@@ -542,7 +542,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@wait('ready')
 	protected initGeometry(): CanPromise<void> {
 		const
-			{maxVisiblePercent, $refs: {header, content, view}} = this;
+			{maxVisiblePercent, $refs: {header, content, view, window}} = this;
 
 		const
 			currentPage = this.history?.current?.content;
@@ -567,11 +567,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		if (currentPage) {
 			Object.assign((<HTMLElement>currentPage.el).style, {
-				maxHeight: maxVisiblePx.px
+				maxHeight: (maxVisiblePx === 0 ? 0 : (maxVisiblePx - header.clientHeight)).px
 			});
 		}
 
-		Object.assign(view.style, {
+		Object.assign(window.style, {
 			// If documentElement height is equal to zero, maxVisiblePx is always be zero too,
 			// even after new calling of initGeometry.
 			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
