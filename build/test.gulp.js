@@ -42,7 +42,7 @@ module.exports = function (gulp = require('gulp')) {
 		const argsString = [
 			['--client-output', args['--client-name'] || args['--name']],
 			['--components', args['--name']],
-			['--long-cache', false],
+			['--build-cache', false],
 			['--public-path', ''],
 			['--es', 'ES2019']
 		].flat().join(' ');

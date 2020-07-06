@@ -36,7 +36,7 @@ module.exports = async function ({buildId}) {
 		['dependencies', include('build/plugins/dependencies')({graph})]
 	]);
 
-	if (config.webpack.longCache()) {
+	if (config.webpack.buildCache()) {
 		plugins.set('buildCache', new HardSourceWebpackPlugin({
 			environmentHash: {
 				files: [
