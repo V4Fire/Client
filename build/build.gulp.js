@@ -12,6 +12,8 @@ const
 	{src} = require('config');
 
 module.exports = function (gulp = require('gulp')) {
+	include('@super/build/build.gulp', __dirname)(gulp);
+
 	const
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
 

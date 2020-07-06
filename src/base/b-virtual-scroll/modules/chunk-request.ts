@@ -86,6 +86,7 @@ export default class ChunkRequest extends Friend {
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.pendingData = [];
+		this.async.clearTimeout({label: $$.waitForInitCalls});
 	}
 
 	/**
@@ -103,6 +104,8 @@ export default class ChunkRequest extends Friend {
 	 * Initializes the request module
 	 */
 	async init(): Promise<void> {
+		await this.async.sleep(50, {label: $$.waitForInitCalls});
+
 		const
 			{options, chunkSize, dataProvider} = this.ctx;
 
@@ -131,6 +134,7 @@ export default class ChunkRequest extends Friend {
 		if (
 			this.ctx.localState !== 'error' &&
 			this.pendingData.length === 0 &&
+			this.chunkRender.itemsCount === 0 &&
 			this.isDone
 		) {
 			this.chunkRender.setRefVisibility('empty', true);
@@ -286,6 +290,14 @@ export default class ChunkRequest extends Friend {
 			this.chunkRender.setRefVisibility('done', true);
 		}
 
-		this.chunkRender.setLoadersVisibility(false);
+		this.async.wait(() => this.ctx.localState === 'ready', {label: $$.requestDoneWaitForReady})
+			.then(() => {
+				if (!this.pendingData.length) {
+					this.chunkRender.setRefVisibility('done', true);
+				}
+
+				this.chunkRender.setLoadersVisibility(false);
+			})
+			.catch(stderr);
 	}
 }

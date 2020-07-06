@@ -83,7 +83,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@prop({
 		type: [Function, Array],
-		default: (e) => e && (e.component || e.page),
+		default: (e) => e && (e.component || e.name),
 		forceDefault: true
 	})
 

@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.24",
+  "version": "3.0.0-rc.35",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components",
     "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js ./src/**/*.js",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
-    "test:components": "npx gulp test:components"
+    "test:components": "npx gulp test:components --reinit-browser true"
   },
   "husky": {
     "hooks": {
@@ -72,9 +72,9 @@
     "glob-promise": "^3.4.0",
     "gulp": "^4.0.2",
     "gulp-csso": "^4.0.1",
+    "gulp-ext-replace": "0.3.0",
     "gulp-favicons": "^2.4.0",
     "gulp-gzip": "^1.4.2",
-    "gulp-ext-replace": "0.3.0",
     "gulp-htmlmin": "^5.0.1",
     "gulp-imagemin": "^7.1.0",
     "gulp-load-plugins": "^2.0.3",

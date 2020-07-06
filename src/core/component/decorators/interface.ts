@@ -6,16 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { WatchPath } from 'core/object/watch';
-
 import {
 
 	Hook,
 	ComponentInterface,
 
+	WatchPath,
 	WatchOptions,
-	MethodWatcher,
-	WatchHandler
+	WatchHandlerParams,
+	MethodWatcher
 
 } from 'core/component/interface';
 
@@ -116,6 +115,11 @@ export interface UniqueFieldFn<CTX extends ComponentInterface = ComponentInterfa
 	(ctx: CTX['unsafe'], oldCtx: CTX): unknown;
 }
 
+export interface DecoratorWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	(ctx: CTX['unsafe'], a: A, b: B, params?: WatchHandlerParams): unknown;
+	(ctx: CTX['unsafe'], ...args: A[]): unknown;
+}
+
 export interface DecoratorFieldWatcherObject<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
@@ -124,10 +128,10 @@ export interface DecoratorFieldWatcherObject<
 	/**
 	 * Handler (or a name of a component method) that is invoked on watcher events
 	 */
-	handler: string | WatchHandler<CTX, A, B>;
+	handler: string | DecoratorWatchHandler<CTX, A, B>;
 
 	/** @deprecated */
-	fn?: string | WatchHandler<CTX, A, B>;
+	fn?: string | DecoratorWatchHandler<CTX, A, B>;
 
 	/**
 	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
@@ -139,8 +143,8 @@ export interface DecoratorFieldWatcherObject<
 export type DecoratorFieldWatcher<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	DecoratorFieldWatcherObject<CTX, A, B> |
-	WatchHandler<CTX, A, B> |
-	Array<string | DecoratorFieldWatcherObject<CTX, A, B> | WatchHandler<CTX, A, B>>;
+	DecoratorWatchHandler<CTX, A, B> |
+	Array<string | DecoratorFieldWatcherObject<CTX, A, B> | DecoratorWatchHandler<CTX, A, B>>;
 
 export interface DecoratorProp<
 	CTX extends ComponentInterface = ComponentInterface,

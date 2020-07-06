@@ -38,7 +38,7 @@ import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/modules/helpers';
 
 import {
 
@@ -187,6 +187,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Local component state store
 	 */
+	@system()
 	protected localStateStore: LocalState = 'init';
 
 	/** @override */
@@ -263,6 +264,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	async reInit(): Promise<void> {
 		this.componentRender.reInit();
+		this.chunkRequest.reset();
 		this.chunkRender.reInit();
 	}
 
@@ -271,6 +273,8 @@ export default class bVirtualScroll extends iData implements iItems {
 		if (!this.db) {
 			return;
 		}
+
+		this.localState = 'init';
 
 		const
 			val = this.convertDBToComponent<RemoteData>(this.db);
@@ -310,6 +314,11 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
+
+		if (isAsyncReplaceError(err)) {
+			return;
+		}
+
 		this.localState = 'error';
 	}
 }

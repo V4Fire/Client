@@ -19,10 +19,10 @@ const {
 
 const
 	deps = pzlr.dependencies.map((el) => RegExp.escape(el || el.src)),
-	importRgxp = new RegExp(`(['"])(${deps.join('|')})(/.*?|(?=\\1))\\1`, 'g');
+	importRgxp = new RegExp(`\\b(import\\s*\\(?|export|from|require\\s*\\()\\s*(['"])(${deps.join('|')})(/.*?|(?=\\2))\\2`, 'g');
 
 /**
- * Monic replacer for TS import declarations
+ * Monic replacer for TS import/export declarations
  *
  * @param {string} str
  * @param {string} file
@@ -33,10 +33,10 @@ module.exports = function (str, file) {
 		return str;
 	}
 
-	return str.replace(importRgxp, (str, $1, root, url) => {
+	return str.replace(importRgxp, (str, statement, $1, root, url) => {
 		if (resolve.depMap[root]) {
 			const l = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, url);
-			return `'./${path.relative(path.dirname(file), l)}'`;
+			return `${statement} './${path.relative(path.dirname(file), l)}'`;
 		}
 
 		return str;

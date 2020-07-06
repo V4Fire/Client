@@ -334,7 +334,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * If true, then the component state will be synchronized with the router after initializing.
-	 * For example, you have a component uses "syncRouterState" method to create two-way binding with a router.
+	 * For example, you have a component uses "syncRouterState" method to create two-way binding with the router.
 	 *
 	 * ```typescript
 	 * @component()
@@ -355,9 +355,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * But, if in some cases we don't have "stage" within "route.query", and the component have the default value,
 	 * we trap in a situation where exists route, which wasn't synchronized with the component, and
-	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match with our expectation.
-	 * But if we toggle "syncRouterStoreOnInit" to true,
-	 * the component will forcely map own state to the router after initializing.
+	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match our expectations.
+	 * But if we toggle "syncRouterStoreOnInit" to true, the component will forcibly map own state to
+	 * the router after initializing.
 	 */
 	@prop(Boolean)
 	readonly syncRouterStoreOnInit: boolean = false;
@@ -1453,10 +1453,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
-				watcher = this.$watch(path, opts, handler);
+				unwatch = this.$watch(path, opts, handler);
 
-			if (watcher && (opts.group || opts.label || opts.join)) {
-				this.async.worker(watcher, {
+			if (unwatch && (opts.group || opts.label || opts.join)) {
+				this.async.worker(unwatch, {
 					group: opts.group,
 					label: opts.label,
 					join: opts.join
@@ -2063,7 +2063,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * When the component initializes, it asks the local storage for data that associated to this component
 	 * by using a global name as a namespace to search. When the local storage is ready to provide data to the component,
 	 * it passes data  to this method. After this, the method returns a dictionary that will be mapped to the
-	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
 	 *
 	 * Also, the component will watch for changes of every property that was in that dictionary
 	 * and when at least one of these properties is changed, the whole butch of data will be sent to the local storage
@@ -2100,7 +2100,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * When the component initializes, it asks the router for data. The router provides the data by using this method.
 	 * After this, the method returns a dictionary that will be mapped to the
-	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
 	 *
 	 * Also, the component will watch for changes of every property that was in that dictionary
 	 * and when at least one of these properties is changed, the whole butch of data will be sent to the router

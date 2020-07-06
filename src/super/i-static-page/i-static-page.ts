@@ -20,14 +20,13 @@ import { setLocale, locale } from 'core/i18n';
 
 import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
-import { CurrentPage } from 'core/router/interface';
 
 //#if runtime has bRouter
-import bRouter from 'base/b-router/b-router';
+import bRouter, { Route } from 'base/b-router/b-router';
 //#endif
 
 import iBlock from 'super/i-block/i-block';
-import iPage, { component, field, system, watch } from 'super/i-page/i-page';
+import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
 import { RemoteState, RootMod } from 'super/i-static-page/interface';
@@ -61,7 +60,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Type: current page
 	 */
-	readonly CurrentPage!: CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>;
+	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/** @override */
 	@system()
@@ -108,10 +107,11 @@ export default abstract class iStaticPage extends iPage {
 	remoteState!: Dictionary;
 
 	/**
-	 * Name of the active page
+	 * Name of the active route page
 	 */
+	@computed({cache: true, dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
-		return this.field.get('route.meta.page');
+		return this.field.get('route.meta.name');
 	}
 
 	/** @override */

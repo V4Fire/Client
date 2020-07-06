@@ -11,3 +11,6 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- block body
+		/// The slot to write auto tests
+		+= self.slot()

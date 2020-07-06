@@ -6,10 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:core/router/README.md]]
- * @packageDocumentation
- */
+module.exports = [
+	{
+		attrs: {
+			':routes': 'r.testRoutes'
+		},
 
-export { default } from 'core/router/engines';
-export * from 'core/router/interface';
+		content: "{{ field.get('route.meta.content') }}"
+	}
+];

@@ -17,13 +17,13 @@ const
 module.exports = async (page, {componentSelector, component: c}) => {
 	describe('b-virtual-scroll', () => {
 		it('renders data chunks to the page', async () => {
-			await h.waitItemsCountGreaterThan(page, 0, componentSelector);
+			await h.waitItemsCountGreaterThan(page, 0, {componentSelector});
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(0);
 
-			await h.scrollAndWaitItemsCountGreaterThan(page, 10, componentSelector);
+			await h.scrollAndWaitItemsCountGreaterThan(page, 10, {componentSelector});
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(20);
 
-			await h.scrollAndWaitItemsCountGreaterThan(page, 20, componentSelector);
+			await h.scrollAndWaitItemsCountGreaterThan(page, 20, {componentSelector});
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(30);
 		});
 	});
