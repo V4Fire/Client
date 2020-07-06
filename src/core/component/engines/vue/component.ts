@@ -60,7 +60,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 					return;
 				}
 
-				if (meta.fields[info.path[0]]?.forceUpdate !== false) {
+				if (meta.fields[String(info.path[0])]?.forceUpdate !== false) {
 					ctx.$forceUpdate();
 				}
 
