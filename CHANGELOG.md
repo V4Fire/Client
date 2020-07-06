@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * All linter configurations now loaded from @v4fire/linters
+* Fixed TS warnings
 
 ## v3.0.0-rc.35 (2020-07-02)
 
