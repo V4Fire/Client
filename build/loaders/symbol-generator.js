@@ -13,12 +13,22 @@ const
 	isPathInside = require('is-path-inside');
 
 /**
- * WebPack loader for using proxies in old browsers
+ * WebPack loader to shim "core/symbol" module for old browsers
  *
  * @param {string} str
  * @returns {string}
+ *
+ * @example
+ * ```js
+ * import symbolGenerator from 'core/symbol';
+ *
+ * const $$ = symbolGenerator();
+ *
+ * console.log($$.foo);
+ * console.log($$.bar);
+ * ```
  */
-module.exports = function (str) {
+module.exports = function proxyLoader(str) {
 	if (!$C(this.query.modules).some((src) => isPathInside(this.context, src))) {
 		return str;
 	}
@@ -28,7 +38,9 @@ module.exports = function (str) {
 		names = new Set();
 
 	let res;
-	while ((res = calls.exec(str))) {
+
+	// eslint-disable-next-line no-cond-assign
+	while (res = calls.exec(str)) {
 		names.add(res[1]);
 	}
 

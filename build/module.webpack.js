@@ -61,7 +61,7 @@ module.exports = async function module({buildId, plugins}) {
 				},
 
 				{
-					loader: 'proxy',
+					loader: 'symbol-generator',
 					options: {
 						modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 					}

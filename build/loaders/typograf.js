@@ -20,7 +20,7 @@ const
 	tp = new Typograf(config.typograf());
 
 const
-	literalsRgxp = /typograf`(?:(?:\\[\s\S]|[^`\\])*?)`/g,
+	literalRgxp = /typograf`(?:(?:\\[\s\S]|[^`\\])*?)`/g,
 	chunkRgxp = /^(?=})?(.*?)(?=\${)?$/;
 
 const
@@ -32,9 +32,14 @@ const
  *
  * @param {string} str
  * @returns {string}
+ *
+ * @example
+ * ```js
+ * console.log(typograf`Hello "user"!`);
+ * ```
  */
-module.exports = function (str) {
-	str = escaper.replace(str, escaperRules).replace(literalsRgxp, (str) => {
+module.exports = function typografLoader(str) {
+	str = escaper.replace(str, escaperRules).replace(literalRgxp, (str) => {
 		str = escaper.replace(str);
 		$C(chunks).set((el) => el.replace(chunkRgxp, (str, val) => tp.execute(val)));
 		return escaper.paste(str.slice(tagLength));
