@@ -14,14 +14,14 @@ const
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
+	{isLayerDep, isExternalDep} = include('build/const'),
 	{inherit} = include('build/build.webpack'),
-	{RUNTIME} = include('build/entries.webpack'),
-	{isLayerDep, isExternalDep} = include('build/const');
+	{RUNTIME} = include('build/entries.webpack');
 
 /**
  * Returns options for Webpack ".optimization"
  *
- * @param {number} buildId - build id
+ * @param {(number|string)} buildId - build id
  * @param {!Map} plugins - map of plugins to use
  * @returns {!Object}
  */

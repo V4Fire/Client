@@ -13,14 +13,14 @@ const
 	MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const
-	{webpack} = config,
-	{resolve} = require('@pzlr/build-core'),
-	{output, assetsOutput, inherit, depsRgxpStr, hash, hashRgxp} = include('build/build.webpack');
+	path = require('upath'),
+	build = include('build/entries.webpack');
 
 const
-	path = require('upath'),
-	build = include('build/entries.webpack'),
-	depsRgxp = new RegExp(`(?:^|[\\/])node_modules[\\/](?:(?!${depsRgxpStr}).)*?(?:[\\/]|$)`);
+	{webpack} = config,
+	{resolve} = require('@pzlr/build-core'),
+	{isExternalDep} = include('build/const'),
+	{output, assetsOutput, inherit, hash, hashRgxp} = include('build/build.webpack');
 
 const
 	snakeskin = config.snakeskin(),
@@ -31,26 +31,29 @@ const
 const fileLoaderOpts = {
 	name: path.basename(assetsOutput),
 	outputPath: path.dirname(assetsOutput),
-	limit: webpack.dataURILimit()/*,
-	encoding: 'base64'*/
+	limit: webpack.dataURILimit()
 };
 
 /**
- * Returns parameters for webpack.module
+ * Returns options for WebPack ".module"
  *
  * @param {(number|string)} buildId - build id
  * @param {!Map} plugins - list of plugins
  * @returns {!Promise<Object>}
  */
-module.exports = async function ({buildId, plugins}) {
+module.exports = async function module({buildId, plugins}) {
 	const
 		graph = await build,
 		loaders = {rules: new Map()};
 
 	if (buildId === build.STD || buildId === build.RUNTIME) {
+		const
+			workers = /[\\/]workers[\\/].*?(?:\.d)?\.ts$/,
+			notWorkers = /^(?:(?![\\/]workers[\\/]).)*(?:\.d)?\.ts$/;
+
 		loaders.rules.set('ts', {
-			test: /^(?:(?![\\/]workers[\\/]).)*(?:\.d)?\.ts$/,
-			exclude: depsRgxp,
+			test: notWorkers,
+			exclude: isExternalDep,
 			use: [
 				{
 					loader: 'ts',
@@ -82,8 +85,8 @@ module.exports = async function ({buildId, plugins}) {
 		});
 
 		loaders.rules.set('ts.workers', {
-			test: /[\\/]workers[\\/].*?(?:\.d)?\.ts$/,
-			exclude: depsRgxp,
+			test: workers,
+			exclude: isExternalDep,
 			use: [
 				{
 					loader: 'ts',
@@ -108,7 +111,7 @@ module.exports = async function ({buildId, plugins}) {
 
 		loaders.rules.set('js', {
 			test: /\.js$/,
-			exclude: depsRgxp,
+			exclude: isExternalDep,
 			use: [
 				'prelude',
 
@@ -196,9 +199,7 @@ module.exports = async function ({buildId, plugins}) {
 				{
 					loader: 'monic',
 					options: inherit(monic.html, {
-						replacers: [
-							include('build/replacers/html-import')
-						]
+						replacers: [include('build/replacers/html-import')]
 					})
 				},
 
@@ -245,10 +246,9 @@ module.exports = async function ({buildId, plugins}) {
 				options: fileLoaderOpts
 			}
 		].concat(
-			isProd ? {
-				loader: 'image-webpack',
-				options: Object.reject(imageOpts, ['webp'])
-			} : []
+			isProd ?
+				{loader: 'image-webpack', options: Object.reject(imageOpts, ['webp'])} :
+				[]
 		)
 	});
 
@@ -260,10 +260,9 @@ module.exports = async function ({buildId, plugins}) {
 				options: fileLoaderOpts
 			}
 		].concat(
-			isProd ? {
-				loader: 'image-webpack',
-				options: imageOpts
-			} : []
+			isProd ?
+				{loader: 'image-webpack', options: imageOpts} :
+				[]
 		)
 	});
 
@@ -275,10 +274,9 @@ module.exports = async function ({buildId, plugins}) {
 				options: fileLoaderOpts
 			}
 		].concat(
-			isProd ? {
-				loader: 'svgo',
-				options: imageOpts.svgo
-			} : []
+			isProd ?
+				{loader: 'svgo', options: imageOpts.svgo} :
+				[]
 		)
 	});
 

@@ -17,8 +17,8 @@ const
 /**
  * Returns WebPack configuration to the specified entry
  *
- * @param entry - options for WebPack ".entry"
- * @param buildId - build id
+ * @param {!Object} entry - options for WebPack ".entry"
+ * @param {(number|string)} buildId - build id
  * @returns {!Object}
  */
 async function buildFactory(entry, buildId) {

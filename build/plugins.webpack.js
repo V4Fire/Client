@@ -24,7 +24,7 @@ const
 /**
  * Returns options for Webpack ".plugins"
  *
- * @param {number} buildId - build id
+ * @param {(number|string)} buildId - build id
  * @returns {!Map}
  */
 module.exports = async function plugins({buildId}) {

@@ -14,19 +14,10 @@ const
 	path = require('path');
 
 const
-	{src, build, webpack: wp} = config,
-	{config: {dependencies}} = require('@pzlr/build-core');
+	{src, build, webpack: wp} = config;
 
 const
 	hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
-
-/**
- * String with project dependencies for using with regular expressions
- */
-exports.depsRgxpStr = dependencies.map((el) => {
-	const src = Object.isString(el) ? el : el.src;
-	return src.split(/[\\/]/).map(RegExp.escape).join('[\\\\/]');
-}).join('|');
 
 /**
  * Output pattern
