@@ -22,13 +22,14 @@ const
 	importRgxp = new RegExp(`\\b(import\\s*\\(?|export|from|require\\s*\\()\\s*(['"])(${deps.join('|')})(/.*?|(?=\\2))\\2`, 'g');
 
 /**
- * Monic replacer for TS import/export declarations
+ * Monic replacer to enable the import/export/etc. constructions from one TS project to another TS project,
+ * because TS have problems with it
  *
  * @param {string} str
- * @param {string} file
+ * @param {string} filePath
  * @returns {string}
  */
-module.exports = function (str, file) {
+module.exports = function tsImportReplacer(str, filePath) {
 	if (!deps.length) {
 		return str;
 	}
@@ -36,9 +37,13 @@ module.exports = function (str, file) {
 	return str.replace(importRgxp, (str, statement, $1, root, url) => {
 		if (resolve.depMap[root]) {
 			const l = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, url);
-			return `${statement} './${path.relative(path.dirname(file), l)}'`;
+			return `${statement} './${path.relative(path.dirname(filePath), l)}'`;
 		}
 
 		return str;
 	});
 };
+
+Object.assign(module.exports, {
+	importRgxp
+});

@@ -61,7 +61,7 @@ module.exports = async function module({buildId, plugins}) {
 				},
 
 				{
-					loader: 'proxy',
+					loader: 'symbol-generator',
 					options: {
 						modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 					}
@@ -74,10 +74,10 @@ module.exports = async function module({buildId, plugins}) {
 					loader: 'monic',
 					options: inherit(monic.typescript, {
 						replacers: [
-							include('build/replacers/context'),
-							include('build/replacers/super'),
+							include('build/replacers/require-context'),
+							include('build/replacers/super-import'),
 							include('build/replacers/ts-import'),
-							include('build/replacers/tests')
+							include('build/replacers/require-tests')
 						]
 					})
 				}
@@ -100,8 +100,8 @@ module.exports = async function module({buildId, plugins}) {
 					loader: 'monic',
 					options: inherit(monic.typescript, {
 						replacers: [
-							include('build/replacers/context'),
-							include('build/replacers/super'),
+							include('build/replacers/require-context'),
+							include('build/replacers/super-import'),
 							include('build/replacers/ts-import')
 						]
 					})
@@ -119,8 +119,8 @@ module.exports = async function module({buildId, plugins}) {
 					loader: 'monic',
 					options: inherit(monic.javascript, {
 						replacers: [
-							include('build/replacers/context'),
-							include('build/replacers/super')
+							include('build/replacers/require-context'),
+							include('build/replacers/super-import')
 						]
 					})
 				}
@@ -199,7 +199,7 @@ module.exports = async function module({buildId, plugins}) {
 				{
 					loader: 'monic',
 					options: inherit(monic.html, {
-						replacers: [include('build/replacers/html-import')]
+						replacers: [include('build/replacers/raw-import')]
 					})
 				},
 

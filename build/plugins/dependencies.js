@@ -22,12 +22,12 @@ const
 	{MODULE_DEPENDENCIES} = include('build/globals.webpack');
 
 /**
- * WebPack plugin for .dependencies.js files and assets.js
+ * WebPack plugin to generate ".dependencies.js" files and "assets.json" / "assets.js"
  *
  * @param {{entry, processes, dependencies}} graph - build object
  * @returns {!Function}
  */
-module.exports = function ({graph}) {
+module.exports = function DependenciesPlugin({graph}) {
 	return {
 		apply(compiler) {
 			compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
