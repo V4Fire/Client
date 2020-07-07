@@ -32,9 +32,11 @@ const externalMap = $C(config.webpack.externals).filter((el, key) => {
 		cb();
 	});
 
+	return false;
+
 }).map();
 
 /**
- * Parameters for webpack.externals
+ * Options for WebPack ".externals"
  */
 module.exports = [externalMap].concat(externals);

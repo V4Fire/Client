@@ -55,8 +55,8 @@ exports.hash = hash;
 exports.hashRgxp = hashRgxp;
 
 /**
- * Returns WebPack output path string from the specified with hash parameters
- * (for longterm cache)
+ * Returns WebPack output path string from the specified string with hash parameters
+ * (for longterm caching)
  *
  * @param {string} output - source string
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
@@ -70,12 +70,12 @@ exports.inherit = inherit;
 /**
  * Alias for $C.extend({deep, concatArray})
  */
-function inherit() {
+function inherit(...args) {
 	const extOpts = {
 		deep: true,
 		concatArray: true,
 		concatFn: Array.union
 	};
 
-	return $C.extend(extOpts, {}, ...arguments);
+	return $C.extend(extOpts, {}, ...args);
 }

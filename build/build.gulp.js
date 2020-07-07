@@ -11,7 +11,31 @@
 const
 	{src} = require('config');
 
-module.exports = function (gulp = require('gulp')) {
+/**
+ * @override
+ *
+ * @example
+ * ```bash
+ * # Builds the application as a node.js package
+ * npx gulp build:server
+ *
+ * # Builds the project as a client (browser) package
+ * npx gulp build:client
+ *
+ * # Builds the application as a node.js package and watches for changes
+ * npx gulp watch:server
+ *
+ * # Builds the project as a client (browser) package and watches for changes
+ * npx gulp watch:client
+ *
+ * # Cleans the dist directory of a node.js package
+ * npx gulp clean:server
+ *
+ * # Cleans the dist directory of a client (browser) package
+ * npx gulp clean:client
+ * ```
+ */
+module.exports = function init(gulp = require('gulp')) {
 	include('@super/build/build.gulp', __dirname)(gulp);
 
 	const
@@ -20,15 +44,24 @@ module.exports = function (gulp = require('gulp')) {
 	const
 		args = process.argv.slice(3).join(' ');
 
-	gulp.task('clean:client', () =>
-		require('del')(src.clientOutput())
-	);
+	/**
+	 * Cleans the dist directory of a client (browser) package
+	 */
+	gulp.task('clean:client', () => require('del')(src.clientOutput()));
 
-	gulp.task('build:client', () =>
-		$.run(`npx parallel-webpack -- ${args}`, {verbosity: 3}).exec().on('error', console.error)
-	);
+	/**
+	 * Builds the project as a client (browser) package
+	 */
+	gulp.task('build:client', () => {
+		const t = $.run(`npx parallel-webpack -- ${args}`, {verbosity: 3}).exec();
+		return t.on('error', console.error);
+	});
 
-	gulp.task('watch:client', () =>
-		$.run(`npx webpack --watch ${args}`, {verbosity: 3}).exec().on('error', console.error)
-	);
+	/**
+	 * Builds the project as a client (browser) package and watches for changes
+	 */
+	gulp.task('watch:client', () => {
+		const t = $.run(`npx webpack --watch ${args}`, {verbosity: 3}).exec();
+		return t.on('error', console.error);
+	});
 };
