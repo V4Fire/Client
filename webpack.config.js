@@ -11,13 +11,18 @@
 require('config');
 
 const
-	$C = require('collection.js');
-
-const
+	$C = require('collection.js'),
 	build = include('build/entries.webpack');
 
+/**
+ * Returns WebPack configuration to the specified entry
+ *
+ * @param entry - options for WebPack ".entry"
+ * @param buildId - build id
+ * @returns {!Object}
+ */
 async function buildFactory(entry, buildId) {
-	await include('build/preload.webpack');
+	await include('build/preconfig.webpack');
 
 	const
 		plugins = await include('build/plugins.webpack')({buildId}),
@@ -45,13 +50,18 @@ async function buildFactory(entry, buildId) {
 	};
 }
 
+/**
+ * Array of promises with WebPack configs.
+ * To speed up build you can use "parallel-webpack" or similar modules.
+ */
 const tasks = (async () => {
 	await include('build/snakeskin');
 
 	const
 		graph = await build,
-		tasks = global.WEBPACK_CONFIG = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
+		tasks = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
 
+	globalThis.WEBPACK_CONFIG = tasks;
 	return tasks;
 })();
 

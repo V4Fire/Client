@@ -22,12 +22,12 @@ const
 	{buildCache} = include('build/build.webpack');
 
 /**
- * Returns a list of webpack plugins
+ * Returns options for Webpack ".plugins"
  *
  * @param {number} buildId - build id
- * @returns {Map}
+ * @returns {!Map}
  */
-module.exports = async function ({buildId}) {
+module.exports = async function plugins({buildId}) {
 	const
 		graph = await build;
 
@@ -51,7 +51,7 @@ module.exports = async function ({buildId}) {
 				config.webpack.cacheDir()
 			),
 
-			configHash: () => config.build.hash({webpack: global.WEBPACK_CONFIG})
+			configHash: () => config.build.hash({webpack: globalThis.WEBPACK_CONFIG})
 		}));
 	}
 
