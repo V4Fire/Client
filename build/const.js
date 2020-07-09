@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-Object.assign(exports, include('build/const'));
+Object.assign(exports, include('@super/build/const', __dirname));
 
 const
 	{depsRgxpStr} = exports;
