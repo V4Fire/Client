@@ -16,19 +16,19 @@ const
 	{RUNTIME} = include('build/entries.webpack');
 
 const
-	externals = [],
-	rgxp = /^\/(.*?)\/$/;
+	externalList = [],
+	asRgxp = /^\/(.*?)\/$/;
 
 const externalMap = $C(config.webpack.externals).filter((el, key) => {
-	if (!rgxp.test(key)) {
+	if (!asRgxp.test(key)) {
 		return true;
 	}
 
 	const
-		r = new RegExp(RegExp.$1);
+		rgxp = new RegExp(RegExp.$1);
 
-	externals.push((ctx, req, cb) => {
-		if (r.test(req)) {
+	externalList.push((ctx, req, cb) => {
+		if (rgxp.test(req)) {
 			return cb(null, `root ${Object.isObject(el) ? el.root : el}`);
 		}
 
@@ -47,7 +47,7 @@ const externalMap = $C(config.webpack.externals).filter((el, key) => {
  */
 module.exports = function externals({buildId}) {
 	if (buildId === RUNTIME) {
-		return [externalMap].concat(externals);
+		return [externalMap].concat(externalList);
 	}
 
 	return [];
