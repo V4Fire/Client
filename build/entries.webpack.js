@@ -23,62 +23,95 @@ const
 	{output, buildCache} = include('build/build.webpack');
 
 const
-	isFastBuild = build.fast();
+	canFastBuild = build.fast();
+
+let
+	buildIterator = -1;
 
 const
-	STD = 0,
-	RUNTIME = 1,
-	HTML = 2;
+	WORKERS = ++buildIterator,
+	RUNTIME = ++buildIterator,
+	HTML = ++buildIterator;
 
 const
-	I = [STD, RUNTIME, HTML].length,
-	IN_PROCESS = ['js', 'css', 'html'].length;
-
-let MAX_PROCESS = build.processes > IN_PROCESS ? build.processes : IN_PROCESS;
-MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
+	MIN_PROCESS = ++buildIterator,
+	MAX_PROCESS = build.processes > MIN_PROCESS ? build.processes : MIN_PROCESS,
+	MAX_TASKS_PER_ONE_PROCESS = 3;
 
 /**
- * Tree of dependencies
+ * The project graph
  * @type {Promise<{entry, processes, dependencies, blockMap}>}
  */
-module.exports = (async () => {
+module.exports = Object.assign(buildProjectGraph(), {
+	WORKERS,
+	RUNTIME,
+	HTML,
+	MIN_PROCESS,
+	MAX_PROCESS
+});
+
+/**
+ * Builds the project graph
+ * @returns {Promise<{entry, processes, dependencies, blockMap}>}
+ */
+async function buildProjectGraph() {
 	const
 		configHash = build.hash(),
 		graphCacheFile = path.join(buildCache, `${configHash}_graph.json`);
 
-	if (build.buildGraphFromCache) {
-		if (fs.existsSync(graphCacheFile)) {
-			const readCache = () => fs.readJSONSync(graphCacheFile, {
-				reviver(k, v) {
-					if (Object.isObject(v) && v.type === 'Map') {
-						return new Map(v.value);
-					}
-
-					return v;
+	// Graph already exists in the cache and we can read it
+	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
+		/**
+		 * Parses the graph from JSON to JS
+		 * @returns {!Object}
+		 */
+		const readCache = () => fs.readJSONSync(graphCacheFile, {
+			reviver(k, v) {
+				if (Object.isObject(v) && v.type === 'Map') {
+					return new Map(v.value);
 				}
-			});
 
-			return await new Promise((r) => {
-				const f = () => {
-					setTimeout(() => {
-						try {
-							r(readCache());
+				return v;
+			}
+		});
 
-						} catch {
-							f();
+		const
+			timeout = (1).minute();
+
+		let
+			total = 0;
+
+		return new Promise((r) => {
+			const f = () => {
+				// Sometimes we can be caught in the situation when one of the multiple processes writes something
+				// to the cache file and it breaks the cache for a moment.
+				// To avoid this, we can sleep a little and try again.
+				setTimeout(() => {
+					try {
+						r(readCache());
+
+					} catch {
+						total += 15;
+
+						if (total > timeout) {
+							build.buildGraphFromCache = false;
+							return buildProjectGraph();
 						}
-					}, 15);
-				};
 
-				f();
-			});
-		}
+						f();
+					}
+				}, 15);
+			};
 
-	} else {
-		fs.mkdirpSync(buildCache);
-		fs.writeFileSync(graphCacheFile, '');
-		process.env.BUILD_GRAPH_FROM_CACHE = 1;
+			f();
+		});
 	}
+
+	fs.mkdirpSync(buildCache);
+	fs.writeFileSync(graphCacheFile, '');
+
+	// All others process will use this cache
+	process.env.BUILD_GRAPH_FROM_CACHE = 1;
 
 	const
 		tmpEntries = path.join(resolve.entry(), `tmp/${configHash}`);
@@ -89,31 +122,26 @@ module.exports = (async () => {
 	let
 		entriesFilter;
 
+	// Filtering of build entries (if there are specified)
 	if (build.entries) {
-		entriesFilter = $C(build.entries).reduce((map, el) => (map[el] = true, map), {});
+		entriesFilter = $C(build.entries).reduce((map, el) => {
+			map[el] = true;
+			return map;
+		}, {});
+
 		entriesFilter.index = true;
 		entriesFilter.std = true;
 	}
 
 	const
-		buildConfig = (await entries.getBuildConfig()).filter((el, key) => entriesFilter ? entriesFilter[key] : true),
+		buildConfig = (await entries.getBuildConfig()).filter((el, key) => !entriesFilter || entriesFilter[key]),
 		blockMap = await block.getAll();
 
 	const
 		graph = await buildConfig.getUnionEntryPoints({cache: blockMap}),
-		processes = $C(I).map(() => ({}));
+		processes = $C(MIN_PROCESS).map(() => ({}));
 
-	/**
-	 * Returns the specified URL relative to the entry folder
-	 */
-	function getUrl(url) {
-		if (resolve.isNodeModule(url)) {
-			return path.normalize(url);
-		}
-
-		return path.relative(tmpEntries, url);
-	}
-
+	// Generate dynamic entries to build with WebPack
 	const entry = await $C(graph.entry)
 		.parallel()
 		.to({})
@@ -121,7 +149,7 @@ module.exports = (async () => {
 			// JS / TS
 
 			const
-				blackName = /^[iv]-/,
+				componentsToIgnore = /^[iv]-/,
 				logicTaskName = `${name}.js`,
 				logicFile = path.join(tmpEntries, `${configHash}__${logicTaskName}`);
 
@@ -135,8 +163,20 @@ module.exports = (async () => {
 				}
 
 				if (!block || logic) {
-					const url = logic ? logic : resolve.isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
-					str += `require('${getUrl(url)}');\n`;
+					let
+						url;
+
+					if (logic) {
+						url = logic;
+
+					} else if (resolve.isNodeModule(name)) {
+						url = name;
+
+					} else {
+						url = path.resolve(tmpEntries, '../', name);
+					}
+
+					str += `require('${getEntryURL(url)}');\n`;
 				}
 
 				return str;
@@ -144,12 +184,17 @@ module.exports = (async () => {
 
 			entry[logicTaskName] = logicFile;
 
-			if (name === 'std') {
-				processes[STD][logicTaskName] = logicFile;
+			let
+				cursor;
+
+			if (name === 'std' || /\.worker\b/.test(name)) {
+				cursor = WORKERS;
 
 			} else {
-				processes[RUNTIME][logicTaskName] = logicFile;
+				cursor = RUNTIME;
 			}
+
+			processes[cursor][logicTaskName] = logicFile;
 
 			// CSS
 
@@ -163,14 +208,14 @@ module.exports = (async () => {
 						block = blockMap.get(name),
 						style = block && await block.styles;
 
-					if (!isParent && style && style.length && !blackName.test(name)) {
+					if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
 						$C(style).forEach((url) => {
-							str += `@import "${getUrl(url)}"\n`;
+							str += `@import "${getEntryURL(url)}"\n`;
 						});
 
 						if (/^[bp]-/.test(name)) {
 							str +=
-							`
+								`
 .${name}
 	extends($${camelize(name)})
 
@@ -185,50 +230,53 @@ module.exports = (async () => {
 			].join('\n'));
 
 			let
-				union = processes[processes.length - 1];
+				taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : WORKERS];
 
-			if (processes.length === I || MAX_PROCESS > processes.length && $C(union).length() > IN_PROCESS) {
-				processes.push(union = {});
+			if (MAX_PROCESS > processes.length && $C(taskProcess).length() > MAX_TASKS_PER_ONE_PROCESS) {
+				taskProcess = {};
+				processes.push(taskProcess);
 			}
 
-			entry[styleTaskName] = union[styleTaskName] = styleFile;
+			entry[styleTaskName] = styleFile;
+			taskProcess[styleTaskName] = styleFile;
 
 			// TEMPLATES
 
 			const
 				tplTaskName = `${name}_tpl.js`,
-				tplFile = path.join(tmpEntries, `${configHash}__${name}.ss${!isFastBuild ? '.js' : ''}`);
+				tplFile = path.join(tmpEntries, `${configHash}__${name}.ss${!canFastBuild ? '.js' : ''}`);
 
 			fs.writeFileSync(tplFile, await $C(list)
 				.async
-				.to(isFastBuild ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
+				.to(canFastBuild ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
 				.reduce(async (str, {name, isParent}) => {
 					const
 						block = blockMap.get(name),
 						tpl = block && await block.tpl;
 
-					if (!isParent && tpl && !blackName.test(name)) {
-						const url = getUrl(tpl);
-						str += isFastBuild ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+					if (!isParent && tpl && !componentsToIgnore.test(name)) {
+						const url = getEntryURL(tpl);
+						str += canFastBuild ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
 					}
 
 					return str;
-				})
-			);
+				}));
 
-			if (isFastBuild) {
+			if (canFastBuild) {
 				const
 					tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
 
 				fs.writeFileSync(
 					tplRequireFileUrl,
-					`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getUrl(tplFile)}'));\n`
+					`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getEntryURL(tplFile)}'));\n`
 				);
 
-				entry[tplTaskName] = union[tplTaskName] = tplRequireFileUrl;
+				entry[tplTaskName] = tplRequireFileUrl;
+				taskProcess[tplTaskName] = tplRequireFileUrl;
 
 			} else {
-				entry[tplTaskName] = union[tplTaskName] = tplFile;
+				entry[tplTaskName] = tplFile;
+				taskProcess[tplTaskName] = tplFile;
 			}
 
 			// HTML
@@ -242,29 +290,33 @@ module.exports = (async () => {
 					block = blockMap.get(name),
 					html = block && await block.etpl;
 
-				if (html && !blackName.test(name)) {
-					str += `require('./${getUrl(html)}');\n`;
+				if (html && !componentsToIgnore.test(name)) {
+					str += `require('./${getEntryURL(html)}');\n`;
 				}
 
 				return str;
 			}));
 
-			entry[htmlTaskName] = processes[HTML][htmlTaskName] = htmlFile;
+			entry[htmlTaskName] = htmlFile;
+
+			// eslint-disable-next-line require-atomic-updates
+			processes[HTML][htmlTaskName] = htmlFile;
+
 			return entry;
 		});
 
+	// Move HTML tasks to the end of the build queue
 	processes.push(processes[HTML]);
 	processes.splice(HTML, 1);
 
-	$C(processes)
-		.remove((obj, i) => i >= I.length && !$C(obj).length());
+	// Remove redundant process
+	$C(processes).remove((obj, i) => i >= buildIterator.length && !$C(obj).length());
 
-	blockMap.toJSON = function () {
-		return {
-			type: 'Map',
-			value: Array.from(blockMap.entries())
-		};
-	};
+	// Helper to serialize Map values
+	blockMap.toJSON = () => ({
+		type: 'Map',
+		value: Array.from(blockMap.entries())
+	});
 
 	const res = {
 		entry,
@@ -273,15 +325,19 @@ module.exports = (async () => {
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
-	fs.writeFileSync(graphCacheFile, JSON.stringify(res, null, 2));
+	fs.writeFileSync(graphCacheFile, JSON.stringify(res));
 	console.log('Project graph initialized');
 
 	return res;
-})();
 
-Object.assign(module.exports, {
-	STD,
-	RUNTIME,
-	HTML,
-	MAX_PROCESS,
-});
+	/**
+	 * Returns the specified URL relative to the entry folder
+	 */
+	function getEntryURL(url) {
+		if (resolve.isNodeModule(url)) {
+			return path.normalize(url);
+		}
+
+		return path.relative(tmpEntries, url);
+	}
+}

@@ -13,6 +13,9 @@ const
 	config = require('config');
 
 const
+	{RUNTIME} = include('build/entries.webpack');
+
+const
 	externals = [],
 	rgxp = /^\/(.*?)\/$/;
 
@@ -37,6 +40,15 @@ const externalMap = $C(config.webpack.externals).filter((el, key) => {
 }).map();
 
 /**
- * Options for WebPack ".externals"
+ * Returns options for WebPack ".externals"
+ *
+ * @param {(number|string)} buildId - build id
+ * @returns {!Array}
  */
-module.exports = [externalMap].concat(externals);
+module.exports = function externals({buildId}) {
+	if (buildId === RUNTIME) {
+		return [externalMap].concat(externals);
+	}
+
+	return [];
+};

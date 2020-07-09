@@ -29,7 +29,7 @@ async function buildFactory(entry, buildId) {
 		optimization = await include('build/optimization.webpack')({buildId, plugins}),
 		modules = await include('build/module.webpack')({buildId, plugins});
 
-	if (build.STD === buildId) {
+	if (build.WORKERS === buildId) {
 		$C(entry).set((el) => [].concat(el));
 	}
 
@@ -39,7 +39,7 @@ async function buildFactory(entry, buildId) {
 
 		resolve: await include('build/resolve.webpack'),
 		resolveLoader: await include('build/resolve-loader.webpack'),
-		externals: await include('build/externals.webpack'),
+		externals: await include('build/externals.webpack')({buildId}),
 
 		plugins: [...plugins.values()],
 		module: {...modules, rules: [...modules.rules.values()]},
