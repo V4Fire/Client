@@ -17,7 +17,7 @@ const
 
 module.exports = [
 	/**
-	 * Converts BEM classes to a component
+	 * Integrates BEM classes to a component: attaches identifiers, provides runtime transformers, etc.
 	 *
 	 * @param {string} block
 	 * @param {!Object} attrs
@@ -26,9 +26,11 @@ module.exports = [
 	 * @returns {string}
 	 */
 	function bem2Component(block, attrs, rootTag, value) {
+		attrs[':class'] = attrs[':class'] || [];
+
 		const
 			elName = value.replace(elSeparatorRgxp, ''),
-			classes = attrs[':class'] = attrs[':class'] || [],
+			classes = attrs[':class'],
 			styles = attrs[':style'];
 
 		const newClasses = classes.concat(

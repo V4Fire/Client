@@ -40,13 +40,19 @@ exports.genericRgxp = /<.*|\s.*/g;
  */
 exports.extendsRgxp = /\s+extends\s+/;
 
-const
-	resources = [resolve.blockSync(), ...resolve.dependencies],
-	componentQuery = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
+/**
+ * List of available resources to load
+ */
+exports.resources = [resolve.blockSync(), ...resolve.dependencies];
+
+/**
+ * Glob pattern to search component files
+ */
+exports.componentQuery = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
 
 /**
  * List of component paths
  */
-exports.componentFiles = $C(resources)
-	.reduce((arr, el) => arr.concat(glob.sync(path.join(el, componentQuery))), [])
+exports.componentFiles = $C(exports.resources)
+	.reduce((arr, el) => arr.concat(glob.sync(path.join(el, exports.componentQuery))), [])
 	.reverse();

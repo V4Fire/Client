@@ -19,18 +19,16 @@ const
 	isPathInside = require('is-path-inside');
 
 const
-	{validators, resolve, config: {dependencies, superRgxp}} = require('@pzlr/build-core');
+	{validators, config: {dependencies, superRgxp}} = require('@pzlr/build-core'),
+	{resources} = include('build/snakeskin/const'),
+	{ssExtRgxp} = include('build/snakeskin/filters/const');
 
 const
-	resources = [resolve.blockSync(), ...resolve.dependencies],
 	resourcesRgxp = $C(dependencies).map((el) => new RegExp(`^${RegExp.escape(el)}`));
-
-const
-	ssExtRgxp = /\.e?ss$/;
 
 Snakeskin.importFilters({
 	/**
-	 * Resolves the specified URL for a Snakeskin include directive
+	 * Resolves the specified URL to use with a Snakeskin include directive
 	 *
 	 * @param {string} url
 	 * @param {string} source - original file source
