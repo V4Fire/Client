@@ -34,6 +34,12 @@ const fileLoaderOpts = {
 	limit: webpack.dataURILimit()
 };
 
+const
+	isTSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?(?:\.d)?)\.ts$/,
+	isJSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?)\.js$/,
+	isNotTSWorker = /^(?:(?!(?:\.worker\b|[\\/]workers[\\/])).)*(?:\.d)?\.ts$/,
+	isNotJSWorker = /^(?:(?!(?:\.worker\b|[\\/]workers[\\/])).)*\.js$/;
+
 /**
  * Returns options for WebPack ".module"
  *
@@ -45,12 +51,32 @@ module.exports = async function module({plugins}) {
 		graph = await build,
 		loaders = {rules: new Map()};
 
-	const
-		workers = /[\\/]workers[\\/].*?(?:\.d)?\.ts$/,
-		notWorkers = /^(?:(?![\\/]workers[\\/]).)*(?:\.d)?\.ts$/;
+	const tsHelperLoaders = [
+		{
+			loader: 'symbol-generator',
+			options: {
+				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
+			}
+		},
+
+		'typograf',
+		'prelude',
+
+		{
+			loader: 'monic',
+			options: inherit(monic.typescript, {
+				replacers: [
+					include('build/replacers/require-context'),
+					include('build/replacers/super-import'),
+					include('build/replacers/ts-import'),
+					include('build/replacers/require-tests')
+				]
+			})
+		}
+	];
 
 	loaders.rules.set('ts', {
-		test: notWorkers,
+		test: isNotTSWorker,
 		exclude: isExternalDep,
 		use: [
 			{
@@ -58,70 +84,52 @@ module.exports = async function module({plugins}) {
 				options: typescript.client
 			},
 
-			{
-				loader: 'symbol-generator',
-				options: {
-					modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
-				}
-			},
-
-			'typograf',
-			'prelude',
-
-			{
-				loader: 'monic',
-				options: inherit(monic.typescript, {
-					replacers: [
-						include('build/replacers/require-context'),
-						include('build/replacers/super-import'),
-						include('build/replacers/ts-import'),
-						include('build/replacers/require-tests')
-					]
-				})
-			}
+			...tsHelperLoaders
 		]
 	});
 
 	loaders.rules.set('ts.workers', {
-		test: workers,
+		test: isTSWorker,
 		exclude: isExternalDep,
 		use: [
+			'worker',
+
 			{
 				loader: 'ts',
 				options: typescript.worker
 			},
 
-			'typograf',
-			'prelude',
-
-			{
-				loader: 'monic',
-				options: inherit(monic.typescript, {
-					replacers: [
-						include('build/replacers/require-context'),
-						include('build/replacers/super-import'),
-						include('build/replacers/ts-import')
-					]
-				})
-			}
+			...tsHelperLoaders
 		]
 	});
 
+	const jsHelperLoaders = [
+		'prelude',
+
+		{
+			loader: 'monic',
+			options: inherit(monic.javascript, {
+				replacers: [
+					include('build/replacers/require-context'),
+					include('build/replacers/super-import'),
+					include('build/replacers/require-tests')
+				]
+			})
+		}
+	];
+
 	loaders.rules.set('js', {
-		test: /\.js$/,
+		test: isNotJSWorker,
+		exclude: isExternalDep,
+		use: jsHelperLoaders
+	});
+
+	loaders.rules.set('js.workers', {
+		test: isNotJSWorker,
 		exclude: isExternalDep,
 		use: [
-			'prelude',
-
-			{
-				loader: 'monic',
-				options: inherit(monic.javascript, {
-					replacers: [
-						include('build/replacers/require-context'),
-						include('build/replacers/super-import')
-					]
-				})
-			}
+			'worker',
+			...jsHelperLoaders
 		]
 	});
 
@@ -268,3 +276,10 @@ module.exports = async function module({plugins}) {
 
 	return loaders;
 };
+
+Object.assign(module.exports, {
+	isTSWorker,
+	isJSWorker,
+	isNotTSWorker,
+	isNotJSWorker
+});
