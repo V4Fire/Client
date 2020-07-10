@@ -10,14 +10,18 @@
 
 require('config');
 
-module.exports = function (gulp = require('gulp')) {
+/**
+ * Initializes the specified gulp instance
+ * @param gulp
+ */
+module.exports = function initGulp(gulp = require('gulp')) {
 	include('@super/gulpfile', __dirname)(gulp);
 
 	include('build/static.gulp')(gulp);
 	include('build/build.gulp')(gulp);
 	include('build/test.gulp')(gulp);
 
-	global.callGulp(module);
+	globalThis.callGulp(module);
 };
 
 module.exports();
