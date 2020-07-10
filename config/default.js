@@ -712,6 +712,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Config for worker-loader
+	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
+	 */
+	worker() {
+		return {
+			worker: {},
+
+			serviceWorker: {
+				workerType: 'ServiceWorker'
+			},
+
+			sharedWorker: {
+				workerType: 'SharedWorker'
+			}
+		};
+	},
+
+	/**
 	 * Config for css-loader
 	 * @returns {!Object}
 	 */

@@ -36,9 +36,13 @@ const fileLoaderOpts = {
 
 const
 	isTSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?(?:\.d)?)\.ts$/,
+	isTSServiceWorker = /(?:\.service-worker\b|[\\/]service-workers[\\/].*?(?:\.d)?)\.ts$/,
+	isTSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?(?:\.d)?)\.ts$/,
 	isJSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?)\.js$/,
-	isNotTSWorker = /^(?:(?!(?:\.worker\b|[\\/]workers[\\/])).)*(?:\.d)?\.ts$/,
-	isNotJSWorker = /^(?:(?!(?:\.worker\b|[\\/]workers[\\/])).)*\.js$/;
+	isJSServiceWorker = /(?:\.servie-worker\b|[\\/]service-workers[\\/].*?)\.js$/,
+	isJSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?)\.js$/,
+	isNotTSWorker = /^(?:(?!(?:\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/])).)*(?:\.d)?\.ts$/,
+	isNotJSWorker = /^(?:(?!(?:\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/])).)*\.js$/;
 
 /**
  * Returns options for WebPack ".module"
@@ -50,6 +54,9 @@ module.exports = async function module({plugins}) {
 	const
 		graph = await build,
 		loaders = {rules: new Map()};
+
+	const
+		workerOpts = config.worker();
 
 	const tsHelperLoaders = [
 		{
@@ -92,7 +99,46 @@ module.exports = async function module({plugins}) {
 		test: isTSWorker,
 		exclude: isExternalDep,
 		use: [
-			'worker',
+			{
+				loader: 'worker',
+				options: workerOpts.worker
+			},
+
+			{
+				loader: 'ts',
+				options: typescript.worker
+			},
+
+			...tsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('ts.serviceWorkers', {
+		test: isTSServiceWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.serviceWorker
+			},
+
+			{
+				loader: 'ts',
+				options: typescript.worker
+			},
+
+			...tsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('ts.sharedWorkers', {
+		test: isTSSharedWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.sharedWorker
+			},
 
 			{
 				loader: 'ts',
@@ -125,10 +171,40 @@ module.exports = async function module({plugins}) {
 	});
 
 	loaders.rules.set('js.workers', {
-		test: isNotJSWorker,
+		test: isJSWorker,
 		exclude: isExternalDep,
 		use: [
-			'worker',
+			{
+				loader: 'worker',
+				options: workerOpts.worker
+			},
+
+			...jsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('js.serviceWorkers', {
+		test: isJSServiceWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.serviceWorker
+			},
+
+			...jsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('js.sharedWorkers', {
+		test: isJSSharedWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.sharedWorker
+			},
+
 			...jsHelperLoaders
 		]
 	});
@@ -279,7 +355,11 @@ module.exports = async function module({plugins}) {
 
 Object.assign(module.exports, {
 	isTSWorker,
+	isTSServiceWorker,
+	isTSSharedWorker,
 	isJSWorker,
+	isJSServiceWorker,
+	isJSSharedWorker,
 	isNotTSWorker,
 	isNotJSWorker
 });
