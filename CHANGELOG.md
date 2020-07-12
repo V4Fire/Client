@@ -11,12 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.36 ()
+## v3.0.0-rc.36 (2020-07-13)
+
+#### :rocket: New Feature
+
+* Improved support of workers `core/build`
 
 #### :house: Internal
 
 * All linter configurations now loaded from @v4fire/linters
 * Fixed TS warnings
+* Improved logic `core/build/entries.webpack.js`
+* Moved to ESLint `core/build`
+* Refactoring `core/build`
 
 ## v3.0.0-rc.35 (2020-07-02)
 
