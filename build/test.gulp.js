@@ -15,17 +15,48 @@ const
 
 const
 	{src} = require('config'),
-	{resolve} = require('@pzlr/build-core');
+	{resolve} = require('@pzlr/build-core'),
+	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs} = include('build/helpers');
 
 const
 	cpus = os.cpus().length;
 
-module.exports = function (gulp = require('gulp')) {
+/**
+ * Registers gulp tasks to test the project
+ *
+ * @example
+ * ```bash
+ * # Builds an application to test the specified component
+ * npx gulp test:component:build --name b-button
+ *
+ * # Runs tests for the specified component
+ * npx gulp test:component:run --name b-button --browsers ff
+ *
+ * # Builds and runs tests for the specified component
+ * npx gulp test:component --name b-button
+ *
+ * # Builds and runs tests for all components
+ * npx gulp test:components -p 16
+ * ```
+ */
+module.exports = function init(gulp = require('gulp')) {
 	const
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
 
 	/**
-	 * Build an application to test the specified component
+	 * Builds an application to test the specified component.
+	 * Arguments:
+	 *
+	 * * --name - name of the component to test
+	 * * [--client-output] - directory to save generated code
+	 * * [--build-cache=false] - should or not generate static build cache to speed up secondary re-build
+	 * * [--public-path] - WebPack publicPath value
+	 * * [--es='ES2019'] - version of used ECMAScript specification to generate
+	 *
+	 * @example
+	 * ```bash
+	 * npx gulp test:component:build --name b-button --client-output b-button --watch
+	 * ```
 	 */
 	gulp.task('test:component:build', () => {
 		const
@@ -53,7 +84,22 @@ module.exports = function (gulp = require('gulp')) {
 	});
 
 	/**
-	 * Runs tests for the specified component
+	 * Runs tests for the specified component.
+	 * Arguments:
+	 *
+	 * * --name - name of the component to test
+	 * * [--port] - port to launch the test server
+	 * * [--page='p-v4-components-demo'] - demo page to run tests
+	 * * [--browsers] - list of browsers to test (firefox (ff), chromium (chrome), webkit (wk))
+	 * * [--close=true] - should or not close the running browsers after finishing the tests
+	 * * [--headless=true] - should or not run browsers with the headless option
+	 * * [--reinit-browser=false] - should or not reuse already existence browser instances
+	 * * [--test-entry] - directory with entry points to build the application
+	 *
+	 * @example
+	 * ```bash
+	 * npx gulp test:component:run --name b-button --browsers ff,chrome
+	 * ```
 	 */
 	gulp.task('test:component:run', async () => {
 		const
@@ -91,9 +137,9 @@ module.exports = function (gulp = require('gulp')) {
 		let exitCode = 0;
 
 		const cliParams = {
-			'headless': true,
+			headless: true,
 			'reinit-browser': false,
-			'close': true
+			close: true
 		};
 
 		Object.keys(cliParams).forEach((key) => {
@@ -106,7 +152,7 @@ module.exports = function (gulp = require('gulp')) {
 		const
 			fileServer = new nodeStatic.Server(src.output(args['--client-name']));
 
-		const server = http.createServer(async (req, res) => {
+		const server = http.createServer((req, res) => {
 			req.addListener('end', () => {
 				fileServer.serve(req, res);
 			}).resume();
@@ -229,6 +275,14 @@ module.exports = function (gulp = require('gulp')) {
 
 	/**
 	 * Builds and runs tests for the specified component
+	 *
+	 * @see test:component:build
+	 * @see test:component:run
+	 *
+	 * @example
+	 * ```bash
+	 * npx gulp test:component --name b-button --browsers ff,chrome
+	 * ```
 	 */
 	gulp.task('test:component', gulp.series([
 		'test:component:build',
@@ -236,7 +290,20 @@ module.exports = function (gulp = require('gulp')) {
 	]));
 
 	/**
-	 * Builds and runs tests for all components
+	 * Builds and runs tests for all components.
+	 * Arguments:
+	 *
+	 * * [--processes] | [-p] - number of available CPUs to build the application and run tests
+	 * * [--test-processes] | [-tp] - number of available CPUs to run tests
+	 * * [--build-processes] | [-tb] - number of available CPUs to build the application
+	 *
+	 * @see test:component
+	 * @see test:component
+	 *
+	 * @example
+	 * ```bash
+	 * npx gulp test:components -p 16
+	 * ```
 	 */
 	gulp.task('test:components', async (cb) => {
 		console.log(`CPUS available: ${cpus}`);
@@ -245,7 +312,7 @@ module.exports = function (gulp = require('gulp')) {
 			playwright = require('playwright');
 
 		const
-			cwd = resolve.cwd,
+			{cwd} = resolve,
 			cases = require(path.join(cwd, 'tests/cases.js'));
 
 		const processesArgs = arg({
@@ -265,7 +332,7 @@ module.exports = function (gulp = require('gulp')) {
 
 		const cliParams = {
 			reInitBrowser: cliArgs['--reinit-browser'] ? JSON.parse(cliArgs['--reinit-browser']) : false,
-			browserArgs: cliArgs['--browser-args'] ? cliArgs['--browser-args'].split(',') : [],
+			browserArgs: cliArgs['--browser-args'] ? cliArgs['--browser-args'].split(',') : []
 		};
 
 		const
@@ -347,9 +414,10 @@ module.exports = function (gulp = require('gulp')) {
 		if (!cliParams.reInitBrowser) {
 			for (const browserType of browsers) {
 				const
-					browser = servers[browserType] = await playwright[browserType].launchServer({args: getBrowserArgs()}),
+					browser = await playwright[browserType].launchServer({args: getBrowserArgs()}),
 					wsEndpoint = browser.wsEndpoint();
 
+				servers[browserType] = browser;
 				await playwright[browserType].connect({wsEndpoint});
 				wsEndpoints[browserType] = wsEndpoint;
 			}
@@ -370,8 +438,7 @@ module.exports = function (gulp = require('gulp')) {
 			const args = arg({
 				'--suit': String,
 				'--name': String
-
-			}, {argv: c.split(' '), permissive: true});
+}, {argv: c.split(' '), permissive: true});
 
 			args['--suit'] = args['--suit'] || 'demo';
 			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
@@ -394,8 +461,7 @@ module.exports = function (gulp = require('gulp')) {
 					() => {
 						onTestEnd(argsString);
 						failedCases.push(argsString);
-					}
-				)
+					})
 			);
 		}
 
@@ -406,134 +472,20 @@ module.exports = function (gulp = require('gulp')) {
 		console.log(`\n❌ Tests failed: ${failedCases.length}`);
 
 		if (failedCases.length) {
-			console.log(`\n❗ Failed tests:`);
+			console.log('\n❗ Failed tests:');
 			console.log(`\n${failedCases.join('\n')}`);
 		}
 
 		console.log('\n-------------\n');
 
 		if (!cliParams.reInitBrowser) {
-			Object.keys(servers).forEach(async (key) => await servers[key].close());
+			Object.keys(servers).forEach((key) => servers[key].close());
 		}
 
 		if (failedCases.length) {
-			throw new Error(`Tests didn't passed`);
+			throw new Error('Tests wasn\'t passed');
 		}
 
 		cb();
 	});
 };
-
-/**
- * Waits till the specified callback function returns true
- *
- * @param {Function} cb
- * @param {number} interval
- * @returns {!Promise<void>}
- */
-function wait(cb, interval = 15) {
-	return new Promise((res) => {
-		if (cb()) {
-			res();
-			return;
-		}
-
-		const intervalId = setInterval(() => {
-			if (cb()) {
-				res();
-				clearInterval(intervalId);
-			}
-		}, interval);
-	});
-}
-
-/**
- * Returns a browser instance by the specified parameters
- *
- * @param {string} browserType
- * @param {!Object} params
- * @param {!Object} options
- * @returns {!Promise<?>}
- */
-async function getBrowserInstance(browserType, params, options = {}) {
-	const
-		playwright = require('playwright');
-
-	const args = {
-		'--firefoxWsEndpoint': '',
-		'--webkitWsEndpoint': '',
-		'--chromiumWsEndpoint': ''
-	};
-
-	Object.keys(args).forEach((key) => {
-		try {
-			args[key] = arg({[key]: String}, {permissive: true})[key];
-
-		} catch {}
-	});
-
-	const endpointMap = {
-		firefox: '--firefoxWsEndpoint',
-		webkit: '--webkitWsEndpoint',
-		chromium: '--chromiumWsEndpoint'
-	};
-
-	if (args[endpointMap[browserType]] && !options.reInit) {
-		return await playwright[browserType].connect({wsEndpoint: args[endpointMap[browserType]], ...params});
-	}
-
-	return await playwright[browserType].launch({args: getBrowserArgs(), ...params});
-}
-
-/**
- * Returns a list of selected browsers
- * @returns {!Array<string>}
- */
-function getSelectedBrowsers() {
-	const
-		args = arg({'--browsers': String}, {permissive: true}),
-		browsers = ['chromium', 'firefox', 'webkit'];
-
-	const aliases = {
-		ff: 'firefox',
-		firefox: 'firefox',
-		chr: 'chromium',
-		chrome: 'chromium',
-		chromium: 'chromium',
-		wk: 'webkit',
-		webkit: 'webkit'
-	};
-
-	if (args['--browsers']) {
-		const customBrowsers = args['--browsers']
-			.split(',')
-			.map((name) => aliases[name] || null)
-			.filter((name) => name);
-
-		if (customBrowsers.length) {
-			return customBrowsers;
-		}
-	}
-
-	return browsers;
-}
-
-/**
- * Returns a list of arguments that will be provided to a browser
- * @returns {!Array<string>}
- */
-function getBrowserArgs() {
-	try {
-		const
-			args = arg({'--browser-args': String}, {permissive: true});
-
-		if (!args['--browser-args']) {
-			return [];
-		}
-
-		return args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
-
-	} catch {
-		return [];
-	}
-}
