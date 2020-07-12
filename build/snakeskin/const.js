@@ -9,6 +9,7 @@
  */
 
 const
+	$C = require('collection.js'),
 	path = require('upath'),
 	glob = require('glob');
 
