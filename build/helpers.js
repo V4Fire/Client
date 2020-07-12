@@ -8,6 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	arg = require('arg');
+
 Object.assign(exports, include('build/helpers'));
 
 /**
@@ -68,7 +71,7 @@ exports.getBrowserInstance = function getBrowserInstance(browserType, params, op
 		return playwright[browserType].connect({wsEndpoint: args[endpointMap[browserType]], ...params});
 	}
 
-	return playwright[browserType].launch({args: getBrowserArgs(), ...params});
+	return playwright[browserType].launch({args: exports.getBrowserArgs(), ...params});
 };
 
 /**
