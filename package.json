@@ -27,7 +27,7 @@
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --public-path",
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components",
-    "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js ./src/**/*.js",
+    "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
     "test:components": "npx gulp test:components --reinit-browser true"
   },
