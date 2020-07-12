@@ -25,14 +25,33 @@ const
 	tplRgxp = /\/?\${(.*?)}/g;
 
 /**
- * Monic replacer for require.context declarations
+ * Monic replacer to enable require.context declarations through multiple contexts
  *
  * @param {string} str
  * @returns {string}
+ *
+ * @example
+ * ```js
+ * // @context: ['@sprite', ['./assets', './node_modules/a/assets']]
+ * console.log(require.context('!!svg-sprite!@sprite', true, /\.svg$/));
+ * // @endcontext
+ *
+ * // The declaration will be transformed to
+ *
+ * console.log(require.context('!!svg-sprite!./assets', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite!./node_modules/a/assets', true, /\.svg$/));
+ *
+ * // Also, you can take values that are passed as monic flags
+ *
+ * // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
+ * console.log(require.context('!!svg-sprite!@sprite', true, /\.svg$/));
+ * // @endcontext
+ * ```
  */
-module.exports = function (str) {
+module.exports = function requireContextReplacer(str) {
 	return str.replace(contextRgxp, (str, values, body) => {
-		values = new Function('flags', `return ${values}`)(this.flags);
+		// eslint-disable-next-line no-new-func
+		values = Function('flags', `return ${values}`)(this.flags);
 
 		if (!Object.isArray(values) || values.length < 2) {
 			throw SyntaxError('Invalid @context format');
@@ -104,3 +123,8 @@ module.exports = function (str) {
 		return res;
 	});
 };
+
+Object.assign(module.exports, {
+	contextRgxp,
+	tplRgxp
+});

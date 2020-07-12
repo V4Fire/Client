@@ -32,6 +32,111 @@ if (config.designSystem) {
 	console.log('[stylus] Design system package is not specified');
 }
 
+prepareData(DS);
+
+module.exports = function addPlugins(api) {
+	/**
+	 * Injects additional options to component options ($p)
+	 *
+	 * @param {string} string - component name
+	 * @returns {!Object}
+	 */
+	api.define(
+		'injector',
+		({string}) => {
+			const
+				value = $C(DS).get(`components.${string}`);
+
+			if (value) {
+				const
+					__vars__ = $C(cssVars).get(`components.${string}`),
+					__diffVars__ = $C(cssVars).get(`diff.components.${string}`);
+
+				return stylus.utils.coerce({
+					...value,
+					__vars__,
+					__diffVars__
+				}, true);
+			}
+
+			return {};
+		}
+	);
+
+	/**
+	 * Returns Design System css variables with values
+	 * @returns {!Object}
+	 */
+	api.define('getFlatDSVars', () => {
+		const
+			obj = {};
+
+		// eslint-disable-next-line no-unused-vars
+		for (const val of cssVars.__map__.values()) {
+			const
+				[key, value] = val;
+
+			if (value || Object.isNumber(value)) {
+				obj[key] = stylus.utils.parseString(value);
+			}
+		}
+
+		return stylus.utils.coerce(obj, true);
+	});
+
+	/**
+	 * Returns a part of the Design System by the specified path or the whole DS object
+	 *
+	 * @param {string} string - field path
+	 * @param {boolean=} [vars] - if true, the method will return css variables from the specified path
+	 * @returns {!Object}
+	 */
+	api.define(
+		'getDSOptions',
+		({string}, vars = false) => {
+			if (vars && vars.val) {
+				return string ? stylus.utils.coerce($C(cssVars).get(string), true) : {};
+			}
+
+			return string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS;
+		}
+	);
+
+	/**
+	 * Returns color(s) from the Design System by the specified name and identifier (optional)
+	 *
+	 * @param {!Object} hueInput
+	 * @param {!Object} [hueNum]
+	 * @returns {(!Object|!Array)}
+	 */
+	api.define(
+		'getDSColor',
+		(hueInput, hueId) => {
+			const
+				hue = hueInput.string || hueInput.name;
+
+			let
+				id;
+
+			if (hueId) {
+				id = hueId.string || hueId.val;
+
+				if (Object.isNumber(id)) {
+					id -= 1;
+				}
+			}
+
+			return hue ? $C(DS).get(`colors.${hue}${id !== undefined ? `.${id}` : ''}`) : undefined;
+		}
+	);
+};
+
+Object.assign(module.exports, {
+	setVar,
+	genPath,
+	prepareData
+});
+
 /**
  * Sets a variable into cssVars dictionary by the specified path
  * @param {string} path
@@ -106,102 +211,3 @@ function prepareData(data, path) {
 		}
 	});
 }
-
-prepareData(DS);
-
-module.exports = function (style) {
-	/**
-	 * Injects additional options to component options ($p)
-	 *
-	 * @param {string} string - component name
-	 * @returns {!Object}
-	 */
-	style.define(
-		'injector',
-		({string}) => {
-			const
-				value = $C(DS).get(`components.${string}`);
-
-			if (value) {
-				const
-					__vars__ = $C(cssVars).get(`components.${string}`),
-					__diffVars__ = $C(cssVars).get(`diff.components.${string}`);
-
-				return stylus.utils.coerce({
-					...value,
-					__vars__,
-					__diffVars__
-				}, true);
-			}
-
-			return {};
-		}
-	);
-
-	/**
-	 * Returns Design System css variables with values
-	 * @returns {!Object}
-	 */
-	style.define('getFlatDSVars', () => {
-		const
-			obj = {};
-
-		// eslint-disable-next-line no-unused-vars
-		for (const val of cssVars.__map__.values()) {
-			const
-				[key, value] = val;
-
-			if (value || Object.isNumber(value)) {
-				obj[key] = stylus.utils.parseString(value);
-			}
-		}
-
-		return stylus.utils.coerce(obj, true);
-	});
-
-	/**
-	 * Returns a part of the Design System by the specified path or whole DS object
-	 *
-	 * @param {string} string - field path
-	 * @param {boolean=} [vars] - if true, the method will return css variables from the specified path
-	 * @returns {!Object}
-	 */
-	style.define(
-		'getDSOptions',
-		({string}, vars = false) => {
-			if (vars && vars.val) {
-				return string ? stylus.utils.coerce($C(cssVars).get(string), true) : {};
-			}
-
-			return string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS;
-		}
-	);
-
-	/**
-	 * Returns color(s) from the Design System by the specified name and identifier (optional)
-	 *
-	 * @param {!Object} hueInput
-	 * @param {!Object} [hueNum]
-	 * @returns {(!Object|!Array)}
-	 */
-	style.define(
-		'getDSColor',
-		(hueInput, hueId) => {
-			const
-				hue = hueInput.string || hueInput.name;
-
-			let
-				id;
-
-			if (hueId) {
-				id = hueId.string || hueId.val;
-
-				if (Object.isNumber(id)) {
-					id = id - 1;
-				}
-			}
-
-			return hue ? $C(DS).get(`colors.${hue}${id !== undefined ? `.${id}` : ''}`) : undefined;
-		}
-	);
-};

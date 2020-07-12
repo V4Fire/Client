@@ -22,7 +22,7 @@ const blendModes = {
 	colorBurn(f, b) {
 		const getColor = (f, b) => {
 			const
-				tmp = 255 - ((255 - b) * 255) / f;
+				tmp = 255 - (255 - b) * 255 / f;
 
 			if (f === 0) {
 				f = 255;
@@ -62,9 +62,9 @@ const blendModes = {
 	}
 };
 
-module.exports = function (style) {
+module.exports = function addPlugins(api) {
 	/**
-	 * Returns a color, mixed with the specified mode
+	 * Returns a color mixed with the specified mode
 	 *
 	 * @see https://en.wikipedia.org/wiki/Blend_modes
 	 * @param {!Object} foreground
@@ -72,7 +72,7 @@ module.exports = function (style) {
 	 * @param {string=} [mode=normal]
 	 * @returns {!Object}
 	 */
-	style.define('blend', (foreground, background, mode = 'normal') => {
+	api.define('blend', (foreground, background, mode = 'normal') => {
 		utils.assertColor(foreground);
 		foreground = foreground.rgba;
 
@@ -92,3 +92,7 @@ module.exports = function (style) {
 		}
 	});
 };
+
+Object.assign(module.exports, {
+	blendModes
+});

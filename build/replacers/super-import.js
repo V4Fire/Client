@@ -24,7 +24,7 @@ const {
 	config: {dependencies, super: superLink}
 } = require('@pzlr/build-core');
 
-const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
+const extensions = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
 	list.push(ext);
 	list.push(`/index${ext}`);
 	return list;
@@ -34,13 +34,19 @@ const
 	importRgxp = new RegExp(`(['"])(${RegExp.escape(superLink)})(/.*?|(?=\\1))\\1`, 'g');
 
 /**
- * Monic replacer for TS import declarations
+ * Monic replacer to enable the "@super" import alias within TS/JS files.
+ * This alias always refers to the previous layer that has the specified file.
  *
  * @param {string} str
- * @param {string} file
+ * @param {string} filePath
  * @returns {string}
+ *
+ * @example
+ * ```js
+ * import '@super/foo';
+ * ```
  */
-module.exports = function (str, file) {
+module.exports = function superImportReplacer(str, filePath) {
 	if (!dependencies.length || !importRgxp.test(str)) {
 		return str;
 	}
@@ -49,14 +55,14 @@ module.exports = function (str, file) {
 		start = 0;
 
 	for (let i = 0; i < rootDependencies.length; i++) {
-		if (isPathInside(file, rootDependencies[i])) {
+		if (isPathInside(filePath, rootDependencies[i])) {
 			start = i + 1;
 			break;
 		}
 	}
 
 	const
-		isTS = path.extname(file) === '.ts';
+		isTS = path.extname(filePath) === '.ts';
 
 	return str.replace(importRgxp, (str, $1, root, url) => {
 		let
@@ -68,17 +74,17 @@ module.exports = function (str, file) {
 				l = path.join(rootDependencies[i], url);
 
 			if (path.extname(l)) {
-				if (!pathEqual(l, file) && fs.existsSync(l)) {
+				if (!pathEqual(l, filePath) && fs.existsSync(l)) {
 					resource = dep;
 					break;
 				}
 
 			} else {
-				for (let i = 0; i < exts.length; i++) {
+				for (let i = 0; i < extensions.length; i++) {
 					const
-						ml = l + exts[i];
+						ml = l + extensions[i];
 
-					if (!pathEqual(ml, file) && fs.existsSync(ml)) {
+					if (!pathEqual(ml, filePath) && fs.existsSync(ml)) {
 						resource = dep;
 						break loop;
 					}
@@ -97,3 +103,7 @@ module.exports = function (str, file) {
 		return str;
 	});
 };
+
+Object.assign(module.exports, {
+	importRgxp
+});

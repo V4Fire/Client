@@ -8,27 +8,27 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-exports.attachVIf = function (arr, op) {
+exports.attachVIf = function attachVIf(arr, op) {
 	const
-		join = arr.join;
+		arrJoin = arr.join.bind(arr);
 
-	arr.join = function () {
-		return join.call(this, op);
+	arr.join = function join() {
+		return arrJoin(op);
 	};
 
 	return arr;
 };
 
-exports.wrapAttrArray = function (arr) {
+exports.wrapAttrArray = function wrapAttrArray(arr) {
 	const
-		join = arr.join;
+		arrJoin = arr.join.bind(arr);
 
-	arr.join = function () {
+	arr.join = function join() {
 		if (this.length < 2) {
-			return join.call(this);
+			return arrJoin.call(this);
 		}
 
-		return `[${join.call(this, ',')}]`;
+		return `[${arrJoin.call(this, ',')}]`;
 	};
 
 	return arr;

@@ -10,26 +10,14 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config');
-
-const
-	objectHash = require('node-object-hash'),
+	config = require('config'),
 	path = require('path');
 
 const
-	{src, webpack: wp} = config,
-	{config: {dependencies}} = require('@pzlr/build-core');
+	{src, build, webpack: wp} = config;
 
 const
 	hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
-
-/**
- * String with project dependencies for using with regular expressions
- */
-exports.depsRgxpStr = dependencies.map((el) => {
-	const src = Object.isString(el) ? el : el.src;
-	return src.split(/[\\/]/).map(RegExp.escape).join('[\\\\/]');
-}).join('|');
 
 /**
  * Output pattern
@@ -61,25 +49,20 @@ exports.dllManifest = path.join(src.clientOutput(), wp.dllOutput({name: 'dll-man
  */
 exports.buildCache = path.join(src.cwd(), 'app-cache');
 
-/**
- * Hash of the config
- */
-exports.configHash = objectHash().hash({config: config.expand()}).slice(0, wp.hashLength);
-
 // Some helpers
 
 exports.hash = hash;
 exports.hashRgxp = hashRgxp;
 
 /**
- * Returns WebPack output path string from the specified with hash parameters
- * (for longterm cache)
+ * Returns WebPack output path string from the specified string with hash parameters
+ * (for longterm caching)
  *
  * @param {string} output - source string
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	return output.replace(hashRgxp, chunk ? `[chunkhash:${wp.hashLength}]_` : `[hash:${wp.hashLength}]_`);
+	return output.replace(hashRgxp, chunk ? `[chunkhash:${build.hashLength}]_` : `[hash:${build.hashLength}]_`);
 }
 
 exports.inherit = inherit;
@@ -87,12 +70,12 @@ exports.inherit = inherit;
 /**
  * Alias for $C.extend({deep, concatArray})
  */
-function inherit() {
+function inherit(...args) {
 	const extOpts = {
 		deep: true,
 		concatArray: true,
 		concatFn: Array.union
 	};
 
-	return $C.extend(extOpts, {}, ...arguments);
+	return $C.extend(extOpts, {}, ...args);
 }

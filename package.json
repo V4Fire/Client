@@ -27,7 +27,7 @@
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --public-path",
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components",
-    "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js ./src/**/*.js",
+    "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
     "test:components": "npx gulp test:components --reinit-browser true"
   },
@@ -37,7 +37,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.20.4",
+    "@v4fire/core": "^3.21.0",
     "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",
@@ -92,10 +92,9 @@
     "monic": "^2.6.0",
     "monic-loader": "^3.0.1",
     "nib": "^1.1.2",
-    "node-object-hash": "^2.0.0",
     "node-static": "^0.7.11",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "parallel-webpack": "2.0.0",
+    "parallel-webpack": "^2.6.0",
     "path-equal": "^1.1.1",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^4.0.1",
@@ -119,10 +118,11 @@
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "worker-loader": "^2.0.0"
   },
   "devDependencies": {
-    "@v4fire/linters": "^1.1.0",
+    "@v4fire/linters": "^1.2.1",
     "husky": "^4.2.5",
     "nyc": "^15.1.0",
     "playwright": "1.0.2"

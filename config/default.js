@@ -20,21 +20,142 @@ const
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
+	/** @inheritDoc */
 	build: {
+		/**
+		 * List of entries to build.
+		 * The entries are taken from the "core/entries" directory.
+		 *
+		 * You can use this parameter when you develop some particular chunk and don't want to build the whole application,
+		 * because it may slow down the build time.
+		 *
+		 * @type {string}
+		 *
+		 * @example
+		 * ```bash
+		 * # Build only entries foo and bar
+		 * npx webpack --entries foo,bar
+		 * ```
+		 */
 		entries: o('entries', {
 			env: true,
 			coerce: (v) => v ? v.split(',') : []
 		}),
 
-		inspectComponents: o('inspect-components', {
+		/**
+		 * Enables the fast kind of application building.
+		 *
+		 * Mind, this type of build is slower on re-building, i.e.,
+		 * it doesn't meet with the development needs when you launch the development server and
+		 * incrementally rebuild the modified chunks, but it totally matches the situation when you need
+		 * to improve the speed of the release build.
+		 *
+		 * @cli fast-build
+		 * @env FAST_BUILD
+		 *
+		 * @type {boolean}
+		 * @default `isProd`
+		 *
+		 * @returns {boolean}
+		 */
+		fast() {
+			const v = o('fast-build', {
+				env: true,
+				type: 'boolean'
+			});
+
+			return v != null ? v : isProd;
+		},
+
+		/**
+		 * Every client build starts with calculating the project graph.
+		 * The graph contains information about entry points, dependencies, and other stuff.
+		 * This information is used by WebPack to deduplicate code blocks and optimize building,
+		 * but the process of graph calculation may take time.
+		 *
+		 * This option enables that the graph can be taken from the previous build if it exists.
+		 * Mind, the invalid graph can produce to the broken build of the application.
+		 *
+		 * @cli build-graph-from-cache
+		 * @env BUILD_GRAPH_FROM_CACHE
+		 *
+		 * @type {boolean}
+		 * @default `false`
+		 */
+		buildGraphFromCache: o('build-graph-from-cache', {
 			env: true,
 			type: 'boolean'
 		}),
 
-		suit: o('suit', {
-			env: true
+		/**
+		 * The number of available CPUs that can be used with application building
+		 *
+		 * @cli processes
+		 * @env PROCESSES
+		 *
+		 * @type {number}
+		 * @default `require('os').cpus().length - 1`
+		 */
+		processes: o('processes', {
+			env: true,
+			short: 'p',
+			type: 'number',
+			default: require('os').cpus().length - 1
 		}),
 
+		/**
+		 * Returns a list of components to build within the demo page (pages/p-v4-components-demo).
+		 * The list contains objects with default properties for each specified component.
+		 *
+		 * ```js
+		 * [
+		 *   {name: 'b-button', attrs: {':theme': "'demo'"}, content: {default: 'Hello world'}},
+		 *   {name: 'b-select', attrs: {':theme': "'demo'"}}
+		 * ]
+		 * ```
+		 *
+		 * To specify the default properties for a component demo, you should create a "demo.js" file and
+		 * place it with the component directory, for instance, "b-button/demo.js":
+		 *
+		 * ```js
+		 * module.exports = [
+		 *   {
+		 *     // Within "attrs" you can specify attributes that will be passed to the component
+		 *     attrs: {':theme': "'demo'"},
+		 *
+		 *     // Within "content" you can specify slots that will be passed to the component
+		 *     content: {default: 'Hello world'}
+		 *   }
+		 * ];
+		 * ```
+		 *
+		 * Every object from the list represents one instance of a component,
+		 * i.e. to create two or more examples of a component with different attributes just add more objects to the list.
+		 *
+		 * ```js
+		 * module.exports = [
+		 *   {
+		 *     attrs: {':theme': "'demo'"},
+		 *     content: {default: 'Hello world'}
+		 *   },
+		 *
+		 *   {
+		 *     attrs: {':theme': "'demo2'"}
+		 *   }
+		 * ];
+		 * ```
+		 *
+		 * @cli components
+		 * @env COMPONENTS
+		 *
+		 * @type {!Array<{name: string, args?: Object, content?: Object}>}
+		 *
+		 * @example
+		 * ```bash
+		 * # Build the demo page with b-button and b-select
+		 * npx webpack --components b-button,b-select
+		 * ```
+		 */
 		components: o('components', {
 			env: true,
 			coerce: (v) => {
@@ -81,54 +202,188 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 		}),
 
-		fast() {
-			const v = o('fast-build', {
-				env: true,
-				type: 'boolean'
-			});
-
-			return v != null ? v : isProd;
-		},
-
-		buildGraphFromCache: o('build-graph-from-cache', {
+		/**
+		 * Enables the special kind of the demo page (pages/p-v4-components-demo) to build with
+		 * the feature of component inspection by using the "bV4ComponentDemo" component.
+		 *
+		 * The inspection mode allows us to see all component modifiers/props and dynamically change it.
+		 *
+		 * @cli inspect-components
+		 * @env INSPECT_COMPONENTS
+		 *
+		 * @type {boolean}
+		 */
+		inspectComponents: o('inspect-components', {
 			env: true,
 			type: 'boolean'
+		}),
+
+		/**
+		 * This option is used with component test files.
+		 *
+		 * For instance, you have the "b-button/test.js" file that contains tests for the component.
+		 * You may export one function to call to run tests, or you can export an object where each key
+		 * exports a function to test the component with different attributes.
+		 * The value of "suit" refers to the key of the test function to invoke.
+		 *
+		 * See the "/test" folder for more details.
+		 *
+		 * @cli suit
+		 * @env SUIT
+		 *
+		 * @type {string}
+		 */
+		suit: o('suit', {
+			env: true
 		})
 	},
 
-	webpack: {
-		devtool: false,
-		hashLength: 8,
+	/**
+	 * Name of the used MVVM library, like vue or react
+	 *
+	 * @cli engine
+	 * @env ENGINE
+	 */
+	engine() {
+		return o('engine', {
+			env: true,
+			default: 'vue',
+			validate(v) {
+				return Boolean({
+					vue: true,
+					zero: true
+				}[v]);
+			}
+		});
+	},
 
+	/** @override */
+	runtime() {
+		return {
+			...super.runtime(),
+
+			engine: this.engine(),
+			noGlobals: false,
+			svgSprite: true,
+
+			'ds-diff': false,
+			'ds-vars': false,
+
+			blockNames: false,
+			passDesignSystem: false,
+
+			'core/browser': true,
+			'core/session': true,
+
+			'prelude/dependencies': true,
+			'component/async-render': true,
+			'component/daemons': true,
+
+			'directives/event': true,
+			'directives/resize': false,
+			'directives/image': false,
+			'directives/in-view': false,
+			'directives/update-on': false,
+
+			iData: true,
+			bRouter: true,
+
+			'iInput/validators': true,
+			'bInput/mask': true,
+			'bInput/validators': true
+		};
+	},
+
+	/**
+	 * Webpack configuration
+	 */
+	webpack: {
+		/**
+		 * WebPack ".devtool" option
+		 */
+		devtool: false,
+
+		/**
+		 * Returns the default hash algorithm to use
+		 * @returns {?string}
+		 */
 		hashFunction() {
-			return !isProd || this.fatHTML() ? undefined : 'md5';
+			return !isProd || this.fatHTML() ? undefined : this.config.build.hashAlg;
 		},
 
+		/**
+		 * Returns true if all static from the build have to inline within HTML files
+		 * @returns {boolean}
+		 */
 		fatHTML() {
 			return false;
 		},
 
+		/**
+		 * Returns the maximum size of a file in bytes that can be inline as base64
+		 * @returns {(number|undefined)}
+		 */
 		dataURILimit() {
 			return this.fatHTML() ? undefined : 2048;
 		},
 
+		/**
+		 * WebPack ".externals" option
+		 */
 		externals: {
 			vue: 'Vue',
 			eventemitter2: 'EventEmitter2',
 			setimmediate: 'setImmediate'
 		},
 
-		longCache() {
-			return o('long-cache', {
+		/**
+		 * Enables hard caching of WebPack build: it helps speed up "cold" build time
+		 *
+		 * @cli build-cache
+		 * @env BUILD_CACHE
+		 *
+		 * @returns {boolean}
+		 */
+		buildCache() {
+			return o('build-cache', {
 				default: !isProd,
 				type: 'boolean'
 			});
 		},
 
+		/**
+		 * Returns a path to the directory to store application build cache
+		 *
+		 * @see buildCache
+		 * @returns {string}
+		 */
 		cacheDir() {
 			return '[confighash]';
 		},
 
+		/**
+		 * Returns the value for WebPack "output.publicPath".
+		 * The method can take arguments that will be concatenated to the base value.
+		 *
+		 * @cli public-path
+		 * @env PUBLIC_PATH
+		 *
+		 * @param args
+		 * @returns {string}
+		 *
+		 * @example
+		 * ```bash
+		 * npx webpack --public-path /s3/hash
+		 *
+		 * # For local build without a static server
+		 * npx webpack --public-path ''
+		 * ```
+		 *
+		 * ```js
+		 * // PUBLIC_PATH = '/s3/hash'
+		 * publicPath('foo', 'bar') // /s3/hash/foo/bar
+		 * ```
+		 */
 		publicPath(...args) {
 			const
 				concatUrls = require('urlconcat').concat;
@@ -163,6 +418,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return pathVal;
 		},
 
+		/**
+		 * Returns the value for WebPack "output.filename".
+		 * The method can take an object with values to expand macros.
+		 *
+		 * @param params
+		 * @returns {string}
+		 *
+		 * @example
+		 * ```js
+		 * output() // [hash]_[name]
+		 * output({hash: 'foo', name: 'bla'}) // foo_bla
+		 * ```
+		 */
 		output(params) {
 			const
 				res = !isProd || this.fatHTML() ? '[name]' : '[hash]_[name]';
@@ -180,10 +448,36 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return res;
 		},
 
+		/**
+		 * Returns the value for WebPack DllPlugin "output.filename".
+		 * The method can take an object with values to expand macros.
+		 *
+		 * @param params
+		 * @returns {string}
+		 *
+		 * @example
+		 * ```js
+		 * dllOutput() // [hash]_[name]
+		 * dllOutput({hash: 'foo', name: 'bla'}) // foo_bla
+		 * ```
+		 */
 		dllOutput(params) {
 			return this.output(params);
 		},
 
+		/**
+		 * Returns the value for WebPack FileLoader "output.filename".
+		 * The method can take an object with values to expand macros.
+		 *
+		 * @param params
+		 * @returns {string}
+		 *
+		 * @example
+		 * ```js
+		 * assetsOutput() // assets/[hash].[ext]
+		 * assetsOutput({hash: 'foo'}) // assets/foo.[ext]
+		 * ```
+		 */
 		assetsOutput(params) {
 			const
 				root = 'assets';
@@ -203,26 +497,84 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			});
 		},
 
+		/**
+		 * Returns path to a generated assets.json within the output directory.
+		 * This file contains a JSON object with links to all JS/CSS files that are declared within "src/entries".
+		 * The declaration solves the problem of connection between original files and compiled files:
+		 * generated files may have different names (because of hash or other stuff) with original files.
+		 *
+		 * For instance:
+		 *
+		 * ```
+		 * {
+		 *   "index.dependencies": {
+		 *     "path": "index.dependencies.js",
+		 *     "publicPath": "index.dependencies.js"
+		 *  },
+		 *  "index$style": {
+		 *     "path": "index$style.css",
+		 *     "publicPath": "index$style.css"
+		 *  },
+		 *  "index_tpl": {
+		 *     "path": "index_tpl.js",
+		 *     "publicPath": "index_tpl.js"
+		 *  }
+		 * }
+		 * ```
+		 *
+		 * @returns {string}
+		 */
 		assetsJSON() {
 			return 'assets.json';
 		},
 
+		/**
+		 * Returns path to a generated assets.js within the output directory.
+		 * This file contains the modified version of "assets.json" to load as a JS script.
+		 *
+		 * @returns {string}
+		 */
 		assetsJS() {
 			return path.changeExt(this.assetsJSON(), '.js');
 		}
 	},
 
+	/**
+	 * Config for a favicon generator
+	 * @returns {!Object}
+	 */
+	favicons() {
+		return {
+			appName: this.appName,
+			path: this.src.assets('favicons'),
+			background: '#FFF',
+			display: 'standalone',
+			orientation: 'portrait',
+			version: 1.0,
+			logging: false
+		};
+	},
+
+	/**
+	 * Config for image-webpack-loader
+	 * @returns {!Object}
+	 */
 	imageOpts() {
 		return {
 			svgo: {
 				removeUnknownsAndDefaults: false
 			},
+
 			webp: {
 				quality: 75
 			}
 		};
 	},
 
+	/**
+	 * Config for html-loader
+	 * @returns {!Object}
+	 */
 	html() {
 		return {
 			attributes: false,
@@ -237,82 +589,31 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
+	/**
+	 * Config for postcss-loader
+	 * @returns {!Object}
+	 */
 	postcss() {
 		return {};
 	},
 
+	/**
+	 * Config for postcss/autoprefixer
+	 * @returns {!Object}
+	 */
 	autoprefixer() {
 		return {remove: false};
 	},
 
+	/**
+	 * Config for Webpack TerserPlugin
+	 * @returns {{}}
+	 */
 	uglify() {
 		return {};
 	},
 
-	engine() {
-		return o('engine', {
-			env: true,
-			default: 'vue',
-			validate(v) {
-				return Boolean({
-					vue: true,
-					zero: true
-				}[v]);
-			}
-		});
-	},
-
-	runtime() {
-		return {
-			'prod': IS_PROD,
-			'debug': !IS_PROD,
-			'env': process.env.NODE_ENV,
-
-			'engine': this.engine(),
-			'noGlobals': false,
-			'svgSprite': true,
-
-			'ds-diff': false,
-			'ds-vars': false,
-
-			'blockNames': false,
-			'passDesignSystem': false,
-
-			'core/helpers': true,
-			'core/browser': true,
-
-			'core/analytics': true,
-			'core/log': true,
-
-			'core/kv-storage': true,
-			'core/session': true,
-			'core/net': false,
-
-			'prelude/dependencies': true,
-			'prelude/date/relative': true,
-			'prelude/date/format': true,
-
-			'prelude/number/rounding': true,
-			'prelude/number/format': true,
-
-			'component/async-render': true,
-			'component/daemons': true,
-
-			'directives/event': true,
-			'directives/resize': false,
-			'directives/image': false,
-			'directives/in-view': false,
-			'directives/update-on': false,
-
-			'iData': true,
-			'bRouter': true,
-
-			'iInput/validators': true,
-			'bInput/mask': true,
-			'bInput/validators': true
-		};
-	},
-
+	/** @override */
 	monic() {
 		const
 			runtime = this.runtime(),
@@ -346,18 +647,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
-	favicons() {
-		return {
-			appName: this.appName,
-			path: this.src.assets('favicons'),
-			background: '#FFF',
-			display: 'standalone',
-			orientation: 'portrait',
-			version: 1.0,
-			logging: false
-		};
-	},
-
+	/**
+	 * Config for snakeskin-loader:
+	 *
+	 * 1. server - for .ess files
+	 * 2. client - for .ss files
+	 *
+	 * @returns {{server: !Object, client: !Object}}
+	 */
 	snakeskin() {
 		const
 			{webpack, src} = this,
@@ -397,6 +694,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
+	/**
+	 * Config for typescript-loader
+	 *
+	 * 1. server - to compile node.js modules
+	 * 2. client - to compile client modules
+	 * 3. worker - to compile web-worker modules
+	 *
+	 * @returns {{server: !Object, client: !Object, worker: !Object}}
+	 */
 	typescript() {
 		return {
 			client: super.typescript(),
@@ -405,21 +711,51 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
+	/**
+	 * Config for worker-loader
+	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
+	 */
+	worker() {
+		return {
+			worker: {},
+
+			serviceWorker: {
+				workerType: 'ServiceWorker'
+			},
+
+			sharedWorker: {
+				workerType: 'SharedWorker'
+			}
+		};
+	},
+
+	/**
+	 * Config for css-loader
+	 * @returns {!Object}
+	 */
 	css() {
 		return {
 			minimize: Boolean(isProd || Number(process.env.MINIFY_CSS))
 		};
 	},
 
+	/**
+	 * Config for stylus-loader
+	 * @returns {!Object}
+	 */
 	stylus() {
 		return {
 			preferPathResolver: 'webpack'
 		};
 	},
 
+	/**
+	 * Config for the Typograf library
+	 * @returns {!Object}
+	 */
 	typograf() {
 		return {
 			locale: this.locale
 		};
-	},
+	}
 });

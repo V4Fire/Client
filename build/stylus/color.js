@@ -21,6 +21,102 @@ const GLOBAL_COLORS = {
 const
 	PROJECT_NAME = pzlr.config.projectName;
 
+module.exports = function addPlugins(api) {
+	/**
+	 * Registers a kit with the specified name
+	 *
+	 * @param {!Object} kit
+	 * @param {string} name
+	 * @param {boolean=} [theme=false]
+	 */
+	api.define('registerColors', (kit, name, theme = false) => {
+		if (!name || !kit) {
+			throw new Error('Can\'t register colors kit');
+		}
+
+		saveColorsKit(kit.vals, name.val, theme && theme.val);
+	});
+
+	/**
+	 * Returns a global color value
+	 *
+	 * @param {!Object} hueInput - color
+	 * @param {!Object} numInput - color position in a kit
+	 * @param {(!Object|boolean)} [reservedInput=false] - is value in the reserved kit
+	 * @param {(!Object|boolean)} [baseInput=false] - prototype field name
+	 * @returns {string}
+	 */
+	api.define('getGlobalColor', (hueInput, numInput, reservedInput = false, baseInput = false) => {
+		if (arguments.length === 1 && hueInput.raw) {
+			return checkInGlobalSpace(hueInput);
+		}
+
+		const
+			{dependencies} = pzlr.config;
+
+		const
+			hue = hueInput.string || hueInput.name,
+			num = numInput.string || numInput.val;
+
+		const
+			reserved = reservedInput && reservedInput.val || false,
+			base = baseInput && baseInput.val || false,
+			meta = {hue, num, reserved, base};
+
+		let
+			col = GLOBAL_COLORS.kits[hue],
+			res;
+
+		if (!base) {
+			if (col && (reserved && col[0][num - 1] || col[num])) {
+				return reserved ? pickColor(col[0][num - 1], meta) : pickColor(col[num], meta);
+			}
+
+			$C(dependencies).some((el) => {
+				col = GLOBAL_COLORS.kits[el];
+
+				if (col) {
+					const
+						val = $C(col).get(`${hue}.0.${num - 1}`);
+
+					if (reserved && val) {
+						res = val;
+						return true;
+					}
+
+					if (!reserved && $C(col).get(`${hue}.${num}`)) {
+						res = col[hue][num];
+						return true;
+					}
+				}
+
+				return false;
+			});
+
+		} else {
+			const
+				kit = GLOBAL_COLORS.kits[base];
+
+			if (kit && reserved) {
+				res = kit[hue][0][num - 1];
+
+			} else if (kit && kit[hue] && kit[hue][num]) {
+				res = kit[hue][num];
+			}
+		}
+
+		return pickColor(res, meta);
+	});
+};
+
+Object.assign(module.exports, {
+	saveToSpace,
+	checkInGlobalSpace,
+	kitFromNodes,
+	saveColorsKit,
+	pickColor
+});
+
 /**
  * Saves the specified color HEXs to the global space with kit names
  *
@@ -67,7 +163,7 @@ function kitFromNodes(nodes, name) {
 }
 
 /**
- * Saves subset of colors to a global color set
+ * Saves subset of colors to the global color set
  *
  * @param {!Object} kit - subset
  * @param {string} nm - name of a subset
@@ -115,88 +211,3 @@ function pickColor(str, meta = {}) {
 		throw new Error(`Can't find a color with the hex value ${str}. Additional info ${JSON.stringify(meta)}`);
 	}
 }
-
-module.exports = function (style) {
-	/**
-	 * Registers a kit with the specified name
-	 *
-	 * @param {!Object} kit
-	 * @param {string} name
-	 * @param {boolean=} [theme=false]
-	 */
-	style.define('registerColors', (kit, name, theme = false) => {
-		if (!name || !kit) {
-			throw new Error('Can\'t register colors kit');
-		}
-
-		saveColorsKit(kit.vals, name.val, theme && theme.val);
-	});
-
-	/**
-	 * Returns a global color value
-	 *
-	 * @param {!Object} hueInput - color
-	 * @param {!Object} numInput - color position in a kit
-	 * @param {(!Object|boolean)} [reservedInput=false] - is value in the reserved kit
-	 * @param {(!Object|boolean)} [baseInput=false] - prototype field name
-	 * @returns {string}
-	 */
-	style.define('getGlobalColor', (hueInput, numInput, reservedInput = false, baseInput = false) => {
-		if (arguments.length === 1 && hueInput.raw) {
-			return checkInGlobalSpace(hueInput);
-		}
-
-		const
-			{dependencies} = pzlr.config;
-
-		const
-			hue = hueInput.string || hueInput.name,
-			num = numInput.string || numInput.val;
-
-		const
-			reserved = reservedInput && reservedInput.val || false,
-			base = baseInput && baseInput.val || false,
-			meta = {hue, num, reserved, base};
-
-		let
-			col = GLOBAL_COLORS.kits[hue],
-			res;
-
-		if (!base) {
-			if (col && (reserved && col[0][num - 1] || col[num])) {
-				return reserved ? pickColor(col[0][num - 1], meta) : pickColor(col[num], meta);
-			}
-
-			$C(dependencies).some((el) => {
-				col = GLOBAL_COLORS.kits[el];
-
-				if (col) {
-					const
-						val = $C(col).get(`${hue}.0.${num - 1}`);
-
-					if (reserved && val) {
-						res = val;
-						return true;
-
-					} else if (!reserved && $C(col).get(`${hue}.${num}`)) {
-						res = col[hue][num];
-						return true;
-					}
-				}
-			});
-
-		} else {
-			const
-				kit = GLOBAL_COLORS.kits[base];
-
-			if (kit && reserved) {
-				res = kit[hue][0][num - 1];
-
-			} else if (kit && kit[hue] && kit[hue][num]) {
-				res = kit[hue][num];
-			}
-		}
-
-		return pickColor(res, meta);
-	});
-};

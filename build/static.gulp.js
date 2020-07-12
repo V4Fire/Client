@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 'use strict';
 
 /*!
@@ -12,7 +14,34 @@ const
 	path = require('upath'),
 	config = require('config');
 
-module.exports = function (gulp = require('gulp')) {
+/**
+ * Registers gulp tasks to minify/generate project static assets
+ *
+ * @example
+ * ```bash
+ * # Builds project favicons
+ * npx gulp static:favicons
+ *
+ * # Minifies project HTML files
+ * npx gulp static:html
+ *
+ * # Minifies project CSS files
+ * npx gulp static:css
+ *
+ * # Minifies project JS files
+ * npx gulp static:js
+ *
+ * # Minifies project images
+ * npx gulp static:image
+ *
+ * # Generates WEBP from project images
+ * npx gulp static:image:webp
+ *
+ * # Generates GZ archives from project files
+ * npx gulp static:gzip
+ * ```
+ */
+module.exports = function init(gulp = require('gulp')) {
 	const
 		merge = require('merge2'),
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
@@ -25,17 +54,16 @@ module.exports = function (gulp = require('gulp')) {
 		return path.join(config.src.clientOutput(), file);
 	}
 
+	/**
+	 * Builds project favicons
+	 */
 	gulp.task('static:favicons', () => {
-		/* eslint-disable camelcase */
-
 		const faviconsParams = Object.assign(config.favicons(), {
 			start_url: '.',
 			html: 'favicons.html',
 			pipeHTML: true,
 			replace: true
 		});
-
-		/* eslint-enable camelcase */
 
 		return merge([
 			gulp.src(a('logo.svg'))
@@ -45,21 +73,22 @@ module.exports = function (gulp = require('gulp')) {
 
 			gulp.src(a('favicons/*'))
 				.pipe($.plumber())
-				.pipe($.imagemin([
-					$.imagemin.optipng({optimizationLevel: 5})
-				]))
-
+				.pipe($.imagemin([$.imagemin.optipng({optimizationLevel: 5})]))
 				.pipe(gulp.dest(a('favicons')))
 		]);
 	});
 
-	gulp.task('static:html', () =>
-		gulp.src(o('/**/*.html'))
-			.pipe($.plumber())
-			.pipe($.htmlmin(config.html()))
-			.pipe(gulp.dest(o()))
-	);
+	/**
+	 * Minifies project HTML files
+	 */
+	gulp.task('static:html', () => gulp.src(o('/**/*.html'))
+		.pipe($.plumber())
+		.pipe($.htmlmin(config.html()))
+		.pipe(gulp.dest(o())));
 
+	/**
+	 * Minifies project CSS files
+	 */
 	gulp.task('static:css', () => {
 		function f(src) {
 			return gulp.src([path.join(src, '/**/*.css'), `!${path.join(src, '/**/*.min.css')}`])
@@ -74,9 +103,10 @@ module.exports = function (gulp = require('gulp')) {
 		]);
 	});
 
+	/**
+	 * Minifies project JS files
+	 */
 	gulp.task('static:js', () => {
-		/* eslint-disable camelcase */
-
 		function f(src) {
 			return gulp.src([path.join(src, '/**/*.js'), `!${path.join(src, '/**/*.min.js')}`])
 				.pipe($.plumber())
@@ -99,10 +129,13 @@ module.exports = function (gulp = require('gulp')) {
 
 		return merge([
 			f(o('lib')),
-			f(a()),
+			f(a())
 		]);
 	});
 
+	/**
+	 * Minifies project images
+	 */
 	gulp.task('static:image', () => {
 		function f(src) {
 			const
@@ -121,51 +154,60 @@ module.exports = function (gulp = require('gulp')) {
 
 		return merge([
 			f(o()),
-			f([a(), `!${path.join(a(), 'favicons/**')}`]),
+			f([a(), `!${path.join(a(), 'favicons/**')}`])
 		]);
 	});
 
+	/**
+	 * Generates WEBP from project images
+	 */
 	gulp.task('static:image:webp', () => {
 		function f(src) {
-			const webp = require('imagemin-webp');
-			$.imagemin.webp = webp;
+			$.imagemin.webp = require('imagemin-webp');
 
 			const
 				isArr = Array.isArray(src);
 
 			return gulp.src([path.join(isArr ? src[0] : src, '/**/*.@(png|jpg|jpeg)')].concat(isArr ? src[1] || [] : []))
 				.pipe($.plumber())
-
-				.pipe($.imagemin([
-					$.imagemin.webp({quality: 100, lossless: true})
-				]))
+				.pipe($.imagemin([$.imagemin.webp({quality: 100, lossless: true})]))
 				.pipe($.extReplace('webp'))
 				.pipe(gulp.dest(isArr ? src[0] : src));
 		}
 
-		return merge([
-			f(a())
-		]);
+		return merge([f(a())]);
 	});
 
-	gulp.task('static:gzip', gulp.series([gulp.parallel(['static:image', 'static:html', 'static:css', 'static:js']), () => {
-		function f(src) {
-			return gulp.src([path.join(src, '/**/*'), `!${path.join(src, '/**/*.gz')}`])
-				.pipe($.plumber())
+	/**
+	 * Generates GZ archives from project files
+	 */
+	gulp.task('static:gzip', gulp.series([
+		gulp.parallel([
+			'static:image',
+			'static:html',
+			'static:css',
+			'static:js'
+		]),
 
-				.pipe($.gzip({
-					threshold: '1kb',
-					gzipOptions: {level: 9}
-				}))
+		() => {
+			function f(src) {
+				return gulp.src([path.join(src, '/**/*'), `!${path.join(src, '/**/*.gz')}`])
+					.pipe($.plumber())
 
-				.pipe(gulp.dest(src));
+					.pipe($.gzip({
+						threshold: '1kb',
+						gzipOptions: {level: 9}
+					}))
+
+					.pipe(gulp.dest(src));
+			}
+
+			return merge([
+				f(o()),
+				f(a())
+			]);
 		}
-
-		return merge([
-			f(o()),
-			f(a()),
-		]);
-	}]));
+	]));
 
 	gulp.task('static', gulp.series(['static:gzip']));
 };
