@@ -15,7 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Added a missing parameter `StaticRouteMeta/external`
+* Added a missing parameter `StaticRouteMeta.external`
+
+#### :house: Internal
+
+* Fixed ESLint warnings
 
 ## v3.0.0-rc.29 (2020-06-09)
 

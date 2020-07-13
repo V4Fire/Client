@@ -82,7 +82,7 @@ function saveHistoryPos(): void {
 
 // Try to load history log from the session storage
 try {
-	historyPos = historyStorage.get('pos') || 0;
+	historyPos = historyStorage.get('pos') ?? 0;
 
 	for (let o = <HistoryLog>historyStorage.get('log'), i = 0; i < o.length; i++) {
 		const
@@ -113,8 +113,8 @@ export default function createRouter(component: bRouter): Router {
 		.clearAll(engineGroup);
 
 	function load(route: string, params?: Route, method: string = 'pushState'): Promise<void> {
-		if (!route) {
-			throw new Error('Page to load is not defined');
+		if (!Object.isTruly(route)) {
+			throw new ReferenceError('Page to load is not specified');
 		}
 
 		// Remove some redundant characters
@@ -130,7 +130,7 @@ export default function createRouter(component: bRouter): Router {
 			}
 
 			// The route identifier is needed to support the feature of the history clearing
-			if (!params._id) {
+			if (params._id == null) {
 				params._id = Math.random().toString().slice(2);
 			}
 
@@ -142,7 +142,7 @@ export default function createRouter(component: bRouter): Router {
 
 				// Prevent pushing of one route more than one times:
 				// this situation take a place when we reload the browser page
-				if (historyLog.length && !Object.fastCompare(
+				if (historyLog.length > 0 && !Object.fastCompare(
 					Object.reject(historyLog[historyLog.length - 1].params, '_id'),
 					Object.reject(params, '_id')
 				)) {
@@ -150,7 +150,7 @@ export default function createRouter(component: bRouter): Router {
 				}
 			}
 
-			if (!historyLog.length || syncMethod === 'pushState') {
+			if (historyLog.length === 0 || syncMethod === 'pushState') {
 				historyLog.push({route, params});
 				historyPos = historyLog.length - 1;
 				saveHistoryPos();
@@ -170,7 +170,7 @@ export default function createRouter(component: bRouter): Router {
 			 * @param qs
 			 * @param test
 			 */
-			const parseQuery = (qs, test?) => {
+			const parseQuery = (qs: string, test?: boolean) => {
 				if (test && !qsRgxp.test(qs)) {
 					return {};
 				}
@@ -183,7 +183,7 @@ export default function createRouter(component: bRouter): Router {
 			let
 				qs = toQueryString(params.query);
 
-			if (qs) {
+			if (qs !== '') {
 				qs = `?${qs}`;
 
 				if (qsRgxp.test(route)) {
@@ -196,15 +196,17 @@ export default function createRouter(component: bRouter): Router {
 
 			if (location.href !== route) {
 				params.url = route;
-				// params can contain proxy objects,
+				// "params" can contain proxy objects,
 				// to avoid DataCloneError we should clone it by using Object.fastClone
 				history[method](Object.fastClone(params), params.name, route);
 			}
 
 			const
-				entryPoint = params.meta.entryPoint,
+				{entryPoint} = params.meta;
+
+			const
 				depsAlreadyLoaded = entryPoint != null ? Object.isArray(ModuleDependencies.get(entryPoint)) : false,
-				dontLoadDependencies = !entryPoint || depsAlreadyLoaded || params.meta.dynamicDependencies === false;
+				dontLoadDependencies = entryPoint == null || depsAlreadyLoaded || params.meta.dynamicDependencies === false;
 
 			if (dontLoadDependencies) {
 				resolve();
@@ -216,8 +218,11 @@ export default function createRouter(component: bRouter): Router {
 
 			ModuleDependencies.emitter.on(`component.${entryPoint}.loading`, $a.proxy(
 				({packages}) => {
-					component.field.set('status', (++i * 100) / packages);
-					(i === packages) && resolve();
+					component.field.set('status', ++i * 100 / packages);
+
+					if (i === packages) {
+						resolve();
+					}
 				},
 
 				{
@@ -308,17 +313,17 @@ export default function createRouter(component: bRouter): Router {
 				const
 					interval = cutIntervals[cutIntervals.length - 1];
 
-				if (i && (!filter || filter(historyLog[i].params))) {
-					if (!interval.length) {
-						interval.push(i || 1);
+				if (i > 0 && (!filter || Object.isTruly(filter(historyLog[i].params)))) {
+					if (interval.length === 0) {
+						interval.push(i > 0 ? i : 1);
 					}
 
 				} else {
-					if (!lastEnd) {
+					if (lastEnd === 0) {
 						lastEnd = i;
 					}
 
-					if (interval.length) {
+					if (interval.length > 0) {
 						interval.push(i);
 						cutIntervals.push([]);
 					}
@@ -335,13 +340,17 @@ export default function createRouter(component: bRouter): Router {
 
 				case 1:
 					last.push(lastEnd);
+					break;
+
+				default:
+					// Loopback
 			}
 
-			if (!cutIntervals.length) {
+			if (cutIntervals.length === 0) {
 				return;
 			}
 
-			for (let i = cutIntervals.length; i--;) {
+			for (let i = cutIntervals.length; i-- > 0;) {
 				const
 					el = cutIntervals[i];
 
@@ -353,7 +362,7 @@ export default function createRouter(component: bRouter): Router {
 					history.go(from - historyPos - 1);
 				}
 
-				await $a.promisifyOnce(window, 'popstate', modHistoryLabel);
+				await $a.promisifyOnce(globalThis, 'popstate', modHistoryLabel);
 
 				historyLog.splice(from);
 				historyLog.push(to);
@@ -366,6 +375,7 @@ export default function createRouter(component: bRouter): Router {
 
 				saveHistoryLog();
 
+				// eslint-disable-next-line require-atomic-updates
 				historyPos = historyLog.length - 1;
 				saveHistoryPos();
 
@@ -380,24 +390,32 @@ export default function createRouter(component: bRouter): Router {
 
 			if (lastPos > 0) {
 				history.go(lastPos);
-				await $a.promisifyOnce(window, 'popstate', modHistoryLabel);
+				await $a.promisifyOnce(globalThis, 'popstate', modHistoryLabel);
+
+				// eslint-disable-next-line require-atomic-updates
 				historyPos = lastPos;
 				saveHistoryPos();
 			}
 		},
 
 		clearTmp(): Promise<void> {
-			return this.clear((el) => el.params?.tmp || el.query?.tmp || el.meta?.tmp);
+			return this.clear((el) => {
+				if (!Object.isPlainObject(el)) {
+					return false;
+				}
+
+				return Object.isTruly(el.params?.tmp) || Object.isTruly(el.query?.tmp) || Object.isTruly(el.meta?.tmp);
+			});
 		}
 	});
 
-	$a.on(window, 'popstate', async () => {
+	$a.on(globalThis, 'popstate', async () => {
 		truncateHistoryLog();
 
 		const
-			{_id} = history.state || {_id: undefined};
+			{_id} = history.state ?? {_id: undefined};
 
-		if (_id) {
+		if (_id != null) {
 			for (let i = 0; i < historyLog.length; i++) {
 				if (historyLog[i].params._id === _id) {
 					historyPos = i;
