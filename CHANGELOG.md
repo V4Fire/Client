@@ -17,12 +17,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Improved support of workers `core/build`
 
+#### :bug: Bug Fix
+
+* Added a missing parameter `core/router/StaticRouteMeta.external`
+* Fixed providing of parameters `base/b-router/getRoute`
+
 #### :house: Internal
 
 * All linter configurations now loaded from @v4fire/linters
 * Fixed TS warnings
 * Improved logic `core/build/entries.webpack.js`
-* Moved to ESLint `core/build`
+* Moved to ESLint `core/build`, `core/cookies`, `core/router`, `base/b-router`
 * Refactoring `core/build`
 
 ## v3.0.0-rc.35 (2020-07-02)
