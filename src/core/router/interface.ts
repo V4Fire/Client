@@ -131,6 +131,11 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	redirect?: string;
 
 	/**
+	 * Marks this route as "external", i.e. transitions to this route will be produced by using location.href
+	 */
+	external?: boolean;
+
+	/**
 	 * Default "query" parameters.
 	 * If some parameter value is specified as a function, it will be invoked with the router instance as an argument.
 	 */
