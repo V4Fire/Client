@@ -43,7 +43,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 		isEmptyData = true;
 
 	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
-		if (Object.size(data[keys[i]])) {
+		if (Object.size(data[keys[i]]) > 0) {
 			isEmptyData = false;
 			break;
 		}
@@ -57,7 +57,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 		normalizedData = Object.mixin<Dictionary>(true, {}, Object.select(data, transitionOptions));
 
 	const normalizer = (data, key?, parent?) => {
-		if (!data) {
+		if (data == null) {
 			return;
 		}
 
@@ -78,7 +78,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 			return;
 		}
 
-		if (parent) {
+		if (parent != null) {
 			const
 				strVal = String(data);
 
@@ -104,7 +104,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
  */
 export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRoute<T> {
 	if (params) {
-		return convertRouteToPlainObject(params, (el, key) => key[0] !== '_' && !systemRouteParams[key]);
+		return convertRouteToPlainObject(params, (el, key) => !key.startsWith('_') && systemRouteParams[key] !== true);
 	}
 
 	return {};
@@ -139,6 +139,7 @@ export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends str
 		return res;
 	}
 
+	// eslint-disable-next-line guard-for-in
 	for (const key in route) {
 		const
 			el = route[key];
@@ -171,7 +172,7 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
 				key = keys[i],
 				el = route[key];
 
-			if (key[0] === '_') {
+			if (key.startsWith('_')) {
 				continue;
 			}
 
@@ -189,7 +190,7 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
  * @param route
  */
 export function getComparableRouteParams<T extends AnyRoute>(route: Nullable<T>): WatchableRoute<T> {
-	return convertRouteToPlainObject<T, 'meta'>(route, (el, key) => key !== 'meta' && key[0] !== '_');
+	return convertRouteToPlainObject<T, 'meta'>(route, (el, key) => key !== 'meta' && !key.startsWith('_'));
 }
 
 /**
@@ -205,15 +206,15 @@ export function fillRouteParams(route: Route, router: bRouter): void {
 		params
 	} = route;
 
-	const defs: [CanUndef<Dictionary>, Dictionary][] = [
+	const defs: Array<[CanUndef<Dictionary>, Dictionary]> = [
 		[meta.query, query],
 		[meta.params, params],
 		[meta.meta, meta]
 	];
 
-	for (let o = defs, i = 0; i < o.length; i++) {
+	for (let i = 0; i < defs.length; i++) {
 		const
-			[def, original] = o[i];
+			[def, original] = defs[i];
 
 		if (!Object.isDictionary(def)) {
 			continue;
@@ -227,7 +228,8 @@ export function fillRouteParams(route: Route, router: bRouter): void {
 				val = def[key];
 
 			if (Object.isFunction(val)) {
-				val = def[key] = val(router);
+				val = val(router);
+				def[key] = val;
 			}
 
 			if (val !== undefined && original[key] === undefined) {
@@ -236,11 +238,11 @@ export function fillRouteParams(route: Route, router: bRouter): void {
 		}
 	}
 
-	if (meta.paramsFromQuery !== false) {
+	if (meta.paramsFromQuery !== false && Object.isArray(route.pathParams)) {
 		for (let o = route.pathParams, i = 0; i < o.length; i++) {
 			const
 				param = o[i],
-				name = param.name;
+				{name} = param;
 
 			if (params[name] === undefined) {
 				const

@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.36 (2020-07-13)
+
+#### :bug: Bug Fix
+
+* Fixed providing of parameters `getRoute`
+
+#### :house: Internal
+
+* Fixed ESLint warnings
+
 ## v3.0.0-rc.29 (2020-06-09)
 
 #### :bug: Bug Fix

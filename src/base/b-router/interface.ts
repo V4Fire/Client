@@ -26,11 +26,7 @@ export {
 /**
  * Compiled not applied route
  */
-export interface RouteBlueprint<
-	PARAMS extends object = Dictionary,
-	QUERY extends object = Dictionary,
-	META extends object = Dictionary
-> {
+export interface RouteBlueprint<META extends object = Dictionary> {
 	/**
 	 * Route name
 	 */
@@ -51,12 +47,12 @@ export interface RouteBlueprint<
 	/**
 	 * Pattern of the route path
 	 */
-	pattern: string;
+	pattern?: string;
 
 	/**
 	 * RegExp to parse the route path
 	 */
-	rgxp: RegExp;
+	rgxp?: RegExp;
 
 	/**
 	 * List of parameters that passed to the route path
@@ -89,7 +85,7 @@ export type Route<
 	PARAMS extends object = Dictionary,
 	QUERY extends object = Dictionary,
 	META extends object = Dictionary
-> = EngineRoute<PARAMS, QUERY, META> & RouteBlueprint<PARAMS, QUERY, META>;
+> = EngineRoute<PARAMS, QUERY, META> & RouteBlueprint<META>;
 
 export type AnyRoute =
 	Route |
