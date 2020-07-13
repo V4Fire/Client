@@ -1,0 +1,87 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	itemSize: 100%
+	itemBg: #E8E8E8
+	itemMargin: 0 0 0 0
+	itemBorderRadius: 16px
+
+	rectSize: 200px
+
+	circleSize: 50px
+	circleBorderRadius: 50%
+
+	animation: true
+	animationGradient: linear-gradient(to right, alpha(#FFF, 0) 46%, alpha(#FFF, 0.25) 50%, alpha(#FFF, 0) 54%) 50% 50%
+	animationDuration: 1.5s
+	animationDistanceXXL: 2000px
+	animationDistanceXL: 1200px
+	animationDistanceL: 600px
+	animationDistanceM: 300px
+	animationDistanceS: 100px
+}
+
+b-skeleton extends i-block
+	&__item
+		position relative
+		size $p.itemSize
+		overflow hidden
+		border-radius $p.itemBorderRadius
+		background-color $p.itemBg
+
+		if $p.animation
+			&:before
+				content ""
+
+				absolute left 50% top 0 bottom 0 right 0
+
+				width 500%
+				margin-left -250%
+
+				background $p.animationGradient
+				animation-duration $p.animationDuration
+				animation-iteration-count infinite
+				animation-timing-function linear
+
+	&__item_shape_rect
+		size $p.rectSize
+
+	&__column
+		display flex
+		flex-direction column
+
+	&__row
+		display flex
+		width 100%
+		overflow hidden
+
+	&__column &__item
+	&__row &__item
+		flex-shrink 0
+
+	&_shape_circle
+		size $p.circleSize
+		border-radius $p.circleBorderRadius
+
+	if $p.animation
+		for $s in ("S" "M" "L" "XL" "XXL")
+			$keyframe = skeleton_ + $s
+			$v = $p[animationDistance + $s]
+
+			&__item_animation_{toLowerCase($s)}:before
+				animation-name $keyframe
+			
+			@keyframes {$keyframe}
+				0%
+					transform translate(-($v), 0)
+
+				100%
+					transform translate($v, 0)

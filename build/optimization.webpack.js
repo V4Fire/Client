@@ -10,25 +10,22 @@
 
 const
 	config = require('config'),
-	UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+	TerserPlugin = require('terser-webpack-plugin'),
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
-	{inherit, depsRgxpStr} = include('build/build.webpack'),
-	{RUNTIME} = include('build/entities.webpack');
-
-const
-	excludeCustomNodeModules = new RegExp(`(?:^|/)node_modules/(?:${depsRgxpStr})(?:/|$)|^(?:(?!(?:^|/)node_modules/).)*$`),
-	excludeNotCustomNodeModules = new RegExp(`^(?:(?!(?:^|/)node_modules/).)*/?node_modules/(?:(?!${depsRgxpStr}).)*$`);
+	{isLayerDep, isExternalDep} = include('build/const'),
+	{inherit} = include('build/build.webpack'),
+	{RUNTIME} = include('build/entries.webpack');
 
 /**
- * Returns a list of webpack optimizations
+ * Returns options for Webpack ".optimization"
  *
- * @param {number} buildId - build id
- * @param {!Map} plugins - list of plugins
- * @returns {Array}
+ * @param {(number|string)} buildId - build id
+ * @param {!Map} plugins - map of plugins to use
+ * @returns {!Object}
  */
-module.exports = async function ({buildId, plugins}) {
+module.exports = function optimization({buildId, plugins}) {
 	const
 		options = {};
 
@@ -46,39 +43,43 @@ module.exports = async function ({buildId, plugins}) {
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: excludeCustomNodeModules
+					test: isLayerDep
 				},
 
 				vendor: {
 					name: 'vendor.js',
 					chunks: 'all',
 					priority: 1,
-					minChunks: 2,
+					minChunks: 1,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: excludeNotCustomNodeModules
+					test: isExternalDep
 				}
 			}
 		};
 	}
 
 	if (isProd) {
+		const
+			es = config.es(),
+			keepFNames = Boolean({ES5: true, ES3: true}[es]);
+
 		options.minimizer = [
 			/* eslint-disable camelcase */
 
-			new UglifyJsPlugin({
+			new TerserPlugin({
 				parallel: true,
-				uglifyOptions: inherit(config.uglify(), {
-					compress: {
-						keep_fnames: true
-					},
+				terserOptions: inherit({
+					safari10: true,
+					warnings: false,
+					ecma: es,
+					keep_fnames: keepFNames,
+					keep_classnames: true,
 
 					output: {
 						comments: false
-					},
-
-					mangle: false
-				})
+					}
+				}, config.uglify())
 			})
 
 			/* eslint-enable camelcase */

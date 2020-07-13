@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bInput, { component, prop, field, watch, p, Value, FormValue } from 'form/b-input/b-input';
+import bInput, { component, prop, field, watch } from 'form/b-input/b-input';
 export * from 'form/b-input/b-input';
 
 export const
@@ -20,11 +20,7 @@ export const
 	}
 })
 
-export default class bInputTime<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-> extends bInput<V, FV, D> {
+export default class bInputTime extends bInput {
 	/** @override */
 	readonly placeholder: string = '__:__';
 
@@ -61,7 +57,6 @@ export default class bInputTime<
 	/**
 	 * Minimum date value
 	 */
-	@p({cache: false})
 	get min(): CanUndef<Date> {
 		return this.minProp != null ? Date.create(this.minProp) : undefined;
 	}
@@ -69,7 +64,6 @@ export default class bInputTime<
 	/**
 	 * Maximum date value
 	 */
-	@p({cache: false})
 	get max(): CanUndef<Date> {
 		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
 	}
@@ -78,7 +72,7 @@ export default class bInputTime<
 	 * Time pointer
 	 */
 	get pointer(): CanUndef<Date> {
-		return Object.fastClone(this.getField('pointerStore'));
+		return Object.fastClone(this.field.get('pointerStore'));
 	}
 
 	/**
@@ -86,7 +80,7 @@ export default class bInputTime<
 	 * @param value
 	 */
 	set pointer(value: CanUndef<Date>) {
-		this.setField('pointerStore', this.getNPointer(this.value, value, this.pointerStore));
+		this.field.set('pointerStore', this.getNPointer(this.value, value, this.pointerStore));
 	}
 
 	/** @override */
@@ -96,25 +90,27 @@ export default class bInputTime<
 	}
 
 	/** @override */
-	protected readonly blockValueField: string = 'pointer';
+	protected readonly valueKey: string = 'pointer';
 
 	/** @override */
 	@field<bInputTime>({
 		after: 'pointerStore',
-		init: (o, data) => o.link<V>((val) =>
-			o.getTimeFormat(o.getNPointer(val, ('pointerStore' in o ? o.pointerStore : <Date>data.pointerStore))))
+		init: (o, data) => o.sync.link<bInputTime['Value']>((val) => {
+			const v = o.getNPointer(val, ('pointerStore' in o ? o.pointerStore : <Date>data.pointerStore));
+			return o.getTimeFormat(v);
+		})
 	})
 
-	protected valueStore!: V;
+	protected valueStore!: this['Value'];
 
 	/**
 	 * Time pointer store
 	 */
-	@field<bInputTime>((o) => o.link<Date>((val) => {
+	@field<bInputTime>((o) => o.sync.link<Date>((val) => {
 		val = o.getNPointer(undefined, val, o.pointerStore);
 
 		if (val === undefined) {
-			return o.initDefaultValue();
+			return <any>o.resolveValue();
 		}
 
 		return val;
@@ -136,7 +132,7 @@ export default class bInputTime<
 	protected async syncValueStoreWatcher(value: string): Promise<void> {
 		try {
 			await this.async.wait(() => this.mods.focused !== 'true', {label: $$.$$valueStore});
-			this.pointer = this.getNPointer(value, this.getField('pointerStore'));
+			this.pointer = this.getNPointer(value, this.field.get('pointerStore'));
 		} catch {}
 	}
 
@@ -152,8 +148,8 @@ export default class bInputTime<
 	 * Returns a string time value by the specified date
 	 * @param [date]
 	 */
-	protected getTimeFormat(date: CanUndef<Date>): V {
-		return <V>(date ? date.format('{HH}:{mm}') : '');
+	protected getTimeFormat(date?: Date): this['Value'] {
+		return date ? date.format('h;m') : '';
 	}
 
 	/**
@@ -170,17 +166,8 @@ export default class bInputTime<
 	 * @param [pointer] - time pointer
 	 * @param [buffer] - time buffer
 	 */
-	protected getNPointer(
-		value: CanUndef<string>,
-		pointer?: CanUndef<Date>,
-		buffer?: CanUndef<Date>
-	): CanUndef<Date>;
-
-	protected getNPointer(
-		value: CanUndef<string>,
-		pointer: CanUndef<Date>,
-		buffer: CanUndef<Date> = pointer
-	): CanUndef<Date> {
+	protected getNPointer(value?: string, pointer?: Date, buffer?: Date): CanUndef<Date>;
+	protected getNPointer(value?: string, pointer?: Date, buffer: CanUndef<Date> = pointer): CanUndef<Date> {
 		if (!pointer || !buffer) {
 			if (value === undefined) {
 				return undefined;
@@ -231,8 +218,8 @@ export default class bInputTime<
 				label: $$.change
 			});
 
-			this.pointer = this.getNPointer(value, this.getField('pointerStore'));
-			this.emit('actionChange', this.pointer);
+			this.pointer = this.getNPointer(value, this.field.get('pointerStore'));
+			this.emit('actionChange', this[this.valueKey]);
 
 		} catch {}
 	}

@@ -7,9 +7,13 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-
+	visibleHelpers: false
 }
 
 i-page extends i-data
+	// @stlint-disable
+	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable

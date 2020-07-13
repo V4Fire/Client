@@ -13,12 +13,9 @@ import bInput, {
 	component,
 	prop,
 	system,
-	p,
 	hook,
 	wait,
 	watch,
-	Value,
-	FormValue,
 	ModsDecl
 
 } from 'form/b-input/b-input';
@@ -34,11 +31,13 @@ export const
 	}
 })
 
-export default class bTextarea<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-> extends bInput<V, FV, D> {
+export default class bTextarea extends bInput {
+	/**
+	 * Exterior of bScroll component
+	 */
+	@prop({type: String, required: false})
+	readonly scrollExterior?: string;
+
 	/**
 	 * Row count for extending
 	 */
@@ -48,11 +47,12 @@ export default class bTextarea<
 	/**
 	 * Textarea height
 	 */
-	@p({cache: false})
 	get height(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
 			const
-				{input} = this.$refs,
+				{input} = this.$refs;
+
+			const
 				s = getComputedStyle(this.$refs.input);
 
 			return input.scrollHeight -
@@ -64,7 +64,6 @@ export default class bTextarea<
 	/**
 	 * Maximum component height
 	 */
-	@p({cache: false})
 	get maxHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
 			const s = getComputedStyle(this.$refs.superWrapper);
@@ -97,7 +96,7 @@ export default class bTextarea<
 	static readonly mods: ModsDecl = {
 		collapsed: [
 			'true',
-			['false']
+			'false'
 		]
 	};
 
@@ -118,7 +117,7 @@ export default class bTextarea<
 	/**
 	 * Calculates the component height
 	 */
-	@wait('ready', {label: $$.calcHeight, defer: true})
+	@wait('ready', {defer: true, label: $$.calcHeight})
 	async calcHeight(): Promise<CanUndef<number>> {
 		const
 			{input, scroll} = this.$refs,
@@ -155,7 +154,7 @@ export default class bTextarea<
 	 */
 	@hook('mounted')
 	protected async initHeight(): Promise<void> {
-		await this.putInStream(async () => {
+		await this.dom.putInStream(async () => {
 			this.minHeight = this.$refs.input.clientHeight;
 			await this.calcHeight();
 		});
@@ -164,7 +163,7 @@ export default class bTextarea<
 	/**
 	 * Minimizes the component
 	 */
-	@wait('ready', {label: $$.minimize, defer: true})
+	@wait('ready', {defer: true, label: $$.minimize})
 	protected async minimize(): Promise<number> {
 		const
 			{input, scroll} = this.$refs;

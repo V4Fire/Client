@@ -6,12 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	components = (require('config').build.components || []).map(({name}) => name);
+
 package('p-v4-components-demo')
 	.extends('i-static-page')
-	.dependencies(
-		'b-v4-component-demo',
-		'b-select',
-		'b-button',
-		'b-checkbox',
-		'b-file-button'
-	);
+	.dependencies('b-v4-component-demo', components);

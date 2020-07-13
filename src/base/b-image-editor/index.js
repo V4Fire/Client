@@ -8,4 +8,4 @@
 
 package('b-image-editor')
 	.extends('i-block')
-	.dependencies('b-crop', 'b-progress', 'b-icon');
+	.dependencies('b-crop', 'b-icon');

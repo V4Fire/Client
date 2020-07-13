@@ -21,15 +21,22 @@
 $IMG = {}
 
 /**
- * Saves the specified image to thew global cache
+ * Saves the specified image to the global cache
+ *
  * @param {string} $img
+ * @param {boolean=} [$isDsAsset]
  */
-img($img)
+img($img, $isDsAsset = false)
 	$prop = current-property[0]
 	$keys = {
 		background: background-image
 		background-image: background-image
 	}
+
+	// @stlint-disable
+
+	if $isDsAsset
+		$img = join("/", ds icons $img)
 
 	if !$IMG[$img]
 		$IMG[$img] = {
@@ -39,6 +46,8 @@ img($img)
 
 	$obj = $IMG[$img]
 	$props = $obj.props
+
+	// @stlint-enable
 
 	push($obj.selectors, selector())
 	$props[$keys[$prop]] = true
@@ -50,7 +59,9 @@ img($img)
  */
 generateImgClasses()
 	for $img, $obj in $IMG
-		{join(",", $obj.selectors)}
+		$sel = join(",", $obj.selectors)
+
+		{$sel}
 			for $prop in $obj.props
 				add-property($prop, "url(%s)" % $img)
 
@@ -66,43 +77,10 @@ execFontPattern($type = "")
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
- * Returns a color from global kits
- *
- * @param {RGBA} $hue
- * @param {number} [$num]
- * @param {boolean=} [$reserved]
- * @param {boolean=} [$base]
- */
-c($hue, $num = null, $reserved = false, $base = false)
-	getGlobalColor($hue, $num, $reserved, $base)
-
-/**
- * Generates rules for colorized styles
- *
- * @param {Tuple} [$set] - set of colors
- * @param {Tuple} [$styles] - list of styles
- * @param {string=} [$selector] - additional selector
- * @param {string=} [$key] - color key
- * @param {Function=} [$cb] - callback function
- */
-setColorMods($set, $styles = null, $selector = "", $key = "backgroundColor", $cb = null)
-	for $s in $set
-		$color = $set[$s][$key]
-
-		if $cb
-			$cb($s, $color)
-
-		else if $styles
-			&_{dasherize($s)}{$selector},
-			&_{$s}{$selector}
-				for $style in $styles
-					{$style}: $color
-
-/**
  * CSS hack for IE10-11
  */
 ie10-11()
-	@media all and (-ms-high-contrast: none), (-ms-high-contrast: active)
+	@media all and (-ms-high-contrast none), (-ms-high-contrast active)
 		{block}
 
 /**
@@ -209,3 +187,105 @@ stretch-layer($position, $zIndexPos = "modal")
 	bottom 0
 	right 0
 	zIndex($zIndexPos)
+
+/**
+ * Returns a color from the global kits or from the Design System
+ *
+ * @param {string} $kit
+ * @param {number|string} [$id]
+ * @param {boolean=} [$reserved]
+ * @param {boolean=} [$base]
+ */
+c($kit, $id = null, $reserved = false, $base = false)
+	if getDSOptions("colors")
+		return getDSColor($kit, $id)
+
+	getGlobalColor($kit, $id || null, $reserved, $base)
+
+/**
+ * Returns a background rule from the Design System styles by the specified name and parameters
+ *
+ * @param {string} $name
+ * @param {string=} [$repeat]
+ * @param {string=} [$align]
+ */
+i($name, $repeat = no-repeat, $align = center)
+	background img(join(".", $name svg), true) $repeat $align
+
+	$chunks = split("/", $name)
+
+	if length($chunks) > 1 and typeof(convert($chunks[0])) == "unit"
+		size unit(convert($chunks[0]), "px")
+
+/**
+ * Returns text style rules from the Design System styles by the specified name
+ * @param {string} $name - text style name
+ */
+t($name)
+	$name = replaceByRegExp($name, "[ \/]", "-", "g")
+	$obj = getDSOptions("text." + $name)
+
+	if $obj
+		interpolate-props($obj)
+
+/**
+ * Returns a border-radius rule from the Design System styles by the specified name and position
+ *
+ * @param {string} $name - border-radius DS name
+ * @param {string} [$pos] - %s tokens-styled string for multiple border-radius values
+ *
+ * @example
+ * r(big, '$s 0 $s') -> border-radius 16px 0 16px
+ */
+r($name, $pos = null)
+	$val = getDSOptions("rounding." + $name)
+
+	if $val
+		if $pos
+			border-radius convert(replace("%s", s("%s", $val), $pos))
+
+		else
+			border-radius $val
+
+/**
+ * Generates rules from object properties
+ *
+ * @param {Object} $opts
+ * @param {boolean=} $normalize
+ */
+interpolate-props($opts, $normalize = true)
+	if type($opts) == "object"
+		for $key, $val in $opts
+			$value = type($val) == "string" ? convert($val) : $val
+			{$normalize ? dasherize($key): $key} $value
+
+/**
+ * Generates path from the specified sequence
+ * @param {string[]} $arr
+ */
+path($arr)
+	join(".", $arr)
+
+/**
+ * Generates necessary rules for specified component options and factory
+ *
+ * @param $p
+ * @param $fn
+ */
+generateRules($p, $fn)
+	if !$p.skipDsInheritance
+		//#if runtime has ds-vars
+		$fn($p.__vars__)
+		//#endif
+
+		//#unless runtime has ds-vars
+		$fn($p)
+		//#endunless
+
+		//#if runtime has ds-diff
+		&_diff_true
+			$fn($p.__diffVars__)
+
+		&_diff_false
+			$fn($p.__vars__)
+		//#endif

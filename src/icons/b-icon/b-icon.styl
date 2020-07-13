@@ -14,18 +14,20 @@ $p = {
 
 b-icon extends i-block
 	display inline-flex
-	align-items center
 	justify-content center
+	align-items center
 
-	&__svg
-		display block
-		width $p.size
-		height @width
+	&_size_full
+		size 100%
+
+	if $p.size
+		&_size_auto
+			size $p.size
 
 	if $p.color
-		fill $p.color
-		color @fill
+		color $p.color
+		fill @color
 
 	else
-		fill currentColor
 		color currentColor
+		fill currentColor

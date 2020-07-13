@@ -7,8 +7,20 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import iDynamicPage, { component, prop, field, watch, Statuses } from 'super/i-dynamic-page/i-dynamic-page';
 import { EventEmitterLike } from 'core/async';
+
+import iDynamicPage, {
+
+	component,
+	prop,
+	field,
+	watch,
+
+	ComponentStatus,
+	InitLoadOptions
+
+} from 'super/i-dynamic-page/i-dynamic-page';
+
 export * from 'super/i-data/i-data';
 
 export type KeepAlive =
@@ -70,17 +82,17 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Event value converter
 	 */
 	@prop({
-		type: Function,
-		default: (e) => e && (e.component || e.page),
+		type: [Function, Array],
+		default: (e) => e && (e.component || e.name),
 		forceDefault: true
 	})
 
-	readonly eventConverter!: Function;
+	readonly eventConverter!: CanArray<Function>;
 
 	/**
 	 * Component name
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	page?: string;
 
 	/**
@@ -91,20 +103,20 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/** @override */
-	protected readonly componentStatusStore: Statuses = 'ready';
+	protected readonly componentStatusStore: ComponentStatus = 'ready';
 
 	/** @override */
 	protected readonly $refs!: {component?: iDynamicPage};
 
 	/** @override */
-	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
+	async initLoad(data?: unknown, params?: InitLoadOptions): Promise<void> {
 		return undefined;
 	}
 
 	/** @override */
-	async reload(): Promise<void> {
+	async reload(params?: InitLoadOptions): Promise<void> {
 		const {component} = this.$refs;
-		return component && component.reload();
+		return component && component.reload(params);
 	}
 
 	/**
@@ -117,7 +129,8 @@ export default class bDynamicPage extends iDynamicPage {
 			{async: $a} = this,
 			group = {group: 'emitter'};
 
-		$a.clearAll(group);
+		$a
+			.clearAll(group);
 
 		if (this.event) {
 			$a.on(this.emitter || this.$root, this.event, (component, e) => {
@@ -125,11 +138,15 @@ export default class bDynamicPage extends iDynamicPage {
 					e = component;
 				}
 
-				const
-					v = this.eventConverter ? this.eventConverter(e, this.page) : e;
+				let
+					v = e;
+
+				if (this.eventConverter) {
+					v = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
+				}
 
 				if (v == null || Object.isString(v)) {
-					this.page = v;
+					this.page = <string>v;
 				}
 
 			}, group);
@@ -139,6 +156,6 @@ export default class bDynamicPage extends iDynamicPage {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('hidden', 'page', (v) => !v);
+		this.sync.mod('hidden', 'page', (v) => !v);
 	}
 }

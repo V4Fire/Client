@@ -1,0 +1,90 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+@import "traits/i-history/i-history.styl"
+
+$p = {
+
+}
+
+b-bottom-slide extends i-block
+	zIndex(overall)
+
+	// @stlint-disable
+	i-history({})
+	// @stlint-enable
+
+	&__window
+		-webkit-overflow-scrolling touch
+		fixed top 100% left 0
+		overscroll-behavior none
+
+		useGPU()
+		zIndex(overall)
+
+		size 100%
+
+		will-change transform
+
+	&__title
+		tap-highlight-color transparent
+
+	&__view
+		position relative
+		box-sizing border-box
+		overflow hidden
+		useGPU()
+
+	&__content
+		position relative
+		size 100%
+		overflow hidden
+
+	&__overlay
+		fixed left 0 top 0
+		zIndex(overall)
+
+		size 100%
+		visibility hidden
+
+		opacity 0
+
+	&__trigger
+		size 100% 1px
+
+	&_hidden_true
+		visibility hidden
+
+	&_hidden_true &__overlay
+		visibility hidden
+		opacity 0
+
+	&_opened_true &__overlay
+		visibility visible
+
+	&-fullscreen-moving-true
+		pointer-events none
+
+	&-fullscreen-moving-true &__view
+		pointer-events auto
+
+	&_events_false &__overlay
+		pointer-events none
+
+	&_stick_false ^[0]
+		&__window
+		&__overlay
+			transition none
+
+	&_height-mode_content ^[0]
+		&__view
+			height auto
+
+	&__page
+		position relative

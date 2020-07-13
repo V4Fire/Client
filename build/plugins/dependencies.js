@@ -13,20 +13,21 @@ const
 
 const
 	fs = require('fs'),
-	path = require('path'),
+	path = require('upath'),
 	hash = include('build/hash');
 
 const
 	{webpack, src: {clientOutput}} = require('config'),
-	{assetsJSON, assetsJS} = include('build/build.webpack');
+	{assetsJSON, assetsJS} = include('build/build.webpack'),
+	{MODULE_DEPENDENCIES} = include('build/globals.webpack');
 
 /**
- * WebPack plugin for .dependencies.js files and assets.js
+ * WebPack plugin to generate ".dependencies.js" files and "assets.json" / "assets.js"
  *
  * @param {{entry, processes, dependencies}} graph - build object
  * @returns {!Function}
  */
-module.exports = function ({graph}) {
+module.exports = function DependenciesPlugin({graph}) {
 	return {
 		apply(compiler) {
 			compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
@@ -35,7 +36,7 @@ module.exports = function ({graph}) {
 
 				$C(graph.dependencies).forEach((el, key) => {
 					const
-						content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
+						content = `window[${MODULE_DEPENDENCIES}].add("${key}", ${JSON.stringify([...el])});`,
 						name = `${key}.dependencies`;
 
 					const src = webpack.output({
@@ -43,7 +44,11 @@ module.exports = function ({graph}) {
 						hash: hash(content)
 					});
 
-					manifest[name] = webpack.publicPath(src);
+					manifest[name] = {
+						path: src,
+						publicPath: webpack.publicPath(src)
+					};
+
 					fs.writeFileSync(path.join(clientOutput(), src), content);
 				});
 
@@ -52,7 +57,10 @@ module.exports = function ({graph}) {
 						file = $C(files).one.filter((src) => path.extname(src)).get();
 
 					if (file) {
-						manifest[path.basename(name, path.extname(name))] = webpack.publicPath(file);
+						manifest[path.basename(name, path.extname(name))] = {
+							path: file,
+							publicPath: webpack.publicPath(file)
+						};
 					}
 				});
 
@@ -66,11 +74,11 @@ module.exports = function ({graph}) {
 					try {
 						assets = JSON.parse(fs.readFileSync(fd, 'utf-8'));
 
-					} catch (_) {}
+					} catch {}
 
 					fs.closeSync(fd);
 
-				} catch (_) {}
+				} catch {}
 
 				Object.assign(assets, manifest);
 
@@ -78,7 +86,7 @@ module.exports = function ({graph}) {
 				fs.writeFileSync(fd, JSON.stringify(assets));
 				fs.closeSync(fd);
 
-				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
+				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el.publicPath}';\n`));
 			});
 		}
 	};

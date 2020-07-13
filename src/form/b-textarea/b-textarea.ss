@@ -13,13 +13,10 @@
 - template index() extends ['b-input'].index
 	- block wrapper
 		< b-scroll-inline.&__scroll &
-			v-func = isFunctional |
 			ref = scroll |
-			:mods = provideMods({
-				theme: 'light',
-				width: 'full',
-				size: 'm'
-			})
+			v-func = isFunctional |
+			:width = 'full' |
+			:exterior = scrollExterior
 		.
 
 			< textarea.&__input &
@@ -41,7 +38,7 @@
 		- super
 		- block limit
 			+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxlength'})
-				< _ v-if = maxlength | :class = getElClasses({ &
+				< _ v-if = maxlength | :class = provide.elClasses({ &
 					limit: {
 						hidden: limit > maxlength / 1.5,
 						warning: limit < maxlength / 4

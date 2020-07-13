@@ -17,7 +17,7 @@ const
 	{src} = require('config');
 
 /**
- * Parameters for webpack.alias
+ * Options for WebPack ".alias"
  */
 const aliases = {
 	'@super': resolve.rootDependencies[0],
@@ -33,6 +33,10 @@ const aliases = {
 		return map;
 	})
 };
+
+if (pzlr.designSystem) {
+	aliases.ds = pzlr.designSystem;
+}
 
 if (pzlr.assets && pzlr.assets.sprite) {
 	aliases.sprite = src.assets(pzlr.assets.sprite);

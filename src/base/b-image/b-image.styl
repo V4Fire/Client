@@ -6,19 +6,30 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-message/i-message.styl"
+@import "super/i-block/i-block.styl"
+@import "traits/i-progress/i-progress.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-
+	progressHelpers: false
+	visibleHelpers: true
 }
 
-b-image extends i-message
-	&__root-wrapper
-		size 100%
+b-image extends i-block
+	// @stlint-disable
+	i-progress({helpers: $p.progressHelpers})
+	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
+
+	position relative
+	size 100%
+	overflow hidden
+
+	&__overlay
+		position absolute
 
 	&__overlay
 	&__broken
-		position absolute
 		size 100%
 		pointer-events none
 
@@ -28,19 +39,16 @@ b-image extends i-message
 	&__broken
 		display none
 
-	&_disabled_true &__overlay
-	&_progress_true &__overlay
+	&_disabled_true > &__overlay
+	&_progress_true > &__overlay
 		opacity 1
 
 	&__img
 		width 100%
+		background-repeat no-repeat
 
-		img
-			max-width 100%
-
-	&_show-error_true &__broken
-		z-index-pos modal
+	&_show-error_true > &__broken
 		display block
 
-	&_show-error_true &__img
+	&_show-error_true > &__img
 		display none

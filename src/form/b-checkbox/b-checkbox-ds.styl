@@ -1,0 +1,67 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	messageHelpers: true
+}
+
+b-checkbox
+	&__checkbox
+		flex-row center
+
+	&__wrapper
+		align-items center
+
+	&__check
+		position absolute
+		display none
+
+	createStyles($o)
+		plain($o)
+			if getField($o, "block.textStyle")
+				& ^[0]__label
+					t(getField($o, "block.textStyle"))
+
+			for $key in (disabled focused checked)
+				$mod = getField($o, path(mods $key true))
+
+				for $k, $v in $mod
+					&^[0]_{$key}_true ^[0]__{$k}
+						interpolate-props($v)
+
+			if getField($o, block)
+				for $key in getField($o, block)
+					& ^[0]__{$key}
+						interpolate-props(getField($o, path(block $key)))
+
+			& ^[0]__check
+				display none
+
+			$checked = getField($o, "mods.checked.true")
+
+			if $checked
+				&^[0]_checked_true ^[0]__check
+					display block
+
+		plain($o)
+
+		$switch = getField($o, "exterior.switch")
+
+		if $switch
+			&_exterior_switch
+				plain($switch)
+
+				& ^[0]__check
+					display block
+					transition transform 0.3s ease-in
+
+				& ^[0]__checkbox
+					flex-row flex-start
+					transition background-color 0.3s ease-in, border-color 0.3s ease-in
+
+	generateRules($p, createStyles)

@@ -6,11 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, system, wait } from 'super/i-block/i-block';
+import iBlock, { component, system, wait, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 @component()
 export default class bV4ComponentDemo extends iBlock {
+	/**
+	 * Dictionary with prop names and modifiers for highlighting
+	 */
+	@prop({type: Object, required: false})
+	readonly highlighting?: Dictionary;
+
 	/**
 	 * Debug component
 	 */
@@ -18,7 +24,7 @@ export default class bV4ComponentDemo extends iBlock {
 	protected debugComponent?: iBlock;
 
 	/**
-	 * Starts debugs the specified component
+	 * Starts debugging the specified component
 	 * @param component
 	 */
 	debug(component: iBlock): void {

@@ -6,32 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, prop, field, system, watch, hook, p, Statuses } from 'super/i-data/i-data';
+/**
+ * [[include:super/i-page/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
-import { WrappedFunction } from 'core/async';
+import iVisible from 'traits/i-visible/i-visible';
+
+import iData, { component, prop, system, computed, watch, hook, ModsDecl } from 'super/i-data/i-data';
+import { TitleValue, StageTitles, ScrollOptions } from 'super/i-page/interface';
+
 export * from 'super/i-data/i-data';
+export * from 'super/i-page/interface';
 
-export type TitleValue<T = unknown> = string | ((ctx: T) => string);
-export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
-	'[[DEFAULT]]': TitleValue<T>;
-}
-
-export interface ScrollToFn<T = number, N = ScrollOpts> extends WrappedFunction {
-	(x?: T | N, y?: T): void
-}
-
-export interface ScrollOpts extends ScrollOptions {
-	x?: number;
-	y?: number;
-}
-
-const
+export const
 	$$ = symbolGenerator();
 
+/**
+ * Superclass for all page components
+ */
 @component({inheritMods: false})
-export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
+export default abstract class iPage extends iData implements iVisible {
 	/** @override */
-	readonly needReInit: boolean = true;
+	readonly reloadOnActivation: boolean = true;
+
+	/** @override */
+	readonly syncRouterStoreOnInit: boolean = true;
 
 	/**
 	 * Initial page title
@@ -40,16 +41,17 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	readonly pageTitleProp: TitleValue = '';
 
 	/**
-	 * Map of page titles ({stage: title})
+	 * Map of page titles that associated with component state values
 	 */
-	@prop(Object)
-	readonly stagePageTitles?: StageTitles;
+	@prop({type: Object, required: false})
+	readonly stagePageTitles?: StageTitles<this>;
 
 	/**
 	 * Page title
 	 */
+	@computed({cache: true, dependencies: ['r.pageTitle']})
 	get pageTitle(): string {
-		return this.$root.pageTitle;
+		return this.r.pageTitle;
 	}
 
 	/**
@@ -57,64 +59,64 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			this.$root.setPageTitle(value, this);
+			this.r.setPageTitle(value, this);
 		}
 	}
 
 	/**
-	 * Proxy wrapper for the scrollTo method
+	 * The wrapped version of .scrollTo method
+	 * @see [[iPage.scrollTo]]
 	 */
-	@p({cache: false})
-	get scrollToProxy(): ScrollToFn {
-		return this.scrollToProxyFn();
+	get scrollToProxy(): this['scrollTo'] {
+		return this.async.proxy(this.scrollTo, {
+			single: false,
+			label: $$.scrollTo
+		});
 	}
 
-	/** @override */
-	@field()
-	protected componentStatusStore!: Statuses;
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iVisible.mods
+	};
 
 	/**
 	 * Page title store
 	 */
-	@system((o) => o.link((v) => Object.isFunction(v) ? v(o) : v))
+	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
 
 	/**
-	 * Scrolls a page to specified coordinates
-	 * @param p
+	 * Scrolls a page by the specified options
+	 * @param opts
 	 */
-	scrollTo(p: ScrollOpts): void;
+	scrollTo(opts: ScrollOptions): void;
 
 	/**
+	 * Scrolls a page to the specified coordinates
+	 *
 	 * @param x
 	 * @param y
 	 */
 	scrollTo(x?: number, y?: number): void;
 
-	// tslint:disable-next-line
-	scrollTo(p?: ScrollOpts | number, y?: number): void {
+	scrollTo(p?: ScrollOptions | number, y?: number): void {
 		this.async.cancelProxy({label: $$.scrollTo});
 
-		const scroll = (p: ScrollToOptions) => {
+		const scroll = (opts: ScrollToOptions) => {
 			try {
-				scrollTo(p);
+				window.scrollTo(opts);
 
 			} catch {
-				scrollTo(p.left == null ? pageXOffset : p.left, p.top == null ? pageYOffset : p.top);
+				window.scrollTo(opts.left == null ? pageXOffset : opts.left, opts.top == null ? pageYOffset : opts.top);
 			}
 		};
 
-		if (p && Object.isObject(p)) {
-			const
-				{x, y} = <ScrollOpts>p,
-				opts = <ScrollOptions>Object.reject(p, ['x', 'y']);
-
-			scroll({left: x, top: y, ...opts});
+		if (Object.isPlainObject(p)) {
+			scroll({left: p.x, top: p.y, ...Object.reject(p, ['x', 'y'])});
 
 		} else {
-			scroll({left: <CanUndef<number>>p, top: y});
+			scroll({left: p, top: y});
 		}
-
 	}
 
 	/** @override */
@@ -130,24 +132,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Returns proxy wrapper for the scrollTo method
-	 */
-	protected scrollToProxyFn(): ScrollToFn {
-		return this.async.proxy((x?: number | ScrollOpts, y?: number) => {
-			if (x && Object.isObject(x)) {
-				this.scrollTo(<ScrollOpts>x);
-
-			} else {
-				this.scrollTo(<number | undefined>x, y);
-			}
-		}, {
-			single: false,
-			label: $$.scrollTo
-		});
-	}
-
-	/**
-	 * Synchronization for the stagePageTitles field
+	 * Synchronization for .stagePageTitles field
 	 */
 	@watch('!:onStageChange')
 	protected syncStageTitles(): CanUndef<string> {
@@ -183,8 +168,14 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/** @override */
-	protected activated(): void {
-		super.activated();
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
+	}
+
+	/** @override */
+	protected activated(force?: boolean): void {
+		super.activated(force);
 		this.initTitle();
 	}
 

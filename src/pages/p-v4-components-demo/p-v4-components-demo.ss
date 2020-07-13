@@ -12,59 +12,31 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< b-v4-component-demo
-			< b-file-button &
-				v-func = false |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug
-			.
-				Some text
+		: config = require('config').build
 
-		< b-v4-component-demo
-			< b-button &
-				v-func = false |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug
-			.
-				Some text
+		- forEach config.components => @component
+			- if config.inspectComponents
+				< b-v4-component-demo
+					< ${@name} &
+						v-func = false |
+						slot-scope = {ctx} |
+						@statusReady = ctx.debug |
+						${@attrs}
+					.
+						- if Object.isString(@content)
+							+= @content
 
-		< b-v4-component-demo
-			< b-checkbox &
-				v-func = false |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug
-			.
-				Some text
+						- else
+							- forEach @content => el, key
+								< template #${key} = {ctx}
+									+= el
 
-		/*< b-v4-component-demo #default = {ctx}
-			< b-select @statusReady = ctx.debug | :options = [ &
-				{
-					value: '0',
-					label: '0'
-				},
+			- else
+				< ${@name} ${@attrs}
+					- if Object.isString(@content)
+						+= @content
 
-				{
-					value: '1',
-					label: '1'
-				},
-
-				{
-					value: '2',
-					label: '2'
-				},
-
-				{
-					value: '3',
-					label: '3'
-				},
-
-				{
-					value: '4',
-					label: '4'
-				},
-
-				{
-					value: '5',
-					label: '5'
-				}
-			] .*/
+					- else
+						- forEach @content => el, key
+							< template #${key} = {ctx}
+								+= el

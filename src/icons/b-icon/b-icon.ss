@@ -10,9 +10,8 @@
 
 - include 'super/i-block'|b as placeholder
 
-- template index(params) extends ['i-block'].index
-	- rootTag = 'span'
+- template index() extends ['i-block'].index
+	- rootTag = 'svg'
 
 	- block body
-		< svg.&__svg
-			< use v-if = value | :xlink:href = getIconLink(value)
+		< use v-if = value | :xlink:href = getIconLink(value)

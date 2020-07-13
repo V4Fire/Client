@@ -6,11 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, prop } from 'super/i-block/i-block';
+/**
+ * [[include:icons/b-icon/README.md]]
+ * @packageDocumentation
+ */
+
+import iIcon from 'traits/i-icon/i-icon';
+import iSize from 'traits/i-size/i-size';
+
+import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
-@component({functional: true, tiny: true})
-export default class bIcon extends iBlock {
+/**
+ * Component to use an SVG icon from the global SVG sprite
+ */
+@component({functional: true, flyweight: true})
+export default class bIcon extends iBlock implements iIcon, iSize {
 	/**
 	 * Component value
 	 */
@@ -34,4 +45,19 @@ export default class bIcon extends iBlock {
 	 */
 	@prop(String)
 	readonly hintPos: string = 'bottom';
+
+	/** @override */
+	static readonly mods: ModsDecl = {
+		...iSize.mods,
+
+		size: [
+			['auto'],
+			'full'
+		]
+	};
+
+	/** @see iIcon.getIconLink */
+	getIconLink(iconId: string): string {
+		return iIcon.getIconLink(iconId);
+	}
 }

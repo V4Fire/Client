@@ -6,42 +6,51 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
+/**
+ * [[include:super/i-input/README.md]]
+ * @packageDocumentation
+ */
 
-import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
+import { identity } from 'core/functools';
+
+import iAccess from 'traits/i-access/i-access';
+import iVisible from 'traits/i-visible/i-visible';
+
+import iData, {
+
+	component,
+
+	prop,
+	field,
+	system,
+	wait,
+	p,
+
+	ModsDecl,
+	ModEvent
+
+} from 'super/i-data/i-data';
+
+import {
+
+	Value,
+	FormValue,
+
+	Validators,
+	ValidatorMsg,
+	ValidatorParams,
+	ValidatorResult,
+	ValidationResult,
+	ValidatorsDecl
+
+} from 'super/i-input/interface';
+
 export * from 'super/i-data/i-data';
+export * from 'super/i-input/interface';
 
-export type ValidatorMsg = Nullable<
-	string |
-	Dictionary<string> |
-	((err: ValidatorResult) => string)
->;
-
-export interface ValidatorParams extends Dictionary {
-	msg?: ValidatorMsg;
-	showMsg?: boolean;
-}
-
-export interface ValidatorError<T = unknown> extends Dictionary {
-	name: string;
-	value?: T;
-}
-
-export type ValidatorResult<T = unknown> =
-	boolean |
-	null |
-	ValidatorError<T>;
-
-export type ValidationError<T = unknown> = [string, ValidatorError<T>];
-export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
-
-export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
-export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: T, params: P) =>
-	CanPromise<boolean | unknown>>;
-
-export type Value = unknown;
-export type FormValue = Value;
-
+/**
+ * Superclass for form components
+ */
 @component({
 	model: {
 		prop: 'valueProp',
@@ -49,38 +58,37 @@ export type FormValue = Value;
 	}
 })
 
-export default class iInput<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-> extends iData<D> {
+export default abstract class iInput extends iData implements iVisible, iAccess {
+	/**
+	 * Type: component value
+	 */
+	readonly Value!: Value;
+
+	/**
+	 * Type: component form value
+	 */
+	readonly FormValue!: FormValue;
+
 	/**
 	 * Initial component value
 	 */
 	@prop({required: false})
-	readonly valueProp?: V;
+	readonly valueProp?: this['Value'];
 
 	/**
 	 * Component default value
 	 */
 	@prop({required: false})
-	readonly defaultProp?: V;
+	readonly defaultProp?: this['Value'];
 
 	/**
-	 * If true, then the component value will be marked as UTC
-	 * (if value is date)
-	 */
-	@prop(Boolean)
-	readonly utc: boolean = false;
-
-	/**
-	 * Input id
+	 * Input DOM identifier
 	 */
 	@prop({type: String, required: false})
 	readonly id?: string;
 
 	/**
-	 * Input name
+	 * Input DOM name
 	 */
 	@prop({type: String, required: false})
 	readonly name?: string;
@@ -98,91 +106,127 @@ export default class iInput<
 	readonly tabIndex?: number;
 
 	/**
-	 * Connected form id
+	 * Input focus order for keyboard navigation
+	 */
+	@prop({type: Number, required: false})
+	readonly tabIndex?: number;
+
+	/**
+	 * Identifier of a form that connected to the component
 	 */
 	@prop({type: String, required: false})
 	readonly form?: string;
 
 	/**
-	 * Illegal component values
+	 * Component values that are not allowed to send to a form.
+	 * The parameter can take a value or list of values to ban,
+	 * or a function that checks the values, or a regular expression to test.
 	 */
 	@prop({required: false})
-	readonly disallow?: V | V[] | Function | RegExp;
+	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
-	 * Component value type factory
+	 * Data type of component form value.
+	 * This function is used to transform a component value to one of primitive types that will be sent from a form.
+	 * For example: String, Blob or Number.
 	 */
 	@prop(Function)
-	readonly dataType: Function = Any;
+	readonly dataType: Function = identity;
 
 	/**
-	 * Form value converter
+	 * Converter/s of a component value to a form value.
+	 * These functions are used to convert a component value to a value that will be sent from a form.
 	 */
-	@prop({type: Function, required: false})
-	readonly formConverter?: Function;
+	@prop({type: [Function, Array], required: false})
+	readonly formConverter?: CanArray<Function>;
 
 	/**
-	 * If false, then the component value won't be cached by a form
+	 * If false, then the component value won't be cached by a form.
+	 * The caching is mean, that if the component value doesn't change since the last sending of a form,
+	 * it won't be send again.
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = true;
 
 	/**
-	 * List of validators
+	 * List of component validators
 	 */
 	@prop(Array)
 	readonly validators: Validators = [];
 
 	/**
+	 * Initial information message that component need to show
+	 */
+	@prop({type: String, required: false})
+	readonly infoProp?: string;
+
+	/**
+	 * Initial error message that component need to show
+	 */
+	@prop({type: String, required: false})
+	readonly errorProp?: string;
+
+	/**
+	 * If true, then will be generated the default markup within a component template to show info/error messages
+	 */
+	@prop({type: Boolean, required: false})
+	readonly messageHelpers?: boolean;
+
+	/**
 	 * Previous component value
 	 */
-	@system()
-	prevValue?: V;
+	@system({replace: false})
+	prevValue?: this['Value'];
 
 	/**
-	 * Link to the component validators
+	 * Link to a map of available component validators
 	 */
-	get blockValidators(): typeof iInput['blockValidators'] {
-		return (<typeof iInput>this.instance.constructor).blockValidators;
-	}
-
-	/** @override */
-	get error(): CanUndef<string> {
-		return this.errorMsg && this.errorMsg.replace(/\.$/, '');
-	}
-
-	/** @override */
-	set error(value: CanUndef<string>) {
-		this.errorMsg = value;
+	@p({replace: false})
+	get validatorsMap(): typeof iInput['validators'] {
+		return (<typeof iInput>this.instance.constructor).validators;
 	}
 
 	/**
-	 * Link to the form that is associated to the component
+	 * Link to a form that is tied with the component
 	 */
-	@p({cache: false})
+	@p({replace: false})
 	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
-		return this.waitStatus('ready', () =>
-			(this.form ? document.querySelector<HTMLFormElement>(`#${this.form}`) : this.$el.closest('form')) || undefined);
+		return this.waitStatus('ready', () => {
+			let
+				form;
+
+			// tslint:disable-next-line:prefer-conditional-expression
+			if (this.form) {
+				form = document.querySelector<HTMLFormElement>(`#${this.form}`);
+
+			} else {
+				form = this.$el.closest('form');
+			}
+
+			return form || undefined;
+		});
 	}
 
 	/**
 	 * Component value
 	 */
-	get value(): V {
-		return <V>this.getField('valueStore');
+	@p({replace: false})
+	get value(): this['Value'] {
+		return this.field.get('valueStore');
 	}
 
 	/**
 	 * Sets a new component value
 	 * @param value
 	 */
-	set value(value: V) {
-		this.setField('valueStore', value);
+	set value(value: this['Value']) {
+		this.field.set('valueStore', value);
 	}
 
 	/**
 	 * Component default value
 	 */
+	@p({replace: false})
 	get default(): unknown {
 		return this.defaultProp;
 	}
@@ -190,14 +234,14 @@ export default class iInput<
 	/**
 	 * Form value of the component
 	 */
-	@p({cache: false})
-	get formValue(): Promise<FV> {
+	@p({replace: false})
+	get formValue(): Promise<this['FormValue']> {
 		return (async () => {
 			await this.nextTick();
 
 			const
-				test = (<Array<V | Function | RegExp>>[]).concat(this.disallow || []),
-				value = await this[this.blockValueField];
+				test = Array.concat([], this.disallow),
+				value = await this[this.valueKey];
 
 			const match = (el) => {
 				if (Object.isFunction(el)) {
@@ -230,46 +274,130 @@ export default class iInput<
 	}
 
 	/**
-	 * Grouped form value of the component
+	 * Grouped form value of the component, i.e.
+	 * if there are another form components with the same form name,
+	 * their values will be grouped
 	 */
-	@p({cache: false})
-	get groupFormValue(): Promise<CanArray<FV>> {
+	@p({replace: false})
+	get groupFormValue(): Promise<CanArray<this['FormValue']>> {
 		return (async () => {
-			if (this.name) {
-				const
-					form = this.connectedForm,
-					list = document.getElementsByName(this.name) || [];
+			const
+				list = await this.groupElements;
 
-				const
-					els = <FV[]>[],
-					promises = <Promise<void>[]>[];
+			const
+				els = <this['FormValue'][]>[],
+				tasks = <Promise<void>[]>[];
 
-				for (let i = 0; i < list.length; i++) {
-					promises.push((async () => {
-						const
-							block = this.$<iInput>(list[i], '[class*="_form_true"]');
+			for (let i = 0; i < list.length; i++) {
+				tasks.push((async () => {
+					const
+						v = await list[i].formValue;
 
-						if (block && form === block.connectedForm) {
-							const
-								v = await block.formValue;
-
-							if (v !== undefined) {
-								els.push(<FV>v);
-							}
-						}
-					})());
-				}
-
-				await Promise.all(promises);
-				return els.length > 1 ? els : els[0];
+					if (v !== undefined) {
+						els.push(v);
+					}
+				})());
 			}
 
-			return this.formValue;
+			await Promise.all(tasks);
+			return els.length > 1 ? els : els[0];
 		})();
+	}
+
+	/**
+	 * List of components from the current form group (components with the same form name)
+	 */
+	@p({replace: false})
+	get groupElements(): CanPromise<ReadonlyArray<iInput>> {
+		const
+			nm = this.name;
+
+		if (nm) {
+			return this.waitStatus('ready', () => {
+				const
+					form = this.connectedForm,
+					list = document.getElementsByName(nm) || [];
+
+				const
+					els = <iInput[]>[];
+
+				for (let i = 0; i < list.length; i++) {
+					const
+						component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+
+					if (component && form === component.connectedForm) {
+						els.push(component);
+					}
+				}
+
+				return Object.freeze(els);
+			});
+		}
+
+		return Object.freeze([this]);
+	}
+
+	/**
+	 * Information message that component need to show.
+	 * This parameter logically is pretty similar to STD output from Unix.
+	 */
+	@p({replace: false})
+	get info(): CanUndef<string> {
+		return this.infoStore;
+	}
+
+	/**
+	 * Sets a new information message
+	 * @param value
+	 */
+	set info(value: CanUndef<string>) {
+		this.infoStore = value;
+
+		if (this.messageHelpers) {
+			this.waitStatus('ready', () => {
+				const
+					box = this.block.element('info-box');
+
+				if (box?.children[0]) {
+					box.children[0].innerHTML = this.infoStore || '';
+				}
+			});
+		}
+	}
+
+	/**
+	 * Error message that component need to show.
+	 * This parameter logically is pretty similar to STDERR output from Unix.
+	 */
+	@p({replace: false})
+	get error(): CanUndef<string> {
+		return this.errorStore;
+	}
+
+	/**
+	 * Sets a new error message
+	 * @param value
+	 */
+	set error(value: CanUndef<string>) {
+		this.errorStore = value;
+
+		if (this.messageHelpers) {
+			this.waitStatus('ready', () => {
+				const
+					box = this.block.element('error-box');
+
+				if (box?.children[0]) {
+					box.children[0].innerHTML = this.errorStore || '';
+				}
+			});
+		}
 	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iAccess.mods,
+		...iVisible.mods,
+
 		form: [
 			['true'],
 			'false'
@@ -278,42 +406,90 @@ export default class iInput<
 		valid: [
 			'true',
 			'false'
+		],
+
+		showInfo: [
+			'true',
+			'false'
+		],
+
+		showError: [
+			'true',
+			'false'
 		]
 	};
 
 	/**
-	 * Component validators
+	 * Map of available component validators
 	 */
-	static blockValidators: ValidatorsDecl = {
+	static validators: ValidatorsDecl = {
+		//#if runtime has iInput/validators
+
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			if (await this.formValue == null) {
-				if (showMsg) {
-					this.error = this.getValidatorMsg(false, msg, t`Required field`);
-				}
-
+				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
 
 			return true;
 		}
+
+		//#endif
 	};
 
 	/**
-	 * Component value field name
+	 * Name of a component property that is used as a source for a form value
 	 */
-	@field()
-	protected readonly blockValueField: string = 'value';
+	@field({replace: false})
+	protected readonly valueKey: string = 'value';
+
+	/** @see [[iInput.info]] */
+	@system({
+		replace: false,
+		init: (o) => o.sync.link()
+	})
+
+	protected infoStore?: string;
+
+	/** @see [[iInput.error]] */
+	@system({
+		replace: false,
+		init: (o) => o.sync.link()
+	})
+
+	protected errorStore?: string;
 
 	/** @override */
 	protected readonly $refs!: {input?: HTMLInputElement};
 
-	/**
-	 * Component value store
-	 */
-	@field<iInput>((o) => o.link((val) => o.initDefaultValue(val)))
+	/** @see [[iInput.value]] */
+	@field<iInput>({
+		replace: false,
+		init: (o) => o.sync.link((val) => o.resolveValue(val))
+	})
+
 	protected valueStore!: unknown;
 
-	/** @override */
+	/**
+	 * Internal validation error message
+	 */
+	@system()
+	private validationMsg?: string;
+
+	/** @see [[iAccess.enable]] */
+	@p({replace: false})
+	enable(): Promise<boolean> {
+		return iAccess.enable(this);
+	}
+
+	/** @see [[iAccess.disable]] */
+	@p({replace: false})
+	disable(): Promise<boolean> {
+		return iAccess.disable(this);
+	}
+
+	/** @see [[iAccess.focus]] */
+	@p({replace: false})
 	@wait('ready')
 	async focus(): Promise<boolean> {
 		const
@@ -327,7 +503,8 @@ export default class iInput<
 		return false;
 	}
 
-	/** @override */
+	/** @see [[iAccess.blur]] */
+	@p({replace: false})
 	@wait('ready')
 	async blur(): Promise<boolean> {
 		const
@@ -342,17 +519,20 @@ export default class iInput<
 	}
 
 	/**
-	 * Clears value of the component
-	 * @emits clear()
+	 * Clears the component value
+	 * @emits `clear()`
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async clear(): Promise<boolean> {
-		if (this[this.blockValueField]) {
-			this[this.blockValueField] = undefined;
+		if (this[this.valueKey]) {
+			this[this.valueKey] = undefined;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
+
 			this.removeMod('valid');
 			this.emit('clear');
+
 			return true;
 		}
 
@@ -363,14 +543,17 @@ export default class iInput<
 	 * Resets the component value to default
 	 * @emits reset()
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async reset(): Promise<boolean> {
-		if (this[this.blockValueField] !== this.default) {
-			this[this.blockValueField] = this.default;
+		if (this[this.valueKey] !== this.default) {
+			this[this.valueKey] = this.default;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
+
 			this.removeMod('valid');
 			this.emit('reset');
+
 			return true;
 		}
 
@@ -378,7 +561,7 @@ export default class iInput<
 	}
 
 	/**
-	 * Sets a validator error message to the component
+	 * Returns a validator error message from the specified arguments
 	 *
 	 * @param err - error details
 	 * @param msg - error message / error table / error function
@@ -389,25 +572,42 @@ export default class iInput<
 			return msg(err) || defMsg;
 		}
 
-		if (Object.isObject(msg)) {
-			return Object.isObject(err) && msg[err.name] || defMsg;
+		if (Object.isPlainObject(msg)) {
+			return Object.isPlainObject(err) && msg[err.name] || defMsg;
 		}
 
 		return msg || defMsg;
 	}
 
 	/**
+	 * Sets a validator error message to the component
+	 *
+	 * @param msg
+	 * @param [showMsg] - if true, then the message will be provided to .error
+	 */
+	setValidationMsg(msg: string, showMsg: boolean = false): void {
+		this.validationMsg = msg;
+
+		if (showMsg) {
+			this.error = msg;
+		}
+	}
+
+	/**
 	 * Validates the component value
-	 * (returns true or a failed validation name)
+	 * (returns true or name of the failed validation)
 	 *
 	 * @param params - additional parameters
-	 * @emits validationStart()
-	 * @emits validationSuccess()
-	 * @emits validationFail(failedValidation: ValidationError<FV>)
-	 * @emits validationEnd(result: boolean, failedValidation?: ValidationError<FV>)
+	 * @emits `validationStart()`
+	 * @emits `validationSuccess()`
+	 * @emits `validationFail(failedValidation: ValidationError<this['FormValue']>)`
+	 * @emits `validationEnd(result: boolean, failedValidation?: ValidationError<this['FormValue']>)`
 	 */
+	@p({replace: false})
 	@wait('ready')
-	async validate(params?: ValidatorParams): Promise<ValidationResult<FV>> {
+	async validate(params?: ValidatorParams): Promise<ValidationResult<this['FormValue']>> {
+		//#if runtime has iInput/validators
+
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
@@ -419,12 +619,14 @@ export default class iInput<
 			valid,
 			failedValidation;
 
-		for (const el of this.validators) {
+		for (const decl of this.validators) {
 			const
-				isArray = Object.isArray(el),
-				isObject = !isArray && Object.isObject(el),
-				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el),
-				validator = this.blockValidators[key];
+				isArray = Object.isArray(decl),
+				isPlainObject = !isArray && Object.isPlainObject(decl);
+
+			const
+				key = <string>(isPlainObject ? Object.keys(decl)[0] : isArray ? decl[0] : decl),
+				validator = this.validatorsMap[key];
 
 			if (!validator) {
 				throw new Error(`Validator "${key}" is not defined`);
@@ -433,10 +635,10 @@ export default class iInput<
 			const validation = validator.call(
 				this,
 				// tslint:disable-next-line:prefer-object-spread
-				Object.assign(isObject ? el[key] : isArray && el[1] || {}, params)
+				Object.assign(isPlainObject ? decl[key] : isArray && decl[1] || {}, params)
 			);
 
-			if (validation instanceof Promise) {
+			if (Object.isPromise(validation)) {
 				this.removeMod('valid');
 				this.setMod('progress', true);
 			}
@@ -444,7 +646,12 @@ export default class iInput<
 			valid = await validation;
 
 			if (valid !== true) {
-				failedValidation = [key, valid];
+				failedValidation = {
+					validator: key,
+					error: valid,
+					msg: this.validationMsg
+				};
+
 				break;
 			}
 		}
@@ -465,14 +672,20 @@ export default class iInput<
 			this.emit('validationFail', failedValidation);
 		}
 
+		this.validationMsg = undefined;
 		this.emit('validationEnd', valid === true, failedValidation);
+
 		return valid || failedValidation;
+
+		//#endif
+
+		return true;
 	}
 
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.initDefaultValue = this.instance.initDefaultValue.bind(this);
+		this.resolveValue = this.instance.resolveValue.bind(this);
 	}
 
 	/** @override */
@@ -481,46 +694,53 @@ export default class iInput<
 			return;
 		}
 
-		return this[this.blockValueField] = this.convertDBToComponent(this.db);
+		return this[this.valueKey] = this.convertDBToComponent(this.db);
 	}
 
 	/**
-	 * Handler: focus
+	 * Handler: component focus
 	 */
+	@p({replace: false})
 	protected onFocus(): void {
 		this.setMod('focused', true);
 	}
 
 	/**
-	 * Handler: blur
+	 * Handler: component blur
 	 */
+	@p({replace: false})
 	protected onBlur(): void {
 		this.setMod('focused', false);
 	}
 
 	/**
 	 * Handler: component value change
-	 * @emits change(value)
+	 * @emits `change(value)`
 	 */
-	protected onBlockValueChange(newValue: V, oldValue: CanUndef<V>): void {
+	@p({replace: false})
+	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
 		this.prevValue = oldValue;
+
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
-			this.emit('change', this[this.blockValueField]);
+			this.emit('change', this[this.valueKey]);
 		}
 	}
 
 	/**
-	 * Initializes a default value (if needed) for the blockValue field
-	 * @param value - blockValue field value
+	 * Resolves the specified component value and returns it.
+	 * If the value argument is undefined, the method returns a value by default.
+	 *
+	 * @param value
 	 */
-	protected initDefaultValue(value?: unknown): V {
+	@p({replace: false})
+	protected resolveValue(value?: unknown): this['Value'] {
 		const
 			i = this.instance,
-			k = i.blockValueField,
+			k = i.valueKey,
 			f = this.$activeField;
 
 		if (value !== undefined || f !== k && f !== `${k}Store`) {
-			return <V>value;
+			return value;
 		}
 
 		// tslint:disable-next-line:no-string-literal
@@ -528,22 +748,40 @@ export default class iInput<
 	}
 
 	/**
-	 * Initializes events for valueStore
+	 * Initializes default event listeners for a component value
 	 */
-	@hook('created')
-	protected initValueEvents(): void {
-		const k = this.blockValueField;
-		this.watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
+	@p({hook: 'created', replace: false})
+	protected initValueListeners(): void {
+		this.watch(this.valueKey, this.onValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+
+		iAccess.initModEvents(this);
+		iVisible.initModEvents(this);
+
+		this.localEmitter.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}
 		});
+
+		const
+			msgInit = {};
+
+		const createMsgHandler = (type) => (val) => {
+			if (!msgInit[type] && this.modsProp && String(this.modsProp[type]) === 'false') {
+				return false;
+			}
+
+			msgInit[type] = true;
+			return Boolean(val);
+		};
+
+		this.sync.mod('showInfo', 'infoStore', createMsgHandler('showInfo'));
+		this.sync.mod('showError', 'errorStore', createMsgHandler('showError'));
 	}
 }

@@ -13,6 +13,17 @@
 - template index() extends ['i-input'].index
 	- rootTag = 'span'
 
+	- hiddenInputType = "'checkbox'"
+	- hiddenInputModel = undefined
+
+	- block rootAttrs
+		- super
+		? rootAttrs[':-parent-id'] = 'parentId'
+
+	- block attrs
+		- super
+		? attrs['@click'] = 'onClick'
+
 	- block body
 		- super
 
@@ -20,10 +31,14 @@
 			+= self.hiddenInput()
 
 		- block wrapper
-			< _.&__wrapper
+			< _.&__wrapper @click = onClick
 				- block checkbox
-					< _.&__box
+					< _.&__checkbox
+						- block check
+							+= self.slot('check')
+								< _.&__check
 
 					- block label
-						< span.&__label v-if = label
-							{{ t(label) }}
+						< span.&__label v-if = label || vdom.getSlot('label')
+							+= self.slot('label', {':label': 'label'})
+								{{ t(label) }}

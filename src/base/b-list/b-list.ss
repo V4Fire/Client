@@ -11,7 +11,6 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
-	- overWrapper = false
 	- listTag = 'ul'
 	- listElTag = 'li'
 
@@ -19,67 +18,95 @@
 		- super
 
 		/**
-		 * Generates list block
+		 * Generates a list block
 		 * @param {!Array<Option>} value - array of values
 		 */
 		- block list(value)
 			< ${listElTag}.&__el v-for = el in ${value}
 				< a &
-					:class = setHint(el.hintPos).concat(getElClasses({link: {
+					:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
 						id: values[el.value],
 						active: isActive(el),
-						theme: el.theme,
+						exterior: el.exterior,
 						hidden: el.hidden,
-						progress: el.progress
+						progress: el.progress,
+						...el.classes
 					}})) |
 
 					:href = el.href |
 					:-hint = el.hint |
-					:-id = values[el.value]
+					:-id = values[el.value] |
+					:v-attrs = el.attrs
 				.
 					- block preIcon
-						< span.&__cell.&__link-icon.&__link-pre-icon v-if = $slots.preIcon
-							+= self.slot('preIcon')
+						< span.&__cell.&__link-icon.&__link-pre-icon v-if = vdom.getSlot('preIcon')
+							+= self.slot('preIcon', { &
+								':icon': 'el.preIcon',
+								':hint': 'el.preIconHint',
+								':hintPos': 'el.preIconHintPos'
+							}) .
 
 						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
-							< component.&__b-icon &
-								v-if = el.preIconComponent || el.preIconHint |
+							< component &
+								v-if = el.preIconComponent |
 								:instanceOf = bIcon |
-								:is = el.preIconComponent || 'b-icon' |
+								:is = el.preIconComponent |
 								:value = el.preIcon |
-								:hint = el.preIconHint
+								:hint = el.preIconHint |
+								:hintPos = el.preIconHintPos
 							.
 
-							< template v-else
-								+= self.gIcon(['el.preIcon'], {'g-icon': {}})
+							< @b-icon &
+								v-else |
+								:value = el.preIcon |
+								:hint = el.preIconHint |
+								:hintPos = el.preIconHintPos
+							.
 
 					- block text
 						< span.&__cell.&__link-text v-if = !hideLabels
 							{{ t(el.label) }}
 
 					- block info
-						< span.&__cell.&__link-info v-if = db && el.info && getField('db.' + el.info)
-							{{ getField('db.' + el.info) }}
+						< span.&__cell.&__link-info v-if = vdom.getSlot('info')
+							+= self.slot('info', {':option': 'el'})
 
 					- block icon
-						< span.&__cell.&__link-icon.&__link-post-icon v-if = $slots.icon
-							+= self.slot('icon')
+						< span.&__cell.&__link-icon.&__link-post-icon v-if = vdom.getSlot('icon')
+							+= self.slot('icon', { &
+								':icon': 'el.icon',
+								':hint': 'getElHint(el)',
+								':hintPos': 'el.iconHintPos'
+							}) .
 
 						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = el.icon
-							< component.&__b-icon &
-								v-if = el.iconComponent || el.iconHint || hideLabels |
+							< component &
+								v-if = el.iconComponent |
 								:instanceOf = bIcon |
-								:is = el.iconComponent || 'b-icon' |
+								:is = el.iconComponent |
 								:value = el.icon |
-								:hint = el.iconHint || (hideLabels ? t(el.label) : undefined)
+								:hint = getElHint(el) |
+								:hintPos = el.iconHintPos
 							.
 
-							< template v-else
-								+= self.gIcon(['el.icon'], {'g-icon': {}})
+							< @b-icon &
+								v-else |
+								:value = el.icon |
+								:hint = getElHint(el) |
+								:hintPos = el.iconHintPos
+							.
 
 					- block progress
-						< span.&__cell.&__link-icon.&__link-progress v-if = dataProvider
-							< b-progress-icon v-once
+						< span.&__cell.&__link-icon.&__link-progress v-if = el.progressIcon != null
+							< template v-if = vdom.getSlot('progressIcon')
+								+= self.slot('progressIcon', {':icon': 'el.progressIcon'})
+
+							< component &
+								v-else-if = progressIcon |
+								:is = progressIcon
+							.
+
+							< @b-progress-icon v-else
 
 	- block body
 		- super

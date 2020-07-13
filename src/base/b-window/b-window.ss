@@ -12,15 +12,6 @@
 - include '**/*.window.ss'|b
 
 - template index() extends ['i-data'].index
-	- overWrapper = false
-
-	/// FIXME: missing closing or opening directives in the template
-	/// - thirdPartySlots = true
-
-	/*- block rootAttrs
-		- super
-		? Object.assign(rootAttrs, {':style': "{top: (m.position === 'absolute' ? global.pageYOffset + 'px' : undefined)}"})*/
-
 	- block body
 		- super
 		- block window
@@ -29,7 +20,7 @@
 			< .&__back
 			< .&__wrapper v-if = &
 				isFunctional ||
-				ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+				opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
 			.
 
 				< section.&__window ref = window
@@ -43,8 +34,8 @@
 
 					< template v-else
 						+= self.slot()
-							< h1.&__title v-if = title || $slots.title
-								+= self.slot('title')
+							< h1.&__title v-if = title || vdom.getSlot('title')
+								+= self.slot('title', {':title': 'title'})
 									- block title
 										{{ title }}
 
@@ -55,8 +46,5 @@
 							< .&__controls
 								+= self.slot('control')
 									- block controls
-										< b-button &
-											:mods = provideMods({theme: 'dark', size: gt[m.size]}) |
-											@click = close
-										.
+										< b-button @click = close
 											{{ `Close` }}

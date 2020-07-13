@@ -11,10 +11,6 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
-	- overWrapper = false
-
 	- block body
-		- super
-		- block status
-			< template v-if = showStatus
-				< b-progress :value = status | :mods = provideMods({theme: 'fine-line'})
+		/// The slot to write auto tests
+		+= self.slot()

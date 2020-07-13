@@ -12,19 +12,18 @@
 
 - template index() extends ['b-input'].index
 	- block icons
-		< _.&__cell.&__icon.&__expand @click = setMod('opened', true)
-			+= self.gIcon('expand_more')
+		< _.&__cell.&__icon.&__expand @click = open
 
 	- block input
 		- super
 		< select.&__native &
 			ref = select |
-			v-if = b.is.mobile |
+			v-if = browser.is.mobile |
 			v-model = selectedStore |
 			:tabindex = tabIndex |
 			@focus = onFocus |
 			@blur = onBlur |
-			@change = onOptionSelected($event.target.dataset.value)
+			@change = onOptionSelected($event.target.value)
 		.
 			< option v-for = el in options | :key = :value, el.value
 				{{ el.label }}
@@ -33,23 +32,23 @@
 		- super
 		- block dropdown
 			< _.&__dropdown[.&_pos_bottom-left] &
-				v-if = !b.is.mobile && options.length && (
+				v-if = !browser.is.mobile && options.length && (
 					isFunctional ||
-					ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
+					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				)
 			.
 				< _.&__dropdown-content
 					< _.&__dropdown-content-wrapper
 						< b-scroll-inline.&__scroll &
-							v-func = isFunctional |
 							ref = scroll |
+							v-func = isFunctional |
 							:fixSize = true |
-							:mods = provideMods({size: 'm'})
+							:exterior = scrollExterior
 						.
 							< _ &
 								v-for = el in options |
 								:key = :-value, el.value |
-								:class = getElClasses({
+								:class = provide.elClasses({
 									option: {
 										marked: el.marked,
 										selected: isSelected(el)
@@ -57,11 +56,18 @@
 								})
 							.
 
-								< template v-if = $scopedSlots.default
-									< slot :el = el | ${slotAttrs|!html}
+								< template v-if = vdom.getSlot('default')
+									+= self.slot('default', {':option': 'el'})
 
-								< template v-else-if = option
-									< component :is = option | :p = el
+								< component &
+									v-else-if = option |
+									:is = option |
+									:p = el |
+									:exterior = el.exterior |
+									:classes = el.classes |
+									:mods = el.mods |
+									:v-attrs = el.attrs
+								.
 
 								< template v-else
 									{{ t(el.label) }}

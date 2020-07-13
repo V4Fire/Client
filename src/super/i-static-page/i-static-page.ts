@@ -6,64 +6,96 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-static-page/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
-import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
-import { setLang, lang } from 'core/i18n';
+import { defProp } from 'core/const/props';
+import { reset, ResetType, ComponentInterface } from 'core/component';
+import { setLocale, locale } from 'core/i18n';
 
-import { SetEvent } from 'core/session';
-import { StatusEvent } from 'core/net';
+import { Session } from 'core/session/interface';
+import { NetStatus } from 'core/net/interface';
+
+//#if runtime has bRouter
+import bRouter, { Route } from 'base/b-router/b-router';
+//#endif
 
 import iBlock from 'super/i-block/i-block';
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
-import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
+import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
-export * from 'super/i-data/i-data';
-export { globalEvent, ResetType, CurrentPage };
+import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
+import { RemoteState, RootMod } from 'super/i-static-page/interface';
 
-export type RootMods = Dictionary<{
-	mod: string;
-	value: string;
-	component: ComponentInterface;
-}>;
+export * from 'super/i-page/i-page';
+export * from 'super/i-static-page/interface';
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Superclass for all root components
+ */
 @component()
-export default class iStaticPage<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary,
-	D extends Dictionary = Dictionary
-> extends iPage<D> {
+export default abstract class iStaticPage extends iPage {
 	/**
-	 * Link to i18n function
+	 * Type: page parameters
 	 */
-	@system()
-	readonly i18n: typeof i18n = i18n;
+	readonly PageParams!: object;
+
+	/**
+	 * Type: page query
+	 */
+	readonly PageQuery!: object;
+
+	/**
+	 * Type: page meta
+	 */
+	readonly PageMeta!: object;
+
+	/**
+	 * Type: current page
+	 */
+	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/** @override */
-	@system(() => globalEvent)
-	readonly globalEvent!: Event<this>;
+	@system()
+	readonly i18n: typeof i18n = ((i18n));
+
+	/**
+	 * Remote data store
+	 */
+	@system(() => new ProvidedDataStore())
+	readonly providerDataStore!: ProvidedDataStore;
 
 	/**
 	 * Authorization status
 	 */
-	@field((o) => o.remoteState.isAuth)
+	@field({
+		after: 'remoteState',
+		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isAuth)
+	})
+
 	isAuth!: boolean;
 
 	/**
 	 * Online status
 	 */
-	@field((o) => o.remoteState.isOnline)
+	@field({
+		after: 'remoteState',
+		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isOnline)
+	})
+
 	isOnline!: boolean;
 
 	/**
 	 * Last online date
 	 */
-	@system((o) => o.remoteState.lastOnlineDate)
+	@system((o) => o.sync.link('remoteState', (state: RemoteState) => state.lastOnlineDate))
 	lastOnlineDate?: Date;
 
 	/** @override */
@@ -74,68 +106,90 @@ export default class iStaticPage<
 
 	remoteState!: Dictionary;
 
+	/**
+	 * Name of the active route page
+	 */
+	@computed({cache: true, dependencies: ['route.meta.name']})
+	get activePage(): CanUndef<string> {
+		return this.field.get('route.meta.name');
+	}
+
 	/** @override */
-	get route(): CanUndef<CurrentPage<P, Q, M>> {
-		return this.getField('routeStore');
+	get route(): CanUndef<this['CurrentPage']> {
+		return this.field.get('routeStore');
 	}
 
 	/**
-	 * @override
-	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
+	 * Sets a new route object
+	 *
+	 * @param value
+	 * @emits `setRoute(value: CanUndef<this['CurrentPage']>)`
 	 */
-	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
-		this.setField('routeStore', value);
+	set route(value: CanUndef<this['CurrentPage']>) {
+		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
 	}
 
 	/** @override */
 	get pageTitle(): string {
-		return <NonNullable<string>>this.getField('pageTitleStore');
+		return this.field.get<string>('pageTitleStore')!;
 	}
 
 	/** @override */
 	set pageTitle(value: string) {
-		document.title = value;
+		if (value == null) {
+			return;
+		}
+
+		const
+			div = Object.assign(document.createElement('div'), {innerHTML: value}),
+			title = div.textContent || '';
+
+		// Fix strange Chrome bug
+		// tslint:disable-next-line:no-irregular-whitespace
+		document.title = `${title} `;
+		document.title = title;
+
+		this.field.set('pageTitleStore', title);
 	}
 
 	/**
-	 * System language
+	 * System locale
 	 */
-	get lang(): string {
-		return <NonNullable<string>>this.getField('langStore');
+	get locale(): string {
+		return this.field.get<string>('localeStore')!;
 	}
 
 	/**
-	 * Sets a new system language
+	 * Sets a new system locale
 	 */
-	set lang(value: string) {
-		this.setField('langStore', value);
-		setLang(value);
+	set locale(value: string) {
+		this.field.set('localeStore', value);
+		setLocale(value);
 	}
 
 	/**
 	 * Route information object store
+	 * @see [[iStaticPage.route]]
 	 */
-	@field()
-	protected routeStore?: CurrentPage<P, Q, M>;
+	@field({forceUpdate: false})
+	protected routeStore?: this['CurrentPage'];
 
 	/**
-	 * Root page router instance
+	 * Link to a router instance
 	 */
 	@system()
 	protected routerStore?: bRouter;
 
-	/**
-	 * System language store
-	 */
-	@field()
-	protected langStore: string = lang;
+	/** @see [[iStaticPage.locale]]  */
+	@field(() => locale.value)
+	protected localeStore!: string;
 
 	/**
 	 * Cache of root modifiers
 	 */
 	@system()
-	protected rootMods: RootMods = {};
+	protected rootMods: Dictionary<RootMod> = {};
 
 	/**
 	 * Sets a new page title
@@ -149,7 +203,7 @@ export default class iStaticPage<
 	}
 
 	/**
-	 * Sends a message for reset to all components
+	 * Sends a message to reset data of all components
 	 * @param [type] - reset type
 	 */
 	reset(type?: ResetType): void {
@@ -173,7 +227,7 @@ export default class iStaticPage<
 
 		const
 			c = (component.globalName || component.componentName).dasherize(),
-			mod = this.getFullBlockName(c, name, value).replace(/_/g, '-');
+			mod = this.provide.fullComponentName(c, name, value).replace(/_/g, '-');
 
 		name = `${c}_${name.camelize(false)}`;
 		value = String(value).dasherize();
@@ -232,39 +286,38 @@ export default class iStaticPage<
 
 	/** @override */
 	getRootMod(name: string, component: ComponentInterface = this): undefined | string {
-		return this.removeRootMod[name] && this.removeRootMod[name].value;
+		return this.rootMods[name]?.value;
 	}
 
 	/**
-	 * Synchronization for the langStore field
-	 * @param lang
+	 * Synchronization for .localeStore field
+	 * @param locale
 	 */
-	@watch('langStore')
-	@watch('globalEvent:i18n.setLang')
-	protected syncLangWatcher(lang: string): void {
-		if (this.lang === lang) {
+	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
+	protected syncLocaleWatcher(locale: string): void {
+		if (this.locale === locale) {
 			return;
 		}
 
-		this.lang = lang;
-		this.$forceUpdate();
+		this.locale = locale;
+		this.forceUpdate().catch(stderr);
 	}
 
 	/**
-	 * Synchronization for the isAuth field
+	 * Synchronization for .isAuth field
 	 * @param [e]
 	 */
-	@watch('globalEvent:session.*')
-	protected syncAuthWatcher(e?: SetEvent): void {
+	@watch('globalEmitter:session.*')
+	protected syncAuthWatcher(e?: Session): void {
 		this.isAuth = Boolean(e && e.auth);
 	}
 
 	/**
-	 * Synchronization for the isOnline field
+	 * Synchronization for .isOnline field
 	 * @param e
 	 */
-	@watch('globalEvent:net.status')
-	protected syncOnlineWatcher(e: StatusEvent): void {
+	@watch('globalEmitter:net.status')
+	protected syncOnlineWatcher(e: NetStatus): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;
 	}
@@ -272,6 +325,6 @@ export default class iStaticPage<
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.remoteState = remoteState;
+		Object.defineProperty(this, 'remoteState', {...defProp, value: remoteState});
 	}
 }

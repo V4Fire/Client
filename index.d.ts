@@ -9,8 +9,18 @@
 /// <reference types="@v4fire/core"/>
 
 declare let READY_STATE: number;
+
+declare const GLOBAL_NONCE: unknown;
+declare const MODULE_DEPENDENCIES: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
+
+declare const BLOCK_NAMES: CanUndef<string[]>;
+declare const DS: CanUndef<Dictionary>;
+
+declare const DS_COMPONENTS_MODS: CanUndef<{
+	[name: string]: Nullable<Array<ModDeclVal>>;
+}>;
 
 interface HTMLImageElement {
 	readonly init: Promise<this>;
@@ -21,6 +31,27 @@ interface Event {
 	delegateTarget?: Element;
 }
 
+interface BoxSize {
+	readonly blockSize: number;
+	readonly inlineSize: number;
+}
+
+interface ResizeObserverObserveOptions {
+	box: 'content-box' | 'border-box';
+}
+
+declare class ResizeObserver {
+	constructor(callback: (entries: ResizeObserverEntry[]) => unknown);
+	disconnect(): void;
+	observe(target: Element, opts?: ResizeObserverObserveOptions): void;
+	unobserve(target: Element): void;
+}
+
+declare class ResizeObserverEntry {
+	readonly contentRect: DOMRect;
+	readonly target: Element;
+}
+
 declare let ModuleDependencies: {
 	cache: Dictionary;
 	event: {on: Function; once: Function; off: Function};
@@ -28,25 +59,32 @@ declare let ModuleDependencies: {
 	get(module: string): Promise<string[]>;
 };
 
+interface ElementPosition {
+	top: number;
+	left: number;
+}
+
 interface Element {
-	getPosition(): {top: number; left: number};
+	getPosition(): ElementPosition;
 	getIndex(): number | null;
 }
 
 interface Node {
-	getOffset(parent?: Element | string): {top: number; left: number};
+	getOffset(parent?: Element | string): ElementPosition;
 }
 
-interface Number {
-	em: string;
-	ex: string;
-	px: string;
-	per: string;
-	rem: string;
-	vh: string;
-	vw: string;
-	vmin: string;
-	vmax: string;
+interface IntersectionObserverInit {
+	delay?: number;
+	trackVisibility?: boolean;
 }
 
-declare const GLOBAL_NONCE: unknown;
+interface IntersectionObserver {
+	delay?: number;
+	trackVisibility?: boolean;
+}
+
+interface Document {
+	fonts: {
+		ready: Promise<void>;
+	}
+}

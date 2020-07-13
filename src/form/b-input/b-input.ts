@@ -6,28 +6,37 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import keyCodes from 'core/key-codes';
-import BlockValidators from 'form/b-input/modules/validators';
+
+import iWidth from 'traits/i-width/i-width';
+import iSize from 'traits/i-size/i-size';
+
 import iInput, {
 
 	component,
 	prop,
 	field,
 	system,
+
+	watch,
+	hook,
 	wait,
+
 	ModsDecl,
 	ValidatorsDecl
 
 } from 'super/i-input/i-input';
 
+import Validators from 'form/b-input/modules/validators';
+
+//#if runtime has bInput/mask
+import * as mask from 'form/b-input/modules/mask';
+//#endif
+
 export * from 'super/i-input/i-input';
 
 export type Value = string;
-export type FormValue = Value;
+export type FormValue = CanUndef<Value>;
 
 export const
 	$$ = symbolGenerator();
@@ -38,18 +47,20 @@ export const
 	}
 })
 
-export default class bInput<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-> extends iInput<V, FV, D> {
+export default class bInput extends iInput implements iWidth, iSize {
 	/** @override */
-	@prop({type: String, required: false})
-	readonly valueProp?: V;
+	readonly Value!: Value;
+
+	/** @override */
+	readonly FormValue!: FormValue;
 
 	/** @override */
 	@prop({type: String, required: false})
-	readonly defaultProp?: V;
+	readonly valueProp?: this['Value'];
+
+	/** @override */
+	@prop({type: String, required: false})
+	readonly defaultProp?: this['Value'];
 
 	/**
 	 * Input type
@@ -70,12 +81,6 @@ export default class bInput<
 	readonly placeholder?: string;
 
 	/**
-	 * Input pattern
-	 */
-	@prop({type: String, required: false})
-	readonly pattern?: string;
-
-	/**
 	 * Readonly flag
 	 */
 	@prop({type: Boolean, required: false})
@@ -90,20 +95,20 @@ export default class bInput<
 	/**
 	 * Input minimum value (for number and date)
 	 */
-	@prop({type: [Number, String], required: false})
-	readonly min?: number;
+	@prop({type: [Number, String, Date], required: false})
+	readonly min?: number | string | Date;
 
 	/**
 	 * Input maximum value (for number and date)
 	 */
-	@prop({type: [Number, String], required: false})
-	readonly max?: number;
+	@prop({type: [Number, String, Date], required: false})
+	readonly max?: number | string | Date;
 
 	/**
-	 * Reset button for input
+	 * Additional input attributes
 	 */
-	@prop(Boolean)
-	readonly resetButton: boolean = true;
+	@prop({type: Object, required: false})
+	readonly attrs?: Dictionary;
 
 	/**
 	 * Icon before input
@@ -114,17 +119,17 @@ export default class bInput<
 	/**
 	 * Component for .preIcon
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly preIconComponent?: string;
 
 	/**
-	 * Tooltip text for the preIcon
+	 * Tooltip text for .preIcon
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHint?: string;
 
 	/**
-	 * Tooltip position for the preIcon
+	 * Tooltip position for .preIcon
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHintPos?: string;
@@ -138,27 +143,33 @@ export default class bInput<
 	/**
 	 * Component for .icon
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly iconComponent?: string;
 
 	/**
-	 * Tooltip text for the icon
+	 * Tooltip text for .icon
 	 */
 	@prop({type: String, required: false})
 	readonly iconHint?: string;
 
 	/**
-	 * Tooltip position for the icon
+	 * Tooltip position for .icon
 	 */
 	@prop({type: String, required: false})
 	readonly iconHintPos?: string;
+
+	/**
+	 * Component for a progress icon
+	 */
+	@prop({type: String, required: false})
+	readonly progressIcon?: string;
 
 	/**
 	 * RegExp map
 	 * (for using with .mask)
 	 */
 	@prop(Object)
-	readonly regs: Dictionary<RegExp> = {};
+	readonly regExps: Dictionary<RegExp> = {};
 
 	/**
 	 * Input mask value
@@ -169,17 +180,36 @@ export default class bInput<
 	/**
 	 * Mask placeholder
 	 */
-	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
+	@prop({type: String, watch: {handler: 'updateMask', immediate: true, provideArgs: false}})
 	readonly maskPlaceholder: string = '_';
 
-	/** @override */
-	get value(): V {
-		return <NonNullable<V>>this.getField('valueStore');
+	/**
+	 * Initial number of mask repetitions
+	 */
+	@prop({type: [Number, Boolean], required: false})
+	readonly maskRepeatProp?: number | boolean;
+
+	/**
+	 * Delimiter for a mask value (if the mask is repeated)
+	 */
+	@prop({type: String, required: false})
+	readonly maskDelimiter: string = ' ';
+
+	/**
+	 * Should mask be repeated infinitely
+	 */
+	get isMaskInfinite(): boolean {
+		return this.maskRepeatProp === true;
 	}
 
 	/** @override */
-	set value(value: V) {
-		this.setField('valueStore', value);
+	get value(): this['Value'] {
+		return this.field.get<this['Value']>('valueStore')!;
+	}
+
+	/** @override */
+	set value(value: this['Value']) {
+		this.field.set('valueStore', value);
 
 		if (this.skipBuffer) {
 			this.skipBuffer = false;
@@ -205,17 +235,8 @@ export default class bInput<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		rounding: [
-			'none',
-			'small',
-			'normal',
-			'big'
-		],
-
-		theme: [
-			bInput.PARENT,
-			'link'
-		],
+		...iWidth.mods,
+		...iSize.mods,
 
 		empty: [
 			'true',
@@ -224,9 +245,9 @@ export default class bInput<
 	};
 
 	/** @override */
-	static blockValidators: ValidatorsDecl = {
-		...<any>iInput.blockValidators,
-		...BlockValidators
+	static validators: ValidatorsDecl = {
+		...<any>iInput.validators,
+		...Validators
 	};
 
 	/** @override */
@@ -237,12 +258,7 @@ export default class bInput<
 	 */
 	@field({
 		after: 'valueStore',
-		watch: {
-			fn: 'onValueBufferUpdate',
-			immediate: true
-		},
-
-		init: (o, data) => o.link('valueProp', (val) => {
+		init: (o, data) => o.sync.link('valueProp', (val) => {
 			val = val === undefined ? data.valueStore : val;
 			return val !== undefined ? String(val) : '';
 		})
@@ -253,15 +269,15 @@ export default class bInput<
 	/**
 	 * Value buffer
 	 */
-	protected get valueBuffer(): V {
-		return <NonNullable<V>>this.getField('valueBufferStore');
+	protected get valueBuffer(): this['Value'] {
+		return this.field.get<this['Value']>('valueBufferStore')!;
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
-	protected set valueBuffer(value: V) {
-		this.setField('valueBufferStore', value);
+	protected set valueBuffer(value: this['Value']) {
+		this.field.set('valueBufferStore', value);
 	}
 
 	/**
@@ -269,6 +285,12 @@ export default class bInput<
 	 */
 	@field()
 	protected skipBuffer: boolean = false;
+
+	/**
+	 * Number of mask repetitions
+	 */
+	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
+	protected maskRepeat!: number;
 
 	/**
 	 * Temporary last selection start index
@@ -302,7 +324,7 @@ export default class bInput<
 			await this.applyMaskToValue('', {updateBuffer: true});
 
 		} else {
-			this.valueBuffer = <V>'';
+			this.valueBuffer = '';
 
 			const
 				{input} = this.$refs;
@@ -339,11 +361,11 @@ export default class bInput<
 	@wait('ready', {label: $$.updateMask})
 	async updateMask(): Promise<void> {
 		const
-			{async: $a} = this,
+			{async: $a, maskDelimiter} = this,
 			{input} = this.$refs;
 
-		const
-			group = {group: 'mask'};
+		const group = {group: 'mask'};
+		$a.off(group);
 
 		if (this.mask) {
 			$a.on(input, 'mousedown keydown', this.onMaskNavigate, group);
@@ -356,7 +378,7 @@ export default class bInput<
 				...group
 			});
 
-			$a.on(input, this.b.is.Android ? 'keyup' : 'keypress', this.onMaskKeyPress, group);
+			$a.on(input, 'keypress', this.onMaskKeyPress, group);
 			$a.on(input, 'keydown', this.onMaskBackspace, group);
 			$a.on(input, 'input', this.onMaskInput, group);
 			$a.on(input, 'focus', this.onMaskFocus, group);
@@ -369,22 +391,37 @@ export default class bInput<
 				tpl = '',
 				sys = false;
 
-			$C(this.mask).forEach((el) => {
-				if (el === '%') {
-					sys = true;
-					return;
+			if (this.mask) {
+				for (let o = this.mask, i = 0, j = 0; i < o.length && j < this.maskRepeat; i++) {
+					const
+						el = o[i];
+
+					if (el === '%') {
+						sys = true;
+						continue;
+					}
+
+					tpl += sys ? this.maskPlaceholder : el;
+
+					if (sys) {
+						value.push(this.regExps[el] || new RegExp(`\\${el}`));
+						sys = false;
+
+					} else {
+						value.push(el);
+					}
+
+					if (i === o.length - 1) {
+						i = -1;
+						j++;
+
+						if (j < this.maskRepeat) {
+							tpl += maskDelimiter;
+							value.push(maskDelimiter);
+						}
+					}
 				}
-
-				tpl += sys ? this.maskPlaceholder : el;
-
-				if (sys) {
-					value.push(this.regs[el] || new RegExp(`\\${el}`));
-					sys = false;
-
-				} else {
-					value.push(el);
-				}
-			});
+			}
 
 			this._mask = {value, tpl};
 			this._maskBuffer = '';
@@ -392,7 +429,6 @@ export default class bInput<
 			await this.applyMaskToValue(this.value, {updateBuffer: true});
 
 		} else {
-			$a.off(group);
 			this._mask = undefined;
 		}
 	}
@@ -461,24 +497,25 @@ export default class bInput<
 				ph = this.maskPlaceholder,
 				def = (mask, i) => buffer && mask.test(buffer[i]) ? buffer[i] : ph;
 
-			$C(mask).forEach((mask, i) => {
+			for (let i = 0; i < mask.length; i++) {
 				const
-					isRgxp = Object.isRegExp(mask);
+					val = mask[i],
+					isRgxp = Object.isRegExp(val);
 
 				if (i < startPos || !selectionFalse && i > endPos) {
 					if (isRgxp) {
-						res += def(mask, i);
+						res += def(val, i);
 
 					} else {
-						res += mask;
+						res += val;
 					}
 
-					return;
+					break;
 				}
 
 				if (isRgxp) {
 					if (chunks.length) {
-						while (chunks.length && !(<RegExp>mask).test(chunks[0])) {
+						while (chunks.length && !(<RegExp>val).test(chunks[0])) {
 							chunks.shift();
 						}
 
@@ -488,17 +525,17 @@ export default class bInput<
 							pos++;
 
 						} else {
-							res += def(mask, i);
+							res += def(val, i);
 						}
 
 					} else {
-						res += def(mask, i);
+						res += def(val, i);
 					}
 
 				} else {
-					res += mask;
+					res += val;
 				}
-			});
+			}
 
 		} else if (focused) {
 			cursor = 'start';
@@ -506,11 +543,16 @@ export default class bInput<
 		}
 
 		if (cursor === 'start') {
-			cursor = $C(mask).one.search((el) => Object.isRegExp(el));
+			for (let i = 0; i < mask.length; i++) {
+				if (Object.isRegExp(mask[i])) {
+					cursor = i;
+					break;
+				}
+			}
 		}
 
 		const {input} = this.$refs;
-		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = <V>res;
+		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = res;
 
 		if (focused) {
 			pos = cursor != null ? Number(cursor) : selectionFalse ? startPos + pos + 1 : endPos;
@@ -531,7 +573,7 @@ export default class bInput<
 		if (!this.readonly && input.hasAttribute('readonly')) {
 			input.removeAttribute('readonly');
 
-			if (this.b.is.iOS) {
+			if (this.browser.is.iOS) {
 				input.blur();
 				input.focus();
 			}
@@ -542,11 +584,12 @@ export default class bInput<
 
 	/**
 	 * Handler: value buffer update
-	 * @param value
 	 */
-	protected onValueBufferUpdate(value: V): void {
+	@watch('valueBufferStore')
+	@hook('beforeDataCreate')
+	protected onValueBufferUpdate(): void {
 		if (!this.mask) {
-			this.value = value;
+			this.value = this.field.get<this['Value']>('valueBufferStore')!;
 		}
 	}
 
@@ -558,7 +601,7 @@ export default class bInput<
 	 */
 	protected async onClear(e: MouseEvent): Promise<void> {
 		if (await this.clear()) {
-			this.emit('actionChange', this.value);
+			this.emit('actionChange', this[this.valueKey]);
 		}
 	}
 
@@ -568,12 +611,24 @@ export default class bInput<
 	 * @param e
 	 * @emits actionChange(value: V)
 	 */
-	protected async onEdit(e: Event): Promise<void> {
-		this.valueBufferStore =
+	protected onEdit(e: Event): void {
+		this.valueBuffer =
 			(<HTMLInputElement>e.target).value || '';
 
-		if (!this.mask && this.blockValueField === 'value') {
-			this.emit('actionChange', this.value);
+		if (!this.mask && this.valueKey === 'value') {
+			this.emit('actionChange', this[this.valueKey]);
+		}
+	}
+
+	/**
+	 * Handler: raw data change
+	 *
+	 * @param value
+	 * @emits actionChange(value: V)
+	 */
+	protected onRawDataChange(value: this['Value']): void {
+		if (this.valueKey === 'value') {
+			this.emit('actionChange', value);
 		}
 	}
 
@@ -582,19 +637,7 @@ export default class bInput<
 	 * @param e
 	 */
 	protected async onMaskFocus(e: FocusEvent): Promise<void> {
-		if (this.mods.empty === 'true') {
-			await this.applyMaskToValue('', {updateBuffer: true});
-		}
-
-		const
-			m = this._mask;
-
-		if (!m) {
-			return;
-		}
-
-		const pos = $C(m.value).one.search((el) => Object.isRegExp(el)) || 0;
-		this.$refs.input.setSelectionRange(pos, pos);
+		return mask.onMaskFocus(this, e);
 	}
 
 	/**
@@ -602,16 +645,7 @@ export default class bInput<
 	 * @param e
 	 */
 	protected onMaskBlur(e: Event): void {
-		const
-			m = this._mask;
-
-		if (!m) {
-			return;
-		}
-
-		if (this.valueBuffer === m.tpl) {
-			this.value = <V>'';
-		}
+		return mask.onMaskBlur(this, e);
 	}
 
 	/**
@@ -619,9 +653,7 @@ export default class bInput<
 	 * @param e
 	 */
 	protected onMaskCursorReady(e: KeyboardEvent | MouseEvent): void {
-		const {input} = this.$refs;
-		this._lastMaskSelectionStartIndex = input.selectionStart;
-		this._lastMaskSelectionEndIndex = input.selectionEnd;
+		return mask.onMaskCursorReady(this, e);
 	}
 
 	/**
@@ -629,19 +661,7 @@ export default class bInput<
 	 * @param e
 	 */
 	protected onMaskValueReady(e: KeyboardEvent | MouseEvent): void {
-		this._maskBuffer = this.valueBuffer;
-	}
-
-	/**
-	 * Raw data change handler
-	 *
-	 * @param value
-	 * @emits actionChange(value: V)
-	 */
-	protected onRawDataChange(value: V): void {
-		if (this.blockValueField === 'value') {
-			this.emit('actionChange', value);
-		}
+		return mask.onMaskValueReady(this, e);
 	}
 
 	/**
@@ -649,12 +669,7 @@ export default class bInput<
 	 * @emits actionChange(value: V)
 	 */
 	protected async onMaskInput(e: Event): Promise<void> {
-		await this.applyMaskToValue(undefined, {
-			start: this._lastMaskSelectionStartIndex,
-			end: this._lastMaskSelectionEndIndex
-		});
-
-		this.onRawDataChange(this.value);
+		return mask.onMaskInput(this);
 	}
 
 	/**
@@ -664,126 +679,7 @@ export default class bInput<
 	 * @emits actionChange(value: V)
 	 */
 	protected async onMaskBackspace(e: KeyboardEvent): Promise<void> {
-		const codes = {
-			[keyCodes.BACKSPACE]: true,
-			[keyCodes.DELETE]: true
-		};
-
-		if (!codes[e.keyCode]) {
-			return;
-		}
-
-		e.preventDefault();
-
-		const
-			{input} = this.$refs;
-
-		const
-			selectionStart = input.selectionStart || 0,
-			selectionEnd = input.selectionEnd || 0,
-			selectionFalse = selectionStart === selectionEnd;
-
-		const
-			m = this._mask,
-			mask = m && m.value,
-			ph = this.maskPlaceholder;
-
-		if (!m || !mask) {
-			return;
-		}
-
-		let
-			res = this.valueBuffer,
-			pos = 0;
-
-		if (e.keyCode === keyCodes.DELETE) {
-			let
-				start = selectionStart,
-				end = selectionEnd;
-
-			const chunks = $C(mask).to([] as string[]).reduce((arr, el, i) => {
-				if (res && Object.isRegExp(el) && el.test(res[i])) {
-					arr.push(res[i]);
-
-				} else {
-					if (i < selectionStart) {
-						start--;
-					}
-
-					if (!selectionFalse && i < selectionEnd) {
-						end--;
-					}
-				}
-
-				return arr;
-			});
-
-			chunks.splice(start, selectionFalse ? 1 : end - start);
-			res = <V>chunks.join('');
-
-			if (res) {
-				await this.applyMaskToValue(res, {cursor: selectionStart, maskBuffer: ''});
-
-			} else {
-				this.skipBuffer = true;
-				this.value = <V>'';
-				await this.applyMaskToValue('', {updateBuffer: true});
-			}
-
-			return;
-		}
-
-		const
-			chunks = (<string>res).split('');
-
-		let n = selectionEnd - selectionStart;
-		n = n > 0 ? n : 1;
-
-		while (n--) {
-			const
-				end = selectionEnd - n - 1;
-
-			let
-				maskEl = mask[end],
-				prevMaskEl = '',
-				i = end;
-
-			if (!Object.isRegExp(maskEl) && selectionFalse) {
-				prevMaskEl = maskEl;
-
-				while (!Object.isRegExp(mask[--i]) && i > -1) {
-					prevMaskEl += mask[i];
-				}
-
-				maskEl = mask[i];
-			}
-
-			if (Object.isRegExp(maskEl)) {
-				pos = end - prevMaskEl.length;
-				chunks[pos] = ph;
-			}
-		}
-
-		res = <V>chunks.join('');
-
-		let
-			start = selectionFalse ? pos : selectionStart;
-
-		while (start < mask.length && !Object.isRegExp(mask[start])) {
-			start++;
-		}
-
-		if (res === m.tpl) {
-			this.skipBuffer = true;
-			this.value = <V>'';
-			await this.applyMaskToValue('', {updateBuffer: true});
-
-		} else {
-			this.value = input.value = res;
-			input.setSelectionRange(start, start);
-		}
-
-		this.onRawDataChange(this.value);
+		return mask.onMaskBackspace(this, e);
 	}
 
 	/**
@@ -791,89 +687,7 @@ export default class bInput<
 	 * @param e
 	 */
 	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): void {
-		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) {
-			return;
-		}
-
-		const
-			keyboardEvent = e instanceof KeyboardEvent,
-			leftKey = (<KeyboardEvent>e).keyCode === keyCodes.LEFT;
-
-		if (keyboardEvent ? !leftKey && (<KeyboardEvent>e).keyCode !== keyCodes.RIGHT : (<MouseEvent>e).button !== 0) {
-			return;
-		}
-
-		const event = () => {
-			const
-				m = this._mask;
-
-			if (!m) {
-				return;
-			}
-
-			const
-				mask = m.value,
-				{input} = this.$refs;
-
-			const
-				selectionStart = input.selectionStart || 0,
-				selectionEnd = input.selectionEnd || 0;
-
-			let
-				canChange = true,
-				pos;
-
-			if (keyboardEvent) {
-				// tslint:disable-next-line:prefer-conditional-expression
-				if (selectionStart !== selectionEnd) {
-					pos = leftKey ? selectionStart : selectionEnd;
-
-				} else {
-					pos = leftKey ? selectionStart - 1 : selectionEnd + 1;
-				}
-
-			} else {
-				pos = selectionStart;
-			}
-
-			if (selectionEnd === pos || keyboardEvent) {
-				while (!Object.isRegExp(mask[pos])) {
-					if (leftKey) {
-						pos--;
-
-						if (pos <= 0) {
-							canChange = false;
-							break;
-						}
-
-					} else {
-						if (Object.isRegExp(mask[pos - 1])) {
-							break;
-						}
-
-						pos++;
-						if (pos >= mask.length) {
-							canChange = false;
-							break;
-						}
-					}
-				}
-
-				if (!canChange) {
-					pos = $C(mask).one.search((el) => Object.isRegExp(el));
-				}
-
-				input.setSelectionRange(pos, pos);
-			}
-		};
-
-		if (keyboardEvent || this.mods.focused !== 'true') {
-			e.preventDefault();
-			keyboardEvent && event();
-
-		} else {
-			this.async.setImmediate(event, {label: $$.setCursor});
-		}
+		return mask.onMaskNavigate(this, e);
 	}
 
 	/**
@@ -883,91 +697,26 @@ export default class bInput<
 	 * @emits actionChange(value: V)
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): void {
-		const blacklist = {
-			[keyCodes.TAB]: true
-		};
-
-		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.keyCode] || !this.valueBuffer || !this._mask) {
-			return;
-		}
-
-		e.preventDefault();
-
-		const
-			{input} = this.$refs;
-
-		const
-			selectionStart = input.selectionStart || 0,
-			selectionEnd = input.selectionEnd || 0;
-
-		const
-			res = this.valueBuffer.split(''),
-			mask = this._mask.value;
-
-		let
-			insert = true,
-			n = selectionEnd - selectionStart + 1,
-			start = selectionStart,
-			inputVal = String.fromCharCode(e.charCode);
-
-		while (n--) {
-			const
-				end = selectionEnd - n;
-
-			let
-				maskEl = mask[end],
-				nextMaskEl = '',
-				i = end;
-
-			if (insert && !Object.isRegExp(maskEl)) {
-				nextMaskEl = maskEl;
-
-				while (!Object.isRegExp(mask[++i]) && i < mask.length) {
-					nextMaskEl += mask[i];
-				}
-
-				maskEl = mask[i];
-			}
-
-			if (Object.isRegExp(maskEl) && (!insert || maskEl.test(inputVal))) {
-				let pos = end + nextMaskEl.length;
-				res[pos] = inputVal;
-
-				if (insert) {
-					pos++;
-					start = pos;
-					insert = false;
-					inputVal = this.maskPlaceholder;
-				}
-			}
-		}
-
-		while (start < mask.length && !Object.isRegExp(mask[start])) {
-			start++;
-		}
-
-		this.value = input.value = <V>res.join('');
-		input.setSelectionRange(start, start);
-
-		this.onRawDataChange(this.value);
+		return mask.onMaskKeyPress(this, e);
 	}
 
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('empty', 'valueBufferStore', (v) => !v);
+		this.sync.mod('empty', 'valueBufferStore', (v) => !v);
+		this.sync.mod('readonly', 'readonly');
 	}
 
 	/** @override */
-	protected initValueEvents(): void {
-		super.initValueEvents();
-		this.watch('valueBufferStore', async (val = '') => {
+	protected initValueListeners(): void {
+		super.initValueListeners();
+		this.watch('valueBuffer', async (val: this['Value'] = '') => {
 			try {
 				const
 					input = await this.waitRef<HTMLInputElement>('input', {label: $$.valueBufferStoreModel});
 
 				if (input.value !== val) {
-					input.value = <V>val;
+					input.value = val;
 				}
 
 			} catch {}

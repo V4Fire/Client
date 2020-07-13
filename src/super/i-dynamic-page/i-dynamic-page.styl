@@ -9,24 +9,7 @@
 @import "super/i-page/i-page.styl"
 
 $p = {
-	cellMargin: 0.5em
-	cellHelpers: false
+
 }
 
 i-dynamic-page extends i-page
-	if $p.cellHelpers
-		&__cell
-			$d = 1..20
-
-			for $el in $d
-				&-p{$el}
-					width $el * 5%
-
-			for $el in $d
-				&-m{$el}
-					width $el * 5%
-
-				for $el2 in $d
-					&-m{$el} + &-m{$el2}
-						margin-left $p.cellMargin
-						width s("calc(%s * 5% - %s)", $el2, $p.cellMargin)

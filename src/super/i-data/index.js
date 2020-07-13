@@ -7,4 +7,4 @@
  */
 
 package('i-data')
-	.extends('i-message');
+	.extends('i-block');

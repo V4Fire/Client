@@ -6,21 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iVisible from 'traits/i-visible/i-visible';
+import iWidth from 'traits/i-width/i-width';
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
+
 import iData, {
 
 	field,
 	component,
 	prop,
 	hook,
+	wait,
 	ModsDecl,
 	Stage,
 	ModEvent,
-	SetModEvent
+	SetModEvent,
+	RequestError
 
 } from 'super/i-data/i-data';
 
-import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
+export * from 'traits/i-open-toggle/i-open-toggle';
 
 export type TitleValue<T = unknown> = string | ((ctx: T) => string);
 export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
@@ -28,7 +35,10 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 }
 
 @component()
-export default class bWindow<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
+	/** @override */
+	readonly proxyCall: boolean = true;
+
 	/**
 	 * Initial window title
 	 */
@@ -38,7 +48,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Map of window titles ({stage: title})
 	 */
-	@prop(Object)
+	@prop({type: Object, required: false})
 	readonly stageTitles?: Dictionary<string>;
 
 	/**
@@ -49,14 +59,18 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iVisible.mods,
+		...iWidth.mods,
+
 		opened: [
-			bWindow.PARENT,
+			...iOpenToggle.mods.opened,
 			['false']
 		],
 
 		position: [
 			['fixed'],
-			'absolute'
+			'absolute',
+			'custom'
 		]
 	};
 
@@ -67,59 +81,20 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Window title store
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	protected titleStore?: string;
 
 	/**
 	 * Slot name store
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	protected slotNameStore?: string;
-
-	/** @override */
-	set error(value: string) {
-		if (value) {
-			this.stage = 'error';
-		}
-
-		this.errorMsg = value;
-	}
-
-	/**
-	 * @override
-	 * @param [stage] - window stage
-	 */
-	async open(stage?: Stage): Promise<boolean> {
-		if (await super.open()) {
-			if (stage) {
-				this.stage = stage;
-			}
-
-			this.setRootMod('hidden', false);
-			await this.nextTick();
-			this.emit('open');
-			return true;
-		}
-
-		return false;
-	}
-
-	/** @override */
-	async close(): Promise<boolean> {
-		if (await super.close()) {
-			this.setRootMod('hidden', true);
-			this.emit('close');
-			return true;
-		}
-
-		return false;
-	}
 
 	/**
 	 * Slot name
 	 */
 	get slotName(): CanUndef<string> {
-		return this.getField('slotNameStore');
+		return this.field.get('slotNameStore');
 	}
 
 	/**
@@ -127,7 +102,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param value
 	 */
 	set slotName(value: CanUndef<string>) {
-		this.setField('slotNameStore', value);
+		this.field.set('slotNameStore', value);
 	}
 
 	/**
@@ -135,7 +110,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	get title(): string {
 		const
-			v = this.getField<string>('titleStore') || '',
+			v = this.field.get<string>('titleStore') || '',
 			stageTitles = this.stageTitles;
 
 		if (stageTitles) {
@@ -160,32 +135,67 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * Sets a new window title
 	 */
 	set title(value: string) {
-		this.setField('titleStore', value);
+		this.field.set('titleStore', value);
+	}
+
+	/** @see iOpenToggle.toggle */
+	toggle(): Promise<boolean> {
+		return iOpenToggle.toggle(this);
 	}
 
 	/**
-	 * Initializes the component placement within a document
+	 * @see iOpenToggle.open
+	 * @param [stage] - window stage
 	 */
-	@hook('mounted')
-	protected initDocumentPlacement(): void {
-		document.body.insertAdjacentElement('beforeend', this.$el);
+	async open(stage?: Stage): Promise<boolean> {
+		if (await iOpenToggle.open(this)) {
+			if (stage) {
+				this.stage = stage;
+			}
+
+			this.setRootMod('hidden', false);
+			await this.nextTick();
+			this.emit('open');
+			return true;
+		}
+
+		return false;
 	}
 
-	/**
-	 * Handler: error
-	 * @param err
-	 */
-	protected onError(err: RequestError): void {
-		this.error = this.getDefaultErrorText(err);
+	/** @see iOpenToggle.close */
+	async close(): Promise<boolean> {
+		if (await iOpenToggle.close(this)) {
+			this.setRootMod('hidden', true);
+			this.emit('close');
+			return true;
+		}
+
+		return false;
 	}
 
-	/** @override */
-	protected async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
+	/** @see iLockPageScroll.lock */
+	@wait('loading')
+	lock(): Promise<void> {
+		return iLockPageScroll.lock(this, this.$refs.window);
+	}
+
+	/** @see iLockPageScroll.unlock */
+	unlock(): Promise<void> {
+		return iLockPageScroll.unlock(this);
+	}
+
+	/** @see iOpenToggle.onOpenedChange */
+	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/** @override */
-	protected async onTouchClose(e: MouseEvent): Promise<void> {
+	/** @see iOpenToggle.onKeyClose */
+	onKeyClose(e: KeyboardEvent): Promise<void> {
+		return iOpenToggle.onKeyClose(this, e);
+	}
+
+	/** @see iOpenToggle.onTouchClose */
+	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <Element>e.target;
 
@@ -197,6 +207,52 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 			e.preventDefault();
 			await this.close();
 		}
+	}
+
+	/**
+	 * Initializes the component placement within a document
+	 */
+	@hook('mounted')
+	protected initDocumentPlacement(): void {
+		document.body.insertAdjacentElement('beforeend', this.$el);
+		this.initRootStyles();
+	}
+
+	/**
+	 * Attaches dynamic window styles to the root node
+	 */
+	@wait('loading')
+	protected initRootStyles(): CanPromise<void> {
+		const
+			el = <HTMLElement>this.$el;
+
+		if (this.mods.position === 'absolute') {
+			Object.assign(el.style, {
+				top: pageYOffset.px
+			});
+		}
+	}
+
+	/** @see iOpenToggle.initCloseHelpers */
+	@hook('beforeDataCreate')
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		iOpenToggle.initCloseHelpers(this, events);
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iOpenToggle.initModEvents(this);
+		iVisible.initModEvents(this);
+		iLockPageScroll.initModEvents(this);
+	}
+
+	/**
+	 * Handler: error
+	 * @param err
+	 */
+	protected onError(err: RequestError): void {
+		return undefined;
 	}
 
 	/** @override */

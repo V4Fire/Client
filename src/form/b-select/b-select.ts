@@ -6,12 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import keyCodes from 'core/key-codes';
+
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
+
 import bInput, {
 
 	component,
@@ -22,28 +21,19 @@ import bInput, {
 	watch,
 	mod,
 	wait,
-	Value,
-	ComponentConverter,
-	CloseHelperEvents,
+
 	ModEvent,
-	SetModEvent
+	SetModEvent,
+	ModsDecl,
+	InitLoadOptions
 
 } from 'form/b-input/b-input';
 
+import { Option, NOption } from 'form/b-select/modules/interface';
+
 export * from 'form/b-input/b-input';
-export type FormValue = CanUndef<string>;
-
-export interface Option {
-	label: string;
-	inputLabel?: string;
-	value?: unknown;
-	selected?: boolean;
-	marked?: boolean;
-}
-
-export interface NOption extends Option {
-	value: string;
-}
+export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-select/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -58,16 +48,7 @@ let
 	}
 })
 
-export default class bSelect<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-// @ts-ignore
-> extends bInput<V, FV, D> {
-	/** @override */
-	@prop({default: (obj) => $C(obj).get('data') || obj || []})
-	readonly componentConverter?: ComponentConverter<Option[]>;
-
+export default class bSelect extends bInput implements iOpenToggle {
 	/**
 	 * Initial select options
 	 */
@@ -87,6 +68,12 @@ export default class bSelect<
 	readonly option?: string;
 
 	/**
+	 * Exterior of bScroll component
+	 */
+	@prop({type: String, required: false})
+	readonly scrollExterior?: string;
+
+	/**
 	 * If true, then .initLoad will be executed after .mods.opened === 'true'
 	 */
 	@prop(Boolean)
@@ -95,18 +82,18 @@ export default class bSelect<
 	/**
 	 * Selected value store
 	 */
-	@field<bSelect>((o) => o.link((val) => {
-		val = o.initDefaultValue(val);
+	@field<bSelect>((o) => o.sync.link((val) => {
+		val = o.resolveValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
 
-	selected?: FV;
+	selected?: this['FormValue'];
 
 	/**
 	 * Select options
 	 */
 	get options(): NOption[] {
-		return (<NOption[]>this.getField('optionsStore')).slice();
+		return (<NOption[]>this.field.get('optionsStore')).slice();
 	}
 
 	/**
@@ -114,7 +101,7 @@ export default class bSelect<
 	 * @param value
 	 */
 	set options(value: NOption[]) {
-		this.setField('optionsStore', value);
+		this.field.set('optionsStore', value);
 	}
 
 	/** @override */
@@ -122,9 +109,17 @@ export default class bSelect<
 		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		]
+	};
+
 	/** @override */
 	@field()
-	protected readonly blockValueField: string = 'selected';
+	protected readonly valueKey: string = 'selected';
 
 	/**
 	 * Select options store
@@ -134,7 +129,7 @@ export default class bSelect<
 			o.initComponentValues().catch(stderr);
 		},
 
-		init: (o) => o.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
+		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
 	})
 
 	protected optionsStore!: NOption[];
@@ -158,15 +153,18 @@ export default class bSelect<
 	};
 
 	/** @override */
-	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
-		try {
-			/// FIXME
-			if (this.initAfterOpen && !this.b.is.mobile) {
-				await this.async.wait(() => this.mods.opened !== 'false' || this.mods.focused === 'true');
-			}
+	initLoad(data?: unknown, params?: InitLoadOptions): CanPromise<void> {
+		/// FIXME
+		if (this.initAfterOpen && !this.browser.is.mobile) {
+			const
+				{mods} = this;
 
-			return super.initLoad(data, silent);
-		} catch {}
+			return this.async
+				.wait(() => mods.opened !== 'false' || mods.focused === 'true')
+				.then(() => super.initLoad(data, params));
+		}
+
+		return super.initLoad(data, params);
 	}
 
 	/** @override */
@@ -174,7 +172,7 @@ export default class bSelect<
 		await this.close();
 
 		if (this.value || this.selected) {
-			this.value = <V>'';
+			this.value = '';
 			await super.clear();
 			return true;
 		}
@@ -182,14 +180,14 @@ export default class bSelect<
 		return false;
 	}
 
-	/** @override */
+	/** @see iOpenToggle.open */
 	@mod('focused', true)
 	@wait('ready')
 	async open(): Promise<boolean> {
 		const
 			{select} = this.$refs;
 
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			select && select.focus();
 			this.emit('open');
 			return true;
@@ -200,7 +198,7 @@ export default class bSelect<
 				return true;
 			}
 
-			if (this.ifOnce('opened') < 2) {
+			if (this.opt.ifOnce('opened') < 2) {
 				// @ts-ignore
 				await Promise.all([this.nextTick(), this.waitRef('scroll')]);
 			}
@@ -227,9 +225,9 @@ export default class bSelect<
 		return false;
 	}
 
-	/** @override */
+	/** @see iOpenToggle.close */
 	async close(): Promise<boolean> {
-		if (await super.close()) {
+		if (await iOpenToggle.close(this)) {
 			if (this.selected) {
 				await this.onOptionSelected(this.selected);
 			}
@@ -240,10 +238,15 @@ export default class bSelect<
 		return false;
 	}
 
+	/** @see iOpenToggle.toggle */
+	toggle(): Promise<boolean> {
+		return iOpenToggle.toggle(this);
+	}
+
 	/** @override */
 	@wait('ready')
 	async focus(): Promise<boolean> {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			const
 				{select} = this.$refs;
 
@@ -261,7 +264,7 @@ export default class bSelect<
 	/** @override */
 	@wait('ready')
 	async blur(): Promise<boolean> {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			const
 				{select} = this.$refs;
 
@@ -274,6 +277,127 @@ export default class bSelect<
 		}
 
 		return super.blur();
+	}
+
+	/** @see iOpenToggle.onOpenedChange */
+	onOpenedChange(e: ModEvent | SetModEvent): void {
+		const
+			{async: $a} = this;
+
+		// opened == false or opened == null
+		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
+			if (openedSelect === this) {
+				openedSelect = null;
+			}
+
+			if (this.mods.focused !== 'true') {
+				$a.off({
+					group: 'navigation'
+				});
+			}
+
+			return;
+		}
+
+		$a.off({
+			group: 'navigation'
+		});
+
+		if (openedSelect) {
+			openedSelect.close().catch(() => undefined);
+		}
+
+		openedSelect = this;
+
+		$a.on(document, 'keydown', async (e) => {
+			if (!{ArrowUp: true, ArrowDown: true, Enter: true}[e.key]) {
+				return;
+			}
+
+			e.preventDefault();
+
+			const
+				{block: $b} = this,
+				selected = getSelected();
+
+			function getSelected(): CanUndef<HTMLElement> {
+				return $b.element('option', {selected: true});
+			}
+
+			switch (e.key) {
+				case 'Enter':
+					if (selected) {
+						await this.onOptionSelected();
+					}
+
+					break;
+
+				case 'ArrowUp':
+					if (this.selected) {
+						if (selected) {
+							if (selected.previousElementSibling) {
+								this.selected = (<HTMLElement>selected.previousElementSibling).dataset.value;
+								break;
+							}
+
+							await this.close();
+						}
+					}
+
+					break;
+
+				case 'ArrowDown': {
+					const
+						that = this;
+
+					// Use "that" instead of "this" because of TS generates invalid code
+					const select = async (el) => {
+						if (that.mods.opened !== 'true') {
+							await that.open();
+							el = getSelected();
+							if (that.selected) {
+								return;
+							}
+						}
+
+						if (el) {
+							if (!that.selected) {
+								that.selected = el.dataset.value;
+								return;
+							}
+
+							if (el.nextElementSibling) {
+								that.selected = el.nextElementSibling.dataset.value;
+								return;
+							}
+
+							that.selected = $b.element<HTMLElement>('option')!.dataset.value;
+						}
+					};
+
+					if (this.selected) {
+						if (selected) {
+							await select(selected);
+							break;
+						}
+					}
+
+					await select($b.element('option'));
+				}
+			}
+		}, {
+			group: 'navigation'
+		});
+	}
+
+	/** @see iOpenToggle.onKeyClose */
+	onKeyClose(e: KeyboardEvent): Promise<void> {
+		return iOpenToggle.onKeyClose(this, e);
+	}
+
+	/** @see iOpenToggle.onTouchClose */
+	onTouchClose(e: MouseEvent): Promise<void> {
+		return iOpenToggle.onTouchClose(this, e);
 	}
 
 	/** @override */
@@ -302,12 +426,23 @@ export default class bSelect<
 	 * Normalizes the specified options and returns it
 	 * @param options
 	 */
-	protected normalizeOptions(options: CanUndef<Option[]>): NOption[] {
-		return $C(options).to([]).map((el) => {
-			el.label = String(el.label);
-			el.value = el.value !== undefined ? String(el.value) : el.label;
-			return el;
-		});
+	protected normalizeOptions(options?: Option[]): NOption[] {
+		const
+			res = <NOption[]>[];
+
+		if (options) {
+			for (let i = 0; i < options.length; i++) {
+				const
+					el = options[i];
+
+				res.push({
+					label: String(el.label),
+					value: el.value !== undefined ? String(el.value) : el.label
+				});
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -316,17 +451,18 @@ export default class bSelect<
 	@hook('beforeDataCreate')
 	protected async initComponentValues(): Promise<void> {
 		const
-			data = this.$$data,
+			data = this.$fields,
 			labels = {},
 			values = {};
 
-		$C(data.optionsStore).forEach((el) => {
+		for (let o = <NOption[]>data.optionsStore, i = 0; i < o.length; i++) {
 			const
+				el = o[i],
 				val = el.value;
 
 			if (el.selected && !this.selected && !this.value) {
 				if (this.mods.focused !== 'true') {
-					this.syncLinks('valueProp', this.getOptionLabel(el));
+					this.sync.syncLinks('valueProp', this.getOptionLabel(el));
 				}
 
 				data.selected = val;
@@ -334,7 +470,7 @@ export default class bSelect<
 
 			values[val] = el;
 			labels[el.label] = el;
-		});
+		}
 
 		this.labels = labels;
 		this.values = values;
@@ -371,7 +507,7 @@ export default class bSelect<
 	 */
 	@watch('selected')
 	@wait('ready')
-	protected async syncSelectedStoreWatcher(selected: FV): Promise<void> {
+	protected async syncSelectedStoreWatcher(selected: this['FormValue']): Promise<void> {
 		const
 			{block: $b} = this,
 			prevSelected = $b.element('option', {selected: true});
@@ -381,7 +517,7 @@ export default class bSelect<
 		}
 
 		if (selected === undefined) {
-			this.value = <V>'';
+			this.value = '';
 			return;
 		}
 
@@ -393,10 +529,10 @@ export default class bSelect<
 		}
 
 		const
-			{mobile} = this.b.is;
+			{mobile} = this.browser.is;
 
 		if (this.mods.focused !== 'true' || mobile) {
-			this.value = <V>this.getOptionLabel(option);
+			this.value = this.getOptionLabel(option);
 		}
 
 		if (mobile) {
@@ -455,7 +591,7 @@ export default class bSelect<
 	 */
 	protected syncValue(selected?: string): void {
 		if (selected) {
-			this.selected = <FV>selected;
+			this.selected = selected;
 		}
 
 		if (!this.selected) {
@@ -466,7 +602,7 @@ export default class bSelect<
 			label = this.values[String(this.selected)];
 
 		if (label) {
-			this.value = <V>this.getOptionLabel(label);
+			this.value = this.getOptionLabel(label);
 		}
 	}
 
@@ -478,13 +614,14 @@ export default class bSelect<
 		return this.selected || this.value ? option.value === this.selected : Boolean(option.selected);
 	}
 
-	/** @override */
+	/** @see iOpenToggle.initCloseHelpers */
+	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			return;
 		}
 
-		super.initCloseHelpers(events);
+		iOpenToggle.initCloseHelpers(this, events);
 	}
 
 	/**
@@ -495,7 +632,7 @@ export default class bSelect<
 	 */
 	@watch({
 		field: '?$el:click',
-		wrapper: (o, cb) => o.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
+		wrapper: (o, cb) => o.dom.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
 	})
 
 	protected async onOptionSelected(value?: string): Promise<void> {
@@ -504,30 +641,37 @@ export default class bSelect<
 
 		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
 			this.syncValue(value);
-			this.emit('actionChange', this.selected);
+			this.emit('actionChange', this[this.valueKey]);
 		}
 
 		await this.close();
 	}
 
 	/** @override */
-	protected async onEdit(e: Event): Promise<void> {
-		this.valueBufferStore =
+	protected onEdit(e: Event): void {
+		this.valueBuffer =
 			(<HTMLInputElement>e.target).value || '';
 
 		this.async.setTimeout(() => {
 			const
 				rgxp = new RegExp(`^${RegExp.escape(this.value)}`, 'i');
 
-			if (
-				$C(this.labels).some((el, key) => {
-					if (rgxp.test(key)) {
-						this.selected = <FV>(<NonNullable<Option>>el).value;
-						return true;
-					}
-				})
+			let
+				some = false;
 
-			) {
+			for (let keys = Object.keys(this.labels), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = this.labels[key];
+
+				if (el && rgxp.test(key)) {
+					this.selected = String(el.value);
+					some = true;
+					break;
+				}
+			}
+
+			if (some) {
 				return this.open();
 			}
 
@@ -540,129 +684,16 @@ export default class bSelect<
 	}
 
 	/** @override */
-	protected async onBlockValueChange(newValue: V, oldValue: CanUndef<V>): Promise<void> {
+	protected async onValueChange(newValue: this['Value'], oldValue?: this['Value']): Promise<void> {
 		try {
-			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
-			super.onBlockValueChange(newValue, oldValue);
+			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onValueChange});
+			super.onValueChange(newValue, oldValue);
 		} catch {}
 	}
 
 	/** @override */
-	protected onOpenedChange(e: ModEvent | SetModEvent): void {
-		const
-			{async: $a} = this;
-
-		// opened == false or opened == null
-		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
-			if (openedSelect === this) {
-				openedSelect = null;
-			}
-
-			if (this.mods.focused !== 'true') {
-				$a.off({
-					group: 'navigation'
-				});
-			}
-
-			return;
-		}
-
-		$a.off({
-			group: 'navigation'
-		});
-
-		if (openedSelect) {
-			openedSelect.close().catch(() => undefined);
-		}
-
-		openedSelect = this;
-
-		$a.on(document, 'keydown', async (e) => {
-			if (!{[keyCodes.UP]: true, [keyCodes.DOWN]: true, [keyCodes.ENTER]: true}[e.keyCode]) {
-				return;
-			}
-
-			e.preventDefault();
-
-			const
-				{block: $b} = this,
-				selected = getSelected();
-
-			function getSelected(): CanUndef<HTMLElement> {
-				return $b.element('option', {selected: true});
-			}
-
-			switch (e.keyCode) {
-				case keyCodes.ENTER:
-					if (selected) {
-						await this.onOptionSelected();
-					}
-
-					break;
-
-				case keyCodes.UP:
-					if (this.selected) {
-						if (selected) {
-							if (selected.previousElementSibling) {
-								this.selected = <FV>(<HTMLElement>selected.previousElementSibling).dataset.value;
-								break;
-							}
-
-							await this.close();
-						}
-					}
-
-					break;
-
-				case keyCodes.DOWN: {
-					const
-						that = this;
-
-					// Use "that" instead of "this" because of TS generates invalid code
-					const select = async (el) => {
-						if (that.mods.opened !== 'true') {
-							await that.open();
-							el = getSelected();
-							if (that.selected) {
-								return;
-							}
-						}
-
-						if (el) {
-							if (!that.selected) {
-								that.selected = el.dataset.value;
-								return;
-							}
-
-							if (el.nextElementSibling) {
-								that.selected = el.nextElementSibling.dataset.value;
-								return;
-							}
-
-							that.selected = <FV>(<HTMLElement>$b.element('option')).dataset.value;
-						}
-					};
-
-					if (this.selected) {
-						if (selected) {
-							await select(selected);
-							break;
-						}
-					}
-
-					await select($b.element('option'));
-				}
-			}
-		}, {
-			group: 'navigation'
-		});
-	}
-
-	/** @override */
 	protected created(): void {
-		super.created();
-
-		if (!this.b.is.mobile) {
+		if (!this.browser.is.mobile) {
 			this.on('asyncRender', async () => {
 				try {
 					await (await this.waitRef<bScrollInline>('scroll')).initScroll();

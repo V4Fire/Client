@@ -9,32 +9,26 @@
 @import "super/i-input/i-input.styl"
 
 $p = {
-	width: 1.2em
+	accessHelpers: true
+	visibleHelpers: true
 }
 
 b-checkbox extends i-input
-	display inline-block
+	contain paint
+	position relative
 
 	&__wrapper
 		display flex
-		align-items center
 		cursor pointer
 
-	&__box
+	&__checkbox
 		display block
-		width $p.width
-		height @width
 		cursor pointer
 
-		&:after
-			content ""
-			position absolute
-			display none
+	&__label
+		user-select none
 
-	&_checked_true &__box:after
-		display block
-		left ($p.width / 2.5)em
-		top ($p.width / 6)em
-		width ($p.width / 6)em
-		height ($p.width / 2)em
-		transform rotate(45deg)
+	&__hidden-input
+		position absolute
+		zIndex(underall)
+		opacity 0

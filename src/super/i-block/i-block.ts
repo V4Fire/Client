@@ -6,150 +6,189 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/README.md]]
+ * @packageDocumentation
+ */
+
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
-
 import symbolGenerator from 'core/symbol';
-import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
+import { deprecated } from 'core/functools';
+
+import SyncPromise from 'core/promise/sync';
+import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
-import { toQueryString } from 'core/url';
-import { ExperimentsSet } from 'core/abt/interface';
-
-import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import 'super/i-block/directives';
-import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
-import Block, { ModEvent } from 'super/i-block/modules/block';
-import Cache from 'super/i-block/modules/cache';
+//#if runtime has core/helpers
+import * as helpers from 'core/helpers';
+//#endif
 
-import { statuses } from 'super/i-block/modules/const';
-import { icons, iconsMap } from 'super/i-block/modules/icons';
+//#if runtime has core/browser
+import * as browser from 'core/browser';
+//#endif
 
-import {
+import * as presets from 'presets';
 
-	Classes,
-	WatchObjectFields,
-	SizeTo,
-	SyncLinkCache,
-	ModsTable,
-	ModsNTable,
-	Statuses,
-	LinkWrapper,
-	WaitStatusOpts,
-	ParentMessage,
-	AsyncTaskId,
-	AsyncTaskObjectId,
-	AsyncTaskSimpleId,
-	AsyncQueueType,
-	AsyncWatchOpts,
-	RemoteEvent,
-	Event,
-	ConverterCallType,
-	Stage,
-	BindModCb
+//#if runtime has bRouter
+import bRouter from 'base/b-router/b-router';
+//#endif
 
-} from 'super/i-block/modules/interface';
-
+//#if runtime has iStaticPage
 import iStaticPage from 'super/i-static-page/i-static-page';
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
-import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
+//#endif
+
 import {
 
 	component,
-	hook,
-	execRenderObject,
-	patchVNode,
-	runHook,
-	globalEvent,
+	PARENT,
+
+	globalEmitter,
 	customWatcherRgxp,
+	bindRemoteWatchers,
 
-	ModVal,
-	ModsDecl,
-
+	WatchPath,
+	RawWatchHandler,
 	ComponentInterface,
-	ComponentElement,
-	ComponentMeta,
-	MethodWatchers,
+	UnsafeGetter,
 
-	RenderObject,
-	RenderContext,
-	VNode,
-
-	Hooks,
-	PARENT
+	VNode
 
 } from 'core/component';
 
-import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
-import { queue, backQueue, restart, deferRestart } from 'core/render';
-import { delegate } from 'core/dom';
+import 'super/i-block/directives';
+import { statuses } from 'super/i-block/const';
 
-import * as helpers from 'core/helpers';
-import * as browser from 'core/browser';
+import Cache from 'super/i-block/modules/cache';
+import Opt from 'super/i-block/modules/opt';
+import Lazy from 'super/i-block/modules/lazy';
 
-export * from 'core/component';
-export * from 'super/i-block/modules/interface';
-export * from 'super/i-block/modules/daemons';
-export * from 'super/i-block/modules/block';
+import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+import Analytics from 'super/i-block/modules/analytics';
 
-export { statuses, Cache };
-export {
+import DOM from 'super/i-block/modules/dom';
+import VDOM from 'super/i-block/modules/vdom';
+
+import Lfc from 'super/i-block/modules/lfc';
+import AsyncRender from 'super/i-block/modules/async-render';
+import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
+
+import Block from 'super/i-block/modules/block';
+import Field from 'super/i-block/modules/field';
+
+import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
+import State, { ConverterCallType } from 'super/i-block/modules/state';
+import Storage from 'super/i-block/modules/storage';
+
+import {
+
+	wrapEventEmitter,
+	EventEmitterWrapper,
+	ReadonlyEventEmitterWrapper
+
+} from 'super/i-block/modules/event-emitter';
+
+import { initGlobalListeners, initRemoteWatchers } from 'super/i-block/modules/listeners';
+import { readyStatuses, activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/activation';
+
+import {
+
+	Stage,
+	ComponentStatus,
+
+	ComponentStatuses,
+	ComponentEvent,
+
+	InitLoadOptions,
+	InitLoadCb,
+
+	ParentMessage,
+	UnsafeIBlock
+
+} from 'super/i-block/interface';
+
+import {
+
+	mergeMods,
+	initMods,
+	getWatchableMods,
+
+	ModVal,
+	ModsDecl,
+	ModsTable,
+	ModsNTable
+
+} from 'super/i-block/modules/mods';
+
+import {
 
 	p,
+
 	prop,
 	field,
 	system,
+	computed,
+
 	watch,
+	hook,
 	wait,
-	bindModTo,
-	mod,
-	removeMod,
-	elMod,
-	removeElMod
+
+	WaitDecoratorOptions,
+	DecoratorMethodWatcher
 
 } from 'super/i-block/modules/decorators';
 
-export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
-export interface FieldGetter<R = unknown, D = unknown> {
-	(key: string, data: NonNullable<D>): R;
-}
+export * from 'core/component';
+export * from 'super/i-block/const';
+export * from 'super/i-block/interface';
 
-export interface RouteParams {
-	params?: Dictionary;
-	query?: Dictionary;
-}
+export * from 'super/i-block/modules/block';
+export * from 'super/i-block/modules/field';
+export * from 'super/i-block/modules/state';
+
+export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/event-emitter';
+
+export * from 'super/i-block/modules/sync';
+export * from 'super/i-block/modules/async-render';
+export * from 'super/i-block/modules/decorators';
+
+export { default as Friend } from 'super/i-block/modules/friend';
+
+export {
+
+	Cache,
+	Classes,
+
+	ModVal,
+	ModsDecl,
+	ModsTable,
+	ModsNTable
+
+};
 
 export const
-	$$ = symbolGenerator(),
-	modsCache = Object.createDict<ModsNTable>(),
-	literalCache = Object.createDict();
+	$$ = symbolGenerator();
 
-const classesCache = new Cache<'base' | 'blocks' | 'els', ReadonlyArray<string> | Readonly<Dictionary<string>>>([
-	'base',
-	'blocks',
-	'els'
-]);
-
+/**
+ * Superclass for all components
+ */
 @component()
-export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
-	/**
-	 * Returns a link for the specified icon
-	 * @param iconId
-	 */
-	static getIconLink(iconId: string): string {
-		if (!(iconId in iconsMap)) {
-			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
-		}
+export default abstract class iBlock extends ComponentInterface {
+	/** @override */
+	readonly Component!: iBlock;
 
-		const q = location.search || (location.href.slice(-1) === '?' ? '?' : '');
-		return `${location.pathname + q}#${icons(iconsMap[iconId]).id}`;
-	}
+	/** @override */
+	readonly Root!: iStaticPage;
+
+	/** @override */
+	// @ts-ignore
+	readonly $root!: this['Root'];
 
 	/**
-	 * Component unique id
+	 * Component unique identifier
 	 */
 	@system({
 		atom: true,
@@ -160,110 +199,48 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	readonly componentId!: string;
 
 	/**
-	 * If true, then if the component is functional it won't be destroyed after removal from DOM
-	 */
-	@prop(Boolean)
-	readonly keepAlive: boolean = false;
-
-	/**
-	 * If true, then will be forcing activation hooks for all components instead of non functional components
-	 */
-	@prop(Boolean)
-	readonly forceActivation: boolean = false;
-
-	/**
-	 * If true, then will be forcing initial activation hooks
-	 * (only for functional components)
-	 */
-	@prop(Boolean)
-	readonly forceInitialActivation: boolean = false;
-
-	/**
-	 * Link to i18n function
-	 */
-	@prop(Function)
-	readonly i18n: typeof i18n = defaultI18n;
-
-	/**
-	 * Component unique name
+	 * Component unique name.
+	 * It's used to enable synchronization of component data with different storages: local, router, etc.
 	 */
 	@prop({type: String, required: false})
 	readonly globalName?: string;
 
 	/**
-	 * If true, then the component state will be synchronized with the router after initializing
+	 * Component render cache key.
+	 * It's used to cache the component vnode.
 	 */
-	@prop(Boolean)
-	readonly syncRouterStoreOnInit: boolean = false;
+	@prop({required: false})
+	readonly renderKey?: string;
 
 	/**
-	 * Link to the remote state object
-	 */
-	get remoteState(): Dictionary {
-		return this.$root.remoteState;
-	}
-
-	/**
-	 * Component initialize status
-	 */
-	@p({cache: false})
-	get componentStatus(): Statuses {
-		return this.shadowComponentStatusStore || <NonNullable<Statuses>>this.getField('componentStatusStore');
-	}
-
-	/**
-	 * Sets a new component initialize status
-	 * @param value
-	 */
-	set componentStatus(value: Statuses) {
-		const
-			old = this.componentStatus;
-
-		if (old === value && value !== 'beforeReady') {
-			return;
-		}
-
-		if ((<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value]) {
-			this.shadowComponentStatusStore = value;
-
-		} else {
-			this.shadowComponentStatusStore = undefined;
-			this.setField('componentStatusStore', value);
-		}
-
-		this.localEvent.emit(`component.status.${value}`, value);
-		this.emit(`status-${value}`, value);
-	}
-
-	/**
-	 * Initial component modifiers
-	 */
-	@prop(Object)
-	readonly modsProp: ModsTable = {};
-
-	/**
-	 * Initial component stage
+	 * Initial component stage value.
+	 *
+	 * The stage property can be used to mark different states of the component.
+	 * For example, we have a component implements a form of image uploading,
+	 * and we have two variants of the form: upload by a link or upload from a computer.
+	 *
+	 * We can create two stage values: 'link' and 'file' to separate the component template by two variant of a markup
+	 * depending on the stage value.
 	 */
 	@prop({type: [String, Number], required: false})
 	readonly stageProp?: Stage;
 
 	/**
-	 * Component render weight
+	 * Component stage value
+	 * @see [[iBlock.stageProp]]
 	 */
-	@prop({type: Number, required: false})
-	readonly weight?: number;
-
-	/**
-	 * Component stage store
-	 */
-	@p({cache: false})
+	@computed({replace: false})
 	get stage(): CanUndef<Stage> {
-		return this.getField('stageStore');
+		return this.field.get('stageStore');
 	}
 
 	/**
-	 * Sets a new component stage
-	 * @emits stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)
+	 * Sets a new component stage value.
+	 * Also, by default, clears all async listeners from the group of `stage.${oldGroup}`.
+	 *
+	 * @see [[iBlock.stageProp]]
+	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
+	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 */
 	set stage(value: CanUndef<Stage>) {
 		const
@@ -273,57 +250,328 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		this.setField('stageStore', value);
+		this.async.clearAll({group: this.stageGroup});
+		this.field.set('stageStore', value);
+
+		if (value != null) {
+			this.emit(`stage:${value}`, value, oldValue);
+		}
+
 		this.emit('stageChange', value, oldValue);
 	}
 
 	/**
-	 * Group name for the current stage
+	 * Group name of the current stage
 	 */
+	@computed({replace: false})
 	get stageGroup(): string {
 		return `stage.${this.stage}`;
 	}
 
 	/**
-	 * Dispatching mode
+	 * Initial component modifiers.
+	 * Modifiers represent the special API to bind component state properties directly with CSS classes
+	 * without needless of component re-rendering.
+	 */
+	@prop({type: Object, required: false})
+	readonly modsProp?: ModsTable;
+
+	/**
+	 * Component modifiers
+	 * @see [[iBlock.modsProp]]
+	 */
+	@system({
+		replace: false,
+		merge: mergeMods,
+		init: initMods
+	})
+
+	readonly mods!: ModsNTable;
+
+	/**
+	 * If true, then the component won't be destroyed after removal from the DOM
+	 * (only for functional components)
 	 */
 	@prop(Boolean)
-	readonly dispatching: boolean = false;
+	readonly keepAlive: boolean = false;
 
 	/**
-	 * If true, then all dispatching events will be emits as self component events
-	 */
-	@prop(Boolean)
-	readonly selfDispatching: boolean = false;
-
-	/**
-	 * If true, then the component marked as a remote provider
-	 */
-	@prop(Boolean)
-	readonly remoteProvider: boolean = false;
-
-	/**
-	 * Remote watchers table
-	 */
-	@prop(Object)
-	readonly watchProp: Dictionary<MethodWatchers> = {};
-
-	/**
-	 * If true, then the current component is activated
+	 * If true, then the component is activated.
+	 * The deactivated component won't load data from providers on initializing.
 	 */
 	@prop(Boolean)
 	readonly activatedProp: boolean = true;
 
 	/**
-	 * True if the current component is activated
+	 * If true, then is enabled forcing of activation handlers (only for functional components).
+	 * By default, functional components don't execute activation handlers: router/storage synchronization, etc.
+	 */
+	@prop(Boolean)
+	readonly forceActivation: boolean = false;
+
+	/**
+	 * If true, then the component will try to reload data on re-activation.
+	 * This parameter can be useful if you are using keep-alive directive within your template.
+	 * For example, you have a page within keep-alive, and after backing to this page the component will be forcely drawn
+	 * from a keep-alive cache, but after this page will try to update data in silent.
+	 */
+	@prop(Boolean)
+	readonly reloadOnActivation: boolean = false;
+
+	/**
+	 * If true, then the component is marked as a remote provider.
+	 * It means, that a parent component will wait the loading of the current component.
+	 */
+	@prop(Boolean)
+	readonly remoteProvider: boolean = false;
+
+	/**
+	 * If true, then the component will listen the special event of its parent.
+	 * It's used to provide a common functionality of proxy calls from the parent.
+	 */
+	@prop(Boolean)
+	readonly proxyCall: boolean = false;
+
+	/**
+	 * If true, then the component state will be synchronized with the router after initializing.
+	 * For example, you have a component uses "syncRouterState" method to create two-way binding with the router.
+	 *
+	 * ```typescript
+	 * @component()
+	 * class Foo {
+	 *   @field()
+	 *   stage: string = 'defaultStage';
+	 *
+	 *   syncRouterState(data?: Dictionary) {
+	 *     // This notation means that if there is a value within "route.query"
+	 *     // it will be mapped to the component as "stage" field.
+	 *     // If a route was changed, the mapping repeat.
+	 *     // Also if "stage" field of the component was changed,
+	 *     // it will be mapped to the router as "stage" query parameter by using "router.push".
+	 *     return {stage: data?.stage || this.stage};
+	 *   }
+	 * }
+	 * ```
+	 *
+	 * But, if in some cases we don't have "stage" within "route.query", and the component have the default value,
+	 * we trap in a situation where exists route, which wasn't synchronized with the component, and
+	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match our expectations.
+	 * But if we toggle "syncRouterStoreOnInit" to true, the component will forcibly map own state to
+	 * the router after initializing.
+	 */
+	@prop(Boolean)
+	readonly syncRouterStoreOnInit: boolean = false;
+
+	/**
+	 * Map of remote component watchers.
+	 * The usage of this mechanism is similar to the "@watch" decorator:
+	 *   *) As a key we declare a name of a component method that we want to call;
+	 *   *) As a value we declare a path to a property/event we want to watch/listen.
+	 *      Also, the method can take additional parameters of watching.
+	 *      Mind, the properties/events is taken from a component contents the current.
+	 *
+	 * @see [[iBlock.watch]]
+	 * @example
+	 * ```js
+	 * // We have two components: A and B.
+	 * // We want to declare that the component B must calls own "reload" method on an event from the component A.
+	 *
+	 * {
+	 *   // If we want to listen events, we should use the ":" syntax.
+	 *   // Also, we can provide a different event emitter as "link:",
+	 *   // for instance, "document:scroll"
+	 *   reload: ':foo'
+	 * }
+	 * ```
+	 *
+	 * @example
+	 * ```js
+	 * // We can attach multiple watchers for one method
+	 *
+	 * {
+	 *   reload: [
+	 *     // Listens "foo" events from A
+	 *     ':foo',
+	 *
+	 *     // Watches for changes of the "A.bla" property
+	 *     'bla',
+	 *
+	 *     // Listens window.document scroll event,
+	 *     // doesn't provide event arguments to "reload"
+	 *     {
+	 *       path: 'document:scroll',
+	 *       provideArgs: false
+	 *     }
+	 *   ]
+	 * }
+	 * ```
+	 */
+	@prop({type: Object, required: false})
+	readonly watchProp?: Dictionary<DecoratorMethodWatcher>;
+
+	/**
+	 * If true, then is enabled a dispatching mode of component events.
+	 *
+	 * It means that all component events will bubble to a parent component:
+	 * if the parent also has this property in true, then the events will bubble to the next (from the hierarchy)
+	 * parent component.
+	 *
+	 * All dispatching events have special prefixes to avoid collisions with events from another components,
+	 * for example: bButton "click" will bubble as "b-button::click".
+	 * Or if the component has globalName parameter, it will additionally bubble as `${globalName}::click`.
+	 */
+	@prop(Boolean)
+	readonly dispatching: boolean = false;
+
+	/**
+	 * If true, then all events that are bubbled from child components
+	 * will be emitted as component self events without any prefixes
+	 */
+	@prop(Boolean)
+	readonly selfDispatching: boolean = false;
+
+	/**
+	 * Additional component parameters.
+	 * This parameter can be useful if you need to provide some unstructured additional parameters to a component.
+	 */
+	@prop({type: Object, required: false})
+	readonly p?: Dictionary;
+
+	/**
+	 * Additional classes for component elements.
+	 * It can be useful, if you need to attach some extra classes to internal component elements.
+	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
+	 *
+	 * @example
+	 * // Key names are tied with component elements,
+	 * // and values contain a CSS class or list of classes we want to add
+	 *
+	 * {
+	 *   foo: 'bla',
+	 *   bar: ['bla', 'baz']
+	 * }
+	 */
+	@prop({type: Object, required: false})
+	readonly classes?: Dictionary<CanArray<string>>;
+
+	/**
+	 * Additional styles for component elements.
+	 * It can be useful, if you need to attach some extra styles to internal component elements.
+	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
+	 *
+	 * @example
+	 * // Key names are tied with component elements,
+	 * // and values contains a CSS style string, a style object or list of style strings
+	 *
+	 * {
+	 *   foo: 'color: red',
+	 *   bar: {color: 'blue'},
+	 *   baz: ['color: red', 'background: green']
+	 * }
+	 */
+	@prop({type: Object, required: false})
+	readonly styles?: Styles;
+
+	/**
+	 * Link to i18n function, that will be used to localize of string literals
+	 */
+	@prop(Function)
+	readonly i18n: typeof i18n = defaultI18n;
+
+	/**
+	 * Link to a remote state object.
+	 *
+	 * The remote state object is a special watchable object that provides some parameters
+	 * that can't be initialized within a component directly. You can modify this object outside from components,
+	 * but remember, that these mutations may force re-render of all components.
+	 */
+	@computed({cache: true, dependencies: ['r.remoteState']})
+	get remoteState(): Dictionary {
+		return this.r.remoteState;
+	}
+
+	/**
+	 * Component status.
+	 * This parameter is pretty similar to "hook" parameter.
+	 * But, the hook represents a component status relative to its MVVM instance: created, mounted, destroyed, etc.
+	 * Opposite to "hook", "componentStatus" represents a logical component status:
+	 *
+	 *   *) unloaded - a component was just created without any initializing:
+	 *      this status can intersect with some hooks, like beforeCreate or created
+	 *
+	 *   *) loading - a component starts to load data from own providers:
+	 *      this status can intersect with some hooks, like created or mounted.
+	 *      If the component was mounted with this status, you can show by using UI that data is loading.
+	 *
+	 *   *) beforeReady - a component was fully loaded and starts to prepare to render:
+	 *      this status can intersect with some hooks like created or mounted
+	 *
+	 *   *) ready - a component was fully loaded and rendered:
+	 *      this status can intersect with "mounted" hook
+	 *
+	 *   *) inactive - a component is frozen by keep-alive mechanism or special input property:
+	 *      this status can intersect with "deactivated" hook
+	 *
+	 *   *) destroyed - a component was destroyed:
+	 *      this status can intersect with some hooks, like beforeDestroy or destroyed
+	 */
+	@computed({replace: false})
+	get componentStatus(): ComponentStatus {
+		if (this.isFlyweight) {
+			return 'ready';
+		}
+
+		return this.shadowComponentStatusStore || this.field.get<ComponentStatus>('componentStatusStore')!;
+	}
+
+	/**
+	 * Sets a new component status.
+	 * Notice, not all statuses emit re-render of the component: unloaded, inactive, destroyed will emit only an event.
+	 *
+	 * @param value
+	 * @emits `componentStatus:{$value}(value: Statuses, oldValue: Statuses)`
+	 * @emits `componentStatusChange(value: Statuses, oldValue: Statuses)`
+	 */
+	set componentStatus(value: ComponentStatus) {
+		const
+			oldValue = this.componentStatus;
+
+		if (oldValue === value && value !== 'beforeReady') {
+			return;
+		}
+
+		const
+			isShadowStatus = (<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
+
+		if (isShadowStatus || value === 'ready' && oldValue === 'beforeReady') {
+			this.shadowComponentStatusStore = value;
+
+		} else {
+			this.shadowComponentStatusStore = undefined;
+			this.field.set('componentStatusStore', value);
+		}
+
+		if (!this.isFlyweight) {
+			this.setMod('status', value);
+
+			// @deprecated
+			this.emit(`status-${value}`, value);
+			this.emit(`componentStatus:${value}`, value, oldValue);
+			this.emit('componentStatusChange', value, oldValue);
+		}
+	}
+
+	/**
+	 * True if the component is already activated
+	 * @see [[iBlock.activatedProp]]
 	 */
 	@system((o) => {
-		o.execCbAtTheRightTime(() => {
-			if (o.isFunctional && !o.getField('forceSelfActivation')) {
+		o.lfc.execCbAtTheRightTime(() => {
+			if (o.isFunctional && !o.field.get('forceActivation')) {
 				return;
 			}
 
-			if (o.getField('isActivated')) {
+			if (o.field.get('isActivated')) {
 				o.activate(true);
 
 			} else {
@@ -331,7 +579,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		});
 
-		return o.link('activatedProp', (val) => {
+		return o.sync.link('activatedProp', (val) => {
 			if (o.hook !== 'beforeDataCreate') {
 				o[val ? 'activate' : 'deactivate']();
 			}
@@ -343,484 +591,299 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	isActivated!: boolean;
 
 	/**
-	 * If true, then the component will be reinitialized after an activated hook
+	 * True if the component was in ready status at least once
 	 */
-	@prop(Boolean)
-	readonly needReInit: boolean = false;
+	@system()
+	isReadyOnce: boolean = false;
 
 	/**
-	 * Additional classes for component elements
+	 * Link to the component root
 	 */
-	@prop(Object)
-	readonly classes: Classes = {};
-
-	/**
-	 * Advanced component parameters
-	 */
-	@prop(Object)
-	readonly pProp: Dictionary = {};
-
-	/**
-	 * Returns the internal advanced parameters store value
-	 */
-	get p(): Dictionary {
-		return <NonNullable<Dictionary>>this.getField('pStore');
-	}
-
-	/**
-	 * Sets the internal advanced parameters store value
-	 */
-	set p(value: Dictionary) {
-		this.setField('pStore', value);
-	}
-
-	/**
-	 * Link to $root
-	 */
-	get r(): iStaticPage | any {
+	get r(): this['$root'] {
 		return this.$root;
 	}
 
 	/**
-	 * Link to the root router
+	 * Link to an application router
 	 */
-	@p({cache: false})
-	get router(): CanUndef<bRouter | any> {
-		return this.getField('routerStore', this.$root);
+	get router(): bRouter {
+		return <bRouter>this.field.get('routerStore', this.r);
 	}
 
 	/**
-	 * Link to the root route object
+	 * Link to an application route object
 	 */
-	@p({cache: false})
-	get route(): CanUndef<CurrentPage | any> {
-		return this.getField('route', this.$root);
+	get route(): CanUndef<this['r']['CurrentPage']> {
+		return this.field.get('route', this.r);
 	}
 
 	/**
-	 * True if the current component is ready (componentStatus == ready)
+	 * True if the current component is ready
+	 * (componentStatus == ready)
 	 */
+	@computed({replace: false})
 	get isReady(): boolean {
-		return this.componentStatus === 'ready';
+		return Boolean(readyStatuses[this.componentStatus]);
 	}
 
 	/**
 	 * True if the current component is functional
 	 */
+	@computed({replace: false})
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
 	}
 
 	/**
-	 * Base component modifiers
+	 * Base component modifiers.
+	 * These modifiers are automatically provided to child components.
+	 * For example, you have a component uses another component within own template,
+	 * and you specify to the outer component some theme modifier.
+	 * This modifier will recursively provide to all child components.
 	 */
-	get baseMods(): Readonly<ModsNTable> {
+	@computed({replace: false})
+	get baseMods(): CanUndef<Readonly<ModsNTable>> {
 		const
 			m = this.mods;
 
-		return Object.freeze({
-			theme: m.theme,
-			size: m.size
-		});
+		let
+			res;
+
+		if (m.theme) {
+			res = {theme: m.theme};
+		}
+
+		return res && Object.freeze(res);
 	}
 
 	/**
-	 * Component modifiers
+	 * API for analytic engines
 	 */
 	@system({
-		merge: (ctx, oldCtx, key, link) => {
-			if (!link) {
-				return;
-			}
-
-			const
-				cache = ctx.syncLinkCache[link];
-
-			if (!cache) {
-				return;
-			}
-
-			const
-				l = cache[key];
-
-			if (!l) {
-				return;
-			}
-
-			const getFullModsProp = (o) => {
-				const
-					declMods = o.meta.component.mods,
-					res = {...o.$props[link]};
-
-				for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i];
-
-					if (key in declMods) {
-						const
-							attrVal = attrs[key];
-
-						if (attrVal != null) {
-							res[key] = attrVal;
-						}
-					}
-				}
-
-				return res;
-			};
-
-			const
-				modsProp = getFullModsProp(ctx),
-				mods = {...oldCtx.mods};
-
-			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i];
-
-				if (ctx.syncModCache[key]) {
-					delete mods[key];
-				}
-			}
-
-			if (Object.fastCompare(modsProp, getFullModsProp(oldCtx))) {
-				l.sync(mods);
-
-			} else {
-				// tslint:disable-next-line:prefer-object-spread
-				l.sync(Object.assign(mods, modsProp));
-			}
-		},
-
-		init: (o) => {
-			const
-				declMods = o.meta.component.mods,
-				attrMods = <string[][]>[],
-				modVal = (val) => val != null ? String(val) : val;
-
-			for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i];
-
-				if (key in declMods) {
-					const attrVal = attrs[key];
-					o.watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
-
-					if (attrVal == null) {
-						continue;
-					}
-
-					attrMods.push([key, attrVal]);
-				}
-			}
-
-			return o.link((val) => {
-				const
-					declMods = o.meta.component.mods,
-					// tslint:disable-next-line:prefer-object-spread
-					mods = Object.assign(o.mods || {...declMods}, val),
-					{experiments} = o.$root.remoteState;
-
-				for (let i = 0; i < attrMods.length; i++) {
-					const [key, val] = attrMods[i];
-					mods[key] = val;
-				}
-
-				if (Object.isArray(experiments)) {
-					for (let i = 0; i < experiments.length; i++) {
-						const
-							el = (<ExperimentsSet>experiments)[i];
-
-						if (el.meta && el.meta.mods) {
-							Object.assign(mods, el.meta.mods);
-						}
-					}
-				}
-
-				for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						val = modVal(mods[key]);
-
-					mods[key] = val;
-					o.hook !== 'beforeDataCreate' && o.setMod(key, val);
-				}
-
-				return mods;
-			});
-		}
+		atom: true,
+		unique: true,
+		init: (ctx) => new Analytics(ctx)
 	})
 
-	readonly mods!: ModsNTable;
+	readonly analytics!: Analytics;
 
 	/**
-	 * Parent link
+	 * API for component value providers.
+	 * This property gives a bunch of methods to provide component classes/styles to another component, etc.
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new Provide(ctx)
+	})
+
+	readonly provide!: Provide;
+
+	/**
+	 * API for the component life cycle
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new Lfc(ctx)
+	})
+
+	readonly lfc!: Lfc;
+
+	/**
+	 * API for component field accessors.
+	 * This property provides a bunch of methods to safety access to a component property.
+	 *
+	 * @example
+	 * ```js
+	 * this.field.get('foo.bar.bla')
+	 * ```
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new Field(ctx)
+	})
+
+	readonly field!: Field;
+
+	/**
+	 * API to synchronize component properties.
+	 * This property provides a bunch of method to organize a "link" from one component property to another.
+	 *
+	 * @example
+	 * ```typescript
+	 * @component()
+	 * class Foo {
+	 *   @prop()
+	 *   blaProp: string;
+	 *
+	 *   @field((ctx) => ctx.sync.link('blaProp'))
+	 *   bla: string;
+	 * }
+	 * ```
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new Sync(ctx)
+	})
+
+	readonly sync!: Sync;
+
+	/**
+	 * API to render component template chunks asynchronously
+	 *
+	 * @example
+	 * ```
+	 * < .bla v-for = el in asyncRender.iterate(veryBigList, 10)
+	 *   {{ el }}
+	 * ```
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		functional: false,
+		init: (ctx) => new AsyncRender(ctx)
+	})
+
+	readonly asyncRender!: AsyncRender;
+
+	/**
+	 * API to work with a VDOM tree
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new VDOM(ctx)
+	})
+
+	readonly vdom!: VDOM;
+
+	/**
+	 * API to unsafe invoke of internal properties of the component.
+	 * It can be useful to create friendly classes for a component.
+	 */
+	@p({replace: true})
+	get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
+		return <any>this;
+	}
+
+	/**
+	 * The special link to a parent component.
+	 * This parameter is used with static declaration of modifiers to refer parent modifiers.
+	 *
+	 * @example
+	 * ```js
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   static mods = {
+	 *     theme: [
+	 *       ['light']
+	 *     ]
+	 *   };
+	 * }
+	 *
+	 * @component()
+	 * class Bar extends Foo {
+	 *   static mods = {
+	 *     theme: [
+	 *       Bar.PARENT,
+	 *       ['dark']
+	 *     ]
+	 *   };
+	 * }
+	 * ```
 	 */
 	static readonly PARENT: object = PARENT;
 
 	/**
-	 * Component shadow statuses
+	 * Map of component shadow statuses.
+	 * These statuses don't emit re-render of a component.
+	 *
+	 * @see [[iBlock.componentStatus]]
 	 */
 	static readonly shadowComponentStatuses: ComponentStatuses = {
-		beforeReady: true,
 		inactive: true,
 		destroyed: true,
 		unloaded: true
 	};
 
 	/**
-	 * Component modifiers
+	 * Static declaration of component modifiers.
+	 * This declaration helps to declare the default value of a modifier: just wrap the value with square brackets.
+	 * Also, all modifiers that are declared can be provided to a component not only by using "modsProp", but as an own
+	 * prop value. In addition to previous benefits, if you provide all available values of modifiers to the declaration,
+	 * it can be useful for runtime reflection.
+	 *
+	 * @example
+	 * ```js
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   static mods = {
+	 *     theme: [
+	 *       'dark',
+	 *       ['light']
+	 *     ]
+	 *   };
+	 * }
+	 * ```
+	 *
+	 * ```
+	 * < foo :theme = 'dark'
+	 * ```
+	 *
+	 * @see [[iBlock.modsProp]]
 	 */
 	static readonly mods: ModsDecl = {
-		theme: [
-			'default'
+		status: [
+			['unloaded'],
+			'loading',
+			'beforeReady',
+			'ready',
+			'inactive',
+			'destroyed'
 		],
 
-		size: [
-			'xxs',
-			'xs',
-			's',
-			['m'],
-			'xl',
-			'xxl'
-		],
-
-		progress: [
+		diff: [
 			'true',
 			'false'
 		],
 
-		disabled: [
-			'true',
-			'false'
-		],
-
-		focused: [
-			'true',
-			'false'
-		],
-
-		hidden: [
-			'true',
-			'false'
-		],
-
-		width: [
-			'normal',
-			'full',
-			'auto'
-		]
+		theme: [],
+		exterior: []
 	};
 
 	/**
-	 * Size converter
-	 */
-	static sizeTo: SizeTo = {
-		gt: {
-			xxl: 'xxl',
-			xl: 'xxl',
-			l: 'xl',
-			m: 'l',
-			undefined: 'l',
-			s: 'm',
-			xs: 's',
-			xxs: 'xs'
-		},
-
-		lt: {
-			xxl: 'xl',
-			xl: 'l',
-			l: 'm',
-			m: 's',
-			undefined: 's',
-			s: 'xs',
-			xs: 'xxs',
-			xxs: 'xxs'
-		}
-	};
-
-	/**
-	 * Component daemons
+	 * Map of static component daemons.
+	 * Daemon is a special object that can watch component properties,
+	 * listen component events/hooks and do some useful payload, like sending analytic or performance events.
 	 */
 	static readonly daemons: DaemonsDict = {};
 
 	/**
-	 * Wrapper for $refs
+	 * API for daemons
 	 */
-	@p({cache: false})
-	protected get refs(): Dictionary<ComponentElement<iBlock> | Element> {
-		const
-			obj = this.$refs,
-			res = {};
+	@system({
+		unique: true,
+		replace: true,
+		init: (ctx) => new Daemons(ctx)
+	})
 
-		if (obj) {
-			for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = obj[key];
-
-				if (!el) {
-					continue;
-				}
-
-				const component = (<ComponentElement>el).component;
-				res[key] = component && (<iBlock>component).$el === el ? component : <Element>el;
-			}
-		}
-
-		return res;
-	}
+	protected readonly daemons!: Daemons;
 
 	/**
-	 * Alias for iBlock.sizeTo.gt
-	 */
-	protected get gt(): Dictionary<string> {
-		return (<typeof iBlock>this.instance.constructor).sizeTo.gt;
-	}
-
-	/**
-	 * Alias for iBlock.sizeTo.lt
-	 */
-	protected get lt(): Dictionary<string> {
-		return (<typeof iBlock>this.instance.constructor).sizeTo.lt;
-	}
-
-	/**
-	 * Link to bIcon.getIconLink
-	 */
-	protected get getIconLink(): typeof iBlock.getIconLink {
-		return (<typeof iBlock>this.instance.constructor).getIconLink;
-	}
-
-	/**
-	 * Render counter (for forceUpdate)
-	 */
-	@field()
-	protected renderCounter: number = 0;
-
-	/**
-	 * Advanced component parameters internal storage
-	 */
-	@field((o) => o.link())
-	protected pStore: Dictionary = {};
-
-	/**
-	 * Component stage store
-	 */
-	@field((o) => o.link((val, old) => {
-		if (val === old) {
-			return;
-		}
-
-		o.emit('stageChange', val, old);
-		return val;
-	}))
-
-	protected stageStore?: Stage;
-
-	/**
-	 * Number of beforeReady event listeners
-	 * @type {number}
-	 */
-	@system({unique: true})
-	protected beforeReadyListeners: number = 0;
-
-	/**
-	 * Component initialize status store
-	 */
-	@system({unique: true})
-	protected componentStatusStore: Statuses = 'unloaded';
-
-	/**
-	 * Component initialize status store for non watch statuses
-	 */
-	@system()
-	protected shadowComponentStatusStore?: Statuses;
-
-	/**
-	 * Watched store of component modifiers
-	 */
-	@field({merge: true})
-	protected watchModsStore: ModsNTable = {};
-
-	/**
-	 * Watched component modifiers
-	 */
-	protected get m(): Readonly<ModsNTable> {
-		const
-			o = {},
-			w = <NonNullable<ModsNTable>>this.getField('watchModsStore'),
-			m = this.mods;
-
-		for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				val = m[key];
-
-			if (key in w) {
-				o[key] = val;
-
-			} else {
-				Object.defineProperty(o, key, {
-					get: () => {
-						if (!(key in w)) {
-							w[key] = val;
-						}
-
-						return val;
-					}
-				});
-			}
-		}
-
-		return Object.freeze(o);
-	}
-
-	/**
-	 * Cache of ifOnce
-	 */
-	@field({merge: true})
-	protected readonly ifOnceStore: Dictionary = {};
-
-	/**
-	 * Temporary cache
-	 */
-	@system({merge: true})
-	protected tmp: Dictionary = {};
-
-	/**
-	 * Temporary cache with watching
-	 */
-	@field({merge: true})
-	protected watchTmp: Dictionary = {};
-
-	/**
-	 * Cache for prop/field links
-	 */
-	@system({unique: true})
-	protected readonly linksCache!: Dictionary<Dictionary>;
-
-	/**
-	 * Cache for prop/field synchronize functions
-	 */
-	@system({unique: true})
-	protected readonly syncLinkCache!: SyncLinkCache;
-
-	/**
-	 * Cache for modifiers synchronize functions
-	 */
-	@system({unique: true})
-	protected readonly syncModCache!: Dictionary<Function>;
-
-	/**
-	 * Link to the current component
+	 * API for the component local storage
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => ctx
+		replace: true,
+		init: (ctx) => new Storage(ctx)
 	})
 
-	protected readonly self!: this;
+	protected readonly storage!: Storage;
 
 	/**
 	 * API for async operations
@@ -828,250 +891,376 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: (ctx) => new Async(ctx)
 	})
 
 	protected readonly async!: Async<this>;
 
 	/**
-	 * API for BEM like develop
+	 * API for the component state.
+	 * This property provides a bunch of helper methods to initialize component state.
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		init: (ctx) => new State(ctx)
+	})
+
+	protected readonly state!: State;
+
+	/**
+	 * API to work with a DOM tree
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new DOM(ctx)
+	})
+
+	protected readonly dom!: DOM;
+
+	/**
+	 * API for BEM like develop.
+	 * This property provides a bunch of methods to get/set/remove modifiers of the component.
 	 */
 	@system({unique: true})
 	protected block!: Block;
 
 	/**
-	 * Daemons API
-	 */
-	@system({
-		unique: true,
-		init: (ctx) => new Daemons(ctx)
-	})
-
-	protected daemons!: Daemons;
-
-	/**
-	 * Local event emitter
+	 * API for lazy operations.
+	 * This property provides a bunch of helper methods to organize lazy calculations.
+	 * @deprecated
 	 */
 	@system({
 		atom: true,
-		after: 'async',
 		unique: true,
-		init: (o, d) => {
-			const
-				$a = <Async>d.async,
-				$e = new EventEmitter({maxListeners: 100, wildcard: true});
-
-			const group = (params) => {
-				const
-					group = params ? params.group : '';
-
-				if (!Object.isString(group) || /:!suspend(?:\b|$)/.test(group)) {
-					return params;
-				}
-
-				return {...params, group: `${group}:suspend`};
-			};
-
-			return {
-				emit: (event, ...args) => $e.emit(event, ...args),
-				on: (event, fn, params, ...args) => $a.on($e, event, fn, group(params), ...args),
-				once: (event, fn, params, ...args) => $a.once($e, event, fn, group(params), ...args),
-				promisifyOnce: (event, params, ...args) => $a.promisifyOnce($e, event, group(params), ...args),
-				off: (params) => $a.off(params && params.group ? group(params) : params)
-			};
-		}
+		replace: true,
+		init: (ctx) => new Lazy(ctx)
 	})
 
-	protected readonly localEvent!: Event<this>;
+	protected readonly lazy!: Lazy;
 
 	/**
-	 * Global event emitter
+	 * API for optimization.
+	 * This property provides a bunch of helper methods to optimize some operations.
 	 */
 	@system({
 		atom: true,
-		after: 'async',
 		unique: true,
-		init: (o, d) => {
-			const
-				$a = <Async>d.async;
-
-			return {
-				emit: (event, ...args) => globalEvent.emit(event, ...args),
-				on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
-				once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
-				promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
-				off: (...args) => $a.off(...args)
-			};
-		}
+		init: (ctx) => new Opt(ctx)
 	})
 
-	protected readonly globalEvent!: Event<this>;
+	protected readonly opt!: Opt;
+
+	/** @override */
+	@system()
+	protected renderCounter: number = 0;
 
 	/**
-	 * Root event emitter
+	 * Component stage store
+	 * @see [[iBlock.stageProp]]
 	 */
-	@system({
-		atom: true,
-		after: 'async',
-		unique: true,
-		init: (o, d) => {
-			const
-				$e = o.$root,
-				$a = <Async>d.async;
-
-			return {
-				emit: (event, ...args) => {
-					if (!$e) {
-						return;
-					}
-
-					return $e.emit(event, ...args);
-				},
-
-				on: (event, fn, params, ...args) => {
-					if (!$e) {
-						return;
-					}
-
-					return $a.on($e, event, fn, params, ...args);
-				},
-
-				once: (event, fn, params, ...args) => {
-					if (!$e) {
-						return;
-					}
-
-					return $a.once($e, event, fn, params, ...args);
-				},
-
-				promisifyOnce: (event, params, ...args) => {
-					if (!$e) {
-						return;
-					}
-
-					return $a.promisifyOnce($e, event, params, ...args);
-				},
-
-				off: (...args) => {
-					if (!$e) {
-						return;
-					}
-
-					$a.off(...args);
-				}
-			};
-		}
+	@field({
+		replace: false,
+		forceUpdate: false,
+		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
+			o.stage = val;
+			return o.field.get('stageStore');
+		})
 	})
 
-	protected readonly rootEvent!: Event<this>;
+	protected stageStore?: Stage;
 
 	/**
-	 * Parent event emitter
+	 * Component initialize status store
+	 * @see [[iBlock.componentStatus]]
 	 */
-	protected get parentEvent(): RemoteEvent<this> {
-		const
-			{async: $a, $parent: $e} = this;
+	@field({unique: true, forceUpdate: false})
+	protected componentStatusStore: ComponentStatus = 'unloaded';
 
-		return {
-			on: (event, fn, params, ...args) => {
-				if (!$e) {
-					return;
-				}
+	/**
+	 * Component initialize status store for unwatchable statuses
+	 * @see [[iBlock.componentStatus]]
+	 */
+	@system({unique: true})
+	protected shadowComponentStatusStore?: ComponentStatus;
 
-				return $a.on($e, event, fn, params, ...args) || undefined;
-			},
+	/**
+	 * Store of component modifiers that can emit re-render of the component
+	 */
+	@field({
+		merge: true,
+		replace: false,
+		forceUpdate: false,
+		init: () => Object.create({})
+	})
 
-			once: (event, fn, params, ...args) => {
-				if (!$e) {
-					return;
-				}
+	protected watchModsStore!: ModsNTable;
 
-				return $a.once($e, event, fn, params, ...args) || undefined;
-			},
-
-			promisifyOnce: (event, params, ...args) => {
-				if (!$e) {
-					return;
-				}
-
-				return $a.promisifyOnce($e, event, params, ...args);
-			},
-
-			off: (...args) => {
-				if (!$e) {
-					return;
-				}
-
-				$a.off(...args);
-			}
-		};
+	/**
+	 * Special getter for component modifiers:
+	 * on a first touch of a property from that object will be registered a modifier by the property name
+	 * that can emit re-render of the component.
+	 * Don't use this getter outside the component template.
+	 */
+	@computed({cache: true, replace: false})
+	protected get m(): Readonly<ModsNTable> {
+		return getWatchableMods(this);
 	}
 
 	/**
-	 * Storage object
+	 * Cache object for opt.ifOnce
+	 */
+	@system({merge: true, replace: false})
+	protected readonly ifOnceStore: Dictionary = {};
+
+	/**
+	 * The temporary cache.
+	 * Mutation of this object don't emit re-render of the component.
 	 */
 	@system({
-		atom: true,
-		unique: true,
-		init: (o) => asyncLocal.namespace(o.componentName)
+		merge: true,
+		replace: false,
+		init: () => Object.createDict()
 	})
 
-	protected readonly storage!: AsyncNamespace;
+	protected tmp!: Dictionary;
 
 	/**
-	 * Cache of child async components
+	 * The temporary cache.
+	 * Mutation of this object emit re-render of the component.
 	 */
-	@field({unique: true})
-	protected readonly asyncComponents: Dictionary<string> = {};
+	@field({merge: true})
+	protected watchTmp: Dictionary = {};
 
 	/**
-	 * Cache of child background async components
+	 * The render temporary cache.
+	 * It's used with the "renderKey" directive.
 	 */
-	@field({unique: true})
-	protected readonly asyncBackComponents: Dictionary<string> = {};
+	@system({
+		merge: true,
+		replace: false,
+		init: () => Object.createDict()
+	})
+
+	protected renderTmp!: Dictionary<VNode>;
 
 	/**
-	 * Some helpers
+	 * Cache of watched values
+	 */
+	@system({
+		merge: true,
+		replace: false,
+		init: () => Object.createDict()
+	})
+
+	protected watchCache!: Dictionary;
+
+	/**
+	 * Link to the current component
+	 */
+	@computed({replace: false})
+	protected get self(): this {
+		return this;
+	}
+
+	/**
+	 * Self event emitter
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		replace: true,
+		init: (o, d) => wrapEventEmitter(<Async>d.async, o)
+	})
+
+	protected readonly selfEmitter!: EventEmitterWrapper<this>;
+
+	/**
+	 * Local event emitter: all events that are fired from this emitter don't bubble
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		init: (o, d) => wrapEventEmitter(<Async>d.async, new EventEmitter({
+			maxListeners: 1e3,
+			newListener: false,
+			wildcard: true
+		}), {suspend: true})
+	})
+
+	protected readonly localEmitter!: EventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iBlock.localEmitter]]
+	 */
+	@deprecated({renamedTo: 'localEmitter'})
+	get localEvent(): EventEmitterWrapper<this> {
+		return this.localEmitter;
+	}
+
+	/**
+	 * Event emitter of the parent component
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.$parent, true)
+	})
+
+	protected readonly parentEmitter!: ReadonlyEventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iBlock.parentEmitter]]
+	 */
+	@deprecated({renamedTo: 'parentEmitter'})
+	get parentEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.parentEmitter;
+	}
+
+	/**
+	 * Event emitter of the root component
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		replace: true,
+		init: (o, d) => wrapEventEmitter(<Async>d.async, o.r)
+	})
+
+	protected readonly rootEmitter!: EventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iBlock.rootEmitter]]
+	 */
+	@deprecated({renamedTo: 'rootEmitter'})
+	get rootEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.rootEmitter;
+	}
+
+	/**
+	 * Global event emitter of an application.
+	 * It can be used to provide external events to a component.
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		replace: true,
+		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEmitter)
+	})
+
+	protected readonly globalEmitter!: EventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iBlock.globalEmitter]]
+	 */
+	@deprecated({renamedTo: 'globalEmitter'})
+	get globalEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.globalEmitter;
+	}
+
+	/**
+	 * Map of extra helpers.
+	 * It can be useful to provide some helper functions to a component.
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		init: () => helpers
+		replace: true,
+		init: () => {
+			//#if runtime has core/helpers
+			return helpers;
+			//#endif
+
+			//#unless runtime has core/helpers
+			return {};
+			//#endunless
+		}
 	})
 
 	protected readonly h!: typeof helpers;
 
 	/**
-	 * Browser constants
+	 * API to check a browser
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		init: () => browser
+		replace: true,
+		init: () => {
+			//#if runtime has core/browser
+			return browser;
+			//#endif
+
+			//#unless runtime has core/browser
+			return {};
+			//#endunless
+		}
 	})
 
-	protected readonly b!: typeof browser;
+	protected readonly browser!: typeof browser;
+
+	/**
+	 * Map of component presets
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		init: () => presets
+	})
+
+	protected readonly presets!: typeof presets;
+
+	/** @see [[iBlock.presets]] */
+	@deprecated({renamedTo: 'presets'})
+	get preset(): typeof presets {
+		return this.presets;
+	}
+
+	/**
+	 * Number of beforeReady event listeners:
+	 * it's used to optimize component initializing
+	 */
+	@system({unique: true})
+	protected beforeReadyListeners: number = 0;
+
+	/**
+	 * List of block ready listeners:
+	 * it's used to optimize component initializing
+	 */
+	@system({unique: true})
+	protected blockReadyListeners: Function[] = [];
 
 	/**
 	 * Alias for .i18n
 	 */
-	@system({
-		atom: true,
-		init: (o) => o.link('i18n')
-	})
-
-	protected readonly t!: typeof i18n;
+	@computed({replace: false})
+	protected get t(): this['i18n'] {
+		return this.i18n;
+	}
 
 	/**
-	 * Link to window.l
+	 * Link to globalThis.l
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		init: () => l
+		replace: true
 	})
 
-	protected readonly l!: typeof l;
+	protected readonly l: typeof l = globalThis.l;
 
 	/**
 	 * Link to console API
@@ -1079,6 +1268,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => console
 	})
 
@@ -1090,6 +1280,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => location
 	})
 
@@ -1101,466 +1292,239 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
-		init: () => window
+		replace: true,
+		init: () => globalThis
 	})
 
 	protected readonly global!: Window;
 
 	/**
-	 * Returns a full route path string by the specified parameters
+	 * Sets a watcher to a component property/event by the specified path.
 	 *
-	 * @param path - base path
-	 * @param [opts] - route options
+	 * When you watch for changes of some property, the handler function can take the second argument that refers
+	 * to an old value of a property. If the object that watching is non-primitive, the old value will be cloned from an
+	 * original old value to avoid the problem when we have two links to the one object.
+	 *
+	 * ```typescript
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   @field()
+	 *   list: Dictionary[] = [];
+	 *
+	 *   @watch('list')
+	 *   onListChange(value: Dictionary[], oldValue: Dictionary[]): void {
+	 *     // true
+	 *     console.log(value !== oldValue);
+	 *     console.log(value[0] !== oldValue[0]);
+	 *   }
+	 *
+	 *   // When you don't declare the second argument in a watcher,
+	 *   // the previous value isn't cloned
+	 *   @watch('list')
+	 *   onListChangeWithoutCloning(value: Dictionary[]): void {
+	 *     // true
+	 *     console.log(value === arguments[1]);
+	 *     console.log(value[0] === oldValue[0]);
+	 *   }
+	 *
+	 *   // When you watch a property in a deep and declare the second argument
+	 *   // in a watcher, the previous value is cloned deeply
+	 *   @watch({path: 'list', deep: true})
+	 *   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {
+	 *     // true
+	 *     console.log(value !== oldValue);
+	 *     console.log(value[0] !== oldValue[0]);
+	 *   }
+	 *
+	 *   created() {
+	 *     this.list.push({});
+	 *     this.list[0].foo = 1;
+	 *   }
+	 * }
+	 * ```
+	 *
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 * For instance:
+	 *
+	 * 1. `':onChange'` - a component will listen own event "onChange";
+	 * 2. `'localEmitter:onChange'` - a component will listen an event "onChange" from "localEmitter";
+	 * 3. `'$parent.localEmitter:onChange'` - a component will listen an event "onChange" from "$parent.localEmitter";
+	 * 4. `'document:scroll'` - a component will listen an event "scroll" from "window.document".
+	 *
+	 * A link to the event emitter is taken from component properties or from the global object.
+	 * The empty link '' is a link to a component itself.
+	 *
+	 * Also, if you listen an event, you can manage when start to listen the event by using special characters at the
+	 * beginning of a path string:
+	 *
+	 * 1. `'!'` - start to listen an event on the "beforeCreate" hook, for example: `'!rootEmitter:reset'`;
+	 * 2. `'?'` - start to listen an event on the "mounted" hook, for example: `'?$el:click'`.
+	 *
+	 * By default, all events start to listen on the "created" hook.
+	 *
+	 * @param path - path to a component property to watch or event to listen
+	 * @param opts - additional options
+	 * @param handler
+	 *
+	 * @example
+	 * ```js
+	 * // Watch for changes of "foo"
+	 * this.watch('foo', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Deep watch for changes of "foo"
+	 * this.watch('foo', {deep: true}, (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Watch for changes of "foo.bla"
+	 * this.watch('foo.bla', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Listen "onChange" event of a component
+	 * this.watch(':onChange', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Listen "onChange" event of a component parentEmitter
+	 * this.watch('parentEmitter:onChange', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 * ```
 	 */
-	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
-		const
-			r = this.router;
+	watch<T = unknown>(
+		path: WatchPath,
+		opts: AsyncWatchOptions,
+		handler: RawWatchHandler<this, T>
+	): void;
 
-		if (!r) {
-			return;
-		}
+	/**
+	 * Sets a watcher to a component property/event by the specified path
+	 *
+	 * @param path - path to a component property to watch or event to listen
+	 * @param handler
+	 * @param opts - additional options
+	 */
+	watch<T = unknown>(
+		path: WatchPath,
+		handler: RawWatchHandler<this, T>,
+		opts?: AsyncWatchOptions
+	): void;
 
-		const
-			route = r.getPageOpts(path);
-
-		if (!route) {
+	@p({replace: false})
+	watch<T = unknown>(
+		path: WatchPath,
+		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
+		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
+	): void {
+		if (this.isFlyweight) {
 			return;
 		}
 
 		let
-			res = route.toPath(opts.params);
+			handler,
+			opts;
 
-		if (opts.query) {
-			const
-				q = toQueryString(opts.query, false);
+		if (Object.isFunction(optsOrHandler)) {
+			handler = optsOrHandler;
+			opts = handlerOrOpts || {};
 
-			if (q) {
-				res += `?${q}`;
-			}
+		} else {
+			handler = handlerOrOpts;
+			opts = optsOrHandler || {};
 		}
 
-		return res.replace(/[#?]\s*$/, '');
-	}
-
-	/**
-	 * Returns a string id, which is connected to the component
-	 * @param id - custom id
-	 */
-	getConnectedId(id: string): string;
-	getConnectedId(id: undefined | null): undefined;
-	getConnectedId(id: Nullable<string>): CanUndef<string> {
-		if (!id) {
-			return undefined;
-		}
-
-		return `${this.componentId}-${id}`;
-	}
-
-	/**
-	 * Wrapper for $watch
-	 *
-	 * @see Async.worker
-	 * @param exprOrFn
-	 * @param cb
-	 * @param [params] - additional parameters
-	 */
-	watch<T = unknown>(
-		exprOrFn: string | ((this: this) => string),
-		cb: (this: this, n: T, o?: T) => void,
-		params?: AsyncWatchOpts
-	): void {
-		this.execCbAfterCreated(() => {
-			const
-				p = params || {};
-
-			const fork = (obj) => {
-				if (!Object.isFrozen(obj)) {
-					if (Object.isArray(obj)) {
-						if (p.deep) {
-							return Object.mixin(true, [], obj);
-						}
-
-						return obj.slice();
-					}
-
-					if (Object.isTable(obj)) {
-						if (p.deep) {
-							return Object.mixin(true, {}, obj);
-						}
-
-						return {...obj};
-					}
+		if (Object.isString(path) && customWatcherRgxp.test(path)) {
+			bindRemoteWatchers(this, {
+				async: <Async<any>>this.async,
+				watchers: {
+					[path]: [{
+						handler: (ctx, ...args: unknown[]) => handler.call(this, ...args),
+						...opts
+					}]
 				}
+			});
 
-				return obj;
-			};
+			return;
+		}
 
-			let
-				oldVal: unknown = fork(this.getField(Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn));
-
-			const watchParams = {
-				handler(val: unknown, defOldVal: unknown): unknown {
-					if (val !== defOldVal) {
-						oldVal = defOldVal;
-						return cb.call(this, val, defOldVal);
-					}
-
-					const res = cb.call(this, val, oldVal);
-					oldVal = fork(val);
-					return res;
-				},
-
-				deep: p.deep,
-				immediate: p.immediate
-			};
-
-			const asyncParams = {
-				group: p.group,
-				label: p.label,
-				join: p.join
-			};
-
+		this.lfc.execCbAfterComponentCreated(() => {
 			const
-				watcher = this.$watch(exprOrFn, watchParams);
+				unwatch = this.$watch(path, opts, handler);
 
-			if (Object.keys(asyncParams).length) {
-				this.async.worker(watcher, asyncParams);
-				return;
+			if (unwatch && (opts.group || opts.label || opts.join)) {
+				this.async.worker(unwatch, {
+					group: opts.group,
+					label: opts.label,
+					join: opts.join
+				});
 			}
 		});
 	}
 
 	/**
-	 * Sets a link for the specified field
+	 * Emits a component event.
+	 * Notice, this method always emits two events:
 	 *
-	 * @see Async.worker
-	 * @param [paramsOrWrapper] - additional parameters or wrapper
-	 */
-	link<T = unknown>(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
-
-	/**
-	 * @see Async.worker
-	 * @param params - additional parameters
-	 * @param [wrapper]
-	 */
-	link<T = unknown>(params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
-
-	/**
-	 * @see Async.worker
-	 * @param field
-	 * @param [paramsOrWrapper]
-	 */
-	link<T = unknown>(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
-
-	/**
-	 * @see Async.worker
-	 * @param field
-	 * @param params
-	 * @param [wrapper]
-	 */
-	link<T = unknown>(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
-	link<T>(
-		field?: string | AsyncWatchOpts | LinkWrapper<T>,
-		params?: AsyncWatchOpts | LinkWrapper<T>,
-		wrapper?: LinkWrapper<T>
-	): CanUndef<T> {
-		const
-			path = this.$activeField,
-			cache = this.syncLinkCache;
-
-		if (!field || !Object.isString(field)) {
-			wrapper = <LinkWrapper<T>>params;
-			params = <AsyncWatchOpts>field;
-			field = `${path.replace(/Store$/, '')}Prop`;
-		}
-
-		if (params && Object.isFunction(params)) {
-			wrapper = params;
-			params = undefined;
-		}
-
-		if (!(path in this.linksCache)) {
-			this.linksCache[path] = {};
-
-			const sync = (val?, oldVal?) => {
-				val = val !== undefined ? val : this.getField(<string>field);
-
-				const
-					res = wrapper ? wrapper.call(this, val, oldVal) : val;
-
-				this.setField(path, res);
-				return res;
-			};
-
-			this.watch(field, async (val, oldVal) => {
-				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
-					return;
-				}
-
-				sync(val, oldVal);
-			}, params);
-
-			// tslint:disable-next-line:prefer-object-spread
-			cache[field] = Object.assign(cache[field] || {}, {
-				[path]: {
-					path,
-					sync
-				}
-			});
-
-			if (this.isBeforeCreate('beforeDataCreate')) {
-				const
-					name = '[[SYNC]]',
-					hooks = this.meta.hooks.beforeDataCreate;
-
-				let
-					pos = 0;
-
-				for (let i = 0; i < hooks.length; i++) {
-					if (hooks[i].name === name) {
-						pos = i + 1;
-					}
-				}
-
-				hooks.splice(pos, 0, {fn: sync, name});
-				return;
-			}
-
-			return sync();
-		}
-	}
-
-	/**
-	 * Creates an object with linked fields
-	 *
-	 * @param path - property path
-	 * @param fields
-	 */
-	createWatchObject<T = unknown>(
-		path: string,
-		fields: WatchObjectFields<T>
-	): Dictionary;
-
-	/**
-	 * @param path - property path
-	 * @param params - additional parameters
-	 * @param fields
-	 */
-	createWatchObject<T = unknown>(
-		path: string,
-		params: AsyncWatchOpts,
-		fields: WatchObjectFields<T>
-	): Dictionary;
-
-	createWatchObject<T>(
-		path: string,
-		params: AsyncWatchOpts | WatchObjectFields<T>,
-		fields?: WatchObjectFields<T>
-	): Dictionary {
-		if (Object.isArray(params)) {
-			fields = params;
-			params = {};
-		}
-
-		const
-			hooks = this.meta.hooks.beforeDataCreate,
-			syncLinkCache = this.syncLinkCache,
-			linksCache = $C(this.linksCache);
-
-		const
-			head = this.$activeField;
-
-		// tslint:disable-next-line:prefer-conditional-expression
-		if (path) {
-			path = [head, path].join('.');
-
-		} else {
-			path = head;
-		}
-
-		const
-			tail = path.split('.').slice(1),
-			obj = {};
-
-		if (tail.length) {
-			$C(obj).set({}, tail);
-		}
-
-		const
-			cursor = $C(obj).get(tail);
-
-		const merge = (...args) => Object.mixin({
-			deep: true,
-			extendFilter: (d, v) => Object.isObject(v)
-		}, undefined, ...args);
-
-		const setField = (path, val) => {
-			const
-				newObj = {};
-
-			$C(newObj).set(val, path.split('.').slice(1));
-			this.setField(head, merge(this.getField(head), newObj));
-
-			return val;
-		};
-
-		const attachWatcher = (field, path, getVal) => {
-			const
-				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
-
-			this.watch(field, (val, oldVal) => {
-				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
-					return;
-				}
-
-				sync(val, oldVal);
-			}, <AsyncWatchOpts>params);
-
-			// tslint:disable-next-line:prefer-object-spread
-			syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
-				[path]: {
-					path,
-					sync
-				}
-			});
-
-			if (this.isBeforeCreate('beforeDataCreate')) {
-				hooks.push({fn: sync});
-			}
-		};
-
-		for (let i = 0; i < (<unknown[]>fields).length; i++) {
-			const
-				el = (<WatchObjectFields<T>>fields)[i];
-
-			if (Object.isArray(el)) {
-				let
-					wrapper,
-					field;
-
-				if (el.length === 3) {
-					field = el[1];
-					wrapper = el[2];
-
-				} else if (Object.isFunction(el[1])) {
-					field = el[0];
-					wrapper = el[1];
-
-				} else {
-					field = el[1];
-				}
-
-				const
-					l = [path, el[0]].join('.');
-
-				if (!linksCache.get(l)) {
-					const getVal = (val?, oldVal?) => {
-						val = val !== undefined ? val : this.getField(field);
-						return wrapper ? wrapper.call(this, val, oldVal) : val;
-					};
-
-					attachWatcher(field, l, getVal);
-					cursor[el[0]] = getVal();
-				}
-
-			} else {
-				const
-					l = [path, el].join('.');
-
-				if (!linksCache.get(l)) {
-					const getVal = (val?) => val || this.getField(el);
-					attachWatcher(el, l, getVal);
-					cursor[el] = getVal();
-				}
-			}
-		}
-
-		return obj;
-	}
-
-	/**
-	 * Binds a modifier to the specified field
-	 *
-	 * @param mod
-	 * @param field
-	 * @param [converter] - converter function or additional parameters
-	 * @param [params] - additional parameters
-	 */
-	bindModTo<V = unknown, R = unknown, CTX extends iBlock = this>(
-		mod: string,
-		field: string,
-		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
-		params?: AsyncWatchOpts
-	): void {
-		mod = mod.camelize(false);
-
-		if (!Object.isFunction(converter)) {
-			params = converter;
-			converter = Boolean;
-		}
-
-		const
-			fn = <Function>converter;
-
-		const setWatcher = () => {
-			this.watch(field, (val) => {
-				val = fn(val, this);
-
-				if (val !== undefined) {
-					this.setMod(mod, val);
-				}
-
-			}, params);
-		};
-
-		if (this.isBeforeCreate()) {
-			const sync = this.syncModCache[mod] = () => {
-				const
-					v = fn(this.getField(field), this);
-
-				if (v !== undefined) {
-					this.mods[mod] = String(v);
-				}
-			};
-
-			if (this.hook !== 'beforeDataCreate') {
-				this.meta.hooks.beforeDataCreate.push({
-					fn: sync
-				});
-
-			} else {
-				sync();
-			}
-
-			setWatcher();
-
-		} else if (statuses[this.componentStatus] >= 2) {
-			setWatcher();
-		}
-	}
-
-	/**
-	 * Wrapper for $emit
+	 * 1) `${event}`(self, ...args)
+	 * 2) `on-${event}`(...args)
 	 *
 	 * @param event
 	 * @param args
 	 */
-	emit(event: string, ...args: unknown[]): void {
-		event = event.dasherize();
-		this.$emit(event, this, ...args);
-		this.$emit(`on-${event}`, ...args);
-		this.dispatching && this.dispatch(event, ...args);
-		this.log(`event:${event}`, this, ...args);
+	@p({replace: false})
+	emit(event: string | ComponentEvent, ...args: unknown[]): void {
+		const
+			decl = Object.isString(event) ? {event} : event,
+			eventNm = decl.event = decl.event.dasherize();
+
+		this.$emit(eventNm, this, ...args);
+		this.$emit(`on-${eventNm}`, ...args);
+		this.dispatching && this.dispatch(decl, ...args);
+
+		const
+			logArgs = args.slice();
+
+		if (decl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
+		this.log(`event:${eventNm}`, this, ...logArgs);
 	}
 
 	/**
-	 * Emits the specified event for the parent component
+	 * Emits a component error event
+	 * (all functions from arguments will be wrapped for logging)
 	 *
 	 * @param event
 	 * @param args
 	 */
-	dispatch(event: string, ...args: unknown[]): void {
-		event = event.dasherize();
+	@p({replace: false})
+	emitError(event: string, ...args: unknown[]): void {
+		this.emit({event, type: 'error'}, ...args);
+	}
+
+	/**
+	 * Emits a component event to the parent component
+	 *
+	 * @param event
+	 * @param args
+	 */
+	@p({replace: false})
+	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
+		const
+			decl = Object.isString(event) ? {event} : event,
+			eventNm = decl.event = decl.event.dasherize();
 
 		let
 			obj = this.$parent;
@@ -1569,21 +1533,35 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			nm = this.componentName,
 			globalNm = (this.globalName || '').dasherize();
 
+		const
+			logArgs = args.slice();
+
+		if (decl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
 		while (obj) {
 			if (obj.selfDispatching) {
-				obj.$emit(event, this, ...args);
-				obj.$emit(`on-${event}`, this, ...args);
-				obj.log(`event:${event}`, this, ...args);
+				obj.$emit(eventNm, this, ...args);
+				obj.$emit(`on-${eventNm}`, ...args);
+				obj.log(`event:${eventNm}`, this, ...logArgs);
 
 			} else {
-				obj.$emit(`${nm}::${event}`, this, ...args);
-				obj.$emit(`${nm}::on-${event}`, this, ...args);
-				obj.log(`event:${nm}::${event}`, this, ...args);
+				obj.$emit(`${nm}::${eventNm}`, this, ...args);
+				obj.$emit(`${nm}::on-${eventNm}`, ...args);
+				obj.log(`event:${nm}::${eventNm}`, this, ...logArgs);
 
 				if (globalNm) {
-					obj.$emit(`${globalNm}::${event}`, this, ...args);
-					obj.$emit(`${globalNm}::on-${event}`, this, ...args);
-					obj.log(`event:${globalNm}::${event}`, this, ...args);
+					obj.$emit(`${globalNm}::${eventNm}`, this, ...args);
+					obj.$emit(`${globalNm}::on-${eventNm}`, ...args);
+					obj.log(`event:${globalNm}::${eventNm}`, this, ...logArgs);
 				}
 			}
 
@@ -1596,74 +1574,78 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Wrapper for $on
+	 * Attaches an event listener to the specified component event
 	 *
-	 * @see Async.on
+	 * @see [[Async.on]]
 	 * @param event
-	 * @param cb
-	 * @param [params] - async parameters
+	 * @param handler
+	 * @param [opts] - additional options
 	 */
-	on<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, this>, params?: AsyncOpts): void {
+	@p({replace: false})
+	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
-		if (params) {
-			this.async.on(this, event, cb, params);
+		if (opts) {
+			this.async.on(this, event, handler, opts);
 			return;
 		}
 
-		this.$on(event, cb);
+		this.$on(event, handler);
 	}
 
 	/**
-	 * Wrapper for $once
+	 * Attaches a single event listener to the specified component event
 	 *
-	 * @see Async.on
+	 * @see [[Async.once]]
 	 * @param event
-	 * @param cb
-	 * @param [params] - async parameters
+	 * @param handler
+	 * @param [opts] - additional options
 	 */
-	once<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, this>, params?: AsyncOpts): void {
+	@p({replace: false})
+	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
-		if (params) {
-			this.async.once(this, event, cb, params);
+		if (opts) {
+			this.async.once(this, event, handler, opts);
 			return;
 		}
 
-		this.$once(event, cb);
+		this.$once(event, handler);
 	}
 
 	/**
-	 * Wrapper for promisify $once
+	 * Returns a promise that is resolved after emitting the specified component event
 	 *
-	 * @see Async.on
+	 * @see [[Async.promisifyOnce]]
 	 * @param event
-	 * @param [params] - async parameters
+	 * @param [opts] - additional options
 	 */
-	promisifyOnce<T = unknown>(event: string, params?: AsyncOpts): Promise<T> {
-		event = event.dasherize();
-		return this.async.promisifyOnce(this, event, params);
+	@p({replace: false})
+	promisifyOnce<T = unknown>(event: string, opts?: AsyncOptions): Promise<T> {
+		return this.async.promisifyOnce(this, event.dasherize(), opts);
 	}
 
 	/**
-	 * Wrapper for $off
+	 * Detaches an event listeners from the component
 	 *
 	 * @param [event]
-	 * @param [cb]
+	 * @param [handler]
 	 */
-	off(event?: string, cb?: Function): void;
+	off(event?: string, handler?: Function): void;
 
 	/**
-	 * @see Async.off
-	 * @param [params] - async parameters
+	 * Detaches an event listeners from the component
+	 *
+	 * @see [[Async.off]]
+	 * @param [opts] - additional options
 	 */
-	off(params: ClearOptsId<object>): void;
-	off(eventOrParams?: string | ClearOptsId<object>, cb?: Function): void {
-		if (!eventOrParams || Object.isString(eventOrParams)) {
-			const
-				e = eventOrParams;
+	off(opts: ClearOptionsId<object>): void;
 
-			this.$off(e && e.dasherize(), cb);
+	@p({replace: false})
+	off(eventOrParams?: string | ClearOptionsId<object>, handler?: Function): void {
+		if (!eventOrParams || Object.isString(eventOrParams)) {
+			const e = eventOrParams;
+			this.$off(e && e.dasherize(), handler);
 			return;
 		}
 
@@ -1671,146 +1653,224 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Wrapper for a wait decorator
+	 * Returns a promise that will be resolved when the component is toggled to the specified status
 	 *
-	 * @see Async.promise
+	 * @see [[Async.promise]]
 	 * @param status
-	 * @param [params] - additional parameters:
-	 *   *) [params.defer] - if true, then the function will always return a promise
+	 * @param [opts] - additional options
 	 */
-	waitStatus(status: Statuses, params?: WaitStatusOpts): Promise<void>;
+	waitStatus(status: ComponentStatus, opts?: WaitDecoratorOptions): Promise<void>;
 
 	/**
-	 * @see Async.promise
+	 * Executes a callback when the component is toggled to the specified status.
+	 * The method returns a promise with a result of invoking the function or raw result without wrapping
+	 * if the component already in the specified status.
+	 *
+	 * @see [[Async.promise]]
 	 * @param status
 	 * @param cb
-	 * @param [params] - additional parameters:
-	 *   *) [params.defer] - if true, then the function will always return a promise
+	 * @param [opts] - additional options
 	 */
-	waitStatus<T = unknown>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOpts): CanPromise<T>;
-	waitStatus<T = unknown>(
-		status: Statuses,
-		cbOrParams?: Function | WaitStatusOpts,
-		params?: WaitStatusOpts
-	): CanPromise<T> {
-		const
-			isFn = cbOrParams && Object.isFunction(cbOrParams),
-			p = {...(isFn ? params : cbOrParams) || {}, join: false};
+	waitStatus<F extends BoundFn<this>>(
+		status: ComponentStatus,
+		cb: F,
+		opts?: WaitDecoratorOptions
+	): CanPromise<ReturnType<F>>;
 
-		if (isFn) {
-			return wait(status, {fn: <Function>cbOrParams, ...p}).call(this);
+	@p({replace: false})
+	waitStatus<F extends BoundFn<this>>(
+		status: ComponentStatus,
+		cbOrOpts?: F | WaitDecoratorOptions,
+		opts?: WaitDecoratorOptions
+	): CanPromise<void | ReturnType<F>> {
+		let
+			needWrap = true;
+
+		let
+			cb;
+
+		if (Object.isFunction(cbOrOpts)) {
+			cb = cbOrOpts;
+			needWrap = false;
+
+		} else {
+			opts = cbOrOpts;
 		}
 
-		return this.async.promise(new Promise((r) => wait(status, {fn: r, ...p}).call(this)));
+		opts = {...opts, join: false};
+
+		if (!needWrap) {
+			return wait(status, {...opts, fn: cb}).call(this);
+		}
+
+		let
+			isResolved = false;
+
+		const promise = new SyncPromise((resolve) => wait(status, {...opts, fn: () => {
+			isResolved = true;
+			resolve();
+		}}).call(this));
+
+		if (isResolved) {
+			return promise;
+		}
+
+		return this.async.promise<void>(promise);
 	}
 
 	/**
-	 * Wrapper for $nextTick
+	 * Executes the specified function on a next render tick
 	 *
-	 * @see Async.proxy
-	 * @param cb
-	 * @param [params] - async parameters
+	 * @see [[Async.proxy]]
+	 * @param fn
+	 * @param [opts] - additional options
 	 */
-	nextTick(cb: WrappedFunction, params?: AsyncOpts): void;
+	nextTick(fn: BoundFn<this>, opts?: AsyncOptions): void;
 
 	/**
-	 * @see Async.promise
-	 * @param [params] - async parameters
+	 * Returns a promise that will be resolved on a next render tick
+	 *
+	 * @see [[Async.promise]]
+	 * @param [opts] - additional options
 	 */
-	nextTick(params?: AsyncOpts): Promise<void>;
-	nextTick(cbOrParams?: WrappedFunction | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
+	nextTick(opts?: AsyncOptions): Promise<void>;
+	nextTick(fnOrOpts?: BoundFn<this> | AsyncOptions, opts?: AsyncOptions): CanPromise<void> {
 		const
 			{async: $a} = this;
 
-		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick($a.proxy(<WrappedFunction>cbOrParams, params));
+		if (Object.isFunction(fnOrOpts)) {
+			this.$nextTick($a.proxy(fnOrOpts, opts));
 			return;
 		}
 
-		return $a.promise(this.$nextTick(), cbOrParams);
+		return $a.promise(this.$nextTick(), fnOrOpts);
 	}
 
 	/**
-	 * Wrapper for $forceUpdate
+	 * Forces the component re-render
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
 	async forceUpdate(): Promise<void> {
-		this.renderCounter++;
+		this.$forceUpdate();
 	}
 
 	/**
-	 * Loads component data
+	 * Loads initial data to the component
 	 *
 	 * @param [data] - data object (for events)
-	 * @param [silent] - silent mode
-	 *
-	 * @emits initLoad(data: CanUndef<unknown>, silent: boolean)
-	 * @emits dbReady(data: CanUndef<unknown>, silent: boolean)
+	 * @param [opts] - additional options
+	 * @emits `initLoad(data: CanUndef<unknown>, params: CanUndef<InitLoadOptions>)`
 	 */
 	@hook('beforeDataCreate')
-	initLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
+	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
+
 		this.beforeReadyListeners = 0;
 
-		if (!silent) {
+		if (!opts.silent) {
 			this.componentStatus = 'loading';
 		}
 
 		const
-			{$children: $c, async: $a} = this,
-			providers = new Set();
+			{async: $a} = this;
 
-		if ($c) {
-			for (let i = 0; i < $c.length; i++) {
-				const
-					el = $c[i];
-
-				if (el.remoteProvider && statuses[el.componentStatus]) {
-					providers.add(el);
-				}
-			}
-		}
+		const label = <AsyncOptions>{
+			label: $$.initLoad,
+			join: 'replace'
+		};
 
 		const done = () => {
-			const
-				get = () => Object.isFunction(data) ? data.call(this) : data;
-
-			this.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
+			const get = () => Object.isFunction(data) ? data.call(this) : data;
 			this.componentStatus = 'beforeReady';
 
-			this.execCbAfterBlockReady(async () => {
+			this.lfc.execCbAfterBlockReady(() => {
+				this.isReadyOnce = true;
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {
-					await this.nextTick();
-					this.beforeReadyListeners = 0;
-				}
+					this.nextTick().then(() => {
+						this.beforeReadyListeners = 0;
+						this.emit('initLoad', get(), opts);
+					});
 
-				this.emit('initLoad', get(), silent);
+				} else {
+					this.emit('initLoad', get(), opts);
+				}
 			});
 		};
 
-		if (this.globalName || providers.size) {
+		if (this.globalName || !this.isFunctional) {
+			if (this.isFunctional) {
+				return $a.promise(async () => {
+					await this.state.initFromStorage();
+					done();
+				}, label).catch(stderr);
+			}
+
 			const init = async () => {
-				await this.initStateFromStorage();
+				if (this.globalName) {
+					await this.state.initFromStorage();
 
-				if (providers.size) {
-					await $a.wait(() => $C(providers).every((el) => {
+				} else {
+					await this.nextTick(label);
+				}
+
+				const
+					{$children: childComponent} = this;
+
+				let
+					remoteProviders!: Set<iBlock>;
+
+				if (childComponent) {
+					for (let i = 0; i < childComponent.length; i++) {
 						const
-							st = <string>el.componentStatus;
+							el = childComponent[i],
+							st = el.componentStatus;
 
-						if (st === 'ready' || statuses[st] <= 0) {
-							providers.delete(el);
-							return true;
+						if (el.remoteProvider && statuses[st]) {
+							if (st === 'ready') {
+								if (opts.recursive) {
+									el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+
+								} else {
+									continue;
+								}
+							}
+
+							if (!remoteProviders) {
+								remoteProviders = new Set<iBlock>();
+							}
+
+							remoteProviders.add(el);
+						}
+					}
+				}
+
+				if (remoteProviders) {
+					await $a.wait(() => {
+						for (let o = remoteProviders.values(), el = o.next(); !el.done; el = o.next()) {
+							const
+								val = el.value,
+								st = val.componentStatus;
+
+							if (st === 'ready' || statuses[st] <= 0) {
+								remoteProviders.delete(val);
+								continue;
+							}
+
+							return false;
 						}
 
-						return false;
-					}));
+						return true;
+					});
 				}
 
 				done();
 			};
 
-			return $a.promise(init, {join: true, label: $$.initLoad}).catch(stderr);
+			return $a.promise(init, label).catch(stderr);
 		}
 
 		done();
@@ -1818,554 +1878,143 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Reloads component data
+	 * @param [opts] - additional options
 	 */
-	async reload(): Promise<void> {
-		await this.initLoad(undefined, true);
+	reload(opts?: InitLoadOptions): Promise<void> {
+		const
+			res = this.initLoad(undefined, {silent: true, ...opts});
+
+		if (Object.isPromise(res)) {
+			return res;
+		}
+
+		return Promise.resolve();
 	}
 
 	/**
-	 * Returns an array of component classes by the specified parameters
-	 *
-	 * @param [componentName] - name of the source component
-	 * @param mods - map of modifiers
-	 */
-	getBlockClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
-
-	/**
-	 * @param mods - map of modifiers
-	 */
-	getBlockClasses(mods: ModsTable): ReadonlyArray<string>;
-	getBlockClasses(componentName: CanUndef<string | ModsTable>, mods?: ModsTable): ReadonlyArray<string> {
-		if (arguments.length === 1) {
-			mods = <ModsTable>componentName;
-			componentName = undefined;
-
-		} else {
-			mods = <ModsTable>mods;
-			componentName = <CanUndef<string>>componentName;
-		}
-
-		const
-			key = JSON.stringify(mods) + componentName,
-			cache = classesCache.create('blocks', this.componentName);
-
-		if (cache[key]) {
-			return <ReadonlyArray<string>>cache[key];
-		}
-
-		const
-			classes = cache[key] = [this.getFullBlockName(componentName)];
-
-		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				val = mods[key];
-
-			if (val !== undefined) {
-				classes.push(this.getFullBlockName(componentName, key, val));
-			}
-		}
-
-		return classes;
-	}
-
-	/**
-	 * Sets a component modifier
+	 * Sets a component modifier to the specified node
 	 *
 	 * @param node
-	 * @param name
-	 * @param value
+	 * @param name - modifier name
+	 * @param value - modifier value
 	 */
 	setMod(node: Element, name: string, value: unknown): CanPromise<boolean>;
 
 	/**
-	 * @param name
-	 * @param value
+	 * Sets a component modifier
+	 *
+	 * @param name - modifier name
+	 * @param value - modifier value
 	 */
 	setMod(name: string, value: unknown): CanPromise<boolean>;
+
+	@p({replace: false})
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name)) || false;
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.setMod.call(ctx, nodeOrName, name);
+			}
+
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
+			return <CanPromise<boolean>>(res || false);
 		}
 
-		return Block.prototype.setMod.call(
-			this.createBlockCtxFromNode(nodeOrName),
-			name,
-			value
-		);
+		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
+		return Block.prototype.setMod.call(ctx, name, value);
 	}
 
 	/**
-	 * Removes a component modifier
+	 * Removes a component modifier from the specified node
 	 *
 	 * @param node
-	 * @param name
-	 * @param [value]
+	 * @param name - modifier name
+	 * @param [value] - modifier value
 	 */
 	removeMod(node: Element, name: string, value?: unknown): CanPromise<boolean>;
 
 	/**
-	 * @param name
-	 * @param [value]
+	 * Removes a component modifier
+	 *
+	 * @param name - modifier name
+	 * @param [value] - modifier value
 	 */
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
+
+	@p({replace: false})
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name)) || false;
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
+			}
+
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
+			return <CanPromise<boolean>>(res || false);
 		}
 
-		return Block.prototype.removeMod.call(
-			this.createBlockCtxFromNode(nodeOrName),
-			name,
-			value
-		);
+		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
+		return Block.prototype.removeMod.call(ctx, name, value);
 	}
 
 	/**
-	 * Sets a modifier for the root element
+	 * Sets a modifier to the root element of an application.
+	 * This method is useful, when you need to attach a class can affect to the whole application,
+	 * for instance, you want to lock page scrolling, i.e. you need to add a class to the root HTML tag.
 	 *
 	 * @param name
 	 * @param value
 	 */
+	@p({replace: false})
 	setRootMod(name: string, value: unknown): boolean {
-		return this.$root.setRootMod(name, value, this);
+		return this.r.setRootMod(name, value, this);
 	}
 
 	/**
-	 * Removes a modifier from the root element
+	 * Removes a modifier from the root element of an application
 	 *
 	 * @param name
 	 * @param value
 	 */
+	@p({replace: false})
 	removeRootMod(name: string, value?: unknown): boolean {
-		return this.$root.removeRootMod(name, value, this);
+		return this.r.removeRootMod(name, value, this);
 	}
 
 	/**
 	 * Returns a value of the specified root element modifier
 	 * @param name
 	 */
+	@p({replace: false})
 	getRootMod(name: string): CanUndef<string> {
-		return this.$root.getRootMod(name, this);
+		return this.r.getRootMod(name, this);
 	}
 
 	/**
-	 * Activates the component
-	 * @param [force]
+	 * Activates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it's automatically synchronized with keep-alive or the special input property.
+	 *
+	 * @see [[iBlock.activatedProp]]
+	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
 	 */
 	activate(force?: boolean): void {
-		if (!this.isActivated || force) {
-			this.initStateFromRouter();
-			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
-				try {
-					if (type === 'hard') {
-						if (route !== this.r.route) {
-							await this.rootEvent.promisifyOnce('setRoute', {
-								label: $$.activateAfterTransition
-							});
-
-						} else {
-							await this.nextTick({label: $$.activateAfterHardChange});
-						}
-					}
-
-					if (!{destroyed: true, inactive: true}[this.componentStatus]) {
-						this.initStateFromRouter();
-					}
-
-				} catch (err) {
-					stderr(err);
-				}
-
-			}, {
-				label: $$.activate,
-				group: 'routerStateWatchers'
-			}));
-		}
-
-		if (this.isBeforeCreate()) {
-			return;
-		}
-
-		const
-			els = new Set();
-
-		const exec = (ctx: iBlock = this) => {
-			els.add(ctx);
-
-			const
-				children = ctx.$children;
-
-			if (children) {
-				for (let i = 0; i < children.length; i++) {
-					exec(children[i]);
-				}
-			}
-		};
-
-		exec();
-
-		const
-			{$el} = this;
-
-		if (this.forceActivation && $el) {
-			const
-				domEls = $el.querySelectorAll('.i-block-helper');
-
-			for (let i = 0; i < domEls.length; i++) {
-				const
-					el = (<ComponentElement<any>>domEls[i]).component;
-
-				if (el) {
-					els.add(el);
-				}
-			}
-		}
-
-		for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
-			const
-				ctx = el.value;
-
-			if (!ctx.isActivated) {
-				runHook('activated', ctx.meta, ctx).then(() => ctx.activated(), stderr);
-			}
-		}
+		activate(this, force);
 	}
 
 	/**
-	 * Deactivates the component
+	 * Deactivates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it's automatically synchronized with keep-alive or the special input property.
+	 *
+	 * @see [[iBlock.activatedProp]]
 	 */
 	deactivate(): void {
-		if (this.isBeforeCreate()) {
-			return;
-		}
-
-		const
-			els = new Set();
-
-		const exec = (ctx: iBlock = this) => {
-			els.add(ctx);
-
-			const
-				children = ctx.$children;
-
-			if (children) {
-				for (let i = 0; i < children.length; i++) {
-					exec(children[i]);
-				}
-			}
-		};
-
-		exec();
-
-		const
-			{$el} = this;
-
-		if (this.forceActivation && $el) {
-			const
-				domEls = $el.querySelectorAll('.i-block-helper');
-
-			for (let i = 0; i < domEls.length; i++) {
-				const
-					el = (<ComponentElement<any>>domEls[i]).component;
-
-				if (el) {
-					els.add(el);
-				}
-			}
-		}
-
-		for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
-			const
-				ctx = el.value;
-
-			if (ctx.isActivated) {
-				runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
-			}
-		}
-	}
-
-	/**
-	 * Disables the component
-	 */
-	async disable(): Promise<boolean> {
-		return this.setMod('disabled', true);
-	}
-
-	/**
-	 * Enables the component
-	 */
-	async enable(): Promise<boolean> {
-		return this.setMod('disabled', false);
-	}
-
-	/**
-	 * Sets focus for the component
-	 */
-	async focus(): Promise<boolean> {
-		return this.setMod('focused', true);
-	}
-
-	/**
-	 * Unsets focus for the component
-	 */
-	async blur(): Promise<boolean> {
-		return this.setMod('focused', false);
-	}
-
-	/**
-	 * Returns true if the component has all modifiers from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	ifEveryMods(mods: Array<CanArray<string>>, value?: ModVal): boolean {
-		return $C(mods).every((el) => {
-			if (Object.isArray(el)) {
-				return this.mods[<string>el[0]] === String(el[1]);
-			}
-
-			return this.mods[el] === String(value);
-		});
-	}
-
-	/**
-	 * Returns true if the component has at least one modifier from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	ifSomeMod(mods: Array<CanArray<string>>, value?: ModVal): boolean {
-		return $C(mods).some((el) => {
-			if (Object.isArray(el)) {
-				return this.mods[<string>el[0]] === String(el[1]);
-			}
-
-			return this.mods[el] === String(value);
-		});
-	}
-
-	/**
-	 * Returns a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [getter] - field getter
-	 */
-	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
-
-	/**
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 * @param [getter] - field getter
-	 */
-	getField<T = unknown>(path: string, obj?: Dictionary, getter?: FieldGetter): CanUndef<T>;
-	getField<T = unknown>(
-		path: string,
-		obj: Dictionary | FieldGetter = this,
-		getter?: FieldGetter
-	): CanUndef<T> {
-		if (!getter && Object.isFunction(obj)) {
-			getter = <FieldGetter>obj;
-			obj = this;
-		}
-
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if ((<Dictionary>obj).instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]];
-
-		let
-			res = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
-
-			const prop = chunks[i];
-			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
-		}
-
-		return <any>res;
-	}
-
-	/**
-	 * Sets a new property to the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param value
-	 * @param [obj]
-	 */
-	setField<T = unknown>(path: string, value: T, obj: Dictionary = this): T {
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if (obj.instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.isBeforeCreate();
-
-		let
-			ref = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
-
-			if (chunks.length === i + 1) {
-				path = prop;
-				continue;
-			}
-
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
-				const
-					val = isNaN(Number(chunks[i + 1])) ? {} : [];
-
-				if (isField && isReady) {
-					ctx.$set(ref, prop, val);
-
-				} else {
-					ref[prop] = val;
-				}
-			}
-
-			ref = <Dictionary>ref[prop];
-		}
-
-		if (path in ref) {
-			ref[path] = value;
-
-		} else {
-			if (isField && isReady) {
-				ctx.$set(ref, path, value);
-
-			} else {
-				ref[path] = value;
-			}
-		}
-
-		return value;
-	}
-
-	/**
-	 * Deletes a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 */
-	deleteField(path: string, obj: Dictionary = this): boolean {
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if (obj.instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.isBeforeCreate();
-
-		let
-			test = true,
-			ref = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
-
-			if (chunks.length === i + 1) {
-				path = prop;
-				continue;
-			}
-
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
-				test = false;
-				break;
-			}
-
-			ref = <Dictionary>ref[prop];
-		}
-
-		if (test) {
-			if (isField && isReady) {
-				ctx.$delete(ref, path);
-
-			} else {
-				delete ref[path];
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Gets values from the specified object and saves it to the component state
-	 * @param [obj]
-	 */
-	setState(obj: CanUndef<Dictionary>): void {
-		$C(obj).forEach((el, key) => {
-			const
-				p = key.split('.');
-
-			if (p[0] === 'mods') {
-				this.setMod(p[1], el);
-
-			} else if (!Object.fastCompare(el, this.getField(key))) {
-				this.setField(key, el);
-			}
-		});
-	}
-
-	/**
-	 * Executes the specified callback after beforeDataCreate hook or beforeReady event
-	 *
-	 * @see Async.proxy
-	 * @param cb
-	 * @param [params] - async parameters
-	 */
-	execCbAtTheRightTime<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T | void> {
-		if (this.isBeforeCreate('beforeDataCreate')) {
-			return <any>this.$async.promise(new Promise((r) => {
-				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this))});
-			}), params).catch(stderr);
-		}
-
-		if (this.hook === 'beforeDataCreate') {
-			return cb.call(this);
-		}
-
-		this.beforeReadyListeners++;
-
-		const
-			res = this.waitStatus('beforeReady', cb, params);
-
-		if (Object.isPromise(res)) {
-			return res.catch(stderr);
-		}
-
-		return res;
+		deactivate(this);
 	}
 
 	/**
@@ -2374,7 +2023,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param ctxOrOpts - log context or log options (logLevel, context)
 	 * @param [details]
 	 */
-	protected log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
+	@p({replace: false})
+	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
 			logLevel;
@@ -2408,681 +2058,81 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Creates a new function from the specified that executes deferredly
+	 * This method works as a two-way connector between a local storage and a component.
 	 *
-	 * @see Async.setTimeout
-	 * @param fn
-	 * @param [params] - async parameters
-	 */
-	protected createDeferFn(fn: Function, params?: AsyncOpts): Function {
-		return (...args) => this.async.setTimeout(() => fn.call(this, ...args), 0.2.second(), params);
-	}
-
-	/**
-	 * Accumulates a temporary object and apply it with the specified function
+	 * When the component initializes, it asks the local storage for data that associated to this component
+	 * by using a global name as a namespace to search. When the local storage is ready to provide data to the component,
+	 * it passes data  to this method. After this, the method returns a dictionary that will be mapped to the
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
 	 *
-	 * @param obj
-	 * @param key - cache key
-	 * @param fn
-	 */
-	protected accumulateTmpObj(
-		obj: Dictionary,
-		key: string | symbol,
-		fn: (this: this, obj: Dictionary) => void
-	): void {
-		const
-			t = this.tmp,
-			k = <string>key,
-			tmp = t[k] = t[k] || {};
-
-		Object.assign(
-			tmp,
-			obj
-		);
-
-		this.createDeferFn(() => {
-			fn.call(this, tmp);
-			t[k] = undefined;
-
-		}, {
-			label: $$.accumulateTmpObj
-		})();
-	}
-
-	/**
-	 * Creates a fake context for a Block instance from the specified node
-	 * @param node
-	 */
-	protected createBlockCtxFromNode(node: Element): Dictionary {
-		const
-			$el = <ComponentElement<iBlock>>node,
-			comp = $el.component;
-
-		const
-			rgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/,
-			componentName = comp ? comp.componentName : $C(rgxp.exec($el.className)).get('1') || this.componentName;
-
-		return Object.assign(Object.create(Block.prototype), {
-			component: {
-				$el,
-				componentName,
-				localEvent: comp ? comp.localEvent : {emit(): void { /* loopback */ }},
-				mods: comp ? comp.mods : undefined
-			}
-		});
-	}
-
-	/**
-	 * Executes the specified render object
-	 *
-	 * @param renderObj
-	 * @param [ctx] - render context
-	 */
-	protected execRenderObject(
-		renderObj: RenderObject,
-		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): VNode {
-		let
-			instanceCtx,
-			renderCtx;
-
-		const
-			i = this.instance;
-
-		if (ctx && Object.isArray(ctx)) {
-			instanceCtx = ctx[0] || this;
-			renderCtx = ctx[1];
-
-			if (instanceCtx !== this) {
-				instanceCtx.getBlockClasses = i.getBlockClasses.bind(instanceCtx);
-				instanceCtx.getFullBlockName = i.getFullBlockName.bind(instanceCtx);
-				instanceCtx.getFullElName = i.getFullElName.bind(instanceCtx);
-				instanceCtx.getElClasses = i.getElClasses.bind(instanceCtx);
-				instanceCtx.execRenderObject = i.execRenderObject.bind(instanceCtx);
-				instanceCtx.findElFromVNode = i.findElFromVNode.bind(instanceCtx);
-			}
-
-		} else {
-			instanceCtx = this;
-			renderCtx = ctx;
-		}
-
-		const
-			vnode = execRenderObject(renderObj, instanceCtx);
-
-		if (renderCtx) {
-			return patchVNode(vnode, instanceCtx, renderCtx);
-		}
-
-		return vnode;
-	}
-
-	/**
-	 * Returns a full name of the specified component
-	 *
-	 * @param [componentName]
-	 * @param [modName]
-	 * @param [modValue]
-	 */
-	protected getFullBlockName(componentName: string = this.componentName, modName?: string, modValue?: unknown): string {
-		return Block.prototype.getFullBlockName.call({blockName: componentName}, modName, modValue);
-	}
-
-	/**
-	 * Returns a full name of the specified element
-	 *
-	 * @param componentName
-	 * @param elName
-	 * @param [modName]
-	 * @param [modValue]
-	 */
-	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string;
-
-	/**
-	 * @param elName
-	 * @param [modName]
-	 * @param [modValue]
-	 */
-	protected getFullElName(elName: string, modName?: string, modValue?: unknown): string;
-	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string {
-		if (!{2: true, 4: true}[arguments.length]) {
-			modValue = modName;
-			modName = elName;
-			elName = componentName;
-			componentName = this.componentName;
-		}
-
-		return Block.prototype.getFullElName.call({blockName: componentName}, elName, modName, modValue);
-	}
-
-	/**
-	 * Searches an element by the specified name from a virtual node
-	 *
-	 * @param vnode
-	 * @param elName
-	 * @param [ctx] - component context
-	 */
-	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): CanUndef<VNode> {
-		const
-			selector = ctx.getFullElName(elName);
-
-		const search = (vnode) => {
-			const
-				data = vnode.data || {};
-
-			const classes = Object.fromArray([].concat(
-				(data.staticClass || '').split(' '),
-				data.class || []
-			));
-
-			if (classes[selector]) {
-				return vnode;
-			}
-
-			if (vnode.children) {
-				for (let i = 0; i < vnode.children.length; i++) {
-					const
-						res = search(vnode.children[i]);
-
-					if (res) {
-						return res;
-					}
-				}
-			}
-
-			return undefined;
-		};
-
-		return search(vnode);
-	}
-
-	/**
-	 * Sets g-hint for the specified element
-	 * @param [pos] - hint position
-	 */
-	protected setHint(pos: string = 'bottom'): ReadonlyArray<string> {
-		return this.getBlockClasses('g-hint', {pos});
-	}
-
-	/**
-	 * Returns an array of element classes by the specified parameters
-	 *
-	 * @param componentNameOrCtx
-	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
-	 */
-	protected getElClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
-
-	/**
-	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
-	 */
-	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
-	protected getElClasses(
-		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
-		els?: Dictionary<ModsTable>
-	): ReadonlyArray<string> {
-		let
-			id,
-			componentName;
-
-		if (arguments.length === 1) {
-			id = this.componentId;
-			componentName = this.componentName;
-			els = <Dictionary<ModsTable>>componentNameOrCtx;
-
-		} else {
-			if (Object.isString(componentNameOrCtx)) {
-				componentName = componentNameOrCtx;
-
-			} else {
-				id = (<iBlock>componentNameOrCtx).componentId;
-				componentName = (<iBlock>componentNameOrCtx).componentName;
-			}
-		}
-
-		if (!els) {
-			return Object.freeze([]);
-		}
-
-		const
-			key = JSON.stringify(els),
-			cache = classesCache.create('els', id || componentName);
-
-		if (cache[key]) {
-			return <ReadonlyArray<string>>cache[key];
-		}
-
-		const
-			classes = cache[key] = id ? [id] : [];
-
-		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
-			const
-				el = keys[i],
-				mods = els[el];
-
-			classes.push(
-				this.getFullElName(<string>componentName, el)
-			);
-
-			if (!Object.isObject(mods)) {
-				continue;
-			}
-
-			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					val = mods[key];
-
-				if (val !== undefined) {
-					classes.push(this.getFullElName(<string>componentName, el, key, val));
-				}
-			}
-		}
-
-		return Object.freeze(classes);
-	}
-
-	/**
-	 * Puts the specified element to the render stream
-	 *
-	 * @param cb
-	 * @param [el]
-	 */
-	@wait('ready')
-	protected async putInStream(cb: (el: Element) => void, el: Element = this.$el): Promise<boolean> {
-		if (el.clientHeight) {
-			cb.call(this, el);
-			return false;
-		}
-
-		const wrapper = document.createElement('div');
-		Object.assign(wrapper.style, {
-			'display': 'block',
-			'position': 'absolute',
-			'top': 0,
-			'left': 0,
-			'z-index': -1,
-			'opacity': 0
-		});
-
-		const
-			parent = el.parentNode,
-			before = el.nextSibling;
-
-		wrapper.appendChild(el);
-		document.body.appendChild(wrapper);
-		await cb.call(this, el);
-
-		if (parent) {
-			if (before) {
-				parent.insertBefore(el, before);
-
-			} else {
-				parent.appendChild(el);
-			}
-		}
-
-		wrapper.remove();
-		return true;
-	}
-
-	/**
-	 * Saves the specified settings to a local storage by a key
-	 *
-	 * @param settings
-	 * @param [key] - data storage key
-	 */
-	protected async saveSettings<T extends object = Dictionary>(settings: T, key: string = ''): Promise<T> {
-		const
-			$a = this.async,
-			id = `${this.globalName}_${key}`;
-
-		return $a.promise(async () => {
-			try {
-				await this.storage.set(id, settings);
-				this.log('settings:save', () => Object.fastClone(settings));
-
-			} catch {}
-
-			return settings;
-
-		}, {
-			label: id,
-			group: 'saveSettings',
-			join: 'replace'
-		});
-	}
-
-	/**
-	 * Loads settings from a local storage by the specified key
-	 * @param [key] - data key
-	 */
-	protected loadSettings<T extends object = Dictionary>(key: string = ''): Promise<CanUndef<T>> {
-		const
-			id = `${this.globalName}_${key}`;
-
-		return this.async.promise(async () => {
-			try {
-				const res = await this.storage.get<T>(id);
-				this.log('settings:load', () => Object.fastClone(res));
-				return res;
-
-			} catch {}
-
-		}, {
-			label: id,
-			group: 'loadSettings',
-			join: true
-		});
-	}
-
-	/**
-	 * Returns an object with default component fields for saving to a local storage
+	 * Also, the component will watch for changes of every property that was in that dictionary
+	 * and when at least one of these properties is changed, the whole butch of data will be sent to the local storage
+	 * by using this method. When the component provides local storage data the second argument of the method is
+	 * equal to "remote".
 	 *
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToStorage(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
+	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
 	/**
-	 * Returns an object with default component fields for resetting a local storage
+	 * Returns a dictionary with default component properties to reset a local storage state
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToStorageReset(data?: CanUndef<Dictionary>): Dictionary {
-		return $C(this.convertStateToStorage(data)).map(() => undefined);
-	}
+	protected convertStateToStorageReset(data?: Dictionary): Dictionary<undefined> {
+		const
+			stateFields = this.syncStorageState(data),
+			res = {};
 
-	/**
-	 * Saves a component state to a local storage
-	 * @param [data] - advanced data
-	 */
-	protected async saveStateToStorage(data?: CanUndef<Dictionary>): Promise<void> {
-		if (!this.globalName) {
-			return;
+		if (stateFields) {
+			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
+				res[keys[i]] = undefined;
+			}
 		}
 
-		data = this.convertStateToStorage(data, 'remote');
-		this.setState(this.convertStateToStorage(data));
-
-		await this.saveSettings(data, '[[STORE]]');
-		this.log('state:save:storage', this, data);
+		return res;
 	}
 
 	/**
-	 * Initializes a component state from a local storage
-	 */
-	protected async initStateFromStorage(): Promise<void> {
-		if (!this.globalName) {
-			return;
-		}
-
-		const
-			key = $$.pendingLocalStore;
-
-		if (this[key]) {
-			return this[key];
-		}
-
-		const
-			$a = this.async,
-			storeWatchers = {group: 'storeWatchers'};
-
-		$a.clearAll(
-			storeWatchers
-		);
-
-		return this[key] = $a.promise(async () => {
-			const
-				data = await this.loadSettings('[[STORE]]');
-
-			this.execCbAtTheRightTime(() => {
-				const
-					stateFields = this.convertStateToStorage(data);
-
-				this.setState(
-					stateFields
-				);
-
-				const sync = this.createDeferFn(() => this.saveStateToStorage(), {
-					label: $$.syncLocalStore
-				});
-
-				$C(stateFields).forEach((el, key) => {
-					const
-						p = key.split('.');
-
-					if (p[0] === 'mods') {
-						$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
-
-					} else {
-						this.watch(key, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
-								sync();
-							}
-						}, storeWatchers);
-					}
-				});
-
-				this.log('state:init:storage', this, stateFields);
-			});
-
-		}, {
-			group: 'loadStore',
-			join: true
-		});
-	}
-
-	/**
-	 * Resets a component storage state
-	 */
-	protected async resetStorageState(): Promise<boolean> {
-		const
-			stateFields = this.convertStateToStorageReset();
-
-		this.setState(
-			stateFields
-		);
-
-		await this.saveStateToStorage();
-		this.log('state:reset:storage', this, stateFields);
-		return true;
-	}
-
-	/**
-	 * Returns an object with default component fields for saving to a router
+	 * This method works as a two-way connector between the global router and a component.
+	 *
+	 * When the component initializes, it asks the router for data. The router provides the data by using this method.
+	 * After this, the method returns a dictionary that will be mapped to the
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
+	 *
+	 * Also, the component will watch for changes of every property that was in that dictionary
+	 * and when at least one of these properties is changed, the whole butch of data will be sent to the router
+	 * by using this method (the router will produce a new transition by using "push").
+	 * When the component provides router data the second argument of the method is equal to "remote".
+	 *
+	 * Mind, that the router is global for all components, i.e. a dictionary that this method passes to the router
+	 * will extend the current route data but not override (`router.push(null, {...route, ...componentData}})`).
 	 *
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToRouter(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
+	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {};
 	}
 
 	/**
-	 * Returns an object with default component fields for resetting a router
+	 * Returns a dictionary with default component properties to reset a router state
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToRouterReset(data?: CanUndef<Dictionary>): Dictionary {
-		return $C(this.convertStateToRouter(data)).map(() => undefined);
-	}
-
-	/**
-	 * Saves a component state to a router
-	 * @param [data] - advanced data
-	 */
-	protected async saveStateToRouter(data?: CanUndef<Dictionary>): Promise<boolean> {
-		data = this.convertStateToRouter(data, 'remote');
-		this.setState(this.convertStateToRouter(data));
-
+	protected convertStateToRouterReset(data?: Dictionary): Dictionary<undefined> {
 		const
-			r = this.$root.router;
+			stateFields = this.syncRouterState(data),
+			res = {};
 
-		if (!this.isActivated || !r) {
-			return false;
+		if (stateFields) {
+			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
+				res[keys[i]] = undefined;
+			}
 		}
 
-		await r.push(null, {
-			query: data
-		});
-
-		this.log('state:save:router', this, data);
-		return true;
-	}
-
-	/**
-	 * Initializes a component state from a router
-	 */
-	protected initStateFromRouter(): void {
-		const
-			{async: $a} = this,
-			routerWatchers = {group: 'routerWatchers'};
-
-		$a.clearAll(
-			routerWatchers
-		);
-
-		this.execCbAtTheRightTime(async () => {
-			const
-				r = this.$root;
-
-			let
-				{router} = r;
-
-			if (!router) {
-				await $a.promisifyOnce(this.$root, 'initRouter', {
-					label: $$.initStateFromRouter
-				});
-
-				({router} = r);
-			}
-
-			if (!router) {
-				return;
-			}
-
-			const
-				route = r.route || {},
-				stateFields = this.convertStateToRouter(Object.assign(Object.create(route), route.params, route.query));
-
-			this.setState(
-				stateFields
-			);
-
-			if (this.syncRouterStoreOnInit) {
-				const
-					routerState = this.convertStateToRouter(stateFields, 'remote');
-
-				if (Object.keys(routerState).length) {
-					let
-						modState;
-
-					for (let keys = Object.keys(routerState), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							p = route.params,
-							q = route.query;
-
-						if ((!p || p[key] == null) && (!q || q[key] == null)) {
-							modState = modState || {};
-							modState[key] = routerState[key];
-						}
-					}
-
-					if (modState) {
-						router.replace(null, {query: modState});
-					}
-				}
-			}
-
-			const sync = this.createDeferFn(() => this.saveStateToRouter(), {
-				label: $$.syncRouter
-			});
-
-			$C(stateFields).forEach((el, key) => {
-				const
-					p = key.split('.');
-
-				if (p[0] === 'mods') {
-					$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
-
-				} else {
-					this.watch(key, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							sync();
-						}
-					}, routerWatchers);
-				}
-			});
-
-			this.log('state:init:router', this, stateFields);
-
-		}, {
-			label: $$.initStateFromRouter
-		});
-	}
-
-	/**
-	 * Resets a component router state
-	 */
-	protected async resetRouterState(): Promise<boolean> {
-		const
-			stateFields = this.convertStateToRouterReset();
-
-		this.setState(
-			stateFields
-		);
-
-		const
-			r = this.$root.router;
-
-		if (!this.isActivated || !r) {
-			return false;
-		}
-
-		await r.push(null);
-		this.log('state:reset:router', this, stateFields);
-		return true;
-	}
-
-	/**
-	 * Wrapper for core/dom -> delegate
-	 *
-	 * @param selector
-	 * @param handler
-	 */
-	protected delegate(selector: string, handler?: Function): Function {
-		return delegate(selector, handler);
-	}
-
-	/**
-	 * Wraps a handler for delegation of the specified element
-	 *
-	 * @param elName
-	 * @param handler
-	 */
-	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler)) || Any;
-	}
-
-	/**
-	 * Returns a link to the closest parent component for the current
-	 * @param component - component name or a link to the component constructor
-	 */
-	protected closest<T extends iBlock = iBlock>(component: string | {new: T}): CanUndef<T> {
-		const
-			isStr = Object.isString(component);
-
-		let el = this.$parent;
-		while (el && (
-			isStr ?
-				el.componentName !== (<string>component).dasherize() :
-				!(el.instance instanceof <any>component)
-		)) {
-			el = el.$parent;
-		}
-
-		return <any>el;
+		return res;
 	}
 
 	/**
@@ -3091,383 +2141,60 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param obj
 	 * @param [constructor] - component constructor
 	 */
-	protected isComponent<T extends iBlock>(obj: any, constructor?: {new(): T}): obj is T {
-		return Boolean(obj && obj.instance instanceof (constructor || iBlock));
+	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
+		return Boolean(obj && (<Dictionary>obj).instance instanceof (constructor || iBlock));
 	}
 
 	/**
-	 * Returns an instance of a component by the specified element
+	 * Waits until the specified reference won't be available and returns it.
+	 * The method returns a promise.
 	 *
-	 * @param el
-	 * @param [filter]
+	 * @see [[Async.wait]]
+	 * @param ref - ref name
+	 * @param [opts] - additional options
 	 */
-	protected $<T extends iBlock>(el: ComponentElement<T>, filter?: string): T;
+	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
+		let
+			that = <iBlock>this;
 
-	/**
-	 * Returns an instance of a component by the specified query
-	 *
-	 * @param query
-	 * @param [filter]
-	 */
-	protected $<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
-	protected $<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
+		if (this.isFlyweight || this.isFunctional) {
+			ref += `:${this.componentId}`;
+			that = this.$normalParent || that;
+		}
+
 		const
-			q = Object.isString(query) ? document.body.querySelector<ComponentElement<T>>(query) : query;
+			watchers = that.$refHandlers[ref] = that.$refHandlers[ref] || [],
+			refVal = that.$refs[ref];
 
-		if (q) {
-			if (q.component && (q.component.instance instanceof iBlock)) {
-				return q.component;
+		return this.async.promise(() => new Promise((resolve) => {
+			if (refVal) {
+				resolve(<T>refVal);
+
+			} else {
+				watchers.push(resolve);
 			}
-
-			const
-				el = <ComponentElement<T>>q.closest(`.i-block-helper${filter}`);
-
-			if (el) {
-				return el.component;
-			}
-		}
-
-		return undefined;
-	}
-
-	/**
-	 * Returns if the specified label:
-	 *   2 -> already exists in the cache;
-	 *   1 -> just written in the cache;
-	 *   0 -> doesn't exist in the cache.
-	 *
-	 * @param label
-	 * @param [value] - label value (will saved in the cache only if true)
-	 */
-	protected ifOnce(label: unknown, value: boolean = false): 0 | 1 | 2 {
-		if (this.ifOnceStore[String(label)]) {
-			return 2;
-		}
-
-		if (value) {
-			return this.ifOnceStore[String(label)] = 1;
-		}
-
-		return 0;
-	}
-
-	/**
-	 * Waits until the specified reference won't be available and returns it
-	 *
-	 * @see Async.wait
-	 * @param ref
-	 * @param [params] - async parameters
-	 */
-	protected async waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
-		await this.async.wait(() => this.$refs[ref], params);
-		const link = <any>this.$refs[ref];
-		return link.component ? link.component : link;
-	}
-
-	/**
-	 * Sends an analytic event with the specified parameters
-	 *
-	 * @param event - event name
-	 * @param [details] - event details
-	 */
-	protected sendAnalyticsEvent(event: string, details: Dictionary = {}): void {
-		analytics.send(event, details);
+		}), opts);
 	}
 
 	/**
 	 * Initializes core component API
 	 */
-	@hook('beforeRuntime')
+	@hook({beforeRuntime: {functional: false}})
 	protected initBaseAPI(): void {
-		// @ts-ignore
-		this.linksCache = {};
-
-		// @ts-ignore
-		this.syncLinkCache = {};
-
-		// @ts-ignore
-		this.syncModCache = {};
-
 		const
 			i = this.instance;
 
-		this.link = i.link.bind(this);
-		this.createWatchObject = i.createWatchObject.bind(this);
+		this.syncStorageState = i.syncStorageState.bind(this);
+		this.syncRouterState = i.syncRouterState.bind(this);
 
-		this.isBeforeCreate = i.isBeforeCreate.bind(this);
-		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
-		this.execCbAfterBlockReady = i.execCbAfterBlockReady.bind(this);
-		this.execCbAtTheRightTime = i.execCbAtTheRightTime.bind(this);
-
-		this.bindModTo = i.bindModTo.bind(this);
-		this.getField = i.getField.bind(this);
-		this.setField = i.setField.bind(this);
-		this.deleteField = i.deleteField.bind(this);
-
-		this.convertStateToStorage = i.convertStateToStorage.bind(this);
-		this.initStateFromStorage = i.initStateFromStorage.bind(this);
-		this.convertStateToRouter = i.convertStateToRouter.bind(this);
-
-		this.initStateFromRouter = i.initStateFromRouter.bind(this);
-		this.setState = i.setState.bind(this);
 		this.watch = i.watch.bind(this);
-
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
-		this.delegate = i.delegate.bind(this);
-
-		// tslint:disable:no-string-literal
-
-		Object.defineProperties(this, {
-			refs: {
-				get: i['refsGetter']
-			}
-		});
-
-		// tslint:enable:no-string-literal
 	}
 
 	/**
-	 * Synchronizes component link values with linked values
-	 *
-	 * @param [name] - link name or [linked] | [linked, link]
-	 * @param [value] - additional value for sync
-	 */
-	protected syncLinks(name?: string | [string] | [string, string], value?: unknown): void {
-		const
-			linkName = <CanUndef<string>>(Object.isString(name) ? name : name && name[1]),
-			fieldName = Object.isArray(name) ? name[0] : undefined;
-
-		const
-			cache = this.syncLinkCache,
-			sync = (el, key) => (!fieldName || key === fieldName) && el.sync(value);
-
-		if (linkName) {
-			$C(cache[linkName]).forEach(sync);
-
-		} else {
-			$C(cache).forEach((el) => $C(el).forEach(sync));
-		}
-	}
-
-	/**
-	 * Restarts the async render daemon for forcing render
-	 */
-	protected forceAsyncRender(): void {
-		restart();
-	}
-
-	/**
-	 * Restarts the async render daemon for forcing render
-	 * (runs on a next tick)
-	 */
-	protected deferForceAsyncRender(): void {
-		deferRestart();
-	}
-
-	/**
-	 * Adds a component to the render queue
-	 *
-	 * @param id - task id
-	 * @param [group] - task group
-	 */
-	protected regAsyncComponent(id: AsyncTaskId, group: AsyncQueueType = 'asyncComponents'): AsyncTaskSimpleId {
-		id = Object.isFunction(id) ? id() : id;
-
-		let
-			filter,
-			simpleId,
-			weight;
-
-		if (Object.isObject(id)) {
-			simpleId = (<AsyncTaskObjectId>id).id;
-			filter = (<AsyncTaskObjectId>id).filter;
-			weight = (<AsyncTaskObjectId>id).weight;
-
-		} else {
-			simpleId = id;
-		}
-
-		weight =
-			weight ||
-			this.weight ||
-			this.isFunctional ? 0.5 : 1;
-
-		const
-			cursor = group === 'asyncComponents' ? queue : backQueue,
-			store = <Dictionary>this[group];
-
-		if (!(simpleId in store)) {
-			const obj = {
-				weight,
-				fn: this.async.proxy(() => {
-					if (filter && !filter(simpleId)) {
-						return false;
-					}
-
-					store[simpleId] = true;
-					return true;
-
-				}, {
-					onClear: () => cursor.delete(obj),
-					single: false,
-					group
-				})
-			};
-
-			this.$set(store, simpleId, false);
-			cursor.add(obj);
-		}
-
-		return simpleId;
-	}
-
-	/**
-	 * Adds a component to the background render queue
-	 * @param id - task id
-	 */
-	protected regAsyncBackComponent(id: AsyncTaskId): AsyncTaskSimpleId {
-		return this.regAsyncComponent(id, 'asyncBackComponents');
-	}
-
-	/**
-	 * Synchronization for the asyncComponents field
-	 * @emits asyncRender()
-	 */
-	@watch({field: 'asyncComponents', deep: true})
-	@watch({field: 'asyncBackComponents', deep: true})
-	protected syncAsyncComponentsWatcher(): void {
-		this.emit('asyncRender');
-	}
-
-	/**
-	 * Synchronization for the stageStore field
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch('!:onStageChange')
-	protected syncStageWatcher(value: CanUndef<Stage>, oldValue?: CanUndef<Stage>): void {
-		this.async.clearAll({group: `stage.${oldValue}`});
-	}
-
-	/**
-	 * Returns an object with classes for elements of an another component
-	 *
-	 * @param componentName
-	 * @param classes - additional classes ({baseElementName: newElementName})
-	 */
-	protected provideClasses(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
-
-	/**
-	 * @param classes - additional classes ({baseElementName: newElementName})
-	 */
-	protected provideClasses(classes: Classes): Readonly<Dictionary<string>>;
-	protected provideClasses(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
-		if (!Object.isString(componentName)) {
-			classes = componentName;
-			componentName = this.componentName;
-		}
-
-		const
-			key = JSON.stringify(classes),
-			cache = classesCache.create('base'),
-			cacheVal = cache[key];
-
-		if (cacheVal) {
-			return <Readonly<Dictionary<string>>>cacheVal;
-		}
-
-		const
-			map = cache[key] = {};
-
-		if (classes) {
-			const
-				keys = Object.keys(classes);
-
-			for (let i = 0; i < keys.length; i++) {
-				const
-					key = keys[i];
-
-				let
-					el = classes[key];
-
-				if (el === true) {
-					el = key;
-
-				} else if (Object.isArray(el)) {
-					el = el.slice();
-					for (let i = 0; i < el.length; i++) {
-						if (el[i] === true) {
-							el[i] = key;
-						}
-					}
-				}
-
-				map[key.dasherize()] = this.getFullElName.apply(this, (<any[]>[componentName]).concat(el));
-			}
-		}
-
-		return Object.freeze(map);
-	}
-
-	/**
-	 * Returns an object with base component modifiers
-	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
-	 */
-	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
-		const
-			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
-			cache = modsCache[key];
-
-		if (cache) {
-			return cache;
-		}
-
-		const
-			map = modsCache[key] = {...this.baseMods};
-
-		if (mods) {
-			const
-				keys = Object.keys(mods);
-
-			for (let i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					mod = key.dasherize();
-
-				let
-					el = <any>mods[key];
-
-				if (!Object.isObject(el)) {
-					el = {default: el};
-				}
-
-				// tslint:disable-next-line:prefer-conditional-expression
-				if (!(key in mods) || el[key] === undefined) {
-					map[mod] = el[Object.keys(el)[0]];
-
-				} else {
-					map[mod] = el[key];
-				}
-			}
-		}
-
-		return Object.freeze(map);
-	}
-
-	/**
-	 * Saves to cache the specified literal and returns returns it
-	 * @param literal
-	 */
-	protected memoizeLiteral<T = unknown>(literal: T): T extends Dictionary ? Readonly<T>: ReadonlyArray<T> {
-		const key = JSON.stringify(literal);
-		return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
-	}
-
-	/**
-	 * Initializes component instance
+	 * Initializes an instance of the Block class for the current component
 	 */
 	@hook('mounted')
 	protected initBlockInstance(): void {
@@ -3485,386 +2212,96 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		this.block = new Block(this);
-		this.localEvent.emit('block.ready');
-	}
 
-	/**
-	 * Initializes an update from the parent listener
-	 */
-	@hook('created')
-	protected initParentCallEvent(): void {
-		this.parentEvent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
-			if (
-				check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
-				check[0] === 'instanceOf' && this.instance instanceof <Function>check[1]
-			) {
-				return action.call(this);
-			}
-		});
+		for (let i = 0; i < this.blockReadyListeners.length; i++) {
+			this.blockReadyListeners[i]();
+		}
+
+		this.blockReadyListeners = [];
 	}
 
 	/**
 	 * Initializes global event listeners
+	 * @param [resetListener]
 	 */
-	@hook('created')
-	protected initGlobalEvents(): void {
-		const
-			{globalEvent: $e} = this;
-
-		const waitNextTick = (fn) => async () => {
-			try {
-				await this.nextTick({label: $$.reset});
-				await fn();
-
-			} catch (err) {
-				stderr(err);
-			}
-		};
-
-		$e.on('reset.load', waitNextTick(this.initLoad));
-		$e.on('reset.load.silence', waitNextTick(this.reload));
-		$e.on('reset.router', this.resetRouterState);
-		$e.on('reset.storage', this.resetStorageState);
-
-		$e.on('reset', waitNextTick(async () => {
-			this.componentStatus = 'loading';
-
-			await Promise.all([
-				this.resetRouterState(),
-				this.resetStorageState()
-			]);
-
-			await this.initLoad();
-		}));
-
-		$e.on('reset.silence', waitNextTick(async () => {
-			await Promise.all([
-				this.resetRouterState(),
-				this.resetStorageState()
-			]);
-
-			await this.reload();
-		}));
+	@hook({created: {functional: false}})
+	protected initGlobalEvents(resetListener?: boolean): void {
+		initGlobalListeners(this, resetListener);
 	}
 
 	/**
-	 * Initializes modifiers event listeners
-	 *
-	 * @emits enable()
-	 * @emits disable()
-	 *
-	 * @emits focus()
-	 * @emits blur()
-	 *
-	 * @emits show()
-	 * @emits hide()
+	 * Initializes modifier event listeners
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
-		const
-			{async: $a, localEvent: $e} = this;
-
-		$e.on('block.mod.set.**', (e: ModEvent) => {
-			const
-				k = e.name,
-				v = e.value,
-				w = <NonNullable<ModsNTable>>this.getField('watchModsStore');
-
-			this
-				.mods[k] = v;
-
-			if (k in w && w[k] !== v) {
-				delete w[k];
-				this.setField(`watchModsStore.${k}`, v);
-			}
-
-			this.emit(`mod-set-${k}-${v}`, e);
-		});
-
-		$e.on('block.mod.remove.**', (e: ModEvent) => {
-			if (e.reason === 'removeMod') {
-				const
-					k = e.name,
-					w = <NonNullable<ModsNTable>>this.getField('watchModsStore');
-
-				this
-					.mods[k] = undefined;
-
-				if (k in w && w[k]) {
-					delete w[k];
-					this.setField(`watchModsStore.${k}`, undefined);
-				}
-
-				this.emit(`mod-remove-${k}-${e.value}`, e);
-			}
-		});
-
-		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
-			if (e.value === 'false' || e.type === 'remove') {
-				$a.off({group: 'blockOnDisable'});
-				this.emit('enable');
-
-			} else {
-				this.emit('disable');
-
-				const handler = (e) => {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-				};
-
-				$a.on(this.$el, 'click mousedown touchstart keydown input change scroll', handler, {
-					group: 'blockOnDisable',
-					options: {
-						capture: true
-					}
-				});
-			}
-		});
-
-		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
-			this.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
-		});
-
-		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
-			this.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
-		});
+		return undefined;
 	}
 
 	/**
-	 * Initializes watchers from .watchProp
+	 * Initializes remote watchers from the prop
 	 */
-	@hook('beforeDataCreate')
+	@hook({beforeDataCreate: {functional: false}})
 	protected initRemoteWatchers(): void {
-		const
-			w = this.meta.watchers,
-			o = this.watchProp;
+		initRemoteWatchers(this);
+	}
 
-		if (!o) {
+	/**
+	 * Initializes "callChild" event listener
+	 */
+	@watch({field: 'proxyCall', immediate: true})
+	protected initCallChildListener(value: boolean): void {
+		if (!value) {
 			return;
 		}
 
-		const
-			keys = Object.keys(o);
+		this.parentEmitter.on('onCallChild', this.onCallChild);
+	}
 
-		const normalizeField = (field) => {
-			if (customWatcherRgxp.test(field)) {
-				return field.replace(customWatcherRgxp, (str, prfx, emitter, event) =>
-					`${prfx + ['$parent'].concat(emitter || []).join('.')}:${event}`);
-			}
-
-			return `$parent.${field}`;
-		};
-
-		for (let i = 0; i < keys.length; i++) {
-			const
-				method = keys[i],
-				watchers = (<any[]>[]).concat((<MethodWatchers>o[method]) || []);
-
-			for (let i = 0; i < watchers.length; i++) {
-				const
-					el = watchers[i],
-					isStr = Object.isString(el);
-
-				const
-					field = normalizeField(isStr ? el : el.field),
-					wList = w[field] = w[field] || [];
-
-				if (Object.isString(el)) {
-					wList.push({
-						method,
-						handler: method
-					});
-
-				} else {
-					wList.push({
-						...el,
-						args: [].concat(el.args || []),
-						method,
-						handler: method
-					});
-				}
-			}
+	/**
+	 * Handler: "callChild" event
+	 * @param e
+	 */
+	protected onCallChild(e: ParentMessage<this>): void {
+		if (
+			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
+			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
+		) {
+			return e.action.call(this);
 		}
 	}
 
 	/**
-	 * Returns true if the component hook is equal one of "before" hooks
-	 * @param [skip] - name of a skipped hook
-	 */
-	protected isBeforeCreate(...skip: Hooks[]): boolean {
-		const
-			hooks = {beforeRuntime: true, beforeCreate: true, beforeDataCreate: true};
-
-		for (let i = 0; i < skip.length; i++) {
-			hooks[skip[i]] = false;
-		}
-
-		return Boolean(hooks[this.hook]);
-	}
-
-	/**
-	 * Executes the specified callback after created hook and returns the result
-	 *
-	 * @param cb
-	 * @param [params] - async parameters
-	 */
-	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanUndef<CanPromise<T>> {
-		if (this.isBeforeCreate()) {
-			return <any>this.$async.promise(new Promise((r) => {
-				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
-			}), params).catch(stderr);
-		}
-
-		if (statuses[this.componentStatus] >= 0) {
-			return cb.call(this);
-		}
-	}
-
-	/**
-	 * Executes the specified callback after block.ready event and returns the result
-	 *
-	 * @param cb
-	 * @param [params] - async parameters
-	 */
-	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanUndef<CanPromise<T>> {
-		if (this.block) {
-			if (statuses[this.componentStatus] >= 0) {
-				return cb.call(this);
-			}
-
-			return;
-		}
-
-		return <any>this.$async.promise(new Promise((r) => {
-			this.localEvent.once('block.ready', () => r(cb.call(this)));
-		}), params).catch(stderr);
-	}
-
-	/**
-	 * Component created
-	 */
-	protected created(): void {
-		return undefined;
-	}
-
-	/**
-	 * Component mounted to DOM
-	 */
-	protected mounted(): void {
-		return undefined;
-	}
-
-	/**
-	 * Component activated
+	 * Component activated hook
 	 * (for keep-alive)
+	 *
+	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
 	 */
-	protected activated(): void {
-		if (this.isActivated) {
-			return;
-		}
-
-		this.async.unmuteAll().unsuspendAll();
-		this.componentStatus = 'beforeReady';
-
-		if (this.needReInit) {
-			this.async.setImmediate(() => {
-				const
-					v = this.reload();
-
-				if (Object.isPromise(v)) {
-					v.catch(stderr);
-				}
-
-			}, {
-				label: $$.activated
-			});
-		}
-
-		if (!{beforeReady: true, ready: true}[this.componentStatus]) {
-			this.componentStatus = 'beforeReady';
-		}
-
-		this.componentStatus = 'ready';
-		this.isActivated = true;
+	protected activated(force?: boolean): void {
+		onActivated(this, force);
 	}
 
 	/**
-	 * Component deactivated
+	 * Component deactivated hook
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		const
-			$a = this.async,
-			names = Async.linkNames;
-
-		const nonMute = {
-			[names.promise]: true,
-			[names.request]: true
-		};
-
-		for (let keys = Object.keys(names), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
-			if (nonMute[key]) {
-				continue;
-			}
-
-			const
-				fn = $a[`mute-${names[key]}`.camelize(false)];
-
-			if (Object.isFunction(fn)) {
-				fn.call($a);
-			}
-		}
-
-		$a
-			.unmuteAll({group: /:suspend(?:\b|$)/})
-			.suspendAll();
-
-		this.componentStatus = 'inactive';
-		this.isActivated = false;
+		onDeactivated(this);
 	}
 
 	/**
-	 * Component before destroy
+	 * Component destructor
 	 */
+	@p({replace: false})
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll().locked = true;
-		delete (<StrictDictionary<any>>classesCache).dict.els[this.componentId];
-	}
-}
 
-/**
- * Hack for i-component decorators
- */
-export abstract class iBlockDecorator extends iBlock {
-	public readonly h!: typeof helpers;
-	public readonly b!: typeof browser;
-	public readonly t!: typeof i18n;
-
-	public readonly meta!: ComponentMeta;
-	public readonly linksCache!: Dictionary<Dictionary>;
-	public readonly syncLinkCache!: SyncLinkCache;
-	public readonly $attrs!: Dictionary<string>;
-
-	public readonly async!: Async<this>;
-	public readonly block!: Block;
-
-	public readonly localEvent!: Event<this>;
-	public readonly globalEvent!: Event<this>;
-	public readonly rootEvent!: Event<this>;
-
-	public delegate(selector: string, handler?: Function): Function {
-		return () => ({});
-	}
-
-	public delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return () => ({});
+		if (classesCache.dict && classesCache.dict.els) {
+			delete classesCache.dict.els[this.componentId];
+		}
 	}
 }
 
 function defaultI18n(): string {
-	return this.$root.i18n.apply(this.$root, arguments);
+	return (this.r.i18n || ((i18n))).apply(this.r, arguments);
 }

@@ -6,119 +6,197 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
+/**
+ * [[include:super/i-data/README.md]]
+ * @packageDocumentation
+ */
 
-import $C = require('collection.js');
-
-import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
+import { deprecated } from 'core/functools';
 
-import { Socket } from 'core/socket';
-import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
+import iProgress from 'traits/i-progress/i-progress';
+import Async, { AsyncOptions } from 'core/async';
 
-import iMessage, { component, prop, field, system, watch, wait, RemoteEvent } from 'super/i-message/i-message';
+import RequestError from 'core/request/error';
+import { providers } from 'core/data/const';
+
+//#if runtime has core/data
+
 import Provider, {
 
-	providers,
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
-	RequestError,
-	Response,
-	ModelMethods,
-	CreateRequestOptions as BaseCreateRequestOptions
+	ModelMethod,
+	ProviderOptions
 
 } from 'core/data';
 
-export * from 'super/i-message/i-message';
-export { ModelMethods, RequestQuery, RequestBody, RequestResponseObject, RequestError } from 'core/data';
+//#endif
 
-export interface RequestFilterOpts<T = unknown> {
-	isEmpty: boolean;
-	method: ModelMethods;
-	params: CreateRequestOptions<T>;
-}
+import iBlock, {
 
-export type RequestFilter<T = unknown> =
-	((data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>) => boolean) |
-	boolean;
+	component,
+	wrapEventEmitter,
 
-export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<T>];
-export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
-export type RequestParams<T = unknown> = StrictDictionary<Request<T>>;
+	prop,
+	field,
+	system,
+	watch,
+	wait,
 
-export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
-	connection: Promise<Socket | void>;
-}
+	ReadonlyEventEmitterWrapper,
 
-export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOpts {
-	showProgress?: boolean;
-	hideProgress?: boolean;
-}
+	InitLoadCb,
+	InitLoadOptions,
 
-export interface ComponentConverter<T = unknown> {
-	(value: unknown): T;
-}
+	ModsDecl,
+	UnsafeGetter
+
+} from 'super/i-block/i-block';
+
+import { providerMethods } from 'super/i-data/const';
+
+import {
+
+	UnsafeIData,
+
+	RequestParams,
+	DefaultRequest,
+	RequestFilter,
+	CreateRequestOptions,
+
+	RetryRequestFn,
+	ComponentConverter,
+	CheckDBEquality
+
+} from 'super/i-data/interface';
+
+export { RequestError };
+
+//#if runtime has core/data
+
+export {
+
+	Socket,
+	RequestQuery,
+	RequestBody,
+	RequestResponseObject,
+	Response,
+	ModelMethod,
+	ProviderOptions,
+	ExtraProvider,
+	ExtraProviders
+
+} from 'core/data';
+
+//#endif
+
+export * from 'super/i-block/i-block';
+export * from 'super/i-data/const';
+export * from 'super/i-data/interface';
 
 export const
 	$$ = symbolGenerator();
 
-@component()
-export default class iData<T extends Dictionary = Dictionary> extends iMessage {
+/**
+ * Superclass for all components that need to download data from data providers
+ */
+@component({functional: null})
+export default abstract class iData extends iBlock implements iProgress {
+	/**
+	 * Type: raw provider data
+	 */
+	readonly DB!: object;
+
+	//#if runtime has iData
+
 	/**
 	 * Data provider name
 	 */
-	@prop({type: String, watch: 'reload', required: false})
+	@prop({type: String, required: false})
 	readonly dataProvider?: string;
 
 	/**
-	 * Parameters for a data provider instance
+	 * Initial parameters for a data provider instance
 	 */
-	@prop(Object)
-	readonly dataProviderParams: Dictionary = {};
+	@prop({type: Object, required: false})
+	readonly dataProviderOptions?: ProviderOptions;
 
 	/**
-	 * Initial request parameters
+	 * External request parameters.
+	 * Keys of the object represent names of data provider methods.
+	 * Parameters that associated to provider methods will be automatically appended to
+	 * invocation as parameters by default.
+	 *
+	 * This parameter is useful to provide some request parameters from a parent component.
+	 *
+	 * @example
+	 * ```
+	 * < b-select :dataProvider = 'Cities' | :request = {get: {text: searchValue}}
+	 *
+	 * // Also, you can provide additional parameters to request method
+	 * < b-select :dataProvider = 'Cities' | :request = {get: [{text: searchValue}, {cacheStrategy: 'never'}]}
+	 * ```
 	 */
 	@prop({type: [Object, Array], required: false})
 	readonly request?: RequestParams;
 
 	/**
-	 * Initial request filter or if false,
-	 * then won't be request for an empty request
+	 * If false, then the initial data request won't be executed if the request data is empty.
+	 * Also, the parameter can be passed as a function, that returns true if the request can be executed.
 	 */
-	@prop({type: [Function, Boolean], watch: 'reload'})
+	@prop({type: [Boolean, Function]})
 	readonly requestFilter: RequestFilter = true;
 
 	/**
-	 * Remote data converter
+	 * Remote data converter/s.
+	 * This function transforms initial provider data before saving to .db.
 	 */
-	@prop({type: Function, watch: 'reload', required: false})
-	readonly dbConverter?: ComponentConverter<any>;
+	@prop({type: [Function, Array], required: false})
+	readonly dbConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
-	 * Converter from .db to the component format
+	 * If true, then all new initial provider data will be compared with old data.
+	 * Also, the parameter can be passed as a function, that returns true if data are equal.
 	 */
-	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly componentConverter?: ComponentConverter<any>;
+	@prop({type: [Boolean, Function]})
+	readonly checkDBEquality: CheckDBEquality = true;
 
 	/**
-	 * If true, then the component will be reinitialized after an activated hook in offline mode
+	 * Converter/s from .db to the component format
+	 */
+	@prop({type: [Function, Array], required: false})
+	readonly componentConverter?: CanArray<ComponentConverter<any>>;
+
+	/**
+	 * If true, then the component can reload data within an offline mode
 	 */
 	@prop(Boolean)
-	readonly needOfflineReInit: boolean = false;
+	readonly offlineReload: boolean = false;
+
+	/** @override */
+	get unsafe(): UnsafeGetter<UnsafeIData<this>> {
+		return <any>this;
+	}
 
 	/**
-	 * Component data
+	 * Initial component data.
+	 * When a component takes data from own data provider it stores the value within this property.
 	 */
-	get db(): CanUndef<T> {
-		return this.getField('dbStore');
+	get db(): CanUndef<this['DB']> {
+		return this.field.get('dbStore');
 	}
 
 	/**
 	 * Sets new component data
+	 *
+	 * @emits `dbCanChange(value: CanUndef<this['DB']>)`
+	 * @emits `dbChange(value: CanUndef<this['DB']>)`
 	 */
-	set db(value: CanUndef<T>) {
+	set db(value: CanUndef<this['DB']>) {
+		this.emit('dbCanChange', value);
+
 		if (value === this.db) {
 			return;
 		}
@@ -130,380 +208,468 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			label: $$.db
 		});
 
-		this.setField('dbStore', value);
-		this.initRemoteData();
+		this.field.set('dbStore', value);
 
-		this.watch('dbStore', this.initRemoteData, {
-			deep: true,
-			label: $$.db
-		});
+		if (this.initRemoteData() !== undefined) {
+			this.watch('dbStore', this.initRemoteData, {
+				deep: true,
+				label: $$.db
+			});
+		}
+
+		this.emit('dbChange', value);
+	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iProgress.mods
+	};
+
+	/**
+	 * Event emitter of a component data provider
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		// @ts-ignore
+		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.dp?.event, true)
+	})
+
+	protected readonly dataProviderEmitter!: ReadonlyEventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iData.dataProviderEmitter]]
+	 */
+	@deprecated({renamedTo: 'dataProviderEmitter'})
+	get dataEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.dataProviderEmitter;
 	}
 
 	/**
-	 * Event emitter object for working with a data provider
+	 * Request parameters for a data provider.
+	 * Keys of the object represent names of data provider methods.
+	 * Parameters that associated to provider methods will be automatically appended to
+	 * invocation as parameters by default.
+	 *
+	 * To create logic when the data provider automatically reload data, if some properties has been
+	 * changed, you need to use 'sync.object'.
+	 *
+	 * @example
+	 * ```ts
+	 * class Foo extends iData {
+	 *   @system()
+	 *   i: number = 0;
+	 *
+	 *   // {get: {step: 0}, upd: {i: 0}, del: {i: '0'}}
+	 *   @system((ctx) => ({
+	 *     ...ctx.sync.link('get', [
+	 *       ['step', 'i']
+	 *     ]),
+	 *
+	 *     ...ctx.sync.link('upd', [
+	 *       ['i']
+	 *     ]),
+	 *
+	 *     ...ctx.sync.link('del', [
+	 *       ['i', String]
+	 *     ]),
+	 *   })
+	 *
+	 *   protected readonly requestParams!: RequestParams;
+	 * }
+	 * ```
 	 */
-	get dataEvent(): RemoteEvent<this> {
-		const
-			{async: $a, dp: $d} = this;
-
-		return {
-			on: (event, fn, params, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.on($d.event, event, fn, params, ...args) || undefined;
-			},
-
-			once: (event, fn, params, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.once($d.event, event, fn, params, ...args) || undefined;
-			},
-
-			promisifyOnce: (event, params, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.promisifyOnce($d.event, event, params, ...args);
-			},
-
-			off: (...args) => {
-				if (!$d) {
-					return;
-				}
-
-				$a.off(...args);
-			}
-		};
-	}
-
-	/**
-	 * Request parameters
-	 */
-	@field({merge: true})
+	@system({merge: true})
 	protected readonly requestParams: RequestParams = {get: {}};
 
 	/**
 	 * Component data store
+	 * @see [[iData.db]]
 	 */
 	@field()
-	protected dbStore?: CanUndef<T>;
+	// @ts-ignore
+	protected dbStore?: CanUndef<this['DB']>;
 
 	/**
-	 * Provider instance
+	 * Instance of a component data provider by .dataProvider value
 	 */
 	@system()
 	protected dp?: Provider;
 
 	/** @override */
-	@wait({label: $$.initLoad, defer: true})
-	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
-		const
-			important = this.componentStatus === 'unloaded';
+	initLoad(data?: unknown, opts: InitLoadOptions = {}): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
 
-		if (!silent) {
+		const
+			{async: $a} = this;
+
+		const label = <AsyncOptions>{
+			label: $$.initLoad,
+			join: 'replace'
+		};
+
+		$a
+			.clearAll({group: 'requestSync:get'});
+
+		if (this.isFunctional) {
+			return super.initLoad(() => {
+				if (data) {
+					this.db = this.convertDataToDB<this['DB']>(data);
+				}
+
+				return this.db;
+			}, opts);
+		}
+
+		if (this.dataProvider && !this.dp) {
+			this.syncDataProviderWatcher();
+		}
+
+		if (!opts.silent) {
 			this.componentStatus = 'loading';
 		}
 
 		if (data || this.dp && this.dp.baseURL) {
-			const
-				p = this.getDefaultRequestParams<T>('get');
+			if (data) {
+				const db = this.convertDataToDB<this['DB']>(data);
+				this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
-			const label = {
-				join: true,
-				label: $$.initLoad
-			};
+			} else if (this.getDefaultRequestParams('get')) {
+				return $a
+					.nextTick(label)
+					.then(() => {
+						const
+							p = this.getDefaultRequestParams<this['DB']>('get');
 
-			if (p) {
-				Object.assign(p[1], {...label, important, join: false});
+						Object.assign(p[1], {
+							...label,
+							important: this.componentStatus === 'unloaded'
+						});
 
-				try {
-					const db = this.convertDataToDB<T>(data || await this.get(<RequestQuery>p[0], p[1]));
-					this.execCbAtTheRightTime(() => this.db = db, label);
+						return this.get(<RequestQuery>p[0], p[1]);
+					})
 
-				} catch (err) {
-					stderr(err);
-				}
+					.then((data) => {
+						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
+						return super.initLoad(() => this.db, opts);
+
+					}, (err) => {
+						stderr(err);
+						return super.initLoad(() => this.db, opts);
+					});
 
 			} else if (this.db) {
-				this.execCbAtTheRightTime(() => this.db = undefined, label);
+				this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
 			}
 		}
 
-		return super.initLoad(() => this.db, silent);
+		return super.initLoad(() => this.db, opts);
 	}
 
 	/**
-	 * Alias for iBlock.initLoad
+	 * Link to iBlock.initLoad
 	 *
-	 * @see iBlock.initLoad
-	 * @param data
-	 * @param silent
+	 * @see [[iBlock.initLoad]]
+	 * @param [data]
+	 * @param [opts]
 	 */
-	initBaseLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
-		return super.initLoad(data, silent);
+	initBaseLoad(data?: unknown | InitLoadCb, opts?: InitLoadOptions): CanPromise<void> {
+		return super.initLoad(data, opts);
 	}
 
-	/** override */
-	async reload(): Promise<void> {
-		if (!this.$root.isOnline && !this.needOfflineReInit) {
-			return;
+	/** @override */
+	reload(opts?: InitLoadOptions): Promise<void> {
+		if (!this.r.isOnline && !this.offlineReload) {
+			return Promise.resolve();
 		}
 
-		await super.reload();
+		return super.reload(opts);
 	}
 
 	/**
-	 * Returns full request URL
+	 * Drops the request cache
+	 */
+	dropRequestCache(): void {
+		this.dp?.dropCache();
+	}
+
+	/**
+	 * Returns full URL of any request
 	 */
 	url(): CanUndef<string>;
 
 	/**
-	 * Sets advanced URL for requests
+	 * Sets an extra URL part for any request (it is concatenated with the base part of URL).
+	 * This method returns a new component object with additional context.
+	 *
 	 * @param [value]
 	 */
 	url(value: string): this;
-	url(value?: string): CanUndef<this | string> {
-		const
-			{dp: $d} = this;
-
-		if (!$d) {
-			return value != null ? this : undefined;
-		}
-
+	url(value?: string): CanUndef<string> | this {
 		if (value == null) {
-			return $d.url();
+			return this.dp?.url();
 		}
 
-		$d.url(value);
-		return this;
-	}
-
-	/**
-	 * Sets base temporary URL for requests
-	 * @param value
-	 */
-	base(value: string): this {
 		if (this.dp) {
-			this.dp.base(value);
+			const ctx = Object.create(this);
+			ctx.dp = this.dp.url(value);
+
+			for (let i = 0; i < providerMethods.length; i++) {
+				const
+					method = providerMethods[i];
+
+				Object.defineProperty(ctx, method, {
+					writable: true,
+					configurable: true,
+					value: this.instance[method]
+				});
+			}
+
+			return ctx;
 		}
 
 		return this;
 	}
 
 	/**
-	 * Returns an event emitter object for working with a socket connection
-	 * @param [params] - advanced parameters
+	 * Returns a base part of URL of any request
 	 */
-	connect(params?: Dictionary): SocketEvent<this> {
-		const
-			{async: $a, dp: $d} = this,
-			connection = (async () => $d && $d.connect(params))();
+	base(): CanUndef<string>;
 
-		return {
-			connection,
-			on: (event, fnOrParams, ...args) => {
-				if (!$d) {
-					return;
-				}
+	/**
+	 * Sets a base part of URL for any request.
+	 * This method returns a new component object with additional context.
+	 *
+	 * @param [value]
+	 */
+	base(value: string): this;
+	base(value?: string): CanUndef<string> | this {
+		if (value == null) {
+			return this.dp?.base();
+		}
 
-				return (async () => $a.on(<Socket>(await connection), event, fnOrParams, ...args))();
-			},
+		if (this.dp) {
+			const ctx = Object.create(this);
+			ctx.dp = this.dp.base(value);
 
-			once: (event, fnOrParams, ...args) => {
-				if (!$d) {
-					return;
-				}
+			for (let i = 0; i < providerMethods.length; i++) {
+				const
+					method = providerMethods[i];
 
-				return (async () => $a.once(<Socket>(await connection), event, fnOrParams, ...args))();
-			},
-
-			promisifyOnce: (event, params, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return (async () => $a.promisifyOnce(<Socket>(await connection), event, params, ...args))();
-			},
-
-			off: (...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.off(...args);
+				Object.defineProperty(ctx, method, {
+					writable: true,
+					configurable: true,
+					value: this.instance[method]
+				});
 			}
-		};
+
+			return ctx;
+		}
+
+		return this;
 	}
 
 	/**
-	 * Peeks data
+	 * Requests the provider for data by a query.
+	 * This method is similar for a GET request.
 	 *
-	 * @param [data]
-	 * @param [params]
+	 * @see [[Provider.get]]
+	 * @param [query] - request query
+	 * @param [opts] - additional request options
 	 */
-	peek(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	get<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
+			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams('get');
 
 		if (args) {
-			return this.createRequest('peek', ...args);
+			return this.createRequest('get', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
 	}
 
 	/**
-	 * Gets data
+	 * Checks accessibility of the provider by a query.
+	 * This method is similar for a HEAD request.
 	 *
-	 * @param [data]
-	 * @param [params]
+	 * @see [[Provider.peek]]
+	 * @param [query] - request query
+	 * @param [opts] - additional request options
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	peek<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
 		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
+			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams('peek');
 
 		if (args) {
-			return this.createRequest('get', ...args);
+			return this.createRequest('peek', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
 	}
 
 	/**
-	 * Post data
+	 * Sends custom data to the provider without any logically effect.
+	 * This method is similar for a POST request.
+	 *
+	 * @see [[Provider.post]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
+	 */
+	post<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
+		const
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('post');
+
+		if (args) {
+			return this.createRequest('post', ...<any>args);
+		}
+
+		return Promise.resolve(undefined);
+	}
+
+	/**
+	 * Add new data to the provider.
+	 * This method is similar for a POST request.
+	 *
+	 * @see [[Provider.add]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
+	 */
+	add<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
+		const
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('add');
+
+		if (args) {
+			return this.createRequest('add', ...<any>args);
+		}
+
+		return Promise.resolve(undefined);
+	}
+
+	/**
+	 * Updates data of the provider by a query.
+	 * This method is similar for a PUT request.
+	 *
+	 * @see [[Provider.upd]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
+	 */
+	upd<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
+		const
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('upd');
+
+		if (args) {
+			return this.createRequest('upd', ...<any>args);
+		}
+
+		return Promise.resolve(undefined);
+	}
+
+	/**
+	 * Deletes data of the provider by a query.
+	 * This method is similar for a DELETE request.
+	 *
+	 * @see [[Provider.del]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
+	 */
+	del<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
+		const
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('del');
+
+		if (args) {
+			return this.createRequest('del', ...<any>args);
+		}
+
+		return Promise.resolve(undefined);
+	}
+
+	/**
+	 * Saves data to the root data store
 	 *
 	 * @param data
-	 * @param [params]
+	 * @param [key] - key to save data
 	 */
-	post<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
-		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
+	protected saveDataToRootStore(data: unknown, key?: string): void {
+		key = key || this.globalName || this.dataProvider;
 
-		if (args) {
-			return this.createRequest('post', ...args);
-		}
-
-		return Promise.resolve(undefined);
-	}
-
-	/**
-	 * Adds data
-	 *
-	 * @param data
-	 * @param [params]
-	 */
-	add<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
-		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
-
-		if (args) {
-			return this.createRequest('add', ...args);
-		}
-
-		return Promise.resolve(undefined);
-	}
-
-	/**
-	 * Updates data
-	 *
-	 * @param [data]
-	 * @param [params]
-	 */
-	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
-		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
-
-		if (args) {
-			return this.createRequest('upd', ...args);
-		}
-
-		return Promise.resolve(undefined);
-	}
-
-	/**
-	 * Deletes data
-	 *
-	 * @param [data]
-	 * @param [params]
-	 */
-	del<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
-		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
-
-		if (args) {
-			return this.createRequest('del', ...args);
-		}
-
-		return Promise.resolve(undefined);
-	}
-
-	/**
-	 * Drops a request cache
-	 */
-	dropCache(): void {
-		if (!this.dp) {
+		if (!key) {
 			return;
 		}
 
-		this.dp.dropCache();
+		this.r.providerDataStore.set(key, data);
 	}
 
 	/**
-	 * Executes the specified function with a socket connection
-	 *
-	 * @see {Provider.attachToSocket}
-	 * @param fn
-	 * @param [params]
-	 */
-	protected attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts<Provider>): void {
-		if (!this.dp) {
-			return;
-		}
-
-		this.dp.attachToSocket(fn, params);
-	}
-
-	/**
-	 * Converts the specified remote data to the component format and returns it
+	 * Converts data to the component format and returns it
 	 * @param data
 	 */
 	protected convertDataToDB<O>(data: unknown): O;
-	protected convertDataToDB(data: unknown): T;
-	protected convertDataToDB<O>(data: unknown): O | T {
-		return this.dbConverter ? this.dbConverter(
-			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
-		) : data;
+	protected convertDataToDB(data: unknown): this['DB'];
+	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
+		let
+			v = data;
+
+		if (this.dbConverter) {
+			v = Array.concat([], this.dbConverter)
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
+		}
+
+		const
+			{db, checkDBEquality} = this;
+
+		if (
+			Object.isFunction(checkDBEquality) ?
+				checkDBEquality.call(this, v, db) :
+				checkDBEquality && Object.fastCompare(v, db)
+		) {
+			return <O | this['DB']>db;
+		}
+
+		return <O | this['DB']>v;
 	}
 
 	/**
-	 * Converts the specified data to the internal component format and returns it
+	 * Converts data to the internal component format and returns it
 	 * @param data
 	 */
-	protected convertDBToComponent<O = unknown>(data: unknown): O | T {
-		return this.componentConverter ? this.componentConverter(
-			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
-		) : data;
+	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
+		let
+			v = data;
+
+		if (this.componentConverter) {
+			v = Array.concat([], this.componentConverter)
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
+		}
+
+		return <O | this['DB']>v;
 	}
 
 	/**
-	 * Initializes remote data
+	 * Initializes component data from a data provider.
+	 * This method is used to map .db to component properties.
+	 * If the method is used, it must return some value that not equals to undefined.
 	 */
+	@watch('componentConverter')
 	protected initRemoteData(): CanUndef<unknown> {
 		return undefined;
+	}
+
+	/** @override */
+	protected initGlobalEvents(resetListener?: boolean): void {
+		super.initGlobalEvents(resetListener != null ? resetListener : Boolean(this.dataProvider));
 	}
 
 	/**
 	 * Initializes data event listeners
 	 */
 	@wait('ready')
-	protected async initDataListeners(): Promise<void> {
+	protected initDataListeners(): void {
 		const
-			{dataEvent: $e} = this,
+			{dataProviderEmitter: $e} = this,
 			group = {group: 'dataProviderSync'};
 
 		$e.off(
@@ -532,23 +698,21 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Synchronization for the requestParams field
+	 * Synchronization for request fields
 	 *
 	 * @param [value]
 	 * @param [oldValue]
 	 */
-	@watch({field: 'request', deep: true})
-	@watch({field: 'requestParams', deep: true})
-	protected async syncRequestParamsWatcher<T = unknown>(
+	protected syncRequestParamsWatcher<T = unknown>(
 		value?: RequestParams<T>,
 		oldValue?: RequestParams<T>
-	): Promise<void> {
+	): void {
 		if (!value) {
 			return;
 		}
 
 		const
-			tasks = <Promise<void>[]>[];
+			{async: $a} = this;
 
 		for (let o = Object.keys(value), i = 0; i < o.length; i++) {
 			const
@@ -556,81 +720,66 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				val = value[key],
 				oldVal = oldValue && oldValue[key];
 
-			if (val && oldVal && val.toSource() === oldVal.toSource()) {
+			if (val && oldVal && Object.fastCompare(val, oldVal)) {
 				continue;
 			}
 
 			const
-				m = key.split(':')[0];
+				m = key.split(':')[0],
+				group = {group: `requestSync:${m}`};
+
+			$a
+				.clearAll(group);
 
 			if (m === 'get') {
-				tasks.push(this.initLoad());
+				this.componentStatus = 'loading';
+				$a.setImmediate(this.initLoad, group);
 
 			} else {
-				tasks.push(this[m](...this.getDefaultRequestParams(key)));
+				$a.setImmediate(() => this[m](...this.getDefaultRequestParams(key)), group);
 			}
 		}
-
-		await Promise.all(tasks);
 	}
 
 	/**
-	 * Synchronization for the dataProvider property
-	 * @param value
+	 * Synchronization for dataProvider properties
 	 */
-	@watch({field: 'dataProvider', immediate: true})
-	protected async syncDataProviderWatcher(value: CanUndef<string>): Promise<void> {
-		if (value) {
-			const
-				Provider = providers[value];
-
-			if (!Provider) {
-				throw new Error(`Provider "${value}" is not defined`);
-			}
-
-			this.dp = new Provider(this.dataProviderParams);
-			await this.initDataListeners();
-
-		} else {
-			this.dp = undefined;
-			this.dataEvent.off({group: 'dataProviderSync'});
-		}
-	}
-
-	/**
-	 * Synchronization for the p property
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch('p')
-	protected syncAdvParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
-		if (!Object.fastCompare(value, oldValue)) {
-			this.initRemoteData();
-		}
-	}
-
-	/**
-	 * Synchronization for the dataProviderParams property
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch('p')
-	protected async syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): Promise<void> {
+	@watch(['dataProvider', 'dataProviderOptions'])
+	protected syncDataProviderWatcher(): void {
 		const
-			providerNm = this.dataProvider;
+			provider = this.dataProvider;
 
-		if (providerNm) {
+		if (this.dp) {
+			this.async
+				.clearAll({group: /requestSync/})
+				.clearAll({label: $$.initLoad});
+
+			this.dataProviderEmitter.off();
+			this.dp = undefined;
+		}
+
+		if (provider) {
 			const
-				Provider = providers[providerNm];
+				ProviderConstructor = <typeof Provider>providers[provider];
 
-			if (!Provider) {
-				throw new Error(`Provider "${providerNm}" is not defined`);
+			if (!ProviderConstructor) {
+				if (provider === 'Provider') {
+					return;
+				}
+
+				throw new Error(`Provider "${provider}" is not defined`);
 			}
 
-			this.dp = new Provider(value);
-			await this.initDataListeners();
+			const watchParams = {
+				deep: true,
+				group: 'requestSync'
+			};
+
+			this.watch('request', watchParams, this.syncRequestParamsWatcher);
+			this.watch('requestParams', watchParams, this.syncRequestParamsWatcher);
+
+			this.dp = new ProviderConstructor(this.dataProviderOptions);
+			this.initDataListeners();
 		}
 	}
 
@@ -639,12 +788,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param method
 	 */
 	protected getDefaultRequestParams<T = unknown>(method: string): DefaultRequest<T> | false {
-		const [customData, customOpts] = (<unknown[]>[]).concat(
-			this.request && this.request[method] || []
-		);
+		const
+			{field} = this;
 
 		const
-			p = this.requestParams && this.requestParams[method],
+			[customData, customOpts] = Array.concat([], field.get(`request.${method}`));
+
+		const
+			p = field.get(`requestParams.${method}`),
 			isGet = /^get(:|$)/.test(method);
 
 		let
@@ -658,7 +809,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			res = [p, {}];
 		}
 
-		if (Object.isObject(res[0]) && Object.isObject(customData)) {
+		if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
 			res[0] = Object.mixin({
 				traits: true,
 				filter: (el) => isGet ? el != null : el !== undefined
@@ -671,8 +822,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 
 		const
-			f = this.requestFilter,
-			isEmpty = !$C(res[0]).length();
+			f = field.get('requestFilter'),
+			isEmpty = !Object.size(res[0]);
 
 		const info = {
 			isEmpty,
@@ -688,105 +839,63 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Returns default texts for server errors
-	 * @param err
-	 */
-	protected getDefaultErrorText(err: Error | RequestError): string {
-		const
-			defMsg = t`Unknown server error`;
-
-		if (!(err instanceof RequestError)) {
-			return defMsg;
-		}
-
-		if (err.type === 'abort') {
-			return defMsg;
-		}
-
-		let msg;
-		switch (err.type) {
-			case 'timeout':
-				msg = t`The server doesn't respond, try again later`;
-				break;
-
-			case 'invalidStatus':
-				switch ((<NonNullable<Response>>err.details.response).status) {
-					case statusCodes.FORBIDDEN:
-						msg = t`You don't have permission for this operation`;
-						break;
-
-					case statusCodes.NOT_FOUND:
-						msg = t`The requested resource wasn't found`;
-						break;
-
-					default:
-						msg = defMsg;
-				}
-
-				break;
-
-			default:
-				msg = defMsg;
-		}
-
-		return msg;
-	}
-
-	/**
-	 * Create a new request to the data provider
+	 * Creates a new request to the data provider
 	 *
 	 * @param method - request method
-	 * @param [data]
-	 * @param [params]
+	 * @param [body] - request body
+	 * @param [opts] - additional options
 	 */
-	protected createRequest<T = unknown>(
-		method: ModelMethods,
-		data?: RequestBody,
-		params?: CreateRequestOptions<T>
-	): Promise<CanUndef<T>> {
+	protected createRequest<D = unknown>(
+		method: ModelMethod,
+		body?: RequestBody,
+		opts: CreateRequestOptions<D> = {}
+	): Promise<CanUndef<D>> {
 		if (!this.dp) {
 			return Promise.resolve(undefined);
 		}
 
 		const
-			p = <CreateRequestOptions<T>>(params || {}),
 			asyncFields = ['join', 'label', 'group'],
-			reqParams = <CreateRequestOptions<T>>(Object.reject(p, asyncFields)),
-			asyncParams = <AsyncOpts>(Object.select(p, asyncFields));
+			reqParams = Object.reject(opts, asyncFields),
+			asyncParams = Object.select(opts, asyncFields);
 
 		const
-			req = this.async.request<RequestResponseObject<T>>((<Function>this.dp[method])(data, reqParams), asyncParams),
+			req = this.async.request<RequestResponseObject<D>>((<Function>this.dp[method])(body, reqParams), asyncParams),
 			is = (v) => v !== false;
 
 		if (this.mods.progress !== 'true') {
-			if (is(p.showProgress)) {
+			if (is(opts.showProgress)) {
 				this.setMod('progress', true);
 			}
 
 			const then = () => {
-				if (is(p.hideProgress)) {
-					this.execCbAtTheRightTime(() => this.setMod('progress', false));
+				if (is(opts.hideProgress)) {
+					this.lfc.execCbAtTheRightTime(() => this.setMod('progress', false));
 				}
 			};
 
 			req.then(then, (err) => {
-				this.onRequestError(err, () => this.createRequest<T>(method, data, params));
+				this.onRequestError(err, () => this.createRequest<D>(method, body, opts));
 				then();
 			});
 		}
 
-		return req.then((res) => res.data || undefined);
+		return req.then((res) => {
+			const v = res.data || undefined;
+			this.saveDataToRootStore(v);
+			return v;
+		});
 	}
 
 	/**
 	 * Handler: dataProvider.error
 	 *
-	 * @emits error(err: Error)
 	 * @param err
 	 * @param retry - retry function
+	 * @emits `requestError(err: Error | RequestError, retry: RetryRequestFn)`
 	 */
-	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
-		this.emit('error', err, retry);
+	protected onRequestError<T = unknown>(err: Error | RequestError, retry: RetryRequestFn): void {
+		this.emitError('requestError', err, retry);
 	}
 
 	/**
@@ -821,7 +930,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	protected onDelData(data: unknown): void {
 		if (data != null) {
-			this.db = undefined;
+			this.db = this.convertDataToDB(data);
 
 		} else {
 			this.reload().catch(stderr);
@@ -832,7 +941,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.refresh
 	 * @param data
 	 */
-	protected async onRefreshData(data: T): Promise<void> {
-		await this.reload();
+	protected onRefreshData(data: this['DB']): Promise<void> {
+		return this.reload();
 	}
+
+	//#endif
 }

@@ -11,7 +11,8 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
-	- rootTag = 'span'
-	- rootWrapper = false
-	- messageHelpers = false
-	- overWrapper = false
+	- rootTag = 'div'
+
+	- block body
+		- super
+		+= self.slot()

@@ -12,29 +12,36 @@
 - import $C from 'collection.js'
 
 /**
- * Base block template
+ * Base component template
  */
 - template index()
-	- blockName = ''
+	- componentName = ''
 
 	/**
-	 * Returns the block name
+	 * Returns the component name
 	 * @param {string=} [name] - custom template name
 	 */
-	- block name(name = TPL_NAME)
-		- return (blockName || /\['(.*?)'\]/.exec(name)[1] || '').dasherize()
+	- block name(name)
+		? name = name || componentName || TPL_NAME
+		: nmsRgxp = /\['(.*?)'\]\.index/
+
+		- if nmsRgxp.test(name)
+			? name = nmsRgxp.exec(name)[1]
+
+		- return name.split('.').slice(-1)[0].dasherize()
 
 	/**
-	 * Returns link to a template by the specified link
+	 * Returns a link to a template by the specified path
+	 * @param {string} path
 	 */
-	- block getTpl(nms)
-		? nms = nms.replace(/\/$/, '.index')
-		- return $C(exports).get(nms)
+	- block getTpl(path)
+		? path = path.replace(/\/$/, '.index')
+		- return $C(exports).get(path)
 
 	- rootTag = 'div'
-	- overWrapper = true
-	- rootWrapper = true
-	- renderCounter = true
+	- rootWrapper = false
+	- overWrapper = false
+	- skeletonMarker = false
 
 	/**
 	 * Applies Typograf to the specified content
@@ -49,15 +56,19 @@
 	 */
 	- block appendToRootClasses(value)
 		- if rootAttrs[':class']
-			? rootAttrs[':class'] += '.concat(' + value + ')'
+			? rootAttrs[':class'] += '.concat((' + value + ') || [])'
 
 		- else
 			rootAttrs[':class'] = value
 
 	- rootAttrs = { &
-		':class': '[getBlockClasses(mods), "i-block-helper", componentId]',
+		':class': '[...provide.componentClasses("' + self.name() + '", mods), "i-block-helper", componentId]',
+		':-render-group': 'renderGroup',
 		':-render-counter': 'renderCounter'
 	} .
+
+	- if skeletonMarker
+		? rootAttrs['data-skeleton-marker'] = 'true'
 
 	- block rootAttrs
 
@@ -79,7 +90,7 @@
 				 * @param {Object=} [attrs]
 				 */
 				- block index->gIcon(iconId, classes = {}, attrs = {})
-					< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
+					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
 						- if Object.isArray(iconId)
 							< use :xlink:href = getIconLink(${iconId})
 
@@ -87,27 +98,7 @@
 							< use :xlink:href = getIconLink('${iconId}')
 
 				/**
-				 * Generates a transition wrapper for a content
-				 * @param {string=} [content] - content to wrapping
-				 */
-				- block transition(content)
-					: elName = (content + '' |getFirstTagElementName)
-
-					- if !elName
-						< transition
-							{content}
-
-					- else
-						: a = {}
-
-						- forEach ['enter', 'enter-active', 'enter-to', 'leave', 'leave-active', 'leave-to'] => type
-							? a[type + '-class'] = elName + '_' + type + '_true';
-
-						< transition ${a}
-							{content}
-
-				/**
-				 * Generates double slot declaration (scoped and plain)
+				 * Generates a slot declaration (scoped and plain)
 				 *
 				 * @param {string=} [name] - slot name
 				 * @param {Object=} [attrs] - scoped slot attributes

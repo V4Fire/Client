@@ -7,12 +7,18 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-width/i-width.styl"
 
 $p = {
-
+	widthHelpers: true
+	visibleHelpers: true
 }
 
 b-input-birthday extends i-input
+	// @stlint-disable
+	i-width({helpers: $p.widthHelpers})
+	// @stlint-enable
+
 	display inline-block
 
 	&__wrapper

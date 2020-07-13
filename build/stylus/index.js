@@ -10,26 +10,30 @@
 
 const
 	stylus = require('stylus'),
-	size = include('build/stylus/size'),
 	color = include('build/stylus/color'),
-	string = include('build/stylus/string');
+	string = include('build/stylus/string'),
+	object = include('build/stylus/object'),
+	blendModes = include('build/stylus/blend-modes'),
+	ds = include('build/stylus/ds');
 
 module.exports = [
 	require('nib')(),
 
-	function (style) {
+	function addPlugins(api) {
 		/**
 		 * Returns true if the specified file is already exists
 		 *
 		 * @param {?} path - file path
 		 * @returns {boolean}
 		 */
-		style.define('file-exists', function (path) {
+		api.define('file-exists', function fileExists(path) {
 			return Boolean(stylus.utils.find(path.string, this.paths));
 		});
 	},
 
-	size,
+	ds,
+	color,
 	string,
-	color
+	object,
+	blendModes
 ];

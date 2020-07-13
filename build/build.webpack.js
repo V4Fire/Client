@@ -10,67 +10,59 @@
 
 const
 	$C = require('collection.js'),
+	config = require('config'),
 	path = require('path');
 
 const
-	{src, webpack} = require('config'),
-	{config: {dependencies}} = require('@pzlr/build-core');
+	{src, build, webpack: wp} = config;
 
-/**
- * String with project dependencies for using with regular expressions
- */
-exports.depsRgxpStr = dependencies.map((el) => RegExp.escape(el || el.src)).join('|');
+const
+	hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
 
 /**
  * Output pattern
  */
-exports.output = hash(webpack.output());
+exports.output = hash(wp.output());
 
 /**
  * Output pattern for assets
  */
-exports.assetsOutput = hash(webpack.assetsOutput());
+exports.assetsOutput = hash(wp.assetsOutput());
 
 /**
  * Path to assets.json
  */
-exports.assetsJSON = path.join(src.clientOutput(), webpack.assetsJSON());
+exports.assetsJSON = path.join(src.clientOutput(), wp.assetsJSON());
 
 /**
  * Path to assets.js
  */
-exports.assetsJS = path.join(src.clientOutput(), webpack.assetsJS());
+exports.assetsJS = path.join(src.clientOutput(), wp.assetsJS());
 
 /**
  * Path to dll-manifest.json
  */
-exports.dllManifest = path.join(src.clientOutput(), webpack.dllOutput({name: 'dll-manifest.json', hash: null}));
+exports.dllManifest = path.join(src.clientOutput(), wp.dllOutput({name: 'dll-manifest.json', hash: null}));
 
 /**
  * Build cache folder
  */
 exports.buildCache = path.join(src.cwd(), 'app-cache');
 
-/**
- * STD build cache folder
- */
-exports.stdCache = path.join(src.cwd(), 'app-std-cache');
-
 // Some helpers
 
 exports.hash = hash;
-exports.hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
+exports.hashRgxp = hashRgxp;
 
 /**
- * Returns WebPack output path string from the specified with hash parameters
- * (for longterm cache)
+ * Returns WebPack output path string from the specified string with hash parameters
+ * (for longterm caching)
  *
  * @param {string} output - source string
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	const l = webpack.hashLength;
-	return output.replace(exports.hashRgxp, chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_`);
+	return output.replace(hashRgxp, chunk ? `[chunkhash:${build.hashLength}]_` : `[hash:${build.hashLength}]_`);
 }
 
 exports.inherit = inherit;
@@ -78,12 +70,12 @@ exports.inherit = inherit;
 /**
  * Alias for $C.extend({deep, concatArray})
  */
-function inherit() {
+function inherit(...args) {
 	const extOpts = {
 		deep: true,
 		concatArray: true,
 		concatFn: Array.union
 	};
 
-	return $C.extend(extOpts, {}, ...arguments);
+	return $C.extend(extOpts, {}, ...args);
 }

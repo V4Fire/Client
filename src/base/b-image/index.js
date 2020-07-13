@@ -7,4 +7,4 @@
  */
 
 package('b-image')
-	.extends('i-message');
+	.extends('i-block');

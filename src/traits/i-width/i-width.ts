@@ -1,0 +1,27 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * [[include:traits/i-width/README.md]]
+ * @packageDocumentation
+ */
+
+import { ModsDecl } from 'super/i-block/i-block';
+
+export default abstract class iWidth {
+	/**
+	 * Width modifiers
+	 */
+	static readonly mods: ModsDecl = {
+		width: [
+			'full',
+			'auto',
+			'inherit'
+		]
+	};
+}

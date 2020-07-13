@@ -10,7 +10,9 @@
 
 - include 'super/i-block'|b as placeholder
 
-- template index(params) extends ['i-block'].index
+- template index() extends ['i-block'].index
+	- rootWrapper = true
+
 	- block body
 		- super
 		- block editor
@@ -45,12 +47,7 @@
 				.
 
 				< .&__wrapper
-					< .&__info-cell.&__progress
-						< b-progress ref = progress
 
 				< .&__controls
 					< .&__control v-if = tools.rotate.left | @click = rotate('left')
-						< b-icon :value = 'rotate-left'
-
 					< .&__control v-if = tools.rotate.right | @click = rotate('right')
-						< b-icon :value = 'rotate-right'

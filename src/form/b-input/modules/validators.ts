@@ -58,17 +58,19 @@ export interface PasswordValidatorResult extends ValidatorError<string | number 
 }
 
 export default <ValidatorsDecl<bInput, unknown>>{
+	//#if runtime has iInput/validators
+
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		if (!await this.formValue) {
-			if (showMsg) {
-				this.error = this.getValidatorMsg(false, msg, t`Required field`);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 			return false;
 		}
 
 		return true;
 	},
+
+	//#endif
+	//#if runtime has bInput/validators
 
 	async number({
 		msg,
@@ -82,7 +84,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: NumberValidatorParams): Promise<ValidatorResult<NumberValidatorResult>> {
 		const
-			value = (await this.formValue).trim();
+			value = (await this.formValue)?.trim() || '';
 
 		if (!value) {
 			const
@@ -99,8 +101,8 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		const
-			s = `[${(<string[]>[]).concat(separator).join('')}]`,
-			ss = `[${(<string[]>[]).concat(styleSeparator).join('')}]`,
+			s = `[${Array.concat([], separator).join('')}]`,
+			ss = `[${Array.concat([], styleSeparator).join('')}]`,
 			pr = precision ? String(precision) : '';
 
 		const error = (
@@ -113,10 +115,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<NumberValidatorResult>>err;
 		};
 
@@ -204,10 +203,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<DateValidatorResult>>err;
 		};
 
@@ -236,14 +232,14 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		min = min != null ? Date.create(min) : min;
-		max = max != null ? Date.create(max) : max;
+		max = max != null ? Date.create(max) : min;
 
 		if (Object.isDate(min) && !min.isBefore(value)) {
 			return error('MIN', min, t`Date must be at least ${min}`);
 		}
 
 		if (Object.isDate(max) && !max.isAfter(value)) {
-			return error('MAX', min, t`Date must be no more than ${max}`);
+			return error('MAX', max, t`Date must be no more than ${max}`);
 		}
 
 		return true;
@@ -258,7 +254,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
-			value = await this.formValue;
+			value = (await this.formValue) || '';
 
 		let
 			rgxp;
@@ -280,10 +276,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<PatternValidatorResult>>err;
 		};
 
@@ -306,13 +299,10 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 	async email({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
-			value = (await this.formValue).trim();
+			value = (await this.formValue)?.trim();
 
-		if (value && !/@/.test(value)) {
-			if (showMsg) {
-				this.error = this.getValidatorMsg(false, msg, t`Invalid email format`);
-			}
-
+		if (value && !/.+@.+/.test(value)) {
+			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Invalid email format`), showMsg);
 			return false;
 		}
 
@@ -330,7 +320,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PasswordValidatorParams): Promise<ValidatorResult> {
 		const
-			value = await this.formValue;
+			value = (await this.formValue) || '';
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'INVALID_VALUE',
@@ -342,10 +332,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<PasswordValidatorResult>>err;
 		};
 
@@ -409,4 +396,6 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 		return true;
 	}
+
+	//#endif
 };

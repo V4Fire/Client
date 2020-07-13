@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
-import statusCodes from 'core/status-codes';
 import Provider, { provider, Middlewares, RequestResponse, RequestFunctionResponse, Response } from 'core/data';
 import * as s from 'core/session';
 export * from 'core/data';
@@ -53,14 +51,14 @@ export default class Session extends Provider {
 	};
 
 	/** @override */
-	async getAuthParams(params?: CanUndef<Dictionary>): Promise<Dictionary> {
+	async getAuthParams(params?: Dictionary): Promise<Dictionary> {
 		const
 			session = await s.get();
 
 		if (Object.isString(session.auth)) {
 			return {
 				[this.authHeader]: this.authPrfx + session.auth,
-				[this.csrfHeader]: session.csrf
+				[this.csrfHeader]: session?.params?.csrf
 			};
 		}
 
@@ -92,7 +90,7 @@ export default class Session extends Provider {
 
 			try {
 				if (refreshHeader) {
-					s.set(refreshHeader, info.getHeader(this.csrfHeader));
+					s.set(refreshHeader, {csrf: info.getHeader(this.csrfHeader)});
 				}
 			} catch {}
 		};
@@ -100,15 +98,15 @@ export default class Session extends Provider {
 		req.then(update);
 		return req.catch(async (err) => {
 			const
-				response = <CanUndef<Response>>$C(err).get('details.response'),
-				{auth, csrf} = await session;
+				response = Object.get<Response>(err, 'details.response'),
+				{auth, params} = await session;
 
 			if (response) {
 				const
 					r = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory);
 
-				if (response.status === statusCodes.UNAUTHORIZED) {
-					if (!await s.match(auth, csrf)) {
+				if (response.status === 401) {
+					if (!await s.match(auth, params)) {
 						return r();
 					}
 

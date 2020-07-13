@@ -11,8 +11,6 @@
 - include './*'
 - include 'presets/**/*.ss'|b
 
-- import Sugar from 'sugar'
-
 /**
  * Mixes the specified parameters and returns a new object
  *
@@ -32,11 +30,11 @@
 	- forEach b => el, key
 		: val = p[key]
 
-		- if Sugar.Object.isObject(val) && Sugar.Object.isObject(el)
+		- if Object.isObject(val) && Object.isObject(el)
 			? Object.assign(val, el)
 
 		- else if Array.isArray(val) && Array.isArray(el)
-			? p[key] = Sugar.Array.union(val, el)
+			? p[key] = val.union(el)
 
 		- else
 			? p[key] = el
@@ -47,7 +45,7 @@
  * Creates a component by the specified parameters
  *
  * @param {string} component
- * @param {Object=} [params] - additional parameters ({async, asyncBack, ref, if, elseIf, else, show, props, events, mods, attrs})
+ * @param {Object=} [params] - additional parameters ({ref, if, elseIf, else, show, props, events, mods, attrs})
  * @param {string=} [content] - slot content
  */
 - block index->createComponent(component, params = {}, content)
@@ -60,7 +58,7 @@
 	}, params) .
 
 	- forEach p => el, cluster
-		- if Sugar.Object.isObject(el)
+		- if Object.isObject(el)
 			- forEach el => val, key
 				- switch cluster
 					> 'props'
@@ -72,7 +70,7 @@
 						? el['@' + key] = val
 
 	- if p.mods
-		? p.props[':mods'] = 'provideMods(' + (p.mods|json|replace /:\s*"(.*?)"/g, ':$1') + ')'
+		? p.props[':mods'] = 'provide.mods(' + (p.mods|json|replace /:\s*"(.*?)"/g, ':$1') + ')'
 
 	- if p.classes
 		? p.props[':class'] = p.classes
@@ -80,9 +78,9 @@
 	- if p.ref
 		? p.attrs.ref = p.ref
 
-	- forEach ['if', 'elseIf', 'else', 'show', 'async', 'asyncBack', 'model'] => el
+	- forEach ['if', 'elseIf', 'else', 'show', 'model'] => el
 		- if p[el]
-			? p.attrs['v-' + Sugar.String.dasherize(el)] = p[el]
+			? p.attrs['v-' + String.dasherize(el)] = p[el]
 
 	< ${component} ${p.props|!html} | ${p.events|!html} | ${p.attrs|!html}
 		{content}

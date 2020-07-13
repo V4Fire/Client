@@ -1,0 +1,36 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	color: #4B494B
+	titleColor: #FFF
+	bgColor: #FFF
+	titleBgColor: #00786B
+	backBgColor: alpha(#000, 0.4)
+}
+
+b-window
+	&__back
+		background $p.backBgColor
+
+	&__window
+		color $p.color
+		background-color $p.bgColor
+
+	&__title
+		padding 1em 10em 1em 1em
+		font-size 1.8rem
+		color $p.titleColor
+		background $p.titleBgColor
+
+	&__controls
+		padding 1em
+		text-align center
+
+	&__control + &__control
+		margin-left 0.2em

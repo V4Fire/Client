@@ -1,0 +1,29 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data/i-data.styl"
+
+$p = {
+
+}
+
+b-slider extends i-data
+	if $p.height
+		height $p.height
+
+	&__window
+	&__view
+		display flex
+		size 100%
+		overflow hidden
+
+	&__window
+		position relative
+
+	&__view
+		useGPU()

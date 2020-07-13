@@ -7,33 +7,30 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-width/i-width.styl"
 
 $p = {
-	width: 15em
+	widthHelpers: true
+	progressHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
 }
 
 b-input extends i-input
+	// @stlint-disable
+	i-width({helpers: $p.widthHelpers})
+	// @stlint-enable
+
 	display inline-block
-	width $p.width
-
-	&_focused_true
-		z-index-pos layer 1
-
-	&_progress_true
-		pointer-events auto
 
 	&__root-wrapper
 	&__super-wrapper
 	&__wrapper
 		display flex
-		box-sizing border-box
 		width 100%
 
 	&__super-wrapper
 		cursor text
-
-	&__wrapper
-		align-items center
 
 	&__cell
 		flex auto
@@ -42,19 +39,22 @@ b-input extends i-input
 		width 100%
 
 	&__input
-		margin 0
 		width 100%
+		overflow hidden
+		margin 0
+
+		text-overflow ellipsis
 
 		border 0
 		background transparent
-		overflow hidden
 
-		font-size 1em
-		font-family BASE_FONT
-		text-overflow ellipsis
-
+		// @stlint-disable
 		&::-ms-clear
+		// @stlint-enable
 			display none
+
+		&:focus
+			-webkit-tap-highlight-color transparent
 
 		&:focus
 		&:valid
@@ -68,23 +68,16 @@ b-input extends i-input
 		visibility hidden
 		cursor pointer
 
-	&_focused_true&_empty_false &__clear
-		display block
-		visibility visible
-
-	&_focused_true&_empty_false &__post-icon
-	&_progress_true &__icon&__clear
-		display none
-
-	&__valid-status
 	&__progress
+	&__valid-status
 		pointer-events none
 
-	&_focused_true &__valid-status
+	&__valid-status
 		display none
 
 	&_show-error_true &__error-box
 		display none
 
-	&_show-error_true&_focused_true&_valid_false &__error-box
+	&_focused_true&_empty_false &__clear
 		display block
+		visibility visible

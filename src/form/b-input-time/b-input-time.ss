@@ -9,4 +9,5 @@
  */
 
 - include 'form/b-input'|b as placeholder
+
 - template index() extends ['b-input'].index

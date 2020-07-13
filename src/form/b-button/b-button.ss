@@ -12,7 +12,8 @@
 
 - template index() extends ['i-data'].index
 	- rootTag = 'span'
-	- messageHelpers = true
+	- rootWrapper = true
+	- skeletonMarker = true
 
 	- block body
 		- super
@@ -46,56 +47,63 @@
 		- block button(type = 'button')
 			< ${type}.&__button &
 				ref = button |
-				:class = setHint(hintPos) |
+				:class = provide.hintClasses(hintPos) |
 				:autofocus = autofocus |
 				:-hint = t(hint) |
 				@click = onClick |
+				@focus = focus |
+				@blur = blur |
 				${self.buttonAttrs(type)} |
 				${attrs|!html}
 			.
 
 				< _.&__wrapper
 					- block preIcon
-						< _.&__cell.&__icon.&__pre-icon v-if = $slots.preIcon
-							+= self.slot('preIcon')
+						< _.&__cell.&__icon.&__pre-icon v-if = vdom.getSlot('preIcon')
+							+= self.slot('preIcon', {':icon': 'preIcon'})
 
 						< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
-							< component.&__b-icon &
+							< component &
 								v-if = preIconComponent |
 								:instanceOf = bIcon |
 								:is = preIconComponent |
 								:value = preIcon
 							.
 
-							< template v-else
-								+= self.gIcon(['preIcon'], {'g-icon': {}})
+							< @b-icon v-else | :value = preIcon
 
 					- block value
 						< _.&__cell.&__value
 							+= self.slot()
 
 					- block expand
-						< _.&__cell.&__icon.&__expand v-if = $slots.dropdown
-							+= self.gIcon('expand_more')
+						< _.&__cell.&__icon.&__expand v-if = vdom.getSlot('dropdown')
 
 					- block icon
-						< _.&__cell.&__icon.&__post-icon v-if = $slots.icon
-							+= self.slot('icon')
+						< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
+							+= self.slot('icon', {':icon': 'icon'})
 
 						< _.&__cell.&__icon.&__post-icon v-else-if = icon
-							< component.&__b-icon &
+							< component &
 								v-if = iconComponent |
 								:instanceOf = bIcon |
 								:is = iconComponent |
 								:value = icon
 							.
 
-							< template v-else
-								+= self.gIcon(['icon'], {'g-icon': {}})
+							< @b-icon v-else | :value = icon
 
 					- block progress
-						< _.&__cell.&__icon.&__progress v-if = dataProvider
-							< b-progress-icon v-once
+						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
+							< template v-if = vdom.getSlot('progressIcon')
+								+= self.slot('progressIcon', {':icon': 'progressIcon'})
+
+							< component &
+								v-else-if = progressIcon |
+								:is = progressIcon
+							.
+
+							< @b-progress-icon v-else
 
 		< template v-if = type === 'link'
 			+= self.button('a')
@@ -105,12 +113,12 @@
 
 		- block dropdown
 			< . &
-				v-if = $slots.dropdown && (
+				v-if = vdom.getSlot('dropdown') && (
 					isFunctional ||
-					ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
+					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				) |
 
-				:class = getElClasses({dropdown: {pos: dropdown}})
+				:class = provide.elClasses({dropdown: {pos: dropdown}})
 			.
 				< .&__dropdown-content
 					+= self.slot('dropdown')

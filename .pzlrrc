@@ -4,5 +4,6 @@
   "sourceDir": "src",
   "disclaimer": "disclaimer.txt",
   "dependencies": ["@v4fire/core"],
+  "designSystem": "@v4fire/design-system",
   "assets": {"sprite": "svg"}
 }

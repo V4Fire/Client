@@ -6,8 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:icons/b-progress-icon/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock, { component } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
-@component({functional: true, tiny: true})
+/**
+ * Component to indicate a loading
+ */
+@component({functional: true, flyweight: true})
 export default class bProgressIcon extends iBlock {}
