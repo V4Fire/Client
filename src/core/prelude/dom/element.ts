@@ -11,7 +11,7 @@ import extend from 'core/prelude/extend';
 /**
  * Returns a position of the element relative to the document
  */
-extend(Element.prototype, 'getPosition', function (this: Element): ElementPosition {
+extend(Element.prototype, 'getPosition', function getPosition(this: Element): ElementPosition {
 	const
 		box = this.getBoundingClientRect();
 
@@ -24,9 +24,9 @@ extend(Element.prototype, 'getPosition', function (this: Element): ElementPositi
 /**
  * Returns an element index relative to the parent
  */
-extend(Element.prototype, 'getIndex', function (): number | null {
+extend(Element.prototype, 'getIndex', function getIndex(this: Element): number | null {
 	const
-		els = this.parentElement && <HTMLCollection>this.parentElement.children;
+		els = this.parentElement?.children;
 
 	if (!els) {
 		return null;
@@ -45,28 +45,40 @@ extend(Element.prototype, 'getIndex', function (): number | null {
  * Returns a position of the element relative to the parent
  * @param [parent]
  */
-extend(Node.prototype, 'getOffset', function (parent?: Element | string): ElementPosition {
+extend(HTMLElement.prototype, 'getOffset', function getOffset(
+	this: HTMLElement,
+	parent?: Element | string
+): ElementPosition {
 	const res = {
 		top: this.offsetTop,
 		left: this.offsetLeft
 	};
 
-	if (!parent) {
+	if (parent == null) {
 		return res;
 	}
 
 	let
 		{offsetParent} = this;
 
-	const matcher = () =>
-		offsetParent && offsetParent !== document.documentElement &&
-		(Object.isString(parent) ? !offsetParent.matches(parent) : offsetParent !== parent);
-
 	while (matcher()) {
+		if (offsetParent == null || !(offsetParent instanceof HTMLElement)) {
+			break;
+		}
+
 		res.top += offsetParent.offsetTop;
 		res.left += offsetParent.offsetLeft;
+
 		({offsetParent} = offsetParent);
 	}
 
 	return res;
+
+	function matcher(): boolean {
+		if (offsetParent === document.documentElement) {
+			return false;
+		}
+
+		return Object.isString(parent) ? !offsetParent?.matches(parent) : offsetParent !== parent;
+	}
 });

@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-if (!Element.prototype.closest) {
-	Element.prototype.closest = function (selector: string): Element | null {
-		if (!this) {
+// eslint-disable-next-line @typescript-eslint/unbound-method
+if (!Object.isFunction(Element.prototype.closest)) {
+	Element.prototype.closest = function closest(this: Nullable<Element>, selector: string): Element | null {
+		if (this == null) {
 			return null;
 		}
 

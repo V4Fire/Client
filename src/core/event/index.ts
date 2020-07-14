@@ -13,6 +13,7 @@
 
 import SyncPromise from 'core/promise/sync';
 import { deprecate } from 'core/functools';
+
 export * from '@v4fire/core/core/event';
 
 /**

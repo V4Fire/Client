@@ -19,4 +19,4 @@ export interface Meta extends Dictionary {
 
 export type Target = 'api' | 'ui';
 export type ExperimentID = string | number;
-export type ExperimentsSet = Experiment<Target, ExperimentID>[];
+export type ExperimentsSet = Array<Experiment<Target, ExperimentID>>;
