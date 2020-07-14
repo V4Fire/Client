@@ -195,7 +195,7 @@
 
 				+= self.jsScript({})
 					# block initVars
-						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
+						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: Object.create(null)};
 
 						# if nonce
 							var GLOBAL_NONCE = #{nonce|json};
