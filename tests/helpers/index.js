@@ -33,3 +33,4 @@ class Helpers {
 }
 
 module.exports = new Helpers();
+module.exports.Helpers = Helpers;
