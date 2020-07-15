@@ -6,7 +6,6 @@ const
 /**
  * @typedef {import('playwright').Page} Page
  * @typedef {import('playwright').BrowserContext} BrowserContext
- * @typedef {import('playwright').ElementHandle} ElementHandle
  */
 
 class Utils {
