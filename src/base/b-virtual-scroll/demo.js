@@ -6,13 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// @ts-check
+
 const
 	s = JSON.stringify;
 
 const baseAttrs = {
 	':theme': s('demo'),
 	':option': s('div'),
-	':optionProps': '({current}, i) => ({"data-index": current.i})',
+	':optionProps': '({current}, i) => ({"data-index": current.i})'
 };
 
 const slots = {
@@ -29,36 +31,41 @@ const suits = {
 	/**
 	 * Set of parameters to render demo
 	 */
-	demo: [{
-		attrs: {
-			...baseAttrs,
-			':dataProvider': s('demo.Pagination'),
-			':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}'
-		},
+	demo: [
+		{
+			attrs: {
+				...baseAttrs,
+				':dataProvider': s('demo.Pagination'),
+				':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}'
+			},
 
-		content: {
-			...baseContent
+			content: {
+				...baseContent
+			}
 		}
-	}],
+	],
 
 	/**
 	 * Set of parameters to render data
 	 */
-	render: [{
-		attrs: {
-			...baseAttrs,
-			':dataProvider': s('demo.Pagination')
-		},
+	render: [
+		{
+			attrs: {
+				...baseAttrs,
+				':dataProvider': s('demo.Pagination')
+			},
 
-		content: {
-			...baseContent
+			content: {
+				...baseContent
+			}
 		}
-	}],
+	],
 
 	/**
 	 * Set of parameters to render truncated data
 	 */
-	renderTruncated: [{
+	renderTruncated: [
+	{
 		attrs: {
 			...baseAttrs,
 			':dataProvider': s('demo.Pagination'),
@@ -69,76 +76,83 @@ const suits = {
 		content: {
 			...baseContent
 		}
-	}],
+	}
+],
 
 	/**
 	 * Set of parameters to render static data
 	 */
-	renderOptions: [{
-		attrs: {
-			...baseAttrs,
-			':options': s(Array.from(Array(97), (v, i) => ({i})))
-		},
+	renderOptions: [
+		{
+			attrs: {
+				...baseAttrs,
+				':options': s(Array.from(Array(97), (v, i) => ({i})))
+			},
 
-		content: {
-			...baseContent
+			content: {
+				...baseContent
+			}
 		}
-	}],
+	],
 
 	/**
 	 * Set of parameters to render the empty slot
 	 */
-	slotEmpty: [{
-		attrs: {
-			...baseAttrs,
-			':dataProvider': s('demo.Pagination'),
-			':dbConverter': '({data}) => ({data: []})'
-		},
+	slotEmpty: [
+		{
+			attrs: {
+				...baseAttrs,
+				':dataProvider': s('demo.Pagination'),
+				':dbConverter': '({data}) => ({data: []})'
+			},
 
-		content: {
-			...baseContent,
-			empty: slots.empty
-		}
-	}, {
-		attrs: {
-			...baseAttrs,
-			':dataProvider': s('demo.Pagination'),
-			':dbConverter': '({data}) => ({data: data.splice(0, 4)})',
-			':request': '{get: {chunkSize: 8, total: 8, id: "b-virtual:slot-empty"}}',
-			'id': 'second'
-		},
+			content: {
+				...baseContent,
+				empty: slots.empty
+			}
+		}, {
+			attrs: {
+				...baseAttrs,
+				':dataProvider': s('demo.Pagination'),
+				':dbConverter': '({data}) => ({data: data.splice(0, 4)})',
+				':request': '{get: {chunkSize: 8, total: 8, id: "b-virtual:slot-empty"}}',
+				id: 'second'
+			},
 
-		content: {
-			...baseContent,
-			empty: slots.empty
+			content: {
+				...baseContent,
+				empty: slots.empty
+			}
 		}
-	}],
+	],
 
 	/**
 	 * Set of parameters to render two instances of b-virtual-scroll
 	 */
-	doubleComponents: [{
-		attrs: {
-			...baseAttrs,
-			':dataProvider': s('demo.Pagination'),
-			':request': '{get: {chunkSize: 10}}'
-		},
+	doubleComponents: [
+		{
+			attrs: {
+				...baseAttrs,
+				':dataProvider': s('demo.Pagination'),
+				':request': '{get: {chunkSize: 10}}'
+			},
 
-		content: {
-			...baseContent
-		}
-	}, {
-		attrs: {
-			...baseAttrs,
-			':dataProvider': s('demo.Pagination'),
-			':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}',
-			'id': 'second'
-		},
+			content: {
+				...baseContent
+			}
+		}, {
+			attrs: {
+				...baseAttrs,
+				':dataProvider': s('demo.Pagination'),
+				':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}',
+				id: 'second'
+			},
 
-		content: {
-			...baseContent
+			content: {
+				...baseContent
+			}
 		}
-	}],
+	]
 };
 
 module.exports = suits;
