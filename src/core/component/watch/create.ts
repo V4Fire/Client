@@ -44,46 +44,76 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		}
 
 		const
-			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path,
-			propCtx = info.ctx.unsafe,
-			ctxParams = propCtx.meta.params;
+			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path;
+
+		if (!Object.isString(info.type)) {
+			Object.assign(info, {
+				type: 'remote',
+				originalPath: info.path,
+				fullPath: info.path
+			});
+		}
 
 		const
+			isDefinedPath = Object.isArray(info.path) || Object.isString(info.path),
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
 			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx);
 
 		let
 			proxy = watchInfo?.value;
 
-		const
-			needCache = handler.length > 1,
-			ref = info.originalPath;
-
-		const normalizedOpts = {
+		const normalizedOpts = <WatchOptions>{
 			collapse: true,
 			...opts,
 			...watchInfo?.opts
 		};
 
+		const
+			needCache = handler.length > 1 && normalizedOpts.collapse !== false,
+			ref = info.originalPath;
+
 		let
 			oldVal;
 
 		const
-			originalHandler = handler,
-			getVal = () => Object.get(info.type === 'field' ? proxy : component, info.originalPath);
+			originalHandler = handler;
+
+		const getVal = () => {
+			switch (info.type) {
+				case 'remote':
+					return isDefinedPath ? Object.get(info.ctx, info.path) : info.ctx;
+
+				case 'field':
+					return Object.get(proxy, info.originalPath);
+
+				default:
+					return Object.get(component, info.originalPath);
+			}
+		};
+
+		const wrapDestructor = (destructor) => {
+			if (Object.isFunction(destructor)) {
+				// Every worker that passed to async have a counter with number of consumers of this worker,
+				// but in this case this behaviour is redundant and can produce an error,
+				// that why we wrap original destructor with a new function
+				component.unsafe.$async.worker(() => destructor());
+			}
+
+			return destructor;
+		};
 
 		if (needCache) {
 			if (ref in watchCache) {
 				oldVal = watchCache[ref];
 
 			} else {
-				oldVal = opts.immediate || !isAccessor ? cloneWatchValue(getVal(), opts) : undefined;
+				oldVal = normalizedOpts.immediate || !isAccessor ? cloneWatchValue(getVal(), normalizedOpts) : undefined;
 				watchCache[ref] = oldVal;
 			}
 
-			handler = (val, _, ...args) => {
+			handler = (val, _, i) => {
 				if (isAccessor) {
-					if (Object.isTruly(normalizedOpts.collapse)) {
+					if (normalizedOpts.collapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
 
 					} else {
@@ -91,10 +121,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					}
 				}
 
-				const
-					res = originalHandler.call(this, val, oldVal, ...args);
+				if (!isDefinedPath && Object.isArray(i?.path)) {
+					oldVal = Object.get(oldVal, [i.path[0]]);
+				}
 
-				oldVal = cloneWatchValue(val, opts);
+				const
+					res = originalHandler.call(this, val, oldVal, i);
+
+				oldVal = cloneWatchValue(isDefinedPath ? val : getVal(), normalizedOpts);
 				watchCache[ref] = oldVal;
 
 				return res;
@@ -102,7 +136,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			handler[tiedWatchers] = originalHandler[tiedWatchers];
 
-			if (opts.immediate) {
+			if (normalizedOpts.immediate) {
 				const val = oldVal;
 				oldVal = undefined;
 				handler.call(component, val);
@@ -110,25 +144,33 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		} else {
 			if (isAccessor) {
-				handler = (val, oldVal, ...args) => {
-					if (Object.isTruly(normalizedOpts.collapse)) {
+				handler = (val, oldVal, i) => {
+					if (normalizedOpts.collapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
 
 					} else {
 						val = Object.get(component, info.originalPath);
 					}
 
-					return originalHandler.call(this, val, oldVal, ...args);
+					return originalHandler.call(this, val, oldVal, i);
 				};
 			}
 
-			if (opts.immediate) {
+			if (normalizedOpts.immediate) {
 				handler.call(component, getVal());
 			}
 		}
 
-		const
+		let
+			rootOrFunctional = false;
+
+		if (info.type !== 'remote') {
+			const
+				propCtx = info.ctx.unsafe,
+				ctxParams = propCtx.meta.params;
+
 			rootOrFunctional = Boolean(ctxParams.root) || ctxParams.functional === true;
+		}
 
 		if (proxy != null) {
 			if (watchInfo == null) {
@@ -150,7 +192,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							configurable: true,
 							get: () => proxy[info.name],
 							set: (val) => {
-								propCtx.$set(proxy, info.name, val);
+								info.ctx.unsafe.$set(proxy, info.name, val);
 							}
 						});
 					}
@@ -187,7 +229,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						unwatch = watch(proxy, info.path, normalizedOpts, handler).unwatch;
 					}
 
-					return unwatch;
+					return wrapDestructor(unwatch);
 				}
 
 				case 'prop': {
@@ -252,7 +294,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 					} else {
 						// eslint-disable-next-line @typescript-eslint/unbound-method
-						unwatch = watch(proxy, info.path, normalizedOpts, watchHandler).unwatch;
+						unwatch = watch(proxy, info.path, <any>normalizedOpts, watchHandler).unwatch;
 					}
 
 					destructors.push(unwatch);
@@ -292,17 +334,20 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 					attachDeepProxy();
 
-					return () => {
+					return wrapDestructor(() => {
 						for (let i = 0; i < destructors.length; i++) {
 							destructors[i]();
 						}
-					};
+					});
 				}
 
 				default: {
 					// eslint-disable-next-line @typescript-eslint/unbound-method
-					const {unwatch} = watch(proxy, info.path, normalizedOpts, handler);
-					return unwatch;
+					const {unwatch} = isDefinedPath ?
+						watch(proxy, info.path, normalizedOpts, handler) :
+						watch(proxy, normalizedOpts, handler);
+
+					return wrapDestructor(unwatch);
 				}
 			}
 		}
