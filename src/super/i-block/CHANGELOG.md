@@ -9,7 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-_Note: Gaps between patch versions are faulty, broken or test releases._
+## v3.0.0-rc.37 ()
+
+#### :house: Internal
+
+* Fixed ESLint warnings
 
 ## v3.0.0-rc.18 (2020-05-24)
 

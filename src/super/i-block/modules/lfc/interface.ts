@@ -7,4 +7,5 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+
 export type Cb<CTX extends iBlock = iBlock, R = any> = (this: CTX) => R;
