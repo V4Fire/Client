@@ -11,10 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.37 ()
+## v3.0.0-rc.37 (2020-07-16)
 
 #### :house: Internal
 
+* [Improves browser tests API](https://github.com/V4Fire/Client/issues/289)
 * Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`
 
 ## v3.0.0-rc.36 (2020-07-13)
