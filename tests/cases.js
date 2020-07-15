@@ -9,8 +9,11 @@
  */
 
 module.exports = [
-	// // b-router
+	// b-router
 	'--name b-router',
+
+	// b-virtual-scroll
+	'--name b-virtual-scroll --suit slots/empty --runner slots/empty',
 
 	// b-button
 	'--name b-button --suit demo'
