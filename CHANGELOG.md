@@ -18,6 +18,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Improves browser tests API](https://github.com/V4Fire/Client/issues/289)
 * Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`
 
+* :up:
+  * playwright 1.2.1
+
 ## v3.0.0-rc.36 (2020-07-13)
 
 #### :rocket: New Feature
