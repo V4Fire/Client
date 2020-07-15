@@ -68,6 +68,7 @@ export type PropertyType =
 	'attr' |
 	'field' |
 	'system' |
+	'remote' |
 	AccessorType;
 
 /**
