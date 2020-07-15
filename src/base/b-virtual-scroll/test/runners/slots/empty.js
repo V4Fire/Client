@@ -30,9 +30,7 @@ module.exports = (/** @type Page */ page) => {
 		withData: undefined
 	};
 
-	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
-
+	beforeAll(async () => {
 		for (let keys = Object.keys(components), i = 0; i < keys.length; i++) {
 			const key = keys[i];
 
