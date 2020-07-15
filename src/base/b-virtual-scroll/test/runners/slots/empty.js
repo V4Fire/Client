@@ -43,20 +43,20 @@ module.exports = (/** @type Page */ page) => {
 	});
 
 	describe('b-virtual-scroll slot empty', () => {
-		describe('не рендерит `empty slot`', () => {
-			it('если он не задан', async () => {
+		describe('does not render `empty slot`', () => {
+			it('if it is not set', async () => {
 				expect(await components.noSlot.evaluate((ctx) => Boolean(ctx.vdom.getSlot('empty')))).toBe(false);
 				expect(await h.dom.getRef(nodes.noSlot, 'empty')).toBeFalsy();
 			});
 
-			it('если есть данные', async () => {
+			it('if there is data', async () => {
 				expect(await components.withData.evaluate((ctx) => Boolean(ctx.vdom.getSlot('empty')))).toBe(true);
 				expect(await h.dom.isVisible('#empty', nodes.withData)).toBeFalsy();
 			});
 		});
 
-		describe('рендерит `empty slot`', () => {
-			it('если он задан и нет данных', async () => {
+		describe('render `empty slot`', () => {
+			it('if it is set and there is no data', async () => {
 				expect(await components.withSlot.evaluate((ctx) => Boolean(ctx.vdom.getSlot('empty')))).toBe(true);
 				expect(await h.dom.getRef(nodes.withSlot, 'empty')).toBeTruthy();
 			});
