@@ -76,7 +76,7 @@ declare namespace BrowserTests {
 		mocks?: string;
 
 		/**
-		 * Набор `permissions`
+		 * Set of `permissions`
 		 * @default ['geolocation']
 		 */
 		permissions?: Playwright.Permissions;
