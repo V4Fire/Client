@@ -42,7 +42,7 @@ interface IncludeReturns extends Record<string, any> {
 	'tests/utils': Tests.TestUtils;
 }
 
-declare function include<PATH extends keyof IncludeReturns>(path: PATH): IncludeReturns[PATH];
+declare function include<PATH extends keyof IncludeReturns>(path: PATH, ...args: any[]): IncludeReturns[PATH];
 
 declare namespace BrowserTests {
 	/**
