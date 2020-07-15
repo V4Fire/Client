@@ -1300,10 +1300,10 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly global!: Window;
 
 	/**
-	 * Sets a watcher to a component property/event by the specified path.
+	 * Sets a watcher to a component/object property or event by the specified path.
 	 *
 	 * When you watch for changes of some property, the handler function can take the second argument that refers
-	 * to an old value of a property. If the object that watching is non-primitive, the old value will be cloned from an
+	 * to the old value of a property. If the object that watching is non-primitive, the old value will be cloned from the
 	 * original old value to avoid the problem when we have two links to the one object.
 	 *
 	 * ```typescript
@@ -1364,6 +1364,15 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * By default, all events start to listen on the "created" hook.
 	 *
+	 * To listen for changes of another watchable object you need to specify the watch path as an object:
+	 *
+	 * ```
+	 * {
+	 *   ctx: linkToWatchObject,
+	 *   path?: pathToWatch
+	 * }
+	 * ```
+	 *
 	 * @param path - path to a component property to watch or event to listen
 	 * @param opts - additional options
 	 * @param handler
@@ -1372,6 +1381,11 @@ export default abstract class iBlock extends ComponentInterface {
 	 * ```js
 	 * // Watch for changes of "foo"
 	 * this.watch('foo', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Watch for changes of another watchable object
+	 * this.watch({ctx: anotherObject, path: 'foo'}, (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
 	 *

@@ -450,7 +450,7 @@ export abstract class ComponentInterface {
 	protected $delete(object: object, key: unknown): void {}
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component/object property by the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -463,7 +463,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component/object property by the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -476,7 +476,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component/object property by the specified path
 	 *
 	 * @param path
 	 * @param handler
