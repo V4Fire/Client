@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental, @typescript-eslint/no-empty-function */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,9 +7,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-// tslint:disable:no-empty
-// tslint:disable:typedef
 
 import Async, { BoundFn, ProxyCb } from 'core/async';
 import { LogMessageOptions } from 'core/log';
@@ -250,7 +249,7 @@ export abstract class ComponentInterface {
 	/**
 	 * List of child components
 	 */
-	readonly $children?: this['Component'][];
+	readonly $children?: Array<this['Component']>;
 
 	/**
 	 * Link to a parent component
@@ -307,7 +306,7 @@ export abstract class ComponentInterface {
 	 * Link to a parent component
 	 * (using with async rendering)
 	 */
-	// @ts-ignore
+	// @ts-ignore (ts error)
 	protected readonly $remoteParent?: this['Component'];
 
 	/**
@@ -422,7 +421,7 @@ export abstract class ComponentInterface {
 	 * Mounts the component to a DOM element
 	 * @param elementOrSelector - link to an element or a selector to an element
 	 */
-	protected $mount(elementOrSelector?: Element | string) {
+	protected $mount(elementOrSelector?: Element | string): this {
 		return this;
 	}
 
@@ -468,13 +467,26 @@ export abstract class ComponentInterface {
 	 *
 	 * @param path
 	 * @param handler
+	 * @param opts
+	 */
+	protected $watch<T = unknown>(
+		path: WatchPath,
+		opts: WatchOptions,
+		handler: RawWatchHandler<this, T>
+	): Nullable<Function>;
+
+	/**
+	 * Sets a watcher to a component property by the specified path
+	 *
+	 * @param path
+	 * @param handler
 	 */
 	protected $watch<T = unknown>(
 		path: WatchPath,
 		handler: RawWatchHandler<this, T>
 	): Nullable<Function>;
 
-	protected $watch() {
+	protected $watch(): Nullable<Function> {
 		return null;
 	}
 
