@@ -192,7 +192,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		unique: (ctx, oldCtx) => !ctx.$el.classList.contains(oldCtx.componentId),
+		unique: (ctx, oldCtx) => !ctx.$el?.classList.contains(oldCtx.componentId),
 		init: () => `uid-${Math.random().toString().slice(2)}`
 	})
 
@@ -2273,7 +2273,7 @@ export default abstract class iBlock extends ComponentInterface {
 			const
 				{node} = this.block;
 
-			if (node === this.$el) {
+			if (node == null || node === this.$el) {
 				return;
 			}
 
