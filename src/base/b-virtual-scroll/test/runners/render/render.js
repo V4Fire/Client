@@ -122,6 +122,22 @@ module.exports = (/** @type Page */ page) => {
 				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
 				expect(await getContainerChildCount()).toBe(total);
 			});
+
+			it('does not render more than received data', async () => {
+				await component.evaluate((ctx) => ctx.options = Array.from(Array(40), (v, i) => ({i})));
+				await h.dom.waitForEl(container, 'section');
+
+				const
+					total = await component.evaluate((ctx) => ctx.options.length),
+					checkFn = async () => await getContainerChildCount() === total;
+
+				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
+				expect(await getContainerChildCount()).toBe(total);
+
+				await h.bom.waitForIdleCallback(page);
+				await h.scroll.scrollToBottom(page);
+				expect(await getContainerChildCount()).toBe(total);
+			});
 		});
 
 		describe('with `dataProvider`', () => {
@@ -143,6 +159,21 @@ module.exports = (/** @type Page */ page) => {
 
 				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
 
+				expect(await getContainerChildCount()).toBe(total);
+			});
+
+			it('does not render more than received data', async () => {
+				await resetComponentState({total: 40});
+
+				const
+					total = await component.evaluate((ctx) => ctx.requestParams.get.total),
+					checkFn = async () => await getContainerChildCount() === total;
+
+				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
+				expect(await getContainerChildCount()).toBe(total);
+
+				await h.bom.waitForIdleCallback(page);
+				await h.scroll.scrollToBottom(page);
 				expect(await getContainerChildCount()).toBe(total);
 			});
 		});
