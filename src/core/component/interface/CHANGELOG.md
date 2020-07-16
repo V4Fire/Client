@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Marked `$el` as optional
+* Changed the `SyncLinkCache` type from Dictionary to Map
 
 #### :house: Internal
 
