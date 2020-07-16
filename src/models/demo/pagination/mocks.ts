@@ -20,35 +20,38 @@ const requestStates: Dictionary<RequestState> = {
 };
 
 export default {
-	GET: [{
-		async response({opts}: MiddlewareParams): Promise<{data: ResponseItem[]}> {
-			const query = <RequestQuery>{
-				chunkSize: 12,
-				id: String(Math.random()),
-				sleep: 300,
-				...Object.isObject(opts.query) ? opts.query : {}
-			};
+	GET: [
+		{
+			async response({opts}: MiddlewareParams): Promise<{data: ResponseItem[]}> {
+				const query = <RequestQuery>{
+					chunkSize: 12,
+					id: String(Math.random()),
+					sleep: 300,
+					...Object.isObject(opts.query) ? opts.query : {}
+				};
 
-			await sleep(<number>query.sleep);
+				await sleep(<number>query.sleep);
 
-			const state = requestStates[query.id] = requestStates[query.id] || {
-				i: 0,
-				totalSent: 0,
-				...query
-			};
+				// eslint-disable-next-line no-multi-assign
+				const state = requestStates[query.id] = requestStates[query.id] ?? {
+					i: 0,
+					totalSent: 0,
+					...query
+				};
 
-			if (state.totalSent === state.total) {
+				if (state.totalSent === state.total) {
+					return {
+						data: []
+					};
+				}
+
+				const dataToSend = Array.from(Array(query.chunkSize), () => ({i: state.i++}));
+				state.totalSent += dataToSend.length;
+
 				return {
-					data: []
+					data: dataToSend
 				};
 			}
-
-			const dataToSend = Array.from(Array(query.chunkSize), () => ({i: state.i++}));
-			state.totalSent += dataToSend.length;
-
-			return {
-				data: dataToSend
-			};
 		}
-	}]
+	]
 };

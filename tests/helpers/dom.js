@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 // @ts-check
 
 const
@@ -15,11 +23,12 @@ const
 class DOM {
 	/**
 	 * Parent class
+	 * @type  {BrowserTests.Helpers}
 	 */
 	#parent;
 
 	/**
-	 * @param {?} parent
+	 * @param {BrowserTests.Helpers} parent
 	 */
 	constructor(parent) {
 		this.#parent = parent;

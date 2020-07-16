@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 // @ts-check
 
 /// <reference path="../../ts-definitions/tests.d.ts" />
@@ -7,13 +15,8 @@ const
 	BOM = require('./bom'),
 	Utils = require('./utils'),
 	Component = require('./component'),
+	Scroll = require('./scroll'),
 	Router = require('./router');
-
-/**
- * @typedef {import('playwright').Page} Page
- * @typedef {import('playwright').BrowserContext} BrowserContext
- * @typedef {import('playwright').ElementHandle} ElementHandle
- */
 
 class Helpers {
 	/** @see Utils */
@@ -30,6 +33,9 @@ class Helpers {
 
 	/** @see DOM */
 	dom = new DOM(this);
+
+	/** @see Scroll */
+	scroll = new Scroll(this);
 }
 
 module.exports = new Helpers();

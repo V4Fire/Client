@@ -112,14 +112,18 @@ export default class ChunkRequest extends Friend {
 		this.pendingData = [...options];
 
 		const initChunkRenderer = () => {
-			this.chunkRender.initItems(dataProvider ? this.pendingData.splice(0, chunkSize) : this.pendingData);
+			this.chunkRender.initItems(
+				Object.isString(dataProvider) ?
+					this.pendingData.splice(0, chunkSize) :
+					this.pendingData.splice(0, this.pendingData.length)
+			);
 		};
 
-		if (!dataProvider) {
+		if (dataProvider === undefined) {
 			this.onRequestsDone();
 		}
 
-		if (this.pendingData.length < chunkSize && dataProvider) {
+		if (this.pendingData.length < chunkSize && Object.isString(dataProvider)) {
 			if (!this.isDone) {
 				await this.try();
 

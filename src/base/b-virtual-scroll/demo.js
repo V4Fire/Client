@@ -13,7 +13,7 @@ const
 
 const baseAttrs = {
 	':theme': s('demo'),
-	':option': s('div'),
+	':option': s('section'),
 	':optionProps': '({current}, i) => ({"data-index": current.i})'
 };
 
@@ -26,6 +26,9 @@ const slots = {
 };
 
 const suits = {
+	/*
+	 * Slots
+	 */
 	'slots/empty': [
 			{
 				attrs: {
@@ -60,6 +63,15 @@ const suits = {
 					empty: slots.empty
 				}
 			}
+	],
+
+	render: [
+		{
+			attrs: {
+				...baseAttrs,
+				id: 'target'
+			}
+		}
 	]
 };
 

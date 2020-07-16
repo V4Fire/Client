@@ -8,6 +8,8 @@
 
 // tslint:disable max-classes-per-file
 
+/// <reference types="@v4fire/core" />
+
 declare namespace Playwright {
 	type BrowserContext = import('playwright').BrowserContext;
 	type ElementHandle = import('playwright').ElementHandle;
@@ -63,6 +65,9 @@ declare namespace BrowserTests {
 
 		/** @see Router */
 		router: Router;
+
+		/** @see Scroll */
+		scroll: Scroll;
 	}
 
 	/**
@@ -131,13 +136,13 @@ declare namespace BrowserTests {
 		 * The delay between trying to find an element on the page
 		 * @default `100`
 		 */
-		sleep: number;
+		sleep?: number;
 
 		/**
 		 * Time after which the function stops trying to find an element on the page and returns `undefined`
 		 * @default `2000`
 		 */
-		timeout: number;
+		timeout?: number;
 
 		/**
 		 * Event to wait
@@ -147,7 +152,7 @@ declare namespace BrowserTests {
 		 *
 		 * @default `mount`
 		 */
-		to: 'mount' | 'unmount';
+		to?: 'mount' | 'unmount';
 	}
 
 	type PlaywrightElContext = Playwright.ElementHandle | Playwright.JSHandle | Playwright.Page;
@@ -355,6 +360,83 @@ declare namespace BrowserTests {
 		 * @param args
 		 */
 		call(page: Playwright.Page, method: string, ...args: unknown[]): Promise<void>;
+	}
+
+	interface ScrollToBottomWhileOptions extends ScrollOptions {
+		/**
+		 * Timeout after which the function will complete execution
+		 * @default `1000`
+		 */
+		timeout?: number;
+
+		/**
+		 * Number of milliseconds between attempts to scroll down the page
+		 * @default `100`
+		 */
+		tick?: number;
+	}
+
+	/**
+	 * Class provides API to work with scroll on the page
+	 */
+	class Scroll {
+		/**
+		 * This method waits for actionability checks, then tries to scroll element into view,
+		 * unless it is completely visible as defined by IntersectionObserver's ratio.
+		 *
+		 * Throws when elementHandle does not point to an element connected to a Document or a ShadowRoot.
+		 *
+		 * @param ctx
+		 * @param selector
+		 * @param [scrollIntoViewOptions]
+		 */
+		scrollIntoViewIfNeeded(
+			ctx: PlaywrightElContext,
+			selector: string,
+			scrollIntoViewOptions: Dictionary
+		): Promise<void>;
+
+		/**
+		 * This method waits for actionability checks, then tries to scroll element into view,
+		 * unless it is completely visible as defined by IntersectionObserver's ratio.
+		 *
+		 * Throws when elementHandle does not point to an element connected to a Document or a ShadowRoot.
+		 *
+		 * @param ctx
+		 * @param refName
+		 * @param [scrollIntoViewOptions]
+		 */
+		scrollRefIntoViewIfNeeded(
+			ctx: PlaywrightElContext,
+			refName: string,
+			scrollIntoViewOptions: Dictionary
+		): Promise<void>;
+
+		/**
+		 * @param page
+		 * @param options
+		 */
+		scrollBy(page: Playwright.Page, options: ScrollOptions): Promise<void>;
+
+		/**
+		 * @param page
+		 * @param [options]
+		 */
+		scrollToBottom(page: Playwright.Page, options?: ScrollOptions): Promise<void>;
+
+		/**
+		 * Scrolls the page until the value returned by the function is `true`
+		 * or until the time specified in` timeout` expires.
+		 *
+		 * @param page
+		 * @param [checkFn]
+		 * @param [options]
+		 */
+		scrollToBottomWhile(
+			page: Playwright.Page,
+			checkFn?: () => CanPromise<boolean>,
+			options?: ScrollToBottomWhileOptions
+		): Promise<void>;
 	}
 
 }

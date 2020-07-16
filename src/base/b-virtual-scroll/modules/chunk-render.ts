@@ -104,10 +104,6 @@ export default class ChunkRender extends Friend {
 
 		this.ctx.meta.hooks.mounted.push({fn: () => {
 			this.initEventHandlers();
-
-			if (!this.ctx.dataProvider) {
-				this.chunkRequest.init().catch(stderr);
-			}
 		}});
 	}
 

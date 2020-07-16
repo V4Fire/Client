@@ -20,7 +20,9 @@ import iData, {
 	prop,
 	field,
 	system,
+	watch,
 	wait,
+	hook,
 	p,
 
 	RequestParams,
@@ -200,14 +202,15 @@ export default class bVirtualScroll extends iData implements iItems {
 		return {
 			get: {
 				...this.requestQuery?.(getRequestParams())?.get,
-				...(<Dictionary<Dictionary>>this.request)?.get
+				...(<CanUndef<Dictionary<Dictionary>>>this.request)?.get
 			}
 		};
 	}
 
 	/** @override */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected set requestParams(value: RequestParams) {
-		return;
+		// ...
 	}
 
 	/**
@@ -241,7 +244,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadOptions = {}): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
-			this.reInit().catch(stderr);
+			this.reInit();
 		}
 
 		return super.initLoad(data, params);
@@ -251,7 +254,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Reloads the last request (if there is no `db` or `options` the method calls reload)
 	 */
 	reloadLast(): void {
-		if (!this.db || !this.options.length) {
+		if (!this.db || this.options.length === 0) {
 			this.reload().catch(stderr);
 
 		} else {
@@ -262,7 +265,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Re-initializes component
 	 */
-	async reInit(): Promise<void> {
+	reInit(): void {
 		this.componentRender.reInit();
 		this.chunkRequest.reset();
 		this.chunkRender.reInit();
@@ -279,7 +282,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		const
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
-		if (this.field.get('data.length', val)) {
+		if (Object.isTruly(this.field.get('data.length', val))) {
 			const
 				params = getRequestParams(undefined, undefined, {lastLoadedData: val.data});
 
@@ -298,6 +301,24 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.chunkRequest.init().catch(stderr);
 	}
 
+	/**
+	 * Initializes data from passed items
+	 */
+	@hook('mounted')
+	@watch('options')
+	@wait('ready', {defer: true, label: $$.initOptions})
+	protected initItems(): CanPromise<void> {
+		if (this.dataProvider !== undefined) {
+			return;
+		}
+
+		if (this.localState === 'ready') {
+			this.reInit();
+		}
+
+		this.chunkRequest.init().catch(stderr);
+	}
+
 	/** @see [[iItems.getItemKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
 		return iItems.getItemKey(this, el, i);
@@ -307,8 +328,21 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Synchronization for the component props
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
-	protected async syncPropsWatcher(): Promise<void> {
+	protected syncPropsWatcher(): CanPromise<void> {
 		return this.reInit();
+	}
+
+	/** @override */
+	protected syncDataProviderWatcher(): void {
+		const
+			provider = this.dataProvider;
+
+		if (provider === undefined) {
+			this.reInit();
+
+		} else {
+			super.syncDataProviderWatcher();
+		}
 	}
 
 	/** @override */

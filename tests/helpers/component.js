@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 // @ts-check
 
 /**
@@ -13,11 +21,12 @@ class Component {
 
 	/**
 	 * Parent class
+	 * @type  {BrowserTests.Helpers}
 	 */
 	#parent;
 
 	/**
-	 * @param {?} parent
+	 * @param {BrowserTests.Helpers} parent
 	 */
 	constructor(parent) {
 		this.#parent = parent;
@@ -46,7 +55,7 @@ class Component {
 			await ctx.nextTick();
 		}, props);
 
-		await this.#parent.dom.waitForIdleCallback(page, options);
+		await this.#parent.bom.waitForIdleCallback(page, options);
 		return this.getComponentByQuery(page, componentSelector);
 	}
 
