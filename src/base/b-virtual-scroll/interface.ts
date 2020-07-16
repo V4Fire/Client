@@ -60,7 +60,7 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<ITEM>[];
+	items: Array<RenderItem<ITEM>>;
 
 	/**
 	 * Data that pending to be rendered
@@ -85,20 +85,20 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 		 * Raw provider data without any processing
 		 */
 		raw: RAW;
-	}
+	};
 
 	/**
 	 * @deprecated
 	 * @see [[RequestMoreParams.lastLoadedChunk]]
 	 */
-	lastLoadedData: Array<ITEM>;
+	lastLoadedData: ITEM[];
 }
 
 export interface RemoteData {
 	/**
 	 * Data to render components
 	 */
-	data: unknown[];
+	data?: unknown[];
 
 	/**
 	 * Total number of elements
@@ -159,7 +159,7 @@ export type LocalState = 'init' | 'ready' | 'error';
  */
 export type RefDisplayState = '' | 'none';
 
-// @ts-ignore
+// @ts-ignore (unsafe)
 export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
 	total: CTX['total'];

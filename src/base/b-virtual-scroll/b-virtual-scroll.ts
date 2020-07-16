@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-virtual-scroll/README.md]]
+ * @packageDocumentation
+ */
+
 //#if demo
 import 'models/demo/pagination';
 //#endif
@@ -49,6 +54,7 @@ import {
 	RemoteData,
 	LocalState,
 	RequestQueryFn,
+	RequestMoreParams,
 	UnsafeBVirtualScroll
 
 } from 'base/b-virtual-scroll/interface';
@@ -93,24 +99,28 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Maximum number of elements to cache
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of elements till the page bottom that should initialize a new render iteration
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly renderGap: number = 10;
 
 	/**
 	 * Number of elements per one render chunk
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly chunkSize: number = 10;
 
 	/**
 	 * Number of tombstones to render
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, required: false, validator: Number.isNatural})
 	readonly tombstonesSize?: number;
 
@@ -152,7 +162,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * When this function returns true the component will be able to request additional data
 	 */
-	@prop({type: Function, default: (v) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v: RequestMoreParams) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
@@ -287,7 +297,7 @@ export default class bVirtualScroll extends iData implements iItems {
 				params = getRequestParams(undefined, undefined, {lastLoadedData: val.data});
 
 			this.chunkRequest.shouldStopRequest(params);
-			this.options = val.data;
+			this.options = val.data!;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {

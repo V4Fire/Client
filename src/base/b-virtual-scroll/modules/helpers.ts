@@ -24,11 +24,11 @@ export function getRequestParams(
 	merge?: Dictionary
 ): RequestMoreParams {
 	const
-		component = chunkRenderCtx?.component || chunkRequestCtx?.component,
-		pendingData = chunkRequestCtx?.pendingData || [];
+		component = chunkRenderCtx?.component ?? chunkRequestCtx?.component,
+		pendingData = chunkRequestCtx?.pendingData ?? [];
 
-	const lastLoadedData = chunkRequestCtx?.lastLoadedChunk.normalized.length ?
-		chunkRequestCtx.lastLoadedChunk.normalized :
+	const lastLoadedData = Object.isTruly(chunkRequestCtx?.lastLoadedChunk.normalized.length) ?
+		chunkRequestCtx?.lastLoadedChunk.normalized :
 		component?.options;
 
 	const base: RequestMoreParams = {
@@ -40,38 +40,40 @@ export function getRequestParams(
 		itemsTillBottom: 0,
 
 		pendingData,
-		lastLoadedData: lastLoadedData || [],
+		lastLoadedData: lastLoadedData ?? [],
 		lastLoadedChunk: {
 			raw: undefined,
-			normalized: lastLoadedData || []
+			normalized: lastLoadedData ?? []
 		}
 	};
 
-	const params = chunkRequestCtx && chunkRenderCtx ? {
-		items: chunkRenderCtx.items,
-		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
+	const params = chunkRequestCtx && chunkRenderCtx ?
+		{
+			items: chunkRenderCtx.items,
+			itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
 
-		currentPage: chunkRequestCtx.page,
-		isLastEmpty: chunkRequestCtx.isLastEmpty,
-		total: component?.unsafe.total,
+			currentPage: chunkRequestCtx.page,
+			isLastEmpty: chunkRequestCtx.isLastEmpty,
+			total: component?.unsafe.total,
 
-		pendingData,
-		lastLoadedData: lastLoadedData || [],
-		lastLoadedChunk: {
-			raw: chunkRequestCtx.lastLoadedChunk.raw,
-			normalized: lastLoadedData || []
-		}
-	} : base;
+			pendingData,
+			lastLoadedData: lastLoadedData ?? [],
+			lastLoadedChunk: {
+				raw: chunkRequestCtx.lastLoadedChunk.raw,
+				normalized: lastLoadedData ?? []
+			}
+		} :
+		base;
 
 	const merged = {
 		...params,
 		...merge
 	};
 
-	// tslint:disable-next-line: prefer-object-spread
-	return Object.assign(merged, {
+	return {
+		...merged,
 		nextPage: merged.currentPage + 1
-	});
+	};
 }
 
 /**
