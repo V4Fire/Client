@@ -46,10 +46,10 @@ module.exports = (/** @type Page */ page) => {
 
 	describe('b-virtual-scroll rendering', () => {
 
-		describe('после переинициализации', () => {
+		describe('after reinitialization', () => {
 
-			describe('путем изменения `request` пропа', () => {
-				it('удаляет старые элементы', async () => {
+			describe('by changing the `request` prop', () => {
+				it('removes old elements', async () => {
 					await resetComponentState();
 
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 10, total: 0}});
@@ -58,7 +58,7 @@ module.exports = (/** @type Page */ page) => {
 					expect(await getContainerChildCount()).toBe(0);
 				});
 
-				it('рендерит новые', async () => {
+				it('renders new', async () => {
 					await resetComponentState();
 
 					const
@@ -78,8 +78,8 @@ module.exports = (/** @type Page */ page) => {
 				});
 			});
 
-			describe('путем изменения `dataProvider` пропа', () => {
-				it('удаляет старые элементы', async () => {
+			describe('by changing the `dataProvider` prop', () => {
+				it('removes old elements', async () => {
 					await resetComponentState();
 
 					await component.evaluate((ctx) => ctx.dataProvider = undefined);
@@ -88,7 +88,7 @@ module.exports = (/** @type Page */ page) => {
 					expect(await getContainerChildCount()).toBe(0);
 				});
 
-				it('рендерит новые', async () => {
+				it('renders new', async () => {
 					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 					expect(await getContainerChildCount()).toBe(0);
 
@@ -100,8 +100,8 @@ module.exports = (/** @type Page */ page) => {
 			});
 		});
 
-		describe('с заданными `options`', () => {
-			it('рендерит первый чанк', async () => {
+		describe('with `options`', () => {
+			it('renders the first chunk', async () => {
 				const
 					chunkSize = await component.evaluate((ctx) => ctx.chunkSize);
 
@@ -111,7 +111,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getContainerChildCount()).toBe(chunkSize);
 			});
 
-			it('рендерит все доступные `options`', async () => {
+			it('renders all available `options`', async () => {
 				await component.evaluate((ctx) => ctx.options = Array.from(Array(40), (v, i) => ({i})));
 				await h.dom.waitForEl(container, 'section');
 
@@ -124,8 +124,8 @@ module.exports = (/** @type Page */ page) => {
 			});
 		});
 
-		describe('с заданным `dataProvider`', () => {
-			it('рендерит первый чанк', async () => {
+		describe('with `dataProvider`', () => {
+			it('renders the first chunk', async () => {
 				await resetComponentState();
 
 				const
@@ -134,7 +134,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getContainerChildCount()).toBe(chunkSize);
 			});
 
-			it('рендерит все доступные элементы', async () => {
+			it('renders all available items', async () => {
 				await resetComponentState({total: 40});
 
 				const
@@ -147,8 +147,8 @@ module.exports = (/** @type Page */ page) => {
 			});
 		});
 
-		describe('без заданных `options` и `dataProvider`', () => {
-			it('не рендерит ничего', async () => {
+		describe('without `options` and` dataProvider` specified', () => {
+			it('does not render anything', async () => {
 				expect(await component.evaluate((ctx) => ctx.options.length)).toBe(0);
 				expect(await component.evaluate((ctx) => ctx.dataProvider)).toBeUndefined();
 				expect(await getContainerChildCount()).toBe(0);
