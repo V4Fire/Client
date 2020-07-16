@@ -16,6 +16,10 @@ Changelog
 * Added support for remote watchers
 
 ```js
+this.$watch(anotherWatcher, () => {
+  console.log('...');
+});
+
 this.$watch({ctx: anotherWatcher, path: foo}, () => {
   console.log('...');
 });

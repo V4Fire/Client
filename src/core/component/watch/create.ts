@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { mute, unmute, unwrap, getProxyType } from 'core/object/watch';
+import watch, { mute, unmute, unwrap, getProxyType, isProxy } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
@@ -43,8 +43,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			opts = optsOrHandler ?? {};
 		}
 
-		const
-			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path;
+		let
+			info: PropertyInfo;
+
+		if (Object.isString(path)) {
+			info = getPropertyInfo(path, component);
+
+		} else {
+			info = isProxy(path) ? {ctx: path} : path;
+		}
 
 		if (!Object.isString(info.type)) {
 			Object.assign(info, {
@@ -341,15 +348,16 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					});
 				}
 
-				default: {
-					// eslint-disable-next-line @typescript-eslint/unbound-method
-					const {unwatch} = isDefinedPath ?
-						watch(proxy, info.path, normalizedOpts, handler) :
-						watch(proxy, normalizedOpts, handler);
-
-					return wrapDestructor(unwatch);
-				}
+				default:
+					// Loopback
 			}
+
+			// eslint-disable-next-line @typescript-eslint/unbound-method
+			const {unwatch} = isDefinedPath ?
+				watch(proxy, info.path, normalizedOpts, handler) :
+				watch(proxy, normalizedOpts, handler);
+
+			return wrapDestructor(unwatch);
 		}
 
 		return attachDynamicWatcher(component, info, opts, handler);

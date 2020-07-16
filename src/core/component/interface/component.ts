@@ -1,4 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental, @typescript-eslint/no-empty-function */
+/*
+eslint-disable
+@typescript-eslint/no-unused-vars-experimental,
+@typescript-eslint/no-empty-function,
+@typescript-eslint/unified-signatures
+*/
 
 /*!
  * V4Fire Client Core
@@ -467,22 +472,33 @@ export abstract class ComponentInterface {
 	 *
 	 * @param path
 	 * @param handler
-	 * @param opts
 	 */
 	protected $watch<T = unknown>(
 		path: WatchPath,
-		opts: WatchOptions,
 		handler: RawWatchHandler<this, T>
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to a component/object property by the specified path
+	 * Sets a watcher to the specified watchable object
 	 *
-	 * @param path
+	 * @param obj
 	 * @param handler
 	 */
 	protected $watch<T = unknown>(
-		path: WatchPath,
+		obj: object,
+		handler: RawWatchHandler<this, T>
+	): Nullable<Function>;
+
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param handler
+	 * @param opts
+	 */
+	protected $watch<T = unknown>(
+		obj: object,
+		opts: WatchOptions,
 		handler: RawWatchHandler<this, T>
 	): Nullable<Function>;
 

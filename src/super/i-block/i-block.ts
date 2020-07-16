@@ -184,6 +184,7 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly Root!: iStaticPage;
 
 	/** @override */
+	// @ts-ignore (override)
 	readonly $root!: this['Root'];
 
 	/**
@@ -1421,7 +1422,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * @param path - path to a component property to watch or event to listen
 	 * @param handler
-	 * @param opts - additional options
+	 * @param [opts] - additional options
 	 */
 	watch<T = unknown>(
 		path: WatchPath,
@@ -1429,9 +1430,49 @@ export default abstract class iBlock extends ComponentInterface {
 		opts?: AsyncWatchOptions
 	): void;
 
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param opts - additional options
+	 * @param handler
+	 *
+	 * @example
+	 * ```js
+	 * this.watch(anotherObject, {deep: true}, (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 * ```
+	 */
+	watch<T = unknown>(
+		obj: object,
+		opts: AsyncWatchOptions,
+		handler: RawWatchHandler<this, T>
+	): void;
+
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param handler
+	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * this.watch(anotherObject, (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 * ```
+	 */
+	watch<T = unknown>(
+		obj: object,
+		handler: RawWatchHandler<this, T>,
+		opts?: AsyncWatchOptions
+	): void;
+
 	@p({replace: false})
 	watch<T = unknown>(
-		path: WatchPath,
+		path: WatchPath | object,
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
@@ -1470,7 +1511,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		void this.lfc.execCbAfterComponentCreated(() => {
 			const
-				unwatch = this.$watch(path, opts, handler);
+				unwatch = this.$watch(<any>path, opts, handler);
 
 			if (unwatch && (opts.group != null || opts.label != null || opts.join != null)) {
 				this.async.worker(unwatch, {
