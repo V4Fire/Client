@@ -11,4 +11,6 @@
  * @packageDocumentation
  */
 
-export default {} as Dictionary;
+import watch from 'core/object/watch';
+
+export default watch({}).proxy;
