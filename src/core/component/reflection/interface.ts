@@ -68,13 +68,12 @@ export type PropertyType =
 	'attr' |
 	'field' |
 	'system' |
-	'remote' |
 	AccessorType;
 
 /**
- * Information about a component property: prop, field, computedField, etc.
+ * Common information of a component property
  */
-export interface PropertyInfo {
+export interface CommonPropertyInfo {
 	/**
 	 * Property root name
 	 *
@@ -116,11 +115,6 @@ export interface PropertyInfo {
 	originalPath: string;
 
 	/**
-	 * Property type
-	 */
-	type: PropertyType;
-
-	/**
 	 * Name of an accessor that is tied with the property
 	 */
 	accessor?: string;
@@ -129,6 +123,16 @@ export interface PropertyInfo {
 	 * Type of accessor that is tied with the property
 	 */
 	accessorType?: AccessorType;
+}
+
+/**
+ * Information of a regular component property: prop, field, computedField, etc.
+ */
+export interface ComponentPropertyInfo extends CommonPropertyInfo {
+	/**
+	 * Property type
+	 */
+	type: PropertyType;
 
 	/**
 	 * Link to a context of the property
@@ -140,3 +144,20 @@ export interface PropertyInfo {
 	 */
 	ctx: ComponentInterface;
 }
+
+/**
+ * Information of a mounted component property
+ */
+export interface MountedPropertyInfo extends CommonPropertyInfo {
+	/**
+	 * Property type
+	 */
+	type: 'mounted';
+
+	/**
+	 * Link to a context of the property
+	 */
+	ctx: object;
+}
+
+export type PropertyInfo = ComponentPropertyInfo | MountedPropertyInfo;

@@ -55,14 +55,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		if (!Object.isString(info.type)) {
 			Object.assign(info, {
-				type: 'remote',
+				type: 'mounted',
 				originalPath: info.path,
 				fullPath: info.path
 			});
 		}
 
 		const
-			isDefinedPath = Object.isArray(info.path) || Object.isString(info.path),
+			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
 			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx);
 
@@ -76,7 +76,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		};
 
 		const
-			needCache = handler.length > 1 && normalizedOpts.collapse !== false,
+			needCache = handler.length > 1 && isDefinedPath && normalizedOpts.collapse !== false,
 			ref = info.originalPath;
 
 		let
@@ -87,7 +87,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		const getVal = () => {
 			switch (info.type) {
-				case 'remote':
+				case 'mounted':
 					return isDefinedPath ? Object.get(info.ctx, info.path) : info.ctx;
 
 				case 'field':
@@ -171,7 +171,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		let
 			rootOrFunctional = false;
 
-		if (info.type !== 'remote') {
+		if (info.type !== 'mounted') {
 			const
 				propCtx = info.ctx.unsafe,
 				ctxParams = propCtx.meta.params;
@@ -194,12 +194,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						proxy[info.name] = info.ctx[info.name];
 						unmute(proxy);
 
+						const
+							propCtx = info.ctx.unsafe;
+
 						Object.defineProperty(info.ctx, info.name, {
 							enumerable: true,
 							configurable: true,
 							get: () => proxy[info.name],
 							set: (val) => {
-								info.ctx.unsafe.$set(proxy, info.name, val);
+								propCtx.$set(proxy, info.name, val);
 							}
 						});
 					}

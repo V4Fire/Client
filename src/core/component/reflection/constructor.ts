@@ -25,11 +25,18 @@ import { ComponentConstructorInfo } from 'core/component/reflection/interface';
  *
  * }
  *
- * getComponentName(bButton); // 'b-button'
+ * getComponentName(bButton) // 'b-button'
  * ```
  */
 export function getComponentName(constructor: Function): string {
-	return (constructor.name || '').dasherize();
+	const
+		nm = constructor.name;
+
+	if (Object.isString(nm)) {
+		return nm.dasherize();
+	}
+
+	return '';
 }
 
 /**
@@ -59,31 +66,39 @@ export function getInfoFromConstructor(
 	declParams?: ComponentOptions
 ): ComponentConstructorInfo {
 	const
-		name = declParams?.name || getComponentName(constructor),
+		name = declParams?.name ?? getComponentName(constructor);
+
+	const
 		parent = Object.getPrototypeOf(constructor),
-		parentParams = parent && componentParams.get(parent);
+		parentParams = parent != null ? componentParams.get(parent) : undefined;
 
 	// Create an object with parameters of a component
-	const params = parentParams ? {root: parentParams.root, ...declParams, name} : {
-		root: false,
-		tpl: true,
-		inheritAttrs: true,
-		functional: false,
-		...declParams,
-		name
-	};
+	const params = parentParams != null ?
+		{
+			root: parentParams.root,
+			...declParams,
+			name
+		} :
+
+		{
+			root: false,
+			tpl: true,
+			inheritAttrs: true,
+			functional: false,
+			...declParams,
+			name
+		};
 
 	// Mix the "functional" parameter from a parent @component declaration
 	if (parentParams) {
 		let
 			functional;
 
-		// tslint:disable-next-line:prefer-conditional-expression
 		if (Object.isPlainObject(params.functional) && Object.isPlainObject(parentParams.functional)) {
 			functional = {...parentParams.functional, ...params.functional};
 
 		} else {
-			functional = params.functional !== undefined ? params.functional : parentParams.functional || false;
+			functional = params.functional !== undefined ? params.functional : parentParams.functional ?? false;
 		}
 
 		params.functional = functional;
@@ -98,22 +113,25 @@ export function getInfoFromConstructor(
 	return {
 		name,
 		componentName: name.replace(isSmartComponent, ''),
-		isAbstract: isAbstractComponent.test(name),
-		isSmart: isSmartComponent.test(name),
 		constructor,
 		params,
+
+		isAbstract: isAbstractComponent.test(name),
+		isSmart: isSmartComponent.test(name),
+
 		parent,
 		parentParams,
+
 		get parentMeta(): CanUndef<ComponentMeta> {
-			return parent && components.get(parent);
+			return parent != null ? components.get(parent) : undefined;
 		}
 	};
 }
 
 /**
  * Returns a map of component modifiers from the specified component.
- * This function normalizes the raw modifier declaration and mixes to it values from a design system
- * (if it is specified).
+ * This function normalizes declaration of raw modifiers and mixes it with the design system modifiers
+ * (if there are specified).
  *
  * @param component - information object of the component
  *
@@ -145,17 +163,16 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 
 	const
 		modsFromDS = dsComponentsMods?.[componentName],
-		// tslint:disable-next-line:no-string-literal
 		modsFromConstructor = {...constructor['mods']};
 
-	if (modsFromDS) {
+	if (Object.isDictionary(modsFromDS)) {
 		for (let keys = Object.keys(modsFromDS), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				dsModDecl = modsFromDS[key],
 				modDecl = modsFromConstructor[key];
 
-			modsFromConstructor[key] = modDecl ? modDecl.concat(dsModDecl) : dsModDecl;
+			modsFromConstructor[key] = modDecl != null ? modDecl.concat(dsModDecl) : dsModDecl;
 		}
 	}
 
@@ -165,13 +182,13 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 			modDecl = o[key],
 			modValues = <Array<string | object>>[];
 
-		if (modDecl) {
+		if (modDecl != null) {
 			let
-				cache,
+				cache: Nullable<Map<any, any>> = null,
 				active;
 
 			for (let i = 0; i < modDecl.length; i++) {
-				cache = cache || new Map();
+				cache = cache ?? new Map();
 
 				const
 					modVal = modDecl[i];
@@ -194,7 +211,7 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 				}
 			}
 
-			if (cache) {
+			if (cache != null) {
 				for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
 					modValues.push(el.value);
 				}

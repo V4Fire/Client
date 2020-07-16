@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import { isProxy } from 'core/object/watch';
 import { bindingRgxp, customWatcherRgxp, getPropertyInfo, SyncLinkCache } from 'core/component';
 
 import Friend from 'super/i-block/modules/friend';
@@ -19,8 +20,12 @@ import { statuses } from 'super/i-block/const';
 import {
 
 	LinkDecl,
+	ObjectLinkDecl,
+	ObjectPropLinksDecl,
+
+	Link,
 	LinkWrapper,
-	ObjectLinksDecl,
+
 	ModValueConverter,
 	AsyncWatchOptions
 
@@ -56,7 +61,7 @@ export default class Sync extends Friend {
 	constructor(component: any) {
 		super(component);
 		this.linksCache = Object.createDict();
-		this.syncLinkCache = Object.createDict();
+		this.syncLinkCache = new Map();
 		this.syncModCache = Object.createDict();
 	}
 
@@ -117,7 +122,7 @@ export default class Sync extends Friend {
 	link<D = unknown, R = D>(opts: AsyncWatchOptions, wrapper?: LinkWrapper<this['C'], D, R>): CanUndef<R>;
 
 	/**
-	 * Sets a link to a property/event by the specified path.
+	 * Sets a link to a component/object property or event by the specified path.
 	 *
 	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
@@ -140,6 +145,9 @@ export default class Sync extends Friend {
 	 *
 	 *   @field((ctx) => ctx.sync.link('bla'))
 	 *   baz!: number;
+	 *
+	 *   @field((ctx) => ctx.sync.link({ctx: remoteObject, path: 'bla'}))
+	 *   ban!: number;
 	 * }
 	 * ```
 	 *
@@ -152,19 +160,23 @@ export default class Sync extends Friend {
 	 *   @field()
 	 *   baz!: number;
 	 *
+	 *   @field()
+	 *   ban!: number;
+	 *
 	 *   created() {
 	 *     this.baz = this.sync.link(['baz', 'bla']);
+	 *     this.ban = this.sync.link(['ban', remoteObject]);
 	 *   }
 	 * }
 	 * ```
 	 */
 	link<D = unknown, R = D>(
-		path: LinkDecl,
+		path: ObjectLinkDecl,
 		optsOrWrapper?: AsyncWatchOptions | LinkWrapper<this['C'], D, R>
 	): CanUndef<R>;
 
 	/**
-	 * Sets a link to a property/event by the specified path.
+	 * Sets a link to a component/object property or event by the specified path.
 	 *
 	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
@@ -188,6 +200,9 @@ export default class Sync extends Friend {
 	 *
 	 *   @field((ctx) => ctx.sync.link('bla', {deep: true}, (val) => val + 1))
 	 *   baz!: number;
+	 *
+	 *   @field((ctx) => ctx.sync.link({ctx: remoteObject, path: 'bla'}, {deep: true}, (val) => val + 1)))
+	 *   ban!: number;
 	 * }
 	 * ```
 	 *
@@ -200,19 +215,24 @@ export default class Sync extends Friend {
 	 *   @field()
 	 *   baz!: number;
 	 *
+	 *   @field()
+	 *   ban!: number;
+	 *
 	 *   created() {
 	 *     this.baz = this.sync.link(['baz', 'bla'], {deep: true}, (val) => val + 1));
+	 *     this.ban = this.sync.link(['ban', remoteObject], {deep: true}, (val) => val + 1));
 	 *   }
 	 * }
 	 * ```
 	 */
 	link<D = unknown, R = D>(
-		path: LinkDecl,
-		opts: AsyncWatchOptions, wrapper?: LinkWrapper<this['C'], D, R>
+		path: ObjectLinkDecl,
+		opts: AsyncWatchOptions,
+		wrapper?: LinkWrapper<this['C'], D, R>
 	): CanUndef<R>;
 
 	link<D = unknown, R = D>(
-		path?: LinkDecl | AsyncWatchOptions | LinkWrapper<this['C'], D>,
+		path?: ObjectLinkDecl | AsyncWatchOptions | LinkWrapper<this['C'], D>,
 		opts?: AsyncWatchOptions | LinkWrapper<this['C'], D>,
 		wrapper?: LinkWrapper<this['C'], D>
 	): CanUndef<R> {
@@ -228,7 +248,7 @@ export default class Sync extends Friend {
 		}
 
 		if (head == null) {
-			throw new Error('Path to a property that is contained a link is not defined');
+			throw new Error('Path to the property that is contained a link is not defined');
 		}
 
 		const {
@@ -244,12 +264,25 @@ export default class Sync extends Friend {
 
 		let
 			info,
+			isRemoteWatcher = false,
 			isCustomWatcher = false;
 
 		if (path == null || !Object.isString(path)) {
-			wrapper = <LinkWrapper<this['C'], D>>opts;
-			opts = <AsyncWatchOptions>path;
-			path = `${head.replace(bindingRgxp, '')}Prop`;
+			if (isProxy(path)) {
+				isRemoteWatcher = true;
+				info = {ctx: path};
+				path = undefined;
+
+			} else if (isProxy((<any>path)?.ctx)) {
+				isRemoteWatcher = true;
+				info = path;
+				path = info.path;
+
+			} else {
+				wrapper = <LinkWrapper<this['C'], D>>opts;
+				opts = path;
+				path = `${head.replace(bindingRgxp, '')}Prop`;
+			}
 
 		} else if (!customWatcherRgxp.test(path)) {
 			info = getPropertyInfo(path, this.ctx);
@@ -281,18 +314,12 @@ export default class Sync extends Friend {
 		linksCache[head] = {};
 
 		const sync = (val?, oldVal?) => {
-			if (!isCustomWatcher) {
-				val = val !== undefined ? val : this.field.get(<string>path);
-			}
-
-			const
-				res = wrapper ? wrapper.call(this.component, val, oldVal) : val;
-
+			const res = wrapper ? wrapper.call(this.component, val, oldVal) : val;
 			this.field.set(head, res);
 			return res;
 		};
 
-		if (wrapper && wrapper.length > 1) {
+		if ((wrapper?.length ?? 0) > 1) {
 			ctx.watch(info ?? path, opts, (val, oldVal) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
@@ -321,12 +348,32 @@ export default class Sync extends Friend {
 			});
 		}
 
-		syncLinkCache[path] = Object.assign(syncLinkCache[path] ?? {}, {
-			[head]: {
-				path: head,
-				sync
+		{
+			const
+				key = Object.isString(path) ? path : info?.ctx ?? path;
+
+			syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
+				[head]: {
+					path: head,
+					sync
+				}
+			}));
+		}
+
+		if (isCustomWatcher) {
+			return sync();
+		}
+
+		if (isRemoteWatcher) {
+			const
+				obj = info?.ctx;
+
+			if (Object.isString(path) || Object.isArray(path)) {
+				return sync(Object.get(obj, path));
 			}
-		});
+
+			return sync(obj);
+		}
 
 		if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 			const
@@ -346,7 +393,7 @@ export default class Sync extends Friend {
 			return;
 		}
 
-		return sync();
+		return sync(this.field.get(info != null ? info.originalPath : path));
 	}
 
 	/**
@@ -386,7 +433,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	object(decl: ObjectLinksDecl): Dictionary;
+	object(decl: ObjectPropLinksDecl): Dictionary;
 
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
@@ -426,7 +473,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	object(opts: AsyncWatchOptions, fields: ObjectLinksDecl): Dictionary;
+	object(opts: AsyncWatchOptions, fields: ObjectPropLinksDecl): Dictionary;
 
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
@@ -466,8 +513,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	// tslint:disable-next-line:unified-signatures
-	object(path: LinkDecl, fields: ObjectLinksDecl): Dictionary;
+	object(path: LinkDecl, fields: ObjectPropLinksDecl): Dictionary;
 
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
@@ -509,15 +555,15 @@ export default class Sync extends Friend {
 	 * ```
 	 */
 	object(
-		path: string,
+		path: Link,
 		opts: AsyncWatchOptions,
-		fields: ObjectLinksDecl
+		fields: ObjectPropLinksDecl
 	): Dictionary;
 
 	object(
-		path: string | AsyncWatchOptions | ObjectLinksDecl,
-		opts?: AsyncWatchOptions | ObjectLinksDecl,
-		fields?: ObjectLinksDecl
+		path: LinkDecl | AsyncWatchOptions | ObjectPropLinksDecl,
+		opts?: AsyncWatchOptions | ObjectPropLinksDecl,
+		fields?: ObjectPropLinksDecl
 	): Dictionary {
 		if (Object.isString(path)) {
 			if (Object.isArray(opts)) {
@@ -531,7 +577,10 @@ export default class Sync extends Friend {
 				opts = undefined;
 
 			} else {
-				fields = <ObjectLinksDecl>opts;
+				if (Object.isArray(opts)) {
+					fields = opts;
+				}
+
 				opts = path;
 			}
 
@@ -654,12 +703,12 @@ export default class Sync extends Friend {
 				});
 			}
 
-			syncLinkCache[watchPath] = Object.assign(syncLinkCache[watchPath] ?? {}, {
+			syncLinkCache.set(watchPath, Object.assign(syncLinkCache.get(watchPath) ?? {}, {
 				[tiedPath]: {
 					path: tiedPath,
 					sync
 				}
-			});
+			}));
 
 			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				hooks.push({fn: sync});
@@ -692,7 +741,7 @@ export default class Sync extends Friend {
 
 				if (Object.get(linksCache, tiedPath) == null) {
 					const getVal = (val?, oldVal?) => {
-						if (!customWatcherRgxp.test(watchPath)) {
+						if (Object.isString(watchPath) && !customWatcherRgxp.test(watchPath)) {
 							val = val !== undefined ? val : this.field.get(watchPath);
 						}
 
@@ -751,7 +800,7 @@ export default class Sync extends Friend {
 
 		const sync = (linkName) => {
 			const
-				o = cache[linkName];
+				o = cache.get(linkName);
 
 			if (!o) {
 				return;
@@ -776,8 +825,8 @@ export default class Sync extends Friend {
 			sync(linkPath);
 
 		} else {
-			for (let keys = Object.keys(cache), i = 0; i < keys.length; i++) {
-				sync(keys[i]);
+			for (let o = cache.keys(), el = o.next(); !el.done; el = o.next()) {
+				sync(el.value);
 			}
 		}
 	}
