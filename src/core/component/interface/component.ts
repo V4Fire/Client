@@ -239,7 +239,7 @@ export abstract class ComponentInterface {
 	/**
 	 * Link to a DOM element that is tied with the component
 	 */
-	readonly $el!: ComponentElement<this['Component']>;
+	readonly $el?: ComponentElement<this['Component']>;
 
 	/**
 	 * Map of raw component options

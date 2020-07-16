@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.37 ()
 
+#### :boom: Breaking Change
+
+* Marked `$el` as optional
+
 #### :house: Internal
 
 * Fixed ESLint warnings
