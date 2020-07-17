@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added support for mounted watchers
+* Added support of mounted watchers
 
 ```js
 this.sync.link(anotherWatcher, () => {

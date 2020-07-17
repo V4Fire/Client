@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added support for remote watchers
+* Added support of mounted watchers
 
 ```js
 this.watch(anotherWatcher, () => {
