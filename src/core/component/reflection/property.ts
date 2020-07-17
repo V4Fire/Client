@@ -281,9 +281,8 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				ctxPath = chunks.slice(0, rootI + 1);
 
 			} else {
+				ctxPath = path;
 				path = '';
-				fullPath = storeName;
-				ctxPath = storeName;
 			}
 
 			return {
