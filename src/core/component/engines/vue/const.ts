@@ -70,7 +70,7 @@ export const proxyGetters = Object.createDict({
 		}
 	}),
 
-	remote: (ctx) => ({
+	mounted: (ctx) => ({
 		key: null,
 		get value(): typeof ctx {
 			return ctx;

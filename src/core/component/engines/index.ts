@@ -16,6 +16,6 @@ export * from 'core/component/engines/vue';
 //#endif
 
 //#if runtime.engine = zero
-// @ts-ignore
+// @ts-ignore (double export)
 export * from 'core/component/engines/zero';
 //#endif
