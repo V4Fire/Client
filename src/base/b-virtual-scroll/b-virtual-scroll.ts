@@ -365,4 +365,9 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		this.localState = 'error';
 	}
+
+	@watch(':onDataChange')
+	protected ttt(v) {
+		console.log(v)
+	}
 }
