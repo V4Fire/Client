@@ -379,6 +379,9 @@ export default class Sync extends Friend {
 			return sync(obj);
 		}
 
+		const
+			initSync = () => sync(this.field.get(info != null ? info.originalPath : path));
+
 		if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 			const
 				name = '[[SYNC]]',
@@ -393,11 +396,11 @@ export default class Sync extends Friend {
 				}
 			}
 
-			hooks.splice(pos, 0, {fn: sync, name});
+			hooks.splice(pos, 0, {fn: initSync, name});
 			return;
 		}
 
-		return sync(this.field.get(info != null ? info.originalPath : path));
+		return initSync();
 	}
 
 	/**
