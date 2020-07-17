@@ -27,18 +27,14 @@ export type ObjectLink = WatchPath | object;
 export type LinkContainer = string;
 
 export type LinkDecl =
-	Link |
-	[LinkContainer, Link];
-
-export type ObjectLinkDecl =
 	ObjectLink |
 	[LinkContainer, ObjectLink];
 
-export type ObjectPropLink =
+export type PropLink =
 	Link |
 	[Link] |
 	[LinkContainer, ObjectLink] |
 	[Link, LinkWrapper] |
 	[LinkContainer, ObjectLink, LinkWrapper];
 
-export type ObjectPropLinksDecl = ObjectPropLink[];
+export type PropLinks = PropLink[];

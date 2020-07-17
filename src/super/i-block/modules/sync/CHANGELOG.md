@@ -11,6 +11,20 @@ Changelog
 
 ## v3.0.0-rc.37 ()
 
+#### :rocket: New Feature
+
+* Added support for mounted watchers
+
+```js
+this.sync.link(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.sync.object('foo', [
+  ['bla', {ctx: anotherWatcher, path: 'bar'}]
+]);
+```
+
 #### :house: Internal
 
 * Fixed ESLint warnings

@@ -20,8 +20,7 @@ import { statuses } from 'super/i-block/const';
 import {
 
 	LinkDecl,
-	ObjectLinkDecl,
-	ObjectPropLinksDecl,
+	PropLinks,
 
 	Link,
 	LinkWrapper,
@@ -171,7 +170,7 @@ export default class Sync extends Friend {
 	 * ```
 	 */
 	link<D = unknown, R = D>(
-		path: ObjectLinkDecl,
+		path: LinkDecl,
 		optsOrWrapper?: AsyncWatchOptions | LinkWrapper<this['C'], D, R>
 	): CanUndef<R>;
 
@@ -226,28 +225,28 @@ export default class Sync extends Friend {
 	 * ```
 	 */
 	link<D = unknown, R = D>(
-		path: ObjectLinkDecl,
+		path: LinkDecl,
 		opts: AsyncWatchOptions,
 		wrapper?: LinkWrapper<this['C'], D, R>
 	): CanUndef<R>;
 
 	link<D = unknown, R = D>(
-		path?: ObjectLinkDecl | AsyncWatchOptions | LinkWrapper<this['C'], D>,
+		path?: LinkDecl | AsyncWatchOptions | LinkWrapper<this['C'], D>,
 		opts?: AsyncWatchOptions | LinkWrapper<this['C'], D>,
 		wrapper?: LinkWrapper<this['C'], D>
 	): CanUndef<R> {
 		let
-			head;
+			destPath;
 
 		if (Object.isArray(path)) {
-			head = path[0];
+			destPath = path[0];
 			path = path[1];
 
 		} else {
-			head = this.activeField;
+			destPath = this.activeField;
 		}
 
-		if (head == null) {
+		if (destPath == null) {
 			throw new Error('Path to the property that is contained a link is not defined');
 		}
 
@@ -258,30 +257,30 @@ export default class Sync extends Friend {
 			syncLinkCache
 		} = this;
 
-		if (linksCache[head]) {
+		if (linksCache[destPath]) {
 			return;
 		}
 
 		let
 			info,
-			isRemoteWatcher = false,
+			isMountedWatcher = false,
 			isCustomWatcher = false;
 
 		if (path == null || !Object.isString(path)) {
 			if (isProxy(path)) {
-				isRemoteWatcher = true;
+				isMountedWatcher = true;
 				info = {ctx: path};
 				path = undefined;
 
 			} else if (isProxy((<any>path)?.ctx)) {
-				isRemoteWatcher = true;
+				isMountedWatcher = true;
 				info = path;
 				path = info.path;
 
 			} else {
 				wrapper = <LinkWrapper<this['C'], D>>opts;
 				opts = path;
-				path = `${head.replace(bindingRgxp, '')}Prop`;
+				path = `${destPath.replace(bindingRgxp, '')}Prop`;
 			}
 
 		} else if (!customWatcherRgxp.test(path)) {
@@ -298,6 +297,11 @@ export default class Sync extends Friend {
 
 		opts = opts ?? {};
 
+		if (info?.type === 'mounted') {
+			isMountedWatcher = true;
+			path = info.path;
+		}
+
 		const isAccessor = info != null ?
 			Boolean(
 				info.type === 'accessor' ||
@@ -311,20 +315,20 @@ export default class Sync extends Friend {
 			opts.immediate = opts.immediate !== false;
 		}
 
-		linksCache[head] = {};
+		linksCache[destPath] = {};
 
 		const sync = (val?, oldVal?) => {
 			const res = wrapper ? wrapper.call(this.component, val, oldVal) : val;
-			this.field.set(head, res);
+			this.field.set(destPath, res);
 			return res;
 		};
 
-		if ((wrapper?.length ?? 0) > 1) {
+		if (Object.size(wrapper) > 1) {
 			ctx.watch(info ?? path, opts, (val, oldVal) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
 
-				} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(head))) {
+				} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
 					return;
 				}
 
@@ -339,7 +343,7 @@ export default class Sync extends Friend {
 				if (!isCustomWatcher) {
 					oldVal = args[0];
 
-					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(head))) {
+					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
 						return;
 					}
 				}
@@ -350,11 +354,11 @@ export default class Sync extends Friend {
 
 		{
 			const
-				key = Object.isString(path) ? path : info?.ctx ?? path;
+				key = isMountedWatcher ? info?.ctx ?? path : path;
 
 			syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
-				[head]: {
-					path: head,
+				[destPath]: {
+					path: destPath,
 					sync
 				}
 			}));
@@ -364,12 +368,12 @@ export default class Sync extends Friend {
 			return sync();
 		}
 
-		if (isRemoteWatcher) {
+		if (isMountedWatcher) {
 			const
 				obj = info?.ctx;
 
-			if (Object.isString(path) || Object.isArray(path)) {
-				return sync(Object.get(obj, path));
+			if (Object.size(path) > 0) {
+				return sync(Object.get(obj, <any>path));
 			}
 
 			return sync(obj);
@@ -433,7 +437,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	object(decl: ObjectPropLinksDecl): Dictionary;
+	object(decl: PropLinks): Dictionary;
 
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
@@ -473,7 +477,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	object(opts: AsyncWatchOptions, fields: ObjectPropLinksDecl): Dictionary;
+	object(opts: AsyncWatchOptions, fields: PropLinks): Dictionary;
 
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
@@ -513,7 +517,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	object(path: LinkDecl, fields: ObjectPropLinksDecl): Dictionary;
+	object(path: Link, fields: PropLinks): Dictionary;
 
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
@@ -557,13 +561,13 @@ export default class Sync extends Friend {
 	object(
 		path: Link,
 		opts: AsyncWatchOptions,
-		fields: ObjectPropLinksDecl
+		fields: PropLinks
 	): Dictionary;
 
 	object(
-		path: LinkDecl | AsyncWatchOptions | ObjectPropLinksDecl,
-		opts?: AsyncWatchOptions | ObjectPropLinksDecl,
-		fields?: ObjectPropLinksDecl
+		path: Link | AsyncWatchOptions | PropLinks,
+		opts?: AsyncWatchOptions | PropLinks,
+		fields?: PropLinks
 	): Dictionary {
 		if (Object.isString(path)) {
 			if (Object.isArray(opts)) {
@@ -588,24 +592,26 @@ export default class Sync extends Friend {
 		}
 
 		let
-			head = this.activeField;
+			destHead = this.activeField;
 
-		if (head != null) {
-			if (Object.isTruly(path)) {
-				path = [head, path].join('.');
+		if (destHead != null) {
+			if (Object.size(path) > 0) {
+				path = [destHead, path].join('.');
 
 			} else {
-				path = head;
+				path = destHead;
 			}
 
 		} else {
-			head = path;
-			path = '';
+			destHead = path.split('.')[0];
 		}
 
+		const
+			localPath = path.split('.').slice(1);
+
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (head == null) {
-			throw new Error('Path to a property that is contained the final object is not defined');
+		if (destHead == null) {
+			throw new ReferenceError('Path to a property that is contained the final object is not defined');
 		}
 
 		const {
@@ -616,15 +622,18 @@ export default class Sync extends Friend {
 		} = this;
 
 		const
-			tail = path.split('.').slice(1),
-			obj = {};
+			resObj = {};
 
-		if (tail.length > 0) {
-			Object.set(obj, tail, {});
+		if (!Object.isArray(fields)) {
+			return resObj;
+		}
+
+		if (localPath.length > 0) {
+			Object.set(resObj, localPath, {});
 		}
 
 		const
-			cursor = Object.get<StrictDictionary>(obj, tail);
+			cursor = Object.get<StrictDictionary>(resObj, localPath);
 
 		const merge = (...args) => Object.mixin({
 			deep: true,
@@ -632,27 +641,58 @@ export default class Sync extends Friend {
 		}, undefined, ...args);
 
 		const setField = (path, val) => {
+			if (destHead == null) {
+				return val;
+			}
+
 			const
+				localPath = path.split('.').slice(1);
+
+			let
+				newObj;
+
+			if (localPath.length > 0) {
 				newObj = {};
+				Object.set(newObj, localPath, val);
 
-			Object.set(newObj, path.split('.').slice(1), val);
-			this.field.set(head!, merge(this.field.get(head!), newObj));
+			} else {
+				newObj = val;
+			}
 
+			this.field.set(destHead, merge(this.field.get(destHead), newObj));
 			return val;
 		};
 
-		const attachWatcher = (watchPath, tiedPath, getVal, clone?) => {
-			Object.set(linksCache, tiedPath, true);
-
-			const
-				isCustomWatcher = customWatcherRgxp.test(watchPath),
-				sync = (val?, oldVal?) => setField(tiedPath, getVal(val, oldVal));
+		const attachWatcher = (watchPath, destPath, getVal, clone?) => {
+			Object.set(linksCache, destPath, true);
 
 			let
-				info;
+				info,
+				isMountedWatcher = false,
+				isCustomWatcher = false;
 
-			if (!isCustomWatcher) {
+			if (!Object.isString(watchPath)) {
+				if (isProxy(watchPath)) {
+					isMountedWatcher = true;
+					info = {ctx: watchPath};
+					watchPath = undefined;
+
+				} else if (isProxy(watchPath?.ctx)) {
+					isMountedWatcher = true;
+					info = watchPath;
+					watchPath = info.path;
+				}
+
+			} else if (!customWatcherRgxp.test(watchPath)) {
 				info = getPropertyInfo(watchPath, this.ctx);
+
+			} else {
+				isCustomWatcher = true;
+			}
+
+			if (info?.type === 'mounted') {
+				isMountedWatcher = true;
+				watchPath = info.path;
 			}
 
 			const isAccessor = info != null ?
@@ -665,6 +705,7 @@ export default class Sync extends Friend {
 				false;
 
 			const
+				sync = (val?, oldVal?) => setField(destPath, getVal(val, oldVal)),
 				isolatedOpts = <AsyncWatchOptions>{...opts};
 
 			if (isAccessor) {
@@ -676,7 +717,7 @@ export default class Sync extends Friend {
 					if (isCustomWatcher) {
 						oldVal = undefined;
 
-					} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(tiedPath))) {
+					} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
 						return;
 					}
 
@@ -684,9 +725,6 @@ export default class Sync extends Friend {
 				});
 
 			} else {
-				const
-					that = this;
-
 				ctx.watch(info ?? watchPath, isolatedOpts, (val, ...args) => {
 					let
 						oldVal;
@@ -694,7 +732,7 @@ export default class Sync extends Friend {
 					if (!isCustomWatcher) {
 						oldVal = args[0];
 
-						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, that.field.get(tiedPath))) {
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
 							return;
 						}
 					}
@@ -703,21 +741,36 @@ export default class Sync extends Friend {
 				});
 			}
 
-			syncLinkCache.set(watchPath, Object.assign(syncLinkCache.get(watchPath) ?? {}, {
-				[tiedPath]: {
-					path: tiedPath,
-					sync
-				}
-			}));
+			{
+				const
+					key = isMountedWatcher ? info?.ctx ?? watchPath : watchPath;
+
+				syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
+					[destPath]: {
+						path: destPath,
+						sync
+					}
+				}));
+			}
+
+			if (isCustomWatcher) {
+				return ['custom'];
+			}
+
+			if (isMountedWatcher) {
+				return ['mounted', info];
+			}
 
 			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				hooks.push({fn: sync});
 			}
+
+			return ['regular', info];
 		};
 
-		for (let i = 0; i < fields!.length; i++) {
+		for (let i = 0; i < fields.length; i++) {
 			const
-				el = fields![i];
+				el = fields[i];
 
 			if (Object.isArray(el)) {
 				let
@@ -737,41 +790,67 @@ export default class Sync extends Friend {
 				}
 
 				const
-					tiedPath = [path, el[0]].join('.');
+					savePath = el[0],
+					destPath = [path, savePath].join('.');
 
-				if (Object.get(linksCache, tiedPath) == null) {
+				if (Object.get(linksCache, destPath) == null) {
 					const getVal = (val?, oldVal?) => {
-						if (Object.isString(watchPath) && !customWatcherRgxp.test(watchPath)) {
-							val = val !== undefined ? val : this.field.get(watchPath);
+						if (wrapper == null) {
+							return val;
 						}
 
-						return wrapper != null ? wrapper.call(this.component, val, oldVal) : val;
+						return wrapper.call(this.component, val, oldVal);
 					};
 
-					attachWatcher(watchPath, tiedPath, getVal, wrapper?.length > 1);
-					cursor[el[0]] = getVal();
+					const
+						[type, info] = attachWatcher(watchPath, destPath, getVal, Object.size(wrapper) > 1);
+
+					let
+						val;
+
+					switch (type) {
+						case 'regular':
+							val = this.field.get(watchPath);
+							break;
+
+						case 'mounted': {
+							const
+								obj = info.ctx;
+
+							if (Object.size(info.path) > 0) {
+								val = Object.get(obj, info.path);
+
+							} else {
+								val = obj;
+							}
+
+							break;
+						}
+
+						default:
+							val = undefined;
+							break;
+					}
+
+					Object.set(cursor, savePath, getVal(val));
 				}
 
 			} else {
 				const
-					tiedPath = [path, el].join('.');
+					savePath = el,
+					destPath = [path, savePath].join('.');
 
-				if (Object.get(linksCache, tiedPath) == null) {
-					const getVal = (val?) => {
-						if (customWatcherRgxp.test(el)) {
-							return val;
-						}
+				if (Object.get(linksCache, destPath) == null) {
+					const
+						getVal = (val?) => val,
+						[type] = attachWatcher(el, destPath, getVal);
 
-						return val !== undefined ? val : this.field.get(el);
-					};
-
-					attachWatcher(el, tiedPath, getVal);
-					cursor[el] = getVal();
+					Object.set(cursor, savePath, getVal(type === 'regular' ? this.field.get(el) : undefined));
 				}
 			}
 		}
 
-		return obj;
+		return resObj;
 	}
 
 	/**
