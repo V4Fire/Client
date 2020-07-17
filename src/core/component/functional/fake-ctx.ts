@@ -106,7 +106,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		$unregisteredHooks: {},
 
 		$slots: {
-			default: (children?.length ?? 0) > 0 ? children : undefined,
+			default: Object.size(children) > 0 ? children : undefined,
 			...renderCtx.slots?.()
 		},
 
