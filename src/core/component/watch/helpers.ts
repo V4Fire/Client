@@ -18,7 +18,7 @@ import { DynamicHandlers } from 'core/component/watch/interface';
  * Attaches a dynamic watcher to the specified property.
  * This function is used to manage the situation when we are watching some accessor.
  *
- * @param component - component that watches
+ * @param component - component that is watched
  * @param prop - property to watch
  * @param opts - options for watching
  * @param handler
@@ -31,6 +31,10 @@ export function attachDynamicWatcher(
 	handler: Function,
 	store: DynamicHandlers = dynamicHandlers
 ): Function {
+	if (prop.type === 'mounted') {
+		throw new TypeError("The mounted accessor can't be watched in this way");
+	}
+
 	let
 		handlersStore = store.get(prop.ctx);
 

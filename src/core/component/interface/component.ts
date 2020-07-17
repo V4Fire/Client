@@ -178,14 +178,14 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 }
 
 /**
- * Helper structure to pack an unsafe interface:
+ * Helper structure to pack the unsafe interface:
  * it fixes some ambiguous TS warnings
  */
 export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
 	Dictionary & U['CTX'] & U & {unsafe: any};
 
 /**
- * Abstract class represents Vue compatible component API
+ * Abstract class that represents Vue compatible component API
  */
 export abstract class ComponentInterface {
 	/**
