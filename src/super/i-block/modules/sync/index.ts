@@ -708,7 +708,7 @@ export default class Sync extends Friend {
 				false;
 
 			const
-				sync = (val?, oldVal?) => setField(destPath, getVal(val, oldVal)),
+				sync = (val?, oldVal?, init?) => setField(destPath, getVal(val, oldVal, init)),
 				isolatedOpts = <AsyncWatchOptions>{...opts};
 
 			if (isAccessor) {
@@ -765,7 +765,7 @@ export default class Sync extends Friend {
 			}
 
 			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
-				hooks.push({fn: sync});
+				hooks.push({fn: () => sync(null, null, true)});
 			}
 
 			return ['regular', info];
@@ -797,7 +797,36 @@ export default class Sync extends Friend {
 					destPath = [path, savePath].join('.');
 
 				if (Object.get(linksCache, destPath) == null) {
-					const getVal = (val?, oldVal?) => {
+					// eslint-disable-next-line prefer-const
+					let type, info;
+
+					const getVal = (val?, oldVal?, init?: boolean) => {
+						if (init) {
+							switch (type) {
+								case 'regular':
+									val = this.field.get(watchPath);
+									break;
+
+								case 'mounted': {
+									const
+										obj = info.ctx;
+
+									if (Object.size(info.path) > 0) {
+										val = Object.get(obj, info.path);
+
+									} else {
+										val = obj;
+									}
+
+									break;
+								}
+
+								default:
+									val = undefined;
+									break;
+							}
+						}
+
 						if (wrapper == null) {
 							return val;
 						}
@@ -805,37 +834,10 @@ export default class Sync extends Friend {
 						return wrapper.call(this.component, val, oldVal);
 					};
 
-					const
-						[type, info] = attachWatcher(watchPath, destPath, getVal, Object.size(wrapper) > 1);
+					[type, info] =
+						attachWatcher(watchPath, destPath, getVal, Object.size(wrapper) > 1);
 
-					let
-						val;
-
-					switch (type) {
-						case 'regular':
-							val = this.field.get(watchPath);
-							break;
-
-						case 'mounted': {
-							const
-								obj = info.ctx;
-
-							if (Object.size(info.path) > 0) {
-								val = Object.get(obj, info.path);
-
-							} else {
-								val = obj;
-							}
-
-							break;
-						}
-
-						default:
-							val = undefined;
-							break;
-					}
-
-					Object.set(cursor, savePath, getVal(val));
+					Object.set(cursor, savePath, getVal(null, null, true));
 				}
 
 			} else {
@@ -844,11 +846,21 @@ export default class Sync extends Friend {
 					destPath = [path, savePath].join('.');
 
 				if (Object.get(linksCache, destPath) == null) {
-					const
-						getVal = (val?) => val,
-						[type] = attachWatcher(el, destPath, getVal);
+					// eslint-disable-next-line prefer-const
+					let type;
 
-					Object.set(cursor, savePath, getVal(type === 'regular' ? this.field.get(el) : undefined));
+					const getVal = (val?, oldVal?, init?: boolean) => {
+						if (init) {
+							return type === 'regular' ? this.field.get(el) : undefined;
+						}
+
+						return val;
+					};
+
+					[type] =
+						attachWatcher(el, destPath, getVal);
+
+					Object.set(cursor, savePath, getVal(null, null, true));
 				}
 			}
 		}
