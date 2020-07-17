@@ -144,7 +144,7 @@ export interface ComponentPropertyInfo extends CommonPropertyInfo {
 	type: PropertyType;
 
 	/**
-	 * Link to a context (the component that owns this property) of the property
+	 * Link to a context of the property: the component that owns this property
 	 *
 	 * @example
 	 * ```js
@@ -165,7 +165,7 @@ export interface MountedPropertyInfo extends CommonPropertyInfo {
 	type: 'mounted';
 
 	/**
-	 * Link to a context of the property
+	 * Link to a context of the property: the raw watchable object that mounted to the property
 	 */
 	ctx: object;
 }
