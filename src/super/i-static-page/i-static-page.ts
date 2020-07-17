@@ -14,7 +14,6 @@
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
-import { defProp } from 'core/const/props';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 import { setLocale, locale } from 'core/i18n';
 
@@ -75,21 +74,13 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Authorization status
 	 */
-	@field({
-		after: 'remoteState',
-		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isAuth)
-	})
-
+	@field((o) => o.sync.link('remoteState', (state: RemoteState) => state.isAuth))
 	isAuth!: boolean;
 
 	/**
 	 * Online status
 	 */
-	@field({
-		after: 'remoteState',
-		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isOnline)
-	})
-
+	@field((o) => o.sync.link('remoteState', (state: RemoteState) => state.isOnline))
 	isOnline!: boolean;
 
 	/**
@@ -99,12 +90,10 @@ export default abstract class iStaticPage extends iPage {
 	lastOnlineDate?: Date;
 
 	/** @override */
-	@field({
-		atom: true,
-		init: () => remoteState
-	})
-
-	remoteState!: Dictionary;
+	@computed({watchable: true})
+	get remoteState(): typeof remoteState {
+		return remoteState;
+	}
 
 	/**
 	 * Name of the active route page
@@ -137,13 +126,13 @@ export default abstract class iStaticPage extends iPage {
 
 	/** @override */
 	set pageTitle(value: string) {
-		if (value == null) {
+		if (!Object.isString(value)) {
 			return;
 		}
 
 		const
 			div = Object.assign(document.createElement('div'), {innerHTML: value}),
-			title = div.textContent || '';
+			title = div.textContent ?? '';
 
 		// Fix strange Chrome bug
 		// tslint:disable-next-line:no-irregular-whitespace
@@ -197,6 +186,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param value
 	 * @param component
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
 		this.pageTitle = value;
 		return this.pageTitle === value;
@@ -213,12 +203,11 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	// @ts-ignore
 	setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
-		if (value === undefined || !root) {
+		if (value === undefined || !Object.isTruly(root)) {
 			return false;
 		}
 
@@ -226,7 +215,7 @@ export default abstract class iStaticPage extends iPage {
 			cl = root.classList;
 
 		const
-			c = (component.globalName || component.componentName).dasherize(),
+			c = (component.globalName ?? component.componentName).dasherize(),
 			mod = this.provide.fullComponentName(c, name, value).replace(/_/g, '-');
 
 		name = `${c}_${name.camelize(false)}`;
@@ -254,16 +243,15 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	// @ts-ignore
 	removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
-		if (!root) {
+		if (!Object.isTruly(root)) {
 			return false;
 		}
 
-		name = `${(component.globalName || component.componentName).dasherize()}_${name.camelize(false)}`;
+		name = `${(component.globalName ?? component.componentName).dasherize()}_${name.camelize(false)}`;
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
@@ -285,6 +273,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	getRootMod(name: string, component: ComponentInterface = this): undefined | string {
 		return this.rootMods[name]?.value;
 	}
@@ -309,7 +298,7 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@watch('globalEmitter:session.*')
 	protected syncAuthWatcher(e?: Session): void {
-		this.isAuth = Boolean(e && e.auth);
+		this.isAuth = Boolean(e?.auth);
 	}
 
 	/**
@@ -320,11 +309,5 @@ export default abstract class iStaticPage extends iPage {
 	protected syncOnlineWatcher(e: NetStatus): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;
-	}
-
-	/** @override */
-	protected initBaseAPI(): void {
-		super.initBaseAPI();
-		Object.defineProperty(this, 'remoteState', {...defProp, value: remoteState});
 	}
 }

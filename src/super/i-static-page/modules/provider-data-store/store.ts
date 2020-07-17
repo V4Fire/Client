@@ -40,7 +40,7 @@ export default class ProviderDataStore {
 	 * @param key
 	 */
 	get<T>(key: string): ProviderDataItem<T> {
-		return <ProviderDataItem<T>>this.store[key] || this.loopbackItem;
+		return <any>this.store[key] ?? this.loopbackItem;
 	}
 
 	/**
