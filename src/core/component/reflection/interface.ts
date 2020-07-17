@@ -9,11 +9,11 @@
 import { ComponentOptions, ComponentMeta, ComponentInterface, ComponentConstructor } from 'core/component/interface';
 
 /**
- * Information about a component can be taken from a constructor
+ * Information of a component that can be taken from a constructor
  */
 export interface ComponentConstructorInfo {
 	/**
-	 * Full name of a component.
+	 * The full name of a component.
 	 * If the component is smart the name can be equal to `b-foo-functional`.
 	 */
 	name: string;
@@ -24,12 +24,12 @@ export interface ComponentConstructorInfo {
 	componentName: string;
 
 	/**
-	 * True if the component is abstract, i.e. has a special prefix in the name
+	 * True if the component is abstract, i.e., has a prefix in the name
 	 */
 	isAbstract: boolean;
 
 	/**
-	 * True if the component is smart, i.e. it is compiled as a functional component and as a regular component
+	 * True if the component is smart, i.e., it is compiled as a functional component and as regular component
 	 */
 	isSmart: boolean;
 
@@ -59,10 +59,19 @@ export interface ComponentConstructorInfo {
 	parentMeta?: ComponentMeta;
 }
 
+/**
+ * Available types of a property accessor:
+ *
+ * 1. computed - the cached type
+ * 2. accessor - the non-cached type
+ */
 export type AccessorType =
 	'computed' |
 	'accessor';
 
+/**
+ * Available types of an own component properties
+ */
 export type PropertyType =
 	'prop' |
 	'attr' |
@@ -75,7 +84,7 @@ export type PropertyType =
  */
 export interface CommonPropertyInfo {
 	/**
-	 * Property root name
+	 * The property root name
 	 *
 	 * @example
 	 * ```js
@@ -120,7 +129,7 @@ export interface CommonPropertyInfo {
 	accessor?: string;
 
 	/**
-	 * Type of accessor that is tied with the property
+	 * Type of an accessor that is tied with the property
 	 */
 	accessorType?: AccessorType;
 }
@@ -135,7 +144,7 @@ export interface ComponentPropertyInfo extends CommonPropertyInfo {
 	type: PropertyType;
 
 	/**
-	 * Link to a context of the property
+	 * Link to a context (the component that owns this property) of the property
 	 *
 	 * @example
 	 * ```js
@@ -146,7 +155,8 @@ export interface ComponentPropertyInfo extends CommonPropertyInfo {
 }
 
 /**
- * Information of a mounted component property
+ * Information of a mounted component property.
+ * The mounted property it's the special kind of a component property that refers to another watchable object.
  */
 export interface MountedPropertyInfo extends CommonPropertyInfo {
 	/**

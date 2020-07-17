@@ -12,7 +12,7 @@ import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/refl
 import { PropertyInfo } from 'core/component/reflection/interface';
 
 /**
- * Returns an information object about the component property by the specified path
+ * Returns an information object of a component property by the specified path
  *
  * @param path
  * @param component - component instance

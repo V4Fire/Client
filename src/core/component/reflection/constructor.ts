@@ -130,7 +130,7 @@ export function getInfoFromConstructor(
 
 /**
  * Returns a map of component modifiers from the specified component.
- * This function normalizes declaration of raw modifiers and mixes it with the design system modifiers
+ * This function takes the raw declaration of modifiers, normalizes it, and mixes with the design system modifiers
  * (if there are specified).
  *
  * @param component - information object of the component
