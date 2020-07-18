@@ -236,7 +236,15 @@ export default class ChunkRequest extends Friend {
 			.then((v) => {
 				if (!Object.isTruly(ctx.field.get('data.length', v))) {
 					this.isLastEmpty = true;
-					this.shouldStopRequest(getRequestParams(this, chunkRender, {lastLoadedData: []}));
+
+					this.shouldStopRequest(getRequestParams(this, chunkRender, {
+						lastLoadedData: [],
+						lastLoadedChunk: {
+							raw: undefined,
+							normalized: []
+						}
+					}));
+
 					chunkRender.setLoadersVisibility(false);
 					updateCurrentData();
 					return;

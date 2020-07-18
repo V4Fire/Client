@@ -16,6 +16,7 @@ import 'models/demo/pagination';
 //#endif
 
 import symbolGenerator from 'core/symbol';
+import { deprecate } from 'core/functools/deprecation';
 
 import iItems from 'traits/i-items/i-items';
 
@@ -289,13 +290,26 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		this.localState = 'init';
 
+		if (this.dbConverter) {
+			deprecate({
+				type: 'function',
+				name: 'bVirtualScroll.dbConverter',
+				notice: 'if you use `dbConverter` to convert data to a suitable format for a component, please use` componentConverter` instead, otherwise just ignore this message. See https://github.com/V4Fire/Client/issues/281',
+				alternative: 'componentConverter'
+			});
+		}
+
 		const
+			hasComponentConverter = Boolean(this.componentConverter),
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (Object.isTruly(this.field.get('data.length', val))) {
 			const params = getRequestParams(undefined, undefined, {
 				lastLoadedData: val.data,
-				lastLoadedChunk: {normalized: val.data}
+				lastLoadedChunk: {
+					normalized: val.data,
+					raw: hasComponentConverter ? this.db : undefined
+				}
 			});
 
 			this.chunkRequest.shouldStopRequest(params);
