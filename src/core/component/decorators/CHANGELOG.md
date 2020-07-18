@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.37 ()
 
+#### :boom: Breaking Change
+
+* Now all accessors with dependencies are cacheable by default
+
 #### :house: Internal
 
 * Fixed ESLint warnings

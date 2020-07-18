@@ -13,9 +13,39 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.37 ()
 
+#### :boom: Breaking Change
+
+* Now all accessors with dependencies are cacheable by default
+
+#### :rocket: New Feature
+
+* Added support for mounted watchers
+
+```js
+this.watch(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.watch({ctx: anotherWatcher, path: foo}, () => {
+  console.log('...');
+});
+
+this.sync.link(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.sync.object('foo', [
+  ['bla', {ctx: anotherWatcher, path: 'bar'}]
+]);
+```
+
+#### :bug: Bug Fix
+
+* Fixed watching for `remoteState`
+
 #### :house: Internal
 
-* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`
+* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`, `core/component`, `super/i-block`
 
 ## v3.0.0-rc.36 (2020-07-13)
 
