@@ -15,6 +15,19 @@ Changelog
 
 * Now all accessors with dependencies are cacheable by default
 
+#### :rocket: New Feature
+
+* Added support of mounted watchers
+
+```js
+class bFoo {
+  @computed({watchable: true})
+  get remoteState(): typeof anotherWatcher {
+    return anotherWatcher;
+  }
+}
+```
+
 #### :house: Internal
 
 * Fixed ESLint warnings

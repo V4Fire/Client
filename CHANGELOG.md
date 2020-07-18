@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added support for mounted watchers
+* Added support of mounted watchers
 
 ```js
 this.watch(anotherWatcher, () => {
@@ -37,6 +37,13 @@ this.sync.link(anotherWatcher, () => {
 this.sync.object('foo', [
   ['bla', {ctx: anotherWatcher, path: 'bar'}]
 ]);
+
+class bFoo {
+  @computed({watchable: true})
+  get remoteState(): typeof anotherWatcher {
+    return anotherWatcher;
+  }
+}
 ```
 
 #### :bug: Bug Fix
