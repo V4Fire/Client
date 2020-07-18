@@ -23,7 +23,7 @@ export function getNormalParent(component: ComponentInterface): CanUndef<Compone
 
 	while (
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		normalParent?.unsafe?.meta &&
+		normalParent?.unsafe?.meta != null &&
 		(normalParent.isFlyweight || normalParent.unsafe.meta.params.functional === true)
 	) {
 		normalParent = normalParent.$parent;
