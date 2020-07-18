@@ -40,6 +40,7 @@ export function getRequestParams(
 		itemsTillBottom: 0,
 
 		pendingData,
+
 		lastLoadedData: lastLoadedData ?? [],
 		lastLoadedChunk: {
 			raw: undefined,
@@ -57,6 +58,7 @@ export function getRequestParams(
 			total: component?.unsafe.total,
 
 			pendingData,
+
 			lastLoadedData: lastLoadedData ?? [],
 			lastLoadedChunk: {
 				raw: chunkRequestCtx.lastLoadedChunk.raw,
@@ -65,10 +67,7 @@ export function getRequestParams(
 		} :
 		base;
 
-	const merged = {
-		...params,
-		...merge
-	};
+	const merged = Object.mixin({deep: true, withUndef: true}, {}, params, merge);
 
 	return {
 		...merged,

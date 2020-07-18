@@ -180,12 +180,9 @@ export default class ChunkRequest extends Friend {
 
 	/**
 	 * Tries to request additional data
-	 *
-	 * @param [externalCall]
-	 *
-	 * @emits dataChange(val: unknown, oldVal: unknown)
+	 * @param [initialCall]
 	 */
-	try(externalCall: boolean = true): Promise<CanUndef<RemoteData>> {
+	try(initialCall: boolean = true): Promise<CanUndef<RemoteData>> {
 		const
 			{ctx, chunkRender} = this,
 			{chunkSize} = ctx,
@@ -194,7 +191,7 @@ export default class ChunkRequest extends Friend {
 		const additionParams = {
 			lastLoadedChunk: {
 				...this.lastLoadedChunk,
-				normalized: this.lastLoadedChunk.normalized.length === 0 ? ctx.options : this.lastLoadedChunk.normalized
+				normalized: this.lastLoadedChunk.normalized
 			}
 		};
 
@@ -204,10 +201,18 @@ export default class ChunkRequest extends Friend {
 			return resolved;
 		}
 
+		const updateCurrentData = () => {
+			if (this.currentAccumulatedData !== undefined) {
+				this.currentData = this.currentAccumulatedData;
+				this.currentAccumulatedData = undefined;
+			}
+		};
+
 		const
 			shouldRequest = ctx.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
 
 		if (this.isDone) {
+			updateCurrentData();
 			this.onRequestsDone();
 			return resolved;
 		}
@@ -221,7 +226,7 @@ export default class ChunkRequest extends Friend {
 			return resolved;
 		}
 
-		if (externalCall) {
+		if (initialCall) {
 			this.currentAccumulatedData = undefined;
 		}
 
@@ -233,6 +238,7 @@ export default class ChunkRequest extends Friend {
 					this.isLastEmpty = true;
 					this.shouldStopRequest(getRequestParams(this, chunkRender, {lastLoadedData: []}));
 					chunkRender.setLoadersVisibility(false);
+					updateCurrentData();
 					return;
 				}
 

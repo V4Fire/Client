@@ -293,11 +293,14 @@ export default class bVirtualScroll extends iData implements iItems {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (Object.isTruly(this.field.get('data.length', val))) {
-			const
-				params = getRequestParams(undefined, undefined, {lastLoadedData: val.data});
+			const params = getRequestParams(undefined, undefined, {
+				lastLoadedData: val.data,
+				lastLoadedChunk: {normalized: val.data}
+			});
 
 			this.chunkRequest.shouldStopRequest(params);
 			this.options = val.data!;
+			this.chunkRequest.data = val.data!;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
@@ -364,10 +367,5 @@ export default class bVirtualScroll extends iData implements iItems {
 		}
 
 		this.localState = 'error';
-	}
-
-	@watch(':onDataChange')
-	protected ttt(v) {
-		console.log(v)
 	}
 }

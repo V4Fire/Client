@@ -29,7 +29,7 @@ class TestUtils {
 
 		options = {
 			testDirPath: args['--test-entry'] || `${args['--name']}/test`,
-			runnerPath: `/runners/${dasherize(runner)}.js`,
+			runnerPath: `/runners/${runner}.js`,
 			...options
 		};
 
