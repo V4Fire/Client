@@ -353,8 +353,16 @@ export default class Sync extends Friend {
 		}
 
 		{
-			const
-				key = isMountedWatcher ? info?.ctx ?? path : path;
+			let
+				key;
+
+			if (isMountedWatcher) {
+				const o = info?.originalPath;
+				key = Object.isString(o) ? o : info?.ctx ?? path;
+
+			} else {
+				key = path;
+			}
 
 			syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
 				[destPath]: {
@@ -745,8 +753,16 @@ export default class Sync extends Friend {
 			}
 
 			{
-				const
-					key = isMountedWatcher ? info?.ctx ?? watchPath : watchPath;
+				let
+					key;
+
+				if (isMountedWatcher) {
+					const o = info?.originalPath;
+					key = Object.isString(o) ? o : info?.ctx ?? watchPath;
+
+				} else {
+					key = watchPath;
+				}
 
 				syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
 					[destPath]: {

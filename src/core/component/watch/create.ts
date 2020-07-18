@@ -22,7 +22,7 @@ import { attachDynamicWatcher } from 'core/component/watch/helpers';
  */
 export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
 	const
-		watchCache = Object.createDict();
+		watchCache = new Map();
 
 	// eslint-disable-next-line @typescript-eslint/typedef
 	return function watchFn(this: unknown, path, optsOrHandler, rawHandler?) {
@@ -69,22 +69,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		let
 			proxy = watchInfo?.value;
 
-		const normalizedOpts = <WatchOptions>{
-			collapse: true,
-			...opts,
-			...watchInfo?.opts
-		};
-
-		const
-			needCache = handler.length > 1 && isDefinedPath && normalizedOpts.collapse !== false,
-			ref = info.originalPath;
-
-		let
-			oldVal;
-
-		const
-			originalHandler = handler;
-
 		const getVal = () => {
 			switch (info.type) {
 				case 'mounted':
@@ -109,13 +93,36 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			return destructor;
 		};
 
+		const normalizedOpts = <WatchOptions>{
+			collapse: true,
+			...opts,
+			...watchInfo?.opts
+		};
+
+		const
+			needCache = handler.length > 1 && (isDefinedPath || normalizedOpts.collapse !== false),
+			originalHandler = handler;
+
+		let
+			oldVal;
+
 		if (needCache) {
-			if (ref in watchCache) {
-				oldVal = watchCache[ref];
+			let
+				cacheKey;
+
+			if (Object.isString(info.originalPath)) {
+				cacheKey = [info.originalPath];
+
+			} else {
+				cacheKey = Array.concat([info.ctx], info.path);
+			}
+
+			if (Object.has(watchCache, cacheKey)) {
+				oldVal = Object.get(watchCache, cacheKey);
 
 			} else {
 				oldVal = normalizedOpts.immediate || !isAccessor ? cloneWatchValue(getVal(), normalizedOpts) : undefined;
-				watchCache[ref] = oldVal;
+				Object.set(watchCache, cacheKey, oldVal);
 			}
 
 			handler = (val, _, i) => {
@@ -136,7 +143,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					res = originalHandler.call(this, val, oldVal, i);
 
 				oldVal = cloneWatchValue(isDefinedPath ? val : getVal(), normalizedOpts);
-				watchCache[ref] = oldVal;
+				Object.set(watchCache, cacheKey, oldVal);
 
 				return res;
 			};
@@ -151,7 +158,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		} else {
 			if (isAccessor) {
-				handler = (val, oldVal, i) => {
+				handler = (val, _, i) => {
 					if (normalizedOpts.collapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
 
@@ -159,7 +166,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						val = Object.get(component, info.originalPath);
 					}
 
-					return originalHandler.call(this, val, oldVal, i);
+					if (!isDefinedPath && Object.isArray(i?.path)) {
+						oldVal = Object.get(oldVal, [i.path[0]]);
+					}
+
+					const res = originalHandler.call(this, val, oldVal, i);
+					oldVal = isDefinedPath ? val : getVal();
+
+					return res;
 				};
 			}
 
