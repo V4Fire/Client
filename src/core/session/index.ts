@@ -20,7 +20,7 @@ export * from 'core/session/const';
 export * from 'core/session/interface';
 
 /**
- * Returns information about the current session
+ * Returns information of the current session
  */
 export async function get(): Promise<Session> {
 	try {
@@ -56,11 +56,11 @@ export async function set(auth?: SessionKey, params?: SessionParams): Promise<bo
 		const
 			s = await session;
 
-		if (auth) {
+		if (auth != null) {
 			await s.set('auth', auth);
 		}
 
-		if (params) {
+		if (params != null) {
 			await s.set('params', params);
 		}
 

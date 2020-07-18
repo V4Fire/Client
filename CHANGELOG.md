@@ -52,7 +52,7 @@ class bFoo {
 
 #### :house: Internal
 
-* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`, `core/component`, `super/i-block`
+* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`, `core/component`, `core/session`, `core/std`, `super/i-block`
 
 ## v3.0.0-rc.36 (2020-07-13)
 
