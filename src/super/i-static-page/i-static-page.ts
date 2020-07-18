@@ -28,7 +28,7 @@ import iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import { RemoteState, RootMod } from 'super/i-static-page/interface';
+import { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
 export * from 'super/i-static-page/interface';
@@ -74,19 +74,19 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Authorization status
 	 */
-	@field((o) => o.sync.link('remoteState', (state: RemoteState) => state.isAuth))
+	@field((o) => o.sync.link('remoteState.isAuth'))
 	isAuth!: boolean;
 
 	/**
 	 * Online status
 	 */
-	@field((o) => o.sync.link('remoteState', (state: RemoteState) => state.isOnline))
+	@field((o) => o.sync.link('remoteState.isOnline'))
 	isOnline!: boolean;
 
 	/**
 	 * Last online date
 	 */
-	@system((o) => o.sync.link('remoteState', (state: RemoteState) => state.lastOnlineDate))
+	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
 	lastOnlineDate?: Date;
 
 	/** @override */
