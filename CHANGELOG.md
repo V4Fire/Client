@@ -16,6 +16,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Now all accessors with dependencies are cacheable by default
+* Marked `router` as optional `iBlock`
+* Marked `block` as optional `iBlock`
 
 #### :rocket: New Feature
 
