@@ -35,12 +35,14 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 
 		model: m && {
 			prop: m.prop,
-			event: m.event && m.event.dasherize() || ''
+			event: m.event?.dasherize() ?? ''
 		},
 
 		data(): Dictionary {
 			const
 				ctx = <any>this,
+
+				// eslint-disable-next-line @typescript-eslint/unbound-method
 				{$watch, $set, $delete} = this;
 
 			ctx.$vueWatch = $watch;
@@ -56,7 +58,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 					oldValue
 				};
 
-				if (beforeRenderHooks[ctx.hook]) {
+				if (beforeRenderHooks[ctx.hook] === true) {
 					return;
 				}
 
@@ -103,47 +105,47 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 		beforeCreate(): void {
 			const ctx = <any>this;
 			init.beforeCreateState(ctx, meta);
-			implementComponentForceUpdateAPI(ctx, this.$forceUpdate);
+			implementComponentForceUpdateAPI(ctx, this.$forceUpdate.bind(this));
 		},
 
-		created(): void {
-			init.createdState(<any>this);
+		created(this: any): void {
+			init.createdState(this);
 		},
 
-		beforeMount(): void {
-			init.beforeMountState(<any>this);
+		beforeMount(this: any): void {
+			init.beforeMountState(this);
 		},
 
-		mounted(): void {
-			init.mountedState(<any>this);
+		mounted(this: any): void {
+			init.mountedState(this);
 		},
 
-		beforeUpdate(): void {
-			init.beforeUpdateState(<any>this);
+		beforeUpdate(this: any): void {
+			init.beforeUpdateState(this);
 		},
 
-		updated(): void {
-			init.updatedState(<any>this);
+		updated(this: any): void {
+			init.updatedState(this);
 		},
 
-		activated(): void {
-			init.activatedState(<any>this);
+		activated(this: any): void {
+			init.activatedState(this);
 		},
 
-		deactivated(): void {
-			init.deactivatedState(<any>this);
+		deactivated(this: any): void {
+			init.deactivatedState(this);
 		},
 
-		beforeDestroy(): void {
-			init.beforeDestroyState(<any>this);
+		beforeDestroy(this: any): void {
+			init.beforeDestroyState(this);
 		},
 
-		destroyed(): void {
-			init.destroyedState(<any>this);
+		destroyed(this: any): void {
+			init.destroyedState(this);
 		},
 
-		errorCaptured(): void {
-			init.errorCapturedState(<any>this);
+		errorCaptured(this: any): void {
+			init.errorCapturedState(this);
 		}
 	};
 }

@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -10,8 +12,6 @@
  * [[include:super/i-block/README.md]]
  * @packageDocumentation
  */
-
-// tslint:disable:max-file-line-count
 
 import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools';
@@ -184,7 +184,7 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly Root!: iStaticPage;
 
 	/** @override */
-	// @ts-ignore
+	// @ts-ignore (override)
 	readonly $root!: this['Root'];
 
 	/**
@@ -192,7 +192,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		unique: (ctx, oldCtx) => !ctx.$el.classList.contains(oldCtx.componentId),
+		unique: (ctx, oldCtx) => !ctx.$el?.classList.contains(oldCtx.componentId),
 		init: () => `uid-${Math.random().toString().slice(2)}`
 	})
 
@@ -485,7 +485,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * that can't be initialized within a component directly. You can modify this object outside from components,
 	 * but remember, that these mutations may force re-render of all components.
 	 */
-	@computed({cache: true, dependencies: ['r.remoteState']})
+	@computed({watchable: true, dependencies: ['r.remoteState']})
 	get remoteState(): Dictionary {
 		return this.r.remoteState;
 	}
@@ -521,7 +521,7 @@ export default abstract class iBlock extends ComponentInterface {
 			return 'ready';
 		}
 
-		return this.shadowComponentStatusStore || this.field.get<ComponentStatus>('componentStatusStore')!;
+		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore')!;
 	}
 
 	/**
@@ -552,7 +552,7 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		if (!this.isFlyweight) {
-			this.setMod('status', value);
+			void this.setMod('status', value);
 
 			// @deprecated
 			this.emit(`status-${value}`, value);
@@ -566,12 +566,12 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[iBlock.activatedProp]]
 	 */
 	@system((o) => {
-		o.lfc.execCbAtTheRightTime(() => {
-			if (o.isFunctional && !o.field.get('forceActivation')) {
+		void o.lfc.execCbAtTheRightTime(() => {
+			if (o.isFunctional && !o.field.get<boolean>('forceActivation')) {
 				return;
 			}
 
-			if (o.field.get('isActivated')) {
+			if (o.field.get<boolean>('isActivated')) {
 				o.activate(true);
 
 			} else {
@@ -579,7 +579,7 @@ export default abstract class iBlock extends ComponentInterface {
 			}
 		});
 
-		return o.sync.link('activatedProp', (val) => {
+		return o.sync.link('activatedProp', (val: boolean) => {
 			if (o.hook !== 'beforeDataCreate') {
 				o[val ? 'activate' : 'deactivate']();
 			}
@@ -606,8 +606,8 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Link to an application router
 	 */
-	get router(): bRouter {
-		return <bRouter>this.field.get('routerStore', this.r);
+	get router(): CanUndef<bRouter> {
+		return this.field.get('routerStore', this.r);
 	}
 
 	/**
@@ -649,11 +649,11 @@ export default abstract class iBlock extends ComponentInterface {
 		let
 			res;
 
-		if (m.theme) {
+		if (m.theme != null) {
 			res = {theme: m.theme};
 		}
 
-		return res && Object.freeze(res);
+		return res != null ? Object.freeze(res) : undefined;
 	}
 
 	/**
@@ -926,7 +926,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * This property provides a bunch of methods to get/set/remove modifiers of the component.
 	 */
 	@system({unique: true})
-	protected block!: Block;
+	protected block?: Block;
 
 	/**
 	 * API for lazy operations.
@@ -1184,6 +1184,7 @@ export default abstract class iBlock extends ComponentInterface {
 			//#endif
 
 			//#unless runtime has core/helpers
+			// eslint-disable-next-line no-unreachable
 			return {};
 			//#endunless
 		}
@@ -1204,6 +1205,7 @@ export default abstract class iBlock extends ComponentInterface {
 			//#endif
 
 			//#unless runtime has core/browser
+			// eslint-disable-next-line no-unreachable
 			return {};
 			//#endunless
 		}
@@ -1299,10 +1301,10 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly global!: Window;
 
 	/**
-	 * Sets a watcher to a component property/event by the specified path.
+	 * Sets a watcher to a component/object property or event by the specified path.
 	 *
 	 * When you watch for changes of some property, the handler function can take the second argument that refers
-	 * to an old value of a property. If the object that watching is non-primitive, the old value will be cloned from an
+	 * to the old value of a property. If the object that watching is non-primitive, the old value will be cloned from the
 	 * original old value to avoid the problem when we have two links to the one object.
 	 *
 	 * ```typescript
@@ -1363,6 +1365,15 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * By default, all events start to listen on the "created" hook.
 	 *
+	 * To listen for changes of another watchable object you need to specify the watch path as an object:
+	 *
+	 * ```
+	 * {
+	 *   ctx: linkToWatchObject,
+	 *   path?: pathToWatch
+	 * }
+	 * ```
+	 *
 	 * @param path - path to a component property to watch or event to listen
 	 * @param opts - additional options
 	 * @param handler
@@ -1371,6 +1382,11 @@ export default abstract class iBlock extends ComponentInterface {
 	 * ```js
 	 * // Watch for changes of "foo"
 	 * this.watch('foo', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Watch for changes of another watchable object
+	 * this.watch({ctx: anotherObject, path: 'foo'}, (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
 	 *
@@ -1406,7 +1422,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * @param path - path to a component property to watch or event to listen
 	 * @param handler
-	 * @param opts - additional options
+	 * @param [opts] - additional options
 	 */
 	watch<T = unknown>(
 		path: WatchPath,
@@ -1414,9 +1430,49 @@ export default abstract class iBlock extends ComponentInterface {
 		opts?: AsyncWatchOptions
 	): void;
 
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param opts - additional options
+	 * @param handler
+	 *
+	 * @example
+	 * ```js
+	 * this.watch(anotherObject, {deep: true}, (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 * ```
+	 */
+	watch<T = unknown>(
+		obj: object,
+		opts: AsyncWatchOptions,
+		handler: RawWatchHandler<this, T>
+	): void;
+
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param handler
+	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * this.watch(anotherObject, (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 * ```
+	 */
+	watch<T = unknown>(
+		obj: object,
+		handler: RawWatchHandler<this, T>,
+		opts?: AsyncWatchOptions
+	): void;
+
 	@p({replace: false})
 	watch<T = unknown>(
-		path: WatchPath,
+		path: WatchPath | object,
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
@@ -1430,32 +1486,36 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (Object.isFunction(optsOrHandler)) {
 			handler = optsOrHandler;
-			opts = handlerOrOpts || {};
+			opts = handlerOrOpts;
 
 		} else {
 			handler = handlerOrOpts;
-			opts = optsOrHandler || {};
+			opts = optsOrHandler;
 		}
+
+		opts = opts ?? {};
 
 		if (Object.isString(path) && customWatcherRgxp.test(path)) {
 			bindRemoteWatchers(this, {
 				async: <Async<any>>this.async,
 				watchers: {
-					[path]: [{
-						handler: (ctx, ...args: unknown[]) => handler.call(this, ...args),
-						...opts
-					}]
+					[path]: [
+						{
+							handler: (ctx, ...args: unknown[]) => handler.call(this, ...args),
+							...opts
+						}
+					]
 				}
 			});
 
 			return;
 		}
 
-		this.lfc.execCbAfterComponentCreated(() => {
+		void this.lfc.execCbAfterComponentCreated(() => {
 			const
-				unwatch = this.$watch(path, opts, handler);
+				unwatch = this.$watch(<any>path, opts, handler);
 
-			if (unwatch && (opts.group || opts.label || opts.join)) {
+			if (unwatch && (opts.group != null || opts.label != null || opts.join != null)) {
 				this.async.worker(unwatch, {
 					group: opts.group,
 					label: opts.label,
@@ -1479,7 +1539,9 @@ export default abstract class iBlock extends ComponentInterface {
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			decl = Object.isString(event) ? {event} : event,
-			eventNm = decl.event = decl.event.dasherize();
+			eventNm = decl.event.dasherize();
+
+		decl.event = eventNm;
 
 		this.$emit(eventNm, this, ...args);
 		this.$emit(`on-${eventNm}`, ...args);
@@ -1524,16 +1586,16 @@ export default abstract class iBlock extends ComponentInterface {
 	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			decl = Object.isString(event) ? {event} : event,
-			eventNm = decl.event = decl.event.dasherize();
+			eventNm = decl.event.dasherize();
+
+		decl.event = eventNm;
 
 		let
 			obj = this.$parent;
 
 		const
 			nm = this.componentName,
-			globalNm = (this.globalName || '').dasherize();
-
-		const
+			globalNm = (this.globalName ?? '').dasherize(),
 			logArgs = args.slice();
 
 		if (decl.type === 'error') {
@@ -1558,7 +1620,7 @@ export default abstract class iBlock extends ComponentInterface {
 				obj.$emit(`${nm}::on-${eventNm}`, ...args);
 				obj.log(`event:${nm}::${eventNm}`, this, ...logArgs);
 
-				if (globalNm) {
+				if (globalNm !== '') {
 					obj.$emit(`${globalNm}::${eventNm}`, this, ...args);
 					obj.$emit(`${globalNm}::on-${eventNm}`, ...args);
 					obj.log(`event:${globalNm}::${eventNm}`, this, ...logArgs);
@@ -1643,13 +1705,15 @@ export default abstract class iBlock extends ComponentInterface {
 
 	@p({replace: false})
 	off(eventOrParams?: string | ClearOptionsId<object>, handler?: Function): void {
-		if (!eventOrParams || Object.isString(eventOrParams)) {
-			const e = eventOrParams;
-			this.$off(e && e.dasherize(), handler);
+		const
+			e = eventOrParams;
+
+		if (e == null || Object.isString(e)) {
+			this.$off(e?.dasherize(), handler);
 			return;
 		}
 
-		this.async.off(eventOrParams);
+		this.async.off(e);
 	}
 
 	/**
@@ -1682,7 +1746,7 @@ export default abstract class iBlock extends ComponentInterface {
 		status: ComponentStatus,
 		cbOrOpts?: F | WaitDecoratorOptions,
 		opts?: WaitDecoratorOptions
-	): CanPromise<void | ReturnType<F>> {
+	): CanPromise<undefined | ReturnType<F>> {
 		let
 			needWrap = true;
 
@@ -1706,16 +1770,20 @@ export default abstract class iBlock extends ComponentInterface {
 		let
 			isResolved = false;
 
-		const promise = new SyncPromise((resolve) => wait(status, {...opts, fn: () => {
-			isResolved = true;
-			resolve();
-		}}).call(this));
+		const promise = new SyncPromise((resolve) => wait(status, {
+			...opts,
+			fn: () => {
+				isResolved = true;
+				resolve();
+			}
+		}).call(this));
 
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (isResolved) {
 			return promise;
 		}
 
-		return this.async.promise<void>(promise);
+		return this.async.promise<undefined>(promise);
 	}
 
 	/**
@@ -1750,8 +1818,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Forces the component re-render
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
-	async forceUpdate(): Promise<void> {
+	forceUpdate(): Promise<void> {
 		this.$forceUpdate();
+		return Promise.resolve();
 	}
 
 	/**
@@ -1785,7 +1854,7 @@ export default abstract class iBlock extends ComponentInterface {
 			const get = () => Object.isFunction(data) ? data.call(this) : data;
 			this.componentStatus = 'beforeReady';
 
-			this.lfc.execCbAfterBlockReady(() => {
+			void this.lfc.execCbAfterBlockReady(() => {
 				this.isReadyOnce = true;
 				this.componentStatus = 'ready';
 
@@ -1793,7 +1862,7 @@ export default abstract class iBlock extends ComponentInterface {
 					this.nextTick().then(() => {
 						this.beforeReadyListeners = 0;
 						this.emit('initLoad', get(), opts);
-					});
+					}, stderr);
 
 				} else {
 					this.emit('initLoad', get(), opts);
@@ -1801,7 +1870,7 @@ export default abstract class iBlock extends ComponentInterface {
 			});
 		};
 
-		if (this.globalName || !this.isFunctional) {
+		if (this.globalName != null || !this.isFunctional) {
 			if (this.isFunctional) {
 				return $a.promise(async () => {
 					await this.state.initFromStorage();
@@ -1810,7 +1879,7 @@ export default abstract class iBlock extends ComponentInterface {
 			}
 
 			const init = async () => {
-				if (this.globalName) {
+				if (this.globalName != null) {
 					await this.state.initFromStorage();
 
 				} else {
@@ -1821,7 +1890,7 @@ export default abstract class iBlock extends ComponentInterface {
 					{$children: childComponent} = this;
 
 				let
-					remoteProviders!: Set<iBlock>;
+					remoteProviders: Nullable<Set<iBlock>> = null;
 
 				if (childComponent) {
 					for (let i = 0; i < childComponent.length; i++) {
@@ -1829,7 +1898,7 @@ export default abstract class iBlock extends ComponentInterface {
 							el = childComponent[i],
 							st = el.componentStatus;
 
-						if (el.remoteProvider && statuses[st]) {
+						if (el.remoteProvider && Object.isTruly(statuses[st])) {
 							if (st === 'ready') {
 								if (opts.recursive) {
 									el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
@@ -1839,7 +1908,7 @@ export default abstract class iBlock extends ComponentInterface {
 								}
 							}
 
-							if (!remoteProviders) {
+							if (remoteProviders == null) {
 								remoteProviders = new Set<iBlock>();
 							}
 
@@ -1848,15 +1917,15 @@ export default abstract class iBlock extends ComponentInterface {
 					}
 				}
 
-				if (remoteProviders) {
+				if (remoteProviders != null) {
 					await $a.wait(() => {
-						for (let o = remoteProviders.values(), el = o.next(); !el.done; el = o.next()) {
+						for (let o = remoteProviders!.values(), el = o.next(); !el.done; el = o.next()) {
 							const
 								val = el.value,
 								st = val.componentStatus;
 
 							if (st === 'ready' || statuses[st] <= 0) {
-								remoteProviders.delete(val);
+								remoteProviders!.delete(val);
 								continue;
 							}
 
@@ -1916,8 +1985,8 @@ export default abstract class iBlock extends ComponentInterface {
 				return Block.prototype.setMod.call(ctx, nodeOrName, name);
 			}
 
-			const res = this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
-			return <CanPromise<boolean>>(res || false);
+			const res = this.lfc.execCbAfterBlockReady(() => this.block!.setMod(nodeOrName, name));
+			return res ?? false;
 		}
 
 		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
@@ -1949,8 +2018,8 @@ export default abstract class iBlock extends ComponentInterface {
 				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
 			}
 
-			const res = this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
-			return <CanPromise<boolean>>(res || false);
+			const res = this.lfc.execCbAfterBlockReady(() => this.block!.removeMod(nodeOrName, name));
+			return res ?? false;
 		}
 
 		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
@@ -2044,7 +2113,7 @@ export default abstract class iBlock extends ComponentInterface {
 			this
 		);
 
-		if (this.globalName) {
+		if (this.globalName != null) {
 			log(
 				{
 					context: ['component:global', this.globalName, context, this.componentName].join(':'),
@@ -2073,6 +2142,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
@@ -2086,7 +2156,7 @@ export default abstract class iBlock extends ComponentInterface {
 			stateFields = this.syncStorageState(data),
 			res = {};
 
-		if (stateFields) {
+		if (Object.isDictionary(stateFields)) {
 			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
 				res[keys[i]] = undefined;
 			}
@@ -2113,6 +2183,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {};
 	}
@@ -2126,7 +2197,7 @@ export default abstract class iBlock extends ComponentInterface {
 			stateFields = this.syncRouterState(data),
 			res = {};
 
-		if (stateFields) {
+		if (Object.isDictionary(stateFields)) {
 			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
 				res[keys[i]] = undefined;
 			}
@@ -2142,7 +2213,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [constructor] - component constructor
 	 */
 	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
-		return Boolean(obj && (<Dictionary>obj).instance instanceof (constructor || iBlock));
+		return Object.isTruly(obj) && (<Dictionary>obj).instance instanceof (constructor ?? iBlock);
 	}
 
 	/**
@@ -2159,19 +2230,21 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (this.isFlyweight || this.isFunctional) {
 			ref += `:${this.componentId}`;
-			that = this.$normalParent || that;
+			that = this.$normalParent ?? that;
 		}
 
+		that.$refHandlers[ref] = that.$refHandlers[ref] ?? [];
+
 		const
-			watchers = that.$refHandlers[ref] = that.$refHandlers[ref] || [],
+			watchers = that.$refHandlers[ref],
 			refVal = that.$refs[ref];
 
 		return this.async.promise(() => new Promise((resolve) => {
-			if (refVal) {
+			if (refVal != null) {
 				resolve(<T>refVal);
 
 			} else {
-				watchers.push(resolve);
+				watchers?.push(resolve);
 			}
 		}), opts);
 	}
@@ -2198,15 +2271,15 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@hook('mounted')
 	protected initBlockInstance(): void {
-		if (this.block) {
+		if (this.block != null) {
 			const
 				{node} = this.block;
 
-			if (node === this.$el) {
+			if (node == null || node === this.$el) {
 				return;
 			}
 
-			if (node && node.component === this) {
+			if (node.component === this) {
 				delete node.component;
 			}
 		}
@@ -2254,7 +2327,7 @@ export default abstract class iBlock extends ComponentInterface {
 			return;
 		}
 
-		this.parentEmitter.on('onCallChild', this.onCallChild);
+		this.parentEmitter.on('onCallChild', this.onCallChild.bind(this));
 	}
 
 	/**
@@ -2296,12 +2369,13 @@ export default abstract class iBlock extends ComponentInterface {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll().locked = true;
 
-		if (classesCache.dict && classesCache.dict.els) {
-			delete classesCache.dict.els[this.componentId];
-		}
+		try {
+			delete classesCache.dict.els?.[this.componentId];
+		} catch {}
 	}
 }
 
-function defaultI18n(): string {
-	return (this.r.i18n || ((i18n))).apply(this.r, arguments);
+function defaultI18n(this: iBlock, ...args: unknown[]): string {
+	// eslint-disable-next-line @typescript-eslint/no-extra-parens
+	return (Object.isFunction(this.r.i18n) ? this.r.i18n : ((i18n))).apply(this.r, args);
 }

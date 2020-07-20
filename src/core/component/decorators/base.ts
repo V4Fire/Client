@@ -25,8 +25,10 @@ export function paramsFactory<T = object>(
 ): FactoryTransformer<T> {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
 		initEmitter.once('bindConstructor', (componentName) => {
+			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
+
 			const
-				link = metaPointers[componentName] = metaPointers[componentName] || Object.createDict();
+				link = metaPointers[componentName]!;
 
 			link[key] = true;
 			initEmitter.once(`constructor.${componentName}`, reg);
@@ -41,6 +43,7 @@ export function paramsFactory<T = object>(
 					opts.replace = false;
 				}
 
+				// eslint-disable-next-line eqeqeq
 				if (opts.functional === undefined && p.functional === null) {
 					opts.functional = false;
 				}
@@ -51,15 +54,30 @@ export function paramsFactory<T = object>(
 			let
 				p = params;
 
-			if (desc) {
+			if (desc != null) {
 				delete meta.props[key];
 				delete meta.fields[key];
 				delete meta.systemFields[key];
 
-				const metaKey = cluster || (
-					'value' in desc ? 'methods' : p.cache === true || key in meta.computedFields && p.cache !== false ?
-						'computedFields' : 'accessors'
-				);
+				let
+					metaKey;
+
+				if (cluster != null) {
+					metaKey = cluster;
+
+				} else if ('value' in desc) {
+					metaKey = 'methods';
+
+				} else if (
+					p.cache === true ||
+					Object.isArray(p.dependencies) ||
+					key in meta.computedFields && p.cache !== false
+				) {
+					metaKey = 'computedFields';
+
+				} else {
+					metaKey = 'accessors';
+				}
 
 				if (transformer) {
 					p = transformer(p, metaKey);
@@ -67,25 +85,24 @@ export function paramsFactory<T = object>(
 
 				const
 					obj = meta[metaKey],
-					el = obj[key] || {src: meta.componentName};
+					el = obj[key] ?? {src: meta.componentName};
 
 				if (metaKey === 'methods') {
 					const
 						name = key;
 
 					let
-						watchers = el.watchers,
-						hooks = el.hooks;
+						{watchers, hooks} = el;
 
-					if (p.watch) {
-						watchers = watchers || {};
+					if (p.watch != null) {
+						watchers = watchers ?? {};
 
 						for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
 							const
 								el = o[i];
 
 							if (Object.isPlainObject(el)) {
-								const path = String(el.path || el.field);
+								const path = String(el.path ?? el.field);
 								watchers[path] = wrapOpts({...p.watchParams, ...el, path});
 
 							} else {
@@ -94,8 +111,8 @@ export function paramsFactory<T = object>(
 						}
 					}
 
-					if (p.hook) {
-						hooks = hooks || {};
+					if (p.hook != null) {
+						hooks = hooks ?? {};
 
 						for (let o = <Array<typeof p.hook>>[].concat(p.hook), i = 0; i < o.length; i++) {
 							const
@@ -110,7 +127,7 @@ export function paramsFactory<T = object>(
 									...val,
 									name,
 									hook: key,
-									after: val.after ? new Set([].concat(val.after)) : undefined
+									after: val.after != null ? new Set([].concat(val.after)) : undefined
 								});
 
 							} else {
@@ -134,7 +151,7 @@ export function paramsFactory<T = object>(
 					obj[key] = wrapOpts({...el, ...p});
 				}
 
-				if (p.dependencies) {
+				if (p.dependencies != null) {
 					meta.watchDependencies.set(key, p.dependencies);
 				}
 
@@ -154,11 +171,11 @@ export function paramsFactory<T = object>(
 			}
 
 			const
-				metaKey = cluster || (key in meta.props ? 'props' : 'fields'),
+				metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
 				inverse = inverseFieldMap[metaKey],
 				obj = meta[metaKey];
 
-			if (inverse) {
+			if (inverse != null) {
 				for (let i = 0; i < inverse.length; i++) {
 					const
 						tmp = meta[inverse[i]];
@@ -176,25 +193,24 @@ export function paramsFactory<T = object>(
 			}
 
 			const
-				el = obj[key] || {src: meta.componentName};
+				el = obj[key] ?? {src: meta.componentName};
 
 			let
-				watchers = el.watchers,
-				after = el.after;
+				{watchers, after} = el;
 
-			if (p.after) {
+			if (p.after != null) {
 				after = new Set([].concat(p.after));
 			}
 
-			if (p.watch) {
+			if (p.watch != null) {
 				for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
-					watchers = watchers || new Map();
+					watchers = watchers ?? new Map();
 
 					const
 						val = o[i];
 
 					if (Object.isPlainObject(val)) {
-						watchers.set(val.handler || val.fn, wrapOpts({...val, handler: val.handler}));
+						watchers.set(val.handler ?? val.fn, wrapOpts({...val, handler: val.handler}));
 
 					} else {
 						watchers.set(val, wrapOpts({handler: val}));

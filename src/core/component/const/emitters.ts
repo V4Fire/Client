@@ -18,7 +18,11 @@ export const
 // We need wrap an original "once" function of the emitter
 // to attach logic to register smart components
 ((initEventOnce) => {
-	initEmitter.once = function (event: CanArray<string>, listener: ListenerFn, opts?: true | OnOptions): EventEmitter {
+	initEmitter.once = function once(
+		event: CanArray<string>,
+		listener: ListenerFn,
+		opts?: true | OnOptions
+	): EventEmitter {
 		const
 			events = Array.concat([], event);
 

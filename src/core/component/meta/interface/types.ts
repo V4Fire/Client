@@ -304,6 +304,7 @@ export interface ComponentAccessor<T = unknown> extends ComputedOptions<T> {
 	src: string;
 	replace?: boolean;
 	functional?: boolean;
+	watchable?: boolean;
 }
 
 export interface ComponentHook {

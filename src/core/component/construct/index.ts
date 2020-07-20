@@ -67,7 +67,8 @@ export function beforeCreateState(
 	const
 		{unsafe, unsafe: {$parent: parent}} = component;
 
-	if (parent && !parent.componentName) {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (parent != null && parent.componentName == null) {
 		Object.set(unsafe, '$parent', unsafe.$root.unsafe.$remoteParent);
 	}
 
@@ -93,7 +94,7 @@ export function beforeCreateState(
 	let
 		watchMap;
 
-	if (watchDependencies.size) {
+	if (watchDependencies.size > 0) {
 		watchMap = Object.createDict();
 
 		for (let o = watchDependencies.values(), el = o.next(); !el.done; el = o.next()) {
@@ -121,18 +122,20 @@ export function beforeCreateState(
 		// If a computed property is tied with a system field
 		// and the host component doesn't have any watchers to this field,
 		// we need to register the "fake" watcher to force watching for system fields
-		const needToForceWatching = !watchers[key] && (
-			watchMap?.[key] ||
+		const needToForceWatching = Boolean(watchers[key] == null && (
+			watchMap?.[key] === true ||
 			storeRgxp.test(key) && (computedFields[normalizedKey] || accessors[normalizedKey])
-		);
+		));
 
 		if (needToForceWatching) {
-			watchers[key] = [{
-				deep: true,
-				immediate: true,
-				provideArgs: false,
-				handler: fakeHandler
-			}];
+			watchers[key] = [
+				{
+					deep: true,
+					immediate: true,
+					provideArgs: false,
+					handler: fakeHandler
+				}
+			];
 		}
 	}
 
@@ -195,7 +198,8 @@ export function beforeMountState(component: ComponentInterface): void {
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	component.$el.component = component;
+	Object.set(component, '$el.component', component);
+
 	runHook('beforeMounted', component).catch(stderr);
 	resolveRefs(component);
 

@@ -1,3 +1,10 @@
+/*
+eslint-disable
+@typescript-eslint/no-unused-vars-experimental,
+@typescript-eslint/no-empty-function,
+@typescript-eslint/unified-signatures
+*/
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,9 +12,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-// tslint:disable:no-empty
-// tslint:disable:typedef
 
 import Async, { BoundFn, ProxyCb } from 'core/async';
 import { LogMessageOptions } from 'core/log';
@@ -174,14 +178,14 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 }
 
 /**
- * Helper structure to pack an unsafe interface:
+ * Helper structure to pack the unsafe interface:
  * it fixes some ambiguous TS warnings
  */
 export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
 	Dictionary & U['CTX'] & U & {unsafe: any};
 
 /**
- * Abstract class represents Vue compatible component API
+ * Abstract class that represents Vue compatible component API
  */
 export abstract class ComponentInterface {
 	/**
@@ -235,7 +239,7 @@ export abstract class ComponentInterface {
 	/**
 	 * Link to a DOM element that is tied with the component
 	 */
-	readonly $el!: ComponentElement<this['Component']>;
+	readonly $el?: ComponentElement<this['Component']>;
 
 	/**
 	 * Map of raw component options
@@ -250,7 +254,7 @@ export abstract class ComponentInterface {
 	/**
 	 * List of child components
 	 */
-	readonly $children?: this['Component'][];
+	readonly $children?: Array<this['Component']>;
 
 	/**
 	 * Link to a parent component
@@ -307,7 +311,7 @@ export abstract class ComponentInterface {
 	 * Link to a parent component
 	 * (using with async rendering)
 	 */
-	// @ts-ignore
+	// @ts-ignore (ts error)
 	protected readonly $remoteParent?: this['Component'];
 
 	/**
@@ -422,7 +426,7 @@ export abstract class ComponentInterface {
 	 * Mounts the component to a DOM element
 	 * @param elementOrSelector - link to an element or a selector to an element
 	 */
-	protected $mount(elementOrSelector?: Element | string) {
+	protected $mount(elementOrSelector?: Element | string): this {
 		return this;
 	}
 
@@ -451,7 +455,7 @@ export abstract class ComponentInterface {
 	protected $delete(object: object, key: unknown): void {}
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component/object property by the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -464,7 +468,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component/object property by the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -474,7 +478,31 @@ export abstract class ComponentInterface {
 		handler: RawWatchHandler<this, T>
 	): Nullable<Function>;
 
-	protected $watch() {
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param handler
+	 */
+	protected $watch<T = unknown>(
+		obj: object,
+		handler: RawWatchHandler<this, T>
+	): Nullable<Function>;
+
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param handler
+	 * @param opts
+	 */
+	protected $watch<T = unknown>(
+		obj: object,
+		opts: WatchOptions,
+		handler: RawWatchHandler<this, T>
+	): Nullable<Function>;
+
+	protected $watch(): Nullable<Function> {
 		return null;
 	}
 

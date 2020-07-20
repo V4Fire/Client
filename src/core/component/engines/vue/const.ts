@@ -68,5 +68,12 @@ export const proxyGetters = Object.createDict({
 		get value(): typeof ctx.$systemFields {
 			return ctx.$systemFields;
 		}
+	}),
+
+	mounted: (ctx) => ({
+		key: null,
+		get value(): typeof ctx {
+			return ctx;
+		}
 	})
 });

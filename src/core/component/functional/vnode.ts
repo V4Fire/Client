@@ -13,7 +13,7 @@ import { RenderContext } from 'core/component/render';
 import { FlyweightVNode } from 'core/component/flyweight';
 
 import { $$, mountHooks, parentMountMap } from 'core/component/functional/const';
-import { ComponentInterface } from 'core/component/interface';
+import { ComponentField, ComponentInterface } from 'core/component/interface';
 
 /**
  * Initializes a component from the specified VNode.
@@ -25,16 +25,16 @@ import { ComponentInterface } from 'core/component/interface';
  */
 export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): FlyweightVNode {
 	const
-		{unsafe} = ctx,
+		{unsafe} = ctx;
 
-		// tslint:disable-next-line:prefer-object-spread
+	const
 		flyweightVNode = Object.assign(vnode, {fakeInstance: ctx});
 
 	const {data} = renderCtx;
 	patchVNode(flyweightVNode, ctx, renderCtx);
 
 	// Attach component event listeners
-	if (data.on) {
+	if (data.on != null) {
 		for (let o = data.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
@@ -56,7 +56,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 	const
 		parent = unsafe.$normalParent;
 
-	if (!parent) {
+	if (parent == null) {
 		return flyweightVNode;
 	}
 
@@ -64,7 +64,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		{hooks} = parent.unsafe.meta;
 
 	let
-		destroyed;
+		destroyed = false;
 
 	const destroy = () => {
 		unsafe.$destroy();
@@ -80,7 +80,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		{$async: $a} = unsafe;
 
 	// Mount hook listener
-	const mount = (retry?) => {
+	const mount = (retry?: boolean) => {
 		if (ctx.hook === 'mounted') {
 			// If a parent component was mounted, but the current component doesn't exist in the DOM and
 			// doesn't have the keepAlive flag, then the component should to destroy
@@ -115,7 +115,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 
 		// The situation when we have an old context of the same component on the same node:
 		// we need to merge the old state with a new
-		if (oldCtx) {
+		if (oldCtx != null) {
 			if (oldCtx === ctx) {
 				return;
 			}
@@ -126,7 +126,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			}
 		}
 
-		if (oldCtx) {
+		if (oldCtx != null) {
 			oldCtx._componentId = ctx.componentId;
 
 			// Destroy the old component
@@ -141,14 +141,14 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					linked = oldCtx.$syncLinkCache[key];
+					linked = oldCtx.$syncLinkCache.get(key);
 
-				if (linked) {
+				if (linked != null) {
 					for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
 						const
 							link = linked[keys[i]];
 
-						if (link) {
+						if (link != null) {
 							linkedFields[link.path] = key;
 						}
 					}
@@ -171,45 +171,52 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 					for (let j = 0; j < keys.length; j++) {
 						const
 							key = keys[j],
-							field = obj[key],
-							link = linkedFields[key];
+							field = <CanUndef<ComponentField>>obj[key];
 
-						if (!field) {
+						if (field == null) {
 							continue;
 						}
 
 						const
-							val = ctx[key],
-							old = oldCtx[key];
+							link = linkedFields[key];
 
-						if (
-							!unsafe.$modifiedFields[key] &&
-							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
-							!Object.fastCompare(val, old) &&
+						const
+							val = ctx[key],
+							oldVal = oldCtx[key];
+
+						const needMerge =
+							unsafe.$modifiedFields[key] !== true &&
 
 							(
-								!link ||
-								link && Object.fastCompare(props[link], oldProps[link])
-							)
-						) {
-							if (field.merge) {
+								Object.isFunction(field.unique) ?
+									!Object.isTruly(field.unique(ctx.unsafe, oldCtx)) :
+									!field.unique
+							) &&
+
+							!Object.fastCompare(val, oldVal) &&
+
+							(
+								link == null ||
+								Object.fastCompare(props[link], oldProps[link])
+							);
+
+						if (needMerge) {
+							if (Object.isTruly(field.merge)) {
 								if (field.merge === true) {
 									let
-										newVal = old;
+										newVal = oldVal;
 
-									if (Object.isPlainObject(val) || Object.isPlainObject(old)) {
-										// tslint:disable-next-line:prefer-object-spread
-										newVal = Object.assign({}, val, old);
+									if (Object.isPlainObject(val) || Object.isPlainObject(oldVal)) {
+										newVal = {...val, ...oldVal};
 
-									} else if (Object.isArray(val) || Object.isArray(old)) {
-										// tslint:disable-next-line:prefer-object-spread
-										newVal = Object.assign([], val, old);
+									} else if (Object.isArray(val) || Object.isArray(oldVal)) {
+										newVal = Object.assign([], val, oldVal);
 									}
 
 									ctx[key] = newVal;
 
-								} else {
-									field.merge(ctx, oldCtx, key, link);
+								} else if (Object.isFunction(field.merge)) {
+									field.merge(ctx.unsafe, oldCtx, key, link);
 								}
 
 							} else {
@@ -224,6 +231,9 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		el[$$.component] = unsafe;
 		init.mountedState(ctx);
 	};
+
+	const
+		parentHook = parentMountMap[parent.hook];
 
 	const deferMount = () => {
 		if (ctx.$el) {
@@ -274,9 +284,6 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 
 	deferMount[$$.self] = ctx;
 
-	const
-		parentHook = parentMountMap[parent.hook];
-
 	for (let i = 0; i < mountHooks.length; i++) {
 		const
 			hook = mountHooks[i];
@@ -290,7 +297,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		});
 	}
 
-	if (parentHook) {
+	if (parentHook != null) {
 		hooks[parentHook].unshift({
 			fn: deferMount
 		});

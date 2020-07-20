@@ -9,8 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-_Note: Gaps between patch versions are faulty, broken or test releases._
-
 ## v3.0.0-rc.19 (2020-05-26)
 
 #### :rocket: New Feature

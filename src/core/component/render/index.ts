@@ -14,6 +14,7 @@
 import { VNode } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
 import { RenderObject } from 'core/component/render/interface';
+
 export * from 'core/component/render/interface';
 
 /**

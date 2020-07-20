@@ -11,4 +11,10 @@
  * @packageDocumentation
  */
 
-export default {} as Dictionary;
+import watch from 'core/object/watch';
+
+export default watch({
+	isAuth: undefined,
+	isOnline: undefined,
+	lastOnlineDate: undefined
+}).proxy;

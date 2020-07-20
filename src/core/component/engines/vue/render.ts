@@ -25,15 +25,9 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
 		render: (c) => isArr ? c('div', <VNode[]>data) : <VNode>data
 	});
 
-	// @ts-ignore (access)
-	// tslint:disable-next-line:no-string-literal
-	vue['$root'] = Object.create(parent.$root);
-
-	// @ts-ignore (access)
-	vue.$root.$remoteParent = parent;
-
-	// @ts-ignore (access)
-	vue.$root.unsafe = vue.$root;
+	Object.set(vue, '$root', Object.create(parent.$root));
+	Object.set(vue, '$root.$remoteParent', parent);
+	Object.set(vue, '$root.unsafe', vue.$root);
 
 	const el = document.createElement('div');
 	vue.$mount(el);
