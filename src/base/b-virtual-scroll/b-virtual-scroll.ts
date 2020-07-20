@@ -23,8 +23,8 @@ import iData, {
 
 	component,
 	prop,
-	field,
 	system,
+	field,
 	watch,
 	wait,
 	hook,
@@ -265,7 +265,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Reloads the last request (if there is no `db` or `options` the method calls reload)
 	 */
 	reloadLast(): void {
-		if (!this.db || this.options.length === 0) {
+		if (!this.db || this.chunkRequest.data.length === 0) {
 			this.reload().catch(stderr);
 
 		} else {
@@ -280,9 +280,6 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.componentRender.reInit();
 		this.chunkRequest.reset();
 		this.chunkRender.reInit();
-
-		this.options = [];
-		this.db = undefined;
 	}
 
 	/**
@@ -342,16 +339,13 @@ export default class bVirtualScroll extends iData implements iItems {
 				raw: hasComponentConverter ? this.db : undefined
 			};
 
-			this.chunkRequest.lastLoadedChunk = lastLoadedChunk;
-
 			const params = this.buildState({
 				lastLoadedData: val.data,
 				lastLoadedChunk
 			});
 
+			this.chunkRequest.lastLoadedChunk = lastLoadedChunk;
 			this.chunkRequest.shouldStopRequest(params);
-
-			this.options = val.data!;
 			this.chunkRequest.data = val.data!;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
@@ -362,7 +356,6 @@ export default class bVirtualScroll extends iData implements iItems {
 				params = this.buildState({isLastEmpty: true});
 
 			this.chunkRequest.shouldStopRequest(params);
-			this.options = [];
 		}
 
 		this.emit('chunkLoaded', this.chunkRequest.lastLoadedChunk);
@@ -384,6 +377,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.reInit();
 		}
 
+		this.chunkRequest.lastLoadedChunk.normalized = Object.isArray(this.options) ? [...this.options] : [];
 		this.chunkRequest.init().catch(stderr);
 	}
 

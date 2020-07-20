@@ -136,9 +136,9 @@ export default class ChunkRequest extends Friend {
 		await this.async.sleep(50, {label: $$.waitForInitCalls});
 
 		const
-			{options, chunkSize, dataProvider} = this.ctx;
+			{chunkSize, dataProvider} = this.ctx;
 
-		this.pendingData = [...options];
+		this.pendingData = [...this.lastLoadedChunk.normalized];
 
 		const initChunkRenderer = () => {
 			this.chunkRender.initItems(

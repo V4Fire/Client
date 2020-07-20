@@ -26,7 +26,7 @@ module.exports = (/** @type Page */ page) => {
 	const
 		getContainerChildCount = () => component.evaluate((ctx) => ctx.$refs.container.childElementCount);
 
-	const resetComponentState = async (reqParams) => {
+	const setProps = async (reqParams) => {
 		await component.evaluate((ctx, reqParams) => {
 			ctx.dataProvider = 'demo.Pagination';
 			ctx.chunkSize = 10;
@@ -50,7 +50,7 @@ module.exports = (/** @type Page */ page) => {
 
 			describe('by changing the `request` prop', () => {
 				it('removes old elements', async () => {
-					await resetComponentState();
+					await setProps();
 
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 10, total: 0}});
 					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
@@ -59,7 +59,7 @@ module.exports = (/** @type Page */ page) => {
 				});
 
 				it('renders new', async () => {
-					await resetComponentState();
+					await setProps();
 
 					const
 						chunkSize = await component.evaluate((ctx) => ctx.requestParams.get.chunkSize);
@@ -80,7 +80,7 @@ module.exports = (/** @type Page */ page) => {
 
 			describe('by changing the `dataProvider` prop', () => {
 				it('removes old elements', async () => {
-					await resetComponentState();
+					await setProps();
 
 					await component.evaluate((ctx) => ctx.dataProvider = undefined);
 					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
@@ -142,7 +142,7 @@ module.exports = (/** @type Page */ page) => {
 
 		describe('with `dataProvider`', () => {
 			it('renders the first chunk', async () => {
-				await resetComponentState();
+				await setProps();
 
 				const
 					chunkSize = await component.evaluate((ctx) => ctx.chunkSize);
@@ -151,7 +151,7 @@ module.exports = (/** @type Page */ page) => {
 			});
 
 			it('renders all available items', async () => {
-				await resetComponentState({total: 40});
+				await setProps({total: 40});
 
 				const
 					total = await component.evaluate((ctx) => ctx.requestParams.get.total),
@@ -163,7 +163,7 @@ module.exports = (/** @type Page */ page) => {
 			});
 
 			it('does not render more than received data', async () => {
-				await resetComponentState({total: 40});
+				await setProps({total: 40});
 
 				const
 					total = await component.evaluate((ctx) => ctx.requestParams.get.total),

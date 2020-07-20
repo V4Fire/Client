@@ -33,7 +33,7 @@ export default abstract class iItems {
 	abstract readonly optionsProp?: unknown[];
 
 	/** @see iItems.prototype.optionProps */
-	abstract options: unknown[];
+	abstract options?: unknown[];
 
 	/**
 	 * Factory for an item iterator

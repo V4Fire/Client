@@ -17,6 +17,9 @@ import { CurrentState } from 'base/b-virtual-scroll/interface';
  * @param [chunkRequestCtx]
  * @param [chunkRenderCtx]
  * @param [merge]
+ *
+ * @typeParam ITEM
+ * @typeParam RAW
  */
 export function getRequestParams<ITEM extends unknown = unknown, RAW extends unknown = unknown>(
 	chunkRequestCtx?: ChunkRequest,
@@ -27,9 +30,7 @@ export function getRequestParams<ITEM extends unknown = unknown, RAW extends unk
 		component = chunkRenderCtx?.component ?? chunkRequestCtx?.component,
 		pendingData = chunkRequestCtx?.pendingData ?? [];
 
-	const lastLoadedData = Object.isTruly(chunkRequestCtx?.lastLoadedChunk.normalized.length) ?
-		<CanUndef<ITEM[]>>chunkRequestCtx?.lastLoadedChunk.normalized :
-		<CanUndef<ITEM[]>>component?.options;
+	const lastLoadedData = <CanUndef<ITEM[]>>chunkRequestCtx?.lastLoadedChunk.normalized;
 
 	const base: CurrentState<ITEM, RAW> = {
 		currentPage: 0,
