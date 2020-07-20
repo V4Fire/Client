@@ -18,6 +18,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now all accessors with dependencies are cacheable by default
 * Marked `router` as optional `iBlock`
 * Marked `block` as optional `iBlock`
+* Marked `$el` as optional `core/component/interface`
+* Changed the `SyncLinkCache` type from Dictionary to Map `core/component/interface`
 
 #### :rocket: New Feature
 
