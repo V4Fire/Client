@@ -12,8 +12,7 @@ import Friend from 'super/i-block/modules/friend';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
-import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
+import { RemoteData, CurrentState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -103,6 +102,10 @@ export default class ChunkRequest extends Friend {
 	 * Resets the current state
 	 */
 	reset(): void {
+		// eslint-disable-next-line capitalized-comments
+		// tslint:disable-next-line: deprecation
+		this.lastLoadedData = [];
+
 		this.total = 0;
 		this.page = 1;
 		this.data = [];
@@ -209,7 +212,7 @@ export default class ChunkRequest extends Friend {
 		};
 
 		const
-			shouldRequest = ctx.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
+			shouldRequest = ctx.shouldMakeRequest(this.ctx.getCurrentState(additionParams));
 
 		if (this.isDone) {
 			updateCurrentData();
@@ -237,7 +240,7 @@ export default class ChunkRequest extends Friend {
 				if (!Object.isTruly(ctx.field.get('data.length', v))) {
 					this.isLastEmpty = true;
 
-					this.shouldStopRequest(getRequestParams(this, chunkRender, {
+					this.shouldStopRequest(this.ctx.getCurrentState({
 						lastLoadedData: [],
 						lastLoadedChunk: {
 							raw: undefined,
@@ -260,7 +263,7 @@ export default class ChunkRequest extends Friend {
 				this.pendingData = this.pendingData.concat(data);
 				this.currentAccumulatedData = Object.mixin({concatArray: true, deep: true}, {}, this.currentAccumulatedData, v);
 
-				this.shouldStopRequest(getRequestParams(this, chunkRender));
+				this.shouldStopRequest(this.ctx.getCurrentState());
 
 				if (this.pendingData.length < ctx.chunkSize) {
 					return this.try(false);
@@ -283,7 +286,7 @@ export default class ChunkRequest extends Friend {
 	 * Checks possibility of another request for data
 	 * @param params
 	 */
-	shouldStopRequest(params: RequestMoreParams): boolean {
+	shouldStopRequest(params: CurrentState): boolean {
 		const {ctx} = this;
 		this.isDone = ctx.shouldStopRequest(params);
 
@@ -308,7 +311,7 @@ export default class ChunkRequest extends Friend {
 			defaultRequestParams = ctx.getDefaultRequestParams('get'),
 			params = <CanUndef<Dictionary>>(defaultRequestParams !== false ? defaultRequestParams : [])[0];
 
-		Object.assign(params, ctx.requestQuery?.(getRequestParams(this, this.chunkRender))?.get);
+		Object.assign(params, ctx.requestQuery?.(this.ctx.getCurrentState())?.get);
 
 		return ctx.async.request(ctx.getData(this.component, params), {label: $$.request})
 			.then((data) => {

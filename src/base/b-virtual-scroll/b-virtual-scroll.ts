@@ -54,7 +54,8 @@ import {
 	RemoteData,
 	LocalState,
 	RequestQueryFn,
-	RequestMoreParams,
+	CurrentState,
+	MergeStateParams,
 	UnsafeBVirtualScroll
 
 } from 'base/b-virtual-scroll/interface';
@@ -162,7 +163,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * When this function returns true the component will be able to request additional data
 	 */
-	@prop({type: Function, default: (v: RequestMoreParams) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v: CurrentState) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
@@ -211,7 +212,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
-				...this.requestQuery?.(getRequestParams())?.get,
+				...this.requestQuery?.(this.buildState())?.get,
 				...(<CanUndef<Dictionary<Dictionary>>>this.request)?.get
 			}
 		};
@@ -279,6 +280,45 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.componentRender.reInit();
 		this.chunkRequest.reset();
 		this.chunkRender.reInit();
+
+		this.options = [];
+		this.db = undefined;
+	}
+
+	/**
+	 * Returns an object with the current state of the component
+	 *
+	 * @param [overrideParams]
+	 *
+	 * @typeParam ITEM
+	 * @typeParam RAW
+	 */
+	getCurrentState<
+		ITEM extends unknown = unknown,
+		RAW extends unknown = unknown
+	>(overrideParams?: MergeStateParams): CurrentState<ITEM, RAW> {
+		return this.buildState(overrideParams, this.chunkRequest, this.chunkRender);
+	}
+
+	/**
+	 * Returns an object with the current state of the component that will be merged with the specified object
+	 *
+	 * @param [overrideParams]
+	 * @param [chunkRequest]
+	 * @param [chunkRender]
+	 *
+	 * @typeParam ITEM
+	 * @typeParam RAW
+	 */
+	protected buildState<
+		ITEM extends unknown = unknown,
+		RAW extends unknown = unknown
+	>(
+		overrideParams?: MergeStateParams,
+		chunkRequest?: ChunkRequest,
+		chunkRender?: ChunkRender
+	): CurrentState<ITEM, RAW> {
+		return getRequestParams(chunkRequest, chunkRender, overrideParams);
 	}
 
 	/**
@@ -304,19 +344,22 @@ export default class bVirtualScroll extends iData implements iItems {
 
 			this.chunkRequest.lastLoadedChunk = lastLoadedChunk;
 
-			const params = getRequestParams(undefined, undefined, {
+			const params = this.buildState({
 				lastLoadedData: val.data,
 				lastLoadedChunk
 			});
 
 			this.chunkRequest.shouldStopRequest(params);
+
 			this.options = val.data!;
 			this.chunkRequest.data = val.data!;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
+			this.chunkRequest.isLastEmpty = true;
+
 			const
-				params = getRequestParams(undefined, undefined, {isLastEmpty: true});
+				params = this.buildState({isLastEmpty: true});
 
 			this.chunkRequest.shouldStopRequest(params);
 			this.options = [];

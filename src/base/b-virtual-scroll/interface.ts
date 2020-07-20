@@ -10,10 +10,10 @@ import { UnsafeIData } from 'super/i-data/i-data';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
-	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
+	(params: CurrentState<T>): Dictionary<Dictionary>;
 }
 export interface RequestFn<T extends unknown = unknown> {
-	(params: RequestMoreParams<T>): boolean;
+	(params: CurrentState<T>): boolean;
 }
 
 export interface GetData<T extends unknown = unknown> {
@@ -41,7 +41,7 @@ export interface OptionEl<T extends unknown = unknown> {
  * @typeParam ITEM - data item to render
  * @typeParam RAW - raw provider data without any processing
  */
-export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
+export interface CurrentState<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -51,6 +51,11 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 	 * Number of a page to upload
 	 */
 	nextPage: number;
+
+	/**
+	 * All loaded data
+	 */
+	data: unknown[];
 
 	/**
 	 * Number of items to show till the page bottom is reached
@@ -84,7 +89,7 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 		/**
 		 * Raw provider data without any processing
 		 */
-		raw: RAW;
+		raw: CanUndef<RAW>;
 	};
 
 	/**
@@ -92,6 +97,11 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 	 * @see [[RequestMoreParams.lastLoadedChunk]]
 	 */
 	lastLoadedData: ITEM[];
+
+	/**
+	 * Total property from loaded data
+	 */
+	total: CanUndef<number>;
 }
 
 export interface RemoteData {
@@ -178,4 +188,11 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 
 	// @ts-ignore (access)
 	getOptionKey: CTX['getOptionKey'];
+
+	// @ts-ignore (access)
+	buildState: CTX['buildState'];
 }
+
+export type MergeStateParams = {
+	[key in keyof CurrentState]?: CurrentState[key];
+};

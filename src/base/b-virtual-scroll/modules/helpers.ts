@@ -8,7 +8,7 @@
 
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
-import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
+import { CurrentState } from 'base/b-virtual-scroll/interface';
 
 /**
  * Returns accumulated data among `b-virtual-scroll`,` chunk-render`, `chunk-request` and passes it to the client
@@ -18,26 +18,28 @@ import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
  * @param [chunkRenderCtx]
  * @param [merge]
  */
-export function getRequestParams(
+export function getRequestParams<ITEM extends unknown = unknown, RAW extends unknown = unknown>(
 	chunkRequestCtx?: ChunkRequest,
 	chunkRenderCtx?: ChunkRender,
 	merge?: Dictionary
-): RequestMoreParams {
+): CurrentState<ITEM, RAW> {
 	const
 		component = chunkRenderCtx?.component ?? chunkRequestCtx?.component,
 		pendingData = chunkRequestCtx?.pendingData ?? [];
 
 	const lastLoadedData = Object.isTruly(chunkRequestCtx?.lastLoadedChunk.normalized.length) ?
-		chunkRequestCtx?.lastLoadedChunk.normalized :
-		component?.options;
+		<CanUndef<ITEM[]>>chunkRequestCtx?.lastLoadedChunk.normalized :
+		<CanUndef<ITEM[]>>component?.options;
 
-	const base: RequestMoreParams = {
+	const base: CurrentState<ITEM, RAW> = {
 		currentPage: 0,
 		nextPage: 1,
 
+		data: [],
 		items: [],
 		isLastEmpty: false,
 		itemsTillBottom: 0,
+		total: undefined,
 
 		pendingData,
 
@@ -58,6 +60,7 @@ export function getRequestParams(
 			total: component?.unsafe.total,
 
 			pendingData,
+			data: chunkRequestCtx.data,
 
 			lastLoadedData: lastLoadedData ?? [],
 			lastLoadedChunk: {
@@ -68,7 +71,7 @@ export function getRequestParams(
 		base;
 
 	const
-		mergeLastLoadedChunk = <RequestMoreParams['lastLoadedChunk']>merge?.lastLoadedChunk;
+		mergeLastLoadedChunk = <CurrentState['lastLoadedChunk']>merge?.lastLoadedChunk;
 
 	const merged = {
 		...params,
@@ -79,7 +82,7 @@ export function getRequestParams(
 		}
 	};
 
-	return {
+	return <CurrentState<ITEM, RAW>>{
 		...merged,
 		nextPage: merged.currentPage + 1
 	};

@@ -10,6 +10,7 @@
 import iBlock from 'super/i-block/i-block';
 
 import { ItemsIterator, ItemProps, OptionFn } from 'traits/i-items/interface';
+
 export * from 'traits/i-items/interface';
 
 export default abstract class iItems {
