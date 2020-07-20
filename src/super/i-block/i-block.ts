@@ -1486,12 +1486,14 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (Object.isFunction(optsOrHandler)) {
 			handler = optsOrHandler;
-			opts = handlerOrOpts ?? {};
+			opts = handlerOrOpts;
 
 		} else {
 			handler = handlerOrOpts;
 			opts = optsOrHandler;
 		}
+
+		opts = opts ?? {};
 
 		if (Object.isString(path) && customWatcherRgxp.test(path)) {
 			bindRemoteWatchers(this, {
