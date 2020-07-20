@@ -67,7 +67,17 @@ export function getRequestParams(
 		} :
 		base;
 
-	const merged = Object.mixin({deep: true, withUndef: true}, {}, params, merge);
+	const
+		mergeLastLoadedChunk = <RequestMoreParams['lastLoadedChunk']>merge?.lastLoadedChunk;
+
+	const merged = {
+		...params,
+		...merge,
+		lastLoadedChunk: {
+			...params.lastLoadedChunk,
+			...mergeLastLoadedChunk
+		}
+	};
 
 	return {
 		...merged,
