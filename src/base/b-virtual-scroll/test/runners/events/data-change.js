@@ -65,7 +65,7 @@ module.exports = (/** @type Page */ page) => {
 
 			it('после загрузки первой части чанка и остановки запросов с помощью `shouldStopRequest`', async () => {
 				const subscribePromise = subscribe('onDataChange');
- 
+
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
@@ -77,7 +77,7 @@ module.exports = (/** @type Page */ page) => {
 
 			it('после загрузки второй части первого чанка и остановки запроса с помощью `shouldStopRequest`', async () => {
 				const subscribePromise = subscribe('onDataChange');
- 
+
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
@@ -87,7 +87,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(0, 8));
 			 });
 
-			 it('после загрузки первой части второго чанка и остановки запроса с помощью `shouldStopRequest`', async () => { 
+			 it('после загрузки первой части второго чанка и остановки запроса с помощью `shouldStopRequest`', async () => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
@@ -141,17 +141,17 @@ module.exports = (/** @type Page */ page) => {
 			describe('после загрузки', () => {
 				it('первого чанка', async () => {
 					const subscribePromise = subscribe('onDataChange');
-	
+
 					await setProps({chunkSize: 12});
 					await expectAsync(subscribePromise).toBeResolvedTo(firstChunkExpected);
 				});
-	
+
 				it('второго чанка', async () => {
 					await setProps({chunkSize: 12});
 					await h.dom.waitForEl(container, 'section');
-	
+
 					const subscribePromise = subscribe('onDataChange');
-	
+
 					await h.scroll.scrollToBottom(page);
 					await expectAsync(subscribePromise).toBeResolvedTo(secondChunkExpected);
 				});
@@ -161,35 +161,35 @@ module.exports = (/** @type Page */ page) => {
 				it('и загрузки первого чанка с помощью 2 запросов', async () => {
 					await setProps({id: undefined});
 					await h.dom.waitForEl(container, 'section');
-	
+
 					const subscribePromise = subscribe('onDataChange');
-	
+
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 6, id: 'uniq'}});
-	
+
 					await expectAsync(subscribePromise).toBeResolvedTo(firstChunkExpected);
 				});
 
 				it('и загрузки второго чанка с помощью 2 запросов', async () => {
 					await setProps({id: undefined});
 					await h.dom.waitForEl(container, 'section');
-	
+
 					await component.evaluate((ctx) => ctx.watch(':onDataChange', (val) => {
 						ctx.tmp.currentCall = ctx.tmp.currentCall ?? 0;
 						ctx.tmp[ctx.tmp.currentCall] = val;
 						ctx.tmp.currentCall++;
 					}));
-	
+
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 6, id: 'uniq'}});
 					await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1000});
-	
+
 					expect(await component.evaluate((ctx) => ctx.tmp[0])).toEqual(firstChunkExpected);
-	
+
 					await h.scroll.scrollToBottom(page);
 					await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1000});
-	
+
 					expect(await component.evaluate((ctx) => ctx.tmp[1])).toEqual(secondChunkExpected);
 				});
 			});
 		});
 	});
-}
+};
