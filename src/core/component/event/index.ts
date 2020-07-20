@@ -31,7 +31,7 @@ export * from 'core/component/event/interface';
  * @param [type] - reset type
  */
 export function reset(type?: ResetType): void {
-	emitter.emit(type ? `reset.${type}` : 'reset');
+	emitter.emit(type != null ? `reset.${type}` : 'reset');
 }
 
 net.emitter.on('status', (...args) => {

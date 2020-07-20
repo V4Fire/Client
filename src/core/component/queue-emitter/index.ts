@@ -12,6 +12,7 @@
  */
 
 import { EventListener } from 'core/component/queue-emitter/interface';
+
 export * from 'core/component/queue-emitter/interface';
 
 /**
@@ -35,14 +36,12 @@ export default class QueueEmitter {
 	 * @param event - set of events (can be undefined)
 	 * @param cb
 	 */
-	on(event: CanUndef<Set<string>>, cb: Function): void {
-		if (event && event.size) {
+	on(event: Nullable<Set<string>>, cb: Function): void {
+		if (event != null && event.size > 0) {
 			for (let v = event.values(), el = v.next(); !el.done; el = v.next()) {
-				const
-					key = el.value,
-					queue = this.listeners[key] = this.listeners[key] || [];
-
-				queue.push({event, cb});
+				const key = el.value;
+				this.listeners[key] = this.listeners[key] ?? [];
+				this.listeners[key]!.push({event, cb});
 			}
 
 			return;
@@ -67,17 +66,18 @@ export default class QueueEmitter {
 		}
 
 		const
-			tasks = <CanPromise<unknown>[]>[];
+			tasks = <Array<CanPromise<unknown>>>[];
 
 		for (let i = 0; i < queue.length; i++) {
 			const
-				el = <EventListener>queue[i];
+				el = queue[i];
 
-			if (el) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (el != null) {
 				const ev = el.event;
 				ev.delete(event);
 
-				if (!ev.size) {
+				if (ev.size === 0) {
 					const
 						task = el.cb();
 
@@ -88,7 +88,7 @@ export default class QueueEmitter {
 			}
 		}
 
-		if (tasks.length) {
+		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);
 		}
 	}
@@ -103,7 +103,7 @@ export default class QueueEmitter {
 			{queue} = this;
 
 		const
-			tasks = <Promise<unknown>[]>[];
+			tasks = <Array<Promise<unknown>>>[];
 
 		for (let i = 0; i < queue.length; i++) {
 			const
@@ -114,7 +114,7 @@ export default class QueueEmitter {
 			}
 		}
 
-		if (tasks.length) {
+		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);
 		}
 	}

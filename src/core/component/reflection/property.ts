@@ -12,7 +12,7 @@ import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/refl
 import { PropertyInfo } from 'core/component/reflection/interface';
 
 /**
- * Returns an information object about the component property by the specified path
+ * Returns an information object of a component property by the specified path
  *
  * @param path
  * @param component - component instance
@@ -49,19 +49,20 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 	let
 		name = path,
-		fullPath = path,
+		fullPath = path;
+
+	let
 		chunks,
-		rootI;
+		rootI = 0;
 
 	if (hasSeparator.test(path)) {
 		chunks = path.split('.');
-		rootI = 0;
 
 		let
-			obj = component;
+			obj: Nullable<ComponentInterface> = component;
 
 		for (let i = 0; i < chunks.length; i++) {
-			if (!obj) {
+			if (obj == null) {
 				break;
 			}
 
@@ -83,17 +84,18 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	const
 		alternative = deprecatedProps?.[name];
 
-	if (alternative) {
+	if (alternative != null) {
 		deprecate({type: 'property', name, renamedTo: alternative});
 		name = alternative;
 
-		if (chunks) {
+		if (chunks != null) {
 			chunks[rootI] = name;
-			path = chunks.slice(chunks).join('.');
+			path = chunks.slice(rootI).join('.');
 			fullPath = chunks.join('.');
 
 		} else {
-			path = fullPath = name;
+			path = name;
+			fullPath = name;
 		}
 	}
 
@@ -175,20 +177,32 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	}
 
 	const
-		storeName = `${name}Store`,
-		accessorType = computedFields[name] ? 'computed' : accessors[name] ? 'accessor' : undefined,
-		accessor = accessorType && name;
+		storeName = `${name}Store`;
+
+	let
+		accessorType,
+		accessor;
+
+	if (computedFields[name] != null) {
+		accessorType = 'computed';
+		accessor = name;
+
+	} else if (accessors[name] != null) {
+		accessorType = 'accessor';
+		accessor = name;
+	}
 
 	if (fields[storeName]) {
 		name = storeName;
 
-		if (chunks) {
+		if (chunks != null) {
 			chunks[rootI] = storeName;
-			path = chunks.slice(chunks).join('.');
+			path = chunks.slice(rootI).join('.');
 			fullPath = chunks.join('.');
 
 		} else {
-			path = fullPath = storeName;
+			path = storeName;
+			fullPath = storeName;
 		}
 
 		return {
@@ -206,13 +220,14 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	if (systemFields[storeName]) {
 		name = storeName;
 
-		if (chunks) {
+		if (chunks != null) {
 			chunks[rootI] = storeName;
-			path = chunks.slice(chunks).join('.');
+			path = chunks.slice(rootI).join('.');
 			fullPath = chunks.join('.');
 
 		} else {
-			path = fullPath = storeName;
+			path = storeName;
+			fullPath = storeName;
 		}
 
 		return {
@@ -233,13 +248,14 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	if (props[propName]) {
 		name = propName;
 
-		if (chunks) {
+		if (chunks != null) {
 			chunks[rootI] = propName;
 			path = chunks.slice(chunks).join('.');
 			fullPath = chunks.join('.');
 
 		} else {
-			path = fullPath = storeName;
+			path = storeName;
+			fullPath = storeName;
 		}
 
 		return {
@@ -254,12 +270,47 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		};
 	}
 
+	if (accessorType != null) {
+		if ((computedFields[name] ?? accessors[name])!.watchable) {
+			let
+				ctxPath;
+
+			if (chunks != null) {
+				path = chunks.slice(rootI + 1).join('.');
+				fullPath = chunks.join('.');
+				ctxPath = chunks.slice(0, rootI + 1);
+
+			} else {
+				ctxPath = path;
+				path = '';
+			}
+
+			return {
+				path,
+				fullPath,
+				originalPath,
+				name,
+				ctx: Object.get(component, ctxPath),
+				type: 'mounted'
+			};
+		}
+
+		return {
+			path,
+			fullPath,
+			originalPath,
+			name,
+			ctx: component,
+			type: accessorType
+		};
+	}
+
 	return {
 		path,
 		fullPath,
 		originalPath,
 		name,
 		ctx: component,
-		type: computedFields[name] ? 'computed' : accessors[name] ? 'accessor' : 'system'
+		type: 'system'
 	};
 }

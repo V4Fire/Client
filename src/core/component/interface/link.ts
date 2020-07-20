@@ -11,6 +11,7 @@ export interface SyncLink<T = unknown> {
 	sync(value?: T): void;
 }
 
-export type SyncLinkCache<T = unknown> = Dictionary<
+export type SyncLinkCache<T = unknown> = Map<
+	string | object,
 	Dictionary<SyncLink<T>>
 >;

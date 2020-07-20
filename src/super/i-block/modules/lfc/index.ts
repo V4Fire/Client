@@ -11,13 +11,14 @@
  * @packageDocumentation
  */
 
-import Async, { AsyncOptions } from 'core/async';
+import { AsyncOptions } from 'core/async';
 import Friend from 'super/i-block/modules/friend';
 
 import { statuses } from 'super/i-block/const';
 import { Hook } from 'core/component';
 
 import { Cb } from 'super/i-block/modules/lfc/interface';
+
 export * from 'super/i-block/modules/lfc/interface';
 
 /**
@@ -79,7 +80,7 @@ export default class Lfc extends Friend {
 	 * @param cb
 	 * @param [opts] - additional options
 	 */
-	execCbAfterBlockReady<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
+	execCbAfterBlockReady<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanUndef<CanPromise<R>> {
 		if (this.ctx.block) {
 			if (statuses[this.componentStatus] >= 0) {
 				return cb.call(this.component);
@@ -88,7 +89,7 @@ export default class Lfc extends Friend {
 			return;
 		}
 
-		return this.async.promise(new Promise<R>((r) => {
+		return this.async.promise(new Promise<any>((r) => {
 			this.ctx.blockReadyListeners.push(() => r(cb.call(this.component)));
 		}), opts).catch(stderr);
 	}

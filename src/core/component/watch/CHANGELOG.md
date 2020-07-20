@@ -11,6 +11,24 @@ Changelog
 
 ## v3.0.0-rc.37 (2020-07-20)
 
+#### :rocket: New Feature
+
+* Added support of mounted watchers
+
+```js
+this.$watch(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.$watch({ctx: anotherWatcher, path: foo}, () => {
+  console.log('...');
+});
+```
+
+#### :bug: Bug Fix
+
+* Fixed memory leak with watchers
+
 #### :house: Internal
 
 * Fixed ESLint warnings

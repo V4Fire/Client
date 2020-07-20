@@ -6,9 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:pages/p-v4-components-demo/b-v4-component-demo/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock, { component, system, wait, prop } from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
 
+/**
+ * Component to inspect another components
+ */
 @component()
 export default class bV4ComponentDemo extends iBlock {
 	/**
@@ -41,7 +50,7 @@ export default class bV4ComponentDemo extends iBlock {
 			res = Object.isArray(value) ? value[0] : value;
 
 		if (res === undefined) {
-			return <undefined>res;
+			return res;
 		}
 
 		return String(res);
@@ -60,7 +69,7 @@ export default class bV4ComponentDemo extends iBlock {
 			return;
 		}
 
-		this.debugComponent.setMod(mod, value);
+		void this.debugComponent.setMod(mod, value);
 
 		const
 			parent = el.parentElement;
@@ -71,7 +80,7 @@ export default class bV4ComponentDemo extends iBlock {
 
 		for (let o = Array.from(parent.children), i = 0; i < o.length; i++) {
 			const c = o[i];
-			this.block.setElMod(c, 'modValue', 'selected', c === el);
+			this.block?.setElMod(c, 'modValue', 'selected', c === el);
 		}
 	}
 
@@ -87,8 +96,7 @@ export default class bV4ComponentDemo extends iBlock {
 		}
 
 		let
-			// @ts-ignore
-			parent = this.debugComponent.meta.parentMeta;
+			parent = this.debugComponent.unsafe.meta.parentMeta;
 
 		while (parent) {
 			res.push(parent.componentName);

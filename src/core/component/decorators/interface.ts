@@ -257,6 +257,11 @@ export interface DecoratorFunctionalOptions {
 
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	/**
+	 * If true, a value of the accessor can be watched
+	 */
+	watchable?: boolean;
+
+	/**
 	 * If true, a value of the accessor will be cached
 	 */
 	cache?: boolean;
@@ -329,7 +334,7 @@ export interface DecoratorMethod<CTX extends ComponentInterface = ComponentInter
 }
 
 export interface ParamsFactoryTransformer {
-	(params: object, cluster: string): Dictionary<any>
+	(params: object, cluster: string): Dictionary<any>;
 }
 
 export interface FactoryTransformer<T = object> {

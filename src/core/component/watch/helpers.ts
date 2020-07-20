@@ -18,7 +18,7 @@ import { DynamicHandlers } from 'core/component/watch/interface';
  * Attaches a dynamic watcher to the specified property.
  * This function is used to manage the situation when we are watching some accessor.
  *
- * @param component - component that watches
+ * @param component - component that is watched
  * @param prop - property to watch
  * @param opts - options for watching
  * @param handler
@@ -31,6 +31,10 @@ export function attachDynamicWatcher(
 	handler: Function,
 	store: DynamicHandlers = dynamicHandlers
 ): Function {
+	if (prop.type === 'mounted') {
+		throw new TypeError("The mounted accessor can't be watched in this way");
+	}
+
 	let
 		handlersStore = store.get(prop.ctx);
 
@@ -46,13 +50,15 @@ export function attachDynamicWatcher(
 		handlersSet = handlersStore[nm];
 
 	if (!handlersSet) {
-		handlersSet = handlersStore[nm] = new Set<Function>();
+		handlersSet = new Set<Function>();
+		handlersStore[nm] = handlersSet;
 	}
 
-	// tslint:disable-next-line:typedef
-	const wrapper = <MultipleWatchHandler>function (mutations, ...args) {
+	// eslint-disable-next-line @typescript-eslint/typedef
+	const wrapper = <MultipleWatchHandler>function wrapper(this: unknown, mutations, ...args) {
 		const
-			needPack = !args.length;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			needPack = args.length === 0;
 
 		if (!needPack) {
 			mutations = [<any>[mutations, ...args]];
@@ -73,7 +79,7 @@ export function attachDynamicWatcher(
 				!opts.withProto && info.fromProto ||
 
 				// The mutation was already fired
-				opts.eventFilter && !opts.eventFilter(value, oldValue, info)
+				opts.eventFilter && !Object.isTruly(opts.eventFilter(value, oldValue, info))
 			) {
 				continue;
 			}
@@ -81,7 +87,7 @@ export function attachDynamicWatcher(
 			filteredMutations.push(mutations[i]);
 		}
 
-		if (filteredMutations.length) {
+		if (filteredMutations.length > 0) {
 			if (needPack) {
 				handler.call(this, filteredMutations);
 
@@ -100,8 +106,6 @@ export function attachDynamicWatcher(
 	// Every worker that passed to async have a counter with number of consumers of this worker,
 	// but in this case this behaviour is redundant and can produce an error,
 	// that why we wrap original destructor with a new function
-
-	// tslint:disable-next-line:no-unnecessary-callback-wrapper
 	component.unsafe.$async.worker(() => destructor());
 
 	return destructor;

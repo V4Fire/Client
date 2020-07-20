@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import { ComponentDriver } from 'core/component/engines';
 import * as strings from 'core/helpers/string';
+import { ComponentDriver } from 'core/component/engines';
 
 for (let keys = Object.keys(strings), i = 0; i < keys.length; i++) {
 	const

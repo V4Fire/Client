@@ -6,15 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable prefer-arrow-callback,no-var,object-shorthand */
+/* eslint-disable prefer-arrow-callback, no-var, object-shorthand, vars-on-top, prefer-rest-params */
 
 var
-	global = new Function('return this')();
+	// eslint-disable-next-line no-new-func
+	global = Function('return this')();
 
 if (typeof global['setImmediate'] !== 'function') {
-	(function () {
+	(function setImmediateShim() {
 		if (typeof Promise !== 'function') {
-			global['setImmediate'] = function (fn) {
+			global['setImmediate'] = function setImmediate(fn) {
 				return setTimeout(fn, 0);
 			};
 
@@ -62,12 +63,12 @@ if (typeof global['setImmediate'] !== 'function') {
 			track = null;
 		}
 
-		global['setImmediate'] = function (fn) {
+		global['setImmediate'] = function setImmediate(fn) {
 			var
 				id,
 				pos = i++;
 
-			queue[pos] = function () {
+			queue[pos] = function exec() {
 				delete map[id];
 				fn();
 			};
@@ -78,14 +79,14 @@ if (typeof global['setImmediate'] !== 'function') {
 			}
 
 			while (map[id = getRandomInt(0, 10e3)]) {
-				// empty
+				// Empty
 			}
 
 			map[id] = {queue: queue, pos: pos};
 			return id;
 		};
 
-		global['clearImmediate'] = function (id) {
+		global['clearImmediate'] = function clearImmediate(id) {
 			var
 				obj = map[id];
 
@@ -94,24 +95,24 @@ if (typeof global['setImmediate'] !== 'function') {
 				delete map[id];
 			}
 		};
-	})();
+	}());
 }
 
 exports.loadToPrototype = loadToPrototype;
 exports.loadToConstructor = loadToConstructor;
 
 function loadToConstructor(list) {
-	list.forEach(function (obj) {
-		obj.slice(1).forEach(function (fn) {
+	list.forEach(function cb(obj) {
+		obj.slice(1).forEach(function cb(fn) {
 			if (Array.isArray(fn)) {
 				obj[0][fn[0]] = fn[1];
 
 			} else {
 				for (var key in fn) {
 					if (fn.hasOwnProperty(key)) {
-						(function (key) {
+						(function isolate(key) {
 							obj[0][key] = fn[key];
-						})(key);
+						}(key));
 					}
 				}
 			}
@@ -120,21 +121,21 @@ function loadToConstructor(list) {
 }
 
 function loadToPrototype(list) {
-	list.forEach(function (obj) {
-		obj.slice(1).forEach(function (fn) {
+	list.forEach(function cb(obj) {
+		obj.slice(1).forEach(function cb(fn) {
 			if (Array.isArray(fn)) {
-				obj[0].prototype[fn[0]] = function () {
+				obj[0].prototype[fn[0]] = function cb() {
 					return fn[1].apply(fn[1], [this].concat(Array.from(arguments)));
 				};
 
 			} else {
 				for (var key in fn) {
 					if (fn.hasOwnProperty(key)) {
-						(function (key) {
-							obj[0].prototype[key] = function () {
+						(function isolate(key) {
+							obj[0].prototype[key] = function cb() {
 								return fn[key].apply(fn[key], [this].concat(Array.from(arguments)));
 							};
-						})(key);
+						}(key));
 					}
 				}
 			}

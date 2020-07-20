@@ -9,7 +9,30 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-_Note: Gaps between patch versions are faulty, broken or test releases._
+## v3.0.0-rc.37 (2020-07-20)
+
+#### :boom: Breaking Change
+
+* Marked `router` as optional
+* Marked `block` as optional
+
+#### :rocket: New Feature
+
+* Added support of mounted watchers
+
+```js
+this.watch(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.watch({ctx: anotherWatcher, path: foo}, () => {
+  console.log('...');
+});
+```
+
+#### :house: Internal
+
+* Fixed ESLint warnings
 
 ## v3.0.0-rc.18 (2020-05-24)
 

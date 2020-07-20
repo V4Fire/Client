@@ -18,13 +18,13 @@ const
 export function fakeMapSetCopy<
 	T extends Map<unknown, unknown> | WeakMap<object, unknown> | Set<unknown> | WeakSet<object>
 >(obj: T): T {
-	obj = obj[toNonFakeObject] || obj;
+	obj = obj[toNonFakeObject] ?? obj;
 
 	const
 		Constructor = obj.constructor,
 		proto = Constructor.prototype;
 
-	// @ts-ignore
+	// @ts-ignore (constructor)
 	const wrap = new Constructor();
 
 	for (let keys = Object.getOwnPropertyNames(proto), i = 0; i < keys.length; i++) {
@@ -42,6 +42,7 @@ export function fakeMapSetCopy<
 				value: obj[key].bind(obj)
 			});
 
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		} else if (Object.isFunction(desc.get)) {
 			Object.defineProperty(wrap, key, {
 				...desc,
