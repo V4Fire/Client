@@ -606,8 +606,8 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Link to an application router
 	 */
-	get router(): bRouter {
-		return <bRouter>this.field.get('routerStore', this.r);
+	get router(): CanUndef<bRouter> {
+		return this.field.get('routerStore', this.r);
 	}
 
 	/**
