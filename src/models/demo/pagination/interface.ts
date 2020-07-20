@@ -50,6 +50,11 @@ export interface RequestQuery {
 	 * Indicates on which request to fail (return 500)
 	 */
 	failOn?: number;
+
+	/**
+	 * Additional data to be returned
+	 */
+	additionalData?: Dictionary;
 }
 
 /**

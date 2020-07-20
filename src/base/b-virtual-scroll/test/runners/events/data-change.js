@@ -34,7 +34,7 @@ module.exports = (/** @type Page */ page) => {
 		ctx.request = {get: {chunkSize: 12, id: 'uniq', ...requestProps}};
 	}, requestProps);
 
-	const subscribe = (eventName) => component.evaluate((ctx, eventName) => new Promise((res) => ctx.watch(`:${eventName}`, res)), eventName);
+	const subscribe = () => component.evaluate((ctx) => new Promise((res) => ctx.watch(':onDataChange', res)));
 
 	beforeEach(async () => {
 		await h.utils.reloadAndWaitForIdle(page);
@@ -47,7 +47,7 @@ module.exports = (/** @type Page */ page) => {
 	describe('b-virtual-scroll dataChange event', () => {
 		describe('вызывается', () => {
 			it('при загрузке первого чанка', async () => {
-				const subscribePromise = subscribe('onDataChange');
+				const subscribePromise = subscribe();
 
 				await setProps();
 				await expectAsync(subscribePromise).toBeResolved();
@@ -57,14 +57,14 @@ module.exports = (/** @type Page */ page) => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
-				const subscribePromise = subscribe('onDataChange');
+				const subscribePromise = subscribe();
 
 				await h.scroll.scrollToBottom(page);
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
 			it('после загрузки первой части чанка и остановки запросов с помощью `shouldStopRequest`', async () => {
-				const subscribePromise = subscribe('onDataChange');
+				const subscribePromise = subscribe();
 
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
@@ -76,7 +76,7 @@ module.exports = (/** @type Page */ page) => {
 			});
 
 			it('после загрузки второй части первого чанка и остановки запроса с помощью `shouldStopRequest`', async () => {
-				const subscribePromise = subscribe('onDataChange');
+				const subscribePromise = subscribe();
 
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
@@ -99,7 +99,7 @@ module.exports = (/** @type Page */ page) => {
 
 				await h.dom.waitForEl(container, 'section');
 
-				const subscribePromise = subscribe('onDataChange');
+				const subscribePromise = subscribe();
 				await h.scroll.scrollToBottom(page);
 
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(12, 4));
@@ -132,7 +132,7 @@ module.exports = (/** @type Page */ page) => {
 
 		describe('имеет корректный payload', () => {
 			it('если ничего не было загружено', async () => {
-				const subscribePromise = subscribe('onDataChange');
+				const subscribePromise = subscribe();
 
 				await setProps({total: 0, chunkSize: 0});
 				await expectAsync(subscribePromise).toBeResolvedTo({data: []});
@@ -140,7 +140,7 @@ module.exports = (/** @type Page */ page) => {
 
 			describe('после загрузки', () => {
 				it('первого чанка', async () => {
-					const subscribePromise = subscribe('onDataChange');
+					const subscribePromise = subscribe();
 
 					await setProps({chunkSize: 12});
 					await expectAsync(subscribePromise).toBeResolvedTo(firstChunkExpected);
@@ -150,7 +150,7 @@ module.exports = (/** @type Page */ page) => {
 					await setProps({chunkSize: 12});
 					await h.dom.waitForEl(container, 'section');
 
-					const subscribePromise = subscribe('onDataChange');
+					const subscribePromise = subscribe();
 
 					await h.scroll.scrollToBottom(page);
 					await expectAsync(subscribePromise).toBeResolvedTo(secondChunkExpected);
@@ -162,7 +162,7 @@ module.exports = (/** @type Page */ page) => {
 					await setProps({id: undefined});
 					await h.dom.waitForEl(container, 'section');
 
-					const subscribePromise = subscribe('onDataChange');
+					const subscribePromise = subscribe();
 
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 6, id: 'uniq'}});
 

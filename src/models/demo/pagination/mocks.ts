@@ -49,6 +49,7 @@ export default {
 
 				if (state.totalSent === state.total) {
 					return {
+						...query.additionalData,
 						data: []
 					};
 				}
@@ -57,6 +58,7 @@ export default {
 				state.totalSent += dataToSend.length;
 
 				return {
+					...query.additionalData,
 					data: dataToSend
 				};
 			}

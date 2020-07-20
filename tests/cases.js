@@ -16,6 +16,7 @@ module.exports = [
 	'--name b-virtual-scroll --suit slots/empty --runner slots/empty',
 	'--name b-virtual-scroll --suit render --runner render/render',
 	'--name b-virtual-scroll --suit render --runner events/data-change',
+	'--name b-virtual-scroll --suit render --runner events/chunk-loaded',
 
 	// b-button
 	'--name b-button --suit demo'

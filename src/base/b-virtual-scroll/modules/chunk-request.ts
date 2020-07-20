@@ -257,7 +257,6 @@ export default class ChunkRequest extends Friend {
 				this.isLastEmpty = false;
 
 				this.data = this.data.concat(data);
-				this.lastLoadedChunk.normalized = data!;
 				this.pendingData = this.pendingData.concat(data);
 				this.currentAccumulatedData = Object.mixin({concatArray: true, deep: true}, {}, this.currentAccumulatedData, v);
 
@@ -297,6 +296,7 @@ export default class ChunkRequest extends Friend {
 
 	/**
 	 * Loads additional data
+	 * @emits chunkLoaded(lastLoadedChunk: LastLoadedChunk)
 	 */
 	protected load(): Promise<CanUndef<RemoteData>> {
 		const
@@ -315,19 +315,14 @@ export default class ChunkRequest extends Friend {
 				void ctx.removeMod('progress', true);
 				this.lastLoadedChunk.raw = data;
 
-				if (data == null) {
-					this.lastLoadedChunk.normalized = [];
-					return;
-				}
-
 				const
-					converted = ctx.convertDataToDB<CanUndef<RemoteData>>(data);
+					converted = Object.isTruly(data) ? ctx.convertDataToDB<CanUndef<RemoteData>>(data) : undefined;
 
-				if (!Object.isTruly(converted?.data?.length)) {
-					this.lastLoadedChunk.normalized = [];
-					return;
-				}
+				this.lastLoadedChunk.normalized = !Object.isTruly(converted?.data?.length) ?
+					this.lastLoadedChunk.normalized = [] :
+					this.lastLoadedChunk.normalized = converted!.data!;
 
+				this.ctx.emit('chunkLoaded', this.lastLoadedChunk);
 				return converted;
 			})
 
