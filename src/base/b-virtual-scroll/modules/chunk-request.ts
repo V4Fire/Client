@@ -263,6 +263,7 @@ export default class ChunkRequest extends Friend {
 				this.pendingData = this.pendingData.concat(data);
 				this.currentAccumulatedData = Object.mixin({concatArray: true, deep: true}, {}, this.currentAccumulatedData, v);
 
+				this.ctx.emit('dbChange', {data: this.data});
 				this.shouldStopRequest(this.ctx.getCurrentState());
 
 				if (this.pendingData.length < ctx.chunkSize) {
@@ -319,7 +320,7 @@ export default class ChunkRequest extends Friend {
 				this.lastLoadedChunk.raw = data;
 
 				const
-					converted = Object.isTruly(data) ? ctx.convertDataToDB<CanUndef<RemoteData>>(data) : undefined;
+					converted = Object.isTruly(data) ? ctx.convertDataToDB<RemoteData>(data) : undefined;
 
 				this.lastLoadedChunk.normalized = !Object.isTruly(converted?.data?.length) ?
 					this.lastLoadedChunk.normalized = [] :

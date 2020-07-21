@@ -104,7 +104,7 @@ export interface CurrentState<ITEM extends unknown = unknown, RAW extends unknow
 	total: CanUndef<number>;
 }
 
-export interface RemoteData {
+export interface RemoteData extends Dictionary {
 	/**
 	 * Data to render components
 	 */

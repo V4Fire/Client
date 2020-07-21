@@ -336,25 +336,21 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		this.localState = 'init';
 
-		const
-			hasComponentConverter = Boolean(this.componentConverter),
-			val = this.convertDBToComponent<RemoteData>(this.db);
-
-		if (Object.isTruly(this.field.get('data.length', val))) {
+		if (Object.isTruly(this.field.get('data.length', this.db))) {
 			const lastLoadedChunk = {
-				normalized: val.data!,
-				raw: hasComponentConverter ? this.db : undefined
+				normalized: this.db.data!,
+				raw: this.chunkRequest.lastLoadedChunk.raw
 			};
 
 			const params = this.buildState({
-				lastLoadedData: val.data,
+				lastLoadedData: this.db.data,
 				lastLoadedChunk
 			});
 
 			this.chunkRequest.lastLoadedChunk = lastLoadedChunk;
 			this.chunkRequest.shouldStopRequest(params);
-			this.chunkRequest.data = val.data!;
-			this.total = Object.isNumber(val.total) ? val.total : undefined;
+			this.chunkRequest.data = this.db.data!;
+			this.total = Object.isNumber(this.db.total) ? this.db.total : undefined;
 
 		} else {
 			this.chunkRequest.isLastEmpty = true;
@@ -367,6 +363,12 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		this.emit('chunkLoaded', this.chunkRequest.lastLoadedChunk);
 		this.chunkRequest.init().catch(stderr);
+	}
+
+	/** @override */
+	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
+		this.chunkRequest.lastLoadedChunk.raw = data;
+		return super.convertDataToDB(data);
 	}
 
 	/**

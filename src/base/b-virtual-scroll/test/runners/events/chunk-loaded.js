@@ -117,30 +117,13 @@ module.exports = (/** @type Page */ page) => {
 		});
 
 		describe('имеет корректный payload', () => {
-			it('при загрузке первого чанка без `componentConverter`', async () => {
-				const subscribePromise = subscribe();
-
-				await component.evaluate((ctx) => {
-					ctx.dataProvider = 'demo.Pagination';
-					ctx.chunkSize = 10;
-					ctx.request = {get: {chunkSize: 12}};
-					ctx.dbConverter = (data) => data;
-				});
-
-				await expectAsync(subscribePromise).toBeResolvedTo({
-					normalized: firstChunkExpected.data,
-					raw: undefined
-				});
-			});
-
-			it('при загрузке первого чанка с `componentConverter`', async () => {
+			it('при загрузке первого чанка', async () => {
 				const subscribePromise = subscribe();
 
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.chunkSize = 10;
 					ctx.request = {get: {chunkSize: 12, additionalData: {size: 12}}};
-					ctx.componentConverter = (data) => data;
 				});
 
 				await expectAsync(subscribePromise).toBeResolvedTo({
@@ -167,12 +150,26 @@ module.exports = (/** @type Page */ page) => {
 				});
 			});
 
-			it('при загрузке второго чанка с `componentConverter`', async () => {
+			it('при загрузке первого чанка с пустым payload', async () => {
+				const subscribePromise = subscribe();
+
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.chunkSize = 10;
-					ctx.request = {get: {chunkSize: 12, additionalData: {size: 12}}};
-					ctx.componentConverter = (data) => data;
+					ctx.request = {get: {id: 'uniq', chunkSize: 0, total: 0, additionalData: {size: 12}}};
+				});
+
+				await expectAsync(subscribePromise).toBeResolved({
+					normalized: [],
+					raw: {data: [], size: 12}
+				});
+			});
+
+			it('при загрузке второго чанка с пустым payload', async () => {
+				await component.evaluate((ctx) => {
+					ctx.dataProvider = 'demo.Pagination';
+					ctx.chunkSize = 10;
+					ctx.request = {get: {id: 'uniq', hunkSize: 12, total: 12, additionalData: {size: 12}}};
 				});
 
 				await h.dom.waitForEl(container, 'section');
@@ -181,8 +178,8 @@ module.exports = (/** @type Page */ page) => {
 
 				await h.scroll.scrollToBottom(page);
 				await expectAsync(subscribePromise).toBeResolved({
-					normalized: firstChunkExpected.data,
-					raw: {data: firstChunkExpected.data, size: 12}
+					normalized: [],
+					raw: {data: [], size: 12}
 				});
 			});
 
@@ -198,7 +195,6 @@ module.exports = (/** @type Page */ page) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.chunkSize = 10;
 					ctx.request = {get: {chunkSize: 4, id: 'uniq', additionalData: {size: 12}}};
-					ctx.componentConverter = (data) => data;
 				});
 
 				await h.dom.waitForEl(container, 'section');
