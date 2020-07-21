@@ -41,15 +41,15 @@ module.exports = (/** @type Page */ page) => {
 
 	describe('b-virtual-scroll chunkLoaded event', () => {
 
-		describe('вызывается', () => {
-			it('при загрузке первого чанка', async () => {
+		describe('called', () => {
+			it('when loading the first chunk', async () => {
 				const subscribePromise = subscribe();
 
 				await setProps();
 				await expectAsync(subscribePromise).toBeResolvedTo(0);
 			});
 
-			it('при загрузке второго чанка', async () => {
+			it('when loading the second chunk', async () => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
@@ -59,7 +59,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(1);
 			});
 
-			it('при загрузке первого чанка после переинициализации', async () => {
+			it('when loading the first chunk after reinitialization', async () => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
@@ -69,7 +69,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(0);
 			});
 
-			it('три раза при загрузке полного чанка', async () => {
+			it('three times when loading a full chunk', async () => {
 				await component.evaluate((ctx) => ctx.watch(':onChunkLoading', (val) => {
 					ctx.tmp.currentCall = (ctx.tmp.currentCall ?? 0) + 1;
 					ctx.tmp[ctx.tmp.currentCall] = val;

@@ -44,15 +44,15 @@ module.exports = (/** @type Page */ page) => {
 	});
 
 	describe('b-virtual-scroll dbChange', () => {
-		describe('вызывается', () => {
-			it('при загрузке первого чанка', async () => {
+		describe('called', () => {
+			it('after loading the first chunk', async () => {
 				const subscribePromise = subscribe();
 				await setProps();
 
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('при загрузке второго чанка', async () => {
+			it('after loading the second chunk', async () => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
@@ -62,7 +62,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('при загрузке первого чанка после переинициализации', async () => {
+			it('after loading the first chunk after reinitialization', async () => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
@@ -72,7 +72,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('три раза если надо набрать на цельный чанк', async () => {
+			it('three times if you need to type on a whole chunk', async () => {
 				await component.evaluate((ctx) => {
 					ctx.watch(':onDBChange', () => {
 						ctx.tmp.called = (ctx.tmp.called ?? 0) + 1;
@@ -85,7 +85,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await component.evaluate((ctx) => ctx.tmp.called)).toBe(3);
 			});
 
-			it('при успешной загрузки первого чанка без payload', async () => {
+			it('after successful loading of the first chunk without payload', async () => {
 				const subscribePromise = subscribe();
 
 				await setProps({chunkSize: 0, total: 0});
@@ -94,8 +94,8 @@ module.exports = (/** @type Page */ page) => {
 			});
 		});
 
-		describe('не вызывается', () => {
-			it('если произошла ошибка загрузка', async () => {
+		describe('not called', () => {
+			it('if there was a request error', async () => {
 				await component.evaluate((ctx) => {
 					ctx.watch(':onDBChange', () => {
 						ctx.tmp.called = (ctx.tmp.called ?? 0) + 1;
@@ -108,7 +108,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await component.evaluate((ctx) => ctx.tmp.called)).toBeUndefined();
 			});
 
-			it('при успешной загрузки второго чанка без payload', async () => {
+			it('after successful loading of the second chunk without payload', async () => {
 				await setProps({chunkSize: 12, total: 12});
 				await h.dom.waitForEl(container, 'section');
 
@@ -123,8 +123,8 @@ module.exports = (/** @type Page */ page) => {
 			});
 		});
 
-		describe('имеет корректный payload', () => {
-			it('после первой загрузки', async () => {
+		describe('has correct payload', () => {
+			it('after loading the first chunk', async () => {
 				const subscribePromise = subscribe();
 
 				await setProps({chunkSize: 4});
@@ -133,7 +133,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(0, 4));
 			});
 
-			it('после загрузки двух чанков', async () => {
+			it('after loading two chunks', async () => {
 				await component.evaluate((ctx) => {
 					ctx.watch(':onDBChange', (val) => {
 						ctx.tmp.called = (ctx.tmp.called ?? 0) + 1;
@@ -149,7 +149,7 @@ module.exports = (/** @type Page */ page) => {
 
 			});
 
-			it('после переинициализации и загрузки первого чанка', async () => {
+			it('after reinitializing and loading the first chunk', async () => {
 				await setProps({chunkSize: 6});
 				await h.dom.waitForEl(container, 'section');
 

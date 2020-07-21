@@ -45,15 +45,15 @@ module.exports = (/** @type Page */ page) => {
 	});
 
 	describe('b-virtual-scroll dataChange event', () => {
-		describe('вызывается', () => {
-			it('при загрузке первого чанка', async () => {
+		describe('called', () => {
+			it('after loading the first chunk', async () => {
 				const subscribePromise = subscribe();
 
 				await setProps();
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('при загрузки второго чанке', async () => {
+			it('after loading the second chunk', async () => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
@@ -63,7 +63,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('после загрузки первой части чанка и остановки запросов с помощью `shouldStopRequest`', async () => {
+			it('after loading the first part of the chunk and stopping the requests with `shouldStopRequest`', async () => {
 				const subscribePromise = subscribe();
 
 				await component.evaluate((ctx) => {
@@ -75,7 +75,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(0, 4));
 			});
 
-			it('после загрузки второй части первого чанка и остановки запроса с помощью `shouldStopRequest`', async () => {
+			it('after loading the second part of the first chunk and stopping the request with `shouldStopRequest`', async () => {
 				const subscribePromise = subscribe();
 
 				await component.evaluate((ctx) => {
@@ -87,7 +87,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(0, 8));
 			 });
 
-			 it('после загрузки первой части второго чанка и остановки запроса с помощью `shouldStopRequest`', async () => {
+			 it('after loading the first part of the second chunk and stopping the request with `shouldStopRequest`', async () => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
@@ -107,8 +107,8 @@ module.exports = (/** @type Page */ page) => {
 
 		});
 
-		describe('не вызывается', () => {
-			it('если произошла ошибка загрузки', async () => {
+		describe('not called', () => {
+			it('if there was a request error', async () => {
 				await component.evaluate((ctx) => ctx.watch(':onDataChange', () => ctx.tmp.change = true));
 
 				await setProps({failOn: 0});
@@ -117,7 +117,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await component.evaluate((ctx) => ctx.tmp.change)).toBeUndefined();
 			});
 
-			it('если произошла ошибка загрузки на втором чанке', async () => {
+			it('if there was a request error on the second chunk', async () => {
 				await setProps({failOn: 1});
 				await h.dom.waitForEl(container, 'section');
 
@@ -130,23 +130,23 @@ module.exports = (/** @type Page */ page) => {
 			});
 		});
 
-		describe('имеет корректный payload', () => {
-			it('если ничего не было загружено', async () => {
+		describe('has correct payload', () => {
+			it('if nothing was loaded', async () => {
 				const subscribePromise = subscribe();
 
 				await setProps({total: 0, chunkSize: 0});
 				await expectAsync(subscribePromise).toBeResolvedTo({data: []});
 			});
 
-			describe('после загрузки', () => {
-				it('первого чанка', async () => {
+			describe('after loading', () => {
+				it('first chunk', async () => {
 					const subscribePromise = subscribe();
 
 					await setProps({chunkSize: 12});
 					await expectAsync(subscribePromise).toBeResolvedTo(firstChunkExpected);
 				});
 
-				it('второго чанка', async () => {
+				it('second chunk', async () => {
 					await setProps({chunkSize: 12});
 					await h.dom.waitForEl(container, 'section');
 
@@ -157,8 +157,8 @@ module.exports = (/** @type Page */ page) => {
 				});
 			});
 
-			describe('после переинциализации', () => {
-				it('и загрузки первого чанка с помощью 2 запросов', async () => {
+			describe('after reinitialization', () => {
+				it('and loading the first chunk with 2 requests', async () => {
 					await setProps({id: undefined});
 					await h.dom.waitForEl(container, 'section');
 
@@ -169,7 +169,7 @@ module.exports = (/** @type Page */ page) => {
 					await expectAsync(subscribePromise).toBeResolvedTo(firstChunkExpected);
 				});
 
-				it('и загрузки второго чанка с помощью 2 запросов', async () => {
+				it('and loading the second chunk with 2 requests', async () => {
 					await setProps({id: undefined});
 					await h.dom.waitForEl(container, 'section');
 
