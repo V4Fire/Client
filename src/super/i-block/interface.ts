@@ -122,6 +122,9 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 	syncRouterState: CTX['syncRouterState'];
 
 	// @ts-ignore (access)
+	waitRef: CTX['waitRef'];
+
+	// @ts-ignore (access)
 	convertStateToRouterReset: CTX['convertStateToRouterReset'];
 
 	// @ts-ignore (access)
