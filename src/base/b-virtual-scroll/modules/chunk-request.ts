@@ -183,7 +183,11 @@ export default class ChunkRequest extends Friend {
 
 	/**
 	 * Tries to request additional data
+	 *
 	 * @param [initialCall]
+	 *
+	 * @emits dbChange({data: unknown[]})
+	 * @emits chunkLoading(page: number)
 	 */
 	try(initialCall: boolean = true): Promise<CanUndef<RemoteData>> {
 		const
@@ -234,6 +238,7 @@ export default class ChunkRequest extends Friend {
 		}
 
 		chunkRender.setLoadersVisibility(true);
+		this.ctx.emit('chunkLoading', this.page);
 
 		return this.load()
 			.then((v) => {
