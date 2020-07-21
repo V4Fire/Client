@@ -56,7 +56,8 @@ module.exports = (/** @type Page */ page) => {
 		...params
 	});
 
-	const getCurrentComponentState = () => component.evaluate((ctx) => ctx.getCurrentState({
+	const getCurrentComponentState = () => component.evaluate((ctx) => ({
+		...ctx.getCurrentState(),
 		itemsTillBottom: undefined,
 		items: undefined
 	}));

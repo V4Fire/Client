@@ -300,7 +300,9 @@ export default class bVirtualScroll extends iData implements iItems {
 	getCurrentState<
 		ITEM extends unknown = unknown,
 		RAW extends unknown = unknown
-	>(overrideParams?: MergeStateParams): CurrentState<ITEM, RAW> {
+	>(): CurrentState<ITEM, RAW> {
+		let overrideParams: MergeStateParams = {};
+
 		if (this.componentStatus !== 'ready' || !Object.isTruly(this.dataProvider)) {
 			overrideParams = {
 				currentPage: 0,

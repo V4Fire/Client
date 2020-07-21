@@ -216,7 +216,7 @@ export default class ChunkRequest extends Friend {
 		};
 
 		const
-			shouldRequest = ctx.shouldMakeRequest(this.ctx.getCurrentState(additionParams));
+			shouldRequest = ctx.shouldMakeRequest(this.ctx.buildState(additionParams, this, chunkRender));
 
 		if (this.isDone) {
 			updateCurrentData();
@@ -245,13 +245,13 @@ export default class ChunkRequest extends Friend {
 				if (!Object.isTruly(ctx.field.get('data.length', v))) {
 					this.isLastEmpty = true;
 
-					this.shouldStopRequest(this.ctx.getCurrentState({
+					this.shouldStopRequest(this.ctx.buildState({
 						lastLoadedData: [],
 						lastLoadedChunk: {
 							raw: undefined,
 							normalized: []
 						}
-					}));
+					}, this, chunkRender));
 
 					chunkRender.setLoadersVisibility(false);
 					updateCurrentData();
