@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.39 (2020-07-22)
+
+#### :rocket: New Feature
+
+* [Life cycle events](https://github.com/V4Fire/Client/issues/205)
+
+#### :bug: Bug Fix
+
+* [Data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match](https://github.com/V4Fire/Client/issues/281)
+* [`lastLoadedChunk.raw` returns undefined](https://github.com/V4Fire/Client/issues/267)
+
+#### :house: Internal
+
+* Refactoring tests
+* Fixed ESLint warnings `base/b-virtual-scroll`
+
 ## v3.0.0-rc.31 (2020-06-17)
 
 #### :bug: Bug Fix
