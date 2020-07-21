@@ -565,23 +565,6 @@ export default class bInput extends iInput implements iWidth, iSize {
 		}
 	}
 
-	/** @override */
-	protected onFocus(): void {
-		const
-			{input} = this.$refs;
-
-		if (!this.readonly && input.hasAttribute('readonly')) {
-			input.removeAttribute('readonly');
-
-			if (this.browser.is.iOS) {
-				input.blur();
-				input.focus();
-			}
-		}
-
-		super.onFocus();
-	}
-
 	/**
 	 * Handler: value buffer update
 	 */

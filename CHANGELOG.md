@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.38 (2020-07-20)
+
+#### :bug: Bug Fix
+
+* Fixed providing explicit `false` value to `readonly` prop `form/b-input`
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :boom: Breaking Change
