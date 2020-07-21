@@ -11,12 +11,69 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.37 (2020-07-16)
+## v3.0.0-rc.39 (2020-07-22)
+
+#### :rocket: New Feature
+
+* [Improves browser tests API](https://github.com/V4Fire/Client/issues/289)
+
+## v3.0.0-rc.38 (2020-07-21)
+
+#### :bug: Bug Fix
+
+* Fixed caching of old values `core/component/watch`
+* Fixed providing explicit `false` value to `readonly` prop `form/b-input`
 
 #### :house: Internal
 
-* [Improves browser tests API](https://github.com/V4Fire/Client/issues/289)
-* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`
+* Added `npm run up`
+
+## v3.0.0-rc.37 (2020-07-20)
+
+#### :boom: Breaking Change
+
+* Now all accessors with dependencies are cacheable by default
+* Marked `router` as optional `iBlock`
+* Marked `block` as optional `iBlock`
+* Marked `$el` as optional `core/component/interface`
+* Changed the `SyncLinkCache` type from Dictionary to Map `core/component/interface`
+
+#### :rocket: New Feature
+
+* Added support of mounted watchers
+
+```js
+this.watch(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.watch({ctx: anotherWatcher, path: foo}, () => {
+  console.log('...');
+});
+
+this.sync.link(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.sync.object('foo', [
+  ['bla', {ctx: anotherWatcher, path: 'bar'}]
+]);
+
+class bFoo {
+  @computed({watchable: true})
+  get remoteState(): typeof anotherWatcher {
+    return anotherWatcher;
+  }
+}
+```
+
+#### :bug: Bug Fix
+
+* Fixed watching for `remoteState`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`, `core/component`, `core/session`, `core/std`, `super/i-block`
 
 * :up:
   * playwright 1.2.1

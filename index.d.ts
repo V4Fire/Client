@@ -19,7 +19,7 @@ declare const BLOCK_NAMES: CanUndef<string[]>;
 declare const DS: CanUndef<Dictionary>;
 
 declare const DS_COMPONENTS_MODS: CanUndef<{
-	[name: string]: Nullable<ModDeclVal[]>;
+	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
 
 interface HTMLImageElement {

@@ -1,3 +1,3 @@
 # core/component/prop
 
-This module provides API to initialize component input properties.
+This module provides API to manage component input properties.

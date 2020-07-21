@@ -19,11 +19,10 @@ const emitter = new EventEmitter({
 });
 
 const
-	emit = emitter.emit;
+	originalEmit = emitter.emit.bind(emitter);
 
-// tslint:disable-next-line:only-arrow-functions
-emitter.emit = function (event: string, ...args: unknown[]): boolean {
-	const res = emit.call(emitter, event, ...args);
+emitter.emit = (event: string, ...args) => {
+	const res = originalEmit(event, ...args);
 	log(`global:event:${event.replace(/\./g, ':')}`, ...args);
 	return res;
 };

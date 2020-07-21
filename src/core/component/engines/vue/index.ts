@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import Vue, { VNode } from 'vue';
+import Vue from 'vue';
 
 export * from 'vue';
 export { Vue as ComponentDriver };

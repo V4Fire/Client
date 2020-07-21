@@ -9,12 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.36 (2020-07-13)
+## v3.0.0-rc.37 (2020-07-20)
 
 #### :rocket: New Feature
 
-* Added the `worker` option
+* Added support of mounted watchers
+
+```js
+this.sync.link(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.sync.object('foo', [
+  ['bla', {ctx: anotherWatcher, path: 'bar'}]
+]);
+```
 
 #### :house: Internal
 
-* Refactoring
+* Fixed ESLint warnings

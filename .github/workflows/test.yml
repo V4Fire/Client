@@ -72,8 +72,8 @@ jobs:
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
-      - name: Run typescript test
-        run: npm run test:typescript
+      #- name: Run typescript test
+      #  run: npm run test:typescript
 
 
   # Run eslint check

@@ -7,40 +7,40 @@
  */
 
 import { Group, Label, Join } from 'core/async';
-import { WatchOptions, WatchHandlerParams } from 'core/object/watch';
+import { WatchPath as RawWatchPath, WatchOptions, WatchHandlerParams } from 'core/object/watch';
 
 import { PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface } from 'core/component/interface';
 
 export { WatchOptions, WatchHandlerParams };
 
-export type WatchPath<CTX extends ComponentInterface = ComponentInterface> =
+export type WatchPath =
 	string |
-	PropertyInfo;
+	PropertyInfo |
+	{ctx: object; path?: RawWatchPath};
 
 export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b?: B, params?: WatchHandlerParams): any;
 	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): any;
 }
 
-export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+export interface WatchHandler<A = unknown, B = A> {
 	(a: A, b: B, params?: WatchHandlerParams): unknown;
 	(...args: A[]): unknown;
 }
 
 export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(ctx: CTX['unsafe'], handler: WatchHandler<CTX, A, B>): CanPromise<WatchHandler<CTX, A, B> | Function>;
+	(ctx: CTX['unsafe'], handler: WatchHandler<A, B>): CanPromise<WatchHandler<A, B> | Function>;
 }
 
 export interface FieldWatcher<
-	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {
 	/**
 	 * Handler that is invoked on watcher events
 	 */
-	handler: WatchHandler<CTX, A, B>;
+	handler: WatchHandler<A, B>;
 
 	/**
 	 * If false, the watcher won't be registered for functional/flyweight components
@@ -135,7 +135,7 @@ export interface WatchObject<
 	/**
 	 * Handler (or a name of a component method) that is invoked on watcher events
 	 */
-	handler: string | WatchHandler<CTX, A, B>;
+	handler: string | WatchHandler<A, B>;
 }
 
 export interface MethodWatcher<
