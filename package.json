@@ -29,7 +29,8 @@
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components",
     "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
-    "test:components": "npx gulp test:components --reinit-browser true"
+    "test:components": "npx gulp test:components --reinit-browser true",
+    "up": "npm i && npm up && npm audit fix"
   },
   "husky": {
     "hooks": {

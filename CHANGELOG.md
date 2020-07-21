@@ -18,6 +18,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed caching of old values `core/component/watch`
 * Fixed providing explicit `false` value to `readonly` prop `form/b-input`
 
+#### :house: Internal
+
+* Added `npm run up`
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :boom: Breaking Change
