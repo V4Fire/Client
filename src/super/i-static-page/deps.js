@@ -10,7 +10,7 @@ const
 	config = require('config'),
 	runtime = config.runtime();
 
-const deps = module.exports = {
+const deps = {
 	/**
 	 * @type {Map<(string|{
 	 *   src: string,
@@ -59,3 +59,5 @@ if (!config.webpack.fatHTML() && deps.styles.size) {
 	deps.scripts.set('fg-loadcss', 'fg-loadcss/src/loadCSS.js');
 	deps.scripts.set('fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js');
 }
+
+module.exports = deps;
