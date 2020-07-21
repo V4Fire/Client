@@ -176,6 +176,33 @@ module.exports = (/** @type Page */ page) => {
 				await h.scroll.scrollToBottom(page);
 				expect(await getContainerChildCount()).toBe(total);
 			});
+
+			it('renders the first chunk with 3 requests to get the full chunk', async () => {
+				await setProps({chunkSize: 4});
+
+				const
+					chunkSize = await component.evaluate((ctx) => ctx.chunkSize);
+
+				await h.dom.waitForEl(container, 'section');
+
+				expect(await getContainerChildCount()).toBe(chunkSize);
+			});
+
+			it('renders the first chunk with truncated data in all loaded chunks', async () => {
+				await component.evaluate((ctx) => {
+					ctx.dataProvider = 'demo.Pagination';
+					ctx.chunkSize = 4;
+					ctx.request = {get: {chunkSize: 8, total: 32, id: 'uniq'}};
+					ctx.dbConverter = ({data}) => ({data: data.splice(0, 1)});
+				});
+
+				const
+					chunkSize = await component.evaluate((ctx) => ctx.chunkSize);
+
+				await h.dom.waitForEl(container, 'section');
+
+				expect(await getContainerChildCount()).toBe(chunkSize);
+			});
 		});
 
 		describe('without `options` and` dataProvider` specified', () => {
