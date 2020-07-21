@@ -294,6 +294,13 @@ export default class bVirtualScroll extends iData implements iItems {
 		ITEM extends unknown = unknown,
 		RAW extends unknown = unknown
 	>(overrideParams?: MergeStateParams): CurrentState<ITEM, RAW> {
+		if (this.componentStatus !== 'ready' || !Object.isTruly(this.dataProvider)) {
+			overrideParams = {
+				currentPage: 0,
+				...overrideParams
+			};
+		}
+
 		return this.buildState(overrideParams, this.chunkRequest, this.chunkRender);
 	}
 

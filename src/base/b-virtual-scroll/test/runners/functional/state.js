@@ -72,7 +72,7 @@ module.exports = (/** @type Page */ page) => {
 
 		describe('возвращает корректно значение', () => {
 			it('если нет `dataProvider`', async () => {
-				const expected = getExpected({currentPage: 1, nextPage: 2});
+				const expected = getExpected({currentPage: 0, nextPage: 1});
 
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
@@ -119,7 +119,7 @@ module.exports = (/** @type Page */ page) => {
 			});
 
 			it('после переинициализации и без похода в `dataProvider`', async () => {
-				const expected = getExpected({currentPage: 1, nextPage: 2});
+				const expected = getExpected({currentPage: 0, nextPage: 1});
 
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
