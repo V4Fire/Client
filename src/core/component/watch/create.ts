@@ -69,30 +69,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		let
 			proxy = watchInfo?.value;
 
-		const getVal = () => {
-			switch (info.type) {
-				case 'mounted':
-					return isDefinedPath ? Object.get(info.ctx, info.path) : info.ctx;
-
-				case 'field':
-					return Object.get(proxy, info.originalPath);
-
-				default:
-					return Object.get(component, info.originalPath);
-			}
-		};
-
-		const wrapDestructor = (destructor) => {
-			if (Object.isFunction(destructor)) {
-				// Every worker that passed to async have a counter with number of consumers of this worker,
-				// but in this case this behaviour is redundant and can produce an error,
-				// that why we wrap original destructor with a new function
-				component.unsafe.$async.worker(() => destructor());
-			}
-
-			return destructor;
-		};
-
 		const normalizedOpts = <WatchOptions>{
 			collapse: true,
 			...opts,
@@ -100,7 +76,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		};
 
 		const
-			needCache = handler.length > 1 && (isDefinedPath || normalizedOpts.collapse !== false),
+			needCache = handler.length > 1 && (isDefinedPath || normalizedOpts.collapse),
 			originalHandler = handler;
 
 		let
@@ -378,5 +354,53 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		}
 
 		return attachDynamicWatcher(component, info, opts, handler);
+
+		function getVal(): unknown {
+			let
+				ctx,
+				path;
+
+			switch (info.type) {
+				case 'mounted':
+					ctx = info.ctx;
+
+					if (isDefinedPath) {
+						path = info.path;
+					}
+
+					break;
+
+				case 'field':
+					ctx = proxy;
+					path = info.originalPath;
+					break;
+
+				default:
+					ctx = component;
+					path = info.originalPath;
+			}
+
+			if (path == null) {
+				return ctx;
+			}
+
+			if (normalizedOpts.collapse) {
+				const normalizedPath = Object.isString(path) ? path.split('.') : path;
+				return Object.get(ctx, normalizedPath.slice(0, info.type === 'mounted' ? 1 : 2));
+			}
+
+			return Object.get(ctx, path);
+		}
+
+		function wrapDestructor<T>(destructor: T): T {
+			if (Object.isFunction(destructor)) {
+				// Every worker that passed to async have a counter with number of consumers of this worker,
+				// but in this case this behaviour is redundant and can produce an error,
+				// that why we wrap original destructor with a new function
+				component.unsafe.$async.worker(() => destructor());
+			}
+
+			return destructor;
+		}
 	};
 }
