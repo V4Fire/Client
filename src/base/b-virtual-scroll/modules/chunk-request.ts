@@ -70,7 +70,7 @@ export default class ChunkRequest extends Friend {
 	/**
 	 * Data that was loaded through the first `try` method call and subsequent recursive calls
 	 */
-	currentAccumulatedData: CanUndef<unknown> = undefined;
+	currentAccumulatedData: CanUndef<unknown[]> = undefined;
 
 	/**
 	 * Merged `currentAccumulatedData` or `ctx.db`
@@ -154,7 +154,7 @@ export default class ChunkRequest extends Friend {
 
 		if (this.pendingData.length < chunkSize && Object.isString(dataProvider)) {
 			if (!this.isDone) {
-				this.currentAccumulatedData = this.ctx.db;
+				this.currentAccumulatedData = this.ctx.db?.data;
 				await this.try(false);
 
 			} else {
@@ -175,7 +175,7 @@ export default class ChunkRequest extends Friend {
 		}
 
 		if (this.currentData === undefined && Object.isTruly(this.ctx.db)) {
-			this.currentData = this.ctx.db;
+			this.currentData = this.ctx.db!.data;
 		}
 
 		this.ctx.localState = 'ready';
@@ -266,7 +266,7 @@ export default class ChunkRequest extends Friend {
 
 				this.data = this.data.concat(data);
 				this.pendingData = this.pendingData.concat(data);
-				this.currentAccumulatedData = Object.mixin({concatArray: true, deep: true}, {}, this.currentAccumulatedData, v);
+				this.currentAccumulatedData = (this.currentAccumulatedData ?? []).concat(v!.data);
 
 				this.ctx.emit('dbChange', {data: this.data});
 				this.shouldStopRequest(this.ctx.getCurrentState());

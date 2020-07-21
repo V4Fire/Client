@@ -24,7 +24,7 @@ module.exports = (/** @type Page */ page) => {
 		container;
 
 	const
-		getArray = (offset = 0, length = 12) => ({data: Array.from(Array(length), (v, i) => ({i: i + offset}))}),
+		getArray = (offset = 0, length = 12) => Array.from(Array(length), (v, i) => ({i: i + offset})),
 		firstChunkExpected = getArray(),
 		secondChunkExpected = getArray(12);
 
@@ -135,7 +135,7 @@ module.exports = (/** @type Page */ page) => {
 				const subscribePromise = subscribe();
 
 				await setProps({total: 0, chunkSize: 0});
-				await expectAsync(subscribePromise).toBeResolvedTo({data: []});
+				await expectAsync(subscribePromise).toBeResolvedTo([]);
 			});
 
 			describe('after loading', () => {
