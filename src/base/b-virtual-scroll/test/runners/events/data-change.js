@@ -19,7 +19,6 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-
 	let
 		component,
 		node,
@@ -65,7 +64,7 @@ module.exports = (page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('after loading the first part of the chunk and stopping the requests with `shouldStopRequest`', async () => {
+			it('after loading the first part of the batch and stopping further loading because `shouldStopRequest` returned `true`', async () => {
 				const subscribePromise = subscribe();
 
 				await component.evaluate((ctx) => {
@@ -77,7 +76,7 @@ module.exports = (page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(0, 4));
 			});
 
-			it('after loading the second part of the first chunk and stopping the request with `shouldStopRequest`', async () => {
+			it('after loading the second part of the batch and stopping further loading because `shouldStopRequest` returned `true`', async () => {
 				const subscribePromise = subscribe();
 
 				await component.evaluate((ctx) => {
@@ -89,7 +88,7 @@ module.exports = (page) => {
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(0, 8));
 			 });
 
-			 it('after loading the first part of the second chunk and stopping the request with `shouldStopRequest`', async () => {
+			 it('after loading the first part of the second batch and stopping further loading because `shouldStopRequest` returned `true`', async () => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
