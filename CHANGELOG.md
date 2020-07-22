@@ -15,12 +15,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* [Improves browser tests API](https://github.com/V4Fire/Client/issues/289)
+* [Improved browser test API](https://github.com/V4Fire/Client/issues/289)
 * [Life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
 
 #### :bug: Bug Fix
 
-* [Fixed the problem when `initLoad` was not called when changing data Provider `iData`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed reloading of a component after changing its data provider `iData`](https://github.com/V4Fire/Client/pull/293)
 * [Fixed data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
 * [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
 

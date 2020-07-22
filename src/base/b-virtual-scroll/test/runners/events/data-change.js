@@ -124,7 +124,7 @@ module.exports = (/** @type Page */ page) => {
 				await component.evaluate((ctx) => ctx.watch(':onDataChange', () => ctx.tmp.change = true));
 
 				await h.scroll.scrollToBottom(page);
-				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1000});
+				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 500});
 
 				expect(await component.evaluate((ctx) => ctx.tmp.change)).toBeUndefined();
 			});
