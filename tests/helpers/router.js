@@ -26,9 +26,7 @@ class Router {
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {string} method
-	 * @param  {...any} args
+	 * @see [[BrowserTests.Router.call]]
 	 */
 	async call(page, method, ...args) {
 		const

@@ -52,7 +52,7 @@ export interface RequestQuery {
 	failOn?: number;
 
 	/**
-	 * Additional data to be returned
+	 * Additional data to be return
 	 */
 	additionalData?: Dictionary;
 }

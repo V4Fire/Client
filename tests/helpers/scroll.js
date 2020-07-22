@@ -29,9 +29,7 @@ class Scroll {
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} selector
-	 * @param {Object=} [scrollIntoViewOptions]
+	 * @see [[BrowserTests.Scroll.scrollIntoViewIfNeeded]]
 	 */
 	async scrollIntoViewIfNeeded(ctx, selector, scrollIntoViewOptions) {
 		const el = await this.#parent.dom.waitForEl(ctx, selector);
@@ -39,9 +37,7 @@ class Scroll {
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} refName
-	 * @param {Object=} [scrollIntoViewOptions]
+	 * @see [[BrowserTests.Scroll.scrollRefIntoViewIfNeeded]]
 	 */
 	async scrollRefIntoViewIfNeeded(ctx, refName, scrollIntoViewOptions) {
 		const ref = await this.#parent.dom.waitForRef(ctx, refName);
@@ -49,25 +45,21 @@ class Scroll {
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {ScrollToOptions} options
+	 * @see [[BrowserTests.Scroll.scrollBy]]
 	 */
 	scrollBy(page, options) {
 		return page.evaluate((options) => globalThis.scrollBy(options), options);
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {ScrollToOptions=} [options]
+	 * @see [[BrowserTests.Scroll.scrollToBottom]]
 	 */
 	scrollToBottom(page, options) {
 		return this.scrollBy(page, {top: 1e7, left: 0, ...options});
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {Function=} [checkFn]
-	 * @param {Object=} [options]
+	 * @see [[BrowserTests.Scroll.scrollToBottomWhile]]
 	 */
 	async scrollToBottomWhile(page, checkFn, options) {
 		options = {

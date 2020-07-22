@@ -75,7 +75,7 @@ export default class ChunkRequest extends Friend {
 	currentAccumulatedData: CanUndef<unknown[]> = undefined;
 
 	/**
-	 * Merged `currentAccumulatedData` or `ctx.db`
+	 * Contains `currentAccumulatedData` from previous requests cycle
 	 */
 	currentDataStore: CanUndef<unknown> = undefined;
 
@@ -293,7 +293,7 @@ export default class ChunkRequest extends Friend {
 	}
 
 	/**
-	 * Checks possibility of another request for data
+	 * Checks for the possibility of stopping data requests
 	 * @param params
 	 */
 	shouldStopRequest(params: DataState): boolean {

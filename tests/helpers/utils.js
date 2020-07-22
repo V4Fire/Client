@@ -25,11 +25,7 @@ class Utils {
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {BrowserContext} context
-	 * @param {Object=} [options]
-	 *
-	 * @returns {!Promise<void>}
+	 * @see [[BrowserTests.Utils.setup]]
 	 */
 	async setup(page, context, options) {
 		options = {
@@ -77,10 +73,7 @@ class Utils {
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {Object=} [idleOptions]
-	 *
-	 * @returns {!Promise<void>}
+	 * @see [[BrowserTests.Utils.reloadAndWaitForIdle]]
 	 */
 	async reloadAndWaitForIdle(page, idleOptions) {
 		await page.reload({waitUntil: 'networkidle'});

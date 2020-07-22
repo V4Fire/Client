@@ -287,7 +287,7 @@ declare namespace BrowserTests {
 	}
 
 	/**
-	 * Class provides API to work with `BOM`
+	 * Class provides API to work with `BOM` (browser object model)
 	 */
 	class BOM {
 		/**

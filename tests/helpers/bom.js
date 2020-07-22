@@ -18,10 +18,9 @@ const
  */
 
 /**
- * Class provides API to work with `BOM`
+ * Class provides API to work with `BOM` (browser object model)
  */
 class BOM {
-
 	/**
 	 * @param {BrowserTests.Helpers} parent
 	 */
@@ -30,10 +29,7 @@ class BOM {
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {Object=} [idleOptions]
-	 *
-	 * @returns {!Promise<void>}
+	 * @see [[BrowserTests.BOM.waitForIdleCallback]]
 	 */
 	async waitForIdleCallback(page, idleOptions = {}) {
 		idleOptions = {

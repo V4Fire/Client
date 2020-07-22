@@ -29,61 +29,42 @@ class DOM {
 	}
 
 	/**
-	 * @param {string} refName
-	 * @returns {string}
+	 * @see [[BrowserTests.DOM.getRefSelector]]
 	 */
 	getRefSelector(refName) {
 		return `[data-test-ref="${refName}"]`;
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} refName
-	 *
-	 * @returns {!Promise<Array<ElementHandle>>}
+	 * @see [[BrowserTests.DOM.getRefs]]
 	 */
 	getRefs(ctx, refName) {
 		return ctx.$$(this.getRefSelector(refName));
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} refName
-	 *
-	 * @returns {!Promise<ElementHandle>}
+	 * @see [[BrowserTests.DOM.getRef]]
 	 */
 	getRef(ctx, refName) {
 		return ctx.$(this.getRefSelector(refName));
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} refName
-	 * @param {string} attr
-	 *
-	 * @returns {!Promise<string>}
+	 * @see [[BrowserTests.DOM.getRefAttr]]
 	 */
 	async getRefAttr(ctx, refName, attr) {
 		return (await this.getRef(ctx, refName)).getAttribute(attr);
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} refName
-	 * @param {Object=} [clickOptions]
-	 *
-	 * @returns {!Promise<void>}
+	 * @see [[BrowserTests.DOM.clickToRef]]
 	 */
 	clickToRef(ctx, refName, clickOptions) {
 		return ctx.click(this.getRefSelector(refName), clickOptions);
 	}
 
 	/**
-	 * @param {ElementHandle | Page} ctx
-	 * @param {string} selector
-	 * @param {Object} [options]
-	 *
-	 * @returns {!Promise<?ElementHandle>}
+	 * @see [[BrowserTests.DOM.waitForEl]]
 	 */
 	async waitForEl(ctx, selector, options) {
 		options = {
@@ -142,21 +123,14 @@ class DOM {
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} refName
-	 * @param {Object=} [options]
-	 *
-	 * @returns {!Promise<?ElementHandle>}
+	 * @see [[BrowserTests.DOM.waitForRef]]
 	 */
 	waitForRef(ctx, refName, options) {
 		return this.waitForEl(ctx, this.getRefSelector(refName), options);
 	}
 
 	/**
-	 * @param {ElementHandle | string} selectorOrElement
-	 * @param {Page | ElementHandle} [ctx]
-	 *
-	 * @returns {!Promise<boolean>}
+	 * @see [[BrowserTests.DOM.isVisible]]
 	 */
 	async isVisible(selectorOrElement, ctx) {
 		const element = typeof selectorOrElement === 'string' ?

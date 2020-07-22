@@ -74,7 +74,7 @@ module.exports = (page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('three times if you need to type on a whole chunk', async () => {
+			it('three times to get a full data batch', async () => {
 				await component.evaluate((ctx) => {
 					ctx.watch(':onDBChange', () => {
 						ctx.tmp.called = (ctx.tmp.called ?? 0) + 1;

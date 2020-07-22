@@ -21,7 +21,6 @@ const
  * Class provides API to work with components on the page
  */
 class Component {
-
 	/**
 	 * @param {BrowserTests.Helpers} parent
 	 */
@@ -30,12 +29,7 @@ class Component {
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {string} componentSelector
-	 * @param {Object} props
-	 * @param {Object=} [options]
-	 *
-	 * @returns {!Promise<Object>}
+	 * @see [[BrowserTests.Component.setPropsToComponent]]
 	 */
 	async setPropsToComponent(page, componentSelector, props, options) {
 		const ctx = await this.getComponentByQuery(page, componentSelector);
@@ -57,11 +51,7 @@ class Component {
 	}
 
 	/**
-	 * @param {Page} page
-	 * @param {string} componentSelector
-	 * @param {Object} props
-	 *
-	 * @returns {!Promise<Object>}
+	 * @see [[BrowserTests.Component.reloadAndSetProps]]
 	 */
 	async reloadAndSetProps(page, componentSelector, props) {
 		await this.#parent.utils.reloadAndWaitForIdle(page);
@@ -69,11 +59,7 @@ class Component {
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} selector
-	 * @param {Object=} [options]
-	 *
-	 * @returns {!Promise<?ElementHandle>}
+	 * @see [[BrowserTests.Component.waitForComponent]]
 	 */
 	async waitForComponent(ctx, selector, options = {}) {
 		const componentEl = await this.#parent.dom.waitForEl(ctx, selector, options);
@@ -86,35 +72,28 @@ class Component {
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @returns {!Promise<?ElementHandle>}
+	 * @see [[BrowserTests.Component.getRoot]]
 	 */
 	getRoot(ctx) {
 		return this.waitForComponent(ctx, '#root-component');
 	}
 
 	/**
-	 * @param {string} id
-	 * @returns {!Promise<Object>} component
+	 * @see [[BrowserTests.Component.getComponentById]]
 	 */
 	async getComponentById(page, id) {
 		return (await page.$(`#${id}`)).getProperty('component');
 	}
 
 	/**
-	 * @param {ElementHandle|Page} ctx
-	 * @param {string} selector
-	 * @returns {!Promise<Object>} component
+	 * @see [[BrowserTests.Component.getComponentByQuery]]
 	 */
 	async getComponentByQuery(ctx, selector) {
 		return (await ctx.$(selector)).getProperty('component');
 	}
 
 	/**
-	 * @param {Page} ctx
-	 * @param {string} selector
-	 *
-	 * @returns {!Promise<Array<Object>>} components
+	 * @see [[BrowserTests.Component.getComponents]]
 	 */
 	async getComponents(ctx, selector) {
 		const
@@ -129,11 +108,7 @@ class Component {
 	}
 
 	/**
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} selector
-	 * @param {string} status
-	 *
-	 * @returns {!Promise<?Playwright.JSHandle>}
+	 * @see [[BrowserTests.Component.waitForComponentStatus]]
 	 */
 	async waitForComponentStatus(ctx, selector, status) {
 		const component = await this.getComponentByQuery(ctx, selector);
@@ -154,19 +129,7 @@ class Component {
 	}
 
 	/**
-	 * Waits for the passed value in the passed property of the component, and returns the component
-	 *
-	 * @param {Page | ElementHandle} ctx
-	 * @param {string} selector
-	 * @param {string} prop
-	 * @param {*} val
-	 *
-	 * @example
-	 * ```typescript
-	 * waitForComponentPropVal(page, '.b-slider', 'module.test', true)
-	 * ```
-	 *
-	 * @returns {!Promise<?Playwright.JSHandle>}
+	 * @see [[BrowserTests.Component.waitForComponentPropVal]]
 	 */
 	async waitForComponentPropVal(ctx, selector, prop, val) {
 		const check = async () => {
