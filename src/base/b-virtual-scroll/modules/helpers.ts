@@ -18,8 +18,8 @@ import { CurrentState } from 'base/b-virtual-scroll/interface';
  * @param [chunkRenderCtx]
  * @param [merge]
  *
- * @typeParam ITEM
- * @typeParam RAW
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data without any processing
  */
 export function getRequestParams<ITEM extends unknown = unknown, RAW extends unknown = unknown>(
 	chunkRequestCtx?: ChunkRequest,

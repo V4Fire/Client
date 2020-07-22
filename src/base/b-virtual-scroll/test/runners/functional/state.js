@@ -71,14 +71,14 @@ module.exports = (/** @type Page */ page) => {
 
 	describe('b-virtual-scroll getCurrentState', () => {
 
-		describe('возвращает корректно значение', () => {
-			it('если нет `dataProvider`', async () => {
+		describe('returns the correct value', () => {
+			it('if there is no `dataProvider`', async () => {
 				const expected = getExpected({currentPage: 0, nextPage: 1});
 
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('после загрузки первого чанка', async () => {
+			it('after loading the first chunk', async () => {
 				const expected = getExpected({
 					currentPage: 1,
 					nextPage: 2,
@@ -97,7 +97,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('после загрузки второго чанка', async () => {
+			it('after loading the second chunk', async () => {
 				const expected = getExpected({
 					currentPage: 2,
 					nextPage: 3,
@@ -119,7 +119,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('после переинициализации и без похода в `dataProvider`', async () => {
+			it('after reinitialization and without `dataProvider`', async () => {
 				const expected = getExpected({currentPage: 0, nextPage: 1});
 
 				await setProps();
@@ -137,7 +137,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('после переинициализации и с походом в `dataProvider`', async () => {
+			it('after reinitialization and with `dataProvider`', async () => {
 				const expected = getExpected({
 					currentPage: 1,
 					nextPage: 2,
@@ -160,7 +160,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('если для полноценного чанка пришлось сходить несколько раз в `dataProvider`', async () => {
+			it('if for a batch it was necessary to go several times to `dataProvider`', async () => {
 				const expected = getExpected({
 					currentPage: 3,
 					nextPage: 4,
@@ -183,8 +183,8 @@ module.exports = (/** @type Page */ page) => {
 
 	describe('b-virtual-scroll buildState', () => {
 
-		describe('возвращает корректно значение', () => {
-			it('если передан `chunkRequest` и `chunkRender`', async () => {
+		describe('returns the correct value', () => {
+			it('with `chunkRequest` and `chunkRender`', async () => {
 				const expected = getExpected();
 
 				expect(await component.evaluate((ctx) => ctx.buildState({
@@ -193,7 +193,7 @@ module.exports = (/** @type Page */ page) => {
 				}))).toEqual(expected);
 			});
 
-			it('если передан `chunkRequest` но не передан `chunkRender`', async () => {
+			it('with `chunkRequest`', async () => {
 				const expected = getExpected();
 
 				expect(await component.evaluate((ctx) => ctx.buildState({
@@ -202,7 +202,7 @@ module.exports = (/** @type Page */ page) => {
 				}, ctx.chunkRequest))).toEqual(expected);
 			});
 
-			it('если переданы override параметры и `chunkRequest`, `chunkRender`', async () => {
+			it('with override params, `chunkRequest` and `chunkRender`', async () => {
 				const expected = getExpected({
 					currentPage: 1,
 					nextPage: 2

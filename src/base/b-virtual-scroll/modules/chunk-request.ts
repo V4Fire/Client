@@ -68,7 +68,9 @@ export default class ChunkRequest extends Friend {
 	pendingData: unknown[] = [];
 
 	/**
-	 * Data that was loaded through the first `try` method call and subsequent recursive calls
+	 * The object contains data from the main request and from all additional requests.
+	 * Sometimes a data provider can't provide the whole batch of data in one request,
+	 * so you need to emit some extra requests till the data batch is filled.
 	 */
 	currentAccumulatedData: CanUndef<unknown[]> = undefined;
 

@@ -30,7 +30,7 @@
     "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
     "test:components": "npx gulp test:components",
-    "test:components:chromium": "npx gulp test:components --browsers chromium",
+    "test:components:chrome": "npx gulp test:components --browsers chromium",
     "up": "npm i && npm up && npm audit fix"
   },
   "husky": {
@@ -127,6 +127,6 @@
     "@v4fire/linters": "^1.4.0",
     "husky": "^4.2.5",
     "nyc": "^15.1.0",
-    "playwright": "1.2.1"
+    "playwright": "^1.2.1"
   }
 }

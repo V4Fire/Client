@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { deprecate } from 'core/functools';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
 import iBlock, {
@@ -283,6 +284,17 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 
 		this.contentLengthStore += addedNodes.length - removedNodes.length;
 		iObserveDOM.onDOMChange(this, records);
+	}
+
+	/**
+	 * Warns that the component is deprecated
+	 */
+	@hook('created')
+	protected deprecatedMessage(): void {
+		deprecate({
+			name: 'b-content-switcher',
+			type: 'component'
+		});
 	}
 
 	/**

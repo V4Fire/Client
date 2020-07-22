@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * [Improved browser test API](https://github.com/V4Fire/Client/issues/289)
-* [Life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
+* [Added life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
 
 #### :bug: Bug Fix
 
@@ -26,7 +26,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* [Refactoring tests `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
+* [Refactoring of tests `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
 * [Fixed ESLint warnings `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/293)
 
 * [:up:](https://github.com/V4Fire/Client/pull/293)

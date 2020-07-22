@@ -13,23 +13,23 @@ Changelog
 
 #### :rocket: New Feature
 
-* [Life cycle events](https://github.com/V4Fire/Client/issues/205)
+* [Added life cycle events](https://github.com/V4Fire/Client/issues/205)
 
 #### :bug: Bug Fix
 
-* [Data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match](https://github.com/V4Fire/Client/issues/281)
-* [`lastLoadedChunk.raw` returns undefined](https://github.com/V4Fire/Client/issues/267)
+* [Fixed data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match](https://github.com/V4Fire/Client/issues/281)
+* [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
 
 #### :house: Internal
 
-* Refactoring tests
-* Fixed ESLint warnings `base/b-virtual-scroll`
+* [Refactoring of tests](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings](https://github.com/V4Fire/Client/pull/293)
 
 ## v3.0.0-rc.31 (2020-06-17)
 
 #### :bug: Bug Fix
 
-* Fixed a problem with the disappearance of loaders before the content was rendered in `bVirtualScroll`
+* Fixed a problem with the disappearance of loaders before the content was rendered
 
 ## v3.0.0-rc.25 (2020-06-03)
 
