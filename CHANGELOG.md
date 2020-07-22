@@ -15,21 +15,21 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* [\[Tests\] Improves browser tests API](https://github.com/V4Fire/Client/issues/289)
-* [\[bVirtualScroll\] Life cycle events](https://github.com/V4Fire/Client/issues/205)
+* [Improves browser tests API](https://github.com/V4Fire/Client/issues/289)
+* [Life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
 
 #### :bug: Bug Fix
 
-* [\[iData\] Fixed the problem when `initLoad` was not called when changing data Provider](https://github.com/V4Fire/Client/pull/293)
-* [\[bVirtualScroll\] Data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match](https://github.com/V4Fire/Client/issues/281)
-* [\[bVirtualScroll\] `lastLoadedChunk.raw` returns undefined](https://github.com/V4Fire/Client/issues/267)
+* [Fixed the problem when `initLoad` was not called when changing data Provider `iData`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
+* [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll` ](https://github.com/V4Fire/Client/issues/267)
 
 #### :house: Internal
 
-* [bVirtualScroll] Refactoring tests
-* Fixed ESLint warnings `base/b-virtual-scroll`
+* [Refactoring tests `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/293)
 
-* :up:
+* [:up:](https://github.com/V4Fire/Client/pull/293)
   * playwright 1.2.1
 
 ## v3.0.0-rc.38 (2020-07-21)

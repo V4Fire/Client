@@ -11,8 +11,7 @@
 const
 	path = require('upath'),
 	arg = require('arg'),
-	pzlr = require('@pzlr/build-core'),
-	dasherize = require('string-dasherize');
+	pzlr = require('@pzlr/build-core');
 
 /**
  * Class provides API for working with launching / configuring / receiving tests

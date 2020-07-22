@@ -17,13 +17,6 @@ const
  */
 
 class Utils {
-
-	/**
-	 * Parent class
-	 * @type  {BrowserTests.Helpers}
-	 */
-	#parent;
-
 	/**
 	 * @param {BrowserTests.Helpers} parent
 	 */
@@ -93,6 +86,12 @@ class Utils {
 		await page.reload({waitUntil: 'networkidle'});
 		await this.#parent.bom.waitForIdleCallback(page, idleOptions);
 	}
+
+	/**
+	 * Parent class
+	 * @type  {BrowserTests.Helpers}
+	 */
+	#parent;
 }
 
 module.exports = Utils;

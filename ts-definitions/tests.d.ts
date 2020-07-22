@@ -250,8 +250,40 @@ declare namespace BrowserTests {
 
 		/**
 		 * Returns `root` component
+		 * @param ctx
 		 */
 		getRoot(ctx: PlaywrightElContext): Promise<CanUndef<Playwright.JSHandle>>;
+
+		/**
+		 * Waits until the component has the specified status and returns the component
+		 *
+		 * @param ctx
+		 * @param selector
+		 * @param status
+		 */
+		waitForComponentStatus(ctx: PlaywrightElContext, selector: string, status: string): CanUndef<Playwright.JSHandle>;
+
+		/**
+		 * Waits for the passed value in the passed property of the component, and returns it
+		 *
+		 * @param ctx
+		 * @param selector
+		 * @param prop
+		 * @param val
+		 *
+		 * @example
+		 * ```typescript
+		 * waitForComponentPropVal(page, '.b-slider', 'module.test', true)
+		 * ```
+		 *
+		 * @returns {!Promise<?Playwright.JSHandle>}
+		 */
+		waitForComponentPropVal(
+			ctx: PlaywrightElContext,
+			selector: string,
+			prop: string,
+			val: unknown
+		): Promise<CanUndef<Playwright.JSHandle>>;
 	}
 
 	/**

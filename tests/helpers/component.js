@@ -8,6 +8,9 @@
 
 // @ts-check
 
+const
+	delay = require('delay');
+
 /**
  * @typedef {import('playwright').Page} Page
  * @typedef {import('playwright').BrowserContext} BrowserContext
@@ -18,12 +21,6 @@
  * Class provides API to work with components on the page
  */
 class Component {
-
-	/**
-	 * Parent class
-	 * @type  {BrowserTests.Helpers}
-	 */
-	#parent;
 
 	/**
 	 * @param {BrowserTests.Helpers} parent
@@ -130,6 +127,73 @@ class Component {
 
 		return components;
 	}
+
+	/**
+	 * @param {Page | ElementHandle} ctx
+	 * @param {string} selector
+	 * @param {string} status
+	 *
+	 * @returns {!Promise<?Playwright.JSHandle>}
+	 */
+	async waitForComponentStatus(ctx, selector, status) {
+		const component = await this.getComponentByQuery(ctx, selector);
+
+		if (!component) {
+			return undefined;
+		}
+
+		await component.evaluate((ctx, status) => new Promise((res) => {
+			if (ctx.componentStatus === status) {
+				res();
+			}
+
+			ctx.on(`status${status.camelize(true)}`, res);
+		}), status);
+
+		return component;
+	}
+
+	/**
+	 * Waits for the passed value in the passed property of the component, and returns the component
+	 *
+	 * @param {Page | ElementHandle} ctx
+	 * @param {string} selector
+	 * @param {string} prop
+	 * @param {*} val
+	 *
+	 * @example
+	 * ```typescript
+	 * waitForComponentPropVal(page, '.b-slider', 'module.test', true)
+	 * ```
+	 *
+	 * @returns {!Promise<?Playwright.JSHandle>}
+	 */
+	async waitForComponentPropVal(ctx, selector, prop, val) {
+		const check = async () => {
+			const
+				c = await this.waitForComponent(ctx, selector),
+				// eslint-disable-next-line no-inline-comments
+				isSettled = await c.evaluate((/** @type any */ ctx, [prop, val]) => ctx.field.get(prop) === val, [prop, val]);
+
+			return isSettled;
+		};
+
+		let
+			res = await check();
+
+		while (!res) {
+			res = await check();
+			await delay(100);
+		}
+
+		return this.getComponentByQuery(ctx, selector);
+	}
+
+	/**
+	 * Parent class
+	 * @type  {BrowserTests.Helpers}
+	 */
+	#parent;
 }
 
 module.exports = Component;

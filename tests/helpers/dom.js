@@ -22,12 +22,6 @@ const
  */
 class DOM {
 	/**
-	 * Parent class
-	 * @type  {BrowserTests.Helpers}
-	 */
-	#parent;
-
-	/**
 	 * @param {BrowserTests.Helpers} parent
 	 */
 	constructor(parent) {
@@ -179,6 +173,12 @@ class DOM {
 			return style && style.visibility !== 'hidden' && hasVisibleBoundingBox;
 		});
 	}
+
+	/**
+	 * Parent class
+	 * @type  {BrowserTests.Helpers}
+	 */
+	#parent;
 }
 
 module.exports = DOM;

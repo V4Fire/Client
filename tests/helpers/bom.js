@@ -23,12 +23,6 @@ const
 class BOM {
 
 	/**
-	 * Parent class
-	 * @type  {BrowserTests.Helpers}
-	 */
-	#parent;
-
-	/**
 	 * @param {BrowserTests.Helpers} parent
 	 */
 	constructor(parent) {
@@ -72,6 +66,11 @@ class BOM {
 		await delay(idleOptions.sleepAfterIdles);
 	}
 
+	/**
+	 * Parent class
+	 * @type  {BrowserTests.Helpers}
+	 */
+	#parent;
 }
 
 module.exports = BOM;

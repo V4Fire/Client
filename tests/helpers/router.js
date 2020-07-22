@@ -18,13 +18,6 @@
  * Class provides API to work with `b-router`.
  */
 class Router {
-
-	/**
-	 * Parent class
-	 * @type  {BrowserTests.Helpers}
-	 */
-	#parent;
-
 	/**
 	 * @param {BrowserTests.Helpers} parent
 	 */
@@ -46,6 +39,12 @@ class Router {
 		await page.waitForLoadState('networkidle');
 		await this.#parent.bom.waitForIdleCallback(page);
 	}
+
+	/**
+	 * Parent class
+	 * @type  {BrowserTests.Helpers}
+	 */
+	#parent;
 }
 
 module.exports = Router;

@@ -21,13 +21,6 @@ const
  * Class provides API to work with scroll on the page
  */
 class Scroll {
-
-	/**
-	 * Parent class
-	 * @type  {BrowserTests.Helpers}
-	 */
-	#parent;
-
 	/**
 	 * @param {BrowserTests.Helpers} parent
 	 */
@@ -108,6 +101,12 @@ class Scroll {
 
 		clearTimeout(timeout);
 	}
+
+	/**
+	 * Parent class
+	 * @type  {BrowserTests.Helpers}
+	 */
+	#parent;
 }
 
 module.exports = Scroll;
