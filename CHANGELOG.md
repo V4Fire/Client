@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* [\[iData\] Fixed the problem when `initLoad` was not called when changing data Provider](https://github.com/V4Fire/Client/pull/293)
 * [\[bVirtualScroll\] Data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match](https://github.com/V4Fire/Client/issues/281)
 * [\[bVirtualScroll\] `lastLoadedChunk.raw` returns undefined](https://github.com/V4Fire/Client/issues/267)
 

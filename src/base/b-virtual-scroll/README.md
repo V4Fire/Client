@@ -25,7 +25,7 @@ A component that will be rendered is passed to the `option` property, this prope
 
 | EventName        | Description     | Payload description      | Payload  |
 | ------------- |-------------| -----|---|
-| dbChange | This event is called after receiving data from the `dataProvider`. The event will not be triggered if an empty response is received from the server. | An array of all uploaded data. | `unknown[]` |
+| dbChange | This event is called after receiving data from the `dataProvider`. The event will not be triggered if an empty response is received from the server. | An array of all uploaded data. | `{data: unknown[]} & Dictionary` |
 | dataChange | This event is called after the trips to the `dataProvider` for one chunk are completed.| An array of uploaded data for the chunk. | `unknown[]` |
 | chunkLoaded | This event is called after every successful response from `dataProvider` | Normalized and raw data from `dataProvider` | `LastLoadedChunk` |
 | chunkLoading | This event is called before every trip to the `dataProvider` | Current page | `number` |
