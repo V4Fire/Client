@@ -381,7 +381,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Initializes data from passed items
+	 * Initializes rendering on the items passed to the component
 	 */
 	@hook('mounted')
 	@watch('options')
