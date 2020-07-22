@@ -15,9 +15,10 @@
 const
 	h = include('tests/helpers');
 
-// eslint-disable-next-line no-inline-comments
-module.exports = (/** @type Page */ page) => {
-
+/**
+ * @param {Page} page
+ */
+module.exports = (page) => {
 	let
 		component,
 		node,
@@ -44,7 +45,6 @@ module.exports = (/** @type Page */ page) => {
 	}, requestProps);
 
 	describe('b-virtual-scroll chunkLoaded event', () => {
-
 		describe('called', () => {
 			it('after loading the first chunk', async () => {
 				const subscribePromise = subscribe();
@@ -63,7 +63,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('when loading the first chunk after reinitialization', async () => {
+			it('when loading the first chunk after re-initialization', async () => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
@@ -94,7 +94,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('при успешной загрузки второго чанка без payload', async () => {
+			it('after successful loading of the second chunk without payload', async () => {
 				await setProps({chunkSize: 12, total: 12});
 				await h.dom.waitForEl(container, 'section');
 
@@ -106,7 +106,7 @@ module.exports = (/** @type Page */ page) => {
 		});
 
 		describe('not called', () => {
-			it('if there was an request error', async () => {
+			it('if there was a request error', async () => {
 				await component.evaluate((ctx) => ctx.watch(':onChunkLoaded', () => ctx.tmp.change = true));
 
 				await setProps({failOn: 0});

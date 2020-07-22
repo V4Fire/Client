@@ -104,19 +104,21 @@ export default class ChunkRequest extends Friend {
 	 * Resets the current state
 	 */
 	reset(): void {
+		this.total = 0;
+		this.page = 1;
+
 		// eslint-disable-next-line capitalized-comments
 		// tslint:disable-next-line: deprecation
 		this.lastLoadedData = [];
-
-		this.total = 0;
-		this.page = 1;
 		this.data = [];
 		this.lastLoadedChunk = {raw: undefined, normalized: []};
+		this.pendingData = [];
+
 		this.isDone = false;
 		this.isLastEmpty = false;
-		this.pendingData = [];
 		this.currentAccumulatedData = undefined;
 		this.currentDataStore = undefined;
+
 		this.async.clearTimeout({label: $$.waitForInitCalls});
 	}
 
@@ -150,11 +152,11 @@ export default class ChunkRequest extends Friend {
 			);
 		};
 
-		if (dataProvider === undefined) {
+		if (dataProvider == null) {
 			this.onRequestsDone();
 		}
 
-		if (this.pendingData.length < chunkSize && Object.isString(dataProvider)) {
+		if (this.pendingData.length < chunkSize && dataProvider != null) {
 			if (!this.isDone) {
 				this.currentAccumulatedData = this.ctx.db?.data;
 				await this.try(false);
@@ -176,7 +178,7 @@ export default class ChunkRequest extends Friend {
 			this.chunkRender.setRefVisibility('empty', true);
 		}
 
-		if (this.currentData === undefined && Object.isTruly(this.ctx.db)) {
+		if (this.currentData === undefined && Array.isArray(this.ctx.db?.data)) {
 			this.currentData = this.ctx.db!.data;
 		}
 
@@ -188,7 +190,7 @@ export default class ChunkRequest extends Friend {
 	 *
 	 * @param [initialCall]
 	 *
-	 * @emits dbChange({data: unknown[]} & Dictionary)
+	 * @emits dbChange(data: RemoteData)
 	 * @emits chunkLoading(page: number)
 	 */
 	try(initialCall: boolean = true): Promise<CanUndef<RemoteData>> {
@@ -211,7 +213,7 @@ export default class ChunkRequest extends Friend {
 		}
 
 		const updateCurrentData = () => {
-			if (this.currentAccumulatedData !== undefined) {
+			if (this.currentAccumulatedData != null) {
 				this.currentData = this.currentAccumulatedData;
 				this.currentAccumulatedData = undefined;
 			}
@@ -228,7 +230,7 @@ export default class ChunkRequest extends Friend {
 
 		const cantRequest = () => this.isDone ||
 			!shouldRequest ||
-			ctx.dataProvider === undefined ||
+			ctx.dataProvider == null ||
 			ctx.mods.progress === 'true';
 
 		if (cantRequest()) {
@@ -244,7 +246,7 @@ export default class ChunkRequest extends Friend {
 
 		return this.load()
 			.then((v) => {
-				if (!Object.isTruly(ctx.field.get('data.length', v))) {
+				if (Object.size(v?.data) === 0) {
 					this.isLastEmpty = true;
 
 					this.shouldStopRequest(this.ctx.buildState({
@@ -261,14 +263,14 @@ export default class ChunkRequest extends Friend {
 				}
 
 				const
-					{data} = <RemoteData>v;
+					data = (<RemoteData>v).data!;
 
 				this.page++;
 				this.isLastEmpty = false;
 
 				this.data = this.data.concat(data);
 				this.pendingData = this.pendingData.concat(data);
-				this.currentAccumulatedData = (this.currentAccumulatedData ?? []).concat(v!.data);
+				this.currentAccumulatedData = Array.concat(this.currentAccumulatedData ?? [], data);
 
 				this.ctx.emit('dbChange', {...v, data: this.data});
 				this.shouldStopRequest(this.ctx.getCurrentState());

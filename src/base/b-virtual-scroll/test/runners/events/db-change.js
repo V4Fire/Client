@@ -15,8 +15,10 @@
 const
 	h = include('tests/helpers');
 
-// eslint-disable-next-line no-inline-comments
-module.exports = (/** @type Page */ page) => {
+/**
+ * @param {Page} page
+ */
+module.exports = (page) => {
 
 	let
 		component,
@@ -62,7 +64,7 @@ module.exports = (/** @type Page */ page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('after loading the first chunk after reinitialization', async () => {
+			it('after loading the first chunk after re-initialization', async () => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
@@ -149,7 +151,7 @@ module.exports = (/** @type Page */ page) => {
 
 			});
 
-			it('after reinitializing and loading the first chunk', async () => {
+			it('after re-initialization and loading the first chunk', async () => {
 				await setProps({chunkSize: 6});
 				await h.dom.waitForEl(container, 'section');
 

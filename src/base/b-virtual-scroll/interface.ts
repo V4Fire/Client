@@ -193,6 +193,6 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 	buildState: CTX['buildState'];
 }
 
-export type MergeStateParams = {
+export type MergeDataStateParams = {
 	[key in keyof DataState]?: DataState[key];
 };

@@ -47,7 +47,7 @@ export interface RequestQuery {
 	sleep?: number;
 
 	/**
-	 * Indicates on which request to fail (return 500)
+	 * Number of requests that should be completed for start generating an error
 	 */
 	failOn?: number;
 

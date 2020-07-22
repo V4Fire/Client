@@ -178,14 +178,12 @@ export default class ComponentRender extends Friend {
 		const
 			{ctx: c, scrollRender: {items: totalItems}} = this;
 
-		/* eslint-disable implicit-arrow-linebreak */
 		const getOption = (itemParas: OptionEl, index: number) =>
 			Object.isFunction(c.option) ? c.option(itemParas, index) : c.option;
 
 		const render = (children: DataToRender[]) =>
 			<HTMLElement[]>c.vdom.render(children.map(({itemAttrs, itemParams, index}) =>
 				this.createElement(getOption(itemParams, index), itemAttrs)));
-		/* eslint-enable  implicit-arrow-linebreak */
 
 		const getChildrenAttrs = (props: Dictionary) => ({
 			attrs: {

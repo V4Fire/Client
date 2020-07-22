@@ -15,8 +15,10 @@
 const
 	h = include('tests/helpers');
 
-// eslint-disable-next-line no-inline-comments
-module.exports = (/** @type Page */ page) => {
+/**
+ * @param {Page} page
+ */
+module.exports = (page) => {
 
 	let
 		component,
@@ -46,7 +48,7 @@ module.exports = (/** @type Page */ page) => {
 
 	describe('b-virtual-scroll rendering', () => {
 
-		describe('after reinitialization', () => {
+		describe('after re-initialization', () => {
 
 			describe('by changing the `request` prop', () => {
 				it('removes old elements', async () => {

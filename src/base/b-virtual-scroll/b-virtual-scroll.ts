@@ -55,7 +55,7 @@ import {
 	LocalState,
 	RequestQueryFn,
 	DataState,
-	MergeStateParams,
+	MergeDataStateParams,
 	UnsafeBVirtualScroll
 
 } from 'base/b-virtual-scroll/interface';
@@ -290,9 +290,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Returns an object with the current state of the component
-	 *
-	 * @param [overrideParams]
+	 * Returns an object with the current data state of the component
 	 *
 	 * @typeParam ITEM - data item to render
 	 * @typeParam RAW - raw provider data without any processing
@@ -301,7 +299,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		ITEM extends unknown = unknown,
 		RAW extends unknown = unknown
 	>(): DataState<ITEM, RAW> {
-		let overrideParams: MergeStateParams = {};
+		let overrideParams: MergeDataStateParams = {};
 
 		if (this.componentStatus !== 'ready' || !Object.isTruly(this.dataProvider)) {
 			overrideParams = {
@@ -327,7 +325,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		ITEM extends unknown = unknown,
 		RAW extends unknown = unknown
 	>(
-		overrideParams?: MergeStateParams,
+		overrideParams?: MergeDataStateParams,
 		chunkRequest?: ChunkRequest,
 		chunkRender?: ChunkRender
 	): DataState<ITEM, RAW> {

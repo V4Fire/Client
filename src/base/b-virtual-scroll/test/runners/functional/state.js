@@ -15,8 +15,10 @@
 const
 	h = include('tests/helpers');
 
-// eslint-disable-next-line no-inline-comments
-module.exports = (/** @type Page */ page) => {
+/**
+ * @param {Page} page
+ */
+module.exports = (page) => {
 
 	let
 		component,
@@ -119,7 +121,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('after reinitialization and without `dataProvider`', async () => {
+			it('after re-initialization and without `dataProvider`', async () => {
 				const expected = getExpected({currentPage: 0, nextPage: 1});
 
 				await setProps();
@@ -137,7 +139,7 @@ module.exports = (/** @type Page */ page) => {
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('after reinitialization and with `dataProvider`', async () => {
+			it('after re-initialization and with `dataProvider`', async () => {
 				const expected = getExpected({
 					currentPage: 1,
 					nextPage: 2,
