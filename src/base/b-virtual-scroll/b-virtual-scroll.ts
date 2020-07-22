@@ -345,21 +345,24 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		this.localState = 'init';
 
-		if (Object.isTruly(this.field.get('data.length', this.db))) {
+		const
+			{data, total} = this.db;
+
+		if (data && data.length > 0) {
 			const lastLoadedChunk = {
-				normalized: this.db.data!,
+				normalized: data,
 				raw: this.chunkRequest.lastLoadedChunk.raw
 			};
 
 			const params = this.buildState({
-				lastLoadedData: this.db.data,
+				lastLoadedData: data,
 				lastLoadedChunk
 			});
 
 			this.chunkRequest.lastLoadedChunk = lastLoadedChunk;
 			this.chunkRequest.shouldStopRequest(params);
-			this.chunkRequest.data = this.db.data!;
-			this.total = Object.isNumber(this.db.total) ? this.db.total : undefined;
+			this.chunkRequest.data = data;
+			this.total = total;
 
 		} else {
 			this.chunkRequest.isLastEmpty = true;
