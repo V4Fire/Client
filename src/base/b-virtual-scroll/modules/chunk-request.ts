@@ -268,7 +268,7 @@ export default class ChunkRequest extends Friend {
 				this.pendingData = this.pendingData.concat(data);
 				this.currentAccumulatedData = (this.currentAccumulatedData ?? []).concat(v!.data);
 
-				this.ctx.emit('dbChange', {...data, data: this.data});
+				this.ctx.emit('dbChange', {...v, data: this.data});
 				this.shouldStopRequest(this.ctx.getCurrentState());
 
 				if (this.pendingData.length < ctx.chunkSize) {
