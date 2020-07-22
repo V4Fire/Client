@@ -60,8 +60,8 @@ export default class ComponentRender extends Friend {
 	/**
 	 * Classname for options
 	 */
-	get optionClass(): string {
-		return this.ctx.block!.getFullElName('option-el');
+	get optionClass(): CanUndef<string> {
+		return this.ctx.block?.getFullElName('option-el');
 	}
 
 	/**

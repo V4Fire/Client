@@ -327,9 +327,9 @@ export default class ChunkRequest extends Friend {
 				this.lastLoadedChunk.raw = data;
 
 				const
-					converted = Object.isTruly(data) ? ctx.convertDataToDB<RemoteData>(data) : undefined;
+					converted = data != null ? ctx.convertDataToDB<RemoteData>(data) : undefined;
 
-				this.lastLoadedChunk.normalized = !Object.isTruly(converted?.data?.length) ?
+				this.lastLoadedChunk.normalized = Object.size(converted?.data) < 0 ?
 					this.lastLoadedChunk.normalized = [] :
 					this.lastLoadedChunk.normalized = converted!.data!;
 
