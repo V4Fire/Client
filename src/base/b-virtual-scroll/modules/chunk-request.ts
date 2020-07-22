@@ -12,7 +12,7 @@ import Friend from 'super/i-block/modules/friend';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
-import { RemoteData, CurrentState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
+import { RemoteData, DataState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -294,7 +294,7 @@ export default class ChunkRequest extends Friend {
 	 * Checks possibility of another request for data
 	 * @param params
 	 */
-	shouldStopRequest(params: CurrentState): boolean {
+	shouldStopRequest(params: DataState): boolean {
 		const {ctx} = this;
 		this.isDone = ctx.shouldStopRequest(params);
 

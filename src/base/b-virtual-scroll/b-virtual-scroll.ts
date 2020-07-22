@@ -54,7 +54,7 @@ import {
 	RemoteData,
 	LocalState,
 	RequestQueryFn,
-	CurrentState,
+	DataState,
 	MergeStateParams,
 	UnsafeBVirtualScroll
 
@@ -163,7 +163,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * When this function returns true the component will be able to request additional data
 	 */
-	@prop({type: Function, default: (v: CurrentState) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v: DataState) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
@@ -300,7 +300,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	getCurrentState<
 		ITEM extends unknown = unknown,
 		RAW extends unknown = unknown
-	>(): CurrentState<ITEM, RAW> {
+	>(): DataState<ITEM, RAW> {
 		let overrideParams: MergeStateParams = {};
 
 		if (this.componentStatus !== 'ready' || !Object.isTruly(this.dataProvider)) {
@@ -330,7 +330,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		overrideParams?: MergeStateParams,
 		chunkRequest?: ChunkRequest,
 		chunkRender?: ChunkRender
-	): CurrentState<ITEM, RAW> {
+	): DataState<ITEM, RAW> {
 		return getRequestParams(chunkRequest, chunkRender, overrideParams);
 	}
 

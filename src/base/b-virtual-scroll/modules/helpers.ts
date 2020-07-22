@@ -8,7 +8,7 @@
 
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
-import { CurrentState } from 'base/b-virtual-scroll/interface';
+import { DataState } from 'base/b-virtual-scroll/interface';
 
 /**
  * Returns accumulated data among `b-virtual-scroll`,` chunk-render`, `chunk-request` and passes it to the client
@@ -25,14 +25,14 @@ export function getRequestParams<ITEM extends unknown = unknown, RAW extends unk
 	chunkRequestCtx?: ChunkRequest,
 	chunkRenderCtx?: ChunkRender,
 	merge?: Dictionary
-): CurrentState<ITEM, RAW> {
+): DataState<ITEM, RAW> {
 	const
 		component = chunkRenderCtx?.component ?? chunkRequestCtx?.component,
 		pendingData = chunkRequestCtx?.pendingData ?? [];
 
 	const lastLoadedData = <CanUndef<ITEM[]>>chunkRequestCtx?.lastLoadedChunk.normalized;
 
-	const base: CurrentState<ITEM, RAW> = {
+	const base: DataState<ITEM, RAW> = {
 		currentPage: 0,
 		nextPage: 1,
 
@@ -72,7 +72,7 @@ export function getRequestParams<ITEM extends unknown = unknown, RAW extends unk
 		base;
 
 	const
-		mergeLastLoadedChunk = <CurrentState['lastLoadedChunk']>merge?.lastLoadedChunk;
+		mergeLastLoadedChunk = <DataState['lastLoadedChunk']>merge?.lastLoadedChunk;
 
 	const merged = {
 		...params,
@@ -83,7 +83,7 @@ export function getRequestParams<ITEM extends unknown = unknown, RAW extends unk
 		}
 	};
 
-	return <CurrentState<ITEM, RAW>>{
+	return <DataState<ITEM, RAW>>{
 		...merged,
 		nextPage: merged.currentPage + 1
 	};

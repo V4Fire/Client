@@ -10,10 +10,10 @@ import { UnsafeIData } from 'super/i-data/i-data';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
-	(params: CurrentState<T>): Dictionary<Dictionary>;
+	(params: DataState<T>): Dictionary<Dictionary>;
 }
 export interface RequestFn<T extends unknown = unknown> {
-	(params: CurrentState<T>): boolean;
+	(params: DataState<T>): boolean;
 }
 
 export interface GetData<T extends unknown = unknown> {
@@ -41,7 +41,7 @@ export interface OptionEl<T extends unknown = unknown> {
  * @typeParam ITEM - data item to render
  * @typeParam RAW - raw provider data without any processing
  */
-export interface CurrentState<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
+export interface DataState<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -194,5 +194,5 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 }
 
 export type MergeStateParams = {
-	[key in keyof CurrentState]?: CurrentState[key];
+	[key in keyof DataState]?: DataState[key];
 };
