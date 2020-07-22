@@ -16,9 +16,13 @@ const
 	Utils = require('./utils'),
 	Component = require('./component'),
 	Scroll = require('./scroll'),
-	Router = require('./router');
+	Router = require('./router'),
+	Request = require('./request');
 
 class Helpers {
+	/** @see Request */
+	request = new Request(this);
+
 	/** @see Utils */
 	utils = new Utils(this);
 

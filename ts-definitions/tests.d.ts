@@ -68,6 +68,9 @@ declare namespace BrowserTests {
 
 		/** @see Scroll */
 		scroll: Scroll;
+
+		/** @see Request */
+		request: Request;
 	}
 
 	/**
@@ -471,6 +474,15 @@ declare namespace BrowserTests {
 		): Promise<void>;
 	}
 
+	class Request {
+		/**
+		 * Returns a promise that will be resolved after all specified URLs will be requested
+		 *
+		 * @param page
+		 * @param urls
+		 */
+		waitForRequests(page: Playwright.Page, urls: string[]): Promise<void>;
+	}
 }
 
 declare namespace Tests {
