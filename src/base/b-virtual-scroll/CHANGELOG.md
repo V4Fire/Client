@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* [Added life cycle events](https://github.com/V4Fire/Client/issues/205)
+* [Added life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
 
 #### :bug: Bug Fix
 
@@ -23,7 +23,7 @@ Changelog
 #### :house: Internal
 
 * [Refactoring of tests](https://github.com/V4Fire/Client/pull/293)
-* [Fixed ESLint warnings](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
 
 ## v3.0.0-rc.31 (2020-06-17)
 

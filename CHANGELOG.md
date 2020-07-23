@@ -21,7 +21,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed reloading of a component after changing its data provider `iData`](https://github.com/V4Fire/Client/pull/293)
-* [Fixed data in the `lastLoadedData` and `lastLoadedChunk.normalized` fields do not match `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
+* [Fixed an issue when data from `lastLoadedData` and `lastLoadedChunk.normalized` aren't synchronized `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
 * [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
 
 #### :house: Internal
