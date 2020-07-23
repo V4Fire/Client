@@ -19,7 +19,6 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-
 	let
 		component,
 		node,
@@ -47,9 +46,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-virtual-scroll rendering', () => {
-
 		describe('after re-initialization', () => {
-
 			describe('by changing the `request` prop', () => {
 				it('removes old elements', async () => {
 					await setProps();

@@ -41,8 +41,7 @@ module.exports = (page) => {
 	}, requestProps);
 
 	describe('b-virtual-scroll chunkLoaded event', () => {
-
-		describe('called', () => {
+		describe('emitted', () => {
 			it('when loading the first chunk', async () => {
 				const subscribePromise = subscribe();
 

@@ -19,7 +19,7 @@ import { DataState } from 'base/b-virtual-scroll/interface';
  * @param [merge]
  *
  * @typeParam ITEM - data item to render
- * @typeParam RAW - raw provider data without any processing
+ * @typeParam RAW - raw provider data
  */
 export function getRequestParams<ITEM extends unknown = unknown, RAW extends unknown = unknown>(
 	chunkRequestCtx?: ChunkRequest,

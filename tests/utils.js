@@ -14,7 +14,7 @@ const
 	pzlr = require('@pzlr/build-core');
 
 /**
- * Class provides API for working with launching / configuring / receiving tests
+ * Class provides API to work with launching / configuring / receiving tests
  */
 class TestUtils {
 	/**

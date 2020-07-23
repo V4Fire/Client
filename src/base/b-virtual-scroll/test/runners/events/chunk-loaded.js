@@ -45,7 +45,7 @@ module.exports = (page) => {
 	}, requestProps);
 
 	describe('b-virtual-scroll chunkLoaded event', () => {
-		describe('called', () => {
+		describe('emitted', () => {
 			it('after loading the first chunk', async () => {
 				const subscribePromise = subscribe();
 				await setProps();
@@ -73,7 +73,7 @@ module.exports = (page) => {
 				await expectAsync(subscribePromise).toBeResolved();
 			});
 
-			it('three times to get a full data batch', async () => {
+			it('three times to get the full data batch', async () => {
 				await component.evaluate((ctx) => {
 					ctx.watch(':onChunkLoaded', () => {
 						ctx.tmp.called = (ctx.tmp.called ?? 0) + 1;
@@ -105,7 +105,7 @@ module.exports = (page) => {
 			});
 		});
 
-		describe('not called', () => {
+		describe('not emitted', () => {
 			it('if there was a request error', async () => {
 				await component.evaluate((ctx) => ctx.watch(':onChunkLoaded', () => ctx.tmp.change = true));
 

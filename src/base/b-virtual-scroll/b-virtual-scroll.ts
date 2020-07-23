@@ -293,7 +293,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Returns an object with the current data state of the component
 	 *
 	 * @typeParam ITEM - data item to render
-	 * @typeParam RAW - raw provider data without any processing
+	 * @typeParam RAW - raw provider data
 	 */
 	getCurrentDataState<
 		ITEM extends unknown = unknown,
@@ -319,7 +319,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @param [chunkRender]
 	 *
 	 * @typeParam ITEM - data item to render
-	 * @typeParam RAW - raw provider data without any processing
+	 * @typeParam RAW - raw provider data
 	 */
 	protected getDataStateSnapshot<
 		ITEM extends unknown = unknown,
@@ -406,7 +406,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Synchronization for the component props
+	 * Synchronization of the component prop
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
 	protected syncPropsWatcher(): CanPromise<void> {

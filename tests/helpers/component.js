@@ -18,7 +18,7 @@ const
  */
 
 /**
- * Class provides API to work with components on the page
+ * Class provides API to work with components on a page
  */
 class Component {
 	/**

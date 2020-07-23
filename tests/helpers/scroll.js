@@ -18,7 +18,7 @@ const
  */
 
 /**
- * Class provides API to work with scroll on the page
+ * Class provides API to work with the page scroll
  */
 class Scroll {
 	/**

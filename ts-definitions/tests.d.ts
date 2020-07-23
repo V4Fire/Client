@@ -48,7 +48,7 @@ declare function include<PATH extends keyof IncludeReturns>(path: PATH, ...args:
 
 declare namespace BrowserTests {
 	/**
-	 * Helpers for writing browser tests
+	 * Helpers to write browser tests
 	 */
 	class Helpers {
 		/** @see Utils */
@@ -136,13 +136,13 @@ declare namespace BrowserTests {
 	 */
 	interface WaitForElOptions {
 		/**
-		 * The delay between trying to find an element on the page
+		 * The delay between trying to find an element on a page
 		 * @default `100`
 		 */
 		sleep?: number;
 
 		/**
-		 * Time after which the function stops trying to find an element on the page and returns `undefined`
+		 * Time after which the function stops trying to find an element on a page and returns `undefined`
 		 * @default `2000`
 		 */
 		timeout?: number;
@@ -150,8 +150,8 @@ declare namespace BrowserTests {
 		/**
 		 * Event to wait
 		 *
-		 *  * `mount` – element attached to the page
-		 *  * `unmount` – element detached from the page
+		 *  * `mount` – element attached to a page
+		 *  * `unmount` – element detached from a page
 		 *
 		 * @default `mount`
 		 */
@@ -161,7 +161,7 @@ declare namespace BrowserTests {
 	type PlaywrightElContext = Playwright.ElementHandle | Playwright.JSHandle | Playwright.Page;
 
 	/**
-	 * Provides API for setting browser environment
+	 * Provides API to set browser environment
 	 */
 	class Utils {
 		/**
@@ -183,11 +183,11 @@ declare namespace BrowserTests {
 	}
 
 	/**
-	 * Class provides API to work with components on the page
+	 * Class provides API to work with components on a page
 	 */
 	class Component {
 		/**
-		 * Sets props to the component and waits until `requestIdleCallback`
+		 * Sets props to a component by the specified selector `requestIdleCallback`
 		 *
 		 * @param page
 		 * @param componentSelector
@@ -509,7 +509,7 @@ declare namespace Tests {
 	}
 
 	/**
-	 * Helper function for test setup
+	 * Helper function to test setup
 	 */
 	interface TestUtils {
 		/**

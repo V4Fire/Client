@@ -41,7 +41,7 @@ export interface OptionEl<T extends unknown = unknown> {
 
 /**
  * @typeParam ITEM - data item to render
- * @typeParam RAW - raw provider data without any processing
+ * @typeParam RAW - raw provider data
  */
 export interface DataState<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
@@ -89,7 +89,7 @@ export interface DataState<ITEM extends unknown = unknown, RAW extends unknown =
 		normalized: ITEM[];
 
 		/**
-		 * Raw provider data without any processing
+		 * Raw provider data
 		 */
 		raw: CanUndef<RAW>;
 	};
@@ -141,7 +141,7 @@ export interface RenderItem<T extends unknown = unknown> {
 }
 
 /**
- * Attributes for items to render
+ * Attributes of items to render
  */
 export type ItemAttrs = {
 	[prop in keyof ComponentVNodeData]?: ComponentVNodeData[prop];
@@ -151,7 +151,7 @@ export type ItemAttrs = {
  * Last loaded data chunk
  *
  * @typeParam DATA - data to render
- * @typeParam RAW - raw provider data without any processing
+ * @typeParam RAW - raw provider data
  */
 export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends unknown = unknown> {
 	normalized: DATA;

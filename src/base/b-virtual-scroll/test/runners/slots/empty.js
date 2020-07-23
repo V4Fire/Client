@@ -15,9 +15,10 @@
 const
 	h = include('tests/helpers');
 
-// eslint-disable-next-line no-inline-comments
-module.exports = (/** @type Page */ page) => {
-
+/**
+ * @param {Page} page
+ */
+module.exports = (page) => {
 	const components = {
 		withSlot: undefined,
 		noSlot: undefined,

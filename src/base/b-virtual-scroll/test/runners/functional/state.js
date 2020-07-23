@@ -72,7 +72,6 @@ module.exports = (page) => {
 	}, requestProps);
 
 	describe('b-virtual-scroll getCurrentDataState', () => {
-
 		describe('returns the correct value', () => {
 			it('if there is no `dataProvider`', async () => {
 				const expected = getExpected({currentPage: 0, nextPage: 1});
@@ -184,7 +183,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-virtual-scroll getDataStateSnapshot', () => {
-
 		describe('returns the correct value', () => {
 			it('with `chunkRequest` and `chunkRender`', async () => {
 				const expected = getExpected();
