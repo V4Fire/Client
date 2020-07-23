@@ -29,7 +29,8 @@
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components",
     "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
-    "test:components": "npx gulp test:components --reinit-browser true",
+    "test:components": "npx gulp test:components",
+    "test:components:chrome": "npx gulp test:components --browsers chromium",
     "up": "npm i && npm up && npm audit fix"
   },
   "husky": {
@@ -123,9 +124,9 @@
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
-    "@v4fire/linters": "^1.4.0",
+    "@v4fire/linters": "^1.5.2",
     "husky": "^4.2.5",
     "nyc": "^15.1.0",
-    "playwright": "1.0.2"
+    "playwright": "^1.2.1"
   }
 }
