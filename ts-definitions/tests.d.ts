@@ -519,5 +519,4 @@ declare namespace Tests {
 		 */
 		getCurrentTest(options?: GetCurrentTestOptions): Function;
 	}
-
 }
