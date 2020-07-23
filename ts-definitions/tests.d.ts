@@ -202,7 +202,7 @@ declare namespace BrowserTests {
 		): Promise<CanUndef<Playwright.JSHandle>>;
 
 		/**
-		 * Reloads the page, waits for `idleCallback`, sets the passed props to the component, waits for `idleCallback`
+		 * Reloads the page, waits for `idleCallback`, sets the passed props to a component, waits for `idleCallback`
 		 *
 		 * @param page
 		 * @param componentSelector
@@ -236,7 +236,7 @@ declare namespace BrowserTests {
 		getComponentById(page: PlaywrightElContext, id: string): Promise<CanUndef<Playwright.JSHandle>>;
 
 		/**
-		 * Returns the component by id
+		 * Returns a component by id
 		 *
 		 * @param ctx
 		 * @param selector
@@ -244,7 +244,7 @@ declare namespace BrowserTests {
 		getComponentByQuery(ctx: PlaywrightElContext, selector: string): Promise<CanUndef<Playwright.JSHandle>>;
 
 		/**
-		 * Returns the component by the specified selector
+		 * Returns a component by the specified selector
 		 *
 		 * @param ctx
 		 * @param componentSelector
@@ -267,7 +267,7 @@ declare namespace BrowserTests {
 		waitForComponentStatus(ctx: PlaywrightElContext, selector: string, status: string): CanUndef<Playwright.JSHandle>;
 
 		/**
-		 * Waits for the passed value in the passed property of the component, and returns it
+		 * Waits for the passed value in the passed property of a component, and returns it
 		 *
 		 * @param ctx
 		 * @param selector
