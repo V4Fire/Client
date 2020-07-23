@@ -37,8 +37,6 @@ You can use `dbConverter` to convert data to match this interface.
 To specify what kind of component to render, you have to use the `option` property.
 Mind, the property can be defined as a string or function.
 
-A component that will be rendered is passed to the `option` property, this property can also be a function.
-
 ### Events
 
 | EventName     | Description     | Payload description      | Payload  |
