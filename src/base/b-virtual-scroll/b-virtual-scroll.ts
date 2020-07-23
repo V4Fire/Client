@@ -213,7 +213,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return {
 			get: {
 				...this.requestQuery?.(this.buildState())?.get,
-				...(<CanUndef<Dictionary<Dictionary>>>this.request)?.get
+				...Object.isDictionary(this.request?.get) ? this.request?.get : undefined
 			}
 		};
 	}
