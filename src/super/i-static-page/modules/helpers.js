@@ -168,15 +168,15 @@ function normalizeAttrs(attrs) {
 	return normalizedAttrs;
 }
 
-exports.loadLibs = initLibs;
+exports.initLibs = initLibs;
 
 /**
- * Initializes the specified libs.
+ * Initializes the specified libraries.
  * The function returns a list of initialized libraries to load.
  *
  * @param {(Libs|StyleLibs)} libs
  * @param {Object=} [assets] - map with assets
- * @returns {!Array<(InitializedLib|InitializedStyleLib)>}
+ * @returns {!Promise<!Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
 async function initLibs(libs, assets) {
 	const
@@ -229,10 +229,61 @@ async function initLibs(libs, assets) {
 			p.src = requireAsLib({name: key, relative: !inline}, cwd, p.src);
 		}
 
+		if (p.inline) {
+			while (!fs.existsSync(src)) {
+				await delay(500);
+			}
+
+		} else {
+			p.src = webpack.publicPath(p.src);
+		}
+
 		res.push(p);
 	}
 
 	return res;
+}
+
+exports.loadLibs = loadLibs;
+
+/**
+ * Initializes and loads the specified libraries.
+ * The function returns declaration to load libraries.
+ *
+ * @param {Libs} libs
+ * @param {Object=} [assets] - map with assets
+ * @returns {!Promise<string>}
+ */
+async function loadLibs(libs, assets) {
+	return (await initLibs(libs, assets)).reduce((res, lib) => res + getLinkDecl(lib), '');
+}
+
+exports.loadStyles = loadStyles;
+
+/**
+ * Initializes and loads the specified style libraries.
+ * The function returns declaration to load libraries.
+ *
+ * @param {StyleLibs} libs
+ * @param {Object=} [assets] - map with assets
+ * @returns {!Promise<string>}
+ */
+async function loadStyles(libs, assets) {
+	return (await initLibs(libs, assets)).reduce((res, lib) => res + getStyleDecl(lib), '');
+}
+
+exports.loadLinks = loadLinks;
+
+/**
+ * Initializes and loads the specified links.
+ * The function returns declaration to load links.
+ *
+ * @param {Links} libs
+ * @param {Object=} [assets] - map with assets
+ * @returns {!Promise<string>}
+ */
+async function loadLinks(libs, assets) {
+	return (await initLibs(libs, assets)).reduce((res, lib) => res + getLinkDecl(lib), '');
 }
 
 exports.requireAsLib = requireAsLib;
