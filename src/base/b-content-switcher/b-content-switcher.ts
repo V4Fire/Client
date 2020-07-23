@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools/deprecation';
+
 import symbolGenerator from 'core/symbol';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
@@ -283,6 +285,17 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 
 		this.contentLengthStore += addedNodes.length - removedNodes.length;
 		iObserveDOM.onDOMChange(this, records);
+	}
+
+	/**
+	 * Warns that the component is deprecated
+	 */
+	@hook('created')
+	protected showDeprecatedMessage(): void {
+		deprecate({
+			name: 'b-content-switcher',
+			type: 'component'
+		});
 	}
 
 	/**

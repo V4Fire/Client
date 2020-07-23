@@ -13,7 +13,7 @@
 - template index() extends ['i-data'].index
 	- block body
 		< .&__wrapper
-			< .&__container ref = container
+			< .&__container ref = container | -test-ref = container
 
 			< .&__tombstones &
 				ref = tombstones |
