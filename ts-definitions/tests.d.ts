@@ -388,7 +388,7 @@ declare namespace BrowserTests {
 	 */
 	class Router {
 		/**
-		 * Calls the specified method on the router and passes it the specified list of arguments
+		 * Calls the specified method on a router with providing of arguments
 		 *
 		 * @param page
 		 * @param method
