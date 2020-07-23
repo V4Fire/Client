@@ -406,7 +406,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Synchronization of the component prop
+	 * Synchronization of the component props
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
 	protected syncPropsWatcher(): CanPromise<void> {

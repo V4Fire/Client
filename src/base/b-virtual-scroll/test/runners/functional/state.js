@@ -19,7 +19,6 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-
 	let
 		component,
 		node,

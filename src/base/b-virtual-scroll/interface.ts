@@ -101,7 +101,7 @@ export interface DataState<ITEM extends unknown = unknown, RAW extends unknown =
 	lastLoadedData: ITEM[];
 
 	/**
-	 * Total property from loaded data
+	 * `total` property from loaded data
 	 */
 	total: CanUndef<number>;
 }
