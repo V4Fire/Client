@@ -26,7 +26,7 @@ const
 	isURL = /^(\w+:)?\/\//;
 
 const
-	libDest = path.join(src.clientOutput(), webpack.outputPattern({name: 'lib'}));
+	libDest = path.join(src.clientOutput(), webpack.output({name: 'lib'}));
 
 exports.getScriptDecl = getScriptDecl;
 
@@ -39,7 +39,7 @@ exports.getScriptDecl = getScriptDecl;
  * @returns {(Promise<string>|string)}
  */
 function getScriptDecl(lib, body) {
-	if (!lib.load) {
+	if (lib.load === false || isFolder.test(lib.src)) {
 		return '';
 	}
 
@@ -83,10 +83,14 @@ function getStyleDecl(lib, body) {
 		return `<style>${body}</style>`;
 	}
 
+	const
+		rel = lib.attrs?.rel ?? 'stylesheet';
+
 	const normalizedAttrs = normalizeAttrs({
 		...Object.reject(lib, ['src', 'source', 'inline', 'defer']),
-		...lib.inline || body ? null : {href: lib.src, rel: 'stylesheet'},
-		...lib.attrs
+		...lib.attrs,
+		...lib.inline || body ? null : {href: lib.src, rel},
+		...lib.defer ? {rel: 'preload', onload: `this.rel='${rel}'`} : null
 	});
 
 	const
@@ -151,7 +155,7 @@ function normalizeAttrs(attrs) {
 
 	Object.keys(attrs).forEach((key) => {
 		const
-			val = lib[key];
+			val = attrs[key];
 
 		if (val === undefined) {
 			return;
@@ -160,7 +164,7 @@ function normalizeAttrs(attrs) {
 		if (Object.isString(val)) {
 			normalizedAttrs.push(`${key}="${val}"`);
 
-		} else {
+		} else if (val) {
 			normalizedAttrs.push(key);
 		}
 	});
@@ -182,14 +186,8 @@ async function initLibs(libs, assets) {
 	const
 		res = [];
 
-	for (const el of libs.entries()) {
-		const
-			[key, val] = el.value;
-
-		const
-			p = Object.isString(val) ? {src: val} : {...val};
-
-		p.key = key;
+	for (const [key, val] of libs.entries()) {
+		const p = Object.isString(val) ? {src: val} : {...val};
 		p.inline = webpack.fatHTML() || p.inline;
 
 		let
@@ -221,12 +219,12 @@ async function initLibs(libs, assets) {
 
 			p.src = path.join(cwd, Object.isObject(p.src) ? p.src.path : p.src);
 
-			if (!inline) {
+			if (!p.inline) {
 				p.src = path.relative(src.clientOutput(), p.src);
 			}
 
 		} else {
-			p.src = requireAsLib({name: key, relative: !inline}, cwd, p.src);
+			p.src = requireAsLib({name: key, relative: !p.inline}, cwd, p.src);
 		}
 
 		if (p.inline) {
@@ -255,7 +253,15 @@ exports.loadLibs = loadLibs;
  * @returns {!Promise<string>}
  */
 async function loadLibs(libs, assets) {
-	return (await initLibs(libs, assets)).reduce((res, lib) => res + getLinkDecl(lib), '');
+	let
+		res = '';
+
+	for (const lib of await initLibs(libs, assets)) {
+		lib.defer = lib.defer !== false;
+		res += await getScriptDecl(lib);
+	}
+
+	return res;
 }
 
 exports.loadStyles = loadStyles;
@@ -269,7 +275,15 @@ exports.loadStyles = loadStyles;
  * @returns {!Promise<string>}
  */
 async function loadStyles(libs, assets) {
-	return (await initLibs(libs, assets)).reduce((res, lib) => res + getStyleDecl(lib), '');
+	let
+		res = '';
+
+	for (const lib of await initLibs(libs, assets)) {
+		lib.defer = lib.defer !== false;
+		res += await getStyleDecl(lib);
+	}
+
+	return res;
 }
 
 exports.loadLinks = loadLinks;
@@ -283,7 +297,14 @@ exports.loadLinks = loadLinks;
  * @returns {!Promise<string>}
  */
 async function loadLinks(libs, assets) {
-	return (await initLibs(libs, assets)).reduce((res, lib) => res + getLinkDecl(lib), '');
+	let
+		res = '';
+
+	for (const lib of await initLibs(libs, assets)) {
+		res += await getLinkDecl(lib);
+	}
+
+	return res;
 }
 
 exports.requireAsLib = requireAsLib;
@@ -325,29 +346,28 @@ function requireAsLib({name, relative = true} = {}, ...paths) {
 		needHash = Boolean(webpack.hashFunction()),
 		cache = srcIsFolder ? folders : files;
 
+	if (cache[name]) {
+		return cache[name];
+	}
+
 	let
 		fileContent,
 		newSrc;
 
 	if (srcIsFolder) {
-		if (!cache[name]) {
-			const hash = needHash ? `${genHash(path.join(resSrc, '/**/*'))}_` : '';
-			newSrc = path.join(libDest, hash + name);
-		}
+		const hash = needHash ? `${genHash(path.join(resSrc, '/**/*'))}_` : '';
+		newSrc = path.join(libDest, hash + name);
 
-	} else if (!cache[name]) {
+	} else {
 		fileContent = fs.readFileSync(resSrc);
-
-		const
-			hash = needHash ? `${genHash(fileContent)}_` : '';
-
+		const hash = needHash ? `${genHash(fileContent)}_` : '';
 		newSrc = path.join(libDest, hash + name);
 	}
 
-	const distPath = relative ? path.relative(src.output(), newSrc) : newSrc;
-	cache[name] = fs.existsSync(newSrc) && distPath;
+	const
+		distPath = relative ? path.relative(src.clientOutput(), newSrc) : newSrc;
 
-	if (!cache[name]) {
+	if (!fs.existsSync(newSrc)) {
 		if (srcIsFolder) {
 			fs.mkdirpSync(newSrc);
 			fs.copySync(resSrc, newSrc);
@@ -357,11 +377,10 @@ function requireAsLib({name, relative = true} = {}, ...paths) {
 				clrfx = /\/\/# sourceMappingURL=.*/;
 
 			fs.mkdirpSync(libDest);
-			fs.writeFileSync(newSrc, file.toString().replace(clrfx, ''));
+			fs.writeFileSync(newSrc, fileContent.toString().replace(clrfx, ''));
 		}
-
-		cache[name] = distPath;
 	}
 
-	return cache[name];
+	cache[name] = distPath;
+	return distPath;
 }
