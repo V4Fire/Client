@@ -476,7 +476,7 @@ declare namespace BrowserTests {
 
 	class Request {
 		/**
-		 * Returns a promise that will be resolved after all specified URLs will be requested
+		 * Returns a promise that will be resolved after all specified URL-s are requested
 		 *
 		 * @param page
 		 * @param urls
@@ -488,7 +488,7 @@ declare namespace BrowserTests {
 declare namespace Tests {
 	interface GetCurrentTestOptions {
 		/**
-		 * The path to the test folder will be resolved using `pzlr.resolve.blockSync`
+		 * The path to the test folder that will be resolved by using `pzlr.resolve.blockSync`
 		 *
 		 * @default
 		 * ```typescript
@@ -513,7 +513,7 @@ declare namespace Tests {
 	 */
 	interface TestUtils {
 		/**
-		 *  Returns a test that matches the `runner` parameter and the `name` passed to the `CLI`
+		 * Returns a test that matches the `runner` parameter and the `name` passed to the `CLI`
 		 *
 		 * @param [options]
 		 */
