@@ -13,7 +13,7 @@ import { Friend } from 'super/i-block/i-block';
 import ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem, DataToRender, OptionEl } from 'base/b-virtual-scroll/interface';
+import { RenderItem, DataToRender, OptionEl, ItemAttrs } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -185,14 +185,12 @@ export default class ComponentRender extends Friend {
 			<HTMLElement[]>c.vdom.render(children.map(({itemAttrs, itemParams, index}) =>
 				this.createElement(getOption(itemParams, index), itemAttrs)));
 
-		const getChildrenAttrs = (props: Dictionary) => ({
+		const getChildrenAttrs = (props: ItemAttrs) => ({
 			attrs: {
 				'v-attrs': {
 					...props,
-					class: [this.optionClass].concat(<CanUndef<string[]>>props.class ?? []),
-					style: {
-						...<Dictionary<string>>props.style
-					}
+					class: [this.optionClass].concat(props.class ?? []),
+					style: props.style
 				}
 			}
 		});

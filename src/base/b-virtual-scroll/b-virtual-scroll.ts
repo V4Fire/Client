@@ -334,7 +334,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @override
-	 * @emits chunkLoaded(lastLoadedChunk: lastLoadedChunk)
+	 * @emits chunkLoaded(lastLoadedChunk: LastLoadedChunk)
 	 */
 	protected initRemoteData(): void {
 		if (!this.db) {

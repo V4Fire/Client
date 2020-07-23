@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { UnsafeIData } from 'super/i-data/i-data';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+
+import { UnsafeIData } from 'super/i-data/i-data';
+import { ComponentVNodeData } from 'core/component/vnode';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: DataState<T>): Dictionary<Dictionary>;
@@ -137,6 +139,13 @@ export interface RenderItem<T extends unknown = unknown> {
 	 */
 	index: number;
 }
+
+/**
+ * Attributes for items to render
+ */
+export type ItemAttrs = {
+	[prop in keyof ComponentVNodeData]?: ComponentVNodeData[prop];
+} & Dictionary;
 
 /**
  * Last loaded data chunk

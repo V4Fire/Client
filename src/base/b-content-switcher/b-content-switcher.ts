@@ -290,7 +290,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	 * Warns that the component is deprecated
 	 */
 	@hook('created')
-	protected deprecatedMessage(): void {
+	protected showDeprecatedMessage(): void {
 		deprecate({
 			name: 'b-content-switcher',
 			type: 'component'
