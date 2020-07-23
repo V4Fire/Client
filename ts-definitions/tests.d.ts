@@ -419,7 +419,7 @@ declare namespace BrowserTests {
 		 * This method waits for actionability checks, then tries to scroll element into view,
 		 * unless it is completely visible as defined by IntersectionObserver's ratio.
 		 *
-		 * Throws when elementHandle does not point to an element connected to a Document or a ShadowRoot.
+		 * Throws an error when elementHandle does not point to an element connected to a Document or a ShadowRoot.
 		 *
 		 * @param ctx
 		 * @param selector
@@ -435,7 +435,7 @@ declare namespace BrowserTests {
 		 * This method waits for actionability checks, then tries to scroll element into view,
 		 * unless it is completely visible as defined by IntersectionObserver's ratio.
 		 *
-		 * Throws when elementHandle does not point to an element connected to a Document or a ShadowRoot.
+		 * Throws an error when elementHandle does not point to an element connected to a Document or a ShadowRoot.
 		 *
 		 * @param ctx
 		 * @param refName
