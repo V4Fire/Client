@@ -183,8 +183,7 @@
 						+= self.addDependencies('styles')
 
 					- block std
-						+= self.jsScript({})
-							+= self.addScriptDep('std', {optional: true})
+						+= h.getScriptDepDecl('std', {optional: true, wrap: true})
 
 					: defLibs = deps.scripts
 					- block defLibs
@@ -199,13 +198,11 @@
 								}
 
 						- block scripts
-							+= self.jsScript({})
-								+= self.addScriptDep('vendor', {optional: true})
+							+= h.getScriptDepDecl('vendor', {optional: true, wrap: true})
 
 							+= self.addDependencies('scripts')
 
-							+= self.jsScript({})
-								+= self.addScriptDep('webpack.runtime')
+							+= h.getScriptDepDecl('webpack.runtime', {wrap: true})
 
 					+= self.jsScript({})
 						- block depsReady

@@ -264,12 +264,12 @@
 		- if @@fatHTML
 			- style
 				- forEach list => el
-					+= self.addStyleDep(el)
+					+= h.getStyleDepDecl(el)
 
 		- else
 			+= self.jsScript({})
 				- forEach list => el
-					+= self.addStyleDep(el)
+					+= h.getStyleDepDecl(el)
 
 	- if !type || type === 'scripts'
 		+= self.jsScript({})
@@ -277,11 +277,11 @@
 				: tpl = el + '_tpl'
 
 				- if el === 'index'
-					+= self.addScriptDep(el)
-					+= self.addScriptDep(tpl)
+					+= h.getScriptDepDecl(el)
+					+= h.getScriptDepDecl(tpl)
 
 				- else
-					+= self.addScriptDep(tpl)
-					+= self.addScriptDep(el)
+					+= h.getScriptDepDecl(tpl)
+					+= h.getScriptDepDecl(el)
 
 				window[#{globals.MODULE_DEPENDENCIES}].fileCache['{el}'] = true;

@@ -14,7 +14,7 @@ const
 	delay = require('delay');
 
 const
-	{webpack, src} = require('config'),
+	{webpack, src, csp} = require('config'),
 	{files, folders} = include('src/super/i-static-page/modules/const');
 
 const
@@ -25,8 +25,9 @@ const
 	isFolder = /[\\/]+$/,
 	isURL = /^(\w+:)?\/\//;
 
-const
-	libDest = path.join(src.clientOutput(), webpack.output({name: 'lib'}));
+const nonce = {
+	nonce: csp.nonce
+};
 
 exports.getScriptDecl = getScriptDecl;
 
@@ -44,16 +45,14 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (Object.isString(lib)) {
-		return `<script>${body}</script>`;
+		return `<script ${normalizeAttrs(nonce)}>${lib}</script>`;
 	}
 
-	const normalizedAttrs = normalizeAttrs({
+	const attrs = normalizeAttrs({
 		...Object.reject(lib, ['source', 'inline'].concat(lib.inline || body ? 'src' : [])),
+		...nonce,
 		...lib.attrs
 	});
-
-	const
-		attrs = normalizedAttrs.join(' ');
 
 	if (lib.inline && !body) {
 		return (async () => {
@@ -61,11 +60,63 @@ function getScriptDecl(lib, body) {
 				await delay(500);
 			}
 
-			return `<script ${attrs}>requireMonic({${lib.src}})</script>`;
+			return `<script ${attrs}>requireMonic(${lib.src})</script>`;
 		})();
 	}
 
 	return `<script ${attrs}>${body || ''}</script>`;
+}
+
+exports.getScriptDepDecl = getScriptDepDecl;
+
+/**
+ * Returns declaration of a script to initialize the specified dependency
+ *
+ * @param {string} name - dependence name
+ * @param {DepOptions=} [opts] - additional options
+ * @param {Object=} [assets] - map with assets
+ * @returns {string}
+ */
+function getScriptDepDecl(name, opts, assets) {
+	opts = {defer: true, ...opts};
+
+	if (webpack.fatHTML() || opts.inline) {
+		if (assets[name]) {
+			const
+				filePath = path.join(src.clientOutput(assets[name]));
+
+			if (fs.existsSync(filePath)) {
+				const decl = `requireMonic(${filePath})`;
+				return opts.wrap ? getScriptDecl(decl) : decl;
+			}
+
+		} else if (!opts.optional) {
+			throw new ReferenceError(`Script dependency with id "${name}" is not defined`);
+		}
+
+		return '';
+	}
+
+	const attrs = normalizeAttrs({
+		src: `' + PATH['${name}'] + '`,
+		defer: opts.defer !== false,
+		...nonce
+	});
+
+	const script = [
+		`'<script ${attrs}' +`,
+		"'><' +",
+		"'/script>'"
+	].join(' ');
+
+	let
+		decl = `document.write(${script});`;
+
+	if (opts.optional) {
+		decl = `if ('${name}' in PATH) { ${decl} }`;
+	}
+
+	return opts.wrap ? getScriptDecl(decl) : decl;
 }
 
 exports.getStyleDecl = getStyleDecl;
@@ -80,21 +131,19 @@ exports.getStyleDecl = getStyleDecl;
  */
 function getStyleDecl(lib, body) {
 	if (Object.isString(lib)) {
-		return `<style>${body}</style>`;
+		return `<style ${normalizeAttrs(nonce)}>${lib}</style>`;
 	}
 
 	const
 		rel = lib.attrs?.rel ?? 'stylesheet';
 
-	const normalizedAttrs = normalizeAttrs({
+	const attrs = normalizeAttrs({
 		...Object.reject(lib, ['src', 'source', 'inline', 'defer']),
+		...nonce,
 		...lib.attrs,
 		...lib.inline || body ? null : {href: lib.src, rel},
 		...lib.defer ? {rel: 'preload', onload: `this.rel='${rel}'`} : null
 	});
-
-	const
-		attrs = normalizedAttrs.join(' ');
 
 	if (lib.inline && !body) {
 		return (async () => {
@@ -102,7 +151,7 @@ function getStyleDecl(lib, body) {
 				await delay(500);
 			}
 
-			return `<style ${attrs}>requireMonic({${lib.src}})</style>`;
+			return `<style ${attrs}>requireMonic(${lib.src})</style>`;
 		})();
 	}
 
@@ -111,6 +160,56 @@ function getStyleDecl(lib, body) {
 	}
 
 	return `<link ${attrs}>`;
+}
+
+exports.getStyleDepDecl = getStyleDepDecl;
+
+/**
+ * Returns declaration of a style to initialize the specified dependency
+ *
+ * @param {string} name - dependence name
+ * @param {DepOptions=} [opts] - additional options
+ * @param {Object=} [assets] - map with assets
+ * @returns {string}
+ */
+function getStyleDepDecl(name, opts, assets) {
+	opts = {defer: true, ...opts};
+
+	const
+		rname = `${name}$style`;
+
+	if (webpack.fatHTML() || opts.inline) {
+		if (assets[rname]) {
+			const
+				filePath = path.join(src.clientOutput(assets[rname]));
+
+			if (fs.existsSync(filePath)) {
+				const decl = `requireMonic(${filePath})`;
+				return opts.wrap ? getStyleDecl(decl) : decl;
+			}
+
+		} else if (!opts.optional) {
+			throw new ReferenceError(`Script dependency with id "${name}" is not defined`);
+		}
+
+		return '';
+	}
+
+	const attrs = normalizeAttrs({
+		rel: 'stylesheet',
+		href: `' + PATH['${rname}'] + '`,
+		defer: opts.defer !== false,
+		...nonce
+	});
+
+	let
+		decl = `document.write('<link ${attrs}>')`;
+
+	if (opts.optional) {
+		decl = `if ('${rname}' in PATH) { ${decl} }`;
+	}
+
+	return opts.wrap ? getStyleDecl(decl) : decl;
 }
 
 exports.getLinkDecl = getLinkDecl;
@@ -122,13 +221,14 @@ exports.getLinkDecl = getLinkDecl;
  * @returns {string}
  */
 function getLinkDecl(link) {
-	const normalizedAttrs = normalizeAttrs({
+	const attrs = normalizeAttrs({
 		href: src,
+		...nonce,
 		...Object.reject(link, ['src', 'source']),
 		...link.attrs
 	});
 
-	return `<link ${normalizedAttrs.join(' ')}>`;
+	return `<link ${attrs}>`;
 }
 
 exports.normalizeAttrs = normalizeAttrs;
@@ -154,8 +254,12 @@ function normalizeAttrs(attrs) {
 	}
 
 	Object.keys(attrs).forEach((key) => {
-		const
+		let
 			val = attrs[key];
+
+		if (Object.isFunction(val)) {
+			val = val();
+		}
 
 		if (val === undefined) {
 			return;
@@ -169,6 +273,7 @@ function normalizeAttrs(attrs) {
 		}
 	});
 
+	normalizedAttrs.toString = () => normalizedAttrs.join(' ');
 	return normalizedAttrs;
 }
 
@@ -349,6 +454,9 @@ function requireAsLib({name, relative = true} = {}, ...paths) {
 	if (cache[name]) {
 		return cache[name];
 	}
+
+	const
+		libDest = src.clientOutput(webpack.output({name: 'lib'}));
 
 	let
 		fileContent,

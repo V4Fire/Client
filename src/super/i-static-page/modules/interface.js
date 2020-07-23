@@ -7,6 +7,19 @@
  */
 
 /**
+ * Additional options of a dependency
+ *
+ * @typedef {{
+ *   optional?: boolean,
+ *   defer?: boolean,
+ *   inline?: boolean,
+ *   wrap?: boolean
+ * }}
+ */
+const DepOptions = {};
+exports.DepOptions = DepOptions;
+
+/**
  * Source type of a library:
  *
  * 1. lib - external library, i.e, something from node_modules
