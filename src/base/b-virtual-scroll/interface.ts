@@ -199,7 +199,7 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 	getOptionKey: CTX['getOptionKey'];
 
 	// @ts-ignore (access)
-	buildState: CTX['buildState'];
+	getDataStateSnapshot: CTX['getDataStateSnapshot'];
 }
 
 export type MergeDataStateParams = {

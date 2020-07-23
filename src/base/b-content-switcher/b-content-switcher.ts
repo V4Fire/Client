@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools/deprecation';
+
 import symbolGenerator from 'core/symbol';
-import { deprecate } from 'core/functools';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
 import iBlock, {

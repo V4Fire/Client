@@ -212,7 +212,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
-				...this.requestQuery?.(this.buildState())?.get,
+				...this.requestQuery?.(this.getDataStateSnapshot())?.get,
 				...Object.isDictionary(this.request?.get) ? this.request?.get : undefined
 			}
 		};
@@ -295,24 +295,24 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @typeParam ITEM - data item to render
 	 * @typeParam RAW - raw provider data without any processing
 	 */
-	getCurrentState<
+	getCurrentDataState<
 		ITEM extends unknown = unknown,
 		RAW extends unknown = unknown
 	>(): DataState<ITEM, RAW> {
 		let overrideParams: MergeDataStateParams = {};
 
-		if (this.componentStatus !== 'ready' || !Object.isTruly(this.dataProvider)) {
+		if (this.componentStatus !== 'ready' || this.dataProvider == null) {
 			overrideParams = {
 				currentPage: 0,
 				...overrideParams
 			};
 		}
 
-		return this.buildState(overrideParams, this.chunkRequest, this.chunkRender);
+		return this.getDataStateSnapshot(overrideParams, this.chunkRequest, this.chunkRender);
 	}
 
 	/**
-	 * Returns an object with the current state of the component that will be merged with the specified object
+	 * Takes a snapshot of the current data state and returns it
 	 *
 	 * @param [overrideParams]
 	 * @param [chunkRequest]
@@ -321,7 +321,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @typeParam ITEM - data item to render
 	 * @typeParam RAW - raw provider data without any processing
 	 */
-	protected buildState<
+	protected getDataStateSnapshot<
 		ITEM extends unknown = unknown,
 		RAW extends unknown = unknown
 	>(
@@ -352,7 +352,7 @@ export default class bVirtualScroll extends iData implements iItems {
 				raw: this.chunkRequest.lastLoadedChunk.raw
 			};
 
-			const params = this.buildState({
+			const params = this.getDataStateSnapshot({
 				lastLoadedData: data,
 				lastLoadedChunk
 			});
@@ -366,7 +366,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.chunkRequest.isLastEmpty = true;
 
 			const
-				params = this.buildState({isLastEmpty: true});
+				params = this.getDataStateSnapshot({isLastEmpty: true});
 
 			this.chunkRequest.shouldStopRequest(params);
 		}

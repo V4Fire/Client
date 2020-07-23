@@ -41,7 +41,7 @@ Mind, the property can be defined as a string or function.
 
 | EventName     | Description     | Payload description      | Payload  |
 | ------------- |---------------- | ------------------------ |--------- |
-| dbChange      | This event is called after receiving data from the `dataProvider`.The event will not be triggered if an empty response is received from the server. | An array of all uploaded data | `{data: unknown[]} & Dictionary` |
-| dataChange    | This event is called after data batch is filled. | An array of uploaded data for a batch | `unknown[]` |
-| chunkLoaded   | This event is called after every successful response from `dataProvider` | Normalized and raw data from `dataProvider` | `LastLoadedChunk` |
-| chunkLoading  | This event is called before every trip to the `dataProvider` | Current page | `number` |
+| dbChange      | The event is fired after receiving data from a data provider. The event won't be fired if the data is empty. | Cumulative data of all tied requests | `RemoteData` |
+| dataChange    | The event is fired after changing a data batch | Data batch value | `unknown[]` |
+| chunkLoaded   | The event is fired after every successful response from a data provider | A structure with raw and normalized data that takes from a data provider | `LastLoadedChunk` |
+| chunkLoading  | The event is fired before start to load data from a data provider | Current page | `number` |

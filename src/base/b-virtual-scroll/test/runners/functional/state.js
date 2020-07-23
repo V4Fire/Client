@@ -59,7 +59,7 @@ module.exports = (page) => {
 	});
 
 	const getCurrentComponentState = () => component.evaluate((ctx) => ({
-		...ctx.getCurrentState(),
+		...ctx.getCurrentDataState(),
 		itemsTillBottom: undefined,
 		items: undefined
 	}));
@@ -71,7 +71,7 @@ module.exports = (page) => {
 		ctx.componentConverter = (v) => ({data: v.data});
 	}, requestProps);
 
-	describe('b-virtual-scroll getCurrentState', () => {
+	describe('b-virtual-scroll getCurrentDataState', () => {
 
 		describe('returns the correct value', () => {
 			it('if there is no `dataProvider`', async () => {
@@ -183,13 +183,13 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-virtual-scroll buildState', () => {
+	describe('b-virtual-scroll getDataStateSnapshot', () => {
 
 		describe('returns the correct value', () => {
 			it('with `chunkRequest` and `chunkRender`', async () => {
 				const expected = getExpected();
 
-				expect(await component.evaluate((ctx) => ctx.buildState({
+				expect(await component.evaluate((ctx) => ctx.getDataStateSnapshot({
 					items: undefined,
 					itemsTillBottom: undefined
 				}))).toEqual(expected);
@@ -198,7 +198,7 @@ module.exports = (page) => {
 			it('with `chunkRequest`', async () => {
 				const expected = getExpected();
 
-				expect(await component.evaluate((ctx) => ctx.buildState({
+				expect(await component.evaluate((ctx) => ctx.getDataStateSnapshot({
 					items: undefined,
 					itemsTillBottom: undefined
 				}, ctx.chunkRequest))).toEqual(expected);
@@ -210,7 +210,7 @@ module.exports = (page) => {
 					nextPage: 2
 				});
 
-				expect(await component.evaluate((ctx) => ctx.buildState({
+				expect(await component.evaluate((ctx) => ctx.getDataStateSnapshot({
 					items: undefined,
 					itemsTillBottom: undefined
 				}, ctx.chunkRequest, ctx.chunkRender))).toEqual(expected);
