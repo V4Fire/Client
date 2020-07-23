@@ -160,7 +160,7 @@ module.exports = (page) => {
 				expect(await getCurrentComponentState()).toEqual(expected);
 			});
 
-			it('if for a batch it was necessary to go several times to `dataProvider`', async () => {
+			it('if for the full loading it was necessary to go several times to `dataProvider`', async () => {
 				const expected = getExpected({
 					currentPage: 3,
 					nextPage: 4,
