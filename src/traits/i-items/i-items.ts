@@ -10,6 +10,7 @@
 import iBlock from 'super/i-block/i-block';
 
 import { ItemsIterator, ItemProps, OptionFn } from 'traits/i-items/interface';
+
 export * from 'traits/i-items/interface';
 
 export default abstract class iItems {
@@ -32,7 +33,7 @@ export default abstract class iItems {
 	abstract readonly optionsProp?: unknown[];
 
 	/** @see iItems.prototype.optionProps */
-	abstract options: unknown[];
+	abstract options?: unknown[];
 
 	/**
 	 * Factory for an item iterator

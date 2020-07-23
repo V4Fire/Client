@@ -11,6 +11,34 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.40 (2020-07-23)
+
+#### :nail_care: Polish
+
+* Added waitRef to the UnsafeIBlock declaration
+
+## v3.0.0-rc.39 (2020-07-22)
+
+#### :rocket: New Feature
+
+* [Improved browser test API](https://github.com/V4Fire/Client/issues/289)
+* [Added life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
+
+#### :bug: Bug Fix
+
+* [Fixed reloading of a component after changing its data provider `iData`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed an issue when data from `lastLoadedData` and `lastLoadedChunk.normalized` aren't synchronized `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
+* [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
+
+#### :house: Internal
+
+* [Refactoring of tests `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/293)
+
+* [:up:](https://github.com/V4Fire/Client/pull/293)
+  * playwright 1.2.1
+  * @v4fire/linters 1.5.2
+
 ## v3.0.0-rc.38 (2020-07-21)
 
 #### :bug: Bug Fix

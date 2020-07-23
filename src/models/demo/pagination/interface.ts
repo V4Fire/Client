@@ -31,6 +31,7 @@ export interface RequestQuery {
 
 	/**
 	 * Number of requested items
+	 * @default `12`
 	 */
 	chunkSize: number;
 
@@ -44,6 +45,16 @@ export interface RequestQuery {
 	 * @default `300`
 	 */
 	sleep?: number;
+
+	/**
+	 * Number of requests that should be completed for start to throw an error
+	 */
+	failOn?: number;
+
+	/**
+	 * Additional data to be return
+	 */
+	additionalData?: Dictionary;
 }
 
 /**
@@ -59,4 +70,9 @@ export interface RequestState extends RequestQuery {
 	 * Current index of the response item
 	 */
 	i: number;
+
+	/**
+	 * Current request number
+	 */
+	requestNumber: number;
 }

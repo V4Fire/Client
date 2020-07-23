@@ -779,7 +779,9 @@ export default abstract class iData extends iBlock implements iProgress {
 			this.watch('requestParams', watchParams, this.syncRequestParamsWatcher);
 
 			this.dp = new ProviderConstructor(this.dataProviderOptions);
+
 			this.initDataListeners();
+			this.initLoad();
 		}
 	}
 

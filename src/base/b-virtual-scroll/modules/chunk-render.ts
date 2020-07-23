@@ -104,10 +104,6 @@ export default class ChunkRender extends Friend {
 
 		this.ctx.meta.hooks.mounted.push({fn: () => {
 			this.initEventHandlers();
-
-			if (!this.ctx.dataProvider) {
-				this.chunkRequest.init().catch(stderr);
-			}
 		}});
 	}
 
@@ -158,7 +154,7 @@ export default class ChunkRender extends Friend {
 		if (
 			renderFrom === this.lastRenderRange[0] &&
 			renderTo === this.lastRenderRange[1] ||
-			!renderItems.length
+			renderItems.length === 0
 		) {
 			return;
 		}
@@ -169,7 +165,7 @@ export default class ChunkRender extends Friend {
 		const
 			nodes = this.renderItems(renderItems);
 
-		if (!nodes) {
+		if (nodes.length === 0) {
 			return;
 		}
 
@@ -241,7 +237,7 @@ export default class ChunkRender extends Friend {
 
 			item.node = node;
 
-			if (!node[$$.inView]) {
+			if (!Object.isFunction(node[$$.inView])) {
 				this.wrapInView(item);
 			}
 		}

@@ -298,8 +298,8 @@ module.exports = async (page) => {
 			})).toEqual({
 				initialContent: 'Main page',
 				initialQuery: '',
-				routeChanges: [[{foo: 1}, null]],
-				queryChanges: [[{foo: 1}, null], [{foo: 2}, {foo: 1}]]
+				routeChanges: [[{foo: 1}, undefined]],
+				queryChanges: [[{foo: 1}, undefined], [{foo: 2}, {foo: 1}]]
 			});
 		});
 

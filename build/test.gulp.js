@@ -438,7 +438,7 @@ module.exports = function init(gulp = require('gulp')) {
 			const args = arg({
 				'--suit': String,
 				'--name': String
-}, {argv: c.split(' '), permissive: true});
+			}, {argv: c.split(' '), permissive: true});
 
 			args['--suit'] = args['--suit'] || 'demo';
 			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
