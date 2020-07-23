@@ -129,4 +129,7 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	convertStateToStorageReset: CTX['convertStateToStorageReset'];
+
+	// @ts-ignore (access)
+	waitRef: CTX['waitRef'];
 }
