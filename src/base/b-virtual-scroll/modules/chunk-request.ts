@@ -77,19 +77,19 @@ export default class ChunkRequest extends Friend {
 	/**
 	 * Contains `currentAccumulatedData` from previous requests cycle
 	 */
-	currentDataStore: CanUndef<unknown> = undefined;
+	previousDataStore: CanUndef<unknown> = undefined;
 
-	/** @see [[ChunkRequest.prototype.currentDataStore]] */
-	get currentData(): CanUndef<unknown> {
-		return this.currentDataStore;
+	/** @see [[ChunkRequest.prototype.previousDataStore]] */
+	get previousData(): CanUndef<unknown> {
+		return this.previousDataStore;
 	}
 
 	/**
 	 * @emits dataChange(v: unknown)
-	 * @see [[ChunkRequest.prototype.currentDataStore]]
+	 * @see [[ChunkRequest.prototype.previousDataStore]]
 	 */
-	set currentData(v: unknown) {
-		this.currentDataStore = v;
+	set previousData(v: unknown) {
+		this.previousDataStore = v;
 		this.ctx.emit('dataChange', v);
 	}
 
@@ -107,7 +107,6 @@ export default class ChunkRequest extends Friend {
 		this.total = 0;
 		this.page = 1;
 
-		// eslint-disable-next-line capitalized-comments
 		// tslint:disable-next-line: deprecation
 		this.lastLoadedData = [];
 		this.data = [];
@@ -117,7 +116,7 @@ export default class ChunkRequest extends Friend {
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.currentAccumulatedData = undefined;
-		this.currentDataStore = undefined;
+		this.previousDataStore = undefined;
 
 		this.async.clearTimeout({label: $$.waitForInitCalls});
 	}
@@ -178,8 +177,8 @@ export default class ChunkRequest extends Friend {
 			this.chunkRender.setRefVisibility('empty', true);
 		}
 
-		if (this.currentData === undefined && Array.isArray(this.ctx.db?.data)) {
-			this.currentData = this.ctx.db!.data;
+		if (this.previousData === undefined && Array.isArray(this.ctx.db?.data)) {
+			this.previousData = this.ctx.db!.data;
 		}
 
 		this.ctx.localState = 'ready';
@@ -214,13 +213,13 @@ export default class ChunkRequest extends Friend {
 
 		const updateCurrentData = () => {
 			if (this.currentAccumulatedData != null) {
-				this.currentData = this.currentAccumulatedData;
+				this.previousData = this.currentAccumulatedData;
 				this.currentAccumulatedData = undefined;
 			}
 		};
 
 		const
-			shouldRequest = ctx.shouldMakeRequest(this.ctx.buildState(additionParams, this, chunkRender));
+			shouldRequest = ctx.shouldMakeRequest(this.ctx.getDataStateSnapshot(additionParams, this, chunkRender));
 
 		if (this.isDone) {
 			updateCurrentData();
@@ -249,7 +248,7 @@ export default class ChunkRequest extends Friend {
 				if (Object.size(v?.data) === 0) {
 					this.isLastEmpty = true;
 
-					this.shouldStopRequest(this.ctx.buildState({
+					this.shouldStopRequest(this.ctx.getDataStateSnapshot({
 						lastLoadedData: [],
 						lastLoadedChunk: {
 							raw: undefined,
@@ -273,13 +272,13 @@ export default class ChunkRequest extends Friend {
 				this.currentAccumulatedData = Array.concat(this.currentAccumulatedData ?? [], data);
 
 				this.ctx.emit('dbChange', {...v, data: this.data});
-				this.shouldStopRequest(this.ctx.getCurrentState());
+				this.shouldStopRequest(this.ctx.getCurrentDataState());
 
 				if (this.pendingData.length < ctx.chunkSize) {
 					return this.try(false);
 				}
 
-				this.currentData = this.currentAccumulatedData;
+				this.previousData = this.currentAccumulatedData;
 				this.currentAccumulatedData = undefined;
 
 				chunkRender.setLoadersVisibility(false);
@@ -321,7 +320,7 @@ export default class ChunkRequest extends Friend {
 			defaultRequestParams = ctx.getDefaultRequestParams('get'),
 			params = <CanUndef<Dictionary>>(defaultRequestParams !== false ? defaultRequestParams : [])[0];
 
-		Object.assign(params, ctx.requestQuery?.(this.ctx.getCurrentState())?.get);
+		Object.assign(params, ctx.requestQuery?.(this.ctx.getCurrentDataState())?.get);
 
 		return ctx.async.request(ctx.getData(this.component, params), {label: $$.request})
 			.then((data) => {

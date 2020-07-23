@@ -31,6 +31,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [:up:](https://github.com/V4Fire/Client/pull/293)
   * playwright 1.2.1
+  * @v4fire/linters 1.5.2
 
 ## v3.0.0-rc.38 (2020-07-21)
 
