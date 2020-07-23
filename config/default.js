@@ -540,6 +540,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Options of Content Security Policy
+	 */
+	csp: {
+		/**
+		 * Returns value of the "nonce" hash
+		 * @returns {?string}
+		 */
+		nonce() {
+			return '{{nonce}}';
+		}
+	},
+
+	/**
 	 * Config for a favicon generator
 	 * @returns {!Object}
 	 */
