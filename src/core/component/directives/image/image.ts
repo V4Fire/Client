@@ -32,19 +32,26 @@ export default class ImageLoader {
 
 		const
 			srcset = Object.isPlainObject(opts.srcset) ? getSrcSet(opts.srcset) : opts.srcset,
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			{src, load, error} = opts;
 
-		if (!src && !srcset) {
-			this.isImg(el) ? el.src = '' : this.setBackgroundImage(el, '');
+		if (src == null && srcset == null) {
+			if (this.isImg(el)) {
+				el.src = '';
+
+			} else {
+				this.setBackgroundImage(el, '');
+			}
+
 			return;
 		}
 
 		if (this.isImg(el)) {
-			if (src) {
+			if (src != null) {
 				el.src = src;
 			}
 
-			if (srcset) {
+			if (srcset != null) {
 				el.srcset = srcset;
 			}
 
@@ -62,13 +69,33 @@ export default class ImageLoader {
 
 				load: () => {
 					this.setBackgroundImage(el, img.currentSrc);
-					load && load(el);
+					load?.(el);
 				},
 
 				error: () => {
-					error && error(el);
+					error?.(el);
 				}
 			});
+		}
+	}
+
+	/**
+	 * @param el
+	 * @param value
+	 * @param oldValue
+	 */
+	update(el: HTMLElement, value?: DirectiveValue, oldValue?: DirectiveValue): void {
+		value = value != null ? this.normalizeOptions(value) : undefined;
+		oldValue = oldValue != null ? this.normalizeOptions(oldValue) : undefined;
+
+		if (this.compare(value, oldValue)) {
+			return;
+		}
+
+		this.removeFromPending(el);
+
+		if (value) {
+			this.load(el, value);
 		}
 	}
 
@@ -77,7 +104,7 @@ export default class ImageLoader {
 	 * @param el
 	 */
 	removeFromPending(el: HTMLElement): void {
-		this.pending.delete(el[$$.img] || el);
+		this.pending.delete(el[$$.img] == null ? el : el[$$.img]);
 	}
 
 	/**
@@ -102,6 +129,16 @@ export default class ImageLoader {
 	 */
 	setBackgroundImage(el: HTMLElement, imageSrc: string): void {
 		el.style.backgroundImage = `url('${imageSrc}')`;
+	}
+
+	/**
+	 * Returns true if the specified `val` is equal to `oldVal`
+	 *
+	 * @param val
+	 * @param oldVal
+	 */
+	protected compare(val: CanUndef<ImageOptions>, oldVal: CanUndef<ImageOptions>): boolean {
+		return Object.fastCompare(val, oldVal);
 	}
 
 	/**
@@ -130,7 +167,7 @@ export default class ImageLoader {
 				}
 
 				pending.delete(img);
-				onLoad && onLoad(img);
+				onLoad?.(img);
 			})
 
 			.catch(() => {
@@ -139,7 +176,7 @@ export default class ImageLoader {
 				}
 
 				pending.delete(img);
-				onError && onError(img);
+				onError?.(img);
 			});
 
 		pending.add(img);

@@ -18,7 +18,7 @@ export { ImageLoaderInstance as ImageLoader };
 
 ComponentDriver.directive('image', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
-		if (!value) {
+		if (value == null) {
 			return;
 		}
 
@@ -26,18 +26,7 @@ ComponentDriver.directive('image', {
 	},
 
 	update(el: HTMLElement, {value, oldValue}: DirectiveOptions): void {
-		value = value && ImageLoaderInstance.normalizeOptions(value);
-		oldValue = oldValue && ImageLoaderInstance.normalizeOptions(oldValue);
-
-		if (Object.fastCompare(value, oldValue)) {
-			return;
-		}
-
-		ImageLoaderInstance.removeFromPending(el);
-
-		if (value) {
-			ImageLoaderInstance.load(el, value);
-		}
+		ImageLoaderInstance.update(el, value, oldValue);
 	},
 
 	unbind(el: HTMLElement): void {
