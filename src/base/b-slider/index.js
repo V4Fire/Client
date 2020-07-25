@@ -1,2 +1,2 @@
-package('b-slider')
+package('b-dummy')
 	.extends('i-data');

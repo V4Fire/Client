@@ -38,6 +38,7 @@ export default class ImageLoader {
 		if (src == null && srcset == null) {
 			if (this.isImg(el)) {
 				el.src = '';
+				el.alt = opts.alt ?? '';
 
 			} else {
 				this.setBackgroundImage(el, '');
@@ -55,6 +56,7 @@ export default class ImageLoader {
 				el.srcset = srcset;
 			}
 
+			el.alt = opts.alt ?? '';
 			this.attachListeners(el, load, error);
 
 		} else {

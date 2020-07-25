@@ -22,5 +22,8 @@ module.exports = [
 	'--name b-virtual-scroll --suit render --runner functional/state',
 
 	// b-button
-	'--name b-button --suit demo'
+	'--name b-button --suit demo',
+
+	// v-image
+	'--name b-dummy --runner directives/image/render'
 ];
