@@ -50,6 +50,8 @@ module.exports = (page) => {
 
 			ctx.appendChild(image);
 			ctx.appendChild(div);
+
+			globalThis.tmp = undefined;
 		});
 
 		await imageLoader.evaluate((ctx) => {
@@ -59,8 +61,6 @@ module.exports = (page) => {
 
 		imgNode = await componentNode.$('#img-target');
 		divNode = await componentNode.$('#div-target');
-
-		globalThis.tmp = undefined;
 	});
 
 	describe('v-image', () => {
@@ -141,6 +141,26 @@ module.exports = (page) => {
 			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
 
 			expect(await page.evaluate(() => globalThis.tmp)).toBeFalse();
+		});
+
+		it('img tag `error` callback will not be called if loading are successful', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const img = document.getElementById('img-target');
+				ctx.load(img, {src: images.pngImage, error: () => globalThis.tmp = false});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1500});
+			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+		});
+
+		it('div tag `error` callback will not be called if loading are successful', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const div = document.getElementById('div-target');
+				ctx.load(div, {src: images.pngImage, error: () => globalThis.tmp = false});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1500});
+			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 	});
 };

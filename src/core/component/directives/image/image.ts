@@ -60,14 +60,11 @@ export default class ImageLoader {
 			this.attachListeners(el, load, error);
 
 		} else {
-			const
-				img = new Image(),
-				normalized = this.normalizeOptions(value);
-
+			const img = new Image();
 			el[$$.img] = img;
 
 			this.load(el[$$.img], {
-				...normalized,
+				...opts,
 
 				load: () => {
 					this.setBackgroundImage(el, img.currentSrc);
@@ -134,7 +131,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Returns true if the specified `val` is equal to `oldVal`
+	 * Returns `true` if the specified `val` is equal to `oldVal`
 	 *
 	 * @param val
 	 * @param oldVal
@@ -144,7 +141,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Returns true if the specified element is an instance of HTMLImageElement
+	 * Returns `true` if the specified element is an instance of `HTMLImageElement`
 	 * @param el
 	 */
 	protected isImg(el: HTMLElement): el is HTMLImageElement {
