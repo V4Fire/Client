@@ -59,9 +59,11 @@ module.exports = (page) => {
 
 		imgNode = await componentNode.$('#img-target');
 		divNode = await componentNode.$('#div-target');
+
+		globalThis.tmp = undefined;
 	});
 
-	describe('v-image rendering', () => {
+	describe('v-image', () => {
 		it('img tag with `src`', async () => {
 			await imageLoader.evaluate((ctx, images) => {
 				const img = document.getElementById('img-target');
@@ -94,6 +96,28 @@ module.exports = (page) => {
 
 			expect(await imgNode.evaluate((ctx) => ctx.src)).toBe(images.pngImage);
 			expect(await imgNode.evaluate((ctx) => ctx.alt)).toBe('alt text');
+		});
+
+		it('img tag `load` callback', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const img = document.getElementById('img-target');
+				ctx.load(img, {src: images.pngImage, load: () => globalThis.tmp = true});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
+
+			expect(await page.evaluate(() => globalThis.tmp)).toBeTrue();
+		});
+
+		it('div tag `load` callback', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const img = document.getElementById('div-target');
+				ctx.load(img, {src: images.pngImage, load: () => globalThis.tmp = true});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
+
+			expect(await page.evaluate(() => globalThis.tmp)).toBeTrue();
 		});
 	});
 };
