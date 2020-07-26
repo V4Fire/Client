@@ -482,6 +482,23 @@ declare namespace BrowserTests {
 		 * @param urls
 		 */
 		waitForRequests(page: Playwright.Page, urls: string[]): Promise<void>;
+
+		/**
+		 * Returns a promise that will be resolved after all specified URL-s are requested and completed with an error
+		 *
+		 * @param page
+		 * @param urls
+		 */
+		waitForRequestsFail(page: Playwright.Page, urls: string[]): Promise<void>;
+
+		/**
+		 * Returns a promise that will be resolved after all specified URL-s will fire an event
+		 *
+		 * @param page
+		 * @param urls
+		 * @param event
+		 */
+		protected waitForRequestsEvents(page: Playwright.Page, urls: string[], event: string): Promise<void>;
 	}
 }
 

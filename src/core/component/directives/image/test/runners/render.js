@@ -111,13 +111,36 @@ module.exports = (page) => {
 
 		it('div tag `load` callback', async () => {
 			await imageLoader.evaluate((ctx, images) => {
-				const img = document.getElementById('div-target');
-				ctx.load(img, {src: images.pngImage, load: () => globalThis.tmp = true});
+				const div = document.getElementById('div-target');
+				ctx.load(div, {src: images.pngImage, load: () => globalThis.tmp = true});
 			}, images);
 
 			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
-
 			expect(await page.evaluate(() => globalThis.tmp)).toBeTrue();
+		});
+
+		it('img tag `error` callback', async () => {
+			await imageLoader.evaluate((ctx) => {
+				const img = document.getElementById('img-target');
+				ctx.load(img, {src: 'https://error-url-fake-url-1/img.jpg', error: () => globalThis.tmp = false});
+			});
+
+			await h.request.waitForRequestsFail(page, ['https://error-url-fake-url-1/img.jpg']);
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
+
+			expect(await page.evaluate(() => globalThis.tmp)).toBeFalse();
+		});
+
+		it('div tag `error` callback', async () => {
+			await imageLoader.evaluate((ctx) => {
+				const div = document.getElementById('div-target');
+				ctx.load(div, {src: 'https://error-url-fake-url-2/img.jpg', error: () => globalThis.tmp = false});
+			});
+
+			await h.request.waitForRequestsFail(page, ['https://error-url-fake-url-2/img.jpg']);
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
+
+			expect(await page.evaluate(() => globalThis.tmp)).toBeFalse();
 		});
 	});
 };

@@ -29,10 +29,25 @@ class Request {
 	 * @see [[BrowserTests.Request.waitForRequests]]
 	 */
 	waitForRequests(page, urls) {
+		return this.waitForRequestsEvents(page, urls, 'request');
+	}
+
+	/**
+	 * @see [[BrowserTests.Request.waitForRequestsFail]]
+	 */
+	waitForRequestsFail(page, urls) {
+		return this.waitForRequestsEvents(page, urls, 'requestfailed');
+	}
+
+	/**
+	 * @see [[BrowserTests.Request.waitForRequestsEvents]]
+	 * @private
+	 */
+	waitForRequestsEvents(page, urls, event) {
 		const normalized = [...urls];
 
 		return new Promise((res) => {
-			page.on('request', (request) => {
+			page.on(event, (request) => {
 				const index = normalized.indexOf(request.url());
 
 				if (index === -1) {
