@@ -143,7 +143,7 @@ module.exports = (page) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeFalse();
 		});
 
-		it('img tag `error` callback will not be called if loading are successful', async () => {
+		it('img tag `error` callback will not be called if a loading are successful', async () => {
 			await imageLoader.evaluate((ctx, images) => {
 				const img = document.getElementById('img-target');
 				ctx.load(img, {src: images.pngImage, error: () => globalThis.tmp = false});
@@ -153,7 +153,7 @@ module.exports = (page) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 
-		it('div tag `error` callback will not be called if loading are successful', async () => {
+		it('div tag `error` callback will not be called if a loading are successful', async () => {
 			await imageLoader.evaluate((ctx, images) => {
 				const div = document.getElementById('div-target');
 				ctx.load(div, {src: images.pngImage, error: () => globalThis.tmp = false});
@@ -163,7 +163,7 @@ module.exports = (page) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 
-		it('img tag `load` callback will not be called if loading are failed', async () => {
+		it('img tag `load` callback will not be called if a loading are failed', async () => {
 			await imageLoader.evaluate((ctx) => {
 				const img = document.getElementById('img-target');
 				ctx.load(img, {src: 'https://error-url-fake-url-3/img.jpg', load: () => globalThis.tmp = true});
@@ -173,7 +173,7 @@ module.exports = (page) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 
-		it('div tag `load` callback will not be called if loading are failed', async () => {
+		it('div tag `load` callback will not be called if a loading are failed', async () => {
 			await imageLoader.evaluate((ctx) => {
 				const div = document.getElementById('div-target');
 				ctx.load(div, {src: 'https://error-url-fake-url-3/img.jpg', load: () => globalThis.tmp = true});
