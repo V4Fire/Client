@@ -12,7 +12,7 @@ module.exports = [
 	// b-router
 	'--name b-router',
 
-	// // b-virtual-scroll
+	// b-virtual-scroll
 	'--name b-virtual-scroll --suit slots/empty --runner slots/empty',
 	'--name b-virtual-scroll --suit render --runner render/render',
 	'--name b-virtual-scroll --suit render --runner events/data-change',
@@ -21,7 +21,7 @@ module.exports = [
 	'--name b-virtual-scroll --suit render --runner events/db-change',
 	'--name b-virtual-scroll --suit render --runner functional/state',
 
-	// // b-button
+	// b-button
 	'--name b-button --suit demo',
 
 	// v-image
