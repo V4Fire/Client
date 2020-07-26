@@ -162,5 +162,25 @@ module.exports = (page) => {
 			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1500});
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
+
+		it('img tag `load` callback will not be called if loading are failed', async () => {
+			await imageLoader.evaluate((ctx) => {
+				const img = document.getElementById('img-target');
+				ctx.load(img, {src: 'https://error-url-fake-url-3/img.jpg', load: () => globalThis.tmp = true});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1500});
+			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+		});
+
+		it('div tag `load` callback will not be called if loading are failed', async () => {
+			await imageLoader.evaluate((ctx) => {
+				const div = document.getElementById('div-target');
+				ctx.load(div, {src: 'https://error-url-fake-url-3/img.jpg', load: () => globalThis.tmp = true});
+			});
+
+			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1500});
+			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+		});
 	});
 };
