@@ -36,15 +36,7 @@ export default class ImageLoader {
 			{src, load, error} = opts;
 
 		if (src == null && srcset == null) {
-			if (this.isImg(el)) {
-				el.src = '';
-				el.alt = opts.alt ?? '';
-
-			} else {
-				this.setBackgroundImage(el, '');
-			}
-
-			return;
+			return this.clearElement(el);
 		}
 
 		if (this.isImg(el)) {
@@ -56,7 +48,6 @@ export default class ImageLoader {
 				el.srcset = srcset;
 			}
 
-			el.alt = opts.alt ?? '';
 			this.attachListeners(el, load, error);
 
 		} else {
@@ -76,12 +67,16 @@ export default class ImageLoader {
 				}
 			});
 		}
+
+		this.setAltAttr(el, opts.alt);
 	}
 
 	/**
+	 * Updates state of the specified element
+	 *
 	 * @param el
-	 * @param value
-	 * @param oldValue
+	 * @param [value]
+	 * @param [oldValue]
 	 */
 	update(el: HTMLElement, value?: DirectiveValue, oldValue?: DirectiveValue): void {
 		value = value != null ? this.normalizeOptions(value) : undefined;
@@ -128,6 +123,47 @@ export default class ImageLoader {
 	 */
 	setBackgroundImage(el: HTMLElement, imageSrc: string): void {
 		el.style.backgroundImage = `url('${imageSrc}')`;
+	}
+
+	/**
+	 * Sets an `alt` attribute for an image or `aria-label` for other types of a `HTMLElement`
+	 *
+	 * @param el
+	 * @param alt
+	 */
+	protected setAltAttr(el: HTMLElement, alt: CanUndef<string>): void {
+		if (this.isImg(el)) {
+			el.alt = alt ?? '';
+			return;
+		}
+
+		if (alt == null || alt === '') {
+			el.removeAttribute('role');
+			el.removeAttribute('aria-label');
+
+		} else {
+			el.setAttribute('role', 'img');
+			el.setAttribute('aria-label', alt);
+		}
+	}
+
+	/**
+	 * Clears:
+	 *   * settled attributes of the specified element
+	 *   * from `pending` set
+	 *
+	 * @param el
+	 */
+	protected clearElement(el: HTMLElement): void {
+		if (this.isImg(el)) {
+			el.src = '';
+
+		} else {
+			this.setBackgroundImage(el, '');
+		}
+
+		this.removeFromPending(el);
+		return this.setAltAttr(el, '');
 	}
 
 	/**

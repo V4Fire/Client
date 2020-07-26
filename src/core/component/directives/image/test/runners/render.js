@@ -98,6 +98,19 @@ module.exports = (page) => {
 			expect(await imgNode.evaluate((ctx) => ctx.alt)).toBe('alt text');
 		});
 
+		it('div tag with `src` and `alt`', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const div = document.getElementById('div-target');
+				ctx.load(div, {src: images.pngImage, alt: 'alt-text'});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${images.pngImage}")`);
+			expect(await divNode.getAttribute('aria-label')).toBe('alt-text');
+			expect(await divNode.getAttribute('role')).toBe('img');
+		});
+
 		it('img tag `load` callback', async () => {
 			await imageLoader.evaluate((ctx, images) => {
 				const img = document.getElementById('img-target');
