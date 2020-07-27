@@ -26,7 +26,7 @@
 	- globals = include('build/globals.webpack')
 	- build = include('build/build.webpack')
 
-	- h = include('src/super/i-static-page/modules/helpers.js')
+	- h = include('src/super/i-static-page/modules/ss-helpers')
 
 	- title = @@appName
 	- pageData = Object.create(null)
@@ -50,20 +50,7 @@
 	- htmlAttrs = {}
 
 	- block root
-		- if @@fatHTML
-			- forEach @@dependencies => el, key
-				: nm = @@outputPattern({name: key})
-				? assets[key] = nm + '.js'
-				? assets[key + '_tpl'] = nm + '_tpl.js'
-				? assets[key + '$style'] = nm + '$style.css'
-
-			- for var key in assets
-				- while !fs.existsSync(path.join(@@output, assets[key]))
-					? await delay(200)
-
-			? assets['std'] = @@outputPattern({name: 'std'}) + '.js'
-			? assets['vendor'] = @@outputPattern({name: 'vendor'}) + '.js'
-			? assets['webpack.runtime'] = @@outputPattern({name: 'webpack.runtime'}) + '.js'
+		? await h.initAssets(assets, @@dependencies)
 
 		- block doctype
 			- doctype
@@ -180,7 +167,7 @@
 						+= await h.loadStyles(defStyles, assets)
 
 					- block styles
-						+= self.addDependencies('styles')
+						+= h.loadDependencies(@@dependencies[path.basename(__filename, '.ess')], 'styles')
 
 					- block std
 						+= h.getScriptDepDecl('std', {optional: true, wrap: true})
@@ -199,9 +186,7 @@
 
 						- block scripts
 							+= h.getScriptDepDecl('vendor', {optional: true, wrap: true})
-
-							+= self.addDependencies('scripts')
-
+							+= h.loadDependencies(@@dependencies[path.basename(__filename, '.ess')], 'scripts')
 							+= h.getScriptDepDecl('webpack.runtime', {wrap: true})
 
 					+= self.jsScript({})
