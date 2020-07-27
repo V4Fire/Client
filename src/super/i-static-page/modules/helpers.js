@@ -70,7 +70,9 @@ function getScriptDecl(lib, body) {
 exports.getScriptDepDecl = getScriptDepDecl;
 
 /**
- * Returns declaration of a script to initialize the specified dependency
+ * Returns declaration of a script to initialize the specified dependency.
+ * The declaration based on the "document.write" mechanism,
+ * i.e., to load dependency you need to put this declaration within a script tag or use the "wrap" option.
  *
  * @param {string} name - dependence name
  * @param {DepOptions=} [opts] - additional options
@@ -165,7 +167,9 @@ function getStyleDecl(lib, body) {
 exports.getStyleDepDecl = getStyleDepDecl;
 
 /**
- * Returns declaration of a style to initialize the specified dependency
+ * Returns declaration of a style to initialize the specified dependency.
+ * The declaration based on the "document.write" mechanism,
+ * i.e., to load dependency you need to put this declaration within a script tag or use the "wrap" option.
  *
  * @param {string} name - dependence name
  * @param {DepOptions=} [opts] - additional options

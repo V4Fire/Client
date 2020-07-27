@@ -7,7 +7,12 @@
  */
 
 /**
- * Additional options of a dependency
+ * Additional options of a dependency:
+ *
+ * 1. [optional=false] - if true, the missing of this dependency won't throw an error
+ * 2. [defer=true] - if true, the dependency will be declared with the "defer" attribute
+ * 3. [inline=false] - if true, the dependency will be placed as text into a script tag
+ * 4. [wrap=false] - if true, declaration of the dependency is wrapped by a script tag
  *
  * @typedef {{
  *   optional?: boolean,
