@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import 'core/component/engines/vue/config';
 import Vue from 'vue';
 
 export * from 'vue';
