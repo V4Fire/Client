@@ -78,6 +78,6 @@ b-input extends i-input
 	&_show-error_true &__error-box
 		display none
 
-	&_focused_true&_empty_false &__clear
+	&_focused_true&_empty_false:not(&_readonly_true) &__clear
 		display block
 		visibility visible
