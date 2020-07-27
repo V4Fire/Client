@@ -6,12 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Vue from 'vue';
 import log from 'core/log';
 
 const
 	logger = log.namespace('vue');
-
-import Vue from 'vue';
 
 Vue.config.errorHandler = (err, vm, info) => {
 	logger.error('errorHandler', err, info, getComponentInfo(vm));
@@ -29,9 +28,9 @@ function getComponentInfo(vm: Vue): Dictionary {
 	return {
 		name: getComponentName(vm),
 		// @ts-ignore - class ComponentInterface has hook property, but Vue hasn't
-		hook: vm?.hook,
+		hook: vm.hook,
 		// @ts-ignore - class ComponentInterface has componentStatus property, but Vue hasn't
-		status: vm?.componentStatus
+		status: vm.componentStatus
 	};
 }
 
@@ -44,18 +43,19 @@ const
  * @param vm - component
  */
 function getComponentName(vm: Vue): string {
-	if (!vm) {
-		return UNRECOGNIZED_COMPONENT_NAME;
-
-	} else if ('componentName' in vm) {
+	if ('componentName' in vm) {
 		// @ts-ignore - class ComponentInterface has componentName property, but Vue hasn't
 		return vm.componentName;
 
-	} else if (vm.$root === vm) {
+	}
+
+	if (vm.$root === vm) {
 		return ROOT_COMPONENT_NAME;
 
-	} else if (vm.$options?.name) {
-		return vm.$options?.name;
+	}
+
+	if (vm.$options.name != null) {
+		return vm.$options.name;
 
 	}
 
