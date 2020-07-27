@@ -8,6 +8,7 @@
 
 import Vue from 'vue';
 import log from 'core/log';
+import { ComponentInterface } from 'core/component/interface';
 
 const
 	logger = log.namespace('vue');
@@ -21,16 +22,20 @@ Vue.config.warnHandler = (msg, vm, trace) => {
 };
 
 /**
- * Return component info for logging
- * @param vm - component
+ * Returns component info to log
+ * @param component
  */
-function getComponentInfo(vm: Vue): Dictionary {
+function getComponentInfo(component: Vue | ComponentInterface): Dictionary {
+	if ('componentName' in component) {
+		return {
+			name: getComponentName(component),
+			hook: component.hook,
+			status: component.unsafe.componentStatus
+		};
+	}
+
 	return {
-		name: getComponentName(vm),
-		// @ts-ignore - class ComponentInterface has hook property, but Vue hasn't
-		hook: vm.hook,
-		// @ts-ignore - class ComponentInterface has componentStatus property, but Vue hasn't
-		status: vm.componentStatus
+		name: getComponentName(component)
 	};
 }
 
@@ -39,24 +44,20 @@ const
 	ROOT_COMPONENT_NAME = 'root-component';
 
 /**
- * Returns a name of a component
- * @param vm - component
+ * Returns a name of the specified component
+ * @param component
  */
-function getComponentName(vm: Vue): string {
-	if ('componentName' in vm) {
-		// @ts-ignore - class ComponentInterface has componentName property, but Vue hasn't
-		return vm.componentName;
-
+function getComponentName(component: Vue | ComponentInterface): string {
+	if ('componentName' in component) {
+		return component.componentName;
 	}
 
-	if (vm.$root === vm) {
+	if (component.$root === component) {
 		return ROOT_COMPONENT_NAME;
-
 	}
 
-	if (vm.$options.name != null) {
-		return vm.$options.name;
-
+	if (component.$options.name != null) {
+		return component.$options.name;
 	}
 
 	return UNRECOGNIZED_COMPONENT_NAME;

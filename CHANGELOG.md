@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Logging Vue errors and warnings via `core/log` module
+* Logging Vue errors and warnings via the `core/log` module `core/component/engines/vue`
 
 ## v3.0.0-rc.39 (2020-07-23)
 

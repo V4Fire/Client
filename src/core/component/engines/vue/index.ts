@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import 'core/component/engines/vue/config';
 import Vue from 'vue';
+import 'core/component/engines/vue/config';
 
 export * from 'vue';
 export { Vue as ComponentDriver };
