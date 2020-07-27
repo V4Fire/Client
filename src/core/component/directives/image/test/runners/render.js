@@ -86,6 +86,29 @@ module.exports = (page) => {
 			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${images.pngImage}")`);
 		});
 
+		it('img tag with `srcset`', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const img = document.getElementById('img-target');
+				ctx.load(img, {srcset: {'1x': images.pngImage}});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await imgNode.evaluate((ctx) => ctx.srcset)).toBe(`${images.pngImage} 1x`);
+			expect(await imgNode.evaluate((ctx) => ctx.currentSrc)).toBe(images.pngImage);
+		});
+
+		it('div tag with `srcset`', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const div = document.getElementById('div-target');
+				ctx.load(div, {srcset: {'1x': images.pngImage}});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${images.pngImage}")`);
+		});
+
 		it('img tag with `src` and `alt`', async () => {
 			await imageLoader.evaluate((ctx, images) => {
 				const img = document.getElementById('img-target');
