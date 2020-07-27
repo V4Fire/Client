@@ -20,17 +20,21 @@
  * Base page template
  */
 - async template index(@params = {}) extends ['i-page'].index
-	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
-
-	- deps = include('src/super/i-static-page/deps')
-	- globals = include('build/globals.webpack')
-	- build = include('build/build.webpack')
-
 	- h = include('src/super/i-static-page/modules/ss-helpers')
+	- globals = include('build/globals.webpack')
+
+	/// Map of external libraries to load
+	- deps = include('src/super/i-static-page/deps')
+
+	/// List of page self dependencies to load
+	- selfDeps = @@dependencies[self.name()] || {}
+
+	/// Map with page own assets: styles, scripts, links, etc.
+	- assets = Object.create(null)
 
 	- title = @@appName
 	- pageData = Object.create(null)
-	- assets = Object.create(null)
+
 	- nonce = @nonce
 
 	- defineBase = false
@@ -51,6 +55,7 @@
 
 	- block root
 		? await h.initAssets(assets, @@dependencies)
+		? await h.generateInitJS(self.name(), {deps, selfDeps, assets})
 
 		- block doctype
 			- doctype
@@ -76,7 +81,8 @@
 					.
 
 				- block title
-					< title :: {title}
+					< title
+						{title}
 
 				- if defineBase
 					- block base
@@ -164,10 +170,10 @@
 					- block defStyles
 
 					- block loadStyles
-						+= await h.loadStyles(defStyles, assets)
+						+= await h.loadStyles(defStyles, {assets})
 
 					- block styles
-						+= h.loadDependencies(@@dependencies[path.basename(__filename, '.ess')], 'styles')
+						+= h.loadDependencies(selfDeps, 'styles')
 
 					- block std
 						+= h.getScriptDepDecl('std', {optional: true, wrap: true})
@@ -176,7 +182,7 @@
 					- block defLibs
 
 					- block loadLibs
-						+= await h.loadLibs(defLibs, assets)
+						+= await h.loadLibs(defLibs, {assets})
 
 						+= self.jsScript({})
 							# block initLibs
@@ -186,7 +192,7 @@
 
 						- block scripts
 							+= h.getScriptDepDecl('vendor', {optional: true, wrap: true})
-							+= h.loadDependencies(@@dependencies[path.basename(__filename, '.ess')], 'scripts')
+							+= h.loadDependencies(selfDeps, 'scripts')
 							+= h.getScriptDepDecl('webpack.runtime', {wrap: true})
 
 					+= self.jsScript({})

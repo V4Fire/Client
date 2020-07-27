@@ -13,8 +13,12 @@ const
 	delay = require('delay');
 
 const
-	{src, csp} = require('config'),
-	{isFolder} = include('src/super/i-static-page/modules/const');
+	{Filters} = require('snakeskin');
+
+const
+	{csp} = require('config'),
+	{isFolder} = include('src/super/i-static-page/modules/const'),
+	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
 const nonce = {
 	nonce: csp.nonce
@@ -39,23 +43,44 @@ function getScriptDecl(lib, body) {
 		return `<script ${normalizeAttrs(nonce)}>${lib}</script>`;
 	}
 
+	body = body || '';
+
 	const attrs = normalizeAttrs({
-		...Object.reject(lib, ['source', 'inline'].concat(lib.inline || body ? 'src' : [])),
+		...Object.select(lib, lib.inline || body ? [] : ['defer', 'src']),
 		...nonce,
 		...lib.attrs
 	});
 
-	if (lib.inline && !body) {
+	if (needInline(lib.inline) && !body) {
 		return (async () => {
 			while (!fs.existsSync(lib.src)) {
 				await delay(500);
 			}
 
-			return `<script ${attrs}>requireMonic(${lib.src})</script>`;
+			const
+				body = `include(${lib.src})`;
+
+			if (lib.documentWrite) {
+				return `${body}\n`;
+			}
+
+			return `<script ${attrs}>${body}</script>`;
 		})();
 	}
 
-	return `<script ${attrs}>${body || ''}</script>`;
+	if (body) {
+		if (lib.documentWrite) {
+			return `${body}\n`;
+		}
+
+		return `<script ${attrs}>${body}</script>`;
+	}
+
+	if (lib.documentWrite) {
+		return `document.write('<script ${attrs}' + '><' + '/script>');`;
+	}
+
+	return `<script ${attrs}>${body}</script>`;
 }
 
 exports.getStyleDecl = getStyleDecl;
@@ -73,32 +98,36 @@ function getStyleDecl(lib, body) {
 		return `<style ${normalizeAttrs(nonce)}>${lib}</style>`;
 	}
 
+	body = body || '';
+
 	const
 		rel = lib.attrs?.rel ?? 'stylesheet';
 
 	const attrs = normalizeAttrs({
-		...Object.reject(lib, ['src', 'source', 'inline', 'defer']),
 		...nonce,
 		...lib.attrs,
 		...lib.inline || body ? null : {href: lib.src, rel},
 		...lib.defer ? {rel: 'preload', onload: `this.rel='${rel}'`} : null
 	});
 
-	if (lib.inline && !body) {
+	const
+		wrap = (decl) => lib.documentWrite ? `document.write('${decl}');` : decl;
+
+	if (needInline(lib.inline) && !body) {
 		return (async () => {
 			while (!fs.existsSync(lib.src)) {
 				await delay(500);
 			}
 
-			return `<style ${attrs}>requireMonic(${lib.src})</style>`;
+			return wrap(`<style ${attrs}>include(${lib.src})</style>`);
 		})();
 	}
 
 	if (body) {
-		return `<style ${attrs}>${body}</style>`;
+		return wrap(`<style ${attrs}>${body}</style>`);
 	}
 
-	return `<link ${attrs}>`;
+	return wrap(`<link ${attrs}>`);
 }
 
 exports.getLinkDecl = getLinkDecl;
@@ -111,13 +140,13 @@ exports.getLinkDecl = getLinkDecl;
  */
 function getLinkDecl(link) {
 	const attrs = normalizeAttrs({
-		href: src,
+		href: link.src,
 		...nonce,
-		...Object.reject(link, ['src', 'source']),
 		...link.attrs
 	});
 
-	return `<link ${attrs}>`;
+	const decl = `<link ${attrs}>`;
+	return link.documentWrite ? `document.write('${decl}');` : decl;
 }
 
 exports.normalizeAttrs = normalizeAttrs;
@@ -154,8 +183,10 @@ function normalizeAttrs(attrs) {
 			return;
 		}
 
+		key = Filters.html(key, null, 'attrKey');
+
 		if (Object.isString(val)) {
-			normalizedAttrs.push(`${key}="${val}"`);
+			normalizedAttrs.push(`${key}="${Filters.html(val, null, 'attrValue')}"`);
 
 		} else if (val) {
 			normalizedAttrs.push(key);

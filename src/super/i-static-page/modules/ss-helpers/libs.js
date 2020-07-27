@@ -101,14 +101,18 @@ exports.loadLibs = loadLibs;
  *
  * @param {Libs} libs
  * @param {Object<string>=} [assets] - map with assets
+ * @param {boolean=} [documentWrite] - if true,
+ *   the function returns JS code to load the libraries by using document.write
+ *
  * @returns {!Promise<string>}
  */
-async function loadLibs(libs, assets) {
+async function loadLibs(libs, {assets, documentWrite} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
+		lib.documentWrite = documentWrite;
 		res += await getScriptDecl(lib);
 	}
 
@@ -122,15 +126,20 @@ exports.loadStyles = loadStyles;
  * The function returns declaration to load libraries.
  *
  * @param {StyleLibs} libs
+ *
  * @param {Object<string>=} [assets] - map with assets
+ * @param {boolean=} [documentWrite] - if true,
+ *   the function returns JS code to load the libraries by using document.write
+ *
  * @returns {!Promise<string>}
  */
-async function loadStyles(libs, assets) {
+async function loadStyles(libs, {assets, documentWrite} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
+		lib.documentWrite = documentWrite;
 		res += await getStyleDecl(lib);
 	}
 
@@ -145,13 +154,17 @@ exports.loadLinks = loadLinks;
  *
  * @param {Links} libs
  * @param {Object<string>=} [assets] - map with assets
+ * @param {boolean=} [documentWrite] - if true,
+ *   the function returns JS code to load the lins by using document.write
+ *
  * @returns {!Promise<string>}
  */
-async function loadLinks(libs, assets) {
+async function loadLinks(libs, {assets, documentWrite} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
+		lib.documentWrite = documentWrite;
 		res += await getLinkDecl(lib);
 	}
 

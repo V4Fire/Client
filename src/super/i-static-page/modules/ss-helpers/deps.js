@@ -45,7 +45,7 @@ function getScriptDepDecl(name, opts, assets) {
 				filePath = path.join(src.clientOutput(assets[name]));
 
 			if (fs.existsSync(filePath)) {
-				const decl = `requireMonic(${filePath})`;
+				const decl = `include(${filePath})`;
 				return opts.wrap ? getScriptDecl(decl) : decl;
 			}
 
@@ -102,7 +102,7 @@ function getStyleDepDecl(name, opts, assets) {
 				filePath = path.join(src.clientOutput(assets[rname]));
 
 			if (fs.existsSync(filePath)) {
-				const decl = `requireMonic(${filePath})`;
+				const decl = `include(${filePath})`;
 				return opts.wrap ? getStyleDecl(decl) : decl;
 			}
 

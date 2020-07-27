@@ -61,13 +61,15 @@ exports.Lib = Lib;
  * Parameters of an initialized script library:
  *
  * * src - path to a file to load
- * @see Lib
+ * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
  *
+ * @see Lib
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
  *   defer?: boolean,
  *   load?: boolean,
+ *   documentWrite?: boolean,
  *   attrs?: Object
  * }}
  */
@@ -96,7 +98,7 @@ exports.Libs = Libs;
  *   src: string,
  *   source?: LibSource,
  *   inline?: boolean,
- *   defer?: boolean,
+ *   defer?: boolean
  *   attrs?: Object
  * }}
  */
@@ -107,12 +109,14 @@ exports.StyleLib = StyleLib;
  * Parameters of an initialized style library:
  *
  * * src - path to a file to load
- * @see StyleLib
+ * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
  *
+ * @see StyleLib
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
- *   defer?: boolean,
+ *   defer?: boolean,,
+ *   documentWrite?: boolean,
  *   attrs?: Object
  * }}
  */
@@ -148,9 +152,14 @@ exports.Link = Link;
  * Parameters of an initialized link:
  *
  * * src - path to a file to load
- * @see Link
+ * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
  *
- * @typedef {{src: string, attrs?: Object}}
+ * @see Link
+ * @typedef {{
+ *   src: string,
+ *   documentWrite?: boolean,
+ *   attrs?: Object
+ * }}
  */
 const InitializedLink = {};
 exports.InitializedLink = InitializedLink;

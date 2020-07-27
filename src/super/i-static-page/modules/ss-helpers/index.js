@@ -17,5 +17,6 @@ Object.assign(
 	include('src/super/i-static-page/modules/ss-helpers/tags'),
 	include('src/super/i-static-page/modules/ss-helpers/libs'),
 	include('src/super/i-static-page/modules/ss-helpers/deps'),
-	include('src/super/i-static-page/modules/ss-helpers/assets')
+	include('src/super/i-static-page/modules/ss-helpers/assets'),
+	include('src/super/i-static-page/modules/ss-helpers/init')
 );
