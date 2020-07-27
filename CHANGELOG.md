@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.40 (2020-07-27)
+
+#### :house: Internal
+
+* Logging Vue errors and warnings via `core/log` module
+
 ## v3.0.0-rc.39 (2020-07-23)
 
 #### :rocket: New Feature
