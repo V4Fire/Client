@@ -218,5 +218,39 @@ module.exports = (page) => {
 			await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1500});
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
+
+		it('img tag update `src`', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const img = document.getElementById('img-target');
+				ctx.load(img, {src: images.pngImage});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page);
+
+			await imageLoader.evaluate((ctx, images) => {
+				const img = document.getElementById('img-target');
+				ctx.update(img, {src: images.pngImage2x});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page);
+			expect(await imgNode.evaluate((ctx) => ctx.src)).toBe(images.pngImage2x);
+		});
+
+		it('div tag update `src`', async () => {
+			await imageLoader.evaluate((ctx, images) => {
+				const div = document.getElementById('div-target');
+				ctx.load(div, {src: images.pngImage});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page);
+
+			await imageLoader.evaluate((ctx, images) => {
+				const div = document.getElementById('div-target');
+				ctx.update(div, {src: images.pngImage2x});
+			}, images);
+
+			await h.bom.waitForIdleCallback(page);
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${images.pngImage2x}")`);
+		});
 	});
 };
