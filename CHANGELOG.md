@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.41 (2020-07-27)
+
+#### :bug: Bug Fix
+
+* Fixed bug in `test` function in `core/browser`
+
 ## v3.0.0-rc.40 (2020-07-27)
 
 #### :house: Internal
