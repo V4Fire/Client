@@ -11,6 +11,10 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+#### :bug: Bug Fix
+
+* For readonly mode - do not show clear button
+
 ## v3.0.0-rc.40 (2020-07-27)
 
 #### :house: Internal
