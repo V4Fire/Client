@@ -17,7 +17,9 @@ const
 	delay = require('delay');
 
 const
-	{assetsJSON, assetsJS} = include('build/build.webpack'),
+	build = include('build/build.webpack');
+
+const
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -44,7 +46,7 @@ async function getAssets(entryPoints) {
 	async function fillAssets(dep) {
 		while (!assets[dep]) {
 			try {
-				$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
+				$C(fs.readJSONSync(build.assetsJSON)).forEach((el, key, rawAssets) => {
 					assets[key] = rawAssets[key].publicPath;
 				});
 
@@ -58,24 +60,21 @@ async function getAssets(entryPoints) {
 exports.getAssetsDecl = getAssetsDecl;
 
 /**
- * Returns declaration of project assets.
- * You need to put this declaration within a script tag or use the "wrap" option.
+ * Returns declaration of project assets
  *
  * @param {boolean=} [inline] - if true, the declaration is placed as a text
  * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
+ * @param {boolean=} [documentWrite] - if true, the function returns JS code to load
+ *   the declaration by using document.write
+ *
  * @returns {string}
  */
-function getAssetsDecl({inline, wrap}) {
+function getAssetsDecl({inline, wrap, documentWrite} = {}) {
 	if (needInline(inline)) {
-		const
-			decl = fs.readFileSync(assetsJS).toString();
-
-		if (wrap) {
-			return getScriptDecl(decl);
-		}
-
-		return decl;
+		const decl = fs.readFileSync(build.assetsJS).toString();
+		return wrap ? getScriptDecl(decl) : decl;
 	}
 
-	return getScriptDecl({src: webpack.publicPath(webpack.assetsJS)});
+	const decl = getScriptDecl({src: webpack.publicPath(webpack.assetsJS()), documentWrite});
+	return documentWrite && wrap ? getScriptDecl(decl) : decl;
 }

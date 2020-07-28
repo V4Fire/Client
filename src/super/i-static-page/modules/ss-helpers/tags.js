@@ -9,6 +9,9 @@
 require('../interface');
 
 const
+	{csp} = require('config');
+
+const
 	fs = require('fs-extra-promise'),
 	delay = require('delay');
 
@@ -16,7 +19,6 @@ const
 	{Filters} = require('snakeskin');
 
 const
-	{csp} = require('config'),
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 

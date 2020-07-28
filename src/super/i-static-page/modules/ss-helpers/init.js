@@ -31,22 +31,17 @@ async function generateInitJS(name, {
 	rootTag,
 	rootAttrs
 }) {
-	const opts = {
-		assets,
-		documentWrite: true
-	};
-
 	const
 		head = [],
 		body = [];
 
 	// - block links
-	head.push(await loadLinks(deps.links, opts));
+	head.push(await loadLinks(deps.links, {assets, documentWrite: true}));
 
 	// - block headScripts
 	head.push(
-		getVarsDecl({assets}),
-		await loadLibs(deps.headScripts, opts)
+		getVarsDecl(),
+		await loadLibs(deps.headScripts, {assets, documentWrite: true})
 	);
 
 	{
@@ -61,18 +56,18 @@ async function generateInitJS(name, {
 
 	// - block styles
 	body.push(
-		await loadStyles(deps.styles, opts),
+		await loadStyles(deps.styles, {assets, documentWrite: true}),
 		loadEntryPointDependencies(entryPoint, {type: 'styles'})
 	);
 
 	// - block assets
-	body.push(getAssetsDecl({inline: !assetsRequest}));
+	body.push(getAssetsDecl({inline: !assetsRequest, documentWrite: true}));
 
 	// - block scripts
 	body.push(
 		await getScriptDeclByName('std', {optional: true}),
 
-		await loadLibs(deps.scripts, opts),
+		await loadLibs(deps.scripts, {assets, documentWrite: true}),
 		getInitLibDecl(),
 
 		getScriptDeclByName('vendor', {optional: true}),

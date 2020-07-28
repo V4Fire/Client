@@ -9,19 +9,20 @@
 require('../interface');
 
 const
+	{webpack, src} = require('config');
+
+const
 	path = require('upath'),
 	fs = require('fs-extra-promise'),
 	delay = require('delay');
 
 const
-	{webpack, src} = require('config'),
+	genHash = include('build/hash');
+
+const
 	{isURL, isFolder, files, folders} = include('src/super/i-static-page/modules/const'),
 	{getScriptDecl, getStyleDecl, getLinkDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
-
-const
-	build = include('build/build.webpack'),
-	genHash = include('build/hash');
 
 exports.initLibs = initLibs;
 
@@ -56,15 +57,6 @@ async function initLibs(libs, assets) {
 
 		if (p.source === 'output') {
 			if (assets) {
-				while (!assets[p.src]) {
-					while (!fs.existsSync(build.assetsJSON)) {
-						await delay(500);
-					}
-
-					await delay(500);
-					Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)));
-				}
-
 				p.src = assets[p.src];
 			}
 
@@ -80,7 +72,7 @@ async function initLibs(libs, assets) {
 
 		if (p.inline) {
 			while (!fs.existsSync(src)) {
-				await delay(500);
+				await delay((1).second());
 			}
 
 		} else {
@@ -156,7 +148,7 @@ exports.loadLinks = loadLinks;
  * @param {Links} libs
  * @param {Object<string>=} [assets] - map with assets
  * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the lins by using document.write
+ *   the function returns JS code to load the links by using document.write
  *
  * @returns {!Promise<string>}
  */

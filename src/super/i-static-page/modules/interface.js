@@ -9,10 +9,10 @@
 /**
  * Additional options of a dependency:
  *
- * 1. [optional] - if true, the missing of this dependency won't throw an error
- * 2. [defer=true] - if true, the dependency is declared with the "defer" attribute
- * 3. [inline] - if true, the dependency is placed as a text
- * 4. [wrap] - if true, declaration of the dependency is wrapped by a script tag
+ * * [optional] - if true, the missing of this dependency won't throw an error
+ * * [defer=true] - if true, the dependency is declared with the "defer" attribute
+ * * [inline] - if true, the dependency is placed as a text
+ * * [wrap] - if true, declaration of the dependency is wrapped by a script tag
  *
  * @typedef {{
  *   optional?: boolean,
@@ -42,8 +42,8 @@ exports.LibSource = LibSource;
  * * src - relative path to a file to load, i.e. without referencing to /node_modules, etc.
  * * [source='lib'] - source type of the library, i.e. where the library is stored
  * * [inline=false] - if true, the library is placed as a text
- * * [defer=true] - if true, the script is declared with the "defer" attribute
- * * [load=true] - if false, the script won't be automatically loaded with a page
+ * * [defer=true] - if true, the library is declared with the "defer" attribute
+ * * [load=true] - if false, the library won't be automatically loaded with a page
  * * [attrs] - dictionary with additional attributes
  *
  * @typedef {{
@@ -93,7 +93,7 @@ exports.Libs = Libs;
  * * src - relative path to a file to load, i.e. without referencing to /node_modules, etc.
  * * [source='lib'] - source type of the library, i.e. where the library is stored
  * * [inline=false] - if true, the library is placed as text into a style tag
- * * [defer=true] - if true, the style is loaded only after loading of the whole page
+ * * [defer=true] - if true, the library is loaded only after loading of the whole page
  * * [attrs] - dictionary with additional attributes
  *
  * @typedef {{
