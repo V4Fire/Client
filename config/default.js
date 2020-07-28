@@ -548,7 +548,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {?string}
 		 */
 		nonce() {
-			return '{{nonce}}';
+			return undefined;
 		}
 	},
 
