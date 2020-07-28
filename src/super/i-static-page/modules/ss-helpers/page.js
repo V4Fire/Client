@@ -9,13 +9,18 @@
 require('../interface');
 
 const
+	{src, csp} = require('config');
+
+const
 	path = require('upath'),
 	fs = require('fs-extra-promise');
 
 const
-	{src, csp} = require('config'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers'),
-	{getScriptDecl, getStyleDecl, normalizeAttrs} = include('src/super/i-static-page/modules/ss-helpers/tags');
+	{getAssetsDecl} = include('src/super/i-static-page/modules/ss-helpers/assets'),
+	{getScriptDecl, getStyleDecl, normalizeAttrs} = include('src/super/i-static-page/modules/ss-helpers/tags'),
+	{loadLibs, loadStyles, loadLinks} = include('src/super/i-static-page/modules/ss-helpers/libs'),
+	{getVarsDecl, getInitLibDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
 
 const
 	globals = include('build/globals.webpack');
@@ -138,10 +143,10 @@ function getStyleDeclByName(name, opts, assets) {
 	return opts.wrap ? getStyleDecl(decl) : decl;
 }
 
-exports.loadEntryPointDependencies = loadEntryPointDependencies;
+exports.loadPageDependencies = loadPageDependencies;
 
 /**
- * Initializes and loads the specified dependencies of an entry point.
+ * Initializes and loads the specified dependencies of a page.
  *
  * The function returns JS code to load the dependencies by using document.write.
  * You need to put this declaration within a script tag or use the "wrap" option.
@@ -151,7 +156,7 @@ exports.loadEntryPointDependencies = loadEntryPointDependencies;
  * @param {boolean=} [wrap] - if true, declaration of the dependency is wrapped by a script tag
  * @returns {string}
  */
-function loadEntryPointDependencies(dependencies, {type, wrap} = {}) {
+function loadPageDependencies(dependencies, {type, wrap} = {}) {
 	if (!dependencies) {
 		return '';
 	}
@@ -203,4 +208,87 @@ function loadEntryPointDependencies(dependencies, {type, wrap} = {}) {
 	}
 
 	return styles + scripts;
+}
+
+exports.generatePageInitJS = generatePageInitJS;
+
+/**
+ * Generates js script to initialize the specified page
+ *
+ * @param pageName
+ *
+ * @param deps - map of external libraries to load
+ * @param ownDeps - own dependencies of the page
+ *
+ * @param assets - map with static page assets
+ * @param assetsRequest - should or not do a request for assets.js
+ *
+ * @param rootTag - type of the root tag (div, span, etc.)
+ * @param rootAttrs - attributes for the root tag
+ *
+ * @returns {!Promise<void>}
+ */
+async function generatePageInitJS(pageName, {
+	deps,
+	ownDeps,
+
+	assets,
+	assetsRequest,
+
+	rootTag,
+	rootAttrs
+}) {
+	const
+		head = [],
+		body = [];
+
+	// - block links
+	head.push(await loadLinks(deps.links, {assets, documentWrite: true}));
+
+	// - block headScripts
+	head.push(
+		getVarsDecl(),
+		await loadLibs(deps.headScripts, {assets, documentWrite: true})
+	);
+
+	{
+		const
+			attrs = normalizeAttrs(rootAttrs);
+
+		body.push(
+			`document.write('<${rootTag} class=".i-static-page.${pageName}" ${attrs}></${rootTag}>')`
+		);
+	}
+
+	// - block styles
+	body.push(
+		await loadStyles(deps.styles, {assets, documentWrite: true}),
+		loadPageDependencies(ownDeps, {type: 'styles'})
+	);
+
+	// - block assets
+	body.push(getAssetsDecl({inline: !assetsRequest, documentWrite: true}));
+
+	// - block scripts
+	body.push(
+		await getScriptDeclByName('std', {optional: true}),
+
+		await loadLibs(deps.scripts, {assets, documentWrite: true}),
+		getInitLibDecl(),
+
+		getScriptDeclByName('vendor', {optional: true}),
+		loadPageDependencies(ownDeps, {type: 'scripts'}),
+		getScriptDeclByName('webpack.runtime', {optional: true})
+	);
+
+	const bodyInitializer = `
+function $__RENDER_ROOT() {
+	${body.join('\n')}
+}
+`;
+
+	fs.writeFileSync(
+		src.clientOutput(`${pageName}.init.js`),
+		head.join('\n') + bodyInitializer
+	);
 }

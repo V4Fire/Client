@@ -57,8 +57,8 @@
 	/** Map of external libraries to load */
 	- deps = include('src/super/i-static-page/deps')
 
-	/** Dependencies of the active entry point */
-	- entryPoint = @@entryPoints[self.name()] || {}
+	/** Own dependencies of the page */
+	- ownDeps = @@entryPoints[self.name()] || {}
 
 	/** Map with static page assets */
 	- assets = await h.getAssets(@@entryPoints)
@@ -68,9 +68,9 @@
 			? rootAttrs['data-root-component'] = self.name()
 			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
-		? await h.generateInitJS(self.name(), { &
+		? await h.generatePageInitJS(self.name(), { &
 			deps,
-			entryPoint,
+			ownDeps,
 
 			assets,
 			assetsRequest,
@@ -137,7 +137,7 @@
 				- block head
 					- block styles
 						+= await h.loadStyles(deps.styles, {assets})
-						+= h.loadEntryPointDependencies(entryPoint, {type: 'styles', wrap: true})
+						+= h.loadPageDependencies(ownDeps, {type: 'styles', wrap: true})
 
 					- block assets
 						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
@@ -149,5 +149,5 @@
 						+= h.getInitLibDecl({wrap: true})
 
 						+= h.getScriptDeclByName('vendor', {optional: true, wrap: true})
-						+= h.loadEntryPointDependencies(entryPoint, {type: 'scripts', wrap: true})
+						+= h.loadPageDependencies(ownDeps, {type: 'scripts', wrap: true})
 						+= h.getScriptDeclByName('webpack.runtime', {wrap: true})
