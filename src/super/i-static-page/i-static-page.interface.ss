@@ -135,12 +135,12 @@
 						- block providers
 
 				- block head
+					- block assets
+						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
+
 					- block styles
 						+= await h.loadStyles(deps.styles, {assets})
 						+= h.loadPageDependencies(ownDeps, {type: 'styles', wrap: true})
-
-					- block assets
-						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
 
 					- block scripts
 						+= h.getScriptDeclByName('std', {optional: true, wrap: true})

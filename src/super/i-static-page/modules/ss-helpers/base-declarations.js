@@ -33,12 +33,11 @@ var PATH = Object.create(null);
 try {
 	PATH = new Proxy(PATH, {
 		get: function (target, prop) {
-			if (target.hasOwnProperty(prop)) {
+			if (prop in target) {
 				var v = target[prop];
 				return typeof v === 'string' ? v : v.publicPath || v.path;
 			}
 
-			console.log(target);
 			throw new ReferenceError('A resource by the path "' + prop + '" is not defined');
 		}
 	});

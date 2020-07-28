@@ -260,14 +260,14 @@ async function generatePageInitJS(pageName, {
 		);
 	}
 
+	// - block assets
+	body.push(getAssetsDecl({inline: !assetsRequest, documentWrite: true}));
+
 	// - block styles
 	body.push(
 		await loadStyles(deps.styles, {assets, documentWrite: true}),
 		loadPageDependencies(ownDeps, {type: 'styles'})
 	);
-
-	// - block assets
-	body.push(getAssetsDecl({inline: !assetsRequest, documentWrite: true}));
 
 	// - block scripts
 	body.push(
