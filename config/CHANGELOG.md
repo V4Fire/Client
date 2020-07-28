@@ -11,6 +11,12 @@ Changelog
 
 ## v3.0.0-rc.39 ()
 
+#### :boom: Breaking Change
+
+* Removed redundant parameters from `snakeskin`
+
+#### :rocket: New Feature
+
 * Added `csp`
 
 ## v3.0.0-rc.36 (2020-07-13)
