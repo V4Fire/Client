@@ -173,10 +173,10 @@
 						+= await h.loadStyles(defStyles, {assets})
 
 					- block styles
-						+= h.loadDependencies(selfDeps, 'styles')
+						+= h.loadEntryPointDependencies(selfDeps, {type: 'styles', wrap: true})
 
 					- block std
-						+= h.getScriptDepDecl('std', {optional: true, wrap: true})
+						+= h.getScriptDeclByName('std', {optional: true, wrap: true})
 
 					: defLibs = deps.scripts
 					- block defLibs
@@ -191,9 +191,9 @@
 								}
 
 						- block scripts
-							+= h.getScriptDepDecl('vendor', {optional: true, wrap: true})
-							+= h.loadDependencies(selfDeps, 'scripts')
-							+= h.getScriptDepDecl('webpack.runtime', {wrap: true})
+							+= h.getScriptDeclByName('vendor', {optional: true, wrap: true})
+							+= h.loadEntryPointDependencies(selfDeps, {type: 'scripts', wrap: true})
+							+= h.getScriptDeclByName('webpack.runtime', {wrap: true})
 
 					+= self.jsScript({})
 						- block depsReady

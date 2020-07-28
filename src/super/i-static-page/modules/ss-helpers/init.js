@@ -31,8 +31,12 @@ async function generateInitJS(name, {deps, selfDeps, assets}) {
 	head.push(await h.loadLinks(deps.links, opts));
 
 	body.push(await h.loadStyles(deps.styles, opts));
-	//body.push(await h.loadDependencies(selfDeps));
-	body.push(await h.getScriptDepDecl('std', {optional: true}));
+	body.push(await h.loadEntryPointDependencies(selfDeps, {type: 'styles'}));
+	body.push(await h.getScriptDeclByName('std', {optional: true}));
+	head.push(await h.loadLibs(deps.scripts, opts));
+	body.push(await h.getScriptDeclByName('vendor', {optional: true}));
+	body.push(await h.loadEntryPointDependencies(selfDeps, {type: 'scripts'}));
+	body.push(await h.getScriptDeclByName('webpack.runtime', {optional: true}));
 
 	fs.writeFileSync(src.clientOutput(`${name}.init-head.js`), head.join('\n'));
 	fs.writeFileSync(src.clientOutput(`${name}.init-body.js`), body.join('\n'));

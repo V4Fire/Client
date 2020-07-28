@@ -24,19 +24,21 @@ const nonce = {
 	nonce: csp.nonce
 };
 
-exports.getScriptDepDecl = getScriptDepDecl;
+exports.getScriptDeclByName = getScriptDeclByName;
 
 /**
- * Returns declaration of a script to initialize the specified dependency.
- * The declaration based on the "document.write" mechanism,
- * i.e., to load dependency you need to put this declaration within a script tag or use the "wrap" option.
+ * Returns declaration of a script tag to load a library by the specified name.
  *
- * @param {string} name - dependence name
+ * The names are taken on entry points from "src/entries".
+ * The function returns JS code to load the library by using document.write.
+ * You need to put this declaration within a script tag or use the "wrap" option.
+ *
+ * @param {string} name
  * @param {DepOptions=} [opts] - additional options
  * @param {Object<string>=} [assets] - map with assets
  * @returns {string}
  */
-function getScriptDepDecl(name, opts, assets) {
+function getScriptDeclByName(name, opts, assets) {
 	opts = {defer: true, ...opts};
 
 	if (needInline(opts.inline)) {
@@ -78,19 +80,21 @@ function getScriptDepDecl(name, opts, assets) {
 	return opts.wrap ? getScriptDecl(decl) : decl;
 }
 
-exports.getStyleDepDecl = getStyleDepDecl;
+exports.getStyleDeclByName = getStyleDeclByName;
 
 /**
- * Returns declaration of a style to initialize the specified dependency.
- * The declaration based on the "document.write" mechanism,
- * i.e., to load dependency you need to put this declaration within a script tag or use the "wrap" option.
+ * Returns declaration of a script tag to load a style library by the specified name.
  *
- * @param {string} name - dependence name
+ * The names are taken on entry points from "src/entries".
+ * The function returns JS code to load the library by using document.write.
+ * You need to put this declaration within a script tag or use the "wrap" option.
+ *
+ * @param {string} name
  * @param {DepOptions=} [opts] - additional options
  * @param {Object<string>=} [assets] - map with assets
  * @returns {string}
  */
-function getStyleDepDecl(name, opts, assets) {
+function getStyleDeclByName(name, opts, assets) {
 	opts = {defer: true, ...opts};
 
 	const
@@ -121,7 +125,7 @@ function getStyleDepDecl(name, opts, assets) {
 	});
 
 	let
-		decl = `document.write('<link ${attrs}>')`;
+		decl = `document.write('<link ${attrs}>');`;
 
 	if (opts.optional) {
 		decl = `if ('${rname}' in PATH) { ${decl} }`;
@@ -130,16 +134,20 @@ function getStyleDepDecl(name, opts, assets) {
 	return opts.wrap ? getStyleDecl(decl) : decl;
 }
 
-exports.loadDependencies = loadDependencies;
+exports.loadEntryPointDependencies = loadEntryPointDependencies;
 
 /**
- * Initializes and loads runtime dependencies of the project
+ * Initializes and loads the specified dependencies of an entry point.
+ *
+ * The function returns JS code to load the dependencies by using document.write.
+ * You need to put this declaration within a script tag or use the "wrap" option.
  *
  * @param {Array<string>} dependencies - list of dependencies to load
- * @param {string=} [type] - type of dependencies (styles, scripts)
+ * @param {string=} [type] - type of dependencies (styles or scripts)
+ * @param {boolean=} [wrap=false] - if true, declaration of the dependency is wrapped by a script tag
  * @returns {string}
  */
-function loadDependencies(dependencies, type) {
+function loadEntryPointDependencies(dependencies, {type, wrap} = {}) {
 	if (!dependencies) {
 		return '';
 	}
@@ -150,14 +158,16 @@ function loadDependencies(dependencies, type) {
 
 	if (!type || type === 'styles') {
 		for (const dep of dependencies) {
-			styles += getStyleDepDecl(dep);
+			styles += getStyleDeclByName(dep);
 		}
 
-		if (needInline()) {
-			styles = getStyleDecl(styles);
+		if (wrap) {
+			if (needInline()) {
+				styles = getStyleDecl(styles);
 
-		} else {
-			styles = getScriptDecl(styles);
+			} else {
+				styles = getScriptDecl(styles);
+			}
 		}
 	}
 
@@ -167,18 +177,20 @@ function loadDependencies(dependencies, type) {
 				tpl = `${dep}_tpl`;
 
 			if (dep === 'index') {
-				scripts += getScriptDepDecl(dep);
-				scripts += getScriptDepDecl(tpl);
+				scripts += getScriptDeclByName(dep);
+				scripts += getScriptDeclByName(tpl);
 
 			} else {
-				scripts += getScriptDepDecl(tpl);
-				scripts += getScriptDepDecl(dep);
+				scripts += getScriptDeclByName(tpl);
+				scripts += getScriptDeclByName(dep);
 			}
 
-			scripts += `window[${globals.MODULE_DEPENDENCIES}].fileCache['${dep}'] = true;\n`;
+			scripts += `window[${globals.MODULE_DEPENDENCIES}].fileCache['${dep}'] = true;`;
 		}
 
-		scripts = getScriptDecl(scripts);
+		if (wrap) {
+			scripts = getScriptDecl(scripts);
+		}
 	}
 
 	return styles + scripts;
