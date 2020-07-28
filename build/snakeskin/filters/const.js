@@ -81,8 +81,3 @@ exports.commaRgxp = /\s*,\s*/;
  * RegExp to detect Snakeskin file extensions
  */
 exports.ssExtRgxp = /\.e?ss$/;
-
-/**
- * RegExp to match tags that support the nonce attribute
- */
-exports.tagNonceRgxp = /^(['"])<(link|script)([^>]*)>/;
