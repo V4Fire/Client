@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Removed `snakeskin/filters/csp`
+* Renamed `dependencies` -> `entryPoints` `module.webpack/snakeskin`
 
 ## v3.0.0-rc.36 (2020-07-13)
 

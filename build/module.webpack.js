@@ -279,7 +279,7 @@ module.exports = async function module({plugins}) {
 				options: inherit(snakeskin.server, {
 					exec: true,
 					vars: {
-						dependencies: graph.dependencies
+						entryPoints: graph.dependencies
 					}
 				})
 			}
