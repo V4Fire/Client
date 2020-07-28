@@ -59,7 +59,7 @@ function getScriptDeclByName(name, opts, assets) {
 	}
 
 	const attrs = normalizeAttrs({
-		src: `' + PATH['${name}'] + '`,
+		staticAttrs: `src="' + PATH['${name}'] + '"`,
 		defer: opts.defer !== false,
 		...nonce
 	});
@@ -120,8 +120,8 @@ function getStyleDeclByName(name, opts, assets) {
 	}
 
 	const attrs = normalizeAttrs({
+		staticAttrs: `href="' + PATH['${rname}'] + '"`,
 		rel: 'stylesheet',
-		href: `' + PATH['${rname}'] + '`,
 		defer: opts.defer !== false,
 		...nonce
 	});

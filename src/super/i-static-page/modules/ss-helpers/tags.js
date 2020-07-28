@@ -46,7 +46,7 @@ function getScriptDecl(lib, body) {
 	body = body || '';
 
 	const attrs = normalizeAttrs({
-		...Object.select(lib, lib.inline || body ? [] : ['defer', 'src']),
+		...Object.select(lib, lib.inline || body ? [] : ['staticAttrs', 'defer', 'src']),
 		...nonce,
 		...lib.attrs
 	});
@@ -104,6 +104,7 @@ function getStyleDecl(lib, body) {
 		rel = lib.attrs?.rel ?? 'stylesheet';
 
 	const attrs = normalizeAttrs({
+		staticAttrs: lib.staticAttrs,
 		...nonce,
 		...lib.attrs,
 		...lib.inline || body ? null : {href: lib.src, rel},
@@ -141,6 +142,7 @@ exports.getLinkDecl = getLinkDecl;
 function getLinkDecl(link) {
 	const attrs = normalizeAttrs({
 		href: link.src,
+		staticAttrs: link.staticAttrs,
 		...nonce,
 		...link.attrs
 	});
@@ -180,6 +182,11 @@ function normalizeAttrs(attrs) {
 		}
 
 		if (val === undefined) {
+			return;
+		}
+
+		if (key === 'staticAttrs') {
+			normalizedAttrs.push(val);
 			return;
 		}
 

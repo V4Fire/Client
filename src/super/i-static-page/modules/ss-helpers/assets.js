@@ -22,18 +22,18 @@ const
 exports.initAssets = initAssets;
 
 /**
- * Initializes the specified assets
+ * Initializes the specified assets object
  *
  * @param {!Object<string>} assets - map with assets
- * @param {!Object<!Array<string>>} dependencies - map of project dependencies
+ * @param {!Object<!Array<string>>} entryPoints - map of project entry points
  * @returns {!Promise<!Object<string>>}
  */
-async function initAssets(assets, dependencies) {
+async function initAssets(assets, entryPoints) {
 	if (!needInline()) {
 		return assets;
 	}
 
-	$C(dependencies).forEach((el, key) => {
+	$C(entryPoints).forEach((el, key) => {
 		const nm = webpack.output({name: key});
 		assets[key] = `${nm}.js`;
 		assets[`${key}_tpl`] = `${nm}_tpl.js`;

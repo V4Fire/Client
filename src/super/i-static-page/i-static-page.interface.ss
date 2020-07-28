@@ -9,41 +9,29 @@
  */
 
 - include 'super/i-page'|b
-- include 'super/i-static-page/modules/**/*.ss'|b
-
 - import fs from 'fs-extra-promise'
-- import glob from 'glob'
-- import path from 'upath'
-- import delay from 'delay'
+
+/**
+ * Injects the specified file to a template
+ * @param {string} src
+ */
+- block index->inject(src)
+	- return fs.readFileSync(src).toString()
 
 /**
  * Base page template
  */
 - async template index(@params = {}) extends ['i-page'].index
-	- h = include('src/super/i-static-page/modules/ss-helpers')
-	- globals = include('build/globals.webpack')
-
-	/// Map of external libraries to load
-	- deps = include('src/super/i-static-page/deps')
-
-	/// List of page self dependencies to load
-	- selfDeps = @@dependencies[self.name()] || {}
-
-	/// Map with page own assets: styles, scripts, links, etc.
-	- assets = Object.create(null)
-
+	/** Static page title */
 	- title = @@appName
-	- pageData = Object.create(null)
 
-	- nonce = @nonce
+	/** Additional static page data */
+	- pageData = {}
 
-	- defineBase = false
-	- assetsRequest = true
+	/** Page charset */
+	- charset = 'utf-8'
 
-	- charset = { &
-		charset: 'utf-8'
-	} .
-
+	/** Map of meta viewport attributes */
 	- viewport = { &
 		'width': 'device-width',
 		'initial-scale': '1.0',
@@ -51,11 +39,33 @@
 		'user-scalable': 'no'
 	} .
 
+	/** Map with attributes of <html> tag */
 	- htmlAttrs = {}
 
+	/** @override */
+	- rootAttrs = {}
+
+	/** Should or not generate <base> tag */
+	- defineBase = false
+
+	/** Should or not do a request for assets.js */
+	- assetsRequest = true
+
+	/** Map of external libraries to load */
+	- deps = include('src/super/i-static-page/deps')
+
+	/** Dependencies of the active entry point */
+	- entryPoint = @@entryPoints[self.name()] || {}
+
+	/** Map with static page assets */
+	- assets = {}
+
+	/** Helpers to generate a template */
+	- h = include('src/super/i-static-page/modules/ss-helpers')
+
 	- block root
-		? await h.initAssets(assets, @@dependencies)
-		? await h.generateInitJS(self.name(), {deps, selfDeps, assets})
+		? await h.initAssets(assets, @@entryPoints)
+		? await h.generateInitJS(self.name(), {deps, entryPoint, assets})
 
 		- block doctype
 			- doctype
@@ -66,8 +76,8 @@
 			< head
 				: base = @@publicPath()
 
-				- block meta
-					< meta ${charset}
+				- block charset
+					< meta charset = ${charset}
 
 				- block viewport
 					: content = []
@@ -80,42 +90,22 @@
 						content = ${content}
 					.
 
-				- block title
-					< title
-						{title}
-
 				- if defineBase
 					- block base
 						< base href = ${base}
 
 				- block favicons
-					/// Dirty hack for replacing startURL from manifest.json
-					: putIn injectFavicons
-						() =>
-							: faviconsSrc = glob.sync(path.join(@@favicons, '*.html'))[0]
+					+= h.getFaviconsDecl()
 
-							- if !faviconsSrc
-								- return
+				- block title
+					< title
+						{title}
 
-							: &
-								rgxp = new RegExp('<link (.*?) href="(.*?/manifest.json)">'),
-								favicons = self.inject(faviconsSrc),
-								manifest = rgxp.exec(favicons)
-							.
-
-							+= favicons.replace(rgxp, '')
-
-							+= self.jsScript({})
-								document.write({"'<link " + manifest[1] + " href=\"" + manifest[2] + "?from=' + location.href + '\">'"|addNonce});
-
-					+= injectFavicons()
+				- block links
+					+= await h.loadLinks(deps.links, assets)
 
 				- block headScripts
-					: headLibs = deps.headScripts
-					- block headLibs
-
-					- block loadHeadScripts
-						+= await h.loadLibs(headLibs, assets)
+					+= await h.loadLibs(deps.headScripts, assets)
 
 			: pageName = self.name()
 
@@ -126,51 +116,34 @@
 			< body
 				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}
 					- block headHelpers
+
 					- block innerRoot
 						- if overWrapper
 							< .&__over-wrapper
 								- block overWrapper
 
 							- block body
+
 						- block helpers
 						- block providers
 
-				+= h.getVarsDecl({assets, wrap: true})
-
-				- if !@@fatHTML && assetsRequest
-					- block assets
-						+= h.getScriptDecl({src: @@publicPath(@@assetsJS)})
-
 				- block head
-					: defStyles = deps.styles
-					- block defStyles
-
-					- block loadStyles
-						+= await h.loadStyles(defStyles, {assets})
-
 					- block styles
-						+= h.loadEntryPointDependencies(selfDeps, {type: 'styles', wrap: true})
+						+= await h.loadStyles(deps.styles, {assets})
+						+= h.loadEntryPointDependencies(entryPoint, {type: 'styles', wrap: true})
 
-					- block std
+					+= h.getVarsDecl({assets, wrap: true})
+
+					- block assets
+						- if !@@fatHTML && assetsRequest
+							+= h.getScriptDecl({src: @@publicPath(@@assetsJS)})
+
+					- block scripts
 						+= h.getScriptDeclByName('std', {optional: true, wrap: true})
 
-					: defLibs = deps.scripts
-					- block defLibs
+						+= await h.loadLibs(deps.scripts, {assets})
+						+= h.getInitLibDecl({wrap: true})
 
-					- block loadLibs
-						+= await h.loadLibs(defLibs, {assets})
-
-						+= self.jsScript({})
-							# block initLibs
-								if (typeof Vue !== 'undefined') {
-									Vue.default = Vue;
-								}
-
-						- block scripts
-							+= h.getScriptDeclByName('vendor', {optional: true, wrap: true})
-							+= h.loadEntryPointDependencies(selfDeps, {type: 'scripts', wrap: true})
-							+= h.getScriptDeclByName('webpack.runtime', {wrap: true})
-
-					+= self.jsScript({})
-						- block depsReady
-							READY_STATE++;
+						+= h.getScriptDeclByName('vendor', {optional: true, wrap: true})
+						+= h.loadEntryPointDependencies(entryPoint, {type: 'scripts', wrap: true})
+						+= h.getScriptDeclByName('webpack.runtime', {wrap: true})

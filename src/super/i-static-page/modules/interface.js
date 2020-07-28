@@ -62,6 +62,7 @@ exports.Lib = Lib;
  *
  * * src - path to a file to load
  * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
+ * * [staticAttrs] - string with additional attributes
  *
  * @see Lib
  * @typedef {{
@@ -70,7 +71,8 @@ exports.Lib = Lib;
  *   defer?: boolean,
  *   load?: boolean,
  *   documentWrite?: boolean,
- *   attrs?: Object
+ *   attrs?: Object,
+ *   staticAttrs?: string
  * }}
  */
 const InitializedLib = {};
@@ -110,6 +112,7 @@ exports.StyleLib = StyleLib;
  *
  * * src - path to a file to load
  * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
+ * * [staticAttrs] - string with additional attributes
  *
  * @see StyleLib
  * @typedef {{
@@ -117,7 +120,8 @@ exports.StyleLib = StyleLib;
  *   inline?: boolean,
  *   defer?: boolean,,
  *   documentWrite?: boolean,
- *   attrs?: Object
+ *   attrs?: Object,
+ *   staticAttrs?: string
  * }}
  */
 const InitializedStyleLib = {};
@@ -153,12 +157,14 @@ exports.Link = Link;
  *
  * * src - path to a file to load
  * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
+ * * [staticAttrs] - string with additional attributes
  *
  * @see Link
  * @typedef {{
  *   src: string,
  *   documentWrite?: boolean,
- *   attrs?: Object
+ *   attrs?: Object,
+ *   staticAttrs?: string
  * }}
  */
 const InitializedLink = {};

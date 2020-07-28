@@ -18,6 +18,7 @@ Object.assign(
 	include('src/super/i-static-page/modules/ss-helpers/libs'),
 	include('src/super/i-static-page/modules/ss-helpers/entry-point'),
 	include('src/super/i-static-page/modules/ss-helpers/assets'),
-	include('src/super/i-static-page/modules/ss-helpers/vars'),
+	include('src/super/i-static-page/modules/ss-helpers/favicons'),
+	include('src/super/i-static-page/modules/ss-helpers/base-declarations'),
 	include('src/super/i-static-page/modules/ss-helpers/init')
 );
