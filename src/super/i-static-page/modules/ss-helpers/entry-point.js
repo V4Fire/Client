@@ -74,7 +74,9 @@ function getScriptDeclByName(name, opts, assets) {
 		decl = `document.write(${script});`;
 
 	if (opts.optional) {
-		decl = `if ('${name}' in PATH) { ${decl} }`;
+		decl = `if ('${name}' in PATH) {
+	${decl}
+}`;
 	}
 
 	return opts.wrap ? getScriptDecl(decl) : decl;
@@ -128,7 +130,9 @@ function getStyleDeclByName(name, opts, assets) {
 		decl = `document.write('<link ${attrs}>');`;
 
 	if (opts.optional) {
-		decl = `if ('${rname}' in PATH) { ${decl} }`;
+		decl = `if ('${rname}' in PATH) {
+	${decl}
+}`;
 	}
 
 	return opts.wrap ? getStyleDecl(decl) : decl;
@@ -159,6 +163,7 @@ function loadEntryPointDependencies(dependencies, {type, wrap} = {}) {
 	if (!type || type === 'styles') {
 		for (const dep of dependencies) {
 			styles += getStyleDeclByName(dep);
+			styles += '\n';
 		}
 
 		if (wrap) {
@@ -178,11 +183,15 @@ function loadEntryPointDependencies(dependencies, {type, wrap} = {}) {
 
 			if (dep === 'index') {
 				scripts += getScriptDeclByName(dep);
+				scripts += '\n';
 				scripts += getScriptDeclByName(tpl);
+				scripts += '\n';
 
 			} else {
 				scripts += getScriptDeclByName(tpl);
+				scripts += '\n';
 				scripts += getScriptDeclByName(dep);
+				scripts += '\n';
 			}
 
 			scripts += `window[${globals.MODULE_DEPENDENCIES}].fileCache['${dep}'] = true;`;

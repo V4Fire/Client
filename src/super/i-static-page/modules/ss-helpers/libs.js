@@ -141,6 +141,7 @@ async function loadStyles(libs, {assets, documentWrite} = {}) {
 		lib.defer = lib.defer !== false;
 		lib.documentWrite = documentWrite;
 		res += await getStyleDecl(lib);
+		res += '\n';
 	}
 
 	return res;
@@ -166,6 +167,7 @@ async function loadLinks(libs, {assets, documentWrite} = {}) {
 	for (const lib of await initLibs(libs, assets)) {
 		lib.documentWrite = documentWrite;
 		res += await getLinkDecl(lib);
+		res += '\n';
 	}
 
 	return res;

@@ -135,35 +135,11 @@
 						- block helpers
 						- block providers
 
-				+= self.jsScript({})
-					# block initVars
-						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: Object.create(null)};
-
-						# if nonce
-							var GLOBAL_NONCE = #{nonce|json};
-
-						var
-							READY_STATE = 0,
-							PATH = #{assets|json};
-
-						try {
-							PATH = new Proxy(PATH, {
-								get: function (target, prop) {
-									if (target.hasOwnProperty(prop)) {
-										var v = target[prop];
-										return typeof v === 'string' ? v : v.publicPath || v.path;
-									}
-
-									console.log(target);
-									throw new Error('Path "' + prop + '" is not find!');
-								}
-							});
-
-						} catch(_) {}
+				+= h.getVarsDecl({assets, wrap: true})
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
-						+= self.jsScript({src: @@publicPath(@@assetsJS)})
+						+= h.getScriptDecl({src: @@publicPath(@@assetsJS)})
 
 				- block head
 					: defStyles = deps.styles
