@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('../interface');
+const
+	{webpack} = require('config');
 
 const
 	$C = require('collection.js');
@@ -16,46 +17,65 @@ const
 	delay = require('delay');
 
 const
-	{webpack, src} = require('config'),
+	{assetsJSON, assetsJS} = include('build/build.webpack'),
+	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
-exports.initAssets = initAssets;
+exports.getAssets = getAssets;
 
 /**
- * Initializes the specified assets object
+ * Returns a map of project assets by the specified entry points
  *
- * @param {!Object<string>} assets - map with assets
- * @param {!Object<!Array<string>>} entryPoints - map of project entry points
+ * @param {!Object<!Array<string>>} entryPoints
  * @returns {!Promise<!Object<string>>}
  */
-async function initAssets(assets, entryPoints) {
-	if (!needInline()) {
-		return assets;
-	}
+async function getAssets(entryPoints) {
+	const
+		assets = {},
+		assetsBlueprint = ['webpack.runtime'];
 
 	$C(entryPoints).forEach((el, key) => {
-		const nm = webpack.output({name: key});
-		assets[key] = `${nm}.js`;
-		assets[`${key}_tpl`] = `${nm}_tpl.js`;
-		assets[`${key}$style`] = `${nm}$style.css`;
+		assetsBlueprint.push(key, `${key}_tpl`, `${key}$style`);
 	});
 
-	await $C(assets).async.forEach(wait);
-
-	// eslint-disable-next-line require-atomic-updates
-	assets['std'] = `${webpack.output({name: 'std'})}.js`;
-
-	// eslint-disable-next-line require-atomic-updates
-	assets['vendor'] = `${webpack.output({name: 'vendor'})}.js`;
-
-	// eslint-disable-next-line require-atomic-updates
-	assets['webpack.runtime'] = `${webpack.output({name: 'webpack.runtime'})}.js`;
-
+	await $C(assetsBlueprint).async.forEach(fillAssets);
 	return assets;
 
-	async function wait(path) {
-		while (!fs.existsSync(src.clientOutput(path))) {
-			await delay(200);
+	async function fillAssets(dep) {
+		while (!assets[dep]) {
+			try {
+				$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
+					assets[key] = rawAssets[key].publicPath;
+				});
+
+			} catch {}
+
+			await delay((1).second());
 		}
 	}
+}
+
+exports.getAssetsDecl = getAssetsDecl;
+
+/**
+ * Returns declaration of project assets.
+ * You need to put this declaration within a script tag or use the "wrap" option.
+ *
+ * @param {boolean=} [inline] - if true, the declaration is placed as a text
+ * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
+ * @returns {string}
+ */
+function getAssetsDecl({inline, wrap}) {
+	if (needInline(inline)) {
+		const
+			decl = fs.readFileSync(assetsJS).toString();
+
+		if (wrap) {
+			return getScriptDecl(decl);
+		}
+
+		return decl;
+	}
+
+	return getScriptDecl({src: webpack.publicPath(webpack.assetsJS)});
 }

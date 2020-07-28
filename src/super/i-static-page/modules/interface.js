@@ -9,10 +9,10 @@
 /**
  * Additional options of a dependency:
  *
- * 1. [optional=false] - if true, the missing of this dependency won't throw an error
- * 2. [defer=true] - if true, the dependency will be declared with the "defer" attribute
- * 3. [inline=false] - if true, the dependency will be placed as text into a script tag
- * 4. [wrap=false] - if true, declaration of the dependency is wrapped by a script tag
+ * 1. [optional] - if true, the missing of this dependency won't throw an error
+ * 2. [defer=true] - if true, the dependency is declared with the "defer" attribute
+ * 3. [inline] - if true, the dependency is placed as a text
+ * 4. [wrap] - if true, declaration of the dependency is wrapped by a script tag
  *
  * @typedef {{
  *   optional?: boolean,
@@ -41,7 +41,7 @@ exports.LibSource = LibSource;
  *
  * * src - relative path to a file to load, i.e. without referencing to /node_modules, etc.
  * * [source='lib'] - source type of the library, i.e. where the library is stored
- * * [inline=false] - if true, the library will be placed as text into a script tag
+ * * [inline=false] - if true, the library is placed as a text
  * * [defer=true] - if true, the script is declared with the "defer" attribute
  * * [load=true] - if false, the script won't be automatically loaded with a page
  * * [attrs] - dictionary with additional attributes
@@ -61,7 +61,7 @@ exports.Lib = Lib;
  * Parameters of an initialized script library:
  *
  * * src - path to a file to load
- * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
+ * * [documentWrite] - if true, the function returns JS code to load the library by using document.write
  * * [staticAttrs] - string with additional attributes
  *
  * @see Lib
@@ -92,8 +92,8 @@ exports.Libs = Libs;
  *
  * * src - relative path to a file to load, i.e. without referencing to /node_modules, etc.
  * * [source='lib'] - source type of the library, i.e. where the library is stored
- * * [inline=false] - if true, the library will be placed as text into a style tag
- * * [defer=true] - if true, the style will be loaded only after loading of the whole page
+ * * [inline=false] - if true, the library is placed as text into a style tag
+ * * [defer=true] - if true, the style is loaded only after loading of the whole page
  * * [attrs] - dictionary with additional attributes
  *
  * @typedef {{
@@ -111,7 +111,7 @@ exports.StyleLib = StyleLib;
  * Parameters of an initialized style library:
  *
  * * src - path to a file to load
- * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
+ * * [documentWrite] - if true, the function returns JS code to load the library by using document.write
  * * [staticAttrs] - string with additional attributes
  *
  * @see StyleLib
@@ -156,7 +156,7 @@ exports.Link = Link;
  * Parameters of an initialized link:
  *
  * * src - path to a file to load
- * * [documentWrite=false] - if true, the function returns JS code to load the library by using document.write
+ * * [documentWrite] - if true, the function returns JS code to load the library by using document.write
  * * [staticAttrs] - string with additional attributes
  *
  * @see Link

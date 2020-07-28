@@ -22,6 +22,9 @@
  * Base page template
  */
 - async template index(@params = {}) extends ['i-page'].index
+	/** Helpers to generate a template */
+	- h = include('src/super/i-static-page/modules/ss-helpers')
+
 	/** Static page title */
 	- title = @@appName
 
@@ -49,7 +52,7 @@
 	- defineBase = false
 
 	/** Should or not do a request for assets.js */
-	- assetsRequest = true
+	- assetsRequest = false
 
 	/** Map of external libraries to load */
 	- deps = include('src/super/i-static-page/deps')
@@ -58,14 +61,23 @@
 	- entryPoint = @@entryPoints[self.name()] || {}
 
 	/** Map with static page assets */
-	- assets = {}
-
-	/** Helpers to generate a template */
-	- h = include('src/super/i-static-page/modules/ss-helpers')
+	- assets = await h.getAssets(@@entryPoints)
 
 	- block root
-		? await h.initAssets(assets, @@entryPoints)
-		? await h.generateInitJS(self.name(), {deps, entryPoint, assets})
+		- block pageData
+			? rootAttrs['data-root-component'] = self.name()
+			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
+
+		? await h.generateInitJS(self.name(), { &
+			deps,
+			entryPoint,
+
+			assets,
+			assetsRequest,
+
+			rootTag,
+			rootAttrs
+		}) .
 
 		- block doctype
 			- doctype
@@ -105,16 +117,11 @@
 					+= await h.loadLinks(deps.links, assets)
 
 				- block headScripts
+					+= h.getVarsDecl({wrap: true})
 					+= await h.loadLibs(deps.headScripts, assets)
 
-			: pageName = self.name()
-
-			- block pageData
-				? rootAttrs['data-root-component'] = pageName
-				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
-
 			< body
-				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}
+				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
 					- block headHelpers
 
 					- block innerRoot
@@ -132,11 +139,8 @@
 						+= await h.loadStyles(deps.styles, {assets})
 						+= h.loadEntryPointDependencies(entryPoint, {type: 'styles', wrap: true})
 
-					+= h.getVarsDecl({assets, wrap: true})
-
 					- block assets
-						- if !@@fatHTML && assetsRequest
-							+= h.getScriptDecl({src: @@publicPath(@@assetsJS)})
+						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
 
 					- block scripts
 						+= h.getScriptDeclByName('std', {optional: true, wrap: true})

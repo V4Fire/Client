@@ -13,11 +13,24 @@ const
 	{src} = require('config');
 
 const
-	h = include('src/super/i-static-page/modules/ss-helpers');
+	{loadLibs, loadStyles, loadLinks} = include('src/super/i-static-page/modules/ss-helpers/libs'),
+	{normalizeAttrs} = include('src/super/i-static-page/modules/ss-helpers/tags'),
+	{getAssetsDecl} = include('src/super/i-static-page/modules/ss-helpers/assets'),
+	{getScriptDeclByName, loadEntryPointDependencies} = include('src/super/i-static-page/modules/ss-helpers/entry-point'),
+	{getVarsDecl, getInitLibDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
 
 exports.generateInitJS = generateInitJS;
 
-async function generateInitJS(name, {deps, selfDeps, assets}) {
+async function generateInitJS(name, {
+	deps,
+	entryPoint,
+
+	assets,
+	assetsRequest,
+
+	rootTag,
+	rootAttrs
+}) {
 	const opts = {
 		assets,
 		documentWrite: true
@@ -27,17 +40,54 @@ async function generateInitJS(name, {deps, selfDeps, assets}) {
 		head = [],
 		body = [];
 
-	head.push(await h.loadLibs(deps.headScripts, opts));
-	head.push(await h.loadLinks(deps.links, opts));
+	// - block links
+	head.push(await loadLinks(deps.links, opts));
 
-	body.push(await h.loadStyles(deps.styles, opts));
-	body.push(await h.loadEntryPointDependencies(selfDeps, {type: 'styles'}));
-	body.push(await h.getScriptDeclByName('std', {optional: true}));
-	head.push(await h.loadLibs(deps.scripts, opts));
-	body.push(await h.getScriptDeclByName('vendor', {optional: true}));
-	body.push(await h.loadEntryPointDependencies(selfDeps, {type: 'scripts'}));
-	body.push(await h.getScriptDeclByName('webpack.runtime', {optional: true}));
+	// - block headScripts
+	head.push(
+		getVarsDecl({assets}),
+		await loadLibs(deps.headScripts, opts)
+	);
 
-	fs.writeFileSync(src.clientOutput(`${name}.init-head.js`), head.join('\n'));
-	fs.writeFileSync(src.clientOutput(`${name}.init-body.js`), body.join('\n'));
+	{
+		const
+			name = rootAttrs['data-root-component'],
+			attrs = normalizeAttrs(rootAttrs);
+
+		body.push(
+			`document.write('<${rootTag} class=".i-static-page.${name}" ${attrs}></${rootTag}>')`
+		);
+	}
+
+	// - block styles
+	body.push(
+		await loadStyles(deps.styles, opts),
+		loadEntryPointDependencies(entryPoint, {type: 'styles'})
+	);
+
+	// - block assets
+	body.push(getAssetsDecl({inline: !assetsRequest}));
+
+	// - block scripts
+	body.push(
+		await getScriptDeclByName('std', {optional: true}),
+
+		await loadLibs(deps.scripts, opts),
+		getInitLibDecl(),
+
+		getScriptDeclByName('vendor', {optional: true}),
+		loadEntryPointDependencies(entryPoint, {type: 'scripts'}),
+		getScriptDeclByName('webpack.runtime', {optional: true})
+	);
+
+	const bodyInitializer = `
+function $__RENDER_ROOT() {
+	${body.join('\n')}
+}
+`;
+
+	fs.writeFileSync(
+		src.clientOutput(`${name}.init.js`),
+		head.join('\n') + bodyInitializer
+	);
 }

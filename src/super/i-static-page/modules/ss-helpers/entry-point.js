@@ -148,7 +148,7 @@ exports.loadEntryPointDependencies = loadEntryPointDependencies;
  *
  * @param {Array<string>} dependencies - list of dependencies to load
  * @param {string=} [type] - type of dependencies (styles or scripts)
- * @param {boolean=} [wrap=false] - if true, declaration of the dependency is wrapped by a script tag
+ * @param {boolean=} [wrap] - if true, declaration of the dependency is wrapped by a script tag
  * @returns {string}
  */
 function loadEntryPointDependencies(dependencies, {type, wrap} = {}) {

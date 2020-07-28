@@ -19,17 +19,16 @@ exports.getVarsDecl = getVarsDecl;
  * Returns declaration of global variables to initialize the application.
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
- * @param {Object<string>=} [assets] - map with assets
- * @param {boolean=} [wrap=false] - if true, the declaration is wrapped by a script tag
+ * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
  * @returns {string}
  */
-function getVarsDecl({assets, wrap} = {}) {
+function getVarsDecl({wrap} = {}) {
 	const decl = `
 window[${globals.MODULE_DEPENDENCIES}] = {fileCache: Object.create(null)};
 
 var GLOBAL_NONCE = '${config.csp.nonce() || ''}' || undefined;
 
-var PATH = ${JSON.stringify(assets || {}, null, 2)};
+var PATH = Object.create(null);
 
 try {
 	PATH = new Proxy(PATH, {
@@ -54,7 +53,7 @@ exports.getInitLibDecl = getInitLibDecl;
  * Returns declaration of a library initializer of the application.
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
- * @param {boolean=} [wrap=false] - if true, the declaration is wrapped by a script tag
+ * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
  * @returns {string}
  */
 function getInitLibDecl({wrap} = {}) {
