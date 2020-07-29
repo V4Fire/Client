@@ -540,6 +540,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Options of Content Security Policy
+	 */
+	csp: {
+		/**
+		 * Returns value of the "nonce" hash
+		 * @returns {?string}
+		 */
+		nonce() {
+			return undefined;
+		}
+	},
+
+	/**
 	 * Config for a favicon generator
 	 * @returns {!Object}
 	 */
@@ -657,7 +670,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	snakeskin() {
 		const
-			{webpack, src} = this,
 			snakeskinVars = include('build/snakeskin/vars');
 
 		return {
@@ -673,22 +685,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			server: this.extend(super.snakeskin(), {
 				vars: {
 					...snakeskinVars,
-
-					rel: src.rel,
-					root: src.cwd(),
-					src: src.src(),
-					lib: src.lib(),
-
-					assets: src.assets(),
-					assetsJS: webpack.assetsJS(),
-					favicons: this.favicons().path,
-
-					publicPath: webpack.publicPath,
-					output: src.clientOutput(),
-					outputPattern: webpack.output,
-
-					fatHTML: webpack.fatHTML(),
-					hashFunction: webpack.hashFunction()
+					publicPath: this.webpack.publicPath
 				}
 			})
 		};

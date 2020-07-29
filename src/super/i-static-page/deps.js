@@ -32,7 +32,13 @@ const deps = {
 	 * Map of style libraries to require
 	 * @type {StyleLibs}
 	 */
-	styles: new Map()
+	styles: new Map(),
+
+	/**
+	 * Map of links to require
+	 * @type {Links}
+	 */
+	links: new Map()
 };
 
 if (runtime.debug) {
