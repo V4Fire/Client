@@ -19,6 +19,7 @@ Changelog
 
 * Added `links` to `deps.js`
 * Added `attrs` to `modules/interface.js`
+* Added generation of `init.js`
 
 #### :house: Internal
 
