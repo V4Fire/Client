@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.39 (2020-07-23)
+
+#### :house: Internal
+
+* Added `waitRef` to `UnsafeIBlock`
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :boom: Breaking Change

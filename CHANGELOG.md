@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.39 ()
+## v3.0.0-rc.41 (2020-07-29)
 
 #### :boom: Breaking Change
 
@@ -24,8 +24,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `iStaticPage`
   * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
 
+* Removed redundant parameters from `config/snakeskin`
+
 #### :rocket: New Feature
 
+Added `config/csp`
 * `iStaticPage`
   * Added `links` to `deps.js`
   * Added `attrs` to `modules/interface.js`
@@ -34,6 +37,35 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Moved logic from SS to JS `iStaticPage`
+
+## v3.0.0-rc.40 (2020-07-27)
+
+#### :house: Internal
+
+* Logging Vue errors and warnings via the `core/log` module `core/component/engines/vue`
+
+## v3.0.0-rc.39 (2020-07-23)
+
+#### :rocket: New Feature
+
+* [Improved browser test API](https://github.com/V4Fire/Client/issues/289)
+* [Added life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
+
+#### :bug: Bug Fix
+
+* [Fixed reloading of a component after changing its data provider `iData`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed an issue when data from `lastLoadedData` and `lastLoadedChunk.normalized` aren't synchronized `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
+* [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
+
+#### :house: Internal
+
+* Added `waitRef` `iBlock/interface/UnsafeIBlock`
+* [Refactoring of tests `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/293)
+
+* [:up:](https://github.com/V4Fire/Client/pull/293)
+  * playwright 1.2.1
+  * @v4fire/linters 1.5.2
 
 ## v3.0.0-rc.38 (2020-07-21)
 
