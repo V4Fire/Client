@@ -13,6 +13,8 @@ const
 
 Object.assign(exports, include('build/helpers'));
 
+exports.wait = wait;
+
 /**
  * Waits till the specified callback function returns true
  *
@@ -20,7 +22,7 @@ Object.assign(exports, include('build/helpers'));
  * @param {number} interval
  * @returns {!Promise<void>}
  */
-exports.wait = function wait(cb, interval = 15) {
+function wait(cb, interval = 15) {
 	return new Promise((res) => {
 		if (cb()) {
 			res();
@@ -34,7 +36,9 @@ exports.wait = function wait(cb, interval = 15) {
 			}
 		}, interval);
 	});
-};
+}
+
+exports.getBrowserInstance = getBrowserInstance;
 
 /**
  * Returns a browser instance by the specified parameters
@@ -44,7 +48,7 @@ exports.wait = function wait(cb, interval = 15) {
  * @param {!Object} options
  * @returns {!Promise<?>}
  */
-exports.getBrowserInstance = function getBrowserInstance(browserType, params, options = {}) {
+function getBrowserInstance(browserType, params, options = {}) {
 	const
 		playwright = require('playwright');
 
@@ -71,14 +75,16 @@ exports.getBrowserInstance = function getBrowserInstance(browserType, params, op
 		return playwright[browserType].connect({wsEndpoint: args[endpointMap[browserType]], ...params});
 	}
 
-	return playwright[browserType].launch({args: exports.getBrowserArgs(), ...params});
-};
+	return playwright[browserType].launch({args: getBrowserArgs(), ...params});
+}
 
-/**
+exports.getSelectedBrowsers = getSelectedBrowsers;
+
+	/**
  * Returns a list of selected browsers
  * @returns {!Array<string>}
  */
-exports.getSelectedBrowsers = function getSelectedBrowsers() {
+function getSelectedBrowsers() {
 	const
 		args = arg({'--browsers': String}, {permissive: true}),
 		browsers = ['chromium', 'firefox', 'webkit'];
@@ -105,13 +111,15 @@ exports.getSelectedBrowsers = function getSelectedBrowsers() {
 	}
 
 	return browsers;
-};
+}
+
+exports.getBrowserArgs = getBrowserArgs;
 
 /**
  * Returns a list of arguments that will be provided to a browser
  * @returns {!Array<string>}
  */
-exports.getBrowserArgs = function getBrowserArgs() {
+function getBrowserArgs() {
 	try {
 		const
 			args = arg({'--browser-args': String}, {permissive: true});
@@ -125,4 +133,4 @@ exports.getBrowserArgs = function getBrowserArgs() {
 	} catch {
 		return [];
 	}
-};
+}

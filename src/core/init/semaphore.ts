@@ -34,12 +34,9 @@ export default createsAsyncSemaphore(async () => {
 		return Object.assign(Object.isFunction(getData) ? getData.call(this) : {}, params.data);
 	};
 
-	const app = new Component({
+	return new Component({
 		...params,
 		...component,
 		el: node
 	});
-
-	READY_STATE++;
-	return app;
 }, ...flags);

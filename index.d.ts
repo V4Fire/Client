@@ -8,8 +8,6 @@
 
 /// <reference types="@v4fire/core"/>
 
-declare let READY_STATE: number;
-
 declare const GLOBAL_NONCE: unknown;
 declare const MODULE_DEPENDENCIES: string;
 declare const PATH: Dictionary<CanUndef<string>>;

@@ -9,6 +9,5 @@
  */
 
 include('build/snakeskin/filters/include');
-include('build/snakeskin/filters/csp');
 include('build/snakeskin/filters/typograf');
 include('build/snakeskin/filters/tag-name');

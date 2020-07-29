@@ -9,7 +9,7 @@
  */
 
 const
-	importRgxp = /\b(?:requireMonic|include)\((.*?)\)/g;
+	includeRgxp = /\binclude\((['"`])(.*?)\1\);/g;
 
 /**
  * Monic replacer that adds extra syntax to use the "#include" directive.
@@ -25,10 +25,10 @@ const
  *   include(bla/foo.html)
  * ```
  */
-module.exports = function rawImportReplacer(str) {
-	return str.replace(importRgxp, (str, url) => `\n//#include ${url}\n`);
+module.exports = function includeReplacer(str) {
+	return str.replace(includeRgxp, (str, _, url) => `\n//#include ${url}\n`);
 };
 
 Object.assign(module.exports, {
-	importRgxp
+	importRgxp: includeRgxp
 });
