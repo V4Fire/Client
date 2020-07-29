@@ -11,6 +11,34 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.41 (2020-07-29)
+
+#### :boom: Breaking Change
+
+* `build/`
+  * Removed `snakeskin/filters/csp`
+  * Renamed `dependencies` -> `entryPoints` `module.webpack/snakeskin`
+  * Renamed `replacers/raw-import` -> `replacers/include`
+  * Changed a pattern from `requireMonic(...)` to `include('...');` `replacers/include`
+
+* `iStaticPage`
+  * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
+
+* Removed redundant parameters from `config/snakeskin`
+
+#### :rocket: New Feature
+
+Added `config/csp`
+* `iStaticPage`
+  * Added `links` to `deps.js`
+  * Added `attrs` to `modules/interface.js`
+  * Added generation of `init.js`
+
+#### :house: Internal
+
+* Moved logic from SS to JS `iStaticPage`
+* Added new dependency: `buble`
+
 ## v3.0.0-rc.40 (2020-07-27)
 
 #### :house: Internal

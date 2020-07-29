@@ -270,7 +270,7 @@ module.exports = async function module({plugins}) {
 			{
 				loader: 'monic',
 				options: inherit(monic.html, {
-					replacers: [include('build/replacers/raw-import')]
+					replacers: [include('build/replacers/include')]
 				})
 			},
 
@@ -279,7 +279,7 @@ module.exports = async function module({plugins}) {
 				options: inherit(snakeskin.server, {
 					exec: true,
 					vars: {
-						dependencies: graph.dependencies
+						entryPoints: graph.dependencies
 					}
 				})
 			}
