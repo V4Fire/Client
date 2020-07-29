@@ -23,6 +23,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `iStaticPage`
   * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
+  * Removed SS blocks from the template: `headScripts`, `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
+  * Moved logic from SS to JS `iStaticPage`
 
 * Removed redundant parameters from `config/snakeskin`
 
@@ -41,7 +43,6 @@ Added `config/csp`
 
 #### :house: Internal
 
-* Moved logic from SS to JS `iStaticPage`
 * Added new dependency: `buble`
 
 ## v3.0.0-rc.40 (2020-07-27)
