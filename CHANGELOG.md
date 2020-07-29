@@ -34,6 +34,10 @@ Added `config/csp`
   * Added `attrs` to `modules/interface.js`
   * Added generation of `init.js`
 
+#### :bug: Bug Fix
+
+* Fixed bug in `test` function in `core/browser`
+
 #### :house: Internal
 
 * Moved logic from SS to JS `iStaticPage`

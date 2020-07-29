@@ -24,11 +24,11 @@ export * from 'core/browser/helpers';
  * @param [operation] - operation type (>, >=, etc.)
  * @param [version] - browser version
  */
-export function test(platform: string, operation?: Operation, version?: string): boolean {
+export function test(platform: keyof typeof is, operation?: Operation, version?: string): boolean {
 	const
 		val = is[platform];
 
-	if (val == null) {
+	if (val === false) {
 		return false;
 	}
 
