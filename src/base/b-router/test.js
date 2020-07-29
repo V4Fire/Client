@@ -240,7 +240,7 @@ module.exports = async (page) => {
 				onHardChange: [{}, {foo: 1, bla: 1}],
 				onChange: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
 				onTransition: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
-				onRootTransition: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
+				onRootTransition: [{foo: 1, bla: 1}, {foo: 1, bla: 1}]
 			});
 		});
 
@@ -357,7 +357,7 @@ module.exports = async (page) => {
 				return ctx.route.meta.content;
 			})).toBe('Second page');
 
-			expect(await root.evaluate(async ({route}) => route.name)).toBe('secondAlias');
+			expect(await root.evaluate(({route}) => route.name)).toBe('secondAlias');
 		});
 
 		it('transition to an alias with redirect', async () => {
@@ -366,7 +366,7 @@ module.exports = async (page) => {
 				return ctx.route.meta.content;
 			})).toBe('Main page');
 
-			expect(await root.evaluate(async ({route}) => route.name)).toBe('aliasToRedirect');
+			expect(await root.evaluate(({route}) => route.name)).toBe('aliasToRedirect');
 		});
 
 		it('transition to chained aliases', async () => {
@@ -375,7 +375,7 @@ module.exports = async (page) => {
 				return ctx.route.meta.content;
 			})).toBe('Second page');
 
-			expect(await root.evaluate(async ({route}) => route.name)).toBe('aliasToAlias');
+			expect(await root.evaluate(({route}) => route.name)).toBe('aliasToAlias');
 		});
 
 		it('transition with redirect', async () => {
@@ -384,7 +384,7 @@ module.exports = async (page) => {
 				return ctx.route.meta.content;
 			})).toBe('Second page');
 
-			expect(await root.evaluate(async ({route}) => route.name)).toBe('second');
+			expect(await root.evaluate(({route}) => route.name)).toBe('second');
 		});
 
 		it('transition with redirect and alias', async () => {
@@ -393,7 +393,7 @@ module.exports = async (page) => {
 				return ctx.route.meta.content;
 			})).toBe('Second page');
 
-			expect(await root.evaluate(async ({route}) => route.name)).toBe('secondAlias');
+			expect(await root.evaluate(({route}) => route.name)).toBe('secondAlias');
 		});
 
 		it('transition with chained redirect', async () => {
@@ -402,7 +402,7 @@ module.exports = async (page) => {
 				return ctx.route.meta.content;
 			})).toBe('Second page');
 
-			expect(await root.evaluate(async ({route}) => route.name)).toBe('second');
+			expect(await root.evaluate(({route}) => route.name)).toBe('second');
 		});
 
 		it('moving back and forward from one page to another', async () => {
@@ -521,10 +521,10 @@ module.exports = async (page) => {
 		});
 
 		it('getting URL by a query', async () => {
-			expect(await root.evaluate(async ({router}) => router.getRoutePath('second', {query: {bla: 1}})))
+			expect(await root.evaluate(({router}) => router.getRoutePath('second', {query: {bla: 1}})))
 				.toBe('/second?bla=1');
 
-			expect(await root.evaluate(async ({router}) => router.getRoutePath('/', {query: {bla: 1}})))
+			expect(await root.evaluate(({router}) => router.getRoutePath('/', {query: {bla: 1}})))
 				.toBe('/?bla=1');
 		});
 
@@ -538,12 +538,12 @@ module.exports = async (page) => {
 				content: 'Main page'
 			};
 
-			expect(await root.evaluate(async ({router}) => {
+			expect(await root.evaluate(({router}) => {
 				const route = router.getRoute('main');
 				return route.meta;
 			})).toEqual(pageMeta);
 
-			expect(await root.evaluate(async ({router}) => {
+			expect(await root.evaluate(({router}) => {
 				const route = router.getRoute('/');
 				return route.meta;
 			})).toEqual(pageMeta);
