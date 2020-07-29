@@ -35,6 +35,21 @@ exports.getScriptDecl = getScriptDecl;
  * @param {(InitializedLib|body)} lib - library or raw code
  * @param {string=} [body] - library body
  * @returns {(Promise<string>|string)}
+ *
+ * @example
+ * ```js
+ * // <script src="..."></script>
+ * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js'});
+ *
+ * // <script>...</script>;
+ * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', inline: true});
+ *
+ * // document.write('<script src="..."></script>');
+ * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', documentWrite: true});
+ *
+ * // <script>var a = 1;</script>;
+ * getScriptDecl('var a = 1;');
+ * ```
  */
 function getScriptDecl(lib, body) {
 	if (lib.load === false || isFolder.test(lib.src)) {
@@ -94,6 +109,18 @@ exports.getStyleDecl = getStyleDecl;
  * @param {(InitializedStyleLib|body)} lib - library or raw code
  * @param {string=} [body] - library body
  * @returns {(Promise<string>|string)}
+ *
+ * @example
+ * ```js
+ * // <link href="..." rel="stylesheet">
+ * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css'});
+ *
+ * // <style>...</style>
+ * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', inline: true});
+ *
+ * // document.write('<link href="..." rel="stylesheet">');
+ * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', documentWrite: true});
+ * ```
  */
 function getStyleDecl(lib, body) {
 	if (Object.isString(lib)) {
@@ -149,6 +176,12 @@ exports.getLinkDecl = getLinkDecl;
  *
  * @param {InitializedLink} link
  * @returns {string}
+ *
+ * @example
+ * ```js
+ * // <link href="...">
+ * getLinkDecl({src: 'assets/favicon.ico'});
+ * ```
  */
 function getLinkDecl(link) {
 	const attrs = normalizeAttrs({

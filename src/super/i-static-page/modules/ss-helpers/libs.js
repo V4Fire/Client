@@ -24,6 +24,83 @@ const
 	{getScriptDecl, getStyleDecl, getLinkDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
+exports.loadLibs = loadLibs;
+
+/**
+ * Initializes the specified libraries and returns code to load
+ *
+ * @param {Libs} libs
+ * @param {Object<string>=} [assets] - map with static page assets
+ * @param {boolean=} [documentWrite] - if true,
+ *   the function returns JS code to load the libraries by using document.write
+ *
+ * @returns {!Promise<string>}
+ */
+async function loadLibs(libs, {assets, documentWrite} = {}) {
+	let
+		res = '';
+
+	for (const lib of await initLibs(libs, assets)) {
+		lib.defer = lib.defer !== false;
+		lib.documentWrite = documentWrite;
+		res += await getScriptDecl(lib);
+	}
+
+	return res;
+}
+
+exports.loadStyles = loadStyles;
+
+/**
+ * Initializes the specified styles and returns code to load
+ *
+ * @param {StyleLibs} libs
+ *
+ * @param {Object<string>=} [assets] - map with static page assets
+ * @param {boolean=} [documentWrite] - if true,
+ *   the function returns JS code to load the libraries by using document.write
+ *
+ * @returns {!Promise<string>}
+ */
+async function loadStyles(libs, {assets, documentWrite} = {}) {
+	let
+		res = '';
+
+	for (const lib of await initLibs(libs, assets)) {
+		lib.defer = lib.defer !== false;
+		lib.documentWrite = documentWrite;
+		res += await getStyleDecl(lib);
+		res += '\n';
+	}
+
+	return res;
+}
+
+exports.loadLinks = loadLinks;
+
+/**
+ * Initializes the specified links  and returns code to load
+ *
+ * @param {Links} libs
+ * @param {Object<string>=} [assets] - map with static page assets
+ * @param {boolean=} [documentWrite] - if true,
+ *   the function returns JS code to load the links by using document.write
+ *
+ * @returns {!Promise<string>}
+ */
+async function loadLinks(libs, {assets, documentWrite} = {}) {
+	let
+		res = '';
+
+	for (const lib of await initLibs(libs, assets)) {
+		lib.documentWrite = documentWrite;
+		res += await getLinkDecl(lib);
+		res += '\n';
+	}
+
+	return res;
+}
+
 exports.initLibs = initLibs;
 
 /**
@@ -31,7 +108,7 @@ exports.initLibs = initLibs;
  * The function returns a list of initialized libraries to load.
  *
  * @param {(Libs|StyleLibs)} libs
- * @param {Object<string>=} [assets] - map with assets
+ * @param {Object<string>=} [assets] - map with static page assets
  * @returns {!Promise<!Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
 async function initLibs(libs, assets) {
@@ -85,86 +162,6 @@ async function initLibs(libs, assets) {
 	return res;
 }
 
-exports.loadLibs = loadLibs;
-
-/**
- * Initializes and loads the specified libraries.
- * The function returns code to load libraries.
- *
- * @param {Libs} libs
- * @param {Object<string>=} [assets] - map with assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the libraries by using document.write
- *
- * @returns {!Promise<string>}
- */
-async function loadLibs(libs, {assets, documentWrite} = {}) {
-	let
-		res = '';
-
-	for (const lib of await initLibs(libs, assets)) {
-		lib.defer = lib.defer !== false;
-		lib.documentWrite = documentWrite;
-		res += await getScriptDecl(lib);
-	}
-
-	return res;
-}
-
-exports.loadStyles = loadStyles;
-
-/**
- * Initializes and loads the specified style libraries.
- * The function returns code to load libraries.
- *
- * @param {StyleLibs} libs
- *
- * @param {Object<string>=} [assets] - map with assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the libraries by using document.write
- *
- * @returns {!Promise<string>}
- */
-async function loadStyles(libs, {assets, documentWrite} = {}) {
-	let
-		res = '';
-
-	for (const lib of await initLibs(libs, assets)) {
-		lib.defer = lib.defer !== false;
-		lib.documentWrite = documentWrite;
-		res += await getStyleDecl(lib);
-		res += '\n';
-	}
-
-	return res;
-}
-
-exports.loadLinks = loadLinks;
-
-/**
- * Initializes and loads the specified links.
- * The function returns code to load links.
- *
- * @param {Links} libs
- * @param {Object<string>=} [assets] - map with assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the links by using document.write
- *
- * @returns {!Promise<string>}
- */
-async function loadLinks(libs, {assets, documentWrite} = {}) {
-	let
-		res = '';
-
-	for (const lib of await initLibs(libs, assets)) {
-		lib.documentWrite = documentWrite;
-		res += await getLinkDecl(lib);
-		res += '\n';
-	}
-
-	return res;
-}
-
 exports.resolveAsLib = resolveAsLib;
 
 /**
@@ -175,7 +172,7 @@ exports.resolveAsLib = resolveAsLib;
  *   (if not specified, the name will be taken from a basename of the source file)
  *
  * @param {boolean=} [relative=true] - if false, the function will return an absolute path
- * @param {...string} paths - string paths to join (also, can take URLs)
+ * @param {...string} paths - string paths to join (also, can take URL-s)
  * @returns {string}
  *
  * @example

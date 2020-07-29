@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('../interface');
-
 const
 	config = require('config'),
 	{src, csp} = config;
@@ -44,7 +42,7 @@ exports.getScriptDeclByName = getScriptDeclByName;
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
  * @param {string} name
- * @param {!Object<string>} assets - map with assets
+ * @param {!Object<string>} assets - map with static page assets
  * @param {boolean=} [optional] - if true, the missing of this script won't throw an error
  * @param {boolean=} [defer=true] - if true, the script is loaded with the "defer" attribute
  * @param {boolean=} [inline] - if true, the script is placed as a text
@@ -108,7 +106,7 @@ exports.getPageScriptDepsDecl = getPageScriptDepsDecl;
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
  * @param {Array<string>} dependencies - list of dependencies to load
- * @param {!Object<string>} assets - map with assets
+ * @param {!Object<string>} assets - map with static page assets
  * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {string}
  */
@@ -157,7 +155,7 @@ exports.getStyleDeclByName = getStyleDeclByName;
  * You may use the "wrap" option to wrap the final code with a tag to load.
  *
  * @param {string} name
- * @param {!Object<string>} assets - map with assets
+ * @param {!Object<string>} assets - map with static page assets
  * @param {boolean=} [optional] - if true, the missing of this style won't throw an error
  * @param {boolean=} [defer=true] - if true, the style is loaded only after loading of the whole page
  * @param {boolean=} [inline] - if true, the style is placed as a text
@@ -229,7 +227,7 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
  * You may use the "wrap" option to wrap the final code with a tag to load.
  *
  * @param {Array<string>} dependencies - list of dependencies to load
- * @param {!Object<string>} assets - map with assets
+ * @param {!Object<string>} assets - map with static page assets
  * @param {boolean=} [wrap] - if true, the final code is wrapped by a tag to load
  * @param {boolean=} [documentWrite] - if true, the function will always return JS code to
  *   load the dependency by using document.write

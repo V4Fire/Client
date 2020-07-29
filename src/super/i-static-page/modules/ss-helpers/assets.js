@@ -26,7 +26,7 @@ const
 exports.getAssets = getAssets;
 
 /**
- * Returns a map of project assets by the specified entry points
+ * Returns a map of static page assets by the specified entry points
  *
  * @param {!Object<!Array<string>>} entryPoints
  * @returns {!Promise<!Object<string>>}
