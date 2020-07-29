@@ -114,11 +114,11 @@
 						{title}
 
 				- block links
-					+= await h.loadLinks(deps.links, assets)
+					+= await h.loadLinks(deps.links, {assets})
 
 				- block headScripts
 					+= h.getVarsDecl({wrap: true})
-					+= await h.loadLibs(deps.headScripts, assets)
+					+= await h.loadLibs(deps.headScripts, {assets})
 
 			< body
 				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
@@ -140,14 +140,14 @@
 
 					- block styles
 						+= await h.loadStyles(deps.styles, {assets})
-						+= h.loadPageDependencies(ownDeps, {type: 'styles', wrap: true})
+						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
 					- block scripts
-						+= h.getScriptDeclByName('std', {optional: true, wrap: true})
+						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
 
 						+= await h.loadLibs(deps.scripts, {assets})
 						+= h.getInitLibDecl({wrap: true})
 
-						+= h.getScriptDeclByName('vendor', {optional: true, wrap: true})
-						+= h.loadPageDependencies(ownDeps, {type: 'scripts', wrap: true})
-						+= h.getScriptDeclByName('webpack.runtime', {wrap: true})
+						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
+						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
+						+= h.getScriptDeclByName('webpack.runtime', {assets, wrap: true})

@@ -9,11 +9,16 @@
 require('../interface');
 
 const
-	{src, csp} = require('config');
+	config = require('config'),
+	{src, csp} = config;
 
 const
-	path = require('upath'),
-	fs = require('fs-extra-promise');
+	fs = require('fs-extra-promise'),
+	path = require('upath');
+
+const
+	buble = require('buble'),
+	monic = require('monic');
 
 const
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers'),
@@ -32,32 +37,39 @@ const nonce = {
 exports.getScriptDeclByName = getScriptDeclByName;
 
 /**
- * Returns declaration of a script tag to load a library by the specified name.
+ * Returns code to load a script by the specified name.
+ * The names are equal with entry points from "src/entries".
  *
- * The names are taken on entry points from "src/entries".
  * The function returns JS code to load the library by using document.write.
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
  * @param {string} name
- * @param {DepOptions=} [opts] - additional options
- * @param {Object<string>=} [assets] - map with assets
+ * @param {!Object<string>} assets - map with assets
+ * @param {boolean=} [optional] - if true, the missing of this script won't throw an error
+ * @param {boolean=} [defer=true] - if true, the script is loaded with the "defer" attribute
+ * @param {boolean=} [inline] - if true, the script is placed as a text
+ * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {string}
  */
-function getScriptDeclByName(name, opts, assets) {
-	opts = {defer: true, ...opts};
-
-	if (needInline(opts.inline)) {
+function getScriptDeclByName(name, {
+	assets,
+	optional,
+	defer = true,
+	inline,
+	wrap
+}) {
+	if (needInline(inline)) {
 		if (assets[name]) {
 			const
 				filePath = path.join(src.clientOutput(assets[name]));
 
 			if (fs.existsSync(filePath)) {
-				const decl = `include(${filePath})`;
-				return opts.wrap ? getScriptDecl(decl) : decl;
+				const decl = `include('${filePath}');`;
+				return wrap ? getScriptDecl(decl) : decl;
 			}
 
-		} else if (!opts.optional) {
-			throw new ReferenceError(`Script dependency with id "${name}" is not defined`);
+		} else if (!optional) {
+			throw new ReferenceError(`Script by a name "${name}" is not defined`);
 		}
 
 		return '';
@@ -65,7 +77,7 @@ function getScriptDeclByName(name, opts, assets) {
 
 	const attrs = normalizeAttrs({
 		staticAttrs: `src="' + PATH['${name}'] + '"`,
-		defer: opts.defer !== false,
+		defer: defer !== false,
 		...nonce
 	});
 
@@ -78,47 +90,112 @@ function getScriptDeclByName(name, opts, assets) {
 	let
 		decl = `document.write(${script});`;
 
-	if (opts.optional) {
+	if (optional) {
 		decl = `if ('${name}' in PATH) {
 	${decl}
 }`;
 	}
 
-	return opts.wrap ? getScriptDecl(decl) : decl;
+	return wrap ? getScriptDecl(decl) : decl;
+}
+
+exports.getPageScriptDepsDecl = getPageScriptDepsDecl;
+
+/**
+ * Returns code to load script dependencies of a page.
+ *
+ * The function returns JS code to load the library by using document.write.
+ * You need to put this declaration within a script tag or use the "wrap" option.
+ *
+ * @param {Array<string>} dependencies - list of dependencies to load
+ * @param {!Object<string>} assets - map with assets
+ * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
+ * @returns {string}
+ */
+function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
+	if (!dependencies) {
+		return '';
+	}
+
+	let
+		res = '';
+
+	for (const dep of dependencies) {
+		const
+			tpl = `${dep}_tpl`;
+
+		if (dep === 'index') {
+			res += getScriptDeclByName(dep, {assets});
+			res += '\n';
+			res += getScriptDeclByName(tpl, {assets});
+			res += '\n';
+
+		} else {
+			res += getScriptDeclByName(tpl, {assets});
+			res += '\n';
+			res += getScriptDeclByName(dep, {assets});
+			res += '\n';
+		}
+
+		res += `window[${globals.MODULE_DEPENDENCIES}].fileCache['${dep}'] = true;`;
+	}
+
+	if (wrap) {
+		res = getScriptDecl(res);
+	}
+
+	return res;
 }
 
 exports.getStyleDeclByName = getStyleDeclByName;
 
 /**
- * Returns declaration of a script tag to load a style library by the specified name.
+ * Returns code to load a style by the specified name.
+ * The names are equal with entry points from "src/entries".
  *
- * The names are taken on entry points from "src/entries".
- * The function returns JS code to load the library by using document.write.
- * You need to put this declaration within a script tag or use the "wrap" option.
+ * The function can return JS code to load the style by using document.write or pure CSS to inline.
+ * You may use the "wrap" option to wrap the final code with a tag to load.
  *
  * @param {string} name
- * @param {DepOptions=} [opts] - additional options
- * @param {Object<string>=} [assets] - map with assets
+ * @param {!Object<string>} assets - map with assets
+ * @param {boolean=} [optional] - if true, the missing of this style won't throw an error
+ * @param {boolean=} [defer=true] - if true, the style is loaded only after loading of the whole page
+ * @param {boolean=} [inline] - if true, the style is placed as a text
+ * @param {boolean=} [wrap] - if true, the final code is wrapped by a tag to load
+ * @param {boolean=} [documentWrite] - if true, the function will always return JS code to
+ *   load the dependency by using document.write
+ *
  * @returns {string}
  */
-function getStyleDeclByName(name, opts, assets) {
-	opts = {defer: true, ...opts};
-
+function getStyleDeclByName(name, {
+	assets,
+	optional,
+	defer = true,
+	inline,
+	wrap,
+	documentWrite
+}) {
 	const
 		rname = `${name}$style`;
 
-	if (needInline(opts.inline)) {
+	if (needInline(inline)) {
 		if (assets[rname]) {
 			const
 				filePath = path.join(src.clientOutput(assets[rname]));
 
 			if (fs.existsSync(filePath)) {
-				const decl = `include(${filePath})`;
-				return opts.wrap ? getStyleDecl(decl) : decl;
+				let
+					decl = `include('${filePath}');`;
+
+				if (documentWrite) {
+					decl = `document.write(\`${decl}\`);`;
+				}
+
+				return wrap ? getStyleDecl(decl) : decl;
 			}
 
-		} else if (!opts.optional) {
-			throw new ReferenceError(`Script dependency with id "${name}" is not defined`);
+		} else if (!optional) {
+			throw new ReferenceError(`Style by a name "${name}" is not defined`);
 		}
 
 		return '';
@@ -127,87 +204,61 @@ function getStyleDeclByName(name, opts, assets) {
 	const attrs = normalizeAttrs({
 		staticAttrs: `href="' + PATH['${rname}'] + '"`,
 		rel: 'stylesheet',
-		defer: opts.defer !== false,
+		defer: defer !== false,
 		...nonce
 	});
 
 	let
 		decl = `document.write('<link ${attrs}>');`;
 
-	if (opts.optional) {
+	if (optional) {
 		decl = `if ('${rname}' in PATH) {
 	${decl}
 }`;
 	}
 
-	return opts.wrap ? getStyleDecl(decl) : decl;
+	return wrap ? getStyleDecl(decl) : decl;
 }
 
-exports.loadPageDependencies = loadPageDependencies;
+exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
 
 /**
- * Initializes and loads the specified dependencies of a page.
+ * Returns code to load style dependencies of a page.
  *
- * The function returns JS code to load the dependencies by using document.write.
- * You need to put this declaration within a script tag or use the "wrap" option.
+ * The function can return JS code to load the style by using document.write or pure CSS to inline.
+ * You may use the "wrap" option to wrap the final code with a tag to load.
  *
  * @param {Array<string>} dependencies - list of dependencies to load
- * @param {string=} [type] - type of dependencies (styles or scripts)
- * @param {boolean=} [wrap] - if true, declaration of the dependency is wrapped by a script tag
+ * @param {!Object<string>} assets - map with assets
+ * @param {boolean=} [wrap] - if true, the final code is wrapped by a tag to load
+ * @param {boolean=} [documentWrite] - if true, the function will always return JS code to
+ *   load the dependency by using document.write
+ *
  * @returns {string}
  */
-function loadPageDependencies(dependencies, {type, wrap} = {}) {
+function getPageStyleDepsDecl(dependencies, {assets, wrap, documentWrite}) {
 	if (!dependencies) {
 		return '';
 	}
 
 	let
-		styles = '',
-		scripts = '';
+		res = '';
 
-	if (!type || type === 'styles') {
-		for (const dep of dependencies) {
-			styles += getStyleDeclByName(dep);
-			styles += '\n';
-		}
+	for (const dep of dependencies) {
+		res += getStyleDeclByName(dep, {assets, documentWrite});
+		res += '\n';
+	}
 
-		if (wrap) {
-			if (needInline()) {
-				styles = getStyleDecl(styles);
+	if (wrap) {
+		if (needInline() && !documentWrite) {
+			res = getStyleDecl(res);
 
-			} else {
-				styles = getScriptDecl(styles);
-			}
+		} else {
+			res = getScriptDecl(res);
 		}
 	}
 
-	if (!type || type === 'scripts') {
-		for (const dep of dependencies) {
-			const
-				tpl = `${dep}_tpl`;
-
-			if (dep === 'index') {
-				scripts += getScriptDeclByName(dep);
-				scripts += '\n';
-				scripts += getScriptDeclByName(tpl);
-				scripts += '\n';
-
-			} else {
-				scripts += getScriptDeclByName(tpl);
-				scripts += '\n';
-				scripts += getScriptDeclByName(dep);
-				scripts += '\n';
-			}
-
-			scripts += `window[${globals.MODULE_DEPENDENCIES}].fileCache['${dep}'] = true;`;
-		}
-
-		if (wrap) {
-			scripts = getScriptDecl(scripts);
-		}
-	}
-
-	return styles + scripts;
+	return res;
 }
 
 exports.generatePageInitJS = generatePageInitJS;
@@ -266,19 +317,19 @@ async function generatePageInitJS(pageName, {
 	// - block styles
 	body.push(
 		await loadStyles(deps.styles, {assets, documentWrite: true}),
-		loadPageDependencies(ownDeps, {type: 'styles'})
+		getPageStyleDepsDecl(ownDeps, {assets, documentWrite: true})
 	);
 
 	// - block scripts
 	body.push(
-		await getScriptDeclByName('std', {optional: true}),
+		await getScriptDeclByName('std', {assets, optional: true}),
 
 		await loadLibs(deps.scripts, {assets, documentWrite: true}),
 		getInitLibDecl(),
 
-		getScriptDeclByName('vendor', {optional: true}),
-		loadPageDependencies(ownDeps, {type: 'scripts'}),
-		getScriptDeclByName('webpack.runtime', {optional: true})
+		getScriptDeclByName('vendor', {assets, optional: true}),
+		getPageScriptDepsDecl(ownDeps, {assets}),
+		getScriptDeclByName('webpack.runtime', {assets})
 	);
 
 	const bodyInitializer = `
@@ -287,8 +338,21 @@ function $__RENDER_ROOT() {
 }
 `;
 
-	fs.writeFileSync(
-		src.clientOutput(`${pageName}.init.js`),
-		head.join('\n') + bodyInitializer
-	);
+	const
+		initPath = src.clientOutput(`${pageName}.init.js`),
+		content = head.join('\n') + bodyInitializer;
+
+	fs.writeFileSync(initPath, content);
+
+	let {result} = await monic.compile(initPath, {
+		content,
+		saveFiles: false,
+		replacers: [include('build/replacers/include')]
+	});
+
+	if (config.es() === 'ES5') {
+		result = buble.transform(result).code;
+	}
+
+	fs.writeFileSync(initPath, result);
 }

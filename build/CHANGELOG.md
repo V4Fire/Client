@@ -15,6 +15,7 @@ Changelog
 
 * Removed `snakeskin/filters/csp`
 * Renamed `dependencies` -> `entryPoints` `module.webpack/snakeskin`
+* Renamed `replacers/raw-import` -> `replacers/include`
 
 ## v3.0.0-rc.36 (2020-07-13)
 

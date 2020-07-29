@@ -9,7 +9,7 @@
 require('../interface');
 
 const
-	{csp} = require('config');
+	config = require('config');
 
 const
 	fs = require('fs-extra-promise'),
@@ -23,13 +23,13 @@ const
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
 const nonce = {
-	nonce: csp.nonce
+	nonce: config.csp.nonce
 };
 
 exports.getScriptDecl = getScriptDecl;
 
 /**
- * Returns declaration of a script tag to load the specified library.
+ * Returns code to load the specified library.
  * If the "inline" parameter is set to true, the function will return a promise.
  *
  * @param {(InitializedLib|body)} lib - library or raw code
@@ -60,7 +60,7 @@ function getScriptDecl(lib, body) {
 			}
 
 			const
-				body = `include(${lib.src})`;
+				body = `include('${lib.src}');`;
 
 			if (lib.documentWrite) {
 				return `${body}\n`;
@@ -88,7 +88,7 @@ function getScriptDecl(lib, body) {
 exports.getStyleDecl = getStyleDecl;
 
 /**
- * Returns declaration of a link/style tag to load the specified style library.
+ * Returns code to load the specified style library.
  * If the "inline" parameter is set to true, the function will return a promise.
  *
  * @param {(InitializedStyleLib|body)} lib - library or raw code
@@ -113,8 +113,17 @@ function getStyleDecl(lib, body) {
 		...lib.defer ? {rel: 'preload', onload: `this.rel='${rel}'`} : null
 	});
 
-	const
-		wrap = (decl) => lib.documentWrite ? `document.write('${decl}');` : decl;
+	const wrap = (decl) => {
+		if (lib.documentWrite) {
+			if (needInline() || body) {
+				return `document.write(\`${decl}\`);`;
+			}
+
+			return `document.write('${decl}');`;
+		}
+
+		return decl;
+	};
 
 	if (needInline(lib.inline) && !body) {
 		return (async () => {
@@ -122,7 +131,7 @@ function getStyleDecl(lib, body) {
 				await delay(500);
 			}
 
-			return wrap(`<style ${attrs}>include(${lib.src})</style>`);
+			return wrap(`<style ${attrs}>include('${lib.src}');</style>`);
 		})();
 	}
 
@@ -136,7 +145,7 @@ function getStyleDecl(lib, body) {
 exports.getLinkDecl = getLinkDecl;
 
 /**
- * Returns declaration of a link tag to load the specified link
+ * Returns code to load the specified link
  *
  * @param {InitializedLink} link
  * @returns {string}

@@ -7,24 +7,6 @@
  */
 
 /**
- * Additional options of a dependency:
- *
- * * [optional] - if true, the missing of this dependency won't throw an error
- * * [defer=true] - if true, the dependency is declared with the "defer" attribute
- * * [inline] - if true, the dependency is placed as a text
- * * [wrap] - if true, declaration of the dependency is wrapped by a script tag
- *
- * @typedef {{
- *   optional?: boolean,
- *   defer?: boolean,
- *   inline?: boolean,
- *   wrap?: boolean
- * }}
- */
-const DepOptions = {};
-exports.DepOptions = DepOptions;
-
-/**
  * Source type of a library:
  *
  * 1. lib - external library, i.e, something from node_modules

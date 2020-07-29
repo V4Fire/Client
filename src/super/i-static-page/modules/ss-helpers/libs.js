@@ -12,8 +12,8 @@ const
 	{webpack, src} = require('config');
 
 const
-	path = require('upath'),
 	fs = require('fs-extra-promise'),
+	path = require('upath'),
 	delay = require('delay');
 
 const
@@ -67,11 +67,11 @@ async function initLibs(libs, assets) {
 			}
 
 		} else {
-			p.src = requireAsLib({name: key, relative: !p.inline}, cwd, p.src);
+			p.src = resolveAsLib({name: key, relative: !p.inline}, cwd, p.src);
 		}
 
 		if (p.inline) {
-			while (!fs.existsSync(src)) {
+			while (!fs.existsSync(p.src)) {
 				await delay((1).second());
 			}
 
@@ -89,7 +89,7 @@ exports.loadLibs = loadLibs;
 
 /**
  * Initializes and loads the specified libraries.
- * The function returns declaration to load libraries.
+ * The function returns code to load libraries.
  *
  * @param {Libs} libs
  * @param {Object<string>=} [assets] - map with assets
@@ -115,7 +115,7 @@ exports.loadStyles = loadStyles;
 
 /**
  * Initializes and loads the specified style libraries.
- * The function returns declaration to load libraries.
+ * The function returns code to load libraries.
  *
  * @param {StyleLibs} libs
  *
@@ -143,7 +143,7 @@ exports.loadLinks = loadLinks;
 
 /**
  * Initializes and loads the specified links.
- * The function returns declaration to load links.
+ * The function returns code to load links.
  *
  * @param {Links} libs
  * @param {Object<string>=} [assets] - map with assets
@@ -165,7 +165,7 @@ async function loadLinks(libs, {assets, documentWrite} = {}) {
 	return res;
 }
 
-exports.requireAsLib = requireAsLib;
+exports.resolveAsLib = resolveAsLib;
 
 /**
  * Loads the specified file or directory as an external library to the output folder.
@@ -184,7 +184,7 @@ exports.requireAsLib = requireAsLib;
  * loadAsLib({name: 'images'}, 'assets', 'images/');
  * ```
  */
-function requireAsLib({name, relative = true} = {}, ...paths) {
+function resolveAsLib({name, relative = true} = {}, ...paths) {
 	const
 		url = paths.find((el) => isURL.test(el));
 

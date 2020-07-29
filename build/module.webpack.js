@@ -270,7 +270,7 @@ module.exports = async function module({plugins}) {
 			{
 				loader: 'monic',
 				options: inherit(monic.html, {
-					replacers: [include('build/replacers/raw-import')]
+					replacers: [include('build/replacers/include')]
 				})
 			},
 
