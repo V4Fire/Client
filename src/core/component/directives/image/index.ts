@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iBlock from 'super/i-block/i-block';
 import ImageLoader from 'core/component/directives/image/image';
 
-import { ComponentDriver } from 'core/component/engines';
+import { ComponentDriver, VNode } from 'core/component/engines';
 import { DirectiveOptions } from 'core/component/directives/image/interface';
 
 export * from 'core/component/directives/image/interface';
@@ -17,12 +18,26 @@ const ImageLoaderInstance = new ImageLoader();
 export { ImageLoaderInstance as ImageLoader };
 
 ComponentDriver.directive('image', {
-	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
+	// @ts-expect-error (wrong type)
+	inserted(el: HTMLElement, {value}: DirectiveOptions, vNode: VNode & {context?: iBlock}): void {
 		if (value == null) {
 			return;
 		}
 
-		ImageLoaderInstance.load(el, value);
+		if (vNode.context != null) {
+			if (Object.isPlainObject(value)) {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				value.ctx = value.ctx ?? vNode.context;
+
+			} else {
+				value = {
+					src: value,
+					ctx: vNode.context
+				};
+			}
+		}
+
+		ImageLoaderInstance.init(el, value);
 	},
 
 	update(el: HTMLElement, {value, oldValue}: DirectiveOptions): void {
@@ -30,6 +45,6 @@ ComponentDriver.directive('image', {
 	},
 
 	unbind(el: HTMLElement): void {
-		ImageLoaderInstance.removeFromPending(el);
+		ImageLoaderInstance.clearElement(el);
 	}
 });

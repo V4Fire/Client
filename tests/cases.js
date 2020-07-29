@@ -25,5 +25,5 @@ module.exports = [
 	'--name b-button --suit demo',
 
 	// v-image
-	'--name b-dummy --test-entry core/component/directives/image/test --runner render'
+	'--name b-dummy --test-entry core/component/directives/image/test'
 ];
