@@ -58,6 +58,7 @@
     "arg": "^4.1.3",
     "autoprefixer": "^9.7.6",
     "browserslist": "^4.12.0",
+    "buble": "^0.20.0",
     "camelize": "^1.0.0",
     "collection.js": "^6.7.10",
     "config": "^1.31.0",
