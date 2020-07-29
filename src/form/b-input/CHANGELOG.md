@@ -13,11 +13,4 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a bug in `test` function
-
-## v3.0.0-rc.37 (2020-07-20)
-
-#### :house: Internal
-
-* Fixed ESLint warnings
-* Refactoring
+* Don't show clear button within the read-only mode

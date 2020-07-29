@@ -36,8 +36,8 @@ Added `config/csp`
 
 #### :bug: Bug Fix
 
-* Fixed bug in `test` function in `core/browser`
-* For readonly mode - do not show clear button
+* Fixed a bug in `test` function in `core/browser`
+* Don't show clear button within the read-only mode `iInput`
 
 #### :house: Internal
 
