@@ -37,6 +37,7 @@ Added `config/csp`
 #### :house: Internal
 
 * Moved logic from SS to JS `iStaticPage`
+* Added new dependency: `buble`
 
 ## v3.0.0-rc.40 (2020-07-27)
 
