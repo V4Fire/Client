@@ -210,7 +210,7 @@ module.exports = async (page, params) => {
 			await expectAsync(page.waitForFunction('globalThis.tmp === false')).toBeResolved();
 		});
 
-		it('img tag `error` callback will not be called if a loading are successful', async () => {
+		it('img tag `error` callback will not be called if loading are successful', async () => {
 			await imageLoader.evaluate((imageLoaderCtx, images) => {
 				const img = document.getElementById('img-target');
 				imageLoaderCtx.init(img, {src: images.pngImage, ctx: globalThis.dummy, error: () => globalThis.tmp = false});
@@ -220,7 +220,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 
-		it('div tag `error` callback will not be called if a loading are successful', async () => {
+		it('div tag `error` callback will not be called if loading are successful', async () => {
 			await imageLoader.evaluate((imageLoaderCtx, images) => {
 				const div = document.getElementById('div-target');
 				imageLoaderCtx.init(div, {src: images.pngImage, ctx: globalThis.dummy, error: () => globalThis.tmp = false});
@@ -230,7 +230,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 
-		it('img tag `load` callback will not be called if a loading are failed', async () => {
+		it('img tag `load` callback will not be called if loading are failed', async () => {
 			await imageLoader.evaluate((imageLoaderCtx) => {
 				const img = document.getElementById('img-target');
 				imageLoaderCtx.init(img, {src: 'https://error-url-fake-url-3/img.jpg', ctx: globalThis.dummy, load: () => globalThis.tmp = true});
@@ -240,7 +240,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 
-		it('div tag `load` callback will not be called if a loading are failed', async () => {
+		it('div tag `load` callback will not be called if loading are failed', async () => {
 			await imageLoader.evaluate((imageLoaderCtx) => {
 				const div = document.getElementById('div-target');
 				imageLoaderCtx.init(div, {src: 'https://error-url-fake-url-3/img.jpg', ctx: globalThis.dummy, load: () => globalThis.tmp = true});
@@ -318,28 +318,28 @@ module.exports = async (page, params) => {
 			await expectAsync(h.utils.waitForFunction(divNode, (ctx, imgUrl) => ctx.style.backgroundImage === `url("${imgUrl}")`, imgUrl)).toBeResolved();
 		});
 
-		it('img tag with `src` and broken with `src`', async () => {
+		it('img tag with loading error and broken with `src`', async () => {
 			const imgUrl = getRandomImgUrl();
 			abortImageRequest(imgUrl);
 
 			await imageLoader.evaluate((imageLoaderCtx, [images, imgUrl]) => {
 				const img = document.getElementById('img-target');
-				imageLoaderCtx.init(img, {src: imgUrl, ctx: globalThis.dummy, broken: images.pngImage});
+				imageLoaderCtx.init(img, {src: imgUrl, ctx: globalThis.dummy, broken: images.broken});
 			}, [images, imgUrl]);
 
-			await expectAsync(h.utils.waitForFunction(imgNode, (ctx, pngImage) => ctx.src === pngImage, images.pngImage)).toBeResolved();
+			await expectAsync(h.utils.waitForFunction(imgNode, (ctx, broken) => ctx.src === broken, images.broken)).toBeResolved();
 		});
 
-		it('div tag with `src` and broken with `src`', async () => {
+		it('div tag with loading error and broken with `src`', async () => {
 			const imgUrl = getRandomImgUrl();
 			abortImageRequest(imgUrl);
 
 			await imageLoader.evaluate((imageLoaderCtx, [images, imgUrl]) => {
 				const div = document.getElementById('div-target');
-				imageLoaderCtx.init(div, {src: imgUrl, ctx: globalThis.dummy, broken: images.pngImage});
+				imageLoaderCtx.init(div, {src: imgUrl, ctx: globalThis.dummy, broken: images.broken});
 			}, [images, imgUrl]);
 
-			await expectAsync(h.utils.waitForFunction(divNode, (ctx, pngImage) => ctx.style.backgroundImage === `url("${pngImage}")`, images.pngImage)).toBeResolved();
+			await expectAsync(h.utils.waitForFunction(divNode, (ctx, broken) => ctx.style.backgroundImage === `url("${broken}")`, images.broken)).toBeResolved();
 		});
 
 		it('img tag with `src`, preview with `src`, broken with `src`', async () => {
@@ -361,6 +361,151 @@ module.exports = async (page, params) => {
 			await h.bom.waitForIdleCallback(page);
 
 			expect(await imgNode.evaluate((ctx) => ctx.src)).toBe(imgUrl);
+		});
+
+		it('div tag with `src`, preview with `src`, broken with `src`', async () => {
+			const
+				imgUrl = getRandomImgUrl(),
+				reqPromise = handleImageRequest(imgUrl, 2000);
+
+			await imageLoader.evaluate((imageLoaderCtx, [images, imgUrl]) => {
+				const div = document.getElementById('div-target');
+				imageLoaderCtx.init(div, {src: imgUrl, ctx: globalThis.dummy, preview: images.preview, broken: images.broken});
+			}, [images, imgUrl]);
+
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${images.preview}")`);
+			await expectAsync(h.utils.waitForFunction(divNode, (ctx, imgUrl) => ctx.style.backgroundImage === `url("${imgUrl}")`, imgUrl)).toBeResolved();
+
+			await reqPromise;
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${imgUrl}")`);
+		});
+
+		it('img tag with loading error, preview with `src`, broken with `src`', async () => {
+			const imgUrl = getRandomImgUrl();
+			abortImageRequest(imgUrl, 1000);
+
+			await imageLoader.evaluate((imageLoaderCtx, [images, imgUrl]) => {
+				const img = document.getElementById('img-target');
+				imageLoaderCtx.init(img, {src: imgUrl, ctx: globalThis.dummy, preview: images.preview, broken: images.broken});
+			}, [images, imgUrl]);
+
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await imgNode.evaluate((ctx) => ctx.src)).toBe(images.preview);
+			await expectAsync(h.utils.waitForFunction(imgNode, (ctx, broken) => ctx.src === broken, images.broken)).toBeResolved();
+		});
+
+		it('div tag with loading error, preview with `src`, broken with `src`', async () => {
+			const imgUrl = getRandomImgUrl();
+			abortImageRequest(imgUrl, 1000);
+
+			await imageLoader.evaluate((imageLoaderCtx, [images, imgUrl]) => {
+				const div = document.getElementById('div-target');
+				imageLoaderCtx.init(div, {src: imgUrl, ctx: globalThis.dummy, preview: images.preview, broken: images.broken});
+			}, [images, imgUrl]);
+
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${images.preview}")`);
+			await expectAsync(h.utils.waitForFunction(divNode, (ctx, broken) => ctx.style.backgroundImage === `url("${broken}")`, images.broken)).toBeResolved();
+		});
+
+		it('img tag with `src`, preview with loading error, broken with `src`', async () => {
+			const
+				previewImgUrl = getRandomImgUrl(),
+				mainImgUrl = getRandomImgUrl();
+
+			abortImageRequest(previewImgUrl, 1000);
+			handleImageRequest(mainImgUrl, 1000)
+
+			await imageLoader.evaluate((imageLoaderCtx, [images, mainImgUrl, previewImgUrl]) => {
+				const img = document.getElementById('img-target');
+				imageLoaderCtx.init(img, {src: mainImgUrl, ctx: globalThis.dummy, preview: previewImgUrl, broken: images.broken});
+			}, [images, mainImgUrl, previewImgUrl]);
+
+			await h.bom.waitForIdleCallback(page);
+			expect(await imgNode.evaluate((ctx) => ctx.src)).not.toBe(previewImgUrl);
+
+			await expectAsync(h.utils.waitForFunction(imgNode, (ctx, mainImgUrl) => ctx.src === mainImgUrl, mainImgUrl)).toBeResolved();
+		});
+
+		it('div tag with `src`, preview with loading error, broken with `src`', async () => {
+			const
+				previewImgUrl = getRandomImgUrl(),
+				mainImgUrl = getRandomImgUrl();
+
+			abortImageRequest(previewImgUrl, 1000);
+			handleImageRequest(mainImgUrl, 1000);
+
+			await imageLoader.evaluate((imageLoaderCtx, [images, mainImgUrl, previewImgUrl]) => {
+				const div = document.getElementById('div-target');
+				imageLoaderCtx.init(div, {src: mainImgUrl, ctx: globalThis.dummy, preview: previewImgUrl, broken: images.broken});
+			}, [images, mainImgUrl, previewImgUrl]);
+
+			await h.bom.waitForIdleCallback(page);
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).not.toBe(`url("${previewImgUrl}")`);
+
+			await expectAsync(h.utils.waitForFunction(divNode, (ctx, mainImgUrl) => ctx.style.backgroundImage === `url("${mainImgUrl}")`, mainImgUrl)).toBeResolved();
+		});
+
+		it('img tag with loading error, preview with loading error, broken with loading error', async () => {
+			const
+				previewImgUrl = getRandomImgUrl(),
+				brokenImgUrl = getRandomImgUrl(),
+				mainImgUrl = getRandomImgUrl();
+
+			const reqPromises = [
+				abortImageRequest(previewImgUrl, 1000),
+				abortImageRequest(brokenImgUrl, 1000),
+				handleImageRequest(mainImgUrl, 1000)
+			];
+
+			await imageLoader.evaluate((imageLoaderCtx, [brokenImgUrl, mainImgUrl, previewImgUrl]) => {
+				const img = document.getElementById('img-target');
+				imageLoaderCtx.init(img, {src: mainImgUrl, ctx: globalThis.dummy, preview: previewImgUrl, broken: brokenImgUrl});
+			}, [brokenImgUrl, mainImgUrl, previewImgUrl]);
+
+			await h.bom.waitForIdleCallback(page);
+			expect(await imgNode.evaluate((ctx) => ctx.src)).not.toBe(previewImgUrl);
+
+			await Promise.all(reqPromises);
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await divNode.evaluate((ctx) => ctx.src)).not.toBe(previewImgUrl);
+			expect(await divNode.evaluate((ctx) => ctx.src)).not.toBe(brokenImgUrl);
+			expect(await divNode.evaluate((ctx) => ctx.src)).not.toBe(mainImgUrl);
+		});
+
+		it('div tag with loading error, preview with loading error, broken with loading error', async () => {
+			const
+				previewImgUrl = getRandomImgUrl(),
+				brokenImgUrl = getRandomImgUrl(),
+				mainImgUrl = getRandomImgUrl();
+
+			const reqPromises = [
+				abortImageRequest(previewImgUrl, 1000),
+				abortImageRequest(brokenImgUrl, 1000),
+				abortImageRequest(mainImgUrl, 1000)
+			];
+
+			await imageLoader.evaluate((imageLoaderCtx, [brokenImgUrl, mainImgUrl, previewImgUrl]) => {
+				const div = document.getElementById('div-target');
+				imageLoaderCtx.init(div, {src: mainImgUrl, ctx: globalThis.dummy, preview: previewImgUrl, broken: brokenImgUrl});
+			}, [brokenImgUrl, mainImgUrl, previewImgUrl]);
+
+			await h.bom.waitForIdleCallback(page);
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).not.toBe(`url("${previewImgUrl}"`);
+
+			await Promise.all(reqPromises);
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).not.toBe(`url("${previewImgUrl}"`);
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).not.toBe(`url("${brokenImgUrl}"`);
+			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).not.toBe(`url("${mainImgUrl}"`);
 		});
 	});
 };

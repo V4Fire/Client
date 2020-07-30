@@ -184,7 +184,7 @@ declare namespace BrowserTests {
 		/**
 		 * Waits for the specified function to return `Boolean(result) === true`
 		 *
-		 * Similar to `Playwright.page.waitForFunction` but its executes with provided context
+		 * Similar to `Playwright.Page.waitForFunction` but its executes with provided context
 		 *
 		 * @param ctx – the specified context will be available as first argument of the provided function
 		 * @param fn
