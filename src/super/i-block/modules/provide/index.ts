@@ -76,7 +76,7 @@ export default class Provide extends Friend {
 		const
 			l = arguments.length;
 
-		if (l === 2 || l === 4) {
+		if (l !== 2 && l !== 4) {
 			modValue = modName;
 			modName = elName;
 			elName = componentName;
@@ -228,6 +228,8 @@ export default class Provide extends Friend {
 					}
 				}
 			}
+
+			console.log(121, componentName, classes, Array.concat([componentName], el));
 
 			// eslint-disable-next-line prefer-spread
 			map[key.dasherize()] = this.fullElName.apply(this, Array.concat([componentName], el));
