@@ -22,8 +22,7 @@ export const
 	$$ = symbolGenerator();
 
 let
-	baseSyncRouterState,
-	baseConvertStateToRouterReset;
+	baseSyncRouterState;
 
 /**
  * Class provides some helper methods to initialize a component state
@@ -33,8 +32,7 @@ export default class State extends Friend {
 	 * True if needed synchronization with a router
 	 */
 	get needRouterSync(): boolean {
-		const {instance: i} = this;
-		return baseSyncRouterState !== i.syncRouterState || baseConvertStateToRouterReset !== i.convertStateToRouterReset;
+		return baseSyncRouterState !== this.instance.syncRouterState;
 	}
 
 	/** @see [[iBlock.instance]] */
@@ -42,10 +40,6 @@ export default class State extends Friend {
 		// @ts-ignore (access)
 		// eslint-disable-next-line @typescript-eslint/unbound-method
 		baseSyncRouterState = baseSyncRouterState ?? iBlock.prototype.syncRouterState;
-
-		// @ts-ignore (access)
-		// eslint-disable-next-line @typescript-eslint/unbound-method
-		baseConvertStateToRouterReset = baseConvertStateToRouterReset ?? iBlock.prototype.convertStateToRouterReset;
 		return this.ctx.instance;
 	}
 
@@ -353,10 +347,6 @@ export default class State extends Friend {
 	 */
 	async resetRouter(): Promise<boolean> {
 		//#if runtime has bRouter
-
-		if (!this.needRouterSync) {
-			return false;
-		}
 
 		const
 			{ctx} = this,
