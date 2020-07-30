@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.44 ()
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/cache`
+  * `super/i-block/modules/provide`
+
 ## v3.0.0-rc.43 (2020-07-30)
 
 #### :bug: Bug Fix
