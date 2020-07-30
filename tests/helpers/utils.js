@@ -81,6 +81,31 @@ class Utils {
 	}
 
 	/**
+	 * @see [[BrowserTests.Utils.waitForFunction]]
+	 */
+	async waitForFunction(ctx, fn, ...args) {
+		const strFn = fn.toString();
+
+		await ctx.evaluate((ctx, [strFn, ...args]) => {
+			const
+				// eslint-disable-next-line no-new-func
+				newFn = new Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
+
+			return new Promise((res) => {
+				const interval = setInterval(() => {
+					const fnRes = Boolean(newFn.call(ctx));
+
+					if (fnRes) {
+						res(true);
+						clearInterval(interval);
+					}
+				}, 15);
+			});
+
+		}, [strFn, ...args]);
+	}
+
+	/**
 	 * Parent class
 	 * @type  {BrowserTests.Helpers}
 	 */

@@ -180,6 +180,27 @@ declare namespace BrowserTests {
 		 * @param [idleOptions]
 		 */
 		reloadAndWaitForIdle(page: Playwright.Page, idleOptions?: WaitForIdleOptions): Promise<void>;
+
+		/**
+		 * Waits for the specified function to return `Boolean(result) === true`
+		 *
+		 * Similar to `Playwright.page.waitForFunction` but its executes with provided context
+		 *
+		 * @param ctx – the specified context will be available as first argument of the provided function
+		 * @param fn
+		 * @param args
+		 *
+		 * @example
+		 * ```typescript
+		 * // ctx refers to the imgNode
+		 * h.utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
+		 * ```
+		 */
+		waitForFunction<ARGS extends any[] = any[]>(
+			ctx: PlaywrightElContext,
+			fn: (this: any, ctx: any, ...args: ARGS) => unknown,
+			...args: ARGS
+		): Promise<true>;
 	}
 
 	/**
