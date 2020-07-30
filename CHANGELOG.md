@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.42 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed `resetRouter` without providing of `convertRouterState` `iBlock/state`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `super/i-block/modules/state`
+
 ## v3.0.0-rc.41 (2020-07-29)
 
 #### :boom: Breaking Change
