@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.43 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init.js`
+
 ## v3.0.0-rc.41 (2020-07-29)
 
 #### :boom: Breaking Change

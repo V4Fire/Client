@@ -8,7 +8,7 @@
 
 const
 	config = require('config'),
-	{src, csp} = config;
+	{webpack, src, csp} = config;
 
 const
 	fs = require('fs-extra-promise'),
@@ -337,7 +337,7 @@ function $__RENDER_ROOT() {
 `;
 
 	const
-		initPath = src.clientOutput(`${pageName}.init.js`),
+		initPath = src.clientOutput(`${webpack.output({name: pageName})}.init.js`),
 		content = head.join('\n') + bodyInitializer;
 
 	fs.writeFileSync(initPath, content);
