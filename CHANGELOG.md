@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed setting of `staticClass` `core/component/engines/vue`
-* Fixed initializing of the router iBlock/state`
+* Fixed initializing of the router `iBlock/state`
 
 #### :house: Internal
 
