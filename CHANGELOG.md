@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.45 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed deadlock on initializing `iBlock/state`
+
 ## v3.0.0-rc.44 (2020-07-30)
 
 #### :bug: Bug Fix

@@ -122,7 +122,7 @@ export default class State extends Friend {
 			const
 				data = await this.storage.get('[[STORE]]');
 
-			await this.lfc.execCbAtTheRightTime(() => {
+			void this.lfc.execCbAtTheRightTime(() => {
 				const
 					stateFields = ctx.syncStorageState(data);
 
@@ -231,7 +231,7 @@ export default class State extends Friend {
 	/**
 	 * Initializes a state of the current component from a router
 	 */
-	async initFromRouter(): Promise<boolean> {
+	initFromRouter(): boolean {
 		//#if runtime has bRouter
 
 		if (!this.needRouterSync) {
@@ -245,7 +245,7 @@ export default class State extends Friend {
 			routerWatchers = {group: 'routerWatchers'},
 			$a = this.async.clearAll(routerWatchers);
 
-		await this.lfc.execCbAtTheRightTime(async () => {
+		void this.lfc.execCbAtTheRightTime(async () => {
 			const
 				{r} = ctx;
 
