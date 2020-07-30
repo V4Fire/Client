@@ -24,4 +24,3 @@ Changelog
 #### :house: Internal
 
 * Fixed ESLint warnings
-
