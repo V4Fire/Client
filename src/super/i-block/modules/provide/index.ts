@@ -229,8 +229,6 @@ export default class Provide extends Friend {
 				}
 			}
 
-			console.log(121, componentName, classes, Array.concat([componentName], el));
-
 			// eslint-disable-next-line prefer-spread
 			map[key.dasherize()] = this.fullElName.apply(this, Array.concat([componentName], el));
 		}
