@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.47 (2020-07-31)
+
+#### :boom: Breaking Change
+
+* Renamed `head` -> `deps` `i-static-page.interface.ss`
+
+#### :rocket: New Feature
+
+* `i-static-page.interface.ss`:
+  * Added `meta`
+  * Added `head`
+
 ## v3.0.0-rc.43 (2020-07-30)
 
 #### :bug: Bug Fix
@@ -19,6 +31,7 @@ Changelog
 
 #### :boom: Breaking Change
 
+* Removed SS blocks from the template: `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
 * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
 
 #### :rocket: New Feature
