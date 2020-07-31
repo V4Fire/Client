@@ -37,7 +37,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 
 		// Custom classes and attributes
 
-		if (data.staticClass !== '') {
+		if (Object.isTruly(data.staticClass)) {
 			vData.staticClass += ` ${data.staticClass}`;
 		}
 

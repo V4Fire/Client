@@ -486,7 +486,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * but remember, that these mutations may force re-render of all components.
 	 */
 	@computed({watchable: true, dependencies: ['r.remoteState']})
-	get remoteState(): Dictionary {
+	get remoteState(): this['r']['remoteState'] {
 		return this.r.remoteState;
 	}
 
@@ -1014,7 +1014,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Cache object for opt.ifOnce
 	 */
 	@system({merge: true, replace: false})
-	protected readonly ifOnceStore: Dictionary = {};
+	protected readonly ifOnceStore: Dictionary<number> = {};
 
 	/**
 	 * The temporary cache.
@@ -2067,7 +2067,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * because it's automatically synchronized with keep-alive or the special input property.
 	 *
 	 * @see [[iBlock.activatedProp]]
-	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
+	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
 	 */
 	activate(force?: boolean): void {
 		activate(this, force);
@@ -2347,7 +2347,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Component activated hook
 	 * (for keep-alive)
 	 *
-	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
+	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
 	 */
 	protected activated(force?: boolean): void {
 		onActivated(this, force);

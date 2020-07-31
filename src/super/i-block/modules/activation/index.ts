@@ -37,7 +37,7 @@ export const
  * Activates the specified component
  *
  * @param component
- * @param [force] - if true, then the component will be activated forced, even if it is already activated
+ * @param [force] - if true, then the component will be forced to activate, even if it is already activated
  */
 export function activate(component: iBlock, force?: boolean): void {
 	const
@@ -53,7 +53,7 @@ export function activate(component: iBlock, force?: boolean): void {
 		}
 
 		if ($s.needRouterSync) {
-			ctx.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
+			void ctx.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
 				try {
 					if (type === 'hard') {
 						if (route !== ctx.r.route) {
@@ -68,7 +68,7 @@ export function activate(component: iBlock, force?: boolean): void {
 						}
 					}
 
-					if (!inactiveStatuses[ctx.componentStatus]) {
+					if (inactiveStatuses[ctx.componentStatus] == null) {
 						$s.initFromRouter();
 					}
 
@@ -140,7 +140,7 @@ export function deactivate(component: iBlock): void {
  * Handler: component activated hook
  *
  * @param component
- * @param [force] - if true, then the component will be activated forced, even if it is already activated
+ * @param [force] - if true, then the component will be forced to activate, even if it is already activated
  */
 export function onActivated(component: iBlock, force?: boolean): void {
 	const
@@ -155,7 +155,7 @@ export function onActivated(component: iBlock, force?: boolean): void {
 		.unmuteAll()
 		.unsuspendAll();
 
-	if (ctx.isReadyOnce && !readyStatuses[ctx.componentStatus]) {
+	if (ctx.isReadyOnce && readyStatuses[ctx.componentStatus] == null) {
 		ctx.componentStatus = 'beforeReady';
 	}
 
@@ -195,7 +195,7 @@ export function onDeactivated(component: iBlock): void {
 		const
 			key = keys[i];
 
-		if (nonMuteAsyncLinkNames[key]) {
+		if (nonMuteAsyncLinkNames[key] != null) {
 			continue;
 		}
 

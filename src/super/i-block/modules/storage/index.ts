@@ -11,11 +11,11 @@
  * @packageDocumentation
  */
 
-import Friend from 'super/i-block/modules/friend';
-
 //#if runtime has core/kv-storage
 import { asyncLocal, factory, AsyncStorageNamespace } from 'core/kv-storage';
 //#endif
+
+import Friend from 'super/i-block/modules/friend';
 
 /**
  * Class to work with a local storage

@@ -13,8 +13,8 @@ eslint-disable
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { BoundFn, ProxyCb } from 'core/async';
 import { LogMessageOptions } from 'core/log';
+import Async, { BoundFn, ProxyCb } from 'core/async';
 
 import {
 

@@ -52,7 +52,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
-			methods[key] = Object.assign(methods[key] || {replace, watchers: {}, hooks: {}}, {src, fn});
+			methods[key] = Object.assign(methods[key] ?? {replace, watchers: {}, hooks: {}}, {src, fn});
 
 		// Accessors
 		} else {
@@ -76,24 +76,38 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				metaKey = 'accessors';
 			}
 
+			let
+				field;
+
+			if (props[key] != null) {
+				field = props;
+
+			} else if (fields[key] != null) {
+				field = fields;
+
+			} else {
+				field = systemFields;
+			}
+
 			const
-				field = props[key] ? props : fields[key] ? fields : systemFields,
 				obj = meta[metaKey];
 
 			// If we already have a property by this key, like a prop or a field,
 			// we need to delete it to correct override
-			if (field[key]) {
+			if (field[key] != null) {
 				Object.defineProperty(proto, key, defProp);
 				delete field[key];
 			}
 
 			const
 				old = obj[key],
-				set = desc.set || old && old.set,
-				get = desc.get || old && old.get;
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				set = desc.set ?? old?.set,
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				get = desc.get ?? old?.get;
 
 			// For using "super" within a setter we also create a method with a name of form `${key}Setter`
-			if (set) {
+			if (set != null) {
 				const
 					k = `${key}Setter`;
 
@@ -108,7 +122,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			}
 
 			// For using "super" within a getter we also create a method with a name of form `${key}Getter`
-			if (get) {
+			if (get != null) {
 				const
 					k = `${key}Getter`;
 
@@ -123,9 +137,10 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
-			obj[key] = Object.assign(obj[key] || {replace}, {
+			obj[key] = Object.assign(obj[key] ?? {replace}, {
 				src,
-				get: desc.get || old && old.get,
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				get: desc.get ?? old?.get,
 				set
 			});
 		}

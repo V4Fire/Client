@@ -11,6 +11,114 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.46 (2020-07-31)
+
+#### :bug: Bug Fix
+
+* Fixed `fullElName` overloads `iBlock/provide`
+
+#### :house: Internal
+
+* `core/component/state`:
+  * Added `experiments`
+  * Added `interface/State`
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/activation`
+  * `super/i-block/modules/analytics`
+  * `super/i-block/modules/async-render`
+  * `super/i-block/modules/block`
+  * `super/i-block/modules/daemons`
+  * `super/i-block/modules/decorators`
+  * `super/i-block/modules/dom`
+  * `super/i-block/modules/event-emitter`
+  * `super/i-block/modules/field`
+  * `super/i-block/modules/friend`
+  * `super/i-block/modules/lazy`
+  * `super/i-block/modules/mods`
+  * `super/i-block/modules/opt`
+  * `super/i-block/modules/storage`
+  * `super/i-block/modules/vdom`
+  * `super/i-block/modules/listeners`
+  * `super/i-block/directives/event`
+  * `core/component/meta`
+  * `core/component/field`
+
+## v3.0.0-rc.45 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed deadlock on initializing `iBlock/state`
+
+## v3.0.0-rc.44 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed setting of `staticClass` `core/component/engines/vue`
+* Fixed initializing of the router `iBlock/state`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/cache`
+  * `super/i-block/modules/provide`
+
+## v3.0.0-rc.43 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init.js` `iStaticPage`
+
+## v3.0.0-rc.42 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed `resetRouter` without providing of `convertRouterState` `iBlock/state`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `super/i-block/modules/state`
+
+## v3.0.0-rc.41 (2020-07-29)
+
+#### :boom: Breaking Change
+
+* `build/`
+  * Removed `snakeskin/filters/csp`
+  * Renamed `dependencies` -> `entryPoints` `module.webpack/snakeskin`
+  * Renamed `replacers/raw-import` -> `replacers/include`
+  * Changed a pattern from `requireMonic(...)` to `include('...');` `replacers/include`
+
+* `iStaticPage`
+  * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
+  * Removed SS blocks from the template: `headScripts`, `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
+  * Moved logic from SS to JS `iStaticPage`
+
+* Removed redundant parameters from `config/snakeskin`
+
+#### :rocket: New Feature
+
+Added `config/csp`
+* `iStaticPage`
+  * Added `links` to `deps.js`
+  * Added `attrs` to `modules/interface.js`
+  * Added generation of `init.js`
+
+#### :bug: Bug Fix
+
+* Fixed a bug in `test` function in `core/browser`
+* Don't show clear button within the read-only mode `iInput`
+
+#### :house: Internal
+
+* Added new dependency: `buble`
+
+## v3.0.0-rc.40 (2020-07-27)
+
+#### :house: Internal
+
+* Logging Vue errors and warnings via the `core/log` module `core/component/engines/vue`
+
 ## v3.0.0-rc.39 (2020-07-23)
 
 #### :rocket: New Feature

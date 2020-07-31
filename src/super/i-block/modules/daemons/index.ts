@@ -112,7 +112,9 @@ export default class Daemons extends Friend {
 	 */
 	run<R = unknown>(name: string, ...args: unknown[]): CanUndef<R> {
 		const
-			ctx = this.ctx,
+			{ctx} = this;
+
+		const
 			daemon = this.get(name);
 
 		if (!daemon) {
@@ -120,7 +122,7 @@ export default class Daemons extends Friend {
 		}
 
 		const
-			fn = daemon.wrappedFn || daemon.fn;
+			fn = daemon.wrappedFn ?? daemon.fn;
 
 		if (daemon.immediate !== true) {
 			const asyncOptions = {
@@ -164,7 +166,7 @@ export default class Daemons extends Friend {
 	 * @param daemon
 	 */
 	protected wrapDaemonFn<T extends Daemon>(daemon: T): T {
-		daemon.wrappedFn = daemon.wait ? wait(daemon.wait, daemon.fn) : daemon.fn;
+		daemon.wrappedFn = daemon.wait != null ? wait(daemon.wait, daemon.fn) : daemon.fn;
 		return daemon;
 	}
 
@@ -268,10 +270,10 @@ export default class Daemons extends Friend {
  * @param base
  * @param parent
  */
-function mergeDaemons(base: Daemon, parent: Daemon): Daemon {
+export function mergeDaemons(base: Daemon, parent: Daemon): Daemon {
 	const
 		hook = mergeHooks(base, parent),
-		watch = (parent.watch || []).union(base.watch || []);
+		watch = (parent.watch ?? []).union(base.watch ?? []);
 
 	return {
 		...parent,
@@ -287,7 +289,7 @@ function mergeDaemons(base: Daemon, parent: Daemon): Daemon {
  * @param base
  * @param parent
  */
-function mergeHooks(base: Daemon, parent: Daemon): CanUndef<DaemonHook> {
+export function mergeHooks(base: Daemon, parent: Daemon): CanUndef<DaemonHook> {
 	const
 		{hook: aHooks} = base,
 		{hook: bHooks} = parent;

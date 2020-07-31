@@ -47,10 +47,10 @@ export function inherit(
 
 	// Watcher dependencies
 
-	if (meta.watchDependencies.size) {
+	if (meta.watchDependencies.size > 0) {
 		for (let o = pWatchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 			const [key, pVal] = el.value;
-			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) || []).concat(pVal));
+			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) ?? []).concat(pVal));
 		}
 
 	} else {
@@ -91,14 +91,14 @@ export function inherit(
 				if (parent.watchers) {
 					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 						const val = el.value;
-						watchers = watchers || new Map();
+						watchers = watchers ?? new Map();
 						watchers.set(val.handler, {...el.value});
 					}
 				}
 
 				if ('after' in parent && parent.after) {
 					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
-						after = after || new Set();
+						after = after ?? new Set();
 						after.add(el.value);
 					}
 				}
@@ -166,7 +166,7 @@ export function inherit(
 
 				hooks[key] = {
 					...el,
-					after: el.after && el.after.size ? new Set(el.after) : undefined
+					after: Object.size(el.after) > 0 ? new Set(el.after) : undefined
 				};
 			}
 		}
@@ -180,7 +180,7 @@ export function inherit(
 		const
 			key = keys[i],
 			current = o[key],
-			parent = (pMods[key] || []).slice();
+			parent = (pMods[key] ?? []).slice();
 
 		if (current) {
 			const

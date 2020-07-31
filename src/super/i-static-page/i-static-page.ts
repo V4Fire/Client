@@ -12,13 +12,13 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import remoteState from 'core/component/state';
 
-import { reset, ResetType, ComponentInterface } from 'core/component';
-import { setLocale, locale } from 'core/i18n';
-
-import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
+import { setLocale, locale } from 'core/i18n';
+import { Session } from 'core/session/interface';
+
+import remoteState from 'core/component/state';
+import { reset, ResetType, ComponentInterface } from 'core/component';
 
 //#if runtime has bRouter
 import bRouter, { Route } from 'base/b-router/b-router';

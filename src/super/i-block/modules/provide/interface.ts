@@ -15,8 +15,7 @@ export type Classes = Dictionary<
 >;
 
 export type Styles = Dictionary<
-	string |
-	Array<string> |
+	CanArray<string> |
 	Dictionary<string>
 >;
 
@@ -26,7 +25,7 @@ export type ClassesCacheNms =
 	'els';
 
 export type ClassesCacheValue =
-	ReadonlyArray<string> |
+	readonly string[] |
 	Readonly<Dictionary<string>>;
 
 export type ProvideMods = Dictionary<ModVal | Dictionary<ModVal>>;

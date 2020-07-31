@@ -20,18 +20,18 @@ function bind(
 	node: ComponentElement<iBlock>,
 	p: VNodeDirective,
 	vNode: VNode & {context?: iBlock},
-	oldVNode: VNode
+	oldVNode?: VNode
 ): void {
 	if (!vNode.context) {
 		return;
 	}
 
-	if (!p.arg) {
+	if (p.arg == null || p.arg === '') {
 		throw new Error('Event type is not defined');
 	}
 
 	const
-		m = <NonNullable<VNodeDirective['modifiers']>>(p.modifiers || {}),
+		m = p.modifiers ?? {},
 		obj = vNode.context.unsafe.async,
 		raw = <string>(<any>p).rawName;
 
@@ -39,9 +39,9 @@ function bind(
 		isObj = Object.isPlainObject(p.value),
 		group = isObj && p.value.group || `v-e:${p.arg}`,
 		handler = isObj ? p.value.fn : p.value,
-		cacheList = cache.get(oldVNode);
+		cacheList = oldVNode && cache.get(oldVNode);
 
-	if (oldVNode && cacheList) {
+	if (oldVNode != null && cacheList != null) {
 		for (let i = 0; i < cacheList.length; i++) {
 			cacheList[i].off({group});
 		}
@@ -49,7 +49,7 @@ function bind(
 
 	cache.set(
 		vNode,
-		[].concat(cache.get(vNode) || [], group)
+		Array.concat([], cache.get(vNode), group)
 	);
 
 	if (p.arg === 'dnd') {
@@ -65,7 +65,8 @@ function bind(
 	if (m.key) {
 		const
 			res = keyValRgxp.exec(raw);
-		if (res && res[1]) {
+
+		if (res?.[1] != null) {
 			const
 				list = res[1].split(commaRgxp);
 
@@ -75,7 +76,7 @@ function bind(
 		}
 	}
 
-	function fn(e: KeyboardEvent): void {
+	function fn(this: unknown, e: KeyboardEvent, ...args: unknown[]): void {
 		const
 			key = m.key && e.key;
 
@@ -84,7 +85,7 @@ function bind(
 			m.shift && !e.shiftKey ||
 			m.ctrl && !e.ctrlKey ||
 			m.meta && !e.metaKey ||
-			key && !keys[key.toLowerCase()]
+			Object.isTruly(key) && keys[String(key).toLowerCase()] == null
 
 		) {
 			return;
@@ -110,7 +111,7 @@ function bind(
 				fn = handlers[i];
 
 			if (Object.isFunction(fn)) {
-				fn.apply(this, arguments);
+				fn.apply(this, args);
 			}
 		}
 	}

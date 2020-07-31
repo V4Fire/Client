@@ -35,11 +35,11 @@ export default class Cache<K extends string = string, V = unknown> {
 	 * @param [cacheKey] - cache key
 	 */
 	create(nms: K, cacheKey?: string): Dictionary<V> {
-		const
-			cache = this.dict[nms] = <any>this.dict[nms] || Object.createDict();
+		const cache = this.dict[nms] ?? Object.createDict();
+		this.dict[nms] = cache;
 
-		if (cacheKey) {
-			cache[cacheKey] = cache[cacheKey] || Object.createDict<V>();
+		if (cacheKey != null) {
+			cache[cacheKey] = cache[cacheKey] ?? Object.createDict<V>();
 			return cache[cacheKey];
 		}
 

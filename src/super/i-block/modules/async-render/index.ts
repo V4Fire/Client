@@ -17,6 +17,7 @@ import { queue, restart, deferRestart } from 'core/render';
 
 import Friend from 'super/i-block/modules/friend';
 import { TaskOptions, TaskDesc } from 'super/i-block/modules/async-render/interface';
+
 export * from 'super/i-block/modules/async-render/interface';
 
 /**
@@ -67,8 +68,8 @@ export default class AsyncRender extends Friend {
 	 * @param slice - elements per chunk or [start position, elements per chunk]
 	 * @param [opts] - additional options
 	 */
-	iterate(value: unknown, slice: number | [number, number], opts: TaskOptions = {}): unknown[] {
-		if (!value) {
+	iterate(value: unknown, slice: number | [number?, number?], opts: TaskOptions = {}): unknown[] {
+		if (value == null) {
 			return [];
 		}
 
@@ -92,7 +93,15 @@ export default class AsyncRender extends Friend {
 				return value.then(setList);
 			}
 
-			return value && typeof value === 'object' ? value[Symbol.iterator] ? value : Object.keys(value) : [value];
+			if (value != null && typeof value === 'object') {
+				if (Object.isFunction(value[Symbol.iterator])) {
+					return value;
+				}
+
+				return Object.keys(value);
+			}
+
+			return [value];
 		};
 
 		list = setList(value);
@@ -102,7 +111,7 @@ export default class AsyncRender extends Friend {
 			count;
 
 		if (Object.isArray(slice)) {
-			from = slice[0] || from;
+			from = slice[0] ?? from;
 			count = slice[1];
 
 		} else {
@@ -117,7 +126,7 @@ export default class AsyncRender extends Friend {
 
 		let
 			iterator: Iterator<unknown>,
-			lastSyncEl;
+			lastSyncEl: IteratorResult<any>;
 
 		let
 			syncI = 0,
@@ -126,8 +135,10 @@ export default class AsyncRender extends Friend {
 		if (!isPromise) {
 			iterator = list[Symbol.iterator]();
 
-			for (let o = iterator, el = lastSyncEl = o.next(); !el.done; el = lastSyncEl = o.next(), syncI++) {
-				if (from) {
+			for (let o = iterator, el = o.next(); !el.done; el = o.next(), syncI++) {
+				lastSyncEl = el;
+
+				if (from > 0) {
 					from--;
 					continue;
 				}
@@ -136,7 +147,12 @@ export default class AsyncRender extends Friend {
 					val = el.value,
 					isPromise = Object.isPromise(val);
 
-				if (!isPromise && (!f || f.call(this.component, val, syncI, {list, i: syncI, total: syncTotal}))) {
+				if (
+					!isPromise && (
+						!f ||
+						Object.isTruly(f.call(this.component, val, syncI, {list, i: syncI, total: syncTotal}))
+					)
+				) {
 					syncTotal++;
 					finalArr.push(val);
 
@@ -175,7 +191,7 @@ export default class AsyncRender extends Friend {
 					i = 0;
 
 				const next = () => {
-					if (!filteredArr.length && lastSyncEl.done) {
+					if (filteredArr.length === 0 && lastSyncEl.done) {
 						return lastSyncEl;
 					}
 
@@ -193,7 +209,7 @@ export default class AsyncRender extends Friend {
 			};
 
 			const
-				weight = opts.weight || 1,
+				weight = opts.weight ?? 1,
 				newIterator = createIterator();
 
 			let
@@ -217,6 +233,7 @@ export default class AsyncRender extends Friend {
 
 				if (isPromise) {
 					try {
+						// eslint-disable-next-line require-atomic-updates
 						val = await val;
 
 					} catch (err) {
@@ -244,7 +261,7 @@ export default class AsyncRender extends Friend {
 						let
 							group = 'asyncComponents';
 
-						if (opts.group) {
+						if (opts.group != null) {
 							group = `asyncComponents:${opts.group}:${chunkI}`;
 							desc.destructor = () => $a.terminateWorker({group});
 						}
@@ -260,11 +277,11 @@ export default class AsyncRender extends Friend {
 
 						$a.worker(() => {
 							const destroyEl = (el) => {
-								if (el[this.asyncLabel]) {
+								if (el[this.asyncLabel] != null) {
 									delete el[this.asyncLabel];
 									$a.worker(() => destroyEl(el), {group});
 
-								} else if (el.parentNode) {
+								} else if (el.parentNode != null) {
 									if (opts.destructor) {
 										opts.destructor(el);
 									}
@@ -282,7 +299,7 @@ export default class AsyncRender extends Friend {
 
 				this.createTask(task, {
 					weight,
-					filter: f && f.bind(this.ctx, val, i, {
+					filter: f?.bind(this.ctx, val, i, {
 						list,
 						i: syncI + i + 1,
 
@@ -309,7 +326,7 @@ export default class AsyncRender extends Friend {
 	 * @param cb
 	 * @param [params]
 	 */
-	protected createTask(cb: (...args: unknown[]) => void, params: TaskOptions = {}): void {
+	protected createTask(cb: AnyFunction, params: TaskOptions = {}): void {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {

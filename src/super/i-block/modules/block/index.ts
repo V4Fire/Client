@@ -12,7 +12,9 @@
  */
 
 import Friend from 'super/i-block/modules/friend';
+
 import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
+import { fakeCtx, modRgxpCache, elRxp } from 'super/i-block/modules/block/const';
 
 import {
 
@@ -26,11 +28,6 @@ import {
 } from 'super/i-block/modules/block/interface';
 
 export * from 'super/i-block/modules/block/interface';
-
-const
-	fakeCtx = document.createElement('div'),
-	modRgxpCache = Object.createDict<RegExp>(),
-	elRxp = /_+/;
 
 /**
  * Class implements BEM-like API
@@ -53,18 +50,37 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Returns a full name of the current block
+	 * Returns the full name of the current block
 	 *
 	 * @param [modName]
 	 * @param [modValue]
+	 *
+	 * @example
+	 * ```js
+	 * // b-foo
+	 * this.getFullBlockName();
+	 *
+	 * // b-foo_focused_true
+	 * this.getFullBlockName('focused', true);
+	 * ```
 	 */
 	getFullBlockName(modName?: string, modValue?: unknown): string {
-		return this.componentName + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
+		return this.componentName + (modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
 	}
 
 	/**
 	 * Returns CSS selector to the current block
+	 *
 	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * // .b-foo
+	 * this.getBlockSelector();
+	 *
+	 * // .b-foo.b-foo_focused_true
+	 * this.getBlockSelector({focused: true});
+	 * ```
 	 */
 	getBlockSelector(mods?: ModsTable): string {
 		let
@@ -81,14 +97,23 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Returns a full name of the specified element
+	 * Returns the full name of the specified element
 	 *
 	 * @param name - element name
 	 * @param [modName]
 	 * @param [modValue]
+	 *
+	 * @example
+	 * ```js
+	 * // .b-foo__bla
+	 * this.getFullElName('bla');
+	 *
+	 * // b-foo__bla_focused_true
+	 * this.getBlockSelector('bla', 'focused', true);
+	 * ```
 	 */
 	getFullElName(name: string, modName?: string, modValue?: unknown): string {
-		const modStr = modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
+		const modStr = modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
 		return `${this.componentName}__${name.dasherize()}${modStr}`;
 	}
 
@@ -97,6 +122,15 @@ export default class Block extends Friend {
 	 *
 	 * @param name - element name
 	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * // .$componentId.b-foo__bla
+	 * this.getElSelector('bla');
+	 *
+	 * // .$componentId.b-foo__bla.b-foo__bla_focused_true
+	 * this.getElSelector('bla', {focused: true});
+	 * ```
 	 */
 	getElSelector(name: string, mods?: ModsTable): string {
 		let
@@ -113,89 +147,136 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Returns block child elements by the specified request
+	 * Returns block child elements by the specified request.
+	 * This overload is used to optimize DOM searching.
 	 *
 	 * @param ctx - context node
 	 * @param name - element name
 	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * this.elements(node, 'foo');
+	 * this.elements(node, 'foo', {focused: true});
+	 * ```
 	 */
 	elements<E extends Element = Element>(ctx: Element, name: string, mods?: ModsTable): NodeListOf<E>;
 
 	/**
+	 * Returns block child elements by the specified request
+	 *
 	 * @param name - element name
 	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * this.elements('foo');
+	 * this.elements('foo', {focused: true});
+	 * ```
 	 */
 	elements<E extends Element = Element>(name: string, mods?: ModsTable): NodeListOf<E>;
 	elements<E extends Element = Element>(
-		ctx: Element | string,
+		ctxOrName: Element | string,
 		name?: string | ModsTable,
 		mods?: ModsTable
 	): NodeListOf<E> {
 		let
+			ctx = this.node,
 			elName;
 
-		if (Object.isString(ctx)) {
-			mods = <ModsTable>name;
-			elName = ctx;
-			ctx = this.node;
+		if (Object.isString(ctxOrName)) {
+			elName = ctxOrName;
+
+			if (Object.isPlainObject(name)) {
+				mods = name;
+			}
 
 		} else {
 			elName = name;
-			ctx = ctx || this.node;
+			ctx = ctxOrName;
 		}
 
-		if (!ctx) {
-			return fakeCtx.querySelectorAll('loopback');
+		ctx = ctx ?? this.node;
+
+		if (ctx == null) {
+			return fakeCtx.querySelectorAll('.loopback');
 		}
 
 		return ctx.querySelectorAll(this.getElSelector(elName, mods));
 	}
 
 	/**
-	 * Returns a block child element by the specified request
+	 * Returns a block child element by the specified request.
+	 * This overload is used to optimize DOM searching.
 	 *
 	 * @param ctx - context node
 	 * @param name - element name
 	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * this.element(node, 'foo');
+	 * this.element(node, 'foo', {focused: true});
+	 * ```
 	 */
 	element<E extends Element = Element>(ctx: Element, name: string, mods?: ModsTable): CanUndef<E>;
 
 	/**
+	 * Returns a block child element by the specified request
+	 *
 	 * @param name - element name
 	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * this.element('foo');
+	 * this.element('foo', {focused: true});
+	 * ```
 	 */
 	element<E extends Element = Element>(name: string, mods?: ModsTable): CanUndef<E>;
 	element<E extends Element = Element>(
-		ctx: Element | string,
+		ctxOrName: Element | string,
 		name?: string | ModsTable,
 		mods?: ModsTable
 	): CanUndef<E> {
 		let
+			ctx = this.node,
 			elName;
 
-		if (Object.isString(ctx)) {
-			mods = <ModsTable>name;
-			elName = ctx;
-			ctx = this.node;
+		if (Object.isString(ctxOrName)) {
+			elName = ctxOrName;
+
+			if (Object.isPlainObject(name)) {
+				mods = name;
+			}
 
 		} else {
 			elName = name;
-			ctx = ctx || this.node;
+			ctx = ctxOrName;
 		}
 
-		if (!ctx) {
+		ctx = ctx ?? this.node;
+
+		if (ctx == null) {
 			return undefined;
 		}
 
-		return ctx.querySelector<E>(this.getElSelector(elName, mods)) || undefined;
+		return ctx.querySelector<E>(this.getElSelector(elName, mods)) ?? undefined;
 	}
 
 	/**
-	 * Sets a modifier to the current block
+	 * Sets a modifier to the current block.
+	 * The method returns false if the modifier is already set.
 	 *
 	 * @param name - modifier name
 	 * @param value
 	 * @param [reason] - reason to set a modifier
+	 *
+	 * @example
+	 * ```js
+	 * this.setMod('focused', true);
+	 * this.setMod('focused', true, 'removeMod');
+	 * ```
 	 */
 	setMod(name: string, value: unknown, reason: ModEventReason = 'setMod'): boolean {
 		if (value == null) {
@@ -234,20 +315,21 @@ export default class Block extends Friend {
 			this.removeMod(name, undefined, 'setMod');
 		}
 
-		if (node && (!isInit || needSync)) {
+		if (node != null && (!isInit || needSync)) {
 			node.classList.add(this.getFullBlockName(name, normalizedVal));
 		}
 
-		if (mods) {
+		if (mods != null) {
 			mods[name] = normalizedVal;
 		}
 
 		ctx.mods[name] = normalizedVal;
 
 		const
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
 
-		if (watchModsStore && name in watchModsStore && watchModsStore[name] !== normalizedVal) {
+		if (watchModsStore != null && name in watchModsStore && watchModsStore[name] !== normalizedVal) {
 			delete Object.getPrototypeOf(watchModsStore)[name];
 			ctx.field.set(`watchModsStore.${name}`, normalizedVal);
 		}
@@ -272,11 +354,19 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Removes a modifier of the current block
+	 * Removes a modifier of the current block.
+	 * The method returns false if the block doesn't have this modifier.
 	 *
 	 * @param name - modifier name
 	 * @param [value]
 	 * @param [reason] - reason to remove a modifier
+	 *
+	 * @example
+	 * ```js
+	 * this.removeMod('focused');
+	 * this.removeMod('focused', true);
+	 * this.removeMod('focused', true, 'setMod');
+	 * ```
 	 */
 	removeMod(name: string, value?: unknown, reason: ModEventReason = 'removeMod'): boolean {
 		name = name.camelize(false);
@@ -292,11 +382,11 @@ export default class Block extends Friend {
 			return false;
 		}
 
-		if (node) {
+		if (node != null) {
 			node.classList.remove(this.getFullBlockName(name, currentVal));
 		}
 
-		if (mods) {
+		if (mods != null) {
 			mods[name] = undefined;
 		}
 
@@ -307,9 +397,10 @@ export default class Block extends Friend {
 			ctx.mods[name] = undefined;
 
 			const
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
 
-			if (watchModsStore && name in watchModsStore && watchModsStore[name]) {
+			if (watchModsStore != null && name in watchModsStore && watchModsStore[name] != null) {
 				delete Object.getPrototypeOf(watchModsStore)[name];
 				ctx.field.set(`watchModsStore.${name}`, undefined);
 			}
@@ -340,6 +431,12 @@ export default class Block extends Friend {
 	 *
 	 * @param name - modifier name
 	 * @param [fromNode] - if true, then the modifier value will always taken from a dom node
+	 *
+	 * @example
+	 * ```js
+	 * this.getMod('focused');
+	 * this.getMod('focused', true);
+	 * ```
 	 */
 	getMod(name: string, fromNode?: boolean): CanUndef<string> {
 		const
@@ -358,20 +455,28 @@ export default class Block extends Friend {
 
 		const
 			pattern = `(?:^| )(${this.getFullBlockName(name, '')}[^_ ]*)`,
-			rgxp = modRgxpCache[pattern] = modRgxpCache[pattern] || new RegExp(pattern),
+			rgxp = modRgxpCache[pattern] ?? new RegExp(pattern),
 			el = rgxp.exec(node.className);
 
+		modRgxpCache[pattern] = rgxp;
 		return el ? el[1].split('_')[MOD_VALUE] : undefined;
 	}
 
 	/**
-	 * Sets a modifier to the specified element
+	 * Sets a modifier to the specified element.
+	 * The method returns false if the modifier is already set.
 	 *
 	 * @param link - link to the element
 	 * @param elName - element name
 	 * @param modName
 	 * @param value
 	 * @param [reason] - reason to set a modifier
+	 *
+	 * @example
+	 * ```js
+	 * this.setElMod(node, 'foo', 'focused', true);
+	 * this.setElMod(node, 'foo', 'focused', true, 'initSetMod');
+	 * ```
 	 */
 	setElMod(
 		link: Nullable<Element>,
@@ -412,13 +517,21 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Removes a modifier from the specified element
+	 * Removes a modifier from the specified element.
+	 * The method returns false if the element doesn't have this modifier.
 	 *
 	 * @param link - link to the element
 	 * @param elName - element name
 	 * @param modName
 	 * @param [value]
 	 * @param [reason] - reason to remove a modifier
+	 *
+	 * @example
+	 * ```js
+	 * this.removeElMod(node, 'foo', 'focused');
+	 * this.removeElMod(node, 'foo', 'focused', true);
+	 * this.removeElMod(node, 'foo', 'focused', true, 'setMod');
+	 * ```
 	 */
 	removeElMod(
 		link: Nullable<Element>,
@@ -476,9 +589,10 @@ export default class Block extends Friend {
 
 		const
 			pattern = `(?:^| )(${this.getFullElName(elName, modName, '')}[^_ ]*)`,
-			rgxp = modRgxpCache[pattern] = pattern[pattern] || new RegExp(pattern),
+			rgxp = pattern[pattern] ?? new RegExp(pattern),
 			el = rgxp.exec(link.className);
 
-		return el ? el[1].split(elRxp)[MOD_VALUE] : undefined;
+		modRgxpCache[pattern] = rgxp;
+		return el != null ? el[1].split(elRxp)[MOD_VALUE] : undefined;
 	}
 }

@@ -67,7 +67,7 @@ module.exports = (page) => {
 
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 4, total: 4, id: 'uniq-options'}});
 
-					await h.bom.waitForIdleCallback(page);
+					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 					await h.dom.waitForEl(container, 'section');
 
 					const

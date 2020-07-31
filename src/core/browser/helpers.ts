@@ -15,7 +15,7 @@ const
  *
  * @param pattern
  */
-export function match(pattern: RegExp | string): [string, number[] | null] | boolean {
+export function match(pattern: RegExp | string): [string, number[] | null] | false {
 	const
 		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9._]*))?`, 'i') : pattern,
 		res = rgxp.exec(userAgent);
