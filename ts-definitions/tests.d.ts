@@ -12,7 +12,7 @@
 
 declare namespace Playwright {
 	type BrowserContext = import('playwright').BrowserContext;
-	type ElementHandle = import('playwright').ElementHandle;
+	type ElementHandle<T extends Node = Node> = import('playwright').ElementHandle<T>;
 	type JSHandle = import('playwright').JSHandle;
 	type Page = import('playwright').Page;
 
@@ -308,6 +308,19 @@ declare namespace BrowserTests {
 			prop: string,
 			val: unknown
 		): Promise<CanUndef<Playwright.JSHandle>>;
+
+		/**
+		 * Creates a component using `$createElement` and `vdom.render` methods
+		 *
+		 * @param componentCtx
+		 * @param componentName
+		 * @param props
+		 */
+		renderComponent(
+			componentCtx: PlaywrightElContext,
+			componentName: string,
+			props?: Dictionary
+		): Playwright.ElementHandle<any>;
 	}
 
 	/**

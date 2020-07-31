@@ -14,7 +14,6 @@ import {
 
 	SHADOW_PREVIEW,
 	SHADOW_MAIN,
-	SHADOW_BROKEN,
 	IMG_IS_LOADED,
 	INIT_LOAD,
 	LOADING_STARTED,
@@ -43,7 +42,10 @@ export default class Lifecycle {
 	 * @param el
 	 */
 	init(el: ImageNode): void {
-		const previewShadowState = el[SHADOW_PREVIEW];
+		const
+			previewShadowState = el[SHADOW_PREVIEW];
+
+		this.parent.setClasses(el, el[SHADOW_MAIN], 'initial');
 
 		if (previewShadowState != null) {
 			this.initHelperImage(el, 'preview');
@@ -57,7 +59,11 @@ export default class Lifecycle {
 	 * @param el
 	 */
 	protected initMain(el: ImageNode): void {
-		const mainShadowState = el[SHADOW_MAIN];
+		const mainShadowState = this.parent.getShadowStateByType(el, 'main');
+
+		if (!mainShadowState) {
+			return;
+		}
 
 		if (mainShadowState.imgNode.complete && !mainShadowState.isFailed) {
 			this.onMainImageLoad(el);
@@ -83,7 +89,7 @@ export default class Lifecycle {
 			errorCallback = this.onHelperImageError.bind(this, el, type);
 
 		const
-			shadowState = el[type === 'preview' ? SHADOW_PREVIEW : SHADOW_BROKEN];
+			shadowState = this.parent.getShadowStateByType(el, type);
 
 		if (!shadowState) {
 			return;
@@ -120,10 +126,10 @@ export default class Lifecycle {
 	 */
 	protected trySetHelperImage(el: ImageNode, type: ImageHelperType): void {
 		const
-			shadowState = el[type === 'preview' ? SHADOW_PREVIEW : SHADOW_BROKEN],
-			mainShadowState = el[SHADOW_MAIN];
+			shadowState = this.parent.getShadowStateByType(el, type),
+			mainShadowState = this.parent.getShadowStateByType(el, 'main');
 
-		if (!shadowState) {
+		if (!shadowState || !mainShadowState) {
 			return;
 		}
 
@@ -147,7 +153,7 @@ export default class Lifecycle {
 	 * @param type
 	 */
 	protected onHelperImageError(el: ImageNode, type: ImageHelperType): void {
-		const shadowState = el[type === 'preview' ? SHADOW_PREVIEW : SHADOW_BROKEN];
+		const shadowState = this.parent.getShadowStateByType(el, type);
 
 		if (!shadowState) {
 			return;

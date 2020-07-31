@@ -121,7 +121,7 @@ export interface ImageOptions {
 	stateClasses?: boolean;
 
 	/** @see [[ImageBackgroundOptions]] */
-	backgroundOptions?: ImageBackgroundOptions;
+	bgOptions?: ImageBackgroundOptions;
 
 	/**
 	 * Will be called after successful loading (`img.onload`)

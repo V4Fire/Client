@@ -22,6 +22,7 @@ import {
 	ShadowElState,
 	ImageOptions,
 	ImageNode,
+	ImageType,
 
 	SHADOW_BROKEN,
 	SHADOW_PREVIEW,
@@ -220,6 +221,43 @@ export default class ImageLoader {
 		}
 	}
 
+	getShadowStateByType(el: ImageNode, type: ImageType): CanUndef<ShadowElState> {
+		if (type === 'main') {
+			return el[SHADOW_MAIN];
+		}
+
+		return el[type === 'preview' ? SHADOW_PREVIEW : SHADOW_BROKEN];
+	}
+
+	/**
+	 * Sets a lifecycle classes to the specified el
+	 *
+	 * @param el
+	 * @param state
+	 * @param type – If the `type` is not specified when `type` from `state` will be used
+	 */
+	setClasses(el: ImageNode, state: ShadowElState, type?: ImageType | 'initial'): void {
+		const
+			{mainOptions} = state,
+			ctx = state.mainOptions.ctx.unsafe;
+
+		if (mainOptions.stateClasses === true) {
+			if (!ctx.block) {
+				return;
+			}
+
+			const classMap = {
+				initial: ctx.block.getFullElName('v-image', 'initial', 'true'),
+				preview: ctx.block.getFullElName('v-image', 'preview', 'true'),
+				main: ctx.block.getFullElName('v-image', 'main', 'true'),
+				broken: ctx.block.getFullElName('v-image', 'broken', 'true')
+			};
+
+			el.classList.remove(classMap.preview, classMap.main, classMap.broken, classMap.initial);
+			el.classList.add(classMap[type ?? state.type]);
+		}
+	}
+
 	/**
 	 * Merges default image state with the provided options
 	 *
@@ -309,18 +347,18 @@ export default class ImageLoader {
 	 */
 	protected setBackgroundProps(el: ImageNode, state: ShadowElState): void {
 		const
-			{backgroundOptions} = state.selfOptions;
+			{bgOptions} = state.selfOptions;
 
 		const
-			beforeImg = backgroundOptions?.beforeImg ?? [],
-			afterImg = backgroundOptions?.afterImg ?? [],
+			beforeImg = bgOptions?.beforeImg ?? [],
+			afterImg = bgOptions?.afterImg ?? [],
 			img = `url("${state.imgNode.currentSrc}")`;
 
 		const
 			backgroundImage = Array.concat([], beforeImg, img, afterImg).join(','),
-			backgroundPosition = backgroundOptions?.position ?? '',
-			backgroundSize = backgroundOptions?.size ?? '',
-			paddingBottom = this.calculatePaddingByRatio(backgroundOptions?.ratio);
+			backgroundPosition = bgOptions?.position ?? '',
+			backgroundSize = bgOptions?.size ?? '',
+			paddingBottom = this.calculatePaddingByRatio(state, bgOptions?.ratio);
 
 		Object.assign(el.style, {
 			backgroundImage,
@@ -332,10 +370,21 @@ export default class ImageLoader {
 
 	/**
 	 * Calculates a `padding-bottom` based on the specified ratio
+	 *
+	 * @param state
 	 * @param ratio
 	 */
-	protected calculatePaddingByRatio(ratio: CanUndef<number>): string {
+	protected calculatePaddingByRatio(state: ShadowElState, ratio: CanUndef<number>): string {
 		if (ratio == null) {
+			const
+				{imgNode} = state,
+				{naturalHeight, naturalWidth} = imgNode;
+
+			if (naturalHeight > 0 || naturalWidth > 0) {
+				const calculated = naturalHeight === 0 ? 1 : naturalWidth / naturalHeight;
+				return `${(1 / calculated) * 100}`;
+			}
+
 			return '';
 		}
 
@@ -365,33 +414,6 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets a lifecycle classes to the specified el
-	 *
-	 * @param el
-	 * @param state
-	 */
-	protected setClasses(el: ImageNode, state: ShadowElState): void {
-		const
-			{mainOptions} = state,
-			ctx = state.mainOptions.ctx.unsafe;
-
-		if (mainOptions.stateClasses === true) {
-			if (!ctx.block) {
-				return;
-			}
-
-			const classMap = {
-				main: ctx.block.getFullElName('v-image', 'main', 'true'),
-				preview: ctx.block.getFullElName('v-image', 'preview', 'true'),
-				broken: ctx.block.getFullElName('v-image', 'broken', 'true')
-			};
-
-			el.classList.remove(classMap.preview, classMap.main, classMap.broken);
-			el.classList.add(classMap[state.type]);
-		}
-	}
-
-	/**
 	 * Returns `true` if the specified `val` is equal to `oldVal`
 	 *
 	 * @param val
@@ -401,13 +423,3 @@ export default class ImageLoader {
 		return Object.fastCompare(val, oldVal);
 	}
 }
-
-/**
- * Если `div`
- * 1. Если не указаны `sources` то используем просто img
- * 2. Если указаны `sources` то используем `shadow picture` но не делаем рантайм обновлений
- *
- * Если `img`
- * 1. Если не указаны `sources` то используем просто переданный тег
- * 2. Если указаны sources то используем `picture`, забираем все классы с элемента и переносим его на `img` внутри
- */
