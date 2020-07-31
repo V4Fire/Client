@@ -80,10 +80,9 @@ export default class Provide extends Friend {
 			modValue = modName;
 			modName = elName;
 			elName = componentName;
-			componentName = '';
+			componentName = this.componentName;
 		}
 
-		componentName = <CanUndef<typeof componentName>>componentName ?? this.componentName;
 		return Block.prototype.getFullElName.call({componentName}, elName, modName, modValue);
 	}
 

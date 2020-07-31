@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.46 ()
+
+#### :bug: Bug Fix
+
+* Fixed `fullElName` overloads
+
 ## v3.0.0-rc.44 (2020-07-30)
 
 #### :house: Internal
