@@ -200,7 +200,7 @@ declare namespace BrowserTests {
 			ctx: PlaywrightElContext,
 			fn: (this: any, ctx: any, ...args: ARGS) => unknown,
 			...args: ARGS
-		): Promise<true>;
+		): Promise<void>;
 	}
 
 	/**

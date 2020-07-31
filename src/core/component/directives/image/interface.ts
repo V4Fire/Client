@@ -199,11 +199,6 @@ export interface ImageSource {
 	srcset?: string;
 
 	/**
-	 * `src` attribute for a `source` tag
-	 */
-	src?: string;
-
-	/**
 	 * `sizes` attribute for a `source` tag
 	 */
 	sizes?: string;
@@ -241,7 +236,7 @@ export interface ShadowElState {
 	/**
 	 * Image shadow node
 	 */
-	imgNode: HTMLImageElement;
+	imgNode: HTMLShadowImageElement;
 
 	/**
 	 * Image loading promise
@@ -261,7 +256,32 @@ export interface ShadowElState {
 
 export interface PictureFactoryResult {
 	picture: HTMLPictureElement;
-	img: HTMLImageElement;
+	img: HTMLShadowImageElement;
+}
+
+export const
+	IMG_IS_LOADED: unique symbol = Symbol.for('image is successfully loaded indicator'),
+	INIT_LOAD: unique symbol = Symbol.for('image loading initiator'),
+	LOADING_STARTED: unique symbol = Symbol.for('indicator of an image starts a loading');
+
+export interface HTMLShadowImageElement extends HTMLImageElement {
+	/**
+	 * If
+	 *   - `true` – image was successfully loaded
+	 *   - `false`– loading failed
+	 *   - `undefined` – initial state, loading was not completed
+	 */
+	[IMG_IS_LOADED]?: boolean;
+
+	/**
+	 * Initializes loading of the image
+	 */
+	[INIT_LOAD]?: Function;
+
+	/**
+	 * Indicator of an image starts loading
+	 */
+	[LOADING_STARTED]?: true;
 }
 
 /**

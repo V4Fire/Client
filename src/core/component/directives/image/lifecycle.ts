@@ -7,7 +7,20 @@
  */
 
 import ImageLoader from 'core/component/directives/image/image';
-import { ImageNode, ImageHelperType, SHADOW_PREVIEW, SHADOW_MAIN, SHADOW_BROKEN, ID } from 'core/component/directives/image';
+import {
+
+	ImageNode,
+	ImageHelperType,
+
+	SHADOW_PREVIEW,
+	SHADOW_MAIN,
+	SHADOW_BROKEN,
+	IMG_IS_LOADED,
+	INIT_LOAD,
+	LOADING_STARTED,
+	ID
+
+} from 'core/component/directives/image';
 
 /**
  * Helper class, provides an API to work with image lifecycle
@@ -77,17 +90,25 @@ export default class Lifecycle {
 		}
 
 		const
-			{mainOptions} = shadowState;
+			{mainOptions} = shadowState,
+			{imgNode} = shadowState;
 
-		if (shadowState.imgNode.complete && !shadowState.isFailed) {
+		if (imgNode[IMG_IS_LOADED] === true) {
 			/*
 			 * If an img is ready – set it to the element
 			 */
 			return successCallback();
 		}
 
+		if (imgNode[LOADING_STARTED] == null) {
+			/*
+			 * If loading was not started – this is a `broken` image that should be loaded lazy
+			 */
+			imgNode[INIT_LOAD]!();
+		}
+
 		shadowState.loadPromise = mainOptions.ctx.unsafe.async.promise(
-			shadowState.imgNode.init, {group: `[[v-image:${type}]]`, label: el[ID]}
+			imgNode.init, {group: `[[v-image:${type}]]`, label: el[ID]}
 		).then(successCallback, errorCallback);
 	}
 

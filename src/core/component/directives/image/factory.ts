@@ -10,7 +10,19 @@ import { concatUrls } from 'core/url';
 import { getSrcSet } from 'core/html';
 
 import ImageLoader from 'core/component/directives/image/image';
-import { ImageOptions, PictureFactoryResult, ShadowElState, ImageType } from 'core/component/directives/image';
+
+import {
+
+	ImageOptions,
+	PictureFactoryResult,
+	ShadowElState,
+	ImageType,
+
+	INIT_LOAD,
+	IMG_IS_LOADED,
+	LOADING_STARTED
+
+} from 'core/component/directives/image';
 
 /**
  * Helpers class, provides an API for creating DOM elements
@@ -40,7 +52,7 @@ export default class Factory {
 		let res: ShadowElState;
 
 		if (Object.isArray(selfOptions.sources) && selfOptions.sources.length > 0) {
-			const {picture, img} = this.picture(selfOptions, mainOptions);
+			const {picture, img} = this.picture(selfOptions, mainOptions, type);
 
 			res = {
 				pictureNode: picture,
@@ -52,7 +64,7 @@ export default class Factory {
 			};
 
 		} else {
-			const img = this.img(selfOptions, mainOptions);
+			const img = this.img(selfOptions, mainOptions, type);
 
 			res = {
 				pictureNode: undefined,
@@ -73,33 +85,36 @@ export default class Factory {
 	 *
 	 * @param selfOptions
 	 * @param mainOptions
+	 * @param type
 	 */
-	picture(selfOptions: ImageOptions, mainOptions: ImageOptions): PictureFactoryResult {
+	picture(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): PictureFactoryResult {
 		const t = performance.now();
 
 		const
 			picture = document.createElement('picture'),
-			img = this.img(selfOptions, mainOptions);
+			img = this.img(selfOptions, mainOptions, type);
 
 		if (selfOptions.sources != null && selfOptions.sources.length > 0) {
-			const sourcesFragment = this.source(selfOptions, mainOptions);
+			const sourcesFragment = this.sources(selfOptions, mainOptions);
 			picture.appendChild(sourcesFragment);
 		}
+
+		picture.appendChild(img);
 
 		console.log(performance.now() - t, 'picture render');
 		return {picture, img};
 	}
 
 	/**
-	 * Creates a source element
+	 * Creates a `sources` elements
 	 *
 	 * @param selfOptions
 	 * @param mainOptions
 	 */
-	source(selfOptions: ImageOptions, mainOptions: ImageOptions): DocumentFragment {
+	sources(selfOptions: ImageOptions, mainOptions: ImageOptions): DocumentFragment {
 		const fragment = document.createDocumentFragment();
 
-		if (selfOptions.sources == null || selfOptions.sources.length > 0) {
+		if (selfOptions.sources == null || selfOptions.sources.length === 0) {
 			return fragment;
 		}
 
@@ -110,9 +125,10 @@ export default class Factory {
 
 			sourceNode.media = source.media ?? '';
 			sourceNode.sizes = source.sizes ?? '';
-			sourceNode.src = this.src(source.src, selfOptions, mainOptions);
-			sourceNode.srcset = this.srcset(selfOptions.srcset, selfOptions, mainOptions);
+			sourceNode.srcset = this.srcset(source.srcset, selfOptions, mainOptions);
 			sourceNode.type = this.type(source.type);
+
+			fragment.appendChild(sourceNode);
 		}
 
 		return fragment;
@@ -123,13 +139,30 @@ export default class Factory {
 	 *
 	 * @param selfOptions
 	 * @param mainOptions
+	 * @param type
 	 */
-	img(selfOptions: ImageOptions, mainOptions: ImageOptions): HTMLImageElement {
+	img(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): HTMLImageElement {
 		const imgNode = document.createElement('img');
 
-		imgNode.sizes = selfOptions.sizes ?? '';
-		imgNode.src = this.src(selfOptions.src, selfOptions, mainOptions);
-		imgNode.srcset = this.srcset(selfOptions.srcset, selfOptions, mainOptions);
+		/*
+		 * Create a function for prevent immediate loading of a `broken` image
+		 */
+		imgNode[INIT_LOAD] = () => {
+			imgNode.sizes = selfOptions.sizes ?? '';
+			imgNode.src = this.src(selfOptions.src, selfOptions, mainOptions);
+			imgNode.srcset = this.srcset(selfOptions.srcset, selfOptions, mainOptions);
+			imgNode[LOADING_STARTED] = true;
+		};
+
+		imgNode.addEventListener('load', () => imgNode[IMG_IS_LOADED] = true);
+		imgNode.addEventListener('error', () => imgNode[IMG_IS_LOADED] = false);
+
+		/*
+		 * Immediate load every image except of a `broken` image
+		 */
+		if (type !== 'broken') {
+			imgNode[INIT_LOAD]();
+		}
 
 		return imgNode;
 	}

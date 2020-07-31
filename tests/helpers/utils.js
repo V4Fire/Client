@@ -84,19 +84,37 @@ class Utils {
 	 * @see [[BrowserTests.Utils.waitForFunction]]
 	 */
 	async waitForFunction(ctx, fn, ...args) {
-		const strFn = fn.toString();
+		const
+			strFn = fn.toString();
 
 		await ctx.evaluate((ctx, [strFn, ...args]) => {
 			const
+				timeout = 4e3,
 				// eslint-disable-next-line no-new-func
 				newFn = new Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
 
-			return new Promise((res) => {
-				const interval = setInterval(() => {
-					const fnRes = Boolean(newFn.call(ctx));
+			let
+				isTimeout = false;
 
-					if (fnRes) {
-						res(true);
+			return new Promise((res, rej) => {
+				const timeoutTimer = setTimeout(() => isTimeout = true, timeout);
+
+				const interval = setInterval(() => {
+					try {
+						const fnRes = Boolean(newFn.call(ctx));
+
+						if (fnRes) {
+							res();
+							clearTimeout(timeoutTimer);
+							clearInterval(interval);
+						}
+
+						if (isTimeout) {
+							rej();
+							clearInterval(interval);
+						}
+
+					} catch {
 						clearInterval(interval);
 					}
 				}, 15);
