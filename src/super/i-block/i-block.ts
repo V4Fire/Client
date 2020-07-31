@@ -1014,7 +1014,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Cache object for opt.ifOnce
 	 */
 	@system({merge: true, replace: false})
-	protected readonly ifOnceStore: Dictionary = {};
+	protected readonly ifOnceStore: Dictionary<number> = {};
 
 	/**
 	 * The temporary cache.
