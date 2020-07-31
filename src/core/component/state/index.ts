@@ -16,5 +16,6 @@ import watch from 'core/object/watch';
 export default watch({
 	isAuth: undefined,
 	isOnline: undefined,
-	lastOnlineDate: undefined
+	lastOnlineDate: undefined,
+	experiments: undefined
 }).proxy;
