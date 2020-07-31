@@ -681,9 +681,9 @@ module.exports = async (page, params) => {
 						brokenSrcUrl = getRandomImgUrl(),
 						previewSrcUrl = getRandomImgUrl();
 
-					handleImageRequest(previewSrcUrl, 100);
+					handleImageRequest(previewSrcUrl, 300);
 					handleImageRequest(brokenSrcUrl);
-					abortImageRequest(mainSrcUrl, 300);
+					abortImageRequest(mainSrcUrl, 600);
 
 					const
 						brokenClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'broken', 'true')),
