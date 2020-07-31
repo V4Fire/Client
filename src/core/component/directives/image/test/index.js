@@ -99,8 +99,8 @@ module.exports = async (page, params) => {
 				return ctx.style.backgroundImage.match(/url\("(.*)"\)/)?.[1] ?? '';
 			};
 
-			const picture = document.getElementById('expected-picture');
-			picture?.remove();
+			// eslint-disable-next-line no-unused-expressions
+			document.getElementById('expected-picture')?.remove();
 		});
 
 		await imageLoader.evaluate((ctx) => {
@@ -472,8 +472,9 @@ module.exports = async (page, params) => {
 							ctx: globalThis.dummy,
 							sources: [{srcset: webp, type: 'webp'}]
 						});
-					}, [tag, images.png, images.webp]);
+					}, [tag, images.pngImage, images.webp]);
 
+					// @ts-expect-error
 					await expectAsync(waitFor(getNode(tag), (ctx) => globalThis.getSrc(ctx) === document.getElementById('expected-img').currentSrc)).toBeResolved();
 				});
 
@@ -789,6 +790,7 @@ module.exports = async (page, params) => {
 				const testImg = document.createElement('img');
 				testImg.src = mainSrc;
 
+				// @ts-expect-error
 				testImg.onInit(() => {
 					if (testImg.naturalHeight > 0 || testImg.naturalWidth > 0) {
 						const ratio = testImg.naturalHeight === 0 ? 1 : testImg.naturalWidth / testImg.naturalHeight;

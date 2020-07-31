@@ -83,11 +83,11 @@ class Utils {
 	/**
 	 * @see [[BrowserTests.Utils.waitForFunction]]
 	 */
-	async waitForFunction(ctx, fn, ...args) {
+	waitForFunction(ctx, fn, ...args) {
 		const
 			strFn = fn.toString();
 
-		await ctx.evaluate((ctx, [strFn, ...args]) => {
+		return ctx.evaluate((ctx, [strFn, ...args]) => {
 			const
 				timeout = 4e3,
 				// eslint-disable-next-line no-new-func
@@ -104,18 +104,19 @@ class Utils {
 						const fnRes = Boolean(newFn.call(ctx));
 
 						if (fnRes) {
-							res();
 							clearTimeout(timeoutTimer);
 							clearInterval(interval);
+							res();
 						}
 
 						if (isTimeout) {
-							rej();
 							clearInterval(interval);
+							rej();
 						}
 
 					} catch {
 						clearInterval(interval);
+						rej();
 					}
 				}, 15);
 			});
