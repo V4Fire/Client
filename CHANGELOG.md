@@ -11,6 +11,30 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.46 (2020-07-31)
+
+#### :house: Internal
+
+* `core/component/state`:
+  * Added `experiments`
+  * Added `interface/State`
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/activation`
+  * `super/i-block/modules/analytics`
+  * `super/i-block/modules/async-render`
+  * `super/i-block/modules/block`
+  * `super/i-block/modules/daemons`
+  * `super/i-block/modules/decorators`
+  * `super/i-block/modules/dom`
+  * `super/i-block/modules/event-emitter`
+  * `super/i-block/modules/field`
+  * `super/i-block/modules/friend`
+  * `super/i-block/modules/lazy`
+  * `super/i-block/modules/mods`
+  * `super/i-block/modules/opt`
+  * `super/i-block/modules/storage`
+
 ## v3.0.0-rc.45 (2020-07-30)
 
 #### :bug: Bug Fix
