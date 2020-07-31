@@ -486,7 +486,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * but remember, that these mutations may force re-render of all components.
 	 */
 	@computed({watchable: true, dependencies: ['r.remoteState']})
-	get remoteState(): Dictionary {
+	get remoteState(): this['r']['remoteState'] {
 		return this.r.remoteState;
 	}
 
