@@ -12,7 +12,6 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { ExperimentsSet } from 'core/abt/interface';
 import { ModsTable, ModsNTable } from 'super/i-block/modules/mods/interface';
 
 export * from 'super/i-block/modules/mods/interface';
@@ -151,7 +150,7 @@ export function initMods(component: iBlock): ModsNTable {
 		if (Object.isArray(experiments)) {
 			for (let i = 0; i < experiments.length; i++) {
 				const
-					el = (<ExperimentsSet>experiments)[i],
+					el = experiments[i],
 					experimentMods = el.meta?.mods;
 
 				if (experimentMods) {
