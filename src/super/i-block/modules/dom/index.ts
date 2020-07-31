@@ -43,7 +43,7 @@ export default class DOM extends Friend {
 	getId(id: string): string;
 	getId(id: undefined | null): undefined;
 	getId(id: Nullable<string>): CanUndef<string> {
-		if (!id) {
+		if (id == null) {
 			return undefined;
 		}
 
@@ -56,6 +56,13 @@ export default class DOM extends Friend {
 	 * @see [[wrapAsDelegateHandler]]
 	 * @param selector - selector to delegate
 	 * @param fn
+	 *
+	 * @example
+	 * ```js
+	 * el.addEventListener('click', this.delegate('.foo', () => {
+	 *   // ...
+	 * }));
+	 * ```
 	 */
 	delegate<T extends Function>(selector: string, fn: T): T {
 		return wrapAsDelegateHandler(selector, fn);
@@ -66,6 +73,13 @@ export default class DOM extends Friend {
 	 *
 	 * @param name - element name
 	 * @param fn
+	 *
+	 * @example
+	 * ```js
+	 * el.addEventListener('click', this.delegateElement('myElement', () => {
+	 *   // ...
+	 * }));
+	 * ```
 	 */
 	delegateElement<T extends Function>(name: string, fn: T): T {
 		return this.delegate([''].concat(this.provide.elClasses({[name]: {}})).join('.'), fn);
@@ -73,7 +87,7 @@ export default class DOM extends Friend {
 
 	/**
 	 * Puts the specified element to a render stream.
-	 * This method forces the render of the element.
+	 * This method forces the rendering of the element.
 	 *
 	 * @param cb
 	 * @param [el] - link to a DOM element or component element name
@@ -81,28 +95,28 @@ export default class DOM extends Friend {
 	@wait('ready')
 	async putInStream(
 		cb: ElCb<this['C']>,
-		el: Element | string = this.ctx.$el
+		el: CanUndef<Element | string> = this.ctx.$el
 	): Promise<boolean> {
 		const
-			node = Object.isString(el) ? this.block.element(el) : el;
+			node = Object.isString(el) ? this.block?.element(el) : el;
 
-		if (!node) {
+		if (node == null) {
 			return false;
 		}
 
-		if (node.clientHeight) {
+		if (node.clientHeight > 0) {
 			cb.call(this.component, node);
 			return false;
 		}
 
 		const wrapper = document.createElement('div');
 		Object.assign(wrapper.style, {
-			'display': 'block',
-			'position': 'absolute',
-			'top': 0,
-			'left': 0,
+			display: 'block',
+			position: 'absolute',
+			top: 0,
+			left: 0,
 			'z-index': -1,
-			'opacity': 0
+			opacity: 0
 		});
 
 		const
@@ -140,19 +154,19 @@ export default class DOM extends Friend {
 		group?: string
 	): Function | false {
 		const
-			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
+			parentNode = Object.isString(parent) ? this.block?.element(parent) : parent;
 
-		if (!parentNode) {
+		if (parentNode == null) {
 			return false;
 		}
 
-		if (!group && !(parent instanceof DocumentFragment)) {
-			group = (<Element>parentNode).getAttribute('data-render-group') || '';
+		if (group == null && parentNode instanceof Element) {
+			group = parentNode.getAttribute('data-render-group') ?? undefined;
 		}
 
 		parentNode.appendChild(newNode);
 		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
-			group: group || 'asyncComponents'
+			group: group ?? 'asyncComponents'
 		});
 	}
 
@@ -166,19 +180,19 @@ export default class DOM extends Friend {
 	 */
 	replaceWith(el: string | Element, newNode: Node, group?: string): Function | false {
 		const
-			node = Object.isString(el) ? this.block.element(el) : el;
+			node = Object.isString(el) ? this.block?.element(el) : el;
 
-		if (!node) {
+		if (node == null) {
 			return false;
 		}
 
-		if (!group) {
-			group = node.getAttribute('data-render-group') || '';
+		if (group == null) {
+			group = node.getAttribute('data-render-group') ?? undefined;
 		}
 
 		node.replaceWith(newNode);
 		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
-			group: group || 'asyncComponents'
+			group: group ?? 'asyncComponents'
 		});
 	}
 
@@ -207,9 +221,9 @@ export default class DOM extends Friend {
 			}
 
 			const
-				el = <ComponentElement<T>>q.closest(`.i-block-helper${filter}`);
+				el = q.closest<ComponentElement<T>>(`.i-block-helper${filter}`);
 
-			if (el) {
+			if (el != null) {
 				return el.component;
 			}
 		}
@@ -226,19 +240,28 @@ export default class DOM extends Friend {
 	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
 		const
 			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
-			ctxFromNode = component || $el?.component;
+			ctxFromNode = component ?? $el?.component;
 
 		const componentName = ctxFromNode ?
 			ctxFromNode.componentName :
-			Object.get(componentRgxp.exec($el?.className || ''), '1') || this.ctx.componentName;
+			Object.get(componentRgxp.exec($el?.className ?? ''), '1') ?? this.ctx.componentName;
 
-		const resolvedCtx = ctxFromNode || {
+		const resolvedCtx = ctxFromNode ?? {
 			$el,
 			componentName,
+
 			mods: {},
 			isFlyweight: true,
-			localEmitter: {emit(): void { /* loopback */ }},
-			emit(): void { /* loopback */ }
+
+			localEmitter: {
+				emit(): void {
+					// Loopback
+				}
+			},
+
+			emit(): void {
+				// Loopback
+			}
 		};
 
 		return Object.assign(Object.create(Block.prototype), {

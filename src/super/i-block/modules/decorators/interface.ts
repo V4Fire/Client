@@ -44,7 +44,7 @@ export type DecoratorMethodWatcher<
 	CTX extends ComponentInterface = iBlock,
 	A = unknown,
 	B = A
-> = BaseDecoratorMethodWatcher<CTX , A, B>;
+> = BaseDecoratorMethodWatcher<CTX, A, B>;
 
 export type DecoratorFieldWatcher<
 	CTX extends ComponentInterface = iBlock,
