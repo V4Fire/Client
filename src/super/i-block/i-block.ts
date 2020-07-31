@@ -2067,7 +2067,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * because it's automatically synchronized with keep-alive or the special input property.
 	 *
 	 * @see [[iBlock.activatedProp]]
-	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
+	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
 	 */
 	activate(force?: boolean): void {
 		activate(this, force);
@@ -2347,7 +2347,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Component activated hook
 	 * (for keep-alive)
 	 *
-	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
+	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
 	 */
 	protected activated(force?: boolean): void {
 		onActivated(this, force);
