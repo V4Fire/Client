@@ -204,17 +204,26 @@ export interface ImageSource {
 	sizes?: string;
 }
 
+/*
+ * @see https://github.com/microsoft/TypeScript/issues/1863
+ */
+const
+	SHADOW_PREVIEW_SYMBOL: unique symbol = Symbol.for('state of a preview element'),
+	SHADOW_BROKEN_SYMBOL: unique symbol = Symbol.for('state of a broken element'),
+	SHADOW_MAIN_SYMBOL: unique symbol = Symbol.for('state of a main element'),
+	ID_SYMBOL: unique symbol = Symbol.for('id of an element');
+
 export const
-	SHADOW_PREVIEW: unique symbol = Symbol.for('state of a preview element'),
-	SHADOW_BROKEN: unique symbol = Symbol.for('state of a broken element'),
-	SHADOW_MAIN: unique symbol = Symbol.for('state of a main element'),
-	ID: unique symbol = Symbol.for('id of an element');
+	SHADOW_PREVIEW = <any>SHADOW_PREVIEW_SYMBOL,
+	SHADOW_BROKEN = <any>SHADOW_BROKEN_SYMBOL,
+	SHADOW_MAIN = <any>SHADOW_MAIN_SYMBOL,
+	ID = <any>ID_SYMBOL;
 
 export interface ImageNode extends HTMLElement {
-	[SHADOW_PREVIEW]?: ShadowElState;
-	[SHADOW_BROKEN]?: ShadowElState;
-	[SHADOW_MAIN]: ShadowElState;
-	[ID]: string;
+	[SHADOW_PREVIEW_SYMBOL]?: ShadowElState;
+	[SHADOW_BROKEN_SYMBOL]?: ShadowElState;
+	[SHADOW_MAIN_SYMBOL]: ShadowElState;
+	[ID_SYMBOL]: string;
 }
 
 export interface ShadowElState {
@@ -259,29 +268,40 @@ export interface PictureFactoryResult {
 	img: HTMLShadowImageElement;
 }
 
-export const
-	IMG_IS_LOADED: unique symbol = Symbol.for('image is successfully loaded indicator'),
-	INIT_LOAD: unique symbol = Symbol.for('image loading initiator'),
-	LOADING_STARTED: unique symbol = Symbol.for('indicator of an image starts a loading');
+/*
+ * @see https://github.com/microsoft/TypeScript/issues/1863
+ */
+const
+	IMG_IS_LOADED_SYMBOL: unique symbol = Symbol.for('image is successfully loaded indicator'),
+	INIT_LOAD_SYMBOL: unique symbol = Symbol.for('image loading initiator'),
+	LOADING_STARTED_SYMBOL: unique symbol = Symbol.for('indicator of an image starts a loading');
 
-export interface HTMLShadowImageElement extends HTMLImageElement {
+/*
+ * @see https://github.com/microsoft/TypeScript/issues/1863
+ */
+export const
+	IMG_IS_LOADED = <any>IMG_IS_LOADED_SYMBOL,
+	INIT_LOAD = <any>INIT_LOAD_SYMBOL,
+	LOADING_STARTED = <any>LOADING_STARTED_SYMBOL;
+
+interface HTMLShadowImageElement extends HTMLImageElement {
 	/**
 	 * If
 	 *   - `true` – image was successfully loaded
 	 *   - `false`– loading failed
 	 *   - `undefined` – initial state, loading was not completed
 	 */
-	[IMG_IS_LOADED]?: boolean;
+	[IMG_IS_LOADED_SYMBOL]?: boolean;
 
 	/**
 	 * Initializes loading of the image
 	 */
-	[INIT_LOAD]?: Function;
+	[INIT_LOAD_SYMBOL]?: Function;
 
 	/**
 	 * Indicator of an image starts loading
 	 */
-	[LOADING_STARTED]?: true;
+	[LOADING_STARTED_SYMBOL]?: true;
 }
 
 /**

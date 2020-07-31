@@ -142,7 +142,9 @@ export default class Factory {
 	 * @param type
 	 */
 	img(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): HTMLImageElement {
-		const imgNode = document.createElement('img');
+		const
+			{async} = this.parent,
+			imgNode = document.createElement('img');
 
 		/*
 		 * Create a function for prevent immediate loading of a `broken` image
@@ -154,8 +156,8 @@ export default class Factory {
 			imgNode[LOADING_STARTED] = true;
 		};
 
-		imgNode.addEventListener('load', () => imgNode[IMG_IS_LOADED] = true);
-		imgNode.addEventListener('error', () => imgNode[IMG_IS_LOADED] = false);
+		async.once(imgNode, 'load', () => imgNode[IMG_IS_LOADED] = true);
+		async.once(imgNode, 'error', () => imgNode[IMG_IS_LOADED] = false);
 
 		/*
 		 * Immediate load every image except of a `broken` image

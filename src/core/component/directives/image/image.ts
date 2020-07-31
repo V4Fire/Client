@@ -9,6 +9,7 @@
 /* eslint-disable @typescript-eslint/no-invalid-this */
 
 import symbolGenerator from 'core/symbol';
+import Async from 'core/async';
 
 import Factory from 'core/component/directives/image/factory';
 import Lifecycle from 'core/component/directives/image/lifecycle';
@@ -38,6 +39,11 @@ export default class ImageLoader {
 
 	/** @see [[Lifecycle]] */
 	readonly lifecycle: Lifecycle = new Lifecycle(this);
+
+	/**
+	 * Async instance
+	 */
+	readonly async: Async<this> = new Async(this);
 
 	/**
 	 * Normalizes the specified directive value
