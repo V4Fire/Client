@@ -11,7 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.46 ()
+## v3.0.0-rc.46 (2020-07-31)
+
+#### :bug: Bug Fix
+
+* Fixed `fullElName` overloads `iBlock/provide`
 
 #### :house: Internal
 
