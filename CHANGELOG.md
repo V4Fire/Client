@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.47 (2020-07-31)
+
+#### :boom: Breaking Change
+
+* Renamed `head` -> `deps` `super/i-static-page/i-static-page.interface.ss`
+
+#### :rocket: New Feature
+
+* `super/i-static-page/i-static-page.interface.ss`:
+  * Added `meta`
+  * Added `head`
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :bug: Bug Fix
@@ -91,7 +103,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `iStaticPage`
   * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
-  * Removed SS blocks from the template: `headScripts`, `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
+  * Removed SS blocks from the template: `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
   * Moved logic from SS to JS `iStaticPage`
 
 * Removed redundant parameters from `config/snakeskin`
