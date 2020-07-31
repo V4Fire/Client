@@ -1,4 +1,5 @@
 src/*/**/index.js
+!src/**/test/*.js
 src/*/**/*.index.js
 dist/**
 assets/**

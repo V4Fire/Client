@@ -8,10 +8,13 @@
 
  // @ts-check
 
+/* eslint-disable max-lines-per-function */
+/* eslint-disable max-lines */
+
 const
 	h = include('tests/helpers'),
-	images = require('./const'),
-	delay = require('delay');
+	delay = require('delay'),
+	images = require('./const');
 
 /**
  * Starts a test
@@ -32,29 +35,27 @@ module.exports = async (page, params) => {
 		imgNode,
 		divNode;
 
-	const handleImageRequest = (url, sleep = 0, base64Img = images.pngImage) => {
-		return page.route(url, async (route) => {
-			await delay(sleep);
+	const handleImageRequest = (url, sleep = 0, base64Img = images.pngImage) => page.route(url, async (route) => {
+		await delay(sleep);
 
-			if (base64Img === '') {
-				route.abort('failed');
-				return;
-			}
+		if (base64Img === '') {
+			route.abort('failed');
+			return;
+		}
 
-			const
-				res = base64Img.split(',')[1],
-				headers = route.request().headers();
+		const
+			res = base64Img.split(',')[1],
+			headers = route.request().headers();
 
-			headers['Content-Length'] = String(res?.length ?? 0);
+		headers['Content-Length'] = String(res?.length ?? 0);
 
-			route.fulfill({
-				status: 200,
-				body: Buffer.from(res, 'base64'),
-				contentType: 'image/png',
-				headers
-			});
+		route.fulfill({
+			status: 200,
+			body: Buffer.from(res, 'base64'),
+			contentType: 'image/png',
+			headers
 		});
-	}
+	});
 
 	const
 		getRandomUrlPostfix = () => `${Math.random().toString().substr(10)}x${Math.random().toString().substr(10)}`,
@@ -96,7 +97,7 @@ module.exports = async (page, params) => {
 				}
 
 				return ctx.style.backgroundImage.match(/url\("(.*)"\)/)?.[1] ?? '';
-			}
+			};
 
 			const picture = document.getElementById('expected-picture');
 			picture?.remove();
@@ -113,7 +114,7 @@ module.exports = async (page, params) => {
 		await page.setViewportSize({
 			width: 1024,
 			height: 1024
-		})
+		});
 	});
 
 	describe('v-image', () => {
@@ -124,51 +125,60 @@ module.exports = async (page, params) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: images.pngImage, ctx: globalThis.dummy});
 					}, [tag, images]);
-		
+
 					await h.bom.waitForIdleCallback(page);
-		
+
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
 				});
-		
 
 				it('with `srcset`', async () => {
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {srcset: {'1x': images.pngImage}, ctx: globalThis.dummy});
 					}, [tag, images]);
-		
+
 					await h.bom.waitForIdleCallback(page);
-		
+
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
 				});
 
 				it('`load` callback', async () => {
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: images.pngImage, ctx: globalThis.dummy, load: () => globalThis.tmp = true});
+
+						imageLoaderCtx.init(target, {
+							src: images.pngImage,
+							ctx: globalThis.dummy,
+							load: () => globalThis.tmp = true
+						});
 					}, [tag, images]);
-		
+
 					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 				});
 
 				it('`error` callback', async () => {
 					const imgUrl = getRandomImgUrl();
 					abortImageRequest(imgUrl);
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: imgUrl, ctx: globalThis.dummy, error: () => globalThis.tmp = false});
 					}, [tag, imgUrl]);
-		
+
 					await expectAsync(page.waitForFunction('globalThis.tmp === false')).toBeResolved();
 				});
 
 				it('`error` callback will not be called if loading was successful', async () => {
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: images.pngImage, ctx: globalThis.dummy, error: () => globalThis.tmp = false});
+
+						imageLoaderCtx.init(target, {
+							src: images.pngImage,
+							ctx: globalThis.dummy,
+							error: () => globalThis.tmp = false
+						});
 					}, [tag, images]);
-		
+
 					await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1500});
 					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 				});
@@ -178,45 +188,49 @@ module.exports = async (page, params) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: images.pngImage, ctx: globalThis.dummy});
 					}, [tag, images]);
-		
+
 					await h.bom.waitForIdleCallback(page);
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.update(target, {src: images.pngImage2x, ctx: globalThis.dummy, handleUpdate: true});
 					}, [tag, images]);
-		
+
 					await h.bom.waitForIdleCallback(page);
-					expect(await getNode(tag).evaluate((ctx) =>globalThis.getSrc(ctx))).toBe(images.pngImage2x);
+					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage2x);
 				});
 
 				it('with `src` and preview with `src`', async () => {
 					const
 						imgUrl = getRandomImgUrl(),
 						reqPromise = handleImageRequest(imgUrl, 500);
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: imgUrl, ctx: globalThis.dummy, preview: images.preview});
 					}, [tag, images, imgUrl]);
-		
+
 					await h.bom.waitForIdleCallback(page);
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.preview);
-		
+
 					await reqPromise;
-					await expectAsync(waitFor(getNode(tag), (ctx, imgUrl) => globalThis.getSrc(ctx) === imgUrl, imgUrl)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, imgUrl) => globalThis.getSrc(ctx) === imgUrl, imgUrl)
+					).toBeResolved();
 				});
 
 				it('with loading error and broken with `src`', async () => {
 					const imgUrl = getRandomImgUrl();
 					abortImageRequest(imgUrl);
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: imgUrl, ctx: globalThis.dummy, broken: images.broken});
 					}, [tag, images, imgUrl]);
-		
-					await expectAsync(waitFor(getNode(tag), (ctx, broken) => globalThis.getSrc(ctx) === broken, images.broken)).toBeResolved();
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, broken) => globalThis.getSrc(ctx) === broken, images.broken)
+					).toBeResolved();
 				});
 
 				it('with `src`, preview with `src`, broken with `src`', async () => {
@@ -226,13 +240,22 @@ module.exports = async (page, params) => {
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: imgUrl, ctx: globalThis.dummy, preview: images.preview, broken: images.broken});
+
+						imageLoaderCtx.init(target, {
+							src: imgUrl,
+							ctx: globalThis.dummy,
+							preview: images.preview,
+							broken: images.broken
+						});
+
 					}, [tag, images, imgUrl]);
 
 					await h.bom.waitForIdleCallback(page);
 
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.preview);
-					await expectAsync(waitFor(getNode(tag), (ctx, imgUrl) => globalThis.getSrc(ctx) === imgUrl, imgUrl)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, imgUrl) => globalThis.getSrc(ctx) === imgUrl, imgUrl)
+					).toBeResolved();
 
 					await reqPromise;
 					await h.bom.waitForIdleCallback(page);
@@ -243,38 +266,55 @@ module.exports = async (page, params) => {
 				it('with loading error, preview with `src`, broken with `src`', async () => {
 					const imgUrl = getRandomImgUrl();
 					abortImageRequest(imgUrl, 500);
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: imgUrl, ctx: globalThis.dummy, preview: images.preview, broken: images.broken});
+
+						imageLoaderCtx.init(target, {
+							src: imgUrl,
+							ctx: globalThis.dummy,
+							preview: images.preview,
+							broken: images.broken
+						});
 					}, [tag, images, imgUrl]);
-		
+
 					await h.bom.waitForIdleCallback(page);
-		
+
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.preview);
-					await expectAsync(waitFor(getNode(tag), (ctx, broken) => globalThis.getSrc(ctx) === broken, images.broken)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, broken) => globalThis.getSrc(ctx) === broken, images.broken)
+					).toBeResolved();
 				});
 
 				it('tag with `src`, preview with loading error, broken with `src`', async () => {
 					const
 						previewImgUrl = getRandomImgUrl(),
 						mainImgUrl = getRandomImgUrl();
-		
+
 					const
 						abortReq = abortImageRequest(previewImgUrl, 100);
-		
+
 					handleImageRequest(mainImgUrl, 500);
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images, mainImgUrl, previewImgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: mainImgUrl, ctx: globalThis.dummy, preview: previewImgUrl, broken: images.broken});
+
+						imageLoaderCtx.init(target, {
+							src: mainImgUrl,
+							ctx: globalThis.dummy,
+							preview: previewImgUrl,
+							broken: images.broken
+						});
+
 					}, [tag, images, mainImgUrl, previewImgUrl]);
-		
+
 					await abortReq;
 					await h.bom.waitForIdleCallback(page);
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(previewImgUrl);
-		
-					await expectAsync(waitFor(getNode(tag), (ctx, mainImgUrl) => globalThis.getSrc(ctx) === mainImgUrl, mainImgUrl)).toBeResolved();
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, mainImgUrl) => globalThis.getSrc(ctx) === mainImgUrl, mainImgUrl)
+					).toBeResolved();
 				});
 
 				it('with loading error, preview with loading error, broken with loading error', async () => {
@@ -282,24 +322,31 @@ module.exports = async (page, params) => {
 						previewImgUrl = getRandomImgUrl(),
 						brokenImgUrl = getRandomImgUrl(),
 						mainImgUrl = getRandomImgUrl();
-		
+
 					const reqPromises = [
 						abortImageRequest(previewImgUrl, 100),
 						abortImageRequest(brokenImgUrl, 100),
 						abortImageRequest(mainImgUrl, 100)
 					];
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, brokenImgUrl, mainImgUrl, previewImgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: mainImgUrl, ctx: globalThis.dummy, preview: previewImgUrl, broken: brokenImgUrl});
+
+						imageLoaderCtx.init(target, {
+							src: mainImgUrl,
+							ctx: globalThis.dummy,
+							preview: previewImgUrl,
+							broken: brokenImgUrl
+						});
+
 					}, [tag, brokenImgUrl, mainImgUrl, previewImgUrl]);
-		
+
 					await h.bom.waitForIdleCallback(page);
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(previewImgUrl);
-		
+
 					await Promise.all(reqPromises);
 					await h.bom.waitForIdleCallback(page);
-		
+
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(previewImgUrl);
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(brokenImgUrl);
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(mainImgUrl);
@@ -308,12 +355,12 @@ module.exports = async (page, params) => {
 				it('main with `load` callback will not be called if loading are failed', async () => {
 					const reqUrl = getRandomImgUrl();
 					abortImageRequest(reqUrl);
-		
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, reqUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: reqUrl, ctx: globalThis.dummy, load: () => globalThis.tmp = true});
 					}, [tag, reqUrl]);
-		
+
 					await abortImageRequest;
 					await h.bom.waitForIdleCallback(page);
 
@@ -323,21 +370,37 @@ module.exports = async (page, params) => {
 				it('main with `src`, preview with `src` and load callback', async () => {
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainImgUrl, previewImgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: mainImgUrl, ctx: globalThis.dummy, preview: {src: previewImgUrl, load: () => globalThis.tmp = true}});
+
+						imageLoaderCtx.init(target, {
+							src: mainImgUrl,
+							ctx: globalThis.dummy,
+							preview: {
+								src: previewImgUrl,
+								load: () => globalThis.tmp = true
+							}
+						});
+
 					}, [tag, images.pngImage, images.preview]);
 
 					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 				});
 
 				it('main with loading error, broken with `src` and load callback', async () => {
-					const
-						mainImgUrl = getRandomImgUrl();
-
+					const mainImgUrl = getRandomImgUrl();
 					abortImageRequest(mainImgUrl);
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainImgUrl, brokenImgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: mainImgUrl, ctx: globalThis.dummy, broken: {src: brokenImgUrl, load: () => globalThis.tmp = true}});
+
+						imageLoaderCtx.init(target, {
+							src: mainImgUrl,
+							ctx: globalThis.dummy,
+							broken: {
+								src: brokenImgUrl,
+								load: () => globalThis.tmp = true
+							}
+						});
+
 					}, [tag, mainImgUrl, images.preview]);
 
 					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
@@ -353,7 +416,16 @@ module.exports = async (page, params) => {
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainImgUrl, brokenImgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
-						imageLoaderCtx.init(target, {src: mainImgUrl, ctx: globalThis.dummy, broken: {src: brokenImgUrl, error: () => globalThis.tmp = false}});
+
+						imageLoaderCtx.init(target, {
+							src: mainImgUrl,
+							ctx: globalThis.dummy,
+							broken: {
+								src: brokenImgUrl,
+								error: () => globalThis.tmp = false
+							}
+						});
+
 					}, [tag, mainImgUrl, brokenImgUrl]);
 
 					await expectAsync(page.waitForFunction('globalThis.tmp === false')).toBeResolved();
@@ -362,7 +434,7 @@ module.exports = async (page, params) => {
 				it('main with `src`, `sources` (srcset, media)', async () => {
 					await page.setViewportSize({
 						width: 580,
-						height: 480,
+						height: 480
 					 });
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, pngImage2x, pngImage]) => {
@@ -375,7 +447,9 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, images.pngImage2x, images.pngImage]);
 
-					await expectAsync(waitFor(getNode(tag), (ctx, pngImage) => globalThis.getSrc(ctx) === pngImage, images.pngImage)).toBeResolved()
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, pngImage) => globalThis.getSrc(ctx) === pngImage, images.pngImage)
+					).toBeResolved();
 				});
 
 				it('main with `src`, `sources` (srcset, type)', async () => {
@@ -417,11 +491,13 @@ module.exports = async (page, params) => {
 						imageLoaderCtx.init(target, {
 							src,
 							baseSrc,
-							ctx: globalThis.dummy,
+							ctx: globalThis.dummy
 						});
 					}, [tag, baseSrc, src]);
 
-					await expectAsync(waitFor(getNode(tag), (ctx, reqUrl) => globalThis.getSrc(ctx) === reqUrl, reqUrl)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, reqUrl) => globalThis.getSrc(ctx) === reqUrl, reqUrl)
+					).toBeResolved();
 				});
 
 				it('main with `src`, `baseSrc`, preview with `src`', async () => {
@@ -442,18 +518,23 @@ module.exports = async (page, params) => {
 							src: mainSrc,
 							baseSrc,
 							preview: previewSrc,
-							ctx: globalThis.dummy,
+							ctx: globalThis.dummy
 						});
 					}, [tag, baseSrc, mainSrc, previewSrc]);
 
-					await expectAsync(waitFor(getNode(tag), (ctx, previewReqUrl) => globalThis.getSrc(ctx) === previewReqUrl, previewReqUrl)).toBeResolved();
-					await expectAsync(waitFor(getNode(tag), (ctx, mainReqUrl) => globalThis.getSrc(ctx) === mainReqUrl, mainReqUrl)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, previewReqUrl) => globalThis.getSrc(ctx) === previewReqUrl, previewReqUrl)
+					).toBeResolved();
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, mainReqUrl) => globalThis.getSrc(ctx) === mainReqUrl, mainReqUrl)
+					).toBeResolved();
 				});
 
 				it('main with `src`, `baseSrc`, `sources` (srcset, media)', async () => {
 					await page.setViewportSize({
 						width: 580,
-						height: 480,
+						height: 480
 					 });
 
 					const
@@ -477,13 +558,15 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, baseSrc, mainSrc, sourceSrc]);
 
-					await expectAsync(waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, sourceReqUrl)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, sourceReqUrl)
+					).toBeResolved();
 				});
 
 				it('main with `src`, `baseSrc`, preview with `src`, `sources` (srcset, media)', async () => {
 					await page.setViewportSize({
 						width: 580,
-						height: 480,
+						height: 480
 					 });
 
 					const
@@ -498,7 +581,7 @@ module.exports = async (page, params) => {
 					handleImageRequest(sourceReqUrl);
 					handleImageRequest(mainReqUrl, 1000);
 					handleImageRequest(previewUrl);
-	
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, baseSrc, mainSrc, previewSrc, sourceSrc]) => {
 						const target = document.getElementById(`${tag}-target`);
 
@@ -513,14 +596,19 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, baseSrc, mainSrc, previewSrc, sourceSrc]);
 
-					await expectAsync(waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, sourceReqUrl)).toBeResolved();
-					await expectAsync(waitFor(getNode(tag), (ctx, mainReqUrl) => globalThis.getSrc(ctx) === mainReqUrl, mainReqUrl)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, sourceReqUrl)
+					).toBeResolved();
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, mainReqUrl) => globalThis.getSrc(ctx) === mainReqUrl, mainReqUrl)
+					).toBeResolved();
 				});
 
 				it('main loading error with `src`, `baseSrc`, broken with `src`, `sources` (srcset, media)', async () => {
 					await page.setViewportSize({
 						width: 580,
-						height: 480,
+						height: 480
 					 });
 
 					const
@@ -535,7 +623,7 @@ module.exports = async (page, params) => {
 					handleImageRequest(sourceReqUrl);
 					abortImageRequest(mainReqUrl, 1000);
 					handleImageRequest(brokeUrl);
-	
+
 					await imageLoader.evaluate((imageLoaderCtx, [tag, baseSrc, mainSrc, brokenSrc, sourceSrc]) => {
 						const target = document.getElementById(`${tag}-target`);
 
@@ -550,7 +638,9 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, baseSrc, mainSrc, brokenSrc, sourceSrc]);
 
-					await expectAsync(waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, sourceReqUrl)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, sourceReqUrl)
+					).toBeResolved();
 				});
 
 				it('main state classes with `src`, preview with `src`', async () => {
@@ -562,8 +652,8 @@ module.exports = async (page, params) => {
 					handleImageRequest(mainSrcUrl, 100);
 
 					const
-						previewStateClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'preview', 'true')),
-						mainStateClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'main', 'true'));
+						previewClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'preview', 'true')),
+						mainClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'main', 'true'));
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainSrcUrl, previewSrcUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -576,8 +666,13 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, mainSrcUrl, previewSrcUrl]);
 
-					await expectAsync(waitFor(getNode(tag), (ctx, previewStateClass) => ctx.classList.contains(previewStateClass), previewStateClass)).toBeResolved();
-					await expectAsync(waitFor(getNode(tag), (ctx, mainStateClass) => ctx.classList.contains(mainStateClass), mainStateClass)).toBeResolved();
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, previewClass) => ctx.classList.contains(previewClass), previewClass)
+					).toBeResolved();
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, mainStateClass) => ctx.classList.contains(mainStateClass), mainClass)
+					).toBeResolved();
 				});
 
 				it('main with `stateClasses`, `src`, preview with `src`, broken with `src`', async () => {
@@ -591,9 +686,9 @@ module.exports = async (page, params) => {
 					abortImageRequest(mainSrcUrl, 300);
 
 					const
-						brokenStateClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'broken', 'true')),
-						previewStateClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'preview', 'true')),
-						initialStateClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'initial', 'true'))
+						brokenClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'broken', 'true')),
+						previewClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'preview', 'true')),
+						initialClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'initial', 'true'));
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainSrcUrl, previewSrcUrl, brokenSrcUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -607,9 +702,17 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, mainSrcUrl, previewSrcUrl, brokenSrcUrl]);
 
-					expect(await getNode(tag).evaluate((ctx, initialStateClass) => ctx.classList.contains(initialStateClass), initialStateClass)).toBeTrue();
-					await expectAsync(waitFor(getNode(tag), (ctx, previewStateClass) => ctx.classList.contains(previewStateClass), previewStateClass)).toBeResolved();
-					await expectAsync(waitFor(getNode(tag), (ctx, brokenStateClass) => ctx.classList.contains(brokenStateClass), brokenStateClass)).toBeResolved();
+					expect(
+						await getNode(tag).evaluate((ctx, initialClass) => ctx.classList.contains(initialClass), initialClass)
+					).toBeTrue();
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, previewClass) => ctx.classList.contains(previewClass), previewClass)
+					).toBeResolved();
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, brokenClass) => ctx.classList.contains(brokenClass), brokenClass)
+					).toBeResolved();
 				});
 
 				it('main with `src`, `load` will not call a `load` callback if context was destroyed', async () => {
@@ -643,7 +746,7 @@ module.exports = async (page, params) => {
 			const
 				tag = 'div',
 				beforeImg = 'linear-gradient(rgb(230, 100, 101), rgb(145, 152, 229))',
-				afterImg = 'linear-gradient(rgb(230, 97, 101), rgb(145, 40, 229))'
+				afterImg = 'linear-gradient(rgb(230, 97, 101), rgb(145, 40, 229))';
 
 			await imageLoader.evaluate((imageLoaderCtx, [tag, mainSrc, beforeImg, afterImg]) => {
 				const target = document.getElementById(`${tag}-target`);
@@ -656,7 +759,7 @@ module.exports = async (page, params) => {
 			}, [tag, images.pngImage, beforeImg, afterImg]);
 
 			const
-				expected = `${(1 / (100 / 50)) * 100}%`
+				expected = `${(1 / (100 / 50)) * 100}%`;
 
 			await expectAsync(getNode(tag).evaluate((ctx, mainSrc) => globalThis.getSrc(ctx) === mainSrc, images.pngImage));
 
@@ -713,12 +816,17 @@ module.exports = async (page, params) => {
 		it('div tag with `src` and `alt`', async () => {
 			await imageLoader.evaluate((imageLoaderCtx, images) => {
 				const div = document.getElementById('div-target');
-				imageLoaderCtx.init(div, {src: images.pngImage, alt: 'alt-text', ctx: globalThis.dummy});
+				imageLoaderCtx.init(div, {
+					src: images.pngImage,
+					alt: 'alt-text',
+					ctx: globalThis.dummy
+				});
+
 			}, images);
 
 			await h.bom.waitForIdleCallback(page);
 
-			expect(await divNode.evaluate((ctx) => ctx.style.backgroundImage)).toBe(`url("${images.pngImage}")`);
+			expect(await divNode.evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
 			expect(await divNode.getAttribute('aria-label')).toBe('alt-text');
 			expect(await divNode.getAttribute('role')).toBe('img');
 		});
