@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.46 ()
 
+#### :bug: Bug Fix
+
+* Fixed blank component prefix at the `fullElName` method (`i-block/modules/provide`)
+
 #### :house: Internal
 
 * `core/component/state`:

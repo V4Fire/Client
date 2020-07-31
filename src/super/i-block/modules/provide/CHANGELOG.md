@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.46 (2020-07-31)
+
+#### :bug: Bug Fix
+
+* Fixed blank component prefix at the `fullElName` method
+
 ## v3.0.0-rc.44 (2020-07-30)
 
 #### :house: Internal
