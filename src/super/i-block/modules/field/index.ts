@@ -17,6 +17,7 @@ import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 import { FieldGetter } from 'super/i-block/modules/field/interface';
+
 export * from 'super/i-block/modules/field/interface';
 
 /**
@@ -38,10 +39,15 @@ export default class Field extends Friend {
 	 * @param [obj]
 	 * @param [getter] - field getter
 	 */
-	get<T = unknown>(path: string, obj?: object, getter?: FieldGetter): CanUndef<T>;
 	get<T = unknown>(
 		path: string,
-		obj: object | FieldGetter = this.ctx,
+		obj?: Nullable<object>,
+		getter?: FieldGetter
+	): CanUndef<T>;
+
+	get<T = unknown>(
+		path: string,
+		obj: Nullable<object | FieldGetter> = this.ctx,
 		getter?: FieldGetter
 	): CanUndef<T> {
 		if (Object.isFunction(obj)) {
@@ -49,12 +55,14 @@ export default class Field extends Friend {
 			obj = this;
 		}
 
-		if (!obj) {
+		if (obj == null) {
 			return;
 		}
 
 		let
-			ctx = this.ctx,
+			{ctx} = this;
+
+		let
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -63,24 +71,26 @@ export default class Field extends Friend {
 		}
 
 		let
-			res = obj,
+			res: unknown = obj,
 			chunks;
 
 		if (isComponent) {
 			const
 				info = getPropertyInfo(path, ctx);
 
-			ctx = res = <any>info.ctx;
+			ctx = <any>info.ctx;
+			res = ctx;
+
 			chunks = info.path.split('.');
 
-			if (info.accessor && this.ctx.hook !== 'beforeRuntime') {
+			if (info.accessor != null && this.ctx.hook !== 'beforeRuntime') {
 				chunks[0] = info.accessor;
 
 			} else {
 				const isField = info.type === 'field';
 				res = isField ? ctx.$fields : ctx;
 
-				if ((isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in res))) {
+				if ((isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in <Dictionary>res))) {
 					chunks[0] = info.name;
 				}
 			}
@@ -95,7 +105,7 @@ export default class Field extends Friend {
 			}
 
 			const prop = chunks[i];
-			res = getter ? getter(prop, res) : res[prop];
+			res = getter ? getter(prop, res) : (<Dictionary>res)[prop];
 		}
 
 		return <any>res;
@@ -108,13 +118,15 @@ export default class Field extends Friend {
 	 * @param value
 	 * @param [obj]
 	 */
-	set<T = unknown>(path: string, value: T, obj: object = this.ctx): T {
-		if (!obj) {
+	set<T = unknown>(path: string, value: T, obj: Nullable<object> = this.ctx): T {
+		if (obj == null) {
 			return value;
 		}
 
 		let
-			ctx = this.ctx,
+			{ctx} = this;
+
+		let
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -132,10 +144,12 @@ export default class Field extends Friend {
 				info = getPropertyInfo(path, ctx),
 				isReady = !ctx.lfc.isBeforeCreate();
 
-			ctx = ref = <any>info.ctx;
+			ctx = <any>info.ctx;
+			ref = ctx;
+
 			chunks = info.path.split('.');
 
-			if (info.accessor && this.ctx.hook !== 'beforeRuntime') {
+			if (info.accessor != null && this.ctx.hook !== 'beforeRuntime') {
 				isField = false;
 				chunks[0] = info.accessor;
 
@@ -164,7 +178,7 @@ export default class Field extends Friend {
 				break;
 			}
 
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
+			if (ref[prop] == null || typeof ref[prop] !== 'object') {
 				const
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
@@ -195,13 +209,15 @@ export default class Field extends Friend {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	delete(path: string, obj: object = this.ctx): boolean {
-		if (!obj) {
+	delete(path: string, obj: Nullable<object> = this.ctx): boolean {
+		if (obj == null) {
 			return false;
 		}
 
 		let
-			ctx = this.ctx,
+			{ctx} = this;
+
+		let
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -240,7 +256,7 @@ export default class Field extends Friend {
 				break;
 			}
 
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
+			if (ref[prop] == null || typeof ref[prop] !== 'object') {
 				test = false;
 				break;
 			}
