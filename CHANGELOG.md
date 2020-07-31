@@ -34,6 +34,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `super/i-block/modules/mods`
   * `super/i-block/modules/opt`
   * `super/i-block/modules/storage`
+  * `super/i-block/modules/vdom`
+  * `super/i-block/modules/listeners`
+  * `super/i-block/directives/event`
+  * `core/component/meta`
+  * `core/component/field`
 
 ## v3.0.0-rc.45 (2020-07-30)
 

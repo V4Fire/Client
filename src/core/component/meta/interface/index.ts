@@ -160,5 +160,5 @@ export interface ComponentMeta {
 		 * Main render function of the component
 		 */
 		render: RenderFunction;
-	}
+	};
 }
