@@ -51,7 +51,6 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				continue;
 			}
 
-			// tslint:disable-next-line:prefer-object-spread
 			methods[key] = Object.assign(methods[key] ?? {replace, watchers: {}, hooks: {}}, {src, fn});
 
 		// Accessors
@@ -64,10 +63,8 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				metaKey;
 
 			// Computed fields are cached by default
-			// tslint:disable-next-line:prefer-conditional-expression
 			if (
 				key in computedFields ||
-				// tslint:disable-next-line:no-conditional-assignment
 				!(key in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
 			) {
 				metaKey = 'computedFields';
@@ -136,7 +133,6 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			// tslint:disable-next-line:prefer-object-spread
 			obj[key] = Object.assign(obj[key] ?? {replace}, {
 				src,
 				// eslint-disable-next-line @typescript-eslint/unbound-method

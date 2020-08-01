@@ -144,7 +144,6 @@ export function component(opts?: ComponentOptions): Function {
 						if (i < 15) {
 							i++;
 
-							// tslint:disable-next-line:no-string-literal
 							globalThis['setImmediate'](f);
 
 						} else {
