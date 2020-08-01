@@ -14,3 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added `initLoadStart` event
+
+#### :bug: Bug Fix
+
+* Fixed issue with `initLoad` may be called twice `iData`

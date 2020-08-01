@@ -18,6 +18,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added `initLoadStart` event `iBlock`, `iData`
 * Added `core/component/interface/$componentId`
 
+#### :bug: Bug Fix
+
+* Fixed issue with `initLoad` may be called twice `iData`
+
 #### :house: Internal
 
 * Fixed ESLint warnings:
