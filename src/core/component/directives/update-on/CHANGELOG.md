@@ -9,6 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## (2020-03-26)
+## v3.0.0-rc.48 ()
 
-* `v-update-on` directive was created
+#### :house: Internal
+
+* Fixed ESLint warnings
