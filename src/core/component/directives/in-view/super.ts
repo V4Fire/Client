@@ -36,6 +36,11 @@ export default abstract class AbstractInView {
 	protected readonly observablesByGroup: ObservablesByGroup = new Map();
 
 	/**
+	 * Map of elements that was suspended
+	 */
+	protected readonly suspendedElements: ObservableElementsThresholdMap = new Map();
+
+	/**
 	 * Queue of elements that wait to become observable
 	 */
 	protected readonly awaitingElements: ObservableElementsThresholdMap = new Map();
@@ -68,23 +73,72 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Suspends elements by the specified group
-	 * @param group
+	 * Suspends the specified element or elements by the specified group
+	 *
+	 * @param el
+	 * @param threshold
 	 */
-	suspend(group: InViewGroup): void {
-		this.observablesByGroup.get(group)?.forEach((observable) => {
-			this.unobserve(observable.node, observable.threshold, true);
-		});
+	suspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		if (groupOrElement instanceof Element) {
+			const
+				{suspendedElements} = this;
+
+			if (threshold == null) {
+				return;
+			}
+
+			const observable = this.getEl(groupOrElement, threshold);
+
+			if (!observable) {
+				return;
+			}
+
+			let map = suspendedElements.get(groupOrElement);
+
+			if (!map) {
+				suspendedElements.set(groupOrElement, map = new Map());
+			}
+
+			map.set(threshold, observable);
+
+		} else {
+			this.observablesByGroup.get(groupOrElement)?.forEach((observable) => {
+				this.unobserve(observable.node, observable.threshold, true);
+			});
+		}
 	}
 
 	/**
-	 * Unsuspends elements by the specified group
-	 * @param group
+	 * Unsuspends the specified element or elements by the specified group
+	 *
+	 * @param el
+	 * @param threshold
 	 */
-	unsuspend(group: InViewGroup): void {
-		this.observablesByGroup.get(group)?.forEach((observable) => {
+	unsuspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		if (groupOrElement instanceof Element) {
+			const
+				{suspendedElements} = this;
+
+			if (threshold == null) {
+				return;
+			}
+
+			const
+				map = suspendedElements.get(groupOrElement),
+				observable = map?.get(threshold);
+
+			if (!observable) {
+				return;
+			}
+
+			map!.delete(threshold);
 			this.observe(observable.node, observable);
-		});
+
+		} else {
+			this.observablesByGroup.get(groupOrElement)?.forEach((observable) => {
+				this.observe(observable.node, observable);
+			});
+		}
 	}
 
 	/**
@@ -164,6 +218,23 @@ export default abstract class AbstractInView {
 		}
 
 		return observable;
+	}
+
+	/**
+	 * Re-initialize observation of the specified element or group
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	reObserve(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		if (threshold != null) {
+			this.suspend(<Element>groupOrElement, threshold);
+			this.unsuspend(<Element>groupOrElement, threshold);
+
+		} else {
+			this.suspend(<InViewGroup>groupOrElement);
+			this.unsuspend(<InViewGroup>groupOrElement);
+		}
 	}
 
 	/**
@@ -345,8 +416,21 @@ export default abstract class AbstractInView {
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected remove(observable: ObservableElement, suspend?: boolean): boolean {
-		if (observable.group != null && !suspend) {
-			this.observablesByGroup.get(observable.group)?.delete(observable);
+		if (!suspend) {
+			if (observable.group != null) {
+				this.observablesByGroup.get(observable.group)?.delete(observable);
+			}
+
+			const
+				map = this.suspendedElements.get(observable.node);
+
+			if (map) {
+				map.delete(observable.threshold);
+
+				if (map.size === 0) {
+					this.suspendedElements.delete(observable.node);
+				}
+			}
 		}
 
 		this.clearAllAsync(observable);

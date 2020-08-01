@@ -20,7 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added `core/component/interface/$componentId`
-* Added `suspend`, `unsuspend` methods `inView`
+* Added `suspend`, `unsuspend`, `reObserve` methods `inView`
 
 #### :bug: Bug Fix
 

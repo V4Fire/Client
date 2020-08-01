@@ -13,15 +13,15 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Removed `isDeactivated`, `removeStrategy` from `core/component/directives/inView/observableElement`
+* Removed `isDeactivated`, `removeStrategy` from `observableElement`
 
 #### :rocket: New Feature
 
-* Added `suspend`, `unsuspend` methods `inView`
+* Added `suspend`, `unsuspend`, `reObserve` methods
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `polling` strategy won't fire a `callback` `inView`
+* Fixed an issue with `polling` strategy won't fire a `callback`
 
 ## v3.0.0-rc.19 (2020-05-26)
 

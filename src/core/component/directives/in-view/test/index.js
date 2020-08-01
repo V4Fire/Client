@@ -270,6 +270,22 @@ module.exports = async (page, params) => {
 					await getInView(strategy).evaluate((ctx) => ctx.unsuspend('test'));
 					await expectAsync(page.evaluate('globalThis.tmp === true')).toBeResolved();
 				});
+
+				it('`reObserve` with an element and threshold provided', async () => {
+					await page.evaluate(() => globalThis.tmp = 0);
+
+					await getInView(strategy).evaluate((ctx) => {
+						ctx.observe(globalThis.target, {
+							callback: () => globalThis.tmp += 1,
+							delay: 100,
+							threshold: 0.7
+						});
+
+						setTimeout(() => ctx.reObserve(globalThis.target, 0.7), 150);
+					});
+
+					await expectAsync(page.evaluate('globalThis.tmp === 2')).toBeResolved();
+				});
 			});
 		});
 	});

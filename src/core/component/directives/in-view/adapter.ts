@@ -84,19 +84,61 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Suspends elements by the specified group
+	 * Suspends elements by the specified group.
+	 *
+	 * Calling this method will temporarily (until `unsuspend` will be called)
+	 * stop observing elements that match the specified group
+	 *
 	 * @param group
 	 */
-	suspend(group: InViewGroup): void {
-		return this.adaptee?.suspend(group);
+	suspend(group: InViewGroup): void;
+
+	/**
+	 * Suspends the specified element
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	suspend(el: Element, threshold: number): void;
+
+	suspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		return this.adaptee?.suspend(groupOrElement, threshold);
 	}
 
 	/**
-	 * Unsuspends elements by the specified group
+	 * Unsuspends the specified element
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	unsuspend(el: Element, threshold: number): void;
+
+	/**
+	 * Unsuspends the specified group of elements
 	 * @param group
 	 */
-	unsuspend(group: InViewGroup): void {
-		return this.adaptee?.unsuspend(group);
+	unsuspend(group: InViewGroup): void;
+
+	unsuspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		return this.adaptee?.unsuspend(groupOrElement, threshold);
+	}
+
+	/**
+	 * Re-initialize observation of the specified element
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	reObserve(el: Element, threshold: number): void;
+
+	/**
+	 * Re-initialize observation of the specified group
+	 * @param group
+	 */
+	reObserve(group: InViewGroup): void;
+
+	reObserve(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		return this.adaptee?.reObserve(groupOrElement, threshold);
 	}
 
 	/**
