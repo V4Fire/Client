@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/directives/in-view/README.md]]
+ * @packageDocumentation
+ */
+
 import InViewAdapter from 'core/component/directives/in-view/adapter';
 
 import { getAdaptee } from 'core/component/directives/in-view/helpers';

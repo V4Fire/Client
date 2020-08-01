@@ -167,7 +167,7 @@ module.exports = async (page, params) => {
 					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 				});
 
-				it('with `threshold` element is positioned at the bottom of the page', async () => {
+				it('with `threshold: 0.5` element is positioned at the bottom of the page', async () => {
 					await page.setViewportSize({
 						width: 600,
 						height: 300
@@ -185,7 +185,7 @@ module.exports = async (page, params) => {
 					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 				});
 
-				it('with `threshold`, `polling` element is positioned at the bottom of the page', async () => {
+				it('with `threshold: 0.5`, `polling` element is positioned at the bottom of the page', async () => {
 					await page.setViewportSize({
 						width: 600,
 						height: 300
@@ -202,6 +202,26 @@ module.exports = async (page, params) => {
 					});
 
 					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
+				});
+
+				it('with `threshold: 0.5` and an element that is 0.2 visible won\'t fire a `callback`', async () => {
+					await page.setViewportSize({
+						width: 600,
+						height: 300
+					});
+
+					await divNode.evaluate((ctx) => ctx.style.marginTop = '250px');
+
+					await getInView(strategy).evaluate((ctx) => {
+						ctx.observe(globalThis.target, {
+							callback: () => globalThis.tmp = true,
+							threshold: 0.5,
+							delay: 100
+						});
+					});
+
+					await delay(200);
+					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 				});
 
 				it('call `remove` stops observe of an element', async () => {
