@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.48 ()
+
+#### :rocket: New Feature
+
+* Added `core/component/interface/$componentId`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `core/component/render-function`
+  * `core/component/register`
+
 ## v3.0.0-rc.47 (2020-07-31)
 
 #### :boom: Breaking Change
