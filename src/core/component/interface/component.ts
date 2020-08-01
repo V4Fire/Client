@@ -99,6 +99,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	meta: CTX['meta'];
 
 	// @ts-ignore (access)
+	$componentId: CTX['$componentId'];
+
+	// @ts-ignore (access)
 	$async: CTX['$async'];
 
 	// @ts-ignore (access)
@@ -275,6 +278,12 @@ export abstract class ComponentInterface {
 	 * True if the component can be attached to a parent render function
 	 */
 	readonly isFlyweight?: boolean;
+
+	/**
+	 * Temporary unique component string identifier
+	 * (for functional components)
+	 */
+	protected readonly $componentId?: string;
 
 	/**
 	 * Link to a component meta object
