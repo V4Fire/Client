@@ -20,7 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed issue with `initLoad` may be called twice `iData`
+* Fixed an issue with `initLoad` may be called twice `iData`
 
 #### :house: Internal
 
