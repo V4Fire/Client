@@ -127,7 +127,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 
 		if (oldCtx != null) {
-			oldCtx._componentId = ctx.componentId;
+			oldCtx.$componentId = ctx.componentId;
 
 			// Destroy the old component
 			oldCtx.$destroy();
