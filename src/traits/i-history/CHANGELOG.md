@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `trigger` in `b-bottom-slide` not fires `intersectionObserver` callback `bBottomSlide`, `iHistory`
+* Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
 
 ## v3.0.0-rc.16 (2020-05-21)
 
