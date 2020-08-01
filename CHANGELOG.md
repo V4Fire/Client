@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added `initLoadStart` event `iBlock`, `iData`
 * Added `core/component/interface/$componentId`
 
 #### :house: Internal

@@ -329,6 +329,8 @@ export default abstract class iData extends iBlock implements iProgress {
 			this.syncDataProviderWatcher();
 		}
 
+		this.emit('initLoadStart', opts);
+
 		if (!opts.silent) {
 			this.componentStatus = 'loading';
 		}
