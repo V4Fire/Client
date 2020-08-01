@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
+import Async from 'core/async';
 
 import { ModsDecl, ComponentHooks } from 'core/component';
 import { InView } from 'core/component/directives/in-view';
@@ -263,15 +263,12 @@ export default class History<C extends iHistory> {
 		t.setAttribute(this.config.triggerAttr, 'true');
 
 		this.async.requestAnimationFrame(() => {
-			/*
-			 * This trigger can't have an `absolute` position because
-			 * an `IntersectionObserver` starts work incorrectly
-			 */
 			Object.assign(t.style, {
 				height: (1).px,
 				width: '100%',
-				pointerEvents: 'none',
-				opacity: 0
+				position: 'absolute',
+				top: 0,
+				zIndex: -1
 			});
 		}, {label: $$.createTrigger});
 
