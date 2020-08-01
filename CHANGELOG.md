@@ -17,6 +17,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `core/component/interface/$componentId`
 
+#### :bug: Bug Fix
+
+* Fixed an issue with `polling` strategy won't fire a `callback` `inView`
+* Fixed an issue with `trigger` in `b-bottom-slide` won't fire `intersectionObserver` callback `bBottomSlide`, `iHistory`
+
 #### :house: Internal
 
 * Fixed ESLint warnings:

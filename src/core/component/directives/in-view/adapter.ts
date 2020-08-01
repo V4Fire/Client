@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools/deprecation';
+
 import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
 import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
 
@@ -67,7 +69,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param params
 	 */
-	observe(el: Element, params: CanArray<InitOptions>): false | void {
+	observe(el: Element, params: CanArray<InitOptions>): false | undefined {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -82,53 +84,47 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Activates deactivated elements by the specified group
-	 * @param [group]
+	 * Suspends elements by the specified group
+	 * @param group
 	 */
-	activate(group?: InViewGroup): void {
-		if (!this.adaptee) {
-			return;
-		}
-
-		return this.adaptee.setGroupState(false, group);
+	suspend(group: InViewGroup): void {
+		return this.adaptee?.suspend(group);
 	}
 
 	/**
-	 * Deactivates elements by the specified group
-	 * @param [group]
+	 * Unsuspends elements by the specified group
+	 * @param group
 	 */
-	deactivate(group?: InViewGroup): void {
-		if (!this.adaptee) {
-			return;
-		}
+	unsuspend(group: InViewGroup): void {
+		return this.adaptee?.unsuspend(group);
+	}
 
-		return this.adaptee.setGroupState(true, group);
+	/**
+	 * @see [[InViewAdapter.prototype.remove]]
+	 * @deprecated
+	 */
+	stopObserve(el: Element, threshold?: number): boolean {
+		deprecate({
+			type: 'function',
+			alternative: 'inViewAdapter.remove',
+			name: 'inViewAdapter.stopObserve'
+		});
+
+		return this.remove(el, threshold);
 	}
 
 	/**
 	 * Removes an element from observable elements
-	 * @param el
-	 */
-	remove(el: Element): boolean {
-		if (!this.adaptee) {
-			return false;
-		}
-
-		return this.adaptee.unobserve(el);
-	}
-
-	/**
-	 * Stops observing the specified element
 	 *
 	 * @param el
 	 * @param [threshold]
 	 */
-	stopObserve(el: Element, threshold?: number): boolean {
+	remove(el: Element, threshold?: number): boolean {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		return this.adaptee.stopObserve(el, threshold);
+		return this.adaptee.unobserve(el, threshold);
 	}
 
 	/**

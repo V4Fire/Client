@@ -21,14 +21,14 @@ export const
 
 export default class InView extends Super {
 	/**
-	 * True if the current adaptee can be used
-	 */
-	static readonly acceptable: boolean = hasIntersection;
-
-	/**
 	 * Adaptee type
 	 */
 	readonly type: AdapteeType = 'observer';
+
+	/**
+	 * True if the current adaptee can be used
+	 */
+	static readonly acceptable: boolean = hasIntersection;
 
 	/**
 	 * Contains IntersectionObserver instances
@@ -39,11 +39,6 @@ export default class InView extends Super {
 	 * Map of ids for root elements
 	 */
 	protected readonly rootMap: Map<Element, number> = new Map();
-
-	/** @override */
-	constructor() {
-		super();
-	}
 
 	/**
 	 * Initializes an observer
@@ -61,7 +56,10 @@ export default class InView extends Super {
 
 	/** @override */
 	protected remove(observable: ObservableElement): boolean {
-		const observer = this.observers.get(observable.id);
+		super.remove(observable);
+
+		const
+			observer = this.observers.get(observable.id);
 
 		if (observer) {
 			observer.unobserve(observable.node);
@@ -100,7 +98,7 @@ export default class InView extends Super {
 		for (let i = 0; i < entries.length; i++) {
 			const
 				entry = entries[i],
-				el = <Element>entry.target,
+				el = entry.target,
 				observable = this.getEl(el, threshold);
 
 			if (!observable) {
@@ -112,7 +110,7 @@ export default class InView extends Super {
 			if (observable.isLeaving) {
 				this.onObservableOut(observable, entry);
 
-			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated) {
+			} else if (entry.intersectionRatio >= observable.threshold) {
 				this.onObservableIn(observable, entry);
 			}
 		}
@@ -137,11 +135,12 @@ export default class InView extends Super {
 		observable.time = entry.time;
 		observable.timeIn = entry.time;
 
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onEnter)) {
 			observable.onEnter(observable);
 		}
 
-		if (observable.delay) {
+		if (observable.delay != null && observable.delay > 0) {
 			$a.setTimeout(() => this.call(observable), observable.delay, asyncOptions);
 
 		} else {
@@ -170,6 +169,7 @@ export default class InView extends Super {
 			join: true
 		};
 
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onLeave)) {
 			observable.onLeave(observable);
 		}

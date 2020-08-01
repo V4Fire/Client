@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.48 ()
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `trigger` in `b-bottom-slide` not fires `intersectionObserver` callback `bBottomSlide`, `iHistory`
+
 ## v3.0.0-rc.16 (2020-05-21)
 
 #### :bug: Bug Fix

@@ -263,12 +263,15 @@ export default class History<C extends iHistory> {
 		t.setAttribute(this.config.triggerAttr, 'true');
 
 		this.async.requestAnimationFrame(() => {
+			/*
+			 * This trigger can't have an `absolute` position because
+			 * an `IntersectionObserver` starts work incorrectly
+			 */
 			Object.assign(t.style, {
-				height: 1,
+				height: (1).px,
 				width: '100%',
-				position: 'absolute',
-				top: 0,
-				zIndex: -1
+				pointerEvents: 'none',
+				opacity: 0
 			});
 		}, {label: $$.createTrigger});
 
@@ -293,10 +296,11 @@ export default class History<C extends iHistory> {
 			InView.observe(el, {
 				threshold: this.config.titleThreshold,
 				onEnter: () => this.onPageTopVisibilityChange(true),
-				onLeave: () => this.onPageTopVisibilityChange(false)
+				onLeave: () => this.onPageTopVisibilityChange(false),
+				polling: true
 			});
 
-			this.async.worker(() => InView.stopObserve(el), label);
+			this.async.worker(() => InView.remove(el), label);
 
 		} else {
 			this.async.terminateWorker(label);

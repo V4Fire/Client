@@ -267,7 +267,7 @@ export default class ChunkRender extends Friend {
 		this.InView
 			.observe(node, inViewOptions);
 
-		node[$$.inView] = this.async.worker(() => this.InView.stopObserve(node, inViewOptions.threshold), {
+		node[$$.inView] = this.async.worker(() => this.InView.remove(node, inViewOptions.threshold), {
 			group: this.asyncGroup,
 			label
 		});

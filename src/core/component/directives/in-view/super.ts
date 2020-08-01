@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
+import Async from 'core/async';
 
 import {
 
@@ -16,7 +16,8 @@ import {
 	ObservableElement,
 	ObservableElementsThresholdMap,
 	ObservableThresholdMap,
-	Size
+	Size,
+	ObservablesByGroup
 
 } from 'core/component/directives/in-view/interface';
 
@@ -30,6 +31,11 @@ export default abstract class AbstractInView {
 	protected readonly elements: ObservableElementsThresholdMap = new Map();
 
 	/**
+	 * Map of observable elements sorted by a group parameter
+	 */
+	protected readonly observablesByGroup: ObservablesByGroup = new Map();
+
+	/**
 	 * Queue of elements that wait to become observable
 	 */
 	protected readonly awaitingElements: ObservableElementsThresholdMap = new Map();
@@ -37,6 +43,7 @@ export default abstract class AbstractInView {
 	/**
 	 * Async instance
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-invalid-this
 	protected readonly async: Async<this> = new Async(this);
 
 	/**
@@ -47,7 +54,7 @@ export default abstract class AbstractInView {
 			POP_AWAITING_INTERVAL = 75;
 
 		this.async.setInterval(() => {
-			if (!this.awaitingElements.size) {
+			if (this.awaitingElements.size === 0) {
 				return;
 			}
 
@@ -61,20 +68,22 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Activates or deactivates elements by the specified group
-	 *
-	 * @param isDeactivated
-	 * @param [group]
+	 * Suspends elements by the specified group
+	 * @param group
 	 */
-	setGroupState(isDeactivated: boolean, group?: InViewGroup): void {
-		this.maps().forEach((map) => {
-			map.forEach((el) => {
-				if (!group || el.group !== group) {
-					return;
-				}
+	suspend(group: InViewGroup): void {
+		this.observablesByGroup.get(group)?.forEach((observable) => {
+			this.unobserve(observable.node, observable.threshold, true);
+		});
+	}
 
-				el.isDeactivated = isDeactivated;
-			});
+	/**
+	 * Unsuspends elements by the specified group
+	 * @param group
+	 */
+	unsuspend(group: InViewGroup): void {
+		this.observablesByGroup.get(group)?.forEach((observable) => {
+			this.observe(observable.node, observable);
 		});
 	}
 
@@ -86,7 +95,7 @@ export default abstract class AbstractInView {
 	 */
 	getEl(el: Element, threshold: number): CanUndef<ObservableElement> {
 		const map = this.getThresholdMap(el);
-		return map && map.get(threshold);
+		return map?.get(threshold);
 	}
 
 	/**
@@ -102,10 +111,6 @@ export default abstract class AbstractInView {
 	 * @param observable
 	 */
 	call(observable: ObservableElement): void {
-		if (observable.isDeactivated) {
-			return;
-		}
-
 		const count = Object.isFunction(observable.count) ?
 			observable.count() :
 			observable.count;
@@ -119,7 +124,7 @@ export default abstract class AbstractInView {
 		}
 
 		if (observable.once) {
-			this.stopObserve(observable.node, observable.threshold);
+			this.unobserve(observable.node, observable.threshold);
 		}
 	}
 
@@ -135,7 +140,21 @@ export default abstract class AbstractInView {
 		}
 
 		const
+			{observablesByGroup} = this,
 			observable = this.createObservable(el, opts);
+
+		if (observable.group != null) {
+			let observableSet: Set<ObservableElement>;
+
+			if (observablesByGroup.has(observable.group)) {
+				observableSet = observablesByGroup.get(observable.group)!;
+
+			} else {
+				observablesByGroup.set(observable.group, observableSet = new Set());
+			}
+
+			observableSet.add(observable);
+		}
 
 		if (observable.wait) {
 			this.putInMap(this.awaitingElements, observable);
@@ -148,62 +167,20 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Stops to observe the specified element
-	 *
-	 * @param el
-	 * @param threshold
-	 */
-	stopObserve(el: Element, threshold?: number): boolean {
-		const
-			thresholdMap = this.getThresholdMap(el);
-
-		const stopObserve = (o) => {
-			this.clearAllAsync(o);
-
-			if (o.removeStrategy === 'remove') {
-				return this.unobserve(el, threshold);
-			}
-
-			o.isDeactivated = true;
-			return true;
-		};
-
-		if (thresholdMap && threshold === undefined) {
-			thresholdMap.forEach((observable) => {
-				stopObserve(observable);
-			});
-
-			return true;
-		}
-
-		if (thresholdMap && threshold !== undefined) {
-			const
-				observable = thresholdMap.get(threshold);
-
-			if (!observable) {
-				return false;
-			}
-
-			return stopObserve(observable);
-		}
-
-		return false;
-	}
-
-	/**
 	 * Removes an element from observable elements
 	 *
 	 * @param el
 	 * @param [threshold]
+	 * @param [suspend] – if this option is provided as `true` element will be not be deleted from `observablesByGroup`
 	 */
-	unobserve(el: Element, threshold?: number): boolean {
+	unobserve(el: Element, threshold?: number, suspend?: boolean): boolean {
 		const
 			map = this.getElMap(el),
 			thresholdMap = this.getThresholdMap(el);
 
 		if (thresholdMap && threshold === undefined) {
 			thresholdMap.forEach((observable) => {
-				this.remove(observable);
+				this.remove(observable, suspend);
 			});
 
 			return map.delete(el);
@@ -217,7 +194,7 @@ export default abstract class AbstractInView {
 				return false;
 			}
 
-			this.remove(observable);
+			this.remove(observable, suspend);
 			return thresholdMap.delete(threshold);
 		}
 
@@ -239,10 +216,8 @@ export default abstract class AbstractInView {
 			count: true,
 
 			isLeaving: false,
-			isDeactivated: false,
-			removeStrategy: 'remove',
 
-			// @ts-ignore
+			// @ts-expect-error (override)
 			threshold: 1,
 
 			size: {
@@ -314,7 +289,7 @@ export default abstract class AbstractInView {
 		awaitingElements.forEach((map, node) => {
 			map.forEach((observable, threshold) => {
 				const
-					isResolved = Boolean(observable.wait && observable.wait());
+					isResolved = Boolean(observable.wait?.());
 
 				if (!isResolved) {
 					return;
@@ -357,15 +332,24 @@ export default abstract class AbstractInView {
 	 * Initializes observing for the specified element
 	 * @param observable
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected initObserve(observable: ObservableElement): CanUndef<ObservableElement> {
 		return undefined;
 	}
 
 	/**
 	 * Removes element from observer data
+	 *
 	 * @param observable
+	 * @param [suspend]
 	 */
-	protected remove(observable: ObservableElement): boolean {
-		return false;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	protected remove(observable: ObservableElement, suspend?: boolean): boolean {
+		if (observable.group != null && !suspend) {
+			this.observablesByGroup.get(observable.group)?.delete(observable);
+		}
+
+		this.clearAllAsync(observable);
+		return true;
 	}
 }
