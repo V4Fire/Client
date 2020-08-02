@@ -11,11 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.48 ()
+## v3.0.0-rc.48 (2020-08-02)
 
 #### :rocket: New Feature
 
 * Added `core/component/interface/$componentId`
+* Added `isWorker` to helpers `build`
+
+#### :bug: Bug Fix
+
+* Fixed building of assets `iStaticPage`
 
 #### :house: Internal
 
