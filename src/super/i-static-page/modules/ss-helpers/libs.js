@@ -133,11 +133,11 @@ async function initLibs(libs, assets) {
 		}
 
 		if (p.source === 'output') {
-			if (assets) {
-				p.src = assets[p.src];
+			if (assets?.[p.src]) {
+				p.src = assets[p.src].path;
 			}
 
-			p.src = path.join(cwd, Object.isObject(p.src) ? p.src.path : p.src);
+			p.src = path.join(cwd, p.src);
 
 			if (!p.inline) {
 				p.src = path.relative(src.clientOutput(), p.src);
