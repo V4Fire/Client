@@ -26,9 +26,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed building of assets `iStaticPage`
-
-#### :bug: Bug Fix
-
 * Fixed an issue with `initLoad` may be called twice `iData`
 
 #### :house: Internal
