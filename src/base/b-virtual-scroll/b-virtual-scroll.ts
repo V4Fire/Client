@@ -414,7 +414,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
-	protected syncDataProviderWatcher(): void {
+	protected syncDataProviderWatcher(initLoad?: boolean): void {
 		const
 			provider = this.dataProvider;
 
@@ -422,7 +422,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.reInit();
 
 		} else {
-			super.syncDataProviderWatcher();
+			super.syncDataProviderWatcher(initLoad);
 		}
 	}
 

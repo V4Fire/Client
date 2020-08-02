@@ -15,12 +15,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added `initLoadStart` event `iBlock`, `iData`
 * Added `core/component/interface/$componentId`
 * Added `isWorker` to helpers `build`
 
 #### :bug: Bug Fix
 
 * Fixed building of assets `iStaticPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `initLoad` may be called twice `iData`
 
 #### :house: Internal
 
