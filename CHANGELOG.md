@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.48 (2020-08-02)
 
+#### :boom: Breaking Change
+
+* Changed the signature of `iData/getDefaultRequestParams`
+
 #### :rocket: New Feature
 
 * Added `initLoadStart` event `iBlock`, `iData`
