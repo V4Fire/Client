@@ -744,14 +744,15 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Synchronization for dataProvider properties
-	 * @param initLoad - if `false` there is no need to call `initLoad`
+	 * Synchronization of dataProvider properties
+	 * @param initLoad - if false, there is no need to call .initLoad
 	 */
 	@watch([
 		{field: 'dataProvider', provideArgs: false},
 		{field: 'dataProviderOptions', provideArgs: false}
 	])
-	protected syncDataProviderWatcher(initLoad?: boolean): void {
+
+	protected syncDataProviderWatcher(initLoad: boolean = true): void {
 		const
 			provider = this.dataProvider;
 
@@ -788,7 +789,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 			this.initDataListeners();
 
-			if (initLoad !== false) {
+			if (initLoad) {
 				this.initLoad();
 			}
 		}

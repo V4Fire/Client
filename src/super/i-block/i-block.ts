@@ -1828,8 +1828,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * @param [data] - data object (for events)
 	 * @param [opts] - additional options
-	 * @emits `initLoad(data: CanUndef<unknown>, options: CanUndef<InitLoadOptions>)`
 	 * @emits `initLoadStart(options: CanUndef<InitLoadOptions>)`
+	 * @emits `initLoad(data: CanUndef<unknown>, options: CanUndef<InitLoadOptions>)`
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {

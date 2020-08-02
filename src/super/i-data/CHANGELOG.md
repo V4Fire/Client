@@ -17,4 +17,4 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `initLoad` may be called twice `iData`
+* Fixed an issue with `initLoad` may be called twice
