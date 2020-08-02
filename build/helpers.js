@@ -13,6 +13,18 @@ const
 
 Object.assign(exports, include('build/helpers'));
 
+exports.isWorker = isWorker;
+
+/**
+ * Returns true if the specified entry point is a worker
+ *
+ * @param {string} entryPoint
+ * @returns {boolean}
+ */
+function isWorker(entryPoint) {
+	return entryPoint === 'std' || /\.worker\b/.test(entryPoint);
+}
+
 exports.wait = wait;
 
 /**
