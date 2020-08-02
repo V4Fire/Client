@@ -41,7 +41,7 @@ async function getAssets(entryPoints) {
 		assetsBlueprint.push(key);
 
 		if (!isWorker(key)) {
-			assetsBlueprint.push(key, `${key}_tpl`, `${key}$style`);
+			assetsBlueprint.push(`${key}_tpl`, `${key}$style`);
 		}
 	});
 
