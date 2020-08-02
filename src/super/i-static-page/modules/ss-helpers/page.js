@@ -59,7 +59,7 @@ function getScriptDeclByName(name, {
 	if (needInline(inline)) {
 		if (assets[name]) {
 			const
-				filePath = path.join(src.clientOutput(assets[name]));
+				filePath = path.join(src.clientOutput(assets[name].path));
 
 			if (fs.existsSync(filePath)) {
 				const decl = `include('${filePath}');`;
@@ -179,7 +179,7 @@ function getStyleDeclByName(name, {
 	if (needInline(inline)) {
 		if (assets[rname]) {
 			const
-				filePath = path.join(src.clientOutput(assets[rname]));
+				filePath = path.join(src.clientOutput(assets[rname].path));
 
 			if (fs.existsSync(filePath)) {
 				let

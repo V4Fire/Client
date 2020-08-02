@@ -20,6 +20,7 @@ const
 	build = include('build/build.webpack');
 
 const
+	{isWorker} = include('build/helpers'),
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -37,7 +38,11 @@ async function getAssets(entryPoints) {
 		assetsBlueprint = ['webpack.runtime'];
 
 	$C(entryPoints).forEach((el, key) => {
-		assetsBlueprint.push(key, `${key}_tpl`, `${key}$style`);
+		assetsBlueprint.push(key);
+
+		if (!isWorker(key)) {
+			assetsBlueprint.push(`${key}_tpl`, `${key}$style`);
+		}
 	});
 
 	await $C(assetsBlueprint).async.forEach(fillAssets);
@@ -47,7 +52,7 @@ async function getAssets(entryPoints) {
 		while (!assets[dep]) {
 			try {
 				$C(fs.readJSONSync(build.assetsJSON)).forEach((el, key, rawAssets) => {
-					assets[key] = rawAssets[key].publicPath;
+					assets[key] = rawAssets[key];
 				});
 
 			} catch {}

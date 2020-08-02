@@ -11,16 +11,17 @@ Changelog
 
 ## v3.0.0-rc.48 (2020-08-02)
 
-#### :rocket: New Feature
-
-* Added `$componentId`
-
-## v3.0.0-rc.37 (2020-07-20)
-
 #### :boom: Breaking Change
 
-* Marked `$el` as optional
-* Changed the `SyncLinkCache` type from Dictionary to Map
+* Changed the signature of `getDefaultRequestParams`
+
+#### :rocket: New Feature
+
+* Added `initLoadStart` event
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `initLoad` may be called twice
 
 #### :house: Internal
 

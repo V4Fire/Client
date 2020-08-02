@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.48 (2020-08-02)
+
+#### :bug: Bug Fix
+
+* Fixed building of assets
+
 ## v3.0.0-rc.47 (2020-07-31)
 
 #### :boom: Breaking Change

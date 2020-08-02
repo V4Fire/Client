@@ -1828,7 +1828,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * @param [data] - data object (for events)
 	 * @param [opts] - additional options
-	 * @emits `initLoad(data: CanUndef<unknown>, params: CanUndef<InitLoadOptions>)`
+	 * @emits `initLoadStart(options: CanUndef<InitLoadOptions>)`
+	 * @emits `initLoad(data: CanUndef<unknown>, options: CanUndef<InitLoadOptions>)`
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
@@ -1837,6 +1838,7 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		this.beforeReadyListeners = 0;
+		this.emit('initLoadStart', opts);
 
 		if (!opts.silent) {
 			this.componentStatus = 'loading';

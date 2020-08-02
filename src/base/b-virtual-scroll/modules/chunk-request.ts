@@ -318,7 +318,7 @@ export default class ChunkRequest extends Friend {
 
 		const
 			defaultRequestParams = ctx.getDefaultRequestParams('get'),
-			params = <CanUndef<Dictionary>>(defaultRequestParams !== false ? defaultRequestParams : [])[0];
+			params = <CanUndef<Dictionary>>(defaultRequestParams ?? [])[0];
 
 		Object.assign(params, ctx.requestQuery?.(this.ctx.getCurrentDataState())?.get);
 

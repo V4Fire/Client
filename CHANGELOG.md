@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.48 ()
+## v3.0.0-rc.49 ()
 
 #### :boom: Breaking Change
 
@@ -19,7 +19,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `core/component/interface/$componentId`
 * Added `suspend`, `unsuspend`, `reObserve` methods `inView`
 
 #### :bug: Bug Fix
@@ -27,10 +26,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed an issue with `polling` strategy won't fire a `callback` `inView`
 * Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
 
+## v3.0.0-rc.48 (2020-08-02)
+
+#### :boom: Breaking Change
+
+* Changed the signature of `iData/getDefaultRequestParams`
+
+#### :rocket: New Feature
+
+* Added `initLoadStart` event `iBlock`, `iData`
+* Added `core/component/interface/$componentId`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `initLoad` may be called twice `iData`
+
 #### :house: Internal
 
 * Marked `inViewAdapter/stopObserve` as deprecated
-
 * Fixed ESLint warnings:
   * `core/component/directives/in-view`
   * `core/component/render-function`
