@@ -1837,8 +1837,11 @@ export default abstract class iBlock extends ComponentInterface {
 			return;
 		}
 
+		if (opts.emitStartEvent !== false) {
+			this.emit('initLoadStart', opts);
+		}
+
 		this.beforeReadyListeners = 0;
-		this.emit('initLoadStart', opts);
 
 		if (!opts.silent) {
 			this.componentStatus = 'loading';

@@ -303,6 +303,15 @@ export default abstract class iData extends iBlock implements iProgress {
 			return;
 		}
 
+		if (opts.emitStartEvent !== false) {
+			this.emit('initLoadStart', opts);
+		}
+
+		opts = {
+			emitStartEvent: false,
+			...opts
+		};
+
 		const
 			{async: $a} = this;
 
@@ -311,8 +320,8 @@ export default abstract class iData extends iBlock implements iProgress {
 			join: 'replace'
 		};
 
-		$a.clearAll({group: 'requestSync:get'});
-		this.emit('initLoadStart', opts);
+		$a
+			.clearAll({group: 'requestSync:get'});
 
 		if (this.isFunctional) {
 			return super.initLoad(() => {
@@ -343,6 +352,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			if (Object.isArray(defParams)) {
 				return $a
 					.nextTick(label)
+
 					.then(() => {
 						Object.assign(defParams[1], {
 							...label,
@@ -355,8 +365,9 @@ export default abstract class iData extends iBlock implements iProgress {
 					.then((data) => {
 						void this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
 						return super.initLoad(() => this.db, opts);
+					})
 
-					}, (err) => {
+					.catch((err) => {
 						stderr(err);
 						return super.initLoad(() => this.db, opts);
 					});
