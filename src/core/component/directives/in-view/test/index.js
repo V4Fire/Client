@@ -29,15 +29,11 @@ module.exports = async (page, params) => {
 		componentNode,
 		component,
 		inViewMutation,
-		inViewObserver;
-
-	let
+		inViewObserver,
 		divNode;
 
 	const
-		strategies = ['mutation', 'observer'];
-
-	const
+		strategies = ['mutation', 'observer'],
 		getInView = (strategy) => strategy === 'mutation' ? inViewMutation : inViewObserver;
 
 	beforeAll(async () => {
@@ -84,208 +80,206 @@ module.exports = async (page, params) => {
 		divNode = await componentNode.$('#div-target');
 	});
 
-	describe('in-view ', () => {
-		strategies.forEach((strategy) => {
-			describe(`${strategy} strategy`, () => {
-				it('with `callback`', async () => {
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true
-						});
+	strategies.forEach((strategy) => {
+		describe(`in-view ${strategy} strategy`, () => {
+			it('with `callback`', async () => {
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true
 					});
-
-					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 				});
 
-				it('with `callback` and `delay`', async () => {
-					await getInView(strategy).evaluate((ctx) => {
-						globalThis.tmpTime = performance.now();
+				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
+			});
 
-						ctx.observe(globalThis.target, {
-							callback: () => {
-								globalThis.tmp = true;
-								globalThis.tmpTotalTime = performance.now() - globalThis.tmpTime;
-							},
-							delay: 1000
-						});
+			it('with `callback` and `delay`', async () => {
+				await getInView(strategy).evaluate((ctx) => {
+					globalThis.tmpTime = performance.now();
+
+					ctx.observe(globalThis.target, {
+						callback: () => {
+							globalThis.tmp = true;
+							globalThis.tmpTotalTime = performance.now() - globalThis.tmpTime;
+						},
+						delay: 1000
 					});
-
-					await h.bom.waitForIdleCallback(page);
-					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
-
-					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
-					expect(await page.evaluate(() => globalThis.tmpTotalTime)).toBeGreaterThanOrEqual(1000);
-					expect(await page.evaluate(() => globalThis.tmpTotalTime)).not.toBeGreaterThanOrEqual(2000);
 				});
 
-				it('with `callback` does not fires a `callback` on a hidden element', async () => {
-					await page.evaluate(() => {
-						globalThis.target.style.height = '0';
-						globalThis.target.style.width = '0';
-						globalThis.target.style.display = 'none';
-					});
+				await h.bom.waitForIdleCallback(page);
+				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true
-						});
-					});
+				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
+				expect(await page.evaluate(() => globalThis.tmpTotalTime)).toBeGreaterThanOrEqual(1000);
+				expect(await page.evaluate(() => globalThis.tmpTotalTime)).not.toBeGreaterThanOrEqual(2000);
+			});
 
-					await h.bom.waitForIdleCallback(page);
-					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			it('with `callback` does not fires a `callback` on a hidden element', async () => {
+				await page.evaluate(() => {
+					globalThis.target.style.height = '0';
+					globalThis.target.style.width = '0';
+					globalThis.target.style.display = 'none';
 				});
 
-				it('with `callback` and `polling`', async () => {
-					await getInView(strategy).evaluate((ctx) => {
-						console.log(globalThis.target);
-						console.log(ctx);
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							delay: 1,
-							polling: true
-						});
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true
 					});
-
-					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 				});
 
-				it('with `callback` and `polling` does not fires a callback on a hidden element', async () => {
-					await page.evaluate(() => {
-						globalThis.target.style.height = '0';
-						globalThis.target.style.width = '0';
-						globalThis.target.style.display = 'none';
-					});
+				await h.bom.waitForIdleCallback(page);
+				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			});
 
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							polling: true
-						});
+			it('with `callback` and `polling`', async () => {
+				await getInView(strategy).evaluate((ctx) => {
+					console.log(globalThis.target);
+					console.log(ctx);
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						delay: 1,
+						polling: true
 					});
-
-					await h.bom.waitForIdleCallback(page);
-					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 				});
 
-				it('with `threshold: 0.5` element is positioned at the bottom of the page', async () => {
-					await page.setViewportSize({
-						width: 600,
-						height: 300
-					});
+				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
+			});
 
-					await divNode.evaluate((ctx) => ctx.style.marginTop = '200px');
-
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							threshold: 0.5
-						});
-					});
-
-					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
+			it('with `callback` and `polling` does not fires a callback on a hidden element', async () => {
+				await page.evaluate(() => {
+					globalThis.target.style.height = '0';
+					globalThis.target.style.width = '0';
+					globalThis.target.style.display = 'none';
 				});
 
-				it('with `threshold: 0.5`, `polling` element is positioned at the bottom of the page', async () => {
-					await page.setViewportSize({
-						width: 600,
-						height: 300
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						polling: true
 					});
-
-					await divNode.evaluate((ctx) => ctx.style.marginTop = '200px');
-
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							threshold: 0.5,
-							polling: true
-						});
-					});
-
-					await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 				});
 
-				it('with `threshold: 0.5` and an element that is 0.2 visible won\'t fire a `callback`', async () => {
-					await page.setViewportSize({
-						width: 600,
-						height: 300
-					});
+				await h.bom.waitForIdleCallback(page);
+				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			});
 
-					await divNode.evaluate((ctx) => ctx.style.marginTop = '250px');
-
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							threshold: 0.5,
-							delay: 100
-						});
-					});
-
-					await delay(200);
-					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			it('with `threshold: 0.5` element is positioned at the bottom of the page', async () => {
+				await page.setViewportSize({
+					width: 600,
+					height: 300
 				});
 
-				it('call `remove` stops observe of an element', async () => {
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							delay: 200
-						});
+				await divNode.evaluate((ctx) => ctx.style.marginTop = '200px');
 
-						ctx.remove(globalThis.target);
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						threshold: 0.5
 					});
-
-					await delay(300);
-					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 				});
 
-				it('suspended with `callback` does not fires a callback', async () => {
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							delay: 200,
-							group: 'test'
-						});
+				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
+			});
 
-						setTimeout(() => ctx.suspend('test'), 0);
-					});
-
-					await delay(300);
-					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			it('with `threshold: 0.5`, `polling` element is positioned at the bottom of the page', async () => {
+				await page.setViewportSize({
+					width: 600,
+					height: 300
 				});
 
-				it('suspended and unsuspend with `callback` fires a callback', async () => {
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp = true,
-							delay: 200,
-							group: 'test'
-						});
+				await divNode.evaluate((ctx) => ctx.style.marginTop = '200px');
 
-						setTimeout(() => ctx.suspend('test'), 0);
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						threshold: 0.5,
+						polling: true
 					});
-
-					await delay(300);
-					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
-
-					await getInView(strategy).evaluate((ctx) => ctx.unsuspend('test'));
-					await expectAsync(page.evaluate('globalThis.tmp === true')).toBeResolved();
 				});
 
-				it('`reObserve` with an element and threshold provided', async () => {
-					await page.evaluate(() => globalThis.tmp = 0);
+				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
+			});
 
-					await getInView(strategy).evaluate((ctx) => {
-						ctx.observe(globalThis.target, {
-							callback: () => globalThis.tmp += 1,
-							delay: 100,
-							threshold: 0.7
-						});
+			it('with `threshold: 0.5` and an element that is 0.2 visible won\'t fire a `callback`', async () => {
+				await page.setViewportSize({
+					width: 600,
+					height: 300
+				});
 
-						setTimeout(() => ctx.reObserve(globalThis.target, 0.7), 150);
+				await divNode.evaluate((ctx) => ctx.style.marginTop = '250px');
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						threshold: 0.5,
+						delay: 100
+					});
+				});
+
+				await delay(200);
+				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			});
+
+			it('call `remove` stops observe of an element', async () => {
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						delay: 200
 					});
 
-					await expectAsync(page.evaluate('globalThis.tmp === 2')).toBeResolved();
+					ctx.remove(globalThis.target);
 				});
+
+				await delay(300);
+				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			});
+
+			it('suspended with `callback` does not fires a callback', async () => {
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						delay: 200,
+						group: 'test'
+					});
+
+					setTimeout(() => ctx.suspend('test'), 0);
+				});
+
+				await delay(300);
+				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+			});
+
+			it('suspended and unsuspend with `callback` fires a callback', async () => {
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = true,
+						delay: 200,
+						group: 'test'
+					});
+
+					setTimeout(() => ctx.suspend('test'), 0);
+				});
+
+				await delay(300);
+				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
+
+				await getInView(strategy).evaluate((ctx) => ctx.unsuspend('test'));
+				await expectAsync(page.evaluate('globalThis.tmp === true')).toBeResolved();
+			});
+
+			it('`reObserve` with an element and threshold provided', async () => {
+				await page.evaluate(() => globalThis.tmp = 0);
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp += 1,
+						delay: 100,
+						threshold: 0.7
+					});
+
+					setTimeout(() => ctx.reObserve(globalThis.target, 0.7), 150);
+				});
+
+				await expectAsync(page.evaluate('globalThis.tmp === 2')).toBeResolved();
 			});
 		});
 	});
