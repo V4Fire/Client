@@ -23,8 +23,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Marked `inViewAdapter/stopObserve` as deprecated
 * Fixed an issue with `polling` strategy won't fire a `callback` `inView`
 * Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
+
+* Fixed ESLint warnings:
+  * `core/component/directives/in-view`
 
 ## v3.0.0-rc.48 (2020-08-02)
 
@@ -36,16 +40,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `initLoadStart` event `iBlock`, `iData`
 * Added `core/component/interface/$componentId`
+* Added `isWorker` to helpers `build`
 
 #### :bug: Bug Fix
 
+* Fixed building of assets `iStaticPage`
 * Fixed an issue with `initLoad` may be called twice `iData`
 
 #### :house: Internal
 
-* Marked `inViewAdapter/stopObserve` as deprecated
 * Fixed ESLint warnings:
-  * `core/component/directives/in-view`
   * `core/component/render-function`
   * `core/component/register`
   * `core/component/directives/update-on`
