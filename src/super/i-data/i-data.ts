@@ -311,9 +311,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			join: 'replace'
 		};
 
-		$a
-			.clearAll({group: 'requestSync:get'});
-
+		$a.clearAll({group: 'requestSync:get'});
 		this.emit('initLoadStart', opts);
 
 		if (this.isFunctional) {
@@ -745,7 +743,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Synchronization of dataProvider properties
-	 * @param initLoad - if false, there is no need to call .initLoad
+	 * @param [initLoad] - if false, there is no need to call .initLoad
 	 */
 	@watch([
 		{field: 'dataProvider', provideArgs: false},
