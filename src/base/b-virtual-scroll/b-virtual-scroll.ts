@@ -256,7 +256,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @override
 	 * @emits chunkLoading(page: number)
 	 */
-	initLoad(data?: unknown, params: InitLoadOptions = {}): CanPromise<void> {
+	initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
 			this.reInit();
 		}
@@ -265,7 +265,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.emit('chunkLoading', 0);
 		}
 
-		return super.initLoad(data, params);
+		return super.initLoad(data, opts);
 	}
 
 	/**
