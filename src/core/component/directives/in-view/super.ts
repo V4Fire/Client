@@ -76,7 +76,7 @@ export default abstract class AbstractInView {
 	 * Suspends the specified element or elements by the specified group
 	 *
 	 * @param el
-	 * @param threshold
+	 * @param [threshold]
 	 */
 	suspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
 		if (groupOrElement instanceof Element) {
@@ -112,7 +112,7 @@ export default abstract class AbstractInView {
 	 * Unsuspends the specified element or elements by the specified group
 	 *
 	 * @param el
-	 * @param threshold
+	 * @param [threshold]
 	 */
 	unsuspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
 		if (groupOrElement instanceof Element) {
