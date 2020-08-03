@@ -26,7 +26,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 		parentName = component.parentParams?.name,
 		parentComponent = component.parent;
 
-	if (!parentName || !componentInitializers[parentName]) {
+	if (!Object.isTruly(parentName) || !componentInitializers[<string>parentName]) {
 		return false;
 	}
 
@@ -35,11 +35,13 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 
 		if (parentComponent) {
 			const p = componentParams.get(parentComponent);
-			parentName = p && p.name;
+			parentName = p?.name;
 		}
 	}
 
-	if (parentName) {
+	if (Object.isTruly(parentName)) {
+		parentName = <string>parentName;
+
 		const
 			regParentComponent = componentInitializers[parentName];
 

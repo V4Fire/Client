@@ -1,6 +1,6 @@
 # super/i-data
 
-This module provides a super component for all components that need to download data from data providers.
+This module provides a super component for all components that need to download data from a data provider.
 
 ```typescript
 import 'models/user';

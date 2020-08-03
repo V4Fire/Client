@@ -10,6 +10,7 @@ import { ComponentDriver } from 'core/component/engines';
 
 import engine from 'core/component/directives/update-on/engines';
 import { DirectiveOptions } from 'core/component/directives/update-on/interface';
+
 export * from 'core/component/directives/update-on/interface';
 
 /**
@@ -17,7 +18,7 @@ export * from 'core/component/directives/update-on/interface';
  */
 ComponentDriver.directive('update-on', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
-		if (!Object.isArray(value) && (!value || (!value.emitter || !value.event || !value.listener))) {
+		if (value == null) {
 			return;
 		}
 

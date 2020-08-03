@@ -11,7 +11,7 @@ import Async from 'core/async';
 import { attrs } from 'core/component/directives/update-on/const';
 import { DirectiveValue } from 'core/component/directives/update-on/interface';
 
-const
+export const
 	async = new Async();
 
 export default {

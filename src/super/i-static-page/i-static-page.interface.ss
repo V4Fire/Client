@@ -86,39 +86,42 @@
 
 		< html ${htmlAttrs}
 			< head
-				: base = @@publicPath()
+				- block head
+					: base = @@publicPath()
 
-				- block charset
-					< meta charset = ${charset}
+					- if defineBase
+						- block base
+							< base href = ${base}
 
-				- block viewport
-					: content = []
+					- block meta
 
-					- forEach viewport => el, key
-						? content.push(key + '=' + el)
+					- block charset
+						< meta charset = ${charset}
 
-					< meta &
-						name = viewport |
-						content = ${content}
-					.
+					- block viewport
+						: content = []
 
-				- if defineBase
-					- block base
-						< base href = ${base}
+						- forEach viewport => el, key
+							? content.push(key + '=' + el)
 
-				- block favicons
-					+= h.getFaviconsDecl()
+						< meta &
+							name = viewport |
+							content = ${content}
+						.
 
-				- block title
-					< title
-						{title}
+					- block favicons
+						+= h.getFaviconsDecl()
 
-				- block links
-					+= await h.loadLinks(deps.links, {assets})
+					- block title
+						< title
+							{title}
 
-				- block headScripts
-					+= h.getVarsDecl({wrap: true})
-					+= await h.loadLibs(deps.headScripts, {assets})
+					- block links
+						+= await h.loadLinks(deps.links, {assets})
+
+					- block headScripts
+						+= h.getVarsDecl({wrap: true})
+						+= await h.loadLibs(deps.headScripts, {assets})
 
 			< body
 				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
@@ -134,7 +137,7 @@
 						- block helpers
 						- block providers
 
-				- block head
+				- block deps
 					- block assets
 						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
 

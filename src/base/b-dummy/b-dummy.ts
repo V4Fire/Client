@@ -6,16 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component } from 'super/i-data/i-data';
-
+import { inViewFactory } from 'core/component/directives/in-view';
 import { ImageLoader } from 'core/component/directives/image';
-import ImageLoaderConstructor from 'core/component/directives/image/image';
+
+import iData, { component } from 'super/i-data/i-data';
+import { Directives } from 'base/b-dummy/interface';
+
+const
+	inViewMutation = inViewFactory('mutation'),
+	inViewObserver = inViewFactory('observer');
 
 export * from 'super/i-data/i-data';
-
-export interface Directives {
-	image: ImageLoaderConstructor;
-}
+export * from 'base/b-dummy/interface';
 
 @component()
 export default class bDummy extends iData {
@@ -24,7 +26,9 @@ export default class bDummy extends iData {
 	 */
 	get directives(): Directives {
 		return {
-			image: ImageLoader
+			image: ImageLoader,
+			inViewMutation,
+			inViewObserver
 		};
 	}
 }

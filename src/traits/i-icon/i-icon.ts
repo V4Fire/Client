@@ -23,7 +23,16 @@ export default abstract class iIcon {
 			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 		}
 
-		const q = location.search || (location.href.slice(-1) === '?' ? '?' : '');
+		let
+			q = '';
+
+		if (location.search !== '') {
+			q = location.search;
+
+		} else {
+			q = location.href.endsWith('?') ? '?' : '';
+		}
+
 		return `${location.pathname + q}#${icons(iconsMap[iconId]).id}`;
 	}
 

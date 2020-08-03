@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.48 (2020-08-02)
+
+#### :rocket: New Feature
+
+* Added `$componentId`
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :boom: Breaking Change

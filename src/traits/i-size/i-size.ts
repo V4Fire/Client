@@ -12,8 +12,10 @@
  */
 
 import { ModsDecl } from 'super/i-block/i-block';
+
 export * from 'traits/i-size/interface';
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iSize {
 	/**
 	 * Size modifiers

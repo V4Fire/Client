@@ -198,6 +198,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	}
 
 	/** @see iOpenToggle.onOpenedChange */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	onOpenedChange(e: ModEvent | SetModEvent): void {
 		// ...
 	}
@@ -237,18 +238,19 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 			const
 				dp = this.dataProvider;
 
-			if (dp != null && (dp !== 'Provider' || this.href)) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (dp != null && (dp !== 'Provider' || this.href != null)) {
 				let
 					that = this;
 
-				if (this.href) {
+				if (this.href != null) {
 					that = this.base(this.href);
 				}
 
 				await (<Function>that[this.method])();
 
 			// Form attribute fix for MS Edge && IE
-			} else if (this.form && this.type === 'submit') {
+			} else if (this.form != null && this.type === 'submit') {
 				e.preventDefault();
 				const form = this.dom.getComponent<bForm>(`#${this.form}`);
 				form && await form.submit();

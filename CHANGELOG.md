@@ -11,6 +11,80 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.49 (2020-08-03)
+
+#### :boom: Breaking Change
+
+* Removed `isDeactivated`, `removeStrategy` from `core/component/directives/inView/observableElement`
+
+#### :rocket: New Feature
+
+* Added `suspend`, `unsuspend`, `reObserve` methods `inView`
+
+#### :bug: Bug Fix
+
+* Marked `inViewAdapter/stopObserve` as deprecated
+* Fixed an issue with `polling` strategy won't fire a `callback` `inView`
+* Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
+* Fixed providing of `GLOBAL_NONCE` `iStaticPage`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `core/component/directives/in-view`
+  * `traits/i-history`
+  * `traits/i-access`
+  * `traits/i-icon`
+  * `traits/i-width`
+  * `traits/i-visible`
+  * `traits/i-size`
+  * `traits/i-progress`
+  * `traits/i-observe-dom`
+  * `super/i-page`
+  * `super/i-dynamic-page`
+  * `super/i-input`
+  * `form/b-button`
+
+#### :nail_care: Polish
+
+* Added documentation `bButton`
+
+## v3.0.0-rc.48 (2020-08-02)
+
+#### :boom: Breaking Change
+
+* Changed the signature of `iData/getDefaultRequestParams`
+
+#### :rocket: New Feature
+
+* Added `initLoadStart` event `iBlock`, `iData`
+* Added `core/component/interface/$componentId`
+* Added `isWorker` to helpers `build`
+
+#### :bug: Bug Fix
+
+* Fixed building of assets `iStaticPage`
+* Fixed an issue with `initLoad` may be called twice `iData`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `core/component/render-function`
+  * `core/component/register`
+  * `core/component/directives/update-on`
+
+## v3.0.0-rc.47 (2020-07-31)
+
+#### :boom: Breaking Change
+
+* Renamed `head` -> `deps` `super/i-static-page/i-static-page.interface.ss`
+
+#### :rocket: New Feature
+
+* `super/i-static-page/i-static-page.interface.ss`:
+  * Added `meta`
+  * Added `head`
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :bug: Bug Fix
@@ -91,7 +165,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `iStaticPage`
   * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
-  * Removed SS blocks from the template: `headScripts`, `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
+  * Removed SS blocks from the template: `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
   * Moved logic from SS to JS `iStaticPage`
 
 * Removed redundant parameters from `config/snakeskin`

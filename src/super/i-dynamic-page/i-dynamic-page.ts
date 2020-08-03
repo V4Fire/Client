@@ -12,6 +12,7 @@
  */
 
 import iPage, { component } from 'super/i-page/i-page';
+
 export * from 'super/i-page/i-page';
 
 @component()

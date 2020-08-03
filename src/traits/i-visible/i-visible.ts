@@ -13,7 +13,18 @@
 
 import iBlock, { ModEvent, ModsDecl } from 'super/i-block/i-block';
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iVisible {
+	/**
+	 * Visibility modifiers
+	 */
+	static readonly mods: ModsDecl = {
+		hidden: [
+			'true',
+			'false'
+		]
+	};
+
 	/**
 	 * Initializes modifier event listeners for the specified component
 	 *
@@ -34,14 +45,4 @@ export default abstract class iVisible {
 			component.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
 		});
 	}
-
-	/**
-	 * Visibility modifiers
-	 */
-	static readonly mods: ModsDecl = {
-		hidden: [
-			'true',
-			'false'
-		]
-	};
 }

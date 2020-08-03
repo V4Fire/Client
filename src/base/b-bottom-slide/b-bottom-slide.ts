@@ -38,10 +38,10 @@ import iBlock, {
 
 } from 'super/i-block/i-block';
 
-export * from 'super/i-data/i-data';
-
 import { HeightMode, Direction } from 'base/b-bottom-slide/interface';
 import { heightMode } from 'base/b-bottom-slide/const';
+
+export * from 'super/i-data/i-data';
 
 export * from 'base/b-bottom-slide/const';
 export * from 'base/b-bottom-slide/interface';
@@ -77,6 +77,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * Minimum height value of a component visible part (in pixels),
 	 * i.e. even the component is closed this part still be visible
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNonNegative})
 	readonly visible: number = 0;
 
@@ -89,18 +90,21 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Maximum time in milliseconds after after which we can assume that there was a quick swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * Minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeThreshold: number = 10;
 
 	/**
 	 * Minimum required amount of pixels of scrolling to swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeThreshold: number = 40;
 
@@ -113,6 +117,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Maximum value of overlay opacity
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
 	readonly maxOpacity: number = 0.8;
 
@@ -347,7 +352,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.isPullingStore = value;
 
 		this[value ? 'setRootMod' : 'removeRootMod']('fullscreen-moving', true);
-		this[value ? 'setMod' : 'removeMod']('stick', false);
+		void this[value ? 'setMod' : 'removeMod']('stick', false);
 
 		// @deprecated
 		this.emit('changeMoveState', value);

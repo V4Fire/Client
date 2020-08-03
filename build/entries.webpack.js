@@ -19,7 +19,10 @@ const
 
 const
 	{build, src} = config,
-	{resolve, entries, block} = require('@pzlr/build-core'),
+	{resolve, entries, block} = require('@pzlr/build-core');
+
+const
+	{isWorker} = include('build/helpers'),
 	{output, buildCache} = include('build/build.webpack');
 
 const
@@ -184,16 +187,7 @@ async function buildProjectGraph() {
 
 			entry[logicTaskName] = logicFile;
 
-			let
-				cursor;
-
-			if (name === 'std' || /\.worker\b/.test(name)) {
-				cursor = WORKERS;
-
-			} else {
-				cursor = RUNTIME;
-			}
-
+			const cursor = isWorker(name) ? WORKERS : RUNTIME;
 			processes[cursor][logicTaskName] = logicFile;
 
 			// CSS

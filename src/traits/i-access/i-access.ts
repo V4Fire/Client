@@ -15,6 +15,21 @@ import iBlock, { ModsDecl, ModEvent } from 'super/i-block/i-block';
 
 export default abstract class iAccess {
 	/**
+	 * Accessibility modifiers
+	 */
+	static readonly mods: ModsDecl = {
+		disabled: [
+			'true',
+			'false'
+		],
+
+		focused: [
+			'true',
+			'false'
+		]
+	};
+
+	/**
 	 * Disables the component
 	 * @param component
 	 */
@@ -69,7 +84,7 @@ export default abstract class iAccess {
 					component.emit('enable');
 				}
 
-			} else {
+			} else if (component.$el != null) {
 				component.emit('disable');
 
 				const handler = (e) => {
@@ -94,21 +109,6 @@ export default abstract class iAccess {
 			component.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
 		});
 	}
-
-	/**
-	 * Accessibility modifiers
-	 */
-	static readonly mods: ModsDecl = {
-		disabled: [
-			'true',
-			'false'
-		],
-
-		focused: [
-			'true',
-			'false'
-		]
-	};
 
 	/**
 	 * Disables the component

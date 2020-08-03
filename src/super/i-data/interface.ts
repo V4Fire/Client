@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOptions } from 'core/async';
-import { UnsafeIBlock } from 'super/i-block/i-block';
-
-import iData from 'super/i-data/i-data';
-
 //#if runtime has core/data
 
 import {
@@ -23,6 +18,11 @@ import {
 } from 'core/data';
 
 //#endif
+
+import { AsyncOptions } from 'core/async';
+import { UnsafeIBlock } from 'super/i-block/i-block';
+
+import iData from 'super/i-data/i-data';
 
 export interface RequestFilterOptions<D = unknown> {
 	isEmpty: boolean;
@@ -67,7 +67,7 @@ export type CheckDBEquality<T = unknown> =
 	boolean |
 	CheckDBEqualityFn<T>;
 
-// @ts-ignore
+// @ts-ignore (extend)
 export interface UnsafeIData<CTX extends iData = iData> extends UnsafeIBlock<CTX> {
 	// @ts-ignore (access)
 	dataProviderEmitter: CTX['dataProviderEmitter'];
