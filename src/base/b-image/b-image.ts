@@ -261,7 +261,6 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 	/** @override */
 	protected beforeDestroy(): void {
-		this.memoizeImage();
 		this.$refs.img.style.backgroundImage = '';
 		super.beforeDestroy();
 	}
