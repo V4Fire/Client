@@ -14,7 +14,8 @@ import {
 	ObservableElement,
 	ObservableElementRect,
 	ObservableElementsThresholdMap,
-	InitOptions
+	InitOptions,
+	UnobserveOptions
 
 } from 'core/component/directives/in-view/interface';
 
@@ -153,9 +154,9 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	unobserve(el: Element, threshold?: number): boolean {
+	unobserve(el: Element, unobserveOptionsOrThreshold?: UnobserveOptions | number): boolean {
 		const
-			res = super.unobserve(el, threshold);
+			res = super.unobserve(el, unobserveOptionsOrThreshold);
 
 		if (!this.pollingElements.has(el)) {
 			this.recalculateDeffer();

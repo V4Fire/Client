@@ -121,6 +121,19 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: CanArray<InitOptions>;
 }
 
+export interface UnobserveOptions {
+	/**
+	 * Threshold of an element to unobserve
+	 */
+	threshold?: number;
+
+	/**
+	 * If true then the element will not be removed completely,
+	 * later it will be possible to resume tracking the element using `unsuspend` method.
+	 */
+	suspend?: boolean;
+}
+
 /**
  * Suspended observable elements
  * [group name]:[observable[]]
