@@ -17,10 +17,10 @@ import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools';
 
 import SyncPromise from 'core/promise/sync';
-import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
 
 //#if runtime has core/helpers
 import * as helpers from 'core/helpers';
@@ -1837,11 +1837,11 @@ export default abstract class iBlock extends ComponentInterface {
 			return;
 		}
 
+		this.beforeReadyListeners = 0;
+
 		if (opts.emitStartEvent !== false) {
 			this.emit('initLoadStart', opts);
 		}
-
-		this.beforeReadyListeners = 0;
 
 		if (!opts.silent) {
 			this.componentStatus = 'loading';

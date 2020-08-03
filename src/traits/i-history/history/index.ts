@@ -371,7 +371,7 @@ export default class History extends Friend {
 			$a.on(title, 'click', this.onTitleClick.bind(this));
 		}
 
-		if (trigger) {
+		if (trigger != null) {
 			this.async.requestAnimationFrame(() => {
 				if (!hasTrigger) {
 					page?.insertAdjacentElement('afterbegin', trigger);
@@ -394,7 +394,7 @@ export default class History extends Friend {
 			}
 		};
 
-		this.component.emit('history:initPage', response);
+		this.ctx.emit('history:initPage', response);
 		return response;
 	}
 
@@ -427,7 +427,7 @@ export default class History extends Friend {
 	protected initTitleInView(visible?: boolean): void {
 		const {current} = this;
 		this.block?.setElMod(current?.title?.el, 'title', 'in-view', visible);
-		this.component.emit('history:titleInView', visible);
+		this.ctx.emit('history:titleInView', visible);
 	}
 
 	/**
@@ -439,7 +439,7 @@ export default class History extends Friend {
 			this.initTitleInView(state);
 		}
 
-		this.component.onPageTopVisibilityChange(state);
+		this.ctx.onPageTopVisibilityChange(state);
 	}
 
 	/**
