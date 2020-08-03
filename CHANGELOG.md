@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.51 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `reObserve` method `inView`
+
 ## v3.0.0-rc.50 (2020-08-03)
 
 #### :bug: Bug Fix
