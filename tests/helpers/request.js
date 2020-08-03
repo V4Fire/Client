@@ -65,6 +65,29 @@ class Request {
 	}
 
 	/**
+	 * @see [[BrowserTests.Request.interceptRequests]]
+	 */
+	interceptRequests(page, urls, response, timeout) {
+		return Promise.all(urls.map((url) => this.interceptRequest(page, url, response, timeout)));
+	}
+
+	/**
+	 * @see [[BrowserTests.Request.interceptRequest]]
+	 */
+	interceptRequest(page, url, response, timeout) {
+		return new Promise((res, rej) => {
+			if (timeout != null) {
+				setTimeout(rej, timeout);
+			}
+
+			page.route(url, (route) => {
+				route.fulfill({status: 200, ...response});
+				res();
+			});
+		});
+	}
+
+	/**
 	 * Parent class
 	 * @type  {BrowserTests.Helpers}
 	 */

@@ -37,6 +37,34 @@ declare namespace Playwright {
 	type Permissions = Permission[];
 
 	type Geolocation = import('playwright').Geolocation;
+
+	interface RouteFulfillResponse {
+		/**
+		 * Response status code, defaults to `200`.
+		 */
+		status?: number;
+
+		/**
+		 * Optional response headers. Header values will be converted to a string.
+		 */
+		headers?: Dictionary<string>;
+
+		/**
+		 * If set, equals to setting `Content-Type` response header.
+		 */
+		contentType?: string;
+
+		/**
+		 * Optional response body.
+		 */
+		body?: string | Buffer;
+
+		/**
+		 * Optional file path to respond with. The content type will be inferred from file extension.
+		 * If `path` is a relative path, then it is resolved relative to current working directory.
+		 */
+		path?: string;
+	}
 }
 
 interface IncludeReturns extends Record<string, any> {
@@ -525,6 +553,36 @@ declare namespace BrowserTests {
 		 */
 		waitForRequestsFail(page: Playwright.Page, urls: string[]): Promise<void>;
 
+		/*
+		 * Intercepts the specified URL and sends the specified response on it
+		 *
+		 * @param page
+		 * @param urls
+		 * @param response
+		 * @param timeout
+		 */
+		interceptRequest(
+			page: Playwright.Page,
+			url: string[],
+			response: Playwright.RouteFulfillResponse,
+			timeout?: number
+		): Promise<void>;
+
+		/**
+		 * Intercepts the specified URL-s and sends the specified response on each of them
+		 *
+		 * @param page
+		 * @param urls
+		 * @param response
+		 * @param timeout
+		 */
+		interceptRequests(
+			page: Playwright.Page,
+			urls: string[],
+			response: Playwright.RouteFulfillResponse,
+			timeout?: number
+		): Promise<void>;
+
 		/**
 		 * Returns a promise that will be resolved after all specified URL-s will fire an event
 		 *
@@ -532,7 +590,7 @@ declare namespace BrowserTests {
 		 * @param urls
 		 * @param event
 		 */
-		protected waitForRequestsEvents(page: Playwright.Page, urls: string[], event: string): Promise<void>;
+		waitForRequestsEvents(page: Playwright.Page, urls: string[], event: string): Promise<void>;
 	}
 }
 
