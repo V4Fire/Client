@@ -4,7 +4,7 @@ This module provides a directive to track elements entering or leaving the viewp
 
 ## Synopsis
 
-* Can be used as standalone (without `ComponentDriver` directives lifecycle)
+* Can be used as standalone (without `ComponentDriver` directives lifecycle).
 
 ## Callbacks
 
