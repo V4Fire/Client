@@ -7,6 +7,7 @@
  */
 
 import Session, { provider } from 'models/modules/session';
+
 export * from 'models/modules/session';
 
 @provider
