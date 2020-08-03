@@ -35,6 +35,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `traits/i-history`
   * `super/i-page`
   * `super/i-dynamic-page`
+  * `super/i-input`
 
 ## v3.0.0-rc.48 (2020-08-02)
 

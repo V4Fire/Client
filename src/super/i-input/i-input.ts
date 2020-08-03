@@ -113,15 +113,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component values that are not allowed to send to a form.
-	 * The parameter can take a value or list of values to ban,
-	 * or a function that checks the values, or a regular expression to test.
+	 * The parameter can take a value or list of values to ban.
+	 * Also, the parameter can be passed as a function or regular expression.
 	 */
 	@prop({required: false})
 	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
-	 * Data type of component form value.
-	 * This function is used to transform a component value to one of primitive types that will be sent from a form.
+	 * Data type of a component form value.
+	 * This function is used to transform the component value to one of the primitive types that will be sent from a form.
 	 * For example: String, Blob or Number.
 	 */
 	@prop(Function)
@@ -129,7 +129,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Converter/s of a component value to a form value.
-	 * These functions are used to convert a component value to a value that will be sent from a form.
+	 * These functions are used to convert the component value to a value that will be sent from a form.
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly formConverter?: CanArray<Function>;
@@ -190,14 +190,14 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				form;
 
 			// tslint:disable-next-line:prefer-conditional-expression
-			if (this.form) {
+			if (this.form != null) {
 				form = document.querySelector<HTMLFormElement>(`#${this.form}`);
 
 			} else {
-				form = this.$el.closest('form');
+				form = this.$el?.closest('form');
 			}
 
-			return form || undefined;
+			return form ?? undefined;
 		});
 	}
 
@@ -237,7 +237,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				test = Array.concat([], this.disallow),
 				value = await this[this.valueKey];
 
-			const match = (el) => {
+			const match = (el): boolean => {
 				if (Object.isFunction(el)) {
 					return el.call(this, value);
 				}
@@ -279,8 +279,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				list = await this.groupElements;
 
 			const
-				els = <this['FormValue'][]>[],
-				tasks = <Promise<void>[]>[];
+				els = <Array<this['FormValue']>>[],
+				tasks = <Array<Promise<void>>>[];
 
 			for (let i = 0; i < list.length; i++) {
 				tasks.push((async () => {
@@ -302,15 +302,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * List of components from the current form group (components with the same form name)
 	 */
 	@p({replace: false})
-	get groupElements(): CanPromise<ReadonlyArray<iInput>> {
+	get groupElements(): CanPromise<readonly iInput[]> {
 		const
 			nm = this.name;
 
-		if (nm) {
+		if (nm != null) {
 			return this.waitStatus('ready', () => {
 				const
 					form = this.connectedForm,
-					list = document.getElementsByName(nm) || [];
+					list = document.getElementsByName(nm);
 
 				const
 					els = <iInput[]>[];
@@ -319,7 +319,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 					const
 						component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
 
-					if (component && form === component.connectedForm) {
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+					if (component != null && form === component.connectedForm) {
 						els.push(component);
 					}
 				}
@@ -348,12 +349,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.infoStore = value;
 
 		if (this.messageHelpers) {
-			this.waitStatus('ready', () => {
+			void this.waitStatus('ready', () => {
 				const
-					box = this.block.element('info-box');
+					box = this.block?.element('info-box');
 
 				if (box?.children[0]) {
-					box.children[0].innerHTML = this.infoStore || '';
+					box.children[0].innerHTML = this.infoStore ?? '';
 				}
 			});
 		}
@@ -376,12 +377,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.errorStore = value;
 
 		if (this.messageHelpers) {
-			this.waitStatus('ready', () => {
+			void this.waitStatus('ready', () => {
 				const
-					box = this.block.element('error-box');
+					box = this.block?.element('error-box');
 
 				if (box?.children[0]) {
-					box.children[0].innerHTML = this.errorStore || '';
+					box.children[0].innerHTML = this.errorStore ?? '';
 				}
 			});
 		}
@@ -485,16 +486,16 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/** @see [[iAccess.focus]] */
 	@p({replace: false})
 	@wait('ready')
-	async focus(): Promise<boolean> {
+	focus(): Promise<boolean> {
 		const
 			{input} = this.$refs;
 
 		if (input && document.activeElement !== input) {
 			input.focus();
-			return true;
+			return Promise.resolve(true);
 		}
 
-		return false;
+		return Promise.resolve(false);
 	}
 
 	/** @see [[iAccess.blur]] */
@@ -506,10 +507,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		if (input && document.activeElement === input) {
 			input.blur();
-			return true;
+			return Promise.resolve(true);
 		}
 
-		return false;
+		return Promise.resolve(false);
 	}
 
 	/**
@@ -519,12 +520,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@p({replace: false})
 	@wait('ready')
 	async clear(): Promise<boolean> {
-		if (this[this.valueKey]) {
+		if (this[this.valueKey] !== undefined) {
 			this[this.valueKey] = undefined;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 
-			this.removeMod('valid');
+			void this.removeMod('valid');
 			this.emit('clear');
 
 			return true;
@@ -545,7 +546,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 
-			this.removeMod('valid');
+			void this.removeMod('valid');
 			this.emit('reset');
 
 			return true;
@@ -563,14 +564,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	getValidatorMsg(err: ValidatorResult, msg: ValidatorMsg, defMsg: string): string {
 		if (Object.isFunction(msg)) {
-			return msg(err) || defMsg;
+			const m = msg(err);
+			return Object.isTruly(m) ? m : defMsg;
 		}
 
 		if (Object.isPlainObject(msg)) {
 			return Object.isPlainObject(err) && msg[err.name] || defMsg;
 		}
 
-		return msg || defMsg;
+		return Object.isTruly(msg) ? String(msg) : defMsg;
 	}
 
 	/**
@@ -602,8 +604,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	async validate(params?: ValidatorParams): Promise<ValidationResult<this['FormValue']>> {
 		//#if runtime has iInput/validators
 
-		if (!this.validators.length) {
-			this.removeMod('valid');
+		if (this.validators.length === 0) {
+			void this.removeMod('valid');
 			return true;
 		}
 
@@ -618,23 +620,34 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				isArray = Object.isArray(decl),
 				isPlainObject = !isArray && Object.isPlainObject(decl);
 
+			let
+				key;
+
+			if (isPlainObject) {
+				key = Object.keys(decl)[0];
+
+			} else if (isArray) {
+				key = decl[0];
+
+			} else {
+				key = decl;
+			}
+
 			const
-				key = <string>(isPlainObject ? Object.keys(decl)[0] : isArray ? decl[0] : decl),
 				validator = this.validatorsMap[key];
 
-			if (!validator) {
+			if (validator == null) {
 				throw new Error(`Validator "${key}" is not defined`);
 			}
 
 			const validation = validator.call(
 				this,
-				// tslint:disable-next-line:prefer-object-spread
-				Object.assign(isPlainObject ? decl[key] : isArray && decl[1] || {}, params)
+				Object.assign(isPlainObject ? decl[key] : (isArray && decl[1]) ?? {}, params)
 			);
 
 			if (Object.isPromise(validation)) {
-				this.removeMod('valid');
-				this.setMod('progress', true);
+				void this.removeMod('valid');
+				void this.setMod('progress', true);
 			}
 
 			valid = await validation;
@@ -650,13 +663,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			}
 		}
 
-		this.setMod('progress', false);
+		void this.setMod('progress', false);
 
 		if (valid != null) {
-			this.setMod('valid', valid === true);
+			void this.setMod('valid', valid === true);
 
 		} else {
-			this.removeMod('valid');
+			void this.removeMod('valid');
 		}
 
 		if (valid === true) {
@@ -669,7 +682,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.validationMsg = undefined;
 		this.emit('validationEnd', valid === true, failedValidation);
 
-		return valid || failedValidation;
+		return Object.isTruly(valid) ? valid : failedValidation;
 
 		//#endif
 
@@ -696,7 +709,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@p({replace: false})
 	protected onFocus(): void {
-		this.setMod('focused', true);
+		void this.setMod('focused', true);
 	}
 
 	/**
@@ -704,7 +717,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@p({replace: false})
 	protected onBlur(): void {
-		this.setMod('focused', false);
+		void this.setMod('focused', false);
 	}
 
 	/**
@@ -715,7 +728,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
 		this.prevValue = oldValue;
 
-		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
+		if (newValue !== oldValue || newValue != null && typeof newValue === 'object') {
 			this.emit('change', this[this.valueKey]);
 		}
 	}
@@ -746,7 +759,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@p({hook: 'created', replace: false})
 	protected initValueListeners(): void {
-		this.watch(this.valueKey, this.onValueChange);
+		this.watch(this.valueKey, this.onValueChange.bind(this));
 		this.on('actionChange', () => this.validate());
 	}
 
@@ -764,10 +777,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		});
 
 		const
-			msgInit = {};
+			msgInit = Object.createDict();
 
 		const createMsgHandler = (type) => (val) => {
-			if (!msgInit[type] && this.modsProp && String(this.modsProp[type]) === 'false') {
+			if (msgInit[type] == null && this.modsProp != null && String(this.modsProp[type]) === 'false') {
 				return false;
 			}
 
