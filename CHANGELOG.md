@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed `core/component/engines/vue/config/getComponentName`
+* Removed normalizing of the `nonce` attribute `iStaticPage`
 
 ## v3.0.0-rc.49 (2020-08-03)
 

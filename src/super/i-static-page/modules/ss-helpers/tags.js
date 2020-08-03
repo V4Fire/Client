@@ -237,7 +237,12 @@ function normalizeAttrs(attrs) {
 		key = Filters.html(key, null, 'attrKey');
 
 		if (Object.isString(val)) {
-			normalizedAttrs.push(`${key}="${Filters.html(val, null, 'attrValue')}"`);
+			if (key === 'nonce') {
+				normalizedAttrs.push(`${key}="${val}"`);
+
+			} else {
+				normalizedAttrs.push(`${key}="${Filters.html(val, null, 'attrValue')}"`);
+			}
 
 		} else if (val) {
 			normalizedAttrs.push(key);
