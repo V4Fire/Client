@@ -30,6 +30,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed ESLint warnings:
   * `core/component/directives/in-view`
   * `traits/i-history`
+  * `traits/i-history`
+  * `super/i-page`
+  * `super/i-dynamic-page`
 
 ## v3.0.0-rc.48 (2020-08-02)
 
