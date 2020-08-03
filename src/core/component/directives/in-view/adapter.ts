@@ -96,7 +96,7 @@ export default class InViewAdapter {
 	 * Suspends observing of the specified element
 	 *
 	 * @param el
-	 * @param threshold
+	 * @param threshold - The `threshold` should be specified because it's used as a unique key for observables
 	 */
 	suspend(el: Element, threshold: number): void;
 	suspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
@@ -113,7 +113,7 @@ export default class InViewAdapter {
 	 * Unsuspends observing of the specified element
 	 *
 	 * @param el
-	 * @param threshold
+	 * @param threshold - The `threshold` should be specified because it's used as a unique key for observables
 	 */
 	unsuspend(el: Element, threshold: number): void;
 	unsuspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
@@ -130,7 +130,7 @@ export default class InViewAdapter {
 	 * Re-initializes observing of the specified element
 	 *
 	 * @param el
-	 * @param threshold
+	 * @param threshold - The `threshold` should be specified because it's used as a unique key
 	 */
 	reObserve(el: Element, threshold: number): void;
 	reObserve(groupOrElement: InViewGroup | Element, threshold?: number): void {

@@ -19,7 +19,8 @@ import {
 	ObservableThresholdMap,
 	ObservablesByGroup,
 
-	Size
+	Size,
+	UnobserveOptions
 
 } from 'core/component/directives/in-view/interface';
 
@@ -107,7 +108,7 @@ export default abstract class AbstractInView {
 
 		} else {
 			this.observablesByGroup.get(groupOrElement)?.forEach((observable) => {
-				this.unobserve(observable.node, observable.threshold, true);
+				this.unobserve(observable.node, {threshold: observable.threshold, suspend: true});
 			});
 		}
 	}
@@ -242,13 +243,24 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Removes an element from observable elements
+	 * Removes or suspends the specified element
 	 *
 	 * @param el
-	 * @param [threshold]
-	 * @param [suspend] – if true, the element isn't deleted from `observablesByGroup`
+	 * @param unobserveOptionsOrThreshold
 	 */
-	unobserve(el: Element, threshold?: number, suspend?: boolean): boolean {
+	unobserve(el: Element, unobserveOptionsOrThreshold?: UnobserveOptions | number): boolean {
+		let
+			threshold: CanUndef<number>,
+			suspend: CanUndef<boolean>;
+
+		if (Object.isNumber(unobserveOptionsOrThreshold)) {
+			threshold = unobserveOptionsOrThreshold;
+
+		} else if (Object.isPlainObject(unobserveOptionsOrThreshold)) {
+			threshold = unobserveOptionsOrThreshold.threshold;
+			suspend = unobserveOptionsOrThreshold.suspend;
+		}
+
 		const
 			map = this.getElMap(el),
 			thresholdMap = this.getThresholdMap(el);
