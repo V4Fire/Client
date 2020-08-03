@@ -6,18 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { InitOptions } from 'core/component/directives/in-view/interface';
+import { InitOptions, AdapteeInstance } from 'core/component/directives/in-view/interface';
 
 /**
  * Returns a first adaptee which is acceptable
  * @param strategies
  */
-export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): CanUndef<T> {
+export function getAdaptee(strategies: AdapteeInstance[]): CanUndef<AdapteeInstance> {
 	for (let i = 0; i < strategies.length; i++) {
 		const
 			strategy = strategies[i];
 
-		if (strategy.acceptable) {
+		if (strategy.acceptable === true) {
 			return strategy;
 		}
 	}
@@ -29,7 +29,8 @@ export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): Ca
  * Validates the specified value
  * @param value
  */
-export function valueValidator(value: InitOptions): boolean {
+export function valueValidator(value: CanUndef<InitOptions>): boolean {
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	return Boolean(value && (value.callback || value.onEnter || value.onLeave));
 }
 
@@ -41,10 +42,6 @@ export function valueValidator(value: InitOptions): boolean {
  * @param [scrollRoot]
  */
 export function isInView(elRect: DOMRect, threshold: number = 1, scrollRoot?: Element): boolean {
-	if (!document.documentElement) {
-		return false;
-	}
-
 	const {
 		top,
 		right,
@@ -54,8 +51,12 @@ export function isInView(elRect: DOMRect, threshold: number = 1, scrollRoot?: El
 		height
 	} = elRect;
 
+	if (elRect.height === 0 || elRect.width === 0) {
+		return false;
+	}
+
 	const
-		root = scrollRoot || document.documentElement,
+		root = scrollRoot ?? document.documentElement,
 		scrollRect = root.getBoundingClientRect();
 
 	const intersection = {
@@ -76,7 +77,7 @@ export function isInView(elRect: DOMRect, threshold: number = 1, scrollRoot?: El
 	};
 
 	return (
-		top - scrollRect.top - height >= elementThreshold.y &&
+		scrollRect.bottom - top >= elementThreshold.y &&
 		scrollRect.right - left >= elementThreshold.x &&
 		intersection.top >= elementThreshold.y &&
 		intersection.right >= elementThreshold.x &&

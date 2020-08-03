@@ -8,11 +8,13 @@
 
 import { VNodeDirective } from 'core/component/engines';
 
+import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
+import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
+
 export interface Observable {
 	node: Element;
 	id: string;
 	isLeaving: boolean;
-	isDeactivated: boolean;
 	size: Size;
 
 	/**
@@ -52,16 +54,6 @@ export interface ObserveOptions {
 	 * Delay before callback execution
 	 */
 	delay?: number;
-
-	/**
-	 * How an element should be deactivated after he was seen (only if once is set to true)
-	 *
-	 *   *) remove - element will be removed from inView directive
-	 *
-	 *   *) deactivate - element will not be removed from inView directive: he will be deactivated after was seen
-	 *      (you can activate the specified element later, and he will become observable again)
-	 */
-	removeStrategy?: RemoveStrategy;
 
 	/**
 	 * Only for environments that doesn't support intersection observer.
@@ -129,6 +121,14 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: CanArray<InitOptions>;
 }
 
+/**
+ * Suspended observable elements
+ * [group name]:[observable[]]
+ */
+export type ObservablesByGroup = Map<InViewGroup, Set<ObservableElement>>;
+
+export type AdapteeType = 'mutation' | 'observer';
+export type AdapteeInstance = typeof MutationObserverStrategy | typeof IntersectionObserverStrategy;
 export type InViewGroup = string | number | symbol;
 export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;

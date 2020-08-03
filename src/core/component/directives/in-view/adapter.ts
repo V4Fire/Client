@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools/deprecation';
+
 import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
 import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
 
@@ -67,7 +69,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param params
 	 */
-	observe(el: Element, params: CanArray<InitOptions>): false | void {
+	observe(el: Element, params: CanArray<InitOptions>): false | undefined {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -82,53 +84,89 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Activates deactivated elements by the specified group
-	 * @param [group]
+	 * Suspends elements by the specified group.
+	 *
+	 * Calling this method will temporarily (until `unsuspend` will be called)
+	 * stop observing elements that match the specified group
+	 *
+	 * @param group
 	 */
-	activate(group?: InViewGroup): void {
-		if (!this.adaptee) {
-			return;
-		}
+	suspend(group: InViewGroup): void;
 
-		return this.adaptee.setGroupState(false, group);
+	/**
+	 * Suspends the specified element
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	suspend(el: Element, threshold: number): void;
+
+	suspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		return this.adaptee?.suspend(groupOrElement, threshold);
 	}
 
 	/**
-	 * Deactivates elements by the specified group
-	 * @param [group]
+	 * Unsuspends the specified element
+	 *
+	 * @param el
+	 * @param threshold
 	 */
-	deactivate(group?: InViewGroup): void {
-		if (!this.adaptee) {
-			return;
-		}
+	unsuspend(el: Element, threshold: number): void;
 
-		return this.adaptee.setGroupState(true, group);
+	/**
+	 * Unsuspends the specified group of elements
+	 * @param group
+	 */
+	unsuspend(group: InViewGroup): void;
+
+	unsuspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		return this.adaptee?.unsuspend(groupOrElement, threshold);
+	}
+
+	/**
+	 * Re-initialize observation of the specified element
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	reObserve(el: Element, threshold: number): void;
+
+	/**
+	 * Re-initialize observation of the specified group
+	 * @param group
+	 */
+	reObserve(group: InViewGroup): void;
+
+	reObserve(groupOrElement: InViewGroup | Element, threshold?: number): void {
+		return this.adaptee?.reObserve(groupOrElement, threshold);
+	}
+
+	/**
+	 * @see [[InViewAdapter.prototype.remove]]
+	 * @deprecated
+	 */
+	stopObserve(el: Element, threshold?: number): boolean {
+		deprecate({
+			type: 'function',
+			alternative: 'inViewAdapter.remove',
+			name: 'inViewAdapter.stopObserve'
+		});
+
+		return this.remove(el, threshold);
 	}
 
 	/**
 	 * Removes an element from observable elements
-	 * @param el
-	 */
-	remove(el: Element): boolean {
-		if (!this.adaptee) {
-			return false;
-		}
-
-		return this.adaptee.unobserve(el);
-	}
-
-	/**
-	 * Stops observing the specified element
 	 *
 	 * @param el
 	 * @param [threshold]
 	 */
-	stopObserve(el: Element, threshold?: number): boolean {
+	remove(el: Element, threshold?: number): boolean {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		return this.adaptee.stopObserve(el, threshold);
+		return this.adaptee.unobserve(el, threshold);
 	}
 
 	/**

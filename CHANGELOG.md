@@ -11,6 +11,25 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.49 ()
+
+#### :boom: Breaking Change
+
+* Removed `isDeactivated`, `removeStrategy` from `core/component/directives/inView/observableElement`
+
+#### :rocket: New Feature
+
+* Added `suspend`, `unsuspend`, `reObserve` methods `inView`
+
+#### :bug: Bug Fix
+
+* Marked `inViewAdapter/stopObserve` as deprecated
+* Fixed an issue with `polling` strategy won't fire a `callback` `inView`
+* Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
+
+* Fixed ESLint warnings:
+  * `core/component/directives/in-view`
+
 ## v3.0.0-rc.48 (2020-08-02)
 
 #### :boom: Breaking Change

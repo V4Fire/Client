@@ -22,5 +22,8 @@ module.exports = [
 	'--name b-virtual-scroll --suit render --runner functional/state',
 
 	// b-button
-	'--name b-button --suit demo'
+	'--name b-button --suit demo',
+
+	// in-view
+	'--name b-dummy --test-entry core/component/directives/in-view/test'
 ];
