@@ -121,7 +121,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		const
 			tmpSrc = <CanUndef<string>>this.tmp[this.src];
 
-		if (tmpSrc) {
+		if (tmpSrc !== undefined) {
 			this.updateHeight(tmpSrc);
 			this.onImageLoadSuccess(tmpSrc);
 			return;
@@ -136,11 +136,11 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			img.srcset = getSrcSet(this.srcset);
 		}
 
-		if (this.sizes) {
+		if (this.sizes !== undefined) {
 			img.sizes = this.sizes;
 		}
 
-		if (this.alt) {
+		if (this.alt !== undefined) {
 			img.alt = this.alt;
 		}
 
@@ -162,8 +162,8 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		let
 			tmpPadding = this.tmp[`${this.src}-padding`];
 
-		if (!tmpPadding) {
-			if (this.ratio) {
+		if (!Object.isTruly(tmpPadding)) {
+			if (this.ratio != null && this.ratio !== 0) {
 				tmpPadding = `${(1 / this.ratio) * 100}%`;
 
 			} else if (!Object.isString(img) && this.ratio !== 0) {
@@ -174,10 +174,9 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			}
 		}
 
-		Object.assign(imgRef.style, tmpPadding ?
+		Object.assign(imgRef.style, Object.isTruly(tmpPadding) ?
 			{paddingBottom: tmpPadding} :
-			{height: '100%'}
-		);
+			{height: '100%'});
 	}
 
 	/**
@@ -188,7 +187,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		const
 			{img: imgRef} = this.$refs;
 
-		if (img && (img.naturalHeight || img.naturalWidth)) {
+		if (img.naturalHeight !== 0 || img.naturalWidth !== 0) {
 			const ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
 			imgRef.style.paddingBottom = `${(1 / ratio) * 100}%`;
 		}
@@ -203,7 +202,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		const
 			{img} = this.$refs;
 
-		if (img.style.backgroundImage) {
+		if (Object.isTruly(img.style.backgroundImage)) {
 			this.tmp[this.src] = img[$$.img];
 			this.tmp[`${this.src}-padding`] = img.style.paddingBottom;
 		}
