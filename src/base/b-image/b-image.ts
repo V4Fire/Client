@@ -221,13 +221,27 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * @emits loadSuccess()
 	 */
 	protected onImageLoadSuccess(img: HTMLImageElement | string): void {
-		const
-			{img: imgRef} = this.$refs,
-			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
+		let
+			cssImg: string;
 
-		if (!Object.isString(img) && this.ratio === undefined) {
-			this.updateCalculatedImageRatio(img);
+		if (!Object.isString(img)) {
+			if (this.ratio === undefined) {
+				this.updateCalculatedImageRatio(img);
+			}
+
+			const
+				// IE has no currentSrc in HTMLImageElement so its type from lib.dom.d.ts is incorrect
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				imgUrl = img.currentSrc ?? img.src;
+
+			cssImg = `url("${imgUrl}")`;
+
+		} else {
+			cssImg = img;
 		}
+
+		const
+			{img: imgRef} = this.$refs;
 
 		void this.setMod('progress', false);
 		void this.setMod('showError', false);
