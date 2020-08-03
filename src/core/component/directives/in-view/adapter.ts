@@ -33,7 +33,7 @@ export default class InViewAdapter {
 	protected adaptee?: ObserveStrategy;
 
 	/**
-	 * True if an adapter instance has an adaptee
+	 * True if the adapter instance has an adaptee
 	 */
 	get hasAdaptee(): boolean {
 		return this.adaptee !== undefined;
@@ -48,7 +48,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Returns true if an adaptee type is 'mutation'
+	 * Returns true if the passed adaptee type is 'mutation'
 	 * @param adaptee
 	 */
 	isMutation(adaptee: ObserveStrategy): adaptee is MutationObserverStrategy {
@@ -56,7 +56,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Returns true if an adaptee type is 'observer'
+	 * Returns true if the passed adaptee type is 'observer'
 	 * @param adaptee
 	 */
 	isIntersection(adaptee: ObserveStrategy): adaptee is IntersectionObserverStrategy {
@@ -64,7 +64,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Starts observing the specified element
+	 * Starts to observe the specified element
 	 *
 	 * @param el
 	 * @param params
@@ -84,65 +84,61 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Suspends elements by the specified group.
-	 *
-	 * Calling this method will temporarily (until `unsuspend` will be called)
-	 * stop observing elements that match the specified group
+	 * Suspends observing of elements by the specified group.
+	 * Calling this method will temporarily stop observing elements that match the specified group.
+	 * To cancel the suspending invoke `unsuspend`.
 	 *
 	 * @param group
 	 */
 	suspend(group: InViewGroup): void;
 
 	/**
-	 * Suspends the specified element
+	 * Suspends observing of the specified element
 	 *
 	 * @param el
 	 * @param threshold
 	 */
 	suspend(el: Element, threshold: number): void;
-
 	suspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
 		return this.adaptee?.suspend(groupOrElement, threshold);
 	}
 
 	/**
-	 * Unsuspends the specified element
+	 * Unsuspends observing of the specified group of elements
+	 * @param group
+	 */
+	unsuspend(group: InViewGroup): void;
+
+	/**
+	 * Unsuspends observing of the specified element
 	 *
 	 * @param el
 	 * @param threshold
 	 */
 	unsuspend(el: Element, threshold: number): void;
-
-	/**
-	 * Unsuspends the specified group of elements
-	 * @param group
-	 */
-	unsuspend(group: InViewGroup): void;
-
 	unsuspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
 		return this.adaptee?.unsuspend(groupOrElement, threshold);
 	}
 
 	/**
-	 * Re-initialize observation of the specified element
+	 * Re-initializes observing of the specified group
+	 * @param group
+	 */
+	reObserve(group: InViewGroup): void;
+
+	/**
+	 * Re-initializes observing of the specified element
 	 *
 	 * @param el
 	 * @param threshold
 	 */
 	reObserve(el: Element, threshold: number): void;
-
-	/**
-	 * Re-initialize observation of the specified group
-	 * @param group
-	 */
-	reObserve(group: InViewGroup): void;
-
 	reObserve(groupOrElement: InViewGroup | Element, threshold?: number): void {
 		return this.adaptee?.reObserve(groupOrElement, threshold);
 	}
 
 	/**
-	 * @see [[InViewAdapter.prototype.remove]]
+	 * @see [[InViewAdapter.remove]]
 	 * @deprecated
 	 */
 	stopObserve(el: Element, threshold?: number): boolean {
@@ -156,7 +152,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Removes an element from observable elements
+	 * Removes the passed element from observable elements
 	 *
 	 * @param el
 	 * @param [threshold]

@@ -43,13 +43,13 @@ export default class InView extends Super {
 	readonly type: AdapteeType = 'mutation';
 
 	/**
-	 * Deferred variation of the recalculate function
+	 * Deferred version of the recalculate function
 	 * @see recalculate
 	 */
 	readonly recalculateDeffer: Function;
 
 	/**
-	 * Deferred variation of the check function
+	 * Deferred version of the check function
 	 * @see recalculate
 	 */
 	readonly checkDeffer: Function;

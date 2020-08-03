@@ -113,7 +113,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmpTotalTime)).not.toBeGreaterThanOrEqual(2000);
 			});
 
-			it('with `callback` does not fires a `callback` on a hidden element', async () => {
+			it('with `callback`: doesn\'t fire the callback on a hidden element', async () => {
 				await page.evaluate(() => {
 					globalThis.target.style.height = '0';
 					globalThis.target.style.width = '0';
@@ -144,7 +144,7 @@ module.exports = async (page, params) => {
 				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 			});
 
-			it('with `callback` and `polling` does not fires a callback on a hidden element', async () => {
+			it('with `callback` and `polling`: doesn\'t fire the callback on a hidden element', async () => {
 				await page.evaluate(() => {
 					globalThis.target.style.height = '0';
 					globalThis.target.style.width = '0';
@@ -162,7 +162,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 			});
 
-			it('with `threshold: 0.5` element is positioned at the bottom of the page', async () => {
+			it('with `threshold: 0.5`: the element is positioned at the bottom of the page', async () => {
 				await page.setViewportSize({
 					width: 600,
 					height: 300
@@ -180,7 +180,7 @@ module.exports = async (page, params) => {
 				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 			});
 
-			it('with `threshold: 0.5`, `polling` element is positioned at the bottom of the page', async () => {
+			it('with `threshold: 0.5` and `polling`: the element is positioned at the bottom of the page', async () => {
 				await page.setViewportSize({
 					width: 600,
 					height: 300
@@ -199,7 +199,7 @@ module.exports = async (page, params) => {
 				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 			});
 
-			it('with `threshold: 0.5` and an element that is 0.2 visible won\'t fire a `callback`', async () => {
+			it('with `threshold: 0.5` and the element that is 0.2 visible: doesn\'t fire the callback', async () => {
 				await page.setViewportSize({
 					width: 600,
 					height: 300
@@ -219,7 +219,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 			});
 
-			it('call `remove` stops observe of an element', async () => {
+			it('removing an element from observing', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = true,
@@ -233,7 +233,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 			});
 
-			it('suspended with `callback` does not fires a callback', async () => {
+			it('suspending with `callback`: doesn\'t fire the callback', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = true,
@@ -248,7 +248,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 			});
 
-			it('suspended and unsuspend with `callback` fires a callback', async () => {
+			it('suspending/unsuspending with `callback`: fires the callback', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = true,
@@ -266,7 +266,7 @@ module.exports = async (page, params) => {
 				await expectAsync(page.evaluate('globalThis.tmp === true')).toBeResolved();
 			});
 
-			it('`reObserve` with an element and threshold provided', async () => {
+			it('re-observing with an element and threshold provided', async () => {
 				await page.evaluate(() => globalThis.tmp = 0);
 
 				await getInView(strategy).evaluate((ctx) => {

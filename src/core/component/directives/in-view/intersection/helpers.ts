@@ -9,6 +9,8 @@
 export const hasIntersection =
 	// tslint:disable-next-line strict-type-predicates
 	typeof IntersectionObserver === 'function' &&
+
 	// tslint:disable-next-line strict-type-predicates
 	typeof IntersectionObserverEntry === 'function' &&
+
 	'intersectionRatio' in IntersectionObserverEntry.prototype;

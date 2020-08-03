@@ -13,11 +13,13 @@ import {
 
 	InViewGroup,
 	InitOptions,
+
 	ObservableElement,
 	ObservableElementsThresholdMap,
 	ObservableThresholdMap,
-	Size,
-	ObservablesByGroup
+	ObservablesByGroup,
+
+	Size
 
 } from 'core/component/directives/in-view/interface';
 
@@ -75,7 +77,7 @@ export default abstract class AbstractInView {
 	/**
 	 * Suspends the specified element or elements by the specified group
 	 *
-	 * @param el
+	 * @param groupOrElement
 	 * @param [threshold]
 	 */
 	suspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
@@ -87,15 +89,17 @@ export default abstract class AbstractInView {
 				return;
 			}
 
-			const observable = this.getEl(groupOrElement, threshold);
+			const
+				observable = this.getEl(groupOrElement, threshold);
 
-			if (!observable) {
+			if (observable == null) {
 				return;
 			}
 
-			let map = suspendedElements.get(groupOrElement);
+			let
+				map = suspendedElements.get(groupOrElement);
 
-			if (!map) {
+			if (map == null) {
 				suspendedElements.set(groupOrElement, map = new Map());
 			}
 
@@ -111,7 +115,7 @@ export default abstract class AbstractInView {
 	/**
 	 * Unsuspends the specified element or elements by the specified group
 	 *
-	 * @param el
+	 * @param groupOrElement
 	 * @param [threshold]
 	 */
 	unsuspend(groupOrElement: InViewGroup | Element, threshold?: number): void {
@@ -127,11 +131,11 @@ export default abstract class AbstractInView {
 				map = suspendedElements.get(groupOrElement),
 				observable = map?.get(threshold);
 
-			if (!observable) {
+			if (observable == null || map == null) {
 				return;
 			}
 
-			map!.delete(threshold);
+			map.delete(threshold);
 			this.observe(observable.node, observable);
 
 		} else {
@@ -142,7 +146,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Returns an observable element parameters
+	 * Returns an observable element
 	 *
 	 * @param el
 	 * @param threshold
@@ -221,9 +225,9 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Re-initialize observation of the specified element or group
+	 * Re-initializes observation of the specified element or group
 	 *
-	 * @param el
+	 * @param groupOrElement
 	 * @param threshold
 	 */
 	reObserve(groupOrElement: InViewGroup | Element, threshold?: number): void {
@@ -242,7 +246,7 @@ export default abstract class AbstractInView {
 	 *
 	 * @param el
 	 * @param [threshold]
-	 * @param [suspend] – if this option is provided as `true` element will be not be deleted from `observablesByGroup`
+	 * @param [suspend] – if true, the element isn't deleted from `observablesByGroup`
 	 */
 	unobserve(el: Element, threshold?: number, suspend?: boolean): boolean {
 		const
@@ -309,7 +313,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Puts an observable element in the specified map
+	 * Puts an observable element into the specified map
 	 *
 	 * @param map
 	 * @param observable
@@ -333,7 +337,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * All maps combined into one
+	 * Returns all maps combined into one
 	 */
 	protected maps(): ObservableElementsThresholdMap {
 		return new Map([
@@ -343,7 +347,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Returns a map which contains an element
+	 * Returns a map which contains the specified element
 	 * @param el
 	 */
 	protected getElMap(el: Element): ObservableElementsThresholdMap {
@@ -351,7 +355,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Initializes element from an observable queue
+	 * Initializes an element from the observable queue
 	 */
 	protected popAwaiting(): void {
 		const
@@ -379,6 +383,9 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Sets a size of the specified observable element
+	 *
+	 * @param observable
+	 * @param size
 	 */
 	protected setObservableSize(observable: ObservableElement, size: Size): void {
 		observable.size.width = size.width;
@@ -409,7 +416,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Removes element from observer data
+	 * Removes an element from the observer data
 	 *
 	 * @param observable
 	 * @param [suspend]

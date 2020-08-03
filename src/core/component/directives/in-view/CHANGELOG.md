@@ -23,6 +23,10 @@ Changelog
 
 * Fixed an issue with `polling` strategy won't fire a `callback`
 
+#### :house: Internal
+
+* Fixed ESLint warnings
+
 ## v3.0.0-rc.19 (2020-05-26)
 
 #### :rocket: New Feature

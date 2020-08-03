@@ -12,18 +12,18 @@ import MutationObserverStrategy from 'core/component/directives/in-view/mutation
 import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
 
 export interface Observable {
-	node: Element;
 	id: string;
-	isLeaving: boolean;
+	node: Element;
 	size: Size;
+	isLeaving: boolean;
 
 	/**
-	 * Indicates the time at which the element enters the viewport relative to the creation of the document.
+	 * Indicates the time at which the element enters the viewport relative to the document creation
 	 */
 	timeIn?: DOMHighResTimeStamp;
 
 	/**
-	 * Indicates the time at which the element leaves the viewport relative to the creation of the document.
+	 * Indicates the time at which the element leaves the viewport relative to the document creation
 	 */
 	timeOut?: DOMHighResTimeStamp;
 
@@ -56,13 +56,13 @@ export interface ObserveOptions {
 	delay?: number;
 
 	/**
-	 * Only for environments that doesn't support intersection observer.
+	 * Only for environments that don't support intersection observer.
 	 *
-	 * If true, the element will not be placed in the position map;
+	 * If true, the element won't be placed in the position map;
 	 * instead, the method of polling the positions of the elements will be used.
-	 * Every 75 milliseconds each observable elements will be asked about its position using getBoundingClientRect
+	 * Every 75 milliseconds each observable elements will be asked about its position by using getBoundingClientRect.
 	 *
-	 * Notice: May slowdown your app performance, use it carefully
+	 * Notice: May slowdown your app performance, use it carefully.
 	 */
 	polling?: boolean;
 
@@ -129,9 +129,12 @@ export type ObservablesByGroup = Map<InViewGroup, Set<ObservableElement>>;
 
 export type AdapteeType = 'mutation' | 'observer';
 export type AdapteeInstance = typeof MutationObserverStrategy | typeof IntersectionObserverStrategy;
+
 export type InViewGroup = string | number | symbol;
 export type RemoveStrategy = 'remove' | 'deactivate';
+
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
+
 export type ObservableElementsMap = Map<Element, ObservableElement>;
 export type ObservableThresholdMap = Map<number, ObservableElement>;
 export type ObservableElementsThresholdMap = Map<Element, ObservableThresholdMap>;

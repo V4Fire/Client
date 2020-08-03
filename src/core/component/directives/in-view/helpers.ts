@@ -9,7 +9,7 @@
 import { InitOptions, AdapteeInstance } from 'core/component/directives/in-view/interface';
 
 /**
- * Returns a first adaptee which is acceptable
+ * Returns the first adaptee which is acceptable
  * @param strategies
  */
 export function getAdaptee(strategies: AdapteeInstance[]): CanUndef<AdapteeInstance> {
@@ -37,8 +37,8 @@ export function valueValidator(value: CanUndef<InitOptions>): boolean {
 /**
  * Returns true if the specified element is in view
  *
- * @param elRect - Element DOMRect
- * @param [threshold] - Ratio of intersection area to total bounding box area for the observed target
+ * @param elRect - element DOMRect
+ * @param [threshold] - ratio of an intersection area to the total bounding box area for the observed target
  * @param [scrollRoot]
  */
 export function isInView(elRect: DOMRect, threshold: number = 1, scrollRoot?: Element): boolean {
