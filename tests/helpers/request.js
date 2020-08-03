@@ -76,14 +76,20 @@ class Request {
 	 */
 	interceptRequest(page, url, response, timeout) {
 		return new Promise((res, rej) => {
+			const handler = (route) => {
+				route.fulfill({status: 200, ...response});
+				page.unroute(url, handler);
+				res();
+			};
+
 			if (timeout != null) {
-				setTimeout(rej, timeout);
+				setTimeout(() => {
+					page.unroute(url, handler);
+					rej();
+				}, timeout);
 			}
 
-			page.route(url, (route) => {
-				route.fulfill({status: 200, ...response});
-				res();
-			});
+			page.route(url, handler);
 		});
 	}
 
