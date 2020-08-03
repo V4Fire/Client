@@ -246,7 +246,8 @@ export default abstract class AbstractInView {
 	 *
 	 * @param el
 	 * @param [threshold]
-	 * @param [suspend] – if true, the element isn't deleted from `observablesByGroup`
+	 * @param [suspend] - if true then the element will not be removed completely,
+	 * later it will be possible to resume tracking the element using the `unsuspend` method.
 	 */
 	unobserve(el: Element, threshold?: number, suspend?: boolean): boolean {
 		const
