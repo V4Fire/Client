@@ -10,7 +10,7 @@ This module provides a directive to track elements entering or leaving the viewp
 
 | EventName  | Description                                                      | Payload description    | Payload      |
 | ---------- |----------------------------------------------------------------- | ---------------------- |------------- |
-| `callback` | Element in the viewport for N ms                                 | `Observable` element   | `Observable` |
+| `callback` | Element in the viewport for `delay` ms                           | `Observable` element   | `Observable` |
 | `onEnter`  | Element passed the specified `threshold` and enters the viewport | `Observable` element   | `Observable` |
 | `onLeave`  | Element passed the specified `threshold` and leaves the viewport | `Observable` element   | `Observable` |
 
