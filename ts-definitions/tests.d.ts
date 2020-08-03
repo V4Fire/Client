@@ -591,6 +591,11 @@ declare namespace BrowserTests {
 		 * @param event
 		 */
 		waitForRequestsEvents(page: Playwright.Page, urls: string[], event: string): Promise<void>;
+
+		/**
+		 * Generates a a random url
+		 */
+		getRandomUrl(): string;
 	}
 }
 

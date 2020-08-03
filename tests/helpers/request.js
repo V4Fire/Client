@@ -88,6 +88,13 @@ class Request {
 	}
 
 	/**
+	 * @see [[BrowserTests.Request.getRandomUrl]]
+	 */
+	getRandomUrl() {
+		return `https://v4fire-random-url.com/${String(Math.random()).substring(4)}`;
+	}
+
+	/**
 	 * Parent class
 	 * @type  {BrowserTests.Helpers}
 	 */
