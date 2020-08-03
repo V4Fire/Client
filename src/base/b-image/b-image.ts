@@ -127,7 +127,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			return;
 		}
 
-		this.setMod('progress', true);
+		void this.setMod('progress', true);
 
 		const img = new Image();
 		img.src = this.src;
@@ -229,8 +229,8 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			this.updateCalculatedImageRatio(img);
 		}
 
-		this.setMod('progress', false);
-		this.setMod('showError', false);
+		void this.setMod('progress', false);
+		void this.setMod('showError', false);
 
 		imgRef[$$.img] = cssImg;
 		Object.assign(imgRef.style, {
@@ -249,13 +249,13 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * @emits loadFail()
 	 */
 	protected onImageLoadFailed(err: CanUndef<Error | TaskCtx>): void {
-		this.setMod('progress', false);
+		void this.setMod('progress', false);
 
 		if (err && 'type' in err && err.type === 'clearAsync') {
 			return;
 		}
 
-		this.setMod('showError', true);
+		void this.setMod('showError', true);
 		this.emitError('loadFail', err);
 	}
 
