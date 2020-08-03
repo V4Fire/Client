@@ -32,7 +32,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed ESLint warnings:
   * `core/component/directives/in-view`
   * `traits/i-history`
-  * `traits/i-history`
+  * `traits/i-access`
+  * `traits/i-icon`
+  * `traits/i-width`
+  * `traits/i-visible`
+  * `traits/i-size`
+  * `traits/i-progress`
   * `super/i-page`
   * `super/i-dynamic-page`
   * `super/i-input`

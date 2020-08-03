@@ -18,7 +18,7 @@ interface Sprite {
 }
 
 function icons(id?: string): Sprite {
-	if (id) {
+	if (id != null) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {
 				return iconsList[i](id).default;
@@ -37,7 +37,7 @@ let
 	ctx;
 
 if (IS_PROD) {
-	// @ts-ignore
+	// @ts-ignore (require)
 	ctx = (<any>require).context(
 		'!!svg-sprite!svgo!@sprite',
 		true,
@@ -45,7 +45,7 @@ if (IS_PROD) {
 	);
 
 } else {
-	// @ts-ignore
+	// @ts-ignore (require)
 	ctx = (<any>require).context(
 		'!!svg-sprite!@sprite',
 		true,
