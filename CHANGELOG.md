@@ -27,6 +27,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed an issue with `polling` strategy won't fire a `callback` `inView`
 * Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
 
+#### :house: Internal
+
 * Fixed ESLint warnings:
   * `core/component/directives/in-view`
   * `traits/i-history`
