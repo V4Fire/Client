@@ -26,7 +26,7 @@ function getVarsDecl({wrap} = {}) {
 	const decl = `
 window[${globals.MODULE_DEPENDENCIES}] = {fileCache: Object.create(null)};
 
-var GLOBAL_NONCE = '${config.csp.nonce() || ''}' || undefined;
+var GLOBAL_NONCE = ${JSON.stringify(config.csp.nonce() || '')} || undefined;
 
 var PATH = Object.create(null);
 

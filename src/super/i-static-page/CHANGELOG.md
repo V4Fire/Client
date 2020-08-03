@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.49 ()
+
+#### :bug: Bug Fix
+
+* Fixed providing of `GLOBAL_NONCE`
+
 ## v3.0.0-rc.48 (2020-08-02)
 
 #### :bug: Bug Fix
