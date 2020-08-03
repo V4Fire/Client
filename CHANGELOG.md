@@ -38,6 +38,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `traits/i-visible`
   * `traits/i-size`
   * `traits/i-progress`
+  * `traits/i-observe-dom`
   * `super/i-page`
   * `super/i-dynamic-page`
   * `super/i-input`
