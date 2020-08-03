@@ -18,7 +18,7 @@ export default abstract class iHistory extends iBlock {
 	/**
 	 * Component history
 	 */
-	abstract history: History<iHistory>;
+	abstract history: History;
 
 	/**
 	 * Handler: was changed the visibility state of the top of a content
