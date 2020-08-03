@@ -148,7 +148,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 		this.async
 			.promise(img.init, {label: $$.loadImage})
-			.then(() => this.onImageLoadSuccess(img), this.onImageLoadFailed);
+			.then(() => this.onImageLoadSuccess(img), this.onImageLoadFailed.bind(this));
 	}
 
 	/**
