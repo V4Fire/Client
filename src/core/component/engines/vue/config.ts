@@ -43,11 +43,15 @@ const
 	UNRECOGNIZED_COMPONENT_NAME = 'unrecognized-component',
 	ROOT_COMPONENT_NAME = 'root-component';
 
+interface VueWithComponentTag extends Vue {
+	_componentTag?: string;
+}
+
 /**
  * Returns a name of the specified component
  * @param component
  */
-function getComponentName(component: Vue | ComponentInterface): string {
+function getComponentName(component: VueWithComponentTag | ComponentInterface): string {
 	if ('componentName' in component) {
 		return component.componentName;
 	}
@@ -56,8 +60,14 @@ function getComponentName(component: Vue | ComponentInterface): string {
 		return ROOT_COMPONENT_NAME;
 	}
 
-	if (component.$options.name != null) {
+	// @see https://github.com/V4Fire/Client/issues/312
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (component?.$options?.name != null) {
 		return component.$options.name;
+	}
+
+	if (Object.isString(component._componentTag)) {
+		return component._componentTag;
 	}
 
 	return UNRECOGNIZED_COMPONENT_NAME;
