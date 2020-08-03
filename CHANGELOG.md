@@ -42,6 +42,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `super/i-page`
   * `super/i-dynamic-page`
   * `super/i-input`
+  * `form/b-button`
+
+#### :nail_care: Polish
+
+* Added documentation `bButton`
 
 ## v3.0.0-rc.48 (2020-08-02)
 
