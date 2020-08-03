@@ -26,6 +26,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Marked `inViewAdapter/stopObserve` as deprecated
 * Fixed an issue with `polling` strategy won't fire a `callback` `inView`
 * Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
+* Fixed providing of `GLOBAL_NONCE` `iStaticPage`
 
 #### :house: Internal
 
