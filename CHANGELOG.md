@@ -30,6 +30,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bImage`
   * `bIcon`
   * `bProgressIcon`
+  * `global/g-debug`
+  * `global/g-def`
+  * `global/g-hint`
+  * `global/g-icon`
 
 ## v3.0.0-rc.50 (2020-08-03)
 
