@@ -22,12 +22,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed ESLint warnings:
   * `bImage`
   * `bIcon`
+  * `bProgressIcon`
 
 #### :nail_care: Polish
 
 * Added documentation:
   * `bImage`
   * `bIcon`
+  * `bProgressIcon`
 
 ## v3.0.0-rc.50 (2020-08-03)
 
