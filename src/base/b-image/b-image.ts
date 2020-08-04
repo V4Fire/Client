@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-image/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 
 import { TaskCtx } from 'core/async';

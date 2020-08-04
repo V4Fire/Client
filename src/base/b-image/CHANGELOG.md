@@ -18,3 +18,7 @@ Changelog
 #### :house: Internal
 
 * Fixed ESLint warnings
+
+#### :nail_care: Polish
+
+* Added documentation
