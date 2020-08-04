@@ -16,6 +16,25 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue with `reObserve` method `inView`
+* Fixed getting an image URL for IE `bImage`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+  * `global/g-debug`
+  * `global/g-def`
+  * `global/g-hint`
+  * `global/g-icon`
 
 ## v3.0.0-rc.50 (2020-08-03)
 

@@ -536,7 +536,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Resets the component value to default
-	 * @emits reset()
+	 * @emits `reset()`
 	 */
 	@p({replace: false})
 	@wait('ready')
