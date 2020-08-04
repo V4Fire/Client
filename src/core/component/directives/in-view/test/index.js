@@ -248,7 +248,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 			});
 
-			it('suspending first observable by the group doesn\'t fires a callback, second observable without group fires a callback', async () => {
+			it('suspending first observable by the group doesn\'t fire a callback, second observable without group fire a callback', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = 1,
