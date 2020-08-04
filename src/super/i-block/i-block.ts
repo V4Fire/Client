@@ -2132,6 +2132,16 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * Returns true if the specified object is a component
+	 *
+	 * @param obj
+	 * @param [constructor] - component constructor
+	 */
+	isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
+		return Object.isTruly(obj) && (<Dictionary>obj).instance instanceof (constructor ?? iBlock);
+	}
+
+	/**
 	 * This method works as a two-way connector between a local storage and a component.
 	 *
 	 * When the component initializes, it asks the local storage for data that associated to this component
@@ -2209,16 +2219,6 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		return res;
-	}
-
-	/**
-	 * Returns true if the specified object is a component
-	 *
-	 * @param obj
-	 * @param [constructor] - component constructor
-	 */
-	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
-		return Object.isTruly(obj) && (<Dictionary>obj).instance instanceof (constructor ?? iBlock);
 	}
 
 	/**

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.54 (2020-08-04)
+
+#### :house: Internal
+
+* Marked as public `iBlock/isComponent`
+
 ## v3.0.0-rc.53 (2020-08-04)
 
 #### :bug: Bug Fix
