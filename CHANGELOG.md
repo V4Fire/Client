@@ -15,11 +15,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed getting an image URL for IE `b-image`
+* Fixed getting an image URL for IE `bImage`
 
 #### :house: Internal
 
-* Fixed ESLint warnings `b-image`
+* Fixed ESLint warnings `bImage`
+
+#### :nail_care: Polish
+
+* Added documentation `bImage`
 
 ## v3.0.0-rc.50 (2020-08-03)
 
