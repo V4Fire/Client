@@ -8,7 +8,7 @@ This module provides a component to create a button.
 
 * The component implements [[iAccess]], [[iOpenToggle]], [[iVisible]], [[iWidth]], [[iSize]] traits.
 
-* The component is compiled as functional if there are no provided `dataProvider` and `href` props.
+* The component is used as functional if there are no provided `dataProvider` and `href` props.
 
 * The component can be used as flyweight.
 
