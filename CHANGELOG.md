@@ -19,11 +19,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Fixed ESLint warnings `bImage`
+* Fixed ESLint warnings:
+  * `bImage`
+  * `bIcon`
 
 #### :nail_care: Polish
 
-* Added documentation `bImage`
+* Added documentation:
+  * `bImage`
+  * `bIcon`
 
 ## v3.0.0-rc.50 (2020-08-03)
 
