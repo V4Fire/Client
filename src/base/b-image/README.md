@@ -40,3 +40,23 @@ This module provides a component to load an image with support of features:
   :overlayImg = require('assets/overlay.jpg')
 .
 ```
+
+## Slots
+
+The component supports a bunch of slots to provide:
+
+1. `overlay` to provide an overlay image till loading is completed.
+
+```
+< b-image :src = require('assets/my-img.jpg')
+  < template #overlay
+    The image is loading...
+```
+
+2. `broken` to provide an error image when the original image wasn't successfully loaded.
+
+```
+< b-image :src = require('assets/my-img.jpg')
+  < template #broken
+    The image can't be loaded :(
+```
