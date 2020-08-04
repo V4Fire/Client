@@ -13,7 +13,8 @@ const
 
 const
 	fs = require('fs-extra-promise'),
-	delay = require('delay');
+	delay = require('delay'),
+	buble = require('buble');
 
 const
 	{Filters} = require('snakeskin');
@@ -62,13 +63,16 @@ function getScriptDecl(lib, body) {
 
 	body = body || '';
 
+	const
+		isInline = Boolean(needInline(lib.inline) || body);
+
 	const attrs = normalizeAttrs({
-		...Object.select(lib, lib.inline || body ? [] : ['staticAttrs', 'defer', 'src']),
+		...Object.select(lib, isInline ? [] : ['staticAttrs', 'defer', 'src']),
 		...nonce,
 		...lib.attrs
 	});
 
-	if (needInline(lib.inline) && !body) {
+	if (isInline && !body) {
 		return (async () => {
 			while (!fs.existsSync(lib.src)) {
 				await delay(500);
@@ -94,7 +98,14 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (lib.documentWrite) {
-		return `document.write(\`<script ${attrs}\` + '><' + '/script>');`;
+		let
+			decl = `document.write(\`<script ${attrs}\` + '><' + '/script>');`;
+
+		if (config.es() === 'ES5') {
+			decl = buble.transform(decl).code;
+		}
+
+		return decl;
 	}
 
 	return `<script ${attrs}>${body}</script>`;
@@ -130,20 +141,51 @@ function getStyleDecl(lib, body) {
 	body = body || '';
 
 	const
-		rel = lib.attrs?.rel ?? 'stylesheet';
+		rel = lib.attrs?.rel ?? 'stylesheet',
+		isInline = Boolean(needInline(lib.inline) || body);
 
-	const attrs = normalizeAttrs({
+	const attrsObj = {
 		staticAttrs: lib.staticAttrs,
 		...nonce,
-		...lib.attrs,
-		...lib.inline || body ? null : {href: lib.src, rel},
-		...lib.defer ? {rel: 'preload', onload: `this.rel='${rel}'`} : null
-	});
+		...lib.attrs
+	};
+
+	if (!isInline) {
+		Object.assign(attrsObj, {
+			href: lib.src,
+			rel
+		});
+
+		if (lib.defer) {
+			Object.assign(attrsObj, {
+				rel: 'preload',
+				onload: `this.rel='${rel}'`
+			});
+		}
+	}
 
 	const
-		wrap = (decl) => lib.documentWrite ? `document.write(\`${decl}\`);` : decl;
+		attrs = normalizeAttrs(attrsObj);
 
-	if (needInline(lib.inline) && !body) {
+	const wrap = (decl) => {
+		if (lib.documentWrite) {
+			decl = `document.write(\`${decl}\`);`;
+
+			if (isInline) {
+				return decl;
+			}
+
+			if (config.es() === 'ES5') {
+				decl = buble.transform(decl).code;
+			}
+
+			return decl;
+		}
+
+		return decl;
+	};
+
+	if (isInline && !body) {
 		return (async () => {
 			while (!fs.existsSync(lib.src)) {
 				await delay(500);
@@ -182,8 +224,18 @@ function getLinkDecl(link) {
 		...link.attrs
 	});
 
-	const decl = `<link ${attrs}>`;
-	return link.documentWrite ? `document.write(\`${decl}\`);` : decl;
+	let
+		decl = `<link ${attrs}>`;
+
+	if (link.documentWrite) {
+		decl = `document.write(\`${decl}\`);`;
+
+		if (config.es() === 'ES5') {
+			decl = buble.transform(decl).code;
+		}
+	}
+
+	return decl;
 }
 
 exports.normalizeAttrs = normalizeAttrs;

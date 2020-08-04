@@ -94,6 +94,10 @@ function getScriptDeclByName(name, {
 }`;
 	}
 
+	if (config.es() === 'ES5') {
+		decl = buble.transform(decl).code;
+	}
+
 	return wrap ? getScriptDecl(decl) : decl;
 }
 
@@ -213,6 +217,10 @@ function getStyleDeclByName(name, {
 		decl = `if ('${rname}' in PATH) {
 	${decl}
 }`;
+	}
+
+	if (config.es() === 'ES5') {
+		decl = buble.transform(decl).code;
 	}
 
 	return wrap ? getStyleDecl(decl) : decl;

@@ -38,7 +38,7 @@ try {
 				return typeof v === 'string' ? v : v.publicPath || v.path;
 			}
 
-			throw new ReferenceError(\`A resource by the path "\${prop}" is not defined\`);
+			throw new ReferenceError('A resource by the path "' + prop + '" is not defined');
 		}
 	});
 } catch(_) {}`;
