@@ -94,7 +94,7 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (lib.documentWrite) {
-		return `document.write('<script ${attrs}' + '><' + '/script>');`;
+		return `document.write(\`<script ${attrs}\` + '><' + '/script>');`;
 	}
 
 	return `<script ${attrs}>${body}</script>`;
@@ -140,17 +140,8 @@ function getStyleDecl(lib, body) {
 		...lib.defer ? {rel: 'preload', onload: `this.rel='${rel}'`} : null
 	});
 
-	const wrap = (decl) => {
-		if (lib.documentWrite) {
-			if (needInline() || body) {
-				return `document.write(\`${decl}\`);`;
-			}
-
-			return `document.write('${decl}');`;
-		}
-
-		return decl;
-	};
+	const
+		wrap = (decl) => lib.documentWrite ? `document.write(\`${decl}\`);` : decl;
 
 	if (needInline(lib.inline) && !body) {
 		return (async () => {
@@ -192,7 +183,7 @@ function getLinkDecl(link) {
 	});
 
 	const decl = `<link ${attrs}>`;
-	return link.documentWrite ? `document.write('${decl}');` : decl;
+	return link.documentWrite ? `document.write(\`${decl}\`);` : decl;
 }
 
 exports.normalizeAttrs = normalizeAttrs;

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.52 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed generation of code for a case `nonce() { return "<!--#echo var='NonceValue' -->"; }`
+
 ## v3.0.0-rc.50 (2020-08-03)
 
 #### :bug: Bug Fix

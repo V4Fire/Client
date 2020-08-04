@@ -74,13 +74,13 @@ function getScriptDeclByName(name, {
 	}
 
 	const attrs = normalizeAttrs({
-		staticAttrs: `src="' + PATH['${name}'] + '"`,
+		staticAttrs: `src="\${PATH['${name}']}"`,
 		defer: defer !== false,
 		...nonce
 	});
 
 	const script = [
-		`'<script ${attrs}' +`,
+		`\`<script ${attrs}\` +`,
 		"'><' +",
 		"'/script>'"
 	].join(' ');
@@ -200,14 +200,14 @@ function getStyleDeclByName(name, {
 	}
 
 	const attrs = normalizeAttrs({
-		staticAttrs: `href="' + PATH['${rname}'] + '"`,
+		staticAttrs: `href="\${PATH['${rname}']}"`,
 		rel: 'stylesheet',
 		defer: defer !== false,
 		...nonce
 	});
 
 	let
-		decl = `document.write('<link ${attrs}>');`;
+		decl = `document.write(\`<link ${attrs}>\`);`;
 
 	if (optional) {
 		decl = `if ('${rname}' in PATH) {
