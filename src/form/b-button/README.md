@@ -14,6 +14,8 @@ This module provides a component to create a button.
 
 * By default, the root tag of the component is `<span>`.
 
+* The component supports tooltips.
+
 * The component has `skeletonMarker`.
 
 ## Events

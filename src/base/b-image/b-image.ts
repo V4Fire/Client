@@ -223,7 +223,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image loading successfully completed
 	 *
 	 * @param img
-	 * @emits loadSuccess()
+	 * @emits `loadSuccess()`
 	 */
 	protected onImageLoadSuccess(img: HTMLImageElement | string): void {
 		let
@@ -265,7 +265,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image loading failed
 	 *
 	 * @param err
-	 * @emits loadFail()
+	 * @emits `loadFail(err: Error)`
 	 */
 	protected onImageLoadFailed(err: CanUndef<Error | TaskCtx>): void {
 		void this.setMod('progress', false);

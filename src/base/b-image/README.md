@@ -24,6 +24,13 @@ This module provides a component to load an image with support of features:
 
 * The component has `skeletonMarker`.
 
+## Events
+
+| EventName     | Description                            | Payload description | Payload  |
+| ------------- |--------------------------------------- | ------------------- |--------- |
+| `loadSuccess` | The image has been successfully loaded | -                   | -        |
+| `loadFail`    | The image hasn't been loaded           | `Error` object      | `Error`  |
+
 ## Usage
 
 ```
