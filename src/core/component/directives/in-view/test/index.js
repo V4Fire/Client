@@ -248,6 +248,28 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 			});
 
+			it('suspending first observable by the group doesn\'t fire a callback, second observable without group fire a callback', async () => {
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = 1,
+						delay: 200,
+						threshold: 0.7,
+						group: 'test'
+					});
+
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = 2,
+						delay: 100,
+						threshold: 0.8
+					});
+
+					setTimeout(() => ctx.suspend('test'), 0);
+				});
+
+				await delay(300);
+				expect(await page.evaluate(() => globalThis.tmp)).toBe(2);
+			});
+
 			it('suspending/unsuspending with `callback`: fires the callback', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
@@ -263,7 +285,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 
 				await getInView(strategy).evaluate((ctx) => ctx.unsuspend('test'));
-				await expectAsync(page.evaluate('globalThis.tmp === true')).toBeResolved();
+				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 			});
 
 			it('re-observing with an element and threshold provided', async () => {
@@ -276,10 +298,27 @@ module.exports = async (page, params) => {
 						threshold: 0.7
 					});
 
-					setTimeout(() => ctx.reObserve(globalThis.target, 0.7), 150);
+					setTimeout(() => ctx.reObserve(globalThis.target, 0.7), 400);
 				});
 
-				await expectAsync(page.evaluate('globalThis.tmp === 2')).toBeResolved();
+				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
+			});
+
+			it('re-observing with a group provided', async () => {
+				await page.evaluate(() => globalThis.tmp = 0);
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp += 1,
+						delay: 100,
+						threshold: 0.7,
+						group: 'test-group'
+					});
+
+					setTimeout(() => ctx.reObserve('test-group'), 400);
+				});
+
+				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
 			});
 		});
 	});
