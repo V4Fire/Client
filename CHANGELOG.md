@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `reObserve` method `inView`
+* Fixed an issue with `reObserve` `core/component/directives/in-view`
 * Fixed getting an image URL for IE `bImage`
 
 #### :house: Internal

@@ -154,9 +154,9 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	unobserve(el: Element, unobserveOptionsOrThreshold?: UnobserveOptions | number): boolean {
+	unobserve(el: Element, unobserveOptsOrThreshold?: UnobserveOptions | number): boolean {
 		const
-			res = super.unobserve(el, unobserveOptionsOrThreshold);
+			res = super.unobserve(el, unobserveOptsOrThreshold);
 
 		if (!this.pollingElements.has(el)) {
 			this.recalculateDeffer();

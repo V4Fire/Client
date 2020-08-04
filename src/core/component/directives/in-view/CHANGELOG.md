@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `reObserve` method
+* Fixed an issue with `reObserve`
 
 ## v3.0.0-rc.49 (2020-08-03)
 

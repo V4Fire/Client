@@ -258,19 +258,19 @@ export default abstract class AbstractInView {
 	 * Removes or suspends the specified element
 	 *
 	 * @param el
-	 * @param [unobserveOptionsOrThreshold]
+	 * @param [unobserveOptsOrThreshold]
 	 */
-	unobserve(el: Element, unobserveOptionsOrThreshold?: UnobserveOptions | number): boolean {
+	unobserve(el: Element, unobserveOptsOrThreshold?: UnobserveOptions | number): boolean {
 		let
 			threshold: CanUndef<number>,
 			suspend: CanUndef<boolean>;
 
-		if (Object.isNumber(unobserveOptionsOrThreshold)) {
-			threshold = unobserveOptionsOrThreshold;
+		if (Object.isNumber(unobserveOptsOrThreshold)) {
+			threshold = unobserveOptsOrThreshold;
 
-		} else if (Object.isPlainObject(unobserveOptionsOrThreshold)) {
-			threshold = unobserveOptionsOrThreshold.threshold;
-			suspend = unobserveOptionsOrThreshold.suspend;
+		} else if (Object.isPlainObject(unobserveOptsOrThreshold)) {
+			threshold = unobserveOptsOrThreshold.threshold;
+			suspend = unobserveOptsOrThreshold.suspend;
 		}
 
 		const
