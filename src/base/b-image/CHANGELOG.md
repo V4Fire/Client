@@ -9,12 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.51 (2020-08-03)
+## v3.0.0-rc.51 (2020-08-04)
 
 #### :bug: Bug Fix
 
-* Fixed getting an image url for IE
+* Fixed getting an image URL for IE
 
 #### :house: Internal
 
-* Fixed ESLint warnings in `b-image`
+* Fixed ESLint warnings

@@ -11,15 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.51 (2020-08-03)
+## v3.0.0-rc.51 (2020-08-04)
 
 #### :bug: Bug Fix
 
-* Fixed getting an image url for IE
+* Fixed getting an image URL for IE `b-image`
 
 #### :house: Internal
 
-* Fixed ESLint warnings in `b-image`
+* Fixed ESLint warnings `b-image`
 
 ## v3.0.0-rc.50 (2020-08-03)
 

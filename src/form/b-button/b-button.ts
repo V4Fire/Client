@@ -231,7 +231,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	 * Handler: button trigger
 	 *
 	 * @param e
-	 * @emits click(e: Event)
+	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
 		if (this.type !== 'link') {

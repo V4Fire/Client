@@ -114,14 +114,14 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	};
 
 	/**
-	 * Initializes an image loading process
+	 * Initializes the image loading process
 	 */
 	@wait('ready', {label: $$.init})
 	protected init(): CanPromise<void> {
 		const
 			tmpSrc = <CanUndef<string>>this.tmp[this.src];
 
-		if (tmpSrc !== undefined) {
+		if (tmpSrc != null) {
 			this.updateHeight(tmpSrc);
 			this.onImageLoadSuccess(tmpSrc);
 			return;
@@ -136,11 +136,11 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			img.srcset = getSrcSet(this.srcset);
 		}
 
-		if (this.sizes !== undefined) {
+		if (this.sizes != null) {
 			img.sizes = this.sizes;
 		}
 
-		if (this.alt !== undefined) {
+		if (this.alt != null) {
 			img.alt = this.alt;
 		}
 
@@ -194,7 +194,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	}
 
 	/**
-	 * Saves an image style to the cache
+	 * Saves image styles to the cache
 	 */
 	@hook('beforeDestroy')
 	@wait('loading')
@@ -222,10 +222,10 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 */
 	protected onImageLoadSuccess(img: HTMLImageElement | string): void {
 		let
-			cssImg: string;
+			cssImg = '';
 
 		if (!Object.isString(img)) {
-			if (this.ratio === undefined) {
+			if (this.ratio == null) {
 				this.updateCalculatedImageRatio(img);
 			}
 
