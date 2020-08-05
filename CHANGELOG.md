@@ -11,6 +11,23 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.55 (2020-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `unsafe` after refactoring `core/component/render-function`
+* `iData`:
+  * Fixed an issue with `requestFilter` after refactoring
+  * Fixed an issue with `initLoad` after refactoring
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bRemoteProvider`
+
+#### :nail_care: Polish
+
+* Added documentation `bRemoteProvider`
+
 ## v3.0.0-rc.54 (2020-08-04)
 
 #### :house: Internal
