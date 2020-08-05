@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed an issue with `requestFilter` after refactoring
+* Fixed an issue with `initLoad` after refactoring
 
 ## v3.0.0-rc.48 (2020-08-02)
 

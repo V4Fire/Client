@@ -347,13 +347,20 @@ export default abstract class iData extends iBlock implements iProgress {
 
 		} else if (this.dp?.baseURL != null) {
 			const
-				defParams = this.getDefaultRequestParams('get');
+				needRequest = Object.isArray(this.getDefaultRequestParams('get'));
 
-			if (Object.isArray(defParams)) {
+			if (needRequest) {
 				return $a
 					.nextTick(label)
 
 					.then(() => {
+						const
+							defParams = this.getDefaultRequestParams<this['DB']>('get');
+
+						if (defParams == null) {
+							return;
+						}
+
 						Object.assign(defParams[1], {
 							...label,
 							important: this.componentStatus === 'unloaded'
