@@ -842,7 +842,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 
 		const
-			f = field.get('requestFilter'),
+			f = field.get<RequestFilter>('requestFilter'),
 			isEmpty = Object.size(res[0]) === 0;
 
 		const info = {
@@ -851,7 +851,11 @@ export default abstract class iData extends iBlock implements iProgress {
 			params: res[1]
 		};
 
-		if (f != null ? Object.isFunction(f) && !Object.isTruly(f.call(this, res[0], info)) : isEmpty) {
+		if (
+			Object.isTruly(f) ?
+				Object.isFunction(f) && !Object.isTruly(f.call(this, res[0], info)) :
+				isEmpty
+		) {
 			return;
 		}
 
