@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface Option {
+export interface Item {
 	label?: string;
 	value?: unknown;
 	href?: string;
@@ -17,14 +17,33 @@ export interface Option {
 	exterior?: string;
 	classes?: Dictionary<string>;
 	hint?: string;
+
 	preIcon?: string;
+
+	/**
+	 * Name of used component to show `preIcon`
+	 * @default `'b-icon'`
+	 */
 	preIconComponent?: string;
+
+	/**
+	 * Text of a hint that is shown on hovering of `preIcon`
+	 */
 	preIconHint?: string;
+
+	/**
+	 * Position of a `preIcon` hint to show
+	 */
 	preIconHintPos?: string;
+
 	icon?: string;
 	iconComponent?: string;
 	iconHint?: string;
 	iconHintPos?: string;
 	progressIcon?: string;
+
+	/**
+	 * Dictionary with extra HTML attributes of an item
+	 */
 	attrs?: Dictionary;
 }

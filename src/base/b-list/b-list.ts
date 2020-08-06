@@ -12,14 +12,17 @@ import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import { Option } from 'base/b-list/modules/interface';
+import { Option } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'base/b-list/modules/interface';
+export * from 'base/b-list/interface';
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to create a list of tabs/links
+ */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -28,6 +31,10 @@ export const
 	model: {
 		prop: 'valueProp',
 		event: 'onChange'
+	},
+
+	deprecatedProps: {
+		valueProp: 'itemsProp'
 	}
 })
 
@@ -77,7 +84,14 @@ export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Component value
 	 */
-	@field<bList>((o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val)))
+	@field<bList>((o) => o.sync.link<Option[]>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Option[]>>o.value ?? [];
+		}
+
+		return o.normalizeOptions(val);
+	}))
+
 	value!: Option[];
 
 	/**
@@ -163,7 +177,7 @@ export default class bList extends iData implements iVisible, iWidth {
 				val = String(this.active);
 
 			if (val in this.values) {
-				return this.block.element<HTMLAnchorElement>('link', {
+				return this.block?.element<HTMLAnchorElement>('link', {
 					id: this.values[val]
 				});
 			}
@@ -349,7 +363,7 @@ export default class bList extends iData implements iVisible, iWidth {
 			}
 
 			if (el.href === undefined) {
-				el.href = this.autoHref && el.value !== undefined ? `#${el.value}` : 'javascript:void(0)';
+				el.href = this.autoHref && el.value !== undefined ? `#${String(el.value)}` : 'javascript:void(0)';
 			}
 
 			res.push(el);
@@ -366,12 +380,15 @@ export default class bList extends iData implements iVisible, iWidth {
 	protected initComponentValues(): void {
 		const
 			values = {},
-			indexes = {},
+			indexes = {};
+
+		const
+			value = this.field.get<CanUndef<Option[]>>('value') ?? [],
 			active = this.field.get('activeStore');
 
-		for (let o = <Option[]>this.$fields.value || [], i = 0; i < o.length; i++) {
+		for (let i = 0; i < value.length; i++) {
 			const
-				el = o[i],
+				el = value[i],
 				val = el.value;
 
 			if (el.active && (this.multiple ? !(<string>val in <Dictionary>active) : active === undefined)) {
@@ -391,7 +408,11 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @param el
 	 */
 	protected getElHint(el: Option): string {
-		return el.iconHint != null ? el.iconHint : this.hideLabels ? t(el.label) : '';
+		if (el.iconHint != null) {
+			return el.iconHint;
+		}
+
+		return this.hideLabels ? t(el.label) : '';
 	}
 
 	/** @override */
@@ -444,7 +465,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	protected onActive(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,
-			id = Number(this.block.getElMod(target, 'link', 'id'));
+			id = Number(this.block?.getElMod(target, 'link', 'id'));
 
 		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);
