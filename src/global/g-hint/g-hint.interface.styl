@@ -7,179 +7,236 @@
  */
 
 $p = {
-	hintData: false
+	/**
+	 * Selector to a hint container
+	 */
+	location: '&',
+
+	/**
+	 * Name of the used attribute that contains data to show or false
+	 */
+	dataAttr: false
+
+	/**
+	 * Selector to a hint data container: it is used with hints that based on valued from attributes.
+	 * Basically, you don't need to change this value.
+	 */
+	content: "&::after"
+
+	/**
+	 * Dictionary with extra styles of a data container
+	 */
+	contentStyles: {}
+
+	/**
+	 * Selector of the "hint-arrow" to show.
+	 * Basically, you don't need to change this value.
+	 */
+	arrow: "&::before"
+
+	/**
+	 * Dictionary with extra styles of the "hint-arrow"
+	 */
+	arrowStyles: {}
+
 	showSelector: false
 	zIndexPos: overall
 
-	wrapper: "&"
-	arrow: "&::before"
-	content: "&::after"
+	rounding: 0.3rem
+
+	hideStyles: {
+		display: none
+	}
+
+	showStyles: {
+		display: block
+	}
 
 	horArrowSize: 0.4rem
 	vertArrowSize: 0.7rem
 
-	fontSize: 0.8rem
-	rounding: 0.3rem
-
 	color: #FEFEFE
 	bgColor: #616161
+
 	shadow: 0 0 0.2rem alpha(#111, 0.4)
 }
 
 g-hint
-	{$p.wrapper}
-		if $p.wrapper != "&"
+	{$p.location}
+		if $p.location != "&"
 			display none
 
 		else
 			display inline-block
 
-		{$p.content},
-		{$p.arrow}
-			position absolute
-			display none
-			text-shadow none
+		if $p.content
+			{$p.content}
+				position absolute
+				zIndex($p.zIndexPos)
 
-			if $p.fontSize
-				font-size $p.fontSize
+				if $p.bgColor
+					background-color $p.bgColor
 
-		{$p.content}
-			zIndex($p.zIndexPos)
-			text-transform none
-			border-radius $p.rounding
+				if $p.color
+					color $p.color
 
-			if $p.contentPadding
-				padding $p.contentPadding
+				if $p.dataAttr
+					content attr($p.dataAttr)
 
-			else
-				padding ($p.fontSize / 1.8)
+				border-radius $p.rounding
 
-			if $p.bgColor
-				background-color $p.bgColor
+				$p.hideStyles
+				$p.contentStyles
 
-			if $p.shadow
-				box-shadow $p.shadow
+		if $p.arrow
+			{$p.arrow}
+				position absolute
+				zIndex($p.zIndexPos, 1)
 
-			if $p.color
-				color $p.color
+				border $p.vertArrowSize solid transparent
+				content ""
 
-			if $p.hintData
-				content attr($p.hintData)
-
-		{$p.arrow}
-			zIndex($p.zIndexPos, 1)
-			border $p.vertArrowSize solid transparent
-			content ""
+				$p.hideStyles
+				$p.arrowStyles
 
 	if $p.showSelector
 		for $el in $p.showSelector
 			{$el}
-				if $p.wrapper != "&"
-					display block
+				if $p.location != "&"
+					$p.showStyles
 
-				{$p.content},
-				{$p.arrow}
-					display block
+				if $p.content
+					{$p.content}
+						$p.showStyles
 
-	{$p.wrapper}_pos_top,
-	{$p.wrapper}_pos_top-left,
-	{$p.wrapper}_pos_top-right
-		{$p.content}
-			bottom "calc(100% + %s)" % $p.vertArrowSize
+				if $p.arrow
+					{$p.arrow}
+						$p.showStyles
 
-		{$p.arrow}
-			top "calc(-%s - %s)" % ($p.vertArrowSize 1px)
-			border-top-color $p.bgColor
+	{$p.location}_pos_top,
+	{$p.location}_pos_top-left,
+	{$p.location}_pos_top-right
+		if $p.content
+			{$p.content}
+				bottom "calc(100% + %s)" % $p.vertArrowSize
 
-	{$p.wrapper}_pos_bottom,
-	{$p.wrapper}_pos_bottom-left,
-	{$p.wrapper}_pos_bottom-right
-		{$p.content}
-			top "calc(100% + %s)" % $p.vertArrowSize
+		if $p.arrow
+			{$p.arrow}
+				top "calc(-%s - %s)" % ($p.vertArrowSize 1px)
+				border-top-color $p.bgColor
 
-		{$p.arrow}
-			bottom "calc(-%s - %s)" % ($p.vertArrowSize 1px)
-			border-bottom-color $p.bgColor
+	{$p.location}_pos_bottom,
+	{$p.location}_pos_bottom-left,
+	{$p.location}_pos_bottom-right
+		if $p.content
+			{$p.content}
+				top "calc(100% + %s)" % $p.vertArrowSize
 
-	{$p.wrapper}_pos_top,
-	{$p.wrapper}_pos_bottom
-		{$p.content},
-		{$p.arrow}
-			left 50%
-			transform translateX(-50%)
+		if $p.arrow
+			{$p.arrow}
+				bottom "calc(-%s - %s)" % ($p.vertArrowSize 1px)
+				border-bottom-color $p.bgColor
 
-	{$p.wrapper}_pos_top-right,
-	{$p.wrapper}_pos_bottom-right
-		{$p.content}
-			left 0
+	{$p.location}_pos_top,
+	{$p.location}_pos_bottom
+		if $p.content
+			{$p.content}
+				left 50%
+				transform translateX(-50%)
 
-		{$p.arrow}
-			left "calc(%s + %s)" % ($p.vertArrowSize / 2 $p.rounding / 4 || 0px)
+		if $p.arrow
+			{$p.arrow}
+				left 50%
+				transform translateX(-50%)
 
-	{$p.wrapper}_pos_top-left,
-	{$p.wrapper}_pos_bottom-left
-		{$p.content},
-		{$p.arrow}
-			transform translateX(-100%)
+	{$p.location}_pos_top-right,
+	{$p.location}_pos_bottom-right
+		if $p.content
+			{$p.content}
+				left 0
 
-		{$p.content}
-			left 100%
+		if $p.arrow
+			{$p.arrow}
+				left "calc(%s + %s)" % ($p.vertArrowSize / 2 $p.rounding / 4 || 0px)
 
-		{$p.arrow}
-			left "calc(100% - %s - %s)" % ($p.vertArrowSize / 2 $p.rounding / 4 || 0px)
+	{$p.location}_pos_top-left,
+	{$p.location}_pos_bottom-left
+		if $p.content
+			{$p.content}
+				transform translateX(-100%)
+				left 100%
 
-	{$p.wrapper}_pos_left,
-	{$p.wrapper}_pos_left-top,
-	{$p.wrapper}_pos_left-bottom,
-	{$p.wrapper}_pos_right,
-	{$p.wrapper}_pos_right-top,
-	{$p.wrapper}_pos_right-bottom
-		{$p.arrow}
-			border-width $p.horArrowSize
+		if $p.arrow
+			{$p.arrow}
+				transform translateX(-100%)
+				left "calc(100% - %s - %s)" % ($p.vertArrowSize / 2 $p.rounding / 4 || 0px)
 
-	{$p.wrapper}_pos_left,
-	{$p.wrapper}_pos_right
-		{$p.content},
-		{$p.arrow}
-			bottom 50%
-			transform translateY(50%)
+	{$p.location}_pos_left,
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_left-bottom,
+	{$p.location}_pos_right,
+	{$p.location}_pos_right-top,
+	{$p.location}_pos_right-bottom
+		if $p.arrow
+			{$p.arrow}
+				border-width $p.horArrowSize
 
-	{$p.wrapper}_pos_right,
-	{$p.wrapper}_pos_right-top,
-	{$p.wrapper}_pos_right-bottom
-		{$p.content}
-			left "calc(100% + %s)" % ($p.horArrowSize / 1.1)
+	{$p.location}_pos_left,
+	{$p.location}_pos_right
+		if $p.content
+			{$p.content}
+				bottom 50%
+				transform translateY(50%)
 
-		{$p.arrow}
-			left "calc(100% - %s)" % ($p.horArrowSize / 1.1)
+		if $p.arrow
+			{$p.arrow}
+				bottom 50%
+				transform translateY(50%)
 
-			if $p.bgColor
-				border-right-color $p.bgColor
+	{$p.location}_pos_right,
+	{$p.location}_pos_right-top,
+	{$p.location}_pos_right-bottom
+		if $p.content
+			{$p.content}
+				left "calc(100% + %s)" % ($p.horArrowSize / 1.1)
 
-	{$p.wrapper}_pos_left,
-	{$p.wrapper}_pos_left-top,
-	{$p.wrapper}_pos_left-bottom
-		{$p.content}
-			right "calc(100% + %s)" % ($p.horArrowSize / 1.1)
+		if $p.arrow
+			{$p.arrow}
+				left "calc(100% - %s)" % ($p.horArrowSize / 1.1)
 
-		{$p.arrow}
-			right "calc(100% - %s)" % ($p.horArrowSize / 1.1)
+				if $p.bgColor
+					border-right-color $p.bgColor
 
-			if $p.bgColor
-				border-left-color $p.bgColor
+	{$p.location}_pos_left,
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_left-bottom
+		if $p.content
+			{$p.content}
+				right "calc(100% + %s)" % ($p.horArrowSize / 1.1)
 
-	{$p.wrapper}_pos_left-top,
-	{$p.wrapper}_pos_right-top
-		{$p.content}
-			top 0 - $p.rounding
+		if $p.arrow
+			{$p.arrow}
+				right "calc(100% - %s)" % ($p.horArrowSize / 1.1)
 
-		{$p.arrow}
-			top 0
+				if $p.bgColor
+					border-left-color $p.bgColor
 
-	{$p.wrapper}_pos_left-bottom,
-	{$p.wrapper}_pos_right-bottom
-		{$p.content}
-			bottom 0 - $p.rounding
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_right-top
+		if $p.content
+			{$p.content}
+				top 0 - $p.rounding
 
-		{$p.arrow}
-			top 0
+		if $p.arrow
+			{$p.arrow}
+				top 0
+
+	{$p.location}_pos_left-bottom,
+	{$p.location}_pos_right-bottom
+		if $p.content
+			{$p.content}
+				bottom 0 - $p.rounding
+
+		if $p.arrow
+			{$p.arrow}
+				top 0
