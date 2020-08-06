@@ -11,6 +11,28 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.56 ()
+
+#### :boom: Breaking Change
+
+* `bList`:
+  * Renamed `interface/Option` -> `interface/Item`
+  * Renamed `valueProp` -> `itemsProp`
+
+#### :rocket: New Feature
+
+* Added `gHint/interface.ts`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bList`
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bList`
+  * `gHint`
+
 ## v3.0.0-rc.55 (2020-08-05)
 
 #### :bug: Bug Fix
