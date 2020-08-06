@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.56 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `initLoad` error handling `iBlock`, `iData`
+
 ## v3.0.0-rc.55 (2020-08-05)
 
 #### :bug: Bug Fix

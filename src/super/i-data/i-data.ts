@@ -303,15 +303,6 @@ export default abstract class iData extends iBlock implements iProgress {
 			return;
 		}
 
-		if (opts.emitStartEvent !== false) {
-			this.emit('initLoadStart', opts);
-		}
-
-		opts = {
-			emitStartEvent: false,
-			...opts
-		};
-
 		const
 			{async: $a} = this;
 
@@ -320,72 +311,90 @@ export default abstract class iData extends iBlock implements iProgress {
 			join: 'replace'
 		};
 
-		$a
-			.clearAll({group: 'requestSync:get'});
+		const
+			callSuper = () => super.initLoad(() => this.db, opts);
 
-		if (this.isFunctional) {
-			return super.initLoad(() => {
-				if (data !== undefined) {
-					this.db = this.convertDataToDB<this['DB']>(data);
+		try {
+			if (opts.emitStartEvent !== false) {
+				this.emit('initLoadStart', opts);
+			}
+
+			opts = {
+				emitStartEvent: false,
+				...opts
+			};
+
+			$a
+				.clearAll({group: 'requestSync:get'});
+
+			if (this.isFunctional) {
+				return super.initLoad(() => {
+					if (data !== undefined) {
+						this.db = this.convertDataToDB<this['DB']>(data);
+					}
+
+					return this.db;
+				}, opts);
+			}
+
+			if (this.dataProvider != null && this.dp == null) {
+				this.syncDataProviderWatcher(false);
+			}
+
+			if (!opts.silent) {
+				this.componentStatus = 'loading';
+			}
+
+			if (data !== undefined) {
+				const db = this.convertDataToDB<this['DB']>(data);
+				void this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+
+			} else if (this.dp?.baseURL != null) {
+				const
+					needRequest = Object.isArray(this.getDefaultRequestParams('get'));
+
+				if (needRequest) {
+					return $a
+						.nextTick(label)
+
+						.then(() => {
+							const
+								defParams = this.getDefaultRequestParams<this['DB']>('get');
+
+							if (defParams == null) {
+								return;
+							}
+
+							Object.assign(defParams[1], {
+								...label,
+								important: this.componentStatus === 'unloaded'
+							});
+
+							return this.get(<RequestQuery>defParams[0], defParams[1]);
+						})
+
+						.then((data) => {
+							void this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
+							return callSuper();
+						})
+
+						.catch((err) => {
+							stderr(err);
+							return callSuper();
+						});
 				}
 
-				return this.db;
-			}, opts);
-		}
-
-		if (this.dataProvider != null && this.dp == null) {
-			this.syncDataProviderWatcher(false);
-		}
-
-		if (!opts.silent) {
-			this.componentStatus = 'loading';
-		}
-
-		if (data !== undefined) {
-			const db = this.convertDataToDB<this['DB']>(data);
-			void this.lfc.execCbAtTheRightTime(() => this.db = db, label);
-
-		} else if (this.dp?.baseURL != null) {
-			const
-				needRequest = Object.isArray(this.getDefaultRequestParams('get'));
-
-			if (needRequest) {
-				return $a
-					.nextTick(label)
-
-					.then(() => {
-						const
-							defParams = this.getDefaultRequestParams<this['DB']>('get');
-
-						if (defParams == null) {
-							return;
-						}
-
-						Object.assign(defParams[1], {
-							...label,
-							important: this.componentStatus === 'unloaded'
-						});
-
-						return this.get(<RequestQuery>defParams[0], defParams[1]);
-					})
-
-					.then((data) => {
-						void this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
-						return super.initLoad(() => this.db, opts);
-					})
-
-					.catch((err) => {
-						stderr(err);
-						return super.initLoad(() => this.db, opts);
-					});
+				if (this.db !== undefined) {
+					void this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
+				}
 			}
 
-			if (this.db !== undefined) {
-				void this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
-			}
-		}
+			return callSuper();
 
-		return super.initLoad(() => this.db, opts);
+		} catch (err) {
+			stderr(err);
+			return callSuper();
+		}
 	}
 
 	/**

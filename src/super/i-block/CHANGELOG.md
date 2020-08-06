@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.56 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `initLoad` error handling
+
 ## v3.0.0-rc.54 (2020-08-04)
 
 #### :house: Internal
