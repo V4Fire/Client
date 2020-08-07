@@ -1,0 +1,58 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * Generates a path from the specified sequence
+ *
+ * @param {!Array<string>} $arr
+ *
+ * @example
+ * ```styl
+ * // "foo.bar.bla"
+ * path(foo bar bla)
+ * ```
+ */
+path($arr)
+	join(".", $arr)
+
+/**
+ * Generates necessary rules for the specified component options and factory.
+ * The function is used to integrate a Design System.
+ *
+ * @param $p
+ * @param $fn
+ */
+generateRules($p, $fn)
+	if !$p.skipDsInheritance
+		//#if runtime has ds-vars
+		$fn($p.__vars__)
+		//#endif
+
+		//#unless runtime has ds-vars
+		$fn($p)
+		//#endunless
+
+		//#if runtime has ds-diff
+		&_diff_true
+			$fn($p.__diffVars__)
+
+		&_diff_false
+			$fn($p.__vars__)
+		//#endif
+
+/**
+ * Generates rules from object properties
+ *
+ * @param {Object} $opts
+ * @param {boolean=} $normalize
+*/
+interpolate-props($opts, $normalize = true)
+	if type($opts) == "object"
+		for $key, $val in $opts
+			$value = type($val) == "string" ? convert($val) : $val
+			{$normalize ? dasherize($key): $key} $value
