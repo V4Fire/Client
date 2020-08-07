@@ -19,9 +19,26 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Renamed `interface/Option` -> `interface/Item`
   * Renamed `valueProp` -> `itemsProp`
 
+* `gHint`
+  * Renamed:
+    * `target` -> `location`
+    * `showSelector` -> `showOn`
+    * `hintData` -> `dataAttr`
+
+  * Replaced:
+    * `horArrowSize`, `vertArrowSize` -> `arrowSize`
+    * `color`, `bgColor`, `rounding`, `shadow` -> `contentStyles`
+
+  * Removed:
+    * Auto-hide logic: now you need to specify the `hidden` option
+
+  * Changed the way how to use the mixin
+
 #### :rocket: New Feature
 
-* Added `gHint/interface.ts`
+* `gHint`
+  * Added `arrowStyles`, `hideStyles`, `showStyles`
+  * Added `interface.ts`
 
 #### :house: Internal
 
@@ -32,6 +49,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added documentation:
   * `bList`
   * `gHint`
+  * `gIcon`
 
 ## v3.0.0-rc.57 (2020-08-06)
 
