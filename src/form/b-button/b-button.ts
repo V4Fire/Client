@@ -24,6 +24,7 @@ import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
+import { HintPosition } from 'global/g-hint/interface';
 
 import iData, {
 
@@ -133,7 +134,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	 * Tooltip position
 	 */
 	@prop({type: String, required: false})
-	readonly hintPos?: string;
+	readonly hintPos?: HintPosition;
 
 	/**
 	 * Dropdown position
