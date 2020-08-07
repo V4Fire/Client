@@ -15,6 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* Removed `gDef/funcs/setSizes`
+
 * `bList`:
   * Renamed `interface/Option` -> `interface/Item`
   * Renamed `valueProp` -> `itemsProp`
@@ -43,6 +45,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Fixed ESLint warnings `bList`
+* Refactoring:
+  * `bList`
+  * `gHint`
+  * `gIcon`
+  * `gDef`
 
 #### :nail_care: Polish
 
@@ -50,6 +57,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bList`
   * `gHint`
   * `gIcon`
+  * `gDef`
 
 ## v3.0.0-rc.57 (2020-08-06)
 
