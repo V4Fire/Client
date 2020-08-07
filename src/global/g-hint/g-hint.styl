@@ -6,12 +6,252 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "global/g-hint/g-hint.interface.styl"
+$p = {
+	/**
+	 * Selector to a hint container
+	 */
+	location: '&',
 
-.g-hint
-	// @stlint-disable
-	extends($gHint, {
-		hintData: data-hint,
-		showSelector: "&[data-hint]:hover",
-	})
-	// @stlint-enable
+	/**
+	 * True if should hide a hint container
+	 */
+	hidden: false,
+
+	/**
+	 * Selector to show a hint container or false
+	 */
+	showOn: false,
+
+	/**
+	 * Name of an attribute that contains data to show or false
+	 */
+	dataAttr: false
+
+	/**
+	 * Selector to a hint data container: it is used with hints that based on valued from attributes.
+	 * Basically, you don't need to change this value.
+	 */
+	content: "&::after"
+
+	/**
+	 * Z-index position to show a data container
+	 */
+	zIndexPos: overall
+
+	/**
+	 * Dictionary with extra styles of a data container
+	 */
+	contentStyles: {
+		color: #FEFEFE
+		background-color: #616161
+		border-radius: 0.3rem
+		padding: 0.3rem
+	}
+
+	/**
+	 * Selector of the "hint-arrow" to show.
+	 * Basically, you don't need to change this value.
+	 */
+	arrow: "&::before"
+
+	/**
+	 * Size of the "hint-arrow" to show: vertical, horizontal
+	 */
+	arrowSize: 0.7rem 0.4rem
+
+	/**
+	 * Dictionary with extra styles of the "hint-arrow"
+	 */
+	arrowStyles: {
+		color: #616161
+	}
+
+	/**
+	 * Dictionary with styles to hide a container
+	 */
+	hideStyles: {
+		display: none
+	}
+
+	/**
+	 * Dictionary with styles to show a container
+	 */
+	showStyles: {
+		display: block
+	}
+}
+
+g-hint
+	$arrowColor = $p.arrowStyles.color || $p.arrowStyles['background-color'] || $p.contentStyles['background-color']
+	$rounding = $p.contentStyles['border-radius'] || 0
+
+	{$p.location}
+		if $p.hidden
+			{$p.hideStyles}
+
+		else
+			{$p.showStyles}
+
+		if $p.content
+			{$p.content}
+				position absolute
+				zIndex($p.zIndexPos)
+
+				if $p.dataAttr
+					content attr($p.dataAttr)
+
+				{$p.hideStyles}
+				{$p.contentStyles}
+
+		if $p.arrow
+			{$p.arrow}
+				position absolute
+				zIndex($p.zIndexPos, 1)
+
+				border $p.arrowSize[0] solid transparent
+				content ""
+
+				{$p.hideStyles}
+				{$p.arrowStyles}
+
+	if $p.showOn
+		for $el in $p.showOn
+			{$el}
+				if $p.hidden
+					{$p.showStyles}
+
+				if $p.content
+					{$p.content}
+						{$p.showStyles}
+
+				if $p.arrow
+					{$p.arrow}
+						{$p.showStyles}
+
+	{$p.location}_pos_top,
+	{$p.location}_pos_top-left,
+	{$p.location}_pos_top-right
+		if $p.content
+			{$p.content}
+				bottom "calc(100% + %s)" % $p.arrowSize[0]
+
+		if $p.arrow
+			{$p.arrow}
+				top "calc(-%s - %s)" % ($p.arrowSize[0] 1px)
+				border-top-color $arrowColor !important
+
+	{$p.location}_pos_bottom,
+	{$p.location}_pos_bottom-left,
+	{$p.location}_pos_bottom-right
+		if $p.content
+			{$p.content}
+				top "calc(100% + %s)" % $p.arrowSize[0]
+
+		if $p.arrow
+			{$p.arrow}
+				bottom "calc(-%s - %s)" % ($p.arrowSize[0] 1px)
+				border-bottom-color $arrowColor !important
+
+	{$p.location}_pos_top,
+	{$p.location}_pos_bottom
+		if $p.content
+			{$p.content}
+				left 50%
+				transform translateX(-50%)
+
+		if $p.arrow
+			{$p.arrow}
+				left 50%
+				transform translateX(-50%)
+
+	{$p.location}_pos_top-right,
+	{$p.location}_pos_bottom-right
+		if $p.content
+			{$p.content}
+				left 0
+
+		if $p.arrow
+			{$p.arrow}
+				left "calc(%s + %s)" % ($p.arrowSize[0] / 2 $rounding / 4 || 0px)
+
+	{$p.location}_pos_top-left,
+	{$p.location}_pos_bottom-left
+		if $p.content
+			{$p.content}
+				transform translateX(-100%)
+				left 100%
+
+		if $p.arrow
+			{$p.arrow}
+				transform translateX(-100%)
+				left "calc(100% - %s - %s)" % ($p.arrowSize[0] / 2 $rounding / 4 || 0px)
+
+	{$p.location}_pos_left,
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_left-bottom,
+	{$p.location}_pos_right,
+	{$p.location}_pos_right-top,
+	{$p.location}_pos_right-bottom
+		if $p.arrow
+			{$p.arrow}
+				border-width $p.arrowSize[1] !important
+
+	{$p.location}_pos_left,
+	{$p.location}_pos_right
+		if $p.content
+			{$p.content}
+				bottom 50%
+				transform translateY(50%)
+
+		if $p.arrow
+			{$p.arrow}
+				bottom 50%
+				transform translateY(50%)
+
+	{$p.location}_pos_right,
+	{$p.location}_pos_right-top,
+	{$p.location}_pos_right-bottom
+		if $p.content
+			{$p.content}
+				left "calc(100% + %s)" % ($p.arrowSize[1] / 1.1)
+
+		if $p.arrow
+			{$p.arrow}
+				left "calc(100% - %s)" % ($p.arrowSize[1] / 1.1)
+
+				if $arrowColor
+					border-right-color $arrowColor !important
+
+	{$p.location}_pos_left,
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_left-bottom
+		if $p.content
+			{$p.content}
+				right "calc(100% + %s)" % ($p.arrowSize[1] / 1.1)
+
+		if $p.arrow
+			{$p.arrow}
+				right "calc(100% - %s)" % ($p.arrowSize[1] / 1.1)
+
+				if $arrowColor
+					border-left-color $arrowColor !important
+
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_right-top
+		if $p.content
+			{$p.content}
+				top 0 - $rounding
+
+		if $p.arrow
+			{$p.arrow}
+				top 0
+
+	{$p.location}_pos_left-bottom,
+	{$p.location}_pos_right-bottom
+		if $p.content
+			{$p.content}
+				bottom 0 - $rounding
+
+		if $p.arrow
+			{$p.arrow}
+				top 0
