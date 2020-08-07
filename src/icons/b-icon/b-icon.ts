@@ -13,6 +13,7 @@
 
 import iIcon from 'traits/i-icon/i-icon';
 import iSize from 'traits/i-size/i-size';
+import { HintPosition } from 'global/g-hint/interface';
 
 import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 
@@ -45,7 +46,7 @@ export default class bIcon extends iBlock implements iIcon, iSize {
 	 * Tooltip position
 	 */
 	@prop(String)
-	readonly hintPos: string = 'bottom';
+	readonly hintPos: HintPosition = 'bottom';
 
 	/** @override */
 	static readonly mods: ModsDecl = {
