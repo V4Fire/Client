@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.56 ()
+## v3.0.0-rc.58 ()
 
 #### :boom: Breaking Change
 
@@ -32,6 +32,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added documentation:
   * `bList`
   * `gHint`
+
+## v3.0.0-rc.57 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `core/browser/mobile`
+
+## v3.0.0-rc.56 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `initLoad` error handling `iBlock`, `iData`
 
 ## v3.0.0-rc.55 (2020-08-05)
 

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.57 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `mobile`
+
 ## v3.0.0-rc.41 (2020-07-29)
 
 #### :bug: Bug Fix

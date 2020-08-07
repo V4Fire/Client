@@ -21,6 +21,7 @@ export const is = {
 	 * Version of the current mobile browser or false
 	 */
 	get mobile(): string[] | boolean {
-		return this.Android ?? this.BlackBerry ?? this.iOS ?? this.OperaMini ?? this.WindowsMobile ?? false;
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		return this.Android || this.BlackBerry || this.iOS || this.OperaMini || this.WindowsMobile || false;
 	}
 };
