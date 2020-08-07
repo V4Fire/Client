@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.58 ()
+
+#### :rocket: New Feature
+
+* Added `globalHintHelpers`
+* Added `globalIconHelpers`
+
 ## v3.0.0-rc.53 (2020-08-04)
 
 #### :bug: Bug Fix

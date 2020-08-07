@@ -10,8 +10,23 @@
 @import "traits/i-lock-page-scroll/i-lock-page-scroll.styl"
 
 $p = {
-	lockPageHelpers: true
+	lockPageHelpers: true,
+	globalHintHelpers: false
+	globalIconHelpers: false
 }
 
 i-static-page extends i-page
 	i-lock-page-scroll({helpers: $p.lockPageHelpers})
+
+	if $p.globalHintHelpers
+		/.g-hint
+			position relative
+
+			extends($gHint, {
+				dataAttr: data-hint,
+				showOn: "&[data-hint]:hover",
+			})
+
+	if $p.globalIconHelpers
+		/.g-icon
+			extends($gIcon)
