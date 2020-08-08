@@ -52,6 +52,11 @@ export interface RequestQuery {
 	failOn?: number;
 
 	/**
+	 * How many times a request should fail
+	 */
+	failCount?: number;
+
+	/**
 	 * Additional data to be return
 	 */
 	additionalData?: Dictionary;
@@ -70,6 +75,9 @@ export interface RequestState extends RequestQuery {
 	 * Current index of the response item
 	 */
 	i: number;
+
+	/** @see [[RequestQuery.failCount]] */
+	failCount: number;
 
 	/**
 	 * Current request number

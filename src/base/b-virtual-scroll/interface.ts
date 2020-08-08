@@ -234,6 +234,9 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 
 	// @ts-ignore (access)
 	getDataStateSnapshot: CTX['getDataStateSnapshot'];
+
+	// @ts-ignore (access)
+	onRequestError: CTX['onRequestError'];
 }
 
 export type MergeDataStateParams = {

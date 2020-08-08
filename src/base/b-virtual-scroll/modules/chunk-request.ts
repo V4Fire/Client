@@ -198,12 +198,16 @@ export default class ChunkRequest extends Friend {
 				}
 
 				return resolved;
-
 			}
 
 			if (this.pendingData.length >= chunkSize) {
 				chunkRender.initItems(this.pendingData.splice(0, chunkSize));
 				chunkRender.render();
+
+				if (this.isDone && this.pendingData.length === 0) {
+					this.emitDone();
+				}
+
 				return resolved;
 			}
 		}
@@ -285,11 +289,13 @@ export default class ChunkRequest extends Friend {
 				chunkRender.setLoadersVisibility(false);
 
 				if (!this.isDone) {
-					chunkRender.setRefVisibility('renderNext', true);
+					chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+					chunkRender.render();
 				}
 
-				chunkRender.initItems(this.pendingData.splice(0, chunkSize));
-				chunkRender.render();
+				if (!this.isDone || this.pendingData.length > 0) {
+					chunkRender.setRefVisibility('renderNext', true);
+				}
 
 			}).catch((err) => {
 				stderr(err);
@@ -358,6 +364,7 @@ export default class ChunkRequest extends Friend {
 				chunkRender.setRefVisibility('retry', true);
 				chunkRender.setRefVisibility('renderNext', false);
 
+				this.ctx.onRequestError(err, this.ctx.reloadLast.bind(this.ctx));
 				stderr(err);
 
 				this.lastLoadedChunk.raw = [];
@@ -378,12 +385,9 @@ export default class ChunkRequest extends Friend {
 		if (this.pendingData.length > 0) {
 			chunkRender.initItems(this.pendingData.splice(0, chunkSize));
 			chunkRender.render();
+		}
 
-			if (this.pendingData.length === 0) {
-				chunkRender.setRefVisibility('renderNext', false);
-			}
-
-		} else {
+		if (this.pendingData.length === 0) {
 			chunkRender.setRefVisibility('done', true);
 			chunkRender.setRefVisibility('renderNext', false);
 		}
