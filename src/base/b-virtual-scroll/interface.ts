@@ -174,9 +174,43 @@ export interface DataToRender {
 export type LocalState = 'init' | 'ready' | 'error';
 
 /**
+ * Loading strategy
+ *
+ * * `scroll` - will prompt the client to load data every time a new element appears in the viewport
+ * * `manual` - data will only be loaded using method calls
+ */
+export type LoadStrategy = 'scroll' | 'manual';
+
+/**
  * Display state of the ref
  */
 export type RefDisplayState = '' | 'none';
+
+/**
+ * `bVirtualScroll` `$refs`
+ */
+export type bVirtualScrollRefs = bVirtualScroll['$refs'];
+
+/**
+ * Display states of refs
+ */
+export type RefsDisplayState = {
+	[ref in keyof bVirtualScrollRefs]?: RefDisplayState;
+};
+
+export interface TryLoadOptions {
+	/**
+	 * If `true` it is a primary (non-recursive) method call
+	 * @default `true`
+	 */
+	initialCall?: boolean;
+
+	/**
+	 * If `true` after loading render will be called
+	 * @default `true`
+	 */
+	shouldRender?: boolean;
+}
 
 // @ts-ignore (unsafe)
 export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {

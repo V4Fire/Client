@@ -53,6 +53,7 @@ import {
 	RequestFn,
 	RemoteData,
 	LocalState,
+	LoadStrategy,
 	RequestQueryFn,
 	DataState,
 	MergeDataStateParams,
@@ -84,6 +85,10 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
+
+	/** @see [[LoadStrategy]] */
+	@prop({type: String, watch: 'syncPropsWatcher'})
+	readonly loadStrategy: LoadStrategy = 'scroll';
 
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
@@ -188,9 +193,9 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @param state
-	 * @emits localEvent:localState.loading()
-	 * @emits localEvent:localState.ready()
-	 * @emits localEvent:localState.error()
+	 * @emits localEmitter:localState.loading()
+	 * @emits localEmitter:localState.ready()
+	 * @emits localEmitter:localState.error()
 	 */
 	protected set localState(state: LocalState) {
 		this.localStateStore = state;
@@ -250,6 +255,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		empty?: HTMLElement;
 		retry?: HTMLElement;
 		done?: HTMLElement;
+		renderNext?: HTMLElement;
 	};
 
 	/**
@@ -278,6 +284,20 @@ export default class bVirtualScroll extends iData implements iItems {
 		} else {
 			this.chunkRequest.reloadLast();
 		}
+	}
+
+	/**
+	 * Tries to render the next chunk of data, makes a request to get more data if necessary
+	 */
+	renderNext(): void {
+		const
+			{localState, chunkRequest, dataProvider, options} = this;
+
+		if (localState !== 'ready' || dataProvider == null && options.length === 0) {
+			return;
+		}
+
+		chunkRequest.try().catch(stderr);
 	}
 
 	/**
@@ -353,6 +373,8 @@ export default class bVirtualScroll extends iData implements iItems {
 			};
 
 			const params = this.getDataStateSnapshot({
+				data,
+				total,
 				lastLoadedData: data,
 				lastLoadedChunk
 			});

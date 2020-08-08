@@ -266,8 +266,11 @@ module.exports = async (page, params) => {
 					setTimeout(() => ctx.suspend('test'), 0);
 				});
 
-				await delay(300);
-				expect(await page.evaluate(() => globalThis.tmp)).toBe(2);
+				const
+					shouldNotBeResolved = new Promise((res) => page.waitForFunction('globalThis.tmp === 1').then(() => res(1))),
+					shouldBeResolved = new Promise((res) => page.waitForFunction('globalThis.tmp === 2').then(() => res(2)));
+
+				await expectAsync(Promise.race([shouldNotBeResolved, shouldBeResolved])).toBeResolvedTo(2);
 			});
 
 			it('suspending/unsuspending with `callback`: fires the callback', async () => {

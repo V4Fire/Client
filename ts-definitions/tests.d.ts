@@ -132,6 +132,23 @@ declare namespace BrowserTests {
 	}
 
 	/**
+	 * `waitForRAF` function options
+	 */
+	interface WaitForRAFOptions {
+		/**
+		 * Indicates the number of `requestAnimationFrame` that should occur
+		 * @default `1`
+		 */
+		waitForRafTimes?: number;
+
+		/**
+		 * Delay before exiting the function
+		 * @default `100`
+		 */
+		sleepAfterRAF?: number;
+	}
+
+	/**
 	 * Options for functions `waitForEl` like
 	 */
 	interface WaitForElOptions {
@@ -300,6 +317,14 @@ declare namespace BrowserTests {
 		 * @param [idleOptions]
 		 */
 		waitForIdleCallback(page: Playwright.Page, idleOptions?: WaitForIdleOptions): Promise<void>;
+
+		/**
+		 * Waits until `requestAnimationFrame` fires on the page
+		 *
+		 * @param page
+		 * @param [rafOptions]
+		 */
+		waitForRAF(page: Playwright.Page, rafOptions?: WaitForRAFOptions): Promise<void>;
 	}
 
 	/**
