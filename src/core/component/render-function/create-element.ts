@@ -31,7 +31,7 @@ import {
 
 } from 'core/component/engines';
 
-import { ComponentInterface } from 'core/component/interface';
+import { ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -62,7 +62,8 @@ export function wrapCreateElement(
 		'use strict';
 
 		const
-			{unsafe} = this ?? baseCtx;
+			ctx = this ?? baseCtx,
+			unsafe = <UnsafeComponentInterface>Any(ctx);
 
 		const
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
@@ -135,7 +136,7 @@ export function wrapCreateElement(
 
 			const
 				node = createElement('span', {...opts, tag: undefined}, children),
-				renderCtx = getComponentRenderCtxFromVNode(component, node, unsafe);
+				renderCtx = getComponentRenderCtxFromVNode(component, node, ctx);
 
 			const baseCtx = c.renderCtxCache[componentName] ?? Object.assign(Object.create(minimalCtx), {
 				componentName,
@@ -172,7 +173,7 @@ export function wrapCreateElement(
 			}
 
 			if (flyweightComponent != null) {
-				vnode = parseVNodeAsFlyweight(vnode, <CreateElement>wrappedCreateElement, unsafe);
+				vnode = parseVNodeAsFlyweight(vnode, <CreateElement>wrappedCreateElement, ctx);
 			}
 		}
 
@@ -185,9 +186,9 @@ export function wrapCreateElement(
 		}
 
 		// Add $refs link if it doesn't exist
-		if (vData && ref != null && unsafe !== baseCtx) {
+		if (vData && ref != null && ctx !== baseCtx) {
 			vData[$$.ref] = ref;
-			vData.ref = `${ref}:${unsafe.componentId}`;
+			vData.ref = `${ref}:${ctx.componentId}`;
 
 			Object.defineProperty(unsafe.$refs, ref, {
 				configurable: true,
@@ -195,7 +196,7 @@ export function wrapCreateElement(
 				get: () => {
 					const
 						r = baseCtx.unsafe.$refs,
-						l = r[`${ref}:${unsafe.$componentId}`] ?? r[`${ref}:${unsafe.componentId}`];
+						l = r[`${ref}:${unsafe.$componentId}`] ?? r[`${ref}:${ctx.componentId}`];
 
 					if (l != null) {
 						return l;

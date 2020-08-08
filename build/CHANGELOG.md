@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.58 (2020-08-07)
+
+#### :house: Internal
+
+* Added `.ico` files to build `module.webpack/img`
+
 ## v3.0.0-rc.48 (2020-08-02)
 
 #### :rocket: New Feature
