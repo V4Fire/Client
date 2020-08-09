@@ -6,10 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/decorators/README.md]]
+ * @packageDocumentation
+ */
+
 import { paramsFactory } from 'core/component/decorators/base';
-import { InitFieldFn } from 'core/component/interface';
 
 import {
+
+	InitFieldFn,
 
 	DecoratorProp,
 	DecoratorSystem,
@@ -20,7 +26,7 @@ import {
 
 	DecoratorHook,
 	DecoratorFieldWatcher,
-	DecoratorMethodWatchers
+	DecoratorMethodWatcher
 
 } from 'core/component/decorators/interface';
 
@@ -278,5 +284,5 @@ export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
  */
 export const watch = paramsFactory<
 	DecoratorFieldWatcher |
-	DecoratorMethodWatchers
+	DecoratorMethodWatcher
 >(null, (watch) => ({watch}));

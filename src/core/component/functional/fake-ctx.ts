@@ -18,7 +18,7 @@ import { CreateElement } from 'core/component/engines';
 import { RenderContext } from 'core/component/render';
 
 import { $$, componentOpts, destroyHooks, destroyCheckHooks } from 'core/component/functional/const';
-import { ComponentInterface, FunctionalCtx } from 'core/component/interface';
+import { FunctionalCtx } from 'core/component/interface';
 import { CreateFakeCtxOptions } from 'core/component/functional/interface';
 
 export * from 'core/component/functional/interface';
@@ -33,7 +33,7 @@ export * from 'core/component/functional/interface';
  */
 export function createFakeCtx<T extends object = FunctionalCtx>(
 	createElement: CreateElement,
-	renderCtx: RenderContext,
+	renderCtx: Partial<RenderContext>,
 	baseCtx: FunctionalCtx,
 	opts: CreateFakeCtxOptions
 ): T {
@@ -41,22 +41,22 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	const
 		fakeCtx = Object.create(baseCtx),
-		meta = forkMeta(fakeCtx.meta),
-		p = <ComponentInterface>Any(renderCtx.parent);
+		meta = forkMeta(fakeCtx.meta);
 
 	const
+		{parent} = renderCtx,
 		{component} = meta,
 		{children, data: dataOpts} = renderCtx;
 
 	let
 		$options;
 
-	if (p?.$options) {
+	if (parent?.$options) {
 		const {
 			filters = {},
 			directives = {},
 			components = {}
-		} = p.$options;
+		} = parent.$options;
 
 		$options = {
 			filters: Object.create(filters),
@@ -68,7 +68,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		$options = {filters: {}, directives: {}, components: {}};
 	}
 
-	if (component) {
+	if (Object.isDictionary(component)) {
 		Object.assign($options, Object.reject(component, componentOpts));
 		Object.assign($options.filters, component.filters);
 		Object.assign($options.directives, component.directives);
@@ -85,28 +85,29 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx.props, {
-		children: children || [],
-
 		_self: fakeCtx,
 		_renderProxy: fakeCtx,
 		_staticTrees: [],
 
+		unsafe: fakeCtx,
+		children: Object.isArray(children) ? children : [],
+
 		$createElement: createElement.bind(fakeCtx),
 
-		$parent: p,
-		$root: renderCtx.$root || p && p.$root,
-		$options,
+		$parent: parent,
+		$root: renderCtx.$root ?? parent?.$root,
 
-		$props: renderCtx.props || {},
-		$attrs: dataOpts && dataOpts.attrs || {},
-		$listeners: renderCtx.listeners || dataOpts && dataOpts.on || {},
+		$options,
+		$props: renderCtx.props ?? {},
+		$attrs: dataOpts?.attrs ?? {},
+		$listeners: renderCtx.listeners ?? dataOpts?.on ?? {},
 
 		$refs: {},
-		$destroyedHooks: {},
+		$unregisteredHooks: {},
 
 		$slots: {
-			default: children && children.length ? children : undefined,
-			...renderCtx.slots && renderCtx.slots()
+			default: Object.size(children) > 0 ? children : undefined,
+			...renderCtx.slots?.()
 		},
 
 		$scopedSlots: {
@@ -125,16 +126,16 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 			const
 				parent = this.$normalParent;
 
-			if (parent) {
+			if (parent != null) {
 				const
 					{hooks} = parent.meta,
-					{$destroyedHooks} = this;
+					{$unregisteredHooks} = this;
 
 				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
 					const
 						hook = o[i];
 
-					if ($destroyedHooks[hook]) {
+					if ($unregisteredHooks[hook] === true) {
 						continue;
 					}
 
@@ -160,7 +161,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 						hooks[hook] = filteredHooks;
 					}
 
-					$destroyedHooks[hook] = true;
+					$unregisteredHooks[hook] = true;
 				}
 			}
 
@@ -187,29 +188,30 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		},
 
 		$forceUpdate(): void {
-			if (!Object.isFunction(p.$forceUpdate)) {
+			// eslint-disable-next-line @typescript-eslint/unbound-method
+			if (!Object.isFunction(parent?.$forceUpdate)) {
 				return;
 			}
 
-			this.$async.setImmediate(() => p.$forceUpdate(), {
+			this.$async.setImmediate(() => parent!.$forceUpdate(), {
 				label: $$.forceUpdate
 			});
 		}
 	});
 
-	if (!fakeCtx.$root) {
+	if (fakeCtx.$root == null) {
 		fakeCtx.$root = fakeCtx;
 	}
 
 	initProps(fakeCtx, {
 		store: fakeCtx,
-		saveToStore: opts?.initProps
+		saveToStore: opts.initProps
 	});
 
 	init.beforeCreateState(fakeCtx, meta, {
 		addMethods: true,
 		implementEventAPI: true,
-		safe: opts?.safe
+		safe: opts.safe
 	});
 
 	init.beforeDataCreateState(fakeCtx, {tieFields: true});

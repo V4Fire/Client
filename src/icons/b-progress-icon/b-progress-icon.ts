@@ -12,10 +12,11 @@
  */
 
 import iBlock, { component } from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
 
 /**
- * Component to indicate a loading
+ * Component to indicate loading
  */
 @component({functional: true, flyweight: true})
 export default class bProgressIcon extends iBlock {}

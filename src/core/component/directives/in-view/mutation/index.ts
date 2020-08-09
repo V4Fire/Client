@@ -6,15 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOptions } from 'core/async';
 import symbolGenerator from 'core/symbol';
+import { AsyncOptions } from 'core/async';
 
 import {
 
 	ObservableElement,
 	ObservableElementRect,
 	ObservableElementsThresholdMap,
-	InitOptions
+	InitOptions,
+	UnobserveOptions
 
 } from 'core/component/directives/in-view/interface';
 
@@ -38,26 +39,26 @@ export type AdapteeType = 'mutation';
 
 export default class InView extends Super {
 	/**
-	 * True if the current adaptee can be used
-	 */
-	static readonly acceptable: boolean = hasMutationObserver;
-
-	/**
 	 * Adaptee type
 	 */
 	readonly type: AdapteeType = 'mutation';
 
 	/**
-	 * Deferred variation of the recalculate function
+	 * Deferred version of the recalculate function
 	 * @see recalculate
 	 */
 	readonly recalculateDeffer: Function;
 
 	/**
-	 * Deferred variation of the check function
+	 * Deferred version of the check function
 	 * @see recalculate
 	 */
 	readonly checkDeffer: Function;
+
+	/**
+	 * True if the current adaptee can be used
+	 */
+	static readonly acceptable: boolean = hasMutationObserver;
 
 	/**
 	 * Mutation observer
@@ -116,18 +117,18 @@ export default class InView extends Super {
 				characterData: true
 			});
 
-			$a.setInterval(this.poll, POLL_INTERVAL, {
+			$a.setInterval(this.poll.bind(this), POLL_INTERVAL, {
 				group: 'inView',
 				label: $$.poll,
 				join: true
 			});
 
 			$a.on(document, 'scroll', checkDeffer);
-			$a.on(window, 'resize', () => recalculateDeffer({
+			$a.on(globalThis, 'resize', () => recalculateDeffer({
 				join: false
 			}));
 
-		});
+		}).catch(stderr);
 	}
 
 	/** @override */
@@ -135,7 +136,7 @@ export default class InView extends Super {
 		const
 			observable = super.observe(el, opts);
 
-		if (!observable) {
+		if (observable === false) {
 			return false;
 		}
 
@@ -153,9 +154,9 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	stopObserve(el: Element, threshold?: number): boolean {
+	unobserve(el: Element, unobserveOptsOrThreshold?: UnobserveOptions | number): boolean {
 		const
-			res = super.stopObserve(el, threshold);
+			res = super.unobserve(el, unobserveOptsOrThreshold);
 
 		if (!this.pollingElements.has(el)) {
 			this.recalculateDeffer();
@@ -170,10 +171,6 @@ export default class InView extends Super {
 	poll(): void {
 		this.pollingElements.forEach((map) => {
 			map.forEach((observable) => {
-				if (observable.isDeactivated) {
-					return;
-				}
-
 				const
 					root = Object.isFunction(observable.root) ? observable.root() : observable.root,
 					elRect = observable.node.getBoundingClientRect(),
@@ -213,11 +210,7 @@ export default class InView extends Super {
 				for (let i = 0; i < elements.length; i++) {
 					const
 						el = elements[i],
-						observable = el.observable;
-
-					if (observable.isDeactivated) {
-						continue;
-					}
+						{observable} = el;
 
 					const
 						isElementIn = isElementInView(el, rootRect, observable.threshold);
@@ -254,10 +247,6 @@ export default class InView extends Super {
 
 		this.elements.forEach((thresholdMap) => {
 			thresholdMap.forEach((observable) => {
-				if (observable.isDeactivated) {
-					return;
-				}
-
 				const
 					rect = getElementRect(rootRect, observable.node);
 
@@ -271,7 +260,8 @@ export default class InView extends Super {
 					return;
 				}
 
-				const tile = map[listNum] = map[listNum] || [];
+				// eslint-disable-next-line no-multi-assign
+				const tile = map[listNum] = map[listNum] ?? [];
 				tile.push({...rect, observable});
 			});
 		});
@@ -307,7 +297,7 @@ export default class InView extends Super {
 	protected getElMap(el: Element): ObservableElementsThresholdMap {
 		const res = super.getElMap(el);
 
-		if (res) {
+		if (res.has(el)) {
 			return res;
 		}
 
@@ -338,13 +328,18 @@ export default class InView extends Super {
 			join: true
 		};
 
+		const highResTimeStamp = performance.now();
+		observable.time = highResTimeStamp;
+		observable.timeIn = highResTimeStamp;
+
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onEnter)) {
 			observable.onEnter(observable);
 		}
 
 		observable.isLeaving = true;
 
-		if (observable.delay) {
+		if (observable.delay != null && observable.delay > 0) {
 			this.async.setTimeout(() => this.call(observable), observable.delay, asyncOptions);
 
 		} else {
@@ -363,6 +358,11 @@ export default class InView extends Super {
 			join: true
 		};
 
+		const highResTimeStamp = performance.now();
+		observable.time = highResTimeStamp;
+		observable.timeOut = highResTimeStamp;
+
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onLeave)) {
 			observable.onLeave(observable);
 		}

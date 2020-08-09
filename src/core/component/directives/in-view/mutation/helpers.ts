@@ -12,7 +12,7 @@ import { ElementRect } from 'core/component/directives/in-view/interface';
 export const hasMutationObserver = typeof MutationObserver === 'function';
 
 /**
- * Returns a top offset relative to the root
+ * Returns the top offset relative to the root
  *
  * @param root
  * @param el
@@ -22,7 +22,7 @@ export function getOffsetTop({scrollTop}: RootRect, {top}: DOMRect | ClientRect)
 }
 
 /**
- * Returns a left offset relative to the root
+ * Returns the left offset relative to the root
  *
  * @param root
  * @param el
@@ -48,16 +48,19 @@ export function isElementVisible(rect: {width: number; height: number}): boolean
 export function getElementRect(root: RootRect, el: Element): ElementRect {
 	const
 		rect = el.getBoundingClientRect(),
-		width = rect.width,
-		height = rect.height,
+		{width, height} = rect;
+
+	const
 		top = getOffsetTop(root, rect),
 		left = getOffsetLeft(root, rect);
 
 	return {
 		bottom: top + height,
 		right: left + width,
+
 		top,
 		left,
+
 		width,
 		height
 	};
@@ -67,7 +70,7 @@ export function getElementRect(root: RootRect, el: Element): ElementRect {
  * Returns the page root
  */
 export function getRoot(): Element {
-	return document.documentElement || document.scrollingElement || document.body;
+	return document.documentElement;
 }
 
 /**
@@ -101,6 +104,10 @@ interface RootRect {
  * @param threshold
  */
 export function isElementInView(elRect: ElementRect, rootRect: RootRect, threshold: number): boolean {
+	if (elRect.width === 0 || elRect.height === 0) {
+		return false;
+	}
+
 	const
 		isBoxInRootY = rootRect.scrollTop + rootRect.height >= elRect.top + elRect.height * threshold,
 		isBoxInRootX = rootRect.scrollLeft + rootRect.width >= elRect.left + elRect.width * threshold,

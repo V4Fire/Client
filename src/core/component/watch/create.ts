@@ -6,37 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { mute, unmute, unwrap, getProxyType } from 'core/object/watch';
+import watch, { mute, unmute, unwrap, getProxyType, isProxy } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
+import { proxyGetters } from 'core/component/engines';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
-import { proxyGetters } from 'core/component/engines';
-import { cacheStatus, fakeCopyLabel, watcherInitializer } from 'core/component/watch/const';
-import { DynamicHandlers } from 'core/component/watch/interface';
-import { cloneWatchValue } from 'core/component';
+import { tiedWatchers, watcherInitializer, fakeCopyLabel } from 'core/component/watch/const';
+import { cloneWatchValue } from 'core/component/watch/clone';
+import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
 /**
  * Creates a function to watch changes from the specified component instance and returns it
- *
  * @param component
- * @param dynamicHandlers - map of handlers to watch dynamic fields, like accessors and computedFields
  */
-export function createWatchFn(
-	component: ComponentInterface,
-	dynamicHandlers: DynamicHandlers
-): ComponentInterface['$watch'] {
+export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
 	const
-		watchCache = Object.createDict();
+		watchCache = new Map();
 
-	return (path, optsOrHandler, rawHandler?) => {
+	// eslint-disable-next-line @typescript-eslint/typedef
+	return function watchFn(this: unknown, path, optsOrHandler, rawHandler?) {
 		if (component.isFlyweight) {
 			return null;
 		}
 
 		let
 			handler: RawWatchHandler,
-			opts: CanUndef<WatchOptions>;
+			opts: WatchOptions;
 
 		if (Object.isFunction(optsOrHandler)) {
 			handler = optsOrHandler;
@@ -44,51 +40,93 @@ export function createWatchFn(
 
 		} else {
 			handler = rawHandler;
-			opts = optsOrHandler;
+			opts = optsOrHandler ?? {};
+		}
+
+		let
+			info: PropertyInfo;
+
+		if (Object.isString(path)) {
+			info = getPropertyInfo(path, component);
+
+		} else {
+			info = isProxy(path) ? {ctx: path} : path;
+		}
+
+		if (!Object.isString(info.type)) {
+			Object.assign(info, {
+				type: 'mounted',
+				originalPath: info.path,
+				fullPath: info.path
+			});
 		}
 
 		const
-			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path,
-
-			// @ts-ignore
-			ctxParams = info.ctx.meta.params;
-
-		const
-			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor,
+			isDefinedPath = Object.size(info.path) > 0,
+			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
 			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx);
 
 		let
 			proxy = watchInfo?.value;
 
+		const normalizedOpts = <WatchOptions>{
+			collapse: true,
+			...opts,
+			...watchInfo?.opts
+		};
+
 		const
-			needCache = handler.length > 1,
-			ref = info.originalPath;
+			needCache = handler.length > 1 && (isDefinedPath || normalizedOpts.collapse),
+			originalHandler = handler;
 
 		let
 			oldVal;
 
-		const
-			originalHandler = handler,
-			getVal = () => Object.get(info.type === 'field' ? proxy : component, info.originalPath);
-
 		if (needCache) {
-			oldVal = watchCache[ref] = ref in watchCache ?
-				watchCache[ref] :
-				opts?.immediate || !isAccessor ? cloneWatchValue(getVal(), opts) : undefined;
+			let
+				cacheKey;
 
-			handler = (val, _, ...args) => {
+			if (Object.isString(info.originalPath)) {
+				cacheKey = [info.originalPath];
+
+			} else {
+				cacheKey = Array.concat([info.ctx], info.path);
+			}
+
+			if (Object.has(watchCache, cacheKey)) {
+				oldVal = Object.get(watchCache, cacheKey);
+
+			} else {
+				oldVal = normalizedOpts.immediate || !isAccessor ? cloneWatchValue(getVal(), normalizedOpts) : undefined;
+				Object.set(watchCache, cacheKey, oldVal);
+			}
+
+			handler = (val, _, i) => {
 				if (isAccessor) {
-					val = Object.get(component, info.originalPath);
+					if (normalizedOpts.collapse) {
+						val = Object.get(info.ctx, info.accessor ?? info.name);
+
+					} else {
+						val = Object.get(component, info.originalPath);
+					}
 				}
 
-				const res = originalHandler.call(this, val, oldVal, ...args);
-				oldVal = watchCache[ref] = cloneWatchValue(val, opts);
+				if (!isDefinedPath && Object.isArray(i?.path)) {
+					oldVal = Object.get(oldVal, [i.path[0]]);
+				}
+
+				const
+					res = originalHandler.call(this, val, oldVal, i);
+
+				oldVal = cloneWatchValue(isDefinedPath ? val : getVal(), normalizedOpts);
+				Object.set(watchCache, cacheKey, oldVal);
+
 				return res;
 			};
 
-			handler[cacheStatus] = originalHandler[cacheStatus];
+			handler[tiedWatchers] = originalHandler[tiedWatchers];
 
-			if (opts?.immediate) {
+			if (normalizedOpts.immediate) {
 				const val = oldVal;
 				oldVal = undefined;
 				handler.call(component, val);
@@ -96,45 +134,65 @@ export function createWatchFn(
 
 		} else {
 			if (isAccessor) {
-				handler = (val, oldVal, ...args) => {
-					val = Object.get(component, info.originalPath);
-					return originalHandler.call(this, val, oldVal, ...args);
+				handler = (val, _, i) => {
+					if (normalizedOpts.collapse) {
+						val = Object.get(info.ctx, info.accessor ?? info.name);
+
+					} else {
+						val = Object.get(component, info.originalPath);
+					}
+
+					if (!isDefinedPath && Object.isArray(i?.path)) {
+						oldVal = Object.get(oldVal, [i.path[0]]);
+					}
+
+					const res = originalHandler.call(this, val, oldVal, i);
+					oldVal = isDefinedPath ? val : getVal();
+
+					return res;
 				};
 			}
 
-			if (opts?.immediate) {
+			if (normalizedOpts.immediate) {
 				handler.call(component, getVal());
 			}
 		}
 
-		const rootOrFunctional = Boolean(
-			ctxParams.root || ctxParams.functional === true
-		);
+		let
+			rootOrFunctional = false;
 
-		if (proxy) {
-			const normalizedOpts = {
-				collapse: true,
-				...opts,
-				...watchInfo.opts
-			};
+		if (info.type !== 'mounted') {
+			const
+				propCtx = info.ctx.unsafe,
+				ctxParams = propCtx.meta.params;
+
+			rootOrFunctional = Boolean(ctxParams.root) || ctxParams.functional === true;
+		}
+
+		if (proxy != null) {
+			if (watchInfo == null) {
+				return null;
+			}
 
 			switch (info.type) {
 				case 'system':
 					if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
 						proxy[watcherInitializer]?.();
-						proxy = watchInfo?.value;
+						proxy = watchInfo.value;
 
 						mute(proxy);
 						proxy[info.name] = info.ctx[info.name];
 						unmute(proxy);
+
+						const
+							propCtx = info.ctx.unsafe;
 
 						Object.defineProperty(info.ctx, info.name, {
 							enumerable: true,
 							configurable: true,
 							get: () => proxy[info.name],
 							set: (val) => {
-								// @ts-ignore (access))
-								info.ctx.$set(proxy, info.name, val);
+								propCtx.$set(proxy, info.name, val);
 							}
 						});
 					}
@@ -167,10 +225,11 @@ export function createWatchFn(
 						});
 
 					} else {
+						// eslint-disable-next-line @typescript-eslint/unbound-method
 						unwatch = watch(proxy, info.path, normalizedOpts, handler).unwatch;
 					}
 
-					return unwatch;
+					return wrapDestructor(unwatch);
 				}
 
 				case 'prop': {
@@ -190,9 +249,10 @@ export function createWatchFn(
 							destructors.pop();
 						}
 
+						// eslint-disable-next-line no-use-before-define
 						attachDeepProxy();
 
-						if (value?.[fakeCopyLabel]) {
+						if (value?.[fakeCopyLabel] === true) {
 							return;
 						}
 
@@ -214,9 +274,9 @@ export function createWatchFn(
 							};
 
 							const
-								tiedLinks = handler[cacheStatus];
+								tiedLinks = handler[tiedWatchers];
 
-							if (tiedLinks) {
+							if (Object.isArray(tiedLinks)) {
 								for (let i = 0; i < tiedLinks.length; i++) {
 									const modifiedInfo = {
 										...info,
@@ -233,7 +293,8 @@ export function createWatchFn(
 						});
 
 					} else {
-						unwatch = watch(proxy, info.path, normalizedOpts, watchHandler).unwatch;
+						// eslint-disable-next-line @typescript-eslint/unbound-method
+						unwatch = watch(proxy, info.path, <any>normalizedOpts, watchHandler).unwatch;
 					}
 
 					destructors.push(unwatch);
@@ -245,7 +306,7 @@ export function createWatchFn(
 						const
 							proxyVal = Object.get(unwrap(proxy), info.path);
 
-						if (getProxyType(proxyVal)) {
+						if (getProxyType(proxyVal) != null) {
 							const normalizedOpts = {
 								collapse: true,
 								...opts,
@@ -265,6 +326,7 @@ export function createWatchFn(
 								}
 							};
 
+							// eslint-disable-next-line @typescript-eslint/unbound-method
 							const {unwatch} = watch(<object>proxyVal, normalizedOpts, watchHandler);
 							destructors.push(unwatch);
 						}
@@ -272,40 +334,73 @@ export function createWatchFn(
 
 					attachDeepProxy();
 
-					return () => {
+					return wrapDestructor(() => {
 						for (let i = 0; i < destructors.length; i++) {
 							destructors[i]();
 						}
-					};
+					});
 				}
+
+				default:
+					// Loopback
 			}
 
-			const {unwatch} = watch(proxy, info.path, normalizedOpts, handler);
-			return unwatch;
+			// eslint-disable-next-line @typescript-eslint/unbound-method
+			const {unwatch} = isDefinedPath ?
+				watch(proxy, info.path, normalizedOpts, handler) :
+				watch(proxy, normalizedOpts, handler);
+
+			return wrapDestructor(unwatch);
 		}
 
-		let
-			handlersStore = dynamicHandlers.get(component);
+		return attachDynamicWatcher(component, info, opts, handler);
 
-		if (!handlersStore) {
-			handlersStore = Object.createDict();
-			dynamicHandlers.set(component, handlersStore);
+		function getVal(): unknown {
+			let
+				ctx,
+				path;
+
+			switch (info.type) {
+				case 'mounted':
+					ctx = info.ctx;
+
+					if (isDefinedPath) {
+						path = info.path;
+					}
+
+					break;
+
+				case 'field':
+					ctx = proxy;
+					path = info.originalPath;
+					break;
+
+				default:
+					ctx = component;
+					path = info.originalPath;
+			}
+
+			if (path == null) {
+				return ctx;
+			}
+
+			if (normalizedOpts.collapse) {
+				const normalizedPath = Object.isString(path) ? path.split('.') : path;
+				return Object.get(ctx, normalizedPath.slice(0, info.type === 'mounted' ? 1 : 2));
+			}
+
+			return Object.get(ctx, path);
 		}
 
-		const
-			nm = info.accessor || info.name;
+		function wrapDestructor<T>(destructor: T): T {
+			if (Object.isFunction(destructor)) {
+				// Every worker that passed to async have a counter with number of consumers of this worker,
+				// but in this case this behaviour is redundant and can produce an error,
+				// that why we wrap original destructor with a new function
+				component.unsafe.$async.worker(() => destructor());
+			}
 
-		let
-			handlersSet = handlersStore[nm];
-
-		if (!handlersSet) {
-			handlersSet = handlersStore[nm] = new Set<Function>();
+			return destructor;
 		}
-
-		handlersSet.add(handler);
-
-		return () => {
-			handlersSet?.delete(handler);
-		};
 	};
 }

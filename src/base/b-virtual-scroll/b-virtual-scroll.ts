@@ -6,6 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-virtual-scroll/README.md]]
+ * @packageDocumentation
+ */
+
+//#if demo
+import 'models/demo/pagination';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';
@@ -14,27 +23,48 @@ import iData, {
 
 	component,
 	prop,
-	field,
 	system,
+	field,
+	watch,
 	wait,
+	hook,
+	p,
 
-	CheckDBEquality,
-	InitLoadOptions,
 	RequestParams,
 	RequestError,
-	RetryRequestFn
+
+	InitLoadOptions,
+	RetryRequestFn,
+	CheckDBEquality,
+
+	UnsafeGetter
 
 } from 'super/i-data/i-data';
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
-import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
+import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
+import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/modules/helpers';
+
+import {
+
+	GetData,
+	RequestFn,
+	RemoteData,
+	LocalState,
+	RequestQueryFn,
+	DataState,
+	MergeDataStateParams,
+	UnsafeBVirtualScroll
+
+} from 'base/b-virtual-scroll/interface';
+
+export * from 'super/i-data/i-data';
+export * from 'base/b-virtual-scroll/modules/helpers';
+export * from 'base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
-export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -47,47 +77,51 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iItems.prototype.itemsProp]] */
+	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
 	readonly optionsProp?: iItems['optionsProp'] = [];
 
-	/** @see [[iItems.prototype.items]] */
+	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see [[iItems.prototype.item]] */
+	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['option'];
 
-	/** @see [[iItems.prototype.itemKey]] */
+	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItems['optionKey'];
 
-	/** @see [[iItems.prototype.itemProps]] */
+	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, default: () => ({})})
 	readonly optionProps!: iItems['optionProps'];
 
 	/**
 	 * Maximum number of elements to cache
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of elements till the page bottom that should initialize a new render iteration
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly renderGap: number = 10;
 
 	/**
 	 * Number of elements per one render chunk
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly chunkSize: number = 10;
 
 	/**
 	 * Number of tombstones to render
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, required: false, validator: Number.isNatural})
 	readonly tombstonesSize?: number;
 
@@ -99,10 +133,16 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly clearNodes: boolean = false;
 
 	/**
-	 * If true then created nodes will be cached
+	 * If true, then created nodes will be cached
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNodes: boolean = true;
+
+	/**
+	 * If true, then additional data chunk will be requested automatically on user scroll
+	 */
+	@prop({type: Boolean})
+	readonly requestOnScroll: boolean = true;
 
 	/**
 	 * Function that returns request parameters
@@ -115,7 +155,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly request?: RequestParams;
 
 	/**
-	 * Requests remote data chunk to render
+	 * Requests a new data chunk to render
 	 */
 	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
 	readonly getData!: GetData;
@@ -123,7 +163,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * When this function returns true the component will be able to request additional data
 	 */
-	@prop({type: Function, default: (v) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v: DataState) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
@@ -138,8 +178,33 @@ export default class bVirtualScroll extends iData implements iItems {
 	@system()
 	protected total?: number;
 
+	/**
+	 * Local component state
+	 */
+	@p({cache: false})
+	protected get localState(): LocalState {
+		return this.localStateStore;
+	}
+
+	/**
+	 * @param state
+	 * @emits localEvent:localState.loading()
+	 * @emits localEvent:localState.ready()
+	 * @emits localEvent:localState.error()
+	 */
+	protected set localState(state: LocalState) {
+		this.localStateStore = state;
+		this.localEmitter.emit(`localState.${state}`);
+	}
+
+	/**
+	 * Local component state store
+	 */
+	@system()
+	protected localStateStore: LocalState = 'init';
+
 	/** @override */
-	get unsafe(): Unsafe & this {
+	get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return <any>this;
 	}
 
@@ -147,33 +212,34 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
-				...this.requestQuery?.(getRequestParams())?.get,
-				...(<Dictionary<Dictionary>>this.request)?.get
+				...this.requestQuery?.(this.getDataStateSnapshot())?.get,
+				...Object.isDictionary(this.request?.get) ? this.request?.get : undefined
 			}
 		};
 	}
 
 	/** @override */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected set requestParams(value: RequestParams) {
-		return;
+		// Loopback
 	}
 
 	/**
 	 * API for scroll rendering
 	 */
-	@system((o: bVirtualScroll) => new ScrollRender(o))
-	protected scrollRender!: ScrollRender;
+	@system<bVirtualScroll>((o) => new ChunkRender(o))
+	protected chunkRender!: ChunkRender;
 
 	/**
 	 * API for scroll data requests
 	 */
-	@system((o: bVirtualScroll) => new ScrollRequest(o))
-	protected scrollRequest!: ScrollRequest;
+	@system<bVirtualScroll>((o) => new ChunkRequest(o))
+	protected chunkRequest!: ChunkRequest;
 
 	/**
 	 * API for dynamic component rendering
 	 */
-	@system((o: bVirtualScroll) => new ComponentRender(o))
+	@system<bVirtualScroll>((o) => new ComponentRender(o))
 	protected componentRender!: ComponentRender;
 
 	/** @override */
@@ -186,58 +252,152 @@ export default class bVirtualScroll extends iData implements iItems {
 		done?: HTMLElement;
 	};
 
-	/** @override */
-	initLoad(data?: unknown, params: InitLoadOptions = {}): CanPromise<void> {
+	/**
+	 * @override
+	 * @emits chunkLoading(page: number)
+	 */
+	initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
-			this.reInit().catch(stderr);
+			this.reInit();
 		}
 
-		return super.initLoad(data, params);
+		if (this.isActivated) {
+			this.emit('chunkLoading', 0);
+		}
+
+		return super.initLoad(data, opts);
 	}
 
 	/**
-	 * Reloads the last request (if there is no `db` or `options` `bVirtualScroll.prototype.reload` will be called)
+	 * Reloads the last request (if there is no `db` or `options` the method calls reload)
 	 */
 	reloadLast(): void {
-		if (!this.db || !this.options.length) {
-			this.reload();
+		if (!this.db || this.chunkRequest.data.length === 0) {
+			this.reload().catch(stderr);
 
 		} else {
-			this.scrollRequest.reloadLast();
+			this.chunkRequest.reloadLast();
 		}
 	}
 
 	/**
 	 * Re-initializes component
 	 */
-	async reInit(): Promise<void> {
+	reInit(): void {
 		this.componentRender.reInit();
-		this.scrollRender.reInit();
+		this.chunkRequest.reset();
+		this.chunkRender.reInit();
+	}
+
+	/**
+	 * Returns an object with the current data state of the component
+	 *
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
+	 */
+	getCurrentDataState<
+		ITEM extends unknown = unknown,
+		RAW extends unknown = unknown
+	>(): DataState<ITEM, RAW> {
+		let overrideParams: MergeDataStateParams = {};
+
+		if (this.componentStatus !== 'ready' || !Object.isTruly(this.dataProvider)) {
+			overrideParams = {
+				currentPage: 0,
+				...overrideParams
+			};
+		}
+
+		return this.getDataStateSnapshot(overrideParams, this.chunkRequest, this.chunkRender);
+	}
+
+	/**
+	 * Takes a snapshot of the current data state and returns it
+	 *
+	 * @param [overrideParams]
+	 * @param [chunkRequest]
+	 * @param [chunkRender]
+	 *
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
+	 */
+	protected getDataStateSnapshot<
+		ITEM extends unknown = unknown,
+		RAW extends unknown = unknown
+	>(
+		overrideParams?: MergeDataStateParams,
+		chunkRequest?: ChunkRequest,
+		chunkRender?: ChunkRender
+	): DataState<ITEM, RAW> {
+		return getRequestParams(chunkRequest, chunkRender, overrideParams);
 	}
 
 	/**
 	 * @override
-	 * @emits localEmitter:localReady
+	 * @emits chunkLoaded(lastLoadedChunk: LastLoadedChunk)
 	 */
-	protected initRemoteData(): CanUndef<unknown[]> {
+	protected initRemoteData(): void {
 		if (!this.db) {
 			return;
 		}
 
-		const
-			val = this.convertDBToComponent<RemoteData>(this.db);
+		this.localState = 'init';
 
-		if (this.field.get('data.length', val)) {
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
-			this.options = <unknown[]>val.data;
-			this.total = Object.isNumber(val.total) ? val.total : undefined;
+		const
+			{data, total} = this.db;
+
+		if (data && data.length > 0) {
+			const lastLoadedChunk = {
+				normalized: data,
+				raw: this.chunkRequest.lastLoadedChunk.raw
+			};
+
+			const params = this.getDataStateSnapshot({
+				lastLoadedData: data,
+				lastLoadedChunk
+			});
+
+			this.chunkRequest.lastLoadedChunk = lastLoadedChunk;
+			this.chunkRequest.shouldStopRequest(params);
+			this.chunkRequest.data = data;
+			this.total = total;
 
 		} else {
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
-			this.options = [];
+			this.chunkRequest.isLastEmpty = true;
+
+			const
+				params = this.getDataStateSnapshot({isLastEmpty: true});
+
+			this.chunkRequest.shouldStopRequest(params);
 		}
 
-		this.localEmitter.emit('localReady');
+		this.emit('chunkLoaded', this.chunkRequest.lastLoadedChunk);
+		this.chunkRequest.init().catch(stderr);
+	}
+
+	/** @override */
+	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
+		this.chunkRequest.lastLoadedChunk.raw = data;
+		return super.convertDataToDB(data);
+	}
+
+	/**
+	 * Initializes rendering on the items passed to the component
+	 */
+	@hook('mounted')
+	@watch('options')
+	@wait('ready', {defer: true, label: $$.initOptions})
+	protected initItems(): CanPromise<void> {
+		if (this.dataProvider !== undefined) {
+			return;
+		}
+
+		if (this.localState === 'ready') {
+			this.reInit();
+		}
+
+		this.chunkRequest.lastLoadedChunk.normalized = Object.isArray(this.options) ? [...this.options] : [];
+		this.chunkRequest.init().catch(stderr);
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -246,20 +406,34 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Synchronization for the component props
+	 * Synchronization of the component props
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
-	protected async syncPropsWatcher(): Promise<void> {
+	protected syncPropsWatcher(): CanPromise<void> {
 		return this.reInit();
 	}
 
-	/**
-	 *  @override
-	 *  @emits localEmitter:localError
-	 */
+	/** @override */
+	protected syncDataProviderWatcher(initLoad?: boolean): void {
+		const
+			provider = this.dataProvider;
+
+		if (provider === undefined) {
+			this.reInit();
+
+		} else {
+			super.syncDataProviderWatcher(initLoad);
+		}
+	}
+
+	/** @override */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		this.localEmitter.emit('localError');
+		if (isAsyncReplaceError(err)) {
+			return;
+		}
+
+		this.localState = 'error';
 	}
 }

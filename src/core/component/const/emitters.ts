@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
+import { EventEmitter2 as EventEmitter, ListenerFn, OnOptions } from 'eventemitter2';
 import { componentParams } from 'core/component/const/cache';
 
 /**
@@ -18,7 +18,11 @@ export const
 // We need wrap an original "once" function of the emitter
 // to attach logic to register smart components
 ((initEventOnce) => {
-	initEmitter.once = function (event: CanArray<string>, listener: Listener): EventEmitter {
+	initEmitter.once = function once(
+		event: CanArray<string>,
+		listener: ListenerFn,
+		opts?: true | OnOptions
+	): EventEmitter {
 		const
 			events = Array.concat([], event);
 
@@ -28,17 +32,17 @@ export const
 				chunks = el.split('.');
 
 			if (chunks[0] === 'constructor') {
-				initEventOnce(el, listener);
+				initEventOnce(el, listener, opts);
 
 				const
 					p = componentParams.get(chunks[1]);
 
 				if (p && Object.isPlainObject(p.functional)) {
-					initEventOnce(`${el}-functional`, listener);
+					initEventOnce(`${el}-functional`, listener, opts);
 				}
 
 			} else {
-				initEventOnce(el, listener);
+				initEventOnce(el, listener, opts);
 			}
 		}
 

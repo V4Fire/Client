@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 import iVisible from 'traits/i-visible/i-visible';
 
-import iData, { component, prop, system, watch, hook, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, system, computed, watch, hook, ModsDecl } from 'super/i-data/i-data';
 import { TitleValue, StageTitles, ScrollOptions } from 'super/i-page/interface';
 
 export * from 'super/i-data/i-data';
@@ -49,6 +49,7 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * Page title
 	 */
+	@computed({cache: true, dependencies: ['r.pageTitle']})
 	get pageTitle(): string {
 		return this.r.pageTitle;
 	}
@@ -58,7 +59,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			this.r.setPageTitle(value, this);
+			void this.r.setPageTitle(value, this);
 		}
 	}
 
@@ -67,7 +68,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 * @see [[iPage.scrollTo]]
 	 */
 	get scrollToProxy(): this['scrollTo'] {
-		return this.async.proxy(this.scrollTo, {
+		return this.async.proxy(this.scrollTo.bind(this), {
 			single: false,
 			label: $$.scrollTo
 		});
@@ -103,10 +104,10 @@ export default abstract class iPage extends iData implements iVisible {
 
 		const scroll = (opts: ScrollToOptions) => {
 			try {
-				scrollTo(opts);
+				globalThis.scrollTo(opts);
 
 			} catch {
-				scrollTo(opts.left == null ? pageXOffset : opts.left, opts.top == null ? pageYOffset : opts.top);
+				globalThis.scrollTo(opts.left == null ? pageXOffset : opts.left, opts.top == null ? pageYOffset : opts.top);
 			}
 		};
 
@@ -135,22 +136,23 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	@watch('!:onStageChange')
 	protected syncStageTitles(): CanUndef<string> {
-		if (!this.stagePageTitles) {
+		const
+			stageTitles = this.stagePageTitles;
+
+		if (stageTitles == null) {
 			return;
 		}
 
-		const
-			stageTitles = this.stage != null && this.stagePageTitles;
-
-		if (stageTitles) {
+		if (this.stage != null) {
 			let
-				v = stageTitles[<string>this.stage];
+				v = stageTitles[this.stage];
 
-			if (!v) {
+			if (v == null) {
 				v = stageTitles['[[DEFAULT]]'];
 			}
 
-			if (v) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (v != null) {
 				return this.pageTitle = this.t(Object.isFunction(v) ? v(this) : v);
 			}
 		}
@@ -161,7 +163,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	@hook('created')
 	protected initTitle(): void {
-		if (!this.syncStageTitles() && this.pageTitleStore) {
+		if (this.syncStageTitles() == null && Object.isTruly(this.pageTitleStore)) {
 			this.pageTitle = this.pageTitleStore;
 		}
 	}

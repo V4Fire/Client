@@ -16,12 +16,17 @@ const
 	labelRgxp = /\[__ESCAPER_QUOT__(\d+)_]/g;
 
 /**
- * WebPack loader for prelude modules
+ * WebPack loader to replace global invokes of prelude methods
  *
  * @param {string} str
  * @returns {string}
+ *
+ * @example
+ * ```js
+ * "foo".camelize() // "foo"[Symbol.for('[[V4_PROP_TRAP:camelize')]()
+ * ```
  */
-module.exports = function (str) {
+module.exports = function preludeLoader(str) {
 	if (replaceRgxp) {
 		const
 			content = [];
@@ -30,6 +35,7 @@ module.exports = function (str) {
 			initGlobals = false;
 
 		str = escaper.paste(
+			// eslint-disable-next-line no-template-curly-in-string
 			escaper.replace(str, {label: '[__ESCAPER_QUOT__${pos}_]'}, content).replace(replaceRgxp, (str) => {
 				const
 					token = tokens.get(str);

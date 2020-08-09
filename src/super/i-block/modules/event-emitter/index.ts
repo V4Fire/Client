@@ -62,7 +62,7 @@ export function wrapEventEmitter(
 
 	const group = (p) => {
 		const
-			group = p ? p.group : '';
+			group = Object.isPlainObject(p) ? p.group : '';
 
 		if (!Object.isString(group) || unsuspendRgxp.test(group)) {
 			return p;

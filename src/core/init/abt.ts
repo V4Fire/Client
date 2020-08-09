@@ -7,4 +7,5 @@
  */
 
 import semaphore from 'core/init/semaphore';
+
 export default (() => semaphore('ABTReady'))();

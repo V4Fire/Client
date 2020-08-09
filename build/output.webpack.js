@@ -17,7 +17,7 @@ const
 	publicPath = webpack.publicPath();
 
 /**
- * Parameters for webpack.output
+ * Options for WebPack ".output"
  */
 module.exports = {
 	path: src.clientOutput(),

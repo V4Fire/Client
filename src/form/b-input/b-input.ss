@@ -59,7 +59,7 @@
 								:maxlength = maxlength |
 								:min = min |
 								:max = max |
-								:readonly = readonly || autocomplete === 'off' ? 'readonly' : undefined |
+								:readonly = readonly |
 								:v-attrs = attrs |
 								@focus = onFocus |
 								@input = onEdit |

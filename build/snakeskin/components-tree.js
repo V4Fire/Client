@@ -10,20 +10,36 @@
 
 const
 	$C = require('collection.js'),
-	escaper = require('escaper');
+	escaper = require('escaper'),
+	camelize = require('camelize'),
+	fs = require('fs');
+
+const {
+	componentRgxp,
+	componentClassRgxp,
+	propRgxp,
+	genericRgxp,
+	extendsRgxp,
+	componentFiles
+} = include('build/snakeskin/const');
 
 const
-	fs = require('fs'),
-	path = require('upath'),
-	glob = require('glob');
+	componentsTree = module.exports;
 
-const
-	camelize = require('camelize');
+Object.assign(componentsTree, {
+	getParentParameters,
 
-const
-	{validators, resolve} = require('@pzlr/build-core');
-
-module.exports = {
+	/**
+	 * Returns a map of component prop attributes
+	 *
+	 * @param name - component name
+	 * @returns {!Object}
+	 *
+	 * @example
+	 * ```js
+	 * getComponentPropAttrs('b-foo') // {':bla': 'bla'}
+	 * ```
+	 */
 	getComponentPropAttrs(name) {
 		name = camelize(name);
 
@@ -34,33 +50,27 @@ module.exports = {
 		return $C(this[name].props)
 			.object(true)
 			.to({})
-			.reduce((map, el, key) => (map[`:${key}`] = key, map));
+			.reduce((map, el, key) => {
+				map[`:${key}`] = key;
+				return map;
+			});
 	}
-};
+});
 
-const componentsTree = module.exports;
-
-const
-	resources = [resolve.blockSync(), ...resolve.dependencies],
-	components = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`,
-	files = $C(resources).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse();
-
-const
-	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
-	componentClassRgxp = /^\s*export\s+default\s+(?:abstract\s+)?class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)(?:\s+implements\s+[^{]*|\s*){/m,
-	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:[?!]?:\s*[ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
-
-const
-	genericRgxp = /<.*|\s.*/g,
-	extendsRgxp = /\s+extends\s+/;
-
-$C(files).forEach((el) => {
+/**
+ * Load component parameters and build a tree from it
+ */
+$C(componentFiles).forEach((el) => {
 	const
 		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'})),
 		componentClass = componentClassRgxp.exec(file);
 
-	const
-		p = ((v) => v && new Function(`return ${escaper.paste(v[1]) || '{}'}`)())(componentClass && componentRgxp.exec(file));
+	const p = ((v) => {
+		if (v) {
+			// eslint-disable-next-line no-new-func
+			return Function(`return ${escaper.paste(v[1]) || '{}'}`)();
+		}
+	})(componentClass && componentRgxp.exec(file));
 
 	if (!p) {
 		return;
@@ -70,10 +80,13 @@ $C(files).forEach((el) => {
 		component = componentClass[2].replace(genericRgxp, ''),
 		parent = componentClass[1].split(extendsRgxp).slice(-1)[0].replace(genericRgxp, '');
 
-	const obj = componentsTree[component] = componentsTree[component] || {
+	componentsTree[component] = componentsTree[component] || {
 		props: {},
 		parent
 	};
+
+	const
+		obj = componentsTree[component];
 
 	obj.model = p.model;
 	obj.deprecatedProps = p.deprecatedProps || {};
@@ -87,13 +100,36 @@ $C(files).forEach((el) => {
 	}
 
 	let s;
-	while ((s = propsRgxp.exec(file))) {
+
+	// eslint-disable-next-line no-cond-assign
+	while (s = propRgxp.exec(file)) {
 		obj.props[s[2].split(' ').slice(-1)[0]] = true;
 	}
 });
 
-function getInheritParameters(obj) {
-	if (!obj || !obj.parent) {
+/**
+ * Inherit parent parameters
+ */
+$C(componentsTree).forEach((el, key, data) => {
+	Object.assign(el, getParentParameters(el));
+
+	const
+		parent = el.parent && data[el.parent];
+
+	if (parent) {
+		Object.setPrototypeOf(el, parent);
+		Object.setPrototypeOf(el.props, parent.props);
+	}
+});
+
+/**
+ * Return parameters of the specified component
+ *
+ * @param component - component object
+ * @returns {!Object}
+ */
+function getParentParameters(component) {
+	if (!component || !component.parent) {
 		return {};
 	}
 
@@ -105,14 +141,14 @@ function getInheritParameters(obj) {
 
 	const
 		res = {},
-		parent = getInheritParameters(componentsTree[obj.parent]);
+		parent = getParentParameters(componentsTree[component.parent]);
 
 	for (let i = 0; i < fields.length; i++) {
 		const
 			[key, def] = fields[i];
 
 		const
-			val = obj[key],
+			val = component[key],
 			isObj = Object.isObject(val);
 
 		if (val === undefined || isObj) {
@@ -138,15 +174,3 @@ function getInheritParameters(obj) {
 
 	return res;
 }
-
-$C(componentsTree).forEach((el, key, data) => {
-	Object.assign(el, getInheritParameters(el));
-
-	const
-		parent = el.parent && data[el.parent];
-
-	if (parent) {
-		Object.setPrototypeOf(el, parent);
-		Object.setPrototypeOf(el.props, parent.props);
-	}
-});

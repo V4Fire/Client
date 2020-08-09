@@ -24,7 +24,7 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 			key = keys[i],
 			v = p[key];
 
-		if (v) {
+		if (v != null) {
 			o[key] = v.slice();
 		}
 	}
@@ -34,7 +34,7 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 			key = keys[i],
 			v = p[key];
 
-		if (v) {
+		if (v != null) {
 			o[key] = v.slice();
 		}
 	}

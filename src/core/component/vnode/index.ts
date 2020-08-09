@@ -13,8 +13,9 @@
 
 import { components } from 'core/component/const';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
-import { RenderContext, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
+import { RenderContext, VNode, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentVNodeData, ComponentModelVNodeData } from 'core/component/vnode/interface';
+
 export * from 'core/component/vnode/interface';
 
 /**
@@ -34,7 +35,7 @@ export function getComponentRenderCtxFromVNode(
 
 	return {
 		parent: <any>parent,
-		children: vnode.children || [],
+		children: vnode.children ?? [],
 		props: data.props,
 		listeners: <Record<string, CanArray<Function>>>data.on,
 
@@ -64,8 +65,8 @@ export function getComponentRenderCtxFromVNode(
  */
 export function getComponentDataFromVNode(component: string | ComponentMeta, vnode: VNode): ComponentVNodeData {
 	const
-		vData = vnode.data || {},
-		slots = (<Dictionary>vData).slots;
+		vData = vnode.data ?? {},
+		{slots, model} = (<Dictionary>vData);
 
 	const res = <ComponentVNodeData>{
 		ref: vData.ref,
@@ -83,7 +84,7 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 		on: {...vData.on},
 		nativeOn: {...vData.nativeOn},
 
-		class: [].concat(vData.class || []),
+		class: [].concat(vData.class ?? []),
 		staticClass: vData.staticClass,
 		style: vData.style
 	};
@@ -92,20 +93,20 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 		meta = Object.isString(component) ? components.get(component) : component;
 
 	if (!meta) {
-		res.attrs = vData.attrs || res.attrs;
+		res.attrs = vData.attrs ?? res.attrs;
 		return res;
 	}
 
 	const
-		model = (<Dictionary>vData).model,
 		componentModel = meta.params.model;
 
-	if (model && componentModel) {
+	if (model != null && componentModel) {
 		const
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			{value, callback} = <ComponentModelVNodeData>model,
 			{prop, event} = componentModel;
 
-		if (prop && event) {
+		if (prop != null && event != null) {
 			res.props[prop] = value;
 			res.on[event] = callback;
 		}
@@ -135,7 +136,7 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 		}
 	}
 
-	if (!slots && vnode.children) {
+	if (slots == null && vnode.children) {
 		const
 			{children} = vnode;
 
@@ -145,10 +146,13 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 		for (let i = 0; i < children.length; i++) {
 			const
 				node = children[i],
-				data = node && node.data || {},
-				attrs = data.attrs;
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				data = node?.data ?? {};
 
-			if (attrs && attrs.slot) {
+			const
+				{attrs} = data;
+
+			if (attrs?.slot != null) {
 				hasSlots = true;
 				res.slots[attrs.slot] = node;
 			}

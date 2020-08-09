@@ -12,26 +12,10 @@
  */
 
 import semver, { Operation } from 'core/semver';
+import { is } from 'core/browser/const';
 
-const
-	agent = navigator.userAgent,
-	separator = /[._]/;
-
-/**
- * Takes a string pattern and returns a tuple (browserName, browserVersion?[]) if the pattern
- * is matches with navigator.userAgent, otherwise returns false
- *
- * @param pattern
- */
-export function match(pattern: RegExp | string): [string, number[] | null] | boolean {
-	const
-		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9._]*))?`, 'i') : pattern,
-		res = agent.match(rgxp);
-
-	return res ?
-		[res[1], res[2] ? res[2].split(separator).map((el) => parseInt(String(el), 10) || 0) : null] :
-		false;
-}
+export * from 'core/browser/const';
+export * from 'core/browser/helpers';
 
 /**
  * Returns true if navigator.userAgent matches with the specified parameters
@@ -40,38 +24,21 @@ export function match(pattern: RegExp | string): [string, number[] | null] | boo
  * @param [operation] - operation type (>, >=, etc.)
  * @param [version] - browser version
  */
-export function test(platform: string, operation?: Operation, version?: string): boolean {
+export function test(platform: keyof typeof is, operation?: Operation, version?: string): boolean {
 	const
 		val = is[platform];
 
-	if (!val) {
+	if (val === false) {
 		return false;
 	}
 
-	if (!operation || !version) {
+	if (operation == null || version == null) {
 		return true;
 	}
 
-	if (!val[1]) {
+	if (val[1] == null) {
 		return false;
 	}
 
 	return semver(val[1].join('.'), version, operation);
 }
-
-export const is = {
-	Chrome: match('Chrome'),
-	Firefox: match('Firefox'),
-	Android: match('Android'),
-	BlackBerry: match('BlackBerry'),
-	iOS: match('(?:iPhone|iPad|iPod);[ \\w]+(?= \\d)'),
-	OperaMini: match('Opera Mini'),
-	WindowsMobile: match('IEMobile'),
-
-	/**
-	 * Version of the current mobile browser or false
-	 */
-	get mobile(): string[] | boolean {
-		return this.Android || this.BlackBerry || this.iOS || this.OperaMini || this.WindowsMobile || false;
-	}
-};

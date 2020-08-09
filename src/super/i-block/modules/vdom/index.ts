@@ -38,7 +38,7 @@ export * from 'super/i-block/modules/vdom/interface';
 /**
  * Class provides API to work with a VDOM tree
  */
-export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
+export default class VDOM extends Friend {
 	/**
 	 * Renders the specified data
 	 * @param data
@@ -55,7 +55,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 	render(data: VNode): Node;
 	render(data: VNode[]): Node[];
 	render(data: CanArray<VNode>): CanArray<Node> {
-		return renderData(<any>data, this.component);
+		return renderData(<any>data, this.ctx);
 	}
 
 	/**
@@ -74,14 +74,14 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 		const
 			chunks = path.split('.');
 
-		if (path.slice(-1) === '/') {
+		if (path.endsWith('/')) {
 			const l = chunks.length - 1;
 			chunks[l] = chunks[l].slice(0, -1);
 			chunks.push('index');
 		}
 
 		if (chunks.length === 1) {
-			chunks.unshift(this.component.componentName);
+			chunks.unshift(this.ctx.componentName);
 
 		} else {
 			chunks[0] = chunks[0].dasherize();
@@ -127,7 +127,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			renderObj = Object.isString(objOrPath) ? this.getRenderObject(objOrPath) : objOrPath;
 
 		if (!renderObj) {
-			return () => this.component.$createElement('span');
+			return () => this.ctx.$createElement('span');
 		}
 
 		let
@@ -135,7 +135,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			renderCtx;
 
 		if (ctx && Object.isArray(ctx)) {
-			instanceCtx = ctx[0] || this.component;
+			instanceCtx = ctx[0] ?? this.ctx;
 			renderCtx = ctx[1];
 
 			if (instanceCtx !== instanceCtx.provide.component) {
@@ -145,7 +145,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			}
 
 		} else {
-			instanceCtx = this.component;
+			instanceCtx = this.ctx;
 			renderCtx = ctx;
 		}
 
@@ -175,7 +175,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			const
 				vnode = execRenderObject(renderObj, instanceCtx);
 
-			if (renderCtx) {
+			if (renderCtx != null) {
 				patchVNode(vnode, instanceCtx, renderCtx);
 			}
 
@@ -208,7 +208,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			nm = Object.isString(component) ? component.dasherize() : undefined;
 
 		let
-			el = <CanUndef<T>>this.component.$parent;
+			el = <CanUndef<T>>this.ctx.$parent;
 
 		while (el) {
 			if (Object.isFunction(component) && el.instance instanceof component || el.componentName === nm) {
@@ -238,22 +238,22 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 
 		const search = (vnode) => {
 			const
-				data = vnode.data || {};
+				data = vnode.data ?? {};
 
 			const classes = Object.fromArray(
-				Array.concat([], (data.staticClass || '').split(' '), data.class)
+				Array.concat([], (data.staticClass ?? '').split(' '), data.class)
 			);
 
-			if (classes[selector]) {
+			if (classes[selector] != null) {
 				return vnode;
 			}
 
-			if (vnode.children) {
+			if (vnode.children != null) {
 				for (let i = 0; i < vnode.children.length; i++) {
 					const
 						res = search(vnode.children[i]);
 
-					if (res) {
+					if (res != null) {
 						return res;
 					}
 				}
@@ -275,6 +275,6 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 		name: string,
 		ctx: iBlock = this.component
 	): CanUndef<VNode | ScopedSlot> {
-		return Object.get(ctx, `$slots.${name}`) || Object.get(ctx, `$scopedSlots.${name}`);
+		return Object.get(ctx, `$slots.${name}`) ?? Object.get(ctx, `$scopedSlots.${name}`);
 	}
 }

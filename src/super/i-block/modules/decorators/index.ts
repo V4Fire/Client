@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -11,18 +13,19 @@
  * @packageDocumentation
  */
 
+import { ProxyCb } from 'core/async';
 import { initEmitter, ModVal } from 'core/component';
 
 import {
-
-	DecoratorMethod,
-	DecoratorComponentAccessor,
 
 	p as pDecorator,
 	prop as propDecorator,
 	field as fieldDecorator,
 	system as systemDecorator,
-	watch as watchDecorator
+	watch as watchDecorator,
+
+	DecoratorMethod,
+	DecoratorComponentAccessor
 
 } from 'core/component/decorators';
 
@@ -32,73 +35,69 @@ import { waitCtxRgxp } from 'super/i-block/modules/decorators/const';
 
 import {
 
-	ComponentProp,
-	ComponentField,
+	DecoratorProp,
+	DecoratorField,
 	InitFieldFn,
 
-	FieldWatcher,
-	MethodWatchers,
+	DecoratorFieldWatcher,
+	DecoratorMethodWatcher,
 
 	WaitStatuses,
-	WaitFn,
 	WaitDecoratorOptions,
 	WaitOptions,
 
-	ModEventType,
-	DecoratorCtx
+	DecoratorEventListenerMethod
 
 } from 'super/i-block/modules/decorators/interface';
 
+export { hook, computed } from 'core/component/decorators';
 export * from 'super/i-block/modules/decorators/interface';
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
+export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
+	params?:
+		// @ts-ignore (unsafe cast)
+		DecoratorProp<CTX, A, B> | DecoratorField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const prop = propDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | ComponentProp<CTX, A, B>
+export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore (unsafe cast)
+	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | DecoratorProp<CTX, A, B>
 ) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const field = fieldDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
+export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore (unsafe cast)
+	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const system = systemDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
+export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore (unsafe cast)
+	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const watch = watchDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: FieldWatcher<CTX, A, B> | MethodWatchers<CTX, A, B>
+export const watch = watchDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore (unsafe cast)
+	params?: DecoratorFieldWatcher<CTX, A, B> | DecoratorMethodWatcher<CTX, A, B>
 ) => Function;
-
-/**
- * Returns a component instance from the specified decorator wrapper
- * @param wrapper
- */
-export function getComponentCtx<CTX>(wrapper: DecoratorCtx<CTX>): CTX {
-	// @ts-ignore
-	return wrapper.component || wrapper;
-}
 
 /**
  * Decorates a method as a modifier handler
@@ -111,15 +110,14 @@ export function getComponentCtx<CTX>(wrapper: DecoratorCtx<CTX>): CTX {
 export function mod(
 	name: string,
 	value: ModVal = '*',
-	method: ModEventType = 'on'
+	method: DecoratorEventListenerMethod = 'on'
 ): Function {
 	return (target, key, descriptor) => {
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
-						const c = getComponentCtx(this);
-						c.localEmitter[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
+					fn(this: iBlock['unsafe']): void {
+						this.localEmitter[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
 					}
 				});
 			});
@@ -138,15 +136,14 @@ export function mod(
 export function removeMod(
 	name: string,
 	value: ModVal = '*',
-	method: ModEventType = 'on'
+	method: DecoratorEventListenerMethod = 'on'
 ): Function {
 	return (target, key, descriptor) => {
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
-						const c = getComponentCtx(this);
-						c.localEmitter[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
+					fn(this: iBlock['unsafe']): void {
+						this.localEmitter[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
 					}
 				});
 			});
@@ -170,9 +167,9 @@ export function wait(opts: WaitDecoratorOptions): Function;
  * @see [[Async.wait]]
  * @param opts - additional options
  */
-export function wait<F extends WaitFn>(
+export function wait<F extends AnyFunction>(
 	opts: WaitOptions<F>
-): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
+): ProxyCb<Parameters<F>, CanPromise<ReturnType<F>>, iBlock>;
 
 /**
  * Decorates a method to wait the specified component status
@@ -192,18 +189,18 @@ export function wait(status: WaitStatuses, opts?: WaitDecoratorOptions): Functio
  * @param status
  * @param fnOrOpts - function to wrap or additional options
  */
-export function wait<F extends WaitFn>(
+export function wait<F extends AnyFunction>(
 	status: WaitStatuses,
 	fnOrOpts: F | WaitOptions<F>
-): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
+): ProxyCb<Parameters<F>, CanPromise<ReturnType<F>>, iBlock>;
 
 export function wait(
 	statusOrOpts: WaitStatuses | WaitDecoratorOptions | WaitOptions,
 	optsOrCb?: WaitDecoratorOptions | WaitOptions | Function
 ): Function {
 	let
-		status,
-		opts,
+		status: WaitStatuses,
+		opts: CanUndef<WaitDecoratorOptions | WaitOptions>,
 		handler,
 		ctx;
 
@@ -219,7 +216,10 @@ export function wait(
 
 		} else {
 			status = 0;
-			opts = statusOrOpts;
+
+			if (Object.isPlainObject(statusOrOpts)) {
+				opts = statusOrOpts;
+			}
 		}
 
 		handler = optsOrCb;
@@ -233,53 +233,52 @@ export function wait(
 			status = statuses[statusOrOpts];
 		}
 
-		opts = optsOrCb;
-		handler = opts?.fn;
+		if (Object.isPlainObject(optsOrCb)) {
+			opts = <typeof opts>optsOrCb;
+			handler = Object.get(opts, 'fn');
+		}
 
 	} else {
 		status = 0;
-		opts = statusOrOpts;
-		handler = opts?.fn;
+
+		if (Object.isPlainObject(statusOrOpts)) {
+			opts = statusOrOpts;
+			handler = Object.get(opts, 'fn');
+		}
 	}
 
-	// tslint:disable:prefer-const
+	opts = opts ?? {};
 
 	let {
 		join,
 		label,
 		group,
 		defer
-	} = opts || {};
-
-	// tslint:enable:prefer-const
+	} = opts;
 
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: DecoratorCtx<iBlock['unsafe']>): CanUndef<CanPromise<unknown>> {
+	function wrapper(this: iBlock['unsafe'], ...args: unknown[]): CanUndef<CanPromise<unknown>> {
 		const
-			component = getComponentCtx(this);
-
-		const
-			getRoot = () => ctx ? component.field.get(ctx) : component,
-			root = getRoot(),
-			args = arguments;
+			getRoot = () => ctx != null ? this.field.get(ctx) : this,
+			root = getRoot();
 
 		if (join === undefined) {
-			join = handler.length ? 'replace' : true;
+			join = handler.length > 0 ? 'replace' : true;
 		}
 
 		const
-			{async: $a} = component,
+			{async: $a} = this,
 			p = {join, label, group};
 
 		const exec = (ctx) => {
 			const
-				componentStatus = statuses[component.componentStatus];
+				componentStatus = Number(statuses[this.componentStatus]);
 
 			let
 				res,
-				init;
+				init = false;
 
 			if (componentStatus < 0 && status > componentStatus) {
 				throw Object.assign(new Error('Component status watcher abort'), {
@@ -287,9 +286,9 @@ export function wait(
 				});
 			}
 
-			if (component.isFlyweight || componentStatus >= status) {
+			if (this.isFlyweight || componentStatus >= status) {
 				init = true;
-				res = defer ?
+				res = Object.isTruly(defer) ?
 					$a.promise($a.nextTick().then(() => handler.apply(this, args)), p) :
 					handler.apply(this, args);
 			}
@@ -308,7 +307,7 @@ export function wait(
 			return res;
 		};
 
-		if (root) {
+		if (root != null) {
 			return exec(root);
 		}
 

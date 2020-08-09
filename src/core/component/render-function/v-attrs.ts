@@ -7,10 +7,8 @@
  */
 
 import { VNodeData } from 'core/component/engines';
+import { vAttrsRgxp } from 'core/component/render-function/const';
 import { ComponentMeta } from 'core/component/interface';
-
-const
-	directiveRgxp = /(v-(.*?))(?::(.*?))?(\..*)?$/;
 
 /**
  * Applies dynamic attributes from v-attrs to the specified vnode
@@ -20,16 +18,17 @@ const
  */
 export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): void {
 	const
-		attrs = vnode.attrs = vnode.attrs || {},
+		attrs = vnode.attrs ?? {},
 		attrsSpreadObj = attrs['v-attrs'],
 		slotsSpreadObj = attrs['v-slots'];
 
+	vnode.attrs = attrs;
 	delete attrs['v-attrs'];
 	delete attrs['v-slots'];
 
 	if (Object.isPlainObject(slotsSpreadObj)) {
 		const
-			slotOpts: Dictionary = vnode.scopedSlots || {};
+			slotOpts = vnode.scopedSlots ?? {};
 
 		for (let keys = Object.keys(slotsSpreadObj), i = 0; i < keys.length; i++) {
 			const
@@ -58,9 +57,13 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 
 	if (Object.isPlainObject(attrsSpreadObj)) {
 		const
-			eventOpts: Dictionary = vnode.on = vnode.on || {},
-			nativeEventOpts: Dictionary = vnode.nativeOn = vnode.nativeOn || {},
-			directiveOpts = vnode.directives = vnode.directives || [];
+			eventOpts = vnode.on ?? {},
+			nativeEventOpts = vnode.nativeOn ?? {},
+			directiveOpts = vnode.directives ?? [];
+
+		vnode.on = eventOpts;
+		vnode.nativeOn = nativeEventOpts;
+		vnode.directives = directiveOpts;
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
 			let
@@ -76,14 +79,14 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 				}
 			}
 
-			if (key[0] === '@') {
+			if (key.startsWith('@')) {
 				let
 					event = key.slice(1);
 
 				if (component) {
 					const
 						eventChunks = event.split('.'),
-						flags = <Dictionary>{};
+						flags = <Dictionary<boolean>>{};
 
 					for (let i = 1; i < eventChunks.length; i++) {
 						flags[eventChunks[i]] = true;
@@ -129,26 +132,26 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 							};
 						}
 
-						if (!nativeEventOpts[event]) {
+						if (!(event in nativeEventOpts)) {
 							nativeEventOpts[event] = val;
 						}
 
-					} else if (!eventOpts[event]) {
+					} else if (!(event in eventOpts)) {
 						eventOpts[event] = val;
 					}
 
-				} else if (!eventOpts[event]) {
+				} else if (!(event in eventOpts)) {
 					eventOpts[event] = val;
 				}
 
-			} else if (key.slice(0, 2) === 'v-') {
+			} else if (key.startsWith('v-')) {
 				const
-					[, rawName, name, arg, rawModifiers] = directiveRgxp.exec(key);
+					[, rawName, name, arg, rawModifiers] = vAttrsRgxp.exec(key);
 
 				let
 					modifiers;
 
-				if (rawModifiers) {
+				if (Object.isTruly(rawModifiers)) {
 					modifiers = {};
 
 					for (let o = rawModifiers.split('.'), i = 0; i < o.length; i++) {
@@ -159,11 +162,11 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 				const
 					dir = <Dictionary>{name, rawName, value: val};
 
-				if (arg) {
+				if (Object.isTruly(arg)) {
 					dir.arg = arg;
 				}
 
-				if (modifiers) {
+				if (Object.isTruly(modifiers)) {
 					dir.modifiers = modifiers;
 				}
 
@@ -178,7 +181,7 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 			} else if (key === 'style') {
 				vnode.style = Array.concat([], vnode.style, val);
 
-			} else if (!attrs[key]) {
+			} else if (attrs[key] == null) {
 				attrs[key] = val;
 			}
 		}

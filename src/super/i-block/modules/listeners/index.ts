@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { customWatcherRgxp, MethodWatcher } from 'core/component';
+import { customWatcherRgxp } from 'core/component';
 import iBlock from 'super/i-block/i-block';
 
 export const
@@ -28,7 +28,8 @@ let
  * @param [resetListener]
  */
 export function initGlobalListeners(component: iBlock, resetListener?: boolean): void {
-	baseInitLoad = baseInitLoad || iBlock.prototype.initLoad;
+	// eslint-disable-next-line @typescript-eslint/unbound-method
+	baseInitLoad = baseInitLoad ?? iBlock.prototype.initLoad;
 
 	const
 		ctx = component.unsafe;
@@ -42,8 +43,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 	resetListener = Boolean(
 		(resetListener != null ? resetListener : baseInitLoad !== ctx.instance.initLoad) ||
-		globalName ||
-		needRouterSync
+		(globalName ?? needRouterSync)
 	);
 
 	if (!resetListener) {
@@ -60,23 +60,23 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		}
 	};
 
-	$e.on('reset.load', waitNextTick(ctx.initLoad));
-	$e.on('reset.load.silence', waitNextTick(ctx.reload));
+	$e.on('reset.load', waitNextTick(ctx.initLoad.bind(ctx)));
+	$e.on('reset.load.silence', waitNextTick(ctx.reload.bind(ctx)));
 
 	if (needRouterSync) {
-		$e.on('reset.router', $s.resetRouter);
+		$e.on('reset.router', $s.resetRouter.bind($s));
 	}
 
-	if (globalName) {
-		$e.on('reset.storage', $s.resetStorage);
+	if (globalName != null) {
+		$e.on('reset.storage', $s.resetStorage.bind($s));
 	}
 
 	$e.on('reset', waitNextTick(async () => {
 		ctx.componentStatus = 'loading';
 
-		if (needRouterSync || globalName) {
+		if (needRouterSync || globalName != null) {
 			await Promise.all(
-				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName ? $s.resetStorage() : null)
+				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName != null ? $s.resetStorage() : null)
 			);
 		}
 
@@ -84,9 +84,9 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 	}));
 
 	$e.on('reset.silence', waitNextTick(async () => {
-		if (needRouterSync || globalName) {
+		if (needRouterSync || globalName != null) {
 			await Promise.all(
-				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName ? $s.resetStorage() : null)
+				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName != null ? $s.resetStorage() : null)
 			);
 		}
 
@@ -104,16 +104,16 @@ export function initRemoteWatchers(component: iBlock): void {
 
 	const
 		watchMap = ctx.meta.watchers,
-		watchProp = ctx.watchProp;
+		{watchProp} = ctx;
 
-	if (!watchProp) {
+	if (watchProp == null) {
 		return;
 	}
 
 	const normalizeField = (field) => {
 		if (customWatcherRgxp.test(field)) {
-			return field.replace(customWatcherRgxp, (str, prfx, emitter, event) =>
-				`${prfx + ['$parent'].concat(emitter || []).join('.')}:${event}`);
+			return field.replace(customWatcherRgxp, (str, prfx: string, emitter: string, event: string) =>
+				`${prfx + ['$parent'].concat(Object.isTruly(emitter) ? emitter : []).join('.')}:${event}`);
 		}
 
 		return `$parent.${field}`;
@@ -131,17 +131,18 @@ export function initRemoteWatchers(component: iBlock): void {
 			if (Object.isString(el)) {
 				const
 					field = normalizeField(el),
-					wList = watchMap[field] = watchMap[field] || [];
+					wList = watchMap[field] ?? [];
 
-				wList.push({
-					method,
-					handler: method
-				});
+				watchMap[field] = wList;
+				wList.push({method, handler: method});
 
 			} else {
 				const
 					field = normalizeField(el.field),
-					wList = watchMap[field] = watchMap[field] || [];
+					wList = watchMap[field] ?? [];
+
+				watchMap[field] =
+					wList;
 
 				wList.push({
 					...el,

@@ -11,11 +11,647 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.58 (2020-08-07)
+
+#### :house: Internal
+
+* Added `.ico` files to build `build/module.webpack/img`
+
+## v3.0.0-rc.57 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `core/browser/mobile`
+
+## v3.0.0-rc.56 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `initLoad` error handling `iBlock`, `iData`
+
+## v3.0.0-rc.55 (2020-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `unsafe` after refactoring `core/component/render-function`
+* `iData`:
+  * Fixed an issue with `requestFilter` after refactoring
+  * Fixed an issue with `initLoad` after refactoring
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bRemoteProvider`
+
+#### :nail_care: Polish
+
+* Added documentation `bRemoteProvider`
+
+## v3.0.0-rc.54 (2020-08-04)
+
+#### :house: Internal
+
+* Marked as public `iBlock/isComponent`
+
+## v3.0.0-rc.53 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed generation of code `ES5` `iStaticPage`
+
+## v3.0.0-rc.52 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed generation of code for a case `nonce() { return "<!--#echo var='NonceValue' -->"; }` `iStaticPage`
+
+## v3.0.0-rc.51 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `reObserve` `core/component/directives/in-view`
+* Fixed getting an image URL for IE `bImage`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+  * `global/g-debug`
+  * `global/g-def`
+  * `global/g-hint`
+  * `global/g-icon`
+
+## v3.0.0-rc.50 (2020-08-03)
+
+#### :bug: Bug Fix
+
+* Fixed `core/component/engines/vue/config/getComponentName`
+* Removed normalizing of the `nonce` attribute `iStaticPage`
+
+## v3.0.0-rc.49 (2020-08-03)
+
+#### :boom: Breaking Change
+
+* Removed `isDeactivated`, `removeStrategy` from `core/component/directives/inView/observableElement`
+
+#### :rocket: New Feature
+
+* Added `suspend`, `unsuspend`, `reObserve` methods `inView`
+
+#### :bug: Bug Fix
+
+* Marked `inViewAdapter/stopObserve` as deprecated
+* Fixed an issue with `polling` strategy won't fire a `callback` `inView`
+* Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
+* Fixed providing of `GLOBAL_NONCE` `iStaticPage`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `core/component/directives/in-view`
+  * `traits/i-history`
+  * `traits/i-access`
+  * `traits/i-icon`
+  * `traits/i-width`
+  * `traits/i-visible`
+  * `traits/i-size`
+  * `traits/i-progress`
+  * `traits/i-observe-dom`
+  * `super/i-page`
+  * `super/i-dynamic-page`
+  * `super/i-input`
+  * `form/b-button`
+
+#### :nail_care: Polish
+
+* Added documentation `bButton`
+
+## v3.0.0-rc.48 (2020-08-02)
+
+#### :boom: Breaking Change
+
+* Changed the signature of `iData/getDefaultRequestParams`
+
+#### :rocket: New Feature
+
+* Added `initLoadStart` event `iBlock`, `iData`
+* Added `core/component/interface/$componentId`
+* Added `isWorker` to helpers `build`
+
+#### :bug: Bug Fix
+
+* Fixed building of assets `iStaticPage`
+* Fixed an issue with `initLoad` may be called twice `iData`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `core/component/render-function`
+  * `core/component/register`
+  * `core/component/directives/update-on`
+
+## v3.0.0-rc.47 (2020-07-31)
+
+#### :boom: Breaking Change
+
+* Renamed `head` -> `deps` `super/i-static-page/i-static-page.interface.ss`
+
+#### :rocket: New Feature
+
+* `super/i-static-page/i-static-page.interface.ss`:
+  * Added `meta`
+  * Added `head`
+
+## v3.0.0-rc.46 (2020-07-31)
+
+#### :bug: Bug Fix
+
+* Fixed `fullElName` overloads `iBlock/provide`
+
+#### :house: Internal
+
+* `core/component/state`:
+  * Added `experiments`
+  * Added `interface/State`
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/activation`
+  * `super/i-block/modules/analytics`
+  * `super/i-block/modules/async-render`
+  * `super/i-block/modules/block`
+  * `super/i-block/modules/daemons`
+  * `super/i-block/modules/decorators`
+  * `super/i-block/modules/dom`
+  * `super/i-block/modules/event-emitter`
+  * `super/i-block/modules/field`
+  * `super/i-block/modules/friend`
+  * `super/i-block/modules/lazy`
+  * `super/i-block/modules/mods`
+  * `super/i-block/modules/opt`
+  * `super/i-block/modules/storage`
+  * `super/i-block/modules/vdom`
+  * `super/i-block/modules/listeners`
+  * `super/i-block/directives/event`
+  * `core/component/meta`
+  * `core/component/field`
+
+## v3.0.0-rc.45 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed deadlock on initializing `iBlock/state`
+
+## v3.0.0-rc.44 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed setting of `staticClass` `core/component/engines/vue`
+* Fixed initializing of the router `iBlock/state`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/cache`
+  * `super/i-block/modules/provide`
+
+## v3.0.0-rc.43 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init.js` `iStaticPage`
+
+## v3.0.0-rc.42 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed `resetRouter` without providing of `convertRouterState` `iBlock/state`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `super/i-block/modules/state`
+
+## v3.0.0-rc.41 (2020-07-29)
+
+#### :boom: Breaking Change
+
+* `build/`
+  * Removed `snakeskin/filters/csp`
+  * Renamed `dependencies` -> `entryPoints` `module.webpack/snakeskin`
+  * Renamed `replacers/raw-import` -> `replacers/include`
+  * Changed a pattern from `requireMonic(...)` to `include('...');` `replacers/include`
+
+* `iStaticPage`
+  * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
+  * Removed SS blocks from the template: `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
+  * Moved logic from SS to JS `iStaticPage`
+
+* Removed redundant parameters from `config/snakeskin`
+
+#### :rocket: New Feature
+
+Added `config/csp`
+* `iStaticPage`
+  * Added `links` to `deps.js`
+  * Added `attrs` to `modules/interface.js`
+  * Added generation of `init.js`
+
+#### :bug: Bug Fix
+
+* Fixed a bug in `test` function in `core/browser`
+* Don't show clear button within the read-only mode `iInput`
+
+#### :house: Internal
+
+* Added new dependency: `buble`
+
+## v3.0.0-rc.40 (2020-07-27)
+
+#### :house: Internal
+
+* Logging Vue errors and warnings via the `core/log` module `core/component/engines/vue`
+
+## v3.0.0-rc.39 (2020-07-23)
+
+#### :rocket: New Feature
+
+* [Improved browser test API](https://github.com/V4Fire/Client/issues/289)
+* [Added life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
+
+#### :bug: Bug Fix
+
+* [Fixed reloading of a component after changing its data provider `iData`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed an issue when data from `lastLoadedData` and `lastLoadedChunk.normalized` aren't synchronized `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
+* [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
+
+#### :house: Internal
+
+* Added `waitRef` `iBlock/interface/UnsafeIBlock`
+* [Refactoring of tests `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/293)
+
+* [:up:](https://github.com/V4Fire/Client/pull/293)
+  * playwright 1.2.1
+  * @v4fire/linters 1.5.2
+
+## v3.0.0-rc.38 (2020-07-21)
+
+#### :bug: Bug Fix
+
+* Fixed caching of old values `core/component/watch`
+* Fixed providing explicit `false` value to `readonly` prop `form/b-input`
+
+#### :house: Internal
+
+* Added `npm run up`
+
+## v3.0.0-rc.37 (2020-07-20)
+
+#### :boom: Breaking Change
+
+* Now all accessors with dependencies are cacheable by default
+* Marked `router` as optional `iBlock`
+* Marked `block` as optional `iBlock`
+* Marked `$el` as optional `core/component/interface`
+* Changed the `SyncLinkCache` type from Dictionary to Map `core/component/interface`
+
+#### :rocket: New Feature
+
+* Added support of mounted watchers
+
+```js
+this.watch(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.watch({ctx: anotherWatcher, path: foo}, () => {
+  console.log('...');
+});
+
+this.sync.link(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.sync.object('foo', [
+  ['bla', {ctx: anotherWatcher, path: 'bar'}]
+]);
+
+class bFoo {
+  @computed({watchable: true})
+  get remoteState(): typeof anotherWatcher {
+    return anotherWatcher;
+  }
+}
+```
+
+#### :bug: Bug Fix
+
+* Fixed watching for `remoteState`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`, `core/component`, `core/session`, `core/std`, `super/i-block`
+
+## v3.0.0-rc.36 (2020-07-13)
+
+#### :rocket: New Feature
+
+* Improved support of workers `core/build`
+
+#### :bug: Bug Fix
+
+* Added a missing parameter `core/router/StaticRouteMeta.external`
+* Fixed providing of parameters `base/b-router/getRoute`
+
+#### :house: Internal
+
+* All linter configurations now loaded from @v4fire/linters
+* Fixed TS warnings
+* Improved logic `core/build/entries.webpack.js`
+* Moved to ESLint `core/build`, `core/cookies`, `core/router`, `base/b-router`
+* Refactoring `core/build`
+
+## v3.0.0-rc.35 (2020-07-02)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect bottom-slide positioning with content bigger than `maxVisiblePx`
+
+## v3.0.0-rc.34 (2020-06-30)
+
+#### :house: Internal
+
+* Added `test-entry` argument for test cases
+
+## v3.0.0-rc.33 (2020-06-24)
+
+#### :house: Internal
+
+* Unlocked the @v4fire/core package version
+
+## v3.0.0-rc.32 (2020-06-19)
+
+#### :bug: Bug Fix
+
+* Fixed a problem with converting images to webp `static:image:webp` at `build/static.gulp.js`
+* Fixed a problem with image loading `image-webpack-plugin` at `build/module.webpack.js`
+
+#### :house: Internal
+
+* [Improves github actions performance](https://github.com/V4Fire/Client/issues/266)
+
+## v3.0.0-rc.31 (2020-06-17)
+
+#### :bug: Bug Fix
+
+* Fixed a problem with the disappearance of loaders before the content was rendered
+* Fixed unsafe pointer `core/component/engines/vue/render`
+
+#### :house: Internal
+
+* Added `.npmignore`
+* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+
+## v3.0.0-rc.30 (2020-06-10)
+
+#### :bug: Bug Fix
+
+* Fixed invalid expanding of string literals `build/replacers/ts-import`
+
+## v3.0.0-rc.29 (2020-06-09)
+
+#### :bug: Bug Fix
+
+* Fixed loading of external dependencies `core/router/engines/browser.history`
+
+## v3.0.0-rc.28 (2020-06-09)
+
+#### :bug: Bug Fix
+
+* Fixed loading of external dependencies `core/router/engines/browser.history`
+
+## v3.0.0-rc.27 (2020-06-08)
+
+#### :boom: Breaking Change
+
+* Removed legacy `bRouter`:
+  * Removed click handler;
+  * Removed `scrollTo`;
+  * Review legacy logic with providing of root parameters to the router.
+
+#### :rocket: New Feature
+
+* Improved API `bRouter`:
+  * Added `updateRoutes`;
+  * Added support to watch route query;
+  * Marked `routes` as public;
+  * Marked `basePath` as system field.
+
+#### :bug: Bug Fix
+
+* Fixed `external`, `alias` and `redirect` logic `bRouter`
+
+#### :house: Internal
+
+* Added doc and tests `bRouter`
+
+## v3.0.0-rc.26 (2020-06-03)
+
+#### :bug: Bug Fix
+
+* Fixed race condition within tests `bVirtualScroll`
+
+## v3.0.0-rc.25 (2020-06-03)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue where skeletons disappeared `bVirtualScroll`](https://github.com/V4Fire/Client/issues/230)
+* [Fixed an issue with a race condition `b-virtual-scroll/chunk-request/init`](https://github.com/V4Fire/Client/issues/203)
+* [Fixed an issue where an `empty` slot appeared when there was data `bVirtualScroll`](https://github.com/V4Fire/Client/issues/259)
+
+#### :house: Internal
+
+* [Fixed type of `WrappedDaemonFn`](https://github.com/V4Fire/Client/issues/257)
+
+## v3.0.0-rc.24 (2020-05-29)
+
+#### :bug: Bug Fix
+
+* [Fixed issue with providing extra args in tests](https://github.com/V4Fire/Client/pull/252)
+* [Fixed issue with running tests in a single browser](https://github.com/V4Fire/Client/pull/252)
+
+#### :house: Internal
+
+* [Added `--reinit-browser` argument for `npx gulp test:components`](https://github.com/V4Fire/Client/pull/252)
+
+## v3.0.0-rc.23 (2020-05-27)
+
+#### :bug: Bug Fix
+
+* Fixed watching of external accessors
+
+## v3.0.0-rc.22 (2020-05-27)
+
+#### :bug: Bug Fix
+
+* Fixed providing of watch parameters
+* Fixed state synchronizing
+
+## v3.0.0-rc.21 (2020-05-27)
+
+#### :bug: Bug Fix
+
+* Fixed deep watching of accessors
+
+## v3.0.0-rc.20 (2020-05-26)
+
+#### :bug: Bug Fix
+
+* Fixed resolving of `$normalParent`
+
+## v3.0.0-rc.19 (2020-05-26)
+
+#### :rocket: New Feature
+
+* [Added `webp` format support](https://github.com/V4Fire/Client/pull/201)
+  * Added gulp task `static:image:webp` which will create `webp` from `jpg`, `png` files;
+  * Replaced `gulp-image` to the `gulp-imagemin`;
+  * Webpack will pass `webp` files through the `image-webpack`.
+
+* [Added gulp task "test: components" which will run in parallel all tests that are specified in the `tests/cases.js` file](https://github.com/V4Fire/Client/pull/201)
+* [Added `time`, `timeIn`, `timeOut` in the `in-view` directive](https://github.com/V4Fire/Client/pull/201)
+
+### :bug: Bug Fix
+
+* [Fixed rendering of truncated data in `bVirtualScroll`](https://github.com/V4Fire/Client/issues/231)
+* [Fixed rendering of empty slot in `bVirtualScroll`](https://github.com/V4Fire/Client/issues/241)
+* [Fixed clear of `in-view` in `bVirtualScroll`](https://github.com/V4Fire/Client/pull/201)
+* [Fixed issue with `in-view` that element did not becomes observable](https://github.com/V4Fire/Client/pull/201)
+* [Fixed `stopObserver` method in `in-view`](https://github.com/V4Fire/Client/pull/201)
+* [Fixed parallel components build](https://github.com/V4Fire/Client/pull/201)
+* [Fixed extra space `bCheckbox`](https://github.com/V4Fire/Client/pull/246)
+
+#### :house: Internal
+
+* Added `husky`
+* [Added test action](https://github.com/V4Fire/Client/pull/201)
+  * Runs component tests;
+  * Runs typescript tests;
+  * Runs eslint.
+
+* [Added demo model](https://github.com/V4Fire/Client/pull/201)
+* [Review `bVirtualScroll`](https://github.com/V4Fire/Client/pull/201)
+* [Added few tests for `bVirtualScroll`](https://github.com/V4Fire/Client/pull/201)
+* [Improves tests performance](https://github.com/V4Fire/Client/pull/201)
+
+## v3.0.0-rc.18 (2020-05-24)
+
+#### :boom: Breaking Change
+
+* [Renamed `interface/Unsafe` to `interface/UnsafeIBlock` `iBlock`](https://github.com/V4Fire/Client/pull/247)
+
+## v3.0.0-rc.17 (2020-05-22)
+
+#### :bug: Bug Fix
+
+* [Fixed watching for accessors with external dependencies](https://github.com/V4Fire/Client/pull/244)
+
+## v3.0.0-rc.16 (2020-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed NaN at the `visibleInPercent` getter in a case of `windowHeight === 0` `traits/i-history`
+* Fixed the `hasTrigger` flag calculation if a page has no children `bBottomSlide`
+
+## v3.0.0-rc.15 (2020-05-20)
+
+#### :bug: Bug Fix
+
+* [Removed `padding-bottom` of the page element `bBottomSlide`](https://github.com/V4Fire/Client/pull/237)
+
+## v3.0.0-rc.14 (2020-05-15)
+
+#### :bug: Bug Fix
+
+* [Fixed `bBottomSlide` bottom padding](https://github.com/V4Fire/Client/pull/232)
+
+## v3.0.0-rc.13 (2020-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed build with TS@3.9
+
+## v3.0.0-rc.12 (2020-05-13)
+
+#### :rocket: New Feature
+
+* Added `--browsers` flag `gulp test:component`
+
+#### :bug: Bug Fix
+
+* Fixed initializing of functional components
+
+#### :house: Internal
+
+* Added demo styles `form/b-button`
+
+## v3.0.0-rc.11 (2020-05-10)
+
+#### :rocket: New Feature
+
+* [Added `forceUpdate` parameter for `@field` decorator](https://github.com/V4Fire/Client/pull/226)
+
+#### :bug: Bug Fix
+
+* Fixed calling `window.scrollTo` without window context
+
+#### :house: Internal
+
+* [Marked `iBlock/modules/lazy` as deprecated](https://github.com/V4Fire/Client/pull/228)
+
+## v3.0.0-rc.10 (2020-05-10)
+
+#### :rocket: New Feature
+
+* Added support for `*.spec.js` files
+
+## v3.0.0-rc.9 (2020-05-09)
+
+#### :rocket: New Feature
+
+* [Added API to test components by using playwright and jasmine](https://github.com/V4Fire/Client/pull/223)
+
+```bash
+npx gulp test:component --name b-button
+```
+
+## v3.0.0-rc.8 (2020-05-08)
+
+#### :rocket: New Feature
+
+* Added integration with a test library
+* Added dynamic demo-s
+
+```bash
+npx webpack --components b-button,b-select
+```
+
+#### :nail_care: Polish
+
+* [Printing any changes as groups](https://github.com/V4Fire/Client/pull/218)
+
 ## v3.0.0-rc.7 (2020-05-01)
 
 #### :bug: Bug Fix
 
-* Fixed async labels for request animation frame operations `traits/iHistory/history`
+* Fixed async labels for request animation frame operations `traits/i-history/history`
 * Fixed history clearing on close `base/b-bottom-slide`
 * Fixed `setMod` event `super/i-block/modules/block/setMod`
 
@@ -108,6 +744,12 @@ export default class bExample extends iBlock {
 * Documentation
 * Refactoring
 
+## v3.0.0-beta.272 (2020-05-19)
+
+#### :bug: Bug Fix
+
+* [Fixed rendering of truncated data in `bVirtualScroll`](https://github.com/V4Fire/Client/issues/231)
+
 ## v3.0.0-beta.271 (2020-04-27)
 
 #### :boom: Breaking Change
@@ -118,7 +760,7 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* [Fixed repetitive `iLockPageScroll.unlock` calls `traits/iLockPageScroll/lock`](https://github.com/V4Fire/Client/pull/200)
+* [Fixed repetitive `iLockPageScroll.unlock` calls `traits/i-lock-page-scroll/lock`](https://github.com/V4Fire/Client/pull/200)
 * [Fixed the default image ratio `bImage`](https://github.com/V4Fire/Client/pull/197)
 
 #### :house: Internal
@@ -130,18 +772,18 @@ export default class bExample extends iBlock {
 #### :rocket: New Feature
 
 * Added `base/bBottomSlide`
-* Added `traits/iHistory`
+* Added `traits/i-history`
 * Added `core/component/directive/v-update-on`
 
 #### :bug: Bug Fix
 
-* Fixed scrolling of nested pages `traits/iLockPageScroll/lock`
+* Fixed scrolling of nested pages `traits/i-lock-page-scroll/lock`
 
 ## v3.0.0-beta.268 (2020-04-08)
 
 #### :bug: Bug Fix
 
-* [Fixed rendering `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/194)
+* [Fixed rendering `bVirtualScroll`](https://github.com/V4Fire/Client/pull/194)
 
 ## v3.0.0-beta.267 (2020-04-06)
 
@@ -181,13 +823,13 @@ export default class bExample extends iBlock {
 
 ### :bug: Bug Fix
 
-* [Fixed `reload` method in `b-virtual-scroll` when `db` was empty](https://github.com/V4Fire/Client/pull/180)
+* [Fixed `reload` method in `bVirtualScroll` when `db` was empty](https://github.com/V4Fire/Client/pull/180)
 
 ## v3.0.0-beta.261 (2020-03-10)
 
 ### :bug: Bug Fix
 
-* [Fixed `reload` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/180)
+* [Fixed `reload` method in `bVirtualScroll`](https://github.com/V4Fire/Client/pull/180)
 * [Updated `validators.ts`](https://github.com/V4Fire/Client/pull/178/files)
 
 ## v3.0.0-beta.260 (2020-03-10)
@@ -203,7 +845,7 @@ export default class bExample extends iBlock {
 
 #### :house: Internal
 
-* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/173)
+* [Review `bVirtualScroll`](https://github.com/V4Fire/Client/pull/173)
 
 ## v3.0.0-beta.259 (2020-03-05)
 
@@ -255,13 +897,13 @@ export default class bExample extends iBlock {
 #### :rocket: New Feature
 
 * Added a new event `dbCanChange` for `iData`
-* [Optimized rendering of `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/169)
+* [Optimized rendering of `bVirtualScroll`](https://github.com/V4Fire/Client/pull/169)
 * [Added `prefetch` in `core/init`](https://github.com/V4Fire/Client/pull/169)
 
 #### :bug: Bug Fix
 
 * Fixed memory leak with data providers
-* [Fixed issue with `b-virtual-scroll` not beign render some chunks](https://github.com/V4Fire/Client/pull/169)
+* [Fixed issue with `bVirtualScroll` not beign render some chunks](https://github.com/V4Fire/Client/pull/169)
 
 ## v3.0.0-beta.253 (2020-02-24)
 
@@ -282,12 +924,12 @@ export default class bExample extends iBlock {
 * Fixed custom base URL-s with providers
 * Fixed `messageHelpers` type
 * Fixed `State.initFromRouter`
-* [Fixed `reInit` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/162)
+* [Fixed `reInit` method in `bVirtualScroll`](https://github.com/V4Fire/Client/pull/162)
 * [Fixed `in-view` initialization](https://github.com/V4Fire/Client/pull/162)
 
 #### :house: Internal
 
-* [Added `unsafe` getter for `b-virtual-scroll`, `b-virtual-scroll/scroll-render`, `b-virtual-scroll/scroll-request`](https://github.com/V4Fire/Client/pull/162)
+* [Added `unsafe` getter for `bVirtualScroll`, `b-virtual-scroll/scroll-render`, `b-virtual-scroll/scroll-request`](https://github.com/V4Fire/Client/pull/162)
 
 ## v3.0.0-beta.250 (2020-02-12)
 
@@ -319,14 +961,14 @@ export default class bExample extends iBlock {
 #### :rocket: New Feature
 
 * [Added `i-items` trait](https://github.com/V4Fire/Client/pull/154)
-* [Added `runtime` block to `b-skeleton`](https://github.com/V4Fire/Client/pull/154)
+* [Added `runtime` block to `bSkeleton`](https://github.com/V4Fire/Client/pull/154)
 * [Added `inViewFactory` to create local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
 * [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
 * [Improved icon loading from DS](https://github.com/V4Fire/Client/pull/148)
 
 #### :boom: Breaking Change
 
-* [Review `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/154)
+* [Review `bVirtualScroll` component](https://github.com/V4Fire/Client/pull/154)
 
 #### :bug: Bug Fix
 
@@ -418,9 +1060,9 @@ export default class bExample extends iBlock {
 
 #### :house: Internal
 
-* [`b-slider` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
-* [`b-content-switcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
-* [`b-slider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
+* [`bSlider` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`bContentSwitcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`bSlider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
 * [Review observable APIs](https://github.com/V4Fire/Client/pull/146)
 
 ## v3.0.0-beta.233 (2019-12-13)
@@ -445,12 +1087,12 @@ export default class bExample extends iBlock {
 
 #### :rocket: New Feature
 
-* Added `beforeOptions` and `afterOptions` slots to `b-slider` component
+* Added `beforeOptions` and `afterOptions` slots to `bSlider` component
 
 #### :bug: Bug Fix
 
-* [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
-* [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `bVirtualScroll` request params](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `bVirtualScroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
 
 ## v3.0.0-beta.229 (2019-12-10)
 
@@ -494,9 +1136,9 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
-* [Fixed `b-virtual-scroll` reload method](https://github.com/V4Fire/Client/pull/144)
-* [Fixed `b-image` onImageLoaded method](https://github.com/V4Fire/Client/pull/145)
+* [Fixed `bVirtualScroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
+* [Fixed `bVirtualScroll` reload method](https://github.com/V4Fire/Client/pull/144)
+* [Fixed `bImage` onImageLoaded method](https://github.com/V4Fire/Client/pull/145)
 * Fixed race conditions within `iData`
 
 #### :house: Internal
@@ -519,14 +1161,14 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* [Fixed `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/142)
+* [Fixed `bVirtualScroll` component](https://github.com/V4Fire/Client/pull/142)
 
 ## v3.0.0-beta.221 (2019-11-27)
 
 #### :boom: Breaking Change
 
 * [Changed `iLockPageScroll` trait methods signature](https://github.com/V4Fire/Client/pull/137)
-* [Changed `before` and `after` slots position in `b-slider`](https://github.com/V4Fire/Client/pull/137)
+* [Changed `before` and `after` slots position in `bSlider`](https://github.com/V4Fire/Client/pull/137)
 * [Changed `saveDataToRootStore` key generation](https://github.com/V4Fire/Client/pull/137)
 * Renamed `needReInit` to `reloadOnActivation` from `iBlock`
 * Renamed `needOfflineReInit` to `offlineReload` from `iData`
@@ -537,15 +1179,15 @@ export default class bExample extends iBlock {
 
 #### :rocket: New Feature
 
-* [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137)
+* [Added `bVirtualScroll` component](https://github.com/V4Fire/Client/pull/137)
 * [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
-* [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
+* [Added `placeholderHidden` prop to `bContentSwitcher`](https://github.com/V4Fire/Client/pull/137)
 * [Added support for icons from DS](https://github.com/V4Fire/Client/pull/140)
 
 #### :bug: Bug Fix
 
-* [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
-* [Fixed `b-content-switcher` not being hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
+* [Fixed `bContentSwitcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
+* [Fixed `bContentSwitcher` not being hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
 
 ## v3.0.0-beta.220 (2019-11-25)
 
@@ -839,7 +1481,7 @@ export default class bExample extends iBlock {
 * New API for `i-static-page/deps.js`
 * Removed redundant span tag within `b-icon/b-icon.ss`
 * Rewrite `bCheckboxGroup` API
-* [Added `attrs` argument instead of `style` for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
+* [Added `attrs` argument instead of `style` for `bSkeleton`](https://github.com/V4Fire/Client/pull/134)
 
 #### :rocket: New Feature
 
@@ -849,7 +1491,7 @@ export default class bExample extends iBlock {
 #### :bug: Bug Fix
 
 * Fixed dependency loader `i-static-page/i-static-page.ss`
-* [Fixed `b-skeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
+* [Fixed `bSkeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
 * Fixed icons within `bCheckbox`
 
 #### :house: Internal
@@ -878,16 +1520,16 @@ export default class bExample extends iBlock {
 
 #### :boom: Breaking Change
 
-* [Renamed `b-switcher` component to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+* [Renamed `bSwitcher` component to `bContentSwitcher`](https://github.com/V4Fire/Client/pull/132/files)
 
 ### :rocket: New Feature
 
-* [Added `resolveStrategy` property to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
-* [Added `syncState` event to `b-slider`](https://github.com/V4Fire/Client/pull/132/files)
+* [Added `resolveStrategy` property to `bContentSwitcher`](https://github.com/V4Fire/Client/pull/132/files)
+* [Added `syncState` event to `bSlider`](https://github.com/V4Fire/Client/pull/132/files)
 
 #### :bug: Bug Fix
 
-* [Fixed `b-skeleton` params providing to blocks](https://github.com/V4Fire/Client/pull/132/files)
+* [Fixed `bSkeleton` params providing to blocks](https://github.com/V4Fire/Client/pull/132/files)
 
 #### :house: Internal
 
@@ -1134,7 +1776,7 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* Removed V2 legacy code from `b-window`, `b-checkbox-group`
+* Removed V2 legacy code from `bWindow`, `bCheckboxGroup`
 * Fixed `asyncRender` with nested template tags
 
 #### :nail_care: Polish
@@ -1176,7 +1818,7 @@ export default class bExample extends iBlock {
 
 #### :rocket: New Feature
 
-* Added support for `height` prop (stylus) within `b-slider`
+* Added support for `height` prop (stylus) within `bSlider`
 
 #### :bug: Bug Fix
 

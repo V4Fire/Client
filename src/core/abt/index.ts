@@ -29,10 +29,16 @@ export * from 'core/abt/interface';
  */
 export default async function saveABT(opts: unknown): Promise<void> {
 	let
-		config = <CanPromise<ExperimentsSet | void>>adapter(opts);
+		config = <CanPromise<CanUndef<ExperimentsSet>>>adapter(opts);
 
 	if (Object.isPromise(config)) {
-		config = await config.catch(stderr);
+		try {
+			config = await config;
+
+		} catch (err) {
+			stderr(err);
+			config = undefined;
+		}
 	}
 
 	if (Object.isArray(config)) {

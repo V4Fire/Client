@@ -9,7 +9,7 @@
 import log from 'core/log';
 import { identity } from 'core/functools';
 
-// @ts-ignore
+// @ts-ignore (ss import)
 import * as defTpls from 'core/block.ss';
 import * as c from 'core/component/const';
 
@@ -40,11 +40,12 @@ export function component(opts?: ComponentOptions): Function {
 		const componentInfo = getInfoFromConstructor(target, opts);
 		c.initEmitter.emit('bindConstructor', componentInfo.name);
 
-		if (!componentInfo.name || componentInfo.params.root || componentInfo.isAbstract) {
+		if (!Object.isTruly(componentInfo.name) || componentInfo.params.root || componentInfo.isAbstract) {
 			regComponent();
 
 		} else {
-			const initList = c.componentInitializers[componentInfo.name] = c.componentInitializers[componentInfo.name] || [];
+			const initList = c.componentInitializers[componentInfo.name] ?? [];
+			c.componentInitializers[componentInfo.name] = initList;
 			initList.push(regComponent);
 		}
 
@@ -63,10 +64,12 @@ export function component(opts?: ComponentOptions): Function {
 			registerParentComponents(componentInfo);
 
 			const
-				parentMeta = componentInfo.parentMeta,
+				{parentMeta} = componentInfo;
+
+			const
 				meta = createMeta(componentInfo);
 
-			if (!componentInfo.params.name || !componentInfo.isSmart) {
+			if (componentInfo.params.name == null || !componentInfo.isSmart) {
 				c.components.set(target, meta);
 			}
 
@@ -79,7 +82,7 @@ export function component(opts?: ComponentOptions): Function {
 			}
 
 			// Function that waits till a component template is loaded
-			const loadTemplate = (component, dryRun?) => {
+			const loadTemplate = (component, dryRun = false) => {
 				const promiseCb = (resolve) => {
 					const success = () => {
 						log(`component:load:${componentInfo.name}`, component);
@@ -90,15 +93,16 @@ export function component(opts?: ComponentOptions): Function {
 						{methods, methods: {render}} = meta;
 
 					const addRenderAndResolve = (tpls) => {
-						const
-							fns = c.componentTemplates[componentInfo.name] = c.componentTemplates[componentInfo.name] || tpls.index();
+						const fns = c.componentTemplates[componentInfo.name] ?? tpls.index();
+						c.componentTemplates[componentInfo.name] = fns;
 
 						// We need to add some meta properties, like, watchers,
 						// because we also register render methods to a component meta object
 						const renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
 						renderObj.fn = fns.render;
-						component.staticRenderFns = meta.component.staticRenderFns = fns.staticRenderFns || [];
+						component.staticRenderFns = fns.staticRenderFns ?? [];
+						meta.component.staticRenderFns = component.staticRenderFns;
 
 						methods.render = renderObj;
 						return success();
@@ -109,50 +113,45 @@ export function component(opts?: ComponentOptions): Function {
 						// We have a custom render function
 						if (render && !render.wrapper) {
 							return success();
-
-						// Loopback render function
-						} else {
-							return addRenderAndResolve(defTpls.block);
 						}
 
-					} else {
-						let
-							i = 0;
-
-						// Dirty check of a component template loading status
-						const f = () => {
-							const
-								fns = TPLS[meta.componentName];
-
-							if (fns) {
-								if (render && !render.wrapper) {
-									return success();
-
-								} else {
-									return addRenderAndResolve(fns);
-								}
-
-							} else {
-								if (dryRun) {
-									return promiseCb;
-								}
-
-								// First 15 times we use "fast" setImmediate strategy,
-								// but after, we start to throttle
-								if (i < 15) {
-									i++;
-
-									// tslint:disable-next-line:no-string-literal
-									globalThis['setImmediate'](f);
-
-								} else {
-									setTimeout(f, 100);
-								}
-							}
-						};
-
-						return f();
+						// Loopback render function
+						return addRenderAndResolve(defTpls.block);
 					}
+
+					let
+						i = 0;
+
+					// Dirty check of a component template loading status
+					const f = () => {
+						const
+							fns = TPLS[meta.componentName];
+
+						if (fns) {
+							if (render && !render.wrapper) {
+								return success();
+							}
+
+							return addRenderAndResolve(fns);
+						}
+
+						if (dryRun) {
+							return promiseCb;
+						}
+
+						// First 15 times we use "fast" setImmediate strategy,
+						// but after, we start to throttle
+						if (i < 15) {
+							i++;
+
+							globalThis['setImmediate'](f);
+
+						} else {
+							setTimeout(f, 100);
+						}
+					};
+
+					return f();
 				};
 
 				return promiseCb;

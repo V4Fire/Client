@@ -38,10 +38,10 @@ import iBlock, {
 
 } from 'super/i-block/i-block';
 
-export * from 'super/i-data/i-data';
-
 import { HeightMode, Direction } from 'base/b-bottom-slide/interface';
 import { heightMode } from 'base/b-bottom-slide/const';
+
+export * from 'super/i-data/i-data';
 
 export * from 'base/b-bottom-slide/const';
 export * from 'base/b-bottom-slide/interface';
@@ -70,13 +70,14 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly stepsProp: number[] = [];
 
 	/** @see [[bBottomSlide.steps]] */
-	@field((o: bBottomSlide) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
+	@field<bBottomSlide>((o) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
 	readonly stepsStore!: number[];
 
 	/**
 	 * Minimum height value of a component visible part (in pixels),
 	 * i.e. even the component is closed this part still be visible
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNonNegative})
 	readonly visible: number = 0;
 
@@ -89,18 +90,21 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Maximum time in milliseconds after after which we can assume that there was a quick swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * Minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeThreshold: number = 10;
 
 	/**
 	 * Minimum required amount of pixels of scrolling to swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeThreshold: number = 40;
 
@@ -113,6 +117,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Maximum value of overlay opacity
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
 	readonly maxOpacity: number = 0.8;
 
@@ -157,7 +162,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/** @see [[iHistory.history]] */
-	@system((ctx: iHistory) => new History(ctx))
+	@system<iHistory>((ctx) => new History(ctx))
 	readonly history!: History<iHistory>;
 
 	/** @inheritDoc */
@@ -347,7 +352,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.isPullingStore = value;
 
 		this[value ? 'setRootMod' : 'removeRootMod']('fullscreen-moving', true);
-		this[value ? 'setMod' : 'removeMod']('stick', false);
+		void this[value ? 'setMod' : 'removeMod']('stick', false);
 
 		// @deprecated
 		this.emit('changeMoveState', value);
@@ -361,7 +366,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@p({cache: false})
 	protected get visibleInPercent(): number {
-		return this.visible / this.windowHeight * 100;
+		return !this.windowHeight ? 0 : this.visible / this.windowHeight * 100;
 	}
 
 	/**
@@ -542,7 +547,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@wait('ready')
 	protected initGeometry(): CanPromise<void> {
 		const
-			{maxVisiblePercent, $refs: {header, content, view}} = this;
+			{maxVisiblePercent, $refs: {header, content, view, window}} = this;
 
 		const
 			currentPage = this.history?.current?.content;
@@ -567,16 +572,15 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		if (currentPage) {
 			Object.assign((<HTMLElement>currentPage.el).style, {
-				maxHeight: maxVisiblePx.px
+				maxHeight: (maxVisiblePx === 0 ? 0 : (maxVisiblePx - header.clientHeight)).px
 			});
 		}
 
-		Object.assign(view.style, {
+		Object.assign(window.style, {
 			// If documentElement height is equal to zero, maxVisiblePx is always be zero too,
 			// even after new calling of initGeometry.
 			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
-			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px,
-			paddingBottom: header.clientHeight.px
+			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px
 		});
 	}
 

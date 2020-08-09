@@ -7,31 +7,34 @@
  */
 
 import { AsyncOptions } from 'core/async';
-import { WatchOptions } from 'core/component';
+import { WatchOptions, WatchPath } from 'core/component';
+
+import iBlock from 'super/i-block/i-block';
 
 export type AsyncWatchOptions =
 	WatchOptions & AsyncOptions;
 
-export interface LinkWrapper<V = unknown, R = unknown> {
-	(value: V, oldValue?: V): R;
+export interface LinkWrapper<CTX extends iBlock = iBlock, V = unknown, R = unknown> {
+	(this: CTX, value: V, oldValue?: V): R;
 }
 
-export type ModValueConverter<V = unknown, R = unknown> =
-	LinkWrapper<V, CanUndef<R>> |
+export type ModValueConverter<CTX extends iBlock = iBlock, V = unknown, R = unknown> =
+	LinkWrapper<CTX, V, CanUndef<R>> |
 	Function;
 
 export type Link = string;
+export type ObjectLink = WatchPath | object;
 export type LinkContainer = string;
 
 export type LinkDecl =
-	Link |
-	[LinkContainer, Link];
+	ObjectLink |
+	[LinkContainer, ObjectLink];
 
-export type ObjectLink =
+export type PropLink =
 	Link |
 	[Link] |
-	[LinkContainer, Link] |
+	[LinkContainer, ObjectLink] |
 	[Link, LinkWrapper] |
-	[LinkContainer, Link, LinkWrapper];
+	[LinkContainer, ObjectLink, LinkWrapper];
 
-export type ObjectLinksDecl = ObjectLink[];
+export type PropLinks = PropLink[];

@@ -19,7 +19,6 @@ export * from 'core/component/watch';
 
 export * from 'core/component/register';
 export * from 'core/component/reflection';
-export * from 'core/component/decorators';
 
 export * from 'core/component/event';
 export * from 'core/component/render';
@@ -37,10 +36,8 @@ export {
 
 	renderData,
 	patchVNode,
-	ComponentDriver as default,
 
-	WatchOptions,
-	WatchOptionsWithHandler,
+	ComponentDriver as default,
 
 	VNode,
 	VNodeDirective,

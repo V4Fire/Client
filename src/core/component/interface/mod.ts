@@ -13,5 +13,5 @@ export type StrictModDeclVal = CanArray<ModVal>;
 export type ModDeclVal = StrictModDeclVal | typeof PARENT;
 
 export interface ModsDecl {
-	[name: string]: Nullable<Array<ModDeclVal>>;
+	[name: string]: Nullable<ModDeclVal[]>;
 }

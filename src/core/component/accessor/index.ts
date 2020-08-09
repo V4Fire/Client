@@ -23,18 +23,17 @@ import { cacheStatus, ComponentInterface } from 'core/component';
  */
 export function attachAccessorsFromMeta(component: ComponentInterface, safe?: boolean): void {
 	const
-		// @ts-ignore (access)
-		{meta, meta: {params: {deprecatedProps}}} = component;
+		{meta, meta: {params: {deprecatedProps}}} = component.unsafe;
 
 	const
-		isFlyweight = component.isFlyweight || meta.params.functional === true;
+		isFlyweight = meta.params.functional === true || component.isFlyweight;
 
 	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			el = o[key];
 
-		if (!el) {
+		if (el == null) {
 			continue;
 		}
 
@@ -43,7 +42,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 		}
 
 		const
-			alreadyExists = safe ? Object.getOwnPropertyDescriptor(component, key) : component[key];
+			alreadyExists = Boolean(safe ? Object.getOwnPropertyDescriptor(component, key) : component[key]);
 
 		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
 			continue;
@@ -52,7 +51,11 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 		Object.defineProperty(component, keys[i], {
 			configurable: true,
 			enumerable: true,
+
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			get: el.get,
+
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			set: el.set
 		});
 	}
@@ -62,7 +65,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			key = keys[i],
 			el = o[key];
 
-		if (!el) {
+		if (el == null) {
 			continue;
 		}
 
@@ -71,13 +74,14 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 		}
 
 		const
-			alreadyExists = safe ? Object.getOwnPropertyDescriptor(component, key) : component[key];
+			alreadyExists = Boolean(safe ? Object.getOwnPropertyDescriptor(component, key) : component[key]);
 
 		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
 			continue;
 		}
 
-		const get = function (this: typeof component): unknown {
+		// eslint-disable-next-line func-style
+		const get = function get(this: typeof component): unknown {
 			if (cacheStatus in get) {
 				return get[cacheStatus];
 			}
@@ -88,7 +92,11 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 		Object.defineProperty(component, keys[i], {
 			configurable: true,
 			enumerable: true,
-			get: el.get && get,
+
+			// eslint-disable-next-line @typescript-eslint/unbound-method
+			get: el.get ?? get,
+
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			set: el.set
 		});
 	}
@@ -99,7 +107,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 				key = keys[i],
 				alternative = deprecatedProps[key];
 
-			if (!alternative) {
+			if (alternative == null) {
 				continue;
 			}
 

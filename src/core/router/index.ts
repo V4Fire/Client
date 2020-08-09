@@ -12,3 +12,4 @@
  */
 
 export { default } from 'core/router/engines';
+export * from 'core/router/interface';

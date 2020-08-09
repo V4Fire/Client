@@ -16,6 +16,10 @@ const
 	glob = require('glob'),
 	path = require('path');
 
+/**
+ * Map with aliases for custom (not external) loaders from all layers
+ * @type {!Object}
+ */
 const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, i) => {
 	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/loaders/*.js'))).forEach((el) => {
 		const
@@ -29,6 +33,10 @@ const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, 
 	return map;
 });
 
+/**
+ * Options for WebPack ".resolveLoader"
+ * @type {{moduleExtensions: [string], alias: !Object}}
+ */
 module.exports = {
 	moduleExtensions: ['-loader'],
 	alias

@@ -15,6 +15,7 @@ import iIcon from 'traits/i-icon/i-icon';
 import iSize from 'traits/i-size/i-size';
 
 import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
 
 /**

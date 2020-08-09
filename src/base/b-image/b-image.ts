@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-image/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 
 import { TaskCtx } from 'core/async';
@@ -114,20 +119,20 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	};
 
 	/**
-	 * Initializes an image loading process
+	 * Initializes the image loading process
 	 */
 	@wait('ready', {label: $$.init})
 	protected init(): CanPromise<void> {
 		const
 			tmpSrc = <CanUndef<string>>this.tmp[this.src];
 
-		if (tmpSrc) {
+		if (tmpSrc != null) {
 			this.updateHeight(tmpSrc);
 			this.onImageLoadSuccess(tmpSrc);
 			return;
 		}
 
-		this.setMod('progress', true);
+		void this.setMod('progress', true);
 
 		const img = new Image();
 		img.src = this.src;
@@ -136,11 +141,11 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			img.srcset = getSrcSet(this.srcset);
 		}
 
-		if (this.sizes) {
+		if (this.sizes != null) {
 			img.sizes = this.sizes;
 		}
 
-		if (this.alt) {
+		if (this.alt != null) {
 			img.alt = this.alt;
 		}
 
@@ -148,7 +153,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 		this.async
 			.promise(img.init, {label: $$.loadImage})
-			.then(() => this.onImageLoadSuccess(img), this.onImageLoadFailed);
+			.then(() => this.onImageLoadSuccess(img), this.onImageLoadFailed.bind(this));
 	}
 
 	/**
@@ -162,8 +167,8 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		let
 			tmpPadding = this.tmp[`${this.src}-padding`];
 
-		if (!tmpPadding) {
-			if (this.ratio) {
+		if (!Object.isTruly(tmpPadding)) {
+			if (this.ratio != null && this.ratio !== 0) {
 				tmpPadding = `${(1 / this.ratio) * 100}%`;
 
 			} else if (!Object.isString(img) && this.ratio !== 0) {
@@ -174,10 +179,9 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			}
 		}
 
-		Object.assign(imgRef.style, tmpPadding ?
+		Object.assign(imgRef.style, Object.isTruly(tmpPadding) ?
 			{paddingBottom: tmpPadding} :
-			{height: '100%'}
-		);
+			{height: '100%'});
 	}
 
 	/**
@@ -188,14 +192,14 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		const
 			{img: imgRef} = this.$refs;
 
-		if (img && (img.naturalHeight || img.naturalWidth)) {
+		if (img.naturalHeight !== 0 || img.naturalWidth !== 0) {
 			const ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
 			imgRef.style.paddingBottom = `${(1 / ratio) * 100}%`;
 		}
 	}
 
 	/**
-	 * Saves an image style to the cache
+	 * Saves image styles to the cache
 	 */
 	@hook('beforeDestroy')
 	@wait('loading')
@@ -203,7 +207,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		const
 			{img} = this.$refs;
 
-		if (img.style.backgroundImage) {
+		if (Object.isTruly(img.style.backgroundImage)) {
 			this.tmp[this.src] = img[$$.img];
 			this.tmp[`${this.src}-padding`] = img.style.paddingBottom;
 		}
@@ -219,19 +223,33 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image loading successfully completed
 	 *
 	 * @param img
-	 * @emits loadSuccess()
+	 * @emits `loadSuccess()`
 	 */
 	protected onImageLoadSuccess(img: HTMLImageElement | string): void {
-		const
-			{img: imgRef} = this.$refs,
-			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
+		let
+			cssImg = '';
 
-		if (!Object.isString(img) && this.ratio === undefined) {
-			this.updateCalculatedImageRatio(img);
+		if (!Object.isString(img)) {
+			if (this.ratio == null) {
+				this.updateCalculatedImageRatio(img);
+			}
+
+			const
+				// IE has no currentSrc in HTMLImageElement so its type from lib.dom.d.ts is incorrect
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				imgUrl = img.currentSrc ?? img.src;
+
+			cssImg = `url("${imgUrl}")`;
+
+		} else {
+			cssImg = img;
 		}
 
-		this.setMod('progress', false);
-		this.setMod('showError', false);
+		const
+			{img: imgRef} = this.$refs;
+
+		void this.setMod('progress', false);
+		void this.setMod('showError', false);
 
 		imgRef[$$.img] = cssImg;
 		Object.assign(imgRef.style, {
@@ -247,22 +265,21 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image loading failed
 	 *
 	 * @param err
-	 * @emits loadFail()
+	 * @emits `loadFail(err: Error)`
 	 */
 	protected onImageLoadFailed(err: CanUndef<Error | TaskCtx>): void {
-		this.setMod('progress', false);
+		void this.setMod('progress', false);
 
 		if (err && 'type' in err && err.type === 'clearAsync') {
 			return;
 		}
 
-		this.setMod('showError', true);
+		void this.setMod('showError', true);
 		this.emitError('loadFail', err);
 	}
 
 	/** @override */
 	protected beforeDestroy(): void {
-		this.memoizeImage();
 		this.$refs.img.style.backgroundImage = '';
 		super.beforeDestroy();
 	}

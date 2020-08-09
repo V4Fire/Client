@@ -87,7 +87,7 @@ export function observeSet<T extends ObservableSet<unknown> = ObservableSet<unkn
  * @param [params]
  * @private
  */
-function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unknown, unknown>>(
+function bindMutationHooks<T extends ObservableInstance = ObservableInstance>(
 	obj: T,
 	cb: Function,
 	params: ObservableParams = {}
@@ -111,7 +111,7 @@ function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unk
 		timerId;
 
 	const wrappedCb = (...args) => {
-		if (!timerId && !immediate) {
+		if (timerId == null && !immediate) {
 			timerId = setImmediate(() => {
 				cb(...args);
 				timerId = undefined;
@@ -136,7 +136,7 @@ function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unk
 			k = keys[i],
 			{is, methods} = shimTable[k];
 
-		if (!is(obj)) {
+		if (!Object.isTruly(is(obj))) {
 			continue;
 		}
 
@@ -145,11 +145,11 @@ function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unk
 				method = methods[j],
 				fn = obj[method];
 
-			if (ignore && ignore.includes(method)) {
+			if (ignore?.includes(method)) {
 				continue;
 			}
 
-			obj[method] = function (...args: unknown[]): unknown {
+			obj[method] = function wrapper(this: unknown, ...args: unknown[]): unknown {
 				return shim(this, fn, method, ...args);
 			};
 		}

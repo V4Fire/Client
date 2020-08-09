@@ -9,25 +9,46 @@
  */
 
 const
-	{resolve} = require('@pzlr/build-core'),
+	{resolve} = require('@pzlr/build-core');
+
+const
 	projectNameRgxp = /@projectName\b/g;
 
 /**
- * Monic replacer for inserting file project name
+ * Monic replacer that adds the "@projectName" declaration which indicates for which layer belong one or another file
  *
  * @param {string} str
- * @param {string} url
+ * @param {string} filePath
  * @returns {string}
+ *
+ * @example
+ * **node_modules/foo/bla.js**
+ *
+ * ```js
+ * // Will be replaced to `"foo"`
+ * @projectName
+ * ```
+ *
+ * **baz/bla.js**
+ *
+ * ```js
+ * // Will be replaced to `"baz"`
+ * @projectName
+ * ```
  */
-module.exports = function (str, url) {
+module.exports = function projectNameReplacer(str, filePath) {
 	return str.replace(projectNameRgxp, () => {
 		const
-			layer = resolve.getLayerByPath(url);
+			layer = resolve.getLayerByPath(filePath);
 
 		if (!layer) {
-			throw new Error(`Cannot find a layer for the file: ${url}`);
+			throw new Error(`Can't find a layer for the file "${filePath}"`);
 		}
 
 		return `"${layer.src}"`;
 	});
 };
+
+Object.assign(module.exports, {
+	projectNameRgxp
+});

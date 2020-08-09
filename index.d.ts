@@ -8,8 +8,6 @@
 
 /// <reference types="@v4fire/core"/>
 
-declare let READY_STATE: number;
-
 declare const GLOBAL_NONCE: unknown;
 declare const MODULE_DEPENDENCIES: string;
 declare const PATH: Dictionary<CanUndef<string>>;
@@ -19,7 +17,7 @@ declare const BLOCK_NAMES: CanUndef<string[]>;
 declare const DS: CanUndef<Dictionary>;
 
 declare const DS_COMPONENTS_MODS: CanUndef<{
-	[name: string]: Nullable<Array<ModDeclVal>>;
+	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
 
 declare const INCLUDED_THEMES: CanUndef<string[]>;
@@ -89,5 +87,5 @@ interface IntersectionObserver {
 interface Document {
 	fonts: {
 		ready: Promise<void>;
-	}
+	};
 }

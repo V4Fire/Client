@@ -6,8 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-remote-provider/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 import iData, { component, prop, RequestError, RetryRequestFn } from 'super/i-data/i-data';
+
 export * from 'super/i-data/i-data';
 
 export const
@@ -22,7 +28,7 @@ export default class bRemoteProvider extends iData {
 	readonly reloadOnActivation: boolean = true;
 
 	/**
-	 * Field for setting to a component parent
+	 * Field to set to the component parent
 	 */
 	@prop({type: String, required: false})
 	readonly fieldProp?: string;
@@ -31,21 +37,20 @@ export default class bRemoteProvider extends iData {
 	 * Link to component content nodes
 	 */
 	get content(): CanPromise<HTMLCollection> {
-		return this.waitStatus('loading', () => this.$el.children);
+		return this.waitStatus('loading', () => this.$el!.children);
 	}
 
 	/** @override */
 	set db(value: CanUndef<this['DB']>) {
-		// tslint:disable-next-line:no-string-literal
 		super['dbSetter'](value);
 		this.syncDBWatcher(value);
 	}
 
 	/**
 	 * @override
-	 * @emits error(err:Error | RequestError, retry: RetryRequestFn)
+	 * @emits `error(err:Error | RequestError, retry: RetryRequestFn)`
 	 */
-	protected onRequestError<T = unknown>(err: Error | RequestError, retry: RetryRequestFn): void {
+	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
 		const
 			l = this.$listeners;
 
@@ -57,43 +62,46 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
-	 * Synchronization for the db field
+	 * Synchronization for the .db field
 	 *
 	 * @param [value]
-	 * @emits change(db: CanUndef<T>)
+	 * @emits `change(db: CanUndef<T>)`
 	 */
 	protected syncDBWatcher(value: CanUndef<this['DB']>): void {
 		const
-			p = this.$parent;
+			parent = this.$parent;
 
-		if (!p) {
+		if (!parent) {
 			return;
 		}
 
 		const
-			f = this.fieldProp;
+			fieldToUpdate = this.fieldProp;
 
 		let
-			needUpdate = !f,
+			needUpdate = fieldToUpdate == null,
 			action;
 
-		if (f) {
+		if (fieldToUpdate != null) {
 			const
-				field = p.field.get(f);
+				field = parent.field.get(fieldToUpdate);
 
 			if (Object.isFunction(field)) {
-				action = () => field.call(p, value);
+				action = () => field.call(parent, value);
 				needUpdate = true;
 
 			} else if (!Object.fastCompare(value, field)) {
-				action = () => p.field.set(f, value);
+				action = () => parent.field.set(fieldToUpdate, value);
 				needUpdate = true;
 			}
 		}
 
 		if (needUpdate) {
-			p.lfc.execCbAtTheRightTime(this.async.proxy(() => {
-				action && action();
+			void parent.lfc.execCbAtTheRightTime(this.async.proxy(() => {
+				if (Object.isFunction(action)) {
+					action();
+				}
+
 				this.emit('change', value);
 
 			}, {
@@ -104,7 +112,7 @@ export default class bRemoteProvider extends iData {
 
 	/**
 	 * @override
-	 * @emits addData(data: unknown)
+	 * @emits `addData(data: unknown)`
 	 */
 	protected onAddData(data: unknown): void {
 		const
@@ -119,7 +127,7 @@ export default class bRemoteProvider extends iData {
 
 	/**
 	 * @override
-	 * @emits updData(data: unknown)
+	 * @emits `updData(data: unknown)`
 	 */
 	protected onUpdData(data: unknown): void {
 		const
@@ -134,7 +142,7 @@ export default class bRemoteProvider extends iData {
 
 	/**
 	 * @override
-	 * @emits delData(data: unknown)
+	 * @emits `delData(data: unknown)`
 	 */
 	protected onDelData(data: unknown): void {
 		const

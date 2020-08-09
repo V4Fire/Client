@@ -46,9 +46,9 @@ export function parseVNodeAsFlyweight(
 	parentComponent: ComponentInterface
 ): VNode | FlyweightVNode {
 	const
-		compositeAttr = vnode?.data?.attrs?.['v4-flyweight-component'];
+		compositeAttr = vnode.data?.attrs?.['v4-flyweight-component'];
 
-	if (!supports.composite || !compositeAttr) {
+	if (!supports.composite || compositeAttr == null) {
 		return vnode;
 	}
 
@@ -64,7 +64,7 @@ export function parseVNodeAsFlyweight(
 	const
 		componentData = getComponentDataFromVNode(compositeAttr, vnode),
 		componentProto = meta.constructor.prototype,
-		componentTpl = TPLS[compositeAttr] || componentProto.render;
+		componentTpl = TPLS[compositeAttr] ?? componentProto.render;
 
 	// To create a flyweight component we need to create a "fake" context for a component.
 	// The context is based on the specified parent context by using Object.create.
@@ -78,6 +78,7 @@ export function parseVNodeAsFlyweight(
 		isFlyweight: true
 	});
 
+	fakeCtx.unsafe = fakeCtx;
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
 
 	attachMethodsFromMeta(fakeCtx);
@@ -137,12 +138,19 @@ export function parseVNodeAsFlyweight(
 			key = keys[i],
 			value = o[key];
 
-		Object.defineProperty(fakeCtx, key, value !== undefined ? {
-			configurable: true,
-			enumerable: true,
-			writable: true,
-			value
-		} : defProp);
+		Object.defineProperty(
+			fakeCtx,
+			key,
+			value !== undefined ?
+				{
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value
+				} :
+
+				defProp
+		);
 
 		fakeCtx.$props[key] = value;
 	}
@@ -165,7 +173,12 @@ export function parseVNodeAsFlyweight(
 				key = keys[i],
 				val = fields[key];
 
-			if (val && (val.replace !== true && (val.unique || val.src === meta.componentName) || val.replace === false)) {
+			if (
+				val && (
+					val.replace !== true && (Object.isTruly(val.unique) || val.src === meta.componentName) ||
+					val.replace === false
+				)
+			) {
 				Object.defineProperty(fakeCtx, key, defField);
 			}
 		}
@@ -189,10 +202,12 @@ export function parseVNodeAsFlyweight(
 	fakeCtx.hook = 'created';
 
 	const newVNode = <FlyweightVNode>execRenderObject(componentTpl.index(), fakeCtx);
+
 	newVNode.fakeInstance = fakeCtx;
+	newVNode.data = newVNode.data ?? {};
 
 	const
-		newVData = newVNode.data = newVNode.data || {};
+		newVData = newVNode.data;
 
 	// Attach component event listeners
 	for (let o = componentData.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -205,10 +220,12 @@ export function parseVNodeAsFlyweight(
 
 	// Attach component native event listeners
 
-	const
-		on = newVData.on = newVData.on || {};
+	newVData.on = newVData.on ?? {};
 
-	if (componentData.nativeOn) {
+	const
+		{on} = newVData;
+
+	if (Object.isDictionary(componentData.nativeOn)) {
 		for (let o = componentData.nativeOn, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const key = keys[i];
 			on[key] = Array.concat([], on[key], o[key]);

@@ -12,9 +12,8 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { ExperimentsSet } from 'core/abt/interface';
-
 import { ModsTable, ModsNTable } from 'super/i-block/modules/mods/interface';
+
 export * from 'super/i-block/modules/mods/interface';
 
 /**
@@ -32,13 +31,13 @@ export function mergeMods<T extends iBlock>(
 	key: string,
 	link?: string
 ): void {
-	if (!link) {
+	if (link == null) {
 		return;
 	}
 
 	const
 		ctx = component.unsafe,
-		cache = ctx.$syncLinkCache[link];
+		cache = ctx.$syncLinkCache.get(link);
 
 	if (!cache) {
 		return;
@@ -90,7 +89,6 @@ export function mergeMods<T extends iBlock>(
 		l.sync(mods);
 
 	} else {
-		// tslint:disable-next-line:prefer-object-spread
 		l.sync(Object.assign(mods, modsProp));
 	}
 }
@@ -125,12 +123,11 @@ export function initMods(component: iBlock): ModsNTable {
 		}
 	}
 
-	function link(propMods: ModsTable): ModsNTable {
+	function link(propMods: CanUndef<ModsTable>): ModsNTable {
 		const
-			// tslint:disable-next-line:prefer-object-spread
-			mods = ctx.mods || {...declMods};
+			mods = Object.isDictionary(ctx.mods) ? ctx.mods : {...declMods};
 
-		if (propMods) {
+		if (propMods != null) {
 			for (let keys = Object.keys(propMods), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
@@ -153,8 +150,8 @@ export function initMods(component: iBlock): ModsNTable {
 		if (Object.isArray(experiments)) {
 			for (let i = 0; i < experiments.length; i++) {
 				const
-					el = (<ExperimentsSet>experiments)[i],
-					experimentMods = el.meta && el.meta.mods;
+					el = experiments[i],
+					experimentMods = el.meta?.mods;
 
 				if (experimentMods) {
 					for (let keys = Object.keys(experimentMods), i = 0; i < keys.length; i++) {
@@ -176,7 +173,10 @@ export function initMods(component: iBlock): ModsNTable {
 				val = modVal(mods[key]);
 
 			mods[key] = val;
-			ctx.hook !== 'beforeDataCreate' && ctx.setMod(key, val);
+
+			if (ctx.hook !== 'beforeDataCreate') {
+				void ctx.setMod(key, val);
+			}
 		}
 
 		return mods;

@@ -12,6 +12,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+
 import Friend from 'super/i-block/modules/friend';
 import Block from 'super/i-block/modules/block';
 
@@ -25,14 +26,9 @@ export * from 'super/i-block/modules/provide/interface';
 /**
  * Class with methods to provide component classes/styles to another component, etc.
  */
-export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
-	/** @see [[iBlock.componentName]] */
-	get componentName(): string {
-		return this.component.componentName;
-	}
-
+export default class Provide extends Friend {
 	/**
-	 * Returns a full name of the specified component
+	 * Returns the full name of the specified component
 	 *
 	 * @param [modName]
 	 * @param [modValue]
@@ -40,7 +36,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 	fullComponentName(modName?: string, modValue?: unknown): string;
 
 	/**
-	 * Returns a full name of the specified component
+	 * Returns the full name of the specified component
 	 *
 	 * @param [componentName] - base component name
 	 * @param [modName]
@@ -54,12 +50,12 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 			componentName = undefined;
 		}
 
-		componentName = componentName || this.componentName;
-		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
+		componentName = componentName ?? this.componentName;
+		return Block.prototype.getFullBlockName.call({componentName}, modName, modValue);
 	}
 
 	/**
-	 * Returns a full name of the specified element
+	 * Returns the full name of the specified element
 	 *
 	 * @param componentName
 	 * @param elName
@@ -69,7 +65,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 	fullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string;
 
 	/**
-	 * Returns a full name of the specified element
+	 * Returns the full name of the specified element
 	 *
 	 * @param elName
 	 * @param [modName]
@@ -77,24 +73,34 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	fullElName(elName: string, modName?: string, modValue?: unknown): string;
 	fullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string {
-		if (!{2: true, 4: true}[arguments.length]) {
+		const
+			l = arguments.length;
+
+		if (l !== 2 && l !== 4) {
 			modValue = modName;
 			modName = elName;
 			elName = componentName;
-			componentName = '';
+			componentName = this.componentName;
 		}
 
-		componentName = componentName || this.componentName;
-		return Block.prototype.getFullElName.call({name: componentName}, elName, modName, modValue);
+		return Block.prototype.getFullElName.call({componentName}, elName, modName, modValue);
 	}
 
 	/**
-	 * Returns a dictionary with base component modifiers
+	 * Returns a map with base component modifiers
+	 *
+	 * @see [[iBlock.baseMods]]
 	 * @param [mods] - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
+	 *
+	 * @example
+	 * ```js
+	 * // {theme: '...', size: 'x'}
+	 * this.mods({size: 'x'});
+	 * ```
 	 */
 	mods(mods?: ProvideMods): CanUndef<Readonly<ModsNTable>> {
 		const
-			{baseMods} = this.component;
+			{baseMods} = this.ctx;
 
 		if (!baseMods && !mods) {
 			return;
@@ -102,14 +108,14 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 
 		const
 			key = JSON.stringify(baseMods) + JSON.stringify(mods),
-			cache = modsCache[key];
+			cacheVal = modsCache[key];
 
-		if (cache) {
-			return cache;
+		if (cacheVal != null) {
+			return cacheVal;
 		}
 
 		const
-			map = modsCache[key] = {...baseMods},
+			map = {...baseMods},
 			modVal = (val) => val != null ? String(val) : undefined;
 
 		if (mods) {
@@ -125,7 +131,6 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 					el = {default: el};
 				}
 
-				// tslint:disable-next-line:prefer-conditional-expression
 				if (!(key in mods) || el[key] === undefined) {
 					map[mod] = modVal(el[Object.keys(el)[0]]);
 
@@ -135,107 +140,162 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 			}
 		}
 
-		return Object.freeze(map);
+		return modsCache[key] = Object.freeze(map);
 	}
 
 	/**
-	 * Returns an object with classes for elements of another component
+	 * Returns a map with classes for elements of another component.
+	 * This method is used to provide some extra classes to elements of an external component.
 	 *
 	 * @param componentName
 	 * @param [classes] - additional classes ({baseElementName: newElementName})
+	 *
+	 * @example
+	 * ```js
+	 * // {button: 'b-foo__button'}
+	 * this.classes('b-foo', {button: true});
+	 *
+	 * // {button: 'b-foo__submit'}
+	 * this.classes('b-foo', {button: 'submit'});
+	 *
+	 * // {button: 'b-foo__submit_focused_true'}
+	 * this.classes('b-foo', {button: ['submit', 'focused', 'true']});
+	 * ```
 	 */
 	classes(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
 
 	/**
-	 * Returns an object with classes for elements of another component
+	 * Returns a map with classes for elements of another component.
+	 * This method is used to provide some extra classes to elements of an external component.
+	 *
 	 * @param classes - additional classes ({baseElementName: newElementName})
+	 *
+	 * @example
+	 * ```js
+	 * // {button: `${this.componentName}__button`}
+	 * this.classes({button: true});
+	 *
+	 * // {button: `${this.componentName}__submit`}
+	 * this.classes({button: 'submit'});
+	 *
+	 * // {button: `${this.componentName}__submit_focused_true`}
+	 * this.classes({button: ['submit', 'focused', 'true']});
+	 * ```
 	 */
 	classes(classes: Classes): Readonly<Dictionary<string>>;
-	classes(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
-		if (!Object.isString(componentName)) {
-			classes = componentName;
-			componentName = '';
+	classes(nameOrClasses: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
+		let
+			{componentName} = this;
+
+		if (Object.isString(nameOrClasses)) {
+			componentName = nameOrClasses;
+
+		} else {
+			classes = nameOrClasses;
 		}
 
-		componentName = componentName || this.componentName;
+		classes = classes ?? {};
 
 		const
 			key = JSON.stringify(classes) + componentName,
 			cache = classesCache.create('base'),
 			cacheVal = cache[key];
 
-		if (cacheVal) {
-			return <Readonly<Dictionary<string>>>cacheVal;
+		if (Object.isDictionary(cacheVal)) {
+			return cacheVal;
 		}
 
 		const
-			map = cache[key] = {};
+			map = {};
 
-		if (classes) {
+		for (let keys = Object.keys(classes), i = 0; i < keys.length; i++) {
 			const
-				keys = Object.keys(classes);
+				key = keys[i];
 
-			for (let i = 0; i < keys.length; i++) {
-				const
-					key = keys[i];
+			let
+				el = classes[key];
 
-				let
-					el = classes[key];
+			if (el === true) {
+				el = key;
 
-				if (el === true) {
-					el = key;
+			} else if (Object.isArray(el)) {
+				el = el.slice();
 
-				} else if (Object.isArray(el)) {
-					el = el.slice();
-					for (let i = 0; i < el.length; i++) {
-						if (el[i] === true) {
-							el[i] = key;
-						}
+				for (let i = 0; i < el.length; i++) {
+					if (el[i] === true) {
+						el[i] = key;
 					}
 				}
-
-				map[key.dasherize()] = this.fullElName.apply(this, Array.concat([componentName], el));
 			}
+
+			// eslint-disable-next-line prefer-spread
+			map[key.dasherize()] = this.fullElName.apply(this, Array.concat([componentName], el));
 		}
 
-		return Object.freeze(map);
+		return cache[key] = Object.freeze(map);
 	}
 
 	/**
 	 * Returns an array of component classes by the specified parameters
 	 *
-	 * @param [componentName] - name of the source component
-	 * @param mods - map of modifiers
+	 * @param componentName
+	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * // ['b-foo']
+	 * this.componentClasses('b-foo');
+	 *
+	 * // ['b-foo', 'b-foo_checked_true']
+	 * this.componentClasses('b-foo', {checked: true});
+	 * ```
 	 */
-	componentClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
+	componentClasses(componentName: CanUndef<string>, mods?: ModsTable): readonly string[];
 
 	/**
 	 * Returns an array of component classes by the specified parameters
-	 * @param mods - map of modifiers
+	 *
+	 * @param [mods] - map of additional modifiers
+	 *
+	 * @example
+	 * ```js
+	 * // [this.componentName]
+	 * this.componentClasses();
+	 *
+	 * // [this.componentName, `${this.componentName}_checked_true`]
+	 * this.componentClasses({checked: true});
+	 * ```
 	 */
-	componentClasses(mods: ModsTable): ReadonlyArray<string>;
-	componentClasses(componentName?: string | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
-		if (arguments.length === 1) {
-			mods = <ModsTable>componentName;
-			componentName = undefined;
+	componentClasses(mods?: ModsTable): readonly string[];
+	componentClasses(nameOrMods?: string | ModsTable, mods?: ModsTable): readonly string[] {
+		let
+			{componentName} = this;
 
-		} else {
-			mods = <ModsTable>mods;
-			componentName = <CanUndef<string>>componentName;
+		if (arguments.length === 1) {
+			if (Object.isString(nameOrMods)) {
+				componentName = nameOrMods;
+
+			} else {
+				mods = nameOrMods;
+			}
+
+		} else if (Object.isString(nameOrMods)) {
+			componentName = nameOrMods;
 		}
 
-		componentName = componentName || this.componentName;
+		mods = mods ?? {};
 
 		const
 			key = JSON.stringify(mods) + componentName,
-			cache = classesCache.create('components', this.componentName);
+			cache = classesCache.create('components', this.componentName),
+			cacheVal = cache[key];
 
-		if (cache[key]) {
-			return <ReadonlyArray<string>>cache[key];
+		if (Object.isArray(cacheVal)) {
+			return <readonly string[]>cacheVal;
 		}
 
 		const
-			classes = cache[key] = [this.fullComponentName(componentName)];
+			classes = [this.fullComponentName(componentName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const
@@ -247,45 +307,57 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 			}
 		}
 
-		return classes;
+		return cache[key] = Object.freeze(classes);
 	}
 
 	/**
 	 * Returns an array of element classes by the specified parameters
 	 *
-	 * @param componentNameOrCtx - component name or a link to a component context
-	 * @param els - map of elements and its modifiers ({button: {focused: true}})
+	 * @param componentNameOrCtx - component name or link to a component context
+	 * @param els - map of elements with modifiers ({button: {focused: true}})
+	 *
+	 * @example
+	 * ```js
+	 * // ['b-foo__button', 'b-foo__button_focused_true']
+	 * this.elClasses('b-foo', {button: {focused: true}});
+	 * ```
 	 */
-	elClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	elClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): readonly string[];
 
 	/**
 	 * Returns an array of element classes by the specified parameters
-	 * @param els - map of elements and its modifiers ({button: {focused: true}})
+	 *
+	 * @param els - map of elements with modifiers ({button: {focused: true}})
+	 *
+	 * @example
+	 * ```js
+	 * // [this.componentId, `${this.componentName}__button`, `${this.componentName}__button_focused_true`]
+	 * this.elClasses({button: {focused: true}});
+	 * ```
 	 */
-	elClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	elClasses(els: Dictionary<ModsTable>): readonly string[];
 	elClasses(
-		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
+		nameCtxEls: string | iBlock | Dictionary<ModsTable>,
 		els?: Dictionary<ModsTable>
-	): ReadonlyArray<string> {
+	): readonly string[] {
 		let
-			id,
-			componentName;
+			componentId,
+			{componentName} = this;
 
 		if (arguments.length === 1) {
-			id = this.component.componentId;
-			els = <Dictionary<ModsTable>>componentNameOrCtx;
+			componentId = this.componentId;
+
+			if (Object.isDictionary(nameCtxEls)) {
+				els = nameCtxEls;
+			}
+
+		} else if (Object.isString(nameCtxEls)) {
+			componentName = nameCtxEls;
 
 		} else {
-			if (Object.isString(componentNameOrCtx)) {
-				componentName = componentNameOrCtx;
-
-			} else {
-				id = (<iBlock>componentNameOrCtx).componentId;
-				componentName = (<iBlock>componentNameOrCtx).componentName;
-			}
+			componentId = (<iBlock>nameCtxEls).componentId;
+			componentName = (<iBlock>nameCtxEls).componentName;
 		}
-
-		componentName = componentName || this.componentName;
 
 		if (!els) {
 			return Object.freeze([]);
@@ -293,14 +365,15 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 
 		const
 			key = JSON.stringify(els),
-			cache = classesCache.create('els', id || componentName);
+			cache = classesCache.create('els', componentId ?? componentName),
+			cacheVal = cache[key];
 
-		if (cache[key]) {
-			return <ReadonlyArray<string>>cache[key];
+		if (cacheVal != null) {
+			return <readonly string[]>cacheVal;
 		}
 
 		const
-			classes = cache[key] = id ? [id] : [];
+			classes = componentId != null ? [componentId] : [];
 
 		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
 			const
@@ -308,7 +381,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 				mods = els[el];
 
 			classes.push(
-				this.fullElName(<string>componentName, el)
+				this.fullElName(componentName, el)
 			);
 
 			if (!Object.isPlainObject(mods)) {
@@ -321,19 +394,26 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 					val = mods[key];
 
 				if (val !== undefined) {
-					classes.push(this.fullElName(<string>componentName, el, key, val));
+					classes.push(this.fullElName(componentName, el, key, val));
 				}
 			}
 		}
 
-		return Object.freeze(classes);
+		return Object.freeze(cache[key] = classes);
 	}
 
 	/**
 	 * Returns an array of hint classes by the specified parameters
+	 *
 	 * @param [pos] - hint position
+	 *
+	 * @example
+	 * ```js
+	 * // ['g-hint', 'g-hint_pos_bottom']
+	 * this.hintClasses();
+	 * ```
 	 */
-	hintClasses(pos: string = 'bottom'): ReadonlyArray<string> {
+	hintClasses(pos: string = 'bottom'): readonly string[] {
 		return this.componentClasses('g-hint', {pos});
 	}
 }

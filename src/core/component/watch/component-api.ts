@@ -6,15 +6,37 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, unset, mute, watchHandlers, WatchHandler, MultipleWatchHandler } from 'core/object/watch';
+import watch, {
 
-import { bindingRgxp } from 'core/component/reflection';
+	set,
+	unset,
+	mute,
+
+	watchHandlers,
+	MultipleWatchHandler
+
+} from 'core/object/watch';
+
+import { getPropertyInfo, bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
 
-import { cacheStatus, watcherInitializer, toComponentObject } from 'core/component/watch/const';
-import { createWatchFn } from 'core/component/watch/create';
+import {
 
-import { ComponentInterface } from 'core/component/interface';
+	dynamicHandlers,
+	immediateDynamicHandlers,
+
+	cacheStatus,
+	tiedWatchers,
+
+	watcherInitializer,
+	toComponentObject
+
+} from 'core/component/watch/const';
+
+import { createWatchFn } from 'core/component/watch/create';
+import { attachDynamicWatcher } from 'core/component/watch/helpers';
+
+import { ComponentInterface, RawWatchHandler } from 'core/component/interface';
 import { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
 
 /**
@@ -28,26 +50,27 @@ export function implementComponentWatchAPI(
 	opts?: ImplementComponentWatchAPIOptions
 ): void {
 	const
-		// @ts-ignore (access)
-		{meta, meta: {watchDependencies, computedFields, accessors, params}} = component;
+		{unsafe} = component,
+		{meta, meta: {watchDependencies, computedFields, accessors, params}} = unsafe;
 
 	const
-		isFlyweight = component.isFlyweight || meta.params.functional === true,
-		dynamicHandlers = new WeakMap<ComponentInterface, Dictionary<Set<Function>>>(),
+		isFlyweight = Boolean(component.isFlyweight) || meta.params.functional === true,
 		usedHandlers = new Set<Function>();
 
 	let
 		timerId;
 
-	const invalidateComputedCache: WatchHandler = (val, oldVal, info) => {
-		if (!info) {
+	// The handler to invalidate the cache of computed fields
+	// eslint-disable-next-line @typescript-eslint/typedef
+	const invalidateComputedCache = () => <RawWatchHandler>function invalidateComputedCache(val, oldVal, info) {
+		if (info == null) {
 			return;
 		}
 
 		const
 			{path} = info;
 
-		if (info.parent) {
+		if (info.parent != null) {
 			const
 				rootKey = String(path[0]);
 
@@ -56,11 +79,27 @@ export function implementComponentWatchAPI(
 			if (meta.computedFields[rootKey]?.get) {
 				delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
 			}
+
+			// We need to provide this mutation to other listeners.
+			// This behavior fixes the bug when we have some accessor that depends on a property from another component.
+
+			const
+				ctx = invalidateComputedCache[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
+				currentDynamicHandlers = immediateDynamicHandlers.get(ctx)?.[rootKey];
+
+			if (currentDynamicHandlers) {
+				for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
+					el.value(val, oldVal, info);
+				}
+			}
 		}
 	};
 
-	const emitAccessorEvents: MultipleWatchHandler = (mutations, ...args) => {
-		if (args.length) {
+	// The handler to broadcast events of accessors
+	// eslint-disable-next-line @typescript-eslint/typedef
+	const emitAccessorEvents = () => <MultipleWatchHandler>function emitAccessorEvents(mutations, ...args) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (args.length > 0) {
 			mutations = [<any>[mutations, ...args]];
 		}
 
@@ -87,7 +126,7 @@ export function implementComponentWatchAPI(
 
 				const
 					rootKey = String(path[0]),
-					ctx = emitAccessorEvents[cacheStatus] ? component : info.root[toComponentObject] || component,
+					ctx = emitAccessorEvents[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
 					currentDynamicHandlers = dynamicHandlers.get(ctx)?.[rootKey];
 
 				if (currentDynamicHandlers) {
@@ -104,8 +143,7 @@ export function implementComponentWatchAPI(
 						handler(...eventArgs);
 						usedHandlers.add(handler);
 
-						if (!timerId) {
-							// tslint:disable-next-line:no-string-literal
+						if (timerId == null) {
 							timerId = globalThis['setImmediate'](() => {
 								timerId = undefined;
 								usedHandlers.clear();
@@ -129,10 +167,79 @@ export function implementComponentWatchAPI(
 		dependencies: watchDependencies
 	};
 
+	// We need to manage situations when we have accessors with dependencies from external components,
+	// that why we iterate over all dependencies list,
+	// find external dependencies and attach watchers that directly update state
+	if (watchDependencies.size > 0) {
+		const
+			immediateHandler = invalidateComputedCache(),
+			handler = emitAccessorEvents();
+
+		handler[tiedWatchers] = [];
+		immediateHandler[tiedWatchers] = handler[tiedWatchers];
+
+		const watchOpts = {
+			deep: true,
+			withProto: true
+		};
+
+		for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
+			const
+				[key, deps] = el.value;
+
+			for (let j = 0; j < deps.length; j++) {
+				const
+					info = getPropertyInfo(Array.concat([], deps[j]).join('.'), component);
+
+				if (info.type === 'mounted' || info.ctx === component) {
+					continue;
+				}
+
+				const invalidateCache = (value, oldValue, info) => {
+					info = Object.assign(Object.create(info), {
+						path: [key],
+						parent: {value, oldValue, info}
+					});
+
+					immediateHandler(value, oldValue, info);
+				};
+
+				attachDynamicWatcher(component, info, watchOpts, invalidateCache, immediateDynamicHandlers);
+
+				const broadcastEvents = (mutations, ...args) => {
+					if (args.length > 0) {
+						mutations = [<any>[mutations, ...args]];
+					}
+
+					const
+						modifiedMutations = <any[]>[];
+
+					for (let i = 0; i < mutations.length; i++) {
+						const
+							[value, oldValue, info] = mutations[i];
+
+						modifiedMutations.push([
+							value,
+							oldValue,
+
+							Object.assign(Object.create(info), {
+								path: [key],
+								parent: {value, oldValue, info}
+							})
+						]);
+					}
+
+					handler(modifiedMutations);
+				};
+
+				attachDynamicWatcher(component, info, watchOpts, broadcastEvents, dynamicHandlers);
+			}
+		}
+	}
+
 	let
 		fieldWatchOpts;
 
-	// tslint:disable-next-line:prefer-conditional-expression
 	if (opts?.tieFields) {
 		fieldWatchOpts = {...watchOpts, tiedWith: component};
 
@@ -152,15 +259,21 @@ export function implementComponentWatchAPI(
 	};
 
 	// Watcher of fields
-	const fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache);
-	watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents);
+
+	const
+		fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
+
+	watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
 	initWatcher(fields.key, fieldsWatcher);
 
 	// Don't force watching of system fields until it becomes necessary
 	systemFields.value[watcherInitializer] = () => {
 		delete systemFields.value[watcherInitializer];
-		const systemFieldsWatcher = watch(systemFields.value, {...watchOpts, immediate: true}, invalidateComputedCache);
-		watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents);
+
+		const
+			systemFieldsWatcher = watch(systemFields.value, {...watchOpts, immediate: true}, invalidateComputedCache());
+
+		watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents());
 		initWatcher(systemFields.key, systemFieldsWatcher);
 	};
 
@@ -170,7 +283,7 @@ export function implementComponentWatchAPI(
 		enumerable: true,
 		configurable: true,
 		writable: true,
-		value: createWatchFn(component, dynamicHandlers)
+		value: createWatchFn(component)
 	});
 
 	Object.defineProperty(component, '$set', {
@@ -178,7 +291,7 @@ export function implementComponentWatchAPI(
 		configurable: true,
 		writable: true,
 		value: (obj, path, val) => {
-			set(obj, path, val, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
+			set(obj, path, val, obj[watchHandlers] ?? fieldsWatcher.proxy[watchHandlers]);
 			return val;
 		}
 	});
@@ -188,20 +301,20 @@ export function implementComponentWatchAPI(
 		configurable: true,
 		writable: true,
 		value: (obj, path) => {
-			unset(obj, path, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
+			unset(obj, path, obj[watchHandlers] ?? fieldsWatcher.proxy[watchHandlers]);
 		}
 	});
 
 	// Watching of component props.
 	// The root component and functional/flyweight components can't watch props.
-	if (!isFlyweight && !params.root)  {
+	if (!isFlyweight && !params.root) {
 		const
 			props = proxyGetters.prop(component),
 			propsStore = props.value;
 
 		// We need to attach a watcher for a prop object
 		// and watchers for each non primitive value of that object, like arrays or maps.
-		if (propsStore) {
+		if (propsStore != null) {
 			const propWatchOpts = {
 				...watchOpts,
 				postfixes: ['Prop']
@@ -211,25 +324,29 @@ export function implementComponentWatchAPI(
 			// we need to wrap a prop object
 			if (!('watch' in props)) {
 				const propsWatcher = watch(propsStore, propWatchOpts);
-				initWatcher(props!.key, propsWatcher);
+				initWatcher((<Dictionary>props).key, propsWatcher);
 			}
 
 			// We need to attach default watchers for all props that can affect component computed fields
-			if (Object.size(computedFields) || Object.size(accessors)) {
+			if (Object.size(computedFields) > 0 || Object.size(accessors) > 0) {
 				for (let keys = Object.keys(propsStore), i = 0; i < keys.length; i++) {
 					const
 						prop = keys[i],
+
+						// Remove from the prop name "Store" and "Prop" postfixes
 						normalizedKey = prop.replace(bindingRgxp, '');
 
 					let
 						tiedLinks,
-						needWatch = Boolean(computedFields[normalizedKey] || accessors[normalizedKey]);
+						needWatch = Boolean(computedFields[normalizedKey] ?? accessors[normalizedKey]);
 
+					// We have some accessor that tied with this prop
 					if (needWatch) {
 						tiedLinks = [[normalizedKey]];
-					}
 
-					if (!needWatch && watchDependencies.size) {
+					// We don't have the direct connection between the prop and any accessor,
+					// but we have a set of dependencies, so we need to check it
+					} else if (watchDependencies.size > 0) {
 						tiedLinks = [];
 
 						for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
@@ -251,13 +368,16 @@ export function implementComponentWatchAPI(
 
 					// Skip redundant watchers
 					if (needWatch) {
-						emitAccessorEvents[cacheStatus] = tiedLinks;
+						const
+							immediateHandler = invalidateComputedCache(),
+							handler = emitAccessorEvents();
 
-						// @ts-ignore (access)
-						component.$watch(prop, {...propWatchOpts, immediate: true}, invalidateComputedCache);
+						// Provide the list of connections to handlers
+						invalidateComputedCache[tiedWatchers] = tiedLinks;
+						emitAccessorEvents[tiedWatchers] = tiedLinks;
 
-						// @ts-ignore (access)
-						component.$watch(prop, propWatchOpts, emitAccessorEvents);
+						unsafe.$watch(prop, {...propWatchOpts, immediate: true}, immediateHandler);
+						unsafe.$watch(prop, propWatchOpts, handler);
 					}
 				}
 			}

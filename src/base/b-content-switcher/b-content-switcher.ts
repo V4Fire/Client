@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools/deprecation';
+
 import symbolGenerator from 'core/symbol';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
@@ -159,7 +161,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Strategies readiness map
 	 */
-	@system((o: bContentSwitcher): IsStrategyReadyMap => ({
+	@system<bContentSwitcher>((o): IsStrategyReadyMap => ({
 		mutation: () => o.is.mutationReady,
 
 		semaphore: () => {
@@ -178,11 +180,11 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Is table
 	 */
-	@system((o: bContentSwitcher): IsTable => ({
+	@system<bContentSwitcher>((o): IsTable => ({
 		readyToSwitchStore: false,
 		placeholderHidden: false,
 		mutationReady: false,
-		manual: () =>  !o.resolve || !o.resolve.length
+		manual: () => !o.resolve || !o.resolve.length
 	}))
 
 	protected is!: IsTable;
@@ -286,6 +288,17 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	}
 
 	/**
+	 * Warns that the component is deprecated
+	 */
+	@hook('created')
+	protected showDeprecatedMessage(): void {
+		deprecate({
+			name: 'b-content-switcher',
+			type: 'component'
+		});
+	}
+
+	/**
 	 * Sets readiness for switching
 	 */
 	@hook('mounted')
@@ -344,10 +357,10 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 		const
 			content = <HTMLElement>this.content;
 
-		const defferCheck = this.lazy.createLazyFn(() => {
+		const defferCheck = this.async.debounce(() => {
 			this.is.mutationReady = this.contentLengthStore > 0;
 			this.setSwitchReadiness();
-		}, {label: $$.defferCheck, join: true});
+		}, 0, {label: $$.defferCheck, join: true});
 
 		this.contentLengthStore =
 			content.children.length;
@@ -392,7 +405,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 			}
 		};
 
-		const defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
+		const defferRegister = $a.debounce(register, 0, {label: $$.register});
 		defferRegister();
 
 		this.initDOMObservers();

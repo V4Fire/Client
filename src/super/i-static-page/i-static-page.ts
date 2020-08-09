@@ -12,25 +12,23 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import remoteState from 'core/component/state';
 
-import { defProp } from 'core/const/props';
-import { reset, ResetType, ComponentInterface } from 'core/component';
-import { setLocale, locale } from 'core/i18n';
-
-import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
-import { CurrentPage } from 'core/router/interface';
+import { setLocale, locale } from 'core/i18n';
+import { Session } from 'core/session/interface';
+
+import remoteState from 'core/component/state';
+import { reset, ResetType, ComponentInterface } from 'core/component';
 
 //#if runtime has bRouter
-import bRouter from 'base/b-router/b-router';
+import bRouter, { Route } from 'base/b-router/b-router';
 //#endif
 
 import iBlock from 'super/i-block/i-block';
-import iPage, { component, field, system, watch } from 'super/i-page/i-page';
+import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import { RemoteState, RootMod } from 'super/i-static-page/interface';
+import { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
 export * from 'super/i-static-page/interface';
@@ -64,7 +62,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Type: current page
 	 */
-	readonly CurrentPage!: CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>;
+	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/** @override */
 	@system()
@@ -79,42 +77,33 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Authorization status
 	 */
-	@field({
-		after: 'remoteState',
-		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isAuth)
-	})
-
+	@field((o) => o.sync.link('remoteState.isAuth'))
 	isAuth!: boolean;
 
 	/**
 	 * Online status
 	 */
-	@field({
-		after: 'remoteState',
-		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isOnline)
-	})
-
+	@field((o) => o.sync.link('remoteState.isOnline'))
 	isOnline!: boolean;
 
 	/**
 	 * Last online date
 	 */
-	@system((o) => o.sync.link('remoteState', (state: RemoteState) => state.lastOnlineDate))
+	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
 	lastOnlineDate?: Date;
 
 	/** @override */
-	@field({
-		atom: true,
-		init: () => remoteState
-	})
-
-	remoteState!: Dictionary;
+	@computed({watchable: true})
+	get remoteState(): typeof remoteState {
+		return remoteState;
+	}
 
 	/**
-	 * Name of the active page
+	 * Name of the active route page
 	 */
+	@computed({cache: true, dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
-		return this.field.get('route.meta.page');
+		return this.field.get('route.meta.name');
 	}
 
 	/** @override */
@@ -140,13 +129,13 @@ export default abstract class iStaticPage extends iPage {
 
 	/** @override */
 	set pageTitle(value: string) {
-		if (value == null) {
+		if (!Object.isString(value)) {
 			return;
 		}
 
 		const
 			div = Object.assign(document.createElement('div'), {innerHTML: value}),
-			title = div.textContent || '';
+			title = div.textContent ?? '';
 
 		// Fix strange Chrome bug
 		// tslint:disable-next-line:no-irregular-whitespace
@@ -201,7 +190,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Route information object store
 	 * @see [[iStaticPage.route]]
 	 */
-	@field()
+	@field({forceUpdate: false})
 	protected routeStore?: this['CurrentPage'];
 
 	/**
@@ -232,6 +221,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param value
 	 * @param component
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
 		this.pageTitle = value;
 		return this.pageTitle === value;
@@ -248,12 +238,11 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	// @ts-ignore
 	setRootMod(name: string, value: unknown, component: false | iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
-		if (value === undefined || !root) {
+		if (value === undefined || !Object.isTruly(root)) {
 			return false;
 		}
 
@@ -264,12 +253,12 @@ export default abstract class iStaticPage extends iPage {
 			mod;
 
 		if (component === false) {
-			mod = `${this.rootPrefix}_${name}_${value}`;
+			mod = `${this.rootPrefix}_${name}_${String(value)}`;
 			name = `${this.rootPrefix}_${name.camelize(false)}`;
 
 		} else {
 			const
-				c = (component.globalName || component.componentName).dasherize();
+				c = (component.globalName ?? component.componentName).dasherize();
 
 			mod = this.provide.fullComponentName(c, name, value).replace(/_/g, '-');
 			name = `${c}_${name.camelize(false)}`;
@@ -299,12 +288,11 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	// @ts-ignore
 	removeRootMod(name: string, value?: unknown, component: false | iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
-		if (!root) {
+		if (!Object.isTruly(root)) {
 			return false;
 		}
 
@@ -333,7 +321,8 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	getRootMod(name: string, component: false | ComponentInterface = this): CanUndef<string> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	getRootMod(name: string, component: false | ComponentInterface = this): undefined | string {
 		const
 			prefix = component === false ? this.rootPrefix : (component.globalName || component.componentName).dasherize();
 
@@ -361,7 +350,7 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@watch('globalEmitter:session.*')
 	protected syncAuthWatcher(e?: Session): void {
-		this.isAuth = Boolean(e && e.auth);
+		this.isAuth = Boolean(e?.auth);
 	}
 
 	/**
@@ -372,12 +361,6 @@ export default abstract class iStaticPage extends iPage {
 	protected syncOnlineWatcher(e: NetStatus): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;
-	}
-
-	/** @override */
-	protected initBaseAPI(): void {
-		super.initBaseAPI();
-		Object.defineProperty(this, 'remoteState', {...defProp, value: remoteState});
 	}
 
 	/** @override */

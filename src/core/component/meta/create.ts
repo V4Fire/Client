@@ -110,8 +110,8 @@ export function fillMeta(
 	const
 		{component, methods, watchers, hooks} = meta;
 
-	const
-		instance = meta.instance = new constructor();
+	const instance = new constructor();
+	meta.instance = instance;
 
 	if (isAbstractComponent.test(meta.componentName)) {
 		return meta;
@@ -137,23 +137,20 @@ export function fillMeta(
 			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					watcher = <NonNullable<WatchObject>>o[key],
-					watcherListeners = watchers[key] = watchers[key] || [];
+					watcher = <NonNullable<WatchObject>>o[key];
 
 				if (isFunctional && watcher.functional === false) {
 					continue;
 				}
 
+				const
+					watcherListeners = watchers[key] ?? [];
+
+				watchers[key] = watcherListeners;
 				watcherListeners.push({
+					...watcher,
 					method: nm,
-					group: watcher.group,
-					single: watcher.single,
-					options: watcher.options,
 					args: Array.concat([], watcher.args),
-					provideArgs: watcher.provideArgs,
-					deep: watcher.deep,
-					immediate: watcher.immediate,
-					wrapper: watcher.wrapper,
 					handler: <any>method.fn
 				});
 			}
@@ -171,11 +168,7 @@ export function fillMeta(
 					continue;
 				}
 
-				hooks[key].push({
-					name: watcher.name,
-					fn: method.fn,
-					after: watcher.after
-				});
+				hooks[key].push({...watcher, fn: method.fn});
 			}
 		}
 	}
@@ -197,28 +190,35 @@ export function fillMeta(
 
 		if (defaultProps || prop.forceDefault) {
 			skipDefault = false;
-			def = defWrapper = instance[key];
+			def = instance[key];
+			defWrapper = def;
 
-			if (def && typeof def === 'object' && (!isTypeCanBeFunc(prop.type) || !Object.isFunction(def))) {
+			if (def != null && typeof def === 'object' && (!isTypeCanBeFunc(prop.type) || !Object.isFunction(def))) {
 				defWrapper = () => Object.fastClone(def);
 				defWrapper[defaultWrapper] = true;
 			}
 		}
 
-		const
-			defValue = !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined;
+		let
+			defValue;
+
+		if (!skipDefault) {
+			defValue = prop.default !== undefined ? prop.default : defWrapper;
+		}
 
 		component.props[key] = {
 			type: prop.type,
 			required: prop.required !== false && defaultProps && defValue === undefined,
+
+			// eslint-disable-next-line @typescript-eslint/unbound-method
 			validator: prop.validator,
 			functional: prop.functional,
 			default: defValue
 		};
 
-		if (prop.watchers && prop.watchers.size) {
-			const
-				watcherListeners = watchers[key] = watchers[key] || [];
+		if (Object.size(prop.watchers) > 0) {
+			const watcherListeners = watchers[key] ?? [];
+			watchers[key] = watcherListeners;
 
 			for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 				const
@@ -228,12 +228,7 @@ export function fillMeta(
 					continue;
 				}
 
-				watcherListeners.push({
-					deep: watcher.deep,
-					immediate: watcher.immediate,
-					provideArgs: watcher.provideArgs,
-					handler: watcher.handler
-				});
+				watcherListeners.push(watcher);
 			}
 		}
 	}
@@ -249,19 +244,17 @@ export function fillMeta(
 			if (field.watchers) {
 				for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 					const
-						watcher = el.value,
-						watcherListeners = watchers[key] = watchers[key] || [];
+						watcher = el.value;
 
 					if (isFunctional && watcher.functional === false) {
 						continue;
 					}
 
-					watcherListeners.push({
-						deep: watcher.deep,
-						immediate: watcher.immediate,
-						provideArgs: watcher.provideArgs,
-						handler: watcher.handler
-					});
+					const
+						watcherListeners = watchers[key] ?? [];
+
+					watchers[key] = watcherListeners;
+					watcherListeners.push(watcher);
 				}
 			}
 		}
@@ -270,7 +263,7 @@ export function fillMeta(
 	// Modifiers
 
 	const
-		mods = component.mods;
+		{mods} = component;
 
 	for (let o = meta.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
@@ -291,7 +284,7 @@ export function fillMeta(
 				}
 			}
 
-			mods[key] = def ? String(def[0]) : undefined;
+			mods[key] = def !== undefined ? String(def[0]) : undefined;
 		}
 	}
 

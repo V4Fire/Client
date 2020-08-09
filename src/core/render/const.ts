@@ -34,4 +34,4 @@ export const daemon = new Async();
 /**
  * Adds a task to the queue
  */
-export const add = queue.add;
+export const add = queue.add.bind(queue);

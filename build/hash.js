@@ -12,13 +12,13 @@ const
 	{webpack} = require('config');
 
 /**
- * Returns a hash value from the specified file or text (glob pattern also supported)
+ * Returns a hash value of the specified file or text (glob pattern also supported)
  *
- * @param value
+ * @param value - path to the file or text content
  * @param [length] - hash length
  * @returns {string}
  */
-module.exports = function (value, length = webpack.hashLength) {
+module.exports = function getHash(value, length = webpack.hashLength) {
 	const
 		algorithm = webpack.hashFunction();
 

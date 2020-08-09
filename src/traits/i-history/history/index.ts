@@ -6,13 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 
 import { ModsDecl, ComponentHooks } from 'core/component';
 import { InView } from 'core/component/directives/in-view';
 
-import Block from 'super/i-block/modules/block';
+import Friend from 'super/i-block/modules/friend';
 import iHistory from 'traits/i-history/i-history';
 
 import { INITIAL_STAGE } from 'traits/i-history/history/const';
@@ -24,7 +23,10 @@ export * from 'traits/i-history/history/interface';
 export const
 	$$ = symbolGenerator();
 
-export default class History<C extends iHistory> {
+export default class History extends Friend {
+	/** @override */
+	readonly C!: iHistory;
+
 	/**
 	 * Default configuration for a history item
 	 */
@@ -45,16 +47,9 @@ export default class History<C extends iHistory> {
 	};
 
 	/**
-	 * Linked component async
-	 */
-	get async(): Async<C['unsafe']> {
-		return this.component.async;
-	}
-
-	/**
 	 * Current store position
 	 */
-	get current(): HistoryItem {
+	get current(): CanUndef<HistoryItem> {
 		return this.store[this.store.length - 1];
 	}
 
@@ -64,11 +59,6 @@ export default class History<C extends iHistory> {
 	get length(): number {
 		return this.store.length;
 	}
-
-	/**
-	 * Linked component instance
-	 */
-	protected readonly component: C['unsafe'];
 
 	/**
 	 * List of transitions
@@ -84,8 +74,8 @@ export default class History<C extends iHistory> {
 	 * @param component
 	 * @param [config]
 	 */
-	constructor(component: C, config?: HistoryConfig) {
-		this.component = component.unsafe;
+	constructor(component: any, config?: HistoryConfig) {
+		super(component);
 		this.config = {...History.defaultConfig, ...config};
 	}
 
@@ -93,14 +83,7 @@ export default class History<C extends iHistory> {
 	 * Hooks of the component instance
 	 */
 	protected get componentHooks(): ComponentHooks {
-		return this.component.meta.hooks;
-	}
-
-	/**
-	 * Block instance
-	 */
-	protected get block(): Block {
-		return this.component.block;
+		return this.meta.hooks;
 	}
 
 	/**
@@ -121,28 +104,33 @@ export default class History<C extends iHistory> {
 	 */
 	push(stage: string, opts?: Dictionary): void {
 		const
-			currentPage = this.current?.content?.el;
+			{block} = this;
+
+		if (block == null) {
+			return;
+		}
 
 		const
+			currentPage = this.current?.content?.el,
 			els = this.initPage(stage);
 
 		if (els?.content.el) {
 			const
-				isBelow = this.block.getElMod(els.content.el, 'page', 'below') === 'true';
+				isBelow = block.getElMod(els.content.el, 'page', 'below') === 'true';
 
 			if (isBelow || currentPage === els.content.el) {
 				throw new Error(`A page with the stage "${stage}" is already opened`);
 			}
 
 			this.async.requestAnimationFrame(() => {
-				this.block.setElMod(els.content.el, 'page', 'turning', 'in');
-				this.block.setElMod(currentPage, 'page', 'below', true);
-				this.component.setMod('blankHistory', false);
+				block.setElMod(els.content.el, 'page', 'turning', 'in');
+				block.setElMod(currentPage, 'page', 'below', true);
+				void this.ctx.setMod('blankHistory', false);
 			}, {label: $$.addNewPage});
 
 			this.store.push({stage, options: opts, ...els});
 			this.scrollToTop();
-			this.component.emit('history:transition', {page: this.current, type: 'push'});
+			this.ctx.emit('history:transition', {page: this.current, type: 'push'});
 
 		} else {
 			throw new ReferenceError(`A page for the stage "${stage}" is not defined`);
@@ -163,7 +151,7 @@ export default class History<C extends iHistory> {
 
 		if (current) {
 			if (this.store.length === 1) {
-				this.component.setMod('blankHistory', true);
+				void this.ctx.setMod('blankHistory', true);
 			}
 
 			this.unwindPage(current);
@@ -172,8 +160,8 @@ export default class History<C extends iHistory> {
 				pageBelow = this.store[this.store.length - 1],
 				pageBelowEl = pageBelow.content?.el;
 
-			this.block.removeElMod(pageBelowEl, 'page', 'below');
-			this.component.emit('history:transition', <Transition>{page: current, type: 'back'});
+			this.block?.removeElMod(pageBelowEl, 'page', 'below');
+			this.ctx.emit('history:transition', <Transition>{page: current, type: 'back'});
 		}
 
 		return current;
@@ -194,19 +182,19 @@ export default class History<C extends iHistory> {
 
 		this.store = [];
 		this.async.requestAnimationFrame(() => {
-			this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
+			this.block?.removeElMod(this.store[0]?.content?.el, 'page', 'below');
 		}, {label: $$.pageChange});
 
 		const
-			history = <HTMLElement>this.block.element('history');
+			history = this.block?.element<HTMLElement>('history');
 
-		if (history.hasAttribute('data-page')) {
+		if (history?.hasAttribute('data-page')) {
 			history.removeAttribute('data-page');
 		}
 
 		this.async.requestAnimationFrame(() => {
-			this.component.setMod('blankHistory', true);
-			this.component.emit('history:clear');
+			void this.ctx.setMod('blankHistory', true);
+			this.ctx.emit('history:clear');
 		}, {label: $$.historyClear});
 
 		return true;
@@ -217,12 +205,19 @@ export default class History<C extends iHistory> {
 	 */
 	protected calculateCurrentPage(): void {
 		this.async.requestAnimationFrame(() => {
-			const els = this.initPage(this.current.stage);
+			const
+				{current} = this;
+
+			if (current == null) {
+				return;
+			}
+
+			const els = this.initPage(current.stage);
 			Object.assign(this.current, els);
 
 			const
-				titleH = this.current?.title?.initBoundingRect?.height || 0,
-				scrollTop = this.current.content?.el?.scrollTop || 0,
+				titleH = current.title?.initBoundingRect?.height ?? 0,
+				scrollTop = current.content?.el.scrollTop ?? 0,
 				visible = titleH - scrollTop >= titleH * this.config.titleThreshold;
 
 			this.initTitleInView(visible);
@@ -230,25 +225,32 @@ export default class History<C extends iHistory> {
 	}
 
 	/**
-	 * Unwinds a history item to the initial state
+	 * Unwinds the passed history item to the initial state
 	 * @param item
 	 */
 	protected unwindPage(item: HistoryItem): void {
 		const
 			page = item.content?.el,
-			trigger = item.content?.trigger,
-			label = {label: $$[`unwindPage${item.stage.camelize()}`]};
+			trigger = item.content?.trigger;
+
+		const group = {
+			group: item.stage.camelize(),
+			label: $$.unwindPage
+		};
 
 		this.async.requestAnimationFrame(() => {
+			const
+				{block} = this;
+
 			if (trigger) {
 				this.setObserving(trigger, false);
 			}
 
-			if (page) {
-				this.block.removeElMod(page, 'page', 'turning');
-				this.block.removeElMod(page, 'page', 'below');
+			if (page != null && block != null) {
+				block.removeElMod(page, 'page', 'turning');
+				block.removeElMod(page, 'page', 'below');
 			}
-		}, label);
+		}, group);
 	}
 
 	/**
@@ -264,7 +266,7 @@ export default class History<C extends iHistory> {
 
 		this.async.requestAnimationFrame(() => {
 			Object.assign(t.style, {
-				height: 1,
+				height: (1).px,
 				width: '100%',
 				position: 'absolute',
 				top: 0,
@@ -279,7 +281,7 @@ export default class History<C extends iHistory> {
 	 * Sets observing for the specified element
 	 *
 	 * @param el
-	 * @param observe - if false, observing for the element will be stopped
+	 * @param observe - if false, the observing of the element will be stopped
 	 */
 	protected setObserving(el: HTMLElement, observe: boolean): void {
 		if (!this.config.pageTriggers) {
@@ -293,10 +295,11 @@ export default class History<C extends iHistory> {
 			InView.observe(el, {
 				threshold: this.config.titleThreshold,
 				onEnter: () => this.onPageTopVisibilityChange(true),
-				onLeave: () => this.onPageTopVisibilityChange(false)
+				onLeave: () => this.onPageTopVisibilityChange(false),
+				polling: true
 			});
 
-			this.async.worker(() => InView.stopObserve(el), label);
+			this.async.worker(() => InView.remove(el), label);
 
 		} else {
 			this.async.terminateWorker(label);
@@ -312,35 +315,54 @@ export default class History<C extends iHistory> {
 	 */
 	protected initPage(stage: string): CanUndef<Page> {
 		const
-			$a = this.async;
+			{async: $a, block} = this;
+
+		if (block == null) {
+			return;
+		}
 
 		let
-			page = this.block?.node?.querySelector<HTMLElement>(`[data-page=${stage}]`);
+			page = block.node?.querySelector<HTMLElement>(`[data-page=${stage}]`);
 
-		if (!page) {
-			this.component.emit('history:initPageFail', stage);
+		if (page == null) {
+			this.ctx.emit('history:initPageFail', stage);
 
 			if (stage !== INITIAL_STAGE) {
 				return;
 			}
 
-			page = this.block.element<HTMLElement>('history')!;
+			page = block.element<HTMLElement>('history');
+
+			if (page == null) {
+				return;
+			}
+
 			page.setAttribute('data-page', stage);
 		}
 
 		this.async.requestAnimationFrame(() => {
-			if (!page!.classList.contains(this.block.getFullElName('page'))) {
-				page!.classList.add(this.block.getFullElName('page'));
+			if (page == null) {
+				return;
+			}
+
+			const
+				nm = block.getFullElName('page');
+
+			if (!page.classList.contains(nm)) {
+				page.classList.add(nm);
 			}
 		}, {label: $$.initPage});
 
 		const
 			title = page.querySelector('[data-title]'),
-			hasTrigger = page.children[0].getAttribute(this.config.triggerAttr),
-			trigger = !hasTrigger ? this.createTrigger() : <HTMLElement>page.children[0];
+			fstChild = Object.get<CanUndef<HTMLElement>>(page, 'children.0');
 
-		if (title) {
-			if (trigger) {
+		const
+			hasTrigger = Boolean(fstChild?.getAttribute(this.config.triggerAttr)),
+			trigger = hasTrigger ? fstChild! : this.createTrigger();
+
+		if (title != null) {
+			if (trigger != null) {
 				this.async.requestAnimationFrame(() => {
 					trigger.style.height = title.clientHeight.px;
 				}, {label: $$.setTriggerHeight});
@@ -349,10 +371,10 @@ export default class History<C extends iHistory> {
 			$a.on(title, 'click', this.onTitleClick.bind(this));
 		}
 
-		if (trigger) {
+		if (trigger != null) {
 			this.async.requestAnimationFrame(() => {
 				if (!hasTrigger) {
-					(<HTMLElement>page).insertAdjacentElement('afterbegin', trigger);
+					page?.insertAdjacentElement('afterbegin', trigger);
 				}
 
 				this.setObserving(trigger, true);
@@ -372,7 +394,7 @@ export default class History<C extends iHistory> {
 			}
 		};
 
-		this.component.emit('history:initPage', response);
+		this.ctx.emit('history:initPage', response);
 		return response;
 	}
 
@@ -382,9 +404,9 @@ export default class History<C extends iHistory> {
 	 */
 	protected scrollToTop(animate: boolean = false): void {
 		const
-			{content} = this.current;
+			content = this.current?.content;
 
-		if (content && (content.el.scrollTop !== 0 || content.el.scrollLeft !== 0)) {
+		if (content != null && (content.el.scrollTop !== 0 || content.el.scrollLeft !== 0)) {
 			const
 				options = {top: 0, left: 0};
 
@@ -403,11 +425,9 @@ export default class History<C extends iHistory> {
 	 * @emits `history:titleInView(visible: boolean)`
 	 */
 	protected initTitleInView(visible?: boolean): void {
-		const
-			{current} = this;
-
-		this.block.setElMod(current?.title?.el, 'title', 'in-view', visible);
-		this.component.emit('history:titleInView', visible);
+		const {current} = this;
+		this.block?.setElMod(current?.title?.el, 'title', 'in-view', visible);
+		this.ctx.emit('history:titleInView', visible);
 	}
 
 	/**
@@ -419,7 +439,7 @@ export default class History<C extends iHistory> {
 			this.initTitleInView(state);
 		}
 
-		this.component.onPageTopVisibilityChange(state);
+		this.ctx.onPageTopVisibilityChange(state);
 	}
 
 	/**

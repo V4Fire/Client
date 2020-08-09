@@ -14,25 +14,18 @@ const
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
-	{inherit, depsRgxpStr} = include('build/build.webpack'),
-	{RUNTIME} = include('build/entities.webpack');
-
-const excludeCustomNodeModules = new RegExp(
-	`(?:^|[\\\\/])node_modules[\\/](?:${depsRgxpStr})(?:[\\\\/]|$)|^(?:(?!(?:^|[\\\\/])node_modules[\\\\/]).)*$`
-);
-
-const includeNotCustomNodeModules = new RegExp(
-	`^(?:(?!(?:^|[\\\\/])node_modules[\\\\/]).)*[\\\\/]?node_modules[\\\\/](?:(?!${depsRgxpStr}).)*$`
-);
+	{isLayerDep, isExternalDep} = include('build/const'),
+	{inherit} = include('build/build.webpack'),
+	{RUNTIME} = include('build/entries.webpack');
 
 /**
- * Returns a list of webpack optimizations
+ * Returns options for Webpack ".optimization"
  *
- * @param {number} buildId - build id
- * @param {!Map} plugins - list of plugins
- * @returns {Array}
+ * @param {(number|string)} buildId - build id
+ * @param {!Map} plugins - map of plugins to use
+ * @returns {!Object}
  */
-module.exports = async function ({buildId, plugins}) {
+module.exports = function optimization({buildId, plugins}) {
 	const
 		options = {};
 
@@ -50,7 +43,7 @@ module.exports = async function ({buildId, plugins}) {
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: excludeCustomNodeModules
+					test: isLayerDep
 				},
 
 				vendor: {
@@ -60,7 +53,7 @@ module.exports = async function ({buildId, plugins}) {
 					minChunks: 1,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: includeNotCustomNodeModules
+					test: isExternalDep
 				}
 			}
 		};
@@ -88,6 +81,7 @@ module.exports = async function ({buildId, plugins}) {
 					}
 				}, config.uglify())
 			})
+
 			/* eslint-enable camelcase */
 		];
 	}

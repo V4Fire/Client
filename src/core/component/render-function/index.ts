@@ -33,22 +33,27 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 		baseCtx: RenderContext
 	): VNode {
 		const
-			// @ts-ignore (access)
-			renderCounter = ++this.renderCounter,
+			{unsafe} = this;
+
+		const
+			renderCounter = ++unsafe.renderCounter,
 			now = Date.now();
 
 		if (!IS_PROD) {
 			const
-				// @ts-ignore (access)
-				{lastSelfReasonToRender, lastTimeOfRender} = this;
+				{lastSelfReasonToRender, lastTimeOfRender} = unsafe;
 
 			let
 				diff;
 
-			// tslint:disable-next-line:no-conditional-assignment
-			if (lastTimeOfRender && (diff = now - lastTimeOfRender) < 100) {
-				const printableReason = lastSelfReasonToRender ?
-					{...lastSelfReasonToRender, path: lastSelfReasonToRender.path.join('.')} : 'forceUpdate';
+			if (lastTimeOfRender != null && (diff = now - lastTimeOfRender) < 100) {
+				const printableReason = lastSelfReasonToRender != null ?
+					{
+						...lastSelfReasonToRender,
+						path: lastSelfReasonToRender.path.join('.')
+					} :
+
+					'forceUpdate';
 
 				console.warn(
 					`There is too frequent redrawing of the component "${this.componentName}" (# ${renderCounter}; ${diff}ms).`,
@@ -57,211 +62,219 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			}
 		}
 
-		// @ts-ignore (access)
-		this.lastTimeOfRender = now;
+		unsafe.lastTimeOfRender = now;
 
 		const
 			{methods: {render: r}} = meta;
 
 		if (r) {
 			const
-				// tslint:disable-next-line:no-this-assignment
-				rootCtx = this,
-
-				// @ts-ignore (access)
-				asyncLabel = rootCtx.$asyncLabel;
+				asyncLabel = unsafe.$asyncLabel;
 
 			let
-				// tslint:disable-next-line:prefer-const
-				[createElement, tasks] = wrapCreateElement(nativeCreate, rootCtx);
+				[createElement, tasks] = wrapCreateElement(nativeCreate, this);
 
-			if (rootCtx) {
-				// @ts-ignore (access)
-				rootCtx.$createElement = rootCtx._c = createElement;
+			unsafe.$createElement = createElement;
+			unsafe._c = createElement;
 
+			const
+				forEach = unsafe._l;
+
+			// Wrap slot directive to support async rendering
+			unsafe._u = (fns, res) => {
+				res = res ?? {};
+
+				for (let i = 0; i < fns.length; i++) {
+					const
+						el = fns[i];
+
+					if (el == null) {
+						continue;
+					}
+
+					if (Array.isArray(el)) {
+						unsafe._u(el, res);
+
+					} else {
+						res[el.key] = function execAsyncTasks(this: unknown, ...args: unknown[]): VNode[] {
+							const
+								children = fns[i].fn.apply(this, args);
+
+							if (tasks.length > 0) {
+								for (let i = 0; i < tasks.length; i++) {
+									tasks[i](children);
+								}
+
+								tasks = [];
+							}
+
+							return children;
+						};
+					}
+				}
+
+				return res;
+			};
+
+			// Wrap v-for directive to support async loop rendering
+			unsafe._l = (obj, cb) => {
 				const
-					// @ts-ignore (access)
-					forEach = rootCtx._l;
+					res = forEach(obj, cb);
 
-				// Wrap slot directive to support async rendering
-				// @ts-ignore (access)
-				rootCtx._u = (fns, res) => {
-					res = res || {};
-
-					for (let i = 0; i < fns.length; i++) {
-						const
-							el = fns[i];
-
-						if (!el) {
-							continue;
+				if (obj?.[asyncLabel] != null) {
+					tasks.push((vnodes?: CanArray<VNode>) => {
+						if (vnodes == null) {
+							return;
 						}
 
-						if (Array.isArray(el)) {
-							// @ts-ignore (access)
-							rootCtx._u(el, res);
+						const
+							isTemplateParent = Object.isArray(vnodes);
+
+						let
+							vnode: VNode;
+
+						if (isTemplateParent) {
+							while (Object.isArray(vnodes)) {
+								let
+									newVNode = vnodes[0];
+
+								for (let i = 0; i < vnodes.length; i++) {
+									const
+										el = vnodes[i];
+
+									if (!Object.isArray(el) && el.context) {
+										newVNode = el;
+									}
+								}
+
+								vnodes = newVNode;
+							}
+
+							if (vnodes == null) {
+								return;
+							}
+
+							vnode = vnodes;
 
 						} else {
-							res[el.key] = function (): VNode[] {
-								const
-									children = fns[i].fn.apply(this, arguments);
-
-								if (tasks.length) {
-									for (let i = 0; i < tasks.length; i++) {
-										tasks[i](children);
-									}
-
-									tasks = [];
-								}
-
-								return children;
-							};
+							vnode = <Exclude<typeof vnodes, any[]>>vnodes;
 						}
-					}
 
-					return res;
-				};
+						if (vnode.context == null || !('$async' in vnode.context)) {
+							return;
+						}
 
-				// Wrap v-for directive to support async loop rendering
-				// @ts-ignore (access)
-				rootCtx._l = (obj, cb) => {
-					const
-						res = forEach(obj, cb);
+						const
+							ctx = <ComponentInterface['unsafe']>vnode.context;
 
-					if (obj && obj[asyncLabel]) {
-						tasks.push((vnode) => {
-							const
-								isTemplateParent = Object.isArray(vnode);
+						if (!isTemplateParent) {
+							Object.set(vnode, 'fakeInstance', ctx);
+						}
 
-							if (isTemplateParent) {
-								while (Object.isArray(vnode)) {
-									let
-										newVNode = vnode[0];
+						// Function that render a chunk of VNodes
+						const fn = () => ctx.$async.setTimeout(() => {
+							obj[asyncLabel]((obj, p?: ComponentInterface) => {
+								const
+									els = <Node[]>[],
+									renderNodes = <Array<Nullable<Node>>>[],
+									nodes = <VNode[]>[];
 
-									for (let i = 0; i < vnode.length; i++) {
-										const
-											el = vnode[i];
+								const
+									parent = isTemplateParent ? vnode.elm?.parentNode : vnode.elm,
+									baseHook = ctx.hook;
 
-										if (!Object.isArray(el) && (<VNode>el).context) {
-											newVNode = el;
-										}
-									}
-
-									vnode = newVNode;
+								if (parent == null) {
+									return [];
 								}
 
-								if (!vnode) {
-									return;
+								Object.set(ctx, 'hook', 'beforeUpdate');
+								Object.set(ctx, 'renderGroup', p?.renderGroup);
+
+								for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
+									const
+										el = o[i];
+
+									if (el == null) {
+										continue;
+									}
+
+									if (Object.isArray(el)) {
+										for (let o = el, i = 0; i < o.length; i++) {
+											const
+												el = <CanUndef<VNode>>o[i];
+
+											if (el == null) {
+												continue;
+											}
+
+											if (el.elm) {
+												el.elm[asyncLabel] = true;
+												renderNodes.push(el.elm);
+
+											} else {
+												nodes.push(el);
+												renderNodes.push(null);
+											}
+										}
+
+									} else if (el.elm != null) {
+										el.elm[asyncLabel] = true;
+										renderNodes.push(el.elm);
+
+									} else {
+										nodes.push(el);
+										renderNodes.push(null);
+									}
 								}
-							}
 
-							const
-								ctx = vnode.context;
+								const
+									renderVNodes = renderData(nodes, ctx);
 
-							if (!isTemplateParent) {
-								vnode.fakeInstance = ctx;
-							}
-
-							// Function that render a chunk of VNodes
-							const fn = () => ctx.$async.setTimeout(() => {
-								obj[asyncLabel]((obj, p?: ComponentInterface) => {
+								for (let i = 0, j = 0; i < renderNodes.length; i++) {
 									const
-										els = <Node[]>[],
-										renderNodes = <Nullable<Node>[]>[],
-										nodes = <VNode[]>[];
+										el = <CanArray<CanUndef<Node>>>(renderNodes[i] ?? renderVNodes[j++]);
 
-									const
-										parent = isTemplateParent ? vnode.elm.parentNode : vnode.elm,
-										baseHook = ctx.hook;
+									if (Object.isArray(el)) {
+										for (let i = 0; i < el.length; i++) {
+											const
+												node = el[i];
 
-									if (!parent) {
-										return [];
-									}
-
-									ctx.hook = 'beforeUpdate';
-									ctx.renderGroup = p?.renderGroup;
-
-									for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
-										const
-											el = o[i];
-
-										if (!el) {
-											continue;
-										}
-
-										if (Object.isArray(el)) {
-											for (let o = el, i = 0; i < o.length; i++) {
-												const
-													el = <VNode>o[i];
-
-												if (!el) {
-													continue;
-												}
-
-												if (el.elm) {
-													el.elm[asyncLabel] = true;
-													renderNodes.push(el.elm);
-
-												} else {
-													nodes.push(el);
-													renderNodes.push(null);
-												}
+											if (node != null) {
+												els.push(parent.appendChild(node));
 											}
-
-										} else if (el.elm) {
-											el.elm[asyncLabel] = true;
-											renderNodes.push(el.elm);
-
-										} else {
-											nodes.push(el);
-											renderNodes.push(null);
 										}
+
+									} else if (el != null) {
+										els.push(parent.appendChild(el));
 									}
+								}
 
-									const
-										renderVNodes = renderData(nodes, ctx);
+								Object.set(ctx, 'renderGroup', undefined);
+								runHook('beforeUpdated', ctx, p).catch(stderr);
 
-									for (let i = 0, j = 0; i < renderNodes.length; i++) {
-										const
-											el = <Node>(renderNodes[i] || renderVNodes[j++]);
+								resolveRefs(ctx);
+								Object.set(ctx, 'hook', baseHook);
 
-										if (Object.isArray(el)) {
-											for (let i = 0; i < el.length; i++) {
-												if (el[i]) {
-													els.push(parent.appendChild(el[i]));
-												}
-											}
+								return els;
 
-										} else if (el) {
-											els.push(parent.appendChild(el));
-										}
-									}
+							});
 
-									ctx.renderGroup = undefined;
-									runHook('beforeUpdated', ctx, p)
-										.catch(stderr);
+						}, 0, {group: 'asyncComponents'});
 
-									resolveRefs(ctx);
-									ctx.hook = baseHook;
+						if (mountedHooks[ctx.hook] != null) {
+							ctx.$nextTick(fn);
 
-									return els;
-								});
-							}, 0, {group: 'asyncComponents'});
+						} else {
+							const hooks = ctx.meta.hooks[beforeMountHooks[ctx.hook] != null ? 'mounted' : 'beforeUpdated'];
+							hooks.push({fn, once: true});
+						}
+					});
+				}
 
-							if (mountedHooks[ctx.hook]) {
-								ctx.nextTick(fn);
+				return res;
+			};
 
-							} else {
-								const hooks = ctx.meta.hooks[beforeMountHooks[ctx.hook] ? 'mounted' : 'beforeUpdated'];
-								hooks.push({fn, once: true});
-							}
-						});
-					}
-
-					return res;
-				};
-			}
-
-			return r.fn.call(rootCtx, createElement, baseCtx);
+			return r.fn.call(this, createElement, baseCtx);
 		}
 
 		return nativeCreate();

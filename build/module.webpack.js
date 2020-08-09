@@ -13,14 +13,14 @@ const
 	MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const
-	{webpack} = config,
-	{resolve} = require('@pzlr/build-core'),
-	{output, assetsOutput, inherit, depsRgxpStr, hash, hashRgxp} = include('build/build.webpack');
+	path = require('upath'),
+	build = include('build/entries.webpack');
 
 const
-	path = require('upath'),
-	build = include('build/entities.webpack'),
-	depsRgxp = new RegExp(`(?:^|[\\/])node_modules[\\/](?:(?!${depsRgxpStr}).)*?(?:[\\/]|$)`);
+	{webpack} = config,
+	{resolve} = require('@pzlr/build-core'),
+	{isExternalDep} = include('build/const'),
+	{output, assetsOutput, inherit, hash, hashRgxp} = include('build/build.webpack');
 
 const
 	snakeskin = config.snakeskin(),
@@ -31,189 +31,260 @@ const
 const fileLoaderOpts = {
 	name: path.basename(assetsOutput),
 	outputPath: path.dirname(assetsOutput),
-	limit: webpack.dataURILimit()/*,
-	encoding: 'base64'*/
+	limit: webpack.dataURILimit()
 };
 
+const
+	isTSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?(?:\.d)?)\.ts$/,
+	isTSServiceWorker = /(?:\.service-worker\b|[\\/]service-workers[\\/].*?(?:\.d)?)\.ts$/,
+	isTSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?(?:\.d)?)\.ts$/,
+	isJSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?)\.js$/,
+	isJSServiceWorker = /(?:\.servie-worker\b|[\\/]service-workers[\\/].*?)\.js$/,
+	isJSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?)\.js$/,
+	isNotTSWorker = /^(?:(?!(?:\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/])).)*(?:\.d)?\.ts$/,
+	isNotJSWorker = /^(?:(?!(?:\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/])).)*\.js$/;
+
 /**
- * Returns parameters for webpack.module
+ * Returns options for WebPack ".module"
  *
- * @param {(number|string)} buildId - build id
  * @param {!Map} plugins - list of plugins
  * @returns {!Promise<Object>}
  */
-module.exports = async function ({buildId, plugins}) {
+module.exports = async function module({plugins}) {
 	const
 		graph = await build,
 		loaders = {rules: new Map()};
 
-	if (buildId === build.STD || buildId === build.RUNTIME) {
-		loaders.rules.set('ts', {
-			test: /^(?:(?![\\/]workers[\\/]).)*(?:\.d)?\.ts$/,
-			exclude: depsRgxp,
-			use: [
-				{
-					loader: 'ts',
-					options: typescript.client
-				},
+	const
+		workerOpts = config.worker();
 
-				{
-					loader: 'proxy',
-					options: {
-						modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
+	const tsHelperLoaders = [
+		{
+			loader: 'symbol-generator',
+			options: {
+				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
+			}
+		},
+
+		'typograf',
+		'prelude',
+
+		{
+			loader: 'monic',
+			options: inherit(monic.typescript, {
+				replacers: [
+					include('build/replacers/require-context'),
+					include('build/replacers/super-import'),
+					include('build/replacers/ts-import'),
+					include('build/replacers/require-tests')
+				]
+			})
+		}
+	];
+
+	loaders.rules.set('ts', {
+		test: isNotTSWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'ts',
+				options: typescript.client
+			},
+
+			...tsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('ts.workers', {
+		test: isTSWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.worker
+			},
+
+			{
+				loader: 'ts',
+				options: typescript.worker
+			},
+
+			...tsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('ts.serviceWorkers', {
+		test: isTSServiceWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.serviceWorker
+			},
+
+			{
+				loader: 'ts',
+				options: typescript.worker
+			},
+
+			...tsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('ts.sharedWorkers', {
+		test: isTSSharedWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.sharedWorker
+			},
+
+			{
+				loader: 'ts',
+				options: typescript.worker
+			},
+
+			...tsHelperLoaders
+		]
+	});
+
+	const jsHelperLoaders = [
+		'prelude',
+
+		{
+			loader: 'monic',
+			options: inherit(monic.javascript, {
+				replacers: [
+					include('build/replacers/require-context'),
+					include('build/replacers/super-import'),
+					include('build/replacers/require-tests')
+				]
+			})
+		}
+	];
+
+	loaders.rules.set('js', {
+		test: isNotJSWorker,
+		exclude: isExternalDep,
+		use: jsHelperLoaders
+	});
+
+	loaders.rules.set('js.workers', {
+		test: isJSWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.worker
+			},
+
+			...jsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('js.serviceWorkers', {
+		test: isJSServiceWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.serviceWorker
+			},
+
+			...jsHelperLoaders
+		]
+	});
+
+	loaders.rules.set('js.sharedWorkers', {
+		test: isJSSharedWorker,
+		exclude: isExternalDep,
+		use: [
+			{
+				loader: 'worker',
+				options: workerOpts.sharedWorker
+			},
+
+			...jsHelperLoaders
+		]
+	});
+
+	plugins.set('extractCSS', new MiniCssExtractPlugin({
+		filename: `${hash(output, true)}.css`,
+		chunkFilename: '[id].css'
+	}));
+
+	loaders.rules.set('styl', {
+		test: /\.styl$/,
+		use: [].concat(
+			MiniCssExtractPlugin.loader,
+
+			{
+				loader: 'fast-css',
+				options: Object.reject(config.css(), ['minimize'])
+			},
+
+			{
+				loader: 'postcss',
+				options: inherit(config.postcss(), {
+					plugins: [require('autoprefixer')(config.autoprefixer())]
+				})
+			},
+
+			{
+				loader: 'stylus',
+				options: inherit(config.stylus(), {
+					use: include('build/stylus')
+				})
+			},
+
+			{
+				loader: 'monic',
+				options: inherit(monic.stylus, {
+					replacers: [
+						require('@pzlr/stylus-inheritance')({resolveImports: true}),
+						include('build/replacers/project-name')
+					]
+				})
+			}
+		)
+	});
+
+	loaders.rules.set('ess', {
+		test: /\.ess$/,
+		use: [
+			{
+				loader: 'file',
+				options: {
+					name: `${output.replace(hashRgxp, '')}.html`
+				}
+			},
+
+			'extract',
+
+			{
+				loader: 'html',
+				options: config.html()
+			},
+
+			{
+				loader: 'monic',
+				options: inherit(monic.html, {
+					replacers: [include('build/replacers/include')]
+				})
+			},
+
+			{
+				loader: 'snakeskin',
+				options: inherit(snakeskin.server, {
+					exec: true,
+					vars: {
+						entryPoints: graph.dependencies
 					}
-				},
-
-				'typograf',
-				'prelude',
-
-				{
-					loader: 'monic',
-					options: inherit(monic.typescript, {
-						replacers: [
-							include('build/replacers/context'),
-							include('build/replacers/super'),
-							include('build/replacers/ts-import'),
-							include('build/replacers/tests')
-						]
-					})
-				}
-			]
-		});
-
-		loaders.rules.set('ts.workers', {
-			test: /[\\/]workers[\\/].*?(?:\.d)?\.ts$/,
-			exclude: depsRgxp,
-			use: [
-				{
-					loader: 'ts',
-					options: typescript.worker
-				},
-
-				'typograf',
-				'prelude',
-
-				{
-					loader: 'monic',
-					options: inherit(monic.typescript, {
-						replacers: [
-							include('build/replacers/context'),
-							include('build/replacers/super'),
-							include('build/replacers/ts-import')
-						]
-					})
-				}
-			]
-		});
-
-		loaders.rules.set('js', {
-			test: /\.js$/,
-			exclude: depsRgxp,
-			use: [
-				'prelude',
-
-				{
-					loader: 'monic',
-					options: inherit(monic.javascript, {
-						replacers: [
-							include('build/replacers/context'),
-							include('build/replacers/super')
-						]
-					})
-				}
-			]
-		});
-
-	} else {
-		loaders.rules.set('js', {
-			test: /\.js$/,
-			use: [
-				{
-					loader: 'monic',
-					options: inherit(monic.javascript)
-				}
-			]
-		});
-
-		plugins.set('extractCSS', new MiniCssExtractPlugin({
-			filename: `${hash(output, true)}.css`,
-			chunkFilename: '[id].css'
-		}));
-
-		loaders.rules.set('styl', {
-			test: /\.styl$/,
-			use: [].concat(
-				MiniCssExtractPlugin.loader,
-
-				{
-					loader: 'fast-css',
-					options: Object.reject(config.css(), ['minimize'])
-				},
-
-				{
-					loader: 'postcss',
-					options: inherit(config.postcss(), {
-						plugins: [require('autoprefixer')(config.autoprefixer())]
-					})
-				},
-
-				{
-					loader: 'stylus',
-					options: inherit(config.stylus(), {
-						use: include('build/stylus')
-					})
-				},
-
-				{
-					loader: 'monic',
-					options: inherit(monic.stylus, {
-						replacers: [
-							require('@pzlr/stylus-inheritance')({resolveImports: true}),
-							include('build/replacers/project-name')
-						]
-					})
-				}
-			)
-		});
-
-		loaders.rules.set('ess', {
-			test: /\.ess$/,
-			use: [
-				{
-					loader: 'file',
-					options: {
-						name: `${output.replace(hashRgxp, '')}.html`
-					}
-				},
-
-				'extract',
-
-				{
-					loader: 'html',
-					options: config.html()
-				},
-
-				{
-					loader: 'monic',
-					options: inherit(monic.html, {
-						replacers: [
-							include('build/replacers/html-import')
-						]
-					})
-				},
-
-				{
-					loader: 'snakeskin',
-					options: inherit(snakeskin.server, {
-						exec: true,
-						vars: {
-							dependencies: graph.dependencies
-						}
-					})
-				}
-			]
-		});
-	}
+				})
+			}
+		]
+	});
 
 	loaders.rules.set('ss', {
 		test: /\.ss$/,
@@ -238,17 +309,30 @@ module.exports = async function ({buildId, plugins}) {
 	});
 
 	loaders.rules.set('img', {
-		test: /\.(?:png|gif|jpe?g)$/,
+		test: /\.(?:ico|png|gif|jpe?g)$/,
 		use: [
 			{
 				loader: 'url',
 				options: fileLoaderOpts
 			}
 		].concat(
-			isProd ? {
-				loader: 'image-webpack',
-				options: imageOpts
-			} : []
+			isProd ?
+				{loader: 'image-webpack', options: Object.reject(imageOpts, ['webp'])} :
+				[]
+		)
+	});
+
+	loaders.rules.set('img.webp', {
+		test: /\.webp$/,
+		use: [
+			{
+				loader: 'url',
+				options: fileLoaderOpts
+			}
+		].concat(
+			isProd ?
+				{loader: 'image-webpack', options: imageOpts} :
+				[]
 		)
 	});
 
@@ -260,12 +344,22 @@ module.exports = async function ({buildId, plugins}) {
 				options: fileLoaderOpts
 			}
 		].concat(
-			isProd ? {
-				loader: 'svgo',
-				options: imageOpts.svgo
-			} : []
+			isProd ?
+				{loader: 'svgo', options: imageOpts.svgo} :
+				[]
 		)
 	});
 
 	return loaders;
 };
+
+Object.assign(module.exports, {
+	isTSWorker,
+	isTSServiceWorker,
+	isTSSharedWorker,
+	isJSWorker,
+	isJSServiceWorker,
+	isJSSharedWorker,
+	isNotTSWorker,
+	isNotJSWorker
+});

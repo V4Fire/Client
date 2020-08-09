@@ -33,7 +33,7 @@ export * from 'super/i-block/modules/daemons/interface';
 /**
  * Class to manage component daemons
  */
-export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
+export default class Daemons extends Friend {
 	//#if runtime has component/daemons
 
 	/**
@@ -42,10 +42,10 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param base
 	 * @param [parent]
 	 */
-	static createDaemons<CTX extends iBlock = iBlock['unsafe']>(
+	static createDaemons<CTX extends iBlock = iBlock>(
 		base: DaemonsDict,
 		parent?: DaemonsDict
-	): DaemonsDict<CTX> {
+	): DaemonsDict<CTX['unsafe']> {
 		const
 			mixedDaemons = {...parent, ...base};
 
@@ -68,12 +68,12 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Map of component daemons
 	 */
-	protected get daemons(): DaemonsDict<this['C']> {
-		return (<typeof iBlock>this.component.instance.constructor).daemons;
+	protected get daemons(): DaemonsDict<this['CTX']> {
+		return (<typeof iBlock>this.ctx.instance.constructor).daemons;
 	}
 
 	/** @override */
-	constructor(component: C) {
+	constructor(component: any) {
 		super(component);
 		this.init();
 	}
@@ -92,7 +92,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param name
 	 * @param spawned
 	 */
-	spawn(name: string, spawned: SpawnedDaemon<this['C']>): boolean {
+	spawn(name: string, spawned: SpawnedDaemon<this['CTX']>): boolean {
 		const
 			exists = this.isExists(name);
 
@@ -112,7 +112,9 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	run<R = unknown>(name: string, ...args: unknown[]): CanUndef<R> {
 		const
-			ctx = this.component,
+			{ctx} = this;
+
+		const
 			daemon = this.get(name);
 
 		if (!daemon) {
@@ -120,11 +122,11 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			fn = daemon.wrappedFn || daemon.fn;
+			fn = daemon.wrappedFn ?? daemon.fn;
 
 		if (daemon.immediate !== true) {
 			const asyncOptions = {
-				group: `daemons:${this.component.componentName}`,
+				group: `daemons:${this.ctx.componentName}`,
 				label: `daemons:${name}`,
 				...daemon.asyncOptions
 			};
@@ -144,7 +146,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 * Returns a daemon by the specified name
 	 * @param name
 	 */
-	protected get(name: string): CanUndef<Daemon<this['C']>> {
+	protected get(name: string): CanUndef<Daemon<this['CTX']>> {
 		return this.daemons[name];
 	}
 
@@ -164,7 +166,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param daemon
 	 */
 	protected wrapDaemonFn<T extends Daemon>(daemon: T): T {
-		daemon.wrappedFn = daemon.wait ? wait(daemon.wait, daemon.fn) : daemon.fn;
+		daemon.wrappedFn = daemon.wait != null ? wait(daemon.wait, daemon.fn) : daemon.fn;
 		return daemon;
 	}
 
@@ -177,7 +179,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	protected bindToHook(hook: string, name: string, opts?: DaemonHookOptions): void {
 		const
-			{hooks} = this.component.meta;
+			{hooks} = this.ctx.meta;
 
 		hooks[hook].push({
 			fn: () => this.run(name),
@@ -193,7 +195,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	protected bindToWatch(watch: DaemonWatcher, name: string): void {
 		const
-			{watchers} = this.component.meta;
+			{watchers} = this.ctx.meta;
 
 		const
 			watchName = Object.isSimpleObject(watch) ? watch.field : watch,
@@ -268,10 +270,10 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
  * @param base
  * @param parent
  */
-function mergeDaemons(base: Daemon, parent: Daemon): Daemon {
+export function mergeDaemons(base: Daemon, parent: Daemon): Daemon {
 	const
 		hook = mergeHooks(base, parent),
-		watch = (parent.watch || []).union(base.watch || []);
+		watch = (parent.watch ?? []).union(base.watch ?? []);
 
 	return {
 		...parent,
@@ -287,7 +289,7 @@ function mergeDaemons(base: Daemon, parent: Daemon): Daemon {
  * @param base
  * @param parent
  */
-function mergeHooks(base: Daemon, parent: Daemon): CanUndef<DaemonHook> {
+export function mergeHooks(base: Daemon, parent: Daemon): CanUndef<DaemonHook> {
 	const
 		{hook: aHooks} = base,
 		{hook: bHooks} = parent;

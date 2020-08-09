@@ -6,49 +6,66 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+require('./modules/interface');
+
 const
 	config = require('config'),
 	runtime = config.runtime();
 
-const deps = module.exports = {
+const deps = {
 	/**
-	 * @type {Map<(string|{
-	 *   src: string,
-	 *   source?: ('lib'|'src'|'output'),
-	 *   inline?: boolean,
-	 *   defer?: boolean,
-	 *   async?: boolean,
-	 *   module?: boolean,
-	 *   load?: boolean
-	 * })>}
+	 * Map of script libraries to require
+	 * @type {Libs}
 	 */
 	scripts: new Map([
 		['requestidlecallback', 'requestidlecallback/index.js'],
 		['eventemitter2', 'eventemitter2/lib/eventemitter2.js']
 	]),
 
-	/** @see deps.scripts */
+	/**
+	 * Map of script libraries to require: the scripts are placed within the head tag
+	 * @type {Libs}
+	 */
 	headScripts: new Map(),
 
 	/**
-	 * @type {Map<(string|{
-	 *   src: string,
-	 *   source?: ('lib'|'src'|'output'),
-	 *   inline?: boolean,
-	 *   defer?: boolean
-	 * })>}
+	 * Map of style libraries to require
+	 * @type {StyleLibs}
 	 */
-	styles: new Map()
+	styles: new Map(),
+
+	/**
+	 * Map of links to require
+	 * @type {Links}
+	 */
+	links: new Map()
 };
 
-if (runtime.engine === 'vue') {
-	deps.scripts.set('vue', {
-		defer: false,
-		src: `vue/dist/vue.runtime${isProd ? '.min' : ''}.js`
-	});
+if (runtime.debug) {
+	deps.scripts.set('jasmine-core', 'jasmine-core/lib/jasmine-core/jasmine.js');
+	deps.scripts.set('jasmine-html', 'jasmine-core/lib/jasmine-core/jasmine-html.js');
+	deps.scripts.set('jasmine-boot', 'jasmine-core/lib/jasmine-core/boot.js');
+	deps.styles.set('jasmine', 'jasmine-core/lib/jasmine-core/jasmine.css');
+}
+
+switch (runtime.engine) {
+	case 'vue':
+		deps.scripts.set('vue', {
+			defer: false,
+			src: `vue/dist/vue.runtime${isProd ? '.min' : ''}.js`
+		});
+
+		break;
+
+	default:
+		if (!runtime.engine) {
+			throw new Error('The engine to use is not specified');
+		}
 }
 
 if (!config.webpack.fatHTML() && deps.styles.size) {
 	deps.scripts.set('fg-loadcss', 'fg-loadcss/src/loadCSS.js');
 	deps.scripts.set('fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js');
 }
+
+module.exports = deps;

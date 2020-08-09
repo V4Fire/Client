@@ -21,8 +21,11 @@ export function getNormalParent(component: ComponentInterface): CanUndef<Compone
 	let
 		normalParent: CanUndef<ComponentInterface> = component.$parent;
 
-	// @ts-ignore (access)
-	while (normalParent && normalParent.meta && (normalParent.isFlyweight || normalParent.meta.params.functional)) {
+	while (
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		normalParent?.unsafe?.meta != null &&
+		(normalParent.isFlyweight || normalParent.unsafe.meta.params.functional === true)
+	) {
 		normalParent = normalParent.$parent;
 	}
 

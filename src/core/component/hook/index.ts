@@ -24,14 +24,10 @@ import { ComponentHook, ComponentInterface } from 'core/component/interface';
  * @param args - hook arguments
  */
 export function runHook(hook: string, component: ComponentInterface, ...args: unknown[]): Promise<void> {
-	const
-		// @ts-ignore (access)
-		{meta} = component;
+	const {unsafe, unsafe: {meta}} = component;
+	Object.set(unsafe, 'hook', hook);
 
-	// @ts-ignore (access)
-	// tslint:disable-next-line:no-string-literal
-	component['hook'] = hook;
-
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	if (Object.isFunction(component.log)) {
 		component.log(`hook:${hook}`, ...args);
 
@@ -42,7 +38,7 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 	const
 		hooks = meta.hooks[hook];
 
-	if (!hooks.length) {
+	if (hooks.length === 0) {
 		return SyncPromise.resolve();
 	}
 
@@ -52,7 +48,7 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 
 	for (let i = 0; i < hooks.length; i++) {
 		const
-			hook = hooks[i],
+			hook = <ComponentHook>hooks[i],
 			nm = hook.name;
 
 		if (!hook.once) {
@@ -61,16 +57,16 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 
 		emitter.on(hook.after, () => {
 			const
-				res = args.length ? hook.fn.apply(component, args) : hook.fn.call(component);
+				res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
 			if (res instanceof Promise) {
-				return res.then(() => nm ? emitter.emit(nm) : undefined);
+				return res.then(() => nm != null ? emitter.emit(nm) : undefined);
 			}
 
 			const
-				tasks = nm ? emitter.emit(nm) : undefined;
+				tasks = nm != null ? emitter.emit(nm) : null;
 
-			if (tasks !== undefined) {
+			if (tasks != null) {
 				return tasks;
 			}
 		});

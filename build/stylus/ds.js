@@ -158,14 +158,14 @@ const
 	THEME = runtime.theme,
 	INCLUDED_THEMES = it && Object.isBoolean(it) ? DS.meta.includedThemes : it;
 
-module.exports = function (style) {
+module.exports = function addPlugins(api) {
 	/**
 	 * Injects additional options to component options ($p)
 	 *
 	 * @param {string} string - component name
 	 * @returns {!Object}
 	 */
-	style.define(
+	api.define(
 		'injector',
 		({string}) => {
 			const
@@ -191,7 +191,7 @@ module.exports = function (style) {
 	 * @param {string} theme
 	 * @returns {!Object}
 	 */
-	style.define('getFlatDSVars', ({string: theme}) => {
+	api.define('getFlatDSVars', ({string: theme}) => {
 		const
 			obj = {},
 			iterator = theme ? CSSVars.__map__[theme] : CSSVars.__map__;
@@ -205,12 +205,12 @@ module.exports = function (style) {
 	});
 
 	/**
-	 * Returns a part of the Design System by the specified path or whole DS object
+	 * Returns a part of the Design System by the specified path or the whole DS object
 	 *
 	 * @param {string} [string] - field path
 	 * @returns {!Object}
 	 */
-	style.define(
+	api.define(
 		'getDSOptions',
 		({string} = {}) => string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS
 	);
@@ -222,7 +222,7 @@ module.exports = function (style) {
 	 * @param {!Object} [id]
 	 * @returns {(!Object|!Array)}
 	 */
-	style.define(
+	api.define(
 		'getDSColor',
 		(name, id) => {
 			name = name.string || name.name;
@@ -239,7 +239,7 @@ module.exports = function (style) {
 				id = id.string || id.val;
 
 				if (Object.isNumber(id)) {
-					id = id - 1;
+					id -= 1;
 				}
 			}
 
@@ -263,3 +263,84 @@ module.exports = function (style) {
 	 */
 	style.define('includedThemes', () => INCLUDED_THEMES);
 };
+
+Object.assign(module.exports, {
+	setVar,
+	genPath,
+	prepareData
+});
+
+/**
+ * Sets a variable into cssVars dictionary by the specified path
+ * @param {string} path
+ */
+function setVar(path) {
+	const
+		variable = `--${path.split('.').join('-')}`;
+
+	$C(cssVars).set(`var(${variable})`, path);
+	$C(cssVars).set(`var(${variable}-diff)`, `diff.${path}`);
+
+	cssVars.__map__.set(path, [variable, $C(DS).get(path)]);
+}
+
+/**
+ * Returns path with a dot delimiter between prefix and suffix
+ *
+ * @param {string} prefix
+ * @param {string} suffix
+ * @returns {string}
+ */
+function genPath(prefix, suffix) {
+	return `${prefix ? `${prefix}.${suffix}` : suffix}`;
+}
+
+/**
+ * Converts object prop values to Stylus values
+ *
+ * @param {Object} data
+ * @param {string=} [path]
+ */
+function prepareData(data, path) {
+	$C(data).forEach((d, val) => {
+		if (Object.isObject(d)) {
+			prepareData(d, genPath(path, val));
+
+		} else if (Object.isArray(d)) {
+			prepareData(d, genPath(path, val));
+			d = stylus.utils.coerceArray(d, true);
+
+		} else {
+			setVar(genPath(path, val));
+
+			if (/^[a-z-_]+\(.*\)$/.test(d)) {
+				// Built-in function
+				data[val] = new stylus.Parser(d).function();
+				return;
+			}
+
+			if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
+				// HEX value
+				data[val] = new stylus.Parser(d).peek().val;
+				return;
+			}
+
+			if (Object.isString(d)) {
+				const
+					reg = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/,
+					unit = d.match(reg);
+
+				if (unit) {
+					// Value with unit
+					data[val] = new stylus.nodes.Unit(parseFloat(unit[1]), unit[2]);
+					return;
+				}
+
+				data[val] = new stylus.nodes.String(d);
+				return;
+			}
+
+			data[val] = new stylus.nodes.Unit(d);
+		}
+	});
+}

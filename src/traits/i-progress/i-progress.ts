@@ -13,6 +13,7 @@
 
 import { ModsDecl } from 'super/i-block/i-block';
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iProgress {
 	/**
 	 * Progress modifiers

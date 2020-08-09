@@ -15,7 +15,7 @@ import { WatchOptions } from 'core/object/watch';
  * @param [opts]
  */
 export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
-	if (!value || typeof value !== 'object' || Object.isFrozen(value)) {
+	if (value == null || typeof value !== 'object' || Object.isFrozen(value)) {
 		return value;
 	}
 
@@ -58,7 +58,7 @@ export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
 	}
 
 	if (needClone) {
-		return Object.mixin(true, null, value);
+		return Object.mixin({deep: true, withProto: true}, null, value);
 	}
 
 	return value;

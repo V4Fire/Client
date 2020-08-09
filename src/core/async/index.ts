@@ -22,8 +22,7 @@ import {
 	AsyncDnDOptions,
 	DnDEventOptions,
 	AsyncCb,
-	AnimationFrameCb,
-	DnDCb
+	AnimationFrameCb
 
 } from 'core/async/interface';
 
@@ -228,7 +227,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			p: AsyncDnDOptions<T, CTX> & AsyncCbOptions<CTX>;
 
 		if (isAsyncOptions<AsyncDnDOptions<T, CTX>>(opts)) {
-			useCapture = opts.options && opts.options.capture;
+			useCapture = opts.options?.capture;
 			p = opts;
 
 		} else {
@@ -236,41 +235,44 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			p = {};
 		}
 
-		p.group = p.group || `dnd.${Math.random()}`;
+		p.group = p.group ?? `dnd.${Math.random()}`;
 
 		if (this.locked) {
 			return null;
 		}
 
-		const
-			clearHandlers = p.onClear = Array.concat([], p.onClear);
+		const clearHandlers = Array.concat([], p.onClear);
+		p.onClear = clearHandlers;
 
-		function dragStartClear(...args: unknown[]): void {
+		function dragStartClear(this: unknown, ...args: unknown[]): void {
 			for (let i = 0; i < clearHandlers.length; i++) {
 				clearHandlers[i].call(this, ...args, 'dragstart');
 			}
 		}
 
-		function dragClear(...args: unknown[]): void {
+		function dragClear(this: unknown, ...args: unknown[]): void {
 			for (let i = 0; i < clearHandlers.length; i++) {
 				clearHandlers[i].call(this, ...args, 'drag');
 			}
 		}
 
-		function dragEndClear(...args: unknown[]): void {
+		function dragEndClear(this: unknown, ...args: unknown[]): void {
 			for (let i = 0; i < clearHandlers.length; i++) {
 				clearHandlers[i].call(this, ...args, 'dragend');
 			}
 		}
 
 		const dragStartUseCapture = !p.onDragStart || Object.isSimpleFunction(p.onDragStart) ?
-			useCapture : Boolean(p.onDragStart.capture);
+			useCapture :
+			Boolean(p.onDragStart.capture);
 
 		const dragUseCapture = !p.onDrag || Object.isSimpleFunction(p.onDrag) ?
-			useCapture : Boolean(p.onDrag.capture);
+			useCapture :
+			Boolean(p.onDrag.capture);
 
 		const dragEndUseCapture = !p.onDragEnd || Object.isSimpleFunction(p.onDragEnd) ?
-			useCapture : Boolean(p.onDragEnd.capture);
+			useCapture :
+			Boolean(p.onDragEnd.capture);
 
 		const
 			that = this,
@@ -279,16 +281,28 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		function dragStart(this: CTX, e: Event): void {
 			e.preventDefault();
 
-			let res;
+			let
+				res;
+
 			if (p.onDragStart) {
-				res = (<DnDCb>((<DnDEventOptions>p.onDragStart).handler || p.onDragStart)).call(this, e, el);
+				if (Object.isFunction(p.onDragStart)) {
+					res = p.onDragStart.call(this, e, el);
+
+				} else if (Object.isPlainObject(p.onDragStart)) {
+					res = (<DnDEventOptions>p.onDragStart).handler.call(this, e, el);
+				}
 			}
 
 			const drag = (e) => {
 				e.preventDefault();
 
-				if (res !== false && p.onDrag) {
-					res = (<DnDCb>((<DnDEventOptions>p.onDrag).handler || p.onDrag)).call(this, e, el);
+				if (res !== false) {
+					if (Object.isFunction(p.onDrag)) {
+						res = p.onDrag.call(this, e, el);
+
+					} else if (Object.isPlainObject(p.onDrag)) {
+						res = (<DnDEventOptions>p.onDrag).handler.call(this, e, el);
+					}
 				}
 			};
 
@@ -312,8 +326,13 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			const dragEnd = (e) => {
 				e.preventDefault();
 
-				if (res !== false && p.onDragEnd) {
-					res = (<DnDCb>((<DnDEventOptions>p.onDragEnd).handler || p.onDragEnd)).call(this, e, el);
+				if (res !== false) {
+					if (Object.isFunction(p.onDragEnd)) {
+						res = p.onDragEnd.call(this, e, el);
+
+					} else if (Object.isPlainObject(p.onDragEnd)) {
+						res = (<DnDEventOptions>p.onDragEnd).handler.call(this, e, el);
+					}
 				}
 
 				for (let i = 0; i < links.length; i++) {

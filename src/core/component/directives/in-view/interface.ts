@@ -8,12 +8,30 @@
 
 import { VNodeDirective } from 'core/component/engines';
 
+import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
+import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
+
 export interface Observable {
-	node: Element;
 	id: string;
-	isLeaving: boolean;
-	isDeactivated: boolean;
+	node: Element;
 	size: Size;
+	isLeaving: boolean;
+
+	/**
+	 * Indicates the time at which the element enters the viewport relative to the document creation
+	 */
+	timeIn?: DOMHighResTimeStamp;
+
+	/**
+	 * Indicates the time at which the element leaves the viewport relative to the document creation
+	 */
+	timeOut?: DOMHighResTimeStamp;
+
+	/**
+	 * Last recorded time from entry
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserverEntry/time
+	 */
+	time?: DOMHighResTimeStamp;
 }
 
 export interface Size {
@@ -38,23 +56,13 @@ export interface ObserveOptions {
 	delay?: number;
 
 	/**
-	 * How an element should be deactivated after he was seen (only if once is set to true)
+	 * Only for environments that don't support intersection observer.
 	 *
-	 *   *) remove - element will be removed from inView directive
-	 *
-	 *   *) deactivate - element will not be removed from inView directive: he will be deactivated after was seen
-	 *      (you can activate the specified element later, and he will become observable again)
-	 */
-	removeStrategy?: RemoveStrategy;
-
-	/**
-	 * Only for environments that doesn't support intersection observer.
-	 *
-	 * If true, the element will not be placed in the position map;
+	 * If true, the element won't be placed in the position map;
 	 * instead, the method of polling the positions of the elements will be used.
-	 * Every 75 milliseconds each observable elements will be asked about its position using getBoundingClientRect
+	 * Every 75 milliseconds each observable elements will be asked about its position by using getBoundingClientRect.
 	 *
-	 * Notice: May slowdown your app performance, use it carefully
+	 * Notice: May slowdown your app performance, use it carefully.
 	 */
 	polling?: boolean;
 
@@ -113,9 +121,33 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: CanArray<InitOptions>;
 }
 
+export interface UnobserveOptions {
+	/**
+	 * Threshold of an element to unobserve
+	 */
+	threshold?: number;
+
+	/**
+	 * If true then the element will not be removed completely,
+	 * later it will be possible to resume tracking the element using `unsuspend` method.
+	 */
+	suspend?: boolean;
+}
+
+/**
+ * Suspended observable elements
+ * [group name]:[observable[]]
+ */
+export type ObservablesByGroup = Map<InViewGroup, Set<ObservableElement>>;
+
+export type AdapteeType = 'mutation' | 'observer';
+export type AdapteeInstance = typeof MutationObserverStrategy | typeof IntersectionObserverStrategy;
+
 export type InViewGroup = string | number | symbol;
 export type RemoveStrategy = 'remove' | 'deactivate';
+
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
+
 export type ObservableElementsMap = Map<Element, ObservableElement>;
 export type ObservableThresholdMap = Map<number, ObservableElement>;
 export type ObservableElementsThresholdMap = Map<Element, ObservableThresholdMap>;

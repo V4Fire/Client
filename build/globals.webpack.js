@@ -8,92 +8,66 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable quote-props */
+const
+	config = require('config');
 
 const
-	config = require('config'),
-	{config: pzlr} = require('@pzlr/build-core');
+	{config: pzlr} = require('@pzlr/build-core'),
+	{getDSComponentMods} = include('build/ds');
 
 const
 	runtime = config.runtime(),
 	s = JSON.stringify;
 
+/**
+ * Object to provide to WebPack.DefinePlugin
+ * @type {!Object}
+ */
 module.exports = {
 	IS_PROD,
+	DEBUG: runtime.debug === true,
+
+	APP_NAME: s(APP_NAME),
+	API_URL: s(API_URL),
 
 	LOCALE: s(LOCALE),
-	API_URL: s(API_URL),
-	APP_NAME: s(APP_NAME),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 
-	MODULE_DEPENDENCIES: s(`ModuleDependencies${runtime.noGlobals ? `_${Number.random(1e6)}` : ''}`),
+	MODULE_DEPENDENCIES: s(
+		`ModuleDependencies${runtime.noGlobals ? `_${Number.random(1e6)}` : ''}`
+	),
+
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
 	},
 
-	BLOCK_NAMES: runtime.blockNames ? include('build/entities.webpack').then(({blockMap}) => {
-		if (Object.isMap(blockMap)) {
-			const blockNames = Array.from(blockMap.keys()).filter((el) => /^b-/.test(el));
-			return s(blockNames);
-		}
-	}) : null,
+	BLOCK_NAMES: runtime.blockNames ?
+		include('build/entries.webpack').then(({blockMap}) => {
+			if (Object.isMap(blockMap)) {
+				const blockNames = Array.from(blockMap.keys()).filter((el) => /^b-/.test(el));
+				return s(blockNames);
+			}
+		}) :
+
+		null,
 
 	THEME: s(config.theme()),
 	INCLUDED_THEMES: s(config.includedThemes()),
 
-	DS_COMPONENTS_MODS: pzlr.designSystem ? getComponentsMods() : null,
-	DS: runtime.passDesignSystem && pzlr.designSystem ? (() => {
-		try {
-			return s(require(pzlr.designSystem));
+	DS_COMPONENTS_MODS: pzlr.designSystem ?
+		getDSComponentMods() :
+		null,
 
-		} catch {
-			console.log(`Can't find "${pzlr.designSystem}" design system package`);
-			return null;
-		}
-	})() : null
+	DS: runtime.passDesignSystem && pzlr.designSystem ?
+		(() => {
+			try {
+				return s(require(pzlr.designSystem));
+
+			} catch {
+				console.log(`Can't find "${pzlr.designSystem}" design system package`);
+				return null;
+			}
+		})() :
+
+		null
 };
-
-/**
- * Returns modifier values grouped by a component name from a Design System package
- * @returns {Object}
- */
-function getComponentsMods() {
-	try {
-		const
-			{components} = require(pzlr.designSystem);
-
-		if (Object.isObject(components)) {
-			return s(Object.keys(components).reduce((res, componentName) => {
-				const
-					comp = components[componentName],
-					mods = {};
-
-				if (comp.mods) {
-					Object.assign(mods, comp.mods);
-				}
-
-				if (comp.exterior) {
-					Object.assign(mods, {exterior: comp.exterior});
-				}
-
-				if (comp.mods || comp.exterior) {
-					const
-						r = res[componentName.dasherize()] = {};
-
-					Object.forEach(mods, (m, modName) => {
-						r[modName] = Object.keys(m);
-					});
-				}
-
-				return res;
-			}, {}));
-		}
-
-		console.log('Cannot find components within the design system package');
-		return null;
-
-	} catch {
-		console.log(`Can't find "${pzlr.designSystem}" design system package`);
-		return null;
-	}
-}

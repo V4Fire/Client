@@ -13,24 +13,28 @@ const
 	escaper = require('escaper');
 
 const
-	{validators} = require('@pzlr/build-core');
-
-const
-	isVoidLink = /^a:void$/,
-	isButtonLink = /^button:a$/;
+	{isVoidLink, isButtonLink, tagRgxp, componentElRgxp} = include('build/snakeskin/filters/const');
 
 module.exports = [
 	/**
-	 * Converts tag aliases
+	 * Expands tag name snippets
 	 *
 	 * @param {string} tag
 	 * @param {!Object} attrs
 	 * @param {string} rootTag
 	 * @returns {string}
+	 *
+	 * @example
+	 * ```
+	 * < @b-button
+	 * < a:void
+	 * < button:a
+	 * ```
 	 */
-	function convertAliases(tag, attrs, rootTag) {
+	function expandTagSnippets(tag, attrs, rootTag) {
 		if (tag[0] === '@') {
-			attrs['v4-flyweight-component'] = attrs[':instance-of'] = [tag.slice(1)];
+			attrs['v4-flyweight-component'] = [tag.slice(1)];
+			attrs[':instance-of'] = attrs['v4-flyweight-component'];
 			return 'span';
 		}
 
@@ -53,13 +57,9 @@ module.exports = [
 	}
 ];
 
-const
-	tagRgxp = /<[^>]+>/,
-	elRgxp = new RegExp(`\\b${validators.baseBlockName}__[a-z0-9][a-z0-9-_]*\\b`);
-
 Snakeskin.importFilters({
 	/**
-	 * Returns a first element name
+	 * Returns the first name of an element
 	 *
 	 * @param {string} decl
 	 * @returns {?string}
@@ -73,7 +73,7 @@ Snakeskin.importFilters({
 			return null;
 		}
 
-		const search = elRgxp.exec(escaper.paste(tagMatch[0]));
+		const search = componentElRgxp.exec(escaper.paste(tagMatch[0]));
 		return search ? search[0] : null;
 	}
 });

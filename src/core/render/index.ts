@@ -11,7 +11,17 @@
  * @packageDocumentation
  */
 
-import { daemon, queue, add, COMPONENTS_PER_TICK, DELAY } from 'core/render/const';
+import {
+
+	daemon,
+	queue,
+	add as addToQueue,
+
+	COMPONENTS_PER_TICK,
+	DELAY
+
+} from 'core/render/const';
+
 export * from 'core/render/const';
 export * from 'core/render/interface';
 
@@ -19,9 +29,9 @@ let
 	inProgress = false,
 	isStarted = false;
 
-queue.add = function addToQueue<T = unknown>(): T {
+queue.add = function add<T = unknown>(...args: unknown[]): T {
 	const
-		res = add.apply(this, arguments);
+		res = addToQueue(...args);
 
 	if (!isStarted) {
 		run();
@@ -34,7 +44,8 @@ queue.add = function addToQueue<T = unknown>(): T {
  * Restarts the render daemon
  */
 export function restart(): void {
-	isStarted = inProgress = false;
+	isStarted = false;
+	inProgress = false;
 	run();
 }
 
@@ -43,7 +54,8 @@ export function restart(): void {
  * (it runs on the next tick)
  */
 export function deferRestart(): void {
-	isStarted = inProgress = false;
+	isStarted = false;
+	inProgress = false;
 	daemon.clearAll();
 	runOnNextTick();
 }
@@ -52,7 +64,8 @@ function run(): void {
 	daemon.clearAll();
 
 	const exec = async () => {
-		inProgress = isStarted = true;
+		inProgress = true;
+		isStarted = true;
 
 		let
 			time = Date.now(),
@@ -69,22 +82,26 @@ function run(): void {
 			}
 
 			const
-				w = val.weight || 1;
+				w = val.weight ?? 1;
 
 			if (done - w < 0 && done !== COMPONENTS_PER_TICK) {
 				continue;
 			}
 
-			if (val.fn()) {
-				done -= val.weight || 1;
+			if (Object.isTruly(val.fn())) {
+				done -= val.weight ?? 1;
 				queue.delete(val);
 			}
 		}
 
 		if (!runOnNextTick()) {
 			daemon.setImmediate(() => {
-				inProgress = isStarted = canProcessing();
-				inProgress && runOnNextTick();
+				inProgress = canProcessing();
+				isStarted = inProgress;
+
+				if (inProgress) {
+					runOnNextTick();
+				}
 			});
 		}
 	};

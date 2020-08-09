@@ -7,10 +7,12 @@
  */
 
 import { WatchPath } from 'core/object/watch';
-import { ComponentInterface } from 'core/component/interface/component';
 import { ComputedOptions, DirectiveOptions } from 'core/component/engines';
+
+import { Hook } from 'core/component/interface/life-cycle';
+import { ComponentInterface } from 'core/component/interface/component';
 import { FieldWatcher, MethodWatcher } from 'core/component/interface/watch';
-import { PropOptions, Hook, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/interface';
+import { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
 
 /**
  * Additional options to register a component
@@ -76,8 +78,8 @@ export interface ComponentOptions {
 	 * values of the input properties:
 	 *   1. If an empty dictionary, the component will always created as functional;
 	 *   2. If a dictionary with values, the dictionary properties represent component input properties.
-	 *      If the component invocation take these properties with the values that declared within "functional" parameters,
-	 *      it will be created as functional.
+	 *      If the component invocation take these properties with the values that
+	 *      declared within "functional" parameters, it will be created as functional.
 	 *      Also, you can specify multiple values of one input property by using a list of values.
 	 *      Mind that inferring of a component type is compile based, i.e. you can't depend on values from runtime,
 	 *      but you can directly cast the type by using "v-func" directive;
@@ -181,7 +183,7 @@ export interface ComponentOptions {
 	 * ```
 	 *
 	 * ```
-	 * // The value of bInput is two-way binded to bla
+	 * // The value of bInput is two-way bound to bla
 	 * < b-input v-model = bla
 	 * ```
 	 */
@@ -291,6 +293,7 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 
 export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends ComponentSystemField<CTX> {
 	watchers?: Map<string | Function, FieldWatcher>;
+	forceUpdate?: boolean;
 }
 
 export interface ComponentComputedField<T = unknown> extends ComputedOptions<T> {
@@ -301,6 +304,7 @@ export interface ComponentAccessor<T = unknown> extends ComputedOptions<T> {
 	src: string;
 	replace?: boolean;
 	functional?: boolean;
+	watchable?: boolean;
 }
 
 export interface ComponentHook {

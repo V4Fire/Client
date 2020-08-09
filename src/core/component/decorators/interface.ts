@@ -6,23 +6,119 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { WatchPath } from 'core/object/watch';
-import { WatchOptions } from 'core/component/engines';
-
 import {
 
-	PropOptions,
-	ComponentInterface,
 	Hook,
+	ComponentInterface,
 
-	InitFieldFn,
-	MergeFieldFn,
-	UniqueFieldFn,
-
-	MethodWatcher,
-	WatchHandler
+	WatchPath,
+	WatchOptions,
+	WatchHandlerParams,
+	MethodWatcher
 
 } from 'core/component/interface';
+
+export type Prop<T = unknown> =
+	{(): T} |
+	{new(...args: any[]): T & object} |
+	{new(...args: string[]): Function};
+
+export type PropType<T = unknown> = CanArray<
+	Prop<T>
+>;
+
+export interface PropOptions<T = unknown> {
+	/**
+	 * Constructor of a property type or a list of constructors
+	 *
+	 * @example
+	 * ```typescript
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   @prop({type: Number})
+	 *   bla!: number;
+	 *
+	 *   @prop({type: [Number, String]})
+	 *   baz!: number | string;
+	 * }
+	 * ```
+	 */
+	type?: PropType<T>;
+
+	/**
+	 * If false, then the property isn't required
+	 * @default `true`
+	 *
+	 * @example
+	 * ```typescript
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   @prop({required: false})
+	 *   bla?: number;
+	 *
+	 *   @prop()
+	 *   baz: number = 0;
+	 * }
+	 * ```
+	 */
+	required?: boolean;
+
+	/**
+	 * Default value for the property
+	 *
+	 * @example
+	 * ```typescript
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   @prop({default: 1})
+	 *   bla!: number;
+	 *
+	 *   @prop()
+	 *   baz: number = 0;
+	 * }
+	 * ```
+	 */
+	default?: T | null | undefined | (() => T | null | undefined);
+
+	/**
+	 * If false, the property can't work within functional or flyweight components
+	 * @default `true`
+	 */
+	functional?: boolean;
+
+	/**
+	 * Property validator
+	 *
+	 * @param value
+	 *
+	 * @example
+	 * ```typescript
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   @prop({type: Number, validator: (v) => v > 0}})
+	 *   bla!: number;
+	 * }
+	 * ```
+	 */
+	validator?(value: T): boolean;
+}
+
+export interface InitFieldFn<CTX extends ComponentInterface = ComponentInterface> {
+	(ctx: CTX['unsafe'], data: Dictionary): unknown;
+}
+
+export interface MergeFieldFn<CTX extends ComponentInterface = ComponentInterface> {
+	(ctx: CTX['unsafe'], oldCtx: CTX, field: string, link?: string): unknown;
+}
+
+export interface UniqueFieldFn<CTX extends ComponentInterface = ComponentInterface> {
+	(ctx: CTX['unsafe'], oldCtx: CTX): unknown;
+}
+
+export interface DecoratorWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	(ctx: CTX['unsafe'], a: A, b: B, params?: WatchHandlerParams): unknown;
+	(ctx: CTX['unsafe'], ...args: A[]): unknown;
+}
 
 export interface DecoratorFieldWatcherObject<
 	CTX extends ComponentInterface = ComponentInterface,
@@ -32,10 +128,10 @@ export interface DecoratorFieldWatcherObject<
 	/**
 	 * Handler (or a name of a component method) that is invoked on watcher events
 	 */
-	handler: string | WatchHandler<CTX, A, B>;
+	handler: string | DecoratorWatchHandler<CTX, A, B>;
 
 	/** @deprecated */
-	fn?: string | WatchHandler<CTX, A, B>;
+	fn?: string | DecoratorWatchHandler<CTX, A, B>;
 
 	/**
 	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
@@ -47,8 +143,8 @@ export interface DecoratorFieldWatcherObject<
 export type DecoratorFieldWatcher<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	DecoratorFieldWatcherObject<CTX, A, B> |
-	WatchHandler<CTX, A, B> |
-	Array<string | DecoratorFieldWatcherObject<CTX, A, B> | WatchHandler<CTX, A, B>>;
+	DecoratorWatchHandler<CTX, A, B> |
+	Array<string | DecoratorFieldWatcherObject<CTX, A, B> | DecoratorWatchHandler<CTX, A, B>>;
 
 export interface DecoratorProp<
 	CTX extends ComponentInterface = ComponentInterface,
@@ -137,6 +233,12 @@ export interface DecoratorField<
 	 * Watcher for changes of the property
 	 */
 	watch?: DecoratorFieldWatcher<CTX, A, B>;
+
+	/**
+	 * If false, then changes of the property don't force direct re-render
+	 * @default `true`
+	 */
+	forceUpdate?: boolean;
 }
 
 export interface DecoratorFunctionalOptions {
@@ -154,6 +256,11 @@ export interface DecoratorFunctionalOptions {
 }
 
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
+	/**
+	 * If true, a value of the accessor can be watched
+	 */
+	watchable?: boolean;
+
 	/**
 	 * If true, a value of the accessor will be cached
 	 */
@@ -204,7 +311,7 @@ export type DecoratorHook =
 	DecoratorHookOptions |
 	DecoratorHookOptions[];
 
-export type DecoratorMethodWatchers<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
+export type DecoratorMethodWatcher<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	MethodWatcher<CTX, A, B> |
 	Array<string | MethodWatcher<CTX, A, B>>;
@@ -213,7 +320,7 @@ export interface DecoratorMethod<CTX extends ComponentInterface = ComponentInter
 	/**
 	 * Watcher for changes of some properties
 	 */
-	watch?: DecoratorMethodWatchers<CTX, A, B>;
+	watch?: DecoratorMethodWatcher<CTX, A, B>;
 
 	/**
 	 * Parameters for watcher
@@ -227,7 +334,7 @@ export interface DecoratorMethod<CTX extends ComponentInterface = ComponentInter
 }
 
 export interface ParamsFactoryTransformer {
-	(params: object, cluster: string): Dictionary<any>
+	(params: object, cluster: string): Dictionary<any>;
 }
 
 export interface FactoryTransformer<T = object> {

@@ -1,12 +1,3 @@
 {
-	"extends": ["stlint-v4fire"],
-	"rules": {
-		"useMixinInsteadUnit": {
-			"enabled": false
-		},
-
-		"color": {
-			"enabled": false
-		}
-	}
+  "extends": ["@v4fire/linters"]
 }
