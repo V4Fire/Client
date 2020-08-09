@@ -179,8 +179,8 @@ export default abstract class iStaticPage extends iPage {
 	 * @param value
 	 */
 	set theme(value: unknown) {
-		if (!includedThemes?.includes(String(value))) {
-			throw new ReferenceError(`Theme with name "${value}" is not defined`);
+		if (includedThemes?.includes(String(value)) === false) {
+			throw new ReferenceError(`Theme with name "${String(value)}" is not defined`);
 		}
 
 		this.setRootMod('theme', value, false);
@@ -297,7 +297,7 @@ export default abstract class iStaticPage extends iPage {
 		}
 
 		const
-			prefix = component === false ? this.rootPrefix : (component.globalName || component.componentName).dasherize();
+			prefix = component === false ? this.rootPrefix : (component.globalName ?? component.componentName).dasherize();
 
 		name = `${prefix}_${name.camelize(false)}`;
 		value = value !== undefined ? String(value).dasherize() : undefined;
@@ -322,12 +322,12 @@ export default abstract class iStaticPage extends iPage {
 
 	/** @override */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	getRootMod(name: string, component: false | ComponentInterface = this): undefined | string {
+	getRootMod(name: string, component: false | iBlock = this): undefined | string {
 		const
-			prefix = component === false ? this.rootPrefix : (component.globalName || component.componentName).dasherize();
+			prefix = component === false ? this.rootPrefix : (component.globalName ?? component.componentName).dasherize();
 
 		name = `${prefix}_${name.camelize(false)}`;
-		return this.rootMods?.[name]?.value;
+		return this.rootMods[name]?.value;
 	}
 
 	/**
@@ -374,7 +374,7 @@ export default abstract class iStaticPage extends iPage {
 			const
 				[prefix, name, value] = className.split('_');
 
-			if (prefix === this.rootPrefix && name && value) {
+			if (prefix === this.rootPrefix && Object.size(name) > 0 && Object.size(value) > 0) {
 				this.rootMods[`${prefix}_${name.camelize(false)}`] = {
 					value,
 					mod: className,
