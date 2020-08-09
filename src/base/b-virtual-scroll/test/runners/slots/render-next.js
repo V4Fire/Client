@@ -107,6 +107,7 @@ module.exports = (page) => {
 					});
 				});
 
+				await h.bom.waitForIdleCallback(page);
 				await h.bom.waitForRAF(page);
 
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
