@@ -360,8 +360,8 @@ module.exports = (page) => {
 			it('until all data is rendered', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.shouldStopRequest = ({data}) => data.length === 80;
-					ctx.request = {get: {total: 80, chunkSize: 40, id: Math.random()}};
+					ctx.shouldStopRequest = ({data}) => data.length === 60;
+					ctx.request = {get: {total: 60, chunkSize: 30, id: Math.random()}};
 					ctx.chunkSize = 10;
 
 					return new Promise((res) => {
@@ -375,13 +375,12 @@ module.exports = (page) => {
 					renders = 1;
 
 				const
-					totalRenders = 7;
+					totalRenders = 5;
 
 				while (renders < totalRenders) {
 					await h.dom.waitForRef(nodes.renderNextWithSlot, 'renderNext');
 					await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
 					await h.dom.waitForEl(containers.renderNextWithSlot, `section:nth-child(${(renders * 10) + 1})`);
-					await h.bom.waitForIdleCallback(page);
 					await h.bom.waitForRAF(page);
 
 					expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
