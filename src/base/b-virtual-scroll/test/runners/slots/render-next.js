@@ -35,25 +35,6 @@ module.exports = (page) => {
 		renderNextNoSlot: undefined
 	};
 
-	beforeAll(async () => {
-		const allComponents = await page.$$('.b-virtual-scroll');
-
-		for (let i = 0; i < allComponents.length; i++) {
-			await allComponents[i].evaluate((ctx) => ctx.style.display = 'none');
-		}
-
-		for (let keys = Object.keys(components), i = 0; i < keys.length; i++) {
-			const key = keys[i];
-
-			nodes[key] = await h.dom.waitForEl(page, `#${key}`);
-			await nodes[key].evaluate((ctx) => ctx.style.display = '');
-			containers[key] = await h.dom.waitForRef(nodes[key], 'container');
-
-			// eslint-disable-next-line require-atomic-updates
-			components[key] = await h.component.getComponentById(page, key);
-		}
-	});
-
 	beforeEach(async () => {
 		await h.utils.reloadAndWaitForIdle(page);
 		const allComponents = await page.$$('.b-virtual-scroll');
