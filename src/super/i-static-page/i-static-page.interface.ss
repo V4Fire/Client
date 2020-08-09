@@ -64,6 +64,7 @@
 	- assets = await h.getAssets(@@entryPoints)
 
 	- block root
+		: config = require('config').build
 		: runtime = config.runtime()
 
 		- if runtime.includedThemes && runtime.theme
