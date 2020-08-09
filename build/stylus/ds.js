@@ -22,9 +22,9 @@ let
 	DS = {};
 
 const
-	CSSVars = Object.create(null);
+	cssVars = Object.create(null);
 
-Object.defineProperty(CSSVars, '__map__', {
+Object.defineProperty(cssVars, '__map__', {
 	enumerable: false,
 	value: {}
 });
@@ -62,7 +62,7 @@ module.exports = function addPlugins(api) {
 
 			if (value) {
 				const
-					__vars__ = $C(CSSVars).get(`components.${string}`);
+					__vars__ = $C(cssVars).get(`components.${string}`);
 
 				return stylus.utils.coerce({
 					...value,
