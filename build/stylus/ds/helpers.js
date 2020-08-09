@@ -8,6 +8,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	$C = require('collection.js'),
+	stylus = require('stylus'),
+	{cssVars} = include('build/stylus/ds/const');
+
+Object.defineProperty(cssVars, '__map__', {
+	enumerable: false,
+	value: {}
+});
+
 /**
  * Sets a variable into cssVars dictionary by the specified path
  *
@@ -24,7 +34,7 @@ function setVar(path, dsValue, theme) {
 
 	$C(cssVars).set(`var(${variable})`, path);
 
-	if (!theme) {
+	if (theme === undefined) {
 		cssVars.__map__[path] = mapValue;
 
 	} else {
@@ -67,6 +77,14 @@ function prepareData(data, path, theme) {
 			}
 
 		} else if (val === 'theme') {
+			// @example
+			// {
+			//   bButton: {
+			//     theme: {
+			//       dark: d
+			//     }
+			//   }
+			// }}
 			if (Object.isObject(d)) {
 				prepareData(d, path, true);
 
@@ -83,7 +101,7 @@ function prepareData(data, path, theme) {
 
 		} else {
 			if (/^[a-z-_]+\(.*\)$/.test(d)) {
-				// Built-in function
+				// Stylus built-in function
 				data[val] = new stylus.Parser(d).function();
 				setVar(genPath(path, val), data[val], theme);
 				return;

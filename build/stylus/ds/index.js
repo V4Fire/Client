@@ -24,14 +24,10 @@ const {
 	prepareData
 } = include('build/stylus/ds/helpers');
 
-const
-	DS = Object.create(null),
-	cssVars = Object.create(null);
-
-Object.defineProperty(cssVars, '__map__', {
-	enumerable: false,
-	value: {}
-});
+const {
+	DS,
+	cssVars
+} = include('build/stylus/ds/const');
 
 if (pzlr.config.designSystem) {
 	try {
@@ -49,7 +45,7 @@ prepareData(DS);
 
 const
 	THEME = runtime.theme,
-	INCLUDED_THEMES = it && Object.isBoolean(it) ? DS.meta.includedThemes : it;
+	INCLUDED_THEMES = it === true ? DS.meta.includedThemes : it;
 
 module.exports = function addPlugins(api) {
 	/**
@@ -147,14 +143,14 @@ module.exports = function addPlugins(api) {
 	);
 
 	/**
-	 * Returns the runtime config theme value
+	 * Returns a runtime config theme value
 	 */
-	style.define('defaultTheme', () => THEME);
+	api.define('defaultTheme', () => THEME);
 
 	/**
 	 * Returns included interface themes
 	 */
-	style.define('includedThemes', () => INCLUDED_THEMES);
+	api.define('includedThemes', () => INCLUDED_THEMES);
 };
 
 Object.assign(module.exports, {
