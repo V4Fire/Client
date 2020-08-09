@@ -17,7 +17,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { RenderItem, RefsDisplayState } from 'base/b-virtual-scroll/interface';
+import { RenderItem } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
