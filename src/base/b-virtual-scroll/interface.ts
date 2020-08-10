@@ -165,19 +165,19 @@ export interface DataToRender {
 }
 
 /**
- * The local state of a component
+ * The local state of a component:
  *
- * * `error` - indicates the component loading error appear
- * * `init` - indicates the component now loading the first chunk of data
- * * `ready` - indicates the component now is ready to render data
+ *  * `error` - indicates the component loading error appear
+ *  * `init` - indicates the component now loading the first chunk of data
+ *  * `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';
 
 /**
- * Loading strategy
+ * The loading strategy:
  *
- * * `scroll` - will prompt the client to load data every time a new element appears in the viewport
- * * `manual` - data will only be loaded using `renderNext` method (except of an initial load)
+ *  * `scroll` - will prompt the client to load data every time a new element appears in the viewport
+ *  * `manual` - there is only one way to load data: by using `renderNext` method (except the initial load)
  */
 export type LoadStrategy = 'scroll' | 'manual';
 

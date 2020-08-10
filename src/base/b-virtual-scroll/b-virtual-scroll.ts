@@ -287,7 +287,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Tries to render the next chunk of data, makes a request to get more data if necessary
+	 * Tries to render the next data chunk.
+	 * The method emits a new request for data if necessary.
 	 */
 	renderNext(): void {
 		const

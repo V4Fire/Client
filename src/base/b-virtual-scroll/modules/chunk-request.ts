@@ -37,7 +37,7 @@ export default class ChunkRequest extends Friend {
 	data: unknown[] = [];
 
 	/**
-	 * Last uploaded chunk of data that was processed with `dbConverter`
+	 * Last loaded data chunk that was processed with `dbConverter`
 	 *
 	 * @deprecated
 	 * @see [[ScrollRequest.lastLoadedChunk]]

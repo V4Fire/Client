@@ -14,6 +14,15 @@
 	- block body
 		: config = require('config').build
 
+		< b-icon :value = 'foo' | :hint = 'fff'
+
+		< br
+		< br
+		< br
+
+		< b-button :hint = 'fff'
+			2323
+
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo

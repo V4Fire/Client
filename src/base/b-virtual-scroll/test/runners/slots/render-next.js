@@ -78,7 +78,7 @@ module.exports = (page) => {
 				expect(await h.dom.getRef(nodes.renderNextNoSlot, 'empty')).toBeFalsy();
 			});
 
-			it('there is no data loaded', async () => {
+			it('there are no loaded data', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dbConverter = () => ({data: []});
 					ctx.request = {get: {total: 0, chunkSize: 0, id: Math.random()}};
@@ -94,7 +94,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('there is no data', async () => {
+			it('there are no data', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					ctx.options = [];
@@ -120,7 +120,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('if second batch of data loading in progress', async () => {
+			it('if the second batch of data loading in progress', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 1000}};
@@ -136,7 +136,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('if all data was loaded after an initial request', async () => {
+			it('if all data were loaded after the initial request', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {total: 10, chunkSize: 10, id: Math.random()}};
@@ -150,7 +150,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('if all data was loaded after a second batch load', async () => {
+			it('if all data were loaded after the second batch load', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 1000}};
@@ -169,7 +169,7 @@ module.exports = (page) => {
 				expect(await (await nodes.renderNextWithSlot.$('#renderNext')).evaluate((ctx) => ctx.parentNode.style.display)).toBe('none');
 			});
 
-			it('if all items was rendered', async () => {
+			it('if all items were rendered', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					ctx.chunkSize = 10;
@@ -182,7 +182,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('if all items was rendered after second render', async () => {
+			it('if all items were rendered after second render', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					ctx.chunkSize = 10;
@@ -199,7 +199,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('if all data was rendered and loaded', async () => {
+			it('if all data were rendered and loaded', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.shouldStopRequest = ({data}) => data.length === 80;
@@ -232,7 +232,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('if a requestError appears on initial loading', async () => {
+			it('if an error appears on the initial loading', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					const p = new Promise((res) => {
 						ctx.localEmitter.on('localState.error', res);
@@ -249,7 +249,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
-			it('if a requestError appears on loading a second data batch', async () => {
+			it('if an error appears on the second data batch loading', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, sleep: 1000}};
@@ -289,7 +289,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
-			it('after loading of a second data batch', async () => {
+			it('after loading of the second data batch', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random()}};
@@ -310,7 +310,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
-			it('after initial rendering with items provided', async () => {
+			it('after the initial rendering with items provided', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					// @ts-ignore
@@ -323,7 +323,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
-			it('after second rendering with items provided', async () => {
+			it('after the second rendering with items provided', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					// @ts-ignore
@@ -339,7 +339,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
-			it('until all data is rendered', async () => {
+			it('until all data are rendered', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.shouldStopRequest = ({data}) => data.length === 60;
@@ -370,7 +370,7 @@ module.exports = (page) => {
 				}
 			});
 
-			it('if there was a requestError on initial loading but after a retry request a successful load occurred', async () => {
+			it('if there was an error on the initial loading, but after retrying all fine', async () => {
 				const requestErrorPromise = components.renderNextWithSlot.evaluate((ctx) => new Promise((res) => {
 					ctx.watch(':requestError', res);
 				}));
@@ -390,7 +390,7 @@ module.exports = (page) => {
 				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
-			it('if there was a requestError on second data batch loading but after a retry request a successful load occurred', async () => {
+			it('if there was an error on the second data batch loading, but after retrying all fine', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, failCount: 1, sleep: 1000}};

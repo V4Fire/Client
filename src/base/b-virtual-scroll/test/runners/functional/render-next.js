@@ -42,7 +42,7 @@ module.exports = (page) => {
 	describe('b-virtual-scroll', () => {
 		['manual', 'scroll'].forEach((strategy) => {
 			describe(`renderNext with loadStrategy: ${strategy}`, () => {
-				it('renders a next data batch', async () => {
+				it('renders the next data batch', async () => {
 					await component.evaluate((ctx, strategy) => {
 						ctx.loadStrategy = strategy;
 						ctx.request = {get: {chunkSize: 20, id: Math.random()}};

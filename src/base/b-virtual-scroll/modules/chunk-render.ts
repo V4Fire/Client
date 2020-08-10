@@ -205,7 +205,7 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Tries to show a `renderNext` slot
+	 * Tries to show the `renderNext` slot
 	 */
 	tryShowRenderNextSlot(): void {
 		const
@@ -223,7 +223,7 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Updates refs visibility with `RAF`
+	 * Updates visibility of refs by using requestAnimationFrame
 	 */
 	protected performRefsVisibilityUpdate(): void {
 		this.async.requestAnimationFrame(() => {

@@ -264,7 +264,7 @@ declare namespace BrowserTests {
 		 * Returns a component by the specified selector
 		 *
 		 * @param ctx
-		 * @param componentSelector
+		 * @param selector
 		 */
 		getComponents(ctx: PlaywrightElContext, selector: string): Promise<Playwright.JSHandle[]>;
 
@@ -390,7 +390,7 @@ declare namespace BrowserTests {
 		 * Waits for an element in the DOM that matches the specified `refName` and returns it
 		 *
 		 * @param ctx
-		 * @param efName
+		 * @param refName
 		 * @param [options]
 		 */
 		waitForRef(
