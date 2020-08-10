@@ -19,6 +19,7 @@ Changelog
 #### :house: Internal
 
 * Fixed ESLint warnings
+* Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
 
 #### :nail_care: Polish
 

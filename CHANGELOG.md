@@ -45,7 +45,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Fixed ESLint warnings `bList`
+* `bList`:
+  * Fixed ESLint warnings `bList`
+  * Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
+
 * `bIcon`:
   * Removed dead props: `hint`, `hintPos`
 
