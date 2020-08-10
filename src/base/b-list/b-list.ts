@@ -12,7 +12,7 @@ import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import { Option } from 'base/b-list/interface';
+import { Item } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
@@ -43,7 +43,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Initial component value
 	 */
 	@prop(Array)
-	readonly valueProp: Option[] = [];
+	readonly itemsProp: Item[] = [];
 
 	/**
 	 * Initial component active value
@@ -84,15 +84,15 @@ export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Component value
 	 */
-	@field<bList>((o) => o.sync.link<Option[]>((val) => {
+	@field<bList>((o) => o.sync.link<Item[]>((val) => {
 		if (o.dataProvider != null) {
-			return <CanUndef<Option[]>>o.value ?? [];
+			return <CanUndef<Item[]>>o.value ?? [];
 		}
 
 		return o.normalizeOptions(val);
 	}))
 
-	value!: Option[];
+	value!: Item[];
 
 	/**
 	 * Component active value
@@ -306,13 +306,13 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<Option[]> {
+	protected initRemoteData(): CanUndef<Item[]> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent<Option[]>(this.db);
+			val = this.convertDBToComponent<Item[]>(this.db);
 
 		if (Object.isArray(val)) {
 			return this.value = this.normalizeOptions(val);
@@ -334,21 +334,21 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/**
-	 * Returns true if the specified option is active
-	 * @param option
+	 * Returns true if the specified Item is active
+	 * @param Item
 	 */
-	protected isActive(option: Option): boolean {
+	protected isActive(Item: Item): boolean {
 		const active = this.field.get('activeStore');
-		return this.multiple ? String(option.value) in <Dictionary>active : option.value === active;
+		return this.multiple ? String(Item.value) in <Dictionary>active : Item.value === active;
 	}
 
 	/**
 	 * Normalizes the specified options and returns it
 	 * @param options
 	 */
-	protected normalizeOptions(options: CanUndef<Option[]>): Option[] {
+	protected normalizeOptions(options: CanUndef<Item[]>): Item[] {
 		const
-			res = <Option[]>[];
+			res = <Item[]>[];
 
 		if (!options) {
 			return res;
@@ -374,7 +374,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 	/**
 	 * Initializes component values
-	 * @emits valueChange(value: Option[])
+	 * @emits valueChange(value: Item[])
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
@@ -383,7 +383,7 @@ export default class bList extends iData implements iVisible, iWidth {
 			indexes = {};
 
 		const
-			value = this.field.get<CanUndef<Option[]>>('value') ?? [],
+			value = this.field.get<CanUndef<Item[]>>('value') ?? [],
 			active = this.field.get('activeStore');
 
 		for (let i = 0; i < value.length; i++) {
@@ -403,18 +403,6 @@ export default class bList extends iData implements iVisible, iWidth {
 		this.indexes = indexes;
 	}
 
-	/**
-	 * Returns a hint message for the specified element
-	 * @param el
-	 */
-	protected getElHint(el: Option): string {
-		if (el.iconHint != null) {
-			return el.iconHint;
-		}
-
-		return this.hideLabels ? t(el.label) : '';
-	}
-
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
@@ -426,10 +414,10 @@ export default class bList extends iData implements iVisible, iWidth {
 	 *
 	 * @param value
 	 * @param oldValue
-	 * @emits valueChange(value: Option[])
+	 * @emits valueChange(value: Item[])
 	 */
 	@watch('value')
-	protected syncValueWatcher(value: Option[], oldValue: Option[]): void {
+	protected syncValueWatcher(value: Item[], oldValue: Item[]): void {
 		if (!Object.fastCompare(value, oldValue)) {
 			this.initComponentValues();
 			this.emit('valueChange', value);
