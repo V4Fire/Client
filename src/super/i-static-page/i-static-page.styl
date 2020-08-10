@@ -24,7 +24,7 @@ i-static-page extends i-page
 
 			extends($gHint, {
 				dataAttr: data-hint,
-				showOn: "&[data-hint]:hover",
+				showOn: "&[data-hint]:not([data-hint='']):hover",
 			})
 
 	if $p.globalIconHelpers
