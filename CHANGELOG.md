@@ -45,6 +45,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Fixed ESLint warnings `bList`
+* `bIcon`:
+  * Removed dead props: `hint`, `hintPos`
+
 * Refactoring:
   * `bList`
   * `gHint`
