@@ -165,18 +165,31 @@ export interface DataToRender {
 }
 
 /**
- * The local state of a component
+ * The local state of a component:
  *
- * * `error` - indicates the component loading error appear
- * * `init` - indicates the component now loading the first chunk of data
- * * `ready` - indicates the component now is ready to render data
+ *  * `error` - indicates the component loading error appear
+ *  * `init` - indicates the component now loading the first chunk of data
+ *  * `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';
+
+/**
+ * The loading strategy:
+ *
+ *  * `scroll` - will prompt the client to load data every time a new element appears in the viewport
+ *  * `manual` - there is only one way to load data: by using `renderNext` method (except the initial load)
+ */
+export type LoadStrategy = 'scroll' | 'manual';
 
 /**
  * Display state of the ref
  */
 export type RefDisplayState = '' | 'none';
+
+/**
+ * `bVirtualScroll` `$refs`
+ */
+export type bVirtualScrollRefs = bVirtualScroll['$refs'];
 
 // @ts-ignore (unsafe)
 export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
@@ -200,6 +213,9 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 
 	// @ts-ignore (access)
 	getDataStateSnapshot: CTX['getDataStateSnapshot'];
+
+	// @ts-ignore (access)
+	onRequestError: CTX['onRequestError'];
 }
 
 export type MergeDataStateParams = {

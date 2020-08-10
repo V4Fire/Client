@@ -63,6 +63,35 @@ class BOM {
 	}
 
 	/**
+	 * @see [[BrowserTests.BOM.waitForRAF]]
+	 */
+	async waitForRAF(page, rafOptions = {}) {
+		rafOptions = {
+			waitForRafTimes: 1,
+			sleepAfterRAF: 100,
+			...rafOptions
+		};
+
+		try {
+			await page.evaluate((opts) => new Promise(async (res) => {
+				const waitForRAF = () => new Promise((res) => {
+					requestAnimationFrame(res);
+				});
+
+				while (opts.waitForRafTimes) {
+					await waitForRAF();
+					opts.waitForRafTimes--;
+				}
+
+				res();
+
+			}), rafOptions);
+		} catch {}
+
+		await delay(rafOptions.sleepAfterRAF);
+	}
+
+	/**
 	 * Parent class
 	 * @type  {BrowserTests.Helpers}
 	 */
