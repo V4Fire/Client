@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.58 ()
+## v3.0.0-rc.59 ()
 
 #### :boom: Breaking Change
 
@@ -58,6 +58,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+## v3.0.0-rc.58 (2020-08-07)
+
+#### :house: Internal
+
+* Added `.ico` files to build `build/module.webpack/img`
 
 ## v3.0.0-rc.57 (2020-08-06)
 
