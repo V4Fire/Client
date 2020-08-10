@@ -9,7 +9,7 @@ This component can be very efficient if you need to render a good amount of elem
 
 * By default, the root tag of the component is `<div>`.
 
-### Events
+## Events
 
 | EventName     | Description     | Payload description      | Payload  |
 | ------------- |---------------- | ------------------------ |--------- |
@@ -18,9 +18,9 @@ This component can be very efficient if you need to render a good amount of elem
 | chunkLoaded   | The event is fired after every successful response from a data provider | A structure with raw and normalized data that takes from a data provider | `LastLoadedChunk` |
 | chunkLoading  | The event is fired before start to load data from a data provider | Current page | `number` |
 
-### Usage
+## Usage
 
-#### Basic
+### Basic
 
 ```
 < b-virtual-scroll &
@@ -54,7 +54,7 @@ You can use `dbConverter` to convert data to match this interface.
 To specify what kind of component to render, you have to use the `option` property.
 Mind, the property can be defined as a string or function.
 
-#### Manual data display control
+### Manual data display control
 
 By default, data is requested and rendered automatically (when scrolling the page), you can override this behavior to load and render data manually.
 
