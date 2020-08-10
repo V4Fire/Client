@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* Now all extra classes that were added by using `appendToRootClasses` added to the start of the declaration `iBlock`
 * Removed `gDef/funcs/setSizes`
 
 * `bList`:

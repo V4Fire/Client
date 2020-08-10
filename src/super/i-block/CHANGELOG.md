@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.59 ()
+
+#### :boom: Breaking Change
+
+* Now all extra classes that were added by using `appendToRootClasses` added to the start of the declaration
+
 ## v3.0.0-rc.56 (2020-08-06)
 
 #### :bug: Bug Fix

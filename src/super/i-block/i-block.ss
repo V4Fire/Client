@@ -64,7 +64,7 @@
 	 */
 	- block appendToRootClasses(value)
 		- if rootAttrs[':class']
-			? rootAttrs[':class'] += '.concat((' + value + ') || [])'
+			? rootAttrs[':class'] += '((' + value + ') || []).concat(' + rootAttrs[':class'] + ')'
 
 		- else
 			rootAttrs[':class'] = value
