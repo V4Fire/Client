@@ -11,8 +11,10 @@
  * @packageDocumentation
  */
 
-import { wrapAsDelegateHandler } from 'core/dom';
+import { wrapAsDelegateHandler, inViewFactory, InitOptions, InViewAdapter } from 'core/dom';
+
 import { ComponentElement } from 'core/component';
+import { AsyncOptions } from 'core/async';
 
 import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
@@ -20,7 +22,7 @@ import Friend from 'super/i-block/modules/friend';
 
 import { wait } from 'super/i-block/modules/decorators';
 import { componentRgxp } from 'super/i-block/modules/dom/const';
-import { ElCb } from 'super/i-block/modules/dom/interface';
+import { ElCb, inViewInstanceStore } from 'super/i-block/modules/dom/interface';
 
 export * from 'super/i-block/modules/dom/const';
 export * from 'super/i-block/modules/dom/interface';
@@ -268,5 +270,34 @@ export default class DOM extends Friend {
 			ctx: resolvedCtx,
 			component: resolvedCtx
 		});
+	}
+
+	/**
+	 * Watch for node intersects the viewport with `inView` module
+	 *
+	 * @param node
+	 * @param options
+	 * @param [asyncOptions]
+	 */
+	watchForNodeIntersection(node: Element, options: InitOptions, asyncOptions?: AsyncOptions): void {
+		const
+			{ctx} = this,
+			inViewInstance = this.getLocalInView();
+
+		inViewInstance.observe(node, options);
+		ctx.async.worker(() => inViewInstance.remove(node, options.threshold), asyncOptions);
+	}
+	/**
+	 * Returns a component in-view instance
+	 */
+	getLocalInView(): InViewAdapter {
+		const
+			currentInstance = <CanUndef<InViewAdapter>>this.ctx.tmp[inViewInstanceStore];
+
+		if (currentInstance != null) {
+			return currentInstance;
+		}
+
+		return this.ctx.tmp[inViewInstanceStore] = inViewFactory();
 	}
 }

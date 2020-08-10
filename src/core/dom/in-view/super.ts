@@ -21,7 +21,7 @@ import {
 	Size,
 	UnobserveOptions
 
-} from 'core/component/directives/in-view/interface';
+} from 'core/dom/in-view/interface';
 
 export const
 	$$ = symbolGenerator();

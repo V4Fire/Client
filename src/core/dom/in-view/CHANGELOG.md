@@ -9,12 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.60 (2020-08-12)
-
-#### :house: Internal
-
-* Moved to `core/dom/in-view`
-
 ## v3.0.0-rc.51 (2020-08-04)
 
 #### :bug: Bug Fix

@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.60 (2020-08-12)
+
+#### :rocket: New Feature
+
+* [Added `watchForIntersection`, `getLocalInView` methods to `super/i-block/modules/dom`](https://github.com/V4Fire/Client/issues/195)
+
+#### :house: Internal
+
+* [Moved `core/component/directives/in-view` into `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
+
 ## v3.0.0-rc.59 (2020-08-10)
 
 #### :rocket: New Feature

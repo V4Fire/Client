@@ -30,5 +30,5 @@ module.exports = [
 	'--name b-button --suit demo',
 
 	// in-view
-	'--name b-dummy --test-entry core/component/directives/in-view/test'
+	'--name b-dummy --test-entry core/dom/in-view/test'
 ];

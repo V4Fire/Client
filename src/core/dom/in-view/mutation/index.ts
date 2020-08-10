@@ -17,7 +17,7 @@ import {
 	InitOptions,
 	UnobserveOptions
 
-} from 'core/component/directives/in-view/interface';
+} from 'core/dom/in-view/interface';
 
 import {
 
@@ -27,10 +27,10 @@ import {
 	isElementInView,
 	isElementVisible
 
-} from 'core/component/directives/in-view/mutation/helpers';
+} from 'core/dom/in-view/mutation/helpers';
 
-import Super from 'core/component/directives/in-view/super';
-import { isInView } from 'core/component/directives/in-view/helpers';
+import Super from 'core/dom/in-view/super';
+import { isInView } from 'core/dom/in-view/helpers';
 
 export const
 	$$ = symbolGenerator();
