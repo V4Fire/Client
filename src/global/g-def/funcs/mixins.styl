@@ -152,3 +152,29 @@ stretch-layer($position, $zIndexPos = "modal")
 	bottom 0
 	right 0
 	zIndex($zIndexPos)
+
+/**
+ * Generates rules from object properties
+ *
+ * @param {Object} $opts
+ * @param {boolean=} $normalize
+ */
+interpolate-props($opts, $normalize = true)
+	if type($opts) == "object"
+		for $key, $val in $opts
+			$value = type($val) == "string" ? convert($val) : $val
+			{$normalize ? dasherize($key): $key} $value
+
+/**
+ * Generates a path from the specified sequence
+ *
+ * @param {!Array<string>} $arr
+ *
+ * @example
+ * ```styl
+ * // "foo.bar.bla"
+ * path(foo bar bla)
+ * ```
+ */
+path($arr)
+	join(".", $arr)
