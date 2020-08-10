@@ -111,7 +111,7 @@ module.exports = (page) => {
 			it('if initial loading in progress', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {chunkSize: 10, sleep: 1000}};
+					ctx.request = {get: {chunkSize: 10, sleep: 500}};
 				});
 
 				await h.bom.waitForIdleCallback(page);
@@ -123,7 +123,7 @@ module.exports = (page) => {
 			it('if the second batch of data loading in progress', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 1000}};
+					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 500}};
 					ctx.chunkSize = 10;
 				});
 
@@ -153,7 +153,7 @@ module.exports = (page) => {
 			it('if all data were loaded after the second batch load', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 1000}};
+					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 500}};
 					ctx.shouldStopRequest = ({data}) => data.length === 20;
 					ctx.chunkSize = 10;
 				});
@@ -204,7 +204,7 @@ module.exports = (page) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.shouldStopRequest = ({data}) => data.length === 80;
 					ctx.request = {get: {total: 80, chunkSize: 40, id: Math.random()}};
-					ctx.chunkSize = 10;
+					ctx.chunkSize = 20;
 
 					return new Promise((res) => {
 						ctx.localEmitter.on('localState.ready', res);
@@ -217,12 +217,12 @@ module.exports = (page) => {
 					renders = 1;
 
 				const
-					totalRenders = 8;
+					totalRenders = 4;
 
 				while (renders < totalRenders) {
 					await h.dom.waitForRef(nodes.renderNextWithSlot, 'renderNext');
 					await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
-					await h.dom.waitForEl(containers.renderNextWithSlot, `section:nth-child(${(renders * 10) + 1})`);
+					await h.dom.waitForEl(containers.renderNextWithSlot, `section:nth-child(${(renders * 20) + 1})`);
 					await h.bom.waitForIdleCallback(page);
 					await h.bom.waitForRAF(page);
 
@@ -239,7 +239,7 @@ module.exports = (page) => {
 					});
 
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), failOn: 0, sleep: 1000}};
+					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), failOn: 0, sleep: 500}};
 					ctx.chunkSize = 10;
 
 					return p;
@@ -252,7 +252,7 @@ module.exports = (page) => {
 			it('if an error appears on the second data batch loading', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, sleep: 1000}};
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, sleep: 500}};
 					ctx.chunkSize = 10;
 				});
 
@@ -377,7 +377,7 @@ module.exports = (page) => {
 
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 0, failCount: 1, sleep: 1000}};
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 0, failCount: 1, sleep: 500}};
 					ctx.chunkSize = 10;
 				});
 
@@ -393,7 +393,7 @@ module.exports = (page) => {
 			it('if there was an error on the second data batch loading, but after retrying all fine', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, failCount: 1, sleep: 1000}};
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, failCount: 1, sleep: 500}};
 					ctx.chunkSize = 10;
 				});
 
