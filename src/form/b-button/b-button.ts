@@ -101,7 +101,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly preIcon?: string;
 
 	/**
-	 * Component for .preIcon
+	 * Name of the used component to show `preIcon`
 	 * @default `'b-icon'`
 	 */
 	@prop({type: String, required: false})
@@ -114,7 +114,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly icon?: string;
 
 	/**
-	 * Component for .icon
+	 * Name of the used component to show `icon`
 	 * @default `'b-icon'`
 	 */
 	@prop({type: String, required: false})
