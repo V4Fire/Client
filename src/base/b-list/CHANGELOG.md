@@ -20,6 +20,7 @@ Changelog
 
 * Fixed ESLint warnings
 * Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
+* Now `Item` extends from `Dictionary`
 
 #### :nail_care: Polish
 

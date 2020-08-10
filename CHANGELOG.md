@@ -48,6 +48,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `bList`:
   * Fixed ESLint warnings `bList`
   * Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
+  * Now `Item` extends from `Dictionary`
 
 * `bIcon`:
   * Removed dead props: `hint`, `hintPos`

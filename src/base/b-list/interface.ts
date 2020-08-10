@@ -8,7 +8,7 @@
 
 import { HintPosition } from 'global/g-hint/interface';
 
-export interface Item {
+export interface Item extends Dictionary {
 	/**
 	 * Item label text
 	 */
