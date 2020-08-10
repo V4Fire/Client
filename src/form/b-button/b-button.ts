@@ -83,7 +83,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly type: ButtonType = 'button';
 
 	/**
-	 * Connected form id
+	 * Connected form identifier
 	 */
 	@prop({type: String, required: false})
 	readonly form?: string;
@@ -95,31 +95,34 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly autofocus?: boolean;
 
 	/**
-	 * Icon before text
+	 * Icon to show before a button text
 	 */
 	@prop({type: String, required: false})
 	readonly preIcon?: string;
 
 	/**
 	 * Component for .preIcon
+	 * @default `'b-icon'`
 	 */
 	@prop({type: String, required: false})
 	readonly preIconComponent?: string;
 
 	/**
-	 * Icon after text
+	 * Icon to show after a button text
 	 */
 	@prop({type: String, required: false})
 	readonly icon?: string;
 
 	/**
 	 * Component for .icon
+	 * @default `'b-icon'`
 	 */
 	@prop({type: String, required: false})
 	readonly iconComponent?: string;
 
 	/**
-	 * Component for a progress icon
+	 * Component to show "in-progress" state
+	 * @default `'b-progress-icon'`
 	 */
 	@prop({type: String, required: false})
 	readonly progressIcon?: string;

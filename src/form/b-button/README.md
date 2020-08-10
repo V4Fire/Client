@@ -104,7 +104,7 @@ Also, these icons can be provided by props.
 < b-button :icon = 'expand'
   Click on me!
 
-< b-button :icon = 'expand' | :iconComponent = 'bCustomIcon'
+< b-button :icon = 'expand' | :iconComponent = 'b-custom-icon'
   Click on me!
 
 < b-button
