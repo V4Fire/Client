@@ -32,6 +32,20 @@ export * from 'super/i-block/modules/dom/interface';
  */
 export default class DOM extends Friend {
 	/**
+	 * Returns a component in-view instance
+	 */
+	get localInView(): InViewAdapter {
+		const
+			currentInstance = <CanUndef<InViewAdapter>>this.ctx.tmp[inViewInstanceStore];
+
+		if (currentInstance != null) {
+			return currentInstance;
+		}
+
+		return this.ctx.tmp[inViewInstanceStore] = inViewFactory();
+	}
+
+	/**
 	 * Takes a string identifier and returns a new identifier that is connected to the component.
 	 * This method should use to generate id attributes for DOM nodes.
 	 *
@@ -282,22 +296,9 @@ export default class DOM extends Friend {
 	watchForNodeIntersection(node: Element, options: InitOptions, asyncOptions?: AsyncOptions): void {
 		const
 			{ctx} = this,
-			inViewInstance = this.getLocalInView();
+			inViewInstance = this.localInView;
 
 		inViewInstance.observe(node, options);
 		ctx.async.worker(() => inViewInstance.remove(node, options.threshold), asyncOptions);
-	}
-	/**
-	 * Returns a component in-view instance
-	 */
-	getLocalInView(): InViewAdapter {
-		const
-			currentInstance = <CanUndef<InViewAdapter>>this.ctx.tmp[inViewInstanceStore];
-
-		if (currentInstance != null) {
-			return currentInstance;
-		}
-
-		return this.ctx.tmp[inViewInstanceStore] = inViewFactory();
 	}
 }
