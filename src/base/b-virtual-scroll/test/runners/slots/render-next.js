@@ -235,7 +235,7 @@ module.exports = (page) => {
 			it('if an error appears on the initial loading', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					const p = new Promise((res) => {
-						ctx.localEmitter.on('localState.error', res);
+						ctx.watch(':onRequestError', res);
 					});
 
 					ctx.dataProvider = 'demo.Pagination';
