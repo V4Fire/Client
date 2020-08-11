@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.59 (2020-08-10)
+
+#### :rocket: New Feature
+
+* [Added ability to render data manually `bVirtualScroll`](https://github.com/V4Fire/Client/issues/202)
+
+#### :nail_care: Polish
+
+* Improved documentation `bVirtualScroll`
+
 ## v3.0.0-rc.58 (2020-08-07)
 
 #### :house: Internal

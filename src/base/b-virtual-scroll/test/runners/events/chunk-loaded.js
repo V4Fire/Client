@@ -169,7 +169,7 @@ module.exports = (page) => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.chunkSize = 10;
-					ctx.request = {get: {id: 'uniq', hunkSize: 12, total: 12, additionalData: {size: 12}}};
+					ctx.request = {get: {id: 'uniq', chunkSize: 12, total: 12, additionalData: {size: 12}}};
 				});
 
 				await h.dom.waitForEl(container, 'section');
