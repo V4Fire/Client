@@ -91,3 +91,5 @@ export interface Item extends Dictionary {
 	 */
 	attrs?: Dictionary;
 }
+
+export type Items = Item[];
