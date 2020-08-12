@@ -9,21 +9,31 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.59 (2020-08-10)
+
+#### :rocket: New Feature
+
+* [Added ability to render data manually](https://github.com/V4Fire/Client/issues/202)
+
+#### :nail_care: Polish
+
+* Improved documentation
+
 ## v3.0.0-rc.39 (2020-07-22)
 
 #### :rocket: New Feature
 
-* [Added life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
+* [Added life cycle events](https://github.com/V4Fire/Client/issues/205)
 
 #### :bug: Bug Fix
 
-* [Fixed an issue when data from `lastLoadedData` and `lastLoadedChunk.normalized` aren't synchronized `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
-* [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
+* [Fixed an issue when data from `lastLoadedData` and `lastLoadedChunk.normalized` aren't synchronized](https://github.com/V4Fire/Client/issues/281)
+* [Fixed `lastLoadedChunk.raw` returns undefined](https://github.com/V4Fire/Client/issues/267)
 
 #### :house: Internal
 
 * [Refactoring of tests](https://github.com/V4Fire/Client/pull/293)
-* [Fixed ESLint warnings `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings](https://github.com/V4Fire/Client/pull/293)
 
 ## v3.0.0-rc.31 (2020-06-17)
 

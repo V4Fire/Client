@@ -48,3 +48,10 @@
 				:style = {display: 'none'}
 			.
 				+= self.slot('done')
+
+			< .&__render-next &
+				ref = renderNext |
+				v-if = vdom.getSlot('renderNext') |
+				:style = {display: 'none'}
+			.
+				+= self.slot('renderNext')
