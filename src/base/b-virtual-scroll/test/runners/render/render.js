@@ -202,6 +202,21 @@ module.exports = (page) => {
 
 				expect(await getContainerChildCount()).toBe(chunkSize);
 			});
+
+			it('renders all data if `shouldStopRequest` returns true', async () => {
+				await component.evaluate((ctx) => {
+					ctx.dataProvider = 'demo.Pagination';
+					ctx.chunkSize = 10;
+					ctx.request = {get: {chunkSize: 40, total: 80, id: Math.random(), delay: 100}};
+					ctx.shouldStopRequest = ({data}) => data.length === 80;
+				});
+
+				const
+					checkFn = async () => await getContainerChildCount() === 80;
+
+				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
+				expect(await getContainerChildCount()).toBe(80);
+			});
 		});
 
 		describe('without `options` and` dataProvider` specified', () => {

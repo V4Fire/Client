@@ -37,10 +37,15 @@ export default {
 					i: 0,
 					requestNumber: 0,
 					totalSent: 0,
+					failCount: 0,
 					...query
 				};
 
-				if (Object.isNumber(query.failOn) && query.failOn === state.requestNumber) {
+				const
+					isFailCountNotReached = query.failCount != null ? state.failCount <= query.failCount : true;
+
+				if (Object.isNumber(query.failOn) && query.failOn === state.requestNumber && isFailCountNotReached) {
+					state.failCount++;
 					res.status = 500;
 					return undefined;
 				}

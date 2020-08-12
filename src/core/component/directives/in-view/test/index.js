@@ -249,16 +249,18 @@ module.exports = async (page, params) => {
 			});
 
 			it('suspending first observable by the group doesn\'t fire a callback, second observable without group fire a callback', async () => {
+				await page.evaluate(() => globalThis.tmp = {});
+
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
-						callback: () => globalThis.tmp = 1,
+						callback: () => globalThis.tmp[1] = true,
 						delay: 200,
 						threshold: 0.7,
 						group: 'test'
 					});
 
 					ctx.observe(globalThis.target, {
-						callback: () => globalThis.tmp = 2,
+						callback: () => globalThis.tmp[2] = true,
 						delay: 100,
 						threshold: 0.8
 					});
@@ -266,8 +268,10 @@ module.exports = async (page, params) => {
 					setTimeout(() => ctx.suspend('test'), 0);
 				});
 
-				await delay(300);
-				expect(await page.evaluate(() => globalThis.tmp)).toBe(2);
+				await delay(200);
+				await page.waitForFunction('globalThis.tmp[2] === true');
+
+				expect(await page.evaluate(() => globalThis.tmp)).toEqual({2: true});
 			});
 
 			it('suspending/unsuspending with `callback`: fires the callback', async () => {
