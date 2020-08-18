@@ -291,17 +291,16 @@ export default class DOM extends Friend {
 	 *
 	 * @param node
 	 * @param options
-	 * @param [asyncOptions]
+	 * @param asyncOptions
 	 */
-	watchForNodeIntersection(node: Element, options: InitOptions, asyncOptions?: AsyncOptions): Function | false {
+	watchForNodeIntersection(node: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
 		const
 			{ctx} = this,
 			inViewInstance = this.localInView;
 
-		if (inViewInstance.observe(node, options) === false) {
-			return false;
-		}
+		const destructor = ctx.async.worker(() => inViewInstance.remove(node, options.threshold), asyncOptions);
+		inViewInstance.observe(node, options);
 
-		return ctx.async.worker(() => inViewInstance.remove(node, options.threshold), asyncOptions);
+		return destructor;
 	}
 }
