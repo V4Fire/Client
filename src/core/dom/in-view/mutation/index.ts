@@ -210,15 +210,16 @@ export default class InView extends Super {
 				for (let i = 0; i < elements.length; i++) {
 					const
 						el = elements[i],
-						{observable} = el;
+						{observable} = el,
+						{isConnected} = observable.node;
 
 					const
 						isElementIn = isElementInView(el, rootRect, observable.threshold);
 
-					if (isElementIn && !observable.isLeaving) {
+					if (isConnected && isElementIn && !observable.isLeaving) {
 						this.onObservableIn(observable);
 
-					} else if (!isElementIn) {
+					} else if (!isConnected || !isElementIn) {
 						this.onObservableOut(observable);
 					}
 
