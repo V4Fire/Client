@@ -338,10 +338,10 @@ module.exports = async (page, params) => {
 
 					globalThis.target.remove();
 
-					setTimeout(() => globalThis.tmp = 2, 200);
+					return new Promise((res) => setTimeout(res, 300));
 				});
 
-				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
+				expect(await page.evaluate(() => globalThis.tmp)).toBe(0);
 			});
 		});
 	});
