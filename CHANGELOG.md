@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* [Added `watchForIntersection`, `getLocalInView` methods to `super/i-block/modules/dom`](https://github.com/V4Fire/Client/issues/195)
+* [Added `watchForIntersection`, `localInView` methods to `super/i-block/modules/dom`](https://github.com/V4Fire/Client/issues/195)
 
 #### :house: Internal
 
