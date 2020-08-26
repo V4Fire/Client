@@ -476,7 +476,7 @@ declare namespace BrowserTests {
 		 * @param page
 		 * @param options
 		 */
-		scrollBy(page: Playwright.Page, options: ScrollOptions): Promise<void>;
+		scrollBy(page: Playwright.Page, options: ScrollToOptions): Promise<void>;
 
 		/**
 		 * @param page
