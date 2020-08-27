@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.60 (2020-08-31)
+
+#### :rocket: New Feature
+
+* Added option `destroyIfComponent` in `i-block/dom/replaceWith`, `i-block/dom/appendChild`
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :house: Internal

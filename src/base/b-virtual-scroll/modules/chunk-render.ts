@@ -169,7 +169,10 @@ export default class ChunkRender extends Friend {
 			fragment = document.createDocumentFragment();
 
 		for (let i = 0; i < nodes.length; i++) {
-			this.dom.appendChild(fragment, nodes[i], this.asyncGroup);
+			this.dom.appendChild(fragment, nodes[i], {
+				group: this.asyncGroup,
+				destroyIfComponent: true
+			});
 		}
 
 		this.async.requestAnimationFrame(() => {
