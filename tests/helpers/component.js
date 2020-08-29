@@ -153,8 +153,28 @@ class Component {
 	}
 
 	/**
+	 * @see [[BrowserTests.Component.render]]
+	 */
+	async render(page, componentName, components, selectorToInject) {
+		const
+			root = await this.getRoot(page);
+
+		components = [].concat(components);
+		selectorToInject = selectorToInject ?? '#root-component';
+
+		await root.evaluate((ctx, componentName, components, selectorToInject) => {
+			const
+				vNodes = components.map(({attrs, content}) => ctx.createElement(componentName, attrs, content)),
+				nodes = ctx.vdom.render(vNodes);
+
+			document.querySelector(selectorToInject).append(nodes);
+
+		}, [componentName, components, selectorToInject]);
+	}
+
+	/**
 	 * Parent class
-	 * @type  {BrowserTests.Helpers}
+	 * @type {BrowserTests.Helpers}
 	 */
 	#parent;
 }
