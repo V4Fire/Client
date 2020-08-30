@@ -218,7 +218,7 @@ module.exports = (page) => {
 			it('if all data were loaded after the second batch load', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 500}};
+					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 50}};
 					ctx.shouldStopRequest = ({data}) => data.length === 20;
 					ctx.chunkSize = 10;
 				});
@@ -315,15 +315,15 @@ module.exports = (page) => {
 			});
 
 			it('if an error appears on the second data batch loading', async () => {
-				await components.renderNextWithSlot.evaluate((ctx) => {
-					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, sleep: 500}};
-					ctx.chunkSize = 10;
-				});
-
 				const requestErrorPromise = components.renderNextWithSlot.evaluate((ctx) => new Promise((res) => {
 					ctx.watch(':requestError', res);
 				}));
+
+				await components.renderNextWithSlot.evaluate((ctx) => {
+					ctx.dataProvider = 'demo.Pagination';
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, sleep: 50}};
+					ctx.chunkSize = 10;
+				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
 				await h.dom.waitForRef(nodes.renderNextWithSlot, 'renderNext');
@@ -442,7 +442,7 @@ module.exports = (page) => {
 
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 0, failCount: 1, sleep: 500}};
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 0, failCount: 1, sleep: 50}};
 					ctx.chunkSize = 10;
 				});
 
@@ -456,17 +456,17 @@ module.exports = (page) => {
 			});
 
 			it('if there was an error on the second data batch loading, but after retrying all fine', async () => {
+				const requestErrorPromise = components.renderNextWithSlot.evaluate((ctx) => new Promise((res) => {
+					ctx.watch(':requestError', res);
+				}));
+
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, failCount: 1, sleep: 500}};
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, failCount: 1, sleep: 50}};
 					ctx.chunkSize = 10;
 				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
-
-				const requestErrorPromise = components.renderNextWithSlot.evaluate((ctx) => new Promise((res) => {
-					ctx.watch(':requestError', res);
-				}));
 
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
 				await requestErrorPromise;
