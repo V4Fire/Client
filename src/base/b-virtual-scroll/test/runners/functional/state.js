@@ -160,7 +160,7 @@ module.exports = (page) => {
 				});
 
 				await h.dom.waitForEl(container, 'section', {to: 'unmount'});
-				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 200});
+				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1000});
 
 				const current = await getCurrentComponentState();
 				expect(current).toEqual(expected);
