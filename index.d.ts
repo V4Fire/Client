@@ -36,6 +36,14 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
 
+interface RenderOptions {
+	/** @default `rootSelector` */
+	selectorToInject: string;
+
+	/** @default `.i-block-helper` */
+	rootSelector: string;
+}
+
 interface RenderParams {
 	attrs: Dictionary;
 	content: Dictionary;

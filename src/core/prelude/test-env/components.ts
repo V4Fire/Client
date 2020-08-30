@@ -11,11 +11,10 @@ import iStaticPage, { ComponentElement } from 'super/i-static-page/i-static-page
 globalThis.renderComponents = (
 	componentName: string,
 	scheme: RenderScheme,
-	selectorToInject: string = '.i-block-helper'
+	options: RenderOptions
 ) => {
-
 	const
-		rootEl = document.querySelector<ComponentElement<iStaticPage>>('.i-block-helper'),
+		rootEl = document.querySelector<ComponentElement<iStaticPage>>(rootSelector),
 		ctx = rootEl!.component!.unsafe;
 
 	const buildScopedSlots = (content) => {
