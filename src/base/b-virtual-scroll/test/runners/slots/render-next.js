@@ -36,6 +36,8 @@ module.exports = (page) => {
 	};
 
 	beforeEach(async () => {
+		await h.utils.reloadAndWaitForIdle(page);
+
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
 
