@@ -82,6 +82,8 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-virtual-scroll', scheme);
 		});
 
+		await h.bom.waitForIdleCallback(page);
+
 		const
 			allComponents = await page.$$('.b-virtual-scroll');
 

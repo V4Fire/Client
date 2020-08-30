@@ -89,6 +89,8 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-virtual-scroll', scheme);
 		});
 
+		await h.bom.waitForIdleCallback(page);
+
 		for (let keys = Object.keys(components), i = 0; i < keys.length; i++) {
 			const key = keys[i];
 

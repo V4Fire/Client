@@ -59,8 +59,8 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-virtual-scroll', scheme);
 		});
 
-		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 
 		node = await h.dom.waitForEl(page, '#target');
 		component = await h.component.waitForComponent(page, '#target');
