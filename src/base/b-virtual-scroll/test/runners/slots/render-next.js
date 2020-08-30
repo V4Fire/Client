@@ -83,6 +83,7 @@ module.exports = (page) => {
 		});
 
 		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 
 		const
 			allComponents = await page.$$('.b-virtual-scroll');
