@@ -160,7 +160,7 @@ declare namespace BrowserTests {
 
 		/**
 		 * Time after which the function stops trying to find an element on a page and returns `undefined`
-		 * @default `2000`
+		 * @default `3500`
 		 */
 		timeout?: number;
 
