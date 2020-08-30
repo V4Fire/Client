@@ -15,9 +15,9 @@ declare var
 	 *
 	 * @param componentName
 	 * @param scheme
-	 * @param selectorToInject
+	 * @param options
 	 */
-	renderComponents: (componentName: string, scheme: RenderScheme, selectorToInject?: string) => void,
+	renderComponents: (componentName: string, scheme: RenderScheme, options?: RenderOptions) => void,
 
 	/**
 	 * Removes all components created via `globalThis.renderComponents`
@@ -38,10 +38,10 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 
 interface RenderOptions {
 	/** @default `rootSelector` */
-	selectorToInject: string;
+	selectorToInject?: string;
 
 	/** @default `.i-block-helper` */
-	rootSelector: string;
+	rootSelector?: string;
 }
 
 interface RenderParams {

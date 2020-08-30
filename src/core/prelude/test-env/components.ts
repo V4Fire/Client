@@ -11,10 +11,22 @@ import iStaticPage, { ComponentElement } from 'super/i-static-page/i-static-page
 globalThis.renderComponents = (
 	componentName: string,
 	scheme: RenderScheme,
-	options: RenderOptions
+	options?: RenderOptions | string
 ) => {
+	if (Object.size(options) === 0) {
+		options = {rootSelector: '.i-block-helper'};
+
+	} else if (Object.isString(options)) {
+		options = {rootSelector: '.i-block-helper'};
+	}
+
+	const {selectorToInject, rootSelector} = {
+		selectorToInject: options!.rootSelector,
+		...options
+	};
+
 	const
-		rootEl = document.querySelector<ComponentElement<iStaticPage>>(rootSelector),
+		rootEl = document.querySelector<ComponentElement<iStaticPage>>(<string>rootSelector),
 		ctx = rootEl!.component!.unsafe;
 
 	const buildScopedSlots = (content) => {
@@ -41,7 +53,7 @@ globalThis.renderComponents = (
 	const
 		nodes = ctx.vdom.render(vNodes);
 
-	document.querySelector(selectorToInject)?.append(...nodes);
+	document.querySelector(<string>selectorToInject)?.append(...nodes);
 
 	globalThis.__createdComponents = globalThis.__createdComponents ?? new Set();
 	nodes.forEach((node) => globalThis.__createdComponents.add(node));
