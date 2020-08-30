@@ -270,9 +270,11 @@ declare namespace BrowserTests {
 
 		/**
 		 * Returns `root` component
+		 *
 		 * @param ctx
+		 * @param selector – by default `.i-block-helper'
 		 */
-		getRoot(ctx: PlaywrightElContext): Promise<CanUndef<Playwright.JSHandle>>;
+		getRoot(ctx: PlaywrightElContext, selector?: string): Promise<CanUndef<Playwright.JSHandle>>;
 
 		/**
 		 * Waits until the component has the specified status and returns the component

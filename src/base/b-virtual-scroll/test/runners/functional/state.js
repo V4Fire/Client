@@ -1,3 +1,4 @@
+/* eslint-disable no-trailing-spaces */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -23,35 +24,6 @@ module.exports = (page) => {
 		component,
 		node,
 		container;
-
-	beforeEach(async () => {
-		await page.evaluate(() => {
-			globalThis.removeCreatedComponents();
-
-			const baseAttrs = {
-				theme: 'demo',
-				option: 'section',
-				optionProps: ({current}) => ({'data-index': current.i})
-			};
-
-			const scheme = [
-				{
-					attrs: {
-						...baseAttrs,
-						id: 'target'
-					}
-				}
-			];
-
-			globalThis.renderComponents('b-virtual-scroll', scheme);
-		});
-
-		await h.bom.waitForIdleCallback(page);
-
-		component = await h.component.waitForComponent(page, '#target');
-		node = await h.dom.waitForEl(page, '#target');
-		container = await h.dom.waitForRef(node, 'container');
-	});
 
 	const
 		getArray = (offset = 0, length = 12) => ({data: Array.from(Array(length), (v, i) => ({i: i + offset}))}),
@@ -92,6 +64,36 @@ module.exports = (page) => {
 	}, requestProps);
 
 	describe('b-virtual-scroll getCurrentDataState', () => {
+		beforeEach(async () => {
+			await page.evaluate(() => {
+				globalThis.removeCreatedComponents();
+	
+				const baseAttrs = {
+					theme: 'demo',
+					option: 'section',
+					optionProps: ({current}) => ({'data-index': current.i})
+				};
+	
+				const scheme = [
+					{
+						attrs: {
+							...baseAttrs,
+							id: 'target'
+						}
+					}
+				];
+	
+				globalThis.renderComponents('b-virtual-scroll', scheme);
+			});
+
+			await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
+			await h.bom.waitForIdleCallback(page);
+
+			component = await h.component.waitForComponent(page, '#target');
+			node = await h.dom.waitForEl(page, '#target');
+			container = await h.dom.waitForRef(node, 'container');
+		});
+
 		describe('returns the correct value', () => {
 			it('if there is no `dataProvider`', async () => {
 				const
@@ -99,7 +101,7 @@ module.exports = (page) => {
 					current = await getCurrentComponentState();
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 
 			it('after loading the first chunk', async () => {
@@ -121,7 +123,7 @@ module.exports = (page) => {
 				const current = await getCurrentComponentState();
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 
 			it('after loading the second chunk', async () => {
@@ -146,7 +148,7 @@ module.exports = (page) => {
 				const current = await getCurrentComponentState();
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 
 			it('after re-initialization and without `dataProvider`', async () => {
@@ -167,7 +169,7 @@ module.exports = (page) => {
 				const current = await getCurrentComponentState();
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 
 			it('after re-initialization and with `dataProvider`', async () => {
@@ -193,7 +195,7 @@ module.exports = (page) => {
 				const current = await getCurrentComponentState();
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 
 			it('if for the full loading it was necessary to go several times to `dataProvider`', async () => {
@@ -220,7 +222,7 @@ module.exports = (page) => {
 					data: undefined
 				});
 
-				expect(currentState.data).toEqual(expected.data);
+				expect(currentState.data.length).toEqual(expected.data.length);
 			});
 		});
 	});
@@ -236,7 +238,7 @@ module.exports = (page) => {
 					}));
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 
 			it('with `chunkRequest`', async () => {
@@ -248,7 +250,7 @@ module.exports = (page) => {
 					}, ctx.chunkRequest));
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 
 			it('with override params, `chunkRequest` and `chunkRender`', async () => {
@@ -263,8 +265,7 @@ module.exports = (page) => {
 				}, ctx.chunkRequest, ctx.chunkRender));
 
 				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data).toEqual(expected.data);
-
+				expect(current.data.length).toEqual(expected.data.length);
 			});
 		});
 	});

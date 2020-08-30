@@ -111,7 +111,7 @@ class Component {
 	 * @see [[BrowserTests.Component.waitForComponentStatus]]
 	 */
 	async waitForComponentStatus(ctx, selector, status) {
-		const component = await this.getComponentByQuery(ctx, selector);
+		const component = await this.waitForComponent(ctx, selector);
 
 		if (!component) {
 			return undefined;
