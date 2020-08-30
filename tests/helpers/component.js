@@ -75,7 +75,7 @@ class Component {
 	 * @see [[BrowserTests.Component.getRoot]]
 	 */
 	getRoot(ctx) {
-		return this.waitForComponent(ctx, '#root-component');
+		return this.waitForComponent(ctx, '.i-block-helper');
 	}
 
 	/**
@@ -150,26 +150,6 @@ class Component {
 		}
 
 		return this.getComponentByQuery(ctx, selector);
-	}
-
-	/**
-	 * @see [[BrowserTests.Component.render]]
-	 */
-	async render(page, componentName, components, selectorToInject) {
-		const
-			root = await this.getRoot(page);
-
-		components = [].concat(components);
-		selectorToInject = selectorToInject ?? '#root-component';
-
-		await root.evaluate((ctx, componentName, components, selectorToInject) => {
-			const
-				vNodes = components.map(({attrs, content}) => ctx.createElement(componentName, attrs, content)),
-				nodes = ctx.vdom.render(vNodes);
-
-			document.querySelector(selectorToInject).append(nodes);
-
-		}, [componentName, components, selectorToInject]);
 	}
 
 	/**

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 'use strict';
 
 /*!
@@ -57,6 +58,13 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```bash
 	 * npx gulp test:component:build --name b-button --client-output b-button --watch
 	 * ```
+	 *
+	 * If you prefer to create components at runtime – run with `dummy` component
+	 *
+	 * @example
+	 * ```bash
+	 * npx gulp test:component:build --name b-dummy
+	 * ```
 	 */
 	gulp.task('test:component:build', () => {
 		const
@@ -100,6 +108,14 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```bash
 	 * npx gulp test:component:run --name b-button --browsers ff,chrome
 	 * ```
+	 *
+	 * If you prefer to create components at runtime – run with `dummy` component,
+	 * make sure that you added component that you want dynamically render in `index.js` of the demo page.
+	 *
+	 * @example
+	 * ```bash
+	 * npx gulp test:component:run --name b-dummy --test-entry base/b-router/test'
+	 * ```
 	 */
 	gulp.task('test:component:run', async () => {
 		const
@@ -122,7 +138,8 @@ module.exports = function init(gulp = require('gulp')) {
 			'--headless': String,
 			'--client-name': String,
 			'--reinit-browser': String,
-			'--test-entry': String
+			'--test-entry': String,
+			'--runner': String
 		}, {permissive: true});
 
 		if (!args['--name']) {
@@ -266,7 +283,11 @@ module.exports = function init(gulp = require('gulp')) {
 			Object.assign(globalThis, jasmine.env);
 
 			console.log('\n-------------');
-			console.log(`Starting to test "${args['--name']}" on "${browserType}"`);
+			console.log('Starting to test');
+			console.log(`env component: ${args['--name']}`);
+			console.log(`test entry: ${args['--test-entry']}`);
+			console.log(`runner: ${args['--runner']}`);
+			console.log(`browser: ${browserType}`);
 			console.log('-------------\n');
 
 			return jasmine.env;
@@ -363,7 +384,11 @@ module.exports = function init(gulp = require('gulp')) {
 			buildMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
-			const c = cases[i];
+			let c = cases[i];
+
+			if (!c.includes('--name')) {
+				c = `${c} --name b-dummy`;
+			}
 
 			const args = arg({
 				'--suit': String,
@@ -433,7 +458,11 @@ module.exports = function init(gulp = require('gulp')) {
 			testMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
-			const c = cases[i];
+			let c = cases[i];
+
+			if (!c.includes('--name')) {
+				c = `${c} --name b-dummy`;
+			}
 
 			const args = arg({
 				'--suit': String,

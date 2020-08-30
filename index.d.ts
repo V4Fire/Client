@@ -8,6 +8,22 @@
 
 /// <reference types="@v4fire/core"/>
 
+// eslint-disable-next-line no-var
+declare var
+	/**
+	 * Renders specified components
+	 *
+	 * @param componentName
+	 * @param scheme
+	 * @param selectorToInject
+	 */
+	renderComponents: (componentName: string, scheme: RenderScheme, selectorToInject?: string) => void,
+
+	/**
+	 * Removes all components created via `globalThis.renderComponents`
+	 */
+	removeCreatedComponents: () => void;
+
 declare const GLOBAL_NONCE: unknown;
 declare const MODULE_DEPENDENCIES: string;
 declare const PATH: Dictionary<CanUndef<string>>;
@@ -19,6 +35,13 @@ declare const DS: CanUndef<Dictionary>;
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
+
+interface RenderParams {
+	attrs: Dictionary;
+	content: Dictionary;
+}
+
+type RenderScheme = RenderParams[];
 
 interface HTMLImageElement {
 	readonly init: Promise<this>;

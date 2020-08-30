@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.60 (2020-08-31)
+
+#### :house: Internal
+
+* Improved tests performance
+
 ## v3.0.0-rc.59 (2020-08-10)
 
 #### :rocket: New Feature

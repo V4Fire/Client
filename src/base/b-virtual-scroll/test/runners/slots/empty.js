@@ -32,6 +32,63 @@ module.exports = (page) => {
 	};
 
 	beforeAll(async () => {
+		await page.evaluate(() => {
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const slots = {
+				empty: {
+					tag: 'div',
+					attrs: {
+						id: 'empty',
+						'data-test-ref': 'empty'
+					},
+					content: 'Empty'
+				}
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						dataProvider: 'demo.Pagination',
+						dbConverter: ({data}) => ({data: data.splice(0, 4)}),
+						id: 'emptyNoSlot'
+					}
+				},
+				{
+					attrs: {
+						...baseAttrs,
+						dataProvider: 'demo.Pagination',
+						dbConverter: ({data}) => ({data: data.splice(0, 4)}),
+						request: {get: {chunkSize: 8, total: 8}},
+						id: 'emptyWithData'
+					},
+
+					content: {
+						empty: slots.empty
+					}
+				},
+				{
+					attrs: {
+						...baseAttrs,
+						dataProvider: 'demo.Pagination',
+						dbConverter: () => ({data: []}),
+						id: 'emptyWithSlot'
+					},
+
+					content: {
+						empty: slots.empty
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
 		for (let keys = Object.keys(components), i = 0; i < keys.length; i++) {
 			const key = keys[i];
 

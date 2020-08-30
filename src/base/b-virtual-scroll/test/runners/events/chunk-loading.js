@@ -25,7 +25,28 @@ module.exports = (page) => {
 		container;
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
 
 		component = await h.component.waitForComponent(page, '#target');
 		node = await h.dom.waitForEl(page, '#target');
@@ -37,7 +58,7 @@ module.exports = (page) => {
 	const setProps = (requestProps = {}) => component.evaluate((ctx, requestProps) => {
 		ctx.dataProvider = 'demo.Pagination';
 		ctx.chunkSize = 10;
-		ctx.request = {get: {chunkSize: 12, id: 'uniq', ...requestProps}};
+		ctx.request = {get: {chunkSize: 12, id: Math.random(), ...requestProps}};
 	}, requestProps);
 
 	describe('b-virtual-scroll chunkLoaded event', () => {
@@ -64,7 +85,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section');
 
 				const subscribePromise = subscribe();
-				await setProps({id: 'new-id'});
+				await setProps({id: Math.random()});
 
 				await expectAsync(subscribePromise).toBeResolvedTo(0);
 			});

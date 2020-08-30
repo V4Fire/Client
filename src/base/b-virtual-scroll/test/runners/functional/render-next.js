@@ -28,6 +28,29 @@ module.exports = (page) => {
 		getContainerChildCount = () => component.evaluate((ctx) => ctx.$refs.container.childElementCount);
 
 	beforeEach(async () => {
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
+
 		node = await h.dom.waitForEl(page, '#target');
 		component = await h.component.waitForComponent(page, '#target');
 		container = await h.dom.waitForRef(node, 'container');

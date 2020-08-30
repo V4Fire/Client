@@ -36,8 +36,54 @@ module.exports = (page) => {
 	};
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
-		const allComponents = await page.$$('.b-virtual-scroll');
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const slots = {
+				renderNext: {
+					tag: 'div',
+					attrs: {
+						id: 'renderNext',
+						'data-test-ref': 'renderNext'
+					}
+				}
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						dataProvider: 'demo.Pagination',
+						loadStrategy: 'manual',
+						id: 'renderNextNoSlot'
+					}
+				},
+
+				{
+					attrs: {
+						...baseAttrs,
+						dataProvider: 'demo.Pagination',
+						loadStrategy: 'manual',
+						id: 'renderNextWithSlot'
+					},
+
+					content: {
+						renderNext: slots.renderNext
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		const
+			allComponents = await page.$$('.b-virtual-scroll');
 
 		for (let i = 0; i < allComponents.length; i++) {
 			await allComponents[i].evaluate((ctx) => ctx.style.display = 'none');
@@ -67,8 +113,6 @@ module.exports = (page) => {
 				ctx.localEmitter.on('localState.ready', res);
 			});
 		});
-
-		await h.bom.waitForIdleCallback(page);
 	});
 
 	describe('b-virtual-scroll `renderNext` slot', () => {
@@ -262,7 +306,6 @@ module.exports = (page) => {
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
 				await h.dom.waitForRef(nodes.renderNextWithSlot, 'renderNext');
-
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
 				await requestErrorPromise;
 

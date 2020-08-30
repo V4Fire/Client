@@ -25,7 +25,28 @@ module.exports = (page) => {
 		container;
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
 
 		component = await h.component.waitForComponent(page, '#target');
 		node = await h.dom.waitForEl(page, '#target');
@@ -66,16 +87,19 @@ module.exports = (page) => {
 	const setProps = (requestProps = {}) => component.evaluate((ctx, requestProps) => {
 		ctx.dataProvider = 'demo.Pagination';
 		ctx.chunkSize = 10;
-		ctx.request = {get: {chunkSize: 12, id: 'uniq', ...requestProps}};
+		ctx.request = {get: {chunkSize: 12, id: Math.random(), ...requestProps}};
 		ctx.componentConverter = (v) => ({data: v.data});
 	}, requestProps);
 
 	describe('b-virtual-scroll getCurrentDataState', () => {
 		describe('returns the correct value', () => {
 			it('if there is no `dataProvider`', async () => {
-				const expected = getExpected({currentPage: 0, nextPage: 1});
+				const
+					expected = getExpected({currentPage: 0, nextPage: 1}),
+					current = await getCurrentComponentState();
 
-				expect(await getCurrentComponentState()).toEqual(expected);
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
 			});
 
 			it('after loading the first chunk', async () => {
@@ -94,7 +118,10 @@ module.exports = (page) => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
-				expect(await getCurrentComponentState()).toEqual(expected);
+				const current = await getCurrentComponentState();
+
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
 			});
 
 			it('after loading the second chunk', async () => {
@@ -116,7 +143,10 @@ module.exports = (page) => {
 				await h.scroll.scrollToBottom(page);
 				await h.dom.waitForEl(container, 'section:nth-child(11)');
 
-				expect(await getCurrentComponentState()).toEqual(expected);
+				const current = await getCurrentComponentState();
+
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
 			});
 
 			it('after re-initialization and without `dataProvider`', async () => {
@@ -134,7 +164,10 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 200});
 
-				expect(await getCurrentComponentState()).toEqual(expected);
+				const current = await getCurrentComponentState();
+
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
 			});
 
 			it('after re-initialization and with `dataProvider`', async () => {
@@ -153,11 +186,14 @@ module.exports = (page) => {
 				await setProps();
 				await h.dom.waitForEl(container, 'section');
 
-				await setProps({id: 'new-id'});
+				await setProps({id: Math.random()});
 				await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 				await h.dom.waitForEl(container, 'section', {to: 'mount'});
 
-				expect(await getCurrentComponentState()).toEqual(expected);
+				const current = await getCurrentComponentState();
+
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
 			});
 
 			it('if for the full loading it was necessary to go several times to `dataProvider`', async () => {
@@ -176,7 +212,15 @@ module.exports = (page) => {
 				await setProps({chunkSize: 4});
 				await h.dom.waitForEl(container, 'section');
 
-				expect(await getCurrentComponentState()).toEqual(expected);
+				const currentState = await getCurrentComponentState();
+
+					// For some reasons Fifefox return `-0` in data[0]
+				expect({...currentState, data: undefined}).toEqual({
+					...expected,
+					data: undefined
+				});
+
+				expect(currentState.data).toEqual(expected.data);
 			});
 		});
 	});
@@ -184,21 +228,27 @@ module.exports = (page) => {
 	describe('b-virtual-scroll getDataStateSnapshot', () => {
 		describe('returns the correct value', () => {
 			it('with `chunkRequest` and `chunkRender`', async () => {
-				const expected = getExpected();
+				const
+					expected = getExpected(),
+					current = await component.evaluate((ctx) => ctx.getDataStateSnapshot({
+						items: undefined,
+						itemsTillBottom: undefined
+					}));
 
-				expect(await component.evaluate((ctx) => ctx.getDataStateSnapshot({
-					items: undefined,
-					itemsTillBottom: undefined
-				}))).toEqual(expected);
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
 			});
 
 			it('with `chunkRequest`', async () => {
-				const expected = getExpected();
+				const
+					expected = getExpected(),
+					current = await component.evaluate((ctx) => ctx.getDataStateSnapshot({
+						items: undefined,
+						itemsTillBottom: undefined
+					}, ctx.chunkRequest));
 
-				expect(await component.evaluate((ctx) => ctx.getDataStateSnapshot({
-					items: undefined,
-					itemsTillBottom: undefined
-				}, ctx.chunkRequest))).toEqual(expected);
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
 			});
 
 			it('with override params, `chunkRequest` and `chunkRender`', async () => {
@@ -207,10 +257,14 @@ module.exports = (page) => {
 					nextPage: 2
 				});
 
-				expect(await component.evaluate((ctx) => ctx.getDataStateSnapshot({
+				const current = await component.evaluate((ctx) => ctx.getDataStateSnapshot({
 					items: undefined,
 					itemsTillBottom: undefined
-				}, ctx.chunkRequest, ctx.chunkRender))).toEqual(expected);
+				}, ctx.chunkRequest, ctx.chunkRender));
+
+				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
+				expect(current.data).toEqual(expected.data);
+
 			});
 		});
 	});
