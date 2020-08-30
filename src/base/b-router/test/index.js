@@ -1,4 +1,3 @@
-/* eslint-disable no-trailing-spaces */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -21,7 +20,7 @@ module.exports = async (page) => {
 
 				const
 					root = document.querySelector('.i-block-helper').component;
-	
+
 				const scheme = [
 					{
 						attrs: {
@@ -29,7 +28,7 @@ module.exports = async (page) => {
 						}
 					}
 				];
-	
+
 				globalThis.renderComponents('b-router', scheme);
 			});
 		});
