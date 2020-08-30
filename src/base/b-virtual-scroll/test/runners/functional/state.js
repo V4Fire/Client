@@ -63,37 +63,37 @@ module.exports = (page) => {
 		ctx.componentConverter = (v) => ({data: v.data});
 	}, requestProps);
 
-	describe('b-virtual-scroll getCurrentDataState', () => {
-		beforeEach(async () => {
-			await page.evaluate(() => {
-				globalThis.removeCreatedComponents();
-	
-				const baseAttrs = {
-					theme: 'demo',
-					option: 'section',
-					optionProps: ({current}) => ({'data-index': current.i})
-				};
-	
-				const scheme = [
-					{
-						attrs: {
-							...baseAttrs,
-							id: 'target'
-						}
+	beforeEach(async () => {
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
 					}
-				];
-	
-				globalThis.renderComponents('b-virtual-scroll', scheme);
-			});
+				}
+			];
 
-			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
-
-			component = await h.component.waitForComponent(page, '#target');
-			node = await h.dom.waitForEl(page, '#target');
-			container = await h.dom.waitForRef(node, 'container');
+			globalThis.renderComponents('b-virtual-scroll', scheme);
 		});
 
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
+
+		component = await h.component.waitForComponent(page, '#target');
+		node = await h.dom.waitForEl(page, '#target');
+		container = await h.dom.waitForRef(node, 'container');
+	});
+
+	describe('b-virtual-scroll getCurrentDataState', () => {
 		describe('returns the correct value', () => {
 			it('if there is no `dataProvider`', async () => {
 				const
@@ -121,9 +121,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section');
 
 				const current = await getCurrentComponentState();
-
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 
 			it('after loading the second chunk', async () => {
@@ -146,9 +144,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section:nth-child(11)');
 
 				const current = await getCurrentComponentState();
-
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 
 			it('after re-initialization and without `dataProvider`', async () => {
@@ -167,9 +163,7 @@ module.exports = (page) => {
 				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 200});
 
 				const current = await getCurrentComponentState();
-
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 
 			it('after re-initialization and with `dataProvider`', async () => {
@@ -193,9 +187,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section', {to: 'mount'});
 
 				const current = await getCurrentComponentState();
-
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 
 			it('if for the full loading it was necessary to go several times to `dataProvider`', async () => {
@@ -214,15 +206,8 @@ module.exports = (page) => {
 				await setProps({chunkSize: 4});
 				await h.dom.waitForEl(container, 'section');
 
-				const currentState = await getCurrentComponentState();
-
-					// For some reasons Fifefox return `-0` in data[0]
-				expect({...currentState, data: undefined}).toEqual({
-					...expected,
-					data: undefined
-				});
-
-				expect(currentState.data.length).toEqual(expected.data.length);
+				const current = await getCurrentComponentState();
+				expect(current).toEqual(expected);
 			});
 		});
 	});
@@ -237,8 +222,7 @@ module.exports = (page) => {
 						itemsTillBottom: undefined
 					}));
 
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 
 			it('with `chunkRequest`', async () => {
@@ -249,8 +233,7 @@ module.exports = (page) => {
 						itemsTillBottom: undefined
 					}, ctx.chunkRequest));
 
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 
 			it('with override params, `chunkRequest` and `chunkRender`', async () => {
@@ -264,8 +247,7 @@ module.exports = (page) => {
 					itemsTillBottom: undefined
 				}, ctx.chunkRequest, ctx.chunkRender));
 
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 		});
 	});
