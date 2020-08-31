@@ -32,11 +32,22 @@ globalThis.renderComponents = (
 	const buildScopedSlots = (content) => {
 		const res = {};
 
-		Object.forEach(content, (val: Dictionary, key: string) => {
+		const createElement = (val) => {
 			const
 				{tag, attrs, content} = val;
 
-			res[key] = () => ctx.$createElement(<string>tag, {attrs: {'v-attrs': attrs}}, <string>content);
+			let
+				convertedContent = content;
+
+			if (Object.isPlainObject(convertedContent)) {
+				convertedContent = createElement(content)();
+			}
+
+			return () => ctx.$createElement(<string>tag, {attrs: {'v-attrs': attrs}}, convertedContent);
+		};
+
+		Object.forEach(content, (val: Dictionary, key: string) => {
+			res[key] = createElement(val);
 		});
 
 		return res;
