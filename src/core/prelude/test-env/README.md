@@ -1,3 +1,3 @@
 # core/prelude/test-env
 
-This module provides extensions for `globalThis` with various methods for tests.
+This module provides extensions of the global namespace to test components.

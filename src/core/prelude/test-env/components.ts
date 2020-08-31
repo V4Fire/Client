@@ -10,7 +10,7 @@ import iStaticPage, { ComponentElement } from 'super/i-static-page/i-static-page
 
 globalThis.renderComponents = (
 	componentName: string,
-	scheme: RenderScheme,
+	scheme: RenderParams[],
 	options?: RenderOptions | string
 ) => {
 	if (Object.size(options) === 0) {

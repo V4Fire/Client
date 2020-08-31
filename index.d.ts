@@ -17,7 +17,7 @@ declare var
 	 * @param scheme
 	 * @param options
 	 */
-	renderComponents: (componentName: string, scheme: RenderScheme, options?: RenderOptions) => void,
+	renderComponents: (componentName: string, scheme: RenderParams[], options?: RenderOptions) => void,
 
 	/**
 	 * Removes all components created via `globalThis.renderComponents`
@@ -48,8 +48,6 @@ interface RenderParams {
 	attrs: Dictionary;
 	content: Dictionary;
 }
-
-type RenderScheme = RenderParams[];
 
 interface HTMLImageElement {
 	readonly init: Promise<this>;

@@ -13,4 +13,4 @@ Changelog
 
 #### :rocket: New Feature
 
-* Created
+The module has been created

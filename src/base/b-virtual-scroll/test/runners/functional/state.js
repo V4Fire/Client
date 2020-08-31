@@ -1,4 +1,3 @@
-/* eslint-disable no-trailing-spaces */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -100,8 +99,7 @@ module.exports = (page) => {
 					expected = getExpected({currentPage: 0, nextPage: 1}),
 					current = await getCurrentComponentState();
 
-				expect({...current, data: undefined}).toEqual({...expected, data: undefined});
-				expect(current.data.length).toEqual(expected.data.length);
+				expect(current).toEqual(expected);
 			});
 
 			it('after loading the first chunk', async () => {

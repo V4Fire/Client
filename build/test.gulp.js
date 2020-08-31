@@ -59,7 +59,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * npx gulp test:component:build --name b-button --client-output b-button --watch
 	 * ```
 	 *
-	 * If you prefer to create components at runtime – run with `dummy` component
+	 * If you prefer to create components at runtime, you can use a dummy component
 	 *
 	 * @example
 	 * ```bash
@@ -109,8 +109,9 @@ module.exports = function init(gulp = require('gulp')) {
 	 * npx gulp test:component:run --name b-button --browsers ff,chrome
 	 * ```
 	 *
-	 * If you prefer to create components at runtime – run with `dummy` component,
-	 * make sure that you added component that you want dynamically render in `index.js` of the demo page.
+	 * If you prefer to create components at runtime, you can use a dummy component.
+	 * Make sure that that all components you want to test are declared as dependencies
+	 * into `index.js` file of the demo page.
 	 *
 	 * @example
 	 * ```bash

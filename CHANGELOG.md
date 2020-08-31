@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Improved tests performance
+* [Improved tests performance](https://github.com/V4Fire/Client/pull/322)
 
 ## v3.0.0-rc.59 (2020-08-10)
 
