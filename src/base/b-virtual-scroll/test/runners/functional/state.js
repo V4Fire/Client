@@ -96,7 +96,7 @@ module.exports = (page) => {
 		describe('returns the correct value', () => {
 			it('if there is no `dataProvider`', async () => {
 				const
-					expected = getExpected({currentPage: 0, nextPage: 1}),
+					expected = getExpected(),
 					current = await getCurrentComponentState();
 
 				expect(current).toEqual(expected);
