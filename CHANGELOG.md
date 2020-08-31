@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.60 (2020-08-??)
+## v3.0.0-rc.60 (2020-09-01)
 
 #### :rocket: New Feature
 
@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* [Moved `core/component/directives/in-view` into `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
+* [Split the module into two: API was moved to `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
 
 ## v3.0.0-rc.59 (2020-08-10)
 

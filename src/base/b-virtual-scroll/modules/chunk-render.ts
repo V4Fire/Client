@@ -8,8 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { InitOptions } from 'core/dom/in-view/interface';
-import { InViewAdapter, inViewFactory } from 'core/dom/in-view';
+import { InViewAdapter, InitOptions, inViewFactory } from 'core/dom/in-view';
 
 import { Friend } from 'super/i-block/i-block';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';

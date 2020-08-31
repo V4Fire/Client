@@ -325,7 +325,7 @@ module.exports = async (page, params) => {
 				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
 			});
 
-			it('disconnected element doesn\'t fires a callback', async () => {
+			it('disconnected element doesn\'t invokes a callback', async () => {
 				await page.evaluate(() => globalThis.tmp = 0);
 
 				await getInView(strategy).evaluate((ctx) => {

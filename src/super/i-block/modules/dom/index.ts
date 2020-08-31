@@ -287,7 +287,7 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Watch for node intersects the viewport with `inView` module
+	 * Watches for intersections of the specified node by using the in-view module
 	 *
 	 * @param node
 	 * @param options
