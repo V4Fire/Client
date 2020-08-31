@@ -63,6 +63,9 @@ module.exports = (page) => {
 	}, requestProps);
 
 	beforeEach(async () => {
+		await h.utils.reloadAndWaitForIdle(page);
+		await h.component.waitForComponent(page, '#root-component');
+
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
 
