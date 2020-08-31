@@ -14,13 +14,16 @@ export interface ElCb<CTX extends iBlock = iBlock> {
 
 export interface DOMManipulationOptions {
 	/**
-	 * If set to true and the specified node has a component property,
-	 * then when the destructor is called, `$destroy` of the component will be called.
+	 * If true and the source node has a component property,
+	 * then when the destructor is called, $destroy of the component will be called too.
 	 */
 	destroyIfComponent?: boolean;
 
 	/**
 	 * Async group
+	 *
+	 * @see [[core/async]]
+	 * @default `asyncComponents`
 	 */
 	group?: string;
 }

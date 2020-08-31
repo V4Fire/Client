@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed possible memory leak `base/b-virtual-scroll`
+* [Fixed a possible memory leak](https://github.com/V4Fire/Client/pull/321)
 
 ## v3.0.0-rc.59 (2020-08-10)
 

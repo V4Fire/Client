@@ -191,7 +191,7 @@ export default class DOM extends Friend {
 	 *
 	 * @param el - element name or a link to a node
 	 * @param newNode
-	 * @param [groupOrOptions] - operation group
+	 * @param [groupOrOptions] - `async` group or a set of options
 	 */
 	replaceWith(el: string | Element, newNode: Node, groupOrOptions?: string | DOMManipulationOptions): Function | false {
 		const

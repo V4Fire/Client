@@ -15,11 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added option `destroyIfComponent` in `i-block/dom/replaceWith`, `i-block/dom/appendChild`
+* [Added an option `destroyIfComponent` into `i-block/dom/replaceWith`, `i-block/dom/appendChild`](https://github.com/V4Fire/Client/pull/321)
 
 #### :bug: Bug Fix
 
-* Fixed possible memory leak `base/b-virtual-scroll`
+* [Fixed a possible memory leak `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/321)
 
 ## v3.0.0-rc.59 (2020-08-10)
 

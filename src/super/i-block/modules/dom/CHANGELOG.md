@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added option `destroyIfComponent` in `i-block/dom/replaceWith`, `i-block/dom/appendChild`
+* [Added an option `destroyIfComponent` into `i-block/dom/replaceWith`, `i-block/dom/appendChild`](https://github.com/V4Fire/Client/pull/321)
 
 ## v3.0.0-rc.46 (2020-07-31)
 
