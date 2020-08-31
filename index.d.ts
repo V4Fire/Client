@@ -40,7 +40,7 @@ interface RenderOptions {
 	/** @default `rootSelector` */
 	selectorToInject?: string;
 
-	/** @default `.i-block-helper` */
+	/** @default `#root-component` */
 	rootSelector?: string;
 }
 

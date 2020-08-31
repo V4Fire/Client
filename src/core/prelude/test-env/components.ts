@@ -14,10 +14,10 @@ globalThis.renderComponents = (
 	options?: RenderOptions | string
 ) => {
 	if (Object.size(options) === 0) {
-		options = {rootSelector: '.i-block-helper'};
+		options = {rootSelector: '#root-component'};
 
 	} else if (Object.isString(options)) {
-		options = {rootSelector: '.i-block-helper'};
+		options = {rootSelector: '#root-component'};
 	}
 
 	const {selectorToInject, rootSelector} = {

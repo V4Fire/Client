@@ -74,7 +74,7 @@ class Component {
 	/**
 	 * @see [[BrowserTests.Component.getRoot]]
 	 */
-	getRoot(ctx, selector = '.i-block-helper') {
+	getRoot(ctx, selector = '#root-component') {
 		return this.waitForComponent(ctx, selector);
 	}
 
