@@ -41,6 +41,9 @@ globalThis.renderComponents = (
 
 			if (Object.isPlainObject(convertedContent)) {
 				convertedContent = createElement(content)();
+				convertedContent = Object.isString(convertedContent) === false && Object.isArray(convertedContent) === false ?
+					[convertedContent] :
+					convertedContent;
 			}
 
 			return () => ctx.$createElement(<string>tag, {attrs: {'v-attrs': attrs}}, convertedContent);
