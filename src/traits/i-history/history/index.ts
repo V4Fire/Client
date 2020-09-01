@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { ModsDecl, ComponentHooks } from 'core/component';
-import { InView } from 'core/component/directives/in-view';
+import { InView } from 'core/dom/in-view';
 
 import Friend from 'super/i-block/modules/friend';
 import iHistory from 'traits/i-history/i-history';

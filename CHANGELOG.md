@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.60 ()
+## v3.0.0-rc.61 ()
 
 #### :boom: Breaking Change
 
@@ -67,6 +67,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+## v3.0.0-rc.60 (2020-09-01)
+
+#### :rocket: New Feature
+
+* [Added `watchForIntersection`, `localInView` methods to `super/i-block/modules/dom`](https://github.com/V4Fire/Client/issues/195)
+* [Added an option `destroyIfComponent` into `i-block/dom/replaceWith`, `i-block/dom/appendChild`](https://github.com/V4Fire/Client/pull/321)
+
+#### :bug: Bug Fix
+
+* [Fixed a possible memory leak `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/321)
+
+#### :house: Internal
+
+* [Split the module into two: API was moved to `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
+* [Improved tests performance](https://github.com/V4Fire/Client/pull/322)
+* Updated dependencies: `@v4fire/core@3.24.0`, `@v4fire/linters@1.5.8`
+>>>>>>> master
 
 ## v3.0.0-rc.59 (2020-08-10)
 

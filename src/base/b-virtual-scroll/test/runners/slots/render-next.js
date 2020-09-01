@@ -35,9 +35,82 @@ module.exports = (page) => {
 		renderNextNoSlot: undefined
 	};
 
+	const isNotHidden = async (selector, ctx) => {
+		const
+			el = await ctx.$(selector),
+			state = await el.evaluate((ctx) => ctx.parentNode.style.display);
+
+		return state === '';
+	};
+
+	const
+		initialTimeout = globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL;
+
+	beforeAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = 1e4;
+	});
+
 	beforeEach(async () => {
 		await h.utils.reloadAndWaitForIdle(page);
-		const allComponents = await page.$$('.b-virtual-scroll');
+		await h.component.waitForComponent(page, '#root-component');
+
+		await page.evaluate(() => {
+			const dummy = document.querySelector('#dummy-component');
+
+			if (dummy) {
+				document.querySelector('#dummy-component').remove();
+			}
+
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const slots = {
+				renderNext: {
+					tag: 'div',
+					attrs: {
+						id: 'renderNext',
+						'data-test-ref': 'renderNext'
+					}
+				}
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						dataProvider: 'demo.Pagination',
+						loadStrategy: 'manual',
+						id: 'renderNextNoSlot'
+					}
+				},
+
+				{
+					attrs: {
+						...baseAttrs,
+						dataProvider: 'demo.Pagination',
+						loadStrategy: 'manual',
+						id: 'renderNextWithSlot'
+					},
+
+					content: {
+						renderNext: slots.renderNext
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme, '.p-v4-components-demo');
+		});
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
+
+		const
+			allComponents = await page.$$('.b-virtual-scroll');
 
 		for (let i = 0; i < allComponents.length; i++) {
 			await allComponents[i].evaluate((ctx) => ctx.style.display = 'none');
@@ -71,6 +144,10 @@ module.exports = (page) => {
 		await h.bom.waitForIdleCallback(page);
 	});
 
+	afterAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = initialTimeout;
+	});
+
 	describe('b-virtual-scroll `renderNext` slot', () => {
 		describe('not render', () => {
 			it('if it is not set', async () => {
@@ -91,7 +168,7 @@ module.exports = (page) => {
 				await h.bom.waitForIdleCallback(page);
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('there are no data', async () => {
@@ -105,19 +182,25 @@ module.exports = (page) => {
 				});
 
 				await h.bom.waitForRAF(page);
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('if initial loading in progress', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {chunkSize: 10, sleep: 500}};
+					ctx.request = {get: {chunkSize: 10, sleep: 1000}};
 				});
 
 				await h.bom.waitForIdleCallback(page);
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				await expectAsync(page.waitForFunction(() => {
+					const
+						node = document.querySelector('#renderNext'),
+						parent = node.parentElement;
+
+					return parent.style.display === 'none';
+				})).toBeResolved();
 			});
 
 			it('if the second batch of data loading in progress', async () => {
@@ -133,7 +216,7 @@ module.exports = (page) => {
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('if all data were loaded after the initial request', async () => {
@@ -147,13 +230,13 @@ module.exports = (page) => {
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
 				await h.bom.waitForIdleCallback(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('if all data were loaded after the second batch load', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 500}};
+					ctx.request = {get: {total: 20, chunkSize: 10, id: Math.random(), sleep: 50}};
 					ctx.shouldStopRequest = ({data}) => data.length === 20;
 					ctx.chunkSize = 10;
 				});
@@ -179,7 +262,7 @@ module.exports = (page) => {
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
 				await h.bom.waitForRAF(page);
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('if all items were rendered after second render', async () => {
@@ -196,7 +279,7 @@ module.exports = (page) => {
 				await h.bom.waitForIdleCallback(page);
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('if all data were rendered and loaded', async () => {
@@ -229,7 +312,7 @@ module.exports = (page) => {
 					renders++;
 				}
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('if an error appears on the initial loading', async () => {
@@ -246,19 +329,19 @@ module.exports = (page) => {
 				});
 
 				await h.bom.waitForIdleCallback(page);
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 
 			it('if an error appears on the second data batch loading', async () => {
-				await components.renderNextWithSlot.evaluate((ctx) => {
-					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, sleep: 500}};
-					ctx.chunkSize = 10;
-				});
-
 				const requestErrorPromise = components.renderNextWithSlot.evaluate((ctx) => new Promise((res) => {
 					ctx.watch(':requestError', res);
 				}));
+
+				await components.renderNextWithSlot.evaluate((ctx) => {
+					ctx.dataProvider = 'demo.Pagination';
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, sleep: 50}};
+					ctx.chunkSize = 10;
+				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
 				await h.dom.waitForRef(nodes.renderNextWithSlot, 'renderNext');
@@ -269,7 +352,7 @@ module.exports = (page) => {
 				await h.bom.waitForIdleCallback(page);
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
 			});
 		});
 
@@ -286,7 +369,7 @@ module.exports = (page) => {
 				});
 
 				await h.bom.waitForIdleCallback(page);
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
 			it('after loading of the second data batch', async () => {
@@ -307,7 +390,7 @@ module.exports = (page) => {
 				await h.bom.waitForIdleCallback(page);
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
 			it('after the initial rendering with items provided', async () => {
@@ -320,7 +403,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
 				await h.bom.waitForIdleCallback(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
 			it('after the second rendering with items provided', async () => {
@@ -336,7 +419,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section:nth-child(11)');
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
 			it('until all data are rendered', async () => {
@@ -365,7 +448,7 @@ module.exports = (page) => {
 					await h.dom.waitForEl(containers.renderNextWithSlot, `section:nth-child(${(renders * 10) + 1})`);
 					await h.bom.waitForRAF(page);
 
-					expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
+					expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 					renders++;
 				}
 			});
@@ -377,7 +460,7 @@ module.exports = (page) => {
 
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 0, failCount: 1, sleep: 500}};
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 0, failCount: 1, sleep: 50}};
 					ctx.chunkSize = 10;
 				});
 
@@ -387,21 +470,21 @@ module.exports = (page) => {
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 
 			it('if there was an error on the second data batch loading, but after retrying all fine', async () => {
+				const requestErrorPromise = components.renderNextWithSlot.evaluate((ctx) => new Promise((res) => {
+					ctx.watch(':requestError', res);
+				}));
+
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, failCount: 1, sleep: 500}};
+					ctx.request = {get: {total: 40, chunkSize: 10, id: Math.random(), failOn: 1, failCount: 1, sleep: 50}};
 					ctx.chunkSize = 10;
 				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
-
-				const requestErrorPromise = components.renderNextWithSlot.evaluate((ctx) => new Promise((res) => {
-					ctx.watch(':requestError', res);
-				}));
 
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
 				await requestErrorPromise;
@@ -409,7 +492,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section:nth-child(11)');
 				await h.bom.waitForRAF(page);
 
-				expect(await h.dom.isVisible('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
+				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeTrue();
 			});
 		});
 	});

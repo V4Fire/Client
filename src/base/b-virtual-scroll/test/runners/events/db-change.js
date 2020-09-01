@@ -31,13 +31,35 @@ module.exports = (page) => {
 	const setProps = (requestProps = {}) => component.evaluate((ctx, requestProps) => {
 		ctx.dataProvider = 'demo.Pagination';
 		ctx.chunkSize = 10;
-		ctx.request = {get: {chunkSize: 12, id: 'uniq', ...requestProps}};
+		ctx.request = {get: {chunkSize: 12, id: Math.random(), ...requestProps}};
 	}, requestProps);
 
 	const subscribe = () => component.evaluate((ctx) => new Promise((res) => ctx.watch(':onDBChange', res)));
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 
 		component = await h.component.waitForComponent(page, '#target');
 		node = await h.dom.waitForEl(page, '#target');
@@ -156,7 +178,7 @@ module.exports = (page) => {
 
 				const subscribePromise = subscribe();
 
-				await setProps({chunkSize: 12, id: 'new-id'});
+				await setProps({chunkSize: 12, id: Math.random()});
 				await expectAsync(subscribePromise).toBeResolvedTo(firstChunkExpected);
 			});
 		});

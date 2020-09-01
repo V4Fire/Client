@@ -8,8 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { InitOptions } from 'core/component/directives/in-view/interface';
-import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
+import { InViewAdapter, InitOptions, inViewFactory } from 'core/dom/in-view';
 
 import { Friend } from 'super/i-block/i-block';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
@@ -169,7 +168,10 @@ export default class ChunkRender extends Friend {
 			fragment = document.createDocumentFragment();
 
 		for (let i = 0; i < nodes.length; i++) {
-			this.dom.appendChild(fragment, nodes[i], this.asyncGroup);
+			this.dom.appendChild(fragment, nodes[i], {
+				group: this.asyncGroup,
+				destroyIfComponent: true
+			});
 		}
 
 		this.async.requestAnimationFrame(() => {

@@ -9,8 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.61 ()
+## v3.0.0-rc.60 (2020-09-01)
 
-#### :nail_care: Polish
+#### :house: Internal
 
-* Added documentation
+* [Split the module into two: API was moved to `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)

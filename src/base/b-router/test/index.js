@@ -6,12 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable max-lines-per-function */
+
 module.exports = async (page) => {
 	const
 		url = require('url'),
 		root = await (await page.$('.i-block-helper')).getProperty('component');
 
 	describe('b-router', () => {
+		beforeAll(async () => {
+			await page.evaluate(() => {
+				globalThis.removeCreatedComponents();
+
+				const
+					root = document.querySelector('.i-block-helper').component;
+
+				const scheme = [
+					{
+						attrs: {
+							routes: root.testRoutes
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-router', scheme);
+			});
+		});
+
 		it('checking the root', async () => {
 			expect(await root.evaluate((ctx) => ctx.meta.params.root)).toBe(true);
 		});

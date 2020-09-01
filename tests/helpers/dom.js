@@ -69,7 +69,7 @@ class DOM {
 	async waitForEl(ctx, selector, options) {
 		options = {
 			sleep: 100,
-			timeout: 2000,
+			timeout: 3500,
 			to: 'mount',
 			...options
 		};

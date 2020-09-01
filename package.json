@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.59",
+  "version": "3.0.0-rc.60",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -112,7 +112,7 @@
     "svgo-loader": "^2.2.1",
     "svgo-sync": "^0.5.1",
     "terser-webpack-plugin": "^2.3.6",
-    "ts-loader": "^7.0.1",
+    "ts-loader": "^8.0.2",
     "typograf": "^6.11.0",
     "uniconf": "^2.1.1",
     "upath": "^1.2.0",

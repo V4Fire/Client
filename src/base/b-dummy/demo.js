@@ -11,7 +11,7 @@
 module.exports = [
 	{
 		attrs: {
-			id: 'target'
+			id: 'dummy-component'
 		}
 	}
 ];
