@@ -7,7 +7,7 @@
  */
 
 import { ImageLoader } from 'core/component/directives/image';
-import { InViewAdapter } from 'core/component/directives/in-view';
+import { InViewAdapter } from 'core/dom/in-view';
 
 export interface Directives {
 	image: typeof ImageLoader;

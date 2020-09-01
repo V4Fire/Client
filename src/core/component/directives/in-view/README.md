@@ -2,51 +2,7 @@
 
 This module provides a directive to track elements entering or leaving the viewport.
 
-## Synopsis
-
-* Can be used as standalone (without `ComponentDriver` directives lifecycle).
-
-## Callbacks
-
-| Name       | Description                                                                      | Payload description  | Payload      |
-| ---------- |----------------------------------------------------------------------------------| -------------------- |------------- |
-| `callback` | Invoked when an element stands in the viewport more than the specified delay     | `Observable` element | `Observable` |
-| `onEnter`  | Invoked when an element passed the specified `threshold` and enters the viewport | `Observable` element | `Observable` |
-| `onLeave`  | Invoked when an element passed the specified `threshold` and leaves the viewport | `Observable` element | `Observable` |
-
 ## Usage
-
-```
-< .&__class v-in-view = { &
-  threshold: 0.7,
-  delay: 2000,
-  callback: () => emit('elementInViewport'),
-  onEnter: () => emit('elementEnterViewport'),
-  onLeave: () => emit('elementLeaveViewport')
-} .
-```
-
-```ts
-import { InView } from 'core/component/directives/in-view';
-
-export default class bFullScreenView extends iBlock implements iLockPageScroll {
-  @hook('mounted')
-  initInView(): void {
-    InView.observe(this.$el, {
-      threshold: 0.7,
-      delay: 2000,
-      once: true,
-      callback: () => this.emit('elementInViewport'),
-      onEnter: () => this.emit('elementEnterViewport'),
-      onLeave: () => this.emit('elementLeaveViewport')
-    })
-  }
-}
-```
-
-Also, the directive can take an array of options for multiple observing.
-
-**Notice:** If you wanna observe a single element with multiple observers then the observers should have different thresholds.
 
 ```
 < .&__class v-in-view = [{ &
@@ -62,3 +18,4 @@ Also, the directive can take an array of options for multiple observing.
 }] .
 ```
 
+For more examples go to [`core/dom/in-view`](core/dom/in-view/index.ts).

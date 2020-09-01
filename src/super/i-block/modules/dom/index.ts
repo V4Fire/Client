@@ -11,8 +11,10 @@
  * @packageDocumentation
  */
 
-import { wrapAsDelegateHandler } from 'core/dom';
+import { wrapAsDelegateHandler, inViewFactory, InitOptions, InViewAdapter } from 'core/dom';
+
 import { ComponentElement } from 'core/component';
+import { AsyncOptions } from 'core/async';
 
 import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
@@ -20,7 +22,7 @@ import Friend from 'super/i-block/modules/friend';
 
 import { wait } from 'super/i-block/modules/decorators';
 import { componentRgxp } from 'super/i-block/modules/dom/const';
-import { ElCb } from 'super/i-block/modules/dom/interface';
+import { ElCb, inViewInstanceStore } from 'super/i-block/modules/dom/interface';
 
 export * from 'super/i-block/modules/dom/const';
 export * from 'super/i-block/modules/dom/interface';
@@ -29,6 +31,20 @@ export * from 'super/i-block/modules/dom/interface';
  * Class provides some methods to work with a DOM tree
  */
 export default class DOM extends Friend {
+	/**
+	 * Returns a component in-view instance
+	 */
+	get localInView(): InViewAdapter {
+		const
+			currentInstance = <CanUndef<InViewAdapter>>this.ctx.tmp[inViewInstanceStore];
+
+		if (currentInstance != null) {
+			return currentInstance;
+		}
+
+		return this.ctx.tmp[inViewInstanceStore] = inViewFactory();
+	}
+
 	/**
 	 * Takes a string identifier and returns a new identifier that is connected to the component.
 	 * This method should use to generate id attributes for DOM nodes.
@@ -268,5 +284,23 @@ export default class DOM extends Friend {
 			ctx: resolvedCtx,
 			component: resolvedCtx
 		});
+	}
+
+	/**
+	 * Watches for intersections of the specified node by using the in-view module
+	 *
+	 * @param node
+	 * @param options
+	 * @param asyncOptions
+	 */
+	watchForNodeIntersection(node: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+		const
+			{ctx} = this,
+			inViewInstance = this.localInView;
+
+		const destructor = ctx.async.worker(() => inViewInstance.remove(node, options.threshold), asyncOptions);
+		inViewInstance.observe(node, options);
+
+		return destructor;
 	}
 }

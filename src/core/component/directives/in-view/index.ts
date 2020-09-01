@@ -7,55 +7,14 @@
  */
 
 /**
- * [[include:core/component/directives/in-view/README.md]]
+ * [[include:core/dom/in-view/README.md]]
  * @packageDocumentation
  */
 
-import InViewAdapter from 'core/component/directives/in-view/adapter';
-
-import { getAdaptee } from 'core/component/directives/in-view/helpers';
 import { ComponentDriver } from 'core/component/engines';
+import { InView, Adaptee, DirectiveOptions } from 'core/dom/in-view';
 
-import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
-import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
-import { DirectiveOptions, AdapteeType } from 'core/component/directives/in-view/interface';
-
-export { default as InViewAdapter } from 'core/component/directives/in-view/adapter';
-export * from 'core/component/directives/in-view/interface';
-export * from 'core/component/directives/in-view/helpers';
-
-const Adaptee = getAdaptee([
-	IntersectionObserverStrategy,
-	MutationObserverStrategy
-]);
-
-const strategyByType = {
-	mutation: MutationObserverStrategy,
-	observer: IntersectionObserverStrategy
-};
-
-/**
- * Creates a new in-view instance
- * @param [adaptee]
- */
-export function inViewFactory(adaptee?: AdapteeType): InViewAdapter {
-	const
-		inView = new InViewAdapter(),
-		adapteeInstance = adaptee != null ? new strategyByType[adaptee]() : new Adaptee!();
-
-	if (!inView.hasAdaptee) {
-		inView.setInstance(adapteeInstance);
-	}
-
-	return inView;
-}
-
-export const
-	InView: InViewAdapter = inViewFactory();
-
-if (!InView.hasAdaptee) {
-	InView.setInstance(new Adaptee!());
-}
+export * from 'core/dom/in-view';
 
 ComponentDriver.directive('in-view', {
 	inserted(el: Element, {value}: DirectiveOptions): void {

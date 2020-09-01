@@ -324,6 +324,25 @@ module.exports = async (page, params) => {
 
 				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
 			});
+
+			it('disconnected element doesn\'t invokes a callback', async () => {
+				await page.evaluate(() => globalThis.tmp = 0);
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = 1,
+						delay: 100,
+						threshold: 0.7,
+						group: 'test-group'
+					});
+
+					globalThis.target.remove();
+
+					return new Promise((res) => setTimeout(res, 300));
+				});
+
+				expect(await page.evaluate(() => globalThis.tmp)).toBe(0);
+			});
 		});
 	});
 };
