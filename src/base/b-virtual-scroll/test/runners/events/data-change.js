@@ -32,13 +32,35 @@ module.exports = (page) => {
 	const setProps = (requestProps = {}) => component.evaluate((ctx, requestProps) => {
 		ctx.dataProvider = 'demo.Pagination';
 		ctx.chunkSize = 10;
-		ctx.request = {get: {chunkSize: 12, id: 'uniq', ...requestProps}};
+		ctx.request = {get: {chunkSize: 12, id: Math.random(), ...requestProps}};
 	}, requestProps);
 
 	const subscribe = () => component.evaluate((ctx) => new Promise((res) => ctx.watch(':onDataChange', res)));
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 
 		component = await h.component.waitForComponent(page, '#target');
 		node = await h.dom.waitForEl(page, '#target');
@@ -69,7 +91,7 @@ module.exports = (page) => {
 
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
+					ctx.request = {get: {chunkSize: 4, id: Math.random()}};
 					ctx.shouldStopRequest = () => true;
 				});
 
@@ -81,7 +103,7 @@ module.exports = (page) => {
 
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
+					ctx.request = {get: {chunkSize: 4, id: Math.random()}};
 					ctx.shouldStopRequest = (v) => v.pendingData.length === 8;
 				});
 
@@ -91,7 +113,7 @@ module.exports = (page) => {
 			 it('after loading the first part of the second batch and stopping further loading because `shouldStopRequest` have returned `true`', async () => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {chunkSize: 4, id: 'uniq'}};
+					ctx.request = {get: {chunkSize: 4, id: Math.random()}};
 					ctx.shouldStopRequest = (v) => {
 						const {lastLoadedChunk: {normalized}} = v;
 						return normalized[normalized.length - 1].i === 15;
@@ -165,7 +187,7 @@ module.exports = (page) => {
 
 					const subscribePromise = subscribe();
 
-					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 6, id: 'uniq'}});
+					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 6, id: Math.random()}});
 
 					await expectAsync(subscribePromise).toBeResolvedTo(firstChunkExpected);
 				});
@@ -180,7 +202,7 @@ module.exports = (page) => {
 						ctx.tmp.currentCall++;
 					}));
 
-					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 6, id: 'uniq'}});
+					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 6, id: Math.random()}});
 					await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 1000});
 
 					expect(await component.evaluate((ctx) => ctx.tmp[0])).toEqual(firstChunkExpected);

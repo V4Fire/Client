@@ -20,3 +20,19 @@ export const
  */
 export const
 	inViewInstanceStore = <any>inViewInstanceStoreSymbol;
+
+export interface DOMManipulationOptions {
+	/**
+	 * If true and the source node has a component property,
+	 * then when the destructor is called, $destroy of the component will be called too.
+	 */
+	destroyIfComponent?: boolean;
+
+	/**
+	 * Async group
+	 *
+	 * @see [[Async]]
+	 * @default `asyncComponents`
+	 */
+	group?: string;
+}
