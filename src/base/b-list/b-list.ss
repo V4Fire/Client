@@ -25,7 +25,7 @@
 			< ${listElTag}.&__el v-for = el in ${value}
 				< a &
 					:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
-						id: values[el.value],
+						id: Object.get(values, [el.value]),
 						active: isActive(el),
 						exterior: el.exterior,
 						hidden: el.hidden,
@@ -35,7 +35,7 @@
 
 					:href = el.href |
 					:-hint = el.hint |
-					:-id = values[el.value] |
+					:-id = Object.get(values, [el.value]) |
 					:v-attrs = el.attrs
 				.
 					- block preIcon

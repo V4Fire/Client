@@ -66,7 +66,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	readonly multiple: boolean = false;
 
 	/**
-	 * If true, the active tab can be unset by using another click to it
+	 * If true, the active item can be unset by using another click to it
 	 * (works only with `multiple = false`)
 	 */
 	@prop(Boolean)
@@ -108,8 +108,14 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @see [[bList.activeStore]]
 	 */
 	get active(): unknown {
-		const v = this.field.get('activeStore');
-		return this.multiple ? Object.keys(<object>v) : v;
+		const
+			v = this.field.get('activeStore');
+
+		if (this.multiple) {
+			return Object.isSet(v) ? [...v.values()] : [];
+		}
+
+		return v;
 	}
 
 	/** @inheritDoc */
@@ -124,13 +130,13 @@ export default class bList extends iData implements iVisible, iWidth {
 	};
 
 	/**
-	 * Dictionary with temporary indexes
+	 * Map of item indexes and their values
 	 */
 	@system()
 	protected indexes!: Dictionary;
 
 	/**
-	 * Dictionary with temporary values
+	 * Map of item values and their indexes
 	 */
 	@system()
 	protected values!: Map<unknown, number>;
@@ -155,7 +161,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if (o.multiple) {
 			const
-				objVal = Object.fromArray(Array.concat([], val));
+				objVal = new Set(Array.concat([], val));
 
 			if (Object.fastCompare(objVal, o.activeStore)) {
 				return o.activeStore;
@@ -180,7 +186,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	protected activeStore!: unknown;
 
 	/**
-	 * Returns a link to the active element
+	 * Returns a link to the active item element
 	 */
 	@computed({
 		cache: true,
@@ -190,11 +196,11 @@ export default class bList extends iData implements iVisible, iWidth {
 	protected get activeElement(): CanPromise<CanUndef<HTMLAnchorElement>> {
 		return this.waitStatus('ready', () => {
 			const
-				val = String(this.active);
+				activeId = Object.get<CanUndef<number>>(this.values, [this.active]);
 
-			if (val in this.values) {
+			if (activeId != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {
-					id: this.values[val]
+					id: activeId
 				});
 			}
 
@@ -205,22 +211,22 @@ export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Toggles activation of the specified value
 	 *
-	 * @param value
+	 * @param value - item value to activate
 	 * @emits `change(active: unknown)`
 	 */
 	toggleActive(value: unknown): boolean {
 		const
-			active = this.field.get('activeStore');
+			activeValue = this.field.get<any>('activeStore');
 
 		if (this.multiple) {
-			if (String(value) in <Dictionary>active) {
+			if (Object.has(activeValue, <any>value)) {
 				return this.removeActive(value);
 			}
 
 			return this.setActive(value);
 		}
 
-		if (active !== value) {
+		if (activeValue !== value) {
 			return this.setActive(value);
 		}
 
@@ -475,7 +481,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	protected onItemClick(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,
-			id = Number(this.block?.getElMod(target, 'link', 'id'));
+			id = Number(target.getAttribute('data-id'));
 
 		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);
