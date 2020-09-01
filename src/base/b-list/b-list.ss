@@ -53,7 +53,7 @@
 							< @b-icon v-else | :value = el.preIcon
 
 					- block text
-						< span.&__cell.&__link-text v-if = !hideLabels
+						< span.&__cell.&__link-text
 							{{ t(el.label) }}
 
 					- block info

@@ -15,6 +15,7 @@ Changelog
 
 * Renamed `interface/Option` -> `interface/Item`
 * Renamed `valueProp` -> `itemsProp`
+* Changed a type of `hideLabels` from a prop to modifier
 
 #### :house: Internal
 

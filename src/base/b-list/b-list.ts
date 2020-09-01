@@ -60,12 +60,6 @@ export default class bList extends iData implements iVisible, iWidth {
 	readonly autoHref: boolean = false;
 
 	/**
-	 * If true, then all item labels aren't shown
-	 */
-	@prop(Boolean)
-	readonly hideLabels: boolean = false;
-
-	/**
 	 * If true, the component supports the feature of multiple active values
 	 */
 	@prop(Boolean)
@@ -121,7 +115,12 @@ export default class bList extends iData implements iVisible, iWidth {
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,
-		...iWidth.mods
+		...iWidth.mods,
+
+		hideLabels: [
+			'true',
+			['false']
+		]
 	};
 
 	/**
