@@ -32,4 +32,4 @@ export default class bFullScreenView extends iBlock implements iLockPageScroll {
 
 Also, the module can take an array of options for multiple observing.
 
-**Notice:** If you wanna observe a single element with multiple observers then the observers should have different thresholds.
+**Notice:** If you want to observe a single element with multiple observers, the observers must have different thresholds.
