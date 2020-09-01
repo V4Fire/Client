@@ -22,7 +22,7 @@ export interface DOMManipulationOptions {
 	/**
 	 * Async group
 	 *
-	 * @see [[core/async]]
+	 * @see [[Async]]
 	 * @default `asyncComponents`
 	 */
 	group?: string;
