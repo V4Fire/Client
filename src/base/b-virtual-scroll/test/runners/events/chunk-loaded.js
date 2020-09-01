@@ -25,7 +25,29 @@ module.exports = (page) => {
 		container;
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 
 		component = await h.component.waitForComponent(page, '#target');
 		node = await h.dom.waitForEl(page, '#target');
@@ -41,7 +63,7 @@ module.exports = (page) => {
 	const setProps = (requestProps = {}) => component.evaluate((ctx, requestProps) => {
 		ctx.dataProvider = 'demo.Pagination';
 		ctx.chunkSize = 10;
-		ctx.request = {get: {chunkSize: 12, id: 'uniq', ...requestProps}};
+		ctx.request = {get: {chunkSize: 12, id: Math.random(), ...requestProps}};
 	}, requestProps);
 
 	describe('b-virtual-scroll chunkLoaded event', () => {
@@ -156,7 +178,7 @@ module.exports = (page) => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.chunkSize = 10;
-					ctx.request = {get: {id: 'uniq', chunkSize: 0, total: 0, additionalData: {size: 12}}};
+					ctx.request = {get: {id: Math.random(), chunkSize: 0, total: 0, additionalData: {size: 12}}};
 				});
 
 				await expectAsync(subscribePromise).toBeResolved({
@@ -169,7 +191,7 @@ module.exports = (page) => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.chunkSize = 10;
-					ctx.request = {get: {id: 'uniq', chunkSize: 12, total: 12, additionalData: {size: 12}}};
+					ctx.request = {get: {id: Math.random(), chunkSize: 12, total: 12, additionalData: {size: 12}}};
 				});
 
 				await h.dom.waitForEl(container, 'section');
@@ -194,7 +216,7 @@ module.exports = (page) => {
 
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.chunkSize = 10;
-					ctx.request = {get: {chunkSize: 4, id: 'uniq', additionalData: {size: 12}}};
+					ctx.request = {get: {chunkSize: 4, id: Math.random(), additionalData: {size: 12}}};
 				});
 
 				await h.dom.waitForEl(container, 'section');

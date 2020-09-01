@@ -31,14 +31,36 @@ module.exports = (page) => {
 		await component.evaluate((ctx, reqParams) => {
 			ctx.dataProvider = 'demo.Pagination';
 			ctx.chunkSize = 10;
-			ctx.request = {get: {chunkSize: 10, id: 'uniq', ...reqParams}};
+			ctx.request = {get: {chunkSize: 10, id: Math.random(), ...reqParams}};
 		}, reqParams);
 
 		await h.dom.waitForEl(container, 'section');
 	};
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 
 		node = await h.dom.waitForEl(page, '#target');
 		component = await h.component.waitForComponent(page, '#target');
