@@ -59,7 +59,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * npx gulp test:component:build --name b-button --client-output b-button --watch
 	 * ```
 	 *
-	 * If you prefer to create components at runtime, you can use a dummy component
+	 * If you prefer to create components at runtime, you can use a dummy component.
 	 *
 	 * @example
 	 * ```bash

@@ -188,13 +188,19 @@ module.exports = (page) => {
 			it('if initial loading in progress', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
-					ctx.request = {get: {chunkSize: 10, sleep: 500}};
+					ctx.request = {get: {chunkSize: 10, sleep: 1000}};
 				});
 
 				await h.bom.waitForIdleCallback(page);
 				await h.bom.waitForRAF(page);
 
-				expect(await isNotHidden('#renderNext', nodes.renderNextWithSlot)).toBeFalse();
+				await expectAsync(page.waitForFunction(() => {
+					const
+						node = document.querySelector('#renderNext'),
+						parent = node.parentElement;
+
+					return parent.style.display === 'none';
+				})).toBeResolved();
 			});
 
 			it('if the second batch of data loading in progress', async () => {
