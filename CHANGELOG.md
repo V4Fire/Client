@@ -26,6 +26,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Split the module into two: API was moved to `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
 * [Improved tests performance](https://github.com/V4Fire/Client/pull/322)
+* Updated dependencies: `@v4fire/core@3.24.0`, `@v4fire/linters@1.5.8`
 
 ## v3.0.0-rc.59 (2020-08-10)
 
