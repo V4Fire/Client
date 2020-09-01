@@ -25,6 +25,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * [Split the module into two: API was moved to `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
+* [Improved tests performance](https://github.com/V4Fire/Client/pull/322)
 
 ## v3.0.0-rc.59 (2020-08-10)
 
