@@ -16,6 +16,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * [Added `watchForIntersection`, `localInView` methods to `super/i-block/modules/dom`](https://github.com/V4Fire/Client/issues/195)
+* [Added an option `destroyIfComponent` into `i-block/dom/replaceWith`, `i-block/dom/appendChild`](https://github.com/V4Fire/Client/pull/321)
+
+#### :bug: Bug Fix
+
+* [Fixed a possible memory leak `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/321)
 
 #### :house: Internal
 
