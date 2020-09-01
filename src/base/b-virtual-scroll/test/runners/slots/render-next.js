@@ -43,6 +43,13 @@ module.exports = (page) => {
 		return state === '';
 	};
 
+	const
+		initialTimeout = globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL;
+
+	beforeAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = 8000;
+	});
+
 	beforeEach(async () => {
 		await h.utils.reloadAndWaitForIdle(page);
 		await h.component.waitForComponent(page, '#root-component');
@@ -135,6 +142,10 @@ module.exports = (page) => {
 		});
 
 		await h.bom.waitForIdleCallback(page);
+	});
+
+	afterAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = initialTimeout;
 	});
 
 	describe('b-virtual-scroll `renderNext` slot', () => {
