@@ -46,7 +46,13 @@ interface RenderOptions {
 
 interface RenderParams {
 	attrs: Dictionary;
-	content: Dictionary;
+	content: RenderContent;
+}
+
+interface RenderContent {
+	tag: string;
+	attrs: Dictionary;
+	content: RenderContent;
 }
 
 interface HTMLImageElement {
