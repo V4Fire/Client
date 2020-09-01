@@ -1,6 +1,6 @@
 # core/dom/in-view
 
-This module provides an API to track elements entering or leaving the viewport.
+This module provides API to track elements entering or leaving the viewport.
 
 ## Callbacks
 
