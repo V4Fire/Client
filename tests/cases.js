@@ -30,7 +30,7 @@ module.exports = [
 	'--test-entry form/b-button/test',
 
 	// v-image
-	'--name b-dummy --test-entry core/component/directives/image/test',
+	'--test-entry core/component/directives/image/test',
 
 	// in-view
 	'--test-entry core/dom/in-view/test'

@@ -65,8 +65,8 @@ module.exports = async (page, params) => {
 		waitFor = h.utils.waitForFunction;
 
 	beforeAll(async () => {
-		componentNode = await h.dom.waitForEl(page, '#target');
-		component = await h.component.waitForComponent(page, '#target');
+		componentNode = await h.dom.waitForEl(page, '#dummy-component');
+		component = await h.component.waitForComponent(page, '#dummy-component');
 		imageLoader = await component.evaluateHandle((ctx) => ctx.directives.image);
 
 		await component.evaluate((ctx) => globalThis.dummy = ctx);
@@ -474,7 +474,6 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, images.pngImage, images.webp]);
 
-					// @ts-expect-error
 					await expectAsync(waitFor(getNode(tag), (ctx) => globalThis.getSrc(ctx) === document.getElementById('expected-img').currentSrc)).toBeResolved();
 				});
 
@@ -790,7 +789,6 @@ module.exports = async (page, params) => {
 				const testImg = document.createElement('img');
 				testImg.src = mainSrc;
 
-				// @ts-expect-error
 				testImg.onInit(() => {
 					if (testImg.naturalHeight > 0 || testImg.naturalWidth > 0) {
 						const ratio = testImg.naturalHeight === 0 ? 1 : testImg.naturalWidth / testImg.naturalHeight;
