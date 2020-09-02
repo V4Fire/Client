@@ -1,7 +1,9 @@
 
 # V4 component and module testing tools
 
-![Tests in CLI](cli.png){:class="img-responsive"}
+{:refdef: style="width: 10px; height: 10px"}
+![Tests in CLI](cli.png)}
+{: refdef}
 
 ## Test environment
 
