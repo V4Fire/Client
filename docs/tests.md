@@ -1,7 +1,7 @@
 
 # V4 component and module testing tools
 
-<img src="assets/tests/cli.png" height="343.5">
+<img src="./assets/tests/cli.png" height="343.5">
 
 ## Test environment
 
