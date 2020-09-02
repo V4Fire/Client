@@ -39,7 +39,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.24.0",
+    "@v4fire/core": "^3.24.2",
     "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",

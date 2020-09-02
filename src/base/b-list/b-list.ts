@@ -81,7 +81,7 @@ export default class bList extends iData implements iVisible, iWidth {
 			return <CanUndef<Items>>o.value ?? [];
 		}
 
-		return o.normalizeOptions(val);
+		return o.normalizeItems(val);
 	}))
 
 	items!: Items;
@@ -107,7 +107,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Component active value
 	 * @see [[bList.activeStore]]
 	 */
-	get active(): unknown {
+	get active(): CanArray<unknown> {
 		const
 			v = this.field.get('activeStore');
 
@@ -145,8 +145,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Internal component active value store
 	 *
 	 * @see [[bList.activeProp]]
-	 * @emits `change(active: unknown)`
-	 * @emits `immediateChange(active: unknown)`
+	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	@system<bList>((o) => o.sync.link((val) => {
 		const
@@ -174,7 +173,7 @@ export default class bList extends iData implements iVisible, iWidth {
 		}
 
 		if (beforeDataCreate) {
-			o.emit('immediateChange', newVal);
+			o.emit('immediateChange', Object.isSet(newVal) ? [...newVal.values()] : newVal);
 
 		} else {
 			o.setActive(newVal);
@@ -198,14 +197,12 @@ export default class bList extends iData implements iVisible, iWidth {
 		const
 			{active} = this;
 
-		const getEl = (val) => {
+		const getEl = (value) => {
 			const
-				activeId = Object.get<CanUndef<number>>(this.values, [val]);
+				id = Object.get<CanUndef<number>>(this.values, [value]);
 
-			if (activeId != null) {
-				return this.block?.element<HTMLAnchorElement>('link', {
-					id: activeId
-				});
+			if (id != null) {
+				return this.block?.element<HTMLAnchorElement>('link', {id});
 			}
 		};
 
@@ -224,17 +221,15 @@ export default class bList extends iData implements iVisible, iWidth {
 
 	/**
 	 * Toggles activation of the specified value
-	 *
 	 * @param value - item value to activate
-	 * @emits `change(active: unknown)`
 	 */
 	toggleActive(value: unknown): boolean {
 		const
-			activeValue = this.field.get<any>('activeStore');
+			activeValue = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (Object.has(activeValue, <any>value)) {
-				return this.removeActive(value);
+			if (Object.has(activeValue, [value])) {
+				return this.unsetActive(value);
 			}
 
 			return this.setActive(value);
@@ -244,27 +239,26 @@ export default class bList extends iData implements iVisible, iWidth {
 			return this.setActive(value);
 		}
 
-		return this.removeActive(value);
+		return this.unsetActive(value);
 	}
 
 	/**
 	 * Activates the specified value
 	 *
 	 * @param value
-	 * @emits `change(active: unknown)`
-	 * @emits `immediateChange(active: unknown)`
+	 * @emits `change(active: CanArray<unknown>)`
+	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	setActive(value: unknown): boolean {
 		const
-			active = this.field.get('activeStore'),
-			stValue = Object.fastHash(value);
+			active = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (stValue in <Dictionary>active) {
+			if (!Object.has(active, [value])) {
 				return false;
 			}
 
-			this.field.set(`activeStore.${stValue}`, true);
+			(<Set<unknown>>active).add(value);
 
 		} else if (active === value) {
 			return false;
@@ -278,7 +272,8 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if ($b) {
 			const
-				target = $b.element('link', {id: this.values[stValue]});
+				id = Object.get<CanUndef<number>>(this.values, [value]),
+				target = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple) {
 				const
@@ -296,6 +291,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		this.emit('change', this.active);
 		this.emit('immediateChange', this.active);
+
 		return true;
 	}
 
@@ -303,8 +299,8 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Deactivates the specified value
 	 *
 	 * @param value
-	 * @emits change(active: unknown)
-	 * @emits immediateChange(active: unknown)
+	 * @emits `change(active: unknown)`
+	 * @emits `immediateChange(active: unknown)`
 	 */
 	unsetActive(value: unknown): boolean {
 		const
@@ -316,7 +312,7 @@ export default class bList extends iData implements iVisible, iWidth {
 				return false;
 			}
 
-			Object.set(active, [value], undefined);
+			(<Set<unknown>>active).delete(value);
 
 		} else if (active !== value || cantCancel) {
 			return false;
@@ -330,7 +326,8 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if ($b) {
 			const
-				target = $b.element('link', {id: this.values[String(value)]});
+				id = Object.get<CanUndef<number>>(this.values, [value]),
+				target = id != null ? $b.element('link', {id}) : null;
 
 			if (target) {
 				$b.setElMod(target, 'link', 'active', false);
@@ -362,7 +359,7 @@ export default class bList extends iData implements iVisible, iWidth {
 			val = this.convertDBToComponent<Items>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.value = this.normalizeOptions(val);
+			return this.value = this.normalizeItems(val);
 		}
 
 		return this.value;
@@ -377,7 +374,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
-		this.normalizeOptions = i.normalizeOptions.bind(this);
+		this.normalizeItems = i.normalizeItems.bind(this);
 	}
 
 	/**
@@ -385,7 +382,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @param item
 	 */
 	protected isActive(item: Item): boolean {
-		const active = this.field.get<any>('activeStore');
+		const active = this.field.get('activeStore');
 		return this.multiple ? Object.has(active, [item.value]) : item.value === active;
 	}
 
