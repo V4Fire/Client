@@ -15,6 +15,19 @@
 
 First, you need to create the test file itself. In the component folder create the `test` folder and in it create the` index.js` file.
 
+```
+.
+└── src/
+    └── base/
+        └── b-popover/
+            ├── test/
+            │   └── index.js
+            ├── b-popover.ss
+            ├── b-popover.styl
+            ├── b-popover.ts
+            └── index.js
+```
+
 ## Setting up the test environment
 
 To prepare the environment for tests, you need to make a preliminary configuration:
