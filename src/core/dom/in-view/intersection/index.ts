@@ -8,10 +8,10 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { ObservableElement } from 'core/component/directives/in-view/interface';
-import { hasIntersection } from 'core/component/directives/in-view/intersection/helpers';
+import { ObservableElement } from 'core/dom/in-view/interface';
+import { hasIntersection } from 'core/dom/in-view/intersection/helpers';
 
-import Super from 'core/component/directives/in-view/super';
+import Super from 'core/dom/in-view/super';
 
 export type AdapteeType =
 	'observer';
@@ -55,8 +55,8 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	protected remove(observable: ObservableElement): boolean {
-		super.remove(observable);
+	protected remove(observable: ObservableElement, suspend?: boolean): boolean {
+		super.remove(observable, suspend);
 
 		const
 			observer = this.observers.get(observable.id);

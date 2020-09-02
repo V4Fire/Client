@@ -309,7 +309,7 @@ module.exports = async function module({plugins}) {
 	});
 
 	loaders.rules.set('img', {
-		test: /\.(?:png|gif|jpe?g)$/,
+		test: /\.(?:ico|png|gif|jpe?g)$/,
 		use: [
 			{
 				loader: 'url',

@@ -12,3 +12,7 @@ import 'core/prelude/dom';
 //#if runtime has prelude/dependencies
 import 'core/prelude/dependencies';
 //#endif
+
+//#if runtime has prelude/test-env
+import 'core/prelude/test-env';
+//#endif

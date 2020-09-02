@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { inViewFactory } from 'core/component/directives/in-view';
+import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader } from 'core/component/directives/image';
 
 import iData, { component } from 'super/i-data/i-data';

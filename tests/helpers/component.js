@@ -74,8 +74,8 @@ class Component {
 	/**
 	 * @see [[BrowserTests.Component.getRoot]]
 	 */
-	getRoot(ctx) {
-		return this.waitForComponent(ctx, '#root-component');
+	getRoot(ctx, selector = '#root-component') {
+		return this.waitForComponent(ctx, selector);
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Component {
 	 * @see [[BrowserTests.Component.waitForComponentStatus]]
 	 */
 	async waitForComponentStatus(ctx, selector, status) {
-		const component = await this.getComponentByQuery(ctx, selector);
+		const component = await this.waitForComponent(ctx, selector);
 
 		if (!component) {
 			return undefined;
@@ -162,7 +162,7 @@ class Component {
 
 	/**
 	 * Parent class
-	 * @type  {BrowserTests.Helpers}
+	 * @type {BrowserTests.Helpers}
 	 */
 	#parent;
 }

@@ -37,8 +37,8 @@ module.exports = async (page, params) => {
 		getInView = (strategy) => strategy === 'mutation' ? inViewMutation : inViewObserver;
 
 	beforeAll(async () => {
-		componentNode = await h.dom.waitForEl(page, '#target');
-		component = await h.component.waitForComponent(page, '#target');
+		componentNode = await h.dom.waitForEl(page, '#dummy-component');
+		component = await h.component.waitForComponent(page, '#dummy-component');
 
 		inViewMutation = await component.evaluateHandle((ctx) => ctx.directives.inViewMutation);
 		inViewObserver = await component.evaluateHandle((ctx) => ctx.directives.inViewObserver);
@@ -132,8 +132,6 @@ module.exports = async (page, params) => {
 
 			it('with `callback` and `polling`', async () => {
 				await getInView(strategy).evaluate((ctx) => {
-					console.log(globalThis.target);
-					console.log(ctx);
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = true,
 						delay: 1,
@@ -248,6 +246,32 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 			});
 
+			it('suspending first observable by the group doesn\'t fire a callback, second observable without group fire a callback', async () => {
+				await page.evaluate(() => globalThis.tmp = {});
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp[1] = true,
+						delay: 200,
+						threshold: 0.7,
+						group: 'test'
+					});
+
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp[2] = true,
+						delay: 100,
+						threshold: 0.8
+					});
+
+					setTimeout(() => ctx.suspend('test'), 0);
+				});
+
+				await delay(200);
+				await page.waitForFunction('globalThis.tmp[2] === true');
+
+				expect(await page.evaluate(() => globalThis.tmp)).toEqual({2: true});
+			});
+
 			it('suspending/unsuspending with `callback`: fires the callback', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
@@ -263,7 +287,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 
 				await getInView(strategy).evaluate((ctx) => ctx.unsuspend('test'));
-				await expectAsync(page.evaluate('globalThis.tmp === true')).toBeResolved();
+				await expectAsync(page.waitForFunction('globalThis.tmp === true')).toBeResolved();
 			});
 
 			it('re-observing with an element and threshold provided', async () => {
@@ -276,10 +300,46 @@ module.exports = async (page, params) => {
 						threshold: 0.7
 					});
 
-					setTimeout(() => ctx.reObserve(globalThis.target, 0.7), 150);
+					setTimeout(() => ctx.reObserve(globalThis.target, 0.7), 400);
 				});
 
-				await expectAsync(page.evaluate('globalThis.tmp === 2')).toBeResolved();
+				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
+			});
+
+			it('re-observing with a group provided', async () => {
+				await page.evaluate(() => globalThis.tmp = 0);
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp += 1,
+						delay: 100,
+						threshold: 0.7,
+						group: 'test-group'
+					});
+
+					setTimeout(() => ctx.reObserve('test-group'), 400);
+				});
+
+				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
+			});
+
+			it('disconnected element doesn\'t invokes a callback', async () => {
+				await page.evaluate(() => globalThis.tmp = 0);
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = 1,
+						delay: 100,
+						threshold: 0.7,
+						group: 'test-group'
+					});
+
+					globalThis.target.remove();
+
+					return new Promise((res) => setTimeout(res, 300));
+				});
+
+				expect(await page.evaluate(() => globalThis.tmp)).toBe(0);
 			});
 		});
 	});

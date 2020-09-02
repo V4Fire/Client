@@ -11,6 +11,118 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.60 (2020-09-01)
+
+#### :rocket: New Feature
+
+* [Added `watchForIntersection`, `localInView` methods to `super/i-block/modules/dom`](https://github.com/V4Fire/Client/issues/195)
+* [Added an option `destroyIfComponent` into `i-block/dom/replaceWith`, `i-block/dom/appendChild`](https://github.com/V4Fire/Client/pull/321)
+
+#### :bug: Bug Fix
+
+* [Fixed a possible memory leak `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/321)
+
+#### :house: Internal
+
+* [Split the module into two: API was moved to `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
+* [Improved tests performance](https://github.com/V4Fire/Client/pull/322)
+* Updated dependencies: `@v4fire/core@3.24.0`, `@v4fire/linters@1.5.8`
+
+## v3.0.0-rc.59 (2020-08-10)
+
+#### :rocket: New Feature
+
+* [Added ability to render data manually `bVirtualScroll`](https://github.com/V4Fire/Client/issues/202)
+
+#### :nail_care: Polish
+
+* Improved documentation `bVirtualScroll`
+
+## v3.0.0-rc.58 (2020-08-07)
+
+#### :house: Internal
+
+* Added `.ico` files to build `build/module.webpack/img`
+
+## v3.0.0-rc.57 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `core/browser/mobile`
+
+## v3.0.0-rc.56 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `initLoad` error handling `iBlock`, `iData`
+
+## v3.0.0-rc.55 (2020-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `unsafe` after refactoring `core/component/render-function`
+* `iData`:
+  * Fixed an issue with `requestFilter` after refactoring
+  * Fixed an issue with `initLoad` after refactoring
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bRemoteProvider`
+
+#### :nail_care: Polish
+
+* Added documentation `bRemoteProvider`
+
+## v3.0.0-rc.54 (2020-08-04)
+
+#### :house: Internal
+
+* Marked as public `iBlock/isComponent`
+
+## v3.0.0-rc.53 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed generation of code `ES5` `iStaticPage`
+
+## v3.0.0-rc.52 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed generation of code for a case `nonce() { return "<!--#echo var='NonceValue' -->"; }` `iStaticPage`
+
+## v3.0.0-rc.51 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `reObserve` `core/component/directives/in-view`
+* Fixed getting an image URL for IE `bImage`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+  * `global/g-debug`
+  * `global/g-def`
+  * `global/g-hint`
+  * `global/g-icon`
+
+## v3.0.0-rc.50 (2020-08-03)
+
+#### :bug: Bug Fix
+
+* Fixed `core/component/engines/vue/config/getComponentName`
+* Removed normalizing of the `nonce` attribute `iStaticPage`
+
 ## v3.0.0-rc.49 (2020-08-03)
 
 #### :boom: Breaking Change

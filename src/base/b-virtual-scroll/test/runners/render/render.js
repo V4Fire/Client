@@ -31,14 +31,36 @@ module.exports = (page) => {
 		await component.evaluate((ctx, reqParams) => {
 			ctx.dataProvider = 'demo.Pagination';
 			ctx.chunkSize = 10;
-			ctx.request = {get: {chunkSize: 10, id: 'uniq', ...reqParams}};
+			ctx.request = {get: {chunkSize: 10, id: Math.random(), ...reqParams}};
 		}, reqParams);
 
 		await h.dom.waitForEl(container, 'section');
 	};
 
 	beforeEach(async () => {
-		await h.utils.reloadAndWaitForIdle(page);
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
+
+			const baseAttrs = {
+				theme: 'demo',
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
+			};
+
+			const scheme = [
+				{
+					attrs: {
+						...baseAttrs,
+						id: 'target'
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-virtual-scroll', scheme);
+		});
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '.b-virtual-scroll', 'ready');
 
 		node = await h.dom.waitForEl(page, '#target');
 		component = await h.component.waitForComponent(page, '#target');
@@ -201,6 +223,21 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section');
 
 				expect(await getContainerChildCount()).toBe(chunkSize);
+			});
+
+			it('renders all data if `shouldStopRequest` returns true', async () => {
+				await component.evaluate((ctx) => {
+					ctx.dataProvider = 'demo.Pagination';
+					ctx.chunkSize = 10;
+					ctx.request = {get: {chunkSize: 40, total: 80, id: Math.random(), delay: 100}};
+					ctx.shouldStopRequest = ({data}) => data.length === 80;
+				});
+
+				const
+					checkFn = async () => await getContainerChildCount() === 80;
+
+				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
+				expect(await getContainerChildCount()).toBe(80);
 			});
 		});
 

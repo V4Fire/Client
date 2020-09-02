@@ -1839,14 +1839,6 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.beforeReadyListeners = 0;
 
-		if (opts.emitStartEvent !== false) {
-			this.emit('initLoadStart', opts);
-		}
-
-		if (!opts.silent) {
-			this.componentStatus = 'loading';
-		}
-
 		const
 			{async: $a} = this;
 
@@ -1856,7 +1848,20 @@ export default abstract class iBlock extends ComponentInterface {
 		};
 
 		const done = () => {
-			const get = () => Object.isFunction(data) ? data.call(this) : data;
+			const get = () => {
+				if (Object.isFunction(data)) {
+					try {
+						return data.call(this);
+
+					} catch (err) {
+						stderr(err);
+						return;
+					}
+				}
+
+				return data;
+			};
+
 			this.componentStatus = 'beforeReady';
 
 			void this.lfc.execCbAfterBlockReady(() => {
@@ -1875,79 +1880,118 @@ export default abstract class iBlock extends ComponentInterface {
 			});
 		};
 
-		if (this.globalName != null || !this.isFunctional) {
-			if (this.isFunctional) {
-				return $a.promise(async () => {
-					await this.state.initFromStorage();
-					done();
-				}, label).catch(stderr);
+		const doneOnError = (err) => {
+			stderr(err);
+			done();
+		};
+
+		try {
+			if (opts.emitStartEvent !== false) {
+				this.emit('initLoadStart', opts);
 			}
 
-			const init = async () => {
-				if (this.globalName != null) {
-					await this.state.initFromStorage();
+			if (!opts.silent) {
+				this.componentStatus = 'loading';
+			}
 
-				} else {
-					await this.nextTick(label);
+			if (this.globalName != null || !this.isFunctional) {
+				if (this.isFunctional) {
+					return $a.promise(() => this.state.initFromStorage(), label).then(done, doneOnError);
 				}
 
-				const
-					{$children: childComponent} = this;
+				const init = async () => {
+					if (this.globalName != null) {
+						await this.state.initFromStorage();
 
-				let
-					remoteProviders: Nullable<Set<iBlock>> = null;
+					} else {
+						await this.nextTick(label);
+					}
 
-				if (childComponent) {
-					for (let i = 0; i < childComponent.length; i++) {
-						const
-							el = childComponent[i],
-							st = el.componentStatus;
+					const
+						{$children: childComponent} = this;
 
-						if (el.remoteProvider && Object.isTruly(statuses[st])) {
-							if (st === 'ready') {
-								if (opts.recursive) {
-									el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+					let
+						remoteProviders: Nullable<Set<iBlock>> = null;
 
-								} else {
-									continue;
+					if (childComponent) {
+						for (let i = 0; i < childComponent.length; i++) {
+							const
+								el = childComponent[i],
+								st = el.componentStatus;
+
+							if (el.remoteProvider && Object.isTruly(statuses[st])) {
+								if (st === 'ready') {
+									if (opts.recursive) {
+										el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+
+									} else {
+										continue;
+									}
 								}
-							}
 
-							if (remoteProviders == null) {
-								remoteProviders = new Set<iBlock>();
-							}
+								if (remoteProviders == null) {
+									remoteProviders = new Set<iBlock>();
+								}
 
-							remoteProviders.add(el);
+								remoteProviders.add(el);
+							}
 						}
 					}
-				}
 
-				if (remoteProviders != null) {
-					await $a.wait(() => {
-						for (let o = remoteProviders!.values(), el = o.next(); !el.done; el = o.next()) {
-							const
-								val = el.value,
-								st = val.componentStatus;
+					if (remoteProviders != null) {
+						let
+							waitStart = Date.now();
 
-							if (st === 'ready' || statuses[st] <= 0) {
-								remoteProviders!.delete(val);
-								continue;
+						await $a.wait(() => {
+							for (let o = remoteProviders!.values(), el = o.next(); !el.done; el = o.next()) {
+								const
+									remoteProvider = el.value,
+									remoteProviderStatus = remoteProvider.componentStatus;
+
+								if (
+									remoteProviderStatus === 'ready' ||
+
+									// Provider was dropped or just created
+									statuses[remoteProviderStatus] <= 0
+								) {
+									remoteProviders!.delete(remoteProvider);
+									continue;
+								}
+
+								if ((Date.now() - waitStart) > (10).seconds()) {
+									waitStart = Date.now();
+
+									this.log({
+										logLevel: 'warn',
+										context: 'initLoad:remoteProviders'
+									}, {
+										message: 'The component is waiting too long a remote provider',
+										waitFor: {
+											globalName: remoteProvider.globalName,
+											component: remoteProvider.componentName,
+											dataProvider: Object.get(remoteProvider, 'dataProvider')
+										}
+									});
+								}
+
+								return false;
 							}
 
-							return false;
-						}
+							return true;
+						});
+					}
 
-						return true;
-					});
-				}
+					done();
+				};
 
-				done();
-			};
+				return $a.promise(init, label).catch(doneOnError);
+			}
 
-			return $a.promise(init, label).catch(stderr);
+			done();
+
+		} catch (err) {
+			doneOnError(err);
 		}
-
-		done();
 	}
 
 	/**
@@ -2132,6 +2176,16 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * Returns true if the specified object is a component
+	 *
+	 * @param obj
+	 * @param [constructor] - component constructor
+	 */
+	isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
+		return Object.isTruly(obj) && (<Dictionary>obj).instance instanceof (constructor ?? iBlock);
+	}
+
+	/**
 	 * This method works as a two-way connector between a local storage and a component.
 	 *
 	 * When the component initializes, it asks the local storage for data that associated to this component
@@ -2209,16 +2263,6 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		return res;
-	}
-
-	/**
-	 * Returns true if the specified object is a component
-	 *
-	 * @param obj
-	 * @param [constructor] - component constructor
-	 */
-	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
-		return Object.isTruly(obj) && (<Dictionary>obj).instance instanceof (constructor ?? iBlock);
 	}
 
 	/**

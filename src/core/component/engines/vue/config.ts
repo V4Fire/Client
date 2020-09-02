@@ -56,9 +56,5 @@ function getComponentName(component: Vue | ComponentInterface): string {
 		return ROOT_COMPONENT_NAME;
 	}
 
-	if (component.$options.name != null) {
-		return component.$options.name;
-	}
-
-	return UNRECOGNIZED_COMPONENT_NAME;
+	return Object.get<CanUndef<string>>(component, '$options.name') ?? UNRECOGNIZED_COMPONENT_NAME;
 }

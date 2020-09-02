@@ -8,8 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { InitOptions } from 'core/component/directives/in-view/interface';
-import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
+import { InViewAdapter, InitOptions, inViewFactory } from 'core/dom/in-view';
 
 import { Friend } from 'super/i-block/i-block';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
@@ -17,7 +16,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { RenderItem, RefDisplayState } from 'base/b-virtual-scroll/interface';
+import { RenderItem } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -69,13 +68,9 @@ export default class ChunkRender extends Friend {
 	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
-	 * The cache of the current display (`style.display`) state of nodes
-	 *
-	 * ```
-	 * [refName]:[displayValue]
-	 * ```
+	 * Refs state update map
 	 */
-	protected refState: Dictionary<RefDisplayState> = {};
+	protected refsUpdateMap: Map<keyof bVirtualScroll['$refs'], boolean> = new Map();
 
 	/**
 	 * API for dynamic component rendering
@@ -115,7 +110,6 @@ export default class ChunkRender extends Friend {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
-		this.refState = {};
 
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
@@ -123,6 +117,7 @@ export default class ChunkRender extends Friend {
 		this.setRefVisibility('retry', false);
 		this.setRefVisibility('done', false);
 		this.setRefVisibility('empty', false);
+		this.setRefVisibility('renderNext', false);
 
 		this.initEventHandlers();
 	}
@@ -173,7 +168,10 @@ export default class ChunkRender extends Friend {
 			fragment = document.createDocumentFragment();
 
 		for (let i = 0; i < nodes.length; i++) {
-			this.dom.appendChild(fragment, nodes[i], this.asyncGroup);
+			this.dom.appendChild(fragment, nodes[i], {
+				group: this.asyncGroup,
+				destroyIfComponent: true
+			});
 		}
 
 		this.async.requestAnimationFrame(() => {
@@ -195,14 +193,8 @@ export default class ChunkRender extends Friend {
 			return;
 		}
 
-		const
-			state = show ? '' : 'none';
-
-		if (state === this.refState[ref]) {
-			return;
-		}
-
-		refEl.style.display = state;
+		this.refsUpdateMap.set(ref, show);
+		this.performRefsVisibilityUpdate();
 	}
 
 	/**
@@ -212,6 +204,46 @@ export default class ChunkRender extends Friend {
 	setLoadersVisibility(show: boolean): void {
 		this.setRefVisibility('tombstones', show);
 		this.setRefVisibility('loader', show);
+	}
+
+	/**
+	 * Tries to show the `renderNext` slot
+	 */
+	tryShowRenderNextSlot(): void {
+		const
+			{ctx, chunkRequest} = this;
+
+		if (ctx.dataProvider == null && ctx.options.length === 0) {
+			return;
+		}
+
+		if (chunkRequest.isDone) {
+			return;
+		}
+
+		this.setRefVisibility('renderNext', true);
+	}
+
+	/**
+	 * Updates visibility of refs by using requestAnimationFrame
+	 */
+	protected performRefsVisibilityUpdate(): void {
+		this.async.requestAnimationFrame(() => {
+			this.refsUpdateMap.forEach((show, ref) => {
+				const
+					state = show ? '' : 'none',
+					refEl = this.refs[ref];
+
+				if (!refEl) {
+					return;
+				}
+
+				refEl.style.display = state;
+			});
+
+			this.refsUpdateMap.clear();
+
+		}, {label: $$.updateRefsVisibility, group: this.asyncGroup, join: true});
 	}
 
 	/**
@@ -253,6 +285,10 @@ export default class ChunkRender extends Friend {
 		const
 			{ctx} = this,
 			{node} = item;
+
+		if (ctx.loadStrategy === 'manual') {
+			return;
+		}
 
 		const
 			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
@@ -340,6 +376,7 @@ export default class ChunkRender extends Friend {
 	 */
 	protected onError(): void {
 		this.setLoadersVisibility(false);
+		this.setRefVisibility('renderNext', false);
 		this.setRefVisibility('retry', true);
 	}
 }
