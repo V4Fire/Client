@@ -16,6 +16,8 @@ Changelog
 * Renamed `interface/Option` -> `interface/Item`
 * Renamed `valueProp` -> `itemsProp`
 * Changed a type of `hideLabels` from a prop to modifier
+* Renamed `removeActive` -> `unsetActive`
+* Renamed `normalizeOptions` -> `normalizeItems`
 
 #### :bug: Bug Fix
 
@@ -26,6 +28,7 @@ Changelog
 * Fixed ESLint warnings
 * Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
 * Now `Item` extends from `Dictionary`
+* Refactoring
 
 #### :nail_care: Polish
 

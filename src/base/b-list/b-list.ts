@@ -306,7 +306,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @emits change(active: unknown)
 	 * @emits immediateChange(active: unknown)
 	 */
-	removeActive(value: unknown): boolean {
+	unsetActive(value: unknown): boolean {
 		const
 			active = this.field.get<any>('activeStore'),
 			cantCancel = !this.cancelable;
@@ -341,6 +341,15 @@ export default class bList extends iData implements iVisible, iWidth {
 		this.emit('immediateChange', this.active);
 
 		return true;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bList.unsetActive]]
+	 */
+	@deprecated({renamedTo: 'unsetActive'})
+	removeActive(value: unknown): boolean {
+		return this.unsetActive(value);
 	}
 
 	/** @override */
@@ -381,20 +390,20 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/**
-	 * Normalizes the specified options and returns it
-	 * @param options
+	 * Normalizes the specified items and returns it
+	 * @param items
 	 */
-	protected normalizeOptions(options: CanUndef<Items>): Items {
+	protected normalizeItems(items: CanUndef<Items>): Items {
 		const
 			res = <Items>[];
 
-		if (!options) {
+		if (!items) {
 			return res;
 		}
 
-		for (let i = 0; i < options.length; i++) {
+		for (let i = 0; i < items.length; i++) {
 			const
-				el = options[i];
+				el = items[i];
 
 			if (el.value === undefined) {
 				el.value = el.href;
@@ -408,6 +417,15 @@ export default class bList extends iData implements iVisible, iWidth {
 		}
 
 		return res;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bList.normalizeItems]]
+	 */
+	@deprecated({renamedTo: 'normalizeItems'})
+	protected normalizeOptions(items: CanUndef<Items>): Items {
+		return this.normalizeItems(items);
 	}
 
 	/**

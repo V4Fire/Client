@@ -22,6 +22,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Renamed `interface/Option` -> `interface/Item`
   * Renamed `valueProp` -> `itemsProp`
   * Changed a type of `hideLabels` from a prop to modifier
+  * Renamed `removeActive` -> `unsetActive`
+  * Renamed `normalizeOptions` -> `normalizeItems`
 
 * `gHint`:
   * Renamed:
