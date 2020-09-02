@@ -8,10 +8,14 @@
 
 /* eslint-disable max-lines-per-function */
 
+const
+	h = include('tests/helpers');
+
 module.exports = async (page) => {
 	const
+		// eslint-disable-next-line import/no-nodejs-modules
 		url = require('url'),
-		root = await (await page.$('.i-block-helper')).getProperty('component');
+		root = await h.component.waitForComponent(page, '#root-component');
 
 	describe('b-router', () => {
 		beforeAll(async () => {
@@ -19,7 +23,7 @@ module.exports = async (page) => {
 				globalThis.removeCreatedComponents();
 
 				const
-					root = document.querySelector('.i-block-helper').component;
+					root = document.querySelector('#root-component').component;
 
 				const scheme = [
 					{
@@ -273,8 +277,11 @@ module.exports = async (page) => {
 				await router.push('/second');
 				await router.push('/');
 
+				// eslint-disable-next-line require-atomic-updates
 				ctx.rootParam = 1;
 				await router.push('second');
+
+				// eslint-disable-next-line require-atomic-updates
 				ctx.rootParam = undefined;
 
 				return location.search;
