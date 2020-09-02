@@ -304,7 +304,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	unsetActive(value: unknown): boolean {
 		const
-			active = this.field.get<any>('activeStore'),
+			active = this.field.get('activeStore'),
 			cantCancel = !this.cancelable;
 
 		if (this.multiple) {
@@ -444,7 +444,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		const
 			items = this.field.get<CanUndef<Items>>('items') ?? [],
-			active = this.field.get<any>('activeStore');
+			active = this.field.get('activeStore');
 
 		for (let i = 0; i < items.length; i++) {
 			const
