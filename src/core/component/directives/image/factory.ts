@@ -48,7 +48,6 @@ export default class Factory {
 	 * @param type
 	 */
 	shadowState(el: HTMLElement, selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): ShadowElState {
-		const t = performance.now();
 		let res: ShadowElState;
 
 		if (Object.isArray(selfOptions.sources) && selfOptions.sources.length > 0) {
@@ -87,8 +86,6 @@ export default class Factory {
 	 * @param type
 	 */
 	picture(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): PictureFactoryResult {
-		const t = performance.now();
-
 		const
 			picture = document.createElement('picture'),
 			img = this.img(selfOptions, mainOptions, type);
