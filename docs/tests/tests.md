@@ -1,7 +1,7 @@
 
 # V4 component and module testing tools
 
-<img src="./assets/tests/cli.png" height="343.5">
+<img src="cli.png" height="343.5">
 
 ## Test environment
 
@@ -29,6 +29,7 @@ __base/b-popover/test/index.js__
 
 ```javascript
 // @ts-check
+
 const
 	h = include('tests/helpers');
 
@@ -94,6 +95,7 @@ Let's import this file to our main test file and call render:
 __base/b-popover/test/index.js__
 ```javascript
 // @ts-check
+
 const
 	h = include('tests/helpers');
 
