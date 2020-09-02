@@ -124,7 +124,7 @@ export default class ImageLoader {
 			/*
 			 * If the provided `preview` image are same as default – reuse default `preview` shadow state
 			 */
-			typedEl[SHADOW_PREVIEW] = normalized.isDefault ?
+			typedEl[SHADOW_PREVIEW] = Object.isTruly(normalized.isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'preview') :
 				this.factory.shadowState(el, normalized, mainOpts, 'preview');
 		}
@@ -135,7 +135,7 @@ export default class ImageLoader {
 			/*
 			 * If the provided `broken` image are same as default – reuse default `broken` shadow state
 			 */
-			typedEl[SHADOW_BROKEN] = normalized.isDefault ?
+			typedEl[SHADOW_BROKEN] = Object.isTruly(normalized.isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
 				this.factory.shadowState(el, normalized, mainOpts, 'broken');
 		}
@@ -242,7 +242,7 @@ export default class ImageLoader {
 			ctx = state.mainOptions.ctx.unsafe;
 
 		if (mainOptions.stateClasses === true) {
-			if (!ctx.block) {
+			if (ctx.block == null) {
 				return;
 			}
 
@@ -273,7 +273,7 @@ export default class ImageLoader {
 		const
 			defaultShadowState = type === 'preview' ? this.defaultPreviewShadowState : this.defaultBrokenShadowState;
 
-		if (defaultShadowState) {
+		if (defaultShadowState != null) {
 			return {
 				...defaultShadowState,
 				mainOptions: mainImageOptions

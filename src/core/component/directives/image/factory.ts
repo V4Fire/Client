@@ -76,7 +76,6 @@ export default class Factory {
 			};
 		}
 
-		console.log(performance.now() - t, 'create shadow state');
 		return res;
 	}
 
@@ -101,7 +100,6 @@ export default class Factory {
 
 		picture.appendChild(img);
 
-		console.log(performance.now() - t, 'picture render');
 		return {picture, img};
 	}
 

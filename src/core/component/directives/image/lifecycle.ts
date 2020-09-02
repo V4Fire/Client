@@ -61,11 +61,11 @@ export default class Lifecycle {
 	protected initMain(el: ImageNode): void {
 		const mainShadowState = this.parent.getShadowStateByType(el, 'main');
 
-		if (!mainShadowState) {
+		if (mainShadowState == null) {
 			return;
 		}
 
-		if (mainShadowState.imgNode.complete && !mainShadowState.isFailed) {
+		if (mainShadowState.imgNode.complete === true && mainShadowState.isFailed === false) {
 			this.onMainImageLoad(el);
 
 		} else {
@@ -91,7 +91,7 @@ export default class Lifecycle {
 		const
 			shadowState = this.parent.getShadowStateByType(el, type);
 
-		if (!shadowState) {
+		if (shadowState == null) {
 			return;
 		}
 
@@ -129,14 +129,14 @@ export default class Lifecycle {
 			shadowState = this.parent.getShadowStateByType(el, type),
 			mainShadowState = this.parent.getShadowStateByType(el, 'main');
 
-		if (!shadowState || !mainShadowState) {
+		if (shadowState == null || mainShadowState == null) {
 			return;
 		}
 
 		const {selfOptions} = shadowState;
 		selfOptions.load?.(el);
 
-		if (mainShadowState.imgNode.complete && mainShadowState.isFailed === false) {
+		if (mainShadowState.imgNode.complete === true && mainShadowState.isFailed === false) {
 			/*
 			 * If a main image are ready – ignore preview
 			 */
@@ -155,7 +155,7 @@ export default class Lifecycle {
 	protected onHelperImageError(el: ImageNode, type: ImageHelperType): void {
 		const shadowState = this.parent.getShadowStateByType(el, type);
 
-		if (!shadowState) {
+		if (shadowState == null) {
 			return;
 		}
 
