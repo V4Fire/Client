@@ -374,7 +374,13 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
-		this.normalizeItems = i.normalizeItems.bind(this);
+
+		if (i.normalizeOptions.toString().includes("'deprecated';")) {
+			this.normalizeItems = i.normalizeItems.bind(this);
+
+		} else {
+			this.normalizeItems = i.normalizeOptions.bind(this);
+		}
 	}
 
 	/**
@@ -422,6 +428,8 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	@deprecated({renamedTo: 'normalizeItems'})
 	protected normalizeOptions(items: CanUndef<Items>): Items {
+		'deprecated';
+
 		return this.normalizeItems(items);
 	}
 
