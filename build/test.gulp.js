@@ -17,7 +17,7 @@ const
 const
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core'),
-	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs} = include('build/helpers');
+	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs, getTestClientName} = include('build/helpers');
 
 const
 	cpus = os.cpus().length;
@@ -415,7 +415,7 @@ module.exports = function init(gulp = require('gulp')) {
 			}, {argv: c.split(' '), permissive: true});
 
 			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
+			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
 
 			if (buildCache[args['--client-name']]) {
 				continue;
@@ -480,7 +480,7 @@ module.exports = function init(gulp = require('gulp')) {
 			let c = cases[i];
 
 			if (!c.includes('--name')) {
-				c = `${c} --name b-dummy`;
+				c = `${c} --runtime-render true`;
 			}
 
 			const args = arg({
@@ -489,7 +489,7 @@ module.exports = function init(gulp = require('gulp')) {
 			}, {argv: c.split(' '), permissive: true});
 
 			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
+			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
 
 			const
 				browserArgs = cliParams.browserArgs.join(','),

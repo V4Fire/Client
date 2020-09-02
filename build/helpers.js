@@ -146,3 +146,19 @@ function getBrowserArgs() {
 		return [];
 	}
 }
+
+/**
+ * Generates a `--client-name` using the specified parameters
+ *
+ * @param {string} name
+ * @param {string} suit
+ * @returns {string}
+ */
+function getTestClientName(name, suit) {
+	name = name || 'b-dummy';
+	suit = suit || 'demo';
+
+	return `${name}_${suit}`;
+}
+
+exports.getTestClientName = getTestClientName;
