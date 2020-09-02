@@ -1,7 +1,7 @@
 
 # V4 component and module testing tools
 
-<img src="cli.png" style="border-radius: 4px; max-height: 343.5px">
+![Tests in CLI](cli.png){:class="img-responsive"}
 
 ## Test environment
 
