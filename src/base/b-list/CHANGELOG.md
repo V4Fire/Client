@@ -17,6 +17,10 @@ Changelog
 * Renamed `valueProp` -> `itemsProp`
 * Changed a type of `hideLabels` from a prop to modifier
 
+#### :bug: Bug Fix
+
+* Fixed a bug with `activeElement` and `multiple`
+
 #### :house: Internal
 
 * Fixed ESLint warnings

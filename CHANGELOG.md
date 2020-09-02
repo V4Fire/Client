@@ -23,7 +23,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Renamed `valueProp` -> `itemsProp`
   * Changed a type of `hideLabels` from a prop to modifier
 
-* `gHint`
+* `gHint`:
   * Renamed:
     * `target` -> `location`
     * `showSelector` -> `showOn`
@@ -40,9 +40,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* `gHint`
+* `gHint`:
   * Added `arrowStyles`, `hideStyles`, `showStyles`
   * Added `interface.ts`
+
+#### :bug: Bug Fix
+
+* `bList`:
+  * Fixed a bug with `activeElement` and `multiple`
 
 #### :house: Internal
 

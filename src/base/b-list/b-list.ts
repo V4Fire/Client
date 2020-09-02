@@ -186,25 +186,39 @@ export default class bList extends iData implements iVisible, iWidth {
 	protected activeStore!: unknown;
 
 	/**
-	 * Returns a link to the active item element
+	 * Returns a link to the active item element.
+	 * If the component is switched to the "multiple" mode, the getter will return an array of elements.
 	 */
 	@computed({
 		cache: true,
 		dependencies: ['active']
 	})
 
-	protected get activeElement(): CanPromise<CanUndef<HTMLAnchorElement>> {
-		return this.waitStatus('ready', () => {
+	protected get activeElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
+		const
+			{active} = this;
+
+		const getEl = (val) => {
 			const
-				activeId = Object.get<CanUndef<number>>(this.values, [this.active]);
+				activeId = Object.get<CanUndef<number>>(this.values, [val]);
 
 			if (activeId != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {
 					id: activeId
 				});
 			}
+		};
 
-			return undefined;
+		return this.waitStatus('ready', () => {
+			if (this.multiple) {
+				if (!Object.isArray(active)) {
+					return [];
+				}
+
+				return active.flatMap((val) => getEl(val) ?? []);
+			}
+
+			return getEl(active);
 		});
 	}
 
