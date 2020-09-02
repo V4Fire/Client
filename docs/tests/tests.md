@@ -1,7 +1,7 @@
 
 # V4 component and module testing tools
 
-<img src="cli.png" height="343.5">
+<img src="cli.png" style="border-radius: 4px; max-height: 343.5px">
 
 ## Test environment
 
