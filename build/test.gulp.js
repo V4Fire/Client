@@ -68,8 +68,13 @@ module.exports = function init(gulp = require('gulp')) {
 	 */
 	gulp.task('test:component:build', () => {
 		const
-			args = arg({'--name': String, '--suit': String, '--client-name': String, '--runtime-render': String}, {permissive: true}),
+			args = arg({'--suit': String, '--client-name': String, '--runtime-render': String}, {permissive: true}),
 			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
+
+		try {
+			const name = arg({'--name': String}, {permissive: true})['--name'];
+			args['--name'] = name;
+		} catch {}
 
 		if (isRuntimeRender) {
 			args['--name'] = 'b-dummy';
@@ -145,8 +150,16 @@ module.exports = function init(gulp = require('gulp')) {
 			'--client-name': String,
 			'--reinit-browser': String,
 			'--test-entry': String,
-			'--runner': String
+			'--runner': String,
+			'--runtime-render': String
 		}, {permissive: true});
+
+		const
+			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
+
+		if (isRuntimeRender) {
+			args['--name'] = 'b-dummy';
+		}
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
