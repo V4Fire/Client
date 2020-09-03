@@ -117,25 +117,25 @@ export default class ImageLoader {
 			typedEl = <ImageNode>el;
 
 		if (mainOpts.preview != null) {
-			const normalized = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.preview);
+			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.preview);
 
 			/*
 			 * If the provided `preview` image are same as default – reuse default `preview` shadow state
 			 */
-			typedEl[SHADOW_PREVIEW] = Object.isTruly(normalized.isDefault) ?
+			typedEl[SHADOW_PREVIEW] = Object.isTruly(normalizedHelperOptions.isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'preview') :
-				this.factory.shadowState(el, normalized, mainOpts, 'preview');
+				this.factory.shadowState(el, normalizedHelperOptions, mainOpts, 'preview');
 		}
 
 		if (mainOpts.broken != null) {
-			const normalized = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.broken);
+			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.broken);
 
 			/*
 			 * If the provided `broken` image are same as default – reuse default `broken` shadow state
 			 */
-			typedEl[SHADOW_BROKEN] = Object.isTruly(normalized.isDefault) ?
+			typedEl[SHADOW_BROKEN] = Object.isTruly(normalizedHelperOptions.isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
-				this.factory.shadowState(el, normalized, mainOpts, 'broken');
+				this.factory.shadowState(el, normalizedHelperOptions, mainOpts, 'broken');
 		}
 
 		typedEl[SHADOW_MAIN] = this.factory.shadowState(el, mainOpts, mainOpts, 'main');
@@ -219,6 +219,12 @@ export default class ImageLoader {
 		}
 	}
 
+	/**
+	 * Returns a shadow state of the element by the specified type
+	 *
+	 * @param el
+	 * @param type
+	 */
 	getShadowStateByType(el: ImageNode, type: ImageType): CanUndef<ShadowElState> {
 		if (type === 'main') {
 			return el[SHADOW_MAIN];
@@ -304,7 +310,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Clears shadow state of the specified element
+	 * Clears a shadow state of the specified element
 	 * @param el
 	 */
 	protected clearShadowState(el: HTMLElement | ImageNode): void {

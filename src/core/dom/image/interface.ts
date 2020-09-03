@@ -113,7 +113,7 @@ export interface ImageOptions {
 	baseSrc?: string;
 
 	/**
-	 * If true, then for each change of the image (preview, broken, main)
+	 * If true, then for each change of the image (initial, preview, broken, main)
 	 * the class will be installed with the current state
 	 *
 	 * @example

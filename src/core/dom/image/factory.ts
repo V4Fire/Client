@@ -22,7 +22,7 @@ import {
 	IMG_IS_LOADED,
 	LOADING_STARTED
 
-} from 'core/component/directives/image';
+} from 'core/dom/image';
 
 /**
  * Helpers class, provides an API for creating DOM elements
