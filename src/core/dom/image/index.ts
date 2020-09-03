@@ -28,6 +28,9 @@ export function imageLoaderFactory(params: CanUndef<DefaultParams> = defaultPara
 	return instance;
 }
 
+/*
+ * This export should be before creating an instance due to the order of initialization of variables
+ */
 export * from 'core/dom/image/interface';
 
 const ImageLoaderInstance = imageLoaderFactory();
