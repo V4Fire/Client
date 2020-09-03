@@ -9,7 +9,7 @@
 import { concatUrls } from 'core/url';
 import { getSrcSet } from 'core/html';
 
-import ImageLoader from 'core/component/directives/image/image';
+import ImageLoader from 'core/dom/image/image';
 
 import {
 
@@ -138,7 +138,6 @@ export default class Factory {
 	 */
 	img(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): HTMLImageElement {
 		const
-			{async} = this.parent,
 			imgNode = document.createElement('img');
 
 		/*
@@ -149,10 +148,12 @@ export default class Factory {
 			imgNode.src = this.src(selfOptions.src, selfOptions, mainOptions);
 			imgNode.srcset = this.srcset(selfOptions.srcset, selfOptions, mainOptions);
 			imgNode[LOADING_STARTED] = true;
-		};
 
-		async.once(imgNode, 'load', () => imgNode[IMG_IS_LOADED] = true);
-		async.once(imgNode, 'error', () => imgNode[IMG_IS_LOADED] = false);
+			imgNode.init.then(
+				() => imgNode[IMG_IS_LOADED] = true,
+				() => imgNode[IMG_IS_LOADED] = false
+			);
+		};
 
 		/*
 		 * Immediate load every image except of a `broken` image

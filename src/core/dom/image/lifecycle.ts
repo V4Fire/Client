@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import ImageLoader from 'core/component/directives/image/image';
+import ImageLoader from 'core/dom/image/image';
+
 import {
 
 	ImageNode,
@@ -19,7 +20,7 @@ import {
 	LOADING_STARTED,
 	ID
 
-} from 'core/component/directives/image';
+} from 'core/dom/image';
 
 /**
  * Helper class, provides an API to work with image lifecycle
@@ -65,7 +66,7 @@ export default class Lifecycle {
 			return;
 		}
 
-		if (mainShadowState.imgNode.complete === true && mainShadowState.isFailed === false) {
+		if (mainShadowState.imgNode.complete === true && mainShadowState.imgNode[IMG_IS_LOADED] === true) {
 			this.onMainImageLoad(el);
 
 		} else {

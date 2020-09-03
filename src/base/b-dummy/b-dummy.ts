@@ -7,7 +7,7 @@
  */
 
 import { inViewFactory } from 'core/dom/in-view';
-import { ImageLoader } from 'core/component/directives/image';
+import { ImageLoader } from 'core/dom/image';
 
 import iData, { component } from 'super/i-data/i-data';
 import { Directives } from 'base/b-dummy/interface';

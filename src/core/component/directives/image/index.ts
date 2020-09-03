@@ -7,15 +7,12 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import ImageLoader from 'core/component/directives/image/image';
+import { ImageLoader } from 'core/dom/image';
 
 import { ComponentDriver, VNode } from 'core/component/engines';
-import { DirectiveOptions } from 'core/component/directives/image/interface';
+import { DirectiveOptions } from 'core/dom/image/interface';
 
-export * from 'core/component/directives/image/interface';
-
-const ImageLoaderInstance = new ImageLoader();
-export { ImageLoaderInstance as ImageLoader };
+export * from 'core/dom/image';
 
 ComponentDriver.directive('image', {
 	// @ts-expect-error (wrong type)
@@ -37,14 +34,14 @@ ComponentDriver.directive('image', {
 			}
 		}
 
-		ImageLoaderInstance.init(el, value);
+		ImageLoader.init(el, value);
 	},
 
 	update(el: HTMLElement, {value, oldValue}: DirectiveOptions): void {
-		ImageLoaderInstance.update(el, value, oldValue);
+		ImageLoader.update(el, value, oldValue);
 	},
 
 	unbind(el: HTMLElement): void {
-		ImageLoaderInstance.clearElement(el);
+		ImageLoader.clearElement(el);
 	}
 });

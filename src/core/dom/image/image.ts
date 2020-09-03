@@ -9,10 +9,6 @@
 /* eslint-disable @typescript-eslint/no-invalid-this */
 
 import symbolGenerator from 'core/symbol';
-import Async from 'core/async';
-
-import Factory from 'core/component/directives/image/factory';
-import Lifecycle from 'core/component/directives/image/lifecycle';
 
 import {
 
@@ -29,7 +25,10 @@ import {
 	SHADOW_MAIN,
 	ID
 
-} from 'core/component/directives/image';
+} from 'core/dom/image';
+
+import Factory from 'core/dom/image/factory';
+import Lifecycle from 'core/dom/image/lifecycle';
 
 export const
 	$$ = symbolGenerator();
@@ -40,11 +39,6 @@ export default class ImageLoader {
 
 	/** @see [[Lifecycle]] */
 	readonly lifecycle: Lifecycle = new Lifecycle(this);
-
-	/**
-	 * Async instance
-	 */
-	readonly async: Async<this> = new Async(this);
 
 	/**
 	 * Normalizes the specified directive value
