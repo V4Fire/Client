@@ -24,6 +24,11 @@ export interface ImageOptions {
 	 * An async module will be used from the passed context to set events.
 	 * If the context is not specified `vNode.context` will be used.
 	 *
+	 * Make sure you are not using `load` or `error` without the context provided this can lead to unexpected results.
+	 *
+	 * When used as a directive, the context will be set automatically
+	 * (but you can override it explicitly by specifying the context).
+	 *
 	 * @example
 	 * ```typescript
 	 * class Test {
@@ -33,7 +38,7 @@ export interface ImageOptions {
 	 * }
 	 * ```
 	 */
-	ctx: iBlock;
+	ctx?: iBlock;
 
 	/**
 	 * Base url to an image
@@ -174,15 +179,15 @@ export interface ImageBackgroundOptions {
 	ratio?: number;
 }
 
-export interface ImageHelperOptions extends ImageOptions {
+export interface ImageHelperOptions extends Omit<ImageOptions, 'ctx'> {
 	/** @override */
-	preview: never;
+	preview?: never;
 
 	/** @override */
-	broken: never;
+	broken?: never;
 
 	/** @override */
-	ctx: never;
+	ctx?: never;
 
 	/**
 	 * True if the specified helper image is a default image
@@ -326,4 +331,4 @@ export interface DefaultParams {
 export type ImageHelperType = 'preview' | 'broken';
 export type ImageType = 'main' | ImageHelperType;
 export type BackgroundSizeType = 'contain' | 'cover';
-export type DirectiveValue = string | Omit<ImageOptions, 'isPreviewImage' | 'isBrokenImage' | 'isMainImage'>;
+export type DirectiveValue = string | ImageOptions;

@@ -237,7 +237,11 @@ export default class ImageLoader {
 	setClasses(el: ImageNode, state: ShadowElState, type?: ImageType | 'initial'): void {
 		const
 			{mainOptions} = state,
-			ctx = state.mainOptions.ctx.unsafe;
+			ctx = state.mainOptions.ctx?.unsafe;
+
+		if (ctx == null) {
+			return;
+		}
 
 		if (mainOptions.stateClasses === true) {
 			if (ctx.block == null) {

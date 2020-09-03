@@ -70,11 +70,18 @@ export default class Lifecycle {
 			this.onMainImageLoad(el);
 
 		} else {
-			const {async} = mainShadowState.mainOptions.ctx.unsafe;
+			const $a = mainShadowState.mainOptions.ctx?.unsafe.async;
 
-			mainShadowState.loadPromise = async.promise(mainShadowState.imgNode.init, {group: '[[v-image:main]]', label: el[ID]})
-				.then(this.onMainImageLoad.bind(this, el))
-				.catch(this.onMainImageLoadError.bind(this, el));
+			if ($a) {
+				mainShadowState.loadPromise = $a.promise(mainShadowState.imgNode.init, {group: '[[v-image:main]]', label: el[ID]})
+					.then(this.onMainImageLoad.bind(this, el))
+					.catch(this.onMainImageLoadError.bind(this, el));
+
+			} else {
+				mainShadowState.imgNode.init
+					.then(this.onMainImageLoad.bind(this, el))
+					.catch(this.onMainImageLoadError.bind(this, el));
+			}
 		}
 	}
 
@@ -114,9 +121,14 @@ export default class Lifecycle {
 			imgNode[INIT_LOAD]!();
 		}
 
-		shadowState.loadPromise = mainOptions.ctx.unsafe.async.promise(
-			imgNode.init, {group: `[[v-image:${type}]]`, label: el[ID]}
-		).then(successCallback, errorCallback);
+		if (mainOptions.ctx) {
+			shadowState.loadPromise = mainOptions.ctx.unsafe.async.promise(
+				imgNode.init, {group: `[[v-image:${type}]]`, label: el[ID]}
+			).then(successCallback, errorCallback);
+
+		} else {
+			imgNode.init.then(successCallback, errorCallback);
+		}
 	}
 
 	/**
