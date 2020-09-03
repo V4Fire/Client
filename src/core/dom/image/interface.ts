@@ -46,6 +46,14 @@ export interface ImageOptions {
 	srcset?: Dictionary<string> | string;
 
 	/**
+	 * If `true` then default params will be used
+	 * (which were set to `defaultBrokenImageOptions` and `defaultPreviewImageOptions`)
+	 *
+	 * @default `true`
+	 */
+	useDefaultParams?: boolean;
+
+	/**
 	 * `alt` attribute for an image
 	 */
 	alt?: string;
@@ -302,6 +310,14 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 	 * Indicator of an image starts loading
 	 */
 	[LOADING_STARTED_SYMBOL]?: true;
+}
+
+/**
+ * Set of default parameters
+ */
+export interface DefaultParams {
+	broken?: string | ImageOptions['broken'];
+	preview?: string | ImageOptions['preview'];
 }
 
 /**

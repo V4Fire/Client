@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ImageLoader } from 'core/component/directives/image';
+import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import { InViewAdapter } from 'core/dom/in-view';
 
 export interface Directives {
+	imageFactory: typeof imageLoaderFactory;
 	image: typeof ImageLoader;
 	inViewMutation: InViewAdapter;
 	inViewObserver: InViewAdapter;

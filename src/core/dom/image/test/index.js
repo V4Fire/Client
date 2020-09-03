@@ -739,6 +739,175 @@ module.exports = async (page, params) => {
 
 					expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 				});
+
+				it('default `broken` as string', async () => {
+					const
+						mainSrcUrl = getRandomImgUrl(),
+						brokenSrcUrl = getRandomImgUrl();
+
+					const requests = [
+						abortImageRequest(mainSrcUrl),
+						handleImageRequest(brokenSrcUrl)
+					];
+
+					await component.evaluate((ctx, [tag, mainSrcUrl, brokenSrcUrl]) => {
+						const imageLoaderCtx = ctx.directives.imageFactory({
+							broken: {
+								src: brokenSrcUrl
+							}
+						});
+
+						const div = document.getElementById(`${tag}-target`);
+
+						imageLoaderCtx.init(div, {
+							src: mainSrcUrl,
+							ctx: globalThis.dummy
+						});
+
+					}, [tag, mainSrcUrl, brokenSrcUrl]);
+
+					await Promise.all(requests);
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, brokenSrcUrl)
+					).toBeResolved();
+				});
+
+				it('default `preview` as string', async () => {
+					const
+						mainSrcUrl = getRandomImgUrl(),
+						previewSrcUrl = getRandomImgUrl();
+
+					handleImageRequest(mainSrcUrl, 3000);
+					handleImageRequest(previewSrcUrl);
+
+					await component.evaluate((ctx, [tag, mainSrcUrl, previewSrcUrl]) => {
+						const imageLoaderCtx = ctx.directives.imageFactory({
+							preview: {
+								src: previewSrcUrl
+							}
+						});
+
+						const div = document.getElementById(`${tag}-target`);
+
+						imageLoaderCtx.init(div, {
+							src: mainSrcUrl,
+							ctx: globalThis.dummy
+						});
+
+					}, [tag, mainSrcUrl, previewSrcUrl]);
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, previewSrcUrl)
+					).toBeResolved();
+				});
+
+				it('useDefaultParams: false', async () => {
+					const
+							mainSrcUrl = getRandomImgUrl(),
+							previewSrcUrl = getRandomImgUrl();
+
+					const requests = [
+						handleImageRequest(mainSrcUrl, 2000),
+						handleImageRequest(previewSrcUrl)
+					];
+
+					await component.evaluate((ctx, [tag, mainSrcUrl, previewSrcUrl]) => {
+						const imageLoaderCtx = ctx.directives.imageFactory({
+							preview: {
+								src: previewSrcUrl
+							}
+						});
+
+						const div = document.getElementById(`${tag}-target`);
+
+						imageLoaderCtx.init(div, {
+							src: mainSrcUrl,
+							useDefaultParams: false,
+							ctx: globalThis.dummy
+						});
+
+					}, [tag, mainSrcUrl, previewSrcUrl]);
+
+					await h.bom.waitForIdleCallback(page);
+					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(previewSrcUrl);
+					await h.bom.waitForIdleCallback(page);
+					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(previewSrcUrl);
+
+					await Promise.all(requests);
+
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, mainSrcUrl)
+					).toBeResolved();
+				});
+
+				['string', 'object'].forEach((paramType) => {
+					it(`default \`broken\` as ${paramType}`, async () => {
+						const
+							mainSrcUrl = getRandomImgUrl(),
+							brokenSrcUrl = getRandomImgUrl();
+
+						const requests = [
+							abortImageRequest(mainSrcUrl),
+							handleImageRequest(brokenSrcUrl)
+						];
+
+						await component.evaluate((ctx, [tag, paramType, mainSrcUrl, brokenSrcUrl]) => {
+							const imageLoaderCtx = ctx.directives.imageFactory({
+								broken: paramType === 'string' ?
+									brokenSrcUrl :
+									{
+										src: brokenSrcUrl
+									}
+							});
+
+							const div = document.getElementById(`${tag}-target`);
+
+							imageLoaderCtx.init(div, {
+								src: mainSrcUrl,
+								ctx: globalThis.dummy
+							});
+
+						}, [tag, paramType, mainSrcUrl, brokenSrcUrl]);
+
+						await Promise.all(requests);
+
+						await expectAsync(
+							waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, brokenSrcUrl)
+						).toBeResolved();
+					});
+
+					it(`default \`preview\` as ${paramType}`, async () => {
+						const
+							mainSrcUrl = getRandomImgUrl(),
+							previewSrcUrl = getRandomImgUrl();
+
+						handleImageRequest(mainSrcUrl, 3000);
+						handleImageRequest(previewSrcUrl);
+
+						await component.evaluate((ctx, [tag, paramType, mainSrcUrl, previewSrcUrl]) => {
+							const imageLoaderCtx = ctx.directives.imageFactory({
+								preview: paramType === 'string' ?
+									previewSrcUrl :
+									{
+										src: previewSrcUrl
+									}
+							});
+
+							const div = document.getElementById(`${tag}-target`);
+
+							imageLoaderCtx.init(div, {
+								src: mainSrcUrl,
+								ctx: globalThis.dummy
+							});
+
+						}, [tag, paramType, mainSrcUrl, previewSrcUrl]);
+
+						await expectAsync(
+							waitFor(getNode(tag), (ctx, sourceReqUrl) => globalThis.getSrc(ctx) === sourceReqUrl, previewSrcUrl)
+						).toBeResolved();
+					});
+				});
 			});
 		});
 

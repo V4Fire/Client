@@ -101,7 +101,7 @@ export default class Factory {
 	}
 
 	/**
-	 * Creates a `sources` elements
+	 * Creates a `source` elements
 	 *
 	 * @param selfOptions
 	 * @param mainOptions

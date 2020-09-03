@@ -7,7 +7,7 @@
  */
 
 import { inViewFactory } from 'core/dom/in-view';
-import { ImageLoader } from 'core/dom/image';
+import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 
 import iData, { component } from 'super/i-data/i-data';
 import { Directives } from 'base/b-dummy/interface';
@@ -26,6 +26,7 @@ export default class bDummy extends iData {
 	 */
 	get directives(): Directives {
 		return {
+			imageFactory: imageLoaderFactory,
 			image: ImageLoader,
 			inViewMutation,
 			inViewObserver

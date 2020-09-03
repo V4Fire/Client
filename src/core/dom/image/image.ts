@@ -103,10 +103,14 @@ export default class ImageLoader {
 	 * @param value
 	 */
 	init(el: HTMLElement, value: DirectiveValue): void {
+		const
+			normalized = ImageLoader.normalizeOptions(value),
+			{useDefaultParams} = normalized;
+
 		const mainOpts: ImageOptions = {
-			preview: this.defaultPreviewImageOptions,
-			broken: this.defaultBrokenImageOptions,
-			...ImageLoader.normalizeOptions(value)
+			preview: useDefaultParams !== false ? this.defaultPreviewImageOptions : undefined,
+			broken: useDefaultParams !== false ? this.defaultBrokenImageOptions : undefined,
+			...normalized
 		};
 
 		const
