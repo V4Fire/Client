@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.62 (2020-09-07)
+
+#### :rocket: New Feature
+
+* [Improved `core/dom/image` API](https://github.com/V4Fire/Client/issues/168)
+
+#### :house: Internal
+
+* [Split the `directives/image` module into two: API was moved to `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
+
 ## v3.0.0-rc.60 (2020-09-01)
 
 #### :rocket: New Feature

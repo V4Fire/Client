@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/dom/image/README.md]]
+ * @packageDocumentation
+ */
+
 import ImageLoader from 'core/dom/image/image';
 import { defaultParams } from 'core/dom/image/default-params';
 import { DefaultParams } from 'core/dom/image/interface';

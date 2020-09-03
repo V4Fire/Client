@@ -47,7 +47,7 @@ module.exports = (page) => {
 		initialTimeout = globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
 	beforeAll(() => {
-		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = 1e4;
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = 2e4;
 	});
 
 	beforeEach(async () => {

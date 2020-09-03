@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/directives/image/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock from 'super/i-block/i-block';
 import { ImageLoader } from 'core/dom/image';
 
