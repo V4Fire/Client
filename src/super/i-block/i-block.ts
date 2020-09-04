@@ -363,6 +363,13 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly syncRouterStoreOnInit: boolean = false;
 
 	/**
+	 * If true, the component will skip waiting of remote providers to avoid redundant re-renders.
+	 * This prop can help optimize your non-functional component when it doesn't contain any remote providers.
+	 */
+	@prop(Boolean)
+	readonly dontWaitRemoteProviders: boolean = false;
+
+	/**
 	 * Map of remote component watchers.
 	 * The usage of this mechanism is similar to the "@watch" decorator:
 	 *   *) As a key we declare a name of a component method that we want to call;
@@ -1896,14 +1903,22 @@ export default abstract class iBlock extends ComponentInterface {
 
 			if (this.globalName != null || !this.isFunctional) {
 				if (this.isFunctional) {
-					return $a.promise(() => this.state.initFromStorage(), label).then(done, doneOnError);
+					return this.state.initFromStorage().then(done, doneOnError);
 				}
 
 				const init = async () => {
 					if (this.globalName != null) {
 						await this.state.initFromStorage();
 
+						if (this.dontWaitRemoteProviders) {
+							return done();
+						}
+
 					} else {
+						if (this.dontWaitRemoteProviders) {
+							return done();
+						}
+
 						await this.nextTick(label);
 					}
 
