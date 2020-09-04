@@ -373,13 +373,17 @@ export default abstract class iData extends iBlock implements iProgress {
 							return this.get(<RequestQuery>defParams[0], defParams[1]);
 						})
 
-						.then((data) => {
-							void this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
-							return callSuper();
-						}, (err) => {
-							stderr(err);
-							return callSuper();
-						});
+						.then(
+							(data) => {
+								void this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
+								return callSuper();
+							},
+
+							(err) => {
+								stderr(err);
+								return callSuper();
+							}
+						);
 				}
 
 				if (this.db !== undefined) {

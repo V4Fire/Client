@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* [Fixed a wrong refactoring in `rc48`](https://github.com/V4Fire/Client/pull/326)
+* [Fixed wrong refactoring in `rc48`](https://github.com/V4Fire/Client/pull/326)
 
 ## v3.0.0-rc.56 (2020-08-06)
 
