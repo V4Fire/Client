@@ -113,7 +113,7 @@ const
 	h = include('tests/helpers');
 
 const
-	renders = include('src/base/b-popover/test/render.js');
+	scheme = include('src/base/b-popover/test/render.js');
 /**
  * @param {Playwright.Page} page
  * @param {!Object} params
