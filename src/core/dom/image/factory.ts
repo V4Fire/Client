@@ -241,7 +241,7 @@ export default class Factory {
 	/**
 	 * Creates a value of the `srcset` attribute
 	 *
-	 * @param src
+	 * @param srcset
 	 * @param selfOptions
 	 * @param mainOptions
 	 */

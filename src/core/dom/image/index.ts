@@ -20,7 +20,7 @@ export * from 'core/dom/image/interface';
 
 /**
  * Creates an image module
- * @param params
+ * @param [params]
  */
 export function imageLoaderFactory(params: CanUndef<DefaultParams> = defaultParams): ImageLoader {
 	const instance = new ImageLoader();

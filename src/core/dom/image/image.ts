@@ -87,10 +87,10 @@ export default class ImageLoader {
 
 	/**
 	 * Sets the default `preview` image
-	 * @param imageOptions
+	 * @param opts
 	 */
-	setDefaultPreviewImage(imageOptions: string | ImageHelperOptions): void {
-		this.defaultPreviewImageOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(imageOptions);
+	setDefaultPreviewImage(opts: string | ImageHelperOptions): void {
+		this.defaultPreviewImageOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(opts);
 		this.defaultPreviewImageOptions.isDefault = true;
 
 		this.cacheDefaultImage(this.defaultPreviewImageOptions, 'preview');
@@ -238,7 +238,7 @@ export default class ImageLoader {
 	 *
 	 * @param el
 	 * @param state
-	 * @param type – if not specified, the value will be taken from `state`
+	 * @param [type] – if not specified, the value will be taken from `state`
 	 */
 	setClasses(el: ImageNode, state: ShadowElState, type?: ImageType | 'initial'): void {
 		const
@@ -269,8 +269,6 @@ export default class ImageLoader {
 	/**
 	 * Merges the default image state with the provided options
 	 *
-	 * @param el
-	 * @param selfImageOptions
 	 * @param mainImageOptions
 	 * @param type
 	 */
