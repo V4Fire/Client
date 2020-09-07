@@ -41,6 +41,9 @@ export default class Factory {
 	}
 
 	/**
+	 * Creates a "shadow" state of an item.
+	 * This state contains the loading state, generated shadow DOM, provided options, and so on
+	 *
 	 * @param el
 	 * @param selfOptions
 	 * @param mainOptions

@@ -94,9 +94,9 @@ export default class bSomeComponent extends iBlock {
 }
 ```
 
-### Setting up a default value for stage images
+### Default value for stage images
 
-To not install a preview or a broken image every time, it is possible to set the default settings.
+To not install a preview or a broken image every time, it is possible to set theDefault settings.
 Override the `const.ts` file in your layer in the `core/dom/image` folder.
 
 __const.ts__

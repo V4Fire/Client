@@ -31,10 +31,10 @@ export interface DirectiveOptions extends VNodeDirective {
 
 export interface ImageOptions {
 	/**
-	 * Execution context
+	 * Execution context.
 	 *
-	 * An async module will be used from the passed context to set events.
-	 * If the context is not specified `vNode.context` will be used.
+	 * The context is used to provide a component environment, like, async, event emitters, etc.
+	 * When API is used as a directive, the context will automatically taken from a VNode instance.
 	 *
 	 * Make sure you are not using `load` or `error` without the context provided this can lead to unexpected results.
 	 *
@@ -92,6 +92,7 @@ export interface ImageOptions {
 
 	/**
 	 * Image `sizes` attribute
+	 * @see https://developer.mozilla.org/ru/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 */
 	sizes?: string;
 
