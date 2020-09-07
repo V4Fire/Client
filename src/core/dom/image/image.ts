@@ -75,18 +75,18 @@ export default class ImageLoader {
 	protected defaultBrokenShadowState?: ShadowElState;
 
 	/**
-	 * Sets a default `broken` image
-	 * @param imageOptions
+	 * Sets the default `broken` image
+	 * @param opts
 	 */
-	setDefaultBrokenImage(imageOptions: string | ImageHelperOptions): void {
-		this.defaultBrokenImageOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(imageOptions);
+	setDefaultBrokenImage(opts: string | ImageHelperOptions): void {
+		this.defaultBrokenImageOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(opts);
 		this.defaultBrokenImageOptions.isDefault = true;
 
 		this.cacheDefaultImage(this.defaultBrokenImageOptions, 'broken');
 	}
 
 	/**
-	 * Sets a default `preview` image
+	 * Sets the default `preview` image
 	 * @param imageOptions
 	 */
 	setDefaultPreviewImage(imageOptions: string | ImageHelperOptions): void {
@@ -120,7 +120,7 @@ export default class ImageLoader {
 			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.preview);
 
 			/*
-			 * If the provided `preview` image are same as default – reuse default `preview` shadow state
+			 * If the provided `preview` image matches with the default – reuse the default `preview` shadow state
 			 */
 			typedEl[SHADOW_PREVIEW] = Object.isTruly(normalizedHelperOptions.isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'preview') :
@@ -131,7 +131,7 @@ export default class ImageLoader {
 			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.broken);
 
 			/*
-			 * If the provided `broken` image are same as default – reuse default `broken` shadow state
+			 * If the provided `broken` image matches with the default – reuse the default `broken` shadow state 
 			 */
 			typedEl[SHADOW_BROKEN] = Object.isTruly(normalizedHelperOptions.isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
@@ -146,7 +146,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Updates state of the specified element
+	 * Updates the state of the specified element
 	 *
 	 * @param el
 	 * @param [value]
@@ -169,7 +169,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets a background image style for the specified element
+	 * Sets background CSS properties to the specified element
 	 *
 	 * @param el
 	 * @param imageSrc
@@ -234,11 +234,11 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets a lifecycle classes to the specified el
+	 * Sets lifecycle classes to the specified el
 	 *
 	 * @param el
 	 * @param state
-	 * @param type – If the `type` is not specified when `type` from `state` will be used
+	 * @param type – if not specified, the value will be taken from `state`
 	 */
 	setClasses(el: ImageNode, state: ShadowElState, type?: ImageType | 'initial'): void {
 		const
@@ -267,7 +267,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Merges default image state with the provided options
+	 * Merges the default image state with the provided options
 	 *
 	 * @param el
 	 * @param selfImageOptions
@@ -290,7 +290,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Creates a cache for a default image
+	 * Creates a cache for the default image
 	 *
 	 * @param options
 	 * @param type
@@ -331,7 +331,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets an `img` tag props to the specified element
+	 * Sets an `alt` attribute or `aria-label` for the specified element
 	 *
 	 * @param el
 	 * @param state
@@ -377,7 +377,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Calculates a `padding-bottom` based on the specified ratio
+	 * Calculates `padding-bottom` based on the specified ratio
 	 *
 	 * @param state
 	 * @param ratio
