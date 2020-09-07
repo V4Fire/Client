@@ -313,7 +313,7 @@ async function generatePageInitJS(pageName, {
 			attrs = normalizeAttrs(rootAttrs);
 
 		body.push(
-			`document.write('<${rootTag} class=".i-static-page.${pageName}" ${attrs}></${rootTag}>')`
+			`document.write('<${rootTag} class=".i-static-page.${pageName}" ${attrs}></${rootTag}>');`
 		);
 	}
 

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.61 (2020-09-04)
+
+#### :bug: Bug Fix
+
+* [Fixed wrong refactoring in `rc48`](https://github.com/V4Fire/Client/pull/326)
+
 ## v3.0.0-rc.56 (2020-08-06)
 
 #### :bug: Bug Fix
