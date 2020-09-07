@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.63 ()
+
+#### :bug: Bug Fix
+
+* Fixed `init.js` generation `super/i-static-page/ss-helpers`
+
 ## v3.0.0-rc.62 (2020-09-04)
 
 #### :rocket: New Feature

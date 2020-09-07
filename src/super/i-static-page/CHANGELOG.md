@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.63 ()
+
+#### :bug: Bug Fix
+
+* Fixed `init.js` generation `ss-helpers`
+
 ## v3.0.0-rc.53 (2020-08-04)
 
 #### :bug: Bug Fix
