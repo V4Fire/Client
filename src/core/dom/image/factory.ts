@@ -83,6 +83,27 @@ export default class Factory {
 	/**
 	 * Creates a picture element with sources and an image tag
 	 *
+	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/picture
+	 *
+	 * @example
+	 * ```typescript
+	 * this.sources({
+	 *   src: 'preview.jpg',
+	 *   sources: [{srcset: webp, type: 'webp'}]
+	 * }, {
+	 *   src: 'main.jpg',
+	 *   sources: [{srcset: webp, type: 'webp'}],
+	 *   baseSrc: 'https://path'
+	 * });
+	 * ```
+	 *
+	 * ```html
+	 * <picture>
+	 *   <source srcset="https://path/preview.webp" type="image/webp">
+	 *   <img src="https://path/main.jpg">
+	 * </picture>
+	 * ```
+	 *
 	 * @param selfOptions
 	 * @param mainOptions
 	 * @param type
@@ -103,7 +124,23 @@ export default class Factory {
 	}
 
 	/**
-	 * Creates a `source` elements
+	 * Creates source elements using the specified options to generate attributes
+	 *
+	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+	 *
+	 * @example
+	 * ```typescript
+	 * // Provided options
+	 * this.sources({
+	 *   src: 'broken.img',
+	 *   sources: [{srcset: webp, type: 'webp'}]
+	 * }, {
+	 *   src: 'main.img',
+	 *   baseSrc: 'https://path'
+	 * });
+	 *
+	 * // The result is a document fragment with <source srcset="https://path/broken.img" type="image/webp">
+	 * ```
 	 *
 	 * @param selfOptions
 	 * @param mainOptions

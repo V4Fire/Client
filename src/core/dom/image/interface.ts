@@ -7,7 +7,6 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { VNodeDirective } from 'core/component/engines';
 
 import {
 
@@ -21,15 +20,91 @@ import {
 
 } from 'core/dom/image';
 
-export interface DirectiveOptions extends VNodeDirective {
-	modifiers: {
-		[key: string]: boolean;
-	};
-
-	value?: DirectiveValue;
-}
-
 export interface ImageOptions {
+	/**
+	 * URL of an image
+	 */
+	src?: string;
+
+	/**
+	 * Base url for `src` and `srcset`
+	 *
+	 * @example
+	 * ```typescript
+	 * {
+	 *   src: 'img.png',
+	 *   baseSrc: 'https://url-to-img',
+	 *   ctx: this
+	 * }
+	 * ```
+	 *
+	 * ```html
+	 * <img src="https://url-to-img/img.png">
+	 * ```
+	 */
+	baseSrc?: string;
+
+	/**
+	 * Srcset of an image. This option helps to manage the situation with multiple resolutions of the image to load.
+	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
+	 */
+	srcset?: Dictionary<string> | string;
+
+	/**
+	 * Image `sizes` attribute
+	 * @see https://developer.mozilla.org/ru/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
+	 */
+	sizes?: string;
+
+	/**
+	 * `source` tags for a `picture` tag
+	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+	 */
+	sources?: ImageSource[];
+
+	/**
+	 * Alternative value of an image to improve accessibility
+	 */
+	alt?: string;
+
+	/** @see [[ImageBackgroundOptions]] */
+	bgOptions?: ImageBackgroundOptions;
+
+	/**
+	 * If true, then for each change of the image (initial, preview, broken, main)
+	 * the class will be installed with the current state
+	 *
+	 * @example
+	 * ```typescript
+	 * {
+	 *   src: 'img.png',
+	 *   stateClasses: true,
+	 *   ctx: this
+	 * }
+	 * ```
+	 *
+	 * ```html
+	 * <div class="b-block b-block__v-image_state_preview"></div>
+	 * ```
+	 *
+	 * @default `false`
+	 */
+	stageClasses?: boolean;
+
+	/**
+	 * Options for a preview image.
+	 *
+	 * The preview image will be showing while the main image is loading.
+	 */
+	preview?: string | ImageHelperOptions;
+
+	/**
+	 * Options for a broken image.
+	 *
+	 * The broken image will be showing if the loading error appears.
+	 */
+	broken?: string | ImageHelperOptions;
+
 	/**
 	 * Execution context.
 	 *
@@ -53,102 +128,20 @@ export interface ImageOptions {
 	ctx?: iBlock;
 
 	/**
-	 * URL of an image
-	 */
-	src?: string;
-
-	/**
-	 * Srcset of an image. This option helps to manage the situation with multiple resolutions of the image to load.
-	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
-	 */
-	srcset?: Dictionary<string> | string;
-
-	/**
-	 * If `true` then default params will be used
+	 * If `true` then default stages will be used
 	 * (which were set to `defaultBrokenImageOptions` and `defaultPreviewImageOptions`)
 	 *
 	 * @default `true`
 	 */
-	useDefaultParams?: boolean;
+	useDefaultImageStages?: boolean;
 
 	/**
-	 * Alternative value of an image to improve accessibility
-	 */
-	alt?: string;
-
-	/**
-	 * Options for a preview image.
-	 *
-	 * The preview image will be showing while the main image is loading.
-	 */
-	preview?: string | ImageHelperOptions;
-
-	/**
-	 * Options for a broken image.
-	 *
-	 * The broken image will be showing if the loading error appears.
-	 */
-	broken?: string | ImageHelperOptions;
-
-	/**
-	 * Image `sizes` attribute
-	 * @see https://developer.mozilla.org/ru/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
-	 */
-	sizes?: string;
-
-	/**
-	 * If this options is set to `false` – `update` directive hook will be ignored
+	 * If this options is set to `false` – `update` directive hook will be ignored.
+	 * It only makes sense if used in directive mode
 	 *
 	 * @default `false`
 	 */
 	handleUpdate?: boolean;
-
-	/**
-	 * `source` tags for a `picture` tag
-	 */
-	sources?: ImageSource[];
-
-	/**
-	 * Base url for `src` and `srcset`
-	 *
-	 * @example
-	 * ```typescript
-	 * {
-	 *   src: 'img.png',
-	 *   baseSrc: 'https://url-to-img',
-	 *   ctx: this
-	 * }
-	 * ```
-	 *
-	 * ```html
-	 * <img src="https://url-to-img/img.png">
-	 * ```
-	 */
-	baseSrc?: string;
-
-	/**
-	 * If true, then for each change of the image (initial, preview, broken, main)
-	 * the class will be installed with the current state
-	 *
-	 * @example
-	 * ```typescript
-	 * {
-	 *   src: 'img.png',
-	 *   stateClasses: true,
-	 *   ctx: this
-	 * }
-	 * ```
-	 *
-	 * ```html
-	 * <div class="b-block b-block__v-image_state_preview"></div>
-	 * ```
-	 *
-	 * @default `false`
-	 */
-	stageClasses?: boolean;
-
-	/** @see [[ImageBackgroundOptions]] */
-	bgOptions?: ImageBackgroundOptions;
 
 	/**
 	 * Will be called after successful loading (`img.onload`)
@@ -193,7 +186,7 @@ export interface ImageBackgroundOptions {
 	ratio?: number;
 }
 
-export interface ImageHelperOptions extends Omit<ImageOptions, 'ctx'> {
+export interface ImageHelperOptions extends ImageOptions {
 	/** @override */
 	preview?: never;
 
@@ -314,4 +307,4 @@ export interface DefaultParams {
 export type ImageHelperType = 'preview' | 'broken';
 export type ImageType = 'main' | ImageHelperType;
 export type BackgroundSizeType = 'contain' | 'cover';
-export type DirectiveValue = string | ImageOptions;
+export type InitValue = string | ImageOptions;

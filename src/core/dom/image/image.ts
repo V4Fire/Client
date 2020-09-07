@@ -14,7 +14,7 @@ import {
 
 	ImageHelperOptions,
 	ImageHelperType,
-	DirectiveValue,
+	InitValue,
 	ShadowElState,
 	ImageOptions,
 	ImageNode,
@@ -44,7 +44,7 @@ export default class ImageLoader {
 	 * Normalizes the specified directive value
 	 * @param value
 	 */
-	static normalizeOptions<T extends ImageOptions | ImageHelperOptions = ImageOptions>(value: DirectiveValue): T {
+	static normalizeOptions<T extends ImageOptions | ImageHelperOptions = ImageOptions>(value: InitValue): T {
 		if (Object.isString(value)) {
 			return <T>{
 				src: value
@@ -97,15 +97,15 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Initializes `v-image`
+	 * Initializes rendering of an image to the specified element
 	 *
 	 * @param el
 	 * @param value
 	 */
-	init(el: HTMLElement, value: DirectiveValue): void {
+	init(el: HTMLElement, value: InitValue): void {
 		const
 			normalized = ImageLoader.normalizeOptions(value),
-			{useDefaultParams} = normalized;
+			{useDefaultImageStages: useDefaultParams} = normalized;
 
 		const mainOpts: ImageOptions = {
 			preview: useDefaultParams !== false ? this.defaultPreviewImageOptions : undefined,
@@ -131,7 +131,7 @@ export default class ImageLoader {
 			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.broken);
 
 			/*
-			 * If the provided `broken` image matches with the default – reuse the default `broken` shadow state 
+			 * If the provided `broken` image matches with the default – reuse the default `broken` shadow state
 			 */
 			typedEl[SHADOW_BROKEN] = Object.isTruly(normalizedHelperOptions.isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
@@ -152,7 +152,7 @@ export default class ImageLoader {
 	 * @param [value]
 	 * @param [oldValue]
 	 */
-	update(el: HTMLElement, value?: DirectiveValue, oldValue?: DirectiveValue): void {
+	update(el: HTMLElement, value?: InitValue, oldValue?: InitValue): void {
 		value = value != null ? ImageLoader.normalizeOptions(value) : undefined;
 		oldValue = oldValue != null ? ImageLoader.normalizeOptions(oldValue) : undefined;
 
@@ -422,12 +422,12 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Returns `true` if the specified `val` is equal to `oldVal`
+	 * Returns `true` if the specified options are equals
 	 *
-	 * @param val
-	 * @param oldVal
+	 * @param a
+	 * @param b
 	 */
-	protected compare(val: CanUndef<ImageOptions>, oldVal: CanUndef<ImageOptions>): boolean {
-		return Object.fastCompare(val, oldVal);
+	protected compare(a: CanUndef<ImageOptions>, b: CanUndef<ImageOptions>): boolean {
+		return Object.fastCompare(a, b);
 	}
 }

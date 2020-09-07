@@ -15,7 +15,7 @@ import iBlock from 'super/i-block/i-block';
 import { ImageLoader } from 'core/dom/image';
 
 import { ComponentDriver, VNode } from 'core/component/engines';
-import { DirectiveOptions } from 'core/dom/image/interface';
+import { DirectiveOptions } from 'core/component/directives/image/interface';
 
 export * from 'core/dom/image';
 
