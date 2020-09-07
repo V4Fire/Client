@@ -661,7 +661,7 @@ module.exports = async (page, params) => {
 						imageLoaderCtx.init(target, {
 							src: mainSrcUrl,
 							preview: previewSrcUrl,
-							stateClasses: true,
+							stageClasses: true,
 							ctx: globalThis.dummy
 						});
 					}, [tag, mainSrcUrl, previewSrcUrl]);
@@ -675,7 +675,7 @@ module.exports = async (page, params) => {
 					).toBeResolved();
 				});
 
-				it('main with `stateClasses`, `src`, preview with `src`, broken with `src`', async () => {
+				it('main with `stageClasses`, `src`, preview with `src`, broken with `src`', async () => {
 					const
 						mainSrcUrl = getRandomImgUrl(),
 						brokenSrcUrl = getRandomImgUrl(),
@@ -697,7 +697,7 @@ module.exports = async (page, params) => {
 							src: mainSrcUrl,
 							preview: previewSrcUrl,
 							broken: brokenSrcUrl,
-							stateClasses: true,
+							stageClasses: true,
 							ctx: globalThis.dummy
 						});
 					}, [tag, mainSrcUrl, previewSrcUrl, brokenSrcUrl]);
@@ -802,7 +802,7 @@ module.exports = async (page, params) => {
 					).toBeResolved();
 				});
 
-				it('useDefaultParams: false', async () => {
+				it('useDefaultImageStages: false', async () => {
 					const
 							mainSrcUrl = getRandomImgUrl(),
 							previewSrcUrl = getRandomImgUrl();
@@ -823,7 +823,7 @@ module.exports = async (page, params) => {
 
 						imageLoaderCtx.init(div, {
 							src: mainSrcUrl,
-							useDefaultParams: false,
+							useDefaultImageStages: false,
 							ctx: globalThis.dummy
 						});
 
