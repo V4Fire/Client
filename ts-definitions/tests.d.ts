@@ -40,28 +40,28 @@ declare namespace Playwright {
 
 	interface RouteFulfillResponse {
 		/**
-		 * Response status code, defaults to `200`.
+		 * Response status code, defaults to `200`
 		 */
 		status?: number;
 
 		/**
-		 * Optional response headers. Header values will be converted to a string.
+		 * Optional response headers. Header values will be converted to a string
 		 */
 		headers?: Dictionary<string>;
 
 		/**
-		 * If set, equals to setting `Content-Type` response header.
+		 * If set, equals to setting `Content-Type` response header
 		 */
 		contentType?: string;
 
 		/**
-		 * Optional response body.
+		 * Optional response body
 		 */
 		body?: string | Buffer;
 
 		/**
 		 * Optional file path to respond with. The content type will be inferred from file extension.
-		 * If `path` is a relative path, then it is resolved relative to current working directory.
+		 * If `path` is a relative path, then it is resolved relative to current working directory
 		 */
 		path?: string;
 	}
@@ -227,9 +227,8 @@ declare namespace BrowserTests {
 		reloadAndWaitForIdle(page: Playwright.Page, idleOptions?: WaitForIdleOptions): Promise<void>;
 
 		/**
-		 * Waits for the specified function to return `Boolean(result) === true`
-		 *
-		 * Similar to `Playwright.Page.waitForFunction` but its executes with provided context
+		 * Waits for the specified function to return `Boolean(result) === true`.
+		 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context
 		 *
 		 * @param ctx – the specified context will be available as first argument of the provided function
 		 * @param fn
