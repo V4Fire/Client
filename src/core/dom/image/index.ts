@@ -12,7 +12,7 @@
  */
 
 import ImageLoader from 'core/dom/image/image';
-import { defaultParams } from 'core/dom/image/default-params';
+import { defaultParams } from 'core/dom/image/const';
 import { DefaultParams } from 'core/dom/image/interface';
 
 /**
@@ -36,6 +36,7 @@ export function imageLoaderFactory(params: CanUndef<DefaultParams> = defaultPara
 /*
  * This export should be before creating an instance due to the order of initialization of variables
  */
+export * from 'core/dom/image/const';
 export * from 'core/dom/image/interface';
 
 const ImageLoaderInstance = imageLoaderFactory();

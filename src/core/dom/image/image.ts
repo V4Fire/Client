@@ -249,7 +249,7 @@ export default class ImageLoader {
 			return;
 		}
 
-		if (mainOptions.stateClasses === true) {
+		if (mainOptions.stageClasses === true) {
 			if (ctx.block == null) {
 				return;
 			}

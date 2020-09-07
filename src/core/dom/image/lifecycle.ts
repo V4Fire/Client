@@ -45,7 +45,7 @@ export default class Lifecycle {
 			previewShadowState = this.parent.getShadowStateByType(el, 'preview'),
 			mainShadowState = this.parent.getShadowStateByType(el, 'main');
 
-		if (mainShadowState?.mainOptions.stateClasses) {
+		if (mainShadowState?.mainOptions.stageClasses) {
 			this.parent.setClasses(el, mainShadowState, 'initial');
 		}
 

@@ -9,6 +9,18 @@
 import iBlock from 'super/i-block/i-block';
 import { VNodeDirective } from 'core/component/engines';
 
+import {
+
+	SHADOW_PREVIEW_SYMBOL,
+	SHADOW_BROKEN_SYMBOL,
+	SHADOW_MAIN_SYMBOL,
+	ID_SYMBOL,
+	IMG_IS_LOADED_SYMBOL,
+	INIT_LOAD_SYMBOL,
+	LOADING_STARTED_SYMBOL
+
+} from 'core/dom/image';
+
 export interface DirectiveOptions extends VNodeDirective {
 	modifiers: {
 		[key: string]: boolean;
@@ -41,13 +53,13 @@ export interface ImageOptions {
 	ctx?: iBlock;
 
 	/**
-	 * Base URL of an image
+	 * URL of an image
 	 */
 	src?: string;
 
 	/**
 	 * Srcset of an image. This option helps to manage the situation with multiple resolutions of the image to load.
-@see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
+	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 */
 	srcset?: Dictionary<string> | string;
 
@@ -132,7 +144,7 @@ export interface ImageOptions {
 	 *
 	 * @default `false`
 	 */
-	stateClasses?: boolean;
+	stageClasses?: boolean;
 
 	/** @see [[ImageBackgroundOptions]] */
 	bgOptions?: ImageBackgroundOptions;
@@ -218,28 +230,6 @@ export interface ImageSource {
 	sizes?: string;
 }
 
-/*
- * @see https://github.com/microsoft/TypeScript/issues/1863
- */
-const
-	SHADOW_PREVIEW_SYMBOL: unique symbol = Symbol.for('state of a preview element'),
-	SHADOW_BROKEN_SYMBOL: unique symbol = Symbol.for('state of a broken element'),
-	SHADOW_MAIN_SYMBOL: unique symbol = Symbol.for('state of a main element'),
-	ID_SYMBOL: unique symbol = Symbol.for('id of an element');
-
-export const
-	SHADOW_PREVIEW = <any>SHADOW_PREVIEW_SYMBOL,
-	SHADOW_BROKEN = <any>SHADOW_BROKEN_SYMBOL,
-	SHADOW_MAIN = <any>SHADOW_MAIN_SYMBOL,
-	ID = <any>ID_SYMBOL;
-
-export interface ImageNode extends HTMLElement {
-	[SHADOW_PREVIEW_SYMBOL]?: ShadowElState;
-	[SHADOW_BROKEN_SYMBOL]?: ShadowElState;
-	[SHADOW_MAIN_SYMBOL]: ShadowElState;
-	[ID_SYMBOL]: string;
-}
-
 export interface ShadowElState {
 	/**
 	 * True if an image loading was failed
@@ -282,21 +272,12 @@ export interface PictureFactoryResult {
 	img: HTMLShadowImageElement;
 }
 
-/*
- * @see https://github.com/microsoft/TypeScript/issues/1863
- */
-const
-	IMG_IS_LOADED_SYMBOL: unique symbol = Symbol.for('image is successfully loaded indicator'),
-	INIT_LOAD_SYMBOL: unique symbol = Symbol.for('image loading initiator'),
-	LOADING_STARTED_SYMBOL: unique symbol = Symbol.for('indicator of an image starts a loading');
-
-/*
- * @see https://github.com/microsoft/TypeScript/issues/1863
- */
-export const
-	IMG_IS_LOADED = <any>IMG_IS_LOADED_SYMBOL,
-	INIT_LOAD = <any>INIT_LOAD_SYMBOL,
-	LOADING_STARTED = <any>LOADING_STARTED_SYMBOL;
+export interface ImageNode extends HTMLElement {
+	[SHADOW_PREVIEW_SYMBOL]?: ShadowElState;
+	[SHADOW_BROKEN_SYMBOL]?: ShadowElState;
+	[SHADOW_MAIN_SYMBOL]: ShadowElState;
+	[ID_SYMBOL]: string;
+}
 
 interface HTMLShadowImageElement extends HTMLImageElement {
 	/**
