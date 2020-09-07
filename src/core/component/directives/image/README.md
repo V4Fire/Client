@@ -1,6 +1,6 @@
 # core/component/directives/image
 
-This directive provides API to set a `background-image` or an `src` to nodes.
+This module provides a directive to load images by using `background-image` or `src`.
 
 ## Usage
 

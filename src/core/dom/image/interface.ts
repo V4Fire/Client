@@ -41,12 +41,13 @@ export interface ImageOptions {
 	ctx?: iBlock;
 
 	/**
-	 * Base url to an image
+	 * Base URL of an image
 	 */
 	src?: string;
 
 	/**
-	 * Srcset to an image
+	 * Srcset of an image. This option helps to manage the situation with multiple resolutions of the image to load.
+@see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 */
 	srcset?: Dictionary<string> | string;
 
@@ -59,7 +60,7 @@ export interface ImageOptions {
 	useDefaultParams?: boolean;
 
 	/**
-	 * `alt` attribute for an image
+	 * Alternative value of an image to improve accessibility
 	 */
 	alt?: string;
 

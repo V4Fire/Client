@@ -25,10 +25,9 @@ import {
 } from 'core/dom/image';
 
 /**
- * Helpers class, provides an API for creating DOM elements
+ * Helpers class that provides API to create DOM elements
  */
 export default class Factory {
-
 	/**
 	 * Parent class
 	 */
@@ -141,7 +140,7 @@ export default class Factory {
 			imgNode = document.createElement('img');
 
 		/*
-		 * Create a function for prevent immediate loading of a `broken` image
+		 * Create a function to prevent immediate loading of the `broken` image
 		 */
 		imgNode[INIT_LOAD] = () => {
 			imgNode.sizes = selfOptions.sizes ?? '';
@@ -156,7 +155,7 @@ export default class Factory {
 		};
 
 		/*
-		 * Immediate load every image except of a `broken` image
+		 * Immediate load every image except the `broken` image
 		 */
 		if (type !== 'broken') {
 			imgNode[INIT_LOAD]();
@@ -166,7 +165,7 @@ export default class Factory {
 	}
 
 	/**
-	 * Creates a value for a `type` attribute for a `source` tag
+	 * Creates a `type` attribute value of the `source` tag
 	 * @param type
 	 */
 	type(type: CanUndef<string>): string {
@@ -178,7 +177,7 @@ export default class Factory {
 	}
 
 	/**
-	 * Creates a value for a `src` attribute
+	 * Creates a value of the `src` attribute
 	 *
 	 * @param src
 	 * @param selfOptions
@@ -200,7 +199,7 @@ export default class Factory {
 	}
 
 	/**
-	 * Creates a value for a `srcset` attribute
+	 * Creates a value of the `srcset` attribute
 	 *
 	 * @param src
 	 * @param selfOptions
@@ -233,7 +232,7 @@ export default class Factory {
 	}
 
 	/**
-	 * Returns a `baseSrc` from the specified options
+	 * Returns `baseSrc` from the specified options
 	 *
 	 * @param selfOptions
 	 * @param mainOptions

@@ -1,6 +1,6 @@
 # core/dom/image
 
-This module provides API to set a `background-image` or an `src` to nodes.
+This module provides API to load images by using `background-image` or `src`.
 
 ## Callbacks
 
@@ -24,4 +24,3 @@ export default class bSomeComponent extends iBlock {
   }
 }
 ```
-
