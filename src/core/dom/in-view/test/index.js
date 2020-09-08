@@ -37,8 +37,8 @@ module.exports = async (page, params) => {
 		getInView = (strategy) => strategy === 'mutation' ? inViewMutation : inViewObserver;
 
 	beforeAll(async () => {
-		componentNode = await h.dom.waitForEl(page, '#target');
-		component = await h.component.waitForComponent(page, '#target');
+		componentNode = await h.dom.waitForEl(page, '#dummy-component');
+		component = await h.component.waitForComponent(page, '#dummy-component');
 
 		inViewMutation = await component.evaluateHandle((ctx) => ctx.directives.inViewMutation);
 		inViewObserver = await component.evaluateHandle((ctx) => ctx.directives.inViewObserver);
@@ -132,8 +132,6 @@ module.exports = async (page, params) => {
 
 			it('with `callback` and `polling`', async () => {
 				await getInView(strategy).evaluate((ctx) => {
-					console.log(globalThis.target);
-					console.log(ctx);
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = true,
 						delay: 1,
@@ -323,6 +321,25 @@ module.exports = async (page, params) => {
 				});
 
 				await expectAsync(page.waitForFunction('globalThis.tmp === 2')).toBeResolved();
+			});
+
+			it('disconnected element doesn\'t invokes a callback', async () => {
+				await page.evaluate(() => globalThis.tmp = 0);
+
+				await getInView(strategy).evaluate((ctx) => {
+					ctx.observe(globalThis.target, {
+						callback: () => globalThis.tmp = 1,
+						delay: 100,
+						threshold: 0.7,
+						group: 'test-group'
+					});
+
+					globalThis.target.remove();
+
+					return new Promise((res) => setTimeout(res, 300));
+				});
+
+				expect(await page.evaluate(() => globalThis.tmp)).toBe(0);
 			});
 		});
 	});

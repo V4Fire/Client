@@ -287,8 +287,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			'core/browser': true,
 			'core/session': true,
+			'core/dom/in-view': true,
 
 			'prelude/dependencies': true,
+			'prelude/test-env': !isProd,
 			'component/async-render': true,
 			'component/daemons': true,
 

@@ -11,8 +11,10 @@
  * @packageDocumentation
  */
 
-import { wrapAsDelegateHandler } from 'core/dom';
+import { wrapAsDelegateHandler, inViewFactory, InitOptions, InViewAdapter } from 'core/dom';
+
 import { ComponentElement } from 'core/component';
+import { AsyncOptions } from 'core/async';
 
 import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
@@ -20,7 +22,7 @@ import Friend from 'super/i-block/modules/friend';
 
 import { wait } from 'super/i-block/modules/decorators';
 import { componentRgxp } from 'super/i-block/modules/dom/const';
-import { ElCb } from 'super/i-block/modules/dom/interface';
+import { ElCb, inViewInstanceStore, DOMManipulationOptions } from 'super/i-block/modules/dom/interface';
 
 export * from 'super/i-block/modules/dom/const';
 export * from 'super/i-block/modules/dom/interface';
@@ -29,6 +31,20 @@ export * from 'super/i-block/modules/dom/interface';
  * Class provides some methods to work with a DOM tree
  */
 export default class DOM extends Friend {
+	/**
+	 * Returns a component in-view instance
+	 */
+	get localInView(): InViewAdapter {
+		const
+			currentInstance = <CanUndef<InViewAdapter>>this.ctx.tmp[inViewInstanceStore];
+
+		if (currentInstance != null) {
+			return currentInstance;
+		}
+
+		return this.ctx.tmp[inViewInstanceStore] = inViewFactory();
+	}
+
 	/**
 	 * Takes a string identifier and returns a new identifier that is connected to the component.
 	 * This method should use to generate id attributes for DOM nodes.
@@ -146,15 +162,19 @@ export default class DOM extends Friend {
 	 *
 	 * @param parent - element name or a link to the parent node
 	 * @param newNode
-	 * @param [group] - operation group
+	 * @param [groupOrOptions] - `async` group or a set of options
 	 */
 	appendChild(
 		parent: string | Node | DocumentFragment,
 		newNode: Node,
-		group?: string
+		groupOrOptions?: string | DOMManipulationOptions
 	): Function | false {
 		const
-			parentNode = Object.isString(parent) ? this.block?.element(parent) : parent;
+			parentNode = Object.isString(parent) ? this.block?.element(parent) : parent,
+			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
+
+		let
+			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
 
 		if (parentNode == null) {
 			return false;
@@ -165,7 +185,18 @@ export default class DOM extends Friend {
 		}
 
 		parentNode.appendChild(newNode);
-		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+
+		return this.ctx.async.worker(() => {
+			newNode.parentNode?.removeChild(newNode);
+
+			const
+				{component} = <ComponentElement<iBlock>>newNode;
+
+			if (destroyIfComponent === true && component) {
+				component.unsafe.$destroy();
+			}
+
+		}, {
 			group: group ?? 'asyncComponents'
 		});
 	}
@@ -176,11 +207,15 @@ export default class DOM extends Friend {
 	 *
 	 * @param el - element name or a link to a node
 	 * @param newNode
-	 * @param [group] - operation group
+	 * @param [groupOrOptions] - `async` group or a set of options
 	 */
-	replaceWith(el: string | Element, newNode: Node, group?: string): Function | false {
+	replaceWith(el: string | Element, newNode: Node, groupOrOptions?: string | DOMManipulationOptions): Function | false {
 		const
-			node = Object.isString(el) ? this.block?.element(el) : el;
+			node = Object.isString(el) ? this.block?.element(el) : el,
+			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
+
+		let
+			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
 
 		if (node == null) {
 			return false;
@@ -191,7 +226,18 @@ export default class DOM extends Friend {
 		}
 
 		node.replaceWith(newNode);
-		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+
+		return this.ctx.async.worker(() => {
+			newNode.parentNode?.removeChild(newNode);
+
+			const
+				{component} = <ComponentElement<iBlock>>newNode;
+
+			if (destroyIfComponent === true && component) {
+				component.unsafe.$destroy();
+			}
+
+		}, {
 			group: group ?? 'asyncComponents'
 		});
 	}
@@ -268,5 +314,23 @@ export default class DOM extends Friend {
 			ctx: resolvedCtx,
 			component: resolvedCtx
 		});
+	}
+
+	/**
+	 * Watches for intersections of the specified node by using the in-view module
+	 *
+	 * @param node
+	 * @param options
+	 * @param asyncOptions
+	 */
+	watchForNodeIntersection(node: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+		const
+			{ctx} = this,
+			inViewInstance = this.localInView;
+
+		const destructor = ctx.async.worker(() => inViewInstance.remove(node, options.threshold), asyncOptions);
+		inViewInstance.observe(node, options);
+
+		return destructor;
 	}
 }

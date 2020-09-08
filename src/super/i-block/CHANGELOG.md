@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.62 (2020-09-04)
+
+#### :rocket: New Feature
+
+* Added `dontWaitRemoteProviders`
+
 ## v3.0.0-rc.56 (2020-08-06)
 
 #### :bug: Bug Fix

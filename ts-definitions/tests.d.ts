@@ -160,7 +160,7 @@ declare namespace BrowserTests {
 
 		/**
 		 * Time after which the function stops trying to find an element on a page and returns `undefined`
-		 * @default `2000`
+		 * @default `3500`
 		 */
 		timeout?: number;
 
@@ -269,10 +269,12 @@ declare namespace BrowserTests {
 		getComponents(ctx: PlaywrightElContext, selector: string): Promise<Playwright.JSHandle[]>;
 
 		/**
-		 * Returns `root` component
+		 * Returns the root component
+		 *
 		 * @param ctx
+		 * @param [selector='#root-component']
 		 */
-		getRoot(ctx: PlaywrightElContext): Promise<CanUndef<Playwright.JSHandle>>;
+		getRoot(ctx: PlaywrightElContext, selector?: string): Promise<CanUndef<Playwright.JSHandle>>;
 
 		/**
 		 * Waits until the component has the specified status and returns the component
@@ -476,7 +478,7 @@ declare namespace BrowserTests {
 		 * @param page
 		 * @param options
 		 */
-		scrollBy(page: Playwright.Page, options: ScrollOptions): Promise<void>;
+		scrollBy(page: Playwright.Page, options: ScrollToOptions): Promise<void>;
 
 		/**
 		 * @param page

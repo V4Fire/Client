@@ -10,25 +10,25 @@
 
 module.exports = [
 	// b-router
-	'--name b-router',
+	'--test-entry base/b-router/test',
 
 	// b-virtual-scroll
-	'--name b-virtual-scroll --suit slots --runner slots/empty',
-	'--name b-virtual-scroll --suit slots --runner slots/render-next',
+	'--test-entry base/b-virtual-scroll/test --runner slots/empty',
+	'--test-entry base/b-virtual-scroll/test --runner slots/render-next',
 
-	'--name b-virtual-scroll --suit render --runner render/render',
+	'--test-entry base/b-virtual-scroll/test --runner render/render',
 
-	'--name b-virtual-scroll --suit render --runner events/data-change',
-	'--name b-virtual-scroll --suit render --runner events/chunk-loaded',
-	'--name b-virtual-scroll --suit render --runner events/chunk-loading',
-	'--name b-virtual-scroll --suit render --runner events/db-change',
+	'--test-entry base/b-virtual-scroll/test --runner events/data-change',
+	'--test-entry base/b-virtual-scroll/test --runner events/chunk-loaded',
+	'--test-entry base/b-virtual-scroll/test --runner events/chunk-loading',
+	'--test-entry base/b-virtual-scroll/test --runner events/db-change',
 
-	'--name b-virtual-scroll --suit render --runner functional/state',
-	'--name b-virtual-scroll --suit render --runner functional/render-next',
+	'--test-entry base/b-virtual-scroll/test --runner functional/state',
+	'--test-entry base/b-virtual-scroll/test --runner functional/render-next',
 
 	// b-button
-	'--name b-button --suit demo',
+	'--test-entry form/b-button/test',
 
 	// in-view
-	'--name b-dummy --test-entry core/component/directives/in-view/test'
+	'--test-entry core/dom/in-view/test'
 ];

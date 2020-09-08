@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.60 (2020-09-01)
+
+#### :bug: Bug Fix
+
+* [Fixed a possible memory leak](https://github.com/V4Fire/Client/pull/321)
+
 ## v3.0.0-rc.59 (2020-08-10)
 
 #### :rocket: New Feature

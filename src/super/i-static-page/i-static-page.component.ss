@@ -14,6 +14,9 @@
  * Base page component template
  */
 - template index() extends ['i-page'].index
+	- block rootAttrs
+		? Object.assign(rootAttrs, {'id': 'root-component'})
+
 	- block innerRoot
 		< .&__root-wrapper[.page-wrapper]
 			- block body
