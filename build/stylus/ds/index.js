@@ -16,7 +16,7 @@ const
 const
 	config = require('config'),
 	runtime = config.runtime(),
-	it = runtime.includedThemes;
+	{includedThemes} = runtime;
 
 const {
 	setVar,
@@ -31,7 +31,8 @@ const {
 
 if (pzlr.config.designSystem) {
 	try {
-		Object.assign(DS, require(pzlr.config.designSystem));
+		const d = require(pzlr.config.designSystem);
+		Object.assign(DS, $C.clone(d));
 
 	} catch {
 		console.log(`[stylus] Can't find "${pzlr.config.designSystem}" design system package`);
@@ -45,7 +46,7 @@ prepareData(DS);
 
 const
 	THEME = runtime.theme,
-	INCLUDED_THEMES = it === true ? DS.meta.includedThemes : it;
+	INCLUDED_THEMES = includedThemes === true ? DS.meta.includedThemes : includedThemes;
 
 module.exports = function addPlugins(api) {
 	/**

@@ -77,14 +77,17 @@ function prepareData(data, path, theme) {
 			}
 
 		} else if (val === 'theme') {
-			// @example
-			// {
-			//   bButton: {
-			//     theme: {
-			//       dark: d
-			//     }
-			//   }
-			// }}
+			/*
+			 * @example
+			 *
+			 * {
+			 *   bButton: {
+			 *     theme: {
+			 *       dark: d
+			 *     }
+			 *   }
+			 * }}
+			 */
 			if (Object.isObject(d)) {
 				prepareData(d, path, true);
 
