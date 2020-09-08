@@ -27,7 +27,7 @@ export interface ImageOptions {
 	src?: string;
 
 	/**
-	 * Base url for `src` and `srcset`
+	 * Base URL for `src` and `srcset`
 	 *
 	 * @example
 	 * ```typescript
@@ -57,7 +57,7 @@ export interface ImageOptions {
 	sizes?: string;
 
 	/**
-	 * `source` tags for a `picture` tag
+	 * Values of `source` tags within `picture`
 	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	sources?: ImageSource[];
@@ -71,20 +71,20 @@ export interface ImageOptions {
 	bgOptions?: ImageBackgroundOptions;
 
 	/**
-	 * If true, then for each change of the image (initial, preview, broken, main)
+	 * If true, then for each changing of an imaging stage (initial, preview, broken, main), the image element will get a class with the stage value
 	 * the class will be installed with the current state
 	 *
 	 * @example
 	 * ```typescript
 	 * {
 	 *   src: 'img.png',
-	 *   stateClasses: true,
+	 *   stageClasses: true,
 	 *   ctx: this
 	 * }
 	 * ```
 	 *
 	 * ```html
-	 * <div class="b-block b-block__v-image_state_preview"></div>
+	 * <div class="b-block b-block__v-image_stage_preview"></div>
 	 * ```
 	 *
 	 * @default `false`
@@ -92,14 +92,14 @@ export interface ImageOptions {
 	stageClasses?: boolean;
 
 	/**
-	 * Options for a preview image.
+	 * Options of a loading placeholder. The placeholder will be shown while the main image is loading.
 	 *
 	 * The preview image will be showing while the main image is loading.
 	 */
 	preview?: string | ImageHelperOptions;
 
 	/**
-	 * Options for a broken image.
+	 * Options of an error placeholder. The placeholder will be shown when the main image hasn't been loaded due to an error.
 	 *
 	 * The broken image will be showing if the loading error appears.
 	 */
@@ -111,7 +111,7 @@ export interface ImageOptions {
 	 * The context is used to provide a component environment, like, async, event emitters, etc.
 	 * When API is used as a directive, the context will automatically taken from a VNode instance.
 	 *
-	 * Make sure you are not using `load` or `error` without the context provided this can lead to unexpected results.
+	 * Make sure you are not using `load` or `error` without the context provided, cause this can lead to unexpected results.
 	 *
 	 * When used as a directive, the context will be set automatically
 	 * (but you can override it explicitly by specifying the context).
@@ -128,7 +128,7 @@ export interface ImageOptions {
 	ctx?: iBlock;
 
 	/**
-	 * If `true` then default stages will be used
+	 * If true, then image placeholder will use the default options.
 	 * (which were set to `defaultBrokenImageOptions` and `defaultPreviewImageOptions`)
 	 *
 	 * @default `true`
@@ -144,7 +144,7 @@ export interface ImageOptions {
 	handleUpdate?: boolean;
 
 	/**
-	 * Will be called after successful loading (`img.onload`)
+	 * Will be called after the successful loading of an image (`img.onload`)
 	 * @param el
 	 */
 	load?(el: Element): unknown;
@@ -157,7 +157,7 @@ export interface ImageOptions {
 }
 
 /**
- * Options for background image
+ * Options of a background image
  */
 export interface ImageBackgroundOptions {
 	/**
@@ -276,9 +276,9 @@ export interface ImageNode extends HTMLElement {
 interface HTMLShadowImageElement extends HTMLImageElement {
 	/**
 	 * If
-	 *   - `true` – image was successfully loaded
-	 *   - `false`– loading failed
-	 *   - `undefined` – initial state, loading was not completed
+	 *   - `true` – the image has been successfully loaded;
+	 *   - `false`– the image loading has been failed;
+	 *   - `undefined` – initial state, loading isn't finished
 	 */
 	[IMG_IS_LOADED_SYMBOL]?: boolean;
 
