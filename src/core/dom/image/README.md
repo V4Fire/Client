@@ -6,8 +6,8 @@ This module provides API to load images by using `background-image` or `src`.
 
 | Name       | Description                                      | Payload description  | Payload   |
 | ---------- |------------------------------------------------- | -------------------- |-----------|
-| `load`     | Invoked when an image was successfully loaded    | `el` bonded node     | `Element` |
-| `error`    | Invoked when a loading error of an image appears | `el` bonded node     | `Element` |
+| `load`     | Invoked when an image was successfully loaded    | `el` bounded node     | `Element` |
+| `error`    | Invoked when a loading error of an image appears | `el` bounded node     | `Element` |
 
 ## Usage
 
