@@ -6,11 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { DefaultParams } from 'core/dom/image';
+import { DefaultParams } from 'core/dom/image/interface';
 
 /**
- * This variable is used to override the default (`defaultBrokenImageOptions`, `defaultPreviewImageOptions`) values.
- * Override this file and export variable named as `defaultParams` from it to set the default value.
+ * Default parameters for image placeholders: `defaultBrokenImageOptions` and `defaultPreviewImageOptions`
  *
  * @example
  * ```typescript

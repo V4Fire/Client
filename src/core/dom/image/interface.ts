@@ -27,7 +27,7 @@ export interface ImageOptions {
 	src?: string;
 
 	/**
-	 * Base url for `src` and `srcset`
+	 * Base URL for `src` and `srcset`
 	 *
 	 * @example
 	 * ```typescript
@@ -57,7 +57,7 @@ export interface ImageOptions {
 	sizes?: string;
 
 	/**
-	 * `source` tags for a `picture` tag
+	 * Values of `source` tags within `picture`
 	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	sources?: ImageSource[];
@@ -71,20 +71,20 @@ export interface ImageOptions {
 	bgOptions?: ImageBackgroundOptions;
 
 	/**
-	 * If true, then for each change of the image (initial, preview, broken, main)
-	 * the class will be installed with the current state
+	 * If true, then for each changing of an imaging stage (initial, preview, broken, main),
+	 * the image element will get a class with the stage value
 	 *
 	 * @example
 	 * ```typescript
 	 * {
 	 *   src: 'img.png',
-	 *   stateClasses: true,
+	 *   stageClasses: true,
 	 *   ctx: this
 	 * }
 	 * ```
 	 *
 	 * ```html
-	 * <div class="b-block b-block__v-image_state_preview"></div>
+	 * <div class="b-block b-block__v-image_stage_preview"></div>
 	 * ```
 	 *
 	 * @default `false`
@@ -92,16 +92,13 @@ export interface ImageOptions {
 	stageClasses?: boolean;
 
 	/**
-	 * Options for a preview image.
-	 *
-	 * The preview image will be showing while the main image is loading.
+	 * Options of a loading placeholder. The placeholder will be shown while the main image is loading.
 	 */
 	preview?: string | ImagePlaceholderOptions;
 
 	/**
-	 * Options for a broken image.
-	 *
-	 * The broken image will be showing if the loading error appears.
+	 * Options of an error placeholder.
+	 * The placeholder will be shown when the main image hasn't been loaded due to an error.
 	 */
 	broken?: string | ImagePlaceholderOptions;
 
@@ -123,7 +120,8 @@ export interface ImageOptions {
 	 * The context is used to provide a component environment, like, async, event emitters, etc.
 	 * When API is used as a directive, the context will automatically taken from a VNode instance.
 	 *
-	 * Make sure you are not using `load` or `error` without the context provided this can lead to unexpected results.
+	 * Make sure you are not using `load` or `error` without the context provided,
+	 * cause this can lead to unexpected results.
 	 *
 	 * @example
 	 * ```typescript
@@ -150,13 +148,13 @@ export interface ImageOptions {
 }
 
 /**
- * Options for background image
+ * Options of a background image
  */
 export interface ImageBackgroundOptions {
 	/**
 	 * Image background size type
 	 */
-	size?: BackgroundSizeType ;
+	size?: BackgroundSizeType;
 
 	/**
 	 * Image background position
@@ -164,12 +162,12 @@ export interface ImageBackgroundOptions {
 	position?: string;
 
 	/**
-	 * Style (backgroundImage) before the image background
+	 * The string to add to the background image before the URL
 	 */
 	beforeImg?: CanArray<string>;
 
 	/**
-	 * Style (backgroundImage) after the image background
+	 * The string to add to the background image after the URL
 	 */
 	afterImg?: CanArray<string>;
 
@@ -197,6 +195,7 @@ export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions 
 	isDefault?: boolean;
 }
 
+/** @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source */
 export interface ImageSource {
 	/**
 	 * MIME resource type
@@ -282,9 +281,9 @@ export interface ImageNode extends HTMLElement {
 interface HTMLShadowImageElement extends HTMLImageElement {
 	/**
 	 * If
-	 *   - `true` – image was successfully loaded
-	 *   - `false`– loading failed
-	 *   - `undefined` – initial state, loading was not completed
+	 *   - `true` – the image has been successfully loaded;
+	 *   - `false`– the image loading has been failed;
+	 *   - `undefined` – initial state, loading isn't finished
 	 */
 	[IMG_IS_LOADED_SYMBOL]?: boolean;
 

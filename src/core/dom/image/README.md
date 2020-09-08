@@ -52,9 +52,9 @@ export default class bSomeComponent extends iBlock {
 
 Stages of an image:
 
-1. `preview` – It will be displayed until the main image is loading.
-2. `main` – It will be displayed until then the main image is loaded.
-3. `broken` – It will be displayed if the main image failed to load.
+1. `preview` – the main image is loading; till the loading complete, there will be shown a placeholder.
+2. `main` – the main image has been loaded.
+3. `broken` – the main image hasn't been loaded due to an error; there will be shown an error placeholder.
 
 ```typescript
 import { ImageLoader } from 'core/dom/image';
@@ -74,7 +74,7 @@ export default class bSomeComponent extends iBlock {
 
 ### Different image formats
 
-You can use several different image formats or resolutions by using the `srcset` and `sources` options.
+You can use several image formats or resolutions by using the `srcset` and `sources` options.
 
 ```typescript
 import { ImageLoader } from 'core/dom/image';
@@ -98,7 +98,6 @@ export default class bSomeComponent extends iBlock {
 
 To avoid redundant lines of code, you can specify default parameters for load and error stages of an image.
 
-__const.ts__
 ```typescript
 import { DefaultParams } from 'core/dom/image';
 
