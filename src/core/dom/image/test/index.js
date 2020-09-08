@@ -802,7 +802,7 @@ module.exports = async (page, params) => {
 					).toBeResolved();
 				});
 
-				it('useDefaultImageStages: false', async () => {
+				it('override default placeholders', async () => {
 					const
 							mainSrcUrl = getRandomImgUrl(),
 							previewSrcUrl = getRandomImgUrl();
@@ -823,7 +823,7 @@ module.exports = async (page, params) => {
 
 						imageLoaderCtx.init(div, {
 							src: mainSrcUrl,
-							useDefaultImageStages: false,
+							preview: undefined,
 							ctx: globalThis.dummy
 						});
 

@@ -16,7 +16,7 @@ import {
 	ImageOptions,
 	PictureFactoryResult,
 	ShadowElState,
-	ImageType,
+	ImageStage,
 
 	INIT_LOAD,
 	IMG_IS_LOADED,
@@ -49,7 +49,7 @@ export default class Factory {
 	 * @param mainOptions
 	 * @param type
 	 */
-	shadowState(el: HTMLElement, selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): ShadowElState {
+	shadowState(el: HTMLElement, selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageStage): ShadowElState {
 		let res: ShadowElState;
 
 		if (Object.isArray(selfOptions.sources) && selfOptions.sources.length > 0) {
@@ -61,7 +61,7 @@ export default class Factory {
 				isFailed: false,
 				selfOptions,
 				mainOptions,
-				type
+				stageType: type
 			};
 
 		} else {
@@ -73,7 +73,7 @@ export default class Factory {
 				isFailed: false,
 				selfOptions,
 				mainOptions,
-				type
+				stageType: type
 			};
 		}
 
@@ -108,7 +108,7 @@ export default class Factory {
 	 * @param mainOptions
 	 * @param type
 	 */
-	picture(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): PictureFactoryResult {
+	picture(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageStage): PictureFactoryResult {
 		const
 			picture = document.createElement('picture'),
 			img = this.img(selfOptions, mainOptions, type);
@@ -175,7 +175,7 @@ export default class Factory {
 	 * @param mainOptions
 	 * @param type
 	 */
-	img(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageType): HTMLImageElement {
+	img(selfOptions: ImageOptions, mainOptions: ImageOptions, type: ImageStage): HTMLImageElement {
 		const
 			imgNode = document.createElement('img');
 

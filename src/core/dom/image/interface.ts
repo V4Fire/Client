@@ -18,7 +18,7 @@ import {
 	INIT_LOAD_SYMBOL,
 	LOADING_STARTED_SYMBOL
 
-} from 'core/dom/image';
+} from 'core/dom/image/const';
 
 export interface ImageOptions {
 	/**
@@ -96,14 +96,26 @@ export interface ImageOptions {
 	 *
 	 * The preview image will be showing while the main image is loading.
 	 */
-	preview?: string | ImageHelperOptions;
+	preview?: string | ImagePlaceholderOptions;
 
 	/**
 	 * Options for a broken image.
 	 *
 	 * The broken image will be showing if the loading error appears.
 	 */
-	broken?: string | ImageHelperOptions;
+	broken?: string | ImagePlaceholderOptions;
+
+	/**
+	 * If this options is set to `false` – `update` directive hook will be ignored.
+	 * It only makes sense if used in directive mode.
+	 *
+	 * When calling the state update method for a node, the old parameters, and new parameters will be compared.
+	 * If they differ, the current state will be completely cleared and recreated.
+	 * This can be useful if you change the image's src or any options on the same node during re-rendering.
+	 *
+	 * @default `false`
+	 */
+	handleUpdate?: boolean;
 
 	/**
 	 * Execution context.
@@ -112,9 +124,6 @@ export interface ImageOptions {
 	 * When API is used as a directive, the context will automatically taken from a VNode instance.
 	 *
 	 * Make sure you are not using `load` or `error` without the context provided this can lead to unexpected results.
-	 *
-	 * When used as a directive, the context will be set automatically
-	 * (but you can override it explicitly by specifying the context).
 	 *
 	 * @example
 	 * ```typescript
@@ -126,22 +135,6 @@ export interface ImageOptions {
 	 * ```
 	 */
 	ctx?: iBlock;
-
-	/**
-	 * If `true` then default stages will be used
-	 * (which were set to `defaultBrokenImageOptions` and `defaultPreviewImageOptions`)
-	 *
-	 * @default `true`
-	 */
-	useDefaultImageStages?: boolean;
-
-	/**
-	 * If this options is set to `false` – `update` directive hook will be ignored.
-	 * It only makes sense if used in directive mode
-	 *
-	 * @default `false`
-	 */
-	handleUpdate?: boolean;
 
 	/**
 	 * Will be called after successful loading (`img.onload`)
@@ -186,7 +179,7 @@ export interface ImageBackgroundOptions {
 	ratio?: number;
 }
 
-export interface ImageHelperOptions extends ImageOptions {
+export interface ImagePlaceholderOptions extends ImageOptions {
 	/** @override */
 	preview?: never;
 
@@ -195,7 +188,9 @@ export interface ImageHelperOptions extends ImageOptions {
 
 	/** @override */
 	ctx?: never;
+}
 
+export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions {
 	/**
 	 * True if the specified helper image is a default image
 	 */
@@ -204,26 +199,34 @@ export interface ImageHelperOptions extends ImageOptions {
 
 export interface ImageSource {
 	/**
-	 * `type` attribute for a `source` tag
+	 * MIME resource type
+	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	type?: string;
 
 	/**
 	 * `media` attribute for a `source` tag
+	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	media?: string;
 
 	/**
 	 * `srcset` attribute for a `source` tag
+	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	srcset?: string;
 
 	/**
 	 * `sizes` attribute for a `source` tag
+	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	sizes?: string;
 }
 
+/**
+ * The hidden state that binds to the node.
+ * This state contains Shadow DOM, image loading state, etc
+ */
 export interface ShadowElState {
 	/**
 	 * True if an image loading was failed
@@ -233,7 +236,7 @@ export interface ShadowElState {
 	/**
 	 * Type of a shadow image
 	 */
-	type: ImageType;
+	stageType: ImageStage;
 
 	/**
 	 * Picture shadow node
@@ -246,11 +249,6 @@ export interface ShadowElState {
 	imgNode: HTMLShadowImageElement;
 
 	/**
-	 * Image loading promise
-	 */
-	loadPromise?: Promise<unknown>;
-
-	/**
 	 * Options of a shadow state
 	 */
 	selfOptions: ImageOptions;
@@ -259,8 +257,16 @@ export interface ShadowElState {
 	 * Options of a main shadow state
 	 */
 	mainOptions: ImageOptions;
+
+	/**
+	 * Image loading promise
+	 */
+	loadPromise?: Promise<unknown>;
 }
 
+/**
+ * Result of generating HTMLPictureElement
+ */
 export interface PictureFactoryResult {
 	picture: HTMLPictureElement;
 	img: HTMLShadowImageElement;
@@ -304,7 +310,7 @@ export interface DefaultParams {
 /**
  * Stage of an image
  */
-export type ImageHelperType = 'preview' | 'broken';
-export type ImageType = 'main' | ImageHelperType;
+export type ImagePlaceholderType = 'preview' | 'broken';
+export type ImageStage = 'initial' | 'main' | ImagePlaceholderType;
 export type BackgroundSizeType = 'contain' | 'cover';
 export type InitValue = string | ImageOptions;

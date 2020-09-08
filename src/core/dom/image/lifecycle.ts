@@ -11,7 +11,7 @@ import ImageLoader from 'core/dom/image/image';
 import {
 
 	ImageNode,
-	ImageHelperType,
+	ImagePlaceholderType,
 
 	IMG_IS_LOADED,
 	INIT_LOAD,
@@ -92,7 +92,7 @@ export default class Lifecycle {
 	 * @param el
 	 * @param type
 	 */
-	protected initHelperImage(el: ImageNode, type: ImageHelperType): void {
+	protected initHelperImage(el: ImageNode, type: ImagePlaceholderType): void {
 		const
 			successCallback = this.trySetHelperImage.bind(this, el, type),
 			errorCallback = this.onHelperImageError.bind(this, el, type);
@@ -138,7 +138,7 @@ export default class Lifecycle {
 	 * @param el
 	 * @param type
 	 */
-	protected trySetHelperImage(el: ImageNode, type: ImageHelperType): void {
+	protected trySetHelperImage(el: ImageNode, type: ImagePlaceholderType): void {
 		const
 			shadowState = this.parent.getShadowStateByType(el, type),
 			mainShadowState = this.parent.getShadowStateByType(el, 'main');
@@ -166,7 +166,7 @@ export default class Lifecycle {
 	 * @param el
 	 * @param type
 	 */
-	protected onHelperImageError(el: ImageNode, type: ImageHelperType): void {
+	protected onHelperImageError(el: ImageNode, type: ImagePlaceholderType): void {
 		const shadowState = this.parent.getShadowStateByType(el, type);
 
 		if (shadowState == null) {

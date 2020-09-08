@@ -25,10 +25,10 @@ export const defaultParams: CanUndef<DefaultParams> = undefined;
  * @see https://github.com/microsoft/TypeScript/issues/1863
  */
 export const
-	SHADOW_PREVIEW_SYMBOL: unique symbol = Symbol.for('state of a preview element'),
-	SHADOW_BROKEN_SYMBOL: unique symbol = Symbol.for('state of a broken element'),
-	SHADOW_MAIN_SYMBOL: unique symbol = Symbol.for('state of a main element'),
-	ID_SYMBOL: unique symbol = Symbol.for('id of an element');
+	SHADOW_PREVIEW_SYMBOL: unique symbol = Symbol('Stage of a preview element'),
+	SHADOW_BROKEN_SYMBOL: unique symbol = Symbol('Stage of a broken element'),
+	SHADOW_MAIN_SYMBOL: unique symbol = Symbol('Stage of a main element'),
+	ID_SYMBOL: unique symbol = Symbol('ID of an element');
 
 export const
 	SHADOW_PREVIEW = <any>SHADOW_PREVIEW_SYMBOL,
@@ -40,9 +40,9 @@ export const
  * @see https://github.com/microsoft/TypeScript/issues/1863
  */
 export const
-	IMG_IS_LOADED_SYMBOL: unique symbol = Symbol.for('image is successfully loaded indicator'),
-	INIT_LOAD_SYMBOL: unique symbol = Symbol.for('image loading initiator'),
-	LOADING_STARTED_SYMBOL: unique symbol = Symbol.for('indicator of an image starts a loading');
+	IMG_IS_LOADED_SYMBOL: unique symbol = Symbol('Image is successfully loaded indicator'),
+	INIT_LOAD_SYMBOL: unique symbol = Symbol('Image loading initiator'),
+	LOADING_STARTED_SYMBOL: unique symbol = Symbol('Indicator of an image starts a loading');
 
 /*
  * @see https://github.com/microsoft/TypeScript/issues/1863

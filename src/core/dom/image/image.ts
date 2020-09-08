@@ -12,13 +12,14 @@ import symbolGenerator from 'core/symbol';
 
 import {
 
-	ImageHelperOptions,
-	ImageHelperType,
+	DefaultImagePlaceholderOptions,
+	ImagePlaceholderOptions,
+	ImagePlaceholderType,
 	InitValue,
 	ShadowElState,
 	ImageOptions,
 	ImageNode,
-	ImageType,
+	ImageStage,
 
 	SHADOW_BROKEN,
 	SHADOW_PREVIEW,
@@ -44,7 +45,7 @@ export default class ImageLoader {
 	 * Normalizes the specified directive value
 	 * @param value
 	 */
-	static normalizeOptions<T extends ImageOptions | ImageHelperOptions = ImageOptions>(value: InitValue): T {
+	static normalizeOptions<T extends ImageOptions | ImagePlaceholderOptions = ImageOptions>(value: InitValue): T {
 		if (Object.isString(value)) {
 			return <T>{
 				src: value
@@ -57,12 +58,12 @@ export default class ImageLoader {
 	/**
 	 * Default `broken` image options
 	 */
-	protected defaultBrokenImageOptions?: ImageOptions['broken'];
+	protected defaultBrokenImageOptions?: DefaultImagePlaceholderOptions;
 
 	/**
 	 * Default `preview` image options
 	 */
-	protected defaultPreviewImageOptions?: ImageOptions['preview'];
+	protected defaultPreviewImageOptions?: DefaultImagePlaceholderOptions;
 
 	/**
 	 * Default `preview` fake element
@@ -78,8 +79,8 @@ export default class ImageLoader {
 	 * Sets the default `broken` image
 	 * @param opts
 	 */
-	setDefaultBrokenImage(opts: string | ImageHelperOptions): void {
-		this.defaultBrokenImageOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(opts);
+	setDefaultBrokenImage(opts: string | ImagePlaceholderOptions): void {
+		this.defaultBrokenImageOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(opts);
 		this.defaultBrokenImageOptions.isDefault = true;
 
 		this.cacheDefaultImage(this.defaultBrokenImageOptions, 'broken');
@@ -89,8 +90,8 @@ export default class ImageLoader {
 	 * Sets the default `preview` image
 	 * @param opts
 	 */
-	setDefaultPreviewImage(opts: string | ImageHelperOptions): void {
-		this.defaultPreviewImageOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(opts);
+	setDefaultPreviewImage(opts: string | ImagePlaceholderOptions): void {
+		this.defaultPreviewImageOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(opts);
 		this.defaultPreviewImageOptions.isDefault = true;
 
 		this.cacheDefaultImage(this.defaultPreviewImageOptions, 'preview');
@@ -104,12 +105,11 @@ export default class ImageLoader {
 	 */
 	init(el: HTMLElement, value: InitValue): void {
 		const
-			normalized = ImageLoader.normalizeOptions(value),
-			{useDefaultImageStages: useDefaultParams} = normalized;
+			normalized = ImageLoader.normalizeOptions(value);
 
 		const mainOpts: ImageOptions = {
-			preview: useDefaultParams !== false ? this.defaultPreviewImageOptions : undefined,
-			broken: useDefaultParams !== false ? this.defaultBrokenImageOptions : undefined,
+			preview: 'preview' in normalized ? normalized.preview : this.defaultPreviewImageOptions,
+			broken: 'broken' in normalized ? normalized.broken : this.defaultBrokenImageOptions,
 			...normalized
 		};
 
@@ -117,23 +117,23 @@ export default class ImageLoader {
 			typedEl = <ImageNode>el;
 
 		if (mainOpts.preview != null) {
-			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.preview);
+			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.preview);
 
 			/*
 			 * If the provided `preview` image matches with the default – reuse the default `preview` shadow state
 			 */
-			typedEl[SHADOW_PREVIEW] = Object.isTruly(normalizedHelperOptions.isDefault) ?
+			typedEl[SHADOW_PREVIEW] = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedHelperOptions).isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'preview') :
 				this.factory.shadowState(el, normalizedHelperOptions, mainOpts, 'preview');
 		}
 
 		if (mainOpts.broken != null) {
-			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImageHelperOptions>(mainOpts.broken);
+			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.broken);
 
 			/*
 			 * If the provided `broken` image matches with the default – reuse the default `broken` shadow state
 			 */
-			typedEl[SHADOW_BROKEN] = Object.isTruly(normalizedHelperOptions.isDefault) ?
+			typedEl[SHADOW_BROKEN] = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedHelperOptions).isDefault) ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
 				this.factory.shadowState(el, normalizedHelperOptions, mainOpts, 'broken');
 		}
@@ -225,7 +225,7 @@ export default class ImageLoader {
 	 * @param el
 	 * @param type
 	 */
-	getShadowStateByType(el: ImageNode, type: ImageType): CanUndef<ShadowElState> {
+	getShadowStateByType(el: ImageNode, type: ImageStage): CanUndef<ShadowElState> {
 		if (type === 'main') {
 			return el[SHADOW_MAIN];
 		}
@@ -240,7 +240,7 @@ export default class ImageLoader {
 	 * @param state
 	 * @param [type] – if not specified, the value will be taken from `state`
 	 */
-	setClasses(el: ImageNode, state: ShadowElState, type?: ImageType | 'initial'): void {
+	setClasses(el: ImageNode, state: ShadowElState, type?: ImageStage): void {
 		const
 			{mainOptions} = state,
 			ctx = state.mainOptions.ctx?.unsafe;
@@ -262,7 +262,7 @@ export default class ImageLoader {
 			};
 
 			el.classList.remove(classMap.preview, classMap.main, classMap.broken, classMap.initial);
-			el.classList.add(classMap[type ?? state.type]);
+			el.classList.add(classMap[type ?? state.stageType]);
 		}
 	}
 
@@ -274,7 +274,7 @@ export default class ImageLoader {
 	 */
 	protected mergeDefaultShadowState(
 		mainImageOptions: ImageOptions,
-		type: ImageHelperType
+		type: ImagePlaceholderType
 	): CanUndef<ShadowElState> {
 		const
 			defaultShadowState = type === 'preview' ? this.defaultPreviewShadowState : this.defaultBrokenShadowState;
@@ -293,7 +293,7 @@ export default class ImageLoader {
 	 * @param options
 	 * @param type
 	 */
-	protected cacheDefaultImage(options: ImageHelperOptions, type: ImageHelperType): void {
+	protected cacheDefaultImage(options: ImagePlaceholderOptions, type: ImagePlaceholderType): void {
 		const
 			dummy = document.createElement('div'),
 			state = this.factory.shadowState(dummy, options, options, type);
@@ -378,9 +378,9 @@ export default class ImageLoader {
 	 * Calculates `padding-bottom` based on the specified ratio
 	 *
 	 * @param state
-	 * @param ratio
+	 * @param [ratio]
 	 */
-	protected calculatePaddingByRatio(state: ShadowElState, ratio: CanUndef<number>): string {
+	protected calculatePaddingByRatio(state: ShadowElState, ratio?: number): string {
 		if (ratio == null) {
 			const
 				{imgNode} = state,
