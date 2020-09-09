@@ -25,7 +25,7 @@ import {
 } from 'core/dom/image';
 
 /**
- * Helpers class that provides API to create DOM elements
+ * Helper class that provides API to create DOM elements
  */
 export default class Factory {
 	/**
