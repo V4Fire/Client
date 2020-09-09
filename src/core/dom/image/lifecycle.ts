@@ -21,7 +21,7 @@ import {
 } from 'core/dom/image';
 
 /**
- * Helper class, provides an API to work with image lifecycle
+ * Helper class that provides API to work with an image lifecycle
  */
 export default class Lifecycle {
 	/**
@@ -37,7 +37,7 @@ export default class Lifecycle {
 	}
 
 	/**
-	 * Initializes lifecycle of the specified el
+	 * Initializes lifecycle of the specified element
 	 * @param el
 	 */
 	init(el: ImageNode): void {
@@ -57,7 +57,7 @@ export default class Lifecycle {
 	}
 
 	/**
-	 * Initializes a main image
+	 * Initializes the main image
 	 * @param el
 	 */
 	protected initMain(el: ImageNode): void {
@@ -87,7 +87,7 @@ export default class Lifecycle {
 	}
 
 	/**
-	 * Initializes a preview image
+	 * Initializes the preview placeholder
 	 *
 	 * @param el
 	 * @param type
@@ -152,7 +152,7 @@ export default class Lifecycle {
 
 		if (mainShadowState.imgNode.complete === true && mainShadowState.isFailed === false) {
 			/*
-			 * If a main image are ready – ignore preview
+			 * If the main image is ready – ignore the preview
 			 */
 			return;
 		}

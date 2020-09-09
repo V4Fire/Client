@@ -103,7 +103,7 @@ export interface ImageOptions {
 	broken?: string | ImagePlaceholderOptions;
 
 	/**
-	 * If this options is set to `false` – `update` directive hook will be ignored.
+	 * If this option is set to `false` – `update` directive hook will be ignored.
 	 * It only makes sense if used in directive mode.
 	 *
 	 * When calling the state update method for a node, the old parameters, and new parameters will be compared.
@@ -190,7 +190,7 @@ export interface ImagePlaceholderOptions extends ImageOptions {
 
 export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions {
 	/**
-	 * True if the specified helper image is a default image
+	 * True if the placeholder is the default image
 	 */
 	isDefault?: boolean;
 }
@@ -204,19 +204,19 @@ export interface ImageSource {
 	type?: string;
 
 	/**
-	 * `media` attribute for a `source` tag
+	 * `media` attribute
 	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	media?: string;
 
 	/**
-	 * `srcset` attribute for a `source` tag
+	 * `srcset` attribute
 	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	srcset?: string;
 
 	/**
-	 * `sizes` attribute for a `source` tag
+	 * `sizes` attribute
 	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
 	 */
 	sizes?: string;
@@ -224,36 +224,36 @@ export interface ImageSource {
 
 /**
  * The hidden state that binds to the node.
- * This state contains Shadow DOM, image loading state, etc
+ * This state contains Shadow DOM, image loading state, etc.
  */
 export interface ShadowElState {
 	/**
-	 * True if an image loading was failed
+	 * True if an image loading has been failed
 	 */
 	isFailed: boolean;
 
 	/**
-	 * Type of a shadow image
+	 * Type of the shadow image
 	 */
 	stageType: ImageStage;
 
 	/**
-	 * Picture shadow node
+	 * Shadow picture node
 	 */
 	pictureNode?: HTMLPictureElement;
 
 	/**
-	 * Image shadow node
+	 * Shadow image node
 	 */
 	imgNode: HTMLShadowImageElement;
 
 	/**
-	 * Options of a shadow state
+	 * Options of the shadow state
 	 */
 	selfOptions: ImageOptions;
 
 	/**
-	 * Options of a main shadow state
+	 * Options of the main shadow state
 	 */
 	mainOptions: ImageOptions;
 
@@ -293,7 +293,7 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 	[INIT_LOAD_SYMBOL]?: Function;
 
 	/**
-	 * Indicator of an image starts loading
+	 * True if the image is loading
 	 */
 	[LOADING_STARTED_SYMBOL]?: true;
 }
