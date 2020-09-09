@@ -420,7 +420,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Returns true if the specified options are equals
+	 * Returns true if the specified options are equal
 	 *
 	 * @param a
 	 * @param b
