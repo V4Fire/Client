@@ -47,18 +47,27 @@ export interface ImageOptions {
 	/**
 	 * Srcset of an image. This option helps to manage the situation with multiple resolutions of the image to load.
 	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
+	 *
+	 * @example
+	 *
+	 * ```typescript
+	 * {
+	 *   src: 'img.jpg',
+	 *   srcset: {'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'}
+	 * }
+	 * ```
 	 */
 	srcset?: Dictionary<string> | string;
 
 	/**
 	 * Image `sizes` attribute
-	 * @see https://developer.mozilla.org/ru/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
+	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 */
 	sizes?: string;
 
 	/**
 	 * Values of `source` tags within `picture`
-	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	sources?: ImageSource[];
 
@@ -195,29 +204,29 @@ export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions 
 	isDefault?: boolean;
 }
 
-/** @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source */
+/** @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source */
 export interface ImageSource {
 	/**
 	 * MIME resource type
-	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	type?: string;
 
 	/**
 	 * `media` attribute
-	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	media?: string;
 
 	/**
 	 * `srcset` attribute
-	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	srcset?: string;
 
 	/**
 	 * `sizes` attribute
-	 * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	sizes?: string;
 }
