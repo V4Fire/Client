@@ -45,7 +45,7 @@ declare namespace Playwright {
 		status?: number;
 
 		/**
-		 * Optional response headers. Header values will be converted to a string
+		 * Optional response headers. Header values will be converted to strings.
 		 */
 		headers?: Dictionary<string>;
 
@@ -619,7 +619,7 @@ declare namespace BrowserTests {
 		waitForRequestsEvents(page: Playwright.Page, urls: string[], event: string): Promise<void>;
 
 		/**
-		 * Generates a a random url
+		 * Generates a random URL
 		 */
 		getRandomUrl(): string;
 	}

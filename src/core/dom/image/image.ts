@@ -179,7 +179,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Returns `true` if the specified element is an instance of `HTMLImageElement`
+	 * Returns true if the specified element is an instance of `HTMLImageElement`
 	 * @param el
 	 */
 	isImg(el: HTMLElement): el is HTMLImageElement {
@@ -234,7 +234,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets lifecycle classes to the specified el
+	 * Sets lifecycle classes to the specified element
 	 *
 	 * @param el
 	 * @param state
@@ -346,7 +346,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets a background CSS properties to the specified element
+	 * Sets background CSS styles to the specified element
 	 *
 	 * @param el
 	 * @param state
@@ -398,7 +398,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets an `alt` attribute for an image or `aria-label` for other types of `HTMLElement`
+	 * Sets an `alt` attribute or `aria-label` for the specified element
 	 *
 	 * @param el
 	 * @param alt
@@ -420,7 +420,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Returns `true` if the specified options are equals
+	 * Returns true if the specified options are equals
 	 *
 	 * @param a
 	 * @param b
