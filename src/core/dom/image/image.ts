@@ -121,9 +121,7 @@ export default class ImageLoader {
 				normalizedPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.preview),
 				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedPlaceholderOptions).isDefault);
 
-			/*
-			 * If the provided `preview` image matches with the default – reuse the default `preview` shadow state
-			 */
+			// If the provided `preview` image matches with the default – reuse the default `preview` shadow state
 			typedEl[SHADOW_PREVIEW] = isDefault ?
 				this.mergeDefaultShadowState(mainOpts, 'preview') :
 				this.factory.shadowState(el, normalizedPlaceholderOptions, mainOpts, 'preview');
@@ -134,9 +132,7 @@ export default class ImageLoader {
 				normalizedPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.broken),
 				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedPlaceholderOptions).isDefault);
 
-			/*
-			 * If the provided `broken` image matches with the default – reuse the default `broken` shadow state
-			 */
+			// If the provided `broken` image matches with the default – reuse the default `broken` shadow state
 			typedEl[SHADOW_BROKEN] = isDefault ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
 				this.factory.shadowState(el, normalizedPlaceholderOptions, mainOpts, 'broken');
@@ -333,7 +329,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets an `alt` attribute or `aria-label` for the specified element
+	 * Sets an image attributes to the specified el
 	 *
 	 * @param el
 	 * @param state
