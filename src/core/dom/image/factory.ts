@@ -89,18 +89,18 @@ export default class Factory {
 	 * ```typescript
 	 * this.sources({
 	 *   src: 'preview.jpg',
-	 *   sources: [{srcset: webp, type: 'webp'}]
+	 *   sources: [{srcset: 'srcset-with-webp-img', type: 'webp'}]
 	 * }, {
 	 *   src: 'main.jpg',
-	 *   sources: [{srcset: webp, type: 'webp'}],
+	 *   sources: [{srcset: 'srcset-with-webp-img', type: 'webp'}],
 	 *   baseSrc: 'https://path'
 	 * });
 	 * ```
 	 *
 	 * ```html
 	 * <picture>
-	 *   <source srcset="https://path/preview.webp" type="image/webp">
-	 *   <img src="https://path/main.jpg">
+	 *   <source srcset="https://path/srcset-with-webp-img" type="image/webp">
+	 *   <img src="https://path/preview.jpg">
 	 * </picture>
 	 * ```
 	 *
@@ -133,13 +133,13 @@ export default class Factory {
 	 * // Provided options
 	 * this.sources({
 	 *   src: 'broken.img',
-	 *   sources: [{srcset: webp, type: 'webp'}]
+	 *   sources: [{srcset: 'srcset-with-webp-img', type: 'webp'}]
 	 * }, {
 	 *   src: 'main.img',
 	 *   baseSrc: 'https://path'
 	 * });
 	 *
-	 * // The result is a document fragment with <source srcset="https://path/broken.img" type="image/webp">
+	 * // The result is a document fragment with <source srcset="https://path/srcset-with-webp-img" type="image/webp">
 	 * ```
 	 *
 	 * @param selfOptions
