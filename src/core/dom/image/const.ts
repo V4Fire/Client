@@ -26,7 +26,7 @@ export const defaultParams: CanUndef<DefaultParams> = undefined;
 export const
 	SHADOW_PREVIEW_SYMBOL: unique symbol = Symbol('Preview element stage'),
 	SHADOW_BROKEN_SYMBOL: unique symbol = Symbol('Broken element stage'),
-	SHADOW_MAIN_SYMBOL: unique symbol = Symbol('Stage of a main element'),
+	SHADOW_MAIN_SYMBOL: unique symbol = Symbol('Main element stage'),
 	ID_SYMBOL: unique symbol = Symbol('Element Id');
 
 export const
