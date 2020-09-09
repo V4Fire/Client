@@ -19,8 +19,8 @@ import {
 	ImageStage,
 
 	INIT_LOAD,
-	IMG_IS_LOADED,
-	LOADING_STARTED
+	IS_LOADED,
+	IS_LOADING
 
 } from 'core/dom/image';
 
@@ -186,11 +186,11 @@ export default class Factory {
 			imgNode.sizes = selfOptions.sizes ?? '';
 			imgNode.src = this.src(selfOptions.src, selfOptions, mainOptions);
 			imgNode.srcset = this.srcset(selfOptions.srcset, selfOptions, mainOptions);
-			imgNode[LOADING_STARTED] = true;
+			imgNode[IS_LOADING] = true;
 
 			imgNode.init.then(
-				() => imgNode[IMG_IS_LOADED] = true,
-				() => imgNode[IMG_IS_LOADED] = false
+				() => imgNode[IS_LOADED] = true,
+				() => imgNode[IS_LOADED] = false
 			);
 		};
 

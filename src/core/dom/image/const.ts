@@ -39,14 +39,14 @@ export const
  * @see https://github.com/microsoft/TypeScript/issues/1863
  */
 export const
-	IMG_IS_LOADED_SYMBOL: unique symbol = Symbol('Image is successfully loaded indicator'),
+	IS_LOADED_SYMBOL: unique symbol = Symbol('Image is successfully loaded indicator'),
 	INIT_LOAD_SYMBOL: unique symbol = Symbol('Image loading initiator'),
-	LOADING_STARTED_SYMBOL: unique symbol = Symbol('Indicator of an image starts a loading');
+	IS_LOADING_SYMBOL: unique symbol = Symbol('Indicator of an image starts a loading');
 
 /*
  * @see https://github.com/microsoft/TypeScript/issues/1863
  */
 export const
-	IMG_IS_LOADED = <any>IMG_IS_LOADED_SYMBOL,
+	IS_LOADED = <any>IS_LOADED_SYMBOL,
 	INIT_LOAD = <any>INIT_LOAD_SYMBOL,
-	LOADING_STARTED = <any>LOADING_STARTED_SYMBOL;
+	IS_LOADING = <any>IS_LOADING_SYMBOL;

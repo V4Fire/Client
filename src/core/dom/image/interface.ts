@@ -14,9 +14,9 @@ import {
 	SHADOW_BROKEN_SYMBOL,
 	SHADOW_MAIN_SYMBOL,
 	ID_SYMBOL,
-	IMG_IS_LOADED_SYMBOL,
+	IS_LOADED_SYMBOL,
 	INIT_LOAD_SYMBOL,
-	LOADING_STARTED_SYMBOL
+	IS_LOADING_SYMBOL
 
 } from 'core/dom/image/const';
 
@@ -285,7 +285,7 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 	 *   - `false`– the image loading has been failed;
 	 *   - `undefined` – initial state, loading isn't finished
 	 */
-	[IMG_IS_LOADED_SYMBOL]?: boolean;
+	[IS_LOADED_SYMBOL]?: boolean;
 
 	/**
 	 * Initializes loading of the image
@@ -295,20 +295,14 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 	/**
 	 * Indicator of an image starts loading
 	 */
-	[LOADING_STARTED_SYMBOL]?: true;
+	[IS_LOADING_SYMBOL]?: true;
 }
 
-/**
- * Set of default parameters
- */
 export interface DefaultParams {
 	broken?: string | ImageOptions['broken'];
 	preview?: string | ImageOptions['preview'];
 }
 
-/**
- * Stage of an image
- */
 export type ImagePlaceholderType = 'preview' | 'broken';
 export type ImageStage = 'initial' | 'main' | ImagePlaceholderType;
 export type BackgroundSizeType = 'contain' | 'cover';

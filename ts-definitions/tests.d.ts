@@ -610,7 +610,7 @@ declare namespace BrowserTests {
 		): Promise<void>;
 
 		/**
-		 * Returns a promise that will be resolved after all specified URL-s will fire an event
+		 * Returns a promise that will be resolved after all specified URL-s will are fires the specified request event
 		 *
 		 * @param page
 		 * @param urls

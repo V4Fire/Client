@@ -13,9 +13,9 @@ import {
 	ImageNode,
 	ImagePlaceholderType,
 
-	IMG_IS_LOADED,
+	IS_LOADED,
 	INIT_LOAD,
-	LOADING_STARTED,
+	IS_LOADING,
 	ID
 
 } from 'core/dom/image';
@@ -46,11 +46,11 @@ export default class Lifecycle {
 			mainShadowState = this.parent.getShadowStateByType(el, 'main');
 
 		if (mainShadowState?.mainOptions.stageClasses) {
-			this.parent.setClasses(el, mainShadowState, 'initial');
+			this.parent.setLifecycleClass(el, mainShadowState, 'initial');
 		}
 
 		if (previewShadowState != null) {
-			this.initHelperImage(el, 'preview');
+			this.initPlaceholderImage(el, 'preview');
 		}
 
 		this.initMain(el);
@@ -67,7 +67,7 @@ export default class Lifecycle {
 			return;
 		}
 
-		if (mainShadowState.imgNode.complete === true && mainShadowState.imgNode[IMG_IS_LOADED] === true) {
+		if (mainShadowState.imgNode.complete === true && mainShadowState.imgNode[IS_LOADED] === true) {
 			this.onMainImageLoad(el);
 
 		} else {
@@ -87,15 +87,15 @@ export default class Lifecycle {
 	}
 
 	/**
-	 * Initializes a preview image
+	 * Initializes a placeholder image
 	 *
 	 * @param el
 	 * @param type
 	 */
-	protected initHelperImage(el: ImageNode, type: ImagePlaceholderType): void {
+	protected initPlaceholderImage(el: ImageNode, type: ImagePlaceholderType): void {
 		const
-			successCallback = this.trySetHelperImage.bind(this, el, type),
-			errorCallback = this.onHelperImageError.bind(this, el, type);
+			successCallback = this.trySetPlaceholderImage.bind(this, el, type),
+			errorCallback = this.onPlaceholderImageError.bind(this, el, type);
 
 		const
 			shadowState = this.parent.getShadowStateByType(el, type);
@@ -108,16 +108,16 @@ export default class Lifecycle {
 			{mainOptions} = shadowState,
 			{imgNode} = shadowState;
 
-		if (imgNode[IMG_IS_LOADED] === true) {
+		if (imgNode[IS_LOADED] === true) {
 			/*
 			 * If an img is ready – set it to the element
 			 */
 			return successCallback();
 		}
 
-		if (imgNode[LOADING_STARTED] == null) {
+		if (imgNode[IS_LOADING] == null) {
 			/*
-			 * If loading was not started – this is a `broken` image that should be loaded lazy
+			 * If loading hasn't started – this is the broken image that should be loaded lazily
 			 */
 			imgNode[INIT_LOAD]!();
 		}
@@ -133,12 +133,12 @@ export default class Lifecycle {
 	}
 
 	/**
-	 * Tries to set a preview image to the specified element
+	 * Tries to set a placeholder image to the specified element
 	 *
 	 * @param el
 	 * @param type
 	 */
-	protected trySetHelperImage(el: ImageNode, type: ImagePlaceholderType): void {
+	protected trySetPlaceholderImage(el: ImageNode, type: ImagePlaceholderType): void {
 		const
 			shadowState = this.parent.getShadowStateByType(el, type),
 			mainShadowState = this.parent.getShadowStateByType(el, 'main');
@@ -166,7 +166,7 @@ export default class Lifecycle {
 	 * @param el
 	 * @param type
 	 */
-	protected onHelperImageError(el: ImageNode, type: ImagePlaceholderType): void {
+	protected onPlaceholderImageError(el: ImageNode, type: ImagePlaceholderType): void {
 		const shadowState = this.parent.getShadowStateByType(el, type);
 
 		if (shadowState == null) {
@@ -212,6 +212,6 @@ export default class Lifecycle {
 		shadowState.selfOptions.error?.(el);
 		shadowState.isFailed = true;
 
-		this.initHelperImage(el, 'broken');
+		this.initPlaceholderImage(el, 'broken');
 	}
 }

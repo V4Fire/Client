@@ -117,25 +117,29 @@ export default class ImageLoader {
 			typedEl = <ImageNode>el;
 
 		if (mainOpts.preview != null) {
-			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.preview);
+			const
+				normalizedPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.preview),
+				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedPlaceholderOptions).isDefault);
 
 			/*
 			 * If the provided `preview` image matches with the default – reuse the default `preview` shadow state
 			 */
-			typedEl[SHADOW_PREVIEW] = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedHelperOptions).isDefault) ?
+			typedEl[SHADOW_PREVIEW] = isDefault ?
 				this.mergeDefaultShadowState(mainOpts, 'preview') :
-				this.factory.shadowState(el, normalizedHelperOptions, mainOpts, 'preview');
+				this.factory.shadowState(el, normalizedPlaceholderOptions, mainOpts, 'preview');
 		}
 
 		if (mainOpts.broken != null) {
-			const normalizedHelperOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.broken);
+			const
+				normalizedPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.broken),
+				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedPlaceholderOptions).isDefault);
 
 			/*
 			 * If the provided `broken` image matches with the default – reuse the default `broken` shadow state
 			 */
-			typedEl[SHADOW_BROKEN] = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedHelperOptions).isDefault) ?
+			typedEl[SHADOW_BROKEN] = isDefault ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
-				this.factory.shadowState(el, normalizedHelperOptions, mainOpts, 'broken');
+				this.factory.shadowState(el, normalizedPlaceholderOptions, mainOpts, 'broken');
 		}
 
 		typedEl[SHADOW_MAIN] = this.factory.shadowState(el, mainOpts, mainOpts, 'main');
@@ -209,13 +213,13 @@ export default class ImageLoader {
 	 * @param state
 	 */
 	render(el: ImageNode, state: ShadowElState): void {
-		this.setClasses(el, state);
+		this.setLifecycleClass(el, state);
 
 		if (this.isImg(el)) {
 			this.setImgProps(el, state);
 
 		} else {
-			this.setBackgroundProps(el, state);
+			this.setBackgroundStyles(el, state);
 		}
 	}
 
@@ -240,7 +244,7 @@ export default class ImageLoader {
 	 * @param state
 	 * @param [type] – if not specified, the value will be taken from `state`
 	 */
-	setClasses(el: ImageNode, state: ShadowElState, type?: ImageStage): void {
+	setLifecycleClass(el: ImageNode, state: ShadowElState, type?: ImageStage): void {
 		const
 			{mainOptions} = state,
 			ctx = state.mainOptions.ctx?.unsafe;
@@ -351,7 +355,7 @@ export default class ImageLoader {
 	 * @param el
 	 * @param state
 	 */
-	protected setBackgroundProps(el: ImageNode, state: ShadowElState): void {
+	protected setBackgroundStyles(el: ImageNode, state: ShadowElState): void {
 		const
 			{bgOptions} = state.selfOptions;
 
