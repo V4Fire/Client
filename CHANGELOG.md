@@ -13,9 +13,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.63 ()
 
+#### :rocket: New Feature
+
+* [Improved `core/dom/image` API](https://github.com/V4Fire/Client/issues/168)
+
 #### :bug: Bug Fix
 
 * Fixed `init.js` generation `super/i-static-page/ss-helpers`
+
+#### :house: Internal
+
+* [Split the `directives/image` module into two: API was moved to `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
 
 ## v3.0.0-rc.62 (2020-09-04)
 

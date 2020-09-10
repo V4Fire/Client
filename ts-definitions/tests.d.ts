@@ -12,7 +12,7 @@
 
 declare namespace Playwright {
 	type BrowserContext = import('playwright').BrowserContext;
-	type ElementHandle = import('playwright').ElementHandle;
+	type ElementHandle<T extends Node = Node> = import('playwright').ElementHandle<T>;
 	type JSHandle = import('playwright').JSHandle;
 	type Page = import('playwright').Page;
 
@@ -37,6 +37,34 @@ declare namespace Playwright {
 	type Permissions = Permission[];
 
 	type Geolocation = import('playwright').Geolocation;
+
+	interface RouteFulfillResponse {
+		/**
+		 * Response status code, defaults to `200`
+		 */
+		status?: number;
+
+		/**
+		 * Optional response headers. Header values will be converted to strings.
+		 */
+		headers?: Dictionary<string>;
+
+		/**
+		 * Value of `Content-Type` response header
+		 */
+		contentType?: string;
+
+		/**
+		 * Optional response body
+		 */
+		body?: string | Buffer;
+
+		/**
+		 * Optional file path to respond with. The content type will be inferred from the file extension.
+		 * If the path id relative, then it is resolved relative to the current working directory.
+		 */
+		path?: string;
+	}
 }
 
 interface IncludeReturns extends Record<string, any> {
@@ -197,6 +225,26 @@ declare namespace BrowserTests {
 		 * @param [idleOptions]
 		 */
 		reloadAndWaitForIdle(page: Playwright.Page, idleOptions?: WaitForIdleOptions): Promise<void>;
+
+		/**
+		 * Waits for the specified function to return `Boolean(result) === true`.
+		 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.
+		 *
+		 * @param ctx – context that will be available as the first argument of the provided function
+		 * @param fn
+		 * @param args
+		 *
+		 * @example
+		 * ```typescript
+		 * // ctx refers to the imgNode
+		 * h.utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
+		 * ```
+		 */
+		waitForFunction<ARGS extends any[] = any[]>(
+			ctx: PlaywrightElContext,
+			fn: (this: any, ctx: any, ...args: ARGS) => unknown,
+			...args: ARGS
+		): Promise<void>;
 	}
 
 	/**
@@ -306,6 +354,19 @@ declare namespace BrowserTests {
 			prop: string,
 			val: unknown
 		): Promise<CanUndef<Playwright.JSHandle>>;
+
+		/**
+		 * Creates a component by using `$createElement` and `vdom.render` methods
+		 *
+		 * @param componentCtx
+		 * @param componentName
+		 * @param props
+		 */
+		renderComponent(
+			componentCtx: PlaywrightElContext,
+			componentName: string,
+			props?: Dictionary
+		): Playwright.ElementHandle<any>;
 	}
 
 	/**
@@ -509,6 +570,59 @@ declare namespace BrowserTests {
 		 * @param urls
 		 */
 		waitForRequests(page: Playwright.Page, urls: string[]): Promise<void>;
+
+		/**
+		 * Returns a promise that will be resolved after all specified URL-s are requested
+		 * and completed with an request error
+		 *
+		 * @param page
+		 * @param urls
+		 */
+		waitForRequestsFail(page: Playwright.Page, urls: string[]): Promise<void>;
+
+		/**
+		 * Intercepts the specified URL and sends the specified response on it
+		 *
+		 * @param page
+		 * @param urls
+		 * @param response
+		 * @param timeout
+		 */
+		interceptRequest(
+			page: Playwright.Page,
+			url: string[],
+			response: Playwright.RouteFulfillResponse,
+			timeout?: number
+		): Promise<void>;
+
+		/**
+		 * Intercepts the specified URL-s and sends the specified response on each of them
+		 *
+		 * @param page
+		 * @param urls
+		 * @param response
+		 * @param timeout
+		 */
+		interceptRequests(
+			page: Playwright.Page,
+			urls: string[],
+			response: Playwright.RouteFulfillResponse,
+			timeout?: number
+		): Promise<void>;
+
+		/**
+		 * Returns a promise that will be resolved after all specified URL-s will fire the specified request event
+		 *
+		 * @param page
+		 * @param urls
+		 * @param event
+		 */
+		waitForRequestsEvents(page: Playwright.Page, urls: string[], event: string): Promise<void>;
+
+		/**
+		 * Generates a random URL
+		 */
+		getRandomUrl(): string;
 	}
 }
 
