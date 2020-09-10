@@ -6,8 +6,8 @@ This module provides API to load images by using `background-image` or `src`.
 
 | Name       | Description                                      | Payload description  | Payload   |
 | ---------- |------------------------------------------------- | -------------------- |-----------|
-| `load`     | Invoked when an image was successfully loaded    | `el` bounded node     | `Element` |
-| `error`    | Invoked when a loading error of an image appears | `el` bounded node     | `Element` |
+| `load`     | Invoked when an image was successfully loaded    | `el` bound node     | `Element` |
+| `error`    | Invoked when a loading error of an image appears | `el` bound node     | `Element` |
 
 ## Usage
 
@@ -97,6 +97,8 @@ export default class bSomeComponent extends iBlock {
 ### Default value for stage images
 
 To avoid redundant lines of code, you can specify default parameters for load and error stages of an image.
+
+**core/dom/image/const.ts**
 
 ```typescript
 import { DefaultParams } from 'core/dom/image';

@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import ImageLoader from 'core/dom/image/image';
+import ImageLoader from 'core/dom/image/loader';
 import { defaultParams } from 'core/dom/image/const';
 import { DefaultParams } from 'core/dom/image/interface';
 

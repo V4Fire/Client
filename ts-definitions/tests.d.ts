@@ -572,14 +572,15 @@ declare namespace BrowserTests {
 		waitForRequests(page: Playwright.Page, urls: string[]): Promise<void>;
 
 		/**
-		 * Returns a promise that will be resolved after all specified URL-s are requested and completed with an error
+		 * Returns a promise that will be resolved after all specified URL-s are requested
+		 * and completed with an request error
 		 *
 		 * @param page
 		 * @param urls
 		 */
 		waitForRequestsFail(page: Playwright.Page, urls: string[]): Promise<void>;
 
-		/*
+		/**
 		 * Intercepts the specified URL and sends the specified response on it
 		 *
 		 * @param page

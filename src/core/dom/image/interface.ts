@@ -221,8 +221,17 @@ export interface ImageSource {
 	/**
 	 * `srcset` attribute
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
+	 *
+	 * @example
+	 *
+	 * ```typescript
+	 * {
+	 *   src: 'img.jpg',
+	 *   srcset: {'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'}
+	 * }
+	 * ```
 	 */
-	srcset?: string;
+	srcset?: Dictionary<string> | string;
 
 	/**
 	 * `sizes` attribute

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import ImageLoader from 'core/dom/image/image';
+import ImageLoader from 'core/dom/image/loader';
 
 import {
 

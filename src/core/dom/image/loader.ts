@@ -36,7 +36,7 @@ export const
 
 export default class ImageLoader {
 	/** @see [[Factory]] */
-	readonly factory: Factory = new Factory(this);
+	readonly factory: Factory = new Factory();
 
 	/** @see [[Lifecycle]] */
 	readonly lifecycle: Lifecycle = new Lifecycle(this);
@@ -118,24 +118,24 @@ export default class ImageLoader {
 
 		if (mainOpts.preview != null) {
 			const
-				normalizedPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.preview),
-				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedPlaceholderOptions).isDefault);
+				previewPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.preview),
+				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>previewPlaceholderOptions).isDefault);
 
 			// If the provided `preview` image matches with the default – reuse the default `preview` shadow state
 			typedEl[SHADOW_PREVIEW] = isDefault ?
 				this.mergeDefaultShadowState(mainOpts, 'preview') :
-				this.factory.shadowState(el, normalizedPlaceholderOptions, mainOpts, 'preview');
+				this.factory.shadowState(el, previewPlaceholderOptions, mainOpts, 'preview');
 		}
 
 		if (mainOpts.broken != null) {
 			const
-				normalizedPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.broken),
-				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>normalizedPlaceholderOptions).isDefault);
+				brokenPlaceholderOptions = ImageLoader.normalizeOptions<ImagePlaceholderOptions>(mainOpts.broken),
+				isDefault = Object.isTruly((<DefaultImagePlaceholderOptions>brokenPlaceholderOptions).isDefault);
 
 			// If the provided `broken` image matches with the default – reuse the default `broken` shadow state
 			typedEl[SHADOW_BROKEN] = isDefault ?
 				this.mergeDefaultShadowState(mainOpts, 'broken') :
-				this.factory.shadowState(el, normalizedPlaceholderOptions, mainOpts, 'broken');
+				this.factory.shadowState(el, brokenPlaceholderOptions, mainOpts, 'broken');
 		}
 
 		typedEl[SHADOW_MAIN] = this.factory.shadowState(el, mainOpts, mainOpts, 'main');
@@ -160,7 +160,7 @@ export default class ImageLoader {
 			return;
 		}
 
-		if (this.compare(value, oldValue)) {
+		if (this.isEqual(value, oldValue)) {
 			return;
 		}
 
@@ -234,7 +234,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets lifecycle classes to the specified element
+	 * Sets lifecycle class to the specified element
 	 *
 	 * @param el
 	 * @param state
@@ -425,7 +425,7 @@ export default class ImageLoader {
 	 * @param a
 	 * @param b
 	 */
-	protected compare(a: CanUndef<ImageOptions>, b: CanUndef<ImageOptions>): boolean {
+	protected isEqual(a: CanUndef<ImageOptions>, b: CanUndef<ImageOptions>): boolean {
 		return Object.fastCompare(a, b);
 	}
 }

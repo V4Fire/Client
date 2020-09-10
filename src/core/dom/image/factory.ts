@@ -9,8 +9,6 @@
 import { concatUrls } from 'core/url';
 import { getSrcSet } from 'core/html';
 
-import ImageLoader from 'core/dom/image/image';
-
 import {
 
 	ImageOptions,
@@ -28,18 +26,6 @@ import {
  * Helper class that provides API to create DOM elements
  */
 export default class Factory {
-	/**
-	 * Parent class
-	 */
-	protected parent: ImageLoader;
-
-	/**
-	 * @param parent
-	 */
-	constructor(parent: ImageLoader) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Creates a "shadow" state to the specified element.
 	 * The state contains the loading state, generated shadow DOM, provided options, and so on.
@@ -265,7 +251,7 @@ export default class Factory {
 			newSrcset = <string[]>[];
 
 		for (let i = 0; i < chunks.length; i++) {
-			newSrcset.push(concatUrls(baseSrc, chunks[i]));
+			newSrcset.push(concatUrls(baseSrc, chunks[i].trim()));
 		}
 
 		return newSrcset.join(',');
