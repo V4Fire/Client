@@ -81,6 +81,50 @@ class Utils {
 	}
 
 	/**
+	 * @see [[BrowserTests.Utils.waitForFunction]]
+	 */
+	waitForFunction(ctx, fn, ...args) {
+		const
+			strFn = fn.toString();
+
+		return ctx.evaluate((ctx, [strFn, ...args]) => {
+			const
+				timeout = 4e3,
+				// eslint-disable-next-line no-new-func
+				newFn = new Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
+
+			let
+				isTimeout = false;
+
+			return new Promise((res, rej) => {
+				const timeoutTimer = setTimeout(() => isTimeout = true, timeout);
+
+				const interval = setInterval(() => {
+					try {
+						const fnRes = Boolean(newFn.call(ctx));
+
+						if (fnRes) {
+							clearTimeout(timeoutTimer);
+							clearInterval(interval);
+							res();
+						}
+
+						if (isTimeout) {
+							clearInterval(interval);
+							rej();
+						}
+
+					} catch {
+						clearInterval(interval);
+						rej();
+					}
+				}, 15);
+			});
+
+		}, [strFn, ...args]);
+	}
+
+	/**
 	 * Parent class
 	 * @type  {BrowserTests.Helpers}
 	 */
