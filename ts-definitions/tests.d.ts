@@ -50,7 +50,7 @@ declare namespace Playwright {
 		headers?: Dictionary<string>;
 
 		/**
-		 * If set, equals to setting `Content-Type` response header
+		 * Value of `Content-Type` response header
 		 */
 		contentType?: string;
 
@@ -60,8 +60,8 @@ declare namespace Playwright {
 		body?: string | Buffer;
 
 		/**
-		 * Optional file path to respond with. The content type will be inferred from file extension.
-		 * If `path` is a relative path, then it is resolved relative to current working directory
+		 * Optional file path to respond with. The content type will be inferred from the file extension.
+		 * If the path id relative, then it is resolved relative to the current working directory.
 		 */
 		path?: string;
 	}
@@ -228,9 +228,9 @@ declare namespace BrowserTests {
 
 		/**
 		 * Waits for the specified function to return `Boolean(result) === true`.
-		 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context
+		 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.
 		 *
-		 * @param ctx – the specified context will be available as first argument of the provided function
+		 * @param ctx – context that will be available as the first argument of the provided function
 		 * @param fn
 		 * @param args
 		 *
@@ -356,7 +356,7 @@ declare namespace BrowserTests {
 		): Promise<CanUndef<Playwright.JSHandle>>;
 
 		/**
-		 * Creates a component using `$createElement` and `vdom.render` methods
+		 * Creates a component by using `$createElement` and `vdom.render` methods
 		 *
 		 * @param componentCtx
 		 * @param componentName
