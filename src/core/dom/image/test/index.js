@@ -352,7 +352,7 @@ module.exports = async (page, params) => {
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).not.toBe(mainImgUrl);
 				});
 
-				it('main with `load` callback will not be called if loading are failed', async () => {
+				it('main with `load` callback will not be called if loading is failed', async () => {
 					const reqUrl = getRandomImgUrl();
 					abortImageRequest(reqUrl);
 
