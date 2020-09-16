@@ -45,7 +45,7 @@ b-example
   })
 ```
 
-2. The global flyweight tooltip based on pseudo attributes.
+2. The global flyweight tooltip is based on pseudo attributes.
 
 Just add `g-hint` classes to any node and provide the hint message into the `data-hint` attribute.
 
@@ -124,7 +124,7 @@ b-example
 
 ## Variation of position modifiers
 
-You can manage position of a hint by using the `pos` modifier.
+You can manage the position of a hint by using the `pos` modifier.
 
 ```typescript
 type HintPosition =

@@ -10,7 +10,7 @@ This module provides a component to use an SVG icon from the global SVG sprite.
 
 * The component is functional.
 
-* The component can be used as flyweight.
+* The component can be used as a flyweight.
 
 * By default, the root tag of the component is `<svg>`.
 

@@ -4,7 +4,7 @@ This module provides a mixin to generate default styles for SVG icons.
 
 ## Usage
 
-You can use this mixin "as it is", just import it to your styles.
+You can use this mixin "as it is", import it to your styles.
 
 ```stylus
 @import "global/g-icon/g-icon.styl"

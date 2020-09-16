@@ -1,6 +1,6 @@
 # global/g-def
 
-This module provides default global styles and function to use within styl files.
+This module provides default global styles and function to use within `styl` files.
 You free to override and modify these files.
 
 ## Contents
