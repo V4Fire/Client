@@ -1,10 +1,10 @@
 # base/b-image
 
-This module provides a component to load an image with support of features:
+This module provides a component to load an image with the support of features:
 
 * Providing of "srcset" to load different images with different resolutions.
 
-* An overlay image till loading is completed.
+* An overlay image until loading is completed.
 
 * An error image when the original image wasn't successfully loaded.
 
@@ -45,7 +45,7 @@ This module provides a component to load an image with support of features:
 
 The component supports a bunch of slots to provide:
 
-1. `overlay` to provide an overlay image till loading is completed.
+1. `overlay` to give an overlay image until loading is completed.
 
 ```
 < b-image :src = require('assets/my-img.jpg')

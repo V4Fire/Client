@@ -96,7 +96,7 @@ export default class bSomeComponent extends iBlock {
 
 ### Default value for stage images
 
-To avoid redundant lines of code, you can specify default parameters for load and error stages of an image.
+To avoid redundant code lines, you can specify default parameters for load and error stages of an image.
 
 **core/dom/image/const.ts**
 
