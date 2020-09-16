@@ -9,12 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.61 ()
+## v3.0.0-rc.64 ()
 
 #### :rocket: New Feature
 
 * Added `globalHintHelpers`
 * Added `globalIconHelpers`
+
+## v3.0.0-rc.63 (2020-09-10)
+
+#### :bug: Bug Fix
+
+* Fixed `init.js` generation `ss-helpers`
 
 ## v3.0.0-rc.53 (2020-08-04)
 

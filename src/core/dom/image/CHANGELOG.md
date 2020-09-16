@@ -9,8 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.64 ()
+## v3.0.0-rc.63 (2020-09-10)
 
-#### :nail_care: Polish
+#### :rocket: New Feature
 
-* Added documentation
+* [Improved API](https://github.com/V4Fire/Client/issues/168)
+
+## v3.0.0-beta.237 (2019-12-19)
+
+#### :rocket: New Feature
+
+* Initial release

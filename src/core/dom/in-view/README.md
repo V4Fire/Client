@@ -12,9 +12,10 @@ This module provides API to track elements entering or leaving the viewport.
 
 ## Usage
 
-```ts
+```typescript
 import { InView } from 'core/dom/in-view';
 
+@component()
 export default class bFullScreenView extends iBlock implements iLockPageScroll {
   @hook('mounted')
   initInView(): void {

@@ -153,6 +153,14 @@ class Component {
 	}
 
 	/**
+	 * @see [[BrowserTests.Component.renderComponent]]
+	 */
+	renderComponent(componentCtx, componentName, props = {}) {
+		return componentCtx.evaluateHandle((ctx, [componentName, props]) =>
+			ctx.vdom.render(ctx.$createElement(componentName, {attrs: {'v-attrs': props}})), [componentName, props]);
+	}
+
+	/**
 	 * Parent class
 	 * @type {BrowserTests.Helpers}
 	 */

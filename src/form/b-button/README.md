@@ -26,9 +26,9 @@ This module provides a component to create a button.
 
 ## Usage
 
-The component have four base scenarios of usage:
+The component has four base scenarios of usage:
 
-1. A simple button with custom event handler.
+1. A simple button with a custom event handler.
 
 ```
 < b-button @click = console.log('The button was clicked')
@@ -115,7 +115,7 @@ Also, these icons can be provided by props.
     Click on me!
 ```
 
-4. `progressIcon` to inject an icon that indicates loading, by default is used [[bProgressIcon]].
+4. `progressIcon` to inject an icon that indicates loading, by default, is used [[bProgressIcon]].
 
 ```
 < b-button

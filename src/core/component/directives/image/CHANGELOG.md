@@ -9,16 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.64 ()
-
-#### :boom: Breaking Change
-
-* Removed `setSizes`
+## v3.0.0-rc.63 (2020-09-10)
 
 #### :house: Internal
 
-* Refactoring
+* [Split the `directives/image` module into two: API was moved to `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
 
-#### :nail_care: Polish
+## v3.0.0-beta.237 (2019-12-19)
 
-* Added documentation
+#### :rocket: New Feature
+
+* Initial release

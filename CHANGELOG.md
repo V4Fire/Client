@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.61 ()
+## v3.0.0-rc.64 ()
 
 #### :boom: Breaking Change
 
@@ -74,6 +74,36 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+## v3.0.0-rc.63 (2020-09-10)
+
+#### :rocket: New Feature
+
+* [Improved `core/dom/image` API](https://github.com/V4Fire/Client/issues/168)
+
+#### :bug: Bug Fix
+
+* Fixed `init.js` generation `super/i-static-page/ss-helpers`
+
+#### :house: Internal
+
+* [Split the `directives/image` module into two: API was moved to `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
+
+## v3.0.0-rc.62 (2020-09-04)
+
+#### :rocket: New Feature
+
+* Added `iBlock/dontWaitRemoteProviders`
+
+## v3.0.0-rc.61 (2020-09-04)
+
+#### :bug: Bug Fix
+
+* [Fixed wrong refactoring in `rc48` `super/i-data`](https://github.com/V4Fire/Client/pull/326)
+
+#### :house: Internal
+
+* Updated dependencies: `@v4fire/core@3.25.1`
 
 ## v3.0.0-rc.60 (2020-09-01)
 
