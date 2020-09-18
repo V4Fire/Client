@@ -340,9 +340,6 @@ export default class ImageLoader {
 		}
 
 		el.src = state.imgNode.currentSrc;
-		el.sizes = state.imgNode.sizes;
-		el.width = state.imgNode.width;
-		el.height = state.imgNode.height;
 	}
 
 	/**
