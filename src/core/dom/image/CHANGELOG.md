@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.64 (2020-09-18)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with wrong attributes being settled for an img tag
+
 ## v3.0.0-rc.63 (2020-09-10)
 
 #### :rocket: New Feature

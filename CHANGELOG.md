@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.64 (2020-09-18)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with wrong attributes being settled for an img tag `core/dom/image`
+
 ## v3.0.0-rc.63 (2020-09-10)
 
 #### :rocket: New Feature
