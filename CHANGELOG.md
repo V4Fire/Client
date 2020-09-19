@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.65 (2020-09-20)
+
+#### :house: Internal
+
+* JSDoc: changed `Statuses` to `ComponentStatus` for the `componentStatus` setter at `super/i-block/i-block.ts`
+
 ## v3.0.0-rc.64 (2020-09-18)
 
 #### :bug: Bug Fix
