@@ -158,8 +158,9 @@ function getStyleDecl(lib, body) {
 
 		if (lib.defer) {
 			Object.assign(attrsObj, {
-				rel: 'preload',
-				onload: `this.rel='${rel}'`
+				rel: 'stylesheet',
+				media: 'print',
+				onload: `this.rel='${rel}'; this.onload=null;`
 			});
 		}
 	}
