@@ -358,6 +358,7 @@ module.exports = async function module({plugins}) {
 };
 
 Object.assign(module.exports, {
+	urlLoaderOpts,
 	isTSWorker,
 	isTSServiceWorker,
 	isTSSharedWorker,
