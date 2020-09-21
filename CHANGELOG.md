@@ -11,6 +11,42 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.65 (2020-09-21)
+
+#### :boom: Breaking Change
+
+* Updated dependencies:
+  * `url-loader@4.1.0`
+  * `terser-webpack-plugin@4.2.2`
+  * `svg-sprite-loader@5.0.0`
+  * `svg-url-loader@6.0.0`
+  * `postcss-loader@4.0.2`
+  * `mini-css-extract-plugin@0.11.2`
+  * `image-webpack-loader@7.0.1`
+  * `imagemin-webp@6.0.0`
+  * `autoprefixer@10.0.0`
+  * `worker-loader@3.0.2`
+
+* Removed dependencies: `fg-loadcss`
+* Fixed a bug with importing of images within CSS
+
+#### :house: Internal
+
+* Updated dependencies:
+  * `browserslistr@4.14.3`
+  * `copy-dir@1.3.0`
+  * `delay@4.4.0`
+  * `extract-loader@5.1.0`
+  * `file-loader@6.1.0`
+  * `gulp-load-plugin@2.0.4`
+  * `html-loader@1.3.0`
+  * `optimize-css-assets-webpack-plugin@5.0.4`
+  * `stylus@0.54.8`
+  * `ts-loader@8.0.4`
+  * `typograf@6.11.1`
+  * `webpack@4.44.2`
+  * `webpack-cli@3.3.12`
+
 ## v3.0.0-rc.64 (2020-09-18)
 
 #### :bug: Bug Fix

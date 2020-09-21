@@ -28,10 +28,12 @@ const
 	monic = config.monic(),
 	imageOpts = config.imageOpts();
 
-const fileLoaderOpts = {
+const urlLoaderOpts = {
 	name: path.basename(assetsOutput),
 	outputPath: path.dirname(assetsOutput),
-	limit: webpack.dataURILimit()
+	limit: webpack.dataURILimit(),
+	encoding: true,
+	esModule: false
 };
 
 const
@@ -227,7 +229,9 @@ module.exports = async function module({plugins}) {
 			{
 				loader: 'postcss',
 				options: inherit(config.postcss(), {
-					plugins: [require('autoprefixer')(config.autoprefixer())]
+					postcssOptions: {
+						plugins: [require('autoprefixer')(config.autoprefixer())]
+					}
 				})
 			},
 
@@ -303,7 +307,7 @@ module.exports = async function module({plugins}) {
 		use: [
 			{
 				loader: 'url',
-				options: fileLoaderOpts
+				options: urlLoaderOpts
 			}
 		]
 	});
@@ -313,7 +317,7 @@ module.exports = async function module({plugins}) {
 		use: [
 			{
 				loader: 'url',
-				options: fileLoaderOpts
+				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
@@ -327,7 +331,7 @@ module.exports = async function module({plugins}) {
 		use: [
 			{
 				loader: 'url',
-				options: fileLoaderOpts
+				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
@@ -341,7 +345,7 @@ module.exports = async function module({plugins}) {
 		use: [
 			{
 				loader: 'svg-url',
-				options: fileLoaderOpts
+				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
