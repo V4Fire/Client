@@ -47,6 +47,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `webpack@4.44.2`
   * `webpack-cli@3.3.12`
 
+#### :nail_care: Polish
+
+* Fixed JSDoc `Statuses` -> `ComponentStatus` `iBlock`
+
 ## v3.0.0-rc.64 (2020-09-18)
 
 #### :bug: Bug Fix

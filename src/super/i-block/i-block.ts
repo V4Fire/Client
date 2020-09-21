@@ -536,8 +536,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Notice, not all statuses emit re-render of the component: unloaded, inactive, destroyed will emit only an event.
 	 *
 	 * @param value
-	 * @emits `componentStatus:{$value}(value: Statuses, oldValue: Statuses)`
-	 * @emits `componentStatusChange(value: Statuses, oldValue: Statuses)`
+	 * @emits `componentStatus:{$value}(value: ComponentStatus, oldValue: ComponentStatus)`
+	 * @emits `componentStatusChange(value: ComponentStatus, oldValue: ComponentStatus)`
 	 */
 	set componentStatus(value: ComponentStatus) {
 		const
