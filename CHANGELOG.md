@@ -33,6 +33,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Updated dependencies:
+  * `eventemitter2@6.4.3`
+  * `tslib@2.0.1`
   * `browserslistr@4.14.3`
   * `copy-dir@1.3.0`
   * `delay@4.4.0`
