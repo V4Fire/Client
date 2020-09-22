@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed mixing of directives within of a component root tag `core/component`](https://github.com/V4Fire/Client/pull/337)
+* Fixed providing of `Autoprefixer` `build/module.webpack`
 
 ## v3.0.0-rc.65 (2020-09-21)
 

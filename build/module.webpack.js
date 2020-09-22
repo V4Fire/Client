@@ -230,7 +230,12 @@ module.exports = async function module({plugins}) {
 				loader: 'postcss',
 				options: inherit(config.postcss(), {
 					postcssOptions: {
-						plugins: [require('autoprefixer')(config.autoprefixer())]
+						plugins: [
+							[
+								'autoprefixer',
+								config.autoprefixer()
+							]
+						]
 					}
 				})
 			},
