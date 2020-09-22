@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.66 (2020-09-22)
+
+#### :bug: Bug Fix
+
+* [Fixed mixing of directives within of a component root tag `core/component`](https://github.com/V4Fire/Client/pull/337)
+
 ## v3.0.0-rc.65 (2020-09-21)
 
 #### :boom: Breaking Change
