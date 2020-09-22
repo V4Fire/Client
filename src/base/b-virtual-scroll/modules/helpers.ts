@@ -96,3 +96,11 @@ export function getRequestParams<ITEM extends unknown = unknown, RAW extends unk
 export function isAsyncReplaceError(val: unknown): boolean {
 	return Object.isPlainObject(val) && val.join === 'replace';
 }
+
+/**
+ * True if the specified value is an `clear replace` error
+ * @param val
+ */
+export function isAsyncClearError(val: unknown): boolean {
+	return Object.isPlainObject(val) && val.type === 'clearAsync';
+}

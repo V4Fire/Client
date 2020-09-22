@@ -99,6 +99,27 @@ module.exports = (page) => {
 				});
 			});
 
+			describe('by changing the `request` prop while second data batch loading is in progress', () => {
+				it('should render first chunk with correct data', async () => {
+					await component.evaluate((ctx) => {
+						ctx.dataProvider = 'demo.Pagination';
+						ctx.chunkSize = 2;
+						ctx.request = {get: {chunkSize: 2, delay: 1500, id: Math.random()}};
+					});
+
+					await h.dom.waitForEl(container, 'section');
+
+					await component.evaluate((ctx) => {
+						ctx.dataProvider = 'demo.Pagination';
+						ctx.chunkSize = 2;
+						ctx.request = {get: {chunkSize: 2, i: 10, total: 2, delay: 1500, id: Math.random()}};
+					});
+
+					expect(await h.dom.waitForEl(container, '[data-index="10"]'));
+					expect(await getContainerChildCount()).toBe(2);
+				});
+			});
+
 			describe('by changing the `dataProvider` prop', () => {
 				it('removes old elements', async () => {
 					await setProps();
