@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.67 (2020-09-22)
+
+#### :boom: Breaking Change
+
+* `config`
+  * Now `runtime.debug` is always `false` by default
+  * Now `webpack.buildCache` is always `false` by default
+
+#### :bug: Bug Fix
+
+* Updated dependencies:
+  * `postcss@7.0.34`
+  * `autoprefixer@9.8.6`
+
 ## v3.0.0-rc.66 (2020-09-22)
 
 #### :bug: Bug Fix
