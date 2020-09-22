@@ -234,7 +234,7 @@ export function parseVNodeAsFlyweight(
 
 	newVData.staticClass = Array.concat([], newVData.staticClass, componentData.staticClass).join(' ');
 	newVData.class = Array.concat([], newVData.class, componentData.class);
-	newVData.directives = componentData.directives;
+	newVData.directives = Array.concat([], newVData.directives, componentData.directives);
 
 	return newVNode;
 }
