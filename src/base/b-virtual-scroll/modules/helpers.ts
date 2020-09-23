@@ -98,7 +98,7 @@ export function isAsyncReplaceError(val: unknown): boolean {
 }
 
 /**
- * True if the specified value is an `clear replace` error
+ * True if the specified value is an `async clear` error
  * @param val
  */
 export function isAsyncClearError(val: unknown): boolean {

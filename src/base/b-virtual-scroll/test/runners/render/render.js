@@ -37,6 +37,17 @@ module.exports = (page) => {
 		await h.dom.waitForEl(container, 'section');
 	};
 
+	const
+		initialTimeout = globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL;
+
+	beforeAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (20).seconds();
+	});
+
+	afterAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = initialTimeout;
+	});
+
 	beforeEach(async () => {
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
