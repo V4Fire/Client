@@ -11,6 +11,7 @@ import Friend from 'super/i-block/modules/friend';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import { isAsyncClearError } from 'base/b-virtual-scroll/modules/helpers';
 
 import { RemoteData, DataState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
@@ -119,6 +120,7 @@ export default class ChunkRequest extends Friend {
 		this.previousDataStore = undefined;
 
 		this.async.clearTimeout({label: $$.waitForInitCalls});
+		this.async.cancelRequest({label: $$.request});
 	}
 
 	/**
@@ -298,6 +300,10 @@ export default class ChunkRequest extends Friend {
 				}
 
 			}).catch((err) => {
+				if (isAsyncClearError(err)) {
+					return;
+				}
+
 				stderr(err);
 				return undefined;
 			});
@@ -359,6 +365,10 @@ export default class ChunkRequest extends Friend {
 			})
 
 			.catch((err) => {
+				if (isAsyncClearError(err)) {
+					return Promise.reject(err);
+				}
+
 				void ctx.removeMod('progress', true);
 
 				chunkRender.setRefVisibility('retry', true);
