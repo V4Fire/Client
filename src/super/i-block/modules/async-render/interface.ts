@@ -7,7 +7,7 @@
  */
 
 export interface TaskI<D = unknown> {
-	list: Iterator<D>;
+	iterable: Iterable<D>;
 	i: number;
 	total: number;
 	chunk?: number;
