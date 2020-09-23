@@ -13,8 +13,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.68 (2020-09-23)
 
+#### :boom: Breaking Change
+
+* `AsyncRender`:
+  * Renamed `TaskI.list` -> `TaskI.iterable`
+  * Renamed `TaskOptions` -> `TaskParams`
+
 #### :bug: Bug Fix
 
+* Fixed rendering of arrays `AsyncRender`
 * [Fixed an issue with the second data batch load affects initial rendering after reInit 'base/b-virtual-scroll'](https://github.com/V4Fire/Client/issues/346)
 
 ## v3.0.0-rc.67 (2020-09-22)

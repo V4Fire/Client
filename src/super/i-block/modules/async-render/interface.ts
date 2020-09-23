@@ -7,7 +7,7 @@
  */
 
 export interface TaskI<D = unknown> {
-	list: Iterator<D>;
+	iterable: Iterable<D>;
 	i: number;
 	total: number;
 	chunk?: number;
@@ -22,7 +22,7 @@ export interface TaskDestructor {
 	(el: Node);
 }
 
-export interface TaskOptions<EL = unknown, I extends number = number, D = unknown> {
+export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {
 	group?: string;
 	weight?: number;
 	filter?: TaskFilter<EL, I, D>;
