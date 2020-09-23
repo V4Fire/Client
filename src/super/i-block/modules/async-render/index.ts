@@ -16,7 +16,7 @@ import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
 import Friend from 'super/i-block/modules/friend';
-import { TaskOptions, TaskDesc } from 'super/i-block/modules/async-render/interface';
+import { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
 
 export * from 'super/i-block/modules/async-render/interface';
 
@@ -76,7 +76,7 @@ export default class AsyncRender extends Friend {
 	 *   < my-component :data = el
 	 * ```
 	 */
-	iterate(value: unknown, slice: number | [number?, number?], opts: TaskOptions = {}): unknown[] {
+	iterate(value: unknown, slice: number | [number?, number?], opts: TaskParams = {}): unknown[] {
 		if (value == null) {
 			return [];
 		}
@@ -340,7 +340,7 @@ export default class AsyncRender extends Friend {
 	 * @param cb
 	 * @param [params]
 	 */
-	protected createTask(cb: AnyFunction, params: TaskOptions = {}): void {
+	protected createTask(cb: AnyFunction, params: TaskParams = {}): void {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {

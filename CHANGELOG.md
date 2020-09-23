@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Renamed `TaskI.list` -> `TaskI.iterable` `AsyncRender`
+* `AsyncRender`:
+  * Renamed `TaskI.list` -> `TaskI.iterable`
+  * Renamed `TaskOptions` -> `TaskParams`
 
 #### :bug: Bug Fix
 

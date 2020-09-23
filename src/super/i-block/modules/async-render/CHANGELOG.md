@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Renamed `TaskI.list` -> `TaskI.iterable`
+* Renamed `TaskOptions` -> `TaskParams`
 
 #### :bug: Bug Fix
 
