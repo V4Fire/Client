@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.65 (2020-09-21)
+
+#### :nail_care: Polish
+
+* Fixed JSDoc `Statuses` -> `ComponentStatus`
+
 ## v3.0.0-rc.62 (2020-09-04)
 
 #### :rocket: New Feature

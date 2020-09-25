@@ -62,6 +62,17 @@ module.exports = (page) => {
 		ctx.componentConverter = (v) => ({data: v.data});
 	}, requestProps);
 
+	const
+		initialTimeout = globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL;
+
+	beforeAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (20).seconds();
+	});
+
+	afterAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = initialTimeout;
+	});
+
 	beforeEach(async () => {
 		await h.utils.reloadAndWaitForIdle(page);
 		await h.component.waitForComponent(page, '#root-component');

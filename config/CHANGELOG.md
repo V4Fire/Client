@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.67 (2020-09-22)
+
+#### :boom: Breaking Change
+
+* Now `runtime.debug` is always `false` by default
+* Now `webpack.buildCache` is always `false` by default
+
 ## v3.0.0-rc.41 (2020-07-29)
 
 #### :boom: Breaking Change
