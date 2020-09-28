@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.69 (2020-09-28)
+
+#### :boom: Breaking Change
+
+* Renamed `FieldGetter` -> `ValueGetter`
+
+#### :rocket: New Feature
+
+* Added `getter` for `set` and `delete` methods
+
+#### :bug: Bug Fix
+
+* Fixed a bug when a system field can't be watched after removal of a property
+
+#### :nail_care: Polish
+
+* Added more examples
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :house: Internal
