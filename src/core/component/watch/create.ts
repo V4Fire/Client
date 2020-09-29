@@ -249,7 +249,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							destructors.pop();
 						}
 
-						// eslint-disable-next-line no-use-before-define
+						// eslint-disable-next-line @typescript-eslint/no-use-before-define
 						attachDeepProxy();
 
 						if (value?.[fakeCopyLabel] === true) {
