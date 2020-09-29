@@ -210,20 +210,31 @@ export default class Field extends Friend {
 
 			} else {
 				const
-					isReady = !ctx.lfc.isBeforeCreate(),
-					isField = info.type === 'field';
+					isReady = !ctx.lfc.isBeforeCreate();
 
-				needSet = isReady && (
-					isField ||
-					info.type === 'system'
-				);
+				switch (info.type) {
+					case 'system':
+						// eslint-disable-next-line @typescript-eslint/unbound-method
+						needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
 
-				ref = isField ?
-					ctx.$fields :
-					ctx;
+						if (needSet) {
+							ref = ctx.$systemFields;
+						}
 
-				if ((isField && !isReady || !(chunks[0] in ref))) {
-					chunks[0] = info.name;
+						break;
+
+					case 'field':
+						needSet = isReady;
+						ref = ctx.$fields;
+
+						if (!isReady) {
+							chunks[0] = info.name;
+						}
+
+						break;
+
+					default:
+					// Loopback
 				}
 			}
 
@@ -331,15 +342,29 @@ export default class Field extends Friend {
 		if (isComponent) {
 			const
 				info = getPropertyInfo(path, ctx),
-				isField = info.type === 'field';
+				isReady = !ctx.lfc.isBeforeCreate();
 
 			ctx = <any>info.ctx;
-			ref = isField ? ctx.$fields : ctx;
 
-			needSet = !ctx.lfc.isBeforeCreate() && (
-				isField ||
-				info.type === 'system'
-			);
+			switch (info.type) {
+				case 'system':
+					// eslint-disable-next-line @typescript-eslint/unbound-method
+					needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+
+					if (needSet) {
+						ref = ctx.$systemFields;
+					}
+
+					break;
+
+				case 'field':
+					needSet = isReady;
+					ref = ctx.$fields;
+					break;
+
+				default:
+				// Loopback
+			}
 
 			chunks = info.path.split('.');
 			chunks[0] = info.name;
