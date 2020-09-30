@@ -38,7 +38,7 @@ module.exports = async (page) => {
 		});
 
 		it('checking the .route property', async () => {
-			expect(await root.evaluate(({route}) => route)).not.toBeNull();
+			expect(await root.evaluate(({route}) => route != null)).toBeTrue();
 		});
 
 		it('checking the .router property', async () => {
