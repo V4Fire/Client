@@ -26,6 +26,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `defaultRequestFilter`
   * Added `dropDataCache`
 
+## v3.0.0-rc.71 ()
+
+#### :house: Internal
+
+* Moved to `defaultRequestFilter`:
+  * `bButton`
+  * `bForm`
+
 #### :nail_care: Polish
 
 * Improved doc `iData`

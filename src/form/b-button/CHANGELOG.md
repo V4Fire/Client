@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.71 ()
+
+#### :house: Internal
+
+* Moved to `defaultRequestFilter`
+
 ## v3.0.0-rc.49 (2020-08-03)
 
 #### :house: Internal
