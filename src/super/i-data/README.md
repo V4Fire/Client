@@ -1,6 +1,6 @@
 # super/i-data
 
-Before reading this documentation, please see [[Provider]].
+Before reading this documentation, please see [core/data API](https://v4fire.github.io/Core/modules/src_core_data_index.html).
 
 This module provides a superclass to manage the working of a component and data provider.
 
@@ -74,6 +74,52 @@ export default class User extends Provider {
   baseURL: string = '/user/:uuid';
 }
 ```
+
+### Composition of data providers
+
+To overcome the limitation of a provider's single instance per component, you can use the special API calls "extra providers".
+[See more](https://v4fire.github.io/Core/modules/src_core_data_index.html#composition-of-providers).
+
+#### Remote providers
+
+You can use another component as a data provider, pass the `remoteProvider` prop to it.
+After this, the parent component will wait until it is loaded.
+
+```
+< b-example :remoteProvider = true | @someEventWithData = onData
+```
+
+Or you can use the special component - [[bRemoteProvider]].
+The component doesn't have any UI representation and provides a flexible API to use as a remote provider.
+
+```
+< b-remote-provider :dataProvider = 'myData' | @change = onData
+< b-remote-provider :dataProvider = 'myData' | :field = 'fieldWhenWillBeStoredData'
+```
+
+This way is useful when you are using it with the `v-if` directive, but be careful if you want to periodically update data from remote providers: you can emit a bunch of redundant re-renders.
+The valid case to use this kind of provider is to submit some data without getting the response, for instance, analytic events.
+
+#### Manual using of remote providers
+
+You free to use data providers that are not tied with your component, but remember about async wrapping.
+
+```typescript
+import User from 'models/user';
+import iData, { component, system } from 'super/i-data/i-data';
+
+@component()
+export default class bExample extends iData {
+  @system(() => new User())
+  user!: User;
+
+  getUser(): Promise<UserData> {
+    return this.async.request(this.user.get());
+  }
+}
+```
+
+However, it is better to avoid this approach since it can make the code confusing.
 
 ## Provider data
 
@@ -219,3 +265,21 @@ By default, if a component has a data provider, it will ask for data on initial 
 ```
 
 ## Provider API
+
+iData re-exports data provider methods, like, `get`, `peek`, `add`, `upd`, `del`, `post`, `url` and `base`, but wraps it with own async instance.
+Also, the class adds `dropDataCache` and `dataEmitter`.
+
+### Data handlers
+
+iData provides a bunch of handlers for provider/request events: `onAddData`, `onUpdData`, `onDelData`, `onRefreshData` and `onRequestError`.
+You are free to override these handlers in your components. By default, a component will update `db` if it is provided within a handler.
+
+## Offline reloading
+
+By default, a component won't reload data if this no internet, but you can change this behavior by switching the `offlineReload` prop to `true`.
+
+## Error handling
+
+| Name            | Description                                          | Payload description                          | Payload                                  |
+| --------------- |------------------------------------------------------| ---------------------------------------------|----------------------------------------- |
+| `requestError`  | An error occurred during the request to the provider | Error object, function to re-try the request | `Error | RequestError`, `RetryRequestFn` |
