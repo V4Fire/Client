@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecated } from 'core/functools';
+import { deprecate, deprecated } from 'core/functools';
 
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
@@ -143,37 +143,47 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly request?: RequestParams;
 
 	/**
-	 * If false, then the initial data request won't be executed if the request data is empty.
-	 * Also, the parameter can be passed as a function, that returns true if the request can be executed.
-	 */
-	@prop({type: [Boolean, Function]})
-	readonly requestFilter: RequestFilter = true;
-
-	/**
 	 * Remote data converter/s.
-	 * This function transforms initial provider data before saving to .db.
+	 * This function (or a list of functions) transforms initial provider data before saving to `db`.
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly dbConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
-	 * If true, then all new initial provider data will be compared with old data.
-	 * Also, the parameter can be passed as a function, that returns true if data are equal.
-	 */
-	@prop({type: [Boolean, Function]})
-	readonly checkDBEquality: CheckDBEquality = true;
-
-	/**
-	 * Converter/s from .db to the component format
+	 * Converter/s from the raw `db` to the component fields
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly componentConverter?: CanArray<ComponentConverter<any>>;
+
+	/**
+	 * Function to filter all "default" requests, i.e., all requests that were produced implicitly,
+	 * like an initial component request or requests that are triggered by changing of parameters from
+	 * `request` and `requestParams`. If the filter returns negative value, the tied request will be aborted.
+	 *
+	 * Also, you can set this parameter to true, and it will filter only requests with a payload.
+	 */
+	@prop({type: [Boolean, Function]})
+	readonly defaultRequestFilter?: RequestFilter;
+
+	/**
+	 * @deprecated
+	 * @see [[iData.defaultRequestFilter]]
+	 */
+	@prop({type: [Boolean, Function]})
+	readonly requestFilter?: RequestFilter;
 
 	/**
 	 * If true, then the component can reload data within an offline mode
 	 */
 	@prop(Boolean)
 	readonly offlineReload: boolean = false;
+
+	/**
+	 * If true, then all new initial provider data will be compared with the old data.
+	 * Also, the parameter can be passed as a function, that returns true if data are equal.
+	 */
+	@prop({type: [Boolean, Function]})
+	readonly checkDBEquality: CheckDBEquality = true;
 
 	/** @override */
 	get unsafe(): UnsafeGetter<UnsafeIData<this>> {
@@ -292,7 +302,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	protected dbStore?: CanUndef<this['DB']>;
 
 	/**
-	 * Instance of a component data provider by .dataProvider value
+	 * Instance of a component data provider
 	 */
 	@system()
 	protected dp?: Provider;
@@ -400,7 +410,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Link to iBlock.initLoad
+	 * Link to `iBlock.initLoad`
 	 *
 	 * @see [[iBlock.initLoad]]
 	 * @param [data]
@@ -436,6 +446,11 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * This method returns a new component object with additional context.
 	 *
 	 * @param [value]
+	 *
+	 * @example
+	 * ```js
+	 * this.url('list').get()
+	 * ```
 	 */
 	url(value: string): this;
 	url(value?: string): CanUndef<string> | this {
@@ -470,10 +485,15 @@ export default abstract class iData extends iBlock implements iProgress {
 	base(): CanUndef<string>;
 
 	/**
-	 * Sets a base part of URL for any request.
+	 * Sets the base part of URL for any request.
 	 * This method returns a new component object with additional context.
 	 *
 	 * @param [value]
+	 *
+	 * @example
+	 * ```js
+	 * this.base('list').get()
+	 * ```
 	 */
 	base(value: string): this;
 	base(value?: string): CanUndef<string> | this {
@@ -580,7 +600,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Updates data of the provider by a query.
-	 * This method is similar for a PUT request.
+	 * This method is similar for PUT or PATCH requests.
 	 *
 	 * @see [[Provider.upd]]
 	 * @param [body] - request body
@@ -617,7 +637,11 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Saves data to the root data store
+	 * Saves data to the root data store.
+	 * All components with specified global names or data providers by default store data from initial providers'
+	 * requests with the root component.
+	 *
+	 * You can check each provider data by using `r.providerDataStore`.
 	 *
 	 * @param data
 	 * @param [key] - key to save data
@@ -633,7 +657,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Converts data to the component format and returns it
+	 * Converts raw provider data to the component `db` format and returns it
 	 * @param data
 	 */
 	protected convertDataToDB<O>(data: unknown): O;
@@ -650,11 +674,11 @@ export default abstract class iData extends iBlock implements iProgress {
 		const
 			{db, checkDBEquality} = this;
 
-		if (
-			Object.isFunction(checkDBEquality) ?
-				Object.isTruly(checkDBEquality.call(this, v, db)) :
-				checkDBEquality && Object.fastCompare(v, db)
-		) {
+		const canKeepOldData = Object.isFunction(checkDBEquality) ?
+			Object.isTruly(checkDBEquality.call(this, v, db)) :
+			checkDBEquality && Object.fastCompare(v, db);
+
+		if (canKeepOldData) {
 			return <O | this['DB']>db;
 		}
 
@@ -662,7 +686,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Converts data to the internal component format and returns it
+	 * Converts data from `db` to the component field format and returns it
 	 * @param data
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
@@ -679,7 +703,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Initializes component data from a data provider.
-	 * This method is used to map .db to component properties.
+	 * This method is used to map `db` to component properties.
 	 * If the method is used, it must return some value that not equals to undefined.
 	 */
 	@watch('componentConverter')
@@ -771,8 +795,8 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Synchronization of dataProvider properties
-	 * @param [initLoad] - if false, there is no need to call .initLoad
+	 * Synchronization of `dataProvider` properties
+	 * @param [initLoad] - if false, there is no need to call `initLoad`
 	 */
 	@watch([
 		{field: 'dataProvider', provideArgs: false},
@@ -801,7 +825,7 @@ export default abstract class iData extends iBlock implements iProgress {
 					return;
 				}
 
-				throw new Error(`Provider "${provider}" is not defined`);
+				throw new ReferenceError(`The provider "${provider}" is not defined`);
 			}
 
 			const watchParams = {
@@ -848,10 +872,18 @@ export default abstract class iData extends iBlock implements iProgress {
 		}
 
 		if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
-			res[0] = Object.mixin({
-				traits: true,
-				filter: (el) => isGet ? el != null : el !== undefined
+			const mixedData = Object.mixin({
+				onlyNew: true,
+				filter: (el) => {
+					if (isGet) {
+						return el != null;
+					}
+
+					return el !== undefined;
+				}
 			}, undefined, res[0], customData);
+
+			res[0] = mixedData;
 
 		} else {
 			res[0] = res[0] != null ? res[0] : customData;
@@ -860,7 +892,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 
 		const
-			f = field.get<RequestFilter>('requestFilter'),
+			requestFilter = this.requestFilter ?? this.defaultRequestFilter,
 			isEmpty = Object.size(res[0]) === 0;
 
 		const info = {
@@ -869,11 +901,31 @@ export default abstract class iData extends iBlock implements iProgress {
 			params: res[1]
 		};
 
-		if (
-			Object.isTruly(f) ?
-				Object.isFunction(f) && !Object.isTruly(f.call(this, res[0], info)) :
-				isEmpty
-		) {
+		let
+			needSkip = false;
+
+		if (this.requestFilter != null) {
+			deprecate({
+				name: 'requestFilter',
+				type: 'property',
+				alternative: {name: 'defaultRequestFilter'}
+			});
+
+			if (Object.isFunction(requestFilter)) {
+				needSkip = !Object.isTruly(requestFilter.call(this, res[0], info));
+
+			} else if (requestFilter !== true) {
+				needSkip = isEmpty;
+			}
+
+		} else if (Object.isFunction(requestFilter)) {
+			needSkip = !Object.isTruly(requestFilter.call(this, res[0], info));
+
+		} else if (requestFilter === true) {
+			needSkip = isEmpty;
+		}
+
+		if (needSkip) {
 			return;
 		}
 
@@ -930,7 +982,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Handler: dataProvider.error
+	 * Handler: `dataProvider.error`
 	 *
 	 * @param err
 	 * @param retry - retry function
@@ -941,7 +993,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Handler: dataProvider.add
+	 * Handler: `dataProvider.add`
 	 * @param data
 	 */
 	protected onAddData(data: unknown): void {
@@ -954,7 +1006,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Handler: dataProvider.upd
+	 * Handler: `dataProvider.upd`
 	 * @param data
 	 */
 	protected onUpdData(data: unknown): void {
@@ -967,7 +1019,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Handler: dataProvider.del
+	 * Handler: `dataProvider.del`
 	 * @param data
 	 */
 	protected onDelData(data: unknown): void {
@@ -980,7 +1032,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Handler: dataProvider.refresh
+	 * Handler: `dataProvider.refresh`
 	 * @param data
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental

@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.70 ()
+
+#### :boom: Breaking Change
+
+* Deprecated `requestFilter` `iData`
+
+#### :rocket: New Feature
+
+* Added `defaultRequestFilter` `iData`
+
+#### :nail_care: Polish
+
+* Improved doc `iData`
+
 ## v3.0.0-rc.69 (2020-09-28)
 
 #### :boom: Breaking Change

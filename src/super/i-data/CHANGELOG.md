@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.70 ()
+
+#### :boom: Breaking Change
+
+* Deprecated `requestFilter`
+
+#### :rocket: New Feature
+
+* Added `defaultRequestFilter`
+
+#### :nail_care: Polish
+
+* Improved doc
+
 ## v3.0.0-rc.61 (2020-09-04)
 
 #### :bug: Bug Fix
