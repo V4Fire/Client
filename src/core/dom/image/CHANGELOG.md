@@ -9,6 +9,10 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.70 (2020-09-30)
+
+* Fixed an issue with the initial ratio was not settled
+
 ## v3.0.0-rc.64 (2020-09-18)
 
 #### :bug: Bug Fix
