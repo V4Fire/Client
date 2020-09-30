@@ -13,6 +13,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.70 (2020-09-30)
 
+#### :bug: Bug Fix
+
 * Fixed an issue with the initial ratio was not settled `core/dom/image`
 
 ## v3.0.0-rc.69 (2020-09-28)
