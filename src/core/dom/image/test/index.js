@@ -474,6 +474,7 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, images.pngImage, images.webp]);
 
+					// @ts-expect-error
 					await expectAsync(waitFor(getNode(tag), (ctx) => globalThis.getSrc(ctx) === document.getElementById('expected-img').currentSrc)).toBeResolved();
 				});
 
@@ -958,6 +959,7 @@ module.exports = async (page, params) => {
 				const testImg = document.createElement('img');
 				testImg.src = mainSrc;
 
+				// @ts-expect-error
 				testImg.onInit(() => {
 					if (testImg.naturalHeight > 0 || testImg.naturalWidth > 0) {
 						const ratio = testImg.naturalHeight === 0 ? 1 : testImg.naturalWidth / testImg.naturalHeight;
@@ -998,6 +1000,29 @@ module.exports = async (page, params) => {
 			expect(await divNode.evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
 			expect(await divNode.getAttribute('aria-label')).toBe('alt-text');
 			expect(await divNode.getAttribute('role')).toBe('img');
+		});
+
+		it('div tag initial padding bottom', async () => {
+			const
+				mainSrcUrl = getRandomImgUrl();
+
+			handleImageRequest(mainSrcUrl, 2000);
+
+			await imageLoader.evaluate((imageLoaderCtx, mainSrcUrl) => {
+				const div = document.getElementById('div-target');
+
+				imageLoaderCtx.init(div, {
+					src: mainSrcUrl,
+					bgOptions: {
+						ratio: 328 / 172
+					},
+					ctx: globalThis.dummy
+				});
+
+			}, mainSrcUrl);
+
+			await h.bom.waitForIdleCallback(page);
+			expect(await divNode.evaluate((ctx) => parseInt(ctx.style.paddingBottom, 10))).toBe(52);
 		});
 	});
 };

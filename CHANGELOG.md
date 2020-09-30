@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.70 ()
+## v3.0.0-rc.71 ()
 
 #### :boom: Breaking Change
 
@@ -29,6 +29,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :nail_care: Polish
 
 * Improved doc `iData`
+
+## v3.0.0-rc.70 (2020-09-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the initial ratio was not settled `core/dom/image`
 
 ## v3.0.0-rc.69 (2020-09-28)
 
