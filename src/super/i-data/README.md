@@ -256,7 +256,74 @@ export default class bExample extends iData {
 | `initLoadStart` | The component starts the initial loading        | Options of the loading              | `InitLoadOptions`                         |
 | `initLoad`      | The component have finished the initial loading | Loaded data, options of the loading | `CanUndef<this['DB']>`, `InitLoadOptions` |
 
-### Preventing of initial data loading
+### Providing of request parameters
+
+You can provide the `request` prop with data to request by different provider methods to any iData's child component.
+
+```
+< b-example :dataProvider = 'MyData' | :request = {get: {id: 1}, upd: [{id: 1, name: newName}, {responseType: 'blob'}]}
+```
+
+The `get` data is used to the initial request.
+
+You can also set up a component that it will emit some provider request when occurring mutation of the specified properties.
+Just use `sync.object` and `requestParams`. See the [[Sync]] class for additional information.
+
+```typescript
+import 'models/api/user';
+import { Data } from 'models/api/user/interface';
+
+import iData, { component, field, TitleValue, RequestParams } from 'super/i-data/i-data';
+
+@component()
+export default class bExample extends iData {
+  /** @override */
+  readonly DB!: Data;
+
+  /** @override */
+  readonly dataProvider: string = 'api.User';
+
+  /**
+   * User name
+   */
+  @field()
+  name: string = 'Bill';
+
+  /**
+   * Some query parameter
+   */
+  @field()
+  show: boolean = true;
+
+  /** @override */
+  // There will be created an object:
+  // {get: {id: 'bill', show: true, wait: function}}
+  // Every time at least one of the specified fields is updated, there will be a new "get" request of the provider.
+  // The `get` data is used to the initial request and emit reloading of the component.
+  @field((o) => o.sync.object('get', [
+    // `name` will send to a provider as `id`
+    ['id', 'name', (v) => v.toLowerCase()],
+
+    // `show` will send to a provider as `show`
+    'show',
+
+    // `canRequestData` will send to a provider as `wait`
+    ['wait', 'canRequestData']
+  ]))
+
+  protected readonly requestParams!: RequestParams;
+
+  /**
+   * Returns true if the component can load remote data
+   */
+  async canRequestData(): Promise<boolean> {
+    await this.async.sleep(3..seconds());
+    return true;
+  };
+}
+```
+
+### Preventing of the initial data loading
 
 By default, if a component has a data provider, it will ask for data on initial loading. But sometimes you have to manage this process manually. You can use `defaultRequestFilter` to provide a function that can filter any implicit requests, like initial loading: if the function returns a negative value, the request will be aborted. If the prop is set to `true`, then all requests without payload will be aborted.
 
