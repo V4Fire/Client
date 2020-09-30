@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface FieldGetter<R = unknown, D = unknown> {
-	(key: string, data: NonNullable<D>): R;
+export interface KeyGetter<K = unknown, D = unknown> {
+	(key: unknown, data: NonNullable<D>): K;
+}
+
+export interface ValueGetter<R = unknown, D = unknown> {
+	(key: unknown, data: NonNullable<D>): R;
 }
