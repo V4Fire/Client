@@ -14,10 +14,12 @@ Changelog
 #### :boom: Breaking Change
 
 * Deprecated `requestFilter`
+* Deprecated `dropRequestCache`
 
 #### :rocket: New Feature
 
 * Added `defaultRequestFilter`
+* Added `dropProviderCache`
 
 #### :nail_care: Polish
 

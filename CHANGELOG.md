@@ -15,11 +15,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Deprecated `requestFilter` `iData`
+* `iData`:
+  * Deprecated `requestFilter`
+  * Deprecated `dropRequestCache`
 
 #### :rocket: New Feature
 
-* Added `defaultRequestFilter` `iData`
+* `iData`:
+  * Added `defaultRequestFilter`
+  * Added `dropProviderCache`
 
 #### :nail_care: Polish
 

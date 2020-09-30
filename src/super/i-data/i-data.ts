@@ -173,7 +173,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly requestFilter?: RequestFilter;
 
 	/**
-	 * If true, then the component can reload data within an offline mode
+	 * If true, then the component can reload data within the offline mode
 	 */
 	@prop(Boolean)
 	readonly offlineReload: boolean = false;
@@ -430,10 +430,19 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Drops the request cache
+	 * Drops the data provider cache
 	 */
-	dropRequestCache(): void {
+	dropProviderCache(): void {
 		this.dp?.dropCache();
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[iData.dropProviderCache]]
+	 */
+	@deprecated({renamedTo: 'dropProviderCache'})
+	dropRequestCache(): void {
+		this.dropProviderCache();
 	}
 
 	/**
