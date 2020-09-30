@@ -923,7 +923,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			if (Object.isFunction(requestFilter)) {
 				needSkip = !Object.isTruly(requestFilter.call(this, res[0], info));
 
-			} else if (requestFilter !== true) {
+			} else if (requestFilter === false) {
 				needSkip = isEmpty;
 			}
 
