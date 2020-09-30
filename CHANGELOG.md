@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * `iData`:
+  * Renamed `dataProviderEmitter` to `dataEmitter`
   * Deprecated `requestFilter`
   * Deprecated `dropRequestCache`
 
@@ -23,7 +24,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `iData`:
   * Added `defaultRequestFilter`
-  * Added `dropDataProviderCache`
+  * Added `dropDataCache`
 
 #### :nail_care: Polish
 
