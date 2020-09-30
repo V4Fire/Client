@@ -16,7 +16,7 @@ import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
 import Friend from 'super/i-block/modules/friend';
-import { TaskOptions, TaskDesc } from 'super/i-block/modules/async-render/interface';
+import { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
 
 export * from 'super/i-block/modules/async-render/interface';
 
@@ -62,21 +62,29 @@ export default class AsyncRender extends Friend {
 	}
 
 	/**
-	 * Creates an asynchronous stream from the specified value
+	 * Creates an asynchronous render stream from the specified value.
+	 * This method helps to optimize the rendering of a component by splitting big render tasks into little.
 	 *
 	 * @param value
 	 * @param slice - elements per chunk or [start position, elements per chunk]
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```
+	 * /// Asynchronous rendering of components, only five elements per chunk
+	 * < template v-for = el in asyncRender.iterate(largeList, 5)
+	 *   < my-component :data = el
+	 * ```
 	 */
-	iterate(value: unknown, slice: number | [number?, number?], opts: TaskOptions = {}): unknown[] {
+	iterate(value: unknown, slice: number | [number?, number?], opts: TaskParams = {}): unknown[] {
 		if (value == null) {
 			return [];
 		}
 
 		let
-			list: CanPromise<unknown[]>;
+			iterable: CanPromise<Iterable<unknown>>;
 
-		const setList = (value) => {
+		const getIterable = (value) => {
 			if (Object.isArray(value)) {
 				return value;
 			}
@@ -90,7 +98,7 @@ export default class AsyncRender extends Friend {
 			}
 
 			if (Object.isPromise(value)) {
-				return value.then(setList);
+				return value.then(getIterable);
 			}
 
 			if (value != null && typeof value === 'object') {
@@ -104,25 +112,25 @@ export default class AsyncRender extends Friend {
 			return [value];
 		};
 
-		list = setList(value);
+		iterable = getIterable(value);
 
 		let
-			from = 0,
-			count;
+			startPos = 0,
+			perChunk;
 
 		if (Object.isArray(slice)) {
-			from = slice[0] ?? from;
-			count = slice[1];
+			startPos = slice[0] ?? startPos;
+			perChunk = slice[1];
 
 		} else {
-			count = slice;
+			perChunk = slice;
 		}
 
 		const
 			f = opts.filter,
-			finalArr = <unknown[]>[],
-			filteredArr = <unknown[]>[],
-			isPromise = Object.isPromise(list);
+			firstRender = <unknown[]>[],
+			untreatedEls = <unknown[]>[],
+			isSrcPromise = Object.isPromise(iterable);
 
 		let
 			iterator: Iterator<unknown>,
@@ -132,14 +140,14 @@ export default class AsyncRender extends Friend {
 			syncI = 0,
 			syncTotal = 0;
 
-		if (!isPromise) {
-			iterator = list[Symbol.iterator]();
+		if (!isSrcPromise) {
+			iterator = iterable[Symbol.iterator]();
 
 			for (let o = iterator, el = o.next(); !el.done; el = o.next(), syncI++) {
 				lastSyncEl = el;
 
-				if (from > 0) {
-					from--;
+				if (startPos > 0) {
+					startPos--;
 					continue;
 				}
 
@@ -150,31 +158,31 @@ export default class AsyncRender extends Friend {
 				if (
 					!isPromise && (
 						!f ||
-						Object.isTruly(f.call(this.component, val, syncI, {list, i: syncI, total: syncTotal}))
+						Object.isTruly(f.call(this.component, val, syncI, {list: iterable, i: syncI, total: syncTotal}))
 					)
 				) {
 					syncTotal++;
-					finalArr.push(val);
+					firstRender.push(val);
 
 				} else {
-					filteredArr.push(val);
+					untreatedEls.push(val);
 				}
 
-				if (syncTotal >= count || isPromise) {
+				if (syncTotal >= perChunk || isPromise) {
 					break;
 				}
 			}
 		}
 
-		finalArr[this.asyncLabel] = async (cb) => {
+		firstRender[this.asyncLabel] = async (cb) => {
 			const createIterator = () => {
-				if (isPromise) {
+				if (isSrcPromise) {
 					const next = () => {
-						if (Object.isPromise(list)) {
+						if (Object.isPromise(iterable)) {
 							return {
 								done: false,
-								value: list.then((v) => {
-									list = v;
+								value: iterable.then((v) => {
+									iterable = v;
 									iterator = v[Symbol.iterator]();
 									return iterator.next().value;
 								})
@@ -191,13 +199,13 @@ export default class AsyncRender extends Friend {
 					i = 0;
 
 				const next = () => {
-					if (filteredArr.length === 0 && lastSyncEl.done) {
+					if (untreatedEls.length === 0 && lastSyncEl.done) {
 						return lastSyncEl;
 					}
 
-					if (i < filteredArr.length) {
+					if (i < untreatedEls.length) {
 						return {
-							value: filteredArr[i++],
+							value: untreatedEls[i++],
 							done: false
 						};
 					}
@@ -229,9 +237,9 @@ export default class AsyncRender extends Friend {
 					val = el.value;
 
 				const
-					isPromise = Object.isPromise(val);
+					isValPromise = Object.isPromise(val);
 
-				if (isPromise) {
+				if (isValPromise) {
 					try {
 						// eslint-disable-next-line require-atomic-updates
 						val = await val;
@@ -254,7 +262,13 @@ export default class AsyncRender extends Friend {
 					total++;
 					chunkTotal++;
 
-					if (chunkTotal >= count || el.done || isPromise) {
+					const needRender =
+						el.done ||
+						isValPromise ||
+						chunkTotal >= perChunk ||
+						Object.isArray(iterable) && total >= iterable.length;
+
+					if (needRender) {
 						const
 							desc = <TaskDesc>{};
 
@@ -300,7 +314,7 @@ export default class AsyncRender extends Friend {
 				this.createTask(task, {
 					weight,
 					filter: f?.bind(this.ctx, val, i, {
-						list,
+						iterable,
 						i: syncI + i + 1,
 
 						get chunk(): number {
@@ -317,7 +331,7 @@ export default class AsyncRender extends Friend {
 			}
 		};
 
-		return finalArr;
+		return firstRender;
 	}
 
 	/**
@@ -326,7 +340,7 @@ export default class AsyncRender extends Friend {
 	 * @param cb
 	 * @param [params]
 	 */
-	protected createTask(cb: AnyFunction, params: TaskOptions = {}): void {
+	protected createTask(cb: AnyFunction, params: TaskParams = {}): void {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {

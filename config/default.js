@@ -262,6 +262,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			...super.runtime(),
 
+			debug: false,
 			engine: this.engine(),
 			noGlobals: false,
 			svgSprite: true,
@@ -348,7 +349,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		buildCache() {
 			return o('build-cache', {
-				default: !isProd,
+				default: false,
 				type: 'boolean'
 			});
 		},

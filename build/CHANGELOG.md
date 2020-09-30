@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.67 (2020-09-22)
+
+#### :bug: Bug Fix
+
+* Downgrade to `postcss@7`
+
+## v3.0.0-rc.66 (2020-09-22)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `Autoprefixer`
+
 ## v3.0.0-rc.58 (2020-08-07)
 
 #### :house: Internal
