@@ -245,15 +245,15 @@ export default abstract class iData extends iBlock implements iProgress {
 		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.dp?.emitter, true)
 	})
 
-	protected readonly dataProviderEmitter!: ReadonlyEventEmitterWrapper<this>;
+	protected readonly dataEmitter!: ReadonlyEventEmitterWrapper<this>;
 
 	/**
 	 * @deprecated
-	 * @see [[iData.dataProviderEmitter]]
+	 * @see [[iData.dataEmitter]]
 	 */
-	@deprecated({renamedTo: 'dataProviderEmitter'})
+	@deprecated({renamedTo: 'dataEmitter'})
 	get dataEvent(): ReadonlyEventEmitterWrapper<this> {
-		return this.dataProviderEmitter;
+		return this.dataEmitter;
 	}
 
 	/**
@@ -432,17 +432,17 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Drops the data provider cache
 	 */
-	dropDataProviderCache(): void {
+	dropDataCache(): void {
 		this.dp?.dropCache();
 	}
 
 	/**
 	 * @deprecated
-	 * @see [[iData.dropDataProviderCache]]
+	 * @see [[iData.dropDataCache]]
 	 */
 	@deprecated({renamedTo: 'dropProviderCache'})
 	dropRequestCache(): void {
-		this.dropDataProviderCache();
+		this.dropDataCache();
 	}
 
 	/**
@@ -731,7 +731,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	@wait('ready')
 	protected initDataListeners(): void {
 		const
-			{dataProviderEmitter: $e} = this,
+			{dataEmitter: $e} = this,
 			group = {group: 'dataProviderSync'};
 
 		$e.off(
@@ -821,7 +821,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				.clearAll({group: /requestSync/})
 				.clearAll({label: $$.initLoad});
 
-			this.dataProviderEmitter.off();
+			this.dataEmitter.off();
 			this.dp = undefined;
 		}
 

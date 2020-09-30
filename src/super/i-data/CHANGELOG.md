@@ -13,13 +13,14 @@ Changelog
 
 #### :boom: Breaking Change
 
+* Renamed `dataProviderEmitter` to `dataEmitter`
 * Deprecated `requestFilter`
 * Deprecated `dropRequestCache`
 
 #### :rocket: New Feature
 
 * Added `defaultRequestFilter`
-* Added `dropDataProviderCache`
+* Added `dropDataCache`
 
 #### :nail_care: Polish
 
