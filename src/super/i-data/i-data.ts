@@ -242,7 +242,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		atom: true,
 		after: 'async',
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.dp?.event, true)
+		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.dp?.emitter, true)
 	})
 
 	protected readonly dataProviderEmitter!: ReadonlyEventEmitterWrapper<this>;
@@ -432,17 +432,17 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Drops the data provider cache
 	 */
-	dropProviderCache(): void {
+	dropDataProviderCache(): void {
 		this.dp?.dropCache();
 	}
 
 	/**
 	 * @deprecated
-	 * @see [[iData.dropProviderCache]]
+	 * @see [[iData.dropDataProviderCache]]
 	 */
 	@deprecated({renamedTo: 'dropProviderCache'})
 	dropRequestCache(): void {
-		this.dropProviderCache();
+		this.dropDataProviderCache();
 	}
 
 	/**

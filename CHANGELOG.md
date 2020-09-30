@@ -23,7 +23,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `iData`:
   * Added `defaultRequestFilter`
-  * Added `dropProviderCache`
+  * Added `dropDataProviderCache`
 
 #### :nail_care: Polish
 

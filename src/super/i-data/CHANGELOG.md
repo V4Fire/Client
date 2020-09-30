@@ -19,7 +19,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added `defaultRequestFilter`
-* Added `dropProviderCache`
+* Added `dropDataProviderCache`
 
 #### :nail_care: Polish
 
