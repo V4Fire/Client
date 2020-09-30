@@ -381,7 +381,7 @@ export default class ImageLoader {
 	 *
 	 * @param el
 	 * @param mainOptions
-	 * @param previewOptions
+	 * @param [previewOptions]
 	 */
 	protected setInitialBackgroundSizeAttrs(
 		el: HTMLElement,
