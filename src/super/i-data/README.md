@@ -349,4 +349,4 @@ By default, a component won't reload data if this no internet, but you can chang
 
 | Name            | Description                                          | Payload description                          | Payload                                  |
 | --------------- |------------------------------------------------------| ---------------------------------------------|----------------------------------------- |
-| `requestError`  | An error occurred during the request to the provider | Error object, function to re-try the request | `Error | RequestError`, `RetryRequestFn` |
+| `requestError`  | An error occurred during the request to the provider | Error object, function to re-try the request | `RequestError`, `RetryRequestFn` |
