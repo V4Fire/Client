@@ -20,6 +20,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed providing of a watch context
   * Fixed an invalid caching of old values within `collapse = false`
 
+#### :house: [Internal]
+
+* Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
+
 ## v3.0.0-rc.70 (2020-09-30)
 
 #### :bug: Bug Fix
