@@ -358,7 +358,7 @@ You are free to override these handlers in your components. By default, a compon
 
 ## Offline reloading
 
-By default, a component won't reload data if this no internet, but you can change this behavior by switching the `offlineReload` prop to `true`.
+By default, a component won't reload data without the internet, but you can change this behavior by switching the `offlineReload` prop to `true`.
 
 ## Error handling
 
