@@ -4,6 +4,16 @@ Before reading this documentation, please see [core/data API](https://v4fire.git
 
 This module provides a superclass to manage the working of a component and data provider.
 
+## Synopsis
+
+* The component is not used on its own. It is a superclass.
+
+* The component API doesn't support functional or flyweight components.
+
+* The component extends [[iBlock]].
+
+* The component implements [[iProgress]] trait.
+
 ## Basic concepts
 
 To select a data provider tied with a component, you need to provide the `dataProvider` prop or set the default value for it. Mind, the prop value has a string type and contains a provider name from the global pool. To register a data provider within the global pool, you need to use the `@provider` decorator.
@@ -97,7 +107,7 @@ The component doesn't have any UI representation and provides a flexible API to 
 < b-remote-provider :dataProvider = 'myData' | :field = 'fieldWhenWillBeStoredData'
 ```
 
-This way is useful when you are using it with the `v-if` directive, but be careful if you want to periodically update data from remote providers: you can emit a bunch of redundant re-renders.
+This way is useful when you are using it with the `v-if` directive, but be careful if you want to periodically update data from remote providers: you can emit a bunch of redundant re-renders. Mind, `bRemoteProvider` is a regular component, and initialization of it takes additional time.
 The valid case to use this kind of provider is to submit some data without getting the response, for instance, analytic events.
 
 #### Manual using of remote providers
@@ -184,7 +194,8 @@ You can pass a function or list of functions that will be applied to provider da
 #### `initRemoteData` and `componentConverter`
 
 Sometimes you want to create a component that can take data directly from a prop or by loading from a data provider.
-You can manage this situation by using `sync.link` and `initRemoteData`.
+You can manage this situation by using `sync.link` and `initRemoteData`. See the [[Sync]] class for additional information.
+
 `initRemoteData` is a function that invokes every time the `db` is changed.
 You can override it within your component to adopt `db` data to a component field.
 Finally, every child instance of iData has a prop that can transform data from a `db` format to a more suitable component field format.
@@ -256,7 +267,15 @@ export default class bExample extends iData {
 | `initLoadStart` | The component starts the initial loading        | Options of the loading              | `InitLoadOptions`                         |
 | `initLoad`      | The component have finished the initial loading | Loaded data, options of the loading | `CanUndef<this['DB']>`, `InitLoadOptions` |
 
-### Providing of request parameters
+### Preventing of the initial data loading
+
+By default, if a component has a data provider, it will ask for data on initial loading. But sometimes you have to manage this process manually. You can use `defaultRequestFilter` to provide a function that can filter any implicit requests, like initial loading: if the function returns a negative value, the request will be aborted. If the prop is set to `true`, then all requests without payload will be aborted.
+
+```
+< b-example :dataProvider = 'myData' | :defaultRequestFilter = filterRequests
+```
+
+## Providing of request parameters
 
 You can provide the `request` prop with data to request by different provider methods to any iData's child component.
 
@@ -323,13 +342,9 @@ export default class bExample extends iData {
 }
 ```
 
-### Preventing of the initial data loading
+### Preventing of the implicit requests
 
-By default, if a component has a data provider, it will ask for data on initial loading. But sometimes you have to manage this process manually. You can use `defaultRequestFilter` to provide a function that can filter any implicit requests, like initial loading: if the function returns a negative value, the request will be aborted. If the prop is set to `true`, then all requests without payload will be aborted.
-
-```
-< b-example :dataProvider = 'myData' | :defaultRequestFilter = filterRequests
-```
+You can use `defaultRequestFilter` to provide a function that can filter any implicit requests: if the function returns a negative value, the request will be aborted. If the prop is set to `true`, then all requests without payload will be aborted.
 
 ## Provider API
 
