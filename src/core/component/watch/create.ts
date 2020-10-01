@@ -76,7 +76,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		};
 
 		const
-			needCache = handler.length > 1 && (isDefinedPath || normalizedOpts.collapse),
+			needCache = handler.length > 1 && normalizedOpts.collapse,
 			originalHandler = handler;
 
 		let
