@@ -258,9 +258,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							return;
 						}
 
-						const
-							valueByPath = unwrap(Object.get(value, slicedPathChunks)),
-							oldValueByPath = unwrap(Object.get(oldValue, slicedPathChunks));
+						let valueByPath = Object.get(value, slicedPathChunks);
+						valueByPath = unwrap(valueByPath) ?? valueByPath;
+
+						let oldValueByPath = Object.get(oldValue, slicedPathChunks);
+						oldValueByPath = unwrap(oldValueByPath) ?? oldValueByPath;
 
 						if (valueByPath !== oldValueByPath) {
 							if (normalizedOpts.collapse !== true) {
