@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.71 (2020-10-01)
+
+#### :house: Internal
+
+* Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `test.gulp`
+
 ## v3.0.0-rc.67 (2020-09-22)
 
 #### :bug: Bug Fix

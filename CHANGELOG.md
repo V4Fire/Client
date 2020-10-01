@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.71 (2020-10-01)
+
+#### :bug: Bug Fix
+
+* `creo/component/watch`:
+  * Fixed a bug with deep watching of props
+  * Fixed providing of a watch context
+  * Fixed an invalid caching of old values within `collapse = false`
+
+#### :house: [Internal]
+
+* Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
+
 ## v3.0.0-rc.70 (2020-09-30)
 
 #### :bug: Bug Fix
