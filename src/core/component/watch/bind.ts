@@ -206,11 +206,8 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				// The situation for a property watcher when we define the standard length of one argument
 				} else {
 					handler = (val: unknown, ...args) => {
-						// We can safely refer to the second argument without increasing of the handler length by using arguments
-						const oldVal = args[0];
-
 						const
-							argsToProvide = watchInfo.provideArgs === false ? [] : [val, oldVal];
+							argsToProvide = watchInfo.provideArgs === false ? [] : [val, ...args];
 
 						if (Object.isString(rawHandler)) {
 							if (!Object.isFunction(component[rawHandler])) {
