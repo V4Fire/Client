@@ -11,6 +11,31 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.72 (2020-10-01)
+
+#### :boom: Breaking Change
+
+* `iData`:
+  * Renamed `dataProviderEmitter` to `dataEmitter`
+  * Deprecated `requestFilter`
+  * Deprecated `dropRequestCache`
+
+#### :rocket: New Feature
+
+* `iData`:
+  * Added `defaultRequestFilter`
+  * Added `dropDataCache`
+
+#### :house: Internal
+
+* Moved to `defaultRequestFilter`:
+  * `bButton`
+  * `bForm`
+
+#### :nail_care: Polish
+
+* Improved doc `iData`
+
 ## v3.0.0-rc.71 (2020-10-01)
 
 #### :bug: Bug Fix
@@ -18,7 +43,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `creo/component/watch`:
   * Fixed a bug with deep watching of props
   * Fixed providing of a watch context
-  * Fixed an invalid caching of old values within `collapse = false`
+  * Fixed an invalid caching of old values with `collapse = false`
 
 #### :house: [Internal]
 
