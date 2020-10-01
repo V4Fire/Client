@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.71 (2020-10-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with deep watching of props
+
 ## v3.0.0-rc.70 (2020-09-30)
 
 #### :bug: Bug Fix
