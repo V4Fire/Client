@@ -15,7 +15,7 @@ Changelog
 
 * Fixed a bug with deep watching of props
 * Fixed providing of a watch context
-* Fixed an invalid caching of old values within `collapse = false`
+* Fixed an invalid caching of old values with `collapse = false`
 
 ## v3.0.0-rc.38 (2020-07-21)
 

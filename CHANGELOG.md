@@ -43,7 +43,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `creo/component/watch`:
   * Fixed a bug with deep watching of props
   * Fixed providing of a watch context
-  * Fixed an invalid caching of old values within `collapse = false`
+  * Fixed an invalid caching of old values with `collapse = false`
 
 #### :house: [Internal]
 
