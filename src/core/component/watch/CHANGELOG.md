@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed a bug with deep watching of props
+* Fixed providing of a watch context
 
 ## v3.0.0-rc.38 (2020-07-21)
 

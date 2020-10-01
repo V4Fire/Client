@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a bug with deep watching of props
+* `creo/component/watch`:
+  * Fixed a bug with deep watching of props
+  * Fixed providing of a watch context
 
 ## v3.0.0-rc.70 (2020-09-30)
 
