@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/dom/in-view/README.md]]
+ * [[include:core/component/directives/in-view/README.md]]
  * @packageDocumentation
  */
 

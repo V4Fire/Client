@@ -262,6 +262,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			...super.runtime(),
 
+			debug: false,
 			engine: this.engine(),
 			noGlobals: false,
 			svgSprite: true,
@@ -282,10 +283,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'component/daemons': true,
 
 			'directives/event': true,
-			'directives/resize': false,
-			'directives/image': false,
-			'directives/in-view': false,
-			'directives/update-on': false,
+			'directives/resize': true,
+			'directives/image': true,
+			'directives/in-view': true,
+			'directives/update-on': true,
 
 			iData: true,
 			bRouter: true,
@@ -348,7 +349,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		buildCache() {
 			return o('build-cache', {
-				default: !isProd,
+				default: false,
 				type: 'boolean'
 			});
 		},

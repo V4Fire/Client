@@ -29,6 +29,9 @@ module.exports = [
 	// b-button
 	'--test-entry form/b-button/test',
 
-	// in-view
+	// dom/image
+	'--test-entry core/dom/image/test',
+
+	// dom/in-view
 	'--test-entry core/dom/in-view/test'
 ];

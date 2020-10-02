@@ -7,20 +7,12 @@
  */
 
 import { VNodeDirective } from 'core/component/engines';
+import { InitValue } from 'core/dom/image';
 
 export interface DirectiveOptions extends VNodeDirective {
 	modifiers: {
 		[key: string]: boolean;
 	};
 
-	value?: DirectiveValue;
+	value?: InitValue;
 }
-
-export interface ImageOptions {
-	src?: string;
-	srcset?: Dictionary<string> | string;
-	load?(el: Element): unknown;
-	error?(el: Element): unknown;
-}
-
-export type DirectiveValue = string | ImageOptions;

@@ -63,9 +63,4 @@ switch (runtime.engine) {
 		}
 }
 
-if (!config.webpack.fatHTML() && deps.styles.size) {
-	deps.scripts.set('fg-loadcss', 'fg-loadcss/src/loadCSS.js');
-	deps.scripts.set('fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js');
-}
-
 module.exports = deps;

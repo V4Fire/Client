@@ -9,18 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.72 (2020-10-01)
+## v3.0.0-rc.63 (2020-09-10)
 
 #### :house: Internal
 
-* Moved to `defaultRequestFilter`
+* [Split the `directives/image` module into two: API was moved to `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
 
-## v3.0.0-rc.49 (2020-08-03)
+## v3.0.0-beta.237 (2019-12-19)
 
-#### :house: Internal
+#### :rocket: New Feature
 
-* Fixed ESLint warnings
-
-#### :nail_care: Polish
-
-* Added documentation
+* Initial release

@@ -61,7 +61,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	readonly requestFilter: RequestFilter = false;
+	readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
 	 * Link href
