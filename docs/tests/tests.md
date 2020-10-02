@@ -1,4 +1,3 @@
-
 # V4 component and module testing tools
 
 <img src="cli-large.png" width="100%" alt="Tests in CLI">
@@ -6,45 +5,44 @@
 ## Test environment
 
 * Test runner – [Jasmine](https://jasmine.github.io)
-  * I recommend that you read a section about [asynchronous tests](https://jasmine.github.io/tutorials/async)
+  * Please read the section [asynchronous tests](https://jasmine.github.io/tutorials/async)
 
 * [Playwright](https://playwright.dev/) is used to launch headless browsers
 
-
 ## Creating a test file
 
-First, you need to create the test file itself. In the component folder create the `test` folder and in it create the` index.js` file.
+First, you need to create the test file itself. Create a folder with the name `test` within your component with an `index.js` file.
 
 ```
 .
 └── src/
-    └── base/
-        └── b-popover/
-            ├── test/
-            │   └── index.js
-            ├── b-popover.ss
-            ├── b-popover.styl
-            ├── b-popover.ts
-            └── index.js
+  └── base/
+    └── b-popover/
+      ├── test/
+      │   └── index.js
+      ├── b-popover.ss
+      ├── b-popover.styl
+      ├── b-popover.ts
+      └── index.js
 ```
 
 ## Setting up the test environment
 
-To prepare the environment for tests, you need to make a preliminary configuration:
+To prepare the environment for tests, you need to make an initial configuration:
 
 * Enable mocks;
 * Allow geolocation;
 * etc.
 
-There is a special function `h.utils.setup` for this, open the file` index.js` and call this function:
+There is a function `h.utils.setup` for this, open the file` index.js` and call this function:
 
-__base/b-popover/test/index.js__
+**base/b-popover/test/index.js**
 
 ```javascript
 // @ts-check
 
 const
-	h = include('tests/helpers');
+  h = include('tests/helpers');
 
 /**
  * @param {Playwright.Page} page
@@ -52,30 +50,27 @@ const
  * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {
-	await h.utils.setup(page, params.context);
+  await h.utils.setup(page, params.context);
 };
 ```
 
-> Note the `// @ ts-check` – thanks to this directive works static code analysis in javascript files.
+> Note the `// @ ts-check` – thanks to this directive works static code analysis within javascript files.
 
-After that, mocks will be enabled in your environment and permission to use the geolocation will be given, also `h.utils.setup` takes the third argument options to configure environment.
+This code enables data mocks and asks for required permissions.
 
 ## Creating components at runtime
 
-The first step to create your component during test execution is to add the component as a dependency for the demo page:
+The first step to create your component during test execution is to add the component as a dependency for a demo page:
 
-__pages/p-demo-page/index.js__
+**pages/p-demo-page/index.js**
 
 ```javascript
 package('p-v4-components-demo')
-	.extends('i-root')
-	.dependencies(
-		'b-popover'
-	);
+    .extends('i-root')
+    .dependencies('b-popover');
 ```
 
-In order to create a component, a special method `renderComponents` has been added to the global scope.
-The `renderComponents` method has the following signature:
+To render a component dynamically during runtime, you should use `renderComponents`. The method places globally and has a signature:
 
 ```typescript
 /**
@@ -85,132 +80,138 @@ The `renderComponents` method has the following signature:
  * @param scheme
  * @param options
  */
-renderComponents: (componentName: string, scheme: RenderParams[], options?: RenderOptions) => void
+declare var renderComponents: (componentName: string, scheme: RenderParams[], options?: RenderOptions) => void;
 ```
 
-As you can see from the signature when the method is called, `scheme` is expected, this is the scheme by which the component or components will be rendered.
+The `schema` contains a list of parameters to render, i.e., each element represents a component to render.
 
-Let's draw our first component on the page, first of all create a render.js file in which we will place the rendering scheme.
+Let's draw our first component on the page, first of all create a `render.js` file in which we will place the rendering scheme.
 
-__base/b-popover/test/render.js__
+**base/b-popover/test/render.js**
+
 ```javascript
 module.exports = [
-	{
-		attrs: {
-			id: 'without-slots'
-		}
-	}
+  {
+    attrs: {
+      id: 'without-slots'
+    }
+  }
 ];
 ```
 
-Let's import this file to our main test file and call render:
+Let's import this file to our main test file and call the render function:
 
-__base/b-popover/test/index.js__
+**base/b-popover/test/index.js**
+
 ```javascript
 // @ts-check
 
 const
-	h = include('tests/helpers');
+  h = include('tests/helpers');
 
 const
-	scheme = include('src/base/b-popover/test/render.js');
+  scheme = include('src/base/b-popover/test/render.js');
+
 /**
  * @param {Playwright.Page} page
  * @param {!Object} params
  * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {
-	await h.utils.setup(page, params.context);
+  await h.utils.setup(page, params.context);
 
-	await page.evaluate((scheme) => {
-		globalThis.renderComponents('b-popover', scheme);
-	}, scheme);
+  await page.evaluate((scheme) => {
+    globalThis.renderComponents('b-popover', scheme);
+  }, scheme);
 
-	const
-		bPopover = await h.component.getComponentById(page, 'without-slots');
+  const
+    bPopover = await h.component.getComponentById(page, 'without-slots');
 };
 ```
 
-The `b-popover` component is now in the DOM tree and ready for interaction.
+The `b-popover` component is now in the DOM tree and ready to interact.
 
-> Note that the component may not be in a ready state, that is, `globalThis.renderComponents` creates a component and immediately places it in the DOM tree, without waiting for the ready status or anything else.
+> Note that a component may not be in a ready state, i.e., `globalThis.renderComponents` creates a component and immediately places it into a DOM tree, without waiting for the ready status or anything else.
 
-After creating the component, you can directly start testing, let's create the first spec.
+After creating the component, you can directly start testing; let's make the first spec.
 
-__base/b-popover/test/index.js__
+**base/b-popover/test/index.js**
+
 ```javascript
 module.exports = async (page, params) => {
-	await h.utils.setup(page, params.context);
+  await h.utils.setup(page, params.context);
 
-	await page.evaluate((scheme) => {
-		globalThis.renderComponents('b-popover', scheme);
-	}, scheme);
+  await page.evaluate((scheme) => {
+    globalThis.renderComponents('b-popover', scheme);
+  }, scheme);
 
-	const
-		bPopover = await h.component.getComponentById(page, 'without-slots');
+  const
+    bPopover = await h.component.getComponentById(page, 'without-slots');
 
-	describe('bPopover', () => {
-		it('has correct componentName', async () => {
-			const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
-			expect(componentName).toBe('b-popover');
-		});
-	});
+  describe('bPopover', () => {
+    it('has correct componentName', async () => {
+      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
+      expect(componentName).toBe('b-popover');
+    });
+  });
 };
 ```
 
-> At this stage, the test can be run, but we will talk about this a little later, and now we will continue to write the test.
+> Now, we can run our test, but we will talk about this a little later, and now we will continue to write the test.
 
-Each spec runs on the same page, no automatic state updates are provided, so it's always worth keeping in mind that updating the state of the components on the page is in your hands.
+Each spec runs on the same page, and no automatic state updates are provided. So it's always worth keeping in mind that updating a state of components on the page is in your hands.
 
-For updating the state of components, you can use several approaches for your taste (but I would recommend a manual reset, since it is faster), let's look at each of them separately:
+To update a state of components, you can use several approaches for your taste (but I would recommend the manual reset since it is faster). Let's look at each of them separately:
 
-* `Manual reset` – this method involves manually clearing the state of the components on the page, for example, in the `beforeEach` hook.
-* `Page reload` – this method involves reloading the page, as a result of which the page state will be "clean" every time.
+* `Manual reset` – the method involves manually clearing a state of components on the page, for example,  by using the `beforeEach` hook.
 
-Let's write a second spec in our test and add refreshing the components on the page using the `manual reset` strategy.
+* `Page reload` – the method involves reloading the page, as a result of which the page state will be "clean" every time.
 
-__base/b-popover/test/index.js__
+Let's write the second spec and add refreshing of the page's components using the `manual reset` strategy.
+
+**base/b-popover/test/index.js**
+
 ```javascript
 module.exports = async (page, params) => {
-	await h.utils.setup(page, params.context);
+  await h.utils.setup(page, params.context);
 
-	let
-		bPopover,
-		bPopoverNode;
+  let
+    bPopover,
+    bPopoverNode;
 
-	beforeEach(async () => {
-		await page.evaluate((scheme) => {
-			globalThis.removeCreatedComponents();
-			globalThis.renderComponents('b-popover', scheme);
-		}, scheme);
+  beforeEach(async () => {
+    await page.evaluate((scheme) => {
+      globalThis.removeCreatedComponents();
+      globalThis.renderComponents('b-popover', scheme);
+    }, scheme);
 
-		bPopover = await h.component.getComponentById(page, 'without-slots'),
-		bPopoverNode = await page.$('#without-slots');
-	});
+    bPopover = await h.component.getComponentById(page, 'without-slots'),
+    bPopoverNode = await page.$('#without-slots');
+  });
 
-	describe('bPopover', () => {
-		it('has correct componentName', async () => {
-			const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
-			expect(componentName).toBe('b-popover');
-		});
+  describe('bPopover', () => {
+    it('has correct componentName', async () => {
+      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
+      expect(componentName).toBe('b-popover');
+    });
 
-		it('shown when calling `open`', async () => {
-			await bPopover.evaluate((ctx) => ctx.open());
-			expect(await bPopoverNode.evaluate((ctx) => ctx.style.display)).not.toBe('none');
-		});
-	});
+    it('shown when calling `open`', async () => {
+      await bPopover.evaluate((ctx) => ctx.open());
+      expect(await bPopoverNode.evaluate((ctx) => ctx.style.display)).not.toBe('none');
+    });
+  });
 };
 ```
 
-Let's take a look at what happens in the code above, as you can see the `beforeEach` hook has been added, this hook calls 2 methods from the global scope of the page.
+Take a look at what happens in the code above: we have added the `beforeEach` hook. This hook invokes two methods from the global scope of the page.
 
-1. `beforeEach` hook is executed before each spec in the test.
+1. `beforeEach` is executed before each spec in the file.
 2. `removeCreatedComponents` removes all components from the page that were created using the` renderComponents` method.
-3. `renderComponents` creates a new component and places it on the page.
+3. `renderComponents` creates a new component and puts it into the page.
 
-Thus, we have a new component for each spec.
+Thus, we have a new component instance for each spec.
 
-Let's finally run our first test:
+Finally, we can run our tests:
 
 ```bash
 npx gulp test:component --runtime-render true --test-entry base/b-popover/test
@@ -235,62 +236,68 @@ Started
 Finished in 0.054 seconds
 ```
 
-## Working with a pre-prepared component
+## Working with pre-compiled components
 
-Above we looked at the way to create components at runtime, but there is also a way that is mainly used to create `demo` component pages.
+Above we looked at how to create components dynamically at the runtime, but there is another way that is mainly used to build `demo` component pages.
 
-This method allows you to get a page into a test with a ready-made component, for this you need to create a file `demo.js` and place a scheme for rendering in it:
+This method allows you to get a test page with necessary components using a standalone compilation of test-cases.
+Just create a `demo.js` file within your component folder and puts a scheme of rendering within it.
 
-__base/b-popover/demo.js__
+**base/b-popover/demo.js**
+
 ```javascript
 const demo = [
-	{
-		attrs: {
-			id: 'target'
-		}
-	}
+  {
+    attrs: {
+      id: 'target'
+    }
+  }
 ];
+
 const analytics = [
-	{
-		attrs: {
-			':redirect': '() => false',
-			id: 'target'
-		}
-	},
-	{
-		attrs: {
-			':redirect': '() => false',
-			':theme': s('demo'),
-			id: 'without-slots'
-		}
-	}
+  {
+    attrs: {
+      ':redirect': '() => false',
+      id: 'target'
+    }
+  },
+
+  {
+    attrs: {
+      ':redirect': '() => false',
+      ':theme': s('demo'),
+      id: 'without-slots'
+    }
+  }
 ];
+
 const suits = {
-	demo,
-	analytics
+  demo,
+  analytics
 };
 ```
 
-Such a file can have several different suits, according to these suits (depending on the passed parameter `suit`, components in the` demo` page will be generated.
+Such a file can have several different suits. According to these suits (depending on the passed parameter `suit`) will be generated components at the page.
 
-> Note that this schema format is different from the schema format in `renderComponents`.
+> Note that this schema format is different from the schema format of `renderComponents`.
 
 You can get a component in a test as follows:
 
-__base/b-popover/test/index.js__
+**base/b-popover/test/index.js**
+
 ```javascript
 module.exports = async (page, params) => {
-	await h.utils.setup(page, params.context);
+  await h.utils.setup(page, params.context);
 
-	const
-		bPopover = await h.component.getComponentById(page, 'without-slots');
+  const
+    bPopover = await h.component.getComponentById(page, 'without-slots');
 
-	describe('bPopover', () => {
-		it('has correct componentName', async () => {
-			const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
-			expect(componentName).toBe('b-popover');
-		});
-	});
+  describe('bPopover', () => {
+    it('has correct componentName', async () => {
+      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
+      expect(componentName).toBe('b-popover');
+    });
+  });
 };
 ```
 
@@ -304,29 +311,30 @@ npx gulp test:component --name b-popover --suit demo
 
 ## Testing modules
 
-To test some module or directive, you can add it to the `b-dummy` component or to the` demo` page, for example, like this, the `in-view` directive is added to this component:
+To test some module or directive, you can add it into the `b-dummy` component or a `demo` page. For example,  the `in-view` directive:
 
-__base/b-dummy/b-dummy.ts__
+**base/b-dummy/b-dummy.ts**
+
 ```typescript
 const
-	inViewMutation = inViewFactory('mutation'),
-	inViewObserver = inViewFactory('observer');
+  inViewMutation = inViewFactory('mutation'),
+  inViewObserver = inViewFactory('observer');
 
 @component()
 export default class bDummy extends iData {
-	/**
-	 * Links to directives
-	 */
-	get directives(): Directives {
-		return {
-			inViewMutation,
-			inViewObserver
-		};
-	}
+  /**
+   * Links to directives
+   */
+  get directives(): Directives {
+    return {
+      inViewMutation,
+      inViewObserver
+    };
+  }
 }
 ```
 
-Later, in tests, you will be able to access modules through this component.
+Later, you will be able to access modules through the component.
 
 Running a module test using the `in-view` example:
 
@@ -334,28 +342,27 @@ Running a module test using the `in-view` example:
 npx gulp test:component --name b-dummy --test-entry core/dom/in-view/test
 ```
 
-
 ## Running tests with different options
 
-Build a `demo` page with a component and attributes from` suit: demo`, and then run the test located at `b-popover/test.js` or` b-popover/test/index.js`:
+Build a `demo` page with components and attributes from` suit: demo`, and then run the test located at `b-popover/test.js` or` b-popover/test/index.js`:
 
 ```bash
 npx gulp test:component --name b-popover --suit demo
 ```
 
-Build a `demo` page with `b-dummy` and then run the test that is located at the specified `test-entry`:
+Build a `demo` page with `b-dummy` and then run the test located at the specified `test-entry`:
 
 ```bash
 npx gulp test:component --runtime-render true --test-entry base/b-popover/test
 ```
 
-Will run (without building) the test located at `test-entry`:
+Run (without building) the test located at `test-entry`:
 
 ```bash
 npx gulp test:component:run --runtime-render true --test-entry base/b-popover/test
 ```
 
-Will run (without building) the test located at the `test-entry` address only in the `chromium` browser:
+Run (without building) the test located at the `test-entry` address only in the `chromium` browser:
 
 ```bash
 npx gulp test:component:run --runtime-render true --test-entry base/b-popover/test --browsers chromium
@@ -367,30 +374,30 @@ Run all tests defined in `cwd/tests/cases.js`:
 npx gulp test:components
 ```
 
-Runs all tests that are defined in `cwd / tests / cases.js`, maximum 4 builds and 2 tests can be run in parallel:
+Runs all tests defined in `cwd / tests / cases.js`, maximum 4 builds, and two tests can be run in parallel:
 
 ```bash
 npx gulp test:components --test-processes 2 --build-processes 4
 ```
 
-To make your test run during the call to `test: components`, you need to add it to the file with test cases, this file is located in` cwd/tests/cases.js`, it looks something like this:
+To make your test run during the call to `test: components`, you need to add it to a file with test cases. This file is located by an address `cwd/tests/cases.js`. It looks something like this:
 
 ```javascript
 module.exports = [
-	// b-router
-	'--test-entry base/b-router/test',
+  // b-router
+  '--test-entry base/b-router/test',
 
-	// b-virtual-scroll
-	'--test-entry base/b-virtual-scroll/test --runner slots/empty',
+  // b-virtual-scroll
+  '--test-entry base/b-virtual-scroll/test --runner slots/empty',
 
-	// b-button
-	'--test-entry form/b-button/test',
+  // b-button
+  '--test-entry form/b-button/test',
 
-	// in-view
-	'--test-entry core/dom/in-view/test'
+  // in-view
+  '--test-entry core/dom/in-view/test'
 ];
 ```
 
 `cases.js` should export an array of strings containing the parameters with which the test should be run.
 
-> Please note that neither `name` nor `runtime-render` appears anywhere, this is due to the fact that when calling `test:components` all test parameters are checked, and if the test does not have a` --name` parameter, the `--runtime-render true` will be set
+> Please note that neither `name` nor `runtime-render` appears anywhere, because when calling `test:components`, all test parameters are checked. If the test does not have the `--name` parameter, the `--runtime-render true` will be set automatically.
