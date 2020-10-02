@@ -15,11 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added a `runtime-render` flag for tests
+* Added the `runtime-render` flag for tests `build/test.gulp`
 
 #### :nail_care: Polish
 
-* Added documentation to write tests
+* Added documentation to write tests `docs/test`
 
 ## v3.0.0-rc.72 (2020-10-01)
 
