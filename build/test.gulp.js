@@ -17,7 +17,7 @@ const
 const
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core'),
-	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs} = include('build/helpers');
+	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs, getTestClientName} = include('build/helpers');
 
 const
 	cpus = os.cpus().length;
@@ -68,9 +68,19 @@ module.exports = function init(gulp = require('gulp')) {
 	 */
 	gulp.task('test:component:build', () => {
 		const
-			args = arg({'--name': String, '--suit': String, '--client-name': String}, {permissive: true});
+			args = arg({'--suit': String, '--client-name': String, '--runtime-render': String}, {permissive: true}),
+			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
 
-		if (!args['--name']) {
+		try {
+			const name = arg({'--name': String}, {permissive: true})['--name'];
+			args['--name'] = name;
+		} catch {}
+
+		if (isRuntimeRender) {
+			args['--name'] = 'b-dummy';
+		}
+
+		if (!args['--name'] && !isRuntimeRender) {
 			throw new ReferenceError('"--name" parameter is not specified');
 		}
 
@@ -140,8 +150,16 @@ module.exports = function init(gulp = require('gulp')) {
 			'--client-name': String,
 			'--reinit-browser': String,
 			'--test-entry': String,
-			'--runner': String
+			'--runner': String,
+			'--runtime-render': String
 		}, {permissive: true});
+
+		const
+			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
+
+		if (isRuntimeRender) {
+			args['--name'] = 'b-dummy';
+		}
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
@@ -390,7 +408,7 @@ module.exports = function init(gulp = require('gulp')) {
 			let c = cases[i];
 
 			if (!c.includes('--name')) {
-				c = `${c} --name b-dummy`;
+				c = `${c} --runtime-render true`;
 			}
 
 			const args = arg({
@@ -399,7 +417,7 @@ module.exports = function init(gulp = require('gulp')) {
 			}, {argv: c.split(' '), permissive: true});
 
 			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
+			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
 
 			if (buildCache[args['--client-name']]) {
 				continue;
@@ -464,7 +482,7 @@ module.exports = function init(gulp = require('gulp')) {
 			let c = cases[i];
 
 			if (!c.includes('--name')) {
-				c = `${c} --name b-dummy`;
+				c = `${c} --runtime-render true`;
 			}
 
 			const args = arg({
@@ -473,7 +491,7 @@ module.exports = function init(gulp = require('gulp')) {
 			}, {argv: c.split(' '), permissive: true});
 
 			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
+			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
 
 			const
 				browserArgs = cliParams.browserArgs.join(','),
