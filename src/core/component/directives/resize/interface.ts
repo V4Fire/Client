@@ -18,17 +18,28 @@ export interface DirectiveOptions extends VNodeDirective {
 
 export interface ObserverOptions {
 	/**
-	 * If true, when changing the element width, a callback will be executed
+	 * If `true`, when changing the element width, a callback will be executed
+	 * @default `true`
 	 */
 	watchWidth?: boolean;
 
 	/**
-	 * If true, when changing the element height, a callback will be executed
+	 * If `true`, when changing the element height, a callback will be executed
+	 * @default `true`
 	 */
 	watchHeight?: boolean;
 
 	/**
-	 * If true, then the callback is invoked immediately after initializing of the directive
+	 * If `true`, then the callback is invoked immediately after the initializing of the module
+	 * @default `true`
+	 */
+	initial?: boolean;
+
+	/**
+	 * If `true`, then the callback is invoked immediately after the size has been changed.
+	 *
+	 * Be careful with setting this option to `true`, as if an element is resized multiple times in a row,
+	 * a callback will be called for each change
 	 */
 	immediate?: boolean;
 
@@ -38,21 +49,19 @@ export interface ObserverOptions {
 
 export interface Observable extends ObserverOptions {
 	node: HTMLElement;
+	rect?: DOMRectReadOnly;
 	observer?: ResizeObserver;
-	width?: number;
-	height?: number;
-}
-
-export interface Size {
-	width: number;
-	height: number;
 }
 
 /**
  * Callback that is invoked if an element size has been changed
  *
  * @param observable
- * @param newSize
- * @param [oldSize]
+ * @param newRect
+ * @param [oldRect]
  */
-export type ObserverCb = (observable: Observable, newSize: Size, oldSize?: Size) => unknown;
+export type ObserverCb = (
+	observable: Required<Observable>,
+	newRect: DOMRectReadOnly,
+	oldRect?: DOMRectReadOnly
+) => unknown;

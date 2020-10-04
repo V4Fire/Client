@@ -59,11 +59,13 @@ function getOpts({value, modifiers}: DirectiveOptions): CanUndef<ObserverOptions
 		return;
 	}
 
-	const valueDict = Object.isFunction(value) ? {
-		callback: value
-	} : value ;
+	const valueDict = Object.isFunction(value) ?
+		{
+			callback: value
+		} :
+		value;
 
-	if (!valueDict.callback) {
+	if (!Object.isFunction(valueDict.callback)) {
 		return;
 	}
 

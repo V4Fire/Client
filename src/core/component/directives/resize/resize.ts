@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
-import { ObserverOptions, Observable, Size } from 'core/component/directives/resize/interface';
+import Async from 'core/async';
+
+import { ObserverOptions, Observable } from 'core/component/directives/resize/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -17,7 +18,7 @@ export default class Resize {
 	/**
 	 * True if the environment supports ResizeObserver
 	 */
-	get hasResizeObserver(): boolean {
+	get isResizeObserverSupported(): boolean {
 		return 'ResizeObserver' in globalThis;
 	}
 
@@ -27,21 +28,10 @@ export default class Resize {
 	protected elements: Map<Element, Observable> = new Map();
 
 	/**
-	 * Queue of size calculation tasks
-	 * (only for environments that aren't support ResizeObserver)
-	 */
-	protected calculateQueue: Observable[] = [];
-
-	/**
 	 * Async instance
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-invalid-this
 	protected async: Async<this> = new Async(this);
-
-	constructor() {
-		if (!this.hasResizeObserver) {
-			this.initResizeEvent();
-		}
-	}
 
 	/**
 	 * Starts to observe resizing of the specified element
@@ -50,22 +40,16 @@ export default class Resize {
 	 * @param params
 	 */
 	observe(el: HTMLElement, params: ObserverOptions): boolean {
-		if (this.elements.has(el)) {
+		if (this.elements.has(el) || this.isResizeObserverSupported) {
 			return false;
 		}
 
 		const
 			observable = this.createObservable(el, params);
 
-		if (this.hasResizeObserver) {
-			this.createResizeObserver(observable);
-
-		} else {
-			this.calculateQueue.push(observable);
-			this.async.setTimeout(this.calculate.bind(this), 100, {label: $$.calculateTimeout, join: true});
-		}
-
+		this.createResizeObserver(observable);
 		this.elements.set(el, observable);
+
 		return true;
 	}
 
@@ -84,7 +68,7 @@ export default class Resize {
 	 */
 	clear(): void {
 		this.elements.forEach(({observer}) => {
-			observer && observer.disconnect();
+			observer?.disconnect();
 		});
 
 		this.elements.clear();
@@ -108,21 +92,13 @@ export default class Resize {
 	 * @param observable
 	 */
 	protected createResizeObserver(observable: Observable): void {
-		const getSize = (rect) => ({
-			width: Math.floor(rect.width),
-			height: Math.floor(rect.height)
-		});
-
 		observable.observer = new ResizeObserver(([{contentRect}]) => {
-			const
-				newSize = getSize(contentRect);
-
-			if (observable.height === undefined) {
-				this.setInitialSize(observable, newSize);
+			if (observable.rect === undefined) {
+				this.setInitialSize(observable, contentRect);
 				return;
 			}
 
-			this.onElementResize(observable, newSize);
+			this.onElementResize(observable, contentRect);
 		});
 
 		observable.observer.observe(observable.node);
@@ -132,119 +108,70 @@ export default class Resize {
 	 * Sets an initial size of the specified observable
 	 *
 	 * @param observable
-	 * @param size
+	 * @param newRect
 	 */
-	protected setInitialSize(observable: Observable, size: Size): void {
-		Object.assign(observable, size);
+	protected setInitialSize(observable: Observable, newRect: DOMRectReadOnly): void {
+		observable.rect = newRect;
 
-		if (observable.immediate) {
-			observable.callback(observable, size);
+		if (observable.initial) {
+			observable.callback(<Required<Observable>>observable, newRect);
 		}
-	}
-
-	/**
-	 * Calculates size of elements
-	 */
-	protected calculate(): void {
-		if (!this.calculateQueue.length) {
-			return;
-		}
-
-		this.async.requestAnimationFrame(() => {
-			for (let i = 0; i < this.calculateQueue.length; i++) {
-				const
-					observable = this.calculateQueue[i],
-					newSize = this.getElSize(observable.node);
-
-				if (observable.height === undefined) {
-					this.setInitialSize(observable, newSize);
-					continue;
-				}
-
-				this.onElementResize(observable, newSize);
-			}
-
-			this.calculateQueue = [];
-
-		}, {label: $$.calculateSize});
 	}
 
 	/**
 	 * Returns true if the observable callback should be executed
 	 *
 	 * @param observable
-	 * @param newSize
+	 * @param newRect
 	 */
-	protected shouldCallCallback(observable: Observable, newSize: Size): boolean {
+	protected shouldInvokeCallback(observable: Observable, newRect: DOMRectReadOnly): boolean {
 		const {
 			watchWidth,
 			watchHeight,
-			width,
-			height
+			rect: oldRect
 		} = observable;
+
+		if (oldRect == null) {
+			return true;
+		}
+
+		const {
+			width: oldWidth,
+			height: oldHeight
+		} = oldRect;
 
 		const {
 			width: newWidth,
 			height: newHeight
-		} = newSize;
+		} = newRect;
 
 		let
 			res = false;
 
 		if (watchWidth) {
-			res = width !== newWidth;
+			res = oldWidth !== newWidth;
 		}
 
 		if (watchHeight && !res) {
-			res = height !== newHeight;
+			res = oldHeight !== newHeight;
 		}
 
 		return res;
 	}
 
 	/**
-	 * Returns a size of the specified element
-	 * @param el
-	 */
-	protected getElSize(el: HTMLElement): Size {
-		return {
-			width: el.clientWidth,
-			height: el.clientHeight
-		};
-	}
-
-	/**
-	 * Initializes a resize event listener
-	 */
-	protected initResizeEvent(): void {
-		const
-			{async: $a} = this;
-
-		$a.on(window, 'resize', () => {
-			$a.requestIdleCallback(() => {
-				this.calculateQueue = Array.from(this.elements, (v) => v[1]);
-				this.calculate();
-
-			}, {label: $$.callSubscribers, join: true});
-		}, {label: $$.resize});
-	}
-
-	/**
 	 * Handler: element was resized
 	 *
 	 * @param observable
-	 * @param newSize
+	 * @param newRect
 	 */
-	protected onElementResize(observable: Observable, newSize: Size): void {
-		const oldSize = {
-			width: observable.width!,
-			height: observable.height!
-		};
+	protected onElementResize(observable: Observable, newRect: DOMRectReadOnly): void {
+		const oldRect = observable.rect;
 
-		if (this.shouldCallCallback(observable, newSize)) {
-			observable.callback(observable, newSize, oldSize);
+		if (this.shouldInvokeCallback(observable, newRect)) {
+			observable.callback(<Required<Observable>>observable, newRect, oldRect);
 		}
 
-		Object.assign(observable, newSize);
+		observable.rect = newRect;
 	}
 }
