@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.74 (2020-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the progress modifier was not removed
+
 ## v3.0.0-rc.68 (2020-09-23)
 
 #### :bug: Bug Fix
