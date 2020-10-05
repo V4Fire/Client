@@ -11,6 +11,60 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.73 (2020-10-02)
+
+#### :house: Internal
+
+* Added the `runtime-render` flag for tests `build/test.gulp`
+
+#### :nail_care: Polish
+
+* Added documentation to write tests `docs/test`
+
+## v3.0.0-rc.72 (2020-10-01)
+
+#### :boom: Breaking Change
+
+* `iData`:
+  * Renamed `dataProviderEmitter` to `dataEmitter`
+  * Deprecated `requestFilter`
+  * Deprecated `dropRequestCache`
+
+#### :rocket: New Feature
+
+* `iData`:
+  * Added `defaultRequestFilter`
+  * Added `dropDataCache`
+
+#### :house: Internal
+
+* Moved to `defaultRequestFilter`:
+  * `bButton`
+  * `bForm`
+
+#### :nail_care: Polish
+
+* Improved doc `iData`
+
+## v3.0.0-rc.71 (2020-10-01)
+
+#### :bug: Bug Fix
+
+* `creo/component/watch`:
+  * Fixed a bug with deep watching of props
+  * Fixed providing of a watch context
+  * Fixed an invalid caching of old values with `collapse = false`
+
+#### :house: [Internal]
+
+* Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
+
+## v3.0.0-rc.70 (2020-09-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the initial ratio was not settled `core/dom/image`
+
 ## v3.0.0-rc.69 (2020-09-28)
 
 #### :boom: Breaking Change
