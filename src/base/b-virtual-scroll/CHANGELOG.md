@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with the progress modifier was not removed
+* Fixed an issue with removing the progress modifier
 
 ## v3.0.0-rc.68 (2020-09-23)
 

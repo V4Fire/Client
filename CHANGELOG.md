@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed an issue with the progress modifier was not removed `base/b-virtual-scroll`
+* Fixed an issue with removing the progress modifier `base/b-virtual-scroll`
 
 ## v3.0.0-rc.73 (2020-10-02)
 
