@@ -97,6 +97,7 @@ module.exports = (page) => {
 					const
 						chunkSize = await component.evaluate((ctx) => ctx.requestParams.get.chunkSize);
 
+					await h.dom.waitForEl(container, `section:nth-child(${chunkSize - 1})`);
 					expect(await getContainerChildCount()).toBe(chunkSize);
 
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 4, total: 4, id: 'uniq-options'}});
@@ -107,6 +108,7 @@ module.exports = (page) => {
 					const
 						newChunkSize = await component.evaluate((ctx) => ctx.requestParams.get.chunkSize);
 
+					await h.dom.waitForEl(container, `section:nth-child(${newChunkSize - 1})`);
 					expect(await getContainerChildCount()).toBe(newChunkSize);
 				});
 			});
