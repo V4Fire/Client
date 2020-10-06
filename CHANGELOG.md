@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.75 (2020-10-12)
+
+#### :boom: Breaking Change
+
+* Directive mods are no longer supported `core/component/directives/resize-observer`
+* `v-resize` renamed to `v-resize-observer` `core/component/directives/resize-observer`
+
+#### :house: Internal
+
+* [Split the module into two: API was moved to `core/dom/resize-observer`](https://github.com/V4Fire/Client/issues/311)
+
 ## v3.0.0-rc.74 (2020-10-06)
 
 #### :bug: Bug Fix
