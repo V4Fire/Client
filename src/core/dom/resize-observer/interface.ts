@@ -62,7 +62,7 @@ export interface ResizeWatcherObserverOptions {
 	 */
 	ctx?: iBlock;
 
-	/** @see [[ObserverCb]] */
+	/** @see [[ResizeWatcherObserverCb]] */
 	callback: ResizeWatcherObserverCb;
 }
 

@@ -27,8 +27,6 @@ export default class bFullScreenView extends iBlock implements iLockPageScroll {
 }
 ```
 
-Also, the module can take an array of options for multiple observing.
-
 ### Observe width changes only
 
 ```typescript
