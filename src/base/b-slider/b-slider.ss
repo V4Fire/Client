@@ -48,7 +48,11 @@
 		.
 			< .&__view &
 				ref = view |
-				v-resize.width = isSlider ? syncStateDefer : undefined
+				v-resize-observer = {
+					watchHeight: false,
+					watchWidth: true,
+					callback: isSlider ? syncStateDefer : undefined
+				}
 			.
 				< .&__view-content ref = content
 					+= content
