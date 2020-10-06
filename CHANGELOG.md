@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.74 (2020-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with removing the progress modifier `base/b-virtual-scroll`
+
 ## v3.0.0-rc.73 (2020-10-02)
 
 #### :house: Internal

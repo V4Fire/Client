@@ -365,11 +365,11 @@ export default class ChunkRequest extends Friend {
 			})
 
 			.catch((err) => {
+				void ctx.removeMod('progress', true);
+
 				if (isAsyncClearError(err)) {
 					return Promise.reject(err);
 				}
-
-				void ctx.removeMod('progress', true);
 
 				chunkRender.setRefVisibility('retry', true);
 				chunkRender.setRefVisibility('renderNext', false);
