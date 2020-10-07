@@ -20,7 +20,7 @@ const
 	build = include('build/build.webpack');
 
 const
-	{isWorker} = include('build/helpers'),
+	{isStandalone} = include('build/helpers'),
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -40,7 +40,7 @@ async function getAssets(entryPoints) {
 	$C(entryPoints).forEach((el, key) => {
 		assetsBlueprint.push(key);
 
-		if (!isWorker(key)) {
+		if (!isStandalone(key)) {
 			assetsBlueprint.push(`${key}_tpl`, `${key}$style`);
 		}
 	});

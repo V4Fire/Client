@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.75 ()
+## v3.0.0-rc.77 ()
 
 #### :boom: Breaking Change
 
@@ -79,6 +79,26 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+## v3.0.0-rc.76 (2020-10-07)
+
+#### :boom: Breaking Change
+
+* Renamed `isWorker` to `isStandalone` `build/helpers`
+
+#### :rocket: New Feature
+
+* Added support of a new postfix `.standalone` `build/entries.webpack`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when flyweight components can't have refs `core/component/flyweight`
+
+## v3.0.0-rc.75 (2020-10-07)
+
+#### :rocket: New Feature
+
+* Ability to pass background-repeat as image bg options `core/dom/image`
 
 ## v3.0.0-rc.74 (2020-10-06)
 
