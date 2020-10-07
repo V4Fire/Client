@@ -53,7 +53,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			vData.attrs = Object.assign(vData.attrs ?? {}, data.attrs);
 		}
 
-		vData.directives = data.directives;
+		vData.directives = Array.concat([], vData.directives, data.directives);
 		vData.on = vData.on ?? {};
 
 		if (data.nativeOn) {

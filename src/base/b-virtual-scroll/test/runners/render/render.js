@@ -37,6 +37,17 @@ module.exports = (page) => {
 		await h.dom.waitForEl(container, 'section');
 	};
 
+	const
+		initialTimeout = globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL;
+
+	beforeAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (20).seconds();
+	});
+
+	afterAll(() => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = initialTimeout;
+	});
+
 	beforeEach(async () => {
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
@@ -57,6 +68,7 @@ module.exports = (page) => {
 			];
 
 			globalThis.renderComponents('b-virtual-scroll', scheme);
+			globalThis.componentNode = document.querySelector('.b-virtual-scroll');
 		});
 
 		await h.bom.waitForIdleCallback(page);
@@ -76,7 +88,7 @@ module.exports = (page) => {
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 10, total: 0}});
 					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 
-					expect(await getContainerChildCount()).toBe(0);
+					expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount === 0)).toBeTrue();
 				});
 
 				it('renders new', async () => {
@@ -85,6 +97,7 @@ module.exports = (page) => {
 					const
 						chunkSize = await component.evaluate((ctx) => ctx.requestParams.get.chunkSize);
 
+					await h.dom.waitForEl(container, `section:nth-child(${chunkSize - 1})`);
 					expect(await getContainerChildCount()).toBe(chunkSize);
 
 					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 4, total: 4, id: 'uniq-options'}});
@@ -95,7 +108,29 @@ module.exports = (page) => {
 					const
 						newChunkSize = await component.evaluate((ctx) => ctx.requestParams.get.chunkSize);
 
+					await h.dom.waitForEl(container, `section:nth-child(${newChunkSize - 1})`);
 					expect(await getContainerChildCount()).toBe(newChunkSize);
+				});
+			});
+
+			describe('by changing the `request` prop while second data batch loading is in progress', () => {
+				it('should render first chunk with correct data', async () => {
+					await component.evaluate((ctx) => {
+						ctx.dataProvider = 'demo.Pagination';
+						ctx.chunkSize = 2;
+						ctx.request = {get: {chunkSize: 2, delay: 1500, id: Math.random()}};
+					});
+
+					await h.dom.waitForEl(container, 'section');
+
+					await component.evaluate((ctx) => {
+						ctx.dataProvider = 'demo.Pagination';
+						ctx.chunkSize = 2;
+						ctx.request = {get: {chunkSize: 2, i: 10, total: 2, delay: 1500, id: Math.random()}};
+					});
+
+					expect(await h.dom.waitForEl(container, '[data-index="10"]'));
+					expect(await getContainerChildCount()).toBe(2);
 				});
 			});
 
@@ -106,12 +141,12 @@ module.exports = (page) => {
 					await component.evaluate((ctx) => ctx.dataProvider = undefined);
 					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 
-					expect(await getContainerChildCount()).toBe(0);
+					expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount === 0)).toBeTrue();
 				});
 
 				it('renders new', async () => {
 					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
-					expect(await getContainerChildCount()).toBe(0);
+					expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount === 0)).toBeTrue();
 
 					await component.evaluate((ctx) => ctx.dataProvider = 'demo.Pagination');
 					await h.dom.waitForEl(container, 'section');
@@ -243,9 +278,9 @@ module.exports = (page) => {
 
 		describe('without `options` and` dataProvider` specified', () => {
 			it('does not render anything', async () => {
-				expect(await component.evaluate((ctx) => ctx.options.length)).toBe(0);
-				expect(await component.evaluate((ctx) => ctx.dataProvider)).toBeUndefined();
-				expect(await getContainerChildCount()).toBe(0);
+				expect(await component.evaluate((ctx) => ctx.options.length === 0)).toBeTrue();
+				expect(await component.evaluate((ctx) => ctx.dataProvider === undefined)).toBeTrue();
+				expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount === 0)).toBeTrue();
 			});
 		});
 	});

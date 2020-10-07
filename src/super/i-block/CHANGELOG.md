@@ -9,11 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.64 ()
+## v3.0.0-rc.75 ()
 
 #### :boom: Breaking Change
 
 * Now all extra classes that were added by using `appendToRootClasses` added to the start of the declaration
+
+## v3.0.0-rc.65 (2020-09-21)
+
+#### :nail_care: Polish
+
+* Fixed JSDoc `Statuses` -> `ComponentStatus`
 
 ## v3.0.0-rc.62 (2020-09-04)
 

@@ -142,6 +142,11 @@ export default class ImageLoader {
 		typedEl[ID] = String(Math.random());
 
 		this.setAltAttr(el, mainOpts.alt);
+
+		if (!this.isImg(el)) {
+			this.setInitialBackgroundSizeAttrs(el, typedEl[SHADOW_MAIN], typedEl[SHADOW_PREVIEW]);
+		}
+
 		this.lifecycle.init(typedEl);
 	}
 
@@ -340,9 +345,6 @@ export default class ImageLoader {
 		}
 
 		el.src = state.imgNode.currentSrc;
-		el.sizes = state.imgNode.sizes;
-		el.width = state.imgNode.width;
-		el.height = state.imgNode.height;
 	}
 
 	/**
@@ -372,6 +374,28 @@ export default class ImageLoader {
 			backgroundPosition,
 			paddingBottom
 		});
+	}
+
+	/**
+	 * Sets initially calculated padding to the specified element
+	 *
+	 * @param el
+	 * @param mainOptions
+	 * @param [previewOptions]
+	 */
+	protected setInitialBackgroundSizeAttrs(
+		el: HTMLElement,
+		mainState: ShadowElState,
+		previewState?: ShadowElState
+	): void {
+		const
+			ratio = previewState?.selfOptions.bgOptions?.ratio ?? mainState.selfOptions.bgOptions?.ratio;
+
+		if (ratio == null) {
+			return;
+		}
+
+		el.style.paddingBottom = this.calculatePaddingByRatio(mainState, ratio);
 	}
 
 	/**

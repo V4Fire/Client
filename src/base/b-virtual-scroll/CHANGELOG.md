@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.74 (2020-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with removing the progress modifier
+
+## v3.0.0-rc.68 (2020-09-23)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with the second data batch load affects initial rendering after reInit](https://github.com/V4Fire/Client/issues/346)
+
 ## v3.0.0-rc.60 (2020-09-01)
 
 #### :bug: Bug Fix

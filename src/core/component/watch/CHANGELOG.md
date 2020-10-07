@@ -9,6 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.71 (2020-10-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with deep watching of props
+* Fixed providing of a watch context
+* Fixed an invalid caching of old values with `collapse = false`
+
 ## v3.0.0-rc.38 (2020-07-21)
 
 #### :bug: Bug Fix

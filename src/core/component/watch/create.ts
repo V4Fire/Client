@@ -76,7 +76,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		};
 
 		const
-			needCache = handler.length > 1 && (isDefinedPath || normalizedOpts.collapse),
+			needCache = handler.length > 1 && normalizedOpts.collapse,
 			originalHandler = handler;
 
 		let
@@ -233,12 +233,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				}
 
 				case 'prop': {
-					const
-						prop = info.name;
-
 					if (rootOrFunctional) {
 						return null;
 					}
+
+					const
+						prop = info.name,
+						pathChunks = info.path.split('.'),
+						slicedPathChunks = pathChunks.slice(1);
 
 					const
 						destructors = <Function[]>[];
@@ -249,14 +251,27 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							destructors.pop();
 						}
 
-						// eslint-disable-next-line no-use-before-define
+						// eslint-disable-next-line @typescript-eslint/no-use-before-define
 						attachDeepProxy();
 
 						if (value?.[fakeCopyLabel] === true) {
 							return;
 						}
 
-						handler.call(this, value, oldValue, info);
+						let valueByPath = Object.get(value, slicedPathChunks);
+						valueByPath = unwrap(valueByPath) ?? valueByPath;
+
+						let oldValueByPath = Object.get(oldValue, slicedPathChunks);
+						oldValueByPath = unwrap(oldValueByPath) ?? oldValueByPath;
+
+						if (valueByPath !== oldValueByPath) {
+							if (normalizedOpts.collapse !== true) {
+								handler.call(this, valueByPath, oldValueByPath, info);
+
+							} else {
+								handler.call(this, value, oldValue, info);
+							}
+						}
 					};
 
 					let
@@ -293,24 +308,40 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						});
 
 					} else {
+						const topOpts = {
+							...normalizedOpts,
+							deep: false,
+							collapse: true
+						};
+
 						// eslint-disable-next-line @typescript-eslint/unbound-method
-						unwatch = watch(proxy, info.path, <any>normalizedOpts, watchHandler).unwatch;
+						unwatch = watch(proxy, prop, <any>topOpts, watchHandler).unwatch;
 					}
 
 					destructors.push(unwatch);
 
-					const
-						pathChunks = info.path.split('.');
-
 					const attachDeepProxy = () => {
 						const
-							proxyVal = Object.get(unwrap(proxy), info.path);
+							propVal = proxy[prop];
 
-						if (getProxyType(proxyVal) != null) {
+						if (getProxyType(propVal) != null) {
+							const
+								parent = component.$parent;
+
+							if (parent == null) {
+								return;
+							}
+
 							const normalizedOpts = {
 								collapse: true,
 								...opts,
-								pathModifier: (path) => [...pathChunks, ...path.slice(1)]
+								pathModifier: (path) => {
+									if (parent[path[0]] === propVal) {
+										return [pathChunks[0], ...path.slice(1)];
+									}
+
+									return path;
+								}
 							};
 
 							const watchHandler = (...args) => {
@@ -327,7 +358,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							};
 
 							// eslint-disable-next-line @typescript-eslint/unbound-method
-							const {unwatch} = watch(<object>proxyVal, normalizedOpts, watchHandler);
+							const {unwatch} = watch(<object>propVal, info.path, normalizedOpts, watchHandler);
 							destructors.push(unwatch);
 						}
 					};
