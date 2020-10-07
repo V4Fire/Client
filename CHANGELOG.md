@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.75 (2020-10-07)
+
+#### :rocket: New Feature
+
+* Ability to pass background-repeat as image bg options `core/dom/image`
+
 ## v3.0.0-rc.74 (2020-10-06)
 
 #### :bug: Bug Fix
