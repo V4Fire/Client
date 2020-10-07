@@ -25,6 +25,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Renamed `removeActive` -> `unsetActive`
   * Renamed `normalizeOptions` -> `normalizeItems`
   * Now the `active` getter returns a Set with `multiple = true`
+  * Removed `block info` from the template
+  * Renamed `block text` to `block value`
+  * Renamed `&__link-text` to `&__link-value`
+  * Deprecated `&__el`
 
 * `gHint`:
   * Renamed:
