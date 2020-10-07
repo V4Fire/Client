@@ -106,7 +106,8 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/**
-	 * Component active value
+	 * Component active value.
+	 * If the component is switched to the "multiple" mode, the getter will return a Set object.
 	 * @see [[bList.activeStore]]
 	 */
 	get active(): Active {
@@ -144,7 +145,8 @@ export default class bList extends iData implements iVisible, iWidth {
 	protected values!: Map<unknown, number>;
 
 	/**
-	 * Internal component active value store
+	 * Internal component active value store.
+	 * If the component is switched to the "multiple" mode, the value is defined as a Set structure.
 	 *
 	 * @see [[bList.activeProp]]
 	 * @emits `immediateChange(active: CanArray<unknown>)`
@@ -368,10 +370,10 @@ export default class bList extends iData implements iVisible, iWidth {
 			val = this.convertDBToComponent<Items>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.value = this.normalizeItems(val);
+			return this.items = this.normalizeItems(val);
 		}
 
-		return this.value;
+		return this.items;
 	}
 
 	/** @override */
