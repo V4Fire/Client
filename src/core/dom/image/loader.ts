@@ -380,8 +380,8 @@ export default class ImageLoader {
 	 * Sets initially calculated padding to the specified element
 	 *
 	 * @param el
-	 * @param mainOptions
-	 * @param [previewOptions]
+	 * @param mainState
+	 * @param previewState
 	 */
 	protected setInitialBackgroundSizeAttrs(
 		el: HTMLElement,
