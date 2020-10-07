@@ -24,6 +24,10 @@ Changelog
 * Renamed `&__link-text` to `&__link-value`
 * Deprecated `&__el`
 
+#### :rocket: Breaking Change
+
+* Added support of the default slot
+
 #### :bug: Bug Fix
 
 * Fixed a bug with `activeElement` and `multiple`

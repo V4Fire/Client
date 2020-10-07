@@ -51,6 +51,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `arrowStyles`, `hideStyles`, `showStyles`
   * Added `interface.ts`
 
+* Added support of the default slot `bList`
+
 #### :bug: Bug Fix
 
 * `bList`:
