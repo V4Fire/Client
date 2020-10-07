@@ -55,12 +55,12 @@ This module provides a standard component to create a list of tabs/links. You ca
 
 3. Use of the component with the providing of links and custom attributes.
 
- ```
- < b-list :items = [ &
-   {label: 'Home', href: '/home'},
-   {label: 'Google', href: 'https://google.com', attrs: {target: '_blank'}}
- ] .
- ```
+```
+< b-list :items = [ &
+  {label: 'Home', href: '/home'},
+  {label: 'Google', href: 'https://google.com', attrs: {target: '_blank'}}
+] .
+```
 
 4. Loading items from a data provider.
 
@@ -78,6 +78,7 @@ The component supports a bunch of slots to provide:
 < b-list :items = listOfItems
   < template #default = {item}
     {{ item.label }}
+```
 
 2. `preIcon` and `icon` to inject icons around each item.
 
