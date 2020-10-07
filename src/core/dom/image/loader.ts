@@ -365,6 +365,7 @@ export default class ImageLoader {
 		const
 			backgroundImage = Array.concat([], beforeImg, img, afterImg).join(','),
 			backgroundPosition = bgOptions?.position ?? '',
+			backgroundRepeat = bgOptions?.repeat ?? '',
 			backgroundSize = bgOptions?.size ?? '',
 			paddingBottom = this.calculatePaddingByRatio(state, bgOptions?.ratio);
 
@@ -372,6 +373,7 @@ export default class ImageLoader {
 			backgroundImage,
 			backgroundSize,
 			backgroundPosition,
+			backgroundRepeat,
 			paddingBottom
 		});
 	}
