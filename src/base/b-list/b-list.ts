@@ -13,7 +13,7 @@ import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import { Item, Items } from 'base/b-list/interface';
+import { Active, Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
@@ -41,16 +41,17 @@ export const
 
 export default class bList extends iData implements iVisible, iWidth {
 	/**
-	 * Initial list of items
+	 * Initial list of component items
 	 */
 	@prop(Array)
 	readonly itemsProp: Items = [];
 
 	/**
-	 * Initial component active value
+	 * Initial component active value/s.
+	 * If the component is switched to the "multiple" mode, you can pass an array or Set to define several active values.
 	 */
 	@prop({required: false})
-	readonly activeProp?: CanArray<unknown>;
+	readonly activeProp?: unknown[] | Active;
 
 	/**
 	 * If true, then all items without the "href" option will automatically generate a link by using "value"
@@ -66,14 +67,15 @@ export default class bList extends iData implements iVisible, iWidth {
 	readonly multiple: boolean = false;
 
 	/**
-	 * If true, the active item can be unset by using another click to it
-	 * (works only with `multiple = false`)
+	 * If true, the active item can be unset by using another click to it.
+	 * By default, if the component is switched to the "multiple" mode, this value is set to `true`,
+	 * otherwise to `false`.
 	 */
-	@prop(Boolean)
-	readonly cancelable: boolean = false;
+	@prop({type: Boolean, required: false})
+	readonly cancelable?: boolean;
 
 	/**
-	 * List of items
+	 * List of component items
 	 * @see [[bList.itemsProp]]
 	 */
 	@field<bList>((o) => o.sync.link<Items>((val) => {
@@ -107,12 +109,12 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Component active value
 	 * @see [[bList.activeStore]]
 	 */
-	get active(): CanArray<unknown> {
+	get active(): Active {
 		const
 			v = this.field.get('activeStore');
 
 		if (this.multiple) {
-			return Object.isSet(v) ? [...v.values()] : [];
+			return Object.isSet(v) ? new Set(v) : new Set();
 		}
 
 		return v;
@@ -152,6 +154,14 @@ export default class bList extends iData implements iVisible, iWidth {
 			beforeDataCreate = o.hook === 'beforeDataCreate';
 
 		if (val === undefined && beforeDataCreate) {
+			if (o.multiple) {
+				if (Object.isSet(o.activeStore)) {
+					return o.activeStore;
+				}
+
+				return new Set(Array.concat([], o.activeStore));
+			}
+
 			return o.activeStore;
 		}
 
@@ -173,7 +183,7 @@ export default class bList extends iData implements iVisible, iWidth {
 		}
 
 		if (beforeDataCreate) {
-			o.emit('immediateChange', Object.isSet(newVal) ? [...newVal.values()] : newVal);
+			o.emit('immediateChange', o.multiple ? new Set(newVal) : newVal);
 
 		} else {
 			o.setActive(newVal);
@@ -182,7 +192,7 @@ export default class bList extends iData implements iVisible, iWidth {
 		return newVal;
 	}))
 
-	protected activeStore!: unknown;
+	protected activeStore!: Active;
 
 	/**
 	 * Returns a link to the active item element.
@@ -208,11 +218,11 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		return this.waitStatus('ready', () => {
 			if (this.multiple) {
-				if (!Object.isArray(active)) {
+				if (!Object.isSet(active)) {
 					return [];
 				}
 
-				return active.flatMap((val) => getEl(val) ?? []);
+				return [...active].flatMap((val) => getEl(val) ?? []);
 			}
 
 			return getEl(active);
@@ -225,17 +235,17 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	toggleActive(value: unknown): boolean {
 		const
-			activeValue = this.field.get('activeStore');
+			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (Object.has(activeValue, [value])) {
+			if (Object.has(activeStore, [value])) {
 				return this.unsetActive(value);
 			}
 
 			return this.setActive(value);
 		}
 
-		if (activeValue !== value) {
+		if (activeStore !== value) {
 			return this.setActive(value);
 		}
 
@@ -251,20 +261,20 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	setActive(value: unknown): boolean {
 		const
-			active = this.field.get('activeStore');
+			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (!Object.has(active, [value])) {
+			if (Object.has(activeStore, [value])) {
 				return false;
 			}
 
-			(<Set<unknown>>active).add(value);
+			(<Set<unknown>>activeStore).add(value);
 
-		} else if (active === value) {
+		} else if (activeStore === value) {
 			return false;
 
 		} else {
-			this.field.set('activeStore', value);
+			this.field.set('activeStore', Object.freeze(value));
 		}
 
 		const
@@ -304,17 +314,16 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	unsetActive(value: unknown): boolean {
 		const
-			active = this.field.get('activeStore'),
-			cantCancel = !this.cancelable;
+			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (!Object.has(active, [value]) || cantCancel) {
+			if (!Object.has(activeStore, [value]) || this.cancelable === false) {
 				return false;
 			}
 
-			(<Set<unknown>>active).delete(value);
+			(<Set<unknown>>activeStore).delete(value);
 
-		} else if (active !== value || cantCancel) {
+		} else if (activeStore !== value || this.cancelable !== true) {
 			return false;
 
 		} else {
@@ -375,7 +384,7 @@ export default class bList extends iData implements iVisible, iWidth {
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
 
-		if (i.normalizeOptions.toString().includes("'deprecated';")) {
+		if ('deprecated' in i.normalizeOptions) {
 			this.normalizeItems = i.normalizeItems.bind(this);
 
 		} else {
@@ -388,8 +397,8 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @param item
 	 */
 	protected isActive(item: Item): boolean {
-		const active = this.field.get('activeStore');
-		return this.multiple ? Object.has(active, [item.value]) : item.value === active;
+		const v = this.field.get('activeStore');
+		return this.multiple ? Object.has(v, [item.value]) : item.value === v;
 	}
 
 	/**
@@ -428,8 +437,6 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	@deprecated({renamedTo: 'normalizeItems'})
 	protected normalizeOptions(items: CanUndef<Items>): Items {
-		'deprecated';
-
 		return this.normalizeItems(items);
 	}
 
@@ -444,14 +451,14 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		const
 			items = this.field.get<CanUndef<Items>>('items') ?? [],
-			active = this.field.get('activeStore');
+			activeStore = this.field.get('activeStore');
 
 		for (let i = 0; i < items.length; i++) {
 			const
 				el = items[i],
 				val = el.value;
 
-			if (el.active && (this.multiple ? !Object.has(active, [val]) : active === undefined)) {
+			if (el.active && (this.multiple ? this.activeProp === undefined : activeStore === undefined)) {
 				this.setActive(val);
 			}
 

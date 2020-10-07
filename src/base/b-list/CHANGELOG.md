@@ -18,6 +18,7 @@ Changelog
 * Changed a type of `hideLabels` from a prop to modifier
 * Renamed `removeActive` -> `unsetActive`
 * Renamed `normalizeOptions` -> `normalizeItems`
+* Now the `active` getter returns a Set with `multiple = true`
 
 #### :bug: Bug Fix
 

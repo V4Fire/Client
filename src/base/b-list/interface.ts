@@ -93,3 +93,5 @@ export interface Item extends Dictionary {
 }
 
 export type Items = Item[];
+
+export type Active = unknown | Set<unknown>;
