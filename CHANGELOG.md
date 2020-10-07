@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.76 (2020-10-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when flyweight components can't have refs `core/component/flyweight`
+
 ## v3.0.0-rc.75 (2020-10-07)
 
 #### :rocket: New Feature

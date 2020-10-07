@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.76 (2020-10-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when flyweight components can't have refs
+
 ## v3.0.0-rc.66 (2020-09-22)
 
 #### :bug: Bug Fix
