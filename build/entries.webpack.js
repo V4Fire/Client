@@ -22,7 +22,7 @@ const
 	{resolve, entries, block} = require('@pzlr/build-core');
 
 const
-	{isWorker} = include('build/helpers'),
+	{isStandalone} = include('build/helpers'),
 	{output, buildCache} = include('build/build.webpack');
 
 const
@@ -32,7 +32,7 @@ let
 	buildIterator = -1;
 
 const
-	WORKERS = ++buildIterator,
+	STANDALONE = ++buildIterator,
 	RUNTIME = ++buildIterator,
 	HTML = ++buildIterator;
 
@@ -46,7 +46,7 @@ const
  * @type {Promise<{entry, processes, dependencies, blockMap}>}
  */
 module.exports = Object.assign(buildProjectGraph(), {
-	WORKERS,
+	STANDALONE,
 	RUNTIME,
 	HTML,
 	MIN_PROCESS,
@@ -187,7 +187,7 @@ async function buildProjectGraph() {
 
 			entry[logicTaskName] = logicFile;
 
-			const cursor = isWorker(name) ? WORKERS : RUNTIME;
+			const cursor = isStandalone(name) ? STANDALONE : RUNTIME;
 			processes[cursor][logicTaskName] = logicFile;
 
 			// CSS
@@ -224,7 +224,7 @@ async function buildProjectGraph() {
 			].join('\n'));
 
 			let
-				taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : WORKERS];
+				taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
 
 			if (MAX_PROCESS > processes.length && $C(taskProcess).length() > MAX_TASKS_PER_ONE_PROCESS) {
 				taskProcess = {};
