@@ -13,15 +13,17 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Renamed `interface/Option` -> `interface/Item`
-* Renamed `valueProp` -> `itemsProp`
+* Renamed:
+  * `interface/Option` -> `interface/Item`
+  * `valueProp` -> `itemsProp`
+  * `removeActive` -> `unsetActive`
+  * `normalizeOptions` -> `normalizeItems`
+  * `block text` -> `block value`
+  * `&__link-text` -> `&__link-value`
+
 * Changed a type of `hideLabels` from a prop to modifier
-* Renamed `removeActive` -> `unsetActive`
-* Renamed `normalizeOptions` -> `normalizeItems`
 * Now the `active` getter returns a Set with `multiple = true`
 * Removed `block info` from the template
-* Renamed `block text` to `block value`
-* Renamed `&__link-text` to `&__link-value`
 * Deprecated `&__el`
 
 #### :rocket: Breaking Change
