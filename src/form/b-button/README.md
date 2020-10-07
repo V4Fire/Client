@@ -69,7 +69,7 @@ The component has four base scenarios of usage:
 
 The component supports a bunch of slots to provide:
 
-1. `default` to provide base content.
+1. `default` to provide the base content.
 
 ```
 < b-button
