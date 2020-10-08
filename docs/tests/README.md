@@ -73,20 +73,46 @@ package('p-v4-components-demo')
 To render a component dynamically during runtime, you should use `renderComponents`. The method places globally and has a signature:
 
 ```typescript
-interface RenderParams {
+export interface RenderParams {
 	/**
 	 * Component attrs
 	 */
 	attrs: Dictionary;
 
 	/** @see [[RenderContent]] */
-	content: RenderContent;
+	content?: Dictionary<RenderContent | string>;
 }
 
 /**
- * Content to render via `createElement`
+ * Content to render into element
+ *
+ * @example
+ *
+ * ```typescript
+ * globalThis.renderComponents('b-button', {
+ *   attrs: {
+ *      testProp: 1
+ *   },
+ *   content: {
+ *     default: {
+ *       tag: 'b-button',
+ *       content: {
+ *         default: 'Test'
+ *       }
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * This schema is the equivalent of such an entry in the template
+ *
+ * ```ss
+ * < b-button :testProp = 1
+ *   < b-button
+ *     Test
+ * ```
  */
-interface RenderContent {
+export interface RenderContent {
 	/**
 	 * Component name or tagName
 	 */
@@ -98,7 +124,7 @@ interface RenderContent {
 	attrs: Dictionary;
 
 	/** @see [[RenderContent]] */
-	content: RenderContent;
+	content?: Dictionary<RenderContent | string>;
 }
 
 /**

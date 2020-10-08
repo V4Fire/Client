@@ -15,11 +15,37 @@ export interface RenderParams {
 	attrs: Dictionary;
 
 	/** @see [[RenderContent]] */
-	content: RenderContent;
+	content?: Dictionary<RenderContent | string>;
 }
 
 /**
- * Content to render via `createElement`
+ * Content to render into element
+ *
+ * @example
+ *
+ * ```typescript
+ * globalThis.renderComponents('b-button', {
+ *   attrs: {
+ *      testProp: 1
+ *   },
+ *   content: {
+ *     default: {
+ *       tag: 'b-button',
+ *       content: {
+ *         default: 'Test'
+ *       }
+ *     }
+ *   }
+ * });
+ * ```
+ *
+ * This schema is the equivalent of such an entry in the template
+ *
+ * ```ss
+ * < b-button :testProp = 1
+ *   < b-button
+ *     Test
+ * ```
  */
 export interface RenderContent {
 	/**
@@ -33,7 +59,7 @@ export interface RenderContent {
 	attrs: Dictionary;
 
 	/** @see [[RenderContent]] */
-	content: RenderContent;
+	content?: Dictionary<RenderContent | string>;
 }
 
 globalThis.renderComponents = (
