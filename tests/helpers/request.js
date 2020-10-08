@@ -76,7 +76,21 @@ class Request {
 	 */
 	interceptRequest(page, url, response, timeout) {
 		return new Promise((res, rej) => {
+			let
+				isClosed = false;
+
+			const handleClose = () => isClosed = true;
+
+			page.once('close', handleClose);
+
 			const handler = (route) => {
+				page.removeListener('close', handleClose);
+
+				if (isClosed) {
+					res();
+					return;
+				}
+
 				route.fulfill({status: 200, ...response});
 				page.unroute(url, handler);
 				res();

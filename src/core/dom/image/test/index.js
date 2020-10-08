@@ -35,6 +35,11 @@ module.exports = async (page, params) => {
 		imgNode,
 		divNode;
 
+	let
+		isClosed = false;
+
+	page.on('close', () => isClosed = true);
+
 	const handleImageRequest = (url, sleep = 0, base64Img = images.pngImage) => page.route(url, async (route) => {
 		await delay(sleep);
 
@@ -43,11 +48,15 @@ module.exports = async (page, params) => {
 			return;
 		}
 
-		const
+	const
 			res = base64Img.split(',')[1],
 			headers = route.request().headers();
 
 		headers['Content-Length'] = String(res?.length ?? 0);
+
+		if (isClosed) {
+			return;
+		}
 
 		route.fulfill({
 			status: 200,

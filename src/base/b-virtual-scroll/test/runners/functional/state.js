@@ -59,7 +59,6 @@ module.exports = (page) => {
 		ctx.dataProvider = 'demo.Pagination';
 		ctx.chunkSize = 10;
 		ctx.request = {get: {chunkSize: 12, id: Math.random(), ...requestProps}};
-		ctx.componentConverter = (v) => ({data: v.data});
 	}, requestProps);
 
 	const
@@ -195,7 +194,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section');
 
 				await setProps({id: Math.random()});
-				await h.dom.waitForEl(container, 'section', {to: 'unmount'});
+				await h.bom.waitForIdleCallback(page);
 				await h.dom.waitForEl(container, 'section', {to: 'mount'});
 
 				const current = await getCurrentComponentState();

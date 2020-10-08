@@ -11,6 +11,25 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.81 (2020-10-08)
+
+#### :boom: Breaking Change
+
+* Now `BrowserTests.DOM.waitForEl` will throw an exception if a timeout to wait occurs `tests/helpers/dom`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `renderNext`: hasn't been data rendering after a loading error `base/b-virtual-scroll`
+
+#### :house: Internal
+
+* Added `.travis.yml`
+* :up: `playwright` -> 1.4.2
+
+#### :nail_care: Polish
+
+* Added the render scheme `docs/test`
+
 ## v3.0.0-rc.80 (2020-10-08)
 
 #### :bug: Bug Fix
@@ -105,7 +124,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* `creo/component/watch`:
+* `core/component/watch`:
   * Fixed a bug with deep watching of props
   * Fixed providing of a watch context
   * Fixed an invalid caching of old values with `collapse = false`

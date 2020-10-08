@@ -44,17 +44,6 @@ interface RenderOptions {
 	rootSelector?: string;
 }
 
-interface RenderParams {
-	attrs: Dictionary;
-	content: RenderContent;
-}
-
-interface RenderContent {
-	tag: string;
-	attrs: Dictionary;
-	content: RenderContent;
-}
-
 interface HTMLImageElement {
 	readonly init: Promise<this>;
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
