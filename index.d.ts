@@ -81,7 +81,7 @@ declare class ResizeObserver {
 }
 
 declare class ResizeObserverEntry {
-	readonly contentRect: DOMRect;
+	readonly contentRect: DOMRectReadOnly;
 	readonly target: Element;
 }
 

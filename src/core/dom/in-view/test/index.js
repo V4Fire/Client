@@ -81,7 +81,7 @@ module.exports = async (page, params) => {
 	});
 
 	strategies.forEach((strategy) => {
-		describe(`in-view ${strategy} strategy`, () => {
+		describe(`core/dom/in-view ${strategy} strategy`, () => {
 			it('with `callback`', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
