@@ -15,11 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* `BrowserTests.DOM.waitForEl` will now throw an exception if a wait timeout occurs `tests/helpers/dom`
+* Now `BrowserTests.DOM.waitForEl` will throw an exception if a timeout to wait occurs `tests/helpers/dom`
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `renderNext` was not rendering data after loading error `base/b-virtual-scroll`
+* Fixed an issue with `renderNext`: hasn't been data rendering after a loading error `base/b-virtual-scroll`
 
 #### :house: Internal
 
@@ -28,7 +28,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :nail_care: Polish
 
-* Added render scheme `docs/test`
+* Added the render scheme `docs/test`
 
 ## v3.0.0-rc.80 (2020-10-08)
 

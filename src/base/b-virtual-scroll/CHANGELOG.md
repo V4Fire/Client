@@ -9,12 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-
 ## v3.0.0-rc.81 (2020-10-08)
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `renderNext` was not rendering data after loading error
+* Fixed an issue with `renderNext`: hasn't been data rendering after a loading error
 
 ## v3.0.0-rc.74 (2020-10-06)
 

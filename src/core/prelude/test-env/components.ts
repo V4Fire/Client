@@ -19,7 +19,7 @@ export interface RenderParams {
 }
 
 /**
- * Content to render into element
+ * Content to render into an element
  *
  * @example
  *
@@ -28,6 +28,7 @@ export interface RenderParams {
  *   attrs: {
  *      testProp: 1
  *   },
+ *
  *   content: {
  *     default: {
  *       tag: 'b-button',
@@ -39,7 +40,7 @@ export interface RenderParams {
  * });
  * ```
  *
- * This schema is the equivalent of such an entry in the template
+ * This schema is the equivalent of such a template:
  *
  * ```ss
  * < b-button :testProp = 1
