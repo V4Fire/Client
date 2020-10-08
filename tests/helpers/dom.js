@@ -66,7 +66,7 @@ class DOM {
 	waitForEl(ctx, selector, options) {
 		options = {
 			sleep: 100,
-			timeout: 10000,
+			timeout: (20).seconds(),
 			to: 'mount',
 			...options
 		};

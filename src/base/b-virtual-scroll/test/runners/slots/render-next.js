@@ -291,7 +291,7 @@ module.exports = (page) => {
 					ctx.chunkSize = 20;
 
 					return new Promise((res) => {
-						ctx.localEmitter.on('localState.ready', res);
+						ctx.localEmitter.once('localState.ready', res);
 					});
 				});
 
