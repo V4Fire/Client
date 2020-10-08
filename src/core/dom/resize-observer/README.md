@@ -8,7 +8,6 @@ This module provides an API to track changes in the size of DOM elements using `
 | ---------- |-------------------------------------------------- | ----------------------------------------------- |
 | `callback` | Invoked when an element size has been changed     | `ResizeWatcherObservable`, `newRect`, `oldRect` |
 
-
 ## Usage
 
 ### Basic
@@ -27,7 +26,7 @@ export default class bFullScreenView extends iBlock implements iLockPageScroll {
 }
 ```
 
-### Observe width changes only
+### Observe only width changes
 
 ```typescript
 import { ResizeWatcher } from 'core/dom/resize-observer';

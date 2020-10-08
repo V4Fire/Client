@@ -35,7 +35,7 @@ export default class bDummy extends iData {
 	}
 
 	/**
-	 * Links to modules
+	 * Link to the modules
 	 */
 	get modules(): Modules {
 		return {

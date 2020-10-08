@@ -341,7 +341,7 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Watches for intersections of the specified node by using the `in-view` module
+	 * Watches for intersections of the specified element by using the `in-view` module
 	 *
 	 * @param el
 	 * @param options
@@ -359,8 +359,8 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Watches for size changes of the specified node by using the `resize-observer` module.
-	 * Notice, this functionality works only in an environment that supports `ResizeObserver`.
+	 * Watches for size changes of the specified element by using the `resize-observer` module.
+	 * Notice, this functionality depends on `ResizeObserver`.
 	 *
 	 * @param el
 	 * @param options

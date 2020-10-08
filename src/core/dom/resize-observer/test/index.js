@@ -71,7 +71,7 @@ module.exports = async (page, params) => {
 	});
 
 	describe('core/dom/resize-observer', () => {
-		it('invokes an initial callback', async () => {
+		it('invokes the initial callback', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.fn = () => globalThis.tmp = true;
 				ctx.observe(globalThis.target, globalThis.fn);
@@ -80,7 +80,7 @@ module.exports = async (page, params) => {
 			await expectAsync(page.waitForFunction(() => globalThis.tmp === true)).toBeResolved();
 		});
 
-		it('does not invokes an initial callback', async () => {
+		it('does not invoke the initial callback', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.fn = () => globalThis.tmp = true;
 
@@ -114,7 +114,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBe(1);
 		});
 
-		it('invokes a callback after an element width changed `watchWidth: true`', async () => {
+		it('invokes the callback after an element width has been changed `watchWidth: true`', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.fn = () => globalThis.tmp = true;
 
@@ -133,7 +133,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeTrue();
 		});
 
-		it('does not invokes a callback after an element width changed `watchWidth: false`', async () => {
+		it('does not invoke the callback after an element width has been changed `watchWidth: false`', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.fn = () => globalThis.tmp = true;
 
@@ -152,7 +152,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 		});
 
-		it('invokes a callback after element height changed', async () => {
+		it('invokes the callback after an element height has been changed', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.fn = () => globalThis.tmp = true;
 
@@ -171,7 +171,7 @@ module.exports = async (page, params) => {
 			await expectAsync(page.waitForFunction(() => globalThis.tmp)).toBeResolved();
 		});
 
-		it('invokes lazy callback after element width changed', async () => {
+		it('invokes the lazy callback after an element width has been changed', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.tmp = 0;
 				globalThis.fn = () => globalThis.tmp += 1;
@@ -203,7 +203,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBe(1);
 		});
 
-		it('invokes callback multiple times if the size of an element has been changed', async () => {
+		it('invokes the callback multiple times if the size of an element has been changed', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.tmp = 0;
 				globalThis.fn = () => globalThis.tmp += 1;
@@ -234,7 +234,7 @@ module.exports = async (page, params) => {
 			expect(await page.evaluate(() => globalThis.tmp)).toBeGreaterThan(1);
 		});
 
-		it('unobserved element does not invokes a callback', async () => {
+		it('unobserved element does not invokes the callback', async () => {
 			await resizeWatcher.evaluate((ctx) => {
 				globalThis.fn = () => globalThis.tmp = true;
 

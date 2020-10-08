@@ -77,7 +77,7 @@ ComponentDriver.directive('resize-observer', {
 });
 
 /**
- * Sets a flag which indicates that the specified observable was created via directive
+ * Sets a flag which indicates that the specified observable was created via the directive
  * @param observable
  */
 function setCreatedViaDirectiveFlag(observable: Nullable<ResizeWatcherObservable>): void {
@@ -94,7 +94,7 @@ function setCreatedViaDirectiveFlag(observable: Nullable<ResizeWatcherObservable
  * @param options
  * @param ctx
  */
-function normalizeOptions(options: ResizeWatcherInitOptions, ctx: CanUndef<iBlock>): ResizeWatcherObserverOptions {
+function normalizeOptions(opts: ResizeWatcherInitOptions, ctx: CanUndef<iBlock>): ResizeWatcherObserverOptions {
 	return Object.isFunction(options) ?
 		{
 			callback: options,

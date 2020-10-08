@@ -102,7 +102,7 @@ export default class ResizeWatcher {
 	}
 
 	/**
-	 * Removes all resize watcher from the specified element
+	 * Removes all resize watchers from the specified element
 	 * @param el
 	 */
 	clear(el: Element): void {
@@ -155,7 +155,7 @@ export default class ResizeWatcher {
 	}
 
 	/**
-	 * Returns an observables store from the specified element; if it does not exist, it will be created and returned..
+	 * Returns an observables store from the specified element; if it does not exist, it will be created and returned
 	 * @param el
 	 */
 	getOrCreateObservableElStore(el: Element): ResizeWatcherObservableElStore {
@@ -163,7 +163,7 @@ export default class ResizeWatcher {
 	}
 
 	/**
-	 * Returns a normalized observable options
+	 * Returns normalized observable options
 	 * @param options
 	 */
 	normalizeOptions(options: ResizeWatcherInitOptions): ResizeWatcherObserverOptions {
@@ -269,7 +269,7 @@ export default class ResizeWatcher {
 	}
 
 	/**
-	 * Handler: element was resized
+	 * Handler: element has been resized
 	 *
 	 * @param observable
 	 * @param newRect

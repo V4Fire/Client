@@ -10,7 +10,7 @@ import iBlock from 'super/i-block/i-block';
 
 export interface ResizeWatcherObserverOptions {
 	/**
-	 * If `true`, when changing the element width, a callback will be executed
+	 * If `true`, when changing an element width, the callback will be executed
 	 * @default `true`
 	 */
 	watchWidth?: boolean;
@@ -22,23 +22,22 @@ export interface ResizeWatcherObserverOptions {
 	watchHeight?: boolean;
 
 	/**
-	 * If `true`, then the callback is invoked immediately after the initializing of the module
+	 * If `true`, then the callback is invoked immediately after the module initializing
 	 * @default `true`
 	 */
 	initial?: boolean;
 
 	/**
-	 * If `true`, then the callback is invoked immediately after the size has been changed.
+	 * If `true`, then the callback is invoked immediately after any changes of the element size.
 	 *
-	 * Be careful with setting this option to `true`, as if an element is resized multiple times in a row,
-	 * a callback will be called for each change
+	 * Be careful with setting this option to `true`,  the callback will be called for each changing of the size.
 	 *
 	 * @default `false`
 	 */
 	immediate?: boolean;
 
 	/**
-	 * If true, a watcher would be automatically removed when invoked (initial call does not count)
+	 * If true, the watcher would be automatically removed when invoked (initial call does not count)
 	 * @default `false`
 	 */
 	once?: boolean;
