@@ -23,7 +23,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Component tests was removed from `test.yml`
 * Added `.travis.yml`
 * :up: `playwright` -> 1.4.2
 
