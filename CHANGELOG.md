@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.77 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `renderNext` was not rendering data after loading error `base/b-virtual-scroll`
+
+#### :house: Internal
+
+* :up: `playwright` -> 1.4.2
+
 ## v3.0.0-rc.76 (2020-10-07)
 
 #### :boom: Breaking Change
@@ -76,7 +86,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* `creo/component/watch`:
+* `core/component/watch`:
   * Fixed a bug with deep watching of props
   * Fixed providing of a watch context
   * Fixed an invalid caching of old values with `collapse = false`
