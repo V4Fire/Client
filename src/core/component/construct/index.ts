@@ -99,11 +99,10 @@ export function beforeCreateState(
 
 		for (let o = watchDependencies.values(), el = o.next(); !el.done; el = o.next()) {
 			const
-				val = el.value,
-				key = <string>(Object.isArray(val) ? val[0] : val);
+				deps = el.value;
 
-			if (systemFields[key]) {
-				watchMap[key] = true;
+			for (let i = 0; i < deps.length; i++) {
+				watchMap[<string>deps[i]] = true;
 			}
 		}
 	}
