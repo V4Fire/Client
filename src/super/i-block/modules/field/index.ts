@@ -99,8 +99,25 @@ export default class Field extends Friend {
 				chunks[0] = info.accessor;
 
 			} else {
-				const isField = info.type === 'field';
-				res = isField ? ctx.$fields : ctx;
+				let
+					isField = false;
+
+				switch (info.type) {
+					case 'prop':
+						if (ctx.lfc.isBeforeCreate('beforeDataCreate')) {
+							return undefined;
+						}
+
+						break;
+
+					case 'field':
+						isField = true;
+						res = ctx.$fields;
+						break;
+
+					default:
+						// Do nothing
+				}
 
 				if ((isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in <Dictionary>res))) {
 					chunks[0] = info.name;
