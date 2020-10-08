@@ -8,6 +8,34 @@
 
 import iStaticPage, { ComponentElement } from 'super/i-static-page/i-static-page';
 
+export interface RenderParams {
+	/**
+	 * Component attrs
+	 */
+	attrs: Dictionary;
+
+	/** @see [[RenderContent]] */
+	content: RenderContent;
+}
+
+/**
+ * Content to render via `createElement`
+ */
+export interface RenderContent {
+	/**
+	 * Component name or tagName
+	 */
+	tag: string;
+
+	/**
+	 * Component attrs
+	 */
+	attrs: Dictionary;
+
+	/** @see [[RenderContent]] */
+	content: RenderContent;
+}
+
 globalThis.renderComponents = (
 	componentName: string,
 	scheme: RenderParams[],
