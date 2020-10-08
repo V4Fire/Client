@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
- // @ts-check
+// @ts-check
 
 const
 	h = include('tests/helpers'),
