@@ -94,7 +94,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			enumerable: true,
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method
-			get: el.get ?? get,
+			get: el.get != null ? get : undefined,
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method
 			set: el.set

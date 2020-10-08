@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.78 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with caching of computed fields `core/component/accessor`
+
 ## v3.0.0-rc.77 (2020-10-08)
 
 #### :bug: Bug Fix
