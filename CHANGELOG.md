@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.77 ()
+## v3.0.0-rc.81 ()
 
 #### :boom: Breaking Change
 
@@ -83,6 +83,35 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+## v3.0.0-rc.80 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using an array of dependencies to watch an accessor `core/component/construct`
+
+## v3.0.0-rc.79 (2020-10-08)
+
+#### :boom: Breaking Change
+
+* Directive mods are no longer supported `core/component/directives/resize-observer`
+* `v-resize` renamed to `v-resize-observer` `core/component/directives/resize-observer`
+
+#### :house: Internal
+
+* [Split the module into two: API was moved to `core/dom/resize-observer`](https://github.com/V4Fire/Client/issues/311)
+
+## v3.0.0-rc.78 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with caching of computed fields `core/component/accessor`
+
+## v3.0.0-rc.77 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when trying to access a prop value before a component create `i-block/modules/field`
 
 ## v3.0.0-rc.76 (2020-10-07)
 

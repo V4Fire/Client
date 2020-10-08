@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { deprecate } from 'core/functools/deprecation';
-import { cacheStatus, ComponentInterface } from 'core/component';
-
 /**
  * [[include:core/component/accessor/README.md]]
  * @packageDocumentation
  */
+
+import { deprecate } from 'core/functools/deprecation';
+import { cacheStatus, ComponentInterface } from 'core/component';
 
 /**
  * Attaches accessors and computed fields from a meta object to the specified component instance
@@ -94,7 +94,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			enumerable: true,
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method
-			get: el.get ?? get,
+			get: el.get != null ? get : undefined,
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method
 			set: el.set

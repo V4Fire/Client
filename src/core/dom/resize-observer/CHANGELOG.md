@@ -9,14 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.80 (2020-10-08)
-
-#### :bug: Bug Fix
-
-* Fixed a bug when using an array of dependencies to watch an accessor
-
-## v3.0.0-rc.37 (2020-07-20)
+## v3.0.0-rc.79 (2020-10-08)
 
 #### :house: Internal
 
-* Fixed ESLint warnings
+* [Split the module into two: API was moved to `core/dom/resize-observer`](https://github.com/V4Fire/Client/issues/311)

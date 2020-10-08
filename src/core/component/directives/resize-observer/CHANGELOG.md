@@ -9,16 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.81 ()
+## v3.0.0-rc.79 (2020-10-08)
 
 #### :boom: Breaking Change
 
-* Removed `setSizes`
+* Directive mods are no longer supported
+* Renamed to `v-resize-observer`
 
 #### :house: Internal
 
-* Refactoring
-
-#### :nail_care: Polish
-
-* Added documentation
+* [Split the module into two: API was moved to `core/dom/resize-observer`](https://github.com/V4Fire/Client/issues/311)

@@ -31,7 +31,7 @@ export function getAdaptee(strategies: AdapteeInstance[]): CanUndef<AdapteeInsta
  */
 export function valueValidator(value: CanUndef<InitOptions>): boolean {
 	// eslint-disable-next-line @typescript-eslint/unbound-method
-	return Boolean(value && (value.callback || value.onEnter || value.onLeave));
+	return Boolean(value != null && (value.callback || value.onEnter || value.onLeave));
 }
 
 /**
