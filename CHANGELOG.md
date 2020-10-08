@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.80 (2020-10-08)
+## v3.0.0-rc.81 (2020-10-08)
 
 #### :boom: Breaking Change
 
@@ -28,6 +28,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :nail_care: Polish
 
 * Added render scheme `docs/test`
+## v3.0.0-rc.80 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using an array of dependencies to watch an accessor `core/component/construct`
 
 ## v3.0.0-rc.79 (2020-10-08)
 
