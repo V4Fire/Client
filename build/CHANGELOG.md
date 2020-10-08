@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.76 (2020-10-07)
+
+#### :boom: Breaking Change
+
+* Renamed `isWorker` to `isStandalone` `helpers`
+
+#### :rocket: New Feature
+
+* Added support of a new postfix `.standalone` `entries.webpack`
+
 ## v3.0.0-rc.73 (2020-10-02)
 
 #### :house: Internal
