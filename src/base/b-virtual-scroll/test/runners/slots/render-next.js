@@ -55,7 +55,6 @@ module.exports = (page) => {
 		await h.component.waitForComponent(page, '#root-component');
 
 		await page.evaluate(() => {
-			console.log('render');
 			const dummy = document.querySelector('#dummy-component');
 
 			if (dummy) {
