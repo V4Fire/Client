@@ -4,4 +4,6 @@ node_js: '14' # or another
 
 cache: npm
 
-script: npm run test:components
+script:
+  - npx gulp build:tsconfig
+  - npm run test:components
