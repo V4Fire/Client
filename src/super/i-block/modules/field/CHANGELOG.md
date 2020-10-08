@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.77 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when trying to access a prop value before a component create
+
 ## v3.0.0-rc.69 (2020-09-28)
 
 #### :boom: Breaking Change

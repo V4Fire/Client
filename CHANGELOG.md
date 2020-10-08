@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.77 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when trying to access a prop value before a component create `i-block/modules/field`
+
 ## v3.0.0-rc.76 (2020-10-07)
 
 #### :boom: Breaking Change
