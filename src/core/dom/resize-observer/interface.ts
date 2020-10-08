@@ -16,7 +16,7 @@ export interface ResizeWatcherObserverOptions {
 	watchWidth?: boolean;
 
 	/**
-	 * If `true`, when changing the element height, a callback will be executed
+	 * If `true`, when changing an element height, the callback will be executed
 	 * @default `true`
 	 */
 	watchHeight?: boolean;
