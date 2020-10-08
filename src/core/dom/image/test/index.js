@@ -923,7 +923,7 @@ module.exports = async (page, params) => {
 
 				imageLoaderCtx.init(target, {
 					src: mainSrc,
-					bgOptions: {size: 'contain', ratio: 100 / 50, beforeImg, afterImg, position: '47% 47%'},
+					bgOptions: {size: 'contain', ratio: 100 / 50, beforeImg, afterImg, position: '47% 47%', repeat: 'no-repeat'},
 					ctx: globalThis.dummy
 				});
 			}, [tag, images.pngImage, beforeImg, afterImg]);
@@ -942,6 +942,7 @@ module.exports = async (page, params) => {
 			expect(await getNode(tag).evaluate((ctx) => ctx.style.paddingBottom)).toBe(expected);
 			expect(await getNode(tag).evaluate((ctx) => ctx.style.backgroundPosition)).toBe('47% 47%');
 			expect(await getNode(tag).evaluate((ctx) => ctx.style.backgroundSize)).toBe('contain');
+			expect(await getNode(tag).evaluate((ctx) => ctx.style.backgroundRepeat)).toBe('no-repeat');
 		});
 
 		it('div main with `src`, default ratio', async () => {
