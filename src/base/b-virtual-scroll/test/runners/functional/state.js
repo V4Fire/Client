@@ -195,6 +195,7 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section');
 
 				await setProps({id: Math.random()});
+				await h.bom.waitForIdleCallback(page);
 				await h.dom.waitForEl(container, 'section', {to: 'mount'});
 
 				const current = await getCurrentComponentState();
