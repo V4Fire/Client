@@ -590,7 +590,7 @@ declare namespace BrowserTests {
 		 */
 		interceptRequest(
 			page: Playwright.Page,
-			url: string[],
+			urls: string[],
 			response: Playwright.RouteFulfillResponse,
 			timeout?: number
 		): Promise<void>;
