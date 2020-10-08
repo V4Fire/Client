@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.79 (2020-10-08)
 
+#### :boom: Breaking Change
+
+* `BrowserTests.DOM.waitForEl` will now throw an exception if a wait timeout occurs `tests/helpers/dom`
+
 #### :bug: Bug Fix
 
 * Fixed an issue with `renderNext` was not rendering data after loading error `base/b-virtual-scroll`
