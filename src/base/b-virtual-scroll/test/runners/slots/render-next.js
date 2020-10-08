@@ -55,6 +55,7 @@ module.exports = (page) => {
 		await h.component.waitForComponent(page, '#root-component');
 
 		await page.evaluate(() => {
+			console.log('render');
 			const dummy = document.querySelector('#dummy-component');
 
 			if (dummy) {
@@ -488,6 +489,7 @@ module.exports = (page) => {
 
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
 				await requestErrorPromise;
+				await h.bom.waitForIdleCallback(page);
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.reloadLast());
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section:nth-child(11)');
 				await h.bom.waitForRAF(page);

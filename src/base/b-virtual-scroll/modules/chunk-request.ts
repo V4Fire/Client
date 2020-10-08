@@ -350,6 +350,7 @@ export default class ChunkRequest extends Friend {
 
 		return ctx.async.request(ctx.getData(this.component, params), {label: $$.request})
 			.then((data) => {
+				this.ctx.localState = 'ready';
 				void ctx.removeMod('progress', true);
 				this.lastLoadedChunk.raw = data;
 

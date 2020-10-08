@@ -195,7 +195,6 @@ module.exports = (page) => {
 				await h.dom.waitForEl(container, 'section');
 
 				await setProps({id: Math.random()});
-				await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 				await h.dom.waitForEl(container, 'section', {to: 'mount'});
 
 				const current = await getCurrentComponentState();

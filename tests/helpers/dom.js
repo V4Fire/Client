@@ -8,9 +8,6 @@
 
 // @ts-check
 
-const
-	delay = require('delay');
-
 /**
  * @typedef {import('playwright').Page} Page
  * @typedef {import('playwright').BrowserContext} BrowserContext
@@ -66,7 +63,7 @@ class DOM {
 	/**
 	 * @see [[BrowserTests.DOM.waitForEl]]
 	 */
-	async waitForEl(ctx, selector, options) {
+	waitForEl(ctx, selector, options) {
 		options = {
 			sleep: 100,
 			timeout: 3500,
@@ -74,51 +71,12 @@ class DOM {
 			...options
 		};
 
-		let isTimeout = false;
-		setTimeout(() => isTimeout = true, options.timeout);
-
 		if (options.to === 'mount') {
-			let ref = await ctx.$(selector);
-
-			if (ref) {
-				return ref;
-			}
-
-			while (!ref) {
-				if (isTimeout) {
-					return;
-				}
-
-				ref = await ctx.$(selector);
-
-				if (ref) {
-					return ref;
-				}
-
-				await delay(options.sleep);
-			}
+			return ctx.waitForSelector(selector, {state: 'attached', timeout: options.timeout});
 		}
 
 		if (options.to === 'unmount') {
-			let ref = await ctx.$(selector);
-
-			if (!ref) {
-				return;
-			}
-
-			while (ref) {
-				if (isTimeout) {
-					return;
-				}
-
-				ref = await ctx.$(selector);
-
-				if (!ref) {
-					return;
-				}
-
-				await delay(options.sleep);
-			}
+			return ctx.waitForSelector(selector, {state: 'detached', timeout: options.timeout});
 		}
 	}
 
