@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.75 (2020-10-08)
+## v3.0.0-rc.79 (2020-10-08)
 
 #### :boom: Breaking Change
 
@@ -21,6 +21,38 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * [Split the module into two: API was moved to `core/dom/resize-observer`](https://github.com/V4Fire/Client/issues/311)
+
+## v3.0.0-rc.78 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with caching of computed fields `core/component/accessor`
+
+## v3.0.0-rc.77 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when trying to access a prop value before a component create `i-block/modules/field`
+
+## v3.0.0-rc.76 (2020-10-07)
+
+#### :boom: Breaking Change
+
+* Renamed `isWorker` to `isStandalone` `build/helpers`
+
+#### :rocket: New Feature
+
+* Added support of a new postfix `.standalone` `build/entries.webpack`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when flyweight components can't have refs `core/component/flyweight`
+
+## v3.0.0-rc.75 (2020-10-07)
+
+#### :rocket: New Feature
+
+* Ability to pass background-repeat as image bg options `core/dom/image`
 
 ## v3.0.0-rc.74 (2020-10-06)
 

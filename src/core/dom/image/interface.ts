@@ -171,6 +171,11 @@ export interface ImageBackgroundOptions {
 	position?: string;
 
 	/**
+	 * Image background repeat
+	 */
+	repeat?: string;
+
+	/**
 	 * The string to add to the background image before the URL
 	 */
 	beforeImg?: CanArray<string>;
