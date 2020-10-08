@@ -91,18 +91,18 @@ function setCreatedViaDirectiveFlag(observable: Nullable<ResizeWatcherObservable
 /**
  * Normalizes the specified directive options
  *
- * @param options
+ * @param opts
  * @param ctx
  */
 function normalizeOptions(opts: ResizeWatcherInitOptions, ctx: CanUndef<iBlock>): ResizeWatcherObserverOptions {
-	return Object.isFunction(options) ?
+	return Object.isFunction(opts) ?
 		{
-			callback: options,
+			callback: opts,
 			ctx
 		} :
 
 		{
-			...options,
-			ctx: options.ctx ?? ctx
+			...opts,
+			ctx: opts.ctx ?? ctx
 		};
 }

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.82 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a typo after refactoring
+
 ## v3.0.0-rc.79 (2020-10-08)
 
 #### :boom: Breaking Change

@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.82 ()
+## v3.0.0-rc.83 ()
 
 #### :boom: Breaking Change
 
@@ -83,6 +83,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+## v3.0.0-rc.82 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a typo after refactoring `core/component/directive/resize-observer`
 
 ## v3.0.0-rc.81 (2020-10-08)
 
