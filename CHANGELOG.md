@@ -23,11 +23,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
+* Component tests was removed from `test.yml`
+* Added `.travis.yml`
 * :up: `playwright` -> 1.4.2
 
 #### :nail_care: Polish
 
 * Added render scheme `docs/test`
+
 ## v3.0.0-rc.80 (2020-10-08)
 
 #### :bug: Bug Fix
