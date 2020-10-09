@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :house: Internal
+
+* Optimized watching of non-functional properties
+
 ## v3.0.0-rc.84 (2020-10-09)
 
 #### :house: Internal

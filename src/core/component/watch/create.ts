@@ -62,6 +62,38 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			});
 		}
 
+		let
+			meta,
+			isRoot = false,
+			isFunctional = false;
+
+		if (info.type !== 'mounted') {
+			const
+				propCtx = info.ctx.unsafe,
+				ctxParams = propCtx.meta.params;
+
+			meta = propCtx.meta;
+			isRoot = Boolean(ctxParams.root);
+			isFunctional = !isRoot && ctxParams.functional === true;
+		}
+
+		const canSkip =
+			(
+				(isRoot || isFunctional) &&
+				(info.type === 'prop' || info.type === 'attr')
+			) ||
+
+			(
+				isFunctional && (
+					info.type === 'field' && meta.fields[info.name].functional === false ||
+					info.type === 'system' && meta.systemFields[info.name].functional === false
+				)
+			);
+
+		if (canSkip) {
+			return null;
+		}
+
 		const
 			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
@@ -159,17 +191,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
-		let
-			rootOrFunctional = false;
-
-		if (info.type !== 'mounted') {
-			const
-				propCtx = info.ctx.unsafe,
-				ctxParams = propCtx.meta.params;
-
-			rootOrFunctional = Boolean(ctxParams.root) || ctxParams.functional === true;
-		}
-
 		if (proxy != null) {
 			if (watchInfo == null) {
 				return null;
@@ -212,10 +233,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					const
 						attr = info.name;
 
-					if (rootOrFunctional) {
-						return null;
-					}
-
 					let
 						unwatch;
 
@@ -242,10 +259,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				}
 
 				case 'prop': {
-					if (rootOrFunctional) {
-						return null;
-					}
-
 					const
 						prop = info.name,
 						pathChunks = info.path.split('.'),
