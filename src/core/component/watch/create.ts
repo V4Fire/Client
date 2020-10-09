@@ -20,11 +20,12 @@ import { attachDynamicWatcher } from 'core/component/watch/helpers';
  * Creates a function to watch changes from the specified component instance and returns it
  * @param component
  */
+// eslint-disable-next-line max-lines-per-function
 export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
 	const
 		watchCache = new Map();
 
-	// eslint-disable-next-line @typescript-eslint/typedef
+	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function
 	return function watchFn(this: unknown, path, optsOrHandler, rawHandler?) {
 		if (component.isFlyweight) {
 			return null;
@@ -175,13 +176,18 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			switch (info.type) {
+				case 'field':
 				case 'system':
 					if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
 						proxy[watcherInitializer]?.();
 						proxy = watchInfo.value;
 
 						mute(proxy);
-						proxy[info.name] = info.ctx[info.name];
+
+						if (info.type === 'system') {
+							proxy[info.name] = info.ctx[info.name];
+						}
+
 						unmute(proxy);
 
 						const
@@ -190,7 +196,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						Object.defineProperty(info.ctx, info.name, {
 							enumerable: true,
 							configurable: true,
-							get: () => proxy[info.name],
+
+							get: () =>
+								proxy[info.name],
+
 							set: (val) => {
 								propCtx.$set(proxy, info.name, val);
 							}

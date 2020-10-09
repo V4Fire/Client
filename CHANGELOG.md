@@ -11,6 +11,22 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.84 (2020-10-09)
+
+#### :rocket: New Feature
+
+* Added `ComponentMeta.tiedFields` `core/component/meta`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using a complex path as a dependency `core/component/construct`
+
+#### :house: Internal
+
+* Now all tied fields are collected within `meta.tiedFields` `core/component/decorators`
+* Optimized creation of components `core/component/construct`
+* Optimized creation of watchers of functional components `core/component/watch`
+
 ## v3.0.0-rc.83 (2020-10-09)
 
 #### :bug: Bug Fix
