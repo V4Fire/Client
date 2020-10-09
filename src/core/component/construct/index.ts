@@ -16,7 +16,7 @@ import { deprecate } from 'core/functools/deprecation';
 
 import { unmute } from 'core/object/watch';
 import { asyncLabel } from 'core/component/const';
-import { storeRgxp } from 'core/component/reflection';
+import { storeRgxp, getPropertyInfo } from 'core/component/reflection';
 
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
@@ -102,7 +102,15 @@ export function beforeCreateState(
 				deps = el.value;
 
 			for (let i = 0; i < deps.length; i++) {
-				watchMap[<string>deps[i]] = true;
+				const
+					dep = deps[i],
+					info = getPropertyInfo(Object.isArray(dep) ? dep.join('.') : String(dep), component);
+
+				if (info.type !== 'system') {
+					continue;
+				}
+
+				watchMap[info.name] = true;
 			}
 		}
 	}

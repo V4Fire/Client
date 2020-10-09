@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.83 (2020-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using a complex path as a dependency `core/component/construct`
+
 ## v3.0.0-rc.82 (2020-10-08)
 
 #### :bug: Bug Fix
