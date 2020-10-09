@@ -15,14 +15,21 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Marked as non-functional `iBlock`:
-  * `stageStore`
-  * `componentStatusStore`
-  * `watchModsStore`
+* `iBlock`:
+  * Now `dontWaitRemoteProviders` is calculated automatically
+  * Marked as non-functional:
+    * `stageStore`
+    * `componentStatusStore`
+    * `watchModsStore`
+
+#### :rocket: New Feature
+
+* Provided a graph of components to `build/globals.webpack` / `config`
 
 #### :house: Internal
 
 * Optimized watching of non-functional properties `core/component/watch`
+* Extracted interfaces to `index.d.ts` `core/prelude/test-env`
 
 ## v3.0.0-rc.84 (2020-10-09)
 
