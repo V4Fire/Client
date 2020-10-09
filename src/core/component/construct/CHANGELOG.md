@@ -9,11 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.83 (2020-10-09)
+## v3.0.0-rc.84 (2020-10-09)
 
 #### :bug: Bug Fix
 
 * Fixed a bug when using a complex path as a dependency
+
+#### :house: Internal
+
+* Optimized creation of components
 
 ## v3.0.0-rc.80 (2020-10-08)
 
