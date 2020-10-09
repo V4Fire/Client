@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with `in-view/mutation` does not fire a callback in old chromiums `core/dom/in-view`
 
+#### :house: Internal
+
+* Removed `.travis.yml`
+
 ## v3.0.0-rc.82 (2020-10-08)
 
 #### :bug: Bug Fix
