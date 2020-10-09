@@ -24,6 +24,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Now all tied fields are collected within `meta.tiedFields` `core/component/decorators`
+* Optimized creation of components `core/component/construct`
+* Optimized creation of watchers of functional components `core/component/watch`
 
 ## v3.0.0-rc.82 (2020-10-08)
 
