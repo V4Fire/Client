@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `in-view/mutation` does not fire a callback in old chromium `core/dom/in-view`
+* Fixed an issue with `in-view/mutation` does not fire a callback in old chromiums `core/dom/in-view`
 
 ## v3.0.0-rc.82 (2020-10-08)
 

@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with `in-view/mutation` does not fire a callback in old chromium
+* Fixed an issue with `in-view/mutation` does not fire a callback in old chromiums
 
 ## v3.0.0-rc.60 (2020-09-01)
 
