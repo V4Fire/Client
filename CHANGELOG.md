@@ -13,6 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.85 (2020-10-09)
 
+#### :boom: Breaking Change
+
+* Marked as non-functional `iBlock`:
+  * `stageStore`
+  * `componentStatusStore`
+  * `watchModsStore`
+
 #### :house: Internal
 
 * Optimized watching of non-functional properties `core/component/watch`

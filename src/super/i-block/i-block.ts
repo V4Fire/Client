@@ -972,6 +972,7 @@ export default abstract class iBlock extends ComponentInterface {
 	@field({
 		replace: false,
 		forceUpdate: false,
+		functional: false,
 		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
 			return o.field.get('stageStore');
@@ -984,7 +985,12 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Component initialize status store
 	 * @see [[iBlock.componentStatus]]
 	 */
-	@field({unique: true, forceUpdate: false})
+	@field({
+		unique: true,
+		forceUpdate: false,
+		functional: false
+	})
+
 	protected componentStatusStore: ComponentStatus = 'unloaded';
 
 	/**
@@ -1001,6 +1007,7 @@ export default abstract class iBlock extends ComponentInterface {
 		merge: true,
 		replace: false,
 		forceUpdate: false,
+		functional: false,
 		init: () => Object.create({})
 	})
 

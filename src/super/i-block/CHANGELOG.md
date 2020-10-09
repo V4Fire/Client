@@ -9,6 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :boom: Breaking Change
+
+* Marked as non-functional:
+  * `stageStore`
+  * `componentStatusStore`
+  * `watchModsStore`
+
 ## v3.0.0-rc.65 (2020-09-21)
 
 #### :nail_care: Polish
