@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.83 (2020-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `in-view/mutation` does not fire a callback in old chromium `core/dom/in-view`
+
 ## v3.0.0-rc.82 (2020-10-08)
 
 #### :bug: Bug Fix

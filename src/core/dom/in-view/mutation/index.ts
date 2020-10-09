@@ -210,10 +210,12 @@ export default class InView extends Super {
 				for (let i = 0; i < elements.length; i++) {
 					const
 						el = elements[i],
-						{observable} = el,
-						{isConnected} = observable.node;
+						{observable} = el;
 
 					const
+						// Old chromium does not support isConnected
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+						isConnected = observable.node.isConnected ?? true,
 						isElementIn = isElementInView(el, rootRect, observable.threshold);
 
 					if (isConnected && isElementIn && !observable.isLeaving) {

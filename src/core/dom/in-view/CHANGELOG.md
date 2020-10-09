@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.83 (2020-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `in-view/mutation` does not fire a callback in old chromium
+
 ## v3.0.0-rc.60 (2020-09-01)
 
 #### :house: Internal
