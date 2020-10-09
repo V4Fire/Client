@@ -374,7 +374,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/** @see [[iBlock.dontWaitRemoteProvidersProp]] */
 	@system((o) => o.sync.link((val) => {
-		if (val === undefined) {
+		if (val == null) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (o.dontWaitRemoteProviders != null) {
 				return o.dontWaitRemoteProviders;
