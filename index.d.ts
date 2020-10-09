@@ -8,27 +8,13 @@
 
 /// <reference types="@v4fire/core"/>
 
-// eslint-disable-next-line no-var
-declare var
-	/**
-	 * Renders specified components
-	 *
-	 * @param componentName
-	 * @param scheme
-	 * @param options
-	 */
-	renderComponents: (componentName: string, scheme: RenderParams[], options?: RenderOptions) => void,
-
-	/**
-	 * Removes all components created via `globalThis.renderComponents`
-	 */
-	removeCreatedComponents: () => void;
-
 declare const GLOBAL_NONCE: unknown;
 declare const MODULE_DEPENDENCIES: string;
+
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 
+declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
 declare const DS: CanUndef<Dictionary>;
 
