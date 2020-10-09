@@ -13,6 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
+* Now `dontWaitRemoteProviders` is calculated automatically
 * Marked as non-functional:
   * `stageStore`
   * `componentStatusStore`
