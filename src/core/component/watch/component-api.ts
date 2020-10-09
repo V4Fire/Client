@@ -240,7 +240,7 @@ export function implementComponentWatchAPI(
 	let
 		fieldWatchOpts;
 
-	if (opts?.tieFields) {
+	if (!isFlyweight && opts?.tieFields) {
 		fieldWatchOpts = {...watchOpts, tiedWith: component};
 
 	} else {
@@ -260,11 +260,24 @@ export function implementComponentWatchAPI(
 
 	// Watcher of fields
 
-	const
-		fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
+	let
+		fieldsWatcher;
 
-	watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
-	initWatcher(fields.key, fieldsWatcher);
+	if (isFlyweight) {
+		// Don't force watching of fields until it becomes necessary
+		fields.value[watcherInitializer] = () => {
+			delete fields.value[watcherInitializer];
+			fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
+
+			watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
+			initWatcher(fields.key, fieldsWatcher);
+		};
+
+	} else {
+		fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
+		watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
+		initWatcher(fields.key, fieldsWatcher);
+	}
 
 	// Don't force watching of system fields until it becomes necessary
 	systemFields.value[watcherInitializer] = () => {
@@ -291,7 +304,7 @@ export function implementComponentWatchAPI(
 		configurable: true,
 		writable: true,
 		value: (obj, path, val) => {
-			set(obj, path, val, obj[watchHandlers] ?? fieldsWatcher.proxy[watchHandlers]);
+			set(obj, path, val, obj[watchHandlers] ?? fieldsWatcher?.proxy[watchHandlers]);
 			return val;
 		}
 	});
@@ -301,7 +314,7 @@ export function implementComponentWatchAPI(
 		configurable: true,
 		writable: true,
 		value: (obj, path) => {
-			unset(obj, path, obj[watchHandlers] ?? fieldsWatcher.proxy[watchHandlers]);
+			unset(obj, path, obj[watchHandlers] ?? fieldsWatcher?.proxy[watchHandlers]);
 		}
 	});
 

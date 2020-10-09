@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.84 (2020-10-09)
+
+#### :house: Internal
+
+* Optimized creation of watchers of functional components
+
 ## v3.0.0-rc.71 (2020-10-01)
 
 #### :bug: Bug Fix
