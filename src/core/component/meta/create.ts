@@ -47,8 +47,10 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		mods: getComponentMods(component),
 
 		fields: {},
+		tiedFields: {},
 		computedFields: {},
 		systemFields: {},
+		tiedSystemFields: {},
 
 		accessors: {},
 		methods: {},

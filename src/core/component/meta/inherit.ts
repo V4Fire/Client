@@ -28,6 +28,7 @@ export function inherit(
 		props: pProps,
 		mods: pMods,
 		fields: pFields,
+		tiedFields: pTiedFields,
 		computedFields: pComputedFields,
 		systemFields: pSystemFields,
 		accessors: pAccessors,
@@ -45,7 +46,7 @@ export function inherit(
 		deprecatedProps: {...pParams.deprecatedProps, ...meta.params.deprecatedProps}
 	};
 
-	// Watcher dependencies
+	// Watcher dependencies inheritance
 
 	if (meta.watchDependencies.size > 0) {
 		for (let o = pWatchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
@@ -57,7 +58,7 @@ export function inherit(
 		meta.watchDependencies = new Map(pWatchDependencies.entries());
 	}
 
-	// Props|fields inheritance
+	// Props/fields inheritance
 
 	{
 		const list = [
@@ -108,6 +109,12 @@ export function inherit(
 		}
 	}
 
+	// Tied fields inheritance
+
+	Object.assign(meta.tiedFields, pTiedFields);
+
+	// Accessors inheritance
+
 	{
 		const list = [
 			[meta.computedFields, pComputedFields],
@@ -124,6 +131,8 @@ export function inherit(
 			}
 		}
 	}
+
+	// Methods inheritance
 
 	for (let o = meta.methods, keys = Object.keys(pMethods), i = 0; i < keys.length; i++) {
 		const
