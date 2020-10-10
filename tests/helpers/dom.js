@@ -107,6 +107,42 @@ class DOM {
 	}
 
 	/**
+	 * @see [[BrowserTests.DOM.elNameGenerator]]
+	 */
+	elNameGenerator(blockName) {
+		return (elName) => `${blockName}__${elName}`;
+	}
+
+	/**
+	 * @see [[BrowserTests.DOM.elNameSelectorGenerator]]
+	 */
+	elNameSelectorGenerator(blockName) {
+		return (elName) => `.${this.elNameGenerator(blockName)(elName)}`;
+	}
+
+	/**
+	 * @see [[BrowserTests.DOM.elModNameGenerator]]
+	 */
+	elModNameGenerator(fullElName, modName, modVal) {
+		if (modName != null) {
+			return `${this.elModNameGenerator(fullElName)(modName, modVal)}`;
+		}
+
+		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
+	}
+
+	/**
+	 * @see [[BrowserTests.DOM.elModSelectorGenerator]]
+	 */
+	elModSelectorGenerator(fullElName, modName, modVal) {
+		if (modName != null) {
+			return `.${this.elModNameGenerator(fullElName)(modName, modVal)}`;
+		}
+
+		return (modName, modVal) => `.${this.elModNameGenerator(fullElName)(modName, modVal)}`;
+	}
+
+	/**
 	 * Parent class
 	 * @type  {BrowserTests.Helpers}
 	 */
