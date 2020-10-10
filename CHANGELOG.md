@@ -13,7 +13,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.86 (2020-10-12)
 
-* Added new methods `tests/helpers/dom`
+#### :house: Internal
+
+* Added a new API for generating selectors `tests/helpers/dom`
   * `elNameGenerator`
   * `elNameSelectorGenerator`
   * `elModNameGenerator`
