@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an optimization of lazy watchers `base/i-block/modules/field`
+* Fixed immediate watchers `core/component/watch`
 
 ## v3.0.0-rc.85 (2020-10-09)
 
