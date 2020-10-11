@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.87 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed restoring of a functional state
+
 ## v3.0.0-rc.86 (2020-10-11)
 
 #### :bug: Bug Fix

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.87 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed restoring of a functional state `core/component/watch` `core/component/functional`
+
 ## v3.0.0-rc.86 (2020-10-11)
 
 #### :bug: Bug Fix

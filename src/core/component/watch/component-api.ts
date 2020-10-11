@@ -250,12 +250,21 @@ export function implementComponentWatchAPI(
 	// Initializes the specified watcher on a component instance
 	const initWatcher = (name, watcher) => {
 		mute(watcher.proxy);
+
 		watcher.proxy[toComponentObject] = component;
 		Object.defineProperty(component, name, {
 			enumerable: true,
 			configurable: true,
 			value: watcher.proxy
 		});
+
+		if (isFlyweight) {
+			// We need to track all modified fields of a function instance
+			// to restore state if a parent has re-created the component
+			watch(watcher.proxy, {deep: true, collapse: true, immediate: true}, (v, o, i) => {
+				unsafe.$modifiedFields[String(i.path[0])] = true;
+			});
+		}
 	};
 
 	// Watcher of fields
