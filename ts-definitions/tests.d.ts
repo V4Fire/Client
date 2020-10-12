@@ -492,10 +492,6 @@ declare namespace BrowserTests {
 		 * ```
 		 */
 		elNameGenerator(blockName: string, elName: string): string;
-		elNameGenerator(
-			blockName: string,
-			elName?: string
-		): ((elName: string) => string) | string;
 
 		/**
 		 * Returns a generator of an element class names
@@ -519,10 +515,6 @@ declare namespace BrowserTests {
 		 * ```
 		 */
 		elNameSelectorGenerator(blockName: string, elName: string): string;
-		elNameSelectorGenerator(
-			blockName: string,
-			elName?: string
-		): ((elName: string) => string) | string;
 
 		/**
 		 * Returns a generator of an element names with modifiers
@@ -550,11 +542,6 @@ declare namespace BrowserTests {
 		 * ```
 		 */
 		elModNameGenerator(fullElName: string, modName: string, modVal: string): string;
-		elModNameGenerator(
-			fullElName: string,
-			modName?: string,
-			modVal?: string
-		): ((modName: string, modVal: string) => string) | string;
 
 		/**
 		 * Returns a generator of an element class names with modifiers
@@ -582,12 +569,6 @@ declare namespace BrowserTests {
 		 * ```
 		 */
 		elModSelectorGenerator(fullElName: string, modName: string, modVal: string): string;
-		elModSelectorGenerator(
-			fullElName: string,
-			modName?: string,
-			modVal?: string
-		): ((modName: string, modVal: string) => string) | string;
-
 	}
 
 	/**
