@@ -133,7 +133,7 @@ class DOM {
 	 */
 	elModNameGenerator(fullElName, modName, modVal) {
 		if (modName != null) {
-			return `${this.elModNameGenerator(fullElName)(modName, modVal)}`;
+			return `${fullElName}_${modName}_${modVal}`;
 		}
 
 		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
@@ -144,10 +144,10 @@ class DOM {
 	 */
 	elModSelectorGenerator(fullElName, modName, modVal) {
 		if (modName != null) {
-			return `.${this.elModNameGenerator(fullElName)(modName, modVal)}`;
+			return `.${fullElName}_${modName}_${modVal}`;
 		}
 
-		return (modName, modVal) => `.${this.elModNameGenerator(fullElName)(modName, modVal)}`;
+		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
 	}
 
 	/**
