@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import { unwrap } from 'core/object/watch';
 import { getPropertyInfo } from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
@@ -207,6 +208,7 @@ export default class Field extends Friend {
 		}
 
 		let
+			syncWith,
 			needSet = isComponent;
 
 		let
@@ -219,6 +221,7 @@ export default class Field extends Friend {
 
 			ctx = <any>info.ctx;
 			ref = ctx;
+
 			chunks = info.path.split('.');
 
 			if (info.accessor != null && this.ctx.hook !== 'beforeRuntime') {
@@ -227,31 +230,47 @@ export default class Field extends Friend {
 
 			} else {
 				const
-					isReady = !ctx.lfc.isBeforeCreate();
+					isReady = !ctx.lfc.isBeforeCreate(),
+					isSystem = info.type === 'system',
+					isField = !isSystem && info.type === 'field';
 
-				switch (info.type) {
-					case 'system':
-						// eslint-disable-next-line @typescript-eslint/unbound-method
-						needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+				if (isSystem || isField) {
+					// If property not already watched, don't force the creation of a proxy
+					// eslint-disable-next-line @typescript-eslint/unbound-method
+					needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
 
+					if (isSystem) {
+						// If a component already initialized watchers of system fields,
+						// we have to set these properties directly to the proxy object
 						if (needSet) {
 							ref = ctx.$systemFields;
 						}
 
-						break;
-
-					case 'field':
-						needSet = isReady;
+					} else {
 						ref = ctx.$fields;
 
 						if (!isReady) {
 							chunks[0] = info.name;
 						}
 
-						break;
+						const needSync =
+							(ctx.isFlyweight || ctx.isFunctional) &&
+							unwrap(ref) === ref;
 
-					default:
-					// Loopback
+						// If a component doesn't already initialize watchers of fields,
+						// we have to synchronize these properties between the proxy object and component instance
+						if (needSync) {
+							const
+								name = chunks[0];
+
+							syncWith = {
+								name,
+								get value() {
+									return ref[name];
+								}
+							};
+						}
+					}
 				}
 			}
 
@@ -291,6 +310,10 @@ export default class Field extends Friend {
 
 		} else {
 			ctx.$set(ref, prop, value);
+		}
+
+		if (syncWith != null) {
+			Object.set(ctx, [syncWith.name], syncWith.value);
 		}
 
 		return value;
@@ -352,46 +375,68 @@ export default class Field extends Friend {
 		}
 
 		let
-			needSet = isComponent,
+			syncWith,
+			needSet = isComponent;
+
+		let
 			ref = obj,
 			chunks;
 
 		if (isComponent) {
 			const
-				info = getPropertyInfo(path, ctx),
-				isReady = !ctx.lfc.isBeforeCreate();
+				info = getPropertyInfo(path, ctx);
+
+			const
+				isReady = !ctx.lfc.isBeforeCreate(),
+				isSystem = info.type === 'system',
+				isField = !isSystem && info.type === 'field';
 
 			ctx = <any>info.ctx;
 
-			switch (info.type) {
-				case 'system':
-					// eslint-disable-next-line @typescript-eslint/unbound-method
-					needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+			chunks = info.path.split('.');
+			chunks[0] = info.name;
 
+			if (isSystem || isField) {
+				// If property not already watched, don't force the creation of a proxy
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+
+				if (isSystem) {
+					// If a component already initialized watchers of system fields,
+					// we have to set these properties directly to the proxy object
 					if (needSet) {
 						ref = ctx.$systemFields;
 					}
 
-					break;
-
-				case 'field':
-					needSet = isReady;
+				} else {
 					ref = ctx.$fields;
-					break;
 
-				default:
-				// Loopback
+					const needSync =
+						(ctx.isFlyweight || ctx.isFunctional) &&
+						unwrap(ref) === ref;
+
+					// If a component doesn't already initialize watchers of fields,
+					// we have to synchronize these properties between the proxy object and component instance
+					if (needSync) {
+						const
+							name = chunks[0];
+
+						syncWith = {
+							name,
+							get value() {
+								return ref[name];
+							}
+						};
+					}
+				}
 			}
-
-			chunks = info.path.split('.');
-			chunks[0] = info.name;
 
 		} else {
 			chunks = path.split('.');
 		}
 
 		let
-			test = true,
+			needDelete = true,
 			prop;
 
 		for (let i = 0; i < chunks.length; i++) {
@@ -405,19 +450,23 @@ export default class Field extends Friend {
 				newRef = Object.get(ref, [prop]);
 
 			if (newRef == null || typeof newRef !== 'object') {
-				test = false;
+				needDelete = false;
 				break;
 			}
 
 			ref = <any>newRef;
 		}
 
-		if (test) {
+		if (needDelete) {
 			if (needSet) {
 				ctx.$delete(ref, prop);
 
 			} else {
 				Object.delete(ref, [prop]);
+			}
+
+			if (syncWith != null) {
+				Object.delete(ctx, [syncWith.name], syncWith.value);
 			}
 
 			return true;

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.86 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed an optimization of lazy watchers
+
 ## v3.0.0-rc.77 (2020-10-08)
 
 #### :bug: Bug Fix

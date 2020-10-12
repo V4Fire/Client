@@ -90,10 +90,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				)
 			);
 
-		if (canSkip) {
-			return null;
-		}
-
 		const
 			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
@@ -107,6 +103,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			...opts,
 			...watchInfo?.opts
 		};
+
+		if (canSkip && !normalizedOpts.immediate) {
+			return null;
+		}
 
 		const
 			needCache = handler.length > 1 && normalizedOpts.collapse,
@@ -189,6 +189,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			if (normalizedOpts.immediate) {
 				handler.call(component, getVal());
 			}
+		}
+
+		if (canSkip) {
+			return null;
 		}
 
 		if (proxy != null) {
