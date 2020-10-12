@@ -109,15 +109,23 @@ class DOM {
 	/**
 	 * @see [[BrowserTests.DOM.elNameGenerator]]
 	 */
-	elNameGenerator(blockName) {
+	elNameGenerator(blockName, elName) {
+		if (elName != null) {
+			return `${blockName}__${elName}`;
+		}
+
 		return (elName) => `${blockName}__${elName}`;
 	}
 
 	/**
 	 * @see [[BrowserTests.DOM.elNameSelectorGenerator]]
 	 */
-	elNameSelectorGenerator(blockName) {
-		return (elName) => `.${this.elNameGenerator(blockName)(elName)}`;
+	elNameSelectorGenerator(blockName, elName) {
+		if (elName) {
+			return `.${blockName}__${elName}`
+		}
+
+		return (elName) => `.${blockName}__${elName}`;
 	}
 
 	/**

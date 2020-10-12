@@ -471,7 +471,7 @@ declare namespace BrowserTests {
 		isVisible(selectorOrElement: PlaywrightElContext | string, ctx?: PlaywrightElContext): Promise<boolean>;
 
 		/**
-		 * Returns a generator of element names
+		 * Returns a generator of an element names
 		 *
 		 * @example
 		 * ```typescript
@@ -483,7 +483,22 @@ declare namespace BrowserTests {
 		elNameGenerator(blockName: string): (elName: string) => string;
 
 		/**
-		 * Returns a generator of element class names
+		 * Returns an element name
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   elName = elNameGenerator('p-index', 'page'); // 'p-index__page'
+		 * ```
+		 */
+		elNameGenerator(blockName: string, elName: string): string;
+		elNameGenerator(
+			blockName: string,
+			elName?: string
+		): ((elName: string) => string) | string;
+
+		/**
+		 * Returns a generator of an element class names
 		 *
 		 * @example
 		 * ```typescript
@@ -495,7 +510,22 @@ declare namespace BrowserTests {
 		elNameSelectorGenerator(blockName: string): (elName: string) => string;
 
 		/**
-		 * Returns a generator of element names with modifiers
+		 * Returns an element class name
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   elName = elNameGenerator('p-index', 'page'); // '.p-index__page'
+		 * ```
+		 */
+		elNameSelectorGenerator(blockName: string, elName: string): string;
+		elNameSelectorGenerator(
+			blockName: string,
+			elName?: string
+		): ((elName: string) => string) | string;
+
+		/**
+		 * Returns a generator of an element names with modifiers
 		 *
 		 * @example
 		 * ```typescript
@@ -505,6 +535,11 @@ declare namespace BrowserTests {
 		 *   modsBase = elModNameGenerator(elName), // Function
 		 *   elNameWithMods = modsBase('type', 'test'); // 'p-index__page_type_test'
 		 * ```
+		 */
+		elModNameGenerator(fullElName: string): (modName: string, modVal: string) => string;
+
+		/**
+		 * Returns a string of an element name with modifiers
 		 *
 		 * @example
 		 * ```typescript
@@ -514,7 +549,6 @@ declare namespace BrowserTests {
 		 *   modsBase = elModNameGenerator(elName, 'type', 'test'); // 'p-index__page_type_test'
 		 * ```
 		 */
-		elModNameGenerator(fullElName: string): (modName: string, modVal: string) => string;
 		elModNameGenerator(fullElName: string, modName: string, modVal: string): string;
 		elModNameGenerator(
 			fullElName: string,
@@ -523,7 +557,7 @@ declare namespace BrowserTests {
 		): ((modName: string, modVal: string) => string) | string;
 
 		/**
-		 * Returns a generator of element names with modifiers
+		 * Returns a generator of an element class names with modifiers
 		 *
 		 * @example
 		 * ```typescript
@@ -533,6 +567,11 @@ declare namespace BrowserTests {
 		 *   modsBase = elModNameGenerator(elName), // Function
 		 *   elNameWithMods = modsBase('type', 'test'); // '.p-index__page_type_test'
 		 * ```
+		 */
+		elModSelectorGenerator(fullElName: string): (modName: string, modVal: string) => string;
+
+		/**
+		 * Returns a string of an element class name with modifiers
 		 *
 		 * @example
 		 * ```typescript
@@ -542,7 +581,6 @@ declare namespace BrowserTests {
 		 *   modsBase = elModSelectorGenerator(elName, 'type', 'test'); // '.p-index__page_type_test'
 		 * ```
 		 */
-		elModSelectorGenerator(fullElName: string): (modName: string, modVal: string) => string;
 		elModSelectorGenerator(fullElName: string, modName: string, modVal: string): string;
 		elModSelectorGenerator(
 			fullElName: string,
