@@ -20,11 +20,12 @@ import { attachDynamicWatcher } from 'core/component/watch/helpers';
  * Creates a function to watch changes from the specified component instance and returns it
  * @param component
  */
+// eslint-disable-next-line max-lines-per-function
 export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
 	const
 		watchCache = new Map();
 
-	// eslint-disable-next-line @typescript-eslint/typedef
+	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function
 	return function watchFn(this: unknown, path, optsOrHandler, rawHandler?) {
 		if (component.isFlyweight) {
 			return null;
@@ -61,6 +62,34 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			});
 		}
 
+		let
+			meta,
+			isRoot = false,
+			isFunctional = false;
+
+		if (info.type !== 'mounted') {
+			const
+				propCtx = info.ctx.unsafe,
+				ctxParams = propCtx.meta.params;
+
+			meta = propCtx.meta;
+			isRoot = Boolean(ctxParams.root);
+			isFunctional = !isRoot && ctxParams.functional === true;
+		}
+
+		const canSkip =
+			(
+				(isRoot || isFunctional) &&
+				(info.type === 'prop' || info.type === 'attr')
+			) ||
+
+			(
+				isFunctional && (
+					info.type === 'field' && meta.fields[info.name].functional === false ||
+					info.type === 'system' && meta.systemFields[info.name].functional === false
+				)
+			);
+
 		const
 			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
@@ -74,6 +103,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			...opts,
 			...watchInfo?.opts
 		};
+
+		if (canSkip && !normalizedOpts.immediate) {
+			return null;
+		}
 
 		const
 			needCache = handler.length > 1 && normalizedOpts.collapse,
@@ -158,15 +191,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
-		let
-			rootOrFunctional = false;
-
-		if (info.type !== 'mounted') {
-			const
-				propCtx = info.ctx.unsafe,
-				ctxParams = propCtx.meta.params;
-
-			rootOrFunctional = Boolean(ctxParams.root) || ctxParams.functional === true;
+		if (canSkip) {
+			return null;
 		}
 
 		if (proxy != null) {
@@ -175,13 +201,18 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			switch (info.type) {
+				case 'field':
 				case 'system':
 					if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
 						proxy[watcherInitializer]?.();
 						proxy = watchInfo.value;
 
 						mute(proxy);
-						proxy[info.name] = info.ctx[info.name];
+
+						if (info.type === 'system') {
+							proxy[info.name] = info.ctx[info.name];
+						}
+
 						unmute(proxy);
 
 						const
@@ -190,7 +221,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						Object.defineProperty(info.ctx, info.name, {
 							enumerable: true,
 							configurable: true,
-							get: () => proxy[info.name],
+
+							get: () =>
+								proxy[info.name],
+
 							set: (val) => {
 								propCtx.$set(proxy, info.name, val);
 							}
@@ -202,10 +236,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				case 'attr': {
 					const
 						attr = info.name;
-
-					if (rootOrFunctional) {
-						return null;
-					}
 
 					let
 						unwatch;
@@ -233,10 +263,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				}
 
 				case 'prop': {
-					if (rootOrFunctional) {
-						return null;
-					}
-
 					const
 						prop = info.name,
 						pathChunks = info.path.split('.'),

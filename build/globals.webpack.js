@@ -9,6 +9,7 @@
  */
 
 const
+	$C = require('collection.js'),
 	config = require('config');
 
 const
@@ -40,6 +41,20 @@ module.exports = {
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
 	},
+
+	COMPONENTS: include('build/entries.webpack').then(({blockMap}) => {
+		if (Object.isMap(blockMap)) {
+			return $C(blockMap).to({}).reduce((res, el, key) => {
+				res[key] = {
+					dependencies: JSON.stringify(el.dependencies)
+				};
+
+				return res;
+			});
+		}
+
+		return {};
+	}),
 
 	BLOCK_NAMES: runtime.blockNames ?
 		include('build/entries.webpack').then(({blockMap}) => {

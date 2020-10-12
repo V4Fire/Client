@@ -13,6 +13,8 @@
  * @packageDocumentation
  */
 
+import config from 'config';
+
 import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools';
 
@@ -365,9 +367,27 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * If true, the component will skip waiting of remote providers to avoid redundant re-renders.
 	 * This prop can help optimize your non-functional component when it doesn't contain any remote providers.
+	 * By default, this prop is calculated automatically based on component dependencies.
 	 */
-	@prop(Boolean)
-	readonly dontWaitRemoteProviders: boolean = false;
+	@prop({type: Boolean, required: false})
+	readonly dontWaitRemoteProvidersProp?: boolean;
+
+	/** @see [[iBlock.dontWaitRemoteProvidersProp]] */
+	@system((o) => o.sync.link((val) => {
+		if (val == null) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (o.dontWaitRemoteProviders != null) {
+				return o.dontWaitRemoteProviders;
+			}
+
+			const isRemote = /\bremote-provider\b/;
+			return !config.components[o.componentName]?.dependencies.some((dep) => isRemote.test(dep));
+		}
+
+		return val;
+	}))
+
+	dontWaitRemoteProviders!: boolean;
 
 	/**
 	 * Map of remote component watchers.
@@ -972,6 +992,7 @@ export default abstract class iBlock extends ComponentInterface {
 	@field({
 		replace: false,
 		forceUpdate: false,
+		functional: false,
 		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
 			return o.field.get('stageStore');
@@ -984,7 +1005,12 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Component initialize status store
 	 * @see [[iBlock.componentStatus]]
 	 */
-	@field({unique: true, forceUpdate: false})
+	@field({
+		unique: true,
+		forceUpdate: false,
+		functional: false
+	})
+
 	protected componentStatusStore: ComponentStatus = 'unloaded';
 
 	/**
@@ -1001,6 +1027,7 @@ export default abstract class iBlock extends ComponentInterface {
 		merge: true,
 		replace: false,
 		forceUpdate: false,
+		functional: false,
 		init: () => Object.create({})
 	})
 

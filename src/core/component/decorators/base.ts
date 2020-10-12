@@ -8,7 +8,8 @@
 
 import { defProp } from 'core/const/props';
 import { initEmitter, metaPointers } from 'core/component/const';
-import { inverseFieldMap } from 'core/component/decorators/const';
+import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
+import { storeRgxp } from 'core/component/reflection';
 
 import { ComponentMeta } from 'core/component/interface';
 import { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
@@ -54,6 +55,8 @@ export function paramsFactory<T = object>(
 			let
 				p = params;
 
+			delete meta.tiedFields[key];
+
 			if (desc != null) {
 				delete meta.props[key];
 				delete meta.fields[key];
@@ -84,15 +87,15 @@ export function paramsFactory<T = object>(
 				}
 
 				const
-					obj = meta[metaKey],
-					el = obj[key] ?? {src: meta.componentName};
+					metaCluster = meta[metaKey],
+					info = metaCluster[key] ?? {src: meta.componentName};
 
 				if (metaKey === 'methods') {
 					const
 						name = key;
 
 					let
-						{watchers, hooks} = el;
+						{watchers, hooks} = info;
 
 					if (p.watch != null) {
 						watchers = watchers ?? {};
@@ -136,7 +139,7 @@ export function paramsFactory<T = object>(
 						}
 					}
 
-					obj[key] = wrapOpts({...el, ...p, watchers, hooks});
+					metaCluster[key] = wrapOpts({...info, ...p, watchers, hooks});
 					return;
 				}
 
@@ -144,11 +147,11 @@ export function paramsFactory<T = object>(
 				delete p.cache;
 
 				if (metaKey === 'accessors' ? key in meta.computedFields : !hasCache && key in meta.accessors) {
-					obj[key] = wrapOpts({...meta.computedFields[key], ...p});
+					metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p});
 					delete meta.computedFields[key];
 
 				} else {
-					obj[key] = wrapOpts({...el, ...p});
+					metaCluster[key] = wrapOpts({...info, ...p});
 				}
 
 				if (p.dependencies != null) {
@@ -172,16 +175,16 @@ export function paramsFactory<T = object>(
 
 			const
 				metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
-				inverse = inverseFieldMap[metaKey],
-				obj = meta[metaKey];
+				inverseKeys = inverseFieldMap[metaKey],
+				metaCluster = meta[metaKey];
 
-			if (inverse != null) {
-				for (let i = 0; i < inverse.length; i++) {
+			if (inverseKeys != null) {
+				for (let i = 0; i < inverseKeys.length; i++) {
 					const
-						tmp = meta[inverse[i]];
+						tmp = meta[inverseKeys[i]];
 
 					if (key in tmp) {
-						obj[key] = tmp[key];
+						metaCluster[key] = tmp[key];
 						delete tmp[key];
 						break;
 					}
@@ -193,10 +196,10 @@ export function paramsFactory<T = object>(
 			}
 
 			const
-				el = obj[key] ?? {src: meta.componentName};
+				info = metaCluster[key] ?? {src: meta.componentName};
 
 			let
-				{watchers, after} = el;
+				{watchers, after} = info;
 
 			if (p.after != null) {
 				after = new Set([].concat(p.after));
@@ -218,18 +221,22 @@ export function paramsFactory<T = object>(
 				}
 			}
 
-			obj[key] = wrapOpts({
-				...el,
+			metaCluster[key] = wrapOpts({
+				...info,
 				...p,
 
 				after,
 				watchers,
 
 				meta: {
-					...el.meta,
+					...info.meta,
 					...p.meta
 				}
 			});
+
+			if (tiedFieldMap[metaKey] != null && storeRgxp.test(key)) {
+				meta.tiedFields[key] = key.replace(storeRgxp, '');
+			}
 		}
 	};
 }
