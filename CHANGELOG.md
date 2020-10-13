@@ -26,6 +26,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added `functionalWatching` `core/component/meta`
 * Added support of `functionalWatching` `core/component/watch`
 
+#### :nail_care: Polish
+
+* Improved documentation
+
 ## v3.0.0-rc.87 (2020-10-11)
 
 #### :bug: Bug Fix
