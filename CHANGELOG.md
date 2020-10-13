@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :rocket: New Feature
+
+* Added `functionalWatching` to field decorators `core/component/decorators`
+
+#### :bug: Bug Fix
+
+* Fixed initializing of `stageStore` `iBlock`
+
+#### :house: Internal
+
+* Added `functionalWatching` `core/component/meta`
+* Added support of `functionalWatching` `core/component/watch`
+
 ## v3.0.0-rc.87 (2020-10-11)
 
 #### :bug: Bug Fix

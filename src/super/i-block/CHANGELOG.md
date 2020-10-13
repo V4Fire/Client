@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of `stageStore`
+
 ## v3.0.0-rc.85 (2020-10-09)
 
 #### :boom: Breaking Change
