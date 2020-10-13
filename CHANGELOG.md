@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed initializing of `stageStore` `iBlock`
+* [Added a boolean type for `progressIcon` props](https://github.com/V4Fire/Client/pull/409/files)
 
 #### :house: Internal
 
