@@ -77,18 +77,31 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isFunctional = !isRoot && ctxParams.functional === true;
 		}
 
-		const canSkip =
-			(
-				(isRoot || isFunctional) &&
-				(info.type === 'prop' || info.type === 'attr')
-			) ||
+		let canSkip =
+			(isRoot || isFunctional) &&
+			(info.type === 'prop' || info.type === 'attr');
 
-			(
-				isFunctional && (
-					info.type === 'field' && meta.fields[info.name].functional === false ||
-					info.type === 'system' && meta.systemFields[info.name].functional === false
-				)
-			);
+		if (!canSkip && isFunctional) {
+			let
+				f;
+
+			switch (info.type) {
+				case 'system':
+					f = meta.systemFields[info.name];
+					break;
+
+				case 'field':
+					f = meta.fields[info.name];
+					break;
+
+				default:
+					// Do nothing
+			}
+
+			if (f != null) {
+				canSkip = f.functional === false || f.functionalWatching === false;
+			}
+		}
 
 		const
 			isDefinedPath = Object.size(info.path) > 0,

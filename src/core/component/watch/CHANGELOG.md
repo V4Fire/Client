@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :house: Internal
+
+* Added support of `functionalWatching`
+
 ## v3.0.0-rc.87 (2020-10-11)
 
 #### :bug: Bug Fix
