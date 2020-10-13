@@ -25,6 +25,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `functionalWatching` `core/component/meta`
 * Added support of `functionalWatching` `core/component/watch`
+* Added a new API for generating selectors `tests/helpers/dom`
+  * `elNameGenerator`
+  * `elNameSelectorGenerator`
+  * `elModNameGenerator`
+  * `elModSelectorGenerator`
 
 #### :nail_care: Polish
 
