@@ -16,7 +16,9 @@ This module provides a superclass to manage the working of a component and data 
 
 ## Basic concepts
 
-To select a data provider tied with a component, you need to provide the `dataProvider` prop or set the default value for it. Mind, the prop value has a string type and contains a provider name from the global pool. To register a data provider within the global pool, you need to use the `@provider` decorator.
+To select a data provider tied with a component, you need to provide the `dataProvider` prop or set the default value for it.
+Mind, the prop value has a string type and contains a provider name from the global pool.
+To register a data provider within the global pool, you need to use the `@provider` decorator.
 
 **models/user.ts**
 
@@ -56,7 +58,10 @@ After the loading of data, there is stored within the `db` field.
   {{ db.someValue }}
 ```
 
-Every child instance of iData can have no more than one data provider, i.e., you should decompose your data logic between different components, but not to combine all in one component. This approach produces a more strict code structure that is easy to support and debug. Also, all pending requests with the same hash are joined, and the final result will bee shared between consumers. Don't be afraid about the performance decreasing.
+Every child instance of iData can have no more than one data provider, i.e., you should decompose your data logic between different components,
+but not to combine all in one component. This approach produces a more strict code structure that is easy to support and debug.
+Also, all pending requests with the same hash are joined, and the final result will bee shared between consumers.
+Don't be afraid about the performance decreasing.
 
 ```
 /// There will be only two real requests because the first two requests are had the same request hash
@@ -107,12 +112,13 @@ The component doesn't have any UI representation and provides a flexible API to 
 < b-remote-provider :dataProvider = 'myData' | :field = 'fieldWhenWillBeStoredData'
 ```
 
-This way is useful when you are using it with the `v-if` directive, but be careful if you want to periodically update data from remote providers: you can emit a bunch of redundant re-renders. Mind, `bRemoteProvider` is a regular component, and initialization of it takes additional time.
+This way is useful when you are using it with the `v-if` directive, but be careful if you want to periodically update data from remote providers:
+you can emit a bunch of redundant re-renders. Mind, `bRemoteProvider` is a regular component, and initialization of it takes additional time.
 The valid case to use this kind of provider is to submit some data without getting the response, for instance, analytic events.
 
 #### Manual using of remote providers
 
-You free to use data providers that are not tied with your component, but remember about async wrapping.
+You free to use data providers that are not tied with your component but remember async wrapping.
 
 ```typescript
 import User from 'models/user';
@@ -167,7 +173,9 @@ export default class bExample extends iData {
 
 ### Changing of `db`
 
-This behavior can be canceled by switching the `checkDBEquality` prop to `false`. Or you can provide a function to compare within this prop.
+Before setting a new `db` value, it will be compared with the previous. The new data will be applied only if it not equal to the previous.
+To compare, by default is used `Object.fastClone`. This behavior can be canceled by switching the `checkDBEquality` prop to `false`.
+Or you can provide a function to compare within this prop.
 
 ### Converting provider data
 
@@ -233,7 +241,8 @@ export default class bExample extends iData {
 
 If a component has a data provider, it will ask for data on the initializing stage using `initLoad`.
 
-Till data is loaded, the component will have the `loading` status (`componentStatus`). After the main provider loading and if any other external providers are loaded, the component will be switched to the `ready` status.
+Till data is loaded, the component will have the `loading` status (`componentStatus`).
+After the main provider loading and if any other external providers are loaded, the component will be switched to the `ready` status.
 
 You can use `isReady` to avoid the rendering of template chunks with data before it is loaded.
 
@@ -269,7 +278,10 @@ export default class bExample extends iData {
 
 ### Preventing of the initial data loading
 
-By default, if a component has a data provider, it will ask for data on initial loading. But sometimes you have to manage this process manually. You can use `defaultRequestFilter` to provide a function that can filter any implicit requests, like initial loading: if the function returns a negative value, the request will be aborted. If the prop is set to `true`, then all requests without payload will be aborted.
+By default, if a component has a data provider, it will ask for data on initial loading.
+But sometimes you have to manage this process manually. You can use `defaultRequestFilter` to provide a function that can filter any implicit requests,
+like initial loading: if the function returns a negative value, the request will be aborted. If the prop is set to `true`,
+then all requests without payload will be aborted.
 
 ```
 < b-example :dataProvider = 'myData' | :defaultRequestFilter = filterRequests
@@ -344,7 +356,8 @@ export default class bExample extends iData {
 
 ### Preventing of the implicit requests
 
-You can use `defaultRequestFilter` to provide a function that can filter any implicit requests: if the function returns a negative value, the request will be aborted. If the prop is set to `true`, then all requests without payload will be aborted.
+You can use `defaultRequestFilter` to provide a function that can filter any implicit requests: if the function returns a negative value,
+the request will be aborted. If the prop is set to `true`, then all requests without payload will be aborted.
 
 ## Provider API
 
