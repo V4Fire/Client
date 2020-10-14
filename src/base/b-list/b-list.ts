@@ -7,6 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
+import { isAbsURL } from 'core/url';
 import { deprecated } from 'core/functools/deprecation';
 
 import iVisible from 'traits/i-visible/i-visible';
@@ -424,7 +426,19 @@ export default class bList extends iData implements iVisible, iWidth {
 			}
 
 			if (el.href === undefined) {
-				el.href = this.autoHref && el.value !== undefined ? `#${String(el.value)}` : 'javascript:void(0)';
+				let
+					href = String(el.value);
+
+				const valid = {
+					'/': true,
+					'#': true
+				};
+
+				if (!isAbsURL.test(href) && valid[href[0]] !== true) {
+					href = `#${href}`;
+				}
+
+				el.href = this.autoHref && el.value !== undefined ? href : 'javascript:void(0)';
 			}
 
 			res.push(el);
