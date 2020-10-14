@@ -301,8 +301,8 @@ export default class bList extends iData implements iVisible, iWidth {
 			}
 		}
 
-		this.emit('change', this.active);
 		this.emit('immediateChange', this.active);
+		this.emit('change', this.active);
 
 		return true;
 	}
@@ -345,8 +345,8 @@ export default class bList extends iData implements iVisible, iWidth {
 			}
 		}
 
-		this.emit('change', this.active);
 		this.emit('immediateChange', this.active);
+		this.emit('change', this.active);
 
 		return true;
 	}
