@@ -9,11 +9,27 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.83 ()
+## v3.0.0-rc.89 ()
 
 #### :boom: Breaking Change
 
 * Now all extra classes that were added by using `appendToRootClasses` added to the start of the declaration
+
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of `stageStore`
+
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :boom: Breaking Change
+
+* Now `dontWaitRemoteProviders` is calculated automatically
+* Marked as non-functional:
+  * `stageStore`
+  * `componentStatusStore`
+  * `watchModsStore`
 
 ## v3.0.0-rc.65 (2020-09-21)
 

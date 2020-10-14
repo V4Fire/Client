@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.83 ()
+## v3.0.0-rc.89 ()
 
 #### :boom: Breaking Change
 
@@ -83,6 +83,90 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :rocket: New Feature
+
+* Added `functionalWatching` to field decorators `core/component/decorators`
+
+#### :bug: Bug Fix
+
+* Fixed initializing of `stageStore` `iBlock`
+* [Added a boolean type for `progressIcon` props](https://github.com/V4Fire/Client/pull/409/files)
+
+#### :house: Internal
+
+* Added `functionalWatching` `core/component/meta`
+* Added support of `functionalWatching` `core/component/watch`
+* Added a new API for generating selectors `tests/helpers/dom`
+  * `elNameGenerator`
+  * `elNameSelectorGenerator`
+  * `elModNameGenerator`
+  * `elModSelectorGenerator`
+
+#### :nail_care: Polish
+
+* Improved documentation
+
+## v3.0.0-rc.87 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed restoring of a functional state `core/component/watch` `core/component/functional`
+
+## v3.0.0-rc.86 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed an optimization of lazy watchers `base/i-block/modules/field`
+* Fixed immediate watchers `core/component/watch`
+
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :boom: Breaking Change
+
+* `iBlock`:
+  * Now `dontWaitRemoteProviders` is calculated automatically
+  * Marked as non-functional:
+    * `stageStore`
+    * `componentStatusStore`
+    * `watchModsStore`
+
+#### :rocket: New Feature
+
+* Provided a graph of components to `build/globals.webpack` / `config`
+
+#### :house: Internal
+
+* Optimized watching of non-functional properties `core/component/watch`
+* Extracted interfaces to `index.d.ts` `core/prelude/test-env`
+
+## v3.0.0-rc.84 (2020-10-09)
+
+#### :rocket: New Feature
+
+* Added `ComponentMeta.tiedFields` `core/component/meta`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using a complex path as a dependency `core/component/construct`
+
+#### :house: Internal
+
+* Now all tied fields are collected within `meta.tiedFields` `core/component/decorators`
+* Optimized creation of components `core/component/construct`
+* Optimized creation of watchers of functional components `core/component/watch`
+
+## v3.0.0-rc.83 (2020-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `in-view/mutation` does not fire a callback in old chromiums `core/dom/in-view`
+
+#### :house: Internal
+
+* Removed `.travis.yml`
 
 ## v3.0.0-rc.82 (2020-10-08)
 

@@ -77,9 +77,10 @@ export interface Item extends Dictionary {
 	iconComponent?: string;
 
 	/**
-	 * Component to show "in-progress" state of the item
+	 * Component to show "in-progress" state of the item or
+	 * Boolean, if need to show progress by slot or `b-progress-icon`
 	 */
-	progressIcon?: string;
+	progressIcon?: string | boolean;
 
 	/**
 	 * Map of additional classes of the item

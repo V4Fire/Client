@@ -8,61 +8,6 @@
 
 import iStaticPage, { ComponentElement } from 'super/i-static-page/i-static-page';
 
-export interface RenderParams {
-	/**
-	 * Component attrs
-	 */
-	attrs: Dictionary;
-
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | string>;
-}
-
-/**
- * Content to render into an element
- *
- * @example
- *
- * ```typescript
- * globalThis.renderComponents('b-button', {
- *   attrs: {
- *      testProp: 1
- *   },
- *
- *   content: {
- *     default: {
- *       tag: 'b-button',
- *       content: {
- *         default: 'Test'
- *       }
- *     }
- *   }
- * });
- * ```
- *
- * This schema is the equivalent of such a template:
- *
- * ```ss
- * < b-button :testProp = 1
- *   < b-button
- *     Test
- * ```
- */
-export interface RenderContent {
-	/**
-	 * Component name or tagName
-	 */
-	tag: string;
-
-	/**
-	 * Component attrs
-	 */
-	attrs: Dictionary;
-
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | string>;
-}
-
 globalThis.renderComponents = (
 	componentName: string,
 	scheme: RenderParams[],

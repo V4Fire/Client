@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :rocket: New Feature
+
+* Provided a graph of components to `globals.webpack`
+
 ## v3.0.0-rc.76 (2020-10-07)
 
 #### :boom: Breaking Change

@@ -11,3 +11,8 @@ export const inverseFieldMap = Object.createDict({
 	fields: ['props', 'systemFields'],
 	systemFields: ['props', 'fields']
 });
+
+export const tiedFieldMap = Object.createDict({
+	fields: true,
+	systemFields: true
+});

@@ -30,13 +30,13 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	page?: string;
 
 	/**
-	 * Name of an entry point that tied with the route.
-	 * This parameter needs to use when you split your application into different chunks and
-	 * want to tie a route with some chunk. By default, the value is taken from the route name.
+	 * Name of an entry point that is tied with the route.
+	 * This parameter needs to use when you split your application into different chunks and want to tie a
+	 * route with some chunk. By default, the value is taken from the route name.
 	 *
-	 * To create a new entry point you need to create a file within the "core/entries" directory.
-	 * The entry point name is taken from this file. Within this file,
-	 * you write import imports to dependencies of the chunk.
+	 * To create a new entry point, you need to create a file within the "core/entries" directory.
+	 * The entry point name is taken from this file. Within this file, you write import imports to
+	 * dependencies of the chunk.
 	 *
 	 * @example
 	 * *src/entries/index.js*
@@ -65,7 +65,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	/**
 	 * If false, then the route doesn't have any dynamic dependencies to download.
 	 * This parameter is used when you want to tie a route with some entry point,
-	 * but dependencies of this entry point were already initialized statically.
+	 * but this entry point's dependencies were already initialized statically.
 	 *
 	 * @default `true`
 	 */
@@ -73,7 +73,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * @deprecated
-	 * @see [[StaticRouteMeta.remote]]
+	 * @see [[StaticRouteMeta.dynamicDependencies]]
 	 */
 	remote?: boolean;
 
@@ -83,8 +83,8 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	 * You can use some variable binding within the path.
 	 * To organize such binding is used "path-to-regexp" library.
 	 *
-	 * The values to interpolate the path are taken from the "params" property of a route,
-	 * this parameter can be provided by using "push" or "replace" methods of the router.
+	 * The values to interpolate the path are taken from the "params" property of a route.
+	 * This parameter can be provided by using "push" or "replace" methods of the router.
 	 */
 	path?: string;
 
@@ -104,7 +104,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	 * for example, you have routes for URL-s "/foo" and "/bar", but if somebody tries to enter different paths
 	 * that weren't described, it will be redirected to the default route.
 	 *
-	 * There is can be only one default route, but if you defined several routes with this flag,
+	 * There can be only one default route, but if you defined several routes with this flag,
 	 * then it will be used the last defined.
 	 *
 	 * @default `false`
@@ -118,20 +118,20 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	index?: boolean;
 
 	/**
-	 * If this route just an alias for another route, this parameter contains a name of a route that we refer to.
-	 * Mind, the alias preserves its original name of the route (but rest parameters are taken from a refer route),
-	 * if you want to organize some redirect logic, please see the "redirect" parameter.
+	 * If the route is an alias to another route, the parameter contains the route name we refer to.
+	 * The alias preserves its original name of the route (but rest parameters are taken from a refer route).
+	 * If you want to organize some redirect logic, please see the "redirect" parameter.
 	 */
 	alias?: string;
 
 	/**
-	 * If you need to automatically redirect to another route every time when you switch to the current,
-	 * you can pass to this parameter a name of the route to redirect.
+	 * If you need to automatically redirect to another route whenever you switch to the current,
+	 * you can pass this parameter a name of the route to redirect.
 	 */
 	redirect?: string;
 
 	/**
-	 * Marks this route as "external", i.e. transitions to this route will be produced by using location.href
+	 * Marks the route as "external", i.e. transitions to this route will be produced by using location.href
 	 */
 	external?: boolean;
 
@@ -154,9 +154,9 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	meta?: Dictionary;
 
 	/**
-	 * If false, the router don't automatically scroll a page to coordinates that tied with the route.
-	 * Mind, if you switch off this parameter, the scroll position of a page
-	 * won't be restored on a back or forward tap too.
+	 * If false, the router doesn't automatically scroll a page to coordinates tied with the route.
+	 * Mind, if you switch off this parameter, the scroll position of a page won't be restored
+	 * on a back or forward tap too.
 	 *
 	 * @default `true`
 	 */
@@ -215,7 +215,7 @@ export interface Route<
 	page: string;
 
 	/**
-	 * If true, this route can be used as default
+	 * If true, the route can be used as default
 	 */
 	default: boolean;
 

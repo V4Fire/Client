@@ -77,8 +77,8 @@
 								+= self.slot('progressIcon', {':item': 'item', ':icon': 'item.progressIcon'})
 
 							< component &
-								v-else-if = progressIcon |
-								:is = progressIcon
+								v-else-if = Object.isString(el.progressIcon) |
+								:is = el.progressIcon
 							.
 
 							< @b-progress-icon v-else

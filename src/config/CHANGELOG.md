@@ -9,8 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.89 ()
+## v3.0.0-rc.85 (2020-10-09)
 
-#### :nail_care: Polish
+#### :rocket: New Feature
 
-* Added documentation
+* Provided a graph of components to `components`

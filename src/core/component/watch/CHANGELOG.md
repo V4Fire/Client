@@ -9,6 +9,36 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :house: Internal
+
+* Added support of `functionalWatching`
+
+## v3.0.0-rc.87 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed restoring of a functional state
+
+## v3.0.0-rc.86 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed immediate watchers
+
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :house: Internal
+
+* Optimized watching of non-functional properties
+
+## v3.0.0-rc.84 (2020-10-09)
+
+#### :house: Internal
+
+* Optimized creation of watchers of functional components
+
 ## v3.0.0-rc.71 (2020-10-01)
 
 #### :bug: Bug Fix
