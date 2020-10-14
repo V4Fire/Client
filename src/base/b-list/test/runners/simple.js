@@ -36,7 +36,10 @@ module.exports = (page) => {
 							items: [
 								{
 									label: 'Foo',
-									value: 0
+									value: 0,
+									attrs: {
+										title: 'Custom attr'
+									}
 								},
 
 								{
@@ -70,6 +73,10 @@ module.exports = (page) => {
 				})
 
 			).toEqual(['Foo', 'Bla']);
+
+			expect(
+				await target.evaluate((ctx) => ctx.block.element('link').getAttribute('title'))
+			).toBe('Custom attr');
 
 			expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
 		});
