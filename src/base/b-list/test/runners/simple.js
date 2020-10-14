@@ -230,7 +230,7 @@ module.exports = (page) => {
 				target = await init();
 
 			expect(
-				await target.evaluate((ctx) => {
+				await target.evaluate(async (ctx) => {
 					const
 						log = [];
 
@@ -239,15 +239,51 @@ module.exports = (page) => {
 					});
 
 					ctx.setActive(0);
+
+					await ctx.nextTick();
+
 					ctx.setActive(1);
+
+					await ctx.nextTick();
 
 					return log;
 				})
 
 			).toEqual([
-				[],
+				[undefined, undefined, undefined],
 				[0, undefined, 'active'],
 				[1, 0, 'active']
+			]);
+		});
+
+		it('watching for `active` with `multiple = true`', async () => {
+			const
+				target = await init({multiple: true});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						log = [];
+
+					ctx.watch('active', {immediate: true}, (val, oldVal, p) => {
+						log.push([[...val], oldVal && [...oldVal], p?.path.join('.')]);
+					});
+
+					ctx.setActive(0);
+
+					await ctx.nextTick();
+
+					ctx.setActive(1);
+
+					await ctx.nextTick();
+
+					return log;
+				})
+
+			).toEqual([
+				[[], undefined, undefined],
+				[[0], [], 'active'],
+				[[0, 1], [0], 'active']
 			]);
 		});
 	});
