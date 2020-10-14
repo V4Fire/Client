@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#if demo
+import 'models/demo/list';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 
 import { isAbsURL } from 'core/url';
