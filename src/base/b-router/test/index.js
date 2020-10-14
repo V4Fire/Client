@@ -11,6 +11,12 @@
 const
 	h = include('tests/helpers');
 
+/**
+ * Starts a test
+ *
+ * @param {?} page
+ * @returns {!Promise<void>}
+ */
 module.exports = async (page) => {
 	const
 		// eslint-disable-next-line import/no-nodejs-modules
