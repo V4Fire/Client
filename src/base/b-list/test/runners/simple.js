@@ -45,7 +45,9 @@ module.exports = (page) => {
 								}
 							],
 
-							...attrs
+							...attrs,
+							// eslint-disable-next-line no-eval
+							active: /new /.test(attrs.active) ? eval(attrs.active) : attrs.active
 						}
 					}
 				];
@@ -75,6 +77,21 @@ module.exports = (page) => {
 		it('initialization with the predefined active element', async () => {
 			const target = await init({active: 0});
 			expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+		});
+
+		it('initialization with the predefined active element (primitive) with `multiple = true`', async () => {
+			const target = await init({active: 0, multiple: true});
+			expect(await target.evaluate((ctx) => [...ctx.active])).toEqual([0]);
+		});
+
+		it('initialization with the predefined active element (array) with `multiple = true`', async () => {
+			const target = await init({active: [0, 1], multiple: true});
+			expect(await target.evaluate((ctx) => [...ctx.active])).toEqual([0, 1]);
+		});
+
+		it('initialization with the predefined active element (set) with `multiple = true`', async () => {
+			const target = await init({active: 'new Set([0, 1])', multiple: true});
+			expect(await target.evaluate((ctx) => [...ctx.active])).toEqual([0, 1]);
 		});
 
 		it('switching of an active element', async () => {
