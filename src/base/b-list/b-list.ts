@@ -172,7 +172,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if (o.multiple) {
 			const
-				objVal = new Set(Array.concat([], val));
+				objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
 
 			if (Object.fastCompare(objVal, o.activeStore)) {
 				return o.activeStore;
