@@ -54,7 +54,7 @@
 
 					- block value
 						< span.&__cell.&__link-value
-							+= self.slot({':item': 'item'})
+							+= self.slot('default', {':item': 'item'})
 								{{ t(item.label) }}
 
 					- block icon
