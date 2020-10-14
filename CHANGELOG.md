@@ -54,6 +54,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `interface.ts`
 
 * Added support of the default slot `bList`
+* Now `content` can be provided as a function `core/prelude/test-env/renderComponents`
 
 #### :bug: Bug Fix
 
