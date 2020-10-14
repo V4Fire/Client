@@ -94,6 +94,33 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => [...ctx.active])).toEqual([0, 1]);
 		});
 
+		it('changing of items', async () => {
+			const
+				target = await init();
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						log = [];
+
+					ctx.on('onItemsChange', (val) => {
+						log.push(Object.fastClone(val));
+					});
+
+					ctx.items = [{label: 'Bar', value: []}];
+
+					log.push(ctx.items);
+
+					await ctx.nextTick();
+					return log;
+				})
+
+			).toEqual([
+				[{label: 'Bar', value: []}],
+				[{label: 'Bar', value: []}]
+			]);
+		});
+
 		it('switching of an active element', async () => {
 			const
 				target = await init();
