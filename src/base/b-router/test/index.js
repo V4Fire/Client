@@ -8,13 +8,17 @@
 
 /* eslint-disable max-lines-per-function */
 
+/**
+ * @typedef {import('playwright').Page} Page
+ */
+
 const
 	h = include('tests/helpers');
 
 /**
  * Starts a test
  *
- * @param {?} page
+ * @param {Page} page
  * @returns {!Promise<void>}
  */
 module.exports = async (page) => {

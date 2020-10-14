@@ -8,6 +8,10 @@
 
 // @ts-check
 
+/**
+ * @typedef {import('playwright').Page} Page
+ */
+
 const
 	h = include('tests/helpers'),
 	u = include('tests/utils'),
@@ -16,7 +20,7 @@ const
 /**
  * Starts a test
  *
- * @param {?} page
+ * @param {Page} page
  * @param {!Object} params
  * @returns {!Promise<void>}
  */
