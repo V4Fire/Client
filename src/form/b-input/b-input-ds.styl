@@ -34,7 +34,7 @@ b-input
 				$textStyle = getField($mod, textStyle)
 
 				if $textStyle
-					for $key, $val in getDSOptions(path(text $textStyle style))
+					for $key, $val in getDSOptions(text, path($textStyle style))
 						$mod[$key] = $val
 
 				if $mod

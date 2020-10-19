@@ -225,7 +225,7 @@ i($name, $repeat = no-repeat, $align = center)
  */
 t($name)
 	$name = replaceByRegExp($name, "[ \/]", "-", "g")
-	$obj = getDSOptions("text." + $name)
+	$obj = getDSOptions("text", $name)
 
 	if $obj
 		interpolate-props($obj)
@@ -240,14 +240,14 @@ t($name)
  * r(big, '$s 0 $s') -> border-radius 16px 0 16px
  */
 r($name, $pos = null)
-	$val = getDSOptions("rounding." + $name)
+	$val = getDSOptions("rounding", $name)
 
 	if $val
 		if $pos
 			border-radius convert(replace("%s", s("%s", $val), $pos))
 
 		else
-			border-radius $val
+			border-radius type($val) == "string" ? convert($val) : $val
 
 /**
  * Generates rules from object properties

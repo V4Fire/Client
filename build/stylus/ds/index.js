@@ -97,12 +97,36 @@ module.exports = function addPlugins(api) {
 	/**
 	 * Returns a part of the Design System by the specified path or the whole DS object
 	 *
-	 * @param {string} [string] - field path
+	 * @param {string} [string] - first level field (colors, rounding, etc.)
+	 * @param {value} [string] - field path
 	 * @returns {!Object}
 	 */
 	api.define(
 		'getDSOptions',
-		({string} = {}) => string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS
+		({string} = {}, value = {}) => {
+			if (string === undefined) {
+				return DS;
+			}
+
+			const
+				hasIncludedThemes = Boolean(INCLUDED_THEMES);
+
+			let
+				path;
+
+			if (!hasIncludedThemes && THEME) {
+				path = [string, 'theme', THEME];
+
+			} else {
+				path = [string];
+			}
+
+			if (value.string) {
+				path.push(value.string);
+			}
+
+			return hasIncludedThemes ? stylus.utils.coerce($C(cssVars).get(path)) : $C(DS).get(path);
+		}
 	);
 
 	/**
