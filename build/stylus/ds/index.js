@@ -76,7 +76,7 @@ module.exports = function addPlugins(api) {
 	);
 
 	/**
-	 * Returns Design System css variables with values
+	 * Returns Design System css variables with its values
 	 *
 	 * @param {string} theme
 	 * @returns {!Object}

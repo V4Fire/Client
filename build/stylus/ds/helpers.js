@@ -68,9 +68,7 @@ function prepareData(data, path, theme) {
 	$C(data).forEach((d, val) => {
 		if (theme === true) {
 			if (Object.isObject(d)) {
-				if (theme === true) {
-					prepareData(d, path, val);
-				}
+				prepareData(d, path, val);
 
 			} else {
 				throw new Error('Cannot find theme dictionary');
