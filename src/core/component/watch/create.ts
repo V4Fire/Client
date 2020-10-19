@@ -20,11 +20,12 @@ import { attachDynamicWatcher } from 'core/component/watch/helpers';
  * Creates a function to watch changes from the specified component instance and returns it
  * @param component
  */
+// eslint-disable-next-line max-lines-per-function
 export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
 	const
 		watchCache = new Map();
 
-	// eslint-disable-next-line @typescript-eslint/typedef
+	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function
 	return function watchFn(this: unknown, path, optsOrHandler, rawHandler?) {
 		if (component.isFlyweight) {
 			return null;
@@ -61,6 +62,47 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			});
 		}
 
+		let
+			meta,
+			isRoot = false,
+			isFunctional = false;
+
+		if (info.type !== 'mounted') {
+			const
+				propCtx = info.ctx.unsafe,
+				ctxParams = propCtx.meta.params;
+
+			meta = propCtx.meta;
+			isRoot = Boolean(ctxParams.root);
+			isFunctional = !isRoot && ctxParams.functional === true;
+		}
+
+		let canSkip =
+			(isRoot || isFunctional) &&
+			(info.type === 'prop' || info.type === 'attr');
+
+		if (!canSkip && isFunctional) {
+			let
+				f;
+
+			switch (info.type) {
+				case 'system':
+					f = meta.systemFields[info.name];
+					break;
+
+				case 'field':
+					f = meta.fields[info.name];
+					break;
+
+				default:
+					// Do nothing
+			}
+
+			if (f != null) {
+				canSkip = f.functional === false || f.functionalWatching === false;
+			}
+		}
+
 		const
 			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
@@ -75,8 +117,12 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			...watchInfo?.opts
 		};
 
+		if (canSkip && !normalizedOpts.immediate) {
+			return null;
+		}
+
 		const
-			needCache = handler.length > 1 && (isDefinedPath || normalizedOpts.collapse),
+			needCache = handler.length > 1 && normalizedOpts.collapse,
 			originalHandler = handler;
 
 		let
@@ -158,15 +204,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
-		let
-			rootOrFunctional = false;
-
-		if (info.type !== 'mounted') {
-			const
-				propCtx = info.ctx.unsafe,
-				ctxParams = propCtx.meta.params;
-
-			rootOrFunctional = Boolean(ctxParams.root) || ctxParams.functional === true;
+		if (canSkip) {
+			return null;
 		}
 
 		if (proxy != null) {
@@ -175,13 +214,18 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			switch (info.type) {
+				case 'field':
 				case 'system':
 					if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
 						proxy[watcherInitializer]?.();
 						proxy = watchInfo.value;
 
 						mute(proxy);
-						proxy[info.name] = info.ctx[info.name];
+
+						if (info.type === 'system') {
+							proxy[info.name] = info.ctx[info.name];
+						}
+
 						unmute(proxy);
 
 						const
@@ -190,7 +234,10 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						Object.defineProperty(info.ctx, info.name, {
 							enumerable: true,
 							configurable: true,
-							get: () => proxy[info.name],
+
+							get: () =>
+								proxy[info.name],
+
 							set: (val) => {
 								propCtx.$set(proxy, info.name, val);
 							}
@@ -202,10 +249,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				case 'attr': {
 					const
 						attr = info.name;
-
-					if (rootOrFunctional) {
-						return null;
-					}
 
 					let
 						unwatch;
@@ -234,11 +277,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 				case 'prop': {
 					const
-						prop = info.name;
-
-					if (rootOrFunctional) {
-						return null;
-					}
+						prop = info.name,
+						pathChunks = info.path.split('.'),
+						slicedPathChunks = pathChunks.slice(1);
 
 					const
 						destructors = <Function[]>[];
@@ -249,14 +290,27 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							destructors.pop();
 						}
 
-						// eslint-disable-next-line no-use-before-define
+						// eslint-disable-next-line @typescript-eslint/no-use-before-define
 						attachDeepProxy();
 
 						if (value?.[fakeCopyLabel] === true) {
 							return;
 						}
 
-						handler.call(this, value, oldValue, info);
+						let valueByPath = Object.get(value, slicedPathChunks);
+						valueByPath = unwrap(valueByPath) ?? valueByPath;
+
+						let oldValueByPath = Object.get(oldValue, slicedPathChunks);
+						oldValueByPath = unwrap(oldValueByPath) ?? oldValueByPath;
+
+						if (valueByPath !== oldValueByPath) {
+							if (normalizedOpts.collapse !== true) {
+								handler.call(this, valueByPath, oldValueByPath, info);
+
+							} else {
+								handler.call(this, value, oldValue, info);
+							}
+						}
 					};
 
 					let
@@ -293,24 +347,40 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						});
 
 					} else {
+						const topOpts = {
+							...normalizedOpts,
+							deep: false,
+							collapse: true
+						};
+
 						// eslint-disable-next-line @typescript-eslint/unbound-method
-						unwatch = watch(proxy, info.path, <any>normalizedOpts, watchHandler).unwatch;
+						unwatch = watch(proxy, prop, <any>topOpts, watchHandler).unwatch;
 					}
 
 					destructors.push(unwatch);
 
-					const
-						pathChunks = info.path.split('.');
-
 					const attachDeepProxy = () => {
 						const
-							proxyVal = Object.get(unwrap(proxy), info.path);
+							propVal = proxy[prop];
 
-						if (getProxyType(proxyVal) != null) {
+						if (getProxyType(propVal) != null) {
+							const
+								parent = component.$parent;
+
+							if (parent == null) {
+								return;
+							}
+
 							const normalizedOpts = {
 								collapse: true,
 								...opts,
-								pathModifier: (path) => [...pathChunks, ...path.slice(1)]
+								pathModifier: (path) => {
+									if (parent[path[0]] === propVal) {
+										return [pathChunks[0], ...path.slice(1)];
+									}
+
+									return path;
+								}
 							};
 
 							const watchHandler = (...args) => {
@@ -327,7 +397,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							};
 
 							// eslint-disable-next-line @typescript-eslint/unbound-method
-							const {unwatch} = watch(<object>proxyVal, normalizedOpts, watchHandler);
+							const {unwatch} = watch(<object>propVal, info.path, normalizedOpts, watchHandler);
 							destructors.push(unwatch);
 						}
 					};

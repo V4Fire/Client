@@ -13,16 +13,16 @@ const
 
 Object.assign(exports, include('build/helpers'));
 
-exports.isWorker = isWorker;
+exports.isStandalone = isStandalone;
 
 /**
- * Returns true if the specified entry point is a worker
+ * Returns true if the specified entry point is standalone
  *
  * @param {string} entryPoint
  * @returns {boolean}
  */
-function isWorker(entryPoint) {
-	return entryPoint === 'std' || /\.worker\b/.test(entryPoint);
+function isStandalone(entryPoint) {
+	return entryPoint === 'std' || /\.(worker|standalone)\b/.test(entryPoint);
 }
 
 exports.wait = wait;
@@ -146,3 +146,19 @@ function getBrowserArgs() {
 		return [];
 	}
 }
+
+/**
+ * Generates a `--client-name` using the specified parameters
+ *
+ * @param {string} name
+ * @param {string} suit
+ * @returns {string}
+ */
+function getTestClientName(name, suit) {
+	name = name || 'b-dummy';
+	suit = suit || 'demo';
+
+	return `${name}_${suit}`;
+}
+
+exports.getTestClientName = getTestClientName;

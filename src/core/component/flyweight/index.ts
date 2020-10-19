@@ -79,7 +79,13 @@ export function parseVNodeAsFlyweight(
 	});
 
 	fakeCtx.unsafe = fakeCtx;
+
+	fakeCtx._self = fakeCtx;
+	fakeCtx._renderProxy = fakeCtx;
+
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
+	fakeCtx._c = fakeCtx.$createElement;
+	fakeCtx._staticTrees = [];
 
 	attachMethodsFromMeta(fakeCtx);
 	implementEventAPI(fakeCtx);
@@ -128,9 +134,23 @@ export function parseVNodeAsFlyweight(
 		value: componentData.scopedSlots
 	});
 
-	Object.defineProperty(fakeCtx, '$parent', {value: parentComponent});
-	Object.defineProperty(fakeCtx, '$normalParent', {value: getNormalParent(fakeCtx)});
-	Object.defineProperty(fakeCtx, '$children', {value: vnode.children});
+	Object.defineProperty(fakeCtx, '$parent', {
+		configurable: true,
+		enumerable: true,
+		value: parentComponent
+	});
+
+	Object.defineProperty(fakeCtx, '$normalParent', {
+		configurable: true,
+		enumerable: true,
+		value: getNormalParent(fakeCtx)
+	});
+
+	Object.defineProperty(fakeCtx, '$children', {
+		configurable: true,
+		enumerable: true,
+		value: vnode.children
+	});
 
 	// Shim component input properties
 	for (let o = componentData.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {

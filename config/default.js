@@ -289,6 +289,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/browser': true,
 			'core/session': true,
 			'core/dom/in-view': true,
+			'core/dom/resize-observer': true,
 
 			'prelude/dependencies': true,
 			'prelude/test-env': !isProd,
@@ -299,6 +300,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'directives/resize': true,
 			'directives/image': true,
 			'directives/in-view': true,
+			'directives/resize-observer': true,
 			'directives/update-on': true,
 
 			iData: true,

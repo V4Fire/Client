@@ -8,9 +8,6 @@
 
 // @ts-check
 
-const
-	delay = require('delay');
-
 /**
  * @typedef {import('playwright').Page} Page
  * @typedef {import('playwright').BrowserContext} BrowserContext
@@ -66,59 +63,20 @@ class DOM {
 	/**
 	 * @see [[BrowserTests.DOM.waitForEl]]
 	 */
-	async waitForEl(ctx, selector, options) {
+	waitForEl(ctx, selector, options) {
 		options = {
 			sleep: 100,
-			timeout: 3500,
+			timeout: 5000,
 			to: 'mount',
 			...options
 		};
 
-		let isTimeout = false;
-		setTimeout(() => isTimeout = true, options.timeout);
-
 		if (options.to === 'mount') {
-			let ref = await ctx.$(selector);
-
-			if (ref) {
-				return ref;
-			}
-
-			while (!ref) {
-				if (isTimeout) {
-					return;
-				}
-
-				ref = await ctx.$(selector);
-
-				if (ref) {
-					return ref;
-				}
-
-				await delay(options.sleep);
-			}
+			return ctx.waitForSelector(selector, {state: 'attached', timeout: options.timeout});
 		}
 
 		if (options.to === 'unmount') {
-			let ref = await ctx.$(selector);
-
-			if (!ref) {
-				return;
-			}
-
-			while (ref) {
-				if (isTimeout) {
-					return;
-				}
-
-				ref = await ctx.$(selector);
-
-				if (!ref) {
-					return;
-				}
-
-				await delay(options.sleep);
-			}
+			return ctx.waitForSelector(selector, {state: 'detached', timeout: options.timeout});
 		}
 	}
 
@@ -146,6 +104,50 @@ class DOM {
 
 			return style && style.visibility !== 'hidden' && hasVisibleBoundingBox;
 		});
+	}
+
+	/**
+	 * @see [[BrowserTests.DOM.elNameGenerator]]
+	 */
+	elNameGenerator(blockName, elName) {
+		if (elName != null) {
+			return `${blockName}__${elName}`;
+		}
+
+		return (elName) => `${blockName}__${elName}`;
+	}
+
+	/**
+	 * @see [[BrowserTests.DOM.elNameSelectorGenerator]]
+	 */
+	elNameSelectorGenerator(blockName, elName) {
+		if (elName) {
+			return `.${blockName}__${elName}`
+		}
+
+		return (elName) => `.${blockName}__${elName}`;
+	}
+
+	/**
+	 * @see [[BrowserTests.DOM.elModNameGenerator]]
+	 */
+	elModNameGenerator(fullElName, modName, modVal) {
+		if (modName != null) {
+			return `${fullElName}_${modName}_${modVal}`;
+		}
+
+		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
+	}
+
+	/**
+	 * @see [[BrowserTests.DOM.elModSelectorGenerator]]
+	 */
+	elModSelectorGenerator(fullElName, modName, modVal) {
+		if (modName != null) {
+			return `.${fullElName}_${modName}_${modVal}`;
+		}
+
+		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
 	}
 
 	/**

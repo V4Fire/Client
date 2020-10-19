@@ -8,9 +8,10 @@
 
 import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
+import { ResizeWatcher } from 'core/dom/resize-observer';
 
 import iData, { component } from 'super/i-data/i-data';
-import { Directives } from 'base/b-dummy/interface';
+import { Directives, Modules } from 'base/b-dummy/interface';
 
 const
 	inViewMutation = inViewFactory('mutation'),
@@ -30,6 +31,15 @@ export default class bDummy extends iData {
 			image: ImageLoader,
 			inViewMutation,
 			inViewObserver
+		};
+	}
+
+	/**
+	 * Link to the modules
+	 */
+	get modules(): Modules {
+		return {
+			resizeWatcher: ResizeWatcher
 		};
 	}
 }

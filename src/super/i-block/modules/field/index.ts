@@ -11,12 +11,13 @@
  * @packageDocumentation
  */
 
+import { unwrap } from 'core/object/watch';
 import { getPropertyInfo } from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
-import { FieldGetter } from 'super/i-block/modules/field/interface';
+import { KeyGetter, ValueGetter } from 'super/i-block/modules/field/interface';
 
 export * from 'super/i-block/modules/field/interface';
 
@@ -28,31 +29,43 @@ export default class Field extends Friend {
 	 * Returns a property from a component by the specified path
 	 *
 	 * @param path - path to the property (bla.baz.foo)
-	 * @param [getter] - field getter
+	 * @param getter - function that returns a value from the passed object
+	 *
+	 * @example
+	 * ```js
+	 * this.field.get('bla.foo');
+	 * this.field.get('bla.fooBla', String.underscore.compose(Object.get));
+	 * ```
 	 */
-	get<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
+	get<T = unknown>(path: ObjectPropertyPath, getter: ValueGetter): CanUndef<T>;
 
 	/**
 	 * Returns a property from an object by the specified path
 	 *
 	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 * @param [getter] - field getter
+	 * @param [obj] - source object
+	 * @param [getter] - function that returns a value from the passed object
+	 *
+	 * @example
+	 * ```js
+	 * this.field.get('bla.foo', obj);
+	 * this.field.get('bla.fooBla', obj, String.underscore.compose(Object.get));
+	 * ```
 	 */
 	get<T = unknown>(
 		path: string,
 		obj?: Nullable<object>,
-		getter?: FieldGetter
+		getter?: ValueGetter
 	): CanUndef<T>;
 
 	get<T = unknown>(
 		path: string,
-		obj: Nullable<object | FieldGetter> = this.ctx,
-		getter?: FieldGetter
+		obj: Nullable<object | ValueGetter> = this.ctx,
+		getter?: ValueGetter
 	): CanUndef<T> {
 		if (Object.isFunction(obj)) {
 			getter = obj;
-			obj = this;
+			obj = this.ctx;
 		}
 
 		if (obj == null) {
@@ -87,8 +100,25 @@ export default class Field extends Friend {
 				chunks[0] = info.accessor;
 
 			} else {
-				const isField = info.type === 'field';
-				res = isField ? ctx.$fields : ctx;
+				let
+					isField = false;
+
+				switch (info.type) {
+					case 'prop':
+						if (ctx.lfc.isBeforeCreate('beforeDataCreate')) {
+							return undefined;
+						}
+
+						break;
+
+					case 'field':
+						isField = true;
+						res = ctx.$fields;
+						break;
+
+					default:
+						// Do nothing
+				}
 
 				if ((isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in <Dictionary>res))) {
 					chunks[0] = info.name;
@@ -99,13 +129,16 @@ export default class Field extends Friend {
 			chunks = path.split('.');
 		}
 
+		if (getter == null) {
+			return Object.get(res, chunks);
+		}
+
 		for (let i = 0; i < chunks.length; i++) {
 			if (res == null) {
 				return undefined;
 			}
 
-			const prop = chunks[i];
-			res = getter ? getter(prop, res) : (<Dictionary>res)[prop];
+			res = getter(chunks[i], res);
 		}
 
 		return <any>res;
@@ -115,10 +148,50 @@ export default class Field extends Friend {
 	 * Sets a new property to an object by the specified path
 	 *
 	 * @param path - path to the property (bla.baz.foo)
-	 * @param value
-	 * @param [obj]
+	 * @param value - value to set
+	 * @param getter - function that returns a key name from the passed object
+	 *
+	 * @example
+	 * ```js
+	 * this.field.set('bla.foo', 1);
+	 * this.field.get('bla.fooBla', 1, String.underscore);
+	 * ```
 	 */
-	set<T = unknown>(path: string, value: T, obj: Nullable<object> = this.ctx): T {
+	set<T = unknown>(path: string, value: T, getter: KeyGetter): T;
+
+	/**
+	 * Sets a new property to an object by the specified path
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param value - value to set
+	 * @param [obj] - source object
+	 * @param [getter] - function that returns a key name from the passed object
+	 *
+	 * @example
+	 * ```js
+	 * this.field.set('bla.foo', 1);
+	 * this.field.set('bla.foo', 1, obj);
+	 * this.field.get('bla.fooBla', 1, obj, String.underscore);
+	 * ```
+	 */
+	set<T = unknown>(
+		path: string,
+		value: T,
+		obj?: Nullable<object>,
+		getter?: KeyGetter
+	): T;
+
+	set<T = unknown>(
+		path: string,
+		value: T,
+		obj: Nullable<object> = this.ctx,
+		getter?: ValueGetter
+	): T {
+		if (Object.isFunction(obj)) {
+			getter = obj;
+			obj = this.ctx;
+		}
+
 		if (obj == null) {
 			return value;
 		}
@@ -135,14 +208,16 @@ export default class Field extends Friend {
 		}
 
 		let
-			isField = isComponent,
+			syncWith,
+			needSet = isComponent;
+
+		let
 			ref = obj,
 			chunks;
 
 		if (isComponent) {
 			const
-				info = getPropertyInfo(path, ctx),
-				isReady = !ctx.lfc.isBeforeCreate();
+				info = getPropertyInfo(path, ctx);
 
 			ctx = <any>info.ctx;
 			ref = ctx;
@@ -150,15 +225,52 @@ export default class Field extends Friend {
 			chunks = info.path.split('.');
 
 			if (info.accessor != null && this.ctx.hook !== 'beforeRuntime') {
-				isField = false;
+				needSet = false;
 				chunks[0] = info.accessor;
 
 			} else {
-				isField = info.type === 'field';
-				ref = isField ? ctx.$fields : ctx;
+				const
+					isReady = !ctx.lfc.isBeforeCreate(),
+					isSystem = info.type === 'system',
+					isField = !isSystem && info.type === 'field';
 
-				if ((isField && !isReady || !(chunks[0] in ref))) {
-					chunks[0] = info.name;
+				if (isSystem || isField) {
+					// If property not already watched, don't force the creation of a proxy
+					// eslint-disable-next-line @typescript-eslint/unbound-method
+					needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+
+					if (isSystem) {
+						// If a component already initialized watchers of system fields,
+						// we have to set these properties directly to the proxy object
+						if (needSet) {
+							ref = ctx.$systemFields;
+						}
+
+					} else {
+						ref = ctx.$fields;
+
+						if (!isReady) {
+							chunks[0] = info.name;
+						}
+
+						const needSync =
+							(ctx.isFlyweight || ctx.isFunctional) &&
+							unwrap(ref) === ref;
+
+						// If a component doesn't already initialize watchers of fields,
+						// we have to synchronize these properties between the proxy object and component instance
+						if (needSync) {
+							const
+								name = chunks[0];
+
+							syncWith = {
+								name,
+								get value() {
+									return ref[name];
+								}
+							};
+						}
+					}
 				}
 			}
 
@@ -166,38 +278,42 @@ export default class Field extends Friend {
 			chunks = path.split('.');
 		}
 
-		const
-			isReady = !ctx.lfc.isBeforeCreate();
+		let
+			prop;
 
 		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
+			prop = getter ? getter(chunks[i], ref) : chunks[i];
 
 			if (i + 1 === chunks.length) {
-				path = prop;
 				break;
 			}
 
-			if (ref[prop] == null || typeof ref[prop] !== 'object') {
-				const
-					val = isNaN(Number(chunks[i + 1])) ? {} : [];
+			let
+				newRef = Object.get(ref, [prop]);
 
-				if (isField && isReady) {
-					ctx.$set(ref, prop, val);
+			if (newRef == null || typeof newRef !== 'object') {
+				newRef = isNaN(Number(chunks[i + 1])) ? {} : [];
+
+				if (needSet) {
+					ctx.$set(ref, prop, newRef);
 
 				} else {
-					ref[prop] = val;
+					Object.set(ref, [prop], newRef);
 				}
 			}
 
-			ref = <Dictionary>ref[prop];
+			ref = <any>newRef;
 		}
 
-		if (!isField || !isReady || path in ref && !Object.isArray(ref)) {
-			ref[path] = value;
+		if (!needSet || !Object.isArray(ref) && Object.has(ref, [prop])) {
+			Object.set(ref, [prop], value);
 
 		} else {
-			ctx.$set(ref, path, value);
+			ctx.$set(ref, prop, value);
+		}
+
+		if (syncWith != null) {
+			Object.set(ctx, [syncWith.name], syncWith.value);
 		}
 
 		return value;
@@ -207,9 +323,42 @@ export default class Field extends Friend {
 	 * Deletes a property from an object by the specified path
 	 *
 	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
+	 * @param getter - function that returns a key name from the passed object
+	 *
+	 * @example
+	 * ```js
+	 * this.field.delete('bla.foo');
+	 * this.field.delete('bla.fooBla', String.underscore);
+	 * ```
 	 */
-	delete(path: string, obj: Nullable<object> = this.ctx): boolean {
+	delete(path: string, getter?: KeyGetter): boolean;
+
+	/**
+	 * Deletes a property from an object by the specified path
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj] - source object
+	 * @param [getter] - function that returns a key name from the passed object
+	 *
+	 * @example
+	 * ```js
+	 * this.field.delete('bla.foo');
+	 * this.field.delete('bla.foo', obj);
+	 * this.field.delete('bla.fooBla', obj, String.underscore);
+	 * ```
+	 */
+	delete(path: string, obj?: Nullable<object>, getter?: KeyGetter): boolean;
+
+	delete(
+		path: string,
+		obj: Nullable<object> = this.ctx,
+		getter?: KeyGetter
+	): boolean {
+		if (Object.isFunction(obj)) {
+			getter = obj;
+			obj = this.ctx;
+		}
+
 		if (obj == null) {
 			return false;
 		}
@@ -226,7 +375,10 @@ export default class Field extends Friend {
 		}
 
 		let
-			isField = isComponent,
+			syncWith,
+			needSet = isComponent;
+
+		let
 			ref = obj,
 			chunks;
 
@@ -234,42 +386,87 @@ export default class Field extends Friend {
 			const
 				info = getPropertyInfo(path, ctx);
 
+			const
+				isReady = !ctx.lfc.isBeforeCreate(),
+				isSystem = info.type === 'system',
+				isField = !isSystem && info.type === 'field';
+
 			ctx = <any>info.ctx;
-			isField = info.type === 'field';
-			ref = isField ? ctx.$fields : ctx;
+
 			chunks = info.path.split('.');
 			chunks[0] = info.name;
+
+			if (isSystem || isField) {
+				// If property not already watched, don't force the creation of a proxy
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+
+				if (isSystem) {
+					// If a component already initialized watchers of system fields,
+					// we have to set these properties directly to the proxy object
+					if (needSet) {
+						ref = ctx.$systemFields;
+					}
+
+				} else {
+					ref = ctx.$fields;
+
+					const needSync =
+						(ctx.isFlyweight || ctx.isFunctional) &&
+						unwrap(ref) === ref;
+
+					// If a component doesn't already initialize watchers of fields,
+					// we have to synchronize these properties between the proxy object and component instance
+					if (needSync) {
+						const
+							name = chunks[0];
+
+						syncWith = {
+							name,
+							get value() {
+								return ref[name];
+							}
+						};
+					}
+				}
+			}
 
 		} else {
 			chunks = path.split('.');
 		}
 
 		let
-			test = true;
+			needDelete = true,
+			prop;
 
 		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
+			prop = getter ? getter(chunks[i], ref) : chunks[i];
 
 			if (i + 1 === chunks.length) {
-				path = prop;
 				break;
 			}
 
-			if (ref[prop] == null || typeof ref[prop] !== 'object') {
-				test = false;
+			const
+				newRef = Object.get(ref, [prop]);
+
+			if (newRef == null || typeof newRef !== 'object') {
+				needDelete = false;
 				break;
 			}
 
-			ref = <Dictionary>ref[prop];
+			ref = <any>newRef;
 		}
 
-		if (test) {
-			if (isField && !ctx.lfc.isBeforeCreate()) {
-				ctx.$delete(ref, path);
+		if (needDelete) {
+			if (needSet) {
+				ctx.$delete(ref, prop);
 
 			} else {
-				delete ref[path];
+				Object.delete(ref, [prop]);
+			}
+
+			if (syncWith != null) {
+				Object.delete(ctx, [syncWith.name], syncWith.value);
 			}
 
 			return true;

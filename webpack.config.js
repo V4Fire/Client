@@ -29,7 +29,7 @@ async function buildFactory(entry, buildId) {
 		optimization = await include('build/optimization.webpack')({buildId, plugins}),
 		modules = await include('build/module.webpack')({buildId, plugins});
 
-	if (build.WORKERS === buildId) {
+	if (build.STANDALONE === buildId) {
 		$C(entry).set((el) => [].concat(el));
 	}
 

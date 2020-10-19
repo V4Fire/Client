@@ -86,6 +86,11 @@ export interface ComponentMeta {
 	systemFields: Dictionary<ComponentField>;
 
 	/**
+	 * Map of fields that contains the "Store" postfix
+	 */
+	tiedFields: Dictionary<string>;
+
+	/**
 	 * Map of component accessors
 	 */
 	accessors: Dictionary<ComponentAccessor>;

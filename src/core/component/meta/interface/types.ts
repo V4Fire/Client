@@ -285,6 +285,7 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 	unique?: boolean | UniqueFieldFn<CTX>;
 	replace?: boolean;
 	functional?: boolean;
+	functionalWatching?: boolean;
 	after?: Set<string>;
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;

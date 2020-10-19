@@ -11,6 +11,242 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :rocket: New Feature
+
+* Added `functionalWatching` to field decorators `core/component/decorators`
+
+#### :bug: Bug Fix
+
+* Fixed initializing of `stageStore` `iBlock`
+* [Added a boolean type for `progressIcon` props](https://github.com/V4Fire/Client/pull/409/files)
+
+#### :house: Internal
+
+* Added `functionalWatching` `core/component/meta`
+* Added support of `functionalWatching` `core/component/watch`
+* Added a new API for generating selectors `tests/helpers/dom`
+  * `elNameGenerator`
+  * `elNameSelectorGenerator`
+  * `elModNameGenerator`
+  * `elModSelectorGenerator`
+
+#### :nail_care: Polish
+
+* Improved documentation
+
+## v3.0.0-rc.87 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed restoring of a functional state `core/component/watch` `core/component/functional`
+
+## v3.0.0-rc.86 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed an optimization of lazy watchers `base/i-block/modules/field`
+* Fixed immediate watchers `core/component/watch`
+
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :boom: Breaking Change
+
+* `iBlock`:
+  * Now `dontWaitRemoteProviders` is calculated automatically
+  * Marked as non-functional:
+    * `stageStore`
+    * `componentStatusStore`
+    * `watchModsStore`
+
+#### :rocket: New Feature
+
+* Provided a graph of components to `build/globals.webpack` / `config`
+
+#### :house: Internal
+
+* Optimized watching of non-functional properties `core/component/watch`
+* Extracted interfaces to `index.d.ts` `core/prelude/test-env`
+
+## v3.0.0-rc.84 (2020-10-09)
+
+#### :rocket: New Feature
+
+* Added `ComponentMeta.tiedFields` `core/component/meta`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using a complex path as a dependency `core/component/construct`
+
+#### :house: Internal
+
+* Now all tied fields are collected within `meta.tiedFields` `core/component/decorators`
+* Optimized creation of components `core/component/construct`
+* Optimized creation of watchers of functional components `core/component/watch`
+
+## v3.0.0-rc.83 (2020-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `in-view/mutation` does not fire a callback in old chromiums `core/dom/in-view`
+
+#### :house: Internal
+
+* Removed `.travis.yml`
+
+## v3.0.0-rc.82 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a typo after refactoring `core/component/directive/resize-observer`
+
+## v3.0.0-rc.81 (2020-10-08)
+
+#### :boom: Breaking Change
+
+* Now `BrowserTests.DOM.waitForEl` will throw an exception if a timeout to wait occurs `tests/helpers/dom`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `renderNext`: hasn't been data rendering after a loading error `base/b-virtual-scroll`
+
+#### :house: Internal
+
+* Added `.travis.yml`
+* :up: `playwright` -> 1.4.2
+
+#### :nail_care: Polish
+
+* Added the render scheme `docs/test`
+
+## v3.0.0-rc.80 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using an array of dependencies to watch an accessor `core/component/construct`
+
+## v3.0.0-rc.79 (2020-10-08)
+
+#### :boom: Breaking Change
+
+* Directive mods are no longer supported `core/component/directives/resize-observer`
+* `v-resize` renamed to `v-resize-observer` `core/component/directives/resize-observer`
+
+#### :house: Internal
+
+* [Split the module into two: API was moved to `core/dom/resize-observer`](https://github.com/V4Fire/Client/issues/311)
+
+## v3.0.0-rc.78 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with caching of computed fields `core/component/accessor`
+
+## v3.0.0-rc.77 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when trying to access a prop value before a component create `i-block/modules/field`
+
+## v3.0.0-rc.76 (2020-10-07)
+
+#### :boom: Breaking Change
+
+* Renamed `isWorker` to `isStandalone` `build/helpers`
+
+#### :rocket: New Feature
+
+* Added support of a new postfix `.standalone` `build/entries.webpack`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when flyweight components can't have refs `core/component/flyweight`
+
+## v3.0.0-rc.75 (2020-10-07)
+
+#### :rocket: New Feature
+
+* Ability to pass background-repeat as image bg options `core/dom/image`
+
+## v3.0.0-rc.74 (2020-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with removing the progress modifier `base/b-virtual-scroll`
+
+## v3.0.0-rc.73 (2020-10-02)
+
+#### :house: Internal
+
+* Added the `runtime-render` flag for tests `build/test.gulp`
+
+#### :nail_care: Polish
+
+* Added documentation to write tests `docs/test`
+
+## v3.0.0-rc.72 (2020-10-01)
+
+#### :boom: Breaking Change
+
+* `iData`:
+  * Renamed `dataProviderEmitter` to `dataEmitter`
+  * Deprecated `requestFilter`
+  * Deprecated `dropRequestCache`
+
+#### :rocket: New Feature
+
+* `iData`:
+  * Added `defaultRequestFilter`
+  * Added `dropDataCache`
+
+#### :house: Internal
+
+* Moved to `defaultRequestFilter`:
+  * `bButton`
+  * `bForm`
+
+#### :nail_care: Polish
+
+* Improved doc `iData`
+
+## v3.0.0-rc.71 (2020-10-01)
+
+#### :bug: Bug Fix
+
+* `core/component/watch`:
+  * Fixed a bug with deep watching of props
+  * Fixed providing of a watch context
+  * Fixed an invalid caching of old values with `collapse = false`
+
+#### :house: [Internal]
+
+* Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
+
+## v3.0.0-rc.70 (2020-09-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the initial ratio was not settled `core/dom/image`
+
+## v3.0.0-rc.69 (2020-09-28)
+
+#### :boom: Breaking Change
+
+* Renamed `FieldGetter` -> `ValueGetter` `super/i-block/modules/field`
+
+#### :rocket: New Feature
+
+* Added `getter` for `set` and `delete` methods `super/i-block/modules/field`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when a system field can't be watched after removal of a property `super/i-block/modules/field`
+
+#### :nail_care: Polish
+
+* Added more examples `super/i-block/modules/field`
+
 ## v3.0.0-rc.68 (2020-09-23)
 
 #### :boom: Breaking Change

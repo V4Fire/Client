@@ -469,6 +469,106 @@ declare namespace BrowserTests {
 		 * @param ctx
 		 */
 		isVisible(selectorOrElement: PlaywrightElContext | string, ctx?: PlaywrightElContext): Promise<boolean>;
+
+		/**
+		 * Returns a generator of an element names
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   base = elNameGenerator('p-index'), // Function
+		 *   elName = base('page'); // 'p-index__page'
+		 * ```
+		 */
+		elNameGenerator(blockName: string): (elName: string) => string;
+
+		/**
+		 * Returns an element name
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   elName = elNameGenerator('p-index', 'page'); // 'p-index__page'
+		 * ```
+		 */
+		elNameGenerator(blockName: string, elName: string): string;
+
+		/**
+		 * Returns a generator of an element class names
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   base = elNameSelectorGenerator('p-index'), // Function
+		 *   elName = base('page'); // '.p-index__page'
+		 * ```
+		 */
+		elNameSelectorGenerator(blockName: string): (elName: string) => string;
+
+		/**
+		 * Returns an element class name
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   elName = elNameGenerator('p-index', 'page'); // '.p-index__page'
+		 * ```
+		 */
+		elNameSelectorGenerator(blockName: string, elName: string): string;
+
+		/**
+		 * Returns a generator of an element names with modifiers
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   base = elNameGenerator('p-index') // Function,
+		 *   elName = base('page'), // 'p-index__page'
+		 *   modsBase = elModNameGenerator(elName), // Function
+		 *   elNameWithMods = modsBase('type', 'test'); // 'p-index__page_type_test'
+		 * ```
+		 */
+		elModNameGenerator(fullElName: string): (modName: string, modVal: string) => string;
+
+		/**
+		 * Returns a string of an element name with modifiers
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   base = elNameGenerator('p-index') // Function,
+		 *   elName = base('page'), // 'p-index__page'
+		 *   modsBase = elModNameGenerator(elName, 'type', 'test'); // 'p-index__page_type_test'
+		 * ```
+		 */
+		elModNameGenerator(fullElName: string, modName: string, modVal: string): string;
+
+		/**
+		 * Returns a generator of an element class names with modifiers
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   base = elNameGenerator('p-index') // Function,
+		 *   elName = base('page'), // 'p-index__page'
+		 *   modsBase = elModNameGenerator(elName), // Function
+		 *   elNameWithMods = modsBase('type', 'test'); // '.p-index__page_type_test'
+		 * ```
+		 */
+		elModSelectorGenerator(fullElName: string): (modName: string, modVal: string) => string;
+
+		/**
+		 * Returns a string of an element class name with modifiers
+		 *
+		 * @example
+		 * ```typescript
+		 * const
+		 *   base = elNameGenerator('p-index') // Function,
+		 *   elName = base('page'), // 'p-index__page'
+		 *   modsBase = elModSelectorGenerator(elName, 'type', 'test'); // '.p-index__page_type_test'
+		 * ```
+		 */
+		elModSelectorGenerator(fullElName: string, modName: string, modVal: string): string;
 	}
 
 	/**
@@ -590,7 +690,7 @@ declare namespace BrowserTests {
 		 */
 		interceptRequest(
 			page: Playwright.Page,
-			url: string[],
+			urls: string[],
 			response: Playwright.RouteFulfillResponse,
 			timeout?: number
 		): Promise<void>;

@@ -11,7 +11,18 @@
  * @packageDocumentation
  */
 
-import { wrapAsDelegateHandler, inViewFactory, InitOptions, InViewAdapter } from 'core/dom';
+import { deprecated } from 'core/functools';
+
+import {
+
+	wrapAsDelegateHandler,
+	inViewFactory,
+	InitOptions,
+	InViewAdapter,
+	ResizeWatcher,
+	ResizeWatcherInitOptions
+
+} from 'core/dom';
 
 import { ComponentElement } from 'core/component';
 import { AsyncOptions } from 'core/async';
@@ -317,19 +328,50 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Watches for intersections of the specified node by using the in-view module
+	 * @deprecated
+	 * @see [[DOM.prototype.watchForIntersection]]
 	 *
-	 * @param node
+	 * @param el
 	 * @param options
 	 * @param asyncOptions
 	 */
-	watchForNodeIntersection(node: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+	@deprecated({renamedTo: 'watchForIntersection'})
+	watchForNodeIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+		return this.watchForIntersection(el, options, asyncOptions);
+	}
+
+	/**
+	 * Watches for intersections of the specified element by using the `in-view` module
+	 *
+	 * @param el
+	 * @param options
+	 * @param asyncOptions
+	 */
+	watchForIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
 		const
 			{ctx} = this,
 			inViewInstance = this.localInView;
 
-		const destructor = ctx.async.worker(() => inViewInstance.remove(node, options.threshold), asyncOptions);
-		inViewInstance.observe(node, options);
+		const destructor = ctx.async.worker(() => inViewInstance.remove(el, options.threshold), asyncOptions);
+		inViewInstance.observe(el, options);
+
+		return destructor;
+	}
+
+	/**
+	 * Watches for size changes of the specified element by using the `resize-observer` module.
+	 * Notice, this functionality depends on `ResizeObserver`.
+	 *
+	 * @param el
+	 * @param options
+	 * @param asyncOptions
+	 */
+	watchForResize(el: Element, options: ResizeWatcherInitOptions, asyncOptions: AsyncOptions): Function {
+		const
+			{ctx} = this;
+
+		const destructor = ctx.async.worker(() => ResizeWatcher.unobserve(el, options), asyncOptions);
+		ResizeWatcher.observe(el, options);
 
 		return destructor;
 	}

@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch from 'core/object/watch';
 import * as init from 'core/component/construct';
 
 import { forkMeta } from 'core/component/meta';
@@ -215,12 +214,6 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	});
 
 	init.beforeDataCreateState(fakeCtx, {tieFields: true});
-
-	for (let o = [fakeCtx.$systemFields, fakeCtx.$fields], i = 0; i < o.length; i++) {
-		watch(o[i], {deep: true, collapse: true, immediate: true}, (v, o, i) => {
-			fakeCtx.$modifiedFields[String(i.path[0])] = true;
-		});
-	}
 
 	return fakeCtx;
 }

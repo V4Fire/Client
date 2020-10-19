@@ -190,6 +190,12 @@ export interface DecoratorSystem<
 	unique?: boolean | UniqueFieldFn<CTX>;
 
 	/**
+	 * If false, the property can't be watched within a functional component
+	 * @default `true`
+	 */
+	functionalWatching?: boolean;
+
+	/**
 	 * Name or list of names after which this property should be initialized
 	 */
 	after?: CanArray<string>;

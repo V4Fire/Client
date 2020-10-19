@@ -2,16 +2,16 @@ name: build
 
 on:
   push:
-    branches: [master, v3]
+    branches: [master]
 
   pull_request:
-    branches: [master, v3]
+    branches: [master]
 
 jobs:
 
   # Run components tests
   components:
-    runs-on: macos-latest
+    runs-on: windows-latest
 
     strategy:
       matrix:

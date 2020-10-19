@@ -6,4 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/prelude/test-env/README.md]]
+ * @packageDocumentation
+ */
+
 import 'core/prelude/test-env/components';

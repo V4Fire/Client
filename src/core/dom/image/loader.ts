@@ -142,6 +142,11 @@ export default class ImageLoader {
 		typedEl[ID] = String(Math.random());
 
 		this.setAltAttr(el, mainOpts.alt);
+
+		if (!this.isImg(el)) {
+			this.setInitialBackgroundSizeAttrs(el, typedEl[SHADOW_MAIN], typedEl[SHADOW_PREVIEW]);
+		}
+
 		this.lifecycle.init(typedEl);
 	}
 
@@ -360,6 +365,7 @@ export default class ImageLoader {
 		const
 			backgroundImage = Array.concat([], beforeImg, img, afterImg).join(','),
 			backgroundPosition = bgOptions?.position ?? '',
+			backgroundRepeat = bgOptions?.repeat ?? '',
 			backgroundSize = bgOptions?.size ?? '',
 			paddingBottom = this.calculatePaddingByRatio(state, bgOptions?.ratio);
 
@@ -367,8 +373,31 @@ export default class ImageLoader {
 			backgroundImage,
 			backgroundSize,
 			backgroundPosition,
+			backgroundRepeat,
 			paddingBottom
 		});
+	}
+
+	/**
+	 * Sets initially calculated padding to the specified element
+	 *
+	 * @param el
+	 * @param mainState
+	 * @param previewState
+	 */
+	protected setInitialBackgroundSizeAttrs(
+		el: HTMLElement,
+		mainState: ShadowElState,
+		previewState?: ShadowElState
+	): void {
+		const
+			ratio = previewState?.selfOptions.bgOptions?.ratio ?? mainState.selfOptions.bgOptions?.ratio;
+
+		if (ratio == null) {
+			return;
+		}
+
+		el.style.paddingBottom = this.calculatePaddingByRatio(mainState, ratio);
 	}
 
 	/**

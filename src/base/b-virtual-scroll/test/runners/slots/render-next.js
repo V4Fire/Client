@@ -290,7 +290,7 @@ module.exports = (page) => {
 					ctx.chunkSize = 20;
 
 					return new Promise((res) => {
-						ctx.localEmitter.on('localState.ready', res);
+						ctx.localEmitter.once('localState.ready', res);
 					});
 				});
 
@@ -488,6 +488,7 @@ module.exports = (page) => {
 
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.renderNext());
 				await requestErrorPromise;
+				await h.bom.waitForIdleCallback(page);
 				await components.renderNextWithSlot.evaluate((ctx) => ctx.reloadLast());
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section:nth-child(11)');
 				await h.bom.waitForRAF(page);
