@@ -96,7 +96,7 @@
 					- block progress
 						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
 							< template v-if = vdom.getSlot('progressIcon')
-								+= self.slot('progressIcon', {':icon': 'progressIcon'})
+								+= self.slot('progressIcon', {':icon': 'progressIcon', ':attrs': 'progressIconAttrs'})
 
 							< component &
 								v-else-if = Object.isString(progressIcon) |
