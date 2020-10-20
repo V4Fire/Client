@@ -37,7 +37,7 @@ export const
 	$$ = symbolGenerator();
 
 const
-	includedThemes = INCLUDED_THEMES;
+	availableThemes = INCLUDED_THEMES;
 
 /**
  * Superclass for all root components
@@ -164,7 +164,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Themes list, which are available
 	 */
 	get availableThemes(): CanUndef<string[]> {
-		return includedThemes;
+		return availableThemes;
 	}
 
 	/**
@@ -179,7 +179,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param value
 	 */
 	set theme(value: unknown) {
-		if (includedThemes?.includes(String(value)) === false) {
+		if (this.availableThemes?.includes(String(value)) === false) {
 			throw new ReferenceError(`Theme with name "${String(value)}" is not defined`);
 		}
 

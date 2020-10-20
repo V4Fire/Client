@@ -16,11 +16,22 @@ declare const TPLS: Dictionary<Dictionary<Function>>;
 
 declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
-declare const DS: CanUndef<Dictionary>;
+declare const DS: CanUndef<DesignSystem>;
 
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
+
+interface DesignSystem {
+	meta?: {
+		themes: string[];
+	};
+
+	components?: StrictDictionary;
+	text?: StrictDictionary;
+	rounding?: StrictDictionary;
+	colors?: StrictDictionary;
+}
 
 interface RenderOptions {
 	/** @default `rootSelector` */

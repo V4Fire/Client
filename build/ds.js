@@ -11,6 +11,54 @@
 const
 	{config: pzlr} = require('@pzlr/build-core');
 
+const
+	config = require('config'),
+	{includeThemes} = config.runtime();
+
+/**
+ * Returns a Design System object as string
+ * @returns {string|null}
+ */
+exports.getDS = function getDS() {
+	try {
+		return JSON.stringify(require(pzlr.designSystem));
+
+	} catch {
+		console.log(`Can't find "${pzlr.designSystem}" design system package`);
+		return null;
+	}
+};
+
+/**
+ * Returns available themes from a Design System package
+ * @returns {null|string[]}
+ */
+exports.getThemes = function getThemes() {
+	try {
+		const
+			{meta} = require(pzlr.designSystem);
+
+		if (Object.isObject(meta) && meta.themes !== undefined) {
+			const reduceThemes = () => includeThemes.reduce((res, t) => {
+				if (meta.themes.includes(t)) {
+					res.push(t);
+				}
+
+				return res;
+			}, []);
+
+			return includeThemes === true ? meta.themes : reduceThemes();
+		}
+
+		console.log('Can\'t find themes within the design system package');
+		return null;
+
+	} catch {
+		console.log(`Can't find "${pzlr.designSystem}" design system package`);
+		return null;
+	}
+};
+
 /**
  * Returns modifier values grouped by component names from a Design System package
  * @returns {Object}

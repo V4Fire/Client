@@ -14,7 +14,7 @@ const
 
 const
 	{config: pzlr} = require('@pzlr/build-core'),
-	{getDSComponentMods} = include('build/ds');
+	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
 	runtime = config.runtime(),
@@ -67,22 +67,15 @@ module.exports = {
 		null,
 
 	THEME: s(config.theme()),
-	INCLUDED_THEMES: s(config.includedThemes()),
+	INCLUDED_THEMES: pzlr.designSystem ?
+		getThemes() :
+		null,
 
 	DS_COMPONENTS_MODS: pzlr.designSystem ?
 		getDSComponentMods() :
 		null,
 
 	DS: runtime.passDesignSystem && pzlr.designSystem ?
-		(() => {
-			try {
-				return s(require(pzlr.designSystem));
-
-			} catch {
-				console.log(`Can't find "${pzlr.designSystem}" design system package`);
-				return null;
-			}
-		})() :
-
+		getDS() :
 		null
 };

@@ -264,8 +264,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
-	includedThemes() {
-		return o('included-themes', {
+	includeThemes() {
+		return o('include-themes', {
 			env: true
 		});
 	},
@@ -281,7 +281,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			svgSprite: true,
 
 			theme: this.theme(),
-			includedThemes: this.includedThemes(),
+			includeThemes: this.includeThemes(),
 
 			blockNames: false,
 			passDesignSystem: false,

@@ -66,7 +66,7 @@
 	- block root
 		: runtime = require('config').runtime()
 
-		- if runtime.includedThemes && runtime.theme
+		- if runtime.includeThemes && runtime.theme
 			? Object.assign(htmlAttrs, {class: 'root_theme_' + runtime.theme})
 
 		- block pageData

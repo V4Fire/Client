@@ -12,13 +12,13 @@
 @import "global/g-def/reset.styl"
 
 //#if runtime has theme
-//#unless runtime has includedThemes
+//#unless runtime has includeThemes
 :root
 	interpolate-props(getFlatDSVars(defaultTheme()), false)
 //#endunless
 //#endif
 
-//#if runtime has includedThemes
+//#if runtime has includeThemes
 for name in includedThemes()
 	html.root_theme_{name}
 		interpolate-props(getFlatDSVars(name), false)

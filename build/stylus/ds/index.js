@@ -15,8 +15,8 @@ const
 
 const
 	config = require('config'),
-	runtime = config.runtime(),
-	{includedThemes} = runtime;
+	{theme} = config.runtime(),
+	{getThemes} = include('build/ds');
 
 const {
 	setVar,
@@ -45,8 +45,7 @@ if (pzlr.config.designSystem) {
 prepareData(DS);
 
 const
-	THEME = runtime.theme,
-	INCLUDED_THEMES = includedThemes === true ? DS.meta.includedThemes : includedThemes;
+	themesList = getThemes();
 
 module.exports = function addPlugins(api) {
 	/**
@@ -109,13 +108,13 @@ module.exports = function addPlugins(api) {
 			}
 
 			const
-				hasIncludedThemes = Boolean(INCLUDED_THEMES);
+				hasIncludeThemes = Boolean(themesList);
 
 			let
 				path;
 
-			if (!hasIncludedThemes && THEME) {
-				path = [string, 'theme', THEME];
+			if (!hasIncludeThemes && theme) {
+				path = [string, 'theme', theme];
 
 			} else {
 				path = [string];
@@ -125,7 +124,7 @@ module.exports = function addPlugins(api) {
 				path.push(value.string);
 			}
 
-			return hasIncludedThemes ? stylus.utils.coerce($C(cssVars).get(path)) : $C(DS).get(path);
+			return hasincludeThemes ? stylus.utils.coerce($C(cssVars).get(path)) : $C(DS).get(path);
 		}
 	);
 
@@ -146,8 +145,8 @@ module.exports = function addPlugins(api) {
 			}
 
 			const
-				hasIncludedThemes = Boolean(INCLUDED_THEMES),
-				path = !hasIncludedThemes && THEME ? ['colors', 'theme', THEME] : ['colors'];
+				hasIncludedThemes = Boolean(themesList),
+				path = !hasIncludedThemes && theme ? ['colors', 'theme', theme] : ['colors'];
 
 			if (id) {
 				id = id.string || id.val;
@@ -170,12 +169,12 @@ module.exports = function addPlugins(api) {
 	/**
 	 * Returns a runtime config theme value
 	 */
-	api.define('defaultTheme', () => THEME);
+	api.define('defaultTheme', () => theme);
 
 	/**
 	 * Returns included interface themes
 	 */
-	api.define('includedThemes', () => INCLUDED_THEMES);
+	api.define('includedThemes', () => themesList);
 };
 
 Object.assign(module.exports, {
