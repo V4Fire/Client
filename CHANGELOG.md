@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.89 (2020-10-20)
+
+#### :bug: Bug Fix
+
+* Fixed the background image cleaning `core/dom/image/loader.ts`
+
 ## v3.0.0-rc.88 (2020-10-13)
 
 #### :rocket: New Feature
