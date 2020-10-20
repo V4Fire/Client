@@ -100,10 +100,14 @@
 
 							< component &
 								v-else-if = Object.isString(progressIcon) |
+								:v-attrs = progressIconAttrs |
 								:is = progressIcon
 							.
 
-							< @b-progress-icon v-else
+							< @b-progress-icon &
+								v-else |
+								:v-attrs = progressIconAttrs
+							.
 
 		< template v-if = type === 'link'
 			+= self.button('a')

@@ -125,6 +125,12 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly progressIcon?: string | boolean;
 
 	/**
+	 * Progress icon component attributes
+	 */
+	@prop({type: Object, required: false})
+	readonly progressIconAttrs?: Dictionary;
+
+	/**
 	 * Tooltip text
 	 */
 	@prop({type: String, required: false})
