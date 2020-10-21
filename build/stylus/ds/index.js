@@ -98,7 +98,7 @@ module.exports = function addPlugins(api) {
 	 * Returns a part of the Design System by the specified path or the whole object
 	 *
 	 * @param {string} [string] - first level field (colors, rounding, etc.)
-	 * @param {value} [string] - field path
+	 * @param {!Object} [value] - field path
 	 * @returns {!Object}
 	 */
 	api.define(
@@ -126,21 +126,39 @@ module.exports = function addPlugins(api) {
 		}
 	);
 
+	/**
+	 * Returns a text styles object for the specified text style name
+	 *
+	 * @param {string} [name]
+	 * @returns {!Object}
+	 */
 	api.define('getDSTextStyles', ({string: name} = {}) => {
 		if (!name) {
 			throw new Error('getDSTextStyles: name for the text style is not specified');
 		}
 
-		let
-			path;
-
 		if (!isThemesIncluded && theme) {
-			path = [name, 'theme', theme];
+			const
+				path = [name, 'theme', theme],
+				initial = $C(DS).get(path);
 
-		} else {
-			path = [name];
-			return $C(DS).get(path);
+			if (!Object.isObject(initial)) {
+				throw new Error(`getDSTextStyles: design system has no "${theme}" styles for the specified name: ${name}`);
+			}
+
+			const
+				res = {};
+
+			Object.forEach(initial, (value, key) => {
+				const pathToValue = Array.concat(path, key);
+				res[key] = $C(cssVariables).get(pathToValue);
+			});
+
+			return stylus.utils.coerce(res);
+
 		}
+
+		return $C(DS).get([name]);
 	});
 
 	/**

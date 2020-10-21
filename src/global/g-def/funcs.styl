@@ -225,7 +225,7 @@ i($name, $repeat = no-repeat, $align = center)
  */
 t($name)
 	$name = replaceByRegExp($name, "[ \/]", "-", "g")
-	$obj = getDSOptions("text", $name)
+	$obj = getDSTextStyles($name)
 
 	if $obj
 		interpolate-props($obj)
