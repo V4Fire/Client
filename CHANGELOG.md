@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.90 (2020-??-??)
+
+#### :house: Internal
+
+* [Fixed an issue with unsafe port in tests](https://github.com/V4Fire/Client/issues/330)
+
 ## v3.0.0-rc.89 (2020-10-20)
 
 #### :bug: Bug Fix
