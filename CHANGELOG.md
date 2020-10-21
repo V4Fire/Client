@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* [Fixed an issue with unsafe port in tests](https://github.com/V4Fire/Client/issues/330)
+* [Fixed an issue with unsafe port in tests `build/test.gulp.js`](https://github.com/V4Fire/Client/issues/330)
 
 ## v3.0.0-rc.89 (2020-10-20)
 
