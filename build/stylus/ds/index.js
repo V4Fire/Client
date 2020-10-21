@@ -137,9 +137,9 @@ module.exports = function addPlugins(api) {
 			throw new Error('getDSTextStyles: name for the text style is not specified');
 		}
 
-		if (!isThemesIncluded && theme) {
+		if (isThemesIncluded && theme) {
 			const
-				path = [name, 'theme', theme],
+				path = ['text', 'theme', theme, name],
 				initial = $C(DS).get(path);
 
 			if (!Object.isObject(initial)) {
@@ -150,15 +150,16 @@ module.exports = function addPlugins(api) {
 				res = {};
 
 			Object.forEach(initial, (value, key) => {
-				const pathToValue = Array.concat(path, key);
-				res[key] = $C(cssVariables).get(pathToValue);
+				res[key] = $C(cssVariables).get(['text', name, key]);
 			});
 
-			return stylus.utils.coerce(res);
-
+			return stylus.utils.coerce(res, true);
 		}
 
-		return $C(DS).get([name]);
+		const
+			tail = !isThemesIncluded && theme ? ['theme', theme, name] : [name];
+
+		return $C(DS).get(['text', ...tail]);
 	});
 
 	/**
