@@ -10,5 +10,5 @@
 
 module.exports = {
 	DS: Object.create(null),
-	cssVars: Object.create(null)
+	cssVariables: Object.create(null)
 };

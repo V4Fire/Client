@@ -19,14 +19,14 @@ const
 	{getThemes} = include('build/ds');
 
 const {
-	setVar,
-	genPath,
+	saveVariable,
+	createPath,
 	prepareData
 } = include('build/stylus/ds/helpers');
 
 const {
 	DS,
-	cssVars
+	cssVariables
 } = include('build/stylus/ds/const');
 
 if (pzlr.config.designSystem) {
@@ -45,7 +45,8 @@ if (pzlr.config.designSystem) {
 prepareData(DS);
 
 const
-	themesList = getThemes();
+	themesList = getThemes(),
+	isThemesIncluded = Boolean(themesList);
 
 module.exports = function addPlugins(api) {
 	/**
@@ -62,7 +63,7 @@ module.exports = function addPlugins(api) {
 
 			if (value) {
 				const
-					__vars__ = $C(cssVars).get(`components.${string}`);
+					__vars__ = $C(cssVariables).get(`components.${string}`);
 
 				return stylus.utils.coerce({
 					...value,
@@ -80,10 +81,10 @@ module.exports = function addPlugins(api) {
 	 * @param {string} theme
 	 * @returns {!Object}
 	 */
-	api.define('getFlatDSVars', ({string: theme}) => {
+	api.define('getDSVariables', ({string: theme}) => {
 		const
 			obj = {},
-			iterator = theme ? cssVars.__map__[theme] : cssVars.__map__;
+			iterator = theme ? cssVariables.__map__[theme] : cssVariables.__map__;
 
 		Object.forEach(iterator, (val) => {
 			const [key, value] = val;
@@ -94,7 +95,7 @@ module.exports = function addPlugins(api) {
 	});
 
 	/**
-	 * Returns a part of the Design System by the specified path or the whole DS object
+	 * Returns a part of the Design System by the specified path or the whole object
 	 *
 	 * @param {string} [string] - first level field (colors, rounding, etc.)
 	 * @param {value} [string] - field path
@@ -107,13 +108,10 @@ module.exports = function addPlugins(api) {
 				return DS;
 			}
 
-			const
-				hasIncludeThemes = Boolean(themesList);
-
 			let
 				path;
 
-			if (!hasIncludeThemes && theme) {
+			if (!isThemesIncluded && theme) {
 				path = [string, 'theme', theme];
 
 			} else {
@@ -124,9 +122,26 @@ module.exports = function addPlugins(api) {
 				path.push(value.string);
 			}
 
-			return hasincludeThemes ? stylus.utils.coerce($C(cssVars).get(path)) : $C(DS).get(path);
+			return isThemesIncluded ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(DS).get(path);
 		}
 	);
+
+	api.define('getDSTextStyles', ({string: name} = {}) => {
+		if (!name) {
+			throw new Error('getDSTextStyles: name for the text style is not specified');
+		}
+
+		let
+			path;
+
+		if (!isThemesIncluded && theme) {
+			path = [name, 'theme', theme];
+
+		} else {
+			path = [name];
+			return $C(DS).get(path);
+		}
+	});
 
 	/**
 	 * Returns color(s) from the Design System by the specified name and identifier (optional)
@@ -145,8 +160,7 @@ module.exports = function addPlugins(api) {
 			}
 
 			const
-				hasIncludedThemes = Boolean(themesList),
-				path = !hasIncludedThemes && theme ? ['colors', 'theme', theme] : ['colors'];
+				path = !isThemesIncluded && theme ? ['colors', 'theme', theme] : ['colors'];
 
 			if (id) {
 				id = id.string || id.val;
@@ -162,7 +176,7 @@ module.exports = function addPlugins(api) {
 				path.push(id);
 			}
 
-			return hasIncludedThemes ? stylus.utils.coerce($C(cssVars).get(path)) : $C(DS).get(path);
+			return isThemesIncluded ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(DS).get(path);
 		}
 	);
 
@@ -178,8 +192,8 @@ module.exports = function addPlugins(api) {
 };
 
 Object.assign(module.exports, {
-	setVar,
-	genPath,
+	saveVariable,
+	createPath,
 	prepareData
 });
 

@@ -14,12 +14,12 @@
 //#if runtime has theme
 //#unless runtime has includeThemes
 :root
-	interpolate-props(getFlatDSVars(defaultTheme()), false)
+	interpolate-props(getDSVariables(defaultTheme()), false)
 //#endunless
 //#endif
 
 //#if runtime has includeThemes
 for name in includedThemes()
 	html.root_theme_{name}
-		interpolate-props(getFlatDSVars(name), false)
+		interpolate-props(getDSVariables(name), false)
 //#endif

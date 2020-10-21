@@ -11,38 +11,38 @@
 const
 	$C = require('collection.js'),
 	stylus = require('stylus'),
-	{cssVars} = include('build/stylus/ds/const');
+	{cssVariables} = include('build/stylus/ds/const');
 
-Object.defineProperty(cssVars, '__map__', {
+Object.defineProperty(cssVariables, '__map__', {
 	enumerable: false,
 	value: {}
 });
 
 /**
- * Sets a variable into cssVars dictionary by the specified path
+ * Sets a variable into cssVariables dictionary by the specified path
  *
  * @param {string} path
  * @param {unknown} dsValue
  * @param {string} [theme]
  */
-function setVar(path, dsValue, theme) {
+function saveVariable(path, dsValue, theme) {
 	const
 		variable = `--${path.split('.').join('-')}`;
 
 	const
 		mapValue = [variable, dsValue];
 
-	$C(cssVars).set(`var(${variable})`, path);
+	$C(cssVariables).set(`var(${variable})`, path);
 
 	if (theme === undefined) {
-		cssVars.__map__[path] = mapValue;
+		cssVariables.__map__[path] = mapValue;
 
 	} else {
-		if (!cssVars.__map__[theme]) {
-			Object.defineProperty(cssVars.__map__, theme, {value: {}, enumerable: false});
+		if (!cssVariables.__map__[theme]) {
+			Object.defineProperty(cssVariables.__map__, theme, {value: {}, enumerable: false});
 		}
 
-		cssVars.__map__[theme][path] = mapValue;
+		cssVariables.__map__[theme][path] = mapValue;
 	}
 }
 
@@ -53,7 +53,7 @@ function setVar(path, dsValue, theme) {
  * @param {string} suffix
  * @returns {string}
  */
-function genPath(prefix, suffix) {
+function createPath(prefix, suffix) {
 	return `${prefix ? `${prefix}.${suffix}` : suffix}`;
 }
 
@@ -94,24 +94,24 @@ function prepareData(data, path, theme) {
 			}
 
 		} else if (Object.isObject(d)) {
-			prepareData(d, genPath(path, val), theme);
+			prepareData(d, createPath(path, val), theme);
 
 		} else if (Object.isArray(d)) {
-			prepareData(d, genPath(path, val), theme);
+			prepareData(d, createPath(path, val), theme);
 			d = stylus.utils.coerceArray(d, true);
 
 		} else {
 			if (/^[a-z-_]+\(.*\)$/.test(d)) {
 				// Stylus built-in function
 				data[val] = new stylus.Parser(d).function();
-				setVar(genPath(path, val), data[val], theme);
+				saveVariable(createPath(path, val), data[val], theme);
 				return;
 			}
 
 			if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
 				// HEX value
 				data[val] = new stylus.Parser(d).peek().val;
-				setVar(genPath(path, val), data[val], theme);
+				saveVariable(createPath(path, val), data[val], theme);
 				return;
 			}
 
@@ -123,23 +123,23 @@ function prepareData(data, path, theme) {
 				if (unit) {
 					// Value with unit
 					data[val] = new stylus.nodes.Unit(parseFloat(unit[1]), unit[2]);
-					setVar(genPath(path, val), data[val], theme);
+					saveVariable(createPath(path, val), data[val], theme);
 					return;
 				}
 
 				data[val] = new stylus.nodes.String(d);
-				setVar(genPath(path, val), data[val], theme);
+				saveVariable(createPath(path, val), data[val], theme);
 				return;
 			}
 
 			data[val] = new stylus.nodes.Unit(d);
-			setVar(genPath(path, val), data[val], theme);
+			saveVariable(createPath(path, val), data[val], theme);
 		}
 	});
 }
 
 module.exports = {
-	setVar,
+	saveVariable,
 	prepareData,
-	genPath
+	createPath
 };
