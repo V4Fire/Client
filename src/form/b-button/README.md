@@ -69,7 +69,7 @@ The component has four base scenarios of usage:
 
 The component supports a bunch of slots to provide:
 
-1. `default` to provide base content.
+1. `default` to provide the base content.
 
 ```
 < b-button
@@ -104,7 +104,7 @@ Also, these icons can be provided by props.
 < b-button :icon = 'expand'
   Click on me!
 
-< b-button :icon = 'expand' | :iconComponent = 'bCustomIcon'
+< b-button :icon = 'expand' | :iconComponent = 'b-custom-icon'
   Click on me!
 
 < b-button

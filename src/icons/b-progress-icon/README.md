@@ -8,7 +8,7 @@ This module provides a component to indicate loading.
 
 * The component is functional.
 
-* The component can be used as flyweight.
+* The component can be used as a flyweight.
 
 * By default, the root tag of the component is `<span>`.
 

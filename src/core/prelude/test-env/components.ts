@@ -33,20 +33,29 @@ globalThis.renderComponents = (
 		const res = {};
 
 		const createElement = (val) => {
-			const
-				{tag, attrs, content} = val;
-
-			let
-				convertedContent = content;
-
-			if (Object.isPlainObject(convertedContent)) {
-				convertedContent = createElement(content)();
-				convertedContent = Object.isString(convertedContent) === false && Object.isArray(convertedContent) === false ?
-					[convertedContent] :
-					convertedContent;
+			if (Object.isFunction(val)) {
+				return val;
 			}
 
-			return () => ctx.$createElement(<string>tag, {attrs: {'v-attrs': attrs}}, convertedContent);
+			return (obj?) => {
+				const
+					{tag, attrs, content} = val;
+
+				let
+					convertedContent = content;
+
+				const
+					getTpl = (tpl) => Object.isString(tpl) === false && Object.isArray(tpl) === false ? [tpl] : tpl;
+
+				if (Object.isFunction(convertedContent)) {
+					convertedContent = getTpl(convertedContent(obj));
+
+				} else if (Object.isPlainObject(convertedContent)) {
+					convertedContent = getTpl(createElement(content)(obj));
+				}
+
+				return ctx.$createElement(<string>tag, {attrs: {'v-attrs': attrs}}, convertedContent);
+			};
 		};
 
 		Object.forEach(content, (val: Dictionary, key: string) => {

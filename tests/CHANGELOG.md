@@ -11,16 +11,10 @@ Changelog
 
 ## v3.0.0-rc.90 (2020-10-22)
 
-#### :house: Internal
+#### :rocket: New Feature
 
-* Removed dead props: `hint`, `hintPos`
+* Added support for a runner wildcard declaration
 
-## v3.0.0-rc.51 (2020-08-04)
-
-#### :house: Internal
-
-* Fixed ESLint warnings
-
-#### :nail_care: Polish
-
-* Added documentation
+```bash
+gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/* --runtime-render true
+```

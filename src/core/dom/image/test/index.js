@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
- // @ts-check
+// @ts-check
 
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-lines */

@@ -11,15 +11,13 @@ Changelog
 
 ## v3.0.0-rc.90 (2020-10-22)
 
-#### :house: Internal
+#### :boom: Breaking Change
 
-* Removed dead props: `hint`, `hintPos`
-
-## v3.0.0-rc.51 (2020-08-04)
+* Removed `setSizes`
 
 #### :house: Internal
 
-* Fixed ESLint warnings
+* Refactoring
 
 #### :nail_care: Polish
 

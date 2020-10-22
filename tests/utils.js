@@ -9,8 +9,15 @@
 // @ts-check
 
 const
-	path = require('upath'),
+	{spawn} = require('child_process');
+
+const
 	arg = require('arg'),
+	path = require('upath'),
+	glob = require('glob');
+
+const
+	$C = require('collection.js'),
 	pzlr = require('@pzlr/build-core');
 
 /**
@@ -24,19 +31,66 @@ class TestUtils {
 	getCurrentTest(options) {
 		const
 			args = arg({'--runner': String, '--name': String, '--test-entry': String}, {permissive: true}),
-			runner = args['--runner'];
+			runner = args['--runner'] ?? '**/*';
 
 		options = {
 			testDirPath: args['--test-entry'] || `${args['--name']}/test`,
-			runnerPath: `/runners/${runner}.js`,
+			runnerPath: `${runner}.js`,
 			...options
 		};
 
 		const
 			testDirPath = pzlr.resolve.blockSync(options.testDirPath),
-			testPath = path.join(testDirPath, options.runnerPath);
+			testPath = path.join(testDirPath, 'runners', options.runnerPath),
+			hasMagic = glob.hasMagic(testPath);
 
-		return require(testPath);
+		const fns = glob.sync(testPath).map((testPath) => [
+			path.relative(`${testDirPath}/runners`, testPath)
+				.replace(path.extname(testPath), ''),
+
+			require(testPath)
+		]);
+
+		return async (...args) => {
+			if (!hasMagic) {
+				await fns[0][1](...args);
+				return true;
+			}
+
+			const
+				argv = process.argv.slice(1);
+
+			for (let i = 0; i < argv.length; i++) {
+				switch (argv[i]) {
+					case '--runner':
+						argv.splice(i, 2);
+						break;
+
+					case 'test:component':
+						argv[i] = 'test:component:run';
+						break;
+
+					default:
+						// Do nothing
+				}
+			}
+
+			await $C(fns).async.forEach(async ([runner, fn]) => {
+				if (!Object.isFunction(fn)) {
+					return;
+				}
+
+				const
+					child = spawn('node', [...argv, '--runner', runner]);
+
+				child.stdout.pipe(process.stdout);
+				child.stderr.pipe(process.stderr);
+
+				await new Promise((close) => child.on('close', close));
+			});
+
+			return false;
+		};
 	}
 }
 

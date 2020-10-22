@@ -26,16 +26,19 @@ b-list extends i-data
 	&__cell
 		display flex
 
-	&__el
+	&__item
 	&__link
 		position relative
 
 	&__link:active
 		{$p.onActive}
 
-	&__el
+	&__item
 	&__link_progress_true &__link-progress
 		display block
 
 	&__link-progress
+		display none
+
+	&_hide-labels &__link-text
 		display none
