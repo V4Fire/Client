@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.89 (2020-10-20)
+
+#### :bug: Bug Fix
+
+* Fixed the background image cleaning
+
 ## v3.0.0-rc.75 (2020-10-07)
 
 #### :rocket: New Feature
