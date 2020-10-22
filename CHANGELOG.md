@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.90 ()
+## v3.0.0-rc.90 (2020-10-22)
 
 #### :boom: Breaking Change
 
@@ -81,6 +81,8 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
   * `gHint`
   * `gIcon`
   * `gDef`
+
+* [Fixed an issue with the unsafe port in tests `build/test.gulp`](https://github.com/V4Fire/Client/issues/330)
 
 #### :nail_care: Polish
 
