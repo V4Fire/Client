@@ -59,12 +59,14 @@ module.exports = (page) => {
 				]
 			});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.block.elements('item')[1].querySelector(ctx.block.getElSelector('link')).click();
-					return location.hash;
-				})
-			).toBe('#bla');
+			const selector = await target.evaluate((ctx) => {
+				const classes = ctx.block.elements('item')[1].querySelector(ctx.block.getElSelector('link')).className;
+				return `.${classes.split(' ').join('.')}`;
+			});
+
+			await page.click(selector);
+
+			expect(await target.evaluate(() => location.hash)).toBe('#bla');
 		});
 
 		it('generation of href-s', async () => {
@@ -84,12 +86,14 @@ module.exports = (page) => {
 				]
 			});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.block.elements('item')[0].querySelector(ctx.block.getElSelector('link')).click();
-					return location.hash;
-				})
-			).toBe('#foo');
+			const selector = await target.evaluate((ctx) => {
+				const classes = ctx.block.elements('item')[0].querySelector(ctx.block.getElSelector('link')).className;
+				return `.${classes.split(' ').join('.')}`;
+			});
+
+			await page.click(selector);
+
+			expect(await target.evaluate(() => location.hash)).toBe('#foo');
 		});
 	});
 };
