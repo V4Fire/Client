@@ -38,7 +38,7 @@ There is a function `h.utils.setup` for this, open the file` index.js` and call 
 
 **base/b-popover/test/index.js**
 
-```javascript
+```js
 // @ts-check
 
 const
@@ -64,7 +64,7 @@ The first step to create your component during test execution is to add the comp
 
 **pages/p-demo-page/index.js**
 
-```javascript
+```js
 package('p-v4-components-demo')
   .extends('i-root')
   .dependencies('b-popover');
@@ -144,7 +144,7 @@ Let's draw our first component on the page, first of all create a `render.js` fi
 
 **base/b-popover/test/render.js**
 
-```javascript
+```js
 module.exports = [
   {
     attrs: {
@@ -158,7 +158,7 @@ Let's import this file to our main test file and call the render function:
 
 **base/b-popover/test/index.js**
 
-```javascript
+```js
 // @ts-check
 
 const
@@ -193,7 +193,7 @@ After creating the component, you can directly start testing; let's make the fir
 
 **base/b-popover/test/index.js**
 
-```javascript
+```js
 module.exports = async (page, params) => {
   await h.utils.setup(page, params.context);
 
@@ -229,7 +229,7 @@ Let's write the second spec and add refreshing of the page's components using th
 
 **base/b-popover/test/index.js**
 
-```javascript
+```js
 module.exports = async (page, params) => {
   await h.utils.setup(page, params.context);
 
@@ -303,7 +303,7 @@ Just create a `demo.js` file within your component folder and puts a scheme of r
 
 **base/b-popover/demo.js**
 
-```javascript
+```js
 const demo = [
   {
     attrs: {
@@ -343,7 +343,7 @@ You can get a component in a test as follows:
 
 **base/b-popover/test/index.js**
 
-```javascript
+```js
 module.exports = async (page, params) => {
   await h.utils.setup(page, params.context);
 
@@ -365,6 +365,109 @@ Run test:
 
 ```bash
 npx gulp test:component --name b-popover --suit demo
+```
+
+## Splitting specs
+
+You can split your specs into different files and run them separately.
+To do this, create the `runners` folder into the `test` folder. Now, you allow adding your spec files to this folder.
+
+**base/b-popover/test/runners/initializing.js**
+
+```js
+module.exports = async (page, params) => {
+  let
+    bPopover,
+    bPopoverNode;
+
+  beforeEach(async () => {
+    await page.evaluate((scheme) => {
+      globalThis.removeCreatedComponents();
+      globalThis.renderComponents('b-popover', scheme);
+    }, scheme);
+
+    bPopover = await h.component.getComponentById(page, 'without-slots'),
+    bPopoverNode = await page.$('#without-slots');
+  });
+
+  describe('bPopover initializing', () => {
+    it('has correct componentName', async () => {
+      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
+      expect(componentName).toBe('b-popover');
+    });
+  });
+};
+```
+
+**base/b-popover/test/runners/behaviour.js**
+
+```js
+module.exports = async (page, params) => {
+  let
+    bPopover,
+    bPopoverNode;
+
+  beforeEach(async () => {
+    await page.evaluate((scheme) => {
+      globalThis.removeCreatedComponents();
+      globalThis.renderComponents('b-popover', scheme);
+    }, scheme);
+
+    bPopover = await h.component.getComponentById(page, 'without-slots'),
+    bPopoverNode = await page.$('#without-slots');
+  });
+
+  describe('bPopover behaviour', () => {
+    it('shown when calling `open`', async () => {
+      await bPopover.evaluate((ctx) => ctx.open());
+      expect(await bPopoverNode.evaluate((ctx) => ctx.style.display)).not.toBe('none');
+    });
+  });
+};
+```
+
+The main test file should contain an initializer of specs.
+
+**base/b-popover/test/index.js**
+
+```js
+// @ts-check
+
+/**
+ * @typedef {import('playwright').Page} Page
+ */
+
+const
+  h = include('tests/helpers'),
+  u = include('tests/utils'),
+  test = u.getCurrentTest();
+
+/**
+ * Starts a test
+ *
+ * @param {Page} page
+ * @param {!Object} params
+ * @returns {!Promise<boolean>}
+ */
+module.exports = async (page, params) => {
+  await h.utils.setup(page, params.context);
+  return test(page);
+};
+```
+
+To run a runner provide its name within a command.
+
+```bash
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner behaviour
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner initializing
+```
+
+Also, you can use glob patterns to define several runners.
+
+```bash
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner *
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner **/*
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner behaviour/*
 ```
 
 ## Testing modules
@@ -442,7 +545,7 @@ npx gulp test:components --test-processes 2 --build-processes 4
 To make your test run during the call to `test:components`, you need to add it to a file with test cases.
 This file is located by an address `cwd/tests/cases.js`. It looks something like this:
 
-```javascript
+```js
 module.exports = [
   // b-router
   '--test-entry base/b-router/test',
