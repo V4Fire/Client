@@ -13,7 +13,7 @@ import 'models/demo/list';
 import symbolGenerator from 'core/symbol';
 
 import { isAbsURL } from 'core/url';
-import { deprecated } from 'core/functools/deprecation';
+import { deprecated, deprecate } from 'core/functools/deprecation';
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
@@ -38,10 +38,6 @@ export const
 	model: {
 		prop: 'valueProp',
 		event: 'onChange'
-	},
-
-	deprecatedProps: {
-		valueProp: 'itemsProp'
 	}
 })
 
@@ -51,6 +47,13 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	@prop(Array)
 	readonly itemsProp: Items = [];
+
+	/**
+	 * @deprecated
+	 * @see [[bList.itemsProp]]
+	 */
+	@prop({type: Array, required: false})
+	readonly valueProp?: Items;
 
 	/**
 	 * Initial component active value/s.
@@ -84,32 +87,32 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * List of component items
 	 * @see [[bList.itemsProp]]
 	 */
+	@computed({dependencies: ['value', 'itemsStore']})
+	get items(): Items {
+		return <Items>this.field.get(this.deprecated ? 'value' : 'itemsStore');
+	}
+
+	/**
+	 * Sets a new list of component items
+	 * @see [[bList.itemsProp]]
+	 */
+	set items(value: Items) {
+		this.field.set(this.deprecated ? 'value' : 'itemsStore', value);
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bList.items]]
+	 */
 	@field<bList>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
-			return <CanUndef<Items>>o.value ?? [];
+			return o.value;
 		}
 
 		return o.normalizeItems(val);
 	}))
 
-	items!: Items;
-
-	/**
-	 * @override
-	 * @see [[bList.items]]
-	 */
-	@deprecated({renamedTo: 'items'})
-	get value(): Items {
-		return this.items;
-	}
-
-	/**
-	 * @override
-	 * @see [[bList.items]]
-	 */
-	set value(items: Items) {
-		this.items = items;
-	}
+	value?: Items;
 
 	/**
 	 * Component active value.
@@ -137,6 +140,27 @@ export default class bList extends iData implements iVisible, iWidth {
 			['false']
 		]
 	};
+
+	/**
+	 * Store of component items
+	 * @see [[bList.items]]
+	 */
+	@field<bList>((o) => o.sync.link<Items>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Items>>o.itemsStore ?? [];
+		}
+
+		return o.normalizeItems(val);
+	}))
+
+	protected itemsStore!: Items;
+
+	/**
+	 * True, if the component works with the deprecated API
+	 * @protected
+	 */
+	@system()
+	protected deprecated: boolean = false;
 
 	/**
 	 * Map of item indexes and their values
@@ -396,6 +420,25 @@ export default class bList extends iData implements iVisible, iWidth {
 			this.normalizeItems = i.normalizeItems.bind(this);
 
 		} else {
+			deprecate({
+				name: 'valueProp',
+				type: 'property',
+				renamedTo: 'itemsProp'
+			});
+
+			deprecate({
+				name: 'value',
+				type: 'property',
+				renamedTo: 'items'
+			});
+
+			deprecate({
+				name: 'normalizeOptions',
+				type: 'method',
+				renamedTo: 'normalizeItems'
+			});
+
+			this.deprecated = true;
 			this.normalizeItems = i.normalizeOptions.bind(this);
 		}
 	}
@@ -505,7 +548,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @emits `valueChange(value: Items)`
 	 * @emits `itemsChange(value: Items)`
 	 */
-	@watch('items')
+	@watch(['value', 'itemsStore'])
 	protected syncItemsWatcher(value: Items, oldValue: Items): void {
 		if (!Object.fastCompare(value, oldValue)) {
 			this.initComponentValues();
