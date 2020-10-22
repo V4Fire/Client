@@ -55,6 +55,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added support of the default slot `bList`
 * Now `content` can be provided as a function `core/prelude/test-env/renderComponents`
+* Added support for a runner wildcard declaration `tests`
+
+```bash
+gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/* --runtime-render true
+```
 
 #### :bug: Bug Fix
 
@@ -84,6 +89,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `gHint`
   * `gIcon`
   * `gDef`
+
+* Improved output `test.gulp`
 
 ## v3.0.0-rc.89 (2020-10-20)
 
