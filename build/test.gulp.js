@@ -252,7 +252,6 @@ module.exports = function init(gulp = require('gulp')) {
 
 			await page.goto(testURL);
 			const testEnv = getTestEnv(browserType);
-			await test(page, params);
 
 			const close = () => {
 				if (!cliParams['reinit-browser'] && cliParams.close) {
@@ -261,6 +260,11 @@ module.exports = function init(gulp = require('gulp')) {
 
 				process.exitCode = exitCode;
 			};
+
+			if (await test(page, params) === false) {
+				close();
+				return;
+			}
 
 			testEnv.addReporter({
 				specDone: (res) => {
@@ -273,7 +277,11 @@ module.exports = function init(gulp = require('gulp')) {
 			});
 
 			await new Promise((resolve) => {
-				testEnv.afterAll(() => resolve(), 10e3);
+				testEnv.afterAll(() => {
+					console.log('\n\n\n');
+					resolve();
+				}, 10e3);
+
 				testEnv.execute();
 			}).then(close, close);
 		};
