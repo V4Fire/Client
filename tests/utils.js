@@ -61,8 +61,17 @@ class TestUtils {
 				argv = process.argv.slice(1);
 
 			for (let i = 0; i < argv.length; i++) {
-				if (argv[i] === '--runner') {
-					argv.splice(i, 2);
+				switch (argv[i]) {
+					case '--runner':
+						argv.splice(i, 2);
+						break;
+
+					case 'test:component':
+						argv[i] = 'test:component:run';
+						break;
+
+					default:
+						// Do nothing
 				}
 			}
 
