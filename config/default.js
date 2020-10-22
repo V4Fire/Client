@@ -257,6 +257,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	/**
+	 * Name of the interface theme by default
+	 *
+	 * @cli t
+	 * @env THEME
+	 */
 	theme() {
 		return o('theme', {
 			short: 't',
@@ -264,8 +270,37 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	/**
+	 * Array of themes to passing from design system to the runtime
+	 * or true, if needed to pass all themes from design system
+	 *
+	 * @cli include-themes
+	 * @env INCLUDE_THEMES
+	 *
+	 * @type {string[]|boolean}
+	 */
 	includeThemes() {
 		return o('include-themes', {
+			env: true
+		});
+	},
+
+	/**
+	 * Array of field names from design system, that support themes.
+	 *
+	 * For example, you can use themes only for colors.
+	 * Then, pass to this variable value `['colors']`.
+	 * In this case, runtime theme will not affect to other fields from a design system
+	 *
+	 * @see [[DS]]
+	 *
+	 * @cli themed-fields
+	 * @env THEMED_FIELDS
+	 *
+	 * @type {string[]}
+	 */
+	themedFields() {
+		return o('themed-fields', {
 			env: true
 		});
 	},
