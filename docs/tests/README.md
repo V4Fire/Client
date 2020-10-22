@@ -66,21 +66,21 @@ The first step to create your component during test execution is to add the comp
 
 ```javascript
 package('p-v4-components-demo')
-    .extends('i-root')
-    .dependencies('b-popover');
+  .extends('i-root')
+  .dependencies('b-popover');
 ```
 
 To render a component dynamically during runtime, you should use `renderComponents`. The method places globally and has a signature:
 
 ```typescript
 export interface RenderParams {
-	/**
-	 * Component attrs
-	 */
-	attrs: Dictionary;
+  /**
+   * Component attrs
+   */
+  attrs: Dictionary;
 
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | string>;
+  /** @see [[RenderContent]] */
+  content?: Dictionary<RenderContent | string>;
 }
 
 /**
@@ -103,7 +103,7 @@ export interface RenderParams {
  *     }
  *   }
  * });
- * ```
+ * \```
  *
  * This schema is the equivalent of such a template:
  *
@@ -111,21 +111,21 @@ export interface RenderParams {
  * < b-button :testProp = 1
  *   < b-button
  *     Test
- * ```
+ * \```
  */
 export interface RenderContent {
-	/**
-	 * Component name or tagName
-	 */
-	tag: string;
+  /**
+   * Component name or tagName
+   */
+  tag: string;
 
-	/**
-	 * Component attrs
-	 */
-	attrs: Dictionary;
+  /**
+   * Component attrs
+   */
+  attrs: Dictionary;
 
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | string>;
+  /** @see [[RenderContent]] */
+  content?: Dictionary<RenderContent | string>;
 }
 
 /**
@@ -435,7 +435,7 @@ Runs all tests defined in `cwd / tests / cases.js`, maximum 4 builds, and two te
 npx gulp test:components --test-processes 2 --build-processes 4
 ```
 
-To make your test run during the call to `test: components`, you need to add it to a file with test cases. This file is located by an address `cwd/tests/cases.js`. It looks something like this:
+To make your test run during the call to `test:components`, you need to add it to a file with test cases. This file is located by an address `cwd/tests/cases.js`. It looks something like this:
 
 ```javascript
 module.exports = [
