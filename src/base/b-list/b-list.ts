@@ -87,7 +87,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * List of component items
 	 * @see [[bList.itemsProp]]
 	 */
-	@computed({dependencies: ['value', 'itemsStore']})
+	@computed({dependencies: ['value', 'itemsStore', 'deprecated']})
 	get items(): Items {
 		return <Items>this.field.get(this.deprecated ? 'value' : 'itemsStore');
 	}
@@ -104,12 +104,12 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @deprecated
 	 * @see [[bList.items]]
 	 */
-	@field<bList>((o) => o.sync.link<Items>((val) => {
+	@field<bList>((o) => o.sync.link<CanUndef<Items>>((val) => {
 		if (o.dataProvider != null) {
 			return o.value;
 		}
 
-		return o.normalizeItems(val);
+		return val != null ? o.normalizeItems(val) : val;
 	}))
 
 	value?: Items;
@@ -508,17 +508,20 @@ export default class bList extends iData implements iVisible, iWidth {
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
+		if (this.valueProp != null || this.field.get('value') != null) {
+			this.deprecated = true;
+		}
+
 		const
 			values = new Map(),
 			indexes = {};
 
 		const
-			items = this.field.get<CanUndef<Items>>('items') ?? [],
 			activeStore = this.field.get('activeStore');
 
-		for (let i = 0; i < items.length; i++) {
+		for (let i = 0; i < this.items.length; i++) {
 			const
-				el = items[i],
+				el = this.items[i],
 				val = el.value;
 
 			if (el.active && (this.multiple ? this.activeProp === undefined : activeStore === undefined)) {
@@ -544,8 +547,6 @@ export default class bList extends iData implements iVisible, iWidth {
 	 *
 	 * @param value
 	 * @param oldValue
-	 *
-	 * @emits `valueChange(value: Items)`
 	 * @emits `itemsChange(value: Items)`
 	 */
 	@watch(['value', 'itemsStore'])
