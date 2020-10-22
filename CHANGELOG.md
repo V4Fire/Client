@@ -90,6 +90,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
   * `gIcon`
   * `gDef`
 
+* Improved documentation `docs/tests`
 * Improved output `test.gulp`
 
 ## v3.0.0-rc.89 (2020-10-20)
