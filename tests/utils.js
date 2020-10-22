@@ -53,7 +53,7 @@ class TestUtils {
 
 		return async (...args) => {
 			if (!hasMagic) {
-				fns[0][1](...args);
+				await fns[0][1](...args);
 				return true;
 			}
 
