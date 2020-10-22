@@ -130,7 +130,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 */
 	gulp.task('test:component:run', async () => {
 		const
-			process = require('process');
+			process = require('process'),
+			portfinder = require('portfinder');
 
 		const
 			http = require('http'),
@@ -182,7 +183,9 @@ module.exports = function init(gulp = require('gulp')) {
 			cliParams[key] = args[`--${key}`] ? JSON.parse(args[`--${key}`]) : cliParams[key];
 		});
 
-		args['--port'] = args['--port'] || Number.random(2000, 6000);
+		// eslint-disable-next-line require-atomic-updates
+		args['--port'] = args['--port'] || await portfinder.getPortPromise();
+		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || 'p-v4-components-demo';
 
 		const
