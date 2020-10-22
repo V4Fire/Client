@@ -465,9 +465,9 @@ npx gulp test:component --runtime-render true --test-entry base/b-popover/test -
 Also, you can use glob patterns to define several runners.
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner *
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner **/*
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner behaviour/*
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner "*"
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner "**/*"
+npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner "behaviour/*"
 ```
 
 ## Testing modules
