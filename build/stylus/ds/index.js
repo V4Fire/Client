@@ -11,17 +11,18 @@
 const
 	$C = require('collection.js'),
 	stylus = require('stylus'),
+	config = require('config'),
 	pzlr = require('@pzlr/build-core');
 
 const
-	config = require('config'),
-	{theme} = config.runtime(),
-	{getThemes} = include('build/ds');
+	{getThemes} = include('build/ds'),
+	{theme} = config.runtime();
 
 const {
 	saveVariable,
 	createPath,
-	prepareData
+	prepareData,
+	getThemedPathChunks
 } = include('build/stylus/ds/helpers');
 
 const {
@@ -46,7 +47,7 @@ prepareData(DS);
 
 const
 	themesList = getThemes(),
-	isThemesIncluded = Boolean(themesList);
+	isThemesIncluded = themesList != null && themesList.length > 0;
 
 module.exports = function addPlugins(api) {
 	/**
@@ -109,7 +110,8 @@ module.exports = function addPlugins(api) {
 			}
 
 			const
-				path = !isThemesIncluded && theme ? [string, 'theme', theme] : [string];
+				tail = getThemedPathChunks(string),
+				path = !isThemesIncluded && theme ? [string, ...tail] : [string];
 
 			if (Object.isString(value.string)) {
 				path.push(value.string);
@@ -130,9 +132,13 @@ module.exports = function addPlugins(api) {
 			throw new Error('getDSTextStyles: name for the text style is not specified');
 		}
 
+		const
+			head = 'text',
+			themed = getThemedPathChunks(head);
+
 		if (isThemesIncluded && theme) {
 			const
-				path = ['text', 'theme', theme, name],
+				path = [head, ...themed, name],
 				initial = $C(DS).get(path);
 
 			if (!Object.isObject(initial)) {
@@ -143,7 +149,7 @@ module.exports = function addPlugins(api) {
 				res = {};
 
 			Object.forEach(initial, (value, key) => {
-				res[key] = $C(cssVariables).get(['text', name, key]);
+				res[key] = $C(cssVariables).get([head, name, key]);
 			});
 
 			return stylus.utils.coerce(res, true);
@@ -152,7 +158,7 @@ module.exports = function addPlugins(api) {
 		const
 			tail = !isThemesIncluded && theme ? ['theme', theme, name] : [name];
 
-		return $C(DS).get(['text', ...tail]);
+		return $C(DS).get([head, ...tail]);
 	});
 
 	/**
@@ -172,7 +178,7 @@ module.exports = function addPlugins(api) {
 			}
 
 			const
-				path = !isThemesIncluded && theme ? ['colors', 'theme', theme] : ['colors'];
+				path = !isThemesIncluded && theme ? ['colors', ...getThemedPathChunks('colors')] : ['colors'];
 
 			if (id) {
 				id = id.string || id.val;

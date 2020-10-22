@@ -11,9 +11,14 @@
 const
 	$C = require('collection.js'),
 	stylus = require('stylus'),
+	config = require('config'),
 	{cssVariables} = include('build/stylus/ds/const');
 
-Object.defineProperty(cssVariables, '__map__', {
+const
+	themedFields = config.themedFields(),
+	{theme} = config.runtime();
+
+	Object.defineProperty(cssVariables, '__map__', {
 	enumerable: false,
 	value: {}
 });
@@ -138,8 +143,27 @@ function prepareData(data, path, theme) {
 	});
 }
 
+/**
+ * Returns array of fields to get themed value
+ *
+ * @param field
+ * @returns {string[]}
+ */
+function getThemedPathChunks(field) {
+	let
+		path = ['theme', theme];
+
+	if (Object.isArray(themedFields) && !themedFields.includes(field)) {
+		// Requested field does not themed
+		path = [];
+	}
+
+	return path;
+}
+
 module.exports = {
 	saveVariable,
 	prepareData,
-	createPath
+	createPath,
+	getThemedPathChunks
 };
