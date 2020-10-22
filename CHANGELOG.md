@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.90 (2020-??-??)
+## v3.0.0-rc.90 ()
 
 #### :house: Internal
 
-* [Fixed an issue with unsafe port in tests `build/test.gulp.js`](https://github.com/V4Fire/Client/issues/330)
+* [Fixed an issue with the unsafe port in tests `build/test.gulp.js`](https://github.com/V4Fire/Client/issues/330)
 
 ## v3.0.0-rc.89 (2020-10-20)
 
