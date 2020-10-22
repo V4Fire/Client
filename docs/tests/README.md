@@ -186,7 +186,8 @@ module.exports = async (page, params) => {
 
 The `b-popover` component is now in the DOM tree and ready to interact.
 
-> Note that a component may not be in a ready state, i.e., `globalThis.renderComponents` creates a component and immediately places it into a DOM tree, without waiting for the ready status or anything else.
+> Note that a component may not be in a ready state, i.e., `globalThis.renderComponents` creates a component and immediately
+>places it into a DOM tree, without waiting for the ready status or anything else.
 
 After creating the component, you can directly start testing; let's make the first spec.
 
@@ -214,9 +215,11 @@ module.exports = async (page, params) => {
 
 > Now, we can run our test, but we will talk about this a little later, and now we will continue to write the test.
 
-Each spec runs on the same page, and no automatic state updates are provided. So it's always worth keeping in mind that updating a state of components on the page is in your hands.
+Each spec runs on the same page, and no automatic state updates are provided. So it's always worth keeping in mind that updating a
+state of components on the page is in your hands.
 
-To update a state of components, you can use several approaches for your taste (but I would recommend the manual reset since it is faster). Let's look at each of them separately:
+To update a state of components, you can use several approaches for your taste (but I would recommend the manual reset since it is faster).
+Let's look at each of them separately:
 
 * `Manual reset` – the method involves manually clearing a state of components on the page, for example,  by using the `beforeEach` hook.
 
@@ -399,7 +402,8 @@ npx gulp test:component --name b-dummy --test-entry core/dom/in-view/test
 
 ## Running tests with different options
 
-Build a `demo` page with components and attributes from` suit: demo`, and then run the test located at `b-popover/test.js` or` b-popover/test/index.js`:
+Build a `demo` page with components and attributes from` suit: demo`, and then run the test located at `b-popover/test.js`
+or` b-popover/test/index.js`:
 
 ```bash
 npx gulp test:component --name b-popover --suit demo
@@ -435,7 +439,8 @@ Runs all tests defined in `cwd / tests / cases.js`, maximum 4 builds, and two te
 npx gulp test:components --test-processes 2 --build-processes 4
 ```
 
-To make your test run during the call to `test:components`, you need to add it to a file with test cases. This file is located by an address `cwd/tests/cases.js`. It looks something like this:
+To make your test run during the call to `test:components`, you need to add it to a file with test cases.
+This file is located by an address `cwd/tests/cases.js`. It looks something like this:
 
 ```javascript
 module.exports = [
@@ -455,4 +460,5 @@ module.exports = [
 
 `cases.js` should export an array of strings containing the parameters with which the test should be run.
 
-> Please note that neither `name` nor `runtime-render` appears anywhere, because when calling `test:components`, all test parameters are checked. If the test does not have the `--name` parameter, the `--runtime-render true` will be set automatically.
+> Please note that neither `name` nor `runtime-render` appears anywhere, because when calling `test:components`, all test parameters are checked.
+> If the test does not have the `--name` parameter, the `--runtime-render true` will be set automatically.
