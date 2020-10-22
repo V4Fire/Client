@@ -108,17 +108,10 @@ module.exports = function addPlugins(api) {
 				return DS;
 			}
 
-			let
-				path;
+			const
+				path = !isThemesIncluded && theme ? [string, 'theme', theme] : [string];
 
-			if (!isThemesIncluded && theme) {
-				path = [string, 'theme', theme];
-
-			} else {
-				path = [string];
-			}
-
-			if (value.string) {
+			if (Object.isString(value.string)) {
 				path.push(value.string);
 			}
 
