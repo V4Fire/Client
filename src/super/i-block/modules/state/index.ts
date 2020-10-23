@@ -47,9 +47,9 @@ export default class State extends Friend {
 	 * Retrieves object values and saves it to a state of the current component
 	 * @param data
 	 */
-	set(data: Nullable<Dictionary>): boolean | Array<Promise<unknown>> {
-		if (!data) {
-			return false;
+	set(data: Nullable<Dictionary>): Array<Promise<unknown>> {
+		if (data == null) {
+			return [];
 		}
 
 		const
