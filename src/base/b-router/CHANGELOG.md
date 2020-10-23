@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.91 ()
+
+#### :boom: Breaking Change
+
+* Changed an interface and behavior of `initRemoteData`
+
 ## v3.0.0-rc.36 (2020-07-13)
 
 #### :bug: Bug Fix
