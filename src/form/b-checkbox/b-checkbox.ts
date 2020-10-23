@@ -11,6 +11,10 @@
  * @packageDocumentation
  */
 
+//#if demo
+import 'models/demo/checkbox';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 import iSize from 'traits/i-size/i-size';
 
