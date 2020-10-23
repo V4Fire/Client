@@ -14,6 +14,7 @@
 import bCheckbox, {
 
 	component,
+
 	ValidatorsDecl,
 	ValidatorParams,
 	ValidatorResult
@@ -22,6 +23,9 @@ import bCheckbox, {
 
 export * from 'super/i-input/i-input';
 
+/**
+ * Component to create a radio button
+ */
 @component({flyweight: true})
 export default class bRadioButton extends bCheckbox {
 	/** @override */

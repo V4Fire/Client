@@ -41,6 +41,9 @@ export { Value, FormValue };
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to create a checkbox
+ */
 @component({
 	flyweight: true,
 	functional: {
