@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Changed an interface of `super/i-block/modules/state/set`
+* Changed an interface and behavior of `bRouter/initRemoteData`
 
 #### :rocket: New Feature
 
@@ -23,6 +24,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added support of interpolation of a data provider response:
   * `iInput`
   * `bList`
+  * `bRouter`
 
 #### :house: Internal
 
