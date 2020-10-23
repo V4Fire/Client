@@ -121,7 +121,7 @@ export default class bCheckbox extends iInput implements iSize {
 		//#if runtime has iInput/validators
 
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-			if ((await this.formValue) != null) {
+			if (Object.isTruly(await this.formValue)) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
@@ -158,7 +158,7 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	async reset(): Promise<boolean> {
 		const cleared = await super.reset();
-		return cleared ? this[`${this.default != null ? '' : 'un'}check`]() : false;
+		return cleared ? this[`${Object.isTruly(this.default) ? '' : 'un'}check`]() : false;
 	}
 
 	/**
@@ -224,7 +224,7 @@ export default class bCheckbox extends iInput implements iSize {
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 
-		if ((this.value == null || this.changeable) && await this.toggle()) {
+		if ((!Object.isTruly(this.value) || this.changeable) && await this.toggle()) {
 			this.emit('actionChange', this.mods.checked === 'true');
 		}
 	}
