@@ -47,10 +47,13 @@ export default class State extends Friend {
 	 * Retrieves object values and saves it to a state of the current component
 	 * @param data
 	 */
-	set(data: Nullable<Dictionary>): boolean {
+	set(data: Nullable<Dictionary>): boolean | Array<Promise<unknown>> {
 		if (!data) {
-			return true;
+			return false;
 		}
+
+		const
+			promises = <Array<Promise<unknown>>>[];
 
 		for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
 			const
@@ -62,17 +65,27 @@ export default class State extends Friend {
 				originalVal = this.field.get(key);
 
 			if (Object.isFunction(originalVal)) {
-				originalVal.call(this.ctx, ...Array.concat([], newVal));
+				const
+					res = originalVal.call(this.ctx, ...Array.concat([], newVal));
+
+				if (Object.isPromise(res)) {
+					promises.push(res);
+				}
 
 			} else if (p[0] === 'mods') {
-				void this.ctx.setMod(p[1], newVal);
+				const
+					res = this.ctx.setMod(p[1], newVal);
+
+				if (Object.isPromise(res)) {
+					promises.push(res);
+				}
 
 			} else if (!Object.fastCompare(newVal, originalVal)) {
 				this.field.set(key, newVal);
 			}
 		}
 
-		return false;
+		return promises;
 	}
 
 	/**

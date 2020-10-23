@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.91 ()
 
+#### :boom: Breaking Change
+
+* Changed an interface of `super/i-block/modules/state/set`
+
 #### :rocket: New Feature
 
 * Added support of method invoking `super/i-block/modules/state/set`

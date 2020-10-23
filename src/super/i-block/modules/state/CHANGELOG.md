@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.91 ()
 
+#### :boom: Breaking Change
+
+* Changed an interface of `set`
+
 #### :rocket: New Feature
 
 * Added support of method invoking `set`
