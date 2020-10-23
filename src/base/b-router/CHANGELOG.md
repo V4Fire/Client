@@ -15,6 +15,10 @@ Changelog
 
 * Changed an interface and behavior of `initRemoteData`
 
+#### :rocket: New Feature
+
+* Added support of interpolation of a data provider response
+
 ## v3.0.0-rc.36 (2020-07-13)
 
 #### :bug: Bug Fix

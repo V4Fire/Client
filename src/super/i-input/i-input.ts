@@ -696,12 +696,20 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<unknown> {
+	protected initRemoteData(): CanUndef<CanPromise<unknown | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
 
-		return this[this.valueKey] = this.convertDBToComponent(this.db);
+		const
+			val = this.convertDBToComponent(this.db);
+
+		if (Object.isDictionary(val)) {
+			return Promise.all(this.state.set(val)).then(() => val);
+		}
+
+		this[this.valueKey] = val;
+		return val;
 	}
 
 	/**

@@ -391,16 +391,20 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<Items> {
+	protected initRemoteData(): CanUndef<CanPromise<Items | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent<Items>(this.db);
+			val = this.convertDBToComponent(this.db);
+
+		if (Object.isDictionary(val)) {
+			return Promise.all(this.state.set(val)).then(() => val);
+		}
 
 		if (Object.isArray(val)) {
-			return this.items = this.normalizeItems(val);
+			this.items = this.normalizeItems(<Items>val);
 		}
 
 		return this.items;

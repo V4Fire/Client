@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.91 ()
+
+#### :rocket: New Feature
+
+* Added support of interpolation of a data provider response
+
 ## v3.0.0-rc.49 (2020-08-03)
 
 #### :house: Internal
