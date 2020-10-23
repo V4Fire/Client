@@ -88,7 +88,6 @@ export default class bCheckbox extends iInput implements iSize {
 
 		if (checked === 'true' || checked === undefined) {
 			const
-				// tslint:disable-next-line:no-string-literal
 				v = super['valueGetter'].call(this);
 
 			if (checked === undefined) {
@@ -103,7 +102,6 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/** @override */
 	set value(value: this['Value']) {
-		// tslint:disable-next-line:no-string-literal
 		super['valueSetter'](value);
 	}
 
