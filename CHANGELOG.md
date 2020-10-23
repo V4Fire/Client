@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.91 ()
+
+#### :house: Internal
+
+* `bCheckbox`:
+  * Fixed ESLint warnings
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bCheckbox`
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :boom: Breaking Change
@@ -69,7 +81,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
 #### :house: Internal
 
 * `bList`:
-  * Fixed ESLint warnings `bList`
+  * Fixed ESLint warnings
   * Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
   * Now `Item` extends from `Dictionary`
 

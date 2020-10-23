@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-checkbox/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 import iSize from 'traits/i-size/i-size';
 
@@ -26,11 +31,12 @@ import iInput, {
 
 } from 'super/i-input/i-input';
 
-export * from 'super/i-input/i-input';
+import { CheckType, Value, FormValue } from 'form/b-checkbox/interface';
 
-export type Value = CanUndef<string | boolean>;
-export type FormValue = Value;
-export type CheckType = true | 'indeterminate';
+export * from 'super/i-input/i-input';
+export * from 'form/b-checkbox/interface';
+
+export { Value, FormValue };
 
 export const
 	$$ = symbolGenerator();
@@ -71,7 +77,7 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/** @override */
 	get default(): unknown {
-		return this.defaultProp || false;
+		return this.defaultProp ?? false;
 	}
 
 	/** @override */
@@ -117,7 +123,7 @@ export default class bCheckbox extends iInput implements iSize {
 		//#if runtime has iInput/validators
 
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-			if (!await this.formValue) {
+			if ((await this.formValue) != null) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
@@ -135,7 +141,7 @@ export default class bCheckbox extends iInput implements iSize {
 	 * Checks the checkbox
 	 */
 	async check(value?: CheckType): Promise<boolean> {
-		return this.setMod('checked', value || true);
+		return this.setMod('checked', value ?? true);
 	}
 
 	/**
@@ -154,7 +160,7 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	async reset(): Promise<boolean> {
 		const cleared = await super.reset();
-		return cleared ? this[`${this.default ? '' : 'un'}check`]() : false;
+		return cleared ? this[`${this.default != null ? '' : 'un'}check`]() : false;
 	}
 
 	/**
@@ -174,8 +180,8 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('checked', 'value', this.convertValueToChecked);
-		this.localEmitter.on('block.mod.*.checked.*', this.onCheckedChange);
+		this.sync.mod('checked', 'value', this.convertValueToChecked.bind(this));
+		this.localEmitter.on('block.mod.*.checked.*', this.onCheckedChange.bind(this));
 	}
 
 	/** @override */
@@ -214,12 +220,13 @@ export default class bCheckbox extends iInput implements iSize {
 	 * Handler: checkbox trigger
 	 *
 	 * @param e
-	 * @emits actionChange(value: V)
+	 * @emits `actionChange(value: this['Value'])`
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 
-		if ((!this.value || this.changeable) && await this.toggle()) {
+		if ((this.value == null || this.changeable) && await this.toggle()) {
 			this.emit('actionChange', this.mods.checked === 'true');
 		}
 	}
@@ -228,8 +235,8 @@ export default class bCheckbox extends iInput implements iSize {
 	 * Handler: checkbox change
 	 *
 	 * @param e
-	 * @emits check(type: CheckType)
-	 * @emits uncheck()
+	 * @emits `check(type:` [[CheckType]]`)`
+	 * @emits `uncheck()`
 	 */
 	protected async onCheckedChange(e: ModEvent): Promise<void> {
 		if (e.type === 'remove' && e.reason !== 'removeMod') {
@@ -254,7 +261,7 @@ export default class bCheckbox extends iInput implements iSize {
 			this.emit('check', e.value);
 		}
 
-		if (this.id) {
+		if (Object.isTruly(this.id)) {
 			const
 				els = document.querySelectorAll(`.i-block-helper[data-parent-id="${this.id}"]`);
 
@@ -273,8 +280,8 @@ export default class bCheckbox extends iInput implements iSize {
 			}
 		}
 
-		if (this.parentId) {
-			const parent = (<ComponentElement>document.getElementById(this.parentId)
+		if (Object.isTruly(this.parentId)) {
+			const parent = (<CanUndef<ComponentElement>>document.getElementById(this.parentId!)
 				?.closest('.i-block-helper'))
 				?.component;
 
@@ -282,7 +289,7 @@ export default class bCheckbox extends iInput implements iSize {
 				const
 					els = await this.groupElements;
 
-				if (els.every((el) => !el.mods.checked || el.mods.checked === 'false')) {
+				if (els.every((el) => el.mods.checked == null || el.mods.checked === 'false')) {
 					parent.uncheck().catch(stderr);
 
 				} else {
