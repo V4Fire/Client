@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-checkbox/README.md]]
+ * @packageDocumentation
+ */
+
 import bCheckbox, {
 
 	component,
@@ -27,7 +32,7 @@ export default class bRadioButton extends bCheckbox {
 			const
 				value = await this.groupFormValue;
 
-			if (!value) {
+			if (!Object.isTruly(value)) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
@@ -39,6 +44,7 @@ export default class bRadioButton extends bCheckbox {
 	};
 
 	/** @override */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 

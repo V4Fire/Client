@@ -15,13 +15,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* `bCheckbox`:
-  * Fixed ESLint warnings
+* Fixed ESLint warnings:
+  * `bCheckbox`
+  * `bRadioButton`
 
 #### :nail_care: Polish
 
 * Added documentation:
   * `bCheckbox`
+  * `bRadioButton`
 
 ## v3.0.0-rc.90 (2020-10-22)
 
