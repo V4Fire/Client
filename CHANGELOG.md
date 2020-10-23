@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.91 ()
 
+#### :rocket: New Feature
+
+* Added support of method invoking `super/i-block/modules/state/set`
+
 #### :house: Internal
 
 * Fixed ESLint warnings:

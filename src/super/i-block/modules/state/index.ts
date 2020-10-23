@@ -55,14 +55,20 @@ export default class State extends Friend {
 		for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = data[key],
 				p = key.split('.');
 
-			if (p[0] === 'mods') {
-				void this.ctx.setMod(p[1], el);
+			const
+				newVal = data[key],
+				originalVal = this.field.get(key);
 
-			} else if (!Object.fastCompare(el, this.field.get(key))) {
-				this.field.set(key, el);
+			if (Object.isFunction(originalVal)) {
+				originalVal.call(this.ctx, ...Array.concat([], newVal));
+
+			} else if (p[0] === 'mods') {
+				void this.ctx.setMod(p[1], newVal);
+
+			} else if (!Object.fastCompare(newVal, originalVal)) {
+				this.field.set(key, newVal);
 			}
 		}
 
