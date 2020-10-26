@@ -76,6 +76,6 @@ module.exports = {
 		null,
 
 	DS: runtime.passDesignSystem && pzlr.designSystem ?
-		getDS() :
+		s(getDS()) :
 		null
 };

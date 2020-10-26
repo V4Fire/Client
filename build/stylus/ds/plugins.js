@@ -16,7 +16,7 @@ const
 const
 	{getThemes} = include('build/ds'),
 	{getThemedPathChunks} = include('build/stylus/ds/helpers'),
-	{theme} = config.runtime();
+	{theme, includeThemes} = config.runtime();
 
 const {
 	DS,
@@ -24,7 +24,7 @@ const {
 } = include('build/stylus/ds/const');
 
 const
-	themesList = getThemes(),
+	themesList = getThemes(DS, includeThemes),
 	isThemesIncluded = themesList != null && themesList.length > 0;
 
 module.exports = function addPlugins(api) {

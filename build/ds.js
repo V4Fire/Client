@@ -12,15 +12,19 @@ const
 	{config: pzlr} = require('@pzlr/build-core');
 
 /**
- * Returns a Design System object as string
- * @returns {string|null}
+ * Returns a Design System object
+ * @returns {DesignSystem|null}
  */
 exports.getDS = function getDS() {
 	try {
-		return JSON.stringify(require(pzlr.designSystem));
+		return require(pzlr.designSystem);
 
-	} catch {
-		console.log(`Can't find "${pzlr.designSystem}" design system package`);
+	} catch (e) {
+		console.log(
+			`Error while getting design system package from "${pzlr.designSystem}". Message: `,
+			e
+		);
+
 		return null;
 	}
 };

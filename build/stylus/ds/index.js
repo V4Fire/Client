@@ -12,14 +12,18 @@ const
 	config = require('config'),
 	pzlr = require('@pzlr/build-core'),
 	createDesignSystem = include('build/stylus/ds/init'),
-	{theme} = config.runtime();
+	{theme} = config.runtime(),
+	{getDS} = include('build/ds');
 
 if (pzlr.config.designSystem) {
-	try {
-		createDesignSystem(require(pzlr.config.designSystem), theme, config.includeThemes());
+	const
+		designSystem = getDS();
 
-	} catch {
-		console.log(`[stylus] Can't find "${pzlr.config.designSystem}" design system package`);
+	if (Object.isObject(designSystem)) {
+		createDesignSystem(designSystem, theme, config.includeThemes());
+
+	} else {
+		console.log('[stylus] Design system must be an object');
 	}
 
 } else {
