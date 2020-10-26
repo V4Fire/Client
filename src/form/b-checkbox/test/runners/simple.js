@@ -64,6 +64,14 @@ module.exports = (page) => {
 			).toEqual(['INPUT', 'checkbox', 'bla', false]);
 		});
 
+		it('checked checkbox', async () => {
+			const target = await init({checked: true, value: 'bar'});
+
+			expect(
+				await target.evaluate((ctx) => ctx.value)
+			).toBe('bar');
+		});
+
 		it('non-changeable checkbox', async () => {
 			const target = await init({changeable: false});
 
