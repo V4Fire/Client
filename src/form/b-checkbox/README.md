@@ -69,6 +69,27 @@ To group checkboxes, use the same name.
 < b-checkbox :name = 'registration' | :value = 'subscribe'
 ```
 
+5. Loading from a data provider.
+
+```
+< b-checkbox :dataProvider = 'AdultProvider'
+```
+
+If the provider returns a dictionary, it will be mapped on the component
+(you can pass the complex property path using dots as separators).
+If a key from the response data is matched with a component method, this method will be invoked with a value from this key
+(if the value is an array, it will be spread to the method as arguments).
+
+```
+{
+  value: true,
+  label: 'Are you over 18?',
+  'mods.focused': true
+}
+```
+
+In other cases, the response value is interpreted as the component value.
+
 ## Validation
 
 Because the component extends from [[iInput]], it supports validation API.

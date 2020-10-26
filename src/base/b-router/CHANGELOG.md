@@ -19,6 +19,10 @@ Changelog
 
 * Added support of interpolation of a data provider response
 
+#### :nail_care: Polish
+
+* Improved documentation
+
 ## v3.0.0-rc.36 (2020-07-13)
 
 #### :bug: Bug Fix

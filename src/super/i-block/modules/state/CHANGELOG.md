@@ -19,6 +19,10 @@ Changelog
 
 * Added support of method invoking `set`
 
+#### :nail_care: Polish
+
+* Improved documentation
+
 ## v3.0.0-rc.45 (2020-07-30)
 
 #### :bug: Bug Fix

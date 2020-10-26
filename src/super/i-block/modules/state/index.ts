@@ -45,7 +45,24 @@ export default class State extends Friend {
 
 	/**
 	 * Retrieves object values and saves it to a state of the current component
+	 * (you can pass the complex property path using dots as separators).
+	 *
+	 * If a key from the object is matched with a component method, this method will be invoked with a value from this key
+	 * (if the value is an array, it will be spread to the method as arguments).
+	 *
+	 * The method returns an array of promises of executed operations.
+	 *
 	 * @param data
+	 *
+	 * @example
+	 * ```js
+	 * await Promise.all(this.state.set({
+	 *   someProperty: 1,
+	 *   'mods.someMod': true,
+	 *   someMethod: [1, 2, 3],
+	 *   anotherMethod: {}
+	 * }));
+	 * ```
 	 */
 	set(data: Nullable<Dictionary>): Array<Promise<unknown>> {
 		if (data == null) {

@@ -95,19 +95,34 @@ export default {
 } .
 ```
 
-3. Download the map of routes from a data provider.
+3. Loading from a data provider.
 
 ```
 < b-router :dataProvider = 'AppRoutes'
 ```
 
-Also, in that case, the data provider can pass not only the map of routes, but an array with extra arguments:
+In this case, the data provider can return an array of parameters, that will be passed to the `updateRoutes` method.
 
+* `[routes]`
+* `[routes, activeRoute]`
 * `[basePath]`
 * `[basePath, routes]`
 * `[basePath, routes, activeRoute]`
 * `[basePath, activeRoute]`
 * `[basePath, activeRoute, routes]`
+
+Or, if the provider returns a dictionary, it will be mapped on the component
+(you can pass the complex property path using dots as separators).
+If a key from the response data is matched with a component method, this method will be invoked with a value from this key
+(if the value is an array, it will be spread to the method as arguments).
+
+```
+{
+  updateRoutes: [routes],
+  someProp: propValue,
+  'mods.someMod': 'modValue'
+}
+```
 
 ## How the router do transitions?
 
@@ -695,3 +710,13 @@ export default class bExample extends iBlock {
 
 To reset the router state, you should invoke `state.resetRouter()` from a component instance or invoke the root reset method.
 By default, all properties from syncRouterState will rewrite to undefined.
+
+## Slots
+
+The component supports the default slot. Sometimes it can be useful.
+
+```
+< b-router :routes = routes
+  < template #default = {ctx}
+    {{ ctx.route.name }}
+```
