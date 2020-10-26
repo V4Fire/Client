@@ -9,6 +9,7 @@
  */
 
 const
+	$C = require('collection.js'),
 	{getThemes} = include('build/ds'),
 	{DS} = include('build/stylus/ds/const'),
 	{prepareData} = include('build/stylus/ds/helpers');

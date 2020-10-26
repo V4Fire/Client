@@ -52,7 +52,7 @@ exports.getThemes = function getThemes(ds, includeThemes) {
 		return includeThemes === true ? meta.themes : reduceThemes();
 	}
 
-	console.log('Can\'t find themes within the design system package');
+	console.log('Project has no themes into the design system package');
 	return null;
 };
 
