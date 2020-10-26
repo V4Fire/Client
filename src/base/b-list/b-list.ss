@@ -19,87 +19,62 @@
 
 		/**
 		 * Generates a list block
-		 * @param {!Array<Option>} value - array of values
+		 * @param {!Array<Option>} items - items to render
 		 */
 		- block list(value)
-			< ${listElTag}.&__el v-for = el in ${value}
+			< ${listElTag}.&__el.&__item v-for = item in ${value}
 				< a &
-					:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
-						id: values[el.value],
-						active: isActive(el),
-						exterior: el.exterior,
-						hidden: el.hidden,
-						progress: el.progress,
-						...el.classes
+					:class = provide.hintClasses(item.hintPos).concat(provide.elClasses({link: {
+						id: Object.get(values, [item.value]),
+						active: isActive(item),
+						exterior: item.exterior,
+						hidden: item.hidden,
+						progress: item.progress,
+						...item.classes
 					}})) |
 
-					:href = el.href |
-					:-hint = el.hint |
-					:-id = values[el.value] |
-					:v-attrs = el.attrs
+					:href = item.href |
+					:-hint = item.hint |
+					:-id = Object.get(values, [item.value]) |
+					:v-attrs = item.attrs
 				.
 					- block preIcon
 						< span.&__cell.&__link-icon.&__link-pre-icon v-if = vdom.getSlot('preIcon')
-							+= self.slot('preIcon', { &
-								':icon': 'el.preIcon',
-								':hint': 'el.preIconHint',
-								':hintPos': 'el.preIconHintPos'
-							}) .
+							+= self.slot('preIcon', {':item': 'item', ':icon': 'item.preIcon'})
 
-						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
+						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = item.preIcon
 							< component &
-								v-if = el.preIconComponent |
+								v-if = item.preIconComponent |
 								:instanceOf = bIcon |
-								:is = el.preIconComponent |
-								:value = el.preIcon |
-								:hint = el.preIconHint |
-								:hintPos = el.preIconHintPos
+								:is = item.preIconComponent |
+								:value = item.preIcon
 							.
 
-							< @b-icon &
-								v-else |
-								:value = el.preIcon |
-								:hint = el.preIconHint |
-								:hintPos = el.preIconHintPos
-							.
+							< @b-icon v-else | :value = item.preIcon
 
-					- block text
-						< span.&__cell.&__link-text v-if = !hideLabels
-							{{ t(el.label) }}
-
-					- block info
-						< span.&__cell.&__link-info v-if = vdom.getSlot('info')
-							+= self.slot('info', {':option': 'el'})
+					- block value
+						< span.&__cell.&__link-value
+							+= self.slot('default', {':item': 'item'})
+								{{ t(item.label) }}
 
 					- block icon
 						< span.&__cell.&__link-icon.&__link-post-icon v-if = vdom.getSlot('icon')
-							+= self.slot('icon', { &
-								':icon': 'el.icon',
-								':hint': 'getElHint(el)',
-								':hintPos': 'el.iconHintPos'
-							}) .
+							+= self.slot('icon', {':item': 'item', ':icon': 'item.icon'})
 
-						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = el.icon
+						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = item.icon
 							< component &
-								v-if = el.iconComponent |
+								v-if = item.iconComponent |
 								:instanceOf = bIcon |
-								:is = el.iconComponent |
-								:value = el.icon |
-								:hint = getElHint(el) |
-								:hintPos = el.iconHintPos
+								:is = item.iconComponent |
+								:value = item.icon
 							.
 
-							< @b-icon &
-								v-else |
-								:value = el.icon |
-								:hint = getElHint(el) |
-								:hintPos = el.iconHintPos
-							.
+							< @b-icon v-else | :value = item.icon
 
 					- block progress
-						< span.&__cell.&__link-icon.&__link-progress v-if = el.progressIcon != null
+						< span.&__cell.&__link-icon.&__link-progress v-if = item.progressIcon != null
 							< template v-if = vdom.getSlot('progressIcon')
-								+= self.slot('progressIcon', {':icon': 'el.progressIcon'})
+								+= self.slot('progressIcon', {':item': 'item', ':icon': 'item.progressIcon'})
 
 							< component &
 								v-else-if = Object.isString(el.progressIcon) |
@@ -112,4 +87,4 @@
 		- super
 
 		< ${listTag}.&__wrapper
-			+= self.list('value')
+			+= self.list('items')

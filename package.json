@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.88",
+  "version": "3.0.0-rc.90",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -123,7 +123,8 @@
     "vue-template-es2015-compiler": "^1.9.1",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
-    "worker-loader": "^3.0.2"
+    "worker-loader": "^3.0.2",
+    "portfinder": "^1.0.28"
   },
   "devDependencies": {
     "@v4fire/linters": "^1.6.1",

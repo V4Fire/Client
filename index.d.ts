@@ -111,6 +111,10 @@ interface Document {
 	};
 }
 
+interface RenderContentFn {
+	(props: Dictionary): string;
+}
+
 interface RenderParams {
 	/**
 	 * Component attrs
@@ -118,7 +122,7 @@ interface RenderParams {
 	attrs: Dictionary;
 
 	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | string>;
+	content?: Dictionary<RenderContent | RenderContentFn | string>;
 }
 
 /**
@@ -163,7 +167,7 @@ interface RenderContent {
 	attrs: Dictionary;
 
 	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | string>;
+	content?: Dictionary<RenderContent | RenderContentFn | string>;
 }
 
 // eslint-disable-next-line no-var,vars-on-top

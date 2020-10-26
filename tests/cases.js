@@ -29,6 +29,12 @@ module.exports = [
 	// b-button
 	'--test-entry form/b-button/test',
 
+	// b-list
+	'--test-entry base/b-list/test --runner simple',
+	'--test-entry base/b-list/test --runner links',
+	'--test-entry base/b-list/test --runner slots',
+	'--test-entry base/b-list/test --runner data-provider',
+
 	// dom/image
 	'--test-entry core/dom/image/test',
 

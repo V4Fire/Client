@@ -1,0 +1,27 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * Returns the globally registered font
+ * @param {string} [$type] - font type
+ */
+getGlobalFont($type = "")
+	if $type
+		unquote(replace("%t", " " + $type, BASE_FONT_PATTERN))
+
+	else
+		unquote(replace("%t", "", BASE_FONT_PATTERN))
+
+/**
+ * @see getGlobalFont
+ * @deprecated
+ * @param {string} [$type]
+ */
+execFontPattern($type = "")
+	warn("This function is deprecated. Please, use getGlobalFont as an alternative.")
+	getGlobalFont($type)

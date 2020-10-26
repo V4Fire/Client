@@ -331,7 +331,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Synchronization for .localeStore field
+	 * Synchronization of the "localeStore" field
 	 * @param locale
 	 */
 	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
@@ -345,7 +345,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Synchronization for .isAuth field
+	 * Synchronization of the "isAuth" field
 	 * @param [e]
 	 */
 	@watch('globalEmitter:session.*')
@@ -354,7 +354,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Synchronization for .isOnline field
+	 * Synchronization of the "isOnline" field
 	 * @param e
 	 */
 	@watch('globalEmitter:net.status')

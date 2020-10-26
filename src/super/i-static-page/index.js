@@ -8,4 +8,9 @@
 
 package('i-static-page')
 	.extends('i-page')
-	.dependencies('g-def', 'g-debug');
+	.dependencies(
+		'g-def',
+		'g-debug',
+		'g-hint',
+		'g-icon'
+	);

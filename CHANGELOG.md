@@ -11,6 +11,96 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.90 (2020-10-22)
+
+#### :boom: Breaking Change
+
+* Now all extra classes that were added by using `appendToRootClasses` added to the start of the declaration `iBlock`
+* Removed `gDef/funcs/setSizes`
+
+* `bList`:
+  * Renamed:
+    * `interface/Option` -> `interface/Item`
+    * `valueProp` -> `itemsProp`
+    * `removeActive` -> `unsetActive`
+    * `normalizeOptions` -> `normalizeItems`
+    * `block text` -> `block value`
+    * `&__link-text` -> `&__link-value`
+
+  * Changed a type of `hideLabels` from a prop to modifier
+  * Now the `active` getter returns a Set with `multiple = true`
+  * Removed `block info` from the template
+  * Deprecated `&__el`
+
+* `gHint`:
+  * Renamed:
+    * `target` -> `location`
+    * `showSelector` -> `showOn`
+    * `hintData` -> `dataAttr`
+
+  * Replaced:
+    * `horArrowSize`, `vertArrowSize` -> `arrowSize`
+    * `color`, `bgColor`, `rounding`, `shadow` -> `contentStyles`
+
+  * Removed:
+    * Auto-hide logic: now you need to specify the `hidden` option
+
+  * Changed the way how to use the mixin
+
+#### :rocket: New Feature
+
+* `gHint`:
+  * Added `arrowStyles`, `hideStyles`, `showStyles`
+  * Added `interface.ts`
+
+* Added support of the default slot `bList`
+* Now `content` can be provided as a function `core/prelude/test-env/renderComponents`
+* Added support for a runner wildcard declaration `tests`
+
+```bash
+gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/* --runtime-render true
+```
+
+#### :bug: Bug Fix
+
+* `bList`:
+  * Fixed a bug with `activeElement` and `multiple`
+
+#### :house: Internal
+
+* `bList`:
+  * Fixed ESLint warnings `bList`
+  * Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
+  * Now `Item` extends from `Dictionary`
+
+* `bIcon`:
+  * Removed dead props: `hint`, `hintPos`
+
+* Refactoring:
+  * `bList`
+  * `gHint`
+  * `gIcon`
+  * `gDef`
+
+* [Fixed an issue with the unsafe port in tests `build/test.gulp`](https://github.com/V4Fire/Client/issues/330)
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bList`
+  * `gHint`
+  * `gIcon`
+  * `gDef`
+
+* Improved documentation `docs/tests`
+* Improved output `test.gulp`
+
+## v3.0.0-rc.89 (2020-10-20)
+
+#### :bug: Bug Fix
+
+* Fixed the background image cleaning `core/dom/image/loader.ts`
+
 ## v3.0.0-rc.88 (2020-10-13)
 
 #### :rocket: New Feature
@@ -119,6 +209,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :nail_care: Polish
 
 * Added the render scheme `docs/test`
+>>>>>>> master
 
 ## v3.0.0-rc.80 (2020-10-08)
 

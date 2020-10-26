@@ -1,0 +1,65 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * Global image cache
+ */
+$IMG = {}
+
+/**
+ * Load an image by the specified URL and saves it to the global cache.
+ * This function is useful to avoid the duplication of code when we use CSS sprites.
+ *
+ * @param {string} $img
+ * @param {boolean=} [$isDsAsset]
+ *
+ * @example
+ * ```styl
+ * .foo
+ *   background-image img("assets/img/loader/spinner_size_l@3x.png")
+ * ```
+ */
+img($img, $isDsAsset = false)
+	$prop = current-property[0]
+	$keys = {
+		background: background-image
+		background-image: background-image
+	}
+
+	// @stlint-disable
+
+	if $isDsAsset
+		$img = join("/", ds icons $img)
+
+	if !$IMG[$img]
+		$IMG[$img] = {
+			selectors: ()
+			props: {}
+		}
+
+	$obj = $IMG[$img]
+	$props = $obj.props
+
+	// @stlint-enable
+
+	push($obj.selectors, selector())
+	$props[$keys[$prop]] = true
+
+	return
+
+/**
+ * Generates registered image classes from the global cache.
+ * Basically, this function is invoked automatically.
+ */
+generateImgClasses()
+	for $img, $obj in $IMG
+		$sel = join(",", $obj.selectors)
+
+		{$sel}
+			for $prop in $obj.props
+				add-property($prop, "url(%s)" % $img)
