@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Changed an interface of `super/i-block/modules/state/set`
 * Changed an interface and behavior of `bRouter/initRemoteData`
+* Now `toggle` returns a component value `bCheckbox`
 
 #### :rocket: New Feature
 

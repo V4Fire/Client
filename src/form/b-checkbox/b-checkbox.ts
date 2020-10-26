@@ -169,10 +169,12 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	/**
-	 * Toggles the checkbox
+	 * Toggles the checkbox.
+	 * The methods returns a new value.
 	 */
-	toggle(): Promise<boolean> {
-		return this.mods.checked === 'true' ? this.uncheck() : this.check();
+	async toggle(): Promise<this['Value']> {
+		await (this.mods.checked === 'true' ? this.uncheck() : this.check());
+		return this.value;
 	}
 
 	/** @override */
