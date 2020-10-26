@@ -66,8 +66,8 @@ function createPath(prefix, suffix) {
  * Converts object prop values to Stylus values
  *
  * @param {Object} data
- * @param {string=} [path]
- * @param {string|boolean=} [theme]
+ * @param {string} [path]
+ * @param {string|boolean} [theme]
  */
 function prepareData(data, path, theme) {
 	$C(data).forEach((d, val) => {
