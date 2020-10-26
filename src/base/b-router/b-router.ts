@@ -13,14 +13,14 @@
 
 // tslint:disable:max-file-line-count
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 
-import globalRoutes from 'routes';
 import path, { Key, RegExpOptions } from 'path-to-regexp';
-
 import { deprecate, deprecated } from 'core/functools/deprecation';
 import { concatUrls, toQueryString } from 'core/url';
+
+import Async from 'core/async';
+import globalRoutes from 'routes';
 
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, computed, hook, wait } from 'super/i-data/i-data';
