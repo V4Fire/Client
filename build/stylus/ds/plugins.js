@@ -136,7 +136,7 @@ module.exports = function addPlugins(api) {
 		const
 			tail = !isThemesIncluded && theme ? ['theme', theme, name] : [name];
 
-		return $C(DS).get([head, ...tail]);
+		return stylus.utils.coerce($C(DS).get([head, ...tail]), true);
 	});
 
 	/**
