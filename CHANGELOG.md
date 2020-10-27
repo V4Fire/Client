@@ -21,6 +21,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added `iInput/isFocused`
 * Added support of method invoking `super/i-block/modules/state/set`
 * Added support of interpolation of a data provider response:
   * `iInput`
@@ -37,6 +38,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Improved documentation:
   * `bRouter`
+  * `iInput`
   * `super/i-block/modules/state`
 
 * Added documentation:

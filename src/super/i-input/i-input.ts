@@ -49,7 +49,7 @@ export * from 'super/i-data/i-data';
 export * from 'super/i-input/interface';
 
 /**
- * Superclass for form components
+ * Superclass for all form components
  */
 @component({
 	model: {
@@ -76,19 +76,27 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly valueProp?: this['Value'];
 
 	/**
-	 * Component default value
+	 * Component default value.
+	 * This value will be used if the value prop is not specified or after invoking of `reset`.
 	 */
 	@prop({required: false})
 	readonly defaultProp?: this['Value'];
 
 	/**
-	 * Input DOM identifier
+	 * Input DOM identifier.
+	 * You free to use this prop to connect the component with a label tag or other stuff.
 	 */
 	@prop({type: String, required: false})
 	readonly id?: string;
 
 	/**
-	 * Input DOM name
+	 * DOM identifier of a form that connected to the component
+	 */
+	@prop({type: String, required: false})
+	readonly form?: string;
+
+	/**
+	 * Input name for a form: a component value is submitted with it
 	 */
 	@prop({type: String, required: false})
 	readonly name?: string;
@@ -106,15 +114,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly tabIndex?: number;
 
 	/**
-	 * Identifier of a form that connected to the component
-	 */
-	@prop({type: String, required: false})
-	readonly form?: string;
-
-	/**
 	 * Component values that are not allowed to send to a form.
 	 * The parameter can take a value or list of values to ban.
 	 * Also, the parameter can be passed as a function or regular expression.
+	 *
+	 * @example
+	 * ```
+	 * /// Disallow values that contain only whitespaces
+	 * < b-input :name = 'name' | :disallow = /^\s*$/
+	 * ```
 	 */
 	@prop({required: false})
 	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
@@ -128,40 +136,47 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly dataType: Function = identity;
 
 	/**
-	 * Converter/s of a component value to a form value.
+	 * Converter/s of an original component value to a form value.
 	 * These functions are used to convert the component value to a value that will be sent from a form.
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly formConverter?: CanArray<Function>;
 
 	/**
-	 * If false, then the component value won't be cached by a form.
-	 * The caching is mean, that if the component value doesn't change since the last sending of a form,
-	 * it won't be send again.
+	 * If false, then the component value isn't cached by a form.
+	 * The caching is mean that if the component value doesn't change since the last sending of the form,
+	 * it won't be sent again.
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = true;
 
 	/**
 	 * List of component validators
+	 *
+	 * @example
+	 * ```
+	 * < b-input :name = 'name' | :validators = ['required', ['pattern', {pattern: /^\d+$/}]]
+	 * ```
 	 */
 	@prop(Array)
 	readonly validators: Validators = [];
 
 	/**
-	 * Initial information message that component need to show
+	 * Initial information message that component need to show.
+	 * This parameter logically is pretty similar to STDIN output from Unix.
 	 */
 	@prop({type: String, required: false})
 	readonly infoProp?: string;
 
 	/**
-	 * Initial error message that component need to show
+	 * Initial error message that component need to show.
+	 * This parameter logically is pretty similar to STDERR output from Unix.
 	 */
 	@prop({type: String, required: false})
 	readonly errorProp?: string;
 
 	/**
-	 * If true, then will be generated the default markup within a component template to show info/error messages
+	 * If true, then is generated the default markup within a component template to show info/error messages
 	 */
 	@prop({type: Boolean, required: false})
 	readonly messageHelpers?: boolean;
@@ -269,8 +284,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Grouped form value of the component, i.e.
-	 * if there are another form components with the same form name,
-	 * their values will be grouped
+	 * if there are another form components with the same form name, their values will be grouped.
+	 * If they are more than one value, the method returns an array of values.
 	 */
 	@p({replace: false})
 	get groupFormValue(): Promise<CanArray<this['FormValue']>> {
@@ -299,7 +314,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * List of components from the current form group (components with the same form name)
+	 * List of components of the current form group (components with the same form name)
 	 */
 	@p({replace: false})
 	get groupElements(): CanPromise<readonly iInput[]> {
@@ -388,6 +403,20 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 	}
 
+	/**
+	 * True if the component in focus
+	 */
+	get isFocused(): boolean {
+		const
+			{input} = this.$refs;
+
+		if (input != null) {
+			return document.activeElement !== input;
+		}
+
+		return this.mods.focused === 'true';
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iAccess.mods,
@@ -433,7 +462,9 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	};
 
 	/**
-	 * Name of a component property that is used as a source for a form value
+	 * Name of a component property that is used as a component form value.
+	 * It's necessary when you inherit a component from another form component,
+	 * but your component uses another property as a form value.
 	 */
 	@field({replace: false})
 	protected readonly valueKey: string = 'value';
@@ -490,7 +521,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		const
 			{input} = this.$refs;
 
-		if (input && document.activeElement !== input) {
+		if (input != null && !this.isFocused) {
 			input.focus();
 			return Promise.resolve(true);
 		}
@@ -501,11 +532,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/** @see [[iAccess.blur]] */
 	@p({replace: false})
 	@wait('ready')
-	async blur(): Promise<boolean> {
+	blur(): Promise<boolean> {
 		const
 			{input} = this.$refs;
 
-		if (input && document.activeElement === input) {
+		if (input != null && this.isFocused) {
 			input.blur();
 			return Promise.resolve(true);
 		}
@@ -514,7 +545,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Clears the component value
+	 * Clears the component form value
 	 * @emits `clear()`
 	 */
 	@p({replace: false})
@@ -535,8 +566,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Resets the component value to default
-	 * @emits `reset()`
+	 * Resets the component form value to the default
+	 * @emits `reset(value: this['Value'])`
 	 */
 	@p({replace: false})
 	@wait('ready')
@@ -547,7 +578,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			await this.nextTick();
 
 			void this.removeMod('valid');
-			this.emit('reset');
+			this.emit('reset', this[this.valueKey]);
 
 			return true;
 		}
@@ -591,7 +622,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Validates the component value
-	 * (returns true or name of the failed validation)
+	 * (returns true or - of the failed validation)
 	 *
 	 * @param params - additional parameters
 	 * @emits `validationStart()`
@@ -748,18 +779,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @param value
 	 */
 	@p({replace: false})
-	protected resolveValue(value?: unknown): this['Value'] {
+	protected resolveValue(value?: this['Value']): this['Value'] {
 		const
-			i = this.instance,
-			k = i.valueKey,
-			f = this.$activeField;
+			i = this.instance;
 
-		if (value !== undefined || f !== k && f !== `${k}Store`) {
-			return value;
+		if (value === undefined && this.lfc.isBeforeCreate()) {
+			return i['defaultGetter'].call(this);
 		}
 
-		// tslint:disable-next-line:no-string-literal
-		return i['defaultGetter'].call(this);
+		return value;
 	}
 
 	/**
