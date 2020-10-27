@@ -11,7 +11,6 @@
 const
 	$C = require('collection.js'),
 	{getThemes} = include('build/ds'),
-	{DS} = include('build/stylus/ds/const'),
 	{prepareData} = include('build/stylus/ds/helpers');
 
 /**
@@ -24,7 +23,9 @@ const
  */
 module.exports = function createDesignSystem(raw, theme, includeThemes) {
 	const
-		ds = prepareData($C.clone(raw));
+		ds = $C.clone(raw);
+
+	prepareData(ds);
 
 	const
 		themesList = getThemes(raw, includeThemes),
@@ -34,7 +35,5 @@ module.exports = function createDesignSystem(raw, theme, includeThemes) {
 		throw new Error('[stylus] Design system have themes, but theme doesn\'t specified');
 	}
 
-	Object.assign(DS, ds);
-
-	return DS;
+	return ds;
 };

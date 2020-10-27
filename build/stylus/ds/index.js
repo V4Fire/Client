@@ -13,6 +13,7 @@ const
 	pzlr = require('@pzlr/build-core'),
 	createDesignSystem = include('build/stylus/ds/init'),
 	{theme} = config.runtime(),
+	{DS} = include('build/stylus/ds/const'),
 	{getDS} = include('build/ds');
 
 if (pzlr.config.designSystem) {
@@ -20,7 +21,7 @@ if (pzlr.config.designSystem) {
 		designSystem = getDS();
 
 	if (Object.isObject(designSystem)) {
-		createDesignSystem(designSystem, theme, config.includeThemes());
+		Object.assign(DS, createDesignSystem(designSystem, theme, config.includeThemes()));
 
 	} else {
 		console.log('[stylus] Design system must be an object');

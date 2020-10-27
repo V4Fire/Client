@@ -141,6 +141,8 @@ function prepareData(data, path, theme) {
 			saveVariable(createPath(path, val), data[val], theme);
 		}
 	});
+
+	return data;
 }
 
 /**
