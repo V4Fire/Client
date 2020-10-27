@@ -126,7 +126,7 @@ export default abstract class iAccess {
 	 * Sets focus to the component
 	 * @param args
 	 */
-	abstract async focus(...args: unknown[]): Promise<boolean> ;
+	abstract async focus(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Unsets focus to the component
