@@ -71,13 +71,16 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Initial component value
+	 * @see [[iInput.value]]
 	 */
 	@prop({required: false})
 	readonly valueProp?: this['Value'];
 
 	/**
-	 * Component default value.
+	 * Initial component default value.
 	 * This value will be used if the value prop is not specified or after invoking of `reset`.
+	 *
+	 * @see [[iInput.default]]
 	 */
 	@prop({required: false})
 	readonly defaultProp?: this['Value'];
@@ -85,30 +88,74 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Input DOM identifier.
 	 * You free to use this prop to connect the component with a label tag or other stuff.
+	 *
+	 * @example
+	 * ```
+	 * < b-input :id = 'my-input'
+	 *   < label for = my-input
+	 *     The input label
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly id?: string;
 
 	/**
-	 * DOM identifier of a form that connected to the component
-	 */
-	@prop({type: String, required: false})
-	readonly form?: string;
+	 * A string specifying a name for the form control.
+	 * This name is submitted along with the control's value when the form data is submitted.
+	 * If you don't provide the name, your component will be ignored by the form.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname
+	 *
+	 * @example
+	 * ```
+	 * < form
+	 *   < b-input :name = 'fname' | :value = 'Andrey'
 
-	/**
-	 * Input name for a form: a component value is submitted with it
+	 *   /// After pressing, the form generates an object to submit with values {fname: 'Andrey'}
+	 *   < button type = submit
+	 *     Submit
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly name?: string;
 
 	/**
-	 * Input autofocus mode
+	 * A string specifying the <form> element with which the input is associated (that is, its form owner).
+	 * This string's value, if present, must match the id of a <form> element in the same document.
+	 * If this attribute isn't specified, the <input> element is associated with the nearest containing form, if any.
+	 *
+	 * The form prop lets you place an input anywhere in the document but have it included with a form elsewhere
+	 * in the document.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform
+	 *
+	 * @example
+	 * ```
+	 * < b-input :name = 'fname' | :form = 'my-form'
+	 *
+	 * < form id = my-form
+	 *   < button type = submit
+	 *     Submit
+	 * ```
+	 */
+	@prop({type: String, required: false})
+	readonly form?: string;
+
+	/**
+	 * A Boolean attribute which, if present, indicates that the input should automatically
+	 * have focus when the page has finished loading
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus
 	 */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
 
 	/**
-	 * Input focus order for keyboard navigation
+	 * An integer attribute indicating if the element can take input focus (is focusable),
+	 * if it should participate to sequential keyboard navigation.
+	 * As all input types except for input of type hidden are focusable, this attribute should not be used on
+	 * form controls, because doing so would require the management of the focus order for all elements within
+	 * the document with the risk of harming usability and accessibility if done incorrectly.
 	 */
 	@prop({type: Number, required: false})
 	readonly tabIndex?: number;
