@@ -33,14 +33,14 @@ exports.getDS = function getDS() {
  * Returns available themes from a Design System package
  *
  * @param {DesignSystem} ds
- * @param {string[]|boolean} includeThemes
+ * @param {string[]|boolean|undefined} includeThemes
  * @returns {string[]|null}
  */
 exports.getThemes = function getThemes(ds, includeThemes) {
 	const
 		{meta} = ds;
 
-	if (Object.isObject(meta) && meta.themes !== undefined) {
+	if (Object.isObject(meta) && meta.themes !== undefined && includeThemes !== undefined) {
 		const reduceThemes = () => includeThemes.reduce((res, t) => {
 			if (meta.themes.includes(t)) {
 				res.push(t);
