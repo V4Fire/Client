@@ -60,6 +60,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Improved documentation:
   * `bList`
+  * `bIcon`
   * `bRouter`
   * `iData`
   * `iInput`

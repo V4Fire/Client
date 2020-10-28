@@ -6,7 +6,7 @@ This module provides a component to use an SVG icon from the global SVG sprite.
 
 * The component extends [[iBlock]].
 
-* The component implements [[iIcon]], [[iSize]] traits.
+* The component implements the [[iIcon]] trait.
 
 * The component is functional.
 
@@ -15,6 +15,14 @@ This module provides a component to use an SVG icon from the global SVG sprite.
 * By default, the root tag of the component is `<svg>`.
 
 * The component supports tooltips.
+
+## Modifiers
+
+| Name   | Description                                                                                                                                                              | Values             | Default  |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------ | -------- |
+| `size` | The icon size. The "auto" value specifies the icon to be equal to CSS's defined size (`1em` by default). The "full" value specifies the icon to fill all existed places. | `'auto' \| 'full'` | `'auto'` |
+
+Also, you can see the [[iIcon]] trait and the [[iBlock]] component.
 
 ## Usage
 
