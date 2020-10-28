@@ -271,10 +271,10 @@ export default class bExample extends iData {
 
 ### Init events
 
-| Name            | Description                                     | Payload description                 | Payload                                   |
-| --------------- |-------------------------------------------------| ------------------------------------|------------------------------------------ |
-| `initLoadStart` | The component starts the initial loading        | Options of the loading              | `InitLoadOptions`                         |
-| `initLoad`      | The component have finished the initial loading | Loaded data, options of the loading | `CanUndef<this['DB']>`, `InitLoadOptions` |
+| Name            | Description                                    | Payload description                 | Payload                                   |
+| --------------- |------------------------------------------------| ------------------------------------|------------------------------------------ |
+| `initLoadStart` | The component starts the initial loading       | Options of the loading              | `InitLoadOptions`                         |
+| `initLoad`      | The component has finished the initial loading | Loaded data, options of the loading | `CanUndef<this['DB']>`, `InitLoadOptions` |
 
 ### Preventing of the initial data loading
 
