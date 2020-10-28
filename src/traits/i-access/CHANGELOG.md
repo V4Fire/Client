@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.91 ()
+
+#### :boom: Breaking Change
+
+* Removed helpers for disabling
+* Removed progress helpers
+
+#### :rocket: New Feature
+
+* Added `autofocus`
+* Added `tabIndex`
+
+#### :nail_care: Polish
+
+* Improved documentation
+
 ## v3.0.0-rc.49 (2020-08-03)
 
 #### :house: Internal

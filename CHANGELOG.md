@@ -19,6 +19,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Changed an interface and behavior of `bRouter/initRemoteData`
 * Now `toggle` returns a component value `bCheckbox`
 
+* `iAccess`:
+  * Removed helpers for disabling
+  * Removed progress helpers
+
 #### :rocket: New Feature
 
 * Added `iInput/isFocused`
@@ -27,6 +31,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `iInput`
   * `bList`
   * `bRouter`
+
+* `iAccess`:
+  * Added `autofocus`
+  * Added `tabIndex`
 
 #### :house: Internal
 
@@ -39,6 +47,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Improved documentation:
   * `bRouter`
   * `iInput`
+  * `iAccess`
   * `super/i-block/modules/state`
 
 * Added documentation:

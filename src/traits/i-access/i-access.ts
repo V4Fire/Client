@@ -74,31 +74,14 @@ export default abstract class iAccess {
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
 		const
-			{localEmitter: $e, async: $a} = component.unsafe;
+			{localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
-			if (e.value === 'false' || e.type === 'remove') {
-				$a.off({group: 'disableHelpers'});
-
-				if (e.type !== 'remove' || e.reason === 'removeMod') {
-					component.emit('enable');
-				}
-
-			} else if (component.$el != null) {
-				component.emit('disable');
-
-				const handler = (e) => {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-				};
-
-				$a.on(component.$el, 'click mousedown touchstart keydown input change scroll', handler, {
-					group: 'disableHelpers',
-					options: {
-						capture: true
-					}
-				});
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
 			}
+
+			component.emit(e.value === 'false' || e.type === 'remove' ? 'enable' : 'disable');
 		});
 
 		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
@@ -111,16 +94,33 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Disables the component
-	 * @param args
+	 * A Boolean attribute which, if present, indicates that the component should automatically
+	 * have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed)
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus
 	 */
-	abstract async disable(...args: unknown[]): Promise<boolean>;
+	abstract readonly autofocus?: boolean;
+
+	/**
+	 * An integer attribute indicating if the component can take input focus (is focusable),
+	 * if it should participate to sequential keyboard navigation.
+	 * As all input types except for input of type hidden are focusable, this attribute should not be used on
+	 * form controls, because doing so would require the management of the focus order for all elements within
+	 * the document with the risk of harming usability and accessibility if done incorrectly.
+	 */
+	abstract readonly tabIndex?: number;
 
 	/**
 	 * Enables the component
 	 * @param args
 	 */
 	abstract async enable(...args: unknown[]): Promise<boolean>;
+
+	/**
+	 * Disables the component
+	 * @param args
+	 */
+	abstract async disable(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Sets focus to the component
