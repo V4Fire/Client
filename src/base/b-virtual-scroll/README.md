@@ -7,6 +7,8 @@ This component can be very efficient if you need to render a good amount of elem
 
 * The component extends [[iData]].
 
+* The component implements the [[iItems]] trait.
+
 * By default, the root tag of the component is `<div>`.
 
 ## Events
@@ -17,6 +19,8 @@ This component can be very efficient if you need to render a good amount of elem
 | dataChange    | The event is fired after changing a data batch                                                               | Data batch value                                                         | `unknown[]`       |
 | chunkLoaded   | The event is fired after every successful response from a data provider                                      | A structure with raw and normalized data that takes from a data provider | `LastLoadedChunk` |
 | chunkLoading  | The event is fired before start to load data from a data provider                                            | Current page                                                             | `number`          |
+
+Also, you can see the parent component and the component traits.
 
 ## Usage
 
