@@ -55,6 +55,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `iInput`
   * `iAccess`
   * `iProgress`
+  * `iVisible`
   * `super/i-block/modules/state`
 
 * Added documentation:
