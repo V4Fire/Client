@@ -37,6 +37,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `tabIndex`
   * Added `isFocused`
 
+* Moved logic from `iAccess` `iProgress`
+
 #### :house: Internal
 
 * Fixed ESLint warnings:
@@ -49,6 +51,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bRouter`
   * `iInput`
   * `iAccess`
+  * `iProgress`
   * `super/i-block/modules/state`
 
 * Added documentation:
