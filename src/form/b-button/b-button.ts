@@ -166,58 +166,58 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	/** @override */
 	protected readonly $refs!: {button: HTMLButtonElement};
 
-	/** @see iAccess.focus */
+	/** @see [[iAccess.focus]] */
 	focus(): Promise<boolean> {
 		return iAccess.focus(this);
 	}
 
-	/** @see iAccess.blur */
+	/** @see [[iAccess.blur]] */
 	blur(): Promise<boolean> {
 		return iAccess.blur(this);
 	}
 
-	/** @see iAccess.enable */
+	/** @see [[iAccess.enable]] */
 	enable(): Promise<boolean> {
 		return iAccess.enable(this);
 	}
 
-	/** @see iAccess.disable */
+	/** @see [[iAccess.disable]] */
 	disable(): Promise<boolean> {
 		return iAccess.disable(this);
 	}
 
-	/** @see iOpenToggle.open */
+	/** @see [[iOpenToggle.open]] */
 	open(): Promise<boolean> {
 		return iOpenToggle.open(this);
 	}
 
-	/** @see iOpenToggle.close */
+	/** @see [[iOpenToggle.close]] */
 	close(): Promise<boolean> {
 		return iOpenToggle.close(this);
 	}
 
-	/** @see iOpenToggle.toggle */
+	/** @see [[iOpenToggle.toggle]] */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
 	}
 
-	/** @see iOpenToggle.onOpenedChange */
+	/** @see [[iOpenToggle.onOpenedChange]] */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	onOpenedChange(e: ModEvent | SetModEvent): void {
 		// ...
 	}
 
-	/** @see iOpenToggle.onKeyClose */
+	/** @see [[iOpenToggle.onKeyClose]] */
 	onKeyClose(e: KeyboardEvent): Promise<void> {
 		return iOpenToggle.onKeyClose(this, e);
 	}
 
-	/** @see iOpenToggle.onTouchClose */
+	/** @see [[iOpenToggle.onTouchClose]] */
 	onTouchClose(e: MouseEvent): Promise<void> {
 		return iOpenToggle.onTouchClose(this, e);
 	}
 
-	/** @see iOpenToggle.initCloseHelpers */
+	/** @see [[iOpenToggle.initCloseHelpers]] */
 	@p({hook: 'beforeDataCreate', replace: false})
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
