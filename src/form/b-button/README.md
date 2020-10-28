@@ -18,6 +18,14 @@ This module provides a component to create a button.
 
 * The component has `skeletonMarker`.
 
+## Modifiers
+
+| Name    | Description                                               | Values    | Default |
+| ------- | --------------------------------------------------------- | ----------| ------- |
+| `upper` | The component displays the text content in the upper case | `Boolean` | -       |
+
+Also, you can see the parent component and the component traits.
+
 ## Events
 
 | EventName  | Description            | Payload description | Payload  |
