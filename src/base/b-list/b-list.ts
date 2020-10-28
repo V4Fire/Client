@@ -36,7 +36,7 @@ export const
 	},
 
 	model: {
-		prop: 'valueProp',
+		prop: 'activeProp',
 		event: 'onChange'
 	}
 })

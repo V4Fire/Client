@@ -8,12 +8,20 @@ Changelog
 > - :memo:       [Documentation]
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
->
+
 ## v3.0.0-rc.91 ()
+
+#### :boom: Breaking Change
+
+* Changed the model prop from `valueProp` to `activeProp`
 
 #### :rocket: New Feature
 
 * Added support of interpolation of a data provider response
+
+#### :nail_care: Polish
+
+* Improved documentation
 
 ## v3.0.0-rc.90 (2020-10-22)
 

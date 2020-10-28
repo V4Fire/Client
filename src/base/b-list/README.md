@@ -24,6 +24,14 @@ This module provides a standard component to create a list of tabs/links. You ca
 
 * Dynamic data loading.
 
+## Modifiers
+
+| Name         | Description            | Values    | Default |
+| ------------ |------------------------| ----------|-------- |
+| `hideLabels` | Item labels is hidden  | `Boolean` | `false` |
+
+Also, you can see [[iVisible]] and [[iWidth]] traits and the [[iData]] component.
+
 ## Events
 
 | EventName         | Description                                                                                                                  | Payload description                    | Payload  |
@@ -32,6 +40,25 @@ This module provides a standard component to create a list of tabs/links. You ca
 | `immediateChange` | An active value of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active values | `Active` |
 | `actionChange`    | An active value of the component has been changed due to some user action                                                    | Active value or a set of active values | `Active` |
 | `itemsChange`     | A list of items has been changed                                                                                             | List of items                          | `Items`  |
+
+Also, you can see [[iVisible]] and [[iWidth]] traits and the [[iData]] component.
+
+## Model
+
+The component can be used with the `v-model` directive.
+
+```
+< b-list :items = items | v-model = activeItem
+```
+
+```js
+({
+  model: {
+    prop: 'activeProp',
+    event: 'onChange'
+  }
+})
+```
 
 ## Usage
 

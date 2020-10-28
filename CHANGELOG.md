@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* Changed the model prop from `valueProp` to `activeProp` `bList`
 * Changed an interface of `super/i-block/modules/state/set`
 * Changed an interface and behavior of `bRouter/initRemoteData`
 * Now `toggle` returns a component value `bCheckbox`
@@ -58,6 +59,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :nail_care: Polish
 
 * Improved documentation:
+  * `bList`
   * `bRouter`
   * `iData`
   * `iInput`
