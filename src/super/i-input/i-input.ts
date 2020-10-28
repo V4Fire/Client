@@ -120,11 +120,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly name?: string;
 
 	/**
-	 * A string specifying the <form> element with which the input is associated (that is, its form owner).
-	 * This string's value, if present, must match the id of a <form> element in the same document.
-	 * If this attribute isn't specified, the <input> element is associated with the nearest containing form, if any.
+	 * A string specifying the `<form>` element with which the component is associated (that is, its form owner).
+	 * This string's value, if present, must match the id of a `<form>` element in the same document.
+	 * If this attribute isn't specified, the component is associated with the nearest containing form, if any.
 	 *
-	 * The form prop lets you place an input anywhere in the document but have it included with a form elsewhere
+	 * The form prop lets you place a component anywhere in the document but have it included with a form elsewhere
 	 * in the document.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform
@@ -150,7 +150,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly tabIndex?: number;
 
 	/**
-	 * Component values that are not allowed to send to a form.
+	 * Component values that are not allowed to send to the form.
 	 * The parameter can take a value or list of values to ban.
 	 * Also, the parameter can be passed as a function or regular expression.
 	 *
@@ -165,21 +165,31 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Data type of a component form value.
-	 * This function is used to transform the component value to one of the primitive types that will be sent from a form.
-	 * For example: String, Blob or Number.
+	 * This function is used to transform the component value to one of the primitive types
+	 * that will be sent from the form. For example: String, Blob or Number.
+	 *
+	 * @example
+	 * ```
+	 * < b-input :dataType = Number
+	 * ```
 	 */
 	@prop(Function)
 	readonly dataType: Function = identity;
 
 	/**
 	 * Converter/s of an original component value to a form value.
-	 * These functions are used to convert the component value to a value that will be sent from a form.
+	 * These functions are used to convert the component value to a value that will be sent from the form.
+	 *
+	 * @example
+	 * ```
+	 * < b-input :formConverter = [toDate, toProtobuf]
+	 * ```
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly formConverter?: CanArray<Function>;
 
 	/**
-	 * If false, then the component value isn't cached by a form.
+	 * If false, then the component value isn't cached by the form.
 	 * The caching is mean that if the component value doesn't change since the last sending of the form,
 	 * it won't be sent again.
 	 */
@@ -200,6 +210,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Initial information message that component need to show.
 	 * This parameter logically is pretty similar to STDIN output from Unix.
+	 *
+	 * @example
+	 * ```
+	 * < b-input :info = 'This is required parameter'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly infoProp?: string;
@@ -207,6 +222,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Initial error message that component need to show.
 	 * This parameter logically is pretty similar to STDERR output from Unix.
+	 *
+	 * @example
+	 * ```
+	 * < b-input :error = 'This is required parameter'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly errorProp?: string;
@@ -232,7 +252,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Link to a form that is tied with the component
+	 * Link to a form that is associated with the component
 	 */
 	@p({replace: false})
 	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
@@ -277,7 +297,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Form value of the component
+	 * Form value of the component.
+	 * This value is produced from the original component value via applying form converters.
+	 * Also, the value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
+	 * it will be skipped (the getter returns undefined).
 	 */
 	@p({replace: false})
 	get formValue(): Promise<this['FormValue']> {
@@ -321,7 +344,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Grouped form value of the component, i.e.
 	 * if there are another form components with the same form name, their values will be grouped.
-	 * If they are more than one value, the method returns an array of values.
+	 * If they are more than one value, the getter returns an array of values.
 	 */
 	@p({replace: false})
 	get groupFormValue(): Promise<CanArray<this['FormValue']>> {
