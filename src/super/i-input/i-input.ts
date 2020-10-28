@@ -594,7 +594,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Clears the component form value
+	 * Clears the component value
 	 * @emits `clear()`
 	 */
 	@p({replace: false})
@@ -615,7 +615,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Resets the component form value to the default
+	 * Resets the component value to the default
 	 * @emits `reset(value: this['Value'])`
 	 */
 	@p({replace: false})
@@ -636,7 +636,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Returns a validator error message from the specified arguments
+	 * Returns a validation error message from the specified arguments
 	 *
 	 * @param err - error details
 	 * @param msg - error message / error table / error function
@@ -656,7 +656,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Sets a validator error message to the component
+	 * Sets a validation error message to the component
 	 *
 	 * @param msg
 	 * @param [showMsg] - if true, then the message will be provided to .error
@@ -671,7 +671,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Validates the component value
-	 * (returns true or - of the failed validation)
+	 * (returns true or `ValidationError` if the validation is failed)
 	 *
 	 * @param params - additional parameters
 	 * @emits `validationStart()`
@@ -793,7 +793,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Handler: component focus
+	 * Handler: the component in focus
 	 */
 	@p({replace: false})
 	protected onFocus(): void {
@@ -801,7 +801,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Handler: component blur
+	 * Handler: the component lost the focus
 	 */
 	@p({replace: false})
 	protected onBlur(): void {
@@ -809,7 +809,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Handler: component value change
+	 * Handler: changing of a component value
 	 * @emits `change(value)`
 	 */
 	@p({replace: false})
@@ -823,7 +823,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Resolves the specified component value and returns it.
-	 * If the value argument is undefined, the method returns a value by default.
+	 * If the value argument is undefined, the method can returns the default value.
 	 *
 	 * @param value
 	 */
