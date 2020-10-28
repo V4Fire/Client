@@ -24,12 +24,22 @@ This module provides a component to load an image with the support of features:
 
 * The component has `skeletonMarker`.
 
+## Modifiers
+
+| Name        | Description                                                           | Values    | Default |
+| ----------- |-----------------------------------------------------------------------| ----------|-------- |
+| `showError` | The component is showing an image or template that indicates an error | `Boolean` | -       |
+
+Also, you can see [[iProgress]] and [[iVisible]] traits and the [[iBlock]] component.
+
 ## Events
 
 | EventName     | Description                            | Payload description | Payload  |
 | ------------- |--------------------------------------- | ------------------- |--------- |
 | `loadSuccess` | The image has been successfully loaded | -                   | -        |
 | `loadFail`    | The image hasn't been loaded           | `Error` object      | `Error`  |
+
+Also, you can see [[iProgress]] and [[iVisible]] traits and the [[iBlock]] component.
 
 ## Usage
 
@@ -45,7 +55,7 @@ This module provides a component to load an image with the support of features:
 
 The component supports a bunch of slots to provide:
 
-1. `overlay` to give an overlay image until loading is completed.
+1. `overlay` to give an overlay image/template until loading is completed.
 
 ```
 < b-image :src = require('assets/my-img.jpg')
@@ -53,7 +63,7 @@ The component supports a bunch of slots to provide:
     The image is loading...
 ```
 
-2. `broken` to provide an error image when the original image wasn't successfully loaded.
+2. `broken` to provide an error image/template when the original image wasn't successfully loaded.
 
 ```
 < b-image :src = require('assets/my-img.jpg')

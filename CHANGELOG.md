@@ -41,6 +41,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Moved logic from `iAccess`
   * Added support of events
 
+* Implemented new API from `iProgress`
+  * `bImage`
+
 * Implemented new API from `iAccess`:
   * `iInput`
   * `bButton`
@@ -59,6 +62,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `iAccess`
   * `iProgress`
   * `iVisible`
+  * `bImage`
   * `super/i-block/modules/state`
 
 * Added documentation:
