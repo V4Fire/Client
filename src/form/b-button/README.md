@@ -24,6 +24,8 @@ This module provides a component to create a button.
 | ---------- |----------------------- | ------------------- |--------- |
 | `click`    | Click to the component | `Event` object      | `Event`  |
 
+Also, you can see the parent component and the component traits.
+
 ## Usage
 
 The component has four base scenarios of usage:
