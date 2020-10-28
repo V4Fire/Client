@@ -12,13 +12,13 @@ The component can be useful to create a composition of data.
 
 ## Events
 
-| EventName     | Description                                            | Payload description                     | Payload                                  |
-| ------------- |------------------------------------------------------- | --------------------------------------- |----------------------------------------- |
-| `change`      | The provider has uploaded and changed data             | Provider data                           | `DB`                                     |
-| `addData`     | There have occur adding of new data to the provider    | Data                                    | `unknown`                                |
-| `updData`     | There have occur updating of data of the provider      | Data                                    | `unknown`                                |
-| `delData`     | There have occur deleting of data from the provider    | Data                                    | `unknown`                                |
-| `error`       | There have occur an error with the provider            | Error object; Function to retry request | `Error | RequestError`; `RetryRequestFn` |
+| EventName     | Description                                            | Payload description                     | Payload                                   |
+| ------------- |------------------------------------------------------- | --------------------------------------- |------------------------------------------ |
+| `change`      | The provider has uploaded and changed data             | Provider data                           | `DB`                                      |
+| `addData`     | There have occur adding of new data to the provider    | Data                                    | `unknown`                                 |
+| `updData`     | There have occur updating of data of the provider      | Data                                    | `unknown`                                 |
+| `delData`     | There have occur deleting of data from the provider    | Data                                    | `unknown`                                 |
+| `error`       | There have occur an error with the provider            | Error object; Function to retry request | `Error \| RequestError`; `RetryRequestFn` |
 
 ## Slots
 
