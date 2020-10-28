@@ -14,6 +14,19 @@ This module provides a trait for a component have some "progress" behaviour.
 | ---------- |------------------------------------------------------------------------------------------------------------------| ----------|-------- |
 | `progress` | The component in the process: loading data, processing something, etc. Maybe, we need to show some progress bar. | `Boolean` | -       |
 
+To support these modifiers, import them from the trait into your component.
+
+```typescript
+import iProgress from 'traits/i-progress/i-progress';
+
+export default class bButton implements iProgress {
+  /** @inheritDoc */
+  static readonly mods: ModsDecl = {
+    ...iProgress.mods
+  }
+}
+```
+
 ## Styles
 
 The trait provides a bunch of optional styles for the component.

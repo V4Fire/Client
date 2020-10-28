@@ -15,6 +15,19 @@ This module provides a trait for a component that needs to implement "accessibil
 | `disabled` | The component is disabled. All actions, like, input or click, are prevented                  | `Boolean` | -       |
 | `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `Boolean` | -       |
 
+To support these modifiers, import them from the trait into your component.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @inheritDoc */
+  static readonly mods: ModsDecl = {
+    ...iAccess.mods
+  }
+}
+```
+
 ## Events
 
 | Name       | Description                  | Payload description | Payload |
@@ -23,6 +36,20 @@ This module provides a trait for a component that needs to implement "accessibil
 | `disable`  | The component is disabled    | -                   | -       |
 | `focus`    | The component in focus       | -                   | -       |
 | `blur`     | The component lost the focus | -                   | -       |
+
+To support these events, override `initModEvents` in your component and puts within invoking a helper method from the trait.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @override */
+  protected initModEvents(): void {
+    super.initModEvents();
+    iAccess.initModEvents(this);
+  }
+}
+```
 
 ## Props
 
