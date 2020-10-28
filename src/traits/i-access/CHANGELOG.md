@@ -20,6 +20,7 @@ Changelog
 
 * Added `autofocus`
 * Added `tabIndex`
+* Added `isFocused`
 
 #### :nail_care: Polish
 

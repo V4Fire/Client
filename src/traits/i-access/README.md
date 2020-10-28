@@ -45,6 +45,26 @@ the document with the risk of harming usability and accessibility if done incorr
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
 
+## Accessors
+
+The trait specifies a getter to determine when the component in focus or not.
+
+### isFocused
+
+True if the component in focus.
+The getter has the default implementation via a static method `iAccess.isFocused`.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @see iAccess.isFocused */
+  get isFocused(): Promise<boolean> {
+    return iAccess.isFocused(this);
+  }
+}
+```
+
 ## Methods
 
 The trait specifies a bunch of methods to implement.

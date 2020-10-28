@@ -35,6 +35,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `iAccess`:
   * Added `autofocus`
   * Added `tabIndex`
+  * Added `isFocused`
 
 #### :house: Internal
 

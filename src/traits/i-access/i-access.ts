@@ -30,6 +30,14 @@ export default abstract class iAccess {
 	};
 
 	/**
+	 * Returns true if the component in focus
+	 * @param component
+	 */
+	static isFocused<T extends iBlock>(component: T): boolean {
+		return component.mods.focused === 'true';
+	}
+
+	/**
 	 * Disables the component
 	 * @param component
 	 */
@@ -109,6 +117,11 @@ export default abstract class iAccess {
 	 * the document with the risk of harming usability and accessibility if done incorrectly.
 	 */
 	abstract readonly tabIndex?: number;
+
+	/**
+	 * True if the component in focus
+	 */
+	abstract readonly isFocused: boolean;
 
 	/**
 	 * Enables the component
