@@ -11,7 +11,7 @@ This module provides a trait for a component that needs to implement "visibility
 ## Modifiers
 
 | Name     | Description             | Values    | Default |
-| -------- |-------------------------| ----------|-------- |
+| -------- | ----------------------- | ----------| ------- |
 | `hidden` | The component is hidden | `Boolean` | -       |
 
 To support these modifiers, import them from the trait into your component.
@@ -30,7 +30,7 @@ export default class bButton implements iVisible {
 ## Events
 
 | Name    | Description             | Payload description | Payload |
-| --------|-------------------------| --------------------|-------- |
+| --------| ----------------------- | --------------------| ------- |
 | `show`  | The component is shown  | -                   | -       |
 | `hide`  | The component is hidden | -                   | -       |
 

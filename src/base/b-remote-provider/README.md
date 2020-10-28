@@ -13,7 +13,7 @@ The component can be useful in creating a composition of data.
 ## Events
 
 | EventName     | Description                                            | Payload description                     | Payload                                   |
-| ------------- |------------------------------------------------------- | --------------------------------------- |------------------------------------------ |
+| ------------- | ------------------------------------------------------ | --------------------------------------- | ----------------------------------------- |
 | `change`      | The provider has uploaded and changed data             | Provider data                           | `DB`                                      |
 | `addData`     | There have occur adding of new data to the provider    | Data                                    | `unknown`                                 |
 | `updData`     | There have occur updating of data of the provider      | Data                                    | `unknown`                                 |

@@ -12,7 +12,7 @@ This component can be very efficient if you need to render a good amount of elem
 ## Events
 
 | EventName     | Description                                                                                                  | Payload description                                                      | Payload           |
-| ------------- |------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |------------------ |
+| ------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ----------------- |
 | dbChange      | The event is fired after receiving data from a data provider. The event won't be fired if the data is empty. | Cumulative data of all tied requests                                     | `RemoteData`      |
 | dataChange    | The event is fired after changing a data batch                                                               | Data batch value                                                         | `unknown[]`       |
 | chunkLoaded   | The event is fired after every successful response from a data provider                                      | A structure with raw and normalized data that takes from a data provider | `LastLoadedChunk` |

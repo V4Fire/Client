@@ -4,8 +4,8 @@ This module provides API to load images by using `background-image` or `src`.
 
 ## Callbacks
 
-| Name       | Description                                      | Payload description  | Payload   |
-| ---------- |------------------------------------------------- | -------------------- |-----------|
+| Name       | Description                                      | Payload description | Payload   |
+| ---------- | ------------------------------------------------ | ------------------- | --------- |
 | `load`     | Invoked when an image was successfully loaded    | `el` bound node     | `Element` |
 | `error`    | Invoked when a loading error of an image appears | `el` bound node     | `Element` |
 

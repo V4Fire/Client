@@ -21,7 +21,7 @@ This module provides a component to create a button.
 ## Events
 
 | EventName  | Description            | Payload description | Payload  |
-| ---------- |----------------------- | ------------------- |--------- |
+| ---------- | ---------------------- | ------------------- | -------- |
 | `click`    | Click to the component | `Event` object      | `Event`  |
 
 Also, you can see the parent component and the component traits.

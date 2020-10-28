@@ -11,7 +11,7 @@ This module provides a trait for a component that needs to implement "accessibil
 ## Modifiers
 
 | Name       | Description                                                                                  | Values    | Default |
-| ---------- |----------------------------------------------------------------------------------------------| ----------|-------- |
+| ---------- | -------------------------------------------------------------------------------------------- | ----------| ------- |
 | `disabled` | The component is disabled. All actions, like, input or click, are prevented                  | `Boolean` | -       |
 | `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `Boolean` | -       |
 
@@ -31,7 +31,7 @@ export default class bButton implements iAccess {
 ## Events
 
 | Name       | Description                  | Payload description | Payload |
-| ---------- |----------------------------- | --------------------|-------- |
+| ---------- | ---------------------------- | ------------------- | ------- |
 | `enable`   | The component is enabled     | -                   | -       |
 | `disable`  | The component is disabled    | -                   | -       |
 | `focus`    | The component in focus       | -                   | -       |

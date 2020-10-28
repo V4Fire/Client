@@ -27,7 +27,7 @@ This module provides a standard component to create a list of tabs/links. You ca
 ## Modifiers
 
 | Name         | Description            | Values    | Default |
-| ------------ |------------------------| ----------|-------- |
+| ------------ | ---------------------- | ----------| ------- |
 | `hideLabels` | Item labels is hidden  | `Boolean` | `false` |
 
 Also, you can see [[iVisible]] and [[iWidth]] traits and the [[iData]] component.
@@ -35,7 +35,7 @@ Also, you can see [[iVisible]] and [[iWidth]] traits and the [[iData]] component
 ## Events
 
 | EventName         | Description                                                                                                                  | Payload description                    | Payload  |
-| ----------------- |----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |--------- |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | -------- |
 | `change`          | An active value of the component has been changed                                                                            | Active value or a set of active values | `Active` |
 | `immediateChange` | An active value of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active values | `Active` |
 | `actionChange`    | An active value of the component has been changed due to some user action                                                    | Active value or a set of active values | `Active` |
