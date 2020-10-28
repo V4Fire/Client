@@ -14,6 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Moved logic from `iAccess`
+* Added support of events
 
 #### :nail_care: Polish
 

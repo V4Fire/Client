@@ -37,7 +37,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `tabIndex`
   * Added `isFocused`
 
-* Moved logic from `iAccess` `iProgress`
+* `iProgress`:
+  * Moved logic from `iAccess`
+  * Added support of events
+
 * Implemented new API from `iAccess`:
   * `iInput`
   * `bButton`

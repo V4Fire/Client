@@ -27,6 +27,27 @@ export default class bButton implements iProgress {
 }
 ```
 
+## Events
+
+| Name            | Description                               | Payload description | Payload |
+| ----------------|-------------------------------------------| --------------------|-------- |
+| `progressStart` | The component starts to process something | -                   | -       |
+| `progressEnd`   | The component ends to process something   | -                   | -       |
+
+To support these events, override `initModEvents` in your component and puts within invoking a helper method from the trait.
+
+```typescript
+import iProgress from 'traits/i-progress/i-progress';
+
+export default class bButton implements iProgress {
+  /** @override */
+  protected initModEvents(): void {
+    super.initModEvents();
+    iProgress.initModEvents(this);
+  }
+}
+```
+
 ## Styles
 
 The trait provides a bunch of optional styles for the component.
