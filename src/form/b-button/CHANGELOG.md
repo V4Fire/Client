@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.91 ()
+
+#### :rocket: New Feature
+
+* Implemented new API from `iAccess`
+
 ## v3.0.0-rc.88 (2020-10-13)
 
 #### :bug: Bug Fix

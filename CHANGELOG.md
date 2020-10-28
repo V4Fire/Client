@@ -38,6 +38,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `isFocused`
 
 * Moved logic from `iAccess` `iProgress`
+* Implemented new API from `iAccess` `bButton`
 
 #### :house: Internal
 

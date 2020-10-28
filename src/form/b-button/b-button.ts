@@ -88,11 +88,13 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	@prop({type: String, required: false})
 	readonly form?: string;
 
-	/**
-	 * Input autofocus mode
-	 */
+	/** @see [[iAccess.autofocus]] */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
+
+	/** @see [[iAccess.tabIndex]] */
+	@prop({type: Number, required: false})
+	readonly tabIndex?: number;
 
 	/**
 	 * Icon to show before a button text
@@ -144,6 +146,19 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	 */
 	@prop(String)
 	readonly dropdown: string = 'bottom';
+
+	/** @see [[iAccess.isFocused]] */
+	get isFocused(): boolean {
+		const
+			{button} = this.$refs;
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (button != null) {
+			return document.activeElement === button;
+		}
+
+		return iAccess.isFocused(this);
+	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
