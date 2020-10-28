@@ -18,6 +18,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Changed an interface of `super/i-block/modules/state/set`
 * Changed an interface and behavior of `bRouter/initRemoteData`
 * Now `toggle` returns a component value `bCheckbox`
+* Removed `iInput/valueKey`
 
 * `iAccess`:
   * Removed helpers for disabling
@@ -25,7 +26,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `iInput/isFocused`
 * Added support of method invoking `super/i-block/modules/state/set`
 * Added support of interpolation of a data provider response:
   * `iInput`
@@ -38,7 +38,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `isFocused`
 
 * Moved logic from `iAccess` `iProgress`
-* Implemented new API from `iAccess` `bButton`
+* Implemented new API from `iAccess`:
+  * `iInput`
+  * `bButton`
 
 #### :house: Internal
 

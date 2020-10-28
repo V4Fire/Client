@@ -11,10 +11,14 @@ Changelog
 
 ## v3.0.0-rc.91 ()
 
+#### :boom: Breaking Change
+
+* Removed `valueKey`
+
 #### :rocket: New Feature
 
 * Added support of interpolation of a data provider response
-* Added `isFocused`
+* Implemented new API from `iAccess`
 
 #### :nail_care: Polish
 

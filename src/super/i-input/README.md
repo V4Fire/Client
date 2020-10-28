@@ -81,15 +81,3 @@ The form prop lets you place an input anywhere in the document but have it inclu
   < button type = submit
     Submit
 ```
-
-##### autofocus
-
-A Boolean attribute which, if present, indicates that the input should automatically have focus when the page has finished loading.
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus).
-
-##### tabIndex
-
-An integer attribute indicating if the element can take input focus (is focusable), if it should participate to sequential keyboard navigation.
-As all input types except for input of type hidden are focusable, this attribute should not be used on form controls,
-because doing so would require the management of the focus order for all elements within the document with the risk of
-harming usability and accessibility if done incorrectly.

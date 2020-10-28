@@ -141,22 +141,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@prop({type: String, required: false})
 	readonly form?: string;
 
-	/**
-	 * A Boolean attribute which, if present, indicates that the input should automatically
-	 * have focus when the page has finished loading
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus
-	 */
+	/** @see [[iAccess.autofocus]] */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
 
-	/**
-	 * An integer attribute indicating if the element can take input focus (is focusable),
-	 * if it should participate to sequential keyboard navigation.
-	 * As all input types except for input of type hidden are focusable, this attribute should not be used on
-	 * form controls, because doing so would require the management of the focus order for all elements within
-	 * the document with the risk of harming usability and accessibility if done incorrectly.
-	 */
+	/** @see [[iAccess.tabIndex]] */
 	@prop({type: Number, required: false})
 	readonly tabIndex?: number;
 
@@ -297,7 +286,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 			const
 				test = Array.concat([], this.disallow),
-				value = await this[this.valueKey];
+				value = await this.value;
 
 			const match = (el): boolean => {
 				if (Object.isFunction(el)) {
@@ -305,7 +294,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				}
 
 				if (Object.isRegExp(el)) {
-					return el.test(value);
+					return el.test(String(value));
 				}
 
 				return el === value;
@@ -450,18 +439,16 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 	}
 
-	/**
-	 * True if the component in focus
-	 */
+	/** @see [[iAccess.isFocused]] */
 	get isFocused(): boolean {
 		const
 			{input} = this.$refs;
 
 		if (input != null) {
-			return document.activeElement !== input;
+			return document.activeElement === input;
 		}
 
-		return this.mods.focused === 'true';
+		return iAccess.isFocused(this);
 	}
 
 	/** @inheritDoc */
@@ -507,14 +494,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		//#endif
 	};
-
-	/**
-	 * Name of a component property that is used as a component form value.
-	 * It's necessary when you inherit a component from another form component,
-	 * but your component uses another property as a form value.
-	 */
-	@field({replace: false})
-	protected readonly valueKey: string = 'value';
 
 	/** @see [[iInput.info]] */
 	@system({
@@ -598,8 +577,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@p({replace: false})
 	@wait('ready')
 	async clear(): Promise<boolean> {
-		if (this[this.valueKey] !== undefined) {
-			this[this.valueKey] = undefined;
+		if (this.value !== undefined) {
+			this.value = undefined;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 
@@ -619,13 +598,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@p({replace: false})
 	@wait('ready')
 	async reset(): Promise<boolean> {
-		if (this[this.valueKey] !== this.default) {
-			this[this.valueKey] = this.default;
+		if (this.value !== this.default) {
+			this.value = this.default;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 
 			void this.removeMod('valid');
-			this.emit('reset', this[this.valueKey]);
+			this.emit('reset', this.value);
 
 			return true;
 		}
@@ -786,7 +765,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			return Promise.all(this.state.set(val)).then(() => val);
 		}
 
-		this[this.valueKey] = val;
+		this.value = val;
 		return val;
 	}
 
@@ -815,7 +794,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.prevValue = oldValue;
 
 		if (newValue !== oldValue || newValue != null && typeof newValue === 'object') {
-			this.emit('change', this[this.valueKey]);
+			this.emit('change', this.value);
 		}
 	}
 
@@ -842,7 +821,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@p({hook: 'created', replace: false})
 	protected initValueListeners(): void {
-		this.watch(this.valueKey, this.onValueChange.bind(this));
+		this.watch('value', this.onValueChange.bind(this));
 		this.on('actionChange', () => this.validate());
 	}
 
