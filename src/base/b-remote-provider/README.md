@@ -20,6 +20,8 @@ The component can be useful in creating a composition of data.
 | `delData`     | There have occur deleting of data from the provider    | Data                                    | `unknown`                                 |
 | `error`       | There have occur an error with the provider            | Error object; Function to retry request | `Error \| RequestError`; `RetryRequestFn` |
 
+Also, you can see the parent component.
+
 ## Usage
 
 Don't use this component if you just want to join several providers into the one `db` object: to do this, you should prefer `extraProviders`.
