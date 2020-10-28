@@ -9,7 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-##   v3.0.0-rc.72 ()
+## v3.0.0-rc.91 ()
+
+#### :rocket: New Feature
+
+* Implemented new API from `iProgress`
+
+#### :nail_care: Polish
+
+* Improved documentation
+
+## v3.0.0-rc.72 (2020-10-01)
 
 #### :boom: Breaking Change
 

@@ -42,6 +42,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added support of events
 
 * Implemented new API from `iProgress`
+  * `iData`
   * `bImage`
 
 * Implemented new API from `iAccess`:
@@ -58,6 +59,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Improved documentation:
   * `bRouter`
+  * `iData`
   * `iInput`
   * `iAccess`
   * `iProgress`
