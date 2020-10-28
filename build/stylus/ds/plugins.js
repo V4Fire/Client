@@ -16,7 +16,8 @@ const
 const
 	{getThemes} = include('build/ds'),
 	{getThemedPathChunks} = include('build/stylus/ds/helpers'),
-	{theme, includeThemes} = config.runtime();
+	{theme, includeThemes} = config.runtime(),
+	themedFields = config.themedFields();
 
 const {
 	DS,
@@ -88,7 +89,7 @@ module.exports = function addPlugins(api) {
 			}
 
 			const
-				tail = getThemedPathChunks(string),
+				tail = getThemedPathChunks(string, themedFields),
 				path = !isThemesIncluded && theme ? [string, ...tail] : [string];
 
 			if (Object.isString(value.string)) {
@@ -112,7 +113,7 @@ module.exports = function addPlugins(api) {
 
 		const
 			head = 'text',
-			themed = getThemedPathChunks(head);
+			themed = getThemedPathChunks(head, themedFields);
 
 		if (isThemesIncluded && theme) {
 			const
@@ -156,7 +157,7 @@ module.exports = function addPlugins(api) {
 			}
 
 			const
-				path = !isThemesIncluded && theme ? ['colors', ...getThemedPathChunks('colors')] : ['colors'];
+				path = !isThemesIncluded && theme ? ['colors', ...getThemedPathChunks('colors', themedFields)] : ['colors'];
 
 			if (id) {
 				id = id.string || id.val;

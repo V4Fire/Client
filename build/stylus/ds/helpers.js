@@ -15,10 +15,9 @@ const
 	{cssVariables} = include('build/stylus/ds/const');
 
 const
-	themedFields = config.themedFields(),
 	{theme} = config.runtime();
 
-	Object.defineProperty(cssVariables, '__map__', {
+Object.defineProperty(cssVariables, '__map__', {
 	enumerable: false,
 	value: {}
 });
@@ -148,10 +147,11 @@ function prepareData(data, path, theme) {
 /**
  * Returns array of fields to get themed value
  *
- * @param field
+ * @param {string} field
+ * @param {string[]} [themedFields]
  * @returns {string[]}
  */
-function getThemedPathChunks(field) {
+function getThemedPathChunks(field, themedFields) {
 	let
 		path = ['theme', theme];
 

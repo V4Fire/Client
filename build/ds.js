@@ -40,7 +40,11 @@ exports.getThemes = function getThemes(ds, includeThemes) {
 	const
 		{meta} = ds;
 
-	if (Object.isObject(meta) && meta.themes !== undefined && includeThemes !== undefined) {
+	if (Object.isObject(meta) && meta.themes !== undefined) {
+		if (includeThemes === undefined) {
+			throw new Error('Design system package has themes, but not included to the build');
+		}
+
 		const reduceThemes = () => includeThemes.reduce((res, t) => {
 			if (meta.themes.includes(t)) {
 				res.push(t);
