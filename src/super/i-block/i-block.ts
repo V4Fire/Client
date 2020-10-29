@@ -13,15 +13,14 @@
  * @packageDocumentation
  */
 
-import config from 'config';
-
 import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools';
 
 import SyncPromise from 'core/promise/sync';
 import log, { LogMessageOptions } from 'core/log';
-
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+
+import config from 'config';
 import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
 
 //#if runtime has core/helpers
