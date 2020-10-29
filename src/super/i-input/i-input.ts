@@ -599,7 +599,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Clears the component value
-	 * @emits `clear()`
+	 * @emits `clear(value: this['Value'])`
 	 */
 	@p({replace: false})
 	@wait('ready')
@@ -610,7 +610,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			await this.nextTick();
 
 			void this.removeMod('valid');
-			this.emit('clear');
+			this.emit('clear', this.value);
 
 			return true;
 		}
@@ -870,7 +870,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Handler: changing of a component value
-	 * @emits `change(value)`
+	 * @emits `change(value: this['Value'])`
 	 */
 	@p({replace: false})
 	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
