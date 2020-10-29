@@ -30,12 +30,12 @@ export default class bButton implements iAccess {
 
 ## Events
 
-| Name       | Description                  | Payload description | Payload |
-| ---------- | ---------------------------- | ------------------- | ------- |
-| `enable`   | The component is enabled     | -                   | -       |
-| `disable`  | The component is disabled    | -                   | -       |
-| `focus`    | The component in focus       | -                   | -       |
-| `blur`     | The component lost the focus | -                   | -       |
+| Name       | Description                      | Payload description | Payload |
+| ---------- | -------------------------------- | ------------------- | ------- |
+| `enable`   | The component has been enabled   | -                   | -       |
+| `disable`  | The component has been disabled  | -                   | -       |
+| `focus`    | The component in focus           | -                   | -       |
+| `blur`     | The component has lost the focus | -                   | -       |
 
 To support these events, override `initModEvents` in your component and puts within invoking a helper method from the trait.
 

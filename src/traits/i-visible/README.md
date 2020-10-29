@@ -29,10 +29,10 @@ export default class bButton implements iVisible {
 
 ## Events
 
-| Name    | Description             | Payload description | Payload |
-| --------| ----------------------- | --------------------| ------- |
-| `show`  | The component is shown  | -                   | -       |
-| `hide`  | The component is hidden | -                   | -       |
+| Name    | Description                   | Payload description | Payload |
+| --------| ----------------------------- | --------------------| ------- |
+| `show`  | The component has been shown  | -                   | -       |
+| `hide`  | The component has been hidden | -                   | -       |
 
 To support these events, override `initModEvents` in your component and puts within invoking a helper method from the trait.
 

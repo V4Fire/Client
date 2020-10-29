@@ -29,10 +29,10 @@ export default class bButton implements iProgress {
 
 ## Events
 
-| Name            | Description                               | Payload description | Payload |
-| ----------------| ----------------------------------------- | --------------------| ------- |
-| `progressStart` | The component starts to process something | -                   | -       |
-| `progressEnd`   | The component ends to process something   | -                   | -       |
+| Name            | Description                                    | Payload description | Payload |
+| ----------------| ---------------------------------------------- | --------------------| ------- |
+| `progressStart` | The component has started to process something | -                   | -       |
+| `progressEnd`   | The component has ended to process something   | -                   | -       |
 
 To support these events, override `initModEvents` in your component and puts within invoking a helper method from the trait.
 

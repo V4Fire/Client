@@ -21,8 +21,8 @@ Checkboxes can be combined in groups with the feature of multiple checking.
 
 | EventName      | Description                                                       | Payload description                                                      | Payload         |
 | -------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------- |
-| `check`        | The checkbox is checked                                           | Type of checking (`indeterminate` if not all child checkbox are checked) | `CheckType`     |
-| `uncheck`      | The checkbox is unchecked                                         | -                                                                        | -               |
+| `check`        | The checkbox has been checked                                     | Type of checking (`indeterminate` if not all child checkbox are checked) | `CheckType`     |
+| `uncheck`      | The checkbox has been unchecked                                   | -                                                                        | -               |
 | `actionChange` | A value of the component has been changed due to some user action | Component value                                                          | `this['Value']` |
 
 Also, the component supports all events from [[iInput]].

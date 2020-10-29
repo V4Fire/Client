@@ -45,6 +45,15 @@ export default class myInput extends iInput {
 
 Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] component.
 
+## Events
+
+| Name            | Description                               | Payload description | Payload |
+| ----------------| ----------------------------------------- | --------------------| ------- |
+| `change`        | A value of the component has been changed | -                   | -       |
+| `progressEnd`   | The component ends to process something           | -                   | -       |
+
+Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] component.
+
 ## Form API
 
 ### Input props
