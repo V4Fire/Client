@@ -151,6 +151,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component values that are not allowed to send to the form.
+	 * If a component value matches with one of the denied conditions, the form value will be equal to undefined.
+	 *
 	 * The parameter can take a value or list of values to ban.
 	 * Also, the parameter can be passed as a function or regular expression.
 	 *
@@ -177,7 +179,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly dataType: Function = identity;
 
 	/**
-	 * Converter/s of an original component value to a form value.
+	 * Converter/s of an original component value to the form value.
 	 * These functions are used to convert the component value to a value that will be sent from the form.
 	 *
 	 * @example
@@ -189,7 +191,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly formConverter?: CanArray<Function>;
 
 	/**
-	 * If false, then the component value isn't cached by the form.
+	 * If false, then a component value isn't cached by the form.
 	 * The caching is mean that if the component value doesn't change since the last sending of the form,
 	 * it won't be sent again.
 	 */
@@ -197,7 +199,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly cache: boolean = true;
 
 	/**
-	 * List of component validators
+	 * List of component validators to check
 	 *
 	 * @example
 	 * ```
@@ -208,7 +210,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly validators: Validators = [];
 
 	/**
-	 * Initial information message that component need to show.
+	 * Initial information message that the component needs to show.
 	 * This parameter logically is pretty similar to STDIN output from Unix.
 	 *
 	 * @example
@@ -220,7 +222,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly infoProp?: string;
 
 	/**
-	 * Initial error message that component need to show.
+	 * Initial error message that the component needs to show.
 	 * This parameter logically is pretty similar to STDERR output from Unix.
 	 *
 	 * @example
@@ -274,6 +276,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component value
+	 * @see [[iInput.valueStore]]
 	 */
 	@p({replace: false})
 	get value(): this['Value'] {
@@ -290,6 +293,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component default value
+	 * @see [[iInput.defaultProp]]
 	 */
 	@p({replace: false})
 	get default(): unknown {
@@ -407,7 +411,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Information message that component need to show.
+	 * Information message that the component needs to show.
 	 * This parameter logically is pretty similar to STD output from Unix.
 	 */
 	@p({replace: false})
@@ -435,7 +439,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Error message that component need to show.
+	 * Error message that the component needs to show.
 	 * This parameter logically is pretty similar to STDERR output from Unix.
 	 */
 	@p({replace: false})
@@ -615,7 +619,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Resets the component value to the default
+	 * Resets the component value to default
 	 * @emits `reset(value: this['Value'])`
 	 */
 	@p({replace: false})
@@ -636,7 +640,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Returns a validation error message from the specified arguments
+	 * Returns a validator error message from the specified arguments
 	 *
 	 * @param err - error details
 	 * @param msg - error message / error table / error function
@@ -769,6 +773,33 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		return true;
 	}
 
+	/**
+	 * Resolves the specified component value and returns it.
+	 * If the value argument is undefined, the method can returns the default value.
+	 *
+	 * @param value
+	 */
+	@p({replace: false})
+	protected resolveValue(value?: this['Value']): this['Value'] {
+		const
+			i = this.instance;
+
+		if (value === undefined && this.lfc.isBeforeCreate()) {
+			return i['defaultGetter'].call(this);
+		}
+
+		return value;
+	}
+
+	/**
+	 * Initializes default event listeners of the component value
+	 */
+	@p({hook: 'created', replace: false})
+	protected initValueListeners(): void {
+		this.watch('value', this.onValueChange.bind(this));
+		this.on('actionChange', () => this.validate());
+	}
+
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
@@ -790,62 +821,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		this.value = val;
 		return val;
-	}
-
-	/**
-	 * Handler: the component in focus
-	 */
-	@p({replace: false})
-	protected onFocus(): void {
-		void this.setMod('focused', true);
-	}
-
-	/**
-	 * Handler: the component lost the focus
-	 */
-	@p({replace: false})
-	protected onBlur(): void {
-		void this.setMod('focused', false);
-	}
-
-	/**
-	 * Handler: changing of a component value
-	 * @emits `change(value)`
-	 */
-	@p({replace: false})
-	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
-		this.prevValue = oldValue;
-
-		if (newValue !== oldValue || newValue != null && typeof newValue === 'object') {
-			this.emit('change', this.value);
-		}
-	}
-
-	/**
-	 * Resolves the specified component value and returns it.
-	 * If the value argument is undefined, the method can returns the default value.
-	 *
-	 * @param value
-	 */
-	@p({replace: false})
-	protected resolveValue(value?: this['Value']): this['Value'] {
-		const
-			i = this.instance;
-
-		if (value === undefined && this.lfc.isBeforeCreate()) {
-			return i['defaultGetter'].call(this);
-		}
-
-		return value;
-	}
-
-	/**
-	 * Initializes default event listeners for a component value
-	 */
-	@p({hook: 'created', replace: false})
-	protected initValueListeners(): void {
-		this.watch('value', this.onValueChange.bind(this));
-		this.on('actionChange', () => this.validate());
 	}
 
 	/** @override */
@@ -875,5 +850,34 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		this.sync.mod('showInfo', 'infoStore', createMsgHandler('showInfo'));
 		this.sync.mod('showError', 'errorStore', createMsgHandler('showError'));
+	}
+
+	/**
+	 * Handler: the component in focus
+	 */
+	@p({replace: false})
+	protected onFocus(): void {
+		void this.setMod('focused', true);
+	}
+
+	/**
+	 * Handler: the component lost the focus
+	 */
+	@p({replace: false})
+	protected onBlur(): void {
+		void this.setMod('focused', false);
+	}
+
+	/**
+	 * Handler: changing of a component value
+	 * @emits `change(value)`
+	 */
+	@p({replace: false})
+	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
+		this.prevValue = oldValue;
+
+		if (newValue !== oldValue || newValue != null && typeof newValue === 'object') {
+			this.emit('change', this.value);
+		}
 	}
 }
