@@ -155,9 +155,27 @@ The form prop lets you place a component anywhere in the document but have it in
 
 #### Validation
 
-All instances of the iInput class support the feature of validation.
+All instances of the `iInput` class support the feature of validation.
 The validation process can be triggered manually via invoking the `validate` method or implicitly by a
 form associated with the component.
+
+To specify validators to a component, use the `validators` prop. The prop takes an array of strings (validator names).
+
+```
+< b-input :validators = ['required', 'validUserName']
+```
+
+Also, you can set additional parameters for each validator.
+
+```
+< b-input :validators = [ &
+  // To provide parameters you can use an array form
+  ['required', {msg: 'This is required field!'}],
+
+  // Or an object form
+  {validUserName: {showMsg: false}}
+] .
+```
 
 Supported validators are placed within the static `validators` property.
 This property is an object: the keys represent validator names; the values are specified as functions that take validation parameters and
@@ -188,7 +206,7 @@ export default class myInput extends iInput {
     ...iInput.validators,
 
     async moreThan5({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-      if ((await this.formValue) < 5) {
+      if ((await this.formValue) <= 5) {
         // This method is set a validation message to the component
         this.setValidationMsg(
           // This function returns a validation message based on the validation result, custom parameters, etc.
@@ -216,4 +234,19 @@ export default class myInput extends iInput {
     }
   };
 }
+```
+
+##### info/error messages
+
+To output information about warnings and errors, descendants of `iInput` can use `infoProp/info` and `erroProp/rerror` properties.
+
+```
+< b-input :info = 'This is required field'
+```
+
+You can put these properties somewhere in your component template, OR if you activate `messageHelpers` to `true`,
+the layout will be generated automatically: all you have to do is write the CSS rules.
+
+```
+< b-input :info = 'This is required field' | :messageHelpers = true
 ```
