@@ -51,10 +51,10 @@ export function implementComponentWatchAPI(
 ): void {
 	const
 		{unsafe} = component,
-		{meta, meta: {watchDependencies, computedFields, accessors, params}} = unsafe;
+		{meta: {watchDependencies, computedFields, accessors, params}} = unsafe;
 
 	const
-		isFlyweight = Boolean(component.isFlyweight) || meta.params.functional === true,
+		isFlyweight = Boolean(component.isFlyweight) || params.functional === true,
 		usedHandlers = new Set<Function>();
 
 	let
@@ -76,7 +76,7 @@ export function implementComponentWatchAPI(
 
 			// If was changed there properties that can affect cached computed fields,
 			// then we need to invalidate these caches
-			if (meta.computedFields[rootKey]?.get) {
+			if (computedFields[rootKey]?.get) {
 				delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
 			}
 
@@ -156,8 +156,8 @@ export function implementComponentWatchAPI(
 	};
 
 	const
-		fields = proxyGetters.field(component),
-		systemFields = proxyGetters.system(component);
+		fieldsInfo = proxyGetters.field(component),
+		systemFieldsInfo = proxyGetters.system(component);
 
 	const watchOpts = {
 		deep: true,
@@ -274,29 +274,29 @@ export function implementComponentWatchAPI(
 
 	if (isFlyweight) {
 		// Don't force watching of fields until it becomes necessary
-		fields.value[watcherInitializer] = () => {
-			delete fields.value[watcherInitializer];
-			fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
+		fieldsInfo.value[watcherInitializer] = () => {
+			delete fieldsInfo.value[watcherInitializer];
+			fieldsWatcher = watch(fieldsInfo.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
 
 			watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
-			initWatcher(fields.key, fieldsWatcher);
+			initWatcher(fieldsInfo.key, fieldsWatcher);
 		};
 
 	} else {
-		fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
+		fieldsWatcher = watch(fieldsInfo.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
 		watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
-		initWatcher(fields.key, fieldsWatcher);
+		initWatcher(fieldsInfo.key, fieldsWatcher);
 	}
 
 	// Don't force watching of system fields until it becomes necessary
-	systemFields.value[watcherInitializer] = () => {
-		delete systemFields.value[watcherInitializer];
+	systemFieldsInfo.value[watcherInitializer] = () => {
+		delete systemFieldsInfo.value[watcherInitializer];
 
 		const
-			systemFieldsWatcher = watch(systemFields.value, {...watchOpts, immediate: true}, invalidateComputedCache());
+			systemFieldsWatcher = watch(systemFieldsInfo.value, {...watchOpts, immediate: true}, invalidateComputedCache());
 
 		watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents());
-		initWatcher(systemFields.key, systemFieldsWatcher);
+		initWatcher(systemFieldsInfo.key, systemFieldsWatcher);
 	};
 
 	// Register the base watch API methods
