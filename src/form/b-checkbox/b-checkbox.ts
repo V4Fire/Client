@@ -223,6 +223,25 @@ export default class bCheckbox extends iInput implements iSize {
 		return checked;
 	}
 
+	/** @override */
+	@p({replace: false})
+	protected resolveValue(value?: this['Value']): this['Value'] {
+		const
+			i = this.instance;
+
+		if (value === undefined && this.mods.checked === undefined && this.lfc.isBeforeCreate()) {
+			const
+				v = i['defaultGetter'].call(this);
+
+			if (Object.isTruly(v)) {
+				void this.setMod('checked', true);
+				return v;
+			}
+		}
+
+		return value;
+	}
+
 	/**
 	 * Handler: checkbox trigger
 	 *
