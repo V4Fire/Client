@@ -11,10 +11,6 @@ Changelog
 
 ## v3.0.0-rc.92 ()
 
-#### :boom: Breaking Change
-
-* Now `toggle` returns a component value
-
 #### :house: Internal
 
 * Fixed ESLint warnings

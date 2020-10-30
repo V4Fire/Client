@@ -6,8 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-input-hidden/README.md]]
+ * @packageDocumentation
+ */
+
 import iInput, { component } from 'super/i-input/i-input';
-export * from  'super/i-input/i-input';
+
+export * from 'super/i-input/i-input';
 
 @component({
 	functional: {

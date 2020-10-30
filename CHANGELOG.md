@@ -55,6 +55,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed ESLint warnings:
   * `bCheckbox`
   * `bRadioButton`
+  * `bInputHidden`
 
 #### :nail_care: Polish
 
@@ -73,6 +74,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added documentation:
   * `bCheckbox`
   * `bRadioButton`
+  * `bInputHidden`
+
+* Added tests:
+  * `bCheckbox`
+  * `bRadioButton`
+  * `bInputHidden`
 
 ## v3.0.0-rc.91 (2020-10-29)
 
