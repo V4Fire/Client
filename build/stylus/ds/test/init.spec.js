@@ -64,8 +64,13 @@ describe('build/stylus/ds/init', () => {
 		});
 	});
 
-	it('should create themed design system', () => {
-		// TODO
-		//expect(createDesignSystem(fullThemed)).toThrowError();
+	it('should crash on creating themed design system without specify theme', () => {
+		expect(() => createDesignSystem(fullThemed))
+			.toThrowError('Design system package has themes, but no one included to the build');
+	});
+
+	it('should crash on creating themed design system with specify theme that not described', () => {
+		expect(() => createDesignSystem(fullThemed, ['morning']))
+			.toThrowError('Design system package has themes, but no one included to the build');
 	});
 });

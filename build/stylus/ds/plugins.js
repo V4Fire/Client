@@ -25,7 +25,7 @@ const {
 } = include('build/stylus/ds/const');
 
 const
-	themesList = getThemes(DS, includeThemes),
+	themesList = getThemes(DS, includeThemes || [theme]),
 	isThemesIncluded = themesList != null && themesList.length > 0;
 
 module.exports = function addPlugins(api) {

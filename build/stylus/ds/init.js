@@ -10,30 +10,18 @@
 
 const
 	$C = require('collection.js'),
-	{getThemes} = include('build/ds'),
 	{prepareData} = include('build/stylus/ds/helpers');
 
 /**
- * Convert raw design system data to the project design system
+ * Converts raw design system data to the project design system
  *
  * @param {DesignSystem} raw
- * @param {boolean|string[]} [includeThemes]
- * @param {string} [theme]
  * @returns {DesignSystem}
  */
-module.exports = function createDesignSystem(raw, theme, includeThemes) {
+module.exports = function createDesignSystem(raw) {
 	const
 		ds = $C.clone(raw);
 
 	prepareData(ds);
-
-	const
-		themesList = getThemes(raw, includeThemes),
-		isThemesIncluded = themesList != null && themesList.length > 0;
-
-	if (isThemesIncluded && !theme) {
-		throw new Error('[stylus] Design system have themes, but theme doesn\'t specified');
-	}
-
 	return ds;
 };

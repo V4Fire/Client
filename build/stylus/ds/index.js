@@ -21,7 +21,7 @@ if (pzlr.config.designSystem) {
 		designSystem = getDS();
 
 	if (Object.isObject(designSystem)) {
-		Object.assign(DS, createDesignSystem(designSystem, theme, config.includeThemes()));
+		Object.assign(DS, createDesignSystem(designSystem));
 
 	} else {
 		console.log('[stylus] Design system must be an object');

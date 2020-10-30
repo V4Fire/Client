@@ -33,19 +33,24 @@ exports.getDS = function getDS() {
  * Returns available themes from a Design System package
  *
  * @param {DesignSystem} ds
- * @param {string[]|boolean|undefined} includeThemes
+ * @param {string[]|boolean} buildThemes
+ *
  * @returns {string[]|null}
  */
-exports.getThemes = function getThemes(ds, includeThemes) {
+exports.getThemes = function getThemes(ds, buildThemes) {
 	const
 		{meta} = ds;
 
 	if (Object.isObject(meta) && meta.themes !== undefined) {
-		if (includeThemes === undefined) {
-			throw new Error('Design system package has themes, but not included to the build');
+		if (buildThemes === undefined) {
+			throw new Error('Design system package has themes, but no one included to the build');
 		}
 
-		const reduceThemes = () => includeThemes.reduce((res, t) => {
+		if (buildThemes === true) {
+			return meta.themes;
+		}
+
+		const dsMatched = buildThemes.reduce((res, t) => {
 			if (meta.themes.includes(t)) {
 				res.push(t);
 			}
@@ -53,10 +58,14 @@ exports.getThemes = function getThemes(ds, includeThemes) {
 			return res;
 		}, []);
 
-		return includeThemes === true ? meta.themes : reduceThemes();
+		if (dsMatched.length === 0) {
+			throw new Error('Design system package has themes, but no one included to the build');
+		}
+
+		return dsMatched;
 	}
 
-	console.log('Project has no themes into the design system package');
+	console.log('No themes into the specified design system');
 	return null;
 };
 
