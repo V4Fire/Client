@@ -83,15 +83,13 @@ export default class myInput extends iInput {
 }
 ```
 
-## Form API
+## API
 
-### Input props
+Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] component.
 
-#### Form control props
+### Props
 
-These props let you configure form control behaviour of the component. Also, check the [[iAccess]] trait.
-
-##### id
+#### id
 
 An identifier of the form control.
 You free to use this prop to connect the component with a label tag or other stuff.
@@ -103,7 +101,7 @@ You free to use this prop to connect the component with a label tag or other stu
   The input label
 ```
 
-##### name
+#### name
 
 A string specifying a name for the form control.
 This name is submitted along with the control's value when the form data is submitted.
@@ -119,7 +117,7 @@ If you don't provide the name, your component will be ignored by the form.
     Submit
 ```
 
-##### valueProp
+#### valueProp
 
 Initial component value
 
@@ -127,7 +125,7 @@ Initial component value
 < b-input :name = 'fname' | :value = 'Andrey'
 ```
 
-##### defaultProp
+#### defaultProp
 
 Initial component default value.
 This value will be used if the value prop is not specified or after invoking of `reset`.
@@ -136,7 +134,7 @@ This value will be used if the value prop is not specified or after invoking of 
 < b-input :name = 'fname' | :value = name | :default = 'Anonymous'
 ```
 
-##### form
+#### form
 
 A string specifying the `<form>` element with which the component is associated (that is, its form owner).
 This string's value, if present, must match the id of a `<form>` element in the same document.
@@ -153,7 +151,64 @@ The form prop lets you place a component anywhere in the document but have it in
     Submit
 ```
 
-#### Validation
+#### cache
+
+A Boolean value that enables or disables caching of a component value by the associated form.
+The caching is mean that if the component value doesn't change since the last sending of the form, it won't be sent again.
+
+#### formConverter
+
+Converter/s of the original component value to a form value.
+
+By design, all `iInput` components have "own" value and "form" value.
+The form value is based on the own component value, but they are equal in a simple case.
+A form component associated with this component will use the form value, but not the original.
+
+You can provide one or more functions to convert the original value to a new form value.
+For instance, you have an input component. The input's original value is string, but you provide a function
+to parse this string into a data object.
+
+```
+< b-input :formConverter = toDate
+```
+
+To provide more than one function, use the array form. Functions from the array are invoked from the "left-to-right".
+
+```
+< b-input :formConverter = [toDate, toUTC]
+```
+
+Any form converter can return a promise. In the case of a list of converters, they are waiting to resolve the previous invoking.
+
+#### disallow
+
+Component values are not allowed to send to the form.
+If a component value matches with one of the denied conditions, the form value will be equal to undefined.
+
+The parameter can take a value or list of values to ban.
+Also, the parameter can be passed as a function or regular expression.
+
+The validation is applied on a component value after invoking form converters but before the data type converter.
+
+```
+/// Disallow values that contain only whitespaces
+< b-input :name = 'name' | :disallow = /^\s*$/
+```
+
+#### dataType
+
+Type of a component form value.
+
+This function is used to transform the component value to one of the primitive types that will be sent from the form.
+For example, String, Blob, or Number.
+
+The function is applied to a value after the invoking of form converters and the disallow validator.
+
+```
+< b-input :dataType = Number
+```
+
+### Validation
 
 All instances of the `iInput` class support the feature of validation.
 The validation process can be triggered manually via invoking the `validate` method or implicitly by a
@@ -236,9 +291,9 @@ export default class myInput extends iInput {
 }
 ```
 
-##### info/error messages
+### info/error messages
 
-To output information about warnings and errors, descendants of `iInput` can use `infoProp/info` and `erroProp/rerror` properties.
+To output information about warnings and errors, descendants of `iInput` can use `infoProp/info` and `errorProp/error` properties.
 
 ```
 < b-input :info = 'This is required field'
@@ -250,3 +305,49 @@ the layout will be generated automatically: all you have to do is write the CSS 
 ```
 < b-input :info = 'This is required field' | :messageHelpers = true
 ```
+
+### Fields and getters
+
+#### value
+
+The original component value. It can be modified directly from a component.
+
+#### default
+
+The default value of a component. It can be modified directly from a component.
+This value will be used after invoking of `reset`.
+
+#### formValue
+
+Form value of the component.
+
+This value is produced from the original component value via applying form converters.
+Also, the value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
+it will be skipped (the getter returns undefined).
+
+The value is always returned as a promise.
+
+#### groupFormValue
+
+Grouped form value of the component, i.e. if there are another form components with the same form name, their values will be grouped.
+If they are more than one value, the getter returns an array of values.
+
+The value is always returned as a promise.
+
+#### groupElements
+
+List of components of the current form group (components with the same form name).
+
+### Methods
+
+#### clear
+
+Clears the component value to undefined.
+
+#### reset
+
+Resets the component value to default.
+
+#### validate
+
+Validates a component value.

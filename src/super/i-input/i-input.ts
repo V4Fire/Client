@@ -150,11 +150,41 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly tabIndex?: number;
 
 	/**
-	 * Component values that are not allowed to send to the form.
+	 * Converter/s of the original component value to a form value.
+	 *
+	 * By design, all `iInput` components have "own" value and "form" value.
+	 * The form value is based on the own component value, but they are equal in a simple case.
+	 * A form component associated with this component will use the form value, but not the original.
+	 *
+	 * You can provide one or more functions to convert the original value to a new form value.
+	 * For instance, you have an input component. The input's original value is string, but you provide a function
+	 * to parse this string into a data object.
+	 *
+	 * ```
+	 * < b-input :formConverter = toDate
+	 * ```
+	 *
+	 * To provide more than one function, use the array form. Functions from the array are invoked from
+	 * the "left-to-right".
+	 *
+	 * ```
+	 * < b-input :formConverter = [toDate, toUTC]
+	 * ```
+	 *
+	 * Any form converter can return a promise. In the case of a list of converters,
+	 * they are waiting to resolve the previous invoking.
+	 */
+	@prop({type: [Function, Array], required: false})
+	readonly formConverter?: CanArray<Function>;
+
+	/**
+	 * Component values are not allowed to send to the form.
 	 * If a component value matches with one of the denied conditions, the form value will be equal to undefined.
 	 *
 	 * The parameter can take a value or list of values to ban.
 	 * Also, the parameter can be passed as a function or regular expression.
+	 *
+	 * The validation is applied on a component value after invoking form converters but before the data type converter.
 	 *
 	 * @example
 	 * ```
@@ -166,9 +196,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
-	 * Data type of a component form value.
-	 * This function is used to transform the component value to one of the primitive types
-	 * that will be sent from the form. For example: String, Blob or Number.
+	 * Type of a component form value.
+	 *
+	 * This function is used to transform the component value to one of the primitive types that will be sent
+	 * from the form. For example, String, Blob, or Number.
+	 *
+	 * The function is applied to a value after the invoking of form converters and the disallow validator.
 	 *
 	 * @example
 	 * ```
@@ -177,18 +210,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@prop(Function)
 	readonly dataType: Function = identity;
-
-	/**
-	 * Converter/s of an original component value to the form value.
-	 * These functions are used to convert the component value to a value that will be sent from the form.
-	 *
-	 * @example
-	 * ```
-	 * < b-input :formConverter = [toDate, toProtobuf]
-	 * ```
-	 */
-	@prop({type: [Function, Array], required: false})
-	readonly formConverter?: CanArray<Function>;
 
 	/**
 	 * If false, then a component value isn't cached by the form.
@@ -598,7 +619,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Clears the component value
+	 * Clears the component value undefined
 	 * @emits `clear(value: this['Value'])`
 	 */
 	@p({replace: false})
@@ -674,7 +695,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Validates the component value
+	 * Validates a component value
 	 * (returns true or `ValidationError` if the validation is failed)
 	 *
 	 * @param params - additional parameters
