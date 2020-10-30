@@ -368,3 +368,35 @@ Resets the component value to default.
 #### validate
 
 Validates a component value.
+
+### Template methods
+
+#### hiddenInput
+
+This block generates a native input tag with predefined attributes. You can use it to shim the native behavior of a control.
+You can also manage a type of the created tag and other options by using the predefined constants.
+
+```
+- hiddenInputTag = 'input'
+- hiddenInputType = "'hidden'"
+- hiddenInputModel = 'valueStore'
+
+/**
+ * Generates a private input field
+ */
+- block hiddenInput()
+  < ${hiddenInputTag}.&__hidden-input &
+    ref = input |
+    v-model = ${hiddenInputModel} |
+    autocomplete = off |
+    :id = id |
+    :type = ${hiddenInputType} |
+    :name = name |
+    :form = form |
+    :autofocus = autofocus |
+    :tabIndex = tabIndex |
+    @focus = onFocus |
+    @blur = onBlur |
+    ${attrs|!html}
+  .
+```
