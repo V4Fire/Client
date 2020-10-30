@@ -96,13 +96,10 @@ export default class Field extends Friend {
 
 			chunks = info.path.split('.');
 
-			if (info.accessor != null && this.ctx.hook !== 'beforeRuntime') {
+			if (info.accessor != null) {
 				chunks[0] = info.accessor;
 
 			} else {
-				let
-					isField = false;
-
 				switch (info.type) {
 					case 'prop':
 						if (ctx.lfc.isBeforeCreate('beforeDataCreate')) {
@@ -112,16 +109,11 @@ export default class Field extends Friend {
 						break;
 
 					case 'field':
-						isField = true;
 						res = ctx.$fields;
 						break;
 
 					default:
 						// Do nothing
-				}
-
-				if ((isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in <Dictionary>res))) {
-					chunks[0] = info.name;
 				}
 			}
 
@@ -208,7 +200,7 @@ export default class Field extends Friend {
 		}
 
 		let
-			syncWith,
+			sync,
 			needSet = isComponent;
 
 		let
@@ -224,13 +216,15 @@ export default class Field extends Friend {
 
 			chunks = info.path.split('.');
 
-			if (info.accessor != null && this.ctx.hook !== 'beforeRuntime') {
+			if (info.accessor != null) {
 				needSet = false;
 				chunks[0] = info.accessor;
 
 			} else {
 				const
-					isReady = !ctx.lfc.isBeforeCreate(),
+					isReady = !ctx.lfc.isBeforeCreate();
+
+				const
 					isSystem = info.type === 'system',
 					isField = !isSystem && info.type === 'field';
 
@@ -244,6 +238,11 @@ export default class Field extends Friend {
 						// we have to set these properties directly to the proxy object
 						if (needSet) {
 							ref = ctx.$systemFields;
+
+						// Otherwise, we have to synchronize these properties between the proxy object and component instance
+						} else {
+							const name = chunks[0];
+							sync = () => Object.set(ctx.$systemFields, [name], ref[name]);
 						}
 
 					} else {
@@ -260,15 +259,8 @@ export default class Field extends Friend {
 						// If a component doesn't already initialize watchers of fields,
 						// we have to synchronize these properties between the proxy object and component instance
 						if (needSync) {
-							const
-								name = chunks[0];
-
-							syncWith = {
-								name,
-								get value() {
-									return ref[name];
-								}
-							};
+							const name = chunks[0];
+							sync = () => Object.set(ctx, [name], ref[name]);
 						}
 					}
 				}
@@ -312,8 +304,8 @@ export default class Field extends Friend {
 			ctx.$set(ref, prop, value);
 		}
 
-		if (syncWith != null) {
-			Object.set(ctx, [syncWith.name], syncWith.value);
+		if (sync != null) {
+			sync();
 		}
 
 		return value;
@@ -375,7 +367,7 @@ export default class Field extends Friend {
 		}
 
 		let
-			syncWith,
+			sync,
 			needSet = isComponent;
 
 		let
@@ -406,6 +398,11 @@ export default class Field extends Friend {
 					// we have to set these properties directly to the proxy object
 					if (needSet) {
 						ref = ctx.$systemFields;
+
+					// Otherwise, we have to synchronize these properties between the proxy object and component instance
+					} else {
+						const name = chunks[0];
+						sync = () => Object.delete(ctx.$systemFields, [name]);
 					}
 
 				} else {
@@ -418,15 +415,8 @@ export default class Field extends Friend {
 					// If a component doesn't already initialize watchers of fields,
 					// we have to synchronize these properties between the proxy object and component instance
 					if (needSync) {
-						const
-							name = chunks[0];
-
-						syncWith = {
-							name,
-							get value() {
-								return ref[name];
-							}
-						};
+						const name = chunks[0];
+						sync = () => Object.delete(ctx, [name]);
 					}
 				}
 			}
@@ -465,8 +455,8 @@ export default class Field extends Friend {
 				Object.delete(ref, [prop]);
 			}
 
-			if (syncWith != null) {
-				Object.delete(ctx, [syncWith.name], syncWith.value);
+			if (sync != null) {
+				sync();
 			}
 
 			return true;

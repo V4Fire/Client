@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.91 ()
+## v3.0.0-rc.92 ()
 
 #### :boom: Breaking Change
 
@@ -73,6 +73,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added documentation:
   * `bCheckbox`
   * `bRadioButton`
+
+## v3.0.0-rc.91 (2020-10-29)
+
+#### :bug: Bug Fix
+
+* `super/i-block/modules/field`:
+  * Fixed working with watchers based on accessors
+  * Fixed resolving of accessor
 
 ## v3.0.0-rc.90 (2020-10-22)
 
@@ -272,7 +280,6 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
 #### :nail_care: Polish
 
 * Added the render scheme `docs/test`
->>>>>>> master
 
 ## v3.0.0-rc.80 (2020-10-08)
 
