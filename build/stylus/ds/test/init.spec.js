@@ -15,8 +15,7 @@ const
 	createDesignSystem = include('build/stylus/ds/init');
 
 const
-	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
-	{fullThemed} = include('build/stylus/ds/test/mocks/ds-themes');
+	plainMock = include('build/stylus/ds/test/mocks/ds-plain');
 
 describe('build/stylus/ds/init', () => {
 	it('should create plain design system', () => {
@@ -62,15 +61,5 @@ describe('build/stylus/ds/init', () => {
 		Object.keys(rounding).forEach((key) => {
 			expect(stylus.functions.type(rounding[key])).toBe('unit');
 		});
-	});
-
-	it('should crash on creating themed design system without specify theme', () => {
-		expect(() => createDesignSystem(fullThemed))
-			.toThrowError('Design system package has themes, but no one included to the build');
-	});
-
-	it('should crash on creating themed design system with specify theme that not described', () => {
-		expect(() => createDesignSystem(fullThemed, ['morning']))
-			.toThrowError('Design system package has themes, but no one included to the build');
 	});
 });

@@ -43,7 +43,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 
 	if (Object.isObject(meta) && meta.themes !== undefined) {
 		if (buildThemes === undefined) {
-			throw new Error('Design system package has themes, but no one included to the build');
+			throw new Error('Design system object has themes, but no one included to the build');
 		}
 
 		if (buildThemes === true) {
@@ -59,7 +59,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 		}, []);
 
 		if (dsMatched.length === 0) {
-			throw new Error('Design system package has themes, but no one included to the build');
+			throw new Error('Design system object has themes, but no one included to the build');
 		}
 
 		return dsMatched;

@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const unThemeText = {
+const unThemeTextMock = {
 	meta: {
 		themes: ['day', 'night']
 	},
@@ -79,7 +79,7 @@ const unThemeText = {
 	}
 };
 
-const unThemeRounding = {
+const unThemeRoundingMock = {
 	meta: {
 		themes: ['day', 'night']
 	},
@@ -132,7 +132,7 @@ const unThemeRounding = {
 	}
 };
 
-const fullThemed = {
+const fullThemedMock = {
 	meta: {
 		themes: ['day', 'night']
 	},
@@ -231,7 +231,7 @@ const fullThemed = {
 };
 
 module.exports = {
-	fullThemed,
-	unThemeText,
-	unThemeRounding
+	fullThemedMock,
+	unThemeTextMock,
+	unThemeRoundingMock
 };
