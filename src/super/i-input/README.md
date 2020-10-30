@@ -83,6 +83,23 @@ export default class myInput extends iInput {
 }
 ```
 
+## Model
+
+All instances of the `iInput` class can be used with the `v-model` directive.
+
+```
+< b-input v-model = value
+```
+
+```js
+({
+  model: {
+    prop: 'valueProp',
+    event: 'onChange'
+  }
+})
+```
+
 ## API
 
 Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] component.
