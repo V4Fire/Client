@@ -18,5 +18,6 @@ package('p-v4-components-demo')
 		'b-router',
 		'b-list',
 		'b-checkbox',
+		'b-input-hidden',
 		components
 	);
