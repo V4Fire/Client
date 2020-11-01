@@ -161,4 +161,3 @@ Also, this icon can be provided by a prop.
   {label: 'Foo', progressIcon: 'bCustomLoader'}
 ] .
 ```
-
