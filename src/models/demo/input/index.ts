@@ -9,10 +9,16 @@
 import Demo, { provider, Mocks } from 'models/demo';
 
 @provider('demo')
-export default class Input extends Demo {
+export class Input extends Demo {
 	/** @override */
 	baseURL: string = '/input';
 
 	/** @override */
 	mocks: Mocks = import('models/demo/input/mocks');
+}
+
+@provider('demo')
+export class InputValue extends Input {
+	/** @override */
+	baseURL: string = '/input-value';
 }

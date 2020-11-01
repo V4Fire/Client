@@ -9,12 +9,19 @@
 export default {
 	GET: [
 		{
+			url: '/input',
+
 			response: {
 				name: 'foo',
 				value: 'bar',
 				'mods.someMod': 'bar',
 				setMod: ['anotherMod', 'bla']
 			}
+		},
+
+		{
+			url: '/input-value',
+			response: 'bar2'
 		}
 	]
 };
