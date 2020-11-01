@@ -11,6 +11,10 @@
  * @packageDocumentation
  */
 
+//#if demo
+import 'models/demo/input';
+//#endif
+
 import iInput, { component } from 'super/i-input/i-input';
 
 export * from 'super/i-input/i-input';
