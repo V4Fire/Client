@@ -83,6 +83,8 @@ export default class myInput extends iInput {
 }
 ```
 
+Also, you can see the parent component.
+
 ## Model
 
 All instances of the `iInput` class can be used with the `v-model` directive.
