@@ -43,6 +43,24 @@ Also, you can see [[iVisible]] and [[iWidth]] traits and the [[iData]] component
 
 Also, you can see [[iVisible]] and [[iWidth]] traits and the [[iData]] component.
 
+## Associated types
+
+The component has one associated types to specify a type of component items: **Items**.
+
+```typescript
+import bList, { component } from 'super/b-list/b-list';
+
+export * from 'super/b-list/b-list';
+
+@component()
+export default class myList extends bList {
+  /** @override */
+  readonly Items!: MyItems;
+}
+```
+
+Also, you can see the parent component.
+
 ## Model
 
 The component can be used with the `v-model` directive.

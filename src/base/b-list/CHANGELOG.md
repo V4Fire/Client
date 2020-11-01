@@ -18,6 +18,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added support of interpolation of a data provider response
+* Added a new associated type: `Items`
 
 #### :nail_care: Polish
 
