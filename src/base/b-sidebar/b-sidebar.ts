@@ -60,6 +60,7 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 	}
 
 	/** @see iOpenToggle.onOpenedChange */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	onOpenedChange(e: ModEvent | SetModEvent): void {
 		// ...
 	}
@@ -72,13 +73,16 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 	/** @see iOpenToggle.onTouchClose */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
-			target = <Element>e.target;
+			target = <CanUndef<Element>>e.target;
 
 		if (!target) {
 			return;
 		}
 
-		if (target.matches(this.block.getElSelector('overWrapper'))) {
+		const
+			overWrapperSelector = this.block?.getElSelector('overWrapper');
+
+		if (overWrapperSelector != null && target.matches(overWrapperSelector)) {
 			e.preventDefault();
 			await this.close();
 		}

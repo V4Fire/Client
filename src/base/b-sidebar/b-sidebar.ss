@@ -14,6 +14,8 @@
 	- rootWrapper = true
 
 	- block body
+		< .&__over-wrapper
+
 		< .&__content-wrapper
 			< .&__content
 				- block content

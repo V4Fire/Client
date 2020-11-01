@@ -11,6 +11,24 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? (2020-??-??)
+
+#### :boom: Breaking Change
+
+* Removed a block style properties (`p.overlayBg`, `p.overlayTansition`) `base/b-sidebar`, prefer to use `provide.classes`.
+
+#### :bug: Bug Fix
+
+* Added missing `over-wrapper` element `base/b-sidebar`
+
+#### :house: Internal
+
+* `base/b-sidebar`
+  * Fixed ESLint errors
+  * Fixed ts errors
+  * Added tests
+
+
 ## v3.0.0-rc.91 (2020-10-29)
 
 #### :bug: Bug Fix
