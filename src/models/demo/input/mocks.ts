@@ -9,7 +9,9 @@
 export default {
 	GET: [
 		{
-			url: '/input',
+			query: {
+				value: undefined
+			},
 
 			response: {
 				name: 'foo',
@@ -20,7 +22,7 @@ export default {
 		},
 
 		{
-			url: '/input-value',
+			query: {value: 1},
 			response: 'bar2'
 		}
 	]

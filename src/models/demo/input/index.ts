@@ -20,5 +20,8 @@ export class Input extends Demo {
 @provider('demo')
 export class InputValue extends Input {
 	/** @override */
-	baseURL: string = '/input-value';
+	static request: typeof Input.request = Input.request({
+		responseType: 'text',
+		query: {value: 1}
+	});
 }
