@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecate, deprecated } from 'core/functools';
+import { deprecate, deprecated } from 'core/functools/deprecation';
 
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';

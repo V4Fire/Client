@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { deprecate } from 'core/functools';
+import { deprecate } from 'core/functools/deprecation';
 
 //#if runtime has core/dom/in-view
 export * from 'core/dom/in-view';
