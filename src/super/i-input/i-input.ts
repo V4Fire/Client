@@ -11,8 +11,6 @@
  * @packageDocumentation
  */
 
-import { identity } from 'core/functools';
-
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -45,7 +43,10 @@ import {
 
 } from 'super/i-input/interface';
 
+import { unpackIf } from 'super/i-input/modules/helpers';
+
 export * from 'super/i-data/i-data';
+export * from 'super/i-input/modules/helpers';
 export * from 'super/i-input/interface';
 
 /**
@@ -55,6 +56,10 @@ export * from 'super/i-input/interface';
 	model: {
 		prop: 'valueProp',
 		event: 'onChange'
+	},
+
+	deprecatedProps: {
+		dataType: 'formValueConverter'
 	}
 })
 
@@ -150,42 +155,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly tabIndex?: number;
 
 	/**
-	 * Converter/s of the original component value to a form value.
-	 *
-	 * By design, all `iInput` components have "own" value and "form" value.
-	 * The form value is based on the own component value, but they are equal in a simple case.
-	 * A form component associated with this component will use the form value, but not the original.
-	 *
-	 * You can provide one or more functions to convert the original value to a new form value.
-	 * For instance, you have an input component. The input's original value is string, but you provide a function
-	 * to parse this string into a data object.
-	 *
-	 * ```
-	 * < b-input :formConverter = toDate
-	 * ```
-	 *
-	 * To provide more than one function, use the array form. Functions from the array are invoked from
-	 * the "left-to-right".
-	 *
-	 * ```
-	 * < b-input :formConverter = [toDate, toUTC]
-	 * ```
-	 *
-	 * Any form converter can return a promise. In the case of a list of converters,
-	 * they are waiting to resolve the previous invoking.
-	 */
-	@prop({type: [Function, Array], required: false})
-	readonly formConverter?: CanArray<Function>;
-
-	/**
-	 * Component values are not allowed to send to the form.
+	 * Component values are not allowed to send via a form.
 	 * If a component value matches with one of the denied conditions, the form value will be equal to undefined.
 	 *
 	 * The parameter can take a value or list of values to ban.
 	 * Also, the parameter can be passed as a function or regular expression.
 	 *
-	 * The validation is applied on a component value after invoking form converters but before the data type converter.
-	 *
+	 * @see [[iInput.formValue]]
 	 * @example
 	 * ```
 	 * /// Disallow values that contain only whitespaces
@@ -196,20 +172,47 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
-	 * Type of a component form value.
+	 * Converter/s of the original component value to a form value.
 	 *
-	 * This function is used to transform the component value to one of the primitive types that will be sent
-	 * from the form. For example, String, Blob, or Number.
+	 * You can provide one or more functions to convert the original value to a new form value.
+	 * For instance, you have an input component. The input's original value is string, but you provide a function
+	 * to parse this string into a data object.
 	 *
-	 * The function is applied to a value after the invoking of form converters and the disallow validator.
-	 *
-	 * @example
 	 * ```
-	 * < b-input :dataType = Number
+	 * < b-input :formValueConverter = toDate
 	 * ```
+	 *
+	 * To provide more than one function, use the array form. Functions from the array are invoked from
+	 * the "left-to-right".
+	 *
+	 * ```
+	 * < b-input :formValueConverter = [toDate, toUTC]
+	 * ```
+	 *
+	 * Any converter can return a promise. In the case of a list of converters,
+	 * they are waiting to resolve the previous invoking.
+	 *
+	 * @see [[iInput.formValue]]
 	 */
-	@prop(Function)
-	readonly dataType: Function = identity;
+	@prop({type: Function, required: false})
+	readonly formValueConverter?: CanArray<Function>;
+
+	/**
+	 * Converter/s that is/are used by the associated form.
+	 * The form applies these converters to the group form value of the component.
+	 *
+	 * To provide more than one function, use the array form. Functions from the array are invoked from
+	 * the "left-to-right".
+	 *
+	 * ```
+	 * < b-input :formConverter = [toProtobuf, zip]
+	 * ```
+	 *
+	 * Any converter can return a promise. In the case of a list of converters,
+	 * they are waiting to resolve the previous invoking.
+	 */
+	@prop({type: [Function, Array], required: false})
+	readonly formConverter?: CanArray<Function> = unpackIf;
 
 	/**
 	 * If false, then a component value isn't cached by the form.
@@ -323,9 +326,16 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Form value of the component.
-	 * This value is produced from the original component value via applying form converters.
-	 * Also, the value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
-	 * it will be skipped (the getter returns undefined).
+	 *
+	 * By design, all `iInput` components have "own" value and "form" value.
+	 * The form value is based on the own component value, but they are equal in a simple case.
+	 * A form associated with this component will use the form value, but not the original.
+	 *
+	 * This value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
+	 * it will be skipped (the getter returns undefined). The value that passed the validation is converted
+	 * via `formValueConverter` (if it's specified).
+	 *
+	 * The getter always returns a promise.
 	 */
 	@p({replace: false})
 	get formValue(): Promise<this['FormValue']> {
@@ -359,7 +369,21 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			}
 
 			if (allow) {
-				return this.dataType(value);
+				if (this.formValueConverter != null) {
+					const
+						converters = Array.concat([], this.formValueConverter);
+
+					let
+						res = value;
+
+					for (let i = 0; i < converters.length; i++) {
+						res = await converters[i].call(this, res);
+					}
+
+					return res;
+				}
+
+				return value;
 			}
 
 			return undefined;
@@ -367,18 +391,21 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Grouped form value of the component, i.e.
-	 * if there are another form components with the same form name, their values will be grouped.
-	 * If they are more than one value, the getter returns an array of values.
+	 * A list of form values. The values are taken from components with the same `name` prop and
+	 * which are associated with the same form.
+	 *
+	 * The getter always returns a promise.
+	 *
+	 * @see [[iInput.formValue]]
 	 */
 	@p({replace: false})
-	get groupFormValue(): Promise<CanArray<this['FormValue']>> {
+	get groupFormValue(): Promise<Array<this['FormValue']>> {
 		return (async () => {
 			const
 				list = await this.groupElements;
 
 			const
-				els = <Array<this['FormValue']>>[],
+				values = <Array<this['FormValue']>>[],
 				tasks = <Array<Promise<void>>>[];
 
 			for (let i = 0; i < list.length; i++) {
@@ -387,18 +414,18 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 						v = await list[i].formValue;
 
 					if (v !== undefined) {
-						els.push(v);
+						values.push(v);
 					}
 				})());
 			}
 
 			await Promise.all(tasks);
-			return els.length > 1 ? els : els[0];
+			return values;
 		})();
 	}
 
 	/**
-	 * List of components of the current form group (components with the same form name)
+	 * A list of components with the same `name` prop and associated with the same form
 	 */
 	@p({replace: false})
 	get groupElements(): CanPromise<readonly iInput[]> {
