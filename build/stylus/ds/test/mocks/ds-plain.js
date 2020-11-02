@@ -45,11 +45,11 @@ module.exports = {
 		small: '8px', big: '16px'
 	},
 	colors: {
-		green: ['#FFF'],
+		green: ['rgba(40,167,69,1)'],
 		red: ['rgba(220,53,69,1)'],
 		yellow: ['rgba(255,246,29,1)'],
 		orange: ['hsla(255,193,7,1)'],
-		blue: ['rgba(0,123,255,1)', 'rgba(23,162,184,1)', 'rgba(128,189,255,1)'],
+		blue: ['rgb(0,123,255)', 'rgba(23,162,184,1)', 'rgba(128,189,255,1)'],
 		grey: [
 			'rgba(33,37,41,1)',
 			'rgba(52,58,64,1)',

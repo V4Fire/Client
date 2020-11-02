@@ -84,7 +84,7 @@ function convertProps(data, variables, path, theme) {
 				convertProps(d, variables, path, val);
 
 			} else {
-				throw new Error('Cannot find theme dictionary');
+				throw new Error('Cannot find a theme dictionary');
 			}
 
 		} else if (val === 'theme') {
