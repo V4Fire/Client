@@ -9,8 +9,7 @@
  */
 
 const
-	$C = require('collection.js'),
-	stylus = require('stylus');
+	$C = require('collection.js')
 
 /**
  * Sets a variable into specified dictionary by the specified path
@@ -54,9 +53,10 @@ function createPath(prefix, suffix) {
  * Converts raw design system data to the project design system
  *
  * @param {DesignSystem} raw
+ * @param {Object} [stylus=]
  * @returns {{variables: Object, data: DesignSystem}}
  */
-function createDesignSystem(raw) {
+function createDesignSystem(raw, stylus = require('stylus')) {
 	const
 		data = $C.clone(raw),
 		variables = Object.create(null);
@@ -66,22 +66,25 @@ function createDesignSystem(raw) {
 		value: {}
 	});
 
-	return convertProps(data, variables);
+	convertProps(stylus, data, variables);
+
+	return {data, variables};
 }
 
 /**
  * Converts object prop values to Stylus values
  *
+ * @param {Object} stylus
  * @param {DesignSystem} data
  * @param {Object} variables
  * @param {string} [path]
  * @param {string|boolean} [theme]
  */
-function convertProps(data, variables, path, theme) {
+function convertProps(stylus, data, variables, path, theme) {
 	$C(data).forEach((d, val) => {
 		if (theme === true) {
 			if (Object.isObject(d)) {
-				convertProps(d, variables, path, val);
+				convertProps(stylus, d, variables, path, val);
 
 			} else {
 				throw new Error('Cannot find a theme dictionary');
@@ -100,17 +103,17 @@ function convertProps(data, variables, path, theme) {
 			 * }}
 			 */
 			if (Object.isObject(d)) {
-				convertProps(d, variables, path, true);
+				convertProps(stylus, d, variables, path, true);
 
 			} else {
 				throw new Error('Cannot find themes dictionary');
 			}
 
 		} else if (Object.isObject(d)) {
-			convertProps(d, variables, createPath(path, val), theme);
+			convertProps(stylus, d, variables, createPath(path, val), theme);
 
 		} else if (Object.isArray(d)) {
-			convertProps(d, variables, createPath(path, val), theme);
+			convertProps(stylus, d, variables, createPath(path, val), theme);
 			d = stylus.utils.coerceArray(d, true);
 
 		} else {
@@ -149,8 +152,6 @@ function convertProps(data, variables, path, theme) {
 			saveVariable(variables, createPath(path, val), data[val], theme);
 		}
 	});
-
-	return {data, variables};
 }
 
 /**

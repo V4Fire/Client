@@ -9,8 +9,7 @@
  */
 
 const
-	$C = require('collection.js'),
-	stylus = require('stylus');
+	$C = require('collection.js');
 
 const
 	{getThemes} = include('build/ds'),
@@ -24,10 +23,18 @@ const
  * @param {string} [theme] - current theme
  * @param {boolean|string[]} [includeThemes] - flag or set of themes provided to runtime
  * @param {string[]} [themedFields] - set of design system fields, that have themed styles
+ * @param {Object} [stylus=]
  *
  * @returns {function(*): void}
  */
-module.exports = function createPlugins({ds, cssVariables, theme, includeThemes, themedFields}) {
+module.exports = function createPlugins({
+	ds,
+	cssVariables,
+	theme,
+	includeThemes,
+	themedFields,
+	stylus = require('stylus')
+}) {
 	const
 		isBuildHasTheme = Object.isString(theme),
 		themesList = getThemes(ds, includeThemes || isBuildHasTheme ? [theme] : []),
