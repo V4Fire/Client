@@ -673,25 +673,33 @@ export default abstract class iData extends iBlock implements iProgress {
 	protected convertDataToDB(data: unknown): this['DB'];
 	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
 		let
-			v = data;
+			val = data;
 
-		if (this.dbConverter) {
-			v = Array.concat([], this.dbConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
+		if (this.dbConverter != null) {
+			const
+				converters = Array.concat([], this.dbConverter);
+
+			if (converters.length > 0) {
+				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
+
+				for (let i = 0; i < converters.length; i++) {
+					val = converters[i].call(this, val);
+				}
+			}
 		}
 
 		const
 			{db, checkDBEquality} = this;
 
 		const canKeepOldData = Object.isFunction(checkDBEquality) ?
-			Object.isTruly(checkDBEquality.call(this, v, db)) :
-			checkDBEquality && Object.fastCompare(v, db);
+			Object.isTruly(checkDBEquality.call(this, val, db)) :
+			checkDBEquality && Object.fastCompare(val, db);
 
 		if (canKeepOldData) {
 			return <O | this['DB']>db;
 		}
 
-		return <O | this['DB']>v;
+		return <O | this['DB']>val;
 	}
 
 	/**
@@ -700,14 +708,22 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
 		let
-			v = data;
+			val = data;
 
 		if (this.componentConverter) {
-			v = Array.concat([], this.componentConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
+			const
+				converters = Array.concat([], this.componentConverter);
+
+			if (converters.length > 0) {
+				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
+
+				for (let i = 0; i < converters.length; i++) {
+					val = converters[i].call(this, val);
+				}
+			}
 		}
 
-		return <O | this['DB']>v;
+		return <O | this['DB']>val;
 	}
 
 	/**

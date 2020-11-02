@@ -15,6 +15,10 @@ Changelog
 
 * Implemented new API from `iProgress`
 
+#### :house: Internal
+
+* Refactoring
+
 #### :nail_care: Polish
 
 * Improved documentation

@@ -53,6 +53,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
+* Refactoring `iData`
 * Fixed ESLint warnings:
   * `bCheckbox`
   * `bRadioButton`
