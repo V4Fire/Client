@@ -9,19 +9,32 @@
  */
 
 const
-	config = require('config'),
 	pzlr = require('@pzlr/build-core'),
-	createDesignSystem = include('build/stylus/ds/init'),
-	{theme} = config.runtime(),
-	{DS} = include('build/stylus/ds/const'),
+	config = require('config');
+
+const
+	{createDesignSystem} = include('build/stylus/ds/helpers'),
+	createPlugins = include('build/stylus/ds/plugins'),
 	{getDS} = include('build/ds');
+
+const
+	{theme, includeThemes} = config.runtime(),
+	themedFields = config.themedFields();
+
+let
+	ds = {},
+	cssVariables = {};
 
 if (pzlr.config.designSystem) {
 	const
 		designSystem = getDS();
 
 	if (Object.isObject(designSystem)) {
-		Object.assign(DS, createDesignSystem(designSystem));
+		const
+			{data, variables} = createDesignSystem(designSystem);
+
+		ds = data;
+		cssVariables = variables;
 
 	} else {
 		console.log('[stylus] Design system must be an object');
@@ -31,4 +44,4 @@ if (pzlr.config.designSystem) {
 	console.log('[stylus] Design system package is not specified');
 }
 
-module.exports = include('build/stylus/ds/plugins');
+module.exports = createPlugins({ds, cssVariables, theme, includeThemes, themedFields});

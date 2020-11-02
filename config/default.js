@@ -286,7 +286,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Array of field names from design system, that support themes.
+	 * Array of field names from a design system, that support themes.
 	 *
 	 * For example, you can use themes only for colors.
 	 * Then, pass to this variable value `['colors']`.

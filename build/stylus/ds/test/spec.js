@@ -8,22 +8,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('config');
-
 const
-	pzlr = require('@pzlr/build-core'),
+	config = require('config'),
 	stylus = require('stylus');
 
 const
-	plugins = include('build/stylus/ds');
+	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
+	createPlugins = include('build/stylus/ds/plugins'),
+	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/ds', () => {
-	it('should return first green hue from the project design system', () => {
+	it('should return values from the project design system', () => {
 		const
-			ds = require(pzlr.config.designSystem);
+			{theme, includeThemes} = config.runtime(),
+			themedFields = config.themedFields();
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
+			plugins = createPlugins({ds, cssVariables, theme, includeThemes, themedFields});
 
 		stylus.render('getDSOptions("colors", "green.0")', {use: [plugins]}, (err, hex) => {
-			expect(hex).toEqual(stylus.render(ds.colors.green[0]));
+			console.log(42, err, hex);
+			expect(hex).toEqual(stylus.render(plainMock.colors.green[0]));
 		});
 	});
 });

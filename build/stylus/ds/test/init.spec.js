@@ -12,7 +12,7 @@ require('config');
 
 const
 	stylus = require('stylus'),
-	createDesignSystem = include('build/stylus/ds/init');
+	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 const
 	plainMock = include('build/stylus/ds/test/mocks/ds-plain');
@@ -20,7 +20,7 @@ const
 describe('build/stylus/ds/init', () => {
 	it('should create plain design system', () => {
 		const
-			designSystem = createDesignSystem(plainMock);
+			{data: designSystem} = createDesignSystem(plainMock);
 
 		expect(Object.isObject(designSystem.colors)).toBeTrue();
 
