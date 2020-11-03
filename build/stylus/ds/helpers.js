@@ -9,7 +9,7 @@
  */
 
 const
-	$C = require('collection.js')
+	$C = require('collection.js');
 
 /**
  * Sets a variable into specified dictionary by the specified path
@@ -72,7 +72,7 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 }
 
 /**
- * Converts object prop values to Stylus values
+ * Converts object prop values to Stylus values recursively
  *
  * @param {Object} stylus
  * @param {DesignSystem} data
@@ -119,14 +119,18 @@ function convertProps(stylus, data, variables, path, theme) {
 		} else {
 			if (/^[a-z-_]+\(.*\)$/.test(d)) {
 				// Stylus built-in function
-				data[val] = new stylus.Parser(d).function();
+
+				const
+					parsed = new stylus.Parser(d, {cache: false});
+
+				data[val] = parsed.function();
 				saveVariable(variables, createPath(path, val), data[val], theme);
 				return;
 			}
 
 			if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
 				// HEX value
-				data[val] = new stylus.Parser(d).peek().val;
+				data[val] = new stylus.Parser(d, {cache: false}).peek().val;
 				saveVariable(variables, createPath(path, val), data[val], theme);
 				return;
 			}

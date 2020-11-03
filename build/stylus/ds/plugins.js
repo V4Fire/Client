@@ -71,7 +71,7 @@ module.exports = function createPlugins({
 		/**
 		 * Returns Design System css variables with its values
 		 *
-		 * @param {string} theme
+		 * @param {string} [theme]
 		 * @returns {!Object}
 		 */
 		api.define('getDSVariables', ({string: theme}) => {
@@ -180,8 +180,6 @@ module.exports = function createPlugins({
 
 				path.push(name);
 
-				console.log(23123, path, $C(ds).get(path));
-
 				if (id !== undefined) {
 					path.push(String(id));
 				}
@@ -191,7 +189,7 @@ module.exports = function createPlugins({
 		);
 
 		/**
-		 * Returns a runtime config theme value
+		 * Returns a current build theme value
 		 */
 		api.define('defaultTheme', () => theme);
 
