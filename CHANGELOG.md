@@ -19,10 +19,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `patchComponentVData`
   * Added `parseStyle`
 
+#### :bug: Bug Fix
+
+* Fixed providing of styles `core/component`
+
 #### :house: Internal
 
 * Refactoring:
   * `core/component/engines/vue`
+  * `core/component/render-function`
   * `core/component/flyweight`
 
 ## v3.0.0-rc.91 (2020-10-29)
