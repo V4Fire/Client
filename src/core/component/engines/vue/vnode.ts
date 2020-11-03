@@ -28,7 +28,9 @@ export function cloneVNode(vnode: VNode): VNode {
 export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): void {
 	vnode.data = vnode.data ?? {};
 
-	patchComponentVData(ctx.unsafe.meta, vnode.data, renderCtx.data);
+	patchComponentVData(vnode.data, renderCtx.data, {
+		patchAttrs: Boolean(ctx.unsafe.meta.params.inheritAttrs)
+	});
 
 	const vData = vnode.data;
 

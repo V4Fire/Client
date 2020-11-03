@@ -14,7 +14,14 @@
 import { components } from 'core/component/const';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 import { RenderContext, VNode, VNodeData, NormalizedScopedSlot } from 'core/component/engines';
-import { ComponentVNodeData, ComponentModelVNodeData } from 'core/component/vnode/interface';
+
+import {
+
+	ComponentVNodeData,
+	ComponentModelVNodeData,
+	PatchComponentVDataOptions
+
+} from 'core/component/vnode/interface';
 
 export * from 'core/component/vnode/interface';
 
@@ -169,14 +176,14 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 /**
  * Patches the specified component VNode data object by using another VNode data object
  *
- * @param meta - component meta object
  * @param data - VNode data object
  * @param anotherData - another VNode data object
+ * @param [opts] - additional options
  */
 export function patchComponentVData(
-	meta: ComponentMeta,
 	data: VNodeData | ComponentVNodeData,
-	anotherData: CanUndef<VNodeData | ComponentVNodeData>
+	anotherData: CanUndef<VNodeData | ComponentVNodeData>,
+	opts?: PatchComponentVDataOptions
 ): VNodeData | ComponentVNodeData {
 	if (anotherData == null) {
 		return data;
@@ -196,7 +203,7 @@ export function patchComponentVData(
 		data.style = parseStyle(data.style, parseStyle(anotherData.style));
 	}
 
-	if (Object.isTruly(anotherData.attrs) && meta.params.inheritAttrs) {
+	if (Object.isTruly(anotherData.attrs) && opts?.patchAttrs) {
 		data.attrs = Object.assign(data.attrs ?? {}, anotherData.attrs);
 	}
 
