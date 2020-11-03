@@ -175,57 +175,55 @@ The form prop lets you place a component anywhere in the document but have it in
 A Boolean value that enables or disables caching of a component value by the associated form.
 The caching is mean that if the component value doesn't change since the last sending of the form, it won't be sent again.
 
-#### formConverter
-
-Converter/s of the original component value to a form value.
-
-By design, all `iInput` components have "own" value and "form" value.
-The form value is based on the own component value, but they are equal in a simple case.
-A form component associated with this component will use the form value, but not the original.
-
-You can provide one or more functions to convert the original value to a new form value.
-For instance, you have an input component. The input's original value is string, but you provide a function
-to parse this string into a data object.
-
-```
-< b-input :formConverter = toDate
-```
-
-To provide more than one function, use the array form. Functions from the array are invoked from the "left-to-right".
-
-```
-< b-input :formConverter = [toDate, toUTC]
-```
-
-Any form converter can return a promise. In the case of a list of converters, they are waiting to resolve the previous invoking.
-
 #### disallow
 
-Component values are not allowed to send to the form.
+Component values are not allowed to send via a form.
 If a component value matches with one of the denied conditions, the form value will be equal to undefined.
 
 The parameter can take a value or list of values to ban.
 Also, the parameter can be passed as a function or regular expression.
-
-The validation is applied on a component value after invoking form converters but before the data type converter.
 
 ```
 /// Disallow values that contain only whitespaces
 < b-input :name = 'name' | :disallow = /^\s*$/
 ```
 
-#### dataType
+#### formValueConverter
 
-Type of a component form value.
+Converter/s of the original component value to a form value.
 
-This function is used to transform the component value to one of the primitive types that will be sent from the form.
-For example, String, Blob, or Number.
-
-The function is applied to a value after the invoking of form converters and the disallow validator.
+You can provide one or more functions to convert the original value to a new form value.
+For instance, you have an input component. The input's original value is string, but you provide a function
+to parse this string into a data object.
 
 ```
-< b-input :dataType = Number
+< b-input :formValueConverter = toDate
 ```
+
+To provide more than one function, use the array form. Functions from the array are invoked from
+the "left-to-right".
+
+```
+< b-input :formValueConverter = [toDate, toUTC]
+```
+
+Any converter can return a promise. In the case of a list of converters,
+they are waiting to resolve the previous invoking.
+
+#### formConverter
+
+Converter/s that is/are used by the associated form.
+The form applies these converters to the group form value of the component.
+
+To provide more than one function, use the array form. Functions from the array are invoked from
+the "left-to-right".
+
+```
+< b-input :formConverter = [toProtobuf, zip]
+```
+
+Any converter can return a promise. In the case of a list of converters,
+they are waiting to resolve the previous invoking.
 
 ### Validation
 
@@ -338,24 +336,28 @@ This value will be used after invoking of `reset`.
 
 #### formValue
 
-Form value of the component.
+A form value of the component.
 
-This value is produced from the original component value via applying form converters.
-Also, the value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
-it will be skipped (the getter returns undefined).
+By design, all `iInput` components have "own" value and "form" value.
+The form value is based on the own component value, but they are equal in a simple case.
+The form associated with this component will use the form value, but not the original.
 
-The value is always returned as a promise.
+This value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
+it will be skipped (the getter returns undefined). The value that passed the validation is converted
+via `formValueConverter` (if it's specified).
+
+The getter always returns a promise.
 
 #### groupFormValue
 
-Grouped form value of the component, i.e. if there are another form components with the same form name, their values will be grouped.
-If they are more than one value, the getter returns an array of values.
+A list of form values. The values are taken from components with the same `name` prop and
+which are associated with the same form.
 
-The value is always returned as a promise.
+The getter always returns a promise.
 
 #### groupElements
 
-List of components of the current form group (components with the same form name).
+A list of components with the same `name` prop and associated with the same form
 
 ### Methods
 

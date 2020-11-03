@@ -215,7 +215,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly formConverter?: CanArray<Function> = unpackIf;
 
 	/**
-	 * If false, then a component value isn't cached by the form.
+	 * If false, then a component value isn't cached by the associated form.
 	 * The caching is mean that if the component value doesn't change since the last sending of the form,
 	 * it won't be sent again.
 	 */
@@ -329,7 +329,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 *
 	 * By design, all `iInput` components have "own" value and "form" value.
 	 * The form value is based on the own component value, but they are equal in a simple case.
-	 * A form associated with this component will use the form value, but not the original.
+	 * The form associated with this component will use the form value, but not the original.
 	 *
 	 * This value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
 	 * it will be skipped (the getter returns undefined). The value that passed the validation is converted

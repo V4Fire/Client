@@ -19,7 +19,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Changed an interface of `super/i-block/modules/state/set`
 * Changed an interface and behavior of `bRouter/initRemoteData`
 * Now `toggle` returns a component value `bCheckbox`
-* Removed `iInput/valueKey`
+
+* `iInput`:
+  * Removed `valueKey`
+  * Now `groupFormValue` always returns an array
+  * Renamed `dataType` to `formValueConverter`
 
 * `iAccess`:
   * Removed helpers for disabling
@@ -27,6 +31,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Now `formValueConverter` can be provided as an array `iInput`
 * Added support of method invoking `super/i-block/modules/state/set`
 * Added a new associated type: `Items` `bList`
 * Added support of interpolation of a data provider response:

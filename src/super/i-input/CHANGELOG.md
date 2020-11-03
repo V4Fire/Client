@@ -14,11 +14,14 @@ Changelog
 #### :boom: Breaking Change
 
 * Removed `valueKey`
+* Now `groupFormValue` always returns an array
+* Renamed `dataType` to `formValueConverter`
 
 #### :rocket: New Feature
 
 * Added support of interpolation of a data provider response
 * Implemented new API from `iAccess`
+* Now `formValueConverter` can be provided as an array
 
 #### :nail_care: Polish
 
