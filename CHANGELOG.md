@@ -30,6 +30,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `core/component/render-function`
   * `core/component/flyweight`
 
+#### :nail_care: Polish
+
+* Added tests `iBlock`
+
 ## v3.0.0-rc.91 (2020-10-29)
 
 #### :bug: Bug Fix
