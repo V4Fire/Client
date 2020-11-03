@@ -8,8 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	config = require('config');
+require('config');
 
 const
 	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
