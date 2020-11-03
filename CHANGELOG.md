@@ -11,13 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.92 ()
+## v3.0.0-rc.92 (2020-11-03)
 
 #### :rocket: New Feature
 
-* `core/component/vnode`
+* `core/component/vnode`:
   * Added `patchComponentVData`
   * Added `parseStyle`
+
+#### :house: Internal
+
+* Refactoring:
+  * `core/component/engines/vue`
+  * `core/component/flyweight`
 
 ## v3.0.0-rc.91 (2020-10-29)
 
