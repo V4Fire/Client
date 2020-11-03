@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.92 ()
+
+#### :rocket: New Feature
+
+* Added `patchComponentVData`
+* Added `parseStyle`
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :house: Internal

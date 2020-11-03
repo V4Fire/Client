@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.92 ()
+
+#### :rocket: New Feature
+
+* `core/component/vnode`
+  * Added `patchComponentVData`
+  * Added `parseStyle`
+
 ## v3.0.0-rc.91 (2020-10-29)
 
 #### :bug: Bug Fix
