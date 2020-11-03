@@ -25,6 +25,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
+* Now the component is smart (by default, the regular) `bDummy`
 * Refactoring:
   * `core/component/engines/vue`
   * `core/component/render-function`
