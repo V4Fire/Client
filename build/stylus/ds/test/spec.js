@@ -65,16 +65,67 @@ describe('build/stylus/ds', () => {
 
 	it('should return value from getDSOptions', () => {
 		const
-			stylus = require('stylus'),
-			{theme, includeThemes} = config.runtime(),
-			themedFields = config.themedFields();
+			stylus = require('stylus');
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
-			plugins = createPlugins({ds, cssVariables, theme, includeThemes, themedFields, stylus});
+			plugins = createPlugins({ds, cssVariables, stylus});
 
 		stylus.render('getDSOptions("colors", "green.0")', {use: [plugins]}, (err, hex) => {
 			expect(hex).toEqual(stylus.render(plainMock.colors.green[0]));
+		});
+	});
+
+	it('should return value from getDSColor', () => {
+		const
+			stylus = require('stylus');
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
+			plugins = createPlugins({ds, cssVariables, stylus});
+
+		stylus.render('getDSColor("blue", 1)', {use: [plugins]}, (err, hex) => {
+			expect(hex).toEqual(stylus.render(plainMock.colors.blue[0]));
+		});
+	});
+
+	it('should return value from getDSVariables', () => {
+		const
+			stylus = require('stylus');
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
+			plugins = createPlugins({ds, cssVariables, stylus});
+
+		stylus.render('getDSVariables()', {use: [plugins]}, (err, value) => {
+			expect(value).toBeTruthy();
+		});
+	});
+
+	it('should return value from getDSTextStyles', () => {
+		const
+			stylus = require('stylus');
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
+			plugins = createPlugins({ds, cssVariables, stylus});
+
+		stylus.render('getDSTextStyles(Base)', {use: [plugins]}, (err, value) => {
+			expect(value).toBeTruthy();
+		});
+	});
+
+	it('should return build theme', () => {
+		const
+			stylus = require('stylus'),
+			theme = 'day';
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
+			plugins = createPlugins({ds, cssVariables, theme, stylus});
+
+		stylus.render('defaultTheme()', {use: [plugins]}, (err, value) => {
+			expect(stylus.utils.parseString(value)).toBeTruthy();
 		});
 	});
 });
