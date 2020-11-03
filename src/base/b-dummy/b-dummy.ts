@@ -20,7 +20,13 @@ const
 export * from 'super/i-data/i-data';
 export * from 'base/b-dummy/interface';
 
-@component()
+@component({
+	functional: {
+		functional: true,
+		dataProvider: undefined
+	}
+})
+
 export default class bDummy extends iData {
 	/**
 	 * Links to directives

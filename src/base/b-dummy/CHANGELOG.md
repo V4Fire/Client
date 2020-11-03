@@ -9,13 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.93 ()
+## v3.0.0-rc.92 (2020-11-03)
 
 #### :house: Internal
 
-* Fixed ESLint warnings
+* Now the component is smart (by default, the regular)
 
 #### :nail_care: Polish
 
-* Added documentation
-* Added tests
+* Added `README`, `CHANGELOG`

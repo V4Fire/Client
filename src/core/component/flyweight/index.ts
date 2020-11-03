@@ -24,7 +24,7 @@ import { attachMethodsFromMeta } from 'core/component/method';
 import { implementEventAPI } from 'core/component/event';
 
 import { supports, CreateElement, VNode } from 'core/component/engines';
-import { getComponentDataFromVNode } from 'core/component/vnode';
+import { getComponentDataFromVNode, patchComponentVData } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
 import { ComponentInterface } from 'core/component/interface';
@@ -226,35 +226,13 @@ export function parseVNodeAsFlyweight(
 	newVNode.fakeInstance = fakeCtx;
 	newVNode.data = newVNode.data ?? {};
 
-	const
-		newVData = newVNode.data;
+	patchComponentVData(meta, newVNode.data, componentData);
 
 	// Attach component event listeners
 	for (let o = componentData.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const key = keys[i];
 		fakeCtx.$on(key, o[key]);
 	}
-
-	newVData.ref = componentData.ref;
-	newVData.refInFor = componentData.refInFor;
-
-	// Attach component native event listeners
-
-	newVData.on = newVData.on ?? {};
-
-	const
-		{on} = newVData;
-
-	if (Object.isDictionary(componentData.nativeOn)) {
-		for (let o = componentData.nativeOn, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const key = keys[i];
-			on[key] = Array.concat([], on[key], o[key]);
-		}
-	}
-
-	newVData.staticClass = Array.concat([], newVData.staticClass, componentData.staticClass).join(' ');
-	newVData.class = Array.concat([], newVData.class, componentData.class);
-	newVData.directives = Array.concat([], newVData.directives, componentData.directives);
 
 	return newVNode;
 }

@@ -7,6 +7,7 @@
  */
 
 import { RenderContext, VNode } from 'vue';
+import { patchComponentVData } from 'core/component/vnode';
 import { ComponentInterface } from 'core/component/interface';
 
 /**
@@ -18,14 +19,17 @@ export function cloneVNode(vnode: VNode): VNode {
 }
 
 /**
- * Patches the specified virtual node: add classes, event handlers, etc.
+ * Patches the specified VNode by using provided contexts
  *
  * @param vnode
- * @param ctx - component fake context
+ * @param ctx - component context
  * @param renderCtx - render context
  */
 export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): void {
 	vnode.data = vnode.data ?? {};
+
+	patchComponentVData(ctx.unsafe.meta, vnode.data, renderCtx.data);
+
 	const vData = vnode.data;
 
 	const
