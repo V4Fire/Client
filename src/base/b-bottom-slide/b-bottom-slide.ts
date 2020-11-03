@@ -791,9 +791,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 				}
 			}
 
-			this.step = step;
-
-			if (this.step === 0) {
+			if (step === 0) {
 				this.close().catch(stderr);
 			}
 		}
