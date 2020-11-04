@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.93 ()
+## v3.0.0-rc.94 ()
 
 #### :boom: Breaking Change
 
@@ -87,6 +87,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bCheckbox`
   * `bRadioButton`
   * `bInputHidden`
+
+## v3.0.0-rc.93 (2020-11-03)
+
+#### :boom: Breaking Change
+
+* Changed an interface `patchComponentVData` `core/component/render-function`
+
+#### :bug: Bug Fix
+
+* Fixed providing of attributes `core/component/flyweight`
 
 ## v3.0.0-rc.92 (2020-11-03)
 

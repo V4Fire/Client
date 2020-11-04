@@ -226,7 +226,7 @@ export function parseVNodeAsFlyweight(
 	newVNode.fakeInstance = fakeCtx;
 	newVNode.data = newVNode.data ?? {};
 
-	patchComponentVData(meta, newVNode.data, componentData);
+	patchComponentVData(newVNode.data, componentData);
 
 	// Attach component event listeners
 	for (let o = componentData.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
