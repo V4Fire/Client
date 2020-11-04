@@ -99,13 +99,13 @@ module.exports = (page) => {
 
 			expect(
 				await target.evaluate((ctx) => ctx.groupFormValue)
-			).toBeUndefined();
+			).toEqual([]);
 
 			await page.click(q);
 
 			expect(
 				await target.evaluate((ctx) => ctx.groupFormValue)
-			).toEqual('foo');
+			).toEqual(['foo']);
 
 			await page.click('[data-id="second"]');
 
@@ -117,7 +117,7 @@ module.exports = (page) => {
 
 			expect(
 				await target.evaluate((ctx) => ctx.groupFormValue)
-			).toEqual('foo');
+			).toEqual(['foo']);
 		});
 
 		it('resetting a checkbox without the default value', async () => {
@@ -156,7 +156,7 @@ module.exports = (page) => {
 
 			expect(
 				await target.evaluate((ctx) => ctx.value)
-			).toBeUndefined();
+			).toBeTrue();
 
 			await target.evaluate((ctx) => ctx.reset());
 
