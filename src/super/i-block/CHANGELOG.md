@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.92 (2020-11-03)
+
+#### :nail_care: Polish
+
+* Added tests
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :boom: Breaking Change

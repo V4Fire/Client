@@ -11,6 +11,48 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.93 (2020-11-03)
+
+#### :boom: Breaking Change
+
+* Changed an interface `patchComponentVData` `core/component/render-function`
+
+#### :bug: Bug Fix
+
+* Fixed providing of attributes `core/component/flyweight`
+
+## v3.0.0-rc.92 (2020-11-03)
+
+#### :rocket: New Feature
+
+* `core/component/vnode`:
+  * Added `patchComponentVData`
+  * Added `parseStyle`
+
+#### :bug: Bug Fix
+
+* Fixed providing of styles `core/component`
+
+#### :house: Internal
+
+* Now the component is smart (by default, the regular) `bDummy`
+* Refactoring:
+  * `core/component/engines/vue`
+  * `core/component/render-function`
+  * `core/component/flyweight`
+
+#### :nail_care: Polish
+
+* Added tests `iBlock`
+
+## v3.0.0-rc.91 (2020-10-29)
+
+#### :bug: Bug Fix
+
+* `super/i-block/modules/field`:
+  * Fixed working with watchers based on accessors
+  * Fixed resolving of accessor
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :boom: Breaking Change
@@ -209,7 +251,6 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
 #### :nail_care: Polish
 
 * Added the render scheme `docs/test`
->>>>>>> master
 
 ## v3.0.0-rc.80 (2020-10-08)
 

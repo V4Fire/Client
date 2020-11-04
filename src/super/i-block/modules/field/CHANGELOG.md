@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.91 (2020-10-29)
+
+#### :bug: Bug Fix
+
+* Fixed working with watchers based on accessors
+* Fixed resolving of accessor
+
 ## v3.0.0-rc.86 (2020-10-11)
 
 #### :bug: Bug Fix

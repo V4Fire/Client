@@ -197,6 +197,8 @@ export function beforeDataCreateState(
 	const {meta, $fields} = component.unsafe;
 	initFields(meta.fields, component, $fields);
 
+	// Because in functional components,
+	// the watching of fields can be initialized in a lazy mode
 	if (meta.params.functional === true) {
 		Object.assign(component, $fields);
 	}

@@ -7,28 +7,29 @@
  */
 
 import { VNodeData } from 'core/component/engines';
+import { parseStyle } from 'core/component/vnode';
 import { vAttrsRgxp } from 'core/component/render-function/const';
 import { ComponentMeta } from 'core/component/interface';
 
 /**
  * Applies dynamic attributes from v-attrs to the specified vnode
  *
- * @param vnode - vnode data object
+ * @param vData - vnode data object
  * @param [component] - component meta object that is tied to the vnode
  */
-export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): void {
+export function applyDynamicAttrs(vData: VNodeData, component?: ComponentMeta): void {
 	const
-		attrs = vnode.attrs ?? {},
+		attrs = vData.attrs ?? {},
 		attrsSpreadObj = attrs['v-attrs'],
 		slotsSpreadObj = attrs['v-slots'];
 
-	vnode.attrs = attrs;
+	vData.attrs = attrs;
 	delete attrs['v-attrs'];
 	delete attrs['v-slots'];
 
 	if (Object.isPlainObject(slotsSpreadObj)) {
 		const
-			slotOpts = vnode.scopedSlots ?? {};
+			slotOpts = vData.scopedSlots ?? {};
 
 		for (let keys = Object.keys(slotsSpreadObj), i = 0; i < keys.length; i++) {
 			const
@@ -57,13 +58,13 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 
 	if (Object.isPlainObject(attrsSpreadObj)) {
 		const
-			eventOpts = vnode.on ?? {},
-			nativeEventOpts = vnode.nativeOn ?? {},
-			directiveOpts = vnode.directives ?? [];
+			eventOpts = vData.on ?? {},
+			nativeEventOpts = vData.nativeOn ?? {},
+			directiveOpts = vData.directives ?? [];
 
-		vnode.on = eventOpts;
-		vnode.nativeOn = nativeEventOpts;
-		vnode.directives = directiveOpts;
+		vData.on = eventOpts;
+		vData.nativeOn = nativeEventOpts;
+		vData.directives = directiveOpts;
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
 			let
@@ -173,13 +174,13 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 				directiveOpts.push(<any>dir);
 
 			} else if (key === 'staticClass') {
-				vnode.staticClass = Array.concat([], vnode.staticClass, val).join(' ');
+				vData.staticClass = Array.concat([], vData.staticClass, val).join(' ');
 
 			} else if (key === 'class') {
-				vnode.class = Array.concat([], vnode.class, val);
+				vData.class = Array.concat([], vData.class, val);
 
 			} else if (key === 'style') {
-				vnode.style = Array.concat([], vnode.style, val);
+				vData.style = parseStyle(vData.style, parseStyle(val));
 
 			} else if (attrs[key] == null) {
 				attrs[key] = val;
