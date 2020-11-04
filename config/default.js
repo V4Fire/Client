@@ -285,26 +285,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
-	/**
-	 * Array of field names from a design system, that support themes.
-	 *
-	 * For example, you can use themes only for colors.
-	 * Then, pass to this variable value `['colors']`.
-	 * In this case, runtime theme will not affect to other fields from a design system
-	 *
-	 * @see [[DS]]
-	 *
-	 * @cli themed-fields
-	 * @env THEMED_FIELDS
-	 *
-	 * @type {string[]}
-	 */
-	themedFields() {
-		return o('themed-fields', {
-			env: true
-		});
-	},
-
 	/** @override */
 	runtime() {
 		return {

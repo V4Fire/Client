@@ -10,7 +10,8 @@
 
 const unThemeTextMock = {
 	meta: {
-		themes: ['day', 'night']
+		themes: ['day', 'night'],
+		themedFields: ['colors', 'rounding']
 	},
 
 	text: {
@@ -79,9 +80,10 @@ const unThemeTextMock = {
 	}
 };
 
-const unThemeRoundingMock = {
+const themedOnlyColors = {
 	meta: {
-		themes: ['day', 'night']
+		themes: ['day', 'night'],
+		themedFields: ['colors']
 	},
 
 	text: {
@@ -233,5 +235,5 @@ const fullThemedMock = {
 module.exports = {
 	fullThemedMock,
 	unThemeTextMock,
-	unThemeRoundingMock
+	themedOnlyColors
 };

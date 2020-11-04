@@ -25,6 +25,15 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 interface DesignSystem {
 	meta?: {
 		themes: string[];
+
+		/**
+		 * Set of design system fields that have theme
+		 *
+		 * For example, you can use themes only for colors.
+		 * Then, pass to this variable value `['colors']`.
+		 * In this case, the runtime theme will not affect other fields from a design system
+		 */
+		themedFields?: string[];
 	};
 
 	/**

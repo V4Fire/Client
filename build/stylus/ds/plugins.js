@@ -22,7 +22,6 @@ const
  * @param {Object} cssVariables
  * @param {string} [theme] - current theme
  * @param {boolean|string[]} [includeThemes] - flag or set of themes provided to runtime
- * @param {string[]} [themedFields] - set of design system fields, that have themed styles
  * @param {Object} [stylus=]
  *
  * @returns {function(*): void}
@@ -32,11 +31,11 @@ module.exports = function createPlugins({
 	cssVariables,
 	theme,
 	includeThemes,
-	themedFields,
 	stylus = require('stylus')
 }) {
 	const
-		isBuildHasTheme = Object.isString(theme);
+		isBuildHasTheme = Object.isString(theme),
+		{themedFields} = ds.meta;
 
 	let
 		buildThemes = includeThemes;

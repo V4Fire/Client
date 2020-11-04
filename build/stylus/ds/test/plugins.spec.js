@@ -12,7 +12,7 @@ require('config');
 
 const
 	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
-	{fullThemedMock} = include('build/stylus/ds/test/mocks/ds-themes'),
+	{fullThemedMock, unThemeTextMock} = include('build/stylus/ds/test/mocks/ds-themes'),
 	createPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers'),
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
@@ -90,5 +90,18 @@ describe('build/stylus/plugins', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemedMock);
 
 		expect(() => createPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
+	});
+
+	it('should return a value from getDSOptions for a themed design system with extracted field', () => {
+		const
+			stylus = require('stylus');
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(unThemeTextMock),
+			plugins = createPlugins({ds, cssVariables, stylus});
+
+		stylus.render('getDSOptions("colors", "green.0")', {use: [plugins]}, (err, hex) => {
+			expect(hex).toEqual(stylus.render(plainMock.colors.green[0]));
+		});
 	});
 });
