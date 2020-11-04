@@ -137,4 +137,50 @@ describe('build/stylus/ds', () => {
 
 		expect(() => createPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
 	});
+
+	it('should create a themed design system', () => {
+		const
+			stylus = require('stylus'),
+			{data: designSystem} = createDesignSystem(fullThemedMock);
+
+		expect(Object.isObject(designSystem.colors)).toBeTrue();
+
+		const
+			{colors: {theme}} = designSystem;
+
+		Object.keys(theme).forEach((key) => {
+			Object.keys(theme[key]).forEach((colorSet) => {
+				theme[key][colorSet].forEach((c) => {
+					expect(['expression', 'rgba']).toContain(stylus.functions.type(c));
+				});
+			});
+		});
+
+		const
+			{text: {theme: themedTextObj}} = designSystem;
+
+		Object.keys(themedTextObj).forEach((themeName) => {
+			Object.keys(themedTextObj[themeName]).forEach((id) => {
+				const
+					style = themedTextObj[themeName][id];
+
+				expect(Object.isObject(style)).toBeTrue();
+
+				Object.keys(style).forEach((t) => {
+					expect(['string', 'unit']).toContain(stylus.functions.type(style[t]));
+				});
+			});
+		});
+
+		const
+			{rounding: {theme: themedRoundingObj}} = designSystem;
+
+		expect(Object.isObject(themedRoundingObj)).toBeTrue();
+
+		Object.keys(themedRoundingObj).forEach((themeName) => {
+			Object.keys(themedRoundingObj[themeName]).forEach((id) => {
+				expect(stylus.functions.type(themedRoundingObj[themeName][id])).toBe('unit');
+			});
+		});
+	});
 });
