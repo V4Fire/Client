@@ -398,6 +398,9 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 						if (validation instanceof Option) {
 							res = await validation.catch(() => undefined);
+
+						} else {
+							res = await validation;
 						}
 					}
 
