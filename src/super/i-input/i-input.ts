@@ -194,6 +194,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * Any converter can return a promise. In the case of a list of converters,
 	 * they are waiting to resolve the previous invoking.
 	 *
+	 * Also, any converter can return the `Maybe` monad.
+	 * It helps to combine validators and converters.
+	 *
+	 * ```
+	 * < b-input :validators = ['required'] | :formValueConverter = [toDate.option(), toUTC.toUTC()]
+	 * ```
+	 *
 	 * @see [[iInput.formValue]]
 	 */
 	@prop({type: Function, required: false})
@@ -212,6 +219,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 *
 	 * Any converter can return a promise. In the case of a list of converters,
 	 * they are waiting to resolve the previous invoking.
+	 *
+	 * Also, any converter can return the `Maybe` monad (all errors transform to undefined).
+	 * It helps to combine validators and converters.
+	 *
+	 * ```
+	 * < b-input :validators = ['required'] | :formConverter = [toProtobuf.option(), zip.toUTC()]
+	 * ```
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly formConverter?: CanArray<Function> = unpackIf;

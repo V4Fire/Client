@@ -207,8 +207,15 @@ the "left-to-right".
 < b-input :formValueConverter = [toDate, toUTC]
 ```
 
-Any converter can return a promise. In the case of a list of converters,
+Any converter can return a promise (). In the case of a list of converters,
 they are waiting to resolve the previous invoking.
+
+Also, any converter can return the `Maybe` monad (all errors transform to undefined).
+It helps to combine validators and converters.
+
+```
+< b-input :formValueConverter = [toDate.option(), toUTC.option()]
+```
 
 #### formConverter
 
@@ -224,6 +231,13 @@ the "left-to-right".
 
 Any converter can return a promise. In the case of a list of converters,
 they are waiting to resolve the previous invoking.
+
+Also, any converter can return the `Maybe` monad (all errors transform to undefined).
+It helps to combine validators and converters.
+
+```
+< b-input :validators = ['required'] | :formConverter = [toProtobuf.option(), zip.option()]
+```
 
 ### Validation
 
