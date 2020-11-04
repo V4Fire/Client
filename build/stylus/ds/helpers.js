@@ -61,12 +61,19 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 		data = $C.clone(raw),
 		variables = Object.create(null);
 
+	$C(data).remove('meta');
+
 	Object.defineProperty(variables, 'map', {
 		enumerable: false,
 		value: {}
 	});
 
 	convertProps(stylus, data, variables);
+
+	Object.defineProperty(data, 'meta', {
+		enumerable: false,
+		value: raw.meta
+	});
 
 	Object.defineProperty(data, 'raw', {
 		enumerable: false,

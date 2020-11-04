@@ -35,7 +35,7 @@ module.exports = function createPlugins({
 }) {
 	const
 		isBuildHasTheme = Object.isString(theme),
-		{themedFields} = ds.meta;
+		themedFields = $C(ds).get('meta.themedFields') || undefined;
 
 	let
 		buildThemes = includeThemes;
