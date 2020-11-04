@@ -46,3 +46,4 @@
 				- forEach ['error', 'info'] => el
 					< _.&__message-box[.&_pos_right-top].&__${el}-box
 						< _.&__message-content
+							{{ ${el} }}
