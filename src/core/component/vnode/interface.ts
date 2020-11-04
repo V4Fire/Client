@@ -32,3 +32,7 @@ export interface ComponentModelVNodeData {
 	expression: string;
 	callback(value: unknown): unknown;
 }
+
+export interface PatchComponentVDataOptions {
+	patchAttrs: boolean;
+}
