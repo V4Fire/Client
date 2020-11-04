@@ -12,11 +12,13 @@ require('config');
 
 const
 	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
+	{fullThemedMock} = include('build/stylus/ds/test/mocks/ds-themes'),
 	createPlugins = include('build/stylus/ds/plugins'),
-	{createDesignSystem} = include('build/stylus/ds/helpers');
+	{createDesignSystem} = include('build/stylus/ds/helpers'),
+	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 describe('build/stylus/ds', () => {
-	it('should create plain design system', () => {
+	it('should create a plain design system', () => {
 		const
 			stylus = require('stylus'),
 			{data: designSystem} = createDesignSystem(plainMock);
@@ -62,7 +64,7 @@ describe('build/stylus/ds', () => {
 		});
 	});
 
-	it('should return value from getDSOptions', () => {
+	it('should return a value from getDSOptions', () => {
 		const
 			stylus = require('stylus');
 
@@ -75,7 +77,7 @@ describe('build/stylus/ds', () => {
 		});
 	});
 
-	it('should return value from getDSColor', () => {
+	it('should return a value from getDSColor', () => {
 		const
 			stylus = require('stylus');
 
@@ -88,7 +90,7 @@ describe('build/stylus/ds', () => {
 		});
 	});
 
-	it('should return value from getDSVariables', () => {
+	it('should return a value from getDSVariables', () => {
 		const
 			stylus = require('stylus');
 
@@ -101,7 +103,7 @@ describe('build/stylus/ds', () => {
 		});
 	});
 
-	it('should return value from getDSTextStyles', () => {
+	it('should return a value from getDSTextStyles', () => {
 		const
 			stylus = require('stylus');
 
@@ -114,7 +116,7 @@ describe('build/stylus/ds', () => {
 		});
 	});
 
-	it('should return build theme', () => {
+	it('should return a build theme', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -124,7 +126,15 @@ describe('build/stylus/ds', () => {
 			plugins = createPlugins({ds, cssVariables, theme, stylus});
 
 		stylus.render('defaultTheme()', {use: [plugins]}, (err, value) => {
-			expect(stylus.utils.parseString(value)).toBeTruthy();
+			expect(value.trim()).toEqual(`'${theme}'`);
 		});
+	});
+
+	it('throws an error on creating plugins for a package with themes without specifying a theme', () => {
+		const
+			stylus = require('stylus'),
+			{data: ds, variables: cssVariables} = createDesignSystem(fullThemedMock);
+
+		expect(() => createPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
 	});
 });

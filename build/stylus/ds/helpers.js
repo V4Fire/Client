@@ -27,14 +27,14 @@ function saveVariable(vars, path, dsValue, theme) {
 	$C(vars).set(`var(${variable})`, path);
 
 	if (theme === undefined) {
-		vars.__map__[path] = mapValue;
+		vars.map[path] = mapValue;
 
 	} else {
-		if (!vars.__map__[theme]) {
-			Object.defineProperty(vars.__map__, theme, {value: {}, enumerable: false});
+		if (!vars.map[theme]) {
+			Object.defineProperty(vars.map, theme, {value: {}, enumerable: false});
 		}
 
-		vars.__map__[theme][path] = mapValue;
+		vars.map[theme][path] = mapValue;
 	}
 }
 
@@ -61,12 +61,19 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 		data = $C.clone(raw),
 		variables = Object.create(null);
 
-	Object.defineProperty(variables, '__map__', {
+	Object.defineProperty(variables, 'map', {
 		enumerable: false,
 		value: {}
 	});
 
 	convertProps(stylus, data, variables);
+
+	Object.defineProperty(data, 'raw', {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: raw
+	});
 
 	return {data, variables};
 }
@@ -118,7 +125,7 @@ function convertProps(stylus, data, variables, path, theme) {
 
 		} else {
 			if (/^[a-z-_]+\(.*\)$/.test(d)) {
-				// Stylus built-in function
+				// Built-in function
 
 				const
 					parsed = new stylus.Parser(d, {cache: false});

@@ -13,25 +13,24 @@ require('config');
 const
 	{getThemes} = include('build/ds'),
 	{fullThemedMock} = include('build/stylus/ds/test/mocks/ds-themes'),
-	plainMock = include('build/stylus/ds/test/mocks/ds-plain');
+	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
+	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 describe('build/ds', () => {
-	it('should crash by passing a themed design system without specify build themes', () => {
-		expect(() => getThemes(fullThemedMock))
-			.toThrowError('Design system object has themes, but no one included to the build');
+	it('should crash by passing a themed design system without specific build themes', () => {
+		expect(() => getThemes(fullThemedMock)).toThrowError(dsHasThemesNotIncluded);
 	});
 
-	it('should crash by passing a themed design system with empty array of build themes', () => {
-		expect(() => getThemes(fullThemedMock, []))
-			.toThrowError('Design system object has themes, but no one included to the build');
+	it('should crash by passing a themed design system with an empty array of build themes', () => {
+		expect(() => getThemes(fullThemedMock, [])).toThrowError(dsHasThemesNotIncluded);
 	});
 
 	it('should crash by passing a themed design system with not included build themes', () => {
 		expect(() => getThemes(fullThemedMock, ['morning']))
-			.toThrowError('Design system object has themes, but no one included to the build');
+			.toThrowError(dsHasThemesNotIncluded);
 	});
 
-	it('should return all themes, that have the specified design system object', () => {
+	it('should return all themes that included in the specified design system object', () => {
 		expect(getThemes(fullThemedMock, true)).toEqual(fullThemedMock.meta.themes);
 	});
 
@@ -43,6 +42,6 @@ describe('build/ds', () => {
 		console.log = jasmine.createSpy('log');
 
 		expect(getThemes(plainMock)).toBe(null);
-		expect(console.log).toHaveBeenCalledWith('No themes into the specified design system');
+		expect(console.log).toHaveBeenCalledWith('Specified design system has no themes');
 	});
 });

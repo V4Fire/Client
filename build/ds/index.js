@@ -9,7 +9,8 @@
  */
 
 const
-	{config: pzlr} = require('@pzlr/build-core');
+	{config: pzlr} = require('@pzlr/build-core'),
+	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 /**
  * Returns a Design System object
@@ -43,7 +44,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 
 	if (Object.isObject(meta) && meta.themes !== undefined) {
 		if (buildThemes === undefined) {
-			throw new Error('Design system object has themes, but no one included to the build');
+			throw new Error(dsHasThemesNotIncluded);
 		}
 
 		if (buildThemes === true) {
@@ -59,13 +60,13 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 		}, []);
 
 		if (dsMatched.length === 0) {
-			throw new Error('Design system object has themes, but no one included to the build');
+			throw new Error(dsHasThemesNotIncluded);
 		}
 
 		return dsMatched;
 	}
 
-	console.log('No themes into the specified design system');
+	console.log('Specified design system has no themes');
 	return null;
 };
 

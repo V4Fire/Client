@@ -36,8 +36,17 @@ module.exports = function createPlugins({
 	stylus = require('stylus')
 }) {
 	const
-		isBuildHasTheme = Object.isString(theme),
-		themesList = getThemes(ds, includeThemes || isBuildHasTheme ? [theme] : []),
+		isBuildHasTheme = Object.isString(theme);
+
+	let
+		buildThemes = includeThemes;
+
+	if (buildThemes === undefined) {
+		buildThemes = isBuildHasTheme ? [theme] : [];
+	}
+
+	const
+		themesList = getThemes(ds.raw, buildThemes),
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = isThemesIncluded && isBuildHasTheme && themesList.length === 0 && themesList[0] === theme;
 
@@ -77,7 +86,7 @@ module.exports = function createPlugins({
 		api.define('getDSVariables', ({string: theme}) => {
 			const
 				obj = {},
-				iterator = isBuildHasTheme ? cssVariables.__map__[theme] : cssVariables.__map__;
+				iterator = isBuildHasTheme ? cssVariables.map[theme] : cssVariables.map;
 
 			Object.forEach(iterator, (val) => {
 				const [key, value] = val;
@@ -190,11 +199,13 @@ module.exports = function createPlugins({
 
 		/**
 		 * Returns a current build theme value
+		 * @returns {!string}
 		 */
 		api.define('defaultTheme', () => theme);
 
 		/**
-		 * Returns included interface themes
+		 * Returns included to build themes
+		 * @returns {!string[]}
 		 */
 		api.define('includedThemes', () => themesList);
 	};

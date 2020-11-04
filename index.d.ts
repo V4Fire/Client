@@ -27,6 +27,12 @@ interface DesignSystem {
 		themes: string[];
 	};
 
+	/**
+	 * Raw data for a design system.
+	 * Only for processed object
+	 */
+	raw?: DesignSystem;
+
 	components?: StrictDictionary;
 	text?: StrictDictionary;
 	rounding?: StrictDictionary;
