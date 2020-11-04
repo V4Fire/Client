@@ -31,13 +31,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Now `formValueConverter` can be provided as an array `iInput`
 * Added support of method invoking `super/i-block/modules/state/set`
 * Added a new associated type: `Items` `bList`
 * Added support of interpolation of a data provider response:
   * `iInput`
   * `bList`
   * `bRouter`
+
+* `iInput`:
+  * Now `formValueConverter` can be provided as an array
+  * Added support for the `Maybe` structure
 
 * `iAccess`:
   * Added `autofocus`
@@ -59,6 +62,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Refactoring `iData`
+* Improved error handling `iInput`
 * Fixed ESLint warnings:
   * `bCheckbox`
   * `bRadioButton`

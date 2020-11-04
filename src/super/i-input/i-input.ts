@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import { Option } from 'core/prelude/structures';
+
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -377,7 +379,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 						res = value;
 
 					for (let i = 0; i < converters.length; i++) {
-						res = await converters[i].call(this, res);
+						const
+							validation = converters[i].call(this, res);
+
+						if (validation instanceof Option) {
+							res = await validation.catch(() => undefined);
+						}
 					}
 
 					return res;
@@ -782,7 +789,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				void this.setMod('progress', true);
 			}
 
-			valid = await validation;
+			try {
+				valid = await validation;
+
+			} catch (err) {
+				valid = err;
+			}
 
 			if (valid !== true) {
 				failedValidation = {

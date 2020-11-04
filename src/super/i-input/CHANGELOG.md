@@ -22,6 +22,11 @@ Changelog
 * Added support of interpolation of a data provider response
 * Implemented new API from `iAccess`
 * Now `formValueConverter` can be provided as an array
+* Added support for the `Maybe` structure
+
+#### :house: Internal
+
+* Improved error handling
 
 #### :nail_care: Polish
 
