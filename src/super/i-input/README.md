@@ -322,6 +322,16 @@ export default class myInput extends iInput {
 }
 ```
 
+#### Automatic validation
+
+By default, the validation process is automatically started on the `actionChange` event.
+This event fires only when a user changes the component value manually.
+
+```
+/// Every time a user types some value into the component, the component will invoke validation
+< b-input :validators = ['required', 'email']
+```
+
 ### info/error messages
 
 To output information about warnings and errors, descendants of `iInput` can use `infoProp/info` and `errorProp/error` properties.
