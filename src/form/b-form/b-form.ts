@@ -57,7 +57,7 @@ export const
 	}
 })
 
-export default class bForm extends iData {
+export default class bForm extends iData implements iVisible {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
