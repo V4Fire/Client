@@ -19,6 +19,9 @@ import iInput, { component } from 'super/i-input/i-input';
 
 export * from 'super/i-input/i-input';
 
+/**
+ * Component to create a hidden input
+ */
 @component({
 	functional: {
 		dataProvider: undefined
