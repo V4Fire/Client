@@ -64,43 +64,81 @@ export default class bForm extends iData {
 	readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
-	 * Form id
+	 * Form identifier.
+	 * You can use it to connect the form with components that lay "outside"
+	 * from the form body (by using the `form` attribute).
+	 *
+	 * @example
+	 * ```
+	 * < b-form :id = 'my-form'
+	 * < b-input :form = 'my-form'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly id?: string;
 
 	/**
-	 * Form name
+	 * Form name.
+	 * You can use it to find the form element via `document.forms`.
+	 *
+	 * @example
+	 * ```
+	 * < b-form :name = 'my-form'
+	 * ```
+	 *
+	 * ```js
+	 * console.log(document.forms['my-form']);
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly name?: string;
 
 	/**
-	 * Form action URL or an action function
+	 * Form action URL (the URL where the data will be sent) or a function to create action.
+	 * If the value is not specified, the component will use the default URL-s from the data provider.
+	 *
+	 * @example
+	 * ```
+	 * < b-form :action = '/create-user'
+	 * < b-form :action = createUser
+	 * ```
 	 */
 	@prop({type: [String, Function], required: false})
 	readonly action?: string | ActionFn;
 
 	/**
-	 * Data provider method
+	 * Data provider method which is invoked on the form submit
+	 *
+	 * @example
+	 * ```
+	 * < b-form :dataProvider = 'User' | :method = 'upd'
+	 * ```
 	 */
 	@prop(String)
 	readonly method: ModelMethod = 'add';
 
 	/**
-	 * Form request parameters
+	 * Additional form request parameters
+	 *
+	 * @example
+	 * ```
+	 * < b-form :params = {headers: {'x-foo': 'bla'}}
+	 * ```
 	 */
 	@prop(Object)
 	readonly paramsProp: CreateRequestOptions = {};
 
 	/**
-	 * If true, then form elements will be cached
+	 * If true, then form elements is cached.
+	 * The caching is mean that if some component value doesn't change since the last sending of the form,
+	 * it won't be sent again.
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = false;
 
 	/**
-	 * Form request parameters store
+	 * Additional request parameters
+	 * @see [[bForm.paramsProp]]
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))
@@ -120,7 +158,7 @@ export default class bForm extends iData {
 	protected readonly $refs!: {form: HTMLFormElement};
 
 	/**
-	 * Array of form components
+	 * List of components that are associated with the form
 	 */
 	get elements(): CanPromise<readonly iInput[]> {
 		const
@@ -150,15 +188,25 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Array of form submit components
+	 * List of components to submit that are associated with the form
 	 */
 	get submits(): CanPromise<readonly bButton[]> {
 		return this.waitStatus('ready', () => {
-			const list = Array.from(this.$el!.querySelectorAll('button[type="submit"]')).concat(
-				this.id != null ?
-					Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) :
-					[]
-			);
+			const
+				{$el} = this;
+
+			if ($el == null) {
+				return Object.freeze([]);
+			}
+
+			let
+				list = Array.from($el.querySelectorAll('button[type="submit"]'));
+
+			if (this.id != null) {
+				list = list.concat(
+					Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`))
+				);
+			}
 
 			const
 				els = <bButton[]>[];
@@ -172,8 +220,8 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Clears child form components
-	 * @emits clear()
+	 * Clears values of all associated components
+	 * @emits `clear()`
 	 */
 	async clear(): Promise<boolean> {
 		const
@@ -196,8 +244,8 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Resets child form components to default
-	 * @emits reset()
+	 * Resets values to the default of all associated components
+	 * @emits `reset()`
 	 */
 	async reset(): Promise<boolean> {
 		const
@@ -224,10 +272,10 @@ export default class bForm extends iData {
 	 *
 	 * @param [params] - additional validation parameters
 	 *
-	 * @emits validationStart()
-	 * @emits validationSuccess()
-	 * @emits validationFail(failedValidation: ValidationError)
-	 * @emits validationEnd(result: boolean, failedValidation: CanUndef<ValidationError>)
+	 * @emits `validationStart()`
+	 * @emits `validationSuccess()`
+	 * @emits `validationFail(failedValidation:` [[ValidationError]]`)`
+	 * @emits `validationEnd(result: boolean, failedValidation: CanUndef<`[[ValidationError]]`>)`
 	 */
 	@wait('ready', {defer: true, label: $$.validate})
 	async validate(params: ValidateParams = {}): Promise<iInput[] | false> {
