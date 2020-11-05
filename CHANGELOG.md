@@ -23,6 +23,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `bForm`:
   * Changed the root tag `div` to `form`
   * Removed the `form` ref and block
+  * Changed the default value of `method` from `add` to `post`
 
 * `iInput`:
   * Removed `valueKey`

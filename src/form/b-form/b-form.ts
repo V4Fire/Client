@@ -116,7 +116,7 @@ export default class bForm extends iData implements iVisible {
 	 * ```
 	 */
 	@prop(String)
-	readonly method: ModelMethod = 'add';
+	readonly method: ModelMethod = 'post';
 
 	/**
 	 * Additional form request parameters

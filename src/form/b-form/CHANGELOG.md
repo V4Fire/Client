@@ -17,6 +17,7 @@ Changelog
 * Renamed `ValidateParams` to `ValidateOptions`
 * Changed the root tag `div` to `form`
 * Removed the `form` ref and block
+* Changed the default value of `method` from `add` to `post`
 
 #### :rocket: New Feature
 
