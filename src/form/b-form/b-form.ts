@@ -356,8 +356,9 @@ export default class bForm extends iData implements iVisible {
 	 * Submits the form
 	 *
 	 * @emits `submitStart(body:` [[SubmitBody]]`, ctx:` [[SubmitCtx]]`)`
-	 * @emits `submitSuccess(result: T, ctx:` [[SubmitCtx]]`)`
-	 * @emits `submitFail(err: Error, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitSuccess(response: unknown, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitFail(err: Error |` [[RequestError]]`, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitEnd(result:` [[SubmitResult]]`, ctx:` [[SubmitCtx]]`)`
 	 */
 	@wait('ready', {defer: true, label: $$.submit})
 	async submit(): Promise<void> {
@@ -390,7 +391,7 @@ export default class bForm extends iData implements iVisible {
 		};
 
 		let
-			formErr,
+			submitErr,
 			res;
 
 		if (elsToSubmit.length > 0) {
@@ -472,7 +473,7 @@ export default class bForm extends iData implements iVisible {
 				Object.assign(this.tmp, body);
 
 			} catch (err) {
-				formErr = err;
+				submitErr = err;
 			}
 		}
 
@@ -503,12 +504,22 @@ export default class bForm extends iData implements iVisible {
 			return;
 		}
 
-		if (formErr != null) {
-			this.emitError('submitFail', formErr, submitCtx);
-			throw formErr;
-		}
+		try {
+			if (submitErr != null) {
+				this.emitError('submitFail', submitErr, submitCtx);
+				throw submitErr;
+			}
 
-		this.emit('submitSuccess', res, submitCtx);
+			this.emit('submitSuccess', res, submitCtx);
+
+		} finally {
+			const submitRes = {
+				status: submitErr != null ? 'fail' : 'success',
+				response: submitErr != null ? submitErr : res
+			};
+
+			this.emit('submitEnd', submitRes, submitCtx);
+		}
 	}
 
 	/**

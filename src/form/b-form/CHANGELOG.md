@@ -19,6 +19,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added `getElValueToSubmit`
+* Added the `submitEnd` event
 
 #### :house: Internal
 

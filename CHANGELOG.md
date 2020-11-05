@@ -35,13 +35,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `getElValueToSubmit` `bForm`
 * Added support of method invoking `super/i-block/modules/state/set`
 * Added a new associated type: `Items` `bList`
 * Added support of interpolation of a data provider response:
   * `iInput`
   * `bList`
   * `bRouter`
+
+* `bForm`:
+  * Added `getElValueToSubmit`
+  * Added the `submitEnd` event
 
 * `iInput`:
   * Now `formValueConverter` can be provided as an array

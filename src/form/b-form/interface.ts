@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { RequestError } from 'core/request';
+
 import bForm from 'form/b-form/b-form';
 import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
 import { RequestQuery, RequestBody } from 'super/i-data/i-data';
@@ -26,6 +28,13 @@ export type SubmitBody =
 export interface SubmitCtx {
 	elements: iInput[];
 	form: bForm;
+}
+
+export type SubmitStatus = 'success' | 'fail';
+
+export interface SubmitResult<T = unknown> {
+	status: SubmitStatus;
+	response: T | Error | RequestError;
 }
 
 export interface ActionFn {
