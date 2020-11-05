@@ -127,6 +127,22 @@ module.exports = (page) => {
 				await target.evaluate((ctx) => ctx.value)
 			).toBe('10');
 
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.on('onReset', (v) => {
+						res.push(v);
+					});
+
+					res.push(await ctx.reset());
+					res.push(await ctx.reset());
+
+					return res;
+				})
+			).toEqual([undefined, true, false]);
+
 			await target.evaluate((ctx) => ctx.reset());
 
 			expect(
@@ -143,7 +159,21 @@ module.exports = (page) => {
 				await target.evaluate((ctx) => ctx.value)
 			).toBe('10');
 
-			await target.evaluate((ctx) => ctx.clear());
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.on('onClear', (v) => {
+						res.push(v);
+					});
+
+					res.push(await ctx.clear());
+					res.push(await ctx.clear());
+
+					return res;
+				})
+			).toEqual([undefined, true, false]);
 
 			expect(
 				await target.evaluate((ctx) => ctx.value)
@@ -167,11 +197,51 @@ module.exports = (page) => {
 				await target.evaluate((ctx) => ctx.value)
 			).toBe('20');
 
-			await target.evaluate((ctx) => ctx.reset());
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.on('onReset', (v) => {
+						res.push(v);
+					});
+
+					res.push(await ctx.reset());
+					res.push(await ctx.reset());
+
+					return res;
+				})
+			).toEqual(['10', true, false]);
 
 			expect(
 				await target.evaluate((ctx) => ctx.value)
 			).toBe('10');
+		});
+
+		it('listening the `change` event', async () => {
+			const target = await init();
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.on('onChange', (v) => {
+						res.push(v);
+					});
+
+					ctx.value = '1';
+					ctx.value = '2';
+
+					await ctx.nextTick();
+
+					// eslint-disable-next-line require-atomic-updates
+					ctx.value = '3';
+
+					return res;
+				})
+
+			).toEqual(['2', '3']);
 		});
 	});
 };
