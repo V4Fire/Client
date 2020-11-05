@@ -15,6 +15,8 @@ Changelog
 
 * Now `validate` returns `ValidationError` in case of failed validation
 * Renamed `ValidateParams` to `ValidateOptions`
+* Changed the root tag `div` to `form`
+* Removed the `form` ref and block
 
 #### :rocket: New Feature
 

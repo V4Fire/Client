@@ -155,9 +155,6 @@ export default class bForm extends iData implements iVisible {
 		]
 	};
 
-	/** @override */
-	protected readonly $refs!: {form: HTMLFormElement};
-
 	/**
 	 * List of components that are associated with the form
 	 */
@@ -169,7 +166,7 @@ export default class bForm extends iData implements iVisible {
 			const
 				els = <iInput[]>[];
 
-			for (let o = Array.from(this.$refs.form.elements), i = 0; i < o.length; i++) {
+			for (let o = Array.from((<HTMLFormElement>this.$el).elements), i = 0; i < o.length; i++) {
 				const
 					component = this.dom.getComponent<iInput>(o[i], '[class*="_form_true"]');
 

@@ -20,6 +20,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Changed an interface and behavior of `bRouter/initRemoteData`
 * Now `toggle` returns a component value `bCheckbox`
 
+* `bForm`:
+  * Changed the root tag `div` to `form`
+  * Removed the `form` ref and block
+
 * `iInput`:
   * Removed `valueKey`
   * Now `groupFormValue` always returns an array

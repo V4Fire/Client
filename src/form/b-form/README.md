@@ -10,7 +10,7 @@ This module provides a component to create a form to group other form components
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the root tag of the component is `<form>`.
 
 ## Modifiers
 
