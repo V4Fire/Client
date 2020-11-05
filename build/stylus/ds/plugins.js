@@ -47,7 +47,7 @@ module.exports = function createPlugins({
 	const
 		themesList = getThemes(ds.raw, buildThemes),
 		isThemesIncluded = themesList != null && themesList.length > 0,
-		isOneTheme = isThemesIncluded && isBuildHasTheme && themesList.length === 0 && themesList[0] === theme;
+		isOneTheme = isThemesIncluded && isBuildHasTheme && themesList.length === 1 && themesList[0] === theme;
 
 	return function addPlugins(api) {
 		/**
@@ -104,7 +104,7 @@ module.exports = function createPlugins({
 		 */
 		api.define(
 			'getDSOptions',
-			({string} = {}, value = {}) => {
+			({string} = {}, {string: value} = {}) => {
 				if (string === undefined) {
 					return ds;
 				}
@@ -112,11 +112,11 @@ module.exports = function createPlugins({
 				const
 					path = isOneTheme ? [string, ...getThemedPathChunks(string, theme, themedFields)] : [string];
 
-				if (Object.isString(value.string)) {
-					path.push(value.string);
+				if (Object.isString(value)) {
+					path.push(value);
 				}
 
-				return isThemesIncluded ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(ds).get(path);
+				return isThemesIncluded ? stylus.utils.coerce($C(cssVariables).get(path.join('.'))) : $C(ds).get(path.join('.'));
 			}
 		);
 

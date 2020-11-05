@@ -58,29 +58,19 @@ function createPath(prefix, suffix) {
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
 	const
-		data = $C.clone(raw),
-		variables = Object.create(null);
+		proto = Object.freeze({meta: raw.meta, raw}),
+		variables = Object.create({map: {}}),
+		clonedRaw = $C.clone(raw);
 
-	$C(data).remove('meta');
+	$C(clonedRaw).remove('meta');
 
-	Object.defineProperty(variables, 'map', {
-		enumerable: false,
-		value: {}
-	});
+	const data = $C.extend(
+		{withProto: true, withAccessors: true},
+		Object.create(proto),
+		clonedRaw
+	);
 
 	convertProps(stylus, data, variables);
-
-	Object.defineProperty(data, 'meta', {
-		enumerable: false,
-		value: raw.meta
-	});
-
-	Object.defineProperty(data, 'raw', {
-		enumerable: false,
-		configurable: false,
-		writable: false,
-		value: raw
-	});
 
 	return {data, variables};
 }
