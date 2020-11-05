@@ -35,7 +35,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `getElValueToSend` `bForm`
+* Added `getElValueToSubmit` `bForm`
 * Added support of method invoking `super/i-block/modules/state/set`
 * Added a new associated type: `Items` `bList`
 * Added support of interpolation of a data provider response:

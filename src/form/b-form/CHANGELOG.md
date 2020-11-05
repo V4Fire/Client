@@ -18,7 +18,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `getElValueToSend`
+* Added `getElValueToSubmit`
 
 #### :house: Internal
 

@@ -416,7 +416,7 @@ export default class bForm extends iData implements iVisible {
 
 				tasks.push((async () => {
 					const
-						val = await this.getElValueToSend(el);
+						val = await this.getElValueToSubmit(el);
 
 					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
 						isMultipart = true;
@@ -537,7 +537,7 @@ export default class bForm extends iData implements iVisible {
 
 				tasks.push((async () => {
 					const
-						val = await this.getElValueToSend(el);
+						val = await this.getElValueToSubmit(el);
 
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (val !== undefined) {
@@ -557,10 +557,10 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Returns a value to send of the specified element
+	 * Returns a value to submit of the specified element
 	 * @param el
 	 */
-	protected async getElValueToSend(el: iInput): Promise<unknown> {
+	protected async getElValueToSubmit(el: iInput): Promise<unknown> {
 		let
 			val = await el.groupFormValue;
 
