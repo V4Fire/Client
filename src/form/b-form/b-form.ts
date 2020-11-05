@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-form/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 
 //#if runtime has core/data
@@ -34,14 +39,17 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { ActionFn, ValidateParams } from 'form/b-form/modules/interface';
+import { ActionFn, ValidateParams } from 'form/b-form/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'form/b-form/modules/interface';
+export * from 'form/b-form/interface';
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to create a form
+ */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -94,8 +102,8 @@ export default class bForm extends iData {
 	/**
 	 * Form request parameters store
 	 */
-	// tslint:disable-next-line:prefer-object-spread
-	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params || {}, val)))
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))
 	params!: CreateRequestOptions;
 
 	/** @inheritDoc */
@@ -114,7 +122,7 @@ export default class bForm extends iData {
 	/**
 	 * Array of form components
 	 */
-	get elements(): CanPromise<ReadonlyArray<iInput>> {
+	get elements(): CanPromise<readonly iInput[]> {
 		const
 			cache = Object.createDict();
 
@@ -126,7 +134,12 @@ export default class bForm extends iData {
 				const
 					component = this.dom.getComponent<iInput>(o[i], '[class*="_form_true"]');
 
-				if (component && component.instance instanceof iInput && !cache[component.componentId]) {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (component == null) {
+					continue;
+				}
+
+				if (component.instance instanceof iInput && cache[component.componentId] == null) {
 					cache[component.componentId] = true;
 					els.push(component);
 				}
@@ -139,17 +152,19 @@ export default class bForm extends iData {
 	/**
 	 * Array of form submit components
 	 */
-	get submits(): CanPromise<ReadonlyArray<bButton>> {
+	get submits(): CanPromise<readonly bButton[]> {
 		return this.waitStatus('ready', () => {
-			const list = Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(
-				this.id ? Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) : []
+			const list = Array.from(this.$el!.querySelectorAll('button[type="submit"]')).concat(
+				this.id != null ?
+					Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) :
+					[]
 			);
 
 			const
 				els = <bButton[]>[];
 
 			for (let i = 0; i < list.length; i++) {
-				els.push(<bButton>this.dom.getComponent(list[i]));
+				els.push(this.dom.getComponent(list[i]));
 			}
 
 			return Object.freeze(els);
@@ -162,7 +177,7 @@ export default class bForm extends iData {
 	 */
 	async clear(): Promise<boolean> {
 		const
-			tasks = <Promise<boolean>[]>[];
+			tasks = <Array<Promise<boolean>>>[];
 
 		for (const el of await this.elements) {
 			try {
@@ -186,7 +201,7 @@ export default class bForm extends iData {
 	 */
 	async reset(): Promise<boolean> {
 		const
-			tasks = <Promise<boolean>[]>[];
+			tasks = <Array<Promise<boolean>>>[];
 
 		for (const el of await this.elements) {
 			try {
@@ -231,14 +246,20 @@ export default class bForm extends iData {
 				el = o[i],
 				{name} = el;
 
-			if (!name) {
+			if (name == null || name === '') {
 				continue;
 			}
 
-			if (!this.cache || !el.cache || !Object.fastCompare(
-				this.field.get(`tmp.${name}`),
-				values[name] || (values[name] = await el.groupFormValue)
-			)) {
+			const needValidate =
+				!this.cache ||
+				!el.cache ||
+
+				!Object.fastCompare(
+					this.field.get(`tmp.${name}`),
+					values[name] ?? (values[name] = await el.groupFormValue)
+				);
+
+			if (needValidate) {
 				const
 					canValidate = el.mods.valid !== 'true',
 					validation = canValidate && await el.validate();
@@ -287,8 +308,8 @@ export default class bForm extends iData {
 
 		{
 			const
-				elTasks = <CanPromise<boolean>[]>[],
-				submitTasks = <CanPromise<boolean>[]>[];
+				elTasks = <Array<CanPromise<boolean>>>[],
+				submitTasks = <Array<CanPromise<boolean>>>[];
 
 			for (let i = 0; i < els.length; i++) {
 				elTasks.push(els[i].setMod('disabled', true));
@@ -301,28 +322,30 @@ export default class bForm extends iData {
 			await Promise.all([...elTasks, ...submitTasks]);
 		}
 
+		let elsToSubmit = await this.validate({focusOnError: true});
+		elsToSubmit = Object.isArray(elsToSubmit) ? elsToSubmit : [];
+
 		const
-			elsToSubmit = await this.validate({focusOnError: true}),
-			submitCtx = {elements: elsToSubmit || [], form: <any>this};
+			submitCtx = {elements: elsToSubmit, form: <any>this};
 
 		let
 			formErr,
 			res;
 
-		if (elsToSubmit && elsToSubmit.length) {
+		if (elsToSubmit.length > 0) {
 			let
 				body = {},
 				isMultipart = false;
 
 			const
-				tasks = <Promise<unknown>[]>[];
+				tasks = <Array<Promise<unknown>>>[];
 
 			for (let i = 0; i < elsToSubmit.length; i++) {
 				const
 					el = elsToSubmit[i],
 					{name} = el;
 
-				if (!name || body.hasOwnProperty(name)) {
+				if (name == null || name === '' || body.hasOwnProperty(name)) {
 					continue;
 				}
 
@@ -347,6 +370,7 @@ export default class bForm extends iData {
 				tasks
 			);
 
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (isMultipart) {
 				const
 					form = new FormData();
@@ -378,7 +402,7 @@ export default class bForm extends iData {
 					let
 						that = this;
 
-					if (this.action) {
+					if (this.action != null) {
 						that = this.base(this.action);
 					}
 
@@ -395,14 +419,14 @@ export default class bForm extends iData {
 		const
 			delay = 0.2.second();
 
-		if (elsToSubmit && Date.now() - start < delay) {
+		if (elsToSubmit.length > 0 && Date.now() - start < delay) {
 			await this.async.sleep(delay);
 		}
 
 		{
 			const
-				elTasks = <CanPromise<boolean>[]>[],
-				submitTasks = <CanPromise<boolean>[]>[];
+				elTasks = <Array<CanPromise<boolean>>>[],
+				submitTasks = <Array<CanPromise<boolean>>>[];
 
 			for (let i = 0; i < els.length; i++) {
 				elTasks.push(els[i].setMod('disabled', false));
@@ -415,11 +439,11 @@ export default class bForm extends iData {
 			await Promise.all([...elTasks, ...submitTasks]);
 		}
 
-		if (!elsToSubmit) {
+		if (elsToSubmit.length === 0) {
 			return;
 		}
 
-		if (formErr) {
+		if (formErr != null) {
 			this.emitError('submitFail', formErr, submitCtx);
 			throw formErr;
 		}
@@ -435,17 +459,17 @@ export default class bForm extends iData {
 		const
 			els = validation ? await this.validate(validation) : await this.elements;
 
-		if (els && els.length) {
+		if (els !== false && els.length > 0) {
 			const
 				result = {},
-				tasks = <Promise<unknown>[]>[];
+				tasks = <Array<Promise<unknown>>>[];
 
 			for (let i = 0; i < els.length; i++) {
 				const
 					el = els[i],
 					{name} = el;
 
-				if (!name || result.hasOwnProperty(name)) {
+				if (name == null || name === '' || result.hasOwnProperty(name)) {
 					continue;
 				}
 
@@ -457,6 +481,7 @@ export default class bForm extends iData {
 						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
 					}
 
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (v !== undefined) {
 						result[name] = v;
 					}

@@ -67,6 +67,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bCheckbox`
   * `bRadioButton`
   * `bInputHidden`
+  * `bForm`
 
 #### :nail_care: Polish
 
@@ -86,11 +87,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bCheckbox`
   * `bRadioButton`
   * `bInputHidden`
+  * `bForm`
 
 * Added tests:
   * `bCheckbox`
   * `bRadioButton`
   * `bInputHidden`
+  * `bForm`
 
 ## v3.0.0-rc.93 (2020-11-03)
 
