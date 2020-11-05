@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { Option } from 'core/prelude/structures';
 
 //#if runtime has core/data
 import 'core/data';
@@ -354,9 +355,9 @@ export default class bForm extends iData {
 	/**
 	 * Submits the form
 	 *
-	 * @emits submitStart(body: SubmitBody, ctx: SubmitCtx)
-	 * @emits submitSuccess(result: T, ctx: SubmitCtx)
-	 * @emits submitFail(err: Error, ctx: SubmitCtx)
+	 * @emits `submitStart(body:` [[SubmitBody]]`, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitSuccess(result: T, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitFail(err: Error, ctx:` [[SubmitCtx]]`)`
 	 */
 	@wait('ready', {defer: true, label: $$.submit})
 	async submit(): Promise<void> {
@@ -383,8 +384,10 @@ export default class bForm extends iData {
 		let elsToSubmit = await this.validate({focusOnError: true});
 		elsToSubmit = Object.isArray(elsToSubmit) ? elsToSubmit : [];
 
-		const
-			submitCtx = {elements: elsToSubmit, form: <any>this};
+		const submitCtx = {
+			elements: elsToSubmit,
+			form: <any>this
+		};
 
 		let
 			formErr,
@@ -400,7 +403,9 @@ export default class bForm extends iData {
 
 			for (let i = 0; i < elsToSubmit.length; i++) {
 				const
-					el = elsToSubmit[i],
+					el = elsToSubmit[i];
+
+				const
 					{name} = el;
 
 				if (name == null || name === '' || body.hasOwnProperty(name)) {
@@ -408,19 +413,16 @@ export default class bForm extends iData {
 				}
 
 				body[name] = true;
+
 				tasks.push((async () => {
-					let
-						v = await el.groupFormValue;
+					const
+						val = await this.getElValueToSend(el);
 
-					if (el.formConverter) {
-						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
-					}
-
-					if (v instanceof Blob || v instanceof File || v instanceof FileList) {
+					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
 						isMultipart = true;
 					}
 
-					body[name] = v;
+					body[name] = val;
 				})());
 			}
 
@@ -510,21 +512,23 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Returns values of child form elements grouped by names
-	 * @param [validation] - if you need only valid value
+	 * Returns values of associated components grouped by names
+	 * @param [validation] - if you need only valid values
 	 */
 	async values(validation?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
 		const
 			els = validation ? await this.validate(validation) : await this.elements;
 
-		if (els !== false && els.length > 0) {
+		if (Object.isArray(els)) {
 			const
 				result = {},
 				tasks = <Array<Promise<unknown>>>[];
 
 			for (let i = 0; i < els.length; i++) {
 				const
-					el = els[i],
+					el = <iInput>els[i];
+
+				const
 					{name} = el;
 
 				if (name == null || name === '' || result.hasOwnProperty(name)) {
@@ -532,16 +536,12 @@ export default class bForm extends iData {
 				}
 
 				tasks.push((async () => {
-					let
-						v = await el.groupFormValue;
-
-					if (el.formConverter) {
-						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
-					}
+					const
+						val = await this.getElValueToSend(el);
 
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					if (v !== undefined) {
-						result[name] = v;
+					if (val !== undefined) {
+						result[name] = val;
 					}
 				})());
 			}
@@ -554,6 +554,34 @@ export default class bForm extends iData {
 		}
 
 		return {};
+	}
+
+	/**
+	 * Returns a value to send of the specified element
+	 * @param el
+	 */
+	protected async getElValueToSend(el: iInput): Promise<unknown> {
+		let
+			val = await el.groupFormValue;
+
+		if (el.formConverter != null) {
+			const
+				converters = Array.concat([], el.formConverter);
+
+			for (let i = 0; i < converters.length; i++) {
+				const
+					validation = converters[i].call(this, val);
+
+				if (validation instanceof Option) {
+					val = await validation.catch(() => undefined);
+
+				} else {
+					val = await validation;
+				}
+			}
+		}
+
+		return val;
 	}
 
 	/** @override */

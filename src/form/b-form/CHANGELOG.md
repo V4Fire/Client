@@ -16,6 +16,10 @@ Changelog
 * Now `validate` returns `ValidationError` in case of failed validation
 * Renamed `ValidateParams` to `ValidateOptions`
 
+#### :rocket: New Feature
+
+* Added `getElValueToSend`
+
 #### :house: Internal
 
 * Fixed ESLint warnings
