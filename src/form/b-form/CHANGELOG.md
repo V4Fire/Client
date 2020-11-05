@@ -11,6 +11,11 @@ Changelog
 
 ## v3.0.0-rc.94 ()
 
+#### :boom: Breaking Change
+
+* Now `validate` returns `ValidationError` in case of failed validation
+* Renamed `ValidateParams` to `ValidateOptions`
+
 #### :house: Internal
 
 * Fixed ESLint warnings

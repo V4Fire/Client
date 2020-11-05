@@ -15,7 +15,7 @@ export interface ValidationError<V = unknown> {
 	validator: InputValidationError<V>;
 }
 
-export interface ValidateParams {
+export interface ValidateOptions {
 	focusOnError?: boolean;
 }
 

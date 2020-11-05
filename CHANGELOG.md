@@ -29,6 +29,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Removed helpers for disabling
   * Removed progress helpers
 
+* `bForm`:
+  * Now `validate` returns `ValidationError` in case of failed validation
+  * Renamed `ValidateParams` to `ValidateOptions`
+
 #### :rocket: New Feature
 
 * Added support of method invoking `super/i-block/modules/state/set`

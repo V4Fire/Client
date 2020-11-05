@@ -18,7 +18,7 @@ import 'core/data';
 //#endif
 
 import iVisible from 'traits/i-visible/i-visible';
-import iInput, { FormValue } from 'super/i-input/i-input';
+import iInput, { FormValue, ValidationError } from 'super/i-input/i-input';
 
 //#if runtime has bButton
 import bButton from 'form/b-button/b-button';
@@ -39,7 +39,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { ActionFn, ValidateParams } from 'form/b-form/interface';
+import { ActionFn, ValidateOptions } from 'form/b-form/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'form/b-form/interface';
@@ -268,9 +268,12 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Validates child form components and returns their or false
+	 * Validates values of all associated components and returns:
 	 *
-	 * @param [params] - additional validation parameters
+	 * * `ValidationError` - if the validation is failed;
+	 * * List of components to send - if the validation is successful.
+	 *
+	 * @param [opts] - additional validation options
 	 *
 	 * @emits `validationStart()`
 	 * @emits `validationSuccess()`
@@ -278,12 +281,12 @@ export default class bForm extends iData {
 	 * @emits `validationEnd(result: boolean, failedValidation: CanUndef<`[[ValidationError]]`>)`
 	 */
 	@wait('ready', {defer: true, label: $$.validate})
-	async validate(params: ValidateParams = {}): Promise<iInput[] | false> {
+	async validate(opts: ValidateOptions = {}): Promise<iInput[] | ValidationError> {
 		this.emit('validationStart');
 
 		const
-			els = <iInput[]>[],
-			values = Object.createDict();
+			elsToSubmit = <iInput[]>[],
+			elValues = Object.createDict();
 
 		let
 			valid = true,
@@ -291,7 +294,9 @@ export default class bForm extends iData {
 
 		for (let o = await this.elements, i = 0; i < o.length; i++) {
 			const
-				el = o[i],
+				el = o[i];
+
+			const
 				{name} = el;
 
 			if (name == null || name === '') {
@@ -304,7 +309,7 @@ export default class bForm extends iData {
 
 				!Object.fastCompare(
 					this.field.get(`tmp.${name}`),
-					values[name] ?? (values[name] = await el.groupFormValue)
+					elValues[name] ?? (elValues[name] = await el.groupFormValue)
 				);
 
 			if (needValidate) {
@@ -313,7 +318,7 @@ export default class bForm extends iData {
 					validation = canValidate && await el.validate();
 
 				if (canValidate && validation !== true) {
-					if (params.focusOnError) {
+					if (opts.focusOnError) {
 						try {
 							await el.focus();
 						} catch {}
@@ -325,7 +330,7 @@ export default class bForm extends iData {
 				}
 
 				if (name !== '_') {
-					els.push(el);
+					elsToSubmit.push(el);
 				}
 			}
 		}
@@ -338,7 +343,12 @@ export default class bForm extends iData {
 		}
 
 		this.emit('validationEnd', valid, failedValidation);
-		return valid && els;
+
+		if (!valid) {
+			return failedValidation;
+		}
+
+		return elsToSubmit;
 	}
 
 	/**
@@ -503,7 +513,7 @@ export default class bForm extends iData {
 	 * Returns values of child form elements grouped by names
 	 * @param [validation] - if you need only valid value
 	 */
-	async values(validation?: ValidateParams): Promise<Dictionary<CanArray<FormValue>>> {
+	async values(validation?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
 		const
 			els = validation ? await this.validate(validation) : await this.elements;
 
