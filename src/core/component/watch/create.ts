@@ -215,23 +215,23 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			switch (info.type) {
 				case 'field':
-				case 'system':
-					if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
+				case 'system': {
+					const
+						propCtx = info.ctx.unsafe;
+
+					if (!Object.getOwnPropertyDescriptor(propCtx, info.name)?.get) {
 						proxy[watcherInitializer]?.();
 						proxy = watchInfo.value;
 
 						mute(proxy);
 
 						if (info.type === 'system') {
-							proxy[info.name] = info.ctx[info.name];
+							propCtx.$set(proxy, info.name, propCtx[info.name]);
 						}
 
 						unmute(proxy);
 
-						const
-							propCtx = info.ctx.unsafe;
-
-						Object.defineProperty(info.ctx, info.name, {
+						Object.defineProperty(propCtx, info.name, {
 							enumerable: true,
 							configurable: true,
 
@@ -245,6 +245,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					}
 
 					break;
+				}
 
 				case 'attr': {
 					const

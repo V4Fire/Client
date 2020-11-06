@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.94 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of watchers based on accessors `core/component/watch/create`
+
 ## v3.0.0-rc.93 (2020-11-03)
 
 #### :boom: Breaking Change

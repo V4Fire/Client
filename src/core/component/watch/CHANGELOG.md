@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.94 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of watchers based on accessors
+
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :house: Internal
+
+* Added support of `functionalWatching`
+
 ## v3.0.0-rc.88 (2020-10-13)
 
 #### :house: Internal
