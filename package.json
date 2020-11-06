@@ -112,7 +112,7 @@
     "svgo-loader": "^2.2.1",
     "svgo-sync": "^0.5.1",
     "terser-webpack-plugin": "^4.2.2",
-    "ts-loader": "^8.0.4",
+    "ts-loader": "^8.0.9",
     "typograf": "^6.11.1",
     "uniconf": "^2.1.1",
     "upath": "^1.2.0",
