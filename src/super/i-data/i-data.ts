@@ -798,7 +798,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				$a.setImmediate(this.initLoad.bind(this), group);
 
 			} else {
-				$a.setImmediate(() => this[m](...this.getDefaultRequestParams(key)), group);
+				$a.setImmediate(() => this[m](...this.getDefaultRequestParams(key) ?? []), group);
 			}
 		}
 	}
