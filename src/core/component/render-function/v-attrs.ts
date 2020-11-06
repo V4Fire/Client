@@ -147,7 +147,7 @@ export function applyDynamicAttrs(vData: VNodeData, component?: ComponentMeta): 
 
 			} else if (key.startsWith('v-')) {
 				const
-					[, rawName, name, arg, rawModifiers] = vAttrsRgxp.exec(key);
+					[, rawName, name, arg, rawModifiers] = vAttrsRgxp.exec(key)!;
 
 				let
 					modifiers;
