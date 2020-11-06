@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.95 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed firing `close` event on swipe closing `base/b-bottom-slide`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bBottomSlide`
+
 ## v3.0.0-rc.93 (2020-11-03)
 
 #### :boom: Breaking Change

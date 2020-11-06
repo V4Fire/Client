@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.95 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed firing `close` event on swipe closing
+
+#### :house: Internal
+
+* Fixed ESLint warnings
+
 ## v3.0.0-rc.35 (2020-07-02)
 
 #### :bug: Bug Fix
