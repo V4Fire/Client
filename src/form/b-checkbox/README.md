@@ -100,14 +100,6 @@ If a key from the response data is matched with a component method, this method 
 
 In other cases, the response value is interpreted as the component value.
 
-## Validation
-
-Because the component extends from [[iInput]], it supports validation API.
-
-```
-< b-checkbox :name = 'adult' | :validators = ['required'] | @validationEnd = handler
-```
-
 ## Slots
 
 The component supports a few of slots to provide:
@@ -127,6 +119,14 @@ The component supports a few of slots to provide:
   < template #check = {label}
     < .label
       {{ label }}
+```
+
+## Validation
+
+Because the component extends from [[iInput]], it supports validation API.
+
+```
+< b-checkbox :name = 'adult' | :validators = ['required'] | @validationEnd = handler
 ```
 
 ## Hierarchy of checkboxes
