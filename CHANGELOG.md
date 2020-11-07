@@ -28,6 +28,51 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed ts errors
   * Added tests
 
+## v3.0.0-rc.95 (2020-11-06)
+
+#### :house: Internal
+
+* Updated to `typescript@4.1.1-rc`
+
+## v3.0.0-rc.94 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of watchers based on accessors `core/component/watch/create`
+
+## v3.0.0-rc.93 (2020-11-03)
+
+#### :boom: Breaking Change
+
+* Changed an interface `patchComponentVData` `core/component/render-function`
+
+#### :bug: Bug Fix
+
+* Fixed providing of attributes `core/component/flyweight`
+
+## v3.0.0-rc.92 (2020-11-03)
+
+#### :rocket: New Feature
+
+* `core/component/vnode`:
+  * Added `patchComponentVData`
+  * Added `parseStyle`
+
+#### :bug: Bug Fix
+
+* Fixed providing of styles `core/component`
+
+#### :house: Internal
+
+* Now the component is smart (by default, the regular) `bDummy`
+* Refactoring:
+  * `core/component/engines/vue`
+  * `core/component/render-function`
+  * `core/component/flyweight`
+
+#### :nail_care: Polish
+
+* Added tests `iBlock`
 
 ## v3.0.0-rc.91 (2020-10-29)
 

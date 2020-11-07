@@ -132,7 +132,7 @@ export default class Daemons extends Friend {
 			};
 
 			if (asyncOptions.label == null) {
-				delete asyncOptions.label;
+				Object.delete(asyncOptions, 'label');
 			}
 
 			ctx.async.setImmediate(() => fn.apply(ctx, args), <any>asyncOptions);

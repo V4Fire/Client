@@ -13,8 +13,15 @@
 
 import { components } from 'core/component/const';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
-import { RenderContext, VNode, NormalizedScopedSlot } from 'core/component/engines';
-import { ComponentVNodeData, ComponentModelVNodeData } from 'core/component/vnode/interface';
+import { RenderContext, VNode, VNodeData, NormalizedScopedSlot } from 'core/component/engines';
+
+import {
+
+	ComponentVNodeData,
+	ComponentModelVNodeData,
+	PatchComponentVDataOptions
+
+} from 'core/component/vnode/interface';
 
 export * from 'core/component/vnode/interface';
 
@@ -164,4 +171,113 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 	}
 
 	return res;
+}
+
+/**
+ * Patches the specified component VNode data object by using another VNode data object
+ *
+ * @param data - VNode data object
+ * @param anotherData - another VNode data object
+ * @param [opts] - additional options
+ */
+export function patchComponentVData(
+	data: VNodeData | ComponentVNodeData,
+	anotherData: CanUndef<VNodeData | ComponentVNodeData>,
+	opts?: PatchComponentVDataOptions
+): VNodeData | ComponentVNodeData {
+	if (anotherData == null) {
+		return data;
+	}
+
+	data.staticClass = data.staticClass ?? '';
+
+	if (Object.isTruly(anotherData.staticClass)) {
+		data.staticClass += ` ${anotherData.staticClass}`;
+	}
+
+	if (Object.isTruly(anotherData.class)) {
+		data.class = Array.concat([], data.class, anotherData.class);
+	}
+
+	if (Object.isTruly(anotherData.style)) {
+		data.style = parseStyle(data.style, parseStyle(anotherData.style));
+	}
+
+	if (Object.isTruly(anotherData.attrs) && opts?.patchAttrs) {
+		data.attrs = Object.assign(data.attrs ?? {}, anotherData.attrs);
+	}
+
+	data.ref = anotherData.ref;
+	data.refInFor = anotherData.refInFor;
+
+	data.directives = Array.concat([], data.directives, anotherData.directives);
+	data.on = data.on ?? {};
+
+	if (anotherData.nativeOn) {
+		const
+			{on} = data;
+
+		for (let o = anotherData.nativeOn, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const key = keys[i];
+			on[key] = Array.concat([], on[key], o[key]);
+		}
+	}
+
+	return data;
+}
+
+/**
+ * Parses the specified style value and returns a dictionary with styles
+ *
+ * @param style - original style
+ * @param [acc] - accumulator
+ *
+ * @example
+ * ```js
+ * // {color: 'red', background: 'blue'}
+ * parseStyle(['color: red', {background: 'blue'}])
+ * ```
+ */
+export function parseStyle(
+	style: CanUndef<CanArray<string | object>>,
+	acc: Dictionary<string> = {}
+): Dictionary<string> {
+	if (!Object.isTruly(style)) {
+		return acc;
+	}
+
+	if (Object.isDictionary(style)) {
+		Object.assign(acc, style);
+		return acc;
+	}
+
+	if (Object.isString(style)) {
+		const
+			styles = style.split(';');
+
+		for (let i = 0; i < styles.length; i++) {
+			const
+				chunks = styles[i].split(':');
+
+			acc[chunks[0].trim()] = chunks[1].trim();
+		}
+
+		return acc;
+	}
+
+	if (Object.isArray(style)) {
+		for (let i = 0; i < style.length; i++) {
+			const
+				el = style[i];
+
+			if (Object.isDictionary(el)) {
+				Object.assign(acc, el);
+
+			} else {
+				parseStyle(<CanArray<string>>el, acc);
+			}
+		}
+	}
+
+	return acc;
 }
