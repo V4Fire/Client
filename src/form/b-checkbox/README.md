@@ -19,6 +19,14 @@ Checkboxes can be combined in groups with the feature of multiple checking.
 
 * The component has `skeletonMarker`.
 
+## Modifiers
+
+| Name      | Description             | Values                                 | Default |
+| --------- | ----------------------- | -------------------------------------- | ------- |
+| `checked` | The checkbox is checked | `'true' \| 'false' \| 'indeterminate'` | -       |
+
+Also, you can see the [[iSize]] trait and the [[iInput]] component.
+
 ## Events
 
 | EventName      | Description                                                       | Payload description                                                      | Payload         |
@@ -27,7 +35,7 @@ Checkboxes can be combined in groups with the feature of multiple checking.
 | `uncheck`      | The checkbox has been unchecked                                   | -                                                                        | -               |
 | `actionChange` | A value of the component has been changed due to some user action | Component value                                                          | `this['Value']` |
 
-Also, the component supports all events from [[iInput]].
+Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
 ## Usage
 
