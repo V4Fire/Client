@@ -66,7 +66,15 @@ module.exports = (page) => {
 		});
 
 		describe('open', () => {
-			it('on method call', async () => {
+			it('emits an open event', async () => {
+				await render();
+				const subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
+				await sidebar.evaluate((ctx) => ctx.open());
+				await h.bom.waitForIdleCallback(page);
+				await expectAsync(subscribe).toBeResolved();
+			});
+
+			it('shows the sidebar on method call', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
@@ -77,7 +85,18 @@ module.exports = (page) => {
 		});
 
 		describe('close', () => {
-			it('on overlay click', async () => {
+			it('emits a close event', async () => {
+				await render();
+				await sidebar.evaluate((ctx) => ctx.open());
+				await h.bom.waitForIdleCallback(page);
+
+				const subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('close', res)));
+				await sidebar.evaluate((ctx) => ctx.close());
+
+				await expectAsync(subscribe).toBeResolved();
+			});
+
+			it('closes the sidebar on overlay click', async () => {
 				await page.evaluate(() => {
 					const styles = document.createElement('style');
 
@@ -104,7 +123,7 @@ module.exports = (page) => {
 				expect(classList).not.toContain('b-sidebar_opened_true');
 			});
 
-			it('on esp press', async () => {
+			it('closes the sidebar on esp press', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
@@ -114,7 +133,7 @@ module.exports = (page) => {
 				expect(classList).not.toContain('b-sidebar_opened_true');
 			});
 
-			it('on close method call', async () => {
+			it('closes the sidebar on close method call', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
