@@ -20,7 +20,7 @@ Changelog
 * Added missing `over-wrapper` element
 
 #### :house: Internal
-[
+
 * Fixed ESLint errors
-* Fixed ts errors
-* Added tests]
+* Fixed TS errors
+* Added tests
