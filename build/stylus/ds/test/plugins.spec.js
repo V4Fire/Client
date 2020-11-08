@@ -18,7 +18,7 @@ const
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 describe('build/stylus/plugins', () => {
-	it('should return a value from getDSOptions', () => {
+	it('should return a value from getDSFieldValue', () => {
 		const
 			stylus = require('stylus');
 
@@ -26,7 +26,7 @@ describe('build/stylus/plugins', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
 			plugins = createPlugins({ds, cssVariables, stylus});
 
-		stylus.render('getDSOptions("colors", "green.0")', {use: [plugins]}, (err, hex) => {
+		stylus.render('getDSFieldValue("colors", "green.0")', {use: [plugins]}, (err, hex) => {
 			expect(hex).toEqual(stylus.render(plainMock.colors.green[0]));
 		});
 	});
@@ -65,8 +65,16 @@ describe('build/stylus/plugins', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
 			plugins = createPlugins({ds, cssVariables, stylus});
 
-		stylus.render('getDSTextStyles(Base)', {use: [plugins]}, (err, value) => {
-			expect(value).toBeTruthy();
+		stylus.render('getDSTextStyles(Base)', {use: [plugins]}, (err, text) => {
+			const
+				mock = unThemeTextMock.text['Base'],
+				resultObj = JSON.parse(text);
+
+			expect(resultObj.fontFamily).toEqual(`'${mock.fontFamily}'`);
+			expect(resultObj.fontWeight).toEqual(`${mock.fontWeight}`);
+
+			expect(resultObj.fontSize).toEqual(mock.fontSize);
+			expect(resultObj.lineHeight).toEqual(mock.lineHeight);
 		});
 	});
 
@@ -92,7 +100,7 @@ describe('build/stylus/plugins', () => {
 		expect(() => createPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
 	});
 
-	it('should return a value from getDSOptions for a themed design system with a non themed field', () => {
+	it('should return a value from getDSFieldValue for a themed design system with a themed field', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -101,12 +109,32 @@ describe('build/stylus/plugins', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(unThemeTextMock),
 			plugins = createPlugins({ds, cssVariables, theme, stylus});
 
-		stylus.render('getDSOptions("colors" "red.0")', {use: [plugins]}, (err, hex) => {
+		stylus.render('getDSFieldValue("colors" "red.0")', {use: [plugins]}, (err, hex) => {
 			expect(hex.trim()).toEqual('\'var(--colors-red-0)\'');
 		});
 	});
 
-	it('should return a value from getDSOptions for a themed design system for a non themed field', () => {
+	it('should return a variables dict from getDSTextStyles for a themed design system', () => {
+		const
+			stylus = require('stylus'),
+			theme = 'day';
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(fullThemedMock),
+			plugins = createPlugins({ds, cssVariables, theme, includeThemes: ['day', 'night'], stylus});
+
+		stylus.render('getDSTextStyles("Heading1")', {use: [plugins]}, (err, text) => {
+			const
+				mock = unThemeTextMock.text.Heading1,
+				resultObj = JSON.parse(text);
+
+			Object.keys(mock).forEach((key) => {
+				expect(resultObj[key]).toEqual(`'var(--text-Heading1-${key})'`);
+			});
+		});
+	});
+
+	it('should return a value from getDSTextStyles for a themed design system and a non themed field', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -116,7 +144,15 @@ describe('build/stylus/plugins', () => {
 			plugins = createPlugins({ds, cssVariables, theme, stylus});
 
 		stylus.render('getDSTextStyles("Heading-3")', {use: [plugins]}, (err, text) => {
-			expect(text).toBeTruthy();
+			const
+				mock = unThemeTextMock.text['Heading-3'],
+				resultObj = JSON.parse(text);
+
+			expect(resultObj.fontFamily).toEqual(`'${mock.fontFamily}'`);
+			expect(resultObj.fontWeight).toEqual(`${mock.fontWeight}`);
+
+			expect(resultObj.fontSize).toEqual(mock.fontSize);
+			expect(resultObj.lineHeight).toEqual(mock.lineHeight);
 		});
 	});
 });

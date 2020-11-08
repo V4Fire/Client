@@ -15,7 +15,7 @@
  * @param {boolean=} [$base]
  */
 c($kit, $id = null, $reserved = false, $base = false)
-	if getDSOptions("colors")
+	if getDSFieldValue("colors")
 		$color = getDSColor($kit, $id)
 		$value = type($color) == "string" ? convert($color) : $color
 		return $value
@@ -58,7 +58,7 @@ t($name)
  * r(big, '$s 0 $s') -> border-radius 16px 0 16px
  */
 r($name, $pos = null)
-	$val = getDSOptions("rounding", $name)
+	$val = getDSFieldValue("rounding", $name)
 
 	if $val
 		if $pos

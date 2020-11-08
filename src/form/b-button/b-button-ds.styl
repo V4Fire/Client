@@ -20,7 +20,7 @@ b-button
 
 	createStyles($obj)
 		&^[0]
-			for $key, $val in getDSOptions(rounding)
+			for $key, $val in getDSFieldValue(rounding)
 				&_rounding_{$key} ^[0]__button
 					border-radius $val
 

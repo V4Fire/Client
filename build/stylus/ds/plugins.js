@@ -103,20 +103,24 @@ module.exports = function createPlugins({
 		 * @returns {!Object}
 		 */
 		api.define(
-			'getDSOptions',
+			'getDSFieldValue',
 			({string} = {}, {string: value} = {}) => {
 				if (string === undefined) {
 					return ds;
 				}
 
 				const
-					path = isOneTheme ? [string, ...getThemedPathChunks(string, theme, themedFields)] : [string];
+					path = !isOneTheme && isThemesIncluded ?
+						[string, ...getThemedPathChunks(string, theme, themedFields)] :
+						[string];
 
 				if (Object.isString(value)) {
 					path.push(value);
 				}
 
-				return isThemesIncluded ? stylus.utils.coerce($C(cssVariables).get(path.join('.'))) : $C(ds).get(path.join('.'));
+				return isThemesIncluded ?
+					stylus.utils.coerce($C(cssVariables).get(path.join('.'))) :
+					$C(ds).get(path.join('.'));
 			}
 		);
 
@@ -154,7 +158,7 @@ module.exports = function createPlugins({
 			}
 
 			const
-				dsPath = isOneTheme ? getThemedPathChunks(head, theme, themedFields) : [head, name];
+				dsPath = isOneTheme ? [head, ...getThemedPathChunks(head, theme, themedFields), name] : [head, name];
 
 			return stylus.utils.coerce($C(ds).get(dsPath), true);
 		});
