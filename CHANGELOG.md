@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed a block style properties (`p.overlayBg`, `p.overlayTansition`) `base/b-sidebar`, prefer to use `provide.classes`.
+* Removed a block style properties (`p.overlayBg`, `p.overlayTansition`) `base/b-sidebar`, prefer to use `provide.classes` or style override
 
 #### :bug: Bug Fix
 

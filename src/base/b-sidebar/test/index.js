@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable max-lines-per-function */
-
 /**
  * @typedef {import('playwright').Page} Page
  */

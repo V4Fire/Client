@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Removed a block style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes`.
+* Removed a block style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes` or style override
 
 #### :bug: Bug Fix
 

@@ -33,44 +33,44 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 		]
 	};
 
-	/** @see iLockPageScroll.lock */
+	/** @see [[iLockPageScroll.lock]] */
 	@wait('loading')
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this);
 	}
 
-	/** @see iLockPageScroll.unlock */
+	/** @see [[iLockPageScroll.unlock]] */
 	unlock(): Promise<void> {
 		return iLockPageScroll.unlock(this);
 	}
 
-	/** @see iOpenToggle.open */
+	/** @see [[iOpenToggle.open]] */
 	open(): Promise<boolean> {
 		return iOpenToggle.open(this);
 	}
 
-	/** @see iOpenToggle.close */
+	/** @see [[iOpenToggle.close]] */
 	close(): Promise<boolean> {
 		return iOpenToggle.close(this);
 	}
 
-	/** @see iOpenToggle.toggle */
+	/** @see [[iOpenToggle.toggle]] */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
 	}
 
-	/** @see iOpenToggle.onOpenedChange */
+	/** @see [[iOpenToggle.onOpenedChange]] */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	onOpenedChange(e: ModEvent | SetModEvent): void {
 		// ...
 	}
 
-	/** @see iOpenToggle.onKeyClose */
+	/** @see [[iOpenToggle.onKeyClose]] */
 	onKeyClose(e: KeyboardEvent): Promise<void> {
 		return iOpenToggle.onKeyClose(this, e);
 	}
 
-	/** @see iOpenToggle.onTouchClose */
+	/** @see [[iOpenToggle.onTouchClose]] */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <CanUndef<Element>>e.target;
@@ -95,7 +95,7 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 		};
 	}
 
-	/** @see iOpenToggle.initCloseHelpers */
+	/** @see [[iOpenToggle.initCloseHelpers]] */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
