@@ -114,7 +114,7 @@ The component supports the default slot to provide associated components.
 
 The component provides a bunch of methods to reset/clear/validate values of associate components: `reset`, `clear`, `validate`.
 To submit the data manually, use the `submit` method.
-Also, the component provides some getters to access associated components: `elements`, `submits`, `values`.
+Also, the component provides some getters/methods to access associated components: `elements`, `submits`, `getValues`.
 
 ### Validation
 

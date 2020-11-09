@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { Option } from 'core/prelude/structures';
-import { deprecate } from 'core/functools/deprecation';
+import { deprecate, deprecated } from 'core/functools/deprecation';
 
 //#if runtime has core/data
 import 'core/data';
@@ -539,7 +539,7 @@ export default class bForm extends iData implements iVisible {
 	 * Returns values of associated components grouped by names
 	 * @param [validate] - if true, the method returns values only when the data is valid
 	 */
-	async values(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
+	async getValues(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
 		const
 			els = validate ? await this.validate(validate) : await this.elements;
 
@@ -575,6 +575,15 @@ export default class bForm extends iData implements iVisible {
 		}
 
 		return {};
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bForm.getValues]]
+	 */
+	@deprecated({renamedTo: 'getValues'})
+	async values(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
+		return this.getValues(validate);
 	}
 
 	/**

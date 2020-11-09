@@ -19,12 +19,14 @@ Changelog
 * Removed the `form` ref and block
 * Changed the default value of `method` from `add` to `post`
 * Deprecated `ValidationError.el` and `ValidationError.validator`
+* Deprecated `values`
 
 #### :rocket: New Feature
 
 * Added `getElValueToSubmit`
 * Added the `submitEnd` event
 * Added `ValidationError.component` and `ValidationError.error`
+* Added `getValues`
 
 #### :house: Internal
 

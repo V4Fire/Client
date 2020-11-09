@@ -24,7 +24,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Changed the root tag `div` to `form`
   * Removed the `form` ref and block
   * Changed the default value of `method` from `add` to `post`
+  * Now `validate` returns `ValidationError` in case of failed validation
+  * Renamed `ValidateParams` to `ValidateOptions`
   * Deprecated `ValidationError.el` and `ValidationError.validator`
+  * Deprecated `values`
 
 * `iInput`:
   * Removed `valueKey`
@@ -34,10 +37,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `iAccess`:
   * Removed helpers for disabling
   * Removed progress helpers
-
-* `bForm`:
-  * Now `validate` returns `ValidationError` in case of failed validation
-  * Renamed `ValidateParams` to `ValidateOptions`
 
 #### :rocket: New Feature
 
@@ -53,6 +52,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `getElValueToSubmit`
   * Added the `submitEnd` event
   * Added `ValidationError.component` and `ValidationError.error`
+  * Added `getValues`
 
 * `iInput`:
   * Now `formValueConverter` can be provided as an array
