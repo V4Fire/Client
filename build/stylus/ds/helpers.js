@@ -12,6 +12,17 @@ const
 	$C = require('collection.js');
 
 /**
+ * Returns a css variable name created
+ * from the specified path with a dot delimiter
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function createVariableName(path) {
+	return `--${path.split('.').join('-')}`;
+}
+
+/**
  * Sets a variable into specified dictionary by the specified path
  *
  * @param {Object} vars
@@ -21,10 +32,11 @@ const
  */
 function saveVariable(vars, path, dsValue, theme) {
 	const
-		variable = `--${path.split('.').join('-')}`,
+		variable = createVariableName(path),
 		mapValue = [variable, dsValue];
 
 	$C(vars).set(`var(${variable})`, path);
+	$C(vars).set(`var(${variable}-diff)`, `diff.${path}`);
 
 	if (theme === undefined) {
 		vars.map[path] = mapValue;
@@ -185,6 +197,7 @@ function getThemedPathChunks(field, theme, fieldsWithTheme) {
 
 module.exports = {
 	saveVariable,
+	createVariableName,
 	createDesignSystem,
 	createPath,
 	getThemedPathChunks

@@ -13,7 +13,7 @@ const
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 /**
- * Returns a Design System object
+ * Returns a design system object
  * @returns {DesignSystem|null}
  */
 exports.getDS = function getDS() {
@@ -31,7 +31,7 @@ exports.getDS = function getDS() {
 };
 
 /**
- * Returns available themes from a Design System package
+ * Returns available themes from a design system package
  *
  * @param {DesignSystem} ds
  * @param {string[]|boolean} buildThemes
@@ -71,7 +71,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 };
 
 /**
- * Returns modifier values grouped by component names from a Design System package
+ * Returns modifier values grouped by component names from a design system package
  * @returns {Object}
  */
 exports.getDSComponentMods = function getDSComponentMods() {

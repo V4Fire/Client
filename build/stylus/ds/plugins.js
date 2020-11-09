@@ -21,6 +21,7 @@ const
  * @param {DesignSystem} ds - stylus-ready design system object
  * @param {Object} cssVariables
  * @param {string} [theme] - current theme
+ * @param {boolean} [includeVars] - true, if need to provide values only as css-variables
  * @param {boolean|string[]} [includeThemes] - flag or set of themes provided to runtime
  * @param {Object} [stylus=]
  *
@@ -30,6 +31,7 @@ module.exports = function createPlugins({
 	ds,
 	cssVariables,
 	theme,
+	includeVars,
 	includeThemes,
 	stylus = require('stylus')
 }) {
@@ -64,11 +66,13 @@ module.exports = function createPlugins({
 
 				if (value) {
 					const
-						__vars__ = $C(cssVariables).get(`components.${string}`);
+						__vars__ = $C(cssVariables).get(`components.${string}`),
+						__diffVars__ = $C(cssVariables).get(`diff.components.${string}`);
 
 					return stylus.utils.coerce({
 						...value,
-						__vars__
+						__vars__,
+						__diffVars__
 					}, true);
 				}
 
@@ -77,7 +81,7 @@ module.exports = function createPlugins({
 		);
 
 		/**
-		 * Returns Design System css variables with its values
+		 * Returns design system css variables with its values
 		 *
 		 * @param {string} [theme]
 		 * @returns {!Object}
@@ -96,7 +100,7 @@ module.exports = function createPlugins({
 		});
 
 		/**
-		 * Returns a part of the Design System by the specified path or the whole object
+		 * Returns a part of a design system by the specified path or the whole object
 		 *
 		 * @param {string} [string] - first level field (colors, rounding, etc.)
 		 * @param {!Object} [value] - field path
@@ -118,7 +122,7 @@ module.exports = function createPlugins({
 					path.push(value);
 				}
 
-				return isThemesIncluded ?
+				return isThemesIncluded || includeVars ?
 					stylus.utils.coerce($C(cssVariables).get(path.join('.'))) :
 					$C(ds).get(path.join('.'));
 			}
@@ -158,13 +162,14 @@ module.exports = function createPlugins({
 			}
 
 			const
-				dsPath = isOneTheme ? [head, ...getThemedPathChunks(head, theme, themedFields), name] : [head, name];
+				dsPath = isOneTheme ? [head, ...getThemedPathChunks(head, theme, themedFields), name] : [head, name],
+				from = includeVars ? cssVariables : ds;
 
-			return stylus.utils.coerce($C(ds).get(dsPath), true);
+			return stylus.utils.coerce($C(from).get(dsPath), true);
 		});
 
 		/**
-		 * Returns color(s) from the Design System by the specified name and identifier (optional)
+		 * Returns color(s) from a design system by the specified name and the specified identifier (optional)
 		 *
 		 * @param {!Object} name
 		 * @param {!Object} [id]
@@ -196,7 +201,7 @@ module.exports = function createPlugins({
 					path.push(String(id));
 				}
 
-				return isThemesIncluded ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(ds).get(path);
+				return isThemesIncluded || includeVars ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(ds).get(path);
 			}
 		);
 

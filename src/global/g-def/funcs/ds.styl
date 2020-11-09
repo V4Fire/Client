@@ -7,7 +7,7 @@
  */
 
 /**
- * Returns a color from the global kits or from Design System
+ * Returns a color from the global kits or from a design system
  *
  * @param {string} $kit
  * @param {number|string} [$id]
@@ -23,7 +23,7 @@ c($kit, $id = null, $reserved = false, $base = false)
 	getGlobalColor($kit, $id || null, $reserved, $base)
 
 /**
- * Returns a background rule from Design System styles by the specified name and parameters
+ * Returns a background rule from design system styles by the specified name and parameters
  *
  * @param {string} $name
  * @param {string=} [$repeat]
@@ -38,7 +38,7 @@ i($name, $repeat = no-repeat, $align = center)
 		size unit(convert($chunks[0]), "px")
 
 /**
- * Returns text style rules from Design System styles by the specified name
+ * Returns text style rules from design system styles by the specified name
  * @param {string} $name - text style name
  */
 t($name)
@@ -49,7 +49,7 @@ t($name)
 		interpolate-props($obj)
 
 /**
- * Returns a border-radius rule from Design System styles by the specified name and position
+ * Returns a border-radius rule from design system styles by the specified name and position
  *
  * @param {string} $name - border-radius DS name
  * @param {string} [$pos] - %s tokens-styled string for multiple border-radius values
@@ -69,19 +69,29 @@ r($name, $pos = null)
 
 /**
  * Generates necessary rules for the specified component options and factory.
- * The function is used to integrate a Design System.
+ * The function is used to integrate a design system.
  *
  * @param $p
  * @param $fn
  */
 generateRules($p, $fn)
-	//#if runtime has ds-diff
 	if !$p.skipDsInheritance
+		//#if runtime has ds/include-vars
+		$fn($p.__vars__)
+		//#endif
+
+		//#unless runtime has ds/include-vars
+		$fn($p)
+		//#endunless
+
+		//#if runtime has ds/diff
 		&_diff_true
 			$fn($p.__diffVars__)
 
 		&_diff_false
 			$fn($p.__vars__)
+		//#endif
+
+		return
 
 	return
-	//#endif
