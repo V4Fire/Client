@@ -537,15 +537,15 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Returns values of associated components grouped by names
-	 * @param [validation] - if you need only valid values
+	 * @param [validate] - if true, the method returns values only when the data is valid
 	 */
-	async values(validation?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
+	async values(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
 		const
-			els = validation ? await this.validate(validation) : await this.elements;
+			els = validate ? await this.validate(validate) : await this.elements;
 
 		if (Object.isArray(els)) {
 			const
-				result = {},
+				res = {},
 				tasks = <Array<Promise<unknown>>>[];
 
 			for (let i = 0; i < els.length; i++) {
@@ -555,7 +555,7 @@ export default class bForm extends iData implements iVisible {
 				const
 					{name} = el;
 
-				if (name == null || name === '' || result.hasOwnProperty(name)) {
+				if (name == null || name === '' || res.hasOwnProperty(name)) {
 					continue;
 				}
 
@@ -565,16 +565,13 @@ export default class bForm extends iData implements iVisible {
 
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (val !== undefined) {
-						result[name] = val;
+						res[name] = val;
 					}
 				})());
 			}
 
-			await Promise.all(
-				tasks
-			);
-
-			return result;
+			await Promise.all(tasks);
+			return res;
 		}
 
 		return {};
