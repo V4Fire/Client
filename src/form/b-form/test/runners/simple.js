@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	{createFormAndEnvironment} = include('src/form/b-form/test/helpers');
 
 /**
  * @param {Page} page
@@ -26,84 +26,9 @@ module.exports = (page) => {
 	});
 
 	describe('b-form simple usage', () => {
-		const
-			q = '[data-id="target"]';
-
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const
-					formConverter = (v) => v.reduce((res, el) => res + Number(el), 0);
-
-				const scheme = [
-					{
-						content: {
-							default: {
-								tag: 'b-form',
-
-								attrs: {
-									id: 'my-form',
-									'data-id': 'target',
-									...attrs
-								}
-							}
-						}
-					},
-
-					{
-						content: {
-							default: {
-								tag: 'b-checkbox',
-								attrs: {
-									name: 'adult',
-									form: 'my-form',
-									validators: [['required', {msg: 'REQUIRED!'}]]
-								}
-							}
-						}
-					},
-
-					{
-						content: {
-							default: {
-								tag: 'b-input-hidden',
-
-								attrs: {
-									name: 'user',
-									value: '1',
-									form: 'my-form',
-									formConverter
-								}
-							}
-						}
-					},
-
-					{
-						content: {
-							default: {
-								tag: 'b-input-hidden',
-
-								attrs: {
-									name: 'user',
-									value: 2,
-									default: 5,
-									form: 'my-form',
-									formConverter
-								}
-							}
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-dummy', scheme);
-			}, attrs);
-
-			await h.bom.waitForIdleCallback(page);
-			return h.component.waitForComponent(page, q);
-		};
-
 		it('getting form elements', async () => {
 			const
-				target = await init();
+				target = await createFormAndEnvironment(page);
 
 			expect(
 				await target.evaluate(async (ctx) => {
@@ -116,7 +41,7 @@ module.exports = (page) => {
 
 		it('getting form values', async () => {
 			const
-				target = await init();
+				target = await createFormAndEnvironment(page);
 
 			expect(await target.evaluate((ctx) => ctx.getValues(false)))
 				.toEqual({user: 3});
@@ -127,7 +52,7 @@ module.exports = (page) => {
 
 		it('clearing form values', async () => {
 			const
-				target = await init();
+				target = await createFormAndEnvironment(page);
 
 			expect(
 				await target.evaluate(async (ctx) => {
@@ -144,7 +69,7 @@ module.exports = (page) => {
 
 		it('resetting form values', async () => {
 			const
-				target = await init();
+				target = await createFormAndEnvironment(page);
 
 			expect(
 				await target.evaluate(async (ctx) => {
@@ -161,7 +86,7 @@ module.exports = (page) => {
 
 		it('validation', async () => {
 			const
-				target = await init();
+				target = await createFormAndEnvironment(page);
 
 			expect(
 				await target.evaluate(async (ctx) => {
@@ -198,7 +123,7 @@ module.exports = (page) => {
 
 		it('listening validation events', async () => {
 			const
-				target = await init();
+				target = await createFormAndEnvironment(page);
 
 			expect(
 				await target.evaluate(async (ctx) => {
