@@ -28,6 +28,7 @@ Changelog
 * Added the `submitEnd` event
 * Added `ValidationError.component` and `ValidationError.error`
 * Added `getValues`
+* Added `toggleControls`
 
 #### :house: Internal
 

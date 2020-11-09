@@ -372,24 +372,9 @@ export default class bForm extends iData implements iVisible {
 	@wait('ready', {defer: true, label: $$.submit})
 	async submit(): Promise<void> {
 		const
-			start = Date.now(),
-			[submits, els] = await Promise.all([this.submits, this.elements]);
+			start = Date.now();
 
-		{
-			const
-				elTasks = <Array<CanPromise<boolean>>>[],
-				submitTasks = <Array<CanPromise<boolean>>>[];
-
-			for (let i = 0; i < els.length; i++) {
-				elTasks.push(els[i].setMod('disabled', true));
-			}
-
-			for (let i = 0; i < submits.length; i++) {
-				submitTasks.push(submits[i].setMod('progress', true));
-			}
-
-			await Promise.all([...elTasks, ...submitTasks]);
-		}
+		await this.toggleControls(true);
 
 		let elsToSubmit = await this.validate({focusOnError: true});
 		elsToSubmit = Object.isArray(elsToSubmit) ? elsToSubmit : [];
@@ -491,21 +476,7 @@ export default class bForm extends iData implements iVisible {
 			await this.async.sleep(delay);
 		}
 
-		{
-			const
-				elTasks = <Array<CanPromise<boolean>>>[],
-				submitTasks = <Array<CanPromise<boolean>>>[];
-
-			for (let i = 0; i < els.length; i++) {
-				elTasks.push(els[i].setMod('disabled', false));
-			}
-
-			for (let i = 0; i < submits.length; i++) {
-				submitTasks.push(submits[i].setMod('progress', false));
-			}
-
-			await Promise.all([...elTasks, ...submitTasks]);
-		}
+		await this.toggleControls(false);
 
 		if (elsToSubmit.length === 0) {
 			return;
@@ -607,6 +578,28 @@ export default class bForm extends iData implements iVisible {
 		}
 
 		return val;
+	}
+
+	/**
+	 * Toggles the status of form controls
+	 * @param freeze - if true, all controls are freeze
+	 */
+	protected async toggleControls(freeze: boolean): Promise<void> {
+		const
+			[submits, els] = await Promise.all([this.submits, this.elements]);
+
+		const
+			tasks = <Array<CanPromise<boolean>>>[];
+
+		for (let i = 0; i < els.length; i++) {
+			tasks.push(els[i].setMod('disabled', freeze));
+		}
+
+		for (let i = 0; i < submits.length; i++) {
+			tasks.push(submits[i].setMod('progress', freeze));
+		}
+
+		await Promise.all(tasks);
 	}
 
 	/** @override */

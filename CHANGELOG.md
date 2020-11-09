@@ -54,6 +54,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added the `submitEnd` event
   * Added `ValidationError.component` and `ValidationError.error`
   * Added `getValues`
+  * Added `toggleControls`
 
 * `iInput`:
   * Now `formValueConverter` can be provided as an array
