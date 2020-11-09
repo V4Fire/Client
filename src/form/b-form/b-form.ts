@@ -351,12 +351,12 @@ export default class bForm extends iData implements iVisible {
 
 		if (valid) {
 			this.emit('validationSuccess');
+			this.emit('validationEnd', true);
 
 		} else {
 			this.emitError('validationFail', failedValidation);
+			this.emit('validationEnd', false, failedValidation);
 		}
-
-		this.emit('validationEnd', valid, failedValidation);
 
 		if (!valid) {
 			return failedValidation;
