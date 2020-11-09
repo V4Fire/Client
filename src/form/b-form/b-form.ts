@@ -12,14 +12,16 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { Option } from 'core/prelude/structures';
+import { deprecate } from 'core/functools/deprecation';
 
 //#if runtime has core/data
 import 'core/data';
 //#endif
 
 import iVisible from 'traits/i-visible/i-visible';
-import iInput, { FormValue, ValidationError } from 'super/i-input/i-input';
+import iInput, { FormValue } from 'super/i-input/i-input';
 
 //#if runtime has bButton
 import bButton from 'form/b-button/b-button';
@@ -40,7 +42,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { ActionFn, ValidateOptions } from 'form/b-form/interface';
+import { ActionFn, ValidateOptions, ValidationError } from 'form/b-form/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'form/b-form/interface';
@@ -322,7 +324,21 @@ export default class bForm extends iData implements iVisible {
 						} catch {}
 					}
 
-					failedValidation = {el, validator: validation};
+					failedValidation = {
+						component: el,
+						error: validation,
+
+						get el() {
+							deprecate({name: 'el', type: 'property', renamedTo: 'component'});
+							return el;
+						},
+
+						get validator() {
+							deprecate({name: 'validator', type: 'property', renamedTo: 'error'});
+							return validation;
+						}
+					};
+
 					valid = false;
 					break;
 				}

@@ -13,8 +13,8 @@ import iInput, { ValidationError as InputValidationError } from 'super/i-input/i
 import { RequestQuery, RequestBody } from 'super/i-data/i-data';
 
 export interface ValidationError<V = unknown> {
-	el: iInput;
-	validator: InputValidationError<V>;
+	component: iInput;
+	error: InputValidationError<V>;
 }
 
 export interface ValidateOptions {

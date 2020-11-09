@@ -24,6 +24,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Changed the root tag `div` to `form`
   * Removed the `form` ref and block
   * Changed the default value of `method` from `add` to `post`
+  * Deprecated `ValidationError.el` and `ValidationError.validator`
 
 * `iInput`:
   * Removed `valueKey`
@@ -51,6 +52,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `bForm`:
   * Added `getElValueToSubmit`
   * Added the `submitEnd` event
+  * Added `ValidationError.component` and `ValidationError.error`
 
 * `iInput`:
   * Now `formValueConverter` can be provided as an array
