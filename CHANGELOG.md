@@ -21,11 +21,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now `toggle` returns a component value `bCheckbox`
 
 * `bForm`:
+  * Now `validate` returns `ValidationError` in case of failed validation
+  * Renamed `ValidateParams` to `ValidateOptions`
   * Changed the root tag `div` to `form`
   * Removed the `form` ref and block
   * Changed the default value of `method` from `add` to `post`
-  * Now `validate` returns `ValidationError` in case of failed validation
-  * Renamed `ValidateParams` to `ValidateOptions`
+  * Removed legacy logic of the `'_'` name
   * Deprecated `ValidationError.el` and `ValidationError.validator`
   * Deprecated `values`
 

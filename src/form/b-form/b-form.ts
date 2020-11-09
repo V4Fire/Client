@@ -294,22 +294,18 @@ export default class bForm extends iData implements iVisible {
 
 		for (let o = await this.elements, i = 0; i < o.length; i++) {
 			const
-				el = o[i];
-
-			const
-				{name} = el;
-
-			if (name == null || name === '') {
-				continue;
-			}
+				el = o[i],
+				elName = el.name;
 
 			const needValidate =
+				elName == null ||
+
 				!this.cache ||
 				!el.cache ||
 
 				!Object.fastCompare(
-					this.field.get(`tmp.${name}`),
-					elValues[name] ?? (elValues[name] = await el.groupFormValue)
+					this.field.get(`tmp.${elName}`),
+					elValues[elName] ?? (elValues[elName] = await el.groupFormValue)
 				);
 
 			if (needValidate) {
@@ -343,7 +339,7 @@ export default class bForm extends iData implements iVisible {
 					break;
 				}
 
-				if (name !== '_') {
+				if (Object.isTruly(el.name)) {
 					elsToSubmit.push(el);
 				}
 			}
@@ -417,32 +413,30 @@ export default class bForm extends iData implements iVisible {
 
 			for (let i = 0; i < elsToSubmit.length; i++) {
 				const
-					el = elsToSubmit[i];
+					el = elsToSubmit[i],
+					key = el.name ?? '';
 
-				const
-					{name} = el;
-
-				if (name == null || name === '' || body.hasOwnProperty(name)) {
+				if (body.hasOwnProperty(key)) {
 					continue;
 				}
-
-				body[name] = true;
 
 				tasks.push((async () => {
 					const
 						val = await this.getElValueToSubmit(el);
 
+					if (val === undefined) {
+						return;
+					}
+
 					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
 						isMultipart = true;
 					}
 
-					body[name] = val;
+					body[key] = val;
 				})());
 			}
 
-			await Promise.all(
-				tasks
-			);
+			await Promise.all(tasks);
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (isMultipart) {
@@ -545,17 +539,15 @@ export default class bForm extends iData implements iVisible {
 
 		if (Object.isArray(els)) {
 			const
-				res = {},
+				body = {},
 				tasks = <Array<Promise<unknown>>>[];
 
 			for (let i = 0; i < els.length; i++) {
 				const
-					el = <iInput>els[i];
+					el = <iInput>els[i],
+					key = el.name ?? '';
 
-				const
-					{name} = el;
-
-				if (name == null || name === '' || res.hasOwnProperty(name)) {
+				if (body.hasOwnProperty(key)) {
 					continue;
 				}
 
@@ -563,15 +555,14 @@ export default class bForm extends iData implements iVisible {
 					const
 						val = await this.getElValueToSubmit(el);
 
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (val !== undefined) {
-						res[name] = val;
+						body[key] = val;
 					}
 				})());
 			}
 
 			await Promise.all(tasks);
-			return res;
+			return body;
 		}
 
 		return {};
@@ -591,6 +582,10 @@ export default class bForm extends iData implements iVisible {
 	 * @param el
 	 */
 	protected async getElValueToSubmit(el: iInput): Promise<unknown> {
+		if (!Object.isTruly(el.name)) {
+			return undefined;
+		}
+
 		let
 			val = await el.groupFormValue;
 

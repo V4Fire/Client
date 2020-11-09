@@ -18,6 +18,7 @@ Changelog
 * Changed the root tag `div` to `form`
 * Removed the `form` ref and block
 * Changed the default value of `method` from `add` to `post`
+* Removed legacy logic of the `'_'` name
 * Deprecated `ValidationError.el` and `ValidationError.validator`
 * Deprecated `values`
 
