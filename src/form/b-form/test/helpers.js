@@ -39,7 +39,10 @@ exports.createFormAndEnvironment = async (page, attrs = {}) => {
 						attrs: {
 							id: 'my-form',
 							'data-id': 'target',
-							...attrs
+							...attrs,
+
+							// eslint-disable-next-line no-eval
+							action: /new /.test(attrs.action) ? eval(attrs.action) : attrs.action
 						}
 					}
 				}
@@ -84,6 +87,33 @@ exports.createFormAndEnvironment = async (page, attrs = {}) => {
 							default: 5,
 							form: 'my-form',
 							formConverter
+						}
+					}
+				}
+			},
+
+			{
+				content: {
+					default: {
+						tag: 'b-input-hidden',
+
+						attrs: {
+							name: 'user',
+							value: 7,
+							form: 'another-form'
+						}
+					}
+				}
+			},
+
+			{
+				content: {
+					default: {
+						tag: 'b-input-hidden',
+
+						attrs: {
+							value: 9,
+							form: 'my-form'
 						}
 					}
 				}

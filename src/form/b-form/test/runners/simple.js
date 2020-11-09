@@ -33,10 +33,10 @@ module.exports = (page) => {
 			expect(
 				await target.evaluate(async (ctx) => {
 					const els = await ctx.elements;
-					return els.map((el) => el.componentName);
+					return els.map((el) => el.name);
 				})
 
-			).toEqual(['b-checkbox', 'b-input-hidden', 'b-input-hidden']);
+			).toEqual(['adult', 'user', 'user', undefined]);
 		});
 
 		it('getting form values', async () => {
@@ -115,10 +115,10 @@ module.exports = (page) => {
 			expect(
 				await target.evaluate(async (ctx) => {
 					const res = await ctx.validate();
-					return res.map((el) => el.componentName);
+					return res.map((el) => el.name);
 				})
 
-			).toEqual(['b-checkbox', 'b-input-hidden', 'b-input-hidden']);
+			).toEqual(['adult', 'user', 'user']);
 		});
 
 		it('listening validation events', async () => {
