@@ -14,10 +14,14 @@ const
 	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
 	{fullThemedMock, unThemeTextMock} = include('build/stylus/ds/test/mocks/ds-themes'),
 	createPlugins = include('build/stylus/ds/plugins'),
-	{createDesignSystem} = include('build/stylus/ds/helpers'),
+	{createDesignSystem, createVariableName} = include('build/stylus/ds/helpers'),
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 describe('build/stylus/plugins', () => {
+	function getCSSVariable(path) {
+		return `'var(${createVariableName(path)})'`;
+	}
+
 	it('should return a value from getDSFieldValue', () => {
 		const
 			stylus = require('stylus');
@@ -100,7 +104,7 @@ describe('build/stylus/plugins', () => {
 		expect(() => createPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
 	});
 
-	it('should return a value from getDSFieldValue for a themed design system with a themed field', () => {
+	it('should return a value from getDSFieldValue for a themed design system', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -110,7 +114,7 @@ describe('build/stylus/plugins', () => {
 			plugins = createPlugins({ds, cssVariables, theme, stylus});
 
 		stylus.render('getDSFieldValue("colors" "red.0")', {use: [plugins]}, (err, hex) => {
-			expect(hex.trim()).toEqual('\'var(--colors-red-0)\'');
+			expect(hex.trim()).toEqual(`${getCSSVariable('colors.red.0')}`);
 		});
 	});
 
@@ -129,7 +133,7 @@ describe('build/stylus/plugins', () => {
 				resultObj = JSON.parse(text);
 
 			Object.keys(mock).forEach((key) => {
-				expect(resultObj[key]).toEqual(`'var(--text-Heading1-${key})'`);
+				expect(resultObj[key]).toEqual(`${getCSSVariable(`text.Heading1.${key}`)}`);
 			});
 		});
 	});
@@ -153,6 +157,36 @@ describe('build/stylus/plugins', () => {
 
 			expect(resultObj.fontSize).toEqual(mock.fontSize);
 			expect(resultObj.lineHeight).toEqual(mock.lineHeight);
+		});
+	});
+
+	it('should return css variables from plugins with an including vars flag', () => {
+		const
+			stylus = require('stylus');
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
+			plugins = createPlugins({ds, cssVariables, stylus, includeVars: true});
+
+		stylus.render('getDSColor("orange", 1)', {use: [plugins]}, (err, hex) => {
+			expect(hex.trim()).toEqual(`${getCSSVariable('colors.orange.0')}`);
+		});
+
+		stylus.render('getDSTextStyles(Small)', {use: [plugins]}, (err, text) => {
+			const
+				resultObj = JSON.parse(text);
+
+			Object.keys(plainMock.text.Small).forEach((key) => {
+				expect(resultObj[key]).toEqual(`${getCSSVariable(`text.Small.${key}`)}`);
+			});
+		});
+
+		stylus.render('getDSFieldValue(rounding small)', {use: [plugins]}, (err, value) => {
+			expect(value.trim()).toEqual(`${getCSSVariable('rounding.small')}`);
+		});
+
+		stylus.render('getDSFieldValue("colors" "blue.1")', {use: [plugins]}, (err, hex) => {
+			expect(hex.trim()).toEqual(`${getCSSVariable('colors.blue.1')}`);
 		});
 	});
 });
