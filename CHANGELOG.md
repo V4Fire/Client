@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added `suspendRequests/unsuspendRequests/waitPermissionToRequest` `iData`
+
 ## v3.0.0-rc.95 (2020-11-06)
 
 #### :house: Internal

@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -12,7 +14,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecate, deprecated } from 'core/functools';
+import SyncPromise from 'core/promise/sync';
+
+import { deprecate, deprecated } from 'core/functools/deprecation';
 
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
@@ -118,7 +122,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly dataProvider?: string;
 
 	/**
-	 * Initial parameters for a data provider instance
+	 * Initial parameters for the data provider instance
 	 */
 	@prop({type: Object, required: false})
 	readonly dataProviderOptions?: ProviderOptions;
@@ -164,6 +168,22 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	@prop({type: [Boolean, Function]})
 	readonly defaultRequestFilter?: RequestFilter;
+
+	/**
+	 * If true, all requests to the data provider are suspended till you don't manually force it.
+	 * This prop is used when you want to organize the lazy loading of components.
+	 * For instance, you can load only components in the viewport.
+	 */
+	@prop(Boolean)
+	readonly suspendRequestsProp: boolean = false;
+
+	/**
+	 * Enables the suspending of all requests to the data provider till you don't manually force it.
+	 * Also, the parameter can contain a promise resolve function.
+	 * @see [[iData.suspendRequestsProp]]
+	 */
+	@system((o) => o.sync.link())
+	suspendRequests?: boolean | Function;
 
 	/**
 	 * @deprecated
@@ -257,7 +277,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Request parameters for a data provider.
+	 * Request parameters for the data provider.
 	 * Keys of the object represent names of data provider methods.
 	 * Parameters that associated with provider methods will be automatically appended to
 	 * invocation as parameters by default.
@@ -306,6 +326,15 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	@system()
 	protected dp?: Provider;
+
+	/**
+	 * Unsuspend requests to the data provider
+	 */
+	unsuspendRequests(): void {
+		if (Object.isFunction(this.suspendRequests)) {
+			this.suspendRequests();
+		}
+	}
 
 	/** @override */
 	initLoad(data?: unknown, opts: InitLoadOptions = {}): CanPromise<void> {
@@ -673,25 +702,33 @@ export default abstract class iData extends iBlock implements iProgress {
 	protected convertDataToDB(data: unknown): this['DB'];
 	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
 		let
-			v = data;
+			val = data;
 
-		if (this.dbConverter) {
-			v = Array.concat([], this.dbConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
+		if (this.dbConverter != null) {
+			const
+				converters = Array.concat([], this.dbConverter);
+
+			if (converters.length > 0) {
+				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
+
+				for (let i = 0; i < converters.length; i++) {
+					val = converters[i].call(this, val);
+				}
+			}
 		}
 
 		const
 			{db, checkDBEquality} = this;
 
 		const canKeepOldData = Object.isFunction(checkDBEquality) ?
-			Object.isTruly(checkDBEquality.call(this, v, db)) :
-			checkDBEquality && Object.fastCompare(v, db);
+			Object.isTruly(checkDBEquality.call(this, val, db)) :
+			checkDBEquality && Object.fastCompare(val, db);
 
 		if (canKeepOldData) {
 			return <O | this['DB']>db;
 		}
 
-		return <O | this['DB']>v;
+		return <O | this['DB']>val;
 	}
 
 	/**
@@ -700,18 +737,26 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
 		let
-			v = data;
+			val = data;
 
 		if (this.componentConverter) {
-			v = Array.concat([], this.componentConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
+			const
+				converters = Array.concat([], this.componentConverter);
+
+			if (converters.length > 0) {
+				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
+
+				for (let i = 0; i < converters.length; i++) {
+					val = converters[i].call(this, val);
+				}
+			}
 		}
 
-		return <O | this['DB']>v;
+		return <O | this['DB']>val;
 	}
 
 	/**
-	 * Initializes component data from a data provider.
+	 * Initializes component data from the data provider.
 	 * This method is used to map `db` to component properties.
 	 * If the method is used, it must return some value that not equals to undefined.
 	 */
@@ -942,6 +987,26 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
+	 * Returns a promise that will be resolved when the component can produce requests to the data provider
+	 */
+	protected waitPermissionToRequest(): Promise<boolean> {
+		if (this.suspendRequests === false) {
+			return SyncPromise.resolve(true);
+		}
+
+		return this.async.promise(() => new Promise((resolve) => {
+			this.suspendRequests = () => {
+				resolve(true);
+				this.suspendRequests = false;
+			};
+
+		}), {
+			label: $$.waitPermissionToRequest,
+			join: true
+		});
+	}
+
+	/**
 	 * Creates a new request to the data provider
 	 *
 	 * @param method - request method
@@ -962,11 +1027,20 @@ export default abstract class iData extends iBlock implements iProgress {
 			reqParams = Object.reject(opts, asyncFields),
 			asyncParams = Object.select(opts, asyncFields);
 
-		const
-			req = this.async.request<RequestResponseObject<D>>((<Function>this.dp[method])(body, reqParams), asyncParams),
-			is = (v) => v !== false;
+		const req = this.waitPermissionToRequest()
+			.then(() => {
+				if (this.dp == null) {
+					throw new ReferenceError('The data provider to request is not defined');
+				}
+
+				const rawRequest = (<Function>this.dp[method])(body, reqParams);
+				return this.async.request<RequestResponseObject<D>>(rawRequest, asyncParams);
+			});
 
 		if (this.mods.progress !== 'true') {
+			const
+				is = (v) => v !== false;
+
 			if (is(opts.showProgress)) {
 				void this.setMod('progress', true);
 			}
