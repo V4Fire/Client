@@ -210,5 +210,72 @@ module.exports = (page) => {
 				3
 			]);
 		});
+
+		it('successful submission with a data provider', async () => {
+			const target = await createFormAndEnvironment(page, {
+				dataProvider: 'demo.Form'
+			});
+
+			await target.evaluate(async (ctx) => {
+				Object.forEach(await ctx.elements, (el) => {
+					if (el.componentName === 'b-checkbox') {
+						el.toggle();
+					}
+				});
+			});
+
+			expect(await target.evaluate((ctx) => ctx.submit())).toEqual({
+				adult: true,
+				user: 3
+			});
+		});
+
+		it('successful submission with a data provider and the custom method', async () => {
+			const target = await createFormAndEnvironment(page, {
+				dataProvider: 'demo.Form',
+				method: 'upd'
+			});
+
+			await target.evaluate(async (ctx) => {
+				Object.forEach(await ctx.elements, (el) => {
+					if (el.componentName === 'b-checkbox') {
+						el.toggle();
+					}
+				});
+			});
+
+			expect(await target.evaluate((ctx) => ctx.submit())).toEqual([
+				'PUT',
+
+				{
+					adult: true,
+					user: 3
+				}
+			]);
+		});
+
+		it('successful submission with a data provider and the custom URL', async () => {
+			const target = await createFormAndEnvironment(page, {
+				dataProvider: 'demo.Form',
+				action: 'some/custom/url'
+			});
+
+			await target.evaluate(async (ctx) => {
+				Object.forEach(await ctx.elements, (el) => {
+					if (el.componentName === 'b-checkbox') {
+						el.toggle();
+					}
+				});
+			});
+
+			expect(await target.evaluate((ctx) => ctx.submit())).toEqual([
+				'PUT',
+
+				{
+					adult: true,
+					user: 3
+				}
+			]);
+		});
 	});
 };
