@@ -164,5 +164,51 @@ module.exports = (page) => {
 				['fail', 'boom!', 'my-form', 3]
 			]);
 		});
+
+		it('successful submission with the action function', async () => {
+			const target = await createFormAndEnvironment(page, {
+				action: 'new Function("body", "return Promise.resolve(body.user)")'
+			});
+
+			await target.evaluate(async (ctx) => {
+				Object.forEach(await ctx.elements, (el) => {
+					if (el.componentName === 'b-checkbox') {
+						el.toggle();
+					}
+				});
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.on('onSubmitStart', (body, ctx) => {
+						res.push(['start', ctx.form.id, ctx.elements.length]);
+					});
+
+					ctx.on('onSubmitSuccess', (response, ctx) => {
+						res.push(['success!', response, ctx.form.id, ctx.elements.length]);
+					});
+
+					ctx.on('onSubmitFail', (err, ctx) => {
+						res.push([err.message, ctx.form.id, ctx.elements.length]);
+					});
+
+					ctx.on('onSubmitEnd', (status, ctx) => {
+						res.push([status.status, status.response, ctx.form.id, ctx.elements.length]);
+					});
+
+					res.push(await ctx.submit());
+					return res;
+				})
+
+			).toEqual([
+				['start', 'my-form', 3],
+				['success!', 3, 'my-form', 3],
+				['success', 3, 'my-form', 3],
+				3
+			]);
+		});
 	});
 };
