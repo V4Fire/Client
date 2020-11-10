@@ -900,7 +900,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Returns default request parameters for the specified method
+	 * Returns default request parameters for the specified data provider method
 	 * @param method
 	 */
 	protected getDefaultRequestParams<T = unknown>(method: string): CanUndef<DefaultRequest<T>> {
