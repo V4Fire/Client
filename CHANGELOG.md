@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added `suspendRequests/unsuspendRequests/waitPermissionToRequest` `iData`
+* Added support of creation flyweight components via `$createElement` `core/component/render-function`
 
 ## v3.0.0-rc.95 (2020-11-06)
 

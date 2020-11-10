@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added support of creation flyweight components via `$createElement`
+
 ## v3.0.0-rc.92 (2020-11-03)
 
 #### :bug: Bug Fix
