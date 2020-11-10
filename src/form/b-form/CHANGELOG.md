@@ -30,6 +30,7 @@ Changelog
 * Added `getValues`
 * Added `toggleControls`
 * Now `ValidationError` is a class
+* Now `submit` returns a value
 * Improved submit events
 
 #### :house: Internal

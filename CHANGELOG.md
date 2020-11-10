@@ -56,6 +56,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `getValues`
   * Added `toggleControls`
   * Now `ValidationError` is a class
+  * Now `submit` returns a value
   * Improved submit events
 
 * `iInput`:

@@ -359,7 +359,7 @@ export default class bForm extends iData implements iVisible {
 	 * @emits `submitEnd(result:` [[SubmitResult]]`, ctx:` [[SubmitCtx]]`)`
 	 */
 	@wait('ready', {defer: true, label: $$.submit})
-	async submit(): Promise<void> {
+	async submit<D = unknown>(): Promise<D> {
 		const
 			start = Date.now();
 
@@ -496,13 +496,15 @@ export default class bForm extends iData implements iVisible {
 				status = 'empty';
 			}
 
-			const submitRes = {
+			const event = {
 				status,
 				response: operationErr != null ? operationErr : formResponse
 			};
 
-			this.emit('submitEnd', submitRes, submitCtx);
+			this.emit('submitEnd', event, submitCtx);
 		}
+
+		return formResponse;
 	}
 
 	/**
@@ -604,7 +606,10 @@ export default class bForm extends iData implements iVisible {
 			tasks.push(submits[i].setMod('progress', freeze));
 		}
 
-		await Promise.all(tasks);
+		try {
+			await Promise.all(tasks);
+
+		} catch {}
 	}
 
 	/** @override */
