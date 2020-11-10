@@ -55,6 +55,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `ValidationError.component` and `ValidationError.error`
   * Added `getValues`
   * Added `toggleControls`
+  * Improved submit events
 
 * `iInput`:
   * Now `formValueConverter` can be provided as an array

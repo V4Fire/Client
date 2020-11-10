@@ -376,19 +376,27 @@ export default class bForm extends iData implements iVisible {
 
 		await this.toggleControls(true);
 
-		let elsToSubmit = await this.validate({focusOnError: true});
-		elsToSubmit = Object.isArray(elsToSubmit) ? elsToSubmit : [];
+		const
+			validation = await this.validate({focusOnError: true}),
+			elsToSubmit = Object.isArray(validation) ? validation : [];
 
 		const submitCtx = {
 			elements: elsToSubmit,
-			form: <any>this
+			form: this
 		};
 
 		let
-			submitErr,
-			res;
+			operationErr,
+			formResponse;
 
-		if (elsToSubmit.length > 0) {
+		if (elsToSubmit.length === 0) {
+			this.emit('submitStart', {}, submitCtx);
+
+			if (!Object.isArray(validation)) {
+				operationErr = validation;
+			}
+
+		} else {
 			let
 				body = {},
 				isMultipart = false;
@@ -449,7 +457,7 @@ export default class bForm extends iData implements iVisible {
 
 			try {
 				if (Object.isFunction(this.action)) {
-					res = await this.action(body, submitCtx);
+					formResponse = await this.action(body, submitCtx);
 
 				} else {
 					let
@@ -459,41 +467,49 @@ export default class bForm extends iData implements iVisible {
 						that = this.base(this.action);
 					}
 
-					res = await (<Function>that[this.method])(body, this.params);
+					formResponse = await (<Function>that[this.method])(body, this.params);
 				}
 
 				Object.assign(this.tmp, body);
 
+				const
+					delay = 0.2.second();
+
+				if (Date.now() - start < delay) {
+					await this.async.sleep(delay);
+				}
+
 			} catch (err) {
-				submitErr = err;
+				operationErr = err;
 			}
-		}
-
-		const
-			delay = 0.2.second();
-
-		if (elsToSubmit.length > 0 && Date.now() - start < delay) {
-			await this.async.sleep(delay);
 		}
 
 		await this.toggleControls(false);
 
-		if (elsToSubmit.length === 0) {
-			return;
-		}
-
 		try {
-			if (submitErr != null) {
-				this.emitError('submitFail', submitErr, submitCtx);
-				throw submitErr;
+			if (operationErr != null) {
+				this.emitError('submitFail', operationErr, submitCtx);
+				throw operationErr;
 			}
 
-			this.emit('submitSuccess', res, submitCtx);
+			if (elsToSubmit.length > 0) {
+				this.emit('submitSuccess', formResponse, submitCtx);
+			}
 
 		} finally {
+			let
+				status = 'success';
+
+			if (operationErr != null) {
+				status = 'fail';
+
+			} else if (elsToSubmit.length === 0) {
+				status = 'empty';
+			}
+
 			const submitRes = {
-				status: submitErr != null ? 'fail' : 'success',
-				response: submitErr != null ? submitErr : res
+				status,
+				response: operationErr != null ? operationErr : formResponse
 			};
 
 			this.emit('submitEnd', submitRes, submitCtx);

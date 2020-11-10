@@ -30,7 +30,7 @@ export interface SubmitCtx {
 	form: bForm;
 }
 
-export type SubmitStatus = 'success' | 'fail';
+export type SubmitStatus = 'success' | 'fail' | 'empty';
 
 export interface SubmitResult<T = unknown> {
 	status: SubmitStatus;

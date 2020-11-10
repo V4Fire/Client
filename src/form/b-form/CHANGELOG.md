@@ -29,6 +29,7 @@ Changelog
 * Added `ValidationError.component` and `ValidationError.error`
 * Added `getValues`
 * Added `toggleControls`
+* Improved submit events
 
 #### :house: Internal
 
