@@ -11,6 +11,10 @@
  * @packageDocumentation
  */
 
+//#if demo
+import 'models/demo/form';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 
 import { Option } from 'core/prelude/structures';
