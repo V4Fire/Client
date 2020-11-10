@@ -36,19 +36,35 @@ module.exports = (page) => {
 						res = [];
 
 					ctx.on('validationStart', () => {
-						res.push('start');
+						res.push('validationStart');
 					});
 
 					ctx.on('onValidationSuccess', () => {
-						res.push('success');
+						res.push('validationSuccess');
 					});
 
 					ctx.on('onValidationFail', (err) => {
-						res.push(err.error);
+						res.push(err.details);
 					});
 
 					ctx.on('onValidationEnd', (status, err) => {
-						res.push([status, err.error]);
+						res.push([status, err.details]);
+					});
+
+					ctx.on('onSubmitStart', (body, ctx) => {
+						res.push(['submitStart', ctx.form.id, ctx.elements.length]);
+					});
+
+					ctx.on('onSubmitSuccess', () => {
+						res.push('submitSuccess');
+					});
+
+					ctx.on('onSubmitFail', (err, ctx) => {
+						res.push([err.name, err.details, ctx.form.id, ctx.elements.length]);
+					});
+
+					ctx.on('onSubmitEnd', (status, ctx) => {
+						res.push([status.status, status.response.details, ctx.form.id, ctx.elements.length]);
 					});
 
 					await ctx.submit();
@@ -56,7 +72,7 @@ module.exports = (page) => {
 				})
 
 			).toEqual([
-				'start',
+				'validationStart',
 
 				{
 					validator: 'required',
@@ -72,11 +88,39 @@ module.exports = (page) => {
 						error: false,
 						msg: 'REQUIRED!'
 					}
+				],
+
+				['submitStart', 'my-form', 0],
+
+				[
+					'ValidationError',
+
+					{
+						validator: 'required',
+						error: false,
+						msg: 'REQUIRED!'
+					},
+
+					'my-form',
+					0
+				],
+
+				[
+					'fail',
+
+					{
+						validator: 'required',
+						error: false,
+						msg: 'REQUIRED!'
+					},
+
+					'my-form',
+					0
 				]
 			]);
 		});
 
-		xit('failed submission with the action function', async () => {
+		it('failed submission with the action function', async () => {
 			const target = await createFormAndEnvironment(page, {
 				action: 'new Function("throw new Error(`boom!`)")'
 			});
@@ -94,7 +138,7 @@ module.exports = (page) => {
 					const
 						res = [];
 
-					ctx.on('onSubmitStart', (ctx) => {
+					ctx.on('onSubmitStart', (body, ctx) => {
 						res.push(['start', ctx.form.id, ctx.elements.length]);
 					});
 
