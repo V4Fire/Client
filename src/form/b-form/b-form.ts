@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { Option } from 'core/prelude/structures';
-import { deprecate, deprecated } from 'core/functools/deprecation';
+import { deprecated } from 'core/functools/deprecation';
 
 //#if runtime has core/data
 import 'core/data';
@@ -42,10 +42,13 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { ActionFn, ValidateOptions, ValidationError } from 'form/b-form/interface';
+import ValidationError from 'form/b-form/modules/error';
+import { ActionFn, ValidateOptions } from 'form/b-form/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'form/b-form/interface';
+
+export { ValidationError };
 
 export const
 	$$ = symbolGenerator();
@@ -313,28 +316,14 @@ export default class bForm extends iData implements iVisible {
 					canValidate = el.mods.valid !== 'true',
 					validation = canValidate && await el.validate();
 
-				if (canValidate && validation !== true) {
+				if (canValidate && !Object.isBoolean(validation)) {
 					if (opts.focusOnError) {
 						try {
 							await el.focus();
 						} catch {}
 					}
 
-					failedValidation = {
-						component: el,
-						error: validation,
-
-						get el() {
-							deprecate({name: 'el', type: 'property', renamedTo: 'component'});
-							return el;
-						},
-
-						get validator() {
-							deprecate({name: 'validator', type: 'property', renamedTo: 'error'});
-							return validation;
-						}
-					};
-
+					failedValidation = new ValidationError(el, validation);
 					valid = false;
 					break;
 				}

@@ -7,15 +7,11 @@
  */
 
 import { RequestError } from 'core/request';
-
-import bForm from 'form/b-form/b-form';
-import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
 import { RequestQuery, RequestBody } from 'super/i-data/i-data';
 
-export interface ValidationError<V = unknown> {
-	component: iInput;
-	error: InputValidationError<V>;
-}
+import iInput from 'super/i-input/i-input';
+import bForm from 'form/b-form/b-form';
+import ValidationError from 'form/b-form/modules/error';
 
 export interface ValidateOptions {
 	focusOnError?: boolean;
@@ -32,9 +28,9 @@ export interface SubmitCtx {
 
 export type SubmitStatus = 'success' | 'fail' | 'empty';
 
-export interface SubmitResult<T = unknown> {
+export interface SubmitResult<D = unknown> {
 	status: SubmitStatus;
-	response: T | Error | RequestError;
+	response: D | Error | RequestError | ValidationError;
 }
 
 export interface ActionFn {

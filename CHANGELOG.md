@@ -52,9 +52,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `bForm`:
   * Added `getElValueToSubmit`
   * Added the `submitEnd` event
-  * Added `ValidationError.component` and `ValidationError.error`
+  * Added `ValidationError.name/component/details`
   * Added `getValues`
   * Added `toggleControls`
+  * Now `ValidationError` is a class
   * Improved submit events
 
 * `iInput`:
