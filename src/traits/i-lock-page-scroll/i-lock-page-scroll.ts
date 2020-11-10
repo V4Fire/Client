@@ -35,64 +35,65 @@ export default abstract class iLockPageScroll {
 			return promise;
 		}
 
-		if (is.iOS) {
-			if (scrollableNode) {
-				$a.on(
-					scrollableNode,
-					'touchstart',
+		if (is.mobile) {
+			if (is.iOS) {
+				if (scrollableNode) {
+					$a.on(
+						scrollableNode,
+						'touchstart',
 
-					(e: TouchEvent) =>
-						component[$$.initialY] = e.targetTouches[0].clientY,
+						(e: TouchEvent) =>
+							component[$$.initialY] = e.targetTouches[0].clientY,
 
-					{
-						group,
-						label: $$.touchstart
-					}
-				);
+						{
+							group,
+							label: $$.touchstart
+						}
+					);
 
-				$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
-					let
-						scrollTarget = <HTMLElement>e.target || scrollableNode;
+					$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
+						let
+							scrollTarget = <HTMLElement>e.target || scrollableNode;
 
-					while (scrollTarget !== scrollableNode) {
-						if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
-							break;
+						while (scrollTarget !== scrollableNode) {
+							if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
+								break;
+							}
+
+							scrollTarget = scrollTarget.parentElement;
 						}
 
-						scrollTarget = scrollTarget.parentElement;
-					}
+						const {
+							scrollTop,
+							scrollHeight,
+							clientHeight
+						} = <HTMLElement>scrollTarget;
 
-					const {
-						scrollTop,
-						scrollHeight,
-						clientHeight
-					} = <HTMLElement>scrollTarget;
+						const
+							clientY = e.targetTouches[0].clientY - component[$$.initialY],
+							isOnTop = clientY > 0 && scrollTop === 0,
+							isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
 
-					const
-						clientY = e.targetTouches[0].clientY - component[$$.initialY],
-						isOnTop = clientY > 0 && scrollTop === 0,
-						isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
+						if ((isOnTop || isOnBottom) && e.cancelable) {
+							return e.preventDefault();
+						}
 
-					if ((isOnTop || isOnBottom) && e.cancelable) {
-						return e.preventDefault();
-					}
+						e.stopPropagation();
 
-					e.stopPropagation();
+					}, {
+						group,
+						label: $$.touchmove,
+						options: {passive: false}
+					});
+				}
 
-				}, {
+				$a.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
 					group,
-					label: $$.touchmove,
+					label: $$.preventTouchMove,
 					options: {passive: false}
 				});
 			}
 
-			$a.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
-				group,
-				label: $$.preventTouchMove,
-				options: {passive: false}
-			});
-
-		} else if (is.Android) {
 			const
 				html = document.documentElement,
 				body = document.body;
@@ -153,7 +154,7 @@ export default abstract class iLockPageScroll {
 				r.removeRootMod('lockScrollDesktop', true);
 				r[$$.isLocked] = false;
 
-				if (is.Android) {
+				if (is.mobile) {
 					window.scrollTo(0, component[$$.scrollTop]);
 				}
 
