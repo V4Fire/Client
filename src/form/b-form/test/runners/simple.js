@@ -13,7 +13,7 @@
  */
 
 const
-	{createFormAndEnvironment} = include('src/form/b-form/test/helpers');
+	{createFormAndEnvironment, checkCheckboxes} = include('src/form/b-form/test/helpers');
 
 /**
  * @param {Page} page
@@ -104,13 +104,7 @@ module.exports = (page) => {
 				}
 			]);
 
-			await target.evaluate(async (ctx) => {
-				Object.forEach(await ctx.elements, (el) => {
-					if (el.componentName === 'b-checkbox') {
-						el.toggle();
-					}
-				});
-			});
+			await checkCheckboxes(target);
 
 			expect(
 				await target.evaluate(async (ctx) => {

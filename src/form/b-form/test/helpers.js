@@ -126,3 +126,19 @@ exports.createFormAndEnvironment = async (page, attrs = {}) => {
 	await h.bom.waitForIdleCallback(page);
 	return h.component.waitForComponent(page, q);
 };
+
+/**
+ * Checks all associated with the specified form checkboxes
+ *
+ * @param {Playwright.JSHandle} form - form target
+ * @return {!Promise<void>}
+ */
+exports.checkCheckboxes = async (form) => {
+	await form.evaluate(async (ctx) => {
+		Object.forEach(await ctx.elements, (el) => {
+			if (el.componentName === 'b-checkbox') {
+				el.toggle();
+			}
+		});
+	});
+};

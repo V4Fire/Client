@@ -13,7 +13,7 @@
  */
 
 const
-	{createFormAndEnvironment} = include('src/form/b-form/test/helpers');
+	{createFormAndEnvironment, checkCheckboxes} = include('src/form/b-form/test/helpers');
 
 /**
  * @param {Page} page
@@ -125,13 +125,7 @@ module.exports = (page) => {
 				action: 'new Function("throw new Error(`boom!`)")'
 			});
 
-			await target.evaluate(async (ctx) => {
-				Object.forEach(await ctx.elements, (el) => {
-					if (el.componentName === 'b-checkbox') {
-						el.toggle();
-					}
-				});
-			});
+			await checkCheckboxes(target);
 
 			expect(
 				await target.evaluate(async (ctx) => {
@@ -170,13 +164,7 @@ module.exports = (page) => {
 				action: 'new Function("body", "return Promise.resolve(body.user)")'
 			});
 
-			await target.evaluate(async (ctx) => {
-				Object.forEach(await ctx.elements, (el) => {
-					if (el.componentName === 'b-checkbox') {
-						el.toggle();
-					}
-				});
-			});
+			await checkCheckboxes(target);
 
 			expect(
 				await target.evaluate(async (ctx) => {
@@ -216,13 +204,7 @@ module.exports = (page) => {
 				dataProvider: 'demo.Form'
 			});
 
-			await target.evaluate(async (ctx) => {
-				Object.forEach(await ctx.elements, (el) => {
-					if (el.componentName === 'b-checkbox') {
-						el.toggle();
-					}
-				});
-			});
+			await checkCheckboxes(target);
 
 			expect(await target.evaluate((ctx) => ctx.submit())).toEqual({
 				adult: true,
@@ -236,13 +218,7 @@ module.exports = (page) => {
 				method: 'upd'
 			});
 
-			await target.evaluate(async (ctx) => {
-				Object.forEach(await ctx.elements, (el) => {
-					if (el.componentName === 'b-checkbox') {
-						el.toggle();
-					}
-				});
-			});
+			await checkCheckboxes(target);
 
 			expect(await target.evaluate((ctx) => ctx.submit())).toEqual([
 				'PUT',
@@ -260,13 +236,7 @@ module.exports = (page) => {
 				action: 'some/custom/url'
 			});
 
-			await target.evaluate(async (ctx) => {
-				Object.forEach(await ctx.elements, (el) => {
-					if (el.componentName === 'b-checkbox') {
-						el.toggle();
-					}
-				});
-			});
+			await checkCheckboxes(target);
 
 			expect(await target.evaluate((ctx) => ctx.submit())).toEqual([
 				'PUT',
