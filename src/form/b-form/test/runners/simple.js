@@ -91,7 +91,7 @@ module.exports = (page) => {
 			expect(
 				await target.evaluate(async (ctx) => {
 					const res = await ctx.validate();
-					return [res.component.componentName, res.error];
+					return [res.component.componentName, res.details];
 				})
 
 			).toEqual([
@@ -139,11 +139,11 @@ module.exports = (page) => {
 					});
 
 					ctx.on('onValidationFail', (err) => {
-						res.push(err.error);
+						res.push(err.details);
 					});
 
 					ctx.on('onValidationEnd', (status, err) => {
-						res.push([status, err.error]);
+						res.push([status, err.details]);
 					});
 
 					await ctx.validate();
@@ -192,7 +192,7 @@ module.exports = (page) => {
 					});
 
 					ctx.on('onValidationFail', (err) => {
-						res.push(err.error);
+						res.push(err.details);
 					});
 
 					ctx.on('onValidationEnd', (status) => {
