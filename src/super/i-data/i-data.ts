@@ -166,8 +166,15 @@ export default abstract class iData extends iBlock implements iProgress {
 	 *
 	 * Also, you can set this parameter to true, and it will filter only requests with a payload.
 	 */
-	@prop({type: [Boolean, Function]})
+	@prop({type: [Boolean, Function], required: false})
 	readonly defaultRequestFilter?: RequestFilter;
+
+	/**
+	 * @deprecated
+	 * @see [[iData.defaultRequestFilter]]
+	 */
+	@prop({type: [Boolean, Function], required: false})
+	readonly requestFilter?: RequestFilter;
 
 	/**
 	 * If true, all requests to the data provider are suspended till you don't manually force it.
@@ -184,13 +191,6 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	@system((o) => o.sync.link())
 	suspendRequests?: boolean | Function;
-
-	/**
-	 * @deprecated
-	 * @see [[iData.defaultRequestFilter]]
-	 */
-	@prop({type: [Boolean, Function]})
-	readonly requestFilter?: RequestFilter;
 
 	/**
 	 * If true, then the component can reload data within the offline mode
