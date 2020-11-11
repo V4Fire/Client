@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.96 ()
+## v3.0.0-rc.97 ()
 
 #### :rocket: New Feature
 
@@ -22,6 +22,12 @@ Changelog
 #### :nail_care: Polish
 
 * Improved documentation
+
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added `suspendRequests/unsuspendRequests/waitPermissionToRequest`
 
 ## v3.0.0-rc.72 (2020-10-01)
 

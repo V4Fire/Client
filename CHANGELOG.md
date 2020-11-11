@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.96 ()
+## v3.0.0-rc.97 ()
 
 #### :boom: Breaking Change
 
@@ -115,6 +115,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bRadioButton`
   * `bInputHidden`
   * `bForm`
+
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added `suspendRequests/unsuspendRequests/waitPermissionToRequest` `iData`
+* Added support of creation flyweight components via `$createElement` `core/component/render-function`
 
 ## v3.0.0-rc.95 (2020-11-06)
 

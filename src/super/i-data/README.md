@@ -287,6 +287,22 @@ then all requests without payload will be aborted.
 < b-example :dataProvider = 'myData' | :defaultRequestFilter = filterRequests
 ```
 
+### Suspending of the initial data loading
+
+You can use `suspendRequests` and `unsuspendRequests` to organize the lazy loading of components.
+For instance, you can load only components in the viewport.
+
+```
+< b-example &
+  :dataProvider = 'myData' |
+  :suspendRequests = true |
+  v-in-view = {
+    threshold: 0.5,
+    onEnter: (el) => el.node.component.unsuspendRequests()
+  }
+.
+```
+
 ## Providing of request parameters
 
 You can provide the `request` prop with data to request by different provider methods to any iData's child component.
