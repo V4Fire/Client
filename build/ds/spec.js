@@ -12,8 +12,8 @@ require('config');
 
 const
 	{getThemes} = include('build/ds'),
-	{fullThemedMock} = include('build/stylus/ds/test/mocks/ds-themes'),
-	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
+	{fullThemedMock} = include('build/stylus/ds/test/scheme/ds-themes'),
+	plainMock = include('build/stylus/ds/test/scheme/ds-plain'),
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 describe('build/ds', () => {

@@ -11,8 +11,8 @@
 require('config');
 
 const
-	plainMock = include('build/stylus/ds/test/mocks/ds-plain'),
-	{fullThemedMock} = include('build/stylus/ds/test/mocks/ds-themes'),
+	plainMock = include('build/stylus/ds/test/scheme/ds-plain'),
+	{fullThemedMock} = include('build/stylus/ds/test/scheme/ds-themes'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/ds', () => {

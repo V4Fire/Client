@@ -18,7 +18,7 @@ const
 	{getDS} = include('build/ds');
 
 const
-	{theme, includeThemes} = config.runtime();
+	{theme, includeThemes, 'ds/include-vars': includeVars} = config.runtime();
 
 let
 	ds = {},
@@ -43,4 +43,4 @@ if (pzlr.config.designSystem) {
 	console.log('[stylus] Design system package is not specified');
 }
 
-module.exports = createPlugins({ds, cssVariables, theme, includeThemes});
+module.exports = createPlugins({ds, cssVariables, theme, includeVars, includeThemes});

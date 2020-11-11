@@ -178,18 +178,25 @@ function convertProps(stylus, data, variables, path, theme) {
  * Returns array of fields to get themed value
  *
  * @param {string} field
- * @param {string} theme
+ * @param {string} [theme]
  * @param {string[]} [fieldsWithTheme]
  *
  * @returns {string[]}
  */
 function getThemedPathChunks(field, theme, fieldsWithTheme) {
 	let
-		path = ['theme', theme];
+		path = [field];
+
+	if (!theme) {
+		return path;
+	}
 
 	if (Object.isArray(fieldsWithTheme) && !fieldsWithTheme.includes(field)) {
 		// Requested field does not themed
-		path = [];
+		path = [field];
+
+	} else {
+		path = [field, 'theme', theme];
 	}
 
 	return path;

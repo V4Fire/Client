@@ -42,14 +42,14 @@ module.exports = function createPlugins({
 	let
 		buildThemes = includeThemes;
 
-	if (buildThemes === undefined) {
+	if (!buildThemes) {
 		buildThemes = isBuildHasTheme ? [theme] : [];
 	}
 
 	const
 		themesList = getThemes(ds.raw, buildThemes),
 		isThemesIncluded = themesList != null && themesList.length > 0,
-		isOneTheme = isThemesIncluded && isBuildHasTheme && themesList.length === 1 && themesList[0] === theme;
+		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
 
 	return function addPlugins(api) {
 		/**
@@ -113,18 +113,13 @@ module.exports = function createPlugins({
 					return ds;
 				}
 
-				const
-					path = !isOneTheme && isThemesIncluded ?
-						[string, ...getThemedPathChunks(string, theme, themedFields)] :
-						[string];
-
-				if (Object.isString(value)) {
-					path.push(value);
+				if (isOneTheme || !isBuildHasTheme) {
+					return includeVars ?
+						stylus.utils.coerce($C(cssVariables).get([].concat([string], value).join('.'))) :
+						$C(ds).get([].concat(getThemedPathChunks(string, theme, themedFields), value).join('.'));
 				}
 
-				return isThemesIncluded || includeVars ?
-					stylus.utils.coerce($C(cssVariables).get(path.join('.'))) :
-					$C(ds).get(path.join('.'));
+				return stylus.utils.coerce($C(cssVariables).get([].concat([string], value).join('.')));
 			}
 		);
 
@@ -142,9 +137,9 @@ module.exports = function createPlugins({
 			const
 				head = 'text';
 
-			if (!isOneTheme && isThemesIncluded && isBuildHasTheme) {
+			if (!isOneTheme && isThemesIncluded) {
 				const
-					path = [head, ...getThemedPathChunks(head, theme, themedFields), name],
+					path = [...getThemedPathChunks(head, theme, themedFields), name],
 					initial = $C(ds).get(path);
 
 				if (!Object.isObject(initial)) {
@@ -162,7 +157,7 @@ module.exports = function createPlugins({
 			}
 
 			const
-				dsPath = isOneTheme ? [head, ...getThemedPathChunks(head, theme, themedFields), name] : [head, name],
+				dsPath = [...getThemedPathChunks(head, theme, themedFields), name],
 				from = includeVars ? cssVariables : ds;
 
 			return stylus.utils.coerce($C(from).get(dsPath), true);
@@ -185,7 +180,7 @@ module.exports = function createPlugins({
 				}
 
 				const
-					path = isOneTheme ? ['colors', ...getThemedPathChunks('colors', theme, themedFields)] : ['colors'];
+					path = isOneTheme ? getThemedPathChunks('colors', theme, themedFields) : ['colors'];
 
 				if (id) {
 					id = id.string || id.val;
