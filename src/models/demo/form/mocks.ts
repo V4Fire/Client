@@ -11,8 +11,9 @@ import { MiddlewareParams } from 'models/demo';
 export default {
 	POST: [
 		{
-			response({opts}: MiddlewareParams): unknown {
-				return opts.body;
+			response({ctx, opts}: MiddlewareParams): unknown {
+				const url = ctx.resolveRequest();
+				return [url, opts.method, opts.body];
 			}
 		}
 	],

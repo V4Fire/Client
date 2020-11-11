@@ -206,10 +206,16 @@ module.exports = (page) => {
 
 			await checkCheckboxes(target);
 
-			expect(await target.evaluate((ctx) => ctx.submit())).toEqual({
-				adult: true,
-				user: 3
-			});
+			expect(await target.evaluate((ctx) => ctx.submit())).toEqual([
+				'/form',
+
+				'POST',
+
+				{
+					adult: true,
+					user: 3
+				}
+			]);
 		});
 
 		it('successful submission with a data provider and the custom method', async () => {
@@ -239,7 +245,9 @@ module.exports = (page) => {
 			await checkCheckboxes(target);
 
 			expect(await target.evaluate((ctx) => ctx.submit())).toEqual([
-				'PUT',
+				'/some/custom/url',
+
+				'POST',
 
 				{
 					adult: true,
