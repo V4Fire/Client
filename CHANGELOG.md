@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.97 (2020-11-11)
 
+#### :rocket: New Feature
+
+* Added `core/component/directives/v-hook`
+
 #### :bug: Bug Fix
 
 * Marked `defaultRequestFilter` and `requestFilter` as optional `iData`
