@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-lock-page-scroll/README.md]]
+ * @packageDocumentation
+ */
+
 import { is } from 'core/browser';
 import symbolGenerator from 'core/symbol';
 import iBlock, { ModEvent } from 'super/i-block/i-block';
@@ -95,8 +100,7 @@ export default abstract class iLockPageScroll {
 			}
 
 			const
-				html = document.documentElement,
-				body = document.body;
+				{body, documentElement: html} = document;
 
 			promise = $a.promise(new Promise((res) => {
 				$a.requestAnimationFrame(() => {
