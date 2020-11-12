@@ -48,19 +48,6 @@ describe('build/stylus/plugins', () => {
 		});
 	});
 
-	it('should return variables', () => {
-		const
-			stylus = require('stylus');
-
-		const
-			{data: ds, variables: cssVariables} = createDesignSystem(plainMock),
-			plugins = createPlugins({ds, cssVariables, stylus});
-
-		stylus.render('getDSVariables()', {use: [plugins]}, (err, value) => {
-			expect(value).toBeTruthy();
-		});
-	});
-
 	it('should return text styles', () => {
 		const
 			stylus = require('stylus');
