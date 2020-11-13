@@ -11,7 +11,7 @@
 - include 'form/b-checkbox'|b as placeholder
 
 - template index() extends ['b-checkbox'].index
-	- hiddenInputType = "'radio'"
+	- nativeInputType = "'radio'"
 
 	- block check
 		< .&__check

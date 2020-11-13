@@ -34,6 +34,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Removed `valueKey`
   * Now `groupFormValue` always returns an array
   * Renamed `dataType` to `formValueConverter`
+  * Renamed `hiddenInputTag` to `nativeInputTag`
+  * Renamed `hiddenInputType` to `nativeInputType`
+  * Renamed `hiddenInputModel` to `nativeInputModel`
 
 * `iAccess`:
   * Removed helpers for disabling
@@ -62,6 +65,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `iInput`:
   * Now `formValueConverter` can be provided as an array
   * Added support for the `Maybe` structure
+  * Added the `inputAttrs` prop
+  * Added the `nativeInput` block
 
 * `iAccess`:
   * Added `autofocus`

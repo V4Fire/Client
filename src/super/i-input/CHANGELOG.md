@@ -16,6 +16,9 @@ Changelog
 * Removed `valueKey`
 * Now `groupFormValue` always returns an array
 * Renamed `dataType` to `formValueConverter`
+* Renamed `hiddenInputTag` to `nativeInputTag`
+* Renamed `hiddenInputType` to `nativeInputType`
+* Renamed `hiddenInputModel` to `nativeInputModel`
 
 #### :rocket: New Feature
 
@@ -23,6 +26,8 @@ Changelog
 * Implemented new API from `iAccess`
 * Now `formValueConverter` can be provided as an array
 * Added support for the `Maybe` structure
+* Added the `inputAttrs` prop
+* Added the `nativeInput` block
 
 #### :house: Internal
 

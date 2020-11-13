@@ -170,6 +170,10 @@ The form prop lets you place a component anywhere in the document but have it in
     Submit
 ```
 
+#### inputAttrs
+
+Additional attributes are provided to an "internal" (native) input tag.
+
 #### cache
 
 A Boolean value that enables or disables caching of a component value by the associated form.
@@ -399,32 +403,52 @@ Validates a component value.
 
 ### Template methods
 
-#### hiddenInput
+#### nativeInput/hiddenInput
 
-This block generates a native input tag with predefined attributes. You can use it to shim the native behavior of a control.
+These blocks generate native input tags with predefined attributes. You can use it to shim the native behavior of the component.
 You can also manage a type of the created tag and other options by using the predefined constants.
 
 ```
-- hiddenInputTag = 'input'
-- hiddenInputType = "'hidden'"
-- hiddenInputModel = 'valueStore'
+- nativeInputTag = 'input'
+- nativeInputType = "'hidden'"
+- nativeInputModel = 'valueStore'
 
 /**
- * Generates a private input field
+ * Generates a native form input
+ *
+ * @param [params] - additional parameters:
+ *   *) [tag=nativeInputTag] - name of the generated tag
+ *   *) [elName='input'] - element name of the generated tag
+ *   *) [ref='input'] - ref attribute
+ *   *) [model=nativeInputModel] - v-model attribute
+ *   *) [type=nativeInputType] - type attribute
+ *   *) [attrs] - dictionary with additional attributes
  */
-- block hiddenInput()
-  < ${hiddenInputTag}.&__hidden-input &
-    ref = input |
-    v-model = ${hiddenInputModel} |
-    autocomplete = off |
+- block nativeInput(@params = {})
+  < ${@tag || nativeInputTag}.&__${@elName || 'input'} &
+    ref = ${@ref || 'input'} |
+    v-model = ${@model || nativeInputModel} |
+    :v-attrs = inputAttrs |
     :id = id |
-    :type = ${hiddenInputType} |
+    :type = ${@type || nativeInputType} |
     :name = name |
     :form = form |
     :autofocus = autofocus |
     :tabIndex = tabIndex |
     @focus = onFocus |
     @blur = onBlur |
-    ${attrs|!html}
+    ${attrs|!html} |
+    ${@attrs}
   .
+
+/**
+ * Generates a hidden form input
+ */
+- block hiddenInput()
+  += self.nativeInput({ &
+    elName: 'hidden-input',
+    attrs: {
+      autocomplete: 'off'
+    }
+  }) .
 ```

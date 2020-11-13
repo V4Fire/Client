@@ -13,31 +13,51 @@
 - template index() extends ['i-data'].index
 	- skeletonMarker = true
 
-	- hiddenInputTag = 'input'
-	- hiddenInputType = "'hidden'"
-	- hiddenInputModel = 'valueStore'
+	- nativeInputTag = 'input'
+	- nativeInputType = "'hidden'"
+	- nativeInputModel = 'valueStore'
 
 	- block headHelpers
 		- super
 
 		/**
-		 * Generates a private input field
+		 * Generates a native form input
+		 *
+		 * @param [params] - additional parameters:
+		 *   *) [tag=nativeInputTag] - name of the generated tag
+		 *   *) [elName='input'] - element name of the generated tag
+		 *   *) [ref='input'] - ref attribute
+		 *   *) [model=nativeInputModel] - v-model attribute
+		 *   *) [type=nativeInputType] - type attribute
+		 *   *) [attrs] - dictionary with additional attributes
 		 */
-		- block hiddenInput()
-			< ${hiddenInputTag}.&__hidden-input &
-				ref = input |
-				v-model = ${hiddenInputModel} |
-				autocomplete = off |
+		- block nativeInput(@params = {})
+			< ${@tag || nativeInputTag}.&__${@elName || 'input'} &
+				ref = ${@ref || 'input'} |
+				v-model = ${@model || nativeInputModel} |
+				:v-attrs = inputAttrs |
 				:id = id |
-				:type = ${hiddenInputType} |
+				:type = ${@type || nativeInputType} |
 				:name = name |
 				:form = form |
 				:autofocus = autofocus |
 				:tabIndex = tabIndex |
 				@focus = onFocus |
 				@blur = onBlur |
-				${attrs|!html}
+				${attrs|!html} |
+				${@attrs}
 			.
+
+		/**
+		 * Generates a hidden form input
+		 */
+		- block hiddenInput()
+			+= self.nativeInput({ &
+				elName: 'hidden-input',
+				attrs: {
+					autocomplete: 'off'
+				}
+			}) .
 
 	- block helpers
 		- super

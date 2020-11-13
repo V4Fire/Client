@@ -157,6 +157,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly tabIndex?: number;
 
 	/**
+	 * Additional attributes are provided to an "internal" (native) input tag
+	 * @see [[iInput.$refs.input]]
+	 */
+	@prop({type: Object, required: false})
+	readonly inputAttrs?: Dictionary<string>;
+
+	/**
 	 * Component values are not allowed to send via a form.
 	 * If a component value matches with one of the denied conditions, the form value will be equal to undefined.
 	 *
