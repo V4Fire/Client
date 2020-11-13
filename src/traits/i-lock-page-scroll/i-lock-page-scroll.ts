@@ -11,8 +11,9 @@
  * @packageDocumentation
  */
 
-import { is } from 'core/browser';
 import symbolGenerator from 'core/symbol';
+import { is } from 'core/browser';
+
 import iBlock, { ModEvent } from 'super/i-block/i-block';
 
 export const
@@ -35,30 +36,30 @@ export default abstract class iLockPageScroll {
 		let
 			promise = Promise.resolve();
 
-		if (r[$$.isLocked]) {
+		if (r[$$.isLocked] === true) {
 			$a.clearAll({group});
 			return promise;
 		}
 
-		if (is.mobile) {
-			if (is.iOS) {
+		const lockLabel = {
+			group,
+			label: $$.lock
+		};
+
+		if (is.mobile !== false) {
+			if (is.iOS !== false) {
 				if (scrollableNode) {
-					$a.on(
-						scrollableNode,
-						'touchstart',
+					const
+						onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
 
-						(e: TouchEvent) =>
-							component[$$.initialY] = e.targetTouches[0].clientY,
+					$a.on(scrollableNode, 'touchstart', onTouchStart, {
+						group,
+						label: $$.touchstart
+					});
 
-						{
-							group,
-							label: $$.touchstart
-						}
-					);
-
-					$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
+					const onTouchMove = (e: TouchEvent) => {
 						let
-							scrollTarget = <HTMLElement>e.target || scrollableNode;
+							scrollTarget = <HTMLElement>(e.target ?? scrollableNode);
 
 						while (scrollTarget !== scrollableNode) {
 							if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
@@ -72,7 +73,7 @@ export default abstract class iLockPageScroll {
 							scrollTop,
 							scrollHeight,
 							clientHeight
-						} = <HTMLElement>scrollTarget;
+						} = scrollTarget;
 
 						const
 							clientY = e.targetTouches[0].clientY - component[$$.initialY],
@@ -84,28 +85,32 @@ export default abstract class iLockPageScroll {
 						}
 
 						e.stopPropagation();
+					};
 
-					}, {
+					$a.on(scrollableNode, 'touchmove', onTouchMove, {
 						group,
 						label: $$.touchmove,
 						options: {passive: false}
 					});
 				}
 
-				$a.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
+				$a.on(document, 'touchmove', (e: TouchEvent) => e.cancelable && e.preventDefault(), {
 					group,
 					label: $$.preventTouchMove,
 					options: {passive: false}
 				});
 			}
 
-			const
-				{body, documentElement: html} = document;
+			const {
+				body,
+				documentElement: html
+			} = document;
 
 			promise = $a.promise(new Promise((res) => {
 				$a.requestAnimationFrame(() => {
-					const
-						scrollTop = html.scrollTop || body.scrollTop;
+					const scrollTop = Object.isTruly(html.scrollTop) ?
+						html.scrollTop :
+						body.scrollTop;
 
 					component[$$.scrollTop] = scrollTop;
 					body.style.top = `-${scrollTop}px`;
@@ -113,15 +118,17 @@ export default abstract class iLockPageScroll {
 
 					res();
 
-				}, {group, label: $$.lock});
-			}), {group, label: $$.lock, join: true});
+				}, lockLabel);
+			}), {join: true, ...lockLabel});
 
 		} else {
 			promise = $a.promise(new Promise((res) => {
 				$a.requestAnimationFrame(() => {
 					const
-						{body} = document,
-						scrollBarWidth = window.innerWidth - body.clientWidth;
+						{body} = document;
+
+					const
+						scrollBarWidth = globalThis.innerWidth - body.clientWidth;
 
 					component[$$.paddingRight] = body.style.paddingRight;
 					body.style.paddingRight = `${scrollBarWidth}px`;
@@ -129,8 +136,8 @@ export default abstract class iLockPageScroll {
 
 					res();
 
-				}, {group, label: $$.lock});
-			}), {group, label: $$.lock, join: true});
+				}, lockLabel);
+			}), {join: true, ...lockLabel});
 		}
 
 		r[$$.isLocked] = true;
@@ -146,7 +153,7 @@ export default abstract class iLockPageScroll {
 			{$root: r, $root: {unsafe: {async: $a}}} = component.unsafe,
 			{body} = document;
 
-		if (!r[$$.isLocked]) {
+		if (r[$$.isLocked] !== true) {
 			return Promise.resolve();
 		}
 
@@ -158,11 +165,11 @@ export default abstract class iLockPageScroll {
 				r.removeRootMod('lockScrollDesktop', true);
 				r[$$.isLocked] = false;
 
-				if (is.mobile) {
-					window.scrollTo(0, component[$$.scrollTop]);
+				if (is.mobile !== false) {
+					globalThis.scrollTo(0, component[$$.scrollTop]);
 				}
 
-				body.style.paddingRight = component[$$.paddingRight] || '';
+				body.style.paddingRight = component[$$.paddingRight] ?? '';
 				res();
 
 			}, {group, label: $$.unlockRaf, join: true});
@@ -187,7 +194,7 @@ export default abstract class iLockPageScroll {
 				return;
 			}
 
-			component[e.value === 'false' || e.type === 'remove' ? 'unlock' : 'lock']();
+			void component[e.value === 'false' || e.type === 'remove' ? 'unlock' : 'lock']();
 		});
 
 		$a.worker(() => {

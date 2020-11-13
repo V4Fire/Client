@@ -17,4 +17,8 @@ Changelog
 
 #### :memo: Documentation
 
-* README, CHANGELOG was added
+* `README`, `CHANGELOG` was added
+
+#### :house: Internal
+
+* Fixed ESLint warnings
