@@ -1,6 +1,6 @@
 # base/b-sidebar
 
-This module provides a component to show content in the sidebar.
+This module provides a component to create a sidebar with the feature of collapsing.
 
 ## Synopsis
 
@@ -8,14 +8,26 @@ This module provides a component to show content in the sidebar.
 
 * The component implements [[iVisible]], [[iOpenToggle]], [[iLockPageScroll]] traits.
 
+* The component supports the `overWrapper` layout.
+
 * By default, the root tag of the component is `<div>`.
+
+## Modifiers
+
+| EventName  | Description             | Values    | Default |
+| ---------- | ----------------------- | --------- | ------- |
+| `opened`   | The component is opened | `Boolean` | `false` |
+
+Also, you can see the implemented traits or the parent component.
 
 ## Events
 
-| EventName  | Description            | Payload description | Payload  |
-| ---------- |----------------------- | ------------------- |--------- |
-| `open`     | Opens the sidebar      |                     |          |
-| `close`    | Closes the sidebar     |                     |          |
+| EventName  | Description                   | Payload description | Payload  |
+| ---------- | ----------------------------- | ------------------- | -------- |
+| `open`     | The component has been opened | -                   | -        |
+| `close`    | The component has been closed | -                   | -        |
+
+Also, you can see the implemented traits or the parent component.
 
 ## Usage
 
@@ -26,17 +38,32 @@ This module provides a component to show content in the sidebar.
 
 ```
 < span @click = $refs.sidebar.open()
-  Open sidebar
+  Open the sidebar
 
 < span @click = $refs.sidebar.close()
-  Close sidebar
+  Close the sidebar
+
+< span @click = $refs.sidebar.toggle()
+  Toogle the sidebar
 ```
 
 ## Slots
 
-1. `default` to provide the base content.
+The component supports the default slot to provide content.
 
 ```
 < b-sidebar
   Sidebar content
+```
+
+## Styles
+
+The component has `sidebarTransition` style property to specify the transition behavior when opening or closing.
+
+```stylus
+$p = {
+  sidebarTransition: EASING_DURATION linear
+}
+
+b-sidebar extends i-data
 ```

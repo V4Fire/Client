@@ -15,10 +15,13 @@ import iData, { component, hook, prop, wait, ModsDecl, ModEvent, SetModEvent } f
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 
+/**
+ * Component to create a sidebar with the feature of collapsing
+ */
 @component()
 export default class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	/**
-	 * If true, then will be blocked the scrolling of the document when component is opened
+	 * If true, then will be blocked the scrolling of the document when the component is opened
 	 */
 	@prop(Boolean)
 	readonly lockPageScroll: boolean = false;
@@ -28,7 +31,7 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 		...iVisible.mods,
 
 		opened: [
-			...iOpenToggle.mods.opened,
+			...iOpenToggle.mods.opened!,
 			['false']
 		]
 	};
@@ -104,8 +107,12 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
-		this.lockPageScroll && iLockPageScroll.initModEvents(this);
+
+		if (this.lockPageScroll) {
+			iLockPageScroll.initModEvents(this);
+		}
 	}
 }

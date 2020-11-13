@@ -15,11 +15,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed a block style properties (`p.overlayBg`, `p.overlayTansition`) `base/b-sidebar`, prefer to use `provide.classes` or style override
+* Removed style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes` or style overriding `bSidebar`
+* Renamed a style property: `sideBarTransition` -> `sidebarTransition`
 
 #### :bug: Bug Fix
 
-* Added missing `over-wrapper` element `base/b-sidebar`
+* Added the missing `over-wrapper` element `base/b-sidebar`
 
 #### :house: Internal
 
