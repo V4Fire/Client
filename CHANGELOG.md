@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.97 ()
+## v3.0.0-rc.?? ()
 
 #### :boom: Breaking Change
 
@@ -115,6 +115,42 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bRadioButton`
   * `bInputHidden`
   * `bForm`
+
+## v3.0.0-rc.98 (2020-11-13)
+
+#### :boom: Breaking Change
+
+* `bSidebar`:
+  * Removed style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes` or style overriding
+  * Renamed a style property: `sideBarTransition` -> `sidebarTransition`
+
+#### :bug: Bug Fix
+
+* Added the missing `over-wrapper` element `bSidebar`
+* Fixed firing the `close` event on swipe closing `bBottomSlide`
+* Now the `lockScrollMobile` modifier is applied for all mobile devices `iLockPageScroll`
+
+#### :memo: Documentation
+
+* Added documentation `iLockPageScroll`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bBottomSlide`
+* `bSidebar`:
+  * Fixed ESLint errors
+  * Fixed ts errors
+  * Added tests
+
+## v3.0.0-rc.97 (2020-11-11)
+
+#### :rocket: New Feature
+
+* Added `core/component/directives/v-hook`
+
+#### :bug: Bug Fix
+
+* Marked `defaultRequestFilter` and `requestFilter` as optional `iData`
 
 ## v3.0.0-rc.96 (2020-11-10)
 

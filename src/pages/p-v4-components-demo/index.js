@@ -20,5 +20,6 @@ package('p-v4-components-demo')
 		'b-checkbox',
 		'b-input-hidden',
 		'b-form',
+		'b-sidebar',
 		components
 	);

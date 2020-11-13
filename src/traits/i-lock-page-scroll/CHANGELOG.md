@@ -9,18 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.?? ()
+## v3.0.0-rc.98 (2020-11-12)
 
-#### :rocket: New Feature
+#### :bug: Bug Fix
 
-* Moved logic from `iAccess`
-* Added support of events
+* Now the `lockScrollMobile` modifier is applied for all mobile devices
 
-#### :nail_care: Polish
+#### :memo: Documentation
 
-* Improved documentation
-
-## v3.0.0-rc.49 (2020-08-03)
+* `README`, `CHANGELOG` was added
 
 #### :house: Internal
 

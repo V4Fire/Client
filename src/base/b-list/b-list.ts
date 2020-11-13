@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-list/README.md]]
+ * @packageDocumentation
+ */
+
 //#if demo
 import 'models/demo/list';
 //#endif

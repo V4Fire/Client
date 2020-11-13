@@ -15,6 +15,7 @@ module.exports = [
 	'--test-entry form/b-checkbox/test',
 	'--test-entry form/b-input-hidden/test',
 	'--test-entry form/b-form/test',
+	'--test-entry base/b-sidebar/test',
 	'--test-entry base/b-list/test',
 	'--test-entry super/i-block/test',
 	'--test-entry core/dom/image/test',
