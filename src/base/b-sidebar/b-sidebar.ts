@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-sidebar/README.md]]
+ * @packageDocumentation
+ */
+
 import iVisible from 'traits/i-visible/i-visible';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
