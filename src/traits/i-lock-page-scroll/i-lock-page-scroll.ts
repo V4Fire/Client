@@ -24,7 +24,8 @@ const
 
 export default abstract class iLockPageScroll {
 	/**
-	 * Locks the document scroll
+	 * Locks the document scroll, i.e.,
+	 * it prevents any scrolling on the document except withing the specified node
 	 *
 	 * @param component
 	 * @param [scrollableNode] - node inside which is allowed to scroll
@@ -205,7 +206,8 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Locks the document scroll
+	 * Locks the document scroll, i.e.,
+	 * it prevents any scrolling on the document except withing the specified node
 	 */
 	abstract lock(): Promise<void>;
 
