@@ -886,8 +886,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Normalize the specified additional attributes and returns it
 	 * @see [[iInput.attrs]]
+	 *
+	 * @param [attrs]
 	 */
-	protected normalizeAttrs(attrs: Dictionary): Dictionary {
+	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
 		return attrs;
 	}
 
