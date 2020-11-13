@@ -11,15 +11,55 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.95 (2020-11-06)
+## v3.0.0-rc.?? (2020-??-??)
+
+#### :boom: Breaking Change
+
+* Removed style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes` or style overriding `bSidebar`
+* Renamed a style property: `sideBarTransition` -> `sidebarTransition`
 
 #### :bug: Bug Fix
 
-* Fixed firing `close` event on swipe closing `base/b-bottom-slide`
+* Added the missing `over-wrapper` element `base/b-sidebar`
+* Fixed firing the `close` event on swipe closing `base/b-bottom-slide`
 
 #### :house: Internal
 
 * Fixed ESLint warnings `bBottomSlide`
+* `base/b-sidebar`
+  * Fixed ESLint errors
+  * Fixed ts errors
+  * Added tests
+
+## v3.0.0-rc.97 (2020-11-11)
+
+#### :rocket: New Feature
+
+* Added `core/component/directives/v-hook`
+
+#### :bug: Bug Fix
+
+* Marked `defaultRequestFilter` and `requestFilter` as optional `iData`
+
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added `suspendRequests/unsuspendRequests/waitPermissionToRequest` `iData`
+* Added support of creation flyweight components via `$createElement` `core/component/render-function`
+
+## v3.0.0-rc.95 (2020-11-06)
+
+#### :house: Internal
+
+* Updated to `typescript@4.1.1-rc`
+
+## v3.0.0-rc.94 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of watchers based on accessors `core/component/watch/create`
+>>>>>>> origin/master
 
 ## v3.0.0-rc.93 (2020-11-03)
 

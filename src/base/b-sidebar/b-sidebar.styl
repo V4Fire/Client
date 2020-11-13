@@ -10,8 +10,7 @@
 @import "traits/i-visible/i-visible.styl"
 
 $p = {
-	sideBarTransition: EASING_DURATION linear
-	overlayTansition: EASING_DURATION ease-in
+	sidebarTransition: EASING_DURATION linear
 	visibleHelpers: true
 }
 
@@ -34,27 +33,21 @@ b-sidebar extends i-data
 	&__content-wrapper
 		display inline-block
 
-	if $p.sideBarTransition
-		transition transform 0s $p.sideBarTransition
+	if $p.sidebarTransition
+		transition transform 0s $p.sidebarTransition
 
 		&__content-wrapper
-			transition transform $p.sideBarTransition
+			transition transform $p.sidebarTransition
 
 		&_opened_true
 			transition none
 
-	if $p.overlayBg
-		&__over-wrapper
-			zIndex(layer)
-			display block
-			opacity 0
-			background $p.overlayBg
+	&__over-wrapper
+		display block
+		opacity 0
 
-			if $p.overlayTansition
-				transition opacity $p.overlayTansition
-
-		&_opened_true &__over-wrapper
-			opacity 1
+	&_opened_true &__over-wrapper
+		opacity 1
 
 	&_opened_true
 	&_opened_true &__content-wrapper

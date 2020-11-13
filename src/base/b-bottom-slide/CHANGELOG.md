@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.95 (2020-11-06)
+## v3.0.0-rc.?? (2020-??-??)
 
 #### :bug: Bug Fix
 
-* Fixed firing `close` event on swipe closing
+* Fixed firing the `close` event on swipe closing
 
 #### :house: Internal
 

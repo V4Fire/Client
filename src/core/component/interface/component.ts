@@ -237,11 +237,14 @@ export abstract class ComponentInterface {
 	 * API to unsafe invoke of internal properties of the component.
 	 * It can be useful to create friendly classes for a component.
 	 */
-	readonly unsafe!: UnsafeGetter<UnsafeComponentInterface<this>>;
+	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
+		return <any>this;
+	}
 
 	/**
 	 * Link to a DOM element that is tied with the component
 	 */
+	// @ts-ignore (ts error)
 	readonly $el?: ComponentElement<this['Component']>;
 
 	/**
@@ -257,11 +260,13 @@ export abstract class ComponentInterface {
 	/**
 	 * List of child components
 	 */
+	// @ts-ignore (ts error)
 	readonly $children?: Array<this['Component']>;
 
 	/**
 	 * Link to a parent component
 	 */
+	// @ts-ignore (ts error)
 	readonly $parent?: this['Component'];
 
 	/**
