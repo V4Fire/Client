@@ -23,6 +23,7 @@ import iData, {
 	prop,
 	field,
 	system,
+
 	wait,
 	p,
 
@@ -161,7 +162,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @see [[iInput.$refs.input]]
 	 */
 	@prop({type: Object, required: false})
-	readonly attrsProp?: Dictionary<string>;
+	readonly attrs?: Dictionary<string>;
 
 	/**
 	 * Component values are not allowed to send via a form.
@@ -601,13 +602,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		//#endif
 	};
 
-	/**
-	 * Additional attributes are provided to an "internal" (native) input tag
-	 * @see [[iInput.attrsProp]]
-	 */
-	@field((o) => o.sync.link())
-	protected attrs?: Dictionary<string>;
-
 	/** @see [[iInput.info]] */
 	@system({
 		replace: false,
@@ -880,6 +874,14 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 
 		return value;
+	}
+
+	/**
+	 * Normalize the specified additional attributes and returns it
+	 * @see [[iInput.attrs]]
+	 */
+	protected normalizeAttrs(attrs: Dictionary): Dictionary {
+		return attrs;
 	}
 
 	/**

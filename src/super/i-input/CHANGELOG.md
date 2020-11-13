@@ -26,7 +26,8 @@ Changelog
 * Implemented new API from `iAccess`
 * Now `formValueConverter` can be provided as an array
 * Added support for the `Maybe` structure
-* Added the `attrsProp/attrs` properties
+* Added the `attrs` prop
+* Added the `normalizeAttrs` method
 * Added the `nativeInput` block
 
 #### :house: Internal
