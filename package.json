@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.97",
+  "version": "3.0.0-rc.98",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
