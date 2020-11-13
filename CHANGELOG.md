@@ -29,6 +29,23 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed ts errors
   * Added tests
 
+## v3.0.0-rc.97 (2020-11-11)
+
+#### :rocket: New Feature
+
+* Added `core/component/directives/v-hook`
+
+#### :bug: Bug Fix
+
+* Marked `defaultRequestFilter` and `requestFilter` as optional `iData`
+
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added `suspendRequests/unsuspendRequests/waitPermissionToRequest` `iData`
+* Added support of creation flyweight components via `$createElement` `core/component/render-function`
+
 ## v3.0.0-rc.95 (2020-11-06)
 
 #### :house: Internal

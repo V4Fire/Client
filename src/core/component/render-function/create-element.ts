@@ -82,7 +82,13 @@ export function wrapCreateElement(
 				return attrOpts.from ?? createElement();
 			}
 
-			flyweightComponent = attrOpts['v4-flyweight-component'];
+			if (tagName.startsWith('@')) {
+				flyweightComponent = tagName.slice(1);
+				tagName = 'span';
+
+			} else {
+				flyweightComponent = attrOpts['v4-flyweight-component'];
+			}
 
 			if (flyweightComponent != null) {
 				tagName = tagName === 'span' ? flyweightComponent : tagName.dasherize();
