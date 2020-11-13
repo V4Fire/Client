@@ -65,7 +65,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `iInput`:
   * Now `formValueConverter` can be provided as an array
   * Added support for the `Maybe` structure
-  * Added the `attrs` prop
+  * Added `attrsProp/attrs` properties
   * Added the `normalizeAttrs` method
   * Added the `nativeInput` block
 
