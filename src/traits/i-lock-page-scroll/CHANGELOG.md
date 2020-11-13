@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Adding `lockScrollMobile` modifier for all mobile devices
+* Now the `lockScrollMobile` modifier is applied for all mobile devices
 
 #### :memo: Documentation
 

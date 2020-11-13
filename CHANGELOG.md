@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.?? (2020-??-??)
+## v3.0.0-rc.98 (2020-11-13)
 
 #### :boom: Breaking Change
 
@@ -22,6 +22,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added the missing `over-wrapper` element `base/b-sidebar`
 * Fixed firing the `close` event on swipe closing `base/b-bottom-slide`
+* Now the `lockScrollMobile` modifier is applied for all mobile devices `iLockPageScroll`
+
+#### :memo: Documentation
+
+* Added documentation `iLockPageScroll`
 
 #### :house: Internal
 
