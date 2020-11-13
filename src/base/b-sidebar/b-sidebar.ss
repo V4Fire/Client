@@ -12,6 +12,7 @@
 
 - template index() extends ['i-data'].index
 	- rootWrapper = true
+	- overWrapper = true
 
 	- block body
 		< .&__content-wrapper

@@ -11,6 +11,24 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? (2020-??-??)
+
+#### :boom: Breaking Change
+
+* Removed style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes` or style overriding `bSidebar`
+* Renamed a style property: `sideBarTransition` -> `sidebarTransition`
+
+#### :bug: Bug Fix
+
+* Added the missing `over-wrapper` element `base/b-sidebar`
+
+#### :house: Internal
+
+* `base/b-sidebar`
+  * Fixed ESLint errors
+  * Fixed ts errors
+  * Added tests
+
 ## v3.0.0-rc.97 (2020-11-11)
 
 #### :rocket: New Feature
