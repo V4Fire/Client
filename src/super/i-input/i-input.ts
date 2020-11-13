@@ -161,7 +161,14 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @see [[iInput.$refs.input]]
 	 */
 	@prop({type: Object, required: false})
-	readonly inputAttrs?: Dictionary<string>;
+	readonly inputAttrsProp?: Dictionary<string>;
+
+	/**
+	 * Additional attributes are provided to an "internal" (native) input tag
+	 * @see [[iInput.inputAttrsProp]]
+	 */
+	@field((o) => o.sync.link())
+	inputAttrs?: Dictionary<string>;
 
 	/**
 	 * Component values are not allowed to send via a form.
