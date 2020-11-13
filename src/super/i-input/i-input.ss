@@ -37,7 +37,7 @@
 				v-model = ${@model || nativeInputModel} |
 				:v-attrs = inputAttrs |
 				:id = id |
-				:type = ${@type || nativeInputType} |
+				:type = field.get('inputAttrs.type') || ${@type || nativeInputType} |
 				:name = name |
 				:form = form |
 				:autofocus = autofocus |
