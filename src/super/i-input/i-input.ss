@@ -35,7 +35,7 @@
 			< ${@tag || nativeInputTag}.&__${@elName || 'input'} &
 				ref = ${@ref || 'input'} |
 				v-model = ${@model || nativeInputModel} |
-				:v-attrs = inputAttrs |
+				:v-attrs = attrs |
 				:id = id |
 				:type = field.get('inputAttrs.type') || ${@type || nativeInputType} |
 				:name = name |

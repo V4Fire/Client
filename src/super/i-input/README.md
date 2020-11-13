@@ -170,9 +170,13 @@ The form prop lets you place a component anywhere in the document but have it in
     Submit
 ```
 
-#### inputAttrs
+#### attrsProp
 
 Additional attributes are provided to an "internal" (native) input tag.
+
+```
+< b-input-hidden :attrs = {type: 'checkbox'}
+```
 
 #### cache
 
