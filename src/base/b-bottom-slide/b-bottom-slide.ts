@@ -74,8 +74,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly stepsStore!: number[];
 
 	/**
-	 * Minimum height value of a component visible part (in pixels),
-	 * i.e. even the component is closed this part still be visible
+	 * Minimum height value of a visible part (in pixels), i.e.,
+	 * even the component is closed, this part still be visible
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNonNegative})
@@ -88,7 +88,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly maxVisiblePercent: number = 90;
 
 	/**
-	 * Maximum time in milliseconds after after which we can assume that there was a quick swipe
+	 * Maximum time in milliseconds after which we can assume that there was a quick swipe
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isPositive})
