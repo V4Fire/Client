@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.?? (2020-??-??)
+## v3.0.0-rc.98 (2020-11-13)
 
 #### :boom: Breaking Change
 
@@ -21,9 +21,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Added the missing `over-wrapper` element `base/b-sidebar`
+* Fixed firing the `close` event on swipe closing `base/b-bottom-slide`
+* Now the `lockScrollMobile` modifier is applied for all mobile devices `iLockPageScroll`
+
+#### :memo: Documentation
+
+* Added documentation `iLockPageScroll`
 
 #### :house: Internal
 
+* Fixed ESLint warnings `bBottomSlide`
 * `base/b-sidebar`
   * Fixed ESLint errors
   * Fixed ts errors
@@ -57,6 +64,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed initializing of watchers based on accessors `core/component/watch/create`
+>>>>>>> origin/master
 
 ## v3.0.0-rc.93 (2020-11-03)
 
