@@ -44,8 +44,7 @@
 				:tabIndex = tabIndex |
 				@focus = onFocus |
 				@blur = onBlur |
-				${attrs|!html} |
-				${@attrs}
+				${Object.assign({}, attrs, @attrs)|!html}
 			.
 
 		/**
