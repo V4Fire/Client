@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { UnsafeIData } from 'super/i-data/i-data';
+
 import iInput from 'super/i-input/i-input';
 
 export interface ValidatorMsgFn {
@@ -55,3 +57,15 @@ export type ValidatorsDecl<CTX = iInput, P = ValidatorParams> = Dictionary<
 
 export type Value = unknown;
 export type FormValue = Value;
+
+// @ts-ignore (extend)
+export interface UnsafeIInput<CTX extends iInput = iInput> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	attrs: CTX['attrs'];
+
+	// @ts-ignore (access)
+	resolveValue: CTX['resolveValue'];
+
+	// @ts-ignore (access)
+	normalizeAttrs: CTX['normalizeAttrs'];
+}

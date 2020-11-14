@@ -28,7 +28,8 @@ import iData, {
 	p,
 
 	ModsDecl,
-	ModEvent
+	ModEvent,
+	UnsafeGetter
 
 } from 'super/i-data/i-data';
 
@@ -36,6 +37,7 @@ import {
 
 	Value,
 	FormValue,
+	UnsafeIInput,
 
 	Validators,
 	ValidatorMsg,
@@ -292,6 +294,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@system({replace: false})
 	prevValue?: this['Value'];
+
+	/** @override */
+	get unsafe(): UnsafeGetter<UnsafeIInput<this>> {
+		return <any>this;
+	}
 
 	/**
 	 * Link to a map of available component validators

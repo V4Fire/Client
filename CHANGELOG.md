@@ -89,7 +89,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Refactoring `iData`
-* Improved error handling `iInput`
+
+* `iInput`:
+  * Improved error handling
+  * Added `UnsafeIInput`
+
 * Fixed ESLint warnings:
   * `bCheckbox`
   * `bRadioButton`

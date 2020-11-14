@@ -33,6 +33,7 @@ Changelog
 #### :house: Internal
 
 * Improved error handling
+* Added `UnsafeIInput`
 
 #### :nail_care: Polish
 
