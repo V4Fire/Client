@@ -7,4 +7,4 @@
  */
 
 package('b-dummy')
-	.extends('i-data');
+	.extends('i-input-text');

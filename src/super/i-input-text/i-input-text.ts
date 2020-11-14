@@ -21,6 +21,7 @@ import iInput, {
 	component,
 	prop,
 	system,
+	computed,
 	wait,
 
 	ModsDecl,
@@ -185,8 +186,17 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * Text value of the input
 	 * @see [[iInputText.text]]
 	 */
+	@computed({cache: false})
 	get text(): string {
-		return this.field.get<string>('textStore')!;
+		const
+			v = this.field.get<string>('textStore') ?? '';
+
+		// If the input is empty, don't provide the mask
+		if (this.compiledMask?.placeholder === v) {
+			return '';
+		}
+
+		return v;
 	}
 
 	/**
@@ -199,8 +209,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		const
 			{input} = this.$refs;
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (input != null) {
+		// Force to set a value to the input
+		if (Object.isTruly(input)) {
 			input.value = value;
 		}
 	}
@@ -331,27 +341,31 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		}
 
 		const
-			isFocused = this.mods.focused === 'true',
+			isFocused = this.mods.focused === 'true';
+
+		let
 			withoutSelection = start === end;
 
-		let
-			{maskText = this.maskText, cursor} = opts;
+		const
+			{maskText = this.maskText} = opts;
 
 		let
-			res = '',
+			maskedInput = '',
 			pos = -1;
 
 		if (text === '') {
 			if (isFocused) {
-				cursor = 'start';
-				res = mask.placeholder;
+				start = 0;
+				end = 0;
+				withoutSelection = true;
+				maskedInput = mask.placeholder;
 			}
 
 		} else {
 			const
-				chunks = Array.from(text).slice(start, withoutSelection ? undefined : end);
+				chunks = text.split('').slice(start, withoutSelection ? undefined : end);
 
-			const resolveNonTerminal = (pattern: RegExp, i: number) => {
+			const resolveNonTerminalFromBuffer = (pattern: RegExp, i: number) => {
 				const
 					char = maskText[i];
 
@@ -367,15 +381,16 @@ export default class iInputText extends iInput implements iWidth, iSize {
 					symbol = maskSymbols[i],
 					isNonTerminal = Object.isRegExp(symbol);
 
+				// Restoration of values that don't match the selection range
 				if (i < start || !withoutSelection && i > end) {
 					if (isNonTerminal) {
-						res += resolveNonTerminal(<RegExp>symbol, i);
+						maskedInput += resolveNonTerminalFromBuffer(<RegExp>symbol, i);
 
 					} else {
-						res += symbol;
+						maskedInput += symbol;
 					}
 
-					break;
+					continue;
 				}
 
 				if (isNonTerminal) {
@@ -383,50 +398,45 @@ export default class iInputText extends iInput implements iWidth, iSize {
 						nonTerminal = <RegExp>symbol;
 
 					if (chunks.length > 0) {
+						// Skip all symbols that don't match the non-terminal grammar
 						while (chunks.length > 0 && !nonTerminal.test(chunks[0])) {
 							chunks.shift();
 						}
 
 						if (chunks.length > 0) {
-							res += chunks[0];
-							chunks.shift();
+							maskedInput += chunks[0];
 							pos++;
-
-						} else {
-							res += resolveNonTerminal(nonTerminal, i);
 						}
-
-					} else {
-						res += resolveNonTerminal(nonTerminal, i);
 					}
 
+					// There are no symbols from the raw input that match the non-terminal grammar
+					if (chunks.length === 0) {
+						maskedInput += resolveNonTerminalFromBuffer(nonTerminal, i);
+
+					} else {
+						chunks.shift();
+					}
+
+				// This is a static symbol from the mask
 				} else {
-					res += symbol;
+					maskedInput += symbol;
 				}
 			}
 		}
 
-		if (cursor === 'start') {
-			for (let i = 0; i < maskSymbols.length; i++) {
-				if (Object.isRegExp(maskSymbols[i])) {
-					cursor = i;
-					break;
-				}
-			}
-		}
-
-		this.text = res;
+		this.text = maskedInput;
+		this.maskText = maskedInput;
 
 		if (isFocused) {
-			if (cursor != null) {
-				pos = Number(cursor);
+			if (withoutSelection) {
+				pos = start + pos + 1;
+
+				while (pos < maskSymbols.length && !Object.isRegExp(maskSymbols[pos])) {
+					pos++;
+				}
 
 			} else {
-				pos = withoutSelection ? start + pos + 1 : end;
-			}
-
-			while (pos < maskSymbols.length && !Object.isRegExp(maskSymbols[pos])) {
-				pos++;
+				pos = end;
 			}
 
 			this.lastMaskSelectionStartIndex = pos;
@@ -474,6 +484,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		$a.on(input, 'blur', this.onMaskBlur.bind(this), group);
 
 		this.compileMask();
+		this.applyMaskToText();
 	}
 
 	/**
@@ -549,47 +560,44 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		this.sync.mod('readonly', 'readonly');
 	}
 
+	protected mounted(): void {
+		this.$refs.input.value = this.text;
+	}
+
 	/**
 	 * Handler: the input with a mask has got the focus
 	 */
-	protected async onMaskFocus(): Promise<void> {
-		return mask.onMaskFocus(this);
+	protected onMaskFocus(): void {
+		void mask.setCursorPositionAtFirstNonTerminal(this);
 	}
 
 	/**
 	 * Handler: the input with a mask has lost the focus
 	 */
 	protected onMaskBlur(): void {
-		return mask.onMaskBlur(this);
-	}
-
-	/**
-	 * Handler: cursor position of the input has been changed and can be saved
-	 */
-	protected onMaskCursorReady(): void {
-		return mask.onMaskCursorReady(this);
+		mask.syncInputWithField(this);
 	}
 
 	/**
 	 * Handler: value of the masked input has been changed and can be saved
 	 */
 	protected onMaskValueReady(): void {
-		return mask.onMaskValueReady(this);
+		mask.saveSnapshot(this);
 	}
 
 	/**
 	 * Handler: there is occur an input action on the masked input
 	 */
-	protected async onMaskInput(): Promise<void> {
-		return mask.onMaskInput(this);
+	protected onMaskInput(): void {
+		void mask.syncFieldWithInput(this);
 	}
 
 	/**
 	 * Handler: the "backspace" button has been pressed on the masked input
 	 * @param e
 	 */
-	protected async onMaskBackspace(e: KeyboardEvent): Promise<void> {
-		return mask.onMaskBackspace(this, e);
+	protected onMaskBackspace(e: KeyboardEvent): void {
+		void mask.onMaskBackspace(this, e);
 	}
 
 	/**
@@ -597,7 +605,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @param e
 	 */
 	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): void {
-		return mask.onMaskNavigate(this, e);
+		mask.onMaskNavigate(this, e);
 	}
 
 	/**
@@ -606,6 +614,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @param e
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): void {
-		return mask.onMaskKeyPress(this, e);
+		mask.onMaskKeyPress(this, e);
 	}
 }

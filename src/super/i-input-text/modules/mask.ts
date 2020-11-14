@@ -13,19 +13,19 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Handler: the input with a mask has got the focus
+ * Sets position of the selection cursor at the first non-terminal symbol from the mask
  * @param component
  */
-export async function onMaskFocus<C extends iInputText>(component: C): Promise<void> {
+export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(component: C): Promise<void> {
 	const
-		c = component.unsafe;
+		{unsafe} = component;
 
-	if (c.mods.empty === 'true') {
-		await c.applyMaskToText('');
+	if (unsafe.mods.empty === 'true') {
+		await unsafe.applyMaskToText('');
 	}
 
 	const
-		mask = c.compiledMask;
+		mask = unsafe.compiledMask;
 
 	if (mask == null) {
 		return;
@@ -41,63 +41,56 @@ export async function onMaskFocus<C extends iInputText>(component: C): Promise<v
 		}
 	}
 
-	c.$refs.input.setSelectionRange(pos, pos);
+	unsafe.$refs.input.setSelectionRange(pos, pos);
 }
 
 /**
- * Handler: the input with a mask has lost the focus
+ * Saves a snapshot of the masked input
  * @param component
  */
-export function onMaskBlur<C extends iInputText>(component: C): void {
-	const
-		mask = component.unsafe.compiledMask;
+export function saveSnapshot<C extends iInputText>(component: C): void {
+	const {
+		unsafe,
+		unsafe: {$refs: {input}}
+	} = component;
 
-	if (mask == null) {
+	unsafe.maskText = component.text;
+
+	if (Object.isTruly(input)) {
+		unsafe.lastMaskSelectionStartIndex = input.selectionStart;
+		unsafe.lastMaskSelectionEndIndex = input.selectionEnd;
+	}
+}
+
+/**
+ * Synchronizes the `$refs.input.text` property with the `text` field
+ * @param component
+ */
+export function syncInputWithField<C extends iInputText>(component: C): void {
+	const {
+		unsafe,
+		unsafe: {$refs: {input}}
+	} = component;
+
+	if (unsafe.compiledMask == null || !Object.isTruly(input)) {
 		return;
 	}
 
-	if (component.text === mask!.placeholder) {
-		component.value = '';
-	}
+	input.value = unsafe.text;
 }
 
 /**
- * Handler: cursor position of the input has been changed and can be saved
+ * Synchronizes the `text` field with the `$refs.input.text` property
  * @param component
  */
-export function onMaskCursorReady<C extends iInputText>(component: C): void {
+export async function syncFieldWithInput<C extends iInputText>(component: C): Promise<void> {
 	const
-		{unsafe, unsafe: {$refs: {input}}} = component;
+		{unsafe} = component;
 
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	if (input == null) {
-		return;
-	}
-
-	unsafe.lastMaskSelectionStartIndex = input.selectionStart;
-	unsafe.lastMaskSelectionEndIndex = input.selectionEnd;
-}
-
-/**
- * Handler: value of the masked input has been changed and can be saved
- * @param component
- */
-export function onMaskValueReady<C extends iInputText>(component: C): void {
-	component.unsafe.maskText = component.text;
-}
-
-/**
- * Handler: there is occur an input action on the masked input
- * @param component
- */
-export async function onMaskInput<C extends iInputText>(component: C): Promise<void> {
-	const
-		c = component.unsafe;
-
-	await c.applyMaskToText(undefined, {
-		start: c.lastMaskSelectionStartIndex,
-		end: c.lastMaskSelectionEndIndex
-	});
+	unsafe.async.setImmediate(() => unsafe.applyMaskToText(unsafe.$refs.input.value, {
+		start: unsafe.lastMaskSelectionStartIndex,
+		end: unsafe.lastMaskSelectionEndIndex
+	}));
 }
 
 /**
@@ -176,7 +169,7 @@ export async function onMaskBackspace<C extends iInputText>(component: C, e: Key
 		text = chunks.join('');
 
 		if (text !== '') {
-			await unsafe.applyMaskToText(text, {cursor: selectionStart, maskText: ''});
+			await unsafe.applyMaskToText(text, {start: selectionStart, end: selectionEnd, maskText: ''});
 
 		} else {
 			await unsafe.applyMaskToText('');
@@ -281,8 +274,7 @@ export function onMaskNavigate<C extends iInputText>(component: C, e: KeyboardEv
 		const
 			{input} = unsafe.$refs;
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (input == null) {
+		if (!Object.isTruly(input)) {
 			return;
 		}
 
@@ -377,8 +369,7 @@ export function onMaskKeyPress<C extends iInputText>(component: C, e: KeyboardEv
 	const
 		{input} = unsafe.$refs;
 
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	if (input == null) {
+	if (!Object.isTruly(input)) {
 		return;
 	}
 

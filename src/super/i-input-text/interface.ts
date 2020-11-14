@@ -21,11 +21,6 @@ export interface ApplyMaskToTextOptions {
 	end?: Nullable<number>;
 
 	/**
-	 * Position to set of the selection cursor
-	 */
-	cursor?: Nullable<number | 'start'>;
-
-	/**
 	 * Text value of the masked input
 	 */
 	maskText?: string;

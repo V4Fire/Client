@@ -11,6 +11,7 @@ import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import { ResizeWatcher } from 'core/dom/resize-observer';
 
 import iData, { component } from 'super/i-data/i-data';
+import iInputText from 'super/i-input-text/i-input-text';
 import { Directives, Modules } from 'base/b-dummy/interface';
 
 const
@@ -27,7 +28,7 @@ export * from 'base/b-dummy/interface';
 	}
 })
 
-export default class bDummy extends iData {
+export default class bDummy extends iInputText {
 	/**
 	 * Links to directives
 	 */

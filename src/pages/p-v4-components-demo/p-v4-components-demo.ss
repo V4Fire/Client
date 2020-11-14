@@ -14,6 +14,9 @@
 	- block body
 		: config = require('config').build
 
+		1
+		< b-dummy :text = '79858608729' | :mask = '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
+
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo

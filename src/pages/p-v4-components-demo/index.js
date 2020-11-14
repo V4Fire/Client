@@ -21,5 +21,6 @@ package('p-v4-components-demo')
 		'b-input-hidden',
 		'b-form',
 		'b-sidebar',
+		'b-dummy',
 		components
 	);
