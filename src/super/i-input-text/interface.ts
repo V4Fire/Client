@@ -6,32 +6,29 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface ApplyMaskToValueOptions {
-	/**
-	 * Which component property should be updated
-	 * @default `'text'`
-	 */
-	update?: 'text' | 'textBuffer';
+import { UnsafeIInput } from 'super/i-input/i-input';
+import iInputText from 'super/i-input-text/i-input-text';
 
+export interface ApplyMaskToTextOptions {
 	/**
-	 * Start index of the position to update
+	 * The start position to set off the text selection
 	 */
 	start?: Nullable<number>;
 
 	/**
-	 * End index of the position to update
+	 * The end position to set off the text selection
 	 */
 	end?: Nullable<number>;
 
 	/**
-	 * Cursor position
+	 * Position to set of the selection cursor
 	 */
 	cursor?: Nullable<number | 'start'>;
 
 	/**
-	 * Value of the buffer to apply
+	 * Text value of the masked input
 	 */
-	buffer?: string;
+	maskText?: string;
 }
 
 export interface CompiledMask {
@@ -57,4 +54,31 @@ export interface CompiledMask {
 	 * ```
 	 */
 	placeholder: string;
+}
+
+// @ts-ignore (extend)
+export interface UnsafeIInputText<CTX extends iInputText = iInputText> extends UnsafeIInput<CTX> {
+	// @ts-ignore (access)
+	maskText: CTX['maskText'];
+
+	// @ts-ignore (access)
+	compiledMask: CTX['compiledMask'];
+
+	// @ts-ignore (access)
+	maskRepeat: CTX['maskRepeat'];
+
+	// @ts-ignore (access)
+	lastMaskSelectionStartIndex: CTX['lastMaskSelectionStartIndex'];
+
+	// @ts-ignore (access)
+	lastMaskSelectionEndIndex: CTX['lastMaskSelectionEndIndex'];
+
+	// @ts-ignore (access)
+	applyMaskToText: CTX['applyMaskToText'];
+
+	// @ts-ignore (access)
+	initMask: CTX['initMask'];
+
+	// @ts-ignore (access)
+	compileMask: CTX['compileMask'];
 }

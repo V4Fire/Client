@@ -13,31 +13,28 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Handler: mask focus
- *
+ * Handler: the input with a mask has got the focus
  * @param component
- * @param e
  */
-export async function onMaskFocus<T extends iInputText>(component: T, e: FocusEvent): Promise<void> {
+export async function onMaskFocus<C extends iInputText>(component: C): Promise<void> {
 	const
 		c = component.unsafe;
 
 	if (c.mods.empty === 'true') {
-		await c.applyMaskToValue('', {updateBuffer: true});
+		await c.applyMaskToText('');
 	}
 
 	const
-		// @ts-ignore (access)
-		m = c._mask;
+		mask = c.compiledMask;
 
-	if (!m) {
+	if (mask == null) {
 		return;
 	}
 
 	let
 		pos = 0;
 
-	for (let o = m.value, i = 0; i < o.length; i++) {
+	for (let o = mask!.symbols, i = 0; i < o.length; i++) {
 		if (Object.isRegExp(o[i])) {
 			pos = i;
 			break;
@@ -48,124 +45,104 @@ export async function onMaskFocus<T extends iInputText>(component: T, e: FocusEv
 }
 
 /**
- * Handler: mask blur
- *
+ * Handler: the input with a mask has lost the focus
  * @param component
- * @param e
  */
-export function onMaskBlur<T extends iInputText>(component: T, e: Event): void {
+export function onMaskBlur<C extends iInputText>(component: C): void {
 	const
-		// @ts-ignore (access)
-		m = component._mask;
+		mask = component.unsafe.compiledMask;
 
-	if (!m) {
+	if (mask == null) {
 		return;
 	}
 
-	// @ts-ignore (access)
-	if (component.valueBuffer === m.tpl) {
+	if (component.text === mask!.placeholder) {
 		component.value = '';
 	}
 }
 
 /**
- * Handler: mask cursor position save
- *
+ * Handler: cursor position of the input has been changed and can be saved
  * @param component
- * @param e
  */
-export function onMaskCursorReady<T extends iInputText>(component: T, e: KeyboardEvent | MouseEvent): void {
+export function onMaskCursorReady<C extends iInputText>(component: C): void {
 	const
-		{input} = component.unsafe.$refs;
+		{unsafe, unsafe: {$refs: {input}}} = component;
 
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (input == null) {
 		return;
 	}
 
-	// @ts-ignore (access)
-	component._lastMaskSelectionStartIndex = input.selectionStart;
-	// @ts-ignore (access)
-	component._lastMaskSelectionEndIndex = input.selectionEnd;
+	unsafe.lastMaskSelectionStartIndex = input.selectionStart;
+	unsafe.lastMaskSelectionEndIndex = input.selectionEnd;
 }
 
 /**
- * Handler: mask value save
- *
+ * Handler: value of the masked input has been changed and can be saved
  * @param component
- * @param e
  */
-export function onMaskValueReady<T extends iInputText>(component: T, e: KeyboardEvent | MouseEvent): void {
-	// @ts-ignore (access)
-	component._maskBuffer = component.valueBuffer;
+export function onMaskValueReady<C extends iInputText>(component: C): void {
+	component.unsafe.maskText = component.text;
 }
 
 /**
- * Handler: mask input
- *
+ * Handler: there is occur an input action on the masked input
  * @param component
- * @emits actionChange(value: V)
  */
-export async function onMaskInput<T extends iInputText>(component: T): Promise<void> {
+export async function onMaskInput<C extends iInputText>(component: C): Promise<void> {
 	const
-		c = component;
+		c = component.unsafe;
 
-	await c.applyMaskToValue(undefined, {
-		// @ts-ignore (access)
-		start: c._lastMaskSelectionStartIndex,
-		// @ts-ignore (access)
-		end: c._lastMaskSelectionEndIndex
+	await c.applyMaskToText(undefined, {
+		start: c.lastMaskSelectionStartIndex,
+		end: c.lastMaskSelectionEndIndex
 	});
-
-	// @ts-ignore (access)
-	c.onRawDataChange(c.value);
 }
 
 /**
- * Handler: backspace for the mask
+ * Handler: the "backspace" button has been pressed on the masked input
  *
  * @param component
  * @param e
- * @emits actionChange(value: V)
  */
-export async function onMaskBackspace<T extends iInputText>(component: T, e: KeyboardEvent): Promise<void> {
+export async function onMaskBackspace<C extends iInputText>(component: C, e: KeyboardEvent): Promise<void> {
 	const codes = {
 		Backspace: true,
 		Delete: true
 	};
 
-	if (!codes[e.key]) {
+	if (codes[e.key] == null) {
 		return;
 	}
 
 	e.preventDefault();
 
 	const
-		c = component,
-		// @ts-ignore (access)
-		{input} = c.$refs;
+		{unsafe, unsafe: {$refs: {input}}} = component;
 
-	if (!input) {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (input == null) {
 		return;
 	}
 
 	const
-		selectionStart = input.selectionStart || 0,
-		selectionEnd = input.selectionEnd || 0,
-		selectionFalse = selectionStart === selectionEnd;
+		selectionStart = input.selectionStart ?? 0,
+		selectionEnd = input.selectionEnd ?? 0,
+		withoutSelection = selectionStart === selectionEnd;
 
 	const
-		// @ts-ignore (access)
-		m = c._mask,
-		mask = m && m.value,
-		ph = c.maskPlaceholder;
+		mask = unsafe.compiledMask,
+		maskSymbols = mask?.symbols;
 
-	if (!m || !mask) {
+	if (mask == null || maskSymbols == null) {
 		return;
 	}
 
 	let
-		// @ts-ignore (access)
-		res = c.valueBuffer,
+		{text} = unsafe;
+
+	let
 		pos = 0;
 
 	if (e.key === 'Delete') {
@@ -176,157 +153,162 @@ export async function onMaskBackspace<T extends iInputText>(component: T, e: Key
 		const
 			chunks = <string[]>[];
 
-		for (let i = 0; i < mask.length; i++) {
+		for (let i = 0; i < maskSymbols.length; i++) {
 			const
-				el = mask[i];
+				symbol = maskSymbols[i],
+				char = text[i];
 
-			if (res && Object.isRegExp(el) && el.test(res[i])) {
-				chunks.push(res[i]);
+			if (Object.isRegExp(symbol) && symbol.test(char)) {
+				chunks.push(char);
 
 			} else {
 				if (i < selectionStart) {
 					start--;
 				}
 
-				if (!selectionFalse && i < selectionEnd) {
+				if (!withoutSelection && i < selectionEnd) {
 					end--;
 				}
 			}
 		}
 
-		chunks.splice(start, selectionFalse ? 1 : end - start);
-		res = chunks.join('');
+		chunks.splice(start, withoutSelection ? 1 : end - start);
+		text = chunks.join('');
 
-		if (res) {
-			await c.applyMaskToValue(res, {cursor: selectionStart, maskBuffer: ''});
+		if (text !== '') {
+			await unsafe.applyMaskToText(text, {cursor: selectionStart, maskText: ''});
 
 		} else {
-			// @ts-ignore (access)
-			c.skipBuffer = true;
-			c.value = '';
-			await c.applyMaskToValue('', {updateBuffer: true});
+			await unsafe.applyMaskToText('');
 		}
 
 		return;
 	}
 
 	const
-		chunks = (<string>res).split('');
+		chunks = text.split('');
 
-	let n = selectionEnd - selectionStart;
-	n = n > 0 ? n : 1;
+	let range = selectionEnd - selectionStart;
+	range = range > 0 ? range : 1;
 
-	while (n--) {
+	while (range-- > 0) {
 		const
-			end = selectionEnd - n - 1;
+			end = selectionEnd - range - 1;
 
 		let
-			maskEl = mask[end],
+			maskEl = maskSymbols[end],
 			prevMaskEl = '',
 			i = end;
 
-		if (!Object.isRegExp(maskEl) && selectionFalse) {
+		if (!Object.isRegExp(maskEl) && withoutSelection) {
 			prevMaskEl = maskEl;
 
-			while (!Object.isRegExp(mask[--i]) && i > -1) {
-				prevMaskEl += mask[i];
+			while (!Object.isRegExp(maskSymbols[--i]) && i > -1) {
+				prevMaskEl += maskSymbols[i];
 			}
 
-			maskEl = mask[i];
+			maskEl = maskSymbols[i];
 		}
 
 		if (Object.isRegExp(maskEl)) {
 			pos = end - prevMaskEl.length;
-			chunks[pos] = ph;
+			chunks[pos] = unsafe.maskPlaceholder;
 		}
 	}
 
-	res = chunks.join('');
+	text = chunks.join('');
 
 	let
-		start = selectionFalse ? pos : selectionStart;
+		start = withoutSelection ? pos : selectionStart;
 
-	while (start < mask.length && !Object.isRegExp(mask[start])) {
+	while (start < maskSymbols.length && !Object.isRegExp(maskSymbols[start])) {
 		start++;
 	}
 
-	if (res === m.tpl) {
-		// @ts-ignore (access)
-		c.skipBuffer = true;
-		c.value = '';
-		await c.applyMaskToValue('', {updateBuffer: true});
+	if (text === mask!.placeholder) {
+		await unsafe.applyMaskToText('');
 
 	} else {
-		c.value = input.value = res;
+		unsafe.text = text;
 		input.setSelectionRange(start, start);
 	}
-
-	// @ts-ignore (access)
-	c.onRawDataChange(c.value);
 }
 
 /**
- * Handler: mask navigation by arrows
+ * Handler: one of "arrow" buttons has been pressed on the masked input
  *
  * @param component
  * @param e
  */
-export function onMaskNavigate<T extends iInputText>(component: T, e: KeyboardEvent | MouseEvent): void {
+export function onMaskNavigate<C extends iInputText>(component: C, e: KeyboardEvent | MouseEvent): void {
 	if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) {
 		return;
 	}
 
 	const
-		c = component,
-		keyboardEvent = e instanceof KeyboardEvent,
-		leftKey = (<KeyboardEvent>e).key === 'ArrowLeft';
+		{unsafe} = component;
 
-	if (keyboardEvent ? !leftKey && (<KeyboardEvent>e).key !== 'ArrowRight' : (<MouseEvent>e).button !== 0) {
+	const
+		isKeyboardEvent = e instanceof KeyboardEvent,
+		isLeftKey = (<KeyboardEvent>e).key === 'ArrowLeft';
+
+	if (isKeyboardEvent ? !isLeftKey && (<KeyboardEvent>e).key !== 'ArrowRight' : (<MouseEvent>e).button !== 0) {
 		return;
 	}
 
-	const event = () => {
-		const
-			// @ts-ignore (access)
-			m = c._mask;
+	if (isKeyboardEvent || unsafe.mods.focused !== 'true') {
+		e.preventDefault();
 
-		if (!m) {
+		if (isKeyboardEvent) {
+			action();
+		}
+
+	} else {
+		unsafe.async.setImmediate(action, {label: $$.setCursor});
+	}
+
+	function action(): void {
+		const
+			mask = unsafe.compiledMask;
+
+		if (mask == null) {
 			return;
 		}
 
 		const
-			mask = m.value,
-			// @ts-ignore (access)
-			{input} = c.$refs;
+			maskSymbols = mask!.symbols;
 
-		if (!input) {
+		const
+			{input} = unsafe.$refs;
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (input == null) {
 			return;
 		}
 
 		const
-			selectionStart = input.selectionStart || 0,
-			selectionEnd = input.selectionEnd || 0;
+			selectionStart = input.selectionStart ?? 0,
+			selectionEnd = input.selectionEnd ?? 0;
 
 		let
 			canChange = true,
 			pos;
 
-		if (keyboardEvent) {
-			// tslint:disable-next-line:prefer-conditional-expression
+		if (isKeyboardEvent) {
 			if (selectionStart !== selectionEnd) {
-				pos = leftKey ? selectionStart : selectionEnd;
+				pos = isLeftKey ? selectionStart : selectionEnd;
 
 			} else {
-				pos = leftKey ? selectionStart - 1 : selectionEnd + 1;
+				pos = isLeftKey ? selectionStart - 1 : selectionEnd + 1;
 			}
 
 		} else {
 			pos = selectionStart;
 		}
 
-		if (selectionEnd === pos || keyboardEvent) {
-			while (!Object.isRegExp(mask[pos])) {
-				if (leftKey) {
+		if (selectionEnd === pos || isKeyboardEvent) {
+			while (!Object.isRegExp(maskSymbols[pos])) {
+				if (isLeftKey) {
 					pos--;
 
 					if (pos <= 0) {
@@ -335,12 +317,12 @@ export function onMaskNavigate<T extends iInputText>(component: T, e: KeyboardEv
 					}
 
 				} else {
-					if (Object.isRegExp(mask[pos - 1])) {
+					if (Object.isRegExp(maskSymbols[pos - 1])) {
 						break;
 					}
 
 					pos++;
-					if (pos >= mask.length) {
+					if (pos >= maskSymbols.length) {
 						canChange = false;
 						break;
 					}
@@ -348,8 +330,8 @@ export function onMaskNavigate<T extends iInputText>(component: T, e: KeyboardEv
 			}
 
 			if (!canChange) {
-				for (let i = 0; i < mask.length; i++) {
-					if (Object.isRegExp(mask[i])) {
+				for (let i = 0; i < maskSymbols.length; i++) {
+					if (Object.isRegExp(maskSymbols[i])) {
 						pos = i;
 						break;
 					}
@@ -358,111 +340,105 @@ export function onMaskNavigate<T extends iInputText>(component: T, e: KeyboardEv
 
 			input.setSelectionRange(pos, pos);
 		}
-	};
-
-	if (keyboardEvent || c.mods.focused !== 'true') {
-		e.preventDefault();
-		keyboardEvent && event();
-
-	} else {
-		// @ts-ignore (access)
-		c.async.setImmediate(event, {label: $$.setCursor});
 	}
 }
 
 /**
- * Handler: mask input from a keyboard
+ * Handler: there is occur a keypress action on the masked input
  *
  * @param component
  * @param e
  * @emits actionChange(value: V)
  */
-export function onMaskKeyPress<T extends iInputText>(component: T, e: KeyboardEvent): void {
+export function onMaskKeyPress<C extends iInputText>(component: C, e: KeyboardEvent): void {
 	const
-		c = component;
+		{unsafe} = component;
 
 	const blacklist = {
 		Tab: true
 	};
 
 	const
-		// @ts-ignore (access)
-		{valueBuffer, _mask} = c;
+		{text, compiledMask} = unsafe;
 
-	if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.key] || !valueBuffer || !_mask) {
+	const isIgnoredKeypress =
+		e.altKey ||
+		e.shiftKey ||
+		e.ctrlKey ||
+		e.metaKey ||
+		blacklist[e.key] === true;
+
+	if (isIgnoredKeypress || text === '' || compiledMask == null) {
 		return;
 	}
 
 	e.preventDefault();
 
 	const
-		// @ts-ignore (access)
-		{input} = c.$refs;
+		{input} = unsafe.$refs;
 
-	if (!input) {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (input == null) {
 		return;
 	}
 
 	const
-		selectionStart = input.selectionStart || 0,
-		selectionEnd = input.selectionEnd || 0;
+		selectionStart = input.selectionStart ?? 0,
+		selectionEnd = input.selectionEnd ?? 0;
 
 	const
-		res = valueBuffer.split(''),
-		mask = _mask.value;
+		chunks = text.split(''),
+		maskSymbols = compiledMask!.symbols;
 
 	let
 		insert = true,
-		n = selectionEnd - selectionStart + 1,
+		range = selectionEnd - selectionStart + 1,
 		start = selectionStart,
 		inputVal = e.key;
 
-	while (n--) {
+	while (range-- > 0) {
 		const
-			end = selectionEnd - n;
+			end = selectionEnd - range;
 
 		let
-			maskEl = mask[end],
+			maskEl = maskSymbols[end],
 			nextMaskEl = '',
 			i = end;
 
 		if (insert && !Object.isRegExp(maskEl)) {
 			nextMaskEl = maskEl;
 
-			while (!Object.isRegExp(mask[++i]) && i < mask.length) {
-				nextMaskEl += mask[i];
+			while (!Object.isRegExp(maskSymbols[++i]) && i < maskSymbols.length) {
+				nextMaskEl += maskSymbols[i];
 			}
 
-			maskEl = mask[i];
+			maskEl = maskSymbols[i];
 		}
 
 		if (Object.isRegExp(maskEl) && (!insert || maskEl.test(inputVal))) {
 			let pos = end + nextMaskEl.length;
-			res[pos] = inputVal;
+			chunks[pos] = inputVal;
 
 			if (insert) {
 				pos++;
 				start = pos;
 				insert = false;
-				inputVal = c.maskPlaceholder;
+				inputVal = unsafe.maskPlaceholder;
 			}
 		}
 	}
 
-	while (start < mask.length && !Object.isRegExp(mask[start])) {
+	while (start < maskSymbols.length && !Object.isRegExp(maskSymbols[start])) {
 		start++;
 	}
 
-	c.value = input.value = res.join('');
+	unsafe.text = chunks.join('');
+	input.setSelectionRange(start, start);
 	input.setSelectionRange(start, start);
 
-	// @ts-ignore (access)
-	c.onRawDataChange(c.value);
-
-	if (c.isMaskInfinite && selectionEnd + 1 === mask.length) {
-		// @ts-ignore (access)
-		c.maskRepeat *= 2;
-		c.updateMask().catch(stderr);
+	if (unsafe.isMaskInfinite && selectionEnd + 1 === maskSymbols.length) {
+		unsafe.maskRepeat *= 2;
+		void unsafe.initMask();
 		input.setSelectionRange(start + 1, start + 1);
 	}
 }
