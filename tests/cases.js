@@ -15,6 +15,7 @@ module.exports = [
 	'--test-entry base/b-list/test',
 	'--test-entry form/b-button/test',
 	'--test-entry super/i-block/test',
+	'--test-entry super/i-block/modules/activation/test',
 	'--test-entry core/dom/image/test',
 	'--test-entry core/dom/in-view/test'
 ];

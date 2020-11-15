@@ -41,8 +41,17 @@ module.exports = (page) => {
 	});
 
 	describe('i-block activation module', () => {
-		describe('events', () => {
-			it('beforeDeactivate', async () => {
+		describe('deactivate', () => {
+			it('sets inactive status to the component', async () => {
+				const
+					status = await dummyComponent.evaluate((ctx) => (ctx.deactivate(), ctx.componentStatus)),
+					isActivated = await dummyComponent.evaluate((ctx) => ctx.isActivated);
+
+				expect(status).toBe('inactive');
+				expect(isActivated).toBeFalse();
+			});
+
+			it('fires beforeDeactivate event', async () => {
 				const eventPromise = dummyComponent.evaluate((ctx) => new Promise((res) => {
 					ctx.once('beforeDeactivate', res);
 					ctx.deactivate();
@@ -51,7 +60,7 @@ module.exports = (page) => {
 				await expectAsync(eventPromise).toBeResolved();
 			});
 
-			it('deactivated', async () => {
+			it('fires deactivated event', async () => {
 				const eventPromise = dummyComponent.evaluate((ctx) => new Promise((res) => {
 					ctx.once('deactivated', res);
 					ctx.deactivate();
@@ -59,8 +68,21 @@ module.exports = (page) => {
 
 				await expectAsync(eventPromise).toBeResolved();
 			});
+		});
 
-			it('beforeActivate', async () => {
+		describe('activate', () => {
+			it('sets ready status to the component', async () => {
+				await dummyComponent.evaluate((ctx) => ctx.deactivate());
+
+				const
+					status = await dummyComponent.evaluate((ctx) => (ctx.activate(), ctx.componentStatus)),
+					isActivated = await dummyComponent.evaluate((ctx) => ctx.isActivated);
+
+				expect(status).toBe('ready');
+				expect(isActivated).toBeTrue();
+			});
+
+			it('fires beforeActivate event', async () => {
 				const eventPromise = dummyComponent.evaluate((ctx) => new Promise((res) => {
 					ctx.once('beforeActivate', res);
 					ctx.deactivate();
@@ -70,7 +92,7 @@ module.exports = (page) => {
 				await expectAsync(eventPromise).toBeResolved();
 			});
 
-			it('activated', async () => {
+			it('fires activated event', async () => {
 				const eventPromise = dummyComponent.evaluate((ctx) => new Promise((res) => {
 					ctx.once('activated', res);
 					ctx.deactivate();
