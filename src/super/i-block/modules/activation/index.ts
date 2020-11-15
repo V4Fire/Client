@@ -139,6 +139,9 @@ export function deactivate(component: iBlock): void {
 /**
  * Handler: component activated hook
  *
+ * @emits beforeActivate()
+ * @emits activated()
+ *
  * @param component
  * @param [force] - if true, then the component will be forced to activate, even if it is already activated
  */
@@ -150,6 +153,8 @@ export function onActivated(component: iBlock, force?: boolean): void {
 	if (ctx.isActivated || !force && !ctx.activatedProp && !ctx.isReadyOnce) {
 		return;
 	}
+
+	component.emit('beforeActivate');
 
 	$a
 		.unmuteAll()
@@ -181,15 +186,23 @@ export function onActivated(component: iBlock, force?: boolean): void {
 
 	ctx.state.initFromRouter();
 	ctx.isActivated = true;
+
+	component.emit('activated');
 }
 
 /**
  * Handler: component deactivated hook
+ *
+ * @emits beforeDeactivate()
+ * @emits deactivated()
+ *
  * @param component
  */
 export function onDeactivated(component: iBlock): void {
 	const
 		{async: $a} = component.unsafe;
+
+	component.emit('beforeDeactivate');
 
 	for (let keys = Object.keys(asyncNames), i = 0; i < keys.length; i++) {
 		const
@@ -213,4 +226,6 @@ export function onDeactivated(component: iBlock): void {
 
 	component.componentStatus = 'inactive';
 	component.isActivated = false;
+
+	component.emit('deactivated');
 }

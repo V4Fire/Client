@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.98 (2020-11-16)
+
+#### :rocket: New Feature
+
+* Added `beforeDeactivate`, `deactivated`, `beforeActivate`, `activated` events `i-block/activation`
+
 ## v3.0.0-rc.98 (2020-11-13)
 
 #### :boom: Breaking Change
