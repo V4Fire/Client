@@ -12,6 +12,7 @@ jobs:
   # Run components tests
   components:
     runs-on: windows-latest
+    timeout-minutes: 30
 
     strategy:
       matrix:
@@ -45,6 +46,7 @@ jobs:
   # Run typescript check
   typescript:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     strategy:
       matrix:
@@ -79,6 +81,7 @@ jobs:
   # Run eslint check
   eslint:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     strategy:
       matrix:
