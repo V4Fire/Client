@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.99 (2020-11-17)
+
+#### :bug: Bug Fix
+
+* [Fixed dynamic creation of flyweight components](https://github.com/V4Fire/Client/issues/434) `core/component/render-function`
+
 ## v3.0.0-rc.98 (2020-11-13)
 
 #### :boom: Breaking Change
