@@ -39,7 +39,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.28.1",
+    "@v4fire/core": "git+ssh://git@github.com:V4Fire/Core.git#issues/135",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.3",
     "path-to-regexp": "^3.2.0",
