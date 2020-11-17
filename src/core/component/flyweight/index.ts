@@ -61,6 +61,8 @@ export function parseVNodeAsFlyweight(
 		return vnode;
 	}
 
+	delete vnode.data!.attrs!['v4-flyweight-component'];
+
 	const
 		componentData = getComponentDataFromVNode(compositeAttr, vnode),
 		componentProto = meta.constructor.prototype,
@@ -226,7 +228,9 @@ export function parseVNodeAsFlyweight(
 	newVNode.fakeInstance = fakeCtx;
 	newVNode.data = newVNode.data ?? {};
 
-	patchComponentVData(newVNode.data, componentData);
+	patchComponentVData(newVNode.data, componentData, {
+		patchAttrs: Boolean(meta.params.inheritAttrs)
+	});
 
 	// Attach component event listeners
 	for (let o = componentData.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {

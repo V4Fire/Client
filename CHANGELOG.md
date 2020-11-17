@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed dynamic creation of flyweight components](https://github.com/V4Fire/Client/issues/434) `core/component/render-function`
+* [Fixed providing of attributes](https://github.com/V4Fire/Client/issues/437) `core/component/flyweight`
 
 ## v3.0.0-rc.98 (2020-11-13)
 
