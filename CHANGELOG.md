@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.100 (2020-11-17)
+
+#### :house: Internal
+
+* Rendering optimization:
+  * `bBottomSlide`
+  * `bSidebar`
+
 ## v3.0.0-rc.99 (2020-11-17)
 
 #### :bug: Bug Fix

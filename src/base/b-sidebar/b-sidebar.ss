@@ -15,7 +15,9 @@
 	- overWrapper = true
 
 	- block body
-		< .&__content-wrapper
+		< .&__content-wrapper &
+			v-if = isFunctional || opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+		.
 			< .&__content
 				- block content
 					+= self.slot()
