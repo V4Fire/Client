@@ -127,7 +127,9 @@ export default class AsyncRender extends Friend {
 		}
 
 		const
-			f = opts.filter,
+			{filter} = opts;
+
+		const
 			firstRender = <unknown[]>[],
 			untreatedEls = <unknown[]>[],
 			isSrcPromise = Object.isPromise(iterable);
@@ -155,12 +157,22 @@ export default class AsyncRender extends Friend {
 					val = el.value,
 					isPromise = Object.isPromise(val);
 
-				if (
-					!isPromise && (
-						!f ||
-						Object.isTruly(f.call(this.component, val, syncI, {list: iterable, i: syncI, total: syncTotal}))
-					)
-				) {
+				let
+					canRender = !isPromise;
+
+				if (canRender && filter != null) {
+					canRender = filter.call(this.component, val, syncI, {
+						list: iterable,
+						i: syncI,
+						total: syncTotal
+					});
+
+					if (Object.isPromise(canRender) || !Object.isTruly(canRender)) {
+						canRender = false;
+					}
+				}
+
+				if (canRender) {
 					syncTotal++;
 					firstRender.push(val);
 
@@ -313,7 +325,7 @@ export default class AsyncRender extends Friend {
 
 				this.createTask(task, {
 					weight,
-					filter: f?.bind(this.ctx, val, i, {
+					filter: filter?.bind(this.ctx, val, i, {
 						iterable,
 						i: syncI + i + 1,
 
