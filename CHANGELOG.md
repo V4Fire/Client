@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.100 (2020-11-17)
 
+#### :rocket: New Feature
+
+* Added support of filters with promises `super/i-block/modules/async-render`
+
 #### :house: Internal
 
 * Rendering optimization:

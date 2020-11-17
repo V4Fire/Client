@@ -344,12 +344,30 @@ export default class AsyncRender extends Friend {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {
-				if (!params.filter || params.filter()) {
-					cb();
-					return true;
+				if (!params.filter) {
+					return exec(true);
 				}
 
-				return false;
+				const
+					res = params.filter();
+
+				if (Object.isPromise(res)) {
+					return res.then(exec).catch((err) => {
+						stderr(err);
+						return false;
+					});
+				}
+
+				return exec(res);
+
+				function exec(res: unknown): boolean {
+					if (Object.isTruly(res)) {
+						cb();
+						return true;
+					}
+
+					return false;
+				}
 
 			}, {
 				onClear: () => queue.delete(task),
