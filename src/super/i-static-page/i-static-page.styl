@@ -7,10 +7,12 @@
  */
 
 @import "super/i-page/i-page.styl"
+@import "global/g-hint/g-hint.styl"
+@import "global/g-icon/g-icon.styl"
 @import "traits/i-lock-page-scroll/i-lock-page-scroll.styl"
 
 $p = {
-	lockPageHelpers: true,
+	lockPageHelpers: true
 	globalHintHelpers: false
 	globalIconHelpers: false
 }
@@ -22,10 +24,12 @@ i-static-page extends i-page
 		/.g-hint
 			position relative
 
+			// @stlint-disable
 			extends($gHint, {
 				dataAttr: data-hint,
 				showOn: "&[data-hint]:not([data-hint='']):hover",
 			})
+			// @stlint-enable
 
 	if $p.globalIconHelpers
 		/.g-icon
