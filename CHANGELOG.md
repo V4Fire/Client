@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.101 (2020-11-18)
+
+#### :bug: Bug Fix
+
+* Fixed import errors `global/g-icon/g-icon.styl`
+
+#### :house: Internal
+
+* Fixed lint warnings `global/g-icon/g-icon.styl`
+
 ## v3.0.0-rc.100 (2020-11-17)
 
 #### :rocket: New Feature

@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.101 (2020-11-18)
+
+#### :bug: Bug Fix
+
+* Fixed import errors
+
+#### :house: Internal
+
+* Fixed lint warnings
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :rocket: New Feature
