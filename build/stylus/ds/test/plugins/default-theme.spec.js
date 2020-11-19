@@ -15,17 +15,18 @@ const
 	createPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
-describe('build/stylus/plugins/get-ds-variables', () => {
-	it('should return variables', () => {
+describe('build/stylus/plugins/default-theme', () => {
+	it('should return a build theme', () => {
 		const
-			stylus = require('stylus');
+			stylus = require('stylus'),
+			theme = 'day';
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
-			plugins = createPlugins({ds, cssVariables, stylus});
+			plugins = createPlugins({ds, cssVariables, theme, stylus});
 
-		stylus.render('getDSVariables()', {use: [plugins]}, (err, value) => {
-			expect(value).toBeTruthy();
+		stylus.render('defaultTheme()', {use: [plugins]}, (err, value) => {
+			expect(value.trim()).toEqual(`'${theme}'`);
 		});
 	});
 });

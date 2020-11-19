@@ -11,15 +11,15 @@
 require('config');
 
 const
-	plainMock = include('build/stylus/ds/test/scheme/ds-plain'),
-	{fullThemedMock} = include('build/stylus/ds/test/scheme/ds-themes'),
+	plainDesignSystem = include('build/stylus/ds/test/scheme/ds-plain'),
+	{fullThemed} = include('build/stylus/ds/test/scheme/ds-themes'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/ds', () => {
 	it('should create a plain design system', () => {
 		const
 			stylus = require('stylus'),
-			{data: designSystem} = createDesignSystem(plainMock);
+			{data: designSystem} = createDesignSystem(plainDesignSystem);
 
 		expect(Object.isObject(designSystem.colors)).toBeTrue();
 
@@ -38,7 +38,7 @@ describe('build/stylus/ds', () => {
 			{text} = designSystem;
 
 		expect(Object.isObject(text)).toBeTrue();
-		expect(Object.keys(text).length).toBe(Object.keys(plainMock.text).length);
+		expect(Object.keys(text).length).toBe(Object.keys(plainDesignSystem.text).length);
 
 		Object.keys(text).forEach((key) => {
 			const
@@ -55,7 +55,7 @@ describe('build/stylus/ds', () => {
 			{rounding} = designSystem;
 
 		expect(Object.isObject(rounding)).toBeTrue();
-		expect(Object.keys(rounding).length).toBe(Object.keys(plainMock.rounding).length);
+		expect(Object.keys(rounding).length).toBe(Object.keys(plainDesignSystem.rounding).length);
 
 		Object.keys(rounding).forEach((key) => {
 			expect(stylus.functions.type(rounding[key])).toBe('unit');
@@ -65,7 +65,7 @@ describe('build/stylus/ds', () => {
 	it('should create a themed design system', () => {
 		const
 			stylus = require('stylus'),
-			{data: designSystem} = createDesignSystem(fullThemedMock);
+			{data: designSystem} = createDesignSystem(fullThemed);
 
 		expect(Object.isObject(designSystem.colors)).toBeTrue();
 

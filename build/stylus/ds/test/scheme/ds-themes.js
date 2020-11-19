@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const unThemeTextMock = {
+const unThemeText = {
 	meta: {
 		themes: ['day', 'night'],
 		themedFields: ['colors', 'rounding']
@@ -134,7 +134,7 @@ const themedOnlyColors = {
 	}
 };
 
-const fullThemedMock = {
+const fullThemed = {
 	meta: {
 		themes: ['day', 'night']
 	},
@@ -233,7 +233,7 @@ const fullThemedMock = {
 };
 
 module.exports = {
-	fullThemedMock,
-	unThemeTextMock,
+	fullThemed,
+	unThemeText,
 	themedOnlyColors
 };

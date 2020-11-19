@@ -15,8 +15,8 @@ const
 	createPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
-describe('build/stylus/plugins/get-ds-variables', () => {
-	it('should return variables', () => {
+describe('build/stylus/plugins/get-ds-color', () => {
+	it('should return a value', () => {
 		const
 			stylus = require('stylus');
 
@@ -24,8 +24,8 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
 			plugins = createPlugins({ds, cssVariables, stylus});
 
-		stylus.render('getDSVariables()', {use: [plugins]}, (err, value) => {
-			expect(value).toBeTruthy();
+		stylus.render('getDSColor("blue", 1)', {use: [plugins]}, (err, hex) => {
+			expect(hex).toEqual(stylus.render(plainDesignSystem.colors.blue[0]));
 		});
 	});
 });

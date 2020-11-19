@@ -89,7 +89,7 @@ module.exports = function createPlugins({
 		api.define('getDSVariables', ({string: theme}) => {
 			const
 				obj = {},
-				iterator = isBuildHasTheme ? cssVariables.map[theme] : cssVariables.map;
+				iterator = Object.isString(theme) ? cssVariables.map[theme] : cssVariables.map;
 
 			Object.forEach(iterator, (val) => {
 				const [key, value] = val;
