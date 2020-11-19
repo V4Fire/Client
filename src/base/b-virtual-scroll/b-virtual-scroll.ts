@@ -178,6 +178,12 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly shouldStopRequest!: RequestFn;
 
 	/**
+	 * If `true`, slots will be removed instead of `display: none`, and appended instead of `display: ''`
+	 */
+	@prop({type: Boolean})
+	readonly shouldRemoveSlotsFromDocument: boolean = false;
+
+	/**
 	 * Total amount of items that can be loaded
 	 */
 	@system()

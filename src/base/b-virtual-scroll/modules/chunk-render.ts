@@ -73,6 +73,19 @@ export default class ChunkRender extends Friend {
 	protected refsUpdateMap: Map<keyof bVirtualScroll['$refs'], boolean> = new Map();
 
 	/**
+	 * Placeholders for the slots
+	 */
+	protected slotsPlaceholders: Partial<Record<keyof bVirtualScroll['$refs'], CanUndef<HTMLElement>>> = {
+		container: undefined,
+		done: undefined,
+		empty: undefined,
+		loader: undefined,
+		renderNext: undefined,
+		retry: undefined,
+		tombstones: undefined
+	};
+
+	/**
 	 * API for dynamic component rendering
 	 */
 	protected get componentRender(): ComponentRender {
@@ -110,6 +123,7 @@ export default class ChunkRender extends Friend {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
+		this.slotsPlaceholders = {};
 
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
@@ -229,21 +243,64 @@ export default class ChunkRender extends Friend {
 	 */
 	protected performRefsVisibilityUpdate(): void {
 		this.async.requestAnimationFrame(() => {
-			this.refsUpdateMap.forEach((show, ref) => {
-				const
-					state = show ? '' : 'none',
-					refEl = this.refs[ref];
-
-				if (!refEl) {
-					return;
-				}
-
-				refEl.style.display = state;
-			});
-
+			this.refsUpdateMap.forEach((show, ref) => this.applyVisibilityState(ref, show));
 			this.refsUpdateMap.clear();
 
 		}, {label: $$.updateRefsVisibility, group: this.asyncGroup, join: true});
+	}
+
+	/**
+	 * Sets a visibility of the specified ref
+	 *
+	 * @param el
+	 * @param show
+	 */
+	protected applyVisibilityState(refName: keyof bVirtualScroll['$refs'], show: boolean): void {
+		const
+			{ctx} = this,
+			originEl = ctx.$refs[refName];
+
+		if (!originEl) {
+			return;
+		}
+
+		if (!ctx.shouldRemoveSlotsFromDocument) {
+			originEl.style.display = show ? '' : 'none';
+
+		} else {
+			const
+				{slotsPlaceholders} = this,
+				parent = originEl.parentNode;
+
+			const
+				// eslint-disable-next-line no-multi-assign
+				placeholderEl = slotsPlaceholders[refName] = slotsPlaceholders[refName] ?? this.createSlotPlaceholder(originEl);
+
+			if (parent == null) {
+				return;
+			}
+
+			if (show) {
+				parent.replaceChild(originEl, placeholderEl);
+
+			} else {
+				parent.replaceChild(placeholderEl, originEl);
+			}
+		}
+	}
+
+	/**
+	 * Creates a slot placeholder
+	 * @param originalEl
+	 */
+	protected createSlotPlaceholder(originalEl: HTMLElement): HTMLElement {
+		const
+			bl = this.block!,
+			originalClasses = `${bl.getFullElName('slot-placeholder')} ${originalEl.className}`,
+			el = document.createElement(originalEl.tagName.toLowerCase());
+
+		el.className = originalClasses;
+		return el;
 	}
 
 	/**
