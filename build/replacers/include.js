@@ -30,5 +30,5 @@ module.exports = function includeReplacer(str) {
 };
 
 Object.assign(module.exports, {
-	importRgxp: includeRgxp
+	includeRgxp
 });

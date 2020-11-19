@@ -216,42 +216,69 @@ module.exports = async function module({plugins}) {
 		chunkFilename: '[id].css'
 	}));
 
+	const stylHelperLoaders = [
+		{
+			loader: 'fast-css',
+			options: Object.reject(config.css(), ['minimize'])
+		},
+
+		{
+			loader: 'postcss',
+			options: inherit(config.postcss(), {
+				postcssOptions: {
+					plugins: [require('autoprefixer')(config.autoprefixer())]
+				}
+			})
+		},
+
+		{
+			loader: 'stylus',
+			options: inherit(config.stylus(), {
+				use: include('build/stylus')
+			})
+		}
+	];
+
 	loaders.rules.set('styl', {
 		test: /\.styl$/,
-		use: [].concat(
-			MiniCssExtractPlugin.loader,
 
+		oneOf: [
 			{
-				loader: 'fast-css',
-				options: Object.reject(config.css(), ['minimize'])
-			},
+				resourceQuery: /dynamic/,
+				use: [].concat(
+					'style-loader',
+					stylHelperLoaders,
 
-			{
-				loader: 'postcss',
-				options: inherit(config.postcss(), {
-					postcssOptions: {
-						plugins: [require('autoprefixer')(config.autoprefixer())]
+					{
+						loader: 'monic',
+						options: inherit(monic.stylus, {
+							replacers: [
+								require('@pzlr/stylus-inheritance')({resolveImports: true}),
+								include('build/replacers/project-name'),
+								include('build/replacers/apply-dynamic-component-styles')
+							]
+						})
 					}
-				})
+				)
 			},
 
 			{
-				loader: 'stylus',
-				options: inherit(config.stylus(), {
-					use: include('build/stylus')
-				})
-			},
+				use: [].concat(
+					MiniCssExtractPlugin.loader,
+					stylHelperLoaders,
 
-			{
-				loader: 'monic',
-				options: inherit(monic.stylus, {
-					replacers: [
-						require('@pzlr/stylus-inheritance')({resolveImports: true}),
-						include('build/replacers/project-name')
-					]
-				})
+					{
+						loader: 'monic',
+						options: inherit(monic.stylus, {
+							replacers: [
+								require('@pzlr/stylus-inheritance')({resolveImports: true}),
+								include('build/replacers/project-name')
+							]
+						})
+					}
+				)
 			}
-		)
+		]
 	});
 
 	loaders.rules.set('ess', {
