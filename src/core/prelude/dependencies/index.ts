@@ -75,6 +75,8 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 
 			script.src = URL.createObjectURL(blob);
 			script.async = false;
+			script.crossOrigin = 'anonymous';
+
 			addNonceAttribute(script);
 
 			head.appendChild(script);
@@ -109,6 +111,8 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 
 				link.href = <string>PATH[cssURL];
 				link.rel = 'stylesheet';
+				link.crossOrigin = 'anonymous';
+
 				addNonceAttribute(link);
 
 				const
