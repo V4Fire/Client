@@ -78,6 +78,7 @@ module.exports = async function module({plugins}) {
 					include('build/replacers/require-context'),
 					include('build/replacers/super-import'),
 					include('build/replacers/ts-import'),
+					include('build/replacers/dynamic-component-import'),
 					include('build/replacers/require-tests')
 				]
 			})
@@ -160,6 +161,7 @@ module.exports = async function module({plugins}) {
 				replacers: [
 					include('build/replacers/require-context'),
 					include('build/replacers/super-import'),
+					include('build/replacers/dynamic-component-import'),
 					include('build/replacers/require-tests')
 				]
 			})
