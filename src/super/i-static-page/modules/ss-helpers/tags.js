@@ -68,6 +68,7 @@ function getScriptDecl(lib, body) {
 
 	const attrs = normalizeAttrs({
 		...Object.select(lib, isInline ? [] : ['staticAttrs', 'defer', 'src']),
+		crossorigin: 'anonymous',
 		...nonce,
 		...lib.attrs
 	});
@@ -146,6 +147,7 @@ function getStyleDecl(lib, body) {
 
 	const attrsObj = {
 		staticAttrs: lib.staticAttrs,
+		crossorigin: 'anonymous',
 		...nonce,
 		...lib.attrs
 	};
@@ -221,6 +223,7 @@ function getLinkDecl(link) {
 	const attrs = normalizeAttrs({
 		href: link.src,
 		staticAttrs: link.staticAttrs,
+		crossorigin: 'anonymous',
 		...nonce,
 		...link.attrs
 	});
