@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? ()
+
+#### :rocket: New Feature
+
+* `build`:
+  * Added `isLayerCoreDep`
+  * Added support of dynamic imports
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix

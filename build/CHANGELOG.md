@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :rocket: New Feature
+
+* Added support of dynamic imports
+* Added `isLayerCoreDep`
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :nail_care: Polish

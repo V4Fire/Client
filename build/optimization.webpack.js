@@ -14,7 +14,7 @@ const
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
-	{isLayerDep, isExternalDep} = include('build/const'),
+	{isLayerCoreDep, isLayerDep, isExternalDep} = include('build/const'),
 	{inherit} = include('build/build.webpack'),
 	{RUNTIME} = include('build/entries.webpack');
 
@@ -37,17 +37,25 @@ module.exports = function optimization({buildId, plugins}) {
 		options.splitChunks = {
 			cacheGroups: {
 				index: {
-					name: 'index.js',
-					chunks: 'all',
+					name: 'index',
+					chunks: 'initial',
 					priority: 0,
 					minChunks: 2,
 					enforce: true,
+					reuseExistingChunk: true,
+					test: isLayerCoreDep
+				},
+
+				async: {
+					chunks: 'async',
+					priority: 0,
+					minChunks: 2,
 					reuseExistingChunk: true,
 					test: isLayerDep
 				},
 
 				vendor: {
-					name: 'vendor.js',
+					name: 'vendor',
 					chunks: 'all',
 					priority: 1,
 					minChunks: 1,

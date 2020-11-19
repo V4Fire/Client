@@ -53,6 +53,10 @@ module.exports = function DependenciesPlugin({graph}) {
 				});
 
 				$C(compilation.chunks).forEach(({name, files}) => {
+					if (name == null) {
+						return;
+					}
+
 					const
 						file = $C(files).one.filter((src) => path.extname(src)).get();
 
