@@ -37,7 +37,7 @@ module.exports = function optimization({buildId, plugins}) {
 		options.splitChunks = {
 			cacheGroups: {
 				index: {
-					name: 'index',
+					name: 'index.js',
 					chunks: 'initial',
 					priority: 0,
 					minChunks: 2,
@@ -55,7 +55,7 @@ module.exports = function optimization({buildId, plugins}) {
 				},
 
 				vendor: {
-					name: 'vendor',
+					name: 'vendor.js',
 					chunks: 'all',
 					priority: 1,
 					minChunks: 1,
