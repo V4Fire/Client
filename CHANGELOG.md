@@ -23,6 +23,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `isLayerCoreDep`
   * Added support of dynamic imports
 
+* Added API to load the dynamic dependencies `iBlock`
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix
