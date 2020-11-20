@@ -98,12 +98,14 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "parallel-webpack": "^2.6.0",
     "path-equal": "^1.1.1",
+    "portfinder": "^1.0.28",
     "postcss": "^7.0.34",
     "postcss-loader": "^4.0.2",
     "raw-loader": "^4.0.1",
     "snakeskin-loader": "^8.0.1",
     "ss2vue": "^1.1.0",
     "string-dasherize": "^1.0.0",
+    "style-loader": "^2.0.0",
     "stylus": "^0.54.8",
     "stylus-loader": "^3.0.2",
     "svg-sprite-loader": "^5.0.0",
@@ -122,8 +124,7 @@
     "vue-template-es2015-compiler": "^1.9.1",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
-    "worker-loader": "^3.0.2",
-    "portfinder": "^1.0.28"
+    "worker-loader": "^3.0.2"
   },
   "devDependencies": {
     "@v4fire/linters": "^1.6.1",

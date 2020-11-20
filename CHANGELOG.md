@@ -25,6 +25,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added API to load the dynamic dependencies `iBlock`
 
+#### :house: Internal
+
+* Added a new dependency `style-loader`
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix
