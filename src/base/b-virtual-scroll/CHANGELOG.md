@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.102 (2020-11-??)
+
+#### :boom: Breaking Change
+
+* Added wrappers to the slots node `base/b-virtual-scroll`
+
+#### :rocket: New Feature
+
+* Added ability to drop slots node `base/b-virtual-scroll`
+
 ## v3.0.0-rc.81 (2020-10-08)
 
 #### :bug: Bug Fix

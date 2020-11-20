@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.102 (2020-11-??)
+
+#### :boom: Breaking Change
+
+* Added wrappers to the slots node `base/b-virtual-scroll`
+
+#### :rocket: New Feature
+
+* Added ability to drop slots node `base/b-virtual-scroll`
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix
