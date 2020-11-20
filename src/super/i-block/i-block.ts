@@ -83,7 +83,7 @@ import Field from 'super/i-block/modules/field';
 import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
-import Dependencies, { Dependence } from 'super/i-block/modules/dependencies';
+import ModuleLoader, { Module } from 'super/i-block/modules/module-loader';
 
 import {
 
@@ -150,7 +150,7 @@ export * from 'super/i-block/interface';
 export * from 'super/i-block/modules/block';
 export * from 'super/i-block/modules/field';
 export * from 'super/i-block/modules/state';
-export * from 'super/i-block/modules/dependencies';
+export * from 'super/i-block/modules/module-loader';
 
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/event-emitter';
@@ -336,7 +336,14 @@ export default abstract class iBlock extends ComponentInterface {
 	 * ```
 	 */
 	@prop({type: Array, required: false})
-	readonly dependencies: Dependence[] = [];
+	readonly dependenciesProp: Module[] = [];
+
+	/**
+	 * List of additional dependencies to load
+	 * @see [[iBlock.dependenciesProp]]
+	 */
+	@system((o) => o.sync.link())
+	dependencies!: Module[];
 
 	/**
 	 * If true, then the component is marked as a remote provider.
@@ -1006,10 +1013,10 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new Dependencies(ctx)
+		init: (ctx) => new ModuleLoader(ctx)
 	})
 
-	protected readonly dependence!: Dependencies;
+	protected readonly moduleLoader!: ModuleLoader;
 
 	/** @override */
 	@system()
@@ -1962,7 +1969,7 @@ export default abstract class iBlock extends ComponentInterface {
 				[],
 
 				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				this.dependence.load(...this.dependencies) || [],
+				this.moduleLoader.load(...this.dependencies) || [],
 
 				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				this.state.initFromStorage() || []

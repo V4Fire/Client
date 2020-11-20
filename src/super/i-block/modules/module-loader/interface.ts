@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * Cache of initialized dependencies
- */
-export const dependenciesCache = Object.createDict<boolean>();
+export interface Module extends Dictionary {
+	id?: unknown;
+	load(): Array<Promise<unknown>>;
+}
