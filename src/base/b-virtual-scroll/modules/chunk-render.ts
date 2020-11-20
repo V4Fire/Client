@@ -73,19 +73,6 @@ export default class ChunkRender extends Friend {
 	protected refsUpdateMap: Map<keyof bVirtualScroll['$refs'], boolean> = new Map();
 
 	/**
-	 * Placeholders for the slots
-	 */
-	protected slotsPlaceholders: Partial<Record<keyof bVirtualScroll['$refs'], CanUndef<HTMLElement>>> = {
-		container: undefined,
-		done: undefined,
-		empty: undefined,
-		loader: undefined,
-		renderNext: undefined,
-		retry: undefined,
-		tombstones: undefined
-	};
-
-	/**
 	 * API for dynamic component rendering
 	 */
 	protected get componentRender(): ComponentRender {
@@ -111,6 +98,7 @@ export default class ChunkRender extends Friend {
 		super(component);
 
 		this.ctx.meta.hooks.mounted.push({fn: () => {
+			this.unMountLazySlots();
 			this.initEventHandlers();
 		}});
 	}
@@ -123,15 +111,11 @@ export default class ChunkRender extends Friend {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
-		this.slotsPlaceholders = {};
 
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
 		this.setLoadersVisibility(true);
-		this.setRefVisibility('retry', false);
-		this.setRefVisibility('done', false);
-		this.setRefVisibility('empty', false);
-		this.setRefVisibility('renderNext', false);
+		this.unMountLazySlots();
 
 		this.initEventHandlers();
 	}
@@ -250,6 +234,17 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
+	 * UnMounts slots from document that should not be visible at the component initialization
+	 * @see [[bVirtualScroll.prototype.shouldRemoveSlotsFromDocument]]
+	 */
+	protected unMountLazySlots(): void {
+		this.setRefVisibility('retry', false);
+		this.setRefVisibility('done', false);
+		this.setRefVisibility('empty', false);
+		this.setRefVisibility('renderNext', false);
+	}
+
+	/**
 	 * Sets a visibility of the specified ref
 	 *
 	 * @param el
@@ -258,49 +253,30 @@ export default class ChunkRender extends Friend {
 	protected applyVisibilityState(refName: keyof bVirtualScroll['$refs'], show: boolean): void {
 		const
 			{ctx} = this,
-			originEl = ctx.$refs[refName];
+			originalEl = ctx.$refs[refName];
 
-		if (!originEl) {
+		if (!originalEl) {
 			return;
 		}
 
 		if (!ctx.shouldRemoveSlotsFromDocument) {
-			originEl.style.display = show ? '' : 'none';
+			originalEl.style.display = show ? '' : 'none';
 
 		} else {
 			const
-				{slotsPlaceholders} = this,
-				parent = originEl.parentNode;
+				wrapperEl = <CanUndef<HTMLElement>>ctx.$refs[`${refName}Wrapper`];
 
-			const
-				// eslint-disable-next-line no-multi-assign
-				placeholderEl = slotsPlaceholders[refName] = slotsPlaceholders[refName] ?? this.createSlotPlaceholder(originEl);
-
-			if (parent == null) {
+			if (wrapperEl == null) {
 				return;
 			}
 
 			if (show) {
-				parent.replaceChild(originEl, placeholderEl);
+				wrapperEl.appendChild(originalEl);
 
 			} else {
-				parent.replaceChild(placeholderEl, originEl);
+				originalEl.remove();
 			}
 		}
-	}
-
-	/**
-	 * Creates a slot placeholder
-	 * @param originalEl
-	 */
-	protected createSlotPlaceholder(originalEl: HTMLElement): HTMLElement {
-		const
-			bl = this.block!,
-			originalClasses = `${bl.getFullElName('slot-placeholder')} ${originalEl.className}`,
-			el = document.createElement(originalEl.tagName.toLowerCase());
-
-		el.className = originalClasses;
-		return el;
 	}
 
 	/**

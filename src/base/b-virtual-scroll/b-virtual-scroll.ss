@@ -15,43 +15,61 @@
 		< .&__wrapper
 			< .&__container ref = container | -test-ref = container
 
-			< .&__tombstones &
-				ref = tombstones |
-				v-if = vdom.getSlot('tombstone')
+			< .&__tombstones-wrapper &
+				v-if = vdom.getSlot('tombstone') |
+				ref = tombstoneWrapper
 			.
-				< .&__tombstone v-for = i in tombstonesSize || chunkSize
-					+= self.slot('tombstone')
+				< .&__tombstones &
+					ref = tombstones
+				.
+					< .&__tombstone v-for = i in tombstonesSize || chunkSize
+						+= self.slot('tombstone')
 
-			< .&__loader &
-				ref = loader |
-				v-if = vdom.getSlot('loader')
+			< .&__loader-wrapper &
+				v-if = vdom.getSlot('loader') |
+				ref = loaderWrapper
 			.
-				+= self.slot('loader')
+				< .&__loader &
+					ref = loader
+				.
+					+= self.slot('loader')
 
-			< .&__retry &
-				ref = retry |
+			< .&__retry-wrapper &
 				v-if = vdom.getSlot('retry') |
-				:style = {display: 'none'}
+				ref = retryWrapper
 			.
-				+= self.slot('retry')
+				< .&__retry &
+					ref = retry |
+					:style = {display: 'none'}
+				.
+					+= self.slot('retry')
 
-			< .&__empty &
-				ref = empty |
+			< .&__empty-wrapper &
 				v-if = vdom.getSlot('empty') |
-				:style = {display: 'none'}
+				ref = emptyWrapper
 			.
-				+= self.slot('empty')
+				< .&__empty &
+					ref = empty |
+					:style = {display: 'none'}
+				.
+					+= self.slot('empty')
 
-			< .&__done &
-				ref = done |
+			< .&__done-wrapper &
 				v-if = vdom.getSlot('done') |
-				:style = {display: 'none'}
+				ref = doneWrapper
 			.
-				+= self.slot('done')
+				< .&__done &
+					ref = done |
+					:style = {display: 'none'}
+				.
+					+= self.slot('done')
 
-			< .&__render-next &
-				ref = renderNext |
+			< .&__render-next-wrapper &
 				v-if = vdom.getSlot('renderNext') |
-				:style = {display: 'none'}
+				ref = renderNextWrapper
 			.
-				+= self.slot('renderNext')
+				< .&__render-next &
+					ref = renderNext |
+					:style = {display: 'none'}
+				.
+					+= self.slot('renderNext')

@@ -256,11 +256,23 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	protected $refs!: {
 		container: HTMLElement;
+
+		loaderWrapper?: HTMLElement;
 		loader?: HTMLElement;
+
+		tombstonesWrapper?: HTMLElement;
 		tombstones?: HTMLElement;
+
+		emptyWrapper?: HTMLElement;
 		empty?: HTMLElement;
+
+		retryWrapper?: HTMLElement;
 		retry?: HTMLElement;
+
+		doneWrapper?: HTMLElement;
 		done?: HTMLElement;
+
+		renderNextWrapper?: HTMLElement;
 		renderNext?: HTMLElement;
 	};
 
