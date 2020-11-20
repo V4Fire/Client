@@ -303,7 +303,10 @@ module.exports = async function module({plugins}) {
 			{
 				loader: 'monic',
 				options: inherit(monic.html, {
-					replacers: [include('build/replacers/include')]
+					replacers: [
+						include('build/replacers/include'),
+						include('build/replacers/dynamic-component-import')
+					]
 				})
 			},
 
@@ -323,6 +326,13 @@ module.exports = async function module({plugins}) {
 		test: /\.ss$/,
 		use: [
 			'prelude',
+
+			{
+				loader: 'monic',
+				options: inherit(monic.javascript, {
+					replacers: [include('build/replacers/dynamic-component-import')]
+				})
+			},
 
 			{
 				loader: 'snakeskin',

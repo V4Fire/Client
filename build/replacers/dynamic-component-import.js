@@ -9,7 +9,7 @@
  */
 
 const
-	importRgxp = /\bimport\((["'])((?:(?![bp]-[^\\/"')]+)[^'")])*([bp]-[^\\/"')]+))\1\)/;
+	importRgxp = /\bimport\((["'])((?:(?![bp]-[^\\/"')]+)[^'")])*([bp]-[^\\/"')]+))\1\)/g;
 
 /**
  * Monic replacer to enable dynamic imports of components
