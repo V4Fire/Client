@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.?? ()
 
+#### :boom: Breaking Change
+
+* Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
+
 #### :rocket: New Feature
 
 * `build`:
