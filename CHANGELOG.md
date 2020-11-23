@@ -28,6 +28,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Added a new dependency `style-loader`
+* Added prefetch for the dynamic dependencies `iData`
 
 ## v3.0.0-rc.101 (2020-11-18)
 

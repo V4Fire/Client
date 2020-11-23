@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :house: Internal
+
+* Added prefetch for the dynamic dependencies
+
 ## v3.0.0-rc.97 (2020-11-11)
 
 #### :bug: Bug Fix
