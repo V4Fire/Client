@@ -495,6 +495,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
 	 *
 	 * @example
+	 * ```js
 	 * // Key names are tied with component elements,
 	 * // and values contain a CSS class or list of classes we want to add
 	 *
@@ -502,6 +503,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *   foo: 'bla',
 	 *   bar: ['bla', 'baz']
 	 * }
+	 * ```
 	 */
 	@prop({type: Object, required: false})
 	readonly classes?: Dictionary<CanArray<string>>;
@@ -512,6 +514,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
 	 *
 	 * @example
+	 * ```js
 	 * // Key names are tied with component elements,
 	 * // and values contains a CSS style string, a style object or list of style strings
 	 *
@@ -520,6 +523,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *   bar: {color: 'blue'},
 	 *   baz: ['color: red', 'background: green']
 	 * }
+	 * ```
 	 */
 	@prop({type: Object, required: false})
 	readonly styles?: Styles;
