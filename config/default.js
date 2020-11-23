@@ -275,26 +275,25 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			'core/browser': true,
 			'core/session': true,
-			'core/dom/in-view': true,
-			'core/dom/resize-observer': true,
 
-			'prelude/dependencies': true,
 			'prelude/test-env': !isProd,
+			'prelude/dependencies': true,
+
 			'component/async-render': true,
 			'component/daemons': true,
 
-			'directives/event': true,
-			'directives/resize': true,
-			'directives/image': true,
-			'directives/in-view': true,
-			'directives/resize-observer': true,
-			'directives/update-on': true,
+			'directives/event': !isProd,
+			'directives/resize': !isProd,
+			'directives/image': !isProd,
+			'directives/in-view': !isProd,
+			'directives/resize-observer': !isProd,
+			'directives/update-on': !isProd,
 
 			iData: true,
 			bRouter: true,
 
 			'iInput/validators': true,
-			'bInput/mask': true,
+			'bInput/mask': false,
 			'bInput/validators': true
 		};
 	},

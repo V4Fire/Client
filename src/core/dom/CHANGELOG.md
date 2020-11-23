@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Removed the default export of submodules
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :house: Internal

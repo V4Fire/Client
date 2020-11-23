@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
+* Removed the default export of submodules `core/dom`
 
 #### :rocket: New Feature
 
