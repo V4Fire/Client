@@ -145,9 +145,8 @@ export default class AsyncRender extends Friend {
 		if (!isSrcPromise) {
 			iterator = iterable[Symbol.iterator]();
 
-			for (let o = iterator, el = o.next(); !el.done; el = o.next(), syncI++) {
-				lastSyncEl = el;
-
+			// eslint-disable-next-line no-multi-assign
+			for (let o = iterator, el = lastSyncEl = o.next(); !el.done; el = o.next(), syncI++) {
 				if (startPos > 0) {
 					startPos--;
 					continue;

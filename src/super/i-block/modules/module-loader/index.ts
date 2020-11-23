@@ -13,7 +13,7 @@
 
 import Friend from 'super/i-block/modules/friend';
 
-import { cache, modules } from 'super/i-block/modules/module-loader/const';
+import { cache, cachedModules } from 'super/i-block/modules/module-loader/const';
 import { Module } from 'super/i-block/modules/module-loader/interface';
 
 export * from 'super/i-block/modules/module-loader/interface';
@@ -30,7 +30,7 @@ export default class ModuleLoader extends Friend {
 	 * Number of added modules
 	 */
 	get size(): number {
-		return modules.length;
+		return cachedModules.length;
 	}
 
 	/**
@@ -87,6 +87,12 @@ export default class ModuleLoader extends Friend {
 
 			if (Object.isPromise(val)) {
 				toLoad.push(val);
+
+				if (module.id != null) {
+					cache.set(module.id, module);
+				}
+
+				cachedModules.push(module);
 			}
 		}
 
@@ -112,7 +118,7 @@ export default class ModuleLoader extends Friend {
 		let
 			iterPos = 0,
 			done = false,
-			cachedLength = modules.length;
+			cachedLength = cachedModules.length;
 
 		const iterator = {
 			[Symbol.iterator]: () => iterator,
@@ -132,9 +138,9 @@ export default class ModuleLoader extends Friend {
 					if (id != null && module.id === id) {
 						done = true;
 
-					} else if (cachedLength !== modules.length) {
+					} else if (cachedLength !== cachedModules.length) {
 						iterPos++;
-						cachedLength = modules.length;
+						cachedLength = cachedModules.length;
 					}
 
 					return this.resolveModule(module);
@@ -151,10 +157,10 @@ export default class ModuleLoader extends Friend {
 						};
 					}
 
-				} else if (iterPos !== modules.length) {
+				} else if (iterPos !== cachedLength) {
 					return {
 						done: false,
-						value: initModule(modules[iterPos++])
+						value: initModule(cachedModules[iterPos++])
 					};
 				}
 
@@ -206,7 +212,6 @@ export default class ModuleLoader extends Friend {
 	protected resolveModule(module: Module): CanPromise<Module> {
 		if (module.id != null) {
 			module = cache.get(module.id) ?? module;
-			cache.set(module.id, module);
 		}
 
 		let
@@ -227,7 +232,7 @@ export default class ModuleLoader extends Friend {
 				module.status = 'pending';
 				module.promise = promises.length > 1 ?
 					Promise.all([promises[0], Promise.allSettled(promises.slice(1))]) :
-					promises[0];
+					Promise.resolve(promises[0]);
 
 				promise = module.promise
 					.then(() => {
