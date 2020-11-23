@@ -112,13 +112,18 @@ export default class ModuleLoader extends Friend {
 	 * If there is no provided id to check, the iterator will never stop.
 	 * The method should be used with [[AsyncRender]].
 	 *
-	 * @param [id] - module identifier to filter
+	 * @param [ids] - module identifiers to filter
 	 */
-	values(id?: unknown): IterableIterator<Module> {
+	values(...ids: unknown[]): IterableIterator<Module> {
 		let
 			iterPos = 0,
 			done = false,
 			cachedLength = cachedModules.length;
+
+		const
+			idsSet = new Set(ids),
+			subTasks = <Array<Promise<Module>>>[],
+			subValues = <Array<CanPromise<Module>>>[];
 
 		const iterator = {
 			[Symbol.iterator]: () => iterator,
@@ -135,8 +140,9 @@ export default class ModuleLoader extends Friend {
 					cursor = undefined;
 					resolve = undefined;
 
-					if (id != null && module.id === id) {
-						done = true;
+					if (ids.length > 0 && idsSet.has(module.id)) {
+						idsSet.delete(module.id);
+						done = idsSet.size === 0;
 
 					} else if (cachedLength !== cachedModules.length) {
 						iterPos++;
@@ -146,15 +152,33 @@ export default class ModuleLoader extends Friend {
 					return this.resolveModule(module);
 				};
 
-				if (id != null) {
-					const
-						module = cache.get(id);
+				if (ids.length > 0) {
+					for (let o = idsSet.values(), el = o.next(); !el.done; el = o.next()) {
+						const
+							id = el.value,
+							module = cache.get(id);
 
-					if (module != null) {
-						return {
-							done: false,
-							value: initModule(module)
-						};
+						if (module != null) {
+							idsSet.delete(id);
+
+							const
+								val = initModule(module);
+
+							if (Object.isPromise(val)) {
+								subTasks.push(val);
+							}
+
+							subValues.push(val);
+
+							if (idsSet.size === 0) {
+								done = true;
+
+								return {
+									done: false,
+									value: subTasks.length > 0 ? Promise.all(subTasks).then(() => subValues) : subValues
+								};
+							}
+						}
 					}
 
 				} else if (iterPos !== cachedLength) {
@@ -165,12 +189,12 @@ export default class ModuleLoader extends Friend {
 				}
 
 				if (cursor != null) {
-					if (id != null) {
+					if (ids.length > 0) {
 						return {
 							done: false,
-							value: cursor.value.then((res) => {
+							value: cursor.value.then((module) => {
 								if (done) {
-									return res;
+									return module;
 								}
 
 								return iterator.next().value;
