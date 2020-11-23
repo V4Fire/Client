@@ -103,7 +103,7 @@ export default class ModuleLoader extends Friend {
 		return Promise.all(toLoad).then(() => true);
 	}
 
-	[Symbol.iterator](): IterableIterator<Module> {
+	[Symbol.iterator](): IterableIterator<CanArray<Module>> {
 		return this.values();
 	}
 
@@ -114,7 +114,7 @@ export default class ModuleLoader extends Friend {
 	 *
 	 * @param [ids] - module identifiers to filter
 	 */
-	values(...ids: unknown[]): IterableIterator<Module> {
+	values(...ids: unknown[]): IterableIterator<CanArray<Module>> {
 		let
 			iterPos = 0,
 			done = false,
