@@ -13,16 +13,10 @@
 
 import { deprecated } from 'core/functools';
 
-import {
+import { wrapAsDelegateHandler } from 'core/dom';
 
-	wrapAsDelegateHandler,
-	inViewFactory,
-	InitOptions,
-	InViewAdapter,
-	ResizeWatcher,
-	ResizeWatcherInitOptions
-
-} from 'core/dom';
+import { inViewFactory, InitOptions, InViewAdapter } from 'core/dom/in-view';
+import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
 import { ComponentElement } from 'core/component';
 import { AsyncOptions } from 'core/async';
