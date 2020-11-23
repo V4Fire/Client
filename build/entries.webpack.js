@@ -153,8 +153,14 @@ async function buildProjectGraph() {
 
 			const
 				componentsToIgnore = /^[iv]-/,
+				cursor = isStandalone(name) ? STANDALONE : RUNTIME;
+
+			const
 				logicTaskName = `${name}.js`,
 				logicFile = path.join(tmpEntries, `${configHash}__${logicTaskName}`);
+
+			let
+				taskProcess = processes[cursor];
 
 			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
@@ -186,53 +192,7 @@ async function buildProjectGraph() {
 			}));
 
 			entry[logicTaskName] = logicFile;
-
-			const cursor = isStandalone(name) ? STANDALONE : RUNTIME;
-			processes[cursor][logicTaskName] = logicFile;
-
-			// CSS
-
-			const
-				styleTaskName = `${name}$style`,
-				styleFile = path.join(tmpEntries, `${configHash}__${name}.styl`);
-
-			fs.writeFileSync(styleFile, [
-				await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
-					const
-						block = blockMap.get(name),
-						style = block && await block.styles;
-
-					if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
-						$C(style).forEach((url) => {
-							str += `@import "${getEntryURL(url)}"\n`;
-						});
-
-						if (/^[bp]-/.test(name)) {
-							str +=
-								`
-.${name}
-	extends($${camelize(name)})
-
-`;
-						}
-					}
-
-					return str;
-				}),
-
-				'generateImgClasses()'
-			].join('\n'));
-
-			let
-				taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
-
-			if (MAX_PROCESS > processes.length && $C(taskProcess).length() > MAX_TASKS_PER_ONE_PROCESS) {
-				taskProcess = {};
-				processes.push(taskProcess);
-			}
-
-			entry[styleTaskName] = styleFile;
-			taskProcess[styleTaskName] = styleFile;
+			taskProcess[logicTaskName] = logicFile;
 
 			// TEMPLATES
 
@@ -272,6 +232,49 @@ async function buildProjectGraph() {
 				entry[tplTaskName] = tplFile;
 				taskProcess[tplTaskName] = tplFile;
 			}
+
+			taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
+
+			if (MAX_PROCESS > processes.length && $C(taskProcess).length() > MAX_TASKS_PER_ONE_PROCESS) {
+				taskProcess = {};
+				processes.push(taskProcess);
+			}
+
+			// CSS
+
+			const
+				styleTaskName = `${name}$style`,
+				styleFile = path.join(tmpEntries, `${configHash}__${name}.styl`);
+
+			fs.writeFileSync(styleFile, [
+				await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+					const
+						block = blockMap.get(name),
+						style = block && await block.styles;
+
+					if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
+						$C(style).forEach((url) => {
+							str += `@import "${getEntryURL(url)}"\n`;
+						});
+
+						if (/^[bp]-/.test(name)) {
+							str +=
+								`
+.${name}
+	extends($${camelize(name)})
+
+`;
+						}
+					}
+
+					return str;
+				}),
+
+				'generateImgClasses()'
+			].join('\n'));
+
+			entry[styleTaskName] = styleFile;
+			taskProcess[styleTaskName] = styleFile;
 
 			// HTML
 
