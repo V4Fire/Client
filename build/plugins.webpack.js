@@ -14,8 +14,7 @@ const
 	path = require('path');
 
 const
-	webpack = require('webpack'),
-	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+	webpack = require('webpack');
 
 const
 	build = include('build/entries.webpack'),
@@ -37,7 +36,7 @@ module.exports = async function plugins({buildId}) {
 	]);
 
 	if (config.webpack.buildCache()) {
-		plugins.set('buildCache', new HardSourceWebpackPlugin({
+		/*plugins.set('buildCache', new HardSourceWebpackPlugin({
 			environmentHash: {
 				files: [
 					'package-lock.json',
@@ -52,7 +51,7 @@ module.exports = async function plugins({buildId}) {
 			),
 
 			configHash: () => config.build.hash({webpack: globalThis.WEBPACK_CONFIG})
-		}));
+		}));*/
 	}
 
 	return plugins;

@@ -62,17 +62,17 @@ module.exports = async function module({plugins}) {
 
 	const tsHelperLoaders = [
 		{
-			loader: 'symbol-generator',
+			loader: 'symbol-generator-loader',
 			options: {
 				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 			}
 		},
 
-		'typograf',
-		'prelude',
+		'typograf-loader',
+		'prelude-loader',
 
 		{
-			loader: 'monic',
+			loader: 'monic-loader',
 			options: inherit(monic.typescript, {
 				replacers: [
 					include('build/replacers/require-context'),
@@ -90,7 +90,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.client
 			},
 
@@ -103,12 +103,12 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.worker
 			},
 
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.worker
 			},
 
@@ -121,12 +121,12 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.serviceWorker
 			},
 
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.worker
 			},
 
@@ -139,12 +139,12 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.sharedWorker
 			},
 
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.worker
 			},
 
@@ -153,10 +153,10 @@ module.exports = async function module({plugins}) {
 	});
 
 	const jsHelperLoaders = [
-		'prelude',
+		'prelude-loader',
 
 		{
-			loader: 'monic',
+			loader: 'monic-loader',
 			options: inherit(monic.javascript, {
 				replacers: [
 					include('build/replacers/require-context'),
@@ -179,7 +179,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.worker
 			},
 
@@ -192,7 +192,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.serviceWorker
 			},
 
@@ -205,7 +205,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.sharedWorker
 			},
 
@@ -220,12 +220,12 @@ module.exports = async function module({plugins}) {
 
 	const stylHelperLoaders = [
 		{
-			loader: 'fast-css',
+			loader: 'fast-css-loader',
 			options: Object.reject(config.css(), ['minimize'])
 		},
 
 		{
-			loader: 'postcss',
+			loader: 'postcss-loader',
 			options: inherit(config.postcss(), {
 				postcssOptions: {
 					plugins: [require('autoprefixer')(config.autoprefixer())]
@@ -234,9 +234,11 @@ module.exports = async function module({plugins}) {
 		},
 
 		{
-			loader: 'stylus',
+			loader: 'stylus-loader',
 			options: inherit(config.stylus(), {
-				use: include('build/stylus')
+				stylusOptions: {
+					use: include('build/stylus')
+				}
 			})
 		}
 	];
@@ -252,7 +254,7 @@ module.exports = async function module({plugins}) {
 					stylHelperLoaders,
 
 					{
-						loader: 'monic',
+						loader: 'monic-loader',
 						options: inherit(monic.stylus, {
 							replacers: [
 								require('@pzlr/stylus-inheritance')({resolveImports: true}),
@@ -270,7 +272,7 @@ module.exports = async function module({plugins}) {
 					stylHelperLoaders,
 
 					{
-						loader: 'monic',
+						loader: 'monic-loader',
 						options: inherit(monic.stylus, {
 							replacers: [
 								require('@pzlr/stylus-inheritance')({resolveImports: true}),
@@ -287,21 +289,21 @@ module.exports = async function module({plugins}) {
 		test: /\.ess$/,
 		use: [
 			{
-				loader: 'file',
+				loader: 'file-loader',
 				options: {
 					name: `${output.replace(hashRgxp, '')}.html`
 				}
 			},
 
-			'extract',
+			'extract-loader',
 
 			{
-				loader: 'html',
+				loader: 'html-loader',
 				options: config.html()
 			},
 
 			{
-				loader: 'monic',
+				loader: 'monic-loader',
 				options: inherit(monic.html, {
 					replacers: [
 						include('build/replacers/include'),
@@ -311,7 +313,7 @@ module.exports = async function module({plugins}) {
 			},
 
 			{
-				loader: 'snakeskin',
+				loader: 'snakeskin-loader',
 				options: inherit(snakeskin.server, {
 					exec: true,
 					vars: {
@@ -325,17 +327,17 @@ module.exports = async function module({plugins}) {
 	loaders.rules.set('ss', {
 		test: /\.ss$/,
 		use: [
-			'prelude',
+			'prelude-loader',
 
 			{
-				loader: 'monic',
+				loader: 'monic-loader',
 				options: inherit(monic.javascript, {
 					replacers: [include('build/replacers/dynamic-component-import')]
 				})
 			},
 
 			{
-				loader: 'snakeskin',
+				loader: 'snakeskin-loader',
 				options: snakeskin.client
 			}
 		]
@@ -345,7 +347,7 @@ module.exports = async function module({plugins}) {
 		test: /\.(?:ttf|eot|woff|woff2|mp3|ogg|aac)$/,
 		use: [
 			{
-				loader: 'url',
+				loader: 'url-loader',
 				options: urlLoaderOpts
 			}
 		]
@@ -355,12 +357,12 @@ module.exports = async function module({plugins}) {
 		test: /\.(?:ico|png|gif|jpe?g)$/,
 		use: [
 			{
-				loader: 'url',
+				loader: 'url-loader',
 				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
-				{loader: 'image-webpack', options: Object.reject(imageOpts, ['webp'])} :
+				{loader: 'image-webpack-loader', options: Object.reject(imageOpts, ['webp'])} :
 				[]
 		)
 	});
@@ -369,12 +371,12 @@ module.exports = async function module({plugins}) {
 		test: /\.webp$/,
 		use: [
 			{
-				loader: 'url',
+				loader: 'url-loader',
 				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
-				{loader: 'image-webpack', options: imageOpts} :
+				{loader: 'image-webpack-loader', options: imageOpts} :
 				[]
 		)
 	});
@@ -383,12 +385,12 @@ module.exports = async function module({plugins}) {
 		test: /\.svg$/,
 		use: [
 			{
-				loader: 'svg-url',
+				loader: 'svg-url-loader',
 				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
-				{loader: 'svgo', options: imageOpts.svgo} :
+				{loader: 'svgo-loader', options: imageOpts.svgo} :
 				[]
 		)
 	});

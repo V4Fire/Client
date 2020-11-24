@@ -37,9 +37,7 @@ module.exports = function optimization({buildId, plugins}) {
 		options.splitChunks = {
 			cacheGroups: {
 				index: {
-					name: 'index.js',
 					chunks: 'initial',
-					priority: 0,
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
@@ -48,18 +46,22 @@ module.exports = function optimization({buildId, plugins}) {
 
 				async: {
 					chunks: 'async',
-					priority: 0,
 					minChunks: 2,
 					reuseExistingChunk: true,
 					test: isLayerDep
 				},
 
-				vendor: {
-					name: 'vendor.js',
-					chunks: 'all',
-					priority: 1,
+				defaultVendors: {
+					chunks: 'initial',
 					minChunks: 1,
 					enforce: true,
+					reuseExistingChunk: true,
+					test: isExternalDep
+				},
+
+				asyncVendors: {
+					chunks: 'async',
+					minChunks: 2,
 					reuseExistingChunk: true,
 					test: isExternalDep
 				}
