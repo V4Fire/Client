@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = {
+const plain = {
 	text: {
 		'Heading-3': {
 			fontFamily: 'Roboto',
@@ -43,7 +43,19 @@ module.exports = {
 	},
 	rounding: {
 		small: '8px', big: '16px'
-	},
+	}
+};
+
+const plainWithAbstractColors = {
+	...plain,
+	colors: {
+		primary: 'rgba(40,167,69,1)',
+		secondary: 'rgba(220,53,69,1)'
+	}
+};
+
+const plainWithHueInColorsName = {
+	...plain,
 	colors: {
 		green: ['rgba(40,167,69,1)'],
 		red: ['rgba(220,53,69,1)'],
@@ -61,4 +73,9 @@ module.exports = {
 		],
 		white: ['rgba(255,255,255,1)']
 	}
+};
+
+module.exports = {
+	plainWithAbstractColors,
+	plainDesignSystem: plainWithHueInColorsName
 };

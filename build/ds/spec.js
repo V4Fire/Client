@@ -12,8 +12,8 @@ require('config');
 
 const
 	{getThemes} = include('build/ds'),
-	{fullThemed} = include('build/stylus/ds/test/scheme/ds-themes'),
-	plainDesignSystem = include('build/stylus/ds/test/scheme/ds-plain'),
+	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
+	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 describe('build/ds', () => {

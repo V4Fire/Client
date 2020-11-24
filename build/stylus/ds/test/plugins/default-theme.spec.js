@@ -11,7 +11,7 @@
 require('config');
 
 const
-	plainDesignSystem = include('build/stylus/ds/test/scheme/ds-plain'),
+	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
 	createPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 

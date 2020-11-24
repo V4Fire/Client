@@ -11,8 +11,8 @@
 require('config');
 
 const
-	plainDesignSystem = include('build/stylus/ds/test/scheme/ds-plain'),
-	{unThemeText} = include('build/stylus/ds/test/scheme/ds-themes'),
+	{plainDesignSystem, plainWithAbstractColors} = include('build/stylus/ds/test/scheme/plain'),
+	{unThemeText} = include('build/stylus/ds/test/scheme/themes'),
 	createPlugins = include('build/stylus/ds/plugins'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
@@ -71,5 +71,22 @@ describe('build/stylus/plugins/get-ds-field-value', () => {
 		stylus.render('getDSFieldValue(colors "red.0")', {use: [plugins]}, (err, hex) => {
 			expect(hex.trim()).toEqual(`${getCSSVariable('colors.red.0')}`);
 		});
+	});
+
+	it('should return colors dictionary', () => {
+		const
+			stylus = require('stylus');
+
+		const
+			{data: ds, variables: cssVariables} = createDesignSystem(plainWithAbstractColors),
+			plugins = createPlugins({ds, cssVariables, stylus});
+
+		stylus.render(
+			'.foo\n\tcontent join(".", keys(getDSFieldValue(colors)))',
+			{use: [plugins]},
+			(err, colors) => {
+				expect(colors.includes(Object.keys(plainWithAbstractColors.colors).join('.'))).toBeTrue();
+			}
+		);
 	});
 });

@@ -115,11 +115,11 @@ module.exports = function createPlugins({
 
 				if (isOneTheme || !isBuildHasTheme) {
 					return includeVars ?
-						stylus.utils.coerce($C(cssVariables).get([].concat([string], value).join('.'))) :
-						$C(ds).get([].concat(getThemedPathChunks(string, theme, themedFields), value).join('.'));
+						stylus.utils.coerce($C(cssVariables).get([].concat([string], value || []).join('.'))) :
+						$C(ds).get([].concat(getThemedPathChunks(string, theme, themedFields), value || []).join('.'));
 				}
 
-				return stylus.utils.coerce($C(cssVariables).get([].concat([string], value).join('.')));
+				return stylus.utils.coerce($C(cssVariables).get([].concat([string], value || []).join('.')));
 			}
 		);
 

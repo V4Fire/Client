@@ -11,9 +11,9 @@
 require('config');
 
 const
-	plainDesignSystem = include('build/stylus/ds/test/scheme/ds-plain'),
-	{unThemeText} = include('build/stylus/ds/test/scheme/ds-themes'),
-	{fullThemed} = include('build/stylus/ds/test/scheme/ds-themes'),
+	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
+	{unThemeText} = include('build/stylus/ds/test/scheme/themes'),
+	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
 	createPlugins = include('build/stylus/ds/plugins'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
