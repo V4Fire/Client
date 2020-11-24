@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.99 (2020-11-17)
+
+#### :bug: Bug Fix
+
+* [Fixed providing of attributes](https://github.com/V4Fire/Client/issues/437)
+
 ## v3.0.0-rc.92 (2020-11-03)
 
 #### :house: Internal

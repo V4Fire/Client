@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.100 (2020-11-17)
+
+#### :rocket: New Feature
+
+* Added support of filters with promises
+
 ## v3.0.0-rc.68 (2020-09-23)
 
 #### :boom: Breaking Change

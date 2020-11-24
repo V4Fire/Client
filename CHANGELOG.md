@@ -11,6 +11,90 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.101 (2020-11-18)
+
+#### :bug: Bug Fix
+
+* Fixed import errors `global/g-icon/g-icon.styl`
+
+#### :house: Internal
+
+* Fixed lint warnings `global/g-icon/g-icon.styl`
+
+## v3.0.0-rc.100 (2020-11-17)
+
+#### :rocket: New Feature
+
+* Added support of filters with promises `super/i-block/modules/async-render`
+
+#### :house: Internal
+
+* Rendering optimization:
+  * `bBottomSlide`
+  * `bSidebar`
+
+## v3.0.0-rc.99 (2020-11-17)
+
+#### :bug: Bug Fix
+
+* [Fixed dynamic creation of flyweight components](https://github.com/V4Fire/Client/issues/434) `core/component/render-function`
+* [Fixed providing of attributes](https://github.com/V4Fire/Client/issues/437) `core/component/flyweight`
+
+## v3.0.0-rc.98 (2020-11-13)
+
+#### :boom: Breaking Change
+
+* `bSidebar`:
+  * Removed style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes` or style overriding
+  * Renamed a style property: `sideBarTransition` -> `sidebarTransition`
+
+#### :bug: Bug Fix
+
+* Added the missing `over-wrapper` element `bSidebar`
+* Fixed firing the `close` event on swipe closing `bBottomSlide`
+* Now the `lockScrollMobile` modifier is applied for all mobile devices `iLockPageScroll`
+
+#### :memo: Documentation
+
+* Added documentation `iLockPageScroll`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bBottomSlide`
+* `bSidebar`:
+  * Fixed ESLint errors
+  * Fixed ts errors
+  * Added tests
+
+## v3.0.0-rc.97 (2020-11-11)
+
+#### :rocket: New Feature
+
+* Added `core/component/directives/v-hook`
+
+#### :bug: Bug Fix
+
+* Marked `defaultRequestFilter` and `requestFilter` as optional `iData`
+
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added `suspendRequests/unsuspendRequests/waitPermissionToRequest` `iData`
+* Added support of creation flyweight components via `$createElement` `core/component/render-function`
+
+## v3.0.0-rc.95 (2020-11-06)
+
+#### :house: Internal
+
+* Updated to `typescript@4.1.1-rc`
+
+## v3.0.0-rc.94 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of watchers based on accessors `core/component/watch/create`
+
 ## v3.0.0-rc.93 (2020-11-03)
 
 #### :boom: Breaking Change

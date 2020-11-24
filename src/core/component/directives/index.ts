@@ -21,3 +21,5 @@ import 'core/component/directives/image';
 //#if runtime has directives/update-on
 import 'core/component/directives/update-on';
 //#endif
+
+import 'core/component/directives/hook';

@@ -200,7 +200,7 @@ export function inherit(
 					el = o[i];
 
 				if (el !== PARENT) {
-					if (!(el in values) || Object.isArray(el)) {
+					if (Object.isArray(el) || !(<string>el in values)) {
 						values[String(el)] = <StrictModDeclVal>el;
 					}
 
@@ -227,7 +227,7 @@ export function inherit(
 					const
 						el = parent[i];
 
-					if (!(el in values)) {
+					if (!(<string>el in values)) {
 						values[String(el)] = <StrictModDeclVal>el;
 					}
 

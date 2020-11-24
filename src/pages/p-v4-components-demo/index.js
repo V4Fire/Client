@@ -17,5 +17,6 @@ package('p-v4-components-demo')
 		'b-button',
 		'b-router',
 		'b-list',
+		'b-sidebar',
 		components
 	);

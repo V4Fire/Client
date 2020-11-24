@@ -67,8 +67,8 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
  *
  * @param name - component name
  */
-export function registerComponent(name: string): CanUndef<ComponentMeta> {
-	if (!isComponent.test(name)) {
+export function registerComponent(name: CanUndef<string>): CanUndef<ComponentMeta> {
+	if (name == null || !isComponent.test(name)) {
 		return;
 	}
 

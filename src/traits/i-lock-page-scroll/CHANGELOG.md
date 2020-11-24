@@ -9,13 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.100 (2020-11-17)
+## v3.0.0-rc.98 (2020-11-12)
 
-#### :rocket: New Feature
+#### :bug: Bug Fix
 
-* Added support of filters with promises
+* Now the `lockScrollMobile` modifier is applied for all mobile devices
 
-## v3.0.0-rc.37 (2020-07-20)
+#### :memo: Documentation
+
+* `README`, `CHANGELOG` was added
 
 #### :house: Internal
 

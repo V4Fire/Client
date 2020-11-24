@@ -167,7 +167,7 @@ export default class bExample extends iData {
 ### `db` events
 
 | Name          | Description                                          | Payload description          | Payload                |
-| ------------- |------------------------------------------------------| -----------------------------|----------------------- |
+| ------------- | ---------------------------------------------------- | -----------------------------| ---------------------- |
 | `dbCanChange` | There is a possibility of changing the value of `db` | Provider data or `undefined` | `CanUndef<this['DB']>` |
 | `dbChange`    | The value of `db` has been changed                   | Provider data or `undefined` | `CanUndef<this['DB']>` |
 
@@ -271,10 +271,10 @@ export default class bExample extends iData {
 
 ### Init events
 
-| Name            | Description                                     | Payload description                 | Payload                                   |
-| --------------- |-------------------------------------------------| ------------------------------------|------------------------------------------ |
-| `initLoadStart` | The component starts the initial loading        | Options of the loading              | `InitLoadOptions`                         |
-| `initLoad`      | The component have finished the initial loading | Loaded data, options of the loading | `CanUndef<this['DB']>`, `InitLoadOptions` |
+| Name            | Description                                    | Payload description                 | Payload                                   |
+| --------------- | ---------------------------------------------- | ------------------------------------| ----------------------------------------- |
+| `initLoadStart` | The component starts the initial loading       | Options of the loading              | `InitLoadOptions`                         |
+| `initLoad`      | The component has finished the initial loading | Loaded data, options of the loading | `CanUndef<this['DB']>`, `InitLoadOptions` |
 
 ### Preventing of the initial data loading
 
@@ -285,6 +285,22 @@ then all requests without payload will be aborted.
 
 ```
 < b-example :dataProvider = 'myData' | :defaultRequestFilter = filterRequests
+```
+
+### Suspending of the initial data loading
+
+You can use `suspendRequests` and `unsuspendRequests` to organize the lazy loading of components.
+For instance, you can load only components in the viewport.
+
+```
+< b-example &
+  :dataProvider = 'myData' |
+  :suspendRequests = true |
+  v-in-view = {
+    threshold: 0.5,
+    onEnter: (el) => el.node.component.unsuspendRequests()
+  }
+.
 ```
 
 ## Providing of request parameters
@@ -376,5 +392,5 @@ By default, a component won't reload data without the internet, but you can chan
 ## Error handling
 
 | Name            | Description                                          | Payload description                          | Payload                                  |
-| --------------- |------------------------------------------------------| ---------------------------------------------|----------------------------------------- |
+| --------------- | ---------------------------------------------------- | ---------------------------------------------| ---------------------------------------- |
 | `requestError`  | An error occurred during the request to the provider | Error object, function to re-try the request | `Error \| RequestError`, `RetryRequestFn` |

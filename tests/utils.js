@@ -44,7 +44,7 @@ class TestUtils {
 			testPath = path.join(testDirPath, 'runners', options.runnerPath),
 			hasMagic = glob.hasMagic(testPath);
 
-		const fns = glob.sync(testPath).map((testPath) => [
+		const fns = (hasMagic ? glob.sync(testPath) : [testPath]).map((testPath) => [
 			path.relative(`${testDirPath}/runners`, testPath)
 				.replace(path.extname(testPath), ''),
 
@@ -67,6 +67,7 @@ class TestUtils {
 						break;
 
 					case 'test:component':
+					case 'test:component:build':
 						argv[i] = 'test:component:run';
 						break;
 
@@ -75,7 +76,7 @@ class TestUtils {
 				}
 			}
 
-			await $C(fns).async.forEach(async ([runner, fn]) => {
+			await $C(fns).async.forEach(([runner, fn]) => {
 				if (!Object.isFunction(fn)) {
 					return;
 				}
@@ -86,7 +87,7 @@ class TestUtils {
 				child.stdout.pipe(process.stdout);
 				child.stderr.pipe(process.stderr);
 
-				await new Promise((close) => child.on('close', close));
+				return new Promise((close) => child.on('close', close));
 			});
 
 			return false;
