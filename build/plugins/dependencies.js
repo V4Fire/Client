@@ -13,44 +13,22 @@ const
 
 const
 	fs = require('fs'),
-	path = require('upath'),
-	hash = include('build/hash');
+	path = require('upath');
 
 const
-	{webpack, src: {clientOutput}} = require('config'),
-	{assetsJSON, assetsJS} = include('build/build.webpack'),
-	{MODULE_DEPENDENCIES} = include('build/globals.webpack');
+	{webpack} = require('config'),
+	{assetsJSON, assetsJS} = include('build/build.webpack');
 
 /**
  * WebPack plugin to generate ".dependencies.js" files and "assets.json" / "assets.js"
- *
- * @param {{entry, processes, dependencies}} graph - build object
  * @returns {!Function}
  */
-module.exports = function DependenciesPlugin({graph}) {
+module.exports = function DependenciesPlugin() {
 	return {
 		apply(compiler) {
 			compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
 				const
 					manifest = {};
-
-				$C(graph.dependencies).forEach((el, key) => {
-					const
-						content = `window[${MODULE_DEPENDENCIES}].add("${key}", ${JSON.stringify([...el])});`,
-						name = `${key}.dependencies`;
-
-					const src = webpack.output({
-						name: `${name}.js`,
-						hash: hash(content)
-					});
-
-					manifest[name] = {
-						path: src,
-						publicPath: webpack.publicPath(src)
-					};
-
-					fs.writeFileSync(path.join(clientOutput(), src), content);
-				});
 
 				$C(compilation.chunks).forEach(({name, files}) => {
 					if (name == null) {

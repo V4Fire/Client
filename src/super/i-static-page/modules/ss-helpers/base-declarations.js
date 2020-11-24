@@ -8,9 +8,6 @@
 
 const
 	config = require('config'),
-	globals = include('build/globals.webpack');
-
-const
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getVarsDecl = getVarsDecl;
@@ -24,8 +21,6 @@ exports.getVarsDecl = getVarsDecl;
  */
 function getVarsDecl({wrap} = {}) {
 	const decl = `
-window[${globals.MODULE_DEPENDENCIES}] = {fileCache: Object.create(null)};
-
 var GLOBAL_NONCE = ${JSON.stringify(config.csp.nonce() || '')} || undefined;
 
 var PATH = Object.create(null);

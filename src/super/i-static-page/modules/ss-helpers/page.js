@@ -138,8 +138,6 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 			res += getScriptDeclByName(dep, {assets});
 			res += '\n';
 		}
-
-		res += `window[${globals.MODULE_DEPENDENCIES}].fileCache['${dep}'] = true;`;
 	}
 
 	if (wrap) {

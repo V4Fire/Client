@@ -34,10 +34,6 @@ module.exports = {
 	LOCALE: s(LOCALE),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 
-	MODULE_DEPENDENCIES: s(
-		`ModuleDependencies${runtime.noGlobals ? `_${Number.random(1e6)}` : ''}`
-	),
-
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
 	},

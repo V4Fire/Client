@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import ModuleDependencies from 'core/dependencies';
 import { deprecate } from 'core/functools/deprecation';
 
 import { session } from 'core/kv-storage';
@@ -213,24 +212,7 @@ export default function createRouter(component: bRouter): Router {
 				return;
 			}
 
-			let
-				i = 0;
-
-			ModuleDependencies.emitter.on(`component.${entryPoint}.loading`, $a.proxy(
-				({packages}) => {
-					component.field.set('status', ++i * 100 / packages);
-
-					if (i === packages) {
-						resolve();
-					}
-				},
-
-				{
-					...engineGroup,
-					label: $$.loadEntryPoint,
-					single: false
-				}
-			));
+			resolve();
 		});
 	}
 

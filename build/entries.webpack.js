@@ -43,7 +43,7 @@ const
 
 /**
  * The project graph
- * @type {Promise<{entry, processes, dependencies, blockMap}>}
+ * @type {Promise<{entry, processes, blockMap}>}
  */
 module.exports = Object.assign(buildProjectGraph(), {
 	STANDALONE,
@@ -55,7 +55,7 @@ module.exports = Object.assign(buildProjectGraph(), {
 
 /**
  * Builds the project graph
- * @returns {Promise<{entry, processes, dependencies, blockMap}>}
+ * @returns {Promise<{entry, processes, blockMap}>}
  */
 async function buildProjectGraph() {
 	const
@@ -318,8 +318,7 @@ async function buildProjectGraph() {
 	const res = {
 		entry,
 		blockMap,
-		processes,
-		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
+		processes
 	};
 
 	fs.writeFileSync(graphCacheFile, JSON.stringify(res));
