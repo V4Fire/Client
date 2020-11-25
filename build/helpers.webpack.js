@@ -55,14 +55,14 @@ exports.hash = hash;
 exports.hashRgxp = hashRgxp;
 
 /**
- * Returns WebPack output path string from the specified string with hash parameters
- * (for longterm caching)
+ * Returns a WebPack output path string from the specified string with hash parameters
+ * (for the longterm caching)
  *
  * @param {string} output - source string
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	return output.replace(hashRgxp, chunk ? `[chunkhash:${build.hashLength}]_` : `[hash:${build.hashLength}]_`);
+	return output.replace(hashRgxp, chunk ? `[chunkhash:${build.hashLength}]_` : `[contenthash:${build.hashLength}]_`);
 }
 
 exports.inherit = inherit;
@@ -78,4 +78,16 @@ function inherit(...args) {
 	};
 
 	return $C.extend(extOpts, {}, ...args);
+}
+
+exports.isStandalone = isStandalone;
+
+/**
+ * Returns true if the specified entry point is standalone
+ *
+ * @param {string} entryPoint
+ * @returns {boolean}
+ */
+function isStandalone(entryPoint) {
+	return entryPoint === 'std' || /\.(worker|standalone)\b/.test(entryPoint);
 }

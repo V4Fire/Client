@@ -22,8 +22,7 @@ const
 	{resolve, entries, block} = require('@pzlr/build-core');
 
 const
-	{isStandalone} = include('build/helpers'),
-	{output, buildCache} = include('build/build.webpack');
+	{output, buildCache, isStandalone} = include('build/helpers.webpack');
 
 const
 	canFastBuild = build.fast();
@@ -43,7 +42,7 @@ const
 
 /**
  * The project graph
- * @type {Promise<{entry, processes, blockMap}>}
+ * @type {Promise<{entry, processes, dependencies, blockMap}>}
  */
 module.exports = Object.assign(buildProjectGraph(), {
 	STANDALONE,
@@ -55,7 +54,7 @@ module.exports = Object.assign(buildProjectGraph(), {
 
 /**
  * Builds the project graph
- * @returns {Promise<{entry, processes, blockMap}>}
+ * @returns {Promise<{entry, processes, dependencies, blockMap}>}
  */
 async function buildProjectGraph() {
 	const
@@ -155,82 +154,85 @@ async function buildProjectGraph() {
 				componentsToIgnore = /^[iv]-/,
 				cursor = isStandalone(name) ? STANDALONE : RUNTIME;
 
-			const
-				logicTaskName = `${name}.js`,
-				logicFile = path.join(tmpEntries, `${configHash}__${logicTaskName}`);
-
 			let
 				taskProcess = processes[cursor];
 
-			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
+			{
 				const
-					block = blockMap.get(name),
-					logic = block && await block.logic;
+					entrySrc = path.join(tmpEntries, `${configHash}__${name}.js`);
 
-				if (block) {
-					$C(block.libs).forEach((el) => str += `require('${el}');\n`);
-				}
-
-				if (!block || logic) {
-					let
-						url;
-
-					if (logic) {
-						url = logic;
-
-					} else if (resolve.isNodeModule(name)) {
-						url = name;
-
-					} else {
-						url = path.resolve(tmpEntries, '../', name);
-					}
-
-					str += `require('${getEntryURL(url)}');\n`;
-				}
-
-				return str;
-			}));
-
-			entry[logicTaskName] = logicFile;
-			taskProcess[logicTaskName] = logicFile;
-
-			// TEMPLATES
-
-			const
-				tplTaskName = `${name}_tpl.js`,
-				tplFile = path.join(tmpEntries, `${configHash}__${name}.ss${!canFastBuild ? '.js' : ''}`);
-
-			fs.writeFileSync(tplFile, await $C(list)
-				.async
-				.to(canFastBuild ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
-				.reduce(async (str, {name, isParent}) => {
+				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
 					const
 						block = blockMap.get(name),
-						tpl = block && await block.tpl;
+						logic = block && await block.logic;
 
-					if (!isParent && tpl && !componentsToIgnore.test(name)) {
-						const url = getEntryURL(tpl);
-						str += canFastBuild ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+					if (block) {
+						$C(block.libs).forEach((el) => str += `require('${el}');\n`);
+					}
+
+					if (!block || logic) {
+						let
+							url;
+
+						if (logic) {
+							url = logic;
+
+						} else if (resolve.isNodeModule(name)) {
+							url = name;
+
+						} else {
+							url = path.resolve(tmpEntries, '../', name);
+						}
+
+						str += `require('${getEntryURL(url)}');\n`;
 					}
 
 					return str;
 				}));
 
-			if (canFastBuild) {
+				entry[name] = entrySrc;
+				taskProcess[name] = entrySrc;
+			}
+
+			// TEMPLATES
+
+			{
 				const
-					tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
+					entryName = `${name}_tpl`,
+					entrySrc = path.join(tmpEntries, `${configHash}__${name}.ss${!canFastBuild ? '.js' : ''}`);
 
-				fs.writeFileSync(
-					tplRequireFileUrl,
-					`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getEntryURL(tplFile)}'));\n`
-				);
+				fs.writeFileSync(entrySrc, await $C(list)
+					.async
+					.to(canFastBuild ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
+					.reduce(async (str, {name, isParent}) => {
+						const
+							block = blockMap.get(name),
+							tpl = block && await block.tpl;
 
-				entry[tplTaskName] = tplRequireFileUrl;
-				taskProcess[tplTaskName] = tplRequireFileUrl;
+						if (!isParent && tpl && !componentsToIgnore.test(name)) {
+							const url = getEntryURL(tpl);
+							str += canFastBuild ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+						}
 
-			} else {
-				entry[tplTaskName] = tplFile;
-				taskProcess[tplTaskName] = tplFile;
+						return str;
+					}));
+
+				if (canFastBuild) {
+					const
+						tplRequireFileUrl = path.join(tmpEntries, entryName);
+
+					fs.writeFileSync(
+						tplRequireFileUrl,
+						`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getEntryURL(entrySrc)}'));\n`
+					);
+
+					entry[entryName] = tplRequireFileUrl;
+					taskProcess[entryName] = tplRequireFileUrl;
+
+				} else {
+					entry[entryName] = entrySrc;
+					taskProcess[entryName] = entrySrc;
+				}
 			}
 
 			taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
@@ -242,62 +244,66 @@ async function buildProjectGraph() {
 
 			// CSS
 
-			const
-				styleTaskName = `${name}$style`,
-				styleFile = path.join(tmpEntries, `${configHash}__${name}.styl`);
+			{
+				const
+					entryName = `${name}_style`,
+					entrySrc = path.join(tmpEntries, `${configHash}__${name}.styl`);
 
-			fs.writeFileSync(styleFile, [
-				await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
-					const
-						block = blockMap.get(name),
-						style = block && await block.styles;
+				fs.writeFileSync(entrySrc, [
+					await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+						const
+							block = blockMap.get(name),
+							style = block && await block.styles;
 
-					if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
-						$C(style).forEach((url) => {
-							str += `@import "${getEntryURL(url)}"\n`;
-						});
+						if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
+							$C(style).forEach((url) => {
+								str += `@import "${getEntryURL(url)}"\n`;
+							});
 
-						if (/^[bp]-/.test(name)) {
-							str +=
-								`
+							if (/^[bp]-/.test(name)) {
+								str +=
+									`
 .${name}
 	extends($${camelize(name)})
 
 `;
+							}
 						}
-					}
 
-					return str;
-				}),
+						return str;
+					}),
 
-				'generateImgClasses()'
-			].join('\n'));
+					'generateImgClasses()'
+				].join('\n'));
 
-			entry[styleTaskName] = styleFile;
-			taskProcess[styleTaskName] = styleFile;
+				entry[entryName] = entrySrc;
+				taskProcess[entryName] = entrySrc;
+			}
 
 			// HTML
 
-			const
-				htmlTaskName = `${name}_view`,
-				htmlFile = path.join(tmpEntries, `${configHash}__${htmlTaskName}.html.js`);
-
-			fs.writeFileSync(htmlFile, await $C(list).async.to('').reduce(async (str, {name}) => {
+			{
 				const
-					block = blockMap.get(name),
-					html = block && await block.etpl;
+					entryName = `${name}_view`,
+					entrySrc = path.join(tmpEntries, `${configHash}__${entryName}.html.js`);
 
-				if (html && !componentsToIgnore.test(name)) {
-					str += `require('./${getEntryURL(html)}');\n`;
-				}
+				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
+					const
+						block = blockMap.get(name),
+						html = block && await block.etpl;
 
-				return str;
-			}));
+					if (html && !componentsToIgnore.test(name)) {
+						str += `require('./${getEntryURL(html)}');\n`;
+					}
 
-			entry[htmlTaskName] = htmlFile;
+					return str;
+				}));
 
-			// eslint-disable-next-line require-atomic-updates
-			processes[HTML][htmlTaskName] = htmlFile;
+				entry[entryName] = entrySrc;
+
+				// eslint-disable-next-line require-atomic-updates
+				processes[HTML][entryName] = entrySrc;
+			}
 
 			return entry;
 		});
@@ -318,7 +324,8 @@ async function buildProjectGraph() {
 	const res = {
 		entry,
 		blockMap,
-		processes
+		processes,
+		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
 	fs.writeFileSync(graphCacheFile, JSON.stringify(res));

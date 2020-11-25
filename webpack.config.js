@@ -12,7 +12,7 @@ require('config');
 
 const
 	$C = require('collection.js'),
-	build = include('build/entries.webpack');
+	graph = include('build/graph.webpack');
 
 /**
  * Returns WebPack configuration to the specified entry
@@ -26,15 +26,10 @@ async function buildFactory(entry, buildId) {
 
 	const
 		plugins = await include('build/plugins.webpack')({buildId}),
-		optimization = await include('build/optimization.webpack')({buildId, plugins}),
 		modules = await include('build/module.webpack')({buildId, plugins});
 
-	if (build.STANDALONE === buildId) {
-		$C(entry).set((el) => [].concat(el));
-	}
-
 	return {
-		entry,
+		entry: await $C(entry).parallel().map((src, name) => include('build/entry.webpack')(name, src)),
 		output: await include('build/output.webpack'),
 
 		resolve: await include('build/resolve.webpack'),
@@ -45,7 +40,7 @@ async function buildFactory(entry, buildId) {
 		module: {...modules, rules: [...modules.rules.values()]},
 
 		mode: isProd ? 'production' : 'development',
-		optimization,
+		optimization: await include('build/optimization.webpack')({buildId, plugins}),
 		devtool: await include('build/devtool.webpack')
 	};
 }
@@ -58,8 +53,10 @@ const tasks = (async () => {
 	await include('build/snakeskin');
 
 	const
-		graph = await build,
-		tasks = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
+		{processes} = await graph;
+
+	const
+		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
 
 	globalThis.WEBPACK_CONFIG = tasks;
 	return tasks;

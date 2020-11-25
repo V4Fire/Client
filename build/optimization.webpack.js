@@ -15,8 +15,8 @@ const
 
 const
 	{isLayerCoreDep, isLayerDep, isExternalDep} = include('build/const'),
-	{inherit} = include('build/build.webpack'),
-	{RUNTIME} = include('build/entries.webpack');
+	{inherit} = include('build/helpers.webpack'),
+	{RUNTIME} = include('build/graph.webpack');
 
 /**
  * Returns options for Webpack ".optimization"
@@ -37,6 +37,7 @@ module.exports = function optimization({buildId, plugins}) {
 		options.splitChunks = {
 			cacheGroups: {
 				index: {
+					name: 'core',
 					chunks: 'initial',
 					minChunks: 2,
 					enforce: true,
@@ -52,6 +53,7 @@ module.exports = function optimization({buildId, plugins}) {
 				},
 
 				defaultVendors: {
+					name: 'vendor',
 					chunks: 'initial',
 					minChunks: 1,
 					enforce: true,

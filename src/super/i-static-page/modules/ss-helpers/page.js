@@ -176,7 +176,7 @@ function getStyleDeclByName(name, {
 	documentWrite
 }) {
 	const
-		rname = `${name}$style`;
+		rname = `${name}_style`;
 
 	if (needInline(inline)) {
 		if (assets[rname]) {

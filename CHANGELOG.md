@@ -17,12 +17,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
 * Removed the default export of submodules `core/dom`
+* `build`:
+  * Renamed `entries.webpack` to `graph.webpack`
+  * Renamed `build.webpack` to `helpers.webpack`
 
 #### :rocket: New Feature
 
 * `build`:
   * Added `isLayerCoreDep`
   * Added support of dynamic imports
+  * Added `entry.webpack`
 
 * Added API to load the dynamic dependencies `iBlock`
 

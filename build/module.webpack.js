@@ -14,13 +14,13 @@ const
 
 const
 	path = require('upath'),
-	build = include('build/entries.webpack');
+	build = include('build/graph.webpack');
 
 const
 	{webpack} = config,
 	{resolve} = require('@pzlr/build-core'),
 	{isExternalDep} = include('build/const'),
-	{output, assetsOutput, inherit, hash, hashRgxp} = include('build/build.webpack');
+	{output, assetsOutput, inherit, hash, hashRgxp} = include('build/helpers.webpack');
 
 const
 	snakeskin = config.snakeskin(),

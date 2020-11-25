@@ -17,10 +17,9 @@ const
 	delay = require('delay');
 
 const
-	build = include('build/build.webpack');
+	{assetsJS, assetsJSON, isStandalone} = include('build/helpers.webpack');
 
 const
-	{isStandalone} = include('build/helpers'),
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -41,7 +40,7 @@ async function getAssets(entryPoints) {
 		assetsBlueprint.push(key);
 
 		if (!isStandalone(key)) {
-			assetsBlueprint.push(`${key}_tpl`, `${key}$style`);
+			assetsBlueprint.push(`${key}_tpl`, `${key}_style`);
 		}
 	});
 
@@ -51,7 +50,7 @@ async function getAssets(entryPoints) {
 	async function fillAssets(dep) {
 		while (!assets[dep]) {
 			try {
-				$C(fs.readJSONSync(build.assetsJSON)).forEach((el, key, rawAssets) => {
+				$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
 					assets[key] = rawAssets[key];
 				});
 
@@ -76,7 +75,7 @@ exports.getAssetsDecl = getAssetsDecl;
  */
 function getAssetsDecl({inline, wrap, documentWrite} = {}) {
 	if (needInline(inline)) {
-		const decl = fs.readFileSync(build.assetsJS).toString();
+		const decl = fs.readFileSync(assetsJS).toString();
 		return wrap ? getScriptDecl(decl) : decl;
 	}
 

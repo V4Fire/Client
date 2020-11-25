@@ -509,13 +509,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * ```
 		 * {
-		 *   "index.dependencies": {
-		 *     "path": "index.dependencies.js",
-		 *     "publicPath": "index.dependencies.js"
-		 *  },
-		 *  "index$style": {
-		 *     "path": "index$style.css",
-		 *     "publicPath": "index$style.css"
+		 *  "index_style": {
+		 *     "path": "index_style.css",
+		 *     "publicPath": "index_style.css"
 		 *  },
 		 *  "index_tpl": {
 		 *     "path": "index_tpl.js",

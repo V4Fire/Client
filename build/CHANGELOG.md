@@ -11,10 +11,16 @@ Changelog
 
 ## v3.0.0-rc.?? ()
 
+#### :boom: Breaking Change
+
+* Renamed `entries.webpack` to `graph.webpack`
+* Renamed `build.webpack` to `helpers.webpack`
+
 #### :rocket: New Feature
 
 * Added support of dynamic imports
 * Added `isLayerCoreDep`
+* Added `entry.webpack`
 
 ## v3.0.0-rc.90 (2020-10-22)
 

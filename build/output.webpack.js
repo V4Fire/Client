@@ -10,7 +10,7 @@
 
 const
 	{src, webpack} = require('config'),
-	{hash, output} = include('build/build.webpack');
+	{hash, output} = include('build/helpers.webpack');
 
 const
 	concatUrl = require('urlconcat').concat;
@@ -32,8 +32,11 @@ module.exports = {
 	path: src.clientOutput(),
 	publicPath,
 
-	filename: hash(output, true),
+	filename: `${hash(output)}.js`,
 	chunkFilename: `${hash(output, true)}.js`,
+
+	chunkLoading: 'jsonp',
+	chunkFormat: 'array-push',
 
 	hashFunction: webpack.hashFunction(),
 	crossOriginLoading: 'anonymous'
