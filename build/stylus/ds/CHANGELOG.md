@@ -11,6 +11,8 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## (2020-08-09) :house:
+## (2020-08-09)
+
+#### :house: Internal
 
 * Extract DS plugins group to the folder

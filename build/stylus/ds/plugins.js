@@ -51,6 +51,16 @@ module.exports = function createPlugins({
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
 
+	if (Object.isString(theme) && !isThemesIncluded) {
+		console.log(`[stylus] Warning: design system package has no theme "${theme}"`);
+	}
+
+	if (includeThemes != null && !isThemesIncluded) {
+		console.log(
+			`[stylus] Warning: design system package has no themes for the specified includeThemes value: "${includeThemes}"`
+		);
+	}
+
 	return function addPlugins(api) {
 		/**
 		 * Injects additional options to component options ($p)
