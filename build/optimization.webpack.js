@@ -31,13 +31,13 @@ module.exports = function optimization({buildId, plugins}) {
 
 	if (buildId === RUNTIME) {
 		options.runtimeChunk = {
-			name: 'webpack.runtime.js'
+			name: 'webpack.runtime'
 		};
 
 		options.splitChunks = {
 			cacheGroups: {
 				index: {
-					name: 'core',
+					name: 'index-core',
 					chunks: 'initial',
 					minChunks: 2,
 					enforce: true,

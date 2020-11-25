@@ -159,7 +159,7 @@ async function buildProjectGraph() {
 
 			{
 				const
-					entrySrc = path.join(tmpEntries, `${configHash}__${name}.js`);
+					entrySrc = path.join(tmpEntries, `${name}.js`);
 
 				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
 					const
@@ -199,7 +199,7 @@ async function buildProjectGraph() {
 			{
 				const
 					entryName = `${name}_tpl`,
-					entrySrc = path.join(tmpEntries, `${configHash}__${name}.ss${!canFastBuild ? '.js' : ''}`);
+					entrySrc = path.join(tmpEntries, `${name}.ss${!canFastBuild ? '.js' : ''}`);
 
 				fs.writeFileSync(entrySrc, await $C(list)
 					.async
@@ -247,7 +247,7 @@ async function buildProjectGraph() {
 			{
 				const
 					entryName = `${name}_style`,
-					entrySrc = path.join(tmpEntries, `${configHash}__${name}.styl`);
+					entrySrc = path.join(tmpEntries, `${name}.styl`);
 
 				fs.writeFileSync(entrySrc, [
 					await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
@@ -285,7 +285,7 @@ async function buildProjectGraph() {
 			{
 				const
 					entryName = `${name}_view`,
-					entrySrc = path.join(tmpEntries, `${configHash}__${entryName}.html.js`);
+					entrySrc = path.join(tmpEntries, `${entryName}.html.js`);
 
 				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
 					const
