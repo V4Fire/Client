@@ -17,7 +17,7 @@ const
 
 const
 	{webpack} = require('config'),
-	{assetsJSON, assetsJS} = include('build/build.webpack');
+	{assetsJSON, assetsJS} = include('build/helpers.webpack');
 
 /**
  * WebPack plugin to generate ".dependencies.js" files and "assets.json" / "assets.js"
@@ -30,16 +30,16 @@ module.exports = function DependenciesPlugin() {
 				const
 					manifest = {};
 
-				$C(compilation.chunks).forEach(({name, files}) => {
-					if (name == null) {
+				$C(compilation.chunks).forEach((el) => {
+					if (el.name == null) {
 						return;
 					}
 
 					const
-						file = $C(files).one.filter((src) => path.extname(src)).get();
+						file = $C(el.files).one.filter((src) => path.extname(src)).get();
 
 					if (file) {
-						manifest[path.basename(name, path.extname(name))] = {
+						manifest[path.basename(el.name, path.extname(el.name))] = {
 							path: file,
 							publicPath: webpack.publicPath(file)
 						};
