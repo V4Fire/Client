@@ -201,18 +201,15 @@ export default function createRouter(component: bRouter): Router {
 			}
 
 			const
-				{entryPoint} = params.meta;
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				{load} = params.meta;
 
-			const
-				depsAlreadyLoaded = entryPoint != null ? Object.isArray(ModuleDependencies.get(entryPoint)) : false,
-				dontLoadDependencies = entryPoint == null || depsAlreadyLoaded || params.meta.dynamicDependencies === false;
-
-			if (dontLoadDependencies) {
+			if (load == null) {
 				resolve();
 				return;
 			}
 
-			resolve();
+			load().then(() => resolve(), stderr);
 		});
 	}
 
