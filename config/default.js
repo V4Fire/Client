@@ -740,9 +740,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	stylus() {
 		return {
-			stylusOptions: {
-				preferPathResolver: 'webpack'
-			}
+			webpackImporter: false
 		};
 	},
 
