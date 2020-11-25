@@ -14,6 +14,12 @@ const
 	{createVariableName} = include('build/stylus/ds/helpers');
 
 module.exports = {
+	/**
+	 * Returns string with css variable by the specified path
+	 *
+	 * @param path
+	 * @returns {string}
+	 */
 	getCSSVariable(path) {
 		return `'var(${createVariableName(path)})'`;
 	}

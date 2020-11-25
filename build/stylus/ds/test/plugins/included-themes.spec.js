@@ -27,21 +27,21 @@ describe('build/stylus/plugins/included-themes', () => {
 			plugins = createPlugins({ds, cssVariables, theme, stylus, includeThemes: true});
 
 		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
-			expect(value.includes('content: \'day.night\'')).toBeTrue();
+			expect(value.includes(`content: '${ds.raw.meta.themes.join('.')}'`)).toBeTrue();
 		});
 	});
 
 	it('should return only specified included theme', () => {
 		const
-			stylus = require('stylus'),
-			theme = 'night';
+			stylus = require('stylus');
 
 		const
+			includeThemes = ['night'],
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
-			plugins = createPlugins({ds, cssVariables, theme, stylus, includeThemes: ['night']});
+			plugins = createPlugins({ds, cssVariables, theme: includeThemes[0], stylus, includeThemes});
 
 		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
-			expect(value.includes('content: \'night\'')).toBeTrue();
+			expect(value.includes(`content: '${includeThemes.join('.')}'`)).toBeTrue();
 		});
 	});
 
