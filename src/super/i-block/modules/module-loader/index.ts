@@ -252,13 +252,8 @@ export default class ModuleLoader extends Friend {
 				break;
 
 			default: {
-				const
-					promises = module.load();
-
 				module.status = 'pending';
-				module.promise = promises.length > 1 ?
-					Promise.all([promises[0], Promise.allSettled(promises.slice(1))]) :
-					Promise.resolve(promises[0]);
+				module.promise = module.load();
 
 				promise = module.promise
 					.then(() => {

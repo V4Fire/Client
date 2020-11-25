@@ -11,5 +11,5 @@ export interface Module extends Dictionary {
 	status?: 'pending' | 'loaded' | 'failed';
 	import?: unknown;
 	promise?: CanArray<Promise<unknown>>;
-	load(): Array<Promise<unknown>>;
+	load(): Promise<unknown>;
 }

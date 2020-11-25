@@ -9,7 +9,11 @@
  */
 
 const
-	importRgxp = /\b(import|require)\((["'])((?:(?![bp]-[^\\/"')]+)[^'")])*([bp]-[^\\/"')]+))\2\)/g;
+	{typescript} = require('config');
+
+const
+	isESImport = typescript().client.compilerOptions.module === 'ES2020',
+	importRgxp = /\bimport\((["'])((?:(?![bp]-[^\\/"')]+)[^'")])*([bp]-[^\\/"')]+))\1\)/g;
 
 /**
  * Monic replacer to enable dynamic imports of components
@@ -25,19 +29,24 @@ const
  * ```
  */
 module.exports = function dynamicComponentImportReplacer(str) {
-	return str.replace(importRgxp, (str, importer, q, path, nm) => {
+	return str.replace(importRgxp, (str, q, path, nm) => {
 		const
-			newPath = `${path}/${nm}`,
-			isESImport = importer === 'import';
+			newPath = `${path}/${nm}`;
 
 		const
 			regTpl = `(module) => { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
 
+		let
+			imports;
+
 		if (isESImport) {
-			return `import('${newPath}'), import('${newPath}.ss').then(${regTpl}), import('${newPath}.styl?dynamic')`;
+			imports = `import('${newPath}'), import('${newPath}.ss').then(${regTpl}), import('${newPath}.styl?dynamic')`;
+
+		} else {
+			imports = `new Promise((r) => r(require('${newPath}'))), new Promise((r) => r(require('${newPath}.ss'))).then(${regTpl}), new Promise((r) => r(require('${newPath}.styl?dynamic')))`;
 		}
 
-		return `Promise.resolve(require('${newPath}')), Promise.resolve(require('${newPath}.ss')).then(${regTpl}), Promise.resolve(require('${newPath}.styl?dynamic'))`;
+		return `Promise.allSettled([${imports}])`;
 	});
 };
 

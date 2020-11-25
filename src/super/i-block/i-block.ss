@@ -50,11 +50,10 @@
 	 * @param {string=} [content]
 	 */
 	- block loadModules(path, content)
-		: isESImport = require('config').typescript().client.compilerOptions.module === 'ES2020'
 		? path = [].concat(path || [])
 
 		- forEach path => id
-			{{ void(moduleLoader.add({id: '${id}', load: () => [${isESImport ? 'import' : 'require'}('${id}')]})) }}
+			{{ void(moduleLoader.add({id: '${id}', load: () => import('${id}')})) }}
 
 		- if content != null
 			< template v-for = el in asyncRender.iterate(moduleLoader.values(...${path|json}), 1)
