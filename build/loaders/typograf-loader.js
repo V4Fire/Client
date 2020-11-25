@@ -47,3 +47,8 @@ module.exports = function typografLoader(str) {
 
 	return escaper.paste(str);
 };
+
+Object.assign(module.exports, {
+	literalRgxp,
+	chunkRgxp
+});

@@ -62,3 +62,7 @@ module.exports = function preludeLoader(str) {
 
 	return str;
 };
+
+Object.assign(module.exports, {
+	labelRgxp
+});
