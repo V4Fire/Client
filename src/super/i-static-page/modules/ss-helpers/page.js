@@ -25,9 +25,6 @@ const
 	{loadLibs, loadStyles, loadLinks} = include('src/super/i-static-page/modules/ss-helpers/libs'),
 	{getVarsDecl, getInitLibDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
 
-const
-	globals = include('build/globals.webpack');
-
 const nonce = {
 	nonce: csp.nonce
 };
@@ -329,11 +326,13 @@ async function generatePageInitJS(pageName, {
 		await getScriptDeclByName('std', {assets, optional: true}),
 
 		await loadLibs(deps.scripts, {assets, documentWrite: true}),
+
+		getScriptDeclByName('index-core', {assets, optional: true}),
 		getInitLibDecl(),
 
 		getScriptDeclByName('vendor', {assets, optional: true}),
 		getPageScriptDepsDecl(ownDeps, {assets}),
-		getScriptDeclByName('webpack.runtime', {assets})
+		getScriptDeclByName('webpack', {assets})
 	);
 
 	const bodyInitializer = `
