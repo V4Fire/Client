@@ -699,10 +699,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {{server: !Object, client: !Object, worker: !Object}}
 	 */
 	typescript() {
+		const
+			server = super.typescript();
+
+		const client = this.extend({}, server, {
+			compilerOptions: {
+				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
+			}
+		});
+
 		return {
-			client: super.typescript(),
-			worker: super.typescript(),
-			server: super.typescript()
+			client,
+			server,
+			worker: client
 		};
 	},
 

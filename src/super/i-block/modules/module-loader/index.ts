@@ -175,7 +175,9 @@ export default class ModuleLoader extends Friend {
 
 								return {
 									done: false,
-									value: subTasks.length > 0 ? Promise.all(subTasks).then(() => subValues) : subValues
+									value: subTasks.length > 0 ?
+										Promise.all(subTasks).then(() => Promise.allSettled(subValues)) :
+										subValues
 								};
 							}
 						}
