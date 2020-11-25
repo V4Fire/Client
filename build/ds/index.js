@@ -48,7 +48,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 		}
 
 		if (buildThemes === true) {
-			return meta.themes;
+			return meta.themes || null;
 		}
 
 		const dsMatched = buildThemes.reduce((res, t) => {
@@ -66,7 +66,6 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 		return dsMatched;
 	}
 
-	console.log('Specified design system has no themes');
 	return null;
 };
 

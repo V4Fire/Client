@@ -38,10 +38,7 @@ describe('build/ds', () => {
 		expect(getThemes(fullThemed, ['day'])).toEqual(['day']);
 	});
 
-	it('should notify by passing a plain design system (without themes)', () => {
-		console.log = jasmine.createSpy('log');
-
+	it('should return null by passing a plain design system (without themes)', () => {
 		expect(getThemes(plainDesignSystem)).toBe(null);
-		expect(console.log).toHaveBeenCalledWith('Specified design system has no themes');
 	});
 });
