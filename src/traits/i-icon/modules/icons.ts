@@ -12,16 +12,15 @@ const
 
 interface Sprite {
 	id: string;
-	content: string;
-	viewBox: string;
-	node: SVGSymbolElement;
+	name: string;
+	svg: string;
 }
 
 function icons(id?: string): Sprite {
 	if (id != null) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {
-				return iconsList[i](id).default;
+				return iconsList[i](id);
 
 			} catch {}
 		}
@@ -39,7 +38,7 @@ let
 if (IS_PROD) {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!svg-sprite-loader!svgo-loader!@sprite',
+		'!!simple-svg-sprite-loader!svgo-loader!@sprite',
 		true,
 		/\.svg$/
 	);
@@ -47,7 +46,7 @@ if (IS_PROD) {
 } else {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!svg-sprite-loader!@sprite',
+		'!!simple-svg-sprite-loader!@sprite',
 		true,
 		/\.svg$/
 	);
