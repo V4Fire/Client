@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.102 (2020-11-27)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with layout shifts after `reInit`
+
 ## v3.0.0-rc.81 (2020-10-08)
 
 #### :bug: Bug Fix
