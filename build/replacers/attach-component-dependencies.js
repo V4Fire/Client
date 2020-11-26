@@ -11,9 +11,11 @@
  */
 
 const
-	$C = require('collection.js'),
 	path = require('upath'),
 	graph = include('build/graph.webpack');
+
+const
+	decls = Object.create(null);
 
 /**
  * Monic replacer to attach component dependencies into the TS/JS file
@@ -31,19 +33,27 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		component = blockMap.get(path.basename(filePath, ext));
 
 	if (component) {
-		await $C(component.dependencies).async.forEach(async (dep) => {
+		for (const dep of component.dependencies) {
+			if (decls[dep] != null) {
+				str += decls[dep];
+				continue;
+			}
+
 			const
 				component = blockMap.get(dep);
 
 			if (!component) {
-				return;
+				continue;
 			}
+
+			let
+				decl = '';
 
 			try {
 				const
 					styles = await component.styles;
 
-				str += `
+				decl += `
 if (!TPLS['${dep}']) {
 	(async () => {
 		try {
@@ -56,16 +66,19 @@ if (!TPLS['${dep}']) {
 
 			try {
 				const src = path.normalize(await component.logic);
-				str += `try { require('${src}'); } catch (err) { stderr(err); }`;
+				decl += `try { require('${src}'); } catch (err) { stderr(err); }`;
 
 			} catch {}
 
 			try {
 				const src = path.normalize(await component.tpl);
-				str += `try { TPLS['${dep}'] = require('${src}')['${dep}']; } catch (err) { stderr(err); }`;
+				decl += `try { TPLS['${dep}'] = require('${src}')['${dep}']; } catch (err) { stderr(err); }`;
 
 			} catch {}
-		});
+
+			decls[dep] = decl;
+			str += decl;
+		}
 
 		component.libs.forEach((lib) => {
 			str += `
