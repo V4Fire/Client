@@ -110,6 +110,7 @@ export default class ChunkRender extends Friend {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
+		this.refsUpdateMap = new Map();
 
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
