@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.102 (2020-11-27)
+## v3.0.0-rc.102 (2020-11-26)
 
 #### :bug: Bug Fix
 
-* Fixed layout shifts after `reInit` `base/b-virtual-scroll`
+* Fixed an issue with layout shifts after `reInit` `base/b-virtual-scroll`
 
 ## v3.0.0-rc.101 (2020-11-18)
 
