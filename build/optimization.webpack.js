@@ -38,7 +38,7 @@ module.exports = function optimization({buildId, plugins}) {
 			cacheGroups: {
 				index: {
 					name: 'index-core',
-					chunks: 'initial',
+					chunks: 'all',
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,

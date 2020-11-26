@@ -40,10 +40,10 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			imports;
 
 		if (isESImport) {
-			imports = `import('${newPath}'), import('${newPath}.ss').then(${regTpl}), import('${newPath}.styl?dynamic')`;
+			imports = `!TPLS['${nm}'] && import('${newPath}.styl?dynamic'), import('${newPath}'), import('${newPath}.ss').then(${regTpl})`;
 
 		} else {
-			imports = `new Promise((r) => r(require('${newPath}'))), new Promise((r) => r(require('${newPath}.ss'))).then(${regTpl}), new Promise((r) => r(require('${newPath}.styl?dynamic')))`;
+			imports = `!TPLS['${nm}'] && new Promise((r) => r(require('${newPath}.styl?dynamic'))), new Promise((r) => r(require('${newPath}'))), new Promise((r) => r(require('${newPath}.ss'))).then(${regTpl})`;
 		}
 
 		return `Promise.allSettled([${imports}])`;
