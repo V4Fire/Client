@@ -98,7 +98,7 @@ export default class ChunkRender extends Friend {
 		super(component);
 
 		this.ctx.meta.hooks.mounted.push({fn: () => {
-			this.unMountLazySlots();
+			this.hideLazySlots();
 			this.initEventHandlers();
 		}});
 	}
@@ -115,7 +115,7 @@ export default class ChunkRender extends Friend {
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
 		this.setLoadersVisibility(true);
-		this.unMountLazySlots();
+		this.hideLazySlots();
 
 		this.initEventHandlers();
 	}
@@ -234,10 +234,10 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * UnMounts slots from document that should not be visible at the component initialization
+	 * Removes or hides slots from document that should not be visible at the component initialization
 	 * @see [[bVirtualScroll.prototype.shouldRemoveSlotsFromDocument]]
 	 */
-	protected unMountLazySlots(): void {
+	protected hideLazySlots(): void {
 		this.setRefVisibility('retry', false);
 		this.setRefVisibility('done', false);
 		this.setRefVisibility('empty', false);
