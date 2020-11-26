@@ -30,6 +30,7 @@ module.exports = function applyDynamicComponentStylesReplacer(str, filePath) {
 .${RegExp.$1}
 	extends($${RegExp.$1.camelize(false)})
 
+generateImgClasses()
 
 `;
 	}
