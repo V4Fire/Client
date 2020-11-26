@@ -71,32 +71,32 @@ module.exports = function optimization({buildId, plugins}) {
 		};
 	}
 
-	if (isProd) {
-		const
-			es = config.es(),
-			keepFNames = Boolean({ES5: true, ES3: true}[es]);
+	const
+		es = config.es(),
+		keepFNames = Boolean({ES5: true, ES3: true}[es]);
 
-		options.minimizer = [
-			/* eslint-disable camelcase */
+	options.minimizer = [
+		/* eslint-disable camelcase */
 
-			new TerserPlugin({
-				parallel: true,
-				terserOptions: inherit({
-					safari10: true,
-					warnings: false,
-					ecma: es,
-					keep_fnames: keepFNames,
-					keep_classnames: true,
+		new TerserPlugin({
+			parallel: true,
+			terserOptions: inherit({
+				ecma: es,
 
-					output: {
-						comments: false
-					}
-				}, config.uglify())
-			})
+				safari10: true,
+				warnings: false,
 
-			/* eslint-enable camelcase */
-		];
-	}
+				keep_fnames: keepFNames,
+				keep_classnames: true,
+
+				output: {
+					comments: false
+				}
+			}, config.uglify())
+		})
+
+		/* eslint-enable camelcase */
+	];
 
 	const
 		css = config.css();

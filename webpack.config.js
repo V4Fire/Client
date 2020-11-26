@@ -8,7 +8,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('config');
+const
+	{webpack} = require('config');
 
 const
 	$C = require('collection.js'),
@@ -39,7 +40,7 @@ async function buildFactory(entry, buildId) {
 		plugins: [...plugins.values()],
 		module: {...modules, rules: [...modules.rules.values()]},
 
-		mode: isProd ? 'production' : 'development',
+		mode: webpack.mode(),
 		optimization: await include('build/optimization.webpack')({buildId, plugins}),
 		devtool: await include('build/devtool.webpack')
 	};

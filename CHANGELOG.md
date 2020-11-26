@@ -32,6 +32,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added API to load the dynamic dependencies `iBlock`
 * Added `StaticRouteMeta.load` `core/router`
+* Added `webpack.mode` `config`
 
 #### :house: Internal
 

@@ -54,6 +54,9 @@ const
  */
 module.exports = async function module({plugins}) {
 	const
+		isProd = webpack.mode() === 'production';
+
+	const
 		graph = await build,
 		loaders = {rules: new Map()};
 

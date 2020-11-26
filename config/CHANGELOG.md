@@ -15,6 +15,10 @@ Changelog
 
 * Removed `build.fast`
 
+#### :boom: New Feature
+
+* Added `webpack.mode`
+
 ## v3.0.0-rc.67 (2020-09-22)
 
 #### :boom: Breaking Change

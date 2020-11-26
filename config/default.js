@@ -281,11 +281,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		devtool: false,
 
 		/**
+		 * WebPack ".mode" option
+		 * @returns {string}
+		 */
+		mode() {
+			return o('mode', {
+				default: IS_PROD ? 'production' : 'development'
+			});
+		},
+
+		/**
 		 * Returns the default hash algorithm to use
 		 * @returns {?string}
 		 */
 		hashFunction() {
-			return !isProd || this.fatHTML() ? undefined : this.config.build.hashAlg;
+			return this.mode() !== 'production' || this.fatHTML() ? undefined : this.config.build.hashAlg;
 		},
 
 		/**
@@ -410,7 +420,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		output(params) {
 			const
-				res = !isProd || this.fatHTML() ? '[name]' : '[hash]_[name]';
+				res = this.mode() !== 'production' || this.fatHTML() ? '[name]' : '[hash]_[name]';
 
 			if (params) {
 				return res.replace(/_?\[(.*?)]/g, (str, key) => {
@@ -459,7 +469,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				root = 'assets';
 
-			if (!isProd || this.fatHTML()) {
+			if (this.mode() !== 'production' || this.fatHTML()) {
 				return this.output({
 					...params,
 					name: `${root}/[path][name].[ext]`,
@@ -562,6 +572,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {!Object}
 	 */
 	html() {
+		const
+			isProd = this.webpack.mode() === 'production';
+
 		return {
 			attributes: false,
 
@@ -714,7 +727,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	css() {
 		return {
-			minimize: Boolean(isProd || Number(process.env.MINIFY_CSS))
+			minimize: Boolean(this.webpack.mode() === 'production')
 		};
 	},
 

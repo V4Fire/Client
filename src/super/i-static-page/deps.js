@@ -52,7 +52,7 @@ switch (runtime.engine) {
 	case 'vue':
 		deps.scripts.set('vue', {
 			defer: false,
-			src: `vue/dist/vue.runtime${isProd ? '.min' : ''}.js`
+			src: `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`
 		});
 
 		break;
