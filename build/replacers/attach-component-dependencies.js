@@ -11,6 +11,9 @@
  */
 
 const
+	$C = require('collection.js');
+
+const
 	path = require('upath'),
 	graph = include('build/graph.webpack');
 
@@ -32,28 +35,27 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		ext = path.extname(filePath),
 		component = blockMap.get(path.basename(filePath, ext));
 
-	if (component) {
-		for (const dep of component.dependencies) {
-			if (decls[dep] != null) {
-				str += decls[dep];
-				continue;
-			}
+	await $C(component?.dependencies).async.forEach(async (dep) => {
+		if (decls[dep] != null) {
+			str += decls[dep];
+			return;
+		}
 
+		const
+			component = blockMap.get(dep);
+
+		if (!component) {
+			return;
+		}
+
+		let
+			decl = '';
+
+		try {
 			const
-				component = blockMap.get(dep);
+				styles = await component.styles;
 
-			if (!component) {
-				continue;
-			}
-
-			let
-				decl = '';
-
-			try {
-				const
-					styles = await component.styles;
-
-				decl += `
+			decl += `
 if (!TPLS['${dep}']) {
 	(async () => {
 		try {
@@ -62,30 +64,29 @@ if (!TPLS['${dep}']) {
 	})();
 }`;
 
-			} catch {}
+		} catch {}
 
-			try {
-				const src = path.normalize(await component.logic);
-				decl += `try { require('${src}'); } catch (err) { stderr(err); }`;
+		try {
+			const src = path.normalize(await component.logic);
+			decl += `try { require('${src}'); } catch (err) { stderr(err); }`;
 
-			} catch {}
+		} catch {}
 
-			try {
-				const src = path.normalize(await component.tpl);
-				decl += `try { TPLS['${dep}'] = require('${src}')['${dep}']; } catch (err) { stderr(err); }`;
+		try {
+			const src = path.normalize(await component.tpl);
+			decl += `try { TPLS['${dep}'] = require('${src}')['${dep}']; } catch (err) { stderr(err); }`;
 
-			} catch {}
+		} catch {}
 
-			decls[dep] = decl;
-			str += decl;
-		}
+		decls[dep] = decl;
+		str += decl;
+	});
 
-		component.libs.forEach((lib) => {
-			str += `
+	$C(component?.libs).forEach((lib) => {
+		str += `
 try { require('${lib}'); } catch (err) { stderr(err); }
 `;
-		});
-	}
+	});
 
 	return str;
 };
