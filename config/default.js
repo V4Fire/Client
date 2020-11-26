@@ -43,31 +43,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Enables the fast kind of application building.
-		 *
-		 * Mind, this type of build is slower on re-building, i.e.,
-		 * it doesn't meet with the development needs when you launch the development server and
-		 * incrementally rebuild the modified chunks, but it totally matches the situation when you need
-		 * to improve the speed of the release build.
-		 *
-		 * @cli fast-build
-		 * @env FAST_BUILD
-		 *
-		 * @type {boolean}
-		 * @default `isProd`
-		 *
-		 * @returns {boolean}
-		 */
-		fast() {
-			const v = o('fast-build', {
-				env: true,
-				type: 'boolean'
-			});
-
-			return v != null ? v : isProd;
-		},
-
-		/**
 		 * Every client build starts with calculating the project graph.
 		 * The graph contains information about entry points, dependencies, and other stuff.
 		 * This information is used by WebPack to deduplicate code blocks and optimize building,

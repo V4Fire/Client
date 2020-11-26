@@ -24,9 +24,6 @@ const
 const
 	{output, buildCache, isStandalone} = include('build/helpers.webpack');
 
-const
-	canFastBuild = build.fast();
-
 let
 	buildIterator = -1;
 
@@ -199,11 +196,11 @@ async function buildProjectGraph() {
 			{
 				const
 					entryName = `${name}_tpl`,
-					entrySrc = path.join(tmpEntries, `${name}.ss${!canFastBuild ? '.js' : ''}`);
+					entrySrc = path.join(tmpEntries, `${name}.ss.js`);
 
 				fs.writeFileSync(entrySrc, await $C(list)
 					.async
-					.to(canFastBuild ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
+					.to('window.TPLS = window.TPLS || Object.create(null);\n')
 					.reduce(async (str, {name, isParent}) => {
 						const
 							block = blockMap.get(name),
@@ -211,28 +208,14 @@ async function buildProjectGraph() {
 
 						if (!isParent && tpl && !componentsToIgnore.test(name)) {
 							const url = getEntryURL(tpl);
-							str += canFastBuild ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+							str += `Object.assign(TPLS, require('./${url}'));\n`;
 						}
 
 						return str;
 					}));
 
-				if (canFastBuild) {
-					const
-						tplRequireFileUrl = path.join(tmpEntries, entryName);
-
-					fs.writeFileSync(
-						tplRequireFileUrl,
-						`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getEntryURL(entrySrc)}'));\n`
-					);
-
-					entry[entryName] = tplRequireFileUrl;
-					taskProcess[entryName] = tplRequireFileUrl;
-
-				} else {
-					entry[entryName] = entrySrc;
-					taskProcess[entryName] = entrySrc;
-				}
+				entry[entryName] = entrySrc;
+				taskProcess[entryName] = entrySrc;
 			}
 
 			taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
