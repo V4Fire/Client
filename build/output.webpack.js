@@ -16,7 +16,7 @@ const
 	concatUrl = require('urlconcat').concat;
 
 /**
- * Returns options for Webpack ".output"*
+ * Returns options for Webpack ".output"
  * @returns {!Object}
  */
 module.exports = function output() {

@@ -36,6 +36,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `isLayerCoreDep`
   * Added support of dynamic imports
   * Added `entry.webpack`
+  * Added `other.webpack`
 
 * `config`:
   * Added `webpack.mode`
