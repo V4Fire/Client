@@ -39,13 +39,23 @@ const
  * ```
  */
 module.exports = function typografLoader(str) {
-	str = escaper.replace(str, escaperRules).replace(literalRgxp, (str) => {
-		str = escaper.replace(str);
+	const
+		content = [];
+
+	str = escaper
+		.replace(str, escaperRules, content);
+
+	str = str.replace(literalRgxp, (str) => {
+		const
+			escapedFragments = [];
+
+		str = escaper.replace(str, escapedFragments);
 		$C(chunks).set((el) => el.replace(chunkRgxp, (str, val) => tp.execute(val)));
-		return escaper.paste(str.slice(tagLength));
+
+		return escaper.paste(str.slice(tagLength), escapedFragments);
 	});
 
-	return escaper.paste(str);
+	return escaper.paste(str, content);
 };
 
 Object.assign(module.exports, {
