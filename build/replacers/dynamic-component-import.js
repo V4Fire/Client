@@ -12,24 +12,14 @@ const
 	{typescript} = require('config');
 
 const
-	path = require('upath'),
-	escaper = require('escaper');
-
-const
-	graph = include('build/graph.webpack');
-
-const
 	isESImport = typescript().client.compilerOptions.module === 'ES2020',
 	importRgxp = /\bimport\((["'])((?:(?![bp]-[^\\/"')]+)[^'")])*([bp]-[^\\/"')]+))\1\)/g;
-
-const
-	paths = Object.create(null);
 
 /**
  * Monic replacer to enable dynamic imports of components
  *
  * @param {string} str
- * @returns {!Promise<string>}
+ * @returns {string}
  *
  * @example
  * ```js
@@ -38,98 +28,38 @@ const
  * });
  * ```
  */
-module.exports = async function dynamicComponentImportReplacer(str) {
-	const
-		{blockMap} = await graph;
+module.exports = function dynamicComponentImportReplacer(str) {
+	return str.replace(importRgxp, (str, q, path, nm) => {
+		const
+			fullPath = `${path}/${nm}`,
+			imports = [];
 
-	let
-		needTransform = false;
+		if (isESImport) {
+			imports.push(`!TPLS['${nm}'] && import('${fullPath}.styl?dynamic')`);
 
-	const
-		content = [],
-		tasks = [];
+		} else {
+			imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl?dynamic')))`);
+		}
 
-	str = escaper.replace(str, ['/*', '//'], content);
+		if (isESImport) {
+			imports.push(`import('${fullPath}')`);
 
-	for (const [,,, nm] of str.matchAll(importRgxp)) {
-		needTransform = nm;
-
-		if (paths[nm]) {
-			continue;
+		} else {
+			imports.push(`new Promise((r) => r(require('${fullPath}')))`);
 		}
 
 		const
-			component = blockMap.get(nm);
+			regTpl = `(module) => { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
 
-		if (component) {
-			// eslint-disable-next-line no-multi-assign
-			const obj = paths[nm] = {styles: []};
+		if (isESImport) {
+			imports.push(`import('${fullPath}.ss').then(${regTpl})`);
 
-			tasks.push(
-				component.logic.then((src) => {
-					obj.logic = path.normalize(src);
-				}),
-
-				component.tpl.then((src) => {
-					obj.tpl = path.normalize(src);
-				}),
-
-				component.styles.then((styles) => {
-					obj.styles = styles.map(path.normalize);
-				})
-			);
-		}
-	}
-
-	if (!needTransform) {
-		return escaper.paste(str, content);
-	}
-
-	await Promise.all(tasks);
-
-	str = str.replace(importRgxp, (str, q, path, nm) => {
-		const
-			component = paths[nm];
-
-		let
-			logic = '',
-			styles = '',
-			tpl = '';
-
-		if (component.logic) {
-			if (isESImport) {
-				logic += `import('${component.logic}')`;
-
-			} else {
-				logic += `new Promise((r) => r(require('${component.logic}')))`;
-			}
+		} else {
+			imports.push(`new Promise((r) => r(require('${fullPath}.ss'))).then(${regTpl})`);
 		}
 
-		if (component.tpl) {
-			const
-				regTpl = `(module) => { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
-
-			if (isESImport) {
-				tpl += `import('${component.tpl}').then(${regTpl})`;
-
-			} else {
-				tpl += `new Promise((r) => r(require('${component.tpl}'))).then(${regTpl})`;
-			}
-		}
-
-		if (component.styles.length) {
-			styles += `!TPLS['${nm}'] && (async () => {
-	const res = [];
-	${component.styles.map((src) => `res.push(${isESImport ? 'await import' : 'require'}('${src}?dynamic'));`).join('')}
-	return res;
-})()`;
-		}
-
-		const imports = [].concat(styles || [], logic || [], tpl || []).join(',');
-		return `Promise.all([${imports}])`;
+		return `Promise.allSettled([${imports.join(',')}])`;
 	});
-
-	return escaper.paste(str, content);
 };
 
 Object.assign(module.exports, {
