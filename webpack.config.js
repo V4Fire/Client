@@ -42,7 +42,9 @@ async function buildFactory(entry, buildId) {
 
 		mode: webpack.mode(),
 		optimization: await include('build/optimization.webpack')({buildId, plugins}),
-		devtool: await include('build/devtool.webpack')
+
+		devtool: await include('build/devtool.webpack'),
+		cache: await include('build/cache.webpack')({buildId})
 	};
 }
 

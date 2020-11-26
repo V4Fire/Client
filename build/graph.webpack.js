@@ -22,7 +22,7 @@ const
 	{resolve, entries, block} = require('@pzlr/build-core');
 
 const
-	{output, buildCache, isStandalone} = include('build/helpers.webpack');
+	{output, cacheDir, isStandalone} = include('build/helpers.webpack');
 
 let
 	buildIterator = -1;
@@ -55,8 +55,7 @@ module.exports = Object.assign(buildProjectGraph(), {
  */
 async function buildProjectGraph() {
 	const
-		configHash = build.hash(),
-		graphCacheFile = path.join(buildCache, `${configHash}_graph.json`);
+		graphCacheFile = path.join(cacheDir, 'graph.json');
 
 	// Graph already exists in the cache and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
@@ -106,14 +105,14 @@ async function buildProjectGraph() {
 		});
 	}
 
-	fs.mkdirpSync(buildCache);
+	fs.mkdirpSync(cacheDir);
 	fs.writeFileSync(graphCacheFile, '');
 
 	// All others process will use this cache
 	process.env.BUILD_GRAPH_FROM_CACHE = 1;
 
 	const
-		tmpEntries = path.join(resolve.entry(), `tmp/${configHash}`);
+		tmpEntries = path.join(resolve.entry(), `tmp/${build.hash()}`);
 
 	fs.mkdirpSync(tmpEntries);
 	fs.mkdirpSync(path.join(src.clientOutput(), path.dirname(output)));

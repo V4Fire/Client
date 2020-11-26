@@ -14,10 +14,14 @@ Changelog
 #### :boom: Breaking Change
 
 * Removed `build.fast`
+* Removed `webpack.buildCache`
+* Removed `webpack.cacheDir`
+* Now `webpack.devtool` is a function
 
 #### :boom: New Feature
 
 * Added `webpack.mode`
+* Added `webpack.cache`
 
 ## v3.0.0-rc.67 (2020-09-22)
 

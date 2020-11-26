@@ -276,17 +276,34 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	webpack: {
 		/**
-		 * WebPack ".devtool" option
-		 */
-		devtool: false,
-
-		/**
 		 * WebPack ".mode" option
 		 * @returns {string}
 		 */
 		mode() {
 			return o('mode', {
+				env: true,
 				default: IS_PROD ? 'production' : 'development'
+			});
+		},
+
+		/**
+		 * WebPack ".cache.type" option
+		 * @returns {string}
+		 */
+		cache() {
+			return o('cache', {
+				env: true,
+				default: 'memory'
+			});
+		},
+
+		/**
+		 * WebPack ".devtool" option
+		 * @returns {?string}
+		 */
+		devtool() {
+			return o('devtool', {
+				env: true
 			});
 		},
 
@@ -321,31 +338,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			vue: 'Vue',
 			eventemitter2: 'EventEmitter2',
 			setimmediate: 'setImmediate'
-		},
-
-		/**
-		 * Enables hard caching of WebPack build: it helps speed up "cold" build time
-		 *
-		 * @cli build-cache
-		 * @env BUILD_CACHE
-		 *
-		 * @returns {boolean}
-		 */
-		buildCache() {
-			return o('build-cache', {
-				default: false,
-				type: 'boolean'
-			});
-		},
-
-		/**
-		 * Returns a path to the directory to store application build cache
-		 *
-		 * @see buildCache
-		 * @returns {string}
-		 */
-		cacheDir() {
-			return '[confighash]';
 		},
 
 		/**

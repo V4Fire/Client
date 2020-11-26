@@ -15,10 +15,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed `build.fast` `config`
 * Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
 * Removed the default export of submodules `core/dom`
 * Removed `StaticRouteMeta.entryPoint` and `StaticRouteMeta.dynamicDependencies` `core/router`
+
+* `config`:
+  * Removed `build.fast`
+  * Removed `webpack.buildCache`
+  * Removed `webpack.cacheDir`
+  * Now `webpack.devtool` is a function
 
 * `build`:
   * Renamed `entries.webpack` to `graph.webpack`
@@ -32,9 +37,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added support of dynamic imports
   * Added `entry.webpack`
 
+* `config`:
+  * Added `webpack.mode`
+  * Added `webpack.cache`
+
 * Added API to load the dynamic dependencies `iBlock`
 * Added `StaticRouteMeta.load` `core/router`
-* Added `webpack.mode` `config`
 
 #### :house: Internal
 

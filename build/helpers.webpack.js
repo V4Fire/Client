@@ -45,9 +45,9 @@ exports.assetsJS = path.join(src.clientOutput(), wp.assetsJS());
 exports.dllManifest = path.join(src.clientOutput(), wp.dllOutput({name: 'dll-manifest.json', hash: null}));
 
 /**
- * Build cache folder
+ * Cache folder
  */
-exports.buildCache = path.join(src.cwd(), 'app-cache');
+exports.cacheDir = path.join(src.cwd(), 'app-cache', build.hash());
 
 // Some helpers
 
