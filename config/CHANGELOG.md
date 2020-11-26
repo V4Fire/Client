@@ -21,7 +21,7 @@ Changelog
 #### :boom: New Feature
 
 * Added `webpack.mode`
-* Added `webpack.cache`
+* Added `webpack.cacheType`
 
 ## v3.0.0-rc.67 (2020-09-22)
 

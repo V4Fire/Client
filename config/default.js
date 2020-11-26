@@ -290,8 +290,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * WebPack ".cache.type" option
 		 * @returns {string}
 		 */
-		cache() {
-			return o('cache', {
+		cacheType() {
+			return o('cache-type', {
 				env: true,
 				default: 'memory'
 			});

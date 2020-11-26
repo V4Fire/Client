@@ -19,7 +19,7 @@ const
  * @returns {(!Object|boolean)}
  */
 module.exports = function cache({buildId}) {
-	switch (webpack.cache) {
+	switch (webpack.cacheType()) {
 		case 'memory':
 			return {type: 'memory'};
 
