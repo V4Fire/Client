@@ -34,13 +34,8 @@ import * as browser from 'core/browser';
 
 import * as presets from 'presets';
 
-//#if runtime has bRouter
-import bRouter from 'base/b-router/b-router';
-//#endif
-
-//#if runtime has iStaticPage
-import iStaticPage from 'super/i-static-page/i-static-page';
-//#endif
+import type bRouter from 'base/b-router/b-router';
+import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import {
 
