@@ -75,6 +75,7 @@ module.exports = async function module({plugins}) {
 			loader: 'monic-loader',
 			options: inherit(monic.typescript, {
 				replacers: [
+					include('build/replacers/attach-component-dependencies'),
 					include('build/replacers/require-context'),
 					include('build/replacers/super-import'),
 					include('build/replacers/ts-import'),
