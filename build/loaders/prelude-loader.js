@@ -29,31 +29,31 @@ const
 module.exports = function preludeLoader(str) {
 	if (replaceRgxp) {
 		const
-			content = [];
+			escapedFragments = [];
 
 		let
 			initGlobals = false;
 
-		str = escaper.paste(
+		str = escaper
 			// eslint-disable-next-line no-template-curly-in-string
-			escaper.replace(str, {label: '[__ESCAPER_QUOT__${pos}_]'}, content).replace(replaceRgxp, (str) => {
-				const
-					token = tokens.get(str);
+			.replace(str, {label: '[__ESCAPER_QUOT__${pos}_]'}, escapedFragments);
 
-				if (token) {
-					if (token.global) {
-						initGlobals = true;
-					}
+		str = str.replace(replaceRgxp, (str) => {
+			const
+				token = tokens.get(str);
 
-					return token.link;
+			if (token) {
+				if (token.global) {
+					initGlobals = true;
 				}
 
-				return str;
-			}),
+				return token.link;
+			}
 
-			content,
-			labelRgxp
-		);
+			return str;
+		});
+
+		str = escaper.paste(str, escapedFragments, labelRgxp);
 
 		if (initGlobals) {
 			str = `const ${globalLink} = Function('return this')();\n\n${str}`;
