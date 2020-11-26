@@ -7,3 +7,4 @@
  */
 
 import '../core';
+import '../global/g-def';
