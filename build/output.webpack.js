@@ -10,34 +10,37 @@
 
 const
 	{src, webpack} = require('config'),
-	{hash, output} = include('build/helpers.webpack');
+	{hash, output: outputPattern} = include('build/helpers.webpack');
 
 const
 	concatUrl = require('urlconcat').concat;
 
-let
-	publicPath = webpack.publicPath();
-
-if (publicPath) {
-	publicPath = concatUrl(publicPath, '/').replace(/^[/]+/, '/');
-
-} else {
-	publicPath = '';
-}
-
 /**
- * Options for WebPack ".output"
+ * Returns options for Webpack ".output"*
+ * @returns {!Object}
  */
-module.exports = {
-	path: src.clientOutput(),
-	publicPath,
+module.exports = function output() {
+	let
+		publicPath = webpack.publicPath();
 
-	filename: `${hash(output)}.js`,
-	chunkFilename: `${hash(output, true)}.js`,
+	if (publicPath) {
+		publicPath = concatUrl(publicPath, '/').replace(/^[/]+/, '/');
 
-	chunkLoading: 'jsonp',
-	chunkFormat: 'array-push',
+	} else {
+		publicPath = '';
+	}
 
-	hashFunction: webpack.hashFunction(),
-	crossOriginLoading: 'anonymous'
+	return {
+		path: src.clientOutput(),
+		publicPath,
+
+		filename: `${hash(outputPattern, true)}.js`,
+		chunkFilename: `${hash(outputPattern, true)}.js`,
+
+		chunkLoading: 'jsonp',
+		chunkFormat: 'array-push',
+
+		hashFunction: webpack.hashFunction(),
+		crossOriginLoading: 'anonymous'
+	};
 };

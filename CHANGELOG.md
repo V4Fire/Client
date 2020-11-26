@@ -19,9 +19,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
 * Removed the default export of submodules `core/dom`
 * Removed `StaticRouteMeta.entryPoint` and `StaticRouteMeta.dynamicDependencies` `core/router`
+
 * `build`:
   * Renamed `entries.webpack` to `graph.webpack`
   * Renamed `build.webpack` to `helpers.webpack`
+  * Now `output.webpack` exports a function
 
 #### :rocket: New Feature
 

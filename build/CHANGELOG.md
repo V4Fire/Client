@@ -15,6 +15,7 @@ Changelog
 
 * Renamed `entries.webpack` to `graph.webpack`
 * Renamed `build.webpack` to `helpers.webpack`
+* Now `output.webpack` exports a function
 
 #### :rocket: New Feature
 
