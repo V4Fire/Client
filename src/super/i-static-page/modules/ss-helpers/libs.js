@@ -9,6 +9,7 @@
 require('../interface');
 
 const
+	{resolve} = require('@pzlr/build-core'),
 	{webpack, src} = require('config');
 
 const
@@ -126,7 +127,7 @@ async function initLibs(libs, assets) {
 			cwd = src.lib();
 
 		} else if (p.source === 'src') {
-			cwd = src.src();
+			cwd = resolve.sourceDirs;
 
 		} else {
 			cwd = src.clientOutput();
@@ -172,6 +173,7 @@ exports.resolveAsLib = resolveAsLib;
  *   (if not specified, the name will be taken from a basename of the source file)
  *
  * @param {boolean=} [relative=true] - if false, the function will return an absolute path
+ * @param {(Array<string>|string)=} cwd - active working directory (can be defined as an array to enable layers)
  * @param {...string} paths - string paths to join (also, can take URL-s)
  * @returns {string}
  *
@@ -181,7 +183,7 @@ exports.resolveAsLib = resolveAsLib;
  * loadAsLib({name: 'images'}, 'assets', 'images/');
  * ```
  */
-function resolveAsLib({name, relative = true} = {}, ...paths) {
+function resolveAsLib({name, relative = true} = {}, cwd = null, ...paths) {
 	const
 		url = paths.find((el) => isURL.test(el));
 
@@ -189,8 +191,23 @@ function resolveAsLib({name, relative = true} = {}, ...paths) {
 		return url;
 	}
 
+	let
+		resSrc;
+
+	if (Object.isArray(cwd)) {
+		for (let i = 0; i < cwd.length; i++) {
+			resSrc = path.join(...[].concat(cwd[i] || [], paths));
+
+			if (fs.existsSync(resSrc)) {
+				break;
+			}
+		}
+
+	} else {
+		resSrc = path.join(...[].concat(cwd || [], paths));
+	}
+
 	const
-		resSrc = path.join(...paths),
 		srcIsFolder = isFolder.test(resSrc);
 
 	name = name ?
