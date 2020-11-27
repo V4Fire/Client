@@ -521,9 +521,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch('heightMode')
 	@hook('mounted')
 	@wait('ready')
-	initDOMObservers(): CanPromise<void> {
+	async initDOMObservers(): Promise<void> {
+		const
+			content = await this.waitRef<HTMLElement>('content', {label: $$.initDOMObservers});
+
 		iObserveDOM.observe(this, {
-			node: this.$refs.content,
+			node: content,
 			childList: true,
 			subtree: true
 		});
@@ -551,9 +554,16 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@hook('mounted')
 	@wait('ready')
-	protected initGeometry(): CanPromise<void> {
+	protected async initGeometry(): Promise<void> {
+		const [header, content, view, window] = await Promise.all([
+			this.waitRef<HTMLElement>('header', {label: $$.initGeometry}),
+			this.waitRef<HTMLElement>('content'),
+			this.waitRef<HTMLElement>('view'),
+			this.waitRef<HTMLElement>('window')
+		]);
+
 		const
-			{maxVisiblePercent, $refs: {header, content, view, window}} = this;
+			{maxVisiblePercent} = this;
 
 		const
 			currentPage = this.history.current?.content;
@@ -847,11 +857,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch(':changeStep')
 	@hook('mounted')
 	@wait('ready')
-	protected onStepChange(): CanPromise<void> {
-		const {
-			window: win,
-			view
-		} = this.$refs;
+	protected async onStepChange(): Promise<void> {
+		const [win, view] = await Promise.all([
+			this.waitRef<HTMLElement>('window', {label: $$.onStepChange}),
+			this.waitRef<HTMLElement>('view')
+		]);
 
 		this.isStepTransitionInProgress = true;
 
