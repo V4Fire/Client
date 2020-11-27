@@ -826,7 +826,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	protected async recalculateState(): Promise<void> {
 		try {
 			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
-			void this.initGeometry();
+			await this.initGeometry();
 			this.bakeSteps();
 			this.stickToStep();
 
