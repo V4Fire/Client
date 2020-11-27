@@ -69,8 +69,8 @@ By default, the router will intercept all click events on elements with a `href`
 You can provide additional parameters by using data attributes.
 
 ```
-< a href = /some-url | data-router-method = back
-< a href = /some-url | data-router-method = go | data-router-go = -5
+< button href = /some-url | data-router-method = back
+< button href = /some-url | data-router-method = go | data-router-go = -5
 < a href = /some-url | data-router-method = replace | data-router-query = {"foo": 1}
 < a href = /some-url | data-router-method = replace | data-router-params = {"foo": 1}
 ```
