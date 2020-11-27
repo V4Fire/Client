@@ -58,6 +58,25 @@ To emit a transition to another route, just call one of the router methods.
   ...
 ```
 
+By default, the router will intercept all click events on elements with a `href` attribute to emit a transition
+(except `href` values that contain absolute paths or page anchors).
+
+```
+/// Click to the element will be intercepted by the router
+< a href = /some-url
+```
+
+You can provide additional parameters by using data attributes.
+
+```
+< a href = /some-url | data-router-method = back
+< a href = /some-url | data-router-method = go | data-router-go = -5
+< a href = /some-url | data-router-method = replace | data-router-query = {"foo": 1}
+< a href = /some-url | data-router-method = replace | data-router-params = {"foo": 1}
+```
+
+To disable this behavior, toggle `interceptLinks` to `false`.
+
 ## How to provide routes?
 
 There are three ways to do it:
