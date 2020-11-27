@@ -46,7 +46,7 @@ b-skeleton extends i-block
 				width 500%
 				margin-left -250%
 
-				background $p.animationGradient
+				background-image $p.animationGradient
 				animation-duration $p.animationDuration
 				animation-iteration-count infinite
 				animation-timing-function linear
@@ -78,7 +78,7 @@ b-skeleton extends i-block
 
 			&__item_animation_{toLowerCase($s)}:before
 				animation-name $keyframe
-			
+
 			@keyframes {$keyframe}
 				0%
 					transform translate(-($v), 0)
