@@ -43,6 +43,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `webpack.mode`
   * Added `webpack.cacheType`
 
+* Added `forceInnerRender`:
+  * `bWindow`
+  * `bSidebar`
+  * `bBottomSlide`
+
 * Added API to load the dynamic dependencies `iBlock`
 * Added `StaticRouteMeta.load` `core/router`
 * Added `interceptLinks` `bRouter`

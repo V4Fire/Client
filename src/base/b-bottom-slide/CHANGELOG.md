@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :rocket: New Feature
+
+* Added `forceInnerRender`
+
 ## v3.0.0-rc.100 (2020-11-17)
 
 #### :house: Internal

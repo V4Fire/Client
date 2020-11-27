@@ -128,6 +128,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly scrollToTopOnClose: boolean = true;
 
 	/**
+	 * If true, the inner content of the component is rendered anyway at the start
+	 */
+	@prop(Boolean)
+	readonly forceInnerRender: boolean = false;
+
+	/**
 	 * List of possible component positions relative to the screen height (in percentages)
 	 */
 	@p({cache: false})
