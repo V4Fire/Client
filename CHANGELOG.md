@@ -51,6 +51,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new dependency `style-loader`
 * Added prefetch for the dynamic dependencies `iData`
+* Minified libs `eventemitter2` and `requestidlecallback`
 
 ## v3.0.0-rc.101 (2020-11-18)
 

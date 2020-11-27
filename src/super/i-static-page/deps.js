@@ -18,8 +18,8 @@ const deps = {
 	 * @type {Libs}
 	 */
 	scripts: new Map([
-		['requestidlecallback', 'requestidlecallback/index.js'],
-		['eventemitter2', 'eventemitter2/lib/eventemitter2.js']
+		['requestidlecallback', {source: 'src', src: 'assets/lib/requestidlecallback.js'}],
+		['eventemitter2', {source: 'src', src: 'assets/lib/eventemitter2.js'}]
 	]),
 
 	/**
