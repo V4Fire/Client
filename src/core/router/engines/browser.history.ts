@@ -195,9 +195,11 @@ export default function createRouter(component: bRouter): Router {
 
 			if (location.href !== route) {
 				params.url = route;
+
 				// "params" can contain proxy objects,
-				// to avoid DataCloneError we should clone it by using Object.fastClone
-				history[method](Object.fastClone(params), params.name, route);
+				// to avoid DataCloneError we should clone it by using Object.mixin({deep: true})
+				const filteredParams = Object.mixin({deep: true, filter: (el) => !Object.isFunction(el)}, {}, params);
+				history[method](filteredParams, params.name, route);
 			}
 
 			const
