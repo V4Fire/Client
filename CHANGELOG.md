@@ -58,6 +58,22 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added prefetch for the dynamic dependencies `iData`
 * Minified libs `eventemitter2` and `requestidlecallback`
 
+## v3.0.0-rc.103 (2020-11-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with slows down while scrolling on ios `base/b-skeleton`
+
+#### :memo: Documentation
+
+* Added `README.md`, `CHANGELOG.md` for `base/b-skeleton`
+
+## v3.0.0-rc.102 (2020-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with layout shifts after `reInit` `base/b-virtual-scroll`
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix
