@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Removed `GLOBAL_NONCE`
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix

@@ -21,8 +21,6 @@ exports.getVarsDecl = getVarsDecl;
  */
 function getVarsDecl({wrap} = {}) {
 	const decl = `
-var GLOBAL_NONCE = ${JSON.stringify(config.csp.nonce() || '')} || undefined;
-
 var PATH = Object.create(null);
 
 try {

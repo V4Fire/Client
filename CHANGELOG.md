@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Removed the default export of submodules `core/dom`
 * Removed `StaticRouteMeta.entryPoint` and `StaticRouteMeta.dynamicDependencies` `core/router`
 * Now `localInView` returns a promise `super/i-block/modules/dom`
+* Removed `GLOBAL_NONCE` `iStaticPage`
 
 * `config`:
   * Removed `build.fast`
@@ -51,6 +52,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added API to load the dynamic dependencies `iBlock`
 * Added `StaticRouteMeta.load` `core/router`
 * Added `interceptLinks` `bRouter`
+* Added `CSP_NONCE`
 
 #### :house: Internal
 

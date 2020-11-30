@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import 'core/prelude/csp';
 import '@v4fire/core/core/prelude';
 import 'core/prelude/dom';
 
