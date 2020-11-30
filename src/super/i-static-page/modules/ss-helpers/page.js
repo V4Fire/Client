@@ -73,6 +73,7 @@ function getScriptDeclByName(name, {
 	const attrs = normalizeAttrs({
 		staticAttrs: `src="\${PATH['${name}']}"`,
 		defer: defer !== false,
+		crossorigin: 'anonymous',
 		...nonce
 	});
 
@@ -202,6 +203,7 @@ function getStyleDeclByName(name, {
 		staticAttrs: `href="\${PATH['${rname}']}"`,
 		rel: 'stylesheet',
 		defer: defer !== false,
+		crossorigin: 'anonymous',
 		...nonce
 	});
 

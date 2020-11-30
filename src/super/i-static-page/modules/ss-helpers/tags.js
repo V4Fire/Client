@@ -67,6 +67,7 @@ function getScriptDecl(lib, body) {
 		isInline = Boolean(needInline(lib.inline) || body);
 
 	const attrs = normalizeAttrs({
+		crossorigin: 'anonymous',
 		...Object.select(lib, isInline ? [] : ['staticAttrs', 'defer', 'src']),
 		...nonce,
 		...lib.attrs
@@ -221,6 +222,7 @@ function getLinkDecl(link) {
 	const attrs = normalizeAttrs({
 		href: link.src,
 		staticAttrs: link.staticAttrs,
+		crossorigin: 'anonymous',
 		...nonce,
 		...link.attrs
 	});

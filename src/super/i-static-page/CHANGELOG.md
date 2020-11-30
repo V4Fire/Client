@@ -15,6 +15,10 @@ Changelog
 
 * Removed `GLOBAL_NONCE`
 
+#### :rocket: New Feature
+
+* Added `crossorigin` attributes to scripts and links
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix
