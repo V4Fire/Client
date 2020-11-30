@@ -35,7 +35,6 @@ module.exports = {
 	API_URL: s(API_URL),
 
 	LOCALE: s(LOCALE),
-	CSP_NONCE: s(config.csp.nonce()),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 
 	'process.env': {

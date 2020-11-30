@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Removed `GLOBAL_NONCE`
+* Renamed `GLOBAL_NONCE` to `CSP_NONCE`
 
 #### :rocket: New Feature
 
