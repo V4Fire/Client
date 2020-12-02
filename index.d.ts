@@ -53,7 +53,7 @@ interface DesignSystem {
 		 */
 		themedFields?: string[];
 
-		deprecated?: StrictDictionary<DesignSystemDeprecatedOptions>;
+		deprecated?: StrictDictionary<DesignSystemDeprecatedOptions | boolean>;
 	};
 
 	/**

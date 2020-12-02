@@ -206,13 +206,14 @@ function getThemedPathChunks(field, theme, fieldsWithTheme) {
  * Checks the specified path to field for obsolescence
  * at the specified design system object
  *
- * @param ds
- * @param path
+ * @param {DesignSystem} ds
+ * @param {string | string[]} path
  */
 function checkDeprecated(ds, path) {
 	if (Object.isObject($C(ds).get('meta.deprecated'))) {
 		const
-			deprecated = $C(ds.meta.deprecated).get(path);
+			strPath = Object.isString(path) ? path : path.join('.'),
+			deprecated = ds.meta.deprecated[strPath];
 
 		if (deprecated != null) {
 			const
@@ -221,32 +222,26 @@ function checkDeprecated(ds, path) {
 			if (Object.isObject(deprecated)) {
 				if (deprecated.renamedTo != null) {
 					message.push(
-						`[stylus] Warning: "${path}" design system field was renamed to "${deprecated.renamedTo}".`,
+						`[stylus] Warning: design system field by path "${strPath}" was renamed to "${deprecated.renamedTo}".`,
 						'Please use the renamed version instead of the current, because it will be removed from the next major release.'
 					);
 
 				} else if (deprecated.alternative != null) {
 					message.push(
-						`[stylus] Warning: "${path}" design system field was deprecated and will be removed from the next major release.`
+						`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
 					);
 
-					if (Object.isString(deprecated.alternative)) {
-						message.push(`Please use "${deprecated.alternative}" instead.`);
-					} else if (deprecated.alternative.source != null) {
-						message.push(
-							`Please use "${deprecated.alternative.name}" from "${deprecated.alternative.source}" instead.`
-						);
-
-					} else {
-						message.push(
-							`Please use "${deprecated.alternative.name}" instead.`
-						);
-					}
+					message.push(`Please use "${deprecated.alternative}" instead.`);
 				}
 
 				if (deprecated.notice != null) {
-					message.push(p.notice);
+					message.push(deprecated.notice);
 				}
+
+			} else {
+				message.push(
+					`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
+				);
 			}
 
 			console.log(...message);

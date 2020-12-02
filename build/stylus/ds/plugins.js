@@ -147,14 +147,14 @@ module.exports = function createPlugins({
 			}
 
 			const
-				head = 'text';
+				head = 'text',
+				path = [...getThemedPathChunks(head, theme, themedFields), name];
+
+			checkDeprecated(ds, path);
 
 			if (!isOneTheme && isThemesIncluded) {
 				const
-					path = [...getThemedPathChunks(head, theme, themedFields), name],
 					initial = $C(ds).get(path);
-
-				checkDeprecated(ds, path);
 
 				if (!Object.isObject(initial)) {
 					throw new Error(`getDSTextStyles: design system has no "${theme}" styles for the specified name: ${name}`);
@@ -171,10 +171,9 @@ module.exports = function createPlugins({
 			}
 
 			const
-				dsPath = [...getThemedPathChunks(head, theme, themedFields), name],
 				from = includeVars ? cssVariables : ds;
 
-			return stylus.utils.coerce($C(from).get(dsPath), true);
+			return stylus.utils.coerce($C(from).get(path), true);
 		});
 
 		/**
