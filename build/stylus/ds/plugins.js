@@ -13,7 +13,7 @@ const
 
 const
 	{getThemes} = include('build/ds'),
-	{getThemedPathChunks} = include('build/stylus/ds/helpers');
+	{getThemedPathChunks, checkDeprecated} = include('build/stylus/ds/helpers');
 
 /**
  * Returns a set of stylus plugins
@@ -123,6 +123,8 @@ module.exports = function createPlugins({
 					return ds;
 				}
 
+				checkDeprecated(ds, string);
+
 				if (isOneTheme || !isBuildHasTheme) {
 					return includeVars ?
 						stylus.utils.coerce($C(cssVariables).get([].concat([string], value || []).join('.'))) :
@@ -151,6 +153,8 @@ module.exports = function createPlugins({
 				const
 					path = [...getThemedPathChunks(head, theme, themedFields), name],
 					initial = $C(ds).get(path);
+
+				checkDeprecated(ds, path);
 
 				if (!Object.isObject(initial)) {
 					throw new Error(`getDSTextStyles: design system has no "${theme}" styles for the specified name: ${name}`);
@@ -205,6 +209,8 @@ module.exports = function createPlugins({
 				if (id !== undefined) {
 					path.push(String(id));
 				}
+
+				checkDeprecated(ds, path);
 
 				return isThemesIncluded || includeVars ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(ds).get(path);
 			}

@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `getThemes` function
 
+#### :house: Internal
+
+* Added tests
+
 #### :memo: Documentation
 
 * Added `README`, `CHANGELOG`

@@ -22,6 +22,24 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
 
+interface DesignSystemDeprecatedOptions {
+	/**
+	 * Indicates that a style or component was renamed, but its interface still actual,
+	 * the value contains a name after renaming
+	 */
+	renamedTo?: string;
+
+	/**
+	 * Name of a style or component that should prefer to use instead of the current
+	 */
+	alternative?: string;
+
+	/**
+	 * Additional notice about deprecation
+	 */
+	notice?: string;
+}
+
 interface DesignSystem {
 	meta?: {
 		themes: string[];
@@ -34,6 +52,8 @@ interface DesignSystem {
 		 * In this case, the runtime theme will not affect other fields from a design system
 		 */
 		themedFields?: string[];
+
+		deprecated?: StrictDictionary<DesignSystemDeprecatedOptions>;
 	};
 
 	/**

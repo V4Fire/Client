@@ -202,8 +202,64 @@ function getThemedPathChunks(field, theme, fieldsWithTheme) {
 	return path;
 }
 
+/**
+ * Checks the specified path to field for obsolescence
+ * at the specified design system object
+ *
+ * @param ds
+ * @param path
+ */
+function checkDeprecated(ds, path) {
+	if (Object.isObject($C(ds).get('meta.deprecated'))) {
+		const
+			deprecated = $C(ds.meta.deprecated).get(path);
+
+		if (deprecated != null) {
+			const
+				message = [];
+
+			if (Object.isObject(deprecated)) {
+				if (deprecated.renamedTo != null) {
+					message.push(
+						`[stylus] Warning: "${path}" design system field was renamed to "${deprecated.renamedTo}".`,
+						'Please use the renamed version instead of the current, because it will be removed from the next major release.'
+					);
+
+				} else if (deprecated.alternative != null) {
+					message.push(
+						`[stylus] Warning: "${path}" design system field was deprecated and will be removed from the next major release.`
+					);
+
+					if (Object.isString(deprecated.alternative)) {
+						message.push(`Please use "${deprecated.alternative}" instead.`);
+					} else if (deprecated.alternative.source != null) {
+						message.push(
+							`Please use "${deprecated.alternative.name}" from "${deprecated.alternative.source}" instead.`
+						);
+
+					} else {
+						message.push(
+							`Please use "${deprecated.alternative.name}" instead.`
+						);
+					}
+				}
+
+				if (deprecated.notice != null) {
+					message.push(p.notice);
+				}
+			}
+
+			console.log(...message);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 module.exports = {
 	saveVariable,
+	checkDeprecated,
 	createVariableName,
 	createDesignSystem,
 	createPath,
