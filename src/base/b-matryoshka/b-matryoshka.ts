@@ -6,15 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iItems from 'traits/i-items/i-items';
-import iData, { component, prop, field } from 'super/i-data/i-data';
-export * from 'super/i-data/i-data';
+import symbolGenerator from 'core/symbol';
 
-export interface Doll extends Dictionary {
-	id: string;
-	parentId?: string;
-	children?: Doll[];
-}
+import iItems from 'traits/i-items/i-items';
+import { Doll } from 'base/b-matryoshka/interface';
+import iData, { component, prop, field } from 'super/i-data/i-data';
+
+export * from 'super/i-data/i-data';
+export * from 'base/b-matryoshka/interface';
+
+export const
+	$$ = symbolGenerator();
 
 @component({flyweight: true})
 export default class bMatryoshka extends iData implements iItems {
@@ -37,6 +39,26 @@ export default class bMatryoshka extends iData implements iItems {
 	/** @see [[iItems.prototype.itemProps]] */
 	@prop({type: Function, required: false})
 	readonly optionProps!: iItems['optionProps'];
+
+	/**
+	 * Recursively render filter
+	 */
+	@prop(
+		{
+			type: Function,
+			required: false,
+			default(this: bMatryoshka, el: Doll): Promise<boolean> {
+				return this.async.promise<boolean>(new Promise((resolve) => {
+					this.async.requestIdleCallback(
+						() => resolve(Object.isString(el.parentId) ? this.getFoldedMod(el.parentId) === 'false' : true),
+						{promise: true, label: $$.renderIdleCallBack}
+					);
+				}), {label: $$.renderFilter}).catch(() => false);
+			}
+		}
+	)
+
+	readonly renderFilter!: (ctx: bMatryoshka, el: Doll) => CanPromise<boolean>;
 
 	/**
 	 * Number of chunks for the async render
@@ -105,14 +127,17 @@ export default class bMatryoshka extends iData implements iItems {
 			op = this.optionProps,
 			item = Object.reject(el, 'children');
 
-		if (!op) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (op == null) {
 			return item;
 		}
 
-		return Object.isFunction(op) ? op(item, i, {
-			key: this.getOptionKey(item, i),
-			ctx: this
-		}) : op;
+		return Object.isFunction(op) ?
+			op(item, i, {
+				key: this.getOptionKey(item, i),
+				ctx: this
+			}) :
+			op;
 	}
 
 	/**
@@ -144,15 +169,7 @@ export default class bMatryoshka extends iData implements iItems {
 			return;
 		}
 
-		return this.top.block.getElMod(target, 'matryoshka', 'folded');
-	}
-
-	/**
-	 * Recursively render filter
-	 * @param el
-	 */
-	protected renderFilter(el: Doll): boolean {
-		return el.parentId ? this.getFoldedMod(el.parentId) === 'false' : true;
+		return this.top.block?.getElMod(target, 'matryoshka', 'folded');
 	}
 
 	/**
@@ -161,7 +178,7 @@ export default class bMatryoshka extends iData implements iItems {
 	 */
 	protected searchDollElement(id: string): CanUndef<HTMLElement> {
 		const dataId = this.top.dom.getId(id);
-		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${dataId}]`) || undefined;
+		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${dataId}]`) ?? undefined;
 	}
 
 	/**
@@ -173,10 +190,10 @@ export default class bMatryoshka extends iData implements iItems {
 	protected onFoldingClick(el: Doll): void {
 		const
 			target = this.searchDollElement(el.id),
-			newVal = this.getFoldedMod(<string>el.id) === 'false';
+			newVal = this.getFoldedMod(el.id) === 'false';
 
 		if (target) {
-			this.top.block.setElMod(target, 'matryoshka', 'folded', newVal);
+			this.top.block?.setElMod(target, 'matryoshka', 'folded', newVal);
 			this.emit('fold', target, el, newVal);
 		}
 	}
