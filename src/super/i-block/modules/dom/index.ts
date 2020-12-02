@@ -11,8 +11,21 @@
  * @packageDocumentation
  */
 
-import { wrapAsDelegateHandler } from 'core/dom';
+import { deprecated } from 'core/functools';
+
+import {
+
+	wrapAsDelegateHandler,
+	inViewFactory,
+	InitOptions,
+	InViewAdapter,
+	ResizeWatcher,
+	ResizeWatcherInitOptions
+
+} from 'core/dom';
+
 import { ComponentElement } from 'core/component';
+import { AsyncOptions } from 'core/async';
 
 import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
@@ -20,7 +33,7 @@ import Friend from 'super/i-block/modules/friend';
 
 import { wait } from 'super/i-block/modules/decorators';
 import { componentRgxp } from 'super/i-block/modules/dom/const';
-import { ElCb } from 'super/i-block/modules/dom/interface';
+import { ElCb, inViewInstanceStore, DOMManipulationOptions } from 'super/i-block/modules/dom/interface';
 
 export * from 'super/i-block/modules/dom/const';
 export * from 'super/i-block/modules/dom/interface';
@@ -29,6 +42,20 @@ export * from 'super/i-block/modules/dom/interface';
  * Class provides some methods to work with a DOM tree
  */
 export default class DOM extends Friend {
+	/**
+	 * Returns a component in-view instance
+	 */
+	get localInView(): InViewAdapter {
+		const
+			currentInstance = <CanUndef<InViewAdapter>>this.ctx.tmp[inViewInstanceStore];
+
+		if (currentInstance != null) {
+			return currentInstance;
+		}
+
+		return this.ctx.tmp[inViewInstanceStore] = inViewFactory();
+	}
+
 	/**
 	 * Takes a string identifier and returns a new identifier that is connected to the component.
 	 * This method should use to generate id attributes for DOM nodes.
@@ -43,7 +70,7 @@ export default class DOM extends Friend {
 	getId(id: string): string;
 	getId(id: undefined | null): undefined;
 	getId(id: Nullable<string>): CanUndef<string> {
-		if (!id) {
+		if (id == null) {
 			return undefined;
 		}
 
@@ -56,6 +83,13 @@ export default class DOM extends Friend {
 	 * @see [[wrapAsDelegateHandler]]
 	 * @param selector - selector to delegate
 	 * @param fn
+	 *
+	 * @example
+	 * ```js
+	 * el.addEventListener('click', this.delegate('.foo', () => {
+	 *   // ...
+	 * }));
+	 * ```
 	 */
 	delegate<T extends Function>(selector: string, fn: T): T {
 		return wrapAsDelegateHandler(selector, fn);
@@ -66,6 +100,13 @@ export default class DOM extends Friend {
 	 *
 	 * @param name - element name
 	 * @param fn
+	 *
+	 * @example
+	 * ```js
+	 * el.addEventListener('click', this.delegateElement('myElement', () => {
+	 *   // ...
+	 * }));
+	 * ```
 	 */
 	delegateElement<T extends Function>(name: string, fn: T): T {
 		return this.delegate([''].concat(this.provide.elClasses({[name]: {}})).join('.'), fn);
@@ -73,7 +114,7 @@ export default class DOM extends Friend {
 
 	/**
 	 * Puts the specified element to a render stream.
-	 * This method forces the render of the element.
+	 * This method forces the rendering of the element.
 	 *
 	 * @param cb
 	 * @param [el] - link to a DOM element or component element name
@@ -81,28 +122,28 @@ export default class DOM extends Friend {
 	@wait('ready')
 	async putInStream(
 		cb: ElCb<this['C']>,
-		el: Element | string = this.ctx.$el
+		el: CanUndef<Element | string> = this.ctx.$el
 	): Promise<boolean> {
 		const
-			node = Object.isString(el) ? this.block.element(el) : el;
+			node = Object.isString(el) ? this.block?.element(el) : el;
 
-		if (!node) {
+		if (node == null) {
 			return false;
 		}
 
-		if (node.clientHeight) {
+		if (node.clientHeight > 0) {
 			cb.call(this.component, node);
 			return false;
 		}
 
 		const wrapper = document.createElement('div');
 		Object.assign(wrapper.style, {
-			'display': 'block',
-			'position': 'absolute',
-			'top': 0,
-			'left': 0,
+			display: 'block',
+			position: 'absolute',
+			top: 0,
+			left: 0,
 			'z-index': -1,
-			'opacity': 0
+			opacity: 0
 		});
 
 		const
@@ -132,27 +173,42 @@ export default class DOM extends Friend {
 	 *
 	 * @param parent - element name or a link to the parent node
 	 * @param newNode
-	 * @param [group] - operation group
+	 * @param [groupOrOptions] - `async` group or a set of options
 	 */
 	appendChild(
 		parent: string | Node | DocumentFragment,
 		newNode: Node,
-		group?: string
+		groupOrOptions?: string | DOMManipulationOptions
 	): Function | false {
 		const
-			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
+			parentNode = Object.isString(parent) ? this.block?.element(parent) : parent,
+			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
 
-		if (!parentNode) {
+		let
+			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
+
+		if (parentNode == null) {
 			return false;
 		}
 
-		if (!group && !(parent instanceof DocumentFragment)) {
-			group = (<Element>parentNode).getAttribute('data-render-group') || '';
+		if (group == null && parentNode instanceof Element) {
+			group = parentNode.getAttribute('data-render-group') ?? undefined;
 		}
 
 		parentNode.appendChild(newNode);
-		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
-			group: group || 'asyncComponents'
+
+		return this.ctx.async.worker(() => {
+			newNode.parentNode?.removeChild(newNode);
+
+			const
+				{component} = <ComponentElement<iBlock>>newNode;
+
+			if (destroyIfComponent === true && component) {
+				component.unsafe.$destroy();
+			}
+
+		}, {
+			group: group ?? 'asyncComponents'
 		});
 	}
 
@@ -162,23 +218,38 @@ export default class DOM extends Friend {
 	 *
 	 * @param el - element name or a link to a node
 	 * @param newNode
-	 * @param [group] - operation group
+	 * @param [groupOrOptions] - `async` group or a set of options
 	 */
-	replaceWith(el: string | Element, newNode: Node, group?: string): Function | false {
+	replaceWith(el: string | Element, newNode: Node, groupOrOptions?: string | DOMManipulationOptions): Function | false {
 		const
-			node = Object.isString(el) ? this.block.element(el) : el;
+			node = Object.isString(el) ? this.block?.element(el) : el,
+			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
 
-		if (!node) {
+		let
+			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
+
+		if (node == null) {
 			return false;
 		}
 
-		if (!group) {
-			group = node.getAttribute('data-render-group') || '';
+		if (group == null) {
+			group = node.getAttribute('data-render-group') ?? undefined;
 		}
 
 		node.replaceWith(newNode);
-		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
-			group: group || 'asyncComponents'
+
+		return this.ctx.async.worker(() => {
+			newNode.parentNode?.removeChild(newNode);
+
+			const
+				{component} = <ComponentElement<iBlock>>newNode;
+
+			if (destroyIfComponent === true && component) {
+				component.unsafe.$destroy();
+			}
+
+		}, {
+			group: group ?? 'asyncComponents'
 		});
 	}
 
@@ -207,9 +278,9 @@ export default class DOM extends Friend {
 			}
 
 			const
-				el = <ComponentElement<T>>q.closest(`.i-block-helper${filter}`);
+				el = q.closest<ComponentElement<T>>(`.i-block-helper${filter}`);
 
-			if (el) {
+			if (el != null) {
 				return el.component;
 			}
 		}
@@ -226,24 +297,82 @@ export default class DOM extends Friend {
 	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
 		const
 			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
-			ctxFromNode = component || $el?.component;
+			ctxFromNode = component ?? $el?.component;
 
 		const componentName = ctxFromNode ?
 			ctxFromNode.componentName :
-			Object.get(componentRgxp.exec($el?.className || ''), '1') || this.ctx.componentName;
+			Object.get(componentRgxp.exec($el?.className ?? ''), '1') ?? this.ctx.componentName;
 
-		const resolvedCtx = ctxFromNode || {
+		const resolvedCtx = ctxFromNode ?? {
 			$el,
 			componentName,
+
 			mods: {},
 			isFlyweight: true,
-			localEmitter: {emit(): void { /* loopback */ }},
-			emit(): void { /* loopback */ }
+
+			localEmitter: {
+				emit(): void {
+					// Loopback
+				}
+			},
+
+			emit(): void {
+				// Loopback
+			}
 		};
 
 		return Object.assign(Object.create(Block.prototype), {
 			ctx: resolvedCtx,
 			component: resolvedCtx
 		});
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[DOM.prototype.watchForIntersection]]
+	 *
+	 * @param el
+	 * @param options
+	 * @param asyncOptions
+	 */
+	@deprecated({renamedTo: 'watchForIntersection'})
+	watchForNodeIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+		return this.watchForIntersection(el, options, asyncOptions);
+	}
+
+	/**
+	 * Watches for intersections of the specified element by using the `in-view` module
+	 *
+	 * @param el
+	 * @param options
+	 * @param asyncOptions
+	 */
+	watchForIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+		const
+			{ctx} = this,
+			inViewInstance = this.localInView;
+
+		const destructor = ctx.async.worker(() => inViewInstance.remove(el, options.threshold), asyncOptions);
+		inViewInstance.observe(el, options);
+
+		return destructor;
+	}
+
+	/**
+	 * Watches for size changes of the specified element by using the `resize-observer` module.
+	 * Notice, this functionality depends on `ResizeObserver`.
+	 *
+	 * @param el
+	 * @param options
+	 * @param asyncOptions
+	 */
+	watchForResize(el: Element, options: ResizeWatcherInitOptions, asyncOptions: AsyncOptions): Function {
+		const
+			{ctx} = this;
+
+		const destructor = ctx.async.worker(() => ResizeWatcher.unobserve(el, options), asyncOptions);
+		ResizeWatcher.observe(el, options);
+
+		return destructor;
 	}
 }

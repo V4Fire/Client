@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -56,8 +58,9 @@ export * from 'super/i-block/modules/decorators/interface';
  * @override
  */
 export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
-	// @ts-ignore
-	params?: DecoratorProp<CTX, A, B> | DecoratorField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
+	params?:
+		// @ts-ignore (unsafe cast)
+		DecoratorProp<CTX, A, B> | DecoratorField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
 /**
@@ -65,7 +68,7 @@ export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
  * @override
  */
 export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
-	// @ts-ignore
+	// @ts-ignore (unsafe cast)
 	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | DecoratorProp<CTX, A, B>
 ) => Function;
 
@@ -74,7 +77,7 @@ export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
  * @override
  */
 export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
-	// @ts-ignore
+	// @ts-ignore (unsafe cast)
 	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
@@ -83,7 +86,7 @@ export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
  * @override
  */
 export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
-	// @ts-ignore
+	// @ts-ignore (unsafe cast)
 	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
@@ -92,7 +95,7 @@ export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
  * @override
  */
 export const watch = watchDecorator as <CTX = iBlock, A = unknown, B = A>(
-	// @ts-ignore
+	// @ts-ignore (unsafe cast)
 	params?: DecoratorFieldWatcher<CTX, A, B> | DecoratorMethodWatcher<CTX, A, B>
 ) => Function;
 
@@ -196,8 +199,8 @@ export function wait(
 	optsOrCb?: WaitDecoratorOptions | WaitOptions | Function
 ): Function {
 	let
-		status,
-		opts,
+		status: WaitStatuses,
+		opts: CanUndef<WaitDecoratorOptions | WaitOptions>,
 		handler,
 		ctx;
 
@@ -213,7 +216,10 @@ export function wait(
 
 		} else {
 			status = 0;
-			opts = statusOrOpts;
+
+			if (Object.isPlainObject(statusOrOpts)) {
+				opts = statusOrOpts;
+			}
 		}
 
 		handler = optsOrCb;
@@ -227,37 +233,39 @@ export function wait(
 			status = statuses[statusOrOpts];
 		}
 
-		opts = optsOrCb;
-		handler = opts?.fn;
+		if (Object.isPlainObject(optsOrCb)) {
+			opts = <typeof opts>optsOrCb;
+			handler = Object.get(opts, 'fn');
+		}
 
 	} else {
 		status = 0;
-		opts = statusOrOpts;
-		handler = opts?.fn;
+
+		if (Object.isPlainObject(statusOrOpts)) {
+			opts = statusOrOpts;
+			handler = Object.get(opts, 'fn');
+		}
 	}
 
-	// tslint:disable:prefer-const
+	opts = opts ?? {};
 
 	let {
 		join,
 		label,
 		group,
 		defer
-	} = opts || {};
-
-	// tslint:enable:prefer-const
+	} = opts;
 
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: iBlock['unsafe']): CanUndef<CanPromise<unknown>> {
+	function wrapper(this: iBlock['unsafe'], ...args: unknown[]): CanUndef<CanPromise<unknown>> {
 		const
-			getRoot = () => ctx ? this.field.get(ctx) : this,
-			root = getRoot(),
-			args = arguments;
+			getRoot = () => ctx != null ? this.field.get(ctx) : this,
+			root = getRoot();
 
 		if (join === undefined) {
-			join = handler.length ? 'replace' : true;
+			join = handler.length > 0 ? 'replace' : true;
 		}
 
 		const
@@ -270,7 +278,7 @@ export function wait(
 
 			let
 				res,
-				init;
+				init = false;
 
 			if (componentStatus < 0 && status > componentStatus) {
 				throw Object.assign(new Error('Component status watcher abort'), {
@@ -280,7 +288,7 @@ export function wait(
 
 			if (this.isFlyweight || componentStatus >= status) {
 				init = true;
-				res = defer ?
+				res = Object.isTruly(defer) ?
 					$a.promise($a.nextTick().then(() => handler.apply(this, args)), p) :
 					handler.apply(this, args);
 			}
@@ -299,7 +307,7 @@ export function wait(
 			return res;
 		};
 
-		if (root) {
+		if (root != null) {
 			return exec(root);
 		}
 

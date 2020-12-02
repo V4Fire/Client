@@ -1,3 +1,5 @@
+/* eslint-disable capitalized-comments */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,18 +9,12 @@
  */
 
 module.exports = [
-	// b-virtual-scroll
-	`--name b-virtual-scroll --suit render`,
-	`--name b-virtual-scroll --suit render-options`,
-	`--name b-virtual-scroll --suit render-truncated --runner render-truncated`,
-
-	'--name b-virtual-scroll --suit slot-empty --runner slot-empty',
-
-	'--name b-virtual-scroll --suit double-components --runner init-load',
-
-	// b-router
-	`--name b-router`,
-
-	// b-button
-	`--name b-button --suit demo`
+	'--test-entry base/b-router/test',
+	'--test-entry base/b-virtual-scroll/test',
+	'--test-entry base/b-sidebar/test',
+	'--test-entry base/b-list/test',
+	'--test-entry form/b-button/test',
+	'--test-entry super/i-block/test',
+	'--test-entry core/dom/image/test',
+	'--test-entry core/dom/in-view/test'
 ];

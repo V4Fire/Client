@@ -190,6 +190,12 @@ export interface DecoratorSystem<
 	unique?: boolean | UniqueFieldFn<CTX>;
 
 	/**
+	 * If false, the property can't be watched within a functional component
+	 * @default `true`
+	 */
+	functionalWatching?: boolean;
+
+	/**
 	 * Name or list of names after which this property should be initialized
 	 */
 	after?: CanArray<string>;
@@ -256,6 +262,11 @@ export interface DecoratorFunctionalOptions {
 }
 
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
+	/**
+	 * If true, a value of the accessor can be watched
+	 */
+	watchable?: boolean;
+
 	/**
 	 * If true, a value of the accessor will be cached
 	 */
@@ -329,7 +340,7 @@ export interface DecoratorMethod<CTX extends ComponentInterface = ComponentInter
 }
 
 export interface ParamsFactoryTransformer {
-	(params: object, cluster: string): Dictionary<any>
+	(params: object, cluster: string): Dictionary<any>;
 }
 
 export interface FactoryTransformer<T = object> {

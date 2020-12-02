@@ -25,7 +25,8 @@ export function resolveRefs(component: ComponentInterface): void {
 	const
 		{$refs, $refHandlers} = component.unsafe;
 
-	if (!$refs) {
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if ($refs == null) {
 		return;
 	}
 
@@ -34,7 +35,7 @@ export function resolveRefs(component: ComponentInterface): void {
 			key = keys[i],
 			el = $refs[key];
 
-		if (!el) {
+		if (el == null) {
 			continue;
 		}
 
@@ -43,7 +44,7 @@ export function resolveRefs(component: ComponentInterface): void {
 				arr = <unknown[]>[];
 
 			let
-				needRewrite;
+				needRewrite = false;
 
 			for (let i = 0; i < el.length; i++) {
 				const
@@ -58,7 +59,7 @@ export function resolveRefs(component: ComponentInterface): void {
 
 				} else {
 					const {$el} = <ComponentInterface>listEl;
-					component = $el.component;
+					component = $el?.component;
 					needRewrite = listEl !== component;
 				}
 
@@ -85,7 +86,7 @@ export function resolveRefs(component: ComponentInterface): void {
 
 			} else {
 				const {$el} = <ComponentInterface>el;
-				component = $el.component;
+				component = $el?.component;
 				needRewrite = el !== component;
 			}
 
@@ -100,14 +101,14 @@ export function resolveRefs(component: ComponentInterface): void {
 		}
 	}
 
-	if ($refHandlers) {
+	if (Object.isDictionary($refHandlers)) {
 		for (let keys = Object.keys($refHandlers), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				watchers = $refHandlers[key],
 				el = $refs[key];
 
-			if (el && watchers) {
+			if (el != null && watchers) {
 				for (let i = 0; i < watchers.length; i++) {
 					watchers[i](el);
 				}

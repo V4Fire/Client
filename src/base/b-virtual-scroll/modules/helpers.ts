@@ -8,7 +8,7 @@
 
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
-import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
+import { DataState } from 'base/b-virtual-scroll/interface';
 
 /**
  * Returns accumulated data among `b-virtual-scroll`,` chunk-render`, `chunk-request` and passes it to the client
@@ -17,61 +17,76 @@ import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
  * @param [chunkRequestCtx]
  * @param [chunkRenderCtx]
  * @param [merge]
+ *
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data
  */
-export function getRequestParams(
+export function getRequestParams<ITEM extends unknown = unknown, RAW extends unknown = unknown>(
 	chunkRequestCtx?: ChunkRequest,
 	chunkRenderCtx?: ChunkRender,
 	merge?: Dictionary
-): RequestMoreParams {
+): DataState<ITEM, RAW> {
 	const
-		component = chunkRenderCtx?.component || chunkRequestCtx?.component,
-		pendingData = chunkRequestCtx?.pendingData || [];
+		component = chunkRenderCtx?.component ?? chunkRequestCtx?.component,
+		pendingData = chunkRequestCtx?.pendingData ?? [];
 
-	const lastLoadedData = chunkRequestCtx?.lastLoadedChunk.normalized.length ?
-		chunkRequestCtx.lastLoadedChunk.normalized :
-		component?.options;
+	const lastLoadedData = <CanUndef<ITEM[]>>chunkRequestCtx?.lastLoadedChunk.normalized;
 
-	const base: RequestMoreParams = {
+	const base: DataState<ITEM, RAW> = {
 		currentPage: 0,
 		nextPage: 1,
 
+		data: [],
 		items: [],
 		isLastEmpty: false,
 		itemsTillBottom: 0,
+		total: undefined,
 
 		pendingData,
-		lastLoadedData: lastLoadedData || [],
+
+		lastLoadedData: lastLoadedData ?? [],
 		lastLoadedChunk: {
 			raw: undefined,
-			normalized: lastLoadedData || []
+			normalized: lastLoadedData ?? []
 		}
 	};
 
-	const params = chunkRequestCtx && chunkRenderCtx ? {
-		items: chunkRenderCtx.items,
-		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
+	const params = chunkRequestCtx && chunkRenderCtx ?
+		{
+			items: chunkRenderCtx.items,
+			itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
 
-		currentPage: chunkRequestCtx.page,
-		isLastEmpty: chunkRequestCtx.isLastEmpty,
-		total: component?.unsafe.total,
+			currentPage: chunkRequestCtx.page,
+			isLastEmpty: chunkRequestCtx.isLastEmpty,
+			total: component?.unsafe.total,
 
-		pendingData,
-		lastLoadedData: lastLoadedData || [],
-		lastLoadedChunk: {
-			raw: chunkRequestCtx.lastLoadedChunk.raw,
-			normalized: lastLoadedData || []
-		}
-	} : base;
+			pendingData,
+			data: chunkRequestCtx.data,
+
+			lastLoadedData: lastLoadedData ?? [],
+			lastLoadedChunk: {
+				raw: chunkRequestCtx.lastLoadedChunk.raw,
+				normalized: lastLoadedData ?? []
+			}
+		} :
+		base;
+
+	const
+		mergeLastLoadedChunk = <DataState['lastLoadedChunk']>merge?.lastLoadedChunk;
 
 	const merged = {
 		...params,
-		...merge
+		...merge,
+		lastLoadedChunk: {
+			...params.lastLoadedChunk,
+			...mergeLastLoadedChunk
+		}
 	};
 
-	// tslint:disable-next-line: prefer-object-spread
-	return Object.assign(merged, {
+	return <DataState<ITEM, RAW>>{
+		...merged,
 		nextPage: merged.currentPage + 1
-	});
+	};
 }
 
 /**
@@ -80,4 +95,12 @@ export function getRequestParams(
  */
 export function isAsyncReplaceError(val: unknown): boolean {
 	return Object.isPlainObject(val) && val.join === 'replace';
+}
+
+/**
+ * True if the specified value is an `async clear` error
+ * @param val
+ */
+export function isAsyncClearError(val: unknown): boolean {
+	return Object.isPlainObject(val) && val.type === 'clearAsync';
 }

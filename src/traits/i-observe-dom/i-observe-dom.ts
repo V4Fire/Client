@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-observe-dom/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
 
@@ -26,7 +31,7 @@ export const
 
 export default abstract class iObserveDOM {
 	/**
-	 * Starts to observe DOM changes by the specified options
+	 * Starts to observe DOM changes of the specified node
 	 *
 	 * @param component
 	 * @param opts
@@ -50,7 +55,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Stops to observe DOM changes for the specified node
+	 * Stops to observe DOM changes of the specified node
 	 *
 	 * @param component
 	 * @param node
@@ -132,28 +137,28 @@ export default abstract class iObserveDOM {
 	 * @param component
 	 */
 	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {
-		return component[$$.DOMObservers] || (component[$$.DOMObservers] = new Map());
+		return component[$$.DOMObservers] ?? (component[$$.DOMObservers] = new Map());
 	}
 
 	/**
 	 * Creates an observer
 	 *
 	 * @param component
-	 * @param options
+	 * @param opts
 	 */
-	protected static createObserver<T extends iBlock>(component: T & iObserveDOM, options: ObserveOptions): Observer {
+	protected static createObserver<T extends iBlock>(component: T & iObserveDOM, opts: ObserveOptions): Observer {
 		const
 			{async: $a} = component.unsafe,
-			{node} = options;
+			{node} = opts;
 
 		const
 			label = this.getObserverKey();
 
 		const observer = new MutationObserver((records) => {
-			component.onDOMChange(records, options);
+			component.onDOMChange(records, opts);
 		});
 
-		observer.observe(node, options);
+		observer.observe(node, opts);
 		$a.worker(observer, {label});
 
 		return {
@@ -163,7 +168,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Generates a unique key and returns it
+	 * Generates the unique key and returns it
 	 */
 	protected static getObserverKey(): string {
 		return String(Math.random());

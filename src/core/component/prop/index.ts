@@ -14,6 +14,7 @@
 import { defaultWrapper } from 'core/component/const';
 import { ComponentInterface } from 'core/component/interface';
 import { InitPropsObjectOptions } from 'core/component/prop/interface';
+
 export * from 'core/component/prop/interface';
 
 /**
@@ -27,15 +28,15 @@ export function initProps(
 	component: ComponentInterface,
 	opts: InitPropsObjectOptions = {}
 ): Dictionary {
+	opts.store = opts.store ?? {};
+
 	const
 		{unsafe} = component,
-		{meta, meta: {component: {props}}} = unsafe;
-
-	const
-		store = opts.store = opts.store || {},
+		{meta, meta: {component: {props}}} = unsafe,
+		{store} = opts,
 
 		// True if a component is functional or a flyweight
-		isFlyweight = component.isFlyweight || meta.params.functional === true;
+		isFlyweight = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
 		const
@@ -65,13 +66,13 @@ export function initProps(
 			const
 				obj = props[key];
 
-			if (obj && obj.required) {
+			if (obj?.required) {
 				throw new TypeError(`Missing the required property "${key}" (component "${component.componentName}")`);
 			}
 		}
 
 		if (Object.isFunction(val)) {
-			if (opts.saveToStore || !val[defaultWrapper]) {
+			if (opts.saveToStore || val[defaultWrapper] !== true) {
 				store[key] = isTypeCanBeFunc(el.type) ? val.bind(component) : val.call(component);
 			}
 

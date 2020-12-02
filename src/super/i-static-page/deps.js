@@ -6,39 +6,39 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+require('./modules/interface');
+
 const
 	config = require('config'),
 	runtime = config.runtime();
 
-const deps = module.exports = {
+const deps = {
 	/**
-	 * @type {Map<(string|{
-	 *   src: string,
-	 *   source?: ('lib'|'src'|'output'),
-	 *   inline?: boolean,
-	 *   defer?: boolean,
-	 *   async?: boolean,
-	 *   module?: boolean,
-	 *   load?: boolean
-	 * })>}
+	 * Map of script libraries to require
+	 * @type {Libs}
 	 */
 	scripts: new Map([
 		['requestidlecallback', 'requestidlecallback/index.js'],
 		['eventemitter2', 'eventemitter2/lib/eventemitter2.js']
 	]),
 
-	/** @see deps.scripts */
+	/**
+	 * Map of script libraries to require: the scripts are placed within the head tag
+	 * @type {Libs}
+	 */
 	headScripts: new Map(),
 
 	/**
-	 * @type {Map<(string|{
-	 *   src: string,
-	 *   source?: ('lib'|'src'|'output'),
-	 *   inline?: boolean,
-	 *   defer?: boolean
-	 * })>}
+	 * Map of style libraries to require
+	 * @type {StyleLibs}
 	 */
-	styles: new Map()
+	styles: new Map(),
+
+	/**
+	 * Map of links to require
+	 * @type {Links}
+	 */
+	links: new Map()
 };
 
 if (runtime.debug) {
@@ -48,14 +48,19 @@ if (runtime.debug) {
 	deps.styles.set('jasmine', 'jasmine-core/lib/jasmine-core/jasmine.css');
 }
 
-if (runtime.engine === 'vue') {
-	deps.scripts.set('vue', {
-		defer: false,
-		src: `vue/dist/vue.runtime${isProd ? '.min' : ''}.js`
-	});
+switch (runtime.engine) {
+	case 'vue':
+		deps.scripts.set('vue', {
+			defer: false,
+			src: `vue/dist/vue.runtime${isProd ? '.min' : ''}.js`
+		});
+
+		break;
+
+	default:
+		if (!runtime.engine) {
+			throw new Error('The engine to use is not specified');
+		}
 }
 
-if (!config.webpack.fatHTML() && deps.styles.size) {
-	deps.scripts.set('fg-loadcss', 'fg-loadcss/src/loadCSS.js');
-	deps.scripts.set('fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js');
-}
+module.exports = deps;

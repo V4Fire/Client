@@ -38,7 +38,8 @@ export default class State extends Friend {
 	/** @see [[iBlock.instance]] */
 	protected get instance(): this['CTX']['instance'] {
 		// @ts-ignore (access)
-		baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
+		// eslint-disable-next-line @typescript-eslint/unbound-method
+		baseSyncRouterState = baseSyncRouterState ?? iBlock.prototype.syncRouterState;
 		return this.ctx.instance;
 	}
 
@@ -58,7 +59,7 @@ export default class State extends Friend {
 				p = key.split('.');
 
 			if (p[0] === 'mods') {
-				this.ctx.setMod(p[1], el);
+				void this.ctx.setMod(p[1], el);
 
 			} else if (!Object.fastCompare(el, this.field.get(key))) {
 				this.field.set(key, el);
@@ -75,7 +76,7 @@ export default class State extends Friend {
 	async saveToStorage(data?: Dictionary): Promise<boolean> {
 		//#if runtime has core/kv-storage
 
-		if (!this.globalName) {
+		if (this.globalName == null) {
 			return false;
 		}
 
@@ -99,14 +100,14 @@ export default class State extends Friend {
 	async initFromStorage(): Promise<boolean> {
 		//#if runtime has core/kv-storage
 
-		if (!this.globalName) {
+		if (this.globalName == null) {
 			return false;
 		}
 
 		const
 			key = $$.pendingLocalStore;
 
-		if (this[key]) {
+		if (this[key] != null) {
 			return this[key];
 		}
 
@@ -121,7 +122,7 @@ export default class State extends Friend {
 			const
 				data = await this.storage.get('[[STORE]]');
 
-			this.lfc.execCbAtTheRightTime(() => {
+			void this.lfc.execCbAtTheRightTime(() => {
 				const
 					stateFields = ctx.syncStorageState(data);
 
@@ -133,7 +134,7 @@ export default class State extends Friend {
 					label: $$.syncLocalStorage
 				});
 
-				if (stateFields) {
+				if (Object.isDictionary(stateFields)) {
 					for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
 						const
 							key = keys[i],
@@ -143,9 +144,8 @@ export default class State extends Friend {
 							$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
 
 						} else {
-							// tslint:disable-next-line:only-arrow-functions
-							ctx.watch(key, function (val: unknown): void {
-								if (!Object.fastCompare(val, arguments[1])) {
+							ctx.watch(key, (val, ...args) => {
+								if (!Object.fastCompare(val, args[0])) {
 									sync();
 								}
 							}, {
@@ -175,7 +175,7 @@ export default class State extends Friend {
 	async resetStorage(): Promise<boolean> {
 		//#if runtime has core/kv-storage
 
-		if (!this.globalName) {
+		if (this.globalName == null) {
 			return false;
 		}
 
@@ -245,7 +245,7 @@ export default class State extends Friend {
 			routerWatchers = {group: 'routerWatchers'},
 			$a = this.async.clearAll(routerWatchers);
 
-		this.lfc.execCbAtTheRightTime(async () => {
+		void this.lfc.execCbAtTheRightTime(async () => {
 			const
 				{r} = ctx;
 
@@ -253,7 +253,7 @@ export default class State extends Friend {
 				{router} = r;
 
 			if (!router) {
-				await (<Promise<unknown>>$a.promisifyOnce(r, 'initRouter', {
+				await ($a.promisifyOnce(r, 'initRouter', {
 					label: $$.initFromRouter
 				}));
 
@@ -277,7 +277,7 @@ export default class State extends Friend {
 					stateForRouter = ctx.syncRouterState(stateFields, 'remote'),
 					stateKeys = Object.keys(stateForRouter);
 
-				if (stateKeys.length) {
+				if (stateKeys.length > 0) {
 					let
 						query;
 
@@ -291,16 +291,16 @@ export default class State extends Friend {
 
 						const
 							val = stateForRouter[key],
-							currentVal = currentParams?.[key] || currentQuery?.[key];
+							currentVal = Object.get(currentParams, key) ?? Object.get(currentQuery, key);
 
 						if (currentVal === undefined && val !== undefined) {
-							query = query || {};
+							query = query ?? {};
 							query[key] = val;
 						}
 					}
 
-					if (query) {
-						router.replace(null, {query});
+					if (query != null) {
+						await router.replace(null, {query});
 					}
 				}
 			}
@@ -309,7 +309,7 @@ export default class State extends Friend {
 				label: $$.syncRouter
 			});
 
-			if (stateFields) {
+			if (Object.isDictionary(stateFields)) {
 				for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
 					const
 						key = keys[i],
@@ -319,9 +319,8 @@ export default class State extends Friend {
 						$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
 					} else {
-						// tslint:disable-next-line:only-arrow-functions
-						ctx.watch(key, function (val: unknown): void {
-							if (!Object.fastCompare(val, arguments[1])) {
+						ctx.watch(key, (val, ...args) => {
+							if (!Object.fastCompare(val, args[0])) {
 								sync();
 							}
 						}, {
@@ -348,10 +347,6 @@ export default class State extends Friend {
 	 */
 	async resetRouter(): Promise<boolean> {
 		//#if runtime has bRouter
-
-		if (!this.needRouterSync) {
-			return false;
-		}
 
 		const
 			{ctx} = this,

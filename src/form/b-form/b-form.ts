@@ -53,7 +53,7 @@ export default class bForm extends iData {
 	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	readonly requestFilter: RequestFilter = false;
+	readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
 	 * Form id

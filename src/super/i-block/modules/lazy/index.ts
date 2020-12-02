@@ -15,6 +15,7 @@ import { deprecated } from 'core/functools/deprecation';
 
 import Friend from 'super/i-block/modules/friend';
 import { CreateLazyFnOptions, LazyFn } from 'super/i-block/modules/lazy/interface';
+
 export * from 'super/i-block/modules/lazy/interface';
 
 /**
@@ -33,8 +34,13 @@ export default class Lazy extends Friend {
 	 */
 	@deprecated({alternative: 'Async.debounce'})
 	createLazyFn<T extends (...args: unknown[]) => unknown>(fn: T, opts?: CreateLazyFnOptions): LazyFn<T> {
-		const {async: $a} = this;
-		return (...args) => (opts?.delay ? $a.sleep(opts.delay, opts) : $a.nextTick())
+		const
+			{async: $a} = this;
+
+		const
+			delay = opts?.delay ?? 0;
+
+		return (...args) => (delay > 0 ? $a.sleep(delay, opts) : $a.nextTick())
 			.then(() => fn.call(this.component, ...args));
 	}
 }

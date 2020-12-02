@@ -13,9 +13,17 @@
 
 import { deprecate } from 'core/functools';
 
+//#if runtime has core/dom/in-view
+export * from 'core/dom/in-view';
+//#endif
+
+//#if runtime has core/dom/resize-observer
+export * from 'core/dom/resize-observer';
+//#endif
+
 /**
  * Wraps the specified function as an event handler with delegation.
- * This function can be used as a decorator or like a simple function.
+ * This function can be used as a decorator or as a simple function.
  *
  * @param selector - selector to delegate
  * @param [fn]
@@ -40,11 +48,12 @@ import { deprecate } from 'core/functools';
 export function wrapAsDelegateHandler<T extends Function>(selector: string, fn: T): T;
 export function wrapAsDelegateHandler(selector: string): Function;
 export function wrapAsDelegateHandler(selector: string, fn?: Function): Function {
-	function wrapper(e: Event): boolean {
+	function wrapper(this: unknown, e: Event): boolean {
 		const
-			t = <Element>e.target;
+			t = <CanUndef<Element>>e.target;
 
-		if (!t || !Object.isFunction(t.closest)) {
+		// eslint-disable-next-line @typescript-eslint/unbound-method
+		if (t == null || !Object.isFunction(t.closest)) {
 			return false;
 		}
 
@@ -53,7 +62,7 @@ export function wrapAsDelegateHandler(selector: string, fn?: Function): Function
 
 		if (link) {
 			e.delegateTarget = link;
-			fn && fn.call(this, e);
+			fn?.call(this, e);
 			return true;
 		}
 

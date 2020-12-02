@@ -28,6 +28,7 @@ export function inherit(
 		props: pProps,
 		mods: pMods,
 		fields: pFields,
+		tiedFields: pTiedFields,
 		computedFields: pComputedFields,
 		systemFields: pSystemFields,
 		accessors: pAccessors,
@@ -45,19 +46,19 @@ export function inherit(
 		deprecatedProps: {...pParams.deprecatedProps, ...meta.params.deprecatedProps}
 	};
 
-	// Watcher dependencies
+	// Watcher dependencies inheritance
 
-	if (meta.watchDependencies.size) {
+	if (meta.watchDependencies.size > 0) {
 		for (let o = pWatchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 			const [key, pVal] = el.value;
-			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) || []).concat(pVal));
+			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) ?? []).concat(pVal));
 		}
 
 	} else {
 		meta.watchDependencies = new Map(pWatchDependencies.entries());
 	}
 
-	// Props|fields inheritance
+	// Props/fields inheritance
 
 	{
 		const list = [
@@ -91,14 +92,14 @@ export function inherit(
 				if (parent.watchers) {
 					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 						const val = el.value;
-						watchers = watchers || new Map();
+						watchers = watchers ?? new Map();
 						watchers.set(val.handler, {...el.value});
 					}
 				}
 
 				if ('after' in parent && parent.after) {
 					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
-						after = after || new Set();
+						after = after ?? new Set();
 						after.add(el.value);
 					}
 				}
@@ -107,6 +108,12 @@ export function inherit(
 			}
 		}
 	}
+
+	// Tied fields inheritance
+
+	Object.assign(meta.tiedFields, pTiedFields);
+
+	// Accessors inheritance
 
 	{
 		const list = [
@@ -124,6 +131,8 @@ export function inherit(
 			}
 		}
 	}
+
+	// Methods inheritance
 
 	for (let o = meta.methods, keys = Object.keys(pMethods), i = 0; i < keys.length; i++) {
 		const
@@ -166,7 +175,7 @@ export function inherit(
 
 				hooks[key] = {
 					...el,
-					after: el.after && el.after.size ? new Set(el.after) : undefined
+					after: Object.size(el.after) > 0 ? new Set(el.after) : undefined
 				};
 			}
 		}
@@ -180,7 +189,7 @@ export function inherit(
 		const
 			key = keys[i],
 			current = o[key],
-			parent = (pMods[key] || []).slice();
+			parent = (pMods[key] ?? []).slice();
 
 		if (current) {
 			const
@@ -191,7 +200,7 @@ export function inherit(
 					el = o[i];
 
 				if (el !== PARENT) {
-					if (!(el in values) || Object.isArray(el)) {
+					if (Object.isArray(el) || !(<string>el in values)) {
 						values[String(el)] = <StrictModDeclVal>el;
 					}
 
@@ -218,7 +227,7 @@ export function inherit(
 					const
 						el = parent[i];
 
-					if (!(el in values)) {
+					if (!(<string>el in values)) {
 						values[String(el)] = <StrictModDeclVal>el;
 					}
 

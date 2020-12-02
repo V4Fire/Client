@@ -11,9 +11,9 @@ import Friend from 'super/i-block/modules/friend';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import { isAsyncClearError } from 'base/b-virtual-scroll/modules/helpers';
 
-import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
+import { RemoteData, DataState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -38,7 +38,7 @@ export default class ChunkRequest extends Friend {
 	data: unknown[] = [];
 
 	/**
-	 * Last uploaded chunk of data that was processed with `dbConverter`
+	 * Last loaded data chunk that was processed with `dbConverter`
 	 *
 	 * @deprecated
 	 * @see [[ScrollRequest.lastLoadedChunk]]
@@ -69,6 +69,32 @@ export default class ChunkRequest extends Friend {
 	pendingData: unknown[] = [];
 
 	/**
+	 * The object contains data from the main request and from all additional requests.
+	 * Sometimes a data provider can't provide the whole batch of data in one request,
+	 * so you need to emit some extra requests till the data batch is filled.
+	 */
+	currentAccumulatedData: CanUndef<unknown[]> = undefined;
+
+	/**
+	 * Contains `currentAccumulatedData` from previous requests cycle
+	 */
+	previousDataStore: CanUndef<unknown> = undefined;
+
+	/** @see [[ChunkRequest.prototype.previousDataStore]] */
+	get previousData(): CanUndef<unknown> {
+		return this.previousDataStore;
+	}
+
+	/**
+	 * @emits dataChange(v: unknown)
+	 * @see [[ChunkRequest.prototype.previousDataStore]]
+	 */
+	set previousData(v: unknown) {
+		this.previousDataStore = v;
+		this.ctx.emit('dataChange', v);
+	}
+
+	/**
 	 * API for scroll rendering
 	 */
 	protected get chunkRender(): ChunkRender {
@@ -81,12 +107,20 @@ export default class ChunkRequest extends Friend {
 	reset(): void {
 		this.total = 0;
 		this.page = 1;
+
+		// tslint:disable-next-line: deprecation
+		this.lastLoadedData = [];
 		this.data = [];
 		this.lastLoadedChunk = {raw: undefined, normalized: []};
+		this.pendingData = [];
+
 		this.isDone = false;
 		this.isLastEmpty = false;
-		this.pendingData = [];
+		this.currentAccumulatedData = undefined;
+		this.previousDataStore = undefined;
+
 		this.async.clearTimeout({label: $$.waitForInitCalls});
+		this.async.cancelRequest({label: $$.request});
 	}
 
 	/**
@@ -107,29 +141,15 @@ export default class ChunkRequest extends Friend {
 		await this.async.sleep(50, {label: $$.waitForInitCalls});
 
 		const
-			{options, chunkSize, dataProvider} = this.ctx;
+			{chunkSize, dataProvider} = this.ctx;
 
-		this.pendingData = [...options];
+		this.pendingData = [...this.lastLoadedChunk.normalized];
 
-		const initChunkRenderer = () => {
-			this.chunkRender.initItems(dataProvider ? this.pendingData.splice(0, chunkSize) : this.pendingData);
-		};
-
-		if (!dataProvider) {
-			this.onRequestsDone();
+		if (this.pendingData.length < chunkSize && dataProvider != null && !this.isDone) {
+			this.currentAccumulatedData = this.ctx.db?.data;
 		}
 
-		if (this.pendingData.length < chunkSize && dataProvider) {
-			if (!this.isDone) {
-				await this.try();
-
-			} else {
-				initChunkRenderer();
-			}
-
-		} else {
-			initChunkRenderer();
-		}
+		await this.try(false);
 
 		if (
 			this.ctx.localState !== 'error' &&
@@ -140,88 +160,160 @@ export default class ChunkRequest extends Friend {
 			this.chunkRender.setRefVisibility('empty', true);
 		}
 
+		this.chunkRender.tryShowRenderNextSlot();
+
+		if (this.previousData === undefined && Array.isArray(this.ctx.db?.data)) {
+			this.previousData = this.ctx.db!.data;
+		}
+
 		this.ctx.localState = 'ready';
 	}
 
 	/**
 	 * Tries to request additional data
+	 *
+	 * @param [initialCall]
+	 *
+	 * @emits dbChange(data: RemoteData)
+	 * @emits chunkLoading(page: number)
 	 */
-	try(): Promise<CanUndef<RemoteData>> {
+	try(initialCall: boolean = true): Promise<CanUndef<RemoteData>> {
 		const
 			{ctx, chunkRender} = this,
-			{chunkSize} = ctx,
+			{chunkSize, dataProvider} = ctx,
 			resolved = Promise.resolve(undefined);
 
 		const additionParams = {
 			lastLoadedChunk: {
 				...this.lastLoadedChunk,
-				normalized: this.lastLoadedChunk.normalized.length === 0 ? ctx.options : this.lastLoadedChunk.normalized
+				normalized: this.lastLoadedChunk.normalized
 			}
 		};
 
-		if (this.pendingData.length >= chunkSize) {
-			this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
-			this.chunkRender.render();
-			return resolved;
+		if (this.pendingData.length > 0) {
+			if (dataProvider == null) {
+				chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+				chunkRender.render();
+
+				if (this.pendingData.length === 0) {
+					this.emitDone();
+				}
+
+				return resolved;
+			}
+
+			if (this.pendingData.length >= chunkSize) {
+				chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+				chunkRender.render();
+
+				if (this.isDone && this.pendingData.length === 0) {
+					this.emitDone();
+				}
+
+				return resolved;
+			}
 		}
 
-		const
-			shouldRequest = ctx.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
+		const updateCurrentData = () => {
+			if (this.currentAccumulatedData != null) {
+				this.previousData = this.currentAccumulatedData;
+				this.currentAccumulatedData = undefined;
+			}
+		};
+
+		const shouldRequest = ctx.loadStrategy === 'scroll' ?
+			ctx.shouldMakeRequest(ctx.getDataStateSnapshot(additionParams, this, chunkRender)) :
+			true;
 
 		if (this.isDone) {
+			updateCurrentData();
 			this.onRequestsDone();
 			return resolved;
 		}
 
-		const cantRequest = () =>
-			this.isDone ||
+		const cantRequest = () => this.isDone ||
 			!shouldRequest ||
-			!ctx.dataProvider ||
+			ctx.dataProvider == null ||
 			ctx.mods.progress === 'true';
 
 		if (cantRequest()) {
 			return resolved;
 		}
 
+		if (initialCall) {
+			this.currentAccumulatedData = undefined;
+		}
+
 		chunkRender.setLoadersVisibility(true);
+		chunkRender.setRefVisibility('renderNext', false);
+
+		ctx.emit('chunkLoading', this.page);
 
 		return this.load()
 			.then((v) => {
-				if (!ctx.field.get('data.length', v)) {
+				if (Object.size(v?.data) === 0) {
 					this.isLastEmpty = true;
-					this.shouldStopRequest(getRequestParams(this, chunkRender, {lastLoadedData: []}));
+
+					this.shouldStopRequest(this.ctx.getDataStateSnapshot({
+						lastLoadedData: [],
+						lastLoadedChunk: {
+							raw: undefined,
+							normalized: []
+						}
+					}, this, chunkRender));
+
 					chunkRender.setLoadersVisibility(false);
+					updateCurrentData();
+
 					return;
 				}
 
 				const
-					{data} = <RemoteData>v;
+					data = (<RemoteData>v).data!;
 
 				this.page++;
 				this.isLastEmpty = false;
 
 				this.data = this.data.concat(data);
-				this.lastLoadedChunk.normalized = data;
 				this.pendingData = this.pendingData.concat(data);
+				this.currentAccumulatedData = Array.concat(this.currentAccumulatedData ?? [], data);
 
-				this.shouldStopRequest(getRequestParams(this, chunkRender));
+				ctx.emit('dbChange', {...v, data: this.data});
+				this.shouldStopRequest(this.ctx.getCurrentDataState());
 
 				if (this.pendingData.length < ctx.chunkSize) {
-					return this.try();
+					return this.try(false);
 				}
 
-				chunkRender.setLoadersVisibility(false);
-				this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
-				this.chunkRender.render();
+				this.previousData = this.currentAccumulatedData;
+				this.currentAccumulatedData = undefined;
 
-			}).catch((err) => (stderr(err), undefined));
+				chunkRender.setLoadersVisibility(false);
+
+				if (!this.isDone) {
+					chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+					chunkRender.render();
+				}
+
+				if (!this.isDone || this.pendingData.length > 0) {
+					chunkRender.setRefVisibility('renderNext', true);
+				}
+
+			}).catch((err) => {
+				if (isAsyncClearError(err)) {
+					return;
+				}
+
+				stderr(err);
+				return undefined;
+			});
 	}
 
 	/**
-	 * Checks possibility of another request for data
+	 * Checks for the possibility of stopping data requests
 	 * @param params
 	 */
-	shouldStopRequest(params: RequestMoreParams): boolean {
+	shouldStopRequest(params: DataState): boolean {
 		const {ctx} = this;
 		this.isDone = ctx.shouldStopRequest(params);
 
@@ -233,39 +325,57 @@ export default class ChunkRequest extends Friend {
 	}
 
 	/**
+	 * Sets `isDone` to `true` and fires `onRequestDone` handler
+	 */
+	protected emitDone(): void {
+		this.isDone = true;
+		this.onRequestsDone();
+	}
+
+	/**
 	 * Loads additional data
+	 * @emits chunkLoaded(lastLoadedChunk: LastLoadedChunk)
 	 */
 	protected load(): Promise<CanUndef<RemoteData>> {
-		const {ctx} = this;
-		ctx.setMod('progress', true);
+		const
+			{ctx, chunkRender} = this;
 
-		const params = <CanUndef<Dictionary>>(ctx.getDefaultRequestParams('get') || [])[0];
-		Object.assign(params, ctx.requestQuery?.(getRequestParams(this, this.chunkRender))?.get);
+		void ctx.setMod('progress', true);
+
+		const
+			defaultRequestParams = ctx.getDefaultRequestParams('get'),
+			params = <CanUndef<Dictionary>>(defaultRequestParams ?? [])[0];
+
+		Object.assign(params, ctx.requestQuery?.(ctx.getCurrentDataState())?.get);
 
 		return ctx.async.request(ctx.getData(this.component, params), {label: $$.request})
 			.then((data) => {
-				ctx.removeMod('progress', true);
+				this.ctx.localState = 'ready';
+				void ctx.removeMod('progress', true);
 				this.lastLoadedChunk.raw = data;
 
-				if (!data) {
-					this.lastLoadedChunk.normalized = [];
-					return;
-				}
-
 				const
-					converted = ctx.convertDataToDB<CanUndef<RemoteData>>(data);
+					converted = data != null ? ctx.convertDataToDB<RemoteData>(data) : undefined;
 
-				if (!converted?.data?.length) {
-					this.lastLoadedChunk.normalized = [];
-					return;
-				}
+				this.lastLoadedChunk.normalized = Object.size(converted?.data) < 0 ?
+					this.lastLoadedChunk.normalized = [] :
+					this.lastLoadedChunk.normalized = converted!.data!;
 
+				ctx.emit('chunkLoaded', this.lastLoadedChunk);
 				return converted;
 			})
 
 			.catch((err) => {
-				ctx.removeMod('progress', true);
-				this.chunkRender.setRefVisibility('retry', true);
+				void ctx.removeMod('progress', true);
+
+				if (isAsyncClearError(err)) {
+					return Promise.reject(err);
+				}
+
+				chunkRender.setRefVisibility('retry', true);
+				chunkRender.setRefVisibility('renderNext', false);
+
+				this.ctx.onRequestError(err, this.ctx.reloadLast.bind(this.ctx));
 				stderr(err);
 
 				this.lastLoadedChunk.raw = [];
@@ -280,23 +390,26 @@ export default class ChunkRequest extends Friend {
 	 */
 	protected onRequestsDone(): void {
 		const
-			{chunkSize} = this.ctx;
+			{ctx, chunkRender, async: $a} = this,
+			{chunkSize} = ctx;
 
-		if (this.pendingData.length) {
-			this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
-			this.chunkRender.render();
-
-		} else {
-			this.chunkRender.setRefVisibility('done', true);
+		if (this.pendingData.length > 0) {
+			chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+			chunkRender.render();
 		}
 
-		this.async.wait(() => this.ctx.localState === 'ready', {label: $$.requestDoneWaitForReady})
+		if (this.pendingData.length === 0) {
+			chunkRender.setRefVisibility('done', true);
+			chunkRender.setRefVisibility('renderNext', false);
+		}
+
+		$a.wait(() => ctx.localState === 'ready', {label: $$.requestDoneWaitForReady})
 			.then(() => {
-				if (!this.pendingData.length) {
-					this.chunkRender.setRefVisibility('done', true);
+				if (this.pendingData.length === 0) {
+					chunkRender.setRefVisibility('done', true);
 				}
 
-				this.chunkRender.setLoadersVisibility(false);
+				chunkRender.setLoadersVisibility(false);
 			})
 			.catch(stderr);
 	}

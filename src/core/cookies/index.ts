@@ -12,13 +12,14 @@
  */
 
 import { SetOptions, RemoveOptions } from 'core/cookies/interface';
+
 export * from 'core/cookies/interface';
 
 /**
  * Returns a cookie value by the specified name
  */
 export function get(name: string): CanUndef<string> {
-	const matches = document.cookie.match(new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`));
+	const matches = new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`).exec(document.cookie);
 	return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
@@ -43,7 +44,7 @@ export function set(name: string, value: string, opts?: SetOptions): string {
 	const
 		{expires} = opts;
 
-	if (expires) {
+	if (expires != null) {
 		let
 			v = expires;
 

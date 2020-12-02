@@ -1,3 +1,10 @@
+/*
+eslint-disable
+@typescript-eslint/no-unused-vars-experimental,
+@typescript-eslint/no-empty-function,
+@typescript-eslint/unified-signatures
+*/
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,11 +13,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:no-empty
-// tslint:disable:typedef
-
-import Async, { BoundFn, ProxyCb } from 'core/async';
 import { LogMessageOptions } from 'core/log';
+import Async, { BoundFn, ProxyCb } from 'core/async';
 
 import {
 
@@ -95,6 +99,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	meta: CTX['meta'];
 
 	// @ts-ignore (access)
+	$componentId: CTX['$componentId'];
+
+	// @ts-ignore (access)
 	$async: CTX['$async'];
 
 	// @ts-ignore (access)
@@ -174,14 +181,14 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 }
 
 /**
- * Helper structure to pack an unsafe interface:
+ * Helper structure to pack the unsafe interface:
  * it fixes some ambiguous TS warnings
  */
 export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
 	Dictionary & U['CTX'] & U & {unsafe: any};
 
 /**
- * Abstract class represents Vue compatible component API
+ * Abstract class that represents Vue compatible component API
  */
 export abstract class ComponentInterface {
 	/**
@@ -230,12 +237,15 @@ export abstract class ComponentInterface {
 	 * API to unsafe invoke of internal properties of the component.
 	 * It can be useful to create friendly classes for a component.
 	 */
-	readonly unsafe!: UnsafeGetter<UnsafeComponentInterface<this>>;
+	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
+		return <any>this;
+	}
 
 	/**
 	 * Link to a DOM element that is tied with the component
 	 */
-	readonly $el!: ComponentElement<this['Component']>;
+	// @ts-ignore (ts error)
+	readonly $el?: ComponentElement<this['Component']>;
 
 	/**
 	 * Map of raw component options
@@ -250,11 +260,13 @@ export abstract class ComponentInterface {
 	/**
 	 * List of child components
 	 */
-	readonly $children?: this['Component'][];
+	// @ts-ignore (ts error)
+	readonly $children?: Array<this['Component']>;
 
 	/**
 	 * Link to a parent component
 	 */
+	// @ts-ignore (ts error)
 	readonly $parent?: this['Component'];
 
 	/**
@@ -271,6 +283,12 @@ export abstract class ComponentInterface {
 	 * True if the component can be attached to a parent render function
 	 */
 	readonly isFlyweight?: boolean;
+
+	/**
+	 * Temporary unique component string identifier
+	 * (for functional components)
+	 */
+	protected readonly $componentId?: string;
 
 	/**
 	 * Link to a component meta object
@@ -307,7 +325,7 @@ export abstract class ComponentInterface {
 	 * Link to a parent component
 	 * (using with async rendering)
 	 */
-	// @ts-ignore
+	// @ts-ignore (ts error)
 	protected readonly $remoteParent?: this['Component'];
 
 	/**
@@ -422,7 +440,7 @@ export abstract class ComponentInterface {
 	 * Mounts the component to a DOM element
 	 * @param elementOrSelector - link to an element or a selector to an element
 	 */
-	protected $mount(elementOrSelector?: Element | string) {
+	protected $mount(elementOrSelector?: Element | string): this {
 		return this;
 	}
 
@@ -451,7 +469,7 @@ export abstract class ComponentInterface {
 	protected $delete(object: object, key: unknown): void {}
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component/object property by the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -464,7 +482,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component/object property by the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -474,7 +492,31 @@ export abstract class ComponentInterface {
 		handler: RawWatchHandler<this, T>
 	): Nullable<Function>;
 
-	protected $watch() {
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param handler
+	 */
+	protected $watch<T = unknown>(
+		obj: object,
+		handler: RawWatchHandler<this, T>
+	): Nullable<Function>;
+
+	/**
+	 * Sets a watcher to the specified watchable object
+	 *
+	 * @param obj
+	 * @param handler
+	 * @param opts
+	 */
+	protected $watch<T = unknown>(
+		obj: object,
+		opts: WatchOptions,
+		handler: RawWatchHandler<this, T>
+	): Nullable<Function>;
+
+	protected $watch(): Nullable<Function> {
 		return null;
 	}
 

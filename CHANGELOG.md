@@ -11,6 +11,988 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.102 (2020-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with layout shifts after `reInit` `base/b-virtual-scroll`
+
+## v3.0.0-rc.101 (2020-11-18)
+
+#### :bug: Bug Fix
+
+* Fixed import errors `global/g-icon/g-icon.styl`
+
+#### :house: Internal
+
+* Fixed lint warnings `global/g-icon/g-icon.styl`
+
+## v3.0.0-rc.100 (2020-11-17)
+
+#### :rocket: New Feature
+
+* Added support of filters with promises `super/i-block/modules/async-render`
+
+#### :house: Internal
+
+* Rendering optimization:
+  * `bBottomSlide`
+  * `bSidebar`
+
+## v3.0.0-rc.99 (2020-11-17)
+
+#### :bug: Bug Fix
+
+* [Fixed dynamic creation of flyweight components](https://github.com/V4Fire/Client/issues/434) `core/component/render-function`
+* [Fixed providing of attributes](https://github.com/V4Fire/Client/issues/437) `core/component/flyweight`
+
+## v3.0.0-rc.98 (2020-11-13)
+
+#### :boom: Breaking Change
+
+* `bSidebar`:
+  * Removed style properties (`p.overlayBg`, `p.overlayTansition`), prefer to use `provide.classes` or style overriding
+  * Renamed a style property: `sideBarTransition` -> `sidebarTransition`
+
+#### :bug: Bug Fix
+
+* Added the missing `over-wrapper` element `bSidebar`
+* Fixed firing the `close` event on swipe closing `bBottomSlide`
+* Now the `lockScrollMobile` modifier is applied for all mobile devices `iLockPageScroll`
+
+#### :memo: Documentation
+
+* Added documentation `iLockPageScroll`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bBottomSlide`
+* `bSidebar`:
+  * Fixed ESLint errors
+  * Fixed ts errors
+  * Added tests
+
+## v3.0.0-rc.97 (2020-11-11)
+
+#### :rocket: New Feature
+
+* Added `core/component/directives/v-hook`
+
+#### :bug: Bug Fix
+
+* Marked `defaultRequestFilter` and `requestFilter` as optional `iData`
+
+## v3.0.0-rc.96 (2020-11-10)
+
+#### :rocket: New Feature
+
+* Added `suspendRequests/unsuspendRequests/waitPermissionToRequest` `iData`
+* Added support of creation flyweight components via `$createElement` `core/component/render-function`
+
+## v3.0.0-rc.95 (2020-11-06)
+
+#### :house: Internal
+
+* Updated to `typescript@4.1.1-rc`
+
+## v3.0.0-rc.94 (2020-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of watchers based on accessors `core/component/watch/create`
+
+## v3.0.0-rc.93 (2020-11-03)
+
+#### :boom: Breaking Change
+
+* Changed an interface `patchComponentVData` `core/component/render-function`
+
+#### :bug: Bug Fix
+
+* Fixed providing of attributes `core/component/flyweight`
+
+## v3.0.0-rc.92 (2020-11-03)
+
+#### :rocket: New Feature
+
+* `core/component/vnode`:
+  * Added `patchComponentVData`
+  * Added `parseStyle`
+
+#### :bug: Bug Fix
+
+* Fixed providing of styles `core/component`
+
+#### :house: Internal
+
+* Now the component is smart (by default, the regular) `bDummy`
+* Refactoring:
+  * `core/component/engines/vue`
+  * `core/component/render-function`
+  * `core/component/flyweight`
+
+#### :nail_care: Polish
+
+* Added tests `iBlock`
+
+## v3.0.0-rc.91 (2020-10-29)
+
+#### :bug: Bug Fix
+
+* `super/i-block/modules/field`:
+  * Fixed working with watchers based on accessors
+  * Fixed resolving of accessor
+
+## v3.0.0-rc.90 (2020-10-22)
+
+#### :boom: Breaking Change
+
+* Now all extra classes that were added by using `appendToRootClasses` added to the start of the declaration `iBlock`
+* Removed `gDef/funcs/setSizes`
+
+* `bList`:
+  * Renamed:
+    * `interface/Option` -> `interface/Item`
+    * `valueProp` -> `itemsProp`
+    * `removeActive` -> `unsetActive`
+    * `normalizeOptions` -> `normalizeItems`
+    * `block text` -> `block value`
+    * `&__link-text` -> `&__link-value`
+
+  * Changed a type of `hideLabels` from a prop to modifier
+  * Now the `active` getter returns a Set with `multiple = true`
+  * Removed `block info` from the template
+  * Deprecated `&__el`
+
+* `gHint`:
+  * Renamed:
+    * `target` -> `location`
+    * `showSelector` -> `showOn`
+    * `hintData` -> `dataAttr`
+
+  * Replaced:
+    * `horArrowSize`, `vertArrowSize` -> `arrowSize`
+    * `color`, `bgColor`, `rounding`, `shadow` -> `contentStyles`
+
+  * Removed:
+    * Auto-hide logic: now you need to specify the `hidden` option
+
+  * Changed the way how to use the mixin
+
+#### :rocket: New Feature
+
+* `gHint`:
+  * Added `arrowStyles`, `hideStyles`, `showStyles`
+  * Added `interface.ts`
+
+* Added support of the default slot `bList`
+* Now `content` can be provided as a function `core/prelude/test-env/renderComponents`
+* Added support for a runner wildcard declaration `tests`
+
+```bash
+gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/* --runtime-render true
+```
+
+#### :bug: Bug Fix
+
+* `bList`:
+  * Fixed a bug with `activeElement` and `multiple`
+
+#### :house: Internal
+
+* `bList`:
+  * Fixed ESLint warnings `bList`
+  * Removed dead options from `Item`: `preIconHint`, `preIconHintPos`, `iconHint`, `iconHintPos`, `info`
+  * Now `Item` extends from `Dictionary`
+
+* `bIcon`:
+  * Removed dead props: `hint`, `hintPos`
+
+* Refactoring:
+  * `bList`
+  * `gHint`
+  * `gIcon`
+  * `gDef`
+
+* [Fixed an issue with the unsafe port in tests `build/test.gulp`](https://github.com/V4Fire/Client/issues/330)
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bList`
+  * `gHint`
+  * `gIcon`
+  * `gDef`
+
+* Improved documentation `docs/tests`
+* Improved output `test.gulp`
+
+## v3.0.0-rc.89 (2020-10-20)
+
+#### :bug: Bug Fix
+
+* Fixed the background image cleaning `core/dom/image/loader.ts`
+
+## v3.0.0-rc.88 (2020-10-13)
+
+#### :rocket: New Feature
+
+* Added `functionalWatching` to field decorators `core/component/decorators`
+
+#### :bug: Bug Fix
+
+* Fixed initializing of `stageStore` `iBlock`
+* [Added a boolean type for `progressIcon` props](https://github.com/V4Fire/Client/pull/409/files)
+
+#### :house: Internal
+
+* Added `functionalWatching` `core/component/meta`
+* Added support of `functionalWatching` `core/component/watch`
+* Added a new API for generating selectors `tests/helpers/dom`
+  * `elNameGenerator`
+  * `elNameSelectorGenerator`
+  * `elModNameGenerator`
+  * `elModSelectorGenerator`
+
+#### :nail_care: Polish
+
+* Improved documentation
+
+## v3.0.0-rc.87 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed restoring of a functional state `core/component/watch` `core/component/functional`
+
+## v3.0.0-rc.86 (2020-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed an optimization of lazy watchers `base/i-block/modules/field`
+* Fixed immediate watchers `core/component/watch`
+
+## v3.0.0-rc.85 (2020-10-09)
+
+#### :boom: Breaking Change
+
+* `iBlock`:
+  * Now `dontWaitRemoteProviders` is calculated automatically
+  * Marked as non-functional:
+    * `stageStore`
+    * `componentStatusStore`
+    * `watchModsStore`
+
+#### :rocket: New Feature
+
+* Provided a graph of components to `build/globals.webpack` / `config`
+
+#### :house: Internal
+
+* Optimized watching of non-functional properties `core/component/watch`
+* Extracted interfaces to `index.d.ts` `core/prelude/test-env`
+
+## v3.0.0-rc.84 (2020-10-09)
+
+#### :rocket: New Feature
+
+* Added `ComponentMeta.tiedFields` `core/component/meta`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using a complex path as a dependency `core/component/construct`
+
+#### :house: Internal
+
+* Now all tied fields are collected within `meta.tiedFields` `core/component/decorators`
+* Optimized creation of components `core/component/construct`
+* Optimized creation of watchers of functional components `core/component/watch`
+
+## v3.0.0-rc.83 (2020-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `in-view/mutation` does not fire a callback in old chromiums `core/dom/in-view`
+
+#### :house: Internal
+
+* Removed `.travis.yml`
+
+## v3.0.0-rc.82 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a typo after refactoring `core/component/directive/resize-observer`
+
+## v3.0.0-rc.81 (2020-10-08)
+
+#### :boom: Breaking Change
+
+* Now `BrowserTests.DOM.waitForEl` will throw an exception if a timeout to wait occurs `tests/helpers/dom`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `renderNext`: hasn't been data rendering after a loading error `base/b-virtual-scroll`
+
+#### :house: Internal
+
+* Added `.travis.yml`
+* :up: `playwright` -> 1.4.2
+
+#### :nail_care: Polish
+
+* Added the render scheme `docs/test`
+
+## v3.0.0-rc.80 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using an array of dependencies to watch an accessor `core/component/construct`
+
+## v3.0.0-rc.79 (2020-10-08)
+
+#### :boom: Breaking Change
+
+* Directive mods are no longer supported `core/component/directives/resize-observer`
+* `v-resize` renamed to `v-resize-observer` `core/component/directives/resize-observer`
+
+#### :house: Internal
+
+* [Split the module into two: API was moved to `core/dom/resize-observer`](https://github.com/V4Fire/Client/issues/311)
+
+## v3.0.0-rc.78 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with caching of computed fields `core/component/accessor`
+
+## v3.0.0-rc.77 (2020-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when trying to access a prop value before a component create `i-block/modules/field`
+
+## v3.0.0-rc.76 (2020-10-07)
+
+#### :boom: Breaking Change
+
+* Renamed `isWorker` to `isStandalone` `build/helpers`
+
+#### :rocket: New Feature
+
+* Added support of a new postfix `.standalone` `build/entries.webpack`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when flyweight components can't have refs `core/component/flyweight`
+
+## v3.0.0-rc.75 (2020-10-07)
+
+#### :rocket: New Feature
+
+* Ability to pass background-repeat as image bg options `core/dom/image`
+
+## v3.0.0-rc.74 (2020-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with removing the progress modifier `base/b-virtual-scroll`
+
+## v3.0.0-rc.73 (2020-10-02)
+
+#### :house: Internal
+
+* Added the `runtime-render` flag for tests `build/test.gulp`
+
+#### :nail_care: Polish
+
+* Added documentation to write tests `docs/test`
+
+## v3.0.0-rc.72 (2020-10-01)
+
+#### :boom: Breaking Change
+
+* `iData`:
+  * Renamed `dataProviderEmitter` to `dataEmitter`
+  * Deprecated `requestFilter`
+  * Deprecated `dropRequestCache`
+
+#### :rocket: New Feature
+
+* `iData`:
+  * Added `defaultRequestFilter`
+  * Added `dropDataCache`
+
+#### :house: Internal
+
+* Moved to `defaultRequestFilter`:
+  * `bButton`
+  * `bForm`
+
+#### :nail_care: Polish
+
+* Improved doc `iData`
+
+## v3.0.0-rc.71 (2020-10-01)
+
+#### :bug: Bug Fix
+
+* `core/component/watch`:
+  * Fixed a bug with deep watching of props
+  * Fixed providing of a watch context
+  * Fixed an invalid caching of old values with `collapse = false`
+
+#### :house: [Internal]
+
+* Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
+
+## v3.0.0-rc.70 (2020-09-30)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the initial ratio was not settled `core/dom/image`
+
+## v3.0.0-rc.69 (2020-09-28)
+
+#### :boom: Breaking Change
+
+* Renamed `FieldGetter` -> `ValueGetter` `super/i-block/modules/field`
+
+#### :rocket: New Feature
+
+* Added `getter` for `set` and `delete` methods `super/i-block/modules/field`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when a system field can't be watched after removal of a property `super/i-block/modules/field`
+
+#### :nail_care: Polish
+
+* Added more examples `super/i-block/modules/field`
+
+## v3.0.0-rc.68 (2020-09-23)
+
+#### :boom: Breaking Change
+
+* `AsyncRender`:
+  * Renamed `TaskI.list` -> `TaskI.iterable`
+  * Renamed `TaskOptions` -> `TaskParams`
+
+#### :bug: Bug Fix
+
+* Fixed rendering of arrays `AsyncRender`
+* [Fixed an issue with the second data batch load affects initial rendering after reInit 'base/b-virtual-scroll'](https://github.com/V4Fire/Client/issues/346)
+
+## v3.0.0-rc.67 (2020-09-22)
+
+#### :boom: Breaking Change
+
+* `config`
+  * Now `runtime.debug` is always `false` by default
+  * Now `webpack.buildCache` is always `false` by default
+
+#### :bug: Bug Fix
+
+* Updated dependencies:
+  * `postcss@7.0.34`
+  * `autoprefixer@9.8.6`
+
+## v3.0.0-rc.66 (2020-09-22)
+
+#### :bug: Bug Fix
+
+* [Fixed mixing of directives within of a component root tag `core/component`](https://github.com/V4Fire/Client/pull/337)
+* Fixed providing of `Autoprefixer` `build/module.webpack`
+
+## v3.0.0-rc.65 (2020-09-21)
+
+#### :boom: Breaking Change
+
+* Updated dependencies:
+  * `url-loader@4.1.0`
+  * `terser-webpack-plugin@4.2.2`
+  * `svg-sprite-loader@5.0.0`
+  * `svg-url-loader@6.0.0`
+  * `postcss-loader@4.0.2`
+  * `mini-css-extract-plugin@0.11.2`
+  * `image-webpack-loader@7.0.1`
+  * `imagemin-webp@6.0.0`
+  * `autoprefixer@10.0.0`
+  * `worker-loader@3.0.2`
+
+* Removed dependencies: `fg-loadcss`
+* Fixed a bug with importing of images within CSS
+
+#### :house: Internal
+
+* Updated dependencies:
+  * `eventemitter2@6.4.3`
+  * `tslib@2.0.1`
+  * `browserslistr@4.14.3`
+  * `copy-dir@1.3.0`
+  * `delay@4.4.0`
+  * `extract-loader@5.1.0`
+  * `file-loader@6.1.0`
+  * `gulp-load-plugin@2.0.4`
+  * `html-loader@1.3.0`
+  * `optimize-css-assets-webpack-plugin@5.0.4`
+  * `stylus@0.54.8`
+  * `ts-loader@8.0.4`
+  * `typograf@6.11.1`
+  * `webpack@4.44.2`
+  * `webpack-cli@3.3.12`
+
+#### :nail_care: Polish
+
+* Fixed JSDoc `Statuses` -> `ComponentStatus` `iBlock`
+
+## v3.0.0-rc.64 (2020-09-18)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with wrong attributes being settled for an img tag `core/dom/image`
+
+## v3.0.0-rc.63 (2020-09-10)
+
+#### :rocket: New Feature
+
+* [Improved `core/dom/image` API](https://github.com/V4Fire/Client/issues/168)
+
+#### :bug: Bug Fix
+
+* Fixed `init.js` generation `super/i-static-page/ss-helpers`
+
+#### :house: Internal
+
+* [Split the `directives/image` module into two: API was moved to `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
+
+## v3.0.0-rc.62 (2020-09-04)
+
+#### :rocket: New Feature
+
+* Added `iBlock/dontWaitRemoteProviders`
+
+## v3.0.0-rc.61 (2020-09-04)
+
+#### :bug: Bug Fix
+
+* [Fixed wrong refactoring in `rc48` `super/i-data`](https://github.com/V4Fire/Client/pull/326)
+
+#### :house: Internal
+
+* Updated dependencies: `@v4fire/core@3.25.1`
+
+## v3.0.0-rc.60 (2020-09-01)
+
+#### :rocket: New Feature
+
+* [Added `watchForIntersection`, `localInView` methods to `super/i-block/modules/dom`](https://github.com/V4Fire/Client/issues/195)
+* [Added an option `destroyIfComponent` into `i-block/dom/replaceWith`, `i-block/dom/appendChild`](https://github.com/V4Fire/Client/pull/321)
+
+#### :bug: Bug Fix
+
+* [Fixed a possible memory leak `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/321)
+
+#### :house: Internal
+
+* [Split the module into two: API was moved to `core/dom/in-view`](https://github.com/V4Fire/Client/issues/310)
+* [Improved tests performance](https://github.com/V4Fire/Client/pull/322)
+* Updated dependencies: `@v4fire/core@3.24.0`, `@v4fire/linters@1.5.8`
+
+## v3.0.0-rc.59 (2020-08-10)
+
+#### :rocket: New Feature
+
+* [Added ability to render data manually `bVirtualScroll`](https://github.com/V4Fire/Client/issues/202)
+
+#### :nail_care: Polish
+
+* Improved documentation `bVirtualScroll`
+
+## v3.0.0-rc.58 (2020-08-07)
+
+#### :house: Internal
+
+* Added `.ico` files to build `build/module.webpack/img`
+
+## v3.0.0-rc.57 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `core/browser/mobile`
+
+## v3.0.0-rc.56 (2020-08-06)
+
+#### :bug: Bug Fix
+
+* Fixed `initLoad` error handling `iBlock`, `iData`
+
+## v3.0.0-rc.55 (2020-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `unsafe` after refactoring `core/component/render-function`
+* `iData`:
+  * Fixed an issue with `requestFilter` after refactoring
+  * Fixed an issue with `initLoad` after refactoring
+
+#### :house: Internal
+
+* Fixed ESLint warnings `bRemoteProvider`
+
+#### :nail_care: Polish
+
+* Added documentation `bRemoteProvider`
+
+## v3.0.0-rc.54 (2020-08-04)
+
+#### :house: Internal
+
+* Marked as public `iBlock/isComponent`
+
+## v3.0.0-rc.53 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed generation of code `ES5` `iStaticPage`
+
+## v3.0.0-rc.52 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed generation of code for a case `nonce() { return "<!--#echo var='NonceValue' -->"; }` `iStaticPage`
+
+## v3.0.0-rc.51 (2020-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `reObserve` `core/component/directives/in-view`
+* Fixed getting an image URL for IE `bImage`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+
+#### :nail_care: Polish
+
+* Added documentation:
+  * `bImage`
+  * `bIcon`
+  * `bProgressIcon`
+  * `global/g-debug`
+  * `global/g-def`
+  * `global/g-hint`
+  * `global/g-icon`
+
+## v3.0.0-rc.50 (2020-08-03)
+
+#### :bug: Bug Fix
+
+* Fixed `core/component/engines/vue/config/getComponentName`
+* Removed normalizing of the `nonce` attribute `iStaticPage`
+
+## v3.0.0-rc.49 (2020-08-03)
+
+#### :boom: Breaking Change
+
+* Removed `isDeactivated`, `removeStrategy` from `core/component/directives/inView/observableElement`
+
+#### :rocket: New Feature
+
+* Added `suspend`, `unsuspend`, `reObserve` methods `inView`
+
+#### :bug: Bug Fix
+
+* Marked `inViewAdapter/stopObserve` as deprecated
+* Fixed an issue with `polling` strategy won't fire a `callback` `inView`
+* Fixed an issue with `trigger` in `b-bottom-slide` won't fire `v-in-view` callback (`mutation strategy`) `bBottomSlide`, `iHistory`
+* Fixed providing of `GLOBAL_NONCE` `iStaticPage`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `core/component/directives/in-view`
+  * `traits/i-history`
+  * `traits/i-access`
+  * `traits/i-icon`
+  * `traits/i-width`
+  * `traits/i-visible`
+  * `traits/i-size`
+  * `traits/i-progress`
+  * `traits/i-observe-dom`
+  * `super/i-page`
+  * `super/i-dynamic-page`
+  * `super/i-input`
+  * `form/b-button`
+
+#### :nail_care: Polish
+
+* Added documentation `bButton`
+
+## v3.0.0-rc.48 (2020-08-02)
+
+#### :boom: Breaking Change
+
+* Changed the signature of `iData/getDefaultRequestParams`
+
+#### :rocket: New Feature
+
+* Added `initLoadStart` event `iBlock`, `iData`
+* Added `core/component/interface/$componentId`
+* Added `isWorker` to helpers `build`
+
+#### :bug: Bug Fix
+
+* Fixed building of assets `iStaticPage`
+* Fixed an issue with `initLoad` may be called twice `iData`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `core/component/render-function`
+  * `core/component/register`
+  * `core/component/directives/update-on`
+
+## v3.0.0-rc.47 (2020-07-31)
+
+#### :boom: Breaking Change
+
+* Renamed `head` -> `deps` `super/i-static-page/i-static-page.interface.ss`
+
+#### :rocket: New Feature
+
+* `super/i-static-page/i-static-page.interface.ss`:
+  * Added `meta`
+  * Added `head`
+
+## v3.0.0-rc.46 (2020-07-31)
+
+#### :bug: Bug Fix
+
+* Fixed `fullElName` overloads `iBlock/provide`
+
+#### :house: Internal
+
+* `core/component/state`:
+  * Added `experiments`
+  * Added `interface/State`
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/activation`
+  * `super/i-block/modules/analytics`
+  * `super/i-block/modules/async-render`
+  * `super/i-block/modules/block`
+  * `super/i-block/modules/daemons`
+  * `super/i-block/modules/decorators`
+  * `super/i-block/modules/dom`
+  * `super/i-block/modules/event-emitter`
+  * `super/i-block/modules/field`
+  * `super/i-block/modules/friend`
+  * `super/i-block/modules/lazy`
+  * `super/i-block/modules/mods`
+  * `super/i-block/modules/opt`
+  * `super/i-block/modules/storage`
+  * `super/i-block/modules/vdom`
+  * `super/i-block/modules/listeners`
+  * `super/i-block/directives/event`
+  * `core/component/meta`
+  * `core/component/field`
+
+## v3.0.0-rc.45 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed deadlock on initializing `iBlock/state`
+
+## v3.0.0-rc.44 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed setting of `staticClass` `core/component/engines/vue`
+* Fixed initializing of the router `iBlock/state`
+
+#### :house: Internal
+
+* Fixed ESLint warnings:
+  * `super/i-block/modules/cache`
+  * `super/i-block/modules/provide`
+
+## v3.0.0-rc.43 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init.js` `iStaticPage`
+
+## v3.0.0-rc.42 (2020-07-30)
+
+#### :bug: Bug Fix
+
+* Fixed `resetRouter` without providing of `convertRouterState` `iBlock/state`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `super/i-block/modules/state`
+
+## v3.0.0-rc.41 (2020-07-29)
+
+#### :boom: Breaking Change
+
+* `build/`
+  * Removed `snakeskin/filters/csp`
+  * Renamed `dependencies` -> `entryPoints` `module.webpack/snakeskin`
+  * Renamed `replacers/raw-import` -> `replacers/include`
+  * Changed a pattern from `requireMonic(...)` to `include('...');` `replacers/include`
+
+* `iStaticPage`
+  * Removed `async`, `module`, `nomodule` from `modules/interface.js/Lib`
+  * Removed SS blocks from the template: `defStyles`, `loadStyles`, `defLibs`, `loadLibs`
+  * Moved logic from SS to JS `iStaticPage`
+
+* Removed redundant parameters from `config/snakeskin`
+
+#### :rocket: New Feature
+
+Added `config/csp`
+* `iStaticPage`
+  * Added `links` to `deps.js`
+  * Added `attrs` to `modules/interface.js`
+  * Added generation of `init.js`
+
+#### :bug: Bug Fix
+
+* Fixed a bug in `test` function in `core/browser`
+* Don't show clear button within the read-only mode `iInput`
+
+#### :house: Internal
+
+* Added new dependency: `buble`
+
+## v3.0.0-rc.40 (2020-07-27)
+
+#### :house: Internal
+
+* Logging Vue errors and warnings via the `core/log` module `core/component/engines/vue`
+
+## v3.0.0-rc.39 (2020-07-23)
+
+#### :rocket: New Feature
+
+* [Improved browser test API](https://github.com/V4Fire/Client/issues/289)
+* [Added life cycle events `bVirtualScroll`](https://github.com/V4Fire/Client/issues/205)
+
+#### :bug: Bug Fix
+
+* [Fixed reloading of a component after changing its data provider `iData`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed an issue when data from `lastLoadedData` and `lastLoadedChunk.normalized` aren't synchronized `bVirtualScroll`](https://github.com/V4Fire/Client/issues/281)
+* [Fixed `lastLoadedChunk.raw` returns undefined `bVirtualScroll`](https://github.com/V4Fire/Client/issues/267)
+
+#### :house: Internal
+
+* Added `waitRef` `iBlock/interface/UnsafeIBlock`
+* [Refactoring of tests `bVirtualScroll`](https://github.com/V4Fire/Client/pull/293)
+* [Fixed ESLint warnings `base/b-virtual-scroll`](https://github.com/V4Fire/Client/pull/293)
+
+* [:up:](https://github.com/V4Fire/Client/pull/293)
+  * playwright 1.2.1
+  * @v4fire/linters 1.5.2
+
+## v3.0.0-rc.38 (2020-07-21)
+
+#### :bug: Bug Fix
+
+* Fixed caching of old values `core/component/watch`
+* Fixed providing explicit `false` value to `readonly` prop `form/b-input`
+
+#### :house: Internal
+
+* Added `npm run up`
+
+## v3.0.0-rc.37 (2020-07-20)
+
+#### :boom: Breaking Change
+
+* Now all accessors with dependencies are cacheable by default
+* Marked `router` as optional `iBlock`
+* Marked `block` as optional `iBlock`
+* Marked `$el` as optional `core/component/interface`
+* Changed the `SyncLinkCache` type from Dictionary to Map `core/component/interface`
+
+#### :rocket: New Feature
+
+* Added support of mounted watchers
+
+```js
+this.watch(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.watch({ctx: anotherWatcher, path: foo}, () => {
+  console.log('...');
+});
+
+this.sync.link(anotherWatcher, () => {
+  console.log('...');
+});
+
+this.sync.object('foo', [
+  ['bla', {ctx: anotherWatcher, path: 'bar'}]
+]);
+
+class bFoo {
+  @computed({watchable: true})
+  get remoteState(): typeof anotherWatcher {
+    return anotherWatcher;
+  }
+}
+```
+
+#### :bug: Bug Fix
+
+* Fixed watching for `remoteState`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `core/abt`, `core/async`, `core/browser`, `core/dom`, `core/event`, `core/init`, `core/prelude`, `core/render`, `core/component`, `core/session`, `core/std`, `super/i-block`
+
+## v3.0.0-rc.36 (2020-07-13)
+
+#### :rocket: New Feature
+
+* Improved support of workers `core/build`
+
+#### :bug: Bug Fix
+
+* Added a missing parameter `core/router/StaticRouteMeta.external`
+* Fixed providing of parameters `base/b-router/getRoute`
+
+#### :house: Internal
+
+* All linter configurations now loaded from @v4fire/linters
+* Fixed TS warnings
+* Improved logic `core/build/entries.webpack.js`
+* Moved to ESLint `core/build`, `core/cookies`, `core/router`, `base/b-router`
+* Refactoring `core/build`
+
+## v3.0.0-rc.35 (2020-07-02)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect bottom-slide positioning with content bigger than `maxVisiblePx`
+
+## v3.0.0-rc.34 (2020-06-30)
+
+#### :house: Internal
+
+* Added `test-entry` argument for test cases
+
+## v3.0.0-rc.33 (2020-06-24)
+
+#### :house: Internal
+
+* Unlocked the @v4fire/core package version
+
 ## v3.0.0-rc.32 (2020-06-19)
 
 #### :bug: Bug Fix

@@ -15,7 +15,20 @@
  * Base component template
  */
 - template index()
+	/** Hardcoded component name */
 	- componentName = ''
+
+	/** Type of the root tag */
+	- rootTag = 'div'
+
+	/** Should or not generate additional wrapper within the root tag */
+	- rootWrapper = false
+
+	/** Should or not generate a layout for overlap */
+	- overWrapper = false
+
+	/** Should or not the component have a skeleton */
+	- skeletonMarker = false
 
 	/**
 	 * Returns the component name
@@ -38,11 +51,6 @@
 		? path = path.replace(/\/$/, '.index')
 		- return $C(exports).get(path)
 
-	- rootTag = 'div'
-	- rootWrapper = false
-	- overWrapper = false
-	- skeletonMarker = false
-
 	/**
 	 * Applies Typograf to the specified content
 	 * @param {string} content
@@ -56,7 +64,7 @@
 	 */
 	- block appendToRootClasses(value)
 		- if rootAttrs[':class']
-			? rootAttrs[':class'] += '.concat((' + value + ') || [])'
+			? rootAttrs[':class'] = '[].concat((' + value + ') || [], ' + rootAttrs[':class'] + ')'
 
 		- else
 			rootAttrs[':class'] = value
@@ -83,7 +91,7 @@
 			< _ ${rootAttrs|!html}
 
 				/**
-				 * Generates an icon block
+				 * Generates an icon layout
 				 *
 				 * @param {string} iconId
 				 * @param {Object=} [classes]

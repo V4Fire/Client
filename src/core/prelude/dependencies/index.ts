@@ -10,7 +10,7 @@ import { deprecate } from 'core/functools';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
- * Adds an attribute "nonce" to the specified element if the "GLOBAL_NONCE" variable is defined
+ * Adds the "nonce" attribute to the specified element if the "GLOBAL_NONCE" variable is defined
  * (support for Content Security Policy)
  *
  * @param el
@@ -22,7 +22,7 @@ function addNonceAttribute(el: Element): void {
 }
 
 const
-	API = globalThis[MODULE_DEPENDENCIES] || {};
+	API = globalThis[MODULE_DEPENDENCIES] ?? {fileCache: Object.createDict()};
 
 /**
  * Manager of modules
@@ -57,7 +57,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 		const
 			{head} = document;
 
-		if (!head) {
+		if (!Object.isTruly(head)) {
 			return;
 		}
 
@@ -87,12 +87,12 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 		const
 			DEPS = ['js', 'tpl', 'css'].length;
 
-		if (!this.cache[moduleName]) {
+		if (this.cache[moduleName] == null) {
 			for (let i = 0; i < dependencies.length; i++) {
 				const
 					el = dependencies[i];
 
-				if (this.fileCache[el]) {
+				if (this.fileCache[el] === true) {
 					continue;
 				}
 
@@ -103,7 +103,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 					link = document.createElement('link'),
 					cssURL = `${el}$style`;
 
-				if (!PATH[cssURL]) {
+				if (PATH[cssURL] == null) {
 					throw new ReferenceError(`Stylesheet "${cssURL}" is not defined`);
 				}
 
@@ -115,7 +115,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 					tpl = document.createElement('script'),
 					tplURL = `${el}_tpl`;
 
-				if (!PATH[tplURL]) {
+				if (PATH[tplURL] == null) {
 					throw new ReferenceError(`Template "${tplURL}" is not defined`);
 				}
 
@@ -126,7 +126,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 				const
 					script = document.createElement('script');
 
-				if (!PATH[el]) {
+				if (PATH[el] == null) {
 					throw new ReferenceError(`JS "${el}" is not defined`);
 				}
 
@@ -138,7 +138,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 					const
 						links = document.getElementsByTagName('link');
 
-					if (links.length) {
+					if (links.length > 0) {
 						const lastLink = links[links.length - 1];
 						(<HTMLElement>lastLink.parentElement).insertBefore(link, lastLink.nextSibling);
 
@@ -174,14 +174,14 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 	 * @param module
 	 */
 	get(module: string): CanPromise<string[]> {
-		if (this.cache[module]) {
+		if (this.cache[module] != null) {
 			return this.cache[module];
 		}
 
 		const
 			{head} = document;
 
-		if (!head) {
+		if (!Object.isTruly(head)) {
 			return [];
 		}
 
@@ -189,11 +189,11 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: tr
 			script = document.createElement('script'),
 			url = `${module}.dependencies`;
 
-		if (!PATH[url]) {
+		if (PATH[url] == null) {
 			throw new ReferenceError(`Dependencies for "${url}" are not defined`);
 		}
 
-		script.src = <string>PATH[`${module}.dependencies`];
+		script.src = String(PATH[`${module}.dependencies`]);
 		addNonceAttribute(script);
 
 		return new Promise((resolve) => {

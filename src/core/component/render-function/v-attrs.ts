@@ -7,29 +7,29 @@
  */
 
 import { VNodeData } from 'core/component/engines';
+import { parseStyle } from 'core/component/vnode';
+import { vAttrsRgxp } from 'core/component/render-function/const';
 import { ComponentMeta } from 'core/component/interface';
-
-const
-	directiveRgxp = /(v-(.*?))(?::(.*?))?(\..*)?$/;
 
 /**
  * Applies dynamic attributes from v-attrs to the specified vnode
  *
- * @param vnode - vnode data object
+ * @param vData - vnode data object
  * @param [component] - component meta object that is tied to the vnode
  */
-export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): void {
+export function applyDynamicAttrs(vData: VNodeData, component?: ComponentMeta): void {
 	const
-		attrs = vnode.attrs = vnode.attrs || {},
+		attrs = vData.attrs ?? {},
 		attrsSpreadObj = attrs['v-attrs'],
 		slotsSpreadObj = attrs['v-slots'];
 
+	vData.attrs = attrs;
 	delete attrs['v-attrs'];
 	delete attrs['v-slots'];
 
 	if (Object.isPlainObject(slotsSpreadObj)) {
 		const
-			slotOpts: Dictionary = vnode.scopedSlots || {};
+			slotOpts = vData.scopedSlots ?? {};
 
 		for (let keys = Object.keys(slotsSpreadObj), i = 0; i < keys.length; i++) {
 			const
@@ -58,9 +58,13 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 
 	if (Object.isPlainObject(attrsSpreadObj)) {
 		const
-			eventOpts: Dictionary = vnode.on = vnode.on || {},
-			nativeEventOpts: Dictionary = vnode.nativeOn = vnode.nativeOn || {},
-			directiveOpts = vnode.directives = vnode.directives || [];
+			eventOpts = vData.on ?? {},
+			nativeEventOpts = vData.nativeOn ?? {},
+			directiveOpts = vData.directives ?? [];
+
+		vData.on = eventOpts;
+		vData.nativeOn = nativeEventOpts;
+		vData.directives = directiveOpts;
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
 			let
@@ -76,14 +80,14 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 				}
 			}
 
-			if (key[0] === '@') {
+			if (key.startsWith('@')) {
 				let
 					event = key.slice(1);
 
 				if (component) {
 					const
 						eventChunks = event.split('.'),
-						flags = <Dictionary>{};
+						flags = <Dictionary<boolean>>{};
 
 					for (let i = 1; i < eventChunks.length; i++) {
 						flags[eventChunks[i]] = true;
@@ -129,26 +133,26 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 							};
 						}
 
-						if (!nativeEventOpts[event]) {
+						if (!(event in nativeEventOpts)) {
 							nativeEventOpts[event] = val;
 						}
 
-					} else if (!eventOpts[event]) {
+					} else if (!(event in eventOpts)) {
 						eventOpts[event] = val;
 					}
 
-				} else if (!eventOpts[event]) {
+				} else if (!(event in eventOpts)) {
 					eventOpts[event] = val;
 				}
 
-			} else if (key.slice(0, 2) === 'v-') {
+			} else if (key.startsWith('v-')) {
 				const
-					[, rawName, name, arg, rawModifiers] = directiveRgxp.exec(key);
+					[, rawName, name, arg, rawModifiers] = vAttrsRgxp.exec(key)!;
 
 				let
 					modifiers;
 
-				if (rawModifiers) {
+				if (Object.isTruly(rawModifiers)) {
 					modifiers = {};
 
 					for (let o = rawModifiers.split('.'), i = 0; i < o.length; i++) {
@@ -159,26 +163,26 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 				const
 					dir = <Dictionary>{name, rawName, value: val};
 
-				if (arg) {
+				if (Object.isTruly(arg)) {
 					dir.arg = arg;
 				}
 
-				if (modifiers) {
+				if (Object.isTruly(modifiers)) {
 					dir.modifiers = modifiers;
 				}
 
 				directiveOpts.push(<any>dir);
 
 			} else if (key === 'staticClass') {
-				vnode.staticClass = Array.concat([], vnode.staticClass, val).join(' ');
+				vData.staticClass = Array.concat([], vData.staticClass, val).join(' ');
 
 			} else if (key === 'class') {
-				vnode.class = Array.concat([], vnode.class, val);
+				vData.class = Array.concat([], vData.class, val);
 
 			} else if (key === 'style') {
-				vnode.style = Array.concat([], vnode.style, val);
+				vData.style = parseStyle(vData.style, parseStyle(val));
 
-			} else if (!attrs[key]) {
+			} else if (attrs[key] == null) {
 				attrs[key] = val;
 			}
 		}

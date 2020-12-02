@@ -12,7 +12,7 @@ export type RenderFn = (params?: Dictionary) => VNode;
 
 export type RenderContext =
 	ComponentRenderContext |
-	[Dictionary] |
-	[Dictionary, ComponentRenderContext];
+	[Dictionary?] |
+	[Dictionary?, ComponentRenderContext?];
 
 export type RenderPath = CanUndef<RenderObject> | string;

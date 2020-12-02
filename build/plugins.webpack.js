@@ -10,25 +10,24 @@
 
 const
 	$C = require('collection.js'),
-	webpack = require('webpack'),
 	config = require('config'),
 	path = require('path');
 
 const
-	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
-	build = include('build/entries.webpack');
+	webpack = require('webpack'),
+	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const
-	{webpack: wp} = config,
+	build = include('build/entries.webpack'),
 	{buildCache} = include('build/build.webpack');
 
 /**
- * Returns a list of webpack plugins
+ * Returns options for Webpack ".plugins"
  *
- * @param {number} buildId - build id
- * @returns {Map}
+ * @param {(number|string)} buildId - build id
+ * @returns {!Map}
  */
-module.exports = async function ({buildId}) {
+module.exports = async function plugins({buildId}) {
 	const
 		graph = await build;
 
@@ -37,7 +36,7 @@ module.exports = async function ({buildId}) {
 		['dependencies', include('build/plugins/dependencies')({graph})]
 	]);
 
-	if (wp.longCache()) {
+	if (config.webpack.buildCache()) {
 		plugins.set('buildCache', new HardSourceWebpackPlugin({
 			environmentHash: {
 				files: [
@@ -49,17 +48,10 @@ module.exports = async function ({buildId}) {
 			cacheDirectory: path.join(
 				buildCache,
 				String(buildId),
-				wp.cacheDir()
+				config.webpack.cacheDir()
 			),
 
-			configHash: () => {
-				const envHash = require('node-object-hash')().hash({
-					webpack: global.WEBPACK_CONFIG,
-					config: config.expand()
-				});
-
-				return envHash.slice(0, wp.hashLength);
-			}
+			configHash: () => config.build.hash({webpack: globalThis.WEBPACK_CONFIG})
 		}));
 	}
 

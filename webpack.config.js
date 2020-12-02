@@ -12,21 +12,24 @@ require('config');
 
 const
 	$C = require('collection.js'),
-	EventEmitter = require('eventemitter2').EventEmitter2;
+	build = include('build/entries.webpack');
 
-const
-	build = include('build/entries.webpack'),
-	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
-
+/**
+ * Returns WebPack configuration to the specified entry
+ *
+ * @param {!Object} entry - options for WebPack ".entry"
+ * @param {(number|string)} buildId - build id
+ * @returns {!Object}
+ */
 async function buildFactory(entry, buildId) {
-	await include('build/preload.webpack');
+	await include('build/preconfig.webpack');
 
 	const
 		plugins = await include('build/plugins.webpack')({buildId}),
 		optimization = await include('build/optimization.webpack')({buildId, plugins}),
 		modules = await include('build/module.webpack')({buildId, plugins});
 
-	if (build.STD === buildId) {
+	if (build.STANDALONE === buildId) {
 		$C(entry).set((el) => [].concat(el));
 	}
 
@@ -36,7 +39,7 @@ async function buildFactory(entry, buildId) {
 
 		resolve: await include('build/resolve.webpack'),
 		resolveLoader: await include('build/resolve-loader.webpack'),
-		externals: await include('build/externals.webpack'),
+		externals: await include('build/externals.webpack')({buildId}),
 
 		plugins: [...plugins.values()],
 		module: {...modules, rules: [...modules.rules.values()]},
@@ -47,27 +50,19 @@ async function buildFactory(entry, buildId) {
 	};
 }
 
-const predefinedTasks = $C(build.MAX_PROCESS).map((el, buildId) => new Promise((resolve) => {
-	buildEvent.once(`build.${buildId}`, resolve);
-	buildEvent.once(`build.all`, () => resolve(include('build/empty.webpack')({buildId})));
-}));
-
+/**
+ * Array of promises with WebPack configs.
+ * To speed up build you can use "parallel-webpack" or similar modules.
+ */
 const tasks = (async () => {
 	await include('build/snakeskin');
 
 	const
 		graph = await build,
-		tasks = global.WEBPACK_CONFIG = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
+		tasks = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
 
-	$C(tasks).forEach((config, i) => {
-		buildEvent.emit(`build.${i}`, config);
-	});
-
-	buildEvent.emit(`build.all`, tasks[0]);
-	buildEvent.removeAllListeners();
-
+	globalThis.WEBPACK_CONFIG = tasks;
 	return tasks;
 })();
 
-// FIXME: https://github.com/trivago/parallel-webpack/issues/76
-module.exports = /[/\\]webpack\b/.test(process.argv[1]) ? tasks : predefinedTasks;
+module.exports = tasks;

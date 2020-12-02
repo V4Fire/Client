@@ -27,7 +27,7 @@ import { BindRemoteWatchersParams } from 'core/component/watch/interface';
  */
 export function bindRemoteWatchers(component: ComponentInterface, params?: BindRemoteWatchersParams): void {
 	const
-		p = params || {};
+		p = params ?? {};
 
 	const
 		{unsafe} = component,
@@ -37,17 +37,17 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		selfAsync = unsafe.$async,
 
 		// Link to an async instance
-		$a = p.async || selfAsync;
+		$a = p.async ?? selfAsync;
 
 	const
 		// True if the component is deactivated right now
 		isDeactivated = hook === 'deactivated',
 
 		// True if the component isn't created yet
-		isBeforeCreate = beforeHooks[hook];
+		isBeforeCreate = Boolean(beforeHooks[hook]);
 
 	const
-		watchersMap = p.watchers || meta.watchers,
+		watchersMap = p.watchers ?? meta.watchers,
 
 		// True if the method was invoked with passing custom async instance as a property
 		customAsync = $a !== unsafe.$async;
@@ -81,7 +81,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		if (customWatcher) {
 			const m = customWatcher[1];
-			watcherNeedCreated = !m;
+			watcherNeedCreated = m === '';
 			watcherNeedMounted = m === '?';
 		}
 
@@ -91,9 +91,17 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			// ':foo' -> watcherCtx == ctx; key = 'foo'
 			// 'document:foo' -> watcherCtx == document; key = 'foo'
 			if (customWatcher) {
-				const l = customWatcher[2];
-				watcherCtx = l ? Object.get(component, l) || Object.get(globalThis, l) || component : component;
-				watchPath = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
+				const
+					l = customWatcher[2];
+
+				if (l !== '') {
+					watcherCtx = Object.get<any>(component, l) ?? Object.get(globalThis, l) ?? component;
+					watchPath = customWatcher[3].toString();
+
+				} else {
+					watcherCtx = component;
+					watchPath = customWatcher[3].dasherize();
+				}
 			}
 
 			// Iterates over all registered handlers for this watcher
@@ -109,7 +117,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				};
 
 				if (!customAsync) {
-					if (!asyncParams.label && !watchInfo.immediate) {
+					if (asyncParams.label == null && !watchInfo.immediate) {
 						let
 							defLabel;
 
@@ -126,7 +134,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						asyncParams.label = defLabel;
 					}
 
-					asyncParams.group = asyncParams.group || 'watchers';
+					asyncParams.group = asyncParams.group ?? 'watchers';
 				}
 
 				const eventParams = {
@@ -180,52 +188,44 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 								throw new ReferenceError(`The specified method "${rawHandler}" to watch is not defined`);
 							}
 
-							if (asyncParams.label) {
+							if (asyncParams.label != null) {
 								$a.setImmediate(() => component[rawHandler](...args), asyncParams);
 
 							} else {
 								component[rawHandler](...args);
 							}
 
-						} else {
-							if (watchInfo.method) {
-								rawHandler.call(component, ...args);
+						} else if (watchInfo.method != null) {
+							rawHandler.call(component, ...args);
 
-							} else {
-								rawHandler(component, ...args);
-							}
+						} else {
+							rawHandler(component, ...args);
 						}
 					};
 
-					// The situation for a property watcher when we define the standard length of one argument
+				// The situation for a property watcher when we define the standard length of one argument
 				} else {
-					// tslint:disable-next-line:only-arrow-functions
-					handler = function (val?: unknown): void {
-						// We can safely refer to the second argument without increasing of the handler length by using arguments
-						const oldVal = arguments[1];
-
+					handler = (val: unknown, ...args) => {
 						const
-							args = watchInfo.provideArgs === false ? [] : [val, oldVal];
+							argsToProvide = watchInfo.provideArgs === false ? [] : [val, ...args];
 
 						if (Object.isString(rawHandler)) {
 							if (!Object.isFunction(component[rawHandler])) {
 								throw new ReferenceError(`The specified method "${rawHandler}" to watch is not defined`);
 							}
 
-							if (asyncParams.label) {
-								$a.setImmediate(() => component[rawHandler](...args), asyncParams);
+							if (asyncParams.label != null) {
+								$a.setImmediate(() => component[rawHandler](...argsToProvide), asyncParams);
 
 							} else {
-								component[rawHandler](...args);
+								component[rawHandler](...argsToProvide);
 							}
+
+						} else if (watchInfo.method != null) {
+							rawHandler.call(component, ...argsToProvide);
 
 						} else {
-							if (watchInfo.method) {
-								rawHandler.call(component, ...args);
-
-							} else {
-								rawHandler(component, ...args);
-							}
+							rawHandler(component, ...argsToProvide);
 						}
 					};
 				}
@@ -246,26 +246,26 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							// because the watcherCtx doesn't look like an event emitter
 							const needDefEmitter =
 								watcherCtx === component &&
-
-								// tslint:disable-next-line:no-string-literal
 								!Object.isFunction(watcherCtx['on']) &&
-
-								// tslint:disable-next-line:no-string-literal
 								!Object.isFunction(watcherCtx['addListener']);
 
 							if (needDefEmitter) {
 								unsafe.$on(watchPath, handler);
 
 							} else {
-								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...(watchInfo.args || []));
+								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
 							}
 
 							return;
 						}
 
-						const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), watchInfo, handler);
-						unwatch && $a.worker(unwatch, asyncParams);
-					});
+						const
+							unwatch = $watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
+
+						if (Object.isFunction(unwatch)) {
+							$a.worker(unwatch, asyncParams);
+						}
+					}, stderr);
 
 				} else {
 					if (customWatcher) {
@@ -273,25 +273,25 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						// because the watcherCtx doesn't look like an event emitter
 						const needDefEmitter =
 							watcherCtx === component &&
-
-							// tslint:disable-next-line:no-string-literal
 							!Object.isFunction(watcherCtx['on']) &&
-
-							// tslint:disable-next-line:no-string-literal
 							!Object.isFunction(watcherCtx['addListener']);
 
 						if (needDefEmitter) {
 							unsafe.$on(watchPath, handler);
 
 						} else {
-							$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...(watchInfo.args || []));
+							$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
 						}
 
 						continue;
 					}
 
-					const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), watchInfo, handler);
-					unwatch && $a.worker(unwatch, asyncParams);
+					const
+						unwatch = $watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
+
+					if (Object.isFunction(unwatch)) {
+						$a.worker(unwatch, asyncParams);
+					}
 				}
 			}
 		};
@@ -303,7 +303,8 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		}
 
 		// Add listener to a component mounted/activated hook if the component isn't mounted yet
-		if (watcherNeedMounted && (isBeforeCreate || !component.$el)) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
 			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: exec});
 			continue;
 		}

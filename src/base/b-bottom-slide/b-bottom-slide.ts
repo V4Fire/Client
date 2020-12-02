@@ -38,10 +38,10 @@ import iBlock, {
 
 } from 'super/i-block/i-block';
 
-export * from 'super/i-data/i-data';
-
 import { HeightMode, Direction } from 'base/b-bottom-slide/interface';
 import { heightMode } from 'base/b-bottom-slide/const';
+
+export * from 'super/i-data/i-data';
 
 export * from 'base/b-bottom-slide/const';
 export * from 'base/b-bottom-slide/interface';
@@ -74,9 +74,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly stepsStore!: number[];
 
 	/**
-	 * Minimum height value of a component visible part (in pixels),
-	 * i.e. even the component is closed this part still be visible
+	 * Minimum height value of a visible part (in pixels), i.e.,
+	 * even the component is closed, this part still be visible
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNonNegative})
 	readonly visible: number = 0;
 
@@ -87,20 +88,23 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly maxVisiblePercent: number = 90;
 
 	/**
-	 * Maximum time in milliseconds after after which we can assume that there was a quick swipe
+	 * Maximum time in milliseconds after which we can assume that there was a quick swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * Minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeThreshold: number = 10;
 
 	/**
 	 * Minimum required amount of pixels of scrolling to swipe
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeThreshold: number = 40;
 
@@ -113,6 +117,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Maximum value of overlay opacity
 	 */
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
 	readonly maxOpacity: number = 0.8;
 
@@ -158,7 +163,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 	/** @see [[iHistory.history]] */
 	@system<iHistory>((ctx) => new History(ctx))
-	readonly history!: History<iHistory>;
+	readonly history!: History;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -347,7 +352,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.isPullingStore = value;
 
 		this[value ? 'setRootMod' : 'removeRootMod']('fullscreen-moving', true);
-		this[value ? 'setMod' : 'removeMod']('stick', false);
+		void this[value ? 'setMod' : 'removeMod']('stick', false);
 
 		// @deprecated
 		this.emit('changeMoveState', value);
@@ -361,7 +366,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@p({cache: false})
 	protected get visibleInPercent(): number {
-		return !this.windowHeight ? 0 : this.visible / this.windowHeight * 100;
+		return this.windowHeight === 0 ? 0 : this.visible / this.windowHeight * 100;
 	}
 
 	/**
@@ -382,7 +387,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * True if all animations need to use requestAnimationFrame
 	 */
 	protected get shouldUseRAF(): boolean {
-		return !this.browser.is.iOS;
+		return this.browser.is.iOS === false;
 	}
 
 	/** @see [[History.onPageTopVisibilityChange]] */
@@ -412,12 +417,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			return false;
 		}
 
-		if (!this.visible) {
-			this.removeMod('hidden', true);
-			iOpen.open(this).catch(stderr);
+		if (this.visible === 0) {
+			void this.removeMod('hidden', true);
+			await iOpen.open(this);
 		}
 
-		this.step = step || 1;
+		this.step = step ?? 1;
 		this.history.initIndex();
 
 		this.emit('open');
@@ -439,9 +444,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		this.step = 0;
 
-		if (!this.visible) {
+		if (this.visible === 0) {
 			iOpen.close(this).catch(stderr);
-			this.setMod('hidden', true);
+			await this.setMod('hidden', true);
 		}
 
 		this.history.clear();
@@ -488,7 +493,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 	/** @see [[iOpen.onOpenedChange]] */
 	onOpenedChange(): void {
-		return;
+		// Loopback
 	}
 
 	/** @see [[iObserveDOM.onDOMChange]] */
@@ -498,12 +503,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 	/** @see [[iOpen.onKeyClose]] */
 	async onKeyClose(): Promise<void> {
-		return;
+		// Loopback
 	}
 
 	/** @see [[iOpen.onTouchClose]] */
 	async onTouchClose(): Promise<void> {
-		return;
+		// Loopback
 	}
 
 	/** @see [[iObserveDOM.initObservers]] */
@@ -532,7 +537,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@hook('mounted')
 	@wait('ready')
 	protected initNodePosition(): CanPromise<void> {
-		document.body.insertAdjacentElement('afterbegin', this.$el);
+		document.body.insertAdjacentElement('afterbegin', this.$el!);
 	}
 
 	/**
@@ -542,14 +547,14 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@wait('ready')
 	protected initGeometry(): CanPromise<void> {
 		const
-			{maxVisiblePercent, $refs: {header, content, view}} = this;
+			{maxVisiblePercent, $refs: {header, content, view, window}} = this;
 
 		const
-			currentPage = this.history?.current?.content;
+			currentPage = this.history.current?.content;
 
 		if (this.heightMode === 'content' && currentPage?.initBoundingRect) {
 			const
-				currentContentPageHeight = currentPage?.initBoundingRect.height;
+				currentContentPageHeight = currentPage.initBoundingRect.height;
 
 			if (content.clientHeight !== currentContentPageHeight) {
 				content.style.height = currentContentPageHeight.px;
@@ -567,11 +572,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		if (currentPage) {
 			Object.assign((<HTMLElement>currentPage.el).style, {
-				maxHeight: maxVisiblePx.px
+				maxHeight: (maxVisiblePx === 0 ? 0 : (maxVisiblePx - header.clientHeight)).px
 			});
 		}
 
-		Object.assign(view.style, {
+		Object.assign(window.style, {
 			// If documentElement height is equal to zero, maxVisiblePx is always be zero too,
 			// even after new calling of initGeometry.
 			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
@@ -586,7 +591,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch('visible')
 	protected initOffset(): void {
 		this.offset = this.visible;
-		this.updateWindowPosition();
+		void this.updateWindowPosition();
 	}
 
 	/**
@@ -606,8 +611,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.offset = this.stepsInPixels[this.step];
 		this.opacity = this.isFullyOpened ? this.maxOpacity : 0;
 		this.stopMovingAnimation();
-		this.updateWindowPosition();
-		this.updateOpacity();
+
+		void this.updateWindowPosition();
+		void this.updateOpacity();
 	}
 
 	/**
@@ -643,10 +649,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		if (isMaxNotReached) {
 			this.offset += this.diff;
 			this.isPulling = true;
-			this.updateWindowPosition();
+
+			void this.updateWindowPosition();
 		}
 
-		this.performOpacity();
+		void this.performOpacity();
 		this.diff = 0;
 	}
 
@@ -706,7 +713,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			lastStep = this.stepsInPixels[stepLength - 1],
 			penultimateStep = this.stepsInPixels[stepLength - 2];
 
-		if (penultimateStep === undefined || penultimateStep > this.offset) {
+		if (!Object.isNumber(penultimateStep) || penultimateStep > this.offset) {
 			return;
 		}
 
@@ -722,7 +729,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		}
 
 		this.opacity = opacity;
-		this.updateOpacity();
+		void this.updateOpacity();
 	}
 
 	/**
@@ -739,10 +746,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		if (this.heightMode === 'content') {
 			if (!respectDirection && isThresholdPassed) {
-				this[this.contentHeight / 2 < offset ? 'next' : 'prev']();
+				void this[this.contentHeight / 2 < offset ? 'next' : 'prev']();
 
 			} else if (respectDirection) {
-				this[direction > 0 ? 'next' : 'prev']();
+				void this[direction > 0 ? 'next' : 'prev']();
 			}
 
 		} else {
@@ -760,7 +767,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 					const
 						res = Math.abs(offset - stepsInPixels[i]);
 
-					if (!min || min > res) {
+					if (!Object.isNumber(min) || min > res) {
 						min = res;
 						step = i;
 					}
@@ -778,17 +785,16 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 					}
 				}
 
+				// tslint:disable-next-line:prefer-conditional-expression
 				if (direction > 0) {
 					step = i > stepsInPixels.length - 1 ? i - 1 : i;
 
 				} else {
-					i === 0 ? step = i : step = i - 1;
+					step = i === 0 ? i : i - 1;
 				}
 			}
 
-			this.step = step;
-
-			if (this.step === 0) {
+			if (step === 0) {
 				this.close().catch(stderr);
 			}
 		}
@@ -804,7 +810,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	protected async recalculateState(): Promise<void> {
 		try {
 			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
-			this.initGeometry();
+			void this.initGeometry();
 			this.bakeSteps();
 			this.stickToStep();
 
@@ -817,7 +823,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@hook('beforeDestroy')
 	protected removeFromDOMIfPossible(): void {
 		if (!this.isStepTransitionInProgress) {
-			this.$el.remove();
+			this.$el?.remove();
 		}
 	}
 
@@ -846,11 +852,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.async.once(win, 'transitionend', () => {
 			if (this.isFullyOpened) {
 				this.lock().catch(stderr);
-				this.removeMod('events', false);
+				void this.removeMod('events', false);
 
 			} else {
 				this.unlock().catch(stderr);
-				this.setMod('events', false);
+				void this.setMod('events', false);
 
 				if (this.scrollToTopOnClose) {
 					view.scrollTo(0, 0);
@@ -892,10 +898,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			{clientY} = e.touches[0];
 
 		const
-			diff = (this.currentY || clientY) - clientY;
+			diff = this.currentY > 0 ? this.currentY - clientY : 0;
 
 		this.currentY = clientY;
-		this.direction = Math.sign(diff) as Direction;
+		this.direction = <Direction>Math.sign(diff);
 
 		const needAnimate =
 			this.byTrigger ||
@@ -945,7 +951,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.stopMovingAnimation();
 		this.moveToClosest(notScroll, isThresholdPassed);
 
-		this.endY = this.endY + (this.startY - this.currentY);
+		this.endY += this.startY - this.currentY;
 		this.byTrigger = false;
 
 		this.diff = 0;

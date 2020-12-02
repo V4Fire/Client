@@ -11,12 +11,13 @@
  * @packageDocumentation
  */
 
-import Async from 'core/async';
 import { deprecate } from 'core/functools/deprecation';
-
 import { unmute } from 'core/object/watch';
+
+import Async from 'core/async';
+
 import { asyncLabel } from 'core/component/const';
-import { storeRgxp } from 'core/component/reflection';
+import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
@@ -67,7 +68,11 @@ export function beforeCreateState(
 	const
 		{unsafe, unsafe: {$parent: parent}} = component;
 
-	if (parent && !parent.componentName) {
+	const
+		isFunctional = meta.params.functional === true;
+
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	if (parent != null && parent.componentName == null) {
 		Object.set(unsafe, '$parent', unsafe.$root.unsafe.$remoteParent);
 	}
 
@@ -84,55 +89,94 @@ export function beforeCreateState(
 	attachAccessorsFromMeta(component, opts?.safe);
 	runHook('beforeRuntime', component).catch(stderr);
 
-	const
-		{systemFields, computedFields, accessors, watchDependencies, watchers} = meta,
-		{$systemFields} = unsafe;
+	const {
+		systemFields,
+		tiedFields,
+
+		computedFields,
+		accessors,
+
+		watchDependencies,
+		watchers
+	} = meta;
 
 	initFields(systemFields, component, unsafe);
-
-	let
-		watchMap;
-
-	if (watchDependencies.size) {
-		watchMap = Object.createDict();
-
-		for (let o = watchDependencies.values(), el = o.next(); !el.done; el = o.next()) {
-			const
-				val = el.value,
-				key = <string>(Object.isArray(val) ? val[0] : val);
-
-			if (systemFields[key]) {
-				watchMap[key] = true;
-			}
-		}
-	}
 
 	const
 		fakeHandler = () => undefined;
 
-	// Tie system fields with a component
-	for (let keys = Object.keys(systemFields), i = 0; i < keys.length; i++) {
+	if (watchDependencies.size > 0) {
+		const
+			watchSet = new Set<PropertyInfo>();
+
+		for (let o = watchDependencies.values(), el = o.next(); !el.done; el = o.next()) {
+			const
+				deps = el.value;
+
+			for (let i = 0; i < deps.length; i++) {
+				const
+					dep = deps[i],
+					info = getPropertyInfo(Object.isArray(dep) ? dep.join('.') : String(dep), component);
+
+				if (info.type === 'system' || isFunctional && info.type === 'field') {
+					watchSet.add(info);
+				}
+			}
+		}
+
+		// If a computed property a field or system field as a dependency,
+		// and the host component doesn't have any watchers to this field,
+		// we need to register the "fake" watcher to force watching
+		if (watchSet.size > 0) {
+			for (let o = watchSet.values(), el = o.next(); !el.done; el = o.next()) {
+				const
+					info = el.value;
+
+				const needToForceWatching =
+					watchers[info.name] == null &&
+					watchers[info.originalPath] == null &&
+					watchers[info.path] == null;
+
+				if (needToForceWatching) {
+					watchers[info.name] = [
+						{
+							deep: true,
+							immediate: true,
+							provideArgs: false,
+							handler: fakeHandler
+						}
+					];
+				}
+			}
+		}
+	}
+
+	// If a computed property is tied with a field or system field
+	// and the host component doesn't have any watchers to this field,
+	// we need to register the "fake" watcher to force watching
+	for (let keys = Object.keys(tiedFields), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			normalizedKey = key.replace(storeRgxp, '');
+			normalizedKey = tiedFields[key];
 
-		$systemFields[key] = component[key];
+		if (normalizedKey == null) {
+			continue;
+		}
 
-		// If a computed property is tied with a system field
-		// and the host component doesn't have any watchers to this field,
-		// we need to register the "fake" watcher to force watching for system fields
-		const needToForceWatching = !watchers[key] && (
-			watchMap?.[key] ||
-			storeRgxp.test(key) && (computedFields[normalizedKey] || accessors[normalizedKey])
+		const needToForceWatching = watchers[key] == null && (
+			accessors[normalizedKey] != null ||
+			computedFields[normalizedKey] != null
 		);
 
 		if (needToForceWatching) {
-			watchers[key] = [{
-				deep: true,
-				immediate: true,
-				provideArgs: false,
-				handler: fakeHandler
-			}];
+			watchers[key] = [
+				{
+					deep: true,
+					immediate: true,
+					provideArgs: false,
+					handler: fakeHandler
+				}
+			];
 		}
 	}
 
@@ -152,6 +196,12 @@ export function beforeDataCreateState(
 ): void {
 	const {meta, $fields} = component.unsafe;
 	initFields(meta.fields, component, $fields);
+
+	// Because in functional components,
+	// the watching of fields can be initialized in a lazy mode
+	if (meta.params.functional === true) {
+		Object.assign(component, $fields);
+	}
 
 	Object.defineProperty(component, '$$data', {
 		get(): typeof $fields {
@@ -195,7 +245,8 @@ export function beforeMountState(component: ComponentInterface): void {
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	component.$el.component = component;
+	Object.set(component, '$el.component', component);
+
 	runHook('beforeMounted', component).catch(stderr);
 	resolveRefs(component);
 

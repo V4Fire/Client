@@ -10,8 +10,8 @@
 import 'core/component/directives/in-view';
 //#endif
 
-//#if runtime has directives/resize
-import 'core/component/directives/resize';
+//#if runtime has directives/resize-observer
+import 'core/component/directives/resize-observer';
 //#endif
 
 //#if runtime has directives/image
@@ -21,3 +21,5 @@ import 'core/component/directives/image';
 //#if runtime has directives/update-on
 import 'core/component/directives/update-on';
 //#endif
+
+import 'core/component/directives/hook';

@@ -9,35 +9,32 @@
  */
 
 - include 'super/i-page'|b
-- include 'super/i-static-page/modules/**/*.ss'|b
-
 - import fs from 'fs-extra-promise'
-- import glob from 'glob'
-- import path from 'upath'
-- import delay from 'delay'
+
+/**
+ * Injects the specified file to a template
+ * @param {string} src
+ */
+- block index->inject(src)
+	- return fs.readFileSync(src).toString()
 
 /**
  * Base page template
  */
 - async template index(@params = {}) extends ['i-page'].index
-	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
+	/** Helpers to generate a template */
+	- h = include('src/super/i-static-page/modules/ss-helpers')
 
-	- deps = include('src/super/i-static-page/deps')
-	- globals = include('build/globals.webpack')
-	- build = include('build/build.webpack')
-
+	/** Static page title */
 	- title = @@appName
-	- pageData = Object.create(null)
-	- assets = Object.create(null)
-	- nonce = @nonce
 
-	- defineBase = false
-	- assetsRequest = true
+	/** Additional static page data */
+	- pageData = {}
 
-	- charset = { &
-		charset: 'utf-8'
-	} .
+	/** Page charset */
+	- charset = 'utf-8'
 
+	/** Map of meta viewport attributes */
 	- viewport = { &
 		'width': 'device-width',
 		'initial-scale': '1.0',
@@ -45,23 +42,42 @@
 		'user-scalable': 'no'
 	} .
 
+	/** Map with attributes of <html> tag */
 	- htmlAttrs = {}
 
+	/** @override */
+	- rootAttrs = {}
+
+	/** Should or not generate <base> tag */
+	- defineBase = false
+
+	/** Should or not do a request for assets.js */
+	- assetsRequest = false
+
+	/** Map of external libraries to load */
+	- deps = include('src/super/i-static-page/deps')
+
+	/** Own dependencies of the page */
+	- ownDeps = @@entryPoints[self.name()] || {}
+
+	/** Map with static page assets */
+	- assets = await h.getAssets(@@entryPoints)
+
 	- block root
-		- if @@fatHTML
-			- forEach @@dependencies => el, key
-				: nm = @@outputPattern({name: key})
-				? assets[key] = nm + '.js'
-				? assets[key + '_tpl'] = nm + '_tpl.js'
-				? assets[key + '$style'] = nm + '$style.css'
+		- block pageData
+			? rootAttrs['data-root-component'] = self.name()
+			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
-			- for var key in assets
-				- while !fs.existsSync(path.join(@@output, assets[key]))
-					? await delay(200)
+		? await h.generatePageInitJS(self.name(), { &
+			deps,
+			ownDeps,
 
-			? assets['std'] = @@outputPattern({name: 'std'}) + '.js'
-			? assets['vendor'] = @@outputPattern({name: 'vendor'}) + '.js'
-			? assets['webpack.runtime'] = @@outputPattern({name: 'webpack.runtime'}) + '.js'
+			assets,
+			assetsRequest,
+
+			rootTag,
+			rootAttrs
+		}) .
 
 		- block doctype
 			- doctype
@@ -70,287 +86,71 @@
 
 		< html ${htmlAttrs}
 			< head
-				: base = @@publicPath()
+				- block head
+					: base = @@publicPath()
 
-				- block meta
-					< meta ${charset}
+					- if defineBase
+						- block base
+							< base href = ${base}
 
-				- block viewport
-					: content = []
+					- block meta
 
-					- forEach viewport => el, key
-						? content.push(key + '=' + el)
+					- block charset
+						< meta charset = ${charset}
 
-					< meta &
-						name = viewport |
-						content = ${content}
-					.
+					- block viewport
+						: content = []
 
-				- block title
-					< title :: {title}
+						- forEach viewport => el, key
+							? content.push(key + '=' + el)
 
-				- if defineBase
-					- block base
-						< base href = ${base}
+						< meta &
+							name = viewport |
+							content = ${content}
+						.
 
-				- block favicons
-					/// Dirty hack for replacing startURL from manifest.json
-					: putIn injectFavicons
-						() =>
-							: faviconsSrc = glob.sync(path.join(@@favicons, '*.html'))[0]
+					- block favicons
+						+= h.getFaviconsDecl()
 
-							- if !faviconsSrc
-								- return
+					- block title
+						< title
+							{title}
 
-							: &
-								rgxp = new RegExp('<link (.*?) href="(.*?/manifest.json)">'),
-								favicons = self.inject(faviconsSrc),
-								manifest = rgxp.exec(favicons)
-							.
+					- block links
+						+= await h.loadLinks(deps.links, {assets})
 
-							+= favicons.replace(rgxp, '')
-
-							+= self.jsScript({})
-								document.write({"'<link " + manifest[1] + " href=\"" + manifest[2] + "?from=' + location.href + '\">'"|addNonce});
-
-					+= injectFavicons()
-
-				- block headScripts
-					: headLibs = deps.headScripts
-					- block headLibs
-
-					- block loadHeadScripts
-						- for var o = headLibs.entries(), el = o.next(); !el.done; el = o.next()
-							: &
-								key = el.value[0],
-								src = el.value[1],
-								isStr = Object.isString(src)
-							.
-
-							: &
-								p = isStr ? {src: src} : src,
-								needLoad = p.load !== false && !/\/$/.test(p.src)
-							.
-
-							: &
-								basename = path.basename(p.src),
-								inline = @@fatHTML || p.inline,
-								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
-							.
-
-							? src = p.src
-
-							- if p.source === 'output'
-								- while !assets[src]
-									- while !fs.existsSync(build.assetsJSON)
-										? await delay(500)
-
-									? await delay(500)
-									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
-
-								? src = assets[src]
-								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
-								? src = inline ? src : path.relative(@@output, src)
-
-							- else
-								? src = self.loadToLib.apply(self, [{name: key, relative: !inline}].concat(cwd, src))
-
-							? p = Object.reject(p, ['src', 'source', 'load'])
-
-							- if !needLoad
-								? src = @@publicPath(src)
-
-								+= self.jsScript({})
-									PATH['{key}'] = '{src}';
-
-							- else
-								- if inline
-									- while !fs.existsSync(src)
-										? await delay(500)
-
-									+= self.jsScript(p)
-										requireMonic({src})
-
-								- else
-									? src = @@publicPath(src)
-									+= self.jsScript(Object.assign({defer: true}, p, {src: src}))
-
-			: pageName = self.name()
-
-			- block pageData
-				? rootAttrs['data-root-component'] = pageName
-				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
+					- block headScripts
+						+= h.getVarsDecl({wrap: true})
+						+= await h.loadLibs(deps.headScripts, {assets})
 
 			< body
-				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}
+				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
 					- block headHelpers
+
 					- block innerRoot
 						- if overWrapper
 							< .&__over-wrapper
 								- block overWrapper
 
 							- block body
+
 						- block helpers
 						- block providers
 
-				+= self.jsScript({})
-					# block initVars
-						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
-
-						# if nonce
-							var GLOBAL_NONCE = #{nonce|json};
-
-						var
-							READY_STATE = 0,
-							PATH = #{assets|json};
-
-						try {
-							PATH = new Proxy(PATH, {
-								get: function (target, prop) {
-									if (target.hasOwnProperty(prop)) {
-										var v = target[prop];
-										return typeof v === 'string' ? v : v.publicPath || v.path;
-									}
-
-									console.log(target);
-									throw new Error('Path "' + prop + '" is not find!');
-								}
-							});
-
-						} catch(_) {}
-
-				- if !@@fatHTML && assetsRequest
+				- block deps
 					- block assets
-						+= self.jsScript({src: @@publicPath(@@assetsJS)})
-
-				- block head
-					: defStyles = deps.styles
-					- block defStyles
-
-					- block loadStyles
-						- for var o = defStyles.entries(), el = o.next(); !el.done; el = o.next()
-							: &
-								key = el.value[0],
-								src = el.value[1],
-								p = Object.isString(src) ? {src: src} : src
-							.
-
-							: &
-								inline = @@fatHTML || p.inline,
-								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
-							.
-
-							? src = p.src
-
-							- if p.source === 'output'
-								- while !assets[src]
-									- while !fs.existsSync(build.assetsJSON)
-										? await delay(500)
-
-									? await delay(500)
-									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
-
-								? src = assets[src]
-								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
-								? src = inline ? src : path.relative(@@output, src)
-
-							- else
-								? src = self.loadToLib.apply(self, [{name: key, relative: !inline}].concat(cwd, src))
-
-							? p = Object.reject(p, ['href', 'source'])
-
-							- if inline
-								- while !fs.existsSync(src)
-									? await delay(500)
-
-								+= self.cssLink(p)
-									requireMonic({src})
-
-							- else
-								? src = @@publicPath(src)
-								+= self.cssLink(Object.assign({defer: true}, p, {href: src}))
+						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
 
 					- block styles
-						+= self.addDependencies('styles')
+						+= await h.loadStyles(deps.styles, {assets})
+						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
-					- block std
-						+= self.jsScript({})
-							+= self.addScriptDep('std', {optional: true})
+					- block scripts
+						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
 
-					: defLibs = deps.scripts
-					- block defLibs
+						+= await h.loadLibs(deps.scripts, {assets})
+						+= h.getInitLibDecl({wrap: true})
 
-					- block loadLibs
-						- for var o = defLibs.entries(), el = o.next(); !el.done; el = o.next()
-							: &
-								key = el.value[0],
-								src = el.value[1],
-								isStr = Object.isString(src)
-							.
-
-							: &
-								p = isStr ? {src: src} : src,
-								needLoad = p.load !== false && !/\/$/.test(p.src)
-							.
-
-							: &
-								basename = path.basename(p.src),
-								inline = @@fatHTML || p.inline,
-								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
-							.
-
-							? src = p.src
-
-							- if p.source === 'output'
-								- while !assets[src]
-									- while !fs.existsSync(build.assetsJSON)
-										? await delay(500)
-
-									? await delay(500)
-									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
-
-								? src = assets[src]
-								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
-								? src = inline ? src : path.relative(@@output, src)
-
-							- else
-								? src = self.loadToLib.apply(self, [{name: key, relative: !inline}].concat(cwd, src))
-
-							? p = Object.reject(p, ['src', 'source', 'load'])
-
-							- if !needLoad
-								? src = @@publicPath(src)
-
-								+= self.jsScript({})
-									PATH['{key}'] = '{src}';
-
-							- else
-								- if inline
-									- while !fs.existsSync(src)
-										? await delay(500)
-
-									+= self.jsScript(p)
-										requireMonic({src})
-
-								- else
-									? src = @@publicPath(src)
-									+= self.jsScript(Object.assign({defer: true}, p, {src: src}))
-
-						+= self.jsScript({})
-							# block initLibs
-								if (typeof Vue !== 'undefined') {
-									Vue.default = Vue;
-								}
-
-						- block scripts
-							+= self.jsScript({})
-								+= self.addScriptDep('vendor', {optional: true})
-
-							+= self.addDependencies('scripts')
-
-							+= self.jsScript({})
-								+= self.addScriptDep('webpack.runtime')
-
-					+= self.jsScript({})
-						- block depsReady
-							READY_STATE++;
+						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
+						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
+						+= h.getScriptDeclByName('webpack.runtime', {assets, wrap: true})

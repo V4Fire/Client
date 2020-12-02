@@ -6,14 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { UnsafeIData } from 'super/i-data/i-data';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
+import { UnsafeIData } from 'super/i-data/i-data';
+import { ComponentVNodeData } from 'core/component/vnode';
+
 export interface RequestQueryFn<T extends unknown = unknown> {
-	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
+	(params: DataState<T>): Dictionary<Dictionary>;
 }
 export interface RequestFn<T extends unknown = unknown> {
-	(params: RequestMoreParams<T>): boolean;
+	(params: DataState<T>): boolean;
 }
 
 export interface GetData<T extends unknown = unknown> {
@@ -39,9 +41,9 @@ export interface OptionEl<T extends unknown = unknown> {
 
 /**
  * @typeParam ITEM - data item to render
- * @typeParam RAW - raw provider data without any processing
+ * @typeParam RAW - raw provider data
  */
-export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
+export interface DataState<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -53,6 +55,11 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 	nextPage: number;
 
 	/**
+	 * All loaded data
+	 */
+	data: unknown[];
+
+	/**
 	 * Number of items to show till the page bottom is reached
 	 */
 	itemsTillBottom: number;
@@ -60,7 +67,7 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<ITEM>[];
+	items: Array<RenderItem<ITEM>>;
 
 	/**
 	 * Data that pending to be rendered
@@ -82,23 +89,28 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 		normalized: ITEM[];
 
 		/**
-		 * Raw provider data without any processing
+		 * Raw provider data
 		 */
-		raw: RAW;
-	}
+		raw: CanUndef<RAW>;
+	};
 
 	/**
 	 * @deprecated
 	 * @see [[RequestMoreParams.lastLoadedChunk]]
 	 */
-	lastLoadedData: Array<ITEM>;
+	lastLoadedData: ITEM[];
+
+	/**
+	 * `total` property from loaded data
+	 */
+	total: CanUndef<number>;
 }
 
-export interface RemoteData {
+export interface RemoteData extends Dictionary {
 	/**
 	 * Data to render components
 	 */
-	data: unknown[];
+	data?: unknown[];
 
 	/**
 	 * Total number of elements
@@ -129,10 +141,17 @@ export interface RenderItem<T extends unknown = unknown> {
 }
 
 /**
+ * Attributes of items to render
+ */
+export type ItemAttrs = {
+	[prop in keyof ComponentVNodeData]?: ComponentVNodeData[prop];
+} & Dictionary;
+
+/**
  * Last loaded data chunk
  *
  * @typeParam DATA - data to render
- * @typeParam RAW - raw provider data without any processing
+ * @typeParam RAW - raw provider data
  */
 export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends unknown = unknown> {
 	normalized: DATA;
@@ -146,20 +165,33 @@ export interface DataToRender {
 }
 
 /**
- * The local state of a component
+ * The local state of a component:
  *
- * * `error` - indicates the component loading error appear
- * * `init` - indicates the component now loading the first chunk of data
- * * `ready` - indicates the component now is ready to render data
+ *  * `error` - indicates the component loading error appear
+ *  * `init` - indicates the component now loading the first chunk of data
+ *  * `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';
+
+/**
+ * The loading strategy:
+ *
+ *  * `scroll` - will prompt the client to load data every time a new element appears in the viewport
+ *  * `manual` - there is only one way to load data: by using `renderNext` method (except the initial load)
+ */
+export type LoadStrategy = 'scroll' | 'manual';
 
 /**
  * Display state of the ref
  */
 export type RefDisplayState = '' | 'none';
 
-// @ts-ignore
+/**
+ * `bVirtualScroll` `$refs`
+ */
+export type bVirtualScrollRefs = bVirtualScroll['$refs'];
+
+// @ts-ignore (unsafe)
 export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
 	total: CTX['total'];
@@ -178,4 +210,14 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 
 	// @ts-ignore (access)
 	getOptionKey: CTX['getOptionKey'];
+
+	// @ts-ignore (access)
+	getDataStateSnapshot: CTX['getDataStateSnapshot'];
+
+	// @ts-ignore (access)
+	onRequestError: CTX['onRequestError'];
 }
+
+export type MergeDataStateParams = {
+	[key in keyof DataState]?: DataState[key];
+};

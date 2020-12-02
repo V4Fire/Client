@@ -78,8 +78,8 @@ export interface ComponentOptions {
 	 * values of the input properties:
 	 *   1. If an empty dictionary, the component will always created as functional;
 	 *   2. If a dictionary with values, the dictionary properties represent component input properties.
-	 *      If the component invocation take these properties with the values that declared within "functional" parameters,
-	 *      it will be created as functional.
+	 *      If the component invocation take these properties with the values that
+	 *      declared within "functional" parameters, it will be created as functional.
 	 *      Also, you can specify multiple values of one input property by using a list of values.
 	 *      Mind that inferring of a component type is compile based, i.e. you can't depend on values from runtime,
 	 *      but you can directly cast the type by using "v-func" directive;
@@ -285,6 +285,7 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 	unique?: boolean | UniqueFieldFn<CTX>;
 	replace?: boolean;
 	functional?: boolean;
+	functionalWatching?: boolean;
 	after?: Set<string>;
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;
@@ -304,6 +305,7 @@ export interface ComponentAccessor<T = unknown> extends ComputedOptions<T> {
 	src: string;
 	replace?: boolean;
 	functional?: boolean;
+	watchable?: boolean;
 }
 
 export interface ComponentHook {

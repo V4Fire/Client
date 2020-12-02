@@ -18,7 +18,7 @@ import semaphore from 'core/init/semaphore';
 
 export default (async () => {
 	const
-		tasks = <Promise<unknown>[]>[];
+		tasks = <Array<Promise<unknown>>>[];
 
 	state.isOnline = true;
 	net.isOnline().then((v) => {

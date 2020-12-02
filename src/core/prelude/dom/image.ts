@@ -14,25 +14,29 @@ import extend from 'core/prelude/extend';
  * @param onSuccess
  * @param [onFail]
  */
-extend(HTMLImageElement.prototype, 'onInit', function (
+extend(HTMLImageElement.prototype, 'onInit', function onInit(
 	this: HTMLImageElement,
 	onSuccess: () => void,
 	onFail?: (err?: Error) => void
 ): void {
-	// tslint:disable-next-line:no-string-literal
 	globalThis['setImmediate'](() => {
 		if (this.complete) {
-			if (this.height || this.width) {
+			if (this.height > 0 || this.width > 0) {
 				onSuccess.call(this);
 
-			} else {
-				onFail && onFail.call(this);
+			} else if (Object.isFunction(onFail)) {
+				onFail.call(this);
 			}
 
 		} else {
 			const onError = (err) => {
-				onFail && onFail.call(this, err);
+				if (Object.isFunction(onFail)) {
+					onFail.call(this, err);
+				}
+
 				this.removeEventListener('error', onError);
+
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				this.removeEventListener('load', onLoad);
 			};
 

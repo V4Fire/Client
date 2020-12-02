@@ -6,20 +6,35 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-list/README.md]]
+ * @packageDocumentation
+ */
+
+//#if demo
+import 'models/demo/list';
+//#endif
+
 import symbolGenerator from 'core/symbol';
+
+import { isAbsURL } from 'core/url';
+import { deprecated, deprecate } from 'core/functools/deprecation';
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import { Option } from 'base/b-list/modules/interface';
+import { Active, Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'base/b-list/modules/interface';
+export * from 'base/b-list/interface';
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to create a list of tabs/links
+ */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -33,90 +48,157 @@ export const
 
 export default class bList extends iData implements iVisible, iWidth {
 	/**
-	 * Initial component value
+	 * Initial list of component items
 	 */
 	@prop(Array)
-	readonly valueProp: Option[] = [];
+	readonly itemsProp: Items = [];
 
 	/**
-	 * Initial component active value
+	 * @deprecated
+	 * @see [[bList.itemsProp]]
+	 */
+	@prop({type: Array, required: false})
+	readonly valueProp?: Items;
+
+	/**
+	 * Initial component active value/s.
+	 * If the component is switched to the "multiple" mode, you can pass an array or Set to define several active values.
 	 */
 	@prop({required: false})
-	readonly activeProp?: CanArray<unknown>;
+	readonly activeProp?: unknown[] | Active;
 
 	/**
-	 * If true, then will be generated href value for a link if it's not existed
+	 * If true, then all items without the "href" option will automatically generate a link by using "value"
+	 * and other props
 	 */
 	@prop(Boolean)
 	readonly autoHref: boolean = false;
 
 	/**
-	 * If true, then all list labels won't be shown
-	 */
-	@prop(Boolean)
-	readonly hideLabels: boolean = false;
-
-	/**
-	 * If true, then will be enabled multiple value mode
+	 * If true, the component supports the feature of multiple active values
 	 */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
 
 	/**
-	 * If true, then tab activation can be cancel (with multiple = false)
+	 * If true, the active item can be unset by using another click to it.
+	 * By default, if the component is switched to the "multiple" mode, this value is set to `true`,
+	 * otherwise to `false`.
 	 */
-	@prop(Boolean)
-	readonly cancelable: boolean = false;
+	@prop({type: Boolean, required: false})
+	readonly cancelable?: boolean;
 
 	/**
-	 * If true, then will be shown page load status on transitions
+	 * List of component items
+	 * @see [[bList.itemsProp]]
 	 */
-	@prop(Boolean)
-	readonly showProgress: boolean = false;
+	@computed({dependencies: ['value', 'itemsStore', 'deprecated']})
+	get items(): Items {
+		return <Items>this.field.get(this.deprecated ? 'value' : 'itemsStore');
+	}
 
 	/**
-	 * Component value
+	 * Sets a new list of component items
+	 * @see [[bList.itemsProp]]
 	 */
-	@field<bList>((o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val)))
-	value!: Option[];
+	set items(value: Items) {
+		this.field.set(this.deprecated ? 'value' : 'itemsStore', value);
+	}
 
 	/**
-	 * Component active value
+	 * @deprecated
+	 * @see [[bList.items]]
 	 */
-	get active(): unknown {
-		const v = this.field.get('activeStore');
-		return this.multiple ? Object.keys(<object>v) : v;
+	@field<bList>((o) => o.sync.link<CanUndef<Items>>((val) => {
+		if (o.dataProvider != null) {
+			return o.value;
+		}
+
+		return val != null ? o.normalizeItems(val) : val;
+	}))
+
+	value?: Items;
+
+	/**
+	 * Component active value.
+	 * If the component is switched to the "multiple" mode, the getter will return a Set object.
+	 * @see [[bList.activeStore]]
+	 */
+	get active(): Active {
+		const
+			v = this.field.get('activeStore');
+
+		if (this.multiple) {
+			return Object.isSet(v) ? new Set(v) : new Set();
+		}
+
+		return v;
 	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,
-		...iWidth.mods
+		...iWidth.mods,
+
+		hideLabels: [
+			'true',
+			['false']
+		]
 	};
 
 	/**
-	 * Temporary index table
+	 * Store of component items
+	 * @see [[bList.items]]
+	 */
+	@field<bList>((o) => o.sync.link<Items>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Items>>o.itemsStore ?? [];
+		}
+
+		return o.normalizeItems(val);
+	}))
+
+	protected itemsStore!: Items;
+
+	/**
+	 * True, if the component works with the deprecated API
+	 * @protected
+	 */
+	@system()
+	protected deprecated: boolean = false;
+
+	/**
+	 * Map of item indexes and their values
 	 */
 	@system()
 	protected indexes!: Dictionary;
 
 	/**
-	 * Temporary values table
+	 * Map of item values and their indexes
 	 */
 	@system()
-	protected values!: Dictionary<number>;
+	protected values!: Map<unknown, number>;
 
 	/**
-	 * Component active value store
+	 * Internal component active value store.
+	 * If the component is switched to the "multiple" mode, the value is defined as a Set structure.
 	 *
-	 * @emits change(active: unknown)
-	 * @emits immediateChange(active: unknown)
+	 * @see [[bList.activeProp]]
+	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	@system<bList>((o) => o.sync.link((val) => {
 		const
 			beforeDataCreate = o.hook === 'beforeDataCreate';
 
 		if (val === undefined && beforeDataCreate) {
+			if (o.multiple) {
+				if (Object.isSet(o.activeStore)) {
+					return o.activeStore;
+				}
+
+				return new Set(Array.concat([], o.activeStore));
+			}
+
 			return o.activeStore;
 		}
 
@@ -125,7 +207,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if (o.multiple) {
 			const
-				objVal = Object.fromArray(Array.concat([], val));
+				objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
 
 			if (Object.fastCompare(objVal, o.activeStore)) {
 				return o.activeStore;
@@ -138,7 +220,7 @@ export default class bList extends iData implements iVisible, iWidth {
 		}
 
 		if (beforeDataCreate) {
-			o.emit('immediateChange', newVal);
+			o.emit('immediateChange', o.multiple ? new Set(newVal) : newVal);
 
 		} else {
 			o.setActive(newVal);
@@ -147,79 +229,89 @@ export default class bList extends iData implements iVisible, iWidth {
 		return newVal;
 	}))
 
-	protected activeStore!: unknown;
+	protected activeStore!: Active;
 
 	/**
-	 * Returns link to the active element
+	 * Returns a link to the active item element.
+	 * If the component is switched to the "multiple" mode, the getter will return an array of elements.
 	 */
 	@computed({
 		cache: true,
 		dependencies: ['active']
 	})
 
-	protected get activeElement(): CanPromise<CanUndef<HTMLAnchorElement>> {
-		return this.waitStatus('ready', () => {
-			const
-				val = String(this.active);
+	protected get activeElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
+		const
+			{active} = this;
 
-			if (val in this.values) {
-				return this.block.element<HTMLAnchorElement>('link', {
-					id: this.values[val]
-				});
+		const getEl = (value) => {
+			const
+				id = Object.get<CanUndef<number>>(this.values, [value]);
+
+			if (id != null) {
+				return this.block?.element<HTMLAnchorElement>('link', {id});
+			}
+		};
+
+		return this.waitStatus('ready', () => {
+			if (this.multiple) {
+				if (!Object.isSet(active)) {
+					return [];
+				}
+
+				return [...active].flatMap((val) => getEl(val) ?? []);
 			}
 
-			return undefined;
+			return getEl(active);
 		});
 	}
 
 	/**
-	 * Toggles the specified value
-	 *
-	 * @param value
-	 * @emits change(active: unknown)
+	 * Toggles activation of the specified value
+	 * @param value - item value to activate
 	 */
 	toggleActive(value: unknown): boolean {
 		const
-			active = this.field.get('activeStore');
+			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (String(value) in <Dictionary>active) {
-				return this.removeActive(value);
+			if (Object.has(activeStore, [value])) {
+				return this.unsetActive(value);
 			}
 
 			return this.setActive(value);
 		}
 
-		if (active !== value) {
+		if (activeStore !== value) {
 			return this.setActive(value);
 		}
 
-		return this.removeActive(value);
+		return this.unsetActive(value);
 	}
 
 	/**
 	 * Activates the specified value
 	 *
 	 * @param value
-	 * @emits change(active: unknown)
-	 * @emits immediateChange(active: unknown)
+	 * @emits `change(active: CanArray<unknown>)`
+	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	setActive(value: unknown): boolean {
 		const
-			active = this.field.get('activeStore');
+			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (String(value) in <Dictionary>active) {
+			if (Object.has(activeStore, [value])) {
 				return false;
 			}
 
-			this.field.set(`activeStore.${value}`, true);
+			(<Set<unknown>>activeStore).add(value);
 
-		} else if (active === value) {
+		} else if (activeStore === value) {
 			return false;
 
 		} else {
-			this.field.set('activeStore', value);
+			this.field.set('activeStore', Object.freeze(value));
 		}
 
 		const
@@ -227,7 +319,8 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if ($b) {
 			const
-				target = $b.element('link', {id: this.values[String(value)]});
+				id = Object.get<CanUndef<number>>(this.values, [value]),
+				target = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple) {
 				const
@@ -243,8 +336,9 @@ export default class bList extends iData implements iVisible, iWidth {
 			}
 		}
 
-		this.emit('change', this.active);
 		this.emit('immediateChange', this.active);
+		this.emit('change', this.active);
+
 		return true;
 	}
 
@@ -252,22 +346,21 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Deactivates the specified value
 	 *
 	 * @param value
-	 * @emits change(active: unknown)
-	 * @emits immediateChange(active: unknown)
+	 * @emits `change(active: unknown)`
+	 * @emits `immediateChange(active: unknown)`
 	 */
-	removeActive(value: unknown): boolean {
+	unsetActive(value: unknown): boolean {
 		const
-			active = this.field.get('activeStore'),
-			cantCancel = !this.cancelable;
+			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (!(String(value) in <Dictionary>active) || cantCancel) {
+			if (!Object.has(activeStore, [value]) || this.cancelable === false) {
 				return false;
 			}
 
-			this.field.delete(`activeField.${value}`);
+			(<Set<unknown>>activeStore).delete(value);
 
-		} else if (active !== value || cantCancel) {
+		} else if (activeStore !== value || this.cancelable !== true) {
 			return false;
 
 		} else {
@@ -279,32 +372,43 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if ($b) {
 			const
-				target = $b.element('link', {id: this.values[String(value)]});
+				id = Object.get<CanUndef<number>>(this.values, [value]),
+				target = id != null ? $b.element('link', {id}) : null;
 
 			if (target) {
 				$b.setElMod(target, 'link', 'active', false);
 			}
 		}
 
-		this.emit('change', this.active);
 		this.emit('immediateChange', this.active);
+		this.emit('change', this.active);
+
 		return true;
 	}
 
+	/**
+	 * @deprecated
+	 * @see [[bList.unsetActive]]
+	 */
+	@deprecated({renamedTo: 'unsetActive'})
+	removeActive(value: unknown): boolean {
+		return this.unsetActive(value);
+	}
+
 	/** @override */
-	protected initRemoteData(): CanUndef<Option[]> {
+	protected initRemoteData(): CanUndef<Items> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent<Option[]>(this.db);
+			val = this.convertDBToComponent<Items>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.value = this.normalizeOptions(val);
+			return this.items = this.normalizeItems(val);
 		}
 
-		return this.value;
+		return this.items;
 	}
 
 	/** @override */
@@ -316,40 +420,77 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
-		this.normalizeOptions = i.normalizeOptions.bind(this);
+
+		if ('deprecated' in i.normalizeOptions) {
+			this.normalizeItems = i.normalizeItems.bind(this);
+
+		} else {
+			deprecate({
+				name: 'valueProp',
+				type: 'property',
+				renamedTo: 'itemsProp'
+			});
+
+			deprecate({
+				name: 'value',
+				type: 'property',
+				renamedTo: 'items'
+			});
+
+			deprecate({
+				name: 'normalizeOptions',
+				type: 'method',
+				renamedTo: 'normalizeItems'
+			});
+
+			this.deprecated = true;
+			this.normalizeItems = i.normalizeOptions.bind(this);
+		}
 	}
 
 	/**
-	 * Returns true if the specified option is active
-	 * @param option
+	 * Returns true if the specified item is active
+	 * @param item
 	 */
-	protected isActive(option: Option): boolean {
-		const active = this.field.get('activeStore');
-		return this.multiple ? String(option.value) in <Dictionary>active : option.value === active;
+	protected isActive(item: Item): boolean {
+		const v = this.field.get('activeStore');
+		return this.multiple ? Object.has(v, [item.value]) : item.value === v;
 	}
 
 	/**
-	 * Normalizes the specified options and returns it
-	 * @param options
+	 * Normalizes the specified items and returns it
+	 * @param items
 	 */
-	protected normalizeOptions(options: CanUndef<Option[]>): Option[] {
+	protected normalizeItems(items: CanUndef<Items>): Items {
 		const
-			res = <Option[]>[];
+			res = <Items>[];
 
-		if (!options) {
+		if (!items) {
 			return res;
 		}
 
-		for (let i = 0; i < options.length; i++) {
+		for (let i = 0; i < items.length; i++) {
 			const
-				el = options[i];
+				el = items[i];
 
 			if (el.value === undefined) {
 				el.value = el.href;
 			}
 
 			if (el.href === undefined) {
-				el.href = this.autoHref && el.value !== undefined ? `#${el.value}` : 'javascript:void(0)';
+				let
+					href = String(el.value);
+
+				const valid = {
+					'/': true,
+					'#': true
+				};
+
+				if (!isAbsURL.test(href) && valid[href[0]] !== true) {
+					href = `#${href}`;
+				}
+
+				el.href = this.autoHref && el.value !== undefined ? href : 'javascript:void(0)';
 			}
 
 			res.push(el);
@@ -359,39 +500,45 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/**
+	 * @deprecated
+	 * @see [[bList.normalizeItems]]
+	 */
+	@deprecated({renamedTo: 'normalizeItems'})
+	protected normalizeOptions(items: CanUndef<Items>): Items {
+		return this.normalizeItems(items);
+	}
+
+	/**
 	 * Initializes component values
-	 * @emits valueChange(value: Option[])
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
-		const
-			values = {},
-			indexes = {},
-			active = this.field.get('activeStore');
+		if (this.valueProp != null || this.field.get('value') != null) {
+			this.deprecated = true;
+		}
 
-		for (let o = <Option[]>this.$fields.value || [], i = 0; i < o.length; i++) {
+		const
+			values = new Map(),
+			indexes = {};
+
+		const
+			activeStore = this.field.get('activeStore');
+
+		for (let i = 0; i < this.items.length; i++) {
 			const
-				el = o[i],
+				el = this.items[i],
 				val = el.value;
 
-			if (el.active && (this.multiple ? !(<string>val in <Dictionary>active) : active === undefined)) {
+			if (el.active && (this.multiple ? this.activeProp === undefined : activeStore === undefined)) {
 				this.setActive(val);
 			}
 
-			values[<string>val] = i;
+			Object.set(values, [val], i);
 			indexes[i] = val;
 		}
 
 		this.values = values;
 		this.indexes = indexes;
-	}
-
-	/**
-	 * Returns a hint message for the specified element
-	 * @param el
-	 */
-	protected getElHint(el: Option): string {
-		return el.iconHint != null ? el.iconHint : this.hideLabels ? t(el.label) : '';
 	}
 
 	/** @override */
@@ -401,17 +548,20 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/**
-	 * Synchronization for the value field
+	 * Synchronization of items
 	 *
 	 * @param value
 	 * @param oldValue
-	 * @emits valueChange(value: Option[])
+	 * @emits `itemsChange(value: Items)`
 	 */
-	@watch('value')
-	protected syncValueWatcher(value: Option[], oldValue: Option[]): void {
+	@watch(['value', 'itemsStore'])
+	protected syncItemsWatcher(value: Items, oldValue: Items): void {
 		if (!Object.fastCompare(value, oldValue)) {
 			this.initComponentValues();
+
+			/** @deprecated */
 			this.emit('valueChange', value);
+			this.emit('itemsChange', value);
 		}
 	}
 
@@ -431,20 +581,20 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/**
-	 * Handler: tab change
+	 * Handler: click to some item element
 	 *
 	 * @param e
-	 * @emits actionChange(active: unknown)
+	 * @emits `actionChange(active: unknown)`
 	 */
 	@watch({
 		field: '?$el:click',
 		wrapper: (o, cb) => o.dom.delegateElement('link', cb)
 	})
 
-	protected onActive(e: Event): void {
+	protected onItemClick(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,
-			id = Number(this.block.getElMod(target, 'link', 'id'));
+			id = Number(target.getAttribute('data-id'));
 
 		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);

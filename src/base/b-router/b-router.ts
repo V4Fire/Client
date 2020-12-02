@@ -47,6 +47,7 @@ import {
 
 	RouteAPI,
 	InitialRoute,
+	PurifiedRoute,
 	StaticRoutes,
 
 	RouteBlueprint,
@@ -194,7 +195,7 @@ export default class bRouter extends iData {
 	 *
 	 * @see [[bRouter.engine]]
 	 */
-	@system((o) => o.sync.link<(v: unknown) => Router>((v) => <any>v(o)))
+	@system((o) => o.sync.link((v) => (<(v: unknown) => Router>v)(o)))
 	protected engine!: Router;
 
 	/**
@@ -402,7 +403,7 @@ export default class bRouter extends iData {
 			const
 				q = toQueryString(opts.query, false);
 
-			if (q) {
+			if (q !== '') {
 				res += `?${q}`;
 			}
 		}
@@ -437,24 +438,29 @@ export default class bRouter extends iData {
 
 		let
 			resolvedById = false,
-			resolvedRoute,
-			alias;
+			resolvedRoute: Nullable<RouteBlueprint> = null,
+			alias: Nullable<RouteBlueprint> = null;
 
 		let
 			resolvedRef = ref,
 			refIsNormalized = true,
 			externalRedirect = false;
 
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			// Reference to a route that passed as ID
 			if (resolvedRef in routes) {
 				resolvedById = true;
 				resolvedRoute = routes[resolvedRef];
 
-				const
-					meta = resolvedRoute?.meta;
+				if (resolvedRoute == null) {
+					break;
+				}
 
-				if (!meta || !meta.redirect && !meta.alias) {
+				const
+					{meta} = resolvedRoute;
+
+				if (meta.redirect == null && meta.alias == null) {
 					break;
 				}
 
@@ -465,7 +471,7 @@ export default class bRouter extends iData {
 
 			// Reference to a route that passed as a path
 			} else {
-				if (basePath) {
+				if (basePath !== '') {
 					// Resolve the situation when the passed path already has basePath
 					const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
 					resolvedRef = concatUrls(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
@@ -494,7 +500,7 @@ export default class bRouter extends iData {
 
 					// Try to test the passed ref with a route pattern
 					if (route.rgxp?.test(resolvedRef)) {
-						if (!resolvedRoute) {
+						if (resolvedRoute == null) {
 							resolvedRoute = route;
 							continue;
 						}
@@ -502,19 +508,23 @@ export default class bRouter extends iData {
 						// If we have several matches with the provided ref,
 						// like routes "/foo" and "/foo/:id" are matched with "/foo/bar",
 						// we should prefer that pattern that has more length
-						if (route.pattern!.length > resolvedRoute.pattern.length) {
+						if (route.pattern!.length > (resolvedRoute.pattern?.length ?? 0)) {
 							resolvedRoute = route;
 						}
 					}
 				}
 			}
 
+			if (resolvedRoute == null) {
+				break;
+			}
+
 			const
-				meta = resolvedRoute?.meta;
+				{meta} = resolvedRoute;
 
 			// If we haven't found a route that matches to the provided ref or the founded route doesn't redirect or refer
 			// to another route, we can exit from the search loop, otherwise, we need to resolve the redirect/alias
-			if (!meta || !meta.redirect && !meta.alias) {
+			if (meta.redirect == null && meta.alias == null) {
 				break;
 			}
 
@@ -524,7 +534,7 @@ export default class bRouter extends iData {
 			}
 
 			// The alias should preserve an original route name and path
-			if (meta.alias) {
+			if (meta.alias != null) {
 				if (alias == null) {
 					alias = resolvedRoute;
 				}
@@ -532,7 +542,8 @@ export default class bRouter extends iData {
 				resolvedRef = meta.alias;
 
 			} else {
-				resolvedRef = ref = meta.redirect;
+				resolvedRef = meta.redirect!;
+				ref = resolvedRef;
 			}
 
 			// Continue of resolving
@@ -546,15 +557,18 @@ export default class bRouter extends iData {
 
 		// We have found a route by the provided ref, but it contains an alias
 		} else if (alias) {
-			resolvedRoute = {...resolvedRoute, ...Object.select(alias, [
-				'name',
-				'pattern',
-				'rgxp',
-				'pathParams'
-			])};
+			resolvedRoute = {
+				...resolvedRoute,
+				...Object.select(alias, [
+					'name',
+					'pattern',
+					'rgxp',
+					'pathParams'
+				])
+			};
 		}
 
-		if (!resolvedRoute) {
+		if (resolvedRoute == null) {
 			return;
 		}
 
@@ -563,7 +577,7 @@ export default class bRouter extends iData {
 			meta: Object.mixin(true, {}, resolvedRoute.meta),
 
 			get page(): string {
-				return resolvedRoute.name;
+				return resolvedRoute!.name;
 			},
 
 			resolvePath(params?: Dictionary): string {
@@ -583,10 +597,10 @@ export default class bRouter extends iData {
 				}
 
 				if (externalRedirect) {
-					return path.compile(resolvedRoute.meta.redirect || ref)(p);
+					return path.compile(resolvedRoute!.meta.redirect ?? ref)(p);
 				}
 
-				return path.compile(resolvedRoute.pattern || ref)(p);
+				return path.compile(resolvedRoute!.pattern ?? ref)(p);
 			},
 
 			toPath(params?: Dictionary): string {
@@ -602,13 +616,12 @@ export default class bRouter extends iData {
 		});
 
 		// Fill route parameters from URL
-		if (!resolvedById && resolvedRoute.pattern) {
+		if (!resolvedById && resolvedRoute.rgxp != null) {
 			const
-				url = resolvedRoute.meta.external ? initialRef : resolvedRoute.url || ref,
-				params = resolvedRoute.rgxp.exec(url);
+				params = resolvedRoute.rgxp.exec(initialRef);
 
 			if (params) {
-				for (let o = path.parse(resolvedRoute.pattern), i = 0, j = 0; i < o.length; i++) {
+				for (let o = path.parse(resolvedRoute.pattern!), i = 0, j = 0; i < o.length; i++) {
 					const
 						el = o[i];
 
@@ -638,14 +651,14 @@ export default class bRouter extends iData {
 	 * @param [opts] - additional transition options
 	 * @param [method] - transition method
 	 *
-	 * @emits beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)
+	 * @emits `beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)`
 	 *
-	 * @emits change(route: Route)
-	 * @emits hardChange(route: Route)
-	 * @emits softChange(route: Route)
+	 * @emits `change(route: Route)`
+	 * @emits `hardChange(route: Route)`
+	 * @emits `softChange(route: Route)`
 	 *
-	 * @emits transition(route: Route, type: TransitionType)
-	 * @emits $root.transition(route: Route, type: TransitionType)
+	 * @emits `transition(route: Route, type: TransitionType)`
+	 * @emits `$root.transition(route: Route, type: TransitionType)`
 	 */
 	async emitTransition(
 		ref: Nullable<string>,
@@ -658,33 +671,19 @@ export default class bRouter extends iData {
 			{r, engine} = this;
 
 		const
-			currentEngineRoute = engine.route || engine.page;
+			currentEngineRoute = engine.route ?? engine.page;
 
 		this.emit('beforeChange', ref, opts, method);
 
-		// Emits the route transition event
-		const emitTransition = (onlyOwnTransition?) => {
-			const type = hardChange ? 'hard' : 'soft';
-
-			if (onlyOwnTransition) {
-				this.emit('transition', newRoute, type);
-
-			} else {
-				this.emit('change', newRoute);
-				this.emit('transition', newRoute, type);
-				r.emit('transition', newRoute, type);
-			}
-		};
-
 		let
-			newRouteInfo;
+			newRouteInfo: CanUndef<RouteAPI>;
 
 		const getEngineRoute = () => currentEngineRoute ?
-			currentEngineRoute.url || getRouteName(currentEngineRoute) :
+			currentEngineRoute.url ?? getRouteName(currentEngineRoute) :
 			undefined;
 
 		// Get information about the specified route
-		if (ref) {
+		if (ref != null) {
 			newRouteInfo = this.getRoute(engine.id(ref));
 
 		// In this case, we don't have the specified ref to a transition,
@@ -721,7 +720,7 @@ export default class bRouter extends iData {
 		}
 
 		// We haven't found any routes that math to the specified ref
-		if (!newRouteInfo) {
+		if (newRouteInfo == null) {
 			// The transition was emitted by a user, then we need to save the scroll
 			if (method !== 'event' && ref != null) {
 				await engine[method](ref, scroll);
@@ -730,11 +729,11 @@ export default class bRouter extends iData {
 			return;
 		}
 
-		if (!newRouteInfo.name) {
+		if ((<PurifiedRoute<RouteAPI>>newRouteInfo).name == null) {
 			const
 				nm = getRouteName(currentEngineRoute);
 
-			if (nm) {
+			if (nm != null) {
 				newRouteInfo.name = nm;
 			}
 		}
@@ -776,6 +775,20 @@ export default class bRouter extends iData {
 		let
 			hardChange = false;
 
+		// Emits the route transition event
+		const emitTransition = (onlyOwnTransition?: boolean) => {
+			const type = hardChange ? 'hard' : 'soft';
+
+			if (onlyOwnTransition) {
+				this.emit('transition', newRoute, type);
+
+			} else {
+				this.emit('change', newRoute);
+				this.emit('transition', newRoute, type);
+				r.emit('transition', newRoute, type);
+			}
+		};
+
 		// Checking that the new route is really needed, i.e. it isn't equal to the previous
 		const newRouteIsReallyNeeded = !Object.fastCompare(
 			getComparableRouteParams(currentRoute),
@@ -807,7 +820,8 @@ export default class bRouter extends iData {
 			// This transitions is marked as external,
 			// i.e. it refers to another site
 			if (newRouteInfo.meta.external) {
-				location.href = newRouteInfo.resolvePath(newRouteInfo.params) || '/';
+				const p = newRouteInfo.resolvePath(newRouteInfo.params);
+				location.href = p !== '' ? p : '/';
 				return;
 			}
 
@@ -829,7 +843,7 @@ export default class bRouter extends iData {
 				// will create a child watch object.
 
 				const
-					proto = <any>r!.route!.__proto__;
+					proto = <any>r.route!.__proto__;
 
 				// Correct values from the root route object
 				for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
@@ -872,7 +886,7 @@ export default class bRouter extends iData {
 				const
 					s = meta.scroll;
 
-				if (s) {
+				if (s != null) {
 					this.r.scrollTo(s.x, s.y);
 
 				} else if (hardChange) {
@@ -948,7 +962,7 @@ export default class bRouter extends iData {
 			}
 
 		} else {
-			routes = <StaticRoutes>basePathOrRoutes;
+			routes = basePathOrRoutes;
 			activeRoute = <Nullable<InitialRoute>>routesOrActiveRoute;
 		}
 
@@ -961,7 +975,7 @@ export default class bRouter extends iData {
 		}
 
 		this.routeStore = undefined;
-		await this.initRoute(activeRoute || this.initialRoute || this.defaultRoute);
+		await this.initRoute(activeRoute ?? this.initialRoute ?? this.defaultRoute);
 		return this.routes;
 	}
 
@@ -979,6 +993,7 @@ export default class bRouter extends iData {
 		}
 
 		if (Object.isArray(val)) {
+			// eslint-disable-next-line prefer-spread
 			return this.updateRoutes.apply(this, val);
 		}
 
@@ -1001,7 +1016,7 @@ export default class bRouter extends iData {
 	 */
 	@hook('beforeDataCreate')
 	protected initRoute(route: Nullable<InitialRoute> = this.initialRoute): Promise<void> {
-		if (route) {
+		if (route != null) {
 			if (Object.isString(route)) {
 				return this.replace(route);
 			}
@@ -1024,30 +1039,26 @@ export default class bRouter extends iData {
 	 * Compiles the specified static routes and returns a new object
 	 * @param [routes]
 	 */
-	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes || globalRoutes): RouteBlueprints {
+	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): RouteBlueprints {
 		const
-			basePath = this.basePath,
+			{basePath} = this,
 			compiledRoutes = {};
 
 		for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
 			const
 				name = keys[i],
-				route = routes[name] || {},
+				route = routes[name] ?? {},
 				pathParams = [];
 
 			if (Object.isString(route)) {
-				let
-					pattern;
-
-				if (route && basePath) {
+				const
 					pattern = concatUrls(basePath, route);
-				}
 
 				compiledRoutes[name] = {
 					name,
 
 					pattern,
-					rgxp: pattern != null ? path(pattern, pathParams) : undefined,
+					rgxp: path(pattern, pathParams),
 
 					get pathParams(): Key[] {
 						return pathParams;
@@ -1076,7 +1087,7 @@ export default class bRouter extends iData {
 				let
 					pattern;
 
-				if (Object.isString(route.path) && basePath) {
+				if (Object.isString(route.path)) {
 					pattern = concatUrls(basePath, route.path);
 				}
 
@@ -1104,11 +1115,11 @@ export default class bRouter extends iData {
 						...route,
 
 						name,
-						default: Boolean(route.default || route.index || defaultRouteNames[name]),
+						default: Boolean(route.default ?? route.index ?? defaultRouteNames[name]),
 
 						external: route.external ?? (
 							isExternal.test(pattern) ||
-							isExternal.test(route.redirect || '')
+							isExternal.test(route.redirect ?? '')
 						),
 
 						/** @deprecated */

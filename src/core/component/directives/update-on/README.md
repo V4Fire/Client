@@ -1,6 +1,6 @@
-# directives/update-on
+# core/component/directives/update-on
 
-This module provides a directive to manual update an element by using various event(s) from various emitters.
+This module provides a directive to manually update an element using various event(s) from multiple emitters.
 You can add one or more reactions to one element, for example:
 
 ```

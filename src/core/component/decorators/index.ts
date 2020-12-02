@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/decorators/README.md]]
+ * @packageDocumentation
+ */
+
 import { paramsFactory } from 'core/component/decorators/base';
 
 import {

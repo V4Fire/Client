@@ -1,0 +1,180 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * CSS hack for IE10-11
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   ie10-11()
+ *     color red
+ * ```
+ */
+ie10-11()
+	@media all and (-ms-high-contrast none), (-ms-high-contrast active)
+		{block}
+
+/**
+ * Activates GPU to render
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   useGPU()
+ * ```
+ */
+useGPU()
+	transform translate3d(0, 0, 0)
+
+/**
+ * Global overlays map
+ */
+$OVERLAYS = ( "layer" "modal" "overall" )
+
+/**
+ * Sets "z-index" for the specified layer position
+ *
+ * @param {string} $pos - layer variants: underall, layer, modal, overall
+ * @param {number} [$mod] - value modifier
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   position absolute
+ *   zIndex(modal)
+ * ```
+ */
+zIndex($pos, $mod = 0)
+	if $pos == "underall"
+		z-index -1
+
+	else
+		z-index index($OVERLAYS, $pos) * 1000 + $mod
+
+/**
+ * Alias for zIndex mixin
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   position absolute
+ *   z-index-pos modal
+ * ```
+ */
+z-index-pos($pos, $mod = 0)
+	zIndex($pos, $mod)
+
+/**
+ * Generates rules for flexbox (direction: row)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   flex-row center
+ * ```
+ */
+flex-row($justify, $align = $justify)
+	display flex
+
+	if $justify != "def"
+		justify-content $justify
+
+	if $align != "def"
+		align-items $align
+
+/**
+ * Generates rules for flexbox (direction: row-reverse)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   flex-row-rev center
+ * ```
+ */
+flex-row-rev($justify, $align = $justify)
+	flex-row($justify, $align)
+	flex-direction row-reverse
+
+/**
+ * Generates rules for flexbox (direction: column)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   flex-col center
+ * ```
+ */
+flex-col($justify, $align = $justify)
+	flex-row($justify, $align)
+	flex-direction column
+
+/**
+ * Generates rules for flexbox (direction: column-reverse)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
+ *
+ * @example
+ * ```stylus
+ * .foo
+ *   flex-col-rev center
+ * ```
+ */
+flex-col-rev($justify, $align = $justify)
+	flex-row($justify, $align)
+	flex-direction column-reverse
+
+/**
+ * Generates rules for a stretch modal layer
+ *
+ * @param {string} $position - position type
+ * @param {string=} [$zIndexPos] - zIndex position
+ */
+stretch-layer($position, $zIndexPos = "modal")
+	position $position
+	top 0
+	left 0
+	bottom 0
+	right 0
+	zIndex($zIndexPos)
+
+/**
+ * Generates rules from object properties
+ *
+ * @param {Object} $opts
+ * @param {boolean=} $normalize
+ */
+interpolate-props($opts, $normalize = true)
+	if type($opts) == "object"
+		for $key, $val in $opts
+			$value = type($val) == "string" ? convert($val) : $val
+			{$normalize ? dasherize($key): $key} $value
+
+/**
+ * Generates a path from the specified sequence
+ *
+ * @param {!Array<string>} $arr
+ *
+ * @example
+ * ```styl
+ * // "foo.bar.bla"
+ * path(foo bar bla)
+ * ```
+ */
+path($arr)
+	join(".", $arr)

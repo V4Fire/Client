@@ -11,4 +11,14 @@
  * @packageDocumentation
  */
 
-export default {} as Dictionary;
+import watch from 'core/object/watch';
+import { State } from 'core/component/state/interface';
+
+export * from 'core/component/state/interface';
+
+export default watch(<State>{
+	isAuth: undefined,
+	isOnline: undefined,
+	lastOnlineDate: undefined,
+	experiments: undefined
+}).proxy;

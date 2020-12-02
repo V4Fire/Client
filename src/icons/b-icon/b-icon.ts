@@ -12,8 +12,8 @@
  */
 
 import iSize from 'traits/i-size/i-size';
-
 import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
 
 /**
@@ -32,18 +32,6 @@ export default class bIcon extends iBlock implements iSize {
 	 */
 	@prop(String)
 	readonly prfx: string = '';
-
-	/**
-	 * Tooltip text
-	 */
-	@prop({type: String, required: false})
-	readonly hint?: string;
-
-	/**
-	 * Tooltip position
-	 */
-	@prop(String)
-	readonly hintPos: string = 'bottom';
 
 	/** @override */
 	static readonly mods: ModsDecl = {

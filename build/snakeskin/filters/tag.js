@@ -13,21 +13,7 @@ const
 	dasherize = require('string-dasherize');
 
 const
-	isLiteral = /^\s*[[{]/,
-	isSvgRequire = /require\(.*?\.svg[\\"']+\)/,
-	isV4Prop = /^(:|@|v-)/,
-	isStaticV4Prop = /^[^[]+$/,
-	commaRgxp = /\s*,\s*/;
-
-const isStaticLiteral = (v) => {
-	try {
-		new Function(`return ${v}`)();
-		return true;
-
-	} catch {
-		return false;
-	}
-};
+	{isObjLiteral, isSvgRequire, isV4Prop, isStaticV4Prop, commaRgxp} = include('build/snakeskin/filters/const');
 
 module.exports = [
 	/**
@@ -50,7 +36,7 @@ module.exports = [
 	},
 
 	/**
-	 * Normalizes component attributes
+	 * Normalizes component attributes: adds memoization, expands aliases, etc.
 	 * @param {!Object} attrs
 	 */
 	function normalizeComponentAttrs({attrs}) {
@@ -60,7 +46,7 @@ module.exports = [
 			}
 
 			el = $C(el).map((el) => {
-				if (Object.isString(el) && isLiteral.test(el) && isStaticLiteral(el)) {
+				if (Object.isString(el) && isObjLiteral.test(el) && isStaticLiteral(el)) {
 					return `opt.memoizeLiteral(${el})`;
 				}
 
@@ -74,7 +60,9 @@ module.exports = [
 			} else if (key === ':key') {
 				const
 					parts = el.join('').split(commaRgxp),
-					val = attrs[key] = parts.slice(-1);
+					val = parts.slice(-1);
+
+				attrs[key] = val;
 
 				$C(parts.slice(0, -1)).forEach((key) => {
 					if (key.slice(0, 2) === ':-') {
@@ -97,3 +85,14 @@ module.exports = [
 		});
 	}
 ];
+
+function isStaticLiteral(v) {
+	try {
+		// eslint-disable-next-line no-new-func
+		Function(`return ${v}`)();
+		return true;
+
+	} catch {
+		return false;
+	}
+}

@@ -17,7 +17,7 @@ const
 	{src} = require('config');
 
 /**
- * Parameters for webpack.alias
+ * Options for WebPack ".alias"
  */
 const aliases = {
 	'@super': resolve.rootDependencies[0],

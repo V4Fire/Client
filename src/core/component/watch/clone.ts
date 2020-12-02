@@ -15,7 +15,7 @@ import { WatchOptions } from 'core/object/watch';
  * @param [opts]
  */
 export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
-	if (!value || typeof value !== 'object' || Object.isFrozen(value)) {
+	if (value == null || typeof value !== 'object' || Object.isFrozen(value)) {
 		return value;
 	}
 

@@ -24,6 +24,7 @@ import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
+import { HintPosition } from 'global/g-hint/interface';
 
 import iData, {
 
@@ -61,7 +62,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	readonly requestFilter: RequestFilter = false;
+	readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
 	 * Link href
@@ -82,7 +83,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly type: ButtonType = 'button';
 
 	/**
-	 * Connected form id
+	 * Connected form identifier
 	 */
 	@prop({type: String, required: false})
 	readonly form?: string;
@@ -94,34 +95,37 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	readonly autofocus?: boolean;
 
 	/**
-	 * Icon before text
+	 * Icon to show before a button text
 	 */
 	@prop({type: String, required: false})
 	readonly preIcon?: string;
 
 	/**
-	 * Component for .preIcon
+	 * Name of the used component to show `preIcon`
+	 * @default `'b-icon'`
 	 */
 	@prop({type: String, required: false})
 	readonly preIconComponent?: string;
 
 	/**
-	 * Icon after text
+	 * Icon to show after a button text
 	 */
 	@prop({type: String, required: false})
 	readonly icon?: string;
 
 	/**
-	 * Component for .icon
+	 * Name of the used component to show `icon`
+	 * @default `'b-icon'`
 	 */
 	@prop({type: String, required: false})
 	readonly iconComponent?: string;
 
 	/**
-	 * Component for a progress icon
+	 * Component to show "in-progress" state or
+	 * Boolean, if need to show progress by slot or `b-progress-icon`
 	 */
-	@prop({type: String, required: false})
-	readonly progressIcon?: string;
+	@prop({type: [String, Boolean], required: false})
+	readonly progressIcon?: string | boolean;
 
 	/**
 	 * Tooltip text
@@ -133,7 +137,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	 * Tooltip position
 	 */
 	@prop({type: String, required: false})
-	readonly hintPos?: string;
+	readonly hintPos?: HintPosition;
 
 	/**
 	 * Dropdown position
@@ -198,6 +202,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	}
 
 	/** @see iOpenToggle.onOpenedChange */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	onOpenedChange(e: ModEvent | SetModEvent): void {
 		// ...
 	}
@@ -230,25 +235,26 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 	 * Handler: button trigger
 	 *
 	 * @param e
-	 * @emits click(e: Event)
+	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
 		if (this.type !== 'link') {
 			const
 				dp = this.dataProvider;
 
-			if (dp != null && (dp !== 'Provider' || this.href)) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (dp != null && (dp !== 'Provider' || this.href != null)) {
 				let
 					that = this;
 
-				if (this.href) {
+				if (this.href != null) {
 					that = this.base(this.href);
 				}
 
 				await (<Function>that[this.method])();
 
 			// Form attribute fix for MS Edge && IE
-			} else if (this.form && this.type === 'submit') {
+			} else if (this.form != null && this.type === 'submit') {
 				e.preventDefault();
 				const form = this.dom.getComponent<bForm>(`#${this.form}`);
 				form && await form.submit();

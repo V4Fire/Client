@@ -1,6 +1,6 @@
 # core/session
 
-This module provides API to work with a user session. The API contains functions for authorizing/unauthorizing, comparing of sessions and broadcasting session events.
+This module provides API to work with a user session. The API contains functions to authorize/unauthorize, compare different sessions and broadcast session events.
 
 ```js
 import * as session from 'core/session';

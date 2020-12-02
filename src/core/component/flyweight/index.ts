@@ -24,7 +24,7 @@ import { attachMethodsFromMeta } from 'core/component/method';
 import { implementEventAPI } from 'core/component/event';
 
 import { supports, CreateElement, VNode } from 'core/component/engines';
-import { getComponentDataFromVNode } from 'core/component/vnode';
+import { getComponentDataFromVNode, patchComponentVData } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
 import { ComponentInterface } from 'core/component/interface';
@@ -46,9 +46,9 @@ export function parseVNodeAsFlyweight(
 	parentComponent: ComponentInterface
 ): VNode | FlyweightVNode {
 	const
-		compositeAttr = vnode?.data?.attrs?.['v4-flyweight-component'];
+		compositeAttr = vnode.data?.attrs?.['v4-flyweight-component'];
 
-	if (!supports.composite || !compositeAttr) {
+	if (!supports.composite || compositeAttr == null) {
 		return vnode;
 	}
 
@@ -61,10 +61,12 @@ export function parseVNodeAsFlyweight(
 		return vnode;
 	}
 
+	delete vnode.data!.attrs!['v4-flyweight-component'];
+
 	const
 		componentData = getComponentDataFromVNode(compositeAttr, vnode),
 		componentProto = meta.constructor.prototype,
-		componentTpl = TPLS[compositeAttr] || componentProto.render;
+		componentTpl = TPLS[compositeAttr] ?? componentProto.render;
 
 	// To create a flyweight component we need to create a "fake" context for a component.
 	// The context is based on the specified parent context by using Object.create.
@@ -79,7 +81,13 @@ export function parseVNodeAsFlyweight(
 	});
 
 	fakeCtx.unsafe = fakeCtx;
+
+	fakeCtx._self = fakeCtx;
+	fakeCtx._renderProxy = fakeCtx;
+
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
+	fakeCtx._c = fakeCtx.$createElement;
+	fakeCtx._staticTrees = [];
 
 	attachMethodsFromMeta(fakeCtx);
 	implementEventAPI(fakeCtx);
@@ -128,9 +136,23 @@ export function parseVNodeAsFlyweight(
 		value: componentData.scopedSlots
 	});
 
-	Object.defineProperty(fakeCtx, '$parent', {value: parentComponent});
-	Object.defineProperty(fakeCtx, '$normalParent', {value: getNormalParent(fakeCtx)});
-	Object.defineProperty(fakeCtx, '$children', {value: vnode.children});
+	Object.defineProperty(fakeCtx, '$parent', {
+		configurable: true,
+		enumerable: true,
+		value: parentComponent
+	});
+
+	Object.defineProperty(fakeCtx, '$normalParent', {
+		configurable: true,
+		enumerable: true,
+		value: getNormalParent(fakeCtx)
+	});
+
+	Object.defineProperty(fakeCtx, '$children', {
+		configurable: true,
+		enumerable: true,
+		value: vnode.children
+	});
 
 	// Shim component input properties
 	for (let o = componentData.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -138,12 +160,19 @@ export function parseVNodeAsFlyweight(
 			key = keys[i],
 			value = o[key];
 
-		Object.defineProperty(fakeCtx, key, value !== undefined ? {
-			configurable: true,
-			enumerable: true,
-			writable: true,
-			value
-		} : defProp);
+		Object.defineProperty(
+			fakeCtx,
+			key,
+			value !== undefined ?
+				{
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value
+				} :
+
+				defProp
+		);
 
 		fakeCtx.$props[key] = value;
 	}
@@ -166,7 +195,12 @@ export function parseVNodeAsFlyweight(
 				key = keys[i],
 				val = fields[key];
 
-			if (val && (val.replace !== true && (val.unique || val.src === meta.componentName) || val.replace === false)) {
+			if (
+				val && (
+					val.replace !== true && (Object.isTruly(val.unique) || val.src === meta.componentName) ||
+					val.replace === false
+				)
+			) {
 				Object.defineProperty(fakeCtx, key, defField);
 			}
 		}
@@ -190,35 +224,19 @@ export function parseVNodeAsFlyweight(
 	fakeCtx.hook = 'created';
 
 	const newVNode = <FlyweightVNode>execRenderObject(componentTpl.index(), fakeCtx);
-	newVNode.fakeInstance = fakeCtx;
 
-	const
-		newVData = newVNode.data = newVNode.data || {};
+	newVNode.fakeInstance = fakeCtx;
+	newVNode.data = newVNode.data ?? {};
+
+	patchComponentVData(newVNode.data, componentData, {
+		patchAttrs: Boolean(meta.params.inheritAttrs)
+	});
 
 	// Attach component event listeners
 	for (let o = componentData.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const key = keys[i];
 		fakeCtx.$on(key, o[key]);
 	}
-
-	newVData.ref = componentData.ref;
-	newVData.refInFor = componentData.refInFor;
-
-	// Attach component native event listeners
-
-	const
-		on = newVData.on = newVData.on || {};
-
-	if (componentData.nativeOn) {
-		for (let o = componentData.nativeOn, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const key = keys[i];
-			on[key] = Array.concat([], on[key], o[key]);
-		}
-	}
-
-	newVData.staticClass = Array.concat([], newVData.staticClass, componentData.staticClass).join(' ');
-	newVData.class = Array.concat([], newVData.class, componentData.class);
-	newVData.directives = componentData.directives;
 
 	return newVNode;
 }

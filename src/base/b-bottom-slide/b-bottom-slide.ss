@@ -20,7 +20,10 @@
 		.
 
 	- block body
-		< .&__window ref = window
+		< .&__window &
+			ref = window |
+			v-if = isFunctional || opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+		.
 			- block header
 				< header.&__header &
 					ref = header |

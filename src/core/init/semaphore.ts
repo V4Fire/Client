@@ -15,31 +15,28 @@ export default createsAsyncSemaphore(async () => {
 		node = document.querySelector<HTMLElement>('[data-root-component]');
 
 	if (!node) {
-		throw new ReferenceError('The root node is not defined');
+		throw new ReferenceError('The root node is not found');
 	}
 
 	const
-		name = <string>node.getAttribute('data-root-component'),
+		name = node.getAttribute('data-root-component') ?? '',
 		component = await rootComponents[name];
 
 	if (!component) {
-		throw new ReferenceError('The root component is not defined');
+		throw new ReferenceError('The root component is not found');
 	}
 
 	const
-		data = <Function>component.data,
-		params = JSON.parse(<string>node.getAttribute('data-root-component-params'));
+		getData = component.data,
+		params = JSON.parse(node.getAttribute('data-root-component-params') ?? '{}');
 
-	component.data = function (): Dictionary {
-		return Object.assign(data.call(this), params.data);
+	component.data = function data(this: unknown): Dictionary {
+		return Object.assign(Object.isFunction(getData) ? getData.call(this) : {}, params.data);
 	};
 
-	// tslint:disable-next-line:no-unused-expression
-	new Component({
+	return new Component({
 		...params,
 		...component,
 		el: node
 	});
-
-	READY_STATE++;
 }, ...flags);

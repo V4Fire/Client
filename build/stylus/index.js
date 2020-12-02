@@ -19,14 +19,14 @@ const
 module.exports = [
 	require('nib')(),
 
-	function (style) {
+	function addPlugins(api) {
 		/**
 		 * Returns true if the specified file is already exists
 		 *
 		 * @param {?} path - file path
 		 * @returns {boolean}
 		 */
-		style.define('file-exists', function (path) {
+		api.define('file-exists', function fileExists(path) {
 			return Boolean(stylus.utils.find(path.string, this.paths));
 		});
 	},

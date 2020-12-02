@@ -20,6 +20,9 @@ const
 const
 	{resolve} = require('@pzlr/build-core');
 
+// If we have switched to the "runtime.noGlobals" mode,
+// we have to find in our code all invoking of Prelude methods, like, `'foo'.camelize()`,
+// and replaces its to another safety form of invoking
 if (config.runtime().noGlobals) {
 	const
 		resources = [resolve.sourceDir, ...resolve.rootDependencies],
@@ -44,7 +47,8 @@ if (config.runtime().noGlobals) {
 		let
 			decl;
 
-		while ((decl = extendRgxp.exec(file))) {
+		// eslint-disable-next-line no-cond-assign
+		while (decl = extendRgxp.exec(file)) {
 			const
 				target = decl[1],
 				method = decl[2],
@@ -88,5 +92,9 @@ if (config.runtime().noGlobals) {
 		replaceRgxp = new RegExp([...regExps.keys()].join('|'), 'g');
 	}
 
+	/**
+	 * Structure to find and replace all Prelude invoking to global safety form
+	 * @type {{globalLink: string, replaceRgxp: !RegExp, tokens: Map<any, any>}}
+	 */
 	module.exports = {tokens, globalLink, replaceRgxp};
 }

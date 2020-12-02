@@ -12,7 +12,7 @@ import * as c from 'core/component/const';
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
-import { parseVNodeAsFlyweight } from 'core/component/flyweight';
+import { parseVNodeAsFlyweight, FlyweightVNode } from 'core/component/flyweight';
 import { createFakeCtx, initComponentVNode } from 'core/component/functional';
 
 import { applyDynamicAttrs } from 'core/component/render-function/v-attrs';
@@ -31,7 +31,7 @@ import {
 
 } from 'core/component/engines';
 
-import { ComponentInterface } from 'core/component/interface';
+import { ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -52,51 +52,78 @@ export function wrapCreateElement(
 	const
 		tasks = <Function[]>[];
 
-	const wrappedCreateElement = <CreateElement>function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
+	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(
+		this: Nullable<ComponentInterface>,
+		tag: CanUndef<string>,
+		opts?: VNodeData,
+		children?: VNode[]
+	): VNode {
+		// eslint-disable-next-line
 		'use strict';
 
 		const
-			ctx = this || baseCtx;
+			ctx = this ?? baseCtx,
+			unsafe = <UnsafeComponentInterface>Any(ctx);
 
 		const
-			hasOpts = Object.isPlainObject(opts),
-			attrOpts = hasOpts ? opts?.attrs : undefined,
-			flyweightComponent = attrOpts?.['v4-flyweight-component'];
-
-		if (tag === 'v-render') {
-			return attrOpts && attrOpts.from || createElement();
-		}
+			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
 
 		let
-			tagName = tag;
+			tagName = tag,
+			flyweightComponent;
 
-		if (flyweightComponent && attrOpts) {
-			attrOpts['v4-flyweight-component'] = tagName = tagName === 'span' ? flyweightComponent : tagName.dasherize();
+		if (attrOpts == null) {
+			if (tag === 'v-render') {
+				return createElement();
+			}
+
+		} else {
+			if (tag === 'v-render') {
+				return attrOpts.from ?? createElement();
+			}
+
+			if (tagName?.[0] === '@') {
+				flyweightComponent = tagName.slice(1);
+				tagName = 'span';
+
+			} else {
+				flyweightComponent = attrOpts['v4-flyweight-component'];
+			}
+
+			if (tagName != null && flyweightComponent != null) {
+				tagName = tagName === 'span' ? flyweightComponent : tagName.dasherize();
+				attrOpts['v4-flyweight-component'] = tagName;
+			}
 		}
 
 		const
 			component = registerComponent(tagName);
 
-		if (hasOpts) {
-			applyDynamicAttrs(<Dictionary>opts, component);
-		}
-
-		const renderKey = attrOpts && attrOpts['render-key'] != null ?
-			`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
-
-		if (renderKey && !component) {
-			const a = <Dictionary>attrOpts;
-			a['data-render-key'] = renderKey;
-			delete a['render-key'];
+		if (Object.isPlainObject(opts)) {
+			applyDynamicAttrs(opts, component);
 		}
 
 		let
-			vnode = ctx.renderTmp[renderKey],
+			renderKey = '';
+
+		if (attrOpts != null) {
+			if (attrOpts['render-key'] != null) {
+				renderKey = `${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}`;
+			}
+
+			if (renderKey !== '' && component == null) {
+				attrOpts['data-render-key'] = renderKey;
+				delete attrOpts['render-key'];
+			}
+		}
+
+		let
+			vnode = <CanUndef<VNode | FlyweightVNode>>unsafe.renderTmp[renderKey],
 			needLinkToEl = Boolean(flyweightComponent);
 
 		const needCreateFunctionalComponent =
-			!vnode &&
-			!flyweightComponent &&
+			vnode == null &&
+			flyweightComponent == null &&
 			supports.functional &&
 			component?.params.functional === true;
 
@@ -104,10 +131,12 @@ export function wrapCreateElement(
 			needLinkToEl = true;
 
 			const
-				{componentName} = component,
-				tpl = TPLS[componentName];
+				{componentName} = component;
 
-			if (!tpl) {
+			const
+				componentTpls = TPLS[componentName];
+
+			if (componentTpls == null) {
 				return createElement();
 			}
 
@@ -115,24 +144,24 @@ export function wrapCreateElement(
 				node = createElement('span', {...opts, tag: undefined}, children),
 				renderCtx = getComponentRenderCtxFromVNode(component, node, ctx);
 
+			const baseCtx = c.renderCtxCache[componentName] ?? Object.assign(Object.create(minimalCtx), {
+				componentName,
+				meta: component,
+				instance: component.instance,
+				$options: {}
+			});
+
+			c.renderCtxCache[componentName] = baseCtx;
+
 			const fakeCtx = createFakeCtx<ComponentInterface>(
 				<CreateElement>wrappedCreateElement,
 				renderCtx,
-
-				c.renderCtxCache[componentName] = c.renderCtxCache[componentName] ||
-					Object.assign(Object.create(minimalCtx), {
-						componentName,
-						meta: component,
-						instance: component.instance,
-						$options: {}
-					}),
-
+				baseCtx,
 				{initProps: true}
 			);
 
-			const renderObject = c.componentTemplates[componentName] =
-				c.componentTemplates[componentName] ||
-				tpl.index && tpl.index();
+			const renderObject = c.componentTemplates[componentName] ?? componentTpls.index?.();
+			c.componentTemplates[componentName] = renderObject;
 
 			vnode = initComponentVNode(
 				execRenderObject(renderObject, fakeCtx),
@@ -141,61 +170,70 @@ export function wrapCreateElement(
 			);
 		}
 
-		if (!vnode) {
-			vnode = createElement.apply(ctx, arguments);
+		if (vnode == null) {
+			// eslint-disable-next-line prefer-rest-params
+			vnode = createElement.apply(unsafe, arguments);
 
-			if (flyweightComponent) {
-				vnode = parseVNodeAsFlyweight(vnode, wrappedCreateElement, ctx);
+			if (vnode == null) {
+				return createElement();
+			}
+
+			if (flyweightComponent != null) {
+				vnode = parseVNodeAsFlyweight(vnode, <CreateElement>wrappedCreateElement, ctx);
 			}
 		}
 
 		const
 			vData = vnode.data,
-			ref = vData && (vData[$$.ref] || vData.ref);
+			ref = vData && (vData[$$.ref] ?? vData.ref);
 
-		if (renderKey) {
-			ctx.renderTmp[renderKey] = cloneVNode(vnode);
+		if (renderKey !== '') {
+			unsafe.renderTmp[renderKey] = cloneVNode(vnode);
 		}
 
 		// Add $refs link if it doesn't exist
-		if (vData && ref && ctx !== baseCtx) {
+		if (vData && ref != null && ctx !== baseCtx) {
 			vData[$$.ref] = ref;
 			vData.ref = `${ref}:${ctx.componentId}`;
 
-			Object.defineProperty(ctx.$refs, ref, {
+			Object.defineProperty(unsafe.$refs, ref, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
 					const
 						r = baseCtx.unsafe.$refs,
-						l = r[`${ref}:${ctx._componentId}`] || r[`${ref}:${ctx.componentId}`];
+						l = r[`${ref}:${unsafe.$componentId}`] ?? r[`${ref}:${ctx.componentId}`];
 
-					if (l) {
+					if (l != null) {
 						return l;
 					}
 
-					return vnode && (vnode.fakeInstance || vnode.elm);
+					if (vnode == null) {
+						return undefined;
+					}
+
+					return 'fakeInstance' in vnode ? vnode.fakeInstance : vnode.elm;
 				}
 			});
 		}
 
 		// Add $el link if it doesn't exist
-		if (needLinkToEl && vnode.fakeInstance) {
+		if (needLinkToEl && 'fakeInstance' in vnode) {
 			Object.defineProperty(vnode.fakeInstance, '$el', {
 				enumerable: true,
 				configurable: true,
 
 				set(): void {
-					return undefined;
+					// Loopback
 				},
 
 				get(): CanUndef<Node> {
-					return vnode.elm;
+					return vnode?.elm;
 				}
 			});
 		}
 
-		if (tasks.length) {
+		if (tasks.length > 0) {
 			for (let i = 0; i < tasks.length; i++) {
 				tasks[i](vnode);
 			}

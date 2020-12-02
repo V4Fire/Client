@@ -159,10 +159,11 @@ export default class bInput extends iInput implements iWidth, iSize {
 	readonly iconHintPos?: string;
 
 	/**
-	 * Component for a progress icon
+	 * Component for a progress icon or
+	 * Boolean, if need to show progress by slot or `b-progress-icon`
 	 */
-	@prop({type: String, required: false})
-	readonly progressIcon?: string;
+	@prop({type: [String, Boolean], required: false})
+	readonly progressIcon?: string | boolean;
 
 	/**
 	 * RegExp map
@@ -563,23 +564,6 @@ export default class bInput extends iInput implements iWidth, iSize {
 			this._lastMaskSelectionStartIndex = this._lastMaskSelectionEndIndex = pos;
 			input.setSelectionRange(pos, pos);
 		}
-	}
-
-	/** @override */
-	protected onFocus(): void {
-		const
-			{input} = this.$refs;
-
-		if (!this.readonly && input.hasAttribute('readonly')) {
-			input.removeAttribute('readonly');
-
-			if (this.browser.is.iOS) {
-				input.blur();
-				input.focus();
-			}
-		}
-
-		super.onFocus();
 	}
 
 	/**
