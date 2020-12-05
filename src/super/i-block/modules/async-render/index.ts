@@ -66,7 +66,7 @@ export default class AsyncRender extends Friend {
 	 * This method helps to optimize the rendering of a component by splitting big render tasks into little.
 	 *
 	 * @param value
-	 * @param slice - elements per chunk or [start position, elements per chunk]
+	 * @param [slice] - elements per chunk or [start position, elements per chunk]
 	 * @param [opts] - additional options
 	 *
 	 * @example
@@ -76,7 +76,7 @@ export default class AsyncRender extends Friend {
 	 *   < my-component :data = el
 	 * ```
 	 */
-	iterate(value: unknown, slice: number | [number?, number?], opts: TaskParams = {}): unknown[] {
+	iterate(value: unknown, slice?: number | [number?, number?], opts: TaskParams = {}): unknown[] {
 		if (value == null) {
 			return [];
 		}

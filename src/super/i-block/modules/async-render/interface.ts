@@ -14,8 +14,8 @@ export interface TaskI<D = unknown> {
 }
 
 export interface TaskFilter<EL = unknown, I extends number = number, D = unknown> {
-	(): boolean;
-	(el: EL, i: I, task: TaskI<D>): boolean;
+	(): CanPromise<boolean>;
+	(el: EL, i: I, task: TaskI<D>): CanPromise<boolean>;
 }
 
 export interface TaskDestructor {
