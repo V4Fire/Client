@@ -56,9 +56,9 @@ export default class bMatryoshka extends iData implements iItems {
 				return this.async.promise<boolean>(new Promise((resolve) => {
 					this.async.requestIdleCallback(
 						() => resolve(Object.isString(el.parentId) ? this.getFoldedMod(el.parentId) === 'false' : true),
-						{promise: true, label: $$.renderIdleCallBack}
+						{promise: true, label: $$[`renderIdleCallBack:${el.id}`]}
 					);
-				}), {label: $$.renderFilter}).catch(() => false);
+				}), {label: $$[`renderFilter:${el.id}`]}).catch(() => false);
 			}
 		}
 	)
