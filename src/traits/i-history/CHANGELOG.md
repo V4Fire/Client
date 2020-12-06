@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.20? (2020-12-??)
+
+#### :bug: Bug Fix
+
+* Next calling of `initIndex` pushes another one index page
+
 ## v3.0.0-rc.49 (2020-08-03)
 
 #### :bug: Bug Fix

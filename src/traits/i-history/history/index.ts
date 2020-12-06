@@ -91,7 +91,14 @@ export default class History extends Friend {
 	 * @param [item] - initial history item
 	 */
 	initIndex(item: HistoryItem = {stage: INITIAL_STAGE, options: {}}): void {
-		this.store.push(item);
+		if (this.store.length > 0) {
+			this.store[0].content?.el.removeAttribute('data-page');
+			this.store[0] = item;
+
+		} else {
+			this.store.push(item);
+		}
+
 		this.calculateCurrentPage();
 	}
 
