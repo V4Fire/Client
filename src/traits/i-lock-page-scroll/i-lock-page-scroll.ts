@@ -117,6 +117,7 @@ export default abstract class iLockPageScroll {
 					body.style.top = `-${scrollTop}px`;
 					r.setRootMod('lockScrollMobile', true);
 
+					r[$$.isLocked] = true;
 					res();
 
 				}, lockLabel);
@@ -135,13 +136,13 @@ export default abstract class iLockPageScroll {
 					body.style.paddingRight = `${scrollBarWidth}px`;
 					r.setRootMod('lockScrollDesktop', true);
 
+					r[$$.isLocked] = true;
 					res();
 
 				}, lockLabel);
 			}), {join: true, ...lockLabel});
 		}
 
-		r[$$.isLocked] = true;
 		return promise;
 	}
 
