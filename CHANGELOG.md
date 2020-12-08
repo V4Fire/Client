@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.104 (2020-12-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with repetitive calls of `iLockPageScroll.lock`
+
+#### :house: Internal
+
+* Added tests `traits/i-lock-page-scroll`
+
 ## v3.0.0-rc.103 (2020-11-29)
 
 #### :bug: Bug Fix
