@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a bug with clearing observable data from `core/in-view`
+* Fixed a bug with clearing observable data from `core/dom/in-view`
 
 ## v3.0.0-rc.104 (2020-12-07)
 
