@@ -10,6 +10,8 @@ import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import { ResizeWatcher } from 'core/dom/resize-observer';
 
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+
 import iData, { component } from 'super/i-data/i-data';
 import { Directives, Modules } from 'base/b-dummy/interface';
 
@@ -27,7 +29,17 @@ export * from 'base/b-dummy/interface';
 	}
 })
 
-export default class bDummy extends iData {
+export default class bDummy extends iData implements iLockPageScroll {
+	/** @see [[iLockPageScroll.lock]] */
+	lock(): Promise<void> {
+		return iLockPageScroll.lock(this);
+	}
+
+	/** @see [[iLockPageScroll.unlock]] */
+	unlock(): Promise<void> {
+		return iLockPageScroll.unlock(this);
+	}
+
 	/**
 	 * Links to directives
 	 */

@@ -16,5 +16,6 @@ module.exports = [
 	'--test-entry form/b-button/test',
 	'--test-entry super/i-block/test',
 	'--test-entry core/dom/image/test',
-	'--test-entry core/dom/in-view/test'
+	'--test-entry core/dom/in-view/test',
+	'--test-entry traits/i-lock-page-scroll/test'
 ];

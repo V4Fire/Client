@@ -66,7 +66,7 @@ export default class AsyncRender extends Friend {
 	 * This method helps to optimize the rendering of a component by splitting big render tasks into little.
 	 *
 	 * @param value
-	 * @param slice - elements per chunk or [start position, elements per chunk]
+	 * @param [slice] - elements per chunk or [start position, elements per chunk]
 	 * @param [opts] - additional options
 	 *
 	 * @example
@@ -76,7 +76,7 @@ export default class AsyncRender extends Friend {
 	 *   < my-component :data = el
 	 * ```
 	 */
-	iterate(value: unknown, slice: number | [number?, number?], opts: TaskParams = {}): unknown[] {
+	iterate(value: unknown, slice: number | [number?, number?] = 1, opts: TaskParams = {}): unknown[] {
 		if (value == null) {
 			return [];
 		}
@@ -185,6 +185,9 @@ export default class AsyncRender extends Friend {
 			}
 		}
 
+		const
+			BREAK = {};
+
 		firstRender[this.asyncLabel] = async (cb) => {
 			const createIterator = () => {
 				if (isSrcPromise) {
@@ -192,11 +195,17 @@ export default class AsyncRender extends Friend {
 						if (Object.isPromise(iterable)) {
 							return {
 								done: false,
-								value: iterable.then((v) => {
-									iterable = v;
-									iterator = v[Symbol.iterator]();
-									return iterator.next().value;
-								})
+								value: iterable
+									.then((v) => {
+										iterable = v;
+										iterator = v[Symbol.iterator]();
+										return iterator.next().value;
+									})
+
+									.catch((err) => {
+										stderr(err);
+										return BREAK;
+									})
 							};
 						}
 
@@ -243,6 +252,13 @@ export default class AsyncRender extends Friend {
 			const
 				{async: $a} = this;
 
+			let
+				group = 'asyncComponents';
+
+			if (opts.group != null) {
+				group = `asyncComponents:${opts.group}:${chunkI}`;
+			}
+
 			for (let o = newIterator, el = o.next(); !el.done; el = o.next()) {
 				let
 					val = el.value;
@@ -253,16 +269,18 @@ export default class AsyncRender extends Friend {
 				if (isValPromise) {
 					try {
 						// eslint-disable-next-line require-atomic-updates
-						val = await val;
+						val = await $a.promise(<Promise<unknown>>val, {group});
 
-					} catch (err) {
-						const
-							{methods} = this.meta;
-
-						if (methods.errorCaptured) {
-							methods.errorCaptured.fn.call(this.component, err);
+						if (val === BREAK) {
+							break;
 						}
 
+					} catch (err) {
+						if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+							break;
+						}
+
+						stderr(err);
 						continue;
 					}
 				}
@@ -280,18 +298,13 @@ export default class AsyncRender extends Friend {
 						Object.isArray(iterable) && total >= iterable.length;
 
 					if (needRender) {
-						const
-							desc = <TaskDesc>{};
-
-						let
-							group = 'asyncComponents';
+						const desc: TaskDesc = {
+							renderGroup: group
+						};
 
 						if (opts.group != null) {
-							group = `asyncComponents:${opts.group}:${chunkI}`;
 							desc.destructor = () => $a.terminateWorker({group});
 						}
-
-						desc.renderGroup = group;
 
 						const
 							els = <Node[]>cb(newArray, desc);
@@ -322,9 +335,8 @@ export default class AsyncRender extends Friend {
 					}
 				};
 
-				this.createTask(task, {
-					weight,
-					filter: filter?.bind(this.ctx, val, i, {
+				if (filter != null) {
+					const filterParams = {
 						iterable,
 						i: syncI + i + 1,
 
@@ -335,8 +347,38 @@ export default class AsyncRender extends Friend {
 						get total(): number {
 							return total;
 						}
-					})
-				});
+					};
+
+					const
+						res = filter.call(this.ctx, val, i, filterParams);
+
+					if (Object.isPromise(res)) {
+						try {
+							const r = await $a.promise(res, {group});
+
+							if (Object.isTruly(r)) {
+								this.createTask(task, {weight});
+							}
+
+						} catch (err) {
+							if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+								break;
+							}
+
+							stderr(err);
+							continue;
+						}
+
+					} else {
+						this.createTask(task, {
+							weight,
+							filter: filter.bind(this.ctx, val, i, filterParams)
+						});
+					}
+
+				} else {
+					this.createTask(task, {weight});
+				}
 
 				i++;
 			}
@@ -348,42 +390,24 @@ export default class AsyncRender extends Friend {
 	/**
 	 * Creates a render task by the specified parameters
 	 *
-	 * @param cb
+	 * @param taskFn
 	 * @param [params]
 	 */
-	protected createTask(cb: AnyFunction, params: TaskParams = {}): void {
+	protected createTask(taskFn: AnyFunction, params: TaskParams = {}): void {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {
-				if (!params.filter) {
-					return exec(true);
+				if (params.filter == null || Object.isTruly(params.filter())) {
+					taskFn();
+					return true;
 				}
 
-				const
-					res = params.filter();
-
-				if (Object.isPromise(res)) {
-					return res.then(exec).catch((err) => {
-						stderr(err);
-						return false;
-					});
-				}
-
-				return exec(res);
-
-				function exec(res: unknown): boolean {
-					if (Object.isTruly(res)) {
-						cb();
-						return true;
-					}
-
-					return false;
-				}
+				return false;
 
 			}, {
+				group: 'asyncComponents',
 				onClear: () => queue.delete(task),
-				single: false,
-				group: 'asyncComponents'
+				single: false
 			})
 		};
 
