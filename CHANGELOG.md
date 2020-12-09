@@ -19,7 +19,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a bug when `iterate` takes the rejected promise `i-block/modules/async-render`
+* `i-block/modules/async-render`:
+  * Fixed a bug when `iterate` takes the rejected promise
+  * Fixed the global blocking of rendering when using a filter that returns a promise
+
 * Fixed a bug with redundant `v-for` invokes:
   * `i-block/modules/async-render`
   * `core/component/render-function`

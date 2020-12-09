@@ -19,6 +19,7 @@ Changelog
 
 * Fixed a bug with redundant `v-for` invokes
 * Fixed a bug when `iterate` takes the rejected promise
+* Fixed the global blocking of rendering when using a filter that returns a promise
 
 ## v3.0.0-rc.100 (2020-11-17)
 

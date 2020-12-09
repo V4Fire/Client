@@ -187,7 +187,7 @@ export default class AsyncRender extends Friend {
 		}
 
 		const
-			breaker = {};
+			BREAK = {};
 
 		firstRender[this.asyncLabel] = async (cb) => {
 			const createIterator = () => {
@@ -205,7 +205,7 @@ export default class AsyncRender extends Friend {
 
 									.catch((err) => {
 										stderr(err);
-										return breaker;
+										return BREAK;
 									})
 							};
 						}
@@ -272,12 +272,12 @@ export default class AsyncRender extends Friend {
 						// eslint-disable-next-line require-atomic-updates
 						val = await $a.promise(<Promise<unknown>>val, {group});
 
-						if (val === breaker) {
+						if (val === BREAK) {
 							break;
 						}
 
 					} catch (err) {
-						if (err?.type === 'clearAsync') {
+						if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
 							break;
 						}
 
@@ -336,9 +336,8 @@ export default class AsyncRender extends Friend {
 					}
 				};
 
-				this.createTask(task, {
-					weight,
-					filter: filter?.bind(this.ctx, val, i, {
+				if (filter != null) {
+					const filterParams = {
 						iterable,
 						i: syncI + i + 1,
 
@@ -349,8 +348,38 @@ export default class AsyncRender extends Friend {
 						get total(): number {
 							return total;
 						}
-					})
-				});
+					};
+
+					const
+						res = filter.call(this.ctx, val, i, filterParams);
+
+					if (Object.isPromise(res)) {
+						try {
+							const r = await $a.promise(res, {group});
+
+							if (Object.isTruly(r)) {
+								this.createTask(task, {weight});
+							}
+
+						} catch (err) {
+							if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+								break;
+							}
+
+							stderr(err);
+							continue;
+						}
+
+					} else {
+						this.createTask(task, {
+							weight,
+							filter: filter.bind(this.ctx, val, i, filterParams)
+						});
+					}
+
+				} else {
+					this.createTask(task, {weight});
+				}
 
 				i++;
 			}
@@ -362,42 +391,24 @@ export default class AsyncRender extends Friend {
 	/**
 	 * Creates a render task by the specified parameters
 	 *
-	 * @param cb
+	 * @param taskFn
 	 * @param [params]
 	 */
-	protected createTask(cb: AnyFunction, params: TaskParams = {}): void {
+	protected createTask(taskFn: AnyFunction, params: TaskParams = {}): void {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {
-				if (!params.filter) {
-					return exec(true);
+				if (params.filter == null || Object.isTruly(params.filter())) {
+					taskFn();
+					return true;
 				}
 
-				const
-					res = params.filter();
-
-				if (Object.isPromise(res)) {
-					return res.then(exec).catch((err) => {
-						stderr(err);
-						return false;
-					});
-				}
-
-				return exec(res);
-
-				function exec(passed: unknown): boolean {
-					if (Object.isTruly(passed)) {
-						cb();
-						return true;
-					}
-
-					return false;
-				}
+				return false;
 
 			}, {
+				group: 'asyncComponents',
 				onClear: () => queue.delete(task),
-				single: false,
-				group: 'asyncComponents'
+				single: false
 			})
 		};
 
