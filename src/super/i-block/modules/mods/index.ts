@@ -191,8 +191,8 @@ export function initMods(component: iBlock): ModsNTable {
  */
 export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsNTable> {
 	const
-		res = {},
-		watchers = Object.getPrototypeOf(component.field.get<ModsNTable>('watchModsStore')!),
+		watchMods = {},
+		watchers = component.field.get<ModsNTable>('watchModsStore')!,
 		systemMods = component.mods;
 
 	for (let keys = Object.keys(systemMods), i = 0; i < keys.length; i++) {
@@ -200,25 +200,22 @@ export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsN
 			key = keys[i];
 
 		if (key in watchers) {
-			res[key] = systemMods[key];
+			watchMods[key] = systemMods[key];
 
 		} else {
-			Object.defineProperty(res, key, {
+			Object.defineProperty(watchMods, key, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
-					const
-						val = systemMods[key];
-
 					if (!(key in watchers)) {
-						watchers[key] = val;
+						Object.getPrototypeOf(watchers)[key] = systemMods[key];
 					}
 
-					return val;
+					return watchers[key];
 				}
 			});
 		}
 	}
 
-	return Object.freeze(res);
+	return Object.freeze(watchMods);
 }

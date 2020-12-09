@@ -60,11 +60,23 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added prefetch for the dynamic dependencies `iData`
 * Minified libs `eventemitter2` and `requestidlecallback`
 
+## v3.0.0-rc.107 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering of a template when using `m` `super/i-block/modules/mods`
+
+## v3.0.0-rc.106 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing observable data from `core/dom/in-view`
+
 ## v3.0.0-rc.105 (2020-12-09)
 
 #### :rocket: New Feature
 
-* Added the default value to `iterate/slice` `i-block/modules/async-render`
+* Added the default value to `iterate/slice` `super/i-block/modules/async-render`
 
 #### :bug: Bug Fix
 
