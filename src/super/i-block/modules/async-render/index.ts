@@ -187,7 +187,7 @@ export default class AsyncRender extends Friend {
 		}
 
 		const
-			breaker = {};
+			BREAK = {};
 
 		firstRender[this.asyncLabel] = async (cb) => {
 			const createIterator = () => {
@@ -205,7 +205,7 @@ export default class AsyncRender extends Friend {
 
 									.catch((err) => {
 										stderr(err);
-										return breaker;
+										return BREAK;
 									})
 							};
 						}
@@ -272,7 +272,7 @@ export default class AsyncRender extends Friend {
 						// eslint-disable-next-line require-atomic-updates
 						val = await $a.promise(<Promise<unknown>>val, {group});
 
-						if (val === breaker) {
+						if (val === BREAK) {
 							break;
 						}
 
