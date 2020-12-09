@@ -77,9 +77,6 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			unsafe.$createElement = createElement;
 			unsafe._c = createElement;
 
-			const
-				forEach = unsafe._l;
-
 			// Wrap slot directive to support async rendering
 			unsafe._u = (fns, res) => {
 				res = res ?? {};
@@ -115,6 +112,9 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 
 				return res;
 			};
+
+			const forEach = <typeof unsafe._l>(unsafe._originalL ?? unsafe._l);
+			unsafe._originalL = forEach;
 
 			// Wrap v-for directive to support async loop rendering
 			unsafe._l = (obj, cb) => {

@@ -11,6 +11,39 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.105 (2020-12-09)
+
+#### :rocket: New Feature
+
+* Added the default value to `iterate/slice` `i-block/modules/async-render`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when `iterate` takes the rejected promise `i-block/modules/async-render`
+* Fixed a bug with redundant `v-for` invokes:
+  * `i-block/modules/async-render`
+  * `core/component/render-function`
+
+## v3.0.0-rc.104 (2020-12-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with repetitive calls of `iLockPageScroll.lock`
+
+#### :house: Internal
+
+* Added tests `traits/i-lock-page-scroll`
+
+## v3.0.0-rc.103 (2020-11-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with slows down while scrolling on ios `base/b-skeleton`
+
+#### :memo: Documentation
+
+* Added `README.md`, `CHANGELOG.md` for `base/b-skeleton`
+
 ## v3.0.0-rc.102 (2020-11-26)
 
 #### :bug: Bug Fix
