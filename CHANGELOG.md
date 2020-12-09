@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.106 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing observable data from `core/dom/in-view`
+
 ## v3.0.0-rc.105 (2020-12-09)
 
 #### :rocket: New Feature
