@@ -299,6 +299,8 @@ export default abstract class AbstractInView {
 			if (thresholdMap.size === 0) {
 				map.delete(el);
 			}
+
+			return true;
 		}
 
 		return false;
