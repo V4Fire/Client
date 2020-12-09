@@ -17,6 +17,7 @@ Changelog
 
 #### :bug: Bug Fix
 
+* Fixed a bug with redundant `v-for` invokes
 * Fixed a bug when `iterate` takes the rejected promise
 
 ## v3.0.0-rc.100 (2020-11-17)
