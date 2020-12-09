@@ -66,7 +66,7 @@ export default class AsyncRender extends Friend {
 	 * This method helps to optimize the rendering of a component by splitting big render tasks into little.
 	 *
 	 * @param value
-	 * @param slice - elements per chunk or [start position, elements per chunk]
+	 * @param [slice] - elements per chunk or [start position, elements per chunk]
 	 * @param [opts] - additional options
 	 *
 	 * @example
@@ -76,7 +76,7 @@ export default class AsyncRender extends Friend {
 	 *   < my-component :data = el
 	 * ```
 	 */
-	iterate(value: unknown, slice: number | [number?, number?], opts: TaskParams = {}): unknown[] {
+	iterate(value: unknown, slice: number | [number?, number?] = 1, opts: TaskParams = {}): unknown[] {
 		if (value == null) {
 			return [];
 		}
@@ -186,6 +186,9 @@ export default class AsyncRender extends Friend {
 			}
 		}
 
+		const
+			breaker = {};
+
 		firstRender[this.asyncLabel] = async (cb) => {
 			const createIterator = () => {
 				if (isSrcPromise) {
@@ -193,11 +196,23 @@ export default class AsyncRender extends Friend {
 						if (Object.isPromise(iterable)) {
 							return {
 								done: false,
-								value: iterable.then((v) => {
-									iterable = v;
-									iterator = v[Symbol.iterator]();
-									return iterator.next().value;
-								})
+								value: iterable
+									.then((v) => {
+										iterable = v;
+										iterator = v[Symbol.iterator]();
+										return iterator.next().value;
+									})
+
+									.catch((err) => {
+										const
+											{methods} = this.meta;
+
+										if (methods.errorCaptured) {
+											methods.errorCaptured.fn.call(this.component, err);
+										}
+
+										return breaker;
+									})
 							};
 						}
 
@@ -255,6 +270,10 @@ export default class AsyncRender extends Friend {
 					try {
 						// eslint-disable-next-line require-atomic-updates
 						val = await val;
+
+						if (val === breaker) {
+							break;
+						}
 
 					} catch (err) {
 						const

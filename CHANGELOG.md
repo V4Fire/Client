@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.105 (2020-12-09)
+
+#### :rocket: New Feature
+
+* Added the default value to `iterate/slice` `i-block/modules/async-render`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when `iterate` takes the rejected promise `i-block/modules/async-render`
+
 ## v3.0.0-rc.104 (2020-12-07)
 
 #### :bug: Bug Fix
