@@ -277,7 +277,7 @@ export default class AsyncRender extends Friend {
 						}
 
 					} catch (err) {
-						if (err?.type === 'clearAsync') {
+						if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
 							break;
 						}
 
