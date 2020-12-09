@@ -88,14 +88,7 @@ function run(): void {
 				continue;
 			}
 
-			let
-				canRender = val.fn();
-
-			if (Object.isPromise(canRender)) {
-				canRender = await canRender;
-			}
-
-			if (Object.isTruly(canRender)) {
+			if (Object.isTruly(val.fn())) {
 				done -= val.weight ?? 1;
 				queue.delete(val);
 			}

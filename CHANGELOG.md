@@ -11,11 +11,27 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.105 (2020-12-09)
+## v3.0.0-rc.106 (2020-12-09)
 
 #### :bug: Bug Fix
 
 * Fixed a bug with clearing observable data from `core/dom/in-view`
+
+## v3.0.0-rc.105 (2020-12-09)
+
+#### :rocket: New Feature
+
+* Added the default value to `iterate/slice` `i-block/modules/async-render`
+
+#### :bug: Bug Fix
+
+* `i-block/modules/async-render`:
+  * Fixed a bug when `iterate` takes the rejected promise
+  * Fixed the global blocking of rendering when using a filter that returns a promise
+
+* Fixed a bug with redundant `v-for` invokes:
+  * `i-block/modules/async-render`
+  * `core/component/render-function`
 
 ## v3.0.0-rc.104 (2020-12-07)
 
