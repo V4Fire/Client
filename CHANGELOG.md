@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.107 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering of a template when using `m` `super/i-block/modules/mods`
+
 ## v3.0.0-rc.106 (2020-12-09)
 
 #### :bug: Bug Fix
@@ -21,7 +27,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added the default value to `iterate/slice` `i-block/modules/async-render`
+* Added the default value to `iterate/slice` `super/i-block/modules/async-render`
 
 #### :bug: Bug Fix
 
