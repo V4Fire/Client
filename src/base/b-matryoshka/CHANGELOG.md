@@ -14,4 +14,5 @@ Changelog
 #### :house: Internal
 
 * Changed render filter to async function with waiting for the idle state
+* Fixed ESLint warnings
 * Added `README` and `CHANGELOG`
