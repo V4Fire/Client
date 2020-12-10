@@ -15,4 +15,4 @@ Changelog
 
 * Changed render filter to async function with waiting for the idle state
 * Fixed ESLint warnings
-* Added `README` and `CHANGELOG`
+* Added `README`, `CHANGELOG` and `interface`

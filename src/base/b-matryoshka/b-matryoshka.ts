@@ -53,7 +53,7 @@ export default class bMatryoshka extends iData implements iItems {
 			type: Function,
 			required: false,
 			default(this: bMatryoshka): Promise<boolean> {
-				return this.async.idle().then(() => true);
+				return this.async.animationFrame().then(() => true);
 			}
 		}
 	)
