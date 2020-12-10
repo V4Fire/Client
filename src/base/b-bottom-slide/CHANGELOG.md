@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.10? (2020-12-10)
+
+#### :bug: Bug Fix
+
+* Geometry initialization in content height mode fix
+
 ## v3.0.0-rc.100 (2020-11-17)
 
 #### :house: Internal
