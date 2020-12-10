@@ -22,6 +22,7 @@ Changelog
 * Added support of dynamic imports
 * Added `isLayerCoreDep`
 * Added `entry.webpack`
+* Added `watch-options.webpack`
 * Added `other.webpack`
 
 ## v3.0.0-rc.90 (2020-10-22)
