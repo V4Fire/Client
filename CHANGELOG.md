@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* Migrated to `webpack@5`
 * Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
 * Removed the default export of submodules `core/dom`
 * Removed `StaticRouteMeta.entryPoint` and `StaticRouteMeta.dynamicDependencies` `core/router`
@@ -57,9 +58,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added a new dependency `style-loader`
 * Added prefetch for the dynamic dependencies `iData`
 * Minified libs `eventemitter2` and `requestidlecallback`
+* Added a new dependency `style-loader`
+* Updated dependencies:
+  * `upath@2.0.1`
+  * `merge2@1.4.1`
+  * `hasha@5.2.2`
+  * `del@6.0.0`
+  * `arg@5.0.0`
+  * `browserslist@4.15.0`
 
 ## v3.0.0-rc.107 (2020-12-09)
 
