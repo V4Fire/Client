@@ -62,8 +62,6 @@ iconsList.push(ctx);
 // @endcontext
 //#endif
 
-console.log(2222);
-
 function normalize(key: string): string {
 	return key.replace(/\.\//, '').replace(/\.svg$/, '');
 }
