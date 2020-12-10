@@ -12,15 +12,17 @@ const
 
 interface Sprite {
 	id: string;
-	name: string;
-	svg: string;
+	content: string;
+	viewBox: string;
+	stringify(): string;
+	destroy(): undefined;
 }
 
 function icons(id?: string): Sprite {
 	if (id != null) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {
-				return iconsList[i](id);
+				return iconsList[i](id).default;
 
 			} catch {}
 		}
@@ -38,7 +40,7 @@ let
 if (IS_PROD) {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!simple-svg-sprite-loader!svgo-loader!@sprite',
+		'!!svg-sprite-loader!svgo-loader!@sprite',
 		true,
 		/\.svg$/
 	);
@@ -46,7 +48,7 @@ if (IS_PROD) {
 } else {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!simple-svg-sprite-loader!@sprite',
+		'!!svg-sprite-loader!@sprite',
 		true,
 		/\.svg$/
 	);
@@ -59,6 +61,8 @@ Object.forEach(ctx.keys(), (el: string) => {
 iconsList.push(ctx);
 // @endcontext
 //#endif
+
+console.log(2222);
 
 function normalize(key: string): string {
 	return key.replace(/\.\//, '').replace(/\.svg$/, '');
