@@ -25,8 +25,9 @@ const
 	{loadLibs, loadStyles, loadLinks} = include('src/super/i-static-page/modules/ss-helpers/libs'),
 	{getVarsDecl, getInitLibDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
 
-const nonce = {
-	nonce: csp.nonce
+const defAttrs = {
+	nonce: csp.nonce,
+	crossorigin: webpack.publicPath() === '' ? undefined : 'anonymous'
 };
 
 exports.getScriptDeclByName = getScriptDeclByName;
@@ -73,8 +74,7 @@ function getScriptDeclByName(name, {
 	const attrs = normalizeAttrs({
 		staticAttrs: `src="\${PATH['${name}']}"`,
 		defer: defer !== false,
-		crossorigin: 'anonymous',
-		...nonce
+		...defAttrs
 	});
 
 	const script = [
@@ -203,8 +203,7 @@ function getStyleDeclByName(name, {
 		staticAttrs: `href="\${PATH['${rname}']}"`,
 		rel: 'stylesheet',
 		defer: defer !== false,
-		crossorigin: 'anonymous',
-		...nonce
+		...defAttrs
 	});
 
 	let

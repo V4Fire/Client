@@ -23,8 +23,13 @@ const
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
-const nonce = {
+const cspAttrs = {
 	nonce: config.csp.nonce
+};
+
+const defAttrs = {
+	...cspAttrs,
+	crossorigin: config.webpack.publicPath() === '' ? undefined : 'anonymous'
 };
 
 exports.getScriptDecl = getScriptDecl;
@@ -58,7 +63,7 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (Object.isString(lib)) {
-		return `<script ${normalizeAttrs(nonce)}>${lib}</script>`;
+		return `<script ${normalizeAttrs(cspAttrs)}>${lib}</script>`;
 	}
 
 	body = body || '';
@@ -67,9 +72,8 @@ function getScriptDecl(lib, body) {
 		isInline = Boolean(needInline(lib.inline) || body);
 
 	const attrs = normalizeAttrs({
-		crossorigin: 'anonymous',
 		...Object.select(lib, isInline ? [] : ['staticAttrs', 'defer', 'src']),
-		...nonce,
+		...defAttrs,
 		...lib.attrs
 	});
 
@@ -136,7 +140,7 @@ exports.getStyleDecl = getStyleDecl;
  */
 function getStyleDecl(lib, body) {
 	if (Object.isString(lib)) {
-		return `<style ${normalizeAttrs(nonce)}>${lib}</style>`;
+		return `<style ${normalizeAttrs(cspAttrs)}>${lib}</style>`;
 	}
 
 	body = body || '';
@@ -147,7 +151,7 @@ function getStyleDecl(lib, body) {
 
 	const attrsObj = {
 		staticAttrs: lib.staticAttrs,
-		...nonce,
+		...isInline ? cspAttrs : defAttrs,
 		...lib.attrs
 	};
 
@@ -222,8 +226,7 @@ function getLinkDecl(link) {
 	const attrs = normalizeAttrs({
 		href: link.src,
 		staticAttrs: link.staticAttrs,
-		crossorigin: 'anonymous',
-		...nonce,
+		...defAttrs,
 		...link.attrs
 	});
 
