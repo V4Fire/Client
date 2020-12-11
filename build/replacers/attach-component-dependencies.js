@@ -35,27 +35,34 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		ext = path.extname(filePath),
 		component = blockMap.get(path.basename(filePath, ext));
 
-	await $C(component?.dependencies).async.forEach(async (dep) => {
-		if (decls[dep] != null) {
-			str += decls[dep];
-			return;
+	return attachDependencies(component);
+
+	async function attachDependencies(component) {
+		if (component == null) {
+			return str;
 		}
 
-		const
-			component = blockMap.get(dep);
+		await $C(component.dependencies).async.forEach(async (dep) => {
+			if (decls[dep] != null) {
+				str += decls[dep];
+				return;
+			}
 
-		if (!component) {
-			return;
-		}
+			const component = blockMap.get(dep);
+			await attachDependencies(component);
 
-		let
-			decl = '';
+			if (!component) {
+				return;
+			}
 
-		try {
-			const
-				styles = await component.styles;
+			let
+				decl = '';
 
-			decl += `
+			try {
+				const
+					styles = await component.styles;
+
+				decl += `
 if (!TPLS['${dep}']) {
 	(async () => {
 		try {
@@ -64,30 +71,31 @@ if (!TPLS['${dep}']) {
 	})();
 }`;
 
-		} catch {}
+			} catch {}
 
-		try {
-			const src = path.normalize(await component.logic);
-			decl += `try { require('${src}'); } catch (err) { stderr(err); }`;
+			try {
+				const src = path.normalize(await component.logic);
+				decl += `try { require('${src}'); } catch (err) { stderr(err); }`;
 
-		} catch {}
+			} catch {}
 
-		try {
-			const src = path.normalize(await component.tpl);
-			decl += `try { TPLS['${dep}'] = require('${src}')['${dep}']; } catch (err) { stderr(err); }`;
+			try {
+				const src = path.normalize(await component.tpl);
+				decl += `try { TPLS['${dep}'] = require('${src}')['${dep}']; } catch (err) { stderr(err); }`;
 
-		} catch {}
+			} catch {}
 
-		decls[dep] = decl;
-		str += decl;
-	});
+			decls[dep] = decl;
+			str += decl;
+		});
 
-	$C(component?.libs).forEach((lib) => {
-		str += `
+		$C(component.libs).forEach((lib) => {
+			str += `
 try { require('${lib}'); } catch (err) { stderr(err); }
 `;
-	});
+		});
 
-	return str;
+		return str;
+	}
 };
 
