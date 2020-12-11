@@ -333,7 +333,7 @@ async function generatePageInitJS(pageName, {
 
 		getScriptDeclByName('vendor', {assets, optional: true}),
 		getPageScriptDepsDecl(ownDeps, {assets}),
-		getScriptDeclByName('webpack', {assets})
+		getScriptDeclByName('webpack.runtime', {assets})
 	);
 
 	const bodyInitializer = `

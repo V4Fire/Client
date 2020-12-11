@@ -34,7 +34,7 @@ exports.getAssets = getAssets;
 async function getAssets(entryPoints) {
 	const
 		assets = {},
-		assetsBlueprint = ['webpack'];
+		assetsBlueprint = ['webpack.runtime'];
 
 	$C(entryPoints).forEach((el, key) => {
 		assetsBlueprint.push(key);
