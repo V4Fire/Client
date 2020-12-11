@@ -8,4 +8,4 @@
 
 package('b-slider')
 	.extends('i-data')
-	.libs('core/component/directives/resize');
+	.libs('core/component/directives/resize-observer');
