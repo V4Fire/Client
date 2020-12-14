@@ -25,23 +25,23 @@ export const
 
 @component({flyweight: true})
 export default class bMatryoshka extends iData implements iItems {
-	/** @see [[iItems.prototype.itemsProp]] */
+	/** @see [[iItems.prototype.optionsProp]] */
 	@prop(Array)
 	readonly optionsProp?: MatryoshkaItem[] = [];
 
-	/** @see [[iItems.prototype.items]] */
+	/** @see [[iItems.prototype.options]] */
 	@field((o) => o.sync.link())
 	options!: MatryoshkaItem[];
 
-	/** @see [[iItems.prototype.item]] */
+	/** @see [[iItems.prototype.option]] */
 	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['option'];
 
-	/** @see [[iItems.prototype.itemKey]] */
+	/** @see [[iItems.prototype.optionKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItems['optionKey'];
 
-	/** @see [[iItems.prototype.itemProps]] */
+	/** @see [[iItems.prototype.optionProps]] */
 	@prop({type: Function, required: false})
 	readonly optionProps!: iItems['optionProps'];
 
