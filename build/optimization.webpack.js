@@ -14,7 +14,7 @@ const
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
-	{isLayerDep, isExternalDep} = include('build/const'),
+	{isLayerDep, isLayerCoreDep, isExternalDep} = include('build/const'),
 	{inherit} = include('build/helpers.webpack'),
 	{RUNTIME} = include('build/graph.webpack');
 
@@ -42,7 +42,7 @@ module.exports = function optimization({buildId, plugins}) {
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: isLayerDep
+					test: isLayerCoreDep
 				},
 
 				async: {

@@ -21,7 +21,7 @@ module.exports = exports = include('@super/build/const', __dirname);
  * List of critical core folders of the framework
  * @type {!Array<string>}
  */
-exports.coreFolders = ['config', 'core', 'super'];
+exports.coreFolders = ['config', 'core', 'super', 'global'];
 
 /**
  * String with project dependence "src" folders to use with regular expressions
