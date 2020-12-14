@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.109 (2020-12-15)
+
+#### :bug: Bug Fix
+
+* Added watchers for `session` and `net` events to update appropriate state fields
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :house: Internal
