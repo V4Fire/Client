@@ -217,12 +217,12 @@ module.exports = async function module({plugins}) {
 		]
 	});
 
-	plugins.set('extractCSS', new MiniCssExtractPlugin({
+	plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
 		filename: `${hash(output, true)}.css`,
 		chunkFilename: '[id].css'
-	}));
+	})));
 
-	const stylHelperLoaders = [
+	const styleHelperLoaders = [
 		{
 			loader: 'fast-css-loader',
 			options: Object.reject(config.css(), ['minimize'])
@@ -252,10 +252,32 @@ module.exports = async function module({plugins}) {
 
 		oneOf: [
 			{
-				resourceQuery: /dynamic/,
+				resourceQuery: /static/,
 				use: [].concat(
-					'style-loader',
-					stylHelperLoaders,
+					MiniCssExtractPlugin.loader,
+					styleHelperLoaders,
+
+					{
+						loader: 'monic-loader',
+						options: inherit(monic.stylus, {
+							replacers: [
+								require('@pzlr/stylus-inheritance')({resolveImports: true}),
+								include('build/replacers/project-name')
+							]
+						})
+					}
+				)
+			},
+
+			{
+				use: [].concat(
+					{
+						loader: 'style-loader',
+						options: config.style()
+					},
+
+					/linkTag/i.test(config.style().injectType) ? MiniCssExtractPlugin.loader : [],
+					styleHelperLoaders,
 
 					{
 						loader: 'monic-loader',
@@ -269,23 +291,6 @@ module.exports = async function module({plugins}) {
 					}
 				)
 			},
-
-			{
-				use: [].concat(
-					MiniCssExtractPlugin.loader,
-					stylHelperLoaders,
-
-					{
-						loader: 'monic-loader',
-						options: inherit(monic.stylus, {
-							replacers: [
-								require('@pzlr/stylus-inheritance')({resolveImports: true}),
-								include('build/replacers/project-name')
-							]
-						})
-					}
-				)
-			}
 		]
 	});
 

@@ -92,7 +92,7 @@ module.exports = function optimization({buildId, plugins}) {
 				output: {
 					comments: false
 				}
-			}, config.uglify())
+			}, config.uglify != null ? config.uglify() : config.terser())
 		})
 
 		/* eslint-enable camelcase */

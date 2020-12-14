@@ -26,6 +26,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Removed `build.fast`
   * Removed `webpack.buildCache`
   * Removed `webpack.cacheDir`
+  * Removed `uglify`
   * Now `webpack.devtool` is a function
 
 * `build`:
@@ -45,6 +46,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `config`:
   * Added `webpack.mode`
   * Added `webpack.cacheType`
+  * Added `style`
+  * Added `miniCssExtractPlugin`
+  * Added `terser`
 
 * Added `forceInnerRender`:
   * `bWindow`

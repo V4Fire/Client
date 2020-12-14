@@ -16,12 +16,16 @@ Changelog
 * Removed `build.fast`
 * Removed `webpack.buildCache`
 * Removed `webpack.cacheDir`
+* Removed `uglify`
 * Now `webpack.devtool` is a function
 
 #### :boom: New Feature
 
 * Added `webpack.mode`
 * Added `webpack.cacheType`
+* Added `style`
+* Added `miniCssExtractPlugin`
+* Added `terser`
 
 ## v3.0.0-rc.67 (2020-09-22)
 

@@ -528,55 +528,77 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for a favicon generator
-	 * @returns {!Object}
+	 * Config for typescript-loader
+	 *
+	 * 1. server - to compile node.js modules
+	 * 2. client - to compile client modules
+	 * 3. worker - to compile web-worker modules
+	 *
+	 * @returns {{server: !Object, client: !Object, worker: !Object}}
 	 */
-	favicons() {
+	typescript() {
+		const
+			server = super.typescript();
+
+		const client = this.extend({}, server, {
+			compilerOptions: {
+				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
+			}
+		});
+
 		return {
-			appName: this.appName,
-			path: this.src.assets('favicons'),
-			background: '#FFF',
-			display: 'standalone',
-			orientation: 'portrait',
-			version: 1.0,
-			logging: false
+			client,
+			server,
+			worker: client
 		};
 	},
 
 	/**
-	 * Config for image-webpack-loader
-	 * @returns {!Object}
+	 * Config for Webpack TerserPlugin
+	 * @returns {{}}
 	 */
-	imageOpts() {
+	terser() {
+		return {};
+	},
+
+	/**
+	 * Config for worker-loader
+	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
+	 */
+	worker() {
 		return {
-			svgo: {
-				removeUnknownsAndDefaults: false
+			worker: {},
+
+			serviceWorker: {
+				workerType: 'ServiceWorker'
 			},
 
-			webp: {
-				quality: 75
+			sharedWorker: {
+				workerType: 'SharedWorker'
 			}
 		};
 	},
 
 	/**
-	 * Config for html-loader
+	 * Config for stylus-loader
 	 * @returns {!Object}
 	 */
-	html() {
-		const
-			isProd = this.webpack.mode() === 'production';
-
+	stylus() {
 		return {
-			attributes: false,
-
-			minimize: {
-				useShortDoctype: true,
-				conservativeCollapse: true,
-				removeAttributeQuotes: true,
-				removeComments: isProd,
-				collapseWhitespace: isProd
+			webpackImporter: false,
+			stylusOptions: {
+				resolveURL: false
 			}
+		};
+	},
+
+	/**
+	 * Config for css-loader
+	 * @returns {!Object}
+	 */
+	css() {
+		return {
+			minimize: Boolean(this.webpack.mode() === 'production')
 		};
 	},
 
@@ -597,44 +619,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for Webpack TerserPlugin
-	 * @returns {{}}
+	 * Config for MiniCssExtractPlugin
+	 * @returns {!Object}
 	 */
-	uglify() {
+	miniCssExtractPlugin() {
 		return {};
 	},
 
-	/** @override */
-	monic() {
-		const
-			runtime = this.runtime(),
-			es = this.es(),
-			demo = Boolean(this.build.components && this.build.components.length);
-
+	/**
+	 * Config for style-loader
+	 * @returns {!Object}
+	 */
+	style() {
 		return {
-			stylus: {
-				flags: {
-					runtime,
-					'+:*': true,
-					demo
-				}
-			},
-
-			typescript: {
-				flags: {
-					runtime,
-					es,
-					demo
-				}
-			},
-
-			javascript: {
-				flags: {
-					runtime,
-					es,
-					demo
-				}
-			}
+			injectType: 'styleTag'
 		};
 	},
 
@@ -670,68 +668,88 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for typescript-loader
-	 *
-	 * 1. server - to compile node.js modules
-	 * 2. client - to compile client modules
-	 * 3. worker - to compile web-worker modules
-	 *
-	 * @returns {{server: !Object, client: !Object, worker: !Object}}
+	 * Config for html-loader
+	 * @returns {!Object}
 	 */
-	typescript() {
+	html() {
 		const
-			server = super.typescript();
-
-		const client = this.extend({}, server, {
-			compilerOptions: {
-				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
-			}
-		});
+			isProd = this.webpack.mode() === 'production';
 
 		return {
-			client,
-			server,
-			worker: client
+			attributes: false,
+
+			minimize: {
+				useShortDoctype: true,
+				conservativeCollapse: true,
+				removeAttributeQuotes: true,
+				removeComments: isProd,
+				collapseWhitespace: isProd
+			}
 		};
 	},
 
 	/**
-	 * Config for worker-loader
-	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
+	 * Config for a favicon generator
+	 * @returns {!Object}
 	 */
-	worker() {
+	favicons() {
 		return {
-			worker: {},
+			appName: this.appName,
+			path: this.src.assets('favicons'),
+			background: '#FFF',
+			display: 'standalone',
+			orientation: 'portrait',
+			version: 1.0,
+			logging: false
+		};
+	},
 
-			serviceWorker: {
-				workerType: 'ServiceWorker'
+	/**
+	 * Config for image-webpack-loader
+	 * @returns {!Object}
+	 */
+	imageOpts() {
+		return {
+			svgo: {
+				removeUnknownsAndDefaults: false
 			},
 
-			sharedWorker: {
-				workerType: 'SharedWorker'
+			webp: {
+				quality: 75
 			}
 		};
 	},
 
-	/**
-	 * Config for css-loader
-	 * @returns {!Object}
-	 */
-	css() {
-		return {
-			minimize: Boolean(this.webpack.mode() === 'production')
-		};
-	},
+	/** @override */
+	monic() {
+		const
+			runtime = this.runtime(),
+			es = this.es(),
+			demo = Boolean(this.build.components && this.build.components.length);
 
-	/**
-	 * Config for stylus-loader
-	 * @returns {!Object}
-	 */
-	stylus() {
 		return {
-			webpackImporter: false,
-			stylusOptions: {
-				resolveURL: false
+			stylus: {
+				flags: {
+					runtime,
+					'+:*': true,
+					demo
+				}
+			},
+
+			typescript: {
+				flags: {
+					runtime,
+					es,
+					demo
+				}
+			},
+
+			javascript: {
+				flags: {
+					runtime,
+					es,
+					demo
+				}
 			}
 		};
 	},

@@ -35,10 +35,10 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			imports = [];
 
 		if (isESImport) {
-			imports.push(`!TPLS['${nm}'] && import('${fullPath}.styl?dynamic')`);
+			imports.push(`!TPLS['${nm}'] && import('${fullPath}.styl')`);
 
 		} else {
-			imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl?dynamic')))`);
+			imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl')))`);
 		}
 
 		if (isESImport) {
