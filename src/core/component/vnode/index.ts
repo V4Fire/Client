@@ -260,9 +260,7 @@ export function parseStyle(
 				continue;
 			}
 
-			const
-				chunks = rule.split(':');
-
+			const chunks = rule.split(':');
 			acc[chunks[0].trim()] = chunks[1].trim();
 		}
 
