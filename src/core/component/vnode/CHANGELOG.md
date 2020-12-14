@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.108 (2020-12-11)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using `parseStyle` with string trailing `;` ex. `background-color: #2B9FFF; color: #FFFFFF; border: 1px solid #FFFFFF;`
+
 ## v3.0.0-rc.93 (2020-11-03)
 
 #### :boom: Breaking Change
