@@ -28,8 +28,7 @@ const cspAttrs = {
 };
 
 const defAttrs = {
-	...cspAttrs,
-	crossorigin: config.webpack.publicPath() === '' ? undefined : 'anonymous'
+	...cspAttrs
 };
 
 exports.getScriptDecl = getScriptDecl;
