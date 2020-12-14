@@ -9,8 +9,17 @@
 /**
  * Element data
  */
-export interface Doll extends Dictionary {
+export interface MatryoshkaItem extends Dictionary {
 	id: string;
+
+	/**
+	 * Parent element identifier
+	 * (for nested items)
+	 */
 	parentId?: string;
-	children?: Doll[];
+
+	/**
+	 * Nested items
+	 */
+	children?: MatryoshkaItem[];
 }

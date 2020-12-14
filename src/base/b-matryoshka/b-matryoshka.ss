@@ -26,8 +26,8 @@
 				< .&__doll-box
 					< .&__marker
 						- block fold
-							< template v-if = Boolean(field.get('children.length', el))
-								< template v-if = vdom.getSlot('fold')
+							< template v-if = Object.size(field.get('children.length', el)) > 0
+								< template v-if = vdom.getSlot('fold') != null
 									+= self.slot('fold', {':params': 'getFoldingProps(el)'})
 
 								< .&__fold &
@@ -46,10 +46,10 @@
 							+= self.slot('default', {':option': 'getOptionProps(el, i)'})
 
 				- block children
-					< .&__children v-if = field.get('children.length', el)
+					< .&__children v-if = Object.size(field.get('children', el)) > 0
 						< @b-matryoshka.&__child &
 							:options = el.children |
-							:v-attrs = getNestedDollProps()
+							:v-attrs = getNestedItemProps()
 						.
 							< template #default = o
 								+= self.slot('default', {':option': 'o.option'})

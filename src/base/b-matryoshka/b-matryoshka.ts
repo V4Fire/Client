@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';
-import { Doll } from 'base/b-matryoshka/interface';
+import { MatryoshkaItem } from 'base/b-matryoshka/interface';
 import iData, { component, prop, field } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -27,11 +27,11 @@ export const
 export default class bMatryoshka extends iData implements iItems {
 	/** @see [[iItems.prototype.itemsProp]] */
 	@prop(Array)
-	readonly optionsProp?: Doll[] = [];
+	readonly optionsProp?: MatryoshkaItem[] = [];
 
 	/** @see [[iItems.prototype.items]] */
 	@field((o) => o.sync.link())
-	options!: Doll[];
+	options!: MatryoshkaItem[];
 
 	/** @see [[iItems.prototype.item]] */
 	@prop({type: [String, Function], required: false})
@@ -58,7 +58,7 @@ export default class bMatryoshka extends iData implements iItems {
 		}
 	)
 
-	readonly renderFilter!: (ctx: bMatryoshka, el: Doll) => CanPromise<boolean>;
+	readonly renderFilter!: (ctx: bMatryoshka, el: MatryoshkaItem) => CanPromise<boolean>;
 
 	/**
 	 * Number of chunks for the async render
@@ -81,18 +81,18 @@ export default class bMatryoshka extends iData implements iItems {
 	/**
 	 * Link to the top level component
 	 */
-	protected get top(): this {
-		return this.isFlyweight && <any>this.$normalParent || this;
+	protected get top(): bMatryoshka {
+		return this.isFlyweight ? <bMatryoshka>this.$normalParent : this;
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<Doll[]> {
+	protected initRemoteData(): CanUndef<this['options']> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent<Doll[]>(this.db);
+			val = this.convertDBToComponent<this['options']>(this.db);
 
 		if (Object.isArray(val)) {
 			return this.options = val;
@@ -105,7 +105,7 @@ export default class bMatryoshka extends iData implements iItems {
 	 * Returns props data for the specified fold element
 	 * @param el
 	 */
-	protected getFoldingProps(el: Doll): Dictionary {
+	protected getFoldingProps(el: MatryoshkaItem): Dictionary {
 		return {
 			'@click': this.onFoldingClick.bind(this, el)
 		};
@@ -122,7 +122,7 @@ export default class bMatryoshka extends iData implements iItems {
 	 * @param el
 	 * @param i
 	 */
-	protected getOptionProps(el: Doll, i: number): Dictionary {
+	protected getOptionProps(el: MatryoshkaItem, i: number): Dictionary {
 		const
 			op = this.optionProps,
 			item = Object.reject(el, 'children');
@@ -143,7 +143,7 @@ export default class bMatryoshka extends iData implements iItems {
 	/**
 	 * Returns props data for recursive calling
 	 */
-	protected getNestedDollProps(): Dictionary {
+	protected getNestedItemProps(): Dictionary {
 		const opts = {
 			folded: this.folded,
 			level: this.level + 1,
@@ -158,12 +158,12 @@ export default class bMatryoshka extends iData implements iItems {
 	}
 
 	/**
-	 * Returns a folded modifier for the specified doll identifier
+	 * Returns a folded modifier for the specified identifier
 	 * @param id
 	 */
 	protected getFoldedMod(id: string): CanUndef<string> {
 		const
-			target = this.searchDollElement(id);
+			target = this.searchItemElement(id);
 
 		if (!target) {
 			return;
@@ -176,7 +176,7 @@ export default class bMatryoshka extends iData implements iItems {
 	 * Searches HTML element with the specified identifier
 	 * @param id
 	 */
-	protected searchDollElement(id: string): CanUndef<HTMLElement> {
+	protected searchItemElement(id: string): CanUndef<HTMLElement> {
 		const dataId = this.top.dom.getId(id);
 		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${dataId}]`) ?? undefined;
 	}
@@ -185,11 +185,11 @@ export default class bMatryoshka extends iData implements iItems {
 	 * Handler: fold element click
 	 *
 	 * @param el
-	 * @emits fold(target: HTMLElement, el: Doll, value: boolean)
+	 * @emits fold(target: HTMLElement, el: MatryoshkaItem, value: boolean)
 	 */
-	protected onFoldingClick(el: Doll): void {
+	protected onFoldingClick(el: MatryoshkaItem): void {
 		const
-			target = this.searchDollElement(el.id),
+			target = this.searchItemElement(el.id),
 			newVal = this.getFoldedMod(el.id) === 'false';
 
 		if (target) {
