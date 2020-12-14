@@ -121,13 +121,13 @@
     "urlconcat": "0.0.12",
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^5.10.0",
+    "webpack": "^5.10.1",
     "webpack-cli": "^3.3.12",
     "worker-loader": "^3.0.6"
   },
   "devDependencies": {
     "@v4fire/linters": "^1.6.1",
-    "husky": "^4.3.5",
+    "husky": "^4.3.6",
     "nyc": "^15.1.0",
     "playwright": "1.4.2"
   }
