@@ -21,7 +21,7 @@ const
 module.exports = async function entry(name, src) {
 	const
 		g = await graph,
-		dependencies = (g.dependencies[name] ?? []).filter((nm) => g.entry([nm]));
+		dependencies = (g.dependencies[name] ?? []).filter((nm) => g.dependencies[nm]);
 
 	const
 		isTpl = /_tpl$/;
