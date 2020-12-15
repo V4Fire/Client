@@ -68,7 +68,7 @@
 			? rootAttrs['data-root-component'] = self.name()
 			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
-		? await h.generatePageInitJS(self.name(), { &
+		? await h.generateInitJS(self.name(), { &
 			deps,
 			ownDeps,
 

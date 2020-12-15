@@ -42,7 +42,8 @@ function getFaviconsDecl() {
 
 	const manifestDecl = getLinkDecl({
 		staticAttrs: `${manifest[1]} href="${manifest[2]}?from=\${location.href}"`,
-		documentWrite: true
+		defer: false,
+		js: true
 	});
 
 	return faviconsDecl + getScriptDecl(manifestDecl);

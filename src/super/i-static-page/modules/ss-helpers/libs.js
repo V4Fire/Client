@@ -32,18 +32,16 @@ exports.loadLibs = loadLibs;
  *
  * @param {Libs} libs
  * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the libraries by using document.write
- *
+ * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
  * @returns {!Promise<string>}
  */
-async function loadLibs(libs, {assets, documentWrite} = {}) {
+async function loadLibs(libs, {assets, js} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
-		lib.documentWrite = documentWrite;
+		lib.js = js;
 		res += await getScriptDecl(lib);
 	}
 
@@ -56,20 +54,17 @@ exports.loadStyles = loadStyles;
  * Initializes the specified styles and returns code to load
  *
  * @param {StyleLibs} libs
- *
  * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the libraries by using document.write
- *
+ * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
  * @returns {!Promise<string>}
  */
-async function loadStyles(libs, {assets, documentWrite} = {}) {
+async function loadStyles(libs, {assets, js} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
-		lib.documentWrite = documentWrite;
+		lib.js = js;
 		res += await getStyleDecl(lib);
 		res += '\n';
 	}
@@ -84,17 +79,15 @@ exports.loadLinks = loadLinks;
  *
  * @param {Links} libs
  * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the links by using document.write
- *
+ * @param {boolean=} [js] - if true, the function returns JS code to load the links
  * @returns {!Promise<string>}
  */
-async function loadLinks(libs, {assets, documentWrite} = {}) {
+async function loadLinks(libs, {assets, js} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
-		lib.documentWrite = documentWrite;
+		lib.js = js;
 		res += await getLinkDecl(lib);
 		res += '\n';
 	}

@@ -49,8 +49,15 @@ exports.getScriptDecl = getScriptDecl;
  * // <script>...</script>;
  * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', inline: true});
  *
+ * // (function () {
+ * //   var el = document.createElement('script');
+ * //   el.src = '...';
+ * //   (document.body || document.head).appendChild(el);
+ * // })();
+ * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', js: true});
+ *
  * // document.write('<script src="..."></script>');
- * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', documentWrite: true});
+ * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', js: true, defer: false});
  *
  * // <script>var a = 1;</script>;
  * getScriptDecl('var a = 1;');
@@ -68,13 +75,14 @@ function getScriptDecl(lib, body) {
 	body = body || '';
 
 	const
-		isInline = Boolean(needInline(lib.inline) || body);
+		isInline = Boolean(needInline(lib.inline) || body),
+		createElement = lib.js && lib.defer !== false;
 
 	const attrs = normalizeAttrs({
-		...Object.select(lib, isInline ? [] : ['staticAttrs', 'defer', 'src']),
+		...Object.select(lib, isInline ? [] : ['staticAttrs', 'src']),
 		...defAttrs,
 		...lib.attrs
-	});
+	}, createElement);
 
 	if (isInline && !body) {
 		return (async () => {
@@ -85,7 +93,7 @@ function getScriptDecl(lib, body) {
 			const
 				body = `include('${lib.src}');`;
 
-			if (lib.documentWrite) {
+			if (lib.js) {
 				return `${body}\n`;
 			}
 
@@ -94,14 +102,24 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (body) {
-		if (lib.documentWrite) {
+		if (lib.js) {
 			return `${body}\n`;
 		}
 
 		return `<script ${attrs}>${body}</script>`;
 	}
 
-	if (lib.documentWrite) {
+	if (createElement) {
+		return `
+(function () {
+	var el = document.createElement('script');
+	${attrs}
+	(document.body || document.head).appendChild(el);
+})();
+`;
+	}
+
+	if (lib.js) {
 		let
 			decl = `document.write(\`<script ${attrs}\` + '><' + '/script>');`;
 
@@ -133,8 +151,13 @@ exports.getStyleDecl = getStyleDecl;
  * // <style>...</style>
  * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', inline: true});
  *
- * // document.write('<link href="..." rel="stylesheet">');
- * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', documentWrite: true});
+ * // (function () {
+ * //   var el = document.createElement('link');
+ * //   el.href = '...';
+ * //   el.setAttribute('rel', 'stylesheet');
+ * //   (document.body || document.head).appendChild(el);
+ * // })();
+ * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', js: true});
  * ```
  */
 function getStyleDecl(lib, body) {
@@ -164,31 +187,13 @@ function getStyleDecl(lib, body) {
 			Object.assign(attrsObj, {
 				rel: 'stylesheet',
 				media: 'print',
-				onload: `this.rel='${rel}'; this.onload=null;`
+				onload: `this.rel=\\'${rel}\\'; this.onload=null;`
 			});
 		}
 	}
 
 	const
-		attrs = normalizeAttrs(attrsObj);
-
-	const wrap = (decl) => {
-		if (lib.documentWrite) {
-			decl = `document.write(\`${decl}\`);`;
-
-			if (isInline) {
-				return decl;
-			}
-
-			if (config.es() === 'ES5') {
-				decl = buble.transform(decl).code;
-			}
-
-			return decl;
-		}
-
-		return decl;
-	};
+		attrs = normalizeAttrs(attrsObj, lib.js);
 
 	if (isInline && !body) {
 		return (async () => {
@@ -196,15 +201,44 @@ function getStyleDecl(lib, body) {
 				await delay(500);
 			}
 
-			return wrap(`<style ${attrs}>include('${lib.src}');</style>`);
+			if (lib.js) {
+				return createTag('style', `include('${lib.src}')`);
+			}
+
+			return `<style ${attrs}>include('${lib.src}');</style>`;
 		})();
 	}
 
 	if (body) {
-		return wrap(`<style ${attrs}>${body}</style>`);
+		if (lib.js) {
+			return createTag('style', body);
+		}
+
+		return `<style ${attrs}>${body}</style>`;
 	}
 
-	return wrap(`<link ${attrs}>`);
+	if (lib.js) {
+		return createTag('link');
+	}
+
+	return `<link ${attrs}>`;
+
+	function createTag(tag, content) {
+		let decl = `
+(function () {
+	var el = document.createElement('${tag}');
+	${content ? `el.innerHTML = \`${content}\`;` : ''}
+	${attrs}
+	(document.body || document.head).appendChild(el);
+})();
+`;
+
+		if (config.es() === 'ES5') {
+			decl = buble.transform(decl).code;
+		}
+
+		return decl;
+	}
 }
 
 exports.getLinkDecl = getLinkDecl;
@@ -227,20 +261,19 @@ function getLinkDecl(link) {
 		staticAttrs: link.staticAttrs,
 		...defAttrs,
 		...link.attrs
-	});
+	}, link.js);
 
-	let
-		decl = `<link ${attrs}>`;
-
-	if (link.documentWrite) {
-		decl = `document.write(\`${decl}\`);`;
-
-		if (config.es() === 'ES5') {
-			decl = buble.transform(decl).code;
-		}
+	if (link.js) {
+		return `
+(function () {
+	var el = document.createElement('link');
+	${attrs}
+	(document.body || document.head).appendChild(el);
+})();
+`;
 	}
 
-	return decl;
+	return `<link ${attrs}>`;
 }
 
 exports.normalizeAttrs = normalizeAttrs;
@@ -249,15 +282,19 @@ exports.normalizeAttrs = normalizeAttrs;
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
  * @param {Object} attrs
+ * @param {boolean=} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
  * @returns {!Array<string>}
  *
  * @example
  * ```js
  * // ['defer', 'type="text/javascript"']
  * normalizeAttrs({defer: true, type: 'text/javascript'});
+ *
+ * // ["el.setAttribute('defer', 'defer');", "el.setAttribute('type', 'text/javascript');"]
+ * normalizeAttrs({defer: true, type: 'text/javascript'}, true);
  * ```
  */
-function normalizeAttrs(attrs) {
+function normalizeAttrs(attrs, dynamic = false) {
 	const
 		normalizedAttrs = [];
 
@@ -274,6 +311,12 @@ function normalizeAttrs(attrs) {
 		}
 
 		if (val === undefined) {
+			return;
+		}
+
+		if (dynamic) {
+			const attrsVal = Object.isString(val) ? val : key;
+			normalizedAttrs.push(`el.setAttribute('${key}', '${attrsVal}');`);
 			return;
 		}
 
@@ -297,6 +340,6 @@ function normalizeAttrs(attrs) {
 		}
 	});
 
-	normalizedAttrs.toString = () => normalizedAttrs.join(' ');
+	normalizedAttrs.toString = () => normalizedAttrs.join(dynamic ? '\n\t' : ' ');
 	return normalizedAttrs;
 }
