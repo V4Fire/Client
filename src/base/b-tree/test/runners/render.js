@@ -107,7 +107,12 @@ module.exports = (page) => {
 				target = await init();
 
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
-			await Promise.all(checkOptionTree({opts: options, target}));
+
+			const
+				promises = await Promise.all(checkOptionTree({opts: options, target})),
+				checkboxes = await page.$$('.b-checkbox');
+
+			expect(promises.length).toEqual(checkboxes.length);
 		});
 
 		it('branch folding', async () => {
@@ -139,7 +144,7 @@ module.exports = (page) => {
 				const defaultSlot = {
 					tag: 'div',
 					attrs: {
-						'data-test-ref': 'default'
+						'data-test-ref': 'item'
 					},
 					content: 'Empty'
 				};
@@ -171,7 +176,12 @@ module.exports = (page) => {
 				target = await init();
 
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
-			await Promise.all(checkOptionTree({opts: options, target}));
+
+			const
+				promises = await Promise.all(checkOptionTree({opts: options, target})),
+				refs = await h.dom.getRefs(page, 'item');
+
+			expect(promises.length).toEqual(refs.length);
 		});
 	});
 };
