@@ -18,11 +18,14 @@ Changelog
 * Removed `webpack.cacheDir`
 * Removed `uglify`
 * Now `webpack.devtool` is a function
+* Moved `webpack.dataURILimit` to `webpack.optimize.dataURILimit`
 
 #### :boom: New Feature
 
 * Added `webpack.mode`
 * Added `webpack.cacheType`
+* Added `webpack.optimize.minChunkSize`
+* Added `webpack.optimize.splitChunks`
 * Added `style`
 * Added `miniCssExtractPlugin`
 * Added `terser`

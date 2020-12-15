@@ -31,7 +31,7 @@ const
 const urlLoaderOpts = {
 	name: path.basename(assetsOutput),
 	outputPath: path.dirname(assetsOutput),
-	limit: webpack.dataURILimit(),
+	limit: webpack.optimize.dataURILimit(),
 	encoding: true,
 	esModule: false
 };

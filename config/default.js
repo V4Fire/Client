@@ -29,6 +29,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * You can use this parameter when you develop some particular chunk and don't want to build the whole application,
 		 * because it may slow down the build time.
 		 *
+		 * @cli entries
+		 * @env ENTRIES
+		 *
 		 * @type {string}
 		 *
 		 * @example
@@ -214,7 +217,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of the used MVVM library, like vue or react
+	 * Name of the used MVVM library, like Vue or React
 	 *
 	 * @cli engine
 	 * @env ENGINE
@@ -232,51 +235,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
-	/** @override */
-	runtime() {
-		return {
-			...super.runtime(),
-
-			debug: false,
-			engine: this.engine(),
-			noGlobals: false,
-			svgSprite: true,
-
-			'ds-diff': false,
-			'ds-vars': false,
-
-			blockNames: false,
-			passDesignSystem: false,
-
-			'core/browser': true,
-			'core/session': true,
-
-			'prelude/test-env': !isProd,
-			'component/async-render': true,
-			'component/daemons': true,
-
-			'directives/event': true,
-			'directives/resize': true,
-			'directives/image': true,
-			'directives/in-view': true,
-			'directives/resize-observer': true,
-			'directives/update-on': true,
-
-			iData: true,
-			bRouter: true,
-
-			'iInput/validators': true,
-			'bInput/mask': false,
-			'bInput/validators': true
-		};
-	},
-
 	/**
-	 * Webpack configuration
+	 * WebPack configuration
 	 */
 	webpack: {
 		/**
-		 * WebPack ".mode" option
+		 * Value of `mode`
+		 *
+		 * @cli mode
+		 * @env MODE
+		 *
 		 * @returns {string}
 		 */
 		mode() {
@@ -287,7 +255,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * WebPack ".cache.type" option
+		 * Value of `cache.type`
+		 *
+		 * @cli cache-type
+		 * @env CACHE_TYPE
+		 *
 		 * @returns {string}
 		 */
 		cacheType() {
@@ -298,7 +270,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * WebPack ".devtool" option
+		 * Value of `devtool`
+		 *
+		 * @cli devtool
+		 * @env DEVTOOL
+		 *
 		 * @returns {?string}
 		 */
 		devtool() {
@@ -316,7 +292,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if all static from the build have to inline within HTML files
+		 * Returns true if all assets from the build have to inline within HTML files
 		 * @returns {boolean}
 		 */
 		fatHTML() {
@@ -324,15 +300,52 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the maximum size of a file in bytes that can be inline as base64
-		 * @returns {(number|undefined)}
+		 * Some webpack options to optimize build
 		 */
-		dataURILimit() {
-			return this.fatHTML() ? undefined : 2048;
+		optimize: {
+			/**
+			 * The minimum size of a chunk file in bytes that can be separated into a single file
+			 *
+			 * @cli optimize-min-chunk-size
+			 * @env OPTIMIZE_MIN_CHUNK_SIZE
+			 *
+			 * @returns {(number|undefined)}
+			 */
+			minChunkSize: o('optimize-min-chunk-size', {
+				env: true,
+				default: 10 * 1024
+			}),
+
+			/**
+			 * Returns parameters for `optimization.splitChunks`
+			 * @returns {!Object}
+			 */
+			splitChunks() {
+				return {};
+			},
+
+			/**
+			 * Returns the maximum size of a file in bytes that can be inline as base64
+			 *
+			 * @cli optimize-data-uri-limit
+			 * @env OPTIMIZE_DATA_URI_LIMIT
+			 *
+			 * @returns {(number|undefined)}
+			 */
+			dataURILimit() {
+				if (require('config').webpack.fatHTML()) {
+					return undefined;
+				}
+
+				return o('optimize-data-uri-limit', {
+					env: true,
+					default: 2 * 1024
+				});
+			}
 		},
 
 		/**
-		 * WebPack ".externals" option
+		 * Value of `externals`
 		 */
 		externals: {
 			vue: 'Vue',
@@ -341,7 +354,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the value for WebPack "output.publicPath".
+		 * Returns a value for `output.publicPath`.
 		 * The method can take arguments that will be concatenated to the base value.
 		 *
 		 * @cli public-path
@@ -398,7 +411,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the value for WebPack "output.filename".
+		 * Returns a value for `output.filename`.
 		 * The method can take an object with values to expand macros.
 		 *
 		 * @param params
@@ -428,7 +441,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the value for WebPack DllPlugin "output.filename".
+		 * Returns a value for `DllPlugin.output.filename`.
 		 * The method can take an object with values to expand macros.
 		 *
 		 * @param params
@@ -445,7 +458,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the value for WebPack FileLoader "output.filename".
+		 * Returns a value for `FileLoader.output.filename`.
 		 * The method can take an object with values to expand macros.
 		 *
 		 * @param params
@@ -477,7 +490,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns path to a generated assets.json within the output directory.
+		 * Returns path to the generated assets.json within the output directory.
 		 * This file contains a JSON object with links to all JS/CSS files that are declared within "src/entries".
 		 * The declaration solves the problem of connection between original files and compiled files:
 		 * generated files may have different names (because of hash or other stuff) with original files.
@@ -504,7 +517,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns path to a generated assets.js within the output directory.
+		 * Returns a path to the generated assets.js within the output directory.
 		 * This file contains the modified version of "assets.json" to load as a JS script.
 		 *
 		 * @returns {string}
@@ -528,12 +541,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for typescript-loader
+	 * Returns parameters for TypeScript:
 	 *
 	 * 1. server - to compile node.js modules
 	 * 2. client - to compile client modules
 	 * 3. worker - to compile web-worker modules
 	 *
+	 * @override
 	 * @returns {{server: !Object, client: !Object, worker: !Object}}
 	 */
 	typescript() {
@@ -554,7 +568,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for Webpack TerserPlugin
+	 * Returns parameters for terser-webpack-plugin
 	 * @returns {{}}
 	 */
 	terser() {
@@ -562,7 +576,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for worker-loader
+	 * Returns parameters for worker-loader
 	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
 	 */
 	worker() {
@@ -580,7 +594,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for stylus-loader
+	 * Returns parameters for stylus-loader
 	 * @returns {!Object}
 	 */
 	stylus() {
@@ -593,7 +607,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for css-loader
+	 * Returns parameters for css-loader
 	 * @returns {!Object}
 	 */
 	css() {
@@ -603,7 +617,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for postcss-loader
+	 * Returns parameters for postcss-loader
 	 * @returns {!Object}
 	 */
 	postcss() {
@@ -611,7 +625,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for postcss/autoprefixer
+	 * Returns parameters for postcss/autoprefixer
 	 * @returns {!Object}
 	 */
 	autoprefixer() {
@@ -619,7 +633,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for MiniCssExtractPlugin
+	 * Returns parameters for MiniCssExtractPlugin
 	 * @returns {!Object}
 	 */
 	miniCssExtractPlugin() {
@@ -627,7 +641,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for style-loader
+	 * Returns parameters for style-loader
 	 * @returns {!Object}
 	 */
 	style() {
@@ -637,7 +651,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for snakeskin-loader:
+	 * Returns parameters for snakeskin-loader:
 	 *
 	 * 1. server - for .ess files
 	 * 2. client - for .ss files
@@ -668,7 +682,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for html-loader
+	 * Returns parameters for html-loader
 	 * @returns {!Object}
 	 */
 	html() {
@@ -689,7 +703,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for a favicon generator
+	 * Returns parameters for a favicon generator
 	 * @returns {!Object}
 	 */
 	favicons() {
@@ -705,7 +719,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for image-webpack-loader
+	 * Returns parameters for image-webpack-loader
 	 * @returns {!Object}
 	 */
 	imageOpts() {
@@ -717,6 +731,55 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			webp: {
 				quality: 75
 			}
+		};
+	},
+
+	/**
+	 * Returns parameters for Typograf
+	 * @returns {!Object}
+	 */
+	typograf() {
+		return {
+			locale: this.locale
+		};
+	},
+
+	/** @override */
+	runtime() {
+		return {
+			...super.runtime(),
+
+			debug: false,
+			engine: this.engine(),
+			noGlobals: false,
+			svgSprite: true,
+
+			'ds-diff': false,
+			'ds-vars': false,
+
+			blockNames: false,
+			passDesignSystem: false,
+
+			'core/browser': true,
+			'core/session': true,
+
+			'prelude/test-env': !isProd,
+			'component/async-render': true,
+			'component/daemons': true,
+
+			'directives/event': true,
+			'directives/resize': true,
+			'directives/image': true,
+			'directives/in-view': true,
+			'directives/resize-observer': true,
+			'directives/update-on': true,
+
+			iData: true,
+			bRouter: true,
+
+			'iInput/validators': true,
+			'bInput/mask': false,
+			'bInput/validators': true
 		};
 	},
 
@@ -751,16 +814,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					demo
 				}
 			}
-		};
-	},
-
-	/**
-	 * Config for the Typograf library
-	 * @returns {!Object}
-	 */
-	typograf() {
-		return {
-			locale: this.locale
 		};
 	}
 });

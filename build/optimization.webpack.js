@@ -10,10 +10,14 @@
 
 const
 	config = require('config'),
+	webpack = require('webpack');
+
+const
 	TerserPlugin = require('terser-webpack-plugin'),
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
+	{optimize} = config.webpack,
 	{isLayerDep, isLayerCoreDep, isExternalDep} = include('build/const'),
 	{inherit} = include('build/helpers.webpack'),
 	{RUNTIME} = include('build/graph.webpack');
@@ -29,12 +33,19 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		options = {};
 
+	if (optimize.minChunkSize) {
+		plugins.set(
+			'minChunkSize',
+			new webpack.optimize.MinChunkSizePlugin({minChunkSize: optimize.minChunkSize})
+		);
+	}
+
 	if (buildId === RUNTIME) {
 		options.runtimeChunk = {
 			name: 'webpack.runtime'
 		};
 
-		options.splitChunks = {
+		options.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
 				index: {
 					name: 'index-core',
@@ -68,12 +79,11 @@ module.exports = function optimization({buildId, plugins}) {
 					test: isExternalDep
 				}
 			}
-		};
+		});
 	}
 
 	const
-		es = config.es(),
-		keepFNames = Boolean({ES5: true, ES3: true}[es]);
+		es = config.es();
 
 	options.minimizer = [
 		/* eslint-disable camelcase */
@@ -86,13 +96,13 @@ module.exports = function optimization({buildId, plugins}) {
 				safari10: true,
 				warnings: false,
 
-				keep_fnames: keepFNames,
+				keep_fnames: Boolean({ES5: true, ES3: true}[es]),
 				keep_classnames: true,
 
 				output: {
 					comments: false
 				}
-			}, config.uglify != null ? config.uglify() : config.terser())
+			}, config.terser())
 		})
 
 		/* eslint-enable camelcase */
