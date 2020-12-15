@@ -51,3 +51,6 @@
 						.
 							< template #default = o
 								+= self.slot('default', {':option': 'o.option'})
+
+							< template #fold = o | v-if = vdom.getSlot('fold') != null
+								+= self.slot('fold', {':params': 'o.params'})
