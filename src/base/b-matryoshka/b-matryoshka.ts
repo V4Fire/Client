@@ -25,8 +25,11 @@ export * from 'base/b-matryoshka/interface';
  */
 @component({flyweight: true})
 export default class bMatryoshka extends bTree implements iItems {
+	/**
+	 * Shows warning about component deprecation
+	 */
 	@hook('created')
-	protected showDeprecatedWarning(): void {
-		deprecate({name: 'bPrice', type: 'component', renamedTo: 'bMoney'});
+	protected showDeprecationWarning(): void {
+		deprecate({name: 'bPrice', type: 'component', renamedTo: 'bMatryoshka'});
 	}
 }
