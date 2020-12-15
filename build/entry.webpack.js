@@ -9,6 +9,9 @@
  */
 
 const
+	path = require('upath');
+
+const
 	graph = include('build/graph.webpack');
 
 /**
@@ -28,6 +31,10 @@ module.exports = async function entry(name, src) {
 
 	if (isTpl.test(name)) {
 		dependencies.push(name.replace(isTpl, ''), name);
+	}
+
+	if (path.extname(src) === '.styl') {
+		src += '?static';
 	}
 
 	return {

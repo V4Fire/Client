@@ -290,7 +290,7 @@ module.exports = async function module({plugins}) {
 						})
 					}
 				)
-			},
+			}
 		]
 	});
 

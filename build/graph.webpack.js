@@ -239,7 +239,7 @@ async function buildProjectGraph() {
 
 						if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
 							$C(style).forEach((url) => {
-								str += `@import "${getEntryURL(url)}?static"\n`;
+								str += `@import "${getEntryURL(url)}"\n`;
 							});
 
 							if (/^[bp]-/.test(name)) {
