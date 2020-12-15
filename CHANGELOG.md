@@ -13,14 +13,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.109 (2020-12-15)
 
+#### :bug: Bug Fix
+
+* Added watchers for `session` and `net` events to update appropriate state fields `core/component/state`
+
 #### :house: Internal
 
 * Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
 They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
-
-#### :bug: Bug Fix
-
-* Added watchers for `session` and `net` events to update appropriate state fields `core/component/state`
 
 ## v3.0.0-rc.108 (2020-12-14)
 
