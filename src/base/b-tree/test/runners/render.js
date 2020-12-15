@@ -37,6 +37,11 @@ module.exports = (page) => {
 		}
 	];
 
+	const getFoldedClass = (target, value = true) => target.evaluate(
+		(ctx, v) => ctx.block.getFullElName('node', 'folded', v),
+		value
+	);
+
 	const checkOptionTree = ({opts, target, queue = [], level = 0}) => {
 		opts.forEach((option) => {
 			if (Object.isArray(option.children)) {
@@ -46,7 +51,7 @@ module.exports = (page) => {
 			queue.push((async () => {
 				const
 					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), option.id),
-					foldedClass = await target.evaluate((ctx) => ctx.block.getFullElName('node', 'folded', true)),
+					foldedClass = await getFoldedClass(target),
 					element = await h.dom.waitForEl(page, `[data-id="${id}"]`);
 
 				await expectAsync(
@@ -66,7 +71,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-tree renders controls tree by passing option prop', () => {
+	describe('b-tree renders tree by passing option prop', () => {
 		const init = async () => {
 			await page.evaluate((options) => {
 				globalThis.removeCreatedComponents();
@@ -104,9 +109,31 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
 			await Promise.all(checkOptionTree({opts: options, target}));
 		});
+
+		it('branch folding', async () => {
+			const
+				target = await init();
+
+			const
+				id = await target.evaluate((ctx, id) => ctx.dom.getId(id), options[1].id),
+				foldClass = await target.evaluate((ctx) => ctx.block.getFullElName('fold')),
+				element = await h.dom.waitForEl(page, `[data-id="${id}"]`),
+				fold = await h.dom.waitForEl(element, `.${foldClass}`);
+
+			fold.click();
+
+			const
+				mod = await getFoldedClass(target, false);
+
+			await h.bom.waitForIdleCallback(page);
+
+			await expectAsync(
+				element.getAttribute('class').then((className) => className.includes(mod))
+			).toBeResolvedTo(true);
+		});
 	});
 
-	describe('b-tree renders controls tree by passing items through slot', () => {
+	describe('b-tree renders tree by passing item through the default slot', () => {
 		const init = async () => {
 			await page.evaluate((options) => {
 				const defaultSlot = {
