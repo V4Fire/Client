@@ -12,10 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
-import { NetStatus } from 'core/net/interface';
 import { setLocale, locale } from 'core/i18n';
-import { Session } from 'core/session/interface';
 
 import remoteState from 'core/component/state';
 import { reset, ResetType, ComponentInterface } from 'core/component';
@@ -290,24 +287,5 @@ export default abstract class iStaticPage extends iPage {
 
 		this.locale = locale;
 		this.forceUpdate().catch(stderr);
-	}
-
-	/**
-	 * Synchronization of the "isAuth" field
-	 * @param [e]
-	 */
-	@watch('globalEmitter:session.*')
-	protected syncAuthWatcher(e?: Session): void {
-		this.isAuth = Boolean(e?.auth);
-	}
-
-	/**
-	 * Synchronization of the "isOnline" field
-	 * @param e
-	 */
-	@watch('globalEmitter:net.status')
-	protected syncOnlineWatcher(e: NetStatus): void {
-		this.isOnline = e.status;
-		this.lastOnlineDate = e.lastOnline;
 	}
 }
