@@ -13,12 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.106 (2020-12-09)
 
+#### :house: Internal
+
+* `base/b-matryoshka` marked as deprecated. Replaced to `base/b-tree`
+
 #### :rocket: New Feature
 
-* `base/b-matryoshka`
-  * Changed render filter to async function with waiting for the idle state
-  * Fixed ESLint warnings
-  * Added `README` and `CHANGELOG`
+* Released `base/b-tree`
 
 #### :bug: Bug Fix
 

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-b-matryoshka_theme_demo extends b-matryoshka
+b-tree_theme_demo extends b-tree
 	/theme &__item-wrapper
 		display flex
 
@@ -19,14 +19,14 @@ b-matryoshka_theme_demo extends b-matryoshka
 
 		text-align center
 
-	/theme &__matryoshka_folded_true &__fold:before
+	/theme &__node_folded_true &__fold:before
 		content "+"
 
-	/theme &__matryoshka_folded_true &__children
+	/theme &__node_folded_true &__children
 		display none
 
-	/theme &__matryoshka_level_1
+	/theme &__node_level_1
 		margin-left 8px
 
-	/theme &__matryoshka_level_2
+	/theme &__node_level_2
 		margin-left 16px

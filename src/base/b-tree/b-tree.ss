@@ -8,17 +8,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'base/b-tree'|b as placeholder
+- include 'super/i-data'|b as placeholder
 
-- template index() extends ['b-tree'].index
+- template index() extends ['i-data'].index
 	- block body
 		< template v-for = (el, i) in top.asyncRender.iterate(options, top.renderChunks, { &
 			filter: renderFilter
 		}) .
-			< .&__matryoshka &
+			< .&__node &
 				:-id = top.dom.getId(el.id) |
 				:-level = level |
-				:class = provide.elClasses({matryoshka: {level, folded}})
+				:class = provide.elClasses({node: {level, folded}})
 			.
 				< .&__item-wrapper
 					< .&__marker
@@ -44,7 +44,7 @@
 
 				- block children
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
-						< @b-matryoshka.&__child &
+						< @b-tree.&__child &
 							:options = el.children |
 							:option = option |
 							:v-attrs = getNestedItemProps()

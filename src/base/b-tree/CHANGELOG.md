@@ -11,7 +11,6 @@ Changelog
 
 ## v3.0.0-rc.109 (2020-12-16)
 
-#### :house: Internal
+#### :rocket: New Feature
 
-* Module marked as deprecated. Replaced to `base/b-tree`
-* Added `README`, `CHANGELOG` and `interface`
+* First release

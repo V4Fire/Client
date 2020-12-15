@@ -46,7 +46,7 @@ module.exports = (page) => {
 			queue.push((async () => {
 				const
 					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), option.id),
-					foldedClass = await target.evaluate((ctx) => ctx.block.getFullElName('matryoshka', 'folded', true)),
+					foldedClass = await target.evaluate((ctx) => ctx.block.getFullElName('node', 'folded', true)),
 					element = await h.dom.waitForEl(page, `[data-id="${id}"]`);
 
 				await expectAsync(
@@ -66,7 +66,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-matryoshka renders controls tree by passing option prop', () => {
+	describe('b-tree renders controls tree by passing option prop', () => {
 		const init = async () => {
 			await page.evaluate((options) => {
 				globalThis.removeCreatedComponents();
@@ -87,12 +87,12 @@ module.exports = (page) => {
 					}
 				];
 
-				globalThis.renderComponents('b-matryoshka', scheme);
-				globalThis.componentNode = document.querySelector('.b-matryoshka');
+				globalThis.renderComponents('b-tree', scheme);
+				globalThis.componentNode = document.querySelector('.b-tree');
 			}, options);
 
 			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '.b-matryoshka', 'ready');
+			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 
 			return h.component.waitForComponent(page, '#target');
 		};
@@ -106,7 +106,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-matryoshka renders controls tree by passing items through slot', () => {
+	describe('b-tree renders controls tree by passing items through slot', () => {
 		const init = async () => {
 			await page.evaluate((options) => {
 				const defaultSlot = {
@@ -130,11 +130,11 @@ module.exports = (page) => {
 					}
 				];
 
-				globalThis.renderComponents('b-matryoshka', scheme);
+				globalThis.renderComponents('b-tree', scheme);
 			}, options);
 
 			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '.b-matryoshka', 'ready');
+			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 
 			return h.component.waitForComponent(page, '#target');
 		};
