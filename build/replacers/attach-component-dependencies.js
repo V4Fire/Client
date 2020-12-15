@@ -66,7 +66,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 if (!TPLS['${dep}']) {
 	(async () => {
 		try {
-			${styles.map((src) => `await import('${path.normalize(src)}?dynamic');`).join('')}
+			${styles.map((src) => `await import('${path.normalize(src)}');`).join('')}
 		} catch {}
 	})();
 }`;
