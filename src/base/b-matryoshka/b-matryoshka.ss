@@ -18,12 +18,9 @@
 			< .&__matryoshka &
 				:-id = top.dom.getId(el.id) |
 				:-level = level |
-				:class = provide.elClasses({matryoshka: {
-					level,
-					folded
-				}})
+				:class = provide.elClasses({matryoshka: {level, folded}})
 			.
-				< .&__doll-box
+				< .&__item-wrapper
 					< .&__marker
 						- block fold
 							< template v-if = Object.size(field.get('children.length', el)) > 0
@@ -35,8 +32,8 @@
 									:v-attrs = getFoldingProps(el)
 								.
 
-					- block doll
-						< template v-if = option
+					- block item
+						< template v-if = Object.isString(option)
 							< component.&__option &
 								:is = Object.isFunction(option) ? option(el, i) : option |
 								:v-attrs = getOptionProps(el, i)
@@ -49,6 +46,7 @@
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
 						< @b-matryoshka.&__child &
 							:options = el.children |
+							:option = option |
 							:v-attrs = getNestedItemProps()
 						.
 							< template #default = o
