@@ -180,8 +180,8 @@ export default class bTree extends iData implements iItems {
 	 * @param id
 	 */
 	protected searchItemElement(id: string): CanUndef<HTMLElement> {
-		const dataId = this.top.dom.getId(id);
-		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${dataId}]`) ?? undefined;
+		const itemId = this.top.dom.getId(id);
+		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${itemId}]`) ?? undefined;
 	}
 
 	/**
