@@ -30,6 +30,6 @@ export default class bMatryoshka extends bTree implements iItems {
 	 */
 	@hook('created')
 	protected showDeprecationWarning(): void {
-		deprecate({name: 'bPrice', type: 'component', renamedTo: 'bMatryoshka'});
+		deprecate({name: 'bMatryoshka', type: 'component', renamedTo: 'bTree'});
 	}
 }
