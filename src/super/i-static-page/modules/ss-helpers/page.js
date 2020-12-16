@@ -224,7 +224,7 @@ function getStyleDeclByName(name, {
 			defer,
 			js: true,
 			rel: 'stylesheet',
-			src: `' + PATH['${name}'] + '`
+			src: `' + PATH['${rname}'] + '`
 		});
 
 		if (optional) {

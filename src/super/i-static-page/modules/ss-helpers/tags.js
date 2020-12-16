@@ -9,6 +9,7 @@
 require('../interface');
 
 const
+	$C = require('collection.js'),
 	config = require('config');
 
 const
@@ -177,6 +178,9 @@ function getStyleDecl(lib, body) {
 		...lib.attrs
 	};
 
+	let
+		decl = '';
+
 	if (!isInline) {
 		Object.assign(attrsObj, {
 			href: lib.src,
@@ -185,10 +189,19 @@ function getStyleDecl(lib, body) {
 
 		if (lib.defer) {
 			Object.assign(attrsObj, {
-				rel: 'stylesheet',
 				media: 'print',
-				onload: `this.rel=\\'${rel}\\'; this.onload=null;`
+				onload: `this.media=\\'${lib.attrs?.media ?? 'all'}\\'; this.onload=null;`
 			});
+
+			const preloadAttrs = $C.extend(true, {}, lib, {
+				defer: false,
+				attrs: {
+					rel: 'preload',
+					as: 'style'
+				}
+			});
+
+			decl = getStyleDecl(preloadAttrs);
 		}
 	}
 
@@ -202,26 +215,31 @@ function getStyleDecl(lib, body) {
 			}
 
 			if (lib.js) {
-				return createTag('style', `include('${lib.src}')`);
+				decl += createTag('style', `include('${lib.src}')`);
+
+			} else {
+				decl += `<style ${attrs}>include('${lib.src}');</style>`;
 			}
 
-			return `<style ${attrs}>include('${lib.src}');</style>`;
+			return decl;
 		})();
 	}
 
 	if (body) {
 		if (lib.js) {
-			return createTag('style', body);
+			decl += createTag('style', body);
 		}
 
-		return `<style ${attrs}>${body}</style>`;
+		decl += `<style ${attrs}>${body}</style>`;
+
+	} else if (lib.js) {
+		decl += createTag('link');
+
+	} else {
+		decl += `<link ${attrs}>`;
 	}
 
-	if (lib.js) {
-		return createTag('link');
-	}
-
-	return `<link ${attrs}>`;
+	return decl;
 
 	function createTag(tag, content) {
 		let decl = `
