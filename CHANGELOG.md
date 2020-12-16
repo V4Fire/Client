@@ -77,6 +77,23 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `arg@5.0.0`
   * `browserslist@4.15.0`
 
+## v3.0.0-rc.109 (2020-12-15)
+
+#### :bug: Bug Fix
+
+* Added watchers for `session` and `net` events to update appropriate state fields `core/component/state`
+
+#### :house: Internal
+
+* Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
+They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
+
+## v3.0.0-rc.108 (2020-12-14)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using `parseStyle` with string trailing `;` ex. `background-color: #2B9FFF; color: #FFFFFF; border: 1px solid #FFFFFF;`
+
 ## v3.0.0-rc.107 (2020-12-09)
 
 #### :bug: Bug Fix

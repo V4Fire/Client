@@ -24,6 +24,13 @@ Changelog
 
 * Prefer `createElement` instead `documentWrite`
 
+## v3.0.0-rc.109 (2020-12-15)
+
+#### :house: Internal
+
+* Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
+They are synchronized with `remoteState` via `sync.link`.
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix
