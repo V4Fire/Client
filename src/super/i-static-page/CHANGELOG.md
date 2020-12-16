@@ -14,10 +14,15 @@ Changelog
 #### :boom: Breaking Change
 
 * Renamed `GLOBAL_NONCE` to `CSP_NONCE`
+* Renamed `documentWrite` -> `js` `modules/ss-helpers`
 
 #### :rocket: New Feature
 
 * Added `crossorigin` attributes to scripts and links
+
+#### :house: Internal
+
+* Prefer `createElement` instead `documentWrite`
 
 ## v3.0.0-rc.101 (2020-11-18)
 

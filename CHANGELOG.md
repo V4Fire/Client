@@ -20,7 +20,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Removed the default export of submodules `core/dom`
 * Removed `StaticRouteMeta.entryPoint` and `StaticRouteMeta.dynamicDependencies` `core/router`
 * Now `localInView` returns a promise `super/i-block/modules/dom`
-* Renamed `GLOBAL_NONCE` to `CSP_NONCE` `iStaticPage`
+
+* `iStaticPage`:
+  * Renamed `GLOBAL_NONCE` to `CSP_NONCE`
+  * Renamed `documentWrite` -> `js` `modules/ss-helpers`
 
 * `config`:
   * Removed `build.fast`
@@ -65,6 +68,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added prefetch for the dynamic dependencies `iData`
 * Minified libs `eventemitter2` and `requestidlecallback`
 * Added a new dependency `style-loader`
+* Prefer `createElement` instead `documentWrite` `iStaticPage`
 * Updated dependencies:
   * `upath@2.0.1`
   * `merge2@1.4.1`
