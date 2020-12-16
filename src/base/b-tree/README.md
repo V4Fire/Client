@@ -65,7 +65,6 @@ Example:
         ➕
 ```
 
-
 ### Render customized elements
 
 Module supports passing item content by the `default` slot.
