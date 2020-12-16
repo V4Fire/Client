@@ -13,18 +13,6 @@ const
 
 Object.assign(exports, include('build/helpers'));
 
-exports.isStandalone = isStandalone;
-
-/**
- * Returns true if the specified entry point is standalone
- *
- * @param {string} entryPoint
- * @returns {boolean}
- */
-function isStandalone(entryPoint) {
-	return entryPoint === 'std' || /\.(worker|standalone)\b/.test(entryPoint);
-}
-
 exports.wait = wait;
 
 /**

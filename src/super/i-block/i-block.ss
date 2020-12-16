@@ -44,6 +44,22 @@
 		- return name.split('.').slice(-1)[0].dasherize()
 
 	/**
+	 * Loads modules by the specified paths and dynamically inserted the provided content when it loaded
+	 *
+	 * @param {(string|!Array<string>)} path - path or an array of paths
+	 * @param {string=} [content]
+	 */
+	- block loadModules(path, content)
+		? path = [].concat(path || [])
+
+		- forEach path => id
+			{{ void(moduleLoader.add({id: '${id}', load: () => import('${id}')})) }}
+
+		- if content != null
+			< template v-for = el in asyncRender.iterate(moduleLoader.values(...${path|json}), 1)
+				+= content
+
+	/**
 	 * Returns a link to a template by the specified path
 	 * @param {string} path
 	 */

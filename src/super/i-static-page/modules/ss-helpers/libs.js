@@ -9,6 +9,7 @@
 require('../interface');
 
 const
+	{resolve} = require('@pzlr/build-core'),
 	{webpack, src} = require('config');
 
 const
@@ -31,18 +32,16 @@ exports.loadLibs = loadLibs;
  *
  * @param {Libs} libs
  * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the libraries by using document.write
- *
+ * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
  * @returns {!Promise<string>}
  */
-async function loadLibs(libs, {assets, documentWrite} = {}) {
+async function loadLibs(libs, {assets, js} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
-		lib.documentWrite = documentWrite;
+		lib.js = js;
 		res += await getScriptDecl(lib);
 	}
 
@@ -55,20 +54,17 @@ exports.loadStyles = loadStyles;
  * Initializes the specified styles and returns code to load
  *
  * @param {StyleLibs} libs
- *
  * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the libraries by using document.write
- *
+ * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
  * @returns {!Promise<string>}
  */
-async function loadStyles(libs, {assets, documentWrite} = {}) {
+async function loadStyles(libs, {assets, js} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
-		lib.documentWrite = documentWrite;
+		lib.js = js;
 		res += await getStyleDecl(lib);
 		res += '\n';
 	}
@@ -83,17 +79,15 @@ exports.loadLinks = loadLinks;
  *
  * @param {Links} libs
  * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [documentWrite] - if true,
- *   the function returns JS code to load the links by using document.write
- *
+ * @param {boolean=} [js] - if true, the function returns JS code to load the links
  * @returns {!Promise<string>}
  */
-async function loadLinks(libs, {assets, documentWrite} = {}) {
+async function loadLinks(libs, {assets, js} = {}) {
 	let
 		res = '';
 
 	for (const lib of await initLibs(libs, assets)) {
-		lib.documentWrite = documentWrite;
+		lib.js = js;
 		res += await getLinkDecl(lib);
 		res += '\n';
 	}
@@ -126,7 +120,7 @@ async function initLibs(libs, assets) {
 			cwd = src.lib();
 
 		} else if (p.source === 'src') {
-			cwd = src.src();
+			cwd = resolve.sourceDirs;
 
 		} else {
 			cwd = src.clientOutput();
@@ -172,6 +166,7 @@ exports.resolveAsLib = resolveAsLib;
  *   (if not specified, the name will be taken from a basename of the source file)
  *
  * @param {boolean=} [relative=true] - if false, the function will return an absolute path
+ * @param {(Array<string>|string)=} cwd - active working directory (can be defined as an array to enable layers)
  * @param {...string} paths - string paths to join (also, can take URL-s)
  * @returns {string}
  *
@@ -181,7 +176,7 @@ exports.resolveAsLib = resolveAsLib;
  * loadAsLib({name: 'images'}, 'assets', 'images/');
  * ```
  */
-function resolveAsLib({name, relative = true} = {}, ...paths) {
+function resolveAsLib({name, relative = true} = {}, cwd = null, ...paths) {
 	const
 		url = paths.find((el) => isURL.test(el));
 
@@ -189,8 +184,23 @@ function resolveAsLib({name, relative = true} = {}, ...paths) {
 		return url;
 	}
 
+	let
+		resSrc;
+
+	if (Object.isArray(cwd)) {
+		for (let i = 0; i < cwd.length; i++) {
+			resSrc = path.join(...[].concat(cwd[i] || [], paths));
+
+			if (fs.existsSync(resSrc)) {
+				break;
+			}
+		}
+
+	} else {
+		resSrc = path.join(...[].concat(cwd || [], paths));
+	}
+
 	const
-		resSrc = path.join(...paths),
 		srcIsFolder = isFolder.test(resSrc);
 
 	name = name ?

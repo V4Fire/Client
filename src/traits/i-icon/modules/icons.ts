@@ -14,7 +14,8 @@ interface Sprite {
 	id: string;
 	content: string;
 	viewBox: string;
-	node: SVGSymbolElement;
+	stringify(): string;
+	destroy(): undefined;
 }
 
 function icons(id?: string): Sprite {
@@ -27,7 +28,7 @@ function icons(id?: string): Sprite {
 		}
 	}
 
-	throw new Error(`Cannot find module "${id}"`);
+	throw new Error(`Cannot find a module "${id}"`);
 }
 
 //#if runtime has svgSprite
@@ -39,7 +40,7 @@ let
 if (IS_PROD) {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!svg-sprite!svgo!@sprite',
+		'!!svg-sprite-loader!svgo-loader!@sprite',
 		true,
 		/\.svg$/
 	);
@@ -47,7 +48,7 @@ if (IS_PROD) {
 } else {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!svg-sprite!@sprite',
+		'!!svg-sprite-loader!@sprite',
 		true,
 		/\.svg$/
 	);

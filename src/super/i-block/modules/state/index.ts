@@ -97,7 +97,7 @@ export default class State extends Friend {
 	/**
 	 * Initializes a state of the current component from a local storage
 	 */
-	async initFromStorage(): Promise<boolean> {
+	initFromStorage(): CanPromise<boolean> {
 		//#if runtime has core/kv-storage
 
 		if (this.globalName == null) {

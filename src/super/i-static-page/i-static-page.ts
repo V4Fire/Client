@@ -17,9 +17,8 @@ import { setLocale, locale } from 'core/i18n';
 import remoteState from 'core/component/state';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 
-//#if runtime has bRouter
-import bRouter, { Route } from 'base/b-router/b-router';
-//#endif
+import { Route } from 'base/b-router/b-router';
+import type bRouter from 'base/b-router/b-router';
 
 import iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';

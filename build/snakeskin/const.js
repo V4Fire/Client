@@ -52,7 +52,7 @@ exports.resources = [resolve.blockSync(), ...resolve.dependencies];
 exports.componentQuery = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
 
 /**
- * List of component paths
+ * List of component file paths
  */
 exports.componentFiles = $C(exports.resources)
 	.reduce((arr, el) => arr.concat(glob.sync(path.join(el, exports.componentQuery))), [])

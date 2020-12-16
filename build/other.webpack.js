@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,8 +9,9 @@
  */
 
 /**
- * [[include:core/dependencies/README.md]]
- * @packageDocumentation
+ * Returns options for other WebPack options
+ * @returns {!Object}
  */
-
-export { default } from 'core/prelude/dependencies';
+module.exports = function other() {
+	return {};
+};

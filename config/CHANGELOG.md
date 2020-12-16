@@ -9,6 +9,27 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Removed `build.fast`
+* Removed `webpack.buildCache`
+* Removed `webpack.cacheDir`
+* Removed `uglify`
+* Now `webpack.devtool` is a function
+* Moved `webpack.dataURILimit` to `webpack.optimize.dataURILimit`
+
+#### :boom: New Feature
+
+* Added `webpack.mode`
+* Added `webpack.cacheType`
+* Added `webpack.optimize.minChunkSize`
+* Added `webpack.optimize.splitChunks`
+* Added `style`
+* Added `miniCssExtractPlugin`
+* Added `terser`
+
 ## v3.0.0-rc.67 (2020-09-22)
 
 #### :boom: Breaking Change

@@ -6,4 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import '../core';
+// eslint-disable-next-line camelcase
+__webpack_nonce__ = CSP_NONCE;

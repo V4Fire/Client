@@ -11,6 +11,72 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Migrated to `webpack@5`
+* Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
+* Removed the default export of submodules `core/dom`
+* Removed `StaticRouteMeta.entryPoint` and `StaticRouteMeta.dynamicDependencies` `core/router`
+* Now `localInView` returns a promise `super/i-block/modules/dom`
+
+* `iStaticPage`:
+  * Renamed `GLOBAL_NONCE` to `CSP_NONCE`
+  * Renamed `documentWrite` -> `js` `modules/ss-helpers`
+
+* `config`:
+  * Removed `build.fast`
+  * Removed `webpack.buildCache`
+  * Removed `webpack.cacheDir`
+  * Removed `uglify`
+  * Now `webpack.devtool` is a function
+
+* `build`:
+  * Renamed `entries.webpack` to `graph.webpack`
+  * Renamed `build.webpack` to `helpers.webpack`
+  * Now `output.webpack` exports a function
+
+#### :rocket: New Feature
+
+* `build`:
+  * Added `isLayerCoreDep`
+  * Added support of dynamic imports
+  * Added `entry.webpack`
+  * Added `watch-options.webpack`
+  * Added `other.webpack`
+
+* `config`:
+  * Added `webpack.mode`
+  * Added `webpack.cacheType`
+  * Added `style`
+  * Added `miniCssExtractPlugin`
+  * Added `terser`
+
+* Added `forceInnerRender`:
+  * `bWindow`
+  * `bSidebar`
+  * `bBottomSlide`
+
+* Added API to load the dynamic dependencies `iBlock`
+* Added `StaticRouteMeta.load` `core/router`
+* Added `interceptLinks` `bRouter`
+* Added `crossorigin` attributes to scripts and links `iStaticPage`
+
+#### :house: Internal
+
+* Added prefetch for the dynamic dependencies `iData`
+* Minified libs `eventemitter2` and `requestidlecallback`
+* Added a new dependency `style-loader`
+* Prefer `createElement` instead `documentWrite` `iStaticPage`
+* Updated dependencies:
+  * `upath@2.0.1`
+  * `merge2@1.4.1`
+  * `hasha@5.2.2`
+  * `del@6.0.0`
+  * `arg@5.0.0`
+  * `browserslist@4.15.0`
+
 ## v3.0.0-rc.109 (2020-12-15)
 
 #### :bug: Bug Fix

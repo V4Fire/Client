@@ -30,52 +30,9 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	page?: string;
 
 	/**
-	 * Name of an entry point that is tied with the route.
-	 * This parameter needs to use when you split your application into different chunks and want to tie a
-	 * route with some chunk. By default, the value is taken from the route name.
-	 *
-	 * To create a new entry point, you need to create a file within the "core/entries" directory.
-	 * The entry point name is taken from this file. Within this file, you write import imports to
-	 * dependencies of the chunk.
-	 *
-	 * @example
-	 * *src/entries/index.js*
-	 *
-	 * ```js
-	 * // This entry point provides the core API
-	 * import '@v4fire/client/core';
-	 * ```
-	 *
-	 * *src/entries/std.js*
-	 *
-	 * ```js
-	 * // This entry point provides dependencies that will be initialized before the other entry points.
-	 * // It uses to attach polyfill libraries or libraries to check performance.
-	 * import '@v4fire/client/core/std';
-	 * ```
-	 *
-	 * *src/entries/p-index.js*
-	 * ```js
-	 * // This entry point provides dependencies for the "p-index" component
-	 * import '../pages/p-index';
-	 * ```
+	 * Dependencies that are loaded with this route
 	 */
-	entryPoint?: string;
-
-	/**
-	 * If false, then the route doesn't have any dynamic dependencies to download.
-	 * This parameter is used when you want to tie a route with some entry point,
-	 * but this entry point's dependencies were already initialized statically.
-	 *
-	 * @default `true`
-	 */
-	dynamicDependencies?: boolean;
-
-	/**
-	 * @deprecated
-	 * @see [[StaticRouteMeta.dynamicDependencies]]
-	 */
-	remote?: boolean;
+	load?(): Promise<unknown>;
 
 	/**
 	 * Path to the route.

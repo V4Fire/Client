@@ -1,4 +1,5 @@
 /* eslint-disable max-lines-per-function */
+
 'use strict';
 
 /*!
@@ -49,10 +50,10 @@ module.exports = function init(gulp = require('gulp')) {
 	 * Arguments:
 	 *
 	 * * --name - name of the component to test
-	 * * [--client-output] - directory to save generated code
-	 * * [--build-cache=false] - should or not generate static build cache to speed up secondary re-build
+	 * * [--client-output] - directory to save the generated code
+	 * * [--cache-type='memory'] - WebPack cache type
 	 * * [--public-path] - WebPack publicPath value
-	 * * [--es='ES2019'] - version of used ECMAScript specification to generate
+	 * * [--es='ES2019'] - version of the used ECMAScript specification to generate
 	 *
 	 * @example
 	 * ```bash
@@ -91,7 +92,7 @@ module.exports = function init(gulp = require('gulp')) {
 		const argsString = [
 			['--client-output', args['--client-name'] || args['--name']],
 			['--components', args['--name']],
-			['--build-cache', false],
+			['--cache-type', 'memory'],
 			['--public-path', ''],
 			['--es', 'ES2019']
 		].flat().join(' ');

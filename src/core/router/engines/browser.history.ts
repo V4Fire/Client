@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import ModuleDependencies from 'core/dependencies';
 import { deprecate } from 'core/functools/deprecation';
 
 import { session } from 'core/kv-storage';
@@ -196,41 +195,23 @@ export default function createRouter(component: bRouter): Router {
 
 			if (location.href !== route) {
 				params.url = route;
+
 				// "params" can contain proxy objects,
-				// to avoid DataCloneError we should clone it by using Object.fastClone
-				history[method](Object.fastClone(params), params.name, route);
+				// to avoid DataCloneError we should clone it by using Object.mixin({deep: true})
+				const filteredParams = Object.mixin({deep: true, filter: (el) => !Object.isFunction(el)}, {}, params);
+				history[method](filteredParams, params.name, route);
 			}
 
 			const
-				{entryPoint} = params.meta;
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				{load} = params.meta;
 
-			const
-				depsAlreadyLoaded = entryPoint != null ? Object.isArray(ModuleDependencies.get(entryPoint)) : false,
-				dontLoadDependencies = entryPoint == null || depsAlreadyLoaded || params.meta.dynamicDependencies === false;
-
-			if (dontLoadDependencies) {
+			if (load == null) {
 				resolve();
 				return;
 			}
 
-			let
-				i = 0;
-
-			ModuleDependencies.emitter.on(`component.${entryPoint}.loading`, $a.proxy(
-				({packages}) => {
-					component.field.set('status', ++i * 100 / packages);
-
-					if (i === packages) {
-						resolve();
-					}
-				},
-
-				{
-					...engineGroup,
-					label: $$.loadEntryPoint,
-					single: false
-				}
-			));
+			load().then(() => resolve(), stderr);
 		});
 	}
 

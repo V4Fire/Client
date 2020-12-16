@@ -13,16 +13,10 @@
 
 import { deprecated } from 'core/functools';
 
-import {
+import { wrapAsDelegateHandler } from 'core/dom';
 
-	wrapAsDelegateHandler,
-	inViewFactory,
-	InitOptions,
-	InViewAdapter,
-	ResizeWatcher,
-	ResizeWatcherInitOptions
-
-} from 'core/dom';
+import { InitOptions, InViewAdapter } from 'core/dom/in-view';
+import { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
 import { ComponentElement } from 'core/component';
 import { AsyncOptions } from 'core/async';
@@ -45,15 +39,15 @@ export default class DOM extends Friend {
 	/**
 	 * Returns a component in-view instance
 	 */
-	get localInView(): InViewAdapter {
+	get localInView(): Promise<InViewAdapter> {
 		const
-			currentInstance = <CanUndef<InViewAdapter>>this.ctx.tmp[inViewInstanceStore];
+			currentInstance = <CanUndef<Promise<InViewAdapter>>>this.ctx.tmp[inViewInstanceStore];
 
 		if (currentInstance != null) {
 			return currentInstance;
 		}
 
-		return this.ctx.tmp[inViewInstanceStore] = inViewFactory();
+		return this.ctx.tmp[inViewInstanceStore] = this.async.promise(import('core/dom/in-view')).then(({inViewFactory}) => inViewFactory());
 	}
 
 	/**
@@ -352,9 +346,12 @@ export default class DOM extends Friend {
 			{ctx} = this,
 			inViewInstance = this.localInView;
 
-		const destructor = ctx.async.worker(() => inViewInstance.remove(el, options.threshold), asyncOptions);
-		inViewInstance.observe(el, options);
+		const destructor = ctx.async.worker(
+			() => inViewInstance.then((adapter) => adapter.remove(el, options.threshold), stderr),
+			asyncOptions
+		);
 
+		inViewInstance.then((adapter) => adapter.observe(el, options), stderr);
 		return destructor;
 	}
 
@@ -368,11 +365,14 @@ export default class DOM extends Friend {
 	 */
 	watchForResize(el: Element, options: ResizeWatcherInitOptions, asyncOptions: AsyncOptions): Function {
 		const
-			{ctx} = this;
+			ResizeWatcher = this.async.promise(import('core/dom/resize-observer'));
 
-		const destructor = ctx.async.worker(() => ResizeWatcher.unobserve(el, options), asyncOptions);
-		ResizeWatcher.observe(el, options);
+		const destructor = this.ctx.async.worker(
+			() => ResizeWatcher.then(({ResizeWatcher}) => ResizeWatcher.unobserve(el, options), stderr),
+			asyncOptions
+		);
 
+		ResizeWatcher.then(({ResizeWatcher}) => ResizeWatcher.observe(el, options), stderr);
 		return destructor;
 	}
 }
