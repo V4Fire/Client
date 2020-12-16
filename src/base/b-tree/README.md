@@ -89,9 +89,16 @@ Example:
             Custom content
 ```
 
-### External render filter
+### External render parameters
 
 Module renders elements with `asyncRender` of the tree root node with default rendering function.
+See the [[AsyncRender]] class for additional information.
+
+#### Render filter
+
 If you need to set an external filter function for the tree render, pass it to the `renderFilter` property.
 Also, you can set a separate filter function for nested items. To do this, pass a function to `nestedRenderFilter` property.
-See the [[AsyncRender]] class for additional information.
+
+#### Chunks count
+
+Set custom value to `renderChunks` property to redefine default chunks count for the `asyncRender`.
