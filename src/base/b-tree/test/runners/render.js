@@ -93,7 +93,11 @@ module.exports = (page) => {
 	});
 
 	describe('b-tree renders tree by passing option prop', () => {
-		const init = async (attrs, content) => {
+		const init = async ({opts, attrs, content} = {}) => {
+			if (opts == null) {
+				opts = options;
+			}
+
 			await page.evaluate(({options, attrs, content}) => {
 				globalThis.removeCreatedComponents();
 
@@ -127,7 +131,7 @@ module.exports = (page) => {
 				];
 
 				globalThis.renderComponents('b-tree', scheme);
-			}, {options, attrs, content});
+			}, {options: opts, attrs, content});
 
 			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
@@ -148,10 +152,10 @@ module.exports = (page) => {
 		});
 
 		it('set external renderFilter', async () => {
-			await init({
+			await init({attrs: {
 				renderChunks: 1,
 				renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
-			});
+			}});
 
 			await h.bom.waitForIdleCallback(page);
 
@@ -163,6 +167,52 @@ module.exports = (page) => {
 
 			await delay(500);
 			await expect((await page.$$('.b-checkbox')).length).toBe(3);
+		});
+
+		it('set external nestedRenderFilter', async () => {
+			const opts = [
+				{id: 'foo'},
+				{
+					id: 'bar',
+					children: [
+						{id: 'fooone'},
+						{id: 'footwo'},
+						{
+							id: 'foothree',
+							children: [
+								{
+									id: 'foothreeone',
+									children: [
+										{
+											id: 'foothreeoneone'
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			];
+
+			await init({
+				opts,
+				attrs: {
+					renderChunks: 1,
+					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.3.second()))'
+				}
+			});
+
+			const wait = async (v, timer = 300) => {
+				await delay(timer);
+				await expect((await page.$$('.b-checkbox')).length).toBe(v);
+			};
+
+			await wait(2, 0);
+			await wait(3);
+			await wait(4);
+			await wait(5);
+			await wait(6);
+			await wait(7);
 		});
 	});
 
