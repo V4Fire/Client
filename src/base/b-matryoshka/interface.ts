@@ -11,15 +11,6 @@
  */
 export interface MatryoshkaItem extends Dictionary {
 	id: string;
-
-	/**
-	 * Parent element identifier
-	 * (for nested items)
-	 */
 	parentId?: string;
-
-	/**
-	 * Nested items
-	 */
 	children?: MatryoshkaItem[];
 }
