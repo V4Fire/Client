@@ -9,8 +9,8 @@
 /**
  * Element data
  */
-export interface MatryoshkaItem extends Dictionary {
+export interface Doll extends Dictionary {
 	id: string;
 	parentId?: string;
-	children?: MatryoshkaItem[];
+	children?: Doll[];
 }

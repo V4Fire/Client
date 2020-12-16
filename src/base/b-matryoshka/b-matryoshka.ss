@@ -20,12 +20,11 @@
 				:-level = level |
 				:class = provide.elClasses({matryoshka: {level, folded}})
 			.
-				< .&__item-wrapper
+				< .&__doll-box
 					< .&__marker
 						- block fold
-							< template v-if = Object.size(field.get('children.length', el)) > 0
-								< template v-if = vdom.getSlot('fold') != null
-									+= self.slot('fold', {':params': 'getFoldingProps(el)'})
+							< template v-if = Boolean(field.get('children.length', el))
+								< template v-if = vdom.getSlot('fold')
 
 								< .&__fold &
 									v-else |
