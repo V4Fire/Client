@@ -42,11 +42,10 @@ module.exports = (page) => {
 		value
 	);
 
-	const checkOptionTree = ({opts, target, queue = [], level = 0}) => {
+	const checkOptionTree = ({opts, target, queue = [], level = 0, foldSelector}) => {
 		opts.forEach((option) => {
-			if (Object.isArray(option.children)) {
-				checkOptionTree({opts: option.children, level: level + 1, target, queue});
-			}
+			const
+				isBranch = Object.isArray(option.children);
 
 			queue.push((async () => {
 				const
@@ -59,7 +58,28 @@ module.exports = (page) => {
 				).toBeResolvedTo(true);
 
 				await expectAsync(element.getAttribute('data-level')).toBeResolvedTo(String(level));
+
+				if (isBranch) {
+					const
+						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElName('fold')}`),
+						fold = await h.dom.waitForEl(element, selector);
+
+					fold.click();
+
+					const
+						mod = await getFoldedClass(target, false);
+
+					await h.bom.waitForIdleCallback(page);
+
+					await expectAsync(
+						element.getAttribute('class').then((className) => className.includes(mod))
+					).toBeResolvedTo(true);
+				}
 			})());
+
+			if (isBranch) {
+				checkOptionTree({opts: option.children, level: level + 1, target, queue, foldSelector});
+			}
 		});
 
 		return queue;
@@ -72,33 +92,41 @@ module.exports = (page) => {
 	});
 
 	describe('b-tree renders tree by passing option prop', () => {
-		const init = async () => {
-			await page.evaluate((options) => {
+		const init = async (content, attrs = {}) => {
+			await page.evaluate(({options, attrs, content}) => {
 				globalThis.removeCreatedComponents();
 
 				const baseAttrs = {
 					theme: 'demo',
 					option: 'b-checkbox-functional',
 					options,
+					id: 'target',
 					renderChunks: 2
 				};
+
+				if (content != null) {
+					Object.forEach(content, (el, key) => {
+						// eslint-disable-next-line no-new-func
+						content[key] = /return /.test(el) ? Function(el)() : el;
+					});
+				}
 
 				const scheme = [
 					{
 						attrs: {
 							...baseAttrs,
-							id: 'target'
-						}
+							...attrs
+						},
+
+						content
 					}
 				];
 
 				globalThis.renderComponents('b-tree', scheme);
-				globalThis.componentNode = document.querySelector('.b-tree');
-			}, options);
+			}, {options, attrs, content});
 
 			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
-
 			return h.component.waitForComponent(page, '#target');
 		};
 
@@ -113,28 +141,6 @@ module.exports = (page) => {
 				checkboxes = await page.$$('.b-checkbox');
 
 			expect(promises.length).toEqual(checkboxes.length);
-		});
-
-		it('branch folding', async () => {
-			const
-				target = await init();
-
-			const
-				id = await target.evaluate((ctx, id) => ctx.dom.getId(id), options[1].id),
-				foldClass = await target.evaluate((ctx) => ctx.block.getFullElName('fold')),
-				element = await h.dom.waitForEl(page, `[data-id="${id}"]`),
-				fold = await h.dom.waitForEl(element, `.${foldClass}`);
-
-			fold.click();
-
-			const
-				mod = await getFoldedClass(target, false);
-
-			await h.bom.waitForIdleCallback(page);
-
-			await expectAsync(
-				element.getAttribute('class').then((className) => className.includes(mod))
-			).toBeResolvedTo(true);
 		});
 	});
 
@@ -153,7 +159,8 @@ module.exports = (page) => {
 					{
 						attrs: {
 							options,
-							id: 'target'
+							id: 'target',
+							theme: 'demo'
 						},
 
 						content: {
