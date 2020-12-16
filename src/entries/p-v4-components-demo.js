@@ -6,6 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import './index';
+import '../core';
 import '../global/g-def';
 import '../pages/p-v4-components-demo';
