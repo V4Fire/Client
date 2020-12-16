@@ -150,7 +150,8 @@ export default class bTree extends iData implements iItems {
 		const opts = {
 			folded: this.folded,
 			level: this.level + 1,
-			classes: this.classes
+			classes: this.classes,
+			renderFilter: this.renderFilter
 		};
 
 		if (this.$listeners.fold) {
