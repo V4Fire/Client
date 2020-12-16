@@ -13,6 +13,7 @@
  */
 
 const
+	delay = require('delay'),
 	h = include('tests/helpers');
 
 /**
@@ -92,9 +93,19 @@ module.exports = (page) => {
 	});
 
 	describe('b-tree renders tree by passing option prop', () => {
-		const init = async (content, attrs = {}) => {
+		const init = async (attrs, content) => {
 			await page.evaluate(({options, attrs, content}) => {
 				globalThis.removeCreatedComponents();
+
+				Object.forEach(content, (el, key) => {
+					// eslint-disable-next-line no-new-func
+					content[key] = /return /.test(el) ? Function(el)() : el;
+				});
+
+				Object.forEach(attrs, (el, key) => {
+					// eslint-disable-next-line no-new-func
+					attrs[key] = /return /.test(el) ? Function(el)() : el;
+				});
 
 				const baseAttrs = {
 					theme: 'demo',
@@ -103,13 +114,6 @@ module.exports = (page) => {
 					id: 'target',
 					renderChunks: 2
 				};
-
-				if (content != null) {
-					Object.forEach(content, (el, key) => {
-						// eslint-disable-next-line no-new-func
-						content[key] = /return /.test(el) ? Function(el)() : el;
-					});
-				}
 
 				const scheme = [
 					{
@@ -142,6 +146,24 @@ module.exports = (page) => {
 
 			expect(promises.length).toEqual(checkboxes.length);
 		});
+
+		it('set external renderFilter', async () => {
+			await init({
+				renderChunks: 1,
+				renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
+			});
+
+			await h.bom.waitForIdleCallback(page);
+
+			await delay(500);
+			await expect((await page.$$('.b-checkbox')).length).toBe(1);
+
+			await delay(500);
+			await expect((await page.$$('.b-checkbox')).length).toBe(2);
+
+			await delay(500);
+			await expect((await page.$$('.b-checkbox')).length).toBe(3);
+		});
 	});
 
 	describe('b-tree renders tree by passing item through the default slot', () => {
@@ -152,7 +174,7 @@ module.exports = (page) => {
 					attrs: {
 						'data-test-ref': 'item'
 					},
-					content: 'Empty'
+					content: 'Item'
 				};
 
 				const scheme = [
