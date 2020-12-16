@@ -32,8 +32,8 @@
 									:v-attrs = getFoldingProps(el)
 								.
 
-					- block item
-						< template v-if = Object.isString(option)
+					- block doll
+						< template v-if = option
 							< component.&__option &
 								:is = Object.isFunction(option) ? option(el, i) : option |
 								:v-attrs = getOptionProps(el, i)
@@ -43,7 +43,7 @@
 							+= self.slot('default', {':option': 'getOptionProps(el, i)'})
 
 				- block children
-					< .&__children v-if = Object.size(field.get('children', el)) > 0
+					< .&__children v-if = field.get('children.length', el)
 						< @b-matryoshka.&__child &
 							:options = el.children |
 							:option = option |
