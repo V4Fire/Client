@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.111 (2020-12-16)
+
+#### :bug: Bug Fix
+
+* Fixed render logic: `bSidebar`, `bWindow`, `bBottomSlide`
+
 ## v3.0.0-rc.110 (2020-12-16)
 
 #### :boom: Breaking Change
