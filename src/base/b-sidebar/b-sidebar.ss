@@ -15,7 +15,12 @@
 	- overWrapper = true
 
 	- block body
-		< .&__content-wrapper
+		< .&__content-wrapper &
+			v-if =
+				isFunctional ||
+				forceInnerRender ||
+				opt.ifOnce('opened', m.opened !== 'true') && delete watchModsStore.opened
+		.
 			< .&__content
 				- block content
 					+= self.slot()

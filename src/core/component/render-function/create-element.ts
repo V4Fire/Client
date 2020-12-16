@@ -54,7 +54,7 @@ export function wrapCreateElement(
 
 	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(
 		this: Nullable<ComponentInterface>,
-		tag: string,
+		tag: CanUndef<string>,
 		opts?: VNodeData,
 		children?: VNode[]
 	): VNode {
@@ -82,7 +82,7 @@ export function wrapCreateElement(
 				return attrOpts.from ?? createElement();
 			}
 
-			if (tagName.startsWith('@')) {
+			if (tagName?.[0] === '@') {
 				flyweightComponent = tagName.slice(1);
 				tagName = 'span';
 
@@ -90,7 +90,7 @@ export function wrapCreateElement(
 				flyweightComponent = attrOpts['v4-flyweight-component'];
 			}
 
-			if (flyweightComponent != null) {
+			if (tagName != null && flyweightComponent != null) {
 				tagName = tagName === 'span' ? flyweightComponent : tagName.dasherize();
 				attrOpts['v4-flyweight-component'] = tagName;
 			}

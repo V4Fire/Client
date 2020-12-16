@@ -409,6 +409,10 @@ export default abstract class iData extends iBlock implements iProgress {
 								important: this.componentStatus === 'unloaded'
 							});
 
+							// Prefetch
+							void this.moduleLoader.load(...this.dependencies);
+							void this.state.initFromStorage();
+
 							return this.get(<RequestQuery>defParams[0], defParams[1]);
 						})
 

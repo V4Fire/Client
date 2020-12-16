@@ -31,6 +31,12 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 	@prop(Boolean)
 	readonly lockPageScroll: boolean = false;
 
+	/**
+	 * If true, the inner content of the component is rendered anyway at the start
+	 */
+	@prop(Boolean)
+	readonly forceInnerRender: boolean = false;
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,

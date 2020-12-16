@@ -22,11 +22,7 @@ const
 	{resolve, entries, block} = require('@pzlr/build-core');
 
 const
-	{isStandalone} = include('build/helpers'),
-	{output, buildCache} = include('build/build.webpack');
-
-const
-	canFastBuild = build.fast();
+	{output, cacheDir, isStandalone} = include('build/helpers.webpack');
 
 let
 	buildIterator = -1;
@@ -59,8 +55,7 @@ module.exports = Object.assign(buildProjectGraph(), {
  */
 async function buildProjectGraph() {
 	const
-		configHash = build.hash(),
-		graphCacheFile = path.join(buildCache, `${configHash}_graph.json`);
+		graphCacheFile = path.join(cacheDir, 'graph.json');
 
 	// Graph already exists in the cache and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
@@ -110,14 +105,14 @@ async function buildProjectGraph() {
 		});
 	}
 
-	fs.mkdirpSync(buildCache);
+	fs.mkdirpSync(cacheDir);
 	fs.writeFileSync(graphCacheFile, '');
 
 	// All others process will use this cache
 	process.env.BUILD_GRAPH_FROM_CACHE = 1;
 
 	const
-		tmpEntries = path.join(resolve.entry(), `tmp/${configHash}`);
+		tmpEntries = path.join(resolve.entry(), `tmp/${build.hash()}`);
 
 	fs.mkdirpSync(tmpEntries);
 	fs.mkdirpSync(path.join(src.clientOutput(), path.dirname(output)));
@@ -153,148 +148,144 @@ async function buildProjectGraph() {
 
 			const
 				componentsToIgnore = /^[iv]-/,
-				logicTaskName = `${name}.js`,
-				logicFile = path.join(tmpEntries, `${configHash}__${logicTaskName}`);
+				cursor = isStandalone(name) ? STANDALONE : RUNTIME;
 
-			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
+			let
+				taskProcess = processes[cursor];
+
+			{
 				const
-					block = blockMap.get(name),
-					logic = block && await block.logic;
+					entrySrc = path.join(tmpEntries, `${name}.js`);
 
-				if (block) {
-					$C(block.libs).forEach((el) => str += `require('${el}');\n`);
-				}
-
-				if (!block || logic) {
-					let
-						url;
-
-					if (logic) {
-						url = logic;
-
-					} else if (resolve.isNodeModule(name)) {
-						url = name;
-
-					} else {
-						url = path.resolve(tmpEntries, '../', name);
-					}
-
-					str += `require('${getEntryURL(url)}');\n`;
-				}
-
-				return str;
-			}));
-
-			entry[logicTaskName] = logicFile;
-
-			const cursor = isStandalone(name) ? STANDALONE : RUNTIME;
-			processes[cursor][logicTaskName] = logicFile;
-
-			// CSS
-
-			const
-				styleTaskName = `${name}$style`,
-				styleFile = path.join(tmpEntries, `${configHash}__${name}.styl`);
-
-			fs.writeFileSync(styleFile, [
-				await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
 					const
 						block = blockMap.get(name),
-						style = block && await block.styles;
+						logic = block && await block.logic;
 
-					if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
-						$C(style).forEach((url) => {
-							str += `@import "${getEntryURL(url)}"\n`;
-						});
+					if (block) {
+						$C(block.libs).forEach((el) => str += `require('${el}');\n`);
+					}
 
-						if (/^[bp]-/.test(name)) {
-							str +=
-								`
-.${name}
-	extends($${camelize(name)})
+					if (!block || logic) {
+						let
+							url;
 
-`;
+						if (logic) {
+							url = logic;
+
+						} else if (resolve.isNodeModule(name)) {
+							url = name;
+
+						} else {
+							url = path.resolve(tmpEntries, '../', name);
 						}
+
+						str += `require('${getEntryURL(url)}');\n`;
 					}
 
 					return str;
-				}),
+				}));
 
-				'generateImgClasses()'
-			].join('\n'));
+				entry[name] = entrySrc;
+				taskProcess[name] = entrySrc;
+			}
 
-			let
-				taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
+			// TEMPLATES
+
+			{
+				const
+					entryName = `${name}_tpl`,
+					entrySrc = path.join(tmpEntries, `${name}.ss.js`);
+
+				fs.writeFileSync(entrySrc, await $C(list)
+					.async
+					.to('window.TPLS = window.TPLS || Object.create(null);\n')
+					.reduce(async (str, {name, isParent}) => {
+						const
+							block = blockMap.get(name),
+							tpl = block && await block.tpl;
+
+						if (!isParent && tpl && !componentsToIgnore.test(name)) {
+							const url = getEntryURL(tpl);
+							str += `Object.assign(TPLS, require('./${url}'));\n`;
+						}
+
+						return str;
+					}));
+
+				entry[entryName] = entrySrc;
+				taskProcess[entryName] = entrySrc;
+			}
+
+			taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
 
 			if (MAX_PROCESS > processes.length && $C(taskProcess).length() > MAX_TASKS_PER_ONE_PROCESS) {
 				taskProcess = {};
 				processes.push(taskProcess);
 			}
 
-			entry[styleTaskName] = styleFile;
-			taskProcess[styleTaskName] = styleFile;
+			// CSS
 
-			// TEMPLATES
+			{
+				const
+					entryName = `${name}_style`,
+					entrySrc = path.join(tmpEntries, `${name}.styl`);
 
-			const
-				tplTaskName = `${name}_tpl.js`,
-				tplFile = path.join(tmpEntries, `${configHash}__${name}.ss${!canFastBuild ? '.js' : ''}`);
+				fs.writeFileSync(entrySrc, [
+					await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+						const
+							block = blockMap.get(name),
+							style = block && await block.styles;
 
-			fs.writeFileSync(tplFile, await $C(list)
-				.async
-				.to(canFastBuild ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
-				.reduce(async (str, {name, isParent}) => {
+						if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
+							$C(style).forEach((url) => {
+								str += `@import "${getEntryURL(url)}"\n`;
+							});
+
+							if (/^[bp]-/.test(name)) {
+								str +=
+									`
+.${name}
+	extends($${camelize(name)})
+
+`;
+							}
+						}
+
+						return str;
+					}),
+
+					'generateImgClasses()'
+				].join('\n'));
+
+				entry[entryName] = entrySrc;
+				taskProcess[entryName] = entrySrc;
+			}
+
+			// HTML
+
+			{
+				const
+					entryName = `${name}_view`,
+					entrySrc = path.join(tmpEntries, `${entryName}.html.js`);
+
+				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
 					const
 						block = blockMap.get(name),
-						tpl = block && await block.tpl;
+						html = block && await block.etpl;
 
-					if (!isParent && tpl && !componentsToIgnore.test(name)) {
-						const url = getEntryURL(tpl);
-						str += canFastBuild ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+					if (html && !componentsToIgnore.test(name)) {
+						str += `require('./${getEntryURL(html)}');\n`;
 					}
 
 					return str;
 				}));
 
-			if (canFastBuild) {
-				const
-					tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
+				entry[entryName] = entrySrc;
 
-				fs.writeFileSync(
-					tplRequireFileUrl,
-					`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getEntryURL(tplFile)}'));\n`
-				);
-
-				entry[tplTaskName] = tplRequireFileUrl;
-				taskProcess[tplTaskName] = tplRequireFileUrl;
-
-			} else {
-				entry[tplTaskName] = tplFile;
-				taskProcess[tplTaskName] = tplFile;
+				// eslint-disable-next-line require-atomic-updates
+				processes[HTML][entryName] = entrySrc;
 			}
-
-			// HTML
-
-			const
-				htmlTaskName = `${name}_view`,
-				htmlFile = path.join(tmpEntries, `${configHash}__${htmlTaskName}.html.js`);
-
-			fs.writeFileSync(htmlFile, await $C(list).async.to('').reduce(async (str, {name}) => {
-				const
-					block = blockMap.get(name),
-					html = block && await block.etpl;
-
-				if (html && !componentsToIgnore.test(name)) {
-					str += `require('./${getEntryURL(html)}');\n`;
-				}
-
-				return str;
-			}));
-
-			entry[htmlTaskName] = htmlFile;
-
-			// eslint-disable-next-line require-atomic-updates
-			processes[HTML][htmlTaskName] = htmlFile;
 
 			return entry;
 		});

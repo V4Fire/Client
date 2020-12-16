@@ -9,6 +9,38 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :boom: Breaking Change
+
+* Renamed `GLOBAL_NONCE` to `CSP_NONCE`
+* Renamed `documentWrite` -> `js` `modules/ss-helpers`
+
+#### :rocket: New Feature
+
+* Added `crossorigin` attributes to scripts and links
+
+#### :house: Internal
+
+* Prefer `createElement` instead `documentWrite`
+
+## v3.0.0-rc.109 (2020-12-15)
+
+#### :house: Internal
+
+* Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
+They are synchronized with `remoteState` via `sync.link`.
+
+## v3.0.0-rc.101 (2020-11-18)
+
+#### :bug: Bug Fix
+
+* Fixed import errors
+
+#### :house: Internal
+
+* Fixed lint warnings
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :rocket: New Feature

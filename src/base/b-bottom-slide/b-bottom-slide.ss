@@ -20,7 +20,13 @@
 		.
 
 	- block body
-		< .&__window ref = window
+		< .&__window &
+			ref = window |
+			v-if =
+				isFunctional ||
+				forceInnerRender ||
+				opt.ifOnce('opened', m.opened !== 'true') && delete watchModsStore.opened
+		.
 			- block header
 				< header.&__header &
 					ref = header |

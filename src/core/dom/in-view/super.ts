@@ -294,7 +294,13 @@ export default abstract class AbstractInView {
 			}
 
 			this.remove(observable, suspend);
-			return thresholdMap.delete(threshold);
+			thresholdMap.delete(threshold);
+
+			if (thresholdMap.size === 0) {
+				map.delete(el);
+			}
+
+			return true;
 		}
 
 		return false;

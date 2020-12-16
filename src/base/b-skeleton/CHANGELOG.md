@@ -9,8 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.37 (2020-07-20)
+## v3.0.0-rc.103 (2020-11-29)
 
-#### :house: Internal
+#### :bug: Bug Fix
 
-* Fixed ESLint warnings
+* Fixed a bug with slows down while scrolling on ios
+
+#### :memo: Documentation
+
+* Added `README`, `CHANGELOG`

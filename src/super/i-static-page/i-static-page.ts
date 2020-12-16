@@ -12,17 +12,13 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
-import { NetStatus } from 'core/net/interface';
 import { setLocale, locale } from 'core/i18n';
-import { Session } from 'core/session/interface';
 
 import remoteState from 'core/component/state';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 
-//#if runtime has bRouter
-import bRouter, { Route } from 'base/b-router/b-router';
-//#endif
+import { Route } from 'base/b-router/b-router';
+import type bRouter from 'base/b-router/b-router';
 
 import iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
@@ -290,24 +286,5 @@ export default abstract class iStaticPage extends iPage {
 
 		this.locale = locale;
 		this.forceUpdate().catch(stderr);
-	}
-
-	/**
-	 * Synchronization of the "isAuth" field
-	 * @param [e]
-	 */
-	@watch('globalEmitter:session.*')
-	protected syncAuthWatcher(e?: Session): void {
-		this.isAuth = Boolean(e?.auth);
-	}
-
-	/**
-	 * Synchronization of the "isOnline" field
-	 * @param e
-	 */
-	@watch('globalEmitter:net.status')
-	protected syncOnlineWatcher(e: NetStatus): void {
-		this.isOnline = e.status;
-		this.lastOnlineDate = e.lastOnline;
 	}
 }

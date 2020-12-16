@@ -66,14 +66,17 @@ Snakeskin.importFilters({
 	 */
 	getFirstTagElementName(decl) {
 		const
-			escapedStr = escaper.replace(decl),
+			escapedFragments = [],
+			escapedStr = escaper.replace(decl, escapedFragments);
+
+		const
 			tagMatch = tagRgxp.exec(escapedStr);
 
 		if (!tagMatch) {
 			return null;
 		}
 
-		const search = componentElRgxp.exec(escaper.paste(tagMatch[0]));
+		const search = componentElRgxp.exec(escaper.paste(tagMatch[0], escapedFragments));
 		return search ? search[0] : null;
 	}
 });

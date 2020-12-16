@@ -17,10 +17,9 @@ const
 	delay = require('delay');
 
 const
-	build = include('build/build.webpack');
+	{assetsJS, assetsJSON, isStandalone} = include('build/helpers.webpack');
 
 const
-	{isStandalone} = include('build/helpers'),
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -41,7 +40,7 @@ async function getAssets(entryPoints) {
 		assetsBlueprint.push(key);
 
 		if (!isStandalone(key)) {
-			assetsBlueprint.push(`${key}_tpl`, `${key}$style`);
+			assetsBlueprint.push(`${key}_tpl`, `${key}_style`);
 		}
 	});
 
@@ -51,7 +50,7 @@ async function getAssets(entryPoints) {
 	async function fillAssets(dep) {
 		while (!assets[dep]) {
 			try {
-				$C(fs.readJSONSync(build.assetsJSON)).forEach((el, key, rawAssets) => {
+				$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
 					assets[key] = rawAssets[key];
 				});
 
@@ -69,17 +68,15 @@ exports.getAssetsDecl = getAssetsDecl;
  *
  * @param {boolean=} [inline] - if true, the declaration is placed as a text
  * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
- * @param {boolean=} [documentWrite] - if true, the function returns JS code to load
- *   the declaration by using document.write
- *
+ * @param {boolean=} [js] - if true, the function returns JS code to load the declaration
  * @returns {string}
  */
-function getAssetsDecl({inline, wrap, documentWrite} = {}) {
+function getAssetsDecl({inline, wrap, js} = {}) {
 	if (needInline(inline)) {
-		const decl = fs.readFileSync(build.assetsJS).toString();
+		const decl = fs.readFileSync(assetsJS).toString();
 		return wrap ? getScriptDecl(decl) : decl;
 	}
 
-	const decl = getScriptDecl({src: webpack.publicPath(webpack.assetsJS()), documentWrite});
-	return documentWrite && wrap ? getScriptDecl(decl) : decl;
+	const decl = getScriptDecl({src: webpack.publicPath(webpack.assetsJS()), js});
+	return js && wrap ? getScriptDecl(decl) : decl;
 }

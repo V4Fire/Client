@@ -10,13 +10,17 @@
 
 const
 	config = require('config'),
+	webpack = require('webpack');
+
+const
 	TerserPlugin = require('terser-webpack-plugin'),
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
-	{isLayerDep, isExternalDep} = include('build/const'),
-	{inherit} = include('build/build.webpack'),
-	{RUNTIME} = include('build/entries.webpack');
+	{optimize} = config.webpack,
+	{isLayerDep, isLayerCoreDep, isExternalDep} = include('build/const'),
+	{inherit} = include('build/helpers.webpack'),
+	{RUNTIME} = include('build/graph.webpack');
 
 /**
  * Returns options for Webpack ".optimization"
@@ -29,62 +33,80 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		options = {};
 
+	if (optimize.minChunkSize) {
+		plugins.set(
+			'minChunkSize',
+			new webpack.optimize.MinChunkSizePlugin({minChunkSize: optimize.minChunkSize})
+		);
+	}
+
 	if (buildId === RUNTIME) {
 		options.runtimeChunk = {
-			name: 'webpack.runtime.js'
+			name: 'webpack.runtime'
 		};
 
-		options.splitChunks = {
+		options.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
 				index: {
-					name: 'index.js',
+					name: 'index-core',
 					chunks: 'all',
-					priority: 0,
 					minChunks: 2,
 					enforce: true,
+					reuseExistingChunk: true,
+					test: isLayerCoreDep
+				},
+
+				async: {
+					chunks: 'async',
+					minChunks: 2,
 					reuseExistingChunk: true,
 					test: isLayerDep
 				},
 
-				vendor: {
-					name: 'vendor.js',
-					chunks: 'all',
-					priority: 1,
+				defaultVendors: {
+					name: 'vendor',
+					chunks: 'initial',
 					minChunks: 1,
 					enforce: true,
 					reuseExistingChunk: true,
 					test: isExternalDep
+				},
+
+				asyncVendors: {
+					chunks: 'async',
+					minChunks: 2,
+					reuseExistingChunk: true,
+					test: isExternalDep
 				}
 			}
-		};
+		});
 	}
 
-	if (isProd) {
-		const
-			es = config.es(),
-			keepFNames = Boolean({ES5: true, ES3: true}[es]);
+	const
+		es = config.es();
 
-		options.minimizer = [
-			/* eslint-disable camelcase */
+	options.minimizer = [
+		/* eslint-disable camelcase */
 
-			new TerserPlugin({
-				parallel: true,
-				terserOptions: inherit({
-					safari10: true,
-					warnings: false,
-					ecma: es,
-					keep_fnames: keepFNames,
-					keep_classnames: true,
+		new TerserPlugin({
+			parallel: true,
+			terserOptions: inherit({
+				ecma: es,
 
-					output: {
-						comments: false
-					}
-				}, config.uglify())
-			})
+				safari10: true,
+				warnings: false,
 
-			/* eslint-enable camelcase */
-		];
-	}
+				keep_fnames: Boolean({ES5: true, ES3: true}[es]),
+				keep_classnames: true,
+
+				output: {
+					comments: false
+				}
+			}, config.terser())
+		})
+
+		/* eslint-enable camelcase */
+	];
 
 	const
 		css = config.css();

@@ -23,6 +23,12 @@ Changelog
 
 * Improved documentation
 
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :house: Internal
+
+* Added prefetch for the dynamic dependencies
+
 ## v3.0.0-rc.97 (2020-11-11)
 
 #### :bug: Bug Fix

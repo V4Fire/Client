@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.106 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing observable data
+
 ## v3.0.0-rc.83 (2020-10-09)
 
 #### :bug: Bug Fix

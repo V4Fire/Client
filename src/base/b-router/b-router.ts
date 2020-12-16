@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -11,19 +13,17 @@
  * @packageDocumentation
  */
 
-// tslint:disable:max-file-line-count
-
 import symbolGenerator from 'core/symbol';
 
 import path, { Key, RegExpOptions } from 'path-to-regexp';
 import { deprecate, deprecated } from 'core/functools/deprecation';
 import { concatUrls, toQueryString } from 'core/url';
 
-import Async from 'core/async';
 import globalRoutes from 'routes';
+import Async from 'core/async';
 
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
-import iData, { component, prop, system, computed, hook, wait } from 'super/i-data/i-data';
+import iData, { component, prop, system, computed, hook, wait, watch } from 'super/i-data/i-data';
 
 import { routeNames, defaultRouteNames, isExternal, qsClearFixRgxp } from 'base/b-router/const';
 import { getRouteName } from 'base/b-router/modules/helpers';
@@ -171,6 +171,19 @@ export default class bRouter extends iData {
 	})
 
 	basePath!: string;
+
+	/**
+	 * If true, the router will intercept all click events on elements with a `href` attribute to emit a transition.
+	 * An element with `href` can have additional attributes:
+	 *
+	 * * `data-router-method` - a type of the used router method to emit the transition;
+	 * * `data-router-go` - a value for the router "go" method;
+	 * * `data-router-params`, `data-router-query`, `data-router-meta` - additional parameters for the used router method
+	 *   (to provide an object use JSON).
+	 *
+	 */
+	@prop(Boolean)
+	readonly interceptLinks: boolean = true;
 
 	/**
 	 * Factory to create router engine.
@@ -1137,5 +1150,73 @@ export default class bRouter extends iData {
 		super.initBaseAPI();
 		this.compileStaticRoutes = this.instance.compileStaticRoutes.bind(this);
 		this.emitTransition = this.instance.emitTransition.bind(this);
+	}
+
+	/**
+	 * Handler: click on an element with a href attribute
+	 * @param e
+	 */
+	@watch({
+		field: 'document:click',
+		wrapper: (o, cb) => o.dom.delegate('[href]', cb)
+	})
+
+	protected async onLink(e: MouseEvent): Promise<void> {
+		const
+			a = <HTMLElement>e.delegateTarget,
+			href = a.getAttribute('href');
+
+		const cantPrevent =
+			!this.interceptLinks ||
+			href == null ||
+			href === '' ||
+			href.startsWith('#') ||
+			isExternal.test(href);
+
+		if (cantPrevent) {
+			return;
+		}
+
+		e.preventDefault();
+
+		const
+			l = Object.assign(document.createElement('a'), {href});
+
+		if (a.getAttribute('target') === '_blank' || e.ctrlKey) {
+			globalThis.open(l.href, '_blank');
+			return;
+		}
+
+		const
+			method = a.getAttribute('data-router-method');
+
+		switch (method) {
+			case 'back':
+				this.back().catch(stderr);
+				break;
+
+			case 'forward':
+				this.back().catch(stderr);
+				break;
+
+			case 'go': {
+				const go = Object.parse(a.getAttribute('data-router-go'));
+				this.go(Object.isNumber(go) ? go : -1).catch(stderr);
+				break;
+			}
+
+			default: {
+				const
+					params = Object.parse(a.getAttribute('data-router-params')),
+					query = Object.parse(a.getAttribute('data-router-query')),
+					meta = Object.parse(a.getAttribute('data-router-meta'));
+
+				await this[method === 'replace' ? 'replace' : 'push'](href, {
+					params: Object.isDictionary(params) ? params : {},
+					query: Object.isDictionary(query) ? query : {},
+					meta: Object.isDictionary(meta) ? meta : {}
+				});
+			}
+		}
 	}
 }

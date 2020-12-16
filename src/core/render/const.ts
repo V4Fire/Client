@@ -10,10 +10,10 @@ import Async from 'core/async';
 import { Task } from 'core/render/interface';
 
 /**
- * Maximum number of component per one render iteration
+ * Maximum number of tasks per one render iteration
  */
 export const
-	COMPONENTS_PER_TICK = 10;
+	TASKS_PER_TICK = 10;
 
 /**
  * Delay in milliseconds between render iterations
