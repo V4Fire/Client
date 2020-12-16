@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.?? ()
+## v3.0.0-rc.110 (2020-12-16)
 
 #### :boom: Breaking Change
 
