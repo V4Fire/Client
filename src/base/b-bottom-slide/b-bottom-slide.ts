@@ -636,8 +636,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * Updates a position of the window node
 	 */
 	@wait('ready')
-	protected updateWindowPosition(): CanPromise<void> {
-		this.$refs.window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
+	protected async updateWindowPosition(): Promise<void> {
+		const window = await this.waitRef<HTMLElement>('window');
+		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
 	}
 
 	/**
