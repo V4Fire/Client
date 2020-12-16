@@ -49,7 +49,10 @@ export default class bTree extends iData implements iItems {
 	readonly optionProps!: iItems['optionProps'];
 
 	/**
-	 * Recursively render filter
+	 * Common filter function for the asyncRender
+	 *
+	 * @see [[AsyncRender.iterate]]
+	 * @see [[TaskFilter]]
 	 */
 	@prop(
 		{
@@ -62,6 +65,15 @@ export default class bTree extends iData implements iItems {
 	)
 
 	readonly renderFilter!: (ctx: bTree, el: TreeItem) => CanPromise<boolean>;
+
+	/**
+	 * Filter function for nested items
+	 *
+	 * @see [[AsyncRender.iterate]]
+	 * @see [[TaskFilter]]
+	 */
+	@prop({type: Function, required: false})
+	readonly nestedRenderFilter?: (ctx: bTree, el: TreeItem) => CanPromise<boolean>;
 
 	/**
 	 * Number of chunks for the async render
@@ -147,11 +159,14 @@ export default class bTree extends iData implements iItems {
 	 * Returns props data for recursive calling
 	 */
 	protected getNestedItemProps(): Dictionary {
+		const
+			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.renderFilter;
+
 		const opts = {
 			folded: this.folded,
 			level: this.level + 1,
 			classes: this.classes,
-			renderFilter: this.renderFilter
+			renderFilter
 		};
 
 		if (this.$listeners.fold) {
