@@ -33,7 +33,7 @@
 								.
 
 					- block item
-						< template v-if = Object.isString(option)
+						< template v-if = option != null
 							< component.&__option &
 								:is = Object.isFunction(option) ? option(el, i) : option |
 								:v-attrs = getOptionProps(el, i)
