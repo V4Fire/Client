@@ -100,6 +100,27 @@ export default class bTree extends iData implements iItems {
 		return this.isFlyweight ? <bTree>this.$normalParent : this;
 	}
 
+	/**
+	 * Properties for recursively inserted components
+	 */
+	protected get getNestedItemProps(): Dictionary {
+		const
+			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.renderFilter;
+
+		const opts = {
+			folded: this.folded,
+			level: this.level + 1,
+			classes: this.classes,
+			renderFilter
+		};
+
+		if (this.$listeners.fold) {
+			opts['@fold'] = this.$listeners.fold;
+		}
+
+		return opts;
+	}
+
 	/** @override */
 	protected initRemoteData(): CanUndef<this['options']> {
 		if (!this.db) {
@@ -153,27 +174,6 @@ export default class bTree extends iData implements iItems {
 				ctx: this
 			}) :
 			op;
-	}
-
-	/**
-	 * Returns props data for recursive calling
-	 */
-	protected getNestedItemProps(): Dictionary {
-		const
-			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.renderFilter;
-
-		const opts = {
-			folded: this.folded,
-			level: this.level + 1,
-			classes: this.classes,
-			renderFilter
-		};
-
-		if (this.$listeners.fold) {
-			opts['@fold'] = this.$listeners.fold;
-		}
-
-		return opts;
 	}
 
 	/**

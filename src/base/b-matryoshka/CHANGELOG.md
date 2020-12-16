@@ -14,4 +14,5 @@ Changelog
 #### :house: Internal
 
 * Module marked as deprecated. Replaced to `base/b-tree`
+* Change protected method `getNestedDollProps` to protected getter `getNestedItemProps`
 * Added `README`, `CHANGELOG` and `interface`

@@ -47,7 +47,7 @@
 						< @b-tree.&__child &
 							:options = el.children |
 							:option = option |
-							:v-attrs = getNestedItemProps()
+							:v-attrs = getNestedItemProps
 						.
 							< template #default = o
 								+= self.slot('default', {':option': 'o.option'})
