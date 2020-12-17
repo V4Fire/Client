@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.112 (2020-12-17)
+
+#### :rocket: New Feature
+
+* Added `snapshot.webpack` `config`
+
 ## v3.0.0-rc.111 (2020-12-16)
 
 #### :bug: Bug Fix

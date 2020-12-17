@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.112 (2020-12-17)
+
+#### :rocket: New Feature
+
+* Added `snapshot.webpack`
+
 ## v3.0.0-rc.110 (2020-12-16)
 
 #### :boom: Breaking Change
