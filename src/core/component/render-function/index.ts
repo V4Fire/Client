@@ -71,7 +71,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			const
 				asyncLabel = unsafe.$asyncLabel;
 
-			let
+			const
 				[createElement, tasks] = wrapCreateElement(nativeCreate, this);
 
 			unsafe.$createElement = createElement;
@@ -102,7 +102,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									tasks[i](children);
 								}
 
-								tasks = [];
+								tasks.splice(0);
 							}
 
 							return children;
@@ -256,7 +256,6 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 								Object.set(ctx, 'hook', baseHook);
 
 								return els;
-
 							});
 
 						}, 0, {group: 'asyncComponents'});
