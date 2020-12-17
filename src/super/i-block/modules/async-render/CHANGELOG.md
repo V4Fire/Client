@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.112 (2020-12-17)
+
+#### :bug: Bug Fix
+
+* Fixed providing of render groups
+
 ## v3.0.0-rc.105 (2020-12-09)
 
 #### :rocket: New Feature

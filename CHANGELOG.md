@@ -21,6 +21,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed `updateWindowPosition` with lazy rendering `bBottomSlide`
+* Fixed providing of render groups:
+  * `super/i-block/modules/module-loader`
+  * `core/component/render-function`
 
 ## v3.0.0-rc.111 (2020-12-16)
 
