@@ -117,11 +117,11 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			unsafe._originalL = forEach;
 
 			// Wrap v-for directive to support async loop rendering
-			unsafe._l = (obj, cb) => {
+			unsafe._l = (iterable, forEachCb) => {
 				const
-					res = forEach(obj, cb);
+					res = forEach(iterable, forEachCb);
 
-				if (obj?.[asyncLabel] != null) {
+				if (iterable?.[asyncLabel] != null) {
 					tasks.push((vnodes?: CanArray<VNode>) => {
 						if (vnodes == null) {
 							return;
@@ -173,7 +173,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 
 						// Function that render a chunk of VNodes
 						const fn = () => {
-							obj[asyncLabel]((obj, desc, returnEls) => {
+							iterable[asyncLabel]((iterable, desc, returnEls) => {
 								ctx.$async.setImmediate(syncFn, {
 									group: desc.renderGroup
 								});
@@ -195,7 +195,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									Object.set(ctx, 'hook', 'beforeUpdate');
 									Object.set(ctx, 'renderGroup', desc?.renderGroup);
 
-									for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
+									for (let o = forEach(iterable, forEachCb), i = 0; i < o.length; i++) {
 										const
 											el = o[i];
 
