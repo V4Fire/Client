@@ -13,6 +13,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.112 (2020-12-17)
 
+#### :boom: Breaking Change
+
+* Now `forceInnerRender` is toggled to `true` by default:
+  * `bBottomSlide`
+  * `bSidebar`
+  * `bWindow`
+
 #### :rocket: New Feature
 
 * Added `snapshot.webpack` `config`

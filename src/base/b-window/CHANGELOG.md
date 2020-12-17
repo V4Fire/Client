@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.112 (2020-12-17)
+
+#### :boom: Breaking Change
+
+* Now `forceInnerRender` is toggled to `true` by default
+
 ## v3.0.0-rc.111 (2020-12-16)
 
 #### :bug: Bug Fix

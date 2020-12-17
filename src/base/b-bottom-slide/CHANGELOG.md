@@ -11,6 +11,12 @@ Changelog
 
 ## v3.0.0-rc.112 (2020-12-17)
 
+#### :boom: Breaking Change
+
+* Now `forceInnerRender` is toggled to `true` by default
+
+## v3.0.0-rc.112 (2020-12-17)
+
 #### :bug: Bug Fix
 
 * Fixed `updateWindowPosition` with lazy rendering
