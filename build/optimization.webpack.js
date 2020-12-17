@@ -65,16 +65,9 @@ module.exports = function optimization({buildId, plugins}) {
 
 				defaultVendors: {
 					name: 'vendor',
-					chunks: 'initial',
-					minChunks: 1,
-					enforce: true,
-					reuseExistingChunk: true,
-					test: isExternalDep
-				},
-
-				asyncVendors: {
-					chunks: 'async',
+					chunks: 'all',
 					minChunks: 2,
+					enforce: true,
 					reuseExistingChunk: true,
 					test: isExternalDep
 				}
