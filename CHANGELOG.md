@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `snapshot.webpack` `config`
 * Added `Module.wait` `super/i-block/modules/module-loader`
+* Added support of `wait` and `renderKey` `iBlock/loadModules`
 
 #### :bug: Bug Fix
 
