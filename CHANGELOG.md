@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added `snapshot.webpack` `config`
+* Added `Module.wait` `super/i-block/modules/module-loader`
 
 #### :bug: Bug Fix
 
