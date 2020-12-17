@@ -22,12 +22,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `snapshot.webpack` `config`
+* Added `snapshot.webpack` `build`
 * Added `Module.wait` `super/i-block/modules/module-loader`
 * Added support of `wait` and `renderKey` `iBlock/loadModules`
 
 #### :bug: Bug Fix
 
+* Fixed `dynamic-component-import` `build`
 * Fixed `updateWindowPosition` with lazy rendering `bBottomSlide`
 * Fixed providing of render groups:
   * `super/i-block/modules/module-loader`
