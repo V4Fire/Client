@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.113 (2020-12-18)
+
+#### :bug: Bug Fix
+
+* Fixed handling of `javascript:` links `bRouter`
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :boom: Breaking Change

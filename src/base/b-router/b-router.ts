@@ -1171,6 +1171,7 @@ export default class bRouter extends iData {
 			href == null ||
 			href === '' ||
 			href.startsWith('#') ||
+			href.startsWith('javascript:') ||
 			isExternal.test(href);
 
 		if (cantPrevent) {
