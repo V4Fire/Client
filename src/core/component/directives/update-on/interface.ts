@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { EventEmitterLike } from 'core/async';
+import { EventEmitterLikeP } from 'core/async';
 import { VNodeDirective } from 'core/component/engines';
 
 export interface DirectiveOptions extends VNodeDirective {
@@ -18,8 +18,9 @@ export interface DirectiveOptions extends VNodeDirective {
 }
 
 export interface DirectiveValue {
-	emitter: EventEmitterLike;
-	once: boolean;
-	event: string;
+	emitter: EventEmitterLikeP | Promise<unknown>;
+	once?: boolean;
+	event?: string;
 	listener: Function;
+	errorListener?: Function;
 }

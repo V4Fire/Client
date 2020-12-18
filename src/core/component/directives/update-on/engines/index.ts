@@ -24,10 +24,27 @@ export default {
 	add(params: DirectiveValue, el: HTMLElement): void {
 		const
 			elId = Math.random().toString().slice(2),
-			handler = (...args) => params.listener(el, ...args);
+			label = {label: elId};
+
+		const
+			handler = (...args) => params.listener(el, ...args),
+			errorHandler = (err) => params.errorListener != null ? params.errorListener(el, err) : stderr(err);
+
+		const
+			emitter = Object.isFunction(params.emitter) ? params.emitter() : params.emitter;
 
 		el.setAttribute(attrs.id, elId);
-		async[params.once ? 'once' : 'on'](params.emitter, params.event, handler, {label: elId});
+
+		if (Object.isPromise(emitter)) {
+			async.promise(emitter, label).then(handler, errorHandler);
+
+		} else {
+			if (params.event == null) {
+				throw new Error('The event to listen is not specified');
+			}
+
+			async[params.once ? 'once' : 'on'](emitter, params.event, handler, label);
+		}
 	},
 
 	/**

@@ -22,6 +22,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added support of promises `core/component/directive/update-on`
 * Added `snapshot.webpack` `build`
 * Added `Module.wait` `super/i-block/modules/module-loader`
 * Added support of `wait` and `renderKey` `iBlock/loadModules`
