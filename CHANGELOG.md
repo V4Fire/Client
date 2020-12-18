@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* Now icons are loaded asynchronously `traits/i-icon`
 * Now `forceInnerRender` is toggled to `true` by default:
   * `bBottomSlide`
   * `bSidebar`

@@ -54,7 +54,7 @@ export default abstract class iIcon {
 		const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
 		newEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href);
 
-		parent.removeChild(el);
+		parent.nextSibling?.remove();
 		parent.appendChild(newEl);
 	}
 

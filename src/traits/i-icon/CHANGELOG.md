@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.112 (2020-12-17)
+
+#### :boom: Breaking Change
+
+* Now icons are loaded asynchronously
+
 ## v3.0.0-rc.49 (2020-08-03)
 
 #### :house: Internal
