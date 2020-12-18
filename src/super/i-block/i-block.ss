@@ -144,10 +144,20 @@
 				- block index->gIcon(iconId, classes = {}, attrs = {})
 					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
 						- if Object.isArray(iconId)
-							< use :xlink:href = getIconLink(${iconId})
+							< use v-if = value | v-update-on = [ &
+								{
+									emitter: getIconLink(${iconId}),
+									listener: updateIconHref
+								}
+							] .
 
 						- else
-							< use :xlink:href = getIconLink('${iconId}')
+							< use v-if = value | v-update-on = [ &
+								{
+									emitter: getIconLink('${iconId}'),
+									listener: updateIconHref
+								}
+							] .
 
 				/**
 				 * Generates a slot declaration (scoped and plain)

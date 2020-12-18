@@ -38,7 +38,33 @@ export default abstract class iIcon {
 	}
 
 	/**
+	 * Updates `href` of the specified `use` element
+	 *
+	 * @param el
+	 * @param href
+	 */
+	static updateIconHref(el: SVGUseElement, href: string): void {
+		const
+			parent = el.parentNode;
+
+		if (!parent) {
+			return;
+		}
+
+		const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+		newEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href);
+
+		parent.removeChild(el);
+		parent.appendChild(newEl);
+	}
+
+	/**
 	 * Link to iIcon.getIconLink
 	 */
 	abstract getIconLink: typeof iIcon.getIconLink;
+
+	/**
+	 * Link to iIcon.updateIconHref
+	 */
+	abstract updateIconHref: typeof iIcon.updateIconHref;
 }
