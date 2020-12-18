@@ -13,9 +13,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.113 (2020-12-18)
 
+#### :rocket: New Feature
+
+* Added `cssMinimizer` `config`
+
 #### :bug: Bug Fix
 
 * Fixed handling of `javascript:` links `bRouter`
+* Downgraded `stylus-loader@3.0.2`
+
+#### :house: Internal
+
+* Replaced `optimize-css-assets-webpack-plugin` -> `css-minimizer-webpack-plugin`
 
 ## v3.0.0-rc.112 (2020-12-18)
 

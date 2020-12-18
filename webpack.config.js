@@ -37,8 +37,8 @@ async function buildFactory(entry, buildId) {
 		resolveLoader: await include('build/resolve-loader.webpack'),
 		externals: await include('build/externals.webpack')({buildId}),
 
-		plugins: [...plugins.values()],
 		module: {...modules, rules: [...modules.rules.values()]},
+		plugins: [...plugins.values()],
 
 		mode: webpack.mode(),
 		optimization: await include('build/optimization.webpack')({buildId, plugins}),

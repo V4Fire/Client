@@ -568,7 +568,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for terser-webpack-plugin
+	 * Returns parameters for TerserPlugin
 	 * @returns {{}}
 	 */
 	terser() {
@@ -599,10 +599,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	stylus() {
 		return {
-			webpackImporter: false,
-			stylusOptions: {
-				resolveURL: false
-			}
+			webpackImporter: false
 		};
 	},
 
@@ -611,9 +608,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {!Object}
 	 */
 	css() {
-		return {
-			minimize: Boolean(this.webpack.mode() === 'production')
-		};
+		return {};
+	},
+
+	/**
+	 * Returns parameters for CssMinimizerPlugin
+	 * @returns {!Object}
+	 */
+	cssMinimizer() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for MiniCssExtractPlugin
+	 * @returns {!Object}
+	 */
+	miniCssExtractPlugin() {
+		return {};
 	},
 
 	/**
@@ -630,14 +641,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	autoprefixer() {
 		return {remove: false};
-	},
-
-	/**
-	 * Returns parameters for MiniCssExtractPlugin
-	 * @returns {!Object}
-	 */
-	miniCssExtractPlugin() {
-		return {};
 	},
 
 	/**
