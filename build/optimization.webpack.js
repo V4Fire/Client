@@ -58,7 +58,7 @@ module.exports = function optimization({buildId, plugins}) {
 
 				async: {
 					chunks: 'async',
-					minChunks: 2,
+					minChunks: 1,
 					reuseExistingChunk: true,
 					test: isLayerDep
 				},
