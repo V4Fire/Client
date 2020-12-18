@@ -768,7 +768,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'component/daemons': true,
 
 			'directives/event': true,
-			'directives/resize': true,
 			'directives/image': true,
 			'directives/in-view': true,
 			'directives/resize-observer': true,
