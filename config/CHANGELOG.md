@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `cssMinimizer` `config`
+* Added `cssMinimizer`
 
 ## v3.0.0-rc.110 (2020-12-16)
 
