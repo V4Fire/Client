@@ -10,7 +10,7 @@ const
 	iconsMap = Object.createDict<CanUndef<string>>(),
 	iconsList = <Function[]>[];
 
-interface Sprite {
+interface SpriteEl {
 	id: string;
 	content: string;
 	viewBox: string;
@@ -18,11 +18,11 @@ interface Sprite {
 	destroy(): undefined;
 }
 
-function icons(id?: string): Sprite {
+async function icons(id?: string): Promise<SpriteEl> {
 	if (id != null) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {
-				return iconsList[i](id).default;
+				return (await iconsList[i](id)).default;
 
 			} catch {}
 		}

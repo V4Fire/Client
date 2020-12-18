@@ -18,7 +18,7 @@ export default abstract class iIcon {
 	 * Returns a link for the specified icon
 	 * @param iconId
 	 */
-	static getIconLink(iconId: string): string {
+	static async getIconLink(iconId: string): Promise<string> {
 		if (!(iconId in iconsMap)) {
 			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 		}
@@ -33,7 +33,8 @@ export default abstract class iIcon {
 			q = location.href.endsWith('?') ? '?' : '';
 		}
 
-		return `${location.pathname + q}#${icons(iconsMap[iconId]).id}`;
+		const icon = await icons(iconsMap[iconId]);
+		return `${location.pathname + q}#${icon.id}`;
 	}
 
 	/**
