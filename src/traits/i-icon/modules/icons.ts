@@ -42,7 +42,8 @@ if (IS_PROD) {
 	ctx = (<any>require).context(
 		'!!svg-sprite-loader!svgo-loader!@sprite',
 		true,
-		/\.svg$/
+		/\.svg$/,
+		'lazy'
 	);
 
 } else {
@@ -50,7 +51,8 @@ if (IS_PROD) {
 	ctx = (<any>require).context(
 		'!!svg-sprite-loader!@sprite',
 		true,
-		/\.svg$/
+		/\.svg$/,
+		'lazy'
 	);
 }
 
