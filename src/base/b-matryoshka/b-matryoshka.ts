@@ -26,7 +26,7 @@ export * from 'base/b-matryoshka/interface';
 @component({flyweight: true})
 export default class bMatryoshka extends bTree implements iItems {
 	/**
-	 * Shows warning that component marked as obsolete
+	 * Shows a warning that the component marked as obsolete
 	 */
 	@hook('created')
 	protected showDeprecationWarning(): void {

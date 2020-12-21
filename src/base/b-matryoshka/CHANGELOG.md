@@ -11,8 +11,11 @@ Changelog
 
 ## v3.0.0-rc.111 (2020-12-17)
 
+#### :boom: Breaking Change
+
+* The module has been marked as deprecated. Use `base/b-tree` instead.
+
 #### :house: Internal
 
-* Module marked as deprecated. Replaced to `base/b-tree`
-* Change protected method `getNestedDollProps` to protected getter `getNestedItemProps`
+* Changed the protected method `getNestedDollProps` to the protected getter `getNestedItemProps`
 * Added `README`, `CHANGELOG` and `interface`
