@@ -47,7 +47,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 
 			ctx.$vueWatch = $watch;
 			ctx.$vueSet = $set;
-			ctx.$vueDelte = $delete;
+			ctx.$vueDelete = $delete;
 
 			init.beforeDataCreateState(ctx);
 
