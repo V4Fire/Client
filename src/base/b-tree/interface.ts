@@ -9,7 +9,7 @@
 /**
  * Tree element data
  */
-export interface TreeItem extends Dictionary {
+export interface Item extends Dictionary {
 	id: string;
 
 	/**
@@ -21,5 +21,5 @@ export interface TreeItem extends Dictionary {
 	/**
 	 * Nested items
 	 */
-	children?: TreeItem[];
+	children?: Item[];
 }

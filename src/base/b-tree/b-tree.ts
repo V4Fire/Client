@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';
-import { TreeItem } from 'base/b-tree/interface';
+import { Item } from 'base/b-tree/interface';
 import iData, { component, prop, field } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -30,11 +30,11 @@ export const
 export default class bTree extends iData implements iItems {
 	/** @see [[iItems.prototype.optionsProp]] */
 	@prop(Array)
-	readonly optionsProp?: TreeItem[] = [];
+	readonly optionsProp?: Item[] = [];
 
 	/** @see [[iItems.prototype.options]] */
 	@field((o) => o.sync.link())
-	options!: TreeItem[];
+	options!: Item[];
 
 	/** @see [[iItems.prototype.option]] */
 	@prop({type: [String, Function], required: false})
@@ -65,7 +65,7 @@ export default class bTree extends iData implements iItems {
 		}
 	)
 
-	readonly renderFilter!: (ctx: bTree, el: TreeItem) => CanPromise<boolean>;
+	readonly renderFilter!: (ctx: bTree, el: Item) => CanPromise<boolean>;
 
 	/**
 	 * Filter to render nested items via `asyncRender`.
@@ -75,7 +75,7 @@ export default class bTree extends iData implements iItems {
 	 * @see [[TaskFilter]]
 	 */
 	@prop({type: Function, required: false})
-	readonly nestedRenderFilter?: (ctx: bTree, el: TreeItem) => CanPromise<boolean>;
+	readonly nestedRenderFilter?: (ctx: bTree, el: Item) => CanPromise<boolean>;
 
 	/**
 	 * Number of chunks to render via `asyncRender`
@@ -143,7 +143,7 @@ export default class bTree extends iData implements iItems {
 	 * Returns props data for the specified fold element
 	 * @param el
 	 */
-	protected getFoldingProps(el: TreeItem): Dictionary {
+	protected getFoldingProps(el: Item): Dictionary {
 		return {
 			'@click': this.onFoldingClick.bind(this, el)
 		};
@@ -160,7 +160,7 @@ export default class bTree extends iData implements iItems {
 	 * @param el
 	 * @param i
 	 */
-	protected getOptionProps(el: TreeItem, i: number): Dictionary {
+	protected getOptionProps(el: Item, i: number): Dictionary {
 		const
 			op = this.optionProps,
 			item = Object.reject(el, 'children');
@@ -206,9 +206,9 @@ export default class bTree extends iData implements iItems {
 	 * Handler: fold element click
 	 *
 	 * @param el
-	 * @emits fold(target: HTMLElement, el: TreeItem, value: boolean)
+	 * @emits fold(target: HTMLElement, el: Item, value: boolean)
 	 */
-	protected onFoldingClick(el: TreeItem): void {
+	protected onFoldingClick(el: Item): void {
 		const
 			target = this.searchItemElement(el.id),
 			newVal = this.getFoldedMod(el.id) === 'false';
