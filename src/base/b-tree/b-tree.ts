@@ -49,7 +49,8 @@ export default class bTree extends iData implements iItems {
 	readonly optionProps!: iItems['optionProps'];
 
 	/**
-	 * Common filter function for the asyncRender
+	 * Common filter to render items via `asyncRender`.
+	 * It is used to optimize the process of rendering items.
 	 *
 	 * @see [[AsyncRender.iterate]]
 	 * @see [[TaskFilter]]
@@ -67,7 +68,8 @@ export default class bTree extends iData implements iItems {
 	readonly renderFilter!: (ctx: bTree, el: TreeItem) => CanPromise<boolean>;
 
 	/**
-	 * Filter function for nested items
+	 * Filter to render nested items via `asyncRender`.
+	 * It is used to optimize the process of rendering child items.
 	 *
 	 * @see [[AsyncRender.iterate]]
 	 * @see [[TaskFilter]]
@@ -76,19 +78,19 @@ export default class bTree extends iData implements iItems {
 	readonly nestedRenderFilter?: (ctx: bTree, el: TreeItem) => CanPromise<boolean>;
 
 	/**
-	 * Number of chunks for the async render
+	 * Number of chunks to render via `asyncRender`
 	 */
 	@prop(Number)
 	readonly renderChunks: number = 5;
 
 	/**
-	 * If true, then all nested elements will be folded by default
+	 * If true, then all nested elements are folded by default
 	 */
 	@prop(Boolean)
 	readonly folded: boolean = true;
 
 	/**
-	 * Component level (internal parameter)
+	 * Component nesting level (internal parameter)
 	 */
 	@prop(Number)
 	readonly level: number = 0;
