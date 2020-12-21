@@ -38,13 +38,13 @@ const
  *
  * // The declaration will be transformed to
  *
- * console.log(require.context('!!svg-sprite!./assets', true, /\.svg$/));
- * console.log(require.context('!!svg-sprite!./node_modules/a/assets', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite-loader!./assets', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite-loader!./node_modules/a/assets', true, /\.svg$/));
  *
  * // Also, you can take values that are passed as monic flags
  *
  * // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
- * console.log(require.context('!!svg-sprite!@sprite', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
  * // @endcontext
  * ```
  */

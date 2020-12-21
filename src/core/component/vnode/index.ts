@@ -255,10 +255,12 @@ export function parseStyle(
 		const
 			styles = style.split(';');
 
-		for (let i = 0; i < styles.length; i++) {
-			const
-				chunks = styles[i].split(':');
+		for (let i = 0, rule = styles[i]; i < styles.length; i++) {
+			if (rule.trim().length === 0) {
+				continue;
+			}
 
+			const chunks = rule.split(':');
 			acc[chunks[0].trim()] = chunks[1].trim();
 		}
 

@@ -10,13 +10,17 @@
 
 const
 	config = require('config'),
-	TerserPlugin = require('terser-webpack-plugin'),
-	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+	webpack = require('webpack');
 
 const
-	{isLayerDep, isExternalDep} = include('build/const'),
-	{inherit} = include('build/build.webpack'),
-	{RUNTIME} = include('build/entries.webpack');
+	TerserPlugin = require('terser-webpack-plugin'),
+	CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
+const
+	{optimize} = config.webpack,
+	{isLayerDep, isLayerCoreDep, isExternalDep} = include('build/const'),
+	{inherit} = include('build/helpers.webpack'),
+	{RUNTIME} = include('build/graph.webpack');
 
 /**
  * Returns options for Webpack ".optimization"
@@ -29,69 +33,75 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		options = {};
 
+	if (optimize.minChunkSize) {
+		plugins.set(
+			'minChunkSize',
+			new webpack.optimize.MinChunkSizePlugin({minChunkSize: optimize.minChunkSize})
+		);
+	}
+
 	if (buildId === RUNTIME) {
 		options.runtimeChunk = {
-			name: 'webpack.runtime.js'
+			name: 'webpack.runtime'
 		};
 
-		options.splitChunks = {
+		options.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
 				index: {
-					name: 'index.js',
+					name: 'index-core',
 					chunks: 'all',
-					priority: 0,
 					minChunks: 2,
 					enforce: true,
+					reuseExistingChunk: true,
+					test: isLayerCoreDep
+				},
+
+				async: {
+					chunks: 'async',
+					minChunks: 1,
 					reuseExistingChunk: true,
 					test: isLayerDep
 				},
 
-				vendor: {
-					name: 'vendor.js',
+				defaultVendors: {
+					name: 'vendor',
 					chunks: 'all',
-					priority: 1,
-					minChunks: 1,
+					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
 					test: isExternalDep
 				}
 			}
-		};
-	}
-
-	if (isProd) {
-		const
-			es = config.es(),
-			keepFNames = Boolean({ES5: true, ES3: true}[es]);
-
-		options.minimizer = [
-			/* eslint-disable camelcase */
-
-			new TerserPlugin({
-				parallel: true,
-				terserOptions: inherit({
-					safari10: true,
-					warnings: false,
-					ecma: es,
-					keep_fnames: keepFNames,
-					keep_classnames: true,
-
-					output: {
-						comments: false
-					}
-				}, config.uglify())
-			})
-
-			/* eslint-enable camelcase */
-		];
+		});
 	}
 
 	const
-		css = config.css();
+		es = config.es();
 
-	if (css.minimize) {
-		plugins.set('minimizeCSS', new OptimizeCssAssetsPlugin({...css.minimize}));
-	}
+	options.minimizer = [
+		new CssMinimizerPlugin(config.cssMinimizer()),
+
+		/* eslint-disable camelcase */
+
+		new TerserPlugin({
+			parallel: true,
+			terserOptions: inherit({
+				ecma: es,
+
+				safari10: true,
+				warnings: false,
+
+				keep_fnames: Boolean({ES5: true, ES3: true}[es]),
+				keep_classnames: true,
+
+				output: {
+					comments: false
+				}
+			}, config.terser())
+		})
+
+		/* eslint-enable camelcase */
+	];
 
 	return options;
 };

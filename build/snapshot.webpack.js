@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,4 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import '../core';
+/**
+ * Options for WebPack ".snapshot"
+ */
+module.exports = {
+	...!IS_PROD ? {managedPaths: []} : {}
+};

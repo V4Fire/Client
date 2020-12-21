@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :boom: Breaking Change
+
+* Now `localInView` returns a promise
+
 ## v3.0.0-rc.60 (2020-09-01)
 
 #### :rocket: New Feature

@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:core/dependencies/README.md]]
- * @packageDocumentation
- */
+import { Module } from 'super/i-block/modules/module-loader/interface';
 
-export { default } from 'core/prelude/dependencies';
+export const
+	cache = new Map<unknown, Module>(),
+	cachedModules = <Module[]>[];

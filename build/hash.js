@@ -9,7 +9,7 @@
  */
 
 const
-	{webpack} = require('config');
+	{build} = require('config');
 
 /**
  * Returns a hash value of the specified file or text (glob pattern also supported)
@@ -18,9 +18,9 @@ const
  * @param [length] - hash length
  * @returns {string}
  */
-module.exports = function getHash(value, length = webpack.hashLength) {
+module.exports = function getHash(value, length = build.hashLength) {
 	const
-		algorithm = webpack.hashFunction();
+		algorithm = build.hashAlg;
 
 	if (!algorithm) {
 		return '';

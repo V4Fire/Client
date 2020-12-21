@@ -9,6 +9,32 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.112 (2020-12-18)
+
+#### :rocket: New Feature
+
+* Added `snapshot.webpack`
+
+#### :bug: Bug Fix
+
+* Fixed `dynamic-component-import`
+
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :boom: Breaking Change
+
+* Renamed `entries.webpack` to `graph.webpack`
+* Renamed `build.webpack` to `helpers.webpack`
+* Now `output.webpack` exports a function
+
+#### :rocket: New Feature
+
+* Added support of dynamic imports
+* Added `isLayerCoreDep`
+* Added `entry.webpack`
+* Added `watch-options.webpack`
+* Added `other.webpack`
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :nail_care: Polish

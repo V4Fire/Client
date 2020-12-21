@@ -145,9 +145,8 @@ export default class AsyncRender extends Friend {
 		if (!isSrcPromise) {
 			iterator = iterable[Symbol.iterator]();
 
-			for (let o = iterator, el = o.next(); !el.done; el = o.next(), syncI++) {
-				lastSyncEl = el;
-
+			// eslint-disable-next-line no-multi-assign
+			for (let o = iterator, el = lastSyncEl = o.next(); !el.done; el = o.next(), syncI++) {
 				if (startPos > 0) {
 					startPos--;
 					continue;
@@ -307,32 +306,31 @@ export default class AsyncRender extends Friend {
 							desc.destructor = () => $a.terminateWorker({group});
 						}
 
-						const
-							els = <Node[]>cb(newArray, desc);
+						cb(newArray, desc, (els: Node[]) => {
+							chunkI++;
+							chunkTotal = 0;
+							newArray = [];
 
-						chunkI++;
-						chunkTotal = 0;
-						newArray = [];
+							$a.worker(() => {
+								const destroyEl = (el) => {
+									if (el[this.asyncLabel] != null) {
+										delete el[this.asyncLabel];
+										$a.worker(() => destroyEl(el), {group});
 
-						$a.worker(() => {
-							const destroyEl = (el) => {
-								if (el[this.asyncLabel] != null) {
-									delete el[this.asyncLabel];
-									$a.worker(() => destroyEl(el), {group});
+									} else if (el.parentNode != null) {
+										if (opts.destructor) {
+											opts.destructor(el);
+										}
 
-								} else if (el.parentNode != null) {
-									if (opts.destructor) {
-										opts.destructor(el);
+										el.parentNode.removeChild(el);
 									}
+								};
 
-									el.parentNode.removeChild(el);
+								for (let i = 0; i < els.length; i++) {
+									destroyEl(els[i]);
 								}
-							};
-
-							for (let i = 0; i < els.length; i++) {
-								destroyEl(els[i]);
-							}
-						}, {group});
+							}, {group});
+						});
 					}
 				};
 
@@ -358,7 +356,7 @@ export default class AsyncRender extends Friend {
 							const r = await $a.promise(res, {group});
 
 							if (Object.isTruly(r)) {
-								this.createTask(task, {weight});
+								this.createTask(task, {group, weight});
 							}
 
 						} catch (err) {
@@ -372,13 +370,14 @@ export default class AsyncRender extends Friend {
 
 					} else {
 						this.createTask(task, {
+							group,
 							weight,
 							filter: filter.bind(this.ctx, val, i, filterParams)
 						});
 					}
 
 				} else {
-					this.createTask(task, {weight});
+					this.createTask(task, {group, weight});
 				}
 
 				i++;
@@ -406,7 +405,7 @@ export default class AsyncRender extends Friend {
 				return false;
 
 			}, {
-				group: 'asyncComponents',
+				group: params.group ?? 'asyncComponents',
 				onClear: () => queue.delete(task),
 				single: false
 			})

@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.113 (2020-12-18)
+
+#### :bug: Bug Fix
+
+* Fixed handling of `javascript:` links
+
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :rocket: New Feature
+
+* Added `interceptLinks`
+
 ## v3.0.0-rc.36 (2020-07-13)
 
 #### :bug: Bug Fix

@@ -16,7 +16,10 @@
 
 	- block body
 		< .&__content-wrapper &
-			v-if = isFunctional || opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+			v-if =
+				isFunctional ||
+				forceInnerRender ||
+				opt.ifOnce('opened', m.opened === 'true') && delete watchModsStore.opened
 		.
 			< .&__content
 				- block content

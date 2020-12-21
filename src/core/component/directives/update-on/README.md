@@ -15,6 +15,12 @@ You can add one or more reactions to one element, for example:
     emitter: rootEvent,
     event: 'bar',
     listener: (el, v) => onSampleEvent(el, v, true)
+  },
+
+  {
+    emitter: somePromiseValue,
+    listener: (el, v) => onSampleEvent(el, v, true),
+    errorListener: (el, err) => console.error(el, err)
   }
 ] .
 ```

@@ -6,12 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import 'core/prelude/csp';
 import '@v4fire/core/core/prelude';
 import 'core/prelude/dom';
-
-//#if runtime has prelude/dependencies
-import 'core/prelude/dependencies';
-//#endif
 
 //#if runtime has prelude/test-env
 import 'core/prelude/test-env';

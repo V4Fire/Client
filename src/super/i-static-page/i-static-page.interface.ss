@@ -68,7 +68,7 @@
 			? rootAttrs['data-root-component'] = self.name()
 			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
-		? await h.generatePageInitJS(self.name(), { &
+		? await h.generateInitJS(self.name(), { &
 			deps,
 			ownDeps,
 
@@ -152,5 +152,6 @@
 						+= h.getInitLibDecl({wrap: true})
 
 						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
+						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
 						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
 						+= h.getScriptDeclByName('webpack.runtime', {assets, wrap: true})

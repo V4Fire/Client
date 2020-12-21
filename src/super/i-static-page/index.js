@@ -7,10 +7,4 @@
  */
 
 package('i-static-page')
-	.extends('i-page')
-	.dependencies(
-		'g-def',
-		'g-debug',
-		'g-hint',
-		'g-icon'
-	);
+	.extends('i-page');

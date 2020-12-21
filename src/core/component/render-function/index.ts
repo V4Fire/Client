@@ -71,7 +71,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			const
 				asyncLabel = unsafe.$asyncLabel;
 
-			let
+			const
 				[createElement, tasks] = wrapCreateElement(nativeCreate, this);
 
 			unsafe.$createElement = createElement;
@@ -102,7 +102,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									tasks[i](children);
 								}
 
-								tasks = [];
+								tasks.splice(0);
 							}
 
 							return children;
@@ -117,11 +117,11 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			unsafe._originalL = forEach;
 
 			// Wrap v-for directive to support async loop rendering
-			unsafe._l = (obj, cb) => {
+			unsafe._l = (iterable, forEachCb) => {
 				const
-					res = forEach(obj, cb);
+					res = forEach(iterable, forEachCb);
 
-				if (obj?.[asyncLabel] != null) {
+				if (iterable?.[asyncLabel] != null) {
 					tasks.push((vnodes?: CanArray<VNode>) => {
 						if (vnodes == null) {
 							return;
@@ -172,94 +172,98 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 						}
 
 						// Function that render a chunk of VNodes
-						const fn = () => ctx.$async.setTimeout(() => {
-							obj[asyncLabel]((obj, p?: ComponentInterface) => {
-								const
-									els = <Node[]>[],
-									renderNodes = <Array<Nullable<Node>>>[],
-									nodes = <VNode[]>[];
+						const fn = () => {
+							iterable[asyncLabel]((iterable, desc, returnEls) => {
+								ctx.$async.setImmediate(syncFn, {
+									group: desc.renderGroup
+								});
 
-								const
-									parent = isTemplateParent ? vnode.elm?.parentNode : vnode.elm,
-									baseHook = ctx.hook;
-
-								if (parent == null) {
-									return [];
-								}
-
-								Object.set(ctx, 'hook', 'beforeUpdate');
-								Object.set(ctx, 'renderGroup', p?.renderGroup);
-
-								for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
+								function syncFn(): void {
 									const
-										el = o[i];
+										els = <Node[]>[],
+										renderNodes = <Array<Nullable<Node>>>[],
+										nodes = <VNode[]>[];
 
-									if (el == null) {
-										continue;
+									const
+										parent = isTemplateParent ? vnode.elm?.parentNode : vnode.elm,
+										baseHook = ctx.hook;
+
+									if (parent == null) {
+										return returnEls([]);
 									}
 
-									if (Object.isArray(el)) {
-										for (let o = el, i = 0; i < o.length; i++) {
-											const
-												el = <CanUndef<VNode>>o[i];
+									Object.set(ctx, 'hook', 'beforeUpdate');
+									Object.set(ctx, 'renderGroup', desc?.renderGroup);
 
-											if (el == null) {
-												continue;
-											}
+									for (let o = forEach(iterable, forEachCb), i = 0; i < o.length; i++) {
+										const
+											el = o[i];
 
-											if (el.elm) {
-												el.elm[asyncLabel] = true;
-												renderNodes.push(el.elm);
-
-											} else {
-												nodes.push(el);
-												renderNodes.push(null);
-											}
+										if (el == null) {
+											continue;
 										}
 
-									} else if (el.elm != null) {
-										el.elm[asyncLabel] = true;
-										renderNodes.push(el.elm);
+										if (Object.isArray(el)) {
+											for (let o = el, i = 0; i < o.length; i++) {
+												const
+													el = <CanUndef<VNode>>o[i];
 
-									} else {
-										nodes.push(el);
-										renderNodes.push(null);
-									}
-								}
+												if (el == null) {
+													continue;
+												}
 
-								const
-									renderVNodes = renderData(nodes, ctx);
+												if (el.elm) {
+													el.elm[asyncLabel] = true;
+													renderNodes.push(el.elm);
 
-								for (let i = 0, j = 0; i < renderNodes.length; i++) {
-									const
-										el = <CanArray<CanUndef<Node>>>(renderNodes[i] ?? renderVNodes[j++]);
-
-									if (Object.isArray(el)) {
-										for (let i = 0; i < el.length; i++) {
-											const
-												node = el[i];
-
-											if (node != null) {
-												els.push(parent.appendChild(node));
+												} else {
+													nodes.push(el);
+													renderNodes.push(null);
+												}
 											}
+
+										} else if (el.elm != null) {
+											el.elm[asyncLabel] = true;
+											renderNodes.push(el.elm);
+
+										} else {
+											nodes.push(el);
+											renderNodes.push(null);
 										}
-
-									} else if (el != null) {
-										els.push(parent.appendChild(el));
 									}
+
+									const
+										renderVNodes = renderData(nodes, ctx);
+
+									for (let i = 0, j = 0; i < renderNodes.length; i++) {
+										const
+											el = <CanArray<CanUndef<Node>>>(renderNodes[i] ?? renderVNodes[j++]);
+
+										if (Object.isArray(el)) {
+											for (let i = 0; i < el.length; i++) {
+												const
+													node = el[i];
+
+												if (node != null) {
+													els.push(parent.appendChild(node));
+												}
+											}
+
+										} else if (el != null) {
+											els.push(parent.appendChild(el));
+										}
+									}
+
+									Object.set(ctx, 'renderGroup', undefined);
+									runHook('beforeUpdated', ctx, desc).catch(stderr);
+
+									resolveRefs(ctx);
+									Object.set(ctx, 'hook', baseHook);
+
+									return returnEls(els);
 								}
-
-								Object.set(ctx, 'renderGroup', undefined);
-								runHook('beforeUpdated', ctx, p).catch(stderr);
-
-								resolveRefs(ctx);
-								Object.set(ctx, 'hook', baseHook);
-
-								return els;
-
 							});
-
-						}, 0, {group: 'asyncComponents'});
+						};
 
 						if (mountedHooks[ctx.hook] != null) {
 							ctx.$nextTick(fn);
