@@ -6,11 +6,15 @@ This module provides API to render a recursive list of elements.
 
 * The component extends [[iData]].
 
-* The component implements the [[iItems]] traits.
-
-* The component can be used as flyweight.
+* The component implements the [[iItems]] trait.
 
 * By default, the root tag of the component is `<div>`.
+
+## Features
+
+* Recursive rendering of any components.
+
+* Folding of branches.
 
 ## Modifiers
 
@@ -46,34 +50,13 @@ export default class myTree extends bTree {
 
 ## Usage
 
-Create a component with the specified `items` prop. `items` is an array of objects where every object implements the `Item` interface.
-
-```
-interface Item extends Dictionary {
-  /**
-   * Item identifier
-   */
-  id: string;
-
-  /**
-   * List of nested items
-   */
-  children?: Item[];
-
-  /**
-   * False, if the item shouldn't be folded by default
-   * @default `true`
-   */
-  folded?: boolean;
-}
-```
-
-After this, you can specify a component that should use to render items. To do this, you have to provide the `item` prop.
-The prop value can be defined as a string or function that returns a string.
+1. Simple use of the component with a provided list of items and component to render.
 
 ```
 < b-tree &
+  /// The specified items are rendered as `b-checkbox`-es
   :item = 'b-checkbox' |
+
   :items = [
     {id: 'foo'},
     {id: 'bar', children: [
@@ -93,14 +76,95 @@ The prop value can be defined as a string or function that returns a string.
 .
 ```
 
+2. Providing extra attributes to a component to render.
+
+```
+< b-tree &
+  :item = 'b-checkbox' |
+  :itemProps = (el, i, params) => el.id === 'foo' ? {label: 'foo'} : {} |
+  :items = listOfItems
+.
+```
+
+3. Providing a key to the internal `v-for` directive.
+
+```
+< b-tree &
+  :item = 'b-checkbox' |
+  :itemKey = 'customId' |
+  :items = listOfItems
+.
+```
+
+4. Providing a component to render via a function.
+
 ```
 < b-tree &
   :item = (el, i) => el.id === 'foo' ? 'b-checkbox' : 'b-radio-button' |
+  :items = listOfItems
+.
+```
+
+5. Providing a component to render via a slot.
+
+```
+< b-tree :items = listOfItems
+  < template #default = {item}
+    < b-checkbox v-if = item.id === 'foo'
+    < b-radio-button v-else
+```
+
+6. Loading items from a data provider.
+
+```
+< b-tree :item = 'b-checkbox' | :dataProvider = 'MyProvider'
+```
+
+## Branch Folding
+
+The module supports a feature to fold child branches of each item. It is implemented by using CSS modifiers, and by default,
+elements have no styles. So you have to write some CSS rules to hide children when the item node has the `folded` modifier.
+
+For instance:
+
+```
+&__fold:before
+  content "-"
+  display block
+  text-align center
+
+&__node_folded_true &__fold:before
+  content "+"
+
+&__node_folded_true &__children
+  display none
+```
+
+All elements have the `folded` modifier in `true` by default.
+To change this, just provide the modifier values as a prop.
+
+```
+< b-tree &
+  :item = 'b-checkbox' |
+  :items = items |
+  :folded = false
+.
+```
+
+Or
+
+```
+< b-tree &
+  :item = 'b-checkbox' |
   :items = [
     {id: 'foo'},
 
     {
       id: 'bar',
+
+      // This branch isn't folded
+      folded: false,
+
       children: [
         {id: 'fooone'},
         {id: 'footwo'}
@@ -108,30 +172,6 @@ The prop value can be defined as a string or function that returns a string.
     }
   ]
 .
-```
-
-### Providing of the component to render via a slot
-
-If you want to have more control of rendering items, you can specify the default slot that will be used to render each item.
-
-```
-< b-tree :options = [
-  {id: 'foo'},
-  {id: 'bar', children: [
-    {id: 'fooone'},
-    {id: 'footwo'},
-
-    {
-      id: 'foothree',
-      children: [
-        {id: 'foothreeone'}
-      ]
-    },
-  ]}
-] .
-  < template #default = {item}
-    < b-checkbox v-if = item.id === 'foo'
-    < b-radio-button v-else
 ```
 
 ## Branch Folding
@@ -185,29 +225,52 @@ Or
 .
 ```
 
-### Customization
+## Slots
 
-You can also customize a folding element.
-To do this, pass scoped slot `fold` with custom content and set the `params` field with the `v-attrs` property.
+The component supports a bunch of slots to provide:
 
-Example:
+1. `default` to render each item (instead of providing the `item` prop).
 
 ```
-< template #fold = o
-  < .&__fold :v-attrs = o.params
-    ➕
+< b-tree :items = listOfItems
+  < template #default = {item}
+    {{ item.label }}
 ```
 
-### External render parameters
+2. `fold` to provide a template to render `fold` blocks.
 
-Module renders elements with `asyncRender` of the tree root node with default rendering function.
-See the [[AsyncRender]] class for additional information.
+```
+< b-tree :item = 'b-checkbox' | :items = listOfItems
+  < template #fold = o
+    < .&__fold :v-attrs = o.params
+      ➕
+```
 
-#### Render filter
+## External render parameters
 
-If you need to set an external filter function for the tree render, pass it to the `renderFilter` property.
-Also, you can set a separate filter function for nested items. To do this, pass a function to `nestedRenderFilter` property.
+Module renders elements via `asyncRender` of the root tree node with the default rendering function.
+See [[AsyncRender]] for additional information.
 
-#### Chunks count
+### renderFilter
 
-Set custom value to `renderChunks` property to redefine default chunks count for the `asyncRender`.
+Common filter to render items via `asyncRender`.
+
+```
+< b-tree :item = 'b-checkbox' | :items = listOfItems | :renderFilter = () => async.idle()
+```
+
+### nestedRenderFilter
+
+Filter to render nested items via `asyncRender`.
+
+```
+< b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()
+```
+
+### renderChunks
+
+A number of chunks to render per tick via `asyncRender`.
+
+```
+< b-tree :item = 'b-checkbox' | :items = listOfItems | :renderChunks = 3
+```
