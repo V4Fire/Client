@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* `base/b-matryoshka` marked as deprecated. Replaced to `base/b-tree`
+* `base/b-matryoshka` marked as deprecated. Use `base/b-tree` instead.
 
 #### :rocket: New Feature
 
@@ -23,11 +23,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* `base/b-bottom-slide`
-  * Geometry initialization in content height mode fix
-
-* `traits/i-history`
-  * Next calling of `initIndex` pushes another one index page
+* Fixed geometry initialization within the content mode `base/b-bottom-slide`
+* Fixed an issue when the next calling of `initIndex` pushes another one index page `traits/i-history`
 
 ## v3.0.0-rc.113 (2020-12-18)
 

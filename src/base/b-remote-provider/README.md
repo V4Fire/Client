@@ -20,16 +20,6 @@ The component can be useful to create a composition of data.
 | `delData`     | There have occur deleting of data from the provider    | Data                                    | `unknown`                                |
 | `error`       | There have occur an error with the provider            | Error object; Function to retry request | `Error | RequestError`; `RetryRequestFn` |
 
-## Slots
-
-The component supports providing the default slot.
-
-```
-< b-remote-provider :dataProvider = 'SelectedCity'
-  < #template = {db}
-    {{ db.value }}
-```
-
 ## Usage
 
 Don't use this component if you just want to join several providers into the one `db` object: to do this you should prefer `extraProviders`.
@@ -56,4 +46,14 @@ Because, this component is a child of [[iData]], you free to use all these props
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity' | :request = {get: {lat, lon}}
+```
+
+## Slots
+
+The component supports providing the default slot.
+
+```
+< b-remote-provider :dataProvider = 'SelectedCity'
+  < #template = {db}
+    {{ db.value }}
 ```
