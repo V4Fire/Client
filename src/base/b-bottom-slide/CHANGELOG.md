@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Geometry initialization in content height mode fix
+* Fixed geometry initialization within the content mode
 
 ## v3.0.0-rc.112 (2020-12-18)
 
