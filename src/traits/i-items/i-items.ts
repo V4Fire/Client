@@ -13,7 +13,7 @@ import iBlock from 'super/i-block/i-block';
  * @packageDocumentation
  */
 
-import { ItemsIterator, ItemPropsFn, UseItemFn } from 'traits/i-items/interface';
+import { ItemsIterator, ItemPropsFn, CreateFromItemFn } from 'traits/i-items/interface';
 
 export * from 'traits/i-items/interface';
 
@@ -45,12 +45,12 @@ export default abstract class iItems {
 	/**
 	 * Item component name or function to create item component name
 	 */
-	abstract readonly item?: string | UseItemFn;
+	abstract readonly item?: string | CreateFromItemFn;
 
 	/**
 	 * Item unique key or function to create item unique key
 	 */
-	abstract readonly itemKey?: string | UseItemFn;
+	abstract readonly itemKey?: string | CreateFromItemFn;
 
 	/**
 	 * Object to mix values into every item props

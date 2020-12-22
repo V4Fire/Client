@@ -31,8 +31,8 @@ export interface ItemsIterator<CTX = iBlock> {
 }
 
 /**
- * Function to create string using item params and its index into items array
+ * Function to create value using item params and its index into items array
  */
-export interface UseItemFn {
+export interface CreateFromItemFn {
 	(el: unknown, i: number): string;
 }
