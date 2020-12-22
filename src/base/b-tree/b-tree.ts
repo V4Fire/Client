@@ -30,11 +30,7 @@ export const
 export default class bTree extends iData implements iItems {
 	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
-	readonly itemsProp?: Item[] = [];
-
-	/** @see [[iItems.items]] */
-	@field((o) => o.sync.link())
-	items!: Item[];
+	readonly itemsProp: Item[] = [];
 
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
@@ -94,6 +90,10 @@ export default class bTree extends iData implements iItems {
 	 */
 	@prop(Number)
 	readonly level: number = 0;
+
+	/** @see [[iItems.items]] */
+	@field((o) => o.sync.link())
+	items!: Item[];
 
 	/**
 	 * Link to the top level component

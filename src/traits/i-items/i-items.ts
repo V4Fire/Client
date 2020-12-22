@@ -1,4 +1,3 @@
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,6 +7,11 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+
+/**
+ * [[include:traits/i-items/README.md]]
+ * @packageDocumentation
+ */
 
 import { ItemsIterator, ItemPropsFn, UseItemFn } from 'traits/i-items/interface';
 
@@ -49,7 +53,8 @@ export default abstract class iItems {
 	abstract readonly itemKey?: string | UseItemFn;
 
 	/**
-	 * Item component props
+	 * Object to mix values into every item props
+	 * or factory to create item props
 	 */
-	abstract readonly itemProps: ItemPropsFn;
+	abstract readonly itemProps?: StrictDictionary | ItemPropsFn;
 }
