@@ -12,7 +12,7 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< template v-for = (el, i) in top.asyncRender.iterate(options, top.renderChunks, { &
+		< template v-for = (el, i) in top.asyncRender.iterate(items, top.renderChunks, { &
 			filter: renderFilter
 		}) .
 			< .&__node &
@@ -33,24 +33,24 @@
 								.
 
 					- block item
-						< template v-if = option != null
-							< component.&__option &
-								:is = Object.isFunction(option) ? option(el, i) : option |
-								:v-attrs = getOptionProps(el, i)
+						< template v-if = item != null
+							< component.&__item &
+								:is = Object.isFunction(item) ? item(el, i) : item |
+								:v-attrs = getItemProps(el, i)
 							.
 
 						< template v-else
-							+= self.slot('default', {':option': 'getOptionProps(el, i)'})
+							+= self.slot('default', {':item': 'getItemProps(el, i)'})
 
 				- block children
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
 						< @b-tree.&__child &
-							:options = el.children |
-							:option = option |
+							:items = el.children |
+							:item = item |
 							:v-attrs = getNestedItemProps
 						.
 							< template #default = o
-								+= self.slot('default', {':option': 'o.option'})
+								+= self.slot('default', {':item': 'o.item'})
 
 							< template #fold = o | v-if = vdom.getSlot('fold') != null
 								+= self.slot('fold', {':params': 'o.params'})

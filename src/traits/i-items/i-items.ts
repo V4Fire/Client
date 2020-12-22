@@ -9,7 +9,7 @@
 
 import iBlock from 'super/i-block/i-block';
 
-import { ItemsIterator, ItemProps, OptionFn } from 'traits/i-items/interface';
+import { ItemsIterator, ItemPropsFn, UseItemFn } from 'traits/i-items/interface';
 
 export * from 'traits/i-items/interface';
 
@@ -22,36 +22,34 @@ export default abstract class iItems {
 	 * @param i
 	 */
 	static getItemKey<T extends iBlock>(component: T & iItems, el: unknown, i: number): CanUndef<string> {
-		return Object.isFunction(component.optionKey) ?
-			component.optionKey(el, i) :
-			component.optionKey;
+		return Object.isFunction(component.itemKey) ?
+			component.itemKey(el, i) :
+			component.itemKey;
 	}
 
 	/**
 	 * Component items
 	 */
-	abstract readonly optionsProp?: unknown[];
+	abstract readonly itemsProp?: unknown[];
 
-	/** @see iItems.prototype.optionProps */
-	abstract options?: unknown[];
+	/** @see [[iItems.itemsProp]] */
+	abstract items?: unknown[];
 
-	/**
-	 * Factory for an item iterator
-	 */
-	abstract readonly optionsIterator?: ItemsIterator;
+	/** @see [[ItemsIterator]] */
+	abstract readonly itemsIterator?: ItemsIterator;
 
 	/**
-	 * Item component name
+	 * Item component name or function to create item component name
 	 */
-	abstract readonly option?: string | OptionFn;
+	abstract readonly item?: string | UseItemFn;
 
 	/**
-	 * Item unique key
+	 * Item unique key or function to create item unique key
 	 */
-	abstract readonly optionKey?: string | OptionFn;
+	abstract readonly itemKey?: string | UseItemFn;
 
 	/**
 	 * Item component props
 	 */
-	abstract readonly optionProps: ItemProps;
+	abstract readonly itemProps: ItemPropsFn;
 }

@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import { deprecate } from 'core/functools';
+import { deprecate, deprecated } from 'core/functools';
 
 import iItems from 'traits/i-items/i-items';
-import bTree, { component, hook } from 'base/b-tree/b-tree';
+import bTree, { Item, component, hook } from 'base/b-tree/b-tree';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-matryoshka/interface';
@@ -26,10 +26,37 @@ export * from 'base/b-matryoshka/interface';
 @component({flyweight: true})
 export default class bMatryoshka extends bTree implements iItems {
 	/**
+	 * @deprecated
+	 * @see [[iItems.items]]
+	 */
+	@deprecated({renamedTo: 'items'})
+	protected get options(): bTree['items'] {
+		return this.items;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[iItems.option]]
+	 */
+	@deprecated({renamedTo: 'item'})
+	protected get option(): bTree['item'] {
+		return this.item;
+	}
+
+	/**
 	 * Shows a warning that the component marked as obsolete
 	 */
 	@hook('created')
 	protected showDeprecationWarning(): void {
 		deprecate({name: 'bMatryoshka', type: 'component', renamedTo: 'bTree'});
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[iItems.getItemProps]]
+	 */
+	@deprecated({renamedTo: 'getItemProps'})
+	protected getOptionProps(el: Item, i: number): Dictionary {
+		return this.getItemProps(el, i);
 	}
 }

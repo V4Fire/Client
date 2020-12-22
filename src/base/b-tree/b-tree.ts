@@ -28,25 +28,25 @@ export const
  */
 @component({flyweight: true})
 export default class bTree extends iData implements iItems {
-	/** @see [[iItems.prototype.optionsProp]] */
+	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
-	readonly optionsProp?: Item[] = [];
+	readonly itemsProp?: Item[] = [];
 
-	/** @see [[iItems.prototype.options]] */
+	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
-	options!: Item[];
+	items!: Item[];
 
-	/** @see [[iItems.prototype.option]] */
+	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
-	readonly option?: iItems['option'];
+	readonly item?: iItems['item'];
 
-	/** @see [[iItems.prototype.optionKey]] */
+	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItems['optionKey'];
+	readonly itemKey?: iItems['itemKey'];
 
-	/** @see [[iItems.prototype.optionProps]] */
+	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, required: false})
-	readonly optionProps!: iItems['optionProps'];
+	readonly itemProps!: iItems['itemProps'];
 
 	/**
 	 * Common filter to render items via `asyncRender`.
@@ -124,19 +124,19 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<this['options']> {
+	protected initRemoteData(): CanUndef<this['items']> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent<this['options']>(this.db);
+			val = this.convertDBToComponent<this['items']>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.options = val;
+			return this.items = val;
 		}
 
-		return this.options;
+		return this.items;
 	}
 
 	/**
@@ -150,7 +150,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/** @see [[iItems.getItemKey]] */
-	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+	protected getItemKey(el: unknown, i: number): CanUndef<string> {
 		return iItems.getItemKey(this, el, i);
 	}
 
@@ -160,9 +160,9 @@ export default class bTree extends iData implements iItems {
 	 * @param el
 	 * @param i
 	 */
-	protected getOptionProps(el: Item, i: number): Dictionary {
+	protected getItemProps(el: Item, i: number): Dictionary {
 		const
-			op = this.optionProps,
+			op = this.itemProps,
 			item = Object.reject(el, 'children');
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -172,7 +172,7 @@ export default class bTree extends iData implements iItems {
 
 		return Object.isFunction(op) ?
 			op(item, i, {
-				key: this.getOptionKey(item, i),
+				key: this.getItemKey(item, i),
 				ctx: this
 			}) :
 			op;
