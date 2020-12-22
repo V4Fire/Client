@@ -22,15 +22,18 @@ const
 module.exports = (page) => {
 	const options = [
 		{id: 'foo'},
+
 		{
 			id: 'bar',
 			children: [
 				{id: 'fooone'},
 				{id: 'footwo'},
+
 				{
 					id: 'foothree',
 					children: [{id: 'foothreeone'}]
 				},
+
 				{id: 'foofour'},
 				{id: 'foofive'},
 				{id: 'foosix'}
