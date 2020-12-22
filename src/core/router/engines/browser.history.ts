@@ -397,12 +397,17 @@ export default function createRouter(component: bRouter): Router {
 			routeId = Object.get(history, 'state._id');
 
 		if (routeId != null) {
-			for (let i = 0; i < historyLog.length; i++) {
-				if (Object.get(historyLog[i], 'params._id') === routeId) {
-					historyPos = i;
-					saveHistoryPos();
-					break;
+			try {
+				for (let i = 0; i < historyLog.length; i++) {
+					if (Object.get(historyLog[i], 'params._id') === routeId) {
+						historyPos = i;
+						saveHistoryPos();
+						break;
+					}
 				}
+
+			} catch (err) {
+				stderr(err);
 			}
 		}
 
