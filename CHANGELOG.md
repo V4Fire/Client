@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.114 (2020-12-22)
+
+#### :bug: Bug Fix
+
+* Fixed clearing of the route history `core/router/engines/browser`
+
 ## v3.0.0-rc.113 (2020-12-18)
 
 #### :rocket: New Feature
