@@ -281,14 +281,13 @@ async function generateInitJS(pageName, {
 		await loadLibs(deps.headScripts, {assets, js: true})
 	);
 
-	{
-		const
-			attrs = normalizeAttrs(rootAttrs);
-
-		body.push(
-			`document.write('<${rootTag} class=".i-static-page.${pageName}" ${attrs}></${rootTag}>');`
-		);
-	}
+	body.push(`
+(function () {
+	var el = document.createElement('${rootTag}');
+	${normalizeAttrs(rootAttrs, true)}
+	el.setAttribute('class', 'i-static-page ${pageName}');
+})();
+`);
 
 	// - block assets
 	body.push(getAssetsDecl({inline: !assetsRequest, js: true}));
