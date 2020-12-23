@@ -40,7 +40,7 @@ async function loadLibs(libs, {assets, js, wrap} = {}) {
 	let
 		decl = '';
 
-	if (csp.nonce()) {
+	if (csp.nonce() && !csp.postProcessor) {
 		js = true;
 	}
 
@@ -51,7 +51,7 @@ async function loadLibs(libs, {assets, js, wrap} = {}) {
 		decl += await getScriptDecl(lib);
 	}
 
-	if (js && wrap) {
+	if (js && wrap && decl) {
 		return getScriptDecl(decl);
 	}
 
@@ -73,7 +73,7 @@ async function loadStyles(libs, {assets, js, wrap} = {}) {
 	let
 		decl = '';
 
-	if (csp.nonce()) {
+	if (csp.nonce() && !csp.postProcessor) {
 		js = true;
 	}
 
@@ -85,7 +85,7 @@ async function loadStyles(libs, {assets, js, wrap} = {}) {
 		decl += '\n';
 	}
 
-	if (js && wrap) {
+	if (js && wrap && decl) {
 		return getScriptDecl(decl);
 	}
 
@@ -107,7 +107,7 @@ async function loadLinks(libs, {assets, js, wrap} = {}) {
 	let
 		decl = '';
 
-	if (csp.nonce()) {
+	if (csp.nonce() && !csp.postProcessor) {
 		js = true;
 	}
 
@@ -118,7 +118,7 @@ async function loadLinks(libs, {assets, js, wrap} = {}) {
 		decl += '\n';
 	}
 
-	if (js && wrap) {
+	if (js && wrap && decl) {
 		return getScriptDecl(decl);
 	}
 

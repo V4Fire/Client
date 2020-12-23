@@ -117,11 +117,11 @@
 							{title}
 
 					- block links
-						+= await h.loadLinks(deps.links, {assets})
+						+= await h.loadLinks(deps.links, {assets, wrap: true})
 
 					- block headScripts
 						+= h.getVarsDecl({wrap: true})
-						+= await h.loadLibs(deps.headScripts, {assets})
+						+= await h.loadLibs(deps.headScripts, {assets, wrap: true})
 
 			< body
 				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
