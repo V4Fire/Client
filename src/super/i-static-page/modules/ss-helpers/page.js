@@ -23,7 +23,7 @@ const
 	{getAssetsDecl} = include('src/super/i-static-page/modules/ss-helpers/assets'),
 	{getScriptDecl, getStyleDecl, normalizeAttrs} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{loadLibs, loadStyles, loadLinks} = include('src/super/i-static-page/modules/ss-helpers/libs'),
-	{getVarsDecl, getInitLibDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
+	{getVarsDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
 
 const defAttrs = {
 	crossorigin: webpack.publicPath() === '' ? undefined : 'anonymous'
@@ -302,13 +302,11 @@ async function generateInitJS(pageName, {
 	// - block scripts
 	body.push(
 		await getScriptDeclByName('std', {assets, optional: true}),
-
 		await loadLibs(deps.scripts, {assets, js: true}),
 
 		getScriptDeclByName('index-core', {assets, optional: true}),
-		getInitLibDecl(),
-
 		getScriptDeclByName('vendor', {assets, optional: true}),
+
 		getPageScriptDepsDecl(ownDeps, {assets}),
 		getScriptDeclByName('webpack.runtime', {assets})
 	);

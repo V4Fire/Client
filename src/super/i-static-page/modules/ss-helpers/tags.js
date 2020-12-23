@@ -85,7 +85,8 @@ function getScriptDecl(lib, body) {
 		createElement = lib.js && lib.defer !== false;
 
 	let
-		attrs;
+		attrs,
+		props = '';
 
 	if (isInline) {
 		attrs = normalizeAttrs({
@@ -95,12 +96,23 @@ function getScriptDecl(lib, body) {
 		}, createElement);
 
 	} else {
-		attrs = normalizeAttrs({
+		const attrsObj = {
 			src: lib.src,
 			staticAttrs: lib.staticAttrs,
 			...defAttrs,
 			...lib.attrs
-		}, createElement);
+		};
+
+		if (attrsObj.async === undefined) {
+			if (createElement) {
+				props += 'el.async = false;';
+
+			} else if (!lib.js && lib.defer !== false) {
+				attrsObj.defer = null;
+			}
+		}
+
+		attrs = normalizeAttrs(attrsObj, createElement);
 	}
 
 	if (isInline && !body) {
@@ -132,6 +144,7 @@ function getScriptDecl(lib, body) {
 		return `
 (function () {
 	var el = document.createElement('script');
+	${props}
 	${attrs}
 	(document.body || document.head).appendChild(el);
 })();
@@ -205,7 +218,7 @@ function getStyleDecl(lib, body) {
 			rel
 		});
 
-		if (lib.defer) {
+		if (lib.defer !== false) {
 			Object.assign(attrsObj, {
 				media: 'print',
 				onload: `this.media='${lib.attrs?.media ?? 'all'}'; this.onload=null;`
