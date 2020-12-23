@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.117 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init` files
+
 ## v3.0.0-rc.116 (2020-12-23)
 
 #### :bug: Bug Fix
