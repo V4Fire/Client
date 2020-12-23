@@ -41,9 +41,9 @@ function getFaviconsDecl() {
 	faviconsDecl = faviconsDecl.replace(manifestRgxp, '');
 
 	const manifestDecl = getLinkDecl({
-		staticAttrs: `${manifest[1]} href="${manifest[2]}?from=\${location.href}"`,
+		js: true,
 		defer: false,
-		js: true
+		staticAttrs: `${manifest[1]} href="${manifest[2]}?from=\${location.href}"`
 	});
 
 	return faviconsDecl + getScriptDecl(manifestDecl);

@@ -18,18 +18,23 @@ const
 	buble = require('buble');
 
 const
+	{csp} = config,
 	{Filters} = require('snakeskin');
 
 const
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
-const cspAttrs = {
-	nonce: config.csp.nonce
-};
+const
+	nonce = csp.nonce();
 
 const defAttrs = {
-	...cspAttrs
+	// eslint-disable-next-line no-nested-ternary
+	nonce: nonce ? csp.postProcessor ? nonce : [`window['${csp.nonceStore}']`] : undefined
+};
+
+const defInlineAttrs = {
+	nonce: nonce != null && csp.postProcessor ? nonce : undefined
 };
 
 exports.getScriptDecl = getScriptDecl;
@@ -70,7 +75,7 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (Object.isString(lib)) {
-		return `<script ${normalizeAttrs(cspAttrs)}>${lib}</script>`;
+		return `<script ${normalizeAttrs(defInlineAttrs)}>${lib}</script>`;
 	}
 
 	body = body || '';
@@ -79,11 +84,24 @@ function getScriptDecl(lib, body) {
 		isInline = Boolean(needInline(lib.inline) || body),
 		createElement = lib.js && lib.defer !== false;
 
-	const attrs = normalizeAttrs({
-		...Object.select(lib, isInline ? [] : ['staticAttrs', 'src']),
-		...defAttrs,
-		...lib.attrs
-	}, createElement);
+	let
+		attrs;
+
+	if (isInline) {
+		attrs = normalizeAttrs({
+			staticAttrs: lib.staticAttrs,
+			...defInlineAttrs,
+			...lib.attrs
+		}, createElement);
+
+	} else {
+		attrs = normalizeAttrs({
+			src: lib.src,
+			staticAttrs: lib.staticAttrs,
+			...defAttrs,
+			...lib.attrs
+		}, createElement);
+	}
 
 	if (isInline && !body) {
 		return (async () => {
@@ -163,7 +181,7 @@ exports.getStyleDecl = getStyleDecl;
  */
 function getStyleDecl(lib, body) {
 	if (Object.isString(lib)) {
-		return `<style ${normalizeAttrs(cspAttrs)}>${lib}</style>`;
+		return `<style ${normalizeAttrs(defInlineAttrs)}>${lib}</style>`;
 	}
 
 	body = body || '';
@@ -174,7 +192,7 @@ function getStyleDecl(lib, body) {
 
 	const attrsObj = {
 		staticAttrs: lib.staticAttrs,
-		...isInline ? cspAttrs : defAttrs,
+		...isInline ? defInlineAttrs : defAttrs,
 		...lib.attrs
 	};
 
@@ -190,7 +208,7 @@ function getStyleDecl(lib, body) {
 		if (lib.defer) {
 			Object.assign(attrsObj, {
 				media: 'print',
-				onload: `this.media=\\'${lib.attrs?.media ?? 'all'}\\'; this.onload=null;`
+				onload: `this.media='${lib.attrs?.media ?? 'all'}'; this.onload=null;`
 			});
 
 			const preloadAttrs = $C.extend(true, {}, lib, {
@@ -299,7 +317,7 @@ exports.normalizeAttrs = normalizeAttrs;
 /**
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
- * @param {Object} attrs
+ * @param {Object=} [attrs]
  * @param {boolean=} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
  * @returns {!Array<string>}
  *
@@ -332,9 +350,20 @@ function normalizeAttrs(attrs, dynamic = false) {
 			return;
 		}
 
+		const
+			needWrap = Object.isString(val);
+
 		if (dynamic) {
-			const attrsVal = Object.isString(val) ? val : key;
-			normalizedAttrs.push(`el.setAttribute('${key}', '${attrsVal}');`);
+			const normalize = (str) => str.replace(/'/g, "\\'");
+			key = normalize(key);
+
+			if (needWrap) {
+				normalizedAttrs.push(`el.setAttribute('${key}', '${val == null ? key : normalize(val)}');`);
+
+			} else {
+				normalizedAttrs.push(`el.setAttribute('${key}', ${val});`);
+			}
+
 			return;
 		}
 
@@ -345,16 +374,15 @@ function normalizeAttrs(attrs, dynamic = false) {
 
 		key = Filters.html(key, null, 'attrKey');
 
-		if (Object.isString(val)) {
-			if (key === 'nonce') {
-				normalizedAttrs.push(`${key}="${val}"`);
+		if (needWrap) {
+			val = Filters.html(val, null, 'attrValue');
+			normalizedAttrs.push(`${key}="${val}"`);
 
-			} else {
-				normalizedAttrs.push(`${key}="${Filters.html(val, null, 'attrValue')}"`);
-			}
-
-		} else if (val) {
+		} else if (val == null) {
 			normalizedAttrs.push(key);
+
+		} else {
+			normalizedAttrs.push(`${key}="\${${val}}"`);
 		}
 	});
 

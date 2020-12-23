@@ -8,7 +8,7 @@
 
 const
 	config = require('config'),
-	{webpack, src, csp} = config;
+	{webpack, src} = config;
 
 const
 	fs = require('fs-extra-promise'),
@@ -26,7 +26,6 @@ const
 	{getVarsDecl, getInitLibDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
 
 const defAttrs = {
-	nonce: csp.nonce,
 	crossorigin: webpack.publicPath() === '' ? undefined : 'anonymous'
 };
 
@@ -49,31 +48,31 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 	}
 
 	let
-		res = '';
+		decl = '';
 
 	for (const dep of dependencies) {
 		const
 			tpl = `${dep}_tpl`;
 
 		if (dep === 'index') {
-			res += getScriptDeclByName(dep, {assets});
-			res += '\n';
-			res += getScriptDeclByName(tpl, {assets});
-			res += '\n';
+			decl += getScriptDeclByName(dep, {assets});
+			decl += '\n';
+			decl += getScriptDeclByName(tpl, {assets});
+			decl += '\n';
 
 		} else {
-			res += getScriptDeclByName(tpl, {assets});
-			res += '\n';
-			res += getScriptDeclByName(dep, {assets});
-			res += '\n';
+			decl += getScriptDeclByName(tpl, {assets});
+			decl += '\n';
+			decl += getScriptDeclByName(dep, {assets});
+			decl += '\n';
 		}
 	}
 
 	if (wrap) {
-		res = getScriptDecl(res);
+		decl = getScriptDecl(decl);
 	}
 
-	return res;
+	return decl;
 }
 
 exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
@@ -96,23 +95,23 @@ function getPageStyleDepsDecl(dependencies, {assets, wrap, js}) {
 	}
 
 	let
-		res = '';
+		decl = '';
 
 	for (const dep of dependencies) {
-		res += getStyleDeclByName(dep, {assets, js});
-		res += '\n';
+		decl += getStyleDeclByName(dep, {assets, js});
+		decl += '\n';
 	}
 
 	if (wrap) {
 		if (needInline() && !js) {
-			res = getStyleDecl(res);
+			decl = getStyleDecl(decl);
 
 		} else {
-			res = getScriptDecl(res);
+			decl = getScriptDecl(decl);
 		}
 	}
 
-	return res;
+	return decl;
 }
 
 exports.getScriptDeclByName = getScriptDeclByName;
@@ -160,7 +159,7 @@ function getScriptDeclByName(name, {
 			...defAttrs,
 			defer,
 			js: true,
-			...defer === false ? {staticAttrs: `src="\${PATH['${name}']}"`} : {src: `' + PATH['${name}'] + '`}
+			src: [`PATH['${name}']`]
 		});
 
 		if (optional) {
@@ -224,7 +223,7 @@ function getStyleDeclByName(name, {
 			defer,
 			js: true,
 			rel: 'stylesheet',
-			src: `' + PATH['${rname}'] + '`
+			src: [`PATH['${rname}']`]
 		});
 
 		if (optional) {

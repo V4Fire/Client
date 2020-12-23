@@ -7,7 +7,10 @@
  */
 
 const
-	config = require('config'),
+	config = require('config');
+
+const
+	{csp} = config,
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getVarsDecl = getVarsDecl;
@@ -21,7 +24,9 @@ exports.getVarsDecl = getVarsDecl;
  */
 function getVarsDecl({wrap} = {}) {
 	const decl = `
-var CSP_NONCE = ${JSON.stringify(config.csp.nonce() || '')} || undefined;
+Object.defineProperty(window, '${csp.nonceStore}', {
+	value: ${csp.postProcessor ? JSON.stringify(csp.nonce()) : csp.nonce()}
+});
 
 var PATH = Object.create(null);
 

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.114 (2020-12-23)
+
+#### :rocket: New Feature
+
+* Improved CSP support. Added the `postProcessor` mode.
+
 ## v3.0.0-rc.113 (2020-12-18)
 
 #### :rocket: New Feature

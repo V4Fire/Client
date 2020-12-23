@@ -142,13 +142,13 @@
 						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
 
 					- block styles
-						+= await h.loadStyles(deps.styles, {assets})
+						+= await h.loadStyles(deps.styles, {assets, wrap: true})
 						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
 					- block scripts
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
 
-						+= await h.loadLibs(deps.scripts, {assets})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: true})
 						+= h.getInitLibDecl({wrap: true})
 
 						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})

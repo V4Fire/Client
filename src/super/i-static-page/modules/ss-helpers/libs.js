@@ -10,7 +10,7 @@ require('../interface');
 
 const
 	{resolve} = require('@pzlr/build-core'),
-	{webpack, src} = require('config');
+	{webpack, src, csp} = require('config');
 
 const
 	fs = require('fs-extra-promise'),
@@ -33,19 +33,29 @@ exports.loadLibs = loadLibs;
  * @param {Libs} libs
  * @param {Object<string>=} [assets] - map with static page assets
  * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
+ * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {!Promise<string>}
  */
-async function loadLibs(libs, {assets, js} = {}) {
+async function loadLibs(libs, {assets, js, wrap} = {}) {
 	let
-		res = '';
+		decl = '';
+
+	if (csp.nonce()) {
+		js = true;
+	}
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
 		lib.js = js;
-		res += await getScriptDecl(lib);
+
+		decl += await getScriptDecl(lib);
 	}
 
-	return res;
+	if (js && wrap) {
+		return getScriptDecl(decl);
+	}
+
+	return decl;
 }
 
 exports.loadStyles = loadStyles;
@@ -56,20 +66,30 @@ exports.loadStyles = loadStyles;
  * @param {StyleLibs} libs
  * @param {Object<string>=} [assets] - map with static page assets
  * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
+ * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {!Promise<string>}
  */
-async function loadStyles(libs, {assets, js} = {}) {
+async function loadStyles(libs, {assets, js, wrap} = {}) {
 	let
-		res = '';
+		decl = '';
+
+	if (csp.nonce()) {
+		js = true;
+	}
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.defer = lib.defer !== false;
 		lib.js = js;
-		res += await getStyleDecl(lib);
-		res += '\n';
+
+		decl += await getStyleDecl(lib);
+		decl += '\n';
 	}
 
-	return res;
+	if (js && wrap) {
+		return getScriptDecl(decl);
+	}
+
+	return decl;
 }
 
 exports.loadLinks = loadLinks;
@@ -80,19 +100,29 @@ exports.loadLinks = loadLinks;
  * @param {Links} libs
  * @param {Object<string>=} [assets] - map with static page assets
  * @param {boolean=} [js] - if true, the function returns JS code to load the links
+ * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {!Promise<string>}
  */
-async function loadLinks(libs, {assets, js} = {}) {
+async function loadLinks(libs, {assets, js, wrap} = {}) {
 	let
-		res = '';
+		decl = '';
+
+	if (csp.nonce()) {
+		js = true;
+	}
 
 	for (const lib of await initLibs(libs, assets)) {
 		lib.js = js;
-		res += await getLinkDecl(lib);
-		res += '\n';
+
+		decl += await getLinkDecl(lib);
+		decl += '\n';
 	}
 
-	return res;
+	if (js && wrap) {
+		return getScriptDecl(decl);
+	}
+
+	return decl;
 }
 
 exports.initLibs = initLibs;
