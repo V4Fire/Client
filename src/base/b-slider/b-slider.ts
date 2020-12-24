@@ -7,43 +7,25 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { deprecated } from 'core/functools';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import iItems from 'traits/i-items/i-items';
 
-import iData, { component, prop, field, system, hook, watch, wait } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, watch, wait, ModsDecl } from 'super/i-data/i-data';
+
+import { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
+import { sliderModes, alignTypes } from 'base/b-slider/const';
 
 export * from 'super/i-data/i-data';
-
-export interface SlideRect extends ClientRect {
-	offsetLeft: number;
-}
-
-/**
- * -1 - Previous
- * 0  - Not changed
- * 1  - Next
- */
-export type SlideDirection = -1 | 0 | 1;
+export * from 'base/b-slider/interface';
 
 export const
 	$$ = symbolGenerator();
 
-export const alignTypes = {
-	start: true,
-	center: true,
-	end: true,
-	none: true
-};
-
-export const sliderModes = {
-	scroll: true,
-	slider: true
-};
-
-export type AlignType = keyof typeof alignTypes;
-export type Mode = keyof typeof sliderModes;
-
+/**
+ * Component to create a content slider
+ */
 @component()
 export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
@@ -81,68 +63,123 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * How much does the shift along the X axis correspond to a finger movement
 	 */
-	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
+	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
 	readonly deltaX: number = 0.9;
 
 	/**
 	 * The minimum required percentage to scroll the slider to an another slide
 	 */
-	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
+	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
 	readonly threshold: number = 0.3;
 
 	/**
 	 * The minimum required percentage for the scroll slider to an another slide in fast motion on the slider
 	 */
-	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
+	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
 	readonly fastSwipeThreshold: number = 0.05;
 
 	/**
 	 * Time (in milliseconds) after which we can assume that there was a quick swipe
 	 */
-	@prop({type: Number, validator: Number.isNatural})
+	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum displacement threshold along the X axis at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: Number.isNatural})
+	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly swipeToleranceX: number = 10;
 
 	/**
 	 * The minimum Y offset threshold at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: Number.isNatural})
+	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly swipeToleranceY: number = 50;
 
-	/** @see [[iItems.prototype.itemsProp]] */
+	/**
+	 * @deprecated
+	 * @see [[bSlider.itemsProp]]
+	 */
 	@prop(Array)
-	readonly optionsProp?: iItems['optionsProp'] = [];
+	readonly optionsProp?: iItems['itemsProp'] = [];
 
-	/** @see [[iItems.prototype.itemsIterator]] */
+	/** @see [[iItems.itemsProp]] */
+	@prop(Array)
+	readonly itemsProp?: iItems['itemsProp'] = [];
+
+	/**
+	 * @deprecated
+	 * @see [[bSlider.itemsIterator]]
+	 */
 	@prop({type: Function, required: false})
-	optionsIterator?: iItems['optionsIterator'];
+	readonly optionsIterator?: iItems['itemsIterator'];
 
-	/** @see [[iItems.prototype.items]] */
-	@field((o) => o.sync.link())
-	options!: unknown[];
+	/** @see [[iItems.itemsIterator]] */
+	@prop({type: Function, required: false})
+	readonly itemsIterator?: iItems['itemsIterator'];
 
-	/** @see [[iItems.prototype.item]] */
+	/**
+	 * @deprecated
+	 * @see [[bSlider.item]]
+	 */
 	@prop({type: [String, Function], required: false})
-	readonly option?: iItems['option'];
+	readonly option?: iItems['item'];
 
-	/** @see [[iItems.prototype.itemKey]] */
+	/**
+	 * @deprecated
+	 * @see [[bSlider.itemKey]]
+	 */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItems['optionKey'];
+	readonly optionKey?: iItems['itemKey'];
 
-	/** @see [[iItems.prototype.itemProps]] */
+	/** @see [[iItems.itemKey]] */
+	@prop({type: [String, Function], required: false})
+	readonly itemKey?: iItems['itemKey'];
+
+	/**
+	 * @deprecated
+	 * @see [[bSlider.itemProps]]
+	 */
 	@prop({type: Function, default: () => ({})})
-	readonly optionProps!: iItems['optionProps'];
+	readonly optionProps!: iItems['itemProps'];
+
+	/** @see [[iItems.itemProps]] */
+	@prop({type: Function, default: () => ({})})
+	readonly itemProps!: iItems['itemProps'];
+
+	/** @see [[iItems.items]] */
+	@field((o) => o.sync.link())
+	items!: unknown[];
 
 	/**
 	 * The number of slides in the slider
 	 */
 	@system()
 	length: number = 0;
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		swipe: [
+			'true',
+			'false'
+		]
+	};
+
+	/**
+	 * @deprecated
+	 * @see [[bSlider.items]]
+	 */
+	get options(): unknown[] {
+		return this.items;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bSlider.items]]
+	 */
+	set options(value: unknown[]) {
+		this.field.set('items', value);
+	}
 
 	/**
 	 * Link to a content node
@@ -194,7 +231,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			{slideRects, current, align, viewRect} = this,
 			slideRect = slideRects[current];
 
-		if (!slideRect || !viewRect) {
+		if (Object.size(slideRect) === 0 || !viewRect) {
 			return 0;
 		}
 
@@ -211,9 +248,10 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 			case 'end':
 				return slideRect.offsetLeft + slideRect.width;
-		}
 
-		return 0;
+			default:
+				return 0;
+		}
 	}
 
 	/** @see current */
@@ -317,7 +355,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	moveSlide(dir: SlideDirection): boolean {
 		let
-			current = this.current;
+			{current} = this;
 
 		const
 			{length, content} = this;
@@ -363,16 +401,26 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		iObserveDOM.onDOMChange(this);
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/**
+	 * @deprecated
+	 * @see [[bSlider.getItemKey]]
+	 */
+	@deprecated({renamedTo: 'getItemKey'})
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+		return this.getItemKey(el, i);
+	}
+
+	/** @see [[iItems.getItemKey]] */
+	protected getItemKey(el: unknown, i: number): CanUndef<string> {
 		return iItems.getItemKey(this, el, i);
 	}
+
 	/**
 	 * Synchronizes the slider state
 	 */
 	@hook('mounted')
 	@wait('loading')
-	protected syncState(): CanPromise<void> {
+	protected syncState(): void {
 		const
 			{view, content} = this.$refs;
 
@@ -396,7 +444,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			});
 		}
 
-		this.setMod('swipe', true);
+		void this.setMod('swipe', true);
 		content.style.setProperty('--offset', `${this.currentOffset}px`);
 	}
 
@@ -492,7 +540,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		this.startY = clientY;
 
 		this.syncState();
-		this.setMod('swipe', true);
+		void this.setMod('swipe', true);
 
 		this.startTime = performance.now();
 	}
@@ -513,11 +561,12 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 		const
 			touch = e.touches[0],
-			diffX = startX - touch.clientX;
+			diffX = startX - touch.clientX,
+			diffY = startY - touch.clientY;
 
 		const isTolerancePassed =
 			this.isTolerancePassed ||
-			Math.abs(startX - touch.clientX) > this.swipeToleranceX && Math.abs(startY - touch.clientY) < this.swipeToleranceY;
+			Math.abs(diffX) > this.swipeToleranceX && Math.abs(diffY) < this.swipeToleranceY;
 
 		if (!content || !isTolerancePassed) {
 			return;
@@ -564,7 +613,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		let
 			isSwiped = false;
 
-		if (!content || !slideRects || !viewRect) {
+		if (!content || Object.size(slideRects) === 0 || !viewRect) {
 			return;
 		}
 
@@ -580,7 +629,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 		this.diffX = 0;
 		content.style.setProperty('--transform', '0px');
-		this.removeMod('swipe', true);
+		void this.removeMod('swipe', true);
 
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
