@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.119 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Now all dynamic scripts and links are added to the document head
+
 ## v3.0.0-rc.117 (2020-12-23)
 
 #### :bug: Bug Fix

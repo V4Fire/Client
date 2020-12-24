@@ -146,7 +146,7 @@ function getScriptDecl(lib, body) {
 	var el = document.createElement('script');
 	${props}
 	${attrs}
-	document.body.appendChild(el);
+	document.head.appendChild(el);
 })();
 `;
 	}
@@ -278,7 +278,7 @@ function getStyleDecl(lib, body) {
 	var el = document.createElement('${tag}');
 	${content ? `el.innerHTML = \`${content}\`;` : ''}
 	${attrs}
-	document.body.appendChild(el);
+	document.head.appendChild(el);
 })();
 `;
 
@@ -317,7 +317,7 @@ function getLinkDecl(link) {
 (function () {
 	var el = document.createElement('link');
 	${attrs}
-	document.body.appendChild(el);
+	document.head.appendChild(el);
 })();
 `;
 	}
