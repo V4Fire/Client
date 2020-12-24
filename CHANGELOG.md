@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.118 (2020-12-24)
+
+#### :bug: Bug Fix
+
+* Trim href-s before go `bRouter`
+
 ## v3.0.0-rc.117 (2020-12-23)
 
 #### :bug: Bug Fix

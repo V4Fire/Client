@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.118 (2020-12-24)
+
+#### :bug: Bug Fix
+
+* Trim href-s before go
+
 ## v3.0.0-rc.113 (2020-12-18)
 
 #### :bug: Bug Fix
