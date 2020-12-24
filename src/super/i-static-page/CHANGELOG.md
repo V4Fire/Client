@@ -6,8 +6,14 @@ Changelog
 > - :rocket:     [New Feature]
 > - :bug:        [Bug Fix]
 > - :memo:       [Documentation]
-> - :house:      [Internal]
+> - :house:      [Internal]****
 > - :nail_care:  [Polish]
+
+## v3.0.0-rc.120 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after refactoring
 
 ## v3.0.0-rc.119 (2020-12-23)
 

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.120 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after refactoring `iStaticPage`
+
 ## v3.0.0-rc.119 (2020-12-23)
 
 #### :bug: Bug Fix
