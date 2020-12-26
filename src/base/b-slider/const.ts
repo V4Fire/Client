@@ -15,5 +15,11 @@ export const alignTypes = {
 
 export const sliderModes = {
 	scroll: true,
+	slide: true,
+
+	/**
+	 * @deprecated
+	 * @see sliderModes.slide
+	 */
 	slider: true
 };

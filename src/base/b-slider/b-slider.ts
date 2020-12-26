@@ -31,10 +31,10 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
-	 *   *) slider - slider implementation (impossible to skip slides)
+	 *   *) slide - slider implementation (impossible to skip slides)
 	 */
 	@prop({type: String, validator: Object.hasOwnProperty(sliderModes)})
-	readonly mode: Mode = 'slider';
+	readonly modeProp: Mode = 'slide';
 
 	/**
 	 * If true, will be used a duplicate slot to calculate the dynamic height
@@ -122,12 +122,12 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @deprecated
 	 * @see [[bSlider.item]]
 	 */
-	@prop({type: [String, Function]})
-	readonly option: iItems['item'];
+	@prop({type: [String, Function], required: false})
+	readonly option?: iItems['item'];
 
 	/** @see [[iItems.item]] */
-	@prop({type: [String, Function]})
-	readonly item: iItems['item'];
+	@prop({type: [String, Function], required: false})
+	readonly item?: iItems['item'];
 
 	/**
 	 * @deprecated
@@ -209,10 +209,18 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * True if mode is `slider`
+	 * @deprecated
+	 * @see [[bSlider.isSlideMode]]
 	 */
 	get isSlider(): boolean {
-		return this.mode === 'slider';
+		return this.isSlideMode;
+	}
+
+	/**
+	 * True if mode is `slide`
+	 */
+	get isSlideMode(): boolean {
+		return this.mode === 'slide';
 	}
 
 	/**
@@ -223,7 +231,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			{slideRects, current, align, viewRect} = this,
 			slideRect = slideRects[current];
 
-		if (Object.size(slideRect) === 0 || !viewRect) {
+		if (current >= slideRects.length || !viewRect) {
 			return 0;
 		}
 
@@ -246,9 +254,26 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @see current */
+	/** @see [[bSlider.current]] */
 	@system()
 	protected currentStore: number = 0;
+
+	/** @see [[bSlider.modeProp]] */
+	@field((o) => o.sync.link((value: Mode) => {
+		if (value === 'slider') {
+			deprecate({
+				name: 'slider',
+				type: 'property',
+				renamedTo: 'slide'
+			});
+
+			return 'slide';
+		}
+
+		return value;
+	}))
+
+	protected mode!: Mode;
 
 	/** @override */
 	protected readonly $refs!: {
@@ -376,7 +401,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		return false;
 	}
 
-	/** @see iObserveDom.initDOMObservers */
+	/** @see [[iObserveDOM.initDOMObservers]] */
 	@hook('mounted')
 	initDOMObservers(): void {
 		const
@@ -390,7 +415,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @see iObserveDom.onDOMChange */
+	/** @see [[iObserveDOM.onDOMChange]] */
 	onDOMChange(): void {
 		iObserveDOM.onDOMChange(this);
 	}
@@ -493,7 +518,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		const
 			{view, content} = this.$refs;
 
-		if (!view || !content || !this.isSlider) {
+		if (!view || !content || !this.isSlideMode) {
 			return;
 		}
 
@@ -524,7 +549,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	@watch(':DOMChange')
 	@wait('ready')
 	protected async syncStateDefer(): Promise<void> {
-		if (!this.isSlider) {
+		if (!this.isSlideMode) {
 			return;
 		}
 
@@ -553,10 +578,20 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			val = this.convertDBToComponent(this.db);
 
 		if (Object.isArray(val)) {
-			return this.options = val;
+			if (Object.isArray(this.options)) {
+				deprecate({
+					name: 'options',
+					type: 'property',
+					renamedTo: 'items'
+				});
+
+				this.options = val;
+			}
+
+			return this.items = val;
 		}
 
-		return this.options;
+		return this.items;
 	}
 
 	/**
@@ -571,7 +606,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		const
 			{content} = this.$refs;
 
-		if (this.isSlider) {
+		if (this.isSlideMode) {
 			this.async.on(document, 'scroll', () => this.scrolling = true, label);
 			this.initDOMObservers();
 
