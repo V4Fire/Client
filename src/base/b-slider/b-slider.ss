@@ -19,23 +19,31 @@
 
 	- block body
 		: putIn content
-			< template v-if = option
+			< template v-if = item
+				/*
+				 * @deprecated
+				 * @see beforeItems
+				 */
 				+= self.slot('beforeOptions')
 
-				< template &
-					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
-					:key = getOptionKey(el, i)
-				.
+				+= self.slot('beforeItems')
 
-					< component.&__option &
-						:is = Object.isFunction(option) ? option(el, i) : option |
-						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, {
-							key: getOptionKey(el, i),
-							ctx: self
-						}) : optionProps
+				< template &
+					v-for = (el, i) in getItemIterator(items) |
+					:key = getItemKey(el, i)
+				.
+					< component.&__option.&__item &
+						:is = getItemComponentName(el, i) |
+						:v-attrs = getItemAttrs(el, i)
 					.
 
+				/*
+				 * @deprecated
+				 * @see beforeItems
+				 */
 				+= self.slot('afterOptions')
+
+				+= self.slot('afterItems')
 
 			< template v-else
 				+= self.slot()
@@ -59,10 +67,7 @@
 
 		< .&__window v-else
 			< .&__view-content ref = view
-				< .&__fake-view-content &
-					v-if = dynamicHeight |
-					ref = fake
-				.
+				< .&__fake-view-content v-if = dynamicHeight
 					+= content
 
 				< .&__outer-view-wrapper

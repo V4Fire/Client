@@ -122,6 +122,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Component active value.
 	 * If the component is switched to the "multiple" mode, the getter will return a Set object.
+	 *
 	 * @see [[bList.activeStore]]
 	 */
 	get active(): Active {
@@ -162,7 +163,6 @@ export default class bList extends iData implements iVisible, iWidth {
 
 	/**
 	 * True, if the component works with the deprecated API
-	 * @protected
 	 */
 	@system()
 	protected deprecated: boolean = false;

@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecated } from 'core/functools';
+import { deprecated, deprecate } from 'core/functools';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import iItems from 'traits/i-items/i-items';
@@ -101,11 +101,11 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @see [[bSlider.itemsProp]]
 	 */
 	@prop(Array)
-	readonly optionsProp?: iItems['itemsProp'] = [];
+	readonly optionsProp: iItems['itemsProp'] = [];
 
 	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
-	readonly itemsProp?: iItems['itemsProp'] = [];
+	readonly itemsProp: iItems['itemsProp'] = [];
 
 	/**
 	 * @deprecated
@@ -122,8 +122,12 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @deprecated
 	 * @see [[bSlider.item]]
 	 */
-	@prop({type: [String, Function], required: false})
-	readonly option?: iItems['item'];
+	@prop({type: [String, Function]})
+	readonly option: iItems['item'];
+
+	/** @see [[iItems.item]] */
+	@prop({type: [String, Function]})
+	readonly item: iItems['item'];
 
 	/**
 	 * @deprecated
@@ -140,16 +144,20 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @deprecated
 	 * @see [[bSlider.itemProps]]
 	 */
-	@prop({type: Function, default: () => ({})})
-	readonly optionProps!: iItems['itemProps'];
+	@prop({type: [Function, Object]})
+	readonly optionProps?: iItems['itemProps'];
 
 	/** @see [[iItems.itemProps]] */
-	@prop({type: Function, default: () => ({})})
-	readonly itemProps!: iItems['itemProps'];
+	@prop({type: [Function, Object]})
+	readonly itemProps?: iItems['itemProps'];
+
+	/** @see [[bSlider.items]] */
+	@field((o) => o.sync.link())
+	options!: iItems['items'];
 
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
-	items!: unknown[];
+	items!: iItems['items'];
 
 	/**
 	 * The number of slides in the slider
@@ -164,22 +172,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			'false'
 		]
 	};
-
-	/**
-	 * @deprecated
-	 * @see [[bSlider.items]]
-	 */
-	get options(): unknown[] {
-		return this.items;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[bSlider.items]]
-	 */
-	set options(value: unknown[]) {
-		this.field.set('items', value);
-	}
 
 	/**
 	 * Link to a content node
@@ -217,14 +209,14 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * True if mode is slider
+	 * True if mode is `slider`
 	 */
 	get isSlider(): boolean {
 		return this.mode === 'slider';
 	}
 
 	/**
-	 * Returns the current slider scroll
+	 * Current slider scroll
 	 */
 	get currentOffset(): number {
 		const
@@ -284,7 +276,9 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Is the minimum threshold for starting slide slides passed
-	 * @see swipeTolerance
+	 *
+	 * @see [[bSlider.swipeToleranceX]]
+	 * @see [[bSlider.swipeToleranceY]]
 	 */
 	@system()
 	protected isTolerancePassed: boolean = false;
@@ -399,6 +393,81 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/** @see iObserveDom.onDOMChange */
 	onDOMChange(): void {
 		iObserveDOM.onDOMChange(this);
+	}
+
+	/**
+	 * Returns iterator to render items
+	 * @param items
+	 */
+	protected getItemsIterator(items: unknown[]): this['items'] {
+		const
+			{itemsIterator, optionsIterator} = this;
+
+		if (optionsIterator != null) {
+			deprecate({
+				name: 'optionsIterator',
+				type: 'property',
+				renamedTo: 'itemsIterator'
+			});
+
+			return Object.isFunction(optionsIterator) ? optionsIterator(items, this) : this.options;
+		}
+
+		return Object.isFunction(itemsIterator) ? itemsIterator(items, this) : items;
+	}
+
+	/**
+	 * Returns additional props to pass to the specified item component
+	 *
+	 * @param el
+	 * @param i
+	 */
+	protected getItemAttrs(el: unknown, i: number): CanUndef<Dictionary> {
+		const
+			{itemProps, optionProps} = this;
+
+		let
+			props = itemProps;
+
+		if (optionProps != null) {
+			deprecate({
+				name: 'optionProps',
+				type: 'property',
+				renamedTo: 'itemProps'
+			});
+
+			props = optionProps;
+		}
+
+		return Object.isFunction(props) ?
+			props(el, i, {
+				key: this.getItemKey(el, i),
+				ctx: this
+			}) :
+			props;
+	}
+
+	/**
+	 * Returns a component name to render an item
+	 *
+	 * @param el
+	 * @param i
+	 */
+	protected getItemComponentName(el: unknown, i: number): string {
+		const
+			{item, option} = this;
+
+		if (option != null) {
+			deprecate({
+				name: 'option',
+				type: 'property',
+				renamedTo: 'item'
+			});
+
+			return Object.isFunction(option) ? option(el, i) : option;
+		}
+
+		return Object.isFunction(item) ? item(el, i) : <string>item;
 	}
 
 	/**

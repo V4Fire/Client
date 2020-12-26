@@ -56,5 +56,5 @@ export default abstract class iItems {
 	 * Object to mix values into every item props
 	 * or factory to create item props
 	 */
-	abstract readonly itemProps?: StrictDictionary | ItemPropsFn;
+	abstract readonly itemProps?: Dictionary | ItemPropsFn;
 }

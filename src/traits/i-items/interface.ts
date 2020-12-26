@@ -27,7 +27,7 @@ export interface ItemPropsFn<CTX = unknown> {
  * Factory for an item iterator
  */
 export interface ItemsIterator<CTX = iBlock> {
-	(options: unknown[], ctx: CTX): unknown[];
+	(items: unknown[], ctx: CTX): unknown[];
 }
 
 /**
