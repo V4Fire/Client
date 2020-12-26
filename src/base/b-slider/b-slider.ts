@@ -212,6 +212,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @deprecated
 	 * @see [[bSlider.isSlideMode]]
 	 */
+	@deprecated({renamedTo: 'isSlideMode'})
 	get isSlider(): boolean {
 		return this.isSlideMode;
 	}

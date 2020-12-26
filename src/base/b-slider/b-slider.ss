@@ -51,7 +51,7 @@
 		+= self.slot('before')
 
 		< .&__window &
-			v-if = isSlider |
+			v-if = isSlideMode |
 			${windowEvents}
 		.
 			< .&__view &
@@ -59,7 +59,7 @@
 				v-resize-observer = {
 					watchHeight: false,
 					watchWidth: true,
-					callback: isSlider ? syncStateDefer : undefined
+					callback: isSlideMode ? syncStateDefer : undefined
 				}
 			.
 				< .&__view-content ref = content
