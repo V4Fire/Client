@@ -20,7 +20,7 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-	const options = [
+	const items = [
 		{id: 'foo'},
 
 		{
@@ -47,13 +47,13 @@ module.exports = (page) => {
 	);
 
 	const checkOptionTree = ({opts, target, queue = [], level = 0, foldSelector}) => {
-		opts.forEach((option) => {
+		opts.forEach((item) => {
 			const
-				isBranch = Object.isArray(option.children);
+				isBranch = Object.isArray(item.children);
 
 			queue.push((async () => {
 				const
-					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), option.id),
+					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), item.id),
 					foldedClass = await getFoldedClass(target),
 					element = await h.dom.waitForEl(page, `[data-id="${id}"]`);
 
@@ -82,7 +82,7 @@ module.exports = (page) => {
 			})());
 
 			if (isBranch) {
-				checkOptionTree({opts: option.children, level: level + 1, target, queue, foldSelector});
+				checkOptionTree({opts: item.children, level: level + 1, target, queue, foldSelector});
 			}
 		});
 
@@ -95,13 +95,13 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-tree renders tree by passing option prop', () => {
+	describe('b-tree renders tree by passing item prop', () => {
 		const init = async ({opts, attrs, content} = {}) => {
 			if (opts == null) {
-				opts = options;
+				opts = items;
 			}
 
-			await page.evaluate(({options, attrs, content}) => {
+			await page.evaluate(({items, attrs, content}) => {
 				globalThis.removeCreatedComponents();
 
 				Object.forEach(content, (el, key) => {
@@ -116,8 +116,8 @@ module.exports = (page) => {
 
 				const baseAttrs = {
 					theme: 'demo',
-					option: 'b-checkbox-functional',
-					options,
+					item: 'b-checkbox-functional',
+					items,
 					id: 'target',
 					renderChunks: 2
 				};
@@ -134,7 +134,7 @@ module.exports = (page) => {
 				];
 
 				globalThis.renderComponents('b-tree', scheme);
-			}, {options: opts, attrs, content});
+			}, {items: opts, attrs, content});
 
 			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
@@ -148,7 +148,7 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
 
 			const
-				promises = await Promise.all(checkOptionTree({opts: options, target})),
+				promises = await Promise.all(checkOptionTree({opts: items, target})),
 				checkboxes = await page.$$('.b-checkbox');
 
 			expect(promises.length).toEqual(checkboxes.length);
@@ -221,7 +221,7 @@ module.exports = (page) => {
 
 	describe('b-tree renders tree by passing item through the default slot', () => {
 		const init = async () => {
-			await page.evaluate((options) => {
+			await page.evaluate((items) => {
 				const defaultSlot = {
 					tag: 'div',
 					attrs: {
@@ -233,7 +233,7 @@ module.exports = (page) => {
 				const scheme = [
 					{
 						attrs: {
-							options,
+							items,
 							id: 'target',
 							theme: 'demo'
 						},
@@ -245,7 +245,7 @@ module.exports = (page) => {
 				];
 
 				globalThis.renderComponents('b-tree', scheme);
-			}, options);
+			}, items);
 
 			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
@@ -260,7 +260,7 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
 
 			const
-				promises = await Promise.all(checkOptionTree({opts: options, target})),
+				promises = await Promise.all(checkOptionTree({opts: items, target})),
 				refs = await h.dom.getRefs(page, 'item');
 
 			expect(promises.length).toEqual(refs.length);
