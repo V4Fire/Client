@@ -66,7 +66,7 @@
 					+= content
 
 		< .&__window v-else
-			< .&__view-content ref = view
+			< .&__view ref = view
 				< .&__fake-view-content v-if = dynamicHeight
 					+= content
 
