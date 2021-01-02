@@ -34,10 +34,10 @@ export default abstract class iItems {
 	/**
 	 * Component items
 	 */
-	abstract readonly itemsProp?: unknown[];
+	abstract readonly itemsProp: unknown[];
 
 	/** @see [[iItems.itemsProp]] */
-	abstract items?: unknown[];
+	abstract items: unknown[];
 
 	/** @see [[ItemsIterator]] */
 	abstract readonly itemsIterator?: ItemsIterator;

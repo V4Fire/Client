@@ -30,5 +30,8 @@ b-slider_mode_slide extends b-slider
 			transition none
 			transform translate3d(calc(0px - var(--offset)), 0, 0)
 
+	/mode &__view-content > *
+		flex-shrink 0
+
 	/mode&_swipe_true &__view-content
 		transition none

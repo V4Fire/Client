@@ -19,7 +19,7 @@
 
 	- block body
 		: putIn content
-			< template v-if = item
+			< template v-if = item || option
 				/*
 				 * @deprecated
 				 * @see beforeItems
@@ -29,7 +29,7 @@
 				+= self.slot('beforeItems')
 
 				< template &
-					v-for = (el, i) in getItemIterator(items) |
+					v-for = (el, i) in items |
 					:key = getItemKey(el, i)
 				.
 					< component.&__option.&__item &
@@ -70,7 +70,7 @@
 				< .&__fake-view-content v-if = dynamicHeight
 					+= content
 
-				< .&__outer-view-wrapper
+				< .&__outer-view-wrapper ref = contentWrapper
 					< .&__view-content ref = content
 						+= content
 

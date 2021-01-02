@@ -17,7 +17,7 @@ import { deprecated, deprecate } from 'core/functools';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import iItems from 'traits/i-items/i-items';
 
-import iData, { component, prop, field, system, hook, watch, wait, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, watch, wait, ModsDecl, computed } from 'super/i-data/i-data';
 
 import { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 import { sliderModes, alignTypes } from 'base/b-slider/const';
@@ -160,10 +160,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	@field((o) => o.sync.link())
 	options!: iItems['items'];
 
-	/** @see [[iItems.items]] */
-	@field((o) => o.sync.link())
-	items!: iItems['items'];
-
 	/**
 	 * The number of slides in the slider
 	 */
@@ -233,6 +229,10 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * Current slider scroll
 	 */
 	get currentOffset(): number {
+		if (this.mode === 'scroll') {
+			return this.$refs.contentWrapper?.scrollLeft ?? 0;
+		}
+
 		const
 			{slideRects, current, align, viewRect} = this,
 			slideRect = slideRects[current];
@@ -260,6 +260,10 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
+	/** @see [[iItems.items]] */
+	@field((o) => o.sync.link())
+	protected itemsStore!: iItems['items'];
+
 	/** @see [[bSlider.current]] */
 	@system()
 	protected currentStore: number = 0;
@@ -285,6 +289,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	protected readonly $refs!: {
 		view?: HTMLElement;
 		content?: HTMLElement;
+		contentWrapper?: HTMLElement;
 	};
 
 	/**
@@ -343,6 +348,45 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@system()
 	protected swiping: boolean = false;
+
+	/** @see [[iItems.items]] */
+	@computed({dependencies: ['itemsStore', 'options']})
+	get items(): iItems['items'] {
+		const
+			{itemsIterator, optionsIterator} = this;
+
+		const
+			items = Object.size(this.options) > 0 ? this.options : this.itemsStore;
+
+		if (optionsIterator != null) {
+			deprecate({
+				name: 'optionsIterator',
+				type: 'property',
+				renamedTo: 'itemsIterator'
+			});
+
+			return Object.isFunction(optionsIterator) ? optionsIterator(items, this) : items;
+		}
+
+		if (Object.isFunction(itemsIterator)) {
+			return itemsIterator(items, this);
+		}
+
+		if (Object.size(this.options) > 0) {
+			deprecate({
+				name: 'options',
+				type: 'property',
+				renamedTo: 'items'
+			});
+		}
+
+		return items;
+	}
+
+	/** @see [[iItems.items]] */
+	set items(value: iItems['items']) {
+		this.field.set('itemsStore', value);
+	}
 
 	/**
 	 * Switches to the specified slide
@@ -424,27 +468,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/** @see [[iObserveDOM.onDOMChange]] */
 	onDOMChange(): void {
 		iObserveDOM.onDOMChange(this);
-	}
-
-	/**
-	 * Returns iterator to render items
-	 * @param items
-	 */
-	protected getItemsIterator(items: unknown[]): this['items'] {
-		const
-			{itemsIterator, optionsIterator} = this;
-
-		if (optionsIterator != null) {
-			deprecate({
-				name: 'optionsIterator',
-				type: 'property',
-				renamedTo: 'itemsIterator'
-			});
-
-			return Object.isFunction(optionsIterator) ? optionsIterator(items, this) : this.options;
-		}
-
-		return Object.isFunction(itemsIterator) ? itemsIterator(items, this) : items;
 	}
 
 	/**

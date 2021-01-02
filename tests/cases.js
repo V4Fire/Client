@@ -13,6 +13,7 @@ module.exports = [
 	'--test-entry base/b-virtual-scroll/test',
 	'--test-entry base/b-tree/test',
 	'--test-entry base/b-sidebar/test',
+	'--test-entry base/b-slider/test',
 	'--test-entry base/b-list/test',
 	'--test-entry form/b-button/test',
 	'--test-entry super/i-block/test',
