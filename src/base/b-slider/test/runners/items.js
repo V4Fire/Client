@@ -13,16 +13,12 @@
  */
 
 const
-	h = include('tests/helpers'),
-	{swipeOnce, initSlider} = include('src/base/b-slider/test/helpers');
+	{initSlider} = include('src/base/b-slider/test/helpers');
 
 /**
  * @param {Page} page
  */
 module.exports = (page) => {
-	const
-		textSlotContent = 'Lorem Ipsum';
-
 	beforeAll(async () => {
 		await page.setViewportSize({width: 480, height: 640});
 	});
@@ -33,26 +29,19 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-slider providing of slots', () => {
-		it('"afterItems" slot', async () => {
-			const
-				w = h.dom.elNameGenerator('.b-slider', 'view-content');
-
+	describe('b-slider renders items', () => {
+		it('simple loading items from a provider', async () => {
 			const target = await initSlider(page, {
 				attrs: {
 					item: 'b-checkbox',
-					items: [{id: '1'}, {id: '2'}]
-				},
-				content: {
-					afterItems: `return () => "${textSlotContent}"`
+					dataProvider: 'demo.List'
 				}
 			});
 
-			const text = await target.evaluate(
-				(ctx, selector) => ctx.$el.querySelector(selector).lastChild.wholeText.trim(), w
-			);
+			const
+				itemsCount = await target.evaluate((ctx) => ctx.$el.querySelectorAll('.b-checkbox').length);
 
-			expect(text).toEqual(textSlotContent);
+			expect(itemsCount).toEqual(2);
 		});
 	});
 };
