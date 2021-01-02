@@ -13,7 +13,8 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers'),
+	{initSlider} = include('src/base/b-slider/test/helpers');
 
 /**
  * @param {Page} page
@@ -28,49 +29,12 @@ module.exports = (page) => {
 		});
 	});
 
-	const init = async ({attrs, content} = {}) => {
-		await page.evaluate(({attrs, content}) => {
-			globalThis.removeCreatedComponents();
-
-			Object.forEach(content, (el, key) => {
-				// eslint-disable-next-line no-new-func
-				content[key] = /return /.test(el) ? Function(el)() : el;
-			});
-
-			Object.forEach(attrs, (el, key) => {
-				// eslint-disable-next-line no-new-func
-				attrs[key] = /return /.test(el) ? Function(el)() : el;
-			});
-
-			const baseAttrs = {
-				id: 'target'
-			};
-
-			const scheme = [
-				{
-					attrs: {
-						...baseAttrs,
-						...attrs
-					},
-
-					content
-				}
-			];
-
-			globalThis.renderComponents('b-slider', scheme);
-		}, {attrs, content});
-
-		await h.bom.waitForIdleCallback(page);
-		await h.component.waitForComponentStatus(page, '.b-slider', 'ready');
-		return h.component.waitForComponent(page, '#target');
-	};
-
 	describe('b-slider providing of slots', () => {
 		it('"beforeOptions" slot', async () => {
 			const
 				w = h.dom.elNameGenerator('.b-slider', 'view-content');
 
-			const target = await init({
+			const target = await initSlider(page, {
 				attrs: {
 					option: 'b-checkbox',
 					options: [{id: '1'}, {id: '2'}]
@@ -91,7 +55,7 @@ module.exports = (page) => {
 			const
 				w = h.dom.elNameGenerator('.b-slider', 'view-content');
 
-			const target = await init({
+			const target = await initSlider(page, {
 				attrs: {
 					option: 'b-checkbox',
 					options: [{id: '1'}, {id: '2'}]
