@@ -72,23 +72,23 @@ module.exports = (page) => {
 			expect(text).toEqual(textSlotContent);
 		});
 
-		it('simple loading items from a provider', async () => {
+		it('simple loading options from a provider', async () => {
 			const target = await initSlider(page, {
 				attrs: {
-					item: 'b-checkbox',
+					option: 'b-checkbox',
 					dataProvider: 'demo.List'
 				}
 			});
 
 			const
-				itemsCount = await target.evaluate((ctx) => ctx.$el.querySelectorAll('.b-slider__option').length);
+				optionsCount = await target.evaluate((ctx) => ctx.$el.querySelectorAll('.b-slider__option').length);
 
-			expect(itemsCount).toEqual(2);
+			expect(optionsCount).toEqual(2);
 		});
 
-		it('loading items with external options iterator', async () => {
+		it('loading options with external options iterator', async () => {
 			const
-				itemClass = h.dom.elNameGenerator('.b-slider', 'option');
+				optionClass = h.dom.elNameGenerator('.b-slider', 'option');
 
 			const target = await initSlider(page, {
 				attrs: {
@@ -98,11 +98,60 @@ module.exports = (page) => {
 				}
 			});
 
-			const itemsCount = await target.evaluate(
-				(ctx, name) => ctx.$el.querySelectorAll(name).length, itemClass
+			const optionsCount = await target.evaluate(
+				(ctx, name) => ctx.$el.querySelectorAll(name).length, optionClass
 			);
 
-			expect(itemsCount).toEqual(3);
+			expect(optionsCount).toEqual(3);
+		});
+
+		it('loading options with an external optionProps as function', async () => {
+			const
+				options = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}],
+				optionClass = h.dom.elNameGenerator('.b-slider', 'option');
+
+			const target = await initSlider(page, {
+				attrs: {
+					option: 'b-checkbox',
+					options,
+					optionProps: 'return (el, i) => ({id: el.id + "_" + i})'
+				}
+			});
+
+			const optionsCount = await target.evaluate(
+				(ctx, name) => ctx.$el.querySelectorAll(name).length,
+				optionClass
+			);
+
+			const getItem = (item, index) => target.evaluate(
+				(ctx, {item, index}) => ctx.$el.querySelector(`#${item.id}_${index}`) != null,
+				{item, index}
+			);
+
+			const
+				results = await Promise.all(options.map(getItem));
+
+			expect(results.every((v) => v)).toEqual(true);
+			expect(optionsCount).toEqual(3);
+		});
+
+		it('loading options with an external optionProps as object', async () => {
+			const
+				options = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}];
+
+			const target = await initSlider(page, {
+				attrs: {
+					option: 'b-checkbox',
+					options,
+					optionProps: {name: 'foo'}
+				}
+			});
+
+			const namedCount = await target.evaluate(
+				(ctx) => ctx.$el.querySelectorAll('[name="foo"]').length
+			);
+
+			expect(namedCount).toEqual(3);
 		});
 	});
 };

@@ -68,5 +68,54 @@ module.exports = (page) => {
 
 			expect(itemsCount).toEqual(3);
 		});
+
+		it('loading items with an external itemProps as function', async () => {
+			const
+				items = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}],
+				itemClass = h.dom.elNameGenerator('.b-slider', 'item');
+
+			const target = await initSlider(page, {
+				attrs: {
+					item: 'b-checkbox',
+					items,
+					itemProps: 'return (el, i) => ({id: el.id + "_" + i})'
+				}
+			});
+
+			const itemsCount = await target.evaluate(
+				(ctx, name) => ctx.$el.querySelectorAll(name).length,
+				itemClass
+			);
+
+			const getItem = (item, index) => target.evaluate(
+				(ctx, {item, index}) => ctx.$el.querySelector(`#${item.id}_${index}`) != null,
+				{item, index}
+			);
+
+			const
+				results = await Promise.all(items.map(getItem));
+
+			expect(results.every((v) => v)).toEqual(true);
+			expect(itemsCount).toEqual(3);
+		});
+
+		it('loading items with an external itemProps as object', async () => {
+			const
+				items = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}];
+
+			const target = await initSlider(page, {
+				attrs: {
+					item: 'b-checkbox',
+					items,
+					itemProps: {name: 'foo'}
+				}
+			});
+
+			const namedCount = await target.evaluate(
+				(ctx) => ctx.$el.querySelectorAll('[name="foo"]').length
+			);
+
+			expect(namedCount).toEqual(3);
+		});
 	});
 };
