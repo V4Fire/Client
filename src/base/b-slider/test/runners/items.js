@@ -13,6 +13,7 @@
  */
 
 const
+	h = include('tests/helpers'),
 	{initSlider} = include('src/base/b-slider/test/helpers');
 
 /**
@@ -31,6 +32,9 @@ module.exports = (page) => {
 
 	describe('b-slider renders items', () => {
 		it('simple loading items from a provider', async () => {
+			const
+				itemClass = h.dom.elNameGenerator('.b-slider', 'item');
+
 			const target = await initSlider(page, {
 				attrs: {
 					item: 'b-checkbox',
@@ -39,9 +43,11 @@ module.exports = (page) => {
 			});
 
 			const
-				itemsCount = await target.evaluate((ctx) => ctx.$el.querySelectorAll('.b-checkbox').length);
+				itemsCount = await target.evaluate((ctx, name) => ctx.$el.querySelectorAll(name).length, itemClass),
+				componentsCount = await target.evaluate((ctx) => ctx.$el.querySelectorAll('.b-checkbox').length);
 
 			expect(itemsCount).toEqual(2);
+			expect(itemsCount).toEqual(componentsCount);
 		});
 	});
 };

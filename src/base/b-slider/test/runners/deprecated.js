@@ -71,5 +71,19 @@ module.exports = (page) => {
 
 			expect(text).toEqual(textSlotContent);
 		});
+
+		it('simple loading items from a provider', async () => {
+			const target = await initSlider(page, {
+				attrs: {
+					item: 'b-checkbox',
+					dataProvider: 'demo.List'
+				}
+			});
+
+			const
+				itemsCount = await target.evaluate((ctx) => ctx.$el.querySelectorAll('.b-slider__option').length);
+
+			expect(itemsCount).toEqual(2);
+		});
 	});
 };
