@@ -12,9 +12,15 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< template v-for = (el, i) in top.asyncRender.iterate(items, top.renderChunks, { &
-			filter: renderFilter
-		}) .
+		< template &
+			v-for = (el, i) in top.asyncRender.iterate(
+				items,
+				top.renderChunks,
+				{filter: renderFilter}
+			) |
+
+			:key = getItemKey(el, i)
+		.
 			< .&__node &
 				:-id = top.dom.getId(el.id) |
 				:-level = level |

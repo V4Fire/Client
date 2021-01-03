@@ -21,7 +21,21 @@ import { deprecated, deprecate } from 'core/functools';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import iItems from 'traits/i-items/i-items';
 
-import iData, { component, prop, field, system, hook, watch, wait, ModsDecl, computed } from 'super/i-data/i-data';
+import iData, {
+
+	component,
+	prop,
+	field,
+	system,
+	computed,
+
+	hook,
+	watch,
+	wait,
+
+	ModsDecl
+
+} from 'super/i-data/i-data';
 
 import { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 import { sliderModes, alignTypes } from 'base/b-slider/const';
