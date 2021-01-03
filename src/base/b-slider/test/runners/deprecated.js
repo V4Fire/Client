@@ -85,5 +85,24 @@ module.exports = (page) => {
 
 			expect(itemsCount).toEqual(2);
 		});
+
+		it('loading items with external options iterator', async () => {
+			const
+				itemClass = h.dom.elNameGenerator('.b-slider', 'option');
+
+			const target = await initSlider(page, {
+				attrs: {
+					option: 'b-checkbox',
+					options: [],
+					optionsIterator: 'return () => [{id: "1"}, {id: "2"}, {id: "3"}]'
+				}
+			});
+
+			const itemsCount = await target.evaluate(
+				(ctx, name) => ctx.$el.querySelectorAll(name).length, itemClass
+			);
+
+			expect(itemsCount).toEqual(3);
+		});
 	});
 };

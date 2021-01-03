@@ -49,5 +49,24 @@ module.exports = (page) => {
 			expect(itemsCount).toEqual(2);
 			expect(itemsCount).toEqual(componentsCount);
 		});
+
+		it('loading items with external items iterator', async () => {
+			const
+				itemClass = h.dom.elNameGenerator('.b-slider', 'item');
+
+			const target = await initSlider(page, {
+				attrs: {
+					item: 'b-checkbox',
+					items: [],
+					itemsIterator: 'return () => [{id: "1"}, {id: "2"}, {id: "3"}]'
+				}
+			});
+
+			const itemsCount = await target.evaluate(
+				(ctx, name) => ctx.$el.querySelectorAll(name).length, itemClass
+			);
+
+			expect(itemsCount).toEqual(3);
+		});
 	});
 };
