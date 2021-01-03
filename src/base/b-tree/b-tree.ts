@@ -11,6 +11,10 @@
  * @packageDocumentation
  */
 
+//#if demo
+import 'models/demo/nested-list';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';
@@ -105,9 +109,9 @@ export default class bTree extends iData implements iItems {
 	/**
 	 * Properties for recursively inserted components
 	 */
-	protected get getNestedItemProps(): Dictionary {
+	protected get nestedItemProps(): Dictionary {
 		const
-			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.renderFilter;
+			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.top.renderFilter;
 
 		const opts = {
 			folded: this.folded,

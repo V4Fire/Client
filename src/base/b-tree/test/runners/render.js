@@ -90,6 +90,7 @@ module.exports = (page) => {
 	};
 
 	beforeEach(async () => {
+		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = 1200000;
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
 		});
@@ -216,6 +217,39 @@ module.exports = (page) => {
 			await wait(5);
 			await wait(6);
 			await wait(7);
+		});
+	});
+
+	describe('b-tree renders items from a provider', () => {
+		const init = async () => {
+			await page.evaluate(() => {
+				globalThis.removeCreatedComponents();
+
+				const scheme = [
+					{
+						attrs: {
+							folded: false,
+							theme: 'demo',
+							dataProvider: 'demo.NestedList',
+							item: 'b-checkbox-functional',
+							id: 'target'
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-tree', scheme);
+			});
+
+			await h.bom.waitForIdleCallback(page);
+			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
+			return h.component.waitForComponent(page, '#target');
+		};
+
+		it('initialization', async () => {
+			await init();
+
+			await h.bom.waitForIdleCallback(page);
+			expect((await page.$$('.b-checkbox')).length).toBe(9);
 		});
 	});
 

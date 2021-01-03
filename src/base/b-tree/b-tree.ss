@@ -53,7 +53,7 @@
 						< @b-tree.&__child &
 							:items = el.children |
 							:item = item |
-							:v-attrs = getNestedItemProps
+							:v-attrs = nestedItemProps
 						.
 							< template #default = o
 								+= self.slot('default', {':item': 'o.item'})

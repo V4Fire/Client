@@ -17,5 +17,5 @@ Changelog
 
 #### :house: Internal
 
-* Changed the protected method `getNestedDollProps` to the protected getter `getNestedItemProps`
+* Changed the protected method `getNestedDollProps` to the protected getter `nestedItemProps`
 * Added `README`, `CHANGELOG` and `interface`
