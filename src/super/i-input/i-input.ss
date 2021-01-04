@@ -35,13 +35,15 @@
 			< ${@tag || nativeInputTag}.&__${@elName || 'input'} &
 				ref = ${@ref || 'input'} |
 				v-model = ${@model || nativeInputModel} |
-				:v-attrs = normalizeAttrs(attrs) |
+
 				:id = id |
 				:type = normalizeAttrs(attrs).type || ${@type || nativeInputType} |
 				:name = name |
 				:form = form |
 				:autofocus = autofocus |
 				:tabIndex = tabIndex |
+				:v-attrs = normalizeAttrs(attrs) |
+
 				@focus = onFocus |
 				@blur = onBlur |
 				${Object.assign({}, attrs, @attrs)|!html}
@@ -53,6 +55,7 @@
 		- block hiddenInput()
 			+= self.nativeInput({ &
 				elName: 'hidden-input',
+
 				attrs: {
 					autocomplete: 'off'
 				}
