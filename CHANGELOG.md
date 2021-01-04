@@ -45,6 +45,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added `bDummyText`
 * Added support of method invoking `super/i-block/modules/state/set`
 * Added a new associated type: `Items` `bList`
 * Added support of the default slot `bDummy`
