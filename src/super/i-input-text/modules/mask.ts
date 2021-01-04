@@ -13,7 +13,7 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Sets position of the selection cursor at the first non-terminal symbol from the mask
+ * Sets a position of the selection cursor at the first non-terminal symbol from the mask
  * @param component
  */
 export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(component: C): Promise<void> {
@@ -50,15 +50,19 @@ export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(
  */
 export function saveSnapshot<C extends iInputText>(component: C): void {
 	const {
-		unsafe,
-		unsafe: {$refs: {input}}
-	} = component;
+		compiledMask: mask,
+		$refs: {input}
+	} = component.unsafe;
 
-	unsafe.maskText = component.text;
+	if (mask == null) {
+		return;
+	}
+
+	mask!.text = component.text;
 
 	if (Object.isTruly(input)) {
-		unsafe.lastMaskSelectionStartIndex = input.selectionStart;
-		unsafe.lastMaskSelectionEndIndex = input.selectionEnd;
+		mask!.start = input.selectionStart;
+		mask!.end = input.selectionEnd;
 	}
 }
 
@@ -83,13 +87,15 @@ export function syncInputWithField<C extends iInputText>(component: C): void {
  * Synchronizes the `text` field with the `$refs.input.text` property
  * @param component
  */
-export async function syncFieldWithInput<C extends iInputText>(component: C): Promise<void> {
-	const
-		{unsafe} = component;
+export function syncFieldWithInput<C extends iInputText>(component: C): void {
+	const {
+		unsafe,
+		unsafe: {compiledMask: mask}
+	} = component;
 
 	unsafe.async.setImmediate(() => unsafe.applyMaskToText(unsafe.$refs.input.value, {
-		start: unsafe.lastMaskSelectionStartIndex,
-		end: unsafe.lastMaskSelectionEndIndex
+		start: mask?.start,
+		end: mask?.end
 	}));
 }
 
@@ -111,11 +117,12 @@ export async function onMaskBackspace<C extends iInputText>(component: C, e: Key
 
 	e.preventDefault();
 
-	const
-		{unsafe, unsafe: {$refs: {input}}} = component;
+	const {
+		unsafe,
+		unsafe: {$refs: {input}}
+	} = component;
 
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	if (input == null) {
+	if (!Object.isTruly(input)) {
 		return;
 	}
 
@@ -139,12 +146,12 @@ export async function onMaskBackspace<C extends iInputText>(component: C, e: Key
 		pos = 0;
 
 	if (e.key === 'Delete') {
+		const
+			chunks = <string[]>[];
+
 		let
 			start = selectionStart,
 			end = selectionEnd;
-
-		const
-			chunks = <string[]>[];
 
 		for (let i = 0; i < maskSymbols.length; i++) {
 			const
@@ -169,7 +176,11 @@ export async function onMaskBackspace<C extends iInputText>(component: C, e: Key
 		text = chunks.join('');
 
 		if (text !== '') {
-			await unsafe.applyMaskToText(text, {start: selectionStart, end: selectionEnd, maskText: ''});
+			await unsafe.applyMaskToText(text, {
+				start: selectionStart,
+				end: selectionEnd,
+				maskText: ''
+			});
 
 		} else {
 			await unsafe.applyMaskToText('');
@@ -228,7 +239,7 @@ export async function onMaskBackspace<C extends iInputText>(component: C, e: Key
 }
 
 /**
- * Handler: one of "arrow" buttons has been pressed on the masked input
+ * Handler: "navigation" over the mask via "arrow" buttons or click events
  *
  * @param component
  * @param e
@@ -238,8 +249,10 @@ export function onMaskNavigate<C extends iInputText>(component: C, e: KeyboardEv
 		return;
 	}
 
-	const
-		{unsafe} = component;
+	const {
+		unsafe,
+		unsafe: {$refs: {input}}
+	} = component;
 
 	const
 		isKeyboardEvent = e instanceof KeyboardEvent,
@@ -253,14 +266,17 @@ export function onMaskNavigate<C extends iInputText>(component: C, e: KeyboardEv
 		e.preventDefault();
 
 		if (isKeyboardEvent) {
-			action();
+			modifyPos();
+
+		} else {
+			input.focus();
 		}
 
 	} else {
-		unsafe.async.setImmediate(action, {label: $$.setCursor});
+		unsafe.async.setTimeout(modifyPos, 0, {label: $$.setCursor});
 	}
 
-	function action(): void {
+	function modifyPos(): void {
 		const
 			mask = unsafe.compiledMask;
 
@@ -271,9 +287,6 @@ export function onMaskNavigate<C extends iInputText>(component: C, e: KeyboardEv
 		const
 			maskSymbols = mask!.symbols;
 
-		const
-			{input} = unsafe.$refs;
-
 		if (!Object.isTruly(input)) {
 			return;
 		}
@@ -283,8 +296,8 @@ export function onMaskNavigate<C extends iInputText>(component: C, e: KeyboardEv
 			selectionEnd = input.selectionEnd ?? 0;
 
 		let
-			canChange = true,
-			pos;
+			canModifyOriginalPos = true,
+			pos: number;
 
 		if (isKeyboardEvent) {
 			if (selectionStart !== selectionEnd) {
@@ -304,24 +317,21 @@ export function onMaskNavigate<C extends iInputText>(component: C, e: KeyboardEv
 					pos--;
 
 					if (pos <= 0) {
-						canChange = false;
+						canModifyOriginalPos = false;
 						break;
 					}
 
 				} else {
-					if (Object.isRegExp(maskSymbols[pos - 1])) {
-						break;
-					}
-
 					pos++;
+
 					if (pos >= maskSymbols.length) {
-						canChange = false;
+						canModifyOriginalPos = false;
 						break;
 					}
 				}
 			}
 
-			if (!canChange) {
+			if (!canModifyOriginalPos) {
 				for (let i = 0; i < maskSymbols.length; i++) {
 					if (Object.isRegExp(maskSymbols[i])) {
 						pos = i;

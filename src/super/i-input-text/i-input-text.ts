@@ -139,7 +139,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @example
 	 * ```
 	 * /// A user will see an input element with a value:
-	 * /// _-_ _-_
+	 * /// _-_
 	 * /// If he types more than two symbols, he will see something like
 	 * /// 2-3 1-_
 	 * < b-input :mask = '%d-%d' | :maskRepeat = 2
@@ -155,7 +155,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @example
 	 * ```
 	 * /// A user will see an input element with a value:
-	 * /// _-_@_-_
+	 * /// _-_
 	 * /// If he types more than two symbols, he will see something like
 	 * /// 2-3@1-_
 	 * < b-input :mask = '%d-%d' | :maskRepeat = 2 | :maskDelimiter = '@'
@@ -241,12 +241,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	protected textStore!: string;
 
 	/**
-	 * Temporary value of the masked input
-	 */
-	@system()
-	protected maskText: string = '';
-
-	/**
 	 * Object of the compiled mask
 	 * @see [[iInputText.mask]]
 	 */
@@ -259,18 +253,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 */
 	@system((o) => o.sync.link((v) => v === true ? 42 : v ?? 1))
 	protected maskRepeat!: number;
-
-	/**
-	 * Start index of the last selection via masked input
-	 */
-	@system()
-	protected lastMaskSelectionStartIndex?: Nullable<number>;
-
-	/**
-	 * End index of the last selection via masked input
-	 */
-	@system()
-	protected lastMaskSelectionEndIndex?: Nullable<number>;
 
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
@@ -333,21 +315,21 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		}
 
 		const
-			mask = this.compiledMask,
-			maskSymbols = mask?.symbols;
+			mask = this.compiledMask;
 
-		if (mask == null || maskSymbols == null) {
+		if (mask == null) {
 			return;
 		}
 
 		const
+			maskSymbols = mask.symbols,
 			isFocused = this.mods.focused === 'true';
 
 		let
 			withoutSelection = start === end;
 
 		const
-			{maskText = this.maskText} = opts;
+			{maskText = mask.text} = opts;
 
 		let
 			maskedInput = '',
@@ -425,7 +407,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		}
 
 		this.text = maskedInput;
-		this.maskText = maskedInput;
+		mask.text = maskedInput;
 
 		if (isFocused) {
 			if (withoutSelection) {
@@ -439,8 +421,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 				pos = end;
 			}
 
-			this.lastMaskSelectionStartIndex = pos;
-			this.lastMaskSelectionEndIndex = pos;
+			mask.start = pos;
+			mask.end = pos;
 
 			this.$refs.input.setSelectionRange(pos, pos);
 		}
@@ -484,7 +466,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		$a.on(input, 'blur', this.onMaskBlur.bind(this), group);
 
 		this.compileMask();
-		this.applyMaskToText();
+		return this.applyMaskToText();
 	}
 
 	/**
@@ -535,12 +517,11 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 		this.compiledMask = {
 			symbols,
-			placeholder
+			placeholder,
+			text: '',
+			start: 0,
+			end: 0
 		};
-
-		this.maskText = '';
-		this.lastMaskSelectionStartIndex = 0;
-		this.lastMaskSelectionEndIndex = 0;
 	}
 
 	/** @override */
@@ -589,7 +570,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * Handler: there is occur an input action on the masked input
 	 */
 	protected onMaskInput(): void {
-		void mask.syncFieldWithInput(this);
+		mask.syncFieldWithInput(this);
 	}
 
 	/**
@@ -601,7 +582,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: one of "arrow" buttons has been pressed on the masked input
+	 * Handler: "navigation" over the mask via "arrow" buttons or click events
 	 * @param e
 	 */
 	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): void {
@@ -610,7 +591,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Handler: there is occur a keypress action on the masked input
-	 *
 	 * @param e
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): void {

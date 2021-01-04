@@ -11,12 +11,12 @@ import iInputText from 'super/i-input-text/i-input-text';
 
 export interface ApplyMaskToTextOptions {
 	/**
-	 * The start position to set off the text selection
+	 * Start position to set off the text selection
 	 */
 	start?: Nullable<number>;
 
 	/**
-	 * The end position to set off the text selection
+	 * End position to set off the text selection
 	 */
 	end?: Nullable<number>;
 
@@ -49,6 +49,21 @@ export interface CompiledMask {
 	 * ```
 	 */
 	placeholder: string;
+
+	/**
+	 * Value of the masked input
+	 */
+	text: string;
+
+	/**
+	 * Start position of the last input selection
+	 */
+	start: Nullable<number>;
+
+	/**
+	 * End position of the last input selection
+	 */
+	end: Nullable<number>;
 }
 
 // @ts-ignore (extend)
