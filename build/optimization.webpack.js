@@ -14,7 +14,7 @@ const
 
 const
 	TerserPlugin = require('terser-webpack-plugin'),
-	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+	CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const
 	{optimize} = config.webpack,
@@ -58,23 +58,16 @@ module.exports = function optimization({buildId, plugins}) {
 
 				async: {
 					chunks: 'async',
-					minChunks: 2,
+					minChunks: 1,
 					reuseExistingChunk: true,
 					test: isLayerDep
 				},
 
 				defaultVendors: {
 					name: 'vendor',
-					chunks: 'initial',
-					minChunks: 1,
-					enforce: true,
-					reuseExistingChunk: true,
-					test: isExternalDep
-				},
-
-				asyncVendors: {
-					chunks: 'async',
+					chunks: 'all',
 					minChunks: 2,
+					enforce: true,
 					reuseExistingChunk: true,
 					test: isExternalDep
 				}
@@ -86,6 +79,8 @@ module.exports = function optimization({buildId, plugins}) {
 		es = config.es();
 
 	options.minimizer = [
+		new CssMinimizerPlugin(config.cssMinimizer()),
+
 		/* eslint-disable camelcase */
 
 		new TerserPlugin({
@@ -107,13 +102,6 @@ module.exports = function optimization({buildId, plugins}) {
 
 		/* eslint-enable camelcase */
 	];
-
-	const
-		css = config.css();
-
-	if (css.minimize) {
-		plugins.set('minimizeCSS', new OptimizeCssAssetsPlugin({...css.minimize}));
-	}
 
 	return options;
 };

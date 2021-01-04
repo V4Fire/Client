@@ -12,4 +12,5 @@ export interface Module extends Dictionary {
 	import?: unknown;
 	promise?: CanArray<Promise<unknown>>;
 	load(): Promise<unknown>;
+	wait?(): Promise<unknown>;
 }

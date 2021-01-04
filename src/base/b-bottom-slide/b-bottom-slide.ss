@@ -25,7 +25,7 @@
 			v-if =
 				isFunctional ||
 				forceInnerRender ||
-				opt.ifOnce('opened', m.opened !== 'true') && delete watchModsStore.opened
+				opt.ifOnce('opened', m.opened === 'true') && delete watchModsStore.opened
 		.
 			- block header
 				< header.&__header &

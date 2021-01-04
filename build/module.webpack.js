@@ -225,7 +225,7 @@ module.exports = async function module({plugins}) {
 	const styleHelperLoaders = [
 		{
 			loader: 'fast-css-loader',
-			options: Object.reject(config.css(), ['minimize'])
+			options: config.css()
 		},
 
 		{
@@ -240,9 +240,7 @@ module.exports = async function module({plugins}) {
 		{
 			loader: 'stylus-loader',
 			options: inherit(config.stylus(), {
-				stylusOptions: {
-					use: include('build/stylus')
-				}
+				use: include('build/stylus')
 			})
 		}
 	];

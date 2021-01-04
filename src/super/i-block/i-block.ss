@@ -47,17 +47,45 @@
 	 * Loads modules by the specified paths and dynamically inserted the provided content when it loaded
 	 *
 	 * @param {(string|!Array<string>)} path - path or an array of paths
+	 * @param {{renderKey: string, wait: string}} [opts] - additional options
 	 * @param {string=} [content]
+	 *
+	 * @example
+	 * ```
+	 * += self.loadModules('form/b-button')
+	 *   < b-button
+	 *     Hello world
+	 *
+	 * += self.loadModules(['form/b-button', 'form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+	 *   < b-button
+	 *     Hello world
+	 *
+	 *   < b-input
+	 * ```
 	 */
-	- block loadModules(path, content)
+	- block loadModules(path, opts = {}, content)
+		- if arguments.length < 3
+			? content = opts
+			? opts = {}
+
 		? path = [].concat(path || [])
 
 		- forEach path => id
-			{{ void(moduleLoader.add({id: '${id}', load: () => import('${id}')})) }}
+			{{ void(moduleLoader.add({id: '${id}', load: () => import('${id}'), wait: ${opts.wait || 'undefined'}})) }}
 
 		- if content != null
-			< template v-for = el in asyncRender.iterate(moduleLoader.values(...${path|json}), 1)
-				+= content
+			- if opts.renderKey
+				< template v-if = !field.get('ifOnceStore.${opts.renderKey}')
+					{{ void(field.set('ifOnceStore.${opts.renderKey}', true)) }}
+
+					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}), 1, { &
+						group: 'module:${opts.renderKey}'
+					}) .
+						+= content
+
+			- else
+				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}))
+					+= content
 
 	/**
 	 * Returns a link to a template by the specified path
@@ -116,10 +144,16 @@
 				- block index->gIcon(iconId, classes = {}, attrs = {})
 					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
 						- if Object.isArray(iconId)
-							< use :xlink:href = getIconLink(${iconId})
+							< use v-if = value | v-update-on = { &
+								emitter: getIconLink(${iconId}),
+								listener: updateIconHref
+							} .
 
 						- else
-							< use :xlink:href = getIconLink('${iconId}')
+							< use v-if = value | v-update-on = { &
+								emitter: getIconLink('${iconId}'),
+								listener: updateIconHref
+							} .
 
 				/**
 				 * Generates a slot declaration (scoped and plain)

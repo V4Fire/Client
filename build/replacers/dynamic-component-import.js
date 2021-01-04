@@ -13,7 +13,7 @@ const
 
 const
 	isESImport = typescript().client.compilerOptions.module === 'ES2020',
-	importRgxp = /\bimport\((["'])((?:(?![bp]-[^\\/"')]+)[^'")])*([bp]-[^\\/"')]+))\1\)/g;
+	importRgxp = /\bimport\((["'])((?:.*?[\\/]|)([bp]-[^.\\/"')]+)+)\1\)/g;
 
 /**
  * Monic replacer to enable dynamic imports of components
@@ -30,6 +30,13 @@ const
  */
 module.exports = function dynamicComponentImportReplacer(str) {
 	return str.replace(importRgxp, (str, q, path, nm) => {
+		const
+			chunks = path.split(/[\\/]/);
+
+		if (chunks.length > 1 && chunks[chunks.length - 1] === chunks[chunks.length - 2]) {
+			return str;
+		}
+
 		const
 			fullPath = `${path}/${nm}`,
 			imports = [];

@@ -128,10 +128,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly scrollToTopOnClose: boolean = true;
 
 	/**
-	 * If true, the inner content of the component is rendered anyway at the start
+	 * If false, the inner content of the component won't be rendered if the component isn't opened
 	 */
 	@prop(Boolean)
-	readonly forceInnerRender: boolean = false;
+	readonly forceInnerRender: boolean = true;
 
 	/**
 	 * List of possible component positions relative to the screen height (in percentages)
@@ -636,8 +636,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * Updates a position of the window node
 	 */
 	@wait('ready')
-	protected updateWindowPosition(): CanPromise<void> {
-		this.$refs.window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
+	protected async updateWindowPosition(): Promise<void> {
+		const window = await this.waitRef<HTMLElement>('window');
+		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
 	}
 
 	/**

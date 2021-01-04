@@ -8,10 +8,10 @@
 
 /// <reference types="@v4fire/core"/>
 
-declare const CSP_NONCE: unknown;
+declare const CSP_NONCE_STORE: string;
 
 // eslint-disable-next-line camelcase
-declare let __webpack_nonce__: unknown;
+declare let __webpack_nonce__: CanUndef<string>;
 
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;

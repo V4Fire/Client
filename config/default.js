@@ -532,6 +532,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	csp: {
 		/**
+		 * If true, the nonce attributes will be post-processed by a proxy, like Nginx
+		 * (this mode will insert nonce attributes into inline tags too).
+		 *
+		 * If false, nonce attributes will be inserted from the JS runtime.
+		 * Note, this mode doesn't support nonce attributes for inline tags.
+		 */
+		postProcessor: true,
+
+		/**
+		 * Name of the generated runtime global variable where the nonce value is stored
+		 */
+		nonceStore: Math.random()
+			.toString(16)
+			.slice(2, 9)
+			.replace(/[a-z]/g, (s) => Math.random() > 0.5 ? s.toUpperCase() : s),
+
+		/**
 		 * Returns value of the "nonce" hash
 		 * @returns {?string}
 		 */
@@ -568,7 +585,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for terser-webpack-plugin
+	 * Returns parameters for TerserPlugin
 	 * @returns {{}}
 	 */
 	terser() {
@@ -599,10 +616,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	stylus() {
 		return {
-			webpackImporter: false,
-			stylusOptions: {
-				resolveURL: false
-			}
+			webpackImporter: false
 		};
 	},
 
@@ -611,9 +625,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {!Object}
 	 */
 	css() {
-		return {
-			minimize: Boolean(this.webpack.mode() === 'production')
-		};
+		return {};
+	},
+
+	/**
+	 * Returns parameters for CssMinimizerPlugin
+	 * @returns {!Object}
+	 */
+	cssMinimizer() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for MiniCssExtractPlugin
+	 * @returns {!Object}
+	 */
+	miniCssExtractPlugin() {
+		return {};
 	},
 
 	/**
@@ -630,14 +658,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	autoprefixer() {
 		return {remove: false};
-	},
-
-	/**
-	 * Returns parameters for MiniCssExtractPlugin
-	 * @returns {!Object}
-	 */
-	miniCssExtractPlugin() {
-		return {};
 	},
 
 	/**
@@ -768,7 +788,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'component/daemons': true,
 
 			'directives/event': true,
-			'directives/resize': true,
 			'directives/image': true,
 			'directives/in-view': true,
 			'directives/resize-observer': true,

@@ -6,8 +6,38 @@ Changelog
 > - :rocket:     [New Feature]
 > - :bug:        [Bug Fix]
 > - :memo:       [Documentation]
-> - :house:      [Internal]
+> - :house:      [Internal]****
 > - :nail_care:  [Polish]
+
+## v3.0.0-rc.120 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after refactoring
+
+## v3.0.0-rc.119 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Now all dynamic scripts and links are added to the document head
+
+## v3.0.0-rc.117 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init` files
+
+## v3.0.0-rc.116 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed CSP bugs
+
+## v3.0.0-rc.115 (2020-12-23)
+
+#### :rocket: New Feature
+
+* Improved CSP support. Added the `postProcessor` mode.
 
 ## v3.0.0-rc.110 (2020-12-16)
 

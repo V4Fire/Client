@@ -80,9 +80,7 @@ export default class ModuleLoader extends Friend {
 
 		for (let i = 0; i < modules.length; i++) {
 			const
-				module = modules[i];
-
-			const
+				module = modules[i],
 				val = this.resolveModule(module);
 
 			if (Object.isPromise(val)) {
@@ -100,7 +98,7 @@ export default class ModuleLoader extends Friend {
 			return false;
 		}
 
-		return Promise.all(toLoad).then(() => true);
+		return this.async.promise(Promise.all(toLoad).then(() => true));
 	}
 
 	[Symbol.iterator](): IterableIterator<CanArray<Module>> {
@@ -115,6 +113,9 @@ export default class ModuleLoader extends Friend {
 	 * @param [ids] - module identifiers to filter
 	 */
 	values(...ids: unknown[]): IterableIterator<CanArray<Module>> {
+		const
+			{async: $a} = this;
+
 		let
 			iterPos = 0,
 			done = false,
@@ -176,7 +177,7 @@ export default class ModuleLoader extends Friend {
 								return {
 									done: false,
 									value: subTasks.length > 0 ?
-										Promise.all(subTasks).then(() => Promise.allSettled(subValues)) :
+										$a.promise(Promise.all(subTasks).then(() => Promise.allSettled(subValues))) :
 										subValues
 								};
 							}
@@ -209,7 +210,7 @@ export default class ModuleLoader extends Friend {
 
 				cursor = {
 					done: false,
-					value: new Promise((r) => {
+					value: $a.promise(new Promise((r) => {
 						resolve = (module: Module) => {
 							const
 								val = initModule(module);
@@ -220,7 +221,7 @@ export default class ModuleLoader extends Friend {
 
 							r(val);
 						};
-					})
+					}))
 				};
 
 				return cursor;
@@ -233,9 +234,13 @@ export default class ModuleLoader extends Friend {
 	/**
 	 * Resolves the specified module: if the module already exists in the cache, the method simply returns it.
 	 * Otherwise, the module will be loaded.
+	 *
 	 * @param module
 	 */
 	protected resolveModule(module: Module): CanPromise<Module> {
+		const
+			{async: $a} = this;
+
 		if (module.id != null) {
 			module = cache.get(module.id) ?? module;
 		}
@@ -253,7 +258,14 @@ export default class ModuleLoader extends Friend {
 
 			default: {
 				module.status = 'pending';
-				module.promise = module.load();
+				module.promise = $a.promise(new Promise((r) => {
+					if (module.wait) {
+						r($a.promise(module.wait()).then(module.load.bind(module)));
+
+					} else {
+						r(module.load());
+					}
+				}));
 
 				promise = module.promise
 					.then(() => {

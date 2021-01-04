@@ -126,6 +126,94 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bInputHidden`
   * `bForm`
 
+## v3.0.0-rc.120 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after refactoring `iStaticPage`
+
+## v3.0.0-rc.119 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Now all dynamic scripts and links are added to the document head `iStaticPage`
+
+## v3.0.0-rc.118 (2020-12-24)
+
+#### :bug: Bug Fix
+
+* Trim href-s before go `bRouter`
+
+## v3.0.0-rc.117 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init` files `iStaticPage`
+
+## v3.0.0-rc.116 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed CSP bugs `iStaticPage`
+
+## v3.0.0-rc.115 (2020-12-23)
+
+#### :rocket: New Feature
+
+* Improved CSP support. Added the `postProcessor` mode.
+
+## v3.0.0-rc.114 (2020-12-22)
+
+#### :bug: Bug Fix
+
+* Fixed clearing of the route history `core/router/engines/browser`
+
+## v3.0.0-rc.113 (2020-12-18)
+
+#### :rocket: New Feature
+
+* Added `cssMinimizer` `config`
+
+#### :bug: Bug Fix
+
+* Fixed handling of `javascript:` links `bRouter`
+* Downgraded `stylus-loader@3.0.2`
+
+#### :house: Internal
+
+* Replaced `optimize-css-assets-webpack-plugin` -> `css-minimizer-webpack-plugin`
+
+## v3.0.0-rc.112 (2020-12-18)
+
+#### :boom: Breaking Change
+
+* Now icons are loaded asynchronously `traits/i-icon`
+* Now `forceInnerRender` is toggled to `true` by default:
+  * `bBottomSlide`
+  * `bSidebar`
+  * `bWindow`
+
+#### :rocket: New Feature
+
+* Added support of promises `core/component/directive/update-on`
+* Added `snapshot.webpack` `build`
+* Added `Module.wait` `super/i-block/modules/module-loader`
+* Added support of `wait` and `renderKey` `iBlock/loadModules`
+
+#### :bug: Bug Fix
+
+* Fixed `dynamic-component-import` `build`
+* Fixed `updateWindowPosition` with lazy rendering `bBottomSlide`
+* Fixed providing of render groups:
+  * `super/i-block/modules/module-loader`
+  * `core/component/render-function`
+
+## v3.0.0-rc.111 (2020-12-16)
+
+#### :bug: Bug Fix
+
+* Fixed render logic: `bSidebar`, `bWindow`, `bBottomSlide`
+
 ## v3.0.0-rc.110 (2020-12-16)
 
 #### :boom: Breaking Change
