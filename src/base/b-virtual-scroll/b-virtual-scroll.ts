@@ -16,6 +16,7 @@ import 'models/demo/pagination';
 //#endif
 
 import symbolGenerator from 'core/symbol';
+import { deprecate, deprecated } from 'core/functools';
 
 import iItems from 'traits/i-items/i-items';
 
@@ -24,6 +25,7 @@ import iData, {
 	component,
 	prop,
 	system,
+	computed,
 	field,
 	watch,
 	wait,
@@ -78,9 +80,16 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
+	/**
+	 * @deprecated
+	 * @see [[bVirtualScroll.itemsProp]]
+	 */
+	@prop(Array)
+	readonly optionsProp: iItems['itemsProp'] = [];
+
 	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
-	readonly optionsProp?: iItems['optionsProp'] = [];
+	readonly itemsProp: iItems['itemsProp'] = [];
 
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
@@ -90,17 +99,38 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: String, watch: 'syncPropsWatcher'})
 	readonly loadStrategy: LoadStrategy = 'scroll';
 
+	/**
+	 * @deprecated
+	 * @see [[bVirtualScroll.item]]
+	 */
+	@prop({type: [String, Function], required: false})
+	readonly optionProp?: iItems['item'];
+
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
-	readonly option?: iItems['option'];
+	readonly itemProp?: iItems['item'];
+
+	/**
+	 * @deprecated
+	 * @see [[bVirtualScroll.itemKey]]
+	 */
+	@prop({type: [String, Function], required: false})
+	readonly optionKeyProp?: iItems['itemKey'];
 
 	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItems['optionKey'];
+	readonly itemKeyProp?: iItems['itemKey'];
+
+	/**
+	 * @deprecated
+	 * @see [[bVirtualScroll.itemProps]]
+	 */
+	@prop({type: [Function, Object]})
+	readonly optionPropsProp?: iItems['itemProps'];
 
 	/** @see [[iItems.itemProps]] */
-	@prop({type: Function, default: () => ({})})
-	readonly optionProps!: iItems['optionProps'];
+	@prop({type: [Function, Object]})
+	readonly itemPropsProp?: iItems['itemProps'];
 
 	/**
 	 * Maximum number of elements to cache
@@ -177,6 +207,10 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
 
+	/** @see [[iItems.items]] */
+	@field((o) => o.sync.link())
+	protected itemsStore!: iItems['items'];
+
 	/**
 	 * Total amount of items that can be loaded
 	 */
@@ -213,6 +247,72 @@ export default class bVirtualScroll extends iData implements iItems {
 		return <any>this;
 	}
 
+	/** @see [[iItems.items]] */
+	@computed({dependencies: ['itemsStore', 'options']})
+	get items(): iItems['items'] {
+		if (Object.size(this.options) > 0) {
+			deprecate({
+				name: 'options',
+				type: 'property',
+				renamedTo: 'items'
+			});
+
+			return this.options;
+		}
+
+		return this.itemsStore;
+	}
+
+	/** @see [[iItems.items]] */
+	set items(value: iItems['items']) {
+		this.field.set('itemsStore', value);
+	}
+
+	/** @see [[bVirtualScroll.itemKeyProp]] */
+	get itemKey(): this['itemKeyProp'] {
+		if (this.optionKeyProp != null) {
+			deprecate({
+				name: 'optionKey',
+				type: 'property',
+				renamedTo: 'itemKey'
+			});
+
+			return this.optionKeyProp;
+		}
+
+		return this.itemKeyProp;
+	}
+
+	/** @see [[bVirtualScroll.itemPropsProp]] */
+	get itemProps(): iItems['itemProps'] {
+		if (this.optionPropsProp != null) {
+			deprecate({
+				name: 'optionProps',
+				type: 'property',
+				renamedTo: 'itemProps'
+			});
+
+			return this.optionPropsProp;
+		}
+
+		return this.itemPropsProp;
+	}
+
+	/** @see [[bVirtualScroll.itemProp]] */
+	get item(): iItems['item'] {
+		if (this.optionProp != null) {
+			deprecate({
+				name: 'option',
+				type: 'property',
+				renamedTo: 'item'
+			});
+
+			return this.optionProp;
+		}
+
+		return this.itemProp;
+	}
+
 	/** @override */
 	protected get requestParams(): RequestParams {
 		return {
@@ -221,12 +321,6 @@ export default class bVirtualScroll extends iData implements iItems {
 				...Object.isDictionary(this.request?.get) ? this.request?.get : undefined
 			}
 		};
-	}
-
-	/** @override */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected set requestParams(value: RequestParams) {
-		// Loopback
 	}
 
 	/**
@@ -275,7 +369,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Reloads the last request (if there is no `db` or `options` the method calls reload)
+	 * Reloads the last request (if there is no `db` or `items` the method calls reload)
 	 */
 	reloadLast(): void {
 		if (!this.db || this.chunkRequest.data.length === 0) {
@@ -292,9 +386,9 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	renderNext(): void {
 		const
-			{localState, chunkRequest, dataProvider, options} = this;
+			{localState, chunkRequest, dataProvider, items} = this;
 
-		if (localState !== 'ready' || dataProvider == null && options.length === 0) {
+		if (localState !== 'ready' || dataProvider == null && items.length === 0) {
 			return;
 		}
 
@@ -408,8 +502,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Initializes rendering on the items passed to the component
 	 */
 	@hook('mounted')
-	@watch('options')
-	@wait('ready', {defer: true, label: $$.initOptions})
+	@watch('items')
+	@wait('ready', {defer: true, label: $$.initItems})
 	protected initItems(): CanPromise<void> {
 		if (this.dataProvider !== undefined) {
 			return;
@@ -419,12 +513,21 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.reInit();
 		}
 
-		this.chunkRequest.lastLoadedChunk.normalized = Object.isArray(this.options) ? [...this.options] : [];
+		this.chunkRequest.lastLoadedChunk.normalized = Object.isArray(this.items) ? [...this.items] : [];
 		this.chunkRequest.init().catch(stderr);
 	}
 
+	/**
+	 * @deprecated
+	 * @see [[bVirtualScroll.getItemKey]]
+	 */
+	@deprecated({renamedTo: 'getItemKey'})
+	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+		return this.getItemKey(el, i);
+	}
+
 	/** @see [[iItems.getItemKey]] */
-	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
+	protected getItemKey(el: unknown, i: number): CanUndef<string> {
 		return iItems.getItemKey(this, el, i);
 	}
 

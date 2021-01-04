@@ -22,7 +22,13 @@ export interface GetData<T extends unknown = unknown> {
 	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
 }
 
-export interface OptionEl<T extends unknown = unknown> {
+/**
+ * @deprecated
+ * @see [[ItemEl]]
+ */
+export type OptionEl = ItemEl;
+
+export interface ItemEl<T extends unknown = unknown> {
 	/**
 	 * Current render data
 	 */
@@ -160,7 +166,7 @@ export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends u
 
 export interface DataToRender {
 	itemAttrs: Dictionary;
-	itemParams: OptionEl;
+	itemParams: ItemEl;
 	index: number;
 }
 
@@ -208,6 +214,13 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 	// @ts-ignore (access)
 	componentRender: CTX['componentRender'];
 
+	// @ts-ignore (access)
+	getItemKey: CTX['getItemKey'];
+
+	/**
+	 * @deprecated
+	 * @see [[UnsafeBVirtualScroll.getItemKey]]
+	 */
 	// @ts-ignore (access)
 	getOptionKey: CTX['getOptionKey'];
 
