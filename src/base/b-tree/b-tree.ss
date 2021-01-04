@@ -31,11 +31,11 @@
 						- block fold
 							< template v-if = Object.size(field.get('children.length', el)) > 0
 								< template v-if = vdom.getSlot('fold') != null
-									+= self.slot('fold', {':params': 'getFoldingProps(el)'})
+									+= self.slot('fold', {':params': 'getFoldProps(el)'})
 
 								< .&__fold &
 									v-else |
-									:v-attrs = getFoldingProps(el)
+									:v-attrs = getFoldProps(el)
 								.
 
 					- block item
@@ -53,7 +53,7 @@
 						< @b-tree.&__child &
 							:items = el.children |
 							:item = item |
-							:v-attrs = nestedItemProps
+							:v-attrs = nestedTreeProps
 						.
 							< template #default = o
 								+= self.slot('default', {':item': 'o.item'})

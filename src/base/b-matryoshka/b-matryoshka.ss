@@ -25,11 +25,11 @@
 						- block fold
 							< template v-if = Boolean(field.get('children.length', el))
 								< template v-if = vdom.getSlot('fold')
-									+= self.slot('fold', {':params': 'getFoldingProps(el)'})
+									+= self.slot('fold', {':params': 'getFoldProps(el)'})
 
 								< .&__fold &
 									v-else |
-									:v-attrs = getFoldingProps(el)
+									:v-attrs = getFoldProps(el)
 								.
 
 					- block doll
@@ -47,7 +47,7 @@
 						< @b-matryoshka.&__child &
 							:options = el.children |
 							:option = option |
-							:v-attrs = nestedItemProps
+							:v-attrs = nestedTreeProps
 						.
 							< template #default = o
 								+= self.slot('default', {':option': 'o.option'})

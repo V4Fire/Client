@@ -107,9 +107,9 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Properties for recursively inserted components
+	 * Properties for recursively inserted tree components
 	 */
-	protected get nestedItemProps(): Dictionary {
+	protected get nestedTreeProps(): Dictionary {
 		const
 			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.top.renderFilter;
 
@@ -147,9 +147,9 @@ export default class bTree extends iData implements iItems {
 	 * Returns props data for the specified fold element
 	 * @param el
 	 */
-	protected getFoldingProps(el: Item): Dictionary {
+	protected getFoldProps(el: Item): Dictionary {
 		return {
-			'@click': this.onFoldingClick.bind(this, el)
+			'@click': this.onFoldClick.bind(this, el)
 		};
 	}
 
@@ -212,7 +212,7 @@ export default class bTree extends iData implements iItems {
 	 * @param el
 	 * @emits fold(target: HTMLElement, el: Item, value: boolean)
 	 */
-	protected onFoldingClick(el: Item): void {
+	protected onFoldClick(el: Item): void {
 		const
 			target = this.searchItemElement(el.id),
 			newVal = this.getFoldedMod(el.id) === 'false';

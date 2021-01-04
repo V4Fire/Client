@@ -174,57 +174,6 @@ Or
 .
 ```
 
-## Branch Folding
-
-The module supports a feature to fold child branches of an item. It is implemented by using CSS modifiers, and by default,
-elements have no styles. So you have to write some CSS rules to hide children when the item node has the `folded` modifier.
-
-For instance:
-
-```
-&__fold:before
-  content "-"
-  display block
-  text-align center
-
-&__node_folded_true &__fold:before
-  content "+"
-
-&__node_folded_true &__children
-  display none
-```
-
-All elements have the `folded` modifier in `true` by default.
-To change this, just provide the modifier values as a prop.
-
-```
-< b-tree &
-  :item = 'b-checkbox' |
-  :items = items |
-  :folded = false
-.
-```
-
-Or
-
-```
-< b-tree &
-  :item = 'b-checkbox' |
-  :items = [
-    {id: 'foo'},
-
-    {
-      id: 'bar',
-      folded: false,
-      children: [
-        {id: 'fooone'},
-        {id: 'footwo'}
-      ]
-    }
-  ]
-.
-```
-
 ## Slots
 
 The component supports a bunch of slots to provide:
