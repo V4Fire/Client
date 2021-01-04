@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy')
+package('b-dummy-text')
 	.extends('i-input-text');
