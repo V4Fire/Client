@@ -43,7 +43,7 @@ exports.Lib = Lib;
  * Parameters of an initialized script library:
  *
  * * src - path to a file to load
- * * [documentWrite] - if true, the function returns JS code to load the library by using document.write
+ * * [js] - if true, the function returns JS code to load the library
  * * [staticAttrs] - string with additional attributes
  *
  * @see Lib
@@ -52,7 +52,7 @@ exports.Lib = Lib;
  *   inline?: boolean,
  *   defer?: boolean,
  *   load?: boolean,
- *   documentWrite?: boolean,
+ *   js?: boolean,
  *   attrs?: Object,
  *   staticAttrs?: string
  * }}
@@ -93,7 +93,7 @@ exports.StyleLib = StyleLib;
  * Parameters of an initialized style library:
  *
  * * src - path to a file to load
- * * [documentWrite] - if true, the function returns JS code to load the library by using document.write
+ * * [js] - if true, the function returns JS code to load the library
  * * [staticAttrs] - string with additional attributes
  *
  * @see StyleLib
@@ -101,7 +101,7 @@ exports.StyleLib = StyleLib;
  *   src: string,
  *   inline?: boolean,
  *   defer?: boolean,,
- *   documentWrite?: boolean,
+ *   js?: boolean,
  *   attrs?: Object,
  *   staticAttrs?: string
  * }}
@@ -138,13 +138,13 @@ exports.Link = Link;
  * Parameters of an initialized link:
  *
  * * src - path to a file to load
- * * [documentWrite] - if true, the function returns JS code to load the library by using document.write
+ * * [js] - if true, the function returns JS code to load the library
  * * [staticAttrs] - string with additional attributes
  *
  * @see Link
  * @typedef {{
  *   src: string,
- *   documentWrite?: boolean,
+ *   js?: boolean,
  *   attrs?: Object,
  *   staticAttrs?: string
  * }}

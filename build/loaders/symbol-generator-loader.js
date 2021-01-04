@@ -12,6 +12,10 @@ const
 	$C = require('collection.js'),
 	isPathInside = require('is-path-inside');
 
+const
+	creationRgxp = /(\$\$ = symbolGenerator\()(\))/,
+	symbolRgxp = /\$\$\.([a-z_$][\w$]*)/gi;
+
 /**
  * WebPack loader to shim "core/symbol" module for old browsers
  *
@@ -34,19 +38,23 @@ module.exports = function symbolGeneratorLoader(str) {
 	}
 
 	const
-		calls = /\$\$\.([a-z_$][\w$]*)/gi,
 		names = new Set();
 
 	let res;
 
 	// eslint-disable-next-line no-cond-assign
-	while (res = calls.exec(str)) {
+	while (res = symbolRgxp.exec(str)) {
 		names.add(res[1]);
 	}
 
 	if (names.size) {
-		return str.replace(/(\$\$ = symbolGenerator\()(\))/, (sstr, $1, $2) => $1 + JSON.stringify([...names]) + $2);
+		return str.replace(creationRgxp, (_, $1, $2) => $1 + JSON.stringify([...names]) + $2);
 	}
 
 	return str;
 };
+
+Object.assign(module.exports, {
+	creationRgxp,
+	symbolRgxp
+});

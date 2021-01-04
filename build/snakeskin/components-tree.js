@@ -62,13 +62,14 @@ Object.assign(componentsTree, {
  */
 $C(componentFiles).forEach((el) => {
 	const
-		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'})),
+		escapedFragments = [],
+		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'}), escapedFragments),
 		componentClass = componentClassRgxp.exec(file);
 
 	const p = ((v) => {
 		if (v) {
 			// eslint-disable-next-line no-new-func
-			return Function(`return ${escaper.paste(v[1]) || '{}'}`)();
+			return Function(`return ${escaper.paste(v[1], escapedFragments) || '{}'}`)();
 		}
 	})(componentClass && componentRgxp.exec(file));
 

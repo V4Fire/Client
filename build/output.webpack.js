@@ -10,18 +10,37 @@
 
 const
 	{src, webpack} = require('config'),
-	{hash, output} = include('build/build.webpack');
+	{hash, output: outputPattern} = include('build/helpers.webpack');
 
 const
-	concatUrl = require('urlconcat').concat,
-	publicPath = webpack.publicPath();
+	concatUrl = require('urlconcat').concat;
 
 /**
- * Options for WebPack ".output"
+ * Returns options for Webpack ".output"
+ * @returns {!Object}
  */
-module.exports = {
-	path: src.clientOutput(),
-	publicPath: publicPath ? concatUrl(publicPath, '/') : '',
-	filename: hash(output, true),
-	hashFunction: webpack.hashFunction()
+module.exports = function output() {
+	let
+		publicPath = webpack.publicPath();
+
+	if (publicPath) {
+		publicPath = concatUrl(publicPath, '/').replace(/^[/]+/, '/');
+
+	} else {
+		publicPath = '';
+	}
+
+	return {
+		path: src.clientOutput(),
+		publicPath,
+
+		filename: `${hash(outputPattern, true)}.js`,
+		chunkFilename: `${hash(outputPattern, true)}.js`,
+
+		chunkLoading: 'jsonp',
+		chunkFormat: 'array-push',
+
+		hashFunction: webpack.hashFunction(),
+		crossOriginLoading: 'anonymous'
+	};
 };

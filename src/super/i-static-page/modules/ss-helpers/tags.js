@@ -9,6 +9,7 @@
 require('../interface');
 
 const
+	$C = require('collection.js'),
 	config = require('config');
 
 const
@@ -17,14 +18,23 @@ const
 	buble = require('buble');
 
 const
+	{csp} = config,
 	{Filters} = require('snakeskin');
 
 const
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
-const nonce = {
-	nonce: config.csp.nonce
+const
+	nonce = csp.nonce();
+
+const defAttrs = {
+	// eslint-disable-next-line no-nested-ternary
+	nonce: nonce ? csp.postProcessor ? nonce : [`window['${csp.nonceStore}']`] : undefined
+};
+
+const defInlineAttrs = {
+	nonce: nonce != null && csp.postProcessor ? nonce : undefined
 };
 
 exports.getScriptDecl = getScriptDecl;
@@ -45,8 +55,15 @@ exports.getScriptDecl = getScriptDecl;
  * // <script>...</script>;
  * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', inline: true});
  *
+ * // (function () {
+ * //   var el = document.createElement('script');
+ * //   el.src = '...';
+ * //   (document.body || document.head).appendChild(el);
+ * // })();
+ * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', js: true});
+ *
  * // document.write('<script src="..."></script>');
- * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', documentWrite: true});
+ * getScriptDecl({src: 'node_modules/jquery/dist/jquery.js', js: true, defer: false});
  *
  * // <script>var a = 1;</script>;
  * getScriptDecl('var a = 1;');
@@ -58,19 +75,45 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (Object.isString(lib)) {
-		return `<script ${normalizeAttrs(nonce)}>${lib}</script>`;
+		return `<script ${normalizeAttrs(defInlineAttrs)}>${lib}</script>`;
 	}
 
 	body = body || '';
 
 	const
-		isInline = Boolean(needInline(lib.inline) || body);
+		isInline = Boolean(needInline(lib.inline) || body),
+		createElement = lib.js && lib.defer !== false;
 
-	const attrs = normalizeAttrs({
-		...Object.select(lib, isInline ? [] : ['staticAttrs', 'defer', 'src']),
-		...nonce,
-		...lib.attrs
-	});
+	let
+		attrs,
+		props = '';
+
+	if (isInline) {
+		attrs = normalizeAttrs({
+			staticAttrs: lib.staticAttrs,
+			...defInlineAttrs,
+			...lib.attrs
+		}, createElement);
+
+	} else {
+		const attrsObj = {
+			src: lib.src,
+			staticAttrs: lib.staticAttrs,
+			...defAttrs,
+			...lib.attrs
+		};
+
+		if (attrsObj.async === undefined) {
+			if (createElement) {
+				props += 'el.async = false;';
+
+			} else if (!lib.js && lib.defer !== false) {
+				attrsObj.defer = null;
+			}
+		}
+
+		attrs = normalizeAttrs(attrsObj, createElement);
+	}
 
 	if (isInline && !body) {
 		return (async () => {
@@ -81,7 +124,7 @@ function getScriptDecl(lib, body) {
 			const
 				body = `include('${lib.src}');`;
 
-			if (lib.documentWrite) {
+			if (lib.js) {
 				return `${body}\n`;
 			}
 
@@ -90,14 +133,25 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (body) {
-		if (lib.documentWrite) {
+		if (lib.js) {
 			return `${body}\n`;
 		}
 
 		return `<script ${attrs}>${body}</script>`;
 	}
 
-	if (lib.documentWrite) {
+	if (createElement) {
+		return `
+(function () {
+	var el = document.createElement('script');
+	${props}
+	${attrs}
+	document.head.appendChild(el);
+})();
+`;
+	}
+
+	if (lib.js) {
 		let
 			decl = `document.write(\`<script ${attrs}\` + '><' + '/script>');`;
 
@@ -129,13 +183,18 @@ exports.getStyleDecl = getStyleDecl;
  * // <style>...</style>
  * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', inline: true});
  *
- * // document.write('<link href="..." rel="stylesheet">');
- * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', documentWrite: true});
+ * // (function () {
+ * //   var el = document.createElement('link');
+ * //   el.href = '...';
+ * //   el.setAttribute('rel', 'stylesheet');
+ * //   (document.body || document.head).appendChild(el);
+ * // })();
+ * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', js: true});
  * ```
  */
 function getStyleDecl(lib, body) {
 	if (Object.isString(lib)) {
-		return `<style ${normalizeAttrs(nonce)}>${lib}</style>`;
+		return `<style ${normalizeAttrs(defInlineAttrs)}>${lib}</style>`;
 	}
 
 	body = body || '';
@@ -146,9 +205,12 @@ function getStyleDecl(lib, body) {
 
 	const attrsObj = {
 		staticAttrs: lib.staticAttrs,
-		...nonce,
+		...isInline ? defInlineAttrs : defAttrs,
 		...lib.attrs
 	};
+
+	let
+		decl = '';
 
 	if (!isInline) {
 		Object.assign(attrsObj, {
@@ -156,35 +218,26 @@ function getStyleDecl(lib, body) {
 			rel
 		});
 
-		if (lib.defer) {
+		if (lib.defer !== false) {
 			Object.assign(attrsObj, {
-				rel: 'stylesheet',
 				media: 'print',
-				onload: `this.rel='${rel}'; this.onload=null;`
+				onload: `this.media='${lib.attrs?.media ?? 'all'}'; this.onload=null;`
 			});
+
+			const preloadAttrs = $C.extend(true, {}, lib, {
+				defer: false,
+				attrs: {
+					rel: 'preload',
+					as: 'style'
+				}
+			});
+
+			decl = getStyleDecl(preloadAttrs);
 		}
 	}
 
 	const
-		attrs = normalizeAttrs(attrsObj);
-
-	const wrap = (decl) => {
-		if (lib.documentWrite) {
-			decl = `document.write(\`${decl}\`);`;
-
-			if (isInline) {
-				return decl;
-			}
-
-			if (config.es() === 'ES5') {
-				decl = buble.transform(decl).code;
-			}
-
-			return decl;
-		}
-
-		return decl;
-	};
+		attrs = normalizeAttrs(attrsObj, lib.js);
 
 	if (isInline && !body) {
 		return (async () => {
@@ -192,15 +245,49 @@ function getStyleDecl(lib, body) {
 				await delay(500);
 			}
 
-			return wrap(`<style ${attrs}>include('${lib.src}');</style>`);
+			if (lib.js) {
+				decl += createTag('style', `include('${lib.src}')`);
+
+			} else {
+				decl += `<style ${attrs}>include('${lib.src}');</style>`;
+			}
+
+			return decl;
 		})();
 	}
 
 	if (body) {
-		return wrap(`<style ${attrs}>${body}</style>`);
+		if (lib.js) {
+			decl += createTag('style', body);
+		}
+
+		decl += `<style ${attrs}>${body}</style>`;
+
+	} else if (lib.js) {
+		decl += createTag('link');
+
+	} else {
+		decl += `<link ${attrs}>`;
 	}
 
-	return wrap(`<link ${attrs}>`);
+	return decl;
+
+	function createTag(tag, content) {
+		let decl = `
+(function () {
+	var el = document.createElement('${tag}');
+	${content ? `el.innerHTML = \`${content}\`;` : ''}
+	${attrs}
+	document.head.appendChild(el);
+})();
+`;
+
+		if (config.es() === 'ES5') {
+			decl = buble.transform(decl).code;
+		}
+
+		return decl;
+	}
 }
 
 exports.getLinkDecl = getLinkDecl;
@@ -221,22 +308,21 @@ function getLinkDecl(link) {
 	const attrs = normalizeAttrs({
 		href: link.src,
 		staticAttrs: link.staticAttrs,
-		...nonce,
+		...defAttrs,
 		...link.attrs
-	});
+	}, link.js);
 
-	let
-		decl = `<link ${attrs}>`;
-
-	if (link.documentWrite) {
-		decl = `document.write(\`${decl}\`);`;
-
-		if (config.es() === 'ES5') {
-			decl = buble.transform(decl).code;
-		}
+	if (link.js) {
+		return `
+(function () {
+	var el = document.createElement('link');
+	${attrs}
+	document.head.appendChild(el);
+})();
+`;
 	}
 
-	return decl;
+	return `<link ${attrs}>`;
 }
 
 exports.normalizeAttrs = normalizeAttrs;
@@ -244,16 +330,20 @@ exports.normalizeAttrs = normalizeAttrs;
 /**
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
- * @param {Object} attrs
+ * @param {Object=} [attrs]
+ * @param {boolean=} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
  * @returns {!Array<string>}
  *
  * @example
  * ```js
  * // ['defer', 'type="text/javascript"']
  * normalizeAttrs({defer: true, type: 'text/javascript'});
+ *
+ * // ["el.setAttribute('defer', 'defer');", "el.setAttribute('type', 'text/javascript');"]
+ * normalizeAttrs({defer: true, type: 'text/javascript'}, true);
  * ```
  */
-function normalizeAttrs(attrs) {
+function normalizeAttrs(attrs, dynamic = false) {
 	const
 		normalizedAttrs = [];
 
@@ -273,6 +363,23 @@ function normalizeAttrs(attrs) {
 			return;
 		}
 
+		const
+			needWrap = Object.isString(val);
+
+		if (dynamic) {
+			const normalize = (str) => str.replace(/'/g, "\\'");
+			key = normalize(key);
+
+			if (needWrap) {
+				normalizedAttrs.push(`el.setAttribute('${key}', '${val == null ? key : normalize(val)}');`);
+
+			} else {
+				normalizedAttrs.push(`el.setAttribute('${key}', ${val});`);
+			}
+
+			return;
+		}
+
 		if (key === 'staticAttrs') {
 			normalizedAttrs.push(val);
 			return;
@@ -280,19 +387,18 @@ function normalizeAttrs(attrs) {
 
 		key = Filters.html(key, null, 'attrKey');
 
-		if (Object.isString(val)) {
-			if (key === 'nonce') {
-				normalizedAttrs.push(`${key}="${val}"`);
+		if (needWrap) {
+			val = Filters.html(val, null, 'attrValue');
+			normalizedAttrs.push(`${key}="${val}"`);
 
-			} else {
-				normalizedAttrs.push(`${key}="${Filters.html(val, null, 'attrValue')}"`);
-			}
-
-		} else if (val) {
+		} else if (val == null) {
 			normalizedAttrs.push(key);
+
+		} else {
+			normalizedAttrs.push(`${key}="\${${val}}"`);
 		}
 	});
 
-	normalizedAttrs.toString = () => normalizedAttrs.join(' ');
+	normalizedAttrs.toString = () => normalizedAttrs.join(dynamic ? '\n\t' : ' ');
 	return normalizedAttrs;
 }

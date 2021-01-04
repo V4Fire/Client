@@ -17,7 +17,7 @@ import {
 	queue,
 	add as addToQueue,
 
-	COMPONENTS_PER_TICK,
+	TASKS_PER_TICK,
 	DELAY
 
 } from 'core/render/const';
@@ -69,7 +69,7 @@ function run(): void {
 
 		let
 			time = Date.now(),
-			done = COMPONENTS_PER_TICK;
+			done = TASKS_PER_TICK;
 
 		for (let w = queue.values(), el = w.next(); !el.done; el = w.next()) {
 			const
@@ -78,17 +78,24 @@ function run(): void {
 			if (done <= 0 || Date.now() - time > DELAY) {
 				await daemon.sleep(DELAY);
 				time = Date.now();
-				done = COMPONENTS_PER_TICK;
+				done = TASKS_PER_TICK;
 			}
 
 			const
 				w = val.weight ?? 1;
 
-			if (done - w < 0 && done !== COMPONENTS_PER_TICK) {
+			if (done - w < 0 && done !== TASKS_PER_TICK) {
 				continue;
 			}
 
-			if (Object.isTruly(val.fn())) {
+			let
+				canRender = val.fn();
+
+			if (Object.isPromise(canRender)) {
+				canRender = await canRender;
+			}
+
+			if (Object.isTruly(canRender)) {
 				done -= val.weight ?? 1;
 				queue.delete(val);
 			}
@@ -106,7 +113,7 @@ function run(): void {
 		}
 	};
 
-	if (inProgress || queue.size >= COMPONENTS_PER_TICK) {
+	if (inProgress || queue.size >= TASKS_PER_TICK) {
 		exec().catch(stderr);
 
 	} else {

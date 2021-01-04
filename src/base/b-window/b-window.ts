@@ -57,6 +57,12 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	@prop({type: String, required: false})
 	readonly slotNameProp?: string;
 
+	/**
+	 * If false, the inner content of the component won't be rendered if the component isn't opened
+	 */
+	@prop(Boolean)
+	readonly forceInnerRender: boolean = true;
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,

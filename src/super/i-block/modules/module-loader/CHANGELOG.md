@@ -9,8 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.37 (2020-07-20)
+## v3.0.0-rc.112 (2020-12-18)
 
-#### :house: Internal
+#### :rocket: New Feature
 
-* Fixed ESLint warnings
+* Added `Module.wait`
+
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :rocket: New Feature
+
+* Initial release

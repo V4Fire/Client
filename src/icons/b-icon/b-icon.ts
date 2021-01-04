@@ -44,8 +44,13 @@ export default class bIcon extends iBlock implements iIcon, iSize {
 		]
 	};
 
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
+	/** @see [[iIcon.getIconLink]] */
+	getIconLink(iconId: string): Promise<string> {
 		return iIcon.getIconLink(iconId);
+	}
+
+	/** @see [[iIcon.updateIconHref]] */
+	updateIconHref(el: SVGUseElement, href: string): void {
+		iIcon.updateIconHref(el, href);
 	}
 }

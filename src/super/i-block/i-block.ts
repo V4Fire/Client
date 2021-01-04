@@ -13,8 +13,6 @@
  * @packageDocumentation
  */
 
-import config from 'config';
-
 import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools';
 
@@ -22,6 +20,8 @@ import SyncPromise from 'core/promise/sync';
 import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+
+import config from 'config';
 import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
 
 //#if runtime has core/helpers
@@ -34,13 +34,8 @@ import * as browser from 'core/browser';
 
 import * as presets from 'presets';
 
-//#if runtime has bRouter
-import bRouter from 'base/b-router/b-router';
-//#endif
-
-//#if runtime has iStaticPage
-import iStaticPage from 'super/i-static-page/i-static-page';
-//#endif
+import type bRouter from 'base/b-router/b-router';
+import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import {
 
@@ -83,6 +78,7 @@ import Field from 'super/i-block/modules/field';
 import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
+import ModuleLoader, { Module } from 'super/i-block/modules/module-loader';
 
 import {
 
@@ -149,6 +145,7 @@ export * from 'super/i-block/interface';
 export * from 'super/i-block/modules/block';
 export * from 'super/i-block/modules/field';
 export * from 'super/i-block/modules/state';
+export * from 'super/i-block/modules/module-loader';
 
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/event-emitter';
@@ -321,6 +318,29 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly reloadOnActivation: boolean = false;
 
 	/**
+	 * List of additional dependencies to load.
+	 * These dependencies will be dynamically loaded during the `initLoad` invoking.
+	 *
+	 * @example
+	 * ```js
+	 * {
+	 *   dependencies: [
+	 *     {name: 'b-button', module: () => import('form/b-button')}
+	 *   ]
+	 * }
+	 * ```
+	 */
+	@prop({type: Array, required: false})
+	readonly dependenciesProp: Module[] = [];
+
+	/**
+	 * List of additional dependencies to load
+	 * @see [[iBlock.dependenciesProp]]
+	 */
+	@system((o) => o.sync.link())
+	dependencies!: Module[];
+
+	/**
 	 * If true, then the component is marked as a remote provider.
 	 * It means, that a parent component will wait the loading of the current component.
 	 */
@@ -470,6 +490,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
 	 *
 	 * @example
+	 * ```js
 	 * // Key names are tied with component elements,
 	 * // and values contain a CSS class or list of classes we want to add
 	 *
@@ -477,6 +498,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *   foo: 'bla',
 	 *   bar: ['bla', 'baz']
 	 * }
+	 * ```
 	 */
 	@prop({type: Object, required: false})
 	readonly classes?: Dictionary<CanArray<string>>;
@@ -487,6 +509,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
 	 *
 	 * @example
+	 * ```js
 	 * // Key names are tied with component elements,
 	 * // and values contains a CSS style string, a style object or list of style strings
 	 *
@@ -495,6 +518,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *   bar: {color: 'blue'},
 	 *   baz: ['color: red', 'background: green']
 	 * }
+	 * ```
 	 */
 	@prop({type: Object, required: false})
 	readonly styles?: Styles;
@@ -970,7 +994,7 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly lazy!: Lazy;
 
 	/**
-	 * API for optimization.
+	 * API for optimizations.
 	 * This property provides a bunch of helper methods to optimize some operations.
 	 */
 	@system({
@@ -980,6 +1004,18 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected readonly opt!: Opt;
+
+	/**
+	 * API for the dynamic dependencies.
+	 * This property provides a bunch of methods to load the dynamic dependencies of the component.
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new ModuleLoader(ctx)
+	})
+
+	protected readonly moduleLoader!: ModuleLoader;
 
 	/** @override */
 	@system()
@@ -1928,108 +1964,79 @@ export default abstract class iBlock extends ComponentInterface {
 				this.componentStatus = 'loading';
 			}
 
-			if (this.globalName != null || !this.isFunctional) {
-				if (this.isFunctional) {
-					return this.state.initFromStorage().then(done, doneOnError);
+			const tasks = <Array<Promise<unknown>>>Array.concat(
+				[],
+
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+				this.moduleLoader.load(...this.dependencies) || [],
+
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+				this.state.initFromStorage() || []
+			);
+
+			if (this.isFunctional || this.dontWaitRemoteProviders) {
+				if (tasks.length > 0) {
+					return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
 				}
 
-				const init = async () => {
-					if (this.globalName != null) {
-						await this.state.initFromStorage();
-
-						if (this.dontWaitRemoteProviders) {
-							return done();
-						}
-
-					} else {
-						if (this.dontWaitRemoteProviders) {
-							return done();
-						}
-
-						await this.nextTick(label);
-					}
-
-					const
-						{$children: childComponent} = this;
-
-					let
-						remoteProviders: Nullable<Set<iBlock>> = null;
-
-					if (childComponent) {
-						for (let i = 0; i < childComponent.length; i++) {
-							const
-								el = childComponent[i],
-								st = el.componentStatus;
-
-							if (el.remoteProvider && Object.isTruly(statuses[st])) {
-								if (st === 'ready') {
-									if (opts.recursive) {
-										el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
-
-									} else {
-										continue;
-									}
-								}
-
-								if (remoteProviders == null) {
-									remoteProviders = new Set<iBlock>();
-								}
-
-								remoteProviders.add(el);
-							}
-						}
-					}
-
-					if (remoteProviders != null) {
-						let
-							waitStart = Date.now();
-
-						await $a.wait(() => {
-							for (let o = remoteProviders!.values(), el = o.next(); !el.done; el = o.next()) {
-								const
-									remoteProvider = el.value,
-									remoteProviderStatus = remoteProvider.componentStatus;
-
-								if (
-									remoteProviderStatus === 'ready' ||
-
-									// Provider was dropped or just created
-									statuses[remoteProviderStatus] <= 0
-								) {
-									remoteProviders!.delete(remoteProvider);
-									continue;
-								}
-
-								if ((Date.now() - waitStart) > (10).seconds()) {
-									waitStart = Date.now();
-
-									this.log({
-										logLevel: 'warn',
-										context: 'initLoad:remoteProviders'
-									}, {
-										message: 'The component is waiting too long a remote provider',
-										waitFor: {
-											globalName: remoteProvider.globalName,
-											component: remoteProvider.componentName,
-											dataProvider: Object.get(remoteProvider, 'dataProvider')
-										}
-									});
-								}
-
-								return false;
-							}
-
-							return true;
-						});
-					}
-
-					done();
-				};
-
-				return $a.promise(init, label).catch(doneOnError);
+				done();
+				return;
 			}
 
-			done();
+			return this.nextTick(label).then((() => {
+				const
+					{$children: childComponents} = this;
+
+				if (childComponents) {
+					for (let i = 0; i < childComponents.length; i++) {
+						const
+							component = childComponents[i],
+							status = component.componentStatus;
+
+						if (component.remoteProvider && Object.isTruly(statuses[status])) {
+							if (status === 'ready') {
+								if (opts.recursive) {
+									component.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+
+								} else {
+									continue;
+								}
+							}
+
+							let
+								isLoaded = false;
+
+							tasks.push(Promise.race([
+								component.waitStatus('ready').then(() => isLoaded = true),
+
+								$a.sleep((10).seconds(), {}).then(() => {
+									if (isLoaded) {
+										return;
+									}
+
+									this.log(
+										{
+											logLevel: 'warn',
+											context: 'initLoad:remoteProviders'
+										},
+
+										{
+											message: 'The component is waiting too long a remote provider',
+											waitFor: {
+												globalName: component.globalName,
+												component: component.componentName,
+												dataProvider: Object.get(component, 'dataProvider')
+											}
+										}
+									);
+								})
+							]));
+						}
+					}
+				}
+
+				return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
+			}));
 
 		} catch (err) {
 			doneOnError(err);

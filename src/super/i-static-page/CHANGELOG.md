@@ -6,8 +6,60 @@ Changelog
 > - :rocket:     [New Feature]
 > - :bug:        [Bug Fix]
 > - :memo:       [Documentation]
-> - :house:      [Internal]
+> - :house:      [Internal]****
 > - :nail_care:  [Polish]
+
+## v3.0.0-rc.120 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after refactoring
+
+## v3.0.0-rc.119 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Now all dynamic scripts and links are added to the document head
+
+## v3.0.0-rc.117 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init` files
+
+## v3.0.0-rc.116 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed CSP bugs
+
+## v3.0.0-rc.115 (2020-12-23)
+
+#### :rocket: New Feature
+
+* Improved CSP support. Added the `postProcessor` mode.
+
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :boom: Breaking Change
+
+* Renamed `GLOBAL_NONCE` to `CSP_NONCE`
+* Renamed `documentWrite` -> `js` `modules/ss-helpers`
+
+#### :rocket: New Feature
+
+* Added `crossorigin` attributes to scripts and links
+
+#### :house: Internal
+
+* Prefer `createElement` instead `documentWrite`
+
+## v3.0.0-rc.109 (2020-12-15)
+
+#### :house: Internal
+
+* Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
+They are synchronized with `remoteState` via `sync.link`.
 
 ## v3.0.0-rc.101 (2020-11-18)
 

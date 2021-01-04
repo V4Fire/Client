@@ -22,7 +22,10 @@
 	- block body
 		< .&__window &
 			ref = window |
-			v-if = isFunctional || opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+			v-if =
+				isFunctional ||
+				forceInnerRender ||
+				opt.ifOnce('opened', m.opened === 'true') && delete watchModsStore.opened
 		.
 			- block header
 				< header.&__header &

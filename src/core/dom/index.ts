@@ -13,14 +13,6 @@
 
 import { deprecate } from 'core/functools';
 
-//#if runtime has core/dom/in-view
-export * from 'core/dom/in-view';
-//#endif
-
-//#if runtime has core/dom/resize-observer
-export * from 'core/dom/resize-observer';
-//#endif
-
 /**
  * Wraps the specified function as an event handler with delegation.
  * This function can be used as a decorator or as a simple function.

@@ -8,8 +8,10 @@
 
 /// <reference types="@v4fire/core"/>
 
-declare const GLOBAL_NONCE: unknown;
-declare const MODULE_DEPENDENCIES: string;
+declare const CSP_NONCE_STORE: string;
+
+// eslint-disable-next-line camelcase
+declare let __webpack_nonce__: CanUndef<string>;
 
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
@@ -23,10 +25,10 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 }>;
 
 interface RenderOptions {
-	/** @default `rootSelector` */
+	/** @default `'rootSelector'` */
 	selectorToInject?: string;
 
-	/** @default `#root-component` */
+	/** @default `'#root-component'` */
 	rootSelector?: string;
 }
 

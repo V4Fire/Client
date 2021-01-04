@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :boom: Breaking Change
+
+* Now `initFromStorage` returns `CanPromise`
+
 ## v3.0.0-rc.45 (2020-07-30)
 
 #### :bug: Bug Fix
