@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// eslint-disable-next-line camelcase
-__webpack_nonce__ = CSP_NONCE;
+// eslint-disable-next-line camelcase,no-new-func
+__webpack_nonce__ = Function('return this')()[CSP_NONCE_STORE];

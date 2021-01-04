@@ -123,7 +123,7 @@ export default function createRouter(component: bRouter): Router {
 			let
 				syncMethod = method;
 
-			if (!params) {
+			if (params == null) {
 				location.href = route;
 				return;
 			}
@@ -142,7 +142,7 @@ export default function createRouter(component: bRouter): Router {
 				// Prevent pushing of one route more than one times:
 				// this situation take a place when we reload the browser page
 				if (historyLog.length > 0 && !Object.fastCompare(
-					Object.reject(historyLog[historyLog.length - 1].params, '_id'),
+					Object.reject(historyLog[historyLog.length - 1]?.params, '_id'),
 					Object.reject(params, '_id')
 				)) {
 					syncMethod = 'pushState';
@@ -394,15 +394,20 @@ export default function createRouter(component: bRouter): Router {
 		truncateHistoryLog();
 
 		const
-			{_id} = history.state ?? {_id: undefined};
+			routeId = Object.get(history, 'state._id');
 
-		if (_id != null) {
-			for (let i = 0; i < historyLog.length; i++) {
-				if (historyLog[i].params._id === _id) {
-					historyPos = i;
-					saveHistoryPos();
-					break;
+		if (routeId != null) {
+			try {
+				for (let i = 0; i < historyLog.length; i++) {
+					if (Object.get(historyLog[i], 'params._id') === routeId) {
+						historyPos = i;
+						saveHistoryPos();
+						break;
+					}
 				}
+
+			} catch (err) {
+				stderr(err);
 			}
 		}
 

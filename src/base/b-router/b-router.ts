@@ -1164,7 +1164,7 @@ export default class bRouter extends iData {
 	protected async onLink(e: MouseEvent): Promise<void> {
 		const
 			a = <HTMLElement>e.delegateTarget,
-			href = a.getAttribute('href');
+			href = a.getAttribute('href')?.trim();
 
 		const cantPrevent =
 			!this.interceptLinks ||

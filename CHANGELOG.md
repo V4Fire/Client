@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2020-12-??)
+## v3.0.0-rc.??? (2021-01-??)
 
 #### :boom: Breaking Change
 
@@ -23,12 +23,62 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* `base/b-matryoshka`
+  * Changed render filter to async function with waiting for the idle state
+  * Fixed ESLint warnings
+  * Added `README` and `CHANGELOG`
+
 * Released `base/b-tree`
 
 #### :bug: Bug Fix
 
-* Fixed geometry initialization within the content mode `base/b-bottom-slide`
-* Fixed an issue when the next calling of `initIndex` pushes another one index page `traits/i-history`
+* `base/b-bottom-slide`
+  * Geometry initialization in content height mode fix
+
+* `traits/i-history`
+  * Next calling of `initIndex` pushes another one index page
+
+## v3.0.0-rc.120 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after refactoring `iStaticPage`
+
+## v3.0.0-rc.119 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Now all dynamic scripts and links are added to the document head `iStaticPage`
+
+## v3.0.0-rc.118 (2020-12-24)
+
+#### :bug: Bug Fix
+
+* Trim href-s before go `bRouter`
+
+## v3.0.0-rc.117 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init` files `iStaticPage`
+
+## v3.0.0-rc.116 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed CSP bugs `iStaticPage`
+
+## v3.0.0-rc.115 (2020-12-23)
+
+#### :rocket: New Feature
+
+* Improved CSP support. Added the `postProcessor` mode.
+
+## v3.0.0-rc.114 (2020-12-22)
+
+#### :bug: Bug Fix
+
+* Fixed clearing of the route history `core/router/engines/browser`
 
 ## v3.0.0-rc.113 (2020-12-18)
 
