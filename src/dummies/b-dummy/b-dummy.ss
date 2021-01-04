@@ -8,6 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-input-text'|b as placeholder
+- include 'super/i-data'|b as placeholder
 
-- template index() extends ['i-input-text'].index
+- template index() extends ['i-data'].index
