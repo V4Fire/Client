@@ -20,7 +20,7 @@ export default {
 
 						{
 							id: 'foo_three',
-							children: [{id: 'foo_three_one'}, {id: 'foo_three_two'}, {id: 'foo_three_three'}]
+							children: [{id: 'foo_three_one'}]
 						},
 
 						{id: 'foo_four'},
