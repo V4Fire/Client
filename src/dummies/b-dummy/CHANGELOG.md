@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.?? ()
 
+#### :boom: Breaking Change
+
+* Moved from `base` to `dummies`
+
 #### :rocket: New Feature
 
 * Added support of the default slot
