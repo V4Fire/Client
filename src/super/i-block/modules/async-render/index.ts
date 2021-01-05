@@ -85,12 +85,8 @@ export default class AsyncRender extends Friend {
 			iterable: CanPromise<Iterable<unknown>>;
 
 		const getIterable = (value) => {
-			if (Object.isArray(value)) {
+			if (Object.isArray(value) || Object.isString(value)) {
 				return value;
-			}
-
-			if (Object.isString(value)) {
-				return value.split('');
 			}
 
 			if (Object.isNumber(value)) {
