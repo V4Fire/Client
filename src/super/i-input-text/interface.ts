@@ -69,19 +69,10 @@ export interface CompiledMask {
 // @ts-ignore (extend)
 export interface UnsafeIInputText<CTX extends iInputText = iInputText> extends UnsafeIInput<CTX> {
 	// @ts-ignore (access)
-	maskText: CTX['maskText'];
-
-	// @ts-ignore (access)
-	compiledMask: CTX['compiledMask'];
-
-	// @ts-ignore (access)
 	maskRepeat: CTX['maskRepeat'];
 
 	// @ts-ignore (access)
-	lastMaskSelectionStartIndex: CTX['lastMaskSelectionStartIndex'];
-
-	// @ts-ignore (access)
-	lastMaskSelectionEndIndex: CTX['lastMaskSelectionEndIndex'];
+	compiledMask: CTX['compiledMask'];
 
 	// @ts-ignore (access)
 	applyMaskToText: CTX['applyMaskToText'];
