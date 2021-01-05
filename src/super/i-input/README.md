@@ -1,6 +1,6 @@
 # super/i-input
 
-This module provides a super component for all form components.
+This module provides a superclass for all form components.
 
 ## Synopsis
 
@@ -22,7 +22,7 @@ import iInput, { component } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 @component()
-export default class myInput extends iInput {
+export default class MyInput extends iInput {
   /** @override */
   protected readonly $refs!: {input: HTMLInputElement};
 }
@@ -67,7 +67,7 @@ import iInput, { component } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 @component()
-export default class myInput extends iInput {
+export default class MyInput extends iInput {
   /** @override */
   readonly Value!: string;
 
@@ -172,7 +172,7 @@ The form prop lets you place a component anywhere in the document but have it in
 
 #### attrsProp
 
-Additional attributes are provided to an "internal" (native) input tag.
+Additional attributes are provided to the "internal" (native) input tag.
 
 ```
 < b-input-hidden :attrs = {type: 'checkbox'}
@@ -275,7 +275,7 @@ Supported validators are placed within the static `validators` property.
 This property is an object: the keys represent validator names; the values are specified as functions that take validation parameters and
 return the `ValidatorResult` structure. Any validator can return a promise.
 
-The iInput class provides out of the box only one validator: `required`.
+The `iInput` class provides out of the box only one validator: `required`.
 You free to add new validator to your component.
 
 ```typescript
@@ -284,7 +284,7 @@ import iInput, { component } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 @component()
-export default class myInput extends iInput {
+export default class MyInput extends iInput {
   /** @override */
   readonly Value!: string;
 
@@ -389,17 +389,17 @@ The getter always returns a promise.
 
 #### groupElements
 
-A list of components with the same `name` prop and associated with the same form
+A list of components with the same `name` prop and associated with the same form.
 
 ### Methods
 
 #### clear
 
-Clears the component value to undefined.
+Clears a component value to undefined.
 
 #### reset
 
-Resets the component value to default.
+Resets a component value to default.
 
 #### validate
 
