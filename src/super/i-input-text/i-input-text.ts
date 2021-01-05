@@ -460,7 +460,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		});
 
 		$a.on(input, 'keypress', this.onMaskKeyPress.bind(this), group);
-		$a.on(input, 'keydown', this.onMaskBackspace.bind(this), group);
+		$a.on(input, 'keydown', this.onMaskDelete.bind(this), group);
 		$a.on(input, 'input', this.onMaskInput.bind(this), group);
 		$a.on(input, 'focus', this.onMaskFocus.bind(this), group);
 		$a.on(input, 'blur', this.onMaskBlur.bind(this), group);
@@ -574,11 +574,11 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: the "backspace" button has been pressed on the masked input
+	 * Handler: removing characters from the mask via "backspace/delete" buttons
 	 * @param e
 	 */
-	protected onMaskBackspace(e: KeyboardEvent): void {
-		void mask.onMaskBackspace(this, e);
+	protected onMaskDelete(e: KeyboardEvent): void {
+		void mask.onMaskDelete(this, e);
 	}
 
 	/**

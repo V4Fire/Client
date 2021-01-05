@@ -100,12 +100,12 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 }
 
 /**
- * Handler: the "backspace" button has been pressed on the masked input
+ * Handler: removing characters from the mask via "backspace/delete" buttons
  *
  * @param component
  * @param e
  */
-export async function onMaskBackspace<C extends iInputText>(component: C, e: KeyboardEvent): Promise<void> {
+export async function onMaskDelete<C extends iInputText>(component: C, e: KeyboardEvent): Promise<void> {
 	const codes = {
 		Backspace: true,
 		Delete: true
