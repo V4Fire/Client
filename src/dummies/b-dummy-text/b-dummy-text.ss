@@ -11,3 +11,5 @@
 - include 'super/i-input-text'|b as placeholder
 
 - template index() extends ['i-input-text'].index
+	- block body
+		+= self.nativeInput()
