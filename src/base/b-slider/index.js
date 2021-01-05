@@ -7,4 +7,5 @@
  */
 
 package('b-slider')
-	.extends('i-data');
+	.extends('i-data')
+	.libs('core/component/directives/resize-observer');

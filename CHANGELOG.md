@@ -11,6 +11,231 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.120 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after refactoring `iStaticPage`
+
+## v3.0.0-rc.119 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Now all dynamic scripts and links are added to the document head `iStaticPage`
+
+## v3.0.0-rc.118 (2020-12-24)
+
+#### :bug: Bug Fix
+
+* Trim href-s before go `bRouter`
+
+## v3.0.0-rc.117 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `init` files `iStaticPage`
+
+## v3.0.0-rc.116 (2020-12-23)
+
+#### :bug: Bug Fix
+
+* Fixed CSP bugs `iStaticPage`
+
+## v3.0.0-rc.115 (2020-12-23)
+
+#### :rocket: New Feature
+
+* Improved CSP support. Added the `postProcessor` mode.
+
+## v3.0.0-rc.114 (2020-12-22)
+
+#### :bug: Bug Fix
+
+* Fixed clearing of the route history `core/router/engines/browser`
+
+## v3.0.0-rc.113 (2020-12-18)
+
+#### :rocket: New Feature
+
+* Added `cssMinimizer` `config`
+
+#### :bug: Bug Fix
+
+* Fixed handling of `javascript:` links `bRouter`
+* Downgraded `stylus-loader@3.0.2`
+
+#### :house: Internal
+
+* Replaced `optimize-css-assets-webpack-plugin` -> `css-minimizer-webpack-plugin`
+
+## v3.0.0-rc.112 (2020-12-18)
+
+#### :boom: Breaking Change
+
+* Now icons are loaded asynchronously `traits/i-icon`
+* Now `forceInnerRender` is toggled to `true` by default:
+  * `bBottomSlide`
+  * `bSidebar`
+  * `bWindow`
+
+#### :rocket: New Feature
+
+* Added support of promises `core/component/directive/update-on`
+* Added `snapshot.webpack` `build`
+* Added `Module.wait` `super/i-block/modules/module-loader`
+* Added support of `wait` and `renderKey` `iBlock/loadModules`
+
+#### :bug: Bug Fix
+
+* Fixed `dynamic-component-import` `build`
+* Fixed `updateWindowPosition` with lazy rendering `bBottomSlide`
+* Fixed providing of render groups:
+  * `super/i-block/modules/module-loader`
+  * `core/component/render-function`
+
+## v3.0.0-rc.111 (2020-12-16)
+
+#### :bug: Bug Fix
+
+* Fixed render logic: `bSidebar`, `bWindow`, `bBottomSlide`
+
+## v3.0.0-rc.110 (2020-12-16)
+
+#### :boom: Breaking Change
+
+* Migrated to `webpack@5`
+* Now `initFromStorage` returns `CanPromise` `super/i-block/modules/state`
+* Removed the default export of submodules `core/dom`
+* Removed `StaticRouteMeta.entryPoint` and `StaticRouteMeta.dynamicDependencies` `core/router`
+* Now `localInView` returns a promise `super/i-block/modules/dom`
+
+* `iStaticPage`:
+  * Renamed `GLOBAL_NONCE` to `CSP_NONCE`
+  * Renamed `documentWrite` -> `js` `modules/ss-helpers`
+
+* `config`:
+  * Removed `build.fast`
+  * Removed `webpack.buildCache`
+  * Removed `webpack.cacheDir`
+  * Removed `uglify`
+  * Now `webpack.devtool` is a function
+
+* `build`:
+  * Renamed `entries.webpack` to `graph.webpack`
+  * Renamed `build.webpack` to `helpers.webpack`
+  * Now `output.webpack` exports a function
+
+#### :rocket: New Feature
+
+* `build`:
+  * Added `isLayerCoreDep`
+  * Added support of dynamic imports
+  * Added `entry.webpack`
+  * Added `watch-options.webpack`
+  * Added `other.webpack`
+
+* `config`:
+  * Added `webpack.mode`
+  * Added `webpack.cacheType`
+  * Added `style`
+  * Added `miniCssExtractPlugin`
+  * Added `terser`
+
+* Added `forceInnerRender`:
+  * `bWindow`
+  * `bSidebar`
+  * `bBottomSlide`
+
+* Added API to load the dynamic dependencies `iBlock`
+* Added `StaticRouteMeta.load` `core/router`
+* Added `interceptLinks` `bRouter`
+* Added `crossorigin` attributes to scripts and links `iStaticPage`
+
+#### :house: Internal
+
+* Added prefetch for the dynamic dependencies `iData`
+* Minified libs `eventemitter2` and `requestidlecallback`
+* Added a new dependency `style-loader`
+* Prefer `createElement` instead `documentWrite` `iStaticPage`
+* Updated dependencies:
+  * `upath@2.0.1`
+  * `merge2@1.4.1`
+  * `hasha@5.2.2`
+  * `del@6.0.0`
+  * `arg@5.0.0`
+  * `browserslist@4.15.0`
+
+## v3.0.0-rc.109 (2020-12-15)
+
+#### :bug: Bug Fix
+
+* Added watchers for `session` and `net` events to update appropriate state fields `core/component/state`
+
+#### :house: Internal
+
+* Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
+They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
+
+## v3.0.0-rc.108 (2020-12-14)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using `parseStyle` with string trailing `;` ex. `background-color: #2B9FFF; color: #FFFFFF; border: 1px solid #FFFFFF;`
+
+## v3.0.0-rc.107 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering of a template when using `m` `super/i-block/modules/mods`
+
+## v3.0.0-rc.106 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing observable data from `core/dom/in-view`
+
+## v3.0.0-rc.105 (2020-12-09)
+
+#### :rocket: New Feature
+
+* Added the default value to `iterate/slice` `super/i-block/modules/async-render`
+
+#### :bug: Bug Fix
+
+* `i-block/modules/async-render`:
+  * Fixed a bug when `iterate` takes the rejected promise
+  * Fixed the global blocking of rendering when using a filter that returns a promise
+
+* Fixed a bug with redundant `v-for` invokes:
+  * `i-block/modules/async-render`
+  * `core/component/render-function`
+
+## v3.0.0-rc.104 (2020-12-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with repetitive calls of `iLockPageScroll.lock`
+
+#### :house: Internal
+
+* Added tests `traits/i-lock-page-scroll`
+
+## v3.0.0-rc.103 (2020-11-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with slows down while scrolling on ios `base/b-skeleton`
+
+#### :memo: Documentation
+
+* Added `README.md`, `CHANGELOG.md` for `base/b-skeleton`
+
+## v3.0.0-rc.102 (2020-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with layout shifts after `reInit` `base/b-virtual-scroll`
+
 ## v3.0.0-rc.101 (2020-11-18)
 
 #### :bug: Bug Fix

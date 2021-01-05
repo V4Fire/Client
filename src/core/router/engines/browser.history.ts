@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import ModuleDependencies from 'core/dependencies';
 import { deprecate } from 'core/functools/deprecation';
 
 import { session } from 'core/kv-storage';
@@ -124,7 +123,7 @@ export default function createRouter(component: bRouter): Router {
 			let
 				syncMethod = method;
 
-			if (!params) {
+			if (params == null) {
 				location.href = route;
 				return;
 			}
@@ -143,7 +142,7 @@ export default function createRouter(component: bRouter): Router {
 				// Prevent pushing of one route more than one times:
 				// this situation take a place when we reload the browser page
 				if (historyLog.length > 0 && !Object.fastCompare(
-					Object.reject(historyLog[historyLog.length - 1].params, '_id'),
+					Object.reject(historyLog[historyLog.length - 1]?.params, '_id'),
 					Object.reject(params, '_id')
 				)) {
 					syncMethod = 'pushState';
@@ -196,41 +195,23 @@ export default function createRouter(component: bRouter): Router {
 
 			if (location.href !== route) {
 				params.url = route;
+
 				// "params" can contain proxy objects,
-				// to avoid DataCloneError we should clone it by using Object.fastClone
-				history[method](Object.fastClone(params), params.name, route);
+				// to avoid DataCloneError we should clone it by using Object.mixin({deep: true})
+				const filteredParams = Object.mixin({deep: true, filter: (el) => !Object.isFunction(el)}, {}, params);
+				history[method](filteredParams, params.name, route);
 			}
 
 			const
-				{entryPoint} = params.meta;
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				{load} = params.meta;
 
-			const
-				depsAlreadyLoaded = entryPoint != null ? Object.isArray(ModuleDependencies.get(entryPoint)) : false,
-				dontLoadDependencies = entryPoint == null || depsAlreadyLoaded || params.meta.dynamicDependencies === false;
-
-			if (dontLoadDependencies) {
+			if (load == null) {
 				resolve();
 				return;
 			}
 
-			let
-				i = 0;
-
-			ModuleDependencies.emitter.on(`component.${entryPoint}.loading`, $a.proxy(
-				({packages}) => {
-					component.field.set('status', ++i * 100 / packages);
-
-					if (i === packages) {
-						resolve();
-					}
-				},
-
-				{
-					...engineGroup,
-					label: $$.loadEntryPoint,
-					single: false
-				}
-			));
+			load().then(() => resolve(), stderr);
 		});
 	}
 
@@ -413,15 +394,20 @@ export default function createRouter(component: bRouter): Router {
 		truncateHistoryLog();
 
 		const
-			{_id} = history.state ?? {_id: undefined};
+			routeId = Object.get(history, 'state._id');
 
-		if (_id != null) {
-			for (let i = 0; i < historyLog.length; i++) {
-				if (historyLog[i].params._id === _id) {
-					historyPos = i;
-					saveHistoryPos();
-					break;
+		if (routeId != null) {
+			try {
+				for (let i = 0; i < historyLog.length; i++) {
+					if (Object.get(historyLog[i], 'params._id') === routeId) {
+						historyPos = i;
+						saveHistoryPos();
+						break;
+					}
 				}
+
+			} catch (err) {
+				stderr(err);
 			}
 		}
 

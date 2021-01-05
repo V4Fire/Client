@@ -38,6 +38,5 @@ const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, 
  * @type {{moduleExtensions: [string], alias: !Object}}
  */
 module.exports = {
-	moduleExtensions: ['-loader'],
 	alias
 };

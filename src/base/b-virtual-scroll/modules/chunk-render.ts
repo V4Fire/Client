@@ -110,14 +110,15 @@ export default class ChunkRender extends Friend {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
+		this.refsUpdateMap = new Map();
 
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
-		this.setLoadersVisibility(true);
-		this.setRefVisibility('retry', false);
-		this.setRefVisibility('done', false);
-		this.setRefVisibility('empty', false);
-		this.setRefVisibility('renderNext', false);
+		this.setLoadersVisibility(true, true);
+		this.setRefVisibility('retry', false, true);
+		this.setRefVisibility('done', false, true);
+		this.setRefVisibility('empty', false, true);
+		this.setRefVisibility('renderNext', false, true);
 
 		this.initEventHandlers();
 	}
@@ -184,12 +185,18 @@ export default class ChunkRender extends Friend {
 	 *
 	 * @param ref
 	 * @param show
+	 * @param [immediate] - if settled as `true` will immediately update a DOM tree
 	 */
-	setRefVisibility(ref: keyof bVirtualScroll['$refs'], show: boolean): void {
+	setRefVisibility(ref: keyof bVirtualScroll['$refs'], show: boolean, immediate: boolean = false): void {
 		const
 			refEl = this.refs[ref];
 
 		if (!refEl) {
+			return;
+		}
+
+		if (immediate) {
+			refEl.style.display = show ? '' : 'none';
 			return;
 		}
 
@@ -200,10 +207,11 @@ export default class ChunkRender extends Friend {
 	/**
 	 * Hides or shows refs of the loader and tombstones
 	 * @param show
+	 * @param [immediate]
 	 */
-	setLoadersVisibility(show: boolean): void {
-		this.setRefVisibility('tombstones', show);
-		this.setRefVisibility('loader', show);
+	setLoadersVisibility(show: boolean, immediate: boolean = false): void {
+		this.setRefVisibility('tombstones', show, immediate);
+		this.setRefVisibility('loader', show, immediate);
 	}
 
 	/**

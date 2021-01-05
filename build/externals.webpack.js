@@ -13,7 +13,7 @@ const
 	config = require('config');
 
 const
-	{RUNTIME} = include('build/entries.webpack');
+	{RUNTIME} = include('build/graph.webpack');
 
 const
 	externalList = [],

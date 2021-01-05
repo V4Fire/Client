@@ -20,7 +20,8 @@
 			< .&__back
 			< .&__wrapper v-if = &
 				isFunctional ||
-				opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+				forceInnerRender ||
+				opt.ifOnce('opened', m.opened === 'true') && delete watchModsStore.opened
 			.
 
 				< section.&__window ref = window

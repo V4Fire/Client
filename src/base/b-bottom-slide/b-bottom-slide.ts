@@ -128,6 +128,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly scrollToTopOnClose: boolean = true;
 
 	/**
+	 * If false, the inner content of the component won't be rendered if the component isn't opened
+	 */
+	@prop(Boolean)
+	readonly forceInnerRender: boolean = true;
+
+	/**
 	 * List of possible component positions relative to the screen height (in percentages)
 	 */
 	@p({cache: false})
@@ -515,9 +521,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch('heightMode')
 	@hook('mounted')
 	@wait('ready')
-	initDOMObservers(): CanPromise<void> {
+	async initDOMObservers(): Promise<void> {
+		const
+			content = await this.waitRef<HTMLElement>('content', {label: $$.initDOMObservers});
+
 		iObserveDOM.observe(this, {
-			node: this.$refs.content,
+			node: content,
 			childList: true,
 			subtree: true
 		});
@@ -545,9 +554,16 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@hook('mounted')
 	@wait('ready')
-	protected initGeometry(): CanPromise<void> {
+	protected async initGeometry(): Promise<void> {
+		const [header, content, view, window] = await Promise.all([
+			this.waitRef<HTMLElement>('header', {label: $$.initGeometry}),
+			this.waitRef<HTMLElement>('content'),
+			this.waitRef<HTMLElement>('view'),
+			this.waitRef<HTMLElement>('window')
+		]);
+
 		const
-			{maxVisiblePercent, $refs: {header, content, view, window}} = this;
+			{maxVisiblePercent} = this;
 
 		const
 			currentPage = this.history.current?.content;
@@ -620,8 +636,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * Updates a position of the window node
 	 */
 	@wait('ready')
-	protected updateWindowPosition(): CanPromise<void> {
-		this.$refs.window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
+	protected async updateWindowPosition(): Promise<void> {
+		const window = await this.waitRef<HTMLElement>('window');
+		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
 	}
 
 	/**
@@ -810,7 +827,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	protected async recalculateState(): Promise<void> {
 		try {
 			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
-			void this.initGeometry();
+			await this.initGeometry();
 			this.bakeSteps();
 			this.stickToStep();
 
@@ -841,11 +858,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch(':changeStep')
 	@hook('mounted')
 	@wait('ready')
-	protected onStepChange(): CanPromise<void> {
-		const {
-			window: win,
-			view
-		} = this.$refs;
+	protected async onStepChange(): Promise<void> {
+		const [win, view] = await Promise.all([
+			this.waitRef<HTMLElement>('window', {label: $$.onStepChange}),
+			this.waitRef<HTMLElement>('view')
+		]);
 
 		this.isStepTransitionInProgress = true;
 

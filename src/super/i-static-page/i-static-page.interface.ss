@@ -73,7 +73,7 @@
 			? rootAttrs['data-root-component'] = self.name()
 			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
-		? await h.generatePageInitJS(self.name(), { &
+		? await h.generateInitJS(self.name(), { &
 			deps,
 			ownDeps,
 
@@ -122,11 +122,11 @@
 							{title}
 
 					- block links
-						+= await h.loadLinks(deps.links, {assets})
+						+= await h.loadLinks(deps.links, {assets, wrap: true})
 
 					- block headScripts
 						+= h.getVarsDecl({wrap: true})
-						+= await h.loadLibs(deps.headScripts, {assets})
+						+= await h.loadLibs(deps.headScripts, {assets, wrap: true})
 
 			< body
 				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
@@ -147,15 +147,15 @@
 						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
 
 					- block styles
-						+= await h.loadStyles(deps.styles, {assets})
+						+= await h.loadStyles(deps.styles, {assets, wrap: true})
 						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
 					- block scripts
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
-
-						+= await h.loadLibs(deps.scripts, {assets})
-						+= h.getInitLibDecl({wrap: true})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: true})
 
 						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
+						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
+
 						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
 						+= h.getScriptDeclByName('webpack.runtime', {assets, wrap: true})

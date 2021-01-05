@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.112 (2020-12-18)
+
+#### :bug: Bug Fix
+
+* Fixed providing of render groups
+
+## v3.0.0-rc.105 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with redundant `v-for` invokes
+
 ## v3.0.0-rc.99 (2020-11-17)
 
 #### :bug: Bug Fix

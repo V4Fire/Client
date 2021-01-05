@@ -7,10 +7,10 @@
  */
 
 const
-	config = require('config'),
-	globals = include('build/globals.webpack');
+	config = require('config');
 
 const
+	{csp} = config,
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getVarsDecl = getVarsDecl;
@@ -24,9 +24,9 @@ exports.getVarsDecl = getVarsDecl;
  */
 function getVarsDecl({wrap} = {}) {
 	const decl = `
-window[${globals.MODULE_DEPENDENCIES}] = {fileCache: Object.create(null)};
-
-var GLOBAL_NONCE = ${JSON.stringify(config.csp.nonce() || '')} || undefined;
+Object.defineProperty(window, '${csp.nonceStore}', {
+	value: ${csp.postProcessor ? JSON.stringify(csp.nonce()) : csp.nonce()}
+});
 
 var PATH = Object.create(null);
 
@@ -41,39 +41,7 @@ try {
 			throw new ReferenceError('A resource by the path "' + prop + '" is not defined');
 		}
 	});
-} catch(_) {}`;
-
-	return wrap ? getScriptDecl(decl) : decl;
-}
-
-exports.getInitLibDecl = getInitLibDecl;
-
-/**
- * Returns declaration of a library initializer of the application.
- * You need to put this declaration within a script tag or use the "wrap" option.
- *
- * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
- * @returns {string}
- */
-function getInitLibDecl({wrap} = {}) {
-	const
-		runtime = config.runtime();
-
-	let
-		decl = '';
-
-	switch (runtime.engine) {
-		case 'vue':
-			decl += `
-if (typeof Vue !== 'undefined') {
-	Vue.default = Vue;
-}`;
-
-			break;
-
-		default:
-			// Loopback
-	}
+} catch (_) {}`;
 
 	return wrap ? getScriptDecl(decl) : decl;
 }

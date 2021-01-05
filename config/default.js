@@ -29,6 +29,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * You can use this parameter when you develop some particular chunk and don't want to build the whole application,
 		 * because it may slow down the build time.
 		 *
+		 * @cli entries
+		 * @env ENTRIES
+		 *
 		 * @type {string}
 		 *
 		 * @example
@@ -41,31 +44,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			env: true,
 			coerce: (v) => v ? v.split(',') : []
 		}),
-
-		/**
-		 * Enables the fast kind of application building.
-		 *
-		 * Mind, this type of build is slower on re-building, i.e.,
-		 * it doesn't meet with the development needs when you launch the development server and
-		 * incrementally rebuild the modified chunks, but it totally matches the situation when you need
-		 * to improve the speed of the release build.
-		 *
-		 * @cli fast-build
-		 * @env FAST_BUILD
-		 *
-		 * @type {boolean}
-		 * @default `isProd`
-		 *
-		 * @returns {boolean}
-		 */
-		fast() {
-			const v = o('fast-build', {
-				env: true,
-				type: 'boolean'
-			});
-
-			return v != null ? v : isProd;
-		},
 
 		/**
 		 * Every client build starts with calculating the project graph.
@@ -239,7 +217,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of the used MVVM library, like vue or react
+	 * Name of the used MVVM library, like Vue or React
 	 *
 	 * @cli engine
 	 * @env ENGINE
@@ -258,97 +236,63 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of the interface theme by default
-	 *
-	 * @cli t
-	 * @env THEME
-	 */
-	theme() {
-		return o('theme', {
-			short: 't',
-			env: true
-		});
-	},
-
-	/**
-	 * Array of themes to passing from design system to the runtime
-	 * or true, if needed to pass all themes from design system
-	 *
-	 * @cli include-themes
-	 * @env INCLUDE_THEMES
-	 *
-	 * @type {string[]|boolean}
-	 */
-	includeThemes() {
-		return o('include-themes', {
-			env: true
-		});
-	},
-
-	/** @override */
-	runtime() {
-		return {
-			...super.runtime(),
-
-			debug: false,
-			engine: this.engine(),
-			noGlobals: false,
-			svgSprite: true,
-
-			theme: this.theme(),
-			includeThemes: this.includeThemes(),
-
-			'ds/diff': false,
-			'ds/include-vars': false,
-
-			blockNames: false,
-			passDesignSystem: false,
-
-			'core/browser': true,
-			'core/session': true,
-			'core/dom/in-view': true,
-			'core/dom/resize-observer': true,
-
-			'prelude/dependencies': true,
-			'prelude/test-env': !isProd,
-			'component/async-render': true,
-			'component/daemons': true,
-
-			'directives/event': true,
-			'directives/resize': true,
-			'directives/image': true,
-			'directives/in-view': true,
-			'directives/resize-observer': true,
-			'directives/update-on': true,
-
-			iData: true,
-			bRouter: true,
-
-			'iInput/validators': true,
-			'bInput/mask': true,
-			'bInput/validators': true
-		};
-	},
-
-	/**
-	 * Webpack configuration
+	 * WebPack configuration
 	 */
 	webpack: {
 		/**
-		 * WebPack ".devtool" option
+		 * Value of `mode`
+		 *
+		 * @cli mode
+		 * @env MODE
+		 *
+		 * @returns {string}
 		 */
-		devtool: false,
+		mode() {
+			return o('mode', {
+				env: true,
+				default: IS_PROD ? 'production' : 'development'
+			});
+		},
+
+		/**
+		 * Value of `cache.type`
+		 *
+		 * @cli cache-type
+		 * @env CACHE_TYPE
+		 *
+		 * @returns {string}
+		 */
+		cacheType() {
+			return o('cache-type', {
+				env: true,
+				default: 'memory'
+			});
+		},
+
+		/**
+		 * Value of `devtool`
+		 *
+		 * @cli devtool
+		 * @env DEVTOOL
+		 *
+		 * @returns {?string}
+		 */
+		devtool() {
+			return o('devtool', {
+				env: true
+			});
+		},
 
 		/**
 		 * Returns the default hash algorithm to use
 		 * @returns {?string}
 		 */
 		hashFunction() {
-			return !isProd || this.fatHTML() ? undefined : this.config.build.hashAlg;
+			return this.mode() !== 'production' || this.fatHTML() ? undefined : this.config.build.hashAlg;
 		},
 
 		/**
-		 * Returns true if all static from the build have to inline within HTML files
+		 * Returns true if all assets from the build have to inline within HTML files
 		 * @returns {boolean}
 		 */
 		fatHTML() {
@@ -356,15 +300,52 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the maximum size of a file in bytes that can be inline as base64
-		 * @returns {(number|undefined)}
+		 * Some webpack options to optimize build
 		 */
-		dataURILimit() {
-			return this.fatHTML() ? undefined : 2048;
+		optimize: {
+			/**
+			 * The minimum size of a chunk file in bytes that can be separated into a single file
+			 *
+			 * @cli optimize-min-chunk-size
+			 * @env OPTIMIZE_MIN_CHUNK_SIZE
+			 *
+			 * @returns {(number|undefined)}
+			 */
+			minChunkSize: o('optimize-min-chunk-size', {
+				env: true,
+				default: 10 * 1024
+			}),
+
+			/**
+			 * Returns parameters for `optimization.splitChunks`
+			 * @returns {!Object}
+			 */
+			splitChunks() {
+				return {};
+			},
+
+			/**
+			 * Returns the maximum size of a file in bytes that can be inline as base64
+			 *
+			 * @cli optimize-data-uri-limit
+			 * @env OPTIMIZE_DATA_URI_LIMIT
+			 *
+			 * @returns {(number|undefined)}
+			 */
+			dataURILimit() {
+				if (require('config').webpack.fatHTML()) {
+					return undefined;
+				}
+
+				return o('optimize-data-uri-limit', {
+					env: true,
+					default: 2 * 1024
+				});
+			}
 		},
 
 		/**
-		 * WebPack ".externals" option
+		 * Value of `externals`
 		 */
 		externals: {
 			vue: 'Vue',
@@ -373,32 +354,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Enables hard caching of WebPack build: it helps speed up "cold" build time
-		 *
-		 * @cli build-cache
-		 * @env BUILD_CACHE
-		 *
-		 * @returns {boolean}
-		 */
-		buildCache() {
-			return o('build-cache', {
-				default: false,
-				type: 'boolean'
-			});
-		},
-
-		/**
-		 * Returns a path to the directory to store application build cache
-		 *
-		 * @see buildCache
-		 * @returns {string}
-		 */
-		cacheDir() {
-			return '[confighash]';
-		},
-
-		/**
-		 * Returns the value for WebPack "output.publicPath".
+		 * Returns a value for `output.publicPath`.
 		 * The method can take arguments that will be concatenated to the base value.
 		 *
 		 * @cli public-path
@@ -455,7 +411,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the value for WebPack "output.filename".
+		 * Returns a value for `output.filename`.
 		 * The method can take an object with values to expand macros.
 		 *
 		 * @param params
@@ -469,7 +425,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		output(params) {
 			const
-				res = !isProd || this.fatHTML() ? '[name]' : '[hash]_[name]';
+				res = this.mode() !== 'production' || this.fatHTML() ? '[name]' : '[hash]_[name]';
 
 			if (params) {
 				return res.replace(/_?\[(.*?)]/g, (str, key) => {
@@ -485,7 +441,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the value for WebPack DllPlugin "output.filename".
+		 * Returns a value for `DllPlugin.output.filename`.
 		 * The method can take an object with values to expand macros.
 		 *
 		 * @param params
@@ -502,7 +458,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the value for WebPack FileLoader "output.filename".
+		 * Returns a value for `FileLoader.output.filename`.
 		 * The method can take an object with values to expand macros.
 		 *
 		 * @param params
@@ -518,7 +474,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				root = 'assets';
 
-			if (!isProd || this.fatHTML()) {
+			if (this.mode() !== 'production' || this.fatHTML()) {
 				return this.output({
 					...params,
 					name: `${root}/[path][name].[ext]`,
@@ -534,7 +490,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns path to a generated assets.json within the output directory.
+		 * Returns path to the generated assets.json within the output directory.
 		 * This file contains a JSON object with links to all JS/CSS files that are declared within "src/entries".
 		 * The declaration solves the problem of connection between original files and compiled files:
 		 * generated files may have different names (because of hash or other stuff) with original files.
@@ -543,13 +499,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * ```
 		 * {
-		 *   "index.dependencies": {
-		 *     "path": "index.dependencies.js",
-		 *     "publicPath": "index.dependencies.js"
-		 *  },
-		 *  "index$style": {
-		 *     "path": "index$style.css",
-		 *     "publicPath": "index$style.css"
+		 *  "index_style": {
+		 *     "path": "index_style.css",
+		 *     "publicPath": "index_style.css"
 		 *  },
 		 *  "index_tpl": {
 		 *     "path": "index_tpl.js",
@@ -565,7 +517,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns path to a generated assets.js within the output directory.
+		 * Returns a path to the generated assets.js within the output directory.
 		 * This file contains the modified version of "assets.json" to load as a JS script.
 		 *
 		 * @returns {string}
@@ -580,6 +532,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	csp: {
 		/**
+		 * If true, the nonce attributes will be post-processed by a proxy, like Nginx
+		 * (this mode will insert nonce attributes into inline tags too).
+		 *
+		 * If false, nonce attributes will be inserted from the JS runtime.
+		 * Note, this mode doesn't support nonce attributes for inline tags.
+		 */
+		postProcessor: true,
+
+		/**
+		 * Name of the generated runtime global variable where the nonce value is stored
+		 */
+		nonceStore: Math.random()
+			.toString(16)
+			.slice(2, 9)
+			.replace(/[a-z]/g, (s) => Math.random() > 0.5 ? s.toUpperCase() : s),
+
+		/**
 		 * Returns value of the "nonce" hash
 		 * @returns {?string}
 		 */
@@ -589,7 +558,200 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for a favicon generator
+	 * Returns parameters for TypeScript:
+	 *
+	 * 1. server - to compile node.js modules
+	 * 2. client - to compile client modules
+	 * 3. worker - to compile web-worker modules
+	 *
+	 * @override
+	 * @returns {{server: !Object, client: !Object, worker: !Object}}
+	 */
+	typescript() {
+		const
+			server = super.typescript();
+
+		const client = this.extend({}, server, {
+			compilerOptions: {
+				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
+			}
+		});
+
+		return {
+			client,
+			server,
+			worker: client
+		};
+	},
+
+	/**
+	 * Returns parameters for TerserPlugin
+	 * @returns {{}}
+	 */
+	terser() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for worker-loader
+	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
+	 */
+	worker() {
+		return {
+			worker: {},
+
+			serviceWorker: {
+				workerType: 'ServiceWorker'
+			},
+
+			sharedWorker: {
+				workerType: 'SharedWorker'
+			}
+		};
+	},
+
+	/**
+	 * Returns parameters for stylus-loader
+	 * @returns {!Object}
+	 */
+	stylus() {
+		return {
+			webpackImporter: false
+		};
+	},
+
+	/**
+	 * Returns parameters for css-loader
+	 * @returns {!Object}
+	 */
+	css() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for CssMinimizerPlugin
+	 * @returns {!Object}
+	 */
+	cssMinimizer() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for MiniCssExtractPlugin
+	 * @returns {!Object}
+	 */
+	miniCssExtractPlugin() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for postcss-loader
+	 * @returns {!Object}
+	 */
+	postcss() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for postcss/autoprefixer
+	 * @returns {!Object}
+	 */
+	autoprefixer() {
+		return {remove: false};
+	},
+
+	/**
+	 * Returns parameters for style-loader
+	 * @returns {!Object}
+	 */
+	style() {
+		return {
+			injectType: 'styleTag'
+		};
+	},
+
+	/**
+	 * Name of the interface theme by default
+	 *
+	 * @cli t
+	 * @env THEME
+	 */
+	theme() {
+		return o('theme', {
+			short: 't',
+			env: true
+		});
+	},
+
+	/**
+	 * Array of themes to passing from design system to the runtime
+	 * or true, if needed to pass all themes from design system
+	 *
+	 * @cli include-themes
+	 * @env INCLUDE_THEMES
+	 *
+	 * @type {string[]|boolean}
+	 */
+	includeThemes() {
+		return o('include-themes', {
+			env: true
+		});
+	},
+
+	/**
+	 * Returns parameters for snakeskin-loader:
+	 *
+	 * 1. server - for .ess files
+	 * 2. client - for .ss files
+	 *
+	 * @returns {{server: !Object, client: !Object}}
+	 */
+	snakeskin() {
+		const
+			snakeskinVars = include('build/snakeskin/vars');
+
+		return {
+			client: this.extend(super.snakeskin(), {
+				adapter: 'ss2vue',
+				adapterOptions: {transpiler: true},
+				tagFilter: 'tagFilter',
+				tagNameFilter: 'tagNameFilter',
+				bemFilter: 'bemFilter',
+				vars: snakeskinVars
+			}),
+
+			server: this.extend(super.snakeskin(), {
+				vars: {
+					...snakeskinVars,
+					publicPath: this.webpack.publicPath
+				}
+			})
+		};
+	},
+
+	/**
+	 * Returns parameters for html-loader
+	 * @returns {!Object}
+	 */
+	html() {
+		const
+			isProd = this.webpack.mode() === 'production';
+
+		return {
+			attributes: false,
+
+			minimize: {
+				useShortDoctype: true,
+				conservativeCollapse: true,
+				removeAttributeQuotes: true,
+				removeComments: isProd,
+				collapseWhitespace: isProd
+			}
+		};
+	},
+
+	/**
+	 * Returns parameters for a favicon generator
 	 * @returns {!Object}
 	 */
 	favicons() {
@@ -605,7 +767,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for image-webpack-loader
+	 * Returns parameters for image-webpack-loader
 	 * @returns {!Object}
 	 */
 	imageOpts() {
@@ -621,45 +783,51 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Config for html-loader
+	 * Returns parameters for Typograf
 	 * @returns {!Object}
 	 */
-	html() {
+	typograf() {
 		return {
-			attributes: false,
-
-			minimize: {
-				useShortDoctype: true,
-				conservativeCollapse: true,
-				removeAttributeQuotes: true,
-				removeComments: isProd,
-				collapseWhitespace: isProd
-			}
+			locale: this.locale
 		};
 	},
 
-	/**
-	 * Config for postcss-loader
-	 * @returns {!Object}
-	 */
-	postcss() {
-		return {};
-	},
+	/** @override */
+	runtime() {
+		return {
+			...super.runtime(),
 
-	/**
-	 * Config for postcss/autoprefixer
-	 * @returns {!Object}
-	 */
-	autoprefixer() {
-		return {remove: false};
-	},
+			debug: false,
+			engine: this.engine(),
+			noGlobals: false,
+			svgSprite: true,
 
-	/**
-	 * Config for Webpack TerserPlugin
-	 * @returns {{}}
-	 */
-	uglify() {
-		return {};
+			'ds-diff': false,
+			'ds/include-vars': false,
+
+			blockNames: false,
+			passDesignSystem: false,
+
+			'core/browser': true,
+			'core/session': true,
+
+			'prelude/test-env': !isProd,
+			'component/async-render': true,
+			'component/daemons': true,
+
+			'directives/event': true,
+			'directives/image': true,
+			'directives/in-view': true,
+			'directives/resize-observer': true,
+			'directives/update-on': true,
+
+			iData: true,
+			bRouter: true,
+
+			'iInput/validators': true,
+			'bInput/mask': false,
+			'bInput/validators': true
+		};
 	},
 
 	/** @override */
@@ -693,102 +861,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					demo
 				}
 			}
-		};
-	},
-
-	/**
-	 * Config for snakeskin-loader:
-	 *
-	 * 1. server - for .ess files
-	 * 2. client - for .ss files
-	 *
-	 * @returns {{server: !Object, client: !Object}}
-	 */
-	snakeskin() {
-		const
-			snakeskinVars = include('build/snakeskin/vars');
-
-		return {
-			client: this.extend(super.snakeskin(), {
-				adapter: 'ss2vue',
-				adapterOptions: {transpiler: true},
-				tagFilter: 'tagFilter',
-				tagNameFilter: 'tagNameFilter',
-				bemFilter: 'bemFilter',
-				vars: snakeskinVars
-			}),
-
-			server: this.extend(super.snakeskin(), {
-				vars: {
-					...snakeskinVars,
-					publicPath: this.webpack.publicPath
-				}
-			})
-		};
-	},
-
-	/**
-	 * Config for typescript-loader
-	 *
-	 * 1. server - to compile node.js modules
-	 * 2. client - to compile client modules
-	 * 3. worker - to compile web-worker modules
-	 *
-	 * @returns {{server: !Object, client: !Object, worker: !Object}}
-	 */
-	typescript() {
-		return {
-			client: super.typescript(),
-			worker: super.typescript(),
-			server: super.typescript()
-		};
-	},
-
-	/**
-	 * Config for worker-loader
-	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
-	 */
-	worker() {
-		return {
-			worker: {},
-
-			serviceWorker: {
-				workerType: 'ServiceWorker'
-			},
-
-			sharedWorker: {
-				workerType: 'SharedWorker'
-			}
-		};
-	},
-
-	/**
-	 * Config for css-loader
-	 * @returns {!Object}
-	 */
-	css() {
-		return {
-			minimize: Boolean(isProd || Number(process.env.MINIFY_CSS))
-		};
-	},
-
-	/**
-	 * Config for stylus-loader
-	 * @returns {!Object}
-	 */
-	stylus() {
-		return {
-			preferPathResolver: 'webpack'
-		};
-	},
-
-	/**
-	 * Config for the Typograf library
-	 * @returns {!Object}
-	 */
-	typograf() {
-		return {
-			locale: this.locale
 		};
 	}
 });

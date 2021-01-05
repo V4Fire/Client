@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.107 (2020-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed re-rendering of a template when using `m`
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :house: Internal

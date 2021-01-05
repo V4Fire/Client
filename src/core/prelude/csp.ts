@@ -6,9 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:core/dependencies/README.md]]
- * @packageDocumentation
- */
-
-export { default } from 'core/prelude/dependencies';
+// eslint-disable-next-line camelcase,no-new-func
+__webpack_nonce__ = Function('return this')()[CSP_NONCE_STORE];

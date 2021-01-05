@@ -14,13 +14,13 @@ const
 
 const
 	path = require('upath'),
-	build = include('build/entries.webpack');
+	build = include('build/graph.webpack');
 
 const
 	{webpack} = config,
 	{resolve} = require('@pzlr/build-core'),
 	{isExternalDep} = include('build/const'),
-	{output, assetsOutput, inherit, hash, hashRgxp} = include('build/build.webpack');
+	{output, assetsOutput, inherit, hash, hashRgxp} = include('build/helpers.webpack');
 
 const
 	snakeskin = config.snakeskin(),
@@ -31,7 +31,7 @@ const
 const urlLoaderOpts = {
 	name: path.basename(assetsOutput),
 	outputPath: path.dirname(assetsOutput),
-	limit: webpack.dataURILimit(),
+	limit: webpack.optimize.dataURILimit(),
 	encoding: true,
 	esModule: false
 };
@@ -54,6 +54,9 @@ const
  */
 module.exports = async function module({plugins}) {
 	const
+		isProd = webpack.mode() === 'production';
+
+	const
 		graph = await build,
 		loaders = {rules: new Map()};
 
@@ -62,22 +65,24 @@ module.exports = async function module({plugins}) {
 
 	const tsHelperLoaders = [
 		{
-			loader: 'symbol-generator',
+			loader: 'symbol-generator-loader',
 			options: {
 				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 			}
 		},
 
-		'typograf',
-		'prelude',
+		'typograf-loader',
+		'prelude-loader',
 
 		{
-			loader: 'monic',
+			loader: 'monic-loader',
 			options: inherit(monic.typescript, {
 				replacers: [
+					include('build/replacers/attach-component-dependencies'),
 					include('build/replacers/require-context'),
 					include('build/replacers/super-import'),
 					include('build/replacers/ts-import'),
+					include('build/replacers/dynamic-component-import'),
 					include('build/replacers/require-tests')
 				]
 			})
@@ -89,7 +94,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.client
 			},
 
@@ -102,12 +107,12 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.worker
 			},
 
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.worker
 			},
 
@@ -120,12 +125,12 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.serviceWorker
 			},
 
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.worker
 			},
 
@@ -138,12 +143,12 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.sharedWorker
 			},
 
 			{
-				loader: 'ts',
+				loader: 'ts-loader',
 				options: typescript.worker
 			},
 
@@ -152,14 +157,15 @@ module.exports = async function module({plugins}) {
 	});
 
 	const jsHelperLoaders = [
-		'prelude',
+		'prelude-loader',
 
 		{
-			loader: 'monic',
+			loader: 'monic-loader',
 			options: inherit(monic.javascript, {
 				replacers: [
 					include('build/replacers/require-context'),
 					include('build/replacers/super-import'),
+					include('build/replacers/dynamic-component-import'),
 					include('build/replacers/require-tests')
 				]
 			})
@@ -177,7 +183,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.worker
 			},
 
@@ -190,7 +196,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.serviceWorker
 			},
 
@@ -203,7 +209,7 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker',
+				loader: 'worker-loader',
 				options: workerOpts.sharedWorker
 			},
 
@@ -211,75 +217,110 @@ module.exports = async function module({plugins}) {
 		]
 	});
 
-	plugins.set('extractCSS', new MiniCssExtractPlugin({
+	plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
 		filename: `${hash(output, true)}.css`,
 		chunkFilename: '[id].css'
-	}));
+	})));
+
+	const styleHelperLoaders = [
+		{
+			loader: 'fast-css-loader',
+			options: config.css()
+		},
+
+		{
+			loader: 'postcss-loader',
+			options: inherit(config.postcss(), {
+				postcssOptions: {
+					plugins: [require('autoprefixer')(config.autoprefixer())]
+				}
+			})
+		},
+
+		{
+			loader: 'stylus-loader',
+			options: inherit(config.stylus(), {
+				use: include('build/stylus')
+			})
+		}
+	];
 
 	loaders.rules.set('styl', {
 		test: /\.styl$/,
-		use: [].concat(
-			MiniCssExtractPlugin.loader,
 
+		oneOf: [
 			{
-				loader: 'fast-css',
-				options: Object.reject(config.css(), ['minimize'])
-			},
+				resourceQuery: /static/,
+				use: [].concat(
+					MiniCssExtractPlugin.loader,
+					styleHelperLoaders,
 
-			{
-				loader: 'postcss',
-				options: inherit(config.postcss(), {
-					postcssOptions: {
-						plugins: [require('autoprefixer')(config.autoprefixer())]
+					{
+						loader: 'monic-loader',
+						options: inherit(monic.stylus, {
+							replacers: [
+								require('@pzlr/stylus-inheritance')({resolveImports: true}),
+								include('build/replacers/project-name')
+							]
+						})
 					}
-				})
+				)
 			},
 
 			{
-				loader: 'stylus',
-				options: inherit(config.stylus(), {
-					use: include('build/stylus')
-				})
-			},
+				use: [].concat(
+					{
+						loader: 'style-loader',
+						options: config.style()
+					},
 
-			{
-				loader: 'monic',
-				options: inherit(monic.stylus, {
-					replacers: [
-						require('@pzlr/stylus-inheritance')({resolveImports: true}),
-						include('build/replacers/project-name')
-					]
-				})
+					/linkTag/i.test(config.style().injectType) ? MiniCssExtractPlugin.loader : [],
+					styleHelperLoaders,
+
+					{
+						loader: 'monic-loader',
+						options: inherit(monic.stylus, {
+							replacers: [
+								require('@pzlr/stylus-inheritance')({resolveImports: true}),
+								include('build/replacers/project-name'),
+								include('build/replacers/apply-dynamic-component-styles')
+							]
+						})
+					}
+				)
 			}
-		)
+		]
 	});
 
 	loaders.rules.set('ess', {
 		test: /\.ess$/,
 		use: [
 			{
-				loader: 'file',
+				loader: 'file-loader',
 				options: {
 					name: `${output.replace(hashRgxp, '')}.html`
 				}
 			},
 
-			'extract',
+			'extract-loader',
 
 			{
-				loader: 'html',
+				loader: 'html-loader',
 				options: config.html()
 			},
 
 			{
-				loader: 'monic',
+				loader: 'monic-loader',
 				options: inherit(monic.html, {
-					replacers: [include('build/replacers/include')]
+					replacers: [
+						include('build/replacers/include'),
+						include('build/replacers/dynamic-component-import')
+					]
 				})
 			},
 
 			{
-				loader: 'snakeskin',
+				loader: 'snakeskin-loader',
 				options: inherit(snakeskin.server, {
 					exec: true,
 					vars: {
@@ -293,10 +334,17 @@ module.exports = async function module({plugins}) {
 	loaders.rules.set('ss', {
 		test: /\.ss$/,
 		use: [
-			'prelude',
+			'prelude-loader',
 
 			{
-				loader: 'snakeskin',
+				loader: 'monic-loader',
+				options: inherit(monic.javascript, {
+					replacers: [include('build/replacers/dynamic-component-import')]
+				})
+			},
+
+			{
+				loader: 'snakeskin-loader',
 				options: snakeskin.client
 			}
 		]
@@ -306,7 +354,7 @@ module.exports = async function module({plugins}) {
 		test: /\.(?:ttf|eot|woff|woff2|mp3|ogg|aac)$/,
 		use: [
 			{
-				loader: 'url',
+				loader: 'url-loader',
 				options: urlLoaderOpts
 			}
 		]
@@ -316,12 +364,12 @@ module.exports = async function module({plugins}) {
 		test: /\.(?:ico|png|gif|jpe?g)$/,
 		use: [
 			{
-				loader: 'url',
+				loader: 'url-loader',
 				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
-				{loader: 'image-webpack', options: Object.reject(imageOpts, ['webp'])} :
+				{loader: 'image-webpack-loader', options: Object.reject(imageOpts, ['webp'])} :
 				[]
 		)
 	});
@@ -330,12 +378,12 @@ module.exports = async function module({plugins}) {
 		test: /\.webp$/,
 		use: [
 			{
-				loader: 'url',
+				loader: 'url-loader',
 				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
-				{loader: 'image-webpack', options: imageOpts} :
+				{loader: 'image-webpack-loader', options: imageOpts} :
 				[]
 		)
 	});
@@ -344,12 +392,12 @@ module.exports = async function module({plugins}) {
 		test: /\.svg$/,
 		use: [
 			{
-				loader: 'svg-url',
+				loader: 'svg-url-loader',
 				options: urlLoaderOpts
 			}
 		].concat(
 			isProd ?
-				{loader: 'svgo', options: imageOpts.svgo} :
+				{loader: 'svgo-loader', options: imageOpts.svgo} :
 				[]
 		)
 	});

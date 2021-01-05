@@ -10,24 +10,25 @@ const
 	iconsMap = Object.createDict<CanUndef<string>>(),
 	iconsList = <Function[]>[];
 
-interface Sprite {
+interface SpriteEl {
 	id: string;
 	content: string;
 	viewBox: string;
-	node: SVGSymbolElement;
+	stringify(): string;
+	destroy(): undefined;
 }
 
-function icons(id?: string): Sprite {
+async function icons(id?: string): Promise<SpriteEl> {
 	if (id != null) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {
-				return iconsList[i](id).default;
+				return (await iconsList[i](id)).default;
 
 			} catch {}
 		}
 	}
 
-	throw new Error(`Cannot find module "${id}"`);
+	throw new Error(`Cannot find a module "${id}"`);
 }
 
 //#if runtime has svgSprite
@@ -39,17 +40,19 @@ let
 if (IS_PROD) {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!svg-sprite!svgo!@sprite',
+		'!!svg-sprite-loader!svgo-loader!@sprite',
 		true,
-		/\.svg$/
+		/\.svg$/,
+		'lazy'
 	);
 
 } else {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
-		'!!svg-sprite!@sprite',
+		'!!svg-sprite-loader!@sprite',
 		true,
-		/\.svg$/
+		/\.svg$/,
+		'lazy'
 	);
 }
 

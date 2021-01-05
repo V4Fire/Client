@@ -14,4 +14,4 @@ const
 /**
  * Options for WebPack ".devtool"
  */
-module.exports = config.webpack.devtool;
+module.exports = config.webpack.devtool() ?? false;
