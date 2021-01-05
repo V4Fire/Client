@@ -423,26 +423,43 @@ You can also manage a type of the created tag and other options by using the pre
  * @param [params] - additional parameters:
  *   *) [tag=nativeInputTag] - name of the generated tag
  *   *) [elName='input'] - element name of the generated tag
- *   *) [ref='input'] - ref attribute
- *   *) [model=nativeInputModel] - v-model attribute
- *   *) [type=nativeInputType] - type attribute
+ *
+ *   *) [ref='input'] - value of the `ref` attribute
+ *   *) [model=nativeInputModel] - value of the `v-model` attribute
+ *
+ *   *) [id='id'] - value of the `:id` attribute
+ *   *) [name='name'] - value of the `:name` attribute
+ *   *) [form='form'] - value of the `:form` attribute
+ *   *) [type=nativeInputType] - value of the `:type` attribute
+ *
+ *   *) [autofocus] - value of the `:autofocus` attribute
+ *   *) [tabIndex] - value of the `:autofocus` attribute
+ *
+ *   *) [focusHandler] - value of the `@focus` attribute
+ *   *) [blurHandler] - value of the `@blur` attribute
+ *
  *   *) [attrs] - dictionary with additional attributes
  */
 - block nativeInput(@params = {})
+  {{ void(tmp.attrs = normalizeAttrs(attrs)) }}
+
   < ${@tag || nativeInputTag}.&__${@elName || 'input'} &
     ref = ${@ref || 'input'} |
     v-model = ${@model || nativeInputModel} |
-    :v-attrs = inputAttrs |
-    :id = id |
-    :type = ${@type || nativeInputType} |
-    :name = name |
-    :form = form |
-    :autofocus = autofocus |
-    :tabIndex = tabIndex |
-    @focus = onFocus |
-    @blur = onBlur |
-    ${attrs|!html} |
-    ${@attrs}
+
+    :id = ${@id || 'id'} |
+    :name = ${@name || 'name'} |
+    :form = ${@form || 'form'} |
+    :type = ${@type} || tmp.attrs.type || ${nativeInputType} |
+
+    :autofocus = ${@autofocus || 'autofocus'} |
+    :tabIndex = ${@tabIndex || 'tabIndex'} |
+
+    @focus = ${@focusHandler || 'onFocus'} |
+    @blur = ${@blurHandler || 'onBlur'} |
+
+    :v-attrs = tmp.attrs |
+    ${Object.assign({}, attrs, @attrs)|!html}
   .
 
 /**
@@ -451,6 +468,7 @@ You can also manage a type of the created tag and other options by using the pre
 - block hiddenInput()
   += self.nativeInput({ &
     elName: 'hidden-input',
+
     attrs: {
       autocomplete: 'off'
     }
