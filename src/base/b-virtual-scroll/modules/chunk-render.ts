@@ -299,7 +299,7 @@ export default class ChunkRender extends Friend {
 		}
 
 		const
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getItemKey(item.data, item.index)}`;
 
 		if (!node) {
 			return;

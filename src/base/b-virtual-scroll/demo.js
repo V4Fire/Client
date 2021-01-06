@@ -13,8 +13,8 @@ const
 
 const baseAttrs = {
 	':theme': s('demo'),
-	':option': s('section'),
-	':optionProps': '({current}, i) => ({"data-index": current.i})'
+	':item': s('section'),
+	':itemProps': '({current}, i) => ({"data-index": current.i})'
 };
 
 const slots = {

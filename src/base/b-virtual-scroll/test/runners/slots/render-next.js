@@ -65,8 +65,8 @@ module.exports = (page) => {
 
 			const baseAttrs = {
 				theme: 'demo',
-				option: 'section',
-				optionProps: ({current}) => ({'data-index': current.i})
+				item: 'section',
+				itemProps: ({current}) => ({'data-index': current.i})
 			};
 
 			const slots = {
@@ -174,7 +174,7 @@ module.exports = (page) => {
 			it('there are no data', async () => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
-					ctx.options = [];
+					ctx.items = [];
 
 					return new Promise((res) => {
 						ctx.localEmitter.on('localState.ready', res);
@@ -257,7 +257,7 @@ module.exports = (page) => {
 					ctx.dataProvider = undefined;
 					ctx.chunkSize = 10;
 					// @ts-ignore
-					ctx.options = Array.from(Array(10), (v, i) => ({i}));
+					ctx.items = Array.from(Array(10), (v, i) => ({i}));
 				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
@@ -269,7 +269,7 @@ module.exports = (page) => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					ctx.chunkSize = 10;
-					ctx.options = Array.from(Array(20), (v, i) => ({i}));
+					ctx.items = Array.from(Array(20), (v, i) => ({i}));
 				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
@@ -397,7 +397,7 @@ module.exports = (page) => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					// @ts-ignore
-					ctx.options = Array.from(Array(20), (v, i) => ({i}));
+					ctx.items = Array.from(Array(20), (v, i) => ({i}));
 				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
@@ -410,7 +410,7 @@ module.exports = (page) => {
 				await components.renderNextWithSlot.evaluate((ctx) => {
 					ctx.dataProvider = undefined;
 					// @ts-ignore
-					ctx.options = Array.from(Array(40), (v, i) => ({i}));
+					ctx.items = Array.from(Array(40), (v, i) => ({i}));
 				});
 
 				await h.dom.waitForEl(containers.renderNextWithSlot, 'section');
