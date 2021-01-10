@@ -26,6 +26,7 @@ globalThis.renderComponents = (
 	};
 
 	const
+		idAttrs = 'data-test-id',
 		rootEl = document.querySelector<ComponentElement<iStaticPage>>(<string>rootSelector),
 		ctx = rootEl!.component!.unsafe;
 
@@ -65,9 +66,15 @@ globalThis.renderComponents = (
 		return res;
 	};
 
-	const vNodes = scheme.map(({attrs, content}) => ctx.$createElement(componentName, {
+	const
+		ids = scheme.map(() => Math.random());
+
+	const vNodes = scheme.map(({attrs, content}, i) => ctx.$createElement(componentName, {
 		attrs: {
-			'v-attrs': attrs
+			'v-attrs': {
+				...attrs,
+				[idAttrs]: ids[i]
+			}
 		},
 
 		scopedSlots: buildScopedSlots(content)
@@ -77,9 +84,8 @@ globalThis.renderComponents = (
 		nodes = ctx.vdom.render(vNodes);
 
 	document.querySelector(<string>selectorToInject)?.append(...nodes);
-
 	globalThis.__createdComponents = globalThis.__createdComponents ?? new Set();
-	nodes.forEach((node) => globalThis.__createdComponents.add(node));
+	ids.forEach((id) => globalThis.__createdComponents.add(document.querySelector(`[${idAttrs}="${id}"]`)));
 };
 
 globalThis.removeCreatedComponents = () => {

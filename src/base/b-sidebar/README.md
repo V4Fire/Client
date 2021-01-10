@@ -44,7 +44,7 @@ Also, you can see the implemented traits or the parent component.
   Close the sidebar
 
 < span @click = $refs.sidebar.toggle()
-  Toogle the sidebar
+  Toggle the sidebar
 ```
 
 ## Slots

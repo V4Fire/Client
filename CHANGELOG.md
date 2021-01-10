@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.121 (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation `base/b-window`
+
+#### :house: Internal
+
+`base/b-window`:
+  * Fixed ESLint errors
+  * Fixed ts errors
+  * Added tests
+
 ## v3.0.0-rc.120 (2020-12-23)
 
 #### :bug: Bug Fix

@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.121 (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation
+
+#### :house: Internal
+
+* Fixed ESLint errors
+* Fixed ts errors
+* Added tests
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :boom: Breaking Change

@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-window/README.md]]
+ * @packageDocumentation
+ */
+
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
@@ -116,22 +121,22 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	 */
 	get title(): string {
 		const
-			v = this.field.get<string>('titleStore') || '',
-			stageTitles = this.stageTitles;
+			v = this.field.get<string>('titleStore') ?? '',
+			{stageTitles} = this;
 
 		if (stageTitles) {
 			let
-				stageValue = stageTitles[<string>v];
+				stageValue = stageTitles[v];
 
-			if (!stageValue) {
+			if (stageValue == null) {
 				stageValue = stageTitles['[[DEFAULT]]'];
 			}
 
-			if (stageValue) {
+			if (stageValue != null) {
 				stageValue = this.t(Object.isFunction(stageValue) ? stageValue(this) : stageValue);
 			}
 
-			return stageValue || v;
+			return stageValue ?? v;
 		}
 
 		return v;
@@ -144,18 +149,18 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		this.field.set('titleStore', value);
 	}
 
-	/** @see iOpenToggle.toggle */
+	/** @see [[iOpenToggle.prototype.toggle]] */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
 	}
 
 	/**
-	 * @see iOpenToggle.open
+	 * @see [[iOpenToggle.prototype.open]]
 	 * @param [stage] - window stage
 	 */
 	async open(stage?: Stage): Promise<boolean> {
 		if (await iOpenToggle.open(this)) {
-			if (stage) {
+			if (stage != null) {
 				this.stage = stage;
 			}
 
@@ -168,7 +173,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		return false;
 	}
 
-	/** @see iOpenToggle.close */
+	/** @see [[iOpenToggle.prototype.close]] */
 	async close(): Promise<boolean> {
 		if (await iOpenToggle.close(this)) {
 			this.setRootMod('hidden', true);
@@ -179,33 +184,37 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		return false;
 	}
 
-	/** @see iLockPageScroll.lock */
+	/** @see [[iLockPageScroll.prototype.lock]] */
 	@wait('loading')
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.window);
 	}
 
-	/** @see iLockPageScroll.unlock */
+	/** @see [[iLockPageScroll.prototype.unlock]] */
 	unlock(): Promise<void> {
 		return iLockPageScroll.unlock(this);
 	}
 
-	/** @see iOpenToggle.onOpenedChange */
+	/** @see [[iOpenToggle.prototype.onOpenedChange]] */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/** @see iOpenToggle.onKeyClose */
+	/** @see [[iOpenToggle.prototype.onKeyClose]] */
 	onKeyClose(e: KeyboardEvent): Promise<void> {
 		return iOpenToggle.onKeyClose(this, e);
 	}
 
-	/** @see iOpenToggle.onTouchClose */
+	/** @see [[iOpenToggle.prototype.onTouchClose]] */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
-			target = <Element>e.target;
+			target = <CanUndef<Element>>e.target;
 
 		if (!target) {
+			return;
+		}
+
+		if (!this.block) {
 			return;
 		}
 
@@ -220,8 +229,8 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	 */
 	@hook('mounted')
 	protected initDocumentPlacement(): void {
-		document.body.insertAdjacentElement('beforeend', this.$el);
-		this.initRootStyles();
+		this.dom.appendChild(document.body, this.$el!);
+		void this.initRootStyles();
 	}
 
 	/**
@@ -255,9 +264,9 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 
 	/**
 	 * Handler: error
-	 * @param err
+	 * @param _err
 	 */
-	protected onError(err: RequestError): void {
+	protected onError(_err: RequestError): void {
 		return undefined;
 	}
 
@@ -265,6 +274,5 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	protected beforeDestroy(): void {
 		super.beforeDestroy();
 		this.removeRootMod('hidden');
-		this.$el.remove();
 	}
 }
