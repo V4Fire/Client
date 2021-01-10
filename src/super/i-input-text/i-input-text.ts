@@ -139,9 +139,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @example
 	 * ```
 	 * /// A user will see an input element with a value:
-	 * /// _-_
-	 * /// If he types more than two symbols, he will see something like
-	 * /// 2-3 1-_
+	 * /// _-_ _-_
 	 * < b-input :mask = '%d-%d' | :maskRepeat = 2
 	 * ```
 	 */
@@ -155,9 +153,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @example
 	 * ```
 	 * /// A user will see an input element with a value:
-	 * /// _-_
-	 * /// If he types more than two symbols, he will see something like
-	 * /// 2-3@1-_
+	 * /// _-_@_-_
 	 * < b-input :mask = '%d-%d' | :maskRepeat = 2 | :maskDelimiter = '@'
 	 * ```
 	 */
@@ -251,7 +247,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * A number of mask repetitions
 	 * @see [[iInputText.maskRepeatProp]]
 	 */
-	@system((o) => o.sync.link((v) => v === true ? 42 : v ?? 1))
+	@system((o) => o.sync.link((v) => v === true ? 1 : v ?? 1))
 	protected maskRepeat!: number;
 
 	/** @override */
@@ -473,55 +469,13 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * Compiles the component mask.
 	 * The method saves the compiled mask object and other properties within the component.
 	 */
-	protected compileMask(): void {
+	protected compileMask(): CanUndef<CompiledMask> {
 		if (this.mask == null) {
 			return;
 		}
 
-		const
-			symbols = <Array<string | RegExp>>[];
-
-		let
-			placeholder = '',
-			isNonTerminal = false;
-
-		for (let o = this.mask, i = 0, j = 0; i < o.length && j < this.maskRepeat; i++) {
-			const
-				el = o[i];
-
-			if (el === '%') {
-				isNonTerminal = true;
-				continue;
-			}
-
-			placeholder += isNonTerminal ? this.maskPlaceholder : el;
-
-			if (isNonTerminal) {
-				symbols.push(this.regExps?.[el] ?? new RegExp(`\\${el}`));
-				isNonTerminal = false;
-
-			} else {
-				symbols.push(el);
-			}
-
-			if (i === o.length - 1) {
-				i = -1;
-				j++;
-
-				if (j < this.maskRepeat) {
-					placeholder += this.maskDelimiter;
-					symbols.push(this.maskDelimiter);
-				}
-			}
-		}
-
-		this.compiledMask = {
-			symbols,
-			placeholder,
-			text: '',
-			start: 0,
-			end: 0
-		};
+		this.compiledMask = mask.compile(this, this.mask);
+		return this.compiledMask;
 	}
 
 	/** @override */
@@ -578,7 +532,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @param e
 	 */
 	protected onMaskDelete(e: KeyboardEvent): void {
-		void mask.onMaskDelete(this, e);
+		void mask.onDelete(this, e);
 	}
 
 	/**
@@ -586,7 +540,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @param e
 	 */
 	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): void {
-		mask.onMaskNavigate(this, e);
+		mask.onNavigate(this, e);
 	}
 
 	/**
@@ -594,6 +548,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @param e
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): void {
-		mask.onMaskKeyPress(this, e);
+		mask.onKeyPress(this, e);
 	}
 }

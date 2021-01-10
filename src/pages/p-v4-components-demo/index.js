@@ -22,5 +22,6 @@ package('p-v4-components-demo')
 		'b-form',
 		'b-sidebar',
 		'b-dummy',
+		'b-dummy-text',
 		components
 	);

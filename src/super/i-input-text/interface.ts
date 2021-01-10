@@ -51,6 +51,11 @@ export interface CompiledMask {
 	placeholder: string;
 
 	/**
+	 * Maximum number of non-terminal characters that can be placed in the mask
+	 */
+	capacity: number;
+
+	/**
 	 * Value of the masked input
 	 */
 	text: string;
