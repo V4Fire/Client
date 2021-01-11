@@ -312,15 +312,6 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		iLockPageScroll.initModEvents(this);
 	}
 
-	/**
-	 * Default error handler
-	 * @param err
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected onError(err: RequestError): void {
-		return undefined;
-	}
-
 	/** @override */
 	protected beforeDestroy(): void {
 		super.beforeDestroy();
