@@ -64,7 +64,7 @@ module.exports = (page) => {
 		});
 
 		describe('open', () => {
-			it('emits an event of opening', async () => {
+			it('emits an event if opening', async () => {
 				await render();
 				const subscribe = window.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
 				await window.evaluate((ctx) => ctx.open());
@@ -92,7 +92,7 @@ module.exports = (page) => {
 		});
 
 		describe('close', () => {
-			it('emits an event of closing', async () => {
+			it('emits an event if closing', async () => {
 				await render();
 				await window.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
@@ -103,7 +103,7 @@ module.exports = (page) => {
 				await expectAsync(subscribe).toBeResolved();
 			});
 
-			it('closes the window via a click', async () => {
+			it('closes the window by a click', async () => {
 				await render();
 				await window.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
