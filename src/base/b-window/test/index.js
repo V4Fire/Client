@@ -23,11 +23,14 @@ module.exports = (page) => {
 	let
 		window;
 
-	const render = async () => {
+	const render = async (attrs = {}) => {
 		await page.evaluate(() => {
 			globalThis.renderComponents('b-window', [
 				{
-					attrs: {},
+					attrs: {
+						...attrs
+					},
+
 					content: {
 						default: {
 							tag: 'div',
@@ -79,6 +82,12 @@ module.exports = (page) => {
 
 				const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-window_opened_true');
+			});
+
+			it('switching to a different stage via `open`', async () => {
+				await render();
+				await window.evaluate((ctx) => ctx.open('foo'));
+				expect(await window.evaluate((ctx) => ctx.stage)).toBe('foo');
 			});
 
 			it('shows the window when `toggle` is invoked', async () => {
