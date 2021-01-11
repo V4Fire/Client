@@ -21,16 +21,14 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 	} = component;
 
 	const
-		symbols = <Array<string | RegExp>>[];
+		symbols = <Array<string | RegExp>>[],
+		nonTerminals = <RegExp[]>[];
 
 	let
 		placeholder = '',
-		capacity = 0;
-
-	let
 		isNonTerminal = false;
 
-	for (let o = mask, i = 0, j = 0; i < o.length && j < maskRepeat; i++) {
+	for (let o = [...mask], i = 0, j = 0; i < o.length && j < maskRepeat; i++) {
 		const
 			char = o[i];
 
@@ -42,11 +40,12 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 		placeholder += isNonTerminal ? maskPlaceholder : char;
 
 		if (isNonTerminal) {
-			symbols.push(
-				unsafe.regExps?.[char] ?? new RegExp(`\\${char}`)
-			);
+			const
+				symbol = unsafe.regExps?.[char] ?? new RegExp(`\\${char}`);
 
-			capacity++;
+			symbols.push(symbol);
+			nonTerminals.push(symbol);
+
 			isNonTerminal = false;
 
 		} else {
@@ -66,8 +65,8 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 
 	return {
 		symbols,
+		nonTerminals,
 		placeholder,
-		capacity,
 		text: '',
 		start: 0,
 		end: 0

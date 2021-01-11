@@ -39,6 +39,17 @@ export interface CompiledMask {
 	symbols: Array<string | RegExp>;
 
 	/**
+	 * List of non-terminal symbols of the compiled mask
+	 *
+	 * @example
+	 * ```
+	 * // mask = '+%d (%d%d%d)'
+	 * [/\d/, /\d/, /\d/, /\d/]
+	 * ```
+	 */
+	nonTerminals: RegExp[];
+
+	/**
 	 * Value of the whole mask placeholder
 	 *
 	 * @example
@@ -49,11 +60,6 @@ export interface CompiledMask {
 	 * ```
 	 */
 	placeholder: string;
-
-	/**
-	 * Maximum number of non-terminal characters that can be placed in the mask
-	 */
-	capacity: number;
 
 	/**
 	 * Value of the masked input
