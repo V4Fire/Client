@@ -8,16 +8,22 @@ This module provides a component to create a modal window.
 
 * The component implements [[iVisible]], [[iWidth]], [[iOpenToggle]], [[iLockPageScroll]] traits.
 
+* The component locks background scrolling when opened.
+
+* The component sets the root `hidden` modifier on opening/closing.
+
+* The component automatically closed by a click at the "outside" place.
+
 * The component automatically places itself within the document body.
 
 * By default, the root tag of the component is `<div>`.
 
 ## Modifiers
 
-| EventName    | Description                              | Values    | Default |
-| ------------ | ---------------------------------------- | --------- | ------- |
-| `opened`     | The component is opened                  | `boolean` | `false` |
-| `position`   | Value of the `position` style property   | `string`  | `fixed` |
+| EventName    | Description                              | Values                  | Default |
+| ------------ | ---------------------------------------- | ----------------------- | ------- |
+| `opened`     | The component is opened                  | `boolean`               | `false` |
+| `position`   | Value of the `position` style property   | `'fixed' \| 'absolute'` | `fixed` |
 
 Also, you can see the implemented traits or the parent component.
 
@@ -163,4 +169,82 @@ $p = {
 }
 
 b-window extends i-data
+```
+
+## API
+
+The component provides a bunch of methods to open/close/toggle the window: `open` , `close`, `toggle`.
+Also, it provides methods to lock/unlock background scrolling: `lock`. `unlock`
+(the component automatically locks background scrolling when opened).
+
+### title
+
+By using this prop, you can provide a string that will be used as the window title.
+Notice that you can use a slot to provide a title too.
+
+```
+< b-window :title = 'Title'
+  < template #body
+    Main content
+
+< b-window
+  < template #title
+    Title
+
+  < template #body
+    Main content
+
+< b-window
+  < template #title = {title}
+    < span.title
+      {{ title }}
+
+  < template #body
+    Main content
+```
+
+### stageTitles
+
+Map window titles tied to the component `stage` values. A key with the name `[[DEFAULT]]` is used by default.
+If a key value is defined as a function, it will be invoked (the result will be used as a title).
+
+```
+< b-window &
+  :dataProvider = 'User' |
+  :stageTitles = {
+    '[[DEFAULT]]': 'Default title',
+    'uploading': 'Uploading the avatar...',
+    'edit': (ctx) => `Edit a user with the identifier ${ctx.db?.id}`
+  }
+.
+```
+
+### forceInnerRender
+
+If false, the inner content of the component won't be rendered if the component isn't opened.
+
+```
+< b-window :forceInnerRender = false
+```
+
+### slotName
+
+Name of the active third-party slot to show.
+
+This feature brings a possibility to decompose different window templates into separate files
+with the special `.window` postfix. All those templates are automatically loaded, but you must provide their
+name to activate one or another.
+
+### open
+
+When opening the window, you can specify at which `stage` the component should switch in.
+
+```
+< b-window ref = window
+  Window content
+```
+
+```
+< span @click = $refs.window.open('loading')
+  Open the window
 ```

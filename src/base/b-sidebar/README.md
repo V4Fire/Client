@@ -67,3 +67,24 @@ $p = {
 
 b-sidebar extends i-data
 ```
+
+## API
+
+The component provides a bunch of methods to open/close/toggle the window: `open` , `close`, `toggle`.
+Also, it provides methods to lock/unlock background scrolling: `lock`. `unlock`.
+
+### lockPageScroll
+
+If true, then will be blocked the scrolling of the document when the component is opened.
+
+```
+< b-sidebar :lockPageScroll = true
+```
+
+### forceInnerRender
+
+If false, the inner content of the component won't be rendered if the component isn't opened.
+
+```
+< b-sidebar :forceInnerRender = false
+```

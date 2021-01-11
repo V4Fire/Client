@@ -124,8 +124,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 
 		position: [
 			['fixed'],
-			'absolute',
-			'custom'
+			'absolute'
 		]
 	};
 
