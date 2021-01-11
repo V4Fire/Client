@@ -86,6 +86,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	 * - namespace b-window
 	 *
 	 * - eval
+	 *  /// Register an external block
 	 *  ? @@saveTplDir(__dirname, 'windowSlotUploadAvatar')
 	 *
 	 * /// Notice, to correct work the external block name must start with "windowSlot"

@@ -112,6 +112,46 @@ other slots become unavailable to you since the default slot will overwrite all 
 
 By default, the component defines a control to close the window.
 
+### Third-party slots
+
+The component allows decomposing different window templates into separate files with the special `.window` postfix.
+All those templates are automatically loaded, but you must provide their name to activate one or another.
+
+**my-page/upload-avatar.window.ss**
+
+```
+- namespace b-window
+
+- eval
+ /// Register an external block
+ ? @@saveTplDir(__dirname, 'windowSlotUploadAvatar')
+
+/// Notice, to correct work the external block name must start with "windowSlot"
+- block index->windowSlotUploadAvatar(nms)
+  /// The `nms` value is taken from a basename of this file directory
+  /// .my-page
+  < ?.${nms}
+    < button.&__button
+      Upload an avatar
+```
+
+```
+/// This component will use a template from windowSlotUploadAvatar
+< b-window :slotName = 'windowSlotUploadAvatar'
+```
+
+If you want to disable this feature in child components of `bWindow`,
+you should override the constant `thirdPartySlots` to false.
+
+```
+- namespace [%fileName%]
+
+- include 'base/b-window'|b as placeholder
+
+- template index() extends ['b-window'].index
+  - thirdPartySlots = false
+```
+
 ## Styles
 
 The component has the `zIndexPos` style property to specify `z-index` of the component.
