@@ -73,7 +73,34 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	readonly stageTitles?: StageTitles;
 
 	/**
-	 * Name of an active third-party slot
+	 * Name of the active third-party slot to show.
+	 *
+	 * This feature brings a possibility to decompose different window templates into separate files
+	 * with the special `.window` postfix. All those templates are automatically loaded, but you must provide their
+	 * name to activate one or another.
+	 *
+	 * @example
+	 * **my-page/upload-avatar.window.ss**
+	 *
+	 * ```
+	 * - namespace b-window
+	 *
+	 * - eval
+	 *  ? @@saveTplDir(__dirname, 'windowSlotUploadAvatar')
+	 *
+	 * /// Notice, to correct work the external block name must start with "windowSlot"
+	 * - block index->windowSlotUploadAvatar(nms)
+	 *   /// The `nms` value is taken from a basename of this file directory
+	 *   /// .my-page
+	 *   < ?.${nms}
+	 *     < button.&__button
+	 *       Upload an avatar
+	 * ```
+	 *
+	 * ```
+	 * /// This component will use a template from windowSlotUploadAvatar
+	 * < b-window :slotName = 'windowSlotUploadAvatar'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly slotNameProp?: string;
@@ -115,19 +142,23 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 
 	/**
 	 * Slot name store
+	 * @see [[bWindow.slotNameProp]]
 	 */
 	@field((o) => o.sync.link())
 	protected slotNameStore?: string;
 
 	/**
-	 * Slot name
+	 * Name of the active third-party slot to show
+	 * @see [[bWindow.slotNameProp]]
 	 */
 	get slotName(): CanUndef<string> {
 		return this.field.get('slotNameStore');
 	}
 
 	/**
-	 * Sets a new slot name
+	 * Sets a new third-party slot to show
+	 *
+	 * @see [[bWindow.slotNameProp]]
 	 * @param value
 	 */
 	set slotName(value: CanUndef<string>) {

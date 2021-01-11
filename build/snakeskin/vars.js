@@ -14,20 +14,39 @@ const
 	path = require('upath');
 
 module.exports = {
+	/**
+	 * Saves a basename of the specified directory by the passed name in the global namespace.
+	 * The function should be used via the `eval` directive.
+	 *
+	 * @param dirName
+	 * @param names
+	 *
+	 * @example
+	 * ```
+	 * - namespace b-window
+	 *
+	 * - eval
+	 *  ? @@saveTplDir(__dirname, 'windowSlotEmptyTransactions')
+	 *
+	 * - block index->windowSlotEmptyTransactions(nms)
+	 *   < ?.${nms}
+	 *     Hello world!
+	 * ```
+	 */
 	saveTplDir(dirName, ...names) {
 		const
 			dir = path.basename(dirName);
 
-		if (!Snakeskin.Vars['globalNames']) {
-			Snakeskin.Vars['globalNames'] = {};
+		if (!Snakeskin.Vars['globalTplDirs']) {
+			Snakeskin.Vars['globalTplDirs'] = {};
 		}
 
-		$C(names).forEach((el) => {
-			if (!Snakeskin.Vars['globalNames'][el]) {
-				Snakeskin.Vars['globalNames'][el] = dir;
+		$C(names).forEach((name) => {
+			if (!Snakeskin.Vars['globalTplDirs'][name]) {
+				Snakeskin.Vars['globalTplDirs'][name] = dir;
 
-			} else if (Snakeskin.Vars['globalNames'][el] !== dir) {
-				throw new Error(`A name "${el}" is already exist in the global namespace`);
+			} else if (Snakeskin.Vars['globalTplDirs'][name] !== dir) {
+				throw new Error(`The name "${name}" is already exist in the global namespace`);
 			}
 		});
 	}
