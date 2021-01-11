@@ -24,7 +24,12 @@
 			< .&__node &
 				:-id = top.dom.getId(el.id) |
 				:-level = level |
-				:class = provide.elClasses({node: {level, folded}})
+				:class = provide.elClasses({
+					node: {
+						level,
+						folded: el.folded != null ? el.folded : top.folded
+					}
+				})
 			.
 				< .&__item-wrapper
 					< .&__marker
@@ -52,6 +57,7 @@
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
 						< @b-tree.&__child &
 							:items = el.children |
+							:folded = el.folded != null ? el.folded : top.folded |
 							:item = item |
 							:v-attrs = nestedTreeProps
 						.

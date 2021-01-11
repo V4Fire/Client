@@ -114,7 +114,6 @@ export default class bTree extends iData implements iItems {
 			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.top.renderFilter;
 
 		const opts = {
-			folded: this.folded,
 			level: this.level + 1,
 			classes: this.classes,
 			renderFilter

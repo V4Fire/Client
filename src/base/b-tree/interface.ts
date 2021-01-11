@@ -22,4 +22,9 @@ export interface Item extends Dictionary {
 	 * Nested items
 	 */
 	children?: Item[];
+
+	/**
+	 * Folding flag
+	 */
+	folded?: boolean;
 }
