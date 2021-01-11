@@ -18,8 +18,8 @@ import 'models/demo/nested-list';
 import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';
-import { Item } from 'base/b-tree/interface';
 import iData, { component, prop, field } from 'super/i-data/i-data';
+import { Item, RenderFilter } from 'base/b-tree/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
@@ -61,17 +61,15 @@ export default class bTree extends iData implements iItems {
 	 * @see [[AsyncRender.iterate]]
 	 * @see [[TaskFilter]]
 	 */
-	@prop(
-		{
-			type: Function,
-			required: false,
-			default(this: bTree): Promise<boolean> {
-				return this.async.animationFrame().then(() => true);
-			}
+	@prop({
+		type: Function,
+		required: false,
+		default(this: bTree): Promise<boolean> {
+			return this.async.animationFrame().then(() => true);
 		}
-	)
+	})
 
-	readonly renderFilter!: (ctx: bTree, el: Item) => CanPromise<boolean>;
+	readonly renderFilter!: RenderFilter;
 
 	/**
 	 * Filter to render nested items via `asyncRender`.
@@ -81,7 +79,7 @@ export default class bTree extends iData implements iItems {
 	 * @see [[TaskFilter]]
 	 */
 	@prop({type: Function, required: false})
-	readonly nestedRenderFilter?: (ctx: bTree, el: Item) => CanPromise<boolean>;
+	readonly nestedRenderFilter?: RenderFilter;
 
 	/**
 	 * Number of chunks to render via `asyncRender`
