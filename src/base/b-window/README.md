@@ -20,10 +20,10 @@ This module provides a component to create a modal window.
 
 ## Modifiers
 
-| EventName    | Description                              | Values                  | Default |
-| ------------ | ---------------------------------------- | ----------------------- | ------- |
-| `opened`     | The component is opened                  | `boolean`               | `false` |
-| `position`   | Value of the `position` style property   | `'fixed' \| 'absolute'` | `fixed` |
+| EventName    | Description                              | Values                  | Default   |
+| ------------ | ---------------------------------------- | ----------------------- | --------- |
+| `opened`     | The component is opened                  | `boolean`               | `false`   |
+| `position`   | Value of the `position` style property   | `'fixed' \| 'absolute'` | `'fixed'` |
 
 Also, you can see the implemented traits or the parent component.
 
