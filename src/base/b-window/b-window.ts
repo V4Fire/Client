@@ -22,10 +22,10 @@ import iData, {
 	prop,
 	field,
 	hook,
+	watch,
 	wait,
 
 	Stage,
-	RequestError,
 
 	ModsDecl,
 	ModEvent,
@@ -280,12 +280,12 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	@hook('mounted')
 	protected initDocumentPlacement(): void {
 		this.dom.appendChild(document.body, this.$el!);
-		void this.initRootStyles();
 	}
 
 	/**
 	 * Attaches dynamic window styles to the root node
 	 */
+	@watch({path: 'mods.position', immediate: true})
 	@wait('loading')
 	protected initRootStyles(): CanPromise<void> {
 		const
