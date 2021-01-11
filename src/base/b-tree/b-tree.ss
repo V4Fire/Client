@@ -16,7 +16,7 @@
 			v-for = (el, i) in top.asyncRender.iterate(
 				items,
 				top.renderChunks,
-				{filter: renderFilter}
+				{filter: (el, i) => renderFilter(el, i)}
 			) |
 
 			:key = getItemKey(el, i)

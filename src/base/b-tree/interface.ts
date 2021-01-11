@@ -32,5 +32,5 @@ export interface Item extends Dictionary {
 }
 
 export interface RenderFilter {
-	(ctx: bTree, el: Item): CanPromise<boolean>;
+	(this: bTree, el: Item, i: number): CanPromise<boolean>;
 }
