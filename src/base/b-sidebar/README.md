@@ -8,6 +8,8 @@ This module provides a component to create a sidebar with the feature of collaps
 
 * The component implements [[iVisible]], [[iOpenToggle]], [[iLockPageScroll]] traits.
 
+* The component automatically synchronizes the `opened` modifier if the `globalName` prop is provided.
+
 * The component supports the `overWrapper` layout.
 
 * By default, the root tag of the component is `<div>`.
