@@ -32,9 +32,15 @@ export const
  */
 @component({flyweight: true})
 export default class bTree extends iData implements iItems {
+	/** @see [[iItems.Item]] */
+	readonly Item!: Item;
+
+	/** @see [[iItems.Items]] */
+	readonly Items!: Item[];
+
 	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
-	readonly itemsProp: Item[] = [];
+	readonly itemsProp: this['Items'] = [];
 
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})

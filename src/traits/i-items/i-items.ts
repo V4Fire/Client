@@ -32,12 +32,22 @@ export default abstract class iItems {
 	}
 
 	/**
+	 * Type: component item
+	 */
+	abstract readonly Item?: object;
+
+	/**
+	 * Type: list of component items
+	 */
+	abstract readonly Items?: Array<this['Item']>;
+
+	/**
 	 * Component items
 	 */
 	abstract readonly itemsProp: unknown[];
 
 	/** @see [[iItems.itemsProp]] */
-	abstract items: unknown[];
+	abstract items: this['Items'];
 
 	/** @see [[ItemsIterator]] */
 	abstract readonly itemsIterator?: ItemsIterator;
