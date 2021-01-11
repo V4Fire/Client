@@ -28,6 +28,7 @@
 					- if thirdPartySlots
 						< template v-if = slotName
 							: isSlot = /^slot[A-Z]/
+
 							- forEach self => el, key
 								- if isSlot.test(key)
 									< template v-if = slotName === '${key}'

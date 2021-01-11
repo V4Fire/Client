@@ -18,27 +18,29 @@ import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-togg
 
 import iData, {
 
-	field,
 	component,
 	prop,
+	field,
 	hook,
 	wait,
-	ModsDecl,
+
 	Stage,
+	RequestError,
+
+	ModsDecl,
 	ModEvent,
-	SetModEvent,
-	RequestError
+	SetModEvent
 
 } from 'super/i-data/i-data';
+
+import { StageTitles } from 'base/b-window/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 
-export type TitleValue<T = unknown> = string | ((ctx: T) => string);
-export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
-	'[[DEFAULT]]': TitleValue<T>;
-}
-
+/**
+ * Component to create a modal window
+ */
 @component()
 export default class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	/** @override */
@@ -51,10 +53,24 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	readonly titleProp?: string;
 
 	/**
-	 * Map of window titles ({stage: title})
+	 * Map window titles tied to the component `stage` values.
+	 * A key with the name `[[DEFAULT]]` is used by default.
+	 * If a key value is defined as a function, it will be invoked (the result will be used as a title).
+	 *
+	 * @example
+	 * ```
+	 * < b-window &
+	 *   :dataProvider = 'User' |
+	 *   :stageTitles = {
+	 *     '[[DEFAULT]]': 'Default title',
+	 *     'uploading': 'Uploading the avatar...',
+	 *     'edit': (ctx) => `Edit a user with the identifier ${ctx.db?.id}`
+	 *   }
+	 * .
+	 * ```
 	 */
 	@prop({type: Object, required: false})
-	readonly stageTitles?: Dictionary<string>;
+	readonly stageTitles?: StageTitles;
 
 	/**
 	 * Name of an active third-party slot
@@ -74,7 +90,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		...iWidth.mods,
 
 		opened: [
-			...iOpenToggle.mods.opened,
+			...iOpenToggle.mods.opened ?? [],
 			['false']
 		],
 
@@ -85,12 +101,14 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		]
 	};
 
+	/** @override */
 	protected readonly $refs!: {
 		window: HTMLElement;
 	};
 
 	/**
 	 * Window title store
+	 * @see [[bWindow.titleProp]]
 	 */
 	@field((o) => o.sync.link())
 	protected titleStore?: string;
@@ -118,6 +136,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 
 	/**
 	 * Window title
+	 * @see [[bWindow.titleStore]]
 	 */
 	get title(): string {
 		const
@@ -156,7 +175,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 
 	/**
 	 * @see [[iOpenToggle.prototype.open]]
-	 * @param [stage] - window stage
+	 * @param [stage] - component stage to open
 	 */
 	async open(stage?: Stage): Promise<boolean> {
 		if (await iOpenToggle.open(this)) {
@@ -263,10 +282,11 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	}
 
 	/**
-	 * Handler: error
-	 * @param _err
+	 * Default error handler
+	 * @param err
 	 */
-	protected onError(_err: RequestError): void {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	protected onError(err: RequestError): void {
 		return undefined;
 	}
 
