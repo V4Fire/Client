@@ -66,18 +66,19 @@ module.exports = (page) => {
 				if (isBranch) {
 					const
 						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElName('fold')}`),
-						fold = await h.dom.waitForEl(element, selector);
+						fold = await h.dom.waitForEl(element, selector),
+						foldedInitClass = item.folded != null ? item.folded : false;
 
 					fold.click();
 
 					const
-						mod = await getFoldedClass(target, false);
+						mod = await getFoldedClass(target, foldedInitClass);
 
 					await h.bom.waitForIdleCallback(page);
 
 					await expectAsync(
 						element.getAttribute('class').then((className) => className.includes(mod))
-					).toBeResolvedTo(true);
+					).toBeResolvedTo(!foldedInitClass);
 				}
 			})());
 
@@ -90,7 +91,6 @@ module.exports = (page) => {
 	};
 
 	beforeEach(async () => {
-		globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = 1200000;
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
 		});
@@ -173,6 +173,27 @@ module.exports = (page) => {
 			await expect((await page.$$('.b-checkbox')).length).toBe(3);
 		});
 
+		it('item unfolded by default', async () => {
+			const opts = [
+				{id: 'foo'},
+				{
+					id: 'bar',
+					children: [
+						{id: 'fooone'},
+						{id: 'footwo'},
+						{
+							id: 'foothree',
+							folded: false,
+							children: [{id: 'foothreeone', children: [{id: 'foothreeoneone'}]}]
+						}
+					]
+				}
+			];
+
+			const target = await init({opts});
+			await Promise.all(checkOptionTree({opts, target}));
+		});
+
 		it('set external nestedRenderFilter', async () => {
 			const opts = [
 				{id: 'foo'},
@@ -183,16 +204,7 @@ module.exports = (page) => {
 						{id: 'footwo'},
 						{
 							id: 'foothree',
-							children: [
-								{
-									id: 'foothreeone',
-									children: [
-										{
-											id: 'foothreeoneone'
-										}
-									]
-								}
-							]
+							children: [{id: 'foothreeone', children: [{id: 'foothreeoneone'}]}]
 						}
 					]
 				}
@@ -228,7 +240,6 @@ module.exports = (page) => {
 				const scheme = [
 					{
 						attrs: {
-							folded: false,
 							theme: 'demo',
 							dataProvider: 'demo.NestedList',
 							item: 'b-checkbox-functional',
