@@ -58,7 +58,7 @@ The component supports the default slot to provide content.
 
 ## Styles
 
-The component has `sidebarTransition` style property to specify the transition behavior when opening or closing.
+The component has the `sidebarTransition` style property to specify the transition behavior when opening or closing.
 
 ```stylus
 $p = {
