@@ -16,7 +16,7 @@ This module provides a component to create a sidebar with the feature of collaps
 
 | EventName  | Description             | Values    | Default |
 | ---------- | ----------------------- | --------- | ------- |
-| `opened`   | The component is opened | `Boolean` | `false` |
+| `opened`   | The component is opened | `boolean` | `false` |
 
 Also, you can see the implemented traits or the parent component.
 
