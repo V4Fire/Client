@@ -9,19 +9,19 @@
 import { UnsafeIInput } from 'super/i-input/i-input';
 import iInputText from 'super/i-input-text/i-input-text';
 
-export interface ApplyMaskToTextOptions {
+export interface SyncMaskWithTextOptions {
 	/**
-	 * Start position to set off the text selection
+	 * Start position to set off the text
 	 */
 	start?: Nullable<number>;
 
 	/**
-	 * End position to set off the text selection
+	 * End position to set off the text
 	 */
 	end?: Nullable<number>;
 
 	/**
-	 * Text value of the masked input
+	 * Text value buffer of the masked input
 	 */
 	maskText?: string;
 }
@@ -80,17 +80,17 @@ export interface CompiledMask {
 // @ts-ignore (extend)
 export interface UnsafeIInputText<CTX extends iInputText = iInputText> extends UnsafeIInput<CTX> {
 	// @ts-ignore (access)
-	maskRepeat: CTX['maskRepeat'];
+	maskRepetitions: CTX['maskRepetitions'];
 
 	// @ts-ignore (access)
 	compiledMask: CTX['compiledMask'];
-
-	// @ts-ignore (access)
-	applyMaskToText: CTX['applyMaskToText'];
 
 	// @ts-ignore (access)
 	initMask: CTX['initMask'];
 
 	// @ts-ignore (access)
 	compileMask: CTX['compileMask'];
+
+	// @ts-ignore (access)
+	syncMaskWithText: CTX['syncMaskWithText'];
 }

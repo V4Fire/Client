@@ -6,10 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInputText, { CompiledMask } from 'super/i-input-text/i-input-text';
+import iInputText from 'super/i-input-text/i-input-text';
+import { CompiledMask } from 'super/i-input-text/interface';
 
 /**
- * Compiles the specified component mask and returns it
+ * Compiles the specified component mask and returns the compiled object.
+ *
+ * To determine non-terminal symbols within the mask is used the symbol `%` and the symbol after it, like `%d` or `%w`.
+ * The character `%` is replaced to `\`, and after, the expression will be compiled to RegExp.
+ * To escape system characters, you can use a backslash, for instance, `\\%d`.
  *
  * @param component
  * @param mask
@@ -17,7 +22,7 @@ import iInputText, { CompiledMask } from 'super/i-input-text/i-input-text';
 export function compile<C extends iInputText>(component: C, mask: string): CompiledMask {
 	const {
 		unsafe,
-		unsafe: {maskRepeat, maskPlaceholder, maskDelimiter}
+		unsafe: {maskRepetitions, maskPlaceholder, maskDelimiter}
 	} = component;
 
 	const
@@ -25,18 +30,29 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 		nonTerminals = <RegExp[]>[];
 
 	let
-		placeholder = '',
+		placeholder = '';
+
+	let
+		needEscape = false,
 		isNonTerminal = false;
 
-	for (let o = [...mask], i = 0, j = 0; i < o.length && j < maskRepeat; i++) {
+	for (let o = [...mask.letters()], i = 0, j = 0; i < o.length && j < maskRepetitions; i++) {
 		const
 			char = o[i];
 
-		if (char === '%') {
-			isNonTerminal = true;
-			continue;
+		if (!needEscape) {
+			if (char === '\\') {
+				needEscape = true;
+				continue;
+			}
+
+			if (char === '%') {
+				isNonTerminal = true;
+				continue;
+			}
 		}
 
+		needEscape = false;
 		placeholder += isNonTerminal ? maskPlaceholder : char;
 
 		if (isNonTerminal) {
@@ -56,7 +72,7 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 			i = -1;
 			j++;
 
-			if (j < maskRepeat) {
+			if (j < maskRepetitions) {
 				placeholder += maskDelimiter;
 				symbols.push(maskDelimiter);
 			}

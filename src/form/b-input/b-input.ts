@@ -188,7 +188,7 @@ export default class bInput extends iInput implements iWidth, iSize {
 	 * Initial number of mask repetitions
 	 */
 	@prop({type: [Number, Boolean], required: false})
-	readonly maskRepeatProp?: number | boolean;
+	readonly maskRepetitionsProp?: number | boolean;
 
 	/**
 	 * Delimiter for a mask value (if the mask is repeated)
@@ -200,7 +200,7 @@ export default class bInput extends iInput implements iWidth, iSize {
 	 * Should mask be repeated infinitely
 	 */
 	get isMaskInfinite(): boolean {
-		return this.maskRepeatProp === true;
+		return this.maskRepetitionsProp === true;
 	}
 
 	/** @override */
@@ -291,7 +291,7 @@ export default class bInput extends iInput implements iWidth, iSize {
 	 * Number of mask repetitions
 	 */
 	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
-	protected maskRepeat!: number;
+	protected maskRepetitions!: number;
 
 	/**
 	 * Temporary last selection start index
@@ -393,7 +393,7 @@ export default class bInput extends iInput implements iWidth, iSize {
 				sys = false;
 
 			if (this.mask) {
-				for (let o = this.mask, i = 0, j = 0; i < o.length && j < this.maskRepeat; i++) {
+				for (let o = this.mask, i = 0, j = 0; i < o.length && j < this.maskRepetitions; i++) {
 					const
 						el = o[i];
 
@@ -416,7 +416,7 @@ export default class bInput extends iInput implements iWidth, iSize {
 						i = -1;
 						j++;
 
-						if (j < this.maskRepeat) {
+						if (j < this.maskRepetitions) {
 							tpl += maskDelimiter;
 							value.push(maskDelimiter);
 						}

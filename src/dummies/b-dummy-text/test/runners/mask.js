@@ -77,7 +77,7 @@ module.exports = (page) => {
 			const target = await init({
 				text: '12357984',
 				mask: '%d-%d',
-				maskRepeat: 2
+				maskRepetitions: 2
 			});
 
 			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-5');
@@ -87,7 +87,7 @@ module.exports = (page) => {
 			const target = await init({
 				text: '1',
 				mask: '%d-%d',
-				maskRepeat: 2
+				maskRepetitions: 2
 			});
 
 			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-_ _-_');
@@ -97,7 +97,7 @@ module.exports = (page) => {
 			const target = await init({
 				text: '12357984',
 				mask: '%d-%d',
-				maskRepeat: true
+				maskRepetitions: true
 			});
 
 			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-5');

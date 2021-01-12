@@ -33,7 +33,7 @@ import iInput, {
 import * as mask from 'super/i-input-text/modules/mask';
 //#endif
 
-import { CompiledMask, ApplyMaskToTextOptions, UnsafeIInputText } from 'super/i-input-text/interface';
+import { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from 'super/i-input-text/interface';
 
 export * from 'super/i-input/i-input';
 export * from 'super/i-input-text/interface';
@@ -140,21 +140,21 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * ```
 	 * /// A user will see an input element with a value:
 	 * /// _-_ _-_
-	 * < b-input :mask = '%d-%d' | :maskRepeat = 2
+	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2
 	 * ```
 	 */
 	@prop({type: [Number, Boolean], required: false})
-	readonly maskRepeatProp?: number | boolean;
+	readonly maskRepetitionsProp?: number | boolean;
 
 	/**
-	 * Delimiter for a mask value. This parameter is used when you are using the `maskRepeat` prop.
+	 * Delimiter for a mask value. This parameter is used when you are using the `maskRepetitions` prop.
 	 * Every next chunk of the mask will have the delimiter as a prefix.
 	 *
 	 * @example
 	 * ```
 	 * /// A user will see an input element with a value:
 	 * /// _-_@_-_
-	 * < b-input :mask = '%d-%d' | :maskRepeat = 2 | :maskDelimiter = '@'
+	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 	 * ```
 	 */
 	@prop(String)
@@ -215,7 +215,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * True, if the mask is repeated infinitely
 	 */
 	get isMaskInfinite(): boolean {
-		return this.maskRepeatProp === true;
+		return this.maskRepetitionsProp === true;
 	}
 
 	/** @inheritDoc */
@@ -245,10 +245,10 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * A number of mask repetitions
-	 * @see [[iInputText.maskRepeatProp]]
+	 * @see [[iInputText.maskRepetitionsProp]]
 	 */
 	@system((o) => o.sync.link((v) => v === true ? 1 : v ?? 1))
-	protected maskRepeat!: number;
+	protected maskRepetitions!: number;
 
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
@@ -282,7 +282,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		}
 
 		if (this.mask != null) {
-			void this.applyMaskToText('');
+			void this.syncMaskWithText('');
 
 		} else {
 			this.text = '';
@@ -293,176 +293,11 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Applies the component mask to the specified text.
-	 * The method can take additional options to specify the text selection and position of the text cursor.
-	 *
-	 * @param [text]
-	 * @param [opts] - additional options
-	 */
-	@wait('ready', {label: $$.applyMaskToText})
-	protected applyMaskToText(text: string = this.text, opts: ApplyMaskToTextOptions = {}): CanPromise<void> {
-		let
-			start = 0,
-			end = 0;
-
-		if (text !== '') {
-			start = opts.start ?? 0;
-			end = opts.end ?? 0;
-		}
-
-		const
-			mask = this.compiledMask;
-
-		if (mask == null) {
-			return;
-		}
-
-		const
-			maskSymbols = mask.symbols,
-			isFocused = this.mods.focused === 'true';
-
-		let
-			withoutSelection = start === end;
-
-		const
-			{maskText = mask.text} = opts;
-
-		let
-			maskedInput = '',
-			pos = -1;
-
-		if (text === '') {
-			if (isFocused) {
-				start = 0;
-				end = 0;
-				withoutSelection = true;
-				maskedInput = mask.placeholder;
-			}
-
-		} else {
-			const
-				chunks = text.split('').slice(start, withoutSelection ? undefined : end);
-
-			const resolveNonTerminalFromBuffer = (pattern: RegExp, i: number) => {
-				const
-					char = maskText[i];
-
-				if (!pattern.test(char)) {
-					return this.maskPlaceholder;
-				}
-
-				return char;
-			};
-
-			for (let i = 0; i < maskSymbols.length; i++) {
-				const
-					symbol = maskSymbols[i],
-					isNonTerminal = Object.isRegExp(symbol);
-
-				// Restoration of values that don't match the selection range
-				if (i < start || !withoutSelection && i > end) {
-					if (isNonTerminal) {
-						maskedInput += resolveNonTerminalFromBuffer(<RegExp>symbol, i);
-
-					} else {
-						maskedInput += symbol;
-					}
-
-					continue;
-				}
-
-				if (isNonTerminal) {
-					const
-						nonTerminal = <RegExp>symbol;
-
-					if (chunks.length > 0) {
-						// Skip all symbols that don't match the non-terminal grammar
-						while (chunks.length > 0 && !nonTerminal.test(chunks[0])) {
-							chunks.shift();
-						}
-
-						if (chunks.length > 0) {
-							maskedInput += chunks[0];
-							pos++;
-						}
-					}
-
-					// There are no symbols from the raw input that match the non-terminal grammar
-					if (chunks.length === 0) {
-						maskedInput += resolveNonTerminalFromBuffer(nonTerminal, i);
-
-					} else {
-						chunks.shift();
-					}
-
-				// This is a static symbol from the mask
-				} else {
-					maskedInput += symbol;
-				}
-			}
-		}
-
-		this.text = maskedInput;
-		mask.text = maskedInput;
-
-		if (isFocused) {
-			if (withoutSelection) {
-				pos = start + pos + 1;
-
-				while (pos < maskSymbols.length && !Object.isRegExp(maskSymbols[pos])) {
-					pos++;
-				}
-
-			} else {
-				pos = end;
-			}
-
-			mask.start = pos;
-			mask.end = pos;
-
-			this.$refs.input.setSelectionRange(pos, pos);
-		}
-	}
-
-	/**
 	 * Initializes the component mask
 	 */
 	@wait('ready', {label: $$.initMask})
 	protected initMask(): CanPromise<void> {
-		const {
-			async: $a,
-			$refs: {input}
-		} = this;
-
-		const group = {
-			group: 'mask'
-		};
-
-		$a.off(group);
-
-		if (this.mask == null) {
-			this.compiledMask = undefined;
-			return;
-		}
-
-		$a.on(input, 'mousedown keydown', this.onMaskNavigate.bind(this), group);
-		$a.on(input, 'mousedown keydown', this.onMaskValueReady.bind(this), group);
-		$a.on(input, 'mouseup keyup', this.onMaskValueReady.bind(this), {
-			options: {
-				capture: true
-			},
-
-			...group
-		});
-
-		$a.on(input, 'keypress', this.onMaskKeyPress.bind(this), group);
-		$a.on(input, 'keydown', this.onMaskDelete.bind(this), group);
-		$a.on(input, 'input', this.onMaskInput.bind(this), group);
-		$a.on(input, 'focus', this.onMaskFocus.bind(this), group);
-		$a.on(input, 'blur', this.onMaskBlur.bind(this), group);
-
-		this.compileMask();
-		return this.applyMaskToText();
+		return mask.init(this);
 	}
 
 	/**
@@ -476,6 +311,20 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 		this.compiledMask = mask.compile(this, this.mask);
 		return this.compiledMask;
+	}
+
+	/**
+	 * Synchronizes the component mask with the specified text value
+	 *
+	 * @param [text]
+	 * @param [opts] - additional options
+	 */
+	@wait('ready', {label: $$.syncComponentMaskWithText})
+	protected syncMaskWithText(
+		text: string = this.text,
+		opts?: SyncMaskWithTextOptions
+	): CanPromise<void> {
+		mask.syncWithText(this, text, opts);
 	}
 
 	/** @override */

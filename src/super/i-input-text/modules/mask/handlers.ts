@@ -87,14 +87,14 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 			text = chunks.join('');
 
 			if (text !== '') {
-				await unsafe.applyMaskToText(text, {
+				await unsafe.syncMaskWithText(text, {
 					start: selectionStart,
 					end: selectionEnd,
 					maskText: ''
 				});
 
 			} else {
-				await unsafe.applyMaskToText('');
+				await unsafe.syncMaskWithText('');
 			}
 
 			break;
@@ -142,7 +142,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 			}
 
 			if (text === mask!.placeholder) {
-				await unsafe.applyMaskToText('');
+				await unsafe.syncMaskWithText('');
 
 			} else {
 				unsafe.text = text;
@@ -326,7 +326,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		maskSymbols = mask!.symbols;
 
 	/*if (unsafe.isMaskInfinite && selectionEnd + 1 === maskSymbols.length) {
-		unsafe.maskRepeat++;
+		unsafe.maskRepetitions++;
 		unsafe.compileMask();
 		maskSymbols = unsafe.compiledMask!.symbols;
 	}*/

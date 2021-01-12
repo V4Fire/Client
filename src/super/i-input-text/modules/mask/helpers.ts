@@ -14,29 +14,41 @@ import iInputText, { CompiledMask } from 'super/i-input-text/i-input-text';
  * @param component
  * @param text
  */
-export async function fitMaskForText<C extends iInputText>(component: C, text: string): CanUndef<CompiledMask> {
+export function fitMaskForText<C extends iInputText>(component: C, text: string): CanUndef<CompiledMask> {
 	const {
 		unsafe,
 		unsafe: {compiledMask: mask}
 	} = component;
 
-	const cantFit =
-		mask == null ||
-		unsafe.maskRepeatProp !== true ||
-		mask!.capacity > text.length;
-
-	if (cantFit) {
+	if (mask == null || unsafe.maskRepetitionsProp !== true) {
 		return;
 	}
 
-	const {
-		symbols: maskSymbols,
-		capacity: maskCapacity
-	} = mask;
+	const
+		{nonTerminals} = mask!;
 
-	for (let i = 0; i < ) {
+	let
+		validCharsInText = 0;
 
+	for (const char of text.letters()) {
+		const
+			maskNonTerminal = nonTerminals[validCharsInText];
+
+		if (maskNonTerminal.test(char)) {
+			validCharsInText++;
+		}
 	}
+
+	if (nonTerminals.length > validCharsInText) {
+		return;
+	}
+
+	const
+		diff = validCharsInText - nonTerminals.length,
+		nonTerminalsPerChunk = nonTerminals.length / unsafe.maskRepetitions;
+
+	unsafe.maskRepetitions += Math.floor(diff / nonTerminalsPerChunk);
+	return unsafe.compileMask();
 }
 
 /**
@@ -54,7 +66,7 @@ export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(
 	}
 
 	if (unsafe.mods.empty === 'true') {
-		await unsafe.applyMaskToText('');
+		await unsafe.syncMaskWithText('');
 	}
 
 	let
@@ -127,7 +139,7 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 			return;
 		}
 
-		void unsafe.applyMaskToText(input.value, {
+		void unsafe.syncMaskWithText(input.value, {
 			start: mask?.start,
 			end: mask?.end
 		});

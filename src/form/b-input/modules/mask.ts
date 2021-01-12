@@ -462,7 +462,7 @@ export function onMaskKeyPress<T extends bInput>(component: T, e: KeyboardEvent)
 
 	if (c.isMaskInfinite && selectionEnd + 1 === mask.length) {
 		// @ts-ignore (access)
-		c.maskRepeat *= 2;
+		c.maskRepetitions *= 2;
 		c.updateMask().catch(stderr);
 		input.setSelectionRange(start + 1, start + 1);
 	}
