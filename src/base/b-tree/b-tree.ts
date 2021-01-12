@@ -115,7 +115,8 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
-			renderFilter = Object.isFunction(this.nestedRenderFilter) ? this.nestedRenderFilter : this.top.renderFilter;
+			{nestedRenderFilter, renderFilter: topRenderFilter} = this.top,
+			renderFilter = Object.isFunction(nestedRenderFilter) ? nestedRenderFilter : topRenderFilter;
 
 		const opts = {
 			level: this.level + 1,
