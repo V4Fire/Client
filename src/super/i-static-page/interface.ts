@@ -13,7 +13,8 @@ export { globalEmitter, ResetType } from 'core/component';
 export type RemoteState = typeof remoteState;
 
 export interface RootMod {
-	mod: string;
+	name: string;
 	value: string;
+	class: string;
 	component: ComponentInterface;
 }

@@ -19,9 +19,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Renamed the slot `control` to `controls`
   * Replaced the global modifier `hidden` to `opened`
 
+#### :bug: Bug Fix
+
+* Fixed a bug with `getRootMod` `iStaticPage`
+
 #### :memo: Documentation
 
 * Added documentation `bWindow`
+* Improved jsDoc `iBlock`
 
 #### :house: Internal
 

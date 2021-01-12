@@ -2126,11 +2126,25 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Sets a modifier to the root element of an application.
+	 *
 	 * This method is useful, when you need to attach a class can affect to the whole application,
 	 * for instance, you want to lock page scrolling, i.e. you need to add a class to the root HTML tag.
 	 *
-	 * @param name
-	 * @param value
+	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
+	 *
+	 * @param name - modifier name
+	 * @param value - modifier value
+	 *
+	 * @example
+	 * ```js
+	 * // this.componentName === 'b-button' && this.globalName === undefined
+	 * this.setRootMod('foo', 'bla');
+	 * console.log(document.documentElement.classList.contains('b-button-foo-bla'));
+	 *
+	 * // this.componentName === 'b-button' && this.globalName === 'bAz'
+	 * this.setRootMod('foo', 'bla');
+	 * console.log(document.documentElement.classList.contains('b-az-foo-bla'));
+	 * ```
 	 */
 	@p({replace: false})
 	setRootMod(name: string, value: unknown): boolean {
@@ -2138,10 +2152,23 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Removes a modifier from the root element of an application
+	 * Removes a modifier from the root element of an application.
+	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
 	 *
-	 * @param name
-	 * @param value
+	 * @param name - modifier name
+	 * @param [value] - modifier value (if not specified, the method removes the matched modifier with any value)
+	 *
+	 * @example
+	 * ```js
+	 * this.setRootMod('foo', 'bla');
+	 * console.log(document.documentElement.classList.contains('b-button-foo-bla'));
+	 *
+	 * this.removeRootMod('foo', 'baz');
+	 * console.log(document.documentElement.classList.contains('b-az-foo-bla') === true);
+	 *
+	 * this.removeRootMod('foo');
+	 * console.log(document.documentElement.classList.contains('b-az-foo-bla') === false);
+	 * ```
 	 */
 	@p({replace: false})
 	removeRootMod(name: string, value?: unknown): boolean {
@@ -2149,8 +2176,16 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Returns a value of the specified root element modifier
-	 * @param name
+	 * Returns a value of the specified root element modifier.
+	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
+	 * Notice that the method returns a normalized value.
+	 *
+	 * @param name - modifier name
+	 * @example
+	 * ```js
+	 * this.setRootMod('foo', 'blaBar');
+	 * console.log(this.getRootMod('foo') === 'bla-bar');
+	 * ```
 	 */
 	@p({replace: false})
 	getRootMod(name: string): CanUndef<string> {
