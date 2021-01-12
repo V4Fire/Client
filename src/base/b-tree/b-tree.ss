@@ -13,21 +13,21 @@
 - template index() extends ['i-data'].index
 	- block body
 		< template &
-			v-for = (el, i) in top.asyncRender.iterate(
+			v-for = (el, i) in asyncRender.iterate(
 				items,
-				top.renderChunks,
-				{filter: (el, i) => renderFilter(el, i)}
+				renderChunks,
+				{filter: renderFilter}
 			) |
 
 			:key = getItemKey(el, i)
 		.
 			< .&__node &
-				:-id = top.dom.getId(el.id) |
+				:-id = dom.getId(el.id) |
 				:-level = level |
 				:class = provide.elClasses({
 					node: {
 						level,
-						folded: el.folded != null ? el.folded : top.folded
+						folded: getFoldedModValue(el)
 					}
 				})
 			.
@@ -55,9 +55,9 @@
 
 				- block children
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
-						< @b-tree.&__child &
+						< b-tree.&__child &
 							:items = el.children |
-							:folded = el.folded != null ? el.folded : top.folded |
+							:folded = getFoldedModValue(el) |
 							:item = item |
 							:v-attrs = nestedTreeProps
 						.

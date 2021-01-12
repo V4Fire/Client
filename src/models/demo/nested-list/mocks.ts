@@ -10,22 +10,22 @@ export default {
 	GET: [
 		{
 			response: [
-				{id: 'foo'},
+				{id: 'bar'},
 
 				{
-					id: 'bar',
+					id: 'foo',
 					children: [
-						{id: 'foo_one'},
-						{id: 'foo_two'},
+						{id: 'foo_1'},
+						{id: 'foo_2'},
 
 						{
-							id: 'foo_three',
-							children: [{id: 'foo_three_one'}]
+							id: 'foo_3',
+							children: [{id: 'foo_3_1'}]
 						},
 
-						{id: 'foo_four'},
-						{id: 'foo_five'},
-						{id: 'foo_six'}
+						{id: 'foo_4'},
+						{id: 'foo_5'},
+						{id: 'foo_6'}
 					]
 				}
 			]

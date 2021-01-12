@@ -20,23 +20,23 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-	const items = [
-		{id: 'foo'},
+	const defaultItems = [
+		{id: 'bar'},
 
 		{
-			id: 'bar',
+			id: 'foo',
 			children: [
-				{id: 'fooone'},
-				{id: 'footwo'},
+				{id: 'foo_1'},
+				{id: 'foo_2'},
 
 				{
-					id: 'foothree',
-					children: [{id: 'foothreeone'}]
+					id: 'foo_3',
+					children: [{id: 'foo_3_1'}]
 				},
 
-				{id: 'foofour'},
-				{id: 'foofive'},
-				{id: 'foosix'}
+				{id: 'foo_4'},
+				{id: 'foo_5'},
+				{id: 'foo_6'}
 			]
 		}
 	];
@@ -50,7 +50,7 @@ module.exports = (page) => {
 	describe('b-tree renders tree by passing item prop', () => {
 		const init = async ({opts, attrs, content} = {}) => {
 			if (opts == null) {
-				opts = items;
+				opts = defaultItems;
 			}
 
 			await page.evaluate(({items, attrs, content}) => {
@@ -100,7 +100,7 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
 
 			const
-				promises = await Promise.all(checkOptionTree({opts: items, target})),
+				promises = await Promise.all(checkOptionTree({opts: defaultItems, target})),
 				checkboxes = await page.$$('.b-checkbox');
 
 			expect(promises.length).toEqual(checkboxes.length);
@@ -126,16 +126,16 @@ module.exports = (page) => {
 
 		it('item unfolded by default', async () => {
 			const opts = [
-				{id: 'foo'},
+				{id: 'bar'},
 				{
-					id: 'bar',
+					id: 'foo',
 					children: [
-						{id: 'fooone'},
-						{id: 'footwo'},
+						{id: 'foo_1'},
+						{id: 'foo_2'},
 						{
-							id: 'foothree',
+							id: 'foo_3',
 							folded: false,
-							children: [{id: 'foothreeone', children: [{id: 'foothreeoneone'}]}]
+							children: [{id: 'foo_3_1', children: [{id: 'foo_3_1_1'}]}]
 						}
 					]
 				}
@@ -147,18 +147,19 @@ module.exports = (page) => {
 
 		it('set external nestedRenderFilter', async () => {
 			const opts = [
-				{id: 'foo'},
 				{
-					id: 'bar',
+					id: 'foo',
 					children: [
-						{id: 'fooone'},
-						{id: 'footwo'},
+						{id: 'foo_1'},
+						{id: 'foo_2'},
 						{
-							id: 'foothree',
-							children: [{id: 'foothreeone', children: [{id: 'foothreeoneone'}]}]
+							id: 'foo_3',
+							children: [{id: 'foo_3_1', children: [{id: 'foo_3_1_1'}]}]
 						}
 					]
-				}
+				},
+
+				{id: 'bar'}
 			];
 
 			await init({
@@ -241,7 +242,7 @@ module.exports = (page) => {
 				];
 
 				globalThis.renderComponents('b-tree', scheme);
-			}, items);
+			}, defaultItems);
 
 			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
@@ -256,7 +257,7 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
 
 			const
-				promises = await Promise.all(checkOptionTree({opts: items, target})),
+				promises = await Promise.all(checkOptionTree({opts: defaultItems, target})),
 				refs = await h.dom.getRefs(page, 'item');
 
 			expect(promises.length).toEqual(refs.length);
@@ -277,8 +278,7 @@ module.exports = (page) => {
 
 			queue.push((async () => {
 				const
-					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), item.id),
-					element = await h.dom.waitForEl(page, `[data-id="${id}"]`);
+					element = await h.dom.waitForEl(page, `[data-id$="-${item.id}"]`);
 
 				const
 					foldedPropValue = await target.evaluate((ctx) => ctx.folded),

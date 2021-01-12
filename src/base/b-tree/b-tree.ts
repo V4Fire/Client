@@ -64,7 +64,11 @@ export default class bTree extends iData implements iItems {
 	@prop({
 		type: Function,
 		required: false,
-		default(this: bTree): Promise<boolean> {
+		default(this: bTree, el: unknown, i: number): CanPromise<boolean> {
+			if (this.level === 0 && i < this.renderChunks) {
+				return true;
+			}
+
 			return this.async.animationFrame().then(() => true);
 		}
 	})
@@ -80,6 +84,12 @@ export default class bTree extends iData implements iItems {
 	 */
 	@prop({type: Function, required: false})
 	readonly nestedRenderFilter?: RenderFilter;
+
+	/**
+	 * Link to the top level component
+	 */
+	@prop({type: Object, required: false})
+	readonly top?: bTree;
 
 	/**
 	 * Number of chunks to render via `asyncRender`
@@ -104,23 +114,23 @@ export default class bTree extends iData implements iItems {
 	items!: Item[];
 
 	/**
-	 * Link to the top level component
-	 */
-	protected get top(): bTree {
-		return this.isFlyweight ? <bTree>this.$normalParent : this;
-	}
-
-	/**
 	 * Props for recursively inserted tree components
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
-			{nestedRenderFilter, renderFilter: topRenderFilter} = this.top,
-			renderFilter = Object.isFunction(nestedRenderFilter) ? nestedRenderFilter : topRenderFilter;
+			root = this.level === 0,
+			{nestedRenderFilter} = this,
+			renderFilter = Object.isFunction(nestedRenderFilter) ? nestedRenderFilter : this.renderFilter;
+
+		console.log(4, renderFilter);
 
 		const opts = {
 			level: this.level + 1,
+			top: root ? this : this.top,
 			classes: this.classes,
+
+			renderChunks: this.renderChunks,
+			nestedRenderFilter,
 			renderFilter
 		};
 
@@ -129,6 +139,18 @@ export default class bTree extends iData implements iItems {
 		}
 
 		return opts;
+	}
+
+	/**
+	 * Returns a folded modifier value for the specified item
+	 * @param el
+	 */
+	protected getFoldedModValue(el: this['Item']): boolean {
+		if (el.folded != null) {
+			return el.folded;
+		}
+
+		return this.top?.folded ?? this.folded;
 	}
 
 	/** @override */
@@ -198,7 +220,7 @@ export default class bTree extends iData implements iItems {
 			return;
 		}
 
-		return this.top.block?.getElMod(target, 'node', 'folded');
+		return this.block?.getElMod(target, 'node', 'folded');
 	}
 
 	/**
@@ -206,7 +228,7 @@ export default class bTree extends iData implements iItems {
 	 * @param id
 	 */
 	protected findItemElement(id: string): CanUndef<HTMLElement> {
-		const itemId = this.top.dom.getId(id);
+		const itemId = this.dom.getId(id);
 		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${itemId}]`) ?? undefined;
 	}
 
@@ -222,7 +244,7 @@ export default class bTree extends iData implements iItems {
 			newVal = this.getFoldedMod(el.id) === 'false';
 
 		if (target) {
-			this.top.block?.setElMod(target, 'node', 'folded', newVal);
+			this.block?.setElMod(target, 'node', 'folded', newVal);
 			this.emit('fold', target, el, newVal);
 		}
 	}
