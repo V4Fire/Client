@@ -23,27 +23,6 @@ module.exports = (page) => {
 	let
 		sidebar;
 
-	const render = async () => {
-		await page.evaluate(() => {
-			globalThis.renderComponents('b-sidebar', [
-				{
-					attrs: {},
-					content: {
-						default: {
-							tag: 'div',
-							content: 'Hello content',
-							attrs: {
-								id: 'test-div'
-							}
-						}
-					}
-				}
-			]);
-		});
-
-		sidebar = await h.component.waitForComponent(page, '.b-sidebar');
-	};
-
 	describe('b-sidebar', () => {
 		beforeEach(async () => {
 			await page.evaluate(() => globalThis.removeCreatedComponents());
@@ -161,4 +140,25 @@ module.exports = (page) => {
 			});
 		});
 	});
+
+	async function render() {
+		await page.evaluate(() => {
+			globalThis.renderComponents('b-sidebar', [
+				{
+					attrs: {},
+					content: {
+						default: {
+							tag: 'div',
+							content: 'Hello content',
+							attrs: {
+								id: 'test-div'
+							}
+						}
+					}
+				}
+			]);
+		});
+
+		sidebar = await h.component.waitForComponent(page, '.b-sidebar');
+	}
 };
