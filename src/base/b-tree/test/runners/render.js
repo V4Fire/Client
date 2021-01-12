@@ -41,55 +41,6 @@ module.exports = (page) => {
 		}
 	];
 
-	const getFoldedClass = (target, value = true) => target.evaluate(
-		(ctx, v) => ctx.block.getFullElName('node', 'folded', v),
-		value
-	);
-
-	const checkOptionTree = ({opts, target, queue = [], level = 0, foldSelector}) => {
-		opts.forEach((item) => {
-			const
-				isBranch = Object.isArray(item.children);
-
-			queue.push((async () => {
-				const
-					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), item.id),
-					foldedClass = await getFoldedClass(target),
-					element = await h.dom.waitForEl(page, `[data-id="${id}"]`);
-
-				await expectAsync(
-					element.getAttribute('class').then((className) => className.includes(foldedClass))
-				).toBeResolvedTo(true);
-
-				await expectAsync(element.getAttribute('data-level')).toBeResolvedTo(String(level));
-
-				if (isBranch) {
-					const
-						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElName('fold')}`),
-						fold = await h.dom.waitForEl(element, selector),
-						foldedInitClass = item.folded != null ? item.folded : false;
-
-					fold.click();
-
-					const
-						mod = await getFoldedClass(target, foldedInitClass);
-
-					await h.bom.waitForIdleCallback(page);
-
-					await expectAsync(
-						element.getAttribute('class').then((className) => className.includes(mod))
-					).toBeResolvedTo(!foldedInitClass);
-				}
-			})());
-
-			if (isBranch) {
-				checkOptionTree({opts: item.children, level: level + 1, target, queue, foldSelector});
-			}
-		});
-
-		return queue;
-	};
-
 	beforeEach(async () => {
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
@@ -311,4 +262,55 @@ module.exports = (page) => {
 			expect(promises.length).toEqual(refs.length);
 		});
 	});
+
+	function getFoldedClass(target, value = true) {
+		return target.evaluate(
+			(ctx, v) => ctx.block.getFullElName('node', 'folded', v),
+			value
+		);
+	}
+
+	function checkOptionTree({opts, target, queue = [], level = 0, foldSelector}) {
+		opts.forEach((item) => {
+			const
+				isBranch = Object.isArray(item.children);
+
+			queue.push((async () => {
+				const
+					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), item.id),
+					foldedClass = await getFoldedClass(target),
+					element = await h.dom.waitForEl(page, `[data-id="${id}"]`);
+
+				await expectAsync(
+					element.getAttribute('class').then((className) => className.includes(foldedClass))
+				).toBeResolvedTo(true);
+
+				await expectAsync(element.getAttribute('data-level')).toBeResolvedTo(String(level));
+
+				if (isBranch) {
+					const
+						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElName('fold')}`),
+						fold = await h.dom.waitForEl(element, selector),
+						foldedInitClass = item.folded != null ? item.folded : false;
+
+					fold.click();
+
+					const
+						mod = await getFoldedClass(target, foldedInitClass);
+
+					await h.bom.waitForIdleCallback(page);
+
+					await expectAsync(
+						element.getAttribute('class').then((className) => className.includes(mod))
+					).toBeResolvedTo(!foldedInitClass);
+				}
+			})());
+
+			if (isBranch) {
+				checkOptionTree({opts: item.children, level: level + 1, target, queue, foldSelector});
+			}
+		});
+
+		return queue;
+	}
 };
