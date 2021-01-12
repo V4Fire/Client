@@ -20,7 +20,7 @@ const
  * @returns {!Promise<void>}
  */
 module.exports = (page) => {
-	describe('b-window', () => {
+	describe('b-window simple tests', () => {
 		beforeEach(async () => {
 			await page.evaluate(() => globalThis.removeCreatedComponents());
 		});
