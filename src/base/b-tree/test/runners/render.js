@@ -278,8 +278,12 @@ module.exports = (page) => {
 			queue.push((async () => {
 				const
 					id = await target.evaluate((ctx, id) => ctx.dom.getId(id), item.id),
-					foldedClass = await getFoldedClass(target),
 					element = await h.dom.waitForEl(page, `[data-id="${id}"]`);
+
+				const
+					foldedPropValue = await target.evaluate((ctx) => ctx.folded),
+					foldedInitModValue = item.folded != null ? item.folded : foldedPropValue,
+					foldedClass = await getFoldedClass(target, foldedInitModValue);
 
 				await expectAsync(
 					element.getAttribute('class').then((className) => className.includes(foldedClass))
@@ -290,19 +294,15 @@ module.exports = (page) => {
 				if (isBranch) {
 					const
 						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElName('fold')}`),
-						fold = await h.dom.waitForEl(element, selector),
-						foldedInitClass = item.folded != null ? item.folded : false;
-
-					fold.click();
-
-					const
-						mod = await getFoldedClass(target, foldedInitClass);
-
-					await h.bom.waitForIdleCallback(page);
+						fold = await h.dom.waitForEl(element, selector);
 
 					await expectAsync(
-						element.getAttribute('class').then((className) => className.includes(mod))
-					).toBeResolvedTo(!foldedInitClass);
+						element.getAttribute('class').then((className) => className.includes(foldedClass))
+					).toBeResolvedTo(true);
+
+					if (foldedInitModValue) {
+						await fold.click();
+					}
 				}
 			})());
 
