@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Renamed the slot `control` to `controls`
+* Replaced the global modifier `hidden` to `opened`
 
 #### :memo: Documentation
 

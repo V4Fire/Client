@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Renamed the slot `control` to `controls` `bWindow`
+* `bWindow`:
+  * Renamed the slot `control` to `controls`
+  * Replaced the global modifier `hidden` to `opened`
 
 #### :memo: Documentation
 

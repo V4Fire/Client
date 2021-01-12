@@ -60,6 +60,9 @@ module.exports = (page) => {
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-window_opened_true');
+
+				expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
+					.toBe('true');
 			});
 
 			it('switching to a different stage via `open`', async () => {
@@ -133,6 +136,9 @@ module.exports = (page) => {
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
+
+				expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
+					.toBe('false');
 			});
 
 			it('closes the window when `toggle` is invoked', async () => {

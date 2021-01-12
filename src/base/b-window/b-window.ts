@@ -214,7 +214,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 				this.stage = stage;
 			}
 
-			this.setRootMod('hidden', false);
+			this.setRootMod('opened', true);
 			await this.nextTick();
 			this.emit('open');
 			return true;
@@ -226,7 +226,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	/** @see [[iOpenToggle.prototype.close]] */
 	async close(): Promise<boolean> {
 		if (await iOpenToggle.close(this)) {
-			this.setRootMod('hidden', true);
+			this.setRootMod('opened', false);
 			this.emit('close');
 			return true;
 		}

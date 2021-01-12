@@ -10,7 +10,7 @@ This module provides a component to create a modal window.
 
 * The component locks background scrolling when opened.
 
-* The component sets the root `hidden` modifier on opening/closing.
+* The component sets the root `opened` modifier on opening/closing.
 
 * The component automatically closed by a click at the "outside" place.
 
