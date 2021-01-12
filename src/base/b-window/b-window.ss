@@ -41,12 +41,12 @@
 									- block title
 										{{ title }}
 
-							< .&__content
+							< .&__body.&__content
 								+= self.slot('body')
 									- block content
 
 							< .&__controls
-								+= self.slot('control')
+								+= self.slot('controls')
 									- block controls
 										< b-button @click = close
 											{{ `Close` }}

@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.121 (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Renamed the slot `control` to `controls`
+
 #### :memo: Documentation
 
 * Added documentation

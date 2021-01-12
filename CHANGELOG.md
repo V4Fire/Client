@@ -13,15 +13,19 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.121 (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Renamed the slot `control` to `controls` `bWindow`
+
 #### :memo: Documentation
 
-* Added documentation `base/b-window`
+* Added documentation `bWindow`
 
 #### :house: Internal
 
-`base/b-window`:
+`bWindow`:
   * Fixed ESLint errors
-  * Fixed ts errors
+  * Fixed TS errors
   * Added tests
 
 ## v3.0.0-rc.120 (2020-12-23)
