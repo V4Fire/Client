@@ -9,12 +9,12 @@
 import iInputText, { CompiledMask } from 'super/i-input-text/i-input-text';
 
 /**
- * Takes the specified text, and if its length more than the mask can accommodate, tries to expand the mask
+ * Takes the specified text, and if its length more than the component mask can accommodate, tries to expand the mask
  *
  * @param component
  * @param text
  */
-export function fitMaskForText<C extends iInputText>(component: C, text: string): CanUndef<CompiledMask> {
+export function fitForText<C extends iInputText>(component: C, text: string): CanUndef<CompiledMask> {
 	const {
 		unsafe,
 		unsafe: {compiledMask: mask}
@@ -28,14 +28,22 @@ export function fitMaskForText<C extends iInputText>(component: C, text: string)
 		{nonTerminals} = mask!;
 
 	let
+		i = 0,
 		validCharsInText = 0;
 
 	for (const char of text.letters()) {
 		const
-			maskNonTerminal = nonTerminals[validCharsInText];
+			maskNonTerminal = nonTerminals[i];
 
 		if (maskNonTerminal.test(char)) {
 			validCharsInText++;
+
+			if (i < nonTerminals.length - 1) {
+				i++;
+
+			} else {
+				i = 0;
+			}
 		}
 	}
 

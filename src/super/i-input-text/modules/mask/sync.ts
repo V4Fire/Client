@@ -8,6 +8,7 @@
 
 import iInputText from 'super/i-input-text/i-input-text';
 import { SyncMaskWithTextOptions } from 'super/i-input-text/interface';
+import { fitForText } from 'super/i-input-text/modules/mask/helpers';
 
 /**
  * Synchronizes the component mask with the specified text value
@@ -29,6 +30,8 @@ export function syncWithText<C extends iInputText>(
 	if (mask == null) {
 		return;
 	}
+
+	fitForText(component, text);
 
 	const
 		isFocused = unsafe.mods.focused === 'true';
