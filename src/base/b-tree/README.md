@@ -34,7 +34,7 @@ Also, you can see the [[iData]] component.
 
 ## Associated types
 
-The component has one associated types to specify a type of component items: **Items**.
+The component has two associated types to specify a type of component items: **Item** and **Items**.
 
 ```typescript
 import bTree, { component } from 'super/b-tree/b-tree';
@@ -44,7 +44,7 @@ export * from 'super/b-list/b-list';
 @component()
 export default class myTree extends bTree {
   /** @override */
-  readonly Items!: MyItems;
+  readonly Item!: MyItem;
 }
 ```
 

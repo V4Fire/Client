@@ -52,7 +52,7 @@ export default class bTree extends iData implements iItems {
 
 	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, required: false})
-	readonly itemProps!: iItems['itemProps'];
+	readonly itemProps?: iItems['itemProps'];
 
 	/**
 	 * Common filter to render items via `asyncRender`.
@@ -111,7 +111,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Properties for recursively inserted tree components
+	 * Props for recursively inserted tree components
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
@@ -147,7 +147,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns props data for the specified fold element
+	 * Returns a dictionary with props for the specified fold element
 	 * @param el
 	 */
 	protected getFoldProps(el: Item): Dictionary {
@@ -162,7 +162,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns props data for the specified iterated element
+	 * Returns a dictionary with props for the specified iterated element
 	 *
 	 * @param el
 	 * @param i
@@ -172,7 +172,6 @@ export default class bTree extends iData implements iItems {
 			op = this.itemProps,
 			item = Object.reject(el, 'children');
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (op == null) {
 			return item;
 		}
@@ -182,16 +181,17 @@ export default class bTree extends iData implements iItems {
 				key: this.getItemKey(item, i),
 				ctx: this
 			}) :
+
 			op;
 	}
 
 	/**
-	 * Returns a folded modifier for the specified identifier
+	 * Returns the folded modifier of an element by the specified identifier
 	 * @param id
 	 */
 	protected getFoldedMod(id: string): CanUndef<string> {
 		const
-			target = this.searchItemElement(id);
+			target = this.findItemElement(id);
 
 		if (!target) {
 			return;
@@ -201,10 +201,10 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Searches HTML element with the specified identifier
+	 * Searches an HTML element by the specified identifier and returns it
 	 * @param id
 	 */
-	protected searchItemElement(id: string): CanUndef<HTMLElement> {
+	protected findItemElement(id: string): CanUndef<HTMLElement> {
 		const itemId = this.top.dom.getId(id);
 		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${itemId}]`) ?? undefined;
 	}
@@ -213,11 +213,11 @@ export default class bTree extends iData implements iItems {
 	 * Handler: fold element click
 	 *
 	 * @param el
-	 * @emits fold(target: HTMLElement, el: Item, value: boolean)
+	 * @emits `fold(target: HTMLElement, el: Item, value: boolean)`
 	 */
 	protected onFoldClick(el: Item): void {
 		const
-			target = this.searchItemElement(el.id),
+			target = this.findItemElement(el.id),
 			newVal = this.getFoldedMod(el.id) === 'false';
 
 		if (target) {

@@ -12,6 +12,9 @@ import bTree from 'base/b-tree/b-tree';
  * Tree element data
  */
 export interface Item extends Dictionary {
+	/**
+	 * Element identifier
+	 */
 	id: string;
 
 	/**
