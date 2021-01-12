@@ -109,5 +109,13 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => ctx.block.element('controls').innerHTML))
 				.toBe('<button>Close</button>');
 		});
+
+		it('third-party slot', async () => {
+			const
+				target = await init({attrs: {slotName: 'windowSlotTestDummy'}});
+
+			expect(await target.evaluate((ctx) => ctx.block.element('window').innerHTML))
+				.toBe('<div class="b-window__bla">Hello world!</div>');
+		});
 	});
 };
