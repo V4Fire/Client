@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.121 (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with parsing of styles
+
 ## v3.0.0-rc.108 (2020-12-14)
 
 #### :bug: Bug Fix

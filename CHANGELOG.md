@@ -11,6 +11,31 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.121 (2021-??-??)
+
+#### :boom: Breaking Change
+
+* `bWindow`:
+  * Renamed the slot `control` to `controls`
+  * Replaced the global modifier `hidden` to `opened`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `getRootMod` `iStaticPage`
+* Fixed a bug with parsing of styles `core/component/vnode`
+
+#### :memo: Documentation
+
+* Added documentation `bWindow`
+* Improved jsDoc `iBlock`
+
+#### :house: Internal
+
+`bWindow`:
+  * Fixed ESLint errors
+  * Fixed TS errors
+  * Added tests
+
 ## v3.0.0-rc.120 (2020-12-23)
 
 #### :bug: Bug Fix
