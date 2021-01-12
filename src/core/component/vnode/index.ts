@@ -200,6 +200,8 @@ export function patchComponentVData(
 	}
 
 	if (Object.isTruly(anotherData.style)) {
+		console.log(data.style, anotherData.style, parseStyle(data.style, parseStyle(anotherData.style)));
+
 		data.style = parseStyle(data.style, parseStyle(anotherData.style));
 	}
 
@@ -255,7 +257,10 @@ export function parseStyle(
 		const
 			styles = style.split(';');
 
-		for (let i = 0, rule = styles[i]; i < styles.length; i++) {
+		for (let i = 0; i < styles.length; i++) {
+			const
+				rule = styles[i];
+
 			if (rule.trim().length === 0) {
 				continue;
 			}

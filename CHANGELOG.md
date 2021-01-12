@@ -22,6 +22,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a bug with `getRootMod` `iStaticPage`
+* Fixed a bug with parsing of styles `core/component/vnode`
 
 #### :memo: Documentation
 
