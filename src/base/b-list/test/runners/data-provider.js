@@ -26,25 +26,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-list list with loading from a data provider', () => {
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							id: 'target',
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-list', scheme);
-			}, attrs);
-
-			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '#target', 'ready');
-			return h.component.waitForComponent(page, '#target');
-		};
-
 		it('simple loading from a provider', async () => {
 			const target = await init({
 				autoHref: true,
@@ -61,4 +42,23 @@ module.exports = (page) => {
 			expect(await target.evaluate(() => location.hash)).toBe('#bar');
 		});
 	});
+
+	async function init(attrs = {}) {
+		await page.evaluate((attrs) => {
+			const scheme = [
+				{
+					attrs: {
+						id: 'target',
+						...attrs
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-list', scheme);
+		}, attrs);
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '#target', 'ready');
+		return h.component.waitForComponent(page, '#target');
+	}
 };

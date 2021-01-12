@@ -26,42 +26,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-list simple list with defined items', () => {
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							id: 'target',
-
-							items: [
-								{
-									label: 'Foo',
-									value: 0,
-									attrs: {
-										title: 'Custom attr'
-									}
-								},
-
-								{
-									label: 'Bla',
-									value: 1
-								}
-							],
-
-							...attrs,
-							// eslint-disable-next-line no-eval
-							active: /new /.test(attrs.active) ? eval(attrs.active) : attrs.active
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-list', scheme);
-			}, attrs);
-
-			await h.bom.waitForIdleCallback(page);
-			return h.component.waitForComponent(page, '#target');
-		};
-
 		it('initialization', async () => {
 			const
 				target = await init();
@@ -338,4 +302,40 @@ module.exports = (page) => {
 			]);
 		});
 	});
+
+	async function init(attrs = {}) {
+		await page.evaluate((attrs) => {
+			const scheme = [
+				{
+					attrs: {
+						id: 'target',
+
+						items: [
+							{
+								label: 'Foo',
+								value: 0,
+								attrs: {
+									title: 'Custom attr'
+								}
+							},
+
+							{
+								label: 'Bla',
+								value: 1
+							}
+						],
+
+						...attrs,
+						// eslint-disable-next-line no-eval
+						active: /new /.test(attrs.active) ? eval(attrs.active) : attrs.active
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-list', scheme);
+		}, attrs);
+
+		await h.bom.waitForIdleCallback(page);
+		return h.component.waitForComponent(page, '#target');
+	}
 };

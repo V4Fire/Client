@@ -26,28 +26,6 @@ module.exports = (page) => {
 	});
 
 	describe('i-block providing of styles', () => {
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs = {}) => {
-				const component = attrs.component ?? 'b-dummy';
-				delete attrs.component;
-
-				const scheme = [
-					{
-						attrs: {
-							id: 'target',
-							style: ['background-color: red; color: blue', {'font-size': '12px'}],
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents(component, scheme);
-			}, attrs);
-
-			await h.bom.waitForIdleCallback(page);
-			return h.component.waitForComponent(page, '#target');
-		};
-
 		it('to a regular component', async () => {
 			const target = await init();
 
@@ -65,4 +43,26 @@ module.exports = (page) => {
 				.toBe('background-color: red; color: blue; font-size: 12px;');
 		});
 	});
+
+	async function init(attrs = {}) {
+		await page.evaluate((attrs = {}) => {
+			const component = attrs.component ?? 'b-dummy';
+			delete attrs.component;
+
+			const scheme = [
+				{
+					attrs: {
+						id: 'target',
+						style: ['background-color: red; color: blue', {'font-size': '12px'}],
+						...attrs
+					}
+				}
+			];
+
+			globalThis.renderComponents(component, scheme);
+		}, attrs);
+
+		await h.bom.waitForIdleCallback(page);
+		return h.component.waitForComponent(page, '#target');
+	}
 };

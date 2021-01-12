@@ -20,141 +20,161 @@ const
  * @returns {!Promise<void>}
  */
 module.exports = (page) => {
-	let
-		window;
-
-	const render = async (attrs = {}) => {
-		await page.evaluate(() => {
-			globalThis.renderComponents('b-window', [
-				{
-					attrs: {
-						...attrs
-					},
-
-					content: {
-						default: {
-							tag: 'div',
-							content: 'Hello content',
-							attrs: {
-								id: 'test-div'
-							}
-						}
-					}
-				}
-			]);
-		});
-
-		window = await h.component.waitForComponent(page, '.b-window');
-	};
-
 	describe('b-window', () => {
 		beforeEach(async () => {
 			await page.evaluate(() => globalThis.removeCreatedComponents());
 		});
 
 		it('renders the specified content', async () => {
-			await render();
+			await init();
 			const div = await h.dom.waitForEl(page, '#test-div');
 			expect(await div.evaluate((ctx) => ctx.textContent)).toBe('Hello content');
 		});
 
 		it('closed by default', async () => {
-			await render();
-			await h.bom.waitForIdleCallback(page);
+			const
+				target = await init(),
+				classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 
-			const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
 			expect(classList).not.toContain('b-window_opened_true');
 		});
 
 		describe('open', () => {
 			it('emits an event if opening', async () => {
-				await render();
-				const subscribe = window.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
-				await window.evaluate((ctx) => ctx.open());
+				const
+					target = await init(),
+					subscribe = target.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
+
+				await target.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
+
 				await expectAsync(subscribe).toBeResolved();
 			});
 
 			it('shows the window when `open` is invoked', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.open());
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
 
-				const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
+				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-window_opened_true');
 			});
 
 			it('switching to a different stage via `open`', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.open('foo'));
-				expect(await window.evaluate((ctx) => ctx.stage)).toBe('foo');
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.open('foo'));
+				expect(await target.evaluate((ctx) => ctx.stage)).toBe('foo');
 			});
 
 			it('shows the window when `toggle` is invoked', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.toggle());
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.toggle());
 				await h.bom.waitForIdleCallback(page);
 
-				const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
+				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-window_opened_true');
 			});
 		});
 
 		describe('close', () => {
 			it('emits an event if closing', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.open());
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
 
-				const subscribe = window.evaluate((ctx) => new Promise((res) => ctx.once('close', res)));
-				await window.evaluate((ctx) => ctx.close());
+				const subscribe = target.evaluate((ctx) => new Promise((res) => ctx.once('close', res)));
+				await target.evaluate((ctx) => ctx.close());
 
 				await expectAsync(subscribe).toBeResolved();
 			});
 
 			it('closes the window by a click', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.open());
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
 				await page.click('.b-window__wrapper', {position: {x: 10, y: 10}});
 				await h.bom.waitForIdleCallback(page);
 
-				const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
+				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
 			});
 
 			it('closes the window when "escape" is pressed', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.open());
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
 				await page.press('.b-window', 'Escape');
 				await h.bom.waitForIdleCallback(page);
 
-				const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
+				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
 			});
 
 			it('closes the window when `close` is invoked', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.open());
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
-				await window.evaluate((ctx) => ctx.close());
+				await target.evaluate((ctx) => ctx.close());
 				await h.bom.waitForIdleCallback(page);
 
-				const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
+				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
 			});
 
 			it('closes the window when `toggle` is invoked', async () => {
-				await render();
-				await window.evaluate((ctx) => ctx.open());
+				const
+					target = await init();
+
+				await target.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
-				await window.evaluate((ctx) => ctx.toggle());
+				await target.evaluate((ctx) => ctx.toggle());
 				await h.bom.waitForIdleCallback(page);
 
-				const classList = await window.evaluate((ctx) => ctx.$el.className.split(' '));
+				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
 			});
 		});
 	});
+
+	async function init(attrs = {}) {
+		await page.evaluate((attrs) => {
+			globalThis.renderComponents('b-window', [
+				{
+					content: {
+						body: {
+							tag: 'div',
+							content: 'Hello content',
+							attrs: {
+								id: 'test-div'
+							}
+						}
+					},
+
+					attrs: {
+						id: 'target',
+						title: 'Bla',
+						...attrs
+					}
+				}
+			]);
+		}, attrs);
+
+		await h.bom.waitForIdleCallback(page);
+		await h.component.waitForComponentStatus(page, '#target', 'ready');
+		return h.component.waitForComponent(page, '#target');
+	}
 };
