@@ -16,14 +16,6 @@ This module provides API to render a recursive list of elements.
 
 * Folding of branches.
 
-## Modifiers
-
-| Name         | Description             | Values    | Default |
-| ------------ | ----------------------- | ----------| ------- |
-| `folded`     | Fold or not child items | `Boolean` | `true`  |
-
-Also, you can see the [[iData]] component.
-
 ## Events
 
 | EventName | Description                                            | Payload description                                            | Payload                          |
