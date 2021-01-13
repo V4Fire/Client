@@ -18,18 +18,52 @@ export * from 'traits/i-items/interface';
 
 export default abstract class iItems {
 	/**
-	 * Generates or returns an item key
+	 * Returns a value of the unique key (to optimize re-rendering) of the specified item
 	 *
 	 * @param component
-	 * @param el
+	 * @param item
 	 * @param i
 	 */
 	static getItemKey<T extends iBlock>(
-		component: T & iItems, el: any, i: number
-	): CanUndef<string> {
-		return Object.isFunction(component.itemKey) ?
-			component.itemKey(el, i) :
-			component.itemKey;
+		component: T & iItems,
+		item: any,
+		i: number
+	): CanUndef<string | number | boolean> {
+		const
+			{unsafe, itemKey} = component;
+
+		let
+			id;
+
+		if (Object.isFunction(itemKey)) {
+			id = itemKey.call(component, item, i);
+
+		} else if (Object.isString(itemKey)) {
+			const
+				cacheKey = `[[FN:${itemKey}]]`;
+
+			let
+				compiledFn = <CanUndef<Function>>unsafe.tmp[cacheKey];
+
+			if (!Object.isFunction(compiledFn)) {
+				const
+					normalize = (str) => str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+				// eslint-disable-next-line no-new-func
+				compiledFn = Function('item', 'i', `return item['${normalize(itemKey)}']`);
+
+				// @ts-ignore (invalid type)
+				unsafe.tmp[cacheKey] = compiledFn;
+			}
+
+			id = compiledFn.call(component, item, i);
+		}
+
+		if (Object.isPrimitive(id)) {
+			return id;
+		}
+
+		return id != null ? String(id) : id;
 	}
 
 	/**
