@@ -31,10 +31,3 @@ export interface CreateFromItemFn<ITEM = object, R = unknown> {
 export interface ItemPropsFn<ITEM = object, CTX = iBlock> {
 	(item: ITEM, i: number, params: ItemPropParams<CTX>): Dictionary;
 }
-
-/**
- * Factory to create an item iterator
- */
-export interface ItemsIterator<ITEMS = object[], CTX = iBlock> {
-	(items: ITEMS, ctx: CTX): ITEMS;
-}

@@ -57,15 +57,6 @@ The prop can be provided as a function. In that case, a value is taken from the 
 < b-tree :items = myItems | :item = 'b-checkbox' | :itemProps = (item, i) => i === 0 ? {name: 'foo'} : {name: 'bar'}
 ```
 
-### itemsIterator
-
-The prop allows specifying a function that takes a list of items to render and returns a new one (or the original).
-I.e., you can filter or modify values, or provided them to the async render function.
-
-```
-< b-tree :items = myItems | :item = 'b-checkbox' | :itemsIterator = (items) => asyncRender.iterate(items, 5)
-```
-
 ### itemKey
 
 To optimize the re-rendering of items, we can specify the unique identifier for each item.
@@ -84,11 +75,11 @@ it will be compiled into a function. The method returns a value of invoking the 
 (if it is not specified).
 
 ```typescript
-import iItems, { ItemsIterator } from 'traits/i-items/i-items';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 export default class bTree implements iItems {
   /** @see [[iItems.getItemKey]] */
-  protected getItemKey(el: this['Item'], i: number): CanUndef<ItemsIterator> {
+  protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
     return iItems.getItemKey(this, el, i);
   }
 }
