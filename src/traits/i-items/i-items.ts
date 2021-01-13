@@ -25,7 +25,7 @@ export default abstract class iItems {
 	 * @param i
 	 */
 	static getItemKey<T extends iBlock>(
-		component: T & iItems, el: object, i: number
+		component: T & iItems, el: any, i: number
 	): CanUndef<string> {
 		return Object.isFunction(component.itemKey) ?
 			component.itemKey(el, i) :
@@ -50,23 +50,23 @@ export default abstract class iItems {
 	/**
 	 * Factory to create an item iterator
 	 */
-	abstract readonly itemsIterator?: ItemsIterator;
+	abstract readonly itemsIterator?: ItemsIterator<this['Items']>;
 
 	/**
 	 * Item component name.
 	 * If provided as a function, it will be invoked.
 	 */
-	abstract readonly item?: string | CreateFromItemFn;
+	abstract readonly item?: string | CreateFromItemFn<this['Item']>;
 
 	/**
 	 * Dictionary with props to item components.
 	 * If provided as a function, it will be invoked.
 	 */
-	abstract readonly itemProps?: Dictionary | ItemPropsFn;
+	abstract readonly itemProps?: Dictionary | ItemPropsFn<this['Item']>;
 
 	/**
 	 * Item unique key to optimize rendering.
 	 * If provided as a function, it will be invoked.
 	 */
-	abstract readonly itemKey?: string | CreateFromItemFn;
+	abstract readonly itemKey?: string | CreateFromItemFn<this['Item']>;
 }
