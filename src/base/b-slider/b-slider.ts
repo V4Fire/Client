@@ -127,12 +127,12 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.itemsProp]]
+	 * @see [[bSlider.items]]
 	 */
 	@prop(Array)
 	readonly optionsProp: iItems['items'] = [];
 
-	/** @see [[iItems.itemsProp]] */
+	/** @see [[iItems.items]] */
 	@prop(Array)
 	readonly itemsProp: iItems['items'] = [];
 

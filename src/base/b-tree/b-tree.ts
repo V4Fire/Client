@@ -38,7 +38,7 @@ export default class bTree extends iData implements iItems {
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
-	/** @see [[iItems.itemsProp]] */
+	/** @see [[iItems.items]] */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
 
