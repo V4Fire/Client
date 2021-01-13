@@ -53,7 +53,7 @@ export default class bButton implements iAccess {
 
 ## Props
 
-The trait specify two optional props.
+The trait specifies two optional props.
 
 ### autofocus
 
