@@ -115,7 +115,7 @@ export default class bTree extends iData implements iItems {
 	items!: this['Items'];
 
 	/**
-	 * Params for an async render task
+	 * Parameters for an async render task
 	 */
 	protected get renderTaskParams(): TaskParams {
 		return {
@@ -182,7 +182,7 @@ export default class bTree extends iData implements iItems {
 			op = this.itemProps;
 
 		if (op == null) {
-			return <this['Item']>Object.reject(item, ['id', 'parentId', 'children', 'folded']);
+			return Object.reject(item, ['id', 'parentId', 'children', 'folded']);
 		}
 
 		return Object.isFunction(op) ?
