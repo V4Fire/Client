@@ -19,6 +19,7 @@ import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';
 import iData, { component, prop, field } from 'super/i-data/i-data';
+import { TaskI } from 'super/i-block/modules/async-render';
 import { Item, RenderFilter } from 'base/b-tree/interface';
 
 export * from 'super/i-data/i-data';
@@ -64,8 +65,8 @@ export default class bTree extends iData implements iItems {
 	@prop({
 		type: Function,
 		required: false,
-		default(this: bTree, el: unknown, i: number): CanPromise<boolean> {
-			if (this.level === 0 && i < this.renderChunks) {
+		default(this: bTree, item: unknown, i: number, task: TaskI): CanPromise<boolean> {
+			if (this.level === 0 && task.i < this.renderChunks) {
 				return true;
 			}
 
@@ -141,8 +142,8 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/** @see [[iItems.getItemKey]] */
-	protected getItemKey(el: this['Item'], i: number): CanUndef<string> {
-		return iItems.getItemKey(this, el, i);
+	protected getItemKey(item: this['Item'], i: number): CanUndef<string> {
+		return iItems.getItemKey(this, item, i);
 	}
 
 	/** @override */
@@ -164,16 +165,15 @@ export default class bTree extends iData implements iItems {
 	/**
 	 * Returns a dictionary with props for the specified element
 	 *
-	 * @param el
+	 * @param item
 	 * @param i - position index
 	 */
-	protected getItemProps(el: this['Item'], i: number): Dictionary {
+	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
-			op = this.itemProps,
-			item = <this['Item']>Object.reject(el, 'children');
+			op = this.itemProps;
 
 		if (op == null) {
-			return item;
+			return <this['Item']>Object.reject(item, ['children', 'parentId', 'folded']);
 		}
 
 		return Object.isFunction(op) ?
@@ -187,21 +187,21 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Returns a dictionary with props for the specified fold element
-	 * @param el
+	 * @param item
 	 */
-	protected getFoldProps(el: Item): Dictionary {
+	protected getFoldProps(item: this['Item']): Dictionary {
 		return {
-			'@click': this.onFoldClick.bind(this, el)
+			'@click': this.onFoldClick.bind(this, item)
 		};
 	}
 
 	/**
 	 * Returns a value of the `folded` property from the specified item
-	 * @param el
+	 * @param item
 	 */
-	protected getFoldedPropValue(el: this['Item']): boolean {
-		if (el.folded != null) {
-			return el.folded;
+	protected getFoldedPropValue(item: this['Item']): boolean {
+		if (item.folded != null) {
+			return item.folded;
 		}
 
 		return this.top?.folded ?? this.folded;
@@ -228,23 +228,23 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected findItemElement(id: string): CanUndef<HTMLElement> {
 		const itemId = this.dom.getId(id);
-		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${itemId}]`) ?? undefined;
+		return this.$el?.querySelector(`[data-id=${itemId}]`) ?? undefined;
 	}
 
 	/**
 	 * Handler: fold element click
 	 *
-	 * @param el
-	 * @emits `fold(target: HTMLElement, el: Item, value: boolean)`
+	 * @param item
+	 * @emits `fold(target: HTMLElement, item: Item, value: boolean)`
 	 */
-	protected onFoldClick(el: Item): void {
+	protected onFoldClick(item: this['Item']): void {
 		const
-			target = this.findItemElement(el.id),
-			newVal = this.getFoldedModById(el.id) === 'false';
+			target = this.findItemElement(item.id),
+			newVal = this.getFoldedModById(item.id) === 'false';
 
 		if (target) {
 			this.block?.setElMod(target, 'node', 'folded', newVal);
-			this.emit('fold', target, el, newVal);
+			this.emit('fold', target, item, newVal);
 		}
 	}
 }

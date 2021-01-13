@@ -21,14 +21,14 @@ export default abstract class iItems {
 	 * Generates or returns an item key
 	 *
 	 * @param component
-	 * @param el
+	 * @param item
 	 * @param i
 	 */
 	static getItemKey<T extends iBlock>(
-		component: T & iItems, el: any, i: number
+		component: T & iItems, item: any, i: number
 	): CanUndef<string> {
 		return Object.isFunction(component.itemKey) ?
-			component.itemKey(el, i) :
+			component.itemKey(item, i) :
 			component.itemKey;
 	}
 
