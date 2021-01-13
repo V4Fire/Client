@@ -9,12 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.1?? (2021-01-??)
+## v3.0.0-rc.??? (2021-01-??)
 
-#### :boom: Breaking Change
+#### :house: Internal
 
-* Updated `iItems` fields.
-Now all option-like fields marked as deprecated.
+* Removed iItems implementation. [Issue to move back](https://github.com/V4Fire/Client/issues/471)
 
 ## v3.0.0-rc.102 (2020-11-26)
 

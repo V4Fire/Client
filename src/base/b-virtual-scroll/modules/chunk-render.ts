@@ -221,7 +221,7 @@ export default class ChunkRender extends Friend {
 		const
 			{ctx, chunkRequest} = this;
 
-		if (ctx.dataProvider == null && ctx.items.length === 0) {
+		if (ctx.dataProvider == null && ctx.options.length === 0) {
 			return;
 		}
 
@@ -299,7 +299,7 @@ export default class ChunkRender extends Friend {
 		}
 
 		const
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getItemKey(item.data, item.index)}`;
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
 
 		if (!node) {
 			return;

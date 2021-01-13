@@ -22,13 +22,7 @@ export interface GetData<T extends unknown = unknown> {
 	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
 }
 
-/**
- * @deprecated
- * @see [[ItemEl]]
- */
-export type OptionEl = ItemEl;
-
-export interface ItemEl<T extends unknown = unknown> {
+export interface OptionEl<T extends unknown = unknown> {
 	/**
 	 * Current render data
 	 */
@@ -166,7 +160,7 @@ export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends u
 
 export interface DataToRender {
 	itemAttrs: Dictionary;
-	itemParams: ItemEl;
+	itemParams: OptionEl;
 	index: number;
 }
 
@@ -215,13 +209,6 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 	componentRender: CTX['componentRender'];
 
 	// @ts-ignore (access)
-	getItemKey: CTX['getItemKey'];
-
-	/**
-	 * @deprecated
-	 * @see [[UnsafeBVirtualScroll.getItemKey]]
-	 */
-	// @ts-ignore (access)
 	getOptionKey: CTX['getOptionKey'];
 
 	// @ts-ignore (access)
@@ -234,3 +221,15 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 export type MergeDataStateParams = {
 	[key in keyof DataState]?: DataState[key];
 };
+
+// TODO: Should be removed in
+//  https://github.com/V4Fire/Client/issues/471
+
+export interface ItemPropParams<CTX> {
+	key?: string;
+	ctx: CTX;
+}
+
+export interface ItemProps<CTX = unknown> {
+	(el: unknown, i: number, params: ItemPropParams<CTX>): Dictionary;
+}

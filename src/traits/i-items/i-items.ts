@@ -24,7 +24,9 @@ export default abstract class iItems {
 	 * @param el
 	 * @param i
 	 */
-	static getItemKey<T extends iBlock>(component: T & iItems, el: unknown, i: number): CanUndef<string> {
+	static getItemKey<T extends iBlock>(
+		component: T & iItems, el: object, i: number
+	): CanUndef<string> {
 		return Object.isFunction(component.itemKey) ?
 			component.itemKey(el, i) :
 			component.itemKey;
@@ -33,19 +35,16 @@ export default abstract class iItems {
 	/**
 	 * Type: component item
 	 */
-	abstract readonly Item?: object;
+	abstract readonly Item: object;
 
 	/**
 	 * Type: list of component items
 	 */
-	abstract readonly Items?: Array<this['Item']>;
+	abstract readonly Items: Array<this['Item']>;
 
 	/**
 	 * List of component items to render
 	 */
-	abstract readonly itemsProp: unknown[];
-
-	/** @see [[iItems.itemsProp]] */
 	abstract items: this['Items'];
 
 	/**

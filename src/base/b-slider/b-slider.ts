@@ -51,6 +51,12 @@ export const
  */
 @component()
 export default class bSlider extends iData implements iObserveDOM, iItems {
+	/** @see [[iItems.Item]] */
+	readonly Item!: object;
+
+	/** @see [[iItems.Items]] */
+	readonly Items!: Array<this['Item']>;
+
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -121,14 +127,14 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.itemsProp]]
+	 * @see [[bSlider.items]]
 	 */
 	@prop(Array)
-	readonly optionsProp: iItems['itemsProp'] = [];
+	readonly optionsProp: iItems['items'] = [];
 
-	/** @see [[iItems.itemsProp]] */
+	/** @see [[iItems.items]] */
 	@prop(Array)
-	readonly itemsProp: iItems['itemsProp'] = [];
+	readonly itemsProp: iItems['items'] = [];
 
 	/**
 	 * @deprecated
@@ -176,7 +182,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/** @see [[bSlider.items]] */
 	@field((o) => o.sync.link())
-	options!: iItems['items'];
+	options!: this['Items'];
 
 	/**
 	 * The number of slides in the slider
@@ -369,7 +375,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/** @see [[iItems.items]] */
 	@computed({dependencies: ['itemsStore', 'options']})
-	get items(): iItems['items'] {
+	get items(): this['Items'] {
 		const
 			{itemsIterator, optionsIterator} = this;
 
@@ -402,7 +408,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/** @see [[iItems.items]] */
-	set items(value: iItems['items']) {
+	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
 
@@ -494,7 +500,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param el
 	 * @param i
 	 */
-	protected getItemAttrs(el: unknown, i: number): CanUndef<Dictionary> {
+	protected getItemAttrs(el: this['Item'], i: number): CanUndef<Dictionary> {
 		const
 			{itemProps, optionProps} = this;
 
@@ -525,7 +531,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param el
 	 * @param i
 	 */
-	protected getItemComponentName(el: unknown, i: number): string {
+	protected getItemComponentName(el: this['Item'], i: number): string {
 		const
 			{item, option} = this;
 
@@ -547,12 +553,12 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @see [[bSlider.getItemKey]]
 	 */
 	@deprecated({renamedTo: 'getItemKey'})
-	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+	protected getOptionKey(el: this['Item'], i: number): CanUndef<string> {
 		return this.getItemKey(el, i);
 	}
 
 	/** @see [[iItems.getItemKey]] */
-	protected getItemKey(el: unknown, i: number): CanUndef<string> {
+	protected getItemKey(el: this['Item'], i: number): CanUndef<string> {
 		return iItems.getItemKey(this, el, i);
 	}
 
@@ -616,13 +622,13 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<unknown[]> {
+	protected initRemoteData(): CanUndef<this['Items']> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent(this.db);
+			val = this.convertDBToComponent<this['Items']>(this.db);
 
 		if (Object.isArray(val)) {
 			if (Object.isArray(this.options)) {
