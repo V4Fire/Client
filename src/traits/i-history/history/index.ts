@@ -126,7 +126,7 @@ export default class History extends Friend {
 				isBelow = block.getElMod(els.content.el, 'page', 'below') === 'true';
 
 			if (isBelow || currentPage === els.content.el) {
-				throw new Error(`A page with the stage "${stage}" is already opened`);
+				throw new Error(`A page for the stage "${stage}" is already opened`);
 			}
 
 			this.async.requestAnimationFrame(() => {
