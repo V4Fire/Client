@@ -54,8 +54,8 @@ module.exports = (page) => {
 
 			const baseAttrs = {
 				theme: 'demo',
-				item: 'section',
-				itemProps: ({current}) => ({'data-index': current.i})
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
 			};
 
 			const scheme = [
@@ -100,7 +100,7 @@ module.exports = (page) => {
 					await h.dom.waitForEl(container, `section:nth-child(${chunkSize - 1})`);
 					expect(await getContainerChildCount()).toBe(chunkSize);
 
-					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 4, total: 4, id: 'uniq-items'}});
+					await component.evaluate((ctx) => ctx.request = {get: {chunkSize: 4, total: 4, id: 'uniq-options'}});
 
 					await h.dom.waitForEl(container, 'section', {to: 'unmount'});
 					await h.dom.waitForEl(container, 'section');
@@ -156,23 +156,23 @@ module.exports = (page) => {
 			});
 		});
 
-		describe('with `items`', () => {
+		describe('with `options`', () => {
 			it('renders the first chunk', async () => {
 				const
 					chunkSize = await component.evaluate((ctx) => ctx.chunkSize);
 
-				await component.evaluate((ctx) => ctx.items = Array.from(Array(40), (v, i) => ({i})));
+				await component.evaluate((ctx) => ctx.options = Array.from(Array(40), (v, i) => ({i})));
 				await h.dom.waitForEl(container, 'section');
 
 				expect(await getContainerChildCount()).toBe(chunkSize);
 			});
 
-			it('renders all available `items`', async () => {
-				await component.evaluate((ctx) => ctx.items = Array.from(Array(40), (v, i) => ({i})));
+			it('renders all available `options`', async () => {
+				await component.evaluate((ctx) => ctx.options = Array.from(Array(40), (v, i) => ({i})));
 				await h.dom.waitForEl(container, 'section');
 
 				const
-					total = await component.evaluate((ctx) => ctx.items.length),
+					total = await component.evaluate((ctx) => ctx.options.length),
 					checkFn = async () => await getContainerChildCount() === total;
 
 				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
@@ -180,11 +180,11 @@ module.exports = (page) => {
 			});
 
 			it('does not render more than received data', async () => {
-				await component.evaluate((ctx) => ctx.items = Array.from(Array(40), (v, i) => ({i})));
+				await component.evaluate((ctx) => ctx.options = Array.from(Array(40), (v, i) => ({i})));
 				await h.dom.waitForEl(container, 'section');
 
 				const
-					total = await component.evaluate((ctx) => ctx.items.length),
+					total = await component.evaluate((ctx) => ctx.options.length),
 					checkFn = async () => await getContainerChildCount() === total;
 
 				await h.scroll.scrollToBottomWhile(page, checkFn, {timeout: 1e5});
@@ -276,9 +276,9 @@ module.exports = (page) => {
 			});
 		});
 
-		describe('without `items` and` dataProvider` specified', () => {
+		describe('without `options` and` dataProvider` specified', () => {
 			it('does not render anything', async () => {
-				expect(await component.evaluate((ctx) => ctx.items.length === 0)).toBeTrue();
+				expect(await component.evaluate((ctx) => ctx.options.length === 0)).toBeTrue();
 				expect(await component.evaluate((ctx) => ctx.dataProvider === undefined)).toBeTrue();
 				expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount === 0)).toBeTrue();
 			});

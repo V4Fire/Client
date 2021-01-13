@@ -26,9 +26,9 @@ This component can be very efficient if you need to render a good amount of elem
 < b-virtual-scroll &
   :dataProvider = 'demo.Pagination' |
   :request = {get: {chunkSize: 12}} |
-  :item = 'b-card' |
-  :itemKey = (el, i) => resolveKey(el) |
-  :itemProps = getPropsForItem |
+  :option = 'b-card' |
+  :optionKey = (el, i) => resolveKey(el) |
+  :optionProps = getPropsForOption |
   :dbConverter = convertDataToVirtual
 .
 ```
@@ -51,7 +51,7 @@ export interface RemoteData extends Dictionary {
 
 You can use `dbConverter` to convert data to match this interface.
 
-To specify what kind of component to render, you have to use the `item` property.
+To specify what kind of component to render, you have to use the `option` property.
 Mind, the property can be defined as a string or function.
 
 ### Manual data display control
@@ -64,10 +64,10 @@ To set loading and rendering data in manual mode, set the `loadStrategy` prop to
 < b-virtual-scroll &
   :dataProvider = 'demo.Pagination' |
   :request = {get: {chunkSize: 12}} |
-  :item = 'b-card' |
+  :option = 'b-card' |
   :loadStrategy = 'manual' |
-  :itemKey = (el, i) => resolveKey(el) |
-  :itemProps = getPropsForItem |
+  :optionKey = (el, i) => resolveKey(el) |
+  :optionProps = getPropsForOption |
   :dbConverter = convertDataToVirtual
 .
   < template #renderNext = o

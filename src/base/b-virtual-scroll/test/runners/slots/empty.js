@@ -35,8 +35,8 @@ module.exports = (page) => {
 		await page.evaluate(() => {
 			const baseAttrs = {
 				theme: 'demo',
-				item: 'section',
-				itemProps: ({current}) => ({'data-index': current.i})
+				option: 'section',
+				optionProps: ({current}) => ({'data-index': current.i})
 			};
 
 			const slots = {
