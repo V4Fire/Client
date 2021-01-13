@@ -105,9 +105,10 @@ export default abstract class iAccess {
 	 * A Boolean attribute which, if present, indicates that the component should automatically
 	 * have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed)
 	 *
+	 * @prop
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus
 	 */
-	abstract readonly autofocus?: boolean;
+	abstract autofocus?: boolean;
 
 	/**
 	 * An integer attribute indicating if the component can take input focus (is focusable),
@@ -115,35 +116,38 @@ export default abstract class iAccess {
 	 * As all input types except for input of type hidden are focusable, this attribute should not be used on
 	 * form controls, because doing so would require the management of the focus order for all elements within
 	 * the document with the risk of harming usability and accessibility if done incorrectly.
+	 *
+	 * @prop
 	 */
-	abstract readonly tabIndex?: number;
+	abstract tabIndex?: number;
 
 	/**
 	 * True if the component in focus
+	 * @prop
 	 */
-	abstract readonly isFocused: boolean;
+	abstract isFocused: boolean;
 
 	/**
 	 * Enables the component
 	 * @param args
 	 */
-	abstract async enable(...args: unknown[]): Promise<boolean>;
+	abstract enable(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Disables the component
 	 * @param args
 	 */
-	abstract async disable(...args: unknown[]): Promise<boolean>;
+	abstract disable(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Sets focus to the component
 	 * @param args
 	 */
-	abstract async focus(...args: unknown[]): Promise<boolean>;
+	abstract focus(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Unsets focus to the component
 	 * @param args
 	 */
-	abstract async blur(...args: unknown[]): Promise<boolean>;
+	abstract blur(...args: unknown[]): Promise<boolean>;
 }

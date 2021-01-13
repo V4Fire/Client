@@ -57,14 +57,14 @@ The trait specifies two optional props.
 
 ### autofocus
 
-A Boolean attribute which, if present, indicates that the component should automatically
+A Boolean prop which, if present, indicates that the component should automatically
 have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed).
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus)
 
 ### tabIndex
 
-An integer attribute indicating if the component can take input focus (is focusable),
+An integer prop indicating if the component can take input focus (is focusable),
 if it should participate to sequential keyboard navigation.
 As all input types except for input of type hidden are focusable, this attribute should not be used on
 form controls, because doing so would require the management of the focus order for all elements within
