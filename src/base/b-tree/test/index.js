@@ -62,14 +62,14 @@ module.exports = async (page, params) => {
 				.toBeResolvedTo(true);
 
 			const
-				promises = await Promise.all(checkOptionTree({opts: defaultItems, target})),
+				promises = await Promise.all(checkOptionTree({items: defaultItems, target})),
 				checkboxes = await page.$$('.b-checkbox');
 
 			expect(promises.length).toEqual(checkboxes.length);
 		});
 
 		it('all items unfolded by default', async () => {
-			const opts = [
+			const items = [
 				{id: 'bar'},
 
 				{
@@ -87,30 +87,48 @@ module.exports = async (page, params) => {
 				}
 			];
 
-			const target = await init({opts});
-			await Promise.all(checkOptionTree({opts, target}));
+			const target = await init({items});
+			await Promise.all(checkOptionTree({items, target}));
 		});
 
-		it('setting of the external `renderFilter`', async () => {
-			await init({attrs: {
-				renderChunks: 1,
-				renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
-			}});
+		describe('setting of the external `renderFilter`', () => {
+			it('renders with timeout', async () => {
+				await init({attrs: {
+					renderChunks: 1,
+					renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
+				}});
 
-			await h.bom.waitForIdleCallback(page);
+				await h.bom.waitForIdleCallback(page);
 
-			await delay(500);
-			await expect((await page.$$('.b-checkbox')).length).toBe(1);
+				await delay(500);
+				await expect((await page.$$('.b-checkbox')).length).toBe(1);
 
-			await delay(500);
-			await expect((await page.$$('.b-checkbox')).length).toBe(2);
+				await delay(500);
+				await expect((await page.$$('.b-checkbox')).length).toBe(2);
 
-			await delay(500);
-			await expect((await page.$$('.b-checkbox')).length).toBe(3);
+				await delay(500);
+				await expect((await page.$$('.b-checkbox')).length).toBe(3);
+			});
+
+			it('renders using context', async () => {
+				await init({
+					attrs: {renderFilter: `return (ctx, item) => {
+							if (ctx.level === 0 ) {
+								return true;
+							}
+
+							return false;
+					}`}
+				});
+
+				await h.bom.waitForIdleCallback(page);
+
+				await expect((await page.$$('.b-checkbox')).length).toBe(2);
+			});
 		});
 
 		it('setting of the external `nestedRenderFilter`', async () => {
-			const opts = [
+			const items = [
 				{
 					id: 'foo',
 					children: [
@@ -128,7 +146,7 @@ module.exports = async (page, params) => {
 			];
 
 			await init({
-				opts,
+				items,
 				attrs: {
 					renderChunks: 1,
 					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.3.second()))'
@@ -148,9 +166,9 @@ module.exports = async (page, params) => {
 			await wait(7);
 		});
 
-		async function init({opts, attrs, content} = {}) {
-			if (opts == null) {
-				opts = defaultItems;
+		async function init({items, attrs, content} = {}) {
+			if (items == null) {
+				items = defaultItems;
 			}
 
 			await page.evaluate(({items, attrs, content}) => {
@@ -186,8 +204,7 @@ module.exports = async (page, params) => {
 						obj[key] = /return /.test(el) ? Function(el)() : el;
 					});
 				}
-
-			}, {items: opts, attrs, content});
+			}, {items, attrs, content});
 
 			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
@@ -238,7 +255,7 @@ module.exports = async (page, params) => {
 				.toBeResolvedTo(true);
 
 			const
-				promises = await Promise.all(checkOptionTree({opts: defaultItems, target})),
+				promises = await Promise.all(checkOptionTree({items: defaultItems, target})),
 				refs = await h.dom.getRefs(page, 'item');
 
 			expect(promises.length).toEqual(refs.length);
@@ -285,8 +302,8 @@ module.exports = async (page, params) => {
 		);
 	}
 
-	function checkOptionTree({opts, target, queue = [], level = 0, foldSelector}) {
-		opts.forEach((item) => {
+	function checkOptionTree({items, target, queue = [], level = 0, foldSelector}) {
+		items.forEach((item) => {
 			const
 				isBranch = Object.isArray(item.children);
 
@@ -322,7 +339,7 @@ module.exports = async (page, params) => {
 
 			if (isBranch) {
 				checkOptionTree({
-					opts: item.children,
+					items: item.children,
 					level: level + 1,
 					target,
 					queue,

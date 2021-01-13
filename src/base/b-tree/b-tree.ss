@@ -13,46 +13,46 @@
 - template index() extends ['i-data'].index
 	- block body
 		< template &
-			v-for = (item, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
-			:key = getItemKey(item, i)
+			v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
+			:key = getItemKey(el, i)
 		.
 			< .&__node &
-				:-id = dom.getId(item.id) |
+				:-id = dom.getId(el.id) |
 				:-level = level |
 				:class = provide.elClasses({
 					node: {
 						level,
-						folded: getFoldedPropValue(item)
+						folded: getFoldedPropValue(el)
 					}
 				})
 			.
 				< .&__item-wrapper
 					< .&__marker
 						- block fold
-							< template v-if = Object.size(field.get('children.length', item)) > 0
+							< template v-if = Object.size(field.get('children.length', el)) > 0
 								< template v-if = vdom.getSlot('fold') != null
-									+= self.slot('fold', {':params': 'getFoldProps(item)'})
+									+= self.slot('fold', {':params': 'getFoldProps(el)'})
 
 								< .&__fold &
 									v-else |
-									:v-attrs = getFoldProps(item)
+									:v-attrs = getFoldProps(el)
 								.
 
 					- block item
 						< template v-if = item != null
 							< component.&__item &
-								:is = Object.isFunction(item) ? item(item, i) : item |
-								:v-attrs = getItemProps(item, i)
+								:is = Object.isFunction(item) ? item(el, i) : item |
+								:v-attrs = getItemProps(el, i)
 							.
 
 						< template v-else
-							+= self.slot('default', {':item': 'getItemProps(item, i)'})
+							+= self.slot('default', {':item': 'getItemProps(el, i)'})
 
 				- block children
-					< .&__children v-if = Object.size(field.get('children', item)) > 0
+					< .&__children v-if = Object.size(field.get('children', el)) > 0
 						< b-tree.&__child &
-							:items = item.children |
-							:folded = getFoldedPropValue(item) |
+							:items = el.children |
+							:folded = getFoldedPropValue(el) |
 							:item = item |
 							:v-attrs = nestedTreeProps
 						.
