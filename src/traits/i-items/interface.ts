@@ -8,30 +8,27 @@
 
 import iBlock from 'super/i-block/i-block';
 
-/**
- * Params to provide to an item
- */
 export interface ItemPropParams<CTX> {
 	key?: string;
 	ctx: CTX;
 }
 
 /**
- * Factory to create props to pass to every item
+ * Factory to create a dictionary with props to pass to every item of a list
  */
 export interface ItemPropsFn<CTX = unknown> {
 	(el: unknown, i: number, params: ItemPropParams<CTX>): Dictionary;
 }
 
 /**
- * Factory for an item iterator
+ * Factory to create an item iterator
  */
 export interface ItemsIterator<CTX = iBlock> {
 	(items: unknown[], ctx: CTX): unknown[];
 }
 
 /**
- * Function to create value using item params and its index into items array
+ * Function to create value by using item params and its index into a list of items
  */
 export interface CreateFromItemFn {
 	(el: unknown, i: number): string;

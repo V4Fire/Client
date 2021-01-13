@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.2?? (2020-12-??)
+## v3.0.0-rc.??? (2021-01-??)
 
 #### :boom: Breaking Change
 
-* Trait refactoring. Using `item` instead of `option`
+* Trait refactoring. Using `item` instead of `option`.
 
 #### :memo: Documentation
 

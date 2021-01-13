@@ -30,7 +30,7 @@ export const
 /**
  * Component to render tree of any elements
  */
-@component({flyweight: true})
+@component()
 export default class bTree extends iData implements iItems {
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
@@ -86,12 +86,6 @@ export default class bTree extends iData implements iItems {
 	readonly nestedRenderFilter?: RenderFilter;
 
 	/**
-	 * Link to the top level component
-	 */
-	@prop({type: Object, required: false})
-	readonly top?: bTree;
-
-	/**
 	 * Number of chunks to render via `asyncRender`
 	 */
 	@prop(Number)
@@ -102,6 +96,12 @@ export default class bTree extends iData implements iItems {
 	 */
 	@prop(Boolean)
 	readonly folded: boolean = true;
+
+	/**
+	 * Link to the top level component (internal parameter)
+	 */
+	@prop({type: Object, required: false})
+	readonly top?: bTree;
 
 	/**
 	 * Component nesting level (internal parameter)
@@ -118,17 +118,16 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
-			root = this.level === 0,
-			{nestedRenderFilter} = this,
-			renderFilter = Object.isFunction(nestedRenderFilter) ? nestedRenderFilter : this.renderFilter;
+			{nestedRenderFilter} = this;
 
-		console.log(4, renderFilter);
+		const
+			isRootLvl = this.level === 0,
+			renderFilter = Object.isFunction(nestedRenderFilter) ? nestedRenderFilter : this.renderFilter;
 
 		const opts = {
 			level: this.level + 1,
-			top: root ? this : this.top,
+			top: isRootLvl ? this : this.top,
 			classes: this.classes,
-
 			renderChunks: this.renderChunks,
 			nestedRenderFilter,
 			renderFilter
@@ -141,16 +140,9 @@ export default class bTree extends iData implements iItems {
 		return opts;
 	}
 
-	/**
-	 * Returns a folded modifier value for the specified item
-	 * @param el
-	 */
-	protected getFoldedModValue(el: this['Item']): boolean {
-		if (el.folded != null) {
-			return el.folded;
-		}
-
-		return this.top?.folded ?? this.folded;
+	/** @see [[iItems.getItemKey]] */
+	protected getItemKey(el: unknown, i: number): CanUndef<string> {
+		return iItems.getItemKey(this, el, i);
 	}
 
 	/** @override */
@@ -170,25 +162,10 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns a dictionary with props for the specified fold element
-	 * @param el
-	 */
-	protected getFoldProps(el: Item): Dictionary {
-		return {
-			'@click': this.onFoldClick.bind(this, el)
-		};
-	}
-
-	/** @see [[iItems.getItemKey]] */
-	protected getItemKey(el: unknown, i: number): CanUndef<string> {
-		return iItems.getItemKey(this, el, i);
-	}
-
-	/**
-	 * Returns a dictionary with props for the specified iterated element
+	 * Returns a dictionary with props for the specified element
 	 *
 	 * @param el
-	 * @param i
+	 * @param i - position index
 	 */
 	protected getItemProps(el: Item, i: number): Dictionary {
 		const
@@ -209,10 +186,32 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns the folded modifier of an element by the specified identifier
+	 * Returns a dictionary with props for the specified fold element
+	 * @param el
+	 */
+	protected getFoldProps(el: Item): Dictionary {
+		return {
+			'@click': this.onFoldClick.bind(this, el)
+		};
+	}
+
+	/**
+	 * Returns a value of the `folded` property from the specified item
+	 * @param el
+	 */
+	protected getFoldedPropValue(el: this['Item']): boolean {
+		if (el.folded != null) {
+			return el.folded;
+		}
+
+		return this.top?.folded ?? this.folded;
+	}
+
+	/**
+	 * Returns a value of the `folded` modifier from an element by the specified identifier
 	 * @param id
 	 */
-	protected getFoldedMod(id: string): CanUndef<string> {
+	protected getFoldedModById(id: string): CanUndef<string> {
 		const
 			target = this.findItemElement(id);
 
@@ -241,7 +240,7 @@ export default class bTree extends iData implements iItems {
 	protected onFoldClick(el: Item): void {
 		const
 			target = this.findItemElement(el.id),
-			newVal = this.getFoldedMod(el.id) === 'false';
+			newVal = this.getFoldedModById(el.id) === 'false';
 
 		if (target) {
 			this.block?.setElMod(target, 'node', 'folded', newVal);

@@ -12,7 +12,7 @@
 
 - template index() extends ['b-tree'].index
 	- block body
-		< template v-for = (el, i) in top.asyncRender.iterate(options, top.renderChunks, { &
+		< template v-for = (el, i) in top.asyncRender.iterate(options, renderChunks, { &
 			filter: renderFilter
 		}) .
 			< .&__matryoshka &

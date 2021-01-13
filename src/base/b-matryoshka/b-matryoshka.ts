@@ -12,8 +12,6 @@
  */
 
 import { deprecate, deprecated } from 'core/functools';
-
-import iItems from 'traits/i-items/i-items';
 import bTree, { Item, component, hook } from 'base/b-tree/b-tree';
 
 export * from 'super/i-data/i-data';
@@ -24,7 +22,7 @@ export * from 'base/b-matryoshka/interface';
  * @see [[bTree]]
  */
 @component({flyweight: true})
-export default class bMatryoshka extends bTree implements iItems {
+export default class bMatryoshka extends bTree {
 	/**
 	 * @deprecated
 	 * @see [[iItems.items]]

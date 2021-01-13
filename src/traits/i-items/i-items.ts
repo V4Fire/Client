@@ -6,13 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
-
 /**
  * [[include:traits/i-items/README.md]]
  * @packageDocumentation
  */
 
+import iBlock from 'super/i-block/i-block';
 import { ItemsIterator, ItemPropsFn, CreateFromItemFn } from 'traits/i-items/interface';
 
 export * from 'traits/i-items/interface';
@@ -42,29 +41,33 @@ export default abstract class iItems {
 	abstract readonly Items?: Array<this['Item']>;
 
 	/**
-	 * Component items
+	 * List of component items to render
 	 */
 	abstract readonly itemsProp: unknown[];
 
 	/** @see [[iItems.itemsProp]] */
 	abstract items: this['Items'];
 
-	/** @see [[ItemsIterator]] */
+	/**
+	 * Factory to create an item iterator
+	 */
 	abstract readonly itemsIterator?: ItemsIterator;
 
 	/**
-	 * Item component name or function to create item component name
+	 * Item component name.
+	 * If provided as a function, it will be invoked.
 	 */
 	abstract readonly item?: string | CreateFromItemFn;
 
 	/**
-	 * Item unique key or function to create item unique key
-	 */
-	abstract readonly itemKey?: string | CreateFromItemFn;
-
-	/**
-	 * Object to mix values into every item props
-	 * or factory to create item props
+	 * Dictionary with props to item components.
+	 * If provided as a function, it will be invoked.
 	 */
 	abstract readonly itemProps?: Dictionary | ItemPropsFn;
+
+	/**
+	 * Item unique key to optimize rendering.
+	 * If provided as a function, it will be invoked.
+	 */
+	abstract readonly itemKey?: string | CreateFromItemFn;
 }

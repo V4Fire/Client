@@ -53,57 +53,13 @@ module.exports = async (page, params) => {
 		});
 	});
 
-	describe('b-tree renders tree by passing item prop', () => {
-		const init = async ({opts, attrs, content} = {}) => {
-			if (opts == null) {
-				opts = defaultItems;
-			}
-
-			await page.evaluate(({items, attrs, content}) => {
-				globalThis.removeCreatedComponents();
-
-				Object.forEach(content, (el, key) => {
-					// eslint-disable-next-line no-new-func
-					content[key] = /return /.test(el) ? Function(el)() : el;
-				});
-
-				Object.forEach(attrs, (el, key) => {
-					// eslint-disable-next-line no-new-func
-					attrs[key] = /return /.test(el) ? Function(el)() : el;
-				});
-
-				const baseAttrs = {
-					theme: 'demo',
-					item: 'b-checkbox-functional',
-					items,
-					id: 'target',
-					renderChunks: 2
-				};
-
-				const scheme = [
-					{
-						attrs: {
-							...baseAttrs,
-							...attrs
-						},
-
-						content
-					}
-				];
-
-				globalThis.renderComponents('b-tree', scheme);
-			}, {items: opts, attrs, content});
-
-			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
-			return h.component.waitForComponent(page, '#target');
-		};
-
+	describe('b-tree rendering data from the `items` prop', () => {
 		it('initialization', async () => {
 			const
 				target = await init();
 
-			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
+			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false))
+				.toBeResolvedTo(true);
 
 			const
 				promises = await Promise.all(checkOptionTree({opts: defaultItems, target})),
@@ -112,32 +68,16 @@ module.exports = async (page, params) => {
 			expect(promises.length).toEqual(checkboxes.length);
 		});
 
-		it('set external renderFilter', async () => {
-			await init({attrs: {
-					renderChunks: 1,
-					renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
-				}});
-
-			await h.bom.waitForIdleCallback(page);
-
-			await delay(500);
-			await expect((await page.$$('.b-checkbox')).length).toBe(1);
-
-			await delay(500);
-			await expect((await page.$$('.b-checkbox')).length).toBe(2);
-
-			await delay(500);
-			await expect((await page.$$('.b-checkbox')).length).toBe(3);
-		});
-
-		it('item unfolded by default', async () => {
+		it('all items unfolded by default', async () => {
 			const opts = [
 				{id: 'bar'},
+
 				{
 					id: 'foo',
 					children: [
 						{id: 'foo_1'},
 						{id: 'foo_2'},
+
 						{
 							id: 'foo_3',
 							folded: false,
@@ -151,13 +91,32 @@ module.exports = async (page, params) => {
 			await Promise.all(checkOptionTree({opts, target}));
 		});
 
-		it('set external nestedRenderFilter', async () => {
+		it('setting of the external `renderFilter`', async () => {
+			await init({attrs: {
+				renderChunks: 1,
+				renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
+			}});
+
+			await h.bom.waitForIdleCallback(page);
+
+			await delay(500);
+			await expect((await page.$$('.b-checkbox')).length).toBe(1);
+
+			await delay(500);
+			await expect((await page.$$('.b-checkbox')).length).toBe(2);
+
+			await delay(500);
+			await expect((await page.$$('.b-checkbox')).length).toBe(3);
+		});
+
+		it('setting of the external `nestedRenderFilter`', async () => {
 			const opts = [
 				{
 					id: 'foo',
 					children: [
 						{id: 'foo_1'},
 						{id: 'foo_2'},
+
 						{
 							id: 'foo_3',
 							children: [{id: 'foo_3_1', children: [{id: 'foo_3_1_1'}]}]
@@ -188,10 +147,64 @@ module.exports = async (page, params) => {
 			await wait(6);
 			await wait(7);
 		});
+
+		async function init({opts, attrs, content} = {}) {
+			if (opts == null) {
+				opts = defaultItems;
+			}
+
+			await page.evaluate(({items, attrs, content}) => {
+				globalThis.removeCreatedComponents();
+
+				parseParams(content);
+				parseParams(attrs);
+
+				const baseAttrs = {
+					theme: 'demo',
+					item: 'b-checkbox-functional',
+					items,
+					id: 'target',
+					renderChunks: 2
+				};
+
+				const scheme = [
+					{
+						attrs: {
+							...baseAttrs,
+							...attrs
+						},
+
+						content
+					}
+				];
+
+				globalThis.renderComponents('b-tree', scheme);
+
+				function parseParams(obj) {
+					Object.forEach(obj, (el, key) => {
+						// eslint-disable-next-line no-new-func
+						obj[key] = /return /.test(el) ? Function(el)() : el;
+					});
+				}
+
+			}, {items: opts, attrs, content});
+
+			await h.bom.waitForIdleCallback(page);
+			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
+
+			return h.component.waitForComponent(page, '#target');
+		}
 	});
 
-	describe('b-tree renders items from a provider', () => {
-		const init = async () => {
+	describe('b-tree rendering data from a data provider', () => {
+		it('initialization', async () => {
+			await init();
+			await h.bom.waitForIdleCallback(page);
+
+			expect((await page.$$('.b-checkbox')).length).toBe(9);
+		});
+
+		async function init() {
 			await page.evaluate(() => {
 				globalThis.removeCreatedComponents();
 
@@ -213,25 +226,32 @@ module.exports = async (page, params) => {
 
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 			return h.component.waitForComponent(page, '#target');
-		};
-
-		it('initialization', async () => {
-			await init();
-
-			await h.bom.waitForIdleCallback(page);
-			expect((await page.$$('.b-checkbox')).length).toBe(9);
-		});
+		}
 	});
 
-	describe('b-tree renders tree by passing item through the default slot', () => {
-		const init = async () => {
+	describe('b-tree providing of the default slot', () => {
+		it('initialization', async () => {
+			const
+				target = await init();
+
+			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false))
+				.toBeResolvedTo(true);
+
+			const
+				promises = await Promise.all(checkOptionTree({opts: defaultItems, target})),
+				refs = await h.dom.getRefs(page, 'item');
+
+			expect(promises.length).toEqual(refs.length);
+		});
+
+		async function init() {
 			await page.evaluate((items) => {
 				const defaultSlot = {
 					tag: 'div',
+					content: 'Item',
 					attrs: {
 						'data-test-ref': 'item'
-					},
-					content: 'Item'
+					}
 				};
 
 				const scheme = [
@@ -255,20 +275,7 @@ module.exports = async (page, params) => {
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 
 			return h.component.waitForComponent(page, '#target');
-		};
-
-		it('initialization', async () => {
-			const
-				target = await init();
-
-			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false)).toBeResolvedTo(true);
-
-			const
-				promises = await Promise.all(checkOptionTree({opts: defaultItems, target})),
-				refs = await h.dom.getRefs(page, 'item');
-
-			expect(promises.length).toEqual(refs.length);
-		});
+		}
 	});
 
 	function getFoldedClass(target, value = true) {
@@ -314,7 +321,13 @@ module.exports = async (page, params) => {
 			})());
 
 			if (isBranch) {
-				checkOptionTree({opts: item.children, level: level + 1, target, queue, foldSelector});
+				checkOptionTree({
+					opts: item.children,
+					level: level + 1,
+					target,
+					queue,
+					foldSelector
+				});
 			}
 		});
 
