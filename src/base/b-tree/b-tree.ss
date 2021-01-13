@@ -13,10 +13,7 @@
 - template index() extends ['i-data'].index
 	- block body
 		< template &
-			v-for = (el, i) in asyncRender.iterate(items, renderChunks, {
-				filter: renderFilter
-			}) |
-
+			v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
 			:key = getItemKey(el, i)
 		.
 			< .&__node &

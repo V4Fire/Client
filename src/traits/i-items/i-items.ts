@@ -15,7 +15,6 @@ import iBlock from 'super/i-block/i-block';
 import {
 
 	IterationKey,
-	ItemsIterator,
 	ItemPropsFn,
 	CreateFromItemFn
 
@@ -100,12 +99,6 @@ export default abstract class iItems {
 	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
 	 */
 	abstract itemProps?: Dictionary | ItemPropsFn<this['Item']>;
-
-	/**
-	 * The prop allows specifying a function that takes a list of items to render and returns a new one (or the original).
-	 * I.e., you can filter or modify values, or provided them to the async render function.
-	 */
-	abstract itemsIterator?: ItemsIterator<this['Items'], this>;
 
 	/**
 	 * To optimize the re-rendering of items, we can specify the unique identifier for each item.

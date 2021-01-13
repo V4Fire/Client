@@ -19,7 +19,7 @@ import symbolGenerator from 'core/symbol';
 import { deprecated, deprecate } from 'core/functools';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
-import iItems from 'traits/i-items/i-items';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, {
 
@@ -135,17 +135,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/** @see [[iItems.items]] */
 	@prop(Array)
 	readonly itemsProp: iItems['items'] = [];
-
-	/**
-	 * @deprecated
-	 * @see [[bSlider.itemsIterator]]
-	 */
-	@prop({type: Function, required: false})
-	readonly optionsIterator?: iItems['itemsIterator'];
-
-	/** @see [[iItems.itemsIterator]] */
-	@prop({type: Function, required: false})
-	readonly itemsIterator?: iItems['itemsIterator'];
 
 	/**
 	 * @deprecated
@@ -377,24 +366,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	@computed({dependencies: ['itemsStore', 'options']})
 	get items(): this['Items'] {
 		const
-			{itemsIterator, optionsIterator} = this;
-
-		const
 			items = Object.size(this.options) > 0 ? this.options : this.itemsStore;
-
-		if (optionsIterator != null) {
-			deprecate({
-				name: 'optionsIterator',
-				type: 'property',
-				renamedTo: 'itemsIterator'
-			});
-
-			return Object.isFunction(optionsIterator) ? optionsIterator(items, this) : items;
-		}
-
-		if (Object.isFunction(itemsIterator)) {
-			return itemsIterator(items, this);
-		}
 
 		if (Object.size(this.options) > 0) {
 			deprecate({
@@ -404,7 +376,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			});
 		}
 
-		return items;
+		return items ?? [];
 	}
 
 	/** @see [[iItems.items]] */
@@ -553,12 +525,12 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 * @see [[bSlider.getItemKey]]
 	 */
 	@deprecated({renamedTo: 'getItemKey'})
-	protected getOptionKey(el: this['Item'], i: number): CanUndef<string> {
+	protected getOptionKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return this.getItemKey(el, i);
 	}
 
 	/** @see [[iItems.getItemKey]] */
-	protected getItemKey(el: this['Item'], i: number): CanUndef<string> {
+	protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}
 

@@ -18,9 +18,8 @@ import 'models/demo/nested-list';
 import symbolGenerator from 'core/symbol';
 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
-import { TaskI } from 'super/i-block/i-block';
 
-import iData, { component, prop, field } from 'super/i-data/i-data';
+import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
 import { Item, RenderFilter } from 'base/b-tree/interface';
 
 export * from 'super/i-data/i-data';
@@ -66,12 +65,12 @@ export default class bTree extends iData implements iItems {
 	@prop({
 		type: Function,
 		required: false,
-		default(this: bTree, item: unknown, i: number, task: TaskI): CanPromise<boolean> {
-			if (this.level === 0 && task.i < this.renderChunks) {
+		default(ctx: bTree, item: unknown, i: number, task: TaskI): CanPromise<boolean> {
+			if (ctx.level === 0 && task.i < ctx.renderChunks) {
 				return true;
 			}
 
-			return this.async.animationFrame().then(() => true);
+			return ctx.async.animationFrame().then(() => true);
 		}
 	})
 
@@ -114,6 +113,15 @@ export default class bTree extends iData implements iItems {
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	items!: this['Items'];
+
+	/**
+	 * Params for an async render task
+	 */
+	protected get renderTaskParams(): TaskParams {
+		return {
+			filter: this.renderFilter.bind(this, this)
+		};
+	}
 
 	/**
 	 * Props for recursively inserted tree components

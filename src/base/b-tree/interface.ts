@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bTree from 'base/b-tree/b-tree';
+import bTree, { TaskI } from 'base/b-tree/b-tree';
 
 /**
  * Tree element data
@@ -35,5 +35,5 @@ export interface Item extends Dictionary {
 }
 
 export interface RenderFilter {
-	(this: bTree, el: Item, i: number): CanPromise<boolean>;
+	(ctx: bTree, el: Item, i: number, task: TaskI): CanPromise<boolean>;
 }
