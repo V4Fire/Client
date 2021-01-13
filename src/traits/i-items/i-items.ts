@@ -50,7 +50,7 @@ export default abstract class iItems {
 	/**
 	 * Factory to create an item iterator
 	 */
-	abstract readonly itemsIterator?: ItemsIterator<this['Items']>;
+	abstract readonly itemsIterator?: ItemsIterator<this['Items'], this>;
 
 	/**
 	 * Item component name.
