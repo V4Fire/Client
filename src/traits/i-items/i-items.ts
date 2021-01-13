@@ -43,30 +43,34 @@ export default abstract class iItems {
 	abstract readonly Items: Array<this['Item']>;
 
 	/**
-	 * List of component items to render
+	 * This prop is used to provide a list of items to render by the component
 	 */
-	abstract items: this['Items'];
+	abstract items?: this['Items'];
 
 	/**
-	 * Factory to create an item iterator
+	 * By design, the specified items are rendered by using other components.
+	 * This prop allows specifying the name of a component that is used to render.
+	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
 	 */
-	abstract readonly itemsIterator?: ItemsIterator<this['Items'], this>;
+	abstract item?: string | CreateFromItemFn<this['Item']>;
 
 	/**
-	 * Item component name.
-	 * If provided as a function, it will be invoked.
+	 * This prop allows specifying props that are passed to a component to render an item.
+	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
 	 */
-	abstract readonly item?: string | CreateFromItemFn<this['Item']>;
+	abstract itemProps?: Dictionary | ItemPropsFn<this['Item']>;
 
 	/**
-	 * Dictionary with props to item components.
-	 * If provided as a function, it will be invoked.
+	 * The prop allows specifying a function that takes a list of items to render and returns a new one (or the original).
+	 * I.e., you can filter or modify values, or provided them to the async render function.
 	 */
-	abstract readonly itemProps?: Dictionary | ItemPropsFn<this['Item']>;
+	abstract itemsIterator?: ItemsIterator<this['Items'], this>;
 
 	/**
-	 * Item unique key to optimize rendering.
-	 * If provided as a function, it will be invoked.
+	 * To optimize the re-rendering of items, we can specify the unique identifier for each item.
+	 * The prop value can be provided as a string or function. In the string case,
+	 * you are providing the name of a property that stores the identifier.
+	 * If the function case, you should return from the function a value of the identifier.
 	 */
-	abstract readonly itemKey?: string | CreateFromItemFn<this['Item']>;
+	abstract itemKey?: string | CreateFromItemFn<this['Item']>;
 }
