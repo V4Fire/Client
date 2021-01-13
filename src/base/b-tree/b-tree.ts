@@ -164,7 +164,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns a dictionary with props for the specified element
+	 * Returns a dictionary with props for the specified item
 	 *
 	 * @param item
 	 * @param i - position index
@@ -174,7 +174,7 @@ export default class bTree extends iData implements iItems {
 			op = this.itemProps;
 
 		if (op == null) {
-			return <this['Item']>Object.reject(item, ['children', 'parentId', 'folded']);
+			return <this['Item']>Object.reject(item, ['id', 'parentId', 'children', 'folded']);
 		}
 
 		return Object.isFunction(op) ?
@@ -187,7 +187,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns a dictionary with props for the specified fold element
+	 * Returns a dictionary with props for the specified item
 	 * @param item
 	 */
 	protected getFoldProps(item: this['Item']): Dictionary {
