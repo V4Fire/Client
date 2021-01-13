@@ -36,7 +36,7 @@ export default class bTree extends iData implements iItems {
 	readonly Item!: Item;
 
 	/** @see [[iItems.Items]] */
-	readonly Items!: Item[];
+	readonly Items!: Array<this['Item']>;
 
 	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
@@ -111,7 +111,7 @@ export default class bTree extends iData implements iItems {
 
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
-	items!: Item[];
+	items!: this['Items'];
 
 	/**
 	 * Props for recursively inserted tree components
@@ -141,7 +141,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/** @see [[iItems.getItemKey]] */
-	protected getItemKey(el: unknown, i: number): CanUndef<string> {
+	protected getItemKey(el: this['Item'], i: number): CanUndef<string> {
 		return iItems.getItemKey(this, el, i);
 	}
 
@@ -167,10 +167,10 @@ export default class bTree extends iData implements iItems {
 	 * @param el
 	 * @param i - position index
 	 */
-	protected getItemProps(el: Item, i: number): Dictionary {
+	protected getItemProps(el: this['Item'], i: number): Dictionary {
 		const
 			op = this.itemProps,
-			item = Object.reject(el, 'children');
+			item = <this['Item']>Object.reject(el, 'children');
 
 		if (op == null) {
 			return item;

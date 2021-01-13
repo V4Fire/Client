@@ -19,7 +19,7 @@ export const sliderModes = {
 
 	/**
 	 * @deprecated
-	 * @see sliderModes.slide
+	 * @see [[sliderModes.slide]]
 	 */
 	slider: true
 };

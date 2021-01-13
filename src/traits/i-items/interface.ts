@@ -16,20 +16,20 @@ export interface ItemPropParams<CTX> {
 /**
  * Factory to create a dictionary with props to pass to every item of a list
  */
-export interface ItemPropsFn<CTX = unknown> {
-	(el: unknown, i: number, params: ItemPropParams<CTX>): Dictionary;
+export interface ItemPropsFn<CTX = iBlock, ITEM = object> {
+	(item: ITEM, i: number, params: ItemPropParams<CTX>): Dictionary;
 }
 
 /**
  * Factory to create an item iterator
  */
-export interface ItemsIterator<CTX = iBlock> {
-	(items: unknown[], ctx: CTX): unknown[];
+export interface ItemsIterator<ITEMS = object[], CTX = iBlock> {
+	(items: ITEMS, ctx: CTX): ITEMS;
 }
 
 /**
  * Function to create value by using item params and its index into a list of items
  */
-export interface CreateFromItemFn {
-	(el: unknown, i: number): string;
+export interface CreateFromItemFn<ITEM = object> {
+	(item: ITEM, i: number): string;
 }
