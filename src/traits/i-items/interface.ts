@@ -8,8 +8,15 @@
 
 import iBlock from 'super/i-block/i-block';
 
-export interface ItemPropParams<CTX> {
+export interface ItemPropParams<CTX = iBlock> {
+	/**
+	 * Iteration key
+	 */
 	key?: string;
+
+	/**
+	 * Operation context
+	 */
 	ctx: CTX;
 }
 
