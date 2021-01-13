@@ -13,11 +13,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-01-??)
 
-#### :boom: Breaking Change
-
-* Now all `option(*)` fields for the trait `iItems` are renamed to `item(*)` and marked as deprecated for
-  * `base/b-virtual-scroll`
-  * `base/b-slider`
+#### :house: Internal
 
 * `base/b-matryoshka` marked as deprecated. Use `base/b-tree` instead.
 
