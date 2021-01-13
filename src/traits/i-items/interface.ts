@@ -16,7 +16,7 @@ export interface ItemPropParams<CTX> {
 /**
  * Factory to create a dictionary with props to pass to every item of a list
  */
-export interface ItemPropsFn<CTX = iBlock, ITEM = object> {
+export interface ItemPropsFn<ITEM = object, CTX = iBlock> {
 	(item: ITEM, i: number, params: ItemPropParams<CTX>): Dictionary;
 }
 
