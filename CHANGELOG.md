@@ -11,28 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2021-01-??)
+## v3.0.0-rc.122 (2021-01-13)
 
-#### :house: Internal
+#### :boom: Breaking Change
 
-* `base/b-matryoshka` marked as deprecated. Use `base/b-tree` instead.
+* Removed `bMatryoshka`. Use `bTree` instead.
 
 #### :rocket: New Feature
 
-* `base/b-matryoshka`
-  * Changed render filter to async function with waiting for the idle state
-  * Fixed ESLint warnings
-  * Added `README` and `CHANGELOG`
-
-* Released `base/b-tree`
+* Released `bTree`
 
 #### :bug: Bug Fix
 
-* `base/b-bottom-slide`
-  * Geometry initialization in content height mode fix
-
-* `traits/i-history`
-  * Next calling of `initIndex` pushes another one index page
+* Fixed geometry initialization within the content mode `bBottomSlide`
+* Fixed an issue when the next calling of `initIndex` pushes another one index page `traits/i-history`
 
 ## v3.0.0-rc.121 (2021-01-12)
 
