@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.1?? (2021-01-??)
+
+#### :boom: Breaking Change
+
+* Updated `iItems` fields.
+Now all option-like fields marked as deprecated.
+
 ## v3.0.0-rc.102 (2020-11-26)
 
 #### :bug: Bug Fix
