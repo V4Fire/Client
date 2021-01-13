@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Removed `bMatryoshka`. Use `bTree` instead.
+* Trait refactoring. Using `item` instead of `option`. `traits/i-items`
 
 #### :rocket: New Feature
 
@@ -25,6 +26,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed geometry initialization within the content mode `bBottomSlide`
 * Fixed an issue when the next calling of `initIndex` pushes another one index page `traits/i-history`
+
+#### :memo: Documentation
+
+* Added `CHANGELOG`, `README` `traits/i-items`
 
 ## v3.0.0-rc.121 (2021-01-12)
 
