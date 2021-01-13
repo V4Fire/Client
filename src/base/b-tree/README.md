@@ -119,7 +119,7 @@ elements have no styles. So you have to write some CSS rules to hide children wh
 
 For instance:
 
-```
+```stylus
 &__fold:before
   content "-"
   display block
