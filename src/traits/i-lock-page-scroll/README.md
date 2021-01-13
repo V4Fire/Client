@@ -42,3 +42,40 @@ export default class bWindow extends iData implements iLockPageScroll {
   }
 }
 ```
+
+## Styles
+
+The trait provides a bunch of optional styles for the component.
+
+```stylus
+$p = {
+  helpers: true
+}
+
+i-lock-page-scroll
+  if $p.helpers
+    &-lock-scroll-mobile-true
+      size 100%
+      overflow hidden
+
+    &-lock-scroll-mobile-true body
+      position fixed
+      width 100%
+      overflow hidden
+
+    &-lock-scroll-desktop-true body
+      overflow hidden
+```
+
+To enable these styles, import the trait within your component and call the provided mixin within your component.
+
+```stylus
+@import "traits/i-lock-page-scroll/i-lock-page-scroll.styl"
+
+$p = {
+  lockPageHelpers: true
+}
+
+b-button
+  i-lock-page-scroll({helpers: $p.lockPageHelpers})
+```
