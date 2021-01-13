@@ -201,7 +201,7 @@ module.exports = async (page, params) => {
 			await init();
 			await h.bom.waitForIdleCallback(page);
 
-			expect((await page.$$('.b-checkbox')).length).toBe(9);
+			expect((await page.$$('.b-checkbox')).length).toBe(14);
 		});
 
 		async function init() {

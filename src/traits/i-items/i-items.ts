@@ -12,7 +12,14 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { ItemsIterator, ItemPropsFn, CreateFromItemFn } from 'traits/i-items/interface';
+import {
+
+	IterationKey,
+	ItemsIterator,
+	ItemPropsFn,
+	CreateFromItemFn
+
+} from 'traits/i-items/interface';
 
 export * from 'traits/i-items/interface';
 
@@ -28,7 +35,7 @@ export default abstract class iItems {
 		component: T & iItems,
 		item: any,
 		i: number
-	): CanUndef<string | number | boolean> {
+	): CanUndef<IterationKey> {
 		const
 			{unsafe, itemKey} = component;
 
@@ -86,7 +93,7 @@ export default abstract class iItems {
 	 * This prop allows specifying the name of a component that is used to render.
 	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
 	 */
-	abstract item?: string | CreateFromItemFn<this['Item']>;
+	abstract item?: string | CreateFromItemFn<this['Item'], string>;
 
 	/**
 	 * This prop allows specifying props that are passed to a component to render an item.
@@ -106,5 +113,5 @@ export default abstract class iItems {
 	 * you are providing the name of a property that stores the identifier.
 	 * If the function case, you should return from the function a value of the identifier.
 	 */
-	abstract itemKey?: string | CreateFromItemFn<this['Item']>;
+	abstract itemKey?: string | CreateFromItemFn<this['Item'], IterationKey>;
 }

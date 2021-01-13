@@ -8,16 +8,21 @@
 
 import iBlock from 'super/i-block/i-block';
 
-export interface ItemPropParams<CTX = iBlock> {
-	/**
-	 * Iteration key
-	 */
-	key?: string;
+export type IterationKey =
+	string |
+	number |
+	boolean;
 
-	/**
-	 * Operation context
-	 */
+export interface ItemPropParams<CTX = iBlock> {
+	key?: IterationKey;
 	ctx: CTX;
+}
+
+/**
+ * Factory to create a value from an item object and its index
+ */
+export interface CreateFromItemFn<ITEM = object, R = unknown> {
+	(item: ITEM, i: number): R;
 }
 
 /**
@@ -32,11 +37,4 @@ export interface ItemPropsFn<ITEM = object, CTX = iBlock> {
  */
 export interface ItemsIterator<ITEMS = object[], CTX = iBlock> {
 	(items: ITEMS, ctx: CTX): ITEMS;
-}
-
-/**
- * Function to create value by using item params and its index into a list of items
- */
-export interface CreateFromItemFn<ITEM = object> {
-	(item: ITEM, i: number): string;
 }

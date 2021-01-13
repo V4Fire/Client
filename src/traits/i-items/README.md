@@ -76,3 +76,20 @@ If the function case, you should return from the function a value of the identif
 < b-tree :items = myItems | :item = 'b-checkbox' | :itemKey = '_id'
 < b-tree :items = myItems | :item = 'b-checkbox' | :itemKey = (item, i) => item._id
 ```
+
+## Helpers
+
+The trait provides a static helper function to resolve a value of the `itemKey` prop: if the value is passed as a string,
+it will be compiled into a function. The method returns a value of invoking the `itemKey` function or undefined
+(if it is not specified).
+
+```typescript
+import iItems, { ItemsIterator } from 'traits/i-items/i-items';
+
+export default class bTree implements iItems {
+  /** @see [[iItems.getItemKey]] */
+  protected getItemKey(el: this['Item'], i: number): CanUndef<ItemsIterator> {
+    return iItems.getItemKey(this, el, i);
+  }
+}
+```
