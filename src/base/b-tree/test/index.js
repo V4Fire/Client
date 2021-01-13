@@ -92,7 +92,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('setting of the external `renderFilter`', () => {
-			it('renders with timeout', async () => {
+			it('renders by one with a timeout', async () => {
 				await init({attrs: {
 					renderChunks: 1,
 					renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
@@ -110,7 +110,7 @@ module.exports = async (page, params) => {
 				await expect((await page.$$('.b-checkbox')).length).toBe(3);
 			});
 
-			it('renders using context', async () => {
+			it('renders using the context data', async () => {
 				await init({
 					attrs: {renderFilter: `return (ctx, item) => {
 							if (ctx.level === 0 ) {
