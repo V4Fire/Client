@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.1?? (2021-01-??)
+
+#### :bug: Bug Fix
+
+* Fixed geometry initialization within the content mode
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :boom: Breaking Change

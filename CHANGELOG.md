@@ -11,6 +11,29 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-01-??)
+
+#### :house: Internal
+
+* `base/b-matryoshka` marked as deprecated. Use `base/b-tree` instead.
+
+#### :rocket: New Feature
+
+* `base/b-matryoshka`
+  * Changed render filter to async function with waiting for the idle state
+  * Fixed ESLint warnings
+  * Added `README` and `CHANGELOG`
+
+* Released `base/b-tree`
+
+#### :bug: Bug Fix
+
+* `base/b-bottom-slide`
+  * Geometry initialization in content height mode fix
+
+* `traits/i-history`
+  * Next calling of `initIndex` pushes another one index page
+
 ## v3.0.0-rc.121 (2021-01-12)
 
 #### :boom: Breaking Change

@@ -19,23 +19,31 @@
 
 	- block body
 		: putIn content
-			< template v-if = option
+			< template v-if = item || option
+				/*
+				 * @deprecated
+				 * @see beforeItems
+				 */
 				+= self.slot('beforeOptions')
 
-				< template &
-					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
-					:key = getOptionKey(el, i)
-				.
+				+= self.slot('beforeItems')
 
-					< component.&__option &
-						:is = Object.isFunction(option) ? option(el, i) : option |
-						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, {
-							key: getOptionKey(el, i),
-							ctx: self
-						}) : optionProps
+				< template &
+					v-for = (el, i) in items |
+					:key = getItemKey(el, i)
+				.
+					< component.&__option.&__item &
+						:is = getItemComponentName(el, i) |
+						:v-attrs = getItemAttrs(el, i)
 					.
 
+				/*
+				 * @deprecated
+				 * @see beforeItems
+				 */
 				+= self.slot('afterOptions')
+
+				+= self.slot('afterItems')
 
 			< template v-else
 				+= self.slot()
@@ -43,7 +51,7 @@
 		+= self.slot('before')
 
 		< .&__window &
-			v-if = isSlider |
+			v-if = isSlideMode |
 			${windowEvents}
 		.
 			< .&__view &
@@ -51,21 +59,18 @@
 				v-resize-observer = {
 					watchHeight: false,
 					watchWidth: true,
-					callback: isSlider ? syncStateDefer : undefined
+					callback: isSlideMode ? syncStateDefer : undefined
 				}
 			.
 				< .&__view-content ref = content
 					+= content
 
 		< .&__window v-else
-			< .&__view-content ref = view
-				< .&__fake-view-content &
-					v-if = dynamicHeight |
-					ref = fake
-				.
+			< .&__view ref = view
+				< .&__fake-view-content v-if = dynamicHeight
 					+= content
 
-				< .&__outer-view-wrapper
+				< .&__outer-view-wrapper ref = contentWrapper
 					< .&__view-content ref = content
 						+= content
 
