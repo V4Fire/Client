@@ -20,12 +20,8 @@ All methods are declared in the trait have default implementation via the static
 
 ```typescript
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
-import iData, { component } from 'super/i-data/i-data';
 
-export * from 'super/i-data/i-data';
-
-@component()
-export default class bWindow extends iData implements iLockPageScroll {
+export default class bWindow implements iLockPageScroll {
   /** @override */
   protected readonly $refs!: {
     window: HTMLElement;
@@ -39,6 +35,22 @@ export default class bWindow extends iData implements iLockPageScroll {
   /** @see iLockPageScroll.unlock */
   unlock(): Promise<void> {
     return iLockPageScroll.unlock(this);
+  }
+}
+```
+
+### Helpers
+
+The trait provides a helper function to initialize modifier event listeners to emit component events.
+
+```typescript
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+
+export default class bWindow implements iLockPageScroll {
+  /** @override */
+  protected initModEvents(): void {
+    super.initModEvents();
+    iLockPageScroll.initModEvents(this);
   }
 }
 ```
