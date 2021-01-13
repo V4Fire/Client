@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.120",
+  "version": "3.0.0-rc.121",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -39,7 +39,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.28.2",
+    "@v4fire/core": "^3.30.1",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.3",
     "path-to-regexp": "^3.2.0",
@@ -127,7 +127,7 @@
   },
   "devDependencies": {
     "@v4fire/linters": "^1.6.1",
-    "husky": "^4.3.6",
+    "husky": "^4.3.7",
     "nyc": "^15.1.0",
     "playwright": "^1.7.1"
   }

@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-window/README.md]]
+ * @packageDocumentation
+ */
+
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
@@ -13,27 +18,29 @@ import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-togg
 
 import iData, {
 
-	field,
 	component,
 	prop,
+	field,
 	hook,
+	watch,
 	wait,
-	ModsDecl,
+
 	Stage,
+
+	ModsDecl,
 	ModEvent,
-	SetModEvent,
-	RequestError
+	SetModEvent
 
 } from 'super/i-data/i-data';
+
+import { StageTitles } from 'base/b-window/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 
-export type TitleValue<T = unknown> = string | ((ctx: T) => string);
-export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
-	'[[DEFAULT]]': TitleValue<T>;
-}
-
+/**
+ * Component to create a modal window
+ */
 @component()
 export default class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	/** @override */
@@ -46,13 +53,55 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	readonly titleProp?: string;
 
 	/**
-	 * Map of window titles ({stage: title})
+	 * Map window titles tied to the component `stage` values.
+	 * A key with the name `[[DEFAULT]]` is used by default.
+	 * If a key value is defined as a function, it will be invoked (the result will be used as a title).
+	 *
+	 * @example
+	 * ```
+	 * < b-window &
+	 *   :dataProvider = 'User' |
+	 *   :stageTitles = {
+	 *     '[[DEFAULT]]': 'Default title',
+	 *     'uploading': 'Uploading the avatar...',
+	 *     'edit': (ctx) => `Edit a user with the identifier ${ctx.db?.id}`
+	 *   }
+	 * .
+	 * ```
 	 */
 	@prop({type: Object, required: false})
-	readonly stageTitles?: Dictionary<string>;
+	readonly stageTitles?: StageTitles;
 
 	/**
-	 * Name of an active third-party slot
+	 * Name of the active third-party slot to show.
+	 *
+	 * This feature brings a possibility to decompose different window templates into separate files
+	 * with the special `.window` postfix. All those templates are automatically loaded, but you must provide their
+	 * name to activate one or another.
+	 *
+	 * @example
+	 * **my-page/upload-avatar.window.ss**
+	 *
+	 * ```
+	 * - namespace b-window
+	 *
+	 * - eval
+	 *  /// Register an external block
+	 *  ? @@saveTplDir(__dirname, 'windowSlotUploadAvatar')
+	 *
+	 * /// Notice, to correct work the external block name must start with "windowSlot"
+	 * - block index->windowSlotUploadAvatar(nms)
+	 *   /// The `nms` value is taken from a basename of this file directory
+	 *   /// .my-page
+	 *   < ?.${nms}
+	 *     < button.&__button
+	 *       Upload an avatar
+	 * ```
+	 *
+	 * ```
+	 * /// This component will use a template from windowSlotUploadAvatar
+	 * < b-window :slotName = 'windowSlotUploadAvatar'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly slotNameProp?: string;
@@ -69,42 +118,47 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		...iWidth.mods,
 
 		opened: [
-			...iOpenToggle.mods.opened,
+			...iOpenToggle.mods.opened ?? [],
 			['false']
 		],
 
 		position: [
 			['fixed'],
-			'absolute',
-			'custom'
+			'absolute'
 		]
 	};
 
+	/** @override */
 	protected readonly $refs!: {
 		window: HTMLElement;
 	};
 
 	/**
 	 * Window title store
+	 * @see [[bWindow.titleProp]]
 	 */
 	@field((o) => o.sync.link())
 	protected titleStore?: string;
 
 	/**
 	 * Slot name store
+	 * @see [[bWindow.slotNameProp]]
 	 */
 	@field((o) => o.sync.link())
 	protected slotNameStore?: string;
 
 	/**
-	 * Slot name
+	 * Name of the active third-party slot to show
+	 * @see [[bWindow.slotNameProp]]
 	 */
 	get slotName(): CanUndef<string> {
 		return this.field.get('slotNameStore');
 	}
 
 	/**
-	 * Sets a new slot name
+	 * Sets a new third-party slot to show
+	 *
+	 * @see [[bWindow.slotNameProp]]
 	 * @param value
 	 */
 	set slotName(value: CanUndef<string>) {
@@ -113,25 +167,26 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 
 	/**
 	 * Window title
+	 * @see [[bWindow.titleStore]]
 	 */
 	get title(): string {
 		const
-			v = this.field.get<string>('titleStore') || '',
-			stageTitles = this.stageTitles;
+			v = this.field.get<string>('titleStore') ?? '',
+			{stageTitles} = this;
 
 		if (stageTitles) {
 			let
-				stageValue = stageTitles[<string>v];
+				stageValue = stageTitles[v];
 
-			if (!stageValue) {
+			if (stageValue == null) {
 				stageValue = stageTitles['[[DEFAULT]]'];
 			}
 
-			if (stageValue) {
+			if (stageValue != null) {
 				stageValue = this.t(Object.isFunction(stageValue) ? stageValue(this) : stageValue);
 			}
 
-			return stageValue || v;
+			return stageValue ?? v;
 		}
 
 		return v;
@@ -144,22 +199,22 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		this.field.set('titleStore', value);
 	}
 
-	/** @see iOpenToggle.toggle */
+	/** @see [[iOpenToggle.prototype.toggle]] */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
 	}
 
 	/**
-	 * @see iOpenToggle.open
-	 * @param [stage] - window stage
+	 * @see [[iOpenToggle.prototype.open]]
+	 * @param [stage] - component stage to open
 	 */
 	async open(stage?: Stage): Promise<boolean> {
 		if (await iOpenToggle.open(this)) {
-			if (stage) {
+			if (stage != null) {
 				this.stage = stage;
 			}
 
-			this.setRootMod('hidden', false);
+			this.setRootMod('opened', true);
 			await this.nextTick();
 			this.emit('open');
 			return true;
@@ -168,10 +223,10 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		return false;
 	}
 
-	/** @see iOpenToggle.close */
+	/** @see [[iOpenToggle.prototype.close]] */
 	async close(): Promise<boolean> {
 		if (await iOpenToggle.close(this)) {
-			this.setRootMod('hidden', true);
+			this.setRootMod('opened', false);
 			this.emit('close');
 			return true;
 		}
@@ -179,33 +234,37 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		return false;
 	}
 
-	/** @see iLockPageScroll.lock */
+	/** @see [[iLockPageScroll.prototype.lock]] */
 	@wait('loading')
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.window);
 	}
 
-	/** @see iLockPageScroll.unlock */
+	/** @see [[iLockPageScroll.prototype.unlock]] */
 	unlock(): Promise<void> {
 		return iLockPageScroll.unlock(this);
 	}
 
-	/** @see iOpenToggle.onOpenedChange */
+	/** @see [[iOpenToggle.prototype.onOpenedChange]] */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/** @see iOpenToggle.onKeyClose */
+	/** @see [[iOpenToggle.prototype.onKeyClose]] */
 	onKeyClose(e: KeyboardEvent): Promise<void> {
 		return iOpenToggle.onKeyClose(this, e);
 	}
 
-	/** @see iOpenToggle.onTouchClose */
+	/** @see [[iOpenToggle.prototype.onTouchClose]] */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
-			target = <Element>e.target;
+			target = <CanUndef<Element>>e.target;
 
 		if (!target) {
+			return;
+		}
+
+		if (!this.block) {
 			return;
 		}
 
@@ -220,13 +279,13 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	 */
 	@hook('mounted')
 	protected initDocumentPlacement(): void {
-		document.body.insertAdjacentElement('beforeend', this.$el);
-		this.initRootStyles();
+		this.dom.appendChild(document.body, this.$el!);
 	}
 
 	/**
 	 * Attaches dynamic window styles to the root node
 	 */
+	@watch({path: 'mods.position', immediate: true})
 	@wait('loading')
 	protected initRootStyles(): CanPromise<void> {
 		const
@@ -253,18 +312,9 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		iLockPageScroll.initModEvents(this);
 	}
 
-	/**
-	 * Handler: error
-	 * @param err
-	 */
-	protected onError(err: RequestError): void {
-		return undefined;
-	}
-
 	/** @override */
 	protected beforeDestroy(): void {
 		super.beforeDestroy();
 		this.removeRootMod('hidden');
-		this.$el.remove();
 	}
 }

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]****
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.121 (2021-01-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `getRootMod`
+
 ## v3.0.0-rc.120 (2020-12-23)
 
 #### :bug: Bug Fix
