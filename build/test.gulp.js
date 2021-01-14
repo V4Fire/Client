@@ -186,6 +186,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 		// eslint-disable-next-line require-atomic-updates
 		args['--port'] = args['--port'] || await portfinder.getPortPromise();
+
 		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || 'p-v4-components-demo';
 
@@ -204,11 +205,9 @@ module.exports = function init(gulp = require('gulp')) {
 
 		fs.mkdirpSync(tmpDir);
 
-		const testPath = args['--test-entry'] ?
-			resolve.blockSync(args['--test-entry']) :
-			path.join(componentDir, 'test');
-
 		const
+			entryPoint = args['--test-entry'],
+			testPath = entryPoint ? resolve.blockSync(entryPoint) : path.join(componentDir, 'test'),
 			test = require(testPath);
 
 		const browserParams = {
@@ -217,7 +216,43 @@ module.exports = function init(gulp = require('gulp')) {
 			webkit: {}
 		};
 
-		const createBrowser = async (browserType) => {
+		const
+			browsersPromises = [];
+
+		for (const browserType of browsers) {
+			browsersPromises.push(createBrowser(browserType));
+		}
+
+		await Promise.all(browsersPromises);
+
+		for (const browserType of browsers) {
+			await runTest(browserType);
+		}
+
+		await server.close();
+
+		function getTestEnv(browserType) {
+			const
+				Jasmine = require('jasmine'),
+				jasmine = new Jasmine();
+
+			jasmine.configureDefaultReporter({});
+			Object.assign(globalThis, jasmine.env);
+
+			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
+
+			console.log('\n-------------');
+			console.log('Starting to test');
+			console.log(`env component: ${args['--name']}`);
+			console.log(`test entry: ${args['--test-entry']}`);
+			console.log(`runner: ${args['--runner']}`);
+			console.log(`browser: ${browserType}`);
+			console.log('-------------\n');
+
+			return jasmine.env;
+		}
+
+		async function createBrowser(browserType) {
 			const browserInstanceParams = {
 				headless: cliParams.headless
 			};
@@ -243,9 +278,9 @@ module.exports = function init(gulp = require('gulp')) {
 				componentDir,
 				tmpDir
 			};
-		};
+		}
 
-		const runTest = async (browserType) => {
+		async function runTest(browserType) {
 			const
 				params = browserParams[browserType];
 
@@ -288,42 +323,6 @@ module.exports = function init(gulp = require('gulp')) {
 
 				testEnv.execute();
 			}).then(close, close);
-		};
-
-		const
-			browsersPromises = [];
-
-		for (const browserType of browsers) {
-			browsersPromises.push(createBrowser(browserType));
-		}
-
-		await Promise.all(browsersPromises);
-
-		for (const browserType of browsers) {
-			await runTest(browserType);
-		}
-
-		await server.close();
-
-		function getTestEnv(browserType) {
-			const
-				Jasmine = require('jasmine'),
-				jasmine = new Jasmine();
-
-			jasmine.configureDefaultReporter({});
-			Object.assign(globalThis, jasmine.env);
-
-			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
-
-			console.log('\n-------------');
-			console.log('Starting to test');
-			console.log(`env component: ${args['--name']}`);
-			console.log(`test entry: ${args['--test-entry']}`);
-			console.log(`runner: ${args['--runner']}`);
-			console.log(`browser: ${browserType}`);
-			console.log('-------------\n');
-
-			return jasmine.env;
 		}
 	});
 
