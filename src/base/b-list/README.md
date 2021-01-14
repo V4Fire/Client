@@ -6,7 +6,7 @@ This module provides a standard component to create a list of tabs/links. You ca
 
 * The component extends [[iData]].
 
-* The component implements [[iVisible]], [[iWidth]] traits.
+* The component implements [[iVisible]], [[iWidth]], [[iItems]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
@@ -24,14 +24,59 @@ This module provides a standard component to create a list of tabs/links. You ca
 
 * Dynamic data loading.
 
+## Modifiers
+
+| Name         | Description            | Values    | Default |
+| ------------ | ---------------------- | ----------| ------- |
+| `hideLabels` | Item labels is hidden  | `Boolean` | `false` |
+
+Also, you can see the parent component and the component traits.
+
 ## Events
 
 | EventName         | Description                                                                                                                  | Payload description                    | Payload  |
-| ----------------- |----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |--------- |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | -------- |
 | `change`          | An active value of the component has been changed                                                                            | Active value or a set of active values | `Active` |
 | `immediateChange` | An active value of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active values | `Active` |
 | `actionChange`    | An active value of the component has been changed due to some user action                                                    | Active value or a set of active values | `Active` |
 | `itemsChange`     | A list of items has been changed                                                                                             | List of items                          | `Items`  |
+
+Also, you can see the parent component and the component traits.
+
+## Associated types
+
+The component has two associated types to specify a type of component items: **Item** and **Items**.
+
+```typescript
+import bList, { component } from 'super/b-list/b-list';
+
+export * from 'super/b-list/b-list';
+
+@component()
+export default class myList extends bList {
+  /** @override */
+  readonly Item!: MyItem;
+}
+```
+
+Also, you can see the parent component.
+
+## Model
+
+The component can be used with the `v-model` directive.
+
+```
+< b-list :items = items | v-model = activeItem
+```
+
+```js
+({
+  model: {
+    prop: 'activeProp',
+    event: 'onChange'
+  }
+})
+```
 
 ## Usage
 
