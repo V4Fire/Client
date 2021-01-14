@@ -14,7 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed working with watchers based on accessors
-* Fixed resolving of accessor
+* Fixed resolving of accessors
 
 ## v3.0.0-rc.86 (2020-10-11)
 

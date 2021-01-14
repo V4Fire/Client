@@ -405,7 +405,7 @@ They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
 
 * `super/i-block/modules/field`:
   * Fixed working with watchers based on accessors
-  * Fixed resolving of accessor
+  * Fixed resolving of accessors
 
 ## v3.0.0-rc.90 (2020-10-22)
 
