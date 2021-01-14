@@ -84,6 +84,7 @@ export default abstract class iItems {
 
 	/**
 	 * This prop is used to provide a list of items to render by the component
+	 * @prop
 	 */
 	abstract items?: this['Items'];
 
@@ -91,12 +92,16 @@ export default abstract class iItems {
 	 * By design, the specified items are rendered by using other components.
 	 * This prop allows specifying the name of a component that is used to render.
 	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+	 *
+	 * @prop
 	 */
 	abstract item?: string | CreateFromItemFn<this['Item'], string>;
 
 	/**
 	 * This prop allows specifying props that are passed to a component to render an item.
 	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+	 *
+	 * @prop
 	 */
 	abstract itemProps?: Dictionary | ItemPropsFn<this['Item']>;
 
@@ -105,6 +110,8 @@ export default abstract class iItems {
 	 * The prop value can be provided as a string or function. In the string case,
 	 * you are providing the name of a property that stores the identifier.
 	 * If the function case, you should return from the function a value of the identifier.
+	 *
+	 * @prop
 	 */
 	abstract itemKey?: string | CreateFromItemFn<this['Item'], IterationKey>;
 }
