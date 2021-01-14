@@ -774,6 +774,12 @@ export default abstract class iData extends iBlock implements iProgress {
 		super.initGlobalEvents(resetListener != null ? resetListener : Boolean(this.dataProvider));
 	}
 
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iProgress.initModEvents(this);
+	}
+
 	/**
 	 * Initializes data event listeners
 	 */
