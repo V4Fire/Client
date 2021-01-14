@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Changed an interface of `set`
+
+#### :rocket: New Feature
+
+* Added support of method invoking `set`
+
+#### :memo: Documentation
+
+* Improved documentation
+
 ## v3.0.0-rc.110 (2020-12-16)
 
 #### :boom: Breaking Change
