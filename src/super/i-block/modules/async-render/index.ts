@@ -90,7 +90,7 @@ export default class AsyncRender extends Friend {
 			}
 
 			if (Object.isString(value)) {
-				return value.split('');
+				return value.letters();
 			}
 
 			if (Object.isNumber(value)) {
