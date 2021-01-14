@@ -14,7 +14,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecated } from 'core/functools';
+import { deprecated } from 'core/functools/deprecation';
 
 import SyncPromise from 'core/promise/sync';
 import log, { LogMessageOptions } from 'core/log';
