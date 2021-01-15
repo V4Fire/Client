@@ -92,15 +92,13 @@
 
 					- block progress
 						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
-							< template v-if = vdom.getSlot('progressIcon')
-								+= self.slot('progressIcon', {':icon': 'progressIcon'})
+							+= self.slot('progressIcon', {':icon': 'progressIcon'})
+								< component &
+									v-else-if = Object.isString(progressIcon) |
+									:is = progressIcon
+								.
 
-							< component &
-								v-else-if = Object.isString(progressIcon) |
-								:is = progressIcon
-							.
-
-							< @b-progress-icon v-else
+								< @b-progress-icon v-else
 
 		< template v-if = type === 'link'
 			+= self.button('a')
