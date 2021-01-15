@@ -28,7 +28,7 @@ async function swipeOnce(page) {
 
 	const create = (clientX, selector) => page.evaluateHandle(({clientX, selector}) => ({
 		touches: [
-			new Touch({
+			new globalThis.Touch({
 				clientX,
 				target: document.querySelector(selector),
 				identifier: Math.random()
