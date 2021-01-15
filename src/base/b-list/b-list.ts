@@ -22,6 +22,7 @@ import { deprecated, deprecate } from 'core/functools/deprecation';
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
 import { Active, Item, Items } from 'base/b-list/interface';
@@ -41,24 +42,40 @@ export const
 	},
 
 	model: {
-		prop: 'valueProp',
+		prop: 'activeProp',
 		event: 'onChange'
 	}
 })
 
-export default class bList extends iData implements iVisible, iWidth {
-	/**
-	 * Initial list of component items
-	 */
+export default class bList extends iData implements iVisible, iWidth, iItems {
+	/** @see [[iItems.Item]] */
+	readonly Item!: Item;
+
+	/** @see [[iItems.Items]] */
+	readonly Items!: Array<this['Item']>;
+
+	/** @see [[iItems.items]] */
 	@prop(Array)
-	readonly itemsProp: Items = [];
+	readonly itemsProp: this['Items'] = [];
+
+	/** @see [[iItems.item]] */
+	@prop({type: [String, Function], required: false})
+	readonly item?: iItems['item'];
+
+	/** @see [[iItems.itemKey]] */
+	@prop({type: [String, Function], required: false})
+	readonly itemKey?: iItems['itemKey'];
+
+	/** @see [[iItems.itemProps]] */
+	@prop({type: Function, required: false})
+	readonly itemProps?: iItems['itemProps'];
 
 	/**
 	 * @deprecated
 	 * @see [[bList.itemsProp]]
 	 */
 	@prop({type: Array, required: false})
-	readonly valueProp?: Items;
+	readonly valueProp?: this['Items'];
 
 	/**
 	 * Initial component active value/s.
@@ -93,15 +110,15 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @see [[bList.itemsProp]]
 	 */
 	@computed({dependencies: ['value', 'itemsStore', 'deprecated']})
-	get items(): Items {
-		return <Items>this.field.get(this.deprecated ? 'value' : 'itemsStore');
+	get items(): this['Items'] {
+		return <this['Items']>this.field.get(this.deprecated ? 'value' : 'itemsStore');
 	}
 
 	/**
 	 * Sets a new list of component items
 	 * @see [[bList.itemsProp]]
 	 */
-	set items(value: Items) {
+	set items(value: this['Items']) {
 		this.field.set(this.deprecated ? 'value' : 'itemsStore', value);
 	}
 
@@ -117,7 +134,7 @@ export default class bList extends iData implements iVisible, iWidth {
 		return val != null ? o.normalizeItems(val) : val;
 	}))
 
-	value?: Items;
+	value?: this['Items'];
 
 	/**
 	 * Component active value.
@@ -159,7 +176,7 @@ export default class bList extends iData implements iVisible, iWidth {
 		return o.normalizeItems(val);
 	}))
 
-	protected itemsStore!: Items;
+	protected itemsStore!: this['Items'];
 
 	/**
 	 * True, if the component works with the deprecated API
@@ -396,16 +413,20 @@ export default class bList extends iData implements iVisible, iWidth {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<Items> {
+	protected initRemoteData(): CanUndef<CanPromise<this['Items'] | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent<Items>(this.db);
+			val = this.convertDBToComponent(this.db);
+
+		if (Object.isDictionary(val)) {
+			return Promise.all(this.state.set(val)).then(() => val);
+		}
 
 		if (Object.isArray(val)) {
-			return this.items = this.normalizeItems(val);
+			this.items = this.normalizeItems(<this['Items']>val);
 		}
 
 		return this.items;
@@ -452,7 +473,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Returns true if the specified item is active
 	 * @param item
 	 */
-	protected isActive(item: Item): boolean {
+	protected isActive(item: this['Item']): boolean {
 		const v = this.field.get('activeStore');
 		return this.multiple ? Object.has(v, [item.value]) : item.value === v;
 	}
@@ -461,9 +482,9 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Normalizes the specified items and returns it
 	 * @param items
 	 */
-	protected normalizeItems(items: CanUndef<Items>): Items {
+	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		const
-			res = <Items>[];
+			res = <this['Items']>[];
 
 		if (!items) {
 			return res;
@@ -504,7 +525,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * @see [[bList.normalizeItems]]
 	 */
 	@deprecated({renamedTo: 'normalizeItems'})
-	protected normalizeOptions(items: CanUndef<Items>): Items {
+	protected normalizeOptions(items: CanUndef<this['Items']>): this['Items'] {
 		return this.normalizeItems(items);
 	}
 
@@ -541,6 +562,30 @@ export default class bList extends iData implements iVisible, iWidth {
 		this.indexes = indexes;
 	}
 
+	/**
+	 * Returns a dictionary with props for the specified item
+	 *
+	 * @param item
+	 * @param i - position index
+	 */
+	protected getItemProps(item: this['Item'], i: number): Dictionary {
+		const
+			op = this.itemProps;
+
+		return Object.isFunction(op) ?
+			op(item, i, {
+				key: this.getItemKey(item, i),
+				ctx: this
+			}) :
+
+			op ?? {};
+	}
+
+	/** @see [[iItems.getItemKey]] */
+	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
+		return iItems.getItemKey(this, item, i);
+	}
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
@@ -552,10 +597,10 @@ export default class bList extends iData implements iVisible, iWidth {
 	 *
 	 * @param value
 	 * @param oldValue
-	 * @emits `itemsChange(value: Items)`
+	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch(['value', 'itemsStore'])
-	protected syncItemsWatcher(value: Items, oldValue: Items): void {
+	protected syncItemsWatcher(value: this['Items'], oldValue: this['Items']): void {
 		if (!Object.fastCompare(value, oldValue)) {
 			this.initComponentValues();
 

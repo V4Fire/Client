@@ -993,7 +993,7 @@ export default class bRouter extends iData {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<CanPromise<RouteBlueprints>> {
+	protected initRemoteData(): CanUndef<CanPromise<RouteBlueprints | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
@@ -1002,7 +1002,7 @@ export default class bRouter extends iData {
 			val = this.convertDBToComponent<StaticRoutes>(this.db);
 
 		if (Object.isDictionary(val)) {
-			return this.updateRoutes(val);
+			return Promise.all(this.state.set(val)).then(() => val);
 		}
 
 		if (Object.isArray(val)) {

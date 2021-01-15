@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.123 (2021-01-15)
+
+#### :rocket: New Feature
+
+* Implemented new API from `iProgress`
+
+#### :memo: Documentation
+
+* Improved documentation
+
 ## v3.0.0-rc.51 (2020-08-04)
 
 #### :bug: Bug Fix

@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { ModsDecl } from 'super/i-block/i-block';
+import iBlock, { ModsDecl, ModEvent } from 'super/i-block/i-block';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iProgress {
@@ -24,4 +24,25 @@ export default abstract class iProgress {
 			'false'
 		]
 	};
+
+	/**
+	 * Initializes modifier event listeners for the specified component
+	 *
+	 * @emits `progressStart()`
+	 * @emits `progressEnd()`
+	 *
+	 * @param component
+	 */
+	static initModEvents<T extends iBlock>(component: T): void {
+		const
+			{localEmitter: $e} = component.unsafe;
+
+		$e.on('block.mod.*.progress.*', (e: ModEvent) => {
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
+			}
+
+			component.emit(e.value === 'false' || e.type === 'remove' ? 'progressEnd' : 'progressStart');
+		});
+	}
 }

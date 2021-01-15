@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.123 (2021-01-15)
+
+#### :rocket: New Feature
+
+* Added `--device` for `component:test`
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :rocket: New Feature

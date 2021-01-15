@@ -110,6 +110,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * * [--port] - port to launch the test server
 	 * * [--page='p-v4-components-demo'] - demo page to run tests
 	 * * [--browsers] - list of browsers to test (firefox (ff), chromium (chrome), webkit (wk))
+	 * * [--device] - name of used device, for instance, "iPhone_11" or "Pixel_2"
 	 * * [--close=true] - should or not close the running browsers after finishing the tests
 	 * * [--headless=true] - should or not run browsers with the headless option
 	 * * [--reinit-browser=false] - should or not reuse already existence browser instances
@@ -142,11 +143,15 @@ module.exports = function init(gulp = require('gulp')) {
 			fs = require('fs-extra-promise'),
 			path = require('upath');
 
+		const
+			{devices} = require('playwright');
+
 		const args = arg({
 			'--name': String,
 			'--port': Number,
 			'--page': String,
 			'--browsers': String,
+			'--device': String,
 			'--close': String,
 			'--headless': String,
 			'--client-name': String,
@@ -186,6 +191,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 		// eslint-disable-next-line require-atomic-updates
 		args['--port'] = args['--port'] || await portfinder.getPortPromise();
+
 		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || 'p-v4-components-demo';
 
@@ -204,11 +210,9 @@ module.exports = function init(gulp = require('gulp')) {
 
 		fs.mkdirpSync(tmpDir);
 
-		const testPath = args['--test-entry'] ?
-			resolve.blockSync(args['--test-entry']) :
-			path.join(componentDir, 'test');
-
 		const
+			entryPoint = args['--test-entry'],
+			testPath = entryPoint ? resolve.blockSync(entryPoint) : path.join(componentDir, 'test'),
 			test = require(testPath);
 
 		const browserParams = {
@@ -217,7 +221,43 @@ module.exports = function init(gulp = require('gulp')) {
 			webkit: {}
 		};
 
-		const createBrowser = async (browserType) => {
+		const
+			browsersPromises = [];
+
+		for (const browserType of browsers) {
+			browsersPromises.push(createBrowser(browserType));
+		}
+
+		await Promise.all(browsersPromises);
+
+		for (const browserType of browsers) {
+			await runTest(browserType);
+		}
+
+		await server.close();
+
+		function getTestEnv(browserType) {
+			const
+				Jasmine = require('jasmine'),
+				jasmine = new Jasmine();
+
+			jasmine.configureDefaultReporter({});
+			Object.assign(globalThis, jasmine.env);
+
+			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
+
+			console.log('\n-------------');
+			console.log('Starting to test');
+			console.log(`env component: ${args['--name']}`);
+			console.log(`test entry: ${args['--test-entry']}`);
+			console.log(`runner: ${args['--runner']}`);
+			console.log(`browser: ${browserType}`);
+			console.log('-------------\n');
+
+			return jasmine.env;
+		}
+
+		async function createBrowser(browserType) {
 			const browserInstanceParams = {
 				headless: cliParams.headless
 			};
@@ -228,7 +268,18 @@ module.exports = function init(gulp = require('gulp')) {
 
 			const
 				browser = await getBrowserInstance(browserType, browserInstanceParams, browserInstanceOptions),
-				context = await browser.newContext(),
+				device = args['--device']?.replace(/_/g, ' ');
+
+			if (device != null && devices[device] == null) {
+				throw Error(`The specified devise "${device}" is not supported`);
+			}
+
+			const contextOpts = {
+				...device ? devices[device] : null
+			};
+
+			const
+				context = await browser.newContext(contextOpts),
 				page = await context.newPage();
 
 			const
@@ -243,9 +294,9 @@ module.exports = function init(gulp = require('gulp')) {
 				componentDir,
 				tmpDir
 			};
-		};
+		}
 
-		const runTest = async (browserType) => {
+		async function runTest(browserType) {
 			const
 				params = browserParams[browserType];
 
@@ -288,42 +339,6 @@ module.exports = function init(gulp = require('gulp')) {
 
 				testEnv.execute();
 			}).then(close, close);
-		};
-
-		const
-			browsersPromises = [];
-
-		for (const browserType of browsers) {
-			browsersPromises.push(createBrowser(browserType));
-		}
-
-		await Promise.all(browsersPromises);
-
-		for (const browserType of browsers) {
-			await runTest(browserType);
-		}
-
-		await server.close();
-
-		function getTestEnv(browserType) {
-			const
-				Jasmine = require('jasmine'),
-				jasmine = new Jasmine();
-
-			jasmine.configureDefaultReporter({});
-			Object.assign(globalThis, jasmine.env);
-
-			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
-
-			console.log('\n-------------');
-			console.log('Starting to test');
-			console.log(`env component: ${args['--name']}`);
-			console.log(`test entry: ${args['--test-entry']}`);
-			console.log(`runner: ${args['--runner']}`);
-			console.log(`browser: ${browserType}`);
-			console.log('-------------\n');
-
-			return jasmine.env;
 		}
 	});
 

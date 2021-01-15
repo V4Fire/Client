@@ -30,23 +30,16 @@
 					< .&__marker
 						- block fold
 							< template v-if = Object.size(field.get('children.length', el)) > 0
-								< template v-if = vdom.getSlot('fold') != null
-									+= self.slot('fold', {':params': 'getFoldProps(el)'})
-
-								< .&__fold &
-									v-else |
-									:v-attrs = getFoldProps(el)
-								.
+								+= self.slot('fold', {':params': 'getFoldProps(el)'})
+									< .&__fold :v-attrs = getFoldProps(el)
 
 					- block item
-						< template v-if = item != null
+						+= self.slot('default', {':item': 'getItemProps(el, i)'})
 							< component.&__item &
+								v-if = item |
 								:is = Object.isFunction(item) ? item(el, i) : item |
 								:v-attrs = getItemProps(el, i)
 							.
-
-						< template v-else
-							+= self.slot('default', {':item': 'getItemProps(el, i)'})
 
 				- block children
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
@@ -56,8 +49,14 @@
 							:item = item |
 							:v-attrs = nestedTreeProps
 						.
-							< template #default = o
+							< template &
+								#default = o |
+								v-if = vdom.getSlot('default') != null
+							.
 								+= self.slot('default', {':item': 'o.item'})
 
-							< template #fold = o | v-if = vdom.getSlot('fold') != null
+							< template &
+								#fold = o |
+								v-if = vdom.getSlot('fold') != null
+							.
 								+= self.slot('fold', {':params': 'o.params'})

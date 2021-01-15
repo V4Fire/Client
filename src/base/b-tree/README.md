@@ -22,7 +22,7 @@ This module provides API to render a recursive list of elements.
 | --------- | ------------------------------------------------------ | -------------------------------------------------------------- | -------------------------------- |
 | `fold`    | One of the component items has been folded or unfolded | A link to the DOM element; The item object; The folding status | `HTMLElement`; `Item`; `boolean` |
 
-Also, you can see the [[iData]] component.
+Also, you can see the parent component and the component traits.
 
 ## Associated types
 
