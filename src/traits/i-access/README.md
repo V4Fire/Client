@@ -176,6 +176,7 @@ The trait provides a bunch of optional styles for the component.
 $p = {
   helpers: true
 }
+
 i-access
   if $p.helpers
     &_disabled_true
@@ -189,9 +190,11 @@ To enable these styles, import the trait within your component and call the prov
 
 ```stylus
 @import "traits/i-access/i-access.styl"
+
 $p = {
   accessHelpers: true
 }
+
 b-button
   i-access({helpers: $p.accessHelpers})
 ```
