@@ -260,11 +260,11 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		const
 			target = <CanUndef<Element>>e.target;
 
-		if (!target) {
+		if (target == null) {
 			return;
 		}
 
-		if (!this.block) {
+		if (this.block == null) {
 			return;
 		}
 
@@ -279,7 +279,9 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 	 */
 	@hook('mounted')
 	protected initDocumentPlacement(): void {
-		this.dom.appendChild(document.body, this.$el!);
+		if (this.$el != null) {
+			this.dom.appendChild(document.body, this.$el);
+		}
 	}
 
 	/**
