@@ -110,6 +110,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * * [--port] - port to launch the test server
 	 * * [--page='p-v4-components-demo'] - demo page to run tests
 	 * * [--browsers] - list of browsers to test (firefox (ff), chromium (chrome), webkit (wk))
+	 * * [--device] - name of used device, for instance, "iPhone_11" or "Pixel_2"
 	 * * [--close=true] - should or not close the running browsers after finishing the tests
 	 * * [--headless=true] - should or not run browsers with the headless option
 	 * * [--reinit-browser=false] - should or not reuse already existence browser instances
@@ -142,11 +143,15 @@ module.exports = function init(gulp = require('gulp')) {
 			fs = require('fs-extra-promise'),
 			path = require('upath');
 
+		const
+			{devices} = require('playwright');
+
 		const args = arg({
 			'--name': String,
 			'--port': Number,
 			'--page': String,
 			'--browsers': String,
+			'--device': String,
 			'--close': String,
 			'--headless': String,
 			'--client-name': String,
@@ -263,7 +268,18 @@ module.exports = function init(gulp = require('gulp')) {
 
 			const
 				browser = await getBrowserInstance(browserType, browserInstanceParams, browserInstanceOptions),
-				context = await browser.newContext(),
+				device = args['--device']?.replace(/_/g, ' ');
+
+			if (device != null && devices[device] == null) {
+				throw Error(`The specified devise "${device}" is not supported`);
+			}
+
+			const contextOpts = {
+				...device ? devices[device] : null
+			};
+
+			const
+				context = await browser.newContext(contextOpts),
 				page = await context.newPage();
 
 			const

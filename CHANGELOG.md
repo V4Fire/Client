@@ -24,6 +24,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added `--device` for `component:test` `build`
 * Now the component implements the `iItems` trait `bList`
 * Added support of method invoking `set` `i-block/modules/state`
 * Implemented new API from `iAccess` `bButton`
