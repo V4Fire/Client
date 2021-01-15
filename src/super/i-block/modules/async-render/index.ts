@@ -353,11 +353,11 @@ export default class AsyncRender extends Friend {
 
 					if (Object.isPromise(res)) {
 						try {
-							const r = await $a.promise(res, {group});
-
-							if (Object.isTruly(r)) {
-								this.createTask(task, {group, weight});
-							}
+							await $a.promise(res, {group}).then((res) => {
+								if (Object.isTruly(res)) {
+									this.createTask(task, {group, weight});
+								}
+							});
 
 						} catch (err) {
 							if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
@@ -397,12 +397,27 @@ export default class AsyncRender extends Friend {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {
-				if (params.filter == null || Object.isTruly(params.filter())) {
-					taskFn();
-					return true;
+				if (params.filter == null) {
+					return resolve(true);
 				}
 
-				return false;
+				const
+					res = params.filter();
+
+				if (Object.isPromise(res)) {
+					return res.then(resolve);
+				}
+
+				return resolve(res);
+
+				function resolve(res: unknown): boolean {
+					if (Object.isTruly(res)) {
+						taskFn();
+						return true;
+					}
+
+					return false;
+				}
 
 			}, {
 				group: params.group ?? 'asyncComponents',
