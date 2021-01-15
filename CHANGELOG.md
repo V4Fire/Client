@@ -11,12 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.?? ()
+## v3.0.0-rc.123 (2021-01-15)
 
 #### :boom: Breaking Change
 
 * Changed an interface and behavior of `initRemoteData` `bRouter`
 * Changed an interface of `set` `i-block/modules/state`
+
 * `traits/i-access`:
   * Removed helpers for disabling
   * Removed progress helpers
