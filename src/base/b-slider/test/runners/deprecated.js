@@ -86,25 +86,6 @@ module.exports = (page) => {
 			expect(optionsCount).toEqual(2);
 		});
 
-		it('loading options with external options iterator', async () => {
-			const
-				optionClass = h.dom.elNameGenerator('.b-slider', 'option');
-
-			const target = await initSlider(page, {
-				attrs: {
-					option: 'b-checkbox',
-					options: [],
-					optionsIterator: 'return () => [{id: "1"}, {id: "2"}, {id: "3"}]'
-				}
-			});
-
-			const optionsCount = await target.evaluate(
-				(ctx, name) => ctx.$el.querySelectorAll(name).length, optionClass
-			);
-
-			expect(optionsCount).toEqual(3);
-		});
-
 		it('loading options with an external optionProps as function', async () => {
 			const
 				options = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}],
