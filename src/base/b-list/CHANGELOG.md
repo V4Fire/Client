@@ -15,6 +15,10 @@ Changelog
 
 * Now the component implements the `iItems` trait
 
+#### :memo: Documentation
+
+* Improved doc
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :boom: Breaking Change
