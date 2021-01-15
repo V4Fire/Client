@@ -42,17 +42,16 @@
 					:v-attrs = el.attrs
 				.
 					- block preIcon
-						< span.&__cell.&__link-icon.&__link-pre-icon
+						< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon || vdom.getSlot('preIcon')
 							+= self.slot('preIcon', {':item': 'el', ':icon': 'el.preIcon'})
-								< template v-if = el.preIcon
-									< component &
-										v-if = el.preIconComponent |
-										:instanceOf = bIcon |
-										:is = el.preIconComponent |
-										:value = el.preIcon
-									.
+								< component &
+									v-if = el.preIconComponent |
+									:instanceOf = bIcon |
+									:is = el.preIconComponent |
+									:value = el.preIcon
+								.
 
-									< @b-icon v-else | :value = el.preIcon
+								< @b-icon v-else | :value = el.preIcon
 
 					- block value
 						< span.&__cell.&__link-value
@@ -67,17 +66,16 @@
 									{{ t(el.label) }}
 
 					- block icon
-						< span.&__cell.&__link-icon.&__link-post-icon
+						< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon || vdom.getSlot('icon')
 							+= self.slot('icon', {':item': 'el', ':icon': 'el.icon'})
-								< template v-if = el.icon
-									< component &
-										v-if = el.iconComponent |
-										:instanceOf = bIcon |
-										:is = el.iconComponent |
-										:value = el.icon
-									.
+								< component &
+									v-if = el.iconComponent |
+									:instanceOf = bIcon |
+									:is = el.iconComponent |
+									:value = el.icon
+								.
 
-									< @b-icon v-else | :value = el.icon
+								< @b-icon v-else | :value = el.icon
 
 					- block progress
 						< span.&__cell.&__link-icon.&__link-progress v-if = el.progressIcon != null

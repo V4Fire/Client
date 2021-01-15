@@ -59,18 +59,16 @@
 
 				< _.&__wrapper
 					- block preIcon
-						< _.&__cell.&__icon.&__pre-icon v-if = vdom.getSlot('preIcon')
+						< _.&__cell.&__icon.&__pre-icon v-if = preIcon || vdom.getSlot('preIcon')
 							+= self.slot('preIcon', {':icon': 'preIcon'})
+								< component &
+									v-if = preIconComponent |
+									:instanceOf = bIcon |
+									:is = preIconComponent |
+									:value = preIcon
+								.
 
-						< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
-							< component &
-								v-if = preIconComponent |
-								:instanceOf = bIcon |
-								:is = preIconComponent |
-								:value = preIcon
-							.
-
-							< @b-icon v-else | :value = preIcon
+								< @b-icon v-else | :value = preIcon
 
 					- block value
 						< _.&__cell.&__value
@@ -80,18 +78,16 @@
 						< _.&__cell.&__icon.&__expand v-if = vdom.getSlot('dropdown')
 
 					- block icon
-						< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
+						< _.&__cell.&__icon.&__post-icon v-if = icon || vdom.getSlot('icon')
 							+= self.slot('icon', {':icon': 'icon'})
+								< component &
+									v-if = iconComponent |
+									:instanceOf = bIcon |
+									:is = iconComponent |
+									:value = icon
+								.
 
-						< _.&__cell.&__icon.&__post-icon v-else-if = icon
-							< component &
-								v-if = iconComponent |
-								:instanceOf = bIcon |
-								:is = iconComponent |
-								:value = icon
-							.
-
-							< @b-icon v-else | :value = icon
+								< @b-icon v-else | :value = icon
 
 					- block progress
 						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
