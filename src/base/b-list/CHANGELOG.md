@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :rocket: New Feature
+
+* Now the component implements the `iItems` trait
+
 ## v3.0.0-rc.90 (2020-10-22)
 
 #### :boom: Breaking Change
@@ -24,7 +30,6 @@ Changelog
 * Changed a type of `hideLabels` from a prop to modifier
 * Now the `active` getter returns a Set with `multiple = true`
 * Removed `block info` from the template
-* Deprecated `&__el`
 
 #### :rocket: Breaking Change
 

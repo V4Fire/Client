@@ -562,6 +562,30 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		this.indexes = indexes;
 	}
 
+	/**
+	 * Returns a dictionary with props for the specified item
+	 *
+	 * @param item
+	 * @param i - position index
+	 */
+	protected getItemProps(item: this['Item'], i: number): Dictionary {
+		const
+			op = this.itemProps;
+
+		return Object.isFunction(op) ?
+			op(item, i, {
+				key: this.getItemKey(item, i),
+				ctx: this
+			}) :
+
+			op ?? {};
+	}
+
+	/** @see [[iItems.getItemKey]] */
+	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
+		return iItems.getItemKey(this, item, i);
+	}
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
@@ -584,11 +608,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			this.emit('valueChange', value);
 			this.emit('itemsChange', value);
 		}
-	}
-
-	/** @see [[iItems.getItemKey]] */
-	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
-		return iItems.getItemKey(this, item, i);
 	}
 
 	/** @override */
