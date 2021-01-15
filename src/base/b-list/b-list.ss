@@ -22,7 +22,7 @@
 		 * @param {!Array<Option>} items - items to render
 		 */
 		- block list(value)
-			< ${listElTag}.&__el &
+			< ${listElTag}.&__el.&__item &
 				v-for = el in ${value} |
 				:key = getItemKey(el, i)
 			.
@@ -57,7 +57,7 @@
 						< span.&__cell.&__link-value
 							+= self.slot('default', {':item': 'el'})
 								< template v-if = item
-									< component.&__item &
+									< component &
 										:is = Object.isFunction(item) ? item(el, i) : item |
 										:v-attrs = getItemProps(el, i)
 									.

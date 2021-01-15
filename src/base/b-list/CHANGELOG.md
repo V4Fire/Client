@@ -17,7 +17,7 @@ Changelog
 
 #### :memo: Documentation
 
-* Improved doc
+* Improved documentation
 
 ## v3.0.0-rc.90 (2020-10-22)
 
@@ -34,6 +34,7 @@ Changelog
 * Changed a type of `hideLabels` from a prop to modifier
 * Now the `active` getter returns a Set with `multiple = true`
 * Removed `block info` from the template
+* Deprecated `&__el`
 
 #### :rocket: Breaking Change
 
