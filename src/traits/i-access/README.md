@@ -182,6 +182,7 @@ i-access
     &_disabled_true
       cursor default
       pointer-events none
+
     &_disabled_true &__over-wrapper
       display block
 ```
