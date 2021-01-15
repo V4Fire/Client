@@ -30,23 +30,19 @@
 					< .&__marker
 						- block fold
 							< template v-if = Object.size(field.get('children.length', el)) > 0
-								< template v-if = vdom.getSlot('fold') != null
-									+= self.slot('fold', {':params': 'getFoldProps(el)'})
-
-								< .&__fold &
-									v-else |
-									:v-attrs = getFoldProps(el)
-								.
+								+= self.slot('fold', {':params': 'getFoldProps(el)'})
+									< .&__fold &
+										v-else |
+										:v-attrs = getFoldProps(el)
+									.
 
 					- block item
 						< template v-if = item != null
-							< component.&__item &
-								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
-							.
-
-						< template v-else
 							+= self.slot('default', {':item': 'getItemProps(el, i)'})
+								< component.&__item &
+									:is = Object.isFunction(item) ? item(el, i) : item |
+									:v-attrs = getItemProps(el, i)
+								.
 
 				- block children
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
