@@ -49,6 +49,7 @@
 				ref = button |
 				:class = provide.hintClasses(hintPos) |
 				:autofocus = autofocus |
+				:tabindex = tabIndex |
 				:-hint = t(hint) |
 				@click = onClick |
 				@focus = focus |
