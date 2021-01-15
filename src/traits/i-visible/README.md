@@ -54,6 +54,7 @@ The trait provides a bunch of optional styles for the component.
 $p = {
   helpers: true
 }
+
 i-visible
   if $p.helpers
     &_hidden_true
@@ -64,9 +65,11 @@ To enable these styles, import the trait within your component and call the prov
 
 ```stylus
 @import "traits/i-visible/i-visible.styl"
+
 $p = {
   visibleHelpers: true
 }
+
 b-button
   i-visible({helpers: $p.visibleHelpers})
 ```
