@@ -11,6 +11,46 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Changed an interface and behavior of `initRemoteData` `bRouter`
+* Changed an interface of `set` `i-block/modules/state`
+* `traits/i-access`:
+  * Removed helpers for disabling
+  * Removed progress helpers
+
+#### :rocket: New Feature
+
+* Now the component implements the `iItems` trait `bList`
+* Added support of method invoking `set` `i-block/modules/state`
+* Implemented new API from `iAccess` `bButton`
+* Implemented new API from `iProgress`:
+  * `bImage`
+  * `bRouter`
+  * `iData`
+
+* `traits/i-access`:
+  * Added `autofocus`
+  * Added `tabIndex`
+  * Added `isFocused`
+
+* `traits/i-progress`:
+  * Moved logic from `iAccess`
+  * Added support of events
+
+#### :memo: Documentation
+
+* Improved documentation
+  * `bImage`
+  * `bList`
+  * `bIcon`
+  * `i-block/modules/state`
+  * `traits/i-access`
+  * `traits/i-progress`
+  * `traits/i-visible`
+
 ## v3.0.0-rc.122 (2021-01-13)
 
 #### :boom: Breaking Change
