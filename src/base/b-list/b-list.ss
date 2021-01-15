@@ -19,13 +19,14 @@
 
 		/**
 		 * Generates a list block
-		 * @param {!Array<Option>} items - items to render
+		 * @param {!Array<Item>} items - items to render
 		 */
-		- block list(value)
+		- block list(items)
 			< template &
-				v-for = el in ${value} |
+				v-for = (el, i) in ${items} |
 				:key = getItemKey(el, i)
 			.
+
 				< ${listElTag}.&__el.&__item
 					< a &
 						:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
@@ -54,8 +55,8 @@
 
 									< @b-icon v-else | :value = el.preIcon
 
-						- block content
-							< span.&__cell.&__link-content
+						- block value
+							< span.&__cell.&__link-value
 								+= self.slot('default', {':item': 'el'})
 									< template v-if = item
 										< component &
@@ -80,7 +81,7 @@
 
 						- block progress
 							< span.&__cell.&__link-icon.&__link-progress v-if = el.progressIcon != null
-								+= self.slot('progressIcon', {':item': 'el', ':icon': 'item.progressIcon'})
+								+= self.slot('progressIcon', {':item': 'el', ':icon': 'el.progressIcon'})
 									< component &
 										v-else-if = Object.isString(el.progressIcon) |
 										:is = el.progressIcon
