@@ -6,8 +6,14 @@ Changelog
 > - :rocket:     [New Feature]
 > - :bug:        [Bug Fix]
 > - :memo:       [Documentation]
-> - :house:      [Internal]****
+> - :house:      [Internal]
 > - :nail_care:  [Polish]
+
+## v3.0.0-rc.124 (2021-01-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with not included optional asset in `getScriptDeclByName` at `modules/ss-helpers/page`
 
 ## v3.0.0-rc.121 (2021-01-12)
 
