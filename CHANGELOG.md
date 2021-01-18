@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a bug with not included optional asset at `modules/ss-helpers/page`
+* Fixed a bug when an optional asset isn't exist `super/i-static-page/modules/ss-helpers`
 
 ## v3.0.0-rc.123 (2021-01-15)
 

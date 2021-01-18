@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a bug with not included optional asset in `getScriptDeclByName` at `modules/ss-helpers/page`
+* Fixed a bug when an optional asset isn't exist `modules/ss-helpers/page/getScriptDeclByName`
 
 ## v3.0.0-rc.121 (2021-01-12)
 
