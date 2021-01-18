@@ -200,8 +200,6 @@ export function patchComponentVData(
 	}
 
 	if (Object.isTruly(anotherData.style)) {
-		console.log(data.style, anotherData.style, parseStyle(data.style, parseStyle(anotherData.style)));
-
 		data.style = parseStyle(data.style, parseStyle(anotherData.style));
 	}
 
