@@ -150,8 +150,12 @@ function getScriptDeclByName(name, {
 				decl = `include('${filePath}');`;
 			}
 
-		} else if (!optional) {
-			throw new ReferenceError(`Script by a name "${name}" is not defined`);
+		} else {
+			if (!optional) {
+				throw new ReferenceError(`Script by a name "${name}" is not defined`);
+			}
+
+			return '';
 		}
 
 	} else {

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.124 (2021-01-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with not included optional asset at `modules/ss-helpers/page`
+
 ## v3.0.0-rc.123 (2021-01-15)
 
 #### :boom: Breaking Change
