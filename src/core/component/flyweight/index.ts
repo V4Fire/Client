@@ -63,6 +63,10 @@ export function parseVNodeAsFlyweight(
 
 	delete vnode.data!.attrs!['v4-flyweight-component'];
 
+	if (parentComponent.isFlyweight) {
+		parentComponent = parentComponent.$normalParent!;
+	}
+
 	const
 		componentData = getComponentDataFromVNode(compositeAttr, vnode),
 		componentProto = meta.constructor.prototype,

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.125 (2021-01-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the creation of nested flyweight components
+
 ## v3.0.0-rc.99 (2020-11-17)
 
 #### :bug: Bug Fix
