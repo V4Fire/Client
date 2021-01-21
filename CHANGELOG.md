@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed creation of fields of flyweight components `core/component/field`
+
 ## v3.0.0-rc.125 (2021-01-18)
 
 #### :bug: Bug Fix
