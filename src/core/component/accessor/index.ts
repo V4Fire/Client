@@ -22,11 +22,14 @@ import { cacheStatus, ComponentInterface } from 'core/component';
  *   by using Object.getOwnPropertyDescriptor/defineProperty
  */
 export function attachAccessorsFromMeta(component: ComponentInterface, safe?: boolean): void {
-	const
-		{meta, meta: {params: {deprecatedProps}}} = component.unsafe;
+	const {
+		meta,
+		meta: {params: {deprecatedProps}},
+		isFlyweight
+	} = component.unsafe;
 
 	const
-		isFlyweight = meta.params.functional === true || component.isFlyweight;
+		isNotRegular = meta.params.functional === true || isFlyweight;
 
 	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
@@ -37,12 +40,15 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			continue;
 		}
 
-		if (isFlyweight && el.functional === false) {
+		if (isNotRegular && el.functional === false) {
 			continue;
 		}
 
-		const
-			alreadyExists = Boolean(safe ? Object.getOwnPropertyDescriptor(component, key) : component[key]);
+		const alreadyExists = Boolean(
+			safe ?
+				Object.getOwnPropertyDescriptor(component, key) :
+				component[key]
+		);
 
 		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
 			continue;
@@ -69,12 +75,15 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			continue;
 		}
 
-		if (isFlyweight && el.functional === false) {
+		if (isNotRegular && el.functional === false) {
 			continue;
 		}
 
-		const
-			alreadyExists = Boolean(safe ? Object.getOwnPropertyDescriptor(component, key) : component[key]);
+		const alreadyExists = Boolean(
+			safe ?
+				Object.getOwnPropertyDescriptor(component, key) :
+				component[key]
+		);
 
 		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
 			continue;
