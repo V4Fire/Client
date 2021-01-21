@@ -61,7 +61,8 @@ export function initFields(
 	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = <Nullable<ComponentSystemField>>fields[key];
+			el = <Nullable<ComponentSystemField>>fields[key],
+			sourceVal = store[key];
 
 		const needInit =
 			el != null &&
@@ -71,10 +72,11 @@ export function initFields(
 			(!isNotRegular || el.functional !== false) &&
 
 			(el.init != null || el.default !== undefined || instance[key] !== undefined) &&
-			(store[key] === undefined || isFlyweight && el.replace === false);
+			(sourceVal === undefined || isFlyweight && el.replace === false);
 
 		if (el == null || !needInit) {
 			canSkip[key] = true;
+			store[key] = sourceVal;
 			continue;
 		}
 
