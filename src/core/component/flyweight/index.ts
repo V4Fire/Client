@@ -181,7 +181,10 @@ export function parseVNodeAsFlyweight(
 		fakeCtx.$props[key] = value;
 	}
 
-	initProps(fakeCtx, {store: fakeCtx, saveToStore: true});
+	initProps(fakeCtx, {
+		store: fakeCtx,
+		saveToStore: true
+	});
 
 	initFields(meta.systemFields, fakeCtx, fakeCtx);
 	initFields(meta.fields, fakeCtx, fakeCtx);
