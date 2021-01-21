@@ -50,7 +50,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 				component[key]
 		);
 
-		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
+		if (alreadyExists && (!isFlyweight || el.replace === true)) {
 			continue;
 		}
 
@@ -85,7 +85,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 				component[key]
 		);
 
-		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
+		if (alreadyExists && (!isFlyweight || el.replace === true)) {
 			continue;
 		}
 

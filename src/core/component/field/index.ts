@@ -65,9 +65,13 @@ export function initFields(
 
 		const needInit =
 			el != null &&
+
+			// Don't initialize a property for a functional component
+			// unless explicitly required (functional == false)
 			(!isNotRegular || el.functional !== false) &&
+
 			(el.init != null || el.default !== undefined || instance[key] !== undefined) &&
-			(store[key] === undefined || isFlyweight && el.replace === true);
+			(store[key] === undefined || isFlyweight && el.replace === false);
 
 		if (el == null || !needInit) {
 			canSkip[key] = true;

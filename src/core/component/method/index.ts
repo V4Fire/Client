@@ -48,7 +48,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 		{unsafe: {meta, meta: {methods}}} = component;
 
 	const
-		isFlyweight = meta.params.functional === true || component.isFlyweight;
+		isNotRegular = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 		const
@@ -59,7 +59,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 			continue;
 		}
 
-		if (isFlyweight && el.functional === false) {
+		if (isNotRegular && el.functional === false) {
 			continue;
 		}
 

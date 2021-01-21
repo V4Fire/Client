@@ -30,13 +30,17 @@ export function initProps(
 ): Dictionary {
 	opts.store = opts.store ?? {};
 
-	const
-		{unsafe} = component,
-		{meta, meta: {component: {props}}} = unsafe,
-		{store} = opts,
+	const {
+		unsafe,
+		unsafe: {meta, meta: {component: {props}}}
+	} = component;
 
+	const
+		{store} = opts;
+
+	const
 		// True if a component is functional or a flyweight
-		isFlyweight = meta.params.functional === true || component.isFlyweight;
+		isNotRegular = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
 		const
@@ -49,7 +53,7 @@ export function initProps(
 
 		// Don't initialize a property for a functional component
 		// unless explicitly required (functional == false)
-		if (isFlyweight && el.functional === false) {
+		if (isNotRegular && el.functional === false) {
 			continue;
 		}
 

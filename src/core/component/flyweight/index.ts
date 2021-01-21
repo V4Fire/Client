@@ -13,7 +13,7 @@
 
 import { defProp } from 'core/const/props';
 import { deprecate } from 'core/functools/deprecation';
-import { components, NULL } from 'core/component/const';
+import { components } from 'core/component/const';
 
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
@@ -73,7 +73,7 @@ export function parseVNodeAsFlyweight(
 		componentTpl = TPLS[compositeAttr] ?? componentProto.render;
 
 	// To create a flyweight component we need to create a "fake" context for a component.
-	// The context is based on the specified parent context by using Object.create.
+	// The context is based on the specified parent context by using `Object.create`.
 	// Also, we need to shim some component hooks.
 
 	const fakeCtx = Object.assign(Object.create(parentComponent), {
@@ -181,39 +181,10 @@ export function parseVNodeAsFlyweight(
 		fakeCtx.$props[key] = value;
 	}
 
-	const defField = {
-		...defProp,
-		value: NULL
-	};
-
-	const
-		{systemFields, fields} = meta;
-
-	// Shim component fields and system fields
-	for (let list = [systemFields, fields], i = 0; i < list.length; i++) {
-		const
-			fields = list[i];
-
-		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				val = fields[key];
-
-			if (
-				val && (
-					val.replace !== true && (Object.isTruly(val.unique) || val.src === meta.componentName) ||
-					val.replace === false
-				)
-			) {
-				Object.defineProperty(fakeCtx, key, defField);
-			}
-		}
-	}
-
-	// Initialize values
 	initProps(fakeCtx, {store: fakeCtx, saveToStore: true});
-	initFields(systemFields, fakeCtx, fakeCtx);
-	initFields(fields, fakeCtx, fakeCtx);
+
+	initFields(meta.systemFields, fakeCtx, fakeCtx);
+	initFields(meta.fields, fakeCtx, fakeCtx);
 
 	fakeCtx.$fields = fakeCtx;
 
