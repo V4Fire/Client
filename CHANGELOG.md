@@ -28,6 +28,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Now functional components emulate hooks via the `v-hook` directive `core/component/functional`
+* Added API based on the `v-hook` directive to attach hook listeners with functional and flyweight components `iBlock`
 
 ## v3.0.0-rc.125 (2021-01-18)
 

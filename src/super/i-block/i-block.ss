@@ -115,8 +115,19 @@
 
 	- rootAttrs = { &
 		':class': '[...provide.componentClasses("' + self.name() + '", mods), "i-block-helper", componentId]',
+
 		':-render-group': 'renderGroup',
-		':-render-counter': 'renderCounter'
+		':-render-counter': 'renderCounter',
+
+		'v-hook': "isFunctional || isFlyweight ?" +
+			"{" +
+				"bind: createInternalHookListener('bind')," +
+				"inserted: createInternalHookListener('inserted')," +
+				"unbind: createInternalHookListener('unbind')," +
+				"update: createInternalHookListener(isFlyweight ? 'unbind' : 'inserted')" +
+			"} :" +
+
+			"null"
 	} .
 
 	- if skeletonMarker
@@ -182,11 +193,13 @@
 							{content}
 
 				- block headHelpers
+
 				- block innerRoot
 					< ${rootWrapper ? '_' : '?'}.&__root-wrapper
 						< ${overWrapper ? '_' : '?'}.&__over-wrapper
 							- block overWrapper
 
 						- block body
+
 					- block helpers
 					- block providers

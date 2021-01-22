@@ -44,6 +44,9 @@ import {
 
 	globalEmitter,
 	customWatcherRgxp,
+
+	runHook,
+	callMethodFromComponent,
 	bindRemoteWatchers,
 
 	WatchPath,
@@ -54,6 +57,8 @@ import {
 	VNode
 
 } from 'core/component';
+
+import * as init from 'core/component/construct';
 
 import 'super/i-block/directives';
 import { statuses } from 'super/i-block/const';
@@ -794,7 +799,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		functional: false,
 		init: (ctx) => new AsyncRender(ctx)
 	})
@@ -816,7 +820,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * API to unsafe invoke of internal properties of the component.
 	 * It can be useful to create friendly classes for a component.
 	 */
-	@p({replace: true})
 	get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return <any>this;
 	}
@@ -942,7 +945,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new Async(ctx)
 	})
 
@@ -1143,7 +1145,6 @@ export default abstract class iBlock extends ComponentInterface {
 		atom: true,
 		after: 'async',
 		unique: true,
-		replace: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, o)
 	})
 
@@ -1202,7 +1203,6 @@ export default abstract class iBlock extends ComponentInterface {
 		atom: true,
 		after: 'async',
 		unique: true,
-		replace: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, o.r)
 	})
 
@@ -1225,7 +1225,6 @@ export default abstract class iBlock extends ComponentInterface {
 		atom: true,
 		after: 'async',
 		unique: true,
-		replace: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEmitter)
 	})
 
@@ -2464,6 +2463,14 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * Factory to create listeners of internal hook events
+	 * @param hook - hook name to listen
+	 */
+	protected createInternalHookListener(hook: string): Function {
+		return (...args) => (<Function>this[`on-${hook}-hook`.camelize(false)]).call(this, ...args);
+	}
+
+	/**
 	 * Handler: "callChild" event
 	 * @param e
 	 */
@@ -2474,6 +2481,30 @@ export default abstract class iBlock extends ComponentInterface {
 		) {
 			return e.action.call(this);
 		}
+	}
+
+	/**
+	 * Handler: "bind" hook (only for functional and flyweight components)
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	protected onBindHook(): void {
+		init.beforeMountState(this);
+	}
+
+	/**
+	 * Handler: "inserted" hook (only for functional and flyweight components)
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	protected onInsertedHook(): void {
+		init.mountedState(this);
+	}
+
+	/**
+	 * Handler: "unbind" hook (only for functional and flyweight components)
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	protected onUnbindHook(): void {
+		this.$destroy();
 	}
 
 	/**
