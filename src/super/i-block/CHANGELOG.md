@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :rocket: New Feature
+
+* Now switching a value of the component hook emits events
+
 #### :house: Internal
 
 * Added API based on the `v-hook` directive to attach hook listeners with functional and flyweight components

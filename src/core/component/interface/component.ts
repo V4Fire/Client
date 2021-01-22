@@ -216,7 +216,17 @@ export abstract class ComponentInterface {
 	/**
 	 * Name of the active component hook
 	 */
-	readonly hook!: Hook;
+	get hook(): Hook {
+		return 'beforeRuntime';
+	}
+
+	/**
+	 * Switches the component to a new hook
+	 * @param value
+	 */
+	set hook(value: Hook) {
+		// Loopback
+	}
 
 	/**
 	 * True if the component shouldn't be destroyed after removal from DOM

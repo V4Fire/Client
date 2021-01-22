@@ -44,13 +44,12 @@ import {
 
 	globalEmitter,
 	customWatcherRgxp,
-
-	runHook,
-	callMethodFromComponent,
 	bindRemoteWatchers,
 
 	WatchPath,
 	RawWatchHandler,
+
+	Hook,
 	ComponentInterface,
 	UnsafeGetter,
 
@@ -573,11 +572,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@computed({replace: false})
 	get componentStatus(): ComponentStatus {
-		if (this.isFlyweight) {
-			return 'ready';
-		}
-
-		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore')!;
+		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore') ?? 'unloaded';
 	}
 
 	/**
@@ -607,13 +602,35 @@ export default abstract class iBlock extends ComponentInterface {
 			this.field.set('componentStatusStore', value);
 		}
 
-		if (!this.isFlyweight) {
-			void this.setMod('status', value);
+		void this.setMod('status', value);
 
-			// @deprecated
-			this.emit(`status-${value}`, value);
-			this.emit(`componentStatus:${value}`, value, oldValue);
-			this.emit('componentStatusChange', value, oldValue);
+		// @deprecated
+		this.emit(`status-${value}`, value);
+		this.emit(`componentStatus:${value}`, value, oldValue);
+		this.emit('componentStatusChange', value, oldValue);
+	}
+
+	/** @override */
+	get hook(): Hook {
+		return this.hookStore;
+	}
+
+	/**
+	 * @override
+	 *
+	 * @param value
+	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
+	 * @emits `componentHookChange(value: Hook, oldValue: Hook)`
+	 */
+	set hook(value: Hook) {
+		const
+			oldValue = this.hook;
+
+		this.hookStore = value;
+
+		if ('lfc' in this && !this.lfc.isBeforeCreate()) {
+			this.emit(`componentHook:${value}`, value, oldValue);
+			this.emit('componentHookChange', value, oldValue);
 		}
 	}
 
@@ -921,7 +938,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		unique: true,
-		replace: true,
 		init: (ctx) => new Daemons(ctx)
 	})
 
@@ -933,7 +949,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new Storage(ctx)
 	})
 
@@ -957,7 +972,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new State(ctx)
 	})
 
@@ -989,7 +1003,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new Lazy(ctx)
 	})
 
@@ -1038,6 +1051,12 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected stageStore?: Stage;
+
+	/**
+	 * Component hook store
+	 * @see [[iBlock.hook]]
+	 */
+	protected hookStore: Hook = 'beforeRuntime';
 
 	/**
 	 * Component initialize status store
@@ -2077,11 +2096,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
-				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
-				return Block.prototype.setMod.call(ctx, nodeOrName, name);
-			}
-
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.setMod(nodeOrName, name));
 			return res ?? false;
 		}
@@ -2110,11 +2124,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
-				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
-				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
-			}
-
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.removeMod(nodeOrName, name));
 			return res ?? false;
 		}
@@ -2356,6 +2365,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param ref - ref name
 	 * @param [opts] - additional options
 	 */
+	@p({replace: false})
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
 		let
 			that = <iBlock>this;
@@ -2391,11 +2401,14 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.syncStorageState = i.syncStorageState.bind(this);
 		this.syncRouterState = i.syncRouterState.bind(this);
-
 		this.watch = i.watch.bind(this);
+
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
+		this.emit = i.emit.bind(this);
+
+		this.log = i.log.bind(this);
 	}
 
 	/**

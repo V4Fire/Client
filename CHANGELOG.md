@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Now flyweight components support life cycle hooks `core/component/flyweight`
+* Now switching a value of the component hook emits events `iBlock`
 
 #### :bug: Bug Fix
 
