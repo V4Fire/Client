@@ -75,8 +75,12 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		ctx.componentStatus = 'loading';
 
 		if (needRouterSync || globalName != null) {
-			await Promise.all(
-				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName != null ? $s.resetStorage() : null)
+			await Promise.allSettled(
+				Array.concat(
+					[],
+					needRouterSync ? $s.resetRouter() : null,
+					globalName != null ? $s.resetStorage() : null
+				)
 			);
 		}
 
@@ -85,8 +89,12 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 	$e.on('reset.silence', waitNextTick(async () => {
 		if (needRouterSync || globalName != null) {
-			await Promise.all(
-				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName != null ? $s.resetStorage() : null)
+			await Promise.allSettled(
+				Array.concat(
+					[],
+					needRouterSync ? $s.resetRouter() : null,
+					globalName != null ? $s.resetStorage() : null
+				)
 			);
 		}
 
