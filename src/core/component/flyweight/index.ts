@@ -11,26 +11,27 @@
  * @packageDocumentation
  */
 
-import { defProp } from 'core/const/props';
 import { deprecate } from 'core/functools/deprecation';
+
+import { defProp } from 'core/const/props';
 import { components } from 'core/component/const';
+import { supports, CreateElement, VNode } from 'core/component/engines';
+
+import * as init from 'core/component/construct';
 
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
+import { destroyComponent, FlyweightVNode } from 'core/component/functional';
 
-import { getNormalParent } from 'core/component/traverse';
-import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta } from 'core/component/method';
 import { implementEventAPI } from 'core/component/event';
+import { attachAccessorsFromMeta } from 'core/component/accessor';
 
-import { supports, CreateElement, VNode } from 'core/component/engines';
+import { getNormalParent } from 'core/component/traverse';
 import { getComponentDataFromVNode, patchComponentVData } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
 import { ComponentInterface } from 'core/component/interface';
-import { FlyweightVNode } from 'core/component/flyweight/interface';
-
-export * from 'core/component/flyweight/interface';
 
 /**
  * Takes a vnode and, if it has the composite attribute, returns a new vnode that contains a flyweight component,
@@ -72,32 +73,39 @@ export function parseVNodeAsFlyweight(
 		componentProto = meta.constructor.prototype,
 		componentTpl = TPLS[compositeAttr] ?? componentProto.render;
 
-	// To create a flyweight component we need to create a "fake" context for a component.
+	// To create a flyweight component we need to create the "fake" context for a component.
 	// The context is based on the specified parent context by using `Object.create`.
 	// Also, we need to shim some component hooks.
 
 	const fakeCtx = Object.assign(Object.create(parentComponent), {
+		isFlyweight: true,
+
+		componentName: meta.componentName,
 		meta,
+
 		hook: 'beforeDataCreate',
 		instance: meta.instance,
-		componentName: meta.componentName,
-		isFlyweight: true
+
+		$destroy(): void {
+			destroyComponent(this);
+		}
 	});
 
 	fakeCtx.unsafe = fakeCtx;
+	fakeCtx.$createElement = createElement.bind(fakeCtx);
 
 	fakeCtx._self = fakeCtx;
 	fakeCtx._renderProxy = fakeCtx;
-
-	fakeCtx.$createElement = createElement.bind(fakeCtx);
 	fakeCtx._c = fakeCtx.$createElement;
 	fakeCtx._staticTrees = [];
 
-	attachMethodsFromMeta(fakeCtx);
-	implementEventAPI(fakeCtx);
-	attachAccessorsFromMeta(fakeCtx, true);
-
 	Object.defineProperty(fakeCtx, '$refs', {
+		configurable: true,
+		enumerable: true,
+		value: {}
+	});
+
+	Object.defineProperty(fakeCtx, '$refHandlers', {
 		configurable: true,
 		enumerable: true,
 		value: {}
@@ -186,9 +194,14 @@ export function parseVNodeAsFlyweight(
 		saveToStore: true
 	});
 
-	initFields(meta.systemFields, fakeCtx, fakeCtx);
-	initFields(meta.fields, fakeCtx, fakeCtx);
+	attachMethodsFromMeta(fakeCtx);
+	implementEventAPI(fakeCtx);
+	attachAccessorsFromMeta(fakeCtx, true);
 
+	initFields(meta.systemFields, fakeCtx, fakeCtx);
+	fakeCtx.$systemFields = fakeCtx;
+
+	initFields(meta.fields, fakeCtx, fakeCtx);
 	fakeCtx.$fields = fakeCtx;
 
 	Object.defineProperty(fakeCtx, '$$data', {
@@ -198,10 +211,12 @@ export function parseVNodeAsFlyweight(
 		}
 	});
 
-	fakeCtx.$systemFields = fakeCtx;
-	fakeCtx.hook = 'created';
+	init.createdState(fakeCtx);
 
-	const newVNode = <FlyweightVNode>execRenderObject(componentTpl.index(), fakeCtx);
+	const newVNode = <FlyweightVNode>execRenderObject(
+		componentTpl.index(),
+		fakeCtx
+	);
 
 	newVNode.fakeInstance = fakeCtx;
 	newVNode.data = newVNode.data ?? {};

@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :rocket: New Feature
+
+* Now flyweight components support life cycle hooks `core/component/flyweight`
+
 #### :bug: Bug Fix
 
 * Fixed creation of fields of flyweight components `core/component/field`
