@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Removed the `beforeMounted` hook `core/component/interface`
+* Renamed the `status` modifier to `component-status` `iBlock`
 
 #### :rocket: New Feature
 

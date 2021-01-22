@@ -584,6 +584,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @emits `componentStatusChange(value: ComponentStatus, oldValue: ComponentStatus)`
 	 */
 	set componentStatus(value: ComponentStatus) {
+		void this.setMod('component-status', value);
+
 		const
 			oldValue = this.componentStatus;
 
@@ -601,8 +603,6 @@ export default abstract class iBlock extends ComponentInterface {
 			this.shadowComponentStatusStore = undefined;
 			this.field.set('componentStatusStore', value);
 		}
-
-		void this.setMod('status', value);
 
 		// @deprecated
 		this.emit(`status-${value}`, value);
@@ -908,7 +908,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[iBlock.modsProp]]
 	 */
 	static readonly mods: ModsDecl = {
-		status: [
+		componentStatus: [
 			['unloaded'],
 			'loading',
 			'beforeReady',
@@ -2096,6 +2096,11 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.setMod.call(ctx, nodeOrName, name);
+			}
+
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.setMod(nodeOrName, name));
 			return res ?? false;
 		}
@@ -2124,6 +2129,11 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
+			}
+
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.removeMod(nodeOrName, name));
 			return res ?? false;
 		}
@@ -2415,6 +2425,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Initializes an instance of the Block class for the current component
 	 */
 	@hook('mounted')
+	@p({replace: false})
 	protected initBlockInstance(): void {
 		if (this.block != null) {
 			const
@@ -2502,6 +2513,10 @@ export default abstract class iBlock extends ComponentInterface {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected onBindHook(): void {
 		init.beforeMountState(this);
+
+		if (this.isFlyweight) {
+			this.componentStatus = 'ready';
+		}
 	}
 
 	/**

@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Renamed the `status` modifier to `component-status`
+
 #### :rocket: New Feature
 
 * Now switching a value of the component hook emits events
