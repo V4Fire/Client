@@ -10,13 +10,13 @@ import * as init from 'core/component/construct';
 
 import { forkMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
-import { callMethodFromComponent } from 'core/component/method';
-import { runHook } from 'core/component/hook';
 
-import { CreateElement } from 'core/component/engines';
 import { RenderContext } from 'core/component/render';
+import { CreateElement } from 'core/component/engines';
 
-import { $$, componentOpts, destroyHooks } from 'core/component/functional/const';
+import { $$, componentOpts } from 'core/component/functional/const';
+import { destroyComponent } from 'core/component/functional/helpers';
+
 import { FunctionalCtx } from 'core/component/interface';
 import { CreateFakeCtxOptions } from 'core/component/functional/interface';
 
@@ -114,14 +114,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		},
 
 		$destroy(): void {
-			if (this.componentStatus === 'destroyed') {
-				return;
-			}
-
-			for (let o = destroyHooks, i = 0; i < o.length; i++) {
-				const hook = o[i];
-				runHook(hook, this).then(() => callMethodFromComponent(this, hook), stderr);
-			}
+			destroyComponent(this);
 		},
 
 		$nextTick(cb?: () => void): Promise<void> | void {

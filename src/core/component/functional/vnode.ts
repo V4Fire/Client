@@ -8,12 +8,13 @@
 
 import * as init from 'core/component/construct';
 
-import { patchVNode, VNode } from 'core/component/engines';
 import { RenderContext } from 'core/component/render';
-import { FlyweightVNode } from 'core/component/flyweight';
+import { patchVNode, VNode } from 'core/component/engines';
 
 import { $$ } from 'core/component/functional/const';
+
 import { ComponentField, ComponentInterface } from 'core/component/interface';
+import { FlyweightVNode } from 'core/component/functional/interface';
 
 /**
  * Initializes a component from the specified VNode.
@@ -49,9 +50,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 	}
 
-	unsafe.onUnbindHook = unsafe.$destroy.bind(unsafe);
 	unsafe.onInsertedHook = onInsertedHook;
-
 	init.createdState(ctx);
 
 	return flyweightVNode;

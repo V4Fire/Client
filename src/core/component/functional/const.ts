@@ -16,8 +16,3 @@ export const componentOpts = [
 	'directives',
 	'components'
 ];
-
-export const destroyHooks = [
-	'beforeDestroy',
-	'destroyed'
-];
