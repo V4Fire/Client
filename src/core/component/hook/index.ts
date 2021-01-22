@@ -12,9 +12,11 @@
  */
 
 import log from 'core/log';
+
 import SyncPromise from 'core/promise/sync';
 import QueueEmitter from 'core/component/queue-emitter';
-import { ComponentHook, ComponentInterface } from 'core/component/interface';
+
+import { Hook, ComponentHook, ComponentInterface } from 'core/component/interface';
 
 /**
  * Runs a component hook from the specified component instance
@@ -23,9 +25,13 @@ import { ComponentHook, ComponentInterface } from 'core/component/interface';
  * @param component - component instance
  * @param args - hook arguments
  */
-export function runHook(hook: string, component: ComponentInterface, ...args: unknown[]): Promise<void> {
-	const {unsafe, unsafe: {meta}} = component;
-	Object.set(unsafe, 'hook', hook);
+export function runHook(hook: Hook, component: ComponentInterface, ...args: unknown[]): Promise<void> {
+	const {
+		unsafe,
+		unsafe: {meta}
+	} = component;
+
+	unsafe.hook = hook;
 
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	if (Object.isFunction(component.log)) {
@@ -48,7 +54,7 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 
 	for (let i = 0; i < hooks.length; i++) {
 		const
-			hook = <ComponentHook>hooks[i],
+			hook = hooks[i],
 			nm = hook.name;
 
 		if (!hook.once) {

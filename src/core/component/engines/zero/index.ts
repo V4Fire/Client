@@ -455,9 +455,6 @@ export function createComponent<T>(
 	meta = fakeCtx.meta;
 	meta.params.functional = true;
 
-	// @ts-ignore (access)
-	fakeCtx['hook'] = 'created';
-
 	runHook('created', fakeCtx).then(() => {
 		if (methods.created) {
 			return methods.created.fn.call(fakeCtx);

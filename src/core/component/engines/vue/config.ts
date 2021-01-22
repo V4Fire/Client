@@ -26,17 +26,24 @@ Vue.config.warnHandler = (msg, vm, trace) => {
  * @param component
  */
 function getComponentInfo(component: Vue | ComponentInterface): Dictionary {
-	if ('componentName' in component) {
+	try {
+		if ('componentName' in component) {
+			return {
+				name: getComponentName(component),
+				hook: component.hook,
+				status: component.unsafe.componentStatus
+			};
+		}
+
 		return {
-			name: getComponentName(component),
-			hook: component.hook,
-			status: component.unsafe.componentStatus
+			name: getComponentName(component)
+		};
+
+	} catch {
+		return {
+			name: 'unknown'
 		};
 	}
-
-	return {
-		name: getComponentName(component)
-	};
 }
 
 const
