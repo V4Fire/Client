@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Removed the `beforeMounted` hook
+
 ## v3.0.0-rc.84 (2020-10-09)
 
 #### :bug: Bug Fix

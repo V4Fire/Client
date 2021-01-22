@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Removed the `beforeMounted` hook `core/component/interface`
+
 #### :rocket: New Feature
 
 * Now flyweight components support life cycle hooks `core/component/flyweight`
