@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed creation of fields of flyweight components `core/component/field`
 
+#### :house: Internal
+
+* Now functional components emulate hooks via the `v-hook` directive `core/component/functional`
+
 ## v3.0.0-rc.125 (2021-01-18)
 
 #### :bug: Bug Fix

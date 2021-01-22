@@ -16,14 +16,14 @@ import { runHook } from 'core/component/hook';
 import { CreateElement } from 'core/component/engines';
 import { RenderContext } from 'core/component/render';
 
-import { $$, componentOpts, destroyHooks, destroyCheckHooks } from 'core/component/functional/const';
+import { $$, componentOpts, destroyHooks } from 'core/component/functional/const';
 import { FunctionalCtx } from 'core/component/interface';
 import { CreateFakeCtxOptions } from 'core/component/functional/interface';
 
 export * from 'core/component/functional/interface';
 
 /**
- * Creates a fake context for a functional component is based on the specified parameters
+ * Creates the fake context for a functional component is based on the specified parameters
  *
  * @param createElement - function to create VNode element
  * @param renderCtx - render context from VNode
@@ -36,16 +36,13 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	baseCtx: FunctionalCtx,
 	opts: CreateFakeCtxOptions
 ): T {
-	// Create a new context object that is based on baseCtx
-
 	const
 		fakeCtx = Object.create(baseCtx),
 		meta = forkMeta(fakeCtx.meta);
 
 	const
-		{parent} = renderCtx,
 		{component} = meta,
-		{children, data: dataOpts} = renderCtx;
+		{parent, children, data: dataOpts} = renderCtx;
 
 	let
 		$options;
@@ -64,7 +61,11 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		};
 
 	} else {
-		$options = {filters: {}, directives: {}, components: {}};
+		$options = {
+			filters: {},
+			directives: {},
+			components: {}
+		};
 	}
 
 	if (Object.isDictionary(component)) {
@@ -102,7 +103,6 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		$listeners: renderCtx.listeners ?? dataOpts?.on ?? {},
 
 		$refs: {},
-		$unregisteredHooks: {},
 
 		$slots: {
 			default: Object.size(children) > 0 ? children : undefined,
@@ -118,59 +118,9 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 				return;
 			}
 
-			this.$async.clearAll().locked = true;
-
-			// We need to clear all handlers that we bound to a parent component of the current
-
-			const
-				parent = this.$normalParent;
-
-			if (parent != null) {
-				const
-					{hooks} = parent.meta,
-					{$unregisteredHooks} = this;
-
-				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
-					const
-						hook = o[i];
-
-					if ($unregisteredHooks[hook] === true) {
-						continue;
-					}
-
-					const
-						filteredHooks = <unknown[]>[];
-
-					let
-						hasChanges = false;
-
-					for (let list = hooks[hook], j = 0; j < list.length; j++) {
-						const
-							el = list[j];
-
-						if (el.fn[$$.self] !== this) {
-							filteredHooks.push(el);
-
-						} else {
-							hasChanges = true;
-						}
-					}
-
-					if (hasChanges) {
-						hooks[hook] = filteredHooks;
-					}
-
-					$unregisteredHooks[hook] = true;
-				}
-			}
-
 			for (let o = destroyHooks, i = 0; i < o.length; i++) {
-				const
-					key = o[i];
-
-				runHook(key, this).then(() => {
-					callMethodFromComponent(this, key);
-				}, stderr);
+				const hook = o[i];
+				runHook(hook, this).then(() => callMethodFromComponent(this, hook), stderr);
 			}
 		},
 

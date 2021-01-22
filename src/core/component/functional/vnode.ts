@@ -12,7 +12,7 @@ import { patchVNode, VNode } from 'core/component/engines';
 import { RenderContext } from 'core/component/render';
 import { FlyweightVNode } from 'core/component/flyweight';
 
-import { $$, mountHooks, parentMountMap } from 'core/component/functional/const';
+import { $$ } from 'core/component/functional/const';
 import { ComponentField, ComponentInterface } from 'core/component/interface';
 
 /**
@@ -25,12 +25,10 @@ import { ComponentField, ComponentInterface } from 'core/component/interface';
  */
 export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): FlyweightVNode {
 	const
-		{unsafe} = ctx;
+		{unsafe} = ctx,
+		{data} = renderCtx;
 
-	const
-		flyweightVNode = Object.assign(vnode, {fakeInstance: ctx});
-
-	const {data} = renderCtx;
+	const flyweightVNode = Object.assign(vnode, {fakeInstance: ctx});
 	patchVNode(flyweightVNode, ctx, renderCtx);
 
 	// Attach component event listeners
@@ -51,64 +49,21 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 	}
 
+	unsafe.onUnbindHook = unsafe.$destroy.bind(unsafe);
+	unsafe.onInsertedHook = onInsertedHook;
+
 	init.createdState(ctx);
 
-	const
-		parent = unsafe.$normalParent;
+	return flyweightVNode;
 
-	if (parent == null) {
-		return flyweightVNode;
-	}
-
-	const
-		{hooks} = parent.unsafe.meta;
-
-	let
-		destroyed = false;
-
-	const destroy = () => {
-		unsafe.$destroy();
-		destroyed = true;
-	};
-
-	destroy[$$.self] = ctx;
-
-	// If a parent component was destroyed the current component need to destroy too
-	hooks.beforeDestroy.unshift({fn: destroy});
-
-	const
-		{$async: $a} = unsafe;
-
-	// Mount hook listener
-	const mount = (retry?: boolean) => {
-		if (ctx.hook === 'mounted') {
-			// If a parent component was mounted, but the current component doesn't exist in the DOM and
-			// doesn't have the keepAlive flag, then the component should to destroy
-			if (!ctx.keepAlive && !ctx.$el) {
-				destroy();
-			}
-
-			return;
-		}
-
-		if (destroyed || ctx.hook !== 'created') {
-			return;
-		}
-
-		// If after the first mount hook the source component doesn't exist in the DOM,
-		// we should try again on the next tick
-		if (!ctx.$el) {
-			if (retry) {
-				return;
-			}
-
-			return $a.promise(parent.$nextTick(), {
-				label: $$.findElWait
-			}).then(() => mount(true), stderr);
-		}
-
+	function onInsertedHook(): void {
 		const
 			el = ctx.$el;
+
+		if (el == null) {
+			unsafe.$destroy();
+			return;
+		}
 
 		let
 			oldCtx = el[$$.component];
@@ -155,7 +110,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 				}
 			}
 
-			// Merge field values
+			// Merge field/system field values
 
 			{
 				const list = [
@@ -230,81 +185,5 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 
 		el[$$.component] = unsafe;
 		init.mountedState(ctx);
-	};
-
-	const
-		parentHook = parentMountMap[parent.hook];
-
-	const deferMount = () => {
-		if (ctx.$el) {
-			ctx.$el.component = ctx;
-		}
-
-		$a.setImmediate(mount, {
-			label: $$.mount,
-			onClear: () => unsafe.$destroy()
-		});
-
-		const
-			{$unregisteredHooks} = unsafe;
-
-		for (let o = Array.concat([], mountHooks, parentHook), i = 0; i < o.length; i++) {
-			const
-				hook = o[i];
-
-			if ($unregisteredHooks[hook]) {
-				continue;
-			}
-
-			const
-				filteredHooks = <unknown[]>[];
-
-			let
-				hasChanges = false;
-
-			for (let list = hooks[hook], j = 0; j < list.length; j++) {
-				const
-					el = list[j];
-
-				if (el.fn[$$.self] !== ctx) {
-					filteredHooks.push(el);
-
-				} else {
-					hasChanges = true;
-				}
-			}
-
-			if (hasChanges) {
-				hooks[hook] = filteredHooks;
-			}
-
-			$unregisteredHooks[hook] = true;
-		}
-	};
-
-	deferMount[$$.self] = ctx;
-
-	for (let i = 0; i < mountHooks.length; i++) {
-		const
-			hook = mountHooks[i];
-
-		if (hook === parentHook) {
-			continue;
-		}
-
-		hooks[hook].unshift({
-			fn: deferMount
-		});
 	}
-
-	if (parentHook != null) {
-		hooks[parentHook].unshift({
-			fn: deferMount
-		});
-
-	} else {
-		deferMount();
-	}
-
-	return flyweightVNode;
 }

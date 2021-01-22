@@ -32,7 +32,8 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		patchAttrs: Boolean(ctx.unsafe.meta.params.inheritAttrs)
 	});
 
-	const vData = vnode.data;
+	const
+		vData = vnode.data;
 
 	const
 		{data} = renderCtx,

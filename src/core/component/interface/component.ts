@@ -117,9 +117,6 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$modifiedFields: CTX['$modifiedFields'];
 
 	// @ts-ignore (access)
-	$unregisteredHooks: CTX['$unregisteredHooks'];
-
-	// @ts-ignore (access)
 	$syncLinkCache: CTX['$syncLinkCache'];
 
 	// @ts-ignore (access)
@@ -389,12 +386,6 @@ export abstract class ComponentInterface {
 	 * (only for functional components)
 	 */
 	protected readonly $modifiedFields!: Dictionary;
-
-	/**
-	 * Map of hook listeners that were already unregistered
-	 * (only for functional components)
-	 */
-	protected readonly $unregisteredHooks!: Dictionary<boolean>;
 
 	/**
 	 * Name of the active field to initialize
