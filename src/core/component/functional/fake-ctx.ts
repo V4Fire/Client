@@ -84,7 +84,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	}
 
 	// Add base methods and properties
-	Object.assign(fakeCtx, renderCtx.props, {
+	Object.assign(fakeCtx, {
 		_self: fakeCtx,
 		_renderProxy: fakeCtx,
 		_staticTrees: [],
@@ -146,6 +146,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	}
 
 	initProps(fakeCtx, {
+		from: renderCtx.props,
 		store: fakeCtx,
 		saveToStore: opts.initProps
 	});

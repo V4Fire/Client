@@ -13,7 +13,6 @@
 
 import { deprecate } from 'core/functools/deprecation';
 
-import { defProp } from 'core/const/props';
 import { components } from 'core/component/const';
 import { supports, CreateElement, VNode } from 'core/component/engines';
 
@@ -166,30 +165,8 @@ export function parseVNodeAsFlyweight(
 		value: vnode.children
 	});
 
-	// Shim component input properties
-	for (let o = componentData.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			value = o[key];
-
-		Object.defineProperty(
-			fakeCtx,
-			key,
-			value !== undefined ?
-				{
-					configurable: true,
-					enumerable: true,
-					writable: true,
-					value
-				} :
-
-				defProp
-		);
-
-		fakeCtx.$props[key] = value;
-	}
-
 	initProps(fakeCtx, {
+		from: componentData.props,
 		store: fakeCtx,
 		saveToStore: true
 	});
