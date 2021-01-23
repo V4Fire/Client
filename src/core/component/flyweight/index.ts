@@ -72,7 +72,7 @@ export function parseVNodeAsFlyweight(
 		componentProto = meta.constructor.prototype,
 		componentTpl = TPLS[compositeAttr] ?? componentProto.render;
 
-	// To create a flyweight component we need to create the "fake" context for a component.
+	// To create a flyweight component we need to create the "fake" context.
 	// The context is based on the specified parent context by using `Object.create`.
 	// Also, we need to shim some component hooks.
 
