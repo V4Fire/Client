@@ -2096,11 +2096,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
-				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
-				return Block.prototype.setMod.call(ctx, nodeOrName, name);
-			}
-
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.setMod(nodeOrName, name));
 			return res ?? false;
 		}
@@ -2129,11 +2124,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
-				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
-				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
-			}
-
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.removeMod(nodeOrName, name));
 			return res ?? false;
 		}
