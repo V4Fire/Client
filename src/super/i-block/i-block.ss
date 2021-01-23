@@ -123,8 +123,8 @@
 			"{" +
 				"bind: createInternalHookListener('bind')," +
 				"inserted: createInternalHookListener('inserted')," +
-				"unbind: createInternalHookListener('unbind')," +
-				"update: createInternalHookListener(isFlyweight ? 'unbind' : 'inserted')" +
+				"update: createInternalHookListener('update')," +
+				"unbind: createInternalHookListener('unbind')" +
 			"} :" +
 
 			"null"

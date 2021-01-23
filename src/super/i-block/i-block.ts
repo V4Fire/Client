@@ -584,8 +584,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @emits `componentStatusChange(value: ComponentStatus, oldValue: ComponentStatus)`
 	 */
 	set componentStatus(value: ComponentStatus) {
-		void this.setMod('component-status', value);
-
 		const
 			oldValue = this.componentStatus;
 
@@ -603,6 +601,8 @@ export default abstract class iBlock extends ComponentInterface {
 			this.shadowComponentStatusStore = undefined;
 			this.field.set('componentStatusStore', value);
 		}
+
+		void this.setMod('component-status', value);
 
 		// @deprecated
 		this.emit(`status-${value}`, value);
@@ -2515,6 +2515,18 @@ export default abstract class iBlock extends ComponentInterface {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected onInsertedHook(): void {
 		init.mountedState(this);
+	}
+
+	/**
+	 * Handler: "update" hook (only for functional and flyweight components)
+	 */
+	protected onUpdateHook(): void {
+		if (this.isFlyweight) {
+			this.$el?.component?.onUnbindHook();
+		}
+
+		this.onBindHook();
+		this.onInsertedHook();
 	}
 
 	/**
