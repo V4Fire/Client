@@ -14,14 +14,6 @@ export interface CreateFakeCtxOptions {
 	 * If true, then component prop values will be forced to initialize
 	 */
 	initProps?: boolean;
-
-	/**
-	 * If true, then the function uses safe access to object properties
-	 * by using Object.getOwnPropertyDescriptor/defineProperty
-	 *
-	 * @default `false`
-	 */
-	safe?: boolean;
 }
 
 export interface FlyweightVNode extends VNode {

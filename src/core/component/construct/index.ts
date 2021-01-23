@@ -86,7 +86,7 @@ export function beforeCreateState(
 		implementEventAPI(component);
 	}
 
-	attachAccessorsFromMeta(component, opts?.safe);
+	attachAccessorsFromMeta(component);
 	runHook('beforeRuntime', component).catch(stderr);
 
 	const {

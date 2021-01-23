@@ -173,7 +173,7 @@ export function parseVNodeAsFlyweight(
 
 	attachMethodsFromMeta(fakeCtx);
 	implementEventAPI(fakeCtx);
-	attachAccessorsFromMeta(fakeCtx, true);
+	attachAccessorsFromMeta(fakeCtx);
 
 	initFields(meta.systemFields, fakeCtx, fakeCtx);
 	fakeCtx.$systemFields = fakeCtx;

@@ -16,12 +16,9 @@ import { cacheStatus, ComponentInterface } from 'core/component';
 
 /**
  * Attaches accessors and computed fields from a meta object to the specified component instance
- *
  * @param component
- * @param [safe] - if true, then the function uses safe access to object properties
- *   by using Object.getOwnPropertyDescriptor/defineProperty
  */
-export function attachAccessorsFromMeta(component: ComponentInterface, safe?: boolean): void {
+export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
 		meta,
 		meta: {params: {deprecatedProps}},
@@ -36,21 +33,18 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			key = keys[i],
 			el = o[key];
 
-		if (el == null) {
-			continue;
-		}
+		const canSkip = Boolean(
+			el == null ||
+			isNotRegular && el.functional === false ||
 
-		if (isNotRegular && el.functional === false) {
-			continue;
-		}
-
-		const alreadyExists = Boolean(
-			safe ?
-				Object.getOwnPropertyDescriptor(component, key) :
-				component[key]
+			(
+				isFlyweight ?
+					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
+					component[key]
+			)
 		);
 
-		if (alreadyExists && (!isFlyweight || el.replace === true)) {
+		if (el == null || canSkip) {
 			continue;
 		}
 
@@ -71,21 +65,18 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			key = keys[i],
 			el = o[key];
 
-		if (el == null) {
-			continue;
-		}
+		const canSkip = Boolean(
+			el == null ||
+			isNotRegular && el.functional === false ||
 
-		if (isNotRegular && el.functional === false) {
-			continue;
-		}
-
-		const alreadyExists = Boolean(
-			safe ?
-				Object.getOwnPropertyDescriptor(component, key) :
-				component[key]
+			(
+				isFlyweight ?
+					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
+					component[key]
+			)
 		);
 
-		if (alreadyExists && (!isFlyweight || el.replace === true)) {
+		if (el == null || canSkip) {
 			continue;
 		}
 

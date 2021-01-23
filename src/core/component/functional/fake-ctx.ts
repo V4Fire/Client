@@ -153,8 +153,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	init.beforeCreateState(fakeCtx, meta, {
 		addMethods: true,
-		implementEventAPI: true,
-		safe: opts.safe
+		implementEventAPI: true
 	});
 
 	init.beforeDataCreateState(fakeCtx, {tieFields: true});
