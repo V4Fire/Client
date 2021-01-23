@@ -250,7 +250,7 @@ export function initFields(
 		}
 	}
 
-	// Initialize all non-atomics
+	// Initialize all non-atoms
 	while (nonAtomList.length > 0) {
 		for (let i = 0; i < nonAtomList.length; i++) {
 			const
