@@ -51,8 +51,7 @@ export function initProps(
 			continue;
 		}
 
-		// Don't initialize a property for a functional component
-		// unless explicitly required (functional == false)
+		// Don't initialize a property for a functional component unless explicitly required
 		if (isNotRegular && el.functional === false) {
 			continue;
 		}
