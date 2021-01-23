@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import { defProp } from 'core/const/props';
 import { defaultWrapper } from 'core/component/const';
 import { ComponentInterface } from 'core/component/interface';
 import { InitPropsObjectOptions } from 'core/component/prop/interface';
@@ -32,11 +33,12 @@ export function initProps(
 
 	const {
 		unsafe,
-		unsafe: {meta, meta: {component: {props}}}
+		unsafe: {meta, meta: {component: {props}}},
+		isFlyweight
 	} = component;
 
 	const
-		{store} = opts;
+		{store, from} = opts;
 
 	const
 		// True if a component is functional or a flyweight
@@ -47,7 +49,10 @@ export function initProps(
 			key = keys[i],
 			el = props[key];
 
-		if (!el) {
+		let
+			needSave = Boolean(isFlyweight) || opts.saveToStore;
+
+		if (el == null) {
 			continue;
 		}
 
@@ -59,7 +64,7 @@ export function initProps(
 		Object.set(unsafe, '$activeField', key);
 
 		let
-			val = component[key];
+			val = (from ?? component)[key];
 
 		if (val === undefined) {
 			val = el.default !== undefined ? el.default : Object.fastClone(meta.instance[key]);
@@ -76,11 +81,29 @@ export function initProps(
 
 		if (Object.isFunction(val)) {
 			if (opts.saveToStore || val[defaultWrapper] !== true) {
-				store[key] = isTypeCanBeFunc(el.type) ? val.bind(component) : val.call(component);
+				val = isTypeCanBeFunc(el.type) ? val.bind(component) : val.call(component);
+				needSave = true;
 			}
+		}
 
-		} else if (opts.saveToStore) {
-			store[key] = val;
+		if (needSave) {
+			if (isFlyweight) {
+				const prop = val === undefined ?
+					defProp :
+
+					{
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: val
+					};
+
+				Object.defineProperty(store, key, prop);
+				component.$props[key] = val;
+
+			} else {
+				store[key] = val;
+			}
 		}
 	}
 
