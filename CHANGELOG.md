@@ -17,15 +17,23 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed the `beforeMounted` hook `core/component/interface`
 * Renamed the `status` modifier to `component-status` `iBlock`
+* Deprecate `listener` and `once` parameters `core/component/directives/update-on`
 
 #### :rocket: New Feature
 
 * Now flyweight components support life cycle hooks `core/component/flyweight`
 * Now switching a value of the component hook emits events `iBlock`
+* `core/component/directives/update-on`:
+  * Added support of watchers
+  * Improved API
 
 #### :bug: Bug Fix
 
 * Fixed creation of fields of flyweight components `core/component/field`
+
+#### :memo: Documentation
+
+* Improved documentation `core/component/directives/update-on`
 
 #### :house: Internal
 
