@@ -251,7 +251,7 @@ export function beforeMountState(component: ComponentInterface): void {
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	if (component.$el?.component == null) {
+	if (component.$el?.component !== component) {
 		Object.set(component, '$el.component', component);
 		resolveRefs(component);
 	}
