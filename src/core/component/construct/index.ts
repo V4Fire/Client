@@ -237,6 +237,12 @@ export function createdState(component: ComponentInterface): void {
  */
 export function beforeMountState(component: ComponentInterface): void {
 	runHook('beforeMount', component).catch(stderr);
+
+	if (component.$el != null) {
+		Object.set(component, '$el.component', component);
+		resolveRefs(component);
+	}
+
 	callMethodFromComponent(component, 'beforeMount');
 }
 
@@ -245,8 +251,10 @@ export function beforeMountState(component: ComponentInterface): void {
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	Object.set(component, '$el.component', component);
-	resolveRefs(component);
+	if (component.$el?.component == null) {
+		Object.set(component, '$el.component', component);
+		resolveRefs(component);
+	}
 
 	runHook('mounted', component).then(() => {
 		callMethodFromComponent(component, 'mounted');

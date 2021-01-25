@@ -18,18 +18,6 @@ import Async, { BoundFn, ProxyCb } from 'core/async';
 
 import {
 
-	ComponentMeta,
-	Hook,
-	SyncLinkCache,
-
-	WatchPath,
-	WatchOptions,
-	RawWatchHandler
-
-} from 'core/component/interface';
-
-import {
-
 	ComponentDriver,
 
 	ComponentOptions,
@@ -40,6 +28,18 @@ import {
 	VNode
 
 } from 'core/component/engines';
+
+import {
+
+	ComponentMeta,
+	Hook,
+	SyncLinkCache,
+
+	WatchPath,
+	WatchOptions,
+	RawWatchHandler
+
+} from 'core/component/interface';
 
 /**
  * Component render function
@@ -154,6 +154,18 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
+
+	// @ts-ignore (access)
+	onBindHook: CTX['onBindHook'];
+
+	// @ts-ignore (access)
+	onInsertedHook: CTX['onInsertedHook'];
+
+	// @ts-ignore (access)
+	onUpdateHook: CTX['onUpdateHook'];
+
+	// @ts-ignore (access)
+	onUnbindHook: CTX['onUnbindHook'];
 
 	// Internal render helpers
 
@@ -559,5 +571,33 @@ export abstract class ComponentInterface {
 	 */
 	protected $emit(event: string, ...args: unknown[]): this {
 		return this;
+	}
+
+	/**
+	 * Handler: "bind" hook (only for functional and flyweight components)
+	 */
+	protected onBindHook(): void {
+		// Loopback
+	}
+
+	/**
+	 * Handler: "inserted" hook (only for functional and flyweight components)
+	 */
+	protected onInsertedHook(): void {
+		// Loopback
+	}
+
+	/**
+	 * Handler: "update" hook (only for functional and flyweight components)
+	 */
+	protected onUpdateHook(): void {
+		// Loopback
+	}
+
+	/**
+	 * Handler: "unbind" hook (only for functional and flyweight components)
+	 */
+	protected onUnbindHook(): void {
+		// Loopback
 	}
 }

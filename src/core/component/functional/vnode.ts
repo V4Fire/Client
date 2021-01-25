@@ -50,17 +50,17 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 	}
 
-	unsafe.onInsertedHook = onInsertedHook;
+	unsafe.onBindHook = onBindHook;
 	init.createdState(ctx);
 
 	return flyweightVNode;
 
-	function onInsertedHook(): void {
+	function onBindHook(): void {
 		const
 			el = ctx.$el;
 
 		if (el == null) {
-			unsafe.$destroy();
+			unsafe.onUnbindHook();
 			return;
 		}
 
@@ -84,7 +84,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			oldCtx.$componentId = ctx.componentId;
 
 			// Destroy the old component
-			oldCtx.$destroy();
+			oldCtx.onUnbindHook();
 
 			const
 				props = ctx.$props,
@@ -183,6 +183,6 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 
 		el[$$.component] = unsafe;
-		init.mountedState(ctx);
+		init.beforeMountState(ctx);
 	}
 }
