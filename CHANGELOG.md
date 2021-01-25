@@ -33,7 +33,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :memo: Documentation
 
-* Improved documentation `core/component/directives/update-on`
+* Improved documentation:
+  * `core/component/directives/update-on`
+  * `traits/i-icon`
 
 #### :house: Internal
 
