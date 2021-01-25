@@ -628,7 +628,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.hookStore = value;
 
-		if ('lfc' in this && !this.lfc.isBeforeCreate()) {
+		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
 			this.emit(`componentHook:${value}`, value, oldValue);
 			this.emit('componentHookChange', value, oldValue);
 		}
@@ -2407,8 +2407,6 @@ export default abstract class iBlock extends ComponentInterface {
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
 		this.emit = i.emit.bind(this);
-
-		this.log = i.log.bind(this);
 	}
 
 	/**
