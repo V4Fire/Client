@@ -24,7 +24,7 @@ export default {
 	 * @param params
 	 * @param ctx - context of the tied components
 	 */
-	add(el: HTMLElement, params: DirectiveValue, ctx: ComponentInterface): void {
+	add(el: Element, params: DirectiveValue, ctx: ComponentInterface): void {
 		let
 			id = Math.random().toString().slice(2);
 
@@ -75,7 +75,7 @@ export default {
 	 * @param el
 	 * @param ctx - context of the tied components
 	 */
-	remove(el: HTMLElement, ctx: ComponentInterface | object): void {
+	remove(el: Element, ctx: ComponentInterface | object): void {
 		const
 			group = el.getAttribute(ID_ATTRIBUTE);
 
@@ -94,7 +94,7 @@ export default {
 	 * @param el
 	 * @param ctx - context of the tied components
 	 */
-	getAsync(el: HTMLElement, ctx: ComponentInterface | object): Async<ComponentInterface> {
+	getAsync(el: Element, ctx: ComponentInterface | object): Async<ComponentInterface> {
 		if ('$async' in ctx) {
 			return ctx.unsafe.$async;
 		}

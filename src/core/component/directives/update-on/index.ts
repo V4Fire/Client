@@ -18,11 +18,11 @@ export * from 'core/component/directives/update-on/interface';
  * Directive to manually update an element by using special events
  */
 ComponentDriver.directive('update-on', {
-	inserted(el: HTMLElement, {value}: DirectiveOptions, vnode: VNode): void {
+	inserted(el: Element, {value}: DirectiveOptions, vnode: VNode): void {
 		add(el, value, vnode);
 	},
 
-	update(el: HTMLElement, {value, oldValue}: DirectiveOptions, vnode: VNode): void {
+	update(el: Element, {value, oldValue}: DirectiveOptions, vnode: VNode): void {
 		if (Object.fastCompare(value, oldValue)) {
 			return;
 		}
@@ -30,7 +30,7 @@ ComponentDriver.directive('update-on', {
 		add(el, value, vnode);
 	},
 
-	unbind(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
+	unbind(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 		const
 			ctx = vnode.context;
 
@@ -40,7 +40,7 @@ ComponentDriver.directive('update-on', {
 	}
 });
 
-function add(el: HTMLElement, value: Nullable<CanArray<DirectiveValue>>, vnode: VNode): void {
+function add(el: Element, value: Nullable<CanArray<DirectiveValue>>, vnode: VNode): void {
 	const
 		ctx = vnode.context;
 
