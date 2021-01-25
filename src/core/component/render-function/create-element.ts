@@ -241,6 +241,7 @@ export function wrapCreateElement(
 			tasks.splice(0);
 		}
 
+		Object.set(vnode, 'context', ctx);
 		return vnode;
 	};
 

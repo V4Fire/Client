@@ -2497,10 +2497,7 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 	}
 
-	/**
-	 * Handler: "bind" hook (only for functional and flyweight components)
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	/** @override */
 	protected onBindHook(): void {
 		init.beforeMountState(this);
 
@@ -2509,17 +2506,12 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 	}
 
-	/**
-	 * Handler: "inserted" hook (only for functional and flyweight components)
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	/** @override */
 	protected onInsertedHook(): void {
 		init.mountedState(this);
 	}
 
-	/**
-	 * Handler: "update" hook (only for functional and flyweight components)
-	 */
+	/** @override */
 	protected onUpdateHook(): void {
 		if (this.isFlyweight) {
 			this.$el?.component?.onUnbindHook();
@@ -2529,10 +2521,7 @@ export default abstract class iBlock extends ComponentInterface {
 		this.onInsertedHook();
 	}
 
-	/**
-	 * Handler: "unbind" hook (only for functional and flyweight components)
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	/** @override */
 	protected onUnbindHook(): void {
 		this.$destroy();
 	}
