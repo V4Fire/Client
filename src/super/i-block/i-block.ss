@@ -157,7 +157,8 @@
 						- if Object.isArray(iconId)
 							< use v-if = value | v-update-on = { &
 								emitter: getIconLink(${iconId}),
-								listener: updateIconHref
+								handler: updateIconHref,
+								errorHandler: handleIconError
 							} .
 
 						- else

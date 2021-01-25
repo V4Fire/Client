@@ -42,12 +42,19 @@ export default class bIcon extends iBlock implements iIcon {
 	};
 
 	/** @see [[iIcon.getIconLink]] */
-	getIconLink(iconId: string): Promise<string> {
+	getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
 		return iIcon.getIconLink(iconId);
 	}
 
 	/** @see [[iIcon.updateIconHref]] */
-	updateIconHref(el: SVGUseElement, href: string): void {
-		iIcon.updateIconHref(el, href);
+	updateIconHref(el: SVGUseElement, href?: string): void {
+		iIcon.updateIconHref(this, el, href);
+	}
+
+	/**
+	 * Handler: default error handler
+	 */
+	handleIconError(el: SVGUseElement, err: Error): void {
+		iIcon.handleIconError(this, el, err);
 	}
 }
