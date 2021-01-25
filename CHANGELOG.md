@@ -29,6 +29,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed the `fatHTML` mode
 * Fixed creation of fields of flyweight components `core/component/field`
 
 #### :memo: Documentation

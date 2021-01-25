@@ -22,6 +22,7 @@ const
 	{Filters} = require('snakeskin');
 
 const
+	{escapeStringLiteralRgxp} = include('build/replacers/include.js'),
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -259,9 +260,10 @@ function getStyleDecl(lib, body) {
 	if (body) {
 		if (lib.js) {
 			decl += createTag('style', body);
-		}
 
-		decl += `<style ${attrs}>${body}</style>`;
+		} else {
+			decl += `<style ${attrs}>${body}</style>`;
+		}
 
 	} else if (lib.js) {
 		decl += createTag('link');
@@ -276,7 +278,9 @@ function getStyleDecl(lib, body) {
 		let decl = `
 (function () {
 	var el = document.createElement('${tag}');
-	${content ? `el.innerHTML = \`${content}\`;` : ''}
+	//#set escapeStringLiteral
+	${content ? `el.innerHTML = \`${content.replace(escapeStringLiteralRgxp, '\\$1')}\`;` : ''}
+	//#unset escapeStringLiteral
 	${attrs}
 	document.head.appendChild(el);
 })();
