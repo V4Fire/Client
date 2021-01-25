@@ -51,9 +51,7 @@ export default class bIcon extends iBlock implements iIcon {
 		iIcon.updateIconHref(this, el, href);
 	}
 
-	/**
-	 * Handler: default error handler
-	 */
+	/** @see [[iIcon.handleIconError]] */
 	handleIconError(el: SVGUseElement, err: Error): void {
 		iIcon.handleIconError(this, el, err);
 	}

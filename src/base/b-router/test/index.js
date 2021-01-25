@@ -27,26 +27,26 @@ module.exports = async (page) => {
 		url = require('url'),
 		root = await h.component.waitForComponent(page, '#root-component');
 
-	describe('b-router', () => {
-		beforeAll(async () => {
-			await page.evaluate(() => {
-				globalThis.removeCreatedComponents();
+	beforeAll(async () => {
+		await page.evaluate(() => {
+			globalThis.removeCreatedComponents();
 
-				const
-					root = document.querySelector('#root-component').component;
+			const
+				root = document.querySelector('#root-component').component;
 
-				const scheme = [
-					{
-						attrs: {
-							routes: root.testRoutes
-						}
+			const scheme = [
+				{
+					attrs: {
+						routes: root.testRoutes
 					}
-				];
+				}
+			];
 
-				globalThis.renderComponents('b-router', scheme);
-			});
+			globalThis.renderComponents('b-router', scheme);
 		});
+	});
 
+	describe('b-router', () => {
 		it('checking the root', async () => {
 			expect(await root.evaluate((ctx) => ctx.meta.params.root)).toBe(true);
 		});
