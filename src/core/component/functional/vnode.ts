@@ -50,9 +50,10 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 	}
 
+	const originalOnBindHook = unsafe.onBindHook;
 	unsafe.onBindHook = onBindHook;
-	init.createdState(ctx);
 
+	init.createdState(ctx);
 	return flyweightVNode;
 
 	function onBindHook(): void {
@@ -183,6 +184,6 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 
 		el[$$.component] = unsafe;
-		init.beforeMountState(ctx);
+		originalOnBindHook.call(unsafe);
 	}
 }
