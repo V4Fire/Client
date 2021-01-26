@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.126 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* Added handling of the empty request
+
 ## v3.0.0-rc.122 (2021-01-13)
 
 #### :house: Internal

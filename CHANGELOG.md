@@ -11,15 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.126 (2021-01-26)
 
 #### :boom: Breaking Change
 
 * Removed the `beforeMounted` hook `core/component/interface`
 * Renamed the `status` modifier to `component-status` `iBlock`
 * Deprecate `listener` and `once` parameters `core/component/directives/update-on`
-* Fixed waiting for storage resetting during the `reset` event.
-  Now, a promise to write to the storage can be rejected. `super/i-block/modules/listeners`
 
 #### :rocket: New Feature
 
@@ -33,6 +31,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed the `fatHTML` mode
 * Fixed creation of fields of flyweight components `core/component/field`
+* Added handling of the empty request `bVirtualScroll`
+* Fixed waiting for storage resetting during the `reset` event.
+  Now, a promise to write to the storage can be rejected. `super/i-block/modules/listeners`
 
 #### :memo: Documentation
 

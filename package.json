@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.125",
+  "version": "3.0.0-rc.126",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -129,6 +129,6 @@
     "@v4fire/linters": "^1.6.1",
     "husky": "^4.3.8",
     "nyc": "^15.1.0",
-    "playwright": "^1.7.1"
+    "playwright": "^1.8.0"
   }
 }
