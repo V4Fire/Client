@@ -9,12 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.2?? (2021-01-2?)
+## v3.0.0-rc.??? (2021-??-??)
 
 #### :bug: Bug Fix
 
-* Fixed waiting for storage resetting on `reset` event.
-Promise for writing to storage can be rejected.
+* Fixed waiting for storage resetting during the `reset` event.
+  Now, a promise to write to the storage can be rejected.
 
 ## v3.0.0-rc.46 (2020-07-31)
 

@@ -18,6 +18,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Removed the `beforeMounted` hook `core/component/interface`
 * Renamed the `status` modifier to `component-status` `iBlock`
 * Deprecate `listener` and `once` parameters `core/component/directives/update-on`
+* Fixed waiting for storage resetting during the `reset` event.
+  Now, a promise to write to the storage can be rejected. `super/i-block/modules/listeners`
 
 #### :rocket: New Feature
 
