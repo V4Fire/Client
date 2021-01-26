@@ -101,6 +101,12 @@ export function parseVNodeAsFlyweight(
 	fakeCtx._c = fakeCtx.$createElement;
 	fakeCtx._staticTrees = [];
 
+	Object.defineProperty(fakeCtx, '$el', {
+		configurable: true,
+		enumerable: true,
+		value: undefined
+	});
+
 	Object.defineProperty(fakeCtx, '$refs', {
 		configurable: true,
 		enumerable: true,
