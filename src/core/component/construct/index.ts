@@ -86,7 +86,7 @@ export function beforeCreateState(
 		implementEventAPI(component);
 	}
 
-	attachAccessorsFromMeta(component, opts?.safe);
+	attachAccessorsFromMeta(component);
 	runHook('beforeRuntime', component).catch(stderr);
 
 	const {
@@ -237,6 +237,12 @@ export function createdState(component: ComponentInterface): void {
  */
 export function beforeMountState(component: ComponentInterface): void {
 	runHook('beforeMount', component).catch(stderr);
+
+	if (component.$el != null) {
+		Object.set(component, '$el.component', component);
+		resolveRefs(component);
+	}
+
 	callMethodFromComponent(component, 'beforeMount');
 }
 
@@ -245,10 +251,10 @@ export function beforeMountState(component: ComponentInterface): void {
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	Object.set(component, '$el.component', component);
-
-	runHook('beforeMounted', component).catch(stderr);
-	resolveRefs(component);
+	if (component.$el?.component !== component) {
+		Object.set(component, '$el.component', component);
+		resolveRefs(component);
+	}
 
 	runHook('mounted', component).then(() => {
 		callMethodFromComponent(component, 'mounted');
@@ -271,6 +277,7 @@ export function beforeUpdateState(component: ComponentInterface): void {
 export function updatedState(component: ComponentInterface): void {
 	runHook('beforeUpdated', component).catch(stderr);
 	resolveRefs(component);
+
 	runHook('updated', component).then(() => {
 		callMethodFromComponent(component, 'updated');
 	}, stderr);
@@ -283,6 +290,7 @@ export function updatedState(component: ComponentInterface): void {
 export function activatedState(component: ComponentInterface): void {
 	runHook('beforeActivated', component).catch(stderr);
 	resolveRefs(component);
+
 	runHook('activated', component).catch(stderr);
 	callMethodFromComponent(component, 'activated');
 }
@@ -301,10 +309,9 @@ export function deactivatedState(component: ComponentInterface): void {
  * @param component
  */
 export function beforeDestroyState(component: ComponentInterface): void {
-	const {$async} = component.unsafe;
 	runHook('beforeDestroy', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeDestroy');
-	$async.clearAll().locked = true;
+	component.unsafe.$async.clearAll().locked = true;
 }
 
 /**

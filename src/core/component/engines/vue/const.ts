@@ -13,19 +13,19 @@ export const supports = {
 	composite: true
 };
 
-export const
-	minimalCtx = {};
-
-{
+export const minimalCtx = (() => {
 	const
-		obj = Vue.prototype;
+		obj = Vue.prototype,
+		ctx = {};
 
 	for (const key in obj) {
 		if (key.length === 2) {
-			minimalCtx[key] = obj[key];
+			ctx[key] = obj[key];
 		}
 	}
-}
+
+	return ctx;
+})();
 
 export const proxyGetters = Object.createDict({
 	prop: (ctx) => ({

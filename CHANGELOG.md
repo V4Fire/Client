@@ -13,9 +13,36 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Removed the `beforeMounted` hook `core/component/interface`
+* Renamed the `status` modifier to `component-status` `iBlock`
+* Deprecate `listener` and `once` parameters `core/component/directives/update-on`
+
+#### :rocket: New Feature
+
+* Now flyweight components support life cycle hooks `core/component/flyweight`
+* Now switching a value of the component hook emits events `iBlock`
+* `core/component/directives/update-on`:
+  * Added support of watchers
+  * Improved API
+
 #### :bug: Bug Fix
 
+* Fixed the `fatHTML` mode
 * Fixed creation of fields of flyweight components `core/component/field`
+
+#### :memo: Documentation
+
+* Improved documentation:
+  * `core/component/directives/update-on`
+  * `traits/i-icon`
+
+#### :house: Internal
+
+* Added a feature to provide raw modifiers `core/component/prop`
+* Now functional components emulate hooks via the `v-hook` directive `core/component/functional`
+* Added API based on the `v-hook` directive to attach hook listeners with functional and flyweight components `iBlock`
 
 ## v3.0.0-rc.125 (2021-01-18)
 

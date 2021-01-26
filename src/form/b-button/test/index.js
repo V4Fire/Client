@@ -6,9 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	h = include('tests/helpers');
-
 module.exports = async (page, {browserType, tmpDir}) => {
 	await page.screenshot({path: `${tmpDir}/example-${browserType}.png`});
 

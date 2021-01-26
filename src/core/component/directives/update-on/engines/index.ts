@@ -6,65 +6,102 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
-import { attrs } from 'core/component/directives/update-on/const';
+import { ComponentInterface } from 'core/component';
+import { ID_ATTRIBUTE } from 'core/component/directives/update-on/const';
 import { DirectiveValue } from 'core/component/directives/update-on/interface';
 
 export const
-	async = new Async();
+	$$ = symbolGenerator();
 
 export default {
 	/**
 	 * Attaches a listener to the specified element
 	 *
-	 * @param params
 	 * @param el
+	 * @param params
+	 * @param ctx - context of the tied components
 	 */
-	add(params: DirectiveValue, el: HTMLElement): void {
-		const
-			elId = Math.random().toString().slice(2),
-			label = {label: elId};
+	add(el: Element, params: DirectiveValue, ctx: ComponentInterface): void {
+		let
+			id = Math.random().toString().slice(2);
+
+		if (Object.isTruly(params.group)) {
+			id = `${params.group}:${id}`;
+		}
 
 		const
-			handler = (...args) => params.listener(el, ...args),
-			errorHandler = (err) => params.errorListener != null ? params.errorListener(el, err) : stderr(err);
+			$a = this.getAsync(el, ctx),
+			group = {group: id};
 
 		const
-			emitter = Object.isFunction(params.emitter) ? params.emitter() : params.emitter;
+			handler = (...args) => (params.listener ?? params.handler)(el, ...args),
+			errorHandler = (err) => params.errorHandler != null ? params.errorHandler(el, err) : stderr(err);
 
-		el.setAttribute(attrs.id, elId);
+		const emitter = Object.isFunction(params.emitter) ? params.emitter() : params.emitter;
+		el.setAttribute(ID_ATTRIBUTE, id);
 
 		if (Object.isPromise(emitter)) {
-			async.promise(emitter, label).then(handler, errorHandler);
+			$a.promise(emitter, group).then(handler, errorHandler);
 
-		} else {
+		} else if (Object.isString(emitter)) {
+			const
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				unsafe = ctx.unsafe ?? ctx;
+
+			const watcher = params.options != null ?
+				unsafe.$watch(emitter, params.options, handler) :
+				unsafe.$watch(emitter, handler);
+
+			$a.worker(watcher, group);
+
+		} else if (emitter != null) {
 			if (params.event == null) {
-				throw new Error('The event to listen is not specified');
+				throw new Error('An event to listen is not specified');
 			}
 
-			async[params.once ? 'once' : 'on'](emitter, params.event, handler, label);
+			$a[params.single ?? params.once ? 'once' : 'on'](emitter, params.event, handler, {
+				options: params.options,
+				...group
+			});
 		}
 	},
 
 	/**
-	 * Updates listeners from the specified element
+	 * Removes listeners from the specified element
 	 *
-	 * @param params
 	 * @param el
+	 * @param ctx - context of the tied components
 	 */
-	update(params: DirectiveValue, el: HTMLElement): void {
-		const elId = el.getAttribute(attrs.id)!;
-		async.clearAll({label: elId});
-		this.add(params, el);
+	remove(el: Element, ctx: ComponentInterface | object): void {
+		const
+			group = el.getAttribute(ID_ATTRIBUTE);
+
+		this
+			.getAsync(el, ctx)
+			.clearAll();
+
+		if (group != null) {
+			this.getAsync(el, ctx).clearAll({group});
+		}
 	},
 
 	/**
-	 * Removes listeners from the specified element
+	 * Returns an async instance of the specified element
+	 *
 	 * @param el
+	 * @param ctx - context of the tied components
 	 */
-	remove(el: HTMLElement): void {
-		const elId = el.getAttribute(attrs.id)!;
-		async.clearAll({label: elId});
+	getAsync(el: Element, ctx: ComponentInterface | object): Async<ComponentInterface> {
+		if ('$async' in ctx) {
+			return ctx.unsafe.$async;
+		}
+
+		const $a = ctx[$$.async] ?? new Async(ctx);
+		ctx[$$.async] = $a;
+
+		return $a;
 	}
 };

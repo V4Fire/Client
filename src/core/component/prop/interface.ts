@@ -11,6 +11,11 @@
  */
 export interface InitPropsObjectOptions {
 	/**
+	 * Object where is stored raw modifiers
+	 */
+	from?: Dictionary;
+
+	/**
 	 * Storage object for initialized properties
 	 * @default `{}`
 	 */

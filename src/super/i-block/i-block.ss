@@ -115,8 +115,19 @@
 
 	- rootAttrs = { &
 		':class': '[...provide.componentClasses("' + self.name() + '", mods), "i-block-helper", componentId]',
+
 		':-render-group': 'renderGroup',
-		':-render-counter': 'renderCounter'
+		':-render-counter': 'renderCounter',
+
+		'v-hook': "isFunctional || isFlyweight ?" +
+			"{" +
+				"bind: createInternalHookListener('bind')," +
+				"inserted: createInternalHookListener('inserted')," +
+				"update: createInternalHookListener('update')," +
+				"unbind: createInternalHookListener('unbind')" +
+			"} :" +
+
+			"null"
 	} .
 
 	- if skeletonMarker
@@ -146,13 +157,15 @@
 						- if Object.isArray(iconId)
 							< use v-if = value | v-update-on = { &
 								emitter: getIconLink(${iconId}),
-								listener: updateIconHref
+								handler: updateIconHref,
+								errorHandler: handleIconError
 							} .
 
 						- else
 							< use v-if = value | v-update-on = { &
 								emitter: getIconLink('${iconId}'),
-								listener: updateIconHref
+								handler: updateIconHref,
+								errorHandler: handleIconError
 							} .
 
 				/**
@@ -182,11 +195,13 @@
 							{content}
 
 				- block headHelpers
+
 				- block innerRoot
 					< ${rootWrapper ? '_' : '?'}.&__root-wrapper
 						< ${overWrapper ? '_' : '?'}.&__over-wrapper
 							- block overWrapper
 
 						- block body
+
 					- block helpers
 					- block providers

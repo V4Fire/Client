@@ -11,10 +11,11 @@
  * @packageDocumentation
  */
 
-import { ComponentInterface, ComponentField, ComponentSystemField } from 'core/component/interface';
+import { defProp } from 'core/const/props';
+import { fieldQueue } from 'core/component/field/const';
+import { ComponentInterface, ComponentField } from 'core/component/interface';
 
-// Queue for fields to initialize
-export const fieldQueue = new Set();
+export * from 'core/component/field/const';
 
 /**
  * Initializes the specified fields to a component instance.
@@ -35,7 +36,7 @@ export function initFields(
 ): Dictionary {
 	const {
 		unsafe,
-		unsafe: {meta: {params, instance}},
+		unsafe: {meta: {componentName, params, instance}},
 		isFlyweight
 	} = component;
 
@@ -54,6 +55,14 @@ export function initFields(
 		// List of non-atoms to initialize
 		nonAtomList = <Array<Nullable<string>>>[];
 
+	const
+		NULL = {};
+
+	const defField = {
+		...defProp,
+		value: NULL
+	};
+
 	// At first, we should initialize all atoms, but some atoms wait for other atoms.
 	// That's why we sort the source list of fields and organize a simple synchronous queue.
 	// All atoms that waits for other atoms are added to `atomList`.
@@ -61,20 +70,37 @@ export function initFields(
 	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = <Nullable<ComponentSystemField>>fields[key];
+			el = fields[key];
 
-		const needInit =
-			el != null &&
+		let
+			sourceVal = store[key],
+			isNull = false;
 
-			// Don't initialize a property for a functional component
-			// unless explicitly required (functional == false)
-			(!isNotRegular || el.functional !== false) &&
+		if (isFlyweight) {
+			if (
+				el != null && (
+					el.replace !== true && (Object.isTruly(el.unique) || el.src === componentName) ||
+					el.replace === false
+				)
+			) {
+				Object.defineProperty(store, key, defField);
+				sourceVal = undefined;
+				isNull = true;
+			}
+		}
 
-			(el.init != null || el.default !== undefined || instance[key] !== undefined) &&
-			(store[key] === undefined || isFlyweight && el.replace === false);
+		const dontNeedInit =
+			el == null ||
+			sourceVal !== undefined ||
 
-		if (el == null || !needInit) {
+			// Don't initialize a property for a functional component unless explicitly required
+			isNotRegular && el.functional === false ||
+
+			el.init == null && el.default === undefined && instance[key] === undefined;
+
+		if (el == null || dontNeedInit) {
 			canSkip[key] = true;
+			store[key] = sourceVal;
 			continue;
 		}
 
@@ -104,6 +130,10 @@ export function initFields(
 			}
 
 			if (canInit) {
+				if (isNull) {
+					store[key] = undefined;
+				}
+
 				Object.set(unsafe, '$activeField', key);
 
 				let
@@ -137,9 +167,13 @@ export function initFields(
 	while (atomList.length > 0) {
 		for (let i = 0; i < atomList.length; i++) {
 			const
-				key = nonAtomList[i];
+				key = nonAtomList[i],
+				el = key != null ? fields[key] : null;
 
-			if (key == null || key in store) {
+			let
+				isNull = false;
+
+			if (el == null || key == null || key in store && !(isNull = store[key] === NULL)) {
 				continue;
 			}
 
@@ -147,7 +181,6 @@ export function initFields(
 			let canInit = true;
 
 			const
-				el = <ComponentSystemField>fields[key],
 				{after} = el;
 
 			if (after && after.size > 0) {
@@ -181,6 +214,10 @@ export function initFields(
 			}
 
 			if (canInit) {
+				if (isNull) {
+					store[key] = undefined;
+				}
+
 				Object.set(unsafe, '$activeField', key);
 				fieldQueue.delete(key);
 
@@ -213,22 +250,25 @@ export function initFields(
 		}
 	}
 
-	// Initialize all non-atomics
+	// Initialize all non-atoms
 	while (nonAtomList.length > 0) {
 		for (let i = 0; i < nonAtomList.length; i++) {
 			const
-				key = nonAtomList[i];
+				key = nonAtomList[i],
+				el = key != null ? fields[key] : null;
 
-			if (key == null || key in store) {
+			let
+				isNull = false;
+
+			if (el == null || key == null || key in store && !(isNull = store[key] === NULL)) {
 				continue;
 			}
 
-			const
-				el = <ComponentSystemField>fields[key],
-				{after} = el;
-
 			// If true, then the field doesn't have any dependencies and can be initialized right now
 			let canInit = true;
+
+			const
+				{after} = el;
 
 			if (after && after.size > 0) {
 				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
@@ -257,6 +297,10 @@ export function initFields(
 			}
 
 			if (canInit) {
+				if (isNull) {
+					store[key] = undefined;
+				}
+
 				Object.set(unsafe, '$activeField', key);
 				fieldQueue.delete(key);
 
