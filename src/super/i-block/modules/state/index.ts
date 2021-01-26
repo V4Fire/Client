@@ -122,13 +122,7 @@ export default class State extends Friend {
 		data = ctx.syncStorageState(data, 'remote');
 		this.set(ctx.syncStorageState(data));
 
-		try {
-			await this.storage.set(data, '[[STORE]]');
-
-		} catch (e) {
-			stderr(e);
-		}
-
+		await this.storage.set(data, '[[STORE]]');
 		ctx.log('state:save:storage', this, data);
 
 		return true;

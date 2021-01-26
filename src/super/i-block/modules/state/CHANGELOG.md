@@ -9,12 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.1?? (2021-01-2?)
-
-#### :bug: Bug Fix
-
-* Catch error on setting storage
-
 ## v3.0.0-rc.123 (2021-01-15)
 
 #### :boom: Breaking Change
