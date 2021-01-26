@@ -172,7 +172,7 @@ export interface DecoratorSystem<
 	CTX extends ComponentInterface = ComponentInterface
 > extends DecoratorFunctionalOptions {
 	/**
-	 * If true, the property will be initialized before all non-atomic properties
+	 * If true, the property will be initialized before all non-atom properties
 	 * @default `false`
 	 */
 	atom?: boolean;

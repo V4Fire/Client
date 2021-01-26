@@ -16,7 +16,7 @@ The trait specifies two methods to manage the document lock scroll status: `lock
 Invoking the `lock` method prevents any document scrolling behavior,
 but you can specify the node within which the scrolling is acceptable.
 
-All methods are declared in the trait have default implementation via the static methods.
+All methods are declared in the trait have default implementations via the static methods.
 
 ```typescript
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';

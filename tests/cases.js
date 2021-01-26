@@ -9,6 +9,7 @@
  */
 
 module.exports = [
+	'--test-entry icons/b-icon/test',
 	'--test-entry base/b-router/test',
 	'--test-entry base/b-virtual-scroll/test',
 	'--test-entry base/b-tree/test',

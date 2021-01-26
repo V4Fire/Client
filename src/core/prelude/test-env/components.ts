@@ -85,7 +85,10 @@ globalThis.renderComponents = (
 
 	document.querySelector(<string>selectorToInject)?.append(...nodes);
 	globalThis.__createdComponents = globalThis.__createdComponents ?? new Set();
-	ids.forEach((id) => globalThis.__createdComponents.add(document.querySelector(`[${idAttrs}="${id}"]`)));
+
+	ids.forEach((id) => {
+		globalThis.__createdComponents.add(document.querySelector(`[${idAttrs}="${id}"]`));
+	});
 };
 
 globalThis.removeCreatedComponents = () => {

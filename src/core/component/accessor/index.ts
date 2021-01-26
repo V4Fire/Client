@@ -16,35 +16,35 @@ import { cacheStatus, ComponentInterface } from 'core/component';
 
 /**
  * Attaches accessors and computed fields from a meta object to the specified component instance
- *
  * @param component
- * @param [safe] - if true, then the function uses safe access to object properties
- *   by using Object.getOwnPropertyDescriptor/defineProperty
  */
-export function attachAccessorsFromMeta(component: ComponentInterface, safe?: boolean): void {
-	const
-		{meta, meta: {params: {deprecatedProps}}} = component.unsafe;
+export function attachAccessorsFromMeta(component: ComponentInterface): void {
+	const {
+		meta,
+		meta: {params: {deprecatedProps}},
+		isFlyweight
+	} = component.unsafe;
 
 	const
-		isFlyweight = meta.params.functional === true || component.isFlyweight;
+		isNotRegular = meta.params.functional === true || isFlyweight;
 
 	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			el = o[key];
 
-		if (el == null) {
-			continue;
-		}
+		const canSkip = Boolean(
+			el == null ||
+			isNotRegular && el.functional === false ||
 
-		if (isFlyweight && el.functional === false) {
-			continue;
-		}
+			(
+				isFlyweight ?
+					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
+					component[key]
+			)
+		);
 
-		const
-			alreadyExists = Boolean(safe ? Object.getOwnPropertyDescriptor(component, key) : component[key]);
-
-		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
+		if (el == null || canSkip) {
 			continue;
 		}
 
@@ -65,18 +65,18 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			key = keys[i],
 			el = o[key];
 
-		if (el == null) {
-			continue;
-		}
+		const canSkip = Boolean(
+			el == null ||
+			isNotRegular && el.functional === false ||
 
-		if (isFlyweight && el.functional === false) {
-			continue;
-		}
+			(
+				isFlyweight ?
+					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
+					component[key]
+			)
+		);
 
-		const
-			alreadyExists = Boolean(safe ? Object.getOwnPropertyDescriptor(component, key) : component[key]);
-
-		if (alreadyExists && (!isFlyweight || el.replace !== false)) {
+		if (el == null || canSkip) {
 			continue;
 		}
 

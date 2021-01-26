@@ -12,8 +12,8 @@ import * as c from 'core/component/const';
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
-import { parseVNodeAsFlyweight, FlyweightVNode } from 'core/component/flyweight';
-import { createFakeCtx, initComponentVNode } from 'core/component/functional';
+import { parseVNodeAsFlyweight } from 'core/component/flyweight';
+import { createFakeCtx, initComponentVNode, FlyweightVNode } from 'core/component/functional';
 
 import { applyDynamicAttrs } from 'core/component/render-function/v-attrs';
 import { registerComponent } from 'core/component/register';
@@ -241,6 +241,7 @@ export function wrapCreateElement(
 			tasks.splice(0);
 		}
 
+		Object.set(vnode, 'context', ctx);
 		return vnode;
 	};
 

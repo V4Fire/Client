@@ -11,5 +11,4 @@ export const
 	defaultWrapper = Symbol('Default wrapper');
 
 export const
-	PARENT = {},
-	NULL = {};
+	PARENT = {};

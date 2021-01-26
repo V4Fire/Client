@@ -6,13 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
-
 export const
-	$$ = symbolGenerator();
-
-export const componentOpts = [
-	'filters',
-	'directives',
-	'components'
-];
+	fieldQueue = new Set();

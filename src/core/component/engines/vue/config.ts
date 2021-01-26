@@ -21,27 +21,34 @@ Vue.config.warnHandler = (msg, vm, trace) => {
 	logger.warn('warnHandler', msg, trace, getComponentInfo(vm));
 };
 
+const
+	UNRECOGNIZED_COMPONENT_NAME = 'unrecognized-component',
+	ROOT_COMPONENT_NAME = 'root-component';
+
 /**
  * Returns component info to log
  * @param component
  */
 function getComponentInfo(component: Vue | ComponentInterface): Dictionary {
-	if ('componentName' in component) {
+	try {
+		if ('componentName' in component) {
+			return {
+				name: getComponentName(component),
+				hook: component.hook,
+				status: component.unsafe.componentStatus
+			};
+		}
+
 		return {
-			name: getComponentName(component),
-			hook: component.hook,
-			status: component.unsafe.componentStatus
+			name: getComponentName(component)
+		};
+
+	} catch {
+		return {
+			name: UNRECOGNIZED_COMPONENT_NAME
 		};
 	}
-
-	return {
-		name: getComponentName(component)
-	};
 }
-
-const
-	UNRECOGNIZED_COMPONENT_NAME = 'unrecognized-component',
-	ROOT_COMPONENT_NAME = 'root-component';
 
 /**
  * Returns a name of the specified component

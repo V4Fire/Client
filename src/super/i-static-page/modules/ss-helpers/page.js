@@ -102,13 +102,8 @@ function getPageStyleDepsDecl(dependencies, {assets, wrap, js}) {
 		decl += '\n';
 	}
 
-	if (wrap) {
-		if (needInline() && !js) {
-			decl = getStyleDecl(decl);
-
-		} else {
-			decl = getScriptDecl(decl);
-		}
+	if (wrap && (js || !needInline())) {
+		decl = getScriptDecl(decl);
 	}
 
 	return decl;

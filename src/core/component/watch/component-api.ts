@@ -54,7 +54,7 @@ export function implementComponentWatchAPI(
 		{meta: {watchDependencies, computedFields, accessors, params}} = unsafe;
 
 	const
-		isFlyweight = Boolean(component.isFlyweight) || params.functional === true,
+		isNotRegular = Boolean(component.isFlyweight) || params.functional === true,
 		usedHandlers = new Set<Function>();
 
 	let
@@ -240,7 +240,7 @@ export function implementComponentWatchAPI(
 	let
 		fieldWatchOpts;
 
-	if (!isFlyweight && opts?.tieFields) {
+	if (!isNotRegular && opts?.tieFields) {
 		fieldWatchOpts = {...watchOpts, tiedWith: component};
 
 	} else {
@@ -258,7 +258,7 @@ export function implementComponentWatchAPI(
 			value: watcher.proxy
 		});
 
-		if (isFlyweight) {
+		if (isNotRegular) {
 			// We need to track all modified fields of a function instance
 			// to restore state if a parent has re-created the component
 			watch(watcher.proxy, {deep: true, collapse: true, immediate: true}, (v, o, i) => {
@@ -272,7 +272,7 @@ export function implementComponentWatchAPI(
 	let
 		fieldsWatcher;
 
-	if (isFlyweight) {
+	if (isNotRegular) {
 		// Don't force watching of fields until it becomes necessary
 		fieldsInfo.value[watcherInitializer] = () => {
 			delete fieldsInfo.value[watcherInitializer];
@@ -329,7 +329,7 @@ export function implementComponentWatchAPI(
 
 	// Watching of component props.
 	// The root component and functional/flyweight components can't watch props.
-	if (!isFlyweight && !params.root) {
+	if (!isNotRegular && !params.root) {
 		const
 			props = proxyGetters.prop(component),
 			propsStore = props.value;

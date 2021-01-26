@@ -11,6 +11,9 @@
  * @packageDocumentation
  */
 
+import iBlock from 'super/i-block/i-block';
+
+import { ID_ATTRIBUTE } from 'core/component/directives/update-on';
 import { icons, iconsMap } from 'traits/i-icon/modules/icons';
 
 export default abstract class iIcon {
@@ -18,7 +21,11 @@ export default abstract class iIcon {
 	 * Returns a link for the specified icon
 	 * @param iconId
 	 */
-	static async getIconLink(iconId: string): Promise<string> {
+	static async getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
+		if (iconId == null) {
+			return Promise.resolve(undefined);
+		}
+
 		if (!(iconId in iconsMap)) {
 			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 		}
@@ -40,10 +47,11 @@ export default abstract class iIcon {
 	/**
 	 * Updates `href` of the specified `use` element
 	 *
+	 * @param component
 	 * @param el
-	 * @param href
+	 * @param [href]
 	 */
-	static updateIconHref(el: SVGUseElement, href: string): void {
+	static updateIconHref<T extends iBlock>(component: T, el: SVGUseElement, href?: string): void {
 		const
 			parent = el.parentNode;
 
@@ -51,11 +59,43 @@ export default abstract class iIcon {
 			return;
 		}
 
-		const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-		newEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href);
+		parent
+			.querySelectorAll('[data-tmp]')
+			.forEach((el) => parent.removeChild(el));
 
-		parent.nextSibling?.remove();
+		if (!Object.isTruly(href)) {
+			return;
+		}
+
+		const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+
+		newEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href!);
+		newEl.setAttribute('data-tmp', '');
+
 		parent.appendChild(newEl);
+
+		component.unsafe.async.worker(destructor, {
+			group: el.getAttribute(ID_ATTRIBUTE) ?? undefined
+		});
+
+		function destructor(): void {
+			try {
+				parent?.removeChild(newEl);
+
+			} catch {}
+		}
+	}
+
+	/**
+	 * Handles an error of the icon loading
+	 *
+	 * @param component
+	 * @param el - link to the source `use` element
+	 * @param err
+	 */
+	static handleIconError<T extends iBlock & iIcon>(component: T, el: SVGUseElement, err: Error): void {
+		stderr(err);
+		component.updateIconHref(el);
 	}
 
 	/**
@@ -64,7 +104,18 @@ export default abstract class iIcon {
 	abstract getIconLink: typeof iIcon.getIconLink;
 
 	/**
-	 * Link to iIcon.updateIconHref
+	 * Updates `href` of the specified `use` element
+	 *
+	 * @param el
+	 * @param [href]
 	 */
-	abstract updateIconHref: typeof iIcon.updateIconHref;
+	abstract updateIconHref(el: SVGUseElement, href?: string): void;
+
+	/**
+	 * Handles an error of the icon loading
+	 *
+	 * @param el - link to the source `use` element
+	 * @param err
+	 */
+	abstract handleIconError(el: SVGUseElement, err: Error): void;
 }

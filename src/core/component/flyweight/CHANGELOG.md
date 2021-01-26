@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Now flyweight components support life cycle hooks
+
 ## v3.0.0-rc.125 (2021-01-18)
 
 #### :bug: Bug Fix

@@ -290,7 +290,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				fullPath,
 				originalPath,
 				name,
-				ctx: Object.get(component, ctxPath),
+				ctx: Object.get(component, ctxPath) ?? {},
 				type: 'mounted'
 			};
 		}
