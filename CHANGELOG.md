@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed `componentStatus` with flyweight components `core/component/flyweight`
+* `core/component/flyweight`:
+  * Fixed `componentStatus` with flyweight components
+  * Fixed creation of `$async`
 
 ## v3.0.0-rc.126 (2021-01-26)
 

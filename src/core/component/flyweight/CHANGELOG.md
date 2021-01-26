@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed `componentStatus` with flyweight components
+* Fixed creation of `$async`
 
 ## v3.0.0-rc.126 (2021-01-26)
 

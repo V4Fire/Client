@@ -12,6 +12,7 @@
  */
 
 import { deprecate } from 'core/functools/deprecation';
+import Async from 'core/async';
 
 import { components } from 'core/component/const';
 import { supports, CreateElement, VNode } from 'core/component/engines';
@@ -93,6 +94,7 @@ export function parseVNodeAsFlyweight(
 
 	fakeCtx.unsafe = fakeCtx;
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
+	fakeCtx.$async = new Async(fakeCtx);
 
 	fakeCtx._self = fakeCtx;
 	fakeCtx._renderProxy = fakeCtx;
