@@ -22,6 +22,7 @@ import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { destroyComponent, FlyweightVNode } from 'core/component/functional';
 
+import { runHook } from 'core/component/hook';
 import { attachMethodsFromMeta } from 'core/component/method';
 import { implementEventAPI } from 'core/component/event';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
@@ -188,6 +189,7 @@ export function parseVNodeAsFlyweight(
 		}
 	});
 
+	runHook('beforeDataCreate', fakeCtx).catch(stderr);
 	init.createdState(fakeCtx);
 
 	const newVNode = <FlyweightVNode>execRenderObject(

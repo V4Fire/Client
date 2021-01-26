@@ -666,7 +666,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * True if the component was in ready status at least once
 	 */
-	@system()
+	@system({unique: true})
 	isReadyOnce: boolean = false;
 
 	/**
@@ -1992,7 +1992,7 @@ export default abstract class iBlock extends ComponentInterface {
 				this.state.initFromStorage() || []
 			);
 
-			if (this.isFunctional || this.dontWaitRemoteProviders) {
+			if (this.isFunctional || this.isFlyweight || this.dontWaitRemoteProviders) {
 				if (tasks.length > 0) {
 					return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
 				}
@@ -2498,10 +2498,6 @@ export default abstract class iBlock extends ComponentInterface {
 	/** @override */
 	protected onBindHook(): void {
 		init.beforeMountState(this);
-
-		if (this.isFlyweight) {
-			this.componentStatus = 'ready';
-		}
 	}
 
 	/** @override */

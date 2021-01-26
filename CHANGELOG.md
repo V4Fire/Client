@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.127 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed `componentStatus` with flyweight components `core/component/flyweight`
+
 ## v3.0.0-rc.126 (2021-01-26)
 
 #### :boom: Breaking Change

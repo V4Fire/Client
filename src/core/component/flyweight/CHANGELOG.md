@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.127 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed `componentStatus` with flyweight components
+
 ## v3.0.0-rc.126 (2021-01-26)
 
 #### :rocket: New Feature
