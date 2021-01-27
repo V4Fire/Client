@@ -777,8 +777,11 @@ export default class bRouter extends iData {
 		// Mutations of query and meta parameters of a route shouldn't force re-render of components,
 		// that why we placed it to a prototype object by using `Object.create`
 
-		const
-			nonWatchRouteValues = {query: newRouteInfo.query, meta};
+		const nonWatchRouteValues = {
+			url: newRouteInfo.resolvePath(newRouteInfo.params),
+			query: newRouteInfo.query,
+			meta
+		};
 
 		const newRoute = Object.assign(
 			Object.create(nonWatchRouteValues),
@@ -833,12 +836,12 @@ export default class bRouter extends iData {
 			// This transitions is marked as `external`,
 			// i.e. it refers to another site
 			if (newRouteInfo.meta.external) {
-				const p = newRouteInfo.resolvePath(newRouteInfo.params);
-				location.href = p !== '' ? p : '/';
+				const u = newRoute.url;
+				location.href = u !== '' ? u : '/';
 				return;
 			}
 
-			await engine[method](newRouteInfo.resolvePath(newRouteInfo.params), plainInfo);
+			await engine[method](newRoute.url, plainInfo);
 
 			const isSoftTransition = Boolean(r.route && Object.fastCompare(
 				convertRouteToPlainObjectWithoutProto(currentRoute),
