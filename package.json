@@ -39,7 +39,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.30.2",
+    "@v4fire/core": "^3.30.3",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.3",
     "path-to-regexp": "^3.2.0",
