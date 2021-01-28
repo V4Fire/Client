@@ -2430,11 +2430,13 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.block = new Block(this);
 
-		for (let i = 0; i < this.blockReadyListeners.length; i++) {
-			this.blockReadyListeners[i]();
-		}
+		if (this.blockReadyListeners.length > 0) {
+			for (let i = 0; i < this.blockReadyListeners.length; i++) {
+				this.blockReadyListeners[i]();
+			}
 
-		this.blockReadyListeners = [];
+			this.blockReadyListeners = [];
+		}
 	}
 
 	/**
@@ -2492,6 +2494,15 @@ export default abstract class iBlock extends ComponentInterface {
 			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
 		) {
 			return e.action.call(this);
+		}
+	}
+
+	/** @override */
+	protected onCreatedHook(): void {
+		if (this.isFlyweight) {
+			this.componentStatusStore = 'ready';
+			this.mods.componentStatus = 'ready';
+			this.isReadyOnce = true;
 		}
 	}
 

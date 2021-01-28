@@ -21,7 +21,9 @@ export function destroyComponent(component: ComponentInterface): void {
 	}
 
 	component[$$.destroyed] = true;
-
 	init.beforeDestroyState(component);
-	init.destroyedState(component);
+
+	if (!component.isFlyweight) {
+		init.destroyedState(component);
+	}
 }

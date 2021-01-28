@@ -24,7 +24,7 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
 	const
 		obj = component.unsafe.meta.methods[method];
 
-	if (obj) {
+	if (obj != null) {
 		try {
 			const
 				res = obj.fn.apply(component, args);

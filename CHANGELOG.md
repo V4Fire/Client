@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.129 (2021-01-28)
+
+#### :house: Internal
+
+* Optimized creation of flyweight components
+
 ## v3.0.0-rc.128 (2021-01-27)
 
 #### :bug: Bug Fix

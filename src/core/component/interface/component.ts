@@ -156,6 +156,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$destroy: CTX['$destroy'];
 
 	// @ts-ignore (access)
+	onCreatedHook: CTX['onCreatedHook'];
+
+	// @ts-ignore (access)
 	onBindHook: CTX['onBindHook'];
 
 	// @ts-ignore (access)
@@ -571,6 +574,13 @@ export abstract class ComponentInterface {
 	 */
 	protected $emit(event: string, ...args: unknown[]): this {
 		return this;
+	}
+
+	/**
+	 * Handler: "created" hook (only for flyweight components)
+	 */
+	protected onCreatedHook(): void {
+		// Loopback
 	}
 
 	/**

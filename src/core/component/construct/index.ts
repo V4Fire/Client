@@ -236,14 +236,18 @@ export function createdState(component: ComponentInterface): void {
  * @param component
  */
 export function beforeMountState(component: ComponentInterface): void {
-	runHook('beforeMount', component).catch(stderr);
+	const
+		{$el} = component;
 
-	if (component.$el != null) {
-		Object.set(component, '$el.component', component);
+	if ($el != null) {
+		$el.component = component;
 		resolveRefs(component);
 	}
 
-	callMethodFromComponent(component, 'beforeMount');
+	if (!component.isFlyweight) {
+		runHook('beforeMount', component).catch(stderr);
+		callMethodFromComponent(component, 'beforeMount');
+	}
 }
 
 /**
@@ -251,8 +255,11 @@ export function beforeMountState(component: ComponentInterface): void {
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	if (component.$el?.component !== component) {
-		Object.set(component, '$el.component', component);
+	const
+		{$el} = component;
+
+	if ($el != null && $el.component !== component) {
+		$el.component = component;
 		resolveRefs(component);
 	}
 
