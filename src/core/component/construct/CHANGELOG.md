@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.130 (2021-01-28)
+
+#### :bug: Bug Fix
+
+* Fixed resolving of ref-s
+
 ## v3.0.0-rc.129 (2021-01-28)
 
 #### :house: Internal

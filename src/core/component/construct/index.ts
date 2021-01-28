@@ -241,7 +241,6 @@ export function beforeMountState(component: ComponentInterface): void {
 
 	if ($el != null) {
 		$el.component = component;
-		resolveRefs(component);
 	}
 
 	if (!component.isFlyweight) {
@@ -260,8 +259,9 @@ export function mountedState(component: ComponentInterface): void {
 
 	if ($el != null && $el.component !== component) {
 		$el.component = component;
-		resolveRefs(component);
 	}
+
+	resolveRefs(component);
 
 	runHook('mounted', component).then(() => {
 		callMethodFromComponent(component, 'mounted');
