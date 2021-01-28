@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ClientNamespaces } from 'core/async/interface';
 import { namespaces as superNamespaces } from '@v4fire/core/core/async/const';
+import { ClientNamespaces } from 'core/async/interface';
 
 export * from '@v4fire/core/core/async/const';
 
