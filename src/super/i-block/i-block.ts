@@ -1638,7 +1638,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.$emit(eventNm, this, ...args);
 		this.$emit(`on-${eventNm}`, ...args);
-		this.dispatching && this.dispatch(decl, ...args);
+
+		if (this.dispatching) {
+			this.dispatch(decl, ...args);
+		}
 
 		const
 			logArgs = args.slice();
