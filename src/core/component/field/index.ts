@@ -134,7 +134,8 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				Object.set(unsafe, '$activeField', key);
+				// @ts-ignore (access)
+				unsafe['$activeField'] = key;
 
 				let
 					val;
@@ -155,7 +156,8 @@ export function initFields(
 					store[key] = val;
 				}
 
-				Object.set(unsafe, '$activeField', undefined);
+				// @ts-ignore (access)
+				unsafe['$activeField'] = undefined;
 			}
 
 		} else {
@@ -218,7 +220,8 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				Object.set(unsafe, '$activeField', key);
+				// @ts-ignore (access)
+				unsafe['$activeField'] = key;
 				fieldQueue.delete(key);
 
 				let
@@ -240,7 +243,8 @@ export function initFields(
 					store[key] = val;
 				}
 
-				Object.set(unsafe, '$activeField', undefined);
+				// @ts-ignore (access)
+				unsafe['$activeField'] = undefined;
 			}
 		}
 
@@ -301,7 +305,8 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				Object.set(unsafe, '$activeField', key);
+				// @ts-ignore (access)
+				unsafe['$activeField'] = key;
 				fieldQueue.delete(key);
 
 				let
@@ -323,7 +328,8 @@ export function initFields(
 					store[key] = val;
 				}
 
-				Object.set(unsafe, '$activeField', undefined);
+				// @ts-ignore (access)
+				unsafe['$activeField'] = undefined;
 			}
 		}
 

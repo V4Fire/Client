@@ -168,7 +168,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 							ctx = <ComponentInterface['unsafe']>vnode.context;
 
 						if (!isTemplateParent) {
-							Object.set(vnode, 'fakeInstance', ctx);
+							vnode['fakeInstance'] = ctx;
 						}
 
 						// Function that render a chunk of VNodes
@@ -254,7 +254,8 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 										}
 									}
 
-									Object.set(ctx, 'renderGroup', undefined);
+									// @ts-ignore (access)
+									ctx['renderGroup'] = undefined;
 									runHook('beforeUpdated', ctx, desc).catch(stderr);
 
 									resolveRefs(ctx);

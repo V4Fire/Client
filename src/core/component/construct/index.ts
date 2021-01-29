@@ -73,7 +73,8 @@ export function beforeCreateState(
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (parent != null && parent.componentName == null) {
-		Object.set(unsafe, '$parent', unsafe.$root.unsafe.$remoteParent);
+		// @ts-ignore (access)
+		unsafe['$parent'] = unsafe.$root.unsafe.$remoteParent;
 	}
 
 	Object.set(unsafe, '$normalParent', getNormalParent(component));

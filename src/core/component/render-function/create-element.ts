@@ -241,7 +241,8 @@ export function wrapCreateElement(
 			tasks.splice(0);
 		}
 
-		Object.set(vnode, 'context', ctx);
+		// @ts-ignore (access)
+		vnode.context = ctx;
 		return vnode;
 	};
 

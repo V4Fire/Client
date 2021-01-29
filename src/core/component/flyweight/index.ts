@@ -17,8 +17,6 @@ import Async from 'core/async';
 import { components } from 'core/component/const';
 import { supports, CreateElement, VNode } from 'core/component/engines';
 
-import * as init from 'core/component/construct';
-
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { destroyComponent, FlyweightVNode } from 'core/component/functional';

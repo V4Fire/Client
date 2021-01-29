@@ -144,7 +144,7 @@ export function implementComponentWatchAPI(
 						usedHandlers.add(handler);
 
 						if (timerId == null) {
-							timerId = globalThis['setImmediate'](() => {
+							timerId = setImmediate(() => {
 								timerId = undefined;
 								usedHandlers.clear();
 							});

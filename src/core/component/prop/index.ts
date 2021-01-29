@@ -61,7 +61,8 @@ export function initProps(
 			continue;
 		}
 
-		Object.set(unsafe, '$activeField', key);
+		// @ts-ignore (access)
+		unsafe['$activeField'] = key;
 
 		let
 			val = (from ?? component)[key];
@@ -107,7 +108,8 @@ export function initProps(
 		}
 	}
 
-	Object.set(unsafe, '$activeField', undefined);
+	// @ts-ignore (access)
+	unsafe['$activeField'] = undefined;
 	return store;
 }
 
