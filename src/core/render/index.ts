@@ -101,7 +101,13 @@ function run(): void {
 			};
 
 			if (Object.isPromise(canRender)) {
+				const now = Date.now();
 				await canRender.then(exec);
+
+				if (now - time > DELAY) {
+					time = now;
+					done += val.weight ?? 1;
+				}
 
 			} else {
 				exec(canRender);

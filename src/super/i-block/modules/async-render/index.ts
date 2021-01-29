@@ -247,7 +247,7 @@ export default class AsyncRender extends Friend {
 				chunkI = 0;
 
 			let
-				newArray = <unknown[]>[];
+				renderBuffer = <unknown[]>[];
 
 			const
 				{async: $a} = this;
@@ -285,8 +285,8 @@ export default class AsyncRender extends Friend {
 					}
 				}
 
-				const task = () => {
-					newArray.push(val);
+				const resolveTask = (filter?) => {
+					renderBuffer.push(val);
 
 					total++;
 					chunkTotal++;
@@ -297,7 +297,11 @@ export default class AsyncRender extends Friend {
 						chunkTotal >= perChunk ||
 						Object.isArray(iterable) && total >= iterable.length;
 
-					if (needRender) {
+					if (!needRender) {
+						return;
+					}
+
+					const task = () => {
 						const desc: TaskDesc = {
 							renderGroup: group
 						};
@@ -306,10 +310,10 @@ export default class AsyncRender extends Friend {
 							desc.destructor = () => $a.terminateWorker({group});
 						}
 
-						cb(newArray, desc, (els: Node[]) => {
+						cb(renderBuffer, desc, (els: Node[]) => {
 							chunkI++;
 							chunkTotal = 0;
-							newArray = [];
+							renderBuffer = [];
 
 							$a.worker(() => {
 								const destroyEl = (el) => {
@@ -331,67 +335,61 @@ export default class AsyncRender extends Friend {
 								}
 							}, {group});
 						});
-					}
-				};
-
-				if (filter != null) {
-					const filterParams = {
-						iterable,
-						i: syncI + i + 1,
-
-						get chunk(): number {
-							return chunkI;
-						},
-
-						get total(): number {
-							return total;
-						}
 					};
 
-					const
-						res = filter.call(this.ctx, val, i, filterParams);
+					return this.createTask(task, {group, weight, filter});
+				};
 
-					if (Object.isPromise(res)) {
-						try {
+				try {
+					if (filter != null) {
+						const filterParams = {
+							iterable,
+							i: syncI + i + 1,
+
+							get chunk(): number {
+								return chunkI;
+							},
+
+							get total(): number {
+								return total;
+							}
+						};
+
+						const
+							res = filter.call(this.ctx, val, i, filterParams);
+
+						if (Object.isPromise(res)) {
 							await $a.promise(res, {group}).then((res) => {
 								if (Object.isTruly(res)) {
-									return $a.animationFrame({group}).then(() => {
-										this.createTask(task, {group, weight});
-									});
+									return resolveTask();
 								}
 							});
 
-						} catch (err) {
-							if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
-								break;
-							}
+						} else {
+							const
+								res = resolveTask(filter.bind(this.ctx, val, i, filterParams));
 
-							stderr(err);
-							continue;
+							if (res != null) {
+								await res;
+							}
 						}
 
 					} else {
-						this.createTask(task, {
-							group,
-							weight,
-							filter: filter.bind(this.ctx, val, i, filterParams)
-						});
-					}
+						const
+							res = resolveTask();
 
-				} else {
-					try {
-						await $a.animationFrame({group}).then(() => {
-							this.createTask(task, {group, weight});
-						});
-
-					} catch (err) {
-						if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
-							break;
+						if (res != null) {
+							await res;
 						}
-
-						stderr(err);
-						continue;
 					}
+
+				} catch (err) {
+					if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+						break;
+					}
+
+					stderr(err);
+					continue;
 				}
 
 				i++;
@@ -407,46 +405,55 @@ export default class AsyncRender extends Friend {
 	 * @param taskFn
 	 * @param [params]
 	 */
-	protected createTask(taskFn: AnyFunction, params: TaskParams = {}): void {
+	protected createTask(taskFn: AnyFunction, params: TaskParams = {}): Promise<void> {
 		const
 			{async: $a} = this;
 
 		const
 			group = params.group ?? 'asyncComponents';
 
-		const task = {
-			weight: params.weight,
-			fn: $a.proxy(() => {
-				if (params.filter == null) {
-					return resolve(true);
-				}
+		return new Promise<void>((resolve, reject) => {
+			const task = {
+				weight: params.weight,
 
-				const
-					res = params.filter();
-
-				if (Object.isPromise(res)) {
-					return res.then(resolve);
-				}
-
-				return resolve(res);
-
-				function resolve(res: unknown): boolean {
-					if (Object.isTruly(res)) {
-						$a.requestAnimationFrame(taskFn, {group});
-						return true;
+				fn: $a.proxy(() => {
+					if (params.filter == null) {
+						return execTask(true);
 					}
 
-					return false;
-				}
+					const
+						res = params.filter();
 
-			}, {
-				group,
-				onClear: () => queue.delete(task),
-				single: false
-			})
-		};
+					if (Object.isPromise(res)) {
+						return res.then(execTask);
+					}
 
-		queue.add(task);
+					return execTask(res);
+
+					function execTask(res: unknown): CanPromise<boolean> {
+						if (Object.isTruly(res)) {
+							return $a.animationFrame({group}).then(() => {
+								taskFn();
+								resolve();
+								return true;
+							});
+						}
+
+						return false;
+					}
+
+				}, {
+					group,
+					single: false,
+					onClear: (err) => {
+						queue.delete(task);
+						reject(err);
+					}
+				})
+			};
+
+			queue.add(task);
+		});
 	}
 
 	//#endif
