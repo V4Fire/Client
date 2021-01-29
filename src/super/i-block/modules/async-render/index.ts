@@ -355,7 +355,9 @@ export default class AsyncRender extends Friend {
 						try {
 							await $a.promise(res, {group}).then((res) => {
 								if (Object.isTruly(res)) {
-									this.createTask(task, {group, weight});
+									return $a.animationFrame({group}).then(() => {
+										this.createTask(task, {group, weight});
+									});
 								}
 							});
 
@@ -377,7 +379,19 @@ export default class AsyncRender extends Friend {
 					}
 
 				} else {
-					this.createTask(task, {group, weight});
+					try {
+						await $a.animationFrame({group}).then(() => {
+							this.createTask(task, {group, weight});
+						});
+
+					} catch (err) {
+						if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+							break;
+						}
+
+						stderr(err);
+						continue;
+					}
 				}
 
 				i++;
