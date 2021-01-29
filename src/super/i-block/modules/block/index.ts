@@ -325,7 +325,7 @@ export default class Block extends Friend {
 
 		ctx.mods[name] = normalizedVal;
 
-		if (!ctx.isFunctional && !ctx.isFlyweight) {
+		if (!ctx.isNotRegular) {
 			const
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
@@ -403,7 +403,7 @@ export default class Block extends Friend {
 		if (needNotify) {
 			ctx.mods[name] = undefined;
 
-			if (!ctx.isFunctional && !ctx.isFlyweight) {
+			if (!ctx.isNotRegular) {
 				const
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
@@ -457,7 +457,7 @@ export default class Block extends Friend {
 			return mods[name.camelize(false)];
 		}
 
-		if (!node || !ctx.isFunctional && !ctx.isFlyweight) {
+		if (!node || !ctx.isNotRegular) {
 			return undefined;
 		}
 

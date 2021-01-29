@@ -20,7 +20,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new prop `verbose` `iBlock`
+* `iBlock`:
+  * Added a new prop `verbose`
+  * Added a new getter `isNotRegular`
 
 ## v3.0.0-rc.130 (2021-01-28)
 

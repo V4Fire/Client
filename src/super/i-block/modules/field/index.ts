@@ -253,7 +253,7 @@ export default class Field extends Friend {
 						}
 
 						const needSync =
-							(ctx.isFlyweight || ctx.isFunctional) &&
+							ctx.isNotRegular &&
 							unwrap(ref) === ref;
 
 						// If a component doesn't already initialize watchers of fields,

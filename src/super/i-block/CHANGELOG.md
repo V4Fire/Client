@@ -18,6 +18,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added a new prop `verbose`
+* Added a new getter `isNotRegular`
 
 ## v3.0.0-rc.127 (2021-01-26)
 

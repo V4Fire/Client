@@ -598,8 +598,7 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		const isShadowStatus =
-			this.isFunctional ||
-			this.isFlyweight ||
+			this.isNotRegular ||
 			(<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value] ||
 			value === 'ready' && oldValue === 'beforeReady';
 
@@ -707,11 +706,19 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * True if the current component is functional
+	 * True if the current component is a functional
 	 */
 	@computed({replace: false})
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
+	}
+
+	/**
+	 * True if the current component is a functional or flyweight
+	 */
+	@computed({replace: false})
+	get isNotRegular(): boolean {
+		return Boolean(this.isFunctional || this.isFlyweight);
 	}
 
 	/**
@@ -1990,7 +1997,7 @@ export default abstract class iBlock extends ComponentInterface {
 				this.state.initFromStorage() || []
 			);
 
-			if (this.isFunctional || this.isFlyweight || this.dontWaitRemoteProviders) {
+			if (this.isNotRegular || this.dontWaitRemoteProviders) {
 				if (tasks.length > 0) {
 					return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
 				}
@@ -2372,7 +2379,7 @@ export default abstract class iBlock extends ComponentInterface {
 		let
 			that = <iBlock>this;
 
-		if (this.isFlyweight || this.isFunctional) {
+		if (this.isNotRegular) {
 			ref += `:${this.componentId}`;
 			that = this.$normalParent ?? that;
 		}
