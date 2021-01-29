@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.132 (2021-01-29)
+
+#### :rocket: New Feature
+
+* Now function and flyweight components support `asyncRender`
+
 ## v3.0.0-rc.131 (2021-01-29)
 
 #### :boom: Breaking Change

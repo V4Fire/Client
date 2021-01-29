@@ -830,7 +830,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		functional: false,
 		init: (ctx) => new AsyncRender(ctx)
 	})
 

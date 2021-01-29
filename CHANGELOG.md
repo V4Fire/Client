@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.132 (2021-01-29)
+
+#### :rocket: New Feature
+
+* Now function and flyweight components support `asyncRender` `iBlock`
+
 ## v3.0.0-rc.131 (2021-01-29)
 
 #### :boom: Breaking Change
