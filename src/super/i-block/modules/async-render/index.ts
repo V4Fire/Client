@@ -394,9 +394,15 @@ export default class AsyncRender extends Friend {
 	 * @param [params]
 	 */
 	protected createTask(taskFn: AnyFunction, params: TaskParams = {}): void {
+		const
+			{async: $a} = this;
+
+		const
+			group = params.group ?? 'asyncComponents';
+
 		const task = {
 			weight: params.weight,
-			fn: this.async.proxy(() => {
+			fn: $a.proxy(() => {
 				if (params.filter == null) {
 					return resolve(true);
 				}
@@ -412,7 +418,7 @@ export default class AsyncRender extends Friend {
 
 				function resolve(res: unknown): boolean {
 					if (Object.isTruly(res)) {
-						taskFn();
+						$a.requestAnimationFrame(taskFn, {group});
 						return true;
 					}
 
@@ -420,7 +426,7 @@ export default class AsyncRender extends Friend {
 				}
 
 			}, {
-				group: params.group ?? 'asyncComponents',
+				group,
 				onClear: () => queue.delete(task),
 				single: false
 			})

@@ -24,6 +24,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added a new prop `verbose`
   * Added a new getter `isNotRegular`
 
+#### :house: Internal
+
+* Now using `requestIdleCallback` instead of `setTimeout` `core/render`
+* Now all tasks will execute on `requestAnimationFrame` `super/modules/async-render`
+
 ## v3.0.0-rc.130 (2021-01-28)
 
 #### :bug: Bug Fix

@@ -76,7 +76,7 @@ function run(): void {
 				val = el.value;
 
 			if (done <= 0 || Date.now() - time > DELAY) {
-				await daemon.sleep(DELAY);
+				await daemon.idle({timeout: DELAY});
 				time = Date.now();
 
 				// eslint-disable-next-line require-atomic-updates
@@ -134,7 +134,7 @@ function canProcessing(): boolean {
 
 function runOnNextTick(): boolean {
 	if (canProcessing()) {
-		daemon.setTimeout(run, DELAY);
+		daemon.requestIdleCallback(run, {timeout: DELAY});
 		return true;
 	}
 
