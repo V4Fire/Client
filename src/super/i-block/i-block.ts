@@ -597,10 +597,13 @@ export default abstract class iBlock extends ComponentInterface {
 			return;
 		}
 
-		const
-			isShadowStatus = (<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
+		const isShadowStatus =
+			this.isFunctional ||
+			this.isFlyweight ||
+			(<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value] ||
+			value === 'ready' && oldValue === 'beforeReady';
 
-		if (isShadowStatus || value === 'ready' && oldValue === 'beforeReady') {
+		if (isShadowStatus) {
 			this.shadowComponentStatusStore = value;
 
 		} else {
