@@ -26,7 +26,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Now using `requestIdleCallback` instead of `setTimeout` `core/render`
+* Now using `requestIdleCallback` instead of `setTimeout`:
+  * `core/render`
+  * `core/dom/resize-observer`
+  * `core/component/register`
+
 * Now all tasks will execute on `requestAnimationFrame` `super/modules/async-render`
 
 ## v3.0.0-rc.130 (2021-01-28)

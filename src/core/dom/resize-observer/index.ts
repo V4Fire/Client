@@ -291,7 +291,14 @@ export default class ResizeWatcher {
 
 			} else {
 				const $a = observable.ctx?.unsafe.async ?? this.async;
-				$a.setTimeout(cb, 50, {group: RESIZE_WATCHER_ASYNC_GROUP, label: observable.id, join: false});
+
+				// @ts-ignore (???)
+				$a.requestIdleCallback(cb, {
+					timeout: 50,
+					group: RESIZE_WATCHER_ASYNC_GROUP,
+					label: observable.id,
+					join: false
+				});
 			}
 		}
 

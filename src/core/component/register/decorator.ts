@@ -176,7 +176,7 @@ export function component(opts?: ComponentOptions): Function {
 							setImmediate(f);
 
 						} else {
-							setTimeout(f, 100);
+							requestIdleCallback(f, {timeout: 100});
 						}
 					};
 
