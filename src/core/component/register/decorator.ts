@@ -148,9 +148,6 @@ export function component(opts?: ComponentOptions): Function {
 						return addRenderAndResolve(defTpls.block);
 					}
 
-					let
-						i = 0;
-
 					// Dirty check of a component template loading status
 					const f = () => {
 						const
@@ -168,16 +165,7 @@ export function component(opts?: ComponentOptions): Function {
 							return promiseCb;
 						}
 
-						// First 15 times we use "fast" setImmediate strategy,
-						// but after, we start to throttle
-						if (i < 15) {
-							i++;
-
-							setImmediate(f);
-
-						} else {
-							requestIdleCallback(f, {timeout: 100});
-						}
+						requestIdleCallback(f, {timeout: 50});
 					};
 
 					return f();
