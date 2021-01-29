@@ -11,8 +11,6 @@
  * @packageDocumentation
  */
 
-import log from 'core/log';
-
 import SyncPromise from 'core/promise/sync';
 import QueueEmitter from 'core/component/queue-emitter';
 
