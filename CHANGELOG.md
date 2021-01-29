@@ -13,6 +13,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.131 (2021-01-29)
 
+#### :boom: Breaking Change
+
+* Don't emit global component events during initializing `super/i-block/modules/block`
+* Removed the `componentStatus` modifier `iBlock`
+
 #### :rocket: New Feature
 
 * Added a new prop `verbose` `iBlock`

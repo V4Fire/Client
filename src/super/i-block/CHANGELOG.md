@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.131 (2021-01-29)
 
+#### :boom: Breaking Change
+
+* Removed the `componentStatus` modifier
+
 #### :rocket: New Feature
 
 * Added a new prop `verbose`

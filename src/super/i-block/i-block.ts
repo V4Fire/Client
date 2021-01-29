@@ -608,8 +608,6 @@ export default abstract class iBlock extends ComponentInterface {
 			this.field.set('componentStatusStore', value);
 		}
 
-		void this.setMod('component-status', value);
-
 		// @deprecated
 		this.emit(`status-${value}`, value);
 		this.emit(`componentStatus:${value}`, value, oldValue);
@@ -914,15 +912,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[iBlock.modsProp]]
 	 */
 	static readonly mods: ModsDecl = {
-		componentStatus: [
-			['unloaded'],
-			'loading',
-			'beforeReady',
-			'ready',
-			'inactive',
-			'destroyed'
-		],
-
 		diff: [
 			'true',
 			'false'
@@ -2511,7 +2500,6 @@ export default abstract class iBlock extends ComponentInterface {
 	protected onCreatedHook(): void {
 		if (this.isFlyweight) {
 			this.componentStatusStore = 'ready';
-			this.mods.componentStatus = 'ready';
 			this.isReadyOnce = true;
 		}
 	}

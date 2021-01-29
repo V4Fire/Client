@@ -349,9 +349,11 @@ export default class Block extends Friend {
 			this.localEmitter
 				.emit(`block.mod.set.${name}.${normalizedVal}`, event);
 
-			// @deprecated
-			ctx.emit(`mod-set-${name}-${normalizedVal}`, event);
-			ctx.emit(`mod:set:${name}:${normalizedVal}`, event);
+			if (!isInit) {
+				// @deprecated
+				ctx.emit(`mod-set-${name}-${normalizedVal}`, event);
+				ctx.emit(`mod:set:${name}:${normalizedVal}`, event);
+			}
 		}
 
 		return true;
