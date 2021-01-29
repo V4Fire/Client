@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.131 (2021-01-29)
+
+#### :rocket: New Feature
+
+* Added a new prop `verbose`
+
 ## v3.0.0-rc.127 (2021-01-26)
 
 #### :bug: Bug Fix

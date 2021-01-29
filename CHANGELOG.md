@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.131 (2021-01-29)
+
+#### :rocket: New Feature
+
+* Added a new prop `verbose` `iBlock`
+
 ## v3.0.0-rc.130 (2021-01-28)
 
 #### :bug: Bug Fix

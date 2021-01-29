@@ -191,6 +191,12 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly $root!: this['Root'];
 
 	/**
+	 * If true, then the component will log info messages, but not only errors and warnings
+	 */
+	@prop(Boolean)
+	readonly verbose: boolean = false;
+
+	/**
 	 * Component unique identifier
 	 */
 	@system({
@@ -2242,6 +2248,10 @@ export default abstract class iBlock extends ComponentInterface {
 		if (!Object.isString(ctxOrOpts)) {
 			logLevel = ctxOrOpts.logLevel;
 			context = ctxOrOpts.context;
+		}
+
+		if (!this.verbose && (logLevel == null || logLevel === 'info')) {
+			return;
 		}
 
 		log(
