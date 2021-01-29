@@ -65,14 +65,6 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		return resolvedPromise;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/unbound-method
-	if (Object.isFunction(component.log)) {
-		component.log(`hook:${hook}`, ...args);
-
-	} else {
-		log(`component:hook:${meta.componentName}:${hook}`, ...args, component);
-	}
-
 	if (hooks.length > 1) {
 		const
 			emitter = new QueueEmitter(),
