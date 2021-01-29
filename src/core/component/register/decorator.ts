@@ -105,11 +105,6 @@ export function component(opts?: ComponentOptions): Function {
 				return promiseCb;
 
 				function promiseCb(resolve: Function) {
-					const success = () => {
-						log(`component:load:${componentInfo.name}`, component);
-						return resolve(component);
-					};
-
 					const
 						{methods, methods: {render}} = meta;
 
@@ -134,14 +129,14 @@ export function component(opts?: ComponentOptions): Function {
 						meta.component.staticRenderFns = staticRenderFns;
 						methods.render = renderObj;
 
-						return success();
+						return resolve(component);
 					};
 
 					// In this case, we don't automatically attaches a render function
 					if (componentInfo.params.tpl === false) {
 						// We have a custom render function
 						if (render && !render.wrapper) {
-							return success();
+							return resolve(component);
 						}
 
 						// Loopback render function
@@ -155,7 +150,7 @@ export function component(opts?: ComponentOptions): Function {
 
 						if (fns) {
 							if (render && !render.wrapper) {
-								return success();
+								return resolve(component);
 							}
 
 							return addRenderAndResolve(fns);
