@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.133 (2021-01-30)
+
+#### :rocket: New Feature
+
+* Added a link to the global root instance `core/component/const`
+
+#### :house: Internal
+
+* Optimized creation of components
+
 ## v3.0.0-rc.132 (2021-01-29)
 
 #### :rocket: New Feature
