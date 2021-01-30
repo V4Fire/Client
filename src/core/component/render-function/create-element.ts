@@ -31,7 +31,7 @@ import {
 
 } from 'core/component/engines';
 
-import { ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
+import { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -144,19 +144,31 @@ export function wrapCreateElement(
 				node = createElement('span', {...opts, tag: undefined}, children),
 				renderCtx = getComponentRenderCtxFromVNode(component, node, ctx);
 
-			const baseCtx = c.renderCtxCache[componentName] ?? Object.assign(Object.create(minimalCtx), {
-				componentName,
-				meta: component,
-				instance: component.instance,
-				$options: {}
-			});
+			let
+				baseCtx = <CanUndef<FunctionalCtx>>c.renderCtxCache[componentName];
+
+			if (baseCtx == null) {
+				baseCtx = Object.create(minimalCtx);
+
+				// @ts-ignore (access)
+				baseCtx.componentName = componentName;
+
+				// @ts-ignore (access)
+				baseCtx.meta = component;
+
+				// @ts-ignore (access)
+				baseCtx.instance = component.instance;
+
+				// @ts-ignore (access)
+				baseCtx.$options = {};
+			}
 
 			c.renderCtxCache[componentName] = baseCtx;
 
 			const fakeCtx = createFakeCtx<ComponentInterface>(
 				<CreateElement>wrappedCreateElement,
 				renderCtx,
-				baseCtx,
+				baseCtx!,
 				{initProps: true}
 			);
 

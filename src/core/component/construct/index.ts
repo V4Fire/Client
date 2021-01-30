@@ -51,19 +51,35 @@ export function beforeCreateState(
 ): void {
 	meta = forkMeta(meta);
 
-	Object.assign(component, {
-		meta,
-		unsafe: component,
-		componentName: meta.componentName,
-		instance: meta.instance,
+	// @ts-ignore (access)
+	component.unsafe = component;
 
-		$fields: {},
-		$systemFields: {},
-		$refHandlers: {},
-		$modifiedFields: {},
-		$async: new Async(component),
-		$asyncLabel: asyncLabel
-	});
+	// @ts-ignore (access)
+	component.meta = meta;
+
+	// @ts-ignore (access)
+	component['componentName'] = meta.componentName;
+
+	// @ts-ignore (access)
+	component['instance'] = meta.instance;
+
+	// @ts-ignore (access)
+	component.$fields = {};
+
+	// @ts-ignore (access)
+	component.$systemFields = {};
+
+	// @ts-ignore (access)
+	component.$refHandlers = {};
+
+	// @ts-ignore (access)
+	component.$modifiedFields = {};
+
+	// @ts-ignore (access)
+	component.$async = new Async(component);
+
+	// @ts-ignore (access)
+	component.$asyncLabel = asyncLabel;
 
 	const
 		{unsafe, unsafe: {$parent: parent}} = component;
@@ -77,7 +93,8 @@ export function beforeCreateState(
 		unsafe['$parent'] = unsafe.$root.unsafe.$remoteParent;
 	}
 
-	Object.set(unsafe, '$normalParent', getNormalParent(component));
+	// @ts-ignore (access)
+	unsafe['$normalParent'] = getNormalParent(component);
 
 	if (opts?.addMethods) {
 		attachMethodsFromMeta(component);

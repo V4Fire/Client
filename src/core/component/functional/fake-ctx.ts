@@ -83,63 +83,56 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		Object.assign($options.components, o.components);
 	}
 
-	// Add base methods and properties
-	Object.assign(fakeCtx, {
-		_self: fakeCtx,
-		_renderProxy: fakeCtx,
-		_staticTrees: [],
+	fakeCtx._self = fakeCtx;
+	fakeCtx._renderProxy = fakeCtx;
+	fakeCtx._staticTrees = [];
 
-		unsafe: fakeCtx,
-		children: Object.isArray(children) ? children : [],
+	fakeCtx.unsafe = fakeCtx;
+	fakeCtx.children = Object.isArray(children) ? children : [];
 
-		$createElement: createElement.bind(fakeCtx),
+	fakeCtx.$parent = parent;
+	fakeCtx.$root = renderCtx.$root ?? parent?.$root;
 
-		$parent: parent,
-		$root: renderCtx.$root ?? parent?.$root,
+	fakeCtx.$options = $options;
+	fakeCtx.$props = renderCtx.props ?? {};
+	fakeCtx.$attrs = dataOpts?.attrs ?? {};
+	fakeCtx.$listeners = renderCtx.listeners ?? dataOpts?.on ?? {};
+	fakeCtx.$refs = {};
 
-		$options,
-		$props: renderCtx.props ?? {},
-		$attrs: dataOpts?.attrs ?? {},
-		$listeners: renderCtx.listeners ?? dataOpts?.on ?? {},
+	fakeCtx.$slots = {
+		default: Object.size(children) > 0 ? children : undefined,
+		...renderCtx.slots?.()
+	};
 
-		$refs: {},
+	fakeCtx.$scopedSlots = {
+		...Object.isFunction(renderCtx.scopedSlots) ? renderCtx.scopedSlots() : renderCtx.scopedSlots
+	};
 
-		$slots: {
-			default: Object.size(children) > 0 ? children : undefined,
-			...renderCtx.slots?.()
-		},
+	fakeCtx.$createElement = createElement.bind(fakeCtx);
+	fakeCtx.$destroy = () => destroyComponent(fakeCtx);
 
-		$scopedSlots: {
-			...Object.isFunction(renderCtx.scopedSlots) ? renderCtx.scopedSlots() : renderCtx.scopedSlots
-		},
+	fakeCtx.$nextTick = (cb?: Function) => {
+		const
+			{$async: $a} = fakeCtx;
 
-		$destroy(): void {
-			destroyComponent(this);
-		},
-
-		$nextTick(cb?: () => void): Promise<void> | void {
-			const
-				{$async: $a} = this;
-
-			if (cb) {
-				$a.setImmediate(cb);
-				return;
-			}
-
-			return $a.nextTick();
-		},
-
-		$forceUpdate(): void {
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			if (!Object.isFunction(parent?.$forceUpdate)) {
-				return;
-			}
-
-			this.$async.setImmediate(() => parent!.$forceUpdate(), {
-				label: $$.forceUpdate
-			});
+		if (cb) {
+			$a.setImmediate(cb);
+			return;
 		}
-	});
+
+		return $a.nextTick();
+	};
+
+	fakeCtx.$forceUpdate = () => {
+		// eslint-disable-next-line @typescript-eslint/unbound-method
+		if (!Object.isFunction(parent?.$forceUpdate)) {
+			return;
+		}
+
+		fakeCtx.$async.setImmediate(() => parent!.$forceUpdate(), {
+			label: $$.forceUpdate
+		});
+	};
 
 	if (fakeCtx.$root == null) {
 		fakeCtx.$root = fakeCtx;

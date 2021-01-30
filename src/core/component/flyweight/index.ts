@@ -75,28 +75,26 @@ export function parseVNodeAsFlyweight(
 	// The context is based on the specified parent context by using `Object.create`.
 	// Also, we need to shim some component hooks.
 
-	const fakeCtx = Object.assign(Object.create(parentComponent), {
-		isFlyweight: true,
-
-		componentName: meta.componentName,
-		meta,
-
-		hook: 'beforeDataCreate',
-		instance: meta.instance,
-
-		$destroy(): void {
-			destroyComponent(this);
-		}
-	});
-
-	fakeCtx.unsafe = fakeCtx;
-	fakeCtx.$createElement = createElement.bind(fakeCtx);
-	fakeCtx.$async = new Async(fakeCtx);
+	const
+		fakeCtx = Object.create(parentComponent);
 
 	fakeCtx._self = fakeCtx;
 	fakeCtx._renderProxy = fakeCtx;
 	fakeCtx._c = fakeCtx.$createElement;
 	fakeCtx._staticTrees = [];
+
+	fakeCtx.isFlyweight = true;
+	fakeCtx.hook = 'beforeDataCreate';
+
+	fakeCtx.meta = meta;
+	fakeCtx.componentName = meta.componentName;
+	fakeCtx.instance = meta.instance;
+
+	fakeCtx.unsafe = fakeCtx;
+	fakeCtx.$async = new Async(fakeCtx);
+
+	fakeCtx.$createElement = createElement.bind(fakeCtx);
+	fakeCtx.$destroy = () => destroyComponent(fakeCtx);
 
 	Object.defineProperty(fakeCtx, '$el', {
 		configurable: true,
