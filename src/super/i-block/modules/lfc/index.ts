@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
+
 import { AsyncOptions } from 'core/async';
 import Friend from 'super/i-block/modules/friend';
 
@@ -53,7 +55,7 @@ export default class Lfc extends Friend {
 	 */
 	execCbAtTheRightTime<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
-			return this.async.promise(new Promise<R>((r) => {
+			return this.async.promise(new SyncPromise<R>((r) => {
 				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this.component))});
 			}), opts).catch(stderr);
 		}
@@ -89,7 +91,7 @@ export default class Lfc extends Friend {
 			return;
 		}
 
-		return this.async.promise(new Promise<any>((r) => {
+		return this.async.promise(new SyncPromise<any>((r) => {
 			this.ctx.blockReadyListeners.push(() => r(cb.call(this.component)));
 		}), opts).catch(stderr);
 	}
@@ -102,7 +104,7 @@ export default class Lfc extends Friend {
 	 */
 	execCbAfterComponentCreated<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate()) {
-			return this.async.promise(new Promise<R>((r) => {
+			return this.async.promise(new SyncPromise<R>((r) => {
 				this.meta.hooks.created.unshift({fn: () => r(cb.call(this.component))});
 			}), opts).catch(stderr);
 		}

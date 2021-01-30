@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
+
 //#if runtime has component/async-render
 import { queue, restart, deferRestart } from 'core/render';
 //#endif
@@ -412,7 +414,7 @@ export default class AsyncRender extends Friend {
 		const
 			group = params.group ?? 'asyncComponents';
 
-		return new Promise<void>((resolve, reject) => {
+		return new SyncPromise<void>((resolve, reject) => {
 			const task = {
 				weight: params.weight,
 
