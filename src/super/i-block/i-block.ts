@@ -2001,7 +2001,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 			if (this.isNotRegular || this.dontWaitRemoteProviders) {
 				if (tasks.length > 0) {
-					return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
+					return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 				}
 
 				done();
@@ -2060,7 +2060,7 @@ export default abstract class iBlock extends ComponentInterface {
 					}
 				}
 
-				return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
+				return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 			}));
 
 		} catch (err) {
