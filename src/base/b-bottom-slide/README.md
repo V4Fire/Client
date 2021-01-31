@@ -67,7 +67,8 @@ To do this provide a `steps` prop.
 < b-bottom-slide :steps = [50]
 ```
 
-In this example, when a component is opened, it will first open at 50%, and only after user action or calling special methods, the component will open or close completely.
+In this example, when a component is opened, it first opens at 50% of its own size,
+and only after user action or calling special methods, the component is opened or closed completely.
 
 ### Lazy rendering
 
@@ -83,7 +84,7 @@ This can be done using the `forceInnerRender` prop. You need to set `forceInnerR
 ### Singleton
 
 It is also good practice to use components such as [singleton](https://en.wikipedia.org/wiki/Singleton_pattern).
-This approach implementation remains entirely on the clients of this component, but we will consider one option.
+This approach implementation remains entirely on the clients of this component, but we will consider few options.
 
 First of all, let's create a wrapper component that will contain `b-bottom-slide` and provide methods for opening and closing `b-bottom-slide`.
 
@@ -135,7 +136,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
     modal: bModal;
   };
 
-  get modal() {
+  get modal(): bModal {
     return this.$refs.modal;
   }
 }

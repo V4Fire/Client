@@ -17,7 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added documentation:
   * `b-slider`
-  * `b-bottom-sticky`
+  * `b-bottom-slide`
   * `i-observe-dom`
 
 ## v3.0.0-rc.134 (2021-01-30)
