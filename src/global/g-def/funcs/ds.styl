@@ -21,18 +21,46 @@ c($kit, $id = null, $reserved = false, $base = false)
 	getGlobalColor($kit, $id || null, $reserved, $base)
 
 /**
- * Returns a background rule from Design System styles by the specified name and parameters
+ * Returns a set of rules by the specified icon name
  *
  * @param {string} $name
- * @param {string=} [$repeat]
- * @param {string=} [$align]
+ * @param {object|ident=} [$params] - transform parameters object or a background repeating rule
+ * @param {object|ident=} [$opts] - background options object or background alignment rule
+ *
+ * @see https://github.com/JetBrains/svg-mixer/tree/master/packages/svg-transform-loader#how-to-pass-transform-parameters
+ *
+ * @example
+ * ```stylus
+ * i('24/foo')
+ * i('24/foo', repeat-x, left)
+ * i('24/foo', {fill: '#FFF'})
+ * i('24/foo', {stroke: 'black #qwe'}, left)
+ * ```
  */
-i($name, $repeat = no-repeat, $align = center)
-	background img(join(".", $name svg), true) $repeat $align
+i($name, $params, $opts)
+	$repeat = no-repeat
+	$align = center
+
+	if type($opts) == "object"
+		$repeat = $opts.repeat || no-repeat
+		$align = $opts.align || center
+
+	else if type($opts) == "ident"
+		$align = $opts
+
+	$imgPath = join(".", $name svg)
+
+	if type($params) == "object"
+		$imgPath = formatURL({query: $params, pathname: $imgPath})
+
+	else if type($params) == "ident"
+		$repeat = $params
+
+	background img($imgPath, true) $repeat $align
 
 	$chunks = split("/", $name)
 
-	if length($chunks) > 1 and typeof(convert($chunks[0])) == "unit"
+	if length($chunks) > 1 and type(convert($chunks[0])) == "unit"
 		size unit(convert($chunks[0]), "px")
 
 /**

@@ -389,11 +389,14 @@ module.exports = async function module({plugins}) {
 	});
 
 	loaders.rules.set('img.svg', {
-		test: /\.svg$/,
+		test: /\.svg(\?.*)?$/,
 		use: [
 			{
 				loader: 'svg-url-loader',
 				options: urlLoaderOpts
+			},
+			{
+				loader: 'svg-transform-loader'
 			}
 		].concat(
 			isProd ?

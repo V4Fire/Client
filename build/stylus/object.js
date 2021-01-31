@@ -23,7 +23,8 @@ module.exports = function addPlugins(api) {
 };
 
 Object.assign(module.exports, {
-	getField
+	getField,
+	parseObject
 });
 
 function getField(obj, path) {
@@ -53,5 +54,55 @@ function getField(obj, path) {
 
 	if (value) {
 		return chunks.length === 0 ? value : getField(value, chunks.join('.'));
+	}
+}
+
+/**
+ * Attempt to parse object node to the javascript object.
+ *
+ * @param {Object} obj
+ * @return {Object}
+ * @api private
+ */
+function parseObject(obj) {
+	obj = obj.vals;
+
+	for (const key in obj) {
+		const
+			{nodes} = obj[key].nodes[0];
+
+		if (nodes && nodes.length) {
+			if (nodes.length > 1) {
+				obj[key] = [];
+
+				for (let i = 0, len = nodes.length; i < len; ++i) {
+					obj[key].push(convert(nodes[i]));
+				}
+
+			} else {
+				obj[key] = convert(nodes[0]);
+			}
+
+		} else {
+			obj[key] = convert(obj[key].first);
+		}
+	}
+
+	return obj;
+
+	function convert(node) {
+		switch (node.nodeName) {
+			case 'object':
+				return parseObject(node);
+			case 'boolean':
+				return node.isTrue;
+			case 'unit':
+				return node.type ? node.toString() : +node.val;
+			case 'string':
+			case 'literal':
+				return node.val;
+			default:
+				return node.toString();
+		}
 	}
 }
