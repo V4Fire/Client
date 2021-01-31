@@ -67,23 +67,29 @@ function parseObject(obj) {
 	obj = obj.vals;
 
 	for (const key in obj) {
-		const
-			{nodes} = obj[key].nodes[0];
+		if (obj.hasOwnProperty(key)) {
+			const
+				{nodes} = obj[key].nodes[0];
 
-		if (nodes && nodes.length) {
-			if (nodes.length > 1) {
-				obj[key] = [];
+			if (nodes && nodes.length) {
+				if (
+					nodes.length === 1 &&
+					(nodes[0].keys || nodes[0].nodeName !== 'expression')
+				) {
+					obj[key] = convert(nodes[0]);
 
-				for (let i = 0, len = nodes.length; i < len; ++i) {
-					obj[key].push(convert(nodes[i]));
+				} else {
+					console.log(777, key, nodes);
+					obj[key] = [];
+
+					for (let i = 0, len = nodes.length; i < len; ++i) {
+						obj[key].push(convert(nodes[i]));
+					}
 				}
 
 			} else {
-				obj[key] = convert(nodes[0]);
+				obj[key] = convert(obj[key].first);
 			}
-
-		} else {
-			obj[key] = convert(obj[key].first);
 		}
 	}
 
