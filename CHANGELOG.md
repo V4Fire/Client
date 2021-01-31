@@ -11,6 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.135 (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation:
+  * `b-slider`
+  * `b-bottom-sticky`
+  * `i-observe-dom`
+
 ## v3.0.0-rc.134 (2021-01-30)
 
 #### :house: Internal
@@ -177,6 +186,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed `bMatryoshka`. Use `bTree` instead.
 * Trait refactoring. Using `item` instead of `option`. `traits/i-items`
+* Refactoring for the updated `iItems` API `b-slider`
 
 #### :rocket: New Feature
 
