@@ -40,6 +40,7 @@ c($kit, $id = null, $reserved = false, $base = false)
 i($name, $params, $opts)
 	$repeat = no-repeat
 	$align = center
+	$imgPath = join(".", $name svg)
 
 	if type($opts) == "object"
 		$repeat = $opts.repeat || no-repeat
@@ -47,8 +48,6 @@ i($name, $params, $opts)
 
 	else if type($opts) == "ident"
 		$align = $opts
-
-	$imgPath = join(".", $name svg)
 
 	if type($params) == "object"
 		$imgPath = formatURL({query: $params, pathname: $imgPath})
