@@ -58,11 +58,10 @@ function getField(obj, path) {
 }
 
 /**
- * Attempt to parse object node to the javascript object.
+ * Attempt to parse an object node to the javascript object.
  *
  * @param {Object} obj
- * @return {Object}
- * @api private
+ * @returns {Object}
  */
 function parseObject(obj) {
 	obj = obj.vals;
@@ -97,7 +96,7 @@ function parseObject(obj) {
 			case 'boolean':
 				return node.isTrue;
 			case 'unit':
-				return node.type ? node.toString() : +node.val;
+				return node.type ? node.toString() : Number(node.val);
 			case 'string':
 			case 'literal':
 				return node.val;
