@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.135 (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with update without ctx provided
+
 ## v3.0.0-rc.89 (2020-10-20)
 
 #### :bug: Bug Fix

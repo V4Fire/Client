@@ -321,13 +321,13 @@ export default class ImageLoader {
 			return;
 		}
 
-		const {async} = el[SHADOW_MAIN].mainOptions.ctx.unsafe;
+		const async = (<ShadowElState>el[SHADOW_MAIN]).mainOptions.ctx?.unsafe.async;
 
 		for (let i = 0, shadows = [SHADOW_PREVIEW, SHADOW_MAIN, SHADOW_BROKEN]; i < shadows.length; i++) {
 			const shadow = shadows[i];
 
 			if (el[shadow] != null) {
-				el[shadow]?.loadPromise != null && async.clearPromise(el[shadow].loadPromise);
+				el[shadow]?.loadPromise != null && async?.clearPromise(el[shadow].loadPromise);
 				delete el[shadow];
 			}
 		}
