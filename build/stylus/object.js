@@ -93,13 +93,17 @@ function parseObject(obj) {
 		switch (node.nodeName) {
 			case 'object':
 				return parseObject(node);
+
 			case 'boolean':
 				return node.isTrue;
+
 			case 'unit':
 				return node.type ? node.toString() : Number(node.val);
+
 			case 'string':
 			case 'literal':
 				return node.val;
+
 			default:
 				return node.toString();
 		}
