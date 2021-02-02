@@ -181,7 +181,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Enables the special kind of the demo page (pages/p-v4-components-demo) to build with
+		 * A name of the component to build demo examples or tests
+		 */
+		demoPage: o('demo-page', {
+			env: true,
+			default: 'p-v4-components-demo'
+		}),
+
+		/**
+		 * Enables the special kind of a demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *
 		 * The inspection mode allows us to see all component modifiers/props and dynamically change it.
@@ -212,7 +220,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @type {string}
 		 */
 		suit: o('suit', {
-			env: true
+			env: true,
+			default: 'demo'
 		})
 	},
 

@@ -16,7 +16,7 @@ const
 	arg = require('arg');
 
 const
-	{src} = require('config'),
+	{build, src} = require('config'),
 	{resolve} = require('@pzlr/build-core'),
 	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs, getTestClientName} = include('build/helpers');
 
@@ -68,8 +68,13 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```
 	 */
 	gulp.task('test:component:build', () => {
+		const args = arg({
+			'--suit': String,
+			'--client-name': String,
+			'--runtime-render': String
+		}, {permissive: true});
+
 		const
-			args = arg({'--suit': String, '--client-name': String, '--runtime-render': String}, {permissive: true}),
 			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
 
 		try {
@@ -196,7 +201,7 @@ module.exports = function init(gulp = require('gulp')) {
 		args['--port'] = args['--port'] || await portfinder.getPortPromise();
 
 		// eslint-disable-next-line require-atomic-updates
-		args['--page'] = args['--page'] || 'p-v4-components-demo';
+		args['--page'] = args['--page'] || build.demoPage;
 
 		const
 			fileServer = new nodeStatic.Server(src.output(args['--client-name']));
@@ -440,7 +445,8 @@ module.exports = function init(gulp = require('gulp')) {
 			buildMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
-			let c = cases[i];
+			let
+				c = cases[i];
 
 			if (!c.includes('--name')) {
 				c = `${c} --runtime-render true`;
@@ -451,8 +457,7 @@ module.exports = function init(gulp = require('gulp')) {
 				'--name': String
 			}, {argv: c.split(' '), permissive: true});
 
-			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
+			args['--client-name'] = getTestClientName(args['--name'], build.suit);
 
 			if (buildCache[args['--client-name']]) {
 				continue;
@@ -514,7 +519,8 @@ module.exports = function init(gulp = require('gulp')) {
 			testMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
-			let c = cases[i];
+			let
+				c = cases[i];
 
 			if (!c.includes('--name')) {
 				c = `${c} --runtime-render true`;
@@ -525,8 +531,7 @@ module.exports = function init(gulp = require('gulp')) {
 				'--name': String
 			}, {argv: c.split(' '), permissive: true});
 
-			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
+			args['--client-name'] = getTestClientName(args['--name'], build.suit);
 
 			const
 				browserArgs = cliParams.browserArgs.join(','),

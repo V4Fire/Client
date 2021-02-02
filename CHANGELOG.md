@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added logging of dependencies `build/test.gulp`
+* Added a new parameter `build.demoPage` `config`
 
 #### :bug: Bug Fix
 

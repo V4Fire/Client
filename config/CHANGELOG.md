@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :rocket: New Feature
+
+* Added a new parameter `build.demoPage`
+
 ## v3.0.0-rc.115 (2020-12-23)
 
 #### :rocket: New Feature
