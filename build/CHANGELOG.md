@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.136 (2021-02-02)
 
+#### :rocket: New Feature
+
+* Added logging of dependencies
+
 #### :bug: Bug Fix
 
 * Fixed inlining with `fatHTML`

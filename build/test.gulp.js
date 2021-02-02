@@ -132,6 +132,9 @@ module.exports = function init(gulp = require('gulp')) {
 	 */
 	gulp.task('test:component:run', async () => {
 		const
+			pzlr = require('@pzlr/build-core');
+
+		const
 			process = require('process'),
 			portfinder = require('portfinder');
 
@@ -248,6 +251,11 @@ module.exports = function init(gulp = require('gulp')) {
 
 			console.log('\n-------------');
 			console.log('Starting to test');
+
+			pzlr.config.dependencies.forEach((dep) => {
+				console.log(`${dep} version: ${require(`${dep}/package.json`).version}`);
+			});
+
 			console.log(`env component: ${args['--name']}`);
 			console.log(`test entry: ${args['--test-entry']}`);
 			console.log(`runner: ${args['--runner']}`);

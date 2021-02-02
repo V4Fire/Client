@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.136 (2021-02-02)
 
+#### :rocket: New Feature
+
+* Added logging of dependencies `build/test.gulp`
+
 #### :bug: Bug Fix
 
 * Fixed inlining with `fatHTML`
