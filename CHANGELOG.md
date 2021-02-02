@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.137 (2021-02-02)
+
+#### :rocket: Bug Fix
+
+* Fixed linking to values with watchable prototypes `super/modules/sync`
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :rocket: New Feature

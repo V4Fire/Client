@@ -295,7 +295,8 @@ export default class Sync extends Friend {
 			opts = {};
 		}
 
-		opts = opts ?? {};
+		const
+			resolvedOpts = opts ?? {};
 
 		if (info?.type === 'mounted') {
 			isMountedWatcher = true;
@@ -312,7 +313,7 @@ export default class Sync extends Friend {
 			false;
 
 		if (isAccessor) {
-			opts.immediate = opts.immediate !== false;
+			resolvedOpts.immediate = resolvedOpts.immediate !== false;
 		}
 
 		linksCache[destPath] = {};
@@ -324,11 +325,11 @@ export default class Sync extends Friend {
 		};
 
 		if (Object.size(wrapper) > 1) {
-			ctx.watch(info ?? path, opts, (val, oldVal) => {
+			ctx.watch(info ?? path, resolvedOpts, (val, oldVal) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
 
-				} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
+				} else if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
 					return;
 				}
 
@@ -336,14 +337,14 @@ export default class Sync extends Friend {
 			});
 
 		} else {
-			ctx.watch(info ?? path, opts, (val, ...args) => {
+			ctx.watch(info ?? path, resolvedOpts, (val, ...args) => {
 				let
 					oldVal;
 
 				if (!isCustomWatcher) {
 					oldVal = args[0];
 
-					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
+					if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
 						return;
 					}
 				}
@@ -728,7 +729,7 @@ export default class Sync extends Friend {
 					if (isCustomWatcher) {
 						oldVal = undefined;
 
-					} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
+					} else if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
 						return;
 					}
 
@@ -743,7 +744,7 @@ export default class Sync extends Friend {
 					if (!isCustomWatcher) {
 						oldVal = args[0];
 
-						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(destPath))) {
+						if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
 							return;
 						}
 					}
@@ -1033,5 +1034,25 @@ export default class Sync extends Friend {
 		} else if (statuses[ctx.componentStatus] >= 1) {
 			setWatcher();
 		}
+	}
+
+	/**
+	 * Wrapper of `Object.fastCompare` to compare watchable values
+	 *
+	 * @param value
+	 * @param oldValue
+	 * @param destPath - path to the property
+	 * @param opts - watch options
+	 */
+	protected fastCompare(
+		value: unknown,
+		oldValue: unknown,
+		destPath: string,
+		opts: AsyncWatchOptions
+	): boolean {
+		return !opts.withProto && (
+			Object.fastCompare(value, oldValue) ||
+			Object.fastCompare(value, this.field.get(destPath))
+		);
 	}
 }
