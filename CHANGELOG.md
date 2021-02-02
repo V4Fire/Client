@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed inlining with `fatHTML`
 
+#### :house: Internal
+
+* Optimized the inserting of an icon into DOM by using `requestAnimationFrame` `traits/i-icon`
+
 ## v3.0.0-rc.135 (2021-02-01)
 
 #### :bug: Bug Fix

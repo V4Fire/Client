@@ -53,6 +53,13 @@ export default abstract class iIcon {
 	 */
 	static updateIconHref<T extends iBlock>(component: T, el: SVGUseElement, href?: string): void {
 		const
+			$a = component.unsafe.async,
+			group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
+
+		$a
+			.clearAll(group);
+
+		const
 			parent = el.parentNode;
 
 		if (!parent) {
@@ -67,23 +74,21 @@ export default abstract class iIcon {
 			return;
 		}
 
-		const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+		const
+			newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
 
 		newEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href!);
 		newEl.setAttribute('data-tmp', '');
 
-		parent.appendChild(newEl);
+		$a.requestAnimationFrame(() => {
+			parent.appendChild(newEl);
+		}, group);
 
-		component.unsafe.async.worker(destructor, {
-			group: el.getAttribute(ID_ATTRIBUTE) ?? undefined
-		});
-
-		function destructor(): void {
+		$a.worker(() => {
 			try {
-				parent?.removeChild(newEl);
-
+				parent.removeChild(newEl);
 			} catch {}
-		}
+		}, group);
 	}
 
 	/**
