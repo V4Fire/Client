@@ -10,7 +10,7 @@
 
 const
 	includeRgxp = /\binclude\((['"`])(.*?)\1\);/g,
-	escapeStringLiteralRgxp = /(`|${|\\)/g;
+	escapeStringLiteralRgxp = /(['`\n\\]|${)/g;
 
 /**
  * Monic replacer that adds extra syntax to use the "#include" directive.
@@ -27,8 +27,9 @@ const
  * ```
  */
 module.exports = function includeReplacer(str) {
-	if (this.flags.escapeStringLiteral) {
+	if (this.flags.convertToStringLiteral) {
 		str = str.replace(escapeStringLiteralRgxp, '\\$1');
+		str = `'${str}'`;
 	}
 
 	return str.replace(includeRgxp, (str, _, url) => `\n//#include ${url}\n`);

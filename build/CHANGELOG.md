@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
 ## v3.0.0-rc.126 (2021-01-26)
 
 #### :bug: Bug Fix

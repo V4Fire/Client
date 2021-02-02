@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
 ## v3.0.0-rc.135 (2021-02-01)
 
 #### :bug: Bug Fix
