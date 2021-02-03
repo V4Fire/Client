@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.137 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added option `--only-run:boolean` for `npx gulp test:components` - it allow run all test cases without building stage.
+
+#### :bug: Bug Fix
+
+* Fixed running parallel tests when `portfinder` was returning the same port for different processes
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :rocket: New Feature
