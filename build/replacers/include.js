@@ -10,6 +10,7 @@
 
 const
 	includeRgxp = /\binclude\((['"`])(.*?)\1\);/g,
+	hasInclude = includeRgxp.removeFlags('g'),
 	escapeStringLiteralRgxp = /(['`\n\\]|${)/g;
 
 /**
@@ -36,5 +37,7 @@ module.exports = function includeReplacer(str) {
 };
 
 Object.assign(module.exports, {
-	includeRgxp
+	hasInclude,
+	includeRgxp,
+	escapeStringLiteralRgxp
 });

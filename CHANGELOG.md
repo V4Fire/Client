@@ -11,11 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.137 (2021-02-02)
+## v3.0.0-rc.137 (2021-02-03)
 
 #### :rocket: Bug Fix
 
 * Fixed linking to values with watchable prototypes `super/modules/sync`
+* Fixed using of global RegExp-s with the `g` flag
 
 ## v3.0.0-rc.136 (2021-02-02)
 

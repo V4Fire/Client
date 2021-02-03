@@ -170,7 +170,7 @@ export default function createRouter(component: bRouter): Router {
 			 * @param test
 			 */
 			const parseQuery = (qs: string, test?: boolean) => {
-				if (test && !qsRgxp.test(qs)) {
+				if (test && !RegExp.test(qsRgxp, qs)) {
 					return {};
 				}
 
@@ -185,7 +185,7 @@ export default function createRouter(component: bRouter): Router {
 			if (qs !== '') {
 				qs = `?${qs}`;
 
-				if (qsRgxp.test(route)) {
+				if (RegExp.test(qsRgxp, route)) {
 					route = route.replace(qsRgxp, qs);
 
 				} else {
