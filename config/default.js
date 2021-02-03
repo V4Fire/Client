@@ -302,10 +302,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns true if all assets from the build have to inline within HTML files
+		 *
+		 * @cli fat-html
+		 * @env FAT_HTML
+		 *
 		 * @returns {boolean}
 		 */
 		fatHTML() {
-			return false;
+			return o('fat-html', {
+				env: true,
+				type: 'boolean',
+				default: false
+			});
 		},
 
 		/**
@@ -322,6 +330,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 */
 			minChunkSize: o('optimize-min-chunk-size', {
 				env: true,
+				type: 'number',
 				default: 10 * 1024
 			}),
 
@@ -348,6 +357,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 				return o('optimize-data-uri-limit', {
 					env: true,
+					type: 'number',
 					default: 2 * 1024
 				});
 			}

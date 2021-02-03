@@ -13,7 +13,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.137 (2021-02-03)
 
-#### :rocket: Bug Fix
+#### :rocket: New Feature
+
+* Added a new parameter `--fat-html` `config`
+
+#### :bug: Bug Fix
 
 * Fixed linking to values with watchable prototypes `super/modules/sync`
 * Fixed using of global RegExp-s with the `g` flag
