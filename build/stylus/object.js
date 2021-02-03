@@ -74,12 +74,11 @@ function parseObject(obj) {
 			if (nodes && nodes.length) {
 				if (
 					nodes.length === 1 &&
-					(nodes[0].keys || nodes[0].nodeName !== 'expression')
+					(nodes[0].nodeName === 'object' || nodes[0].nodeName !== 'expression')
 				) {
 					obj[key] = convert(nodes[0]);
 
 				} else {
-					console.log(777, key, nodes);
 					obj[key] = [];
 
 					for (let i = 0, len = nodes.length; i < len; ++i) {
