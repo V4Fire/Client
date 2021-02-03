@@ -305,7 +305,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {boolean}
 		 */
 		fatHTML() {
-			return true;
+			return false;
 		},
 
 		/**
