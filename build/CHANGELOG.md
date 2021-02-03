@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.137 (2021-02-03)
+
+#### :bug: Bug fix
+
+* Fixed minifying of dynamic styles
+* Fixed dynamic imports with `fatHTML`
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :rocket: New Feature

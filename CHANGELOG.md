@@ -22,6 +22,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed linking to values with watchable prototypes `super/modules/sync`
 * Fixed using of global RegExp-s with the `g` flag
 
+* `config`:
+  * Fixed minifying of dynamic styles
+  * Fixed dynamic imports with `fatHTML`
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :rocket: New Feature

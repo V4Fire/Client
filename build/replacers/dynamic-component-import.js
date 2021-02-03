@@ -9,12 +9,15 @@
  */
 
 const
-	{typescript} = require('config');
+	{typescript, webpack} = require('config');
+
+const
+	importRgxp = /\bimport\((["'])((?:.*?[\\/]|)([bp]-[^.\\/"')]+)+)\1\)/g,
+	hasImport = importRgxp.removeFlags('g');
 
 const
 	isESImport = typescript().client.compilerOptions.module === 'ES2020',
-	importRgxp = /\bimport\((["'])((?:.*?[\\/]|)([bp]-[^.\\/"')]+)+)\1\)/g,
-	hasImport = importRgxp.removeFlags('g');
+	fatHTML = webpack.fatHTML();
 
 /**
  * Monic replacer to enable dynamic imports of components
@@ -49,23 +52,23 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			} else {
 				imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl')))`);
 			}
+		}
 
-			if (isESImport) {
-				imports.push(`import('${fullPath}')`);
+		if (isESImport) {
+			imports.push(`import('${fullPath}')`);
 
-			} else {
-				imports.push(`new Promise((r) => r(require('${fullPath}')))`);
-			}
+		} else {
+			imports.push(`new Promise((r) => r(require('${fullPath}')))`);
+		}
 
-			const
-				regTpl = `(module) => { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
+		const
+			regTpl = `(module) => { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
 
-			if (isESImport) {
-				imports.push(`import('${fullPath}.ss').then(${regTpl})`);
+		if (isESImport) {
+			imports.push(`import('${fullPath}.ss').then(${regTpl})`);
 
-			} else {
-				imports.push(`new Promise((r) => r(require('${fullPath}.ss'))).then(${regTpl})`);
-			}
+		} else {
+			imports.push(`new Promise((r) => r(require('${fullPath}.ss'))).then(${regTpl})`);
 		}
 
 		return `Promise.allSettled([${imports.join(',')}])`;
