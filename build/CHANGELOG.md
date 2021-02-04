@@ -11,8 +11,14 @@ Changelog
 
 ## v3.0.0-rc.137 (2021-02-04)
 
-#### :bug: Bug fix
+#### :rocket: New Feature
 
+* Added a new option `--only-run:boolean` for `npx gulp test:components`.
+  It allows run all test cases without the building stage.
+
+#### :bug: Bug Fix
+
+* Fixed the running of parallel tests when `portfinder` was returning the same port for different processes
 * Fixed minifying of dynamic styles
 * Fixed dynamic imports with `fatHTML`
 
