@@ -30,6 +30,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed dynamic imports with `fatHTML`
   * Fixed the running of parallel tests when `portfinder` was returning the same port for different processes
 
+#### :house: Internal
+
+* Updated dependencies:
+  * `svg-url-loader@7.1.1`
+  * `terser-webpack-plugin@5.1.1`
+  * `postcss-loader@5.0.0`
+  * `webpack@5.20.1`
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :rocket: New Feature
