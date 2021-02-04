@@ -11,11 +11,24 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.137 (2021-02-02)
+## v3.0.0-rc.137 (2021-02-03)
 
-#### :rocket: Bug Fix
+#### :rocket: New Feature
+
+* Added a new parameter `--fat-html` `config`
+* Added a new option `--only-run:boolean` for `npx gulp test:components`.
+  It allows run all test cases without the building stage.
+
+#### :bug: Bug Fix
 
 * Fixed linking to values with watchable prototypes `super/modules/sync`
+* Fixed using of global RegExp-s with the `g` flag
+* Fixed redundant listening of events `core/component/engines/vue`
+
+* `build`:
+  * Fixed minifying of dynamic styles
+  * Fixed dynamic imports with `fatHTML`
+  * Fixed the running of parallel tests when `portfinder` was returning the same port for different processes
 
 ## v3.0.0-rc.136 (2021-02-02)
 

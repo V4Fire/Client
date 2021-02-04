@@ -54,7 +54,8 @@ const
  */
 module.exports = async function module({plugins}) {
 	const
-		isProd = webpack.mode() === 'production';
+		isProd = webpack.mode() === 'production',
+		fatHTML = webpack.fatHTML();
 
 	const
 		graph = await build,
@@ -77,14 +78,19 @@ module.exports = async function module({plugins}) {
 		{
 			loader: 'monic-loader',
 			options: inherit(monic.typescript, {
-				replacers: [
-					include('build/replacers/attach-component-dependencies'),
-					include('build/replacers/require-context'),
-					include('build/replacers/super-import'),
-					include('build/replacers/ts-import'),
-					include('build/replacers/dynamic-component-import'),
-					include('build/replacers/require-tests')
-				]
+				replacers: [].concat(
+					fatHTML ?
+						[] :
+						include('build/replacers/attach-component-dependencies'),
+
+					[
+						include('build/replacers/require-context'),
+						include('build/replacers/super-import'),
+						include('build/replacers/ts-import'),
+						include('build/replacers/dynamic-component-import'),
+						include('build/replacers/require-tests')
+					]
+				)
 			})
 		}
 	];
@@ -222,28 +228,44 @@ module.exports = async function module({plugins}) {
 		chunkFilename: '[id].css'
 	})));
 
-	const styleHelperLoaders = [
-		{
-			loader: 'fast-css-loader',
-			options: config.css()
-		},
+	const styleHelperLoaders = (isStatic) => {
+		const
+			useLink = /linkTag/i.test(config.style().injectType),
+			usePureCSSFiles = isStatic || useLink;
 
-		{
-			loader: 'postcss-loader',
-			options: inherit(config.postcss(), {
-				postcssOptions: {
-					plugins: [require('autoprefixer')(config.autoprefixer())]
+		return [].concat(
+			usePureCSSFiles ? MiniCssExtractPlugin.loader : [],
+
+			[
+				{
+					loader: 'fast-css-loader',
+					options: config.css()
+				},
+
+				{
+					loader: 'postcss-loader',
+					options: inherit(config.postcss(), {
+						postcssOptions: {
+							plugins: [].concat(
+								require('autoprefixer')(config.autoprefixer()),
+
+								webpack.mode() === 'production' && !usePureCSSFiles ?
+									require('cssnano')(config.cssMinimizer().minimizerOptions) :
+									[]
+							)
+						}
+					})
+				},
+
+				{
+					loader: 'stylus-loader',
+					options: inherit(config.stylus(), {
+						use: include('build/stylus')
+					})
 				}
-			})
-		},
-
-		{
-			loader: 'stylus-loader',
-			options: inherit(config.stylus(), {
-				use: include('build/stylus')
-			})
-		}
-	];
+			]
+		);
+	};
 
 	loaders.rules.set('styl', {
 		test: /\.styl$/,
@@ -252,8 +274,7 @@ module.exports = async function module({plugins}) {
 			{
 				resourceQuery: /static/,
 				use: [].concat(
-					MiniCssExtractPlugin.loader,
-					styleHelperLoaders,
+					styleHelperLoaders('static'),
 
 					{
 						loader: 'monic-loader',
@@ -274,8 +295,7 @@ module.exports = async function module({plugins}) {
 						options: config.style()
 					},
 
-					/linkTag/i.test(config.style().injectType) ? MiniCssExtractPlugin.loader : [],
-					styleHelperLoaders,
+					styleHelperLoaders('dynamic'),
 
 					{
 						loader: 'monic-loader',

@@ -283,7 +283,7 @@ export default class Sync extends Friend {
 				path = `${destPath.replace(bindingRgxp, '')}Prop`;
 			}
 
-		} else if (!customWatcherRgxp.test(path)) {
+		} else if (!RegExp.test(customWatcherRgxp, path)) {
 			info = getPropertyInfo(path, this.ctx);
 
 		} else {
@@ -695,7 +695,7 @@ export default class Sync extends Friend {
 					watchPath = info.path;
 				}
 
-			} else if (!customWatcherRgxp.test(watchPath)) {
+			} else if (!RegExp.test(customWatcherRgxp, watchPath)) {
 				info = getPropertyInfo(watchPath, this.ctx);
 
 			} else {

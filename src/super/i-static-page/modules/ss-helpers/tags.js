@@ -22,7 +22,7 @@ const
 	{Filters} = require('snakeskin');
 
 const
-	{includeRgxp, escapeStringLiteralRgxp} = include('build/replacers/include.js'),
+	{hasInclude, escapeStringLiteralRgxp} = include('build/replacers/include.js'),
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -276,7 +276,7 @@ function getStyleDecl(lib, body) {
 
 	function createTag(tag, content) {
 		if (content) {
-			if (includeRgxp.test(content)) {
+			if (hasInclude.test(content)) {
 				content = `
 //#set convertToStringLiteral
 el.innerHTML = ${content};

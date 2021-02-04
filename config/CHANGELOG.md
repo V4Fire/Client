@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.137 (2021-02-03)
+
+#### :rocket: New Feature
+
+* Added a new parameter `--fat-html`
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :rocket: New Feature

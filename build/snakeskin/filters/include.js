@@ -46,7 +46,7 @@ Snakeskin.importFilters({
 		let
 			start = 0;
 
-		if (superRgxp.test(url)) {
+		if (superRgxp.removeFlags('g').test(url)) {
 			url = url.replace(superRgxp, '');
 
 			for (let i = 0; i < resources.length; i++) {
@@ -71,7 +71,7 @@ Snakeskin.importFilters({
 
 		const
 			hasMagic = glob.hasMagic(url),
-			end = ssExtRgxp.test(url) ? '' : '/',
+			end = ssExtRgxp.removeFlags('g').test(url) ? '' : '/',
 			ends = [];
 
 		if (end) {

@@ -17,7 +17,8 @@ const
 	glob = require('glob-promise');
 
 const
-	requireRgxp = /\/\/\s*@requireTests\n/g;
+	requireRgxp = /\/\/\s*@requireTests\n/g,
+	hasRequire = requireRgxp.removeFlags('g');
 
 /**
  * Monic replacer that adds the "@requireTests" declaration which recursively includes all spec.js/*.spec.js files
@@ -44,7 +45,7 @@ module.exports = async function requireTestsReplacer(str, filePath) {
 		return str;
 	}
 
-	if (!requireRgxp.test(str)) {
+	if (!hasRequire.test(str)) {
 		return str;
 	}
 
@@ -57,5 +58,6 @@ module.exports = async function requireTestsReplacer(str, filePath) {
 };
 
 Object.assign(module.exports, {
+	hasRequire,
 	requireRgxp
 });

@@ -119,7 +119,7 @@ export function initRemoteWatchers(component: iBlock): void {
 	}
 
 	const normalizeField = (field) => {
-		if (customWatcherRgxp.test(field)) {
+		if (RegExp.test(customWatcherRgxp, field)) {
 			return field.replace(customWatcherRgxp, (str, prfx: string, emitter: string, event: string) =>
 				`${prfx + ['$parent'].concat(Object.isTruly(emitter) ? emitter : []).join('.')}:${event}`);
 		}
