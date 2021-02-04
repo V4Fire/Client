@@ -461,7 +461,6 @@ module.exports = function init(gulp = require('gulp')) {
 				}
 
 				const args = arg({
-					'--suit': String,
 					'--name': String
 				}, {argv: c.split(' '), permissive: true});
 
@@ -472,7 +471,7 @@ module.exports = function init(gulp = require('gulp')) {
 				}
 
 				const argsString = [
-					['--suit', args['--suit']],
+					['--suit', build.suit],
 					['--name', args['--name']],
 					['--client-name', args['--client-name']]
 				].flat().join(' ');
@@ -539,7 +538,6 @@ module.exports = function init(gulp = require('gulp')) {
 			c = `${c} --start-port ${START_PORT + i * 100}`;
 
 			const args = arg({
-				'--suit': String,
 				'--name': String
 			}, {argv: c.split(' '), permissive: true});
 
