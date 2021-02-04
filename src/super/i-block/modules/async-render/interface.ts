@@ -23,6 +23,7 @@ export interface TaskDestructor {
 }
 
 export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {
+	useRAF?: boolean;
 	group?: string;
 	weight?: number;
 	filter?: TaskFilter<EL, I, D>;
