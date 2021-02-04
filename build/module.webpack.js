@@ -274,7 +274,7 @@ module.exports = async function module({plugins}) {
 			{
 				resourceQuery: /static/,
 				use: [].concat(
-					styleHelperLoaders('static'),
+					styleHelperLoaders(true),
 
 					{
 						loader: 'monic-loader',
@@ -295,7 +295,7 @@ module.exports = async function module({plugins}) {
 						options: config.style()
 					},
 
-					styleHelperLoaders('dynamic'),
+					styleHelperLoaders(),
 
 					{
 						loader: 'monic-loader',
