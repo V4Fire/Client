@@ -21,7 +21,8 @@ const
 	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs, getTestClientName} = include('build/helpers');
 
 const
-	cpus = os.cpus().length;
+	cpus = os.cpus().length,
+	START_PORT = 8000;
 
 /**
  * Registers gulp tasks to test the project
@@ -113,6 +114,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 *
 	 * * --name - name of the component to test
 	 * * [--port] - port to launch the test server
+	 * * [--start-port] - starting port for `portfinder`
 	 * * [--page='p-v4-components-demo'] - demo page to run tests
 	 * * [--browsers] - list of browsers to test (firefox (ff), chromium (chrome), webkit (wk))
 	 * * [--device] - name of used device, for instance, "iPhone_11" or "Pixel_2"
@@ -157,6 +159,7 @@ module.exports = function init(gulp = require('gulp')) {
 		const args = arg({
 			'--name': String,
 			'--port': Number,
+			'--start-port': Number,
 			'--page': String,
 			'--browsers': String,
 			'--device': String,
@@ -198,7 +201,9 @@ module.exports = function init(gulp = require('gulp')) {
 		});
 
 		// eslint-disable-next-line require-atomic-updates
-		args['--port'] = args['--port'] || await portfinder.getPortPromise();
+		args['--port'] = args['--port'] || await portfinder.getPortPromise({
+			port: args['--start-port'] || START_PORT
+		});
 
 		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || build.demoPage;
@@ -378,9 +383,10 @@ module.exports = function init(gulp = require('gulp')) {
 	 * * [--processes] | [-p] - number of available CPUs to build the application and run tests
 	 * * [--test-processes] | [-tp] - number of available CPUs to run tests
 	 * * [--build-processes] | [-tb] - number of available CPUs to build the application
+	 * * [--only-run] - allows run all test cases without the building stage
 	 *
-	 * @see test:component
-	 * @see test:component
+	 * @see test:component:run
+	 * @see test:component:build
 	 *
 	 * @example
 	 * ```bash
@@ -409,6 +415,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 		const cliArgs = arg({
 			'--reinit-browser': String,
+			'--only-run': Boolean,
 			'--browser-args': String
 		}, {permissive: true});
 
@@ -444,41 +451,43 @@ module.exports = function init(gulp = require('gulp')) {
 			buildCache = {},
 			buildMap = new Map();
 
-		for (let i = 0; i < cases.length; i++) {
-			let
-				c = cases[i];
+		if (!cliArgs['--only-run']) {
+			for (let i = 0; i < cases.length; i++) {
+				let
+					c = cases[i];
 
-			if (!c.includes('--name')) {
-				c = `${c} --runtime-render true`;
+				if (!c.includes('--name')) {
+					c = `${c} --runtime-render true`;
+				}
+
+				const args = arg({
+					'--suit': String,
+					'--name': String
+				}, {argv: c.split(' '), permissive: true});
+
+				args['--client-name'] = getTestClientName(args['--name'], build.suit);
+
+				if (buildCache[args['--client-name']]) {
+					continue;
+				}
+
+				const argsString = [
+					['--suit', args['--suit']],
+					['--name', args['--name']],
+					['--client-name', args['--client-name']]
+				].flat().join(' ');
+
+				const extraArgs = args._.join(' ');
+
+				await waitForQuotas(buildMap, buildProcess);
+
+				buildMap.set(
+					argsString,
+					exec(`npx gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
+				);
+
+				buildCache[args['--client-name']] = true;
 			}
-
-			const args = arg({
-				'--suit': String,
-				'--name': String
-			}, {argv: c.split(' '), permissive: true});
-
-			args['--client-name'] = getTestClientName(args['--name'], build.suit);
-
-			if (buildCache[args['--client-name']]) {
-				continue;
-			}
-
-			const argsString = [
-				['--suit', args['--suit']],
-				['--name', args['--name']],
-				['--client-name', args['--client-name']]
-			].flat().join(' ');
-
-			const extraArgs = args._.join(' ');
-
-			await waitForQuotas(buildMap, buildProcess);
-
-			buildMap.set(
-				argsString,
-				exec(`npx gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
-			);
-
-			buildCache[args['--client-name']] = true;
 		}
 
 		await waitForEmpty(buildMap);
@@ -525,6 +534,9 @@ module.exports = function init(gulp = require('gulp')) {
 			if (!c.includes('--name')) {
 				c = `${c} --runtime-render true`;
 			}
+
+			// Set the beginning of the searching range for a free port
+			c = `${c} --start-port ${START_PORT + i * 100}`;
 
 			const args = arg({
 				'--suit': String,
