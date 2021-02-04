@@ -174,16 +174,6 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets background CSS properties to the specified element
-	 *
-	 * @param el
-	 * @param imageSrc
-	 */
-	setBackgroundImage(el: HTMLElement, imageSrc: string): void {
-		el.style.backgroundImage = imageSrc === '' ? '' : `url('${imageSrc}')`;
-	}
-
-	/**
 	 * Returns true if the specified element is an instance of `HTMLImageElement`
 	 * @param el
 	 */
@@ -200,7 +190,7 @@ export default class ImageLoader {
 			el.src = '';
 
 		} else {
-			this.setBackgroundImage(el, '');
+			this.clearBackgroundStyles(el);
 		}
 
 		this.clearShadowState(el);
@@ -375,6 +365,20 @@ export default class ImageLoader {
 			backgroundPosition,
 			backgroundRepeat,
 			paddingBottom
+		});
+	}
+
+	/**
+	 * Clears background CSS styles of the specified element
+	 * @param el
+	 */
+	protected clearBackgroundStyles(el: HTMLElement): void {
+		Object.assign(el.style, {
+			backgroundImage: '',
+			backgroundSize: '',
+			backgroundPosition: '',
+			backgroundRepeat: '',
+			paddingBottom: ''
 		});
 	}
 
