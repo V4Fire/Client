@@ -24,6 +24,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed linking to values with watchable prototypes `super/modules/sync`
 * Fixed using of global RegExp-s with the `g` flag
 * Fixed redundant listening of events `core/component/engines/vue`
+* Used `nanoid` to generate `nonceStore` `config`
 
 * `build`:
   * Fixed minifying of dynamic styles

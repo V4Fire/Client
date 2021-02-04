@@ -15,6 +15,10 @@ Changelog
 
 * Added a new parameter `--fat-html`
 
+#### :bug: Bug fix
+
+* Used `nanoid` to generate `nonceStore`
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :rocket: New Feature

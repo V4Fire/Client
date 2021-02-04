@@ -17,6 +17,9 @@ const
 	camelize = require('camelize'),
 	o = require('uniconf/options').option;
 
+const
+	{nanoid} = require('nanoid');
+
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
@@ -562,10 +565,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		/**
 		 * Name of the generated runtime global variable where the nonce value is stored
 		 */
-		nonceStore: Math.random()
-			.toString(16)
-			.slice(2, 9)
-			.replace(/[a-z]/g, (s) => Math.random() > 0.5 ? s.toUpperCase() : s),
+		nonceStore: nanoid(),
 
 		/**
 		 * Returns value of the "nonce" hash
