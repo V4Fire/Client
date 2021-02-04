@@ -39,7 +39,15 @@ module.exports = function DependenciesPlugin() {
 						file = $C(el.files).one.filter((src) => path.extname(src)).get();
 
 					if (file) {
-						manifest[path.basename(el.name)] = {
+						const
+							key = path.basename(el.name),
+							extname = path.extname(file);
+
+						if (manifest[key] && extname !== '.js') {
+							return;
+						}
+
+						manifest[key] = {
 							path: file,
 							publicPath: webpack.publicPath(file)
 						};
