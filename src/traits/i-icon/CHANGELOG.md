@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.140 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed the support of `--fat-html`
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :house: Internal

@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed the support of `--fat-html` `traits/i-icon`
 * Fixed the condition to provide slots:
   * `bButton`
   * `bInput`

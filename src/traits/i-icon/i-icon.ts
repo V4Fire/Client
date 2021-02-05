@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
 import iBlock from 'super/i-block/i-block';
 
 import { ID_ATTRIBUTE } from 'core/component/directives/update-on';
@@ -21,9 +22,9 @@ export default abstract class iIcon {
 	 * Returns a link for the specified icon
 	 * @param iconId
 	 */
-	static async getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
+	static getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
 		if (iconId == null) {
-			return Promise.resolve(undefined);
+			return SyncPromise.resolve(undefined);
 		}
 
 		if (!(iconId in iconsMap)) {
@@ -40,8 +41,14 @@ export default abstract class iIcon {
 			q = location.href.endsWith('?') ? '?' : '';
 		}
 
-		const icon = await icons(iconsMap[iconId]);
-		return `${location.pathname + q}#${icon.id}`;
+		const
+			icon = icons(iconsMap[iconId]);
+
+		if (Object.isPromise(icon)) {
+			return (async () => `${location.pathname + q}#${(await icon).id}`)();
+		}
+
+		return SyncPromise.resolve(`${location.pathname + q}#${icon.id}`);
 	}
 
 	/**
