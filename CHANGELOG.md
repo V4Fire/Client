@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.139 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed cleaning of background styles `core/dom/image`
+
 ## v3.0.0-rc.138 (2021-02-04)
 
 #### :rocket: New Feature
