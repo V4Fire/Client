@@ -79,10 +79,6 @@ export default {
 		const
 			group = el.getAttribute(ID_ATTRIBUTE);
 
-		this
-			.getAsync(el, ctx)
-			.clearAll();
-
 		if (group != null) {
 			this.getAsync(el, ctx).clearAll({group});
 		}

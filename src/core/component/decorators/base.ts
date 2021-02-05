@@ -234,7 +234,7 @@ export function paramsFactory<T = object>(
 				}
 			});
 
-			if (tiedFieldMap[metaKey] != null && storeRgxp.test(key)) {
+			if (tiedFieldMap[metaKey] != null && RegExp.test(storeRgxp, key)) {
 				meta.tiedFields[key] = key.replace(storeRgxp, '');
 			}
 		}

@@ -434,11 +434,17 @@ export default class AsyncRender extends Friend {
 
 					function execTask(res: unknown): CanPromise<boolean> {
 						if (Object.isTruly(res)) {
-							return $a.animationFrame({group}).then(() => {
+							const cb = () => {
 								taskFn();
 								resolve();
 								return true;
-							});
+							};
+
+							if (params.useRAF) {
+								return $a.animationFrame({group}).then(cb);
+							}
+
+							return cb();
 						}
 
 						return false;

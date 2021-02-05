@@ -206,7 +206,7 @@ export function wait(
 
 	if (Object.isFunction(optsOrCb)) {
 		if (Object.isString(statusOrOpts)) {
-			if (waitCtxRgxp.test(statusOrOpts)) {
+			if (RegExp.test(waitCtxRgxp, statusOrOpts)) {
 				ctx = RegExp.$1;
 				status = statuses[RegExp.$2];
 
@@ -225,7 +225,7 @@ export function wait(
 		handler = optsOrCb;
 
 	} else if (Object.isString(statusOrOpts)) {
-		if (waitCtxRgxp.test(statusOrOpts)) {
+		if (RegExp.test(waitCtxRgxp, statusOrOpts)) {
 			ctx = RegExp.$1;
 			status = statuses[RegExp.$2];
 

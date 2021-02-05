@@ -263,7 +263,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 		const getEl = (value) => {
 			const
-				id = Object.get<CanUndef<number>>(this.values, [value]);
+				id = Object.get<number>(this.values, [value]);
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id});
@@ -336,7 +336,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 		if ($b) {
 			const
-				id = Object.get<CanUndef<number>>(this.values, [value]),
+				id = Object.get<number>(this.values, [value]),
 				target = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple) {
@@ -389,7 +389,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 		if ($b) {
 			const
-				id = Object.get<CanUndef<number>>(this.values, [value]),
+				id = Object.get<number>(this.values, [value]),
 				target = id != null ? $b.element('link', {id}) : null;
 
 			if (target) {

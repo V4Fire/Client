@@ -79,12 +79,13 @@
 					{{ void(field.set('ifOnceStore.${opts.renderKey}', true)) }}
 
 					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}), 1, { &
+						useRaf: true,
 						group: 'module:${opts.renderKey}'
 					}) .
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}))
+				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}), 1, {useRaf: true})
 					+= content
 
 	/**
