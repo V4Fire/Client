@@ -22,6 +22,7 @@ import { deprecated, deprecate } from 'core/functools/deprecation';
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
 import { Active, Item, Items } from 'base/b-list/interface';
@@ -46,17 +47,28 @@ export const
 	}
 })
 
-export default class bList extends iData implements iVisible, iWidth {
-	/**
-	 * Type: list of component items
-	 */
-	readonly Items!: Items;
+export default class bList extends iData implements iVisible, iWidth, iItems {
+	/** @see [[iItems.Item]] */
+	readonly Item!: Item;
 
-	/**
-	 * Initial list of component items
-	 */
+	/** @see [[iItems.Items]] */
+	readonly Items!: Array<this['Item']>;
+
+	/** @see [[iItems.items]] */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
+
+	/** @see [[iItems.item]] */
+	@prop({type: [String, Function], required: false})
+	readonly item?: iItems['item'];
+
+	/** @see [[iItems.itemKey]] */
+	@prop({type: [String, Function], required: false})
+	readonly itemKey?: iItems['itemKey'];
+
+	/** @see [[iItems.itemProps]] */
+	@prop({type: Function, required: false})
+	readonly itemProps?: iItems['itemProps'];
 
 	/**
 	 * @deprecated
@@ -127,6 +139,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Component active value.
 	 * If the component is switched to the "multiple" mode, the getter will return a Set object.
+	 *
 	 * @see [[bList.activeStore]]
 	 */
 	get active(): Active {
@@ -167,7 +180,6 @@ export default class bList extends iData implements iVisible, iWidth {
 
 	/**
 	 * True, if the component works with the deprecated API
-	 * @protected
 	 */
 	@system()
 	protected deprecated: boolean = false;
@@ -251,7 +263,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		const getEl = (value) => {
 			const
-				id = Object.get<CanUndef<number>>(this.values, [value]);
+				id = Object.get<number>(this.values, [value]);
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id});
@@ -324,7 +336,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if ($b) {
 			const
-				id = Object.get<CanUndef<number>>(this.values, [value]),
+				id = Object.get<number>(this.values, [value]),
 				target = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple) {
@@ -377,7 +389,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if ($b) {
 			const
-				id = Object.get<CanUndef<number>>(this.values, [value]),
+				id = Object.get<number>(this.values, [value]),
 				target = id != null ? $b.element('link', {id}) : null;
 
 			if (target) {
@@ -461,7 +473,7 @@ export default class bList extends iData implements iVisible, iWidth {
 	 * Returns true if the specified item is active
 	 * @param item
 	 */
-	protected isActive(item: Item): boolean {
+	protected isActive(item: this['Item']): boolean {
 		const v = this.field.get('activeStore');
 		return this.multiple ? Object.has(v, [item.value]) : item.value === v;
 	}
@@ -548,6 +560,30 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		this.values = values;
 		this.indexes = indexes;
+	}
+
+	/**
+	 * Returns a dictionary with props for the specified item
+	 *
+	 * @param item
+	 * @param i - position index
+	 */
+	protected getItemProps(item: this['Item'], i: number): Dictionary {
+		const
+			op = this.itemProps;
+
+		return Object.isFunction(op) ?
+			op(item, i, {
+				key: this.getItemKey(item, i),
+				ctx: this
+			}) :
+
+			op ?? {};
+	}
+
+	/** @see [[iItems.getItemKey]] */
+	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
+		return iItems.getItemKey(this, item, i);
 	}
 
 	/** @override */

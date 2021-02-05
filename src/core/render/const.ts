@@ -13,7 +13,7 @@ import { Task } from 'core/render/interface';
  * Maximum number of tasks per one render iteration
  */
 export const
-	TASKS_PER_TICK = 10;
+	TASKS_PER_TICK = 5;
 
 /**
  * Delay in milliseconds between render iterations

@@ -37,10 +37,14 @@ import { ComponentOptions, ComponentMethod } from 'core/component/interface';
  */
 export function component(opts?: ComponentOptions): Function {
 	return (target) => {
-		const componentInfo = getInfoFromConstructor(target, opts);
-		c.initEmitter.emit('bindConstructor', componentInfo.name);
+		const
+			componentInfo = getInfoFromConstructor(target, opts),
+			componentParams = componentInfo.params;
 
-		if (!Object.isTruly(componentInfo.name) || componentInfo.params.root || componentInfo.isAbstract) {
+		c.initEmitter
+			.emit('bindConstructor', componentInfo.name);
+
+		if (!Object.isTruly(componentInfo.name) || componentParams.root || componentInfo.isAbstract) {
 			regComponent();
 
 		} else {
@@ -51,7 +55,7 @@ export function component(opts?: ComponentOptions): Function {
 
 		// If we have a smart component,
 		// we need to compile 2 components in the runtime
-		if (Object.isPlainObject(componentInfo.params.functional)) {
+		if (Object.isPlainObject(componentParams.functional)) {
 			component({
 				...opts,
 				name: `${componentInfo.name}-functional`,
@@ -76,19 +80,31 @@ export function component(opts?: ComponentOptions): Function {
 			c.components.set(componentInfo.name, meta);
 			c.initEmitter.emit(`constructor.${componentInfo.name}`, {meta, parentMeta});
 
-			if (componentInfo.isAbstract) {
+			if (componentInfo.isAbstract || meta.params.functional === true) {
 				fillMeta(meta, target);
 				return;
 			}
 
-			// Function that waits till a component template is loaded
-			const loadTemplate = (component, dryRun = false) => {
-				const promiseCb = (resolve) => {
-					const success = () => {
-						log(`component:load:${componentInfo.name}`, component);
-						return resolve(component);
-					};
+			const
+				componentDecl = getComponent(meta);
 
+			if (componentInfo.params.root) {
+				c.rootComponents[componentInfo.name] = new Promise(loadTemplate(componentDecl));
+
+			} else {
+				const
+					c = ComponentDriver.component(componentInfo.name, loadTemplate(componentDecl, true)(identity));
+
+				if (Object.isPromise(c)) {
+					c.catch(stderr);
+				}
+			}
+
+			// Function that waits till a component template is loaded
+			function loadTemplate(component: object, dryRun: boolean = false): (resolve: Function) => any {
+				return promiseCb;
+
+				function promiseCb(resolve: Function) {
 					const
 						{methods, methods: {render}} = meta;
 
@@ -98,29 +114,34 @@ export function component(opts?: ComponentOptions): Function {
 
 						// We need to add some meta properties, like, watchers,
 						// because we also register render methods to a component meta object
-						const renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
+						const renderObj = <ComponentMethod>{
+							wrapper: true,
+							watchers: {},
+							hooks: {},
+							fn: fns.render
+						};
 
-						renderObj.fn = fns.render;
-						component.staticRenderFns = fns.staticRenderFns ?? [];
-						meta.component.staticRenderFns = component.staticRenderFns;
+						// @ts-ignore (access)
+						// eslint-disable-next-line no-multi-assign
+						const staticRenderFns = component.staticRenderFns =
+							fns.staticRenderFns ?? [];
 
+						meta.component.staticRenderFns = staticRenderFns;
 						methods.render = renderObj;
-						return success();
+
+						return resolve(component);
 					};
 
 					// In this case, we don't automatically attaches a render function
 					if (componentInfo.params.tpl === false) {
 						// We have a custom render function
 						if (render && !render.wrapper) {
-							return success();
+							return resolve(component);
 						}
 
 						// Loopback render function
 						return addRenderAndResolve(defTpls.block);
 					}
-
-					let
-						i = 0;
 
 					// Dirty check of a component template loading status
 					const f = () => {
@@ -129,7 +150,7 @@ export function component(opts?: ComponentOptions): Function {
 
 						if (fns) {
 							if (render && !render.wrapper) {
-								return success();
+								return resolve(component);
 							}
 
 							return addRenderAndResolve(fns);
@@ -139,36 +160,10 @@ export function component(opts?: ComponentOptions): Function {
 							return promiseCb;
 						}
 
-						// First 15 times we use "fast" setImmediate strategy,
-						// but after, we start to throttle
-						if (i < 15) {
-							i++;
-
-							globalThis['setImmediate'](f);
-
-						} else {
-							setTimeout(f, 100);
-						}
+						requestIdleCallback(f, {timeout: 50});
 					};
 
 					return f();
-				};
-
-				return promiseCb;
-			};
-
-			const
-				component = getComponent(meta);
-
-			if (componentInfo.params.root) {
-				c.rootComponents[componentInfo.name] = new Promise(loadTemplate(component));
-
-			} else {
-				const
-					c = ComponentDriver.component(componentInfo.name, loadTemplate(component, true)(identity));
-
-				if (Object.isPromise(c)) {
-					c.catch(stderr);
 				}
 			}
 		}

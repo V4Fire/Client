@@ -123,7 +123,6 @@ export default abstract class iAccess {
 
 	/**
 	 * True if the component in focus
-	 * @prop
 	 */
 	abstract isFocused: boolean;
 

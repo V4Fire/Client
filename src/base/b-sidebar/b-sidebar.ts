@@ -42,7 +42,7 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 		...iVisible.mods,
 
 		opened: [
-			...iOpenToggle.mods.opened!,
+			...iOpenToggle.mods.opened ?? [],
 			['false']
 		]
 	};

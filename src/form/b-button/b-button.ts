@@ -168,7 +168,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 		...iSize.mods,
 
 		opened: [
-			...iOpenToggle.mods.opened,
+			...iOpenToggle.mods.opened ?? [],
 			['false']
 		],
 

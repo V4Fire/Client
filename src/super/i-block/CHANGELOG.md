@@ -9,6 +9,49 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.132 (2021-01-29)
+
+#### :rocket: New Feature
+
+* Now function and flyweight components support `asyncRender`
+
+## v3.0.0-rc.131 (2021-01-29)
+
+#### :boom: Breaking Change
+
+* Removed the `componentStatus` modifier
+
+#### :rocket: New Feature
+
+* Added a new prop `verbose`
+* Added a new getter `isNotRegular`
+
+## v3.0.0-rc.127 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed `componentStatus` with flyweight components
+
+## v3.0.0-rc.126 (2021-01-26)
+
+#### :boom: Breaking Change
+
+* Renamed the `status` modifier to `component-status`
+
+#### :rocket: New Feature
+
+* Now switching a value of the component hook emits events
+
+#### :house: Internal
+
+* Added API based on the `v-hook` directive to attach hook listeners with functional and flyweight components
+
+## v3.0.0-rc.121 (2021-01-12)
+
+#### :memo: Documentation
+
+* Improved jsDoc
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :rocket: New Feature

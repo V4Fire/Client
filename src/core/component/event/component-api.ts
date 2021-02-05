@@ -19,26 +19,29 @@ export function implementEventAPI(component: object): void {
 		wildcard: true
 	});
 
-	Object.assign(component, {
-		$emit: $e.emit.bind($e),
-		$once: $e.once.bind($e),
+	// @ts-ignore (access)
+	component.$emit = $e.emit.bind($e);
 
-		$on(e: CanArray<string>, cb: ListenerFn): void {
-			const
-				events = Array.concat([], e);
+	// @ts-ignore (access)
+	component.$once = $e.once.bind($e);
 
-			for (let i = 0; i < events.length; i++) {
-				$e.on(events[i], cb);
-			}
-		},
+	// @ts-ignore (access)
+	component.$on = function $on(e: CanArray<string>, cb: ListenerFn): void {
+		const
+			events = Array.concat([], e);
 
-		$off(e: CanArray<string>, cb: ListenerFn): void {
-			const
-				events = Array.concat([], e);
-
-			for (let i = 0; i < events.length; i++) {
-				$e.off(events[i], cb);
-			}
+		for (let i = 0; i < events.length; i++) {
+			$e.on(events[i], cb);
 		}
-	});
+	};
+
+	// @ts-ignore (access)
+	component.$off = function $off(e: CanArray<string>, cb: ListenerFn): void {
+		const
+			events = Array.concat([], e);
+
+		for (let i = 0; i < events.length; i++) {
+			$e.off(events[i], cb);
+		}
+	};
 }

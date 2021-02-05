@@ -37,4 +37,5 @@ For example:
   .
 ```
 
-In this case, to emit the transition of a page with the name that is equal to `key,` you can call the method `history.push(key)` of your history-based component.
+In this case, to emit the transition of a page with the name that is equal to `key`,
+you can call the method `history.push(key)` of your history-based component.

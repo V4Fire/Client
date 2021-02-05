@@ -55,11 +55,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		}
 
 		if (!Object.isString(info.type)) {
-			Object.assign(info, {
-				type: 'mounted',
-				originalPath: info.path,
-				fullPath: info.path
-			});
+			info.type = 'mounted';
+			info.originalPath = info.path;
+			info.fullPath = info.path;
 		}
 
 		let

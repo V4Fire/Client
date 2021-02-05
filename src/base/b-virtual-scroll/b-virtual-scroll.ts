@@ -57,7 +57,8 @@ import {
 	RequestQueryFn,
 	DataState,
 	MergeDataStateParams,
-	UnsafeBVirtualScroll
+	UnsafeBVirtualScroll,
+	ItemProps
 
 } from 'base/b-virtual-scroll/interface';
 
@@ -71,16 +72,16 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bVirtualScroll extends iData implements iItems {
+export default class bVirtualScroll extends iData {
 	/** @override */
 	readonly DB!: RemoteData;
 
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iItems.itemsProp]] */
+	/** @see [[iItems.items]] */
 	@prop(Array)
-	readonly optionsProp?: iItems['optionsProp'] = [];
+	readonly optionsProp?: unknown[] = [];
 
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
@@ -92,15 +93,15 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
-	readonly option?: iItems['option'];
+	readonly option?: iItems['item'];
 
 	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItems['optionKey'];
+	readonly optionKey?: iItems['itemKey'];
 
 	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, default: () => ({})})
-	readonly optionProps!: iItems['optionProps'];
+	readonly optionProps!: ItemProps;
 
 	/**
 	 * Maximum number of elements to cache
@@ -425,6 +426,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @see [[iItems.getItemKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
+		// @ts-ignore (removed implementation for issues/471)
 		return iItems.getItemKey(this, el, i);
 	}
 

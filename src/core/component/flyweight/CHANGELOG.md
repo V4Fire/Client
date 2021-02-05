@@ -9,6 +9,31 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.129 (2021-01-28)
+
+#### :house: Internal
+
+* Optimized creation of flyweight components
+
+## v3.0.0-rc.127 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed `componentStatus` with flyweight components
+* Fixed creation of `$async`
+
+## v3.0.0-rc.126 (2021-01-26)
+
+#### :rocket: New Feature
+
+* Now flyweight components support life cycle hooks
+
+## v3.0.0-rc.125 (2021-01-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the creation of nested flyweight components
+
 ## v3.0.0-rc.99 (2020-11-17)
 
 #### :bug: Bug Fix

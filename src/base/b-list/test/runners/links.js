@@ -26,24 +26,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-list list with defined items with hrefs', () => {
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							id: 'target',
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-list', scheme);
-			}, attrs);
-
-			await h.bom.waitForIdleCallback(page);
-			return h.component.waitForComponent(page, '#target');
-		};
-
 		it('providing of href-s manually', async () => {
 			const target = await init({
 				items: [
@@ -96,4 +78,22 @@ module.exports = (page) => {
 			expect(await target.evaluate(() => location.hash)).toBe('#foo');
 		});
 	});
+
+	async function init(attrs = {}) {
+		await page.evaluate((attrs) => {
+			const scheme = [
+				{
+					attrs: {
+						id: 'target',
+						...attrs
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-list', scheme);
+		}, attrs);
+
+		await h.bom.waitForIdleCallback(page);
+		return h.component.waitForComponent(page, '#target');
+	}
 };

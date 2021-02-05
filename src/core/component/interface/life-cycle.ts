@@ -12,7 +12,6 @@ export type Hook =
 	'beforeDataCreate' |
 	'created' |
 	'beforeMount' |
-	'beforeMounted' |
 	'mounted' |
 	'beforeUpdate' |
 	'beforeUpdated' |

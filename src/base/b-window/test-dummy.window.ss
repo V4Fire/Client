@@ -1,3 +1,5 @@
+- namespace b-window
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,10 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-data/i-data.styl"
+- eval
+	? @@saveTplDir(__dirname, 'windowSlotTestDummy')
 
-$p = {
-
-}
-
-b-matryoshka extends i-data
+- block index->windowSlotTestDummy(nms)
+	< ?.${nms}
+		< .&__bla
+			Hello world!

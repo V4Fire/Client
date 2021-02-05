@@ -13,11 +13,11 @@ import { ComponentMeta } from 'core/component/interface';
  * @param base
  */
 export function forkMeta(base: ComponentMeta): ComponentMeta {
-	const meta = Object.assign(Object.create(base), {
-		params: Object.create(base.params),
-		watchers: {},
-		hooks: {}
-	});
+	const meta = Object.create(base);
+
+	meta.params = Object.create(base.params);
+	meta.watchers = {};
+	meta.hooks = {};
 
 	for (let o = meta.hooks, p = base.hooks, keys = Object.keys(p), i = 0; i < keys.length; i++) {
 		const

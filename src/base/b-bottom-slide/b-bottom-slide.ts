@@ -570,7 +570,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		if (this.heightMode === 'content' && currentPage?.initBoundingRect) {
 			const
-				currentContentPageHeight = currentPage.initBoundingRect.height;
+				currentContentPageHeight = currentPage.el.scrollHeight;
 
 			if (content.clientHeight !== currentContentPageHeight) {
 				content.style.height = currentContentPageHeight.px;

@@ -9,18 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.?? ()
+## v3.0.0-rc.140 (2021-02-05)
 
-#### :boom: Breaking Change
+#### :bug: Bug Fix
 
-* Changed the model prop from `valueProp` to `activeProp`
+* Fixed the condition to provide slots
+
+## v3.0.0-rc.123 (2021-01-15)
 
 #### :rocket: New Feature
 
-* Added support of interpolation of a data provider response
-* Added a new associated type: `Items`
+* Now the component implements the `iItems` trait
 
-#### :nail_care: Polish
+#### :memo: Documentation
 
 * Improved documentation
 

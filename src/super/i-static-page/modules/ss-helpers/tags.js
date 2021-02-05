@@ -22,6 +22,7 @@ const
 	{Filters} = require('snakeskin');
 
 const
+	{hasInclude, escapeStringLiteralRgxp} = include('build/replacers/include.js'),
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -246,7 +247,7 @@ function getStyleDecl(lib, body) {
 			}
 
 			if (lib.js) {
-				decl += createTag('style', `include('${lib.src}')`);
+				decl += createTag('style', `include('${lib.src}');`);
 
 			} else {
 				decl += `<style ${attrs}>include('${lib.src}');</style>`;
@@ -259,9 +260,10 @@ function getStyleDecl(lib, body) {
 	if (body) {
 		if (lib.js) {
 			decl += createTag('style', body);
-		}
 
-		decl += `<style ${attrs}>${body}</style>`;
+		} else {
+			decl += `<style ${attrs}>${body}</style>`;
+		}
 
 	} else if (lib.js) {
 		decl += createTag('link');
@@ -273,20 +275,31 @@ function getStyleDecl(lib, body) {
 	return decl;
 
 	function createTag(tag, content) {
-		let decl = `
+		if (content) {
+			if (hasInclude.test(content)) {
+				content = `
+//#set convertToStringLiteral
+el.innerHTML = ${content};
+//#unset convertToStringLiteral
+`;
+
+			} else {
+				content = `el.innerHTML = \`${content.replace(escapeStringLiteralRgxp, '\\$1')}\`;`;
+
+				if (config.es() === 'ES5') {
+					content = buble.transform(content).code;
+				}
+			}
+		}
+
+		return `
 (function () {
 	var el = document.createElement('${tag}');
-	${content ? `el.innerHTML = \`${content}\`;` : ''}
+	${content || ''}
 	${attrs}
 	document.head.appendChild(el);
 })();
 `;
-
-		if (config.es() === 'ES5') {
-			decl = buble.transform(decl).code;
-		}
-
-		return decl;
 	}
 }
 

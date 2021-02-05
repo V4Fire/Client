@@ -102,13 +102,8 @@ function getPageStyleDepsDecl(dependencies, {assets, wrap, js}) {
 		decl += '\n';
 	}
 
-	if (wrap) {
-		if (needInline() && !js) {
-			decl = getStyleDecl(decl);
-
-		} else {
-			decl = getScriptDecl(decl);
-		}
+	if (wrap && (js || !needInline())) {
+		decl = getScriptDecl(decl);
 	}
 
 	return decl;
@@ -150,8 +145,12 @@ function getScriptDeclByName(name, {
 				decl = `include('${filePath}');`;
 			}
 
-		} else if (!optional) {
-			throw new ReferenceError(`Script by a name "${name}" is not defined`);
+		} else {
+			if (!optional) {
+				throw new ReferenceError(`Script by a name "${name}" is not defined`);
+			}
+
+			return '';
 		}
 
 	} else {

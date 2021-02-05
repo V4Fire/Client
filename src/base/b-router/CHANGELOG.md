@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.?? ()
+## v3.0.0-rc.128 (2021-01-27)
+
+#### :bug: Bug Fix
+
+* Fixed providing of URL within `route`
+
+## v3.0.0-rc.123 (2021-01-15)
 
 #### :boom: Breaking Change
 
@@ -19,7 +25,7 @@ Changelog
 
 * Added support of interpolation of a data provider response
 
-#### :nail_care: Polish
+#### :memo: Documentation
 
 * Improved documentation
 

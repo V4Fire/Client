@@ -16,16 +16,12 @@ The trait specifies two methods to manage the document lock scroll status: `lock
 Invoking the `lock` method prevents any document scrolling behavior,
 but you can specify the node within which the scrolling is acceptable.
 
-All methods are declared in the trait have default implementation via the static methods.
+All methods are declared in the trait have default implementations via the static methods.
 
 ```typescript
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
-import iData, { component } from 'super/i-data/i-data';
 
-export * from 'super/i-data/i-data';
-
-@component()
-export default class bWindow extends iData implements iLockPageScroll {
+export default class bWindow implements iLockPageScroll {
   /** @override */
   protected readonly $refs!: {
     window: HTMLElement;
@@ -41,4 +37,57 @@ export default class bWindow extends iData implements iLockPageScroll {
     return iLockPageScroll.unlock(this);
   }
 }
+```
+
+### Helpers
+
+The trait provides a helper function to initialize modifier event listeners to emit component events.
+
+```typescript
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+
+export default class bWindow implements iLockPageScroll {
+  /** @override */
+  protected initModEvents(): void {
+    super.initModEvents();
+    iLockPageScroll.initModEvents(this);
+  }
+}
+```
+
+## Styles
+
+The trait provides a bunch of optional styles for the component.
+
+```stylus
+$p = {
+  helpers: true
+}
+
+i-lock-page-scroll
+  if $p.helpers
+    &-lock-scroll-mobile-true
+      size 100%
+      overflow hidden
+
+    &-lock-scroll-mobile-true body
+      position fixed
+      width 100%
+      overflow hidden
+
+    &-lock-scroll-desktop-true body
+      overflow hidden
+```
+
+To enable these styles, import the trait within your component and call the provided mixin within your component.
+
+```stylus
+@import "traits/i-lock-page-scroll/i-lock-page-scroll.styl"
+
+$p = {
+  lockPageHelpers: true
+}
+
+b-button
+  i-lock-page-scroll({helpers: $p.lockPageHelpers})
 ```

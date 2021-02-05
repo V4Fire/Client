@@ -19,7 +19,7 @@ extend(HTMLImageElement.prototype, 'onInit', function onInit(
 	onSuccess: () => void,
 	onFail?: (err?: Error) => void
 ): void {
-	globalThis['setImmediate'](() => {
+	setImmediate(() => {
 		if (this.complete) {
 			if (this.height > 0 || this.width > 0) {
 				onSuccess.call(this);

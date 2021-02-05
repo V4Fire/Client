@@ -7,7 +7,7 @@
  */
 
 import flags from 'core/init/flags';
-import Component, { rootComponents } from 'core/component';
+import Component, { globalRootComponent, rootComponents } from 'core/component';
 import { createsAsyncSemaphore } from 'core/event';
 
 export default createsAsyncSemaphore(async () => {
@@ -34,9 +34,12 @@ export default createsAsyncSemaphore(async () => {
 		return Object.assign(Object.isFunction(getData) ? getData.call(this) : {}, params.data);
 	};
 
-	return new Component({
+	// @ts-ignore (type)
+	globalRootComponent.link = new Component({
 		...params,
 		...component,
 		el: node
 	});
+
+	return globalRootComponent.link;
 }, ...flags);

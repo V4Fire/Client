@@ -6,53 +6,64 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-slider/README.md]]
+ * @packageDocumentation
+ */
+
+//#if demo
+import 'models/demo/list';
+//#endif
+
 import symbolGenerator from 'core/symbol';
+import { deprecated, deprecate } from 'core/functools';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
-import iItems from 'traits/i-items/i-items';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
 
-import iData, { component, prop, field, system, hook, watch, wait } from 'super/i-data/i-data';
+import iData, {
+
+	component,
+	prop,
+	field,
+	system,
+	computed,
+
+	hook,
+	watch,
+	wait,
+
+	ModsDecl
+
+} from 'super/i-data/i-data';
+
+import { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
+import { sliderModes, alignTypes } from 'base/b-slider/const';
 
 export * from 'super/i-data/i-data';
-
-export interface SlideRect extends ClientRect {
-	offsetLeft: number;
-}
-
-/**
- * -1 - Previous
- * 0  - Not changed
- * 1  - Next
- */
-export type SlideDirection = -1 | 0 | 1;
+export * from 'base/b-slider/interface';
 
 export const
 	$$ = symbolGenerator();
 
-export const alignTypes = {
-	start: true,
-	center: true,
-	end: true,
-	none: true
-};
-
-export const sliderModes = {
-	scroll: true,
-	slider: true
-};
-
-export type AlignType = keyof typeof alignTypes;
-export type Mode = keyof typeof sliderModes;
-
+/**
+ * Component to create a content slider
+ */
 @component()
 export default class bSlider extends iData implements iObserveDOM, iItems {
+	/** @see [[iItems.Item]] */
+	readonly Item!: object;
+
+	/** @see [[iItems.Items]] */
+	readonly Items!: Array<this['Item']>;
+
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
-	 *   *) slider - slider implementation (impossible to skip slides)
+	 *   *) slide - slider implementation (impossible to skip slides)
 	 */
 	@prop({type: String, validator: Object.hasOwnProperty(sliderModes)})
-	readonly mode: Mode = 'slider';
+	readonly modeProp: Mode = 'slide';
 
 	/**
 	 * If true, will be used a duplicate slot to calculate the dynamic height
@@ -81,68 +92,100 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * How much does the shift along the X axis correspond to a finger movement
 	 */
-	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
+	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
 	readonly deltaX: number = 0.9;
 
 	/**
 	 * The minimum required percentage to scroll the slider to an another slide
 	 */
-	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
+	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
 	readonly threshold: number = 0.3;
 
 	/**
 	 * The minimum required percentage for the scroll slider to an another slide in fast motion on the slider
 	 */
-	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
+	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
 	readonly fastSwipeThreshold: number = 0.05;
 
 	/**
 	 * Time (in milliseconds) after which we can assume that there was a quick swipe
 	 */
-	@prop({type: Number, validator: Number.isNatural})
+	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum displacement threshold along the X axis at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: Number.isNatural})
+	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly swipeToleranceX: number = 10;
 
 	/**
 	 * The minimum Y offset threshold at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: Number.isNatural})
+	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly swipeToleranceY: number = 50;
 
-	/** @see [[iItems.prototype.itemsProp]] */
+	/**
+	 * @deprecated
+	 * @see [[bSlider.items]]
+	 */
 	@prop(Array)
-	readonly optionsProp?: iItems['optionsProp'] = [];
+	readonly optionsProp: iItems['items'] = [];
 
-	/** @see [[iItems.prototype.itemsIterator]] */
-	@prop({type: Function, required: false})
-	optionsIterator?: iItems['optionsIterator'];
+	/** @see [[iItems.items]] */
+	@prop(Array)
+	readonly itemsProp: iItems['items'] = [];
 
-	/** @see [[iItems.prototype.items]] */
+	/**
+	 * @deprecated
+	 * @see [[bSlider.item]]
+	 */
+	@prop({type: [String, Function], required: false})
+	readonly option?: iItems['item'];
+
+	/** @see [[iItems.item]] */
+	@prop({type: [String, Function], required: false})
+	readonly item?: iItems['item'];
+
+	/**
+	 * @deprecated
+	 * @see [[bSlider.itemKey]]
+	 */
+	@prop({type: [String, Function], required: false})
+	readonly optionKey?: iItems['itemKey'];
+
+	/** @see [[iItems.itemKey]] */
+	@prop({type: [String, Function], required: false})
+	readonly itemKey?: iItems['itemKey'];
+
+	/**
+	 * @deprecated
+	 * @see [[bSlider.itemProps]]
+	 */
+	@prop({type: [Function, Object]})
+	readonly optionProps?: iItems['itemProps'];
+
+	/** @see [[iItems.itemProps]] */
+	@prop({type: [Function, Object]})
+	readonly itemProps?: iItems['itemProps'];
+
+	/** @see [[bSlider.items]] */
 	@field((o) => o.sync.link())
-	options!: unknown[];
-
-	/** @see [[iItems.prototype.item]] */
-	@prop({type: [String, Function], required: false})
-	readonly option?: iItems['option'];
-
-	/** @see [[iItems.prototype.itemKey]] */
-	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItems['optionKey'];
-
-	/** @see [[iItems.prototype.itemProps]] */
-	@prop({type: Function, default: () => ({})})
-	readonly optionProps!: iItems['optionProps'];
+	options!: this['Items'];
 
 	/**
 	 * The number of slides in the slider
 	 */
 	@system()
 	length: number = 0;
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		swipe: [
+			'true',
+			'false'
+		]
+	};
 
 	/**
 	 * Link to a content node
@@ -180,21 +223,34 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * True if mode is slider
+	 * @deprecated
+	 * @see [[bSlider.isSlideMode]]
 	 */
+	@deprecated({renamedTo: 'isSlideMode'})
 	get isSlider(): boolean {
-		return this.mode === 'slider';
+		return this.isSlideMode;
 	}
 
 	/**
-	 * Returns the current slider scroll
+	 * True if mode is `slide`
+	 */
+	get isSlideMode(): boolean {
+		return this.mode === 'slide';
+	}
+
+	/**
+	 * Current slider scroll
 	 */
 	get currentOffset(): number {
+		if (this.mode === 'scroll') {
+			return this.$refs.contentWrapper?.scrollLeft ?? 0;
+		}
+
 		const
 			{slideRects, current, align, viewRect} = this,
 			slideRect = slideRects[current];
 
-		if (!slideRect || !viewRect) {
+		if (current >= slideRects.length || !viewRect) {
 			return 0;
 		}
 
@@ -211,19 +267,42 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 			case 'end':
 				return slideRect.offsetLeft + slideRect.width;
-		}
 
-		return 0;
+			default:
+				return 0;
+		}
 	}
 
-	/** @see current */
+	/** @see [[iItems.items]] */
+	@field((o) => o.sync.link())
+	protected itemsStore!: iItems['items'];
+
+	/** @see [[bSlider.current]] */
 	@system()
 	protected currentStore: number = 0;
+
+	/** @see [[bSlider.modeProp]] */
+	@field((o) => o.sync.link((value: Mode) => {
+		if (value === 'slider') {
+			deprecate({
+				name: 'slider',
+				type: 'property',
+				renamedTo: 'slide'
+			});
+
+			return 'slide';
+		}
+
+		return value;
+	}))
+
+	protected mode!: Mode;
 
 	/** @override */
 	protected readonly $refs!: {
 		view?: HTMLElement;
 		content?: HTMLElement;
+		contentWrapper?: HTMLElement;
 	};
 
 	/**
@@ -246,7 +325,9 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Is the minimum threshold for starting slide slides passed
-	 * @see swipeTolerance
+	 *
+	 * @see [[bSlider.swipeToleranceX]]
+	 * @see [[bSlider.swipeToleranceY]]
 	 */
 	@system()
 	protected isTolerancePassed: boolean = false;
@@ -280,6 +361,28 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@system()
 	protected swiping: boolean = false;
+
+	/** @see [[iItems.items]] */
+	@computed({dependencies: ['itemsStore', 'options']})
+	get items(): this['Items'] {
+		const
+			items = Object.size(this.options) > 0 ? this.options : this.itemsStore;
+
+		if (Object.size(this.options) > 0) {
+			deprecate({
+				name: 'options',
+				type: 'property',
+				renamedTo: 'items'
+			});
+		}
+
+		return items ?? [];
+	}
+
+	/** @see [[iItems.items]] */
+	set items(value: this['Items']) {
+		this.field.set('itemsStore', value);
+	}
 
 	/**
 	 * Switches to the specified slide
@@ -317,7 +420,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	moveSlide(dir: SlideDirection): boolean {
 		let
-			current = this.current;
+			{current} = this;
 
 		const
 			{length, content} = this;
@@ -344,7 +447,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		return false;
 	}
 
-	/** @see iObserveDom.initDOMObservers */
+	/** @see [[iObserveDOM.initDOMObservers]] */
 	@hook('mounted')
 	initDOMObservers(): void {
 		const
@@ -358,25 +461,89 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @see iObserveDom.onDOMChange */
+	/** @see [[iObserveDOM.onDOMChange]] */
 	onDOMChange(): void {
 		iObserveDOM.onDOMChange(this);
 	}
 
+	/**
+	 * Returns additional props to pass to the specified item component
+	 *
+	 * @param el
+	 * @param i
+	 */
+	protected getItemAttrs(el: this['Item'], i: number): CanUndef<Dictionary> {
+		const
+			{itemProps, optionProps} = this;
+
+		let
+			props = itemProps;
+
+		if (optionProps != null) {
+			deprecate({
+				name: 'optionProps',
+				type: 'property',
+				renamedTo: 'itemProps'
+			});
+
+			props = optionProps;
+		}
+
+		return Object.isFunction(props) ?
+			props(el, i, {
+				key: this.getItemKey(el, i),
+				ctx: this
+			}) :
+			props;
+	}
+
+	/**
+	 * Returns a component name to render an item
+	 *
+	 * @param el
+	 * @param i
+	 */
+	protected getItemComponentName(el: this['Item'], i: number): string {
+		const
+			{item, option} = this;
+
+		if (option != null) {
+			deprecate({
+				name: 'option',
+				type: 'property',
+				renamedTo: 'item'
+			});
+
+			return Object.isFunction(option) ? option(el, i) : option;
+		}
+
+		return Object.isFunction(item) ? item(el, i) : <string>item;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bSlider.getItemKey]]
+	 */
+	@deprecated({renamedTo: 'getItemKey'})
+	protected getOptionKey(el: this['Item'], i: number): CanUndef<IterationKey> {
+		return this.getItemKey(el, i);
+	}
+
 	/** @see [[iItems.getItemKey]] */
-	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+	protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}
+
 	/**
 	 * Synchronizes the slider state
 	 */
 	@hook('mounted')
 	@wait('loading')
-	protected syncState(): CanPromise<void> {
+	protected syncState(): void {
 		const
 			{view, content} = this.$refs;
 
-		if (!view || !content || !this.isSlider) {
+		if (!view || !content || !this.isSlideMode) {
 			return;
 		}
 
@@ -396,7 +563,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			});
 		}
 
-		this.setMod('swipe', true);
+		void this.setMod('swipe', true);
 		content.style.setProperty('--offset', `${this.currentOffset}px`);
 	}
 
@@ -407,7 +574,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	@watch(':DOMChange')
 	@wait('ready')
 	protected async syncStateDefer(): Promise<void> {
-		if (!this.isSlider) {
+		if (!this.isSlideMode) {
 			return;
 		}
 
@@ -427,19 +594,29 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<unknown[]> {
+	protected initRemoteData(): CanUndef<this['Items']> {
 		if (!this.db) {
 			return;
 		}
 
 		const
-			val = this.convertDBToComponent(this.db);
+			val = this.convertDBToComponent<this['Items']>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.options = val;
+			if (Object.isArray(this.options)) {
+				deprecate({
+					name: 'options',
+					type: 'property',
+					renamedTo: 'items'
+				});
+
+				this.options = val;
+			}
+
+			return this.items = val;
 		}
 
-		return this.options;
+		return this.items;
 	}
 
 	/**
@@ -454,7 +631,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		const
 			{content} = this.$refs;
 
-		if (this.isSlider) {
+		if (this.isSlideMode) {
 			this.async.on(document, 'scroll', () => this.scrolling = true, label);
 			this.initDOMObservers();
 
@@ -492,7 +669,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		this.startY = clientY;
 
 		this.syncState();
-		this.setMod('swipe', true);
+		void this.setMod('swipe', true);
 
 		this.startTime = performance.now();
 	}
@@ -513,11 +690,12 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 		const
 			touch = e.touches[0],
-			diffX = startX - touch.clientX;
+			diffX = startX - touch.clientX,
+			diffY = startY - touch.clientY;
 
 		const isTolerancePassed =
 			this.isTolerancePassed ||
-			Math.abs(startX - touch.clientX) > this.swipeToleranceX && Math.abs(startY - touch.clientY) < this.swipeToleranceY;
+			Math.abs(diffX) > this.swipeToleranceX && Math.abs(diffY) < this.swipeToleranceY;
 
 		if (!content || !isTolerancePassed) {
 			return;
@@ -564,7 +742,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		let
 			isSwiped = false;
 
-		if (!content || !slideRects || !viewRect) {
+		if (!content || Object.size(slideRects) === 0 || !viewRect) {
 			return;
 		}
 
@@ -580,7 +758,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 		this.diffX = 0;
 		content.style.setProperty('--transform', '0px');
-		this.removeMod('swipe', true);
+		void this.removeMod('swipe', true);
 
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;

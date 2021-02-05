@@ -14,6 +14,8 @@ package('p-v4-components-demo')
 	.dependencies(
 		'b-v4-component-demo',
 		'b-virtual-scroll',
+		'b-tree',
+		'b-checkbox',
 		'b-button',
 		'b-router',
 		'b-list',
@@ -23,5 +25,7 @@ package('p-v4-components-demo')
 		'b-sidebar',
 		'b-dummy',
 		'b-dummy-text',
+		'b-slider',
+		'b-window',
 		components
 	);

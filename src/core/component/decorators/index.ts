@@ -177,11 +177,12 @@ export const p = paramsFactory<
 export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
 
 /**
- * Attaches a watcher to a component property/event to a component method or property.
+ * Attaches a watcher of a component property/event to a component method or property.
  *
- * When you watch for changes of some property, the handler function can take the second argument that refers
- * to an old value of a property. If the object that watching is non-primitive, the old value will be cloned from an
- * original old value to avoid the problem when we have two links to the one object.
+ * When you watch for some property changes, the handler function can take the second argument
+ * that refers to the old value of a property. If the object that watching is non-primitive,
+ * the old value will be cloned from the original old value to avoid the problem when we have two
+ * links to the one object.
  *
  * ```typescript
  * @component()

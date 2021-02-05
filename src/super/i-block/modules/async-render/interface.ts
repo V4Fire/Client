@@ -14,8 +14,8 @@ export interface TaskI<D = unknown> {
 }
 
 export interface TaskFilter<EL = unknown, I extends number = number, D = unknown> {
-	(): boolean;
-	(el: EL, i: I, task: TaskI<D>): boolean;
+	(): CanPromise<boolean>;
+	(el: EL, i: I, task: TaskI<D>): CanPromise<boolean>;
 }
 
 export interface TaskDestructor {
@@ -23,6 +23,7 @@ export interface TaskDestructor {
 }
 
 export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {
+	useRAF?: boolean;
 	group?: string;
 	weight?: number;
 	filter?: TaskFilter<EL, I, D>;

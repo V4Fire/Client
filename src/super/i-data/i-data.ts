@@ -366,7 +366,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			$a
 				.clearAll({group: 'requestSync:get'});
 
-			if (this.isFunctional) {
+			if (this.isNotRegular) {
 				return super.initLoad(() => {
 					if (data !== undefined) {
 						this.db = this.convertDataToDB<this['DB']>(data);

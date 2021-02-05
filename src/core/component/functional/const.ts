@@ -16,26 +16,3 @@ export const componentOpts = [
 	'directives',
 	'components'
 ];
-
-export const destroyCheckHooks = [
-	'beforeMounted',
-	'created',
-	'beforeDestroy'
-];
-
-export const destroyHooks = [
-	'beforeDestroy',
-	'destroyed'
-];
-
-export const mountHooks = [
-	'beforeMounted',
-	'beforeUpdated',
-	'beforeActivated'
-];
-
-export const parentMountMap = Object.createDict({
-	beforeMount: 'beforeMounted',
-	beforeUpdate: 'beforeUpdated',
-	deactivated: 'beforeActivated'
-});

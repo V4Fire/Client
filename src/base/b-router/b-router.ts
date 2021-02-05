@@ -770,15 +770,18 @@ export default class bRouter extends iData {
 		// If the route support filling from the root object or query parameters
 		fillRouteParams(newRouteInfo, this);
 
-		// We have two variants of a transition:
+		// We have two variants of transitions:
 		// "soft" - between routes were changed only query or meta parameters
 		// "hard" - first and second routes aren't equal by a name
 
 		// Mutations of query and meta parameters of a route shouldn't force re-render of components,
-		// that why we placed it to a prototype object by using Object.create
+		// that why we placed it to a prototype object by using `Object.create`
 
-		const
-			nonWatchRouteValues = {query: newRouteInfo.query, meta};
+		const nonWatchRouteValues = {
+			url: newRouteInfo.resolvePath(newRouteInfo.params),
+			query: newRouteInfo.query,
+			meta
+		};
 
 		const newRoute = Object.assign(
 			Object.create(nonWatchRouteValues),
@@ -808,7 +811,7 @@ export default class bRouter extends iData {
 			getComparableRouteParams(newRoute)
 		);
 
-		// The transition is real needed, but now we need to understand should we emit "soft" or "hard" transition
+		// The transition is necessary, but now we need to understand should we emit "soft" or "hard" transition
 		if (newRouteIsReallyNeeded) {
 			this.field.set('routeStore', newRoute);
 
@@ -830,15 +833,15 @@ export default class bRouter extends iData {
 				method = 'replace';
 			}
 
-			// This transitions is marked as external,
+			// This transitions is marked as `external`,
 			// i.e. it refers to another site
 			if (newRouteInfo.meta.external) {
-				const p = newRouteInfo.resolvePath(newRouteInfo.params);
-				location.href = p !== '' ? p : '/';
+				const u = newRoute.url;
+				location.href = u !== '' ? u : '/';
 				return;
 			}
 
-			await engine[method](newRouteInfo.resolvePath(newRouteInfo.params), plainInfo);
+			await engine[method](newRoute.url, plainInfo);
 
 			const isSoftTransition = Boolean(r.route && Object.fastCompare(
 				convertRouteToPlainObjectWithoutProto(currentRoute),
@@ -846,13 +849,13 @@ export default class bRouter extends iData {
 			));
 
 			// In this transition were changed only properties from a prototype,
-			// that why it can be emitted as soft transition, i.e. without forcing of re-render of components
+			// that why it can be emitted as a soft transition, i.e. without forcing of the re-rendering of components
 			if (isSoftTransition) {
 				this.emit('softChange', newRoute);
 
 				// We get the prototype by using __proto__ link
-				// because Object.getPrototypeOf returns non-watchable object.
-				// This behavior is based on a strategy that every touch to an object property of a watched object
+				// because `Object.getPrototypeOf` returns a non-watchable object.
+				// This behavior is based on a strategy that every touch to an object property of the watched object
 				// will create a child watch object.
 
 				const

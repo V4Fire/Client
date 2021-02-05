@@ -1,4 +1,3 @@
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,51 +6,112 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
+/**
+ * [[include:traits/i-items/README.md]]
+ * @packageDocumentation
+ */
 
-import { ItemsIterator, ItemProps, OptionFn } from 'traits/i-items/interface';
+import iBlock from 'super/i-block/i-block';
+import {
+
+	IterationKey,
+	ItemPropsFn,
+	CreateFromItemFn
+
+} from 'traits/i-items/interface';
 
 export * from 'traits/i-items/interface';
 
 export default abstract class iItems {
 	/**
-	 * Generates or returns an item key
+	 * Returns a value of the unique key (to optimize re-rendering) of the specified item
 	 *
 	 * @param component
-	 * @param el
+	 * @param item
 	 * @param i
 	 */
-	static getItemKey<T extends iBlock>(component: T & iItems, el: unknown, i: number): CanUndef<string> {
-		return Object.isFunction(component.optionKey) ?
-			component.optionKey(el, i) :
-			component.optionKey;
+	static getItemKey<T extends iBlock>(
+		component: T & iItems,
+		item: any,
+		i: number
+	): CanUndef<IterationKey> {
+		const
+			{unsafe, itemKey} = component;
+
+		let
+			id;
+
+		if (Object.isFunction(itemKey)) {
+			id = itemKey.call(component, item, i);
+
+		} else if (Object.isString(itemKey)) {
+			const
+				cacheKey = `[[FN:${itemKey}]]`;
+
+			let
+				compiledFn = <CanUndef<Function>>unsafe.tmp[cacheKey];
+
+			if (!Object.isFunction(compiledFn)) {
+				const
+					normalize = (str) => str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+				// eslint-disable-next-line no-new-func
+				compiledFn = Function('item', 'i', `return item['${normalize(itemKey)}']`);
+
+				// @ts-ignore (invalid type)
+				unsafe.tmp[cacheKey] = compiledFn;
+			}
+
+			id = compiledFn.call(component, item, i);
+		}
+
+		if (Object.isPrimitive(id)) {
+			return id;
+		}
+
+		return id != null ? String(id) : id;
 	}
 
 	/**
-	 * Component items
+	 * Type: component item
 	 */
-	abstract readonly optionsProp?: unknown[];
-
-	/** @see iItems.prototype.optionProps */
-	abstract options?: unknown[];
+	abstract readonly Item: object;
 
 	/**
-	 * Factory for an item iterator
+	 * Type: list of component items
 	 */
-	abstract readonly optionsIterator?: ItemsIterator;
+	abstract readonly Items: Array<this['Item']>;
 
 	/**
-	 * Item component name
+	 * This prop is used to provide a list of items to render by the component
+	 * @prop
 	 */
-	abstract readonly option?: string | OptionFn;
+	abstract items?: this['Items'];
 
 	/**
-	 * Item unique key
+	 * By design, the specified items are rendered by using other components.
+	 * This prop allows specifying the name of a component that is used to render.
+	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+	 *
+	 * @prop
 	 */
-	abstract readonly optionKey?: string | OptionFn;
+	abstract item?: string | CreateFromItemFn<this['Item'], string>;
 
 	/**
-	 * Item component props
+	 * This prop allows specifying props that are passed to a component to render an item.
+	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+	 *
+	 * @prop
 	 */
-	abstract readonly optionProps: ItemProps;
+	abstract itemProps?: Dictionary | ItemPropsFn<this['Item']>;
+
+	/**
+	 * To optimize the re-rendering of items, we can specify the unique identifier for each item.
+	 * The prop value can be provided as a string or function. In the string case,
+	 * you are providing the name of a property that stores the identifier.
+	 * If the function case, you should return from the function a value of the identifier.
+	 *
+	 * @prop
+	 */
+	abstract itemKey?: string | CreateFromItemFn<this['Item'], IterationKey>;
 }

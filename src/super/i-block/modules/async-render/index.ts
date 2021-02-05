@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
+
 //#if runtime has component/async-render
 import { queue, restart, deferRestart } from 'core/render';
 //#endif
@@ -87,6 +89,10 @@ export default class AsyncRender extends Friend {
 		const getIterable = (value) => {
 			if (Object.isArray(value) || Object.isString(value)) {
 				return value;
+			}
+
+			if (Object.isString(value)) {
+				return value.letters();
 			}
 
 			if (Object.isNumber(value)) {
@@ -243,7 +249,7 @@ export default class AsyncRender extends Friend {
 				chunkI = 0;
 
 			let
-				newArray = <unknown[]>[];
+				renderBuffer = <unknown[]>[];
 
 			const
 				{async: $a} = this;
@@ -281,8 +287,8 @@ export default class AsyncRender extends Friend {
 					}
 				}
 
-				const task = () => {
-					newArray.push(val);
+				const resolveTask = (filter?) => {
+					renderBuffer.push(val);
 
 					total++;
 					chunkTotal++;
@@ -293,7 +299,11 @@ export default class AsyncRender extends Friend {
 						chunkTotal >= perChunk ||
 						Object.isArray(iterable) && total >= iterable.length;
 
-					if (needRender) {
+					if (!needRender) {
+						return;
+					}
+
+					const task = () => {
 						const desc: TaskDesc = {
 							renderGroup: group
 						};
@@ -302,10 +312,10 @@ export default class AsyncRender extends Friend {
 							desc.destructor = () => $a.terminateWorker({group});
 						}
 
-						cb(newArray, desc, (els: Node[]) => {
+						cb(renderBuffer, desc, (els: Node[]) => {
 							chunkI++;
 							chunkTotal = 0;
-							newArray = [];
+							renderBuffer = [];
 
 							$a.worker(() => {
 								const destroyEl = (el) => {
@@ -327,53 +337,61 @@ export default class AsyncRender extends Friend {
 								}
 							}, {group});
 						});
-					}
-				};
-
-				if (filter != null) {
-					const filterParams = {
-						iterable,
-						i: syncI + i + 1,
-
-						get chunk(): number {
-							return chunkI;
-						},
-
-						get total(): number {
-							return total;
-						}
 					};
 
-					const
-						res = filter.call(this.ctx, val, i, filterParams);
+					return this.createTask(task, {group, weight, filter});
+				};
 
-					if (Object.isPromise(res)) {
-						try {
-							const r = await $a.promise(res, {group});
+				try {
+					if (filter != null) {
+						const filterParams = {
+							iterable,
+							i: syncI + i + 1,
 
-							if (Object.isTruly(r)) {
-								this.createTask(task, {group, weight});
+							get chunk(): number {
+								return chunkI;
+							},
+
+							get total(): number {
+								return total;
 							}
+						};
 
-						} catch (err) {
-							if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
-								break;
+						const
+							res = filter.call(this.ctx, val, i, filterParams);
+
+						if (Object.isPromise(res)) {
+							await $a.promise(res, {group}).then((res) => {
+								if (Object.isTruly(res)) {
+									return resolveTask();
+								}
+							});
+
+						} else {
+							const
+								res = resolveTask(filter.bind(this.ctx, val, i, filterParams));
+
+							if (res != null) {
+								await res;
 							}
-
-							stderr(err);
-							continue;
 						}
 
 					} else {
-						this.createTask(task, {
-							group,
-							weight,
-							filter: filter.bind(this.ctx, val, i, filterParams)
-						});
+						const
+							res = resolveTask();
+
+						if (res != null) {
+							await res;
+						}
 					}
 
-				} else {
-					this.createTask(task, {group, weight});
+				} catch (err) {
+					if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+						break;
+					}
+
+					stderr(err);
+					continue;
 				}
 
 				i++;
@@ -389,25 +407,61 @@ export default class AsyncRender extends Friend {
 	 * @param taskFn
 	 * @param [params]
 	 */
-	protected createTask(taskFn: AnyFunction, params: TaskParams = {}): void {
-		const task = {
-			weight: params.weight,
-			fn: this.async.proxy(() => {
-				if (params.filter == null || Object.isTruly(params.filter())) {
-					taskFn();
-					return true;
-				}
+	protected createTask(taskFn: AnyFunction, params: TaskParams = {}): Promise<void> {
+		const
+			{async: $a} = this;
 
-				return false;
+		const
+			group = params.group ?? 'asyncComponents';
 
-			}, {
-				group: params.group ?? 'asyncComponents',
-				onClear: () => queue.delete(task),
-				single: false
-			})
-		};
+		return new SyncPromise<void>((resolve, reject) => {
+			const task = {
+				weight: params.weight,
 
-		queue.add(task);
+				fn: $a.proxy(() => {
+					if (params.filter == null) {
+						return execTask(true);
+					}
+
+					const
+						res = params.filter();
+
+					if (Object.isPromise(res)) {
+						return res.then(execTask);
+					}
+
+					return execTask(res);
+
+					function execTask(res: unknown): CanPromise<boolean> {
+						if (Object.isTruly(res)) {
+							const cb = () => {
+								taskFn();
+								resolve();
+								return true;
+							};
+
+							if (params.useRAF) {
+								return $a.animationFrame({group}).then(cb);
+							}
+
+							return cb();
+						}
+
+						return false;
+					}
+
+				}, {
+					group,
+					single: false,
+					onClear: (err) => {
+						queue.delete(task);
+						reject(err);
+					}
+				})
+			};
+
+			queue.add(task);
+		});
 	}
 
 	//#endif

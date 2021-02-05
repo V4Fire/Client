@@ -26,7 +26,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-list providing of slots', () => {
-		const init = async (attrs = {}) => {
+		const init = async (params = {}) => {
 			await page.evaluate(({content, attrs}) => {
 				Object.forEach(content, (el, key) => {
 					// eslint-disable-next-line no-new-func
@@ -58,7 +58,7 @@ module.exports = (page) => {
 				];
 
 				globalThis.renderComponents('b-list', scheme);
-			}, attrs);
+			}, params);
 
 			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '#target', 'ready');

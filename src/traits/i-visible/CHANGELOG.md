@@ -9,9 +9,9 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.?? ()
+## v3.0.0-rc.123 (2021-01-15)
 
-#### :nail_care: Polish
+#### :memo: Documentation
 
 * Improved documentation
 
