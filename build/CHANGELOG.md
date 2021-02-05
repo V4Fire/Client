@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.140 (2021-02-05)
+
+#### :rocket: New Feature
+
+* Added a new global constant `MODULE`
+
 ## v3.0.0-rc.137 (2021-02-04)
 
 #### :rocket: New Feature

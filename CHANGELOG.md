@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.140 (2021-02-05)
 
+#### :rocket: New Feature
+
+* Added a new global constant `MODULE` `build`
+
 #### :bug: Bug Fix
 
 * Fixed the condition to provide slots:
