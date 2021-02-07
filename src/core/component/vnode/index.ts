@@ -181,11 +181,11 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
  * @param [opts] - additional options
  */
 export function patchComponentVData(
-	data: VNodeData | ComponentVNodeData,
+	data: CanUndef<VNodeData | ComponentVNodeData>,
 	anotherData: CanUndef<VNodeData | ComponentVNodeData>,
 	opts?: PatchComponentVDataOptions
-): VNodeData | ComponentVNodeData {
-	if (anotherData == null) {
+): CanUndef<VNodeData | ComponentVNodeData> {
+	if (anotherData == null || data == null) {
 		return data;
 	}
 

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.137 (2021-02-04)
+
+#### :bug: Bug fix
+
+* Fixed redundant listening of events
+
 ## v3.0.0-rc.92 (2020-11-03)
 
 #### :house: Internal

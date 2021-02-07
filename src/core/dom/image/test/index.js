@@ -209,6 +209,23 @@ module.exports = async (page, params) => {
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage2x);
 				});
 
+				it('update `src` without ctx provided', async () => {
+					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+						const target = document.getElementById(`${tag}-target`);
+						imageLoaderCtx.init(target, {src: images.pngImage, handleUpdate: true});
+					}, [tag, images]);
+
+					await h.bom.waitForIdleCallback(page);
+
+					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+						const target = document.getElementById(`${tag}-target`);
+						imageLoaderCtx.update(target, {src: images.pngImage2x, handleUpdate: true});
+					}, [tag, images]);
+
+					await h.bom.waitForIdleCallback(page);
+					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage2x);
+				});
+
 				it('with `src` and preview with `src`', async () => {
 					const
 						imgUrl = getRandomImgUrl(),
@@ -1033,6 +1050,41 @@ module.exports = async (page, params) => {
 
 			await h.bom.waitForIdleCallback(page);
 			expect(await divNode.evaluate((ctx) => parseInt(ctx.style.paddingBottom, 10))).toBe(52);
+		});
+
+		it('div tag clearing all styles after unbinding', async () => {
+			const
+				tag = 'div',
+				beforeImg = 'linear-gradient(rgb(230, 100, 101), rgb(145, 152, 229))',
+				afterImg = 'linear-gradient(rgb(230, 97, 101), rgb(145, 40, 229))';
+
+			await imageLoader.evaluate((imageLoaderCtx, [tag, mainSrc, beforeImg, afterImg]) => {
+				const
+					target = document.getElementById(`${tag}-target`);
+
+				imageLoaderCtx.init(target, {
+					src: mainSrc,
+					bgOptions: {size: 'contain', ratio: 100 / 50, beforeImg, afterImg, position: '47% 47%', repeat: 'no-repeat'},
+					ctx: globalThis.dummy
+				});
+			}, [tag, images.pngImage, beforeImg, afterImg]);
+
+			await h.bom.waitForIdleCallback(page);
+
+			await imageLoader.evaluate((imageLoaderCtx, tag) => {
+				const
+					target = document.getElementById(`${tag}-target`);
+
+				imageLoaderCtx.clearElement(target);
+			}, tag);
+
+			await h.bom.waitForIdleCallback(page);
+
+			expect(await getNode(tag).evaluate((ctx) => ctx.style.backgroundImage)).toBe('');
+			expect(await getNode(tag).evaluate((ctx) => ctx.style.backgroundSize)).toBe('');
+			expect(await getNode(tag).evaluate((ctx) => ctx.style.backgroundPosition)).toBe('');
+			expect(await getNode(tag).evaluate((ctx) => ctx.style.backgroundRepeat)).toBe('');
+			expect(await getNode(tag).evaluate((ctx) => ctx.style.paddingBottom)).toBe('');
 		});
 	});
 };

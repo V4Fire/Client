@@ -80,10 +80,10 @@
 									< @b-icon v-else | :value = el.icon
 
 						- block progress
-							< span.&__cell.&__link-icon.&__link-progress v-if = el.progressIcon != null
+							< span.&__cell.&__link-icon.&__link-progress v-if = el.progressIcon != null || vdom.getSlot('progressIcon')
 								+= self.slot('progressIcon', {':item': 'el', ':icon': 'el.progressIcon'})
 									< component &
-										v-else-if = Object.isString(el.progressIcon) |
+										v-if = Object.isString(el.progressIcon) |
 										:is = el.progressIcon
 									.
 

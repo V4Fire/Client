@@ -1,6 +1,6 @@
 # core/component/reflection
 
-This module provides a bunch of function to reflect component classes.
+This module provides a bunch of functions to reflect component classes.
 
 ```js
 @component()

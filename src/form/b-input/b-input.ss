@@ -96,16 +96,14 @@
 						< _.&__cell.&__icon.&__clear @mousedown.prevent | @click = onClear
 
 					- block progress
-						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
-							< template v-if = vdom.getSlot('progressIcon')
-								+= self.slot('progressIcon', {':icon': 'progressIcon'})
+						< _.&__cell.&__icon.&__progress v-if = progressIcon != null || vdom.getSlot('progressIcon')
+							+= self.slot('progressIcon', {':icon': 'progressIcon'})
+								< component &
+									v-if = Object.isString(progressIcon) |
+									:is = progressIcon
+								.
 
-							< component &
-								v-else-if = Object.isString(progressIcon) |
-								:is = progressIcon
-							.
-
-							< @b-progress-icon v-else
+								< @b-progress-icon v-else
 
 					- block validation
 						< _.&__cell.&__icon.&__valid-status.&__valid

@@ -31,7 +31,8 @@ const extensions = $C(include('build/resolve.webpack').extensions).to([]).reduce
 });
 
 const
-	importRgxp = new RegExp(`(['"])(${RegExp.escape(superLink)})(/.*?|(?=\\1))\\1`, 'g');
+	importRgxp = new RegExp(`(['"])(${RegExp.escape(superLink)})(/.*?|(?=\\1))\\1`, 'g'),
+	hasImport = importRgxp.removeFlags('g');
 
 /**
  * Monic replacer to enable the "@super" import alias within TS/JS files.
@@ -47,7 +48,7 @@ const
  * ```
  */
 module.exports = function superImportReplacer(str, filePath) {
-	if (!dependencies.length || !importRgxp.test(str)) {
+	if (!dependencies.length || !hasImport.test(str)) {
 		return str;
 	}
 
@@ -105,5 +106,6 @@ module.exports = function superImportReplacer(str, filePath) {
 };
 
 Object.assign(module.exports, {
+	hasImport,
 	importRgxp
 });
