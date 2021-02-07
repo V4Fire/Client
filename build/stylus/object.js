@@ -60,6 +60,9 @@ function getField(obj, path) {
 /**
  * Attempt to parse an object node to the javascript object.
  *
+ * Object nodes would be a Javascript objects (not an array as at the original function),
+ * but a one-element array would be the first element value.
+ *
  * @param {Object} obj
  * @returns {Object}
  */
