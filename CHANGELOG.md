@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.142 (2021-02-??)
+
+#### :rocket: New Feature
+
+* Added icons colorizing functionality by stylus `i` function
+* Added some `stylus` plugins to generate url strings `build/stylus/url`
+
 ## v3.0.0-rc.141 (2021-02-05)
 
 #### :bug: Bug Fix
