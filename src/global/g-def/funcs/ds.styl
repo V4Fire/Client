@@ -50,7 +50,7 @@ i($name, $params, $opts)
 		$align = $opts
 
 	if type($params) == "object"
-		$imgPath = formatURL({query: $params, pathname: $imgPath})
+		$imgPath = formatURL({href: $imgPath, query: $params})
 
 	else if type($params) == "ident"
 		$repeat = $params
