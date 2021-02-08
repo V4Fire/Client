@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.142 (2021-??-??)
+
+#### :boom: Breaking Change
+
+* `b-content-switcher` component was removed
+
 ## v3.0.0-rc.141 (2021-02-05)
 
 #### :bug: Bug Fix
