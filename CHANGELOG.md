@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* `b-content-switcher` component was removed
+* Removed:
+  * `b-content-switcher`
+  * `core/component/helpers/observable`
 
 ## v3.0.0-rc.141 (2021-02-05)
 
@@ -299,9 +301,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 `bWindow`:
-  * Fixed ESLint errors
-  * Fixed TS errors
-  * Added tests
+* Fixed ESLint errors
+* Fixed TS errors
+* Added tests
 
 ## v3.0.0-rc.120 (2020-12-23)
 
@@ -466,7 +468,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
-They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
+  They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
 
 ## v3.0.0-rc.108 (2020-12-14)
 
@@ -1806,7 +1808,7 @@ npx webpack --components b-button,b-select
 #### :boom: Breaking Change
 
 * All getters are cached by default and can be watched only if they have tied properties, for instance, `foo` -> `fooStore` or `foo` -> `fooProp`,
-otherwise, you need to provide dependencies by using the special decorator to enable these features
+  otherwise, you need to provide dependencies by using the special decorator to enable these features
 
 * Renamed `build/snakeskin.webpack` to `build/snakeskin/index`
 * Renamed `build/snakeskin.vars` to `build/snakeskin/vars`
