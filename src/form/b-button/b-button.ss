@@ -91,10 +91,10 @@
 								< @b-icon v-else | :value = icon
 
 					- block progress
-						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
+						< _.&__cell.&__icon.&__progress v-if = progressIcon != null || vdom.getSlot('progressIcon')
 							+= self.slot('progressIcon', {':icon': 'progressIcon'})
 								< component &
-									v-else-if = Object.isString(progressIcon) |
+									v-if = Object.isString(progressIcon) |
 									:is = progressIcon
 								.
 

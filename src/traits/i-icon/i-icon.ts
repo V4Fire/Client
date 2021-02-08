@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
 import iBlock from 'super/i-block/i-block';
 
 import { ID_ATTRIBUTE } from 'core/component/directives/update-on';
@@ -21,9 +22,9 @@ export default abstract class iIcon {
 	 * Returns a link for the specified icon
 	 * @param iconId
 	 */
-	static async getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
+	static getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
 		if (iconId == null) {
-			return Promise.resolve(undefined);
+			return SyncPromise.resolve(undefined);
 		}
 
 		if (!(iconId in iconsMap)) {
@@ -40,8 +41,14 @@ export default abstract class iIcon {
 			q = location.href.endsWith('?') ? '?' : '';
 		}
 
-		const icon = await icons(iconsMap[iconId]);
-		return `${location.pathname + q}#${icon.id}`;
+		const
+			icon = icons(iconsMap[iconId]);
+
+		if (Object.isPromise(icon)) {
+			return (async () => `${location.pathname + q}#${(await icon).id}`)();
+		}
+
+		return SyncPromise.resolve(`${location.pathname + q}#${icon.id}`);
 	}
 
 	/**
@@ -52,6 +59,13 @@ export default abstract class iIcon {
 	 * @param [href]
 	 */
 	static updateIconHref<T extends iBlock>(component: T, el: SVGUseElement, href?: string): void {
+		const
+			$a = component.unsafe.async,
+			group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
+
+		$a
+			.clearAll(group);
+
 		const
 			parent = el.parentNode;
 
@@ -67,23 +81,21 @@ export default abstract class iIcon {
 			return;
 		}
 
-		const newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+		const
+			newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
 
 		newEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href!);
 		newEl.setAttribute('data-tmp', '');
 
-		parent.appendChild(newEl);
+		$a.requestAnimationFrame(() => {
+			parent.appendChild(newEl);
+		}, group);
 
-		component.unsafe.async.worker(destructor, {
-			group: el.getAttribute(ID_ATTRIBUTE) ?? undefined
-		});
-
-		function destructor(): void {
+		$a.worker(() => {
 			try {
-				parent?.removeChild(newEl);
-
+				parent.removeChild(newEl);
 			} catch {}
-		}
+		}, group);
 	}
 
 	/**

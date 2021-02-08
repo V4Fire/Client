@@ -11,11 +11,92 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.135 (2021-??-??)
+## v3.0.0-rc.142 (2021-??-??)
 
 #### :boom: Breaking Change
 
 * `b-content-switcher` component was removed
+
+## v3.0.0-rc.141 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with an update without providing of `ctx` `core/come/image`
+
+## v3.0.0-rc.140 (2021-02-05)
+
+#### :rocket: New Feature
+
+* Added a new global constant `MODULE` `build`
+
+#### :bug: Bug Fix
+
+* Fixed the support of `--fat-html` `traits/i-icon`
+* Fixed the condition to provide slots:
+  * `bButton`
+  * `bInput`
+  * `bList`
+
+## v3.0.0-rc.139 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed cleaning of background styles `core/dom/image`
+
+## v3.0.0-rc.138 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new parameter `TaskParams.useRAF` `super/i-block/modules/async-render`
+
+## v3.0.0-rc.137 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new parameter `--fat-html` `config`
+* Added a new option `--only-run:boolean` for `npx gulp test:components`.
+  It allows run all test cases without the building stage.
+
+#### :bug: Bug Fix
+
+* Fixed linking to values with watchable prototypes `super/modules/sync`
+* Fixed using of global RegExp-s with the `g` flag
+* Fixed redundant listening of events `core/component/engines/vue`
+* Used `nanoid` to generate `nonceStore` `config`
+
+* `build`:
+  * Fixed minifying of dynamic styles
+  * Fixed dynamic imports with `fatHTML`
+  * Fixed the running of parallel tests when `portfinder` was returning the same port for different processes
+
+#### :house: Internal
+
+* Updated dependencies:
+  * `svg-url-loader@7.1.1`
+  * `terser-webpack-plugin@5.1.1`
+  * `postcss-loader@5.0.0`
+  * `webpack@5.20.1`
+
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :rocket: New Feature
+
+* Added logging of dependencies `build/test.gulp`
+* Added a new parameter `build.demoPage` `config`
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
+#### :house: Internal
+
+* Optimized the inserting of an icon into DOM by using `requestAnimationFrame` `traits/i-icon`
+
+## v3.0.0-rc.135 (2021-02-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the redundant clearing of async tasks `core/component/directives/update-on`
 
 ## v3.0.0-rc.134 (2021-01-30)
 

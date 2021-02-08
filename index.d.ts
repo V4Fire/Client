@@ -13,6 +13,7 @@ declare const CSP_NONCE_STORE: string;
 // eslint-disable-next-line camelcase
 declare let __webpack_nonce__: CanUndef<string>;
 
+declare const MODULE: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 

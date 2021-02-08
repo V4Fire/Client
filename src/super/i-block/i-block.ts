@@ -1587,7 +1587,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		opts = opts ?? {};
 
-		if (Object.isString(path) && customWatcherRgxp.test(path)) {
+		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
 			bindRemoteWatchers(this, {
 				async: <Async<any>>this.async,
 				watchers: {
