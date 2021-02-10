@@ -12,8 +12,7 @@ const
 	$C = require('collection.js');
 
 /**
- * Returns a name of the CSS variable created from the specified path with a dot delimiter
- * from the specified path with a dot delimiter
+ * Returns a name of the CSS variable, created from the specified path with a dot delimiter
  *
  * @param {string} path
  * @returns {string}
@@ -23,46 +22,46 @@ function getVariableName(path) {
 }
 
 /**
- * Sets a variable into specified dictionary by the specified path
+ * Sets a variable into the specified variables dictionary by the specified path
  *
- * @param {Object} vars
- * @param {string} path
- * @param {unknown} dsValue
+ * @param {Object} varDict - variables dictionary
+ * @param {string} path - path to set a value
+ * @param {unknown} value
  * @param {string} [theme]
  */
-function saveVariable(vars, path, dsValue, theme) {
+function saveVariable(varDict, path, value, theme) {
 	const
 		variable = getVariableName(path),
-		mapValue = [variable, dsValue];
+		mapValue = [variable, value];
 
-	$C(vars).set(`var(${variable})`, path);
-	$C(vars).set(`var(${variable}-diff)`, `diff.${path}`);
+	$C(varDict).set(`var(${variable})`, path);
+	$C(varDict).set(`var(${variable}-diff)`, `diff.${path}`);
 
 	if (theme === undefined) {
-		vars.map[path] = mapValue;
+		varDict.map[path] = mapValue;
 
 	} else {
-		if (!vars.map[theme]) {
-			Object.defineProperty(vars.map, theme, {value: {}, enumerable: false});
+		if (!varDict.map[theme]) {
+			Object.defineProperty(varDict.map, theme, {value: {}, enumerable: false});
 		}
 
-		vars.map[theme][path] = mapValue;
+		varDict.map[theme][path] = mapValue;
 	}
 }
 
 /**
- * Returns path with a dot delimiter between prefix and suffix
+ * Returns a path to the specified variable name
  *
- * @param {string} prefix
- * @param {string} suffix
+ * @param {?string} prefix
+ * @param {string} name
  * @returns {string}
  */
-function createPath(prefix, suffix) {
-	return `${prefix ? `${prefix}.${suffix}` : suffix}`;
+function getVariablePath(prefix, name) {
+	return `${prefix ? `${prefix}.${name}` : name}`;
 }
 
 /**
- * Converts raw design system data to the project design system
+ * Creates a project design system from the specified raw object
  *
  * @param {DesignSystem} raw
  * @param {Object} [stylus=]
@@ -88,9 +87,9 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 }
 
 /**
- * Converts object prop values to Stylus values recursively
+ * Converts object prop values to `stylus` values recursively
  *
- * @param {Object} stylus
+ * @param {Object} stylus - link to stylus package instance
  * @param {DesignSystem} data
  * @param {Object} variables
  * @param {string} [path]
@@ -126,10 +125,10 @@ function convertProps(stylus, data, variables, path, theme) {
 			}
 
 		} else if (Object.isObject(d)) {
-			convertProps(stylus, d, variables, createPath(path, val), theme);
+			convertProps(stylus, d, variables, getVariablePath(path, val), theme);
 
 		} else if (Object.isArray(d)) {
-			convertProps(stylus, d, variables, createPath(path, val), theme);
+			convertProps(stylus, d, variables, getVariablePath(path, val), theme);
 			d = stylus.utils.coerceArray(d, true);
 
 		} else {
@@ -140,14 +139,14 @@ function convertProps(stylus, data, variables, path, theme) {
 					parsed = new stylus.Parser(d, {cache: false});
 
 				data[val] = parsed.function();
-				saveVariable(variables, createPath(path, val), data[val], theme);
+				saveVariable(variables, getVariablePath(path, val), data[val], theme);
 				return;
 			}
 
 			if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
 				// HEX value
 				data[val] = new stylus.Parser(d, {cache: false}).peek().val;
-				saveVariable(variables, createPath(path, val), data[val], theme);
+				saveVariable(variables, getVariablePath(path, val), data[val], theme);
 				return;
 			}
 
@@ -159,29 +158,29 @@ function convertProps(stylus, data, variables, path, theme) {
 				if (unit) {
 					// Value with unit
 					data[val] = new stylus.nodes.Unit(parseFloat(unit[1]), unit[2]);
-					saveVariable(variables, createPath(path, val), data[val], theme);
+					saveVariable(variables, getVariablePath(path, val), data[val], theme);
 					return;
 				}
 
 				data[val] = new stylus.nodes.String(d);
-				saveVariable(variables, createPath(path, val), data[val], theme);
+				saveVariable(variables, getVariablePath(path, val), data[val], theme);
 				return;
 			}
 
 			data[val] = new stylus.nodes.Unit(d);
-			saveVariable(variables, createPath(path, val), data[val], theme);
+			saveVariable(variables, getVariablePath(path, val), data[val], theme);
 		}
 	});
 }
 
 /**
- * Returns array of fields to get themed value
+ * Returns array of fields to get a themed value
  *
  * @param {string} field
  * @param {string} [theme]
- * @param {string[]} [fieldsWithTheme]
+ * @param {Array<string>} [fieldsWithTheme]
  *
- * @returns {string[]}
+ * @returns {!Array<string>}
  */
 function getThemedPathChunks(field, theme, fieldsWithTheme) {
 	let
@@ -256,6 +255,6 @@ module.exports = {
 	checkDeprecated,
 	getVariableName,
 	createDesignSystem,
-	createPath,
+	getVariablePath,
 	getThemedPathChunks
 };
