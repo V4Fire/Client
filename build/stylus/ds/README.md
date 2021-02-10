@@ -21,7 +21,7 @@ Module tests divided in the separate files or folders by groups:
 - Tests for design system object creating. For using this object from plugins
 - Tests for plugins, that developers can use in styling files
 
-Different variants of the design system object are located in the folder `test/scheme`
+Different variants of the design system objects is being locate within the folder `test/scheme`
 
 #### Design system generating tests
 

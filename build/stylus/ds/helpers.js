@@ -18,7 +18,7 @@ const
  * @param {string} path
  * @returns {string}
  */
-function createVariableName(path) {
+function getVariableName(path) {
 	return `--${path.split('.').join('-')}`;
 }
 
@@ -32,7 +32,7 @@ function createVariableName(path) {
  */
 function saveVariable(vars, path, dsValue, theme) {
 	const
-		variable = createVariableName(path),
+		variable = getVariableName(path),
 		mapValue = [variable, dsValue];
 
 	$C(vars).set(`var(${variable})`, path);
@@ -203,8 +203,7 @@ function getThemedPathChunks(field, theme, fieldsWithTheme) {
 }
 
 /**
- * Checks the specified path to field for obsolescence
- * at the specified design system object
+ * Checks the specified path to a field for obsolescence at the design system
  *
  * @param {DesignSystem} ds
  * @param {string | string[]} path
@@ -255,7 +254,7 @@ function checkDeprecated(ds, path) {
 module.exports = {
 	saveVariable,
 	checkDeprecated,
-	createVariableName,
+	getVariableName,
 	createDesignSystem,
 	createPath,
 	getThemedPathChunks

@@ -20,10 +20,10 @@ exports.getDS = function getDS() {
 	try {
 		return require(pzlr.designSystem);
 
-	} catch (e) {
-		console.log(
+	} catch (err) {
+		console.error(
 			`Error while getting design system package from "${pzlr.designSystem}". Message: `,
-			e
+			err
 		);
 
 		return null;
@@ -36,7 +36,7 @@ exports.getDS = function getDS() {
  * @param {DesignSystem} ds
  * @param {string[]|boolean} buildThemes
  *
- * @returns {string[]|null}
+ * @returns {?Array<string>}
  */
 exports.getThemes = function getThemes(ds, buildThemes) {
 	const

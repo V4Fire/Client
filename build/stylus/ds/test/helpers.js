@@ -11,7 +11,7 @@
 require('config');
 
 const
-	{createVariableName} = include('build/stylus/ds/helpers');
+	{getVariableName} = include('build/stylus/ds/helpers');
 
 module.exports = {
 	/**
@@ -21,6 +21,6 @@ module.exports = {
 	 * @returns {string}
 	 */
 	getCSSVariable(path) {
-		return `'var(${createVariableName(path)})'`;
+		return `'var(${getVariableName(path)})'`;
 	}
 };
