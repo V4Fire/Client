@@ -14,7 +14,7 @@ const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
 	{unThemeText} = include('build/stylus/ds/test/scheme/themes'),
 	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
-	createPlugins = include('build/stylus/ds/plugins'),
+	getPlugins = include('build/stylus/ds/plugins'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
@@ -25,7 +25,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
-			plugins = createPlugins({ds, cssVariables, stylus});
+			plugins = getPlugins({ds, cssVariables, stylus});
 
 		stylus.render('getDSTextStyles(Base)', {use: [plugins]}, (err, text) => {
 			const
@@ -47,7 +47,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
-			plugins = createPlugins({ds, cssVariables, theme, includeThemes: ['day', 'night'], stylus});
+			plugins = getPlugins({ds, cssVariables, theme, includeThemes: ['day', 'night'], stylus});
 
 		stylus.render('getDSTextStyles("Heading1")', {use: [plugins]}, (err, text) => {
 			const
@@ -67,7 +67,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(unThemeText),
-			plugins = createPlugins({ds, cssVariables, theme, stylus});
+			plugins = getPlugins({ds, cssVariables, theme, stylus});
 
 		stylus.render('getDSTextStyles("Heading-3")', {use: [plugins]}, (err, text) => {
 			const

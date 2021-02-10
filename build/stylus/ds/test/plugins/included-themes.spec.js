@@ -13,7 +13,7 @@ require('config');
 const
 	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
-	createPlugins = include('build/stylus/ds/plugins'),
+	getPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/included-themes', () => {
@@ -24,7 +24,7 @@ describe('build/stylus/plugins/included-themes', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
-			plugins = createPlugins({ds, cssVariables, theme, stylus, includeThemes: true});
+			plugins = getPlugins({ds, cssVariables, theme, stylus, includeThemes: true});
 
 		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
 			expect(value.includes(`content: '${ds.raw.meta.themes.join('.')}'`)).toBeTrue();
@@ -38,7 +38,7 @@ describe('build/stylus/plugins/included-themes', () => {
 		const
 			includeThemes = ['night'],
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
-			plugins = createPlugins({ds, cssVariables, theme: includeThemes[0], stylus, includeThemes});
+			plugins = getPlugins({ds, cssVariables, theme: includeThemes[0], stylus, includeThemes});
 
 		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
 			expect(value.includes(`content: '${includeThemes.join('.')}'`)).toBeTrue();
@@ -52,7 +52,7 @@ describe('build/stylus/plugins/included-themes', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
-			plugins = createPlugins({ds, cssVariables, theme, stylus});
+			plugins = getPlugins({ds, cssVariables, theme, stylus});
 
 		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
 			expect(value.includes('content: \'null\'')).toBeTrue();

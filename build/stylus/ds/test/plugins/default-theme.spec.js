@@ -12,7 +12,7 @@ require('config');
 
 const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
-	createPlugins = include('build/stylus/ds/plugins'),
+	getPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/default-theme', () => {
@@ -23,7 +23,7 @@ describe('build/stylus/plugins/default-theme', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
-			plugins = createPlugins({ds, cssVariables, theme, stylus});
+			plugins = getPlugins({ds, cssVariables, theme, stylus});
 
 		stylus.render('defaultTheme()', {use: [plugins]}, (err, value) => {
 			expect(value.trim()).toEqual(`'${theme}'`);

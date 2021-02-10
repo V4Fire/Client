@@ -13,7 +13,7 @@ require('config');
 const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
 	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
-	createPlugins = include('build/stylus/ds/plugins'),
+	getPlugins = include('build/stylus/ds/plugins'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers'),
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
@@ -24,7 +24,7 @@ describe('build/stylus/plugins', () => {
 			stylus = require('stylus'),
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed);
 
-		expect(() => createPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
+		expect(() => getPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
 	});
 
 	it('should return css variables from plugins with an including vars flag', () => {
@@ -33,7 +33,7 @@ describe('build/stylus/plugins', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
-			plugins = createPlugins({ds, cssVariables, stylus, includeVars: true});
+			plugins = getPlugins({ds, cssVariables, stylus, includeVars: true});
 
 		stylus.render('getDSColor("orange", 1)', {use: [plugins]}, (err, hex) => {
 			expect(hex.trim()).toEqual(`${getCSSVariable('colors.orange.0')}`);

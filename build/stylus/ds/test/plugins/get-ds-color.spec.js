@@ -12,7 +12,7 @@ require('config');
 
 const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
-	createPlugins = include('build/stylus/ds/plugins'),
+	getPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/get-ds-color', () => {
@@ -22,7 +22,7 @@ describe('build/stylus/plugins/get-ds-color', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
-			plugins = createPlugins({ds, cssVariables, stylus});
+			plugins = getPlugins({ds, cssVariables, stylus});
 
 		stylus.render('getDSColor("blue", 1)', {use: [plugins]}, (err, hex) => {
 			expect(hex).toEqual(stylus.render(plainDesignSystem.colors.blue[0]));

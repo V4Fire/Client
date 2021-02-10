@@ -48,7 +48,7 @@ Example:
 ```js
 // ...
 const
-	plugins = createPlugins({ds, cssVariables, stylus, includeVars: true});
+	plugins = getPlugins({ds, cssVariables, stylus, includeVars: true});
 
 stylus.render('getDSFieldValue(rounding small)', {use: [plugins]}, (err, value) => {
 	expect(value.trim()).toEqual(`${getCSSVariable('rounding.small')}`);
@@ -69,7 +69,7 @@ Example with expectation a set of values:
 const
 	includeThemes = ['night', 'day'],
 	{data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
-	plugins = createPlugins({ds, cssVariables, theme, stylus, includeThemes});
+	plugins = getPlugins({ds, cssVariables, theme, stylus, includeThemes});
 
 stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
 	expect(value.includes(`content: '${includeThemes.join('.')}'`)).toBeTrue();

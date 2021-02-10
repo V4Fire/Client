@@ -16,18 +16,18 @@ const
 	{getThemedPathChunks, checkDeprecated} = include('build/stylus/ds/helpers');
 
 /**
- * Returns a set of stylus plugins
+ * Returns a set of stylus plugins by the specified options
  *
- * @param {DesignSystem} ds - stylus-ready design system object
+ * @param {DesignSystem} ds - design system object, prepared to use with `stylus`
  * @param {Object} cssVariables
  * @param {string} [theme] - current theme
  * @param {boolean} [includeVars] - true, if need to provide values only as css-variables
  * @param {boolean|string[]} [includeThemes] - flag or set of themes provided to runtime
- * @param {Object} [stylus=]
+ * @param {Object} [stylus=] - link to a `stylus` package instance
  *
  * @returns {function(*): void}
  */
-module.exports = function createPlugins({
+module.exports = function getPlugins({
 	ds,
 	cssVariables,
 	theme,

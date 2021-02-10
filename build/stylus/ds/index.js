@@ -14,7 +14,7 @@ const
 
 const
 	{createDesignSystem} = include('build/stylus/ds/helpers'),
-	createPlugins = include('build/stylus/ds/plugins'),
+	getPlugins = include('build/stylus/ds/plugins'),
 	{getDS} = include('build/ds');
 
 const
@@ -36,11 +36,11 @@ if (pzlr.config.designSystem) {
 		cssVariables = variables;
 
 	} else {
-		console.log('[stylus] Design system must be an object');
+		console.warn('[stylus] Design system must be an object');
 	}
 
 } else {
-	console.log('[stylus] Design system package is not specified');
+	console.warn('[stylus] Design system package is not specified');
 }
 
-module.exports = createPlugins({ds, cssVariables, theme, includeVars, includeThemes});
+module.exports = getPlugins({ds, cssVariables, theme, includeVars, includeThemes});
