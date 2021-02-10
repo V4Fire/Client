@@ -78,11 +78,6 @@ export function parseVNodeAsFlyweight(
 	const
 		fakeCtx = Object.create(parentComponent);
 
-	fakeCtx._self = fakeCtx;
-	fakeCtx._renderProxy = fakeCtx;
-	fakeCtx._c = fakeCtx.$createElement;
-	fakeCtx._staticTrees = [];
-
 	fakeCtx.isFlyweight = true;
 	fakeCtx.hook = 'beforeDataCreate';
 
@@ -95,6 +90,11 @@ export function parseVNodeAsFlyweight(
 
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
 	fakeCtx.$destroy = () => destroyComponent(fakeCtx);
+
+	fakeCtx._self = fakeCtx;
+	fakeCtx._renderProxy = fakeCtx;
+	fakeCtx._c = fakeCtx.$createElement;
+	fakeCtx._staticTrees = [];
 
 	Object.defineProperty(fakeCtx, '$el', {
 		configurable: true,
