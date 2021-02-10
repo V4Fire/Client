@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `getThemes` function
+* Added a new function `getThemes`
 
 #### :house: Internal
 

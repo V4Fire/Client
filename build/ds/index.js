@@ -13,8 +13,8 @@ const
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 /**
- * Returns a design system object
- * @returns {DesignSystem|null}
+ * Returns parameters of the design system
+ * @returns {?DesignSystem}
  */
 exports.getDS = function getDS() {
 	try {
@@ -22,7 +22,7 @@ exports.getDS = function getDS() {
 
 	} catch (e) {
 		console.log(
-			`Error while getting design system package from "${pzlr.designSystem}". Message: `,
+			`An error occurred while getting the design system package from "${pzlr.design System}". The message:`,
 			e
 		);
 
@@ -31,10 +31,10 @@ exports.getDS = function getDS() {
 };
 
 /**
- * Returns available themes from a design system package
+ * Returns available themes from the design system package
  *
- * @param {DesignSystem} ds
- * @param {string[]|boolean} buildThemes
+ * @param {!DesignSystem} ds
+ * @param {(!Array<string>|boolean)} buildThemes
  *
  * @returns {string[]|null}
  */
@@ -70,7 +70,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 };
 
 /**
- * Returns modifier values grouped by component names from a design system package
+ * Returns modifier values grouped by component names from the design system package
  * @returns {Object}
  */
 exports.getDSComponentMods = function getDSComponentMods() {

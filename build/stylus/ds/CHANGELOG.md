@@ -21,4 +21,4 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Extract DS plugins group to the folder
+*  Extracted DS plugins group into a folder

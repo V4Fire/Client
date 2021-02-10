@@ -34,7 +34,7 @@ describe('build/ds', () => {
 		expect(getThemes(fullThemed, true)).toEqual(fullThemed.meta.themes);
 	});
 
-	it('should return only specified theme', () => {
+	it('should return the only specified theme', () => {
 		expect(getThemes(fullThemed, ['day'])).toEqual(['day']);
 	});
 

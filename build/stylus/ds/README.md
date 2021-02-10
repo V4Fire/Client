@@ -1,25 +1,25 @@
 # build/stylus/ds
 
-This module provides a bunch of the stylus custom functions to manage plugged design system.
+This module provides a bunch of stylus' custom functions to manage the plugged design system.
 
 ## How it works
 
 ### Entry point. `index.js`
 
-Index file attaches the design system package to build. It collects necessary input parameters from the current environment, provides it to the plugins generating function, and exports the result. Then the result can be connected as plugins to preprocessor for build.
+The index file attaches the design system package to build. It collects necessary input parameters from the current environment, provides it to the plugins generating function, and exports the result. Then the result can be connected as plugins to a preprocessor to build.
 
 ### Plugins generating. `plugins.js`
 
-Getting a set of settings from the current environment, function of plugins generating returns a bunch of functions. Then you can use functions from that bunch in styling files to work with values from the design system package.
+Getting a set of settings from the current environment, the function of plugins generating returns a bunch of functions. Then you can use these functions with your style files to work with values from the design system package.
 
 File `plugins.js` imports only third-party functions for internal needs. Importing the environment variables and other constants be a mistake. This allows testing plugins generating function and the plugins themselves in different environments.
 
 ### Module testing
 
-Module tests divided in the separate files or folders by groups:
+Module tests divided into separate files or folders by groups:
 
-- Tests for design system object creating. For using this object from plugins
-- Tests for plugins, that developers can use in styling files
+- Tests of the design system object creating to use it from plugins.
+- Tests of plugins, that developers can use within style files.
 
 Different variants of the design system object are located in the folder `test/scheme`
 
