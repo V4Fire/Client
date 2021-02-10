@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `getThemes` function
+* Added a new function `getThemes`
 
 #### :house: Internal
 

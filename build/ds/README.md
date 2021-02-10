@@ -1,3 +1,3 @@
 # build/ds
 
-This module provides a bunch of the functions to work with design system package.
+This module provides a bunch of functions to work with the design system package.

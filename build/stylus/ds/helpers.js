@@ -12,7 +12,7 @@ const
 	$C = require('collection.js');
 
 /**
- * Returns a css variable name created
+ * Returns a name of the CSS variable created from the specified path with a dot delimiter
  * from the specified path with a dot delimiter
  *
  * @param {string} path
@@ -205,8 +205,8 @@ function getThemedPathChunks(field, theme, fieldsWithTheme) {
 /**
  * Checks the specified path to a field for obsolescence at the design system
  *
- * @param {DesignSystem} ds
- * @param {string | string[]} path
+ * @param {!DesignSystem} ds
+ * @param {(string|!Array<string>)} path
  */
 function checkDeprecated(ds, path) {
 	if (Object.isObject($C(ds).get('meta.deprecated'))) {
@@ -243,7 +243,7 @@ function checkDeprecated(ds, path) {
 				);
 			}
 
-			console.log(...message);
+			console.warn(...message);
 			return true;
 		}
 	}

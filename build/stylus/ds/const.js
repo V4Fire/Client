@@ -9,5 +9,5 @@
  */
 
 module.exports = {
-	dsHasThemesNotIncluded: 'Design system object has themes, but no one included to the build'
+	dsHasThemesNotIncluded: 'The design system object has themes, but no one included into the build'
 };
