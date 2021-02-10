@@ -11,6 +11,300 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.142 (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Removed:
+  * `b-content-switcher`
+  * `core/component/helpers/observable`
+
+## v3.0.0-rc.141 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with an update without providing of `ctx` `core/come/image`
+
+## v3.0.0-rc.140 (2021-02-05)
+
+#### :rocket: New Feature
+
+* Added a new global constant `MODULE` `build`
+
+#### :bug: Bug Fix
+
+* Fixed the support of `--fat-html` `traits/i-icon`
+* Fixed the condition to provide slots:
+  * `bButton`
+  * `bInput`
+  * `bList`
+
+## v3.0.0-rc.139 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed cleaning of background styles `core/dom/image`
+
+## v3.0.0-rc.138 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new parameter `TaskParams.useRAF` `super/i-block/modules/async-render`
+
+## v3.0.0-rc.137 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new parameter `--fat-html` `config`
+* Added a new option `--only-run:boolean` for `npx gulp test:components`.
+  It allows run all test cases without the building stage.
+
+#### :bug: Bug Fix
+
+* Fixed linking to values with watchable prototypes `super/modules/sync`
+* Fixed using of global RegExp-s with the `g` flag
+* Fixed redundant listening of events `core/component/engines/vue`
+* Used `nanoid` to generate `nonceStore` `config`
+
+* `build`:
+  * Fixed minifying of dynamic styles
+  * Fixed dynamic imports with `fatHTML`
+  * Fixed the running of parallel tests when `portfinder` was returning the same port for different processes
+
+#### :house: Internal
+
+* Updated dependencies:
+  * `svg-url-loader@7.1.1`
+  * `terser-webpack-plugin@5.1.1`
+  * `postcss-loader@5.0.0`
+  * `webpack@5.20.1`
+
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :rocket: New Feature
+
+* Added logging of dependencies `build/test.gulp`
+* Added a new parameter `build.demoPage` `config`
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
+#### :house: Internal
+
+* Optimized the inserting of an icon into DOM by using `requestAnimationFrame` `traits/i-icon`
+
+## v3.0.0-rc.135 (2021-02-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the redundant clearing of async tasks `core/component/directives/update-on`
+
+## v3.0.0-rc.134 (2021-01-30)
+
+#### :house: Internal
+
+* Optimized creation of components
+
+## v3.0.0-rc.133 (2021-01-30)
+
+#### :rocket: New Feature
+
+* Added a link to the global root instance `core/component/const`
+
+#### :house: Internal
+
+* Optimized creation of components
+
+## v3.0.0-rc.132 (2021-01-29)
+
+#### :rocket: New Feature
+
+* Now function and flyweight components support `asyncRender` `iBlock`
+
+## v3.0.0-rc.131 (2021-01-29)
+
+#### :boom: Breaking Change
+
+* Don't emit global component events during initializing `super/i-block/modules/block`
+* Removed the `componentStatus` modifier `iBlock`
+
+#### :rocket: New Feature
+
+* `iBlock`:
+  * Added a new prop `verbose`
+  * Added a new getter `isNotRegular`
+
+#### :house: Internal
+
+* Now using `requestIdleCallback` instead of `setTimeout`:
+  * `core/render`
+  * `core/dom/resize-observer`
+  * `core/component/register`
+
+* Now all tasks will execute on `requestAnimationFrame` `super/modules/async-render`
+
+## v3.0.0-rc.130 (2021-01-28)
+
+#### :bug: Bug Fix
+
+* Fixed resolving of ref-s `core/component/construct`
+
+## v3.0.0-rc.129 (2021-01-28)
+
+#### :house: Internal
+
+* Optimized creation of flyweight components
+
+## v3.0.0-rc.128 (2021-01-27)
+
+#### :bug: Bug Fix
+
+* Fixed providing of URL within `route` `bRouter`
+
+## v3.0.0-rc.127 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* `core/component/flyweight`:
+  * Fixed `componentStatus` with flyweight components
+  * Fixed creation of `$async`
+
+## v3.0.0-rc.126 (2021-01-26)
+
+#### :boom: Breaking Change
+
+* Removed the `beforeMounted` hook `core/component/interface`
+* Renamed the `status` modifier to `component-status` `iBlock`
+* Deprecate `listener` and `once` parameters `core/component/directives/update-on`
+
+#### :rocket: New Feature
+
+* Now flyweight components support life cycle hooks `core/component/flyweight`
+* Now switching a value of the component hook emits events `iBlock`
+* `core/component/directives/update-on`:
+  * Added support of watchers
+  * Improved API
+
+#### :bug: Bug Fix
+
+* Fixed the `fatHTML` mode
+* Fixed creation of fields of flyweight components `core/component/field`
+* Added handling of the empty request `bVirtualScroll`
+* Fixed waiting for storage resetting during the `reset` event.
+  Now, a promise to write to the storage can be rejected. `super/i-block/modules/listeners`
+
+#### :memo: Documentation
+
+* Improved documentation:
+  * `core/component/directives/update-on`
+  * `traits/i-icon`
+
+#### :house: Internal
+
+* Added a feature to provide raw modifiers `core/component/prop`
+* Now functional components emulate hooks via the `v-hook` directive `core/component/functional`
+* Added API based on the `v-hook` directive to attach hook listeners with functional and flyweight components `iBlock`
+
+## v3.0.0-rc.125 (2021-01-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the creation of nested flyweight components `core/component/flyweight`
+
+## v3.0.0-rc.124 (2021-01-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when an optional asset isn't exist `super/i-static-page/modules/ss-helpers`
+
+## v3.0.0-rc.123 (2021-01-15)
+
+#### :boom: Breaking Change
+
+* Changed an interface and behavior of `initRemoteData` `bRouter`
+* Changed an interface of `set` `i-block/modules/state`
+
+* `traits/i-access`:
+  * Removed helpers for disabling
+  * Removed progress helpers
+
+#### :rocket: New Feature
+
+* Added `--device` for `component:test` `build`
+* Now the component implements the `iItems` trait `bList`
+* Added support of method invoking `set` `i-block/modules/state`
+* Implemented new API from `iAccess` `bButton`
+* Implemented new API from `iProgress`:
+  * `bImage`
+  * `bRouter`
+  * `iData`
+
+* `traits/i-access`:
+  * Added `autofocus`
+  * Added `tabIndex`
+  * Added `isFocused`
+
+* `traits/i-progress`:
+  * Moved logic from `iAccess`
+  * Added support of events
+
+#### :memo: Documentation
+
+* Improved documentation
+  * `bImage`
+  * `bList`
+  * `bIcon`
+  * `i-block/modules/state`
+  * `traits/i-access`
+  * `traits/i-progress`
+  * `traits/i-visible`
+
+## v3.0.0-rc.122 (2021-01-13)
+
+#### :boom: Breaking Change
+
+* Removed `bMatryoshka`. Use `bTree` instead.
+* Trait refactoring. Using `item` instead of `option`. `traits/i-items`
+
+#### :rocket: New Feature
+
+* Released `bTree`
+
+#### :bug: Bug Fix
+
+* Fixed geometry initialization within the content mode `bBottomSlide`
+* Fixed an issue when the next calling of `initIndex` pushes another one index page `traits/i-history`
+
+#### :memo: Documentation
+
+* Added `CHANGELOG`, `README` `traits/i-items`
+
+## v3.0.0-rc.121 (2021-01-12)
+
+#### :boom: Breaking Change
+
+* `bWindow`:
+  * Renamed the slot `control` to `controls`
+  * Replaced the global modifier `hidden` to `opened`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `getRootMod` `iStaticPage`
+* Fixed a bug with parsing of styles `core/component/vnode`
+
+#### :memo: Documentation
+
+* Added documentation `bWindow`
+* Improved jsDoc `iBlock`
+
+#### :house: Internal
+
+`bWindow`:
+* Fixed ESLint errors
+* Fixed TS errors
+* Added tests
+
 ## v3.0.0-rc.120 (2020-12-23)
 
 #### :bug: Bug Fix
@@ -174,7 +468,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
-They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
+  They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
 
 ## v3.0.0-rc.108 (2020-12-14)
 
@@ -360,7 +654,7 @@ They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
 
 * `super/i-block/modules/field`:
   * Fixed working with watchers based on accessors
-  * Fixed resolving of accessor
+  * Fixed resolving of accessors
 
 ## v3.0.0-rc.90 (2020-10-22)
 
@@ -1514,7 +1808,7 @@ npx webpack --components b-button,b-select
 #### :boom: Breaking Change
 
 * All getters are cached by default and can be watched only if they have tied properties, for instance, `foo` -> `fooStore` or `foo` -> `fooProp`,
-otherwise, you need to provide dependencies by using the special decorator to enable these features
+  otherwise, you need to provide dependencies by using the special decorator to enable these features
 
 * Renamed `build/snakeskin.webpack` to `build/snakeskin/index`
 * Renamed `build/snakeskin.vars` to `build/snakeskin/vars`

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.126 (2021-01-26)
+
+#### :house: Internal
+
+* Added a feature to provide raw modifiers
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :house: Internal

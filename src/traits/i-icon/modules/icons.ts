@@ -18,11 +18,18 @@ interface SpriteEl {
 	destroy(): undefined;
 }
 
-async function icons(id?: string): Promise<SpriteEl> {
+function icons(id?: string): CanPromise<SpriteEl> {
 	if (id != null) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {
-				return (await iconsList[i](id)).default;
+				const
+					icon = iconsList[i](id);
+
+				if (MODULE === 'ES2020') {
+					return (async () => (await icon).default)();
+				}
+
+				return icon.default;
 
 			} catch {}
 		}
@@ -37,13 +44,32 @@ async function icons(id?: string): Promise<SpriteEl> {
 let
 	ctx;
 
-if (IS_PROD) {
+if (MODULE === 'ES2020') {
+	if (IS_PROD) {
+		// @ts-ignore (require)
+		ctx = (<any>require).context(
+			'!!svg-sprite-loader!svgo-loader!@sprite',
+			true,
+			/\.svg$/,
+			'lazy'
+		);
+
+	} else {
+		// @ts-ignore (require)
+		ctx = (<any>require).context(
+			'!!svg-sprite-loader!@sprite',
+			true,
+			/\.svg$/,
+			'lazy'
+		);
+	}
+
+} else if (IS_PROD) {
 	// @ts-ignore (require)
 	ctx = (<any>require).context(
 		'!!svg-sprite-loader!svgo-loader!@sprite',
 		true,
-		/\.svg$/,
-		'lazy'
+		/\.svg$/
 	);
 
 } else {
@@ -51,8 +77,7 @@ if (IS_PROD) {
 	ctx = (<any>require).context(
 		'!!svg-sprite-loader!@sprite',
 		true,
-		/\.svg$/,
-		'lazy'
+		/\.svg$/
 	);
 }
 

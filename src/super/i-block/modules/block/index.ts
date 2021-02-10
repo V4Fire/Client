@@ -325,30 +325,36 @@ export default class Block extends Friend {
 
 		ctx.mods[name] = normalizedVal;
 
-		const
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
+		if (!ctx.isNotRegular) {
+			const
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
 
-		if (watchModsStore != null && name in watchModsStore && watchModsStore[name] !== normalizedVal) {
-			delete Object.getPrototypeOf(watchModsStore)[name];
-			ctx.field.set(`watchModsStore.${name}`, normalizedVal);
+			if (watchModsStore != null && name in watchModsStore && watchModsStore[name] !== normalizedVal) {
+				delete Object.getPrototypeOf(watchModsStore)[name];
+				ctx.field.set(`watchModsStore.${name}`, normalizedVal);
+			}
 		}
 
-		const event = <SetModEvent>{
-			event: 'block.mod.set',
-			type: 'set',
-			name,
-			value: normalizedVal,
-			prev: prevVal,
-			reason
-		};
+		if (!isInit || !ctx.isFlyweight) {
+			const event = <SetModEvent>{
+				event: 'block.mod.set',
+				type: 'set',
+				name,
+				value: normalizedVal,
+				prev: prevVal,
+				reason
+			};
 
-		this.localEmitter
-			.emit(`block.mod.set.${name}.${normalizedVal}`, event);
+			this.localEmitter
+				.emit(`block.mod.set.${name}.${normalizedVal}`, event);
 
-		// @deprecated
-		ctx.emit(`mod-set-${name}-${normalizedVal}`, event);
-		ctx.emit(`mod:set:${name}:${normalizedVal}`, event);
+			if (!isInit) {
+				// @deprecated
+				ctx.emit(`mod-set-${name}-${normalizedVal}`, event);
+				ctx.emit(`mod:set:${name}:${normalizedVal}`, event);
+			}
+		}
 
 		return true;
 	}
@@ -376,7 +382,8 @@ export default class Block extends Friend {
 			{mods, node, ctx} = this;
 
 		const
-			currentVal = this.getMod(name, reason === 'initSetMod');
+			isInit = reason === 'initSetMod',
+			currentVal = this.getMod(name, isInit);
 
 		if (currentVal === undefined || value !== undefined && currentVal !== value) {
 			return false;
@@ -396,31 +403,35 @@ export default class Block extends Friend {
 		if (needNotify) {
 			ctx.mods[name] = undefined;
 
-			const
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
+			if (!ctx.isNotRegular) {
+				const
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+					watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
 
-			if (watchModsStore != null && name in watchModsStore && watchModsStore[name] != null) {
-				delete Object.getPrototypeOf(watchModsStore)[name];
-				ctx.field.set(`watchModsStore.${name}`, undefined);
+				if (watchModsStore != null && name in watchModsStore && watchModsStore[name] != null) {
+					delete Object.getPrototypeOf(watchModsStore)[name];
+					ctx.field.set(`watchModsStore.${name}`, undefined);
+				}
 			}
 		}
 
-		const event = <ModEvent>{
-			event: 'block.mod.remove',
-			type: 'remove',
-			name,
-			value: currentVal,
-			reason
-		};
+		if (!isInit || !ctx.isFlyweight) {
+			const event = <ModEvent>{
+				event: 'block.mod.remove',
+				type: 'remove',
+				name,
+				value: currentVal,
+				reason
+			};
 
-		this.localEmitter
-			.emit(`block.mod.remove.${name}.${currentVal}`, event);
+			this.localEmitter
+				.emit(`block.mod.remove.${name}.${currentVal}`, event);
 
-		if (needNotify) {
-			// @deprecated
-			ctx.emit(`mod-remove-${name}-${currentVal}`, event);
-			ctx.emit(`mod:remove:${name}:${currentVal}`, event);
+			if (needNotify) {
+				// @deprecated
+				ctx.emit(`mod-remove-${name}-${currentVal}`, event);
+				ctx.emit(`mod:remove:${name}:${currentVal}`, event);
+			}
 		}
 
 		return true;
@@ -446,7 +457,7 @@ export default class Block extends Friend {
 			return mods[name.camelize(false)];
 		}
 
-		if (!node || !ctx.isFlyweight && !ctx.isFunctional) {
+		if (!node || !ctx.isNotRegular) {
 			return undefined;
 		}
 

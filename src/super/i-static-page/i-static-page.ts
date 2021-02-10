@@ -167,7 +167,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Root theme
 	 */
 	get theme(): unknown {
-		return this.getRootMod('theme', false);
+		return this.getRootMod('theme');
 	}
 
 	/**
@@ -179,7 +179,7 @@ export default abstract class iStaticPage extends iPage {
 			throw new ReferenceError(`Theme with name "${String(value)}" is not defined`);
 		}
 
-		this.setRootMod('theme', value, false);
+		this.setRootMod('theme', value);
 	}
 
 	/**
@@ -199,11 +199,8 @@ export default abstract class iStaticPage extends iPage {
 	@field(() => locale.value)
 	protected localeStore!: string;
 
-	/**
-	 * Root element self modifiers prefix
-	 */
-	@system()
-	protected rootPrefix: string = 'root';
+	/** @override */
+	protected globalName: string = 'root';
 
 	/**
 	 * Cache of root modifiers
@@ -215,7 +212,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Sets a new page title
 	 *
 	 * @param value
-	 * @param component
+	 * @param [component]
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
@@ -233,8 +230,13 @@ export default abstract class iStaticPage extends iPage {
 		});
 	}
 
-	/** @override */
-	setRootMod(name: string, value: unknown, component: false | iBlock = this): boolean {
+	/**
+	 * @override
+	 * @param name
+	 * @param value
+	 * @param [component] - instance of the component that wants to set a modifier
+	 */
+	setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
@@ -243,48 +245,44 @@ export default abstract class iStaticPage extends iPage {
 		}
 
 		const
-			cl = root.classList;
-
-		let
-			mod;
-
-		if (component === false) {
-			mod = `${this.rootPrefix}_${name}_${String(value)}`;
-			name = `${this.rootPrefix}_${name.camelize(false)}`;
-
-		} else {
-			const
-				c = (component.globalName ?? component.componentName).dasherize();
-
-			mod = this.provide.fullComponentName(c, name, value).replace(/_/g, '-');
-			name = `${c}_${name.camelize(false)}`;
-		}
-
-		value = String(value).dasherize();
+			cl = root.classList,
+			globalName = (component.globalName ?? component.componentName).dasherize();
 
 		const
-			cache = this.rootMods[name];
+			modKey = this.getRootModKey(name, component),
+			modClass = this.provide.fullComponentName(globalName, name, value).replace(/_/g, '-');
+
+		const
+			normalizedValue = String(value).dasherize(),
+			cache = this.rootMods[modKey];
 
 		if (cache) {
-			if (cache.value === value && cache.component === component) {
+			if (cache.value === normalizedValue && cache.component === component) {
 				return false;
 			}
 
-			cl.remove(cache.mod);
+			cl.remove(cache.class);
 		}
 
-		cl.add(mod);
-		this.rootMods[name] = {
-			mod,
-			value: <string>value,
+		cl.add(modClass);
+
+		this.rootMods[modKey] = {
+			name: name.dasherize(),
+			value: normalizedValue,
+			class: modClass,
 			component
 		};
 
 		return true;
 	}
 
-	/** @override */
-	removeRootMod(name: string, value?: unknown, component: false | iBlock = this): boolean {
+	/**
+	 * @override
+	 * @param name
+	 * @param [value]
+	 * @param [component] - instance of the component that wants to remove a modifier
+	 */
+	removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
@@ -293,22 +291,20 @@ export default abstract class iStaticPage extends iPage {
 		}
 
 		const
-			prefix = component === false ? this.rootPrefix : (component.globalName ?? component.componentName).dasherize();
-
-		name = `${prefix}_${name.camelize(false)}`;
-		value = value !== undefined ? String(value).dasherize() : undefined;
-
-		const
-			cache = this.rootMods[name];
+			modKey = this.getRootModKey(name, component),
+			cache = this.rootMods[modKey];
 
 		if (cache) {
 			if (cache.component !== component) {
 				return false;
 			}
 
-			if (value === undefined || value === cache.value) {
-				root.classList.remove(cache.mod);
-				delete this.rootMods[name];
+			const
+				normalizedValue = value !== undefined ? String(value).dasherize() : undefined;
+
+			if (normalizedValue === undefined || normalizedValue === cache.value) {
+				root.classList.remove(cache.class);
+				delete this.rootMods[modKey];
 				return true;
 			}
 		}
@@ -316,14 +312,23 @@ export default abstract class iStaticPage extends iPage {
 		return false;
 	}
 
-	/** @override */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	getRootMod(name: string, component: false | iBlock = this): undefined | string {
-		const
-			prefix = component === false ? this.rootPrefix : (component.globalName ?? component.componentName).dasherize();
+	/**
+	 * @override
+	 * @param name
+	 * @param [component] - instance of the component that wants to get a modifier
+	 */
+	getRootMod(name: string, component: iBlock = this): CanUndef<string> {
+		return this.rootMods[this.getRootModKey(name, component)]?.value;
+	}
 
-		name = `${prefix}_${name.camelize(false)}`;
-		return this.rootMods[name]?.value;
+	/**
+	 * Returns a key to save the specified root element modifier
+	 *
+	 * @param name - modifier name
+	 * @param [component]
+	 */
+	protected getRootModKey(name: string, component: iBlock = this): string {
+		return `${(component.globalName ?? component.componentName).dasherize()}_${name.camelize(false)}`;
 	}
 
 	/**
@@ -351,11 +356,10 @@ export default abstract class iStaticPage extends iPage {
 			const
 				[prefix, name, value] = className.split('_');
 
-			if (prefix === this.rootPrefix && Object.size(name) > 0 && Object.size(value) > 0) {
-				this.rootMods[`${prefix}_${name.camelize(false)}`] = {
+			if (prefix === this.globalName && Object.size(name) > 0 && Object.size(value) > 0) {
+				this.rootMods[this.getRootModKey(name)] = {
 					value,
-					mod: className,
-					component: false
+					mod: className
 				};
 			}
 		});

@@ -9,6 +9,26 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.128 (2021-01-27)
+
+#### :bug: Bug Fix
+
+* Fixed providing of URL within `route`
+
+## v3.0.0-rc.123 (2021-01-15)
+
+#### :boom: Breaking Change
+
+* Changed an interface and behavior of `initRemoteData`
+
+#### :rocket: New Feature
+
+* Added support of interpolation of a data provider response
+
+#### :memo: Documentation
+
+* Improved documentation
+
 ## v3.0.0-rc.118 (2020-12-24)
 
 #### :bug: Bug Fix

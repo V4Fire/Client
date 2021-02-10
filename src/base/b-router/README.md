@@ -2,15 +2,21 @@
 
 This module provides a component to organize page routing.
 
+## Synopsis
+
+* The component extends [[iData]].
+
+* The component doesn't have the default UI.
+
 ## Why a component, but not a plugin?
 
 There are a few reasons why this API has implemented as a component:
 
 1. Easier to organize the logic of sub-routes or alternative routes: we can put two or more routers within a template
-and dynamically switch from one to another by using the "v-if" directive.
+   and dynamically switch from one to another by using the "v-if" directive.
 
 2. The router extends from the `iData` component, i.e., it can download routes to manage from a server or another data source.
-Also, the router can apply modifiers and do other stuff like a regular component.
+   Also, the router can apply modifiers and do other stuff like a regular component.
 
 3. The router automatically compatible with all supported rendered engines.
 
@@ -109,19 +115,34 @@ export default {
 } .
 ```
 
-3. Download the map of routes from a data provider.
+3. Loading from a data provider.
 
 ```
 < b-router :dataProvider = 'AppRoutes'
 ```
 
-Also, in that case, the data provider can pass not only the map of routes, but an array with extra arguments:
+In this case, the data provider can return an array of parameters, that will be passed to the `updateRoutes` method.
 
+* `[routes]`
+* `[routes, activeRoute]`
 * `[basePath]`
 * `[basePath, routes]`
 * `[basePath, routes, activeRoute]`
 * `[basePath, activeRoute]`
 * `[basePath, activeRoute, routes]`
+
+Or, if the provider returns a dictionary, it will be mapped on the component
+(you can pass the complex property path using dots as separators).
+If a key from the response data is matched with a component method, this method will be invoked with a value from this key
+(if the value is an array, it will be spread to the method as arguments).
+
+```
+{
+  updateRoutes: [routes],
+  someProp: propValue,
+  'mods.someMod': 'modValue'
+}
+```
 
 ## How the router do transitions?
 
@@ -163,12 +184,12 @@ export default {
 We have created four routes:
 
 * The `main` route has bound to `/`, it means if we have our site on URL like `https://foo.com`, the `main` is tied with URL-s
-`https://foo.com` and `https://foo.com/`.
+  `https://foo.com` and `https://foo.com/`.
 
 * The `help` route will be tied with `https://foo.com/help`.
 
 * The `friends` route is dynamically tied with a set of URL-s because it has the `:userId` part in its path pattern that
-takes a value from parameters that are specified with a router transition.
+  takes a value from parameters that are specified with a router transition.
 
 ```js
 // https://foo.com/friends/109
@@ -204,9 +225,9 @@ export default {
 ```
 
 * The `notFound` route isn't directly tied with any URL-s (because it hasn't the `path` property),
-but it has the `default` property in `true`, i.e. every time some URL can't be matched directly will be used `notFound`.
-For example, `https://foo.com/bro` or `https://foo.com/bla/bar`. You can also name the default route as `index` instead of
-setting the `default` property.
+  but it has the `default` property in `true`, i.e. every time some URL can't be matched directly will be used `notFound`.
+  For example, `https://foo.com/bro` or `https://foo.com/bla/bar`. You can also name the default route as `index` instead of
+  setting the `default` property.
 
 #### Base path
 
@@ -495,22 +516,22 @@ router.push(route?.name, {query: {foo: 1}});
 When we invoke one of the router transition methods, like `push` or `replace`, the router emits many special events.
 
 1. `beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)` — this event fires before any transition.
-The handlers that listen to this event are taken arguments:
+   The handlers that listen to this event are taken arguments:
 
-  1. `route`  — ref to a route to go to.
-  2. `params` — parameters of the route. The handlers can modify this object to attach more parameters.
-  3. `method` — the type of used transition methods: `push`, `replace` or `event` (for native history navigation).
+1. `route`  — ref to a route to go to.
+2. `params` — parameters of the route. The handlers can modify this object to attach more parameters.
+3. `method` — the type of used transition methods: `push`, `replace` or `event` (for native history navigation).
 
 3. `softChange(route: Route)` or `hardChange(route: Route)` — fires one of these events before changing the route object.
-The difference between these events is that "soft" means that the route still has the same name as the previous route.
-Still, there were some changes in query parameters; opposite "hard" indicates that the route was changed or
-was changed one of the parameters that can modify the path URL.
+   The difference between these events is that "soft" means that the route still has the same name as the previous route.
+   Still, there were some changes in query parameters; opposite "hard" indicates that the route was changed or
+   was changed one of the parameters that can modify the path URL.
 
 2. `change(route: Route)` — fires every time the route was changed. Mind that sometimes a transition can be prevented,
-and this event won't be fired, for instance, if we try to execute `replace` transition on the same route with the same parameters.
+   and this event won't be fired, for instance, if we try to execute `replace` transition on the same route with the same parameters.
 
 5. `transition(route: Route)` — fires after calling of transition methods. If the transition takes place,
-the event fires after the `change` event.
+   the event fires after the `change` event.
 
 The router also fires the `change` event to the root component as `transition`, just for usability.
 
@@ -530,16 +551,16 @@ Every time we use `router.push` or `router.replace`, the router can change the `
 but there are some details you should know:
 
 * If you emit transition without changing the route path, i.e., without changing URL pathname,
-the `route` object's mutations don't force rendering of components. Technically, it means that if you just add or
-change some query parameters, there won't be re-render. You should tie component properties manually.
-This behavior helps increase application performance when changing the route because, usually,
-when you just change query parameters, you don't want to change the page or emit significant UI mutations.
-This behavior is called "soft".
+  the `route` object's mutations don't force rendering of components. Technically, it means that if you just add or
+  change some query parameters, there won't be re-render. You should tie component properties manually.
+  This behavior helps increase application performance when changing the route because, usually,
+  when you just change query parameters, you don't want to change the page or emit significant UI mutations.
+  This behavior is called "soft".
 
 * When you emit the soft transition, you modify query parameters, but don't rewrite, i.e.,
-if you have the URL like `/foo?bla=1` and you do `router.push(null, {query: {baz: 2}})`,
-finally you'll see `/foo?bla=1&baz=2`. If you want to remove some parameters,
-pass their with null values, `router.push(null, {query: {bla: null}})`.
+  if you have the URL like `/foo?bla=1` and you do `router.push(null, {query: {baz: 2}})`,
+  finally you'll see `/foo?bla=1&baz=2`. If you want to remove some parameters,
+  pass their with null values, `router.push(null, {query: {bla: null}})`.
 
 ### Watching for the route
 
@@ -668,3 +689,13 @@ export default class bExample extends iBlock {
 
 To reset the router state, you should invoke `state.resetRouter()` from a component instance or invoke the root reset method.
 By default, all properties from syncRouterState will rewrite to undefined.
+
+## Slots
+
+The component supports the default slot. Sometimes it can be useful.
+
+```
+< b-router :routes = routes
+  < template #default = {ctx}
+    {{ ctx.route.name }}
+```

@@ -30,6 +30,7 @@ const
 module.exports = {
 	IS_PROD,
 	DEBUG: runtime.debug === true,
+	MODULE: s(config.typescript().client.compilerOptions.module),
 
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),

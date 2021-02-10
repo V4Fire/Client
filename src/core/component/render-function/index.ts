@@ -168,7 +168,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 							ctx = <ComponentInterface['unsafe']>vnode.context;
 
 						if (!isTemplateParent) {
-							Object.set(vnode, 'fakeInstance', ctx);
+							vnode['fakeInstance'] = ctx;
 						}
 
 						// Function that render a chunk of VNodes
@@ -192,7 +192,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 										return returnEls([]);
 									}
 
-									Object.set(ctx, 'hook', 'beforeUpdate');
+									ctx.hook = 'beforeUpdate';
 									Object.set(ctx, 'renderGroup', desc?.renderGroup);
 
 									for (let o = forEach(iterable, forEachCb), i = 0; i < o.length; i++) {
@@ -254,11 +254,12 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 										}
 									}
 
-									Object.set(ctx, 'renderGroup', undefined);
+									// @ts-ignore (access)
+									ctx['renderGroup'] = undefined;
 									runHook('beforeUpdated', ctx, desc).catch(stderr);
 
 									resolveRefs(ctx);
-									Object.set(ctx, 'hook', baseHook);
+									ctx.hook = baseHook;
 
 									return returnEls(els);
 								}

@@ -16,12 +16,13 @@ const
 	arg = require('arg');
 
 const
-	{src} = require('config'),
+	{build, src} = require('config'),
 	{resolve} = require('@pzlr/build-core'),
 	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs, getTestClientName} = include('build/helpers');
 
 const
-	cpus = os.cpus().length;
+	cpus = os.cpus().length,
+	START_PORT = 8000;
 
 /**
  * Registers gulp tasks to test the project
@@ -68,8 +69,13 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```
 	 */
 	gulp.task('test:component:build', () => {
+		const args = arg({
+			'--suit': String,
+			'--client-name': String,
+			'--runtime-render': String
+		}, {permissive: true});
+
 		const
-			args = arg({'--suit': String, '--client-name': String, '--runtime-render': String}, {permissive: true}),
 			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
 
 		try {
@@ -97,6 +103,8 @@ module.exports = function init(gulp = require('gulp')) {
 			['--es', 'ES2019']
 		].flat().join(' ');
 
+		console.log(`webpack version: ${require('webpack/package.json').version}`);
+
 		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
 			.exec()
 			.on('error', console.error);
@@ -108,8 +116,10 @@ module.exports = function init(gulp = require('gulp')) {
 	 *
 	 * * --name - name of the component to test
 	 * * [--port] - port to launch the test server
+	 * * [--start-port] - starting port for `portfinder`
 	 * * [--page='p-v4-components-demo'] - demo page to run tests
 	 * * [--browsers] - list of browsers to test (firefox (ff), chromium (chrome), webkit (wk))
+	 * * [--device] - name of used device, for instance, "iPhone_11" or "Pixel_2"
 	 * * [--close=true] - should or not close the running browsers after finishing the tests
 	 * * [--headless=true] - should or not run browsers with the headless option
 	 * * [--reinit-browser=false] - should or not reuse already existence browser instances
@@ -131,6 +141,9 @@ module.exports = function init(gulp = require('gulp')) {
 	 */
 	gulp.task('test:component:run', async () => {
 		const
+			pzlr = require('@pzlr/build-core');
+
+		const
 			process = require('process'),
 			portfinder = require('portfinder');
 
@@ -142,11 +155,16 @@ module.exports = function init(gulp = require('gulp')) {
 			fs = require('fs-extra-promise'),
 			path = require('upath');
 
+		const
+			{devices} = require('playwright');
+
 		const args = arg({
 			'--name': String,
 			'--port': Number,
+			'--start-port': Number,
 			'--page': String,
 			'--browsers': String,
+			'--device': String,
 			'--close': String,
 			'--headless': String,
 			'--client-name': String,
@@ -185,9 +203,12 @@ module.exports = function init(gulp = require('gulp')) {
 		});
 
 		// eslint-disable-next-line require-atomic-updates
-		args['--port'] = args['--port'] || await portfinder.getPortPromise();
+		args['--port'] = args['--port'] || await portfinder.getPortPromise({
+			port: args['--start-port'] || START_PORT
+		});
+
 		// eslint-disable-next-line require-atomic-updates
-		args['--page'] = args['--page'] || 'p-v4-components-demo';
+		args['--page'] = args['--page'] || build.demoPage;
 
 		const
 			fileServer = new nodeStatic.Server(src.output(args['--client-name']));
@@ -204,11 +225,9 @@ module.exports = function init(gulp = require('gulp')) {
 
 		fs.mkdirpSync(tmpDir);
 
-		const testPath = args['--test-entry'] ?
-			resolve.blockSync(args['--test-entry']) :
-			path.join(componentDir, 'test');
-
 		const
+			entryPoint = args['--test-entry'],
+			testPath = entryPoint ? resolve.blockSync(entryPoint) : path.join(componentDir, 'test'),
 			test = require(testPath);
 
 		const browserParams = {
@@ -217,7 +236,48 @@ module.exports = function init(gulp = require('gulp')) {
 			webkit: {}
 		};
 
-		const createBrowser = async (browserType) => {
+		const
+			browsersPromises = [];
+
+		for (const browserType of browsers) {
+			browsersPromises.push(createBrowser(browserType));
+		}
+
+		await Promise.all(browsersPromises);
+
+		for (const browserType of browsers) {
+			await runTest(browserType);
+		}
+
+		await server.close();
+
+		function getTestEnv(browserType) {
+			const
+				Jasmine = require('jasmine'),
+				jasmine = new Jasmine();
+
+			jasmine.configureDefaultReporter({});
+			Object.assign(globalThis, jasmine.env);
+
+			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
+
+			console.log('\n-------------');
+			console.log('Starting to test');
+
+			pzlr.config.dependencies.forEach((dep) => {
+				console.log(`${dep} version: ${require(`${dep}/package.json`).version}`);
+			});
+
+			console.log(`env component: ${args['--name']}`);
+			console.log(`test entry: ${args['--test-entry']}`);
+			console.log(`runner: ${args['--runner']}`);
+			console.log(`browser: ${browserType}`);
+			console.log('-------------\n');
+
+			return jasmine.env;
+		}
+
+		async function createBrowser(browserType) {
 			const browserInstanceParams = {
 				headless: cliParams.headless
 			};
@@ -228,7 +288,18 @@ module.exports = function init(gulp = require('gulp')) {
 
 			const
 				browser = await getBrowserInstance(browserType, browserInstanceParams, browserInstanceOptions),
-				context = await browser.newContext(),
+				device = args['--device']?.replace(/_/g, ' ');
+
+			if (device != null && devices[device] == null) {
+				throw Error(`The specified devise "${device}" is not supported`);
+			}
+
+			const contextOpts = {
+				...device ? devices[device] : null
+			};
+
+			const
+				context = await browser.newContext(contextOpts),
 				page = await context.newPage();
 
 			const
@@ -243,9 +314,9 @@ module.exports = function init(gulp = require('gulp')) {
 				componentDir,
 				tmpDir
 			};
-		};
+		}
 
-		const runTest = async (browserType) => {
+		async function runTest(browserType) {
 			const
 				params = browserParams[browserType];
 
@@ -288,42 +359,6 @@ module.exports = function init(gulp = require('gulp')) {
 
 				testEnv.execute();
 			}).then(close, close);
-		};
-
-		const
-			browsersPromises = [];
-
-		for (const browserType of browsers) {
-			browsersPromises.push(createBrowser(browserType));
-		}
-
-		await Promise.all(browsersPromises);
-
-		for (const browserType of browsers) {
-			await runTest(browserType);
-		}
-
-		await server.close();
-
-		function getTestEnv(browserType) {
-			const
-				Jasmine = require('jasmine'),
-				jasmine = new Jasmine();
-
-			jasmine.configureDefaultReporter({});
-			Object.assign(globalThis, jasmine.env);
-
-			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
-
-			console.log('\n-------------');
-			console.log('Starting to test');
-			console.log(`env component: ${args['--name']}`);
-			console.log(`test entry: ${args['--test-entry']}`);
-			console.log(`runner: ${args['--runner']}`);
-			console.log(`browser: ${browserType}`);
-			console.log('-------------\n');
-
-			return jasmine.env;
 		}
 	});
 
@@ -350,9 +385,10 @@ module.exports = function init(gulp = require('gulp')) {
 	 * * [--processes] | [-p] - number of available CPUs to build the application and run tests
 	 * * [--test-processes] | [-tp] - number of available CPUs to run tests
 	 * * [--build-processes] | [-tb] - number of available CPUs to build the application
+	 * * [--only-run] - allows run all test cases without the building stage
 	 *
-	 * @see test:component
-	 * @see test:component
+	 * @see test:component:run
+	 * @see test:component:build
 	 *
 	 * @example
 	 * ```bash
@@ -381,6 +417,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 		const cliArgs = arg({
 			'--reinit-browser': String,
+			'--only-run': Boolean,
 			'--browser-args': String
 		}, {permissive: true});
 
@@ -416,41 +453,42 @@ module.exports = function init(gulp = require('gulp')) {
 			buildCache = {},
 			buildMap = new Map();
 
-		for (let i = 0; i < cases.length; i++) {
-			let c = cases[i];
+		if (!cliArgs['--only-run']) {
+			for (let i = 0; i < cases.length; i++) {
+				let
+					c = cases[i];
 
-			if (!c.includes('--name')) {
-				c = `${c} --runtime-render true`;
+				if (!c.includes('--name')) {
+					c = `${c} --runtime-render true`;
+				}
+
+				const args = arg({
+					'--name': String
+				}, {argv: c.split(' '), permissive: true});
+
+				args['--client-name'] = getTestClientName(args['--name'], build.suit);
+
+				if (buildCache[args['--client-name']]) {
+					continue;
+				}
+
+				const argsString = [
+					['--suit', build.suit],
+					['--name', args['--name']],
+					['--client-name', args['--client-name']]
+				].flat().join(' ');
+
+				const extraArgs = args._.join(' ');
+
+				await waitForQuotas(buildMap, buildProcess);
+
+				buildMap.set(
+					argsString,
+					exec(`npx gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
+				);
+
+				buildCache[args['--client-name']] = true;
 			}
-
-			const args = arg({
-				'--suit': String,
-				'--name': String
-			}, {argv: c.split(' '), permissive: true});
-
-			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
-
-			if (buildCache[args['--client-name']]) {
-				continue;
-			}
-
-			const argsString = [
-				['--suit', args['--suit']],
-				['--name', args['--name']],
-				['--client-name', args['--client-name']]
-			].flat().join(' ');
-
-			const extraArgs = args._.join(' ');
-
-			await waitForQuotas(buildMap, buildProcess);
-
-			buildMap.set(
-				argsString,
-				exec(`npx gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
-			);
-
-			buildCache[args['--client-name']] = true;
 		}
 
 		await waitForEmpty(buildMap);
@@ -491,19 +529,21 @@ module.exports = function init(gulp = require('gulp')) {
 			testMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
-			let c = cases[i];
+			let
+				c = cases[i];
 
 			if (!c.includes('--name')) {
 				c = `${c} --runtime-render true`;
 			}
 
+			// Set the beginning of the searching range for a free port
+			c = `${c} --start-port ${START_PORT + i * 100}`;
+
 			const args = arg({
-				'--suit': String,
 				'--name': String
 			}, {argv: c.split(' '), permissive: true});
 
-			args['--suit'] = args['--suit'] || 'demo';
-			args['--client-name'] = getTestClientName(args['--name'], args['--suit']);
+			args['--client-name'] = getTestClientName(args['--name'], build.suit);
 
 			const
 				browserArgs = cliParams.browserArgs.join(','),

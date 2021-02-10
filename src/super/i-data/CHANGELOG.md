@@ -9,11 +9,31 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.127 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed `componentStatus` with flyweight components
+
+## v3.0.0-rc.123 (2021-01-15)
+
+#### :rocket: New Feature
+
+* Implemented new API from `iProgress`
+
+#### :memo: Documentation
+
+* Improved documentation
+
+#### :house: Internal
+
+* Refactoring
+
 ## v3.0.0-rc.110 (2020-12-16)
 
 #### :house: Internal
 
-* Added prefetch for the dynamic dependencies
+* Added prefetching for the dynamic dependencies
 
 ## v3.0.0-rc.97 (2020-11-11)
 

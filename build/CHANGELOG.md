@@ -9,6 +9,47 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.140 (2021-02-05)
+
+#### :rocket: New Feature
+
+* Added a new global constant `MODULE`
+
+## v3.0.0-rc.137 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new option `--only-run:boolean` for `npx gulp test:components`.
+  It allows run all test cases without the building stage.
+
+#### :bug: Bug Fix
+
+* Fixed the running of parallel tests when `portfinder` was returning the same port for different processes
+* Fixed minifying of dynamic styles
+* Fixed dynamic imports with `fatHTML`
+
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :rocket: New Feature
+
+* Added logging of dependencies
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
+## v3.0.0-rc.126 (2021-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed the `fatHTML` mode
+
+## v3.0.0-rc.123 (2021-01-15)
+
+#### :rocket: New Feature
+
+* Added `--device` for `component:test`
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :rocket: New Feature

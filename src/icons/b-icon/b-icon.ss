@@ -14,7 +14,8 @@
 	- rootTag = 'svg'
 
 	- block body
-		< use v-if = value | v-update-on = { &
+		< use v-update-on = { &
 			emitter: getIconLink(value),
-			listener: updateIconHref
+			handler: updateIconHref,
+			errorHandler: handleIconError
 		} .

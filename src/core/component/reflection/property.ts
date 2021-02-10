@@ -99,7 +99,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		}
 	}
 
-	if (propRgxp.test(name)) {
+	if (RegExp.test(propRgxp, name)) {
 		return {
 			path,
 			fullPath,
@@ -110,7 +110,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		};
 	}
 
-	if (attrRgxp.test(name)) {
+	if (RegExp.test(attrRgxp, name)) {
 		return {
 			path,
 			fullPath,
@@ -121,7 +121,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		};
 	}
 
-	if (storeRgxp.test(name)) {
+	if (RegExp.test(storeRgxp, name)) {
 		if (fields[name]) {
 			return {
 				path,
@@ -290,7 +290,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				fullPath,
 				originalPath,
 				name,
-				ctx: Object.get(component, ctxPath),
+				ctx: Object.get(component, ctxPath) ?? {},
 				type: 'mounted'
 			};
 		}

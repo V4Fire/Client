@@ -12,7 +12,7 @@ This module provides a superclass to manage the working of a component and data 
 
 * The component extends [[iBlock]].
 
-* The component implements [[iProgress]] trait.
+* The component implements the [[iProgress]] trait.
 
 ## Basic concepts
 

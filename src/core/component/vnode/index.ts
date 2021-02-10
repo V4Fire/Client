@@ -181,11 +181,11 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
  * @param [opts] - additional options
  */
 export function patchComponentVData(
-	data: VNodeData | ComponentVNodeData,
+	data: CanUndef<VNodeData | ComponentVNodeData>,
 	anotherData: CanUndef<VNodeData | ComponentVNodeData>,
 	opts?: PatchComponentVDataOptions
-): VNodeData | ComponentVNodeData {
-	if (anotherData == null) {
+): CanUndef<VNodeData | ComponentVNodeData> {
+	if (anotherData == null || data == null) {
 		return data;
 	}
 
@@ -255,7 +255,10 @@ export function parseStyle(
 		const
 			styles = style.split(';');
 
-		for (let i = 0, rule = styles[i]; i < styles.length; i++) {
+		for (let i = 0; i < styles.length; i++) {
+			const
+				rule = styles[i];
+
 			if (rule.trim().length === 0) {
 				continue;
 			}

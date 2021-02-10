@@ -9,11 +9,15 @@
  */
 
 const
-	{typescript} = require('config');
+	{typescript, webpack} = require('config');
+
+const
+	importRgxp = /\bimport\((["'])((?:.*?[\\/]|)([bp]-[^.\\/"')]+)+)\1\)/g,
+	hasImport = importRgxp.removeFlags('g');
 
 const
 	isESImport = typescript().client.compilerOptions.module === 'ES2020',
-	importRgxp = /\bimport\((["'])((?:.*?[\\/]|)([bp]-[^.\\/"')]+)+)\1\)/g;
+	fatHTML = webpack.fatHTML();
 
 /**
  * Monic replacer to enable dynamic imports of components
@@ -41,11 +45,13 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			fullPath = `${path}/${nm}`,
 			imports = [];
 
-		if (isESImport) {
-			imports.push(`!TPLS['${nm}'] && import('${fullPath}.styl')`);
+		if (!fatHTML) {
+			if (isESImport) {
+				imports.push(`!TPLS['${nm}'] && import('${fullPath}.styl')`);
 
-		} else {
-			imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl')))`);
+			} else {
+				imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl')))`);
+			}
 		}
 
 		if (isESImport) {
@@ -70,5 +76,6 @@ module.exports = function dynamicComponentImportReplacer(str) {
 };
 
 Object.assign(module.exports, {
-	importRgxp
+	importRgxp,
+	hasImport
 });

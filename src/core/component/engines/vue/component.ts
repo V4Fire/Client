@@ -47,7 +47,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 
 			ctx.$vueWatch = $watch;
 			ctx.$vueSet = $set;
-			ctx.$vueDelte = $delete;
+			ctx.$vueDelete = $delete;
 
 			init.beforeDataCreateState(ctx);
 
@@ -82,7 +82,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 							delete obj[key];
 
 							// Get a link to a proxy object
-							obj = Object.get(ctx.$fields, info.path.slice(0, -1));
+							obj = Object.get(ctx.$fields, info.path.slice(0, -1)) ?? {};
 							delete obj[key];
 
 							// Finally we can register a Vue watcher

@@ -51,19 +51,35 @@ export function beforeCreateState(
 ): void {
 	meta = forkMeta(meta);
 
-	Object.assign(component, {
-		meta,
-		unsafe: component,
-		componentName: meta.componentName,
-		instance: meta.instance,
+	// @ts-ignore (access)
+	component.unsafe = component;
 
-		$fields: {},
-		$systemFields: {},
-		$refHandlers: {},
-		$modifiedFields: {},
-		$async: new Async(component),
-		$asyncLabel: asyncLabel
-	});
+	// @ts-ignore (access)
+	component.meta = meta;
+
+	// @ts-ignore (access)
+	component['componentName'] = meta.componentName;
+
+	// @ts-ignore (access)
+	component['instance'] = meta.instance;
+
+	// @ts-ignore (access)
+	component.$fields = {};
+
+	// @ts-ignore (access)
+	component.$systemFields = {};
+
+	// @ts-ignore (access)
+	component.$refHandlers = {};
+
+	// @ts-ignore (access)
+	component.$modifiedFields = {};
+
+	// @ts-ignore (access)
+	component.$async = new Async(component);
+
+	// @ts-ignore (access)
+	component.$asyncLabel = asyncLabel;
 
 	const
 		{unsafe, unsafe: {$parent: parent}} = component;
@@ -73,10 +89,12 @@ export function beforeCreateState(
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (parent != null && parent.componentName == null) {
-		Object.set(unsafe, '$parent', unsafe.$root.unsafe.$remoteParent);
+		// @ts-ignore (access)
+		unsafe['$parent'] = unsafe.$root.unsafe.$remoteParent;
 	}
 
-	Object.set(unsafe, '$normalParent', getNormalParent(component));
+	// @ts-ignore (access)
+	unsafe['$normalParent'] = getNormalParent(component);
 
 	if (opts?.addMethods) {
 		attachMethodsFromMeta(component);
@@ -86,7 +104,7 @@ export function beforeCreateState(
 		implementEventAPI(component);
 	}
 
-	attachAccessorsFromMeta(component, opts?.safe);
+	attachAccessorsFromMeta(component);
 	runHook('beforeRuntime', component).catch(stderr);
 
 	const {
@@ -236,8 +254,17 @@ export function createdState(component: ComponentInterface): void {
  * @param component
  */
 export function beforeMountState(component: ComponentInterface): void {
-	runHook('beforeMount', component).catch(stderr);
-	callMethodFromComponent(component, 'beforeMount');
+	const
+		{$el} = component;
+
+	if ($el != null) {
+		$el.component = component;
+	}
+
+	if (!component.isFlyweight) {
+		runHook('beforeMount', component).catch(stderr);
+		callMethodFromComponent(component, 'beforeMount');
+	}
 }
 
 /**
@@ -245,9 +272,13 @@ export function beforeMountState(component: ComponentInterface): void {
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
-	Object.set(component, '$el.component', component);
+	const
+		{$el} = component;
 
-	runHook('beforeMounted', component).catch(stderr);
+	if ($el != null && $el.component !== component) {
+		$el.component = component;
+	}
+
 	resolveRefs(component);
 
 	runHook('mounted', component).then(() => {
@@ -271,6 +302,7 @@ export function beforeUpdateState(component: ComponentInterface): void {
 export function updatedState(component: ComponentInterface): void {
 	runHook('beforeUpdated', component).catch(stderr);
 	resolveRefs(component);
+
 	runHook('updated', component).then(() => {
 		callMethodFromComponent(component, 'updated');
 	}, stderr);
@@ -283,6 +315,7 @@ export function updatedState(component: ComponentInterface): void {
 export function activatedState(component: ComponentInterface): void {
 	runHook('beforeActivated', component).catch(stderr);
 	resolveRefs(component);
+
 	runHook('activated', component).catch(stderr);
 	callMethodFromComponent(component, 'activated');
 }
@@ -301,10 +334,9 @@ export function deactivatedState(component: ComponentInterface): void {
  * @param component
  */
 export function beforeDestroyState(component: ComponentInterface): void {
-	const {$async} = component.unsafe;
 	runHook('beforeDestroy', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeDestroy');
-	$async.clearAll().locked = true;
+	component.unsafe.$async.clearAll().locked = true;
 }
 
 /**

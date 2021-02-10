@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.140 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed the condition to provide slots
+
+## v3.0.0-rc.123 (2021-01-15)
+
+#### :rocket: New Feature
+
+* Implemented new API from `iAccess`
+
 ## v3.0.0-rc.88 (2020-10-13)
 
 #### :bug: Bug Fix

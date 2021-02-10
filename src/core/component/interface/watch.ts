@@ -155,7 +155,7 @@ export interface MethodWatcher<
 	path?: string;
 
 	/**
-	 * Group name of a watcher
+	 * Group name of the watcher
 	 * (for Async)
 	 */
 	group?: Group;

@@ -91,7 +91,14 @@ export default class History extends Friend {
 	 * @param [item] - initial history item
 	 */
 	initIndex(item: HistoryItem = {stage: INITIAL_STAGE, options: {}}): void {
-		this.store.push(item);
+		if (this.store.length > 0) {
+			this.store[0].content?.el.removeAttribute('data-page');
+			this.store[0] = item;
+
+		} else {
+			this.store.push(item);
+		}
+
 		this.calculateCurrentPage();
 	}
 
@@ -119,7 +126,7 @@ export default class History extends Friend {
 				isBelow = block.getElMod(els.content.el, 'page', 'below') === 'true';
 
 			if (isBelow || currentPage === els.content.el) {
-				throw new Error(`A page with the stage "${stage}" is already opened`);
+				throw new Error(`A page for the stage "${stage}" is already opened`);
 			}
 
 			this.async.requestAnimationFrame(() => {
@@ -355,7 +362,7 @@ export default class History extends Friend {
 
 		const
 			title = page.querySelector('[data-title]'),
-			fstChild = Object.get<CanUndef<HTMLElement>>(page, 'children.0');
+			fstChild = Object.get<HTMLElement>(page, 'children.0');
 
 		const
 			hasTrigger = Boolean(fstChild?.getAttribute(this.config.triggerAttr)),

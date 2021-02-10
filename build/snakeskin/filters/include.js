@@ -28,17 +28,25 @@ const
 
 Snakeskin.importFilters({
 	/**
-	 * Resolves the specified URL to use with a Snakeskin include directive
+	 * Resolves the specified URL to use with the Snakeskin include directive.
+	 * The filter adds the support of layers.
 	 *
 	 * @param {string} url
 	 * @param {string} source - original file source
 	 * @returns {(string|!Array<string>)}
+	 *
+	 * @example
+	 * ```
+	 * - include 'super/i-data'|b as placeholder
+	 *
+	 * - template index() extends ['i-data'].index
+	 * ```
 	 */
 	b(url, source) {
 		let
 			start = 0;
 
-		if (superRgxp.test(url)) {
+		if (superRgxp.removeFlags('g').test(url)) {
 			url = url.replace(superRgxp, '');
 
 			for (let i = 0; i < resources.length; i++) {
@@ -63,7 +71,7 @@ Snakeskin.importFilters({
 
 		const
 			hasMagic = glob.hasMagic(url),
-			end = ssExtRgxp.test(url) ? '' : '/',
+			end = ssExtRgxp.removeFlags('g').test(url) ? '' : '/',
 			ends = [];
 
 		if (end) {

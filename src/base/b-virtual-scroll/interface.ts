@@ -221,3 +221,15 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 export type MergeDataStateParams = {
 	[key in keyof DataState]?: DataState[key];
 };
+
+// TODO: Should be removed in
+//  https://github.com/V4Fire/Client/issues/471
+
+export interface ItemPropParams<CTX> {
+	key?: string;
+	ctx: CTX;
+}
+
+export interface ItemProps<CTX = unknown> {
+	(el: unknown, i: number, params: ItemPropParams<CTX>): Dictionary;
+}

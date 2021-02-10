@@ -22,8 +22,9 @@ b-slider_mode_scroll extends b-slider
 		width 100%
 		visibility hidden
 
-		pointer-events none
 		opacity 0
+
+		pointer-events none
 
 	/mode &__outer-view-wrapper
 		-webkit-overflow-scrolling touch
@@ -39,9 +40,14 @@ b-slider_mode_scroll extends b-slider
 
 	/mode &__view-content
 		white-space nowrap
+
+	/mode &__view-content
+	/mode &__view
 		width 100%
 
-	&__option
+	/mode &__view-content > *
+	/mode &__option
+	/mode &__item
 		display inline-block
 
 	/mode&_dynamic-height_false &__outer-view-wrapper

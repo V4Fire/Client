@@ -216,6 +216,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+		iProgress.initModEvents(this);
 		iVisible.initModEvents(this);
 	}
 

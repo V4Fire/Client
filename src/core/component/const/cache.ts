@@ -7,7 +7,7 @@
  */
 
 import { ComponentOptions as ComponentDriverOptions, ComponentDriver } from 'core/component/engines';
-import { ComponentMeta, ComponentOptions } from 'core/component/interface';
+import { ComponentInterface, ComponentMeta, ComponentOptions } from 'core/component/interface';
 
 /**
  * Map of component declaration parameters
@@ -18,6 +18,13 @@ export const componentParams = new Map<Function | string, ComponentOptions>();
  * Map of root components
  */
 export const rootComponents = Object.createDict<Promise<ComponentDriverOptions<ComponentDriver>>>();
+
+/**
+ * Link to an instance of the global root component
+ */
+export const globalRootComponent = <{link: Nullable<ComponentInterface>}>{
+	link: null
+};
 
 /**
  * Map of registered components

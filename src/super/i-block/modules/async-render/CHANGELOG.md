@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.138 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new parameter `TaskParams.useRAF`
+
+## v3.0.0-rc.131 (2021-01-29)
+
+#### :house: Internal
+
+* Now all tasks will execute on `requestAnimationFrame`
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :bug: Bug Fix

@@ -14,7 +14,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecated } from 'core/functools';
+import { deprecated } from 'core/functools/deprecation';
 
 import SyncPromise from 'core/promise/sync';
 import log, { LogMessageOptions } from 'core/log';
@@ -48,12 +48,16 @@ import {
 
 	WatchPath,
 	RawWatchHandler,
+
+	Hook,
 	ComponentInterface,
 	UnsafeGetter,
 
 	VNode
 
 } from 'core/component';
+
+import * as init from 'core/component/construct';
 
 import 'super/i-block/directives';
 import { statuses } from 'super/i-block/const';
@@ -185,6 +189,12 @@ export default abstract class iBlock extends ComponentInterface {
 	/** @override */
 	// @ts-ignore (override)
 	readonly $root!: this['Root'];
+
+	/**
+	 * If true, then the component will log info messages, but not only errors and warnings
+	 */
+	@prop(Boolean)
+	readonly verbose: boolean = false;
 
 	/**
 	 * Component unique identifier
@@ -568,11 +578,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@computed({replace: false})
 	get componentStatus(): ComponentStatus {
-		if (this.isFlyweight) {
-			return 'ready';
-		}
-
-		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore')!;
+		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore') ?? 'unloaded';
 	}
 
 	/**
@@ -591,10 +597,12 @@ export default abstract class iBlock extends ComponentInterface {
 			return;
 		}
 
-		const
-			isShadowStatus = (<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
+		const isShadowStatus =
+			this.isNotRegular ||
+			(<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value] ||
+			value === 'ready' && oldValue === 'beforeReady';
 
-		if (isShadowStatus || value === 'ready' && oldValue === 'beforeReady') {
+		if (isShadowStatus) {
 			this.shadowComponentStatusStore = value;
 
 		} else {
@@ -602,13 +610,33 @@ export default abstract class iBlock extends ComponentInterface {
 			this.field.set('componentStatusStore', value);
 		}
 
-		if (!this.isFlyweight) {
-			void this.setMod('status', value);
+		// @deprecated
+		this.emit(`status-${value}`, value);
+		this.emit(`componentStatus:${value}`, value, oldValue);
+		this.emit('componentStatusChange', value, oldValue);
+	}
 
-			// @deprecated
-			this.emit(`status-${value}`, value);
-			this.emit(`componentStatus:${value}`, value, oldValue);
-			this.emit('componentStatusChange', value, oldValue);
+	/** @override */
+	get hook(): Hook {
+		return this.hookStore;
+	}
+
+	/**
+	 * @override
+	 *
+	 * @param value
+	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
+	 * @emits `componentHookChange(value: Hook, oldValue: Hook)`
+	 */
+	set hook(value: Hook) {
+		const
+			oldValue = this.hook;
+
+		this.hookStore = value;
+
+		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
+			this.emit(`componentHook:${value}`, value, oldValue);
+			this.emit('componentHookChange', value, oldValue);
 		}
 	}
 
@@ -644,7 +672,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * True if the component was in ready status at least once
 	 */
-	@system()
+	@system({unique: true})
 	isReadyOnce: boolean = false;
 
 	/**
@@ -678,11 +706,19 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * True if the current component is functional
+	 * True if the current component is a functional
 	 */
 	@computed({replace: false})
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
+	}
+
+	/**
+	 * True if the current component is a functional or flyweight
+	 */
+	@computed({replace: false})
+	get isNotRegular(): boolean {
+		return Boolean(this.isFunctional || this.isFlyweight);
 	}
 
 	/**
@@ -794,8 +830,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
-		functional: false,
 		init: (ctx) => new AsyncRender(ctx)
 	})
 
@@ -816,7 +850,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * API to unsafe invoke of internal properties of the component.
 	 * It can be useful to create friendly classes for a component.
 	 */
-	@p({replace: true})
 	get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return <any>this;
 	}
@@ -888,15 +921,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[iBlock.modsProp]]
 	 */
 	static readonly mods: ModsDecl = {
-		status: [
-			['unloaded'],
-			'loading',
-			'beforeReady',
-			'ready',
-			'inactive',
-			'destroyed'
-		],
-
 		diff: [
 			'true',
 			'false'
@@ -918,7 +942,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		unique: true,
-		replace: true,
 		init: (ctx) => new Daemons(ctx)
 	})
 
@@ -930,7 +953,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new Storage(ctx)
 	})
 
@@ -942,7 +964,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new Async(ctx)
 	})
 
@@ -955,7 +976,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new State(ctx)
 	})
 
@@ -987,7 +1007,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: (ctx) => new Lazy(ctx)
 	})
 
@@ -1036,6 +1055,12 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected stageStore?: Stage;
+
+	/**
+	 * Component hook store
+	 * @see [[iBlock.hook]]
+	 */
+	protected hookStore: Hook = 'beforeRuntime';
 
 	/**
 	 * Component initialize status store
@@ -1143,7 +1168,6 @@ export default abstract class iBlock extends ComponentInterface {
 		atom: true,
 		after: 'async',
 		unique: true,
-		replace: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, o)
 	})
 
@@ -1202,7 +1226,6 @@ export default abstract class iBlock extends ComponentInterface {
 		atom: true,
 		after: 'async',
 		unique: true,
-		replace: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, o.r)
 	})
 
@@ -1225,7 +1248,6 @@ export default abstract class iBlock extends ComponentInterface {
 		atom: true,
 		after: 'async',
 		unique: true,
-		replace: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEmitter)
 	})
 
@@ -1565,7 +1587,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		opts = opts ?? {};
 
-		if (Object.isString(path) && customWatcherRgxp.test(path)) {
+		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
 			bindRemoteWatchers(this, {
 				async: <Async<any>>this.async,
 				watchers: {
@@ -1615,7 +1637,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.$emit(eventNm, this, ...args);
 		this.$emit(`on-${eventNm}`, ...args);
-		this.dispatching && this.dispatch(decl, ...args);
+
+		if (this.dispatching) {
+			this.dispatch(decl, ...args);
+		}
 
 		const
 			logArgs = args.slice();
@@ -1974,9 +1999,9 @@ export default abstract class iBlock extends ComponentInterface {
 				this.state.initFromStorage() || []
 			);
 
-			if (this.isFunctional || this.dontWaitRemoteProviders) {
+			if (this.isNotRegular || this.dontWaitRemoteProviders) {
 				if (tasks.length > 0) {
-					return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
+					return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 				}
 
 				done();
@@ -2035,7 +2060,7 @@ export default abstract class iBlock extends ComponentInterface {
 					}
 				}
 
-				return $a.promise(Promise.all(tasks), label).then(done, doneOnError);
+				return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 			}));
 
 		} catch (err) {
@@ -2078,11 +2103,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
-				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
-				return Block.prototype.setMod.call(ctx, nodeOrName, name);
-			}
-
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.setMod(nodeOrName, name));
 			return res ?? false;
 		}
@@ -2111,11 +2131,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
-				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
-				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
-			}
-
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.removeMod(nodeOrName, name));
 			return res ?? false;
 		}
@@ -2126,11 +2141,25 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Sets a modifier to the root element of an application.
+	 *
 	 * This method is useful, when you need to attach a class can affect to the whole application,
 	 * for instance, you want to lock page scrolling, i.e. you need to add a class to the root HTML tag.
 	 *
-	 * @param name
-	 * @param value
+	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
+	 *
+	 * @param name - modifier name
+	 * @param value - modifier value
+	 *
+	 * @example
+	 * ```js
+	 * // this.componentName === 'b-button' && this.globalName === undefined
+	 * this.setRootMod('foo', 'bla');
+	 * console.log(document.documentElement.classList.contains('b-button-foo-bla'));
+	 *
+	 * // this.componentName === 'b-button' && this.globalName === 'bAz'
+	 * this.setRootMod('foo', 'bla');
+	 * console.log(document.documentElement.classList.contains('b-az-foo-bla'));
+	 * ```
 	 */
 	@p({replace: false})
 	setRootMod(name: string, value: unknown): boolean {
@@ -2138,10 +2167,23 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Removes a modifier from the root element of an application
+	 * Removes a modifier from the root element of an application.
+	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
 	 *
-	 * @param name
-	 * @param value
+	 * @param name - modifier name
+	 * @param [value] - modifier value (if not specified, the method removes the matched modifier with any value)
+	 *
+	 * @example
+	 * ```js
+	 * this.setRootMod('foo', 'bla');
+	 * console.log(document.documentElement.classList.contains('b-button-foo-bla'));
+	 *
+	 * this.removeRootMod('foo', 'baz');
+	 * console.log(document.documentElement.classList.contains('b-az-foo-bla') === true);
+	 *
+	 * this.removeRootMod('foo');
+	 * console.log(document.documentElement.classList.contains('b-az-foo-bla') === false);
+	 * ```
 	 */
 	@p({replace: false})
 	removeRootMod(name: string, value?: unknown): boolean {
@@ -2149,8 +2191,16 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Returns a value of the specified root element modifier
-	 * @param name
+	 * Returns a value of the specified root element modifier.
+	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
+	 * Notice that the method returns a normalized value.
+	 *
+	 * @param name - modifier name
+	 * @example
+	 * ```js
+	 * this.setRootMod('foo', 'blaBar');
+	 * console.log(this.getRootMod('foo') === 'bla-bar');
+	 * ```
 	 */
 	@p({replace: false})
 	getRootMod(name: string): CanUndef<string> {
@@ -2199,6 +2249,10 @@ export default abstract class iBlock extends ComponentInterface {
 		if (!Object.isString(ctxOrOpts)) {
 			logLevel = ctxOrOpts.logLevel;
 			context = ctxOrOpts.context;
+		}
+
+		if (!this.verbose && (logLevel == null || logLevel === 'info')) {
+			return;
 		}
 
 		log(
@@ -2322,11 +2376,12 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param ref - ref name
 	 * @param [opts] - additional options
 	 */
+	@p({replace: false})
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
 		let
 			that = <iBlock>this;
 
-		if (this.isFlyweight || this.isFunctional) {
+		if (this.isNotRegular) {
 			ref += `:${this.componentId}`;
 			that = this.$normalParent ?? that;
 		}
@@ -2337,7 +2392,7 @@ export default abstract class iBlock extends ComponentInterface {
 			watchers = that.$refHandlers[ref],
 			refVal = that.$refs[ref];
 
-		return this.async.promise(() => new Promise((resolve) => {
+		return this.async.promise(() => new SyncPromise((resolve) => {
 			if (refVal != null) {
 				resolve(<T>refVal);
 
@@ -2357,17 +2412,19 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.syncStorageState = i.syncStorageState.bind(this);
 		this.syncRouterState = i.syncRouterState.bind(this);
-
 		this.watch = i.watch.bind(this);
+
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
+		this.emit = i.emit.bind(this);
 	}
 
 	/**
 	 * Initializes an instance of the Block class for the current component
 	 */
 	@hook('mounted')
+	@p({replace: false})
 	protected initBlockInstance(): void {
 		if (this.block != null) {
 			const
@@ -2384,11 +2441,13 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.block = new Block(this);
 
-		for (let i = 0; i < this.blockReadyListeners.length; i++) {
-			this.blockReadyListeners[i]();
-		}
+		if (this.blockReadyListeners.length > 0) {
+			for (let i = 0; i < this.blockReadyListeners.length; i++) {
+				this.blockReadyListeners[i]();
+			}
 
-		this.blockReadyListeners = [];
+			this.blockReadyListeners = [];
+		}
 	}
 
 	/**
@@ -2429,6 +2488,14 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * Factory to create listeners of internal hook events
+	 * @param hook - hook name to listen
+	 */
+	protected createInternalHookListener(hook: string): Function {
+		return (...args) => (<Function>this[`on-${hook}-hook`.camelize(false)]).call(this, ...args);
+	}
+
+	/**
 	 * Handler: "callChild" event
 	 * @param e
 	 */
@@ -2439,6 +2506,39 @@ export default abstract class iBlock extends ComponentInterface {
 		) {
 			return e.action.call(this);
 		}
+	}
+
+	/** @override */
+	protected onCreatedHook(): void {
+		if (this.isFlyweight) {
+			this.componentStatusStore = 'ready';
+			this.isReadyOnce = true;
+		}
+	}
+
+	/** @override */
+	protected onBindHook(): void {
+		init.beforeMountState(this);
+	}
+
+	/** @override */
+	protected onInsertedHook(): void {
+		init.mountedState(this);
+	}
+
+	/** @override */
+	protected onUpdateHook(): void {
+		if (this.isFlyweight) {
+			this.$el?.component?.onUnbindHook();
+		}
+
+		this.onBindHook();
+		this.onInsertedHook();
+	}
+
+	/** @override */
+	protected onUnbindHook(): void {
+		this.$destroy();
 	}
 
 	/**

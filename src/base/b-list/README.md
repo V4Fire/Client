@@ -1,12 +1,16 @@
 # base/b-list
 
-This module provides a standard component to create a list of tabs/links. You can use it "as it is" or like a superclass.
+This module provides a standard component to create a list of tabs/links.
+You can use it "as it is" or like a superclass.
+
+The component uses the `<a>` tag with a simple text label to render each item.
+If you need a more complex layout, provide it via a slot or by using `item/itemProps` props.
 
 ## Synopsis
 
 * The component extends [[iData]].
 
-* The component implements [[iVisible]], [[iWidth]] traits.
+* The component implements [[iVisible]], [[iWidth]], [[iItems]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
@@ -24,14 +28,59 @@ This module provides a standard component to create a list of tabs/links. You ca
 
 * Dynamic data loading.
 
+## Modifiers
+
+| Name         | Description            | Values    | Default |
+| ------------ | ---------------------- | ----------| ------- |
+| `hideLabels` | Item labels is hidden  | `Boolean` | `false` |
+
+Also, you can see the parent component and the component traits.
+
 ## Events
 
 | EventName         | Description                                                                                                                  | Payload description                    | Payload  |
-| ----------------- |----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |--------- |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | -------- |
 | `change`          | An active value of the component has been changed                                                                            | Active value or a set of active values | `Active` |
 | `immediateChange` | An active value of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active values | `Active` |
 | `actionChange`    | An active value of the component has been changed due to some user action                                                    | Active value or a set of active values | `Active` |
 | `itemsChange`     | A list of items has been changed                                                                                             | List of items                          | `Items`  |
+
+Also, you can see the parent component and the component traits.
+
+## Associated types
+
+The component has two associated types to specify a type of component items: **Item** and **Items**.
+
+```typescript
+import bList, { component } from 'super/b-list/b-list';
+
+export * from 'super/b-list/b-list';
+
+@component()
+export default class myList extends bList {
+  /** @override */
+  readonly Item!: MyItem;
+}
+```
+
+Also, you can see the parent component.
+
+## Model
+
+The component can be used with the `v-model` directive.
+
+```
+< b-list :items = items | v-model = activeItem
+```
+
+```js
+({
+  model: {
+    prop: 'activeProp',
+    event: 'onChange'
+  }
+})
+```
 
 ## Usage
 
@@ -68,6 +117,31 @@ This module provides a standard component to create a list of tabs/links. You ca
 < b-list :active = true | :dataProvider = 'MyProvider'
 ```
 
+5. Use of the component with the creation of additional component for each item.
+
+```
+< b-list &
+  :item = 'b-my-component' |
+  :itemProps = (item) => item |
+  :items = [ &
+    {label: 'Male', value: 0, active: true},
+    {label: 'Female', value: 1}
+  ]
+.
+```
+
+6. Providing a key to the internal `v-for` directive.
+
+```
+< b-tree &
+  :itemKey = 'value' |
+  :items = [ &
+    {label: 'Male', value: 0, active: true},
+    {label: 'Female', value: 1}
+  ]
+.
+```
+
 ## Slots
 
 The component supports a bunch of slots to provide:
@@ -101,7 +175,7 @@ Also, these icons can be provided by a prop.
     < img :src = icon
 ```
 
-2. `progressIcon` to inject an icon that indicates loading each item, by default, is used [[bProgressIcon]].
+3. `progressIcon` to inject an icon that indicates loading each item, by default, is used [[bProgressIcon]].
 
 ```
 < b-list :items = listOfItems
@@ -116,4 +190,3 @@ Also, this icon can be provided by a prop.
   {label: 'Foo', progressIcon: 'bCustomLoader'}
 ] .
 ```
-

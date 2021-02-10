@@ -76,8 +76,10 @@ function run(): void {
 				val = el.value;
 
 			if (done <= 0 || Date.now() - time > DELAY) {
-				await daemon.sleep(DELAY);
+				await daemon.idle({timeout: DELAY});
 				time = Date.now();
+
+				// eslint-disable-next-line require-atomic-updates
 				done = TASKS_PER_TICK;
 			}
 
@@ -88,16 +90,27 @@ function run(): void {
 				continue;
 			}
 
-			let
+			const
 				canRender = val.fn();
 
-			if (Object.isPromise(canRender)) {
-				canRender = await canRender;
-			}
+			const exec = (canRender) => {
+				if (Object.isTruly(canRender)) {
+					done -= val.weight ?? 1;
+					queue.delete(val);
+				}
+			};
 
-			if (Object.isTruly(canRender)) {
-				done -= val.weight ?? 1;
-				queue.delete(val);
+			if (Object.isPromise(canRender)) {
+				const now = Date.now();
+				await canRender.then(exec);
+
+				if (now - time > DELAY) {
+					time = now;
+					done += val.weight ?? 1;
+				}
+
+			} else {
+				exec(canRender);
 			}
 		}
 
@@ -127,7 +140,7 @@ function canProcessing(): boolean {
 
 function runOnNextTick(): boolean {
 	if (canProcessing()) {
-		daemon.setTimeout(run, DELAY);
+		daemon.requestIdleCallback(run, {timeout: DELAY});
 		return true;
 	}
 

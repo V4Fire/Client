@@ -9,8 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.49 (2020-08-03)
+## v3.0.0-rc.122 (2021-01-13)
 
-#### :house: Internal
+#### :boom: Breaking Change
 
-* Fixed ESLint warnings
+* Trait refactoring. Using `item` instead of `option`.
+
+#### :memo: Documentation
+
+* Added `CHANGELOG`, `README`

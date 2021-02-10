@@ -216,13 +216,13 @@ module.exports = function getPlugins({
 		);
 
 		/**
-		 * Returns a current build theme value
+		 * Returns a current build theme
 		 * @returns {!string}
 		 */
 		api.define('defaultTheme', () => theme);
 
 		/**
-		 * Returns included to build themes
+		 * Returns themes, included to build
 		 * @returns {!string[]}
 		 */
 		api.define('includedThemes', () => themesList);

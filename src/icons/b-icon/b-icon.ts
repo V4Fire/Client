@@ -12,7 +12,6 @@
  */
 
 import iIcon from 'traits/i-icon/i-icon';
-import iSize from 'traits/i-size/i-size';
 import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
@@ -21,7 +20,7 @@ export * from 'super/i-block/i-block';
  * Component to use an SVG icon from the global SVG sprite
  */
 @component({functional: true, flyweight: true})
-export default class bIcon extends iBlock implements iIcon, iSize {
+export default class bIcon extends iBlock implements iIcon {
 	/**
 	 * Component value
 	 */
@@ -36,8 +35,6 @@ export default class bIcon extends iBlock implements iIcon, iSize {
 
 	/** @override */
 	static readonly mods: ModsDecl = {
-		...iSize.mods,
-
 		size: [
 			['auto'],
 			'full'
@@ -45,12 +42,17 @@ export default class bIcon extends iBlock implements iIcon, iSize {
 	};
 
 	/** @see [[iIcon.getIconLink]] */
-	getIconLink(iconId: string): Promise<string> {
+	getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
 		return iIcon.getIconLink(iconId);
 	}
 
 	/** @see [[iIcon.updateIconHref]] */
-	updateIconHref(el: SVGUseElement, href: string): void {
-		iIcon.updateIconHref(el, href);
+	updateIconHref(el: SVGUseElement, href?: string): void {
+		iIcon.updateIconHref(this, el, href);
+	}
+
+	/** @see [[iIcon.handleIconError]] */
+	handleIconError(el: SVGUseElement, err: Error): void {
+		iIcon.handleIconError(this, el, err);
 	}
 }

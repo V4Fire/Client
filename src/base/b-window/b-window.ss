@@ -24,28 +24,29 @@
 				opt.ifOnce('opened', m.opened === 'true') && delete watchModsStore.opened
 			.
 
-				< section.&__window ref = window
+				< .&__window ref = window
 					- if thirdPartySlots
 						< template v-if = slotName
-							: isSlot = /^slot[A-Z]/
+							: isSlot = /^windowSlot[A-Z]/
+
 							- forEach self => el, key
 								- if isSlot.test(key)
 									< template v-if = slotName === '${key}'
-										+= el(@@globalNames[key])
+										+= el(@@globalTplDirs[key])
 
 					< template v-else
 						+= self.slot()
-							< h1.&__title v-if = title || vdom.getSlot('title')
+							< h2.&__title v-if = title || vdom.getSlot('title')
 								+= self.slot('title', {':title': 'title'})
 									- block title
 										{{ title }}
 
-							< .&__content
+							< .&__body.&__content
 								+= self.slot('body')
 									- block content
 
 							< .&__controls
-								+= self.slot('control')
+								+= self.slot('controls')
 									- block controls
 										< b-button @click = close
 											{{ `Close` }}

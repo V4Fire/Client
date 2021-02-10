@@ -23,27 +23,6 @@ module.exports = (page) => {
 	let
 		sidebar;
 
-	const render = async () => {
-		await page.evaluate(() => {
-			globalThis.renderComponents('b-sidebar', [
-				{
-					attrs: {},
-					content: {
-						default: {
-							tag: 'div',
-							content: 'Hello content',
-							attrs: {
-								id: 'test-div'
-							}
-						}
-					}
-				}
-			]);
-		});
-
-		sidebar = await h.component.waitForComponent(page, '.b-sidebar');
-	};
-
 	describe('b-sidebar', () => {
 		beforeEach(async () => {
 			await page.evaluate(() => globalThis.removeCreatedComponents());
@@ -64,7 +43,7 @@ module.exports = (page) => {
 		});
 
 		describe('open', () => {
-			it('emits an event of opening', async () => {
+			it('emits an event if opening', async () => {
 				await render();
 				const subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
 				await sidebar.evaluate((ctx) => ctx.open());
@@ -92,7 +71,7 @@ module.exports = (page) => {
 		});
 
 		describe('close', () => {
-			it('emits an event of closing', async () => {
+			it('emits an event if closing', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);
@@ -103,7 +82,7 @@ module.exports = (page) => {
 				await expectAsync(subscribe).toBeResolved();
 			});
 
-			it('closes the sidebar via a click', async () => {
+			it('closes the sidebar by a click', async () => {
 				await page.evaluate(() => {
 					const styles = document.createElement('style');
 
@@ -161,4 +140,25 @@ module.exports = (page) => {
 			});
 		});
 	});
+
+	async function render() {
+		await page.evaluate(() => {
+			globalThis.renderComponents('b-sidebar', [
+				{
+					attrs: {},
+					content: {
+						default: {
+							tag: 'div',
+							content: 'Hello content',
+							attrs: {
+								id: 'test-div'
+							}
+						}
+					}
+				}
+			]);
+		});
+
+		sidebar = await h.component.waitForComponent(page, '.b-sidebar');
+	}
 };

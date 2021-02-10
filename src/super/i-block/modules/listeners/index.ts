@@ -75,9 +75,13 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		ctx.componentStatus = 'loading';
 
 		if (needRouterSync || globalName != null) {
-			await Promise.all(
-				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName != null ? $s.resetStorage() : null)
+			const tasks = Array.concat(
+				[],
+				needRouterSync ? $s.resetRouter() : null,
+				globalName != null ? $s.resetStorage() : null
 			);
+
+			await Promise.allSettled(tasks);
 		}
 
 		await ctx.initLoad();
@@ -85,9 +89,13 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 	$e.on('reset.silence', waitNextTick(async () => {
 		if (needRouterSync || globalName != null) {
-			await Promise.all(
-				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName != null ? $s.resetStorage() : null)
+			const tasks = Array.concat(
+				[],
+				needRouterSync ? $s.resetRouter() : null,
+				globalName != null ? $s.resetStorage() : null
 			);
+
+			await Promise.allSettled(tasks);
 		}
 
 		await ctx.reload();
@@ -111,7 +119,7 @@ export function initRemoteWatchers(component: iBlock): void {
 	}
 
 	const normalizeField = (field) => {
-		if (customWatcherRgxp.test(field)) {
+		if (RegExp.test(customWatcherRgxp, field)) {
 			return field.replace(customWatcherRgxp, (str, prfx: string, emitter: string, event: string) =>
 				`${prfx + ['$parent'].concat(Object.isTruly(emitter) ? emitter : []).join('.')}:${event}`);
 		}

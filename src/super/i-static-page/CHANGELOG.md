@@ -6,8 +6,26 @@ Changelog
 > - :rocket:     [New Feature]
 > - :bug:        [Bug Fix]
 > - :memo:       [Documentation]
-> - :house:      [Internal]****
+> - :house:      [Internal]
 > - :nail_care:  [Polish]
+
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
+## v3.0.0-rc.124 (2021-01-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when an optional asset isn't exist `modules/ss-helpers/page/getScriptDeclByName`
+
+## v3.0.0-rc.121 (2021-01-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `getRootMod`
 
 ## v3.0.0-rc.120 (2020-12-23)
 

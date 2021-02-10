@@ -5,7 +5,7 @@ This module provides API to track elements entering or leaving the viewport.
 ## Callbacks
 
 | Name       | Description                                                                      | Payload description  | Payload      |
-| ---------- |----------------------------------------------------------------------------------| -------------------- |------------- |
+| ---------- | -------------------------------------------------------------------------------- | -------------------- | ------------ |
 | `callback` | Invoked when an element stands in the viewport more than the specified delay     | `Observable` element | `Observable` |
 | `onEnter`  | Invoked when an element passed the specified `threshold` and enters the viewport | `Observable` element | `Observable` |
 | `onLeave`  | Invoked when an element passed the specified `threshold` and leaves the viewport | `Observable` element | `Observable` |

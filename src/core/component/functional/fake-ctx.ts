@@ -10,20 +10,20 @@ import * as init from 'core/component/construct';
 
 import { forkMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
-import { callMethodFromComponent } from 'core/component/method';
-import { runHook } from 'core/component/hook';
 
-import { CreateElement } from 'core/component/engines';
 import { RenderContext } from 'core/component/render';
+import { CreateElement } from 'core/component/engines';
 
-import { $$, componentOpts, destroyHooks, destroyCheckHooks } from 'core/component/functional/const';
+import { $$, componentOpts } from 'core/component/functional/const';
+import { destroyComponent } from 'core/component/functional/helpers';
+
 import { FunctionalCtx } from 'core/component/interface';
 import { CreateFakeCtxOptions } from 'core/component/functional/interface';
 
 export * from 'core/component/functional/interface';
 
 /**
- * Creates a fake context for a functional component is based on the specified parameters
+ * Creates the fake context for a functional component is based on the specified parameters
  *
  * @param createElement - function to create VNode element
  * @param renderCtx - render context from VNode
@@ -36,16 +36,13 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	baseCtx: FunctionalCtx,
 	opts: CreateFakeCtxOptions
 ): T {
-	// Create a new context object that is based on baseCtx
-
 	const
 		fakeCtx = Object.create(baseCtx),
 		meta = forkMeta(fakeCtx.meta);
 
 	const
-		{parent} = renderCtx,
 		{component} = meta,
-		{children, data: dataOpts} = renderCtx;
+		{parent, children, data: dataOpts} = renderCtx;
 
 	let
 		$options;
@@ -64,7 +61,11 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		};
 
 	} else {
-		$options = {filters: {}, directives: {}, components: {}};
+		$options = {
+			filters: {},
+			directives: {},
+			components: {}
+		};
 	}
 
 	if (Object.isDictionary(component)) {
@@ -82,135 +83,70 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		Object.assign($options.components, o.components);
 	}
 
-	// Add base methods and properties
-	Object.assign(fakeCtx, renderCtx.props, {
-		_self: fakeCtx,
-		_renderProxy: fakeCtx,
-		_staticTrees: [],
+	fakeCtx._self = fakeCtx;
+	fakeCtx._renderProxy = fakeCtx;
+	fakeCtx._staticTrees = [];
 
-		unsafe: fakeCtx,
-		children: Object.isArray(children) ? children : [],
+	fakeCtx.unsafe = fakeCtx;
+	fakeCtx.children = Object.isArray(children) ? children : [];
 
-		$createElement: createElement.bind(fakeCtx),
+	fakeCtx.$parent = parent;
+	fakeCtx.$root = renderCtx.$root ?? parent?.$root;
 
-		$parent: parent,
-		$root: renderCtx.$root ?? parent?.$root,
+	fakeCtx.$options = $options;
+	fakeCtx.$props = renderCtx.props ?? {};
+	fakeCtx.$attrs = dataOpts?.attrs ?? {};
+	fakeCtx.$listeners = renderCtx.listeners ?? dataOpts?.on ?? {};
+	fakeCtx.$refs = {};
 
-		$options,
-		$props: renderCtx.props ?? {},
-		$attrs: dataOpts?.attrs ?? {},
-		$listeners: renderCtx.listeners ?? dataOpts?.on ?? {},
+	fakeCtx.$slots = {
+		default: Object.size(children) > 0 ? children : undefined,
+		...renderCtx.slots?.()
+	};
 
-		$refs: {},
-		$unregisteredHooks: {},
+	fakeCtx.$scopedSlots = {
+		...Object.isFunction(renderCtx.scopedSlots) ? renderCtx.scopedSlots() : renderCtx.scopedSlots
+	};
 
-		$slots: {
-			default: Object.size(children) > 0 ? children : undefined,
-			...renderCtx.slots?.()
-		},
+	fakeCtx.$createElement = createElement.bind(fakeCtx);
+	fakeCtx.$destroy = () => destroyComponent(fakeCtx);
 
-		$scopedSlots: {
-			...Object.isFunction(renderCtx.scopedSlots) ? renderCtx.scopedSlots() : renderCtx.scopedSlots
-		},
+	fakeCtx.$nextTick = (cb?: Function) => {
+		const
+			{$async: $a} = fakeCtx;
 
-		$destroy(): void {
-			if (this.componentStatus === 'destroyed') {
-				return;
-			}
-
-			this.$async.clearAll().locked = true;
-
-			// We need to clear all handlers that we bound to a parent component of the current
-
-			const
-				parent = this.$normalParent;
-
-			if (parent != null) {
-				const
-					{hooks} = parent.meta,
-					{$unregisteredHooks} = this;
-
-				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
-					const
-						hook = o[i];
-
-					if ($unregisteredHooks[hook] === true) {
-						continue;
-					}
-
-					const
-						filteredHooks = <unknown[]>[];
-
-					let
-						hasChanges = false;
-
-					for (let list = hooks[hook], j = 0; j < list.length; j++) {
-						const
-							el = list[j];
-
-						if (el.fn[$$.self] !== this) {
-							filteredHooks.push(el);
-
-						} else {
-							hasChanges = true;
-						}
-					}
-
-					if (hasChanges) {
-						hooks[hook] = filteredHooks;
-					}
-
-					$unregisteredHooks[hook] = true;
-				}
-			}
-
-			for (let o = destroyHooks, i = 0; i < o.length; i++) {
-				const
-					key = o[i];
-
-				runHook(key, this).then(() => {
-					callMethodFromComponent(this, key);
-				}, stderr);
-			}
-		},
-
-		$nextTick(cb?: () => void): Promise<void> | void {
-			const
-				{$async: $a} = this;
-
-			if (cb) {
-				$a.setImmediate(cb);
-				return;
-			}
-
-			return $a.nextTick();
-		},
-
-		$forceUpdate(): void {
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			if (!Object.isFunction(parent?.$forceUpdate)) {
-				return;
-			}
-
-			this.$async.setImmediate(() => parent!.$forceUpdate(), {
-				label: $$.forceUpdate
-			});
+		if (cb) {
+			$a.setImmediate(cb);
+			return;
 		}
-	});
+
+		return $a.nextTick();
+	};
+
+	fakeCtx.$forceUpdate = () => {
+		// eslint-disable-next-line @typescript-eslint/unbound-method
+		if (!Object.isFunction(parent?.$forceUpdate)) {
+			return;
+		}
+
+		fakeCtx.$async.setImmediate(() => parent!.$forceUpdate(), {
+			label: $$.forceUpdate
+		});
+	};
 
 	if (fakeCtx.$root == null) {
 		fakeCtx.$root = fakeCtx;
 	}
 
 	initProps(fakeCtx, {
+		from: renderCtx.props,
 		store: fakeCtx,
 		saveToStore: opts.initProps
 	});
 
 	init.beforeCreateState(fakeCtx, meta, {
 		addMethods: true,
-		implementEventAPI: true,
-		safe: opts.safe
+		implementEventAPI: true
 	});
 
 	init.beforeDataCreateState(fakeCtx, {tieFields: true});

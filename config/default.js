@@ -17,6 +17,9 @@ const
 	camelize = require('camelize'),
 	o = require('uniconf/options').option;
 
+const
+	{nanoid} = require('nanoid');
+
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
@@ -181,7 +184,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Enables the special kind of the demo page (pages/p-v4-components-demo) to build with
+		 * A name of the component to build demo examples or tests
+		 */
+		demoPage: o('demo-page', {
+			env: true,
+			default: 'p-v4-components-demo'
+		}),
+
+		/**
+		 * Enables the special kind of a demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *
 		 * The inspection mode allows us to see all component modifiers/props and dynamically change it.
@@ -212,7 +223,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @type {string}
 		 */
 		suit: o('suit', {
-			env: true
+			env: true,
+			default: 'demo'
 		})
 	},
 
@@ -293,10 +305,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns true if all assets from the build have to inline within HTML files
+		 *
+		 * @cli fat-html
+		 * @env FAT_HTML
+		 *
 		 * @returns {boolean}
 		 */
 		fatHTML() {
-			return false;
+			return o('fat-html', {
+				env: true,
+				type: 'boolean',
+				default: false
+			});
 		},
 
 		/**
@@ -313,6 +333,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 */
 			minChunkSize: o('optimize-min-chunk-size', {
 				env: true,
+				type: 'number',
 				default: 10 * 1024
 			}),
 
@@ -339,6 +360,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 				return o('optimize-data-uri-limit', {
 					env: true,
+					type: 'number',
 					default: 2 * 1024
 				});
 			}
@@ -543,10 +565,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		/**
 		 * Name of the generated runtime global variable where the nonce value is stored
 		 */
-		nonceStore: Math.random()
-			.toString(16)
-			.slice(2, 9)
-			.replace(/[a-z]/g, (s) => Math.random() > 0.5 ? s.toUpperCase() : s),
+		nonceStore: nanoid(),
 
 		/**
 		 * Returns value of the "nonce" hash
