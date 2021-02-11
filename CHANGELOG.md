@@ -19,6 +19,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `b-content-switcher`
   * `core/component/helpers/observable`
 
+#### :rocket: New Feature
+
+* Added a new property `fakeContext` to `VNode` `core/component/engines`
+
+#### :bug: Bug Fix
+
+* Fixed creation of a context:
+  * `core/component/functional`
+  * `core/component/flyweight`
+
 ## v3.0.0-rc.141 (2021-02-05)
 
 #### :bug: Bug Fix

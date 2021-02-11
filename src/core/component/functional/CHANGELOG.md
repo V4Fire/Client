@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.142 (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed creation of a context
+
 ## v3.0.0-rc.126 (2021-01-26)
 
 #### :house: Internal
