@@ -25,6 +25,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed an issue when refs are not resolved after the `update` hook `iBlock`
 * Fixed creation of a context:
   * `core/component/functional`
   * `core/component/flyweight`

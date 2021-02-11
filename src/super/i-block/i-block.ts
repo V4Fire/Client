@@ -2527,7 +2527,9 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/** @override */
-	protected onUpdateHook(): void {
+	protected async onUpdateHook(): Promise<void> {
+		await this.nextTick({label: $$.onUpdateHook});
+
 		if (this.isFlyweight) {
 			this.$el?.component?.onUnbindHook();
 		}
