@@ -31,7 +31,7 @@ module.exports = function addPlugins(api) {
 	 * @param {URLParams} params
 	 * @returns {string}
 	 */
-	api.define('formatURL', (params) => {
+	api.define('createURL', (params) => {
 		const
 			parsedOpts = parseObject(params);
 

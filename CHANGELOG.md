@@ -16,7 +16,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added icons colorizing functionality by stylus `i` function
-* Added some `stylus` plugins to generate url strings `build/stylus/url`
+* Added `stylus` plugins to generate url strings `build/stylus/url`:
+  * `toQueryString`
+  * `createURL`
 
 ## v3.0.0-rc.142 (2021-02-11)
 
@@ -42,7 +44,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Refactoring:
   * `core/dom/image`
   * `core/dom/resize-observer`
->>>>>>> master
 
 ## v3.0.0-rc.141 (2021-02-05)
 
