@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.144 (2021-02-11)
+
+#### :boom: Breaking Change
+
+* Now, by default is used `b-button-functional` `traits/i-control-list`
+
+#### :bug: Bug Fix
+
+* Added providing of activation events to external components
+
 ## v3.0.0-rc.143 (2021-02-11)
 
 #### :rocket: New Feature

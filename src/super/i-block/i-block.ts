@@ -50,6 +50,8 @@ import {
 	RawWatchHandler,
 
 	Hook,
+	ActivationStatus,
+
 	ComponentInterface,
 	UnsafeGetter,
 
@@ -2232,6 +2234,11 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	deactivate(): void {
 		deactivate(this);
+	}
+
+	/** @override */
+	emitActivation(status: ActivationStatus): Promise<void> {
+		return this.r.emitActivation(status);
 	}
 
 	/**

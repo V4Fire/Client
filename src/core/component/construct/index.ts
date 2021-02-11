@@ -32,7 +32,7 @@ import { resolveRefs } from 'core/component/ref';
 import { getNormalParent } from 'core/component/traverse';
 import { forkMeta } from 'core/component/meta';
 
-import { ComponentInterface, ComponentMeta } from 'core/component/interface';
+import { ComponentInterface, ComponentMeta, ActivationStatus } from 'core/component/interface';
 import { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
 
 export * from 'core/component/construct/interface';
@@ -238,11 +238,27 @@ export function beforeDataCreateState(
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
-	const
-		{unsafe} = component;
+	const {
+		unsafe,
+		unsafe: {$root: r}
+	} = component;
 
 	unmute(unsafe.$fields);
 	unmute(unsafe.$systemFields);
+
+	const
+		isRegular = unsafe.meta.params.functional !== true && !unsafe.isFlyweight;
+
+	if (isRegular && '$remoteParent' in r) {
+		const cb = (status: ActivationStatus) => {
+			runHook(status, component).then(() => {
+				callMethodFromComponent(component, status);
+			}, stderr);
+		};
+
+		r.unsafe.$on('app-activation', cb);
+		unsafe.$async.worker(() => r.unsafe.$off('app-activation', cb));
+	}
 
 	runHook('created', component).then(() => {
 		callMethodFromComponent(component, 'created');
@@ -318,6 +334,7 @@ export function activatedState(component: ComponentInterface): void {
 
 	runHook('activated', component).catch(stderr);
 	callMethodFromComponent(component, 'activated');
+	void component.emitActivation('activated');
 }
 
 /**
@@ -327,6 +344,7 @@ export function activatedState(component: ComponentInterface): void {
 export function deactivatedState(component: ComponentInterface): void {
 	runHook('deactivated', component).catch(stderr);
 	callMethodFromComponent(component, 'deactivated');
+	void component.emitActivation('deactivated');
 }
 
 /**
