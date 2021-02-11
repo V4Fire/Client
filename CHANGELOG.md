@@ -30,6 +30,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `core/component/functional`
   * `core/component/flyweight`
 
+#### :house: Internal
+
+* Refactoring:
+  * `core/dom/image`
+
 ## v3.0.0-rc.141 (2021-02-05)
 
 #### :bug: Bug Fix

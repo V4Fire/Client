@@ -311,7 +311,7 @@ export default class ImageLoader {
 			return;
 		}
 
-		const async = (<ShadowElState>el[SHADOW_MAIN]).mainOptions.ctx?.unsafe.async;
+		const async = (<ShadowElState>el[SHADOW_MAIN]).mainOptions.ctx?.unsafe.$async;
 
 		for (let i = 0, shadows = [SHADOW_PREVIEW, SHADOW_MAIN, SHADOW_BROKEN]; i < shadows.length; i++) {
 			const shadow = shadows[i];
