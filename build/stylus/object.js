@@ -69,7 +69,7 @@ function getField(stylusObj, path) {
  */
 function parseObject(stylusObj) {
 	const
-		result = $C.clone(stylusObj.vals);
+		result = $C.extend({deep: true, withProto: true}, {}, stylusObj.vals);
 
 	for (const key in result) {
 		if (result.hasOwnProperty(key)) {
