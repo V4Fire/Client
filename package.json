@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.142",
+  "version": "3.0.0-rc.143",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -45,6 +45,7 @@
     "path-to-regexp": "^3.2.0",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
+    "svg-transform-loader": "^2.0.13",
     "tslib": "2.0.1",
     "vue": "2.6.10"
   },

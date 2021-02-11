@@ -12,6 +12,7 @@ const
 	stylus = require('stylus'),
 	color = include('build/stylus/color'),
 	string = include('build/stylus/string'),
+	url = include('build/stylus/url'),
 	object = include('build/stylus/object'),
 	blendModes = include('build/stylus/blend-modes'),
 	ds = include('build/stylus/ds');
@@ -34,6 +35,7 @@ module.exports = [
 	ds,
 	color,
 	string,
+	url,
 	object,
 	blendModes
 ];
