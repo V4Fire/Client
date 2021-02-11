@@ -690,6 +690,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Global for the root component
+	 * @cli root-global-name
+	 */
+	rootGlobalName() {
+		return o('root-global-name', {
+			default: 'root'
+		});
+	},
+
+	/**
 	 * Name of the interface theme by default
 	 *
 	 * @cli t

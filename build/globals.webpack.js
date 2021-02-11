@@ -43,6 +43,8 @@ module.exports = {
 		NODE_ENV: s(process.env.NODE_ENV)
 	},
 
+	ROOT_GLOBAL_NAME: s(config.rootGlobalName()),
+
 	COMPONENTS: graph.then(({blockMap}) => {
 		if (Object.isMap(blockMap)) {
 			return $C(blockMap).to({}).reduce((res, el, key) => {

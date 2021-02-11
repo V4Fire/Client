@@ -18,6 +18,8 @@ import remoteState from 'core/component/state';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 
 import { Route } from 'base/b-router/b-router';
+
+// tslint:disable-next-line:no-duplicate-imports
 import type bRouter from 'base/b-router/b-router';
 
 import iBlock from 'super/i-block/i-block';
@@ -59,6 +61,9 @@ export default abstract class iStaticPage extends iPage {
 	 * Type: current page
 	 */
 	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
+
+	/** @override */
+	readonly globalName: string = ROOT_GLOBAL_NAME;
 
 	/** @override */
 	@system()
@@ -198,9 +203,6 @@ export default abstract class iStaticPage extends iPage {
 	/** @see [[iStaticPage.locale]]  */
 	@field(() => locale.value)
 	protected localeStore!: string;
-
-	/** @override */
-	protected globalName: string = 'root';
 
 	/**
 	 * Cache of root modifiers
@@ -359,7 +361,9 @@ export default abstract class iStaticPage extends iPage {
 			if (prefix === this.globalName && Object.size(name) > 0 && Object.size(value) > 0) {
 				this.rootMods[this.getRootModKey(name)] = {
 					value,
-					mod: className
+					name: className,
+					class: this.provide.fullComponentName(prefix, name, value).replace(/_/g, '-'),
+					component: this
 				};
 			}
 		});
