@@ -13,7 +13,7 @@ const
 	{parseObject} = include('build/stylus/object');
 
 /**
- * Parameters to create an url:
+ * Parameters to create a URL:
  *
  * @typedef {{
  *   href?: string,
@@ -24,7 +24,7 @@ const
 
 module.exports = function addPlugins(api) {
 	/**
-	 * Converts the specified object to an url string
+	 * Converts the specified object to a URL string
 	 *
 	 * @see https://nodejs.org/api/url.html#url_class_url
 	 *
@@ -64,9 +64,7 @@ module.exports = function addPlugins(api) {
 	 * @returns {string}
 	 */
 	api.define('toQueryString', (obj) => {
-		const
-			parsedOpts = parseObject(obj);
-
+		const parsedOpts = parseObject(obj);
 		return querystring.stringify(parsedOpts);
 	});
 };

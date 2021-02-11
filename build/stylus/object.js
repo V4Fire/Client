@@ -13,12 +13,6 @@ const
 	{functions} = require('stylus');
 
 module.exports = function addPlugins(api) {
-	/**
-	 * Returns a value from an object by the specified path
-	 *
-	 * @param {object} obj
-	 * @param {string} string
-	 */
 	api.define('getField', (obj, {string}) => getField(obj, string));
 };
 
@@ -27,16 +21,23 @@ Object.assign(module.exports, {
 	parseObject
 });
 
-function getField(obj, path) {
+/**
+ * Returns a value form the Stylus object by the specified path
+ *
+ * @param stylusObj
+ * @param path
+ * @returns {?}
+ */
+function getField(stylusObj, path) {
 	const
 		[field, ...chunks] = path.split('.');
 
 	let
-		value = $C(obj).get(field) || $C(obj).get(`vals.${field}`);
+		value = $C(stylusObj).get(field) || $C(stylusObj).get(`vals.${field}`);
 
 	if (!value) {
 		const
-			nodes = $C(obj).get('nodes');
+			nodes = $C(stylusObj).get('nodes');
 
 		if (nodes) {
 			if (nodes.length === 1 && isNaN(parseInt(field, 10))) {
@@ -58,44 +59,44 @@ function getField(obj, path) {
 }
 
 /**
- * Attempt to parse an object node to the javascript object.
+ * Attempts to parse the specified Stylus object to a JavaScript object.
  *
- * Object nodes would be a Javascript objects (not an array as at the original function),
- * but a one-element array would be the first element value.
+ * Nodes of the result object will be objects too, but not arrays like in the original convert function.
+ * In the case of a "one-element array", it will be unpacked.
  *
- * @param {Object} obj
- * @returns {Object}
+ * @param {!Object} stylusObj
+ * @returns {!Object}
  */
-function parseObject(obj) {
-	obj = obj.vals;
+function parseObject(stylusObj) {
+	stylusObj = stylusObj.vals;
 
-	for (const key in obj) {
-		if (obj.hasOwnProperty(key)) {
+	for (const key in stylusObj) {
+		if (stylusObj.hasOwnProperty(key)) {
 			const
-				{nodes} = obj[key].nodes[0];
+				{nodes} = stylusObj[key].nodes[0];
 
 			if (nodes && nodes.length) {
 				if (
 					nodes.length === 1 &&
 					(nodes[0].nodeName === 'object' || nodes[0].nodeName !== 'expression')
 				) {
-					obj[key] = convert(nodes[0]);
+					stylusObj[key] = convert(nodes[0]);
 
 				} else {
-					obj[key] = [];
+					stylusObj[key] = [];
 
 					for (let i = 0, len = nodes.length; i < len; ++i) {
-						obj[key].push(convert(nodes[i]));
+						stylusObj[key].push(convert(nodes[i]));
 					}
 				}
 
 			} else {
-				obj[key] = convert(obj[key].first);
+				stylusObj[key] = convert(stylusObj[key].first);
 			}
 		}
 	}
 
-	return obj;
+	return stylusObj;
 
 	function convert(node) {
 		switch (node.nodeName) {
