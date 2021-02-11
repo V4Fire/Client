@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.142 (2021-02-11)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when refs are not resolved after the `update` hook
+
 ## v3.0.0-rc.132 (2021-01-29)
 
 #### :rocket: New Feature
