@@ -18,7 +18,12 @@ import {
 
 } from 'core/dom/resize-observer/interface';
 
-import { RESIZE_WATCHER_OBSERVABLE_STORE, RESIZE_WATCHER_ASYNC_GROUP } from 'core/dom/resize-observer/const';
+import {
+
+	RESIZE_WATCHER_OBSERVABLE_STORE,
+	RESIZE_WATCHER_ASYNC_GROUP
+
+} from 'core/dom/resize-observer/const';
 
 export * from 'core/dom/resize-observer/interface';
 export * from 'core/dom/resize-observer/const';
@@ -49,7 +54,7 @@ export default class ResizeWatcher {
 	observe(el: Element, options: ResizeWatcherInitOptions): Nullable<ResizeWatcherObservable> {
 		options = this.normalizeOptions(options);
 
-		if (this.isResizeObserverSupported === false) {
+		if (!this.isResizeObserverSupported) {
 			return null;
 		}
 
@@ -95,7 +100,10 @@ export default class ResizeWatcher {
 			{ctx, id} = observable;
 
 		if (ctx) {
-			ctx.unsafe.async.clearAll({group: RESIZE_WATCHER_ASYNC_GROUP, label: id});
+			ctx.unsafe.$async.clearAll({
+				group: RESIZE_WATCHER_ASYNC_GROUP,
+				label: id
+			});
 		}
 
 		return true;
@@ -148,10 +156,7 @@ export default class ResizeWatcher {
 	 * @param el
 	 */
 	getObservableElStore(el: Element): CanUndef<ResizeWatcherObservableElStore> {
-		const
-			store = el[RESIZE_WATCHER_OBSERVABLE_STORE];
-
-		return store;
+		return el[RESIZE_WATCHER_OBSERVABLE_STORE];
 	}
 
 	/**
@@ -290,7 +295,7 @@ export default class ResizeWatcher {
 				cb();
 
 			} else {
-				const $a = observable.ctx?.unsafe.async ?? this.async;
+				const $a = observable.ctx?.unsafe.$async ?? this.async;
 
 				// @ts-ignore (???)
 				$a.requestIdleCallback(cb, {

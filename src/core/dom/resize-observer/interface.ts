@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
+import { ComponentInterface } from 'core/component';
 
 export interface ResizeWatcherObserverOptions {
 	/**
@@ -59,7 +59,7 @@ export interface ResizeWatcherObserverOptions {
 	 * }
 	 * ```
 	 */
-	ctx?: iBlock;
+	ctx?: ComponentInterface;
 
 	/** @see [[ResizeWatcherObserverCb]] */
 	callback: ResizeWatcherObserverCb;
