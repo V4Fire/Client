@@ -441,7 +441,7 @@ export abstract class ComponentInterface {
 	 * Emits an activation event of the application
 	 *
 	 * @param status - activation status
-	 * @emits `app-${status}(status: ActivationStatus)`
+	 * @emits `app-activation(status: ActivationStatus)`
 	 */
 	emitActivation(status: ActivationStatus): Promise<void> {
 		return Promise.resolve();

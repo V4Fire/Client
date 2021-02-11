@@ -292,7 +292,7 @@ export default abstract class iStaticPage extends iPage {
 	/** @override */
 	@wait({defer: true, label: $$.emitActivation})
 	emitActivation(status: ActivationStatus): Promise<void> {
-		this.emit(`app-${status}`, status);
+		this.$emit('app-activation', status);
 		return Promise.resolve();
 	}
 

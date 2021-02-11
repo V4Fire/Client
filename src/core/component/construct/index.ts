@@ -238,19 +238,26 @@ export function beforeDataCreateState(
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
-	const
-		{unsafe} = component;
+	const {
+		unsafe,
+		unsafe: {$root: r}
+	} = component;
 
 	unmute(unsafe.$fields);
 	unmute(unsafe.$systemFields);
 
-	if ('$remoteParent' in unsafe.$root) {
-		// @ts-ignore (unsafe cast)
-		unsafe.$async.on(unsafe.$root, 'app-activated', (status: ActivationStatus) => {
+	const
+		isRegular = unsafe.meta.params.functional !== true && !unsafe.isFlyweight;
+
+	if (isRegular && '$remoteParent' in r) {
+		const cb = (status: ActivationStatus) => {
 			runHook(status, component).then(() => {
 				callMethodFromComponent(component, status);
 			}, stderr);
-		});
+		};
+
+		r.unsafe.$on('app-activation', cb);
+		unsafe.$async.worker(() => r.unsafe.$off('app-activation', cb));
 	}
 
 	runHook('created', component).then(() => {
