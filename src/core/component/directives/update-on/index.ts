@@ -32,7 +32,7 @@ ComponentDriver.directive('update-on', {
 
 	unbind(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 		const
-			ctx = vnode.context;
+			ctx = vnode.fakeContext;
 
 		if (ctx != null) {
 			engine.remove(el, ctx);
@@ -42,7 +42,7 @@ ComponentDriver.directive('update-on', {
 
 function add(el: Element, value: Nullable<CanArray<DirectiveValue>>, vnode: VNode): void {
 	const
-		ctx = vnode.context;
+		ctx = vnode.fakeContext;
 
 	if (ctx == null) {
 		return;
