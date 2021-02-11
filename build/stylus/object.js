@@ -68,35 +68,36 @@ function getField(stylusObj, path) {
  * @returns {!Object}
  */
 function parseObject(stylusObj) {
-	stylusObj = stylusObj.vals;
+	const
+		result = $C.clone(stylusObj.vals);
 
-	for (const key in stylusObj) {
-		if (stylusObj.hasOwnProperty(key)) {
+	for (const key in result) {
+		if (result.hasOwnProperty(key)) {
 			const
-				{nodes} = stylusObj[key].nodes[0];
+				{nodes} = result[key].nodes[0];
 
 			if (nodes && nodes.length) {
 				if (
 					nodes.length === 1 &&
 					(nodes[0].nodeName === 'object' || nodes[0].nodeName !== 'expression')
 				) {
-					stylusObj[key] = convert(nodes[0]);
+					result[key] = convert(nodes[0]);
 
 				} else {
-					stylusObj[key] = [];
+					result[key] = [];
 
 					for (let i = 0, len = nodes.length; i < len; ++i) {
-						stylusObj[key].push(convert(nodes[i]));
+						result[key].push(convert(nodes[i]));
 					}
 				}
 
 			} else {
-				stylusObj[key] = convert(stylusObj[key].first);
+				result[key] = convert(result[key].first);
 			}
 		}
 	}
 
-	return stylusObj;
+	return result;
 
 	function convert(node) {
 		switch (node.nodeName) {
