@@ -262,7 +262,8 @@ export function createdState(component: ComponentInterface): void {
 				}, stderr);
 
 			}, {
-				label: $$.remoteActivation
+				label: $$.remoteActivation,
+				timeout: 50
 			});
 		};
 
