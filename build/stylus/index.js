@@ -10,6 +10,7 @@
 
 const
 	stylus = require('stylus'),
+	config = require('config'),
 	color = include('build/stylus/color'),
 	string = include('build/stylus/string'),
 	object = include('build/stylus/object'),
@@ -29,6 +30,12 @@ module.exports = [
 		api.define('file-exists', function fileExists(path) {
 			return Boolean(stylus.utils.find(path.string, this.paths));
 		});
+
+		/**
+		 * Returns a global name of the root component
+		 * @returns {string}
+		 */
+		api.define('getRootGlobalName', () => config.rootGlobalName());
 	},
 
 	ds,

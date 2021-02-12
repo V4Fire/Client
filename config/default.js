@@ -833,6 +833,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			'ds-diff': false,
 			'ds/include-vars': false,
+			theme: this.theme(),
+			includeThemes: this.includeThemes(),
 
 			blockNames: false,
 			passDesignSystem: false,

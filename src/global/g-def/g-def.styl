@@ -23,6 +23,6 @@
 
 //#if runtime has includeThemes
 for name in includedThemes()
-	html.root_theme_{name}
+	html.{ROOT_GLOBAL_NAME}_theme_{name}
 		interpolate-props(getDSVariables(name), false)
 //#endif
