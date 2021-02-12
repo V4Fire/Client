@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.145 (2021-02-12)
+
+#### :house: Internal
+
+* Now external activation hooks are fired with a delay
+
 ## v3.0.0-rc.130 (2021-01-28)
 
 #### :bug: Bug Fix

@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
+
 import { deprecate } from 'core/functools/deprecation';
 import { unmute } from 'core/object/watch';
 
@@ -36,6 +38,9 @@ import { ComponentInterface, ComponentMeta, ActivationStatus } from 'core/compon
 import { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
 
 export * from 'core/component/construct/interface';
+
+export const
+	$$ = symbolGenerator();
 
 /**
  * Initializes "beforeCreate" state to the specified component instance
@@ -240,7 +245,7 @@ export function beforeDataCreateState(
 export function createdState(component: ComponentInterface): void {
 	const {
 		unsafe,
-		unsafe: {$root: r}
+		unsafe: {$root: r, $async: $a}
 	} = component;
 
 	unmute(unsafe.$fields);
@@ -251,13 +256,18 @@ export function createdState(component: ComponentInterface): void {
 
 	if (isRegular && '$remoteParent' in r) {
 		const cb = (status: ActivationStatus) => {
-			runHook(status, component).then(() => {
-				callMethodFromComponent(component, status);
-			}, stderr);
+			$a.requestIdleCallback(() => {
+				runHook(status, component).then(() => {
+					callMethodFromComponent(component, status);
+				}, stderr);
+
+			}, {
+				label: $$.remoteActivation
+			});
 		};
 
 		r.unsafe.$on('app-activation', cb);
-		unsafe.$async.worker(() => r.unsafe.$off('app-activation', cb));
+		$a.worker(() => r.unsafe.$off('app-activation', cb));
 	}
 
 	runHook('created', component).then(() => {
