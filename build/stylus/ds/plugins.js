@@ -96,7 +96,7 @@ module.exports = function getPlugins({
 		 * @param {string} [theme]
 		 * @returns {!Object}
 		 */
-		api.define('getDSVariables', ({string: theme}) => {
+		api.define('getDSVariables', ({string: theme} = {}) => {
 			const
 				obj = {},
 				iterator = Object.isString(theme) ? cssVariables.map[theme] : cssVariables.map;
