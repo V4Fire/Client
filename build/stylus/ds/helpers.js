@@ -54,6 +54,7 @@ function saveVariable(varDict, path, value, theme) {
  *
  * @param {?string} prefix
  * @param {string} name
+ *
  * @returns {string}
  */
 function getVariablePath(prefix, name) {
@@ -65,112 +66,117 @@ function getVariablePath(prefix, name) {
  *
  * @param {DesignSystem} raw
  * @param {Object} [stylus=]
- * @returns {{variables: Object, data: DesignSystem}}
+ *
+ * @returns {{data: DesignSystem, variables: Object}}
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
 	const
-		proto = Object.freeze({meta: raw.meta, raw}),
+		base = Object.create(Object.freeze({meta: raw.meta, raw})),
 		variables = Object.create({map: {}}),
-		clonedRaw = $C.clone(raw);
+		rawCopy = $C.clone(raw);
 
-	$C(clonedRaw).remove('meta');
+	$C(rawCopy).remove('meta');
 
-	const data = $C.extend(
-		{withProto: true, withAccessors: true},
-		Object.create(proto),
-		clonedRaw
-	);
+	const
+		designSystem = convertToStylusObject(stylus, rawCopy, variables),
+		extendParams = {withProto: true, withAccessors: true};
 
-	convertProps(stylus, data, variables);
-
-	return {data, variables};
+	return {data: $C.extend(extendParams, base, designSystem), variables};
 }
 
 /**
- * Converts object prop values to `stylus` values recursively
+ * Converts the specified Javascript object to a Stylus object (recursively)
  *
  * @param {Object} stylus - link to stylus package instance
- * @param {DesignSystem} data
+ * @param {DesignSystem} ds
  * @param {Object} variables
- * @param {string} [path]
- * @param {string|boolean} [theme]
+ *
+ * @returns {!DesignSystem}
  */
-function convertProps(stylus, data, variables, path, theme) {
-	$C(data).forEach((d, val) => {
-		if (theme === true) {
-			if (Object.isObject(d)) {
-				convertProps(stylus, d, variables, path, val);
+function convertToStylusObject(stylus, ds, variables) {
+	const
+		result = $C.clone(ds);
+
+	convert(result);
+	return result;
+
+	function convert(data, path, theme) {
+		$C(data).forEach((d, val) => {
+			if (theme === true) {
+				if (Object.isObject(d)) {
+					convert(d, path, val);
+
+				} else {
+					throw new Error('Cannot find a theme dictionary');
+				}
+
+			} else if (val === 'theme') {
+				/*
+				 * @example
+				 *
+				 * {
+				 *   bButton: {
+				 *     theme: {
+				 *       dark: d
+				 *     }
+				 *   }
+				 * }}
+				 */
+				if (Object.isObject(d)) {
+					convert(d, path, true);
+
+				} else {
+					throw new Error('Cannot find themes dictionary');
+				}
+
+			} else if (Object.isObject(d)) {
+				convert(d, getVariablePath(path, val), theme);
+
+			} else if (Object.isArray(d)) {
+				convert(d, getVariablePath(path, val), theme);
+				d = stylus.utils.coerceArray(d, true);
 
 			} else {
-				throw new Error('Cannot find a theme dictionary');
-			}
+				if (/^[a-z-_]+\(.*\)$/.test(d)) {
+					// Built-in function
 
-		} else if (val === 'theme') {
-			/*
-			 * @example
-			 *
-			 * {
-			 *   bButton: {
-			 *     theme: {
-			 *       dark: d
-			 *     }
-			 *   }
-			 * }}
-			 */
-			if (Object.isObject(d)) {
-				convertProps(stylus, d, variables, path, true);
+					const
+						parsed = new stylus.Parser(d, {cache: false});
 
-			} else {
-				throw new Error('Cannot find themes dictionary');
-			}
-
-		} else if (Object.isObject(d)) {
-			convertProps(stylus, d, variables, getVariablePath(path, val), theme);
-
-		} else if (Object.isArray(d)) {
-			convertProps(stylus, d, variables, getVariablePath(path, val), theme);
-			d = stylus.utils.coerceArray(d, true);
-
-		} else {
-			if (/^[a-z-_]+\(.*\)$/.test(d)) {
-				// Built-in function
-
-				const
-					parsed = new stylus.Parser(d, {cache: false});
-
-				data[val] = parsed.function();
-				saveVariable(variables, getVariablePath(path, val), data[val], theme);
-				return;
-			}
-
-			if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
-				// HEX value
-				data[val] = new stylus.Parser(d, {cache: false}).peek().val;
-				saveVariable(variables, getVariablePath(path, val), data[val], theme);
-				return;
-			}
-
-			if (Object.isString(d)) {
-				const
-					reg = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/,
-					unit = d.match(reg);
-
-				if (unit) {
-					// Value with unit
-					data[val] = new stylus.nodes.Unit(parseFloat(unit[1]), unit[2]);
+					data[val] = parsed.function();
 					saveVariable(variables, getVariablePath(path, val), data[val], theme);
 					return;
 				}
 
-				data[val] = new stylus.nodes.String(d);
-				saveVariable(variables, getVariablePath(path, val), data[val], theme);
-				return;
-			}
+				if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
+					// HEX value
+					data[val] = new stylus.Parser(d, {cache: false}).peek().val;
+					saveVariable(variables, getVariablePath(path, val), data[val], theme);
+					return;
+				}
 
-			data[val] = new stylus.nodes.Unit(d);
-			saveVariable(variables, getVariablePath(path, val), data[val], theme);
-		}
-	});
+				if (Object.isString(d)) {
+					const
+						reg = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/,
+						unit = d.match(reg);
+
+					if (unit) {
+						// Value with unit
+						data[val] = new stylus.nodes.Unit(String(parseFloat(unit[1])), unit[2]);
+						saveVariable(variables, getVariablePath(path, String(val)), data[val], theme);
+						return;
+					}
+
+					data[val] = new stylus.nodes.String(d);
+					saveVariable(variables, getVariablePath(path, String(val)), data[val], theme);
+					return;
+				}
+
+				data[val] = new stylus.nodes.Unit(d);
+				saveVariable(variables, getVariablePath(path, String(val)), data[val], theme);
+			}
+		});
+	}
 }
 
 /**
