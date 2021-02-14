@@ -64,7 +64,7 @@ module.exports = (page) => {
 		beforeEach(async () => {
 			await h.utils.reloadAndWaitForIdle(page);
 
-			await page.waitForSelector('#root-component', {timeout: (20).seconds()});
+			await page.waitForSelector('#root-component', {timeout: (60).seconds()});
 			await h.component.waitForComponent(page, '#root-component');
 
 			bodyNode = await page.$('body');

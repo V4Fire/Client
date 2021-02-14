@@ -14,7 +14,7 @@ const
 module.exports = (page) => {
 	describe('b-button', () => {
 		beforeAll(async () => {
-			await page.waitForSelector('#root-component', {timeout: (20).seconds()});
+			await page.waitForSelector('#root-component', {timeout: (60).seconds()});
 			await h.component.waitForComponent(page, '#root-component');
 
 			await page.evaluate(() => {
