@@ -50,7 +50,12 @@ if (runtime.debug) {
 
 switch (runtime.engine) {
 	case 'vue':
-		deps.scripts.set('vue', `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`);
+		deps.scripts.set('vue', {
+			source: 'lib',
+			defer: false,
+			src: `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`
+		});
+
 		break;
 
 	default:

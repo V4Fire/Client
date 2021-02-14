@@ -39,9 +39,6 @@ jobs:
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
-      - name: Set PW Debug
-        run: set DEBUG=pw:api
-
       - name: Run components test
         run: npm run test:components
 
