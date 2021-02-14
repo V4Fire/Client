@@ -13,7 +13,7 @@ module.exports = [
 
 	'--test-entry base/b-router/test',
 
-	'--test-entry base/b-virtual-scroll/test',
+	// '--test-entry base/b-virtual-scroll/test',
 
 	'--test-entry base/b-tree/test',
 
