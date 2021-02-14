@@ -224,10 +224,19 @@ module.exports = async (page, params) => {
 						delay: 200
 					});
 
-					ctx.remove(globalThis.target);
+					setTimeout(() => {
+						ctx.remove(globalThis.target);
+					});
 				});
 
-				await delay(300);
+				await getInView(strategy).evaluate((ctx) => new Promise((res) => {
+					const i = setInterval(() => {
+						if (ctx.adaptee.elements.size === 0) {
+							res();
+							clearInterval(i);
+						}
+					}, 500);
+				}));
 
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
 				expect(await getInView(strategy).evaluate((ctx) => ctx.adaptee.elements.size)).toBe(0);

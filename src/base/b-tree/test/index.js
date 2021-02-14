@@ -21,7 +21,7 @@ const
  *
  * @param {Page} page
  * @param {!Object} params
- * @returns {!Promise<boolean>}
+ * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {
 	await h.utils.setup(page, params.context);

@@ -348,14 +348,9 @@ module.exports = function init(gulp = require('gulp')) {
 		 * @returns {!Promise<void>}
 		 */
 		async function runTest(browserType) {
-			function requireUncached(module) {
-				delete require.cache[require.resolve(module)];
-				return require(module);
-			}
-
 			const
 				params = browserParams[browserType],
-				test = requireUncached(testPath);
+				test = require(testPath);
 
 			const {
 				testURL,
@@ -372,6 +367,10 @@ module.exports = function init(gulp = require('gulp')) {
 				}
 
 				process.exitCode = exitCode;
+
+				// if (exitCode === 1) {
+				// 	throw new Error('Test failed');
+				// }
 			};
 
 			testEnv.addReporter({
