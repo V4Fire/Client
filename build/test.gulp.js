@@ -208,9 +208,7 @@ module.exports = function init(gulp = require('gulp')) {
 		});
 
 		// eslint-disable-next-line require-atomic-updates
-		args['--port'] = args['--port'] || await portfinder.getPortPromise({
-			port: args['--start-port'] || START_PORT
-		});
+		args['--port'] = args['--port'] || await portfinder.getPortPromise();
 
 		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || build.demoPage;
