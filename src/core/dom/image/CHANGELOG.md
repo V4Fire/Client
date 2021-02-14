@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.142 (2021-02-11)
+
+#### :house: Internal
+
+* Refactoring
+
+## v3.0.0-rc.141 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with an update without providing of `ctx`
+
+## v3.0.0-rc.139 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed cleaning of background styles
+
 ## v3.0.0-rc.89 (2020-10-20)
 
 #### :bug: Bug Fix

@@ -9,8 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.49 (2020-08-03)
+## v3.0.0-rc.144 (2021-02-11)
 
-#### :house: Internal
+#### :boom: Breaking Change
 
-* Fixed ESLint warnings
+* Now, by default is used `b-button-functional`

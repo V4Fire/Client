@@ -15,7 +15,7 @@ import { deprecate } from 'core/functools/deprecation';
 import Async from 'core/async';
 
 import { components } from 'core/component/const';
-import { supports, CreateElement, VNode } from 'core/component/engines';
+import { patchVNode, supports, CreateElement, VNode } from 'core/component/engines';
 
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
@@ -26,7 +26,7 @@ import { implementEventAPI } from 'core/component/event';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
 
 import { getNormalParent } from 'core/component/traverse';
-import { getComponentDataFromVNode, patchComponentVData } from 'core/component/vnode';
+import { getComponentDataFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
 import { ComponentInterface } from 'core/component/interface';
@@ -78,11 +78,6 @@ export function parseVNodeAsFlyweight(
 	const
 		fakeCtx = Object.create(parentComponent);
 
-	fakeCtx._self = fakeCtx;
-	fakeCtx._renderProxy = fakeCtx;
-	fakeCtx._c = fakeCtx.$createElement;
-	fakeCtx._staticTrees = [];
-
 	fakeCtx.isFlyweight = true;
 	fakeCtx.hook = 'beforeDataCreate';
 
@@ -95,6 +90,11 @@ export function parseVNodeAsFlyweight(
 
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
 	fakeCtx.$destroy = () => destroyComponent(fakeCtx);
+
+	fakeCtx._self = fakeCtx;
+	fakeCtx._renderProxy = fakeCtx;
+	fakeCtx._c = fakeCtx.$createElement;
+	fakeCtx._staticTrees = [];
 
 	Object.defineProperty(fakeCtx, '$el', {
 		configurable: true,
@@ -202,8 +202,9 @@ export function parseVNodeAsFlyweight(
 	newVNode.fakeInstance = fakeCtx;
 	newVNode.data = newVNode.data ?? {};
 
-	patchComponentVData(newVNode.data, componentData, {
-		patchAttrs: Boolean(meta.params.inheritAttrs)
+	patchVNode(newVNode, fakeCtx, {
+		// @ts-ignore (unsafe cast)
+		data: componentData
 	});
 
 	// Attach component event listeners
