@@ -19,7 +19,7 @@ module.exports = [
 
 	'--test-entry base/b-sidebar/test',
 
-	// '--test-entry base/b-slider/test --browsers chrome --device iPhone_11',
+	'--test-entry base/b-slider/test --browsers chrome --device iPhone_11',
 
 	'--test-entry base/b-list/test',
 

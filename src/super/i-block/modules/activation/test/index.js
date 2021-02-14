@@ -22,6 +22,9 @@ module.exports = (page) => {
 		dummyComponent;
 
 	beforeEach(async () => {
+		await page.waitForSelector('#root-component', {timeout: (20).seconds()});
+		await h.component.waitForComponent(page, '#root-component');
+
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
 
