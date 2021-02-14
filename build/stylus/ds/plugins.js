@@ -110,7 +110,8 @@ module.exports = function getPlugins({
 		});
 
 		/**
-		 * Returns a part of a design system by the specified path or the whole object
+		 * Returns a part of a design system by the specified path
+		 * or the whole object if path is not specified
 		 *
 		 * @param {string} [string] - first level field (colors, rounding, etc.)
 		 * @param {!Object} [value] - field path
@@ -222,7 +223,7 @@ module.exports = function getPlugins({
 		api.define('defaultTheme', () => theme);
 
 		/**
-		 * Returns themes, included to build
+		 * Returns themes included to build
 		 * @returns {!string[]}
 		 */
 		api.define('includedThemes', () => themesList);
