@@ -16,7 +16,8 @@ const
 	os = require('os'),
 	path = require('upath'),
 	arg = require('arg'),
-	glob = require('glob');
+	glob = require('glob'),
+	delay = require('delay');
 
 const
 	{build, src} = require('config'),
@@ -528,6 +529,7 @@ module.exports = function init(gulp = require('gulp')) {
 				const extraArgs = args._.join(' ');
 
 				await waitForQuotas(buildMap, buildProcess);
+				await delay(1000);
 
 				buildMap.set(
 					argsString,
