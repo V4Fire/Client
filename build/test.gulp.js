@@ -208,7 +208,9 @@ module.exports = function init(gulp = require('gulp')) {
 		});
 
 		// eslint-disable-next-line require-atomic-updates
-		args['--port'] = args['--port'] || await portfinder.getPortPromise();
+		args['--port'] = args['--port'] || await portfinder.getPortPromise({
+			port: args['--start-port'] || START_PORT
+		});
 
 		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || build.demoPage;
@@ -296,7 +298,7 @@ module.exports = function init(gulp = require('gulp')) {
 			jasmine.configureDefaultReporter({});
 			Object.assign(globalThis, jasmine.env);
 
-			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (100).seconds();
+			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
 
 			console.log('\n-------------');
 			console.log('Starting to test');
