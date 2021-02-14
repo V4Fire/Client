@@ -305,6 +305,7 @@ module.exports = function init(gulp = require('gulp')) {
 				console.log(`${dep} version: ${require(`${dep}/package.json`).version}`);
 			});
 
+			console.log(`port: ${args['--port']}`);
 			console.log(`env component: ${args['--name']}`);
 			console.log(`test entry: ${args['--test-entry']}`);
 			console.log(`runner: ${globalThis.V4FIRE_TEST_ENV.runner}`);
