@@ -144,8 +144,6 @@ export type AdapteeType = 'mutation' | 'observer';
 export type AdapteeInstance = typeof MutationObserverStrategy | typeof IntersectionObserverStrategy;
 
 export type InViewGroup = string | number | symbol;
-export type RemoveStrategy = 'remove' | 'deactivate';
-
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 
 export type ObservableElementsMap = Map<Element, ObservableElement>;

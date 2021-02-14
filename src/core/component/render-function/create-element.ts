@@ -253,8 +253,7 @@ export function wrapCreateElement(
 			tasks.splice(0);
 		}
 
-		// @ts-ignore (access)
-		vnode.context = ctx;
+		vnode.fakeContext = ctx;
 		return vnode;
 	};
 

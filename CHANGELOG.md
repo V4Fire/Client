@@ -11,13 +11,55 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.142 (2021-??-??)
+## v3.0.0-rc.145 (2021-02-12)
+
+#### :house: Internal
+
+* Now external activation hooks are fired with a delay `core/component/construct`
+
+## v3.0.0-rc.144 (2021-02-11)
+
+#### :boom: Breaking Change
+
+* Now, by default is used `b-button-functional` `traits/i-control-list`
+
+#### :bug: Bug Fix
+
+* Added providing of activation events to external components
+
+## v3.0.0-rc.143 (2021-02-11)
+
+#### :rocket: New Feature
+
+* Added icons colorizing functionality by the Stylus' `i` function `global/g-def`
+* Added `stylus` plugins to generate URL-s `build/stylus/url`:
+  * `toQueryString`
+  * `createURL`
+
+## v3.0.0-rc.142 (2021-02-11)
 
 #### :boom: Breaking Change
 
 * Removed:
   * `b-content-switcher`
   * `core/component/helpers/observable`
+
+#### :rocket: New Feature
+
+* Added a new property `fakeContext` to `VNode` `core/component/engines`
+
+#### :bug: Bug Fix
+
+* Fixed an issue when refs are not resolved after the `update` hook `iBlock`
+* Fixed creation of a context:
+  * `core/component/functional`
+  * `core/component/flyweight`
+
+#### :house: Internal
+
+* Refactoring:
+  * `core/dom/image`
+  * `core/dom/resize-observer`
 
 ## v3.0.0-rc.141 (2021-02-05)
 

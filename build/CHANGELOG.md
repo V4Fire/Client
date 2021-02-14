@@ -9,6 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.143 (2021-02-11)
+
+#### :rocket: New Feature
+
+* Added `stylus` plugins to generate URL-s `build/stylus/url`:
+  * `toQueryString`
+  * `createURL`
+
 ## v3.0.0-rc.140 (2021-02-05)
 
 #### :rocket: New Feature
