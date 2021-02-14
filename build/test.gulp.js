@@ -585,7 +585,7 @@ module.exports = function init(gulp = require('gulp')) {
 			}
 
 			// Set the beginning of the searching range for a free port
-			c = `${c} --start-port ${START_PORT + i * 100}`;
+			c = `${c} --start-port ${START_PORT + i * 10}`;
 
 			const args = arg({
 				'--name': String
