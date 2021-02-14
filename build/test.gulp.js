@@ -298,7 +298,7 @@ module.exports = function init(gulp = require('gulp')) {
 			jasmine.configureDefaultReporter({});
 			Object.assign(globalThis, jasmine.env);
 
-			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
+			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (20).seconds();
 
 			console.log('\n-------------');
 			console.log('Starting to test');
