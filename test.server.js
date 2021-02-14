@@ -6,7 +6,7 @@ const
 	path = require('upath');
 
 const
-	fileServer = new nodeStatic.Server(path.join('./dist/b-dummy'));
+	fileServer = new nodeStatic.Server(path.join('./dist/b-dummy_demo'));
 
 http.createServer((req, res) => {
 	req.addListener('end', () => {

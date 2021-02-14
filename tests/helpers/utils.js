@@ -62,6 +62,9 @@ class Utils {
 			await this.reloadAndWaitForIdle(page);
 		}
 
+		await page.waitForLoadState('domcontentloaded');
+		await page.waitForLoadState('networkidle');
+
 		if (options.waitForEl) {
 			await this.#parent.dom.waitForEl(page, options.waitForEl);
 		}
