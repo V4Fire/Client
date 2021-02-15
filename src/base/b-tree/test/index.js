@@ -88,7 +88,6 @@ module.exports = async (page, params) => {
 			];
 
 			const target = await init({items});
-			await waitForCheckboxCount(5);
 			await Promise.all(checkOptionTree({items, target}));
 		});
 
