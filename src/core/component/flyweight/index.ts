@@ -16,6 +16,7 @@ import Async from 'core/async';
 
 import { components } from 'core/component/const';
 import { patchVNode, supports, CreateElement, VNode } from 'core/component/engines';
+import { forkMeta } from 'core/component/meta';
 
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
@@ -53,13 +54,14 @@ export function parseVNodeAsFlyweight(
 
 	vnode.tag = 'span';
 
-	const
+	let
 		meta = components.get(compositeAttr);
 
 	if (!meta) {
 		return vnode;
 	}
 
+	meta = forkMeta(meta);
 	delete vnode.data!.attrs!['v4-flyweight-component'];
 
 	if (parentComponent.isFlyweight) {

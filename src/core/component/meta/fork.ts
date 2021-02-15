@@ -13,7 +13,8 @@ import { ComponentMeta } from 'core/component/interface';
  * @param base
  */
 export function forkMeta(base: ComponentMeta): ComponentMeta {
-	const meta = Object.create(base);
+	const
+		meta = Object.create(base);
 
 	meta.params = Object.create(base.params);
 	meta.watchers = {};

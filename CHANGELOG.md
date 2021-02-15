@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed providing of activation events to external components `core/component/construct`
+* Fixed creation of meta objects `core/component/flyweight`
 
 ## v3.0.0-rc.145 (2021-02-12)
 
