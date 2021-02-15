@@ -149,11 +149,11 @@ module.exports = async (page, params) => {
 				items,
 				attrs: {
 					renderChunks: 1,
-					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.3.second()))'
+					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
 				}
 			});
 
-			await waitForCheckboxCount(2, 0);
+			await waitForCheckboxCount(2);
 			await waitForCheckboxCount(3);
 			await waitForCheckboxCount(4);
 			await waitForCheckboxCount(5);
