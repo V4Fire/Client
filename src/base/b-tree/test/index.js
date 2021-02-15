@@ -291,8 +291,7 @@ module.exports = async (page, params) => {
 		}
 	});
 
-	async function waitForCheckboxCount(v, timer = 300) {
-		await delay(timer);
+	async function waitForCheckboxCount(v) {
 		await page.waitForFunction((v) => document.querySelectorAll('.b-checkbox').length === v, v);
 		await expect((await page.$$('.b-checkbox')).length).toBe(v);
 	};
