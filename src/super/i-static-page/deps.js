@@ -18,22 +18,8 @@ const deps = {
 	 * @type {Libs}
 	 */
 	scripts: new Map([
-		[
-			'requestidlecallback',
-			{
-			source: 'src',
-			src: 'assets/lib/requestidlecallback.js',
-			defer: false
-			}
-		],
-		[
-			'eventemitter2',
-			{
-				source: 'src',
-				src: 'assets/lib/eventemitter2.js',
-				defer: false
-			}
-		]
+		['requestidlecallback', {source: 'src', src: 'assets/lib/requestidlecallback.js'}],
+		['eventemitter2', {source: 'src', src: 'assets/lib/eventemitter2.js'}]
 	]),
 
 	/**
@@ -64,12 +50,7 @@ if (runtime.debug) {
 
 switch (runtime.engine) {
 	case 'vue':
-		deps.scripts.set('vue', {
-			source: 'lib',
-			defer: false,
-			src: `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`
-		});
-
+		deps.scripts.set('vue', `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`);
 		break;
 
 	default:

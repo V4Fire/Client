@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-02-??)
+
+#### :bug: Bug Fix
+
+* Removed a race condition during loading of the libs `iStaticPage`
+
+## v3.0.0-rc.146 (2021-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed providing of activation events to external components `core/component/construct`
+* Fixed creation of meta objects `core/component/flyweight`
+
 ## v3.0.0-rc.145 (2021-02-12)
 
 #### :house: Internal

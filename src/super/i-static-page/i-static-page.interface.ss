@@ -121,7 +121,7 @@
 
 					- block headScripts
 						+= h.getVarsDecl({wrap: true})
-						+= await h.loadLibs(deps.headScripts, {assets, wrap: true})
+						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: true})
 
 			< body
 				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
@@ -147,7 +147,7 @@
 
 					- block scripts
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
-						+= await h.loadLibs(deps.scripts, {assets, wrap: true})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
 
 						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
 						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
