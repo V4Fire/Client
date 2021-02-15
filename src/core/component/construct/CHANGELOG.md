@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.146 (2021-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed providing of activation events to external components
+
 ## v3.0.0-rc.145 (2021-02-12)
 
 #### :house: Internal

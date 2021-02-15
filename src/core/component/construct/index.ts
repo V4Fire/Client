@@ -34,7 +34,7 @@ import { resolveRefs } from 'core/component/ref';
 import { getNormalParent } from 'core/component/traverse';
 import { forkMeta } from 'core/component/meta';
 
-import { ComponentInterface, ComponentMeta, ActivationStatus } from 'core/component/interface';
+import { ComponentInterface, ComponentMeta, Hook } from 'core/component/interface';
 import { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
 
 export * from 'core/component/construct/interface';
@@ -245,7 +245,7 @@ export function beforeDataCreateState(
 export function createdState(component: ComponentInterface): void {
 	const {
 		unsafe,
-		unsafe: {$root: r, $async: $a}
+		unsafe: {$root: r, $async: $a, $normalParent: parent}
 	} = component;
 
 	unmute(unsafe.$fields);
@@ -254,8 +254,12 @@ export function createdState(component: ComponentInterface): void {
 	const
 		isRegular = unsafe.meta.params.functional !== true && !unsafe.isFlyweight;
 
-	if (isRegular && '$remoteParent' in r) {
-		const cb = (status: ActivationStatus) => {
+	if (isRegular && parent != null && '$remoteParent' in r) {
+		const cb = (status: Hook) => {
+			if (status !== 'activated' && status !== 'deactivated') {
+				return;
+			}
+
 			$a.requestIdleCallback(() => {
 				runHook(status, component).then(() => {
 					callMethodFromComponent(component, status);
@@ -267,8 +271,8 @@ export function createdState(component: ComponentInterface): void {
 			});
 		};
 
-		r.unsafe.$on('app-activation', cb);
-		$a.worker(() => r.unsafe.$off('app-activation', cb));
+		parent.unsafe.$on('on-component-hook-change', cb);
+		$a.worker(() => parent.unsafe.$off('on-component-hook-change', cb));
 	}
 
 	runHook('created', component).then(() => {
@@ -345,7 +349,6 @@ export function activatedState(component: ComponentInterface): void {
 
 	runHook('activated', component).catch(stderr);
 	callMethodFromComponent(component, 'activated');
-	void component.emitActivation('activated');
 }
 
 /**
@@ -355,7 +358,6 @@ export function activatedState(component: ComponentInterface): void {
 export function deactivatedState(component: ComponentInterface): void {
 	runHook('deactivated', component).catch(stderr);
 	callMethodFromComponent(component, 'deactivated');
-	void component.emitActivation('deactivated');
 }
 
 /**

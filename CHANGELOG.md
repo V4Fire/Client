@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.146 (2021-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed providing of activation events to external components `core/component/construct`
+
 ## v3.0.0-rc.145 (2021-02-12)
 
 #### :house: Internal
