@@ -61,6 +61,9 @@ module.exports = function getPlugins({
 		);
 	}
 
+	const
+		isFieldThemed = (name) => Object.isArray(themedFields) ? themedFields.includes(name) : true;
+
 	return function addPlugins(api) {
 		/**
 		 * Injects additional options to component options ($p)
@@ -129,7 +132,7 @@ module.exports = function getPlugins({
 				if (isOneTheme || !isBuildHasTheme) {
 					return includeVars ?
 						stylus.utils.coerce($C(cssVariables).get([].concat([string], value || []).join('.'))) :
-						$C(ds).get([].concat(getThemedPathChunks(string, theme, themedFields), value || []).join('.'));
+						$C(ds).get([].concat(getThemedPathChunks(string, theme, isFieldThemed(string)), value || []).join('.'));
 				}
 
 				return stylus.utils.coerce($C(cssVariables).get([].concat([string], value || []).join('.')));
@@ -149,11 +152,12 @@ module.exports = function getPlugins({
 
 			const
 				head = 'text',
-				path = [...getThemedPathChunks(head, theme, themedFields), name];
+				isThemed = isFieldThemed(head),
+				path = [...getThemedPathChunks(head, theme, isThemed), name];
 
 			checkDeprecated(ds, path);
 
-			if (!isOneTheme && isThemesIncluded) {
+			if (!isOneTheme && isThemesIncluded && isThemed) {
 				const
 					initial = $C(ds).get(path);
 
@@ -194,7 +198,7 @@ module.exports = function getPlugins({
 				}
 
 				const
-					path = isOneTheme ? getThemedPathChunks('colors', theme, themedFields) : ['colors'];
+					path = isOneTheme ? getThemedPathChunks('colors', theme, isFieldThemed('colors')) : ['colors'];
 
 				if (id) {
 					id = id.string || id.val;

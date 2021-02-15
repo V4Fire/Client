@@ -45,5 +45,4 @@ if (pzlr.config.designSystem) {
 	console.warn('[stylus] Design system package is not specified');
 }
 
-console.log(32132, theme, includeThemes);
 module.exports = getPlugins({ds, cssVariables, theme, includeVars, includeThemes});

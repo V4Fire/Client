@@ -184,27 +184,16 @@ function convertToStylusObject(stylus, ds, variables) {
  *
  * @param {string} field
  * @param {string} [theme]
- * @param {Array<string>} [fieldsWithTheme]
+ * @param {boolean} [isFieldThemed]
  *
  * @returns {!Array<string>}
  */
-function getThemedPathChunks(field, theme, fieldsWithTheme) {
-	let
-		path = [field];
-
+function getThemedPathChunks(field, theme, isFieldThemed) {
 	if (!theme) {
-		return path;
+		return [field];
 	}
 
-	if (Object.isArray(fieldsWithTheme) && !fieldsWithTheme.includes(field)) {
-		// Requested field does not themed
-		path = [field];
-
-	} else {
-		path = [field, 'theme', theme];
-	}
-
-	return path;
+	return isFieldThemed ? [field, 'theme', theme] : [field];
 }
 
 /**
