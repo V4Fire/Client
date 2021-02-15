@@ -11,8 +11,6 @@ const
 
 module.exports = (page) => {
 	beforeEach(async () => {
-		await h.component.waitForComponent(page, '#root-component');
-
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
 		});
