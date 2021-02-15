@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-02-??)
+
+#### :bug: Bug Fix
+
+* Removed a race condition during loading of the libs `iStaticPage`
+
 ## v3.0.0-rc.146 (2021-02-15)
 
 #### :bug: Bug Fix

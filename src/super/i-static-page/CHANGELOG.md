@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-02-??)
+
+#### :bug: Bug Fix
+
+* Removed a race condition during loading of the libs
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :bug: Bug Fix
