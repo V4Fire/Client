@@ -37,9 +37,7 @@ import {
 
 	WatchPath,
 	WatchOptions,
-	RawWatchHandler,
-
-	ActivationStatus
+	RawWatchHandler
 
 } from 'core/component/interface';
 
@@ -436,16 +434,6 @@ export abstract class ComponentInterface {
 	 * @param [details] - event details
 	 */
 	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
-
-	/**
-	 * Emits an activation event of the application
-	 *
-	 * @param status - activation status
-	 * @emits `app-activation(status: ActivationStatus)`
-	 */
-	emitActivation(status: ActivationStatus): Promise<void> {
-		return Promise.resolve();
-	}
 
 	/**
 	 * Forces the component to re-render
