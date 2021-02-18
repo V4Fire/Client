@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Emit an event when async rendering is completed
+* Emit an event when async rendering is completed `super/i-block/modules/async-render`
 
 #### :bug: Bug Fix
 
