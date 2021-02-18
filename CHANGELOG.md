@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.147 (2021-02-18)
 
+#### :rocket: New Feature
+
+* Emit an event when async rendering is completed
+
 #### :bug: Bug Fix
 
 * Removed a race condition during loading of the libs `iStaticPage`
