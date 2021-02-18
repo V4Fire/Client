@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.147 (2021-02-18)
+
+#### :bug: Bug Fix
+
+* Fixed providing of destroy events to external components
+
 ## v3.0.0-rc.146 (2021-02-15)
 
 #### :bug: Bug Fix

@@ -254,25 +254,34 @@ export function createdState(component: ComponentInterface): void {
 	const
 		isRegular = unsafe.meta.params.functional !== true && !unsafe.isFlyweight;
 
-	if (isRegular && parent != null && '$remoteParent' in r) {
-		const cb = (status: Hook) => {
-			if (status !== 'activated' && status !== 'deactivated') {
-				return;
-			}
+	if (parent != null && '$remoteParent' in r) {
+		const
+			p = parent.unsafe,
+			onBeforeDestroy = unsafe.$destroy.bind(unsafe);
 
-			$a.requestIdleCallback(() => {
-				runHook(status, component).then(() => {
-					callMethodFromComponent(component, status);
-				}, stderr);
+		p.$on('on-component-hook:before-destroy', onBeforeDestroy);
+		$a.worker(() => p.$off('on-component-hook:before-destroy', onBeforeDestroy));
 
-			}, {
-				label: $$.remoteActivation,
-				timeout: 50
-			});
-		};
+		if (isRegular) {
+			const onActivation = (status: Hook) => {
+				if (status !== 'activated' && status !== 'deactivated') {
+					return;
+				}
 
-		parent.unsafe.$on('on-component-hook-change', cb);
-		$a.worker(() => parent.unsafe.$off('on-component-hook-change', cb));
+				$a.requestIdleCallback(() => {
+					runHook(status, component).then(() => {
+						callMethodFromComponent(component, status);
+					}, stderr);
+
+				}, {
+					label: $$.remoteActivation,
+					timeout: 50
+				});
+			};
+
+			p.$on('on-component-hook-change', onActivation);
+			$a.worker(() => p.$off('on-component-hook-change', onActivation));
+		}
 	}
 
 	runHook('created', component).then(() => {
