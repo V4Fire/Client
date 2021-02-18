@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed providing of destroy events to external components
+* Fixed providing of destroying events to external components
 
 ## v3.0.0-rc.146 (2021-02-15)
 

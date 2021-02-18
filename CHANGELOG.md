@@ -20,7 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Removed a race condition during loading of the libs `iStaticPage`
-* Fixed providing of destroy events to external components `core/component/construct`
+* Fixed providing of destroying events to external components `core/component/construct`
 
 ## v3.0.0-rc.146 (2021-02-15)
 
