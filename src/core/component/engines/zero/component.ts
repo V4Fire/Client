@@ -12,7 +12,8 @@ import symbolGenerator from 'core/symbol';
 import Vue, { ComponentOptions } from 'vue';
 //#endif
 
-import { runHook } from 'core/component/hook';
+import * as init from 'core/component/construct';
+
 import { fillMeta } from 'core/component/meta';
 import { createFakeCtx } from 'core/component/functional';
 
@@ -20,7 +21,6 @@ import { components } from 'core/component/const';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 import minimalCtx from 'core/component/engines/zero/context';
-import { minimalCtxCache } from 'core/component/engines/zero/const';
 
 const
 	$$ = symbolGenerator();
@@ -53,12 +53,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<Vue> {
  *
  * @param component - component declaration object or a component name
  * @param ctx - base context
- * @param [parent] - parent context
  */
 export function createComponent<T>(
 	component: ComponentOptions<Vue> | string,
-	ctx: ComponentInterface,
-	parent?: ComponentInterface
+	ctx: ComponentInterface
 ): [T?, ComponentInterface?] {
 	const
 		// @ts-ignore (access)
@@ -69,7 +67,7 @@ export function createComponent<T>(
 		return [];
 	}
 
-	let
+	const
 		meta = components.get(Object.isString(component) ? component : String(component.name));
 
 	if (meta == null) {
@@ -77,60 +75,28 @@ export function createComponent<T>(
 	}
 
 	const
-		{methods, component: {render}} = meta;
+		{component: {render}} = meta;
 
 	if (render == null) {
 		return [];
 	}
 
-	const
-		ctxShim = {parent},
-		renderCtx = Object.create(ctx);
+	const baseCtx = Object.assign(Object.create(minimalCtx), {
+		meta,
+		instance: meta.instance,
+		componentName: meta.componentName
+	});
 
-	for (let keys = Object.keys(ctxShim), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			el = ctxShim[key],
-			val = renderCtx[key];
-
-		if (val != null) {
-			if (Object.isPlainObject(el)) {
-				// tslint:disable-next-line:prefer-object-spread
-				renderCtx[key] = Object.assign(el, val);
-			}
-
-		} else {
-			renderCtx[key] = el;
-		}
-	}
-
-	const baseCtx = minimalCtxCache[meta.componentName] ?? Object.assign(
-		Object.create(minimalCtx), {
-			meta,
-			isFlyweight: true,
-			instance: meta.instance,
-			componentName: meta.componentName
-		}
-	);
-
-	minimalCtxCache[meta.componentName] = baseCtx;
-
-	const fakeCtx = createFakeCtx<ComponentInterface>(createElement, renderCtx, baseCtx, {
+	const fakeCtx = createFakeCtx<ComponentInterface>(createElement, Object.create(ctx), baseCtx, {
 		initProps: true
 	});
 
-	// @ts-ignore (access)
-	meta = fakeCtx.meta;
-	meta.params.functional = true;
+	const {
+		unsafe,
+		unsafe: {$async: $a}
+	} = fakeCtx;
 
-	// @ts-ignore (access)
-	fakeCtx['hook'] = 'created';
-
-	runHook('created', fakeCtx).then(() => {
-		if (methods.created) {
-			return methods.created.fn.call(fakeCtx);
-		}
-	}, stderr);
+	init.createdState(fakeCtx);
 
 	const
 		node = render.call(fakeCtx, createElement);
@@ -140,33 +106,11 @@ export function createComponent<T>(
 	node.component = fakeCtx;
 
 	const
-		// @ts-ignore (access)
-		{$async: $a} = fakeCtx,
-		watchRoot = document.body;
+		watchRoot = document.body,
+		is = (el): boolean => el === node || el.contains(node);
 
 	let
 		mounted = false;
-
-	const mount = () => {
-		if (mounted) {
-			return;
-		}
-
-		mounted = true;
-		runHook('mounted', fakeCtx).then(() => {
-			if (methods.mounted) {
-				return methods.mounted.fn.call(fakeCtx);
-			}
-		}, stderr);
-	};
-
-	const destroy = () => {
-		// @ts-ignore (access)
-		fakeCtx.$destroy();
-	};
-
-	const
-		is = (el): boolean => el === node || el.contains(node);
 
 	if (typeof MutationObserver === 'function') {
 		const observer = new MutationObserver((mutations) => {
@@ -183,10 +127,6 @@ export function createComponent<T>(
 					}
 				}
 
-				if (fakeCtx.keepAlive) {
-					break;
-				}
-
 				for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
 					const
 						el = o[j];
@@ -194,7 +134,7 @@ export function createComponent<T>(
 					if (is(el)) {
 						$a.setTimeout(() => {
 							if (!document.body.contains(el)) {
-								destroy();
+								unsafe.$destroy();
 							}
 						}, 0, {
 							label: $$.removeFromDOM
@@ -222,9 +162,18 @@ export function createComponent<T>(
 
 		$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
 			if (is(srcElement)) {
-				destroy();
+				unsafe.$destroy();
 			}
 		});
+	}
+
+	function mount(): void {
+		if (mounted) {
+			return;
+		}
+
+		mounted = true;
+		init.mountedState(fakeCtx);
 	}
 
 	return [node, fakeCtx];

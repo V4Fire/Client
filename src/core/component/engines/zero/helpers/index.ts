@@ -350,11 +350,11 @@ export function addDirectives(
 			continue;
 		}
 
-		const vNode = Object.create(node);
-		vNode.context = component;
+		const vnode = Object.create(node);
+		vnode.context = component;
 
 		if (customDir.bind) {
-			customDir.bind.call(undefined, node, dir, vNode);
+			customDir.bind.call(undefined, node, dir, vnode);
 		}
 	}
 }

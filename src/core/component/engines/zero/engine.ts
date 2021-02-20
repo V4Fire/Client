@@ -18,9 +18,6 @@ import {
 
 import config from 'core/component/engines/zero/config';
 
-import { getComponentDataFromVNode } from 'core/component/vnode';
-
-import { components } from 'core/component/const';
 import { ComponentInterface } from 'core/component/interface';
 
 import * as _ from 'core/component/engines/zero/helpers';
@@ -88,23 +85,31 @@ export class ComponentDriver {
 	 */
 	constructor(opts: ComponentOptions<any>) {
 		const
-			{el} = opts,
+			{el} = opts;
+
+		if (el == null) {
+			return;
+		}
+
+		const
 			[res] = createComponent<Element>(opts, <any>this);
 
-		if (el != null && res != null) {
-			if (Object.isString(el)) {
-				const
-					node = document.querySelector(el);
+		if (res == null) {
+			return;
+		}
 
-				if (node) {
-					node.appendChild(res);
-				}
+		if (Object.isString(el)) {
+			const
+				node = document.querySelector(el);
 
-				return;
+			if (node != null) {
+				node.appendChild(res);
 			}
 
-			el.appendChild(res);
+			return;
 		}
+
+		el.appendChild(res);
 	}
 
 	/**
@@ -139,125 +144,6 @@ export class ComponentDriver {
 				opts = {};
 			}
 
-			const
-				meta = components.get(tag);
-
-			const getSlots = () => {
-				const
-					res = <Dictionary>{};
-
-				if (children == null || children.length === 0) {
-					return res;
-				}
-
-				const
-					f = <CanUndef<Element>>children[0];
-
-				if (f?.getAttribute('slot') != null) {
-					for (let i = 0; i < children.length; i++) {
-						const
-							slot = <Element>children[i],
-							key = slot.getAttribute('slot');
-
-						if (!key) {
-							continue;
-						}
-
-						res[key] = slot;
-					}
-
-					return res;
-				}
-
-				let
-					slot;
-
-				if (children.length === 1) {
-					slot = f;
-
-				} else {
-					slot = _.createTemplate();
-					_.appendChild(slot, Array.from(children));
-				}
-
-				res.default = slot;
-				return res;
-			};
-
-			if (meta) {
-				const
-					data = <VNodeData>getComponentDataFromVNode(meta.componentName, <any>{data: opts});
-
-				const baseCtx = Object.assign(Object.create(this), {
-					props: data.props,
-
-					$createElement: ComponentDriver.prototype.$createElement,
-					$listeners: data.on,
-					$options: {...options},
-
-					data: {
-						attrs: data.attrs,
-						on: data.on
-					},
-
-					slots: getSlots,
-					scopedSlots: () => data.scopedSlots
-				});
-
-				const [node, ctx] =
-					createComponent<Element>(tag, baseCtx, this);
-
-				if (node) {
-					node['data'] = opts;
-					node[_.$$.data] = opts;
-
-					node['elm'] = node;
-					node['context'] = ctx;
-
-					_.addStaticDirectives(this, opts, data.directives, node);
-					_.addDirectives(this, node, opts, data.directives);
-					_.addClass(node, data);
-					_.attachEvents(node, data.nativeOn);
-					_.addStyles(node, data.style);
-
-					if (Object.isTruly(data.ref)) {
-						if (data.refInFor) {
-							const arr = <typeof ctx[]>(refs[data.ref] || []);
-
-							refs[data.ref] = arr;
-							arr.push(ctx);
-
-						} else {
-							refs[data.ref] = ctx;
-						}
-					}
-
-					if (meta.params.inheritAttrs) {
-						_.addAttrs(node, data.attrs);
-					}
-				}
-
-				if (opts.on) {
-					for (let o = opts.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							fns = Array.concat([], o[key]);
-
-						for (let i = 0; i < fns.length; i++) {
-							const
-								fn = fns[i];
-
-							if (Object.isFunction(fn)) {
-								// @ts-ignore (access)
-								ctx.$on(key, fn);
-							}
-						}
-					}
-				}
-
-				return node ?? document.createComment('');
-			}
-
 			let
 				node;
 
@@ -274,10 +160,8 @@ export class ComponentDriver {
 					node = document.createElement(tag);
 			}
 
-			node[_.$$.data] = node.data = {
-				...opts,
-				slots: getSlots()
-			};
+			node.data = {...opts};
+			node[_.$$.data] = node.data;
 
 			node.elm = node;
 			node.context = this;
@@ -286,9 +170,11 @@ export class ComponentDriver {
 			_.addDirectives(this, node, opts, opts.directives);
 
 			if (node instanceof Element) {
-				if (opts.ref) {
+				if (opts.ref != null) {
 					if (opts.refInFor) {
-						const arr = refs[opts.ref] = <Element[]>(refs[opts.ref] || []);
+						const arr = <Element[]>(refs[opts.ref] ?? []);
+						refs[opts.ref] = arr;
+
 						arr.push(node);
 
 					} else {
