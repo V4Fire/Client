@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { DirectiveOptions } from 'vue';
 import { ComponentElement } from 'core/component';
 
 export type DocumentFragmentP = DocumentFragment & {
@@ -18,8 +17,3 @@ export type DirElement =
 	Element |
 	ComponentElement |
 	DocumentFragmentP;
-
-export interface Options extends Dictionary {
-	filters: Dictionary<Function>;
-	directives: Dictionary<DirectiveOptions>;
-}

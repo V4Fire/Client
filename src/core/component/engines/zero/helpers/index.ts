@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { VNodeData, VNodeDirective } from 'vue/types/vnode';
+import { VNodeData, VNodeDirective } from 'vue';
 import config from 'core/component/engines/zero/config';
 
 import {

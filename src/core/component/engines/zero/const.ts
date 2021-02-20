@@ -8,20 +8,15 @@
 
 import { Options } from 'core/component/engines/zero/interface';
 
+export const supports = {
+	functional: false,
+	composite: true
+};
+
 export const options: Options = {
 	filters: {},
 	directives: {}
 };
 
 export const
-	SVG_NMS = 'http://www.w3.org/2000/svg',
-	XLINK_NMS = 'http://www.w3.org/1999/xlink';
-
-export const eventModifiers = Object.createDict({
-	'!': 'capture',
-	'&': 'passive',
-	'~': 'once'
-});
-
-export const
-	eventModifiersRgxp = new RegExp(`^[${Object.keys(eventModifiers).join('')}]+`);
+	minimalCtxCache = Object.createDict();
