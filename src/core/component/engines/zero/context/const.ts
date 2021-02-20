@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const reservedAttrs = {
+export const reservedAttrs = Object.createDict({
 	is: true,
 	key: true,
 	ref: true,
 	slot: true,
 	'slot-scope': true
-};
+});

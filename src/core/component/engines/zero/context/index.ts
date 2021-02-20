@@ -11,7 +11,7 @@ import { identity } from 'core/functools/helpers';
 
 import config from 'core/component/engines/zero/config';
 
-import { warn } from 'core/component/engines/zero/helpers';
+import { warn } from 'core/component/engines/zero/helpers/helpers';
 import { reservedAttrs } from 'core/component/engines/zero/context/const';
 import { KeyCode } from 'core/component/engines/zero/context/interface';
 
