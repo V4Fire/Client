@@ -74,12 +74,12 @@ export function wrapCreateElement(
 
 		if (attrOpts == null) {
 			if (tag === 'v-render') {
-				return createElement();
+				return createElement.call(ctx);
 			}
 
 		} else {
 			if (tag === 'v-render') {
-				return attrOpts.from ?? createElement();
+				return attrOpts.from ?? createElement.call(ctx);
 			}
 
 			if (tagName?.[0] === '@') {
@@ -122,6 +122,8 @@ export function wrapCreateElement(
 			needLinkToEl = Boolean(flyweightComponent);
 
 		const needCreateFunctionalComponent =
+			!supports.regular ||
+
 			vnode == null &&
 			flyweightComponent == null &&
 			supports.functional &&
@@ -137,11 +139,11 @@ export function wrapCreateElement(
 				componentTpls = TPLS[componentName];
 
 			if (componentTpls == null) {
-				return createElement();
+				return createElement.call(ctx);
 			}
 
 			const
-				node = createElement('span', {...opts, tag: undefined}, children),
+				node = createElement.call(ctx, 'span', {...opts, tag: undefined}, children),
 				renderCtx = getComponentRenderCtxFromVNode(component, node, ctx);
 
 			let
@@ -155,6 +157,9 @@ export function wrapCreateElement(
 
 				// @ts-ignore (access)
 				baseCtx.meta = component;
+
+				// @ts-ignore (access)
+				component.params.functional = true;
 
 				// @ts-ignore (access)
 				baseCtx.instance = component.instance;
@@ -184,10 +189,10 @@ export function wrapCreateElement(
 
 		if (vnode == null) {
 			// eslint-disable-next-line prefer-rest-params
-			vnode = createElement.apply(unsafe, arguments);
+			vnode = createElement.apply(ctx, arguments);
 
 			if (vnode == null) {
-				return createElement();
+				return createElement.call(ctx);
 			}
 
 			if (flyweightComponent != null) {
