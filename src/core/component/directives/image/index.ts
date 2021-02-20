@@ -19,19 +19,19 @@ import { DirectiveOptions } from 'core/component/directives/image/interface';
 export * from 'core/dom/image';
 
 ComponentDriver.directive('image', {
-	inserted(el: HTMLElement, {value}: DirectiveOptions, vNode: VNode): void {
+	inserted(el: HTMLElement, {value}: DirectiveOptions, vnode: VNode): void {
 		if (value == null) {
 			return;
 		}
 
-		if (vNode.fakeContext != null) {
+		if (vnode.fakeContext != null) {
 			if (Object.isPlainObject(value)) {
-				value.ctx = value.ctx ?? vNode.fakeContext;
+				value.ctx = value.ctx ?? vnode.fakeContext;
 
 			} else {
 				value = {
 					src: value,
-					ctx: vNode.fakeContext
+					ctx: vnode.fakeContext
 				};
 			}
 		}
