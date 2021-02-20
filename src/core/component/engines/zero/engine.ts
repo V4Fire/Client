@@ -17,13 +17,12 @@ import {
 } from 'vue';
 
 import config from 'core/component/engines/zero/config';
-
-import { ComponentInterface } from 'core/component/interface';
-
 import * as _ from 'core/component/engines/zero/helpers';
 
 import { options } from 'core/component/engines/zero/const';
 import { createComponent } from 'core/component/engines/zero/component';
+
+import { ComponentInterface } from 'core/component/interface';
 import { VNodeData } from 'core/component/engines/zero/interface';
 
 export class ComponentDriver {
@@ -160,7 +159,7 @@ export class ComponentDriver {
 					node = document.createElement(tag);
 			}
 
-			node.data = {...opts};
+			node.data = {...opts, slots: getSlots()};
 			node[_.$$.data] = node.data;
 
 			node.elm = node;
@@ -200,5 +199,51 @@ export class ComponentDriver {
 		}
 
 		return tag;
+
+		function getSlots(): Dictionary {
+			const
+				res = <Dictionary>{};
+
+			if (children == null || children.length === 0) {
+				return res;
+			}
+
+			const
+				firstChild = <Element | Text>children[0];
+
+			const hasSlotAttr =
+				'getAttribute' in firstChild &&
+				firstChild.getAttribute('slot') != null;
+
+			if (hasSlotAttr) {
+				for (let i = 0; i < children.length; i++) {
+					const
+						slot = <Element>children[i],
+						key = slot.getAttribute('slot');
+
+					if (key == null) {
+						continue;
+					}
+
+					res[key] = slot;
+				}
+
+				return res;
+			}
+
+			let
+				slot;
+
+			if (children.length === 1) {
+				slot = firstChild;
+
+			} else {
+				slot = _.createTemplate();
+				_.appendChild(slot, Array.from(children));
+			}
+
+			res.default = slot;
+			return res;
+		}
 	}
 }
