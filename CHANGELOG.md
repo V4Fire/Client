@@ -11,11 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2021-02-??)
+## v3.0.0-rc.147 (2021-02-18)
+
+#### :rocket: New Feature
+
+* Emit an event when async rendering is completed `super/i-block/modules/async-render`
 
 #### :bug: Bug Fix
 
 * Removed a race condition during loading of the libs `iStaticPage`
+* Fixed providing of destroying events to external components `core/component/construct`
 
 ## v3.0.0-rc.146 (2021-02-15)
 
