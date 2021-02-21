@@ -153,6 +153,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$createElement: CTX['$createElement'];
 
 	// @ts-ignore (access)
+	$initializer: CTX['$initializer'];
+
+	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
 
 	// @ts-ignore (access)
@@ -426,6 +429,11 @@ export abstract class ComponentInterface {
 	 * Link to a function that creates virtual nodes
 	 */
 	protected $createElement!: CreateElement;
+
+	/**
+	 * Promise of the component initializing
+	 */
+	protected $initializer?: Promise<unknown>;
 
 	/**
 	 * Logs an event with the specified context

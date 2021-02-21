@@ -50,14 +50,15 @@ export function wrapCreateElement(
 	baseCtx: ComponentInterface
 ): [CreateElement, Function[]] {
 	const
-		tasks = <Function[]>[];
+		tasks = <Function[]>[],
+		ssrMode = baseCtx.unsafe.meta.params.ssr;
 
 	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(
 		this: Nullable<ComponentInterface>,
 		tag: CanUndef<string>,
 		opts?: VNodeData,
 		children?: VNode[]
-	): VNode {
+	): CanPromise<VNode> {
 		// eslint-disable-next-line
 		'use strict';
 
@@ -129,6 +130,65 @@ export function wrapCreateElement(
 			supports.functional &&
 			component?.params.functional === true;
 
+		const patchVNode = (vnode: VNode | FlyweightVNode) => {
+			const
+				vData = vnode.data,
+				ref = vData != null && (vData[$$.ref] ?? vData.ref);
+
+			if (renderKey !== '') {
+				unsafe.renderTmp[renderKey] = cloneVNode(vnode);
+			}
+
+			// Add $refs link if it doesn't exist
+			if (vData != null && ref != null && ctx !== baseCtx) {
+				vData[$$.ref] = ref;
+				vData.ref = `${ref}:${ctx.componentId}`;
+
+				Object.defineProperty(unsafe.$refs, ref, {
+					configurable: true,
+					enumerable: true,
+					get: () => {
+						const
+							r = baseCtx.unsafe.$refs,
+							l = r[`${ref}:${unsafe.$componentId}`] ?? r[`${ref}:${ctx.componentId}`];
+
+						if (l != null) {
+							return l;
+						}
+
+						return 'fakeInstance' in vnode ? vnode.fakeInstance : vnode.elm;
+					}
+				});
+			}
+
+			// Add $el link if it doesn't exist
+			if (needLinkToEl && 'fakeInstance' in vnode) {
+				Object.defineProperty(vnode.fakeInstance, '$el', {
+					enumerable: true,
+					configurable: true,
+
+					set(): void {
+						// Loopback
+					},
+
+					get(): CanUndef<Node> {
+						return vnode.elm;
+					}
+				});
+			}
+
+			if (tasks.length > 0) {
+				for (let i = 0; i < tasks.length; i++) {
+					tasks[i](vnode);
+				}
+
+				tasks.splice(0);
+			}
+
+			vnode.fakeContext = ctx;
+			return vnode;
+		};
+
 		if (component && needCreateFunctionalComponent) {
 			needLinkToEl = true;
 
@@ -180,11 +240,17 @@ export function wrapCreateElement(
 			const renderObject = c.componentTemplates[componentName] ?? componentTpls.index?.();
 			c.componentTemplates[componentName] = renderObject;
 
-			vnode = initComponentVNode(
+			const createComponentVNode = () => initComponentVNode(
 				execRenderObject(renderObject, fakeCtx),
 				fakeCtx,
 				renderCtx
 			);
+
+			if (ssrMode && Object.isPromise(fakeCtx.unsafe.$initializer)) {
+				return fakeCtx.unsafe.$initializer.then(() => patchVNode(createComponentVNode()));
+			}
+
+			vnode = createComponentVNode();
 		}
 
 		if (vnode == null) {
@@ -200,67 +266,30 @@ export function wrapCreateElement(
 			}
 		}
 
-		const
-			vData = vnode.data,
-			ref = vData && (vData[$$.ref] ?? vData.ref);
+		return patchVNode(vnode);
+	};
 
-		if (renderKey !== '') {
-			unsafe.renderTmp[renderKey] = cloneVNode(vnode);
-		}
+	if (ssrMode) {
+		const wrappedAsyncCreateElement = <CreateElement>function wrappedAsyncCreateElement(
+			this: Nullable<ComponentInterface>,
+			tag: CanUndef<string>,
+			opts?: VNodeData,
+			children?: VNode[]
+		): CanPromise<VNode> {
+			if (children != null && children.length > 0) {
+				children = children.flat();
 
-		// Add $refs link if it doesn't exist
-		if (vData && ref != null && ctx !== baseCtx) {
-			vData[$$.ref] = ref;
-			vData.ref = `${ref}:${ctx.componentId}`;
-
-			Object.defineProperty(unsafe.$refs, ref, {
-				configurable: true,
-				enumerable: true,
-				get: () => {
-					const
-						r = baseCtx.unsafe.$refs,
-						l = r[`${ref}:${unsafe.$componentId}`] ?? r[`${ref}:${ctx.componentId}`];
-
-					if (l != null) {
-						return l;
-					}
-
-					if (vnode == null) {
-						return undefined;
-					}
-
-					return 'fakeInstance' in vnode ? vnode.fakeInstance : vnode.elm;
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				if (children.some(Object.isPromise)) {
+					return Promise.all(children).then((children) => wrappedCreateElement.call(this, tag, opts, children));
 				}
-			});
-		}
-
-		// Add $el link if it doesn't exist
-		if (needLinkToEl && 'fakeInstance' in vnode) {
-			Object.defineProperty(vnode.fakeInstance, '$el', {
-				enumerable: true,
-				configurable: true,
-
-				set(): void {
-					// Loopback
-				},
-
-				get(): CanUndef<Node> {
-					return vnode?.elm;
-				}
-			});
-		}
-
-		if (tasks.length > 0) {
-			for (let i = 0; i < tasks.length; i++) {
-				tasks[i](vnode);
 			}
 
-			tasks.splice(0);
-		}
+			return wrappedCreateElement.call(this, tag, opts, children);
+		};
 
-		vnode.fakeContext = ctx;
-		return vnode;
-	};
+		return [wrappedAsyncCreateElement, tasks];
+	}
 
 	return [wrappedCreateElement, tasks];
 }

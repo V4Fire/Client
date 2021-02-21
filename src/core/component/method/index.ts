@@ -44,8 +44,12 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const
-		{unsafe: {meta, meta: {methods}}} = component;
+	const {
+		unsafe: {
+			meta,
+			meta: {methods, params: {ssr: ssrMode}}
+		}
+	} = component;
 
 	const
 		isNotRegular = meta.params.functional === true || component.isFlyweight;
@@ -59,7 +63,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 			continue;
 		}
 
-		if (isNotRegular && el.functional === false) {
+		if (!ssrMode && isNotRegular && el.functional === false) {
 			continue;
 		}
 

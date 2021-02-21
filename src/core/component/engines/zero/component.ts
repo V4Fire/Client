@@ -31,11 +31,13 @@ const
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<Vue> {
 	const
+		{component} = fillMeta(meta);
+
+	const
 		p = meta.params,
 		m = p.model;
 
-	const
-		{component} = fillMeta(meta);
+	p.ssr = true;
 
 	return {
 		...<ComponentOptions<any>>Any(component),
@@ -54,10 +56,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<Vue> {
  * @param component - component declaration object or a component name
  * @param ctx - base context
  */
-export function createComponent<T>(
+export async function createComponent<T>(
 	component: ComponentOptions<Vue> | string,
 	ctx: ComponentInterface
-): [T?, ComponentInterface?] {
+): Promise<[T?, ComponentInterface?]> {
 	const
 		// @ts-ignore (access)
 		createElement = ctx.$createElement;
@@ -99,9 +101,10 @@ export function createComponent<T>(
 	init.createdState(fakeCtx);
 
 	const
-		node = render.call(fakeCtx, createElement);
+		node = await render.call(fakeCtx, createElement);
 
 	// @ts-ignore (access)
+	// eslint-disable-next-line require-atomic-updates
 	fakeCtx['$el'] = node;
 	node.component = fakeCtx;
 

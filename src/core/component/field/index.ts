@@ -94,7 +94,7 @@ export function initFields(
 			sourceVal !== undefined ||
 
 			// Don't initialize a property for a functional component unless explicitly required
-			isNotRegular && el.functional === false ||
+			!params.ssr && isNotRegular && el.functional === false ||
 
 			el.init == null && el.default === undefined && instance[key] === undefined;
 

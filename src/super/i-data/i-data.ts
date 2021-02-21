@@ -366,14 +366,20 @@ export default abstract class iData extends iBlock implements iProgress {
 			$a
 				.clearAll({group: 'requestSync:get'});
 
-			if (this.isNotRegular) {
-				return super.initLoad(() => {
+			if (this.isNotRegular && !this.meta.params.ssr) {
+				const res = super.initLoad(() => {
 					if (data !== undefined) {
 						this.db = this.convertDataToDB<this['DB']>(data);
 					}
 
 					return this.db;
 				}, opts);
+
+				if (Object.isPromise(res)) {
+					this.$initializer = res;
+				}
+
+				return res;
 			}
 
 			if (this.dataProvider != null && this.dp == null) {
@@ -393,7 +399,7 @@ export default abstract class iData extends iBlock implements iProgress {
 					needRequest = Object.isArray(this.getDefaultRequestParams('get'));
 
 				if (needRequest) {
-					return $a
+					const res = $a
 						.nextTick(label)
 
 						.then(() => {
@@ -427,6 +433,9 @@ export default abstract class iData extends iBlock implements iProgress {
 								return callSuper();
 							}
 						);
+
+					this.$initializer = res;
+					return res;
 				}
 
 				if (this.db !== undefined) {

@@ -23,11 +23,11 @@ import { ComponentMeta } from 'core/component/interface';
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDriver> {
 	const
-		p = meta.params,
-		m = p.model;
+		{component} = fillMeta(meta);
 
 	const
-		{component} = fillMeta(meta);
+		p = meta.params,
+		m = p.model;
 
 	return {
 		...<ComponentOptions<ComponentDriver>>Any(component),

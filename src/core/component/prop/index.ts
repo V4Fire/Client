@@ -33,7 +33,7 @@ export function initProps(
 
 	const {
 		unsafe,
-		unsafe: {meta, meta: {component: {props}}},
+		unsafe: {meta, meta: {component: {props}, params: {ssr: ssrMode}}},
 		isFlyweight
 	} = component;
 
@@ -57,7 +57,7 @@ export function initProps(
 		}
 
 		// Don't initialize a property for a functional component unless explicitly required
-		if (isNotRegular && el.functional === false) {
+		if (!ssrMode && isNotRegular && el.functional === false) {
 			continue;
 		}
 

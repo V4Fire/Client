@@ -90,25 +90,27 @@ export class ComponentDriver {
 			return;
 		}
 
-		const
-			[res] = createComponent<Element>(opts, <any>this);
-
-		if (res == null) {
-			return;
-		}
-
-		if (Object.isString(el)) {
+		(async () => {
 			const
-				node = document.querySelector(el);
+				[res] = await createComponent<Element>(opts, <any>this);
 
-			if (node != null) {
-				node.appendChild(res);
+			if (res == null) {
+				return;
 			}
 
-			return;
-		}
+			if (Object.isString(el)) {
+				const
+					node = document.querySelector(el);
 
-		el.appendChild(res);
+				if (node != null) {
+					node.appendChild(res);
+				}
+
+				return;
+			}
+
+			el.appendChild(res);
+		})();
 	}
 
 	/**
@@ -122,8 +124,8 @@ export class ComponentDriver {
 		this: ComponentInterface,
 		tag: string | Node,
 		attrs?: VNodeData | Node[],
-		children?: Node[]
-	): Node {
+		children?: Array<CanPromise<Node>>
+	): CanPromise<Node> {
 		if (Object.isString(tag)) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const refs = this.$refs ?? {};
@@ -143,107 +145,120 @@ export class ComponentDriver {
 				opts = {};
 			}
 
-			let
-				node;
+			const createNode = (children: Node[]) => {
+				let
+					node;
 
-			switch (tag) {
-				case 'template':
-					node = _.createTemplate();
-					break;
+				switch (tag) {
+					case 'template':
+						node = _.createTemplate();
+						break;
 
-				case 'svg':
-					node = document.createElementNS(_.SVG_NMS, tag);
-					break;
+					case 'svg':
+						node = document.createElementNS(_.SVG_NMS, tag);
+						break;
 
-				default:
-					node = document.createElement(tag);
-			}
-
-			node.data = {...opts, slots: getSlots()};
-			node[_.$$.data] = node.data;
-
-			node.elm = node;
-			node.context = this;
-
-			_.addStaticDirectives(this, opts, opts.directives, node);
-			_.addDirectives(this, node, opts, opts.directives);
-
-			if (node instanceof Element) {
-				if (opts.ref != null) {
-					if (opts.refInFor) {
-						const arr = <Element[]>(refs[opts.ref] ?? []);
-						refs[opts.ref] = arr;
-
-						arr.push(node);
-
-					} else {
-						refs[opts.ref] = node;
-					}
+					default:
+						node = document.createElement(tag);
 				}
 
-				_.addClass(node, opts);
-				_.attachEvents(node, opts.on);
+				node.data = {...opts, slots: getSlots()};
+				node[_.$$.data] = node.data;
+
+				node.elm = node;
+				node.context = this;
+
+				_.addStaticDirectives(this, opts, opts.directives, node);
+				_.addDirectives(this, node, opts, opts.directives);
+
+				if (node instanceof Element) {
+					if (opts.ref != null) {
+						if (opts.refInFor) {
+							const arr = <Element[]>(refs[opts.ref] ?? []);
+							refs[opts.ref] = arr;
+
+							arr.push(node);
+
+						} else {
+							refs[opts.ref] = node;
+						}
+					}
+
+					_.addClass(node, opts);
+					_.attachEvents(node, opts.on);
+				}
+
+				_.addProps(node, opts.domProps);
+				_.addStyles(node, opts.style);
+				_.addAttrs(node, opts.attrs);
+
+				if (node instanceof SVGElement) {
+					children = _.createSVGChildren(this, <Element[]>children);
+				}
+
+				_.appendChild(node, children);
+
+				return node;
+
+				function getSlots(): Dictionary {
+					const
+						res = <Dictionary>{};
+
+					if (children.length === 0) {
+						return res;
+					}
+
+					const
+						firstChild = <Element | Text>children[0];
+
+					const hasSlotAttr =
+						'getAttribute' in firstChild &&
+						firstChild.getAttribute('slot') != null;
+
+					if (hasSlotAttr) {
+						for (let i = 0; i < children.length; i++) {
+							const
+								slot = <Element>children[i],
+								key = slot.getAttribute('slot');
+
+							if (key == null) {
+								continue;
+							}
+
+							res[key] = slot;
+						}
+
+						return res;
+					}
+
+					let
+						slot;
+
+					if (children.length === 1) {
+						slot = firstChild;
+
+					} else {
+						slot = _.createTemplate();
+						_.appendChild(slot, Array.from(children));
+					}
+
+					res.default = slot;
+					return res;
+				}
+			};
+
+			if (children.length > 0) {
+				children = children.flat();
+
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				if (children.some(Object.isPromise)) {
+					return Promise.all<Node>(children).then((children) => createNode(children));
+				}
 			}
 
-			_.addProps(node, opts.domProps);
-			_.addStyles(node, opts.style);
-			_.addAttrs(node, opts.attrs);
-
-			if (node instanceof SVGElement) {
-				children = _.createSVGChildren(this, <Element[]>children);
-			}
-
-			_.appendChild(node, children);
-
-			return node;
+			return createNode(<Node[]>children);
 		}
 
 		return tag;
-
-		function getSlots(): Dictionary {
-			const
-				res = <Dictionary>{};
-
-			if (children == null || children.length === 0) {
-				return res;
-			}
-
-			const
-				firstChild = <Element | Text>children[0];
-
-			const hasSlotAttr =
-				'getAttribute' in firstChild &&
-				firstChild.getAttribute('slot') != null;
-
-			if (hasSlotAttr) {
-				for (let i = 0; i < children.length; i++) {
-					const
-						slot = <Element>children[i],
-						key = slot.getAttribute('slot');
-
-					if (key == null) {
-						continue;
-					}
-
-					res[key] = slot;
-				}
-
-				return res;
-			}
-
-			let
-				slot;
-
-			if (children.length === 1) {
-				slot = firstChild;
-
-			} else {
-				slot = _.createTemplate();
-				_.appendChild(slot, Array.from(children));
-			}
-
-			res.default = slot;
-			return res;
-		}
 	}
 }

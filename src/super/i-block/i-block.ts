@@ -723,6 +723,14 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * True if the current component is rendered by using server-side rendering
+	 */
+	@computed({replace: false})
+	get isSSR(): boolean {
+		return this.meta.params.ssr === true;
+	}
+
+	/**
 	 * Base component modifiers.
 	 * These modifiers are automatically provided to child components.
 	 * For example, you have a component uses another component within own template,
@@ -1569,7 +1577,7 @@ export default abstract class iBlock extends ComponentInterface {
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
-		if (this.isFlyweight) {
+		if (this.isFlyweight || this.isSSR) {
 			return;
 		}
 
@@ -2000,16 +2008,18 @@ export default abstract class iBlock extends ComponentInterface {
 				this.state.initFromStorage() || []
 			);
 
-			if (this.isNotRegular || this.dontWaitRemoteProviders) {
+			if ((this.isNotRegular || this.dontWaitRemoteProviders) && !this.meta.params.ssr) {
 				if (tasks.length > 0) {
-					return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
+					const res = $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
+					this.$initializer = res;
+					return res;
 				}
 
 				done();
 				return;
 			}
 
-			return this.nextTick(label).then((() => {
+			const res = this.nextTick(label).then((() => {
 				const
 					{$children: childComponents} = this;
 
@@ -2063,6 +2073,9 @@ export default abstract class iBlock extends ComponentInterface {
 
 				return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 			}));
+
+			this.$initializer = res;
+			return res;
 
 		} catch (err) {
 			doneOnError(err);
@@ -2511,7 +2524,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/** @override */
 	protected onCreatedHook(): void {
-		if (this.isFlyweight) {
+		if (this.isFlyweight || this.isSSR) {
 			this.componentStatusStore = 'ready';
 			this.isReadyOnce = true;
 		}

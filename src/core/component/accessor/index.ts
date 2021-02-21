@@ -21,7 +21,7 @@ import { cacheStatus, ComponentInterface } from 'core/component';
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
 		meta,
-		meta: {params: {deprecatedProps}},
+		meta: {params: {deprecatedProps, ssr: ssrMode}},
 		isFlyweight
 	} = component.unsafe;
 
@@ -35,7 +35,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		const canSkip = Boolean(
 			el == null ||
-			isNotRegular && el.functional === false ||
+			!ssrMode && isNotRegular && el.functional === false ||
 
 			(
 				isFlyweight ?
@@ -67,7 +67,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		const canSkip = Boolean(
 			el == null ||
-			isNotRegular && el.functional === false ||
+			!ssrMode && isNotRegular && el.functional === false ||
 
 			(
 				isFlyweight ?
@@ -82,6 +82,10 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
+			if (ssrMode) {
+				return el.get!.call(this);
+			}
+
 			if (cacheStatus in get) {
 				return get[cacheStatus];
 			}

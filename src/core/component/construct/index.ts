@@ -235,7 +235,7 @@ export function beforeDataCreateState(
 
 	runHook('beforeDataCreate', component).catch(stderr);
 
-	if (!component.isFlyweight) {
+	if (!component.isFlyweight && !meta.params.ssr) {
 		implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
 		bindRemoteWatchers(component);
 	}
