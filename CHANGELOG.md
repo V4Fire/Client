@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.147 (2021-02-21)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with tests execution took too long](https://github.com/V4Fire/Client/issues/436)
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :rocket: New Feature
