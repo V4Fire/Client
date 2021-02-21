@@ -20,14 +20,14 @@ This module provides a component to create bottom sheet behavior that is similar
 
 | EventName         | Description                              | Payload description        | Payload   |
 | ----------------- | ---------------------------------------- | -------------------------- | --------- |
-| `open`            | The component was opened                 | –                          |           |
+| `open`            | The component was opened                 | –                          | –         |
 | `close`           | The component was closed                 | –                          | –         |
 | `stepChange`      | The component opened step was changed    | Number of the current step | `number`  |
-| `moveStateChange` | The component starts or stops moving     | State of moving            | `boolean` |
+| `moveStateChange` | The component starts or stops moving     | State of moving            | `Boolean` |
 
 ## Usage
 
-To start using the component, pass the content to it in the `default` slot.
+To start using the component, pass the content in the `default` slot.
 
 ```
 < b-bottom-slide ref = bottomSlide
@@ -38,6 +38,7 @@ To start using the component, pass the content to it in the `default` slot.
 Now you can open your component using the `open` method.
 
 ```typescript
+@component()
 class bMyPage extends iData {
   openBottomSlide() {
     this.$refs.bottomSlide.open();
@@ -47,7 +48,7 @@ class bMyPage extends iData {
 
 ### Height Mode
 
-The component supports two different height mode calculation.
+The component supports two modes of height calculation.
 
 * `full` – the height value is equal to the viewport height.
 * `content` – the height value is based on a component content, but no more than the viewport height.
@@ -95,7 +96,7 @@ __b-modal.ts__
 export default class bModal extends iBlock {
   /** @override */
   protected $refs!: {
-    bottomSlide: HTMLElement;
+    bottomSlide: bBottomSlide;
   };
 
   @wait('ready')
@@ -190,7 +191,7 @@ export default class bModal extends iBlock {
   };
 
   @wait('ready')
-  open({title, text}): Promise<void> {
+  open({title, text}: ModalTemplate): Promise<void> {
     this.title = title;
     this.text = text;
 

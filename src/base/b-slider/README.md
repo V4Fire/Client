@@ -21,7 +21,7 @@ The component can operate in two modes, which will be discussed below.
 | ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------- |
 | `change`          | An active slide of the component has been changed              | Number of the current slide                                                           | `number`                |
 | `swipeStart`      | User started scrolling the slider                              | –                                                                                     | –                       |
-| `swipeEnd`        | User finished scrolling the slider                             | Scrolling direction, Indicator showing whether the position of the slider has changed | `-1 | 0 | 1`, `boolean` |
+| `swipeEnd`        | User finished scrolling the slider                             | Scrolling direction, Indicator showing whether the position of the slider has changed | `-1 | 0 | 1`, `Boolean` |
 | `updateState`     | The content of the component content block has been updated    | –                                                                                     | –                       |
 | `syncState`       | The component state has been updated, sent after `updateState` | –                                                                                     | –                       |
 
@@ -59,7 +59,7 @@ In scroll mode, the normal scroll will be used to scroll the slides. To activate
 
 The component supports a bunch of slots to provide:
 
-1. `default` to provide the base content of each item.
+1. `default` to provide the base content.
 
 ```
 < b-slider
@@ -68,7 +68,7 @@ The component supports a bunch of slots to provide:
   < img src = https://fakeimg.pl/300x300
 ```
 
-2. `beforeItems` To provide the content before the main content in the slider.
+2. `beforeItems` To provide the content before items in the slider.
 
 ```
   < b-slider
@@ -76,7 +76,7 @@ The component supports a bunch of slots to provide:
       Hello there general Kenobi
 ```
 
-3. `afterItems` To provide the content after the main content in the slider.
+3. `afterItems` To provide the content after items in the slider.
 
 ```
   < b-slider
