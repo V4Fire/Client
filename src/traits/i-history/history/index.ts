@@ -362,7 +362,7 @@ export default class History extends Friend {
 
 		const
 			title = page.querySelector('[data-title]'),
-			fstChild = Object.get<CanUndef<HTMLElement>>(page, 'children.0');
+			fstChild = Object.get<HTMLElement>(page, 'children.0');
 
 		const
 			hasTrigger = Boolean(fstChild?.getAttribute(this.config.triggerAttr)),

@@ -83,10 +83,6 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		Object.assign($options.components, o.components);
 	}
 
-	fakeCtx._self = fakeCtx;
-	fakeCtx._renderProxy = fakeCtx;
-	fakeCtx._staticTrees = [];
-
 	fakeCtx.unsafe = fakeCtx;
 	fakeCtx.children = Object.isArray(children) ? children : [];
 
@@ -110,6 +106,11 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
 	fakeCtx.$destroy = () => destroyComponent(fakeCtx);
+
+	fakeCtx._self = fakeCtx;
+	fakeCtx._renderProxy = fakeCtx;
+	fakeCtx._c = fakeCtx.$createElement;
+	fakeCtx._staticTrees = [];
 
 	fakeCtx.$nextTick = (cb?: Function) => {
 		const

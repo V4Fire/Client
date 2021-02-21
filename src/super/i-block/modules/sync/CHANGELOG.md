@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.137 (2021-02-04)
+
+#### :rocket: Bug Fix
+
+* Fixed linking to values with watchable prototypes
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :rocket: New Feature

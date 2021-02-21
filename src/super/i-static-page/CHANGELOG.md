@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.147 (2021-02-18)
+
+#### :bug: Bug Fix
+
+* Removed a race condition during loading of the libs
+
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
 ## v3.0.0-rc.124 (2021-01-18)
 
 #### :bug: Bug Fix

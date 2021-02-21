@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.135 (2021-??-??)
+## v3.0.0-rc.148 (2021-??-??)
 
 #### :memo: Documentation
 
@@ -19,6 +19,155 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `b-slider`
   * `b-bottom-slide`
   * `i-observe-dom`
+
+## v3.0.0-rc.147 (2021-02-18)
+
+#### :rocket: New Feature
+
+* Emit an event when async rendering is completed `super/i-block/modules/async-render`
+
+#### :bug: Bug Fix
+
+* Removed a race condition during loading of the libs `iStaticPage`
+* Fixed providing of destroying events to external components `core/component/construct`
+
+## v3.0.0-rc.146 (2021-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed providing of activation events to external components `core/component/construct`
+* Fixed creation of meta objects `core/component/flyweight`
+
+## v3.0.0-rc.145 (2021-02-12)
+
+#### :house: Internal
+
+* Now external activation hooks are fired with a delay `core/component/construct`
+
+## v3.0.0-rc.144 (2021-02-11)
+
+#### :boom: Breaking Change
+
+* Now, by default is used `b-button-functional` `traits/i-control-list`
+
+#### :bug: Bug Fix
+
+* Added providing of activation events to external components
+
+## v3.0.0-rc.143 (2021-02-11)
+
+#### :rocket: New Feature
+
+* Added icons colorizing functionality by the Stylus' `i` function `global/g-def`
+* Added `stylus` plugins to generate URL-s `build/stylus/url`:
+  * `toQueryString`
+  * `createURL`
+
+## v3.0.0-rc.142 (2021-02-11)
+
+#### :boom: Breaking Change
+
+* Removed:
+  * `b-content-switcher`
+  * `core/component/helpers/observable`
+
+#### :rocket: New Feature
+
+* Added a new property `fakeContext` to `VNode` `core/component/engines`
+
+#### :bug: Bug Fix
+
+* Fixed an issue when refs are not resolved after the `update` hook `iBlock`
+* Fixed creation of a context:
+  * `core/component/functional`
+  * `core/component/flyweight`
+
+#### :house: Internal
+
+* Refactoring:
+  * `core/dom/image`
+  * `core/dom/resize-observer`
+
+## v3.0.0-rc.141 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with an update without providing of `ctx` `core/come/image`
+
+## v3.0.0-rc.140 (2021-02-05)
+
+#### :rocket: New Feature
+
+* Added a new global constant `MODULE` `build`
+
+#### :bug: Bug Fix
+
+* Fixed the support of `--fat-html` `traits/i-icon`
+* Fixed the condition to provide slots:
+  * `bButton`
+  * `bInput`
+  * `bList`
+
+## v3.0.0-rc.139 (2021-02-05)
+
+#### :bug: Bug Fix
+
+* Fixed cleaning of background styles `core/dom/image`
+
+## v3.0.0-rc.138 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new parameter `TaskParams.useRAF` `super/i-block/modules/async-render`
+
+## v3.0.0-rc.137 (2021-02-04)
+
+#### :rocket: New Feature
+
+* Added a new parameter `--fat-html` `config`
+* Added a new option `--only-run:boolean` for `npx gulp test:components`.
+  It allows run all test cases without the building stage.
+
+#### :bug: Bug Fix
+
+* Fixed linking to values with watchable prototypes `super/modules/sync`
+* Fixed using of global RegExp-s with the `g` flag
+* Fixed redundant listening of events `core/component/engines/vue`
+* Used `nanoid` to generate `nonceStore` `config`
+
+* `build`:
+  * Fixed minifying of dynamic styles
+  * Fixed dynamic imports with `fatHTML`
+  * Fixed the running of parallel tests when `portfinder` was returning the same port for different processes
+
+#### :house: Internal
+
+* Updated dependencies:
+  * `svg-url-loader@7.1.1`
+  * `terser-webpack-plugin@5.1.1`
+  * `postcss-loader@5.0.0`
+  * `webpack@5.20.1`
+
+## v3.0.0-rc.136 (2021-02-02)
+
+#### :rocket: New Feature
+
+* Added logging of dependencies `build/test.gulp`
+* Added a new parameter `build.demoPage` `config`
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
+#### :house: Internal
+
+* Optimized the inserting of an icon into DOM by using `requestAnimationFrame` `traits/i-icon`
+
+## v3.0.0-rc.135 (2021-02-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the redundant clearing of async tasks `core/component/directives/update-on`
 
 ## v3.0.0-rc.134 (2021-01-30)
 
@@ -222,9 +371,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 `bWindow`:
-  * Fixed ESLint errors
-  * Fixed TS errors
-  * Added tests
+* Fixed ESLint errors
+* Fixed TS errors
+* Added tests
 
 ## v3.0.0-rc.120 (2020-12-23)
 
@@ -389,7 +538,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Removed watchers for `isAuth`, `isOnline` and `lastOnlineDate` fields.
-They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
+  They are synchronized with `remoteState` via `sync.link` `super/i-static-page`.
 
 ## v3.0.0-rc.108 (2020-12-14)
 
@@ -1729,7 +1878,7 @@ npx webpack --components b-button,b-select
 #### :boom: Breaking Change
 
 * All getters are cached by default and can be watched only if they have tied properties, for instance, `foo` -> `fooStore` or `foo` -> `fooProp`,
-otherwise, you need to provide dependencies by using the special decorator to enable these features
+  otherwise, you need to provide dependencies by using the special decorator to enable these features
 
 * Renamed `build/snakeskin.webpack` to `build/snakeskin/index`
 * Renamed `build/snakeskin.vars` to `build/snakeskin/vars`

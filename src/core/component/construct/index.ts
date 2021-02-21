@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
+
 import { deprecate } from 'core/functools/deprecation';
 import { unmute } from 'core/object/watch';
 
@@ -32,10 +34,13 @@ import { resolveRefs } from 'core/component/ref';
 import { getNormalParent } from 'core/component/traverse';
 import { forkMeta } from 'core/component/meta';
 
-import { ComponentInterface, ComponentMeta } from 'core/component/interface';
+import { ComponentInterface, ComponentMeta, Hook } from 'core/component/interface';
 import { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
 
 export * from 'core/component/construct/interface';
+
+export const
+	$$ = symbolGenerator();
 
 /**
  * Initializes "beforeCreate" state to the specified component instance
@@ -238,11 +243,46 @@ export function beforeDataCreateState(
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
-	const
-		{unsafe} = component;
+	const {
+		unsafe,
+		unsafe: {$root: r, $async: $a, $normalParent: parent}
+	} = component;
 
 	unmute(unsafe.$fields);
 	unmute(unsafe.$systemFields);
+
+	const
+		isRegular = unsafe.meta.params.functional !== true && !unsafe.isFlyweight;
+
+	if (parent != null && '$remoteParent' in r) {
+		const
+			p = parent.unsafe,
+			onBeforeDestroy = unsafe.$destroy.bind(unsafe);
+
+		p.$on('on-component-hook:before-destroy', onBeforeDestroy);
+		$a.worker(() => p.$off('on-component-hook:before-destroy', onBeforeDestroy));
+
+		if (isRegular) {
+			const onActivation = (status: Hook) => {
+				if (status !== 'activated' && status !== 'deactivated') {
+					return;
+				}
+
+				$a.requestIdleCallback(() => {
+					runHook(status, component).then(() => {
+						callMethodFromComponent(component, status);
+					}, stderr);
+
+				}, {
+					label: $$.remoteActivation,
+					timeout: 50
+				});
+			};
+
+			p.$on('on-component-hook-change', onActivation);
+			$a.worker(() => p.$off('on-component-hook-change', onActivation));
+		}
+	}
 
 	runHook('created', component).then(() => {
 		callMethodFromComponent(component, 'created');

@@ -22,7 +22,7 @@ export default {
 	 *
 	 * @param el
 	 * @param params
-	 * @param ctx - context of the tied components
+	 * @param ctx - context of the tied component
 	 */
 	add(el: Element, params: DirectiveValue, ctx: ComponentInterface): void {
 		let
@@ -73,15 +73,11 @@ export default {
 	 * Removes listeners from the specified element
 	 *
 	 * @param el
-	 * @param ctx - context of the tied components
+	 * @param ctx - context of the tied component
 	 */
 	remove(el: Element, ctx: ComponentInterface | object): void {
 		const
 			group = el.getAttribute(ID_ATTRIBUTE);
-
-		this
-			.getAsync(el, ctx)
-			.clearAll();
 
 		if (group != null) {
 			this.getAsync(el, ctx).clearAll({group});
@@ -92,7 +88,7 @@ export default {
 	 * Returns an async instance of the specified element
 	 *
 	 * @param el
-	 * @param ctx - context of the tied components
+	 * @param ctx - context of the tied component
 	 */
 	getAsync(el: Element, ctx: ComponentInterface | object): Async<ComponentInterface> {
 		if ('$async' in ctx) {
