@@ -233,9 +233,10 @@ export function beforeDataCreateState(
 		}
 	});
 
-	runHook('beforeDataCreate', component).catch(stderr);
+	runHook('beforeDataCreate', component)
+		.catch(stderr);
 
-	if (!component.isFlyweight && !meta.params.ssr) {
+	if (!component.isFlyweight && !component.$root.unsafe.meta.params.ssr) {
 		implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
 		bindRemoteWatchers(component);
 	}

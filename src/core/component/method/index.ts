@@ -47,11 +47,12 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 	const {
 		unsafe: {
 			meta,
-			meta: {methods, params: {ssr: ssrMode}}
+			meta: {methods}
 		}
 	} = component;
 
 	const
+		ssrMode = component.$root.unsafe.meta.params.ssr,
 		isNotRegular = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {

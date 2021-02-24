@@ -727,7 +727,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@computed({replace: false})
 	get isSSR(): boolean {
-		return this.meta.params.ssr === true;
+		return this.r.meta.params.ssr === true;
 	}
 
 	/**

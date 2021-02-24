@@ -41,7 +41,7 @@ export function initFields(
 	} = component;
 
 	const
-		// True if a component is functional or a flyweight
+		ssrMode = component.$root.unsafe.meta.params.ssr,
 		isNotRegular = params.functional === true || isFlyweight;
 
 	const
@@ -94,7 +94,7 @@ export function initFields(
 			sourceVal !== undefined ||
 
 			// Don't initialize a property for a functional component unless explicitly required
-			!params.ssr && isNotRegular && el.functional === false ||
+			!ssrMode && isNotRegular && el.functional === false ||
 
 			el.init == null && el.default === undefined && instance[key] === undefined;
 

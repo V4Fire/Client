@@ -40,6 +40,10 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		fakeCtx = Object.create(baseCtx),
 		meta = forkMeta(fakeCtx.meta);
 
+	if ('$ssr' in renderCtx) {
+		meta.params.ssr = true;
+	}
+
 	const
 		{component} = meta,
 		{parent, children, data: dataOpts} = renderCtx;

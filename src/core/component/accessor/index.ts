@@ -21,11 +21,12 @@ import { cacheStatus, ComponentInterface } from 'core/component';
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
 		meta,
-		meta: {params: {deprecatedProps, ssr: ssrMode}},
+		meta: {params: {deprecatedProps}},
 		isFlyweight
 	} = component.unsafe;
 
 	const
+		ssrMode = component.$root.unsafe.meta.params.ssr,
 		isNotRegular = meta.params.functional === true || isFlyweight;
 
 	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
