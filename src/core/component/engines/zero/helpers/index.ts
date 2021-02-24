@@ -8,8 +8,17 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { VNodeData, VNodeDirective } from 'vue';
+import {
+
+	VNode,
+	VNodeData,
+	VNodeDirective,
+	DirectiveOptions
+
+} from 'vue';
+
 import config from 'core/component/engines/zero/config';
+import { document } from 'core/component/engines/zero/const';
 
 import {
 
@@ -282,7 +291,7 @@ export function addStaticDirectives(
 		return;
 	}
 
-	if (node) {
+	if (node != null) {
 		node[$$.directives] = directives;
 	}
 
@@ -296,7 +305,7 @@ export function addStaticDirectives(
 					const
 						rule = ';display: none;';
 
-					if (data.tag === 'component' && node) {
+					if (node != null && data.tag === 'component') {
 						// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 						node.setAttribute('style', (node.getAttribute('style') ?? '') + rule);
 
@@ -331,8 +340,10 @@ export function addDirectives(
 		return;
 	}
 
-	const
-		store = component.$options.directives;
+	const {
+		unsafe: {$async: $a},
+		$options: {directives: store}
+	} = component;
 
 	if (store == null) {
 		return;
@@ -340,21 +351,80 @@ export function addDirectives(
 
 	node[$$.directives] = directives;
 
+	const
+		root = component.$root.unsafe;
+
 	for (let o = directives, i = 0; i < o.length; i++) {
 		const
 			dir = o[i],
-			customDir = store[dir.name];
+			dirParams = store[dir.name];
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (customDir == null) {
+		if (dirParams == null) {
 			continue;
 		}
 
 		const vnode = Object.create(node);
 		vnode.context = component;
 
-		if (customDir.bind) {
-			customDir.bind.call(undefined, node, dir, vnode);
+		if (Object.isFunction(dirParams)) {
+			dirParams(<HTMLElement>node, <any>dir, vnode, <any>undefined);
+
+		} else {
+			if (dirParams.bind) {
+				dirParams.bind.call(undefined, node, dir, vnode);
+			}
+
+			if (dirParams.inserted) {
+				const events = [
+					'on-component-hook:mounted',
+					`child-component-mounted:${component.componentId}`
+				];
+
+				dispatchHookFromEvents('inserted', events, dir, dirParams, vnode);
+			}
+
+			if (dirParams.unbind) {
+				const events = [
+					'on-component-hook:beforeDestroy',
+					`child-component-destroyed:${component.componentId}`
+				];
+
+				dispatchHookFromEvents('unbind', events, dir, dirParams, vnode);
+			}
 		}
+	}
+
+	function dispatchHookFromEvents(
+		hook: string,
+		events: string[],
+		dir: VNodeDirective,
+		dirParams: DirectiveOptions,
+		vnode: VNode
+	): void {
+		const clear = () => {
+			for (let i = 0; i < events.length; i++) {
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
+				root.$off(events[i], cb);
+			}
+		};
+
+		const cb = () => {
+			clear();
+
+			const
+				fn = dirParams[hook];
+
+			if (Object.isFunction(fn)) {
+				console.log(hook);
+				return fn(node, dir, vnode);
+			}
+		};
+
+		for (let i = 0; i < events.length; i++) {
+			root.$once(events[i], cb);
+		}
+
+		$a.worker(clear);
 	}
 }

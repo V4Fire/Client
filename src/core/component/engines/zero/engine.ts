@@ -19,7 +19,7 @@ import {
 import config from 'core/component/engines/zero/config';
 import * as _ from 'core/component/engines/zero/helpers';
 
-import { options } from 'core/component/engines/zero/const';
+import { options, document } from 'core/component/engines/zero/const';
 import { createComponent } from 'core/component/engines/zero/component';
 
 import { ComponentInterface } from 'core/component/interface';

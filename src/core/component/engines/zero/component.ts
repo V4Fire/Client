@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { HAS_WINDOW } from 'core/env';
 
 //#if VueInterfaces
 import Vue, { ComponentOptions } from 'vue';
@@ -18,6 +19,7 @@ import { fillMeta } from 'core/component/meta';
 import { createFakeCtx } from 'core/component/functional';
 
 import { components } from 'core/component/const';
+import { document } from 'core/component/engines/zero/const';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 import minimalCtx from 'core/component/engines/zero/context';
@@ -108,67 +110,108 @@ export async function createComponent<T>(
 	fakeCtx['$el'] = node;
 	node.component = fakeCtx;
 
-	const
-		watchRoot = document.body,
-		is = (el): boolean => el === node || el.contains(node);
+	if (HAS_WINDOW) {
+		const
+			watchRoot = document.body,
+			is = (el): boolean => el === node || el.contains(node);
 
-	let
-		mounted = false;
+		if (typeof MutationObserver === 'function') {
+			const observer = new MutationObserver((mutations) => {
+				for (let i = 0; i < mutations.length; i++) {
+					const
+						mut = mutations[i];
 
-	if (typeof MutationObserver === 'function') {
-		const observer = new MutationObserver((mutations) => {
-			for (let i = 0; i < mutations.length; i++) {
-				const
-					mut = mutations[i];
-
-				if (!mounted) {
 					for (let o = mut.addedNodes, j = 0; j < o.length; j++) {
-						if (is(o[j])) {
+						const
+							node = o[j];
+
+						if (!(node instanceof Element)) {
+							continue;
+						}
+
+						if (is(node)) {
 							mount();
-							break;
+
+						} else {
+							const
+								childComponentId = getChildComponentId(node);
+
+							if (childComponentId != null) {
+								unsafe.$emit(`child-component-mounted:${childComponentId}`);
+							}
+						}
+					}
+
+					for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
+						const
+							node = o[j];
+
+						if (!(node instanceof Element)) {
+							continue;
+						}
+
+						if (is(node)) {
+							$a.setTimeout(() => {
+								if (!document.body.contains(node)) {
+									unsafe.$destroy();
+								}
+
+							}, 0, {
+								label: $$.removeFromDOM
+							});
+
+						} else {
+							const
+								childComponentId = getChildComponentId(node);
+
+							if (childComponentId != null) {
+								unsafe.$emit(`child-component-destroyed:${childComponentId}`);
+							}
 						}
 					}
 				}
+			});
 
-				for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
+			observer.observe(watchRoot, {
+				childList: true,
+				subtree: true
+			});
+
+			$a.worker(observer);
+
+		} else {
+			$a.on(watchRoot, 'DOMNodeInserted', ({srcElement}) => {
+				if (is(srcElement)) {
+					mount();
+
+				} else {
 					const
-						el = o[j];
+						childComponentId = getChildComponentId(srcElement);
 
-					if (is(el)) {
-						$a.setTimeout(() => {
-							if (!document.body.contains(el)) {
-								unsafe.$destroy();
-							}
-						}, 0, {
-							label: $$.removeFromDOM
-						});
-
-						break;
+					if (childComponentId != null) {
+						unsafe.$emit(`child-component-mounted:${childComponentId}`);
 					}
 				}
-			}
-		});
+			});
 
-		observer.observe(watchRoot, {
-			childList: true,
-			subtree: true
-		});
+			$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
+				if (is(srcElement)) {
+					unsafe.$destroy();
 
-		$a.worker(observer);
+				} else {
+					const
+						childComponentId = getChildComponentId(srcElement);
 
-	} else {
-		$a.on(watchRoot, 'DOMNodeInserted', ({srcElement}) => {
-			if (is(srcElement)) {
-				mount();
-			}
-		});
-
-		$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
-			if (is(srcElement)) {
-				unsafe.$destroy();
-			}
-		});
+					if (childComponentId != null) {
+						unsafe.$emit(`child-component-destroyed:${childComponentId}`);
+					}
+				}
+			});
+		}
 	}
+
+	let
+		mounted = false;
 
 	function mount(): void {
 		if (mounted) {
@@ -177,6 +220,28 @@ export async function createComponent<T>(
 
 		mounted = true;
 		init.mountedState(fakeCtx);
+	}
+
+	function getChildComponentId(node: Element): CanUndef<string> {
+		if (!node.classList.contains('i-block-helper')) {
+			return;
+		}
+
+		const
+			classes = node.className.split(/\s+/);
+
+		for (let i = 0; i < classes.length; i++) {
+			const
+				classVal = classes[i];
+
+			if (!classVal.startsWith('uid-')) {
+				continue;
+			}
+
+			if (classVal !== unsafe.componentId) {
+				return classVal;
+			}
+		}
 	}
 
 	return [node, fakeCtx];
