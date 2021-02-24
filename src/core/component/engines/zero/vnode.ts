@@ -28,8 +28,7 @@ export function cloneVNode(vnode: VNode): VNode {
 export function patchVNode(vnode: Element, ctx: ComponentInterface, renderCtx: RenderContext): void {
 	const
 		{data} = renderCtx,
-		// @ts-ignore (access)
-		{meta} = ctx;
+		{meta} = ctx.unsafe;
 
 	_.addClass(vnode, data);
 
