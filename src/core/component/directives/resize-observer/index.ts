@@ -6,7 +6,7 @@
 * https://github.com/V4Fire/Client/blob/master/LICENSE
 */
 
-import { ComponentDriver, VNode } from 'core/component/engines';
+import { ComponentEngine, VNode } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
 
 import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
@@ -24,7 +24,7 @@ export * from 'core/component/directives/resize-observer/interface';
 export * from 'core/component/directives/resize-observer/const';
 export * from 'core/dom/resize-observer';
 
-ComponentDriver.directive('resize-observer', {
+ComponentEngine.directive('resize-observer', {
 	inserted(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
 		const
 			val = opts.value;

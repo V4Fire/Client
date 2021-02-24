@@ -19,19 +19,45 @@ import {
 import config from 'core/component/engines/zero/config';
 import * as _ from 'core/component/engines/zero/helpers';
 
+import { rootComponents } from 'core/component/const';
 import { options, document } from 'core/component/engines/zero/const';
 import { createComponent } from 'core/component/engines/zero/component';
 
 import { ComponentInterface } from 'core/component/interface';
 import { VNodeData } from 'core/component/engines/zero/interface';
 
-export class ComponentDriver {
+export class ComponentEngine {
 	/**
 	 * Component options
 	 */
 	$options: Dictionary = {...options};
 
 	static config: typeof config = config;
+
+	/**
+	 * @param nameOrOpts
+	 * @param opts
+	 */
+	static async render(
+		nameOrOpts: string | ComponentOptions<any>,
+		opts?: ComponentOptions<any>
+	): Promise<CanUndef<Element>> {
+		const
+			obj = new this();
+
+		if (Object.isString(nameOrOpts)) {
+			const
+				component = await rootComponents[nameOrOpts];
+
+			if (component == null) {
+				throw new ReferenceError('The root component is not found');
+			}
+
+			return obj.$render({...component, ...opts});
+		}
+
+		return obj.$render({...nameOrOpts, ...opts});
+	}
 
 	/**
 	 * Shim for Vue.component
@@ -80,9 +106,9 @@ export class ComponentDriver {
 	}
 
 	/**
-	 * @param opts
+	 * @param [opts]
 	 */
-	constructor(opts: ComponentOptions<any>) {
+	constructor(opts: ComponentOptions<any> = {}) {
 		const
 			{el} = opts;
 
@@ -92,7 +118,7 @@ export class ComponentDriver {
 
 		(async () => {
 			const
-				[res] = await createComponent<Element>(opts, <any>this);
+				res = await this.$render(opts);
 
 			if (res == null) {
 				return;
@@ -111,6 +137,15 @@ export class ComponentDriver {
 
 			el.appendChild(res);
 		})();
+	}
+
+	/**
+	 * Renders the component and returns the result
+	 * @param opts - component options
+	 */
+	async $render(opts: ComponentOptions<any>): Promise<CanUndef<Element>> {
+		const [res] = await createComponent<Element>(opts, <any>this);
+		return res;
 	}
 
 	/**

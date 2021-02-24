@@ -18,7 +18,7 @@ import Async, { BoundFn, ProxyCb } from 'core/async';
 
 import {
 
-	ComponentDriver,
+	ComponentEngine,
 
 	ComponentOptions,
 	FunctionalComponentOptions,
@@ -45,7 +45,7 @@ import {
  * Component render function
  */
 export type RenderFunction =
-	ComponentOptions<ComponentDriver>['render'] |
+	ComponentOptions<ComponentEngine>['render'] |
 	FunctionalComponentOptions['render'];
 
 /**
@@ -275,7 +275,7 @@ export abstract class ComponentInterface {
 	/**
 	 * Map of raw component options
 	 */
-	readonly $options!: ComponentOptions<ComponentDriver>;
+	readonly $options!: ComponentOptions<ComponentEngine>;
 
 	/**
 	 * Map of initialized component input properties

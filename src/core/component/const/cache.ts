@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentOptions as ComponentDriverOptions, ComponentDriver } from 'core/component/engines';
+import { ComponentEngine, ComponentOptions as ComponentEngineOptions } from 'core/component/engines';
 import { ComponentInterface, ComponentMeta, ComponentOptions } from 'core/component/interface';
 
 /**
@@ -17,7 +17,7 @@ export const componentParams = new Map<Function | string, ComponentOptions>();
 /**
  * Map of root components
  */
-export const rootComponents = Object.createDict<Promise<ComponentDriverOptions<ComponentDriver>>>();
+export const rootComponents = Object.createDict<Promise<ComponentEngineOptions<ComponentEngine>>>();
 
 /**
  * Link to an instance of the global root component

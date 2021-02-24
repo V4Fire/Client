@@ -15,7 +15,11 @@ import Vue from 'vue';
 import 'core/component/engines/vue/config';
 
 export * from 'vue';
+
+/** @deprecated */
 export { Vue as ComponentDriver };
+export { Vue as ComponentEngine };
+export { Vue as default };
 
 export * from 'core/component/engines/vue/const';
 export * from 'core/component/engines/vue/vnode';

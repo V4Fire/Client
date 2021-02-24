@@ -38,7 +38,7 @@ export {
 	renderData,
 	patchVNode,
 
-	ComponentDriver as default,
+	ComponentEngine as default,
 
 	VNode,
 	VNodeDirective,

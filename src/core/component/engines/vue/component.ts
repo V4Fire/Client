@@ -14,14 +14,14 @@ import { fillMeta } from 'core/component/meta';
 import { implementComponentForceUpdateAPI } from 'core/component/render';
 
 import { fakeMapSetCopy } from 'core/component/engines/helpers';
-import { ComponentDriver, ComponentOptions } from 'core/component/engines';
+import { ComponentEngine, ComponentOptions } from 'core/component/engines';
 import { ComponentMeta } from 'core/component/interface';
 
 /**
  * Returns a component declaration object from the specified component meta object
  * @param meta
  */
-export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDriver> {
+export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEngine> {
 	const
 		{component} = fillMeta(meta);
 
@@ -30,7 +30,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 		m = p.model;
 
 	return {
-		...<ComponentOptions<ComponentDriver>>Any(component),
+		...<ComponentOptions<ComponentEngine>>Any(component),
 		inheritAttrs: p.inheritAttrs,
 
 		model: m && {
