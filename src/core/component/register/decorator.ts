@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import log from 'core/log';
 import { identity } from 'core/functools';
 
 // @ts-ignore (ss import)
