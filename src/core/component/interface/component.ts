@@ -37,7 +37,9 @@ import {
 
 	WatchPath,
 	WatchOptions,
-	RawWatchHandler
+	RawWatchHandler,
+
+	RenderEngine
 
 } from 'core/component/interface';
 
@@ -154,6 +156,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$initializer: CTX['$initializer'];
+
+	// @ts-ignore (access)
+	$renderEngine: CTX['$renderEngine'];
 
 	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
@@ -434,6 +439,11 @@ export abstract class ComponentInterface {
 	 * Promise of the component initializing
 	 */
 	protected $initializer?: Promise<unknown>;
+
+	/**
+	 * Description object of the used rendering engine
+	 */
+	protected $renderEngine!: RenderEngine;
 
 	/**
 	 * Logs an event with the specified context

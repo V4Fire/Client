@@ -14,6 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added a new property `$initializer`
+* Added a new property `$renderEngine`
 
 ## v3.0.0-rc.126 (2021-01-26)
 

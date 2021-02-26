@@ -15,7 +15,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new property `$initializer` `core/component/interface`
+* `core/component/interface`:
+  * Added a new property `$initializer`
+  * Added a new property `$renderEngine`
+
 * Added a new render engine `core/component/engine/zero`
 * Added a new getter `isSSR` `iBlock`
 
