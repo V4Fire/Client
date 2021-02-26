@@ -250,12 +250,6 @@ export interface ComponentOptions {
 	 * @default `true`
 	 */
 	defaultProps?: boolean;
-
-	/**
-	 * If true, the component will be rendered by using server-side rendering
-	 * @default `false`
-	 */
-	ssr?: boolean;
 }
 
 /**

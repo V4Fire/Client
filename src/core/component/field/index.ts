@@ -41,7 +41,7 @@ export function initFields(
 	} = component;
 
 	const
-		ssrMode = component.$root.unsafe.meta.params.ssr,
+		ssrMode = component.$renderEngine.supports.ssr,
 		isNotRegular = params.functional === true || isFlyweight;
 
 	const

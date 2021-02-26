@@ -17,7 +17,6 @@ export { VNode, ScopedSlot } from 'vue/types/vnode';
 export * from 'core/component/engines/zero/const';
 export * from 'core/component/engines/zero/engine';
 export * from 'core/component/engines/zero/component';
-export * from 'core/component/engines/zero/render';
 export * from 'core/component/engines/zero/vnode';
 export * from 'core/component/engines/zero/interface';
 

@@ -416,7 +416,6 @@ export function addDirectives(
 				fn = dirParams[hook];
 
 			if (Object.isFunction(fn)) {
-				console.log(hook);
 				return fn(node, dir, vnode);
 			}
 		};

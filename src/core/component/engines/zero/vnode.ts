@@ -22,13 +22,13 @@ export function cloneVNode(vnode: VNode): VNode {
  * Patches the specified VNode by using provided contexts
  *
  * @param vnode
- * @param ctx - component context
+ * @param component - component instance
  * @param renderCtx - render context
  */
-export function patchVNode(vnode: Element, ctx: ComponentInterface, renderCtx: RenderContext): void {
+export function patchVNode(vnode: Element, component: ComponentInterface, renderCtx: RenderContext): void {
 	const
 		{data} = renderCtx,
-		{meta} = ctx.unsafe;
+		{meta} = component.unsafe;
 
 	_.addClass(vnode, data);
 
@@ -36,5 +36,19 @@ export function patchVNode(vnode: Element, ctx: ComponentInterface, renderCtx: R
 		_.addAttrs(vnode, data.attrs);
 	}
 
-	_.addStaticDirectives(ctx, data, vnode[_.$$.directives], vnode);
+	_.addStaticDirectives(component, data, vnode[_.$$.directives], vnode);
+}
+
+/**
+ * Renders the specified VNode/s and returns the result
+ *
+ * @param vnode
+ * @param parent - parent component
+ */
+export function renderVNode(vnode: VNode, parent: ComponentInterface): Node;
+export function renderVNode(vnodes: VNode[], parent: ComponentInterface): Node[];
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+export function renderVNode(vnode: CanArray<VNode>, parent: ComponentInterface): CanArray<Node> {
+	return <any>vnode;
 }

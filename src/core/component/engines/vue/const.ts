@@ -11,7 +11,8 @@ import Vue from 'vue';
 export const supports = {
 	regular: true,
 	functional: true,
-	composite: true
+	composite: true,
+	ssr: false
 };
 
 export const minimalCtx = (() => {

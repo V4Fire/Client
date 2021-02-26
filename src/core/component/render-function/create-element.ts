@@ -51,7 +51,7 @@ export function wrapCreateElement(
 ): [CreateElement, Function[]] {
 	const
 		tasks = <Function[]>[],
-		ssrMode = baseCtx.$root.unsafe.meta.params.ssr;
+		ssrMode = baseCtx.$renderEngine.supports.ssr;
 
 	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(
 		this: Nullable<ComponentInterface>,

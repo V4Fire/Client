@@ -41,7 +41,7 @@ export function initProps(
 		{store, from} = opts;
 
 	const
-		ssrMode = component.$root.unsafe.meta.params.ssr,
+		ssrMode = component.$renderEngine.supports.ssr,
 		isNotRegular = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {

@@ -52,7 +52,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 	} = component;
 
 	const
-		ssrMode = component.$root.unsafe.meta.params.ssr,
+		ssrMode = component.$renderEngine.supports.ssr,
 		isNotRegular = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {

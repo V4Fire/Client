@@ -9,10 +9,13 @@
 import { IS_NODE } from 'core/env';
 import { Options } from 'core/component/engines/zero/interface';
 
+export { default as minimalCtx } from 'core/component/engines/zero/context';
+
 export const supports = {
 	regular: false,
 	functional: true,
-	composite: true
+	composite: true,
+	ssr: true
 };
 
 export const options: Options = {

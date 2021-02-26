@@ -727,7 +727,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@computed({replace: false})
 	get isSSR(): boolean {
-		return this.r.meta.params.ssr === true;
+		return this.$renderEngine.supports.ssr;
 	}
 
 	/**
@@ -2008,7 +2008,10 @@ export default abstract class iBlock extends ComponentInterface {
 				this.state.initFromStorage() || []
 			);
 
-			if ((this.isNotRegular || this.dontWaitRemoteProviders) && !this.meta.params.ssr) {
+			if (
+				(this.isNotRegular || this.dontWaitRemoteProviders) &&
+				!this.$renderEngine.supports.ssr
+			) {
 				if (tasks.length > 0) {
 					const res = $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 					this.$initializer = res;

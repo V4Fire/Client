@@ -16,14 +16,16 @@ import {
 
 } from 'vue';
 
+import { components } from 'core/component/const';
+import { ComponentInterface } from 'core/component/interface';
+
 import config from 'core/component/engines/zero/config';
 import * as _ from 'core/component/engines/zero/helpers';
 
-import { rootComponents } from 'core/component/const';
-import { options, document } from 'core/component/engines/zero/const';
-import { createComponent } from 'core/component/engines/zero/component';
+import { supports, options, minimalCtx, document } from 'core/component/engines/zero/const';
+import { getComponent, createComponent } from 'core/component/engines/zero/component';
+import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines/zero/vnode';
 
-import { ComponentInterface } from 'core/component/interface';
 import { VNodeData } from 'core/component/engines/zero/interface';
 
 export class ComponentEngine {
@@ -35,28 +37,17 @@ export class ComponentEngine {
 	static config: typeof config = config;
 
 	/**
-	 * @param nameOrOpts
-	 * @param opts
+	 * @param name
 	 */
-	static async render(
-		nameOrOpts: string | ComponentOptions<any>,
-		opts?: ComponentOptions<any>
-	): Promise<CanUndef<Element>> {
+	static async render(name: string): Promise<CanUndef<Element>> {
 		const
-			obj = new this();
+			meta = components.get(name);
 
-		if (Object.isString(nameOrOpts)) {
-			const
-				component = await rootComponents[nameOrOpts];
-
-			if (component == null) {
-				throw new ReferenceError('The root component is not found');
-			}
-
-			return obj.$render({...component, ...opts});
+		if (meta == null) {
+			throw new ReferenceError(`A component with the name "${name}" is not found`);
 		}
 
-		return obj.$render({...nameOrOpts, ...opts});
+		return (new this()).$render(getComponent(meta));
 	}
 
 	/**
@@ -144,7 +135,19 @@ export class ComponentEngine {
 	 * @param opts - component options
 	 */
 	async $render(opts: ComponentOptions<any>): Promise<CanUndef<Element>> {
-		const [res] = await createComponent<Element>(opts, <any>this);
+		const
+			ctx = Object.create(this);
+
+		ctx.$renderEngine = {
+			supports,
+			minimalCtx,
+
+			cloneVNode,
+			patchVNode,
+			renderVNode
+		};
+
+		const [res] = await createComponent<Element>(opts, ctx);
 		return res;
 	}
 

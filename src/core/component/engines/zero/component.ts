@@ -39,8 +39,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<Vue> {
 		p = meta.params,
 		m = p.model;
 
-	p.ssr = true;
-
 	return {
 		...<ComponentOptions<any>>Any(component),
 		inheritAttrs: p.inheritAttrs,
@@ -56,7 +54,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<Vue> {
  * Creates a zero component by the specified parameters and returns a tuple [node, ctx]
  *
  * @param component - component declaration object or a component name
- * @param ctx - base context
+ * @param ctx - context of the component to create
  */
 export async function createComponent<T>(
 	component: ComponentOptions<Vue> | string,
