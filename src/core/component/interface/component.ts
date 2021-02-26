@@ -158,9 +158,6 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$initializer: CTX['$initializer'];
 
 	// @ts-ignore (access)
-	$renderEngine: CTX['$renderEngine'];
-
-	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
 
 	// @ts-ignore (access)
@@ -310,6 +307,11 @@ export abstract class ComponentInterface {
 	readonly $root!: this['Root'];
 
 	/**
+	 * Description object of the used rendering engine
+	 */
+	readonly $renderEngine!: RenderEngine;
+
+	/**
 	 * True if the component can be attached to a parent render function
 	 */
 	readonly isFlyweight?: boolean;
@@ -439,11 +441,6 @@ export abstract class ComponentInterface {
 	 * Promise of the component initializing
 	 */
 	protected $initializer?: Promise<unknown>;
-
-	/**
-	 * Description object of the used rendering engine
-	 */
-	protected $renderEngine!: RenderEngine;
 
 	/**
 	 * Logs an event with the specified context

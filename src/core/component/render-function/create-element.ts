@@ -189,6 +189,8 @@ export function wrapCreateElement(
 			return vnode;
 		};
 
+
+
 		if (component && needCreateFunctionalComponent) {
 			needLinkToEl = true;
 

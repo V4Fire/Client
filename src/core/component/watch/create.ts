@@ -9,7 +9,6 @@
 import watch, { mute, unmute, unwrap, getProxyType, isProxy } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
-import { proxyGetters } from 'core/component/engines';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 import { tiedWatchers, watcherInitializer, fakeCopyLabel } from 'core/component/watch/const';
@@ -104,7 +103,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		const
 			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
-			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx);
+			watchInfo = isAccessor ? null : component.$renderEngine.proxyGetters[info.type]?.(info.ctx);
 
 		let
 			proxy = watchInfo?.value;

@@ -9,7 +9,7 @@
 import * as init from 'core/component/construct';
 
 import { RenderContext } from 'core/component/render';
-import { patchVNode, VNode } from 'core/component/engines';
+import { VNode } from 'core/component/engines';
 
 import { $$ } from 'core/component/functional/const';
 
@@ -21,16 +21,20 @@ import { FlyweightVNode } from 'core/component/functional/interface';
  * This function provides life-cycle hooks, adds classes and event listeners, etc.
  *
  * @param vnode
- * @param ctx - component context
+ * @param component - component instance
  * @param renderCtx - render context
  */
-export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): FlyweightVNode {
+export function initComponentVNode(
+	vnode: VNode,
+	component: ComponentInterface,
+	renderCtx: RenderContext
+): FlyweightVNode {
 	const
-		{unsafe} = ctx,
+		{unsafe} = component,
 		{data} = renderCtx;
 
-	const flyweightVNode = Object.assign(vnode, {fakeInstance: ctx});
-	patchVNode(flyweightVNode, ctx, renderCtx);
+	const flyweightVNode = Object.assign(vnode, {fakeInstance: component});
+	component.$renderEngine.patchVNode(flyweightVNode, component, renderCtx);
 
 	// Attach component event listeners
 	if (data.on != null) {
@@ -53,12 +57,12 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 	const originalOnBindHook = unsafe.onBindHook;
 	unsafe.onBindHook = onBindHook;
 
-	init.createdState(ctx);
+	init.createdState(component);
 	return flyweightVNode;
 
 	function onBindHook(): void {
 		const
-			el = ctx.$el;
+			el = component.$el;
 
 		if (el == null) {
 			unsafe.onUnbindHook();
@@ -71,24 +75,24 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		// The situation when we have an old context of the same component on the same node:
 		// we need to merge the old state with a new
 		if (oldCtx != null) {
-			if (oldCtx === ctx) {
+			if (oldCtx === component) {
 				return;
 			}
 
-			if (ctx.componentName !== oldCtx.componentName) {
+			if (component.componentName !== oldCtx.componentName) {
 				oldCtx = undefined;
 				delete el[$$.component];
 			}
 		}
 
 		if (oldCtx != null) {
-			oldCtx.$componentId = ctx.componentId;
+			oldCtx.$componentId = component.componentId;
 
 			// Destroy the old component
 			oldCtx.onUnbindHook();
 
 			const
-				props = ctx.$props,
+				props = component.$props,
 				oldProps = oldCtx.$props,
 				linkedFields = <Dictionary<string>>{};
 
@@ -136,7 +140,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 							link = linkedFields[key];
 
 						const
-							val = ctx[key],
+							val = component[key],
 							oldVal = oldCtx[key];
 
 						const needMerge =
@@ -144,7 +148,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 
 							(
 								Object.isFunction(field.unique) ?
-									!Object.isTruly(field.unique(ctx.unsafe, oldCtx)) :
+									!Object.isTruly(field.unique(component.unsafe, oldCtx)) :
 									!field.unique
 							) &&
 
@@ -168,14 +172,14 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 										newVal = Object.assign([], val, oldVal);
 									}
 
-									ctx[key] = newVal;
+									component[key] = newVal;
 
 								} else if (Object.isFunction(field.merge)) {
-									field.merge(ctx.unsafe, oldCtx, key, link);
+									field.merge(component.unsafe, oldCtx, key, link);
 								}
 
 							} else {
-								ctx[key] = oldCtx[key];
+								component[key] = oldCtx[key];
 							}
 						}
 					}

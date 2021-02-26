@@ -6,6 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { VNode, RenderContext } from 'core/component/engines';
+import { ComponentInterface } from 'core/component/interface/component';
+
 export interface RenderEngineFeatures {
 	regular: boolean;
 	functional: boolean;
@@ -21,12 +24,19 @@ export type ProxyGetterType =
 
 export type ProxyGetter = (ctx: object) => {
 	key: string;
-	value: unknown;
+	value: object;
 	watch?(path: string, handler: Function): Function;
 };
 
 export interface RenderEngine {
 	minimalCtx: object;
+
 	supports: RenderEngineFeatures;
 	proxyGetters: Record<ProxyGetterType, ProxyGetter>;
+
+	cloneVNode(vnode: VNode): VNode;
+	patchVNode(vnode: VNode, component: ComponentInterface, renderCtx: RenderContext): VNode;
+
+	renderVNode(vnode: VNode, parent: ComponentInterface): Node;
+	renderVNode(vnodes: VNode[], parent: ComponentInterface): Node[];
 }

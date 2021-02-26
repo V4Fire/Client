@@ -13,6 +13,9 @@ import { beforeRenderHooks } from 'core/component/const';
 import { fillMeta } from 'core/component/meta';
 import { implementComponentForceUpdateAPI } from 'core/component/render';
 
+import { supports, minimalCtx, proxyGetters } from 'core/component/engines/vue/const';
+import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines/vue/vnode';
+
 import { fakeMapSetCopy } from 'core/component/engines/helpers';
 import { ComponentEngine, ComponentOptions } from 'core/component/engines';
 import { ComponentMeta } from 'core/component/interface';
@@ -103,7 +106,18 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 		},
 
 		beforeCreate(): void {
-			const ctx = <any>this;
+			const
+				ctx = <any>this;
+
+			ctx.$renderEngine = {
+				supports,
+				minimalCtx,
+				proxyGetters,
+				cloneVNode,
+				patchVNode,
+				renderVNode
+			};
+
 			init.beforeCreateState(ctx, meta);
 			implementComponentForceUpdateAPI(ctx, this.$forceUpdate.bind(this));
 		},

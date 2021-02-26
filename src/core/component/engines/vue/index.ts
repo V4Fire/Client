@@ -23,7 +23,6 @@ export { Vue as default };
 
 export * from 'core/component/engines/vue/const';
 export * from 'core/component/engines/vue/vnode';
-export * from 'core/component/engines/vue/render';
 export * from 'core/component/engines/vue/component';
 
 //#if VueInterfaces
