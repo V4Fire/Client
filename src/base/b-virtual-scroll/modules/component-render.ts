@@ -13,7 +13,7 @@ import { Friend } from 'super/i-block/i-block';
 import ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem, DataToRender, OptionEl, ItemAttrs } from 'base/b-virtual-scroll/interface';
+import { RenderItem, DataToRender, ItemAttrs } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -108,8 +108,8 @@ export default class ComponentRender extends Friend {
 	}
 
 	/** @see [[bVirtualScroll.getOptionKey]] */
-	getOptionKey(data: unknown, index: number): string {
-		return String(this.ctx.getOptionKey(data, index));
+	getItemKey(data: object, index: number): string {
+		return String(this.ctx.getItemKey(data, index));
 	}
 
 	/**
@@ -135,7 +135,7 @@ export default class ComponentRender extends Friend {
 
 			if (canCache) {
 				const
-					key = this.getOptionKey(item.data, item.index),
+					key = this.getItemKey(item.data, item.index),
 					node = this.getCachedComponent(key);
 
 				if (node) {
@@ -157,7 +157,7 @@ export default class ComponentRender extends Friend {
 					item = needRender[i][0],
 					indexesToAssign = needRender[i][1],
 					node = nodes[i],
-					key = this.getOptionKey(item.data, item.index);
+					key = this.getItemKey(item.data, item.index);
 
 				if (canCache) {
 					this.cacheNode(key, item.node = node);
@@ -178,12 +178,9 @@ export default class ComponentRender extends Friend {
 		const
 			{ctx: c, scrollRender: {items: totalItems}} = this;
 
-		const getOption = (itemParas: OptionEl, index: number) =>
-			Object.isFunction(c.option) ? c.option(itemParas, index) : c.option;
-
 		const render = (children: DataToRender[]) =>
 			<HTMLElement[]>c.vdom.render(children.map(({itemAttrs, itemParams, index}) =>
-				this.createElement(getOption(itemParams, index), itemAttrs)));
+				this.createElement(c.getItemComponentName(itemParams, index), itemAttrs)));
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({
 			attrs: {
@@ -210,14 +207,8 @@ export default class ComponentRender extends Friend {
 				itemParams = getItemEl(item.data, item.index),
 				itemIndex = item.index;
 
-			const attrs = Object.isFunction(c.optionProps) ?
-				c.optionProps(getItemEl(item.data, item.index), item.index, {
-					ctx: c,
-					key: this.getOptionKey(item.data, item.index)
-				}) :
-				c.optionProps;
-
-			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs), index: itemIndex});
+			const attrs = c.getItemAttrs(getItemEl(item.data, item.index), item.index);
+			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs!), index: itemIndex});
 		}
 
 		return render(children);

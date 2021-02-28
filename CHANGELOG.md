@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.148 (2021-??-??)
+
+#### :house: Internal
+
+* [`bVirtualScroll` is now implements `iItems` trait `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/471)
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :rocket: New Feature
