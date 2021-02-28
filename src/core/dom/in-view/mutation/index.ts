@@ -11,11 +11,11 @@ import { AsyncOptions } from 'core/async';
 
 import {
 
-	ObservableElement,
-	ObservableElementRect,
-	ObservableElementsThresholdMap,
-	InitOptions,
-	UnobserveOptions
+	InViewObservableElement,
+	InViewObservableElementRect,
+	InViewObservableElementsThresholdMap,
+	InViewInitOptions,
+	InViewUnobserveOptions
 
 } from 'core/dom/in-view/interface';
 
@@ -68,12 +68,12 @@ export default class InView extends Super {
 	/**
 	 * Map of elements that needs to be poll
 	 */
-	protected readonly pollingElements: ObservableElementsThresholdMap = new Map();
+	protected readonly pollingElements: InViewObservableElementsThresholdMap = new Map();
 
 	/**
 	 * Map of element positions
 	 */
-	protected map: Dictionary<ObservableElementRect[]> = {};
+	protected map: Dictionary<InViewObservableElementRect[]> = {};
 
 	/**
 	 * Initializes an observer
@@ -132,7 +132,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	observe(el: Element, opts: InitOptions): ObservableElement | false {
+	observe(el: Element, opts: InViewInitOptions): InViewObservableElement | false {
 		const
 			observable = super.observe(el, opts);
 
@@ -154,7 +154,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	unobserve(el: Element, unobserveOptsOrThreshold?: UnobserveOptions | number): boolean {
+	unobserve(el: Element, unobserveOptsOrThreshold?: InViewUnobserveOptions | number): boolean {
 		const
 			res = super.unobserve(el, unobserveOptsOrThreshold);
 
@@ -245,7 +245,7 @@ export default class InView extends Super {
 	 */
 	protected createMap(): void {
 		const
-			map: Dictionary<ObservableElementRect[]> = {},
+			map: Dictionary<InViewObservableElementRect[]> = {},
 			rootRect = getRootRect();
 
 		this.elements.forEach((thresholdMap) => {
@@ -273,7 +273,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	protected maps(): ObservableElementsThresholdMap {
+	protected maps(): InViewObservableElementsThresholdMap {
 		return new Map([
 			...super.maps(),
 			...this.pollingElements
@@ -284,7 +284,7 @@ export default class InView extends Super {
 	 * Initializes an observer
 	 * @param observable
 	 */
-	protected initObserve(observable: ObservableElement): ObservableElement {
+	protected initObserve(observable: InViewObservableElement): InViewObservableElement {
 		if (!observable.polling) {
 			this.putInMap(this.elements, observable);
 			this.recalculateDeffer();
@@ -297,7 +297,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	protected getElMap(el: Element): ObservableElementsThresholdMap {
+	protected getElMap(el: Element): InViewObservableElementsThresholdMap {
 		const res = super.getElMap(el);
 
 		if (res.has(el)) {
@@ -308,7 +308,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	protected clearAllAsync(el: ObservableElement): void {
+	protected clearAllAsync(el: InViewObservableElement): void {
 		const
 			{async: $a} = this;
 
@@ -324,7 +324,7 @@ export default class InView extends Super {
 	 * Handler: element becomes visible on viewport
 	 * @param observable
 	 */
-	protected onObservableIn(observable: ObservableElement): void {
+	protected onObservableIn(observable: InViewObservableElement): void {
 		const asyncOptions = {
 			group: 'inView',
 			label: observable.id,
@@ -354,7 +354,7 @@ export default class InView extends Super {
 	 * Handler: element leaves viewport
 	 * @param observable
 	 */
-	protected onObservableOut(observable: ObservableElement): void {
+	protected onObservableOut(observable: InViewObservableElement): void {
 		const asyncOptions = {
 			group: 'inView',
 			label: observable.id,

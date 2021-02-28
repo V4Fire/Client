@@ -15,7 +15,7 @@ import { deprecated } from 'core/functools/deprecation';
 
 import { wrapAsDelegateHandler } from 'core/dom';
 
-import { InitOptions, InViewAdapter } from 'core/dom/in-view';
+import { InViewInitOptions, InViewAdapter } from 'core/dom/in-view';
 import { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
 import { ComponentElement } from 'core/component';
@@ -47,7 +47,8 @@ export default class DOM extends Friend {
 			return currentInstance;
 		}
 
-		return this.ctx.tmp[inViewInstanceStore] = this.async.promise(import('core/dom/in-view')).then(({inViewFactory}) => inViewFactory());
+		return this.ctx.tmp[inViewInstanceStore] = this.async.promise(import('core/dom/in-view'))
+			.then(({inViewFactory}) => inViewFactory());
 	}
 
 	/**
@@ -330,7 +331,7 @@ export default class DOM extends Friend {
 	 * @param asyncOptions
 	 */
 	@deprecated({renamedTo: 'watchForIntersection'})
-	watchForNodeIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+	watchForNodeIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
 		return this.watchForIntersection(el, options, asyncOptions);
 	}
 
@@ -341,7 +342,7 @@ export default class DOM extends Friend {
 	 * @param options
 	 * @param asyncOptions
 	 */
-	watchForIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+	watchForIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
 		const
 			{ctx} = this,
 			inViewInstance = this.localInView;

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.148 (2021-??-??)
+
+####  :nail_care: Polish
+
+* [Interface names review `core/dom/in-view`](https://github.com/V4Fire/Client/issues/405)
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :rocket: New Feature
