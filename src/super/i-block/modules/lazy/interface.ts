@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOptions } from 'core/async';
-import iBlock from 'super/i-block/i-block';
+import type { AsyncOptions } from 'core/async';
+import type iBlock from 'super/i-block/i-block';
 
 export interface CreateLazyFnOptions extends AsyncOptions {
 	delay?: number;

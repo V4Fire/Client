@@ -11,12 +11,12 @@ import symbolGenerator from 'core/symbol';
 import { InViewAdapter, InitOptions, inViewFactory } from 'core/dom/in-view';
 
 import { Friend } from 'super/i-block/i-block';
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
+import type ComponentRender from 'base/b-virtual-scroll/modules/component-render';
+import type ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { RenderItem } from 'base/b-virtual-scroll/interface';
+import type { RenderItem } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();

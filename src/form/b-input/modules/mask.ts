@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bInput from 'form/b-input/b-input';
+import type bInput from 'form/b-input/b-input';
 
 export const
 	$$ = symbolGenerator();

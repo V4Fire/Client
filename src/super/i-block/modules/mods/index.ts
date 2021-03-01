@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
-import { ModsTable, ModsNTable } from 'super/i-block/modules/mods/interface';
+import type iBlock from 'super/i-block/i-block';
+import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods/interface';
 
 export * from 'super/i-block/modules/mods/interface';
 

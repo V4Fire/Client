@@ -23,7 +23,8 @@ import { providers } from 'core/data/const';
 
 //#if runtime has core/data
 
-import Provider, {
+import type Provider from 'core/data';
+import type {
 
 	RequestQuery,
 	RequestBody,
@@ -35,7 +36,9 @@ import Provider, {
 
 //#endif
 
-import Async, { AsyncOptions } from 'core/async';
+import type Async from 'core/async';
+import type { AsyncOptions } from 'core/async';
+
 import iProgress from 'traits/i-progress/i-progress';
 
 import iBlock, {
@@ -61,7 +64,7 @@ import iBlock, {
 
 import { providerMethods } from 'super/i-data/const';
 
-import {
+import type {
 
 	UnsafeIData,
 

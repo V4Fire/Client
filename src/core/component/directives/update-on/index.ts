@@ -9,7 +9,7 @@
 import { VNode, ComponentDriver } from 'core/component/engines';
 
 import engine from 'core/component/directives/update-on/engines';
-import { DirectiveOptions, DirectiveValue } from 'core/component/directives/update-on/interface';
+import type { DirectiveOptions, DirectiveValue } from 'core/component/directives/update-on/interface';
 
 export * from 'core/component/directives/update-on/const';
 export * from 'core/component/directives/update-on/interface';

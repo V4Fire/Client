@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.148 (2021-03-01)
+
+#### :house: Internal
+
+* Added `importsNotUsedAsValues` to `.tsconfig`
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :rocket: New Feature

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { HintPosition } from 'global/g-hint/interface';
+import type { HintPosition } from 'global/g-hint/interface';
 
 export interface Item extends Dictionary {
 	/**

@@ -25,7 +25,7 @@ import iWidth from 'traits/i-width/i-width';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import { Active, Item, Items } from 'base/b-list/interface';
+import type { Active, Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';

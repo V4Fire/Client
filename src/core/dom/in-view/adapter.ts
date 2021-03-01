@@ -8,10 +8,10 @@
 
 import { deprecate } from 'core/functools/deprecation';
 
-import MutationObserverStrategy from 'core/dom/in-view/mutation';
-import IntersectionObserverStrategy from 'core/dom/in-view/intersection';
+import type MutationObserverStrategy from 'core/dom/in-view/mutation';
+import type IntersectionObserverStrategy from 'core/dom/in-view/intersection';
 
-import {
+import type {
 
 	InViewGroup,
 	InitOptions,

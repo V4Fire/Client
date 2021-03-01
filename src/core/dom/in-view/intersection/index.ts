@@ -7,11 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
-import { ObservableElement } from 'core/dom/in-view/interface';
-import { hasIntersection } from 'core/dom/in-view/intersection/helpers';
-
 import Super from 'core/dom/in-view/super';
+
+import { hasIntersection } from 'core/dom/in-view/intersection/helpers';
+import type { ObservableElement } from 'core/dom/in-view/interface';
 
 export type AdapteeType =
 	'observer';

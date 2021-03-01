@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VNodeDirective } from 'core/component/engines';
+import type { VNodeDirective } from 'core/component/engines';
 
-import MutationObserverStrategy from 'core/dom/in-view/mutation';
-import IntersectionObserverStrategy from 'core/dom/in-view/intersection';
+import type MutationObserverStrategy from 'core/dom/in-view/mutation';
+import type IntersectionObserverStrategy from 'core/dom/in-view/intersection';
 
 export interface Observable {
 	id: string;

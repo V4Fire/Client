@@ -6,17 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
-
-import {
+import type {
 
 	Namespace as SuperNamespace,
+
 	AsyncOptions,
 	AsyncCbOptions,
 	AsyncOnOptions,
+
 	ProxyCb
 
 } from '@v4fire/core/core/async/interface';
+
+import type Async from 'core/async';
 
 export * from '@v4fire/core/core/async/interface';
 

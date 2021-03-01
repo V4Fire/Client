@@ -47,7 +47,7 @@ import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/modules/helpers';
 
-import {
+import type {
 
 	GetData,
 	RequestFn,
@@ -215,6 +215,7 @@ export default class bVirtualScroll extends iData {
 	}
 
 	/** @override */
+	// @ts-ignore (getter instead readonly)
 	protected get requestParams(): RequestParams {
 		return {
 			get: {

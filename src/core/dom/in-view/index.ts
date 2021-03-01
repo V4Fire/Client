@@ -17,7 +17,7 @@ import InViewAdapter from 'core/dom/in-view/adapter';
 import { getAdaptee } from 'core/dom/in-view/helpers';
 
 import MutationObserverStrategy from 'core/dom/in-view/mutation';
-import { AdapteeType } from 'core/dom/in-view/interface';
+import type { AdapteeType } from 'core/dom/in-view/interface';
 
 export { default as InViewAdapter } from 'core/dom/in-view/adapter';
 export * from 'core/dom/in-view/interface';

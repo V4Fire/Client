@@ -13,7 +13,7 @@ import { ResizeWatcher } from 'core/dom/resize-observer';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
 import iData, { component } from 'super/i-data/i-data';
-import { Directives, Modules } from 'base/b-dummy/interface';
+import type { Directives, Modules } from 'base/b-dummy/interface';
 
 const
 	inViewMutation = inViewFactory('mutation'),

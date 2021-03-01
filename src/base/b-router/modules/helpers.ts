@@ -7,7 +7,7 @@
  */
 
 import { routeNames } from 'base/b-router/const';
-import { Route, EngineRoute, RouteBlueprint, InitialRoute } from 'base/b-router/interface';
+import type { Route, EngineRoute, RouteBlueprint, InitialRoute } from 'base/b-router/interface';
 
 /**
  * Returns a name of the specified route

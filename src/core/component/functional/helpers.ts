@@ -9,7 +9,7 @@
 import { $$ } from 'core/component/functional/const';
 
 import * as init from 'core/component/construct';
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Emits destroying of the specified component

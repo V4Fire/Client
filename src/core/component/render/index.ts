@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import { VNode } from 'core/component/engines';
-import { ComponentInterface } from 'core/component/interface';
-import { RenderObject } from 'core/component/render/interface';
+import type { VNode } from 'core/component/engines';
+import type { ComponentInterface } from 'core/component/interface';
+import type { RenderObject } from 'core/component/render/interface';
 
 export * from 'core/component/render/interface';
 

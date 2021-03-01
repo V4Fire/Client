@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iStaticPage, { ComponentElement } from 'super/i-static-page/i-static-page';
+import type iStaticPage from 'super/i-static-page/i-static-page';
+import type { ComponentElement } from 'super/i-static-page/i-static-page';
 
 globalThis.renderComponents = (
 	componentName: string,

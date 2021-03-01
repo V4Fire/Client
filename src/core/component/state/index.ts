@@ -16,7 +16,7 @@ import watch from 'core/object/watch';
 import { emitter as NetEmitter, NetStatus } from 'core/net';
 import { emitter as SessionEmitter, Session } from 'core/session';
 
-import { State } from 'core/component/state/interface';
+import type { State } from 'core/component/state/interface';
 
 export * from 'core/component/state/interface';
 

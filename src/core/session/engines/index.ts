@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncStorageNamespace } from 'core/kv-storage';
+import type { AsyncStorageNamespace } from 'core/kv-storage';
 
 let
 	engine: Promise<AsyncStorageNamespace>;

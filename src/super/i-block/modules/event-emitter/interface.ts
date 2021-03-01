@@ -6,11 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, {
+import type Async from 'core/async';
+import type {
 
 	AsyncOnOptions,
 	AsyncOnceOptions,
 	ClearOptionsId,
+
 	ProxyCb,
 	EventEmitterLike as AsyncEventEmitterLike
 

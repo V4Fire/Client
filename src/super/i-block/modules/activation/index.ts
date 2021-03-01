@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 import { runHook } from 'core/component';
 
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 
 import {
 

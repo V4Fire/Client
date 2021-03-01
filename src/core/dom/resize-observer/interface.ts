@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentInterface } from 'core/component';
+import type { ComponentInterface } from 'core/component';
 
 export interface ResizeWatcherObserverOptions {
 	/**

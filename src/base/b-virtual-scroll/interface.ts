@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { UnsafeIData } from 'super/i-data/i-data';
-import { ComponentVNodeData } from 'core/component/vnode';
+import type { UnsafeIData } from 'super/i-data/i-data';
+import type { ComponentVNodeData } from 'core/component/vnode';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: DataState<T>): Dictionary<Dictionary>;

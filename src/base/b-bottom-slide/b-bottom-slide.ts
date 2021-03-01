@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 
 import History from 'traits/i-history/history';
-import iHistory from 'traits/i-history/i-history';
+import type iHistory from 'traits/i-history/i-history';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
@@ -38,8 +38,8 @@ import iBlock, {
 
 } from 'super/i-block/i-block';
 
-import { HeightMode, Direction } from 'base/b-bottom-slide/interface';
 import { heightMode } from 'base/b-bottom-slide/const';
+import type { HeightMode, Direction } from 'base/b-bottom-slide/interface';
 
 export * from 'super/i-data/i-data';
 

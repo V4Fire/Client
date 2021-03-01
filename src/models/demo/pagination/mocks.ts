@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { MiddlewareParams, MockCustomResponse } from 'models/demo';
-import { RequestState, RequestQuery, ResponseItem } from 'models/demo/pagination/interface';
+import type { MiddlewareParams, MockCustomResponse } from 'models/demo';
+import type { RequestState, RequestQuery, ResponseItem } from 'models/demo/pagination/interface';
 
 async function sleep(t: number): Promise<void> {
 	return new Promise((res) => {

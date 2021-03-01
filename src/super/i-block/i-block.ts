@@ -96,7 +96,7 @@ import {
 import { initGlobalListeners, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { readyStatuses, activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/activation';
 
-import {
+import type {
 
 	Stage,
 	ComponentStatus,

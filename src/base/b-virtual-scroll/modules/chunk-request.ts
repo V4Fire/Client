@@ -9,11 +9,11 @@
 import symbolGenerator from 'core/symbol';
 import Friend from 'super/i-block/modules/friend';
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
-import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
-import { isAsyncClearError } from 'base/b-virtual-scroll/modules/helpers';
+import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import type ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
-import { RemoteData, DataState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
+import { isAsyncClearError } from 'base/b-virtual-scroll/modules/helpers';
+import type { RemoteData, DataState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();

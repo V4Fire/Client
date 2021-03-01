@@ -6,9 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bForm from 'form/b-form/b-form';
-import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
-import { RequestQuery, RequestBody } from 'super/i-data/i-data';
+import type bForm from 'form/b-form/b-form';
+
+import type iInput from 'super/i-input/i-input';
+import type { ValidationError as InputValidationError } from 'super/i-input/i-input';
+
+import type { RequestQuery, RequestBody } from 'super/i-data/i-data';
 
 export interface ValidationError<V = unknown> {
 	el: iInput;

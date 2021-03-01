@@ -17,7 +17,7 @@ import { bindingRgxp, customWatcherRgxp, getPropertyInfo, SyncLinkCache } from '
 import Friend from 'super/i-block/modules/friend';
 import { statuses } from 'super/i-block/const';
 
-import {
+import type {
 
 	LinkDecl,
 	PropLinks,

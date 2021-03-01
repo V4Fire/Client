@@ -8,8 +8,9 @@
 
 import { deprecate } from 'core/functools/deprecation';
 import { ComponentInterface } from 'core/component/interface';
+
 import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/reflection/const';
-import { PropertyInfo } from 'core/component/reflection/interface';
+import type { PropertyInfo } from 'core/component/reflection/interface';
 
 /**
  * Returns an information object of a component property by the specified path

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ModsTable } from 'form/b-input/b-input';
+import type { ModsTable } from 'form/b-input/b-input';
 
 export interface Option {
 	label: string;

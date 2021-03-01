@@ -12,14 +12,13 @@
  */
 
 import { deprecated } from 'core/functools/deprecation';
-
 import { wrapAsDelegateHandler } from 'core/dom';
 
-import { InitOptions, InViewAdapter } from 'core/dom/in-view';
-import { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
+import type { InitOptions, InViewAdapter } from 'core/dom/in-view';
+import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
-import { ComponentElement } from 'core/component';
-import { AsyncOptions } from 'core/async';
+import type { AsyncOptions } from 'core/async';
+import type { ComponentElement } from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';

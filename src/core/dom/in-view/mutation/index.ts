@@ -7,9 +7,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { AsyncOptions } from 'core/async';
+import type { AsyncOptions } from 'core/async';
 
-import {
+import type {
 
 	ObservableElement,
 	ObservableElementRect,

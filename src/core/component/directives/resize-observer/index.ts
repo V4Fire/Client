@@ -7,12 +7,12 @@
 */
 
 import { ComponentDriver, VNode } from 'core/component/engines';
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 import { DIRECTIVE_BIND } from 'core/component/directives/resize-observer/const';
 
-import {
+import type {
 
 	DirectiveOptions,
 	ResizeWatcherObservable,
