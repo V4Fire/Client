@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.149 (2021-03-01)
+
+#### :bug: Bug Fix
+
+* Don't generate `.init.js` with `--fat-html` `iStaticPage`
+
 ## v3.0.0-rc.148 (2021-03-01)
 
 #### :house: Internal
