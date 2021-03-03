@@ -418,6 +418,7 @@ module.exports = function init(gulp = require('gulp')) {
 		const cliArgs = arg({
 			'--reinit-browser': String,
 			'--only-run': Boolean,
+			'--bail': Boolean,
 			'--browser-args': String
 		}, {permissive: true});
 
@@ -526,6 +527,12 @@ module.exports = function init(gulp = require('gulp')) {
 		const
 			totalCases = [],
 			failedCases = [],
+			printFailed = () => {
+				if (failedCases.length) {
+					console.log('\n❗ Failed tests:');
+					console.log(`\n${failedCases.join('\n')}`);
+				}
+			},
 			testMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
@@ -563,6 +570,11 @@ module.exports = function init(gulp = require('gulp')) {
 					() => {
 						onTestEnd(argsString);
 						failedCases.push(argsString);
+
+						if (cliArgs['--bail']) {
+							printFailed();
+							process.exit();
+						}
 					})
 			);
 		}
@@ -573,10 +585,7 @@ module.exports = function init(gulp = require('gulp')) {
 		console.log(`\n✔ Tests passed: ${totalCases.filter((v) => !failedCases.includes(v)).length}`);
 		console.log(`\n❌ Tests failed: ${failedCases.length}`);
 
-		if (failedCases.length) {
-			console.log('\n❗ Failed tests:');
-			console.log(`\n${failedCases.join('\n')}`);
-		}
+		printFailed();
 
 		console.log('\n-------------\n');
 
