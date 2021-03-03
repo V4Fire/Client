@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.150 (2021-03-03)
+
+#### :house: Internal
+
+* Downgraded the delay before initializing to `15ms`
+* Some optimizations
+
 ## v3.0.0-rc.126 (2021-01-26)
 
 #### :bug: Bug Fix

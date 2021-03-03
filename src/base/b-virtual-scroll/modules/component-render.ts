@@ -51,13 +51,6 @@ export default class ComponentRender extends Friend {
 	}
 
 	/**
-	 * Link to the component $createElement method
-	 */
-	protected get createElement(): bVirtualScroll['$createElement'] {
-		return this.ctx.$createElement.bind(this.ctx);
-	}
-
-	/**
 	 * Classname for options
 	 */
 	get optionClass(): CanUndef<string> {
@@ -181,9 +174,12 @@ export default class ComponentRender extends Friend {
 		const getOption = (itemParas: OptionEl, index: number) =>
 			Object.isFunction(c.option) ? c.option(itemParas, index) : c.option;
 
-		const render = (children: DataToRender[]) =>
-			<HTMLElement[]>c.vdom.render(children.map(({itemAttrs, itemParams, index}) =>
-				this.createElement(getOption(itemParams, index), itemAttrs)));
+		const render = (children: DataToRender[]) => {
+			const map = ({itemAttrs, itemParams, index}) =>
+				this.ctx.$createElement(getOption(itemParams, index), itemAttrs);
+
+			return <HTMLElement[]>c.vdom.render(children.map(map));
+		};
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({
 			attrs: {
