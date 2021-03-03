@@ -56,8 +56,11 @@ class DOM {
 	/**
 	 * @see [[BrowserTests.DOM.clickToRef]]
 	 */
-	clickToRef(ctx, refName, clickOptions) {
-		return ctx.click(this.getRefSelector(refName), clickOptions);
+	clickToRef(ctx, refName, clickOptions = {}) {
+		return ctx.click(this.getRefSelector(refName), {
+			force: true,
+			...clickOptions
+		});
 	}
 
 	/**
@@ -122,7 +125,7 @@ class DOM {
 	 */
 	elNameSelectorGenerator(blockName, elName) {
 		if (elName) {
-			return `.${blockName}__${elName}`
+			return `.${blockName}__${elName}`;
 		}
 
 		return (elName) => `.${blockName}__${elName}`;

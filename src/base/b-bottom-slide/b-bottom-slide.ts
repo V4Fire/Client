@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
 
 import History from 'traits/i-history/history';
 import type iHistory from 'traits/i-history/i-history';
@@ -858,37 +859,39 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch(':changeStep')
 	@hook('mounted')
 	@wait('ready')
-	protected async onStepChange(): Promise<void> {
-		const [win, view] = await Promise.all([
+	protected onStepChange(): void {
+		this.async.promise(SyncPromise.all([
 			this.waitRef<HTMLElement>('window', {label: $$.onStepChange}),
 			this.waitRef<HTMLElement>('view')
-		]);
+		]), {label: $$.waitForRefsInStepChange})
+			.then(([win, view]) => {
+				this.isStepTransitionInProgress = true;
 
-		this.isStepTransitionInProgress = true;
+				this.async.once(win, 'transitionend', () => {
+					if (this.isFullyOpened) {
+						this.lock().catch(stderr);
+						void this.removeMod('events', false);
 
-		this.async.once(win, 'transitionend', () => {
-			if (this.isFullyOpened) {
-				this.lock().catch(stderr);
-				void this.removeMod('events', false);
+					} else {
+						this.unlock().catch(stderr);
+						void this.setMod('events', false);
 
-			} else {
-				this.unlock().catch(stderr);
-				void this.setMod('events', false);
+						if (this.scrollToTopOnClose) {
+							view.scrollTo(0, 0);
+						}
+					}
 
-				if (this.scrollToTopOnClose) {
-					view.scrollTo(0, 0);
-				}
-			}
+					this.isStepTransitionInProgress = false;
 
-			this.isStepTransitionInProgress = false;
+					if (this.componentStatus === 'destroyed') {
+						this.removeFromDOMIfPossible();
+					}
 
-			if (this.componentStatus === 'destroyed') {
-				this.removeFromDOMIfPossible();
-			}
+				}, {group: ':zombie', label: $$.waitAnimationToFinish});
 
-		}, {group: ':zombie', label: $$.waitAnimationToFinish});
-
-		this.stickToStep();
+				this.stickToStep();
+			})
+			.catch(stderr);
 	}
 
 	/**

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.150 (2021-03-03)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with scroll unlock on close `base/b-bottom-slide`
+
 ## v3.0.0-rc.149 (2021-03-01)
 
 #### :bug: Bug Fix
