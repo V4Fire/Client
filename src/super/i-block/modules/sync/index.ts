@@ -649,7 +649,7 @@ export default class Sync extends Friend {
 
 		const merge = (...args) => Object.mixin({
 			deep: true,
-			extendFilter: (d, v) => Object.isDictionary(v)
+			extendFilter: (el) => Object.isDictionary(el)
 		}, undefined, ...args);
 
 		const setField = (path, val) => {
