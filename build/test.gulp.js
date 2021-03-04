@@ -575,13 +575,14 @@ module.exports = function init(gulp = require('gulp')) {
 		const
 			totalCases = [],
 			failedCases = [],
-			printFailed = () => {
-				if (failedCases.length) {
-					console.log('\n❗ Failed tests:');
-					console.log(`\n${failedCases.join('\n')}`);
-				}
-			},
 			testMap = new Map();
+
+		const printFailed = () => {
+			if (failedCases.length) {
+				console.log('\n❗ Failed tests:');
+				console.log(`\n${failedCases.join('\n')}`);
+			}
+		};
 
 		for (let i = 0; i < cases.length; i++) {
 			let

@@ -9,12 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.151 (2021-03-03)
+## v3.0.0-rc.??? (2021-??-??)
 
-* Added `force=true` in default options `DOM.clickToRef`. It fixed a bug where clicking on a visible element
+#### :rocket: New Feature
+
+* Added a new option `--bail` to stop test execution after the first failure
+
+#### :bug: Bug Fix:wq
+
+* Added `force=true` to default options `DOM.clickToRef`. It fixed a bug where clicking at a visible element
   did not work because the playwright decided that the element was not visible.
-
-* Added `--bail` option to stop test execution after first failure.
 
 ## v3.0.0-rc.90 (2020-10-22)
 
