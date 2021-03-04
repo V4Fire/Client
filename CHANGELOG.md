@@ -11,13 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.150 (2021-03-03)
+## v3.0.0-rc.151 (2021-03-04)
 
 #### :house: Internal
 
 * `bVirtualScroll`:
   * Downgraded the delay before initializing to `15ms`
   * Some optimizations
+
+## v3.0.0-rc.150 (2021-03-03)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the scroll unlocking during close `base/b-bottom-slide`
 
 ## v3.0.0-rc.149 (2021-03-01)
 
