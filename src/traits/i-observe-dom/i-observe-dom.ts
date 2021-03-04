@@ -115,7 +115,7 @@ export default abstract class iObserveDOM {
 	 * @param [records]
 	 * @param [opts]
 	 *
-	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
+	 * @emits `DOMChange(records?: MutationRecord[], options?: ObserverOptions)`
 	 */
 	static onDOMChange<T extends iBlock>(
 		component: T & iObserveDOM,
@@ -126,14 +126,14 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Returns true if MutationObserver is already observing the specified node
+	 * Returns true if `MutationObserver` is already observing the specified node
 	 */
 	static isNodeBeingObserved<T extends iBlock & iObserveDOM>(component: T, node: Element): boolean {
 		return this.getObserversMap(component).has(node);
 	}
 
 	/**
-	 * Returns a component observers map
+	 * Returns a map of component observers
 	 * @param component
 	 */
 	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {
