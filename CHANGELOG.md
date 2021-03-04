@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added try-catch block to suppress async errors on component rerender in `iBlock.onUpdateHook`
+* Added a `try-catch` block to suppress async errors on component rerender in `iBlock.onUpdateHook`
 
 ## v3.0.0-rc.151 (2021-03-04)
 

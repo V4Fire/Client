@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* Added try-catch block to suppress async errors on component rerender in `onUpdateHook`
+* Added a `try-catch` block to suppress async errors on component rerender in `onUpdateHook`
 
 ## v3.0.0-rc.142 (2021-02-11)
 
