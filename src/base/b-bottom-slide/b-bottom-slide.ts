@@ -58,8 +58,8 @@ export const
 export default class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, iObserveDOM, iHistory {
 	/**
 	 * Component height mode:
-	 * 1. "content" – the height value is based on a component content, but no more than the viewport height
-	 * 2. "full" – the height value is equal to the viewport height
+	 * 1. `content` – the height value is based on a component content, but no more than the viewport height
+	 * 2. `full` – the height value is equal to the viewport height
 	 */
 	@prop({type: String, validator: Object.hasOwnProperty(heightMode)})
 	readonly heightMode: HeightMode = 'full';
@@ -185,6 +185,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		events: [
 			'true',
 			['false']
+		],
+
+		heightMode: [
+			'content',
+			'full'
 		]
 	};
 

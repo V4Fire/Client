@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation
+
 ## v3.0.0-rc.150 (2021-03-03)
 
 #### :bug: Bug Fix

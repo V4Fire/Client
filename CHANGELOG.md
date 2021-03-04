@@ -24,6 +24,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added `force=true` to default options `DOM.clickToRef`. It fixed a bug where clicking at a visible element
   did not work because the playwright decided that the element was not visible. `tests`
 
+#### :memo: Documentation
+
+* Added documentation:
+  * `b-slider`
+  * `b-bottom-slide`
+  * `i-observe-dom`
+
 #### :house: Internal
 
 * [`bVirtualScroll` is now implements `iItems` trait `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/471)
@@ -385,6 +392,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed `bMatryoshka`. Use `bTree` instead.
 * Trait refactoring. Using `item` instead of `option`. `traits/i-items`
+* Refactoring for the updated `iItems` API `b-slider`
 
 #### :rocket: New Feature
 
