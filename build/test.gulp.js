@@ -1,5 +1,7 @@
 /* eslint-disable max-lines-per-function */
 
+// @ts-check
+
 'use strict';
 
 /*!
@@ -13,7 +15,8 @@
 const
 	os = require('os'),
 	path = require('upath'),
-	arg = require('arg');
+	arg = require('arg'),
+	glob = require('glob');
 
 const
 	{build, src} = require('config'),
@@ -26,6 +29,8 @@ const
 
 /**
  * Registers gulp tasks to test the project
+ *
+ * @see https://github.com/V4Fire/Client/blob/master/docs/tests/README.md
  *
  * @example
  * ```bash
@@ -194,8 +199,8 @@ module.exports = function init(gulp = require('gulp')) {
 
 		const cliParams = {
 			headless: true,
-			'reinit-browser': false,
-			close: true
+			close: true,
+			'reinit-browser': false
 		};
 
 		Object.keys(cliParams).forEach((key) => {
@@ -228,7 +233,7 @@ module.exports = function init(gulp = require('gulp')) {
 		const
 			entryPoint = args['--test-entry'],
 			testPath = entryPoint ? resolve.blockSync(entryPoint) : path.join(componentDir, 'test'),
-			test = require(testPath);
+			runners = glob.sync(path.join(testPath, `runners/${args['--runner'] ?? '**/*'}.js`));
 
 		const browserParams = {
 			chromium: {},
@@ -236,21 +241,54 @@ module.exports = function init(gulp = require('gulp')) {
 			webkit: {}
 		};
 
-		const
-			browsersPromises = [];
+		if (runners.length) {
+			for (let i = 0; i < runners.length; i++) {
+				const
+					runner = runners[i];
 
-		for (const browserType of browsers) {
-			browsersPromises.push(createBrowser(browserType));
-		}
+				globalThis.V4FIRE_TEST_ENV = {
+					testPath,
+					runner
+				};
 
-		await Promise.all(browsersPromises);
+				await initBrowserAndTests();
+			}
 
-		for (const browserType of browsers) {
-			await runTest(browserType);
+		} else {
+			globalThis.V4FIRE_TEST_ENV = {
+				testPath
+			};
+
+			await initBrowserAndTests();
 		}
 
 		await server.close();
 
+		/**
+		 * Initializes browsers and starts tests
+		 * @returns {!Promise<void>}
+		 */
+		async function initBrowserAndTests() {
+			const
+				browsersPromises = [];
+
+			for (const browserType of browsers) {
+				browsersPromises.push(createBrowser(browserType));
+			}
+
+			await Promise.all(browsersPromises);
+
+			for (const browserType of browsers) {
+				await runTest(browserType);
+			}
+		}
+
+		/**
+		 * Returns the pre-configured `Jasmine` test environment
+		 *
+		 * @param {string} browserType
+		 * @returns {jasmine.Env}
+		 */
 		function getTestEnv(browserType) {
 			const
 				Jasmine = require('jasmine'),
@@ -259,7 +297,7 @@ module.exports = function init(gulp = require('gulp')) {
 			jasmine.configureDefaultReporter({});
 			Object.assign(globalThis, jasmine.env);
 
-			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (10).seconds();
+			globalThis.jasmine.DEFAULT_TIMEOUT_INTERVAL = (30).seconds();
 
 			console.log('\n-------------');
 			console.log('Starting to test');
@@ -268,15 +306,22 @@ module.exports = function init(gulp = require('gulp')) {
 				console.log(`${dep} version: ${require(`${dep}/package.json`).version}`);
 			});
 
+			console.log(`port: ${args['--port']}`);
 			console.log(`env component: ${args['--name']}`);
 			console.log(`test entry: ${args['--test-entry']}`);
-			console.log(`runner: ${args['--runner']}`);
+			console.log(`runner: ${globalThis.V4FIRE_TEST_ENV.runner}`);
 			console.log(`browser: ${browserType}`);
 			console.log('-------------\n');
 
 			return jasmine.env;
 		}
 
+		/**
+		 * Creates and stores a browser instance
+		 *
+		 * @param {string} browserType
+		 * @returns {!Promise<void>}
+		 */
 		async function createBrowser(browserType) {
 			const browserInstanceParams = {
 				headless: cliParams.headless
@@ -316,9 +361,16 @@ module.exports = function init(gulp = require('gulp')) {
 			};
 		}
 
+		/**
+		 * Runs a test in the specified browser
+		 *
+		 * @param {string} browserType
+		 * @returns {!Promise<void>}
+		 */
 		async function runTest(browserType) {
 			const
-				params = browserParams[browserType];
+				params = browserParams[browserType],
+				test = require(testPath);
 
 			const {
 				testURL,
@@ -327,6 +379,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 			await page.goto(testURL);
 			const testEnv = getTestEnv(browserType);
+			await test(page, params);
 
 			const close = () => {
 				if (!cliParams['reinit-browser'] && cliParams.close) {
@@ -335,11 +388,6 @@ module.exports = function init(gulp = require('gulp')) {
 
 				process.exitCode = exitCode;
 			};
-
-			if (await test(page, params) === false) {
-				close();
-				return;
-			}
 
 			testEnv.addReporter({
 				specDone: (res) => {
@@ -537,7 +585,7 @@ module.exports = function init(gulp = require('gulp')) {
 			}
 
 			// Set the beginning of the searching range for a free port
-			c = `${c} --start-port ${START_PORT + i * 100}`;
+			c = `${c} --start-port ${START_PORT + i * 10}`;
 
 			const args = arg({
 				'--name': String

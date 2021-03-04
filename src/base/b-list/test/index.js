@@ -14,8 +14,7 @@
 
 const
 	h = include('tests/helpers'),
-	u = include('tests/utils'),
-	test = u.getCurrentTest();
+	u = include('tests/utils');
 
 /**
  * Starts a test
@@ -25,6 +24,9 @@ const
  * @returns {!Promise<boolean>}
  */
 module.exports = async (page, params) => {
+	const
+		test = u.getCurrentTest();
+
 	await h.utils.setup(page, params.context);
 	return test(page);
 };

@@ -77,7 +77,7 @@ export const
 })
 
 export default class bRouter extends iData {
-	/* @override */
+	/** @override */
 	public async!: Async<this>;
 
 	/**

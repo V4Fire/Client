@@ -9,15 +9,10 @@
 // @ts-check
 
 const
-	{spawn} = require('child_process');
-
-const
 	arg = require('arg'),
-	path = require('upath'),
-	glob = require('glob');
+	path = require('upath');
 
 const
-	$C = require('collection.js'),
 	pzlr = require('@pzlr/build-core');
 
 /**
@@ -30,68 +25,20 @@ class TestUtils {
 	 */
 	getCurrentTest(options) {
 		const
-			args = arg({'--runner': String, '--name': String, '--test-entry': String}, {permissive: true}),
-			runner = args['--runner'] ?? '**/*';
+			args = arg({'--name': String, '--test-entry': String}, {permissive: true}),
+			{runner} = globalThis.V4FIRE_TEST_ENV;
 
 		options = {
 			testDirPath: args['--test-entry'] || `${args['--name']}/test`,
-			runnerPath: `${runner}.js`,
+			runnerPath: runner,
 			...options
 		};
 
 		const
 			testDirPath = pzlr.resolve.blockSync(options.testDirPath),
-			testPath = path.join(testDirPath, 'runners', options.runnerPath),
-			hasMagic = glob.hasMagic(testPath);
+			testPath = path.join(options.runnerPath ?? testDirPath);
 
-		const fns = (hasMagic ? glob.sync(testPath) : [testPath]).map((testPath) => [
-			path.relative(`${testDirPath}/runners`, testPath)
-				.replace(path.extname(testPath), ''),
-
-			require(testPath)
-		]);
-
-		return async (...args) => {
-			if (!hasMagic) {
-				await fns[0]?.[1](...args);
-				return true;
-			}
-
-			const
-				argv = process.argv.slice(1);
-
-			for (let i = 0; i < argv.length; i++) {
-				switch (argv[i]) {
-					case '--runner':
-						argv.splice(i, 2);
-						break;
-
-					case 'test:component':
-					case 'test:component:build':
-						argv[i] = 'test:component:run';
-						break;
-
-					default:
-						// Do nothing
-				}
-			}
-
-			await $C(fns).async.forEach(([runner, fn]) => {
-				if (!Object.isFunction(fn)) {
-					return;
-				}
-
-				const
-					child = spawn('node', [...argv, '--runner', runner]);
-
-				child.stdout.pipe(process.stdout);
-				child.stderr.pipe(process.stderr);
-
-				return new Promise((close) => child.on('close', close));
-			});
-
-			return false;
-		};
+		return require(testPath);
 	}
 }
 
