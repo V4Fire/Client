@@ -19,6 +19,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Downgraded the delay before initializing to `15ms`
   * Some optimizations
 
+* Caching of dynamic imports `super/i-block/modules/dom`
+
 ## v3.0.0-rc.150 (2021-03-03)
 
 #### :bug: Bug Fix
