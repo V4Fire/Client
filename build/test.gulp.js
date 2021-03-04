@@ -301,6 +301,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 			console.log('\n-------------');
 			console.log('Starting to test');
+			console.log(`typescript version: ${require('typescript/package.json').version}`);
 
 			pzlr.config.dependencies.forEach((dep) => {
 				console.log(`${dep} version: ${require(`${dep}/package.json`).version}`);
