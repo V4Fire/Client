@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :house: Internal
+
+* [`bVirtualScroll` is now implements `iItems` trait `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/471)
+
 #### :nail_care: Polish
 
 * [Interface names review `core/dom/in-view`](https://github.com/V4Fire/Client/issues/405)

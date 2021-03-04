@@ -66,7 +66,7 @@ export default class ChunkRequest extends Friend {
 	/**
 	 * Contains data that pending to be rendered
 	 */
-	pendingData: unknown[] = [];
+	pendingData: object[] = [];
 
 	/**
 	 * The object contains data from the main request and from all additional requests.
@@ -355,7 +355,7 @@ export default class ChunkRequest extends Friend {
 				this.lastLoadedChunk.raw = data;
 
 				const
-					converted = data != null ? ctx.convertDataToDB<RemoteData>(data) : undefined;
+					converted = data != null ? ctx.convertDataToDB<RemoteData>(<object>data) : undefined;
 
 				this.lastLoadedChunk.normalized = Object.size(converted?.data) <= 0 ?
 					this.lastLoadedChunk.normalized = [] :

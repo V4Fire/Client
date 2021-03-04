@@ -296,7 +296,7 @@ export default class ChunkRender extends Friend {
 		}
 
 		const
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getItemKey(item.data, item.index)}`;
 
 		if (!node) {
 			return;
@@ -320,7 +320,7 @@ export default class ChunkRender extends Friend {
 	 * @param data - data to render in item
 	 * @param index - index of the item
 	 */
-	protected createRenderItem(data: unknown, index: number): RenderItem {
+	protected createRenderItem(data: object, index: number): RenderItem {
 		return {
 			data,
 			index: this.itemsCount + index,
