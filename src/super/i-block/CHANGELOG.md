@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.152 (2021-03-04)
+
+#### :house: Internal
+
+* Added try-catch block to suppress async errors on component rerender in `onUpdateHook`
+
 ## v3.0.0-rc.142 (2021-02-11)
 
 #### :bug: Bug Fix
