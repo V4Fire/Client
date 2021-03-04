@@ -615,7 +615,7 @@ export default class Sync extends Friend {
 			}
 
 		} else {
-			destHead = path.split('.')[0];
+			destHead = path.split('.', 1)[0];
 		}
 
 		const
