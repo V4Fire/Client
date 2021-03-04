@@ -860,10 +860,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@hook('mounted')
 	@wait('ready')
 	protected onStepChange(): void {
-		this.async.promise(SyncPromise.all([
+		SyncPromise.all([
 			this.waitRef<HTMLElement>('window', {label: $$.onStepChange}),
 			this.waitRef<HTMLElement>('view')
-		]), {label: $$.waitForRefsInStepChange})
+		])
+
 			.then(([win, view]) => {
 				this.isStepTransitionInProgress = true;
 
@@ -891,6 +892,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 				this.stickToStep();
 			})
+
 			.catch(stderr);
 	}
 

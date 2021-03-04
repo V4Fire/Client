@@ -96,10 +96,7 @@ export default class ChunkRender extends Friend {
 	/** @override */
 	constructor(component: any) {
 		super(component);
-
-		this.ctx.meta.hooks.mounted.push({fn: () => {
-			this.initEventHandlers();
-		}});
+		this.component.on('componentHook:mounted', this.initEventHandlers.bind(this));
 	}
 
 	/**

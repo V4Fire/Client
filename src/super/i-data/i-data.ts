@@ -845,7 +845,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			}
 
 			const
-				m = key.split(':')[0],
+				m = key.split(':', 1)[0],
 				group = {group: `requestSync:${m}`};
 
 			$a

@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with scroll unlock on close
+* Fixed an issue with the scroll unlocking during close
 
 ## v3.0.0-rc.112 (2020-12-18)
 
