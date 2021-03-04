@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.152 (2021-03-04)
+
+#### :house: Internal
+
+* Added try-catch block to suppress async errors on component rerender in `iBlock.onUpdateHook`
+
 ## v3.0.0-rc.151 (2021-03-04)
 
 #### :rocket: New Feature
