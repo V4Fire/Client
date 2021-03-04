@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :nail_care: Polish
+
+* [Interface names review](https://github.com/V4Fire/Client/issues/405)
+
 ## v3.0.0-rc.106 (2020-12-09)
 
 #### :bug: Bug Fix

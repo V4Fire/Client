@@ -12,14 +12,15 @@ import Async from 'core/async';
 import type {
 
 	InViewGroup,
-	InitOptions,
+	InViewInitOptions,
 
-	ObservableElement,
-	ObservableElementsThresholdMap,
-	ObservableThresholdMap,
+	InViewObservableElement,
+	InViewObservableElementsThresholdMap,
+	InViewObservableThresholdMap,
 
-	Size,
-	UnobserveOptions
+	InViewObservableElSize,
+	InViewUnobserveOptions,
+	InViewObservablesByGroup
 
 } from 'core/dom/in-view/interface';
 
@@ -30,22 +31,22 @@ export default abstract class AbstractInView {
 	/**
 	 * Map of observable elements
 	 */
-	protected readonly elements: ObservableElementsThresholdMap = new Map();
+	protected readonly elements: InViewObservableElementsThresholdMap = new Map();
 
 	/**
 	 * Map of observable elements sorted by a group parameter
 	 */
-	protected readonly observablesByGroup: Map<InViewGroup, Map<Element, Map<number, ObservableElement>>> = new Map();
+	protected readonly observablesByGroup: InViewObservablesByGroup = new Map();
 
 	/**
 	 * Map of elements that was suspended
 	 */
-	protected readonly suspendedElements: ObservableElementsThresholdMap = new Map();
+	protected readonly suspendedElements: InViewObservableElementsThresholdMap = new Map();
 
 	/**
 	 * Queue of elements that wait to become observable
 	 */
-	protected readonly awaitingElements: ObservableElementsThresholdMap = new Map();
+	protected readonly awaitingElements: InViewObservableElementsThresholdMap = new Map();
 
 	/**
 	 * Async instance
@@ -145,12 +146,12 @@ export default abstract class AbstractInView {
 			}
 
 			map.delete(threshold);
-			this.observe(observable.node, <InitOptions>Object.reject(observable, fieldsToReject));
+			this.observe(observable.node, <InViewInitOptions>Object.reject(observable, fieldsToReject));
 
 		} else {
 			this.observablesByGroup.get(groupOrElement)?.forEach((elMap) => {
 				elMap.forEach((observable) => {
-					this.observe(observable.node, <InitOptions>Object.reject(observable, fieldsToReject));
+					this.observe(observable.node, <InViewInitOptions>Object.reject(observable, fieldsToReject));
 				});
 			});
 		}
@@ -162,7 +163,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param threshold
 	 */
-	getEl(el: Element, threshold: number): CanUndef<ObservableElement> {
+	getEl(el: Element, threshold: number): CanUndef<InViewObservableElement> {
 		const map = this.getThresholdMap(el);
 		return map?.get(threshold);
 	}
@@ -171,7 +172,7 @@ export default abstract class AbstractInView {
 	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
-	getThresholdMap(el: Element): CanUndef<ObservableThresholdMap> {
+	getThresholdMap(el: Element): CanUndef<InViewObservableThresholdMap> {
 		return this.getElMap(el).get(el);
 	}
 
@@ -179,7 +180,7 @@ export default abstract class AbstractInView {
 	 * Calls an observer function from the specified object
 	 * @param observable
 	 */
-	call(observable: ObservableElement): void {
+	call(observable: InViewObservableElement): void {
 		const count = Object.isFunction(observable.count) ?
 			observable.count() :
 			observable.count;
@@ -203,7 +204,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param opts
 	 */
-	observe(el: Element, opts: InitOptions): ObservableElement | false {
+	observe(el: Element, opts: InViewInitOptions): InViewObservableElement | false {
 		if (this.getEl(el, opts.threshold)) {
 			return false;
 		}
@@ -213,7 +214,7 @@ export default abstract class AbstractInView {
 			observable = this.createObservable(el, opts);
 
 		if (observable.group != null) {
-			let elMap: Map<Element, Map<number, ObservableElement>>;
+			let elMap: Map<Element, Map<number, InViewObservableElement>>;
 
 			if (observablesByGroup.has(observable.group)) {
 				elMap = observablesByGroup.get(observable.group)!;
@@ -260,7 +261,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param [unobserveOptsOrThreshold]
 	 */
-	unobserve(el: Element, unobserveOptsOrThreshold?: UnobserveOptions | number): boolean {
+	unobserve(el: Element, unobserveOptsOrThreshold?: InViewUnobserveOptions | number): boolean {
 		let
 			threshold: CanUndef<number>,
 			suspend: CanUndef<boolean>;
@@ -312,7 +313,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param opts
 	 */
-	protected createObservable(el: Element, opts: InitOptions): ObservableElement {
+	protected createObservable(el: Element, opts: InViewInitOptions): InViewObservableElement {
 		return {
 			id: String(Math.random()),
 			group: 'inView:base',
@@ -338,7 +339,7 @@ export default abstract class AbstractInView {
 	 * Creates a threshold map
 	 * @param observable
 	 */
-	protected createThresholdMap(observable: ObservableElement): ObservableThresholdMap {
+	protected createThresholdMap(observable: InViewObservableElement): InViewObservableThresholdMap {
 		return new Map([[observable.threshold, observable]]);
 	}
 
@@ -349,8 +350,8 @@ export default abstract class AbstractInView {
 	 * @param observable
 	 */
 	protected putInMap(
-		map: ObservableElementsThresholdMap,
-		observable: ObservableElement
+		map: InViewObservableElementsThresholdMap,
+		observable: InViewObservableElement
 	): boolean {
 		const
 			thresholdMap = map.get(observable.node);
@@ -369,7 +370,7 @@ export default abstract class AbstractInView {
 	/**
 	 * Returns all maps combined into one
 	 */
-	protected maps(): ObservableElementsThresholdMap {
+	protected maps(): InViewObservableElementsThresholdMap {
 		return new Map([
 			...this.elements,
 			...this.awaitingElements
@@ -380,7 +381,7 @@ export default abstract class AbstractInView {
 	 * Returns a map which contains the specified element
 	 * @param el
 	 */
-	protected getElMap(el: Element): ObservableElementsThresholdMap {
+	protected getElMap(el: Element): InViewObservableElementsThresholdMap {
 		return this.elements.has(el) ? this.elements : this.awaitingElements;
 	}
 
@@ -417,7 +418,7 @@ export default abstract class AbstractInView {
 	 * @param observable
 	 * @param size
 	 */
-	protected setObservableSize(observable: ObservableElement, size: Size): void {
+	protected setObservableSize(observable: InViewObservableElement, size: InViewObservableElSize): void {
 		observable.size.width = size.width;
 		observable.size.height = size.height;
 	}
@@ -426,7 +427,7 @@ export default abstract class AbstractInView {
 	 * Removes all async operations from the specified element
 	 * @param el
 	 */
-	protected clearAllAsync(el: ObservableElement): void {
+	protected clearAllAsync(el: InViewObservableElement): void {
 		const
 			{async: $a} = this;
 
@@ -441,7 +442,7 @@ export default abstract class AbstractInView {
 	 * @param observable
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected initObserve(observable: ObservableElement): CanUndef<ObservableElement> {
+	protected initObserve(observable: InViewObservableElement): CanUndef<InViewObservableElement> {
 		return undefined;
 	}
 
@@ -451,7 +452,7 @@ export default abstract class AbstractInView {
 	 * @param observable
 	 * @param [suspend]
 	 */
-	protected remove(observable: ObservableElement, suspend?: boolean): boolean {
+	protected remove(observable: InViewObservableElement, suspend?: boolean): boolean {
 		if (!suspend) {
 			if (observable.group != null) {
 				this.observablesByGroup.get(observable.group)?.delete(observable.node);

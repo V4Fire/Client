@@ -15,7 +15,7 @@ import { memoize } from 'core/promise/sync';
 import { deprecated } from 'core/functools/deprecation';
 import { wrapAsDelegateHandler } from 'core/dom';
 
-import type { InitOptions, InViewAdapter } from 'core/dom/in-view';
+import type { InViewInitOptions, InViewAdapter } from 'core/dom/in-view';
 import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
 import type { AsyncOptions } from 'core/async';
@@ -331,7 +331,7 @@ export default class DOM extends Friend {
 	 * @param options
 	 * @param asyncOptions
 	 */
-	watchForIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+	watchForIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
 		const
 			inViewInstance = this.localInView;
 
@@ -359,7 +359,7 @@ export default class DOM extends Friend {
 	 * @param asyncOptions
 	 */
 	@deprecated({renamedTo: 'watchForIntersection'})
-	watchForNodeIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+	watchForNodeIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
 		return this.watchForIntersection(el, options, asyncOptions);
 	}
 

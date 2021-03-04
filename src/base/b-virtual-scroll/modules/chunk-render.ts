@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { InViewAdapter, InitOptions, inViewFactory } from 'core/dom/in-view';
+import { InViewAdapter, InViewInitOptions, inViewFactory } from 'core/dom/in-view';
 
 import { Friend } from 'super/i-block/i-block';
 import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
@@ -333,7 +333,7 @@ export default class ChunkRender extends Friend {
 	 * Returns options to initialize in-view
 	 * @param index
 	 */
-	protected getInViewOptions(index: number): InitOptions {
+	protected getInViewOptions(index: number): InViewInitOptions {
 		return {
 			delay: 0,
 			threshold: this.randomThreshold,

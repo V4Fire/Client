@@ -17,7 +17,7 @@ import InViewAdapter from 'core/dom/in-view/adapter';
 import { getAdaptee } from 'core/dom/in-view/helpers';
 
 import MutationObserverStrategy from 'core/dom/in-view/mutation';
-import type { AdapteeType } from 'core/dom/in-view/interface';
+import type { InViewAdapteeType } from 'core/dom/in-view/interface';
 
 export { default as InViewAdapter } from 'core/dom/in-view/adapter';
 export * from 'core/dom/in-view/interface';
@@ -37,7 +37,7 @@ const strategyByType = {
  * Creates a new in-view instance
  * @param [adaptee]
  */
-export function inViewFactory(adaptee?: AdapteeType): InViewAdapter {
+export function inViewFactory(adaptee?: InViewAdapteeType): InViewAdapter {
 	const
 		inView = new InViewAdapter(),
 		adapteeInstance = adaptee != null ? new strategyByType[adaptee]() : new Adaptee!();
