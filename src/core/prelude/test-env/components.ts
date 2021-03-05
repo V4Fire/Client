@@ -14,10 +14,7 @@ globalThis.renderComponents = (
 	scheme: RenderParams[],
 	options?: RenderOptions | string
 ) => {
-	if (Object.size(options) === 0) {
-		options = {rootSelector: '#root-component'};
-
-	} else if (Object.isString(options)) {
+	if (Object.isString(options) || Object.size(options) === 0) {
 		options = {rootSelector: '#root-component'};
 	}
 
