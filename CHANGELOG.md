@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.155 (2021-03-05)
+
+#### :rocket: New Feature
+
+* Added a new method `canSelfDispatchEvent` to prevent self dispatching of some events `iBlock`
+
+#### :bug: Bug Fix
+
+* Now `componentStatus` and `componentHook` events can't be self dispatched `iBlock`
+
 ## v3.0.0-rc.154 (2021-03-04)
 
 #### :bug: Bug Fix
