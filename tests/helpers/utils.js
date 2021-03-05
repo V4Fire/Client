@@ -70,7 +70,7 @@ class Utils {
 			await delay(options.sleepAfter);
 		}
 
-		await page.waitForSelector('#root-component', {timeout: (60).seconds()});
+		await page.waitForSelector('#root-component', {timeout: (60).seconds(), state: 'attached'});
 	}
 
 	/**

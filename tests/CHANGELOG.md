@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.154 (2021-03-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with tests failing because waiting of `#root-component` to become visible
+
+## v3.0.0-rc.153 (2021-03-04)
 
 #### :rocket: New Feature
 

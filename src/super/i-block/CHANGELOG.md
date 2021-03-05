@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.155 (2021-03-05)
+
+#### :rocket: New Feature
+
+* Added a new method `canSelfDispatchEvent` to prevent self dispatching of some events
+
+#### :bug: Bug Fix
+
+* Now `componentStatus` and `componentHook` events can't be self dispatched
+
 ## v3.0.0-rc.152 (2021-03-04)
 
 #### :house: Internal
