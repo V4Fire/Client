@@ -11,6 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation:
+  * `b-slider`
+  * `b-bottom-slide`
+  * `i-observe-dom`
+
 ## v3.0.0-rc.155 (2021-03-05)
 
 #### :rocket: New Feature
@@ -39,13 +48,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `force=true` to default options `DOM.clickToRef`. It fixed a bug where clicking at a visible element
   did not work because the playwright decided that the element was not visible. `tests`
-
-#### :memo: Documentation
-
-* Added documentation:
-  * `b-slider`
-  * `b-bottom-slide`
-  * `i-observe-dom`
 
 #### :house: Internal
 
