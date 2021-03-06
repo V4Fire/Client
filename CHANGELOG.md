@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.156 (2021-03-06)
+
+#### :bug: Bug Fix
+
+* Updated regexp in `iBlock.canSelfDispatchEvent` to match kebab-cased events but not camelCased
+
 ## v3.0.0-rc.155 (2021-03-05)
 
 #### :rocket: New Feature

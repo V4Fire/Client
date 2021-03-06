@@ -1623,7 +1623,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 */
 	canSelfDispatchEvent(event: string): boolean {
-		return !/^component(?:Status|Hook)(?::\w+|Change)$/.test(event);
+		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event);
 	}
 
 	/**

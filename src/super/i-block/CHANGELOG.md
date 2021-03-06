@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.156 (2021-03-06)
+
+#### :bug: Bug Fix
+
+* Updated regexp in `canSelfDispatchEvent` to match kebab-cased events but not camelCased
+
 ## v3.0.0-rc.155 (2021-03-05)
 
 #### :rocket: New Feature
