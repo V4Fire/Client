@@ -15,6 +15,28 @@ Changelog
 
 * Added a new getter `isSSR`
 
+## v3.0.0-rc.156 (2021-03-06)
+
+#### :bug: Bug Fix
+
+* Updated regexp in `canSelfDispatchEvent` to match kebab-cased events but not camelCased
+
+## v3.0.0-rc.155 (2021-03-05)
+
+#### :rocket: New Feature
+
+* Added a new method `canSelfDispatchEvent` to prevent self dispatching of some events
+
+#### :bug: Bug Fix
+
+* Now `componentStatus` and `componentHook` events can't be self dispatched
+
+## v3.0.0-rc.152 (2021-03-04)
+
+#### :house: Internal
+
+* Added a `try-catch` block to suppress async errors on component rerender in `onUpdateHook`
+
 ## v3.0.0-rc.142 (2021-02-11)
 
 #### :bug: Bug Fix

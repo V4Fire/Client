@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentEngine, ComponentOptions as ComponentEngineOptions } from 'core/component/engines';
-import { ComponentInterface, ComponentMeta, ComponentOptions } from 'core/component/interface';
+import type { ComponentEngine, ComponentOptions as ComponentEngineOptions } from 'core/component/engines';
+import type { ComponentInterface, ComponentMeta, ComponentOptions } from 'core/component/interface';
 
 /**
  * Map of component declaration parameters

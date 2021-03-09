@@ -9,7 +9,7 @@
 import watch, { mute, unmute, unwrap, getProxyType, isProxy } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
-import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
+import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 import { tiedWatchers, watcherInitializer, fakeCopyLabel } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';

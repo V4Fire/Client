@@ -7,8 +7,9 @@
  */
 
 import Vue, { RenderContext, VNode } from 'vue';
+
 import { patchComponentVData } from 'core/component/vnode';
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Clones the specified vnode

@@ -6,15 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VNodeDirective } from 'core/component/engines';
+import type { VNodeDirective } from 'core/component/engines';
 
-import MutationObserverStrategy from 'core/dom/in-view/mutation';
-import IntersectionObserverStrategy from 'core/dom/in-view/intersection';
+import type MutationObserverStrategy from 'core/dom/in-view/mutation';
+import type IntersectionObserverStrategy from 'core/dom/in-view/intersection';
 
-export interface Observable {
+/**
+ * @deprecated
+ * @see [[InViewObservable]]
+ */
+export type Observable = InViewObservable;
+
+export interface InViewObservable {
 	id: string;
 	node: Element;
-	size: Size;
+	size: InViewObservableElSize;
 	isLeaving: boolean;
 
 	/**
@@ -34,12 +40,24 @@ export interface Observable {
 	time?: DOMHighResTimeStamp;
 }
 
-export interface Size {
+/**
+ * @deprecated
+ * @see [[InViewObservableElSize]]
+ */
+export type Size = InViewObservableElSize;
+
+export interface InViewObservableElSize {
 	width: number;
 	height: number;
 }
 
-export interface ObserveOptions {
+/**
+ * @deprecated
+ * @see [[InViewObserveOptions]]
+ */
+export type ObserveOptions = InViewObserveOptions;
+
+export interface InViewObserveOptions {
 	group?: InViewGroup;
 	once?: boolean;
 	handleTransitionEnd?: boolean;
@@ -75,19 +93,19 @@ export interface ObserveOptions {
 	 * Callback that is invoked after the delay
 	 * @param observable
 	 */
-	callback?(observable: ObservableElement): unknown;
+	callback?(observable: InViewObservableElement): unknown;
 
 	/**
 	 * Handler: element enters the viewport
 	 * @param observable
 	 */
-	onEnter?(observable: ObservableElement): unknown;
+	onEnter?(observable: InViewObservableElement): unknown;
 
 	/**
 	 * Handler: element leaves the viewport
 	 * @param observable
 	 */
-	onLeave?(observable: ObservableElement): unknown;
+	onLeave?(observable: InViewObservableElement): unknown;
 }
 
 export interface ElementRect {
@@ -113,15 +131,27 @@ export interface IntersectionObserverOptions {
 	trackVisibility?: boolean;
 }
 
-export interface DirectiveOptions extends VNodeDirective {
+/**
+ * @deprecated
+ * @see [[InViewDirectiveOptions]]
+ */
+export type DirectiveOptions = InViewDirectiveOptions;
+
+export interface InViewDirectiveOptions extends VNodeDirective {
 	modifiers?: {
 		[key: string]: boolean;
 	};
 
-	value?: CanArray<InitOptions>;
+	value?: CanArray<InViewInitOptions>;
 }
 
-export interface UnobserveOptions {
+/**
+ * @deprecated
+ * @see [[InViewUnobserveOptions]]
+ */
+export type UnobserveOptions = InViewUnobserveOptions;
+
+export interface InViewUnobserveOptions {
 	/**
 	 * Threshold of an element to unobserve
 	 */
@@ -138,16 +168,71 @@ export interface UnobserveOptions {
  * Suspended observable elements
  * [group name]:[observable[]]
  */
-export type ObservablesByGroup = Map<InViewGroup, Set<ObservableElement>>;
+export type InViewObservableByGroup = Map<InViewGroup, Set<InViewObservableElement>>;
 
-export type AdapteeType = 'mutation' | 'observer';
-export type AdapteeInstance = typeof MutationObserverStrategy | typeof IntersectionObserverStrategy;
+/**
+ * @deprecated
+ * @see [[InViewObservableByGroup]]
+ */
+export type ObservablesByGroup = InViewObservableByGroup;
+
+export type InViewAdapteeType = 'mutation' | 'observer';
+export type InViewAdapteeInstance = typeof MutationObserverStrategy | typeof IntersectionObserverStrategy;
 
 export type InViewGroup = string | number | symbol;
-export type InitOptions = ObserveOptions & IntersectionObserverOptions;
+export type InViewObservablesByGroup = Map<InViewGroup, Map<Element, Map<number, InViewObservableElement>>>;
+export type InViewInitOptions = InViewObserveOptions & IntersectionObserverOptions;
 
-export type ObservableElementsMap = Map<Element, ObservableElement>;
-export type ObservableThresholdMap = Map<number, ObservableElement>;
-export type ObservableElementsThresholdMap = Map<Element, ObservableThresholdMap>;
-export type ObservableElementRect = ElementRect & {observable: ObservableElement};
-export type ObservableElement = Observable & InitOptions;
+export type InViewObservableElementsMap = Map<Element, InViewObservableElement>;
+export type InViewObservableThresholdMap = Map<number, InViewObservableElement>;
+export type InViewObservableElementsThresholdMap = Map<Element, InViewObservableThresholdMap>;
+export type InViewObservableElementRect = ElementRect & {observable: InViewObservableElement};
+export type InViewObservableElement = InViewObservable & InViewInitOptions;
+
+/**
+ * @deprecated
+ * @see [[InViewAdapteeType]]
+ */
+export type AdapteeType = InViewAdapteeType;
+
+/**
+ * @deprecated
+ * @see [[InViewAdapteeInstance]]
+ */
+export type AdapteeInstance = InViewAdapteeInstance;
+
+/**
+ * @deprecated
+ * @see [[InViewInitOptions]]
+ */
+export type InitOptions = InViewInitOptions;
+
+/**
+ * @deprecated
+ * @see [[InViewObservableElementsMap]]
+ */
+export type ObservableElementsMap = InViewObservableElementsMap;
+
+/**
+ * @deprecated
+ * @see [[InViewObservableThresholdMap]]
+ */
+export type ObservableThresholdMap = InViewObservableThresholdMap;
+
+/**
+ * @deprecated
+ * @see [[InViewObservableElementsThresholdMap]]
+ */
+export type ObservableElementsThresholdMap = InViewObservableElementsThresholdMap;
+
+/**
+ * @deprecated
+ * @see [[InViewObservableElementRect]]
+ */
+export type ObservableElementRect = InViewObservableElementRect;
+
+/**
+ * @deprecated
+ * @see [[InViewObservableElement]]
+ */
+export type ObservableElement = InViewObservableElement;

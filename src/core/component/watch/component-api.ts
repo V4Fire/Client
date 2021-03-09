@@ -35,8 +35,8 @@ import {
 import { createWatchFn } from 'core/component/watch/create';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
-import { ComponentInterface, RawWatchHandler } from 'core/component/interface';
-import { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
+import type { ComponentInterface, RawWatchHandler } from 'core/component/interface';
+import type { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
 
 /**
  * Implements the base component watch API to a component instance

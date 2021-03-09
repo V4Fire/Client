@@ -12,9 +12,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 
-import {
+import type {
 
 	ObserveOptions,
 	Observer,

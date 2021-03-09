@@ -14,7 +14,8 @@
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
 
-import iBlock, { ModEvent } from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
+import type { ModEvent } from 'super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();

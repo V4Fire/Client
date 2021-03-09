@@ -37,8 +37,8 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 import { sliderModes, alignTypes } from 'base/b-slider/const';
+import type { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-slider/interface';

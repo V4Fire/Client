@@ -12,8 +12,9 @@
  */
 
 import ImageLoader from 'core/dom/image/loader';
+
 import { defaultParams } from 'core/dom/image/const';
-import { DefaultParams } from 'core/dom/image/interface';
+import type { DefaultParams } from 'core/dom/image/interface';
 
 export * from 'core/dom/image/const';
 export * from 'core/dom/image/interface';

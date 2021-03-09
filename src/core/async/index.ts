@@ -15,7 +15,7 @@ import SyncPromise from 'core/promise/sync';
 import Super, { AsyncCbOptions, ClearOptionsId, isAsyncOptions } from '@v4fire/core/core/async';
 import { namespaces, NamespacesDictionary } from 'core/async/const';
 
-import {
+import type {
 
 	AsyncRequestAnimationFrameOptions,
 	AsyncAnimationFrameOptions,

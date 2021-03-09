@@ -11,11 +11,12 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
+
 import Friend from 'super/i-block/modules/friend';
 import { wait } from 'super/i-block/modules/decorators';
 
-import {
+import type {
 
 	Daemon,
 	SpawnedDaemon,

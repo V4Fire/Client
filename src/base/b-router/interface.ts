@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { Key } from 'path-to-regexp';
-import { Route as EngineRoute, RouteMeta } from 'core/router';
+import type { Key } from 'path-to-regexp';
+import type { Route as EngineRoute, RouteMeta } from 'core/router';
 
 export { EngineRoute };
 export {

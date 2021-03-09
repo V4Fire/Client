@@ -11,14 +11,14 @@ import * as init from 'core/component/construct';
 import { forkMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 
-import { RenderContext } from 'core/component/render';
-import { CreateElement } from 'core/component/engines';
+import type { RenderContext } from 'core/component/render';
+import type { CreateElement } from 'core/component/engines';
 
 import { $$, componentOpts } from 'core/component/functional/const';
 import { destroyComponent } from 'core/component/functional/helpers';
 
-import { FunctionalCtx } from 'core/component/interface';
-import { CreateFakeCtxOptions } from 'core/component/functional/interface';
+import type { FunctionalCtx } from 'core/component/interface';
+import type { CreateFakeCtxOptions } from 'core/component/functional/interface';
 
 export * from 'core/component/functional/interface';
 

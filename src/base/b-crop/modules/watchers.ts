@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bCrop from 'base/b-crop/b-crop';
+import type bCrop from 'base/b-crop/b-crop';
 
 export const
 	$$ = symbolGenerator();

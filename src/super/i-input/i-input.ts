@@ -31,7 +31,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import {
+import type {
 
 	Value,
 	FormValue,

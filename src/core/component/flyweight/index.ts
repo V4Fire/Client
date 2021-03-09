@@ -30,7 +30,7 @@ import { getNormalParent } from 'core/component/traverse';
 import { getComponentDataFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Takes a vnode and, if it has the composite attribute, returns a new vnode that contains a flyweight component,

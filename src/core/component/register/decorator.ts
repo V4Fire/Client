@@ -18,7 +18,7 @@ import { getInfoFromConstructor } from 'core/component/reflection';
 import { getComponent, ComponentEngine } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/register/helpers';
 
-import { ComponentOptions, ComponentMethod } from 'core/component/interface';
+import type { ComponentOptions, ComponentMethod } from 'core/component/interface';
 
 /**
  * Registers a new component

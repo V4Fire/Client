@@ -13,7 +13,7 @@
  * @packageDocumentation
  */
 
-import { ProxyCb } from 'core/async';
+import type { ProxyCb } from 'core/async';
 import { initEmitter, ModVal } from 'core/component';
 
 import {
@@ -29,11 +29,12 @@ import {
 
 } from 'core/component/decorators';
 
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
+
 import { statuses } from 'super/i-block/const';
 import { waitCtxRgxp } from 'super/i-block/modules/decorators/const';
 
-import {
+import type {
 
 	DecoratorProp,
 	DecoratorField,

@@ -8,7 +8,8 @@
 
 import Vue from 'vue';
 import log from 'core/log';
-import { ComponentInterface } from 'core/component/interface';
+
+import type { ComponentInterface } from 'core/component/interface';
 
 const
 	logger = log.namespace('vue');

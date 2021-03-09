@@ -16,11 +16,12 @@
 import symbolGenerator from 'core/symbol';
 
 import path, { Key, RegExpOptions } from 'path-to-regexp';
+
 import { deprecate, deprecated } from 'core/functools/deprecation';
-import { concatUrls, toQueryString } from 'core/url';
+import { concatURLs, toQueryString } from 'core/url';
 
 import globalRoutes from 'routes';
-import Async from 'core/async';
+import type Async from 'core/async';
 
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, computed, hook, wait, watch } from 'super/i-data/i-data';
@@ -43,7 +44,7 @@ import {
 
 } from 'base/b-router/modules/normalizers';
 
-import {
+import type {
 
 	RouteAPI,
 	InitialRoute,
@@ -76,7 +77,7 @@ export const
 })
 
 export default class bRouter extends iData {
-	/* @override */
+	/** @override */
 	public async!: Async<this>;
 
 	/**
@@ -487,7 +488,7 @@ export default class bRouter extends iData {
 				if (basePath !== '') {
 					// Resolve the situation when the passed path already has basePath
 					const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
-					resolvedRef = concatUrls(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
+					resolvedRef = concatURLs(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
 
 					// We need to normalize only a user "raw" ref
 					if (refIsNormalized) {
@@ -1068,7 +1069,7 @@ export default class bRouter extends iData {
 
 			if (Object.isString(route)) {
 				const
-					pattern = concatUrls(basePath, route);
+					pattern = concatURLs(basePath, route);
 
 				compiledRoutes[name] = {
 					name,
@@ -1104,7 +1105,7 @@ export default class bRouter extends iData {
 					pattern;
 
 				if (Object.isString(route.path)) {
-					pattern = concatUrls(basePath, route.path);
+					pattern = concatURLs(basePath, route.path);
 				}
 
 				compiledRoutes[name] = {

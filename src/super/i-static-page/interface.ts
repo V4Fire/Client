@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import remoteState from 'core/component/state';
-import { ComponentInterface } from 'core/component';
+import type remoteState from 'core/component/state';
+import type { ComponentInterface } from 'core/component';
 
 export { globalEmitter, ResetType } from 'core/component';
 export type RemoteState = typeof remoteState;

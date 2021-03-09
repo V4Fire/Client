@@ -12,7 +12,7 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 
 import { ID_ATTRIBUTE } from 'core/component/directives/update-on';
 import { icons, iconsMap } from 'traits/i-icon/modules/icons';

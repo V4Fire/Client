@@ -21,7 +21,7 @@ import {
 
 } from 'core/component';
 
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 import Opt from 'super/i-block/modules/opt';
@@ -29,7 +29,7 @@ import Field from 'super/i-block/modules/field';
 import Provide from 'super/i-block/modules/provide';
 
 import { tplCache } from 'super/i-block/modules/vdom/const';
-import { RenderFn, RenderPath, RenderContext } from 'super/i-block/modules/vdom/interface';
+import type { RenderFn, RenderPath, RenderContext } from 'super/i-block/modules/vdom/interface';
 
 export * from 'super/i-block/modules/vdom/interface';
 

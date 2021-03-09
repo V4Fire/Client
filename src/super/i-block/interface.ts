@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { UnsafeComponentInterface } from 'core/component';
+import type iBlock from 'super/i-block/i-block';
 
-import iBlock from 'super/i-block/i-block';
-import { statuses } from 'super/i-block/const';
+import type { UnsafeComponentInterface } from 'core/component';
+import type { statuses } from 'super/i-block/const';
 
 export type ComponentStatus =
 	'destroyed' |

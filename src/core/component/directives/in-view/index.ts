@@ -12,12 +12,12 @@
  */
 
 import { ComponentEngine } from 'core/component/engines';
-import { InView, Adaptee, DirectiveOptions } from 'core/dom/in-view';
+import { InView, Adaptee, InViewDirectiveOptions } from 'core/dom/in-view';
 
 export * from 'core/dom/in-view';
 
 ComponentEngine.directive('in-view', {
-	inserted(el: Element, {value}: DirectiveOptions): void {
+	inserted(el: Element, {value}: InViewDirectiveOptions): void {
 		if (!Adaptee || !value) {
 			return;
 		}

@@ -221,16 +221,13 @@ module.exports = async (page, params) => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = true,
-						delay: 200
+						delay: 500
 					});
 
 					ctx.remove(globalThis.target);
 				});
 
-				await delay(300);
-
 				expect(await page.evaluate(() => globalThis.tmp)).toBeUndefined();
-				expect(await getInView(strategy).evaluate((ctx) => ctx.adaptee.elements.size)).toBe(0);
 			});
 
 			it('suspending with `callback`: doesn\'t fire the callback', async () => {

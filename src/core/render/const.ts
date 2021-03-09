@@ -7,7 +7,7 @@
  */
 
 import Async from 'core/async';
-import { Task } from 'core/render/interface';
+import type { Task } from 'core/render/interface';
 
 /**
  * Maximum number of tasks per one render iteration

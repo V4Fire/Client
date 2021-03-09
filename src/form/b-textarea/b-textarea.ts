@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
+import type bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
 import bInput, {
 
 	component,

@@ -7,11 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
-import { ObservableElement } from 'core/dom/in-view/interface';
-import { hasIntersection } from 'core/dom/in-view/intersection/helpers';
-
 import Super from 'core/dom/in-view/super';
+
+import { hasIntersection } from 'core/dom/in-view/intersection/helpers';
+import type { InViewObservableElement } from 'core/dom/in-view/interface';
 
 export type AdapteeType =
 	'observer';
@@ -44,7 +43,7 @@ export default class InView extends Super {
 	 * Initializes an observer
 	 * @param observable
 	 */
-	protected initObserve(observable: ObservableElement): ObservableElement {
+	protected initObserve(observable: InViewObservableElement): InViewObservableElement {
 		const
 			observer = this.createObserver(observable);
 
@@ -55,7 +54,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	protected remove(observable: ObservableElement, suspend?: boolean): boolean {
+	protected remove(observable: InViewObservableElement, suspend?: boolean): boolean {
 		super.remove(observable, suspend);
 
 		const
@@ -74,7 +73,7 @@ export default class InView extends Super {
 	 * Creates a new IntersectionObserver instance
 	 * @param observable
 	 */
-	protected createObserver(observable: ObservableElement): IntersectionObserver {
+	protected createObserver(observable: InViewObservableElement): IntersectionObserver {
 		const
 			root = Object.isFunction(observable.root) ? observable.root() : observable.root,
 			opts = {...observable, root};
@@ -122,7 +121,7 @@ export default class InView extends Super {
 	 * @param observable
 	 * @param entry
 	 */
-	protected onObservableIn(observable: ObservableElement, entry: IntersectionObserverEntry): void {
+	protected onObservableIn(observable: InViewObservableElement, entry: IntersectionObserverEntry): void {
 		const
 			{async: $a} = this;
 
@@ -156,7 +155,7 @@ export default class InView extends Super {
 	 * @param observable
 	 * @param entry
 	 */
-	protected onObservableOut(observable: ObservableElement, entry: IntersectionObserverEntry): void {
+	protected onObservableOut(observable: InViewObservableElement, entry: IntersectionObserverEntry): void {
 		const
 			{async: $a} = this;
 

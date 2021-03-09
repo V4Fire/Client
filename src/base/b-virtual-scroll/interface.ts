@@ -6,15 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { UnsafeIData } from 'super/i-data/i-data';
-import { ComponentVNodeData } from 'core/component/vnode';
+import type { UnsafeIData } from 'super/i-data/i-data';
+import type { ComponentVNodeData } from 'core/component/vnode';
 
-export interface RequestQueryFn<T extends unknown = unknown> {
+export interface RequestQueryFn<T extends object = object> {
 	(params: DataState<T>): Dictionary<Dictionary>;
 }
-export interface RequestFn<T extends unknown = unknown> {
+export interface RequestFn<T extends object = object> {
 	(params: DataState<T>): boolean;
 }
 
@@ -22,7 +22,7 @@ export interface GetData<T extends unknown = unknown> {
 	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
 }
 
-export interface OptionEl<T extends unknown = unknown> {
+export interface VirtualItemEl<T extends object = object> {
 	/**
 	 * Current render data
 	 */
@@ -40,10 +40,16 @@ export interface OptionEl<T extends unknown = unknown> {
 }
 
 /**
+ * @deprecated
+ * @see [[VirtualItemEl]]
+ */
+export type OptionEl<T extends object = object> = VirtualItemEl<T>;
+
+/**
  * @typeParam ITEM - data item to render
  * @typeParam RAW - raw provider data
  */
-export interface DataState<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
+export interface DataState<ITEM extends object = object, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -57,7 +63,7 @@ export interface DataState<ITEM extends unknown = unknown, RAW extends unknown =
 	/**
 	 * All loaded data
 	 */
-	data: unknown[];
+	data: object[];
 
 	/**
 	 * Number of items to show till the page bottom is reached
@@ -72,7 +78,7 @@ export interface DataState<ITEM extends unknown = unknown, RAW extends unknown =
 	/**
 	 * Data that pending to be rendered
 	 */
-	pendingData: unknown[];
+	pendingData: object[];
 
 	/**
 	 * True if the last requested data response was empty
@@ -110,7 +116,7 @@ export interface RemoteData extends Dictionary {
 	/**
 	 * Data to render components
 	 */
-	data?: unknown[];
+	data?: object[];
 
 	/**
 	 * Total number of elements
@@ -118,7 +124,7 @@ export interface RemoteData extends Dictionary {
 	total?: number;
 }
 
-export interface RenderItem<T extends unknown = unknown> {
+export interface RenderItem<T extends object = object> {
 	/**
 	 * Component data
 	 */
@@ -153,14 +159,14 @@ export type ItemAttrs = {
  * @typeParam DATA - data to render
  * @typeParam RAW - raw provider data
  */
-export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends unknown = unknown> {
+export interface LastLoadedChunk<DATA extends object = object[], RAW extends unknown = unknown> {
 	normalized: DATA;
-	raw: RAW;
+	raw: CanUndef<RAW>;
 }
 
 export interface DataToRender {
 	itemAttrs: Dictionary;
-	itemParams: OptionEl;
+	itemParams: VirtualItemEl;
 	index: number;
 }
 
@@ -221,15 +227,3 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 export type MergeDataStateParams = {
 	[key in keyof DataState]?: DataState[key];
 };
-
-// TODO: Should be removed in
-//  https://github.com/V4Fire/Client/issues/471
-
-export interface ItemPropParams<CTX> {
-	key?: string;
-	ctx: CTX;
-}
-
-export interface ItemProps<CTX = unknown> {
-	(el: unknown, i: number, params: ItemPropParams<CTX>): Dictionary;
-}
