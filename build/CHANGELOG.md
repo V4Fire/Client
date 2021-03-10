@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-03-??)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries
+
 ## v3.0.0-rc.143 (2021-02-11)
 
 #### :rocket: New Feature

@@ -157,7 +157,7 @@ async function buildProjectGraph() {
 				const
 					entrySrc = path.join(tmpEntries, `${name}.js`);
 
-				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
+				const content = await $C(list).async.to('').reduce(async (str, {name}) => {
 					const
 						block = blockMap.get(name),
 						logic = block && await block.logic;
@@ -166,7 +166,11 @@ async function buildProjectGraph() {
 						$C(block.libs).forEach((el) => str += `require('${el}');\n`);
 					}
 
-					if (!block || logic) {
+					const needRequireAsLogic = block ?
+						logic :
+						/^$|^\.(?:js|ts)(?:\?|$)/.test(path.extname(name));
+
+					if (needRequireAsLogic) {
 						let
 							url;
 
@@ -184,10 +188,13 @@ async function buildProjectGraph() {
 					}
 
 					return str;
-				}));
+				});
 
-				entry[name] = entrySrc;
-				taskProcess[name] = entrySrc;
+				if (content.trim()) {
+					fs.writeFileSync(entrySrc, content);
+					entry[name] = entrySrc;
+					taskProcess[name] = entrySrc;
+				}
 			}
 
 			// TEMPLATES
@@ -197,24 +204,24 @@ async function buildProjectGraph() {
 					entryName = `${name}_tpl`,
 					entrySrc = path.join(tmpEntries, `${name}.ss.js`);
 
-				fs.writeFileSync(entrySrc, await $C(list)
-					.async
-					.to('window.TPLS = window.TPLS || Object.create(null);\n')
-					.reduce(async (str, {name, isParent}) => {
-						const
-							block = blockMap.get(name),
-							tpl = block && await block.tpl;
+				const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+					const
+						block = blockMap.get(name),
+						tpl = block && await block.tpl;
 
-						if (!isParent && tpl && !componentsToIgnore.test(name)) {
-							const url = getEntryURL(tpl);
-							str += `Object.assign(TPLS, require('./${url}'));\n`;
-						}
+					if (!isParent && tpl && !componentsToIgnore.test(name)) {
+						const url = getEntryURL(tpl);
+						str += `Object.assign(TPLS, require('./${url}'));\n`;
+					}
 
-						return str;
-					}));
+					return str;
+				});
 
-				entry[entryName] = entrySrc;
-				taskProcess[entryName] = entrySrc;
+				if (content.trim()) {
+					fs.writeFileSync(entrySrc, ['window.TPLS = window.TPLS || Object.create(null);', content].join('\n'));
+					entry[entryName] = entrySrc;
+					taskProcess[entryName] = entrySrc;
+				}
 			}
 
 			taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
@@ -231,35 +238,49 @@ async function buildProjectGraph() {
 					entryName = `${name}_style`,
 					entrySrc = path.join(tmpEntries, `${name}.styl`);
 
-				fs.writeFileSync(entrySrc, [
-					await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
-						const
-							block = blockMap.get(name),
-							style = block && await block.styles;
+				const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+					const
+						block = blockMap.get(name),
+						styles = block && await block.styles;
 
-						if (!isParent && style && style.length && !componentsToIgnore.test(name)) {
-							$C(style).forEach((url) => {
-								str += `@import "${getEntryURL(url)}"\n`;
+					const needRequireAsStyles = block ?
+						!isParent && styles && styles.length && !componentsToIgnore.test(name) :
+						/^\.(?:styl|css)(?:\?|$)/.test(path.extname(name));
+
+					if (needRequireAsStyles) {
+						const
+							getImport = (url) => `@import "${getEntryURL(url)}"\n`;
+
+						if (block) {
+							$C(styles).forEach((url) => {
+								str += getImport(url);
 							});
 
-							if (/^[bp]-/.test(name)) {
-								str +=
-									`
-.${name}
-	extends($${camelize(name)})
-
-`;
-							}
+						} else {
+							str += getImport(name);
 						}
 
-						return str;
-					}),
+						const
+							normalizedName = path.basename(name, path.extname(name));
 
-					'generateImgClasses()'
-				].join('\n'));
+						if (/^[bp]-/.test(normalizedName)) {
+							str +=
+								`
+.${normalizedName}
+	extends($${camelize(normalizedName)})
 
-				entry[entryName] = entrySrc;
-				taskProcess[entryName] = entrySrc;
+`;
+						}
+					}
+
+					return str;
+				});
+
+				if (content.trim()) {
+					fs.writeFileSync(entrySrc, [content, 'generateImgClasses()'].join('\n'));
+					entry[entryName] = entrySrc;
+					taskProcess[entryName] = entrySrc;
+				}
 			}
 
 			// HTML
@@ -269,7 +290,7 @@ async function buildProjectGraph() {
 					entryName = `${name}_view`,
 					entrySrc = path.join(tmpEntries, `${entryName}.html.js`);
 
-				fs.writeFileSync(entrySrc, await $C(list).async.to('').reduce(async (str, {name}) => {
+				const content = await $C(list).async.to('').reduce(async (str, {name}) => {
 					const
 						block = blockMap.get(name),
 						html = block && await block.etpl;
@@ -279,12 +300,16 @@ async function buildProjectGraph() {
 					}
 
 					return str;
-				}));
+				});
 
-				entry[entryName] = entrySrc;
+				if (content.trim()) {
+					fs.writeFileSync(entrySrc, content);
 
-				// eslint-disable-next-line require-atomic-updates
-				processes[HTML][entryName] = entrySrc;
+					entry[entryName] = entrySrc;
+
+					// eslint-disable-next-line require-atomic-updates
+					processes[HTML][entryName] = entrySrc;
+				}
 			}
 
 			return entry;

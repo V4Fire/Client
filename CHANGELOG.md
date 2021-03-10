@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-03-??)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries `build` `iStaticPage`
+
 ## v3.0.0-rc.156 (2021-03-06)
 
 #### :bug: Bug Fix
