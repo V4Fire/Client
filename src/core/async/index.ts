@@ -235,7 +235,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			p = {};
 		}
 
-		p.group = p.group ?? `dnd.${Math.random()}`;
+		p.group = p.group ?? `dnd:${Math.random()}`;
 
 		if (this.locked) {
 			return null;
