@@ -22,7 +22,8 @@ const
 	{resolve, entries, block} = require('@pzlr/build-core');
 
 const
-	{output, cacheDir, isStandalone} = include('build/helpers.webpack');
+	{output, cacheDir, isStandalone} = include('build/helpers.webpack'),
+	{isLayerDep} = include('build/const');
 
 let
 	buildIterator = -1;
@@ -172,19 +173,19 @@ async function buildProjectGraph() {
 
 					if (needRequireAsLogic) {
 						let
-							url;
+							entry;
 
 						if (logic) {
-							url = logic;
+							entry = logic;
 
 						} else if (resolve.isNodeModule(name)) {
-							url = name;
+							entry = name;
 
 						} else {
-							url = path.resolve(tmpEntries, '../', name);
+							entry = path.resolve(tmpEntries, '../', name);
 						}
 
-						str += `require('${getEntryURL(url)}');\n`;
+						str += `require('${getEntryPath(entry)}');\n`;
 					}
 
 					return str;
@@ -210,8 +211,8 @@ async function buildProjectGraph() {
 						tpl = block && await block.tpl;
 
 					if (!isParent && tpl && !componentsToIgnore.test(name)) {
-						const url = getEntryURL(tpl);
-						str += `Object.assign(TPLS, require('./${url}'));\n`;
+						const entry = getEntryPath(tpl);
+						str += `Object.assign(TPLS, require('./${entry}'));\n`;
 					}
 
 					return str;
@@ -249,11 +250,11 @@ async function buildProjectGraph() {
 
 					if (needRequireAsStyles) {
 						const
-							getImport = (url) => `@import "${getEntryURL(url)}"\n`;
+							getImport = (filePath) => `@import "${getEntryPath(filePath)}"\n`;
 
 						if (block) {
-							$C(styles).forEach((url) => {
-								str += getImport(url);
+							$C(styles).forEach((filePath) => {
+								str += getImport(filePath);
 							});
 
 						} else {
@@ -296,7 +297,7 @@ async function buildProjectGraph() {
 						html = block && await block.etpl;
 
 					if (html && !componentsToIgnore.test(name)) {
-						str += `require('./${getEntryURL(html)}');\n`;
+						str += `require('./${getEntryPath(html)}');\n`;
 					}
 
 					return str;
@@ -341,13 +342,20 @@ async function buildProjectGraph() {
 	return res;
 
 	/**
-	 * Returns the specified URL relative to the entry folder
+	 * Returns the specified path relative to the entry folder
 	 */
-	function getEntryURL(url) {
-		if (resolve.isNodeModule(url)) {
-			return path.normalize(url);
+	function getEntryPath(filePath) {
+		if (resolve.isNodeModule(filePath)) {
+			const
+				resolvedEntry = src.lib(filePath);
+
+			if (!isLayerDep.test(filePath) || !fs.existsSync(resolvedEntry)) {
+				return path.normalize(filePath);
+			}
+
+			filePath = resolvedEntry;
 		}
 
-		return path.relative(tmpEntries, url);
+		return path.relative(tmpEntries, filePath);
 	}
 }

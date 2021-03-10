@@ -65,14 +65,14 @@ module.exports = function superImportReplacer(str, filePath) {
 	const
 		isTS = path.extname(filePath) === '.ts';
 
-	return str.replace(importRgxp, (str, $1, root, url) => {
+	return str.replace(importRgxp, (str, $1, root, src) => {
 		let
 			resource;
 
 		loop: for (let i = start; i < rootDependencies.length; i++) {
 			const
 				dep = dependencies[i],
-				l = path.join(rootDependencies[i], url);
+				l = path.join(rootDependencies[i], src);
 
 			if (path.extname(l)) {
 				if (!pathEqual(l, filePath) && fs.existsSync(l)) {
@@ -95,10 +95,10 @@ module.exports = function superImportReplacer(str, filePath) {
 
 		if (resource) {
 			if (isTS) {
-				return `'${resource + url}'`;
+				return `'${resource + src}'`;
 			}
 
-			return `'${path.join(resource, depMap[resource].config.sourceDir, url)}'`;
+			return `'${path.join(resource, depMap[resource].config.sourceDir, src)}'`;
 		}
 
 		return str;
