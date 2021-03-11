@@ -22,6 +22,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added a new render engine `core/component/engine/zero`
 * Added a new getter `isSSR` `iBlock`
 
+## v3.0.0-rc.157 (2021-03-10)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries `build` `iStaticPage`
+
 ## v3.0.0-rc.156 (2021-03-06)
 
 #### :bug: Bug Fix

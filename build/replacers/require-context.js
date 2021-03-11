@@ -77,26 +77,26 @@ module.exports = function requireContextReplacer(str) {
 				let
 					exists = false;
 
-				const res = body.replace(rgxp, (str, $1, url) => {
+				const res = body.replace(rgxp, (str, $1, src) => {
 					let
-						src;
+						resolvedSrc;
 
-					if (url[0] === '@') {
+					if (src[0] === '@') {
 						const
-							parts = url.split('/'),
+							parts = src.split('/'),
 							key = [].concat(el || [], parts[0].slice(1)).join('/');
 
 						if (!aliases[key]) {
 							return str;
 						}
 
-						src = [aliases[key], ...parts.slice(1)].join('/');
+						resolvedSrc = [aliases[key], ...parts.slice(1)].join('/');
 
 					} else {
-						src = [].concat(el || [], url).join('/');
+						resolvedSrc = [].concat(el || [], src).join('/');
 					}
 
-					src = src.replace(tplRgxp, (str, key) => {
+					resolvedSrc = resolvedSrc.replace(tplRgxp, (str, key) => {
 						let
 							v = $C(config).get(key);
 
@@ -107,11 +107,11 @@ module.exports = function requireContextReplacer(str) {
 						return v ? `/${v}` : v;
 					});
 
-					if (fs.existsSync(src)) {
+					if (fs.existsSync(resolvedSrc)) {
 						exists = true;
 					}
 
-					return path.normalize($1 + src);
+					return path.normalize($1 + resolvedSrc);
 				});
 
 				if (exists) {
