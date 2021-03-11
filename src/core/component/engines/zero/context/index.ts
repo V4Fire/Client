@@ -29,8 +29,12 @@ export default {
 		return document.createTextNode(value);
 	},
 
-	_e(value: Nullable<string>): Comment {
-		return document.createComment(value == null ? '' : value);
+	_e(value: Nullable<string>): Comment | Text {
+		if (value != null) {
+			return document.createComment(value);
+		}
+
+		return document.createTextNode('');
 	},
 
 	_f(id: string): Function {
