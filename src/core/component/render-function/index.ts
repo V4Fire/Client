@@ -15,9 +15,9 @@ import { runHook } from 'core/component/hook';
 import { beforeMountHooks, mountedHooks } from 'core/component/const';
 
 import { resolveRefs } from 'core/component/ref';
-import { CreateElement, RenderContext, VNode } from 'core/component/engines';
 import { wrapCreateElement } from 'core/component/render-function/create-element';
 
+import type { CreateElement, RenderContext, VNode } from 'core/component/engines';
 import type { ComponentInterface, ComponentMeta, RenderFunction } from 'core/component/interface';
 
 /**

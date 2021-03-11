@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import {
+import type {
 
 	VNode,
 	VNodeData,
@@ -30,8 +30,8 @@ import {
 
 } from 'core/component/engines/zero/helpers/const';
 
-import { ComponentInterface } from 'core/component/interface';
-import { DirElement, DocumentFragmentP } from 'core/component/engines/zero/helpers/interface';
+import type { ComponentInterface } from 'core/component/interface';
+import type { DirElement, DocumentFragmentP } from 'core/component/engines/zero/helpers/interface';
 
 export * from 'core/component/engines/zero/helpers/const';
 export * from 'core/component/engines/zero/helpers/interface';

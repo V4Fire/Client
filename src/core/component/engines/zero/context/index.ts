@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VNodeData } from 'vue';
 import { identity } from 'core/functools/helpers';
+import type { VNodeData } from 'vue';
 
 import config from 'core/component/engines/zero/config';
 
@@ -15,7 +15,7 @@ import { document } from 'core/component/engines/zero/const';
 import { warn } from 'core/component/engines/zero/helpers';
 
 import { reservedAttrs } from 'core/component/engines/zero/context/const';
-import { KeyCode } from 'core/component/engines/zero/context/interface';
+import type { KeyCode } from 'core/component/engines/zero/context/interface';
 
 export * from 'core/component/engines/zero/context/const';
 

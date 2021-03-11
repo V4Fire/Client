@@ -9,9 +9,8 @@
 import symbolGenerator from 'core/symbol';
 import { HAS_WINDOW } from 'core/env';
 
-//#if VueInterfaces
-import Vue, { ComponentOptions } from 'vue';
-//#endif
+import type Vue from 'vue';
+import type { ComponentOptions } from 'vue';
 
 import * as init from 'core/component/construct';
 
@@ -19,10 +18,10 @@ import { fillMeta } from 'core/component/meta';
 import { createFakeCtx } from 'core/component/functional';
 
 import { components } from 'core/component/const';
-import { document } from 'core/component/engines/zero/const';
-import { ComponentInterface, ComponentMeta } from 'core/component/interface';
+import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
-import minimalCtx from 'core/component/engines/zero/context';
+import { document, supports, minimalCtx } from 'core/component/engines/zero/const';
+import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines';
 
 const
 	$$ = symbolGenerator();
@@ -86,7 +85,14 @@ export async function createComponent<T>(
 	const baseCtx = Object.assign(Object.create(minimalCtx), {
 		meta,
 		instance: meta.instance,
-		componentName: meta.componentName
+		componentName: meta.componentName,
+		$renderEngine: {
+			supports,
+			minimalCtx,
+			cloneVNode,
+			patchVNode,
+			renderVNode
+		}
 	});
 
 	const fakeCtx = createFakeCtx<ComponentInterface>(createElement, Object.create(ctx), baseCtx, {

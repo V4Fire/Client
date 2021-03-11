@@ -15,9 +15,9 @@ import { deprecate } from 'core/functools/deprecation';
 import Async from 'core/async';
 
 import { components } from 'core/component/const';
-import { CreateElement, VNode } from 'core/component/engines';
-import { forkMeta } from 'core/component/meta';
+import type { CreateElement, VNode } from 'core/component/engines';
 
+import { forkMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { destroyComponent, FlyweightVNode } from 'core/component/functional';

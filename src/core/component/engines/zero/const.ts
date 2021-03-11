@@ -7,7 +7,7 @@
  */
 
 import { IS_NODE } from 'core/env';
-import { Options } from 'core/component/engines/zero/interface';
+import type { Options } from 'core/component/engines/zero/interface';
 
 export { default as minimalCtx } from 'core/component/engines/zero/context';
 

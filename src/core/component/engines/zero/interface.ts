@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { DirectiveOptions, VNodeData as BaseVNodeData } from 'vue';
+import type { DirectiveOptions, VNodeData as BaseVNodeData } from 'vue';
 
 export interface VNodeData extends BaseVNodeData {
 	model?: {

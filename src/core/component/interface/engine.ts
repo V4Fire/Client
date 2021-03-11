@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VNode, RenderContext } from 'core/component/engines';
-import { ComponentInterface } from 'core/component/interface/component';
+import type { VNode, RenderContext } from 'core/component/engines';
+import type { ComponentInterface } from 'core/component/interface/component';
 
 export interface RenderEngineFeatures {
 	regular: boolean;

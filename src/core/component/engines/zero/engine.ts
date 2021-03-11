@@ -7,26 +7,18 @@
  */
 
 import { identity } from 'core/functools/helpers';
-
-import {
-
-	ComponentOptions,
-	DirectiveOptions,
-	DirectiveFunction
-
-} from 'vue';
+import type { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
 
 import { components } from 'core/component/const';
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 import config from 'core/component/engines/zero/config';
 import * as _ from 'core/component/engines/zero/helpers';
 
-import { supports, options, minimalCtx, document } from 'core/component/engines/zero/const';
+import { options, document } from 'core/component/engines/zero/const';
 import { getComponent, createComponent } from 'core/component/engines/zero/component';
-import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines/zero/vnode';
 
-import { VNodeData } from 'core/component/engines/zero/interface';
+import type { VNodeData } from 'core/component/engines/zero/interface';
 
 export class ComponentEngine {
 	/**
@@ -135,19 +127,7 @@ export class ComponentEngine {
 	 * @param opts - component options
 	 */
 	async $render(opts: ComponentOptions<any>): Promise<CanUndef<Element>> {
-		const
-			ctx = Object.create(this);
-
-		ctx.$renderEngine = {
-			supports,
-			minimalCtx,
-
-			cloneVNode,
-			patchVNode,
-			renderVNode
-		};
-
-		const [res] = await createComponent<Element>(opts, ctx);
+		const [res] = await createComponent<Element>(opts, Object.create(this));
 		return res;
 	}
 

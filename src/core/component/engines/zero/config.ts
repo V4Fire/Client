@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VueConfiguration } from 'vue/types/vue';
+import type { VueConfiguration } from 'vue/types/vue';
 
 export default <VueConfiguration>{
 	silent: true,

@@ -18,19 +18,7 @@ import { createFakeCtx, initComponentVNode, FlyweightVNode } from 'core/componen
 import { applyDynamicAttrs } from 'core/component/render-function/v-attrs';
 import { registerComponent } from 'core/component/register';
 
-import {
-
-	supports,
-	cloneVNode,
-	minimalCtx,
-
-	CreateElement,
-
-	VNode,
-	VNodeData
-
-} from 'core/component/engines';
-
+import type { CreateElement, VNode, VNodeData } from 'core/component/engines';
 import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 export const
@@ -50,8 +38,11 @@ export function wrapCreateElement(
 	baseCtx: ComponentInterface
 ): [CreateElement, Function[]] {
 	const
-		tasks = <Function[]>[],
-		ssrMode = baseCtx.$renderEngine.supports.ssr;
+		tasks = <Function[]>[];
+
+	const
+		engine = baseCtx.$renderEngine,
+		{supports} = baseCtx.$renderEngine;
 
 	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(
 		this: Nullable<ComponentInterface>,
@@ -136,7 +127,7 @@ export function wrapCreateElement(
 				ref = vData != null && (vData[$$.ref] ?? vData.ref);
 
 			if (renderKey !== '') {
-				unsafe.renderTmp[renderKey] = cloneVNode(vnode);
+				unsafe.renderTmp[renderKey] = engine.cloneVNode(vnode);
 			}
 
 			// Add $refs link if it doesn't exist
@@ -189,8 +180,6 @@ export function wrapCreateElement(
 			return vnode;
 		};
 
-
-
 		if (component && needCreateFunctionalComponent) {
 			needLinkToEl = true;
 
@@ -212,7 +201,7 @@ export function wrapCreateElement(
 				baseCtx = <CanUndef<FunctionalCtx>>c.renderCtxCache[componentName];
 
 			if (baseCtx == null) {
-				baseCtx = Object.create(minimalCtx);
+				baseCtx = Object.create(engine.minimalCtx);
 
 				// @ts-ignore (access)
 				baseCtx.componentName = componentName;
@@ -248,7 +237,7 @@ export function wrapCreateElement(
 				renderCtx
 			);
 
-			if (ssrMode && Object.isPromise(fakeCtx.unsafe.$initializer)) {
+			if (supports.ssr && Object.isPromise(fakeCtx.unsafe.$initializer)) {
 				return fakeCtx.unsafe.$initializer.then(() => patchVNode(createComponentVNode()));
 			}
 
@@ -271,7 +260,7 @@ export function wrapCreateElement(
 		return patchVNode(vnode);
 	};
 
-	if (ssrMode) {
+	if (supports.ssr) {
 		const wrappedAsyncCreateElement = <CreateElement>function wrappedAsyncCreateElement(
 			this: Nullable<ComponentInterface>,
 			tag: CanUndef<string>,

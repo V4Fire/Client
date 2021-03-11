@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RenderContext, VNode } from 'vue';
-import { ComponentInterface } from 'core/component';
+import type { RenderContext, VNode } from 'vue';
+import type { ComponentInterface } from 'core/component';
 import * as _ from 'core/component/engines/zero/helpers';
 
 /**

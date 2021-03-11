@@ -7,7 +7,7 @@
  */
 
 import minimalCtx from 'core/component/engines/zero/context';
-import { VNodeData } from 'core/component/engines/zero/interface';
+import type { VNodeData } from 'core/component/engines/zero/interface';
 
 //#if VueInterfaces
 export * from 'vue';

@@ -35,7 +35,8 @@ export {
 
 export {
 
-	renderData,
+	cloneVNode,
+	renderVNode,
 	patchVNode,
 
 	ComponentEngine as default,

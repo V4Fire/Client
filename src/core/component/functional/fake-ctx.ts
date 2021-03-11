@@ -87,7 +87,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	fakeCtx.children = Object.isArray(children) ? children : [];
 
 	fakeCtx.$parent = parent;
-	fakeCtx.$root = renderCtx.$root ?? parent?.$root;
+	fakeCtx.$root = renderCtx.$root ?? parent?.$root ?? fakeCtx;
 	fakeCtx.$renderEngine = fakeCtx.$root.$renderEngine;
 
 	fakeCtx.$options = $options;
