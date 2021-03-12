@@ -99,11 +99,6 @@ export async function createComponent<T>(
 		initProps: true
 	});
 
-	const {
-		unsafe,
-		unsafe: {$async: $a}
-	} = fakeCtx;
-
 	init.createdState(fakeCtx);
 
 	const
@@ -114,105 +109,132 @@ export async function createComponent<T>(
 	fakeCtx['$el'] = node;
 	node.component = fakeCtx;
 
-	if (HAS_WINDOW) {
-		const
-			watchRoot = document.body,
-			is = (el): boolean => el === node || el.contains(node);
+	return [node, fakeCtx];
+}
 
-		if (typeof MutationObserver === 'function') {
-			const observer = new MutationObserver((mutations) => {
-				for (let i = 0; i < mutations.length; i++) {
-					const
-						mut = mutations[i];
-
-					for (let o = mut.addedNodes, j = 0; j < o.length; j++) {
-						const
-							node = o[j];
-
-						if (!(node instanceof Element)) {
-							continue;
-						}
-
-						if (is(node)) {
-							mount();
-
-						} else {
-							const
-								childComponentId = getChildComponentId(node);
-
-							if (childComponentId != null) {
-								unsafe.$emit(`child-component-mounted:${childComponentId}`);
-							}
-						}
-					}
-
-					for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
-						const
-							node = o[j];
-
-						if (!(node instanceof Element)) {
-							continue;
-						}
-
-						if (is(node)) {
-							$a.setTimeout(() => {
-								if (!document.body.contains(node)) {
-									unsafe.$destroy();
-								}
-
-							}, 0, {
-								label: $$.removeFromDOM
-							});
-
-						} else {
-							const
-								childComponentId = getChildComponentId(node);
-
-							if (childComponentId != null) {
-								unsafe.$emit(`child-component-destroyed:${childComponentId}`);
-							}
-						}
-					}
-				}
-			});
-
-			observer.observe(watchRoot, {
-				childList: true,
-				subtree: true
-			});
-
-			$a.worker(observer);
-
-		} else {
-			$a.on(watchRoot, 'DOMNodeInserted', ({srcElement}) => {
-				if (is(srcElement)) {
-					mount();
-
-				} else {
-					const
-						childComponentId = getChildComponentId(srcElement);
-
-					if (childComponentId != null) {
-						unsafe.$emit(`child-component-mounted:${childComponentId}`);
-					}
-				}
-			});
-
-			$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
-				if (is(srcElement)) {
-					unsafe.$destroy();
-
-				} else {
-					const
-						childComponentId = getChildComponentId(srcElement);
-
-					if (childComponentId != null) {
-						unsafe.$emit(`child-component-destroyed:${childComponentId}`);
-					}
-				}
-			});
-		}
+/**
+ * Mounts a component to the specified node
+ *
+ * @param nodeOrSelector - link to the parent node to mount or a selector
+ * @param componentNode - link to the rendered component node
+ * @param ctx - context of the component to mount
+ */
+export function mountComponent(nodeOrSelector: string | Node, [componentNode, ctx]: [Node, ComponentInterface]): void {
+	if (!HAS_WINDOW) {
+		return;
 	}
+
+	const parentNode = Object.isString(nodeOrSelector) ?
+		document.querySelector(nodeOrSelector) :
+		nodeOrSelector;
+
+	if (parentNode == null) {
+		return;
+	}
+
+	const {
+		unsafe,
+		unsafe: {$async: $a}
+	} = ctx;
+
+	const
+		is = (el): boolean => el === parentNode || el.contains(parentNode);
+
+	if (typeof MutationObserver === 'function') {
+		const observer = new MutationObserver((mutations) => {
+			for (let i = 0; i < mutations.length; i++) {
+				const
+					mut = mutations[i];
+
+				for (let o = mut.addedNodes, j = 0; j < o.length; j++) {
+					const
+						node = o[j];
+
+					if (!(node instanceof Element)) {
+						continue;
+					}
+
+					if (is(node)) {
+						mount();
+
+					} else {
+						const
+							childComponentId = getChildComponentId(node);
+
+						if (childComponentId != null) {
+							unsafe.$emit(`child-component-mounted:${childComponentId}`);
+						}
+					}
+				}
+
+				for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
+					const
+						node = o[j];
+
+					if (!(node instanceof Element)) {
+						continue;
+					}
+
+					if (is(node)) {
+						$a.setTimeout(() => {
+							if (!document.body.contains(node)) {
+								unsafe.$destroy();
+							}
+
+						}, 0, {
+							label: $$.removeFromDOM
+						});
+
+					} else {
+						const
+							childComponentId = getChildComponentId(node);
+
+						if (childComponentId != null) {
+							unsafe.$emit(`child-component-destroyed:${childComponentId}`);
+						}
+					}
+				}
+			}
+		});
+
+		observer.observe(parentNode, {
+			childList: true,
+			subtree: true
+		});
+
+		$a.worker(observer);
+
+	} else {
+		$a.on(parentNode, 'DOMNodeInserted', ({srcElement}) => {
+			if (is(srcElement)) {
+				mount();
+
+			} else {
+				const
+					childComponentId = getChildComponentId(srcElement);
+
+				if (childComponentId != null) {
+					unsafe.$emit(`child-component-mounted:${childComponentId}`);
+				}
+			}
+		});
+
+		$a.on(parentNode, 'DOMNodeRemoved', ({srcElement}) => {
+			if (is(srcElement)) {
+				unsafe.$destroy();
+
+			} else {
+				const
+					childComponentId = getChildComponentId(srcElement);
+
+				if (childComponentId != null) {
+					unsafe.$emit(`child-component-destroyed:${childComponentId}`);
+				}
+			}
+		});
+	}
+
+	parentNode.appendChild(componentNode);
 
 	let
 		mounted = false;
@@ -223,7 +245,7 @@ export async function createComponent<T>(
 		}
 
 		mounted = true;
-		init.mountedState(fakeCtx);
+		init.mountedState(ctx);
 	}
 
 	function getChildComponentId(node: Element): CanUndef<string> {
@@ -247,6 +269,4 @@ export async function createComponent<T>(
 			}
 		}
 	}
-
-	return [node, fakeCtx];
 }

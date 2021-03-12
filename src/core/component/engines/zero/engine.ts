@@ -16,7 +16,7 @@ import config from 'core/component/engines/zero/config';
 import * as _ from 'core/component/engines/zero/helpers';
 
 import { options, document } from 'core/component/engines/zero/const';
-import { getComponent, createComponent } from 'core/component/engines/zero/component';
+import { getComponent, createComponent, mountComponent } from 'core/component/engines/zero/component';
 
 import type { VNodeData } from 'core/component/engines/zero/interface';
 
@@ -91,35 +91,21 @@ export class ComponentEngine {
 	/**
 	 * @param [opts]
 	 */
-	constructor(opts: ComponentOptions<any> = {}) {
-		const
-			{el} = opts;
-
-		if (el == null) {
+	constructor(opts?: ComponentOptions<any>) {
+		if (opts == null) {
 			return;
 		}
 
-		(async () => {
-			const
-				res = await this.$render(opts);
+		const
+			{el} = opts;
 
-			if (res == null) {
+		this.$render(opts).then(() => {
+			if (el == null) {
 				return;
 			}
 
-			if (Object.isString(el)) {
-				const
-					node = document.querySelector(el);
-
-				if (node != null) {
-					node.appendChild(res);
-				}
-
-				return;
-			}
-
-			el.appendChild(res);
-		})();
+			this.$mount.bind(this, el);
+		}, stderr);
 	}
 
 	/**
@@ -127,8 +113,24 @@ export class ComponentEngine {
 	 * @param opts - component options
 	 */
 	async $render(opts: ComponentOptions<any>): Promise<CanUndef<Element>> {
-		const [res] = await createComponent<Element>(opts, Object.create(this));
-		return res;
+		const res = await createComponent<Element>(opts, Object.create(this));
+		this[_.$$.renderedComponent] = res;
+		return res[0];
+	}
+
+	/**
+	 * Mounts a component to the specified node
+	 * @param nodeOrSelector - link to the parent node to mount or a selector
+	 */
+	$mount(nodeOrSelector: string | Node): void {
+		const
+			renderedComponent = this[_.$$.renderedComponent];
+
+		if (renderedComponent == null) {
+			return;
+		}
+
+		mountComponent(nodeOrSelector, renderedComponent);
 	}
 
 	/**
