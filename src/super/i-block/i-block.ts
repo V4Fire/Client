@@ -58,6 +58,7 @@ import {
 
 } from 'core/component';
 
+import remoteState from 'core/component/state';
 import * as init from 'core/component/construct';
 
 import 'super/i-block/directives';
@@ -538,7 +539,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Link to i18n function, that will be used to localize of string literals
 	 */
 	@prop(Function)
-	readonly i18n: typeof i18n = defaultI18n;
+	readonly i18n: typeof i18n = ((i18n));
 
 	/**
 	 * Link to a remote state object.
@@ -547,9 +548,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 * that can't be initialized within a component directly. You can modify this object outside from components,
 	 * but remember, that these mutations may force re-render of all components.
 	 */
-	@computed({watchable: true, dependencies: ['r.remoteState']})
-	get remoteState(): this['r']['remoteState'] {
-		return this.r.remoteState;
+	@computed({watchable: true})
+	get remoteState(): typeof remoteState {
+		return remoteState;
 	}
 
 	/**
@@ -2604,9 +2605,4 @@ export default abstract class iBlock extends ComponentInterface {
 			delete classesCache.dict.els?.[this.componentId];
 		} catch {}
 	}
-}
-
-function defaultI18n(this: iBlock, ...args: unknown[]): string {
-	// eslint-disable-next-line @typescript-eslint/no-extra-parens
-	return (Object.isFunction(this.r.i18n) ? this.r.i18n : ((i18n))).apply(this.r, args);
 }

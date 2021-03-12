@@ -12,9 +12,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { setLocale, locale } from 'core/i18n';
 
-import remoteState from 'core/component/state';
+import { setLocale, locale } from 'core/i18n';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 
 import type bRouter from 'base/b-router/b-router';
@@ -57,10 +56,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
-	/** @override */
-	@system()
-	readonly i18n: typeof i18n = ((i18n));
-
 	/**
 	 * Remote data store
 	 */
@@ -84,12 +79,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
 	lastOnlineDate?: Date;
-
-	/** @override */
-	@computed({watchable: true})
-	get remoteState(): typeof remoteState {
-		return remoteState;
-	}
 
 	/**
 	 * Name of the active route page
