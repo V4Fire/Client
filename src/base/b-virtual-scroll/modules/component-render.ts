@@ -213,7 +213,7 @@ export default class ComponentRender extends Friend {
 			res = render(children);
 
 		if (res.length === 0) {
-			throw new Error('Failed to render components, possibly an error occurred while creating the components.');
+			throw new Error('Failed to render components, possibly an error occurred while creating the components');
 		}
 
 		return res;
