@@ -81,7 +81,7 @@ module.exports = async (page, params) => {
 			await check(1);
 		});
 
-		it('executes a handler once with `single` provided', async () => {
+		it('executes a handler once with `single` option', async () => {
 			await ctx.evaluate((ctx) => {
 				globalThis.tVal = 0;
 
@@ -99,7 +99,7 @@ module.exports = async (page, params) => {
 			await check(1);
 		});
 
-		it('executes an error handler if promise was rejected', async () => {
+		it('executes an error handler if the promise was rejected', async () => {
 			await ctx.evaluate((ctx) => {
 				globalThis.tVal = 0;
 
@@ -119,7 +119,7 @@ module.exports = async (page, params) => {
 			await check(-1);
 		});
 
-		it('provides an arguments into handler', async () => {
+		it('provides arguments into the handler', async () => {
 			await ctx.evaluate((ctx) => {
 				ctx.directives.updateOn.add(ctx.$el, {
 					emitter: ctx.selfEmitter,
