@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Now `bVirtualScroll` will throw an error if components render returns an empty array `base/b-virtual-scroll`.
+
 ## v3.0.0-rc.157 (2021-03-10)
 
 #### :rocket: New Feature
