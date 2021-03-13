@@ -7,7 +7,7 @@
  */
 
 import Vue, { VNode } from 'vue';
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Renders the specified data

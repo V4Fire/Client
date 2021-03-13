@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { ModsDecl } from 'super/i-block/i-block';
+import type { ModsDecl } from 'super/i-block/i-block';
 
 export * from 'traits/i-size/interface';
 

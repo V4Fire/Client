@@ -13,7 +13,7 @@
 
 import { paramsFactory } from 'core/component/decorators/base';
 
-import {
+import type {
 
 	InitFieldFn,
 

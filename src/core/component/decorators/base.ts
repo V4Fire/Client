@@ -11,8 +11,8 @@ import { initEmitter, metaPointers } from 'core/component/const';
 import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 import { storeRgxp } from 'core/component/reflection';
 
-import { ComponentMeta } from 'core/component/interface';
-import { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
+import type { ComponentMeta } from 'core/component/interface';
+import type { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
 
 /**
  * Factory to create component property decorators

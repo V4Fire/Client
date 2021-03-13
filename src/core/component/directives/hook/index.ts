@@ -14,7 +14,7 @@
  */
 
 import { ComponentDriver } from 'core/component/engines';
-import { DirectiveOptions } from 'core/component/directives/hook/interface';
+import type { DirectiveOptions } from 'core/component/directives/hook/interface';
 
 export * from 'core/component/directives/hook/interface';
 

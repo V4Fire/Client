@@ -21,7 +21,7 @@ const
  *
  * @param {Page} page
  * @param {!Object} params
- * @returns {!Promise<boolean>}
+ * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {
 	await h.utils.setup(page, params.context);
@@ -149,21 +149,16 @@ module.exports = async (page, params) => {
 				items,
 				attrs: {
 					renderChunks: 1,
-					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.3.second()))'
+					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
 				}
 			});
 
-			const wait = async (v, timer = 300) => {
-				await delay(timer);
-				await expect((await page.$$('.b-checkbox')).length).toBe(v);
-			};
-
-			await wait(2, 0);
-			await wait(3);
-			await wait(4);
-			await wait(5);
-			await wait(6);
-			await wait(7);
+			await waitForCheckboxCount(2);
+			await waitForCheckboxCount(3);
+			await waitForCheckboxCount(4);
+			await waitForCheckboxCount(5);
+			await waitForCheckboxCount(6);
+			await waitForCheckboxCount(7);
 		});
 
 		async function init({items, attrs, content} = {}) {
@@ -216,6 +211,7 @@ module.exports = async (page, params) => {
 	describe('b-tree rendering data from a data provider', () => {
 		it('initialization', async () => {
 			await init();
+			await waitForCheckboxCount(14);
 			await h.bom.waitForIdleCallback(page);
 
 			expect((await page.$$('.b-checkbox')).length).toBe(14);
@@ -294,6 +290,11 @@ module.exports = async (page, params) => {
 			return h.component.waitForComponent(page, '#target');
 		}
 	});
+
+	async function waitForCheckboxCount(v) {
+		await page.waitForFunction((v) => document.querySelectorAll('.b-checkbox').length === v, v);
+		await expect((await page.$$('.b-checkbox')).length).toBe(v);
+	};
 
 	function getFoldedClass(target, value = true) {
 		return target.evaluate(

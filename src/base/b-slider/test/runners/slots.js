@@ -62,6 +62,7 @@ module.exports = (page) => {
 			expect((await h.dom.getRefs(viewContent, 'item')).length).toBe(4);
 
 			await swipeOnce(page);
+			await h.bom.waitForIdleCallback(page);
 			expect((await target.evaluate((ctx) => ctx.current))).toBe(1);
 		});
 

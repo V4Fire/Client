@@ -11,7 +11,8 @@ import symbolGenerator from 'core/symbol';
 
 import iVisible from 'traits/i-visible/i-visible';
 import iBlock, { component, prop, system, wait, watch, ModsDecl } from 'super/i-block/i-block';
-import {
+
+import type {
 
 	Offset,
 	OverflowTypes,

@@ -7,7 +7,7 @@
  */
 
 import { metaPointers, PARENT } from 'core/component/const';
-import { ComponentMeta, StrictModDeclVal } from 'core/component/interface';
+import type { ComponentMeta, StrictModDeclVal } from 'core/component/interface';
 
 /**
  * Inherits the specified meta object from another meta object.

@@ -31,7 +31,7 @@ import {
 
 } from 'core/component/engines';
 
-import { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
+import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 export const
 	$$ = symbolGenerator();

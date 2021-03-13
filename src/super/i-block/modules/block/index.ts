@@ -13,10 +13,10 @@
 
 import Friend from 'super/i-block/modules/friend';
 
-import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 import { fakeCtx, modRgxpCache, elRxp } from 'super/i-block/modules/block/const';
+import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 
-import {
+import type {
 
 	ModEvent,
 	ModEventReason,

@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.157 (2021-03-10)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries
+
+## v3.0.0-rc.149 (2021-03-01)
+
+#### :bug: Bug Fix
+
+* Don't generate `.init.js` with `--fat-html`
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :bug: Bug Fix

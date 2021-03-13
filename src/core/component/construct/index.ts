@@ -34,8 +34,8 @@ import { resolveRefs } from 'core/component/ref';
 import { getNormalParent } from 'core/component/traverse';
 import { forkMeta } from 'core/component/meta';
 
-import { ComponentInterface, ComponentMeta, Hook } from 'core/component/interface';
-import { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
+import type { ComponentInterface, ComponentMeta, Hook } from 'core/component/interface';
+import type { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
 
 export * from 'core/component/construct/interface';
 

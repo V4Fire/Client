@@ -13,7 +13,10 @@ const
 	pzlr = require('@pzlr/build-core');
 
 const
-	path = require('upath'),
+	fs = require('fs'),
+	path = require('upath');
+
+const
 	camelize = require('camelize'),
 	o = require('uniconf/options').option;
 
@@ -590,7 +593,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const
 			server = super.typescript();
 
+		const configFile = fs.existsSync(path.join(this.src.cwd(), 'client.tsconfig.json')) ?
+			'client.tsconfig.json' :
+			'tsconfig.json';
+
 		const client = this.extend({}, server, {
+			configFile,
 			compilerOptions: {
 				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
 			}

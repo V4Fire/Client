@@ -33,7 +33,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { StageTitles } from 'base/b-window/interface';
+import type { StageTitles } from 'base/b-window/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';

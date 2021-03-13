@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { SizeOff, Ratio } from 'base/b-crop/b-crop';
+import type { SizeOff, Ratio } from 'base/b-crop/b-crop';
+
 export * from 'base/b-crop/modules/interface';
 
 export interface Tools {

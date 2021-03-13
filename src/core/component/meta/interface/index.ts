@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { PropOptions } from 'core/component/decorators';
-import { WatchObject } from 'core/component/interface/watch';
-import { ComponentConstructor, RenderFunction, ModsDecl } from 'core/component/interface';
+import type { PropOptions } from 'core/component/decorators';
+import type { WatchObject } from 'core/component/interface/watch';
+import type { ComponentConstructor, RenderFunction, ModsDecl } from 'core/component/interface';
 
-import {
+import type {
 
 	ComponentOptions,
 	ComponentProp,

@@ -13,7 +13,7 @@
 
 import { defProp } from 'core/const/props';
 import { fieldQueue } from 'core/component/field/const';
-import { ComponentInterface, ComponentField } from 'core/component/interface';
+import type { ComponentInterface, ComponentField } from 'core/component/interface';
 
 export * from 'core/component/field/const';
 

@@ -13,14 +13,14 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { TaskCtx } from 'core/async';
 import { getSrcSet } from 'core/html';
+import type { TaskCtx } from 'core/async';
 
 import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iBlock, { component, prop, hook, wait, ModsDecl } from 'super/i-block/i-block';
-import { SizeType } from 'base/b-image/interface';
+import type { SizeType } from 'base/b-image/interface';
 
 export * from 'super/i-block/i-block';
 export * from 'base/b-image/interface';

@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
-import {
+import type {
 
 	ResizeWatcherObserverOptions,
 	ResizeWatcherObservable,

@@ -9,9 +9,10 @@
 import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
-import { ComponentInterface } from 'core/component';
 import { ID_ATTRIBUTE } from 'core/component/directives/update-on/const';
-import { DirectiveValue } from 'core/component/directives/update-on/interface';
+
+import type { ComponentInterface } from 'core/component';
+import type { DirectiveValue } from 'core/component/directives/update-on/interface';
 
 export const
 	$$ = symbolGenerator();

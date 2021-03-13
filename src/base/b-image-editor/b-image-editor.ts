@@ -8,11 +8,11 @@
 
 import Editor from 'core/image-editor';
 
-import bCrop from 'base/b-crop/b-crop';
+import type bCrop from 'base/b-crop/b-crop';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iBlock, { component, prop, field, system, wait, hook, ModsDecl } from 'super/i-block/i-block';
-import { Size, StrSize, RotateSide, Tools, NormalizedTools } from 'base/b-image-editor/modules/interface';
+import type { Size, StrSize, RotateSide, Tools, NormalizedTools } from 'base/b-image-editor/modules/interface';
 
 export * from 'super/i-block/i-block';
 export * from 'base/b-image-editor/modules/interface';

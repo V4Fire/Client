@@ -24,6 +24,93 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `b-bottom-slide`
   * `i-observe-dom`
 
+## v3.0.0-rc.157 (2021-03-10)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries `build` `iStaticPage`
+
+## v3.0.0-rc.156 (2021-03-06)
+
+#### :bug: Bug Fix
+
+* Updated regexp in `iBlock.canSelfDispatchEvent` to match kebab-cased events but not camelCased
+
+## v3.0.0-rc.155 (2021-03-05)
+
+#### :rocket: New Feature
+
+* Added a new method `canSelfDispatchEvent` to prevent self dispatching of some events `iBlock`
+
+#### :bug: Bug Fix
+
+* Now `componentStatus` and `componentHook` events can't be self dispatched `iBlock`
+
+## v3.0.0-rc.154 (2021-03-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with tests failing because waiting of `#root-component` to become visible `tests/helpers/utils`
+
+## v3.0.0-rc.153 (2021-03-04)
+
+#### :rocket: New Feature
+
+* Added a new option `--bail` to stop test execution after the first failure `tests`
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with tests execution took too long](https://github.com/V4Fire/Client/issues/436)
+
+* Added `force=true` to default options `DOM.clickToRef`. It fixed a bug where clicking at a visible element
+  did not work because the playwright decided that the element was not visible. `tests`
+
+#### :house: Internal
+
+* [`bVirtualScroll` is now implements `iItems` trait `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/471)
+
+#### :nail_care: Polish
+
+* [Interface names review `core/dom/in-view`](https://github.com/V4Fire/Client/issues/405)
+
+## v3.0.0-rc.152 (2021-03-04)
+
+#### :house: Internal
+
+* Added a `try-catch` block to suppress async errors on component rerender in `iBlock.onUpdateHook`
+
+## v3.0.0-rc.151 (2021-03-04)
+
+#### :rocket: New Feature
+
+* Added a new config `client.tsconfig`
+
+#### :house: Internal
+
+* `bVirtualScroll`:
+  * Downgraded the delay before initializing to `15ms`
+  * Some optimizations
+
+* Caching of dynamic imports `super/i-block/modules/dom`
+
+## v3.0.0-rc.150 (2021-03-03)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the scroll unlocking during close `base/b-bottom-slide`
+
+## v3.0.0-rc.149 (2021-03-01)
+
+#### :bug: Bug Fix
+
+* Don't generate `.init.js` with `--fat-html` `iStaticPage`
+
+## v3.0.0-rc.148 (2021-03-01)
+
+#### :house: Internal
+
+* Added `importsNotUsedAsValues` to `.tsconfig`
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :rocket: New Feature

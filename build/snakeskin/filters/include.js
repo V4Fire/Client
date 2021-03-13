@@ -28,11 +28,11 @@ const
 
 Snakeskin.importFilters({
 	/**
-	 * Resolves the specified URL to use with the Snakeskin include directive.
+	 * Resolves the specified file path to use with the Snakeskin include directive.
 	 * The filter adds the support of layers.
 	 *
-	 * @param {string} url
-	 * @param {string} source - original file source
+	 * @param {string} filePath
+	 * @param {string} sourceFilePath - original file source path
 	 * @returns {(string|!Array<string>)}
 	 *
 	 * @example
@@ -42,15 +42,15 @@ Snakeskin.importFilters({
 	 * - template index() extends ['i-data'].index
 	 * ```
 	 */
-	b(url, source) {
+	b(filePath, sourceFilePath) {
 		let
 			start = 0;
 
-		if (superRgxp.removeFlags('g').test(url)) {
-			url = url.replace(superRgxp, '');
+		if (superRgxp.removeFlags('g').test(filePath)) {
+			filePath = filePath.replace(superRgxp, '');
 
 			for (let i = 0; i < resources.length; i++) {
-				if (isPathInside(source, resources[i])) {
+				if (isPathInside(sourceFilePath, resources[i])) {
 					start = i + 1;
 					break;
 				}
@@ -61,8 +61,8 @@ Snakeskin.importFilters({
 				const
 					rgxp = resourcesRgxp[i];
 
-				if (rgxp.test(url)) {
-					url = url.replace(rgxp, '');
+				if (rgxp.test(filePath)) {
+					filePath = filePath.replace(rgxp, '');
 					start = i + 1;
 					break;
 				}
@@ -70,13 +70,13 @@ Snakeskin.importFilters({
 		}
 
 		const
-			hasMagic = glob.hasMagic(url),
-			end = ssExtRgxp.removeFlags('g').test(url) ? '' : '/',
+			hasMagic = glob.hasMagic(filePath),
+			end = ssExtRgxp.removeFlags('g').test(filePath) ? '' : '/',
 			ends = [];
 
 		if (end) {
 			const
-				basename = path.basename(url);
+				basename = path.basename(filePath);
 
 			if (!glob.hasMagic(basename)) {
 				ends.push(`${basename}.ss`);
@@ -96,7 +96,7 @@ Snakeskin.importFilters({
 		for (let i = start; i < resources.length; i++) {
 			for (let j = 0; j < ends.length; j++) {
 				const
-					fullPath = path.join(resources[i], url, ends[j] || '');
+					fullPath = path.join(resources[i], filePath, ends[j] || '');
 
 				if (hasMagic) {
 					paths.push(...glob.sync(fullPath));
@@ -111,7 +111,7 @@ Snakeskin.importFilters({
 			return paths;
 		}
 
-		return url + end;
+		return filePath + end;
 	}
 });
 

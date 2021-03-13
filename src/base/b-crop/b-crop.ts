@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import iVisible from 'traits/i-visible/i-visible';
 import iBlock, { component, prop, field, system, wait, watch, ModsDecl } from 'super/i-block/i-block';
-import { SizeOff, MinMax, Ratio, Size, StrSize } from 'base/b-crop/modules/interface';
+import type { SizeOff, MinMax, Ratio, Size, StrSize } from 'base/b-crop/modules/interface';
 import * as watchers from 'base/b-crop/modules/watchers';
 
 export * from 'super/i-block/i-block';

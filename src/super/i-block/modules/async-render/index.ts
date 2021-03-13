@@ -18,7 +18,7 @@ import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
 import Friend from 'super/i-block/modules/friend';
-import { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
+import type { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
 
 export * from 'super/i-block/modules/async-render/interface';
 

@@ -7,7 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { EventEmitterLike } from 'core/async';
+import type { EventEmitterLike } from 'core/async';
 
 import iDynamicPage, {
 

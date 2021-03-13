@@ -6,9 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = async (page, {browserType, tmpDir}) => {
-	await page.screenshot({path: `${tmpDir}/example-${browserType}.png`});
+// @ts-check
 
+const
+	h = include('tests/helpers');
+
+module.exports = (page) => {
 	describe('b-button', () => {
 		beforeAll(async () => {
 			await page.evaluate(() => {

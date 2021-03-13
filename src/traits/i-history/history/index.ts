@@ -8,14 +8,14 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { ModsDecl, ComponentHooks } from 'core/component';
+import type { ModsDecl, ComponentHooks } from 'core/component';
 import { InView } from 'core/dom/in-view';
 
 import Friend from 'super/i-block/modules/friend';
-import iHistory from 'traits/i-history/i-history';
+import type iHistory from 'traits/i-history/i-history';
 
 import { INITIAL_STAGE } from 'traits/i-history/history/const';
-import { Page, HistoryItem, HistoryConfig, Transition } from 'traits/i-history/history/interface';
+import type { Page, HistoryItem, HistoryConfig, Transition } from 'traits/i-history/history/interface';
 
 export * from 'traits/i-history/history/const';
 export * from 'traits/i-history/history/interface';

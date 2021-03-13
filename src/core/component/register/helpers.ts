@@ -7,8 +7,9 @@
  */
 
 import { isComponent, componentInitializers, componentParams, components } from 'core/component/const';
-import { ComponentConstructorInfo } from 'core/component/reflection';
-import { ComponentMeta } from 'core/component/interface';
+
+import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentConstructorInfo } from 'core/component/reflection';
 
 /**
  * Registers a parent component of the specified component to a component library (vue, react, etc.).
