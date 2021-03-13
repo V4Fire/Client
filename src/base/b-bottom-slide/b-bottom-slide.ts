@@ -507,9 +507,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		// Loopback
 	}
 
-	/** @see [[iObserveDOM.onDOMChange]] */
+	/** @see [[iObserveDOM.emitDOMChange]] */
 	onDOMChange(): void {
-		iObserveDOM.onDOMChange(this);
+		iObserveDOM.emitDOMChange(this);
 	}
 
 	/** @see [[iOpen.onKeyClose]] */

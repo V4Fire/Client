@@ -10,6 +10,8 @@ import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import { InViewAdapter } from 'core/dom/in-view';
 import { ResizeWatcher } from 'core/dom/resize-observer';
 
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
+
 export interface Directives {
 	imageFactory: typeof imageLoaderFactory;
 	image: typeof ImageLoader;
@@ -19,4 +21,5 @@ export interface Directives {
 
 export interface Modules {
 	resizeWatcher: typeof ResizeWatcher;
+	iObserveDOM: typeof iObserveDOM;
 }

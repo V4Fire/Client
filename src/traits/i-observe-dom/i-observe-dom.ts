@@ -109,24 +109,41 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Handler: DOM tree was changed
-	 *
-	 * @param component
-	 * @param [records]
-	 * @param [opts]
-	 *
-	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
+	 * @deprecated
+	 * @see [[iObserveDOM.emitDOMChange]]
 	 */
 	static onDOMChange<T extends iBlock>(
 		component: T & iObserveDOM,
 		records?: MutationRecord[],
 		opts?: ObserveOptions
 	): void {
+		this.emitDOMChange(component, records, opts);
+	}
+
+	/**
+	 * Fires an event that DOM tree was changed
+	 *
+	 * @param component
+	 * @param [records]
+	 * @param [opts]
+	 *
+	 * @emits localEmitter:DOMChange(records?: MutationRecord[], options?: ObserverOptions)
+	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
+	 */
+	static emitDOMChange<T extends iBlock>(
+		component: T & iObserveDOM,
+		records?: MutationRecord[],
+		opts?: ObserveOptions
+	): void {
+		component.unsafe.localEmitter.emit('DOMChange', records, opts);
 		component.emit('DOMChange', records, opts);
 	}
 
 	/**
-	 * Returns true if MutationObserver is already observing the specified node
+	 * Returns true if `MutationObserver` is already observing the specified node
+	 *
+	 * @param component
+	 * @param node
 	 */
 	static isNodeBeingObserved<T extends iBlock & iObserveDOM>(component: T, node: Element): boolean {
 		return this.getObserversMap(component).has(node);

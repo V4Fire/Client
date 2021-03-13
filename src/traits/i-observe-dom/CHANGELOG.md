@@ -9,7 +9,9 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.135 (2021-??-??)
+## v3.0.0-rc.158 (2021-??-??)
+
+* `onDOMChange` is now deprecated, use `emitDOMChange` instead
 
 #### :memo: Documentation
 

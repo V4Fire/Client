@@ -11,7 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.148 (2021-??-??)
+## v3.0.0-rc.158 (2021-??-??)
+
+#### :boom: Breaking Change
+
+* `onDOMChange` is now deprecated, use `emitDOMChange` instead `traits/i-observe-dom`
 
 #### :memo: Documentation
 
