@@ -47,7 +47,7 @@ To activate this mode, set the `mode` prop to `scroll`.
 < b-slider :mode = 'scroll'
 ```
 
-### Usage
+## Usage
 
 1. Loading slides from a data provider.
 
@@ -59,6 +59,61 @@ To activate this mode, set the `mode` prop to `scroll`.
   :itemProps = (el) => ({data: el})
 .
 ```
+
+2. Provide data into `default` slot
+
+```
+< b-slider &
+  :mode = 'slide'
+.
+  < img.&__test v-for = img in imgArr
+```
+
+## API
+
+- Prop `dynamicHeight` – If this prop is set to `true`, then the height calculation will be based on rendered elements.
+The component will create an additional element to contain the rendered elements, while it will not be visible to the user.
+This may be useful if you need to hide scroll on mobile devices, but you don't know exact size of the elements that will be rendered into component.
+By default this prop is settled to `false`.
+
+- Prop `circular` – If this prop is set to `true`, the user will return to the first slide when scrolling the last slide.
+That is, the slider will work "in a circle".
+
+- Prop `align` – This prop controls how much the slides will scroll.
+For example, by specifying the value `center`, when scrolling, the slider will stop when the active slide is in the center of the slider.
+
+- Method `slideTo(index: number, animate: boolean)` – Scrolls the slider to the element that matches the provided index.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    slider: bSlider
+  };
+
+  test(): void {
+    this.$refs.slider.slideTo(1).catch(stderr);
+  }
+}
+```
+
+- Method `moveSlide(dir: SlideDirection)` – Scrolls the slider to the next or previous element.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    slider: bSlider
+  };
+
+  test(): void {
+    this.$refs.slider.moveSlide(-1); // move to previous element
+    this.$refs.slider.moveSlide(1); // move to next element
+  }
+}
+```
+
+- Getter `isSlideMode` – True if the component is rendered in `slide` mode.
 
 ## Slots
 
@@ -103,4 +158,25 @@ The component supports a bunch of slots to provide:
 < b-slider
   < template #after
     Hello there general Kenobi
+```
+
+The layout of slots in the component DOM tree:
+
+```
++= self.slot('before')
+
+< .&__slider
+  += self.slot('beforeItems')
+
+  < .&__items &
+    v-if = item || option |
+    v-for = item in items
+  .
+
+  < template v-else
+    += self.slot('default')
+
+  += self.slot('afterItems)
+
++= self.slot('after')
 ```
