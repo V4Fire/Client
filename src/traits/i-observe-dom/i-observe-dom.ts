@@ -127,8 +127,8 @@ export default abstract class iObserveDOM {
 	 * @param [records]
 	 * @param [opts]
 	 *
-	 * @emits localEmitter:DOMChange(records?: MutationRecord[], options?: ObserverOptions)
-	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
+	 * @emits `localEmitter:DOMChange(records?: MutationRecord[], options?: ObserverOptions)`
+	 * @emits `DOMChange(records?: MutationRecord[], options?: ObserverOptions)`
 	 */
 	static emitDOMChange<T extends iBlock>(
 		component: T & iObserveDOM,
@@ -150,7 +150,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Returns a component observers map
+	 * Returns a map of component observers
 	 * @param component
 	 */
 	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {

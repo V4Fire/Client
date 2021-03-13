@@ -808,7 +808,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 					}
 				}
 
-				// tslint:disable-next-line:prefer-conditional-expression
 				if (direction > 0) {
 					step = i > stepsInPixels.length - 1 ? i - 1 : i;
 

@@ -18,16 +18,16 @@ This module provides a component to create bottom sheet behavior that is similar
 
 ## Events
 
-| EventName         | Description                              | Payload description        | Payload   |
-| ----------------- | ---------------------------------------- | -------------------------- | --------- |
-| `open`            | The component was opened                 | –                          | –         |
-| `close`           | The component was closed                 | –                          | –         |
-| `stepChange`      | The component opened step was changed    | Number of the current step | `number`  |
-| `moveStateChange` | The component starts or stops moving     | State of moving            | `Boolean` |
+| EventName         | Description                                | Payload description          | Payload   |
+| ----------------- | ------------------------------------------ | ---------------------------- | --------- |
+| `open`            | The component has been opened              | –                            | –         |
+| `close`           | The component has been closed              | –                            | –         |
+| `stepChange`      | The component opened step has been changed | A number of the current step | `number`  |
+| `moveStateChange` | The component starts or stops moving       | A state of moving            | `Boolean` |
 
 ## Usage
 
-To start using the component, pass the content in the `default` slot.
+To start using the component, pass a content within the `default` slot.
 
 ```
 < b-bottom-slide ref = bottomSlide
@@ -35,7 +35,7 @@ To start using the component, pass the content in the `default` slot.
     Hello there
 ```
 
-Now you can open your component using the `open` method.
+Now you can open your component by using the `open` method.
 
 ```typescript
 @component()
@@ -46,14 +46,14 @@ class bMyPage extends iData {
 }
 ```
 
-### Height Mode
+### Height mode
 
-The component supports two modes of height calculation.
+The component supports two kinds of height modes to calculate.
 
 * `full` – the height value is equal to the viewport height.
-* `content` – the height value is based on a component content, but no more than the viewport height.
+* `content` – the height value is based on the component content, but no more than the viewport height.
 
-You can select a height mode calculation by providing a `heightMode` prop.
+You can select the height mode calculation by providing a `heightMode` prop.
 
 ```
 < b-bottom-slide :heightMode = 'full'
@@ -61,8 +61,8 @@ You can select a height mode calculation by providing a `heightMode` prop.
 
 ### Steps
 
-When opened, a component can have several steps stop. That is, a component can be opened halfway and only after this step to its full size.
-To do this provide a `steps` prop.
+When opened, the component can have several steps stop. That is, the component can be opened halfway and only after this step to its full size.
+To do this, provide a `steps` prop.
 
 ```
 < b-bottom-slide :steps = [50]
@@ -178,7 +178,6 @@ __b-modal.ts__
 ```typescript
 @component()
 export default class bModal extends iBlock {
-
   @field()
   title?: string;
 

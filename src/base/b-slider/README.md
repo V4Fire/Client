@@ -1,7 +1,7 @@
 # base/b-slider
 
-This module provides a component to render sliders.These can be images, videos, text blocks, links.
-The component can operate in two modes, which will be discussed below.
+This module provides a component to create a slider. These can be images, videos, text blocks, links.
+Slides to show can be defined manually via slots or loaded from some data provider.
 
 ## Synopsis
 
@@ -17,20 +17,22 @@ The component can operate in two modes, which will be discussed below.
 
 ## Events
 
-| EventName         | Description                                                    | Payload description                                                                   | Payload                 |
-| ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------- |
-| `change`          | An active slide of the component has been changed              | Number of the current slide                                                           | `number`                |
-| `swipeStart`      | User started scrolling the slider                              | –                                                                                     | –                       |
-| `swipeEnd`        | User finished scrolling the slider                             | Scrolling direction, Indicator showing whether the position of the slider has changed | `-1 | 0 | 1`, `Boolean` |
-| `updateState`     | The content of the component content block has been updated    | –                                                                                     | –                       |
-| `syncState`       | The component state has been updated, sent after `updateState` | –                                                                                     | –                       |
+| EventName         | Description                                                    | Payload description                                                                          | Payload                 |
+| ----------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------- |
+| `change`          | The active slide of the component has been changed             | An index of the current slide                                                                | `number`                |
+| `swipeStart`      | A user has started scrolling the slider                        | –                                                                                            | –                       |
+| `swipeEnd`        | A user has finished scrolling the slider                       | The scrolling direction, An indicator showing whether the position of the slider has changed | `-1 | 0 | 1`, `Boolean` |
+| `updateState`     | Content of the component content block has been updated        | –                                                                                            | –                       |
+| `syncState`       | The component state has been updated, sent after `updateState` | –                                                                                            | –                       |
 
-## Usage
+## Render modes
+
+The component can operate in two modes, which will discuss below.
 
 ### Slide mode
 
-In slider mode, it is impossible to skip slides. That is, it is impossible to get from the first slide directly to the third.
-To activate this mode, set the `mode` parameter to `slide`.
+With the slider mode, it is impossible to skip slides. That is, we can't get from the first slide directly to the third or other stuff.
+To activate this mode, set the `mode` prop to `slide`.
 
 ```
 < b-slider :mode = 'slide'
@@ -38,16 +40,19 @@ To activate this mode, set the `mode` parameter to `slide`.
 
 ### Scroll mode
 
-In scroll mode, the normal scroll will be used to scroll the slides. To activate this mode, set the `mode` parameter to `scroll`.
+With the scroll mode, to scroll slides is used the browser native scrolling.
+To activate this mode, set the `mode` prop to `scroll`.
 
 ```
 < b-slider :mode = 'scroll'
 ```
 
-### With data provider
+### Usage
+
+1. Loading slides from a data provider.
 
 ```
-< .&__slider &
+< b-slider &
   :mode = 'slide' |
   :dataProvider = 'fake.Json' |
   :item = 'b-fake-component' |
@@ -68,34 +73,34 @@ The component supports a bunch of slots to provide:
   < img src = https://fakeimg.pl/300x300
 ```
 
-2. `beforeItems` To provide the content before items in the slider.
+2. `beforeItems` to provide content before all items within the slider.
 
 ```
-  < b-slider
-    < template #beforeItems
-      Hello there general Kenobi
+< b-slider
+  < template #beforeItems
+    Hello there general Kenobi
 ```
 
-3. `afterItems` To provide the content after items in the slider.
+3. `afterItems` to provide content after all items within the slider.
 
 ```
-  < b-slider
-    < template #afterItems
-      Hello there general Kenobi
+< b-slider
+  < template #afterItems
+    Hello there general Kenobi
 ```
 
-4. `before` To provide the content before the slider.
+4. `before` to provide content before the slider.
 
 ```
-  < b-slider
-    < template #before
-      Hello there general Kenobi
+< b-slider
+  < template #before
+    Hello there general Kenobi
 ```
 
 5. `after` To provide the content after the slider.
 
 ```
-  < b-slider
-    < template #after
-      Hello there general Kenobi
+< b-slider
+  < template #after
+    Hello there general Kenobi
 ```

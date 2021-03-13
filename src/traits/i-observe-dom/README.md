@@ -10,10 +10,10 @@ This module provides a trait for a component to observe DOM changes by using [`M
 
 ## Events
 
-| Name                     | Description                                                  | Payload description                | Payload                                                   |
-| ------------------------ | ------------------------------------------------------------ | ---------------------------------- | --------------------------------------------------------- |
-| `DOMChange`              | The observable DOM tree was changed. (deprecated!)           | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
-| `localEmitter:DOMChange` | The observable DOM tree was changed.                         | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
+| Name                     | Description                                        | Payload description                | Payload                                                   |
+| ------------------------ | -------------------------------------------------- | ---------------------------------- | --------------------------------------------------------- |
+| `DOMChange`              | The observable DOM tree was changed. (deprecated!) | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
+| `localEmitter:DOMChange` | The observable DOM tree was changed.               | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
 
 ## API
 
