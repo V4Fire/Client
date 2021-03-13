@@ -71,18 +71,22 @@ To activate this mode, set the `mode` prop to `scroll`.
 
 ## API
 
-- Prop `dynamicHeight` – If this prop is set to `true`, then the height calculation will be based on rendered elements.
+### Props
+
+- `dynamicHeight` – If this prop is set to `true`, then the height calculation will be based on rendered elements.
 The component will create an additional element to contain the rendered elements, while it will not be visible to the user.
 This may be useful if you need to hide scroll on mobile devices, but you don't know exact size of the elements that will be rendered into component.
 By default this prop is settled to `false`.
 
-- Prop `circular` – If this prop is set to `true`, the user will return to the first slide when scrolling the last slide.
+- `circular` – If this prop is set to `true`, the user will return to the first slide when scrolling the last slide.
 That is, the slider will work "in a circle".
 
-- Prop `align` – This prop controls how much the slides will scroll.
+- `align` – This prop controls how much the slides will scroll.
 For example, by specifying the value `center`, when scrolling, the slider will stop when the active slide is in the center of the slider.
 
-- Method `slideTo(index: number, animate: boolean)` – Scrolls the slider to the element that matches the provided index.
+### Methods
+
+- `slideTo(index: number, animate: boolean)` – Scrolls the slider to the element that matches the provided index.
 
 ```typescript
 class Test extends iData {
@@ -97,7 +101,7 @@ class Test extends iData {
 }
 ```
 
-- Method `moveSlide(dir: SlideDirection)` – Scrolls the slider to the next or previous element.
+- `moveSlide(dir: SlideDirection)` – Scrolls the slider to the next or previous element.
 
 ```typescript
 class Test extends iData {
@@ -113,7 +117,9 @@ class Test extends iData {
 }
 ```
 
-- Getter `isSlideMode` – True if the component is rendered in `slide` mode.
+### Fields
+
+- `isSlideMode` – True if the component is rendered in `slide` mode.
 
 ## Slots
 

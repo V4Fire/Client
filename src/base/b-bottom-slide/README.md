@@ -226,6 +226,26 @@ Alternatively, you can use a string name to render a specific template.
 These are just two of the many approaches that the `V4Fire` framework gives you to use components of this kind like a singleton.
 There are many more options you can think of to cover your needs.
 
+## API
+
+### Props
+
+- `visible` – Minimum height value of a visible part (in pixels), i.e., even the component is closed, this part still be visible.
+By default, set to `0`.
+
+- `overlay` – If set to `true`, then when "pulling" the component to the entire height, a semi-transparent back will be displayed below the component.
+By default, set to `true`.
+
+- `scrollToTopOnClose` – If set to `true`, then when the component is closed, the content inside it will be scrolled up.
+
+### Methods
+
+- `next` – Pulls the component to the next step. If the component is completely closed at the method call, the `open` method will be called.
+If the component is stretched to the maximum, the method will return `false`.
+
+- `prev` – Pulls the component to the previous step. If the component is at the last step, it will call the `close` method. If the component
+is fully closed, the method will return `false`.
+
 ## Slots
 
 1. `default` to provide the base content of each item.
