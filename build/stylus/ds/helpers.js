@@ -22,9 +22,9 @@ function getVariableName(path) {
 }
 
 /**
- * Sets a variable into the specified variables dictionary by the specified path
+ * Saves the specified value as css variable into the specified dictionary by the specified path
  *
- * @param {Object} varDict - variables dictionary
+ * @param {DesignSystemVariables} varDict - css variables dictionary
  * @param {string} path - path to set a value
  * @param {unknown} value
  * @param {string} [theme]
@@ -67,113 +67,118 @@ function getVariablePath(prefix, name) {
  * @param {DesignSystem} raw
  * @param {Object} [stylus=]
  *
- * @returns {{data: DesignSystem, variables: Object}}
+ * @returns {!BuildTimeDesignSystemParams}
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
 	const
 		base = Object.create(Object.freeze({meta: raw.meta, raw})),
-		variables = Object.create({map: {}}),
 		rawCopy = $C.clone(raw);
 
 	$C(rawCopy).remove('meta');
 
 	const
-		designSystem = convertToStylusObject(stylus, rawCopy, variables),
+		{data, variables} = convertToBuildTimeUsableObject(stylus, rawCopy),
 		extendParams = {withProto: true, withAccessors: true};
 
-	return {data: $C.extend(extendParams, base, designSystem), variables};
+	return {data: $C.extend(extendParams, base, data), variables};
 }
 
 /**
- * Converts the specified Javascript object to a Stylus object (recursively)
+ * Converts the specified design system object to a Stylus object
+ * and creates css variables to use in style files
  *
- * @param {Object} stylus - link to stylus package instance
+ * @param {Object} stylus - link to a stylus package instance
  * @param {DesignSystem} ds
- * @param {Object} variables
  *
- * @returns {!DesignSystem}
+ * @returns {!BuildTimeDesignSystemParams}
  */
-function convertToStylusObject(stylus, ds, variables) {
+function convertToBuildTimeUsableObject(stylus, ds) {
 	const
-		result = $C.clone(ds);
+		variables = Object.create({map: {}}),
+		data = $C.clone(ds);
 
-	convert(result);
-	return result;
+	const
+		builtInFnRgxp = /^[a-z-_]+\(.*\)$/,
+		colorHEXRgxp = /^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/,
+		unitRgxp = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
+	convert(data);
+	return {data, variables};
+
+	/**
+	 * @param {Object.<string, any>} data
+	 * @param [path]
+	 * @param [theme]
+	 */
 	function convert(data, path, theme) {
-		$C(data).forEach((d, val) => {
+		$C(data).forEach((value, key) => {
 			if (theme === true) {
-				if (Object.isObject(d)) {
-					convert(d, path, val);
+				if (Object.isObject(value)) {
+					convert(value, path, key);
 
 				} else {
 					throw new Error('Cannot find a theme dictionary');
 				}
 
-			} else if (val === 'theme') {
+			} else if (key === 'theme') {
 				/*
 				 * @example
 				 *
 				 * {
 				 *   bButton: {
 				 *     theme: {
-				 *       dark: d
+				 *       dark: value
 				 *     }
 				 *   }
 				 * }}
 				 */
-				if (Object.isObject(d)) {
-					convert(d, path, true);
+				if (Object.isObject(value)) {
+					convert(value, path, true);
 
 				} else {
 					throw new Error('Cannot find themes dictionary');
 				}
 
-			} else if (Object.isObject(d)) {
-				convert(d, getVariablePath(path, val), theme);
+			} else if (Object.isObject(value)) {
+				convert(value, getVariablePath(path, key), theme);
 
-			} else if (Object.isArray(d)) {
-				convert(d, getVariablePath(path, val), theme);
-				d = stylus.utils.coerceArray(d, true);
+			} else if (Object.isArray(value)) {
+				convert(value, getVariablePath(path, key), theme);
+				value = stylus.utils.coerceArray(value, true);
 
 			} else {
-				if (/^[a-z-_]+\(.*\)$/.test(d)) {
-					// Built-in function
-
+				if (builtInFnRgxp.test(value)) {
 					const
-						parsed = new stylus.Parser(d, {cache: false});
+						parsed = new stylus.Parser(value, {cache: false});
 
-					data[val] = parsed.function();
-					saveVariable(variables, getVariablePath(path, val), data[val], theme);
+					data[key] = parsed.function();
+					saveVariable(variables, getVariablePath(path, key), data[key], theme);
 					return;
 				}
 
-				if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
-					// HEX value
-					data[val] = new stylus.Parser(d, {cache: false}).peek().val;
-					saveVariable(variables, getVariablePath(path, val), data[val], theme);
+				if (colorHEXRgxp.test(value)) {
+					data[key] = new stylus.Parser(value, {cache: false}).peek().key;
+					saveVariable(variables, getVariablePath(path, key), data[key], theme);
 					return;
 				}
 
-				if (Object.isString(d)) {
+				if (Object.isString(value)) {
 					const
-						reg = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/,
-						unit = d.match(reg);
+						unit = value.match(unitRgxp);
 
 					if (unit) {
-						// Value with unit
-						data[val] = new stylus.nodes.Unit(String(parseFloat(unit[1])), unit[2]);
-						saveVariable(variables, getVariablePath(path, String(val)), data[val], theme);
+						data[key] = new stylus.nodes.Unit(String(parseFloat(unit[1])), unit[2]);
+						saveVariable(variables, getVariablePath(path, String(key)), data[key], theme);
 						return;
 					}
 
-					data[val] = new stylus.nodes.String(d);
-					saveVariable(variables, getVariablePath(path, String(val)), data[val], theme);
+					data[key] = new stylus.nodes.String(value);
+					saveVariable(variables, getVariablePath(path, String(key)), data[key], theme);
 					return;
 				}
 
-				data[val] = new stylus.nodes.Unit(d);
-				saveVariable(variables, getVariablePath(path, String(val)), data[val], theme);
+				data[key] = new stylus.nodes.Unit(value);
+				saveVariable(variables, getVariablePath(path, String(key)), data[key], theme);
 			}
 		});
 	}
@@ -203,46 +208,48 @@ function getThemedPathChunks(field, theme, isFieldThemed) {
  * @param {(string|!Array<string>)} path
  */
 function checkDeprecated(ds, path) {
-	if (Object.isObject($C(ds).get('meta.deprecated'))) {
-		const
-			strPath = Object.isString(path) ? path : path.join('.'),
-			deprecated = ds.meta.deprecated[strPath];
-
-		if (deprecated != null) {
-			const
-				message = [];
-
-			if (Object.isObject(deprecated)) {
-				if (deprecated.renamedTo != null) {
-					message.push(
-						`[stylus] Warning: design system field by path "${strPath}" was renamed to "${deprecated.renamedTo}".`,
-						'Please use the renamed version instead of the current, because it will be removed from the next major release.'
-					);
-
-				} else if (deprecated.alternative != null) {
-					message.push(
-						`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
-					);
-
-					message.push(`Please use "${deprecated.alternative}" instead.`);
-				}
-
-				if (deprecated.notice != null) {
-					message.push(deprecated.notice);
-				}
-
-			} else {
-				message.push(
-					`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
-				);
-			}
-
-			console.warn(...message);
-			return true;
-		}
+	if (!Object.isObject($C(ds).get('meta.deprecated'))) {
+		return false;
 	}
 
-	return false;
+	const
+		strPath = Object.isString(path) ? path : path.join('.'),
+		deprecated = ds.meta.deprecated[strPath];
+
+	if (deprecated == null) {
+		return false;
+	}
+
+	const
+		message = [];
+
+	if (Object.isObject(deprecated)) {
+		if (deprecated.renamedTo != null) {
+			message.push(
+				`[stylus] Warning: design system field by path "${strPath}" was renamed to "${deprecated.renamedTo}".`,
+				'Please use the renamed version instead of the current, because it will be removed from the next major release.'
+			);
+
+		} else if (deprecated.alternative != null) {
+			message.push(
+				`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
+			);
+
+			message.push(`Please use "${deprecated.alternative}" instead.`);
+		}
+
+		if (deprecated.notice != null) {
+			message.push(deprecated.notice);
+		}
+
+	} else {
+		message.push(
+			`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
+		);
+	}
+
+	console.warn(...message);
+	return true;
 }
 
 module.exports = {

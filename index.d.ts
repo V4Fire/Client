@@ -7,6 +7,7 @@
  */
 
 /// <reference types="@v4fire/core"/>
+/// <reference types="./build/stylus/ds"/>
 
 declare const CSP_NONCE_STORE: string;
 
@@ -24,52 +25,6 @@ declare const DS: CanUndef<DesignSystem>;
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
-
-interface DesignSystemDeprecatedOptions {
-	/**
-	 * Indicates that a style or component was renamed, but its interface still actual,
-	 * the value contains a name after renaming
-	 */
-	renamedTo?: string;
-
-	/**
-	 * Name of a style or component that should prefer to use instead of the current
-	 */
-	alternative?: string;
-
-	/**
-	 * Additional notice about deprecation
-	 */
-	notice?: string;
-}
-
-interface DesignSystem {
-	meta?: {
-		themes: string[];
-
-		/**
-		 * Set of design system fields that have theme
-		 *
-		 * For example, you can use themes only for colors.
-		 * Then, pass to this variable value `['colors']`.
-		 * In this case, the runtime theme will not affect other fields from a design system
-		 */
-		themedFields?: string[];
-
-		deprecated?: StrictDictionary<DesignSystemDeprecatedOptions | boolean>;
-	};
-
-	/**
-	 * Raw data for a design system.
-	 * Only for processed object
-	 */
-	raw?: DesignSystem;
-
-	components?: StrictDictionary;
-	text?: StrictDictionary;
-	rounding?: StrictDictionary;
-	colors?: StrictDictionary;
-}
 
 interface RenderOptions {
 	/** @default `'rootSelector'` */
