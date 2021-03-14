@@ -8,6 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 import bInput, { component, prop, field, watch } from 'form/b-input/b-input';
+
 export * from 'form/b-input/b-input';
 
 export const

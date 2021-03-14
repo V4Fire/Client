@@ -17,7 +17,7 @@ import { bindingRgxp, customWatcherRgxp, getPropertyInfo, SyncLinkCache } from '
 import Friend from 'super/i-block/modules/friend';
 import { statuses } from 'super/i-block/const';
 
-import {
+import type {
 
 	LinkDecl,
 	PropLinks,
@@ -615,7 +615,7 @@ export default class Sync extends Friend {
 			}
 
 		} else {
-			destHead = path.split('.')[0];
+			destHead = path.split('.', 1)[0];
 		}
 
 		const
@@ -649,7 +649,7 @@ export default class Sync extends Friend {
 
 		const merge = (...args) => Object.mixin({
 			deep: true,
-			extendFilter: (d, v) => Object.isDictionary(v)
+			extendFilter: (el) => Object.isDictionary(el)
 		}, undefined, ...args);
 
 		const setField = (path, val) => {

@@ -12,7 +12,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import History from 'traits/i-history/history';
+import type History from 'traits/i-history/history';
 
 export default abstract class iHistory extends iBlock {
 	/**

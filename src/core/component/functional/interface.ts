@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VNode } from 'core/component/engines';
-import { ComponentInterface } from 'core/component/interface';
+import type { VNode } from 'core/component/engines';
+import type { ComponentInterface } from 'core/component/interface';
 
 export interface CreateFakeCtxOptions {
 	/**

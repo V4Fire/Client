@@ -16,6 +16,7 @@ import Async from 'core/async';
 
 import { components } from 'core/component/const';
 import { patchVNode, supports, CreateElement, VNode } from 'core/component/engines';
+import { forkMeta } from 'core/component/meta';
 
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
@@ -29,7 +30,7 @@ import { getNormalParent } from 'core/component/traverse';
 import { getComponentDataFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Takes a vnode and, if it has the composite attribute, returns a new vnode that contains a flyweight component,
@@ -53,13 +54,14 @@ export function parseVNodeAsFlyweight(
 
 	vnode.tag = 'span';
 
-	const
+	let
 		meta = components.get(compositeAttr);
 
 	if (!meta) {
 		return vnode;
 	}
 
+	meta = forkMeta(meta);
 	delete vnode.data!.attrs!['v4-flyweight-component'];
 
 	if (parentComponent.isFlyweight) {

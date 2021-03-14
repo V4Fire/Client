@@ -9,11 +9,11 @@
 import symbolGenerator from 'core/symbol';
 import Friend from 'super/i-block/modules/friend';
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
-import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
-import { isAsyncClearError } from 'base/b-virtual-scroll/modules/helpers';
+import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import type ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
-import { RemoteData, DataState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
+import { isAsyncClearError } from 'base/b-virtual-scroll/modules/helpers';
+import type { RemoteData, DataState, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -66,7 +66,7 @@ export default class ChunkRequest extends Friend {
 	/**
 	 * Contains data that pending to be rendered
 	 */
-	pendingData: unknown[] = [];
+	pendingData: object[] = [];
 
 	/**
 	 * The object contains data from the main request and from all additional requests.
@@ -138,7 +138,7 @@ export default class ChunkRequest extends Friend {
 	 * Initializes the request module
 	 */
 	async init(): Promise<void> {
-		await this.async.sleep(50, {label: $$.waitForInitCalls});
+		await this.async.sleep(15, {label: $$.waitForInitCalls});
 
 		const
 			{chunkSize, dataProvider} = this.ctx;
@@ -355,7 +355,7 @@ export default class ChunkRequest extends Friend {
 				this.lastLoadedChunk.raw = data;
 
 				const
-					converted = data != null ? ctx.convertDataToDB<RemoteData>(data) : undefined;
+					converted = data != null ? ctx.convertDataToDB<RemoteData>(<object>data) : undefined;
 
 				this.lastLoadedChunk.normalized = Object.size(converted?.data) <= 0 ?
 					this.lastLoadedChunk.normalized = [] :

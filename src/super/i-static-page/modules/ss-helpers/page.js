@@ -267,6 +267,10 @@ async function generateInitJS(pageName, {
 	rootTag,
 	rootAttrs
 }) {
+	if (needInline()) {
+		return;
+	}
+
 	const
 		head = [],
 		body = [];

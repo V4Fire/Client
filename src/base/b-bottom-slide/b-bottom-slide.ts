@@ -12,9 +12,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
 
 import History from 'traits/i-history/history';
-import iHistory from 'traits/i-history/i-history';
+import type iHistory from 'traits/i-history/i-history';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
@@ -38,8 +39,8 @@ import iBlock, {
 
 } from 'super/i-block/i-block';
 
-import { HeightMode, Direction } from 'base/b-bottom-slide/interface';
 import { heightMode } from 'base/b-bottom-slide/const';
+import type { HeightMode, Direction } from 'base/b-bottom-slide/interface';
 
 export * from 'super/i-data/i-data';
 
@@ -858,37 +859,41 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch(':changeStep')
 	@hook('mounted')
 	@wait('ready')
-	protected async onStepChange(): Promise<void> {
-		const [win, view] = await Promise.all([
+	protected onStepChange(): void {
+		SyncPromise.all([
 			this.waitRef<HTMLElement>('window', {label: $$.onStepChange}),
 			this.waitRef<HTMLElement>('view')
-		]);
+		])
 
-		this.isStepTransitionInProgress = true;
+			.then(([win, view]) => {
+				this.isStepTransitionInProgress = true;
 
-		this.async.once(win, 'transitionend', () => {
-			if (this.isFullyOpened) {
-				this.lock().catch(stderr);
-				void this.removeMod('events', false);
+				this.async.once(win, 'transitionend', () => {
+					if (this.isFullyOpened) {
+						this.lock().catch(stderr);
+						void this.removeMod('events', false);
 
-			} else {
-				this.unlock().catch(stderr);
-				void this.setMod('events', false);
+					} else {
+						this.unlock().catch(stderr);
+						void this.setMod('events', false);
 
-				if (this.scrollToTopOnClose) {
-					view.scrollTo(0, 0);
-				}
-			}
+						if (this.scrollToTopOnClose) {
+							view.scrollTo(0, 0);
+						}
+					}
 
-			this.isStepTransitionInProgress = false;
+					this.isStepTransitionInProgress = false;
 
-			if (this.componentStatus === 'destroyed') {
-				this.removeFromDOMIfPossible();
-			}
+					if (this.componentStatus === 'destroyed') {
+						this.removeFromDOMIfPossible();
+					}
 
-		}, {group: ':zombie', label: $$.waitAnimationToFinish});
+				}, {group: ':zombie', label: $$.waitAnimationToFinish});
 
-		this.stickToStep();
+				this.stickToStep();
+			})
+
+			.catch(stderr);
 	}
 
 	/**

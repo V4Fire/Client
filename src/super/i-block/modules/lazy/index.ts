@@ -14,7 +14,7 @@
 import { deprecated } from 'core/functools/deprecation';
 
 import Friend from 'super/i-block/modules/friend';
-import { CreateLazyFnOptions, LazyFn } from 'super/i-block/modules/lazy/interface';
+import type { CreateLazyFnOptions, LazyFn } from 'super/i-block/modules/lazy/interface';
 
 export * from 'super/i-block/modules/lazy/interface';
 

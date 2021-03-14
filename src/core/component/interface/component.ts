@@ -13,10 +13,12 @@ eslint-disable
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { LogMessageOptions } from 'core/log';
-import Async, { BoundFn, ProxyCb } from 'core/async';
+import type { LogMessageOptions } from 'core/log';
 
-import {
+import type Async from 'core/async';
+import type { BoundFn, ProxyCb } from 'core/async';
+
+import type {
 
 	ComponentDriver,
 
@@ -29,7 +31,7 @@ import {
 
 } from 'core/component/engines';
 
-import {
+import type {
 
 	ComponentMeta,
 	Hook,
@@ -37,9 +39,7 @@ import {
 
 	WatchPath,
 	WatchOptions,
-	RawWatchHandler,
-
-	ActivationStatus
+	RawWatchHandler
 
 } from 'core/component/interface';
 
@@ -436,16 +436,6 @@ export abstract class ComponentInterface {
 	 * @param [details] - event details
 	 */
 	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
-
-	/**
-	 * Emits an activation event of the application
-	 *
-	 * @param status - activation status
-	 * @emits `app-activation(status: ActivationStatus)`
-	 */
-	emitActivation(status: ActivationStatus): Promise<void> {
-		return Promise.resolve();
-	}
 
 	/**
 	 * Forces the component to re-render

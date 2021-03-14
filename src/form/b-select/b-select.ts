@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
-import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
+import type bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
 
 import bInput, {
 
@@ -29,7 +29,7 @@ import bInput, {
 
 } from 'form/b-input/b-input';
 
-import { Option, NOption } from 'form/b-select/modules/interface';
+import type { Option, NOption } from 'form/b-select/modules/interface';
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';

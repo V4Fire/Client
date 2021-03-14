@@ -15,18 +15,16 @@ import symbolGenerator from 'core/symbol';
 import { setLocale, locale } from 'core/i18n';
 
 import remoteState from 'core/component/state';
-import { reset, ResetType, ComponentInterface, ActivationStatus } from 'core/component';
+import { reset, ResetType, ComponentInterface } from 'core/component';
 
-import { Route } from 'base/b-router/b-router';
-
-// tslint:disable-next-line:no-duplicate-imports
 import type bRouter from 'base/b-router/b-router';
+import type { Route } from 'base/b-router/b-router';
 
-import iBlock from 'super/i-block/i-block';
-import iPage, { component, field, system, computed, watch, wait } from 'super/i-page/i-page';
+import type iBlock from 'super/i-block/i-block';
+import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import { RootMod } from 'super/i-static-page/interface';
+import type { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
 export * from 'super/i-static-page/interface';
@@ -321,13 +319,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	getRootMod(name: string, component: iBlock = this): CanUndef<string> {
 		return this.rootMods[this.getRootModKey(name, component)]?.value;
-	}
-
-	/** @override */
-	@wait({defer: true, label: $$.emitActivation})
-	emitActivation(status: ActivationStatus): Promise<void> {
-		this.$emit('app-activation', status);
-		return Promise.resolve();
 	}
 
 	/**

@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
-import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
-import { DataState } from 'base/b-virtual-scroll/interface';
+import type ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import type ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
+import type { DataState } from 'base/b-virtual-scroll/interface';
 
 /**
  * Returns accumulated data among `b-virtual-scroll`,` chunk-render`, `chunk-request` and passes it to the client
@@ -21,7 +21,7 @@ import { DataState } from 'base/b-virtual-scroll/interface';
  * @typeParam ITEM - data item to render
  * @typeParam RAW - raw provider data
  */
-export function getRequestParams<ITEM extends unknown = unknown, RAW extends unknown = unknown>(
+export function getRequestParams<ITEM extends object = object, RAW extends unknown = unknown>(
 	chunkRequestCtx?: ChunkRequest,
 	chunkRenderCtx?: ChunkRender,
 	merge?: Dictionary

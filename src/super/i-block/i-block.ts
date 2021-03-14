@@ -50,7 +50,6 @@ import {
 	RawWatchHandler,
 
 	Hook,
-	ActivationStatus,
 
 	ComponentInterface,
 	UnsafeGetter,
@@ -97,7 +96,7 @@ import {
 import { initGlobalListeners, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { readyStatuses, activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/activation';
 
-import {
+import type {
 
 	Stage,
 	ComponentStatus,
@@ -1620,6 +1619,14 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * Returns true, if the specified event can be dispatched as an own component event (`selfDispatching`)
+	 * @param event
+	 */
+	canSelfDispatchEvent(event: string): boolean {
+		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event);
+	}
+
+	/**
 	 * Emits a component event.
 	 * Notice, this method always emits two events:
 	 *
@@ -1632,22 +1639,22 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
-			decl = Object.isString(event) ? {event} : event,
-			eventNm = decl.event.dasherize();
+			eventDecl = Object.isString(event) ? {event} : event,
+			eventName = eventDecl.event.dasherize();
 
-		decl.event = eventNm;
+		eventDecl.event = eventName;
 
-		this.$emit(eventNm, this, ...args);
-		this.$emit(`on-${eventNm}`, ...args);
+		this.$emit(eventName, this, ...args);
+		this.$emit(`on-${eventName}`, ...args);
 
 		if (this.dispatching) {
-			this.dispatch(decl, ...args);
+			this.dispatch(eventDecl, ...args);
 		}
 
 		const
 			logArgs = args.slice();
 
-		if (decl.type === 'error') {
+		if (eventDecl.type === 'error') {
 			for (let i = 0; i < logArgs.length; i++) {
 				const
 					el = logArgs[i];
@@ -1658,7 +1665,7 @@ export default abstract class iBlock extends ComponentInterface {
 			}
 		}
 
-		this.log(`event:${eventNm}`, this, ...logArgs);
+		this.log(`event:${eventName}`, this, ...logArgs);
 	}
 
 	/**
@@ -1682,20 +1689,21 @@ export default abstract class iBlock extends ComponentInterface {
 	@p({replace: false})
 	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
-			decl = Object.isString(event) ? {event} : event,
-			eventNm = decl.event.dasherize();
+			eventDecl = Object.isString(event) ? {event} : event,
+			eventName = eventDecl.event.dasherize();
 
-		decl.event = eventNm;
+		eventDecl.event = eventName;
 
-		let
-			obj = this.$parent;
+		let {
+			componentName,
+			$parent: parent
+		} = this;
 
 		const
-			nm = this.componentName,
-			globalNm = (this.globalName ?? '').dasherize(),
+			globalName = (this.globalName ?? '').dasherize(),
 			logArgs = args.slice();
 
-		if (decl.type === 'error') {
+		if (eventDecl.type === 'error') {
 			for (let i = 0; i < logArgs.length; i++) {
 				const
 					el = logArgs[i];
@@ -1706,29 +1714,29 @@ export default abstract class iBlock extends ComponentInterface {
 			}
 		}
 
-		while (obj) {
-			if (obj.selfDispatching) {
-				obj.$emit(eventNm, this, ...args);
-				obj.$emit(`on-${eventNm}`, ...args);
-				obj.log(`event:${eventNm}`, this, ...logArgs);
+		while (parent) {
+			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
+				parent.$emit(eventName, this, ...args);
+				parent.$emit(`on-${eventName}`, ...args);
+				parent.log(`event:${eventName}`, this, ...logArgs);
 
 			} else {
-				obj.$emit(`${nm}::${eventNm}`, this, ...args);
-				obj.$emit(`${nm}::on-${eventNm}`, ...args);
-				obj.log(`event:${nm}::${eventNm}`, this, ...logArgs);
+				parent.$emit(`${componentName}::${eventName}`, this, ...args);
+				parent.$emit(`${componentName}::on-${eventName}`, ...args);
+				parent.log(`event:${componentName}::${eventName}`, this, ...logArgs);
 
-				if (globalNm !== '') {
-					obj.$emit(`${globalNm}::${eventNm}`, this, ...args);
-					obj.$emit(`${globalNm}::on-${eventNm}`, ...args);
-					obj.log(`event:${globalNm}::${eventNm}`, this, ...logArgs);
+				if (globalName !== '') {
+					parent.$emit(`${globalName}::${eventName}`, this, ...args);
+					parent.$emit(`${globalName}::on-${eventName}`, ...args);
+					parent.log(`event:${globalName}::${eventName}`, this, ...logArgs);
 				}
 			}
 
-			if (!obj.dispatching) {
+			if (!parent.dispatching) {
 				break;
 			}
 
-			obj = obj.$parent;
+			parent = parent.$parent;
 		}
 	}
 
@@ -2236,11 +2244,6 @@ export default abstract class iBlock extends ComponentInterface {
 		deactivate(this);
 	}
 
-	/** @override */
-	emitActivation(status: ActivationStatus): Promise<void> {
-		return this.r.emitActivation(status);
-	}
-
 	/**
 	 * Puts the specified parameters to log
 	 *
@@ -2535,14 +2538,19 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/** @override */
 	protected async onUpdateHook(): Promise<void> {
-		await this.nextTick({label: $$.onUpdateHook});
+		try {
+			await this.nextTick({label: $$.onUpdateHook});
 
-		if (this.isFlyweight) {
-			this.$el?.component?.onUnbindHook();
+			if (this.isFlyweight) {
+				this.$el?.component?.onUnbindHook();
+			}
+
+			this.onBindHook();
+			this.onInsertedHook();
+
+		} catch (err) {
+			stderr(err);
 		}
-
-		this.onBindHook();
-		this.onInsertedHook();
 	}
 
 	/** @override */

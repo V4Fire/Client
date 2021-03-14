@@ -22,7 +22,3 @@ export type Hook =
 	'beforeDestroy' |
 	'destroyed' |
 	'errorCaptured';
-
-export type ActivationStatus =
-	'activated' |
-	'deactivated';

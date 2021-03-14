@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.147 (2021-02-18)
+
+#### :rocket: New Feature
+
+* Emit an event when async rendering is completed
+
 ## v3.0.0-rc.138 (2021-02-04)
 
 #### :rocket: New Feature

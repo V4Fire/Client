@@ -8,15 +8,15 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { InViewAdapter, InitOptions, inViewFactory } from 'core/dom/in-view';
+import { InViewAdapter, InViewInitOptions, inViewFactory } from 'core/dom/in-view';
 
 import { Friend } from 'super/i-block/i-block';
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
+import type ComponentRender from 'base/b-virtual-scroll/modules/component-render';
+import type ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { RenderItem } from 'base/b-virtual-scroll/interface';
+import type { RenderItem } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -96,10 +96,7 @@ export default class ChunkRender extends Friend {
 	/** @override */
 	constructor(component: any) {
 		super(component);
-
-		this.ctx.meta.hooks.mounted.push({fn: () => {
-			this.initEventHandlers();
-		}});
+		this.component.on('componentHook:mounted', this.initEventHandlers.bind(this));
 	}
 
 	/**
@@ -299,7 +296,7 @@ export default class ChunkRender extends Friend {
 		}
 
 		const
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getItemKey(item.data, item.index)}`;
 
 		if (!node) {
 			return;
@@ -323,7 +320,7 @@ export default class ChunkRender extends Friend {
 	 * @param data - data to render in item
 	 * @param index - index of the item
 	 */
-	protected createRenderItem(data: unknown, index: number): RenderItem {
+	protected createRenderItem(data: object, index: number): RenderItem {
 		return {
 			data,
 			index: this.itemsCount + index,
@@ -336,7 +333,7 @@ export default class ChunkRender extends Friend {
 	 * Returns options to initialize in-view
 	 * @param index
 	 */
-	protected getInViewOptions(index: number): InitOptions {
+	protected getInViewOptions(index: number): InViewInitOptions {
 		return {
 			delay: 0,
 			threshold: this.randomThreshold,

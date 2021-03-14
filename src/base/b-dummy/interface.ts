@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
-import { InViewAdapter } from 'core/dom/in-view';
-import { ResizeWatcher } from 'core/dom/resize-observer';
+import type { ImageLoader, imageLoaderFactory } from 'core/dom/image';
+import type { InViewAdapter } from 'core/dom/in-view';
+import type { ResizeWatcher } from 'core/dom/resize-observer';
 
 export interface Directives {
 	imageFactory: typeof imageLoaderFactory;

@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RegExpOptions, ParseOptions } from 'path-to-regexp';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import type { RegExpOptions, ParseOptions } from 'path-to-regexp';
+import type { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
  * Meta information of a route that can be declared statically as a literal

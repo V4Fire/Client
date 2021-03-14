@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bRouter from 'base/b-router/b-router';
+import type bRouter from 'base/b-router/b-router';
 import { transitionOptions, systemRouteParams, canParseStr } from 'base/b-router/const';
 
-import {
+import type {
 
 	Route,
 

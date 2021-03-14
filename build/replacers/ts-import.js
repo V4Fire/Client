@@ -34,9 +34,9 @@ module.exports = function tsImportReplacer(str, filePath) {
 		return str;
 	}
 
-	return str.replace(importRgxp, (str, statement, $1, root, url) => {
+	return str.replace(importRgxp, (str, statement, $1, root, src) => {
 		if (resolve.depMap[root]) {
-			const l = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, url);
+			const l = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, src);
 			return `${statement} './${path.relative(path.dirname(filePath), l)}'`;
 		}
 

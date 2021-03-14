@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.153 (2021-03-04)
+
+#### :house: Internal
+
+* [`bVirtualScroll` is now implements `iItems` trait `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/471)
+
+## v3.0.0-rc.151 (2021-03-04)
+
+#### :house: Internal
+
+* Downgraded the delay before initializing to `15ms`
+* Some optimizations
+
 ## v3.0.0-rc.126 (2021-01-26)
 
 #### :bug: Bug Fix

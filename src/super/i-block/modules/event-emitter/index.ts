@@ -11,10 +11,11 @@
  * @packageDocumentation
  */
 
-import Async from 'core/async';
+import type Async from 'core/async';
 
 import { unsuspendRgxp, emitLikeEvents } from 'super/i-block/modules/event-emitter/const';
-import {
+
+import type {
 
 	EventEmitterLikeP,
 	EventEmitterWrapperOptions,

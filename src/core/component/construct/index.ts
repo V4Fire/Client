@@ -34,8 +34,8 @@ import { resolveRefs } from 'core/component/ref';
 import { getNormalParent } from 'core/component/traverse';
 import { forkMeta } from 'core/component/meta';
 
-import { ComponentInterface, ComponentMeta, ActivationStatus } from 'core/component/interface';
-import { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
+import type { ComponentInterface, ComponentMeta, Hook } from 'core/component/interface';
+import type { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
 
 export * from 'core/component/construct/interface';
 
@@ -245,7 +245,7 @@ export function beforeDataCreateState(
 export function createdState(component: ComponentInterface): void {
 	const {
 		unsafe,
-		unsafe: {$root: r, $async: $a}
+		unsafe: {$root: r, $async: $a, $normalParent: parent}
 	} = component;
 
 	unmute(unsafe.$fields);
@@ -254,21 +254,34 @@ export function createdState(component: ComponentInterface): void {
 	const
 		isRegular = unsafe.meta.params.functional !== true && !unsafe.isFlyweight;
 
-	if (isRegular && '$remoteParent' in r) {
-		const cb = (status: ActivationStatus) => {
-			$a.requestIdleCallback(() => {
-				runHook(status, component).then(() => {
-					callMethodFromComponent(component, status);
-				}, stderr);
+	if (parent != null && '$remoteParent' in r) {
+		const
+			p = parent.unsafe,
+			onBeforeDestroy = unsafe.$destroy.bind(unsafe);
 
-			}, {
-				label: $$.remoteActivation,
-				timeout: 50
-			});
-		};
+		p.$on('on-component-hook:before-destroy', onBeforeDestroy);
+		$a.worker(() => p.$off('on-component-hook:before-destroy', onBeforeDestroy));
 
-		r.unsafe.$on('app-activation', cb);
-		$a.worker(() => r.unsafe.$off('app-activation', cb));
+		if (isRegular) {
+			const onActivation = (status: Hook) => {
+				if (status !== 'activated' && status !== 'deactivated') {
+					return;
+				}
+
+				$a.requestIdleCallback(() => {
+					runHook(status, component).then(() => {
+						callMethodFromComponent(component, status);
+					}, stderr);
+
+				}, {
+					label: $$.remoteActivation,
+					timeout: 50
+				});
+			};
+
+			p.$on('on-component-hook-change', onActivation);
+			$a.worker(() => p.$off('on-component-hook-change', onActivation));
+		}
 	}
 
 	runHook('created', component).then(() => {
@@ -345,7 +358,6 @@ export function activatedState(component: ComponentInterface): void {
 
 	runHook('activated', component).catch(stderr);
 	callMethodFromComponent(component, 'activated');
-	void component.emitActivation('activated');
 }
 
 /**
@@ -355,7 +367,6 @@ export function activatedState(component: ComponentInterface): void {
 export function deactivatedState(component: ComponentInterface): void {
 	runHook('deactivated', component).catch(stderr);
 	callMethodFromComponent(component, 'deactivated');
-	void component.emitActivation('deactivated');
 }
 
 /**

@@ -14,7 +14,7 @@
 import SyncPromise from 'core/promise/sync';
 import QueueEmitter from 'core/component/queue-emitter';
 
-import { Hook, ComponentHook, ComponentInterface } from 'core/component/interface';
+import type { Hook, ComponentHook, ComponentInterface } from 'core/component/interface';
 
 const
 	resolvedPromise = SyncPromise.resolve();

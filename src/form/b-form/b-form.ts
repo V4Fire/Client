@@ -15,9 +15,7 @@ import 'core/data';
 import iVisible from 'traits/i-visible/i-visible';
 import iInput, { FormValue } from 'super/i-input/i-input';
 
-//#if runtime has bButton
-import bButton from 'form/b-button/b-button';
-//#endif
+import type bButton from 'form/b-button/b-button';
 
 import iData, {
 
@@ -34,7 +32,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { ActionFn, ValidateParams } from 'form/b-form/modules/interface';
+import type { ActionFn, ValidateParams } from 'form/b-form/modules/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'form/b-form/modules/interface';

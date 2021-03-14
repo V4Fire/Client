@@ -13,8 +13,9 @@
 
 import { defProp } from 'core/const/props';
 import { defaultWrapper } from 'core/component/const';
-import { ComponentInterface } from 'core/component/interface';
-import { InitPropsObjectOptions } from 'core/component/prop/interface';
+
+import type { ComponentInterface } from 'core/component/interface';
+import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 
 export * from 'core/component/prop/interface';
 

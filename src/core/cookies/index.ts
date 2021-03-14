@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { SetOptions, RemoveOptions } from 'core/cookies/interface';
+import type { SetOptions, RemoveOptions } from 'core/cookies/interface';
 
 export * from 'core/cookies/interface';
 
