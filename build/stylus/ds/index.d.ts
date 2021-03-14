@@ -41,7 +41,6 @@ interface DesignSystem {
 		 * Dictionary with deprecated options for the specified field
 		 *
 		 * @example
-		 *
 		 * ```js
 		 * {
 		 *   'text.Heading1': {
@@ -72,7 +71,6 @@ interface DesignSystemVariables extends Dictionary {
 	 * May be separated by themes
 	 *
 	 * @example
-	 *
 	 * ```js
 	 * // Design system has themes
 	 * map: {

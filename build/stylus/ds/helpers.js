@@ -185,20 +185,25 @@ function convertToBuildTimeUsableObject(stylus, ds) {
 }
 
 /**
- * Returns array of fields to get a themed value
+ * Returns array of path chunks to get a themed value from a design system object
+ *
+ * @example
+ * ```js
+ * getThemedPathChunks('colors', 'light', true)
+ * ```
  *
  * @param {string} field
  * @param {string} [theme]
- * @param {boolean} [isFieldThemed]
+ * @param {boolean} [isFieldThemed] - true, if a value of the specified field depends on theme
  *
  * @returns {!Array<string>}
  */
 function getThemedPathChunks(field, theme, isFieldThemed) {
-	if (!theme) {
+	if (isFieldThemed !== true) {
 		return [field];
 	}
 
-	return isFieldThemed ? [field, 'theme', theme] : [field];
+	return theme != null ? [field, 'theme', theme] : [field];
 }
 
 /**
