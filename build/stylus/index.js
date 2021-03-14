@@ -37,6 +37,12 @@ module.exports = [
 		 * @returns {string}
 		 */
 		api.define('getRootGlobalName', () => config.rootGlobalName());
+
+		/**
+		 * Outputs specified arguments to the console
+		 * @param args
+		 */
+		api.define('log', (...args) => console.log(...args));
 	},
 
 	ds,

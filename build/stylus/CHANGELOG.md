@@ -13,8 +13,8 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added ability to mark styles as obsolescence
+* Added `log` plugin function
 
-#### :house: Internal
+#### :memo: Documentation
 
-* Plugins moved to a separated folder `build/stylus/ds`
+* Added `CHANGELOG`

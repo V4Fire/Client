@@ -14,51 +14,52 @@ const
 /**
  * Returns a name of the CSS variable, created from the specified path with a dot delimiter
  *
- * @param {string} path
+ * @param {string[]} path
  * @returns {string}
  */
 function getVariableName(path) {
-	return `--${path.split('.').join('-')}`;
+	return `--${path.join('-')}`;
 }
 
 /**
  * Saves the specified value as css variable into the specified dictionary by the specified path
  *
  * @param {DesignSystemVariables} varDict - css variables dictionary
- * @param {string} path - path to set a value
+ * @param {string[]} path - path to set a value
  * @param {unknown} value
  * @param {string} [theme]
  */
 function saveVariable(varDict, path, value, theme) {
 	const
 		variable = getVariableName(path),
+		joinedPath = path.join('.'),
 		mapValue = [variable, value];
 
 	$C(varDict).set(`var(${variable})`, path);
-	$C(varDict).set(`var(${variable}-diff)`, `diff.${path}`);
+	$C(varDict).set(`var(${variable}-diff)`, `diff.${joinedPath}`);
 
 	if (theme === undefined) {
-		varDict.map[path] = mapValue;
+		varDict.map[joinedPath] = mapValue;
 
 	} else {
 		if (!varDict.map[theme]) {
 			Object.defineProperty(varDict.map, theme, {value: {}, enumerable: false});
 		}
 
-		varDict.map[theme][path] = mapValue;
+		varDict.map[theme][joinedPath] = mapValue;
 	}
 }
 
 /**
  * Returns a path to the specified variable name
  *
- * @param {?string} prefix
- * @param {string} name
+ * @param {?Array} prefix
+ * @param {string|number} postfixes
  *
- * @returns {string}
+ * @returns {string[]}
  */
-function getVariablePath(prefix, name) {
-	return `${prefix ? `${prefix}.${name}` : name}`;
+function accumulateKey(prefix, ...postfixes) {
+	return [...(prefix || []), ...postfixes];
 }
 
 /**
@@ -77,7 +78,7 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 	$C(rawCopy).remove('meta');
 
 	const
-		{data, variables} = convertToBuildTimeUsableObject(stylus, rawCopy),
+		{data, variables} = convertDsToBuildTimeUsableObject(stylus, rawCopy),
 		extendParams = {withProto: true, withAccessors: true};
 
 	return {data: $C.extend(extendParams, base, data), variables};
@@ -92,95 +93,107 @@ function createDesignSystem(raw, stylus = require('stylus')) {
  *
  * @returns {!BuildTimeDesignSystemParams}
  */
-function convertToBuildTimeUsableObject(stylus, ds) {
+function convertDsToBuildTimeUsableObject(stylus, ds) {
 	const
-		variables = Object.create({map: {}}),
-		data = $C.clone(ds);
+		variables = Object.create({map: {}});
 
 	const
 		builtInFnRgxp = /^[a-z-_]+\(.*\)$/,
 		colorHEXRgxp = /^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/,
 		unitRgxp = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
-	convert(data);
+	const
+		data = convert(ds);
+
 	return {data, variables};
 
 	/**
-	 * @param {Object.<string, any>} data
-	 * @param [path]
-	 * @param [theme]
+	 * @param {string[]} keys
+	 * @param {string} theme
 	 */
-	function convert(data, path, theme) {
-		$C(data).forEach((value, key) => {
+	function getVariablePath(keys, theme) {
+		return keys.filter((field) => !['theme', theme].includes(field));
+	}
+
+	/**
+	 * @param {Object} obj
+	 * @param {Object|Array} [res]
+	 * @param {string[]} [path]
+	 * @param {string|boolean} [theme]
+	 */
+	function convert(obj, res, path, theme) {
+		if (!res) {
+			res = {};
+		}
+
+		$C(obj).forEach((value, key) => {
 			if (theme === true) {
 				if (Object.isObject(value)) {
-					convert(value, path, key);
+					convert(value, res, accumulateKey(path, key), key);
 
 				} else {
 					throw new Error('Cannot find a theme dictionary');
 				}
 
 			} else if (key === 'theme') {
-				/*
-				 * @example
-				 *
-				 * {
-				 *   bButton: {
-				 *     theme: {
-				 *       dark: value
-				 *     }
-				 *   }
-				 * }}
-				 */
 				if (Object.isObject(value)) {
-					convert(value, path, true);
+					convert(value, res, accumulateKey(path, key), true);
 
 				} else {
 					throw new Error('Cannot find themes dictionary');
 				}
 
 			} else if (Object.isObject(value)) {
-				convert(value, getVariablePath(path, key), theme);
+				convert(value, res, accumulateKey(path, key), theme);
 
 			} else if (Object.isArray(value)) {
-				convert(value, getVariablePath(path, key), theme);
-				value = stylus.utils.coerceArray(value, true);
+				const
+					array = convert(value, [], [], theme);
+
+				array.forEach((el, i) => {
+					const
+						variablePath = getVariablePath(path, theme);
+
+					saveVariable(variables, accumulateKey(variablePath, key, i), el, theme);
+				});
+
+				$C(res).set(array, accumulateKey(path, key));
 
 			} else {
+				const
+					keyPath = accumulateKey(path, key);
+
+				let
+					parsed;
+
 				if (builtInFnRgxp.test(value)) {
-					const
-						parsed = new stylus.Parser(value, {cache: false});
+					parsed = new stylus.Parser(value, {cache: false}).function();
 
-					data[key] = parsed.function();
-					saveVariable(variables, getVariablePath(path, key), data[key], theme);
-					return;
-				}
+				} else if (colorHEXRgxp.test(value)) {
+					parsed = new stylus.Parser(value, {cache: false}).peek().key;
 
-				if (colorHEXRgxp.test(value)) {
-					data[key] = new stylus.Parser(value, {cache: false}).peek().key;
-					saveVariable(variables, getVariablePath(path, key), data[key], theme);
-					return;
-				}
-
-				if (Object.isString(value)) {
+				} else if (Object.isString(value)) {
 					const
 						unit = value.match(unitRgxp);
 
-					if (unit) {
-						data[key] = new stylus.nodes.Unit(String(parseFloat(unit[1])), unit[2]);
-						saveVariable(variables, getVariablePath(path, String(key)), data[key], theme);
-						return;
-					}
+					parsed = unit != null ? new stylus.nodes.Unit(parseFloat(unit[1]), unit[2]) : new stylus.nodes.String(value);
 
-					data[key] = new stylus.nodes.String(value);
-					saveVariable(variables, getVariablePath(path, String(key)), data[key], theme);
-					return;
+				} else {
+					parsed = new stylus.nodes.Unit(value);
 				}
 
-				data[key] = new stylus.nodes.Unit(value);
-				saveVariable(variables, getVariablePath(path, String(key)), data[key], theme);
+				$C(res).set(parsed, keyPath);
+
+				if (path && path.length > 0) {
+					const
+						variablePath = getVariablePath(keyPath, theme);
+
+					saveVariable(variables, variablePath, parsed, theme);
+				}
 			}
 		});
+
+		return res;
 	}
 }
 
@@ -262,6 +275,5 @@ module.exports = {
 	checkDeprecated,
 	getVariableName,
 	createDesignSystem,
-	getVariablePath,
 	getThemedPathChunks
 };

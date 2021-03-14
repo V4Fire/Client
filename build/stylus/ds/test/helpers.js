@@ -17,10 +17,10 @@ module.exports = {
 	/**
 	 * Returns string with css variable by the specified path
 	 *
-	 * @param path
+	 * @param {string} path
 	 * @returns {string}
 	 */
 	getCSSVariable(path) {
-		return `'var(${getVariableName(path)})'`;
+		return `'var(${getVariableName(path.split('.'))})'`;
 	}
 };
