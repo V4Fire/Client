@@ -22,7 +22,7 @@ const
 
 // If we have switched to the "runtime.noGlobals" mode,
 // we have to find in our code all invoking of Prelude methods, like, `'foo'.camelize()`,
-// and replaces their with another safety form of invoking
+// and replaces their with another safety form of the invoking
 if (config.runtime().noGlobals) {
 	const
 		resources = [resolve.sourceDir, ...resolve.rootDependencies],
@@ -55,13 +55,19 @@ if (config.runtime().noGlobals) {
 				link = `[Symbol.for('[[V4_PROP_TRAP:${method}]]')]`;
 
 			if (target === 'GLOBAL' || target === 'globalThis') {
-				regExps.add(`\\b(?:GLOBAL|globalThis)\\.${method}\\b`);
-				regExps.add(`\\(\\(${method}\\)\\)`);
-				regExps.add(`(?<=[^.]|^)\\b${method}\\b\\s*(?=${method.length > 3 ? '\\(|`' : '`'})`);
+				// Match: globalThis.Any or GLOBAL.Any
+				regExps.add(`\\b(?:GLOBAL|globalThis)\\s*\\.${method}\\b`);
 
+				// Match: ((Any))
+				regExps.add(`\\(\\(${method}\\)\\)`);
+
+				// Match: stderr(err) or i18n`foo`
+				regExps.add(`(?<=[^.]\\s*|^)\\b${method}\\b\\s*(?=${method.length > 3 ? '\\(|`' : '`'})`);
+
+				// Match: .then(something, stderr) or .catch(stderr)
 				if (method.length > 3) {
-					regExps.add(`(?<=\\.\\s*(?:catch|then)\\s*\\()${method}(?=\\s*\\))`);
-					regExps.add(`(?<=\\.\\s*then\\s*\\([\\s\\S]+?}\\s*,\\s*)${method}(?=\\s*\\))`);
+					regExps.add(`(?<=[^.]\\s*\\.\\s*(?:catch|then)\\s*\\()${method}(?=\\s*\\))`);
+					regExps.add(`(?<=[^.]\\s*\\.\\s*then\\s*\\([\\s\\S]+?}\\s*,\\s*)${method}(?=\\s*\\))`);
 				}
 
 				const meta = {
@@ -78,8 +84,9 @@ if (config.runtime().noGlobals) {
 			}
 
 			if (isProto.test(target)) {
-				regExps.add(`\\.${method}\\b`);
+				regExps.add(`[^.]\\s*\\.\\s*${method}\\b`);
 				tokens.set(`.${method}`, {global: false, link});
+				tokens.set(`?.${method}`, {global: false, link: `?.${link}`});
 				continue;
 			}
 
