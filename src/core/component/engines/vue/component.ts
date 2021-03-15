@@ -31,7 +31,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 		{component} = fillMeta(meta);
 
 	return {
-		...<ComponentOptions<ComponentDriver>>Any(component),
+		...<any>(component),
 		inheritAttrs: p.inheritAttrs,
 
 		model: m && {
