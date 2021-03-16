@@ -24,6 +24,7 @@ import type iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
+import Theme from 'super/i-static-page/modules/theme';
 import type { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
@@ -31,9 +32,6 @@ export * from 'super/i-static-page/interface';
 
 export const
 	$$ = symbolGenerator();
-
-const
-	availableThemes = INCLUDED_THEMES;
 
 /**
  * Superclass for all root components
@@ -61,9 +59,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/** @override */
-	readonly globalName: string = ROOT_GLOBAL_NAME;
-
-	/** @override */
 	@system()
 	readonly i18n: typeof i18n = ((i18n));
 
@@ -72,6 +67,12 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system(() => new ProvidedDataStore())
 	readonly providerDataStore!: ProvidedDataStore;
+
+	/**
+	 * Module to provide theme management
+	 */
+	@system(() => new Theme())
+	readonly theme!: Theme;
 
 	/**
 	 * Authorization status
@@ -157,32 +158,6 @@ export default abstract class iStaticPage extends iPage {
 	set locale(value: string) {
 		this.field.set('localeStore', value);
 		setLocale(value);
-	}
-
-	/**
-	 * Themes list, which are available
-	 */
-	get availableThemes(): CanUndef<string[]> {
-		return availableThemes;
-	}
-
-	/**
-	 * Root theme
-	 */
-	get theme(): unknown {
-		return this.getRootMod('theme');
-	}
-
-	/**
-	 * Sets a theme mod for the root element
-	 * @param value
-	 */
-	set theme(value: unknown) {
-		if (this.availableThemes?.includes(String(value)) === false) {
-			throw new ReferenceError(`Theme with name "${String(value)}" is not defined`);
-		}
-
-		this.setRootMod('theme', value);
 	}
 
 	/**
@@ -343,27 +318,5 @@ export default abstract class iStaticPage extends iPage {
 
 		this.locale = locale;
 		this.forceUpdate().catch(stderr);
-	}
-
-	/** @override */
-	protected initBlockInstance(): void {
-		super.initBlockInstance();
-
-		const
-			root = document.documentElement;
-
-		root.classList.forEach((className) => {
-			const
-				[prefix, name, value] = className.split('_');
-
-			if (prefix === this.globalName && Object.size(name) > 0 && Object.size(value) > 0) {
-				this.rootMods[this.getRootModKey(name)] = {
-					value,
-					name: className,
-					class: this.provide.fullComponentName(prefix, name, value).replace(/_/g, '-'),
-					component: this
-				};
-			}
-		});
 	}
 }

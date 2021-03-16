@@ -33,12 +33,6 @@ module.exports = [
 		});
 
 		/**
-		 * Returns a global name of the root component
-		 * @returns {string}
-		 */
-		api.define('getRootGlobalName', () => config.rootGlobalName());
-
-		/**
 		 * Outputs specified arguments to the console
 		 * @param args
 		 */

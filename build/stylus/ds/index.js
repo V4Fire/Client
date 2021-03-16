@@ -8,6 +8,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:build/stylus/ds/README.md]]
+ * @packageDocumentation
+ */
+
 const
 	pzlr = require('@pzlr/build-core'),
 	config = require('config');

@@ -64,11 +64,6 @@
 	- assets = await h.getAssets(@@entryPoints)
 
 	- block root
-		: runtime = require('config').runtime()
-
-		- if runtime.includeThemes && runtime.theme
-			? Object.assign(htmlAttrs, {class: 'root_theme_' + runtime.theme})
-
 		- block pageData
 			? rootAttrs['data-root-component'] = self.name()
 			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)

@@ -698,16 +698,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Global for the root component
-	 * @cli root-global-name
-	 */
-	rootGlobalName() {
-		return o('root-global-name', {
-			default: 'root'
-		});
-	},
-
-	/**
 	 * Name of the interface theme by default
 	 *
 	 * @cli t
@@ -732,6 +722,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	includeThemes() {
 		return o('include-themes', {
 			env: true
+		});
+	},
+
+	/**
+	 * Attribute name to set interface theme
+	 *
+	 * @cli theme-attribute
+	 * @env THEME_ATTRIBUTE
+	 *
+	 * @type {string}
+	 * @default `data-theme`
+	 */
+	themeAttribute() {
+		return o('theme-attribute', {
+			env: true,
+			default: 'data-theme'
 		});
 	},
 
@@ -841,8 +847,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			'ds-diff': false,
 			'ds/include-vars': false,
-			theme: this.theme(),
-			includeThemes: this.includeThemes(),
 
 			blockNames: false,
 			passDesignSystem: false,

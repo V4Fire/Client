@@ -41,7 +41,7 @@ interface HTMLImageElement {
 
 declare const INCLUDED_THEMES: CanUndef<string[]>;
 declare const THEME: CanUndef<string>;
-declare const ROOT_GLOBAL_NAME: string;
+declare const THEME_ATTRIBUTE: CanUndef<string>;
 
 interface Event {
 	delegateTarget?: Element;

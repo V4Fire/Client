@@ -43,8 +43,6 @@ module.exports = {
 		NODE_ENV: s(process.env.NODE_ENV)
 	},
 
-	ROOT_GLOBAL_NAME: s(config.rootGlobalName()),
-
 	COMPONENTS: graph.then(({blockMap}) => {
 		if (Object.isMap(blockMap)) {
 			return $C(blockMap).to({}).reduce((res, el, key) => {
@@ -69,6 +67,7 @@ module.exports = {
 
 		null,
 
+	THEME_ATTRIBUTE: s(config.themeAttribute()),
 	THEME: s(config.theme()),
 	INCLUDED_THEMES: pzlr.designSystem ?
 		s(getThemes(getDS(), config.includeThemes() || [config.theme()])) :
