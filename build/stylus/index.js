@@ -10,7 +10,6 @@
 
 const
 	stylus = require('stylus'),
-	config = require('config'),
 	color = include('build/stylus/color'),
 	string = include('build/stylus/string'),
 	url = include('build/stylus/url'),
