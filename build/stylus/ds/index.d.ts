@@ -65,29 +65,49 @@ interface DesignSystem {
 	colors?: StrictDictionary;
 }
 
+/**
+ * Storage with variables created by the design system object.
+ *
+ * @example
+ * ```
+ * {
+ *   colors: {
+ *     primary: var('--colors-primary')
+ *   },
+ *
+ *   map: {
+ *     light: {
+ *       'colors.primary': ['--colors-primary', '#00F']
+ *     }
+ *   }
+ * }
+ * ```
+ */
 interface DesignSystemVariables extends Dictionary {
 	/**
-	 * Dictionary with variables values with deep path as key.
-	 * May be separated by themes
+	 * Dictionary with couple `[cssVariable, value]` as value and deep path separated by `.` as key.
+	 * May be separated by groups (e.g. themes)
 	 *
 	 * @example
 	 * ```js
 	 * // Design system has themes
 	 * map: {
 	 *   light: {
-	 *     'colors.primary': '#00F'
+	 *     'colors.primary': ['--colors-primary', '#00F']
 	 *   }
 	 * }
 	 *
 	 * // ...
 	 *
 	 * map: {
-	 *  'colors.primary': '#00F'
+	 *  'colors.primary': ['--colors-primary', '#00F']
 	 * }
 	 * ```
 	 */
-	map: Dictionary;
+	map: Dictionary<DesignSystemVariableMapValue>;
 }
+
+type DesignSystemVariableMapValue = [string, unknown];
 
 interface BuildTimeDesignSystemParams {
 	data: DesignSystem;

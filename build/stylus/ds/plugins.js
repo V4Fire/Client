@@ -129,13 +129,16 @@ module.exports = function getPlugins({
 
 				checkDeprecated(ds, string);
 
+				const
+					getCSSVar = () => $C(cssVariables).get([].concat([string], value || []).join('.'));
+
 				if (isOneTheme || !isBuildHasTheme) {
 					return includeVars ?
-						stylus.utils.coerce($C(cssVariables).get([].concat([string], value || []).join('.'))) :
+						stylus.utils.coerce(getCSSVar()) :
 						$C(ds).get([].concat(getThemedPathChunks(string, theme, isFieldThemed(string)), value || []).join('.'));
 				}
 
-				return stylus.utils.coerce($C(cssVariables).get([].concat([string], value || []).join('.')));
+				return stylus.utils.coerce(getCSSVar());
 			}
 		);
 

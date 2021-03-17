@@ -19,8 +19,7 @@ const
  *
  * @example
  * ```
- * // --a-b
- * getVariableName(['a', 'b'])
+ * getVariableName(['a', 'b']) // --a-b
  * ```
  */
 function getVariableName(path) {
@@ -30,29 +29,29 @@ function getVariableName(path) {
 /**
  * Saves the specified value as a CSS variable into a dictionary by the specified path
  *
- * @param {DesignSystemVariables} varDict - dictionary of CSS variables
- * @param {!Array<string>} path - path to set the value
  * @param {?} value
- * @param {string} [theme]
+ * @param {!Array<string>} path - path to set the value
+ * @param {DesignSystemVariables} varStorage - dictionary of CSS variables
+ * @param {string} [mapGroup] - name of group in map field of variable storage
  */
-function saveVariable(varDict, path, value, theme) {
+function saveVariable(value, path, varStorage, mapGroup) {
 	const
 		variable = getVariableName(path),
 		joinedPath = path.join('.'),
 		mapValue = [variable, value];
 
-	$C(varDict).set(`var(${variable})`, path);
-	$C(varDict).set(`var(${variable}-diff)`, `diff.${joinedPath}`);
+	$C(varStorage).set(`var(${variable})`, path);
+	$C(varStorage).set(`var(${variable}-diff)`, `diff.${joinedPath}`);
 
-	if (theme === undefined) {
-		varDict.map[joinedPath] = mapValue;
+	if (mapGroup === undefined) {
+		varStorage.map[joinedPath] = mapValue;
 
 	} else {
-		if (!varDict.map[theme]) {
-			Object.defineProperty(varDict.map, theme, {value: {}, enumerable: false});
+		if (!varStorage.map[mapGroup]) {
+			Object.defineProperty(varStorage.map, mapGroup, {value: {}, enumerable: false});
 		}
 
-		varDict.map[theme][joinedPath] = mapValue;
+		varStorage.map[mapGroup][joinedPath] = mapValue;
 	}
 }
 
@@ -165,7 +164,7 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 					const
 						variablePath = getVariablePath(path, theme);
 
-					saveVariable(variables, accumulateKey(variablePath, key, i), el, theme);
+					saveVariable(el, accumulateKey(variablePath, key, i), variables, theme);
 				});
 
 				$C(res).set(array, accumulateKey(path, key));
@@ -199,7 +198,7 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 					const
 						variablePath = getVariablePath(keyPath, theme);
 
-					saveVariable(variables, variablePath, parsed, theme);
+					saveVariable(parsed, variablePath, variables, theme);
 				}
 			}
 		});
