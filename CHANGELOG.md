@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.158 (2021-03-??)
+## v3.0.0-rc.??? (2021-03-??)
 
 #### :rocket: New Feature
 
@@ -23,6 +23,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added tests `build/stylus/ds`
 * Added tests `build/ds`
 * Improved documentation `build/stylus/ds`
+
+## v3.0.0-rc.160 (2021-03-17)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the project building never stopped `build`
+
+## v3.0.0-rc.159 (2021-03-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the `noGlobal` breaks on `'foo'?.dasherize()` `build`
+
+## v3.0.0-rc.158 (2021-03-15)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when loading template files
 
 ## v3.0.0-rc.157 (2021-03-10)
 

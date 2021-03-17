@@ -38,8 +38,17 @@ module.exports = function preludeLoader(str) {
 			// eslint-disable-next-line no-template-curly-in-string
 			.replace(str, {label: '[__ESCAPER_QUOT__${pos}_]'}, escapedFragments);
 
+		const
+			normalizeRgxp = /^\s*([^.\s]+)\s*\.\s*/;
+
 		str = str.replace(replaceRgxp, (str) => {
-			const
+			str = str.replace(normalizeRgxp, '$1.');
+
+			if (/Any/.test(str)) {
+				console.log(str, tokens.get(str));
+			}
+
+			let
 				token = tokens.get(str);
 
 			if (token) {
@@ -48,6 +57,16 @@ module.exports = function preludeLoader(str) {
 				}
 
 				return token.link;
+			}
+
+			token = tokens.get(str.slice(1));
+
+			if (token) {
+				if (token.global) {
+					initGlobals = true;
+				}
+
+				return str[0] + token.link;
 			}
 
 			return str;
