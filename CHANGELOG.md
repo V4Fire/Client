@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.158 (2021-03-??)
+
+#### :rocket: New Feature
+
+* Added `jasmine` tests for `.spec.js` files
+* Added changing themes functionality
+
+#### :house: Internal
+
+* Added tests `build/stylus/ds`
+* Added tests `build/ds`
+* Improved documentation `build/stylus/ds`
+
 ## v3.0.0-rc.157 (2021-03-10)
 
 #### :rocket: New Feature

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ThemeManager } from 'super/i-static-page/modules/theme/index';
+import ThemeManager from 'super/i-static-page/modules/theme/theme-manager';
 
 /**
  * Returns class instance to manage interface themes

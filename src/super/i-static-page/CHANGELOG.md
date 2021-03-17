@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.158 (2021-03-??)
+
+#### :rocket: New Feature
+
+* Added changing themes functionality
+
 ## v3.0.0-rc.157 (2021-03-10)
 
 #### :rocket: New Feature
