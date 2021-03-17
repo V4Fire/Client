@@ -12,21 +12,27 @@ const
 	$C = require('collection.js');
 
 /**
- * Returns a name of the CSS variable, created from the specified path with a dot delimiter
+ * Returns a name of a CSS variable, created from the specified path with a dot delimiter
  *
- * @param {string[]} path
+ * @param {!Array<string>} path
  * @returns {string}
+ *
+ * @example
+ * ```
+ * // --a-b
+ * getVariableName(['a', 'b'])
+ * ```
  */
 function getVariableName(path) {
 	return `--${path.join('-')}`;
 }
 
 /**
- * Saves the specified value as css variable into the specified dictionary by the specified path
+ * Saves the specified value as a CSS variable into a dictionary by the specified path
  *
- * @param {DesignSystemVariables} varDict - css variables dictionary
- * @param {string[]} path - path to set a value
- * @param {unknown} value
+ * @param {DesignSystemVariables} varDict - dictionary of CSS variables
+ * @param {!Array<string>} path - path to set the value
+ * @param {?} value
  * @param {string} [theme]
  */
 function saveVariable(varDict, path, value, theme) {
