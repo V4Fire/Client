@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added ability to mark styles as obsolescence
+* Added the ability to mark styles as obsolescence
 
 #### :house: Internal
 

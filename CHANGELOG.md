@@ -17,7 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `jasmine` tests for `.spec.js` files
 * Added the ability to change themes
-* Added a new plugin function `log` `build/stylus`
+
+* `build/stylus`:
+  * Added a new plugin function `log`
+  * Added the ability to mark styles as obsolescence
 
 #### :memo: Documentation
 
@@ -25,7 +28,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added tests `build/stylus/ds`
+* `build/stylus/ds`:
+  * Added tests
+  * Plugins moved to a separated folder `build/stylus/ds`
+
 * Added tests `build/ds`
 
 ## v3.0.0-rc.160 (2021-03-17)
