@@ -26,7 +26,7 @@ describe('build/stylus/plugins/included-themes', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
 			plugins = getPlugins({ds, cssVariables, theme, stylus, includeThemes: true});
 
-		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
+		stylus.render('.foo\n\tcontent join(".", availableThemes())', {use: [plugins]}, (err, value) => {
 			expect(value.includes(`content: '${ds.raw.meta.themes.join('.')}'`)).toBeTrue();
 		});
 	});
@@ -40,7 +40,7 @@ describe('build/stylus/plugins/included-themes', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
 			plugins = getPlugins({ds, cssVariables, theme: includeThemes[0], stylus, includeThemes});
 
-		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
+		stylus.render('.foo\n\tcontent join(".", availableThemes())', {use: [plugins]}, (err, value) => {
 			expect(value.includes(`content: '${includeThemes.join('.')}'`)).toBeTrue();
 		});
 	});
@@ -54,7 +54,7 @@ describe('build/stylus/plugins/included-themes', () => {
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
 			plugins = getPlugins({ds, cssVariables, theme, stylus});
 
-		stylus.render('.foo\n\tcontent join(".", includedThemes())', {use: [plugins]}, (err, value) => {
+		stylus.render('.foo\n\tcontent join(".", availableThemes())', {use: [plugins]}, (err, value) => {
 			expect(value.includes('content: \'null\'')).toBeTrue();
 		});
 	});

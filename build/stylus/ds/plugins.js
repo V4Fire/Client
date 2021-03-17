@@ -227,9 +227,9 @@ module.exports = function getPlugins({
 		api.define('defaultTheme', () => theme);
 
 		/**
-		 * Returns themes included to build
+		 * Returns themes, available in the environment
 		 * @returns {!string[]}
 		 */
-		api.define('includedThemes', () => themesList);
+		api.define('availableThemes', () => themesList);
 	};
 };

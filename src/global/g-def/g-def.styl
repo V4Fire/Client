@@ -22,7 +22,7 @@
 //#endif
 
 //#if runtime has includeThemes
-for name in includedThemes()
+for name in availableThemes()
 	html[data-theme={"%s" % name}]
 		interpolate-props(getDSVariables(name), false)
 //#endif

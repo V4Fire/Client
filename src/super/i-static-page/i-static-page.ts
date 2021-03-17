@@ -24,8 +24,8 @@ import type iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import type { RootMod } from 'super/i-static-page/interface';
 import themeManagerFactory, { ThemeManager } from 'super/i-static-page/modules/theme';
+import type { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
 export * from 'super/i-static-page/interface';
@@ -72,7 +72,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Module to provide theme management
 	 */
 	@system<iStaticPage>(themeManagerFactory)
-	readonly theme!: CanUndef<ThemeManager>;
+	readonly theme: CanUndef<ThemeManager>;
 
 	/**
 	 * Authorization status

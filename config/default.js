@@ -698,47 +698,52 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of default app theme to use
-	 *
-	 * @cli t
-	 * @env THEME
+	 * Options of app interface theme
 	 */
-	theme() {
-		return o('theme', {
-			short: 't',
-			env: true
-		});
-	},
+	theme: {
+		/**
+		 * Name of default app theme to use
+		 *
+		 * @cli t
+		 * @env THEME
+		 */
+		value() {
+			return o('theme', {
+				short: 't',
+				env: true
+			});
+		},
 
-	/**
-	 * Array of themes to passing from design system to the runtime
-	 * or true, if needed to pass all themes from design system
-	 *
-	 * @cli include-themes
-	 * @env INCLUDE_THEMES
-	 *
-	 * @type {string[]|boolean}
-	 */
-	includeThemes() {
-		return o('include-themes', {
-			env: true
-		});
-	},
+		/**
+		 * Array of themes to passing from design system to the runtime
+		 * or true, if needed to pass all themes from design system
+		 *
+		 * @cli include-themes
+		 * @env INCLUDE_THEMES
+		 *
+		 * @type {string[]|boolean}
+		 */
+		include() {
+			return o('include-themes', {
+				env: true
+			});
+		},
 
-	/**
-	 * Attribute name to set interface theme
-	 *
-	 * @cli theme-attribute
-	 * @env THEME_ATTRIBUTE
-	 *
-	 * @type {string}
-	 * @default `data-theme`
-	 */
-	themeAttribute() {
-		return o('theme-attribute', {
-			env: true,
-			default: 'data-theme'
-		});
+		/**
+		 * Attribute name to set interface theme
+		 *
+		 * @cli theme-attribute
+		 * @env THEME_ATTRIBUTE
+		 *
+		 * @type {string}
+		 * @default `data-theme`
+		 */
+		attribute() {
+			return o('theme-attribute', {
+				env: true,
+				default: 'data-theme'
+			});
+		}
 	},
 
 	/**

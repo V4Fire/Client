@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iStaticPage from 'super/i-static-page/i-static-page';
 import { Friend } from 'super/i-block/i-block';
+import type iStaticPage from 'super/i-static-page/i-static-page';
 
 /**
  * Class to manage interface themes
@@ -50,8 +50,8 @@ export default class ThemeManager extends Friend {
 	/**
 	 * List of available themes of the app
 	 */
-	get list(): Nullable<string[]> {
-		return INCLUDED_THEMES;
+	get availableThemes(): CanUndef<Set<string>> {
+		return Object.isArray(AVAILABLE_THEMES) ? new Set(AVAILABLE_THEMES) : undefined;
 	}
 
 	/**
@@ -61,7 +61,7 @@ export default class ThemeManager extends Friend {
 	 * @param value
 	 */
 	set current(value: string) {
-		if (this.list?.includes(value) === false) {
+		if (this.availableThemes?.has(value) === false) {
 			throw new ReferenceError(`A theme with the name "${value}" is not defined`);
 		}
 

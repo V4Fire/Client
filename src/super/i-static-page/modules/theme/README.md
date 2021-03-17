@@ -7,11 +7,11 @@ This module provides a class and factory to manage the app themes.
 * The module uses several global variables from the config:
   * `THEME` - a name of the initial theme. If not specified, theme managing won't be available.
   * `THEME_ATTRIBUTE` - an attribute name to set a theme value to the root element
-  * `INCLUDED_THEMES` - a list of available app themes
+  * `AVAILABLE_THEMES` - a list of available app themes
 
 * Theme is set using property `current`
 
-* Available themes can be accessed by property `list`
+* Available themes can be accessed by property `availableThemes`
 
 ## Events
 

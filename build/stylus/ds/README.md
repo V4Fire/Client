@@ -74,12 +74,12 @@ const
   {data: ds, variables: cssVariables} = createDesignSystem(fullThemed),
   plugins = getPlugins({ds, cssVariables, theme, stylus, includeThemes});
 
-stylus.render('.foo { content: join(".", includedThemes()) }', {use: [plugins]}, (err, value) => {
+stylus.render('.foo { content: join(".", availableThemes()) }', {use: [plugins]}, (err, value) => {
   expect(value.includes(`content: '${includeThemes.join('.')}'`)).toBeTrue();
 });
 
 // ...
 ```
 
-The result of `includedThemes` joined by dots and saved to property `content` of an arbitrary CSS-class.
+The result of `availableThemes` joined by dots and saved to property `content` of an arbitrary CSS-class.
 Then the result of the render function is checked for the existence of a substring.

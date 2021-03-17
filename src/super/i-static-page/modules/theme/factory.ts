@@ -9,9 +9,7 @@
 import ThemeManager from 'super/i-static-page/modules/theme/theme-manager';
 
 /**
- * Returns class instance to manage interface themes
- * if that functionality is available
- *
+ * Returns a class instance to manage interface themes if that functionality is available
  * @param component
  */
 export default function themeManagerFactory(component: any): CanUndef<ThemeManager> {
