@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `log` plugin function
+* Added a new plugin function `log`
 
 #### :memo: Documentation
 

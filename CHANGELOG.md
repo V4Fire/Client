@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `jasmine` tests for `.spec.js` files
 * Added the ability to change themes
+* Added a new plugin function `log` `build/stylus`
 
 #### :memo: Documentation
 
