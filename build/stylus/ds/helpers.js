@@ -72,7 +72,7 @@ function accumulateKey(prefix, ...postfixes) {
  * Creates a project design system from the specified raw object
  *
  * @param {DesignSystem} raw
- * @param {Object} [stylus=]
+ * @param {Object=} [stylus]
  *
  * @returns {!BuildTimeDesignSystemParams}
  */
@@ -92,7 +92,7 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 
 /**
  * Converts the specified design system object to a Stylus object
- * and creates css variables to use in style files
+ * and creates CSS variables to use within style files
  *
  * @param {Object} stylus - link to a stylus package instance
  * @param {DesignSystem} ds

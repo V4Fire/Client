@@ -15,7 +15,7 @@ const
 
 module.exports = {
 	/**
-	 * Returns string with css variable by the specified path
+	 * Returns a string with invoking a CSS variable by the specified path
 	 *
 	 * @param {string} path
 	 * @returns {string}

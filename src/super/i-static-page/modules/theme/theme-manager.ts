@@ -22,12 +22,12 @@ export default class ThemeManager extends Friend {
 	protected readonly initialValue!: string;
 
 	/**
-	 * Attribute to set theme value on the root element
+	 * Attribute to set a theme value to the root element
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
 	/**
-	 * Current value
+	 * Current theme value
 	 */
 	protected valueStore!: string;
 
@@ -36,33 +36,33 @@ export default class ThemeManager extends Friend {
 		super(component);
 
 		if (!Object.isString(THEME)) {
-			throw new ReferenceError('Initial theme value is not specified');
+			throw new ReferenceError('A theme to initialize is not specified');
 		}
 
 		this.current = THEME;
 		this.initialValue = THEME;
 
 		if (!Object.isString(this.themeAttribute)) {
-			throw new ReferenceError('Attribute name for interface theme is not defined');
+			throw new ReferenceError('An attribute name to set themes is not specified');
 		}
 	}
 
 	/**
-	 * List of available values for current runtime
+	 * List of available themes of the app
 	 */
 	get list(): Nullable<string[]> {
 		return INCLUDED_THEMES;
 	}
 
 	/**
-	 * Sets current value
+	 * Sets a new value to the current theme
 	 *
-	 * @emits theme:change(value: string, oldValue: CanUndef<string>)
+	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 * @param value
 	 */
 	set current(value: string) {
 		if (this.list?.includes(value) === false) {
-			throw new ReferenceError(`Theme with name "${value}" is not defined`);
+			throw new ReferenceError(`A theme with the name "${value}" is not defined`);
 		}
 
 		if (!Object.isString(this.themeAttribute)) {

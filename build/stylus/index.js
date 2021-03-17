@@ -32,7 +32,7 @@ module.exports = [
 		});
 
 		/**
-		 * Outputs specified arguments to the console
+		 * Outputs the specified arguments to console
 		 * @param args
 		 */
 		api.define('log', (...args) => console.log(...args));

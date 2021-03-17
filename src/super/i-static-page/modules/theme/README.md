@@ -1,13 +1,13 @@
 # super/i-static-page/modules/theme
 
-This module provides a class and factory to theme managing.
+This module provides a class and factory to manage the app themes.
 
 ## Synopsis
 
-* Module uses several global variables from config:
-  * `THEME` - initial theme name. If not specified, theme managing won't available.
-  * `THEME_ATTRIBUTE` - attribute name to set an actual theme value on the root html element
-  * `INCLUDED_THEMES` - a set of theme names, that available in the runtime
+* The module uses several global variables from the config:
+  * `THEME` - a name of the initial theme. If not specified, theme managing won't be available.
+  * `THEME_ATTRIBUTE` - an attribute name to set a theme value to the root element
+  * `INCLUDED_THEMES` - a list of available app themes
 
 * Theme is set using property `current`
 
@@ -17,4 +17,4 @@ This module provides a class and factory to theme managing.
 
 | EventName      | Description            | Payload description | Payload                      |
 | -------------- | ---------------------- | ------------------- | ---------------------------- |
-| `theme:change` | Theme value changed    | New and old value   | `string`; `CanUndef<string>` |
+| `theme:change` | Theme value has been changed    | The new and old value   | `string`; `CanUndef<string>` |

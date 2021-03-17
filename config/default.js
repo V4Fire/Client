@@ -698,7 +698,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of the interface theme by default
+	 * Name of default app theme to use
 	 *
 	 * @cli t
 	 * @env THEME
