@@ -67,8 +67,8 @@ module.exports = {
 
 		null,
 
-	THEME_ATTRIBUTE: s(config.themeAttribute()),
 	THEME: s(config.theme()),
+	THEME_ATTRIBUTE: s(config.themeAttribute()),
 	INCLUDED_THEMES: pzlr.designSystem ?
 		s(getThemes(getDS(), config.includeThemes() || [config.theme()])) :
 		null,

@@ -34,8 +34,10 @@ exports.getDS = function getDS() {
  * Returns available themes from the specified design system package.
  *
  * Pass to the second argument:
- *   * array of theme names to include them to the build. Note that names must be included in the design system object
- *   * true, if necessary to pass all themes from the specified design system object
+ *   * An array of theme names to include them to the build.
+ *     Note that names must be included in the design system object.
+ *
+ *   * `true`, if necessary to pass all themes from the specified design system object
  *
  * @param {!DesignSystem} ds - a raw design system object (e.g. loaded from the linked in the `.pzlrrc` package)
  * @param {(!Array<string>|true)} buildThemes
