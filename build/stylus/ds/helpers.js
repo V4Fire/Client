@@ -57,18 +57,6 @@ function saveVariable(varDict, path, value, theme) {
 }
 
 /**
- * Returns a path to the specified variable name
- *
- * @param {?Array} prefix
- * @param {string|number} postfixes
- *
- * @returns {string[]}
- */
-function accumulateKey(prefix, ...postfixes) {
-	return [...(prefix || []), ...postfixes];
-}
-
-/**
  * Creates a project design system from the specified raw object
  *
  * @param {DesignSystem} raw
@@ -79,7 +67,7 @@ function accumulateKey(prefix, ...postfixes) {
 function createDesignSystem(raw, stylus = require('stylus')) {
 	const
 		base = Object.create(Object.freeze({meta: raw.meta, raw})),
-		rawCopy = $C.clone(raw);
+		rawCopy = $C.extend(true, {}, raw);
 
 	$C(rawCopy).remove('meta');
 
@@ -119,6 +107,23 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 	 */
 	function getVariablePath(keys, theme) {
 		return keys.filter((field) => !['theme', theme].includes(field));
+	}
+
+	/**
+	 * Returns an array of key chunks
+	 *
+	 * @param {?Array} head
+	 * @param {string|number} tail
+	 *
+	 * @example
+	 * ```js
+	 * accumulateKey(['deep', 'path', 'to'], 'variable', 'name') // ['deep', 'path', 'to', 'variable', 'name']
+	 * ```
+	 *
+	 * @returns {string[]}
+	 */
+	function accumulateKey(head, ...tail) {
+		return [...(head || []), ...tail];
 	}
 
 	/**
@@ -206,14 +211,15 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 /**
  * Returns array of path chunks to get a themed value from a design system object
  *
- * @example
- * ```js
- * getThemedPathChunks('colors', 'light', true)
- * ```
- *
  * @param {string} field
  * @param {string} [theme]
  * @param {boolean} [isFieldThemed] - true, if a value of the specified field depends on theme
+ *
+ * @example
+ * ```js
+ * getThemedPathChunks('colors', 'light', true) // ['colors', 'theme', 'light']
+ * getThemedPathChunks('colors', 'light') // ['colors']
+ * ```
  *
  * @returns {!Array<string>}
  */

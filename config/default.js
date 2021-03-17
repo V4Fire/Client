@@ -707,7 +707,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli t
 		 * @env THEME
 		 */
-		value() {
+		default() {
 			return o('theme', {
 				short: 't',
 				env: true

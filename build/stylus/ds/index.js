@@ -23,7 +23,7 @@ const
 	{getDS} = include('build/ds');
 
 const
-	theme = config.theme.value(),
+	theme = config.theme.default(),
 	includeThemes = config.theme.include(),
 	{'ds/include-vars': includeVars} = config.runtime();
 
