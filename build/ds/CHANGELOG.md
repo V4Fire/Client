@@ -15,10 +15,10 @@ Changelog
 
 * Added a new function `getThemes`
 
-#### :house: Internal
-
-* Added tests
-
 #### :memo: Documentation
 
 * Added `README`, `CHANGELOG`
+
+#### :house: Internal
+
+* Added tests
