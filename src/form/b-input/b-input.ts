@@ -578,6 +578,22 @@ export default class bInput extends iInput implements iWidth, iSize {
 	}
 
 	/**
+	 * Handler: paste
+	 *
+	 * @param e
+	 * @emits paste(text: string)
+	 */
+	protected onPaste(e: ClipboardEvent): void {
+		type TGlobalThisWithClipboardData = typeof globalThis & { clipboardData?: ClipboardEvent['clipboardData'] };
+		const text =
+			(e.clipboardData ?? (<TGlobalThisWithClipboardData>globalThis).clipboardData)?.getData('text');
+
+		if (text != null) {
+			this.emit('paste', text);
+		}
+	}
+
+	/**
 	 * Handler: clear
 	 *
 	 * @param e

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added emit paste event
+
 ## v3.0.0-rc.140 (2021-02-05)
 
 #### :bug: Bug Fix

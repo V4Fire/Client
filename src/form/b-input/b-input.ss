@@ -64,6 +64,7 @@
 								@focus = onFocus |
 								@input = onEdit |
 								@blur = onBlur |
+								@paste = onPaste |
 								${attrs|!html}
 							.
 
