@@ -706,6 +706,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @cli t
 		 * @env THEME
+		 * @returns {string}
 		 */
 		default() {
 			return o('theme', {
@@ -721,7 +722,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli include-themes
 		 * @env INCLUDE_THEMES
 		 *
-		 * @type {string[]|boolean}
+		 * @returns {!Array<string>|boolean}
 		 */
 		include() {
 			return o('include-themes', {
@@ -735,8 +736,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli theme-attribute
 		 * @env THEME_ATTRIBUTE
 		 *
-		 * @type {string}
 		 * @default `data-theme`
+		 * @returns {string}
 		 */
 		attribute() {
 			return o('theme-attribute', {
