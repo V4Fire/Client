@@ -17,7 +17,7 @@ export default class ThemeManager extends Friend {
 	readonly C!: iStaticPage;
 
 	/**
-	 * Initial interface theme value
+	 * Initial theme value
 	 */
 	protected readonly initialValue!: string;
 
@@ -48,7 +48,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * List of available themes of the app
+	 * Set of available themes of the app
 	 */
 	get availableThemes(): CanUndef<Set<string>> {
 		return Object.isArray(AVAILABLE_THEMES) ? new Set(AVAILABLE_THEMES) : undefined;
@@ -57,8 +57,8 @@ export default class ThemeManager extends Friend {
 	/**
 	 * Sets a new value to the current theme
 	 *
-	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 * @param value
+	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
 	set current(value: string) {
 		if (this.availableThemes?.has(value) === false) {
@@ -73,7 +73,6 @@ export default class ThemeManager extends Friend {
 			oldValue = this.valueStore;
 
 		this.valueStore = value;
-
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
 		void this.component.lfc.execCbAtTheRightTime(() => {

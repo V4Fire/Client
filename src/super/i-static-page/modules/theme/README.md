@@ -5,16 +5,16 @@ This module provides a class and factory to manage the app themes.
 ## Synopsis
 
 * The module uses several global variables from the config:
-  * `THEME` - a name of the initial theme. If not specified, theme managing won't be available.
-  * `THEME_ATTRIBUTE` - an attribute name to set a theme value to the root element
-  * `AVAILABLE_THEMES` - a list of available app themes
+  * `THEME` - a name of the initial theme. If not specified, theme managing won't be available;
+  * `THEME_ATTRIBUTE` - an attribute name to set a theme value to the root element;
+  * `AVAILABLE_THEMES` - a list of available app themes.
 
-* Theme is set using property `current`
+* To set a new theme, use the `current` property
 
-* Available themes can be accessed by property `availableThemes`
+* To get a set of available themes, use the `availableThemes` property
 
 ## Events
 
-| EventName      | Description            | Payload description | Payload                      |
-| -------------- | ---------------------- | ------------------- | ---------------------------- |
-| `theme:change` | Theme value has been changed    | The new and old value   | `string`; `CanUndef<string>` |
+| EventName      | Description                  | Payload description   | Payload                      |
+| -------------- | ---------------------------- | --------------------- | ---------------------------- |
+| `theme:change` | Theme value has been changed | The new and old value | `string`; `CanUndef<string>` |
