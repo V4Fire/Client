@@ -29,16 +29,14 @@ interface DesignSystem {
 		themes: string[];
 
 		/**
-		 * Set of design system fields that have theme
-		 *
-		 * For example, you can use themes for colors only.
-		 * Then, pass to this variable value `['colors']`.
-		 * In this case, the runtime theme will not affect other fields from a design system
+		 * List of design system fields that should support theming.
+		 * For instance, you can use themes only for colors and don't want that the design system affects other fields.
+		 * To solve that case,  pass the `themedFields` property a value with `['colors']`.
 		 */
 		themedFields?: string[];
 
 		/**
-		 * Dictionary with deprecated options for the specified field
+		 * Dictionary of deprecated options
 		 *
 		 * @example
 		 * ```js
@@ -54,8 +52,7 @@ interface DesignSystem {
 	};
 
 	/**
-	 * Raw data for a design system.
-	 * Only for processed object
+	 * Raw (unprocessed) design system value
 	 */
 	raw?: DesignSystem;
 
@@ -66,7 +63,7 @@ interface DesignSystem {
 }
 
 /**
- * Storage with variables created by the design system object.
+ * Storage with variables created by the design system
  *
  * @example
  * ```
@@ -85,8 +82,8 @@ interface DesignSystem {
  */
 interface DesignSystemVariables extends Dictionary {
 	/**
-	 * Dictionary with couple `[cssVariable, value]` as value and deep path separated by `.` as key.
-	 * May be separated by groups (e.g. themes)
+	 * Dictionary of couples `[cssVariable, value]`.
+	 * It may be separated by groups (e.g., themes).
 	 *
 	 * @example
 	 * ```js
