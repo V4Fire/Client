@@ -15,7 +15,7 @@
  * @param {boolean=} [$base]
  */
 c($kit, $id = null, $reserved = false, $base = false)
-	if getDSFieldValue("colors")
+	if getDSValue("colors")
 		$color = getDSColor($kit, $id)
 		$value = type($color) == "string" ? convert($color) : $color
 		return $value
@@ -85,7 +85,7 @@ t($name)
  * r(big, '$s 0 $s') -> border-radius 16px 0 16px
  */
 r($name, $pos = null)
-	$val = getDSFieldValue("rounding", $name)
+	$val = getDSValue("rounding", $name)
 
 	if $val
 		if $pos
@@ -103,20 +103,14 @@ r($name, $pos = null)
  */
 generateRules($p, $fn)
 	if !$p.skipDsInheritance
-		//#if runtime has ds/include-vars
-		$fn($p.__vars__)
-		//#endif
-
-		//#unless runtime has ds/include-vars
-		$fn($p)
-		//#endunless
+		$fn($p.values)
 
 		//#if runtime has ds/diff
 		&_diff_true
 			$fn($p.__diffVars__)
 
 		&_diff_false
-			$fn($p.__vars__)
+			$fn($p.values)
 		//#endif
 
 		return

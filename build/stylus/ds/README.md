@@ -50,14 +50,14 @@ Example:
 const
   plugins = getPlugins({ds, cssVariables, stylus, includeVars: true});
 
-stylus.render('getDSFieldValue(rounding small)', {use: [plugins]}, (err, value) => {
+stylus.render('getDSValue(rounding small)', {use: [plugins]}, (err, value) => {
   expect(value.trim()).toEqual(`${getCSSVariable('rounding.small')}`);
 });
 
 // ...
 ```
 
-To check the result of `getDSFieldValue` at the example above, we used `getCSSVariable` helper.
+To check the result of `getDSValue` at the example above, we used `getCSSVariable` helper.
 The helpers located and refill at `test/helpers.js`.
 
 Notice, some functions may return unexpected values.

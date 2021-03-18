@@ -20,7 +20,7 @@ const
  *
  * @param {DesignSystem} ds - design system object prepared to use with Stylus
  * @param {!Object} cssVariables - dictionary of CSS variables
- * @param {boolean=} [includeVars] - true, if need to provide values only as css-variables
+ * @param {boolean=} [includeVars] - true, if Design System values provided to style files as css-variables
  *
  * @param {string=} [theme] - current theme value
  * @param {(Array<string>|boolean)=} [includeThemes] - list of themes to include or
@@ -73,20 +73,54 @@ module.exports = function getPlugins({
 		 * Injects additional options to component mixin options ($p)
 		 *
 		 * @param {string} string - component name
+		 *
+		 * @example
+		 * ```stylus
+		 * injector('bButton')
+		 *
+		 * // If variables has been switched on for the build
+		 * //
+		 * // {
+		 * //   values: {
+		 * //     mods: {
+		 * //       size: {
+		 * //         s: {
+		 * //           offset: {
+		 * //             top: 'var(--bButton-mods-size-s-offset-top)'
+		 * //           }
+		 * //         }
+		 * //       }
+		 * //     }
+		 * //   }
+		 *
+		 * // Otherwise. All values are stylus types
+		 * //
+		 * // {
+		 * //   values: {
+		 * //     mods: {
+		 * //       size: {
+		 * //         s: {
+		 * //           offset: {
+		 * //             top: 5px
+		 * //           }
+		 * //         }
+		 * //       }
+		 * //     }
+		 * //   }
+		 * ```
+		 *
 		 * @returns {!Object}
 		 */
 		api.define('injector', ({string}) => {
 			const
-				value = $C(ds).get(`components.${string}`);
+				values = $C(includeVars || isThemesIncluded ? cssVariables : ds).get(`components.${string}`);
 
-			if (value) {
+			if (values) {
 				const
-					__vars__ = $C(cssVariables).get(`components.${string}`),
 					__diffVars__ = $C(cssVariables).get(`diff.components.${string}`);
 
 				return stylus.utils.coerce({
-					...value,
-					__vars__,
+					values,
 					__diffVars__
 				}, true);
 			}
@@ -98,6 +132,16 @@ module.exports = function getPlugins({
 		 * Returns design system CSS variables with their values
 		 *
 		 * @param {string} [theme]
+		 *
+		 * @example
+		 * ```stylus
+		 * getDSVariables()
+		 *
+		 * // {
+		 * //   '--colors-primary': #0F9
+		 * // }
+		 * ```
+		 *
 		 * @returns {!Object}
 		 */
 		api.define('getDSVariables', ({string: theme} = {}) => {
@@ -114,42 +158,62 @@ module.exports = function getPlugins({
 		});
 
 		/**
-		 * Returns a part of the design system by the specified path or the whole object if the path is not specified
+		 * Return a value from the design system from the specified group by the specified path.
+		 * If specified only the first argument, returns parameters object for the specified group.
+		 * If all arguments is not specified, returns full design system object.
 		 *
-		 * @param {string} [string] - first level field (colors, rounding, etc.)
-		 * @param {!Object} [value] - field path
+		 * @param {string} [group] - first level field name (colors, rounding, etc.)
+		 * @param {!Object} [path] - dot-delimited path in the specified group
+		 *
+		 * @example
+		 * ```stylus
+		 * getDSValue(colors "green.0") // rgba(0, 255, 0, 1)
+		 * ```
+		 *
 		 * @returns {!Object}
 		 */
-		api.define('getDSFieldValue', ({string} = {}, {string: value} = {}) => {
-			if (string === undefined) {
+		api.define('getDSValue', ({string: group} = {}, {string: path} = {}) => {
+			if (group === undefined) {
 				return ds;
 			}
 
-			checkDeprecated(ds, string);
+			checkDeprecated(ds, group);
 
 			const
-				getCSSVar = () => $C(cssVariables).get([].concat([string], value || []).join('.'));
+				getCSSVar = () => $C(cssVariables).get([].concat([group], path || []).join('.'));
 
 			if (isOneTheme || !isBuildHasTheme) {
 				return includeVars ?
 					stylus.utils.coerce(getCSSVar()) :
-					$C(ds).get([].concat(getThemedPathChunks(string, theme, isFieldThemed(string)), value || []).join('.'));
+					$C(ds).get([].concat(getThemedPathChunks(group, theme, isFieldThemed(group)), path || []).join('.'));
 			}
 
 			return stylus.utils.coerce(getCSSVar());
 		});
 
 		/**
-		 * Returns text styles for the specified style name
+		 * Returns an object with text styles for the specified style name
 		 *
-		 * @param {string} [name]
+		 * @param {string} name
+		 *
+		 * @example
+		 * ```stylus
+		 * getDSTextStyles(Small)
+		 *
+		 * // Notice: All values are stylus types
+		 * //
+		 * // {
+		 * //  fontFamily: 'Roboto',
+		 * //  fontWeight: 400,
+		 * //  fontSize: '14px',
+		 * //  lineHeight: '16px'
+		 * // }
+		 *
+		 * ```
+		 *
 		 * @returns {!Object}
 		 */
-		api.define('getDSTextStyles', ({string: name} = {}) => {
-			if (!name) {
-				throw new Error('getDSTextStyles: name for the text style is not specified');
-			}
-
+		api.define('getDSTextStyles', ({string: name}) => {
 			const
 				head = 'text',
 				isThemed = isFieldThemed(head),
@@ -186,6 +250,12 @@ module.exports = function getPlugins({
 		 *
 		 * @param {!Object} name
 		 * @param {!Object} [id]
+		 *
+		 * @example
+		 * ```stylus
+		 * getDSColor("blue", 1) // rgba(0, 0, 255, 1)
+		 * ```
+		 *
 		 * @returns {(!Object|!Array)}
 		 */
 		api.define('getDSColor', (name, id) => {

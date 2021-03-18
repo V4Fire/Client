@@ -50,11 +50,11 @@ describe('build/stylus/plugins', () => {
 			});
 		});
 
-		stylus.render('getDSFieldValue(rounding small)', {use: [plugins]}, (err, value) => {
+		stylus.render('getDSValue(rounding small)', {use: [plugins]}, (err, value) => {
 			expect(value.trim()).toEqual(`${getCSSVariable('rounding.small')}`);
 		});
 
-		stylus.render('getDSFieldValue("colors" "blue.1")', {use: [plugins]}, (err, hex) => {
+		stylus.render('getDSValue("colors" "blue.1")', {use: [plugins]}, (err, hex) => {
 			expect(hex.trim()).toEqual(`${getCSSVariable('colors.blue.1')}`);
 		});
 	});
