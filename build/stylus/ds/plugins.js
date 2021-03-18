@@ -16,22 +16,24 @@ const
 	{getThemedPathChunks, checkDeprecated} = include('build/stylus/ds/helpers');
 
 /**
- * Returns a set of stylus plugins by the specified options
+ * Returns a function to register Stylus plugins by the specified options
  *
- * @param {DesignSystem} ds - design system object, prepared to use with `stylus`
- * @param {Object} cssVariables
- * @param {string} [theme] - current theme
- * @param {boolean} [includeVars] - true, if need to provide values only as css-variables
- * @param {boolean|string[]} [includeThemes] - flag or set of themes provided to runtime
- * @param {Object} [stylus=] - link to a `stylus` package instance
+ * @param {DesignSystem} ds - design system object prepared to use with Stylus
+ * @param {!Object} cssVariables - dictionary of CSS variables
+ * @param {boolean=} [includeVars] - true, if need to provide values only as css-variables
  *
- * @returns {function(*): void}
+ * @param {string=} [theme] - current theme value
+ * @param {(Array<string>|boolean)=} [includeThemes] - list of themes to include or
+ *   `true` (will include all available themes)
+ *
+ * @param {Object=} [stylus] - link to a Stylus package instance
+ * @returns {!Function}
  */
 module.exports = function getPlugins({
 	ds,
 	cssVariables,
-	theme,
 	includeVars,
+	theme,
 	includeThemes,
 	stylus = require('stylus')
 }) {
@@ -51,14 +53,16 @@ module.exports = function getPlugins({
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
 
-	if (Object.isString(theme) && !isThemesIncluded) {
-		console.log(`[stylus] Warning: design system package has no theme "${theme}"`);
-	}
+	if (!isThemesIncluded) {
+		if (Object.isString(theme)) {
+			console.log(`[stylus] Warning: the design system package has no theme "${theme}"`);
+		}
 
-	if (includeThemes != null && !isThemesIncluded) {
-		console.log(
-			`[stylus] Warning: design system package has no themes for the specified includeThemes value: "${includeThemes}"`
-		);
+		if (includeThemes != null) {
+			console.log(
+				`[stylus] Warning: the design system package has no themes for the provided "includeThemes" value: "${includeThemes}"`
+			);
+		}
 	}
 
 	const
@@ -66,35 +70,32 @@ module.exports = function getPlugins({
 
 	return function addPlugins(api) {
 		/**
-		 * Injects additional options to component options ($p)
+		 * Injects additional options to component mixin options ($p)
 		 *
 		 * @param {string} string - component name
 		 * @returns {!Object}
 		 */
-		api.define(
-			'injector',
-			({string}) => {
+		api.define('injector', ({string}) => {
+			const
+				value = $C(ds).get(`components.${string}`);
+
+			if (value) {
 				const
-					value = $C(ds).get(`components.${string}`);
+					__vars__ = $C(cssVariables).get(`components.${string}`),
+					__diffVars__ = $C(cssVariables).get(`diff.components.${string}`);
 
-				if (value) {
-					const
-						__vars__ = $C(cssVariables).get(`components.${string}`),
-						__diffVars__ = $C(cssVariables).get(`diff.components.${string}`);
-
-					return stylus.utils.coerce({
-						...value,
-						__vars__,
-						__diffVars__
-					}, true);
-				}
-
-				return {};
+				return stylus.utils.coerce({
+					...value,
+					__vars__,
+					__diffVars__
+				}, true);
 			}
-		);
+
+			return {};
+		});
 
 		/**
-		 * Returns design system css variables with its values
+		 * Returns design system CSS variables with their values
 		 *
 		 * @param {string} [theme]
 		 * @returns {!Object}
@@ -113,37 +114,33 @@ module.exports = function getPlugins({
 		});
 
 		/**
-		 * Returns a part of a design system by the specified path
-		 * or the whole object if path is not specified
+		 * Returns a part of the design system by the specified path or the whole object if the path is not specified
 		 *
 		 * @param {string} [string] - first level field (colors, rounding, etc.)
 		 * @param {!Object} [value] - field path
 		 * @returns {!Object}
 		 */
-		api.define(
-			'getDSFieldValue',
-			({string} = {}, {string: value} = {}) => {
-				if (string === undefined) {
-					return ds;
-				}
-
-				checkDeprecated(ds, string);
-
-				const
-					getCSSVar = () => $C(cssVariables).get([].concat([string], value || []).join('.'));
-
-				if (isOneTheme || !isBuildHasTheme) {
-					return includeVars ?
-						stylus.utils.coerce(getCSSVar()) :
-						$C(ds).get([].concat(getThemedPathChunks(string, theme, isFieldThemed(string)), value || []).join('.'));
-				}
-
-				return stylus.utils.coerce(getCSSVar());
+		api.define('getDSFieldValue', ({string} = {}, {string: value} = {}) => {
+			if (string === undefined) {
+				return ds;
 			}
-		);
+
+			checkDeprecated(ds, string);
+
+			const
+				getCSSVar = () => $C(cssVariables).get([].concat([string], value || []).join('.'));
+
+			if (isOneTheme || !isBuildHasTheme) {
+				return includeVars ?
+					stylus.utils.coerce(getCSSVar()) :
+					$C(ds).get([].concat(getThemedPathChunks(string, theme, isFieldThemed(string)), value || []).join('.'));
+			}
+
+			return stylus.utils.coerce(getCSSVar());
+		});
 
 		/**
-		 * Returns a text styles object for the specified text style name
+		 * Returns text styles for the specified style name
 		 *
 		 * @param {string} [name]
 		 * @returns {!Object}
@@ -185,53 +182,50 @@ module.exports = function getPlugins({
 		});
 
 		/**
-		 * Returns color(s) from a design system by the specified name and the specified identifier (optional)
+		 * Returns color(s) from the design system by the specified name and identifier (optional)
 		 *
 		 * @param {!Object} name
 		 * @param {!Object} [id]
 		 * @returns {(!Object|!Array)}
 		 */
-		api.define(
-			'getDSColor',
-			(name, id) => {
-				name = name.string || name.name;
+		api.define('getDSColor', (name, id) => {
+			name = name.string || name.name;
 
-				if (!name) {
-					return;
-				}
-
-				const
-					path = isOneTheme ? getThemedPathChunks('colors', theme, isFieldThemed('colors')) : ['colors'];
-
-				if (id) {
-					id = id.string || id.val;
-
-					if (Object.isNumber(id)) {
-						id -= 1;
-					}
-				}
-
-				path.push(name);
-
-				if (id !== undefined) {
-					path.push(String(id));
-				}
-
-				checkDeprecated(ds, path);
-
-				return isThemesIncluded || includeVars ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(ds).get(path);
+			if (!name) {
+				return;
 			}
-		);
+
+			const
+				path = isOneTheme ? getThemedPathChunks('colors', theme, isFieldThemed('colors')) : ['colors'];
+
+			if (id) {
+				id = id.string || id.val;
+
+				if (Object.isNumber(id)) {
+					id -= 1;
+				}
+			}
+
+			path.push(name);
+
+			if (id !== undefined) {
+				path.push(String(id));
+			}
+
+			checkDeprecated(ds, path);
+
+			return isThemesIncluded || includeVars ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(ds).get(path);
+		});
 
 		/**
-		 * Returns a current build theme
+		 * Returns a current theme value
 		 * @returns {!string}
 		 */
 		api.define('defaultTheme', () => theme);
 
 		/**
-		 * Returns themes, available in the environment
-		 * @returns {!string[]}
+		 * Returns a list of available themes
+		 * @returns {!Array<string>}
 		 */
 		api.define('availableThemes', () => themesList);
 	};
