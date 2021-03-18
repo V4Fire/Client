@@ -737,14 +737,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @env THEME_ATTRIBUTE
 		 *
 		 * @default `data-theme`
-		 * @returns {string}
 		 */
-		attribute() {
-			return o('theme-attribute', {
-				env: true,
-				default: 'data-theme'
-			});
-		}
+		attribute: o('theme-attribute', {
+			env: true,
+			default: 'data-theme'
+		})
 	},
 
 	/**

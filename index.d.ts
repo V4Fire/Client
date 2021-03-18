@@ -39,8 +39,22 @@ interface HTMLImageElement {
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
 }
 
+/**
+ * Default app theme to use
+ * @see config/default.js
+ */
 declare const THEME: CanUndef<string>;
+
+/**
+ * Attribute name to set a value of the theme to the root element
+ * @see config/default.js
+ */
 declare const THEME_ATTRIBUTE: CanUndef<string>;
+
+/**
+ * Array of available themes in the runtime
+ * @see config/default.js
+ */
 declare const AVAILABLE_THEMES: CanUndef<string[]>;
 
 interface Event {

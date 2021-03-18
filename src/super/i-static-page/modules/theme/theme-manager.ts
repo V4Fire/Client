@@ -17,6 +17,11 @@ export default class ThemeManager extends Friend {
 	readonly C!: iStaticPage;
 
 	/**
+	 * Set of available themes of the app
+	 */
+	availableThemes!: Set<string>;
+
+	/**
 	 * Initial theme value
 	 */
 	protected readonly initialValue!: string;
@@ -39,6 +44,8 @@ export default class ThemeManager extends Friend {
 			throw new ReferenceError('A theme to initialize is not specified');
 		}
 
+		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
+
 		this.current = THEME;
 		this.initialValue = THEME;
 
@@ -48,20 +55,13 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Set of available themes of the app
-	 */
-	get availableThemes(): CanUndef<Set<string>> {
-		return Object.isArray(AVAILABLE_THEMES) ? new Set(AVAILABLE_THEMES) : undefined;
-	}
-
-	/**
 	 * Sets a new value to the current theme
 	 *
 	 * @param value
 	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
 	set current(value: string) {
-		if (this.availableThemes?.has(value) === false) {
+		if (!this.availableThemes.has(value)) {
 			throw new ReferenceError(`A theme with the name "${value}" is not defined`);
 		}
 
@@ -80,7 +80,7 @@ export default class ThemeManager extends Friend {
 		});
 	}
 
-	/** @see [[Theme.currentStore]] */
+	/** @see [[ThemeManager.currentStore]] */
 	get current(): string {
 		return this.currentStore;
 	}
