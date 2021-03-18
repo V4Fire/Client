@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.161 (2021-03-18)
+
+#### :bug: Bug Fix
+
+* Fixed checks weather component is regular or not in `i-block/modules/block`
+
 ## v3.0.0-rc.160 (2021-03-17)
 
 #### :bug: Bug Fix
