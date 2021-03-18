@@ -11,10 +11,12 @@
 require('config');
 
 const
+	getPlugins = include('build/stylus/ds/plugins');
+
+const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
 	{unThemeText} = include('build/stylus/ds/test/scheme/themes'),
 	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
-	getPlugins = include('build/stylus/ds/plugins'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
