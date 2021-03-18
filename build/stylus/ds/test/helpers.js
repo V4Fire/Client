@@ -19,6 +19,12 @@ module.exports = {
 	 *
 	 * @param {string} path
 	 * @returns {string}
+	 *
+	 * @example
+	 * ```js
+	 * // var(--foo-bar)
+	 * getCSSVariable('foo.bar')
+	 * ```
 	 */
 	getCSSVariable(path) {
 		return `'var(${getVariableName(path.split('.'))})'`;
