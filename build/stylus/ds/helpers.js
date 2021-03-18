@@ -32,7 +32,7 @@ function getVariableName(path) {
  * @param {?} value
  * @param {!Array<string>} path - path to set the value
  * @param {DesignSystemVariables} varStorage - dictionary of CSS variables
- * @param {string} [mapGroup] - name of group in map field of variable storage
+ * @param {string=} [mapGroup] - name of a group within the `map` property of the variable storage
  */
 function saveVariable(value, path, varStorage, mapGroup) {
 	const
@@ -113,13 +113,12 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 	 *
 	 * @param {?Array} head
 	 * @param {string|number} tail
+	 * @returns {string[]}
 	 *
 	 * @example
 	 * ```js
 	 * accumulateKey(['deep', 'path', 'to'], 'variable', 'name') // ['deep', 'path', 'to', 'variable', 'name']
 	 * ```
-	 *
-	 * @returns {string[]}
 	 */
 	function accumulateKey(head, ...tail) {
 		return [...(head || []), ...tail];
@@ -208,11 +207,11 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 }
 
 /**
- * Returns array of path chunks to get a themed value from a design system object
+ * Returns an array of path chunks to get a themed value from a design system object
  *
  * @param {string} field
  * @param {string} [theme]
- * @param {boolean} [isFieldThemed] - true, if a value of the specified field depends on theme
+ * @param {boolean} [isFieldThemed] - true, if a value of the specified field depends on the theme
  *
  * @example
  * ```js
