@@ -20,7 +20,7 @@ const
  *
  * @param {DesignSystem} ds - design system object prepared to use with Stylus
  * @param {!Object} cssVariables - dictionary of CSS variables
- * @param {boolean=} [includeVars] - true, if Design System values provided to style files as css-variables
+ * @param {boolean=} [includeVars] - true, if the design system object values provided to style files as css-variables
  *
  * @param {string=} [theme] - current theme value
  * @param {(Array<string>|boolean)=} [includeThemes] - list of themes to include or
