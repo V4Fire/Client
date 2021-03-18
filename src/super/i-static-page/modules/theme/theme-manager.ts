@@ -29,7 +29,7 @@ export default class ThemeManager extends Friend {
 	/**
 	 * Current theme value
 	 */
-	protected valueStore!: string;
+	protected currentStore!: string;
 
 	/** @override */
 	constructor(component: any) {
@@ -70,9 +70,9 @@ export default class ThemeManager extends Friend {
 		}
 
 		const
-			oldValue = this.valueStore;
+			oldValue = this.currentStore;
 
-		this.valueStore = value;
+		this.currentStore = value;
 
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
@@ -81,8 +81,8 @@ export default class ThemeManager extends Friend {
 		});
 	}
 
-	/** @see [[Theme.valueStore]] */
+	/** @see [[Theme.currentStore]] */
 	get current(): string {
-		return this.valueStore;
+		return this.currentStore;
 	}
 }

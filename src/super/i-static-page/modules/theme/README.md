@@ -15,6 +15,6 @@ This module provides a class and factory to manage the app themes.
 
 ## Events
 
-| EventName      | Description            | Payload description | Payload                      |
-| -------------- | ---------------------- | ------------------- | ---------------------------- |
+| EventName      | Description                     | Payload description     | Payload                      |
+| -------------- | ------------------------------- | ----------------------- | ---------------------------- |
 | `theme:change` | Theme value has been changed    | The new and old value   | `string`; `CanUndef<string>` |
