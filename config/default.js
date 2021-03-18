@@ -698,14 +698,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Options of app interface theme
+	 * Options to manage app themes
 	 */
 	theme: {
 		/**
-		 * Name of default app theme to use
+		 * Returns a name of the default app theme to use
 		 *
 		 * @cli t
 		 * @env THEME
+		 * @returns {string}
 		 */
 		default() {
 			return o('theme', {
@@ -715,13 +716,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Array of themes to passing from design system to the runtime
-		 * or true, if needed to pass all themes from design system
+		 * Returns an array of available themes to passing from a design system to the runtime or `true`,
+		 * if needed to pass all themes from the design system
 		 *
 		 * @cli include-themes
 		 * @env INCLUDE_THEMES
 		 *
-		 * @type {string[]|boolean}
+		 * @returns {!Array<string>|boolean}
 		 */
 		include() {
 			return o('include-themes', {
@@ -730,13 +731,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Attribute name to set interface theme
+		 * Returns an attribute name to set a value of the theme to the root element
 		 *
 		 * @cli theme-attribute
 		 * @env THEME_ATTRIBUTE
 		 *
-		 * @type {string}
 		 * @default `data-theme`
+		 * @returns {string}
 		 */
 		attribute() {
 			return o('theme-attribute', {

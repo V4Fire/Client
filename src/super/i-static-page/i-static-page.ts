@@ -69,7 +69,7 @@ export default abstract class iStaticPage extends iPage {
 	readonly providerDataStore!: ProvidedDataStore;
 
 	/**
-	 * Module to provide theme management
+	 * Module to manage app themes
 	 */
 	@system<iStaticPage>(themeManagerFactory)
 	readonly theme: CanUndef<ThemeManager>;

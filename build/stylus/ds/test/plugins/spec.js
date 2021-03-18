@@ -11,15 +11,17 @@
 require('config');
 
 const
+	getPlugins = include('build/stylus/ds/plugins');
+
+const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
 	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
-	getPlugins = include('build/stylus/ds/plugins'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers'),
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
 
 describe('build/stylus/plugins', () => {
-	it('throws an error on creating plugins for a package with themes without specifying a theme', () => {
+	it('throws an error on creating plugins for a package with themes without specifying the current theme', () => {
 		const
 			stylus = require('stylus'),
 			{data: ds, variables: cssVariables} = createDesignSystem(fullThemed);
@@ -27,7 +29,7 @@ describe('build/stylus/plugins', () => {
 		expect(() => getPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
 	});
 
-	it('should return css variables from plugins with an including vars flag', () => {
+	it('should return CSS variables from plugins with an including vars flag', () => {
 		const
 			stylus = require('stylus');
 
