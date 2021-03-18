@@ -11,9 +11,11 @@
 require('config');
 
 const
+	getPlugins = include('build/stylus/ds/plugins');
+
+const
 	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
-	getPlugins = include('build/stylus/ds/plugins'),
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/included-themes', () => {
@@ -31,7 +33,7 @@ describe('build/stylus/plugins/included-themes', () => {
 		});
 	});
 
-	it('should return only specified included theme', () => {
+	it('should return only the specified included theme', () => {
 		const
 			stylus = require('stylus');
 
@@ -45,7 +47,7 @@ describe('build/stylus/plugins/included-themes', () => {
 		});
 	});
 
-	it('should not return included themes for non themed design system', () => {
+	it('should not return included themes for the non-themed design system', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';

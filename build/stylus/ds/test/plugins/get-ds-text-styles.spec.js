@@ -40,7 +40,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 		});
 	});
 
-	it('should return a variables dict for a themed design system', () => {
+	it('should return a variables dict for the themed design system', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -60,7 +60,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 		});
 	});
 
-	it('should return a value for a themed design system and a non themed field', () => {
+	it('should return a value for the themed design system and non-themed field', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
