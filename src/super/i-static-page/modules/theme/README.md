@@ -9,9 +9,9 @@ This module provides a class and factory to manage the app themes.
   * `THEME_ATTRIBUTE` - an attribute name to set a theme value to the root element;
   * `AVAILABLE_THEMES` - a list of available app themes.
 
-* To set a new theme, use the `current` property
+* To set a new theme, use the `current` property.
 
-* To get a set of available themes, use the `availableThemes` property
+* To get a set of available themes, use the `availableThemes` property.
 
 ## Events
 
