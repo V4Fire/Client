@@ -91,7 +91,7 @@ module.exports = function optimization({buildId, plugins}) {
 				safari10: true,
 				warnings: false,
 
-				keep_fnames: Boolean({ES5: true, ES3: true}[es]),
+				keep_fnames: /ES[35]$/.test(es),
 				keep_classnames: true,
 
 				output: {

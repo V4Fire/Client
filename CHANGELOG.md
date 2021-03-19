@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.163 (2021-03-19)
+
+#### :rocket: New Feature
+
+* Added `target.webpack` `build`
+
 ## v3.0.0-rc.162 (2021-03-19)
 
 #### :bug: Bug Fix

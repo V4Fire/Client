@@ -156,7 +156,7 @@ function getScriptDecl(lib, body) {
 		let
 			decl = `document.write(\`<script ${attrs}\` + '><' + '/script>');`;
 
-		if (config.es() === 'ES5') {
+		if (/ES[35]$/.test(config.es())) {
 			decl = buble.transform(decl).code;
 		}
 
@@ -286,7 +286,7 @@ el.innerHTML = ${content};
 			} else {
 				content = `el.innerHTML = \`${content.replace(escapeStringLiteralRgxp, '\\$1')}\`;`;
 
-				if (config.es() === 'ES5') {
+				if (/ES[35]$/.test(config.es())) {
 					content = buble.transform(content).code;
 				}
 			}
