@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.162 (2021-03-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when getter can't be watched when it depends on an external property `core/component/watch`
+
 ## v3.0.0-rc.161 (2021-03-18)
 
 #### :bug: Bug Fix
