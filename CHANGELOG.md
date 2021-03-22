@@ -11,11 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.158 (2021-??-??)
+## v3.0.0-rc.?? (2021-03-??)
 
 #### :boom: Breaking Change
 
 * `onDOMChange` is now deprecated, use `emitDOMChange` instead `traits/i-observe-dom`
+
+#### :bug: Bug Fix
+
+* Now `bVirtualScroll` will throw an error if the rendering of components returns an empty array `base/b-virtual-scroll`
 
 #### :memo: Documentation
 
@@ -23,6 +27,51 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `b-slider`
   * `b-bottom-slide`
   * `i-observe-dom`
+
+#### :house: Internal
+
+* Added tests:
+  * `bImage`
+  * `super/i-block/modules/daemons`
+  * `core/compoent/directives/update-on`
+
+## v3.0.0-rc.163 (2021-03-19)
+
+#### :rocket: New Feature
+
+* Added `target.webpack` `build`
+
+## v3.0.0-rc.162 (2021-03-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when getter can't be watched when it depends on an external property `core/component/watch`
+
+## v3.0.0-rc.161 (2021-03-18)
+
+#### :bug: Bug Fix
+
+* Fixed checks weather component is regular or not in `i-block/modules/block`
+
+## v3.0.0-rc.160 (2021-03-17)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the project building never stopped `build`
+
+## v3.0.0-rc.159 (2021-03-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the `noGlobal` breaks on `'foo'?.dasherize()` `build`
+
+## v3.0.0-rc.158 (2021-03-15)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when loading template files
+>>>>>>> master
+>>>>>>> master
 
 ## v3.0.0-rc.157 (2021-03-10)
 

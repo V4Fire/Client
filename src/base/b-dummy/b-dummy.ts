@@ -6,15 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import daemons from 'base/b-dummy/daemons';
+
 import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import { ResizeWatcher } from 'core/dom/resize-observer';
 
-import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+import updateOn from 'core/component/directives/update-on/engines';
 
-import iData, { component, wait, hook } from 'super/i-data/i-data';
-import { Directives, Modules } from 'base/b-dummy/interface';
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
+
+import iData, { component, field, computed, hook, wait } from 'super/i-data/i-data';
+import type { Directives, Modules } from 'base/b-dummy/interface';
 
 const
 	inViewMutation = inViewFactory('mutation'),
@@ -31,6 +35,46 @@ export * from 'base/b-dummy/interface';
 })
 
 export default class bDummy extends iData implements iLockPageScroll, iObserveDOM {
+	/**
+	 * Test field
+	 */
+	@field()
+	testField: any = undefined;
+
+	/**
+	 * Getter that depends on a value from the another component
+	 */
+	@computed({dependencies: ['r.isAuth']})
+	get remoteWatchableGetter(): boolean {
+		return this.r.isAuth;
+	}
+
+	/**
+	 * Links to directives
+	 */
+	get directives(): Directives {
+		return {
+			imageFactory: imageLoaderFactory,
+			image: ImageLoader,
+			inViewMutation,
+			inViewObserver,
+			updateOn
+		};
+	}
+
+	/**
+	 * Link to the modules
+	 */
+	get modules(): Modules {
+		return {
+			resizeWatcher: ResizeWatcher,
+			iObserveDOM
+		};
+	}
+
+	/** @override */
+	static readonly daemons: typeof daemons = daemons;
+
 	/** @see [[iLockPageScroll.lock]] */
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this);
@@ -55,27 +99,5 @@ export default class bDummy extends iData implements iLockPageScroll, iObserveDO
 	/** @see [[iObserveDOM.prototype.emitDOMChange]] */
 	onDOMChange(): void {
 		iObserveDOM.emitDOMChange(this);
-	}
-
-	/**
-	 * Links to directives
-	 */
-	get directives(): Directives {
-		return {
-			imageFactory: imageLoaderFactory,
-			image: ImageLoader,
-			inViewMutation,
-			inViewObserver
-		};
-	}
-
-	/**
-	 * Link to the modules
-	 */
-	get modules(): Modules {
-		return {
-			resizeWatcher: ResizeWatcher,
-			iObserveDOM
-		};
 	}
 }

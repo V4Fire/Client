@@ -106,7 +106,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: 'prop'
 		};
 	}
@@ -117,7 +117,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: 'attr'
 		};
 	}
@@ -129,7 +129,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				fullPath,
 				originalPath,
 				name,
-				ctx: component,
+				ctx: resolveCtx(component),
 				type: 'field'
 			};
 		}
@@ -139,7 +139,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: 'system'
 		};
 	}
@@ -150,7 +150,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: 'field'
 		};
 	}
@@ -161,7 +161,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: 'prop'
 		};
 	}
@@ -172,7 +172,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: 'system'
 		};
 	}
@@ -211,7 +211,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			accessor,
 			accessorType,
 			type: 'field'
@@ -236,7 +236,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			accessor,
 			accessorType,
 			type: 'system'
@@ -264,7 +264,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: 'prop',
 			accessor,
 			accessorType
@@ -291,7 +291,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				fullPath,
 				originalPath,
 				name,
-				ctx: Object.get(component, ctxPath) ?? {},
+				ctx: resolveCtx(Object.get(component, ctxPath) ?? {}),
 				type: 'mounted'
 			};
 		}
@@ -301,7 +301,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			fullPath,
 			originalPath,
 			name,
-			ctx: component,
+			ctx: resolveCtx(component),
 			type: accessorType
 		};
 	}
@@ -311,7 +311,15 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		fullPath,
 		originalPath,
 		name,
-		ctx: component,
+		ctx: resolveCtx(component),
 		type: 'system'
 	};
+
+	function resolveCtx(component: any): ComponentInterface {
+		if (component != null && '$remoteParent' in component) {
+			return Object.getPrototypeOf(component);
+		}
+
+		return component;
+	}
 }
