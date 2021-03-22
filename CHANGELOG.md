@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? (2021-03-??)
+
+#### :house: Internal
+
+* Added tests `bImage`
+
 ## v3.0.0-rc.163 (2021-03-19)
 
 #### :rocket: New Feature

@@ -34,56 +34,10 @@ module.exports = async (page, params) => {
 		node,
 		isClosed;
 
-	const
-		mainImg = () => page.$('.b-image__img');
-
 	page.on('close', () => isClosed = true);
 
-	const handleImageRequest = (url, sleep = 0, base64Img = images.pngImage) => page.route(url, async (route) => {
-		await delay(sleep);
-
-		if (base64Img === '') {
-			route.abort('failed');
-			return;
-		}
-
-		const
-			res = base64Img.split(',')[1],
-			headers = route.request().headers();
-
-		headers['Content-Length'] = String(res?.length ?? 0);
-
-		if (isClosed) {
-			return;
-		}
-
-		route.fulfill({
-			status: 200,
-			body: Buffer.from(res, 'base64'),
-			contentType: 'image/png',
-			headers
-		});
-	});
-
-	const renderComponent = async (props = {}) => {
-		await page.evaluate((props) => {
-			const scheme = [
-				{
-					attrs: {
-						id: 'target',
-						...props
-					}
-				}
-			];
-
-			globalThis.renderComponents('b-image', scheme);
-		}, props);
-
-		node = await h.dom.waitForEl(page, '#target');
-		component = await h.component.waitForComponent(page, '#target');
-	};
-
 	const
+		mainImg = () => page.$('.b-image__img'),
 		getRandomUrlPostfix = () => `${Math.random().toString().substr(10)}x${Math.random().toString().substr(10)}`,
 		getRandomImgUrl = () => `https://fakeim.pl/${getRandomUrlPostfix()}`,
 		abortImageRequest = (url, sleep = 0) => handleImageRequest(url, sleep, ''),
@@ -101,12 +55,11 @@ module.exports = async (page, params) => {
 				return ctx.style.backgroundImage.match(/url\("(.*)"\)/)?.[1] ?? '';
 			};
 		});
-
 	});
 
 	describe('b-image', () => {
 		describe('src', () => {
-			it('renders the component with the provided src', async () => {
+			it('renders a component with the provided `src`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl, 100);
@@ -121,7 +74,7 @@ module.exports = async (page, params) => {
 				expect(await getSrc(await mainImg())).toBe(imgUrl);
 			});
 
-			it('re-renders the component with a new src', async () => {
+			it('re-renders a component with a new `src`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -146,7 +99,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('srcset', () => {
-			it('renders the component with the provided srcset', async () => {
+			it('renders a component with the provided `srcset`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -163,7 +116,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('alt', () => {
-			it('renders the component with aria attributes', async () => {
+			it('renders a component with aria attributes', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -190,7 +143,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('position', () => {
-			it('renders the component with the provided position', async () => {
+			it('renders a component with the provided `position`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -229,7 +182,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('ratio', () => {
-			it('renders the component with the provided ratio', async () => {
+			it('renders a component with the provided `ratio`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -251,7 +204,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('beforeImg, afterImg', () => {
-			it('renders the component with the provided beforeImg', async () => {
+			it('renders a component with the provided `beforeImg`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -273,7 +226,7 @@ module.exports = async (page, params) => {
 				expect(bg.startsWith(beforeImg)).toBe(true);
 			});
 
-			it('renders the component with the provided afterImg', async () => {
+			it('renders a component with the provided `afterImg`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -295,7 +248,7 @@ module.exports = async (page, params) => {
 				expect(bg.endsWith(afterImg)).toBe(true);
 			});
 
-			it('renders the component with the provided afterImg and beforeImg', async () => {
+			it('renders a component with the provided `afterImg` and `beforeImg`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
@@ -322,7 +275,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('overlayImg', () => {
-			it('renders the component with the overlay image if a loading is still in progress', async () => {
+			it('renders a component with the overlay image if loading is still in progress', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					previewImg = images.preview,
@@ -349,7 +302,7 @@ module.exports = async (page, params) => {
 				await reqPromise;
 			});
 
-			it('hides the overlay image if a loading is complete', async () => {
+			it('hides an overlay image if loading is complete', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					previewImg = images.preview,
@@ -370,7 +323,7 @@ module.exports = async (page, params) => {
 				expect(Number(opacity)).toBe(0);
 			});
 
-			it('hides the overlay image if a loading is failed', async () => {
+			it('hides an overlay image if loading is failed', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					previewImg = images.preview,
@@ -393,7 +346,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('brokenImg', () => {
-			it('renders the component with the broken image if a loading error occurs', async () => {
+			it('renders a component with the broken image if loading error occurs', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					brokenImg = images.broken,
@@ -421,7 +374,7 @@ module.exports = async (page, params) => {
 				expect(brokenElSrc).toBe(brokenImg);
 			});
 
-			it('renders the component without broken image if a loading was successful', async () => {
+			it('renders a component without the broken image if loading was successful', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					brokenImg = images.broken,
@@ -444,7 +397,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('image loading failed', () => {
-			it('fires loadFail event', async () => {
+			it('fires the `loadFail` event', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = abortImageRequest(imgUrl, 300);
@@ -461,7 +414,7 @@ module.exports = async (page, params) => {
 				await expectAsync(eventPromise).toBeResolved();
 			});
 
-			it('sets showError mod to true', async () => {
+			it('sets the `showError` mod to `true`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = abortImageRequest(imgUrl, 300);
@@ -478,7 +431,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('image loaded successfully', () => {
-			it('fires loadSuccess event', async () => {
+			it('fires the `loadSuccess` event', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl, 100);
@@ -497,4 +450,50 @@ module.exports = async (page, params) => {
 			});
 		});
 	});
+
+	function handleImageRequest(url, sleep = 0, base64Img = images.pngImage) {
+		return page.route(url, async (route) => {
+			await delay(sleep);
+
+			if (base64Img === '') {
+				route.abort('failed');
+				return;
+			}
+
+			const
+				res = base64Img.split(',')[1],
+				headers = route.request().headers();
+
+			headers['Content-Length'] = String(res?.length ?? 0);
+
+			if (isClosed) {
+				return;
+			}
+
+			route.fulfill({
+				status: 200,
+				body: Buffer.from(res, 'base64'),
+				contentType: 'image/png',
+				headers
+			});
+		});
+	}
+
+	async function renderComponent(props = {}) {
+		await page.evaluate((props) => {
+			const scheme = [
+				{
+					attrs: {
+						id: 'target',
+						...props
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-image', scheme);
+		}, props);
+
+		node = await h.dom.waitForEl(page, '#target');
+		component = await h.component.waitForComponent(page, '#target');
+	}
 };
