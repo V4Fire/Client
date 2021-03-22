@@ -74,7 +74,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Filters added and removed nodes
+	 * Filters the added and removed nodes
 	 *
 	 * @param records
 	 * @param filter
@@ -121,7 +121,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Fires an event that DOM tree was changed
+	 * Fires an event that the DOM tree has been changed
 	 *
 	 * @param component
 	 * @param [records]
@@ -197,7 +197,7 @@ export default abstract class iObserveDOM {
 	abstract initDOMObservers(): void;
 
 	/**
-	 * Handler: DOM tree was changed
+	 * Handler: the DOM tree has been changed
 	 *
 	 * @param records
 	 * @param options

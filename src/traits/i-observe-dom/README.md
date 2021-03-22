@@ -17,7 +17,7 @@ This module provides a trait for a component to observe DOM changes by using [`M
 
 ## API
 
-A class that implements this trait must implement 2 methods.
+A class that implements this trait must implement two methods.
 
 ### initDOMObservers
 
@@ -43,8 +43,8 @@ export default class component extends iBlock implements iObserveDOM {
 
 ### onDOMChange
 
-This method is a handler. Every time a change occurs, the handler will be called, and changes in the DOM tree will be provided into this method.
-`iObserveDOM` provides a static method `emitDOMChange` that will emit `localEmitter:DOMChange` event.
+This method is a handler. Every time a change occurs, the handler will be called. Changes of the DOM tree are provided into this method.
+`iObserveDOM` provides a static method `emitDOMChange` that will emit the `localEmitter:DOMChange` event.
 
 ```typescript
 @component()
@@ -76,11 +76,11 @@ export default class component extends iBlock implements iObserveDOM {
 
 ## Helpers
 
-The trait provides a bunch of helper functions that implemented as static methods.
+The trait provides a bunch of helper functions that are implemented as static methods.
 
 ### unobserve
 
-This method is useful when you need to stop observation on a specific node.
+This method is useful when you need to stop observation of a specific node.
 
 ### filterNodes
 
@@ -88,7 +88,7 @@ This method is useful when you need to filter `addedNodes` and `removedNodes` vi
 
 ```typescript
 const
-      filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement)
+  filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement)
 ```
 
 ### getChangedNodes
