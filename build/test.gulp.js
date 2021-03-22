@@ -129,6 +129,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * * [--headless=true] - should or not run browsers with the headless option
 	 * * [--reinit-browser=false] - should or not reuse already existence browser instances
 	 * * [--test-entry] - directory with entry points to build the application
+	 * * [--console-proxy] - if true, all console logs from browser will be provided into terminal
 	 *
 	 * @example
 	 * ```bash
@@ -161,7 +162,11 @@ module.exports = function init(gulp = require('gulp')) {
 			path = require('upath');
 
 		const
-			{devices} = require('playwright');
+			pw = require('playwright'),
+			{devices} = pw;
+
+		const
+			pwVersion = require('playwright/package.json').version;
 
 		const args = arg({
 			'--name': String,
@@ -176,11 +181,13 @@ module.exports = function init(gulp = require('gulp')) {
 			'--reinit-browser': String,
 			'--test-entry': String,
 			'--runner': String,
-			'--runtime-render': String
+			'--runtime-render': String,
+			'--console-proxy': String
 		}, {permissive: true});
 
 		const
-			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
+			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false,
+			consoleProxy = args['--console-proxy'] ? JSON.parse(args['--console-proxy']) : false;
 
 		if (isRuntimeRender) {
 			args['--name'] = 'b-dummy';
@@ -307,6 +314,7 @@ module.exports = function init(gulp = require('gulp')) {
 				console.log(`${dep} version: ${require(`${dep}/package.json`).version}`);
 			});
 
+			console.log(`pw verions: ${pwVersion}`);
 			console.log(`port: ${args['--port']}`);
 			console.log(`env component: ${args['--name']}`);
 			console.log(`test entry: ${args['--test-entry']}`);
@@ -377,6 +385,20 @@ module.exports = function init(gulp = require('gulp')) {
 				testURL,
 				page
 			} = params;
+
+			if (consoleProxy) {
+				page.on('console', (message) => {
+					console.log('[From browser console]');
+					console.log(message.text);
+					console.log('[End]');
+				});
+			}
+
+			page.on('pagerror', (err) => {
+				console.log('[Page error emitted]');
+				console.log(err.message);
+				console.log('[End]');
+			});
 
 			await page.goto(testURL);
 			const testEnv = getTestEnv(browserType);
