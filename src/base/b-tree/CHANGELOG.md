@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* Improved test case with waiting for a timeout
+* Fixed a race condition with the test case that waits for timeouts
 
 ## v3.0.0-rc.122 (2021-01-13)
 

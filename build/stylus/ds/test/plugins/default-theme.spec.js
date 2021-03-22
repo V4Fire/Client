@@ -18,7 +18,7 @@ const
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/default-theme', () => {
-	it('should return a build theme', () => {
+	it('should returns a build theme', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';

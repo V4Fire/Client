@@ -20,7 +20,7 @@ const
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/get-ds-field-value', () => {
-	it('should return a value from the non-themed design system', () => {
+	it('should returns a value from the non-themed design system', () => {
 		const
 			stylus = require('stylus');
 
@@ -33,7 +33,7 @@ describe('build/stylus/plugins/get-ds-field-value', () => {
 		});
 	});
 
-	it('should return a value from the themed design system', () => {
+	it('should returns a value from the themed design system', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -47,7 +47,7 @@ describe('build/stylus/plugins/get-ds-field-value', () => {
 		});
 	});
 
-	it('should return a value for the themed design system and included variables', () => {
+	it('should returns a value for the themed design system and included variables', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -61,7 +61,7 @@ describe('build/stylus/plugins/get-ds-field-value', () => {
 		});
 	});
 
-	it('should return a value for the themed design system and with includeThemes', () => {
+	it('should returns a value for the themed design system and with includeThemes', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -75,7 +75,7 @@ describe('build/stylus/plugins/get-ds-field-value', () => {
 		});
 	});
 
-	it('should return a dictionary with colors', () => {
+	it('should returns a dictionary with colors', () => {
 		const
 			stylus = require('stylus');
 

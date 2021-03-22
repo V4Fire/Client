@@ -33,6 +33,11 @@ function getVariableName(path) {
  * @param {!Array<string>} path - path to set the value
  * @param {DesignSystemVariables} varStorage - dictionary of CSS variables
  * @param {string=} [mapGroup] - name of a group within the `map` property of the variable storage
+ *
+ * @example
+ * ```
+ * saveVariable('blue', ['a', 'b'], cssVars)
+ * ```
  */
 function saveVariable(value, path, varStorage, mapGroup) {
 	const
@@ -60,7 +65,6 @@ function saveVariable(value, path, varStorage, mapGroup) {
  *
  * @param {DesignSystem} raw
  * @param {Object=} [stylus]
- *
  * @returns {!BuildTimeDesignSystemParams}
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
@@ -79,10 +83,10 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 
 /**
  * Converts the specified design system object to a Stylus object
- * and creates CSS variables to use within style files
+ * and creates CSS variables to use within `.styl` files
  *
- * @param {DesignSystem} ds
  * @param {Object} stylus - link to a stylus package instance
+ * @param {DesignSystem} ds
  *
  * @returns {!BuildTimeDesignSystemParams}
  */
@@ -91,7 +95,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 		variables = Object.create({map: {}});
 
 	const
-		builtInFnRgxp = /^[a-z-_]+\(.*\)$/,
+		builtinFnRgxp = /^[a-z-_]+\(.*\)$/,
 		colorHEXRgxp = /^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/,
 		unitRgxp = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
@@ -126,9 +130,9 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 
 	/**
 	 * @param {Object} obj
-	 * @param {Object|Array} [res]
-	 * @param {string[]} [path]
-	 * @param {string|boolean} [theme]
+	 * @param {(Object|Array)=} [res]
+	 * @param {Array<string>=} [path]
+	 * @param {(string|boolean)=} [theme]
 	 */
 	function parseRawDS(obj, res, path, theme) {
 		if (!res) {
@@ -175,7 +179,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 				let
 					parsed;
 
-				if (builtInFnRgxp.test(value)) {
+				if (builtinFnRgxp.test(value)) {
 					parsed = new stylus.Parser(value, {cache: false}).function();
 
 				} else if (colorHEXRgxp.test(value)) {
@@ -207,19 +211,18 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 }
 
 /**
- * Returns an array of path chunks to get a themed value from a design system object
+ * Returns path chunks to get a themed value from the design system
  *
  * @param {string} field
  * @param {string} [theme]
  * @param {boolean} [isFieldThemed] - true, if a value of the specified field depends on the theme
+ * @returns {!Array<string>}
  *
  * @example
  * ```js
  * getThemedPathChunks('colors', 'light', true) // ['colors', 'theme', 'light']
  * getThemedPathChunks('colors', 'light') // ['colors']
  * ```
- *
- * @returns {!Array<string>}
  */
 function getThemedPathChunks(field, theme, isFieldThemed) {
 	if (isFieldThemed !== true) {

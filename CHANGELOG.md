@@ -25,6 +25,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :memo: Documentation
 
 * Improved documentation `build/stylus/ds`
+* Fixed a race condition with the test case that waits for timeouts
 
 #### :house: Internal
 

@@ -22,10 +22,10 @@ That allows the testing functions to generate plugins and the plugins themselves
 
 All module tests divided into separate files or folders by groups:
 
-  * Tests of design system object creation: functions that used to read the design system from plugins.
-  * Tests of `stylus` plugins: functions that used to pass design system values into `styl` files.
+* Tests of design system object creation: functions used to read the design system from plugins.
+* Tests of `stylus` plugins: functions used to pass design system values into `styl` files.
 
-Different variants of the design system objects located at `test/scheme`.
+Different variants of the design system object located at `test/scheme`.
 
 #### Design system generating tests
 
@@ -39,7 +39,7 @@ Tests should be located at `test/plugins` and divided into separate files by a p
 Note about plugin tests:
 
 > Plugin tests allow you to call functions as if they were called from `.styl` files.
-> To do this, invoke the special render function and pass it a string with the invoking of a test function as the first argument.
+> To do this, invoke the special render function and pass it a string to invoke a test function as the first argument.
 > The second argument should take an object with Stylus plugins to initialize.
 
 Example:
@@ -61,7 +61,7 @@ To check the result of `getDSValue` at the example above, we used `getCSSVariabl
 The helpers located and refill at `test/helpers.js`.
 
 Notice, some functions may return unexpected values.
-This is due to a feature of the Stylus render function that returns a string to place it within CSS-files.
+This is due to the Stylus render function feature that returns a string to place it within CSS-files.
 For example:
 
 ```js
