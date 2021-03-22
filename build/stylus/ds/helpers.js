@@ -68,10 +68,10 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 		base = Object.create(Object.freeze({meta: raw.meta, raw})),
 		rawCopy = $C.extend(true, {}, raw);
 
-	$C(rawCopy).remove('meta');
+	delete rawCopy.meta;
 
 	const
-		{data, variables} = convertDsToBuildTimeUsableObject(stylus, rawCopy),
+		{data, variables} = convertDsToBuildTimeUsableObject(rawCopy, stylus),
 		extendParams = {withProto: true, withAccessors: true};
 
 	return {data: $C.extend(extendParams, base, data), variables};
@@ -81,12 +81,12 @@ function createDesignSystem(raw, stylus = require('stylus')) {
  * Converts the specified design system object to a Stylus object
  * and creates CSS variables to use within style files
  *
- * @param {Object} stylus - link to a stylus package instance
  * @param {DesignSystem} ds
+ * @param {Object} stylus - link to a stylus package instance
  *
  * @returns {!BuildTimeDesignSystemParams}
  */
-function convertDsToBuildTimeUsableObject(stylus, ds) {
+function convertDsToBuildTimeUsableObject(ds, stylus) {
 	const
 		variables = Object.create({map: {}});
 
@@ -96,7 +96,7 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 		unitRgxp = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
 	const
-		data = convert(ds);
+		data = parseRawDS(ds);
 
 	return {data, variables};
 
@@ -117,10 +117,10 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 	 *
 	 * @example
 	 * ```js
-	 * accumulateKey(['deep', 'path', 'to'], 'variable', 'name') // ['deep', 'path', 'to', 'variable', 'name']
+	 * createArrayFrom(['deep', 'path', 'to'], 'variable', 'name') // ['deep', 'path', 'to', 'variable', 'name']
 	 * ```
 	 */
-	function accumulateKey(head, ...tail) {
+	function createArrayFrom(head, ...tail) {
 		return [...(head || []), ...tail];
 	}
 
@@ -130,7 +130,7 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 	 * @param {string[]} [path]
 	 * @param {string|boolean} [theme]
 	 */
-	function convert(obj, res, path, theme) {
+	function parseRawDS(obj, res, path, theme) {
 		if (!res) {
 			res = {};
 		}
@@ -138,7 +138,7 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 		$C(obj).forEach((value, key) => {
 			if (theme === true) {
 				if (Object.isObject(value)) {
-					convert(value, res, accumulateKey(path, key), key);
+					parseRawDS(value, res, createArrayFrom(path, key), key);
 
 				} else {
 					throw new Error('Cannot find a theme dictionary');
@@ -146,31 +146,31 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 
 			} else if (key === 'theme') {
 				if (Object.isObject(value)) {
-					convert(value, res, accumulateKey(path, key), true);
+					parseRawDS(value, res, createArrayFrom(path, key), true);
 
 				} else {
 					throw new Error('Cannot find themes dictionary');
 				}
 
 			} else if (Object.isObject(value)) {
-				convert(value, res, accumulateKey(path, key), theme);
+				parseRawDS(value, res, createArrayFrom(path, key), theme);
 
 			} else if (Object.isArray(value)) {
 				const
-					array = convert(value, [], [], theme);
+					array = parseRawDS(value, [], [], theme);
 
 				array.forEach((el, i) => {
 					const
 						variablePath = getVariablePath(path, theme);
 
-					saveVariable(el, accumulateKey(variablePath, key, i), variables, theme);
+					saveVariable(el, createArrayFrom(variablePath, key, i), variables, theme);
 				});
 
-				$C(res).set(array, accumulateKey(path, key));
+				$C(res).set(array, createArrayFrom(path, key));
 
 			} else {
 				const
-					keyPath = accumulateKey(path, key);
+					keyPath = createArrayFrom(path, key);
 
 				let
 					parsed;
