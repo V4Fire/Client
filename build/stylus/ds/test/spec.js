@@ -16,7 +16,7 @@ const
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/ds', () => {
-	it('should create a plain design system', () => {
+	it('should creates a plain design system', () => {
 		const
 			stylus = require('stylus'),
 			{data: designSystem} = createDesignSystem(plainDesignSystem);
@@ -62,7 +62,7 @@ describe('build/stylus/ds', () => {
 		});
 	});
 
-	it('should create a themed design system', () => {
+	it('should creates a themed design system', () => {
 		const
 			stylus = require('stylus'),
 			{data: designSystem} = createDesignSystem(fullThemed);

@@ -21,7 +21,7 @@ const
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/get-ds-variables', () => {
-	it('should return text styles', () => {
+	it('should returns text styles', () => {
 		const
 			stylus = require('stylus');
 
@@ -42,7 +42,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 		});
 	});
 
-	it('should return a variables dict for the themed design system', () => {
+	it('should returns a variables dict for the themed design system', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -62,7 +62,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 		});
 	});
 
-	it('should return a value for the themed design system and non-themed field', () => {
+	it('should returns a value for the themed design system and non-themed field', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';

@@ -19,7 +19,7 @@ const
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/included-themes', () => {
-	it('should return all included themes', () => {
+	it('should returns all included themes', () => {
 		const
 			stylus = require('stylus'),
 			theme = 'day';
@@ -33,7 +33,7 @@ describe('build/stylus/plugins/included-themes', () => {
 		});
 	});
 
-	it('should return only the specified included theme', () => {
+	it('should returns only the specified included theme', () => {
 		const
 			stylus = require('stylus');
 

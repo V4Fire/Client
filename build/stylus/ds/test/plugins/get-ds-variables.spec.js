@@ -18,7 +18,7 @@ const
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/get-ds-variables', () => {
-	it('should return variables', () => {
+	it('should returns variables', () => {
 		const
 			stylus = require('stylus');
 

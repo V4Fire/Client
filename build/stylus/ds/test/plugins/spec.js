@@ -29,7 +29,7 @@ describe('build/stylus/plugins', () => {
 		expect(() => getPlugins({ds, cssVariables, stylus})).toThrowError(dsHasThemesNotIncluded);
 	});
 
-	it('should return CSS variables from plugins with an including vars flag', () => {
+	it('should returns CSS variables from plugins with an including vars flag', () => {
 		const
 			stylus = require('stylus');
 

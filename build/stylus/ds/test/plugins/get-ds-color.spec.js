@@ -18,7 +18,7 @@ const
 	{createDesignSystem} = include('build/stylus/ds/helpers');
 
 describe('build/stylus/plugins/get-ds-color', () => {
-	it('should return a value', () => {
+	it('should returns a value', () => {
 		const
 			stylus = require('stylus');
 
