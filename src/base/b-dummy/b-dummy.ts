@@ -12,6 +12,8 @@ import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import { ResizeWatcher } from 'core/dom/resize-observer';
 
+import updateOn from 'core/component/directives/update-on/engines';
+
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
 import iData, { component, field, computed } from 'super/i-data/i-data';
@@ -54,7 +56,8 @@ export default class bDummy extends iData implements iLockPageScroll {
 			imageFactory: imageLoaderFactory,
 			image: ImageLoader,
 			inViewMutation,
-			inViewObserver
+			inViewObserver,
+			updateOn
 		};
 	}
 

@@ -24,5 +24,6 @@ module.exports = [
 	'--test-entry super/i-block/modules/daemons/test',
 	'--test-entry core/dom/image/test',
 	'--test-entry core/dom/in-view/test',
+	'--test-entry core/component/directives/update-on/test',
 	'--test-entry traits/i-lock-page-scroll/test'
 ];
