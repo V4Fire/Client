@@ -33,6 +33,11 @@ function getVariableName(path) {
  * @param {!Array<string>} path - path to set the value
  * @param {DesignSystemVariables} varStorage - dictionary of CSS variables
  * @param {string=} [mapGroup] - name of a group within the `map` property of the variable storage
+ *
+ * @example
+ * ```
+ * saveVariable('blue', ['a', 'b'], cssVars)
+ * ```
  */
 function saveVariable(value, path, varStorage, mapGroup) {
 	const
@@ -60,7 +65,6 @@ function saveVariable(value, path, varStorage, mapGroup) {
  *
  * @param {DesignSystem} raw
  * @param {Object=} [stylus]
- *
  * @returns {!BuildTimeDesignSystemParams}
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
@@ -79,11 +83,10 @@ function createDesignSystem(raw, stylus = require('stylus')) {
 
 /**
  * Converts the specified design system object to a Stylus object
- * and creates CSS variables to use within style files
+ * and creates CSS variables to use within `.styl` files
  *
  * @param {Object} stylus - link to a stylus package instance
  * @param {DesignSystem} ds
- *
  * @returns {!BuildTimeDesignSystemParams}
  */
 function convertDsToBuildTimeUsableObject(stylus, ds) {
