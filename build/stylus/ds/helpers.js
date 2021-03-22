@@ -94,7 +94,7 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 		variables = Object.create({map: {}});
 
 	const
-		builtInFnRgxp = /^[a-z-_]+\(.*\)$/,
+		builtinFnRgxp = /^[a-z-_]+\(.*\)$/,
 		colorHEXRgxp = /^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/,
 		unitRgxp = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
@@ -129,9 +129,9 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 
 	/**
 	 * @param {Object} obj
-	 * @param {Object|Array} [res]
-	 * @param {string[]} [path]
-	 * @param {string|boolean} [theme]
+	 * @param {(Object|Array)=} [res]
+	 * @param {Array<string>=} [path]
+	 * @param {(string|boolean)=} [theme]
 	 */
 	function convert(obj, res, path, theme) {
 		if (!res) {
@@ -178,7 +178,7 @@ function convertDsToBuildTimeUsableObject(stylus, ds) {
 				let
 					parsed;
 
-				if (builtInFnRgxp.test(value)) {
+				if (builtinFnRgxp.test(value)) {
 					parsed = new stylus.Parser(value, {cache: false}).function();
 
 				} else if (colorHEXRgxp.test(value)) {
