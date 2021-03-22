@@ -1,3 +1,5 @@
+'use strict';
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,8 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Config as SuperConfig } from '@v4fire/core/config/interface';
-
-export interface Config extends SuperConfig {
-	components: typeof COMPONENTS;
-}
+module.exports = {
+	dsHasThemesNotIncluded: 'The design system object has themes, but no one included into the build'
+};

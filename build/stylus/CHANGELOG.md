@@ -11,12 +11,10 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
-#### :house: Internal
-
-* Fixed a race condition with the test case that waits for timeouts
-
-## v3.0.0-rc.122 (2021-01-13)
-
 #### :rocket: New Feature
 
-* First release
+* Added a new plugin function `log`
+
+#### :memo: Documentation
+
+* Added `CHANGELOG`

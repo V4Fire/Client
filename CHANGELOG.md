@@ -35,6 +35,30 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `super/i-block/modules/daemons`
   * `core/compoent/directives/update-on`
 
+## v3.0.0-rc.??? (2021-03-??)
+
+#### :rocket: New Feature
+
+* Added `jasmine` tests for `.spec.js` files
+* Added the ability to change themes
+
+* `build/stylus`:
+  * Added a new plugin function `log`
+  * Added the ability to mark styles as obsolescence
+
+#### :memo: Documentation
+
+* Improved documentation `build/stylus/ds`
+* Fixed a race condition with the test case that waits for timeouts
+
+#### :house: Internal
+
+* `build/stylus/ds`:
+  * Added tests
+  * Plugins moved to a separated folder `build/stylus/ds`
+
+* Added tests `build/ds`
+
 ## v3.0.0-rc.163 (2021-03-19)
 
 #### :rocket: New Feature
@@ -70,8 +94,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a race condition when loading template files
->>>>>>> master
->>>>>>> master
 
 ## v3.0.0-rc.157 (2021-03-10)
 
