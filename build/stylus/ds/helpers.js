@@ -113,7 +113,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	}
 
 	/**
-	 * Returns an array of key chunks
+	 * Creates an array of key chunks from the passed head and tail
 	 *
 	 * @param {?Array} head
 	 * @param {string|number} tail
