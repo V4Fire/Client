@@ -22,5 +22,6 @@ package('p-v4-components-demo')
 		'b-sidebar',
 		'b-slider',
 		'b-window',
+		'b-image',
 		components
 	);

@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.?? (2021-03-??)
 
 #### :bug: Bug Fix
 
-* Now `bVirtualScroll` will throw an error if components render returns an empty array.
+* Now `bVirtualScroll` will throw an error if the rendering of components returns an empty array
 
 ## v3.0.0-rc.153 (2021-03-04)
 
