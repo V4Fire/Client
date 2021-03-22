@@ -96,7 +96,7 @@ export default class bDummy extends iData implements iLockPageScroll, iObserveDO
 		});
 	}
 
-	/** @see [[iObserveDOM.prototype.emitDOMChange]] */
+	/** @see [[iObserveDOM.prototype.onDOMChange]] */
 	onDOMChange(): void {
 		iObserveDOM.emitDOMChange(this);
 	}
