@@ -34,7 +34,7 @@ module.exports = async (page, params) => {
 			ctx = await h.component.waitForComponent(page, '#dummy-component');
 		});
 
-		it('executes a handler on event', async () => {
+		it('executes a handler on event emitting', async () => {
 			await ctx.evaluate((ctx) => {
 				ctx.directives.updateOn.add(ctx.$el, {
 					emitter: ctx.selfEmitter,
@@ -48,7 +48,7 @@ module.exports = async (page, params) => {
 			await check(true);
 		});
 
-		it('executes a handler on field change', async () => {
+		it('executes a handler on field changing', async () => {
 			await ctx.evaluate((ctx) => {
 				ctx.directives.updateOn.add(ctx.$el, {
 					emitter: 'testField',
@@ -61,7 +61,7 @@ module.exports = async (page, params) => {
 			await check(true);
 		});
 
-		it('executes a handler on promise resolve', async () => {
+		it('executes a handler on promise resolving', async () => {
 			await ctx.evaluate((ctx) => {
 				globalThis.tVal = 0;
 
@@ -81,7 +81,7 @@ module.exports = async (page, params) => {
 			await check(1);
 		});
 
-		it('executes a handler once with `single` option', async () => {
+		it('executes a handler once with the `single` option', async () => {
 			await ctx.evaluate((ctx) => {
 				globalThis.tVal = 0;
 
@@ -133,7 +133,7 @@ module.exports = async (page, params) => {
 			await check(1);
 		});
 
-		it('remove', async () => {
+		it('invokes the `remove` method', async () => {
 			await ctx.evaluate((ctx) => {
 				ctx.directives.updateOn.add(ctx.$el, {
 					emitter: ctx.selfEmitter,
