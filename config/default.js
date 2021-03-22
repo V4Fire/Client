@@ -285,6 +285,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Value of `target`
+		 *
+		 * @cli target
+		 * @env TARGET
+		 *
+		 * @returns {?string}
+		 */
+		target() {
+			return o('target', {
+				env: true,
+				default: /ES[35]$/.test(this.config.es()) ? 'browserslist:ie 11' : undefined
+			});
+		},
+
+		/**
 		 * Value of `devtool`
 		 *
 		 * @cli devtool

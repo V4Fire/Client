@@ -48,7 +48,7 @@ module.exports = async (page, params) => {
 			return;
 		}
 
-	const
+		const
 			res = base64Img.split(',')[1],
 			headers = route.request().headers();
 

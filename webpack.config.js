@@ -32,6 +32,7 @@ async function buildFactory(entry, buildId) {
 	return {
 		entry: await $C(entry).parallel().map((src, name) => include('build/entry.webpack')(name, src)),
 		output: await include('build/output.webpack')({buildId}),
+		target: await include('build/target.webpack'),
 
 		resolve: await include('build/resolve.webpack'),
 		resolveLoader: await include('build/resolve-loader.webpack'),

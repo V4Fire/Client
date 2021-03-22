@@ -44,7 +44,7 @@ module.exports = async (page, params) => {
 			});
 		});
 
-		it('executes on field change', async () => {
+		it('executes on field changing', async () => {
 			await check('fieldUpdate', undefined);
 
 			await ctx.evaluate((ctx) => {
@@ -57,7 +57,7 @@ module.exports = async (page, params) => {
 		});
 
 		describe('isExists', () => {
-			it('returns true if a daemon is exists', async () => {
+			it('returns true if a daemon exists', async () => {
 				const res = await ctx.evaluate((ctx) => ctx.daemons.isExists('execOnCreated'));
 				expect(res).toBe(true);
 			});
@@ -81,7 +81,7 @@ module.exports = async (page, params) => {
 				expect(res).toBe(true);
 			});
 
-			it('execute spawned daemon', async () => {
+			it('execute the spawned daemon', async () => {
 				await ctx.evaluate((ctx) => {
 					ctx.daemons.spawn('spawnedDaemon', {
 						fn: () => globalThis.daemonsTest.spawned = true

@@ -14,7 +14,7 @@ import { ResizeWatcher } from 'core/dom/resize-observer';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
-import iData, { component, field } from 'super/i-data/i-data';
+import iData, { component, field, computed } from 'super/i-data/i-data';
 import type { Directives, Modules } from 'base/b-dummy/interface';
 
 const
@@ -32,12 +32,19 @@ export * from 'base/b-dummy/interface';
 })
 
 export default class bDummy extends iData implements iLockPageScroll {
-
 	/**
 	 * Test field
 	 */
 	@field()
 	testField: any = undefined;
+
+	/**
+	 * Getter that depends on a value from the another component
+	 */
+	@computed({dependencies: ['r.isAuth']})
+	get remoteWatchableGetter(): boolean {
+		return this.r.isAuth;
+	}
 
 	/**
 	 * Links to directives
