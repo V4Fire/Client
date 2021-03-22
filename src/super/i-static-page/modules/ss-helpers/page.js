@@ -332,7 +332,7 @@ function $__RENDER_ROOT() {
 		replacers: [include('build/replacers/include')]
 	});
 
-	if (config.es() === 'ES5') {
+	if (/ES[35]$/.test(config.es())) {
 		result = buble.transform(result).code;
 	}
 

@@ -209,6 +209,13 @@ export default class ComponentRender extends Friend {
 			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs!), index: itemIndex});
 		}
 
-		return render(children);
+		const
+			res = render(children);
+
+		if (res.length === 0) {
+			throw new Error('Failed to render components, possibly an error occurred while creating the components');
+		}
+
+		return res;
 	}
 }

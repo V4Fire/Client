@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? (2021-03-??)
+
+#### :bug: Bug Fix
+
+* Now `bVirtualScroll` will throw an error if the rendering of components returns an empty array `base/b-virtual-scroll`
+
+#### :house: Internal
+
+* Added tests:
+  * `bImage`
+  * `super/i-block/modules/daemons`
+  * `core/compoent/directives/update-on`
+
 ## v3.0.0-rc.??? (2021-03-??)
 
 #### :rocket: New Feature
@@ -34,6 +47,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Plugins moved to a separated folder `build/stylus/ds`
 
 * Added tests `build/ds`
+
+## v3.0.0-rc.163 (2021-03-19)
+
+#### :rocket: New Feature
+
+* Added `target.webpack` `build`
 
 ## v3.0.0-rc.162 (2021-03-19)
 
