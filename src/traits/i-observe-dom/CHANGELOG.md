@@ -11,7 +11,9 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
-* `onDOMChange` is now deprecated, use `emitDOMChange` instead
+#### :boom: Breaking Change
+
+* Now `onDOMChange` is deprecated. Use `emitDOMChange` instead.
 
 #### :memo: Documentation
 

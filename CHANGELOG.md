@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* `onDOMChange` is now deprecated, use `emitDOMChange` instead `traits/i-observe-dom`
+* Now `onDOMChange` is deprecated. Use `emitDOMChange` instead. `traits/i-observe-dom`
 
 #### :bug: Bug Fix
 
