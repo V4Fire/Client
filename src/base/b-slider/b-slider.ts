@@ -494,6 +494,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 				key: this.getItemKey(el, i),
 				ctx: this
 			}) :
+
 			props;
 	}
 

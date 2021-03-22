@@ -31,7 +31,7 @@ The component can operate in two modes, which will discuss below.
 
 ### Slide mode
 
-With the slider mode, it is impossible to skip slides. That is, we can't get from the first slide directly to the third or other stuff.
+With the `slide` mode, it is impossible to skip slides. That is, we can't get from the first slide directly to the third or other stuff.
 To activate this mode, set the `mode` prop to `slide`.
 
 ```
@@ -40,7 +40,7 @@ To activate this mode, set the `mode` prop to `slide`.
 
 ### Scroll mode
 
-With the scroll mode, to scroll slides is used the browser native scrolling.
+With the `scroll` mode, to scroll slides is used the browser native scrolling.
 To activate this mode, set the `mode` prop to `scroll`.
 
 ```
@@ -73,16 +73,16 @@ To activate this mode, set the `mode` prop to `scroll`.
 
 ### Props
 
-- `dynamicHeight` – If this prop is set to `true`, then the height calculation will be based on rendered elements.
-The component will create an additional element to contain the rendered elements, while it will not be visible to the user.
-This may be useful if you need to hide scroll on mobile devices, but you don't know exact size of the elements that will be rendered into component.
-By default this prop is settled to `false`.
+* `dynamicHeight` – If this prop is set to `true`, the height calculation will be based on rendered elements.
+  The component will create an additional element to contain the rendered elements, while it will not be visible to the user.
+  This may be useful if you need to hide scroll on mobile devices, but you don't know the exact size of the elements
+  that can be rendered into a component. By default, this prop is set to `false`.
 
-- `circular` – If this prop is set to `true`, the user will return to the first slide when scrolling the last slide.
-That is, the slider will work "in a circle".
+* `circular` – If this prop is set to `true`, the user will automatically return to the first slide when scrolling the last slide.
+  That is, the slider will work "in a circle".
 
-- `align` – This prop controls how much the slides will scroll.
-For example, by specifying the value `center`, when scrolling, the slider will stop when the active slide is in the center of the slider.
+* `align` – This prop controls how much the slides will scroll.
+  For example, by specifying the value `center`, the slider will stop when the active slide is in the center of the slider when scrolling.
 
 ### Methods
 
@@ -112,14 +112,14 @@ class Test extends iData {
 
   test(): void {
     this.$refs.slider.moveSlide(-1); // move to previous element
-    this.$refs.slider.moveSlide(1); // move to next element
+    this.$refs.slider.moveSlide(1);  // move to next element
   }
 }
 ```
 
 ### Fields
 
-- `isSlideMode` – True if the component is rendered in `slide` mode.
+- `isSlideMode` – `true` if the component is rendered by using the `slide` mode.
 
 ## Slots
 
@@ -166,7 +166,7 @@ The component supports a bunch of slots to provide:
     Hello there general Kenobi
 ```
 
-The layout of slots in the component DOM tree:
+The layout of slots within the component DOM tree:
 
 ```
 += self.slot('before')
