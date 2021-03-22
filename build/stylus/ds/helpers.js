@@ -85,9 +85,8 @@ function createDesignSystem(raw, stylus = require('stylus')) {
  * Converts the specified design system object to a Stylus object
  * and creates CSS variables to use within `.styl` files
  *
- * @param {Object} stylus - link to a stylus package instance
  * @param {DesignSystem} ds
- *
+ * @param {Object} stylus - link to a stylus package instance
  * @returns {!BuildTimeDesignSystemParams}
  */
 function convertDsToBuildTimeUsableObject(ds, stylus) {
@@ -105,7 +104,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	return {data, variables};
 
 	/**
-	 * @param {string[]} keys
+	 * @param {!Array<string>} keys
 	 * @param {string} theme
 	 */
 	function getVariablePath(keys, theme) {
@@ -117,7 +116,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	 *
 	 * @param {?Array} head
 	 * @param {string|number} tail
-	 * @returns {string[]}
+	 * @returns {!Array<string>}
 	 *
 	 * @example
 	 * ```js
