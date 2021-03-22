@@ -6,20 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable prefer-arrow-callback, no-var, object-shorthand, vars-on-top, prefer-rest-params */
+/* eslint-disable prefer-arrow-callback, no-var, no-new-func, object-shorthand, vars-on-top, prefer-rest-params */
 
-var
-	// eslint-disable-next-line no-new-func
-	global = Function('return this')();
+var GLOBAL = Function('return this')();
+GLOBAL.TPLS = GLOBAL.TPLS || Object.create(null);
 
-if (typeof global['setImmediate'] !== 'function') {
+if (typeof GLOBAL['setImmediate'] !== 'function') {
 	(function setImmediateShim() {
 		if (typeof Promise !== 'function') {
-			global['setImmediate'] = function setImmediate(fn) {
+			GLOBAL['setImmediate'] = function setImmediate(fn) {
 				return setTimeout(fn, 0);
 			};
 
-			global['clearImmediate'] = clearTimeout;
+			GLOBAL['clearImmediate'] = clearTimeout;
 			return;
 		}
 
@@ -63,7 +62,7 @@ if (typeof global['setImmediate'] !== 'function') {
 			track = null;
 		}
 
-		global['setImmediate'] = function setImmediate(fn) {
+		GLOBAL['setImmediate'] = function setImmediate(fn) {
 			var
 				id,
 				pos = i++;
@@ -86,7 +85,7 @@ if (typeof global['setImmediate'] !== 'function') {
 			return id;
 		};
 
-		global['clearImmediate'] = function clearImmediate(id) {
+		GLOBAL['clearImmediate'] = function clearImmediate(id) {
 			var
 				obj = map[id];
 

@@ -68,29 +68,25 @@ export function implementComponentWatchAPI(
 		}
 
 		const
-			{path} = info;
+			{path} = info,
+			rootKey = String(path[0]);
 
-		if (info.parent != null) {
-			const
-				rootKey = String(path[0]);
+		// If was changed there properties that can affect cached computed fields,
+		// then we need to invalidate these caches
+		if (computedFields[rootKey]?.get != null) {
+			delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
+		}
 
-			// If was changed there properties that can affect cached computed fields,
-			// then we need to invalidate these caches
-			if (computedFields[rootKey]?.get) {
-				delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
-			}
+		// We need to provide this mutation to other listeners.
+		// This behavior fixes the bug when we have some accessor that depends on a property from another component.
 
-			// We need to provide this mutation to other listeners.
-			// This behavior fixes the bug when we have some accessor that depends on a property from another component.
+		const
+			ctx = invalidateComputedCache[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
+			currentDynamicHandlers = immediateDynamicHandlers.get(ctx)?.[rootKey];
 
-			const
-				ctx = invalidateComputedCache[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
-				currentDynamicHandlers = immediateDynamicHandlers.get(ctx)?.[rootKey];
-
-			if (currentDynamicHandlers) {
-				for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
-					el.value(val, oldVal, info);
-				}
+		if (currentDynamicHandlers) {
+			for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
+				el.value(val, oldVal, info);
 			}
 		}
 	};
@@ -115,40 +111,39 @@ export function implementComponentWatchAPI(
 				continue;
 			}
 
-			// This mutation can affect computed fields or accessors
-			if (info.parent) {
+			if (info.parent != null) {
 				const
 					{path: parentPath} = info.parent.info;
 
 				if (parentPath[parentPath.length - 1] === '__proto__') {
 					continue;
 				}
+			}
 
-				const
-					rootKey = String(path[0]),
-					ctx = emitAccessorEvents[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
-					currentDynamicHandlers = dynamicHandlers.get(ctx)?.[rootKey];
+			const
+				rootKey = String(path[0]),
+				ctx = emitAccessorEvents[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
+				currentDynamicHandlers = dynamicHandlers.get(ctx)?.[rootKey];
 
-				if (currentDynamicHandlers) {
-					for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
-						const
-							handler = el.value;
+			if (currentDynamicHandlers) {
+				for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
+					const
+						handler = el.value;
 
-						// Because we register several watchers (props, fields, etc.) at the same time,
-						// we need to control that every dynamic handler must be invoked no more than one time per tick
-						if (usedHandlers.has(handler)) {
-							continue;
-						}
+					// Because we register several watchers (props, fields, etc.) at the same time,
+					// we need to control that every dynamic handler must be invoked no more than one time per tick
+					if (usedHandlers.has(handler)) {
+						continue;
+					}
 
-						handler(...eventArgs);
-						usedHandlers.add(handler);
+					handler(...eventArgs);
+					usedHandlers.add(handler);
 
-						if (timerId == null) {
-							timerId = setImmediate(() => {
-								timerId = undefined;
-								usedHandlers.clear();
-							});
-						}
+					if (timerId == null) {
+						timerId = setImmediate(() => {
+							timerId = undefined;
+							usedHandlers.clear();
+						});
 					}
 				}
 			}
