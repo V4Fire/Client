@@ -455,6 +455,10 @@ module.exports = async (page, params) => {
 		return page.route(url, async (route) => {
 			await delay(sleep);
 
+			if (isClosed) {
+				return;
+			}
+
 			if (base64Img === '') {
 				await route.abort('failed');
 				return;
@@ -465,10 +469,6 @@ module.exports = async (page, params) => {
 				headers = route.request().headers();
 
 			headers['Content-Length'] = String(res?.length ?? 0);
-
-			if (isClosed) {
-				return;
-			}
 
 			await route.fulfill({
 				status: 200,

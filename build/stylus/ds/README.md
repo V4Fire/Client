@@ -48,7 +48,7 @@ Example:
 // ...
 
 const
-  plugins = getPlugins({ds, cssVariables, stylus, includeVars: true});
+  plugins = getPlugins({ds, cssVariables, stylus, useCSSVarsInRuntime: true});
 
 stylus.render('getDSValue(rounding small)', {use: [plugins]}, (err, value) => {
   expect(value.trim()).toEqual(`${getCSSVariable('rounding.small')}`);

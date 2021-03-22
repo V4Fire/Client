@@ -35,7 +35,7 @@ describe('build/stylus/plugins', () => {
 
 		const
 			{data: ds, variables: cssVariables} = createDesignSystem(plainDesignSystem),
-			plugins = getPlugins({ds, cssVariables, stylus, includeVars: true});
+			plugins = getPlugins({ds, cssVariables, stylus, useCSSVarsInRuntime: true});
 
 		stylus.render('getDSColor("orange", 1)', {use: [plugins]}, (err, hex) => {
 			expect(hex.trim()).toEqual(`${getCSSVariable('colors.orange.0')}`);

@@ -20,7 +20,8 @@ const
  *
  * @param {DesignSystem} ds - design system object prepared to use with Stylus
  * @param {!Object} cssVariables - dictionary of CSS variables
- * @param {boolean=} [includeVars] - true, if the design system object values provided to style files as css-variables
+ * @param {boolean=} [useCSSVarsInRuntime] - true, if the design system object values provided
+ * to style files as css-variables
  *
  * @param {string=} [theme] - current theme value
  * @param {(Array<string>|boolean)=} [includeThemes] - list of themes to include or
@@ -32,7 +33,7 @@ const
 module.exports = function getPlugins({
 	ds,
 	cssVariables,
-	includeVars,
+	useCSSVarsInRuntime,
 	theme,
 	includeThemes,
 	stylus = require('stylus')
@@ -79,7 +80,7 @@ module.exports = function getPlugins({
 		 * ```stylus
 		 * injector('bButton')
 		 *
-		 * // If `includeVars` is enabled
+		 * // If `useCSSVarsInRuntime` is enabled
 		 * //
 		 * // {
 		 * //   values: {
@@ -112,7 +113,7 @@ module.exports = function getPlugins({
 		 */
 		api.define('injector', ({string}) => {
 			const
-				values = $C(includeVars || isThemesIncluded ? cssVariables : ds).get(`components.${string}`);
+				values = $C(useCSSVarsInRuntime || isThemesIncluded ? cssVariables : ds).get(`components.${string}`);
 
 			if (values) {
 				const
@@ -180,7 +181,7 @@ module.exports = function getPlugins({
 				getCSSVar = () => $C(cssVariables).get([].concat([group], path || []).join('.'));
 
 			if (isOneTheme || !isBuildHasTheme) {
-				return includeVars ?
+				return useCSSVarsInRuntime ?
 					stylus.utils.coerce(getCSSVar()) :
 					$C(ds).get([].concat(getThemedPathChunks(group, theme, isFieldThemed(group)), path || []).join('.'));
 			}
@@ -235,7 +236,7 @@ module.exports = function getPlugins({
 			}
 
 			const
-				from = includeVars ? cssVariables : ds;
+				from = useCSSVarsInRuntime ? cssVariables : ds;
 
 			return stylus.utils.coerce($C(from).get(path), true);
 		});
@@ -278,7 +279,9 @@ module.exports = function getPlugins({
 
 			checkDeprecated(ds, path);
 
-			return isThemesIncluded || includeVars ? stylus.utils.coerce($C(cssVariables).get(path)) : $C(ds).get(path);
+			return isThemesIncluded || useCSSVarsInRuntime ?
+				stylus.utils.coerce($C(cssVariables).get(path)) :
+				$C(ds).get(path);
 		});
 
 		/**
