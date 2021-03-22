@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added tests `bImage`
+* Added tests:
+  * `bImage`
+  * `super/i-block/modules/daemons`
 
 ## v3.0.0-rc.163 (2021-03-19)
 
