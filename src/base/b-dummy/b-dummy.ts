@@ -15,8 +15,9 @@ import { ResizeWatcher } from 'core/dom/resize-observer';
 import updateOn from 'core/component/directives/update-on/engines';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
-import iData, { component, field, computed } from 'super/i-data/i-data';
+import iData, { component, field, computed, hook, wait } from 'super/i-data/i-data';
 import type { Directives, Modules } from 'base/b-dummy/interface';
 
 const
@@ -33,7 +34,7 @@ export * from 'base/b-dummy/interface';
 	}
 })
 
-export default class bDummy extends iData implements iLockPageScroll {
+export default class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	/**
 	 * Test field
 	 */
@@ -66,7 +67,8 @@ export default class bDummy extends iData implements iLockPageScroll {
 	 */
 	get modules(): Modules {
 		return {
-			resizeWatcher: ResizeWatcher
+			resizeWatcher: ResizeWatcher,
+			iObserveDOM
 		};
 	}
 
@@ -81,5 +83,21 @@ export default class bDummy extends iData implements iLockPageScroll {
 	/** @see [[iLockPageScroll.unlock]] */
 	unlock(): Promise<void> {
 		return iLockPageScroll.unlock(this);
+	}
+
+	/** @see [[iObserveDOM.prototype.initDOMObservers]] */
+	@hook('mounted')
+	@wait('ready')
+	initDOMObservers(): void {
+		iObserveDOM.observe(this, {
+			node: this.$el!,
+			childList: true,
+			subtree: true
+		});
+	}
+
+	/** @see [[iObserveDOM.prototype.onDOMChange]] */
+	onDOMChange(): void {
+		iObserveDOM.emitDOMChange(this);
 	}
 }

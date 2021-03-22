@@ -13,9 +13,20 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.?? (2021-03-??)
 
+#### :boom: Breaking Change
+
+* Now `onDOMChange` is deprecated. Use `emitDOMChange` instead. `traits/i-observe-dom`
+
 #### :bug: Bug Fix
 
 * Now `bVirtualScroll` will throw an error if the rendering of components returns an empty array `base/b-virtual-scroll`
+
+#### :memo: Documentation
+
+* Added documentation:
+  * `b-slider`
+  * `b-bottom-slide`
+  * `i-observe-dom`
 
 #### :house: Internal
 
@@ -59,6 +70,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a race condition when loading template files
+>>>>>>> master
 >>>>>>> master
 
 ## v3.0.0-rc.157 (2021-03-10)
@@ -463,6 +475,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed `bMatryoshka`. Use `bTree` instead.
 * Trait refactoring. Using `item` instead of `option`. `traits/i-items`
+* Refactoring for the updated `iItems` API `b-slider`
 
 #### :rocket: New Feature
 

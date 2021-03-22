@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.1?? (2021-01-??)
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation
+
+## v3.0.0-rc.122 (2021-01-13)
 
 #### :boom: Breaking Change
 

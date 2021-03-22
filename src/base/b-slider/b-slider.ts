@@ -463,7 +463,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/** @see [[iObserveDOM.onDOMChange]] */
 	onDOMChange(): void {
-		iObserveDOM.onDOMChange(this);
+		iObserveDOM.emitDOMChange(this);
 	}
 
 	/**
@@ -494,6 +494,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 				key: this.getItemKey(el, i),
 				ctx: this
 			}) :
+
 			props;
 	}
 
