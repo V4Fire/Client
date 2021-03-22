@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.?? (2021-03-??)
 
+#### :bug: Bug Fix
+
+* Now `bVirtualScroll` will throw an error if the rendering of components returns an empty array `base/b-virtual-scroll`
+
 #### :house: Internal
 
 * Added tests:
@@ -55,6 +59,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a race condition when loading template files
+>>>>>>> master
 
 ## v3.0.0-rc.157 (2021-03-10)
 
