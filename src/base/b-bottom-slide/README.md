@@ -27,7 +27,7 @@ This module provides a component to create bottom sheet behavior that is similar
 
 ## Usage
 
-To start using the component, pass a content within the `default` slot.
+To start using the component, pass content within the `default` slot.
 
 ```
 < b-bottom-slide ref = bottomSlide
@@ -53,7 +53,7 @@ The component supports two kinds of height modes to calculate.
 * `full` – the height value is equal to the viewport height.
 * `content` – the height value is based on the component content, but no more than the viewport height.
 
-You can select the height mode calculation by providing a `heightMode` prop.
+You can select the height mode calculation by providing the `heightMode` prop.
 
 ```
 < b-bottom-slide :heightMode = 'full'
@@ -62,20 +62,21 @@ You can select the height mode calculation by providing a `heightMode` prop.
 ### Steps
 
 When opened, the component can have several steps stop. That is, the component can be opened halfway and only after this step to its full size.
-To do this, provide a `steps` prop.
+To do this, provide the `steps` prop.
 
 ```
 < b-bottom-slide :steps = [50]
 ```
 
-In this example, when a component is opened, it first opens at 50% of its own size,
+In this example, when the component is opened, it first opens at 50% of its own size,
 and only after user action or calling special methods, the component is opened or closed completely.
 
 ### Lazy rendering
 
-It is good practice not to render or load what the user cannot see on the screen.
+It is a good practice not to render or load what a user cannot see on the screen.
 The component supports the ability not to render content until it is open.
-This can be done using the `forceInnerRender` prop. You need to set `forceInnerRender` to` false` to avoid rendering the component's content immediately.
+This can be done using the `forceInnerRender` prop.
+You need to set `forceInnerRender` to` false` to avoid rendering the component's content immediately.
 
 ```
 < b-bottom-slide :forceInnerRender = false
@@ -84,10 +85,10 @@ This can be done using the `forceInnerRender` prop. You need to set `forceInnerR
 
 ### Singleton
 
-It is also good practice to use components such as [singleton](https://en.wikipedia.org/wiki/Singleton_pattern).
-This approach implementation remains entirely on the clients of this component, but we will consider few options.
+It is also a good practice to use a component as [singleton](https://en.wikipedia.org/wiki/Singleton_pattern).
+This approach implementation remains entirely on clients of this component, but we will consider few options.
 
-First of all, let's create a wrapper component that will contain `b-bottom-slide` and provide methods for opening and closing `b-bottom-slide`.
+First of all, let's create a wrapper component that will contain `b-bottom-slide` and provide methods to open and close `b-bottom-slide`.
 
 __b-modal.ts__
 
@@ -125,7 +126,7 @@ __b-modal.ss__
     < b-bottom-slide ref = bottomSlide
 ```
 
-After that, let's add our new `b-modal` component to the root component so that clients can refer to its methods.
+After that, let's add our new `b-modal` component to the root component so clients can refer to its methods.
 
 __p-root.ts__
 
@@ -168,7 +169,7 @@ export default class bSomeComponent extends iBlock {
 ```
 
 Okay, now we can access `b-bottom-slide` from anywhere, but what's the point in the `b-modal` component?
-The point is simple, and it will implement the logic of a wrapper component that will render templates inside `b-bottom-slide`.
+The point is simple. It will implement the logic of a wrapper component that will render templates inside `b-bottom-slide`.
 
 Many different approaches can be used here.
 For example, the `open` method of the `b-modal `component can take an object on which to draw the content in `b-bottom-slide`.
@@ -221,34 +222,36 @@ __b-modal.ss__
         {{ text }}
 ```
 
-Alternatively, you can use a string name to render a specific template.
+Alternatively, you can use a string name to render the specific template.
 
-These are just two of the many approaches that the `V4Fire` framework gives you to use components of this kind like a singleton.
+These are just two of the many approaches that the `V4Fire` framework gives you to use that kind of component.
 There are many more options you can think of to cover your needs.
 
 ## API
 
 ### Props
 
-- `visible` – Minimum height value of a visible part (in pixels), i.e., even the component is closed, this part still be visible.
-By default, set to `0`.
+- `visible` – The minimum height value of a visible part (in pixels), i.e., even the component is closed, this part still be visible.
+  By default, set to `0`.
 
-- `overlay` – If set to `true`, then when "pulling" the component to the entire height, a semi-transparent back will be displayed below the component.
-By default, set to `true`.
+- `overlay` – If set to `true`, then when "pulling" the component to the entire height, a semi-transparent back
+  will be displayed below the component. By default, it is set to `true`.
 
 - `scrollToTopOnClose` – If set to `true`, then when the component is closed, the content inside it will be scrolled up.
 
 ### Methods
 
-- `next` – Pulls the component to the next step. If the component is completely closed at the method call, the `open` method will be called.
-If the component is stretched to the maximum, the method will return `false`.
+- `next` – Pulls the component to the next step.
+  If the component is completely closed at the method call, it will call the `open` method.
+  If the component is stretched to the maximum, the method will return `false`.
 
-- `prev` – Pulls the component to the previous step. If the component is at the last step, it will call the `close` method. If the component
-is fully closed, the method will return `false`.
+- `prev` – Pulls the component to the previous step.
+  If the component is at the last step, it will call the `close` method.
+  If the component is fully closed, the method will return `false`.
 
 ## Slots
 
-1. `default` to provide the base content of each item.
+1. `default` to provide the base content of the component.
 
 ```
 < b-bottom-slide
