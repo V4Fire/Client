@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation
+
 ## v3.0.0-rc.150 (2021-03-03)
 
 #### :bug: Bug Fix
@@ -17,20 +23,13 @@ Changelog
 
 ## v3.0.0-rc.112 (2020-12-18)
 
-#### :bug: Bug Fix
-
-* Fixed geometry initialization within the content mode
-
-## v3.0.0-rc.112 (2020-12-18)
-
 #### :boom: Breaking Change
 
 * Now `forceInnerRender` is toggled to `true` by default
 
-## v3.0.0-rc.112 (2020-12-18)
-
 #### :bug: Bug Fix
 
+* Fixed geometry initialization within the content mode
 * Fixed `updateWindowPosition` with lazy rendering
 
 ## v3.0.0-rc.111 (2020-12-16)

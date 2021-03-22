@@ -62,14 +62,14 @@ module.exports = async (page, params) => {
 			it('renders a component with the provided `src`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
-					reqPromise = handleImageRequest(imgUrl, 100);
+					reqPromise = handleImageRequest(imgUrl);
 
 				await renderComponent({
 					src: imgUrl
 				});
 
 				await reqPromise;
-				await h.bom.waitForIdleCallback(page);
+				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 200});
 
 				expect(await getSrc(await mainImg())).toBe(imgUrl);
 			});
