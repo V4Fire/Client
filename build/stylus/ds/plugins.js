@@ -73,12 +73,13 @@ module.exports = function getPlugins({
 		 * Injects additional options to component mixin options ($p)
 		 *
 		 * @param {string} string - component name
+		 * @returns {!Object}
 		 *
 		 * @example
 		 * ```stylus
 		 * injector('bButton')
 		 *
-		 * // If variables has been switched on for the build
+		 * // If `includeVars` is enabled
 		 * //
 		 * // {
 		 * //   values: {
@@ -93,7 +94,7 @@ module.exports = function getPlugins({
 		 * //     }
 		 * //   }
 		 *
-		 * // Otherwise. All values are stylus types
+		 * // Otherwise
 		 * //
 		 * // {
 		 * //   values: {
@@ -108,8 +109,6 @@ module.exports = function getPlugins({
 		 * //     }
 		 * //   }
 		 * ```
-		 *
-		 * @returns {!Object}
 		 */
 		api.define('injector', ({string}) => {
 			const
@@ -132,6 +131,7 @@ module.exports = function getPlugins({
 		 * Returns design system CSS variables with their values
 		 *
 		 * @param {string} [theme]
+		 * @returns {!Object}
 		 *
 		 * @example
 		 * ```stylus
@@ -141,8 +141,6 @@ module.exports = function getPlugins({
 		 * //   '--colors-primary': #0F9
 		 * // }
 		 * ```
-		 *
-		 * @returns {!Object}
 		 */
 		api.define('getDSVariables', ({string: theme} = {}) => {
 			const
@@ -158,19 +156,18 @@ module.exports = function getPlugins({
 		});
 
 		/**
-		 * Return a value from the design system from the specified group by the specified path.
-		 * If specified only the first argument, returns parameters object for the specified group.
-		 * If all arguments is not specified, returns full design system object.
+		 * Returns a value from the design system by the specified group and path.
+		 * If passed only the first argument, the function returns parameters for the whole group,
+		 * but not just the one value. If no arguments are passed, it returns the whole design system object.
 		 *
 		 * @param {string} [group] - first level field name (colors, rounding, etc.)
-		 * @param {!Object} [path] - dot-delimited path in the specified group
+		 * @param {!Object} [path] - dot-delimited path to the value
+		 * @returns {!Object}
 		 *
 		 * @example
 		 * ```stylus
 		 * getDSValue(colors "green.0") // rgba(0, 255, 0, 1)
 		 * ```
-		 *
-		 * @returns {!Object}
 		 */
 		api.define('getDSValue', ({string: group} = {}, {string: path} = {}) => {
 			if (group === undefined) {
@@ -195,12 +192,13 @@ module.exports = function getPlugins({
 		 * Returns an object with text styles for the specified style name
 		 *
 		 * @param {string} name
+		 * @returns {!Object}
 		 *
 		 * @example
 		 * ```stylus
 		 * getDSTextStyles(Small)
 		 *
-		 * // Notice: All values are stylus types
+		 * // Notice, all values are Stylus types
 		 * //
 		 * // {
 		 * //  fontFamily: 'Roboto',
@@ -208,10 +206,7 @@ module.exports = function getPlugins({
 		 * //  fontSize: '14px',
 		 * //  lineHeight: '16px'
 		 * // }
-		 *
 		 * ```
-		 *
-		 * @returns {!Object}
 		 */
 		api.define('getDSTextStyles', ({string: name}) => {
 			const
@@ -226,7 +221,7 @@ module.exports = function getPlugins({
 					initial = $C(ds).get(path);
 
 				if (!Object.isObject(initial)) {
-					throw new Error(`getDSTextStyles: design system has no "${theme}" styles for the specified name: ${name}`);
+					throw new Error(`getDSTextStyles: the design system has no "${theme}" styles for the specified name: ${name}`);
 				}
 
 				const
@@ -250,13 +245,12 @@ module.exports = function getPlugins({
 		 *
 		 * @param {!Object} name
 		 * @param {!Object} [id]
+		 * @returns {(!Object|!Array)}
 		 *
 		 * @example
 		 * ```stylus
 		 * getDSColor("blue", 1) // rgba(0, 0, 255, 1)
 		 * ```
-		 *
-		 * @returns {(!Object|!Array)}
 		 */
 		api.define('getDSColor', (name, id) => {
 			name = name.string || name.name;
@@ -288,7 +282,7 @@ module.exports = function getPlugins({
 		});
 
 		/**
-		 * Returns a current theme value
+		 * Returns the current theme value
 		 * @returns {!string}
 		 */
 		api.define('defaultTheme', () => theme);
