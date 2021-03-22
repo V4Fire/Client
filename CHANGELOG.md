@@ -11,11 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.?? (2021-03-??)
+## v3.0.0-rc.164 (2021-03-22)
 
 #### :boom: Breaking Change
 
 * Now `onDOMChange` is deprecated. Use `emitDOMChange` instead. `traits/i-observe-dom`
+
+#### :rocket: New Feature
+
+* Added `jasmine` tests for `.spec.js` files
+* Added the ability to change themes
+
+* `build/stylus`:
+  * Added a new plugin function `log`
+  * Added the ability to mark styles as obsolescence
 
 #### :bug: Bug Fix
 
@@ -28,36 +37,20 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `b-bottom-slide`
   * `i-observe-dom`
 
+* Improved documentation `build/stylus/ds`
+
 #### :house: Internal
 
+* Fixed a race condition with the test case that waits for timeouts
 * Added tests:
   * `bImage`
+  * `build/ds`
   * `super/i-block/modules/daemons`
   * `core/compoent/directives/update-on`
-
-## v3.0.0-rc.??? (2021-03-??)
-
-#### :rocket: New Feature
-
-* Added `jasmine` tests for `.spec.js` files
-* Added the ability to change themes
-
-* `build/stylus`:
-  * Added a new plugin function `log`
-  * Added the ability to mark styles as obsolescence
-
-#### :memo: Documentation
-
-* Improved documentation `build/stylus/ds`
-* Fixed a race condition with the test case that waits for timeouts
-
-#### :house: Internal
 
 * `build/stylus/ds`:
   * Added tests
   * Plugins moved to a separated folder `build/stylus/ds`
-
-* Added tests `build/ds`
 
 ## v3.0.0-rc.163 (2021-03-19)
 
