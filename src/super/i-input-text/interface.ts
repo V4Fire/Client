@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { UnsafeIInput } from 'super/i-input/i-input';
-import iInputText from 'super/i-input-text/i-input-text';
+import type { UnsafeIInput } from 'super/i-input/i-input';
+import type iInputText from 'super/i-input-text/i-input-text';
 
 export interface SyncMaskWithTextOptions {
 	/**

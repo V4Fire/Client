@@ -33,7 +33,7 @@ import iInput, {
 import * as mask from 'super/i-input-text/modules/mask';
 //#endif
 
-import { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from 'super/i-input-text/interface';
+import type { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from 'super/i-input-text/interface';
 
 export * from 'super/i-input/i-input';
 export * from 'super/i-input-text/interface';

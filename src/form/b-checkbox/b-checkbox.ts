@@ -35,7 +35,7 @@ import iInput, {
 
 } from 'super/i-input/i-input';
 
-import { CheckType, Value, FormValue } from 'form/b-checkbox/interface';
+import type { CheckType, Value, FormValue } from 'form/b-checkbox/interface';
 
 export * from 'super/i-input/i-input';
 export * from 'form/b-checkbox/interface';

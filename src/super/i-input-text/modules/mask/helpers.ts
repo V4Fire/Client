@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInputText, { CompiledMask } from 'super/i-input-text/i-input-text';
+import type iInputText from 'super/i-input-text/i-input-text';
+import type { CompiledMask } from 'super/i-input-text/i-input-text';
 
 /**
  * Takes the specified text, and if its length more than the component mask can accommodate, tries to expand the mask

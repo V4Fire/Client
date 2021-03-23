@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInputText from 'super/i-input-text/i-input-text';
-import { CompiledMask } from 'super/i-input-text/interface';
+import type iInputText from 'super/i-input-text/i-input-text';
+import type { CompiledMask } from 'super/i-input-text/interface';
 
 /**
  * Compiles the specified component mask and returns the compiled object.

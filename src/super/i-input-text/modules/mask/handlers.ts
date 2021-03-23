@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iInputText from 'super/i-input-text/i-input-text';
+import type iInputText from 'super/i-input-text/i-input-text';
 
 export const
 	$$ = symbolGenerator();
