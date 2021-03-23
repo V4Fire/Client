@@ -12,7 +12,9 @@ import { fitForText } from 'super/i-input-text/modules/mask/helpers';
 import type { SyncMaskWithTextOptions } from 'super/i-input-text/interface';
 
 /**
- * Synchronizes the component mask with the specified text value
+ * Synchronizes the component mask with the specified text value.
+ * The function takes raw text from the component input or passed parameters and applies it to the mask.
+ * The resulting text will be saved to the input.
  *
  * @param component
  * @param text
@@ -25,29 +27,30 @@ export function syncWithText<C extends iInputText>(
 ): void {
 	const {
 		unsafe,
-		unsafe: {compiledMask: mask, maskPlaceholder}
+		unsafe: {maskPlaceholder}
 	} = component;
+
+	const
+		mask = fitForText(component, text);
 
 	if (mask == null) {
 		return;
 	}
 
-	fitForText(component, text);
-
 	const
 		isFocused = unsafe.mods.focused === 'true';
 
 	const
-		{symbols: maskSymbols} = mask!,
-		{maskText = mask!.text} = opts;
+		{symbols: maskSymbols} = mask,
+		{maskText = mask.text} = opts;
 
 	let
 		start = 0,
 		end = 0;
 
 	if (text !== '') {
-		start = opts.start ?? 0;
-		end = opts.end ?? 0;
+		start = opts.start ?? start;
+		end = opts.end ?? end;
 	}
 
 	let
@@ -62,12 +65,14 @@ export function syncWithText<C extends iInputText>(
 			start = 0;
 			end = 0;
 			withoutSelection = true;
-			maskedInput = mask!.placeholder;
+			maskedInput = mask.placeholder;
 		}
 
 	} else {
-		const chunks = [...text.letters()]
-			.slice(start, withoutSelection ? undefined : end);
+		const chunks = [...text.letters()].slice(
+			start,
+			withoutSelection ? undefined : end
+		);
 
 		for (let i = 0; i < maskSymbols.length; i++) {
 			const
@@ -113,9 +118,10 @@ export function syncWithText<C extends iInputText>(
 		}
 	}
 
+	mask.text = maskedInput;
 	unsafe.text = maskedInput;
-	mask!.text = maskedInput;
 
+	// If the component is focused, we need to correct the cursor position
 	if (isFocused) {
 		if (withoutSelection) {
 			cursorPos = start + cursorPos + 1;
@@ -128,8 +134,8 @@ export function syncWithText<C extends iInputText>(
 			cursorPos = end;
 		}
 
-		mask!.start = cursorPos;
-		mask!.end = cursorPos;
+		mask.start = cursorPos;
+		mask.end = cursorPos;
 
 		unsafe.$refs.input.setSelectionRange(cursorPos, cursorPos);
 	}
