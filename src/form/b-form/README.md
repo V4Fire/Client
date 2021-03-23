@@ -15,7 +15,8 @@ The component is based on a native `<form>` element and realizes the same behavi
 
 ## Why another component?
 
-* The native form API is based on simple URL-s and HTTP methods, but it's a low-level approach. Opposite, `bForm` uses data providers to submit data.
+* The native form API is based on simple URL-s and HTTP methods, but it's a low-level approach.
+  Opposite, `bForm` uses data providers to submit data.
 
 * `<form>` works with tags; `bForm` works with `iInput/bButton` components.
 
