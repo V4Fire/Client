@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.165 (2021-03-23)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `webpack.target` `build`
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :boom: Breaking Change

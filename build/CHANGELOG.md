@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.165 (2021-03-23)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `webpack.target`
+
 ## v3.0.0-rc.163 (2021-03-19)
 
 #### :rocket: New Feature
