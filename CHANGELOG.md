@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed providing of `webpack.target` `build`
+* Fixed resolving of the external context `core/component/reflection`
 
 ## v3.0.0-rc.164 (2021-03-22)
 
