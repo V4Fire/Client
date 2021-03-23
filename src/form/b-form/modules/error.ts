@@ -6,27 +6,20 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
+import BaseError from 'core/error';
 import { deprecated } from 'core/functools/deprecation';
-import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
+
+import type iInput from 'super/i-input/i-input';
+import type { ValidationError as InputValidationError } from 'super/i-input/i-input';
 
 /**
  * Class to wrap a validation error
  */
-export default class ValidationError<D = undefined> implements Error {
-	/**
-	 * Error name
-	 */
-	readonly name: string = 'ValidationError';
-
+export default class ValidationError<D = undefined> extends BaseError {
 	/**
 	 * Validation error type
 	 */
 	readonly type: string;
-
-	/**
-	 * Validation message
-	 */
-	readonly message: string;
 
 	/**
 	 * A component on which the error occurred
@@ -61,9 +54,26 @@ export default class ValidationError<D = undefined> implements Error {
 	 * @param details - error details
 	 */
 	constructor(component: iInput, details: InputValidationError<D>) {
+		super();
+
+		this.type = details.error.name;
 		this.component = component;
 		this.details = details;
-		this.type = details.error.name;
-		this.message = details.msg ?? '';
+	}
+
+	/** @override */
+	protected format(): string {
+		const
+			parts = [this.details.msg];
+
+		const
+			head = `[${this.component.globalName ?? this.component.componentName}] [${this.type}]`,
+			body = parts.filter((p) => p != null).join(' ');
+
+		if (body.length > 0) {
+			return `${head} ${body}`;
+		}
+
+		return head;
 	}
 }
