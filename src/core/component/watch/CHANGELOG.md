@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.162 (2021-03-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when getter can't be watched when it depends on an external property
+
 ## v3.0.0-rc.94 (2020-11-06)
 
 #### :bug: Bug Fix

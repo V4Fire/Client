@@ -30,6 +30,12 @@ module.exports = [
 		api.define('file-exists', function fileExists(path) {
 			return Boolean(stylus.utils.find(path.string, this.paths));
 		});
+
+		/**
+		 * Outputs the specified arguments to console
+		 * @param args
+		 */
+		api.define('log', (...args) => console.log(...args));
 	},
 
 	ds,

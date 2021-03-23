@@ -23,6 +23,7 @@ import type iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
+import themeManagerFactory, { ThemeManager } from 'super/i-static-page/modules/theme';
 import type { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
@@ -61,6 +62,12 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system(() => new ProvidedDataStore())
 	readonly providerDataStore!: ProvidedDataStore;
+
+	/**
+	 * Module to manage app themes
+	 */
+	@system<iStaticPage>(themeManagerFactory)
+	readonly theme: CanUndef<ThemeManager>;
 
 	/**
 	 * Authorization status
@@ -169,7 +176,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Sets a new page title
 	 *
 	 * @param value
-	 * @param component
+	 * @param [component]
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {

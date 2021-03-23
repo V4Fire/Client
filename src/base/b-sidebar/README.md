@@ -16,7 +16,7 @@ This module provides a component to create a sidebar with the feature of collaps
 
 ## Modifiers
 
-| EventName  | Description             | Values    | Default |
+| Name       | Description             | Values    | Default |
 | ---------- | ----------------------- | --------- | ------- |
 | `opened`   | The component is opened | `boolean` | `false` |
 

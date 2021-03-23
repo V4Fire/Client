@@ -55,7 +55,7 @@ export function wrapCreateElement(
 
 		const
 			ctx = this ?? baseCtx,
-			unsafe = <UnsafeComponentInterface>Any(ctx);
+			unsafe = <UnsafeComponentInterface><any>(ctx);
 
 		const
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;

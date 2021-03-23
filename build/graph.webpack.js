@@ -191,11 +191,9 @@ async function buildProjectGraph() {
 					return str;
 				});
 
-				if (content.trim()) {
-					fs.writeFileSync(entrySrc, content);
-					entry[name] = entrySrc;
-					taskProcess[name] = entrySrc;
-				}
+				fs.writeFileSync(entrySrc, content);
+				entry[name] = entrySrc;
+				taskProcess[name] = entrySrc;
 			}
 
 			// TEMPLATES
@@ -218,11 +216,9 @@ async function buildProjectGraph() {
 					return str;
 				});
 
-				if (content.trim()) {
-					fs.writeFileSync(entrySrc, ['window.TPLS = window.TPLS || Object.create(null);', content].join('\n'));
-					entry[entryName] = entrySrc;
-					taskProcess[entryName] = entrySrc;
-				}
+				fs.writeFileSync(entrySrc, ['window.TPLS = window.TPLS || Object.create(null);', content].join('\n'));
+				entry[entryName] = entrySrc;
+				taskProcess[entryName] = entrySrc;
 			}
 
 			taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
@@ -277,11 +273,9 @@ async function buildProjectGraph() {
 					return str;
 				});
 
-				if (content.trim()) {
-					fs.writeFileSync(entrySrc, [content, 'generateImgClasses()'].join('\n'));
-					entry[entryName] = entrySrc;
-					taskProcess[entryName] = entrySrc;
-				}
+				fs.writeFileSync(entrySrc, [content, 'generateImgClasses()'].join('\n'));
+				entry[entryName] = entrySrc;
+				taskProcess[entryName] = entrySrc;
 			}
 
 			// HTML
@@ -303,14 +297,12 @@ async function buildProjectGraph() {
 					return str;
 				});
 
-				if (content.trim()) {
-					fs.writeFileSync(entrySrc, content);
+				fs.writeFileSync(entrySrc, content);
 
-					entry[entryName] = entrySrc;
+				entry[entryName] = entrySrc;
 
-					// eslint-disable-next-line require-atomic-updates
-					processes[HTML][entryName] = entrySrc;
-				}
+				// eslint-disable-next-line require-atomic-updates
+				processes[HTML][entryName] = entrySrc;
 			}
 
 			return entry;

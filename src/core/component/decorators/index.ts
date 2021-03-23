@@ -164,7 +164,7 @@ export const p = paramsFactory<
  *
  * @decorator
  * @example
- *  ```typescript
+ * ```typescript
  * @component()
  * class Foo extends iBlock {
  *   @hook('mounted')

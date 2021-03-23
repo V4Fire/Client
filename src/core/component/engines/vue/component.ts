@@ -34,7 +34,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 		m = p.model;
 
 	return {
-		...<ComponentOptions<ComponentEngine>>Any(component),
+		...<any>(component),
 		inheritAttrs: p.inheritAttrs,
 
 		model: m && {

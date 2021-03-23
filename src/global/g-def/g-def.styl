@@ -14,7 +14,15 @@
 /** @deprecated */
 @import "global/g-def/consts.styl"
 
-//#if runtime has ds-vars
+//#if runtime has theme
+//#unless runtime has includeThemes
 :root
-	interpolate-props(getFlatDSVars(), false)
+	interpolate-props(getDSVariables(defaultTheme()), false)
+//#endunless
+//#endif
+
+//#if runtime has includeThemes
+for name in availableThemes()
+	html[data-theme={"%s" % name}]
+		interpolate-props(getDSVariables(name), false)
 //#endif
