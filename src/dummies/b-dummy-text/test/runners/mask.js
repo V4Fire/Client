@@ -26,29 +26,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-dummy-text masked input', () => {
-		const
-			q = '[data-id="target"]';
-
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d',
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-dummy-text', scheme);
-			}, attrs);
-
-			await h.bom.waitForIdleCallback(page);
-			return h.component.waitForComponent(page, q);
-		};
-
-		it('applying a mask without providing of a text value', async () => {
+		it('applying a mask without providing of the text value', async () => {
 			const target = await init();
 			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('');
 		});
@@ -103,4 +81,23 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-5');
 		});
 	});
+
+	async function init(attrs = {}) {
+		await page.evaluate((attrs) => {
+			const scheme = [
+				{
+					attrs: {
+						'data-id': 'target',
+						mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d',
+						...attrs
+					}
+				}
+			];
+
+			globalThis.renderComponents('b-dummy-text', scheme);
+		}, attrs);
+
+		await h.bom.waitForIdleCallback(page);
+		return h.component.waitForComponent(page, '[data-id="target"]');
+	}
 };
