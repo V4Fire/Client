@@ -13,7 +13,6 @@
  */
 
 const
-	delay = require('delay'),
 	h = include('tests/helpers');
 
 /**
@@ -21,7 +20,7 @@ const
  *
  * @param {Page} page
  * @param {!Object} params
- * @returns {!Promise<boolean>}
+ * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {
 	await h.utils.setup(page, params.context);
@@ -93,21 +92,25 @@ module.exports = async (page, params) => {
 
 		describe('setting of the external `renderFilter`', () => {
 			it('renders by one with a timeout', async () => {
-				await init({attrs: {
+				const bTree = await init({attrs: {
 					renderChunks: 1,
 					renderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
 				}});
 
 				await h.bom.waitForIdleCallback(page);
 
-				await delay(500);
-				await expect((await page.$$('.b-checkbox')).length).toBe(1);
+				const
+					waitForRender = () => bTree.evaluate((ctx) => ctx.async.sleep(500)),
+					getCheckboxes = () => page.$$('.b-checkbox');
 
-				await delay(500);
-				await expect((await page.$$('.b-checkbox')).length).toBe(2);
+				await waitForRender();
+				await expect((await getCheckboxes()).length).toBe(1);
 
-				await delay(500);
-				await expect((await page.$$('.b-checkbox')).length).toBe(3);
+				await waitForRender();
+				await expect((await getCheckboxes()).length).toBe(2);
+
+				await waitForRender();
+				await expect((await getCheckboxes()).length).toBe(3);
 			});
 
 			it('renders using the context data', async () => {
@@ -149,21 +152,16 @@ module.exports = async (page, params) => {
 				items,
 				attrs: {
 					renderChunks: 1,
-					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.3.second()))'
+					nestedRenderFilter: 'return () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))'
 				}
 			});
 
-			const wait = async (v, timer = 300) => {
-				await delay(timer);
-				await expect((await page.$$('.b-checkbox')).length).toBe(v);
-			};
-
-			await wait(2, 0);
-			await wait(3);
-			await wait(4);
-			await wait(5);
-			await wait(6);
-			await wait(7);
+			await waitForCheckboxCount(2);
+			await waitForCheckboxCount(3);
+			await waitForCheckboxCount(4);
+			await waitForCheckboxCount(5);
+			await waitForCheckboxCount(6);
+			await waitForCheckboxCount(7);
 		});
 
 		async function init({items, attrs, content} = {}) {
@@ -216,6 +214,7 @@ module.exports = async (page, params) => {
 	describe('b-tree rendering data from a data provider', () => {
 		it('initialization', async () => {
 			await init();
+			await waitForCheckboxCount(14);
 			await h.bom.waitForIdleCallback(page);
 
 			expect((await page.$$('.b-checkbox')).length).toBe(14);
@@ -294,6 +293,11 @@ module.exports = async (page, params) => {
 			return h.component.waitForComponent(page, '#target');
 		}
 	});
+
+	async function waitForCheckboxCount(v) {
+		await page.waitForFunction((v) => document.querySelectorAll('.b-checkbox').length === v, v);
+		await expect((await page.$$('.b-checkbox')).length).toBe(v);
+	}
 
 	function getFoldedClass(target, value = true) {
 		return target.evaluate(

@@ -13,7 +13,10 @@ const
 	pzlr = require('@pzlr/build-core');
 
 const
-	path = require('upath'),
+	fs = require('fs'),
+	path = require('upath');
+
+const
 	camelize = require('camelize'),
 	o = require('uniconf/options').option;
 
@@ -278,6 +281,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return o('cache-type', {
 				env: true,
 				default: 'memory'
+			});
+		},
+
+		/**
+		 * Value of `target`
+		 *
+		 * @cli target
+		 * @env TARGET
+		 *
+		 * @returns {?string}
+		 */
+		target() {
+			return o('target', {
+				env: true,
+				default: /ES[35]$/.test(this.config.es()) ? 'browserslist:ie 11' : undefined
 			});
 		},
 
@@ -590,7 +608,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const
 			server = super.typescript();
 
+		const configFile = fs.existsSync(path.join(this.src.cwd(), 'client.tsconfig.json')) ?
+			'client.tsconfig.json' :
+			'tsconfig.json';
+
 		const client = this.extend({}, server, {
+			configFile,
 			compilerOptions: {
 				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
 			}
@@ -687,6 +710,53 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			injectType: 'styleTag'
 		};
+	},
+
+	/**
+	 * Options to manage app themes
+	 */
+	theme: {
+		/**
+		 * Returns a name of the default app theme to use
+		 *
+		 * @cli t
+		 * @env THEME
+		 * @returns {string}
+		 */
+		default() {
+			return o('theme', {
+				short: 't',
+				env: true
+			});
+		},
+
+		/**
+		 * Returns an array of available themes to passing from a design system to the runtime or `true`,
+		 * if needed to pass all themes from the design system
+		 *
+		 * @cli include-themes
+		 * @env INCLUDE_THEMES
+		 *
+		 * @returns {!Array<string>|boolean}
+		 */
+		include() {
+			return o('include-themes', {
+				env: true
+			});
+		},
+
+		/**
+		 * Returns an attribute name to set a value of the theme to the root element
+		 *
+		 * @cli theme-attribute
+		 * @env THEME_ATTRIBUTE
+		 *
+		 * @default `data-theme`
+		 */
+		attribute: o('theme-attribute', {
+			env: true,
+			default: 'data-theme'
+		})
 	},
 
 	/**
@@ -793,8 +863,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			noGlobals: false,
 			svgSprite: true,
 
-			'ds-diff': false,
-			'ds-vars': false,
+			'ds/use-css-vars': false,
 
 			blockNames: false,
 			passDesignSystem: false,

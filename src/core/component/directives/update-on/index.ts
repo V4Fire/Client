@@ -9,7 +9,7 @@
 import { VNode, ComponentDriver } from 'core/component/engines';
 
 import engine from 'core/component/directives/update-on/engines';
-import { DirectiveOptions, DirectiveValue } from 'core/component/directives/update-on/interface';
+import type { DirectiveOptions, DirectiveValue } from 'core/component/directives/update-on/interface';
 
 export * from 'core/component/directives/update-on/const';
 export * from 'core/component/directives/update-on/interface';
@@ -32,7 +32,7 @@ ComponentDriver.directive('update-on', {
 
 	unbind(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 		const
-			ctx = vnode.context;
+			ctx = vnode.fakeContext;
 
 		if (ctx != null) {
 			engine.remove(el, ctx);
@@ -42,7 +42,7 @@ ComponentDriver.directive('update-on', {
 
 function add(el: Element, value: Nullable<CanArray<DirectiveValue>>, vnode: VNode): void {
 	const
-		ctx = vnode.context;
+		ctx = vnode.fakeContext;
 
 	if (ctx == null) {
 		return;

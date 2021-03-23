@@ -13,13 +13,13 @@
 
 import SyncPromise from 'core/promise/sync';
 
-import { AsyncOptions } from 'core/async';
+import type { AsyncOptions } from 'core/async';
 import Friend from 'super/i-block/modules/friend';
 
 import { statuses } from 'super/i-block/const';
-import { Hook } from 'core/component';
 
-import { Cb } from 'super/i-block/modules/lfc/interface';
+import type { Hook } from 'core/component';
+import type { Cb } from 'super/i-block/modules/lfc/interface';
 
 export * from 'super/i-block/modules/lfc/interface';
 

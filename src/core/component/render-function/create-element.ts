@@ -31,7 +31,7 @@ import {
 
 } from 'core/component/engines';
 
-import { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
+import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -63,7 +63,7 @@ export function wrapCreateElement(
 
 		const
 			ctx = this ?? baseCtx,
-			unsafe = <UnsafeComponentInterface>Any(ctx);
+			unsafe = <UnsafeComponentInterface><any>(ctx);
 
 		const
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
@@ -253,8 +253,7 @@ export function wrapCreateElement(
 			tasks.splice(0);
 		}
 
-		// @ts-ignore (access)
-		vnode.context = ctx;
+		vnode.fakeContext = ctx;
 		return vnode;
 	};
 

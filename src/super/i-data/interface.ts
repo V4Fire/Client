@@ -8,21 +8,22 @@
 
 //#if runtime has core/data
 
-import {
+import type {
 
-	RequestQuery,
 	RequestBody,
 	ModelMethod,
+
+	RequestQuery,
 	CreateRequestOptions as BaseCreateRequestOptions
 
 } from 'core/data';
 
 //#endif
 
-import { AsyncOptions } from 'core/async';
-import { UnsafeIBlock } from 'super/i-block/i-block';
+import type { AsyncOptions } from 'core/async';
+import type { UnsafeIBlock } from 'super/i-block/i-block';
 
-import iData from 'super/i-data/i-data';
+import type iData from 'super/i-data/i-data';
 
 export interface RequestFilterOptions<D = unknown> {
 	isEmpty: boolean;

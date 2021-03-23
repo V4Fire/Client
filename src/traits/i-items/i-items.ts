@@ -11,8 +11,9 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
-import {
+import type iBlock from 'super/i-block/i-block';
+
+import type {
 
 	IterationKey,
 	ItemPropsFn,

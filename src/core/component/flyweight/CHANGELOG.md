@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.146 (2021-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed creation of meta objects
+
+## v3.0.0-rc.142 (2021-02-11)
+
+#### :bug: Bug Fix
+
+* Fixed creation of a context
+
 ## v3.0.0-rc.129 (2021-01-28)
 
 #### :house: Internal

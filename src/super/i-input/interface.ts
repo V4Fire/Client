@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { UnsafeIData } from 'super/i-data/i-data';
-
-import iInput from 'super/i-input/i-input';
+import type { UnsafeIData } from 'super/i-data/i-data';
+import type iInput from 'super/i-input/i-input';
 
 export interface ValidatorMsgFn {
 	(err: ValidatorResult): string;

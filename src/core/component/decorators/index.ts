@@ -13,7 +13,7 @@
 
 import { paramsFactory } from 'core/component/decorators/base';
 
-import {
+import type {
 
 	InitFieldFn,
 
@@ -164,7 +164,7 @@ export const p = paramsFactory<
  *
  * @decorator
  * @example
- *  ```typescript
+ * ```typescript
  * @component()
  * class Foo extends iBlock {
  *   @hook('mounted')

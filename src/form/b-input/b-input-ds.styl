@@ -34,13 +34,13 @@ b-input
 				$textStyle = getField($mod, textStyle)
 
 				if $textStyle
-					for $key, $val in getDSOptions(path(text $textStyle style))
+					for $key, $val in getDSValue(text, path($textStyle style))
 						$mod[$key] = $val
 
 				if $mod
 					interpolate-props($mod)
 
-			for $key, $val in getDSOptions(rounding)
+			for $key, $val in getDSValue(rounding)
 				&_rounding_{$key}
 				&_rounding_{$key} ^[0]__root-wrapper
 				&_rounding_{$key} ^[0]__super-wrapper

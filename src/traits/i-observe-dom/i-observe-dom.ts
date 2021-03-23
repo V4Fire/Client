@@ -12,9 +12,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 
-import {
+import type {
 
 	ObserveOptions,
 	Observer,
@@ -74,7 +74,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Filters added and removed nodes
+	 * Filters the added and removed nodes
 	 *
 	 * @param records
 	 * @param filter
@@ -109,31 +109,48 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Handler: DOM tree was changed
-	 *
-	 * @param component
-	 * @param [records]
-	 * @param [opts]
-	 *
-	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
+	 * @deprecated
+	 * @see [[iObserveDOM.emitDOMChange]]
 	 */
 	static onDOMChange<T extends iBlock>(
 		component: T & iObserveDOM,
 		records?: MutationRecord[],
 		opts?: ObserveOptions
 	): void {
+		this.emitDOMChange(component, records, opts);
+	}
+
+	/**
+	 * Fires an event that the DOM tree has been changed
+	 *
+	 * @param component
+	 * @param [records]
+	 * @param [opts]
+	 *
+	 * @emits `localEmitter:DOMChange(records?: MutationRecord[], options?: ObserverOptions)`
+	 * @emits `DOMChange(records?: MutationRecord[], options?: ObserverOptions)`
+	 */
+	static emitDOMChange<T extends iBlock>(
+		component: T & iObserveDOM,
+		records?: MutationRecord[],
+		opts?: ObserveOptions
+	): void {
+		component.unsafe.localEmitter.emit('DOMChange', records, opts);
 		component.emit('DOMChange', records, opts);
 	}
 
 	/**
-	 * Returns true if MutationObserver is already observing the specified node
+	 * Returns true if `MutationObserver` is already observing the specified node
+	 *
+	 * @param component
+	 * @param node
 	 */
 	static isNodeBeingObserved<T extends iBlock & iObserveDOM>(component: T, node: Element): boolean {
 		return this.getObserversMap(component).has(node);
 	}
 
 	/**
-	 * Returns a component observers map
+	 * Returns a map of component observers
 	 * @param component
 	 */
 	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {
@@ -180,7 +197,7 @@ export default abstract class iObserveDOM {
 	abstract initDOMObservers(): void;
 
 	/**
-	 * Handler: DOM tree was changed
+	 * Handler: the DOM tree has been changed
 	 *
 	 * @param records
 	 * @param options

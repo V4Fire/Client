@@ -30,9 +30,9 @@ Also, you can see the parent component and the component traits.
 < b-virtual-scroll &
   :dataProvider = 'demo.Pagination' |
   :request = {get: {chunkSize: 12}} |
-  :option = 'b-card' |
-  :optionKey = (el, i) => resolveKey(el) |
-  :optionProps = getPropsForOption |
+  :item = 'b-card' |
+  :itemKey = (el, i) => resolveKey(el) |
+  :itemProps = getPropsForOption |
   :dbConverter = convertDataToVirtual
 .
 ```
@@ -44,7 +44,7 @@ export interface RemoteData extends Dictionary {
   /**
    * Data to render
    */
-  data?: unknown[];
+  data?: object[];
 
   /**
    * Total number of elements
@@ -67,12 +67,13 @@ To set loading and rendering data in manual mode, set the `loadStrategy` prop to
 ```
 < b-virtual-scroll &
   :dataProvider = 'demo.Pagination' |
+  :dbConverter = convertDataToVirtual |
   :request = {get: {chunkSize: 12}} |
-  :option = 'b-card' |
   :loadStrategy = 'manual' |
-  :optionKey = (el, i) => resolveKey(el) |
-  :optionProps = getPropsForOption |
-  :dbConverter = convertDataToVirtual
+
+  :item = 'b-card' |
+  :itemKey = (el, i) => resolveKey(el) |
+  :itemProps = getPropsForItem |
 .
   < template #renderNext = o
     < .&__render-next @click = o.ctx.renderNext

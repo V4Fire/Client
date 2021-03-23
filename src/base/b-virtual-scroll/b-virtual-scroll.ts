@@ -16,12 +16,14 @@ import 'models/demo/pagination';
 //#endif
 
 import symbolGenerator from 'core/symbol';
+import { deprecate } from 'core/functools';
 
-import iItems from 'traits/i-items/i-items';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, {
 
 	component,
+	computed,
 	prop,
 	system,
 	field,
@@ -47,7 +49,7 @@ import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/modules/helpers';
 
-import {
+import type {
 
 	GetData,
 	RequestFn,
@@ -57,8 +59,7 @@ import {
 	RequestQueryFn,
 	DataState,
 	MergeDataStateParams,
-	UnsafeBVirtualScroll,
-	ItemProps
+	UnsafeBVirtualScroll
 
 } from 'base/b-virtual-scroll/interface';
 
@@ -72,7 +73,13 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bVirtualScroll extends iData {
+export default class bVirtualScroll extends iData implements iItems {
+	/** @see [[iItems.Item]] */
+	readonly Item!: object;
+
+	/** @see [[iItems.Items]] */
+	readonly Items!: Array<this['Item']>;
+
 	/** @override */
 	readonly DB!: RemoteData;
 
@@ -81,27 +88,48 @@ export default class bVirtualScroll extends iData {
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
-	readonly optionsProp?: unknown[] = [];
+	readonly optionsProp?: this['Items'] = [];
 
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
-	options!: unknown[];
+	options!: this['Items'];
 
 	/** @see [[LoadStrategy]] */
 	@prop({type: String, watch: 'syncPropsWatcher'})
 	readonly loadStrategy: LoadStrategy = 'scroll';
 
-	/** @see [[iItems.item]] */
+	/**
+	 * @deprecated
+	 * @see [[iItems.item]]
+	 */
 	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['item'];
 
-	/** @see [[iItems.itemKey]] */
+	/** @see [[iItems.item]] */
+	@prop({type: [String, Function], required: false})
+	readonly item?: iItems['item'];
+
+	/**
+	 * @deprecated
+	 * @see [[iItems.itemKey]]
+	 */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** @see [[iItems.itemKey]] */
+	@prop({type: [String, Function], required: false})
+	readonly itemKey?: iItems['itemKey'];
+
+	/**
+	 * @deprecated
+	 * @see [[iItems.itemProps]]
+	 */
 	@prop({type: Function, default: () => ({})})
-	readonly optionProps!: ItemProps;
+	readonly optionProps!: iItems['itemProps'];
+
+	/** @see [[iItems.itemProps]] */
+	@prop({type: [Function, Object], default: () => ({})})
+	readonly itemProps!: iItems['itemProps'];
 
 	/**
 	 * Maximum number of elements to cache
@@ -178,6 +206,10 @@ export default class bVirtualScroll extends iData {
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
 
+	/** @see [[iItems.items]] */
+	@field((o) => o.sync.link())
+	protected itemsStore!: iItems['items'];
+
 	/**
 	 * Total amount of items that can be loaded
 	 */
@@ -209,12 +241,35 @@ export default class bVirtualScroll extends iData {
 	@system()
 	protected localStateStore: LocalState = 'init';
 
+	/** @see [[iItems.items]] */
+	@computed({dependencies: ['itemsStore', 'options']})
+	get items(): this['Items'] {
+		const
+			items = Object.size(this.options) > 0 ? this.options : this.itemsStore;
+
+		if (Object.size(this.options) > 0) {
+			deprecate({
+				name: 'options',
+				type: 'property',
+				renamedTo: 'items'
+			});
+		}
+
+		return items ?? [];
+	}
+
+	/** @see [[iItems.items]] */
+	set items(value: this['Items']) {
+		this.field.set('itemsStore', value);
+	}
+
 	/** @override */
 	get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return <any>this;
 	}
 
 	/** @override */
+	// @ts-ignore (getter instead readonly)
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
@@ -318,8 +373,8 @@ export default class bVirtualScroll extends iData {
 	 * @typeParam RAW - raw provider data
 	 */
 	getCurrentDataState<
-		ITEM extends unknown = unknown,
-		RAW extends unknown = unknown
+		ITEM extends object = object,
+		RAW extends object = object
 	>(): DataState<ITEM, RAW> {
 		let overrideParams: MergeDataStateParams = {};
 
@@ -334,6 +389,65 @@ export default class bVirtualScroll extends iData {
 	}
 
 	/**
+	 * Returns additional props to pass to the specified item component
+	 *
+	 * @param el
+	 * @param i
+	 */
+	getItemAttrs(el: this['Item'], i: number): CanUndef<Dictionary> {
+		const
+			{itemProps, optionProps} = this;
+
+		let
+			props = itemProps;
+
+		if (optionProps != null) {
+			deprecate({
+				name: 'optionProps',
+				type: 'property',
+				renamedTo: 'itemProps'
+			});
+
+			props = optionProps;
+		}
+
+		return Object.isFunction(props) ?
+			props(el, i, {
+				key: this.getItemKey(el, i),
+				ctx: this
+			}) :
+			props;
+	}
+
+	/**
+	 * Returns a component name to render an item
+	 *
+	 * @param el
+	 * @param i
+	 */
+	getItemComponentName(el: this['Item'], i: number): string {
+		const
+			{item, option} = this;
+
+		if (option != null) {
+			deprecate({
+				name: 'option',
+				type: 'property',
+				renamedTo: 'item'
+			});
+
+			return Object.isFunction(option) ? option(el, i) : option;
+		}
+
+		return Object.isFunction(item) ? item(el, i) : <string>item;
+	}
+
+	/** @see [[iItems.getItemKey]] */
+	getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
+		return iItems.getItemKey(this, el, i);
+	}
+
+	/**
 	 * Takes a snapshot of the current data state and returns it
 	 *
 	 * @param [overrideParams]
@@ -344,7 +458,7 @@ export default class bVirtualScroll extends iData {
 	 * @typeParam RAW - raw provider data
 	 */
 	protected getDataStateSnapshot<
-		ITEM extends unknown = unknown,
+		ITEM extends object = object,
 		RAW extends unknown = unknown
 	>(
 		overrideParams?: MergeDataStateParams,
@@ -400,7 +514,7 @@ export default class bVirtualScroll extends iData {
 	}
 
 	/** @override */
-	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
+	protected convertDataToDB<O>(data: object): O | this['DB'] {
 		this.chunkRequest.lastLoadedChunk.raw = data;
 		return super.convertDataToDB(data);
 	}
@@ -409,7 +523,7 @@ export default class bVirtualScroll extends iData {
 	 * Initializes rendering on the items passed to the component
 	 */
 	@hook('mounted')
-	@watch('options')
+	@watch(['options', 'itemsStore'])
 	@wait('ready', {defer: true, label: $$.initOptions})
 	protected initItems(): CanPromise<void> {
 		if (this.dataProvider !== undefined) {
@@ -424,7 +538,10 @@ export default class bVirtualScroll extends iData {
 		this.chunkRequest.init().catch(stderr);
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/**
+	 * @deprecated
+	 * @see [[iItems.getItemKey]]
+	 */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
 		// @ts-ignore (removed implementation for issues/471)
 		return iItems.getItemKey(this, el, i);

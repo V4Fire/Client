@@ -116,12 +116,20 @@
 						< title
 							{title}
 
+					- block varsDecl
+						+= h.getVarsDecl({wrap: true})
+
+					- block assets
+						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
+
 					- block links
 						+= await h.loadLinks(deps.links, {assets, wrap: true})
 
+					- block headStyles
+						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: true})
+
 					- block headScripts
-						+= h.getVarsDecl({wrap: true})
-						+= await h.loadLibs(deps.headScripts, {assets, wrap: true})
+						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: true})
 
 			< body
 				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
@@ -138,16 +146,13 @@
 						- block providers
 
 				- block deps
-					- block assets
-						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
-
 					- block styles
 						+= await h.loadStyles(deps.styles, {assets, wrap: true})
 						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
 					- block scripts
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
-						+= await h.loadLibs(deps.scripts, {assets, wrap: true})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
 
 						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
 						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})

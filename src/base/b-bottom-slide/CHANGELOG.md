@@ -9,11 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.1?? (2021-01-??)
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation
+
+## v3.0.0-rc.150 (2021-03-03)
 
 #### :bug: Bug Fix
 
-* Fixed geometry initialization within the content mode
+* Fixed an issue with the scroll unlocking during close
 
 ## v3.0.0-rc.112 (2020-12-18)
 
@@ -21,10 +27,9 @@ Changelog
 
 * Now `forceInnerRender` is toggled to `true` by default
 
-## v3.0.0-rc.112 (2020-12-18)
-
 #### :bug: Bug Fix
 
+* Fixed geometry initialization within the content mode
 * Fixed `updateWindowPosition` with lazy rendering
 
 ## v3.0.0-rc.111 (2020-12-16)

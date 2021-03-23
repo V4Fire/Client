@@ -6,13 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { WatchPath } from 'core/object/watch';
-import { ComputedOptions, DirectiveOptions } from 'core/component/engines';
+import type { WatchPath } from 'core/object/watch';
+import type { ComputedOptions, DirectiveOptions } from 'core/component/engines';
 
-import { Hook } from 'core/component/interface/life-cycle';
-import { ComponentInterface } from 'core/component/interface/component';
-import { FieldWatcher, MethodWatcher } from 'core/component/interface/watch';
-import { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
+import type { Hook } from 'core/component/interface/life-cycle';
+import type { ComponentInterface } from 'core/component/interface/component';
+
+import type { FieldWatcher, MethodWatcher } from 'core/component/interface/watch';
+import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
 
 /**
  * Additional options to register a component

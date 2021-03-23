@@ -14,7 +14,7 @@ const
 
 const
 	{config: pzlr} = require('@pzlr/build-core'),
-	{getDSComponentMods} = include('build/ds');
+	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
 	graph = include('build/graph.webpack');
@@ -67,20 +67,17 @@ module.exports = {
 
 		null,
 
+	THEME: s(config.theme.default()),
+	THEME_ATTRIBUTE: s(config.theme.attribute),
+	AVAILABLE_THEMES: pzlr.designSystem ?
+		s(getThemes(getDS(), config.theme.include() || [config.theme.default()])) :
+		null,
+
 	DS_COMPONENTS_MODS: pzlr.designSystem ?
 		getDSComponentMods() :
 		null,
 
 	DS: runtime.passDesignSystem && pzlr.designSystem ?
-		(() => {
-			try {
-				return s(require(pzlr.designSystem));
-
-			} catch {
-				console.log(`Can't find "${pzlr.designSystem}" design system package`);
-				return null;
-			}
-		})() :
-
+		s(getDS()) :
 		null
 };

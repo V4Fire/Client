@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { EventListener } from 'core/component/queue-emitter/interface';
+import type { EventListener } from 'core/component/queue-emitter/interface';
 
 export * from 'core/component/queue-emitter/interface';
 

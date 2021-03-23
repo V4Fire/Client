@@ -14,7 +14,7 @@
 import Friend from 'super/i-block/modules/friend';
 
 import { literalCache } from 'super/i-block/modules/opt/const';
-import { IfOnceValue } from 'super/i-block/modules/opt/interface';
+import type { IfOnceValue } from 'super/i-block/modules/opt/interface';
 
 export * from 'super/i-block/modules/opt/const';
 export * from 'super/i-block/modules/opt/interface';

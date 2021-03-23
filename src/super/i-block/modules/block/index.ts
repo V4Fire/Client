@@ -13,10 +13,10 @@
 
 import Friend from 'super/i-block/modules/friend';
 
-import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 import { fakeCtx, modRgxpCache, elRxp } from 'super/i-block/modules/block/const';
+import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 
-import {
+import type {
 
 	ModEvent,
 	ModEventReason,
@@ -325,7 +325,7 @@ export default class Block extends Friend {
 
 		ctx.mods[name] = normalizedVal;
 
-		if (!ctx.isNotRegular) {
+		if (ctx.isNotRegular === false) {
 			const
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
@@ -403,7 +403,7 @@ export default class Block extends Friend {
 		if (needNotify) {
 			ctx.mods[name] = undefined;
 
-			if (!ctx.isNotRegular) {
+			if (ctx.isNotRegular === false) {
 				const
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
@@ -457,7 +457,7 @@ export default class Block extends Friend {
 			return mods[name.camelize(false)];
 		}
 
-		if (!node || !ctx.isNotRegular) {
+		if (!node || ctx.isNotRegular === false) {
 			return undefined;
 		}
 

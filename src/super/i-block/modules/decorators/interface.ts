@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOptions } from 'core/async';
-import { ComponentInterface } from 'core/component';
+import type { AsyncOptions } from 'core/async';
+import type { ComponentInterface } from 'core/component';
 
-import iBlock from 'super/i-block';
-import { ComponentStatus } from 'super/i-block/interface';
+import type iBlock from 'super/i-block';
+import type { ComponentStatus } from 'super/i-block/interface';
 
-import {
+import type {
 
 	InitFieldFn as BaseInitFieldFn,
 	MergeFieldFn as BaseMergeFieldFn,

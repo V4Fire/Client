@@ -18,7 +18,7 @@ import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
 import Friend from 'super/i-block/modules/friend';
-import { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
+import type { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
 
 export * from 'super/i-block/modules/async-render/interface';
 
@@ -293,11 +293,14 @@ export default class AsyncRender extends Friend {
 					total++;
 					chunkTotal++;
 
-					const needRender =
+					const isDone =
 						el.done ||
-						isValPromise ||
-						chunkTotal >= perChunk ||
 						Object.isArray(iterable) && total >= iterable.length;
+
+					const needRender =
+						isDone ||
+						isValPromise ||
+						chunkTotal >= perChunk;
 
 					if (!needRender) {
 						return;
@@ -316,6 +319,10 @@ export default class AsyncRender extends Friend {
 							chunkI++;
 							chunkTotal = 0;
 							renderBuffer = [];
+
+							if (isDone) {
+								this.ctx.localEmitter.emit('asyncRenderComplete', {...opts, ...desc});
+							}
 
 							$a.worker(() => {
 								const destroyEl = (el) => {

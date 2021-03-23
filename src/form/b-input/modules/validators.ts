@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bInput from 'form/b-input/b-input';
-import iInput, { ValidatorsDecl, ValidatorParams, ValidatorResult, ValidatorError } from 'super/i-input/i-input';
+import type bInput from 'form/b-input/b-input';
+import type iInput from 'super/i-input/i-input';
+import type { ValidatorsDecl, ValidatorParams, ValidatorResult, ValidatorError } from 'super/i-input/i-input';
 
 export interface NumberValidatorParams extends ValidatorParams {
 	type?: 'int' | 'uint' | 'float' | 'ufloat';

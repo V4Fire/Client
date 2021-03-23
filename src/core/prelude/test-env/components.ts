@@ -6,17 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iStaticPage, { ComponentElement } from 'super/i-static-page/i-static-page';
+import type iStaticPage from 'super/i-static-page/i-static-page';
+import type { ComponentElement } from 'super/i-static-page/i-static-page';
 
 globalThis.renderComponents = (
 	componentName: string,
 	scheme: RenderParams[],
 	options?: RenderOptions | string
 ) => {
-	if (Object.size(options) === 0) {
-		options = {rootSelector: '#root-component'};
-
-	} else if (Object.isString(options)) {
+	if (Object.isString(options) || Object.size(options) === 0) {
 		options = {rootSelector: '#root-component'};
 	}
 

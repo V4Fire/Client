@@ -14,8 +14,9 @@ import { fillMeta } from 'core/component/meta';
 import { implementComponentForceUpdateAPI } from 'core/component/render';
 
 import { fakeMapSetCopy } from 'core/component/engines/helpers';
-import { ComponentDriver, ComponentOptions } from 'core/component/engines';
-import { ComponentMeta } from 'core/component/interface';
+
+import type { ComponentDriver, ComponentOptions } from 'core/component/engines';
+import type { ComponentMeta } from 'core/component/interface';
 
 /**
  * Returns a component declaration object from the specified component meta object
@@ -30,7 +31,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 		{component} = fillMeta(meta);
 
 	return {
-		...<ComponentOptions<ComponentDriver>>Any(component),
+		...<any>(component),
 		inheritAttrs: p.inheritAttrs,
 
 		model: m && {

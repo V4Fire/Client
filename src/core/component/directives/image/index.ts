@@ -11,30 +11,27 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
 import { ImageLoader } from 'core/dom/image';
 
 import { ComponentDriver, VNode } from 'core/component/engines';
-import { DirectiveOptions } from 'core/component/directives/image/interface';
+import type { DirectiveOptions } from 'core/component/directives/image/interface';
 
 export * from 'core/dom/image';
 
 ComponentDriver.directive('image', {
-	// @ts-expect-error (wrong type)
-	inserted(el: HTMLElement, {value}: DirectiveOptions, vNode: VNode & {context?: iBlock}): void {
+	inserted(el: HTMLElement, {value}: DirectiveOptions, vNode: VNode): void {
 		if (value == null) {
 			return;
 		}
 
-		if (vNode.context != null) {
+		if (vNode.fakeContext != null) {
 			if (Object.isPlainObject(value)) {
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				value.ctx = value.ctx ?? vNode.context;
+				value.ctx = value.ctx ?? vNode.fakeContext;
 
 			} else {
 				value = {
 					src: value,
-					ctx: vNode.context
+					ctx: vNode.fakeContext
 				};
 			}
 		}

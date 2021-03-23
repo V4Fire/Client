@@ -10,10 +10,10 @@ import symbolGenerator from 'core/symbol';
 
 import { Friend } from 'super/i-block/i-block';
 
-import ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import type ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
+import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem, DataToRender, OptionEl, ItemAttrs } from 'base/b-virtual-scroll/interface';
+import type { RenderItem, DataToRender, ItemAttrs } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -48,13 +48,6 @@ export default class ComponentRender extends Friend {
 	 */
 	protected get scrollRender(): ScrollRender {
 		return this.ctx.chunkRender;
-	}
-
-	/**
-	 * Link to the component $createElement method
-	 */
-	protected get createElement(): bVirtualScroll['$createElement'] {
-		return this.ctx.$createElement.bind(this.ctx);
 	}
 
 	/**
@@ -108,8 +101,8 @@ export default class ComponentRender extends Friend {
 	}
 
 	/** @see [[bVirtualScroll.getOptionKey]] */
-	getOptionKey(data: unknown, index: number): string {
-		return String(this.ctx.getOptionKey(data, index));
+	getItemKey(data: object, index: number): string {
+		return String(this.ctx.getItemKey(data, index));
 	}
 
 	/**
@@ -135,7 +128,7 @@ export default class ComponentRender extends Friend {
 
 			if (canCache) {
 				const
-					key = this.getOptionKey(item.data, item.index),
+					key = this.getItemKey(item.data, item.index),
 					node = this.getCachedComponent(key);
 
 				if (node) {
@@ -157,7 +150,7 @@ export default class ComponentRender extends Friend {
 					item = needRender[i][0],
 					indexesToAssign = needRender[i][1],
 					node = nodes[i],
-					key = this.getOptionKey(item.data, item.index);
+					key = this.getItemKey(item.data, item.index);
 
 				if (canCache) {
 					this.cacheNode(key, item.node = node);
@@ -178,12 +171,12 @@ export default class ComponentRender extends Friend {
 		const
 			{ctx: c, scrollRender: {items: totalItems}} = this;
 
-		const getOption = (itemParas: OptionEl, index: number) =>
-			Object.isFunction(c.option) ? c.option(itemParas, index) : c.option;
+		const render = (children: DataToRender[]) => {
+			const map = ({itemAttrs, itemParams, index}) =>
+				this.ctx.$createElement(c.getItemComponentName(itemParams, index), itemAttrs);
 
-		const render = (children: DataToRender[]) =>
-			<HTMLElement[]>c.vdom.render(children.map(({itemAttrs, itemParams, index}) =>
-				this.createElement(getOption(itemParams, index), itemAttrs)));
+			return <HTMLElement[]>c.vdom.render(children.map(map));
+		};
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({
 			attrs: {
@@ -210,16 +203,19 @@ export default class ComponentRender extends Friend {
 				itemParams = getItemEl(item.data, item.index),
 				itemIndex = item.index;
 
-			const attrs = Object.isFunction(c.optionProps) ?
-				c.optionProps(getItemEl(item.data, item.index), item.index, {
-					ctx: c,
-					key: this.getOptionKey(item.data, item.index)
-				}) :
-				c.optionProps;
+			const attrs = c.getItemAttrs(getItemEl(item.data, item.index), item.index);
 
-			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs), index: itemIndex});
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs!), index: itemIndex});
 		}
 
-		return render(children);
+		const
+			res = render(children);
+
+		if (res.length === 0) {
+			throw new Error('Failed to render components, possibly an error occurred while creating the components');
+		}
+
+		return res;
 	}
 }

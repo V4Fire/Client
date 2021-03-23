@@ -85,6 +85,238 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bInputHidden`
   * `bForm`
 
+## v3.0.0-rc.164 (2021-03-22)
+
+#### :boom: Breaking Change
+
+* Now `onDOMChange` is deprecated. Use `emitDOMChange` instead. `traits/i-observe-dom`
+
+#### :rocket: New Feature
+
+* Added `jasmine` tests for `.spec.js` files
+* Added the ability to change themes
+
+* `build/stylus`:
+  * Added a new plugin function `log`
+  * Added the ability to mark styles as obsolescence
+
+#### :bug: Bug Fix
+
+* Now `bVirtualScroll` will throw an error if the rendering of components returns an empty array `base/b-virtual-scroll`
+
+#### :memo: Documentation
+
+* Added documentation:
+  * `b-slider`
+  * `b-bottom-slide`
+  * `i-observe-dom`
+
+* Improved documentation `build/stylus/ds`
+
+#### :house: Internal
+
+* Fixed a race condition with the test case that waits for timeouts
+* Added tests:
+  * `bImage`
+  * `build/ds`
+  * `super/i-block/modules/daemons`
+  * `core/compoent/directives/update-on`
+
+* `build/stylus/ds`:
+  * Added tests
+  * Plugins moved to a separated folder `build/stylus/ds`
+
+## v3.0.0-rc.163 (2021-03-19)
+
+#### :rocket: New Feature
+
+* Added `target.webpack` `build`
+
+## v3.0.0-rc.162 (2021-03-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when getter can't be watched when it depends on an external property `core/component/watch`
+
+## v3.0.0-rc.161 (2021-03-18)
+
+#### :bug: Bug Fix
+
+* Fixed checks weather component is regular or not in `i-block/modules/block`
+
+## v3.0.0-rc.160 (2021-03-17)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the project building never stopped `build`
+
+## v3.0.0-rc.159 (2021-03-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the `noGlobal` breaks on `'foo'?.dasherize()` `build`
+
+## v3.0.0-rc.158 (2021-03-15)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition when loading template files
+
+## v3.0.0-rc.157 (2021-03-10)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries `build` `iStaticPage`
+
+## v3.0.0-rc.156 (2021-03-06)
+
+#### :bug: Bug Fix
+
+* Updated regexp in `iBlock.canSelfDispatchEvent` to match kebab-cased events but not camelCased
+
+## v3.0.0-rc.155 (2021-03-05)
+
+#### :rocket: New Feature
+
+* Added a new method `canSelfDispatchEvent` to prevent self dispatching of some events `iBlock`
+
+#### :bug: Bug Fix
+
+* Now `componentStatus` and `componentHook` events can't be self dispatched `iBlock`
+
+## v3.0.0-rc.154 (2021-03-04)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with tests failing because waiting of `#root-component` to become visible `tests/helpers/utils`
+
+## v3.0.0-rc.153 (2021-03-04)
+
+#### :rocket: New Feature
+
+* Added a new option `--bail` to stop test execution after the first failure `tests`
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with tests execution took too long](https://github.com/V4Fire/Client/issues/436)
+
+* Added `force=true` to default options `DOM.clickToRef`. It fixed a bug where clicking at a visible element
+  did not work because the playwright decided that the element was not visible. `tests`
+
+#### :house: Internal
+
+* [`bVirtualScroll` is now implements `iItems` trait `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/471)
+
+#### :nail_care: Polish
+
+* [Interface names review `core/dom/in-view`](https://github.com/V4Fire/Client/issues/405)
+
+## v3.0.0-rc.152 (2021-03-04)
+
+#### :house: Internal
+
+* Added a `try-catch` block to suppress async errors on component rerender in `iBlock.onUpdateHook`
+
+## v3.0.0-rc.151 (2021-03-04)
+
+#### :rocket: New Feature
+
+* Added a new config `client.tsconfig`
+
+#### :house: Internal
+
+* `bVirtualScroll`:
+  * Downgraded the delay before initializing to `15ms`
+  * Some optimizations
+
+* Caching of dynamic imports `super/i-block/modules/dom`
+
+## v3.0.0-rc.150 (2021-03-03)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the scroll unlocking during close `base/b-bottom-slide`
+
+## v3.0.0-rc.149 (2021-03-01)
+
+#### :bug: Bug Fix
+
+* Don't generate `.init.js` with `--fat-html` `iStaticPage`
+
+## v3.0.0-rc.148 (2021-03-01)
+
+#### :house: Internal
+
+* Added `importsNotUsedAsValues` to `.tsconfig`
+
+## v3.0.0-rc.147 (2021-02-18)
+
+#### :rocket: New Feature
+
+* Emit an event when async rendering is completed `super/i-block/modules/async-render`
+
+#### :bug: Bug Fix
+
+* Removed a race condition during loading of the libs `iStaticPage`
+* Fixed providing of destroying events to external components `core/component/construct`
+
+## v3.0.0-rc.146 (2021-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed providing of activation events to external components `core/component/construct`
+* Fixed creation of meta objects `core/component/flyweight`
+
+## v3.0.0-rc.145 (2021-02-12)
+
+#### :house: Internal
+
+* Now external activation hooks are fired with a delay `core/component/construct`
+
+## v3.0.0-rc.144 (2021-02-11)
+
+#### :boom: Breaking Change
+
+* Now, by default is used `b-button-functional` `traits/i-control-list`
+
+#### :bug: Bug Fix
+
+* Added providing of activation events to external components
+
+## v3.0.0-rc.143 (2021-02-11)
+
+#### :rocket: New Feature
+
+* Added icons colorizing functionality by the Stylus' `i` function `global/g-def`
+* Added `stylus` plugins to generate URL-s `build/stylus/url`:
+  * `toQueryString`
+  * `createURL`
+
+## v3.0.0-rc.142 (2021-02-11)
+
+#### :boom: Breaking Change
+
+* Removed:
+  * `b-content-switcher`
+  * `core/component/helpers/observable`
+
+#### :rocket: New Feature
+
+* Added a new property `fakeContext` to `VNode` `core/component/engines`
+
+#### :bug: Bug Fix
+
+* Fixed an issue when refs are not resolved after the `update` hook `iBlock`
+* Fixed creation of a context:
+  * `core/component/functional`
+  * `core/component/flyweight`
+
+#### :house: Internal
+
+* Refactoring:
+  * `core/dom/image`
+  * `core/dom/resize-observer`
+
 ## v3.0.0-rc.141 (2021-02-05)
 
 #### :bug: Bug Fix
@@ -332,6 +564,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed `bMatryoshka`. Use `bTree` instead.
 * Trait refactoring. Using `item` instead of `option`. `traits/i-items`
+* Refactoring for the updated `iItems` API `b-slider`
 
 #### :rocket: New Feature
 

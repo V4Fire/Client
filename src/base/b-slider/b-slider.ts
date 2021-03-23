@@ -37,8 +37,8 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 import { sliderModes, alignTypes } from 'base/b-slider/const';
+import type { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-slider/interface';
@@ -463,7 +463,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 
 	/** @see [[iObserveDOM.onDOMChange]] */
 	onDOMChange(): void {
-		iObserveDOM.onDOMChange(this);
+		iObserveDOM.emitDOMChange(this);
 	}
 
 	/**
@@ -494,6 +494,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 				key: this.getItemKey(el, i),
 				ctx: this
 			}) :
+
 			props;
 	}
 

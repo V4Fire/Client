@@ -11,15 +11,15 @@
  * @packageDocumentation
  */
 
+import { memoize } from 'core/promise/sync';
 import { deprecated } from 'core/functools/deprecation';
-
 import { wrapAsDelegateHandler } from 'core/dom';
 
-import { InitOptions, InViewAdapter } from 'core/dom/in-view';
-import { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
+import type { InViewInitOptions, InViewAdapter } from 'core/dom/in-view';
+import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
-import { ComponentElement } from 'core/component';
-import { AsyncOptions } from 'core/async';
+import type { AsyncOptions } from 'core/async';
+import type { ComponentElement } from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
@@ -47,7 +47,9 @@ export default class DOM extends Friend {
 			return currentInstance;
 		}
 
-		return this.ctx.tmp[inViewInstanceStore] = this.async.promise(import('core/dom/in-view')).then(({inViewFactory}) => inViewFactory());
+		return this.ctx.tmp[inViewInstanceStore] = this.async.promise(
+			memoize('core/dom/in-view', () => import('core/dom/in-view'))
+		).then(({inViewFactory}) => inViewFactory());
 	}
 
 	/**
@@ -126,7 +128,7 @@ export default class DOM extends Friend {
 		}
 
 		if (node.clientHeight > 0) {
-			cb.call(this.component, node);
+			await cb.call(this.component, node);
 			return false;
 		}
 
@@ -146,6 +148,7 @@ export default class DOM extends Friend {
 
 		wrapper.appendChild(node);
 		document.body.appendChild(wrapper);
+
 		await cb.call(this.component, node);
 
 		if (parent) {
@@ -210,7 +213,7 @@ export default class DOM extends Friend {
 	 * Replaces a component element with the specified node.
 	 * The method returns a link to an Async worker that wraps the operation.
 	 *
-	 * @param el - element name or a link to a node
+	 * @param el - element name or a link to the node
 	 * @param newNode
 	 * @param [groupOrOptions] - `async` group or a set of options
 	 */
@@ -322,6 +325,32 @@ export default class DOM extends Friend {
 	}
 
 	/**
+	 * Watches for intersections of the specified element by using the `in-view` module
+	 *
+	 * @param el
+	 * @param options
+	 * @param asyncOptions
+	 */
+	watchForIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
+		const
+			inViewInstance = this.localInView;
+
+		const destructor = this.ctx.async.worker(
+			() => inViewInstance
+				.then((adapter) => adapter.remove(el, options.threshold))
+				.catch(stderr),
+
+			asyncOptions
+		);
+
+		inViewInstance
+			.then((adapter) => adapter.observe(el, options))
+			.catch(stderr);
+
+		return destructor;
+	}
+
+	/**
 	 * @deprecated
 	 * @see [[DOM.prototype.watchForIntersection]]
 	 *
@@ -330,29 +359,8 @@ export default class DOM extends Friend {
 	 * @param asyncOptions
 	 */
 	@deprecated({renamedTo: 'watchForIntersection'})
-	watchForNodeIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
+	watchForNodeIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
 		return this.watchForIntersection(el, options, asyncOptions);
-	}
-
-	/**
-	 * Watches for intersections of the specified element by using the `in-view` module
-	 *
-	 * @param el
-	 * @param options
-	 * @param asyncOptions
-	 */
-	watchForIntersection(el: Element, options: InitOptions, asyncOptions: AsyncOptions): Function {
-		const
-			{ctx} = this,
-			inViewInstance = this.localInView;
-
-		const destructor = ctx.async.worker(
-			() => inViewInstance.then((adapter) => adapter.remove(el, options.threshold), stderr),
-			asyncOptions
-		);
-
-		inViewInstance.then((adapter) => adapter.observe(el, options), stderr);
-		return destructor;
 	}
 
 	/**
@@ -364,8 +372,9 @@ export default class DOM extends Friend {
 	 * @param asyncOptions
 	 */
 	watchForResize(el: Element, options: ResizeWatcherInitOptions, asyncOptions: AsyncOptions): Function {
-		const
-			ResizeWatcher = this.async.promise(import('core/dom/resize-observer'));
+		const ResizeWatcher = this.async.promise(
+			memoize('core/dom/resize-observer', () => import('core/dom/resize-observer'))
+		);
 
 		const destructor = this.ctx.async.worker(
 			() => ResizeWatcher.then(({ResizeWatcher}) => ResizeWatcher.unobserve(el, options), stderr),

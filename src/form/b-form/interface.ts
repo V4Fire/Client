@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RequestError } from 'core/request';
-import { RequestQuery, RequestBody } from 'super/i-data/i-data';
+import type iInput from 'super/i-input/i-input';
 
-import iInput from 'super/i-input/i-input';
-import bForm from 'form/b-form/b-form';
-import ValidationError from 'form/b-form/modules/error';
+import type { ValidationError as InputValidationError } from 'super/i-input/i-input';
+import type { RequestError, RequestQuery, RequestBody } from 'super/i-data/i-data';
+
+import type bForm from 'form/b-form/b-form';
 
 export interface ValidateOptions {
 	focusOnError?: boolean;
@@ -30,7 +30,7 @@ export type SubmitStatus = 'success' | 'fail' | 'empty';
 
 export interface SubmitResult<D = unknown> {
 	status: SubmitStatus;
-	response: D | Error | RequestError | ValidationError;
+	response: D | Error | RequestError | InputValidationError;
 }
 
 export interface ActionFn {

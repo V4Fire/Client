@@ -7,6 +7,7 @@
  */
 
 /// <reference types="@v4fire/core"/>
+/// <reference types="./build/stylus/ds"/>
 
 declare const CSP_NONCE_STORE: string;
 
@@ -19,7 +20,7 @@ declare const TPLS: Dictionary<Dictionary<Function>>;
 
 declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
-declare const DS: CanUndef<Dictionary>;
+declare const DS: CanUndef<DesignSystem>;
 
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
@@ -37,6 +38,24 @@ interface HTMLImageElement {
 	readonly init: Promise<this>;
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
 }
+
+/**
+ * Default app theme to use
+ * @see config/default.js
+ */
+declare const THEME: CanUndef<string>;
+
+/**
+ * Attribute name to set a value of the theme to the root element
+ * @see config/default.js
+ */
+declare const THEME_ATTRIBUTE: CanUndef<string>;
+
+/**
+ * Array of available themes in the runtime
+ * @see config/default.js
+ */
+declare const AVAILABLE_THEMES: CanUndef<string[]>;
 
 interface Event {
 	delegateTarget?: Element;

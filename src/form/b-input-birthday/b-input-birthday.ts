@@ -6,15 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type bSelect from 'form/b-select/b-select';
+import type { Option } from 'form/b-select/b-select';
+
 import iWidth from 'traits/i-width/i-width';
-import bSelect, { Option } from 'form/b-select/b-select';
 import iInput, { component, prop, Cache, ModsDecl } from 'super/i-input/i-input';
+
 export * from 'super/i-input/i-input';
 
 export type Value = Date;
 export type FormValue = Value;
 
-export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<Option>>([
+export const selectCache = new Cache<'months' | 'days' | 'years', readonly Option[]>([
 	'months',
 	'days',
 	'years'

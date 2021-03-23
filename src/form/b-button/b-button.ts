@@ -15,16 +15,15 @@
 import 'core/data';
 //#endif
 
-//#if runtime has bForm
-import bForm from 'form/b-form/b-form';
-//#endif
+import type bForm from 'form/b-form/b-form';
 
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
+
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
-import { HintPosition } from 'global/g-hint/interface';
+import type { HintPosition } from 'global/g-hint/interface';
 
 import iData, {
 
@@ -40,7 +39,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { ButtonType } from 'form/b-button/interface';
+import type { ButtonType } from 'form/b-button/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';

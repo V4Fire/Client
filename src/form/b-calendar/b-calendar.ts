@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bInputTime from 'form/b-input-time/b-input-time';
+import type bInputTime from 'form/b-input-time/b-input-time';
 
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
@@ -28,7 +28,7 @@ import iInput, {
 
 } from 'super/i-input/i-input';
 
-import {
+import type {
 
 	Value,
 	FormValue,

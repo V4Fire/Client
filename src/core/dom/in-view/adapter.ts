@@ -8,15 +8,15 @@
 
 import { deprecate } from 'core/functools/deprecation';
 
-import MutationObserverStrategy from 'core/dom/in-view/mutation';
-import IntersectionObserverStrategy from 'core/dom/in-view/intersection';
+import type MutationObserverStrategy from 'core/dom/in-view/mutation';
+import type IntersectionObserverStrategy from 'core/dom/in-view/intersection';
 
-import {
+import type {
 
 	InViewGroup,
-	InitOptions,
-	ObservableElement,
-	ObservableThresholdMap
+	InViewInitOptions,
+	InViewObservableElement,
+	InViewObservableThresholdMap
 
 } from 'core/dom/in-view/interface';
 
@@ -69,7 +69,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param params
 	 */
-	observe(el: Element, params: CanArray<InitOptions>): false | undefined {
+	observe(el: Element, params: CanArray<InViewInitOptions>): false | undefined {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -196,7 +196,7 @@ export default class InViewAdapter {
 	 * Calls an observable callback
 	 * @param observable
 	 */
-	call(observable: ObservableElement): void {
+	call(observable: InViewObservableElement): void {
 		if (!this.adaptee) {
 			return;
 		}
@@ -208,7 +208,7 @@ export default class InViewAdapter {
 	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
-	getThresholdMap(el: Element): CanUndef<ObservableThresholdMap> {
+	getThresholdMap(el: Element): CanUndef<InViewObservableThresholdMap> {
 		if (!this.adaptee) {
 			return;
 		}
@@ -222,7 +222,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param threshold
 	 */
-	get(el: Element, threshold: number): CanUndef<ObservableElement> {
+	get(el: Element, threshold: number): CanUndef<InViewObservableElement> {
 		if (!this.adaptee) {
 			return;
 		}
@@ -234,7 +234,7 @@ export default class InViewAdapter {
 	 * Normalizes the specified directive options
 	 * @param opts
 	 */
-	protected normalizeOptions(opts: InitOptions): InitOptions {
+	protected normalizeOptions(opts: InViewInitOptions): InViewInitOptions {
 		return opts;
 	}
 }

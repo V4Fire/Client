@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RenderContext, VNode } from 'vue';
+import type { RenderContext, VNode } from 'vue';
+
 import { patchComponentVData } from 'core/component/vnode';
-import { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Clones the specified vnode

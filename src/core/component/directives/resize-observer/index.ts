@@ -6,21 +6,26 @@
 * https://github.com/V4Fire/Client/blob/master/LICENSE
 */
 
-import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
-
-import iBlock from 'super/i-block/i-block';
-
 import { ComponentDriver, VNode } from 'core/component/engines';
-import { DirectiveOptions, ResizeWatcherObservable, ResizeWatcherObserverOptions } from 'core/component/directives/resize-observer/interface';
+import type { ComponentInterface } from 'core/component/interface';
+
+import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 import { DIRECTIVE_BIND } from 'core/component/directives/resize-observer/const';
+
+import type {
+
+	DirectiveOptions,
+	ResizeWatcherObservable,
+	ResizeWatcherObserverOptions
+
+} from 'core/component/directives/resize-observer/interface';
 
 export * from 'core/component/directives/resize-observer/interface';
 export * from 'core/component/directives/resize-observer/const';
 export * from 'core/dom/resize-observer';
 
 ComponentDriver.directive('resize-observer', {
-	// @ts-expect-error (wrong type)
-	inserted(el: HTMLElement, opts: DirectiveOptions, vNode: VNode & {context?: iBlock}): void {
+	inserted(el: HTMLElement, opts: DirectiveOptions, vNode: VNode): void {
 		const
 			val = opts.value;
 
@@ -29,13 +34,12 @@ ComponentDriver.directive('resize-observer', {
 		}
 
 		Array.concat([], val).forEach((options) => {
-			options = normalizeOptions(options, vNode.context);
+			options = normalizeOptions(options, vNode.fakeContext);
 			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, options));
 		});
 	},
 
-	// @ts-expect-error (wrong type)
-	update(el: HTMLElement, opts: DirectiveOptions, vNode: VNode & {context?: iBlock}): void {
+	update(el: HTMLElement, opts: DirectiveOptions, vNode: VNode): void {
 		const
 			oldOptions = opts.oldValue,
 			newOptions = opts.value;
@@ -55,7 +59,7 @@ ComponentDriver.directive('resize-observer', {
 				return;
 			}
 
-			options = normalizeOptions(options, vNode.context);
+			options = normalizeOptions(options, vNode.fakeContext);
 			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, options));
 		});
 	},
@@ -94,7 +98,10 @@ function setCreatedViaDirectiveFlag(observable: Nullable<ResizeWatcherObservable
  * @param opts
  * @param ctx
  */
-function normalizeOptions(opts: ResizeWatcherInitOptions, ctx: CanUndef<iBlock>): ResizeWatcherObserverOptions {
+function normalizeOptions(
+	opts: ResizeWatcherInitOptions,
+	ctx: CanUndef<ComponentInterface>
+): ResizeWatcherObserverOptions {
 	return Object.isFunction(opts) ?
 		{
 			callback: opts,

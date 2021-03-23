@@ -27,5 +27,6 @@ package('p-v4-components-demo')
 		'b-dummy-text',
 		'b-slider',
 		'b-window',
+		'b-image',
 		components
 	);

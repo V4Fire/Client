@@ -1,0 +1,10 @@
+{
+  "spec_dir": "",
+  "spec_files": [
+    "src/core/**/*[sS]pec.js",
+    "build/**/*[sS]pec.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": true,
+  "timeoutInterval": 10000
+}

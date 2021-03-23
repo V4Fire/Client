@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { InitOptions, AdapteeInstance } from 'core/dom/in-view/interface';
+import type { InViewInitOptions, InViewAdapteeInstance } from 'core/dom/in-view/interface';
 
 /**
  * Returns the first adaptee which is acceptable
  * @param strategies
  */
-export function getAdaptee(strategies: AdapteeInstance[]): CanUndef<AdapteeInstance> {
+export function getAdaptee(strategies: InViewAdapteeInstance[]): CanUndef<InViewAdapteeInstance> {
 	for (let i = 0; i < strategies.length; i++) {
 		const
 			strategy = strategies[i];
@@ -29,7 +29,7 @@ export function getAdaptee(strategies: AdapteeInstance[]): CanUndef<AdapteeInsta
  * Validates the specified value
  * @param value
  */
-export function valueValidator(value: CanUndef<InitOptions>): boolean {
+export function valueValidator(value: CanUndef<InViewInitOptions>): boolean {
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	return Boolean(value != null && (value.callback || value.onEnter || value.onLeave));
 }

@@ -9,6 +9,30 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-03-??)
+
+#### :rocket: New Feature
+
+* Added the ability to change themes
+
+## v3.0.0-rc.157 (2021-03-10)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries
+
+## v3.0.0-rc.149 (2021-03-01)
+
+#### :bug: Bug Fix
+
+* Don't generate `.init.js` with `--fat-html`
+
+## v3.0.0-rc.147 (2021-02-18)
+
+#### :bug: Bug Fix
+
+* Removed a race condition during loading of the libs
+
 ## v3.0.0-rc.136 (2021-02-02)
 
 #### :bug: Bug Fix

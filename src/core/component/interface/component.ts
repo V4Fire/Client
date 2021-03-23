@@ -13,10 +13,12 @@ eslint-disable
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { LogMessageOptions } from 'core/log';
-import Async, { BoundFn, ProxyCb } from 'core/async';
+import type { LogMessageOptions } from 'core/log';
 
-import {
+import type Async from 'core/async';
+import type { BoundFn, ProxyCb } from 'core/async';
+
+import type {
 
 	ComponentDriver,
 
@@ -29,7 +31,7 @@ import {
 
 } from 'core/component/engines';
 
-import {
+import type {
 
 	ComponentMeta,
 	Hook,

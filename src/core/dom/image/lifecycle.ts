@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import ImageLoader from 'core/dom/image/loader';
+import type ImageLoader from 'core/dom/image/loader';
 
 import {
 
@@ -71,7 +71,8 @@ export default class Lifecycle {
 			this.onMainImageLoad(el);
 
 		} else {
-			const $a = mainShadowState.mainOptions.ctx?.unsafe.async;
+			const
+				$a = mainShadowState.mainOptions.ctx?.unsafe.$async;
 
 			if ($a) {
 				mainShadowState.loadPromise = $a.promise(mainShadowState.imgNode.init, {group: '[[v-image:main]]', label: el[ID]})
@@ -109,22 +110,24 @@ export default class Lifecycle {
 			{imgNode} = shadowState;
 
 		if (imgNode[IS_LOADED] === true) {
-			/*
-			 * If an img is ready – set it to the element
-			 */
+			// If the img is ready – set it to the element
 			return successCallback();
 		}
 
 		if (imgNode[IS_LOADING] == null) {
-			/*
-			 * If loading hasn't started – this is the broken image that should be loaded lazily
-			 */
+			// If the loading hasn't started – this is a broken image that should be loaded lazily
 			imgNode[INIT_LOAD]!();
 		}
 
 		if (mainOptions.ctx) {
-			shadowState.loadPromise = mainOptions.ctx.unsafe.async.promise(
-				imgNode.init, {group: `[[v-image:${type}]]`, label: el[ID]}
+			shadowState.loadPromise = mainOptions.ctx.unsafe.$async.promise(
+				imgNode.init,
+
+				{
+					group: `[[v-image:${type}]]`,
+					label: el[ID]
+				}
+
 			).then(successCallback, errorCallback);
 
 		} else {
@@ -151,9 +154,7 @@ export default class Lifecycle {
 		selfOptions.load?.(el);
 
 		if (mainShadowState.imgNode.complete === true && mainShadowState.isFailed === false) {
-			/*
-			 * If the main image is ready – ignore the preview
-			 */
+			// If the main image is ready – ignore the preview
 			return;
 		}
 

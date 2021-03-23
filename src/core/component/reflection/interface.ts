@@ -6,7 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentOptions, ComponentMeta, ComponentInterface, ComponentConstructor } from 'core/component/interface';
+import type {
+
+	ComponentConstructor,
+	ComponentInterface,
+	ComponentOptions,
+	ComponentMeta
+
+} from 'core/component/interface';
 
 /**
  * Information of a component that can be taken from a constructor

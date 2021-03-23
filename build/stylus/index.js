@@ -12,6 +12,7 @@ const
 	stylus = require('stylus'),
 	color = include('build/stylus/color'),
 	string = include('build/stylus/string'),
+	url = include('build/stylus/url'),
 	object = include('build/stylus/object'),
 	blendModes = include('build/stylus/blend-modes'),
 	ds = include('build/stylus/ds');
@@ -29,11 +30,18 @@ module.exports = [
 		api.define('file-exists', function fileExists(path) {
 			return Boolean(stylus.utils.find(path.string, this.paths));
 		});
+
+		/**
+		 * Outputs the specified arguments to console
+		 * @param args
+		 */
+		api.define('log', (...args) => console.log(...args));
 	},
 
 	ds,
 	color,
 	string,
+	url,
 	object,
 	blendModes
 ];

@@ -13,7 +13,7 @@
 
 import Component, { VNode, VNodeDirective, ComponentElement } from 'core/component';
 
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 import { cache, commaRgxp, keyValRgxp } from 'super/i-block/directives/event/const';
 
 function bind(

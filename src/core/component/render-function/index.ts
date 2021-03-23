@@ -18,7 +18,7 @@ import { resolveRefs } from 'core/component/ref';
 import { renderData, CreateElement, RenderContext, VNode } from 'core/component/engines';
 import { wrapCreateElement } from 'core/component/render-function/create-element';
 
-import { ComponentInterface, ComponentMeta, RenderFunction } from 'core/component/interface';
+import type { ComponentInterface, ComponentMeta, RenderFunction } from 'core/component/interface';
 
 /**
  * Wraps the specified render function and returns a new function.

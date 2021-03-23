@@ -9,8 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.49 (2020-08-03)
+## v3.0.0-rc.??? (2021-??-??)
 
-#### :house: Internal
+#### :rocket: New Feature
 
-* Fixed ESLint warnings
+* Added a new plugin function `log`
+
+#### :memo: Documentation
+
+* Added `CHANGELOG`

@@ -6,14 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentMeta } from 'core/component/interface';
+import type { ComponentMeta } from 'core/component/interface';
 
 /**
  * Creates a new meta object from the specified
  * @param base
  */
 export function forkMeta(base: ComponentMeta): ComponentMeta {
-	const meta = Object.create(base);
+	const
+		meta = Object.create(base);
 
 	meta.params = Object.create(base.params);
 	meta.watchers = {};

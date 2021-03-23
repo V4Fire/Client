@@ -7,8 +7,9 @@
  */
 
 import Cache from 'super/i-block/modules/cache';
-import { ModsNTable } from 'super/i-block/modules/mods';
-import { ClassesCacheNms, ClassesCacheValue } from 'super/i-block/modules/provide/interface';
+
+import type { ModsNTable } from 'super/i-block/modules/mods';
+import type { ClassesCacheNms, ClassesCacheValue } from 'super/i-block/modules/provide/interface';
 
 export const
 	modsCache = Object.createDict<ModsNTable>();

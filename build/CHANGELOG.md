@@ -9,6 +9,38 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.163 (2021-03-19)
+
+#### :rocket: New Feature
+
+* Added `target.webpack`
+
+## v3.0.0-rc.160 (2021-03-17)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the project building never stopped
+
+## v3.0.0-rc.159 (2021-03-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the `noGlobal` breaks on `'foo'?.dasherize()`
+
+## v3.0.0-rc.157 (2021-03-10)
+
+#### :rocket: New Feature
+
+* Added the support of external CSS libraries to build within entries
+
+## v3.0.0-rc.143 (2021-02-11)
+
+#### :rocket: New Feature
+
+* Added `stylus` plugins to generate URL-s `build/stylus/url`:
+  * `toQueryString`
+  * `createURL`
+
 ## v3.0.0-rc.140 (2021-02-05)
 
 #### :rocket: New Feature

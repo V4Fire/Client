@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.161 (2021-03-18)
+
+#### :bug: Bug Fix
+
+* Fixed checks weather component is regular or not
+
 ## v3.0.0-rc.131 (2021-01-29)
 
 #### :boom: Breaking Change

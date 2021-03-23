@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import {
+import type {
 
 	Hook,
 	ComponentInterface,

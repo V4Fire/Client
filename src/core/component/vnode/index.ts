@@ -12,10 +12,11 @@
  */
 
 import { components } from 'core/component/const';
-import { ComponentInterface, ComponentMeta } from 'core/component/interface';
-import { RenderContext, VNode, VNodeData, NormalizedScopedSlot } from 'core/component/engines';
 
-import {
+import type { RenderContext, VNode, VNodeData, NormalizedScopedSlot } from 'core/component/engines';
+import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
+
+import type {
 
 	ComponentVNodeData,
 	ComponentModelVNodeData,

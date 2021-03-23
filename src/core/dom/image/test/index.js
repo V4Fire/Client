@@ -48,7 +48,7 @@ module.exports = async (page, params) => {
 			return;
 		}
 
-	const
+		const
 			res = base64Img.split(',')[1],
 			headers = route.request().headers();
 
@@ -203,6 +203,23 @@ module.exports = async (page, params) => {
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.update(target, {src: images.pngImage2x, ctx: globalThis.dummy, handleUpdate: true});
+					}, [tag, images]);
+
+					await h.bom.waitForIdleCallback(page);
+					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage2x);
+				});
+
+				it('update `src` without ctx provided', async () => {
+					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+						const target = document.getElementById(`${tag}-target`);
+						imageLoaderCtx.init(target, {src: images.pngImage, handleUpdate: true});
+					}, [tag, images]);
+
+					await h.bom.waitForIdleCallback(page);
+
+					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+						const target = document.getElementById(`${tag}-target`);
+						imageLoaderCtx.update(target, {src: images.pngImage2x, handleUpdate: true});
 					}, [tag, images]);
 
 					await h.bom.waitForIdleCallback(page);
