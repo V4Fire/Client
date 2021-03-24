@@ -50,7 +50,7 @@ module.exports = function dynamicComponentImportReplacer(str) {
 				imports.push(`!TPLS['${nm}'] && import('${fullPath}.styl')`);
 
 			} else {
-				imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl')))`);
+				imports.push(`!TPLS['${nm}'] && new Promise(function (r) { return r(require('${fullPath}.styl')); })`);
 			}
 		}
 
@@ -58,17 +58,17 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			imports.push(`import('${fullPath}')`);
 
 		} else {
-			imports.push(`new Promise((r) => r(require('${fullPath}')))`);
+			imports.push(`new Promise(function (r) { return r(require('${fullPath}')); })`);
 		}
 
 		const
-			regTpl = `(module) => { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
+			regTpl = `function (module) { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
 
 		if (isESImport) {
 			imports.push(`import('${fullPath}.ss').then(${regTpl})`);
 
 		} else {
-			imports.push(`new Promise((r) => r(require('${fullPath}.ss'))).then(${regTpl})`);
+			imports.push(`new Promise(function (r) { return r(require('${fullPath}.ss')); }).then(${regTpl})`);
 		}
 
 		return `Promise.allSettled([${imports.join(',')}])`;
