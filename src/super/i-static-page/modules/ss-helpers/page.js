@@ -278,6 +278,9 @@ async function generateInitJS(pageName, {
 	// - block links
 	head.push(await loadLinks(deps.links, {assets, js: true}));
 
+	// - block headStyles
+	head.push(await getStyleDeclByName(deps.links, {assets, js: true}));
+
 	// - block headScripts
 	head.push(
 		getVarsDecl(),
