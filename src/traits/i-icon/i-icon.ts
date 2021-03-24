@@ -73,9 +73,7 @@ export default abstract class iIcon {
 			return;
 		}
 
-		parent
-			.querySelectorAll('[data-tmp]')
-			.forEach((el) => parent.removeChild(el));
+		Object.forEach(parent.querySelectorAll('[data-tmp]'), (el: Node) => parent.removeChild(el));
 
 		if (!Object.isTruly(href)) {
 			return;

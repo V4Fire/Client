@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.168 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed updating of icons with old browsers
+
 ## v3.0.0-rc.140 (2021-02-05)
 
 #### :bug: Bug Fix

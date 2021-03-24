@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.168 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed updating of icons with old browsers `traits/i-icon`
+
 ## v3.0.0-rc.167 (2021-03-24)
 
 #### :bug: Bug Fix
