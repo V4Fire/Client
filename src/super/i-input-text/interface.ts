@@ -80,6 +80,9 @@ export interface CompiledMask {
 // @ts-ignore (extend)
 export interface UnsafeIInputText<CTX extends iInputText = iInputText> extends UnsafeIInput<CTX> {
 	// @ts-ignore (access)
+	updateTextStore: CTX['updateTextStore'];
+
+	// @ts-ignore (access)
 	maskRepetitions: CTX['maskRepetitions'];
 
 	// @ts-ignore (access)

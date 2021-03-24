@@ -119,7 +119,7 @@ export function syncWithText<C extends iInputText>(
 	}
 
 	mask.text = maskedInput;
-	unsafe.text = maskedInput;
+	unsafe.updateTextStore(maskedInput);
 
 	// If the component is focused, we need to correct the cursor position
 	if (isFocused) {

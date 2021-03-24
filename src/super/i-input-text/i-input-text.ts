@@ -200,15 +200,12 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @param value
 	 */
 	set text(value: string) {
-		this.field.set('textStore', value);
-
-		const
-			{input} = this.$refs;
-
-		// Force to set a value to the input
-		if (Object.isTruly(input)) {
-			input.value = value;
+		if (this.mask != null) {
+			void this.syncMaskWithText(value);
+			return;
 		}
+
+		this.updateTextStore(value);
 	}
 
 	/**
@@ -325,6 +322,22 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		opts?: SyncMaskWithTextOptions
 	): CanPromise<void> {
 		mask.syncWithText(this, text, opts);
+	}
+
+	/**
+	 * Updates the component text store with the provided value
+	 * @param value
+	 */
+	protected updateTextStore(value: string): void {
+		this.field.set('textStore', value);
+
+		const
+			{input} = this.$refs;
+
+		// Force to set a value to the input
+		if (Object.isTruly(input)) {
+			input.value = value;
+		}
 	}
 
 	/** @override */

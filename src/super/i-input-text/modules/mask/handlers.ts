@@ -145,7 +145,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 				await unsafe.syncMaskWithText('');
 
 			} else {
-				unsafe.text = text;
+				unsafe.updateTextStore(text);
 				input.setSelectionRange(start, start);
 			}
 
@@ -373,6 +373,6 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		start++;
 	}
 
-	unsafe.text = chunks.join('');
+	unsafe.updateTextStore(chunks.join(''));
 	input.setSelectionRange(start, start);
 }
