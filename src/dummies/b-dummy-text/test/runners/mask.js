@@ -32,13 +32,13 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask to the static content', async () => {
-			const target = await init({text: '79858608729'});
-			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('+7 (985) 860-87-29');
+			const target = await init({text: '79851234567'});
+			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('+7 (985) 123-45-67');
 		});
 
 		it('applying a mask to the partial static content', async () => {
-			const target = await init({text: '798586'});
-			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('+7 (985) 86_-__-__');
+			const target = await init({text: '798512'});
+			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('+7 (985) 12_-__-__');
 		});
 
 		it('applying a mask to the non-normalized static content', async () => {
@@ -78,7 +78,17 @@ module.exports = (page) => {
 				maskRepetitions: true
 			});
 
-			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-5');
+			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-5 7-9 8-4');
+		});
+
+		it('applying a mask with infinite repetitions and partial filling', async () => {
+			const target = await init({
+				text: '1235798',
+				mask: '%d-%d',
+				maskRepetitions: true
+			});
+
+			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-5 7-9 8-_');
 		});
 	});
 

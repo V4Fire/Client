@@ -21,8 +21,12 @@ export function fitForText<C extends iInputText>(component: C, text: string): Ca
 		unsafe: {compiledMask: mask}
 	} = component;
 
-	if (mask == null || unsafe.maskRepetitionsProp !== true) {
+	if (mask == null) {
 		return;
+	}
+
+	if (unsafe.maskRepetitionsProp !== true) {
+		return mask;
 	}
 
 	const
@@ -56,7 +60,7 @@ export function fitForText<C extends iInputText>(component: C, text: string): Ca
 		diff = validCharsInText - nonTerminals.length,
 		nonTerminalsPerChunk = nonTerminals.length / unsafe.maskRepetitions;
 
-	unsafe.maskRepetitions += Math.floor(diff / nonTerminalsPerChunk);
+	unsafe.maskRepetitions += Math.ceil(diff / nonTerminalsPerChunk);
 	return unsafe.compileMask();
 }
 
