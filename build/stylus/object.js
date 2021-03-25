@@ -68,41 +68,66 @@ function getField(stylusObj, path) {
  * @returns {!Object}
  */
 function parseObject(stylusObj) {
-	const
-		result = $C.extend({deep: true, withProto: true}, {}, stylusObj.vals);
+	return parse(stylusObj);
 
-	for (const key in result) {
-		if (result.hasOwnProperty(key)) {
+	function parse(obj, path = [], result = {}) {
+		const
+			{vals} = obj;
+
+		for (const key in vals) {
+			if (!vals.hasOwnProperty(key)) {
+				continue;
+			}
+
 			const
-				{nodes} = result[key].nodes[0];
+				keyPath = [...path, key],
+				{nodes} = vals[key].nodes[0];
 
 			if (nodes && nodes.length) {
-				if (
-					nodes.length === 1 &&
-					(nodes[0].nodeName === 'object' || nodes[0].nodeName !== 'expression')
-				) {
-					result[key] = convert(nodes[0]);
+				if (nodes.length === 1) {
+					if (nodes[0].nodeName === 'object') {
+						convert(nodes[0], keyPath, result);
+
+					} else {
+						const
+							exprRxgp = /^\((.*)\)$/g;
+
+						let
+							value = convert(nodes[0], keyPath, result);
+
+						if (
+							Object.isString(value) &&
+							nodes[0].nodeName === 'expression' &&
+							exprRxgp.test(value)
+						) {
+							// If value is an expression with one element
+							// unwrap it from parentheses
+							value = value.replace(exprRxgp, '$1');
+						}
+
+						$C(result).set(value, keyPath);
+					}
 
 				} else {
-					result[key] = [];
+					$C(result).set([], path);
 
 					for (let i = 0, len = nodes.length; i < len; ++i) {
-						result[key].push(convert(nodes[i]));
+						convert(nodes[i], [...keyPath, `${i}`], result);
 					}
 				}
 
 			} else {
-				result[key] = convert(result[key].first);
+				$C(result).set(convert(vals[key].first, keyPath, result), keyPath);
 			}
 		}
+
+		return result;
 	}
 
-	return result;
-
-	function convert(node) {
+	function convert(node, path, result) {
 		switch (node.nodeName) {
 			case 'object':
-				return parseObject(node);
+				return parse(node, path, result);
 
 			case 'boolean':
 				return node.isTrue;
