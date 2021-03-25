@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.169 (2021-03-25)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `.init.js` files `iStaticPage`
+
 ## v3.0.0-rc.168 (2021-03-24)
 
 #### :bug: Bug Fix
