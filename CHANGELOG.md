@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `chunkRender` event `base/b-virtual-scroll`
+* Added a new event `chunkRender` `base/b-virtual-scroll`
 
 ## v3.0.0-rc.169 (2021-03-25)
 
