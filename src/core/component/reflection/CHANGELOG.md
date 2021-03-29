@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.165 (2021-03-23)
+
+#### :bug: Bug Fix
+
+* Fixed resolving of the external context
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :rocket: New Feature

@@ -85,6 +85,49 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bInputHidden`
   * `bForm`
 
+## v3.0.0-rc.171 (2021-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition during attaching of component dependencies `build`
+
+## v3.0.0-rc.170 (2021-03-26)
+
+#### :rocket: New Feature
+
+* Added a new event `chunkRender` `base/b-virtual-scroll`
+
+## v3.0.0-rc.169 (2021-03-25)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `.init.js` files `iStaticPage`
+
+## v3.0.0-rc.168 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed updating of icons with old browsers `traits/i-icon`
+
+## v3.0.0-rc.167 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed the `--fat-html` build mode `iStaticPage`
+
+## v3.0.0-rc.166 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed generation of dynamic imports for ES5/3 `build`
+
+## v3.0.0-rc.165 (2021-03-23)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `webpack.target` `build`
+* Fixed resolving of the external context `core/component/reflection`
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :boom: Breaking Change

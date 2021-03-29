@@ -275,14 +275,20 @@ async function generateInitJS(pageName, {
 		head = [],
 		body = [];
 
+	// - block varsDecl
+	head.push(getVarsDecl());
+
+	// - block assets
+	head.push(getAssetsDecl({inline: !assetsRequest, js: true}));
+
 	// - block links
 	head.push(await loadLinks(deps.links, {assets, js: true}));
 
+	// - block headStyles
+	head.push(await getStyleDeclByName('std', {assets, optional: true, js: true}));
+
 	// - block headScripts
-	head.push(
-		getVarsDecl(),
-		await loadLibs(deps.headScripts, {assets, js: true})
-	);
+	head.push(await loadLibs(deps.headScripts, {assets, js: true}));
 
 	body.push(`
 (function () {
@@ -292,9 +298,6 @@ async function generateInitJS(pageName, {
 	document.body.appendChild(el);
 })();
 `);
-
-	// - block assets
-	body.push(getAssetsDecl({inline: !assetsRequest, js: true}));
 
 	// - block styles
 	body.push(

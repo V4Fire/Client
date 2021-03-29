@@ -14,4 +14,4 @@ const
 /**
  * Options for WebPack ".target"
  */
-module.exports = config.webpack.target() ?? false;
+module.exports = config.webpack.target();
