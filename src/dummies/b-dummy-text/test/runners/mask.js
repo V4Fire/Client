@@ -197,6 +197,11 @@ module.exports = (page) => {
 				ctx.text = '34567';
 				return ctx.text;
 			})).toBe('3-4');
+
+			expect(await target.evaluate((ctx) => {
+				ctx.text = '67';
+				return ctx.text;
+			})).toBe('6-7');
 		});
 	});
 
