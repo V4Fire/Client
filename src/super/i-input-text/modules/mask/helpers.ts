@@ -53,7 +53,7 @@ export function fitForText<C extends iInputText>(component: C, text: string): Ca
 	}
 
 	if (nonTerminals.length > validCharsInText) {
-		return;
+		return mask;
 	}
 
 	const
