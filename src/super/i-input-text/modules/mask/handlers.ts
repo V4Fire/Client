@@ -7,7 +7,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import type iInputText from 'super/i-input-text/i-input-text';
+import { fitForText } from 'super/i-input-text/modules/mask/helpers';
 
 export const
 	$$ = symbolGenerator();
@@ -86,15 +88,15 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 			chunks.splice(start, withoutSelection ? 1 : end - start);
 			text = chunks.join('');
 
-			if (text !== '') {
-				await unsafe.syncMaskWithText(text, {
-					start: selectionStart,
-					end: selectionEnd,
-					maskText: ''
-				});
+			if (text === '') {
+				await unsafe.syncMaskWithText('');
 
 			} else {
-				await unsafe.syncMaskWithText('');
+				await unsafe.syncMaskWithText(text, {
+					from: selectionStart,
+					to: selectionEnd,
+					inputText: ''
+				});
 			}
 
 			break;
@@ -196,15 +198,9 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 		return;
 	}
 
-	if (isKeyboardEvent || unsafe.mods.focused !== 'true') {
+	if (isKeyboardEvent) {
 		e.preventDefault();
-
-		if (isKeyboardEvent) {
-			modifySelectionPos();
-
-		} else {
-			input.focus();
-		}
+		modifySelectionPos();
 
 	} else {
 		unsafe.async.setTimeout(modifySelectionPos, 0, {label: $$.setCursor});
@@ -228,7 +224,6 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 			selectionEnd = input.selectionEnd ?? 0;
 
 		let
-			canModifyOriginalPos = true,
 			pos: number;
 
 		if (isKeyboardEvent) {
@@ -249,7 +244,6 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 					pos--;
 
 					if (pos <= 0) {
-						canModifyOriginalPos = false;
 						break;
 					}
 
@@ -257,16 +251,6 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 					pos++;
 
 					if (pos >= maskSymbols.length) {
-						canModifyOriginalPos = false;
-						break;
-					}
-				}
-			}
-
-			if (!canModifyOriginalPos) {
-				for (let i = 0; i < maskSymbols.length; i++) {
-					if (Object.isRegExp(maskSymbols[i])) {
-						pos = i;
 						break;
 					}
 				}
@@ -287,21 +271,15 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent): void {
 	const {
 		unsafe,
-		unsafe: {$refs: {input}}
+		unsafe: {text, $refs: {input}}
 	} = component;
 
 	if (!Object.isTruly(input)) {
 		return;
 	}
 
-	const {
-		text,
-		compiledMask: mask
-	} = unsafe;
-
 	const canIgnore =
-		text === '' ||
-		mask == null ||
+		unsafe.mask == null ||
 
 		e.altKey ||
 		e.shiftKey ||
@@ -319,60 +297,61 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		selectionStart = input.selectionStart ?? 0,
 		selectionEnd = input.selectionEnd ?? 0;
 
+	let
+		valToInput = e.key,
+		needInsertInputVal = true;
+
 	const
-		chunks = text.split('');
+		mask = fitForText(component, text + valToInput);
+
+	if (mask == null) {
+		return;
+	}
+
+	const
+		maskSymbols = mask.symbols,
+		normalizedText = [...text.letters()].slice(0, maskSymbols.length).join(''),
+		additionalPlaceholder = mask.placeholder.slice(normalizedText.length);
+
+	const
+		textChunks = [...(normalizedText + additionalPlaceholder).letters()];
 
 	let
-		maskSymbols = mask!.symbols;
-
-	/*if (unsafe.isMaskInfinite && selectionEnd + 1 === maskSymbols.length) {
-		unsafe.maskRepetitions++;
-		unsafe.compileMask();
-		maskSymbols = unsafe.compiledMask!.symbols;
-	}*/
-
-	let
-		insert = true,
 		range = selectionEnd - selectionStart + 1,
-		start = selectionStart,
-		inputVal = e.key;
+		cursorPos = selectionStart;
 
 	while (range-- > 0) {
 		const
-			end = selectionEnd - range;
+			rangeStart = selectionEnd - range;
 
 		let
-			maskEl = maskSymbols[end],
-			nextMaskEl = '',
-			i = end;
+			maskElPos = rangeStart,
+			maskEl = maskSymbols[maskElPos];
 
-		if (insert && !Object.isRegExp(maskEl)) {
-			nextMaskEl = maskEl;
+		if (needInsertInputVal && !Object.isRegExp(maskEl)) {
+			do {
+				maskElPos++;
 
-			while (!Object.isRegExp(maskSymbols[++i]) && i < maskSymbols.length) {
-				nextMaskEl += maskSymbols[i];
-			}
+			} while (maskElPos < maskSymbols.length && !Object.isRegExp(maskSymbols[maskElPos]));
 
-			maskEl = maskSymbols[i];
+			maskEl = maskSymbols[maskElPos];
 		}
 
-		if (Object.isRegExp(maskEl) && (!insert || maskEl.test(inputVal))) {
-			let pos = end + nextMaskEl.length;
-			chunks[pos] = inputVal;
+		if (Object.isRegExp(maskEl) && (!needInsertInputVal || maskEl.test(valToInput))) {
+			textChunks[maskElPos] = valToInput;
 
-			if (insert) {
-				pos++;
-				start = pos;
-				insert = false;
-				inputVal = unsafe.maskPlaceholder;
+			if (needInsertInputVal) {
+				cursorPos = maskElPos + 1;
+				valToInput = unsafe.maskPlaceholder;
+				needInsertInputVal = false;
 			}
 		}
 	}
 
-	while (start < maskSymbols.length && !Object.isRegExp(maskSymbols[start])) {
-		start++;
+	while (cursorPos < maskSymbols.length && !Object.isRegExp(maskSymbols[cursorPos])) {
+		cursorPos++;
 	}
 
-	unsafe.updateTextStore(chunks.join(''));
-	input.setSelectionRange(start, start);
+	unsafe.updateTextStore(textChunks.join(''));
+	input.setSelectionRange(cursorPos, cursorPos);
 }

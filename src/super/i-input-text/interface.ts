@@ -11,19 +11,19 @@ import type iInputText from 'super/i-input-text/i-input-text';
 
 export interface SyncMaskWithTextOptions {
 	/**
-	 * Start position to set off the text
+	 * Starting position of the masked text to synchronize
 	 */
-	start?: Nullable<number>;
+	from?: Nullable<number>;
 
 	/**
-	 * End position to set off the text
+	 * Ending position of the masked text to synchronize
 	 */
-	end?: Nullable<number>;
+	to?: Nullable<number>;
 
 	/**
-	 * Text value buffer of the masked input
+	 * Original text from the input (by default it takes from the DOM node)
 	 */
-	maskText?: string;
+	inputText?: string;
 }
 
 export interface CompiledMask {

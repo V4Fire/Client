@@ -13,8 +13,12 @@ import type { SyncMaskWithTextOptions } from 'super/i-input-text/interface';
 
 /**
  * Synchronizes the component mask with the specified text value.
- * The function takes raw text from the component input or passed parameters and applies it to the mask.
- * The resulting text will be saved to the input.
+ *
+ * The component can already have some masked text as a value (by default, the value is taken from the DOM node,
+ * but you can specify it directly). So we need to apply a new text to the old value with or without limiting bounds to
+ * update. If only a part of the mask is modified, the rest symbols from the old masked text will be preserved.
+ *
+ * The resulting text is saved to the input. The cursor position is updated too.
  *
  * @param component
  * @param text
@@ -38,100 +42,103 @@ export function syncWithText<C extends iInputText>(
 	}
 
 	const
-		isFocused = unsafe.mods.focused === 'true';
+		{symbols: maskSymbols} = mask,
+		{inputText: originalMaskedText = mask.text} = opts;
 
 	const
-		{symbols: maskSymbols} = mask,
-		{maskText = mask.text} = opts;
+		isFocused = unsafe.mods.focused === 'true',
+		isEmptyText = text === '';
 
 	let
-		start = 0,
-		end = 0;
+		from = 0,
+		to = 0;
 
-	if (text !== '') {
-		start = opts.start ?? start;
-		end = opts.end ?? end;
+	if (!isEmptyText) {
+		from = opts.from ?? from;
+		to = opts.to == null || opts.to === from ? maskSymbols.length : opts.to;
 	}
 
-	let
-		withoutSelection = start === end;
+	const
+		selectAll = from === 0 && to === maskSymbols.length;
 
 	let
-		maskedInput = '',
-		cursorPos = -1;
+		newMaskedText = '',
+		cursorPos = from;
 
-	if (text === '') {
-		if (isFocused) {
-			start = 0;
-			end = 0;
-			withoutSelection = true;
-			maskedInput = mask.placeholder;
-		}
+	if (isEmptyText) {
+		newMaskedText = mask.placeholder;
 
 	} else {
-		const chunks = [...text.letters()].slice(
-			start,
-			withoutSelection ? undefined : end
-		);
+		const
+			textChunks = [...text.letters()];
 
 		for (let i = 0; i < maskSymbols.length; i++) {
 			const
 				maskSymbol = maskSymbols[i];
 
 			// Restoration of values that don't match the selection range
-			if (i < start || !withoutSelection && i > end) {
+			if (i < from || i > to) {
 				if (Object.isRegExp(maskSymbol)) {
-					maskedInput += resolveNonTerminalFromBuffer(maskSymbol, i);
+					newMaskedText += resolveNonTerminalFromBuffer(maskSymbol, i);
 
 				} else {
-					maskedInput += maskSymbol;
+					newMaskedText += maskSymbol;
 				}
 
 				continue;
 			}
 
 			if (Object.isRegExp(maskSymbol)) {
-				if (chunks.length > 0) {
+				if (textChunks.length > 0) {
 					// Skip all symbols that don't match the non-terminal grammar
-					while (chunks.length > 0 && !maskSymbol.test(chunks[0])) {
-						chunks.shift();
+					while (textChunks.length > 0 && !maskSymbol.test(textChunks[0])) {
+						textChunks.shift();
 					}
 
-					if (chunks.length > 0) {
-						maskedInput += chunks[0];
+					if (textChunks.length > 0) {
+						newMaskedText += textChunks[0];
 						cursorPos++;
 					}
 				}
 
 				// There are no symbols from the raw input that match the non-terminal grammar
-				if (chunks.length === 0) {
-					maskedInput += resolveNonTerminalFromBuffer(maskSymbol, i);
+				if (textChunks.length === 0) {
+					if (selectAll) {
+						newMaskedText += maskPlaceholder;
+
+					} else {
+						newMaskedText += resolveNonTerminalFromBuffer(maskSymbol, i);
+					}
 
 				} else {
-					chunks.shift();
+					textChunks.shift();
 				}
 
 			// This is a static symbol from the mask
 			} else {
-				maskedInput += maskSymbol;
+				newMaskedText += maskSymbol;
+
+				if (textChunks.length > 0) {
+					cursorPos++;
+				}
 			}
 		}
 	}
 
-	mask.text = maskedInput;
-	unsafe.updateTextStore(maskedInput);
+	mask.text = newMaskedText;
+	unsafe.updateTextStore(newMaskedText);
 
 	// If the component is focused, we need to correct the cursor position
 	if (isFocused) {
-		if (withoutSelection) {
-			cursorPos = start + cursorPos + 1;
+		const needRewindCursorPos =
+			cursorPos < to - 1 &&
+			newMaskedText[cursorPos] !== mask.placeholder;
 
-			while (cursorPos < maskSymbols.length && !Object.isRegExp(maskSymbols[cursorPos])) {
+		if (needRewindCursorPos) {
+			do {
 				cursorPos++;
-			}
 
-		} else {
-			cursorPos = end;
+			} while (cursorPos < to && !Object.isRegExp(maskSymbols[cursorPos]));
 		}
 
 		mask.start = cursorPos;
@@ -142,7 +149,7 @@ export function syncWithText<C extends iInputText>(
 
 	function resolveNonTerminalFromBuffer(pattern: RegExp, i: number): string {
 		const
-			char = maskText[i];
+			char = originalMaskedText[i];
 
 		if (!pattern.test(char)) {
 			return maskPlaceholder;

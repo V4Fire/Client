@@ -362,13 +362,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: the input with a mask has got the focus
-	 */
-	protected onMaskFocus(): void {
-		void mask.setCursorPositionAtFirstNonTerminal(this);
-	}
-
-	/**
 	 * Handler: the input with a mask has lost the focus
 	 */
 	protected onMaskBlur(): void {

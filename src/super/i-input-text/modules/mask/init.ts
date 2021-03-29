@@ -45,7 +45,6 @@ export function init<C extends iInputText>(component: C): CanPromise<void> {
 	$a.on(input, 'keypress', h('onMaskKeyPress'), group);
 	$a.on(input, 'keydown', h('onMaskDelete'), group);
 	$a.on(input, 'input', h('onMaskInput'), group);
-	$a.on(input, 'focus', h('onMaskFocus'), group);
 	$a.on(input, 'blur', h('onMaskBlur'), group);
 
 	unsafe.compileMask();

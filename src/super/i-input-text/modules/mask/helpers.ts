@@ -52,47 +52,18 @@ export function fitForText<C extends iInputText>(component: C, text: string): Ca
 		}
 	}
 
-	if (nonTerminals.length > validCharsInText) {
+	const
+		nonTerminalsPerChunk = nonTerminals.length / unsafe.maskRepetitions,
+
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		expectedRepetitions = Math.ceil(validCharsInText / nonTerminalsPerChunk) || 1;
+
+	if (expectedRepetitions === unsafe.maskRepetitions) {
 		return mask;
 	}
 
-	const
-		diff = validCharsInText - nonTerminals.length,
-		nonTerminalsPerChunk = nonTerminals.length / unsafe.maskRepetitions;
-
-	unsafe.maskRepetitions += Math.ceil(diff / nonTerminalsPerChunk);
+	unsafe.maskRepetitions = expectedRepetitions;
 	return unsafe.compileMask();
-}
-
-/**
- * Sets a position of the selection cursor at the first non-terminal symbol from the mask
- * @param component
- */
-export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(component: C): Promise<void> {
-	const {
-		unsafe,
-		unsafe: {compiledMask: mask}
-	} = component;
-
-	if (mask == null) {
-		return;
-	}
-
-	if (unsafe.mods.empty === 'true') {
-		await unsafe.syncMaskWithText('');
-	}
-
-	let
-		pos = 0;
-
-	for (let o = mask!.symbols, i = 0; i < o.length; i++) {
-		if (Object.isRegExp(o[i])) {
-			pos = i;
-			break;
-		}
-	}
-
-	unsafe.$refs.input.setSelectionRange(pos, pos);
 }
 
 /**
@@ -112,8 +83,18 @@ export function saveSnapshot<C extends iInputText>(component: C): void {
 	mask!.text = component.text;
 
 	if (Object.isTruly(input)) {
-		mask!.start = input.selectionStart;
-		mask!.end = input.selectionEnd;
+		if (input.selectionStart === 0 && input.selectionEnd === input.value.length) {
+			Object.assign(mask, {
+				start: 0,
+				end: 0
+			});
+
+		} else {
+			Object.assign(mask, {
+				start: input.selectionStart,
+				end: input.selectionEnd
+			});
+		}
 	}
 }
 
@@ -153,8 +134,8 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 		}
 
 		void unsafe.syncMaskWithText(input.value, {
-			start: mask?.start,
-			end: mask?.end
+			from: mask?.start,
+			to: mask?.end
 		});
 	});
 }
