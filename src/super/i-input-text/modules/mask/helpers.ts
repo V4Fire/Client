@@ -10,10 +10,13 @@ import type iInputText from 'super/i-input-text/i-input-text';
 import type { CompiledMask } from 'super/i-input-text/i-input-text';
 
 /**
- * Takes the specified text, and if its length more than the component mask can accommodate, tries to expand the mask
+ * Takes the specified text, and:
+ *
+ * * If its length more than the component mask can accommodate, tries to expand the mask.
+ * * If its length less than the vacant mask placeholders, tries to fit the mask.
  *
  * @param component
- * @param text
+ * @param text - string to apply to the mask or an array of symbols
  */
 export function fitForText<C extends iInputText>(component: C, text: CanArray<string>): CanUndef<CompiledMask> {
 	const {
@@ -105,6 +108,37 @@ export function saveSnapshot<C extends iInputText>(component: C): void {
 			});
 		}
 	}
+}
+
+/**
+ * Sets a position of the selection cursor at the first non-terminal symbol from the mask
+ * @param component
+ */
+export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(component: C): Promise<void> {
+	const {
+		unsafe,
+		unsafe: {compiledMask: mask}
+	} = component;
+
+	if (mask == null) {
+		return;
+	}
+
+	if (unsafe.mods.empty === 'true') {
+		await unsafe.syncMaskWithText('');
+	}
+
+	let
+		pos = 0;
+
+	for (let o = mask!.symbols, i = 0; i < o.length; i++) {
+		if (Object.isRegExp(o[i])) {
+			pos = i;
+			break;
+		}
+	}
+
+	unsafe.$refs.input.setSelectionRange(pos, pos);
 }
 
 /**
