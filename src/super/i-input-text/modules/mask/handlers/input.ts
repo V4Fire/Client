@@ -14,7 +14,6 @@ import { fitForText } from 'super/i-input-text/modules/mask';
  *
  * @param component
  * @param e
- * @emits `actionChange(value: V)`
  */
 export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent): void {
 	const {
