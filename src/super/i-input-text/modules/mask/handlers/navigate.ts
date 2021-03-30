@@ -7,7 +7,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import type iInputText from 'super/i-input-text/i-input-text';
+import { getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
 
 export const
 	$$ = symbolGenerator();
@@ -73,43 +75,43 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 
 		const
 			maskSymbols = mask!.symbols,
-			selectionStart = input.selectionStart ?? 0,
-			selectionEnd = input.selectionEnd ?? 0;
+			[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
 
 		let
-			pos: number;
+			cursorPos: number;
 
 		if (isKeyboardEvent) {
 			if (selectionStart !== selectionEnd) {
-				pos = isLeftKey ? selectionStart : selectionEnd;
+				cursorPos = isLeftKey ? selectionStart : selectionEnd;
 
 			} else {
-				pos = isLeftKey ? selectionStart - 1 : selectionEnd + 1;
+				cursorPos = isLeftKey ? selectionStart - 1 : selectionEnd + 1;
 			}
 
 		} else {
-			pos = selectionStart;
+			cursorPos = selectionStart;
 		}
 
-		if (selectionEnd === pos || isKeyboardEvent) {
-			while (!Object.isRegExp(maskSymbols[pos])) {
+		if (cursorPos === selectionEnd || isKeyboardEvent) {
+			while (!Object.isRegExp(maskSymbols[cursorPos])) {
 				if (isLeftKey) {
-					pos--;
+					cursorPos--;
 
-					if (pos <= 0) {
+					if (cursorPos <= 0) {
 						break;
 					}
 
 				} else {
-					pos++;
+					cursorPos++;
 
-					if (pos >= maskSymbols.length) {
+					if (cursorPos >= maskSymbols.length) {
 						break;
 					}
 				}
 			}
 
-			input.setSelectionRange(pos, pos);
+			const utf16Pos = [...unsafe.text.letters()].slice(0, cursorPos).join('').length;
+			input.setSelectionRange(utf16Pos, utf16Pos);
 		}
 	}
 }

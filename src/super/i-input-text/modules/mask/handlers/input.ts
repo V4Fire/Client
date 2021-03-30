@@ -7,7 +7,9 @@
  */
 
 import type iInputText from 'super/i-input-text/i-input-text';
+
 import { fitForText } from 'super/i-input-text/modules/mask';
+import { getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
 
 /**
  * Handler: there is occur a keypress action on the masked input
@@ -48,23 +50,18 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		selectionStart = input.selectionStart ?? 0,
 		selectionEnd = input.selectionEnd ?? 0;
 
-	const
-		slicedText = text.slice(selectionStart, selectionEnd),
-		slicedTextChunks = [...slicedText.letters()];
-
-	let
-		normalizedSelectionEnd = selectionEnd;
-
-	if (slicedText.length > slicedTextChunks.length) {
-		normalizedSelectionEnd -= slicedText.length - slicedTextChunks.length;
-	}
+	const [
+		normalizedSelectionStart,
+		normalizedSelectionEnd
+	] = getNormalizedSelectionBounds(component, selectionStart, selectionEnd);
 
 	const
 		textChunks = [...text.letters()],
 		splicedTextChunks = textChunks.slice();
 
-	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-	splicedTextChunks.splice(selectionStart, normalizedSelectionEnd - selectionStart || 1, valToInput);
+	splicedTextChunks
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+		.splice(normalizedSelectionStart, normalizedSelectionEnd - normalizedSelectionStart || 1, valToInput);
 
 	const
 		fittedMask = fitForText(component, splicedTextChunks);
@@ -82,7 +79,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		fittedTextChunks = Array.concat([], fittedTextLetters, ...additionalPlaceholder);
 
 	let
-		range = slicedTextChunks.length + 1,
+		range = [...text.slice(selectionStart, selectionEnd).letters()].length + 1,
 		cursorPos = selectionStart,
 		needInsertInputVal = true;
 

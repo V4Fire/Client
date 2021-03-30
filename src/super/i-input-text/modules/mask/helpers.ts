@@ -188,3 +188,57 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 		});
 	});
 }
+
+/**
+ * Returns the normalized selection position of the passed component.
+ * The function converts the original selection bounds from UTF 16 characters to Unicode graphemes.
+ *
+ * @param component
+ * @param [selectionStart] - raw selection start bound (if not specified, it will be taken from the node)
+ * @param [selectionEnd] - raw selection end bound (if not specified, it will be taken from the node)
+ *
+ * @example
+ * ```
+ * // '1-😀'
+ * getNormalizedSelectionBounds(component, 2, 4) // [2, 3], cause "😀" is contained two UTF 16 characters
+ * ```
+ */
+export function getNormalizedSelectionBounds<C extends iInputText>(
+	component: C,
+	selectionStart?: number,
+	selectionEnd?: number
+): [number, number] {
+	const {
+		text,
+		$refs: {input}
+	} = component.unsafe;
+
+	selectionStart = selectionStart ?? input.selectionStart ?? 0;
+	selectionEnd = selectionEnd ?? input.selectionEnd ?? 0;
+
+	let
+		normalizedSelectionStart = selectionStart,
+		normalizedSelectionEnd = selectionEnd;
+
+	{
+		const
+			slicedText = text.slice(0, selectionStart),
+			slicedTextChunks = [...slicedText.letters()];
+
+		if (slicedText.length > slicedTextChunks.length) {
+			normalizedSelectionStart -= slicedText.length - slicedTextChunks.length;
+		}
+	}
+
+	{
+		const
+			slicedText = text.slice(0, selectionEnd),
+			slicedTextChunks = [...slicedText.letters()];
+
+		if (slicedText.length > slicedTextChunks.length) {
+			normalizedSelectionEnd -= slicedText.length - slicedTextChunks.length;
+		}
+	}
+
+	return [normalizedSelectionStart, normalizedSelectionEnd];
+}
