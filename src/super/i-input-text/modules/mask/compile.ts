@@ -72,7 +72,7 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 			i = -1;
 			j++;
 
-			if (j < maskRepetitions) {
+			if (j < maskRepetitions && maskDelimiter !== '') {
 				placeholder += maskDelimiter;
 				symbols.push(maskDelimiter);
 			}

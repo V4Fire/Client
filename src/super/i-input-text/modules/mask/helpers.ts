@@ -33,31 +33,37 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 	}
 
 	const
-		{nonTerminals} = mask!;
+		{symbols, nonTerminals} = mask!;
+
+	const
+		nonTerminalsPerChunk = nonTerminals.length / unsafe.maskRepetitions;
 
 	let
 		i = 0,
+		nonTerminalPos = 0;
+
+	let
 		validCharsInText = 0,
 		vacantCharsInText = 0;
 
 	for (const char of (Object.isArray(text) ? text : text.letters())) {
 		const
-			maskNonTerminal = nonTerminals[i];
+			maskNonTerminal = nonTerminals[nonTerminalPos];
 
-		if (char === unsafe.maskPlaceholder) {
+		if (Object.isRegExp(symbols[i]) && char === unsafe.maskPlaceholder) {
 			vacantCharsInText++;
-			incI();
+			incNonTerminalPos();
 
 		} else if (maskNonTerminal.test(char)) {
 			validCharsInText += vacantCharsInText + 1;
 			vacantCharsInText = 0;
-			incI();
+			incNonTerminalPos();
 		}
+
+		i++;
 	}
 
 	const
-		nonTerminalsPerChunk = nonTerminals.length / unsafe.maskRepetitions,
-
 		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		expectedRepetitions = Math.ceil(validCharsInText / nonTerminalsPerChunk) || 1;
 
@@ -68,12 +74,12 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 	unsafe.maskRepetitions = expectedRepetitions;
 	return unsafe.compileMask();
 
-	function incI(): void {
-		if (i < nonTerminals.length - 1) {
-			i++;
+	function incNonTerminalPos(): void {
+		if (nonTerminalPos < nonTerminals.length - 1) {
+			nonTerminalPos++;
 
 		} else {
-			i = 0;
+			nonTerminalPos = 0;
 		}
 	}
 }

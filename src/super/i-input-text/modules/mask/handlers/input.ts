@@ -49,10 +49,22 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		selectionEnd = input.selectionEnd ?? 0;
 
 	const
+		slicedText = text.slice(selectionStart, selectionEnd),
+		slicedTextChunks = [...slicedText.letters()];
+
+	let
+		normalizedSelectionEnd = selectionEnd;
+
+	if (slicedText.length > slicedTextChunks.length) {
+		normalizedSelectionEnd -= slicedText.length - slicedTextChunks.length;
+	}
+
+	const
 		textChunks = [...text.letters()],
 		splicedTextChunks = textChunks.slice();
 
-	splicedTextChunks.splice(selectionStart, selectionEnd - selectionStart, valToInput);
+	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+	splicedTextChunks.splice(selectionStart, normalizedSelectionEnd - selectionStart || 1, valToInput);
 
 	const
 		fittedMask = fitForText(component, splicedTextChunks);
@@ -66,17 +78,17 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		fittedTextLetters = textChunks.slice(0, maskSymbols.length);
 
 	const
-		additionalPlaceholder = fittedMask.placeholder.slice(fittedTextLetters.length),
-		fittedTextChunks = Array.concat([], fittedTextLetters, ...additionalPlaceholder.letters());
+		additionalPlaceholder = [...fittedMask.placeholder.letters()].slice(fittedTextLetters.length),
+		fittedTextChunks = Array.concat([], fittedTextLetters, ...additionalPlaceholder);
 
 	let
-		range = selectionEnd - selectionStart + 1,
+		range = slicedTextChunks.length + 1,
 		cursorPos = selectionStart,
 		needInsertInputVal = true;
 
 	while (range-- > 0) {
 		const
-			rangeStart = selectionEnd - range;
+			rangeStart = normalizedSelectionEnd - range;
 
 		let
 			maskElPos = rangeStart,
@@ -95,7 +107,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 			fittedTextChunks[maskElPos] = valToInput;
 
 			if (needInsertInputVal) {
-				cursorPos = maskElPos + 1;
+				cursorPos = maskElPos + valToInput.length;
 				valToInput = unsafe.maskPlaceholder;
 				needInsertInputVal = false;
 			}
@@ -103,7 +115,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 	}
 
 	while (cursorPos < maskSymbols.length && !Object.isRegExp(maskSymbols[cursorPos])) {
-		cursorPos++;
+		cursorPos += String(maskSymbols[cursorPos]).length;
 	}
 
 	unsafe.updateTextStore(fittedTextChunks.join(''));

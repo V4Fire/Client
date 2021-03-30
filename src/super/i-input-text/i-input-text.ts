@@ -128,7 +128,16 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d' | :maskPlaceholder = '_'
 	 * ```
 	 */
-	@prop({type: String, watch: {handler: 'initMask', immediate: true, provideArgs: false}})
+	@prop({
+		type: String,
+		validator: (val: string) => [...val.letters()].length === 1,
+		watch: {
+			handler: 'initMask',
+			immediate: true,
+			provideArgs: false
+		}
+	})
+
 	readonly maskPlaceholder: string = '_';
 
 	/**
