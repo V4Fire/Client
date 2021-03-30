@@ -15,7 +15,7 @@ import type { CompiledMask } from 'super/i-input-text/i-input-text';
  * @param component
  * @param text
  */
-export function fitForText<C extends iInputText>(component: C, text: string): CanUndef<CompiledMask> {
+export function fitForText<C extends iInputText>(component: C, text: CanArray<string>): CanUndef<CompiledMask> {
 	const {
 		unsafe,
 		unsafe: {compiledMask: mask}
@@ -34,21 +34,21 @@ export function fitForText<C extends iInputText>(component: C, text: string): Ca
 
 	let
 		i = 0,
-		validCharsInText = 0;
+		validCharsInText = 0,
+		vacantCharsInText = 0;
 
-	for (const char of text.letters()) {
+	for (const char of (Object.isArray(text) ? text : text.letters())) {
 		const
 			maskNonTerminal = nonTerminals[i];
 
-		if (maskNonTerminal.test(char)) {
-			validCharsInText++;
+		if (char === unsafe.maskPlaceholder) {
+			vacantCharsInText++;
+			incI();
 
-			if (i < nonTerminals.length - 1) {
-				i++;
-
-			} else {
-				i = 0;
-			}
+		} else if (maskNonTerminal.test(char)) {
+			validCharsInText += vacantCharsInText + 1;
+			vacantCharsInText = 0;
+			incI();
 		}
 	}
 
@@ -64,6 +64,15 @@ export function fitForText<C extends iInputText>(component: C, text: string): Ca
 
 	unsafe.maskRepetitions = expectedRepetitions;
 	return unsafe.compileMask();
+
+	function incI(): void {
+		if (i < nonTerminals.length - 1) {
+			i++;
+
+		} else {
+			i = 0;
+		}
+	}
 }
 
 /**
