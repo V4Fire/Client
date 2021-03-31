@@ -74,7 +74,9 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 		}
 
 		const
-			maskSymbols = mask!.symbols,
+			maskSymbols = mask!.symbols;
+
+		const
 			[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
 
 		let
@@ -92,26 +94,30 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 			cursorPos = selectionStart;
 		}
 
-		if (cursorPos === selectionEnd || isKeyboardEvent) {
-			while (!Object.isRegExp(maskSymbols[cursorPos])) {
-				if (isLeftKey) {
-					cursorPos--;
+		if (!isKeyboardEvent && cursorPos !== selectionEnd) {
+			return;
+		}
 
-					if (cursorPos <= 0) {
-						break;
-					}
+		while (!Object.isRegExp(maskSymbols[cursorPos])) {
+			if (isLeftKey) {
+				cursorPos--;
 
-				} else {
-					cursorPos++;
+				if (cursorPos <= 0) {
+					cursorPos = 0;
+					break;
+				}
 
-					if (cursorPos >= maskSymbols.length) {
-						break;
-					}
+			} else {
+				cursorPos++;
+
+				if (cursorPos >= maskSymbols.length) {
+					cursorPos = maskSymbols.length;
+					break;
 				}
 			}
-
-			cursorPos = convertCursorPositionToRaw(component, cursorPos);
-			input.setSelectionRange(cursorPos, cursorPos);
 		}
+
+		cursorPos = convertCursorPositionToRaw(component, cursorPos);
+		input.setSelectionRange(cursorPos, cursorPos);
 	}
 }
