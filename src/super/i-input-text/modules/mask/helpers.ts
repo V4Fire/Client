@@ -144,6 +144,7 @@ export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(
 		}
 	}
 
+	pos = convertCursorPositionToRaw(component, pos);
 	unsafe.$refs.input.setSelectionRange(pos, pos);
 }
 
@@ -241,4 +242,21 @@ export function getNormalizedSelectionBounds<C extends iInputText>(
 	}
 
 	return [normalizedSelectionStart, normalizedSelectionEnd];
+}
+
+/**
+ * Takes a position of the selection cursor and returns its value within a UTF 16 string
+ *
+ * @param component
+ * @param pos
+ *
+ * @example
+ * ```
+ * // '1-😀'
+ * convertCursorPositionToRaw(component, 3) // 4, cause "😀" is contained two UTF 16 characters
+ * ```
+ */
+export function convertCursorPositionToRaw<C extends iInputText>(component: C, pos: number): number {
+	const {text} = component;
+	return [...text.letters()].slice(0, pos).join('').length;
 }

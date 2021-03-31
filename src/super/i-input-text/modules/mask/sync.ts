@@ -74,24 +74,24 @@ export function syncWithText<C extends iInputText>(
 
 		for (let i = 0; i < maskSymbols.length; i++) {
 			const
-				maskSymbol = maskSymbols[i];
+				maskEl = maskSymbols[i];
 
 			// Restoration of values that don't match the selection range
 			if (i < from || i > to) {
-				if (Object.isRegExp(maskSymbol)) {
-					newMaskedText += resolveNonTerminalFromBuffer(maskSymbol, i);
+				if (Object.isRegExp(maskEl)) {
+					newMaskedText += resolveNonTerminalFromBuffer(maskEl, i);
 
 				} else {
-					newMaskedText += maskSymbol;
+					newMaskedText += maskEl;
 				}
 
 				continue;
 			}
 
-			if (Object.isRegExp(maskSymbol)) {
+			if (Object.isRegExp(maskEl)) {
 				if (textChunks.length > 0) {
 					// Skip all symbols that don't match the non-terminal grammar
-					while (textChunks.length > 0 && !maskSymbol.test(textChunks[0])) {
+					while (textChunks.length > 0 && !maskEl.test(textChunks[0])) {
 						textChunks.shift();
 					}
 
@@ -107,7 +107,7 @@ export function syncWithText<C extends iInputText>(
 						newMaskedText += maskPlaceholder;
 
 					} else {
-						newMaskedText += resolveNonTerminalFromBuffer(maskSymbol, i);
+						newMaskedText += resolveNonTerminalFromBuffer(maskEl, i);
 					}
 
 				} else {
@@ -116,7 +116,7 @@ export function syncWithText<C extends iInputText>(
 
 			// This is a static symbol from the mask
 			} else {
-				newMaskedText += maskSymbol;
+				newMaskedText += maskEl;
 
 				if (textChunks.length > 0) {
 					cursorPos++;

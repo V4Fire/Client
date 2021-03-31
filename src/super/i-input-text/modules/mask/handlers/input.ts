@@ -8,8 +8,13 @@
 
 import type iInputText from 'super/i-input-text/i-input-text';
 
-import { fitForText } from 'super/i-input-text/modules/mask';
-import { getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
+import {
+
+	fitForText,
+	convertCursorPositionToRaw,
+	getNormalizedSelectionBounds
+
+} from 'super/i-input-text/modules/mask/helpers';
 
 /**
  * Handler: there is occur a keypress action on the masked input
@@ -79,13 +84,15 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		fittedTextChunks = Array.concat([], fittedTextLetters, ...additionalPlaceholder);
 
 	let
-		range = [...text.slice(selectionStart, selectionEnd).letters()].length + 1,
-		cursorPos = selectionStart,
+		symbolsInSelection = [...text.slice(selectionStart, selectionEnd).letters()].length + 1;
+
+	let
+		cursorPos = normalizedSelectionStart,
 		needInsertInputVal = true;
 
-	while (range-- > 0) {
+	while (symbolsInSelection-- > 0) {
 		const
-			rangeStart = normalizedSelectionEnd - range;
+			rangeStart = normalizedSelectionEnd - symbolsInSelection;
 
 		let
 			maskElPos = rangeStart,
@@ -104,7 +111,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 			fittedTextChunks[maskElPos] = valToInput;
 
 			if (needInsertInputVal) {
-				cursorPos = maskElPos + valToInput.length;
+				cursorPos = maskElPos + 1;
 				valToInput = unsafe.maskPlaceholder;
 				needInsertInputVal = false;
 			}
@@ -112,9 +119,11 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 	}
 
 	while (cursorPos < maskSymbols.length && !Object.isRegExp(maskSymbols[cursorPos])) {
-		cursorPos += String(maskSymbols[cursorPos]).length;
+		cursorPos++;
 	}
 
 	unsafe.updateTextStore(fittedTextChunks.join(''));
+
+	cursorPos = convertCursorPositionToRaw(component, cursorPos);
 	input.setSelectionRange(cursorPos, cursorPos);
 }

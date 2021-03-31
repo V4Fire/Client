@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import type iInputText from 'super/i-input-text/i-input-text';
-import { getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
+import { convertCursorPositionToRaw, getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
 
 export const
 	$$ = symbolGenerator();
@@ -110,8 +110,8 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 				}
 			}
 
-			const utf16Pos = [...unsafe.text.letters()].slice(0, cursorPos).join('').length;
-			input.setSelectionRange(utf16Pos, utf16Pos);
+			cursorPos = convertCursorPositionToRaw(component, cursorPos);
+			input.setSelectionRange(cursorPos, cursorPos);
 		}
 	}
 }
