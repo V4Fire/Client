@@ -7,7 +7,8 @@
  */
 
 import type iInputText from 'super/i-input-text/i-input-text';
-import type { CompiledMask } from 'super/i-input-text/i-input-text';
+
+import type { CompiledMask } from 'super/i-input-text/interface';
 
 /**
  * Takes the specified text, and:
@@ -72,7 +73,34 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 	}
 
 	unsafe.maskRepetitions = expectedRepetitions;
-	return unsafe.compileMask();
+
+	const
+		newMask = unsafe.compileMask();
+
+	if (newMask != null) {
+		const
+			symbolsInNewMask = newMask.symbols.length,
+			diff = mask!.symbols.length - newMask.symbols.length;
+
+		newMask.text = [...mask!.text.letters()]
+			.slice(0, symbolsInNewMask)
+			.join('');
+
+		newMask.start = mask!.start;
+		newMask.end = mask!.end;
+
+		if (diff > 0) {
+			if (newMask.start != null && newMask.start > symbolsInNewMask) {
+				newMask.start -= diff;
+			}
+
+			if (newMask.end != null && newMask.end > symbolsInNewMask) {
+				newMask.end -= diff;
+			}
+		}
+	}
+
+	return newMask;
 
 	function incNonTerminalPos(): void {
 		if (nonTerminalPos < nonTerminals.length - 1) {
@@ -102,16 +130,11 @@ export function saveSnapshot<C extends iInputText>(component: C): void {
 
 	if (Object.isTruly(input)) {
 		if (input.selectionStart === 0 && input.selectionEnd === input.value.length) {
-			Object.assign(mask, {
-				start: 0,
-				end: 0
-			});
+			Object.assign(mask, {start: 0, end: 0});
 
 		} else {
-			Object.assign(mask, {
-				start: input.selectionStart,
-				end: input.selectionEnd
-			});
+			const [start, end] = getNormalizedSelectionBounds(component, input.selectionStart ?? 0, input.selectionEnd ?? 0);
+			Object.assign(mask, {start, end});
 		}
 	}
 }

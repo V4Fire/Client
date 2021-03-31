@@ -7,6 +7,7 @@
  */
 
 import type iInputText from 'super/i-input-text/i-input-text';
+import { convertCursorPositionToRaw, getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
 
 /**
  * Handler: removing characters from the mask via "backspace/delete" buttons
@@ -17,10 +18,7 @@ import type iInputText from 'super/i-input-text/i-input-text';
 export async function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): Promise<void> {
 	const {
 		unsafe,
-		unsafe: {
-			compiledMask: mask,
-			$refs: {input}
-		}
+		unsafe: {text, compiledMask: mask, $refs: {input}}
 	} = component;
 
 	const canIgnore =
@@ -38,117 +36,77 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 	e.preventDefault();
 
 	const
-		maskSymbols = mask!.symbols;
+		maskSymbols = mask!.symbols,
+		textChunks = [...text.letters()];
 
 	const
-		selectionStart = input.selectionStart ?? 0,
-		selectionEnd = input.selectionEnd ?? 0,
+		[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
+
+	const
 		withoutSelection = selectionStart === selectionEnd;
 
 	let
-		{text} = unsafe;
-
-	let
-		pos = 0;
+		cursorPos = 0;
 
 	switch (e.key) {
 		case 'Delete': {
-			const
-				chunks = <string[]>[];
-
-			let
-				start = selectionStart,
-				end = selectionEnd;
-
-			for (let i = 0; i < maskSymbols.length; i++) {
-				const
-					symbol = maskSymbols[i],
-					char = text[i];
-
-				if (Object.isRegExp(symbol) && symbol.test(char)) {
-					chunks.push(char);
-
-				} else {
-					if (i < selectionStart) {
-						start--;
-					}
-
-					if (!withoutSelection && i < selectionEnd) {
-						end--;
-					}
-				}
-			}
-
-			chunks.splice(start, withoutSelection ? 1 : end - start);
-			text = chunks.join('');
-
-			if (text === '') {
-				await unsafe.syncMaskWithText('');
-
-			} else {
-				await unsafe.syncMaskWithText(text, {
-					from: selectionStart,
-					to: selectionEnd,
-					inputText: ''
-				});
-			}
+			await unsafe.syncMaskWithText(textChunks.slice(selectionStart + 1), {
+				from: selectionStart,
+				to: selectionEnd
+			});
 
 			break;
 		}
 
 		case 'Backspace': {
-			const
-				chunks = text.split('');
+			let symbolsInSelection = selectionEnd - selectionStart;
+			symbolsInSelection = symbolsInSelection > 0 ? symbolsInSelection : 1;
 
-			let range = selectionEnd - selectionStart;
-			range = range > 0 ? range : 1;
-
-			while (range-- > 0) {
+			while (symbolsInSelection-- > 0) {
 				const
-					end = selectionEnd - range - 1;
+					rangeStart = selectionEnd - symbolsInSelection - 1;
 
 				let
-					maskEl = maskSymbols[end],
-					prevMaskEl = '',
-					i = end;
+					maskElPos = rangeStart,
+					maskEl = maskSymbols[maskElPos];
 
 				if (!Object.isRegExp(maskEl) && withoutSelection) {
-					prevMaskEl = maskEl;
+					do {
+						maskElPos--;
 
-					while (!Object.isRegExp(maskSymbols[--i]) && i > -1) {
-						prevMaskEl += maskSymbols[i];
-					}
+					} while (maskElPos >= 0 && !Object.isRegExp(maskSymbols[maskElPos]));
 
-					maskEl = maskSymbols[i];
+					maskEl = maskSymbols[maskElPos];
 				}
 
 				if (Object.isRegExp(maskEl)) {
-					pos = end - prevMaskEl.length;
-					chunks[pos] = unsafe.maskPlaceholder;
+					cursorPos = rangeStart - (rangeStart - maskElPos);
+					textChunks[cursorPos] = unsafe.maskPlaceholder;
 				}
 			}
 
-			text = chunks.join('');
+			cursorPos = withoutSelection ? cursorPos : selectionStart;
 
-			let
-				start = withoutSelection ? pos : selectionStart;
-
-			while (start < maskSymbols.length && !Object.isRegExp(maskSymbols[start])) {
-				start++;
+			while (cursorPos < maskSymbols.length && !Object.isRegExp(maskSymbols[cursorPos])) {
+				cursorPos++;
 			}
 
-			if (text === mask!.placeholder) {
+			const
+				resultText = textChunks.join('');
+
+			if (resultText === mask!.placeholder) {
 				await unsafe.syncMaskWithText('');
 
 			} else {
-				unsafe.updateTextStore(text);
-				input.setSelectionRange(start, start);
+				unsafe.updateTextStore(resultText);
+				cursorPos = convertCursorPositionToRaw(component, cursorPos);
+				input.setSelectionRange(cursorPos, cursorPos);
 			}
 
 			break;
 		}
 
 		default:
-		// Do nothing
+			// Do nothing
 	}
 }

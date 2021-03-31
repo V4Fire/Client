@@ -322,12 +322,12 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	/**
 	 * Synchronizes the component mask with the specified text value
 	 *
-	 * @param [text]
+	 * @param [text] - text to synchronize or a list of Unicode symbols
 	 * @param [opts] - additional options
 	 */
 	@wait('ready', {label: $$.syncComponentMaskWithText})
 	protected syncMaskWithText(
-		text: string = this.text,
+		text: CanArray<string> = this.text,
 		opts?: SyncMaskWithTextOptions
 	): CanPromise<void> {
 		mask.syncWithText(this, text, opts);

@@ -8,8 +8,8 @@
 
 import type iInputText from 'super/i-input-text/i-input-text';
 
-import { fitForText } from 'super/i-input-text/modules/mask/helpers';
-import type { SyncMaskWithTextOptions } from 'super/i-input-text/interface';
+import { fitForText, convertCursorPositionToRaw } from 'super/i-input-text/modules/mask/helpers';
+import type { SyncMaskWithTextOptions } from 'super/i-input-text/modules/mask/interface';
 
 /**
  * Synchronizes the component mask with the specified text value.
@@ -21,12 +21,12 @@ import type { SyncMaskWithTextOptions } from 'super/i-input-text/interface';
  * The resulting text is saved to the input. The cursor position is updated too.
  *
  * @param component
- * @param text
+ * @param text - text to synchronize or a list of Unicode symbols
  * @param [opts] - additional options
  */
 export function syncWithText<C extends iInputText>(
 	component: C,
-	text: string,
+	text: CanArray<string>,
 	opts: SyncMaskWithTextOptions = {}
 ): void {
 	const {
@@ -35,19 +35,28 @@ export function syncWithText<C extends iInputText>(
 	} = component;
 
 	const
+		originalMask = unsafe.compiledMask,
 		mask = fitForText(component, text);
 
-	if (mask == null) {
+	if (originalMask == null || mask == null) {
 		return;
 	}
 
 	const
-		{symbols: maskSymbols} = mask,
-		{inputText: originalMaskedText = mask.text} = opts;
+		{symbols: maskSymbols} = mask;
+
+	const
+		textChunks = Object.isArray(text) ? text.slice() : [...text.letters()];
+
+	const originalMaskedTextChunks = [
+		...Object.isArray(opts.inputText) ?
+			opts.inputText :
+			(opts.inputText ?? mask.text).letters()
+	];
 
 	const
 		isFocused = unsafe.mods.focused === 'true',
-		isEmptyText = text === '';
+		isEmptyText = !Object.isTruly(opts.from) && textChunks.length === 0;
 
 	let
 		from = 0,
@@ -59,7 +68,7 @@ export function syncWithText<C extends iInputText>(
 	}
 
 	const
-		selectAll = from === 0 && to === maskSymbols.length;
+		overwriteWithPlaceholder = from === 0 && to === maskSymbols.length || textChunks.length === 0;
 
 	let
 		newMaskedText = '',
@@ -69,9 +78,6 @@ export function syncWithText<C extends iInputText>(
 		newMaskedText = mask.placeholder;
 
 	} else {
-		const
-			textChunks = [...text.letters()];
-
 		for (let i = 0; i < maskSymbols.length; i++) {
 			const
 				maskEl = maskSymbols[i];
@@ -103,7 +109,7 @@ export function syncWithText<C extends iInputText>(
 
 				// There are no symbols from the raw input that match the non-terminal grammar
 				if (textChunks.length === 0) {
-					if (selectAll) {
+					if (overwriteWithPlaceholder) {
 						newMaskedText += maskPlaceholder;
 
 					} else {
@@ -144,12 +150,13 @@ export function syncWithText<C extends iInputText>(
 		mask.start = cursorPos;
 		mask.end = cursorPos;
 
+		cursorPos = convertCursorPositionToRaw(component, cursorPos);
 		unsafe.$refs.input.setSelectionRange(cursorPos, cursorPos);
 	}
 
-	function resolveNonTerminalFromBuffer(pattern: RegExp, i: number): string {
+	function resolveNonTerminalFromBuffer(pattern: RegExp, pos: number): string {
 		const
-			char = originalMaskedText[i];
+			char = originalMaskedTextChunks[pos];
 
 		if (!pattern.test(char)) {
 			return maskPlaceholder;

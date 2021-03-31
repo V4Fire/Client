@@ -7,7 +7,7 @@
  */
 
 import type iInputText from 'super/i-input-text/i-input-text';
-import type { CompiledMask } from 'super/i-input-text/interface';
+import type { CompiledMask } from 'super/i-input-text/modules/mask/interface';
 
 /**
  * Compiles the specified component mask and returns the compiled object.
