@@ -50,9 +50,10 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 
 	switch (e.key) {
 		case 'Delete': {
-			await unsafe.syncMaskWithText(textChunks.slice(selectionStart + 1), {
+			await unsafe.syncMaskWithText('', {
 				from: selectionStart,
-				to: selectionEnd
+				to: selectionEnd,
+				preserveCursor: true
 			});
 
 			break;

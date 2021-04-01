@@ -24,6 +24,12 @@ export interface SyncMaskWithTextOptions {
 	 * The parameter can be provided as a list of Unicode symbols.
 	 */
 	inputText?: CanArray<string>;
+
+	/**
+	 * If true, the cursor position will be preserved to the left bound of selection to synchronize
+	 * @default `false`
+	 */
+	preserveCursor?: boolean;
 }
 
 export interface CompiledMask {

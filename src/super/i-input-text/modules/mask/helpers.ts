@@ -202,12 +202,16 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 		const
 			{input} = unsafe.$refs;
 
-		if (!Object.isTruly(input)) {
+		if (!Object.isTruly(input) || mask == null) {
 			return;
 		}
 
-		void unsafe.syncMaskWithText(input.value, {
-			from: mask?.start,
+		const
+			from = mask!.start ?? 0,
+			textToSync = input.value.slice(from);
+
+		void unsafe.syncMaskWithText(textToSync, {
+			from,
 			to: mask?.end
 		});
 	});
