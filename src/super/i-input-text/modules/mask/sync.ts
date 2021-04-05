@@ -91,7 +91,12 @@ export function syncWithText<C extends iInputText>(
 			if (Object.isRegExp(maskEl)) {
 				if (textChunks.length > 0) {
 					// Skip all symbols that don't match the non-terminal grammar
-					while (textChunks.length > 0 && (textChunks[0] !== maskPlaceholder && !maskEl.test(textChunks[0]))) {
+					while (
+						textChunks.length > 0 && (
+							(!opts.preservePlaceholders || textChunks[0] !== maskPlaceholder) &&
+							!maskEl.test(textChunks[0])
+						)
+					) {
 						textChunks.shift();
 					}
 

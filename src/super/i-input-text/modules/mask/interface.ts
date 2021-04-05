@@ -43,6 +43,12 @@ export interface SyncMaskWithTextOptions {
 	 * @default `false`
 	 */
 	preserveCursor?: boolean;
+
+	/**
+	 * If true, all symbols from the specified text that are matched as mask placeholders won't be skipped
+	 * @default `false`
+	 */
+	preservePlaceholders?: boolean;
 }
 
 export interface CompiledMask {

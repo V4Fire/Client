@@ -254,7 +254,8 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 				from,
 				fitMask: false,
 				cursorPos: to,
-				preserveCursor: true
+				preserveCursor: true,
+				preservePlaceholders: true
 			});
 
 		} else {
