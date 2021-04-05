@@ -226,35 +226,40 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 			to = mask!.selectionEnd ?? maskSymbols.length,
 			normalizedTo = from === to ? to + 1 : to;
 
-		const
-			originalTextChunks = [...unsafe.text.letters()],
-			textChunks = [...input.value.letters()].slice(from, normalizedTo);
-
-		for (let i = from, j = 0; i < normalizedTo; i++, j++) {
+		if (from > 0 && to < maskSymbols.length) {
 			const
-				char = textChunks[j],
-				maskEl = maskSymbols[i];
+				originalTextChunks = [...unsafe.text.letters()],
+				textChunks = [...input.value.letters()].slice(from, normalizedTo);
 
-			if (Object.isRegExp(maskEl)) {
-				if (!maskEl.test(char)) {
-					textChunks[j] = unsafe.maskPlaceholder;
+			for (let i = from, j = 0; i < normalizedTo; i++, j++) {
+				const
+					char = textChunks[j],
+					maskEl = maskSymbols[i];
+
+				if (Object.isRegExp(maskEl)) {
+					if (!maskEl.test(char)) {
+						textChunks[j] = unsafe.maskPlaceholder;
+					}
+
+				} else {
+					textChunks[j] = originalTextChunks[i];
 				}
-
-			} else {
-				textChunks[j] = originalTextChunks[i];
 			}
+
+			const
+				textTail = normalizedTo >= maskSymbols.length ? '' : originalTextChunks.slice(normalizedTo),
+				textToSync = textChunks.concat(textTail);
+
+			void unsafe.syncMaskWithText(textToSync, {
+				from,
+				fitMask: false,
+				cursorPos: to,
+				preserveCursor: true
+			});
+
+		} else {
+			void unsafe.syncMaskWithText(input.value);
 		}
-
-		const
-			textTail = normalizedTo >= maskSymbols.length ? '' : originalTextChunks.slice(normalizedTo),
-			textToSync = textChunks.concat(textTail);
-
-		void unsafe.syncMaskWithText(textToSync, {
-			from,
-			fitMask: false,
-			cursorPos: to,
-			preserveCursor: true
-		});
 	});
 }
 
