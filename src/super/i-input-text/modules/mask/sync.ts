@@ -41,11 +41,9 @@ export function syncWithText<C extends iInputText>(
 		return;
 	}
 
-	const originalTextChunks = [
-		...Object.isArray(opts.inputText) ?
-			opts.inputText :
-			(opts.inputText ?? originalMask!.text).letters()
-	];
+	const
+		originalText = opts.inputText ?? originalMask!.text,
+		originalTextChunks = Object.isArray(originalText) ? originalText.slice() : [...originalText.letters()];
 
 	const
 		from = opts.from ?? 0,
@@ -71,11 +69,11 @@ export function syncWithText<C extends iInputText>(
 	}
 
 	const
-		isFocused = unsafe.mods.focused === 'true',
-		isEmptyText = !Object.isTruly(opts.from) && textChunks.length === 0;
+		{symbols: maskSymbols} = mask;
 
 	const
-		{symbols: maskSymbols} = mask;
+		isFocused = unsafe.mods.focused === 'true',
+		isEmptyText = !Object.isTruly(opts.from) && textChunks.length === 0;
 
 	let
 		newMaskedText = '',
@@ -140,8 +138,8 @@ export function syncWithText<C extends iInputText>(
 			} while (cursorPos < to && !Object.isRegExp(maskSymbols[cursorPos]));
 		}
 
-		mask.start = cursorPos;
-		mask.end = cursorPos;
+		mask.selectionStart = cursorPos;
+		mask.selectionEnd = cursorPos;
 
 		cursorPos = convertCursorPositionToRaw(component, cursorPos);
 		unsafe.$refs.input.setSelectionRange(cursorPos, cursorPos);

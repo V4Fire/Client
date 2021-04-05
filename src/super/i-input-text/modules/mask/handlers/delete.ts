@@ -7,7 +7,13 @@
  */
 
 import type iInputText from 'super/i-input-text/i-input-text';
-import { convertCursorPositionToRaw, getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
+import {
+
+	fitForText,
+	convertCursorPositionToRaw,
+	getNormalizedSelectionBounds
+
+} from 'super/i-input-text/modules/mask/helpers';
 
 /**
  * Handler: removing characters from the mask via "backspace/delete" buttons
@@ -36,17 +42,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 	e.preventDefault();
 
 	const
-		maskSymbols = mask!.symbols,
-		textChunks = [...text.letters()];
-
-	const
 		[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
-
-	const
-		withoutSelection = selectionStart === selectionEnd;
-
-	let
-		cursorPos = 0;
 
 	switch (e.key) {
 		case 'Delete': {
@@ -60,8 +56,22 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 		}
 
 		case 'Backspace': {
-			let symbolsInSelection = selectionEnd - selectionStart;
-			symbolsInSelection = symbolsInSelection > 0 ? symbolsInSelection : 1;
+			const
+				textChunks = [...text.letters()],
+				fittedMask = fitForText(component, textChunks);
+
+			if (fittedMask == null) {
+				return;
+			}
+
+			const
+				maskSymbols = fittedMask.symbols,
+				fittedTextChunks = textChunks.slice(0, maskSymbols.length),
+				withoutSelection = selectionStart === selectionEnd;
+
+			let
+				cursorPos = 0,
+				symbolsInSelection = selectionEnd - selectionStart + (withoutSelection ? 1 : 0);
 
 			while (symbolsInSelection-- > 0) {
 				const
@@ -82,7 +92,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 
 				if (Object.isRegExp(maskEl)) {
 					cursorPos = rangeStart - (rangeStart - maskElPos);
-					textChunks[cursorPos] = unsafe.maskPlaceholder;
+					fittedTextChunks[cursorPos] = unsafe.maskPlaceholder;
 				}
 			}
 
@@ -92,17 +102,9 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 				cursorPos++;
 			}
 
-			const
-				resultText = textChunks.join('');
-
-			if (resultText === mask!.placeholder) {
-				await unsafe.syncMaskWithText('');
-
-			} else {
-				unsafe.updateTextStore(resultText);
-				cursorPos = convertCursorPositionToRaw(component, cursorPos);
-				input.setSelectionRange(cursorPos, cursorPos);
-			}
+			unsafe.updateTextStore(fittedTextChunks.join(''));
+			cursorPos = convertCursorPositionToRaw(component, cursorPos);
+			input.setSelectionRange(cursorPos, cursorPos);
 
 			break;
 		}

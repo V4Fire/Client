@@ -56,6 +56,11 @@ export interface CompiledMask {
 	nonTerminals: RegExp[];
 
 	/**
+	 * Last value of the masked input
+	 */
+	text: string;
+
+	/**
 	 * Value of the whole mask placeholder
 	 *
 	 * @example
@@ -68,19 +73,14 @@ export interface CompiledMask {
 	placeholder: string;
 
 	/**
-	 * Last value of the masked input
-	 */
-	text: string;
-
-	/**
 	 * Starting position of the last input selection.
 	 * The position refers to a Unicode symbol, but not a UTF 16 char.
 	 */
-	start: Nullable<number>;
+	selectionStart: Nullable<number>;
 
 	/**
 	 * Ending position of the last input selection.
 	 * The position refers to a Unicode symbol, but not a UTF 16 char.
 	 */
-	end: Nullable<number>;
+	selectionEnd: Nullable<number>;
 }

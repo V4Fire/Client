@@ -82,9 +82,11 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 	return {
 		symbols,
 		nonTerminals,
-		placeholder,
+
 		text: '',
-		start: 0,
-		end: 0
+		placeholder,
+
+		selectionStart: 0,
+		selectionEnd: 0
 	};
 }

@@ -86,16 +86,16 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 			.slice(0, symbolsInNewMask)
 			.join('');
 
-		newMask.start = mask!.start;
-		newMask.end = mask!.end;
+		newMask.selectionStart = mask!.selectionStart;
+		newMask.selectionEnd = mask!.selectionEnd;
 
 		if (diff > 0) {
-			if (newMask.start != null && newMask.start > symbolsInNewMask) {
-				newMask.start -= diff;
+			if (newMask.selectionStart != null && newMask.selectionStart > symbolsInNewMask) {
+				newMask.selectionStart -= diff;
 			}
 
-			if (newMask.end != null && newMask.end > symbolsInNewMask) {
-				newMask.end -= diff;
+			if (newMask.selectionEnd != null && newMask.selectionEnd > symbolsInNewMask) {
+				newMask.selectionEnd -= diff;
 			}
 		}
 	}
@@ -199,21 +199,28 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 	} = component;
 
 	unsafe.async.setImmediate(() => {
-		const
-			{input} = unsafe.$refs;
+		const {
+			text,
+			$refs: {input}
+		} = unsafe;
 
-		if (!Object.isTruly(input) || mask == null) {
+		if (mask == null || !Object.isTruly(input)) {
 			return;
 		}
 
 		const
-			from = mask!.start ?? 0,
-			textToSync = input.value.slice(from);
+			{symbols: maskSymbols} = mask!;
 
-		void unsafe.syncMaskWithText(textToSync, {
-			from,
-			to: mask?.end
-		});
+		const
+			from = mask!.selectionStart ?? 0,
+			to = mask!.selectionEnd ?? maskSymbols.length;
+
+		const
+			normalizedTo = from === to ? to + 1 : to,
+			textTail = normalizedTo >= maskSymbols.length ? '' : text.slice(normalizedTo),
+			textToSync = input.value.slice(from, normalizedTo) + textTail;
+
+		void unsafe.syncMaskWithText(textToSync, {from});
 	});
 }
 
