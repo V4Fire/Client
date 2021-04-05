@@ -42,8 +42,9 @@ export function init<C extends iInputText>(component: C): CanPromise<void> {
 		...group
 	});
 
-	$a.on(input, 'keypress', h('onMaskKeyPress'), group);
 	$a.on(input, 'keydown', h('onMaskDelete'), group);
+	$a.on(input, 'keydown', h('onMaskKeyPress'), group);
+
 	$a.on(input, 'input', h('onMaskInput'), group);
 	$a.on(input, 'blur', h('onMaskBlur'), group);
 
