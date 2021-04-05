@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	{initInput} = include('src/dummies/b-dummy-text/test/helpers');
 
 /**
  * @param {Page} page
@@ -25,9 +25,9 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-dummy-text masked input', () => {
+	describe('b-dummy-text masked input simple usage', () => {
 		it('applying a mask without providing of the text value', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 			});
 
@@ -35,7 +35,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask to the static content', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '79851234567',
 				mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 			});
@@ -44,7 +44,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask to the partial static content', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '798512',
 				mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 			});
@@ -53,7 +53,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask to the non-normalized static content', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '798_586xsd35473178x',
 				mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 			});
@@ -62,7 +62,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask with `maskPlaceholder`', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '798586',
 				mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d',
 				maskPlaceholder: '*'
@@ -72,7 +72,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask with finite repetitions', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '12357984',
 				mask: '%d-%d',
 				maskRepetitions: 2
@@ -83,7 +83,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask with finite repetitions and `maskDelimiter`', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '12357984',
 				mask: '%d-%d',
 				maskRepetitions: 2,
@@ -94,7 +94,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask with partial finite repetitions', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '1',
 				mask: '%d-%d',
 				maskRepetitions: 2
@@ -104,7 +104,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask with infinite repetitions', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '12357984',
 				mask: '%d-%d',
 				maskRepetitions: true
@@ -115,7 +115,7 @@ module.exports = (page) => {
 		});
 
 		it('applying a mask with partial infinite repetitions', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '1235798',
 				mask: '%d-%d',
 				maskRepetitions: true
@@ -124,8 +124,8 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-5 7-9 8-_');
 		});
 
-		it('applying a mask with custom non-terminals', async () => {
-			const target = await init({
+		it('applying a mask with the custom non-terminals', async () => {
+			const target = await initInput(page, {
 				text: '1235798',
 				mask: '%l-%l',
 				maskRepetitions: true,
@@ -135,8 +135,8 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-2 3-_');
 		});
 
-		it('applying a mask with custom non-terminals', async () => {
-			const target = await init({
+		it('applying a mask with the custom non-terminals', async () => {
+			const target = await initInput(page, {
 				text: '1235798',
 				mask: '%l-%l',
 				maskRepetitions: true,
@@ -147,12 +147,12 @@ module.exports = (page) => {
 		});
 
 		it('checking the `text` accessor with an empty input', async () => {
-			const target = await init({});
+			const target = await initInput(page, {});
 			expect(await target.evaluate((ctx) => ctx.text)).toBe('');
 		});
 
 		it('checking the `text` accessor with a mask and empty input', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				mask: '%d-%d'
 			});
 
@@ -160,7 +160,7 @@ module.exports = (page) => {
 		});
 
 		it('checking the `text` accessor', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '123'
 			});
 
@@ -168,7 +168,7 @@ module.exports = (page) => {
 		});
 
 		it('setting the `text` accessor', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '123'
 			});
 
@@ -179,7 +179,7 @@ module.exports = (page) => {
 		});
 
 		it('checking the `text` accessor with a mask', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '123',
 				mask: '%d-%d'
 			});
@@ -188,7 +188,7 @@ module.exports = (page) => {
 		});
 
 		it('setting the `text` accessor with a mask', async () => {
-			const target = await init({
+			const target = await initInput(page, {
 				text: '123',
 				mask: '%d-%d'
 			});
@@ -204,25 +204,4 @@ module.exports = (page) => {
 			})).toBe('6-7');
 		});
 	});
-
-	async function init(attrs = {}) {
-		await page.evaluate((attrs) => {
-			const scheme = [
-				{
-					attrs: {
-						'data-id': 'target',
-						...attrs,
-
-						// eslint-disable-next-line no-new-func
-						regExps: /return /.test(attrs.regExps) ? Function(attrs.regExps)() : attrs.regExps
-					}
-				}
-			];
-
-			globalThis.renderComponents('b-dummy-text', scheme);
-		}, attrs);
-
-		await h.bom.waitForIdleCallback(page);
-		return h.component.waitForComponent(page, '[data-id="target"]');
-	}
 };
