@@ -18,7 +18,7 @@ const
 /**
  * Creates the `bForm` component with the environment to test
  *
- * @param {!Page} page
+ * @param {Page} page
  * @param {Object=} attrs
  * @return {!Promise<CanUndef<Playwright.JSHandle>>}
  */

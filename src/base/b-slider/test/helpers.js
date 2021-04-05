@@ -42,12 +42,12 @@ async function swipeOnce(page) {
 }
 
 /**
- * Initializes slider
+ * Initializes a slider
  *
  * @param {Page} page
  * @param attrs
  * @param content
- * @returns {Promise<CanUndef<Playwright.JSHandle>|any>}
+ * @returns {Promise<CanUndef<Playwright.JSHandle>|?>}
  */
 async function initSlider(page, {attrs, content} = {}) {
 	await page.evaluate(({attrs, content}) => {
