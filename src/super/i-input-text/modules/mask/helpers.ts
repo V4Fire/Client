@@ -128,13 +128,25 @@ export function saveSnapshot<C extends iInputText>(component: C): void {
 
 	mask!.text = component.text;
 
+	const
+		rawSelectionStart = input.selectionStart ?? 0,
+		rawSelectionEnd = input.selectionEnd ?? 0;
+
 	if (Object.isTruly(input)) {
-		if (input.selectionStart === 0 && input.selectionEnd === input.value.length) {
-			Object.assign(mask, {start: 0, end: 0});
+		if (rawSelectionStart === 0 && rawSelectionEnd === input.value.length) {
+			Object.assign(mask, {
+				selectionStart: 0,
+				selectionEnd: 0
+			});
 
 		} else {
-			const [start, end] = getNormalizedSelectionBounds(component, input.selectionStart ?? 0, input.selectionEnd ?? 0);
-			Object.assign(mask, {start, end});
+			const [selectionStart, selectionEnd] = getNormalizedSelectionBounds(
+				component,
+				rawSelectionStart,
+				rawSelectionEnd
+			);
+
+			Object.assign(mask, {selectionStart, selectionEnd});
 		}
 	}
 }
@@ -199,10 +211,8 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 	} = component;
 
 	unsafe.async.setImmediate(() => {
-		const {
-			text,
-			$refs: {input}
-		} = unsafe;
+		const
+			{$refs: {input}} = unsafe;
 
 		if (mask == null || !Object.isTruly(input)) {
 			return;
@@ -213,14 +223,38 @@ export function syncFieldWithInput<C extends iInputText>(component: C): void {
 
 		const
 			from = mask!.selectionStart ?? 0,
-			to = mask!.selectionEnd ?? maskSymbols.length;
+			to = mask!.selectionEnd ?? maskSymbols.length,
+			normalizedTo = from === to ? to + 1 : to;
 
 		const
-			normalizedTo = from === to ? to + 1 : to,
-			textTail = normalizedTo >= maskSymbols.length ? '' : text.slice(normalizedTo),
-			textToSync = input.value.slice(from, normalizedTo) + textTail;
+			originalTextChunks = [...unsafe.text.letters()],
+			textChunks = [...input.value.letters()].slice(from, normalizedTo);
 
-		void unsafe.syncMaskWithText(textToSync, {from});
+		for (let i = from, j = 0; i < normalizedTo; i++, j++) {
+			const
+				char = textChunks[j],
+				maskEl = maskSymbols[i];
+
+			if (Object.isRegExp(maskEl)) {
+				if (!maskEl.test(char)) {
+					textChunks[j] = unsafe.maskPlaceholder;
+				}
+
+			} else {
+				textChunks[j] = originalTextChunks[i];
+			}
+		}
+
+		const
+			textTail = normalizedTo >= maskSymbols.length ? '' : originalTextChunks.slice(normalizedTo),
+			textToSync = textChunks.concat(textTail);
+
+		void unsafe.syncMaskWithText(textToSync, {
+			from,
+			fitMask: false,
+			cursorPos: to,
+			preserveCursor: true
+		});
 	});
 }
 

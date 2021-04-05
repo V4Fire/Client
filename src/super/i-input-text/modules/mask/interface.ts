@@ -26,6 +26,19 @@ export interface SyncMaskWithTextOptions {
 	inputText?: CanArray<string>;
 
 	/**
+	 * If false, the mask won't try to fit its size to the specified text to sync
+	 * @default `true`
+	 */
+	fitMask?: boolean;
+
+	/**
+	 * Starting position of the selection cursor.
+	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
+	 * @default `from`
+	 */
+	cursorPos?: number;
+
+	/**
 	 * If true, the cursor position will be preserved to the left bound of selection to synchronize
 	 * @default `false`
 	 */

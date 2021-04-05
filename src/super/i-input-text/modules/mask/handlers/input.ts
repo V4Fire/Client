@@ -73,11 +73,11 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 
 	const
 		maskSymbols = fittedMask.symbols,
-		fittedTextLetters = textChunks.slice(0, maskSymbols.length);
+		boundedTextChunks = textChunks.slice(0, maskSymbols.length);
 
 	const
-		additionalPlaceholder = [...fittedMask.placeholder.letters()].slice(fittedTextLetters.length),
-		fittedTextChunks = Array.concat([], fittedTextLetters, ...additionalPlaceholder);
+		additionalPlaceholder = [...fittedMask.placeholder.letters()].slice(boundedTextChunks.length),
+		fittedTextChunks = Array.concat([], boundedTextChunks, ...additionalPlaceholder);
 
 	let
 		symbolsInSelection = selectionRange + 1,

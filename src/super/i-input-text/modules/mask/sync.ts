@@ -54,8 +54,9 @@ export function syncWithText<C extends iInputText>(
 		.concat(text, originalTextChunks.slice(to + 1))
 		.join('');
 
-	const
-		mask = fitForText(component, text);
+	const mask = opts.fitMask !== false ?
+		fitForText(component, text) :
+		originalMask;
 
 	if (mask == null) {
 		return;
@@ -77,7 +78,7 @@ export function syncWithText<C extends iInputText>(
 
 	let
 		newMaskedText = '',
-		cursorPos = from;
+		cursorPos = opts.cursorPos ?? from;
 
 	if (isEmptyText) {
 		newMaskedText = mask.placeholder;
@@ -90,7 +91,7 @@ export function syncWithText<C extends iInputText>(
 			if (Object.isRegExp(maskEl)) {
 				if (textChunks.length > 0) {
 					// Skip all symbols that don't match the non-terminal grammar
-					while (textChunks.length > 0 && !maskEl.test(textChunks[0])) {
+					while (textChunks.length > 0 && (textChunks[0] !== maskPlaceholder && !maskEl.test(textChunks[0]))) {
 						textChunks.shift();
 					}
 
