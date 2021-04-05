@@ -86,7 +86,7 @@ module.exports = (page) => {
 			expect(optionsCount).toEqual(2);
 		});
 
-		it('loading options with an external optionProps as function', async () => {
+		it('loading options with the external `optionProps` as a function', async () => {
 			const
 				options = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}],
 				optionClass = h.dom.elNameGenerator('.b-slider', 'option');
@@ -116,7 +116,7 @@ module.exports = (page) => {
 			expect(optionsCount).toEqual(3);
 		});
 
-		it('loading options with an external optionProps as object', async () => {
+		it('loading options with the external `optionProps` as an object', async () => {
 			const
 				options = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}];
 

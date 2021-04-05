@@ -51,7 +51,7 @@ module.exports = (page) => {
 			return `return () => ${JSON.stringify(items)}`;
 		};
 
-		it('default slot with slider mode "slide"', async () => {
+		it('default slot with a slider mode "slide"', async () => {
 			const
 				target = await initSlider(page, {content: {default: defaultSlotFn()}, attrs: {mode: 'slide'}}),
 				viewContent = await h.dom.waitForEl(page, h.dom.elNameGenerator('.b-slider', 'view-content'));
@@ -66,7 +66,7 @@ module.exports = (page) => {
 			expect((await target.evaluate((ctx) => ctx.current))).toBe(1);
 		});
 
-		it('default slot with slider mode "scroll"', async () => {
+		it('default slot with a slider mode "scroll"', async () => {
 			const
 				target = await initSlider(page, {content: {default: defaultSlotFn()}, attrs: {mode: 'scroll'}}),
 				viewContent = await h.dom.waitForEl(page, h.dom.elNameGenerator('.b-slider', 'view-content'));
@@ -118,6 +118,7 @@ module.exports = (page) => {
 					item: 'b-checkbox',
 					items: [{id: '1'}, {id: '2'}]
 				},
+
 				content: {
 					beforeItems: `return () => "${textSlotContent}"`
 				}
@@ -139,6 +140,7 @@ module.exports = (page) => {
 					item: 'b-checkbox',
 					items: [{id: '1'}, {id: '2'}]
 				},
+
 				content: {
 					afterItems: `return () => "${textSlotContent}"`
 				}
