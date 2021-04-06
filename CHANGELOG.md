@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.172 (2021-04-06)
+
+#### :house: Internal
+
+* Optimized the project building with `--fat-html`
+
 ## v3.0.0-rc.171 (2021-03-27)
 
 #### :bug: Bug Fix
