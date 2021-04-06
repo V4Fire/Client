@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.171 (2021-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition during attaching of component dependencies `build`
+
+## v3.0.0-rc.170 (2021-03-26)
+
+#### :rocket: New Feature
+
+* Added a new event `chunkRender` `base/b-virtual-scroll`
+
 ## v3.0.0-rc.169 (2021-03-25)
 
 #### :bug: Bug Fix

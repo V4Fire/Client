@@ -35,67 +35,112 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		ext = path.extname(filePath),
 		component = blockMap.get(path.basename(filePath, ext));
 
-	return attachDependencies(component);
+	if (component == null) {
+		return str;
+	}
 
-	async function attachDependencies(component) {
-		if (component == null) {
-			return str;
+	const
+		deps = new Set(),
+		libs = new Set();
+
+	attachComponentDeps(component);
+
+	await $C([...deps].reverse()).async.forEach(async (dep) => {
+		const
+			declFromCache = decls[dep];
+
+		if (declFromCache != null) {
+			str += declFromCache;
+			return;
 		}
 
-		await $C(component.dependencies).async.forEach(async (dep) => {
-			if (decls[dep] != null) {
-				str += decls[dep];
-				return;
-			}
+		const
+			component = blockMap.get(dep);
 
-			const component = blockMap.get(dep);
-			await attachDependencies(component);
+		if (component == null) {
+			return;
+		}
 
-			if (!component) {
-				return;
-			}
+		let
+			decl = '';
 
-			let
-				decl = '';
+		try {
+			const
+				styles = await component.styles;
 
-			try {
-				const
-					styles = await component.styles;
-
-				decl += `
+			decl += `
 if (!TPLS['${dep}']) {
 	(async () => {
 		try {
-			${styles.map((src) => `await import('${path.normalize(src)}');`).join('')}
+			${
+				styles
+					.map((src) => {
+						if (src == null) {
+							return '';
+						}
+
+						src = path.normalize(src);
+						return `await import('${src}');`;
+					})
+
+					.join('')
+			}
 		} catch {}
 	})();
 }`;
 
-			} catch {}
+		} catch {}
 
-			try {
-				const src = path.normalize(await component.logic);
+		try {
+			let
+				src = await component.logic;
+
+			if (src != null) {
+				src = path.normalize(src);
 				decl += `try { require('${src}'); } catch (err) { stderr(err); }`;
+			}
 
-			} catch {}
+		} catch {}
 
-			try {
-				const src = path.normalize(await component.tpl);
+		try {
+			let
+				src = await component.tpl;
+
+			if (src != null) {
+				src = path.normalize(src);
 				decl += `try { TPLS['${dep}'] = require('${src}')['${dep}']; } catch (err) { stderr(err); }`;
+			}
 
-			} catch {}
+		} catch {}
 
+		if (decls[dep] == null) {
 			decls[dep] = decl;
-			str += decl;
+		}
+
+		str += decl;
+	});
+
+	$C([...libs].reverse()).forEach((lib) => {
+		str += `
+try { require('${lib}'); } catch (err) { stderr(err); }
+`;
+	});
+
+	return str;
+
+	function attachComponentDeps(component) {
+		if (component == null) {
+			return;
+		}
+
+		$C(component.dependencies).forEach((dep) => {
+			deps.add(dep);
+			attachComponentDeps(blockMap.get(dep));
 		});
 
 		$C(component.libs).forEach((lib) => {
-			str += `
-try { require('${lib}'); } catch (err) { stderr(err); }
-`;
+			libs.add(lib);
 		});
-
-		return str;
 	}
 };
 
