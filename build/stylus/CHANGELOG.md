@@ -11,6 +11,12 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :bug: Bug Fix
+
+* Fixed a Stylus object parsing bug
+
+## v3.0.0-rc.164 (2021-03-22)
+
 #### :rocket: New Feature
 
 * Added a new plugin function `log`

@@ -101,7 +101,7 @@ function parseObject(stylusObj) {
 							exprRxgp.test(value)
 						) {
 							// If value is an expression with one element
-							// unwrap it from parentheses
+							// then unwrap it from parentheses
 							value = value.replace(exprRxgp, '$1');
 						}
 
