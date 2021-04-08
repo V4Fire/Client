@@ -206,151 +206,6 @@
         }
       ],
       [
-        "b-crop",
-        {
-          "index": "src/base/b-crop/index.js",
-          "declaration": {
-            "name": "b-crop",
-            "parent": "i-block",
-            "dependencies": [
-              "b-progress-icon"
-            ],
-            "libs": []
-          },
-          "name": "b-crop",
-          "parent": "i-block",
-          "resolvedParent": {
-            "index": "src/super/i-block/index.js",
-            "declaration": {
-              "name": "i-block",
-              "parent": null,
-              "dependencies": [],
-              "libs": []
-            }
-          },
-          "dependencies": [
-            "b-progress-icon"
-          ],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": [
-              [
-                "b-progress-icon",
-                {
-                  "index": "src/icons/b-progress-icon/index.js",
-                  "declaration": {
-                    "name": "b-progress-icon",
-                    "parent": "i-block",
-                    "dependencies": [],
-                    "libs": []
-                  }
-                }
-              ]
-            ]
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": [
-              [
-                "b-progress-icon",
-                {
-                  "index": "src/icons/b-progress-icon/index.js",
-                  "declaration": {
-                    "name": "b-progress-icon",
-                    "parent": "i-block",
-                    "dependencies": [],
-                    "libs": []
-                  }
-                }
-              ]
-            ]
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-progress-icon",
-                  {
-                    "index": "src/icons/b-progress-icon/index.js",
-                    "declaration": {
-                      "name": "b-progress-icon",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-crop",
-                  {
-                    "index": "src/base/b-crop/index.js",
-                    "declaration": {
-                      "name": "b-crop",
-                      "parent": "i-block",
-                      "dependencies": [
-                        "b-progress-icon"
-                      ],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-crop/b-crop.ts",
-          "styles": [
-            "src/base/b-crop/b-crop.styl"
-          ],
-          "tpl": "src/base/b-crop/b-crop.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-dummy",
         {
           "index": "src/base/b-dummy/index.js",
@@ -645,6 +500,151 @@
             "src/base/b-dynamic-page/b-dynamic-page.styl"
           ],
           "tpl": "src/base/b-dynamic-page/b-dynamic-page.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-crop",
+        {
+          "index": "src/base/b-crop/index.js",
+          "declaration": {
+            "name": "b-crop",
+            "parent": "i-block",
+            "dependencies": [
+              "b-progress-icon"
+            ],
+            "libs": []
+          },
+          "name": "b-crop",
+          "parent": "i-block",
+          "resolvedParent": {
+            "index": "src/super/i-block/index.js",
+            "declaration": {
+              "name": "i-block",
+              "parent": null,
+              "dependencies": [],
+              "libs": []
+            }
+          },
+          "dependencies": [
+            "b-progress-icon"
+          ],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": [
+              [
+                "b-progress-icon",
+                {
+                  "index": "src/icons/b-progress-icon/index.js",
+                  "declaration": {
+                    "name": "b-progress-icon",
+                    "parent": "i-block",
+                    "dependencies": [],
+                    "libs": []
+                  }
+                }
+              ]
+            ]
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": [
+              [
+                "b-progress-icon",
+                {
+                  "index": "src/icons/b-progress-icon/index.js",
+                  "declaration": {
+                    "name": "b-progress-icon",
+                    "parent": "i-block",
+                    "dependencies": [],
+                    "libs": []
+                  }
+                }
+              ]
+            ]
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-progress-icon",
+                  {
+                    "index": "src/icons/b-progress-icon/index.js",
+                    "declaration": {
+                      "name": "b-progress-icon",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-crop",
+                  {
+                    "index": "src/base/b-crop/index.js",
+                    "declaration": {
+                      "name": "b-crop",
+                      "parent": "i-block",
+                      "dependencies": [
+                        "b-progress-icon"
+                      ],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-crop/b-crop.ts",
+          "styles": [
+            "src/base/b-crop/b-crop.styl"
+          ],
+          "tpl": "src/base/b-crop/b-crop.ss",
           "etpl": null
         }
       ],
@@ -952,131 +952,6 @@
         }
       ],
       [
-        "b-remote-provider",
-        {
-          "index": "src/base/b-remote-provider/index.js",
-          "declaration": {
-            "name": "b-remote-provider",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-remote-provider",
-          "parent": "i-data",
-          "resolvedParent": {
-            "index": "src/super/i-data/index.js",
-            "declaration": {
-              "name": "i-data",
-              "parent": "i-block",
-              "dependencies": [],
-              "libs": []
-            }
-          },
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "i-data",
-                  {
-                    "index": "src/super/i-data/index.js",
-                    "declaration": {
-                      "name": "i-data",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-remote-provider",
-                  {
-                    "index": "src/base/b-remote-provider/index.js",
-                    "declaration": {
-                      "name": "b-remote-provider",
-                      "parent": "i-data",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "i-data",
-                  {
-                    "index": "src/super/i-data/index.js",
-                    "declaration": {
-                      "name": "i-data",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
-          "styles": [
-            "src/base/b-remote-provider/b-remote-provider.styl"
-          ],
-          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-list",
         {
           "index": "src/base/b-list/index.js",
@@ -1281,6 +1156,131 @@
             "src/base/b-list/b-list.styl"
           ],
           "tpl": "src/base/b-list/b-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-remote-provider",
+        {
+          "index": "src/base/b-remote-provider/index.js",
+          "declaration": {
+            "name": "b-remote-provider",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-remote-provider",
+          "parent": "i-data",
+          "resolvedParent": {
+            "index": "src/super/i-data/index.js",
+            "declaration": {
+              "name": "i-data",
+              "parent": "i-block",
+              "dependencies": [],
+              "libs": []
+            }
+          },
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "i-data",
+                  {
+                    "index": "src/super/i-data/index.js",
+                    "declaration": {
+                      "name": "i-data",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-remote-provider",
+                  {
+                    "index": "src/base/b-remote-provider/index.js",
+                    "declaration": {
+                      "name": "b-remote-provider",
+                      "parent": "i-data",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "i-data",
+                  {
+                    "index": "src/super/i-data/index.js",
+                    "declaration": {
+                      "name": "i-data",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
+          "styles": [
+            "src/base/b-remote-provider/b-remote-provider.styl"
+          ],
+          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
           "etpl": null
         }
       ],
@@ -1636,107 +1636,6 @@
         }
       ],
       [
-        "b-skeleton",
-        {
-          "index": "src/base/b-skeleton/index.js",
-          "declaration": {
-            "name": "b-skeleton",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-skeleton",
-          "parent": "i-block",
-          "resolvedParent": {
-            "index": "src/super/i-block/index.js",
-            "declaration": {
-              "name": "i-block",
-              "parent": null,
-              "dependencies": [],
-              "libs": []
-            }
-          },
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-skeleton",
-                  {
-                    "index": "src/base/b-skeleton/index.js",
-                    "declaration": {
-                      "name": "b-skeleton",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/base/b-skeleton/b-skeleton.styl"
-          ],
-          "tpl": "src/base/b-skeleton/b-skeleton.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-slider",
         {
           "index": "src/base/b-slider/index.js",
@@ -1870,6 +1769,309 @@
             "src/base/b-slider/b-slider.styl"
           ],
           "tpl": "src/base/b-slider/b-slider.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-skeleton",
+        {
+          "index": "src/base/b-skeleton/index.js",
+          "declaration": {
+            "name": "b-skeleton",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-skeleton",
+          "parent": "i-block",
+          "resolvedParent": {
+            "index": "src/super/i-block/index.js",
+            "declaration": {
+              "name": "i-block",
+              "parent": null,
+              "dependencies": [],
+              "libs": []
+            }
+          },
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-skeleton",
+                  {
+                    "index": "src/base/b-skeleton/index.js",
+                    "declaration": {
+                      "name": "b-skeleton",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/base/b-skeleton/b-skeleton.styl"
+          ],
+          "tpl": "src/base/b-skeleton/b-skeleton.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-window",
+        {
+          "index": "src/base/b-window/index.js",
+          "declaration": {
+            "name": "b-window",
+            "parent": "i-data",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "b-window",
+          "parent": "i-data",
+          "resolvedParent": {
+            "index": "src/super/i-data/index.js",
+            "declaration": {
+              "name": "i-data",
+              "parent": "i-block",
+              "dependencies": [],
+              "libs": []
+            }
+          },
+          "dependencies": [
+            "b-button"
+          ],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": [
+              [
+                "b-button",
+                {
+                  "index": "src/form/b-button/index.js",
+                  "declaration": {
+                    "name": "b-button",
+                    "parent": "i-data",
+                    "dependencies": [
+                      "b-icon",
+                      "b-progress-icon"
+                    ],
+                    "libs": []
+                  }
+                }
+              ]
+            ]
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": [
+              [
+                "b-button",
+                {
+                  "index": "src/form/b-button/index.js",
+                  "declaration": {
+                    "name": "b-button",
+                    "parent": "i-data",
+                    "dependencies": [
+                      "b-icon",
+                      "b-progress-icon"
+                    ],
+                    "libs": []
+                  }
+                }
+              ]
+            ]
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "i-data",
+                  {
+                    "index": "src/super/i-data/index.js",
+                    "declaration": {
+                      "name": "i-data",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-progress-icon",
+                  {
+                    "index": "src/icons/b-progress-icon/index.js",
+                    "declaration": {
+                      "name": "b-progress-icon",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-icon",
+                  {
+                    "index": "src/icons/b-icon/index.js",
+                    "declaration": {
+                      "name": "b-icon",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-button",
+                  {
+                    "index": "src/form/b-button/index.js",
+                    "declaration": {
+                      "name": "b-button",
+                      "parent": "i-data",
+                      "dependencies": [
+                        "b-icon",
+                        "b-progress-icon"
+                      ],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "b-window",
+                  {
+                    "index": "src/base/b-window/index.js",
+                    "declaration": {
+                      "name": "b-window",
+                      "parent": "i-data",
+                      "dependencies": [
+                        "b-button"
+                      ],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-data",
+                  {
+                    "index": "src/super/i-data/index.js",
+                    "declaration": {
+                      "name": "i-data",
+                      "parent": "i-block",
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ],
+                [
+                  "i-block",
+                  {
+                    "index": "src/super/i-block/index.js",
+                    "declaration": {
+                      "name": "i-block",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-window/b-window.ts",
+          "styles": [
+            "src/base/b-window/b-window.styl"
+          ],
+          "tpl": "src/base/b-window/b-window.ss",
           "etpl": null
         }
       ],
@@ -2120,208 +2322,6 @@
             "src/base/b-virtual-scroll/b-virtual-scroll.styl"
           ],
           "tpl": "src/base/b-virtual-scroll/b-virtual-scroll.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-window",
-        {
-          "index": "src/base/b-window/index.js",
-          "declaration": {
-            "name": "b-window",
-            "parent": "i-data",
-            "dependencies": [
-              "b-button"
-            ],
-            "libs": []
-          },
-          "name": "b-window",
-          "parent": "i-data",
-          "resolvedParent": {
-            "index": "src/super/i-data/index.js",
-            "declaration": {
-              "name": "i-data",
-              "parent": "i-block",
-              "dependencies": [],
-              "libs": []
-            }
-          },
-          "dependencies": [
-            "b-button"
-          ],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": [
-              [
-                "b-button",
-                {
-                  "index": "src/form/b-button/index.js",
-                  "declaration": {
-                    "name": "b-button",
-                    "parent": "i-data",
-                    "dependencies": [
-                      "b-icon",
-                      "b-progress-icon"
-                    ],
-                    "libs": []
-                  }
-                }
-              ]
-            ]
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": [
-              [
-                "b-button",
-                {
-                  "index": "src/form/b-button/index.js",
-                  "declaration": {
-                    "name": "b-button",
-                    "parent": "i-data",
-                    "dependencies": [
-                      "b-icon",
-                      "b-progress-icon"
-                    ],
-                    "libs": []
-                  }
-                }
-              ]
-            ]
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "i-data",
-                  {
-                    "index": "src/super/i-data/index.js",
-                    "declaration": {
-                      "name": "i-data",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-progress-icon",
-                  {
-                    "index": "src/icons/b-progress-icon/index.js",
-                    "declaration": {
-                      "name": "b-progress-icon",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-icon",
-                  {
-                    "index": "src/icons/b-icon/index.js",
-                    "declaration": {
-                      "name": "b-icon",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-button",
-                  {
-                    "index": "src/form/b-button/index.js",
-                    "declaration": {
-                      "name": "b-button",
-                      "parent": "i-data",
-                      "dependencies": [
-                        "b-icon",
-                        "b-progress-icon"
-                      ],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "b-window",
-                  {
-                    "index": "src/base/b-window/index.js",
-                    "declaration": {
-                      "name": "b-window",
-                      "parent": "i-data",
-                      "dependencies": [
-                        "b-button"
-                      ],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-data",
-                  {
-                    "index": "src/super/i-data/index.js",
-                    "declaration": {
-                      "name": "i-data",
-                      "parent": "i-block",
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ],
-                [
-                  "i-block",
-                  {
-                    "index": "src/super/i-block/index.js",
-                    "declaration": {
-                      "name": "i-block",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-window/b-window.ts",
-          "styles": [
-            "src/base/b-window/b-window.styl"
-          ],
-          "tpl": "src/base/b-window/b-window.ss",
           "etpl": null
         }
       ],
@@ -5304,6 +5304,278 @@
         }
       ],
       [
+        "g-debug",
+        {
+          "index": "src/global/g-debug/index.js",
+          "declaration": {
+            "name": "g-debug",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-debug",
+          "parent": null,
+          "resolvedParent": null,
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "g-debug",
+                  {
+                    "index": "src/global/g-debug/index.js",
+                    "declaration": {
+                      "name": "g-debug",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": []
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/global/g-debug/g-debug.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-hint",
+        {
+          "index": "src/global/g-hint/index.js",
+          "declaration": {
+            "name": "g-hint",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-hint",
+          "parent": null,
+          "resolvedParent": null,
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "g-hint",
+                  {
+                    "index": "src/global/g-hint/index.js",
+                    "declaration": {
+                      "name": "g-hint",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": []
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/global/g-hint/g-hint.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-def",
+        {
+          "index": "src/global/g-def/index.js",
+          "declaration": {
+            "name": "g-def",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-def",
+          "parent": null,
+          "resolvedParent": null,
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "g-def",
+                  {
+                    "index": "src/global/g-def/index.js",
+                    "declaration": {
+                      "name": "g-def",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": []
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/global/g-def/g-def.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-icon",
+        {
+          "index": "src/global/g-icon/index.js",
+          "declaration": {
+            "name": "g-icon",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-icon",
+          "parent": null,
+          "resolvedParent": null,
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "g-icon",
+                  {
+                    "index": "src/global/g-icon/index.js",
+                    "declaration": {
+                      "name": "g-icon",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": []
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/global/g-icon/g-icon.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
         "b-icon",
         {
           "index": "src/icons/b-icon/index.js",
@@ -6976,6 +7248,72 @@
         }
       ],
       [
+        "i-icon",
+        {
+          "index": "src/traits/i-icon/index.js",
+          "declaration": {
+            "name": "i-icon",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-icon",
+          "parent": null,
+          "resolvedParent": null,
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-icon",
+                  {
+                    "index": "src/traits/i-icon/index.js",
+                    "declaration": {
+                      "name": "i-icon",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": []
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/traits/i-icon/i-icon.ts",
+          "styles": [],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
         "i-history",
         {
           "index": "src/traits/i-history/index.js",
@@ -7040,72 +7378,6 @@
             "src/traits/i-history/i-history.styl"
           ],
           "tpl": "src/traits/i-history/i-history.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "i-icon",
-        {
-          "index": "src/traits/i-icon/index.js",
-          "declaration": {
-            "name": "i-icon",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-icon",
-          "parent": null,
-          "resolvedParent": null,
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-icon",
-                  {
-                    "index": "src/traits/i-icon/index.js",
-                    "declaration": {
-                      "name": "i-icon",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": []
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/traits/i-icon/i-icon.ts",
-          "styles": [],
-          "tpl": null,
           "etpl": null
         }
       ],
@@ -7543,6 +7815,72 @@
         }
       ],
       [
+        "i-size",
+        {
+          "index": "src/traits/i-size/index.js",
+          "declaration": {
+            "name": "i-size",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-size",
+          "parent": null,
+          "resolvedParent": null,
+          "dependencies": [],
+          "resolvedDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "resolvedOwnDependencies": {
+            "%data": "%data:Map",
+            "%data:Map": []
+          },
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "runtimeDependencies": {
+            "runtime": {
+              "%data": "%data:Map",
+              "%data:Map": [
+                [
+                  "i-size",
+                  {
+                    "index": "src/traits/i-size/index.js",
+                    "declaration": {
+                      "name": "i-size",
+                      "parent": null,
+                      "dependencies": [],
+                      "libs": []
+                    }
+                  }
+                ]
+              ]
+            },
+            "parents": {
+              "%data": "%data:Map",
+              "%data:Map": []
+            },
+            "libs": {
+              "%data": "%data:Set",
+              "%data:Set": []
+            }
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/traits/i-size/i-size.ts",
+          "styles": [],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
         "i-visible",
         {
           "index": "src/traits/i-visible/index.js",
@@ -7611,72 +7949,6 @@
         }
       ],
       [
-        "i-size",
-        {
-          "index": "src/traits/i-size/index.js",
-          "declaration": {
-            "name": "i-size",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-size",
-          "parent": null,
-          "resolvedParent": null,
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "i-size",
-                  {
-                    "index": "src/traits/i-size/index.js",
-                    "declaration": {
-                      "name": "i-size",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": []
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/traits/i-size/i-size.ts",
-          "styles": [],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
         "i-width",
         {
           "index": "src/traits/i-width/index.js",
@@ -7739,278 +8011,6 @@
           "logic": "src/traits/i-width/i-width.ts",
           "styles": [
             "src/traits/i-width/i-width.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
-        "g-debug",
-        {
-          "index": "src/global/g-debug/index.js",
-          "declaration": {
-            "name": "g-debug",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "g-debug",
-          "parent": null,
-          "resolvedParent": null,
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "g-debug",
-                  {
-                    "index": "src/global/g-debug/index.js",
-                    "declaration": {
-                      "name": "g-debug",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": []
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "global",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/global/g-debug/g-debug.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
-        "g-def",
-        {
-          "index": "src/global/g-def/index.js",
-          "declaration": {
-            "name": "g-def",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "g-def",
-          "parent": null,
-          "resolvedParent": null,
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "g-def",
-                  {
-                    "index": "src/global/g-def/index.js",
-                    "declaration": {
-                      "name": "g-def",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": []
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "global",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/global/g-def/g-def.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
-        "g-hint",
-        {
-          "index": "src/global/g-hint/index.js",
-          "declaration": {
-            "name": "g-hint",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "g-hint",
-          "parent": null,
-          "resolvedParent": null,
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "g-hint",
-                  {
-                    "index": "src/global/g-hint/index.js",
-                    "declaration": {
-                      "name": "g-hint",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": []
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "global",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/global/g-hint/g-hint.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
-        "g-icon",
-        {
-          "index": "src/global/g-icon/index.js",
-          "declaration": {
-            "name": "g-icon",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "g-icon",
-          "parent": null,
-          "resolvedParent": null,
-          "dependencies": [],
-          "resolvedDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "resolvedOwnDependencies": {
-            "%data": "%data:Map",
-            "%data:Map": []
-          },
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "runtimeDependencies": {
-            "runtime": {
-              "%data": "%data:Map",
-              "%data:Map": [
-                [
-                  "g-icon",
-                  {
-                    "index": "src/global/g-icon/index.js",
-                    "declaration": {
-                      "name": "g-icon",
-                      "parent": null,
-                      "dependencies": [],
-                      "libs": []
-                    }
-                  }
-                ]
-              ]
-            },
-            "parents": {
-              "%data": "%data:Map",
-              "%data:Map": []
-            },
-            "libs": {
-              "%data": "%data:Set",
-              "%data:Set": []
-            }
-          },
-          "type": "global",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/global/g-icon/g-icon.styl"
           ],
           "tpl": null,
           "etpl": null
