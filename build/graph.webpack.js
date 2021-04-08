@@ -14,7 +14,9 @@ const
 
 const
 	fs = require('fs-extra-promise'),
-	path = require('upath'),
+	path = require('upath');
+
+const
 	camelize = require('camelize');
 
 const
@@ -64,14 +66,9 @@ async function buildProjectGraph() {
 		 * Parses the graph from JSON to JS
 		 * @returns {!Object}
 		 */
-		const readCache = () => fs.readJSONSync(graphCacheFile, {
-			reviver(k, v) {
-				if (Object.isObject(v) && v.type === 'Map') {
-					return new Map(v.value);
-				}
-
-				return v;
-			}
+		const readCache = async () => ({
+			...fs.readJSONSync(graphCacheFile),
+			blockMap: await block.getAll()
 		});
 
 		const
@@ -315,12 +312,6 @@ async function buildProjectGraph() {
 	// Remove redundant process
 	$C(processes).remove((obj, i) => i >= buildIterator.length && !$C(obj).length());
 
-	// Helper to serialize Map values
-	blockMap.toJSON = () => ({
-		type: 'Map',
-		value: Array.from(blockMap.entries())
-	});
-
 	const res = {
 		entry,
 		blockMap,
@@ -328,7 +319,7 @@ async function buildProjectGraph() {
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
-	fs.writeFileSync(graphCacheFile, JSON.stringify(res));
+	fs.writeFileSync(graphCacheFile, JSON.stringify(Object.reject(res, 'blockMap'), undefined, 2));
 	console.log('Project graph initialized');
 
 	return res;
