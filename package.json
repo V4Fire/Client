@@ -40,7 +40,6 @@
     }
   },
   "dependencies": {
-    "@pzlr/build-core": "file:.yalc/@pzlr/build-core",
     "@v4fire/core": "^3.42.0",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.4",
