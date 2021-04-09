@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.173 (2021-04-09)
+
+#### :boom: Breaking Change
+
+* Now `csp.nonceStore` is a function `config`
+
+#### :rocket: New Feature
+
+* Added aliases `mem` and `fs` for `--cache-type` `build`
+* Added a new parameter `componentDependencies` `config`
+
+#### :bug: Bug Fix
+
+* Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified `config`
+
 ## v3.0.0-rc.172 (2021-04-06)
 
 #### :house: Internal

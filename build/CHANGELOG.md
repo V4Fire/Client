@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.173 (2021-04-09)
+
+#### :rocket: New Feature
+
+* Added aliases `mem` and `fs` for `--cache-type`
+
 ## v3.0.0-rc.171 (2021-03-27)
 
 #### :bug: Bug Fix
