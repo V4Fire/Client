@@ -1,40 +1,8 @@
 {
-  "hash": "8da65a2b6b6c651d4f14776463a96bc7",
+  "hash": "9b3f7b2bcf94da6e5eb9c45a9a30f727",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
-      [
-        "b-component-renderer",
-        {
-          "index": "src/base/b-component-renderer/index.js",
-          "declaration": {
-            "name": "b-component-renderer",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-component-renderer",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-component-renderer/b-component-renderer.ts",
-          "styles": [
-            "src/base/b-component-renderer/b-component-renderer.styl"
-          ],
-          "tpl": "src/base/b-component-renderer/b-component-renderer.ss",
-          "etpl": null
-        }
-      ],
       [
         "b-bottom-slide",
         {
@@ -64,6 +32,38 @@
             "src/base/b-bottom-slide/b-bottom-slide.styl"
           ],
           "tpl": "src/base/b-bottom-slide/b-bottom-slide.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-component-renderer",
+        {
+          "index": "src/base/b-component-renderer/index.js",
+          "declaration": {
+            "name": "b-component-renderer",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-renderer",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-component-renderer/b-component-renderer.ts",
+          "styles": [
+            "src/base/b-component-renderer/b-component-renderer.styl"
+          ],
+          "tpl": "src/base/b-component-renderer/b-component-renderer.ss",
           "etpl": null
         }
       ],
@@ -238,38 +238,6 @@
         }
       ],
       [
-        "b-remote-provider",
-        {
-          "index": "src/base/b-remote-provider/index.js",
-          "declaration": {
-            "name": "b-remote-provider",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-remote-provider",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
-          "styles": [
-            "src/base/b-remote-provider/b-remote-provider.styl"
-          ],
-          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-list",
         {
           "index": "src/base/b-list/index.js",
@@ -304,6 +272,38 @@
             "src/base/b-list/b-list.styl"
           ],
           "tpl": "src/base/b-list/b-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-remote-provider",
+        {
+          "index": "src/base/b-remote-provider/index.js",
+          "declaration": {
+            "name": "b-remote-provider",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-remote-provider",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
+          "styles": [
+            "src/base/b-remote-provider/b-remote-provider.styl"
+          ],
+          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
           "etpl": null
         }
       ],
@@ -650,38 +650,6 @@
         }
       ],
       [
-        "b-checkbox",
-        {
-          "index": "src/form/b-checkbox/index.js",
-          "declaration": {
-            "name": "b-checkbox",
-            "parent": "i-input",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-checkbox",
-          "parent": "i-input",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/form/b-checkbox/b-checkbox.ts",
-          "styles": [
-            "src/form/b-checkbox/b-checkbox.styl"
-          ],
-          "tpl": "src/form/b-checkbox/b-checkbox.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-file-button",
         {
           "index": "src/form/b-file-button/index.js",
@@ -710,6 +678,38 @@
             "src/form/b-file-button/b-file-button.styl"
           ],
           "tpl": "src/form/b-file-button/b-file-button.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-checkbox",
+        {
+          "index": "src/form/b-checkbox/index.js",
+          "declaration": {
+            "name": "b-checkbox",
+            "parent": "i-input",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-checkbox",
+          "parent": "i-input",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/form/b-checkbox/b-checkbox.ts",
+          "styles": [
+            "src/form/b-checkbox/b-checkbox.styl"
+          ],
+          "tpl": "src/form/b-checkbox/b-checkbox.ss",
           "etpl": null
         }
       ],
@@ -1026,70 +1026,6 @@
         }
       ],
       [
-        "b-icon",
-        {
-          "index": "src/icons/b-icon/index.js",
-          "declaration": {
-            "name": "b-icon",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-icon",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/icons/b-icon/b-icon.ts",
-          "styles": [
-            "src/icons/b-icon/b-icon.styl"
-          ],
-          "tpl": "src/icons/b-icon/b-icon.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-progress-icon",
-        {
-          "index": "src/icons/b-progress-icon/index.js",
-          "declaration": {
-            "name": "b-progress-icon",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-progress-icon",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/icons/b-progress-icon/b-progress-icon.ts",
-          "styles": [
-            "src/icons/b-progress-icon/b-progress-icon.styl"
-          ],
-          "tpl": "src/icons/b-progress-icon/b-progress-icon.ss",
-          "etpl": null
-        }
-      ],
-      [
         "g-debug",
         {
           "index": "src/global/g-debug/index.js",
@@ -1116,6 +1052,38 @@
           "logic": null,
           "styles": [
             "src/global/g-debug/g-debug.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-icon",
+        {
+          "index": "src/global/g-icon/index.js",
+          "declaration": {
+            "name": "g-icon",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-icon",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/global/g-icon/g-icon.styl"
           ],
           "tpl": null,
           "etpl": null
@@ -1186,17 +1154,17 @@
         }
       ],
       [
-        "g-icon",
+        "b-icon",
         {
-          "index": "src/global/g-icon/index.js",
+          "index": "src/icons/b-icon/index.js",
           "declaration": {
-            "name": "g-icon",
-            "parent": null,
+            "name": "b-icon",
+            "parent": "i-block",
             "dependencies": [],
             "libs": []
           },
-          "name": "g-icon",
-          "parent": null,
+          "name": "b-icon",
+          "parent": "i-block",
           "dependencies": [],
           "libs": [],
           "resolvedLibs": {
@@ -1207,13 +1175,45 @@
             "%data": "%data:Set",
             "%data:Set": []
           },
-          "type": "global",
+          "type": "block",
           "mixin": false,
-          "logic": null,
+          "logic": "src/icons/b-icon/b-icon.ts",
           "styles": [
-            "src/global/g-icon/g-icon.styl"
+            "src/icons/b-icon/b-icon.styl"
           ],
-          "tpl": null,
+          "tpl": "src/icons/b-icon/b-icon.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-progress-icon",
+        {
+          "index": "src/icons/b-progress-icon/index.js",
+          "declaration": {
+            "name": "b-progress-icon",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-progress-icon",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/icons/b-progress-icon/b-progress-icon.ts",
+          "styles": [
+            "src/icons/b-progress-icon/b-progress-icon.styl"
+          ],
+          "tpl": "src/icons/b-progress-icon/b-progress-icon.ss",
           "etpl": null
         }
       ],
