@@ -1,40 +1,8 @@
 {
-  "hash": "e272f201723f9a505c9fcd6341b76e64",
+  "hash": "74c5b66f1142b9cde5709d653f13597e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
-      [
-        "b-bottom-slide",
-        {
-          "index": "src/base/b-bottom-slide/index.js",
-          "declaration": {
-            "name": "b-bottom-slide",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-bottom-slide",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-bottom-slide/b-bottom-slide.ts",
-          "styles": [
-            "src/base/b-bottom-slide/b-bottom-slide.styl"
-          ],
-          "tpl": "src/base/b-bottom-slide/b-bottom-slide.ss",
-          "etpl": null
-        }
-      ],
       [
         "b-component-renderer",
         {
@@ -68,16 +36,16 @@
         }
       ],
       [
-        "b-image",
+        "b-bottom-slide",
         {
-          "index": "src/base/b-image/index.js",
+          "index": "src/base/b-bottom-slide/index.js",
           "declaration": {
-            "name": "b-image",
+            "name": "b-bottom-slide",
             "parent": "i-block",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-image",
+          "name": "b-bottom-slide",
           "parent": "i-block",
           "dependencies": [],
           "libs": [],
@@ -91,11 +59,11 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/base/b-image/b-image.ts",
+          "logic": "src/base/b-bottom-slide/b-bottom-slide.ts",
           "styles": [
-            "src/base/b-image/b-image.styl"
+            "src/base/b-bottom-slide/b-bottom-slide.styl"
           ],
-          "tpl": "src/base/b-image/b-image.ss",
+          "tpl": "src/base/b-bottom-slide/b-bottom-slide.ss",
           "etpl": null
         }
       ],
@@ -196,6 +164,38 @@
             "src/base/b-dynamic-page/b-dynamic-page.styl"
           ],
           "tpl": "src/base/b-dynamic-page/b-dynamic-page.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-image",
+        {
+          "index": "src/base/b-image/index.js",
+          "declaration": {
+            "name": "b-image",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-image",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-image/b-image.ts",
+          "styles": [
+            "src/base/b-image/b-image.styl"
+          ],
+          "tpl": "src/base/b-image/b-image.ss",
           "etpl": null
         }
       ],
@@ -404,6 +404,46 @@
         }
       ],
       [
+        "b-slider",
+        {
+          "index": "src/base/b-slider/index.js",
+          "declaration": {
+            "name": "b-slider",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": [
+              "core/component/directives/resize-observer"
+            ]
+          },
+          "name": "b-slider",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [
+            "core/component/directives/resize-observer"
+          ],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-slider/b-slider.ts",
+          "styles": [
+            "src/base/b-slider/b-slider.styl"
+          ],
+          "tpl": "src/base/b-slider/b-slider.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-skeleton",
         {
           "index": "src/base/b-skeleton/index.js",
@@ -496,46 +536,6 @@
             "src/base/b-virtual-scroll/b-virtual-scroll.styl"
           ],
           "tpl": "src/base/b-virtual-scroll/b-virtual-scroll.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-slider",
-        {
-          "index": "src/base/b-slider/index.js",
-          "declaration": {
-            "name": "b-slider",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": [
-              "core/component/directives/resize-observer"
-            ]
-          },
-          "name": "b-slider",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [
-            "core/component/directives/resize-observer"
-          ],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": [
-              "core/component/directives/resize-observer"
-            ]
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": [
-              "core/component/directives/resize-observer"
-            ]
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-slider/b-slider.ts",
-          "styles": [
-            "src/base/b-slider/b-slider.styl"
-          ],
-          "tpl": "src/base/b-slider/b-slider.ss",
           "etpl": null
         }
       ],
@@ -714,6 +714,38 @@
         }
       ],
       [
+        "b-icon-button",
+        {
+          "index": "src/form/b-icon-button/index.js",
+          "declaration": {
+            "name": "b-icon-button",
+            "parent": "b-button",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-icon-button",
+          "parent": "b-button",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/form/b-icon-button/b-icon-button.ts",
+          "styles": [
+            "src/form/b-icon-button/b-icon-button.styl"
+          ],
+          "tpl": "src/form/b-icon-button/b-icon-button.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-file-button",
         {
           "index": "src/form/b-file-button/index.js",
@@ -746,18 +778,22 @@
         }
       ],
       [
-        "b-icon-button",
+        "b-input-birthday",
         {
-          "index": "src/form/b-icon-button/index.js",
+          "index": "src/form/b-input-birthday/index.js",
           "declaration": {
-            "name": "b-icon-button",
-            "parent": "b-button",
-            "dependencies": [],
+            "name": "b-input-birthday",
+            "parent": "i-input",
+            "dependencies": [
+              "b-select"
+            ],
             "libs": []
           },
-          "name": "b-icon-button",
-          "parent": "b-button",
-          "dependencies": [],
+          "name": "b-input-birthday",
+          "parent": "i-input",
+          "dependencies": [
+            "b-select"
+          ],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -769,11 +805,11 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/form/b-icon-button/b-icon-button.ts",
+          "logic": "src/form/b-input-birthday/b-input-birthday.ts",
           "styles": [
-            "src/form/b-icon-button/b-icon-button.styl"
+            "src/form/b-input-birthday/b-input-birthday.styl"
           ],
-          "tpl": "src/form/b-icon-button/b-icon-button.ss",
+          "tpl": "src/form/b-input-birthday/b-input-birthday.ss",
           "etpl": null
         }
       ],
@@ -816,42 +852,6 @@
         }
       ],
       [
-        "b-input-birthday",
-        {
-          "index": "src/form/b-input-birthday/index.js",
-          "declaration": {
-            "name": "b-input-birthday",
-            "parent": "i-input",
-            "dependencies": [
-              "b-select"
-            ],
-            "libs": []
-          },
-          "name": "b-input-birthday",
-          "parent": "i-input",
-          "dependencies": [
-            "b-select"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/form/b-input-birthday/b-input-birthday.ts",
-          "styles": [
-            "src/form/b-input-birthday/b-input-birthday.styl"
-          ],
-          "tpl": "src/form/b-input-birthday/b-input-birthday.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-input-hidden",
         {
           "index": "src/form/b-input-hidden/index.js",
@@ -884,38 +884,6 @@
         }
       ],
       [
-        "b-input-time",
-        {
-          "index": "src/form/b-input-time/index.js",
-          "declaration": {
-            "name": "b-input-time",
-            "parent": "b-input",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-input-time",
-          "parent": "b-input",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/form/b-input-time/b-input-time.ts",
-          "styles": [
-            "src/form/b-input-time/b-input-time.styl"
-          ],
-          "tpl": "src/form/b-input-time/b-input-time.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-radio-button",
         {
           "index": "src/form/b-radio-button/index.js",
@@ -944,6 +912,38 @@
             "src/form/b-radio-button/b-radio-button.styl"
           ],
           "tpl": "src/form/b-radio-button/b-radio-button.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-input-time",
+        {
+          "index": "src/form/b-input-time/index.js",
+          "declaration": {
+            "name": "b-input-time",
+            "parent": "b-input",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-input-time",
+          "parent": "b-input",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/form/b-input-time/b-input-time.ts",
+          "styles": [
+            "src/form/b-input-time/b-input-time.styl"
+          ],
+          "tpl": "src/form/b-input-time/b-input-time.ss",
           "etpl": null
         }
       ],
@@ -1090,38 +1090,6 @@
         }
       ],
       [
-        "g-icon",
-        {
-          "index": "src/global/g-icon/index.js",
-          "declaration": {
-            "name": "g-icon",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "g-icon",
-          "parent": null,
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "global",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/global/g-icon/g-icon.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
         "g-hint",
         {
           "index": "src/global/g-hint/index.js",
@@ -1148,6 +1116,38 @@
           "logic": null,
           "styles": [
             "src/global/g-hint/g-hint.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-icon",
+        {
+          "index": "src/global/g-icon/index.js",
+          "declaration": {
+            "name": "g-icon",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-icon",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/global/g-icon/g-icon.styl"
           ],
           "tpl": null,
           "etpl": null
@@ -1338,38 +1338,6 @@
         }
       ],
       [
-        "i-input",
-        {
-          "index": "src/super/i-input/index.js",
-          "declaration": {
-            "name": "i-input",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-input",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/super/i-input/i-input.ts",
-          "styles": [
-            "src/super/i-input/i-input.styl"
-          ],
-          "tpl": "src/super/i-input/i-input.ss",
-          "etpl": null
-        }
-      ],
-      [
         "i-dynamic-page",
         {
           "index": "src/super/i-dynamic-page/index.js",
@@ -1466,6 +1434,38 @@
         }
       ],
       [
+        "i-input",
+        {
+          "index": "src/super/i-input/index.js",
+          "declaration": {
+            "name": "i-input",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-input",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/super/i-input/i-input.ts",
+          "styles": [
+            "src/super/i-input/i-input.styl"
+          ],
+          "tpl": "src/super/i-input/i-input.ss",
+          "etpl": null
+        }
+      ],
+      [
         "i-access",
         {
           "index": "src/traits/i-access/index.js",
@@ -1530,36 +1530,6 @@
         }
       ],
       [
-        "i-items",
-        {
-          "index": "src/traits/i-items/index.js",
-          "declaration": {
-            "name": "i-items",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-items",
-          "parent": null,
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/traits/i-items/i-items.ts",
-          "styles": [],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
         "i-icon",
         {
           "index": "src/traits/i-icon/index.js",
@@ -1584,6 +1554,36 @@
           "type": "interface",
           "mixin": false,
           "logic": "src/traits/i-icon/i-icon.ts",
+          "styles": [],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "i-items",
+        {
+          "index": "src/traits/i-items/index.js",
+          "declaration": {
+            "name": "i-items",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-items",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/traits/i-items/i-items.ts",
           "styles": [],
           "tpl": null,
           "etpl": null
@@ -1682,6 +1682,36 @@
         }
       ],
       [
+        "i-open-toggle",
+        {
+          "index": "src/traits/i-open-toggle/index.js",
+          "declaration": {
+            "name": "i-open-toggle",
+            "parent": "i-open",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-open-toggle",
+          "parent": "i-open",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/traits/i-open-toggle/i-open-toggle.ts",
+          "styles": [],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
         "i-progress",
         {
           "index": "src/traits/i-progress/index.js",
@@ -1709,36 +1739,6 @@
           "styles": [
             "src/traits/i-progress/i-progress.styl"
           ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
-        "i-open-toggle",
-        {
-          "index": "src/traits/i-open-toggle/index.js",
-          "declaration": {
-            "name": "i-open-toggle",
-            "parent": "i-open",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-open-toggle",
-          "parent": "i-open",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/traits/i-open-toggle/i-open-toggle.ts",
-          "styles": [],
           "tpl": null,
           "etpl": null
         }

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.174 (2021-04-09)
+
+#### :bug: Bug Fix
+
+* Fixed the project building with `parallel-webpack` `build`
+
 ## v3.0.0-rc.173 (2021-04-09)
 
 #### :boom: Breaking Change
