@@ -15,6 +15,10 @@ Changelog
 
 * Now `csp.nonceStore` is a function
 
+#### :rocket: New Feature
+
+* Added a new parameter `componentDependencies`
+
 #### :bug: Bug Fix
 
 * Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified

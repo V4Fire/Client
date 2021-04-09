@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added aliases `mem` and `fs` for `--cache-type` `build`
+* Added a new parameter `componentDependencies` `config`
 
 #### :bug: Bug Fix
 

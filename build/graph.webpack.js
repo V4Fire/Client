@@ -57,6 +57,8 @@ module.exports = Object.assign(buildProjectGraph(), {
  * @returns {Promise<{entry, processes, dependencies, blockMap}>}
  */
 async function buildProjectGraph() {
+	block.setObjToHash(config.componentDependencies());
+
 	const
 		graphCacheFile = path.join(cacheDir, 'graph.json');
 

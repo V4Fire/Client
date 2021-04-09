@@ -902,6 +902,29 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
+	/**
+	 * Returns a map of component dependencies.
+	 * This map can be used to provide dynamic component dependencies within `index.js` files.
+	 *
+	 * @returns {!Object}
+	 *
+	 * @example
+	 * ```
+	 * componentDependencies() {
+	 *   return {'b-dummy': ['b-icon']};
+	 * }
+	 * ```
+	 *
+	 * ```
+	 * package('b-dummy')
+	 *   .extends('i-data')
+	 *   .dependencies(...require('config').componentDependencies()['b-dummy'] ?? []);
+	 * ```
+	 */
+	componentDependencies() {
+		return {};
+	},
+
 	/** @override */
 	monic() {
 		const
