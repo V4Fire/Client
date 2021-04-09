@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now `csp.nonceStore` is a function `config`
 
+#### :rocket: New Feature
+
+* Added aliases `mem` and `fs` for `--cache-type` `build`
+
 #### :bug: Bug Fix
 
 * Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified `config`

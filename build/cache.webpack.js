@@ -20,9 +20,11 @@ const
  */
 module.exports = function cache({buildId}) {
 	switch (webpack.cacheType()) {
+		case 'mem':
 		case 'memory':
 			return {type: 'memory'};
 
+		case 'fs':
 		case 'filesystem':
 			return {
 				name: String(buildId),
