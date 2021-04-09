@@ -1,40 +1,8 @@
 {
-  "hash": "b902b27dbbdb09878957d0120ff2cbb2",
+  "hash": "8da65a2b6b6c651d4f14776463a96bc7",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
-      [
-        "b-bottom-slide",
-        {
-          "index": "src/base/b-bottom-slide/index.js",
-          "declaration": {
-            "name": "b-bottom-slide",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-bottom-slide",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-bottom-slide/b-bottom-slide.ts",
-          "styles": [
-            "src/base/b-bottom-slide/b-bottom-slide.styl"
-          ],
-          "tpl": "src/base/b-bottom-slide/b-bottom-slide.ss",
-          "etpl": null
-        }
-      ],
       [
         "b-component-renderer",
         {
@@ -64,6 +32,38 @@
             "src/base/b-component-renderer/b-component-renderer.styl"
           ],
           "tpl": "src/base/b-component-renderer/b-component-renderer.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-bottom-slide",
+        {
+          "index": "src/base/b-bottom-slide/index.js",
+          "declaration": {
+            "name": "b-bottom-slide",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-bottom-slide",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-bottom-slide/b-bottom-slide.ts",
+          "styles": [
+            "src/base/b-bottom-slide/b-bottom-slide.styl"
+          ],
+          "tpl": "src/base/b-bottom-slide/b-bottom-slide.ss",
           "etpl": null
         }
       ],
@@ -136,38 +136,6 @@
         }
       ],
       [
-        "b-image",
-        {
-          "index": "src/base/b-image/index.js",
-          "declaration": {
-            "name": "b-image",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-image",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-image/b-image.ts",
-          "styles": [
-            "src/base/b-image/b-image.styl"
-          ],
-          "tpl": "src/base/b-image/b-image.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-dynamic-page",
         {
           "index": "src/base/b-dynamic-page/index.js",
@@ -196,6 +164,38 @@
             "src/base/b-dynamic-page/b-dynamic-page.styl"
           ],
           "tpl": "src/base/b-dynamic-page/b-dynamic-page.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-image",
+        {
+          "index": "src/base/b-image/index.js",
+          "declaration": {
+            "name": "b-image",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-image",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-image/b-image.ts",
+          "styles": [
+            "src/base/b-image/b-image.styl"
+          ],
+          "tpl": "src/base/b-image/b-image.ss",
           "etpl": null
         }
       ],
@@ -238,6 +238,38 @@
         }
       ],
       [
+        "b-remote-provider",
+        {
+          "index": "src/base/b-remote-provider/index.js",
+          "declaration": {
+            "name": "b-remote-provider",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-remote-provider",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
+          "styles": [
+            "src/base/b-remote-provider/b-remote-provider.styl"
+          ],
+          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-list",
         {
           "index": "src/base/b-list/index.js",
@@ -272,38 +304,6 @@
             "src/base/b-list/b-list.styl"
           ],
           "tpl": "src/base/b-list/b-list.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-remote-provider",
-        {
-          "index": "src/base/b-remote-provider/index.js",
-          "declaration": {
-            "name": "b-remote-provider",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-remote-provider",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
-          "styles": [
-            "src/base/b-remote-provider/b-remote-provider.styl"
-          ],
-          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
           "etpl": null
         }
       ],
@@ -1026,6 +1026,70 @@
         }
       ],
       [
+        "b-icon",
+        {
+          "index": "src/icons/b-icon/index.js",
+          "declaration": {
+            "name": "b-icon",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-icon",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/icons/b-icon/b-icon.ts",
+          "styles": [
+            "src/icons/b-icon/b-icon.styl"
+          ],
+          "tpl": "src/icons/b-icon/b-icon.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-progress-icon",
+        {
+          "index": "src/icons/b-progress-icon/index.js",
+          "declaration": {
+            "name": "b-progress-icon",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-progress-icon",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/icons/b-progress-icon/b-progress-icon.ts",
+          "styles": [
+            "src/icons/b-progress-icon/b-progress-icon.styl"
+          ],
+          "tpl": "src/icons/b-progress-icon/b-progress-icon.ss",
+          "etpl": null
+        }
+      ],
+      [
         "g-debug",
         {
           "index": "src/global/g-debug/index.js",
@@ -1154,70 +1218,6 @@
         }
       ],
       [
-        "b-icon",
-        {
-          "index": "src/icons/b-icon/index.js",
-          "declaration": {
-            "name": "b-icon",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-icon",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/icons/b-icon/b-icon.ts",
-          "styles": [
-            "src/icons/b-icon/b-icon.styl"
-          ],
-          "tpl": "src/icons/b-icon/b-icon.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-progress-icon",
-        {
-          "index": "src/icons/b-progress-icon/index.js",
-          "declaration": {
-            "name": "b-progress-icon",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-progress-icon",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/icons/b-progress-icon/b-progress-icon.ts",
-          "styles": [
-            "src/icons/b-progress-icon/b-progress-icon.styl"
-          ],
-          "tpl": "src/icons/b-progress-icon/b-progress-icon.ss",
-          "etpl": null
-        }
-      ],
-      [
         "p-v4-components-demo",
         {
           "index": "src/pages/p-v4-components-demo/index.js",
@@ -1235,7 +1235,8 @@
               "b-sidebar",
               "b-slider",
               "b-window",
-              "b-image"
+              "b-image",
+              "b-dummy"
             ],
             "libs": []
           },
@@ -1252,7 +1253,8 @@
             "b-sidebar",
             "b-slider",
             "b-window",
-            "b-image"
+            "b-image",
+            "b-dummy"
           ],
           "libs": [],
           "resolvedLibs": {
