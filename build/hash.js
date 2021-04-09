@@ -28,13 +28,16 @@ module.exports = function getHash(value, length = build.hashLength) {
 
 	const
 		path = require('upath'),
+		glob = require('glob');
+
+	const
 		hasha = require('hasha'),
 		hashFiles = require('hash-files');
 
 	let
 		res;
 
-	if (Object.isString(value) && path.extname(value)) {
+	if (Object.isString(value) && (path.extname(value) || glob.hasMagic(value))) {
 		res = hashFiles.sync({files: [value], algorithm});
 
 	} else {
