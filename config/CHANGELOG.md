@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.173 (2021-04-09)
+
+#### :boom: Breaking Change
+
+* Now `csp.nonceStore` is a function
+
+#### :bug: Bug Fix
+
+* Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified
+
 ## v3.0.0-rc.137 (2021-02-04)
 
 #### :rocket: New Feature

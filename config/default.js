@@ -581,12 +581,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		postProcessor: true,
 
 		/**
-		 * Name of the generated runtime global variable where the nonce value is stored
+		 * Return a name of the generated runtime global variable where the nonce value is stored
+		 * @returns {?string}
 		 */
-		nonceStore: nanoid(),
+		nonceStore() {
+			if (this.nonce() == null) {
+				return 'GLOBAL_NONCE';
+			}
+
+			if (this.nonceStore.result) {
+				return this.nonceStore.result;
+			}
+
+			this.nonceStore.result = nanoid();
+			return this.nonceStore.result;
+		},
 
 		/**
-		 * Returns value of the "nonce" hash
+		 * Returns a value of the "nonce" hash
 		 * @returns {?string}
 		 */
 		nonce() {
