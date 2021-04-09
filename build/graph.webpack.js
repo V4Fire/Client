@@ -64,15 +64,6 @@ async function buildProjectGraph() {
 
 	// Graph already exists in the cache and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
-		/**
-		 * Parses the graph from JSON to JS
-		 * @returns {!Object}
-		 */
-		const readCache = async () => ({
-			...fs.readJSONSync(graphCacheFile),
-			blockMap: await block.getAll()
-		});
-
 		const
 			timeout = (1).minute();
 
@@ -80,16 +71,24 @@ async function buildProjectGraph() {
 			total = 0;
 
 		return new Promise((r) => {
+			const delay = 500;
+
 			const f = () => {
 				// Sometimes we can be caught in the situation when one of the multiple processes writes something
 				// to the cache file and it breaks the cache for a moment.
 				// To avoid this, we can sleep a little and try again.
-				setTimeout(() => {
+				setTimeout(async () => {
 					try {
-						r(readCache());
+						const
+							graph = fs.readJSONSync(graphCacheFile);
 
-					} catch {
-						total += 15;
+						r({
+							...graph,
+							blockMap: await block.getAll()
+						});
+
+					} catch (err) {
+						total += delay;
 
 						if (total > timeout) {
 							build.buildGraphFromCache = false;
@@ -98,7 +97,7 @@ async function buildProjectGraph() {
 
 						f();
 					}
-				}, 15);
+				}, delay);
 			};
 
 			f();
