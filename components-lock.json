@@ -1,5 +1,5 @@
 {
-  "hash": "7419828e9346bd4c8fae82c8cd217355671b790ef0e26e9c2c8530af7327f89c",
+  "hash": "6c4e5279156538ad68c0759778e780b274939102fd049b14fe44a5ca14b4a07e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -32,546 +32,6 @@
             "src/base/b-bottom-slide/b-bottom-slide.styl"
           ],
           "tpl": "src/base/b-bottom-slide/b-bottom-slide.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-crop",
-        {
-          "index": "src/base/b-crop/index.js",
-          "declaration": {
-            "name": "b-crop",
-            "parent": "i-block",
-            "dependencies": [
-              "b-progress-icon"
-            ],
-            "libs": []
-          },
-          "name": "b-crop",
-          "parent": "i-block",
-          "dependencies": [
-            "b-progress-icon"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-crop/b-crop.ts",
-          "styles": [
-            "src/base/b-crop/b-crop.styl"
-          ],
-          "tpl": "src/base/b-crop/b-crop.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-component-renderer",
-        {
-          "index": "src/base/b-component-renderer/index.js",
-          "declaration": {
-            "name": "b-component-renderer",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-component-renderer",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-component-renderer/b-component-renderer.ts",
-          "styles": [
-            "src/base/b-component-renderer/b-component-renderer.styl"
-          ],
-          "tpl": "src/base/b-component-renderer/b-component-renderer.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy",
-        {
-          "index": "src/base/b-dummy/index.js",
-          "declaration": {
-            "name": "b-dummy",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-dummy/b-dummy.ts",
-          "styles": [
-            "src/base/b-dummy/b-dummy.styl"
-          ],
-          "tpl": "src/base/b-dummy/b-dummy.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dynamic-page",
-        {
-          "index": "src/base/b-dynamic-page/index.js",
-          "declaration": {
-            "name": "b-dynamic-page",
-            "parent": "i-dynamic-page",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dynamic-page",
-          "parent": "i-dynamic-page",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-dynamic-page/b-dynamic-page.ts",
-          "styles": [
-            "src/base/b-dynamic-page/b-dynamic-page.styl"
-          ],
-          "tpl": "src/base/b-dynamic-page/b-dynamic-page.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-image-editor",
-        {
-          "index": "src/base/b-image-editor/index.js",
-          "declaration": {
-            "name": "b-image-editor",
-            "parent": "i-block",
-            "dependencies": [
-              "b-crop",
-              "b-icon"
-            ],
-            "libs": []
-          },
-          "name": "b-image-editor",
-          "parent": "i-block",
-          "dependencies": [
-            "b-crop",
-            "b-icon"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-image-editor/b-image-editor.ts",
-          "styles": [
-            "src/base/b-image-editor/b-image-editor.styl"
-          ],
-          "tpl": "src/base/b-image-editor/b-image-editor.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-image",
-        {
-          "index": "src/base/b-image/index.js",
-          "declaration": {
-            "name": "b-image",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-image",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-image/b-image.ts",
-          "styles": [
-            "src/base/b-image/b-image.styl"
-          ],
-          "tpl": "src/base/b-image/b-image.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-list",
-        {
-          "index": "src/base/b-list/index.js",
-          "declaration": {
-            "name": "b-list",
-            "parent": "i-data",
-            "dependencies": [
-              "b-icon",
-              "b-progress-icon"
-            ],
-            "libs": []
-          },
-          "name": "b-list",
-          "parent": "i-data",
-          "dependencies": [
-            "b-icon",
-            "b-progress-icon"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-list/b-list.ts",
-          "styles": [
-            "src/base/b-list/b-list.styl"
-          ],
-          "tpl": "src/base/b-list/b-list.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-router",
-        {
-          "index": "src/base/b-router/index.js",
-          "declaration": {
-            "name": "b-router",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-router",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-router/b-router.ts",
-          "styles": [
-            "src/base/b-router/b-router.styl"
-          ],
-          "tpl": "src/base/b-router/b-router.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-remote-provider",
-        {
-          "index": "src/base/b-remote-provider/index.js",
-          "declaration": {
-            "name": "b-remote-provider",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-remote-provider",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
-          "styles": [
-            "src/base/b-remote-provider/b-remote-provider.styl"
-          ],
-          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-scroll",
-        {
-          "index": "src/base/b-scroll/index.js",
-          "declaration": {
-            "name": "b-scroll",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-scroll",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-scroll/b-scroll.ts",
-          "styles": [
-            "src/base/b-scroll/b-scroll.styl"
-          ],
-          "tpl": "src/base/b-scroll/b-scroll.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-sidebar",
-        {
-          "index": "src/base/b-sidebar/index.js",
-          "declaration": {
-            "name": "b-sidebar",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-sidebar",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-sidebar/b-sidebar.ts",
-          "styles": [
-            "src/base/b-sidebar/b-sidebar.styl"
-          ],
-          "tpl": "src/base/b-sidebar/b-sidebar.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-skeleton",
-        {
-          "index": "src/base/b-skeleton/index.js",
-          "declaration": {
-            "name": "b-skeleton",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-skeleton",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/base/b-skeleton/b-skeleton.styl"
-          ],
-          "tpl": "src/base/b-skeleton/b-skeleton.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-slider",
-        {
-          "index": "src/base/b-slider/index.js",
-          "declaration": {
-            "name": "b-slider",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": [
-              "core/component/directives/resize-observer"
-            ]
-          },
-          "name": "b-slider",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [
-            "core/component/directives/resize-observer"
-          ],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": [
-              "core/component/directives/resize-observer"
-            ]
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": [
-              "core/component/directives/resize-observer"
-            ]
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-slider/b-slider.ts",
-          "styles": [
-            "src/base/b-slider/b-slider.styl"
-          ],
-          "tpl": "src/base/b-slider/b-slider.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-tree",
-        {
-          "index": "src/base/b-tree/index.js",
-          "declaration": {
-            "name": "b-tree",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-tree",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-tree/b-tree.ts",
-          "styles": [
-            "src/base/b-tree/b-tree.styl"
-          ],
-          "tpl": "src/base/b-tree/b-tree.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-virtual-scroll",
-        {
-          "index": "src/base/b-virtual-scroll/index.js",
-          "declaration": {
-            "name": "b-virtual-scroll",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-virtual-scroll",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-virtual-scroll/b-virtual-scroll.ts",
-          "styles": [
-            "src/base/b-virtual-scroll/b-virtual-scroll.styl"
-          ],
-          "tpl": "src/base/b-virtual-scroll/b-virtual-scroll.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-window",
-        {
-          "index": "src/base/b-window/index.js",
-          "declaration": {
-            "name": "b-window",
-            "parent": "i-data",
-            "dependencies": [
-              "b-button"
-            ],
-            "libs": []
-          },
-          "name": "b-window",
-          "parent": "i-data",
-          "dependencies": [
-            "b-button"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-window/b-window.ts",
-          "styles": [
-            "src/base/b-window/b-window.styl"
-          ],
-          "tpl": "src/base/b-window/b-window.ss",
           "etpl": null
         }
       ],
@@ -682,6 +142,138 @@
         }
       ],
       [
+        "b-component-renderer",
+        {
+          "index": "src/base/b-component-renderer/index.js",
+          "declaration": {
+            "name": "b-component-renderer",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-component-renderer",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-component-renderer/b-component-renderer.ts",
+          "styles": [
+            "src/base/b-component-renderer/b-component-renderer.styl"
+          ],
+          "tpl": "src/base/b-component-renderer/b-component-renderer.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-crop",
+        {
+          "index": "src/base/b-crop/index.js",
+          "declaration": {
+            "name": "b-crop",
+            "parent": "i-block",
+            "dependencies": [
+              "b-progress-icon"
+            ],
+            "libs": []
+          },
+          "name": "b-crop",
+          "parent": "i-block",
+          "dependencies": [
+            "b-progress-icon"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-crop/b-crop.ts",
+          "styles": [
+            "src/base/b-crop/b-crop.styl"
+          ],
+          "tpl": "src/base/b-crop/b-crop.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy",
+        {
+          "index": "src/base/b-dummy/index.js",
+          "declaration": {
+            "name": "b-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-dummy/b-dummy.ts",
+          "styles": [
+            "src/base/b-dummy/b-dummy.styl"
+          ],
+          "tpl": "src/base/b-dummy/b-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dynamic-page",
+        {
+          "index": "src/base/b-dynamic-page/index.js",
+          "declaration": {
+            "name": "b-dynamic-page",
+            "parent": "i-dynamic-page",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dynamic-page",
+          "parent": "i-dynamic-page",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-dynamic-page/b-dynamic-page.ts",
+          "styles": [
+            "src/base/b-dynamic-page/b-dynamic-page.styl"
+          ],
+          "tpl": "src/base/b-dynamic-page/b-dynamic-page.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-file-button",
         {
           "index": "src/form/b-file-button/index.js",
@@ -710,6 +302,70 @@
             "src/form/b-file-button/b-file-button.styl"
           ],
           "tpl": "src/form/b-file-button/b-file-button.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-form",
+        {
+          "index": "src/form/b-form/index.js",
+          "declaration": {
+            "name": "b-form",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-form",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/form/b-form/b-form.ts",
+          "styles": [
+            "src/form/b-form/b-form.styl"
+          ],
+          "tpl": "src/form/b-form/b-form.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-icon",
+        {
+          "index": "src/icons/b-icon/index.js",
+          "declaration": {
+            "name": "b-icon",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-icon",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/icons/b-icon/b-icon.ts",
+          "styles": [
+            "src/icons/b-icon/b-icon.styl"
+          ],
+          "tpl": "src/icons/b-icon/b-icon.ss",
           "etpl": null
         }
       ],
@@ -746,16 +402,16 @@
         }
       ],
       [
-        "b-form",
+        "b-image",
         {
-          "index": "src/form/b-form/index.js",
+          "index": "src/base/b-image/index.js",
           "declaration": {
-            "name": "b-form",
+            "name": "b-image",
             "parent": "i-block",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-form",
+          "name": "b-image",
           "parent": "i-block",
           "dependencies": [],
           "libs": [],
@@ -769,11 +425,49 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/form/b-form/b-form.ts",
+          "logic": "src/base/b-image/b-image.ts",
           "styles": [
-            "src/form/b-form/b-form.styl"
+            "src/base/b-image/b-image.styl"
           ],
-          "tpl": "src/form/b-form/b-form.ss",
+          "tpl": "src/base/b-image/b-image.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-image-editor",
+        {
+          "index": "src/base/b-image-editor/index.js",
+          "declaration": {
+            "name": "b-image-editor",
+            "parent": "i-block",
+            "dependencies": [
+              "b-crop",
+              "b-icon"
+            ],
+            "libs": []
+          },
+          "name": "b-image-editor",
+          "parent": "i-block",
+          "dependencies": [
+            "b-crop",
+            "b-icon"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-image-editor/b-image-editor.ts",
+          "styles": [
+            "src/base/b-image-editor/b-image-editor.styl"
+          ],
+          "tpl": "src/base/b-image-editor/b-image-editor.ss",
           "etpl": null
         }
       ],
@@ -916,6 +610,268 @@
         }
       ],
       [
+        "b-list",
+        {
+          "index": "src/base/b-list/index.js",
+          "declaration": {
+            "name": "b-list",
+            "parent": "i-data",
+            "dependencies": [
+              "b-icon",
+              "b-progress-icon"
+            ],
+            "libs": []
+          },
+          "name": "b-list",
+          "parent": "i-data",
+          "dependencies": [
+            "b-icon",
+            "b-progress-icon"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-list/b-list.ts",
+          "styles": [
+            "src/base/b-list/b-list.styl"
+          ],
+          "tpl": "src/base/b-list/b-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-option",
+        {
+          "index": "src/form/b-select/b-option/index.js",
+          "declaration": {
+            "name": "b-option",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-option",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/form/b-select/b-option/b-option.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "b-progress-icon",
+        {
+          "index": "src/icons/b-progress-icon/index.js",
+          "declaration": {
+            "name": "b-progress-icon",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-progress-icon",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/icons/b-progress-icon/b-progress-icon.ts",
+          "styles": [
+            "src/icons/b-progress-icon/b-progress-icon.styl"
+          ],
+          "tpl": "src/icons/b-progress-icon/b-progress-icon.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-radio-button",
+        {
+          "index": "src/form/b-radio-button/index.js",
+          "declaration": {
+            "name": "b-radio-button",
+            "parent": "b-checkbox",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-radio-button",
+          "parent": "b-checkbox",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/form/b-radio-button/b-radio-button.ts",
+          "styles": [
+            "src/form/b-radio-button/b-radio-button.styl"
+          ],
+          "tpl": "src/form/b-radio-button/b-radio-button.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-remote-provider",
+        {
+          "index": "src/base/b-remote-provider/index.js",
+          "declaration": {
+            "name": "b-remote-provider",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-remote-provider",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-remote-provider/b-remote-provider.ts",
+          "styles": [
+            "src/base/b-remote-provider/b-remote-provider.styl"
+          ],
+          "tpl": "src/base/b-remote-provider/b-remote-provider.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-router",
+        {
+          "index": "src/base/b-router/index.js",
+          "declaration": {
+            "name": "b-router",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-router",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-router/b-router.ts",
+          "styles": [
+            "src/base/b-router/b-router.styl"
+          ],
+          "tpl": "src/base/b-router/b-router.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-scroll",
+        {
+          "index": "src/base/b-scroll/index.js",
+          "declaration": {
+            "name": "b-scroll",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-scroll",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-scroll/b-scroll.ts",
+          "styles": [
+            "src/base/b-scroll/b-scroll.styl"
+          ],
+          "tpl": "src/base/b-scroll/b-scroll.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-scroll-inline",
+        {
+          "index": "src/base/b-scroll/b-scroll-inline/index.js",
+          "declaration": {
+            "name": "b-scroll-inline",
+            "parent": "b-scroll",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-scroll-inline",
+          "parent": "b-scroll",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-scroll/b-scroll-inline/b-scroll-inline.ts",
+          "styles": [
+            "src/base/b-scroll/b-scroll-inline/b-scroll-inline.styl"
+          ],
+          "tpl": "src/base/b-scroll/b-scroll-inline/b-scroll-inline.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-select",
         {
           "index": "src/form/b-select/index.js",
@@ -958,6 +914,110 @@
         }
       ],
       [
+        "b-sidebar",
+        {
+          "index": "src/base/b-sidebar/index.js",
+          "declaration": {
+            "name": "b-sidebar",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-sidebar",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-sidebar/b-sidebar.ts",
+          "styles": [
+            "src/base/b-sidebar/b-sidebar.styl"
+          ],
+          "tpl": "src/base/b-sidebar/b-sidebar.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-skeleton",
+        {
+          "index": "src/base/b-skeleton/index.js",
+          "declaration": {
+            "name": "b-skeleton",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-skeleton",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/base/b-skeleton/b-skeleton.styl"
+          ],
+          "tpl": "src/base/b-skeleton/b-skeleton.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-slider",
+        {
+          "index": "src/base/b-slider/index.js",
+          "declaration": {
+            "name": "b-slider",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": [
+              "core/component/directives/resize-observer"
+            ]
+          },
+          "name": "b-slider",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [
+            "core/component/directives/resize-observer"
+          ],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-slider/b-slider.ts",
+          "styles": [
+            "src/base/b-slider/b-slider.styl"
+          ],
+          "tpl": "src/base/b-slider/b-slider.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-textarea",
         {
           "index": "src/form/b-textarea/index.js",
@@ -994,17 +1054,17 @@
         }
       ],
       [
-        "b-radio-button",
+        "b-tree",
         {
-          "index": "src/form/b-radio-button/index.js",
+          "index": "src/base/b-tree/index.js",
           "declaration": {
-            "name": "b-radio-button",
-            "parent": "b-checkbox",
+            "name": "b-tree",
+            "parent": "i-data",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-radio-button",
-          "parent": "b-checkbox",
+          "name": "b-tree",
+          "parent": "i-data",
           "dependencies": [],
           "libs": [],
           "resolvedLibs": {
@@ -1017,25 +1077,25 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/form/b-radio-button/b-radio-button.ts",
+          "logic": "src/base/b-tree/b-tree.ts",
           "styles": [
-            "src/form/b-radio-button/b-radio-button.styl"
+            "src/base/b-tree/b-tree.styl"
           ],
-          "tpl": "src/form/b-radio-button/b-radio-button.ss",
+          "tpl": "src/base/b-tree/b-tree.ss",
           "etpl": null
         }
       ],
       [
-        "b-icon",
+        "b-v4-component-demo",
         {
-          "index": "src/icons/b-icon/index.js",
+          "index": "src/pages/p-v4-components-demo/b-v4-component-demo/index.js",
           "declaration": {
-            "name": "b-icon",
+            "name": "b-v4-component-demo",
             "parent": "i-block",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-icon",
+          "name": "b-v4-component-demo",
           "parent": "i-block",
           "dependencies": [],
           "libs": [],
@@ -1049,26 +1109,26 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/icons/b-icon/b-icon.ts",
+          "logic": "src/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.ts",
           "styles": [
-            "src/icons/b-icon/b-icon.styl"
+            "src/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.styl"
           ],
-          "tpl": "src/icons/b-icon/b-icon.ss",
+          "tpl": "src/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.ss",
           "etpl": null
         }
       ],
       [
-        "b-progress-icon",
+        "b-virtual-scroll",
         {
-          "index": "src/icons/b-progress-icon/index.js",
+          "index": "src/base/b-virtual-scroll/index.js",
           "declaration": {
-            "name": "b-progress-icon",
-            "parent": "i-block",
+            "name": "b-virtual-scroll",
+            "parent": "i-data",
             "dependencies": [],
             "libs": []
           },
-          "name": "b-progress-icon",
-          "parent": "i-block",
+          "name": "b-virtual-scroll",
+          "parent": "i-data",
           "dependencies": [],
           "libs": [],
           "resolvedLibs": {
@@ -1081,11 +1141,47 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/icons/b-progress-icon/b-progress-icon.ts",
+          "logic": "src/base/b-virtual-scroll/b-virtual-scroll.ts",
           "styles": [
-            "src/icons/b-progress-icon/b-progress-icon.styl"
+            "src/base/b-virtual-scroll/b-virtual-scroll.styl"
           ],
-          "tpl": "src/icons/b-progress-icon/b-progress-icon.ss",
+          "tpl": "src/base/b-virtual-scroll/b-virtual-scroll.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-window",
+        {
+          "index": "src/base/b-window/index.js",
+          "declaration": {
+            "name": "b-window",
+            "parent": "i-data",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "b-window",
+          "parent": "i-data",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-window/b-window.ts",
+          "styles": [
+            "src/base/b-window/b-window.styl"
+          ],
+          "tpl": "src/base/b-window/b-window.ss",
           "etpl": null
         }
       ],
@@ -1218,42 +1314,18 @@
         }
       ],
       [
-        "p-v4-components-demo",
+        "i-access",
         {
-          "index": "src/pages/p-v4-components-demo/index.js",
+          "index": "src/traits/i-access/index.js",
           "declaration": {
-            "name": "p-v4-components-demo",
-            "parent": "i-static-page",
-            "dependencies": [
-              "b-v4-component-demo",
-              "b-virtual-scroll",
-              "b-tree",
-              "b-checkbox",
-              "b-button",
-              "b-router",
-              "b-list",
-              "b-sidebar",
-              "b-slider",
-              "b-window",
-              "b-image"
-            ],
+            "name": "i-access",
+            "parent": null,
+            "dependencies": [],
             "libs": []
           },
-          "name": "p-v4-components-demo",
-          "parent": "i-static-page",
-          "dependencies": [
-            "b-v4-component-demo",
-            "b-virtual-scroll",
-            "b-tree",
-            "b-checkbox",
-            "b-button",
-            "b-router",
-            "b-list",
-            "b-sidebar",
-            "b-slider",
-            "b-window",
-            "b-image"
-          ],
+          "name": "i-access",
+          "parent": null,
+          "dependencies": [],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -1263,14 +1335,14 @@
             "%data": "%data:Set",
             "%data:Set": []
           },
-          "type": "page",
+          "type": "interface",
           "mixin": false,
-          "logic": "src/pages/p-v4-components-demo/p-v4-components-demo.ts",
+          "logic": "src/traits/i-access/i-access.ts",
           "styles": [
-            "src/pages/p-v4-components-demo/p-v4-components-demo.styl"
+            "src/traits/i-access/i-access.styl"
           ],
-          "tpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ss",
-          "etpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ess"
+          "tpl": null,
+          "etpl": null
         }
       ],
       [
@@ -1370,134 +1442,6 @@
         }
       ],
       [
-        "i-input",
-        {
-          "index": "src/super/i-input/index.js",
-          "declaration": {
-            "name": "i-input",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-input",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/super/i-input/i-input.ts",
-          "styles": [
-            "src/super/i-input/i-input.styl"
-          ],
-          "tpl": "src/super/i-input/i-input.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "i-page",
-        {
-          "index": "src/super/i-page/index.js",
-          "declaration": {
-            "name": "i-page",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-page",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/super/i-page/i-page.ts",
-          "styles": [
-            "src/super/i-page/i-page.styl"
-          ],
-          "tpl": "src/super/i-page/i-page.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "i-static-page",
-        {
-          "index": "src/super/i-static-page/index.js",
-          "declaration": {
-            "name": "i-static-page",
-            "parent": "i-page",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-static-page",
-          "parent": "i-page",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/super/i-static-page/i-static-page.ts",
-          "styles": [
-            "src/super/i-static-page/i-static-page.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
-        "i-access",
-        {
-          "index": "src/traits/i-access/index.js",
-          "declaration": {
-            "name": "i-access",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "i-access",
-          "parent": null,
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "interface",
-          "mixin": false,
-          "logic": "src/traits/i-access/i-access.ts",
-          "styles": [
-            "src/traits/i-access/i-access.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
         "i-history",
         {
           "index": "src/traits/i-history/index.js",
@@ -1556,6 +1500,38 @@
           "logic": "src/traits/i-icon/i-icon.ts",
           "styles": [],
           "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "i-input",
+        {
+          "index": "src/super/i-input/index.js",
+          "declaration": {
+            "name": "i-input",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-input",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/super/i-input/i-input.ts",
+          "styles": [
+            "src/super/i-input/i-input.styl"
+          ],
+          "tpl": "src/super/i-input/i-input.ss",
           "etpl": null
         }
       ],
@@ -1712,6 +1688,38 @@
         }
       ],
       [
+        "i-page",
+        {
+          "index": "src/super/i-page/index.js",
+          "declaration": {
+            "name": "i-page",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-page",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/super/i-page/i-page.ts",
+          "styles": [
+            "src/super/i-page/i-page.styl"
+          ],
+          "tpl": "src/super/i-page/i-page.ss",
+          "etpl": null
+        }
+      ],
+      [
         "i-progress",
         {
           "index": "src/traits/i-progress/index.js",
@@ -1769,6 +1777,38 @@
           "mixin": false,
           "logic": "src/traits/i-size/i-size.ts",
           "styles": [],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "i-static-page",
+        {
+          "index": "src/super/i-static-page/index.js",
+          "declaration": {
+            "name": "i-static-page",
+            "parent": "i-page",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-static-page",
+          "parent": "i-page",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/super/i-static-page/i-static-page.ts",
+          "styles": [
+            "src/super/i-static-page/i-static-page.styl"
+          ],
           "tpl": null,
           "etpl": null
         }
@@ -1838,18 +1878,22 @@
         }
       ],
       [
-        "b-scroll-inline",
+        "p-v4-components-demo",
         {
-          "index": "src/base/b-scroll/b-scroll-inline/index.js",
+          "index": "src/pages/p-v4-components-demo/index.js",
           "declaration": {
-            "name": "b-scroll-inline",
-            "parent": "b-scroll",
-            "dependencies": [],
+            "name": "p-v4-components-demo",
+            "parent": "i-static-page",
+            "dependencies": [
+              "b-v4-component-demo"
+            ],
             "libs": []
           },
-          "name": "b-scroll-inline",
-          "parent": "b-scroll",
-          "dependencies": [],
+          "name": "p-v4-components-demo",
+          "parent": "i-static-page",
+          "dependencies": [
+            "b-v4-component-demo"
+          ],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -1859,78 +1903,14 @@
             "%data": "%data:Set",
             "%data:Set": []
           },
-          "type": "block",
+          "type": "page",
           "mixin": false,
-          "logic": "src/base/b-scroll/b-scroll-inline/b-scroll-inline.ts",
+          "logic": "src/pages/p-v4-components-demo/p-v4-components-demo.ts",
           "styles": [
-            "src/base/b-scroll/b-scroll-inline/b-scroll-inline.styl"
+            "src/pages/p-v4-components-demo/p-v4-components-demo.styl"
           ],
-          "tpl": "src/base/b-scroll/b-scroll-inline/b-scroll-inline.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-option",
-        {
-          "index": "src/form/b-select/b-option/index.js",
-          "declaration": {
-            "name": "b-option",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-option",
-          "parent": null,
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/form/b-select/b-option/b-option.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
-        "b-v4-component-demo",
-        {
-          "index": "src/pages/p-v4-components-demo/b-v4-component-demo/index.js",
-          "declaration": {
-            "name": "b-v4-component-demo",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-v4-component-demo",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.ts",
-          "styles": [
-            "src/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.styl"
-          ],
-          "tpl": "src/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.ss",
-          "etpl": null
+          "tpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ss",
+          "etpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ess"
         }
       ]
     ]
