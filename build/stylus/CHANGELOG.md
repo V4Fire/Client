@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.176 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed parsing of Stylus objects
+
+## v3.0.0-rc.164 (2021-03-22)
 
 #### :rocket: New Feature
 

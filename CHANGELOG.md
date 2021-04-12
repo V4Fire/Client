@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.176 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed parsing of Stylus objects `build/stylus/ds`
+
 ## v3.0.0-rc.175 (2021-04-12)
 
 #### :bug: Bug Fix
