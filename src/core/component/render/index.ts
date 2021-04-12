@@ -11,11 +11,38 @@
  * @packageDocumentation
  */
 
+import { componentTemplates } from 'core/component/const';
+
 import type { VNode } from 'core/component/engines';
-import type { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface, ComponentMeta, ComponentMethod } from 'core/component/interface';
 import type { RenderObject } from 'core/component/render/interface';
 
 export * from 'core/component/render/interface';
+
+/**
+ * Attaches templates to the specified component
+ *
+ * @param tpls - dictionary with templates
+ * @param meta - component meta object
+ */
+export function attachTemplates(tpls: Dictionary, meta: ComponentMeta): void {
+	if (('index' in tpls) || !Object.isFunction(tpls.index)) {
+		return;
+	}
+
+	const renderObj = componentTemplates[meta.name] ?? tpls.index();
+	componentTemplates[meta.name] = renderObj;
+
+	meta.component.staticRenderFns =
+		renderObj.staticRenderFns ?? [];
+
+	meta.methods.render = <ComponentMethod>{
+		wrapper: true,
+		watchers: {},
+		hooks: {},
+		fn: renderObj.render
+	};
+}
 
 /**
  * Executes the specified render object
@@ -23,10 +50,7 @@ export * from 'core/component/render/interface';
  * @param renderObject
  * @param ctx - component context
  */
-export function execRenderObject(
-	renderObject: RenderObject,
-	ctx: Dictionary<any>
-): VNode {
+export function execRenderObject(renderObject: RenderObject, ctx: Dictionary<any>): VNode {
 	const
 		fns = renderObject.staticRenderFns;
 

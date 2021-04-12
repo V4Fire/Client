@@ -14,11 +14,12 @@ import * as c from 'core/component/const';
 
 import { createMeta, fillMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflection';
+import { attachTemplates } from 'core/component/render';
 
 import { getComponent, ComponentDriver } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/register/helpers';
 
-import type { ComponentOptions, ComponentMethod } from 'core/component/interface';
+import type { ComponentOptions } from 'core/component/interface';
 
 /**
  * Registers a new component
@@ -105,31 +106,7 @@ export function component(opts?: ComponentOptions): Function {
 
 				function promiseCb(resolve: Function) {
 					const
-						{methods, methods: {render}} = meta;
-
-					const addRenderAndResolve = (tpls) => {
-						const fns = c.componentTemplates[componentInfo.name] ?? tpls.index();
-						c.componentTemplates[componentInfo.name] = fns;
-
-						// We need to add some meta properties, like, watchers,
-						// because we also register render methods to a component meta object
-						const renderObj = <ComponentMethod>{
-							wrapper: true,
-							watchers: {},
-							hooks: {},
-							fn: fns.render
-						};
-
-						// @ts-ignore (access)
-						// eslint-disable-next-line no-multi-assign
-						const staticRenderFns = component.staticRenderFns =
-							fns.staticRenderFns ?? [];
-
-						meta.component.staticRenderFns = staticRenderFns;
-						methods.render = renderObj;
-
-						return resolve(component);
-					};
+						{methods: {render}} = meta;
 
 					// In this case, we don't automatically attaches a render function
 					if (componentInfo.params.tpl === false) {
@@ -139,11 +116,12 @@ export function component(opts?: ComponentOptions): Function {
 						}
 
 						// Loopback render function
-						return addRenderAndResolve(defTpls.block);
+						return attachTemplatesAndResolve(defTpls.block);
 					}
 
-					// Dirty check of a component template loading status
-					const f = () => {
+					return waitComponentTemplates();
+
+					function waitComponentTemplates() {
 						const
 							fns = TPLS[meta.componentName];
 
@@ -152,17 +130,20 @@ export function component(opts?: ComponentOptions): Function {
 								return resolve(component);
 							}
 
-							return addRenderAndResolve(fns);
+							return attachTemplatesAndResolve(fns);
 						}
 
 						if (dryRun) {
 							return promiseCb;
 						}
 
-						requestIdleCallback(f, {timeout: 50});
-					};
+						requestIdleCallback(waitComponentTemplates, {timeout: 50});
+					}
 
-					return f();
+					function attachTemplatesAndResolve(tpls: Dictionary) {
+						attachTemplates(tpls, meta);
+						resolve(component);
+					}
 				}
 			}
 		}

@@ -73,6 +73,12 @@
 
 					- block value
 						< _.&__cell.&__value
+							3
+							< .foo
+								+= self.loadModules('form/b-checkbox', {renderKey: "box", wait: 'r.promisifyOnce.bind(null, "box")'})
+									434
+									< b-checkbox
+
 							+= self.slot()
 
 					- block expand

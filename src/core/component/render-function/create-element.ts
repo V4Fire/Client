@@ -32,6 +32,7 @@ import {
 } from 'core/component/engines';
 
 import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
+import { wrapRender } from 'core/component/render-function';
 
 export const
 	$$ = symbolGenerator();
@@ -175,8 +176,19 @@ export function wrapCreateElement(
 			const renderObject = c.componentTemplates[componentName] ?? componentTpls.index?.();
 			c.componentTemplates[componentName] = renderObject;
 
+			fakeCtx.unsafe.meta.component.staticRenderFns = renderObject.staticRenderFns;
+
+			fakeCtx.meta.methods.render = {
+				wrapper: true,
+				watchers: {},
+				hooks: {},
+				fn: renderObject.render
+			};
+
+			console.log(fakeCtx.unsafe.meta.component.render);
+
 			vnode = initComponentVNode(
-				execRenderObject(renderObject, fakeCtx),
+				fakeCtx.unsafe.meta.component.render.call(fakeCtx, fakeCtx.$createElement),
 				fakeCtx,
 				renderCtx
 			);
