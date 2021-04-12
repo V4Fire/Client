@@ -24,7 +24,7 @@ exports.getVarsDecl = getVarsDecl;
  */
 function getVarsDecl({wrap} = {}) {
 	const decl = `
-Object.defineProperty(window, '${csp.nonceStore}', {
+Object.defineProperty(window, '${csp.nonceStore()}', {
 	value: ${csp.postProcessor ? JSON.stringify(csp.nonce()) : csp.nonce()}
 });
 

@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a Stylus object parsing bug
+* Fixed parsing of Stylus objects
 
 ## v3.0.0-rc.164 (2021-03-22)
 

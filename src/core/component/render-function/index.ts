@@ -65,9 +65,9 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 		unsafe.lastTimeOfRender = now;
 
 		const
-			{methods: {render: r}} = meta;
+			{methods: {render: originalRender}} = meta;
 
-		if (r) {
+		if (originalRender) {
 			const
 				asyncLabel = unsafe.$asyncLabel;
 
@@ -279,7 +279,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 				return res;
 			};
 
-			return r.fn.call(this, createElement, baseCtx);
+			return originalRender.fn.call(this, createElement, baseCtx);
 		}
 
 		return nativeCreate();

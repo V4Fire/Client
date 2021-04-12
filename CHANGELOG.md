@@ -15,7 +15,40 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a Stylus object parsing bug `build/stylus/ds`
+* Fixed parsing of Stylus objects `build/stylus/ds`
+
+## v3.0.0-rc.175 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when trying to load two or more modules with the same id but different parameters via `loadModules` `iBlock`
+
+## v3.0.0-rc.174 (2021-04-09)
+
+#### :bug: Bug Fix
+
+* Fixed the project building with `parallel-webpack` `build`
+
+## v3.0.0-rc.173 (2021-04-09)
+
+#### :boom: Breaking Change
+
+* Now `csp.nonceStore` is a function `config`
+
+#### :rocket: New Feature
+
+* Added aliases `mem` and `fs` for `--cache-type` `build`
+* Added a new parameter `componentDependencies` `config`
+
+#### :bug: Bug Fix
+
+* Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified `config`
+
+## v3.0.0-rc.172 (2021-04-06)
+
+#### :house: Internal
+
+* Optimized the project building with `--fat-html`
 
 ## v3.0.0-rc.171 (2021-03-27)
 
