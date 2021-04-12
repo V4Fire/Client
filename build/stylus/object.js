@@ -90,7 +90,7 @@ function parseObject(stylusObj) {
 
 					} else {
 						const
-							exprRxgp = /^\((.*)\)$/g;
+							exprRgxp = /^\((.*)\)$/g;
 
 						let
 							value = convert(nodes[0], keyPath, result);
@@ -98,11 +98,11 @@ function parseObject(stylusObj) {
 						if (
 							Object.isString(value) &&
 							nodes[0].nodeName === 'expression' &&
-							exprRxgp.test(value)
+							exprRgxp.test(value)
 						) {
-							// If value is an expression with one element
-							// then unwrap it from parentheses
-							value = value.replace(exprRxgp, '$1');
+							// If the value is an expression with one element we have to
+							// unwrap it from parentheses
+							value = value.replace(exprRgxp, '$1');
 						}
 
 						$C(result).set(value, keyPath);
