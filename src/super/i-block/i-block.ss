@@ -68,24 +68,30 @@
 			? content = opts
 			? opts = {}
 
-		? path = [].concat(path || [])
+		? ids = []
 
-		- forEach path => id
-			{{ void(moduleLoader.add({id: '${id}', load: () => import('${id}'), wait: ${opts.wait || 'undefined'}})) }}
+		- forEach [].concat(path || []) => path
+			: &
+				waitFor = opts.wait || 'undefined',
+				id = [path, waitFor].join(':')
+			.
+
+			? ids.push(id)
+			{{ void(moduleLoader.add({id: '${id}', load: () => import('${path}'), wait: ${waitFor}})) }}
 
 		- if content != null
 			- if opts.renderKey
 				< template v-if = !field.get('ifOnceStore.${opts.renderKey}')
 					{{ void(field.set('ifOnceStore.${opts.renderKey}', true)) }}
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}), 1, { &
+					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${ids|json}), 1, { &
 						useRaf: true,
 						group: 'module:${opts.renderKey}'
 					}) .
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}), 1, {useRaf: true})
+				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${ids|json}), 1, {useRaf: true})
 					+= content
 
 	/**

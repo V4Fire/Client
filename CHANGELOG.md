@@ -11,6 +11,10 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.175 (2021-04-12)
+
+* Fixed an issue when trying to load two or more modules with the same id but different parameters via `loadModules` `iBlock`
+
 ## v3.0.0-rc.174 (2021-04-09)
 
 #### :bug: Bug Fix
