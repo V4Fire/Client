@@ -1,5 +1,5 @@
 {
-  "hash": "6c4e5279156538ad68c0759778e780b274939102fd049b14fe44a5ca14b4a07e",
+  "hash": "e8c71fe0aa6a189b3538335b59ee1457482e813b0b04bbd55e172fadbe100128",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1885,14 +1885,34 @@
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
             "dependencies": [
-              "b-v4-component-demo"
+              "b-v4-component-demo",
+              "b-virtual-scroll",
+              "b-tree",
+              "b-checkbox",
+              "b-button",
+              "b-router",
+              "b-list",
+              "b-sidebar",
+              "b-slider",
+              "b-window",
+              "b-image"
             ],
             "libs": []
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
           "dependencies": [
-            "b-v4-component-demo"
+            "b-v4-component-demo",
+            "b-virtual-scroll",
+            "b-tree",
+            "b-checkbox",
+            "b-button",
+            "b-router",
+            "b-list",
+            "b-sidebar",
+            "b-slider",
+            "b-window",
+            "b-image"
           ],
           "libs": [],
           "resolvedLibs": {
