@@ -8,13 +8,10 @@
 
 import { identity } from 'core/functools';
 
-// @ts-ignore (ss import)
-import * as defTpls from 'core/block.ss';
 import * as c from 'core/component/const';
 
-import { createMeta, fillMeta } from 'core/component/meta';
+import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflection';
-import { attachTemplates } from 'core/component/render';
 
 import { getComponent, ComponentDriver } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/register/helpers';
@@ -71,29 +68,29 @@ export function component(opts?: ComponentOptions): Function {
 				{parentMeta} = componentInfo;
 
 			const
-				meta = createMeta(componentInfo);
+				meta = createMeta(componentInfo),
+				componentName = componentInfo.name;
 
 			if (componentInfo.params.name == null || !componentInfo.isSmart) {
 				c.components.set(target, meta);
 			}
 
-			c.components.set(componentInfo.name, meta);
-			c.initEmitter.emit(`constructor.${componentInfo.name}`, {meta, parentMeta});
+			c.components.set(componentName, meta);
+			c.initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
 
 			if (componentInfo.isAbstract || meta.params.functional === true) {
 				fillMeta(meta, target);
-				return;
-			}
 
-			const
-				componentDecl = getComponent(meta);
+				if (!componentInfo.isAbstract) {
+					loadTemplate(meta.component, true)(identity);
+				}
 
-			if (componentInfo.params.root) {
-				c.rootComponents[componentInfo.name] = new Promise(loadTemplate(componentDecl));
+			} else if (meta.params.root) {
+				c.rootComponents[componentName] = new Promise(loadTemplate(getComponent(meta)));
 
 			} else {
 				const
-					c = ComponentDriver.component(componentInfo.name, loadTemplate(componentDecl, true)(identity));
+					c = ComponentDriver.component(componentName, loadTemplate(getComponent(meta), true)(identity));
 
 				if (Object.isPromise(c)) {
 					c.catch(stderr);
@@ -105,18 +102,8 @@ export function component(opts?: ComponentOptions): Function {
 				return promiseCb;
 
 				function promiseCb(resolve: Function) {
-					const
-						{methods: {render}} = meta;
-
-					// In this case, we don't automatically attaches a render function
-					if (componentInfo.params.tpl === false) {
-						// We have a custom render function
-						if (render && !render.wrapper) {
-							return resolve(component);
-						}
-
-						// Loopback render function
-						return attachTemplatesAndResolve(defTpls.block);
+					if (meta.params.tpl === false) {
+						attachTemplatesAndResolve();
 					}
 
 					return waitComponentTemplates();
@@ -126,10 +113,6 @@ export function component(opts?: ComponentOptions): Function {
 							fns = TPLS[meta.componentName];
 
 						if (fns) {
-							if (render && !render.wrapper) {
-								return resolve(component);
-							}
-
 							return attachTemplatesAndResolve(fns);
 						}
 
@@ -140,8 +123,10 @@ export function component(opts?: ComponentOptions): Function {
 						requestIdleCallback(waitComponentTemplates, {timeout: 50});
 					}
 
-					function attachTemplatesAndResolve(tpls: Dictionary) {
-						attachTemplates(tpls, meta);
+					function attachTemplatesAndResolve(tpls?: Dictionary) {
+						attachTemplatesToMeta(meta, tpls);
+						// @ts-ignore (access)
+						component.staticRenderFns = meta.component.staticRenderFns;
 						resolve(component);
 					}
 				}

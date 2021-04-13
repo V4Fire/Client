@@ -16,7 +16,7 @@ import type { ComponentMeta, StrictModDeclVal } from 'core/component/interface';
  * @param meta
  * @param parentMeta
  */
-export function inherit(
+export function inheritMeta(
 	meta: ComponentMeta,
 	parentMeta: ComponentMeta
 ): ComponentMeta {

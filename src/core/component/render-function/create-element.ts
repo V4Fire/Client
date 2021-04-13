@@ -10,7 +10,6 @@ import symbolGenerator from 'core/symbol';
 import * as c from 'core/component/const';
 
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
-import { execRenderObject } from 'core/component/render';
 
 import { parseVNodeAsFlyweight } from 'core/component/flyweight';
 import { createFakeCtx, initComponentVNode, FlyweightVNode } from 'core/component/functional';
@@ -32,7 +31,6 @@ import {
 } from 'core/component/engines';
 
 import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
-import { wrapRender } from 'core/component/render-function';
 
 export const
 	$$ = symbolGenerator();
@@ -173,25 +171,13 @@ export function wrapCreateElement(
 				{initProps: true}
 			);
 
-			const renderObject = c.componentTemplates[componentName] ?? componentTpls.index?.();
-			c.componentTemplates[componentName] = renderObject;
+			const
+				{unsafe} = fakeCtx,
+				{render} = unsafe.meta.component;
 
-			fakeCtx.unsafe.meta.component.staticRenderFns = renderObject.staticRenderFns;
-
-			fakeCtx.meta.methods.render = {
-				wrapper: true,
-				watchers: {},
-				hooks: {},
-				fn: renderObject.render
-			};
-
-			console.log(fakeCtx.unsafe.meta.component.render);
-
-			vnode = initComponentVNode(
-				fakeCtx.unsafe.meta.component.render.call(fakeCtx, fakeCtx.$createElement),
-				fakeCtx,
-				renderCtx
-			);
+			if (Object.isFunction(render)) {
+				vnode = initComponentVNode(render.call(fakeCtx, unsafe.$createElement), fakeCtx, renderCtx);
+			}
 		}
 
 		if (vnode == null) {
