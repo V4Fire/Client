@@ -103,7 +103,7 @@ export function component(opts?: ComponentOptions): Function {
 
 				function promiseCb(resolve: Function) {
 					if (meta.params.tpl === false) {
-						attachTemplatesAndResolve();
+						return attachTemplatesAndResolve();
 					}
 
 					return waitComponentTemplates();
@@ -125,9 +125,11 @@ export function component(opts?: ComponentOptions): Function {
 
 					function attachTemplatesAndResolve(tpls?: Dictionary) {
 						attachTemplatesToMeta(meta, tpls);
+
 						// @ts-ignore (access)
 						component.staticRenderFns = meta.component.staticRenderFns;
-						resolve(component);
+
+						return resolve(component);
 					}
 				}
 			}
