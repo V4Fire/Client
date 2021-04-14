@@ -44,6 +44,8 @@ import {
 
 	globalEmitter,
 	customWatcherRgxp,
+
+	resolveRefs,
 	bindRemoteWatchers,
 
 	WatchPath,
@@ -2547,6 +2549,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 			this.onBindHook();
 			this.onInsertedHook();
+
+			if (this.$normalParent != null) {
+				resolveRefs(this.$normalParent);
+			}
 
 		} catch (err) {
 			stderr(err);
