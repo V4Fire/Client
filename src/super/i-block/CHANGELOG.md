@@ -11,6 +11,8 @@ Changelog
 
 ## v3.0.0-rc.175 (2021-04-12)
 
+#### :bug: Bug Fix
+
 * Fixed an issue when trying to load two or more modules with the same id but different parameters via `loadModules`
 
 ## v3.0.0-rc.156 (2021-03-06)
