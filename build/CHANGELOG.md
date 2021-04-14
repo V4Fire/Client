@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.177 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed the loading order of styles
+
 ## v3.0.0-rc.174 (2021-04-09)
 
 #### :bug: Bug Fix

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.177 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed using the async rendering within functional components
+
 ## v3.0.0-rc.142 (2021-02-11)
 
 #### :bug: Bug Fix

@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.177 (2021-04-12)
+
+#### :house: Internal
+
+* Added `attachTemplatesToMeta`
+* Renamed `inherit` to `inheritMeta`
+
 ## v3.0.0-rc.88 (2020-10-13)
 
 #### :house: Internal

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.177 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using `self.loadModules` with the `wait` option
+
 ## v3.0.0-rc.175 (2021-04-12)
 
 #### :bug: Bug Fix

@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.177 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed the loading order of styles `build`
+* Fixed using the async rendering within functional components `core/component/functional`
+* Fixed a bug when using `self.loadModules` with the `wait` option `iBlock`
+
+#### :house: Internal
+
+* `core/component/meta`:
+  * Added `attachTemplatesToMeta`
+  * Renamed `inherit` to `inheritMeta`
+
 ## v3.0.0-rc.176 (2021-04-12)
 
 #### :bug: Bug Fix
