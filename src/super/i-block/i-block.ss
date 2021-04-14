@@ -64,6 +64,8 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
+		: buble = require('buble')
+
 		- if arguments.length < 3
 			? content = opts
 			? opts = {}
@@ -73,25 +75,35 @@
 		- forEach [].concat(path || []) => path
 			: &
 				waitFor = opts.wait || 'undefined',
-				id = [path, waitFor].join(':')
+				interpolatedWaitFor = (opts.wait ? buble.transform("`" + opts.wait + "`").code : 'undefined')
+					.replace(/^\(?['"]/, '')
+					.replace(/['"]\)?$/, '')
+					.replace(/\\(['"])/g, '$1')
 			.
 
-			? ids.push(id)
-			{{ void(moduleLoader.add({id: '${id}', load: () => import('${path}'), wait: ${waitFor}})) }}
+			: &
+				id = [path, waitFor].join(':'),
+				interpolatedId = buble.transform("`" + id + "`").code
+			.
+
+			? ids.push(interpolatedId)
+			{{ void(moduleLoader.add({id: ${interpolatedId}, load: () => import('${path}'), wait: ${interpolatedWaitFor}})) }}
 
 		- if content != null
 			- if opts.renderKey
-				< template v-if = !field.get('ifOnceStore.${opts.renderKey}')
-					{{ void(field.set('ifOnceStore.${opts.renderKey}', true)) }}
+				: renderKey = buble.transform("`" + opts.renderKey + "`").code
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${ids|json}), 1, { &
+				< template v-if = !field.get('ifOnceStore.' + ${renderKey})
+					{{ void(field.set('ifOnceStore.' + ${renderKey}, true)) }}
+
+					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...[${ids}]), 1, { &
 						useRaf: true,
-						group: 'module:${opts.renderKey}'
+						group: 'module:' + ${renderKey}
 					}) .
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${ids|json}), 1, {useRaf: true})
+				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...[${ids}]), 1, {useRaf: true})
 					+= content
 
 	/**
