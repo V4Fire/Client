@@ -22,7 +22,7 @@ import log, { LogMessageOptions } from 'core/log';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import config from 'config';
-import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
+import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn, EventId } from 'core/async';
 
 //#if runtime has core/helpers
 import * as helpers from 'core/helpers';
@@ -44,6 +44,8 @@ import {
 
 	globalEmitter,
 	customWatcherRgxp,
+
+	resolveRefs,
 	bindRemoteWatchers,
 
 	WatchPath,
@@ -1806,10 +1808,10 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[Async.off]]
 	 * @param [opts] - additional options
 	 */
-	off(opts: ClearOptionsId<object>): void;
+	off(opts: ClearOptionsId<EventId>): void;
 
 	@p({replace: false})
-	off(eventOrParams?: string | ClearOptionsId<object>, handler?: Function): void {
+	off(eventOrParams?: string | ClearOptionsId<EventId>, handler?: Function): void {
 		const
 			e = eventOrParams;
 
@@ -2547,6 +2549,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 			this.onBindHook();
 			this.onInsertedHook();
+
+			if (this.$normalParent != null) {
+				resolveRefs(this.$normalParent);
+			}
 
 		} catch (err) {
 			stderr(err);

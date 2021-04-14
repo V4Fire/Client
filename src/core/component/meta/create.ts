@@ -12,7 +12,7 @@ import { getComponentMods, isAbstractComponent } from 'core/component/reflection
 import { isTypeCanBeFunc } from 'core/component/prop';
 import { wrapRender } from 'core/component/render-function';
 
-import { inherit } from 'core/component/meta/inherit';
+import { inheritMeta } from 'core/component/meta/inherit';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
 import type {
@@ -90,7 +90,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	meta.component.render = wrapRender(meta);
 
 	if (component.parentMeta) {
-		inherit(meta, component.parentMeta);
+		inheritMeta(meta, component.parentMeta);
 	}
 
 	return meta;

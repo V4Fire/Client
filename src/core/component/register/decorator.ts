@@ -8,17 +8,15 @@
 
 import { identity } from 'core/functools';
 
-// @ts-ignore (ss import)
-import * as defTpls from 'core/block.ss';
 import * as c from 'core/component/const';
 
-import { createMeta, fillMeta } from 'core/component/meta';
+import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflection';
 
 import { getComponent, ComponentDriver } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/register/helpers';
 
-import type { ComponentOptions, ComponentMethod } from 'core/component/interface';
+import type { ComponentOptions } from 'core/component/interface';
 
 /**
  * Registers a new component
@@ -70,29 +68,29 @@ export function component(opts?: ComponentOptions): Function {
 				{parentMeta} = componentInfo;
 
 			const
-				meta = createMeta(componentInfo);
+				meta = createMeta(componentInfo),
+				componentName = componentInfo.name;
 
 			if (componentInfo.params.name == null || !componentInfo.isSmart) {
 				c.components.set(target, meta);
 			}
 
-			c.components.set(componentInfo.name, meta);
-			c.initEmitter.emit(`constructor.${componentInfo.name}`, {meta, parentMeta});
+			c.components.set(componentName, meta);
+			c.initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
 
 			if (componentInfo.isAbstract || meta.params.functional === true) {
 				fillMeta(meta, target);
-				return;
-			}
 
-			const
-				componentDecl = getComponent(meta);
+				if (!componentInfo.isAbstract) {
+					loadTemplate(meta.component, true)(identity);
+				}
 
-			if (componentInfo.params.root) {
-				c.rootComponents[componentInfo.name] = new Promise(loadTemplate(componentDecl));
+			} else if (meta.params.root) {
+				c.rootComponents[componentName] = new Promise(loadTemplate(getComponent(meta)));
 
 			} else {
 				const
-					c = ComponentDriver.component(componentInfo.name, loadTemplate(componentDecl, true)(identity));
+					c = ComponentDriver.component(componentName, loadTemplate(getComponent(meta), true)(identity));
 
 				if (Object.isPromise(c)) {
 					c.catch(stderr);
@@ -104,65 +102,35 @@ export function component(opts?: ComponentOptions): Function {
 				return promiseCb;
 
 				function promiseCb(resolve: Function) {
-					const
-						{methods, methods: {render}} = meta;
-
-					const addRenderAndResolve = (tpls) => {
-						const fns = c.componentTemplates[componentInfo.name] ?? tpls.index();
-						c.componentTemplates[componentInfo.name] = fns;
-
-						// We need to add some meta properties, like, watchers,
-						// because we also register render methods to a component meta object
-						const renderObj = <ComponentMethod>{
-							wrapper: true,
-							watchers: {},
-							hooks: {},
-							fn: fns.render
-						};
-
-						// @ts-ignore (access)
-						// eslint-disable-next-line no-multi-assign
-						const staticRenderFns = component.staticRenderFns =
-							fns.staticRenderFns ?? [];
-
-						meta.component.staticRenderFns = staticRenderFns;
-						methods.render = renderObj;
-
-						return resolve(component);
-					};
-
-					// In this case, we don't automatically attaches a render function
-					if (componentInfo.params.tpl === false) {
-						// We have a custom render function
-						if (render && !render.wrapper) {
-							return resolve(component);
-						}
-
-						// Loopback render function
-						return addRenderAndResolve(defTpls.block);
+					if (meta.params.tpl === false) {
+						return attachTemplatesAndResolve();
 					}
 
-					// Dirty check of a component template loading status
-					const f = () => {
+					return waitComponentTemplates();
+
+					function waitComponentTemplates() {
 						const
 							fns = TPLS[meta.componentName];
 
 						if (fns) {
-							if (render && !render.wrapper) {
-								return resolve(component);
-							}
-
-							return addRenderAndResolve(fns);
+							return attachTemplatesAndResolve(fns);
 						}
 
 						if (dryRun) {
 							return promiseCb;
 						}
 
-						requestIdleCallback(f, {timeout: 50});
-					};
+						requestIdleCallback(waitComponentTemplates, {timeout: 50});
+					}
 
-					return f();
+					function attachTemplatesAndResolve(tpls?: Dictionary) {
+						attachTemplatesToMeta(meta, tpls);
+
+						// @ts-ignore (access)
+						component.staticRenderFns = meta.component.staticRenderFns;
+
+						return resolve(component);
+					}
 				}
 			}
 		}
