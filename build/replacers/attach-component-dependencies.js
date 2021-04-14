@@ -93,7 +93,7 @@ if (!TPLS['${dep}']) {
 
 					.join('')
 			}
-		} catch {}
+		} catch (err) { stderr(err); }
 	})();
 }`;
 
