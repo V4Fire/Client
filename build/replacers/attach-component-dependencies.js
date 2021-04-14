@@ -50,12 +50,15 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 	attachComponentDeps(component);
 
+	let
+		imports = '';
+
 	await $C([...deps].reverse()).async.forEach(async (dep) => {
 		const
 			declFromCache = decls[dep];
 
 		if (declFromCache != null) {
-			str += declFromCache;
+			imports += declFromCache;
 			return;
 		}
 
@@ -122,16 +125,16 @@ if (!TPLS['${dep}']) {
 			decls[dep] = decl;
 		}
 
-		str += decl;
+		imports += decl;
 	});
 
 	$C([...libs].reverse()).forEach((lib) => {
-		str += `
+		imports += `
 try { require('${lib}'); } catch (err) { stderr(err); }
 `;
 	});
 
-	return str;
+	return imports + str;
 
 	function attachComponentDeps(component) {
 		if (component == null) {
