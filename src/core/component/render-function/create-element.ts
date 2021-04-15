@@ -127,8 +127,6 @@ export function wrapCreateElement(
 			supports.functional &&
 			component?.params.functional === true;
 
-		console.log(this?.componentName, baseCtx.componentName);
-
 		if (component && needCreateFunctionalComponent) {
 			needLinkToEl = true;
 
