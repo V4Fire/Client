@@ -10,6 +10,7 @@ import symbolGenerator from 'core/symbol';
 import * as c from 'core/component/const';
 
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
+import { execRenderObject } from 'core/component/render';
 
 import { parseVNodeAsFlyweight } from 'core/component/flyweight';
 import { createFakeCtx, initComponentVNode, FlyweightVNode } from 'core/component/functional';
@@ -41,11 +42,11 @@ export const
  *
  * This method adds V4Fire specific logic (v-attrs, composites, etc.) to a simple createElement function.
  *
- * @param createElement - original createElement function
+ * @param nativeCreateElement - original createElement function
  * @param baseCtx - base component context
  */
 export function wrapCreateElement(
-	createElement: CreateElement,
+	nativeCreateElement: CreateElement,
 	baseCtx: ComponentInterface
 ): [CreateElement, Function[]] {
 	const
@@ -73,12 +74,12 @@ export function wrapCreateElement(
 
 		if (attrOpts == null) {
 			if (tag === 'v-render') {
-				return createElement();
+				return nativeCreateElement();
 			}
 
 		} else {
 			if (tag === 'v-render') {
-				return attrOpts.from ?? createElement();
+				return attrOpts.from ?? nativeCreateElement();
 			}
 
 			if (tagName?.[0] === '@') {
@@ -126,6 +127,8 @@ export function wrapCreateElement(
 			supports.functional &&
 			component?.params.functional === true;
 
+		console.log(this?.componentName, baseCtx.componentName);
+
 		if (component && needCreateFunctionalComponent) {
 			needLinkToEl = true;
 
@@ -133,14 +136,14 @@ export function wrapCreateElement(
 				{componentName} = component;
 
 			const
-				componentTpls = TPLS[componentName];
+				renderObject = c.componentTemplates[componentName];
 
-			if (componentTpls == null) {
-				return createElement();
+			if (renderObject == null) {
+				return nativeCreateElement();
 			}
 
 			const
-				node = createElement('span', {...opts, tag: undefined}, children),
+				node = nativeCreateElement('span', {...opts, tag: undefined}, children),
 				renderCtx = getComponentRenderCtxFromVNode(component, node, ctx);
 
 			let
@@ -164,6 +167,12 @@ export function wrapCreateElement(
 
 			c.renderCtxCache[componentName] = baseCtx;
 
+			// @ts-ignore (access)
+			baseCtx._l = ctx._l;
+
+			// @ts-ignore (access)
+			baseCtx._u = ctx._u;
+
 			const fakeCtx = createFakeCtx<ComponentInterface>(
 				<CreateElement>wrappedCreateElement,
 				renderCtx,
@@ -171,21 +180,19 @@ export function wrapCreateElement(
 				{initProps: true}
 			);
 
-			const
-				{unsafe} = fakeCtx,
-				{render} = unsafe.meta.component;
-
-			if (Object.isFunction(render)) {
-				vnode = initComponentVNode(render.call(fakeCtx, unsafe.$createElement), fakeCtx, renderCtx);
-			}
+			vnode = initComponentVNode(
+				execRenderObject(renderObject, fakeCtx),
+				fakeCtx,
+				renderCtx
+			);
 		}
 
 		if (vnode == null) {
 			// eslint-disable-next-line prefer-rest-params
-			vnode = createElement.apply(unsafe, arguments);
+			vnode = nativeCreateElement.apply(unsafe, arguments);
 
 			if (vnode == null) {
-				return createElement();
+				return nativeCreateElement();
 			}
 
 			if (flyweightComponent != null) {
