@@ -1098,6 +1098,11 @@ export default abstract class iBlock extends ComponentInterface {
 	protected watchModsStore!: ModsNTable;
 
 	/**
+	 * True if the component context is based on another component via `vdom.bindRenderObject`
+	 */
+	protected readonly isVirtualTemplate: boolean = false;
+
+	/**
 	 * Special getter for component modifiers:
 	 * on a first touch of a property from that object will be registered a modifier by the property name
 	 * that can emit re-render of the component.

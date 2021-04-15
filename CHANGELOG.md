@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.178 (2021-04-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when dynamically created templates emit lifecycle events `iBlock`
+
 ## v3.0.0-rc.177 (2021-04-14)
 
 #### :bug: Bug Fix
