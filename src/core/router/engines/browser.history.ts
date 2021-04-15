@@ -113,7 +113,7 @@ export default function createRouter(component: bRouter): Router {
 
 	function load(route: string, params?: Route, method: string = 'pushState'): Promise<void> {
 		if (!Object.isTruly(route)) {
-			throw new ReferenceError('Page to load is not specified');
+			throw new ReferenceError('A page to load is not specified');
 		}
 
 		// Remove some redundant characters
