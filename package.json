@@ -52,7 +52,7 @@
     "vue": "2.6.10"
   },
   "optionalDependencies": {
-    "@pzlr/build-core": "^2.11.6",
+    "@pzlr/build-core": "^2.11.7",
     "@pzlr/stylus-inheritance": "^3.1.0",
     "@types/fs-extra-promise": "^1.0.9",
     "@types/glob": "^7.1.3",
