@@ -37,7 +37,7 @@ export class ComponentEngine {
 	 * @param name
 	 * @param [props]
 	 */
-	static async render(name: string, props?: Dictionary): Promise<CanUndef<Element>> {
+	static async render(name: string, props?: Dictionary): Promise<{ctx: ComponentEngine; node: CanUndef<Element>}> {
 		let
 			meta = registerComponent(name);
 
@@ -61,53 +61,57 @@ export class ComponentEngine {
 			});
 		}
 
-		return (new this()).$render(getComponent(meta!));
+		const
+			ctx = new this(),
+			node = await ctx.$render(getComponent(meta!));
+
+		return {ctx, node};
 	}
 
 	/**
-	 * Shim for Vue.component
+	 * Register a component with the specified name and parameters
 	 *
-	 * @param id
-	 * @param factory
+	 * @param name
+	 * @param params
 	 */
-	static component(id: string, factory: any): Promise<ComponentOptions<any>> {
-		if (Object.isFunction(factory)) {
-			return new Promise(factory);
+	static component(name: string, params: any): Promise<ComponentOptions<any>> {
+		if (Object.isFunction(params)) {
+			return new Promise(params);
 		}
 
-		return Promise.resolve(factory);
+		return Promise.resolve(params);
 	}
 
 	/**
-	 * Shim for Vue.directive
+	 * Register a directive with the specified name and parameters
 	 *
-	 * @param id
-	 * @param [definition]
+	 * @param name
+	 * @param [params]
 	 */
-	static directive(id: string, definition?: DirectiveOptions | DirectiveFunction): DirectiveOptions {
+	static directive(name: string, params?: DirectiveOptions | DirectiveFunction): DirectiveOptions {
 		const
 			obj = <DirectiveOptions>{};
 
-		if (Object.isFunction(definition)) {
-			obj.bind = definition;
-			obj.update = definition;
+		if (Object.isFunction(params)) {
+			obj.bind = params;
+			obj.update = params;
 
-		} else if (definition) {
-			Object.assign(obj, definition);
+		} else if (params) {
+			Object.assign(obj, params);
 		}
 
-		options.directives[id] = obj;
+		options.directives[name] = obj;
 		return obj;
 	}
 
 	/**
-	 * Shim for Vue.filter
+	 * Register a filter with the specified name
 	 *
-	 * @param id
-	 * @param [definition]
+	 * @param name
+	 * @param [value]
 	 */
-	static filter(id: string, definition?: Function): Function {
-		return options.filters[id] = definition ?? identity;
+	static filter(name: string, value?: Function): Function {
+		return options.filters[name] = value ?? identity;
 	}
 
 	/**
@@ -131,7 +135,7 @@ export class ComponentEngine {
 	}
 
 	/**
-	 * Renders the component and returns the result
+	 * Renders the current component
 	 * @param opts - component options
 	 */
 	async $render(opts: ComponentOptions<any>): Promise<CanUndef<Element>> {
@@ -141,7 +145,7 @@ export class ComponentEngine {
 	}
 
 	/**
-	 * Mounts a component to the specified node
+	 * Mounts the current component to the specified node
 	 * @param nodeOrSelector - link to the parent node to mount or a selector
 	 */
 	$mount(nodeOrSelector: string | Node): void {
@@ -156,11 +160,11 @@ export class ComponentEngine {
 	}
 
 	/**
-	 * Shim for Vue.$createElement
+	 * Creates an element or component by the specified parameters
 	 *
-	 * @param tag
-	 * @param attrs
-	 * @param children
+	 * @param tag - name of the tag or component to create
+	 * @param attrs - dictionary with additional attributes or props
+	 * @param children - list of child elements
 	 */
 	$createElement(
 		this: ComponentInterface,
