@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { RegExpOptions, ParseOptions } from 'path-to-regexp';
+import type { RegExpOptions, ParseOptions, Key } from 'path-to-regexp';
 import type { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
@@ -285,3 +285,132 @@ export interface Router<
 	 */
 	clearTmp(): Promise<void>;
 }
+
+/**
+ * Compiled not applied route
+ */
+export interface RouteBlueprint<META extends object = Dictionary> {
+	/**
+	 * Route name
+	 */
+	name: string;
+
+	/**
+	 * @deprecated
+	 * @see [[RouteBlueprint.name]]
+	 */
+	page: string;
+
+	/**
+	 * @deprecated
+	 * @see [[RouteBlueprint.meta.default]]
+	 */
+	index: boolean;
+
+	/**
+	 * Pattern of the route path
+	 */
+	pattern?: string;
+
+	/**
+	 * RegExp to parse the route path
+	 */
+	rgxp?: RegExp;
+
+	/**
+	 * List of parameters that passed to the route path
+	 *
+	 * @example
+	 * ```js
+	 * {
+	 *   path: '/:foo/:bar',
+	 *   pathParams: [
+	 *     {modifier: '', name: 'foo', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''},
+	 *     {modifier: '', name: 'bat', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''}
+	 *   ]
+	 * }
+	 * ```
+	 */
+	pathParams: Key[];
+
+	/**
+	 * Route meta information
+	 */
+	meta: RouteMeta<META>;
+}
+
+export type RouteBlueprints = Dictionary<RouteBlueprint>;
+
+/**
+ * Compiled and applied route
+ */
+export type AppliedRoute<
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
+	> = Route<PARAMS, QUERY, META> & RouteBlueprint<META>;
+
+/**
+ * Public API to work with a route
+ */
+export interface RouteAPI<
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
+	> extends AppliedRoute<PARAMS, QUERY, META> {
+	/**
+	 * Applies a dictionary with parameters to the route path and returns the resolved path
+	 * @param params
+	 */
+	resolvePath(params?: Dictionary): string;
+
+	/**
+	 * @deprecated
+	 * @see [[Route.toPath]]
+	 */
+	toPath(params?: Dictionary): string;
+}
+
+export type AnyRoute =
+	AppliedRoute |
+	Route |
+	RouteAPI;
+
+/**
+ * Additional options to use on getting a route object
+ */
+export interface AdditionalGetRouteOpts {
+	basePath?: string;
+	defaultRoute?: RouteBlueprint;
+}
+
+/**
+ * Parameters of a route
+ */
+export interface RouteParams extends TransitionOptions {
+	/**
+	 * Route name
+	 */
+	name: string;
+
+	/**
+	 * @deprecated
+	 * @see [[RouteParams.name]]
+	 */
+	page: string;
+}
+
+/**
+ * Options to emit a route transition
+ */
+export interface TransitionOptions<
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
+	> {
+	params?: PARAMS;
+	query?: QUERY;
+	meta?: META;
+}
+
+export type InitialRoute = string | RouteParams;

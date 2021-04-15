@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -17,19 +15,32 @@ import symbolGenerator from 'core/symbol';
 
 import path, { Key, RegExpOptions } from 'path-to-regexp';
 
-import { deprecate, deprecated } from 'core/functools/deprecation';
-import { concatURLs, toQueryString } from 'core/url';
+import { deprecated } from 'core/functools/deprecation';
+import { concatURLs } from 'core/url';
 
 import globalRoutes from 'routes';
 import type Async from 'core/async';
 
-import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, computed, hook, wait, watch } from 'super/i-data/i-data';
 
-import { routeNames, defaultRouteNames, isExternal, qsClearFixRgxp } from 'base/b-router/const';
-import { getRouteName } from 'base/b-router/modules/helpers';
+import engine, {
 
-import {
+	Router,
+	Route,
+	HistoryClearFilter,
+	RouteAPI,
+	RouteBlueprint,
+	RouteBlueprints,
+	InitialRoute,
+	TransitionOptions,
+
+	isExternal,
+	routeNames,
+	defaultRouteNames,
+
+	getRouteName,
+	getRoute,
+	getRoutePath,
 
 	purifyRoute,
 
@@ -39,28 +50,23 @@ import {
 	convertRouteToPlainObject,
 	convertRouteToPlainObjectWithoutProto,
 
-	normalizeTransitionOpts,
-	fillRouteParams
+	normalizeTransitionOpts
 
-} from 'base/b-router/modules/normalizers';
+} from 'core/router';
+
+import { fillRouteParams } from 'base/b-router/modules/normalizers';
 
 import type {
 
-	RouteAPI,
-	InitialRoute,
 	PurifiedRoute,
 	StaticRoutes,
-
-	RouteBlueprint,
-	RouteBlueprints,
-
-	TransitionMethod,
-	TransitionOptions
+	RouteOption,
+	TransitionMethod
 
 } from 'base/b-router/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'base/b-router/const';
+export * from 'core/router/const';
 export * from 'base/b-router/interface';
 
 export const
@@ -77,6 +83,21 @@ export const
 })
 
 export default class bRouter extends iData {
+	/**
+	 * Type: page parameters
+	 */
+	readonly PageParams!: RouteOption;
+
+	/**
+	 * Type: page query
+	 */
+	readonly PageQuery!: RouteOption;
+
+	/**
+	 * Type: page meta
+	 */
+	readonly PageMeta!: RouteOption;
+
 	/** @override */
 	public async!: Async<this>;
 
@@ -383,270 +404,15 @@ export default class bRouter extends iData {
 		return this.engine.clearTmp();
 	}
 
-	/**
-	 * Returns a path of the specified route with padding of additional parameters
-	 *
-	 * @param ref - route name or path
-	 * @param [opts] - additional options
-	 *
-	 * @example
-	 * ```js
-	 * routes = {
-	 *   demo: {
-	 *     route: '/demo'
-	 *   }
-	 * };
-	 *
-	 *
-	 * this.getRoutePath('demo') === '/demo';
-	 * this.getRoutePath('/demo', {query: {foo: 'bar'}}) === '/demo?foo=bar';
-	 * ```
-	 */
+	/** @see [[getRoutePath]] */
 	getRoutePath(ref: string, opts: TransitionOptions = {}): CanUndef<string> {
-		const
-			route = this.getRoute(ref);
-
-		if (!route) {
-			return;
-		}
-
-		let
-			res = route.resolvePath(opts.params);
-
-		if (opts.query) {
-			const
-				q = toQueryString(opts.query, false);
-
-			if (q !== '') {
-				res += `?${q}`;
-			}
-		}
-
-		return res.replace(qsClearFixRgxp, '');
+		return getRoutePath(ref, this.routes, opts);
 	}
 
-	/**
-	 * Returns a route object by the specified name or path
-	 *
-	 * @param ref - route name or path
-	 *
-	 * @example
-	 * ```js
-	 * routes = {
-	 *   demo: {
-	 *     route: '/demo'
-	 *   }
-	 * };
-	 *
-	 *
-	 * this.getRoute('/demo').name === 'demo';
-	 * ```
-	 */
+	/** @see [[getRoute]] */
 	getRoute(ref: string): CanUndef<RouteAPI> {
-		const
-			{routes, basePath} = this;
-
-		const
-			routeKeys = Object.keys(routes),
-			initialRef = ref;
-
-		let
-			resolvedById = false,
-			resolvedRoute: Nullable<RouteBlueprint> = null,
-			alias: Nullable<RouteBlueprint> = null;
-
-		let
-			resolvedRef = ref,
-			refIsNormalized = true,
-			externalRedirect = false;
-
-		// eslint-disable-next-line no-constant-condition
-		while (true) {
-			// Reference to a route that passed as ID
-			if (resolvedRef in routes) {
-				resolvedById = true;
-				resolvedRoute = routes[resolvedRef];
-
-				if (resolvedRoute == null) {
-					break;
-				}
-
-				const
-					{meta} = resolvedRoute;
-
-				if (meta.redirect == null && meta.alias == null) {
-					break;
-				}
-
-				if (meta.external) {
-					externalRedirect = true;
-					break;
-				}
-
-			// Reference to a route that passed as a path
-			} else {
-				if (basePath !== '') {
-					// Resolve the situation when the passed path already has basePath
-					const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
-					resolvedRef = concatURLs(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
-
-					// We need to normalize only a user "raw" ref
-					if (refIsNormalized) {
-						ref = resolvedRef;
-						refIsNormalized = false;
-					}
-				}
-
-				for (let i = 0; i < routeKeys.length; i++) {
-					const
-						route = routes[routeKeys[i]];
-
-					if (!route) {
-						continue;
-					}
-
-					// In this case we have full matching of a route ref by a name or pattern
-					if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
-						resolvedById = true;
-						resolvedRoute = route;
-						break;
-					}
-
-					// Try to test the passed ref with a route pattern
-					if (route.rgxp?.test(resolvedRef)) {
-						if (resolvedRoute == null) {
-							resolvedRoute = route;
-							continue;
-						}
-
-						// If we have several matches with the provided ref,
-						// like routes "/foo" and "/foo/:id" are matched with "/foo/bar",
-						// we should prefer that pattern that has more length
-						if (route.pattern!.length > (resolvedRoute.pattern?.length ?? 0)) {
-							resolvedRoute = route;
-						}
-					}
-				}
-			}
-
-			if (resolvedRoute == null) {
-				break;
-			}
-
-			const
-				{meta} = resolvedRoute;
-
-			// If we haven't found a route that matches to the provided ref or the founded route doesn't redirect or refer
-			// to another route, we can exit from the search loop, otherwise, we need to resolve the redirect/alias
-			if (meta.redirect == null && meta.alias == null) {
-				break;
-			}
-
-			if (meta.external) {
-				externalRedirect = true;
-				break;
-			}
-
-			// The alias should preserve an original route name and path
-			if (meta.alias != null) {
-				if (alias == null) {
-					alias = resolvedRoute;
-				}
-
-				resolvedRef = meta.alias;
-
-			} else {
-				resolvedRef = meta.redirect!;
-				ref = resolvedRef;
-			}
-
-			// Continue of resolving
-			resolvedRoute = undefined;
-		}
-
-		// We haven't found a route by the provided ref,
-		// that why we need to find "default" route as loopback
-		if (!resolvedRoute) {
-			resolvedRoute = this.defaultRoute;
-
-		// We have found a route by the provided ref, but it contains an alias
-		} else if (alias) {
-			resolvedRoute = {
-				...resolvedRoute,
-				...Object.select(alias, [
-					'name',
-					'pattern',
-					'rgxp',
-					'pathParams'
-				])
-			};
-		}
-
-		if (resolvedRoute == null) {
-			return;
-		}
-
-		const routeAPI: RouteAPI = Object.create({
-			...resolvedRoute,
-			meta: Object.mixin(true, {}, resolvedRoute.meta),
-
-			get page(): string {
-				return resolvedRoute!.name;
-			},
-
-			resolvePath(params?: Dictionary): string {
-				const
-					p = {};
-
-				if (params) {
-					for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							el = params[key];
-
-						if (el !== undefined) {
-							p[key] = String(el);
-						}
-					}
-				}
-
-				if (externalRedirect) {
-					return path.compile(resolvedRoute!.meta.redirect ?? ref)(p);
-				}
-
-				return path.compile(resolvedRoute!.pattern ?? ref)(p);
-			},
-
-			toPath(params?: Dictionary): string {
-				deprecate({name: 'toPath', type: 'method', renamedTo: 'resolvePath'});
-				return this.resolvePath(params);
-			}
-		});
-
-		Object.assign(routeAPI, {
-			name: resolvedRoute.name,
-			params: {},
-			query: {}
-		});
-
-		// Fill route parameters from URL
-		if (!resolvedById && resolvedRoute.rgxp != null) {
-			const
-				params = resolvedRoute.rgxp.exec(initialRef);
-
-			if (params) {
-				for (let o = path.parse(resolvedRoute.pattern!), i = 0, j = 0; i < o.length; i++) {
-					const
-						el = o[i];
-
-					if (Object.isSimpleObject(el)) {
-						routeAPI.params[el.name] = params[++j];
-					}
-				}
-			}
-		}
-
-		return routeAPI;
+		const {routes, basePath, defaultRoute} = this;
+		return getRoute(ref, routes, {basePath, defaultRoute});
 	}
 
 	/**
@@ -876,13 +642,13 @@ export default class bRouter extends iData {
 
 			emitTransition();
 
-		// This route is equal to the previous and we don't actually do transition,
-		// but for a "push" request we need to emit the "fake" transition event anyway
+			// This route is equal to the previous and we don't actually do transition,
+			// but for a "push" request we need to emit the "fake" transition event anyway
 		} else if (method === 'push') {
 			emitTransition();
 
-		// In this case, we don't do transition, but still,
-		// we should emit the special event, because some methods, like, "back" or "forward" can wait for it
+			// In this case, we don't do transition, but still,
+			// we should emit the special event, because some methods, like, "back" or "forward" can wait for it
 		} else {
 			emitTransition(true);
 		}
