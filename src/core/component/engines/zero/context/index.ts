@@ -21,9 +21,15 @@ export * from 'core/component/engines/zero/context/const';
 
 export default {
 	_o: identity,
-
 	_q: Object.fastCompare.bind(Object),
-	_s: Object.fastHash.bind(Object),
+
+	_s(value: unknown): string {
+		if (Object.isPrimitive(value)) {
+			return String(value);
+		}
+
+		return Object.fastHash(value);
+	},
 
 	_v(value: string): Text {
 		return document.createTextNode(value);

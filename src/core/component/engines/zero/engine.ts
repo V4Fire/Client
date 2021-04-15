@@ -26,20 +26,42 @@ export class ComponentEngine {
 	 */
 	$options: Dictionary = {...options};
 
+	/**
+	 * Engine configuration
+	 */
 	static config: typeof config = config;
 
 	/**
+	 * Renders a component with specified name and input properties
+	 *
 	 * @param name
+	 * @param [props]
 	 */
-	static async render(name: string): Promise<CanUndef<Element>> {
-		const
+	static async render(name: string, props?: Dictionary): Promise<CanUndef<Element>> {
+		let
 			meta = registerComponent(name);
 
 		if (meta == null) {
 			throw new ReferenceError(`A component with the name "${name}" is not found`);
 		}
 
-		return (new this()).$render(getComponent(meta));
+		if (props != null) {
+			meta = Object.create(meta);
+
+			const metaProps = {...meta!.props};
+			meta!.props = metaProps;
+
+			Object.forEach(props, (val, key) => {
+				const
+					prop = metaProps[key];
+
+				if (prop != null) {
+					metaProps[key] = {...prop, default: val};
+				}
+			});
+		}
+
+		return (new this()).$render(getComponent(meta!));
 	}
 
 	/**
