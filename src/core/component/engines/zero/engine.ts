@@ -9,7 +9,7 @@
 import { identity } from 'core/functools/helpers';
 import type { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
 
-import { components } from 'core/component/const';
+import { registerComponent } from 'core/component/register';
 import type { ComponentInterface } from 'core/component/interface';
 
 import config from 'core/component/engines/zero/config';
@@ -33,7 +33,7 @@ export class ComponentEngine {
 	 */
 	static async render(name: string): Promise<CanUndef<Element>> {
 		const
-			meta = components.get(name);
+			meta = registerComponent(name);
 
 		if (meta == null) {
 			throw new ReferenceError(`A component with the name "${name}" is not found`);
@@ -229,11 +229,14 @@ export class ComponentEngine {
 					}
 
 					const
-						firstChild = <Element | Text>children[0];
+						firstChild = <CanUndef<Element | Text>>children[0];
+
+					if (firstChild == null) {
+						return res;
+					}
 
 					const hasSlotAttr =
-						'getAttribute' in firstChild &&
-						firstChild.getAttribute('slot') != null;
+						'getAttribute' in firstChild && firstChild.getAttribute('slot') != null;
 
 					if (hasSlotAttr) {
 						for (let i = 0; i < children.length; i++) {
