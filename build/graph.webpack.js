@@ -321,7 +321,7 @@ async function buildProjectGraph() {
 	};
 
 	fs.writeFileSync(graphCacheFile, JSON.stringify(Object.reject(res, 'blockMap'), undefined, 2));
-	console.log('Project graph initialized');
+	console.log('The project graph is initialized');
 
 	return res;
 
