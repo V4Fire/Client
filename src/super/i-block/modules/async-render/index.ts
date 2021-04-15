@@ -84,37 +84,7 @@ export default class AsyncRender extends Friend {
 		}
 
 		let
-			iterable: CanPromise<Iterable<unknown>>;
-
-		const getIterable = (value) => {
-			if (Object.isArray(value)) {
-				return value;
-			}
-
-			if (Object.isString(value)) {
-				return value.letters();
-			}
-
-			if (Object.isNumber(value)) {
-				return new Array(value);
-			}
-
-			if (Object.isPromise(value)) {
-				return value.then(getIterable);
-			}
-
-			if (value != null && typeof value === 'object') {
-				if (Object.isFunction(value[Symbol.iterator])) {
-					return value;
-				}
-
-				return Object.keys(value);
-			}
-
-			return [value];
-		};
-
-		iterable = getIterable(value);
+			iterable = getIterable(value);
 
 		let
 			startPos = 0,
@@ -191,53 +161,6 @@ export default class AsyncRender extends Friend {
 			BREAK = {};
 
 		firstRender[this.asyncLabel] = async (cb) => {
-			const createIterator = () => {
-				if (isSrcPromise) {
-					const next = () => {
-						if (Object.isPromise(iterable)) {
-							return {
-								done: false,
-								value: iterable
-									.then((v) => {
-										iterable = v;
-										iterator = v[Symbol.iterator]();
-										return iterator.next().value;
-									})
-
-									.catch((err) => {
-										stderr(err);
-										return BREAK;
-									})
-							};
-						}
-
-						return iterator.next();
-					};
-
-					return {next};
-				}
-
-				let
-					i = 0;
-
-				const next = () => {
-					if (untreatedEls.length === 0 && lastSyncEl.done) {
-						return lastSyncEl;
-					}
-
-					if (i < untreatedEls.length) {
-						return {
-							value: untreatedEls[i++],
-							done: false
-						};
-					}
-
-					return iterator.next();
-				};
-
-				return {next};
-			};
-
 			const
 				weight = opts.weight ?? 1,
 				newIterator = createIterator();
@@ -403,9 +326,84 @@ export default class AsyncRender extends Friend {
 
 				i++;
 			}
+
+			function createIterator() {
+				if (isSrcPromise) {
+					const next = () => {
+						if (Object.isPromise(iterable)) {
+							return {
+								done: false,
+								value: iterable
+									.then((v) => {
+										iterable = v;
+										iterator = v[Symbol.iterator]();
+										return iterator.next().value;
+									})
+
+									.catch((err) => {
+										stderr(err);
+										return BREAK;
+									})
+							};
+						}
+
+						return iterator.next();
+					};
+
+					return {next};
+				}
+
+				let
+					i = 0;
+
+				const next = () => {
+					if (untreatedEls.length === 0 && lastSyncEl.done) {
+						return lastSyncEl;
+					}
+
+					if (i < untreatedEls.length) {
+						return {
+							value: untreatedEls[i++],
+							done: false
+						};
+					}
+
+					return iterator.next();
+				};
+
+				return {next};
+			}
 		};
 
 		return firstRender;
+
+		function getIterable(value: unknown): CanPromise<Iterable<unknown>> {
+			if (Object.isArray(value)) {
+				return value;
+			}
+
+			if (Object.isString(value)) {
+				return value.letters();
+			}
+
+			if (Object.isNumber(value)) {
+				return new Array(value);
+			}
+
+			if (Object.isPromise(value)) {
+				return value.then(getIterable);
+			}
+
+			if (value != null && typeof value === 'object') {
+				if (Object.isFunction(value![Symbol.iterator])) {
+					return <any>value;
+				}
+
+				return Object.keys(value!);
+			}
+
+			return [value];
+		}
 	}
 
 	/**

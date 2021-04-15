@@ -15,4 +15,5 @@ export * from 'core/component/meta/interface';
 export * from 'core/component/meta/create';
 export * from 'core/component/meta/fork';
 export * from 'core/component/meta/method';
+export * from 'core/component/meta/tpl';
 export * from 'core/component/meta/inherit';

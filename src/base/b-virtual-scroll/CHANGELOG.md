@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.170 (2021-03-26)
+
+#### :rocket: New Feature
+
+* Added a new event `chunkRender`
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :bug: Bug Fix

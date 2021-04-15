@@ -15,6 +15,7 @@ export * from 'core/component/flyweight';
 
 export * from 'core/component/hook';
 export * from 'core/component/field';
+export * from 'core/component/ref';
 export * from 'core/component/watch';
 
 export * from 'core/component/register';

@@ -1,3 +1,4 @@
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -130,6 +131,7 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Renders component content
+	 * @emits chunkRender(renderItems: RenderItem[], chunkNumber: number)
 	 */
 	render(): void {
 		if (this.ctx.localState !== 'ready') {
@@ -151,6 +153,9 @@ export default class ChunkRender extends Friend {
 		) {
 			return;
 		}
+
+		const
+			currentChunk = this.chunk;
 
 		this.chunk++;
 		this.lastRenderRange = [renderFrom, renderTo];
@@ -174,6 +179,7 @@ export default class ChunkRender extends Friend {
 
 		this.async.requestAnimationFrame(() => {
 			this.refs.container.appendChild(fragment);
+			ctx.emit('chunkRender', renderItems, currentChunk);
 		}, {group: this.asyncGroup});
 	}
 

@@ -9,6 +9,42 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.177 (2021-04-14)
+
+#### :bug: Bug Fix
+
+* Fixed the loading order of styles
+
+## v3.0.0-rc.174 (2021-04-09)
+
+#### :bug: Bug Fix
+
+* Fixed the project building with `parallel-webpack`
+
+## v3.0.0-rc.173 (2021-04-09)
+
+#### :rocket: New Feature
+
+* Added aliases `mem` and `fs` for `--cache-type`
+
+## v3.0.0-rc.171 (2021-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition during attaching of component dependencies
+
+## v3.0.0-rc.166 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed generation of dynamic imports for ES5/3
+
+## v3.0.0-rc.165 (2021-03-23)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `webpack.target`
+
 ## v3.0.0-rc.163 (2021-03-19)
 
 #### :rocket: New Feature

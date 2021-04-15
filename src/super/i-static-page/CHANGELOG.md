@@ -9,7 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-03-??)
+## v3.0.0-rc.169 (2021-03-25)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `.init.js` files
+
+## v3.0.0-rc.167 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed the `--fat-html` build mode
+
+## v3.0.0-rc.164 (2021-03-22)
 
 #### :rocket: New Feature
 

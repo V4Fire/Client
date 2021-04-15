@@ -45,33 +45,55 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			fullPath = `${path}/${nm}`,
 			imports = [];
 
-		if (!fatHTML) {
+		{
+			let
+				decl;
+
 			if (isESImport) {
-				imports.push(`!TPLS['${nm}'] && import('${fullPath}.styl')`);
+				decl = `import('${fullPath}')`;
 
 			} else {
-				imports.push(`!TPLS['${nm}'] && new Promise((r) => r(require('${fullPath}.styl')))`);
+				decl = `new Promise(function (r) { return r(require('${fullPath}')); })`;
 			}
+
+			decl += '.catch(function (err) { stderr(err) })';
+			imports.push(decl);
 		}
 
-		if (isESImport) {
-			imports.push(`import('${fullPath}')`);
+		if (!fatHTML) {
+			let
+				decl;
 
-		} else {
-			imports.push(`new Promise((r) => r(require('${fullPath}')))`);
+			if (isESImport) {
+				decl = `import('${fullPath}.styl')`;
+
+			} else {
+				decl = `new Promise(function (r) { return r(require('${fullPath}.styl')); })`;
+			}
+
+			decl = `function () { return ${decl}; }`;
+			imports[0] = `TPLS['${nm}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
 		}
 
-		const
-			regTpl = `(module) => { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
+		{
+			const
+				regTpl = `function (module) { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
 
-		if (isESImport) {
-			imports.push(`import('${fullPath}.ss').then(${regTpl})`);
+			let
+				decl;
 
-		} else {
-			imports.push(`new Promise((r) => r(require('${fullPath}.ss'))).then(${regTpl})`);
+			if (isESImport) {
+				decl = `import('${fullPath}.ss').then(${regTpl})`;
+
+			} else {
+				decl = `new Promise(function (r) { return r(require('${fullPath}.ss')); }).then(${regTpl})`;
+			}
+
+			decl += '.catch(function (err) { stderr(err) })';
+			imports.push(decl);
 		}
 
-		return `Promise.allSettled([${imports.join(',')}])`;
+		return `Promise.all([${imports.join(',')}])`;
 	});
 };
 

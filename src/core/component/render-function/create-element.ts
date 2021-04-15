@@ -10,7 +10,6 @@ import symbolGenerator from 'core/symbol';
 import * as c from 'core/component/const';
 
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
-import { execRenderObject } from 'core/component/render';
 
 import { parseVNodeAsFlyweight } from 'core/component/flyweight';
 import { createFakeCtx, initComponentVNode, FlyweightVNode } from 'core/component/functional';
@@ -228,20 +227,23 @@ export function wrapCreateElement(
 				{initProps: true}
 			);
 
-			const renderObject = c.componentTemplates[componentName] ?? componentTpls.index?.();
-			c.componentTemplates[componentName] = renderObject;
+			const
+				{unsafe} = fakeCtx,
+				{render} = unsafe.meta.component;
 
-			const createComponentVNode = () => initComponentVNode(
-				execRenderObject(renderObject, fakeCtx),
-				fakeCtx,
-				renderCtx
-			);
+			if (Object.isFunction(render)) {
+				const createComponentVNode = () => initComponentVNode(
+					render.call(fakeCtx, unsafe.$createElement),
+					fakeCtx,
+					renderCtx
+				);
 
-			if (supports.ssr && Object.isPromise(fakeCtx.unsafe.$initializer)) {
-				return fakeCtx.unsafe.$initializer.then(() => patchVNode(createComponentVNode()));
+				if (supports.ssr && Object.isPromise(fakeCtx.unsafe.$initializer)) {
+					return fakeCtx.unsafe.$initializer.then(() => patchVNode(createComponentVNode()));
+				}
+
+				vnode = createComponentVNode();
 			}
-
-			vnode = createComponentVNode();
 		}
 
 		if (vnode == null) {

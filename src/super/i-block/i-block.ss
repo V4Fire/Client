@@ -64,28 +64,46 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
+		: buble = require('buble')
+
 		- if arguments.length < 3
 			? content = opts
 			? opts = {}
 
-		? path = [].concat(path || [])
+		? ids = []
 
-		- forEach path => id
-			{{ void(moduleLoader.add({id: '${id}', load: () => import('${id}'), wait: ${opts.wait || 'undefined'}})) }}
+		- forEach [].concat(path || []) => path
+			: &
+				waitFor = opts.wait || 'undefined',
+				interpolatedWaitFor = (opts.wait ? buble.transform("`" + opts.wait + "`").code : 'undefined')
+					.replace(/^\(?['"]/, '')
+					.replace(/['"]\)?$/, '')
+					.replace(/\\(['"])/g, '$1')
+			.
+
+			: &
+				id = [path, waitFor].join(':'),
+				interpolatedId = buble.transform("`" + id + "`").code
+			.
+
+			? ids.push(interpolatedId)
+			{{ void(moduleLoader.add({id: ${interpolatedId}, load: () => import('${path}'), wait: ${interpolatedWaitFor}})) }}
 
 		- if content != null
 			- if opts.renderKey
-				< template v-if = !field.get('ifOnceStore.${opts.renderKey}')
-					{{ void(field.set('ifOnceStore.${opts.renderKey}', true)) }}
+				: renderKey = buble.transform("`" + opts.renderKey + "`").code
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}), 1, { &
+				< template v-if = !field.get('ifOnceStore.' + ${renderKey})
+					{{ void(field.set('ifOnceStore.' + ${renderKey}, true)) }}
+
+					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...[${ids}]), 1, { &
 						useRaf: true,
-						group: 'module:${opts.renderKey}'
+						group: 'module:' + ${renderKey}
 					}) .
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...${path|json}), 1, {useRaf: true})
+				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...[${ids}]), 1, {useRaf: true})
 					+= content
 
 	/**
@@ -120,7 +138,7 @@
 		':-render-group': 'renderGroup',
 		':-render-counter': 'renderCounter',
 
-		'v-hook': "isFunctional || isFlyweight ?" +
+		'v-hook': "!isVirtualTpl && (isFunctional || isFlyweight) ?" +
 			"{" +
 				"bind: createInternalHookListener('bind')," +
 				"inserted: createInternalHookListener('inserted')," +

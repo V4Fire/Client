@@ -126,7 +126,7 @@
 						+= await h.loadLinks(deps.links, {assets, wrap: true})
 
 					- block headStyles
-						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: true})
+						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: true, js: true})
 
 					- block headScripts
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: true})

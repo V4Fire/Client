@@ -14,7 +14,9 @@ const
 
 const
 	fs = require('fs-extra-promise'),
-	path = require('upath'),
+	path = require('upath');
+
+const
 	camelize = require('camelize');
 
 const
@@ -55,25 +57,13 @@ module.exports = Object.assign(buildProjectGraph(), {
  * @returns {Promise<{entry, processes, dependencies, blockMap}>}
  */
 async function buildProjectGraph() {
+	block.setObjToHash(config.componentDependencies());
+
 	const
 		graphCacheFile = path.join(cacheDir, 'graph.json');
 
 	// Graph already exists in the cache and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
-		/**
-		 * Parses the graph from JSON to JS
-		 * @returns {!Object}
-		 */
-		const readCache = () => fs.readJSONSync(graphCacheFile, {
-			reviver(k, v) {
-				if (Object.isObject(v) && v.type === 'Map') {
-					return new Map(v.value);
-				}
-
-				return v;
-			}
-		});
-
 		const
 			timeout = (1).minute();
 
@@ -81,16 +71,24 @@ async function buildProjectGraph() {
 			total = 0;
 
 		return new Promise((r) => {
+			const delay = 500;
+
 			const f = () => {
 				// Sometimes we can be caught in the situation when one of the multiple processes writes something
 				// to the cache file and it breaks the cache for a moment.
 				// To avoid this, we can sleep a little and try again.
-				setTimeout(() => {
+				setTimeout(async () => {
 					try {
-						r(readCache());
+						const
+							graph = fs.readJSONSync(graphCacheFile);
 
-					} catch {
-						total += 15;
+						r({
+							...graph,
+							blockMap: await block.getAll()
+						});
+
+					} catch (err) {
+						total += delay;
 
 						if (total > timeout) {
 							build.buildGraphFromCache = false;
@@ -99,7 +97,7 @@ async function buildProjectGraph() {
 
 						f();
 					}
-				}, 15);
+				}, delay);
 			};
 
 			f();
@@ -315,12 +313,6 @@ async function buildProjectGraph() {
 	// Remove redundant process
 	$C(processes).remove((obj, i) => i >= buildIterator.length && !$C(obj).length());
 
-	// Helper to serialize Map values
-	blockMap.toJSON = () => ({
-		type: 'Map',
-		value: Array.from(blockMap.entries())
-	});
-
 	const res = {
 		entry,
 		blockMap,
@@ -328,8 +320,8 @@ async function buildProjectGraph() {
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
-	fs.writeFileSync(graphCacheFile, JSON.stringify(res));
-	console.log('Project graph initialized');
+	fs.writeFileSync(graphCacheFile, JSON.stringify(Object.reject(res, 'blockMap'), undefined, 2));
+	console.log('The project graph is initialized');
 
 	return res;
 

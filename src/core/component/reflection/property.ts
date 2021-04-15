@@ -316,7 +316,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	};
 
 	function resolveCtx(component: any): ComponentInterface {
-		if (component != null && '$remoteParent' in component) {
+		if (component?.$remoteParent != null) {
 			return Object.getPrototypeOf(component);
 		}
 

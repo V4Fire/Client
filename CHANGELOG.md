@@ -22,6 +22,108 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added a new render engine `core/component/engine/zero`
 * Added a new getter `isSSR` `iBlock`
 
+## v3.0.0-rc.178 (2021-04-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when dynamically created templates emit lifecycle events `iBlock`
+
+## v3.0.0-rc.177 (2021-04-14)
+
+#### :bug: Bug Fix
+
+* Fixed the loading order of styles `build`
+* Fixed using the async rendering within functional components `core/component/functional`
+* Fixed a bug when using `self.loadModules` with the `wait` option `iBlock`
+
+#### :house: Internal
+
+* `core/component/meta`:
+  * Added `attachTemplatesToMeta`
+  * Renamed `inherit` to `inheritMeta`
+
+## v3.0.0-rc.176 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed parsing of Stylus objects `build/stylus/ds`
+
+## v3.0.0-rc.175 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when trying to load two or more modules with the same id but different parameters via `loadModules` `iBlock`
+
+## v3.0.0-rc.174 (2021-04-09)
+
+#### :bug: Bug Fix
+
+* Fixed the project building with `parallel-webpack` `build`
+
+## v3.0.0-rc.173 (2021-04-09)
+
+#### :boom: Breaking Change
+
+* Now `csp.nonceStore` is a function `config`
+
+#### :rocket: New Feature
+
+* Added aliases `mem` and `fs` for `--cache-type` `build`
+* Added a new parameter `componentDependencies` `config`
+
+#### :bug: Bug Fix
+
+* Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified `config`
+
+## v3.0.0-rc.172 (2021-04-06)
+
+#### :house: Internal
+
+* Optimized the project building with `--fat-html`
+
+## v3.0.0-rc.171 (2021-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a race condition during attaching of component dependencies `build`
+
+## v3.0.0-rc.170 (2021-03-26)
+
+#### :rocket: New Feature
+
+* Added a new event `chunkRender` `base/b-virtual-scroll`
+
+## v3.0.0-rc.169 (2021-03-25)
+
+#### :bug: Bug Fix
+
+* Fixed generation of `.init.js` files `iStaticPage`
+
+## v3.0.0-rc.168 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed updating of icons with old browsers `traits/i-icon`
+
+## v3.0.0-rc.167 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed the `--fat-html` build mode `iStaticPage`
+
+## v3.0.0-rc.166 (2021-03-24)
+
+#### :bug: Bug Fix
+
+* Fixed generation of dynamic imports for ES5/3 `build`
+
+## v3.0.0-rc.165 (2021-03-23)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `webpack.target` `build`
+* Fixed resolving of the external context `core/component/reflection`
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :boom: Breaking Change

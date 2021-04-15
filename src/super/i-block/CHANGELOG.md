@@ -15,6 +15,24 @@ Changelog
 
 * Added a new getter `isSSR`
 
+## v3.0.0-rc.178 (2021-04-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when dynamically created templates emit lifecycle events
+
+## v3.0.0-rc.177 (2021-04-14)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using `self.loadModules` with the `wait` option
+
+## v3.0.0-rc.175 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when trying to load two or more modules with the same id but different parameters via `loadModules`
+
 ## v3.0.0-rc.156 (2021-03-06)
 
 #### :bug: Bug Fix
