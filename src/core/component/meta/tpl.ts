@@ -37,8 +37,8 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 		return;
 	}
 
-	const renderObj = componentTemplates[meta.name] ?? tpls.index();
-	componentTemplates[meta.name] = renderObj;
+	const renderObj = componentTemplates[meta.componentName] ?? tpls.index();
+	componentTemplates[meta.componentName] = renderObj;
 
 	meta.component.staticRenderFns =
 		renderObj.staticRenderFns ?? [];

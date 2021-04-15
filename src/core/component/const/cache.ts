@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { RenderObject } from 'core/component/render';
 import type { ComponentEngine, ComponentOptions as ComponentEngineOptions } from 'core/component/engines';
 import type { ComponentInterface, ComponentMeta, ComponentOptions } from 'core/component/interface';
 
@@ -41,7 +42,7 @@ export const componentInitializers = Object.createDict<Function[]>();
 /**
  * Map of component render functions
  */
-export const componentTemplates = Object.createDict();
+export const componentTemplates = Object.createDict<RenderObject>();
 
 /**
  * Cache of minimal required context objects for component render functions

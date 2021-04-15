@@ -24,7 +24,7 @@ import type { ComponentInterface, ComponentMeta, RenderFunction } from 'core/com
 export function wrapRender(meta: ComponentMeta): RenderFunction {
 	return function render(
 		this: ComponentInterface,
-		nativeCreate: CreateElement,
+		nativeCreateElement: CreateElement,
 		baseCtx: RenderContext
 	): VNode {
 		const
@@ -67,7 +67,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 				asyncLabel = unsafe.$asyncLabel;
 
 			const
-				[createElement, tasks] = wrapCreateElement(nativeCreate, this);
+				[createElement, tasks] = wrapCreateElement(nativeCreateElement, this);
 
 			unsafe.$createElement = createElement;
 			unsafe._c = createElement;
@@ -277,6 +277,6 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			return originalRender.fn.call(this, createElement, baseCtx);
 		}
 
-		return nativeCreate();
+		return nativeCreateElement();
 	};
 }

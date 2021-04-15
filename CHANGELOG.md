@@ -22,6 +22,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added a new render engine `core/component/engine/zero`
 * Added a new getter `isSSR` `iBlock`
 
+## v3.0.0-rc.179 (2021-04-15)
+
+#### :bug: Bug Fix
+
+* Fixed resolving refs within functional components `core/component/render-function`
+
 ## v3.0.0-rc.178 (2021-04-15)
 
 #### :bug: Bug Fix
