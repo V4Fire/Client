@@ -138,7 +138,7 @@
 		':-render-group': 'renderGroup',
 		':-render-counter': 'renderCounter',
 
-		'v-hook': "!isVirtualTemplate && (isFunctional || isFlyweight) ?" +
+		'v-hook': "!isVirtualTpl && (isFunctional || isFlyweight) ?" +
 			"{" +
 				"bind: createInternalHookListener('bind')," +
 				"inserted: createInternalHookListener('inserted')," +

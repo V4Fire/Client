@@ -1100,7 +1100,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * True if the component context is based on another component via `vdom.bindRenderObject`
 	 */
-	protected readonly isVirtualTemplate: boolean = false;
+	protected readonly isVirtualTpl: boolean = false;
 
 	/**
 	 * Special getter for component modifiers:

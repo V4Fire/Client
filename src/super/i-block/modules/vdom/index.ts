@@ -151,7 +151,7 @@ export default class VDOM extends Friend {
 
 		return (p) => {
 			instanceCtx = Object.create(instanceCtx);
-			instanceCtx.isVirtualTemplate = true;
+			instanceCtx.isVirtualTpl = true;
 
 			if (p) {
 				for (let keys = Object.keys(p), i = 0; i < keys.length; i++) {
