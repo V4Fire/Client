@@ -1,5 +1,5 @@
 {
-  "hash": "53778d4b206c70a2345b8a7c3173bb3d15080431a643d33ff968227827034c2e",
+  "hash": "6155e6a81ebd253732e65916a2a1fe0a3c24f0fdaf50681de41931d0a5575fb0",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1885,6 +1885,7 @@
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
             "dependencies": [
+              "b-dummy",
               "b-v4-component-demo",
               "b-virtual-scroll",
               "b-tree",
@@ -1902,6 +1903,7 @@
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
           "dependencies": [
+            "b-dummy",
             "b-v4-component-demo",
             "b-virtual-scroll",
             "b-tree",
