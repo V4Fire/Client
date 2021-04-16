@@ -1896,7 +1896,8 @@
               "b-sidebar",
               "b-slider",
               "b-window",
-              "b-image"
+              "b-image",
+              "b-dummy"
             ],
             "libs": []
           },
@@ -1914,7 +1915,8 @@
             "b-sidebar",
             "b-slider",
             "b-window",
-            "b-image"
+            "b-image",
+            "b-dummy"
           ],
           "libs": [],
           "resolvedLibs": {
