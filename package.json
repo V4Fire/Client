@@ -40,7 +40,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.42.1",
+    "@v4fire/core": "^3.43.0",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.4",
     "path-to-regexp": "^3.2.0",
@@ -51,7 +51,7 @@
     "vue": "2.6.10"
   },
   "optionalDependencies": {
-    "@pzlr/build-core": "^2.11.6",
+    "@pzlr/build-core": "^2.11.7",
     "@pzlr/stylus-inheritance": "^3.1.0",
     "@types/fs-extra-promise": "^1.0.9",
     "@types/glob": "^7.1.3",
