@@ -40,7 +40,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.42.1",
+    "@v4fire/core": "^3.43.0",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.4",
     "jsdom": "^16.4.0",
