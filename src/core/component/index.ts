@@ -36,10 +36,11 @@ export {
 
 export {
 
-	renderData,
+	cloneVNode,
+	renderVNode,
 	patchVNode,
 
-	ComponentDriver as default,
+	ComponentEngine as default,
 
 	VNode,
 	VNodeDirective,

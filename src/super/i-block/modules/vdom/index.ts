@@ -13,8 +13,6 @@
 
 import {
 
-	renderData,
-	patchVNode,
 	execRenderObject,
 
 	RenderObject,
@@ -55,7 +53,7 @@ export default class VDOM extends Friend {
 	render(data: VNode): Node;
 	render(data: VNode[]): Node[];
 	render(data: CanArray<VNode>): CanArray<Node> {
-		return renderData(<any>data, this.ctx);
+		return this.ctx.$renderEngine.renderVNode(<any>data, this.ctx);
 	}
 
 	/**
@@ -177,7 +175,7 @@ export default class VDOM extends Friend {
 				vnode = execRenderObject(renderObj, instanceCtx);
 
 			if (renderCtx != null) {
-				patchVNode(vnode, instanceCtx, renderCtx);
+				this.ctx.$renderEngine.patchVNode(vnode, instanceCtx, renderCtx);
 			}
 
 			return vnode;

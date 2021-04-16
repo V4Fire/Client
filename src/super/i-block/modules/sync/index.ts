@@ -247,7 +247,7 @@ export default class Sync extends Friend {
 		}
 
 		if (destPath == null) {
-			throw new Error('Path to the property that is contained a link is not defined');
+			throw new Error('A path to the property that is contained a link is not defined');
 		}
 
 		const {
@@ -623,7 +623,7 @@ export default class Sync extends Friend {
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (destHead == null) {
-			throw new ReferenceError('Path to a property that is contained the final object is not defined');
+			throw new ReferenceError('A path to a property that is contained the final object is not defined');
 		}
 
 		const {

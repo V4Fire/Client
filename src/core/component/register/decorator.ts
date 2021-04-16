@@ -13,7 +13,7 @@ import * as c from 'core/component/const';
 import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflection';
 
-import { getComponent, ComponentDriver } from 'core/component/engines';
+import { getComponent, ComponentEngine } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/register/helpers';
 
 import type { ComponentOptions } from 'core/component/interface';
@@ -90,7 +90,7 @@ export function component(opts?: ComponentOptions): Function {
 
 			} else {
 				const
-					c = ComponentDriver.component(componentName, loadTemplate(getComponent(meta), true)(identity));
+					c = ComponentEngine.component(componentName, loadTemplate(getComponent(meta), true)(identity));
 
 				if (Object.isPromise(c)) {
 					c.catch(stderr);

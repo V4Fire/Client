@@ -42,7 +42,7 @@ jobs:
       - name: Run components test
         run: npm run test:components:chrome
 
-  # Run modules tests
+  # Run module tests
   modules:
     runs-on: ubuntu-latest
     timeout-minutes: 30

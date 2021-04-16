@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* `core/component/interface`:
+  * Added a new property `$initializer`
+  * Added a new property `$renderEngine`
+
+* Added a new render engine `core/component/engine/zero`
+* Added a new getter `isSSR` `iBlock`
+
 ## v3.0.0-rc.179 (2021-04-15)
 
 #### :bug: Bug Fix

@@ -18,7 +18,6 @@ import watch, {
 } from 'core/object/watch';
 
 import { getPropertyInfo, bindingRgxp } from 'core/component/reflection';
-import { proxyGetters } from 'core/component/engines';
 
 import {
 
@@ -49,9 +48,11 @@ export function implementComponentWatchAPI(
 	component: ComponentInterface,
 	opts?: ImplementComponentWatchAPIOptions
 ): void {
-	const
-		{unsafe} = component,
-		{meta: {watchDependencies, computedFields, accessors, params}} = unsafe;
+	const {
+		unsafe,
+		unsafe: {meta: {watchDependencies, computedFields, accessors, params}},
+		$renderEngine: {proxyGetters}
+	} = component;
 
 	const
 		isNotRegular = Boolean(component.isFlyweight) || params.functional === true,

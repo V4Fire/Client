@@ -42,7 +42,7 @@ export function initProps(
 		{store, from} = opts;
 
 	const
-		// True if a component is functional or a flyweight
+		ssrMode = component.$renderEngine.supports.ssr,
 		isNotRegular = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
@@ -58,7 +58,7 @@ export function initProps(
 		}
 
 		// Don't initialize a property for a functional component unless explicitly required
-		if (isNotRegular && el.functional === false) {
+		if (!ssrMode && isNotRegular && el.functional === false) {
 			continue;
 		}
 

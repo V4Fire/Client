@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added a new getter `isSSR`
+
 ## v3.0.0-rc.178 (2021-04-15)
 
 #### :bug: Bug Fix

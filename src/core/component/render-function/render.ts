@@ -10,9 +10,9 @@ import { runHook } from 'core/component/hook';
 import { beforeMountHooks, mountedHooks } from 'core/component/const';
 
 import { resolveRefs } from 'core/component/ref';
-import { renderData, CreateElement, RenderContext, VNode } from 'core/component/engines';
 import { wrapCreateElement } from 'core/component/render-function/create-element';
 
+import type { CreateElement, RenderContext, VNode } from 'core/component/engines';
 import type { ComponentInterface, ComponentMeta, RenderFunction } from 'core/component/interface';
 
 /**
@@ -228,11 +228,11 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									}
 
 									const
-										renderVNodes = renderData(nodes, ctx);
+										renderedVNodes = unsafe.$renderEngine.renderVNode(nodes, ctx);
 
 									for (let i = 0, j = 0; i < renderNodes.length; i++) {
 										const
-											el = <CanArray<CanUndef<Node>>>(renderNodes[i] ?? renderVNodes[j++]);
+											el = <CanArray<CanUndef<Node>>>(renderNodes[i] ?? renderedVNodes[j++]);
 
 										if (Object.isArray(el)) {
 											for (let i = 0; i < el.length; i++) {
