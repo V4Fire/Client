@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/engines/zero/README.md]]
+ * @packageDocumentation
+ */
+
 import minimalCtx from 'core/component/engines/zero/context';
 import type { VNodeData } from 'core/component/engines/zero/interface';
 
