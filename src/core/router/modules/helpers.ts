@@ -8,7 +8,7 @@
 
 import path from 'path-to-regexp';
 
-import { concatURLs, toQueryString } from 'core/url';
+import { concatURLs, toQueryString, fromQueryString } from 'core/url';
 import { deprecate } from 'core/functools/deprecation';
 
 import {
@@ -71,7 +71,8 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	const
 		{basePath, defaultRoute} = opts,
 		routeKeys = Object.keys(routes),
-		initialRef = ref;
+		initialRef = ref,
+		initialRefQuery = fromQueryString(ref);
 
 	let
 		resolvedById = false,
@@ -192,7 +193,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	if (!resolvedRoute) {
 		resolvedRoute = defaultRoute;
 
-		// We have found a route by the provided ref, but it contains an alias
+	// We have found a route by the provided ref, but it contains an alias
 	} else if (alias) {
 		resolvedRoute = {
 			...resolvedRoute,
@@ -249,7 +250,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	Object.assign(routeAPI, {
 		name: resolvedRoute.name,
 		params: {},
-		query: {}
+		query: Object.isDictionary(initialRefQuery) ? initialRefQuery : {}
 	});
 
 	// Fill route parameters from URL
