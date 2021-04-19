@@ -417,16 +417,22 @@ module.exports = async (page, params) => {
 			it('sets the `showError` mod to `true`', async () => {
 				const
 					imgUrl = getRandomImgUrl(),
-					reqPromise = abortImageRequest(imgUrl, 300);
+					reqPromise = abortImageRequest(imgUrl, 500);
 
 				await renderComponent({
 					src: imgUrl
 				});
 
 				await reqPromise;
-				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
+				await h.bom.waitForIdleCallback(page);
 
-				expect(await component.evaluate((ctx) => ctx.mods.showError)).toBe('true');
+				await expectAsync(page.waitForFunction(() => {
+					const
+						// @ts-ignore
+						{component} = document.querySelector('#target');
+
+					return component.mods.showError === 'true';
+				})).toBeResolved();
 			});
 		});
 
