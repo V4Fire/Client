@@ -22,48 +22,10 @@ import globalRoutes from 'routes';
 import type Async from 'core/async';
 
 import iData, { component, prop, system, computed, hook, wait, watch } from 'super/i-data/i-data';
-
-import engine, {
-
-	Router,
-	Route,
-	HistoryClearFilter,
-	RouteAPI,
-	RouteBlueprint,
-	RouteBlueprints,
-	InitialRoute,
-	TransitionOptions,
-
-	isExternal,
-	routeNames,
-	defaultRouteNames,
-
-	getRouteName,
-	getRoute,
-	getRoutePath,
-
-	purifyRoute,
-
-	getBlankRouteFrom,
-	getComparableRouteParams,
-
-	convertRouteToPlainObject,
-	convertRouteToPlainObjectWithoutProto,
-
-	normalizeTransitionOpts
-
-} from 'core/router';
+import engine, * as router from 'core/router';
 
 import { fillRouteParams } from 'base/b-router/modules/normalizers';
-
-import type {
-
-	PurifiedRoute,
-	StaticRoutes,
-	RouteOption,
-	TransitionMethod
-
-} from 'base/b-router/interface';
+import type { StaticRoutes, RouteOption, TransitionMethod } from 'base/b-router/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'core/router/const';
@@ -139,7 +101,7 @@ export default class bRouter extends iData {
 		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
 	})
 
-	routes!: RouteBlueprints;
+	routes!: router.RouteBlueprints;
 
 	/**
 	 * Initial route value.
@@ -165,7 +127,7 @@ export default class bRouter extends iData {
 		watch: 'updateCurrentRoute'
 	})
 
-	readonly initialRoute?: InitialRoute;
+	readonly initialRoute?: router.InitialRoute;
 
 	/**
 	 * Base route path: all route paths are concatenated with this path
@@ -222,7 +184,7 @@ export default class bRouter extends iData {
 		default: engine
 	})
 
-	readonly engineProp!: () => Router;
+	readonly engineProp!: () => router.Router;
 
 	/**
 	 * Internal router engine.
@@ -230,14 +192,14 @@ export default class bRouter extends iData {
 	 *
 	 * @see [[bRouter.engine]]
 	 */
-	@system((o) => o.sync.link((v) => (<(v: unknown) => Router>v)(o)))
-	protected engine!: Router;
+	@system((o) => o.sync.link((v) => (<(v: unknown) => router.Router>v)(o)))
+	protected engine!: router.Router;
 
 	/**
 	 * Value of the active route
 	 */
 	@system()
-	protected routeStore?: Route;
+	protected routeStore?: router.Route;
 
 	/**
 	 * Value of the active route
@@ -282,7 +244,7 @@ export default class bRouter extends iData {
 	 * ```
 	 */
 	@computed({cache: true, dependencies: ['routes']})
-	get defaultRoute(): CanUndef<RouteBlueprint> {
+	get defaultRoute(): CanUndef<router.RouteBlueprint> {
 		let route;
 
 		for (let keys = Object.keys(this.routes), i = 0; i < keys.length; i++) {
@@ -312,7 +274,7 @@ export default class bRouter extends iData {
 	 * router.push('https://google.com');
 	 * ```
 	 */
-	async push(route: Nullable<string>, opts?: TransitionOptions): Promise<void> {
+	async push(route: Nullable<string>, opts?: router.TransitionOptions): Promise<void> {
 		await this.emitTransition(route, opts, 'push');
 	}
 
@@ -330,7 +292,7 @@ export default class bRouter extends iData {
 	 * router.replace('https://google.com');
 	 * ```
 	 */
-	async replace(route: Nullable<string>, opts?: TransitionOptions): Promise<void> {
+	async replace(route: Nullable<string>, opts?: router.TransitionOptions): Promise<void> {
 		await this.emitTransition(route, opts, 'replace');
 	}
 
@@ -380,7 +342,7 @@ export default class bRouter extends iData {
 	 *
 	 * @param [filter] - filter predicate
 	 */
-	clear(filter?: HistoryClearFilter): Promise<void> {
+	clear(filter?: router.HistoryClearFilter): Promise<void> {
 		return this.engine.clear(filter);
 	}
 
@@ -405,14 +367,14 @@ export default class bRouter extends iData {
 	}
 
 	/** @see [[getRoutePath]] */
-	getRoutePath(ref: string, opts: TransitionOptions = {}): CanUndef<string> {
-		return getRoutePath(ref, this.routes, opts);
+	getRoutePath(ref: string, opts: router.TransitionOptions = {}): CanUndef<string> {
+		return router.getRoutePath(ref, this.routes, opts);
 	}
 
 	/** @see [[getRoute]] */
-	getRoute(ref: string): CanUndef<RouteAPI> {
+	getRoute(ref: string): CanUndef<router.RouteAPI> {
 		const {routes, basePath, defaultRoute} = this;
-		return getRoute(ref, routes, {basePath, defaultRoute});
+		return router.getRoute(ref, routes, {basePath, defaultRoute});
 	}
 
 	/**
@@ -420,7 +382,7 @@ export default class bRouter extends iData {
 	 * @see [[bRouter.getRoute]]
 	 */
 	@deprecated({renamedTo: 'getRoute'})
-	getPageOpts(ref: string): CanUndef<RouteBlueprint> {
+	getPageOpts(ref: string): CanUndef<router.RouteBlueprint> {
 		return this.getRoute(ref);
 	}
 
@@ -442,10 +404,10 @@ export default class bRouter extends iData {
 	 */
 	async emitTransition(
 		ref: Nullable<string>,
-		opts?: TransitionOptions,
+		opts?: router.TransitionOptions,
 		method: TransitionMethod = 'push'
-	): Promise<CanUndef<Route>> {
-		opts = getBlankRouteFrom(normalizeTransitionOpts(opts));
+	): Promise<CanUndef<router.Route>> {
+		opts = router.getBlankRouteFrom(router.normalizeTransitionOpts(opts));
 
 		const
 			{r, engine} = this;
@@ -456,10 +418,10 @@ export default class bRouter extends iData {
 		this.emit('beforeChange', ref, opts, method);
 
 		let
-			newRouteInfo: CanUndef<RouteAPI>;
+			newRouteInfo: CanUndef<router.RouteAPI>;
 
 		const getEngineRoute = () => currentEngineRoute ?
-			currentEngineRoute.url ?? getRouteName(currentEngineRoute) :
+			currentEngineRoute.url ?? router.getRouteName(currentEngineRoute) :
 			undefined;
 
 		// Get information about the specified route
@@ -475,7 +437,7 @@ export default class bRouter extends iData {
 				route = this.getRoute(ref);
 
 			if (route) {
-				newRouteInfo = Object.mixin(true, route, purifyRoute(currentEngineRoute));
+				newRouteInfo = Object.mixin(true, route, router.purifyRoute(currentEngineRoute));
 			}
 		}
 
@@ -509,9 +471,9 @@ export default class bRouter extends iData {
 			return;
 		}
 
-		if ((<PurifiedRoute<RouteAPI>>newRouteInfo).name == null) {
+		if ((<router.PurifiedRoute<router.RouteAPI>>newRouteInfo).name == null) {
 			const
-				nm = getRouteName(currentEngineRoute);
+				nm = router.getRouteName(currentEngineRoute);
 
 			if (nm != null) {
 				newRouteInfo.name = nm;
@@ -519,13 +481,13 @@ export default class bRouter extends iData {
 		}
 
 		const
-			currentRoute = this.field.get<Route>('routeStore'),
+			currentRoute = this.field.get<router.Route>('routeStore'),
 			deepMixin = (...args) => Object.mixin({deep: true, withUndef: true}, ...args);
 
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current
-		if (getRouteName(currentRoute) === newRouteInfo.name) {
-			deepMixin(newRouteInfo, getBlankRouteFrom(currentRoute), opts);
+		if (router.getRouteName(currentRoute) === newRouteInfo.name) {
+			deepMixin(newRouteInfo, router.getBlankRouteFrom(currentRoute), opts);
 
 		// Simple normalizing of a route state
 		} else {
@@ -552,7 +514,7 @@ export default class bRouter extends iData {
 
 		const newRoute = Object.assign(
 			Object.create(nonWatchRouteValues),
-			Object.reject(convertRouteToPlainObject(newRouteInfo), Object.keys(nonWatchRouteValues))
+			Object.reject(router.convertRouteToPlainObject(newRouteInfo), Object.keys(nonWatchRouteValues))
 		);
 
 		let
@@ -574,8 +536,8 @@ export default class bRouter extends iData {
 
 		// Checking that the new route is really needed, i.e. it isn't equal to the previous
 		const newRouteIsReallyNeeded = !Object.fastCompare(
-			getComparableRouteParams(currentRoute),
-			getComparableRouteParams(newRoute)
+			router.getComparableRouteParams(currentRoute),
+			router.getComparableRouteParams(newRoute)
 		);
 
 		// The transition is necessary, but now we need to understand should we emit "soft" or "hard" transition
@@ -583,12 +545,12 @@ export default class bRouter extends iData {
 			this.field.set('routeStore', newRoute);
 
 			const
-				plainInfo = convertRouteToPlainObject(newRouteInfo);
+				plainInfo = router.convertRouteToPlainObject(newRouteInfo);
 
 			const canRouteTransformToReplace =
 				currentRoute &&
 				method !== 'replace' &&
-				Object.fastCompare(convertRouteToPlainObject(currentRoute), plainInfo);
+				Object.fastCompare(router.convertRouteToPlainObject(currentRoute), plainInfo);
 
 			if (canRouteTransformToReplace) {
 				method = 'replace';
@@ -611,8 +573,8 @@ export default class bRouter extends iData {
 			await engine[method](newRoute.url, plainInfo);
 
 			const isSoftTransition = Boolean(r.route && Object.fastCompare(
-				convertRouteToPlainObjectWithoutProto(currentRoute),
-				convertRouteToPlainObjectWithoutProto(newRoute)
+				router.convertRouteToPlainObjectWithoutProto(currentRoute),
+				router.convertRouteToPlainObjectWithoutProto(newRoute)
 			));
 
 			// In this transition were changed only properties from a prototype,
@@ -642,13 +604,13 @@ export default class bRouter extends iData {
 
 			emitTransition();
 
-			// This route is equal to the previous and we don't actually do transition,
-			// but for a "push" request we need to emit the "fake" transition event anyway
+		// This route is equal to the previous and we don't actually do transition,
+		// but for a "push" request we need to emit the "fake" transition event anyway
 		} else if (method === 'push') {
 			emitTransition();
 
-			// In this case, we don't do transition, but still,
-			// we should emit the special event, because some methods, like, "back" or "forward" can wait for it
+		// In this case, we don't do transition, but still,
+		// we should emit the special event, because some methods, like, "back" or "forward" can wait for it
 		} else {
 			emitTransition(true);
 		}
@@ -686,7 +648,11 @@ export default class bRouter extends iData {
 	 * @see [[bRouter.emitTransition]]
 	 */
 	@deprecated({renamedTo: 'emitTransition'})
-	setPage(ref: Nullable<string>, opts?: TransitionOptions, method?: TransitionMethod): Promise<CanUndef<Route>> {
+	setPage(
+		ref: Nullable<string>,
+		opts?: router.TransitionOptions,
+		method?: TransitionMethod
+	): Promise<CanUndef<router.Route>> {
 		return this.emitTransition(ref, opts, method);
 	}
 
@@ -697,7 +663,11 @@ export default class bRouter extends iData {
 	 * @param [routes] - static schema of application routes
 	 * @param [activeRoute]
 	 */
-	updateRoutes(basePath: string, routes?: StaticRoutes, activeRoute?: Nullable<InitialRoute>): Promise<RouteBlueprints>;
+	updateRoutes(
+		basePath: string,
+		routes?: StaticRoutes,
+		activeRoute?: Nullable<router.InitialRoute>
+	): Promise<router.RouteBlueprints>;
 
 	/**
 	 * Updates the schema of routes
@@ -706,7 +676,11 @@ export default class bRouter extends iData {
 	 * @param activeRoute
 	 * @param [routes] - static schema of application routes
 	 */
-	updateRoutes(basePath: string, activeRoute: InitialRoute, routes?: StaticRoutes): Promise<RouteBlueprints>;
+	updateRoutes(
+		basePath: string,
+		activeRoute: router.InitialRoute,
+		routes?: StaticRoutes
+	): Promise<router.RouteBlueprints>;
 
 	/**
 	 * Updates the schema of routes
@@ -714,7 +688,10 @@ export default class bRouter extends iData {
 	 * @param routes - static schema of application routes
 	 * @param [activeRoute]
 	 */
-	updateRoutes(routes: StaticRoutes, activeRoute?: Nullable<InitialRoute>): Promise<RouteBlueprints>;
+	updateRoutes(
+		routes: StaticRoutes,
+		activeRoute?: Nullable<router.InitialRoute>
+	): Promise<router.RouteBlueprints>;
 
 	/**
 	 * @param basePathOrRoutes
@@ -724,9 +701,9 @@ export default class bRouter extends iData {
 	@wait('beforeReady')
 	async updateRoutes(
 		basePathOrRoutes: string | StaticRoutes,
-		routesOrActiveRoute?: StaticRoutes | Nullable<InitialRoute>,
-		activeRouteOrRoutes?: Nullable<InitialRoute> | StaticRoutes
-	): Promise<RouteBlueprints> {
+		routesOrActiveRoute?: StaticRoutes | Nullable<router.InitialRoute>,
+		activeRouteOrRoutes?: Nullable<router.InitialRoute> | StaticRoutes
+	): Promise<router.RouteBlueprints> {
 		let
 			basePath,
 			routes,
@@ -741,12 +718,12 @@ export default class bRouter extends iData {
 
 			} else {
 				routes = routesOrActiveRoute;
-				activeRoute = <Nullable<InitialRoute>>activeRouteOrRoutes;
+				activeRoute = <Nullable<router.InitialRoute>>activeRouteOrRoutes;
 			}
 
 		} else {
 			routes = basePathOrRoutes;
-			activeRoute = <Nullable<InitialRoute>>routesOrActiveRoute;
+			activeRoute = <Nullable<router.InitialRoute>>routesOrActiveRoute;
 		}
 
 		if (basePath != null) {
@@ -763,7 +740,7 @@ export default class bRouter extends iData {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<CanPromise<RouteBlueprints | Dictionary>> {
+	protected initRemoteData(): CanUndef<CanPromise<router.RouteBlueprints | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
@@ -798,13 +775,13 @@ export default class bRouter extends iData {
 	 * @param [route] - route
 	 */
 	@hook('beforeDataCreate')
-	protected initRoute(route: Nullable<InitialRoute> = this.initialRoute): Promise<void> {
+	protected initRoute(route: Nullable<router.InitialRoute> = this.initialRoute): Promise<void> {
 		if (route != null) {
 			if (Object.isString(route)) {
 				return this.replace(route);
 			}
 
-			return this.replace(getRouteName(route), Object.reject(route, routeNames));
+			return this.replace(router.getRouteName(route), Object.reject(route, router.routeNames));
 		}
 
 		return this.replace(null);
@@ -822,7 +799,7 @@ export default class bRouter extends iData {
 	 * Compiles the specified static routes and returns a new object
 	 * @param [routes]
 	 */
-	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): RouteBlueprints {
+	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): router.RouteBlueprints {
 		const
 			{basePath} = this,
 			compiledRoutes = {};
@@ -859,7 +836,7 @@ export default class bRouter extends iData {
 
 					meta: {
 						name,
-						external: isExternal.test(pattern),
+						external: router.isExternal.test(pattern),
 
 						/** @deprecated */
 						page: name
@@ -898,11 +875,11 @@ export default class bRouter extends iData {
 						...route,
 
 						name,
-						default: Boolean(route.default ?? route.index ?? defaultRouteNames[name]),
+						default: Boolean(route.default ?? route.index ?? router.defaultRouteNames[name]),
 
 						external: route.external ?? (
-							isExternal.test(pattern) ||
-							isExternal.test(route.redirect ?? '')
+							router.isExternal.test(pattern) ||
+							router.isExternal.test(route.redirect ?? '')
 						),
 
 						/** @deprecated */
@@ -942,7 +919,7 @@ export default class bRouter extends iData {
 			href === '' ||
 			href.startsWith('#') ||
 			href.startsWith('javascript:') ||
-			isExternal.test(href);
+			router.isExternal.test(href);
 
 		if (cantPrevent) {
 			return;
