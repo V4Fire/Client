@@ -6,7 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { TransitionOptions, canParseStr, systemRouteParams, transitionOptions } from 'core/router';
+import {
+
+	canParseStr,
+	systemRouteParams,
+	transitionOptions,
+
+	TransitionOptions
+
+} from 'core/router';
 
 import type {
 
@@ -14,6 +22,7 @@ import type {
 	PlainRoute,
 	PurifiedRoute,
 	WatchableRoute,
+
 	RouteParamsFilter
 
 } from 'base/b-router/interface';
@@ -153,7 +162,7 @@ export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends str
 
 /**
  * Converts the specified route object to a plain object and returns it.
- * All properties from a prototype are skipped.
+ * All properties from the prototype are skipped.
  *
  * @param route
  */
