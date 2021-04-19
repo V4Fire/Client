@@ -11,10 +11,9 @@ import path from 'path-to-regexp';
 import { concatURLs, toQueryString, fromQueryString } from 'core/url';
 import { deprecate } from 'core/functools/deprecation';
 
-import {
+import { qsClearFixRgxp, routeNames } from 'core/router/const';
 
-	qsClearFixRgxp,
-	routeNames,
+import type {
 
 	Route,
 	AppliedRoute,
@@ -27,7 +26,7 @@ import {
 	TransitionOptions,
 	AdditionalGetRouteOpts
 
-} from 'core/router';
+} from 'core/router/interface';
 
 /**
  * Returns a name of the specified route
