@@ -78,7 +78,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 	const
 		initialRef = ref,
-		initialRefQuery = fromQueryString(ref);
+		initialRefQuery = ref.includes('?') ? fromQueryString(ref) : {};
 
 	let
 		resolvedById = false,
