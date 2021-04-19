@@ -169,7 +169,7 @@ export interface Route<
 	 * @deprecated
 	 * @see [[Route.name]]
 	 */
-	page: string;
+	page?: string;
 
 	/**
 	 * If true, the route can be used as default
@@ -180,7 +180,7 @@ export interface Route<
 	 * @deprecated
 	 * @see [[Route.default]]
 	 */
-	index: boolean;
+	index?: boolean;
 
 	/**
 	 * Route parameters that can be passed to the route path
@@ -299,13 +299,13 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	 * @deprecated
 	 * @see [[RouteBlueprint.name]]
 	 */
-	page: string;
+	page?: string;
 
 	/**
 	 * @deprecated
 	 * @see [[RouteBlueprint.meta.default]]
 	 */
-	index: boolean;
+	index?: boolean;
 
 	/**
 	 * Pattern of the route path
@@ -368,7 +368,7 @@ export interface RouteAPI<
 	 * @deprecated
 	 * @see [[Route.toPath]]
 	 */
-	toPath(params?: Dictionary): string;
+	toPath?(params?: Dictionary): string;
 }
 
 export type AnyRoute =
@@ -397,7 +397,7 @@ export interface RouteParams extends TransitionOptions {
 	 * @deprecated
 	 * @see [[RouteParams.name]]
 	 */
-	page: string;
+	page?: string;
 }
 
 /**
