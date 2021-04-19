@@ -13,17 +13,19 @@ import { deprecate } from 'core/functools/deprecation';
 
 import {
 
+	qsClearFixRgxp,
+	routeNames,
+
 	Route,
 	AppliedRoute,
-	RouteBlueprint,
-	RouteBlueprints,
 	RouteAPI,
 	InitialRoute,
-	TransitionOptions,
-	AdditionalGetRouteOpts,
 
-	qsClearFixRgxp,
-	routeNames
+	RouteBlueprint,
+	RouteBlueprints,
+
+	TransitionOptions,
+	AdditionalGetRouteOpts
 
 } from 'core/router';
 
@@ -52,7 +54,7 @@ export function getRouteName(route?: AppliedRoute | Route | RouteBlueprint | Ini
  * Returns a route object by the specified name or path
  *
  * @param ref - route name or path
- * @param routes - available routes to get a route object by name or path
+ * @param routes - available routes to get the route object by a name or path
  * @param [opts] - additional options
  *
  * @example
@@ -69,8 +71,12 @@ export function getRouteName(route?: AppliedRoute | Route | RouteBlueprint | Ini
  */
 export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalGetRouteOpts = {}): CanUndef<RouteAPI> {
 	const
-		{basePath, defaultRoute} = opts,
-		routeKeys = Object.keys(routes),
+		{basePath, defaultRoute} = opts;
+
+	const
+		routeKeys = Object.keys(routes);
+
+	const
 		initialRef = ref,
 		initialRefQuery = fromQueryString(ref);
 
@@ -107,7 +113,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				break;
 			}
 
-			// Reference to a route that passed as a path
+		// Reference to a route that passed as a path
 		} else {
 			if (Object.isString(basePath) && basePath !== '') {
 				// Resolve the situation when the passed path already has basePath
@@ -129,7 +135,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 					continue;
 				}
 
-				// In this case we have full matching of a route ref by a name or pattern
+				// In this case, we have the full matching of a route ref by a name or pattern
 				if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
 					resolvedById = true;
 					resolvedRoute = route;
@@ -160,8 +166,8 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		const
 			{meta} = resolvedRoute;
 
-		// If we haven't found a route that matches to the provided ref or the founded route doesn't redirect or refer
-		// to another route, we can exit from the search loop, otherwise, we need to resolve the redirect/alias
+		// If we haven't found a route that matches the provided ref or the founded route doesn't redirect or refer
+		// to another route, we can exit from the search loop. Otherwise, we need to resolve the redirect/alias.
 		if (meta.redirect == null && meta.alias == null) {
 			break;
 		}
@@ -171,7 +177,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			break;
 		}
 
-		// The alias should preserve an original route name and path
+		// The alias should preserve the original route name and path
 		if (meta.alias != null) {
 			if (alias == null) {
 				alias = resolvedRoute;
@@ -189,7 +195,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	}
 
 	// We haven't found a route by the provided ref,
-	// that why we need to find "default" route as loopback
+	// that why we need to find a "default" route as loopback
 	if (!resolvedRoute) {
 		resolvedRoute = defaultRoute;
 
@@ -277,7 +283,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
  * Returns a path of the specified route with padding of additional parameters
  *
  * @param ref - route name or path
- * @param routes - available routes to get a route object by name or path
+ * @param routes - available routes to get the route object by name or path
  * @param [opts] - additional options
  *
  * @example

@@ -8,16 +8,16 @@
 
 import {
 
+	canParseStr,
+	systemRouteParams,
+	transitionOptions,
+
 	TransitionOptions,
 	AnyRoute,
 	PlainRoute,
 	PurifiedRoute,
 	WatchableRoute,
-	RouteParamsFilter,
-
-	canParseStr,
-	systemRouteParams,
-	transitionOptions
+	RouteParamsFilter
 
 } from 'core/router';
 
@@ -156,7 +156,7 @@ export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends str
 
 /**
  * Converts the specified route object to a plain object and returns it.
- * All properties from a prototype are skipped.
+ * All properties from the prototype are skipped.
  *
  * @param route
  */
