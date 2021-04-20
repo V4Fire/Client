@@ -17,7 +17,7 @@ import { setLocale, locale } from 'core/i18n';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 
 import type bRouter from 'base/b-router/b-router';
-import type { Route } from 'base/b-router/b-router';
+import type { AppliedRoute } from 'core/router';
 
 import type iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
@@ -40,22 +40,27 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Type: page parameters
 	 */
-	readonly PageParams!: object;
+	readonly PageParams!: this['Router']['PageParams'];
 
 	/**
 	 * Type: page query
 	 */
-	readonly PageQuery!: object;
+	readonly PageQuery!: this['Router']['PageQuery'];
 
 	/**
 	 * Type: page meta
 	 */
-	readonly PageMeta!: object;
+	readonly PageMeta!: this['Router']['PageMeta'];
+
+	/**
+	 * Type: router
+	 */
+	readonly Router!: bRouter;
 
 	/**
 	 * Type: current page
 	 */
-	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
+	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
 	 * Remote data store
@@ -160,7 +165,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Link to a router instance
 	 */
 	@system()
-	protected routerStore?: bRouter;
+	protected routerStore?: this['Router'];
 
 	/** @see [[iStaticPage.locale]]  */
 	@field(() => locale.value)
