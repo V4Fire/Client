@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
 
@@ -204,7 +206,6 @@ export default abstract class iLockPageScroll {
 	 *
 	 * @param [scrollableNode] - node inside which is allowed to scroll
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	lock(scrollableNode?: Element): Promise<void> {
 		return <any>null;
 	}
