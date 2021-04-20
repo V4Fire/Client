@@ -11,20 +11,25 @@
  * @packageDocumentation
  */
 
+import { derive } from 'core/functools/trait';
+
 import iVisible from 'traits/i-visible/i-visible';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
-import iData, { component, hook, prop, wait, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
+import iData, { component, hook, prop, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
+
+interface bSidebar extends Trait<typeof iLockPageScroll> {}
 
 /**
  * Component to create a sidebar with the feature of collapsing
  */
 @component()
-export default class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
+@derive(iLockPageScroll)
+class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	/**
 	 * If true, then will be blocked the scrolling of the document when the component is opened
 	 */
@@ -46,17 +51,6 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 			['false']
 		]
 	};
-
-	/** @see [[iLockPageScroll.lock]] */
-	@wait('loading')
-	lock(): Promise<void> {
-		return iLockPageScroll.lock(this);
-	}
-
-	/** @see [[iLockPageScroll.unlock]] */
-	unlock(): Promise<void> {
-		return iLockPageScroll.unlock(this);
-	}
 
 	/** @see [[iOpenToggle.open]] */
 	open(): Promise<boolean> {
@@ -127,3 +121,5 @@ export default class bSidebar extends iData implements iVisible, iOpenToggle, iL
 		}
 	}
 }
+
+export default bSidebar;

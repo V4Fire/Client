@@ -352,7 +352,7 @@ export default class DOM extends Friend {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.prototype.watchForIntersection]]
+	 * @see [[DOM.watchForIntersection]]
 	 *
 	 * @param el
 	 * @param options

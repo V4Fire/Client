@@ -24,13 +24,7 @@ const
 	group = 'lockHelpers';
 
 export default abstract class iLockPageScroll {
-	/**
-	 * Locks the document scroll, i.e.,
-	 * it prevents any scrolling on the document except withing the specified node
-	 *
-	 * @param component
-	 * @param [scrollableNode] - node inside which is allowed to scroll
-	 */
+	/** @see [[iLockPageScroll.lock]] */
 	static lock<T extends iBlock>(component: T, scrollableNode?: Element): Promise<void> {
 		const
 			{$root: r, $root: {unsafe: {async: $a}}} = component;
@@ -147,10 +141,7 @@ export default abstract class iLockPageScroll {
 		return promise;
 	}
 
-	/**
-	 * Unlocks the document scroll
-	 * @param component
-	 */
+	/** @see [[iLockPageScroll.unlock]] */
 	static unlock<T extends iBlock>(component: T): Promise<void> {
 		const
 			{$root: r, $root: {unsafe: {async: $a}}} = component.unsafe,
@@ -210,11 +201,18 @@ export default abstract class iLockPageScroll {
 	/**
 	 * Locks the document scroll, i.e.,
 	 * it prevents any scrolling on the document except withing the specified node
+	 *
+	 * @param [scrollableNode] - node inside which is allowed to scroll
 	 */
-	abstract lock(): Promise<void>;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	lock(scrollableNode?: Element): Promise<void> {
+		return <any>null;
+	}
 
 	/**
 	 * Unlocks the document scroll
 	 */
-	abstract unlock(force?: boolean): Promise<void>;
+	unlock(): Promise<void> {
+		return <any>null;
+	}
 }
