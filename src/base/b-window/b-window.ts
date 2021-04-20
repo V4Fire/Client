@@ -40,13 +40,13 @@ import type { StageTitles } from 'base/b-window/interface';
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 
-interface bWindow extends Trait<typeof iLockPageScroll> {}
+interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScroll> {}
 
 /**
  * Component to create a modal window
  */
 @component()
-@derive(iLockPageScroll)
+@derive(iOpenToggle, iLockPageScroll)
 class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	/** @override */
 	readonly proxyCall: boolean = true;
@@ -204,11 +204,6 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		this.field.set('titleStore', value);
 	}
 
-	/** @see [[iOpenToggle.toggle]] */
-	toggle(): Promise<boolean> {
-		return iOpenToggle.toggle(this);
-	}
-
 	/**
 	 * @see [[iOpenToggle.open]]
 	 * @param [stage] - component stage to open
@@ -248,11 +243,6 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	/** @see [[iOpenToggle.onOpenedChange]] */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
-	}
-
-	/** @see [[iOpenToggle.onKeyClose]] */
-	onKeyClose(e: KeyboardEvent): Promise<void> {
-		return iOpenToggle.onKeyClose(this, e);
 	}
 
 	/** @see [[iOpenToggle.onTouchClose]] */

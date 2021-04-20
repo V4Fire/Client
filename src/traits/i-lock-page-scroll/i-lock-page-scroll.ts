@@ -27,7 +27,7 @@ const
 
 export default abstract class iLockPageScroll {
 	/** @see [[iLockPageScroll.lock]] */
-	static lock<T extends iBlock>(component: T, scrollableNode?: Element): Promise<void> {
+	static lock: AddSelf<iLockPageScroll['lock'], iBlock> = (component, scrollableNode?) => {
 		const
 			{$root: r, $root: {unsafe: {async: $a}}} = component;
 
@@ -141,10 +141,10 @@ export default abstract class iLockPageScroll {
 		}
 
 		return promise;
-	}
+	};
 
 	/** @see [[iLockPageScroll.unlock]] */
-	static unlock<T extends iBlock>(component: T): Promise<void> {
+	static unlock: AddSelf<iLockPageScroll['unlock'], iBlock> = (component) => {
 		const
 			{$root: r, $root: {unsafe: {async: $a}}} = component.unsafe,
 			{body} = document;
@@ -175,7 +175,7 @@ export default abstract class iLockPageScroll {
 			label: $$.unlock,
 			join: true
 		});
-	}
+	};
 
 	/**
 	 * Initializes modifier event listeners

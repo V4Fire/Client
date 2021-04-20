@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 import type iBlock from 'super/i-block/i-block';
 import type { ModsDecl, ModEvent, SetModEvent } from 'super/i-block/i-block';
 
@@ -16,20 +18,48 @@ export interface CloseHelperEvents {
 
 export default abstract class iOpen {
 	/**
-	 * Opens the component
-	 * @param component
+	 * Open modifiers
 	 */
-	static async open<T extends iBlock>(component: T): Promise<boolean> {
-		return component.setMod('opened', true);
-	}
+	static readonly mods: ModsDecl = {
+		opened: [
+			'true',
+			'false'
+		]
+	};
 
-	/**
-	 * Closes the component
-	 * @param component
-	 */
-	static async close<T extends iBlock>(component: T): Promise<boolean> {
-		return component.setMod('opened', false);
-	}
+	/** @see [[iOpen.open]] */
+	static open: AddSelf<iOpen['open'], iBlock> =
+		async (component) => component.setMod('opened', true);
+
+	/** @see [[iOpen.close]] */
+	static close: AddSelf<iOpen['close'], iBlock> =
+		async (component) => component.setMod('opened', false);
+
+	/** @see [[iOpen.onOpenedChange]] */
+	static onOpenedChange: AddSelf<iOpen['onOpenedChange'], iBlock> = (component) => {
+		// Loopback
+	};
+
+	/** @see [[iOpen.onKeyClose]] */
+	static onKeyClose: AddSelf<iOpen['onKeyClose'], iBlock & iOpen> = async (component, e) => {
+		if (e.key === 'Escape') {
+			await component.close();
+		}
+	};
+
+	/** @see [[iOpen.onTouchClose]] */
+	static onTouchClose: AddSelf<iOpen['onTouchClose'], iBlock & iOpen> = async (component, e) => {
+		const
+			target = <CanUndef<Element>>e.target;
+
+		if (target == null) {
+			return;
+		}
+
+		if (!target.closest(`.${component.componentId}`)) {
+			await component.close();
+		}
+	};
 
 	/**
 	 * Initializes close helper listeners
@@ -46,7 +76,7 @@ export default abstract class iOpen {
 			modsGroup = {group: 'closeHelpers:mods'};
 
 		$a.off({group: /closeHelpers/});
-		$e.on('block.mod.*.opened.*', component.onOpenedChange, modsGroup);
+		$e.on('block.mod.*.opened.*', component.onOpenedChange.bind(component), modsGroup);
 		$e.on('block.mod.set.opened.false', () => $a.off(helpersGroup), modsGroup);
 
 		const onOpened = () => {
@@ -57,15 +87,15 @@ export default abstract class iOpen {
 				};
 
 				try {
-					$a.on(document, events.key || 'keyup', (e) => {
-						if (e) {
+					$a.on(document, events.key ?? 'keyup', (e) => {
+						if (e != null) {
 							return component.onKeyClose(e);
 						}
 
 					}, opts);
 
-					$a.on(document, events.touch || 'click touchend', (e) => {
-						if (e) {
+					$a.on(document, events.touch ?? 'click touchend', (e) => {
+						if (e != null) {
 							return component.onTouchClose(e);
 						}
 
@@ -100,73 +130,42 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Handler: close by a keyboard event
-	 *
-	 * @param component
-	 * @param e
-	 */
-	static async onKeyClose<T extends iBlock>(component: T & iOpen, e: KeyboardEvent): Promise<void> {
-		if (e.key === 'Escape') {
-			await component.close();
-		}
-	}
-
-	/**
-	 * Handler: close by a touch event
-	 *
-	 * @param component
-	 * @param e
-	 */
-	static async onTouchClose<T extends iBlock>(component: T & iOpen, e: MouseEvent): Promise<void> {
-		const
-			target = <Element>e.target;
-
-		if (!target) {
-			return;
-		}
-
-		if (!target.closest(`.${component.componentId}`)) {
-			await component.close();
-		}
-	}
-
-	/**
-	 * Open modifiers
-	 */
-	static readonly mods: ModsDecl = {
-		opened: [
-			'true',
-			'false'
-		]
-	};
-
-	/**
 	 * Opens the component
 	 * @param args
 	 */
-	abstract open(...args: unknown[]): Promise<boolean>;
+	open(...args: unknown[]): Promise<boolean> {
+		return <any>null;
+	}
 
 	/**
 	 * Closes the component
 	 * @param args
 	 */
-	abstract close(...args: unknown[]): Promise<boolean>;
+	close(...args: unknown[]): Promise<boolean> {
+		return <any>null;
+	}
 
 	/**
 	 * Handler: opened modifier change
 	 * @param e
 	 */
-	abstract onOpenedChange(e: ModEvent | SetModEvent): void;
+	onOpenedChange(e: ModEvent | SetModEvent): void {
+		return <any>null;
+	}
 
 	/**
 	 * Handler: close by a keyboard event
 	 * @param e
 	 */
-	abstract onKeyClose(e: KeyboardEvent): Promise<void>;
+	onKeyClose(e: KeyboardEvent): Promise<void> {
+		return <any>null;
+	}
 
 	/**
 	 * Handler: close by a touch event
 	 * @param e
 	 */
-	abstract onTouchClose(e: MouseEvent): Promise<void>;
+	onTouchClose(e: MouseEvent): Promise<void> {
+		return <any>null;
+	}
 }

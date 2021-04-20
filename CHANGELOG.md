@@ -16,7 +16,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Improved traits to support auto-deriving:
-  * `i-lock-page-scroll.ts`
+  * `i-lock-page-scroll`
+  * `i-open`
+  * `i-open-toggle`
 
 ## v3.0.0-rc.181 (2021-04-20)
 

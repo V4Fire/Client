@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import { derive } from 'core/functools/trait';
+
 //#if runtime has core/data
 import 'core/data';
 //#endif
@@ -33,9 +35,7 @@ import iData, {
 
 	ModsDecl,
 	ModelMethod,
-	RequestFilter,
-	ModEvent,
-	SetModEvent
+	RequestFilter
 
 } from 'super/i-data/i-data';
 
@@ -44,6 +44,8 @@ import type { ButtonType } from 'form/b-button/interface';
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 export * from 'form/b-button/interface';
+
+interface bButton extends Trait<typeof iOpenToggle> {}
 
 /**
  * Component to create a button
@@ -56,7 +58,8 @@ export * from 'form/b-button/interface';
 	}
 })
 
-export default class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
+@derive(iOpenToggle)
+class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
@@ -200,37 +203,6 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 		return iAccess.disable(this);
 	}
 
-	/** @see [[iOpenToggle.open]] */
-	open(): Promise<boolean> {
-		return iOpenToggle.open(this);
-	}
-
-	/** @see [[iOpenToggle.close]] */
-	close(): Promise<boolean> {
-		return iOpenToggle.close(this);
-	}
-
-	/** @see [[iOpenToggle.toggle]] */
-	toggle(): Promise<boolean> {
-		return iOpenToggle.toggle(this);
-	}
-
-	/** @see [[iOpenToggle.onOpenedChange]] */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	onOpenedChange(e: ModEvent | SetModEvent): void {
-		// ...
-	}
-
-	/** @see [[iOpenToggle.onKeyClose]] */
-	onKeyClose(e: KeyboardEvent): Promise<void> {
-		return iOpenToggle.onKeyClose(this, e);
-	}
-
-	/** @see [[iOpenToggle.onTouchClose]] */
-	onTouchClose(e: MouseEvent): Promise<void> {
-		return iOpenToggle.onTouchClose(this, e);
-	}
-
 	/** @see [[iOpenToggle.initCloseHelpers]] */
 	@p({hook: 'beforeDataCreate', replace: false})
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
@@ -280,3 +252,5 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 		this.emit('click', e);
 	}
 }
+
+export default bButton;

@@ -17,18 +17,18 @@ import iVisible from 'traits/i-visible/i-visible';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
-import iData, { component, hook, prop, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
+import iData, { component, hook, prop, ModsDecl } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 
-interface bSidebar extends Trait<typeof iLockPageScroll> {}
+interface bSidebar extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScroll> {}
 
 /**
  * Component to create a sidebar with the feature of collapsing
  */
 @component()
-@derive(iLockPageScroll)
+@derive(iOpenToggle, iLockPageScroll)
 class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	/**
 	 * If true, then will be blocked the scrolling of the document when the component is opened
@@ -51,32 +51,6 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 			['false']
 		]
 	};
-
-	/** @see [[iOpenToggle.open]] */
-	open(): Promise<boolean> {
-		return iOpenToggle.open(this);
-	}
-
-	/** @see [[iOpenToggle.close]] */
-	close(): Promise<boolean> {
-		return iOpenToggle.close(this);
-	}
-
-	/** @see [[iOpenToggle.toggle]] */
-	toggle(): Promise<boolean> {
-		return iOpenToggle.toggle(this);
-	}
-
-	/** @see [[iOpenToggle.onOpenedChange]] */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	onOpenedChange(e: ModEvent | SetModEvent): void {
-		// ...
-	}
-
-	/** @see [[iOpenToggle.onKeyClose]] */
-	onKeyClose(e: KeyboardEvent): Promise<void> {
-		return iOpenToggle.onKeyClose(this, e);
-	}
 
 	/** @see [[iOpenToggle.onTouchClose]] */
 	async onTouchClose(e: MouseEvent): Promise<void> {
