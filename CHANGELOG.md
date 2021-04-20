@@ -11,11 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.181 (2021-04-20)
 
 #### :bug: Bug Fix
 
 * [Fixed an issue with `itemProps` not being provided to child components `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/512)
+
+#### :house: Internal
+
+* Extracted some helpers and interfaces from `bRouter` to `core/router`
 
 ## v3.0.0-rc.180 (2021-04-16)
 

@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.180",
+  "version": "3.0.0-rc.181",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -40,7 +40,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.43.0",
+    "@v4fire/core": "^3.44.0",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.4",
     "jsdom": "^16.4.0",
