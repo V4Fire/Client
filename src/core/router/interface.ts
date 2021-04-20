@@ -348,7 +348,7 @@ export type AppliedRoute<
 	PARAMS extends object = Dictionary,
 	QUERY extends object = Dictionary,
 	META extends object = Dictionary
-	> = Route<PARAMS, QUERY, META> & RouteBlueprint<META>;
+> = Route<PARAMS, QUERY, META> & RouteBlueprint<META>;
 
 /**
  * Public API to work with a route
@@ -357,7 +357,7 @@ export interface RouteAPI<
 	PARAMS extends object = Dictionary,
 	QUERY extends object = Dictionary,
 	META extends object = Dictionary
-	> extends AppliedRoute<PARAMS, QUERY, META> {
+> extends AppliedRoute<PARAMS, QUERY, META> {
 	/**
 	 * Applies a dictionary with parameters to the route path and returns the resolved path
 	 * @param params
@@ -407,7 +407,7 @@ export interface TransitionOptions<
 	PARAMS extends object = Dictionary,
 	QUERY extends object = Dictionary,
 	META extends object = Dictionary
-	> {
+> {
 	params?: PARAMS;
 	query?: QUERY;
 	meta?: META;
@@ -425,7 +425,7 @@ export interface RouteParamsFilter {
 export type PlainRoute<T extends AnyRoute, FILTER extends string = '_'> = Partial<Omit<
 	T extends RouteAPI ? Omit<T, 'resolvePath' | 'toPath'> : T,
 	FILTER
-	>>;
+>>;
 
 /**
  * Purified route, i.e., only common parameters

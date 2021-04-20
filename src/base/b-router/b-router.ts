@@ -366,12 +366,12 @@ export default class bRouter extends iData {
 		return this.engine.clearTmp();
 	}
 
-	/** @see [[getRoutePath]] */
+	/** @see [[router.getRoutePath]] */
 	getRoutePath(ref: string, opts: router.TransitionOptions = {}): CanUndef<string> {
 		return router.getRoutePath(ref, this.routes, opts);
 	}
 
-	/** @see [[getRoute]] */
+	/** @see [[router.getRoute]] */
 	getRoute(ref: string): CanUndef<router.RouteAPI> {
 		const {routes, basePath, defaultRoute} = this;
 		return router.getRoute(ref, routes, {basePath, defaultRoute});

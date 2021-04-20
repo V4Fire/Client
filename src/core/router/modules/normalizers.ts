@@ -12,11 +12,12 @@ import {
 	systemRouteParams,
 	transitionOptions,
 
-	TransitionOptions,
 	AnyRoute,
 	PlainRoute,
 	PurifiedRoute,
 	WatchableRoute,
+
+	TransitionOptions,
 	RouteParamsFilter
 
 } from 'core/router';
