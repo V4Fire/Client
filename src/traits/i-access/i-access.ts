@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -30,44 +32,28 @@ export default abstract class iAccess {
 		]
 	};
 
+	/** @see [[iAccess.disable]] */
+	static disable: AddSelf<iAccess['disable'], iBlock> =
+		async (component) => component.setMod('disabled', true);
+
+	/** @see [[iAccess.enable]] */
+	static enable: AddSelf<iAccess['enable'], iBlock> =
+		async (component) => component.setMod('disabled', false);
+
+	/** @see [[iAccess.focus]] */
+	static focus: AddSelf<iAccess['focus'], iBlock> =
+		async (component) => component.setMod('focused', true);
+
+	/** @see [[iAccess.blur]] */
+	static blur: AddSelf<iAccess['blur'], iBlock> =
+		async (component) => component.setMod('focused', false);
+
 	/**
 	 * Returns true if the component in focus
 	 * @param component
 	 */
 	static isFocused<T extends iBlock>(component: T): boolean {
 		return component.mods.focused === 'true';
-	}
-
-	/**
-	 * Disables the component
-	 * @param component
-	 */
-	static async disable<T extends iBlock>(component: T): Promise<boolean> {
-		return component.setMod('disabled', true);
-	}
-
-	/**
-	 * Enables the component
-	 * @param component
-	 */
-	static async enable<T extends iBlock>(component: T): Promise<boolean> {
-		return component.setMod('disabled', false);
-	}
-
-	/**
-	 * Sets focus to the component
-	 * @param component
-	 */
-	static async focus<T extends iBlock>(component: T): Promise<boolean> {
-		return component.setMod('focused', true);
-	}
-
-	/**
-	 * Unsets focus to the component
-	 * @param component
-	 */
-	static async blur<T extends iBlock>(component: T): Promise<boolean> {
-		return component.setMod('focused', false);
 	}
 
 	/**
@@ -131,23 +117,31 @@ export default abstract class iAccess {
 	 * Enables the component
 	 * @param args
 	 */
-	abstract enable(...args: unknown[]): Promise<boolean>;
+	enable(...args: unknown[]): Promise<boolean> {
+		return <any>null;
+	}
 
 	/**
 	 * Disables the component
 	 * @param args
 	 */
-	abstract disable(...args: unknown[]): Promise<boolean>;
+	disable(...args: unknown[]): Promise<boolean> {
+		return <any>null;
+	}
 
 	/**
 	 * Sets focus to the component
 	 * @param args
 	 */
-	abstract focus(...args: unknown[]): Promise<boolean>;
+	focus(...args: unknown[]): Promise<boolean> {
+		return <any>null;
+	}
 
 	/**
 	 * Unsets focus to the component
 	 * @param args
 	 */
-	abstract blur(...args: unknown[]): Promise<boolean>;
+	blur(...args: unknown[]): Promise<boolean> {
+		return <any>null;
+	}
 }

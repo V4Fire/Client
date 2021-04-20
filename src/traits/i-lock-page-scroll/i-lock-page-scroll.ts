@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -10,8 +12,6 @@
  * [[include:traits/i-lock-page-scroll/README.md]]
  * @packageDocumentation
  */
-
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';

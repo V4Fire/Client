@@ -45,7 +45,7 @@ export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 export * from 'form/b-button/interface';
 
-interface bButton extends Trait<typeof iOpenToggle> {}
+interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
 /**
  * Component to create a button
@@ -58,7 +58,7 @@ interface bButton extends Trait<typeof iOpenToggle> {}
 	}
 })
 
-@derive(iOpenToggle)
+@derive(iAccess, iOpenToggle)
 class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
@@ -182,26 +182,6 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/** @override */
 	protected readonly $refs!: {button: HTMLButtonElement};
-
-	/** @see [[iAccess.focus]] */
-	focus(): Promise<boolean> {
-		return iAccess.focus(this);
-	}
-
-	/** @see [[iAccess.blur]] */
-	blur(): Promise<boolean> {
-		return iAccess.blur(this);
-	}
-
-	/** @see [[iAccess.enable]] */
-	enable(): Promise<boolean> {
-		return iAccess.enable(this);
-	}
-
-	/** @see [[iAccess.disable]] */
-	disable(): Promise<boolean> {
-		return iAccess.disable(this);
-	}
 
 	/** @see [[iOpenToggle.initCloseHelpers]] */
 	@p({hook: 'beforeDataCreate', replace: false})
