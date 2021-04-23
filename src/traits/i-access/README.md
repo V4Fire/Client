@@ -130,7 +130,7 @@ export default class bButton implements iAccess {
 
 ### focus
 
-Sets focus to the component
+Sets the focus to the component
 The method has the default implementation.
 
 ```typescript
@@ -146,7 +146,7 @@ export default class bButton implements iAccess {
 
 ### blur
 
-Unsets focus to the component.
+Unsets the focus from the component.
 The method has the default implementation.
 
 ```typescript

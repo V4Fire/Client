@@ -130,7 +130,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Sets focus to the component
+	 * Sets the focus to the component
 	 * @param args
 	 */
 	focus(...args: unknown[]): Promise<boolean> {
@@ -138,7 +138,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Unsets focus to the component
+	 * Unsets the focus from the component
 	 * @param args
 	 */
 	blur(...args: unknown[]): Promise<boolean> {
