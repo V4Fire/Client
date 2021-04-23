@@ -54,7 +54,7 @@ The trait specifies a bunch of methods to implement.
 
 ### open
 
-Opens the component
+Opens the component.
 The method has the default implementation.
 
 ```typescript

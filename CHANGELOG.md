@@ -26,6 +26,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added documentation:
   * `traits`
   * `traits/i-open`
+  * `traits/i-open-toggle`
 
 ## v3.0.0-rc.181 (2021-04-20)
 

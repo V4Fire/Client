@@ -8,6 +8,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-open-toggle/README.md]]
+ * @packageDocumentation
+ */
+
 import iOpen from 'traits/i-open/i-open';
 import type iBlock from 'super/i-block/i-block';
 
@@ -19,7 +24,7 @@ export default abstract class iOpenToggle extends iOpen {
 		(component) => component.mods.opened === 'true' ? component.close() : component.open();
 
 	/**
-	 * Toggles the component
+	 * Toggles the component to open or close
 	 * @param args
 	 */
 	toggle(...args: unknown[]): Promise<boolean> {
