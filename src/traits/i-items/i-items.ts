@@ -35,7 +35,7 @@ export default abstract class iItems {
 		component: T & iItems,
 		item: any,
 		i: number
-	): CanUndef<IterationKey> {
+	): Nullable<IterationKey> {
 		const
 			{unsafe, itemKey} = component;
 
