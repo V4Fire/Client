@@ -23,7 +23,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :memo: Documentation
 
-* Added `traits/README.md`
+* Added documentation:
+  * `traits`
+  * `traits/i-open`
 
 ## v3.0.0-rc.181 (2021-04-20)
 

@@ -8,17 +8,20 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-open/README.md]]
+ * @packageDocumentation
+ */
+
 import type iBlock from 'super/i-block/i-block';
 import type { ModsDecl, ModEvent, SetModEvent } from 'super/i-block/i-block';
+import type { CloseHelperEvents } from 'traits/i-open/interface';
 
-export interface CloseHelperEvents {
-	key?: string;
-	touch?: string;
-}
+export * from 'traits/i-open/interface';
 
 export default abstract class iOpen {
 	/**
-	 * Open modifiers
+	 * Trait modifiers
 	 */
 	static readonly mods: ModsDecl = {
 		opened: [
@@ -36,7 +39,7 @@ export default abstract class iOpen {
 		async (component) => component.setMod('opened', false);
 
 	/** @see [[iOpen.onOpenedChange]] */
-	static onOpenedChange: AddSelf<iOpen['onOpenedChange'], iBlock> = (component) => {
+	static onOpenedChange: AddSelf<iOpen['onOpenedChange'], iBlock> = async (component) => {
 		// Loopback
 	};
 
@@ -62,10 +65,10 @@ export default abstract class iOpen {
 	};
 
 	/**
-	 * Initializes close helper listeners
+	 * Initialize default event listeners to close a component by a keyboard or mouse
 	 *
 	 * @param component
-	 * @param [events] - event names for helpers
+	 * @param [events] - map with events to listen
 	 */
 	static initCloseHelpers<T extends iBlock>(component: T & iOpen, events: CloseHelperEvents = {}): void {
 		const
@@ -111,8 +114,8 @@ export default abstract class iOpen {
 	/**
 	 * Initializes modifier event listeners
 	 *
-	 * @emits open()
-	 * @emits close()
+	 * @emits `open()`
+	 * @emits `close()`
 	 *
 	 * @param component
 	 */
@@ -146,15 +149,15 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Handler: opened modifier change
+	 * Handler: the opened modifier has been changed
 	 * @param e
 	 */
-	onOpenedChange(e: ModEvent | SetModEvent): void {
+	onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		return <any>null;
 	}
 
 	/**
-	 * Handler: close by a keyboard event
+	 * Handler: closing by a keyboard event
 	 * @param e
 	 */
 	onKeyClose(e: KeyboardEvent): Promise<void> {
@@ -162,7 +165,7 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Handler: close by a touch event
+	 * Handler: closing by a touch event
 	 * @param e
 	 */
 	onTouchClose(e: MouseEvent): Promise<void> {
