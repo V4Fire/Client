@@ -122,3 +122,20 @@ We have created a trait. Now we can implement it in a simple class.
   /// 'QUACK!!!'
   console.log(new DuckLike().getQuack(60));
   ```
+
+5. Of course, we can implement more than one trait in a component.
+
+  ```typescript
+  import { derive } from 'core/functools/trait';
+
+  interface DuckLike extends Trait<typeof Duckable>, Trait<typeof AnotherTrait> {}
+
+  @derive(Duckable, AnotherTrait)
+  class DuckLike implements Duckable, AnotherTrait, SimpleInterfaceWithoutDefaultMethods {
+    name: string = 'Bob';
+
+    fly(): void {
+      // Do some logic to fly
+    }
+  }
+  ```
