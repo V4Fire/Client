@@ -22,9 +22,11 @@ import { icons, iconsMap } from 'traits/i-icon/modules/icons';
 export default abstract class iIcon {
 	/**
 	 * Returns a link for the specified icon
+	 *
+	 * @param component
 	 * @param iconId
 	 */
-	static getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
+	static getIconLink: AddSelf<iIcon['getIconLink'], iBlock> = (component, iconId) => {
 		if (iconId == null) {
 			return SyncPromise.resolve(undefined);
 		}
@@ -51,7 +53,7 @@ export default abstract class iIcon {
 		}
 
 		return SyncPromise.resolve(`${location.pathname + q}#${icon.id}`);
-	}
+	};
 
 	/**
 	 * Updates `href` of the specified `use` element
@@ -60,7 +62,7 @@ export default abstract class iIcon {
 	 * @param el
 	 * @param [href]
 	 */
-	static updateIconHref<T extends iBlock>(component: T, el: SVGUseElement, href?: string): void {
+	static updateIconHref: AddSelf<iIcon['updateIconHref'], iBlock> = (component, el: SVGUseElement, href?) => {
 		const
 			$a = component.unsafe.async,
 			group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
@@ -96,7 +98,7 @@ export default abstract class iIcon {
 				parent.removeChild(newEl);
 			} catch {}
 		}, group);
-	}
+	};
 
 	/**
 	 * Handles an error of the icon loading
@@ -105,10 +107,10 @@ export default abstract class iIcon {
 	 * @param el - link to the source `use` element
 	 * @param err
 	 */
-	static handleIconError<T extends iBlock & iIcon>(component: T, el: SVGUseElement, err: Error): void {
+	static handleIconError: AddSelf<iIcon['handleIconError'], iBlock & iIcon> = (component, el, err) => {
 		stderr(err);
 		component.updateIconHref(el);
-	}
+	};
 
 	/**
 	 * Link to iIcon.getIconLink
