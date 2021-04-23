@@ -21,6 +21,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `i-open-toggle`
   * `i-access`
 
+#### :memo: Documentation
+
+* Added `traits/README.md`
+
 ## v3.0.0-rc.181 (2021-04-20)
 
 #### :bug: Bug Fix
