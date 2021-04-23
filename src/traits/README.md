@@ -41,6 +41,8 @@ And this is where traits come into play. But how it works? Ok, let's enumerate t
       return <any>null;
     }
 
+    // The first parameter provides a method to wrap.
+    // The second parameter declares which type has `self`.
     static getQuack: AddSelf<Duckable['getQuack'], Duckable> = (self, size) => {
       if (size < 10) {
         return 'quack!';
