@@ -37,7 +37,7 @@ export default class History extends Friend {
 	};
 
 	/**
-	 * History modifiers
+	 * Trait modifiers
 	 */
 	static readonly mods: ModsDecl = {
 		blankHistory: [

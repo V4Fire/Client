@@ -18,7 +18,7 @@ import type { ModsDecl, ModEvent } from 'super/i-block/i-block';
 
 export default abstract class iAccess {
 	/**
-	 * Accessibility modifiers
+	 * Trait modifiers
 	 */
 	static readonly mods: ModsDecl = {
 		disabled: [

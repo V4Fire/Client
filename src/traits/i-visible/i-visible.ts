@@ -17,7 +17,7 @@ import type { ModEvent, ModsDecl } from 'super/i-block/i-block';
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iVisible {
 	/**
-	 * Visibility modifiers
+	 * Trait modifiers
 	 */
 	static readonly mods: ModsDecl = {
 		hidden: [

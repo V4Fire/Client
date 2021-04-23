@@ -18,7 +18,7 @@ export * from 'traits/i-size/interface';
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iSize {
 	/**
-	 * Size modifiers
+	 * Trait modifiers
 	 */
 	static readonly mods: ModsDecl = {
 		size: [
