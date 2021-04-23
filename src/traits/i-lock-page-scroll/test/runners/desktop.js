@@ -24,43 +24,6 @@ module.exports = (page) => {
 			bodyNode,
 			dummyComponent;
 
-		const checkPaddingRight = async (res) => {
-			const
-				paddingRight = await bodyNode.evaluate((ctx) => ctx.style.getPropertyValue('padding-right'));
-
-			expect(paddingRight).toEqual(res);
-		};
-
-		const checkRootMod = async (res) => {
-			const
-				root = await page.$('html'),
-				fullModName = 'p-v-4-components-demo-lock-scroll-desktop-true',
-				containsMod = await root.evaluate(
-					(ctx, mod) => ctx.classList.contains(mod),
-					fullModName
-				);
-
-			expect(containsMod).toEqual(res);
-		};
-
-		const lock = () => dummyComponent.evaluate(async (ctx) => {
-			await ctx.lock();
-		});
-
-		const lockTwice = () => dummyComponent.evaluate(async (ctx) => {
-			await ctx.lock();
-			await ctx.lock();
-		});
-
-		const unlock = () => dummyComponent.evaluate(async (ctx) => {
-			await ctx.unlock();
-		});
-
-		const unlockTwice = () => dummyComponent.evaluate(async (ctx) => {
-			await ctx.unlock();
-			await ctx.unlock();
-		});
-
 		beforeEach(async () => {
 			await h.utils.reloadAndWaitForIdle(page);
 
@@ -69,11 +32,9 @@ module.exports = (page) => {
 		});
 
 		describe('lock', () => {
-			it('sets padding-right to body', async () => {
+			it('sets `padding-right` to the body', async () => {
 				await page.evaluate(() => {
-					const
-						body = document.querySelector('body');
-
+					const body = document.querySelector('body');
 					body.style.setProperty('padding-right', '20px');
 				});
 
@@ -84,7 +45,7 @@ module.exports = (page) => {
 				await checkPaddingRight(`${scrollBarWidth}px`);
 			});
 
-			it('fast repetitive calls set padding-right to body', async () => {
+			it('fast repetitive calls to set `padding-right` to the body', async () => {
 				await page.evaluate(() => {
 					const
 						body = document.querySelector('body');
@@ -99,19 +60,19 @@ module.exports = (page) => {
 				await checkPaddingRight(`${scrollBarWidth}px`);
 			});
 
-			it('sets root mod lockScrollDesktop', async () => {
+			it('sets the `lockScrollDesktop` root modifier', async () => {
 				await lock();
 				await checkRootMod(true);
 			});
 
-			it('fast repetitive calls set root mod lockScrollDesktop', async () => {
+			it('fast repetitive calls to set the `lockScrollDesktop` root modifier', async () => {
 				await lockTwice();
 				await checkRootMod(true);
 			});
 		});
 
 		describe('unlock', () => {
-			it('removes root mod lockScrollDesktop', async () => {
+			it('removes the `lockScrollDesktop` root modifier', async () => {
 				await lock();
 				await checkRootMod(true);
 
@@ -119,7 +80,7 @@ module.exports = (page) => {
 				await checkRootMod(false);
 			});
 
-			it('fast repetitive calls remove root mod lockScrollDesktop', async () => {
+			it('fast repetitive calls to remove the `lockScrollDesktop` root modifier', async () => {
 				await lock();
 				await checkRootMod(true);
 
@@ -127,15 +88,13 @@ module.exports = (page) => {
 				await checkRootMod(false);
 			});
 
-			it('restores body padding-right', async () => {
+			it('restores `padding-right` of the body', async () => {
 				const
 					paddingRightValue = '20px';
 
 				await page.evaluate(
 					(paddingRight) => {
-						const
-							body = document.querySelector('body');
-
+						const body = document.querySelector('body');
 						body.style.setProperty('padding-right', paddingRight);
 					},
 
@@ -147,15 +106,13 @@ module.exports = (page) => {
 				await checkPaddingRight(paddingRightValue);
 			});
 
-			it('fast repetitive calls restore body padding-right', async () => {
+			it('fast repetitive calls to restore `padding-right` of the body', async () => {
 				const
 					paddingRightValue = '20px';
 
 				await page.evaluate(
 					(paddingRight) => {
-						const
-							body = document.querySelector('body');
-
+						const body = document.querySelector('body');
 						body.style.setProperty('padding-right', paddingRight);
 					},
 
@@ -167,7 +124,7 @@ module.exports = (page) => {
 				await checkPaddingRight(paddingRightValue);
 			});
 
-			it('preserves scroll position', async () => {
+			it('preserves a scroll position', async () => {
 				const getScrollTop = () =>
 					page.evaluate(() => document.documentElement.scrollTop);
 
@@ -190,5 +147,49 @@ module.exports = (page) => {
 				await expect(await getScrollTop()).toEqual(scrollYPosition);
 			});
 		});
+
+		async function checkPaddingRight(res) {
+			const paddingRight = await bodyNode.evaluate((ctx) => ctx.style.getPropertyValue('padding-right'));
+			expect(paddingRight).toEqual(res);
+		}
+
+		async function checkRootMod(res) {
+			const
+				root = await page.$('html'),
+				fullModName = 'p-v-4-components-demo-lock-scroll-desktop-true';
+
+			const containsMod = await root.evaluate(
+				(ctx, mod) => ctx.classList.contains(mod),
+				fullModName
+			);
+
+			expect(containsMod).toEqual(res);
+		}
+
+		function lock() {
+			return dummyComponent.evaluate(async (ctx) => {
+				await ctx.lock();
+			});
+		}
+
+		function lockTwice() {
+			return dummyComponent.evaluate(async (ctx) => {
+				await ctx.lock();
+				await ctx.lock();
+			});
+		}
+
+		function unlock() {
+			return dummyComponent.evaluate(async (ctx) => {
+				await ctx.unlock();
+			});
+		}
+
+		function unlockTwice() {
+			return dummyComponent.evaluate(async (ctx) => {
+				await ctx.unlock();
+				await ctx.unlock();
+			});
+		}
 	});
 };
