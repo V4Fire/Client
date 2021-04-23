@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `i-open`
   * `i-open-toggle`
   * `i-access`
+  * `i-icon`
 
 #### :memo: Documentation
 

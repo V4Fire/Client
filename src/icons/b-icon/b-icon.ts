@@ -11,16 +11,25 @@
  * @packageDocumentation
  */
 
+import { derive } from 'core/functools/trait';
+
 import iIcon from 'traits/i-icon/i-icon';
 import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
 
+interface bIcon extends Trait<typeof iIcon> {}
+
 /**
  * Component to use an SVG icon from the global SVG sprite
  */
-@component({functional: true, flyweight: true})
-export default class bIcon extends iBlock implements iIcon {
+@component({
+	functional: true,
+	flyweight: true
+})
+
+@derive(iIcon)
+class bIcon extends iBlock implements iIcon {
 	/**
 	 * Component value
 	 */
@@ -40,19 +49,6 @@ export default class bIcon extends iBlock implements iIcon {
 			'full'
 		]
 	};
-
-	/** @see [[iIcon.getIconLink]] */
-	getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
-		return iIcon.getIconLink(iconId);
-	}
-
-	/** @see [[iIcon.updateIconHref]] */
-	updateIconHref(el: SVGUseElement, href?: string): void {
-		iIcon.updateIconHref(this, el, href);
-	}
-
-	/** @see [[iIcon.handleIconError]] */
-	handleIconError(el: SVGUseElement, err: Error): void {
-		iIcon.handleIconError(this, el, err);
-	}
 }
+
+export default bIcon;

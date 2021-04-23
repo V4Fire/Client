@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -111,7 +113,9 @@ export default abstract class iIcon {
 	/**
 	 * Link to iIcon.getIconLink
 	 */
-	abstract getIconLink: typeof iIcon.getIconLink;
+	getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
+		return <any>null;
+	}
 
 	/**
 	 * Updates `href` of the specified `use` element
@@ -119,7 +123,9 @@ export default abstract class iIcon {
 	 * @param el
 	 * @param [href]
 	 */
-	abstract updateIconHref(el: SVGUseElement, href?: string): void;
+	updateIconHref(el: SVGUseElement, href?: string): void {
+		return <any>null;
+	}
 
 	/**
 	 * Handles an error of the icon loading
@@ -127,5 +133,7 @@ export default abstract class iIcon {
 	 * @param el - link to the source `use` element
 	 * @param err
 	 */
-	abstract handleIconError(el: SVGUseElement, err: Error): void;
+	handleIconError(el: SVGUseElement, err: Error): void {
+		return <any>null;
+	}
 }
