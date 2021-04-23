@@ -162,7 +162,11 @@ export default class bButton implements iAccess {
 
 ## Helpers
 
-The trait provides a helper function to initialize modifier event listeners to emit component events.
+The trait provides a bunch of helper functions to initialize event listeners.
+
+### initModEvents
+
+Initialize modifier event listeners to emit trait events.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
