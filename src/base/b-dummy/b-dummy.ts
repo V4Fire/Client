@@ -29,7 +29,7 @@ const
 export * from 'super/i-data/i-data';
 export * from 'base/b-dummy/interface';
 
-interface bDummy extends Trait<typeof iLockPageScroll> {}
+interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM> {}
 
 @component({
 	functional: {
@@ -38,7 +38,7 @@ interface bDummy extends Trait<typeof iLockPageScroll> {}
 	}
 })
 
-@derive(iLockPageScroll)
+@derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	/**
 	 * Test field
@@ -89,11 +89,6 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 			childList: true,
 			subtree: true
 		});
-	}
-
-	/** @see [[iObserveDOM.onDOMChange]] */
-	onDOMChange(): void {
-		iObserveDOM.emitDOMChange(this);
 	}
 }
 

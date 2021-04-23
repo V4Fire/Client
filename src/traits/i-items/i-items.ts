@@ -12,14 +12,7 @@
  */
 
 import type iBlock from 'super/i-block/i-block';
-
-import type {
-
-	IterationKey,
-	ItemPropsFn,
-	CreateFromItemFn
-
-} from 'traits/i-items/interface';
+import type { IterationKey, ItemPropsFn, CreateFromItemFn } from 'traits/i-items/interface';
 
 export * from 'traits/i-items/interface';
 
@@ -35,7 +28,7 @@ export default abstract class iItems {
 		component: T & iItems,
 		item: any,
 		i: number
-	): Nullable<IterationKey> {
+	): CanUndef<IterationKey> {
 		const
 			{unsafe, itemKey} = component;
 
@@ -67,10 +60,10 @@ export default abstract class iItems {
 		}
 
 		if (Object.isPrimitive(id)) {
-			return id;
+			return id ?? undefined;
 		}
 
-		return id != null ? String(id) : id;
+		return id != null ? String(id) : undefined;
 	}
 
 	/**

@@ -16,11 +16,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Improved traits to support auto-deriving:
-  * `i-lock-page-scroll`
-  * `i-open`
-  * `i-open-toggle`
-  * `i-access`
-  * `i-icon`
+  * `iLockPageScroll`
+  * `iOpen`
+  * `iOpenToggle`
+  * `iAccess`
+  * `iIcon`
+  * `iObserveDom`
 
 #### :memo: Documentation
 
