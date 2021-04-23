@@ -1,6 +1,6 @@
 # traits/i-lock-page-scroll
 
-This trait provides API to lock the page scroll.
+This trait provides API to lock the document scroll.
 It is used if you have a problem with the scrolling page under pop-ups or other overlaying elements.
 
 ## Synopsis
@@ -9,47 +9,75 @@ It is used if you have a problem with the scrolling page under pop-ups or other 
 
 * The trait contains TS logic and default styles.
 
-## API
+## Events
 
-The trait specifies two methods to manage the document lock scroll status: `lock` and `unlock`.
+| Name     | Description                       | Payload description | Payload |
+| -------- | --------------------------------- | ------------------- | ------- |
+| `lock`   | The page scroll has been locked   | -                   | -       |
+| `unlock` | The page scroll has been unlocked | -                   | -       |
 
-Invoking the `lock` method prevents any document scrolling behavior,
-but you can specify the node within which the scrolling is acceptable.
-
-All methods are declared in the trait have the default implementations via the static methods.
-You can derive it automatically by using the `derive` decorator.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
-import { derive } from 'core/functools/trait';
-
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
-interface bWindow extends Trait<typeof iLockPageScroll> {}
-
-@derive(iLockPageScroll)
 class bWindow implements iLockPageScroll {
   /** @override */
-  protected readonly $refs!: {
-    window: HTMLElement;
-  };
-
-  /** @see iLockPageScroll.lock */
-  lock(): Promise<void> {
-    return iLockPageScroll.lock(this, this.$refs.window);
+  protected initModEvents(): void {
+    super.initModEvents();
+    iLockPageScroll.initModEvents(this);
   }
 }
-
-export default bWindow;
 ```
 
-### Helpers
+## Methods
 
-The trait provides a helper function to initialize modifier event listeners to emit component events.
+The trait specifies a bunch of methods to implement.
+
+### lock
+
+Locks the document scroll, i.e., it prevents any scrolling on the document except withing the specified node.
+The method has the default implementation.
 
 ```typescript
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
-export default class bWindow implements iLockPageScroll {
+class bWindow implements iLockPageScroll {
+  /** @see iLockPageScroll.enlockable */
+  lock(scrollableNode?: Element): Promise<void> {
+    return iLockPageScroll.lock(this, scrollableNode);
+  }
+}
+```
+
+### unlock
+
+Unlocks the document scroll.
+The method has the default implementation.
+
+```typescript
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+
+class bWindow implements iLockPageScroll {
+  /** @see iLockPageScroll.unlock */
+  unlock(): Promise<void> {
+    return iLockPageScroll.unlock(this);
+  }
+}
+```
+
+## Helpers
+
+The trait provides a bunch of helper functions to initialize event listeners.
+
+### initModEvents
+
+Initialize modifier event listeners to emit trait events.
+
+```typescript
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+
+class bWindow implements iLockPageScroll {
   /** @override */
   protected initModEvents(): void {
     super.initModEvents();

@@ -14,7 +14,7 @@ This module provides a trait for a component that needs to implement the "openin
 | -------- | ----------------------- | ----------| ------- |
 | `opened` | The component is opened | `Boolean` | -       |
 
-To support these modifiers, import them from the trait into your component.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
 import iOpen from 'traits/i-open/i-open';

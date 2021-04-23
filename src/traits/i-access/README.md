@@ -15,7 +15,7 @@ This module provides a trait for a component that needs to implement the "access
 | `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented              | `Boolean` | -       |
 | `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `Boolean` | -       |
 
-To support these modifiers, import them from the trait into your component.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';

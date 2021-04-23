@@ -14,7 +14,7 @@ This module provides a trait for a component that needs to implement the "visibi
 | -------- | ----------------------- | ----------| ------- |
 | `hidden` | The component is hidden | `Boolean` | -       |
 
-To support these modifiers, import them from the trait into your component.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
 import iVisible from 'traits/i-visible/i-visible';
@@ -33,7 +33,7 @@ export default class bButton implements iVisible {
 | `show`  | The component has been shown  | -                   | -       |
 | `hide`  | The component has been hidden | -                   | -       |
 
-To support these modifiers, import them from the trait into your component.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
 import iVisible from 'traits/i-visible/i-visible';

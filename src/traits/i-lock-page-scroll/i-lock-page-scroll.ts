@@ -178,7 +178,11 @@ export default abstract class iLockPageScroll {
 	};
 
 	/**
-	 * Initializes modifier event listeners
+	 * Initializes modifier event listeners for the specified components
+	 *
+	 * @emits `lock()`
+	 * @emits `unlock()`
+	 *
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
