@@ -86,7 +86,7 @@ We have created a trait. Now we can implement it in a simple class.
   }
   ```
 
-3. Use the `derive` decorator from `core/functools/derive` with our class and provide all traits that we want to implement automatically.
+3. Use the `derive` decorator from `core/functools/trait` with our class and provide all traits that we want to implement automatically.
 
   ```typescript
   import { derive } from 'core/functools/trait';
