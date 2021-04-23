@@ -8,7 +8,7 @@ This module provides a trait for a component that extends the "opening/closing" 
 
 * The trait contains only TS logic.
 
-* The component extends [[iOpen]].
+* The trait extends [[iOpen]] and re-exports its API.
 
 ## Methods
 
