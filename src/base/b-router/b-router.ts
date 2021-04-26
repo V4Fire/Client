@@ -797,8 +797,7 @@ export default class bRouter extends iData {
 	 * @param [routes]
 	 */
 	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): router.RouteBlueprints {
-		const {basePath, defaultRoute} = this;
-		return router.compileStaticRoutes(routes, {basePath, defaultRoute});
+		return router.compileStaticRoutes(routes, {basePath: this.basePath});
 	}
 
 	/** @override */
