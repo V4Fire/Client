@@ -52,14 +52,17 @@ export * from 'base/b-bottom-slide/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bBottomSlide extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM> {}
+interface bBottomSlide extends
+	Trait<typeof iLockPageScroll>,
+	Trait<typeof iObserveDOM>,
+	Trait<typeof iOpen> {}
 
 /**
  * Component to create bottom sheet behavior that is similar to native mobile UI
  * @see https://material.io/develop/android/components/bottom-sheet-behavior/
  */
 @component()
-@derive(iLockPageScroll, iObserveDOM)
+@derive(iLockPageScroll, iObserveDOM, iOpen)
 class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
 	/**
 	 * Component height mode:
@@ -501,11 +504,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 		this.step--;
 		return true;
-	}
-
-	/** @see [[iOpen.onOpenedChange]] */
-	async onOpenedChange(): Promise<void> {
-		// Loopback
 	}
 
 	/** @see [[iOpen.onKeyClose]] */
