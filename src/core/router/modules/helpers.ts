@@ -25,7 +25,9 @@ import type {
 	RouteBlueprints,
 
 	TransitionOptions,
-	AdditionalGetRouteOpts
+
+	AdditionalGetRouteOpts,
+	AdditionalCompileRoutesOpts
 
 } from 'core/router/interface';
 
@@ -333,7 +335,7 @@ export function getRoutePath(ref: string, routes: RouteBlueprints, opts: Transit
  * @param routes
  * @param [opts]
  */
-export function compileStaticRoutes(routes: StaticRoutes, opts: AdditionalGetRouteOpts = {}): RouteBlueprints {
+export function compileStaticRoutes(routes: StaticRoutes, opts: AdditionalCompileRoutesOpts = {}): RouteBlueprints {
 	const
 		{basePath = ''} = opts,
 		compiledRoutes = {};

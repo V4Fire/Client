@@ -385,6 +385,13 @@ export interface AdditionalGetRouteOpts {
 }
 
 /**
+ * Additional options to use on compiling routes
+ */
+export interface AdditionalCompileRoutesOpts {
+	basePath?: string;
+}
+
+/**
  * Parameters of a route
  */
 export interface RouteParams extends TransitionOptions {
