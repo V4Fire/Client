@@ -13,10 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import path, { Key, RegExpOptions } from 'path-to-regexp';
-
 import { deprecated } from 'core/functools/deprecation';
-import { concatURLs } from 'core/url';
 
 import globalRoutes from 'routes';
 import type Async from 'core/async';
@@ -796,100 +793,12 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Compiles the specified static routes and returns a new object
+	 * Compiles the specified static routes with the current base path and default route and returns a new object
 	 * @param [routes]
 	 */
 	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): router.RouteBlueprints {
-		const
-			{basePath} = this,
-			compiledRoutes = {};
-
-		for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
-			const
-				name = keys[i],
-				route = routes[name] ?? {},
-				pathParams = [];
-
-			if (Object.isString(route)) {
-				const
-					pattern = concatURLs(basePath, route);
-
-				compiledRoutes[name] = {
-					name,
-
-					pattern,
-					rgxp: path(pattern, pathParams),
-
-					get pathParams(): Key[] {
-						return pathParams;
-					},
-
-					/** @deprecated */
-					get page(): string {
-						return this.name;
-					},
-
-					/** @deprecated */
-					get index(): boolean {
-						return this.meta.default;
-					},
-
-					meta: {
-						name,
-						external: router.isExternal.test(pattern),
-
-						/** @deprecated */
-						page: name
-					}
-				};
-
-			} else {
-				let
-					pattern;
-
-				if (Object.isString(route.path)) {
-					pattern = concatURLs(basePath, route.path);
-				}
-
-				compiledRoutes[name] = {
-					name,
-
-					pattern,
-					rgxp: pattern != null ? path(pattern, pathParams, <RegExpOptions>route.pathOpts) : undefined,
-
-					get pathParams(): Key[] {
-						return pathParams;
-					},
-
-					/** @deprecated */
-					get page(): string {
-						return this.name;
-					},
-
-					/** @deprecated */
-					get index(): boolean {
-						return this.meta.default;
-					},
-
-					meta: {
-						...route,
-
-						name,
-						default: Boolean(route.default ?? route.index ?? router.defaultRouteNames[name]),
-
-						external: route.external ?? (
-							router.isExternal.test(pattern) ||
-							router.isExternal.test(route.redirect ?? '')
-						),
-
-						/** @deprecated */
-						page: name
-					}
-				};
-			}
-		}
-
-		return compiledRoutes;
+		const {basePath, defaultRoute} = this;
+		return router.compileStaticRoutes(routes, {basePath, defaultRoute});
 	}
 
 	/** @override */

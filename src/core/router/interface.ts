@@ -310,7 +310,7 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	/**
 	 * Pattern of the route path
 	 */
-	pattern?: string;
+	pattern?: string | ((params: Route) => CanUndef<string>);
 
 	/**
 	 * RegExp to parse the route path
