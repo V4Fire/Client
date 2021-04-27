@@ -385,9 +385,12 @@ export interface AdditionalGetRouteOpts {
 }
 
 /**
- * Additional options to use on compiling routes
+ * Additional options to compile routes
  */
-export interface AdditionalCompileRoutesOpts {
+export interface CompileRoutesOpts {
+	/**
+	 * Base route path: all route paths are concatenated with this path
+	 */
 	basePath?: string;
 }
 

@@ -793,7 +793,7 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Compiles the specified static routes with the current base path and default route and returns a new object
+	 * Compiles the specified static routes with the current base path and returns a new object
 	 * @param [routes]
 	 */
 	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): router.RouteBlueprints {
