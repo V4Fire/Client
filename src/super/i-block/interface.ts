@@ -8,6 +8,7 @@
 
 import type iBlock from 'super/i-block/i-block';
 
+import type { AsyncOptions } from 'core/async';
 import type { UnsafeComponentInterface } from 'core/component';
 import type { statuses } from 'super/i-block/const';
 
@@ -139,4 +140,8 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	waitRef: CTX['waitRef'];
+}
+
+export interface WaitRefOptions extends AsyncOptions {
+	emitForLoad: string | CallableFunction;
 }

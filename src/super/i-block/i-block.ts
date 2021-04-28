@@ -110,7 +110,9 @@ import type {
 	InitLoadCb,
 
 	ParentMessage,
-	UnsafeIBlock
+	UnsafeIBlock,
+
+	WaitRefOptions
 
 } from 'super/i-block/interface';
 
@@ -2389,7 +2391,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
+	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: WaitRefOptions): Promise<T> {
 		let
 			that = <iBlock>this;
 
@@ -2410,6 +2412,15 @@ export default abstract class iBlock extends ComponentInterface {
 
 			} else {
 				watchers?.push(resolve);
+
+				if (opts?.emitForLoad != null) {
+					if (Object.isString(opts.emitForLoad)) {
+						this.localEmitter.emit(opts.emitForLoad);
+
+					} else if (Object.isFunction(opts.emitForLoad)) {
+						opts.emitForLoad();
+					}
+				}
 			}
 		}), opts);
 	}
