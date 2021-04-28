@@ -233,9 +233,13 @@ export function beforeDataCreateState(
 		}
 	});
 
-	runHook('beforeDataCreate', component).catch(stderr);
-	implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
-	bindRemoteWatchers(component);
+	runHook('beforeDataCreate', component)
+		.catch(stderr);
+
+	if (!component.isFlyweight && !component.$renderEngine.supports.ssr) {
+		implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
+		bindRemoteWatchers(component);
+	}
 }
 
 /**

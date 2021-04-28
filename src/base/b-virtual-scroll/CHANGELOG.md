@@ -9,12 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with `itemProps` not being provided to child components](https://github.com/V4Fire/Client/issues/512)
 
 ## v3.0.0-rc.170 (2021-03-26)
 
 #### :rocket: New Feature
 
-* Added `chunkRender` event
+* Added a new event `chunkRender`
 
 ## v3.0.0-rc.164 (2021-03-22)
 
@@ -26,7 +31,7 @@ Changelog
 
 #### :house: Internal
 
-* [`bVirtualScroll` is now implements `iItems` trait `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/471)
+* [`bVirtualScroll` is now implements `iItems` trait](https://github.com/V4Fire/Client/issues/471)
 
 ## v3.0.0-rc.151 (2021-03-04)
 

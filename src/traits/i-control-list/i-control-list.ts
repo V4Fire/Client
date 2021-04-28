@@ -74,7 +74,7 @@ export default abstract class iControlList {
 					return fn.call(component);
 				}
 
-				throw new TypeError(`Action method "${action}" is not a function`);
+				throw new TypeError(`The action method "${action}" is not a function`);
 			}
 
 			if (Object.isSimpleFunction(action)) {
@@ -96,7 +96,7 @@ export default abstract class iControlList {
 				return methodFn.call(component, ...(argsMapFn ? argsMapFn.call(component, fullArgs) || [] : fullArgs));
 			}
 
-			throw new TypeError('Action method is not a function');
+			throw new TypeError('The action method is not a function');
 		}
 	}
 

@@ -124,7 +124,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @deprecated
 	 * @see [[iItems.itemProps]]
 	 */
-	@prop({type: Function, default: () => ({})})
+	@prop({type: Function})
 	readonly optionProps!: iItems['itemProps'];
 
 	/** @see [[iItems.itemProps]] */

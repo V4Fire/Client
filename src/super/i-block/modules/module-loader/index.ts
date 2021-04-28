@@ -60,14 +60,12 @@ export default class ModuleLoader extends Friend {
 				cache.set(module.id, module);
 			}
 
-			modules.push(module);
-
 			if (Object.isFunction(resolve)) {
 				resolve(module);
 			}
 		}
 
-		return modules.length;
+		return cache.size;
 	}
 
 	/**

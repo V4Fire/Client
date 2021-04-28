@@ -73,7 +73,7 @@ module.exports = (page) => {
 			await renderComponent();
 			await h.dom.waitForEl(container, 'section');
 			const attrVal = await (await container.$('section')).evaluate((el) => el.getAttribute('data-index'));
-			expect(Number(attrVal)).toBe(0);
+			expect(parseInt(attrVal, 10)).toBe(0);
 		});
 
 		it('uses the deprecated optionKey property', async () => {

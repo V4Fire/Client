@@ -20,7 +20,7 @@ import type { BoundFn, ProxyCb } from 'core/async';
 
 import type {
 
-	ComponentDriver,
+	ComponentEngine,
 
 	ComponentOptions,
 	FunctionalComponentOptions,
@@ -39,7 +39,9 @@ import type {
 
 	WatchPath,
 	WatchOptions,
-	RawWatchHandler
+	RawWatchHandler,
+
+	RenderEngine
 
 } from 'core/component/interface';
 
@@ -47,7 +49,7 @@ import type {
  * Component render function
  */
 export type RenderFunction =
-	ComponentOptions<ComponentDriver>['render'] |
+	ComponentOptions<ComponentEngine>['render'] |
 	FunctionalComponentOptions['render'];
 
 /**
@@ -153,6 +155,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$createElement: CTX['$createElement'];
+
+	// @ts-ignore (access)
+	$initializer: CTX['$initializer'];
 
 	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
@@ -274,7 +279,7 @@ export abstract class ComponentInterface {
 	/**
 	 * Map of raw component options
 	 */
-	readonly $options!: ComponentOptions<ComponentDriver>;
+	readonly $options!: ComponentOptions<ComponentEngine>;
 
 	/**
 	 * Map of initialized component input properties
@@ -302,6 +307,11 @@ export abstract class ComponentInterface {
 	 * Link to the root component
 	 */
 	readonly $root!: this['Root'];
+
+	/**
+	 * Description object of the used rendering engine
+	 */
+	readonly $renderEngine!: RenderEngine;
 
 	/**
 	 * True if the component can be attached to a parent render function
@@ -428,6 +438,11 @@ export abstract class ComponentInterface {
 	 * Link to a function that creates virtual nodes
 	 */
 	protected $createElement!: CreateElement;
+
+	/**
+	 * Promise of the component initializing
+	 */
+	protected $initializer?: Promise<unknown>;
 
 	/**
 	 * Logs an event with the specified context

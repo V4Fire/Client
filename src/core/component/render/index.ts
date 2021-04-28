@@ -23,10 +23,7 @@ export * from 'core/component/render/interface';
  * @param renderObject
  * @param ctx - component context
  */
-export function execRenderObject(
-	renderObject: RenderObject,
-	ctx: Dictionary<any>
-): VNode {
+export function execRenderObject(renderObject: RenderObject, ctx: Dictionary<any>): VNode {
 	const
 		fns = renderObject.staticRenderFns;
 
