@@ -76,7 +76,7 @@ module.exports = (page) => {
 			expect(parseInt(attrVal, 10)).toBe(0);
 		});
 
-		it('uses the deprecated optionKey property', async () => {
+		it('uses the deprecated `optionKey` property', async () => {
 			await renderComponent({
 				itemKey: undefined
 			});
@@ -88,7 +88,7 @@ module.exports = (page) => {
 			expect(optionKey2).toBe(1);
 		});
 
-		it('uses the itemKey property', async () => {
+		it('uses the `itemKey` property', async () => {
 			await renderComponent({
 				optionKey: undefined
 			});
