@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import path from 'path-to-regexp';
+import path, { Key, RegExpOptions } from 'path-to-regexp';
 
 import { concatURLs, toQueryString, fromQueryString } from 'core/url';
 import { deprecate } from 'core/functools/deprecation';
 
-import { qsClearFixRgxp, routeNames } from 'core/router/const';
+import { qsClearFixRgxp, routeNames, defaultRouteNames, isExternal } from 'core/router/const';
 
 import type {
 
@@ -19,12 +19,15 @@ import type {
 	AppliedRoute,
 	RouteAPI,
 	InitialRoute,
+	StaticRoutes,
 
 	RouteBlueprint,
 	RouteBlueprints,
 
 	TransitionOptions,
-	AdditionalGetRouteOpts
+
+	AdditionalGetRouteOpts,
+	CompileRoutesOpts
 
 } from 'core/router/interface';
 
@@ -243,7 +246,10 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				return path.compile(resolvedRoute!.meta.redirect ?? ref)(p);
 			}
 
-			return path.compile(resolvedRoute!.pattern ?? ref)(p);
+			const
+				pattern = Object.isFunction(resolvedRoute?.pattern) ? resolvedRoute?.pattern(routeAPI) : resolvedRoute?.pattern;
+
+			return path.compile(pattern ?? ref)(p);
 		},
 
 		toPath(params?: Dictionary): string {
@@ -264,7 +270,10 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			params = resolvedRoute.rgxp.exec(initialRef);
 
 		if (params) {
-			for (let o = path.parse(resolvedRoute.pattern!), i = 0, j = 0; i < o.length; i++) {
+			const
+				pattern = Object.isFunction(resolvedRoute.pattern) ? resolvedRoute.pattern(routeAPI) : resolvedRoute.pattern;
+
+			for (let o = path.parse(pattern ?? ''), i = 0, j = 0; i < o.length; i++) {
 				const
 					el = o[i];
 
@@ -318,4 +327,103 @@ export function getRoutePath(ref: string, routes: RouteBlueprints, opts: Transit
 	}
 
 	return res.replace(qsClearFixRgxp, '');
+}
+
+/**
+ * Compiles the specified static routes and returns a new object
+ *
+ * @param routes
+ * @param [opts]
+ */
+export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpts = {}): RouteBlueprints {
+	const
+		{basePath = ''} = opts,
+		compiledRoutes = {};
+
+	for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
+		const
+			name = keys[i],
+			route = routes[name] ?? {},
+			pathParams = [];
+
+		if (Object.isString(route)) {
+			const
+				pattern = concatURLs(basePath, route);
+
+			compiledRoutes[name] = {
+				name,
+
+				pattern,
+				rgxp: path(pattern, pathParams),
+
+				get pathParams(): Key[] {
+					return pathParams;
+				},
+
+				/** @deprecated */
+				get page(): string {
+					return this.name;
+				},
+
+				/** @deprecated */
+				get index(): boolean {
+					return this.meta.default;
+				},
+
+				meta: {
+					name,
+					external: isExternal.test(pattern),
+
+					/** @deprecated */
+					page: name
+				}
+			};
+
+		} else {
+			let
+				pattern;
+
+			if (Object.isString(route.path)) {
+				pattern = concatURLs(basePath, route.path);
+			}
+
+			compiledRoutes[name] = {
+				name,
+
+				pattern,
+				rgxp: pattern != null ? path(pattern, pathParams, <RegExpOptions>route.pathOpts) : undefined,
+
+				get pathParams(): Key[] {
+					return pathParams;
+				},
+
+				/** @deprecated */
+				get page(): string {
+					return this.name;
+				},
+
+				/** @deprecated */
+				get index(): boolean {
+					return this.meta.default;
+				},
+
+				meta: {
+					...route,
+
+					name,
+					default: Boolean(route.default ?? route.index ?? defaultRouteNames[name]),
+
+					external: route.external ?? (
+						isExternal.test(pattern) ||
+						isExternal.test(route.redirect ?? '')
+					),
+
+					/** @deprecated */
+					page: name
+				}
+			};
+		}
+	}
+
+	return compiledRoutes;
 }

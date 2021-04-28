@@ -310,7 +310,7 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	/**
 	 * Pattern of the route path
 	 */
-	pattern?: string;
+	pattern?: string | ((route: RouteAPI) => CanUndef<string>);
 
 	/**
 	 * RegExp to parse the route path
@@ -382,6 +382,16 @@ export type AnyRoute =
 export interface AdditionalGetRouteOpts {
 	basePath?: string;
 	defaultRoute?: RouteBlueprint;
+}
+
+/**
+ * Additional options to compile routes
+ */
+export interface CompileRoutesOpts {
+	/**
+	 * Base route path: all route paths are concatenated with this path
+	 */
+	basePath?: string;
 }
 
 /**
