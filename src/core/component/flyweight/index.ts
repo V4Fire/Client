@@ -15,9 +15,9 @@ import { deprecate } from 'core/functools/deprecation';
 import Async from 'core/async';
 
 import { components } from 'core/component/const';
-import { patchVNode, supports, CreateElement, VNode } from 'core/component/engines';
-import { forkMeta } from 'core/component/meta';
+import type { CreateElement, VNode } from 'core/component/engines';
 
+import { forkMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { destroyComponent, FlyweightVNode } from 'core/component/functional';
@@ -46,9 +46,10 @@ export function parseVNodeAsFlyweight(
 	parentComponent: ComponentInterface
 ): VNode | FlyweightVNode {
 	const
+		renderEngine = parentComponent.$renderEngine,
 		compositeAttr = vnode.data?.attrs?.['v4-flyweight-component'];
 
-	if (!supports.composite || compositeAttr == null) {
+	if (!renderEngine.supports.composite || compositeAttr == null) {
 		return vnode;
 	}
 
@@ -89,6 +90,7 @@ export function parseVNodeAsFlyweight(
 
 	fakeCtx.unsafe = fakeCtx;
 	fakeCtx.$async = new Async(fakeCtx);
+	fakeCtx.$renderEngine = renderEngine;
 
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
 	fakeCtx.$destroy = () => destroyComponent(fakeCtx);
@@ -204,7 +206,7 @@ export function parseVNodeAsFlyweight(
 	newVNode.fakeInstance = fakeCtx;
 	newVNode.data = newVNode.data ?? {};
 
-	patchVNode(newVNode, fakeCtx, {
+	renderEngine.patchVNode(newVNode, fakeCtx, {
 		// @ts-ignore (unsafe cast)
 		data: componentData
 	});

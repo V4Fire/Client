@@ -6,7 +6,7 @@
 * https://github.com/V4Fire/Client/blob/master/LICENSE
 */
 
-import { ComponentDriver, VNode } from 'core/component/engines';
+import { ComponentEngine, VNode } from 'core/component/engines';
 import type { ComponentInterface } from 'core/component/interface';
 
 import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
@@ -24,8 +24,8 @@ export * from 'core/component/directives/resize-observer/interface';
 export * from 'core/component/directives/resize-observer/const';
 export * from 'core/dom/resize-observer';
 
-ComponentDriver.directive('resize-observer', {
-	inserted(el: HTMLElement, opts: DirectiveOptions, vNode: VNode): void {
+ComponentEngine.directive('resize-observer', {
+	inserted(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
 		const
 			val = opts.value;
 
@@ -34,12 +34,12 @@ ComponentDriver.directive('resize-observer', {
 		}
 
 		Array.concat([], val).forEach((options) => {
-			options = normalizeOptions(options, vNode.fakeContext);
+			options = normalizeOptions(options, vnode.fakeContext);
 			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, options));
 		});
 	},
 
-	update(el: HTMLElement, opts: DirectiveOptions, vNode: VNode): void {
+	update(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
 		const
 			oldOptions = opts.oldValue,
 			newOptions = opts.value;
@@ -59,7 +59,7 @@ ComponentDriver.directive('resize-observer', {
 				return;
 			}
 
-			options = normalizeOptions(options, vNode.fakeContext);
+			options = normalizeOptions(options, vnode.fakeContext);
 			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, options));
 		});
 	},

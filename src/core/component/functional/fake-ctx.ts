@@ -27,7 +27,7 @@ export * from 'core/component/functional/interface';
  *
  * @param createElement - function to create VNode element
  * @param renderCtx - render context from VNode
- * @param baseCtx - component context that provided core functional
+ * @param baseCtx - component context that provided the core functionality
  * @param [opts] - additional options
  */
 export function createFakeCtx<T extends object = FunctionalCtx>(
@@ -87,7 +87,8 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	fakeCtx.children = Object.isArray(children) ? children : [];
 
 	fakeCtx.$parent = parent;
-	fakeCtx.$root = renderCtx.$root ?? parent?.$root;
+	fakeCtx.$root = renderCtx.$root ?? parent?.$root ?? fakeCtx;
+	fakeCtx.$renderEngine = fakeCtx.$root.$renderEngine;
 
 	fakeCtx.$options = $options;
 	fakeCtx.$props = renderCtx.props ?? {};

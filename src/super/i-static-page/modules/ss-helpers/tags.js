@@ -31,7 +31,7 @@ const
 
 const defAttrs = {
 	// eslint-disable-next-line no-nested-ternary
-	nonce: nonce ? csp.postProcessor ? nonce : [`window['${csp.nonceStore}']`] : undefined
+	nonce: nonce ? csp.postProcessor ? nonce : [`window['${csp.nonceStore()}']`] : undefined
 };
 
 const defInlineAttrs = {

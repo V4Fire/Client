@@ -78,7 +78,7 @@
 					- block expand
 						< _.&__cell.&__icon.&__expand v-if = vdom.getSlot('dropdown')
 
-					- block icon
+					- block icons
 						< _.&__cell.&__icon.&__post-icon v-if = icon || vdom.getSlot('icon')
 							+= self.slot('icon', {':icon': 'icon'})
 								< component &

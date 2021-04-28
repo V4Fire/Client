@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.182 (2021-04-28)
+
+#### :house: Internal
+
+* Extracted `compileStaticRoutes` from `bRouter` to `core/router`
+
+## v3.0.0-rc.181 (2021-04-20)
+
+#### :house: Internal
+
+* Extracted some helpers and interfaces from `bRouter` to `core/router`
+
 ## v3.0.0-rc.128 (2021-01-27)
 
 #### :bug: Bug Fix

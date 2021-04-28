@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { RegExpOptions, ParseOptions } from 'path-to-regexp';
+import type { RegExpOptions, ParseOptions, Key } from 'path-to-regexp';
 import type { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
@@ -169,7 +169,7 @@ export interface Route<
 	 * @deprecated
 	 * @see [[Route.name]]
 	 */
-	page: string;
+	page?: string;
 
 	/**
 	 * If true, the route can be used as default
@@ -180,7 +180,7 @@ export interface Route<
 	 * @deprecated
 	 * @see [[Route.default]]
 	 */
-	index: boolean;
+	index?: boolean;
 
 	/**
 	 * Route parameters that can be passed to the route path
@@ -285,3 +285,164 @@ export interface Router<
 	 */
 	clearTmp(): Promise<void>;
 }
+
+/**
+ * Compiled not applied route
+ */
+export interface RouteBlueprint<META extends object = Dictionary> {
+	/**
+	 * Route name
+	 */
+	name: string;
+
+	/**
+	 * @deprecated
+	 * @see [[RouteBlueprint.name]]
+	 */
+	page?: string;
+
+	/**
+	 * @deprecated
+	 * @see [[RouteBlueprint.meta.default]]
+	 */
+	index?: boolean;
+
+	/**
+	 * Pattern of the route path
+	 */
+	pattern?: string | ((route: RouteAPI) => CanUndef<string>);
+
+	/**
+	 * RegExp to parse the route path
+	 */
+	rgxp?: RegExp;
+
+	/**
+	 * List of parameters that passed to the route path
+	 *
+	 * @example
+	 * ```js
+	 * {
+	 *   path: '/:foo/:bar',
+	 *   pathParams: [
+	 *     {modifier: '', name: 'foo', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''},
+	 *     {modifier: '', name: 'bat', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''}
+	 *   ]
+	 * }
+	 * ```
+	 */
+	pathParams: Key[];
+
+	/**
+	 * Route meta information
+	 */
+	meta: RouteMeta<META>;
+}
+
+export type RouteBlueprints = Dictionary<RouteBlueprint>;
+
+/**
+ * Compiled and applied route
+ */
+export type AppliedRoute<
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
+> = Route<PARAMS, QUERY, META> & RouteBlueprint<META>;
+
+/**
+ * Public API to work with a route
+ */
+export interface RouteAPI<
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
+> extends AppliedRoute<PARAMS, QUERY, META> {
+	/**
+	 * Applies a dictionary with parameters to the route path and returns the resolved path
+	 * @param params
+	 */
+	resolvePath(params?: Dictionary): string;
+
+	/**
+	 * @deprecated
+	 * @see [[Route.toPath]]
+	 */
+	toPath?(params?: Dictionary): string;
+}
+
+export type AnyRoute =
+	AppliedRoute |
+	Route |
+	RouteAPI;
+
+/**
+ * Additional options to use on getting a route object
+ */
+export interface AdditionalGetRouteOpts {
+	basePath?: string;
+	defaultRoute?: RouteBlueprint;
+}
+
+/**
+ * Additional options to compile routes
+ */
+export interface CompileRoutesOpts {
+	/**
+	 * Base route path: all route paths are concatenated with this path
+	 */
+	basePath?: string;
+}
+
+/**
+ * Parameters of a route
+ */
+export interface RouteParams extends TransitionOptions {
+	/**
+	 * Route name
+	 */
+	name: string;
+
+	/**
+	 * @deprecated
+	 * @see [[RouteParams.name]]
+	 */
+	page?: string;
+}
+
+/**
+ * Options to emit a route transition
+ */
+export interface TransitionOptions<
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
+> {
+	params?: PARAMS;
+	query?: QUERY;
+	meta?: META;
+}
+
+export type InitialRoute = string | RouteParams;
+
+export interface RouteParamsFilter {
+	(el: unknown, key: string): boolean;
+}
+
+/**
+ * Plain route object
+ */
+export type PlainRoute<T extends AnyRoute, FILTER extends string = '_'> = Partial<Omit<
+	T extends RouteAPI ? Omit<T, 'resolvePath' | 'toPath'> : T,
+	FILTER
+>>;
+
+/**
+ * Purified route, i.e., only common parameters
+ */
+export type PurifiedRoute<T extends AnyRoute> = PlainRoute<T, 'url' | 'name' | 'page'>;
+
+/**
+ * Route that support watching
+ */
+export type WatchableRoute<T extends AnyRoute> = PlainRoute<T, 'meta'>;

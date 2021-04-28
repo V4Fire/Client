@@ -22,7 +22,7 @@ export default createsAsyncSemaphore(async () => {
 		name = node.getAttribute('data-root-component') ?? '',
 		component = await rootComponents[name];
 
-	if (!component) {
+	if (component == null) {
 		throw new ReferenceError('The root component is not found');
 	}
 

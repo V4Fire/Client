@@ -18,19 +18,7 @@ import { createFakeCtx, initComponentVNode, FlyweightVNode } from 'core/componen
 import { applyDynamicAttrs } from 'core/component/render-function/v-attrs';
 import { registerComponent } from 'core/component/register';
 
-import {
-
-	supports,
-	cloneVNode,
-	minimalCtx,
-
-	CreateElement,
-
-	VNode,
-	VNodeData
-
-} from 'core/component/engines';
-
+import type { CreateElement, VNode, VNodeData } from 'core/component/engines';
 import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from 'core/component/interface';
 
 export const
@@ -42,31 +30,37 @@ export const
  *
  * This method adds V4Fire specific logic (v-attrs, composites, etc.) to a simple createElement function.
  *
- * @param createElement - original createElement function
+ * @param nativeCreateElement - original createElement function
  * @param baseCtx - base component context
  */
 export function wrapCreateElement(
-	createElement: CreateElement,
+	nativeCreateElement: CreateElement,
 	baseCtx: ComponentInterface
 ): [CreateElement, Function[]] {
 	const
-		tasks = <Function[]>[];
+		tasks = <Function[]>[],
+		engine = baseCtx.$renderEngine;
+
+	const
+		{supports} = engine;
 
 	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(
 		this: Nullable<ComponentInterface>,
 		tag: CanUndef<string>,
 		opts?: VNodeData,
 		children?: VNode[]
-	): VNode {
+	): CanPromise<VNode> {
 		// eslint-disable-next-line
 		'use strict';
 
 		const
 			ctx = this ?? baseCtx,
-			unsafe = <UnsafeComponentInterface><any>(ctx);
-
-		const
+			unsafe = <UnsafeComponentInterface><any>(ctx),
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
+
+		const createElement = nativeCreateElement[$$.wrappedCreateElement] === true ?
+			nativeCreateElement :
+			nativeCreateElement.bind(ctx);
 
 		let
 			tagName = tag,
@@ -122,6 +116,8 @@ export function wrapCreateElement(
 			needLinkToEl = Boolean(flyweightComponent);
 
 		const needCreateFunctionalComponent =
+			!supports.regular ||
+
 			vnode == null &&
 			flyweightComponent == null &&
 			supports.functional &&
@@ -134,9 +130,9 @@ export function wrapCreateElement(
 				{componentName} = component;
 
 			const
-				componentTpls = TPLS[componentName];
+				renderObject = c.componentTemplates[componentName];
 
-			if (componentTpls == null) {
+			if (renderObject == null) {
 				return createElement();
 			}
 
@@ -148,13 +144,16 @@ export function wrapCreateElement(
 				baseCtx = <CanUndef<FunctionalCtx>>c.renderCtxCache[componentName];
 
 			if (baseCtx == null) {
-				baseCtx = Object.create(minimalCtx);
+				baseCtx = Object.create(engine.minimalCtx);
 
 				// @ts-ignore (access)
 				baseCtx.componentName = componentName;
 
 				// @ts-ignore (access)
 				baseCtx.meta = component;
+
+				// @ts-ignore (access)
+				component.params.functional = true;
 
 				// @ts-ignore (access)
 				baseCtx.instance = component.instance;
@@ -165,6 +164,12 @@ export function wrapCreateElement(
 
 			c.renderCtxCache[componentName] = baseCtx;
 
+			// @ts-ignore (access)
+			baseCtx._l = ctx._l;
+
+			// @ts-ignore (access)
+			baseCtx._u = ctx._u;
+
 			const fakeCtx = createFakeCtx<ComponentInterface>(
 				<CreateElement>wrappedCreateElement,
 				renderCtx,
@@ -172,20 +177,23 @@ export function wrapCreateElement(
 				{initProps: true}
 			);
 
-			const renderObject = c.componentTemplates[componentName] ?? componentTpls.index?.();
-			c.componentTemplates[componentName] = renderObject;
-
-			vnode = initComponentVNode(
+			const createComponentVNode = () => initComponentVNode(
 				execRenderObject(renderObject, fakeCtx),
 				fakeCtx,
 				renderCtx
 			);
+
+			if (supports.ssr && Object.isPromise(fakeCtx.unsafe.$initializer)) {
+				return fakeCtx.unsafe.$initializer.then(() => patchVNode(createComponentVNode()));
+			}
+
+			vnode = createComponentVNode();
 		}
 
 		if (vnode == null) {
-			// eslint-disable-next-line prefer-rest-params
-			vnode = createElement.apply(unsafe, arguments);
+			vnode = createElement.apply(null, arguments);
 
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (vnode == null) {
 				return createElement();
 			}
@@ -195,67 +203,92 @@ export function wrapCreateElement(
 			}
 		}
 
-		const
-			vData = vnode.data,
-			ref = vData && (vData[$$.ref] ?? vData.ref);
+		return patchVNode(vnode);
 
-		if (renderKey !== '') {
-			unsafe.renderTmp[renderKey] = cloneVNode(vnode);
-		}
+		function patchVNode<T extends VNode | FlyweightVNode>(vnode: T): T {
+			const
+				vData = vnode.data,
+				ref = vData != null && (vData[$$.ref] ?? vData.ref);
 
-		// Add $refs link if it doesn't exist
-		if (vData && ref != null && ctx !== baseCtx) {
-			vData[$$.ref] = ref;
-			vData.ref = `${ref}:${ctx.componentId}`;
-
-			Object.defineProperty(unsafe.$refs, ref, {
-				configurable: true,
-				enumerable: true,
-				get: () => {
-					const
-						r = baseCtx.unsafe.$refs,
-						l = r[`${ref}:${unsafe.$componentId}`] ?? r[`${ref}:${ctx.componentId}`];
-
-					if (l != null) {
-						return l;
-					}
-
-					if (vnode == null) {
-						return undefined;
-					}
-
-					return 'fakeInstance' in vnode ? vnode.fakeInstance : vnode.elm;
-				}
-			});
-		}
-
-		// Add $el link if it doesn't exist
-		if (needLinkToEl && 'fakeInstance' in vnode) {
-			Object.defineProperty(vnode.fakeInstance, '$el', {
-				enumerable: true,
-				configurable: true,
-
-				set(): void {
-					// Loopback
-				},
-
-				get(): CanUndef<Node> {
-					return vnode?.elm;
-				}
-			});
-		}
-
-		if (tasks.length > 0) {
-			for (let i = 0; i < tasks.length; i++) {
-				tasks[i](vnode);
+			if (renderKey !== '') {
+				unsafe.renderTmp[renderKey] = engine.cloneVNode(vnode);
 			}
 
-			tasks.splice(0);
-		}
+			// Add $refs link if it doesn't exist
+			if (vData != null && ref != null && ctx !== baseCtx) {
+				vData[$$.ref] = ref;
+				vData.ref = `${ref}:${ctx.componentId}`;
 
-		vnode.fakeContext = ctx;
-		return vnode;
+				Object.defineProperty(unsafe.$refs, ref, {
+					configurable: true,
+					enumerable: true,
+					get: () => {
+						const
+							r = baseCtx.unsafe.$refs,
+							l = r[`${ref}:${unsafe.$componentId}`] ?? r[`${ref}:${ctx.componentId}`];
+
+						if (l != null) {
+							return l;
+						}
+
+						return 'fakeInstance' in vnode ? (<FlyweightVNode>vnode).fakeInstance : vnode.elm;
+					}
+				});
+			}
+
+			// Add $el link if it doesn't exist
+			if (needLinkToEl && 'fakeInstance' in vnode) {
+				Object.defineProperty((<FlyweightVNode>vnode).fakeInstance, '$el', {
+					enumerable: true,
+					configurable: true,
+
+					set(): void {
+						// Loopback
+					},
+
+					get(): CanUndef<Node> {
+						return vnode.elm;
+					}
+				});
+			}
+
+			if (tasks.length > 0) {
+				for (let i = 0; i < tasks.length; i++) {
+					tasks[i](vnode);
+				}
+
+				tasks.splice(0);
+			}
+
+			vnode.fakeContext = ctx;
+			return vnode;
+		}
 	};
+
+	wrappedCreateElement[$$.wrappedCreateElement] = true;
+
+	if (supports.ssr) {
+		const wrappedAsyncCreateElement = <CreateElement>function wrappedAsyncCreateElement(
+			this: Nullable<ComponentInterface>,
+			tag: CanUndef<string>,
+			opts?: VNodeData,
+			children?: VNode[]
+		): CanPromise<VNode> {
+			if (children != null && children.length > 0) {
+				children = children.flat();
+
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				if (children.some(Object.isPromise)) {
+					return Promise.all(children).then((children) => wrappedCreateElement.call(this, tag, opts, children));
+				}
+			}
+
+			// eslint-disable-next-line prefer-rest-params
+			return wrappedCreateElement.apply(this, arguments);
+		};
+
+		return [wrappedAsyncCreateElement, tasks];
+	}
 
 	return [wrappedCreateElement, tasks];
 }

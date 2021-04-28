@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -15,52 +13,19 @@
 
 import symbolGenerator from 'core/symbol';
 
-import path, { Key, RegExpOptions } from 'path-to-regexp';
-
-import { deprecate, deprecated } from 'core/functools/deprecation';
-import { concatURLs, toQueryString } from 'core/url';
+import { deprecated } from 'core/functools/deprecation';
 
 import globalRoutes from 'routes';
 import type Async from 'core/async';
 
-import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, computed, hook, wait, watch } from 'super/i-data/i-data';
+import engine, * as router from 'core/router';
 
-import { routeNames, defaultRouteNames, isExternal, qsClearFixRgxp } from 'base/b-router/const';
-import { getRouteName } from 'base/b-router/modules/helpers';
-
-import {
-
-	purifyRoute,
-
-	getBlankRouteFrom,
-	getComparableRouteParams,
-
-	convertRouteToPlainObject,
-	convertRouteToPlainObjectWithoutProto,
-
-	normalizeTransitionOpts,
-	fillRouteParams
-
-} from 'base/b-router/modules/normalizers';
-
-import type {
-
-	RouteAPI,
-	InitialRoute,
-	PurifiedRoute,
-	StaticRoutes,
-
-	RouteBlueprint,
-	RouteBlueprints,
-
-	TransitionMethod,
-	TransitionOptions
-
-} from 'base/b-router/interface';
+import { fillRouteParams } from 'base/b-router/modules/normalizers';
+import type { StaticRoutes, RouteOption, TransitionMethod } from 'base/b-router/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'base/b-router/const';
+export * from 'core/router/const';
 export * from 'base/b-router/interface';
 
 export const
@@ -77,6 +42,21 @@ export const
 })
 
 export default class bRouter extends iData {
+	/**
+	 * Type: page parameters
+	 */
+	readonly PageParams!: RouteOption;
+
+	/**
+	 * Type: page query
+	 */
+	readonly PageQuery!: RouteOption;
+
+	/**
+	 * Type: page meta
+	 */
+	readonly PageMeta!: RouteOption;
+
 	/** @override */
 	public async!: Async<this>;
 
@@ -118,7 +98,7 @@ export default class bRouter extends iData {
 		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
 	})
 
-	routes!: RouteBlueprints;
+	routes!: router.RouteBlueprints;
 
 	/**
 	 * Initial route value.
@@ -144,7 +124,7 @@ export default class bRouter extends iData {
 		watch: 'updateCurrentRoute'
 	})
 
-	readonly initialRoute?: InitialRoute;
+	readonly initialRoute?: router.InitialRoute;
 
 	/**
 	 * Base route path: all route paths are concatenated with this path
@@ -201,7 +181,7 @@ export default class bRouter extends iData {
 		default: engine
 	})
 
-	readonly engineProp!: () => Router;
+	readonly engineProp!: () => router.Router;
 
 	/**
 	 * Internal router engine.
@@ -209,14 +189,14 @@ export default class bRouter extends iData {
 	 *
 	 * @see [[bRouter.engine]]
 	 */
-	@system((o) => o.sync.link((v) => (<(v: unknown) => Router>v)(o)))
-	protected engine!: Router;
+	@system((o) => o.sync.link((v) => (<(v: unknown) => router.Router>v)(o)))
+	protected engine!: router.Router;
 
 	/**
 	 * Value of the active route
 	 */
 	@system()
-	protected routeStore?: Route;
+	protected routeStore?: router.Route;
 
 	/**
 	 * Value of the active route
@@ -261,7 +241,7 @@ export default class bRouter extends iData {
 	 * ```
 	 */
 	@computed({cache: true, dependencies: ['routes']})
-	get defaultRoute(): CanUndef<RouteBlueprint> {
+	get defaultRoute(): CanUndef<router.RouteBlueprint> {
 		let route;
 
 		for (let keys = Object.keys(this.routes), i = 0; i < keys.length; i++) {
@@ -291,7 +271,7 @@ export default class bRouter extends iData {
 	 * router.push('https://google.com');
 	 * ```
 	 */
-	async push(route: Nullable<string>, opts?: TransitionOptions): Promise<void> {
+	async push(route: Nullable<string>, opts?: router.TransitionOptions): Promise<void> {
 		await this.emitTransition(route, opts, 'push');
 	}
 
@@ -309,7 +289,7 @@ export default class bRouter extends iData {
 	 * router.replace('https://google.com');
 	 * ```
 	 */
-	async replace(route: Nullable<string>, opts?: TransitionOptions): Promise<void> {
+	async replace(route: Nullable<string>, opts?: router.TransitionOptions): Promise<void> {
 		await this.emitTransition(route, opts, 'replace');
 	}
 
@@ -359,7 +339,7 @@ export default class bRouter extends iData {
 	 *
 	 * @param [filter] - filter predicate
 	 */
-	clear(filter?: HistoryClearFilter): Promise<void> {
+	clear(filter?: router.HistoryClearFilter): Promise<void> {
 		return this.engine.clear(filter);
 	}
 
@@ -383,270 +363,15 @@ export default class bRouter extends iData {
 		return this.engine.clearTmp();
 	}
 
-	/**
-	 * Returns a path of the specified route with padding of additional parameters
-	 *
-	 * @param ref - route name or path
-	 * @param [opts] - additional options
-	 *
-	 * @example
-	 * ```js
-	 * routes = {
-	 *   demo: {
-	 *     route: '/demo'
-	 *   }
-	 * };
-	 *
-	 *
-	 * this.getRoutePath('demo') === '/demo';
-	 * this.getRoutePath('/demo', {query: {foo: 'bar'}}) === '/demo?foo=bar';
-	 * ```
-	 */
-	getRoutePath(ref: string, opts: TransitionOptions = {}): CanUndef<string> {
-		const
-			route = this.getRoute(ref);
-
-		if (!route) {
-			return;
-		}
-
-		let
-			res = route.resolvePath(opts.params);
-
-		if (opts.query) {
-			const
-				q = toQueryString(opts.query, false);
-
-			if (q !== '') {
-				res += `?${q}`;
-			}
-		}
-
-		return res.replace(qsClearFixRgxp, '');
+	/** @see [[router.getRoutePath]] */
+	getRoutePath(ref: string, opts: router.TransitionOptions = {}): CanUndef<string> {
+		return router.getRoutePath(ref, this.routes, opts);
 	}
 
-	/**
-	 * Returns a route object by the specified name or path
-	 *
-	 * @param ref - route name or path
-	 *
-	 * @example
-	 * ```js
-	 * routes = {
-	 *   demo: {
-	 *     route: '/demo'
-	 *   }
-	 * };
-	 *
-	 *
-	 * this.getRoute('/demo').name === 'demo';
-	 * ```
-	 */
-	getRoute(ref: string): CanUndef<RouteAPI> {
-		const
-			{routes, basePath} = this;
-
-		const
-			routeKeys = Object.keys(routes),
-			initialRef = ref;
-
-		let
-			resolvedById = false,
-			resolvedRoute: Nullable<RouteBlueprint> = null,
-			alias: Nullable<RouteBlueprint> = null;
-
-		let
-			resolvedRef = ref,
-			refIsNormalized = true,
-			externalRedirect = false;
-
-		// eslint-disable-next-line no-constant-condition
-		while (true) {
-			// Reference to a route that passed as ID
-			if (resolvedRef in routes) {
-				resolvedById = true;
-				resolvedRoute = routes[resolvedRef];
-
-				if (resolvedRoute == null) {
-					break;
-				}
-
-				const
-					{meta} = resolvedRoute;
-
-				if (meta.redirect == null && meta.alias == null) {
-					break;
-				}
-
-				if (meta.external) {
-					externalRedirect = true;
-					break;
-				}
-
-			// Reference to a route that passed as a path
-			} else {
-				if (basePath !== '') {
-					// Resolve the situation when the passed path already has basePath
-					const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
-					resolvedRef = concatURLs(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
-
-					// We need to normalize only a user "raw" ref
-					if (refIsNormalized) {
-						ref = resolvedRef;
-						refIsNormalized = false;
-					}
-				}
-
-				for (let i = 0; i < routeKeys.length; i++) {
-					const
-						route = routes[routeKeys[i]];
-
-					if (!route) {
-						continue;
-					}
-
-					// In this case we have full matching of a route ref by a name or pattern
-					if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
-						resolvedById = true;
-						resolvedRoute = route;
-						break;
-					}
-
-					// Try to test the passed ref with a route pattern
-					if (route.rgxp?.test(resolvedRef)) {
-						if (resolvedRoute == null) {
-							resolvedRoute = route;
-							continue;
-						}
-
-						// If we have several matches with the provided ref,
-						// like routes "/foo" and "/foo/:id" are matched with "/foo/bar",
-						// we should prefer that pattern that has more length
-						if (route.pattern!.length > (resolvedRoute.pattern?.length ?? 0)) {
-							resolvedRoute = route;
-						}
-					}
-				}
-			}
-
-			if (resolvedRoute == null) {
-				break;
-			}
-
-			const
-				{meta} = resolvedRoute;
-
-			// If we haven't found a route that matches to the provided ref or the founded route doesn't redirect or refer
-			// to another route, we can exit from the search loop, otherwise, we need to resolve the redirect/alias
-			if (meta.redirect == null && meta.alias == null) {
-				break;
-			}
-
-			if (meta.external) {
-				externalRedirect = true;
-				break;
-			}
-
-			// The alias should preserve an original route name and path
-			if (meta.alias != null) {
-				if (alias == null) {
-					alias = resolvedRoute;
-				}
-
-				resolvedRef = meta.alias;
-
-			} else {
-				resolvedRef = meta.redirect!;
-				ref = resolvedRef;
-			}
-
-			// Continue of resolving
-			resolvedRoute = undefined;
-		}
-
-		// We haven't found a route by the provided ref,
-		// that why we need to find "default" route as loopback
-		if (!resolvedRoute) {
-			resolvedRoute = this.defaultRoute;
-
-		// We have found a route by the provided ref, but it contains an alias
-		} else if (alias) {
-			resolvedRoute = {
-				...resolvedRoute,
-				...Object.select(alias, [
-					'name',
-					'pattern',
-					'rgxp',
-					'pathParams'
-				])
-			};
-		}
-
-		if (resolvedRoute == null) {
-			return;
-		}
-
-		const routeAPI: RouteAPI = Object.create({
-			...resolvedRoute,
-			meta: Object.mixin(true, {}, resolvedRoute.meta),
-
-			get page(): string {
-				return resolvedRoute!.name;
-			},
-
-			resolvePath(params?: Dictionary): string {
-				const
-					p = {};
-
-				if (params) {
-					for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							el = params[key];
-
-						if (el !== undefined) {
-							p[key] = String(el);
-						}
-					}
-				}
-
-				if (externalRedirect) {
-					return path.compile(resolvedRoute!.meta.redirect ?? ref)(p);
-				}
-
-				return path.compile(resolvedRoute!.pattern ?? ref)(p);
-			},
-
-			toPath(params?: Dictionary): string {
-				deprecate({name: 'toPath', type: 'method', renamedTo: 'resolvePath'});
-				return this.resolvePath(params);
-			}
-		});
-
-		Object.assign(routeAPI, {
-			name: resolvedRoute.name,
-			params: {},
-			query: {}
-		});
-
-		// Fill route parameters from URL
-		if (!resolvedById && resolvedRoute.rgxp != null) {
-			const
-				params = resolvedRoute.rgxp.exec(initialRef);
-
-			if (params) {
-				for (let o = path.parse(resolvedRoute.pattern!), i = 0, j = 0; i < o.length; i++) {
-					const
-						el = o[i];
-
-					if (Object.isSimpleObject(el)) {
-						routeAPI.params[el.name] = params[++j];
-					}
-				}
-			}
-		}
-
-		return routeAPI;
+	/** @see [[router.getRoute]] */
+	getRoute(ref: string): CanUndef<router.RouteAPI> {
+		const {routes, basePath, defaultRoute} = this;
+		return router.getRoute(ref, routes, {basePath, defaultRoute});
 	}
 
 	/**
@@ -654,7 +379,7 @@ export default class bRouter extends iData {
 	 * @see [[bRouter.getRoute]]
 	 */
 	@deprecated({renamedTo: 'getRoute'})
-	getPageOpts(ref: string): CanUndef<RouteBlueprint> {
+	getPageOpts(ref: string): CanUndef<router.RouteBlueprint> {
 		return this.getRoute(ref);
 	}
 
@@ -676,10 +401,10 @@ export default class bRouter extends iData {
 	 */
 	async emitTransition(
 		ref: Nullable<string>,
-		opts?: TransitionOptions,
+		opts?: router.TransitionOptions,
 		method: TransitionMethod = 'push'
-	): Promise<CanUndef<Route>> {
-		opts = getBlankRouteFrom(normalizeTransitionOpts(opts));
+	): Promise<CanUndef<router.Route>> {
+		opts = router.getBlankRouteFrom(router.normalizeTransitionOpts(opts));
 
 		const
 			{r, engine} = this;
@@ -690,10 +415,10 @@ export default class bRouter extends iData {
 		this.emit('beforeChange', ref, opts, method);
 
 		let
-			newRouteInfo: CanUndef<RouteAPI>;
+			newRouteInfo: CanUndef<router.RouteAPI>;
 
 		const getEngineRoute = () => currentEngineRoute ?
-			currentEngineRoute.url ?? getRouteName(currentEngineRoute) :
+			currentEngineRoute.url ?? router.getRouteName(currentEngineRoute) :
 			undefined;
 
 		// Get information about the specified route
@@ -709,7 +434,7 @@ export default class bRouter extends iData {
 				route = this.getRoute(ref);
 
 			if (route) {
-				newRouteInfo = Object.mixin(true, route, purifyRoute(currentEngineRoute));
+				newRouteInfo = Object.mixin(true, route, router.purifyRoute(currentEngineRoute));
 			}
 		}
 
@@ -743,9 +468,9 @@ export default class bRouter extends iData {
 			return;
 		}
 
-		if ((<PurifiedRoute<RouteAPI>>newRouteInfo).name == null) {
+		if ((<router.PurifiedRoute<router.RouteAPI>>newRouteInfo).name == null) {
 			const
-				nm = getRouteName(currentEngineRoute);
+				nm = router.getRouteName(currentEngineRoute);
 
 			if (nm != null) {
 				newRouteInfo.name = nm;
@@ -753,13 +478,13 @@ export default class bRouter extends iData {
 		}
 
 		const
-			currentRoute = this.field.get<Route>('routeStore'),
+			currentRoute = this.field.get<router.Route>('routeStore'),
 			deepMixin = (...args) => Object.mixin({deep: true, withUndef: true}, ...args);
 
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current
-		if (getRouteName(currentRoute) === newRouteInfo.name) {
-			deepMixin(newRouteInfo, getBlankRouteFrom(currentRoute), opts);
+		if (router.getRouteName(currentRoute) === newRouteInfo.name) {
+			deepMixin(newRouteInfo, router.getBlankRouteFrom(currentRoute), opts);
 
 		// Simple normalizing of a route state
 		} else {
@@ -786,7 +511,7 @@ export default class bRouter extends iData {
 
 		const newRoute = Object.assign(
 			Object.create(nonWatchRouteValues),
-			Object.reject(convertRouteToPlainObject(newRouteInfo), Object.keys(nonWatchRouteValues))
+			Object.reject(router.convertRouteToPlainObject(newRouteInfo), Object.keys(nonWatchRouteValues))
 		);
 
 		let
@@ -808,8 +533,8 @@ export default class bRouter extends iData {
 
 		// Checking that the new route is really needed, i.e. it isn't equal to the previous
 		const newRouteIsReallyNeeded = !Object.fastCompare(
-			getComparableRouteParams(currentRoute),
-			getComparableRouteParams(newRoute)
+			router.getComparableRouteParams(currentRoute),
+			router.getComparableRouteParams(newRoute)
 		);
 
 		// The transition is necessary, but now we need to understand should we emit "soft" or "hard" transition
@@ -817,12 +542,12 @@ export default class bRouter extends iData {
 			this.field.set('routeStore', newRoute);
 
 			const
-				plainInfo = convertRouteToPlainObject(newRouteInfo);
+				plainInfo = router.convertRouteToPlainObject(newRouteInfo);
 
 			const canRouteTransformToReplace =
 				currentRoute &&
 				method !== 'replace' &&
-				Object.fastCompare(convertRouteToPlainObject(currentRoute), plainInfo);
+				Object.fastCompare(router.convertRouteToPlainObject(currentRoute), plainInfo);
 
 			if (canRouteTransformToReplace) {
 				method = 'replace';
@@ -845,8 +570,8 @@ export default class bRouter extends iData {
 			await engine[method](newRoute.url, plainInfo);
 
 			const isSoftTransition = Boolean(r.route && Object.fastCompare(
-				convertRouteToPlainObjectWithoutProto(currentRoute),
-				convertRouteToPlainObjectWithoutProto(newRoute)
+				router.convertRouteToPlainObjectWithoutProto(currentRoute),
+				router.convertRouteToPlainObjectWithoutProto(newRoute)
 			));
 
 			// In this transition were changed only properties from a prototype,
@@ -920,7 +645,11 @@ export default class bRouter extends iData {
 	 * @see [[bRouter.emitTransition]]
 	 */
 	@deprecated({renamedTo: 'emitTransition'})
-	setPage(ref: Nullable<string>, opts?: TransitionOptions, method?: TransitionMethod): Promise<CanUndef<Route>> {
+	setPage(
+		ref: Nullable<string>,
+		opts?: router.TransitionOptions,
+		method?: TransitionMethod
+	): Promise<CanUndef<router.Route>> {
 		return this.emitTransition(ref, opts, method);
 	}
 
@@ -931,7 +660,11 @@ export default class bRouter extends iData {
 	 * @param [routes] - static schema of application routes
 	 * @param [activeRoute]
 	 */
-	updateRoutes(basePath: string, routes?: StaticRoutes, activeRoute?: Nullable<InitialRoute>): Promise<RouteBlueprints>;
+	updateRoutes(
+		basePath: string,
+		routes?: StaticRoutes,
+		activeRoute?: Nullable<router.InitialRoute>
+	): Promise<router.RouteBlueprints>;
 
 	/**
 	 * Updates the schema of routes
@@ -940,7 +673,11 @@ export default class bRouter extends iData {
 	 * @param activeRoute
 	 * @param [routes] - static schema of application routes
 	 */
-	updateRoutes(basePath: string, activeRoute: InitialRoute, routes?: StaticRoutes): Promise<RouteBlueprints>;
+	updateRoutes(
+		basePath: string,
+		activeRoute: router.InitialRoute,
+		routes?: StaticRoutes
+	): Promise<router.RouteBlueprints>;
 
 	/**
 	 * Updates the schema of routes
@@ -948,7 +685,10 @@ export default class bRouter extends iData {
 	 * @param routes - static schema of application routes
 	 * @param [activeRoute]
 	 */
-	updateRoutes(routes: StaticRoutes, activeRoute?: Nullable<InitialRoute>): Promise<RouteBlueprints>;
+	updateRoutes(
+		routes: StaticRoutes,
+		activeRoute?: Nullable<router.InitialRoute>
+	): Promise<router.RouteBlueprints>;
 
 	/**
 	 * @param basePathOrRoutes
@@ -958,9 +698,9 @@ export default class bRouter extends iData {
 	@wait('beforeReady')
 	async updateRoutes(
 		basePathOrRoutes: string | StaticRoutes,
-		routesOrActiveRoute?: StaticRoutes | Nullable<InitialRoute>,
-		activeRouteOrRoutes?: Nullable<InitialRoute> | StaticRoutes
-	): Promise<RouteBlueprints> {
+		routesOrActiveRoute?: StaticRoutes | Nullable<router.InitialRoute>,
+		activeRouteOrRoutes?: Nullable<router.InitialRoute> | StaticRoutes
+	): Promise<router.RouteBlueprints> {
 		let
 			basePath,
 			routes,
@@ -975,12 +715,12 @@ export default class bRouter extends iData {
 
 			} else {
 				routes = routesOrActiveRoute;
-				activeRoute = <Nullable<InitialRoute>>activeRouteOrRoutes;
+				activeRoute = <Nullable<router.InitialRoute>>activeRouteOrRoutes;
 			}
 
 		} else {
 			routes = basePathOrRoutes;
-			activeRoute = <Nullable<InitialRoute>>routesOrActiveRoute;
+			activeRoute = <Nullable<router.InitialRoute>>routesOrActiveRoute;
 		}
 
 		if (basePath != null) {
@@ -997,7 +737,7 @@ export default class bRouter extends iData {
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<CanPromise<RouteBlueprints | Dictionary>> {
+	protected initRemoteData(): CanUndef<CanPromise<router.RouteBlueprints | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
@@ -1032,13 +772,13 @@ export default class bRouter extends iData {
 	 * @param [route] - route
 	 */
 	@hook('beforeDataCreate')
-	protected initRoute(route: Nullable<InitialRoute> = this.initialRoute): Promise<void> {
+	protected initRoute(route: Nullable<router.InitialRoute> = this.initialRoute): Promise<void> {
 		if (route != null) {
 			if (Object.isString(route)) {
 				return this.replace(route);
 			}
 
-			return this.replace(getRouteName(route), Object.reject(route, routeNames));
+			return this.replace(router.getRouteName(route), Object.reject(route, router.routeNames));
 		}
 
 		return this.replace(null);
@@ -1053,100 +793,11 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Compiles the specified static routes and returns a new object
+	 * Compiles the specified static routes with the current base path and returns a new object
 	 * @param [routes]
 	 */
-	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): RouteBlueprints {
-		const
-			{basePath} = this,
-			compiledRoutes = {};
-
-		for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
-			const
-				name = keys[i],
-				route = routes[name] ?? {},
-				pathParams = [];
-
-			if (Object.isString(route)) {
-				const
-					pattern = concatURLs(basePath, route);
-
-				compiledRoutes[name] = {
-					name,
-
-					pattern,
-					rgxp: path(pattern, pathParams),
-
-					get pathParams(): Key[] {
-						return pathParams;
-					},
-
-					/** @deprecated */
-					get page(): string {
-						return this.name;
-					},
-
-					/** @deprecated */
-					get index(): boolean {
-						return this.meta.default;
-					},
-
-					meta: {
-						name,
-						external: isExternal.test(pattern),
-
-						/** @deprecated */
-						page: name
-					}
-				};
-
-			} else {
-				let
-					pattern;
-
-				if (Object.isString(route.path)) {
-					pattern = concatURLs(basePath, route.path);
-				}
-
-				compiledRoutes[name] = {
-					name,
-
-					pattern,
-					rgxp: pattern != null ? path(pattern, pathParams, <RegExpOptions>route.pathOpts) : undefined,
-
-					get pathParams(): Key[] {
-						return pathParams;
-					},
-
-					/** @deprecated */
-					get page(): string {
-						return this.name;
-					},
-
-					/** @deprecated */
-					get index(): boolean {
-						return this.meta.default;
-					},
-
-					meta: {
-						...route,
-
-						name,
-						default: Boolean(route.default ?? route.index ?? defaultRouteNames[name]),
-
-						external: route.external ?? (
-							isExternal.test(pattern) ||
-							isExternal.test(route.redirect ?? '')
-						),
-
-						/** @deprecated */
-						page: name
-					}
-				};
-			}
-		}
-
-		return compiledRoutes;
+	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): router.RouteBlueprints {
+		return router.compileStaticRoutes(routes, {basePath: this.basePath});
 	}
 
 	/** @override */
@@ -1176,7 +827,7 @@ export default class bRouter extends iData {
 			href === '' ||
 			href.startsWith('#') ||
 			href.startsWith('javascript:') ||
-			isExternal.test(href);
+			router.isExternal.test(href);
 
 		if (cantPrevent) {
 			return;

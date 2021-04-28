@@ -13,12 +13,12 @@
  * @packageDocumentation
  */
 
-import { ComponentDriver } from 'core/component/engines';
+import { ComponentEngine } from 'core/component/engines';
 import type { DirectiveOptions } from 'core/component/directives/hook/interface';
 
 export * from 'core/component/directives/hook/interface';
 
-ComponentDriver.directive('hook', {
+ComponentEngine.directive('hook', {
 	bind(el: Element, opts: DirectiveOptions): void {
 		opts.value?.bind?.apply(opts.value, arguments);
 	},

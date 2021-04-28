@@ -12,7 +12,7 @@
  */
 
 import * as strings from 'core/helpers/string';
-import { ComponentDriver } from 'core/component/engines';
+import { ComponentEngine } from 'core/component/engines';
 
 for (let keys = Object.keys(strings), i = 0; i < keys.length; i++) {
 	const
@@ -20,6 +20,6 @@ for (let keys = Object.keys(strings), i = 0; i < keys.length; i++) {
 		val = strings[key];
 
 	if (Object.isFunction(val)) {
-		ComponentDriver.filter(key, val);
+		ComponentEngine.filter(key, val);
 	}
 }

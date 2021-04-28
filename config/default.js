@@ -581,12 +581,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		postProcessor: true,
 
 		/**
-		 * Name of the generated runtime global variable where the nonce value is stored
+		 * Return a name of the generated runtime global variable where the nonce value is stored
+		 * @returns {?string}
 		 */
-		nonceStore: nanoid(),
+		nonceStore() {
+			if (this.nonce() == null) {
+				return 'GLOBAL_NONCE';
+			}
+
+			if (this.nonceStore.result) {
+				return this.nonceStore.result;
+			}
+
+			this.nonceStore.result = nanoid();
+			return this.nonceStore.result;
+		},
 
 		/**
-		 * Returns value of the "nonce" hash
+		 * Returns a value of the "nonce" hash
 		 * @returns {?string}
 		 */
 		nonce() {
@@ -888,6 +900,29 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'iInputText/mask': true,
 			'iInputText/validators': true
 		};
+	},
+
+	/**
+	 * Returns a map of component dependencies.
+	 * This map can be used to provide dynamic component dependencies within `index.js` files.
+	 *
+	 * @returns {!Object}
+	 *
+	 * @example
+	 * ```
+	 * componentDependencies() {
+	 *   return {'b-dummy': ['b-icon']};
+	 * }
+	 * ```
+	 *
+	 * ```
+	 * package('b-dummy')
+	 *   .extends('i-data')
+	 *   .dependencies(...require('config').componentDependencies()['b-dummy'] ?? []);
+	 * ```
+	 */
+	componentDependencies() {
+		return {};
 	},
 
 	/** @override */

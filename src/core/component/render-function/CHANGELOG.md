@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.179 (2021-04-15)
+
+#### :bug: Bug Fix
+
+* Fixed resolving refs within functional components
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :bug: Bug Fix

@@ -85,6 +85,106 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bInputHidden`
   * `bForm`
 
+## v3.0.0-rc.182 (2021-04-28)
+
+#### :rocket: New Feature
+
+* Now a route pattern can be a function
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `optionKey` being ignored `base/b-virtual-scroll`
+
+#### :house: Internal
+
+* Extracted `compileStaticRoutes` from `bRouter` to `core/router`
+
+## v3.0.0-rc.181 (2021-04-20)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with `itemProps` not being provided to child components `base/b-virtual-scroll`](https://github.com/V4Fire/Client/issues/512)
+
+#### :house: Internal
+
+* Extracted some helpers and interfaces from `bRouter` to `core/router`
+
+## v3.0.0-rc.180 (2021-04-16)
+
+#### :rocket: New Feature
+
+* `core/component/interface`:
+  * Added a new property `$initializer`
+  * Added a new property `$renderEngine`
+
+* Added a new render engine `core/component/engine/zero`
+* Added a new getter `isSSR` `iBlock`
+
+## v3.0.0-rc.179 (2021-04-15)
+
+#### :bug: Bug Fix
+
+* Fixed resolving refs within functional components `core/component/render-function`
+
+## v3.0.0-rc.178 (2021-04-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when dynamically created templates emit lifecycle events `iBlock`
+
+## v3.0.0-rc.177 (2021-04-14)
+
+#### :bug: Bug Fix
+
+* Fixed the loading order of styles `build`
+* Fixed using the async rendering within functional components `core/component/functional`
+* Fixed a bug when using `self.loadModules` with the `wait` option `iBlock`
+
+#### :house: Internal
+
+* `core/component/meta`:
+  * Added `attachTemplatesToMeta`
+  * Renamed `inherit` to `inheritMeta`
+
+## v3.0.0-rc.176 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed parsing of Stylus objects `build/stylus/ds`
+
+## v3.0.0-rc.175 (2021-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when trying to load two or more modules with the same id but different parameters via `loadModules` `iBlock`
+
+## v3.0.0-rc.174 (2021-04-09)
+
+#### :bug: Bug Fix
+
+* Fixed the project building with `parallel-webpack` `build`
+
+## v3.0.0-rc.173 (2021-04-09)
+
+#### :boom: Breaking Change
+
+* Now `csp.nonceStore` is a function `config`
+
+#### :rocket: New Feature
+
+* Added aliases `mem` and `fs` for `--cache-type` `build`
+* Added a new parameter `componentDependencies` `config`
+
+#### :bug: Bug Fix
+
+* Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified `config`
+
+## v3.0.0-rc.172 (2021-04-06)
+
+#### :house: Internal
+
+* Optimized the project building with `--fat-html`
+
 ## v3.0.0-rc.171 (2021-03-27)
 
 #### :bug: Bug Fix

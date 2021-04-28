@@ -44,10 +44,15 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const
-		{unsafe: {meta, meta: {methods}}} = component;
+	const {
+		unsafe: {
+			meta,
+			meta: {methods}
+		}
+	} = component;
 
 	const
+		ssrMode = component.$renderEngine.supports.ssr,
 		isNotRegular = meta.params.functional === true || component.isFlyweight;
 
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {
@@ -59,7 +64,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 			continue;
 		}
 
-		if (isNotRegular && el.functional === false) {
+		if (!ssrMode && isNotRegular && el.functional === false) {
 			continue;
 		}
 

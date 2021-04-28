@@ -26,6 +26,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	} = component.unsafe;
 
 	const
+		ssrMode = component.$renderEngine.supports.ssr,
 		isNotRegular = meta.params.functional === true || isFlyweight;
 
 	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -35,7 +36,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		const canSkip = Boolean(
 			el == null ||
-			isNotRegular && el.functional === false ||
+			!ssrMode && isNotRegular && el.functional === false ||
 
 			(
 				isFlyweight ?
@@ -67,7 +68,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		const canSkip = Boolean(
 			el == null ||
-			isNotRegular && el.functional === false ||
+			!ssrMode && isNotRegular && el.functional === false ||
 
 			(
 				isFlyweight ?
@@ -82,6 +83,10 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
+			if (ssrMode) {
+				return el.get!.call(this);
+			}
+
 			if (cacheStatus in get) {
 				return get[cacheStatus];
 			}

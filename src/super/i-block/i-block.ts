@@ -21,7 +21,7 @@ import log, { LogMessageOptions } from 'core/log';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import config from 'config';
-import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
+import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn, EventId } from 'core/async';
 
 //#if runtime has core/helpers
 import * as helpers from 'core/helpers';
@@ -43,6 +43,8 @@ import {
 
 	globalEmitter,
 	customWatcherRgxp,
+
+	resolveRefs,
 	bindRemoteWatchers,
 
 	WatchPath,
@@ -57,6 +59,7 @@ import {
 
 } from 'core/component';
 
+import remoteState from 'core/component/state';
 import * as init from 'core/component/construct';
 
 import 'super/i-block/directives';
@@ -537,7 +540,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Link to i18n function, that will be used to localize of string literals
 	 */
 	@prop(Function)
-	readonly i18n: typeof i18n = defaultI18n;
+	readonly i18n: typeof i18n = ((i18n));
 
 	/**
 	 * Link to a remote state object.
@@ -546,9 +549,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 * that can't be initialized within a component directly. You can modify this object outside from components,
 	 * but remember, that these mutations may force re-render of all components.
 	 */
-	@computed({watchable: true, dependencies: ['r.remoteState']})
-	get remoteState(): this['r']['remoteState'] {
-		return this.r.remoteState;
+	@computed({watchable: true})
+	get remoteState(): typeof remoteState {
+		return remoteState;
 	}
 
 	/**
@@ -719,6 +722,14 @@ export default abstract class iBlock extends ComponentInterface {
 	@computed({replace: false})
 	get isNotRegular(): boolean {
 		return Boolean(this.isFunctional || this.isFlyweight);
+	}
+
+	/**
+	 * True if the current component is rendered by using server-side rendering
+	 */
+	@computed({replace: false})
+	get isSSR(): boolean {
+		return this.$renderEngine.supports.ssr;
 	}
 
 	/**
@@ -1093,6 +1104,11 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected watchModsStore!: ModsNTable;
+
+	/**
+	 * True if the component context is based on another component via `vdom.bindRenderObject`
+	 */
+	protected readonly isVirtualTpl: boolean = false;
 
 	/**
 	 * Special getter for component modifiers:
@@ -1568,7 +1584,7 @@ export default abstract class iBlock extends ComponentInterface {
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
-		if (this.isFlyweight) {
+		if (this.isFlyweight || this.isSSR) {
 			return;
 		}
 
@@ -1805,10 +1821,10 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[Async.off]]
 	 * @param [opts] - additional options
 	 */
-	off(opts: ClearOptionsId<object>): void;
+	off(opts: ClearOptionsId<EventId>): void;
 
 	@p({replace: false})
-	off(eventOrParams?: string | ClearOptionsId<object>, handler?: Function): void {
+	off(eventOrParams?: string | ClearOptionsId<EventId>, handler?: Function): void {
 		const
 			e = eventOrParams;
 
@@ -2008,16 +2024,21 @@ export default abstract class iBlock extends ComponentInterface {
 				this.state.initFromStorage() || []
 			);
 
-			if (this.isNotRegular || this.dontWaitRemoteProviders) {
+			if (
+				(this.isNotRegular || this.dontWaitRemoteProviders) &&
+				!this.$renderEngine.supports.ssr
+			) {
 				if (tasks.length > 0) {
-					return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
+					const res = $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
+					this.$initializer = res;
+					return res;
 				}
 
 				done();
 				return;
 			}
 
-			return this.nextTick(label).then((() => {
+			const res = this.nextTick(label).then((() => {
 				const
 					{$children: childComponents} = this;
 
@@ -2071,6 +2092,9 @@ export default abstract class iBlock extends ComponentInterface {
 
 				return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 			}));
+
+			this.$initializer = res;
+			return res;
 
 		} catch (err) {
 			doneOnError(err);
@@ -2519,7 +2543,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/** @override */
 	protected onCreatedHook(): void {
-		if (this.isFlyweight) {
+		if (this.isFlyweight || this.isSSR) {
 			this.componentStatusStore = 'ready';
 			this.isReadyOnce = true;
 		}
@@ -2546,6 +2570,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 			this.onBindHook();
 			this.onInsertedHook();
+
+			if (this.$normalParent != null) {
+				resolveRefs(this.$normalParent);
+			}
 
 		} catch (err) {
 			stderr(err);
@@ -2587,9 +2615,4 @@ export default abstract class iBlock extends ComponentInterface {
 			delete classesCache.dict.els?.[this.componentId];
 		} catch {}
 	}
-}
-
-function defaultI18n(this: iBlock, ...args: unknown[]): string {
-	// eslint-disable-next-line @typescript-eslint/no-extra-parens
-	return (Object.isFunction(this.r.i18n) ? this.r.i18n : ((i18n))).apply(this.r, args);
 }

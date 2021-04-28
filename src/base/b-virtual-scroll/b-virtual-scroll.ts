@@ -124,7 +124,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @deprecated
 	 * @see [[iItems.itemProps]]
 	 */
-	@prop({type: Function, default: () => ({})})
+	@prop({type: Function})
 	readonly optionProps!: iItems['itemProps'];
 
 	/** @see [[iItems.itemProps]] */
@@ -171,12 +171,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNodes: boolean = true;
-
-	/**
-	 * If true, then additional data chunk will be requested automatically on user scroll
-	 */
-	@prop({type: Boolean})
-	readonly requestOnScroll: boolean = true;
 
 	/**
 	 * Function that returns request parameters
@@ -444,6 +438,16 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @see [[iItems.getItemKey]] */
 	getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
+		if (this.optionKey != null) {
+			deprecate({
+				name: 'optionKey',
+				type: 'property',
+				renamedTo: 'itemKey'
+			});
+
+			return Object.isFunction(this.optionKey) ? this.optionKey(el, i) : this.optionKey;
+		}
+
 		return iItems.getItemKey(this, el, i);
 	}
 
@@ -536,15 +540,6 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		this.chunkRequest.lastLoadedChunk.normalized = Object.isArray(this.options) ? [...this.options] : [];
 		this.chunkRequest.init().catch(stderr);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[iItems.getItemKey]]
-	 */
-	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
-		// @ts-ignore (removed implementation for issues/471)
-		return iItems.getItemKey(this, el, i);
 	}
 
 	/**

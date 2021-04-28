@@ -11,12 +11,12 @@
  * @packageDocumentation
  */
 
-import { ComponentDriver } from 'core/component/engines';
+import { ComponentEngine } from 'core/component/engines';
 import { InView, Adaptee, InViewDirectiveOptions } from 'core/dom/in-view';
 
 export * from 'core/dom/in-view';
 
-ComponentDriver.directive('in-view', {
+ComponentEngine.directive('in-view', {
 	inserted(el: Element, {value}: InViewDirectiveOptions): void {
 		if (!Adaptee || !value) {
 			return;
