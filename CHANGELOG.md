@@ -11,17 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2021-??-??)
-
-#### :bug: Bug Fix
-
-* Fixed an issue with `optionKey` being ignored `base/b-virtual-scroll`
-
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.182 (2021-04-28)
 
 #### :rocket: New Feature
 
 * Now a route pattern can be a function
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `optionKey` being ignored `base/b-virtual-scroll`
 
 #### :house: Internal
 
