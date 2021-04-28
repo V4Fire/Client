@@ -13,6 +13,12 @@ Changelog
 
 #### :bug: Bug Fix
 
+* Fixed an issue with `optionKey` being ignored
+
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
 * [Fixed an issue with `itemProps` not being provided to child components](https://github.com/V4Fire/Client/issues/512)
 
 ## v3.0.0-rc.170 (2021-03-26)
