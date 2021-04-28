@@ -59,9 +59,22 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added the `normalizeAttrs` method
   * Added the `nativeInput` block
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Improved traits to support auto-deriving:
+  * `iLockPageScroll`
+  * `iOpen`
+  * `iOpenToggle`
+  * `iAccess`
+  * `iIcon`
+  * `iObserveDom`
+
 #### :memo: Documentation
 
 * Added documentation:
+<<<<<<< HEAD
   * `bCheckbox`
   * `bRadioButton`
   * `bInputHidden`
@@ -98,6 +111,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Extracted `compileStaticRoutes` from `bRouter` to `core/router`
+=======
+  * `traits`
+  * `traits/i-open`
+  * `traits/i-open-toggle`
+>>>>>>> traits
 
 ## v3.0.0-rc.181 (2021-04-20)
 

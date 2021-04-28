@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Improved the trait to support auto-deriving
+
 ## v3.0.0-rc.168 (2021-03-24)
 
 #### :bug: Bug Fix

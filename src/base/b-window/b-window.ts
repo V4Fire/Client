@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import { derive } from 'core/functools/trait';
+
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
@@ -38,11 +40,14 @@ import type { StageTitles } from 'base/b-window/interface';
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 
+interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScroll> {}
+
 /**
  * Component to create a modal window
  */
 @component()
-export default class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
+@derive(iOpenToggle, iLockPageScroll)
+class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	/** @override */
 	readonly proxyCall: boolean = true;
 
@@ -199,13 +204,8 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		this.field.set('titleStore', value);
 	}
 
-	/** @see [[iOpenToggle.prototype.toggle]] */
-	toggle(): Promise<boolean> {
-		return iOpenToggle.toggle(this);
-	}
-
 	/**
-	 * @see [[iOpenToggle.prototype.open]]
+	 * @see [[iOpenToggle.open]]
 	 * @param [stage] - component stage to open
 	 */
 	async open(stage?: Stage): Promise<boolean> {
@@ -223,7 +223,7 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		return false;
 	}
 
-	/** @see [[iOpenToggle.prototype.close]] */
+	/** @see [[iOpenToggle.close]] */
 	async close(): Promise<boolean> {
 		if (await iOpenToggle.close(this)) {
 			this.setRootMod('opened', false);
@@ -234,28 +234,18 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		return false;
 	}
 
-	/** @see [[iLockPageScroll.prototype.lock]] */
+	/** @see [[iLockPageScroll.lock]] */
 	@wait('loading')
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.window);
 	}
 
-	/** @see [[iLockPageScroll.prototype.unlock]] */
-	unlock(): Promise<void> {
-		return iLockPageScroll.unlock(this);
-	}
-
-	/** @see [[iOpenToggle.prototype.onOpenedChange]] */
+	/** @see [[iOpenToggle.onOpenedChange]] */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/** @see [[iOpenToggle.prototype.onKeyClose]] */
-	onKeyClose(e: KeyboardEvent): Promise<void> {
-		return iOpenToggle.onKeyClose(this, e);
-	}
-
-	/** @see [[iOpenToggle.prototype.onTouchClose]] */
+	/** @see [[iOpenToggle.onTouchClose]] */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <CanUndef<Element>>e.target;
@@ -320,3 +310,5 @@ export default class bWindow extends iData implements iVisible, iWidth, iOpenTog
 		this.removeRootMod('hidden');
 	}
 }
+
+export default bWindow;

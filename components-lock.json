@@ -1,5 +1,5 @@
 {
-  "hash": "e9fb66d9ff1050f6a8ddde3f7e91e4d8b9aae68bf74298e27e38ad383b3280f8",
+  "hash": "5cc4dfb714af6ba8af3de6b51bef341375ee1aaa26cf403d6a4f0e8ccd8baa09",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -212,7 +212,7 @@
       [
         "b-dummy",
         {
-          "index": "src/base/b-dummy/index.js",
+          "index": "src/dummies/b-dummy/index.js",
           "declaration": {
             "name": "b-dummy",
             "parent": "i-data",
@@ -233,11 +233,43 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/base/b-dummy/b-dummy.ts",
+          "logic": "src/dummies/b-dummy/b-dummy.ts",
           "styles": [
-            "src/base/b-dummy/b-dummy.styl"
+            "src/dummies/b-dummy/b-dummy.styl"
           ],
-          "tpl": "src/base/b-dummy/b-dummy.ss",
+          "tpl": "src/dummies/b-dummy/b-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-text",
+        {
+          "index": "src/dummies/b-dummy-text/index.js",
+          "declaration": {
+            "name": "b-dummy-text",
+            "parent": "i-input-text",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-text",
+          "parent": "i-input-text",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-text/b-dummy-text.ts",
+          "styles": [
+            "src/dummies/b-dummy-text/b-dummy-text.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-text/b-dummy-text.ss",
           "etpl": null
         }
       ],
@@ -1536,6 +1568,38 @@
         }
       ],
       [
+        "i-input-text",
+        {
+          "index": "src/super/i-input-text/index.js",
+          "declaration": {
+            "name": "i-input-text",
+            "parent": "i-input",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-input-text",
+          "parent": "i-input",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/super/i-input-text/i-input-text.ts",
+          "styles": [
+            "src/super/i-input-text/i-input-text.styl"
+          ],
+          "tpl": "src/super/i-input-text/i-input-text.ss",
+          "etpl": null
+        }
+      ],
+      [
         "i-items",
         {
           "index": "src/traits/i-items/index.js",
@@ -1893,7 +1957,10 @@
               "b-button",
               "b-router",
               "b-list",
+              "b-input-hidden",
+              "b-form",
               "b-sidebar",
+              "b-dummy-text",
               "b-slider",
               "b-window",
               "b-image"
@@ -1911,7 +1978,10 @@
             "b-button",
             "b-router",
             "b-list",
+            "b-input-hidden",
+            "b-form",
             "b-sidebar",
+            "b-dummy-text",
             "b-slider",
             "b-window",
             "b-image"

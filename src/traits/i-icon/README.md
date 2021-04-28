@@ -69,14 +69,14 @@ monic() {
 }
 ```
 
-## API
+## Methods
 
 The trait specifies a bunch of methods to load sprites asynchronously.
 
 ### getIconLink
 
 The method takes the name of an icon to load and returns a promise with the value for the `href` attribute of the `<use>` tag.
-The method has the default implementation via the static method.
+The method has the default implementation.
 
 ```typescript
 import iIcon from 'traits/i-icon/i-icon';
@@ -92,7 +92,7 @@ export default class bIcon implements iIcon {
 ### updateIconHref
 
 The method applies the loaded icon to a DOM node.
-The method has the default implementation via the static method.
+The method has the default implementation.
 
 ```typescript
 import iIcon from 'traits/i-icon/i-icon';
@@ -108,7 +108,7 @@ export default class bIcon implements iIcon {
 ### handleIconError
 
 The method handles errors that occur during the loading.
-The method has the default implementation via the static method.
+The method has the default implementation.
 
 ```typescript
 import iIcon from 'traits/i-icon/i-icon';

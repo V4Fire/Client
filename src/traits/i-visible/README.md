@@ -1,6 +1,6 @@
 # traits/i-visible
 
-This module provides a trait for a component that needs to implement "visibility" behavior, like "hiding" or "showing".
+This module provides a trait for a component that needs to implement the "visibility" behavior, like "hiding" or "showing".
 
 ## Synopsis
 
@@ -14,7 +14,7 @@ This module provides a trait for a component that needs to implement "visibility
 | -------- | ----------------------- | ----------| ------- |
 | `hidden` | The component is hidden | `Boolean` | -       |
 
-To support these modifiers, import them from the trait into your component.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
 import iVisible from 'traits/i-visible/i-visible';
@@ -34,7 +34,27 @@ export default class bButton implements iVisible {
 | `show`  | The component has been shown  | -                   | -       |
 | `hide`  | The component has been hidden | -                   | -       |
 
-To support these events, override `initModEvents` in your component and puts within invoking a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+
+```typescript
+import iVisible from 'traits/i-visible/i-visible';
+
+export default class bButton implements iVisible {
+  /** @override */
+  protected initModEvents(): void {
+    super.initModEvents();
+    iVisible.initModEvents(this);
+  }
+}
+```
+
+## Helpers
+
+The trait provides a bunch of helper functions to initialize event listeners.
+
+### initModEvents
+
+Initialize modifier event listeners to emit trait events.
 
 ```typescript
 import iVisible from 'traits/i-visible/i-visible';

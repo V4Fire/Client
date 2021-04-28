@@ -1,6 +1,6 @@
 # traits/i-access
 
-This module provides a trait for a component that needs to implement "accessibility" behavior, like "focusing" or "disabling".
+This module provides a trait for a component that needs to implement the "accessibility" behavior, like "focusing" or "disabling".
 
 ## Synopsis
 
@@ -12,10 +12,10 @@ This module provides a trait for a component that needs to implement "accessibil
 
 | Name       | Description                                                                                  | Values    | Default |
 | ---------- | -------------------------------------------------------------------------------------------- | ----------| ------- |
-| `disabled` | The component is disabled. All actions, like, input or click, are prevented                  | `Boolean` | -       |
+| `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented              | `Boolean` | -       |
 | `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `Boolean` | -       |
 
-To support these modifiers, import them from the trait into your component.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
@@ -37,7 +37,7 @@ export default class bButton implements iAccess {
 | `focus`    | The component in focus           | -                   | -       |
 | `blur`     | The component has lost the focus | -                   | -       |
 
-To support these events, override `initModEvents` in your component and puts within invoking a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
@@ -57,7 +57,7 @@ The trait specifies two optional props.
 
 ### autofocus
 
-A Boolean prop which, if present, indicates that the component should automatically
+A boolean prop which, if present, indicates that the component should automatically
 have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed).
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus)
@@ -66,6 +66,7 @@ have focus when the page has finished loading (or when the `<dialog>` containing
 
 An integer prop indicating if the component can take input focus (is focusable),
 if it should participate to sequential keyboard navigation.
+
 As all input types except for input of type hidden are focusable, this attribute should not be used on
 form controls, because doing so would require the management of the focus order for all elements within
 the document with the risk of harming usability and accessibility if done incorrectly.
@@ -99,7 +100,7 @@ The trait specifies a bunch of methods to implement.
 ### enable
 
 Enables the component.
-The method has the default implementation via a static method `iAccess.enable`.
+The method has the default implementation.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
@@ -115,7 +116,7 @@ export default class bButton implements iAccess {
 ### disable
 
 Disables the component.
-The method has the default implementation via a static method `iAccess.disable`.
+The method has the default implementation.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
@@ -130,8 +131,8 @@ export default class bButton implements iAccess {
 
 ### focus
 
-Sets focus to the component
-The method has the default implementation via a static method `iAccess.focus`.
+Sets the focus to the component
+The method has the default implementation.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
@@ -146,8 +147,8 @@ export default class bButton implements iAccess {
 
 ### blur
 
-Unsets focus to the component.
-The method has the default implementation via a static method `iAccess.blur`.
+Unsets the focus from the component.
+The method has the default implementation.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
@@ -162,7 +163,11 @@ export default class bButton implements iAccess {
 
 ## Helpers
 
-The trait provides a helper function to initialize modifier event listeners to emit component events.
+The trait provides a bunch of helper functions to initialize event listeners.
+
+### initModEvents
+
+Initialize modifier event listeners to emit trait events.
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';

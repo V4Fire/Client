@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -24,14 +26,8 @@ const
 	group = 'lockHelpers';
 
 export default abstract class iLockPageScroll {
-	/**
-	 * Locks the document scroll, i.e.,
-	 * it prevents any scrolling on the document except withing the specified node
-	 *
-	 * @param component
-	 * @param [scrollableNode] - node inside which is allowed to scroll
-	 */
-	static lock<T extends iBlock>(component: T, scrollableNode?: Element): Promise<void> {
+	/** @see [[iLockPageScroll.lock]] */
+	static lock: AddSelf<iLockPageScroll['lock'], iBlock> = (component, scrollableNode?) => {
 		const
 			{$root: r, $root: {unsafe: {async: $a}}} = component;
 
@@ -145,13 +141,10 @@ export default abstract class iLockPageScroll {
 		}
 
 		return promise;
-	}
+	};
 
-	/**
-	 * Unlocks the document scroll
-	 * @param component
-	 */
-	static unlock<T extends iBlock>(component: T): Promise<void> {
+	/** @see [[iLockPageScroll.unlock]] */
+	static unlock: AddSelf<iLockPageScroll['unlock'], iBlock> = (component) => {
 		const
 			{$root: r, $root: {unsafe: {async: $a}}} = component.unsafe,
 			{body} = document;
@@ -182,10 +175,14 @@ export default abstract class iLockPageScroll {
 			label: $$.unlock,
 			join: true
 		});
-	}
+	};
 
 	/**
-	 * Initializes modifier event listeners
+	 * Initializes modifier event listeners for the specified components
+	 *
+	 * @emits `lock()`
+	 * @emits `unlock()`
+	 *
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
@@ -210,11 +207,17 @@ export default abstract class iLockPageScroll {
 	/**
 	 * Locks the document scroll, i.e.,
 	 * it prevents any scrolling on the document except withing the specified node
+	 *
+	 * @param [scrollableNode] - node inside which is allowed to scroll
 	 */
-	abstract lock(): Promise<void>;
+	lock(scrollableNode?: Element): Promise<void> {
+		return <any>null;
+	}
 
 	/**
 	 * Unlocks the document scroll
 	 */
-	abstract unlock(force?: boolean): Promise<void>;
+	unlock(): Promise<void> {
+		return <any>null;
+	}
 }
