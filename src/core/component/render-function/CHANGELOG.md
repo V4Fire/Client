@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.183 (2021-05-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with functional components after adding Zero
+
 ## v3.0.0-rc.179 (2021-04-15)
 
 #### :bug: Bug Fix

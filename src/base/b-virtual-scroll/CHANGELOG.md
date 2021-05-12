@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.182 (2021-04-28)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `optionKey` being ignored
+
+## v3.0.0-rc.181 (2021-04-20)
 
 #### :bug: Bug Fix
 

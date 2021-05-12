@@ -130,7 +130,7 @@ export class ComponentEngine {
 				return;
 			}
 
-			this.$mount.bind(this, el);
+			this.$mount(el);
 		}, stderr);
 	}
 

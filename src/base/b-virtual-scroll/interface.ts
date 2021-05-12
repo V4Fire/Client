@@ -215,9 +215,6 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 	componentRender: CTX['componentRender'];
 
 	// @ts-ignore (access)
-	getOptionKey: CTX['getOptionKey'];
-
-	// @ts-ignore (access)
 	getDataStateSnapshot: CTX['getDataStateSnapshot'];
 
 	// @ts-ignore (access)

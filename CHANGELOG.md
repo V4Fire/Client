@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.184 (2021-05-12)
 
 #### :rocket: New Feature
 
@@ -29,6 +29,27 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `traits`
   * `traits/i-open`
   * `traits/i-open-toggle`
+
+## v3.0.0-rc.183 (2021-05-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with functional components after adding Zero `core/component/render-function`
+* Fixed a bug while initializing Zero `core/component/engines/zero`
+
+## v3.0.0-rc.182 (2021-04-28)
+
+#### :rocket: New Feature
+
+* Now a route pattern can be a function
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `optionKey` being ignored `base/b-virtual-scroll`
+
+#### :house: Internal
+
+* Extracted `compileStaticRoutes` from `bRouter` to `core/router`
 
 ## v3.0.0-rc.181 (2021-04-20)
 
