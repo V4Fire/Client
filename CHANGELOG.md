@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.183 (2021-05-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with functional components after adding Zero `core/component/render-function`
+* Fixed a bug while initializing Zero `core/component/engines/zero`
+
 ## v3.0.0-rc.182 (2021-04-28)
 
 #### :rocket: New Feature

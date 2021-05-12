@@ -58,9 +58,17 @@ export function wrapCreateElement(
 			unsafe = <UnsafeComponentInterface><any>(ctx),
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
 
-		const createElement = nativeCreateElement[$$.wrappedCreateElement] === true ?
-			nativeCreateElement :
-			nativeCreateElement.bind(ctx);
+		const createElement = (() => {
+			const dontBind =
+				nativeCreateElement[$$.wrappedCreateElement] === true &&
+				unsafe.meta.params.functional !== true;
+
+			if (dontBind) {
+				return nativeCreateElement;
+			}
+
+			return nativeCreateElement.bind(ctx);
+		})();
 
 		let
 			tagName = tag,
