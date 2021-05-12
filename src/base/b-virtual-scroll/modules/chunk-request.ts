@@ -80,14 +80,14 @@ export default class ChunkRequest extends Friend {
 	 */
 	previousDataStore: CanUndef<unknown> = undefined;
 
-	/** @see [[ChunkRequest.prototype.previousDataStore]] */
+	/** @see [[ChunkRequest.previousDataStore]] */
 	get previousData(): CanUndef<unknown> {
 		return this.previousDataStore;
 	}
 
 	/**
 	 * @emits dataChange(v: unknown)
-	 * @see [[ChunkRequest.prototype.previousDataStore]]
+	 * @see [[ChunkRequest.previousDataStore]]
 	 */
 	set previousData(v: unknown) {
 		this.previousDataStore = v;

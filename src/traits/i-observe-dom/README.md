@@ -15,9 +15,9 @@ This module provides a trait for a component to observe DOM changes by using [`M
 | `DOMChange`              | The observable DOM tree was changed. (deprecated!) | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
 | `localEmitter:DOMChange` | The observable DOM tree was changed.               | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
 
-## API
+## Methods
 
-A class that implements this trait must implement two methods.
+The trait specifies a bunch of methods to implement.
 
 ### initDOMObservers
 
@@ -45,6 +45,7 @@ export default class component extends iBlock implements iObserveDOM {
 
 This method is a handler. Every time a change occurs, the handler will be called. Changes of the DOM tree are provided into this method.
 `iObserveDOM` provides a static method `emitDOMChange` that will emit the `localEmitter:DOMChange` event.
+The method has the default implementation.
 
 ```typescript
 @component()

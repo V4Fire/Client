@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,22 +8,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-open-toggle/README.md]]
+ * @packageDocumentation
+ */
+
 import iOpen from 'traits/i-open/i-open';
 import type iBlock from 'super/i-block/i-block';
 
 export * from 'traits/i-open/i-open';
 
 export default abstract class iOpenToggle extends iOpen {
-	/**
-	 * Toggles the component
-	 */
-	static toggle<T extends iBlock>(component: T & iOpen): Promise<boolean> {
-		return component.mods.opened === 'true' ? component.close() : component.open();
-	}
+	/** @see [[iOpenToggle.toggle]] */
+	static toggle: AddSelf<iOpenToggle['toggle'], iBlock & iOpen> =
+		(component) => component.mods.opened === 'true' ? component.close() : component.open();
 
 	/**
-	 * Toggles the component
+	 * Toggles the component to open or close
 	 * @param args
 	 */
-	abstract toggle(...args: unknown[]): Promise<boolean>;
+	toggle(...args: unknown[]): Promise<boolean> {
+		return <any>null;
+	}
 }

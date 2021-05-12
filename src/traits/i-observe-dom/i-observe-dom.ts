@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -108,10 +110,7 @@ export default abstract class iObserveDOM {
 		return res;
 	}
 
-	/**
-	 * @deprecated
-	 * @see [[iObserveDOM.emitDOMChange]]
-	 */
+	/** @see [[iObserveDOM.onDOMChange]] */
 	static onDOMChange<T extends iBlock>(
 		component: T & iObserveDOM,
 		records?: MutationRecord[],
@@ -145,7 +144,7 @@ export default abstract class iObserveDOM {
 	 * @param component
 	 * @param node
 	 */
-	static isNodeBeingObserved<T extends iBlock & iObserveDOM>(component: T, node: Element): boolean {
+	static isNodeBeingObserved<T extends iBlock>(component: T & iObserveDOM, node: Element): boolean {
 		return this.getObserversMap(component).has(node);
 	}
 
@@ -202,5 +201,7 @@ export default abstract class iObserveDOM {
 	 * @param records
 	 * @param options
 	 */
-	abstract onDOMChange(records: MutationRecord[], options: ObserveOptions): void;
+	onDOMChange(records: MutationRecord[], options: ObserveOptions): void {
+		return <any>null;
+	}
 }

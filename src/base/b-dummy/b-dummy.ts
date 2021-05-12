@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import daemons from 'base/b-dummy/daemons';
+import { derive } from 'core/functools/trait';
 
 import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
@@ -18,6 +18,8 @@ import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
 import iData, { component, field, computed, hook, wait } from 'super/i-data/i-data';
+
+import daemons from 'base/b-dummy/daemons';
 import type { Directives, Modules } from 'base/b-dummy/interface';
 
 const
@@ -27,6 +29,8 @@ const
 export * from 'super/i-data/i-data';
 export * from 'base/b-dummy/interface';
 
+interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM> {}
+
 @component({
 	functional: {
 		functional: true,
@@ -34,7 +38,8 @@ export * from 'base/b-dummy/interface';
 	}
 })
 
-export default class bDummy extends iData implements iLockPageScroll, iObserveDOM {
+@derive(iLockPageScroll, iObserveDOM)
+class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	/**
 	 * Test field
 	 */
@@ -75,17 +80,7 @@ export default class bDummy extends iData implements iLockPageScroll, iObserveDO
 	/** @override */
 	static readonly daemons: typeof daemons = daemons;
 
-	/** @see [[iLockPageScroll.lock]] */
-	lock(): Promise<void> {
-		return iLockPageScroll.lock(this);
-	}
-
-	/** @see [[iLockPageScroll.unlock]] */
-	unlock(): Promise<void> {
-		return iLockPageScroll.unlock(this);
-	}
-
-	/** @see [[iObserveDOM.prototype.initDOMObservers]] */
+	/** @see [[iObserveDOM.initDOMObservers]] */
 	@hook('mounted')
 	@wait('ready')
 	initDOMObservers(): void {
@@ -95,9 +90,6 @@ export default class bDummy extends iData implements iLockPageScroll, iObserveDO
 			subtree: true
 		});
 	}
-
-	/** @see [[iObserveDOM.prototype.onDOMChange]] */
-	onDOMChange(): void {
-		iObserveDOM.emitDOMChange(this);
-	}
 }
+
+export default bDummy;

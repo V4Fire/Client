@@ -11,6 +11,25 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.184 (2021-05-12)
+
+#### :rocket: New Feature
+
+* Improved traits to support auto-deriving:
+  * `iLockPageScroll`
+  * `iOpen`
+  * `iOpenToggle`
+  * `iAccess`
+  * `iIcon`
+  * `iObserveDom`
+
+#### :memo: Documentation
+
+* Added documentation:
+  * `traits`
+  * `traits/i-open`
+  * `traits/i-open-toggle`
+
 ## v3.0.0-rc.183 (2021-05-12)
 
 #### :bug: Bug Fix

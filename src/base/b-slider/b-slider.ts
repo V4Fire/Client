@@ -16,6 +16,8 @@ import 'models/demo/list';
 //#endif
 
 import symbolGenerator from 'core/symbol';
+
+import { derive } from 'core/functools/trait';
 import { deprecated, deprecate } from 'core/functools';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
@@ -46,11 +48,14 @@ export * from 'base/b-slider/interface';
 export const
 	$$ = symbolGenerator();
 
+interface bSlider extends Trait<typeof iObserveDOM> {}
+
 /**
  * Component to create a content slider
  */
 @component()
-export default class bSlider extends iData implements iObserveDOM, iItems {
+@derive(iObserveDOM)
+class bSlider extends iData implements iObserveDOM, iItems {
 	/** @see [[iItems.Item]] */
 	readonly Item!: object;
 
@@ -461,11 +466,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @see [[iObserveDOM.onDOMChange]] */
-	onDOMChange(): void {
-		iObserveDOM.emitDOMChange(this);
-	}
-
 	/**
 	 * Returns additional props to pass to the specified item component
 	 *
@@ -625,7 +625,8 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@watch({field: 'mode', immediate: true})
 	protected initMode(): void {
-		const label = {
+		const group = {
+			group: 'scroll',
 			label: $$.setScrolling
 		};
 
@@ -633,11 +634,11 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 			{content} = this.$refs;
 
 		if (this.isSlideMode) {
-			this.async.on(document, 'scroll', () => this.scrolling = true, label);
+			this.async.on(document, 'scroll', () => this.scrolling = true, group);
 			this.initDOMObservers();
 
 		} else {
-			this.async.off(label);
+			this.async.off(group);
 			content && iObserveDOM.unobserve(this, content);
 		}
 	}
@@ -766,3 +767,5 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 		this.swiping = false;
 	}
 }
+
+export default bSlider;

@@ -7,42 +7,9 @@
  */
 
 import type iBlock from 'super/i-block/i-block';
+import type { Control, ControlEvent } from 'traits/i-control-list/interface';
 
-export interface ControlAnalytics {
-	event: string;
-	details?: Dictionary;
-}
-
-export type ControlActionMethodFn<T extends iBlock = iBlock> =
-	(this: T, ...args: unknown[]) => unknown |
-	Function;
-
-export interface ControlActionArgsMapFn<T extends iBlock = iBlock> {
-	(this: T, args: unknown[]): Nullable<unknown[]>;
-}
-
-export interface ControlActionObject {
-	method: string | ControlActionMethodFn;
-	args?: unknown[];
-	argsMap?: string | ControlActionArgsMapFn;
-	defArgs?: boolean;
-}
-
-export type ControlAction =
-	string |
-	Function |
-	ControlActionObject;
-
-export interface ControlEvent {
-	action?: ControlAction;
-	analytics?: ControlAnalytics;
-}
-
-export interface Control extends ControlEvent {
-	text?: string;
-	component?: 'b-button' | 'b-file-button' | string;
-	attrs?: Dictionary;
-}
+export * from 'traits/i-control-list/interface';
 
 export default abstract class iControlList {
 	/**
@@ -52,7 +19,7 @@ export default abstract class iControlList {
 	 * @param [opts] - control options
 	 * @param [args]
 	 */
-	static callControlAction<R = unknown, C extends iBlock = iBlock, CTX extends iBlock = iBlock>(
+	static callControlAction<R = unknown, CTX extends iBlock = iBlock>(
 		component: CTX,
 		opts: ControlEvent = {},
 		...args: unknown[]
@@ -65,7 +32,7 @@ export default abstract class iControlList {
 			component.analytics.sendEvent(event, details);
 		}
 
-		if (action) {
+		if (action != null) {
 			if (Object.isString(action)) {
 				const
 					fn = component.field.get<Function>(action);
@@ -88,12 +55,26 @@ export default abstract class iControlList {
 				{method, argsMap} = action,
 				{field} = component;
 
-			const
-				argsMapFn = Object.isFunction(argsMap) ? argsMap : argsMap && field.get<Function>(argsMap),
-				methodFn = Object.isFunction(method) ? method : field.get<Function>(method);
+			let
+				argsMapFn,
+				methodFn;
 
-			if (methodFn) {
-				return methodFn.call(component, ...(argsMapFn ? argsMapFn.call(component, fullArgs) || [] : fullArgs));
+			if (Object.isFunction(argsMap)) {
+				argsMapFn = argsMap;
+
+			} else {
+				argsMapFn = argsMap != null ? field.get<Function>(argsMap) : null;
+			}
+
+			if (Object.isFunction(method)) {
+				methodFn = method;
+
+			} else if (Object.isString(method)) {
+				methodFn = field.get<Function>(method);
+			}
+
+			if (methodFn != null) {
+				return methodFn.call(component, ...(argsMapFn != null ? argsMapFn.call(component, fullArgs) ?? [] : fullArgs));
 			}
 
 			throw new TypeError('The action method is not a function');
