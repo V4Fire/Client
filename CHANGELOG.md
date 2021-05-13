@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.187 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Hotfix for v3.0.0-rc.186 :(
+
 ## v3.0.0-rc.186 (2021-05-13)
 
 #### :bug: Bug Fix
