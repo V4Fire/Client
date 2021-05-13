@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.186 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed context providing to functional components
+
 ## v3.0.0-rc.183 (2021-05-12)
 
 #### :bug: Bug Fix

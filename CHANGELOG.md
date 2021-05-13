@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.186 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed context providing to functional components `core/component/render-function`
+
 ## v3.0.0-rc.185 (2021-05-13)
 
 #### :bug: Bug Fix
