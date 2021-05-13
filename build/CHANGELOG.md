@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.186 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed transforming of smart components `snakeskin`
+
 ## v3.0.0-rc.177 (2021-04-14)
 
 #### :bug: Bug Fix

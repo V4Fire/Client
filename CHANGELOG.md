@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed context providing to functional components `core/component/render-function`
+* Fixed transforming of smart components `build/snakeskin`
 
 ## v3.0.0-rc.185 (2021-05-13)
 
