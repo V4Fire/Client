@@ -69,14 +69,34 @@ export default abstract class iAccess {
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
 		const
-			{localEmitter: $e} = component.unsafe;
+			{localEmitter: $e, async: $a} = component.unsafe;
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
-			if (e.type === 'remove' && e.reason !== 'removeMod') {
-				return;
-			}
+			const
+				asyncGroup = 'disableHelpers';
 
-			component.emit(e.value === 'false' || e.type === 'remove' ? 'enable' : 'disable');
+			if (e.value === 'false' || e.type === 'remove') {
+				$a.off({group: asyncGroup});
+
+				if (e.type !== 'remove' || e.reason === 'removeMod') {
+					component.emit('enable');
+				}
+
+			} else if (component.$el != null) {
+				component.emit('disable');
+
+				const handler = (e) => {
+					e.preventDefault();
+					e.stopImmediatePropagation();
+				};
+
+				$a.on(component.$el, 'click mousedown touchstart keydown input change scroll', handler, {
+					group: asyncGroup,
+					options: {
+						capture: true
+					}
+				});
+			}
 		});
 
 		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
