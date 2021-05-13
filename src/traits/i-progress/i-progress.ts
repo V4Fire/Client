@@ -58,6 +58,7 @@ export default abstract class iProgress {
 					e.stopImmediatePropagation();
 				};
 
+				// @see https://github.com/V4Fire/Client/issues/534
 				$a.on(component.$el, 'click mousedown touchstart keydown input change scroll', handler, {
 					group: asyncGroup,
 					options: {
