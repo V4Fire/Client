@@ -59,10 +59,7 @@ export function wrapCreateElement(
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
 
 		const createElement = <typeof nativeCreateElement>function createElement(this: unknown) {
-			const dontProvideBoundContext =
-				nativeCreateElement[$$.wrappedCreateElement] === true &&
-				unsafe.meta.params.functional !== true;
-
+			const dontProvideBoundContext = nativeCreateElement[$$.wrappedCreateElement] === true;
 			return nativeCreateElement.apply(dontProvideBoundContext ? this : ctx, arguments);
 		};
 
