@@ -59,11 +59,11 @@ export function wrapCreateElement(
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
 
 		const createElement = <typeof nativeCreateElement>function createElement(this: unknown) {
-			const dontProvideContext =
+			const dontProvideBoundContext =
 				nativeCreateElement[$$.wrappedCreateElement] === true &&
 				unsafe.meta.params.functional !== true;
 
-			return nativeCreateElement.apply(dontProvideContext ? this : ctx, arguments);
+			return nativeCreateElement.apply(dontProvideBoundContext ? this : ctx, arguments);
 		};
 
 		let
@@ -195,7 +195,7 @@ export function wrapCreateElement(
 		}
 
 		if (vnode == null) {
-			vnode = createElement.apply(null, arguments);
+			vnode = createElement.apply(unsafe, arguments);
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (vnode == null) {
