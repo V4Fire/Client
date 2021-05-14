@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.188 (2021-05-14)
+
+#### :bug: Bug Fix
+
+* Don't skip a context of `createElement`
+
 ## v3.0.0-rc.186 (2021-05-13)
 
 #### :bug: Bug Fix

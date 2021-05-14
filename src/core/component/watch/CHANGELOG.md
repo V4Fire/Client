@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.188 (2021-05-14)
+
+#### :rocket: New Feature
+
+* Added a feature to attach listeners on promises with emitters by using `@watch`
+
 ## v3.0.0-rc.162 (2021-03-19)
 
 #### :bug: Bug Fix

@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.188 (2021-05-14)
+
+#### :rocket: New Feature
+
+* Added a feature to attach listeners on promises with emitters by using `@watch` `core/component/watch`
+
+#### :bug: Bug Fix
+
+* Don't skip a context of `createElement` `core/component/render-function`
+
 ## v3.0.0-rc.187 (2021-05-13)
 
 #### :bug: Bug Fix

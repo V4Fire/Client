@@ -239,8 +239,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 				// To improve initialization performance, we should separately handle the promise situation
 				// ("copy-paste", but works better)
-				if (handler instanceof Promise) {
+				if (Object.isPromise(handler)) {
 					$a.promise(handler, asyncParams).then((handler) => {
+						if (!Object.isFunction(handler)) {
+							throw new TypeError('A handler to watch is not a function');
+						}
+
 						if (customWatcher) {
 							// True if an event can listen by using the component itself,
 							// because the watcherCtx doesn't look like an event emitter
@@ -253,7 +257,15 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 								unsafe.$on(watchPath, handler);
 
 							} else {
-								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
+								const watch = (watcherCtx) =>
+									$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
+
+								if (Object.isPromise(watcherCtx)) {
+									$a.promise(watcherCtx, asyncParams).then(watch, stderr);
+
+								} else {
+									watch(watcherCtx);
+								}
 							}
 
 							return;
@@ -280,7 +292,15 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							unsafe.$on(watchPath, handler);
 
 						} else {
-							$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
+							const watch = (watcherCtx) =>
+								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
+
+							if (Object.isPromise(watcherCtx)) {
+								$a.promise(watcherCtx, asyncParams).then(watch, stderr);
+
+							} else {
+								watch(watcherCtx);
+							}
 						}
 
 						continue;

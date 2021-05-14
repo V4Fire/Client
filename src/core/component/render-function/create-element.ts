@@ -58,12 +58,12 @@ export function wrapCreateElement(
 			unsafe = <UnsafeComponentInterface><any>(ctx),
 			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
 
-		const createElement = <typeof nativeCreateElement>function createElement() {
+		const createElement = <typeof nativeCreateElement>function createElement(this: unknown) {
 			const dontProvideContext =
 				nativeCreateElement[$$.wrappedCreateElement] === true &&
 				unsafe.meta.params.functional !== true;
 
-			return nativeCreateElement.apply(dontProvideContext ? null : ctx, arguments);
+			return nativeCreateElement.apply(dontProvideContext ? this : ctx, arguments);
 		};
 
 		let

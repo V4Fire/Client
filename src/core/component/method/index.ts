@@ -29,7 +29,7 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
 			const
 				res = obj.fn.apply(component, args);
 
-			if (res instanceof Promise) {
+			if (Object.isPromise(res)) {
 				res.catch(stderr);
 			}
 
