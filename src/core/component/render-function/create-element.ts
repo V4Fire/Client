@@ -195,7 +195,7 @@ export function wrapCreateElement(
 		}
 
 		if (vnode == null) {
-			vnode = createElement.apply(unsafe, arguments);
+			vnode = createElement.apply(ctx, arguments);
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (vnode == null) {
