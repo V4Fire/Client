@@ -13,6 +13,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.190 (2021-05-17)
 
+#### :bug: Bug Fix
+
 * Fixed resolving of refs `core/component/engines/zero`
 
 ## v3.0.0-rc.189 (2021-05-13)

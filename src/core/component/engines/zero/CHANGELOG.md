@@ -11,6 +11,8 @@ Changelog
 
 ## v3.0.0-rc.190 (2021-05-17)
 
+#### :bug: Bug Fix
+
 * Fixed resolving of refs
 
 ## v3.0.0-rc.183 (2021-05-12)
