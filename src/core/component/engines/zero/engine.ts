@@ -163,13 +163,13 @@ export class ComponentEngine {
 	 * Creates an element or component by the specified parameters
 	 *
 	 * @param tag - name of the tag or component to create
-	 * @param attrs - dictionary with additional attributes or props
-	 * @param children - list of child elements
+	 * @param [tagData] - additional data for the tag or component
+	 * @param [children] - list of child elements
 	 */
 	$createElement(
 		this: ComponentInterface,
 		tag: string | Node,
-		attrs?: VNodeData | Node[],
+		tagData?: VNodeData | Node[],
 		children?: Array<CanPromise<Node>>
 	): CanPromise<Node> {
 		if (Object.isString(tag)) {
@@ -182,12 +182,12 @@ export class ComponentEngine {
 			let
 				opts: VNodeData;
 
-			if (Object.isSimpleObject(attrs)) {
+			if (Object.isSimpleObject(tagData)) {
 				children = Array.concat([], children);
-				opts = <VNodeData>attrs;
+				opts = <VNodeData>tagData;
 
 			} else {
-				children = Array.concat([], attrs);
+				children = Array.concat([], tagData);
 				opts = {};
 			}
 
