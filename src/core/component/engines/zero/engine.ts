@@ -163,13 +163,13 @@ export class ComponentEngine {
 	 * Creates an element or component by the specified parameters
 	 *
 	 * @param tag - name of the tag or component to create
-	 * @param [tagData] - additional data for the tag or component
+	 * @param [tagDataOrChildren] - additional data for the tag or component
 	 * @param [children] - list of child elements
 	 */
 	$createElement(
 		this: ComponentInterface,
 		tag: string | Node,
-		tagData?: VNodeData | Node[],
+		tagDataOrChildren?: VNodeData | Node[],
 		children?: Array<CanPromise<Node>>
 	): CanPromise<Node> {
 		if (Object.isString(tag)) {
@@ -180,15 +180,15 @@ export class ComponentEngine {
 			this.$refs = refs;
 
 			let
-				opts: VNodeData;
+				tagData: VNodeData;
 
-			if (Object.isSimpleObject(tagData)) {
+			if (Object.isSimpleObject(tagDataOrChildren)) {
 				children = Array.concat([], children);
-				opts = <VNodeData>tagData;
+				tagData = <VNodeData>tagDataOrChildren;
 
 			} else {
-				children = Array.concat([], tagData);
-				opts = {};
+				children = Array.concat([], tagDataOrChildren);
+				tagData = {};
 			}
 
 			const createNode = (children: Node[]) => {
@@ -208,35 +208,24 @@ export class ComponentEngine {
 						node = document.createElement(tag);
 				}
 
-				node.data = {...opts, slots: getSlots()};
+				node.data = {...tagData, slots: getSlots()};
 				node[_.$$.data] = node.data;
 
 				node.elm = node;
 				node.context = this;
 
-				_.addStaticDirectives(this, opts, opts.directives, node);
-				_.addDirectives(this, node, opts, opts.directives);
+				_.addDirectives(this, node, tagData, tagData.directives);
+				_.addStaticDirectives(this, tagData, tagData.directives, node);
 
 				if (node instanceof Element) {
-					if (opts.ref != null) {
-						if (opts.refInFor) {
-							const arr = <Element[]>(refs[opts.ref] ?? []);
-							refs[opts.ref] = arr;
-
-							arr.push(node);
-
-						} else {
-							refs[opts.ref] = node;
-						}
-					}
-
-					_.addClass(node, opts);
-					_.attachEvents(node, opts.on);
+					_.addToRefs(node, tagData, refs);
+					_.addClass(node, tagData);
+					_.attachEvents(node, tagData.on);
 				}
 
-				_.addProps(node, opts.domProps);
-				_.addStyles(node, opts.style);
-				_.addAttrs(node, opts.attrs);
+				_.addProps(node, tagData.domProps);
+				_.addStyles(node, tagData.style);
+				_.addAttrs(node, tagData.attrs);
 
 				if (node instanceof SVGElement) {
 					children = _.createSVGChildren(this, <Element[]>children);

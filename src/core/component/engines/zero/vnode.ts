@@ -30,6 +30,7 @@ export function patchVNode(vnode: Element, component: ComponentInterface, render
 		{data} = renderCtx,
 		{meta} = component.unsafe;
 
+	_.addToRefs(vnode, data, component.$parent?.unsafe.$refs);
 	_.addClass(vnode, data);
 
 	if (data.attrs && meta.params.inheritAttrs) {
