@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.190 (2021-??-??)
+## v3.0.0-rc.190 (2021-05-17)
 
 * Fixed resolving of refs
 
