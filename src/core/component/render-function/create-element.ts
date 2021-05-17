@@ -60,11 +60,11 @@ export function wrapCreateElement(
 
 		const createElement = <typeof nativeCreateElement>function createElement(this: unknown) {
 			if (supports.boundCreateElement) {
-				return nativeCreateElement.apply(this, arguments);
+				const dontProvideBoundContext = nativeCreateElement[$$.wrappedCreateElement] === true;
+				return nativeCreateElement.apply(dontProvideBoundContext ? this : unsafe, arguments);
 			}
 
-			const dontProvideBoundContext = nativeCreateElement[$$.wrappedCreateElement] === true;
-			return nativeCreateElement.apply(dontProvideBoundContext ? this : unsafe, arguments);
+			return nativeCreateElement.apply(this, arguments);
 		};
 
 		let
@@ -182,17 +182,22 @@ export function wrapCreateElement(
 				{initProps: true}
 			);
 
-			const createComponentVNode = () => initComponentVNode(
-				execRenderObject(renderObject, fakeCtx),
-				fakeCtx,
-				renderCtx
-			);
+			const createComponentVNode = () => {
+				const
+					vnode = execRenderObject(renderObject, fakeCtx);
+
+				if (Object.isPromise(vnode)) {
+					return vnode.then((vnode) => initComponentVNode(<any>vnode, fakeCtx, renderCtx));
+				}
+
+				return initComponentVNode(vnode, fakeCtx, renderCtx);
+			};
 
 			if (supports.ssr && Object.isPromise(fakeCtx.unsafe.$initializer)) {
-				return fakeCtx.unsafe.$initializer.then(() => patchVNode(createComponentVNode()));
+				return fakeCtx.unsafe.$initializer.then(async () => patchVNode(await createComponentVNode()));
 			}
 
-			vnode = createComponentVNode();
+			vnode = <FlyweightVNode>createComponentVNode();
 		}
 
 		if (vnode == null) {
