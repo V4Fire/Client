@@ -44,7 +44,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		e.metaKey ||
 
 		// Ignore Tab, ArrowLeft and other stuff
-		/^[A-Z][a-z]/.test(valToInput);
+		/^[A-Z][a-z0-9]/.test(valToInput);
 
 	if (canIgnore) {
 		return;
