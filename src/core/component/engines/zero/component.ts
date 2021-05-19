@@ -137,8 +137,10 @@ export function mountComponent(nodeOrSelector: string | Node, [componentNode, ct
 		unsafe: {$async: $a}
 	} = ctx;
 
-	const
-		is = (el): boolean => el === parentNode || el.contains(parentNode);
+	const is = (el): boolean =>
+		el === parentNode ||
+		el.parentNode === parentNode ||
+		el.contains(parentNode);
 
 	if (typeof MutationObserver === 'function') {
 		const observer = new MutationObserver((mutations) => {

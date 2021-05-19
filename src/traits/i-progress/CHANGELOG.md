@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.185 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with using css-property `pointer-events: none` in Safari
+
 ## v3.0.0-rc.123 (2021-01-15)
 
 #### :rocket: New Feature

@@ -13,7 +13,9 @@ export interface RenderEngineFeatures {
 	regular: boolean;
 	functional: boolean;
 	composite: boolean;
+
 	ssr: boolean;
+	boundCreateElement: boolean;
 }
 
 export type ProxyGetterType =

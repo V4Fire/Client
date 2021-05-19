@@ -47,7 +47,7 @@ export function wrapCreateElement(
 	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(
 		this: Nullable<ComponentInterface>,
 		tag: CanUndef<string>,
-		opts?: VNodeData,
+		tagData?: VNodeData,
 		children?: VNode[]
 	): CanPromise<VNode> {
 		// eslint-disable-next-line
@@ -56,24 +56,29 @@ export function wrapCreateElement(
 		const
 			ctx = this ?? baseCtx,
 			unsafe = <UnsafeComponentInterface><any>(ctx),
-			attrOpts = Object.isPlainObject(opts) ? opts.attrs : undefined;
+			attrs = Object.isPlainObject(tagData) ? tagData.attrs : undefined;
 
-		const createElement = nativeCreateElement[$$.wrappedCreateElement] === true ?
-			nativeCreateElement :
-			nativeCreateElement.bind(ctx);
+		const createElement = <typeof nativeCreateElement>function createElement(this: unknown) {
+			if (supports.boundCreateElement) {
+				const dontProvideBoundContext = nativeCreateElement[$$.wrappedCreateElement] === true;
+				return nativeCreateElement.apply(dontProvideBoundContext ? this : unsafe, arguments);
+			}
+
+			return nativeCreateElement.apply(this, arguments);
+		};
 
 		let
 			tagName = tag,
 			flyweightComponent;
 
-		if (attrOpts == null) {
+		if (attrs == null) {
 			if (tag === 'v-render') {
 				return createElement();
 			}
 
 		} else {
 			if (tag === 'v-render') {
-				return attrOpts.from ?? createElement();
+				return attrs.from ?? createElement();
 			}
 
 			if (tagName?.[0] === '@') {
@@ -81,33 +86,33 @@ export function wrapCreateElement(
 				tagName = 'span';
 
 			} else {
-				flyweightComponent = attrOpts['v4-flyweight-component'];
+				flyweightComponent = attrs['v4-flyweight-component'];
 			}
 
 			if (tagName != null && flyweightComponent != null) {
 				tagName = tagName === 'span' ? flyweightComponent : tagName.dasherize();
-				attrOpts['v4-flyweight-component'] = tagName;
+				attrs['v4-flyweight-component'] = tagName;
 			}
 		}
 
 		const
 			component = registerComponent(tagName);
 
-		if (Object.isPlainObject(opts)) {
-			applyDynamicAttrs(opts, component);
+		if (Object.isPlainObject(tagData)) {
+			applyDynamicAttrs(tagData, component);
 		}
 
 		let
 			renderKey = '';
 
-		if (attrOpts != null) {
-			if (attrOpts['render-key'] != null) {
-				renderKey = `${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}`;
+		if (attrs != null) {
+			if (attrs['render-key'] != null) {
+				renderKey = `${tagName}:${attrs['global-name']}:${attrs['render-key']}`;
 			}
 
 			if (renderKey !== '' && component == null) {
-				attrOpts['data-render-key'] = renderKey;
-				delete attrOpts['render-key'];
+				attrs['data-render-key'] = renderKey;
+				delete attrs['render-key'];
 			}
 		}
 
@@ -137,7 +142,7 @@ export function wrapCreateElement(
 			}
 
 			const
-				node = createElement('span', {...opts, tag: undefined}, children),
+				node = createElement('span', {...tagData, tag: undefined}, children),
 				renderCtx = getComponentRenderCtxFromVNode(component, node, ctx);
 
 			let
@@ -170,28 +175,30 @@ export function wrapCreateElement(
 			// @ts-ignore (access)
 			baseCtx._u = ctx._u;
 
-			const fakeCtx = createFakeCtx<ComponentInterface>(
-				<CreateElement>wrappedCreateElement,
-				renderCtx,
-				baseCtx!,
-				{initProps: true}
-			);
+			const fakeCtx = createFakeCtx<ComponentInterface>(<any>wrappedCreateElement, renderCtx, baseCtx!, {
+				initProps: true
+			});
 
-			const createComponentVNode = () => initComponentVNode(
-				execRenderObject(renderObject, fakeCtx),
-				fakeCtx,
-				renderCtx
-			);
+			const createComponentVNode = () => {
+				const
+					vnode = execRenderObject(renderObject, fakeCtx);
+
+				if (Object.isPromise(vnode)) {
+					return vnode.then((vnode) => initComponentVNode(<any>vnode, fakeCtx, renderCtx));
+				}
+
+				return initComponentVNode(vnode, fakeCtx, renderCtx);
+			};
 
 			if (supports.ssr && Object.isPromise(fakeCtx.unsafe.$initializer)) {
-				return fakeCtx.unsafe.$initializer.then(() => patchVNode(createComponentVNode()));
+				return fakeCtx.unsafe.$initializer.then(async () => patchVNode(await createComponentVNode()));
 			}
 
-			vnode = createComponentVNode();
+			vnode = <FlyweightVNode>createComponentVNode();
 		}
 
 		if (vnode == null) {
-			vnode = createElement.apply(null, arguments);
+			vnode = createElement.apply(unsafe, arguments);
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (vnode == null) {

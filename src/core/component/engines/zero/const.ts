@@ -15,7 +15,9 @@ export const supports = {
 	regular: false,
 	functional: true,
 	composite: true,
-	ssr: true
+
+	ssr: true,
+	boundCreateElement: true
 };
 
 export const options: Options = {

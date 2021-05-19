@@ -12,7 +12,9 @@ export const supports = {
 	regular: true,
 	functional: true,
 	composite: true,
-	ssr: false
+
+	ssr: false,
+	boundCreateElement: true
 };
 
 export const minimalCtx = (() => {

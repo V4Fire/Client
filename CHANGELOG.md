@@ -59,7 +59,48 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added the `normalizeAttrs` method
   * Added the `nativeInput` block
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.190 (2021-05-17)
+
+#### :bug: Bug Fix
+
+* Fixed resolving of refs `core/component/engines/zero`
+
+## v3.0.0-rc.189 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Hotfix for v3.0.0-rc.188 :(
+
+## v3.0.0-rc.188 (2021-05-14)
+
+#### :rocket: New Feature
+
+* Added a feature to attach listeners on promises with emitters by using `@watch` `core/component/watch`
+
+#### :bug: Bug Fix
+
+* Don't skip a context of `createElement` `core/component/render-function`
+
+## v3.0.0-rc.187 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Hotfix for v3.0.0-rc.186 :(
+
+## v3.0.0-rc.186 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed context providing to functional components `core/component/render-function`
+* Fixed transforming of smart components `build/snakeskin`
+
+## v3.0.0-rc.185 (2021-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with using css-property `pointer-events: none` in Safari in `traits/i-access` and `traits/i-progress`
+
+## v3.0.0-rc.184 (2021-05-12)
 
 #### :rocket: New Feature
 
@@ -74,6 +115,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :memo: Documentation
 
 * Added documentation:
+<<<<<<< HEAD
 <<<<<<< HEAD
   * `bCheckbox`
   * `bRadioButton`
@@ -97,6 +139,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bRadioButton`
   * `bInputHidden`
   * `bForm`
+=======
+  * `traits`
+  * `traits/i-open`
+  * `traits/i-open-toggle`
+
+## v3.0.0-rc.183 (2021-05-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with functional components after adding Zero `core/component/render-function`
+* Fixed a bug while initializing Zero `core/component/engines/zero`
+>>>>>>> master
 
 ## v3.0.0-rc.182 (2021-04-28)
 
@@ -111,11 +165,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Extracted `compileStaticRoutes` from `bRouter` to `core/router`
+<<<<<<< HEAD
 =======
   * `traits`
   * `traits/i-open`
   * `traits/i-open-toggle`
 >>>>>>> traits
+=======
+>>>>>>> master
 
 ## v3.0.0-rc.181 (2021-04-20)
 

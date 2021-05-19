@@ -19,7 +19,7 @@ const
 /**
  * RegExp to extract parameters from a @component declaration
  */
-exports.componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/;
+exports.componentRgxp = /@component\(([^@]*?)\)[\s\S]+?class\s+/;
 
 /**
  * RegExp to extract a name from a component and name of the parent component

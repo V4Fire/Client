@@ -81,7 +81,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 				const
 					res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
-				if (res instanceof Promise) {
+				if (Object.isPromise(res)) {
 					return res.then(() => nm != null ? emitter.emit(nm) : undefined);
 				}
 
@@ -99,7 +99,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		const
 			tasks = emitter.drain();
 
-		if (tasks instanceof Promise) {
+		if (Object.isPromise(tasks)) {
 			return tasks;
 		}
 
@@ -108,8 +108,8 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 			hook = hooks[0],
 			res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
-		if (res instanceof Promise) {
-			return res;
+		if (Object.isPromise(res)) {
+			return <any>res;
 		}
 	}
 

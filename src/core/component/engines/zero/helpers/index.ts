@@ -39,6 +39,30 @@ export * from 'core/component/engines/zero/helpers/interface';
 export const
 	$$ = symbolGenerator();
 
+export function addToRefs(el: Element, data: Nullable<VNodeData>, refs: Nullable<Dictionary>): void {
+	if (data == null) {
+		return;
+	}
+
+	const
+		{ref} = data;
+
+	if (ref == null || ref === '' || refs == null) {
+		return;
+	}
+
+	if (data.refInFor === true) {
+		const
+			arr = <Element[]>(refs[ref] ?? []);
+
+		refs[ref] = arr;
+		arr.push(el);
+
+	} else {
+		refs[ref] = el;
+	}
+}
+
 export function createSVGChildren(ctx: ComponentInterface, children: Nullable<Element[]>): SVGElement[] {
 	if (children == null || children.length === 0) {
 		return [];
@@ -57,8 +81,14 @@ export function createSVGChildren(ctx: ComponentInterface, children: Nullable<El
 			const
 				dirs = el[$$.directives];
 
-			addStaticDirectives(ctx, data, dirs, node);
 			addDirectives(ctx, node, data, dirs);
+			addStaticDirectives(ctx, data, dirs, node);
+
+			const
+				// @ts-ignore (access)
+				refs = ctx.$refs;
+
+			addToRefs(el, data, refs);
 
 			addStyles(node, el[$$.styles]);
 			addAttrs(node, el[$$.attrs]);
@@ -66,23 +96,6 @@ export function createSVGChildren(ctx: ComponentInterface, children: Nullable<El
 
 			if (Object.isTruly(el.className)) {
 				node.setAttributeNS(null, 'class', el.className);
-			}
-
-			const
-				// @ts-ignore (access)
-				refs = ctx.$refs;
-
-			if (Object.isTruly(data.ref) && Object.isPlainObject(refs)) {
-				if (data.refInFor === true) {
-					const
-						arr = <Element[]>(refs[data.ref] ?? []);
-
-					refs[data.ref] = arr;
-					arr.push(el);
-
-				} else {
-					refs[data.ref] = el;
-				}
 			}
 
 			res.push(node);
