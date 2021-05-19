@@ -148,7 +148,9 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @example
 	 * ```
 	 * /// A user will see an input element with a value:
-	 * /// _-_ _-_
+	 * /// _-_
+	 * /// When it starts typing, the value will automatically change, like,
+	 * /// 2-3 _-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2
 	 * ```
 	 */
@@ -162,7 +164,9 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @example
 	 * ```
 	 * /// A user will see an input element with a value:
-	 * /// _-_@_-_
+	 * /// _-_
+	 * /// When it starts typing, the value will automatically change, like,
+	 * /// 2-3@_-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 	 * ```
 	 */
@@ -189,14 +193,14 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Text value of the input
-	 * @see [[iInputText.text]]
+	 * @see [[iInputText.textStore]]
 	 */
 	@computed({cache: false})
 	get text(): string {
 		const
 			v = this.field.get<string>('textStore') ?? '';
 
-		// If the input is empty, don't provide the mask
+		// If the input is empty, don't return the empty mask
 		if (this.compiledMask?.placeholder === v) {
 			return '';
 		}
