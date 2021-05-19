@@ -7,6 +7,7 @@
  */
 
 import type iInputText from 'super/i-input-text/i-input-text';
+
 import {
 
 	fitForText,

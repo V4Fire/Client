@@ -7,7 +7,6 @@
  */
 
 import type iInputText from 'super/i-input-text/i-input-text';
-
 import type { CompiledMask } from 'super/i-input-text/interface';
 
 /**
@@ -22,14 +21,18 @@ import type { CompiledMask } from 'super/i-input-text/interface';
 export function fitForText<C extends iInputText>(component: C, text: CanArray<string>): CanUndef<CompiledMask> {
 	const {
 		unsafe,
-		unsafe: {compiledMask: mask}
+		unsafe: {
+			compiledMask: mask,
+			maskRepetitionsProp,
+			maskRepetitions
+		}
 	} = component;
 
 	if (mask == null) {
 		return;
 	}
 
-	if (unsafe.maskRepetitionsProp !== true) {
+	if (maskRepetitionsProp == null || maskRepetitionsProp === false) {
 		return mask;
 	}
 
@@ -37,7 +40,7 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 		{symbols, nonTerminals} = mask!;
 
 	const
-		nonTerminalsPerChunk = nonTerminals.length / unsafe.maskRepetitions;
+		nonTerminalsPerChunk = nonTerminals.length / maskRepetitions;
 
 	let
 		i = 0,
@@ -68,11 +71,16 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		expectedRepetitions = Math.ceil(validCharsInText / nonTerminalsPerChunk) || 1;
 
-	if (expectedRepetitions === unsafe.maskRepetitions) {
+	if (expectedRepetitions === maskRepetitions) {
 		return mask;
 	}
 
-	unsafe.maskRepetitions = expectedRepetitions;
+	if (maskRepetitionsProp === true) {
+		unsafe.maskRepetitions = expectedRepetitions;
+
+	} else {
+		unsafe.maskRepetitions = maskRepetitionsProp >= expectedRepetitions ? expectedRepetitions : maskRepetitionsProp;
+	}
 
 	const
 		newMask = unsafe.compileMask();

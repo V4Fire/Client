@@ -34,6 +34,7 @@ export interface SyncMaskWithTextOptions {
 	/**
 	 * Starting position of the selection cursor.
 	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
+	 *
 	 * @default `from`
 	 */
 	cursorPos?: number;

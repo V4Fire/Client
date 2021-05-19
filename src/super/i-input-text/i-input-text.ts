@@ -253,8 +253,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * A number of mask repetitions
 	 * @see [[iInputText.maskRepetitionsProp]]
 	 */
-	@system((o) => o.sync.link((v) => v === true ? 1 : v ?? 1))
-	protected maskRepetitions!: number;
+	@system()
+	protected maskRepetitions: number = 1;
 
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};

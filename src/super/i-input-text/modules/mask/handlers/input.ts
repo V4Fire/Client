@@ -32,6 +32,9 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		return;
 	}
 
+	let
+		valToInput = e.key;
+
 	const canIgnore =
 		mask == null ||
 
@@ -40,16 +43,14 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		e.ctrlKey ||
 		e.metaKey ||
 
-		e.key === 'Tab';
+		// Ignore Tab, ArrowLeft and other stuff
+		/^[A-Z][a-z]/.test(valToInput);
 
 	if (canIgnore) {
 		return;
 	}
 
 	e.preventDefault();
-
-	let
-		valToInput = e.key;
 
 	const
 		[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
