@@ -374,6 +374,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	/** @override */
 	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
 		attrs.type = this.type;
+
 		attrs.placeholder = this.placeholder;
 		attrs.autocomplete = this.autocomplete;
 		attrs.readonly = Object.parse(this.mods.readonly);
