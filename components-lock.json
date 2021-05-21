@@ -1,5 +1,5 @@
 {
-  "hash": "5cc4dfb714af6ba8af3de6b51bef341375ee1aaa26cf403d6a4f0e8ccd8baa09",
+  "hash": "a4966ed8a922d1aa5df15f60e336da78d627cb85c268d8a5c0ac26f9ed2ad447",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -509,7 +509,7 @@
           "index": "src/form/b-input/index.js",
           "declaration": {
             "name": "b-input",
-            "parent": "i-input",
+            "parent": "i-input-text",
             "dependencies": [
               "b-icon",
               "b-progress-icon"
@@ -517,7 +517,7 @@
             "libs": []
           },
           "name": "b-input",
-          "parent": "i-input",
+          "parent": "i-input-text",
           "dependencies": [
             "b-icon",
             "b-progress-icon"
@@ -1963,7 +1963,8 @@
               "b-dummy-text",
               "b-slider",
               "b-window",
-              "b-image"
+              "b-image",
+              "b-input"
             ],
             "libs": []
           },
@@ -1984,7 +1985,8 @@
             "b-dummy-text",
             "b-slider",
             "b-window",
-            "b-image"
+            "b-image",
+            "b-input"
           ],
           "libs": [],
           "resolvedLibs": {
