@@ -49,7 +49,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 		case 'Delete': {
 			await unsafe.syncMaskWithText('', {
 				from: selectionStart,
-				to: selectionEnd,
+				to: selectionEnd - selectionStart > 1 ? selectionEnd - 1 : selectionEnd,
 				preserveCursor: true
 			});
 

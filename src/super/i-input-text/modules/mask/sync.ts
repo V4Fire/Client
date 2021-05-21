@@ -134,8 +134,9 @@ export function syncWithText<C extends iInputText>(
 	// If the component is focused, we need to correct the cursor position
 	if (isFocused) {
 		const needRewindCursorPos =
-			cursorPos < (opts.to ?? maskSymbols.length) - 1 &&
-			newMaskedText[cursorPos] !== mask.placeholder;
+			!opts.preserveCursor &&
+			newMaskedText[cursorPos] !== mask.placeholder &&
+			cursorPos < (opts.to ?? maskSymbols.length) - 1;
 
 		if (needRewindCursorPos) {
 			do {

@@ -36,7 +36,7 @@ async function initInput(page, attrs = {}) {
 			}
 		];
 
-		globalThis.renderComponents('b-dummy-text', scheme);
+		globalThis.renderComponents('b-dummy-text-functional', scheme);
 	}, attrs);
 
 	await h.bom.waitForIdleCallback(page);
