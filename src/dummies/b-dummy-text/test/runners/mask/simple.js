@@ -100,7 +100,18 @@ module.exports = (page) => {
 				maskRepetitions: 2
 			});
 
-			expect(await target.evaluate((ctx) => ctx.$refs.input.value)).toBe('1-_ _-_');
+			expect(await target.evaluate((ctx) => ctx.$refs.input.value))
+				.toBe('1-_');
+
+			expect(await target.evaluate((ctx) => {
+				ctx.text = '12';
+				return ctx.$refs.input.value;
+			})).toBe('1-2');
+
+			expect(await target.evaluate((ctx) => {
+				ctx.text = '123';
+				return ctx.$refs.input.value;
+			})).toBe('1-2 3-_');
 		});
 
 		it('applying a mask with infinite repetitions', async () => {
