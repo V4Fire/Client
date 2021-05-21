@@ -87,7 +87,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Maximum text value length of the input
-	 * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
 	 */
 	@prop({type: Number, required: false})
 	readonly maxlength?: number;
@@ -150,7 +150,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * /// A user will see an input element with a value:
 	 * /// _-_
 	 * /// When it starts typing, the value will automatically change, like,
-	 * /// 2-3 _-_
+	 * /// 2-3 1-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2
 	 * ```
 	 */
@@ -166,7 +166,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * /// A user will see an input element with a value:
 	 * /// _-_
 	 * /// When it starts typing, the value will automatically change, like,
-	 * /// 2-3@_-_
+	 * /// 2-3@1-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 	 * ```
 	 */
