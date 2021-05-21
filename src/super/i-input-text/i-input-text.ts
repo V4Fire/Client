@@ -78,11 +78,32 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly placeholder?: string;
 
 	/**
+	 * Minimum text value length of the input
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength
+	 */
+	@prop({type: Number, required: false})
+	readonly minlength?: number;
+
+	/**
 	 * Maximum text value length of the input
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
 	 */
 	@prop({type: Number, required: false})
 	readonly maxlength?: number;
+
+	/**
+	 * Minimum value of the input (for number and date types)
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
+	 */
+	@prop({type: [Number, String, Date], required: false})
+	readonly min?: number | string | Date;
+
+	/**
+	 * Maximum value of the input (for number and date types)
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax
+	 */
+	@prop({type: [Number, String, Date], required: false})
+	readonly max?: number | string | Date;
 
 	/**
 	 * Value of the input's mask.
@@ -353,10 +374,16 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	/** @override */
 	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
 		attrs.type = this.type;
-		attrs.autocomplete = this.autocomplete;
 		attrs.placeholder = this.placeholder;
+		attrs.autocomplete = this.autocomplete;
 		attrs.readonly = Object.parse(this.mods.readonly);
+
+		attrs.minlength = this.minlength;
 		attrs.maxlength = this.maxlength;
+
+		attrs.min = this.min;
+		attrs.max = this.max;
+
 		return attrs;
 	}
 

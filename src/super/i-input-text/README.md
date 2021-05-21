@@ -67,11 +67,29 @@ A placeholder text of the input
 < my-text-input :placeholder = 'Enter you name'
 ```
 
+#### minlength
+
+The minimum text value length of the input.
+
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength)
+
 #### maxlength
 
 The maximum text value length of the input.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength)
+
+#### min
+
+The minimum value of the input (for number and date types).
+
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin)
+
+#### max
+
+The maximum value of the input (for number and date types).
+
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax)
 
 #### mask
 
