@@ -79,13 +79,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly placeholder?: string;
 
 	/**
-	 * Enables the read-only mode
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly
-	 */
-	@prop({type: Boolean, required: false})
-	readonly readonly?: boolean;
-
-	/**
 	 * Maximum text value length of the input
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
 	 */
@@ -240,7 +233,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 		readonly: [
 			'true',
-			'false'
+			['false']
 		]
 	};
 
@@ -363,7 +356,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		attrs.type = this.type;
 		attrs.autocomplete = this.autocomplete;
 		attrs.placeholder = this.placeholder;
-		attrs.readonly = this.readonly;
+		attrs.readonly = Object.parse(this.mods.readonly);
 		attrs.maxlength = this.maxlength;
 		return attrs;
 	}
@@ -372,7 +365,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('empty', 'text', (v) => v === '');
-		this.sync.mod('readonly', 'readonly');
 	}
 
 	protected mounted(): void {

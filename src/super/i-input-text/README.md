@@ -67,12 +67,6 @@ A placeholder text of the input
 < my-text-input :placeholder = 'Enter you name'
 ```
 
-#### readonly
-
-Enables the read-only mode.
-
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly)
-
 #### maxlength
 
 The maximum text value length of the input.
