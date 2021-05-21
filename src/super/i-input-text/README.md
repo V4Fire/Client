@@ -12,7 +12,12 @@ This module provides a superclass to create text inputs. The class includes API 
 
 ## Modifiers
 
-See [[iWidth]] and [[iSize]] traits and the [[iInput]] component.
+| Name       | Description                            | Values    | Default |
+| ---------- | -------------------------------------- | ----------| ------- |
+| `empty`    | A component text is empty              | `Boolean` | -       |
+| `readonly` | The component is in the read-only mode | `Boolean` | -       |
+
+Also, you can see [[iWidth]] and [[iSize]] traits and the [[iInput]] component.
 
 ## Events
 
@@ -64,7 +69,7 @@ A placeholder text of the input
 
 #### readonly
 
-Enables the readonly mode.
+Enables the read-only mode.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly)
 

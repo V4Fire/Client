@@ -33,7 +33,7 @@ export default class MyInput extends iInput {
 | Name        | Description                                                                                                            | Values    | Default |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------- | ----------| ------- |
 | `form`      | The system modifier. Is used to find form components from DOM.                                                         | `Boolean` | `true`  |
-| `valid`     | The component passed data validation                                                                                   | `Boolean` | -       |
+| `valid`     | The component has passed data validation                                                                               | `Boolean` | -       |
 | `showInfo`  | The component is showing some info message (like advices to generate a password) through output                        | `Boolean` | -       |
 | `showError` | The component is showing some error message (like using of non-valid characters to generate a password) through output | `Boolean` | -       |
 

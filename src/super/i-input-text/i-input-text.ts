@@ -79,7 +79,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly placeholder?: string;
 
 	/**
-	 * Readonly flag
+	 * Enables the read-only mode
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly
 	 */
 	@prop({type: Boolean, required: false})
@@ -236,6 +236,11 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		empty: [
 			'true',
 			'false'
+		],
+
+		readonly: [
+			'true',
+			'false'
 		]
 	};
 
@@ -267,7 +272,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * Selects all content of the input
 	 * @emits `selectText()`
 	 */
-	@wait('ready', {label: $$.selectAll})
+	@wait('ready', {label: $$.selectText})
 	selectText(): CanPromise<boolean> {
 		const
 			{input} = this.$refs;
