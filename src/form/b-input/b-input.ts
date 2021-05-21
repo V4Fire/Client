@@ -180,7 +180,7 @@ export default class bInput extends iInputText implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: value buffer update
+	 * Handler: updating of a component text value
 	 */
 	@watch('text')
 	@hook('beforeDataCreate')
@@ -189,7 +189,7 @@ export default class bInput extends iInputText implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: edit
+	 * Handler: manual editing of a component text value
 	 * @emits `actionChange(value: V)`
 	 */
 	protected onEdit(): void {
@@ -201,7 +201,7 @@ export default class bInput extends iInputText implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: clear
+	 * Handler: clearing of a component value
 	 * @emits `actionChange(value: V)`
 	 */
 	protected async onClear(): Promise<void> {
