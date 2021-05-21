@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-input')
-	.extends('i-input-text')
-	.dependencies('b-icon', 'b-progress-icon');
+import symbolGenerator from 'core/symbol';
+
+export const
+	$$ = symbolGenerator();

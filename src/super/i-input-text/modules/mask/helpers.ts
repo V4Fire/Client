@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { $$ } from 'super/i-input-text/const';
+
 import type iInputText from 'super/i-input-text/i-input-text';
 import type { CompiledMask } from 'super/i-input-text/interface';
 
@@ -212,13 +214,13 @@ export function syncInputWithField<C extends iInputText>(component: C): void {
  * Synchronizes the `text` field with the `$refs.input.text` property
  * @param component
  */
-export function syncFieldWithInput<C extends iInputText>(component: C): void {
+export function syncFieldWithInput<C extends iInputText>(component: C): Promise<void> {
 	const {
 		unsafe,
 		unsafe: {compiledMask: mask}
 	} = component;
 
-	unsafe.async.setImmediate(() => {
+	return unsafe.async.nextTick({label: $$.syncFieldWithInput}).then(() => {
 		const
 			{$refs: {input}} = unsafe;
 

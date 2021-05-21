@@ -8,9 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-input'|b as placeholder
+- include 'super/i-input-text'|b as placeholder
 
-- template index() extends ['i-input'].index
+- template index() extends ['i-input-text'].index
 	- rootTag = 'span'
 	- rootWrapper = true
 
@@ -46,26 +46,7 @@
 
 					- block input
 						< _.&__cell.&__input-cont
-							< input.&__input &
-								ref = input |
-								:id = id |
-								:name = name |
-								:form = form |
-								:type = type |
-								:placeholder = placeholder && t(placeholder) |
-								:autocomplete = autocomplete |
-								:autofocus = autofocus |
-								:tabindex = tabIndex |
-								:maxlength = maxlength |
-								:min = min |
-								:max = max |
-								:readonly = readonly |
-								:v-attrs = attrs |
-								@focus = onFocus |
-								@input = onEdit |
-								@blur = onBlur |
-								${attrs|!html}
-							.
+							+= self.nativeInput({'@input': 'onEdit'})
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')

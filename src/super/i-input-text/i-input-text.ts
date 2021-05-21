@@ -11,8 +11,6 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
-
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
 
@@ -33,13 +31,14 @@ import iInput, {
 import * as mask from 'super/i-input-text/modules/mask';
 //#endif
 
+import { $$ } from 'super/i-input-text/const';
 import type { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from 'super/i-input-text/interface';
 
 export * from 'super/i-input/i-input';
+export * from 'super/i-input-text/const';
 export * from 'super/i-input-text/interface';
 
-export const
-	$$ = symbolGenerator();
+export { $$ };
 
 /**
  * Superclass to create text inputs
@@ -388,8 +387,16 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	/**
 	 * Handler: there is occur an input action on the masked input
 	 */
-	protected onMaskInput(): void {
-		mask.syncFieldWithInput(this);
+	protected onMaskInput(): Promise<void> {
+		return mask.syncFieldWithInput(this);
+	}
+
+	/**
+	 * Handler: there is occur a keypress action on the masked input
+	 * @param e
+	 */
+	protected onMaskKeyPress(e: KeyboardEvent): void {
+		mask.onKeyPress(this, e);
 	}
 
 	/**
@@ -406,13 +413,5 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 */
 	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): void {
 		mask.onNavigate(this, e);
-	}
-
-	/**
-	 * Handler: there is occur a keypress action on the masked input
-	 * @param e
-	 */
-	protected onMaskKeyPress(e: KeyboardEvent): void {
-		mask.onKeyPress(this, e);
 	}
 }

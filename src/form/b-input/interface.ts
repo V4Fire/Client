@@ -6,6 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-input')
-	.extends('i-input-text')
-	.dependencies('b-icon', 'b-progress-icon');
+export type Value = string;
+export type FormValue = CanUndef<Value>;
