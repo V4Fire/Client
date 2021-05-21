@@ -692,7 +692,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Clears the component value undefined
+	 * Clears the component value to undefined
 	 * @emits `clear(value: this['Value'])`
 	 */
 	@p({replace: false})
