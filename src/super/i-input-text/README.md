@@ -1,6 +1,6 @@
 # super/i-input-text
 
-This module provides a superclass to create text inputs.
+This module provides a superclass to create text inputs. The class includes API to create a masked input.
 
 ## Synopsis
 
@@ -85,6 +85,7 @@ The non-terminal symbols should start with `%` and one more symbol. For instance
 replaced by a numeric character (0-9).
 
 Supported non-terminal symbols:
+
 * `%d` - is equivalent RegExp' `\d`
 * `%w` - is equivalent RegExp' `\w`
 * `%s` - is equivalent RegExp' `\s`
@@ -142,3 +143,23 @@ you can add new non-terminal symbols.
 ```
 < b-input :mask = '%l%l%l' | :regExps = {l: /[a-z]/i}
 ```
+
+### Fields and getters
+
+#### text
+
+A text value of the input. It can be modified directly from a component.
+
+### isMaskInfinite
+
+True, if the mask is repeated infinitely.
+
+### Methods
+
+#### selectText
+
+Selects all content of the input.
+
+#### clearText
+
+Clears content of the input.
