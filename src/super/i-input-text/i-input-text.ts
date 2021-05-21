@@ -43,12 +43,7 @@ export { $$ };
 /**
  * Superclass to create text inputs
  */
-@component({
-	functional: {
-		dataProvider: undefined
-	}
-})
-
+@component()
 export default class iInputText extends iInput implements iWidth, iSize {
 	/**
 	 * Initial text value of the input

@@ -6,17 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-input/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools/deprecation';
-
-import iWidth from 'traits/i-width/i-width';
-import iSize from 'traits/i-size/i-size';
 
 import iInputText, {
 
 	component,
 	prop,
-	field,
+	system,
 
 	watch,
 	hook,
@@ -38,13 +40,16 @@ export { Value, FormValue };
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to create a form input
+ */
 @component({
 	functional: {
 		dataProvider: undefined
 	}
 })
 
-export default class bInput extends iInputText implements iWidth, iSize {
+export default class bInput extends iInputText {
 	/** @override */
 	readonly Value!: Value;
 
@@ -132,17 +137,6 @@ export default class bInput extends iInputText implements iWidth, iSize {
 		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		...iWidth.mods,
-		...iSize.mods,
-
-		empty: [
-			'true',
-			'false'
-		]
-	};
-
 	/** @override */
 	static validators: ValidatorsDecl = {
 		...<any>iInputText.validators,
@@ -150,7 +144,11 @@ export default class bInput extends iInputText implements iWidth, iSize {
 	};
 
 	/** @override */
-	@field({
+	@system()
+	protected valueStore!: this['Value'];
+
+	/** @override */
+	@system({
 		after: 'valueStore',
 		init: (o, data) => o.sync.link((text) => {
 			o.sync.link(['textStore', 'valueProp'], link);
