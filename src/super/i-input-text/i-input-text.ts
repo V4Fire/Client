@@ -59,7 +59,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * UI type of the input
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#input_types
 	 */
 	@prop(String)
 	readonly type: string = 'text';
