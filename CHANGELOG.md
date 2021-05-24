@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.191 (2021-05-24)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using `self.load modules` with the same options within different components `iBlock`
+
 ## v3.0.0-rc.190 (2021-05-17)
 
 #### :bug: Bug Fix
