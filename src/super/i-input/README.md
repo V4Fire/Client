@@ -275,7 +275,7 @@ Supported validators are placed within the static `validators` property.
 This property is an object: the keys represent validator names; the values are specified as functions that take validation parameters and
 return the `ValidatorResult` structure. Any validator can return a promise.
 
-The `iInput` class provides out of the box only one validator: `required`.
+The `iInput` class provides out of the box only one validator: `required`, which checks that a component must be filled.
 You free to add new validator to your component.
 
 ```typescript
