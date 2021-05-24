@@ -247,6 +247,30 @@ It helps to combine validators and converters.
 < b-input :validators = ['required'] | :formConverter = [toProtobuf.option(), zip.option()]
 ```
 
+### Loading data from a provider
+
+Because the class extends from [[iData]], all input component can load own data from providers.
+By default, if the loaded data is a dictionary, it will be mapped to the component properties.
+Otherwise, it will be set as a component value. You can re-define this logic by overriding the `initRemoteData` method.
+
+```typescript
+function initRemoteData(): CanUndef<CanPromise<unknown | Dictionary>> {
+  if (!this.db) {
+    return;
+  }
+
+  const
+    val = this.convertDBToComponent(this.db);
+
+  if (Object.isDictionary(val)) {
+    return Promise.all(this.state.set(val)).then(() => val);
+  }
+
+  this.value = val;
+  return val;
+}
+```
+
 ### Validation
 
 All instances of the `iInput` class support the feature of validation.
