@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a bug when using `self.load modules` with the same options within different components `iBlock`
+* Don't provide attributes that match with modifiers `super/i-block/modules/mods`
 
 ## v3.0.0-rc.190 (2021-05-17)
 
