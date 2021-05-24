@@ -305,7 +305,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	},
 
 	/**
-	 * Checks that a component value must be matched as a email string
+	 * Checks that a component value must be matched as an email string
 	 *
 	 * @param msg
 	 * @param showMsg
