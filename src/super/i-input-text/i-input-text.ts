@@ -73,28 +73,28 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly placeholder?: string;
 
 	/**
-	 * Minimum text value length of the input
+	 * The minimum text value length of the input
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength
 	 */
 	@prop({type: Number, required: false})
 	readonly minlength?: number;
 
 	/**
-	 * Maximum text value length of the input
+	 * The maximum text value length of the input
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
 	 */
 	@prop({type: Number, required: false})
 	readonly maxlength?: number;
 
 	/**
-	 * Minimum value of the input (for number and date types)
+	 * The minimum value of the input (for number and date types)
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
 	 */
 	@prop({type: [Number, String, Date], required: false})
 	readonly min?: number | string | Date;
 
 	/**
-	 * Maximum value of the input (for number and date types)
+	 * The maximum value of the input (for number and date types)
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax
 	 */
 	@prop({type: [Number, String, Date], required: false})

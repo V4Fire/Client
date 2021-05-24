@@ -132,7 +132,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly itemProps!: iItems['itemProps'];
 
 	/**
-	 * Maximum number of elements to cache
+	 * The maximum number of elements to cache
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
