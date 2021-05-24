@@ -110,7 +110,6 @@ export default class AsyncRender extends Friend {
 		};
 
 		if (elementToDrop != null) {
-			console.log(2222);
 			return wait;
 		}
 
