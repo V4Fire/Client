@@ -100,35 +100,6 @@ If a key from the response data is matched with a component method, this method 
 
 In other cases, the response value is interpreted as the component value.
 
-## Slots
-
-The component supports a few of slots to provide:
-
-1. `check` to provide checkbox UI.
-
-```
-< b-checkbox
-  < template #check = {ctx}
-    < .check-ui :data-status = ctx.mods.checked
-```
-
-2. `label` to provide label UI.
-
-```
-< b-checkbox
-  < template #check = {label}
-    < .label
-      {{ label }}
-```
-
-## Validation
-
-Because the component extends from [[iInput]], it supports validation API.
-
-```
-< b-checkbox :name = 'adult' | :validators = ['required'] | @validationEnd = handler
-```
-
 ## Hierarchy of checkboxes
 
 The component supports the feature of the multilevel checkbox hierarchy. For instance:
@@ -154,9 +125,38 @@ When you click a child, the parent checkbox will be set to the indeterminate sta
 < b-checbox :parentId = 'parent' | :name = 'bar'
 ```
 
+## Slots
+
+The component supports a few of slots to provide:
+
+1. `check` to provide checkbox UI.
+
+```
+< b-checkbox
+  < template #check = {ctx}
+    < .check-ui :data-status = ctx.mods.checked
+```
+
+2. `label` to provide label UI.
+
+```
+< b-checkbox
+  < template #check = {label}
+    < .label
+      {{ label }}
+```
+
 ## API
 
 The component provides a bunch of methods to manage of checking/unchecking: `check`, `uncheck`, `toggle`, `reset`, `clear`.
+
+## Validation
+
+Because the component extends from [[iInput]], it supports validation API.
+
+```
+< b-checkbox :name = 'adult' | :validators = ['required'] | @validationEnd = handler
+```
 
 ### Preventing the user manual checking
 

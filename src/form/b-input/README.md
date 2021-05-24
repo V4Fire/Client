@@ -16,13 +16,72 @@ This module provides a component to create a form input.
 
 * The component has `skeletonMarker`.
 
-## Modifiers
+## Modifiers & Events
 
 See the parent component and the component traits.
 
-## Events
+## Usage
 
-See the parent component and the component traits.
+The component has two base scenarios of usage:
+
+1. A simple standalone input component.
+
+```
+< b-input :value = myValue | @onActionChange = console.log($event)
+
+/// The component loads data from a provider
+< b-input :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
+```
+
+2. A component that tied with some form.
+
+```
+< b-form :dataProvider = 'User' | :method = 'add'
+  < b-input :name = 'fname' | :value = fName
+  < b-button :type = 'submit'
+```
+
+## Slots
+
+The component supports a bunch of slots to provide:
+
+1. `preIcon` and `icon` to inject icons around the value block.
+
+```
+< b-input
+  < template #preIcon
+    < img src = validate.svg
+
+  < template #icon
+    < img src = clear.svg
+```
+
+Also, these icons can be provided by props.
+
+```
+< b-input :icon = 'validate'
+< b-input :preIcon = 'validate' | :iconComponent = 'b-custom-icon'
+
+< b-input
+  < template #icon = {icon}
+    < img :src = icon
+```
+
+2. `progressIcon` to inject an icon that indicates loading, by default, is used [[bProgressIcon]].
+
+```
+< b-input
+  < template #progressIcon
+    < img src = spinner.svg
+```
+
+Also, this icon can be provided by a prop.
+
+```
+< b-input :progressIcon = 'bCustomLoader'
+```
+
+## API
 
 ## Validation
 
@@ -98,67 +157,6 @@ Checks that a component value must be matched as a password.
 }]] .
 
 < b-input :id = 'repeat-password'
-```
-
-## Usage
-
-The component has two base scenarios of usage:
-
-1. A simple standalone input component.
-
-```
-< b-input :value = myValue | @onActionChange = console.log($event)
-
-/// The component loads data from a provider
-< b-input :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
-```
-
-2. A component that tied with some form.
-
-```
-< b-form :dataProvider = 'User' | :method = 'add'
-  < b-input :name = 'fname' | :value = fName
-  < b-button :type = 'submit'
-```
-
-## Slots
-
-The component supports a bunch of slots to provide:
-
-1. `preIcon` and `icon` to inject icons around the value block.
-
-```
-< b-input
-  < template #preIcon
-    < img src = validate.svg
-
-  < template #icon
-    < img src = clear.svg
-```
-
-Also, these icons can be provided by props.
-
-```
-< b-input :icon = 'validate'
-< b-input :preIcon = 'validate' | :iconComponent = 'b-custom-icon'
-
-< b-input
-  < template #icon = {icon}
-    < img :src = icon
-```
-
-2. `progressIcon` to inject an icon that indicates loading, by default, is used [[bProgressIcon]].
-
-```
-< b-input
-  < template #progressIcon
-    < img src = spinner.svg
-```
-
-Also, this icon can be provided by a prop.
-
-```
-< b-input :progressIcon = 'bCustomLoader'
 ```
 
 ## Styles
