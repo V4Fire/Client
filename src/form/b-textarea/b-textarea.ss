@@ -8,9 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'form/b-input'|b as placeholder
+- include 'super/i-input-text'|b as placeholder
 
-- template index() extends ['b-input'].index
+- template index() extends ['i-input-text'].index
 	- block wrapper
 		< b-scroll-inline.&__scroll &
 			ref = scroll |

@@ -8,19 +8,26 @@
 
 import symbolGenerator from 'core/symbol';
 import type bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
-import bInput, {
+
+import iInputText, {
 
 	component,
 	prop,
 	system,
 	hook,
+
 	wait,
 	watch,
+
 	ModsDecl
 
-} from 'form/b-input/b-input';
+} from 'super/i-input-text/i-input-text';
 
-export * from 'form/b-input/b-input';
+import type { Value, FormValue } from 'form/b-input/interface';
+
+export * from 'super/i-input-text/i-input-text';
+
+export { Value, FormValue };
 
 export const
 	$$ = symbolGenerator();
@@ -31,7 +38,13 @@ export const
 	}
 })
 
-export default class bTextarea extends bInput {
+export default class bTextarea extends iInputText {
+	/** @override */
+	readonly Value!: Value;
+
+	/** @override */
+	readonly FormValue!: FormValue;
+
 	/**
 	 * Exterior of bScroll component
 	 */
@@ -53,10 +66,13 @@ export default class bTextarea extends bInput {
 				{input} = this.$refs;
 
 			const
-				s = getComputedStyle(this.$refs.input);
+				s = getComputedStyle(input);
 
 			return input.scrollHeight -
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				Number.parseFloat(s.paddingTop || '') -
+
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				Number.parseFloat(s.paddingBottom || '');
 		});
 	}
@@ -66,9 +82,16 @@ export default class bTextarea extends bInput {
 	 */
 	get maxHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
-			const s = getComputedStyle(this.$refs.superWrapper);
+			const
+				s = getComputedStyle(this.$refs.superWrapper);
+
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			return Number.parseFloat(s.maxHeight || '') -
+
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				Number.parseFloat(s.paddingTop || '') -
+
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				Number.parseFloat(s.paddingBottom || '');
 		});
 	}
@@ -78,6 +101,8 @@ export default class bTextarea extends bInput {
 	 */
 	get newlineHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () =>
+
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			Number.parseFloat(getComputedStyle(this.$refs.input).lineHeight || '') || 10);
 	}
 
@@ -86,7 +111,7 @@ export default class bTextarea extends bInput {
 	 */
 	get limit(): CanUndef<number> {
 		if (this.maxlength === undefined) {
-			return;
+			return undefined;
 		}
 
 		return this.maxlength - this.value.length;
@@ -107,8 +132,7 @@ export default class bTextarea extends bInput {
 	protected minHeight?: number;
 
 	/** @override */
-	// @ts-ignore
-	protected readonly $refs!: {
+	protected readonly $refs!: iInputText['$refs'] & {
 		superWrapper: HTMLElement;
 		scroll: bScrollInline;
 		input: HTMLTextAreaElement;
@@ -124,6 +148,7 @@ export default class bTextarea extends bInput {
 			{length} = this.value;
 
 		if (input.scrollHeight <= input.clientHeight) {
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (input.clientHeight > <number>this.minHeight && (this.prevValue || '').length > length) {
 				return this.minimize();
 			}
@@ -170,7 +195,6 @@ export default class bTextarea extends bInput {
 
 		const
 			val = this.value,
-			// @ts-ignore
 			[minHeight, maxHeight]: [any, number] = await Promise.all([this.minHeight, this.maxHeight]);
 
 		let newHeight = await this.calcTextHeight();
@@ -192,24 +216,31 @@ export default class bTextarea extends bInput {
 		const
 			{input} = this.$refs;
 
+		if (this.$el == null || this.block == null) {
+			return 0;
+		}
+
 		const
 			tmp = <HTMLElement>this.$el.cloneNode(true),
 			tmpInput = <HTMLTextAreaElement>tmp.querySelector(this.block.getElSelector('input'));
 
-		tmpInput.value = input.value;
+		tmpInput.value =
+			input.value;
+
 		Object.assign(tmpInput.style, {
 			width: input.clientWidth.px,
 			height: 'auto'
 		});
 
 		Object.assign(tmp.style, {
-			'position': 'absolute',
-			'top': 0,
-			'left': 0,
+			position: 'absolute',
+			top: 0,
+			left: 0,
 			'z-index': -1
 		});
 
 		document.body.appendChild(tmp);
+
 		const height = tmpInput.scrollHeight;
 		tmp.remove();
 

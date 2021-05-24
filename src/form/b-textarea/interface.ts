@@ -6,6 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-textarea')
-	.extends('i-input-text')
-	.dependencies('b-scroll-inline');
+export type Value = string;
+export type FormValue = CanUndef<Value>;
