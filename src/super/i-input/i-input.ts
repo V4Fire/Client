@@ -597,6 +597,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	static validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators
 
+		/**
+		 * Checks that the component must be filled
+		 *
+		 * @param msg
+		 * @param showMsg
+		 */
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			if (await this.formValue == null) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);

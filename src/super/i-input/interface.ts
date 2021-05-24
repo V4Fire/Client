@@ -13,6 +13,11 @@ export interface ValidatorMsgFn {
 	(err: ValidatorResult): string;
 }
 
+/**
+ * Error message to show a user.
+ * It can be passed as a simple string, a dictionary of strings where the keys represent error names or a
+ * function that takes an error object and returns a string.
+ */
 export type ValidatorMsg = Nullable<
 	string |
 	Dictionary<string> |
@@ -20,7 +25,14 @@ export type ValidatorMsg = Nullable<
 >;
 
 export interface ValidatorParams extends Dictionary {
+	/**
+	 * Error message to show a user
+	 */
 	msg?: ValidatorMsg;
+
+	/**
+	 * Should show or not to show an error message to a user
+	 */
 	showMsg?: boolean;
 }
 
@@ -29,10 +41,10 @@ export interface ValidatorError<E = unknown> extends Dictionary {
 	value?: E;
 }
 
-export type ValidatorResult<ERR = unknown> =
+export type ValidatorResult<E = unknown> =
 	boolean |
 	null |
-	ValidatorError<ERR>;
+	ValidatorError<E>;
 
 export interface ValidationError<E = unknown> {
 	validator: string;
@@ -40,9 +52,9 @@ export interface ValidationError<E = unknown> {
 	msg?: string;
 }
 
-export type ValidationResult<ERR = unknown> =
+export type ValidationResult<E = unknown> =
 	boolean |
-	ValidationError<ERR>;
+	ValidationError<E>;
 
 export type Validators = Array<
 	string |
