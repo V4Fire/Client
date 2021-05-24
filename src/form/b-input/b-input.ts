@@ -23,7 +23,6 @@ import iInputText, {
 	watch,
 	hook,
 
-	ModsDecl,
 	ValidatorsDecl
 
 } from 'super/i-input-text/i-input-text';

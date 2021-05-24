@@ -598,7 +598,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		//#if runtime has iInput/validators
 
 		/**
-		 * Checks that the component must be filled
+		 * Checks that a component value must be filled
 		 *
 		 * @param msg
 		 * @param showMsg

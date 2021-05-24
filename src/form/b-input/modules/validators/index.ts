@@ -31,6 +31,7 @@ export * from 'form/b-input/modules/validators/interface';
 export default <ValidatorsDecl<bInput, unknown>>{
 	//#if runtime has iInput/validators
 
+	/** @see [[iInput.validators.required]] */
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		if (!Object.isTruly(await this.formValue)) {
 			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
@@ -43,6 +44,19 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	//#endif
 	//#if runtime has bInput/validators
 
+	/**
+	 * Checks that a component value must be matched as a number
+	 *
+	 * @param msg
+	 * @param type
+	 * @param min
+	 * @param max
+	 * @param precision
+	 * @param strictPrecision
+	 * @param separator
+	 * @param styleSeparator
+	 * @param showMsg
+	 */
 	async number({
 		msg,
 		type,
@@ -51,7 +65,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		precision,
 		strictPrecision,
 		separator = ['.', ','],
-		styleSeparator = [],
+		styleSeparator = [' ', '_'],
 		showMsg = true
 	}: NumberValidatorParams): Promise<ValidatorResult<NumberValidatorResult>> {
 		const
@@ -67,8 +81,8 @@ export default <ValidatorsDecl<bInput, unknown>>{
 			}
 		}
 
-		if (precision != null && precision <= 0) {
-			throw new TypeError(`Invalid precision value "${precision}"`);
+		if (precision != null && !Number.isNatural(precision)) {
+			throw new TypeError('The precision value can be defined only as a natural number');
 		}
 
 		const
@@ -91,7 +105,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		};
 
 		const
-			d = `^\\d(?:\\d|${ss})*`;
+			d = `^\\d(?:\\d|${ss}(?=\\d|$))*`;
 
 		switch (type) {
 			case 'uint':
@@ -148,6 +162,16 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
+	/**
+	 * Checks that a component value must be matched as a date
+	 *
+	 * @param msg
+	 * @param past
+	 * @param future
+	 * @param min
+	 * @param max
+	 * @param showMsg
+	 */
 	async date({
 		msg,
 		past,
@@ -218,6 +242,16 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
+	/**
+	 * Checks that a component value must be matched to the provided pattern
+	 *
+	 * @param msg
+	 * @param pattern
+	 * @param min
+	 * @param max
+	 * @param skipLength
+	 * @param showMsg
+	 */
 	async pattern({
 		msg,
 		pattern,
@@ -270,6 +304,12 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
+	/**
+	 * Checks that a component value must be matched as a email string
+	 *
+	 * @param msg
+	 * @param showMsg
+	 */
 	async email({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
 			value = (await this.formValue)?.trim() ?? '';
@@ -282,6 +322,18 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
+	/**
+	 * Checks that a component value must be matched as a password
+	 *
+	 * @param msg
+	 * @param pattern
+	 * @param min
+	 * @param max
+	 * @param connected
+	 * @param old
+	 * @param skipLength
+	 * @param showMsg
+	 */
 	async password({
 		msg,
 		pattern = /^\w*$/,
@@ -344,29 +396,41 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 		if (old != null) {
 			const
-				connectedInput = dom.getComponent<iInput>(old),
-				connectedValue = connectedInput != null && await connectedInput.formValue;
+				connectedInput = dom.getComponent<iInput>(old);
+
+			if (connectedInput == null) {
+				throw new ReferenceError(`Can't find a component by the provided selector "${old}"`);
+			}
+
+			const
+				connectedValue = await connectedInput.formValue;
 
 			if (Object.isTruly(connectedValue)) {
 				if (connectedValue === value) {
 					return error('OLD_IS_NEW', value, t`The old and new password are the same`);
 				}
 
-				void connectedInput?.setMod('valid', true);
+				void connectedInput.setMod('valid', true);
 			}
 		}
 
 		if (connected != null) {
 			const
-				connectedInput = dom.getComponent<iInput>(connected),
-				connectedValue = connectedInput && await connectedInput.formValue;
+				connectedInput = dom.getComponent<iInput>(connected);
+
+			if (connectedInput == null) {
+				throw new ReferenceError(`Can't find a component by the provided selector "${old}"`);
+			}
+
+			const
+				connectedValue = await connectedInput.formValue;
 
 			if (Object.isTruly(connectedValue)) {
 				if (connectedValue !== value) {
 					return error('NOT_CONFIRM', [value, String(connectedValue)], t`Passwords don't match`);
 				}
 
-				void connectedInput?.setMod('valid', true);
+				void connectedInput.setMod('valid', true);
 			}
 		}
 
