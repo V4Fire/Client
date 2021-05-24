@@ -127,8 +127,8 @@ export default class bInput extends iInputText {
 
 	/** @override */
 	set value(value: this['Value']) {
-		this.field.set('valueStore', value);
 		this.text = value;
+		this.field.set('valueStore', this.text);
 	}
 
 	/** @override */
