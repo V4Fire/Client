@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import Range from 'core/range';
 import SyncPromise from 'core/promise/sync';
 
 //#if runtime has component/async-render
@@ -53,6 +54,7 @@ export default class AsyncRender extends Friend {
 	 */
 	forceRender(): void {
 		restart();
+		this.localEmitter.emit('forceRender');
 	}
 
 	/**
@@ -61,6 +63,58 @@ export default class AsyncRender extends Friend {
 	 */
 	deferForceRender(): void {
 		deferRestart();
+		this.localEmitter.emit('forceRender');
+	}
+
+	/**
+	 * Returns a promise that will be resolved after the firing of the `forceRender` event.
+	 * Notice, the initial rendering of a component is mean the same as `forceRender`.
+	 */
+	waitForceRender(): CanPromise<boolean>;
+
+	/**
+	 * Returns a function that returns a promise that will be resolved after firing the `forceRender` event.
+	 * The method takes an element name as the first parameter, the element will be dropped before resolving.
+	 *
+	 * Notice, the initial rendering of a component is mean the same as `forceRender`.
+	 * The method is useful to re-render a non-regular component (functional or flyweight)
+	 * without touching the parent state.
+	 *
+	 * @param elementToDrop - element to drop before resolving of the promise
+	 *
+	 * @example
+	 * ```
+	 * < button @click = asyncRender.forceRender()
+	 *   Re-render the component
+	 *
+	 * < .&__wrapper
+	 *   < template v-for = el in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('content')})
+	 *     < .&__content
+	 *       {{ Math.random() }}
+	 * ```
+	 */
+	waitForceRender(elementToDrop: string): () => CanPromise<boolean>;
+	waitForceRender(elementToDrop?: string): CanPromise<boolean> | (() => CanPromise<boolean>) {
+		const wait = () => {
+			if (!this.lfc.isBeforeCreate()) {
+				return this.localEmitter.promisifyOnce('forceRender').then(() => {
+					if (elementToDrop != null) {
+						this.block?.element(elementToDrop)?.remove();
+					}
+
+					return true;
+				});
+			}
+
+			return true;
+		};
+
+		if (elementToDrop != null) {
+			console.log(2222);
+			return wait;
+		}
+
+		return wait();
 	}
 
 	/**
@@ -68,7 +122,7 @@ export default class AsyncRender extends Friend {
 	 * This method helps to optimize the rendering of a component by splitting big render tasks into little.
 	 *
 	 * @param value
-	 * @param [slice] - elements per chunk or [start position, elements per chunk]
+	 * @param [sliceOrOpts] - elements per chunk, `[start position, elements per chunk]` or additional options
 	 * @param [opts] - additional options
 	 *
 	 * @example
@@ -78,9 +132,18 @@ export default class AsyncRender extends Friend {
 	 *   < my-component :data = el
 	 * ```
 	 */
-	iterate(value: unknown, slice: number | [number?, number?] = 1, opts: TaskParams = {}): unknown[] {
+	iterate(
+		value: unknown,
+		sliceOrOpts: number | [number?, number?] | TaskParams = 1,
+		opts: TaskParams = {}
+	): unknown[] {
 		if (value == null) {
 			return [];
+		}
+
+		if (Object.isPlainObject(sliceOrOpts)) {
+			opts = sliceOrOpts;
+			sliceOrOpts = 1;
 		}
 
 		let
@@ -90,12 +153,12 @@ export default class AsyncRender extends Friend {
 			startPos = 0,
 			perChunk;
 
-		if (Object.isArray(slice)) {
-			startPos = slice[0] ?? startPos;
-			perChunk = slice[1];
+		if (Object.isArray(sliceOrOpts)) {
+			startPos = sliceOrOpts[0] ?? startPos;
+			perChunk = sliceOrOpts[1];
 
 		} else {
-			perChunk = slice;
+			perChunk = sliceOrOpts;
 		}
 
 		const
@@ -133,8 +196,8 @@ export default class AsyncRender extends Friend {
 
 				if (canRender && filter != null) {
 					canRender = filter.call(this.component, val, syncI, {
-						list: iterable,
 						i: syncI,
+						list: iterable,
 						total: syncTotal
 					});
 
@@ -378,16 +441,24 @@ export default class AsyncRender extends Friend {
 		return firstRender;
 
 		function getIterable(value: unknown): CanPromise<Iterable<unknown>> {
+			if (value === true) {
+				return new Range(0, Infinity);
+			}
+
+			if (value === false) {
+				return new Range(0, -Infinity);
+			}
+
+			if (Object.isNumber(value)) {
+				return new Range(0, value);
+			}
+
 			if (Object.isArray(value)) {
 				return value;
 			}
 
 			if (Object.isString(value)) {
 				return value.letters();
-			}
-
-			if (Object.isNumber(value)) {
-				return new Array(value);
 			}
 
 			if (Object.isPromise(value)) {

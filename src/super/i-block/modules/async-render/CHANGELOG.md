@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.191 (2021-05-24)
+
+#### :rocket: New Feature
+
+* Added overloads for infinite iterators
+* Added `waitForceRender`
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :rocket: New Feature

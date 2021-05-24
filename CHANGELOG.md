@@ -13,6 +13,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.191 (2021-05-24)
 
+#### :rocket: New Feature
+
+* `super/i-block/modules/async-render`:
+  * Added overloads for infinite iterators
+  * Added `waitForceRender`
+
 #### :bug: Bug Fix
 
 * Fixed a bug when using `self.load modules` with the same options within different components `iBlock`
