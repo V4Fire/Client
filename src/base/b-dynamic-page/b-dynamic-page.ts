@@ -21,12 +21,10 @@ import iDynamicPage, {
 
 } from 'super/i-dynamic-page/i-dynamic-page';
 
-export * from 'super/i-data/i-data';
+import type { KeepAlive } from 'base/b-dynamic-page/interface';
 
-export type KeepAlive =
-	string |
-	string[] |
-	RegExp;
+export * from 'super/i-data/i-data';
+export * from 'base/b-dynamic-page/interface';
 
 @component({
 	inheritMods: false,
@@ -83,7 +81,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@prop({
 		type: [Function, Array],
-		default: (e) => e && (e.component || e.name),
+		default: (e) => e != null ? (e.component ?? e.name) : undefined,
 		forceDefault: true
 	})
 
@@ -109,14 +107,14 @@ export default class bDynamicPage extends iDynamicPage {
 	protected readonly $refs!: {component?: iDynamicPage};
 
 	/** @override */
-	async initLoad(data?: unknown, params?: InitLoadOptions): Promise<void> {
-		return undefined;
+	initLoad(): Promise<void> {
+		return Promise.resolve();
 	}
 
 	/** @override */
 	async reload(params?: InitLoadOptions): Promise<void> {
 		const {component} = this.$refs;
-		return component && component.reload(params);
+		return component?.reload(params);
 	}
 
 	/**
@@ -132,8 +130,8 @@ export default class bDynamicPage extends iDynamicPage {
 		$a
 			.clearAll(group);
 
-		if (this.event) {
-			$a.on(this.emitter || this.$root, this.event, (component, e) => {
+		if (this.event != null) {
+			$a.on(this.emitter ?? this.$root, this.event, (component, e) => {
 				if (component != null && !((<Dictionary>component).instance instanceof iBlock)) {
 					e = component;
 				}
@@ -141,7 +139,7 @@ export default class bDynamicPage extends iDynamicPage {
 				let
 					v = e;
 
-				if (this.eventConverter) {
+				if (Object.isTruly(this.eventConverter)) {
 					v = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
 				}
 
@@ -156,6 +154,6 @@ export default class bDynamicPage extends iDynamicPage {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('hidden', 'page', (v) => !v);
+		this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
 	}
 }
