@@ -39,6 +39,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added `bDummyText`
+* Added `iInputText`
 * Added support of the default slot `bDummy`
 * Added support of interpolation of a data provider response `iInput`
 
@@ -58,6 +59,34 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `attrsProp/attrs` properties
   * Added the `normalizeAttrs` method
   * Added the `nativeInput` block
+
+#### :memo: Documentation
+
+* Added documentation:
+  * `bCheckbox`
+  * `bRadioButton`
+  * `bInputHidden`
+  * `bForm`
+  * `bInput`
+
+#### :house: Internal
+
+* `iInput`:
+  * Improved error handling
+  * Added `UnsafeIInput`
+
+* Fixed ESLint warnings:
+  * `bCheckbox`
+  * `bRadioButton`
+  * `bInputHidden`
+  * `bForm`
+  * `bInput`
+
+* Added tests:
+  * `bCheckbox`
+  * `bRadioButton`
+  * `bInputHidden`
+  * `bForm`
 
 ## v3.0.0-rc.190 (2021-05-17)
 
@@ -115,31 +144,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :memo: Documentation
 
 * Added documentation:
-<<<<<<< HEAD
-<<<<<<< HEAD
-  * `bCheckbox`
-  * `bRadioButton`
-  * `bInputHidden`
-  * `bForm`
-
-#### :house: Internal
-
-* `iInput`:
-  * Improved error handling
-  * Added `UnsafeIInput`
-
-* Fixed ESLint warnings:
-  * `bCheckbox`
-  * `bRadioButton`
-  * `bInputHidden`
-  * `bForm`
-
-* Added tests:
-  * `bCheckbox`
-  * `bRadioButton`
-  * `bInputHidden`
-  * `bForm`
-=======
   * `traits`
   * `traits/i-open`
   * `traits/i-open-toggle`
@@ -150,7 +154,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug with functional components after adding Zero `core/component/render-function`
 * Fixed a bug while initializing Zero `core/component/engines/zero`
->>>>>>> master
 
 ## v3.0.0-rc.182 (2021-04-28)
 
@@ -165,14 +168,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Extracted `compileStaticRoutes` from `bRouter` to `core/router`
-<<<<<<< HEAD
-=======
-  * `traits`
-  * `traits/i-open`
-  * `traits/i-open-toggle`
->>>>>>> traits
-=======
->>>>>>> master
 
 ## v3.0.0-rc.181 (2021-04-20)
 
