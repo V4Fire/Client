@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Rewritten with a new keep-alive strategy `bDynamicPage`
+
+#### :bug: Bug Fix
+
+* Fixed an issue when `bDynamicPage` is deactivated on initializing `iBlock`
+
 ## v3.0.0-rc.191 (2021-05-24)
 
 #### :rocket: New Feature
