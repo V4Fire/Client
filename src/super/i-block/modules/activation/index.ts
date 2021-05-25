@@ -95,12 +95,7 @@ export function activate(component: iBlock, force?: boolean): void {
 
 	if (children) {
 		for (let i = 0; i < children.length; i++) {
-			const
-				ctx = children[i].unsafe;
-
-			if (!ctx.isActivated) {
-				runHook('activated', ctx).then(() => ctx.activated(true), stderr);
-			}
+			children[i].unsafe.activate(true);
 		}
 	}
 }
@@ -126,12 +121,7 @@ export function deactivate(component: iBlock): void {
 
 	if (children) {
 		for (let i = 0; i < children.length; i++) {
-			const
-				ctx = children[i].unsafe;
-
-			if (ctx.isActivated) {
-				runHook('deactivated', ctx).then(() => ctx.deactivated(), stderr);
-			}
+			children[i].unsafe.deactivate();
 		}
 	}
 }
