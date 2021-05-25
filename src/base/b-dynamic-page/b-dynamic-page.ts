@@ -235,7 +235,7 @@ export default class bDynamicPage extends iDynamicPage {
 					const
 						currentPageStrategy = this.getKeepAliveStrategy(currentPage);
 
-					if (currentPageStrategy.add(currentComponentEl) == null) {
+					if (currentPageStrategy.add(currentComponentEl) === currentComponentEl) {
 						currentComponent.deactivate();
 
 					} else {
