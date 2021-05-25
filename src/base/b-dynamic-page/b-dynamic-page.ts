@@ -8,12 +8,13 @@
 
 import symbolGenerator from 'core/symbol';
 
+import addEmitter from 'core/cache/decorators/helpers/add-emitter';
 import { Cache, RestrictedCache, AbstractCache } from 'core/cache';
 
 import SyncPromise from 'core/promise/sync';
+import type { EventEmitterLike } from 'core/async';
 
 import iBlock from 'super/i-block/i-block';
-import type { EventEmitterLike } from 'core/async';
 
 import iDynamicPage, {
 
@@ -23,13 +24,21 @@ import iDynamicPage, {
 	computed,
 	watch,
 
+	UnsafeGetter,
 	ComponentStatus,
-	InitLoadOptions,
-	ComponentElement
+	InitLoadOptions
 
 } from 'super/i-dynamic-page/i-dynamic-page';
 
-import type { Include, Exclude, KeepAliveStrategy } from 'base/b-dynamic-page/interface';
+import type {
+
+	Include,
+	Exclude,
+	KeepAliveStrategy,
+	iDynamicPageEl,
+	UnsafeBDynamicPage
+
+} from 'base/b-dynamic-page/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-dynamic-page/interface';
@@ -85,10 +94,10 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@system<bDynamicPage>((o) => o.sync.link('keepAliveSize', (size: number) => ({
 		...o.keepAliveCache,
-		global: size > 0 ? new RestrictedCache(size) : new Cache()
+		global: o.wrapCache(size > 0 ? new RestrictedCache<iDynamicPageEl>(size) : new Cache<iDynamicPageEl>())
 	})))
 
-	keepAliveCache!: Dictionary<AbstractCache<ComponentElement<iDynamicPage>>>;
+	keepAliveCache!: Dictionary<AbstractCache<iDynamicPageEl>>;
 
 	/**
 	 * A predicate to include pages to the `keepAlive` caching: if not specified, will be cached all loaded pages.
@@ -163,6 +172,11 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/** @override */
+	get unsafe(): UnsafeGetter<UnsafeBDynamicPage<this>> {
+		return <any>this;
+	}
+
+	/** @override */
 	protected readonly componentStatusStore: ComponentStatus = 'ready';
 
 	/** @override */
@@ -214,13 +228,21 @@ export default class bDynamicPage extends iDynamicPage {
 					componentRef = this.$refs.component;
 
 				const
-					currentPageStrategy = this.getKeepAliveStrategy(currentPage),
-					currentComponent = this.block?.element<ComponentElement<iDynamicPage>>('component');
+					currentComponentEl = this.block?.element<iDynamicPageEl>('component'),
+					currentComponent = currentComponentEl?.component?.unsafe;
 
-				if (currentComponent != null) {
-					currentPageStrategy?.add(currentComponent);
-					currentComponent.component?.deactivate();
-					currentComponent.remove();
+				if (currentComponentEl != null && currentComponent != null) {
+					const
+						currentPageStrategy = this.getKeepAliveStrategy(currentPage);
+
+					if (currentPageStrategy.add(currentComponentEl) == null) {
+						currentComponent.deactivate();
+
+					} else {
+						currentComponent.$destroy();
+					}
+
+					currentComponentEl.remove();
 				}
 
 				if (Object.isArray(componentRef)) {
@@ -229,7 +251,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 				const
 					newPageStrategy = this.getKeepAliveStrategy(newPage),
-					componentFromCache = newPageStrategy?.get();
+					componentFromCache = newPageStrategy.get();
 
 				if (componentFromCache != null) {
 					if (Object.isArray(componentRef)) {
@@ -243,7 +265,7 @@ export default class bDynamicPage extends iDynamicPage {
 							componentRef.push(c);
 
 						} else {
-							newPageStrategy?.remove();
+							newPageStrategy.remove();
 						}
 					}
 				}
@@ -257,9 +279,16 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Returns a `keepAlive` cache strategy for the specified page
 	 * @param page
 	 */
-	protected getKeepAliveStrategy(page: CanUndef<string>): CanUndef<KeepAliveStrategy> {
+	protected getKeepAliveStrategy(page: CanUndef<string>): KeepAliveStrategy {
+		const loopbackStrategy = {
+			has: () => false,
+			get: () => undefined,
+			add: (page) => page,
+			remove: () => undefined
+		};
+
 		if (page == null) {
-			return;
+			return loopbackStrategy;
 		}
 
 		const
@@ -268,11 +297,11 @@ export default class bDynamicPage extends iDynamicPage {
 		if (exclude != null) {
 			if (Object.isFunction(exclude)) {
 				if (Object.isTruly(exclude(page))) {
-					return;
+					return loopbackStrategy;
 				}
 
 			} else if (Object.isRegExp(exclude) ? exclude.test(page) : Array.concat([], exclude).includes(page)) {
-				return;
+				return loopbackStrategy;
 			}
 		}
 
@@ -296,7 +325,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (res == null || res === false) {
-					return;
+					return loopbackStrategy;
 				}
 
 				if (Object.isString(res) || res === true) {
@@ -304,7 +333,7 @@ export default class bDynamicPage extends iDynamicPage {
 					return globalStrategy;
 				}
 
-				const cache = this.keepAliveCache[res.cacheGroup] ?? res.createCache();
+				const cache = this.keepAliveCache[res.cacheGroup] ?? this.wrapCache(res.createCache());
 				this.keepAliveCache[res.cacheGroup] = cache;
 
 				return {
@@ -316,11 +345,35 @@ export default class bDynamicPage extends iDynamicPage {
 			}
 
 			if (Object.isRegExp(include) ? !include.test(page) : !Array.concat([], include).includes(page)) {
-				return;
+				return loopbackStrategy;
 			}
 		}
 
 		return globalStrategy;
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+
+		const i = this.instance;
+		this.wrapCache = i.wrapCache.bind(this);
+	}
+
+	/**
+	 * Wraps the specified cache object and returns a new
+	 * @param cache
+	 */
+	protected wrapCache<T extends AbstractCache<iDynamicPageEl>>(cache: T): T {
+		addEmitter(cache).subscribe('remove', cache, ({result}) => {
+			result?.component?.unsafe.$destroy();
+		});
+
+		addEmitter(cache).subscribe('clear', cache, ({result}) => {
+			result.forEach((el) => el.component?.unsafe.$destroy());
+		});
+
+		return cache;
 	}
 
 	/**
