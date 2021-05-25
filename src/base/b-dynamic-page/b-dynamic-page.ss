@@ -19,36 +19,12 @@
 		? delete attrs[':is']
 		? delete attrs[':dispatching']
 
-		- block component(keepAlive, include, exclude)
-			: keepAliveAttrs = {}
-
-			- if include
-				? keepAliveAttrs[':include'] = 'include'
-
-			- if exclude
-				? keepAliveAttrs[':exclude'] = 'exclude'
-
-			< ${keepAlive ? 'keep-alive' : '?'} ${keepAliveAttrs}
-				< component.&__component &
-					ref = component |
-					:instanceOf = iDynamicPage |
-					:is = page |
-					:dispatching = true |
-					${attrs}
-				.
-
-		< template v-if = keepAlive
-			< template v-if = include && exclude
-				+= self.component(true, true, true)
-
-			< template v-else-if = include
-				+= self.component(true, true)
-
-			< template v-else-if = exclude
-				+= self.component(true, false, true)
-
-			< template v-else
-				+= self.component(true)
-
-		< template v-else
-			+= self.component()
+		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter})
+			< component.&__component &
+				v-if = !keepAlive || !getKeepAliveStrategy(page).has() |
+				ref = component |
+				:instanceOf = iDynamicPage |
+				:is = page |
+				:dispatching = true |
+				${attrs}
+			.
