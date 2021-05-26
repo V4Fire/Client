@@ -16,12 +16,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Rewritten with a new keep-alive strategy `bDynamicPage`
+* Added a new event `asyncRenderChunkComplete` `super/i-block/modules/async-render`
 
 #### :bug: Bug Fix
 
 * Fixed an issue when `bDynamicPage` is deactivated on initializing `iBlock`
 * Fixed an issue when activation events won't propagate to child components `super/i-block/modules/activation`
 * Fixed the scroll restoring after a transition `bRouter`
+* Prevented the infinity loop when passing non-iterable objects to `iterate` `super/i-block/modules/async-render`
 
 ## v3.0.0-rc.191 (2021-05-24)
 
