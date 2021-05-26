@@ -154,7 +154,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@prop({
 		type: [Function, Array],
-		default: (e) => e != null ? (e.component ?? e.name) : undefined,
+		default: (e) => e != null ? (e.meta.component ?? e.name) : undefined,
 		forceDefault: true
 	})
 
