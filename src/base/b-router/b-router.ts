@@ -623,7 +623,7 @@ export default class bRouter extends iData {
 					await this.async.wait(() => Object.fastCompare(newRoute, r.route), label);
 				}
 
-				await this.nextTick(label);
+				await this.async.sleep(10, label);
 
 				const
 					s = meta.scroll;
