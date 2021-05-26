@@ -43,9 +43,10 @@ export interface KeepAliveCache {
 }
 
 export interface KeepAliveStrategy {
+	isLoopback: boolean;
 	has(): boolean;
 	get(): CanUndef<iDynamicPageEl>;
-	add(page: iDynamicPageEl): CanUndef<iDynamicPageEl>;
+	add(page: iDynamicPageEl): iDynamicPageEl;
 	remove(): CanUndef<iDynamicPageEl>;
 }
 

@@ -266,6 +266,7 @@ module.exports = async (page, params) => {
 			let
 				prev;
 
+			await ctx.router.push('page3');
 			await ctx.router.push('page1');
 
 			res.push(ctx.component.componentName);
@@ -279,8 +280,6 @@ module.exports = async (page, params) => {
 
 			res.push('// Previous component');
 			res.push(prev.hook);
-
-			console.log(prev.block.element('button'));
 
 			res.push(prev.block.element('button').component.hook);
 			res.push(prev.block.element('button-func').component.hook);

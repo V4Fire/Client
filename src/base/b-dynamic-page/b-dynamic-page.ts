@@ -185,18 +185,14 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/** @override */
 	protected readonly $refs!: {
-		component?: CanArray<iDynamicPage>;
+		component?: iDynamicPage[];
 	};
 
 	/**
-	 * Iterator of the rendering loop
+	 * Iterator of the rendering loop. It uses with `asyncRender`.
 	 */
 	protected get renderIterator(): CanPromise<number> {
-		if (this.keepAlive) {
-			return SyncPromise.resolve(Infinity);
-		}
-
-		return 1;
+		return SyncPromise.resolve(Infinity);
 	}
 
 	/** @override */
@@ -211,11 +207,10 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Filter of the rendering loop.
-	 * It uses with `asyncRender`.
+	 * Filter of the rendering loop. It uses with `asyncRender`.
 	 */
 	protected renderFilter(): CanPromise<boolean> {
-		if (!this.keepAlive || this.lfc.isBeforeCreate()) {
+		if (this.lfc.isBeforeCreate()) {
 			return true;
 		}
 
@@ -229,8 +224,8 @@ export default class bDynamicPage extends iDynamicPage {
 					return;
 				}
 
-				const
-					componentRef = this.$refs.component;
+				const componentRef = this.$refs.component;
+				componentRef?.pop();
 
 				const
 					currentComponentEl = this.block?.element<iDynamicPageEl>('component'),
@@ -240,38 +235,44 @@ export default class bDynamicPage extends iDynamicPage {
 					const
 						currentPageStrategy = this.getKeepAliveStrategy(currentPage, currentRoute);
 
-					if (currentPageStrategy.add(currentComponentEl) === currentComponentEl) {
-						currentComponent.deactivate();
+					if (currentPageStrategy.isLoopback) {
+						currentComponent.$destroy();
 
 					} else {
-						currentComponent.$destroy();
+						currentPageStrategy.add(currentComponentEl);
+						currentComponent.deactivate();
 					}
 
 					currentComponentEl.remove();
-				}
-
-				if (Object.isArray(componentRef)) {
-					componentRef.pop();
 				}
 
 				const
 					newPageStrategy = this.getKeepAliveStrategy(newPage),
 					componentFromCache = newPageStrategy.get();
 
-				if (componentFromCache != null) {
-					if (Object.isArray(componentRef)) {
-						const
-							c = componentFromCache.component;
-
-						if (c != null) {
-							this.$el?.append(componentFromCache);
-
-							c.activate();
-							componentRef.push(c);
-
-						} else {
-							newPageStrategy.remove();
+				if (componentFromCache == null) {
+					const handler = () => {
+						if (!newPageStrategy.isLoopback) {
+							this.component?.activate(true);
 						}
+					};
+
+					this.localEmitter.once('asyncRenderChunkComplete', handler, {
+						label: $$.renderFilter
+					});
+
+				} else {
+					const
+						c = componentFromCache.component;
+
+					if (c != null) {
+						this.$el?.append(componentFromCache);
+
+						c.activate();
+						componentRef?.push(c);
+
+					} else {
+						newPageStrategy.remove();
 					}
 				}
 
@@ -288,13 +289,14 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	protected getKeepAliveStrategy(page: CanUndef<string>, route: this['route'] = this.route): KeepAliveStrategy {
 		const loopbackStrategy = {
+			isLoopback: true,
 			has: () => false,
 			get: () => undefined,
 			add: (page) => page,
 			remove: () => undefined
 		};
 
-		if (page == null) {
+		if (!this.keepAlive || page == null) {
 			return loopbackStrategy;
 		}
 
@@ -319,6 +321,7 @@ export default class bDynamicPage extends iDynamicPage {
 			globalCache = this.keepAliveCache.global!;
 
 		const globalStrategy = {
+			isLoopback: false,
 			has: () => globalCache.has(cacheKey),
 			get: () => globalCache.get(cacheKey),
 			add: (page) => globalCache.set(cacheKey, page),
@@ -344,6 +347,7 @@ export default class bDynamicPage extends iDynamicPage {
 				this.keepAliveCache[res.cacheGroup] = cache;
 
 				return {
+					isLoopback: false,
 					has: () => cache.has(res.cacheKey),
 					get: () => cache.get(res.cacheKey),
 					add: (page) => cache.set(res.cacheKey, page),
@@ -392,7 +396,9 @@ export default class bDynamicPage extends iDynamicPage {
 	@watch({field: 'event', immediate: true})
 	protected syncEmitterWatcher(): void {
 		const
-			{async: $a} = this,
+			{async: $a} = this;
+
+		const
 			group = {group: 'emitter'};
 
 		$a
@@ -405,14 +411,14 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				let
-					v = e;
+					newPage = e;
 
 				if (Object.isTruly(this.eventConverter)) {
-					v = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
+					newPage = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), newPage);
 				}
 
-				if (v == null || Object.isString(v)) {
-					this.page = <string>v;
+				if (newPage == null || Object.isString(newPage)) {
+					this.page = <string>newPage;
 				}
 
 			}, group);

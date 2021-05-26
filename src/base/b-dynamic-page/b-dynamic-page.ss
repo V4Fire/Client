@@ -21,7 +21,7 @@
 
 		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter})
 			< component.&__component &
-				v-if = !keepAlive || !getKeepAliveStrategy(page).has() |
+				v-if = !getKeepAliveStrategy(page).has() |
 				ref = component |
 				:instanceOf = iDynamicPage |
 				:is = page |
