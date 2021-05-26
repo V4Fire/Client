@@ -94,7 +94,11 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@system<bDynamicPage>((o) => o.sync.link('keepAliveSize', (size: number) => ({
 		...o.keepAliveCache,
-		global: o.wrapCache(size > 0 ? new RestrictedCache<iDynamicPageEl>(size) : new Cache<iDynamicPageEl>())
+		global: o.addClearListenersToCache(
+			size > 0 ?
+				new RestrictedCache<iDynamicPageEl>(size) :
+				new Cache<iDynamicPageEl>()
+		)
 	})))
 
 	keepAliveCache!: Dictionary<AbstractCache<iDynamicPageEl>>;
@@ -217,7 +221,8 @@ export default class bDynamicPage extends iDynamicPage {
 
 		return new SyncPromise((r) => {
 			const
-				currentPage = this.page;
+				currentPage = this.page,
+				currentRoute = this.route;
 
 			this.watch('page', {immediate: true, label: $$.keepAliveFilter}, (newPage) => {
 				if (currentPage === newPage) {
@@ -233,7 +238,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 				if (currentComponentEl != null && currentComponent != null) {
 					const
-						currentPageStrategy = this.getKeepAliveStrategy(currentPage);
+						currentPageStrategy = this.getKeepAliveStrategy(currentPage, currentRoute);
 
 					if (currentPageStrategy.add(currentComponentEl) === currentComponentEl) {
 						currentComponent.deactivate();
@@ -277,9 +282,11 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * Returns a `keepAlive` cache strategy for the specified page
+	 *
 	 * @param page
+	 * @param [route] - link to an application route object
 	 */
-	protected getKeepAliveStrategy(page: CanUndef<string>): KeepAliveStrategy {
+	protected getKeepAliveStrategy(page: CanUndef<string>, route: this['route'] = this.route): KeepAliveStrategy {
 		const loopbackStrategy = {
 			has: () => false,
 			get: () => undefined,
@@ -296,7 +303,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 		if (exclude != null) {
 			if (Object.isFunction(exclude)) {
-				if (Object.isTruly(exclude(page))) {
+				if (Object.isTruly(exclude(page, route))) {
 					return loopbackStrategy;
 				}
 
@@ -321,7 +328,7 @@ export default class bDynamicPage extends iDynamicPage {
 		if (include != null) {
 			if (Object.isFunction(include)) {
 				const
-					res = include(page);
+					res = include(page, route);
 
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (res == null || res === false) {
@@ -333,7 +340,7 @@ export default class bDynamicPage extends iDynamicPage {
 					return globalStrategy;
 				}
 
-				const cache = this.keepAliveCache[res.cacheGroup] ?? this.wrapCache(res.createCache());
+				const cache = this.keepAliveCache[res.cacheGroup] ?? this.addClearListenersToCache(res.createCache());
 				this.keepAliveCache[res.cacheGroup] = cache;
 
 				return {
@@ -357,14 +364,16 @@ export default class bDynamicPage extends iDynamicPage {
 		super.initBaseAPI();
 
 		const i = this.instance;
-		this.wrapCache = i.wrapCache.bind(this);
+		this.addClearListenersToCache = i.addClearListenersToCache.bind(this);
 	}
 
 	/**
-	 * Wraps the specified cache object and returns a new
+	 * Wraps the specified cache object and returns a new.
+	 * The method adds listeners to destroy unused pages from the cache.
+	 *
 	 * @param cache
 	 */
-	protected wrapCache<T extends AbstractCache<iDynamicPageEl>>(cache: T): T {
+	protected addClearListenersToCache<T extends AbstractCache<iDynamicPageEl>>(cache: T): T {
 		addEmitter(cache).subscribe('remove', cache, ({result}) => {
 			result?.component?.unsafe.$destroy();
 		});

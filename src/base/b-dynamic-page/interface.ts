@@ -12,8 +12,15 @@ import type bDynamicPage from 'base/b-dynamic-page/b-dynamic-page';
 import type iDynamicPage from 'super/i-dynamic-page/i-dynamic-page';
 import type { ComponentElement, UnsafeIData } from 'super/i-dynamic-page/i-dynamic-page';
 
-export type Include = CanArray<string> | RegExp | ((page: string) => boolean | string | KeepAliveCache);
-export type Exclude = CanArray<string> | RegExp | ((page: string) => boolean);
+export type Include =
+	CanArray<string> |
+	RegExp |
+	((page: string, route?: iDynamicPage['route']) => boolean | string | KeepAliveCache);
+
+export type Exclude =
+	CanArray<string> |
+	RegExp |
+	((page: string, route?: iDynamicPage['route']) => boolean);
 
 export type iDynamicPageEl = ComponentElement<iDynamicPage>;
 
