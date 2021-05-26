@@ -314,9 +314,7 @@ export default class AsyncRender extends Friend {
 							chunkTotal = 0;
 							renderBuffer = [];
 
-							const
-								e = {...opts, ...desc};
-
+							const e = {...opts, ...desc};
 							localEmitter.emit('asyncRenderChunkComplete', e);
 
 							if (isDone) {
