@@ -86,7 +86,7 @@ export function activate(component: iBlock, force?: boolean): void {
 		return;
 	}
 
-	if (!ctx.isActivated) {
+	if (!ctx.isActivated || force) {
 		runHook('activated', ctx).then(() => ctx.activated(true), stderr);
 	}
 
