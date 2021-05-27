@@ -15,12 +15,12 @@ import type { ComponentElement, UnsafeIData } from 'super/i-dynamic-page/i-dynam
 export type Include =
 	CanArray<string> |
 	RegExp |
-	((page: string, route?: iDynamicPage['route']) => boolean | string | KeepAliveCache);
+	((page: string, route: iDynamicPage['route'], ctx: bDynamicPage) => boolean | string | KeepAliveCache);
 
 export type Exclude =
 	CanArray<string> |
 	RegExp |
-	((page: string, route?: iDynamicPage['route']) => boolean);
+	((page: string, route: iDynamicPage['route'], ctx: bDynamicPage) => boolean);
 
 export type iDynamicPageEl = ComponentElement<iDynamicPage>;
 

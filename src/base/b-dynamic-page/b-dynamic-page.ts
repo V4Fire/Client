@@ -315,7 +315,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 		if (exclude != null) {
 			if (Object.isFunction(exclude)) {
-				if (Object.isTruly(exclude(page, route))) {
+				if (Object.isTruly(exclude(page, route, this))) {
 					return loopbackStrategy;
 				}
 
@@ -341,7 +341,7 @@ export default class bDynamicPage extends iDynamicPage {
 		if (include != null) {
 			if (Object.isFunction(include)) {
 				const
-					res = include(page, route);
+					res = include(page, route, this);
 
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (res == null || res === false) {
