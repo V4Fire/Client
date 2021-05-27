@@ -3,6 +3,10 @@
 This module provides default global styles and function to use within `styl` files.
 You free to override and modify these files.
 
+## Synopsis
+
+* This module provides global styles and Styl mixins, not a component.
+
 ## Contents
 
 * `g-def.styl` - global registered classes and rules:

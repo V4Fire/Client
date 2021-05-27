@@ -2,6 +2,10 @@
 
 This module provides a mixin to generate default styles for SVG icons.
 
+## Synopsis
+
+* This module provides a global Styl mixin, not a component.
+
 ## Usage
 
 You can use this mixin "as it is", import it to your styles.
