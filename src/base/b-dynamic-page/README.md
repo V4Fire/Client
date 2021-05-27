@@ -164,8 +164,7 @@ An initial component name to load.
 #### [keepAlive = false]
 
 If true, when switching from one page to another, the old page is stored within a cache by its name.
-When occur switching back to this page, it will be restored.
-It helps to optimize switching between pages but grows memory using.
+When occur switching back to this page, it will be restored. It helps to optimize switching between pages but grows memory using.
 Notice, when a page is switching, it will be deactivated by invoking `deactivate`.
 When the page is restoring, it will be activated by invoking `activate`.
 
