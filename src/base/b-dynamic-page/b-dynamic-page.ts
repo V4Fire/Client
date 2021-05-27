@@ -388,11 +388,14 @@ export default class bDynamicPage extends iDynamicPage {
 	 * @param cache
 	 */
 	protected addClearListenersToCache<T extends AbstractCache<iDynamicPageEl>>(cache: T): T {
-		addEmitter(cache).subscribe('remove', cache, ({result}) => {
+		const
+			wrappedCache = addEmitter(cache);
+
+		wrappedCache.subscribe('remove', cache, ({result}) => {
 			result?.component?.unsafe.$destroy();
 		});
 
-		addEmitter(cache).subscribe('clear', cache, ({result}) => {
+		wrappedCache.subscribe('clear', cache, ({result}) => {
 			result.forEach((el) => el.component?.unsafe.$destroy());
 		});
 
