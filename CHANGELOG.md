@@ -25,6 +25,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed the scroll restoring after a transition `bRouter`
 * Prevented the infinity loop when passing non-iterable objects to `iterate` `super/i-block/modules/async-render`
 
+#### :memo: Documentation
+
+* Added documentation `bDynamicPage`
+
 ## v3.0.0-rc.191 (2021-05-24)
 
 #### :rocket: New Feature

@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-dynamic-page/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 
 import addEmitter from 'core/cache/decorators/helpers/add-emitter';
@@ -92,7 +97,8 @@ export default class bDynamicPage extends iDynamicPage {
 	readonly keepAliveSize: number = 10;
 
 	/**
-	 * Dictionary of `keepAlive` caches
+	 * A dictionary of `keepAlive` caches.
+	 * The keys represent cache groups (by default uses `global`).
 	 */
 	@system<bDynamicPage>((o) => o.sync.link('keepAliveSize', (size: number) => ({
 		...o.keepAliveCache,
@@ -202,7 +208,10 @@ export default class bDynamicPage extends iDynamicPage {
 		return Promise.resolve();
 	}
 
-	/** @override */
+	/**
+	 * Reloads the loaded page component
+	 * @override
+	 */
 	async reload(params?: InitLoadOptions): Promise<void> {
 		const {component} = this;
 		return component?.reload(params);

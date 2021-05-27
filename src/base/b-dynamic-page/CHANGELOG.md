@@ -14,3 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Rewritten with a new keep-alive strategy
+
+#### :memo: Documentation
+
+* Added documentation

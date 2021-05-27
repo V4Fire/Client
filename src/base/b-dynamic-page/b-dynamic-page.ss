@@ -17,6 +17,7 @@
 
 		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
 		? delete attrs[':is']
+		? delete attrs[':keepAlive']
 		? delete attrs[':dispatching']
 
 		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter})
