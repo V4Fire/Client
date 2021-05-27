@@ -17,6 +17,7 @@ import type {
 import type bRouter from 'base/b-router/b-router';
 
 export { EngineRoute };
+
 export {
 
 	Router,
@@ -30,7 +31,11 @@ export {
 
 } from 'core/router/interface';
 
-export type AppliedRoute = EngineAppliedRoute<bRouter['PageParams'], bRouter['PageQuery'], bRouter['PageMeta']>;
+export type AppliedRoute = EngineAppliedRoute<
+	bRouter['PageParams'],
+	bRouter['PageQuery'],
+	bRouter['PageMeta']
+>;
 
 export type AnyRoute =
 	AppliedRoute |
