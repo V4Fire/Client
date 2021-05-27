@@ -124,6 +124,9 @@ export default class AsyncRender extends Friend {
 	 * @param [sliceOrOpts] - elements per chunk, `[start position, elements per chunk]` or additional options
 	 * @param [opts] - additional options
 	 *
+	 * @emits `localEmitter.asyncRenderChunkComplete(e: TaskParams & TaskDesc)`
+	 * @emits `localEmitter.asyncRenderComplete(e: TaskParams & TaskDesc)`
+	 *
 	 * @example
 	 * ```
 	 * /// Asynchronous rendering of components, only five elements per chunk
@@ -187,10 +190,10 @@ export default class AsyncRender extends Friend {
 				}
 
 				const
-					val = el.value,
-					isPromise = Object.isPromise(val);
+					val = el.value;
 
 				let
+					isPromise = Object.isPromise(val),
 					canRender = !isPromise;
 
 				if (canRender && filter != null) {
@@ -200,7 +203,11 @@ export default class AsyncRender extends Friend {
 						total: syncTotal
 					});
 
-					if (Object.isPromise(canRender) || !Object.isTruly(canRender)) {
+					if (Object.isPromise(canRender)) {
+						isPromise = true;
+						canRender = false;
+
+					} else if (!Object.isTruly(canRender)) {
 						canRender = false;
 					}
 				}
@@ -236,8 +243,10 @@ export default class AsyncRender extends Friend {
 			let
 				renderBuffer = <unknown[]>[];
 
-			const
-				{async: $a} = this;
+			const {
+				async: $a,
+				localEmitter
+			} = this;
 
 			let
 				group = 'asyncComponents';
@@ -305,8 +314,11 @@ export default class AsyncRender extends Friend {
 							chunkTotal = 0;
 							renderBuffer = [];
 
+							const e = {...opts, ...desc};
+							localEmitter.emit('asyncRenderChunkComplete', e);
+
 							if (isDone) {
-								this.ctx.localEmitter.emit('asyncRenderComplete', {...opts, ...desc});
+								localEmitter.emit('asyncRenderComplete', e);
 							}
 
 							$a.worker(() => {
@@ -440,16 +452,28 @@ export default class AsyncRender extends Friend {
 		return firstRender;
 
 		function getIterable(value: unknown): CanPromise<Iterable<unknown>> {
+			if (value == null) {
+				return [];
+			}
+
 			if (value === true) {
-				return new Range(0, Infinity);
+				if (filter != null) {
+					return new Range(0, Infinity);
+				}
+
+				return [];
 			}
 
 			if (value === false) {
-				return new Range(0, -Infinity);
+				if (filter != null) {
+					return new Range(0, -Infinity);
+				}
+
+				return [];
 			}
 
 			if (Object.isNumber(value)) {
-				return new Range(0, value);
+				return new Range(0, [value]);
 			}
 
 			if (Object.isArray(value)) {
@@ -464,7 +488,7 @@ export default class AsyncRender extends Friend {
 				return value.then(getIterable);
 			}
 
-			if (value != null && typeof value === 'object') {
+			if (typeof value === 'object') {
 				if (Object.isFunction(value![Symbol.iterator])) {
 					return <any>value;
 				}

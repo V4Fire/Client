@@ -615,15 +615,9 @@ export default class bRouter extends iData {
 		// Restoring the scroll position
 		if (meta.autoScroll !== false) {
 			(async () => {
-				const label = {
+				await this.async.sleep(10, {
 					label: $$.autoScroll
-				};
-
-				if (hardChange) {
-					await this.async.wait(() => Object.fastCompare(newRoute, r.route), label);
-				}
-
-				await this.nextTick(label);
+				});
 
 				const
 					s = meta.scroll;

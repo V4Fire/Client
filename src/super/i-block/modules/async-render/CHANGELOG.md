@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added a new event `asyncRenderChunkComplete`
+
+#### :bug: Bug Fix
+
+* Prevented the infinity loop when passing non-iterable objects to `iterate`
+
 ## v3.0.0-rc.191 (2021-05-24)
 
 #### :rocket: New Feature
