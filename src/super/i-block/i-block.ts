@@ -2246,7 +2246,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * The deactivated component won't load data from providers on initializing.
 	 *
 	 * Basically, you don't need to think about a component activation,
-	 * because it's automatically synchronized with keep-alive or the special input property.
+	 * because it's automatically synchronized with `keep-alive` or the special input property.
 	 *
 	 * @see [[iBlock.activatedProp]]
 	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
@@ -2260,7 +2260,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * The deactivated component won't load data from providers on initializing.
 	 *
 	 * Basically, you don't need to think about a component activation,
-	 * because it's automatically synchronized with keep-alive or the special input property.
+	 * because it's automatically synchronized with `keep-alive` or the special input property.
 	 *
 	 * @see [[iBlock.activatedProp]]
 	 */
@@ -2587,9 +2587,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Component activated hook
-	 * (for keep-alive)
-	 *
+	 * Hook handler: the component has been activated
 	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
 	 */
 	protected activated(force?: boolean): void {
@@ -2597,15 +2595,14 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Component deactivated hook
-	 * (for keep-alive)
+	 * Hook handler: the component has been deactivated
 	 */
 	protected deactivated(): void {
 		onDeactivated(this);
 	}
 
 	/**
-	 * Component destructor
+	 * Hook handler: component will be destroyed
 	 */
 	@p({replace: false})
 	protected beforeDestroy(): void {
