@@ -19,6 +19,7 @@ import iBlock from 'super/i-block/i-block';
 import iDynamicPage, {
 
 	component,
+
 	prop,
 	system,
 	computed,
@@ -34,8 +35,9 @@ import type {
 
 	Include,
 	Exclude,
-	KeepAliveStrategy,
+
 	iDynamicPageEl,
+	KeepAliveStrategy,
 	UnsafeBDynamicPage
 
 } from 'base/b-dynamic-page/interface';
@@ -47,7 +49,7 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Component to dynamically load of pages.
+ * Component to dynamically load page components.
  * Basically, it uses with a router.
  */
 @component({
@@ -78,7 +80,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * When occur switching back to this page, it will be restored.
 	 * It helps to optimize switching between pages but grows memory using.
 	 *
-	 * Notice, when a page is switching, it will be deactivated by invoking `deactive`.
+	 * Notice, when a page is switching, it will be deactivated by invoking `deactivate`.
 	 * When the page is restoring, it will be activated by invoking `activate`.
 	 */
 	readonly keepAlive: boolean = false;
@@ -189,7 +191,7 @@ export default class bDynamicPage extends iDynamicPage {
 	};
 
 	/**
-	 * Iterator of the rendering loop. It uses with `asyncRender`.
+	 * Iterator of the rendering loop (it uses with `asyncRender`)
 	 */
 	protected get renderIterator(): CanPromise<number> {
 		return SyncPromise.resolve(Infinity);
@@ -207,33 +209,41 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Filter of the rendering loop. It uses with `asyncRender`.
+	 * Filter of the rendering loop (it uses with `asyncRender`)
 	 */
 	protected renderFilter(): CanPromise<boolean> {
 		if (this.lfc.isBeforeCreate()) {
 			return true;
 		}
 
-		return new SyncPromise((r) => {
-			const
-				currentPage = this.page,
-				currentRoute = this.route;
+		const
+			{unsafe, page, route} = this;
 
-			this.watch('page', {immediate: true, label: $$.keepAliveFilter}, (newPage) => {
+		return new SyncPromise((r) => {
+			const opts = {immediate: true, label: $$.keepAliveFilter};
+			this.watch('page', opts, onPageChange(r, this.page, this.route));
+		});
+
+		function onPageChange(
+			resolve: Function,
+			currentPage: typeof page,
+			currentRoute: typeof route
+		): AnyFunction {
+			return (newPage: typeof page) => {
 				if (currentPage === newPage) {
 					return;
 				}
 
-				const componentRef = this.$refs.component;
+				const componentRef = unsafe.$refs.component;
 				componentRef?.pop();
 
 				const
-					currentComponentEl = this.block?.element<iDynamicPageEl>('component'),
+					currentComponentEl = unsafe.block?.element<iDynamicPageEl>('component'),
 					currentComponent = currentComponentEl?.component?.unsafe;
 
 				if (currentComponentEl != null && currentComponent != null) {
 					const
-						currentPageStrategy = this.getKeepAliveStrategy(currentPage, currentRoute);
+						currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
 
 					if (currentPageStrategy.isLoopback) {
 						currentComponent.$destroy();
@@ -247,17 +257,17 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPageStrategy = this.getKeepAliveStrategy(newPage),
+					newPageStrategy = unsafe.getKeepAliveStrategy(newPage),
 					componentFromCache = newPageStrategy.get();
 
 				if (componentFromCache == null) {
 					const handler = () => {
 						if (!newPageStrategy.isLoopback) {
-							this.component?.activate(true);
+							unsafe.component?.activate(true);
 						}
 					};
 
-					this.localEmitter.once('asyncRenderChunkComplete', handler, {
+					unsafe.localEmitter.once('asyncRenderChunkComplete', handler, {
 						label: $$.renderFilter
 					});
 
@@ -266,7 +276,7 @@ export default class bDynamicPage extends iDynamicPage {
 						c = componentFromCache.component;
 
 					if (c != null) {
-						this.$el?.append(componentFromCache);
+						unsafe.$el?.append(componentFromCache);
 
 						c.activate();
 						componentRef?.push(c);
@@ -276,9 +286,9 @@ export default class bDynamicPage extends iDynamicPage {
 					}
 				}
 
-				r(true);
-			});
-		});
+				resolve(true);
+			};
+		}
 	}
 
 	/**
