@@ -7,6 +7,7 @@
  */
 
 // @ts-check
+/* eslint-disable max-lines-per-function */
 
 /**
  * @typedef {import('playwright').Page} Page
