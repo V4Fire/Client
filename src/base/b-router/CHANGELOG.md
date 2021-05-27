@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed the scroll restoring after a transition
+
 ## v3.0.0-rc.182 (2021-04-28)
 
 #### :house: Internal

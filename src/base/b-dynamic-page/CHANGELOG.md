@@ -11,12 +11,10 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
-#### :bug: Bug Fix
+#### :rocket: New Feature
 
-* Fixed an issue when activation events won't propagate to child components
+* Rewritten with a new keep-alive strategy
 
-## v3.0.0-rc.46 (2020-07-31)
+#### :memo: Documentation
 
-#### :house: Internal
-
-* Fixed ESLint warnings
+* Added documentation

@@ -9,14 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.37 (2020-??-??)
 
-#### :bug: Bug Fix
+#### :rocket: New Feature
 
-* Fixed an issue when activation events won't propagate to child components
-
-## v3.0.0-rc.46 (2020-07-31)
-
-#### :house: Internal
-
-* Fixed ESLint warnings
+* Initial release

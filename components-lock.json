@@ -1,5 +1,5 @@
 {
-  "hash": "646d41a75dbdafbe3ef77daf4a6d61a277665ef20c66efc0534f89d3f0f80d1b",
+  "hash": "ec250e5c4139dd851c22b79bfefbf536b98063bf017fe13b788fb7f33fc99571",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1887,16 +1887,20 @@
             "dependencies": [
               "b-dummy",
               "b-v4-component-demo",
-              "b-virtual-scroll",
+              "p-v4-dynamic-page-1",
+              "p-v4-dynamic-page-2",
+              "p-v4-dynamic-page-3",
+              "b-router",
+              "b-dynamic-page",
               "b-tree",
+              "b-list",
               "b-checkbox",
               "b-button",
-              "b-router",
-              "b-list",
-              "b-sidebar",
-              "b-slider",
+              "b-image",
+              "b-virtual-scroll",
               "b-window",
-              "b-image"
+              "b-sidebar",
+              "b-slider"
             ],
             "libs": []
           },
@@ -1905,16 +1909,20 @@
           "dependencies": [
             "b-dummy",
             "b-v4-component-demo",
-            "b-virtual-scroll",
+            "p-v4-dynamic-page-1",
+            "p-v4-dynamic-page-2",
+            "p-v4-dynamic-page-3",
+            "b-router",
+            "b-dynamic-page",
             "b-tree",
+            "b-list",
             "b-checkbox",
             "b-button",
-            "b-router",
-            "b-list",
-            "b-sidebar",
-            "b-slider",
+            "b-image",
+            "b-virtual-scroll",
             "b-window",
-            "b-image"
+            "b-sidebar",
+            "b-slider"
           ],
           "libs": [],
           "resolvedLibs": {
@@ -1933,6 +1941,114 @@
           ],
           "tpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ss",
           "etpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ess"
+        }
+      ],
+      [
+        "p-v4-dynamic-page-1",
+        {
+          "index": "src/pages/p-v4-dynamic-page-1/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page-1",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page-1",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "p-v4-dynamic-page-2",
+        {
+          "index": "src/pages/p-v4-dynamic-page-2/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page-2",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page-2",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "p-v4-dynamic-page-3",
+        {
+          "index": "src/pages/p-v4-dynamic-page-3/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page-3",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page-3",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.ss",
+          "etpl": null
         }
       ]
     ]
