@@ -412,7 +412,7 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Synchronization for the emitter prop
+	 * Synchronization for the `emitter` prop
 	 */
 	@watch('emitter')
 	@watch({field: 'event', immediate: true})
