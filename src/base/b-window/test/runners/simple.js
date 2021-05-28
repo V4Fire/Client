@@ -112,7 +112,7 @@ module.exports = (page) => {
 				expect(classList).not.toContain('b-window_opened_true');
 			});
 
-			it('closes the window when "escape" is pressed', async () => {
+			it('closes the window when `escape` is pressed', async () => {
 				const
 					target = await init();
 
@@ -179,8 +179,6 @@ module.exports = (page) => {
 			]);
 		}, attrs);
 
-		await h.bom.waitForIdleCallback(page);
-		await h.component.waitForComponentStatus(page, '#target', 'ready');
 		return h.component.waitForComponent(page, '#target');
 	}
 };

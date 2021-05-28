@@ -173,13 +173,11 @@ b-window extends i-data
 
 ## API
 
-The component provides a bunch of methods to open/close/toggle the window: `open` , `close`, `toggle`.
-Also, it provides methods to lock/unlock background scrolling: `lock`. `unlock`
-(the component automatically locks background scrolling when opened).
+### Props
 
-### title
+#### [titleProp]
 
-By using this prop, you can provide a string that will be used as the window title.
+By using this prop, you can provide a string that will be used as a window title.
 Notice that you can use a slot to provide a title too.
 
 ```
@@ -203,10 +201,11 @@ Notice that you can use a slot to provide a title too.
     Main content
 ```
 
-### stageTitles
+#### [stageTitles]
 
-Map window titles tied to the component `stage` values. A key with the name `[[DEFAULT]]` is used by default.
-If a key value is defined as a function, it will be invoked (the result will be used as a title).
+A dictionary of window titles. The dictionary values are tied to the `stage` values.
+A key with the name `[[DEFAULT]]` is used by default. If a key value is defined as a function,
+it will be invoked (the result will be used as a title).
 
 ```
 < b-window &
@@ -219,7 +218,7 @@ If a key value is defined as a function, it will be invoked (the result will be 
 .
 ```
 
-### forceInnerRender
+#### [forceInnerRender = true]
 
 If false, the inner content of the component won't be rendered if the component isn't opened.
 
@@ -227,15 +226,29 @@ If false, the inner content of the component won't be rendered if the component 
 < b-window :forceInnerRender = false
 ```
 
-### slotName
+#### [slotNameProp]
 
-Name of the active third-party slot to show.
+A name of the active third-party slot to show.
 
 This feature brings a possibility to decompose different window templates into separate files
 with the special `.window` postfix. All those templates are automatically loaded, but you must provide their
 name to activate one or another.
 
-### open
+### Fields
+
+#### title
+
+A window title.
+
+#### slotName
+
+A name of the active third-party slot to show.
+
+### Methods
+
+The component provides a bunch of methods via the implemented traits ([[iOpenToggle]], [[iLockPageScroll]], etc.).
+
+#### open
 
 When opening the window, you can specify at which `stage` the component should switch in.
 
