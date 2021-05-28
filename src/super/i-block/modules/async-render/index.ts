@@ -148,6 +148,9 @@ export default class AsyncRender extends Friend {
 			sliceOrOpts = 1;
 		}
 
+		const
+			{filter} = opts;
+
 		let
 			iterable = getIterable(value);
 
@@ -162,9 +165,6 @@ export default class AsyncRender extends Friend {
 		} else {
 			perChunk = sliceOrOpts;
 		}
-
-		const
-			{filter} = opts;
 
 		const
 			firstRender = <unknown[]>[],
