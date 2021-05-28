@@ -16,9 +16,7 @@ const
 	h = include('tests/helpers'),
 	{initSlider} = include('src/base/b-slider/test/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	const
 		textSlotContent = 'Lorem Ipsum';

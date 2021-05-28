@@ -14,8 +14,8 @@ export interface SlideRect extends ClientRect {
 
 /**
  * -1 - Previous
- * 0  - Not changed
- * 1  - Next
+ *  0 - Not changed
+ *  1 - Next
  */
 export type SlideDirection = -1 | 0 | 1;
 

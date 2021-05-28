@@ -16,9 +16,7 @@ const
 	h = include('tests/helpers'),
 	{initSlider} = include('src/base/b-slider/test/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeAll(async () => {
 		await page.setViewportSize({width: 480, height: 640});
@@ -50,7 +48,7 @@ module.exports = (page) => {
 			expect(itemsCount).toEqual(componentsCount);
 		});
 
-		it('loading items with an external itemProps as function', async () => {
+		it('loading items with the external `itemProps` as a function', async () => {
 			const
 				items = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}],
 				itemClass = h.dom.elNameGenerator('.b-slider', 'item');
@@ -80,7 +78,7 @@ module.exports = (page) => {
 			expect(itemsCount).toEqual(3);
 		});
 
-		it('loading items with an external itemProps as object', async () => {
+		it('loading items with the external `itemProps` as an object', async () => {
 			const
 				items = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}];
 

@@ -385,14 +385,14 @@ export default class bRouter extends iData {
 	 * @param [opts] - additional transition options
 	 * @param [method] - transition method
 	 *
-	 * @emits `beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)`
+	 * @emits `beforeChange(route: Nullable<string>, params:` [[TransitionOptions]]`, method:` [[TransitionMethod]]`)`
 	 *
-	 * @emits `change(route: Route)`
-	 * @emits `hardChange(route: Route)`
-	 * @emits `softChange(route: Route)`
+	 * @emits `change(route:` [[Route]]`)`
+	 * @emits `hardChange(route:` [[Route]]`)`
+	 * @emits `softChange(route:` [[Route]]`)`
 	 *
-	 * @emits `transition(route: Route, type: TransitionType)`
-	 * @emits `$root.transition(route: Route, type: TransitionType)`
+	 * @emits `transition(route:` [[Route]]`, type:` [[TransitionType]]`)`
+	 * @emits `$root.transition(route:` [[Route]]`, type:` [[TransitionType]]`)`
 	 */
 	async emitTransition(
 		ref: Nullable<string>,
@@ -748,7 +748,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Initializes the router within an application
-	 * @emits `$root.initRouter(router: bRouter)`
+	 * @emits `$root.initRouter(router:` [[bRouter]]`)`
 	 */
 	@hook('created')
 	protected init(): void {
