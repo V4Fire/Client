@@ -8,6 +8,8 @@ This module provides a component to organize page routing.
 
 * The component doesn't have the default UI.
 
+* By default, the root tag of the component is `<div>`.
+
 ## Why a component, but not a plugin?
 
 There are a few reasons why this API has implemented as a component:

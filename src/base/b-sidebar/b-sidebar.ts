@@ -31,7 +31,7 @@ interface bSidebar extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScro
 @derive(iOpenToggle, iLockPageScroll)
 class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	/**
-	 * If true, then will be blocked the scrolling of the document when the component is opened
+	 * If true, then will be blocked the document' scrolling when the component is opened
 	 */
 	@prop(Boolean)
 	readonly lockPageScroll: boolean = false;

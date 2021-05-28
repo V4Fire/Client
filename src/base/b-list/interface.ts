@@ -20,7 +20,7 @@ export interface Item extends Dictionary {
 	value?: unknown;
 
 	/**
-	 * If this option is provided the component will generate a link for this item
+	 * If this option is provided, the component will generate a link for this item
 	 */
 	href?: string;
 

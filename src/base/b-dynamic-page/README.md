@@ -12,6 +12,10 @@ This module provides a component to dynamically load page components. Basically,
 
 * The component automatically dispatches all events from an internal page component.
 
+* The component doesn't have the default UI.
+
+* By default, the root tag of the component is `<div>`.
+
 ## Modifiers
 
 See the [[iDynamicPage]] component.
@@ -154,6 +158,8 @@ By default, `bDynamicPage` dispatches all events from an internal page component
 ```
 
 ## API
+
+Also, you can see the implemented traits or the parent component.
 
 ### Props
 

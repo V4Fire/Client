@@ -1,12 +1,14 @@
 # base/b-remote-provider
 
 This module provides a component to work with a data provider without visual rendering.
-By default, a parent component will wait until this component is resolved the process of loading.
+By default, the parent component will wait until this component is resolved the process of loading.
 The component can be useful in creating a composition of data.
 
 ## Synopsis
 
 * The component extends [[iData]].
+
+* The component doesn't have the default UI.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -37,7 +39,7 @@ The valid scenario of using this component is to send data to non-main providers
 this.$refs.analytics.post({data: [1, 2, 3]});
 ```
 
-You can also use this component on initializing: you can hook to `@change` event, or provide the `field` prop to store the component `.db` into the parent field.
+You can also use this component on initializing: you can hook to `@change` event, or provide the `field` prop to store the component `db` into the parent field.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity' | :field = 'selectedCity'
@@ -52,10 +54,20 @@ Because this component is a child of [[iData]], you free to use all these props 
 
 ## Slots
 
-The component supports providing the default slot.
+The component supports providing the `default` slot.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity'
   < #template = {db}
     {{ db.value }}
 ```
+
+## API
+
+Also, you can see the implemented traits or the parent component.
+
+### Getters
+
+#### content
+
+A link to component content nodes.
