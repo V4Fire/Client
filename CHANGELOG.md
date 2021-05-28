@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.195 (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation `iPage`
+
 ## v3.0.0-rc.194 (2021-05-28)
 
 #### :bug: Bug Fix
