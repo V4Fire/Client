@@ -16,13 +16,17 @@ This module provides a component to render a recursive list of elements.
 
 * Folding of branches.
 
+## Modifiers
+
+See the [[iItems]] trait and the [[iData]] component.
+
 ## Events
 
 | EventName | Description                                            | Payload description                                            | Payload                          |
 | --------- | ------------------------------------------------------ | -------------------------------------------------------------- | -------------------------------- |
 | `fold`    | One of the component items has been folded or unfolded | A link to the DOM element; The item object; The folding status | `HTMLElement`; `Item`; `boolean` |
 
-Also, you can see the parent component and the component traits.
+See the [[iItems]] trait and the [[iData]] component.
 
 ## Associated types
 
