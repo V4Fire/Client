@@ -235,6 +235,7 @@ module.exports = async (page, params) => {
 				globalThis.renderComponents('b-tree', scheme);
 			});
 
+			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 			return h.component.waitForComponent(page, '#target');
 		}
 	});
@@ -280,9 +281,6 @@ module.exports = async (page, params) => {
 
 				globalThis.renderComponents('b-tree', scheme);
 			}, defaultItems);
-
-			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 
 			return h.component.waitForComponent(page, '#target');
 		}
