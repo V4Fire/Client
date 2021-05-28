@@ -18,6 +18,7 @@ export const inactiveStatuses = Object.createDict({
 });
 
 export const readyStatuses = Object.createDict({
+	inactive: true,
 	beforeReady: true,
 	ready: true
 });

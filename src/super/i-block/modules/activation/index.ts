@@ -15,6 +15,7 @@ import symbolGenerator from 'core/symbol';
 import { runHook } from 'core/component';
 
 import type iBlock from 'super/i-block/i-block';
+import { statuses } from 'super/i-block/const';
 
 import {
 
@@ -218,6 +219,9 @@ export function onDeactivated(component: iBlock): void {
 
 	$a.unmuteAll({group: suspendRgxp}).suspendAll();
 
-	component.componentStatus = 'inactive';
+	if (statuses[component.componentStatus] >= 2) {
+		component.componentStatus = 'inactive';
+	}
+
 	component.isActivated = false;
 }

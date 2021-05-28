@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.196 (2021-05-28)
+
+#### :boom: Breaking Change
+
+* Now `isReady` returns `true` if a component in `inactive`
+
 ## v3.0.0-rc.192 (2021-05-27)
 
 #### :bug: Bug Fix

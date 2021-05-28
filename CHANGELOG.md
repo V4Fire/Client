@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.196 (2021-05-28)
+
+#### :boom: Breaking Change
+
+* Now `isReady` returns `true` if a component in `inactive` `super/i-block/modules/activation`
+
 ## v3.0.0-rc.195 (2021-05-28)
 
 #### :memo: Documentation
