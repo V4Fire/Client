@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added documentation `iPage`
 
+#### :house: Internal
+
+* Improved restoring of scroll `bRouter`
+
 ## v3.0.0-rc.194 (2021-05-28)
 
 #### :bug: Bug Fix

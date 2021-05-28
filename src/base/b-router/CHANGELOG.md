@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.195 (2021-??-??)
+
+#### :house: Internal
+
+* Improved restoring of scroll
+
 ## v3.0.0-rc.192 (2021-05-27)
 
 #### :bug: Bug Fix

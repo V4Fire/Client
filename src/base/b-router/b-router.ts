@@ -610,19 +610,29 @@ export default class bRouter extends iData {
 		// Restoring the scroll position
 		if (meta.autoScroll !== false) {
 			(async () => {
-				await this.async.sleep(10, {
+				const label = {
 					label: $$.autoScroll
-				});
+				};
 
-				const
-					s = meta.scroll;
+				const setScroll = () => {
+					const
+						s = meta.scroll;
 
-				if (s != null) {
-					this.r.scrollTo(s.x, s.y);
+					if (s != null) {
+						this.r.scrollTo(s.x, s.y);
 
-				} else if (hardChange) {
-					this.r.scrollTo(0, 0);
-				}
+					} else if (hardChange) {
+						this.r.scrollTo(0, 0);
+					}
+				};
+
+				// Restoring of scroll for static height components
+				await this.nextTick(label);
+				setScroll();
+
+				// Restoring of scroll for dynamic height components
+				await this.async.sleep(10, label);
+				setScroll();
 			})().catch(stderr);
 		}
 
