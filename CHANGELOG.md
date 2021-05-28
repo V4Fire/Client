@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.194 (2021-05-28)
+
+#### :bug: Bug Fix
+
+* Fixed bug with referencing value from `closure` in `AsyncRender.iterate`
+
 ## v3.0.0-rc.193 (2021-05-28)
 
 #### :bug: Bug Fix
