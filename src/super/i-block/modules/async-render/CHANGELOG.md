@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.194 (2021-05-28)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with referencing a closure' value in the `iterate` method
+
 ## v3.0.0-rc.192 (2021-05-27)
 
 #### :rocket: New Feature
