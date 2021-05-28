@@ -197,6 +197,12 @@ export default class bDynamicPage extends iDynamicPage {
 	};
 
 	/**
+	 * Handler: page has been changed
+	 */
+	@system()
+	protected onPageChange?: Function;
+
+	/**
 	 * Iterator of the rendering loop (it uses with `asyncRender`)
 	 */
 	protected get renderIterator(): CanPromise<number> {
@@ -226,23 +232,17 @@ export default class bDynamicPage extends iDynamicPage {
 		}
 
 		const
-			{unsafe, page, route} = this;
+			{unsafe, route} = this;
 
 		return new SyncPromise((r) => {
-			const opts = {immediate: true, label: $$.keepAliveFilter};
-			this.watch('page', opts, onPageChange(r, this.page, this.route));
+			this.onPageChange = onPageChange(r, this.route);
 		});
 
 		function onPageChange(
 			resolve: Function,
-			currentPage: typeof page,
 			currentRoute: typeof route
 		): AnyFunction {
-			return (newPage: typeof page) => {
-				if (currentPage === newPage) {
-					return;
-				}
-
+			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
 				const componentRef = unsafe.$refs.component;
 				componentRef?.pop();
 
@@ -415,7 +415,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Synchronization for the `emitter` prop
 	 */
 	@watch('emitter')
-	@watch({field: 'event', immediate: true})
+	@watch({path: 'event', immediate: true})
 	protected syncEmitterWatcher(): void {
 		const
 			{async: $a} = this;
@@ -444,6 +444,29 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 			}, group);
+		}
+	}
+
+	/**
+	 * Synchronization for the `page` field
+	 */
+	@watch({path: 'page', immediate: true})
+	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
+		if (this.onPageChange == null) {
+			const
+				label = {label: $$.syncPageWatcher};
+
+			this.watch('onPageChange', {...label, immediate: true}, () => {
+				if (this.onPageChange == null) {
+					return;
+				}
+
+				this.onPageChange(page, oldPage);
+				this.async.clearWorker(label);
+			});
+
+		} else {
+			this.onPageChange(page, oldPage);
 		}
 	}
 

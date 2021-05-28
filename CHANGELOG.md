@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.193 (2021-05-28)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when switching pages via `pageProp` and `page` `bDynamicPage`
+
 ## v3.0.0-rc.192 (2021-05-27)
 
 #### :rocket: New Feature

@@ -33,6 +33,35 @@ module.exports = async (page, params) => {
 	});
 
 	describe('b-dynamic-page', () => {
+		it('setting `pageProp` and `page`', async () => {
+			const target = await init({
+				page: 'p-v4-dynamic-page-1'
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					await ctx.nextTick();
+					res.push(ctx.page, ctx.component.componentName);
+
+					ctx.page = 'p-v4-dynamic-page-2';
+
+					await ctx.nextTick();
+					res.push(ctx.page, ctx.component.componentName);
+
+					return res;
+				})
+			).toEqual([
+				'p-v4-dynamic-page-1',
+				'p-v4-dynamic-page-1',
+
+				'p-v4-dynamic-page-2',
+				'p-v4-dynamic-page-2'
+			]);
+		});
+
 		it('switching between pages', async () => {
 			const
 				target = await init();
