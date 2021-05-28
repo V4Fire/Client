@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// @ts-check
+
 /**
  * @typedef {import('playwright').Page} Page
  */
@@ -13,12 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * Starts a test
- *
- * @param {Page} page
- * @returns {!Promise<void>}
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	describe('b-window simple tests', () => {
 		beforeEach(async () => {

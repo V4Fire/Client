@@ -23,7 +23,7 @@ This module provides a component to create a modal window.
 | Name         | Description                              | Values                  | Default   |
 | ------------ | ---------------------------------------- | ----------------------- | --------- |
 | `opened`     | The component is opened                  | `boolean`               | `false`   |
-| `position`   | Value of the `position` style property   | `'fixed' \| 'absolute'` | `'fixed'` |
+| `position`   | A value of the `position` style property | `'fixed' \| 'absolute'` | `'fixed'` |
 
 Also, you can see the implemented traits or the parent component.
 
@@ -172,6 +172,8 @@ b-window extends i-data
 ```
 
 ## API
+
+Also, you can see the implemented traits or the parent component.
 
 ### Props
 

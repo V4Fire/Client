@@ -15,9 +15,7 @@
 const
 	{initRouter} = include('src/base/b-router/test/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	// eslint-disable-next-line import/no-nodejs-modules
 	const url = require('url');
