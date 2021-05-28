@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed bug with referencing value from `closure` in `AsyncRender.iterate`
+* Fixed a bug with referencing a closure' value `AsyncRender.iterate`
 
 ## v3.0.0-rc.193 (2021-05-28)
 

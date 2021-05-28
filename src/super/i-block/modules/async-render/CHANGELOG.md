@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed bug with referencing value from `closure` in `iterate` method
+* Fixed a bug with referencing a closure' value in the `iterate` method
 
 ## v3.0.0-rc.192 (2021-05-27)
 
