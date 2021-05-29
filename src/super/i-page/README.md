@@ -8,8 +8,6 @@ This module provides a super component for all page components.
 
 * The component sets the root `active` modifier on activation/deactivation.
 
-* The component API doesn't support functional or flyweight components.
-
 * The component extends [[iData]].
 
 * The component implements the [[iVisible]] trait.
@@ -29,9 +27,9 @@ See the [[iVisible]] trait and the [[iData]] component.
 A page component is a special component kind represents a container bound to some URL.
 Why would we need these containers? In a world of "static" websites, we have URL-s and HTML pages,
 but nowadays, many sites transform to SPA. It means that physically we have only one HTML page, and all the rest pages are virtualized.
-And this is a case when we use page components. They represent virtual analogs of static HTML pages.
+This is a case when we use page components. They represent virtual analogs of static HTML pages.
 
-But there is a case when we need the real static HTML page - it's an initialization page.
+But there is one more case when we need the real static HTML page - it's an initialization page or the root page.
 The initialization page contents the default HTML layout, like `head` and `body` tags. Also,
 it loads core CSS and JS dependencies and does other initialization stuff. That's why `iPage` has two descendants:
 
