@@ -2,7 +2,7 @@
 
 This module provides a component to load an image with the support of features:
 
-* Providing of "srcset" to load different images with different resolutions.
+* Providing of `srcset` to load different images with different resolutions.
 
 * An overlay image until loading is completed.
 
@@ -19,6 +19,8 @@ This module provides a component to load an image with the support of features:
 * The component implements [[iProgress]], [[iVisible]] traits.
 
 * The component is used as functional by default but can be used as regular by using `v-func=false`.
+
+* To show an image, the component uses CSS styles, like `background-image` or `background-position`.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -70,3 +72,53 @@ The component supports a bunch of slots to provide:
   < template #broken
     The image can't be loaded :(
 ```
+
+## API
+
+Also, you can see the implemented traits or the parent component.
+
+### Props
+
+#### [src = '']
+
+The image src (a fallback if `srcset` provided).
+
+#### [srcset]
+
+The image `srcset` attribute.
+
+#### [sizes]
+
+An image `sizes` attribute.
+
+#### [alt]
+
+An alternate text for the image.
+
+#### [sizeType = 'contain']
+
+The image background size type.
+
+#### [position = '50% 50%']
+
+The image background position.
+
+#### [ratio]
+
+The image aspect ratio.
+
+#### [beforeImg]
+
+A style (`backgroundImage`) before the image background.
+
+#### [afterImg]
+
+A style (`backgroundImage`) after the image background.
+
+#### [overlayImg]
+
+Parameters for an overlay image (when the image is loading).
+
+#### [brokenImg]
+
+Parameters for a broken image (when the image loading was failed).

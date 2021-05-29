@@ -15,6 +15,7 @@ import symbolGenerator from 'core/symbol';
 import { runHook } from 'core/component';
 
 import type iBlock from 'super/i-block/i-block';
+import { statuses } from 'super/i-block/const';
 
 import {
 
@@ -34,157 +35,166 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Activates the specified component
+ * Activates the component.
+ * The deactivated component won't load data from providers on initializing.
+ *
+ * Basically, you don't need to think about a component activation,
+ * because it's automatically synchronized with `keep-alive` or the special input property.
  *
  * @param component
  * @param [force] - if true, then the component will be forced to activate, even if it is already activated
  */
 export function activate(component: iBlock, force?: boolean): void {
-	const
-		ctx = component.unsafe,
-		beforeCreate = ctx.lfc.isBeforeCreate();
+	const {
+		unsafe,
+		unsafe: {r, lfc, state, rootEmitter}
+	} = component;
 
 	const
-		{state: $s, rootEmitter: $e} = ctx;
+		isBeforeCreate = lfc.isBeforeCreate(),
+		canActivate = !unsafe.isActivated || force;
 
-	if (!ctx.isActivated || force) {
-		if (beforeCreate) {
-			$s.initFromRouter();
+	if (canActivate) {
+		if (isBeforeCreate) {
+			state.initFromRouter();
 		}
 
-		if ($s.needRouterSync) {
-			void ctx.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
-				try {
-					if (type === 'hard') {
-						if (route !== ctx.r.route) {
-							await ctx.promisifyOnce('setRoute', {
-								label: $$.activateAfterTransition
-							});
+		if (state.needRouterSync) {
+			void lfc.execCbAfterComponentCreated(() => {
+				rootEmitter.on('onTransition', handler, {
+					label: $$.activate
+				});
 
-						} else {
-							await ctx.nextTick({
-								label: $$.activateAfterHardChange
-							});
+				async function handler(route: typeof r.route, type: string): Promise<void> {
+					try {
+						if (type === 'hard') {
+							if (route !== r.route) {
+								await unsafe.promisifyOnce('setRoute', {
+									label: $$.activateAfterTransition
+								});
+
+							} else {
+								await unsafe.nextTick({
+									label: $$.activateAfterHardChange
+								});
+							}
 						}
-					}
 
-					if (inactiveStatuses[ctx.componentStatus] == null) {
-						$s.initFromRouter();
-					}
+						if (inactiveStatuses[unsafe.componentStatus] == null) {
+							state.initFromRouter();
+						}
 
-				} catch (err) {
-					stderr(err);
+					} catch (err) {
+						stderr(err);
+					}
 				}
-
-			}, {
-				label: $$.activate
-			}));
+			});
 		}
 	}
 
-	if (beforeCreate) {
+	if (isBeforeCreate) {
 		return;
 	}
 
-	if (!ctx.isActivated) {
-		runHook('activated', ctx).then(() => ctx.activated(true), stderr);
+	if (canActivate) {
+		runHook('activated', unsafe).then(() => unsafe.activated(true), stderr);
 	}
 
 	const
-		children = ctx.$children;
+		children = unsafe.$children;
 
 	if (children) {
 		for (let i = 0; i < children.length; i++) {
-			const
-				ctx = children[i].unsafe;
-
-			if (!ctx.isActivated) {
-				runHook('activated', ctx).then(() => ctx.activated(true), stderr);
-			}
+			children[i].unsafe.activate(true);
 		}
 	}
 }
 
 /**
- * Deactivates the specified component
+ * Deactivates the component.
+ * The deactivated component won't load data from providers on initializing.
+ *
+ * Basically, you don't need to think about a component activation,
+ * because it's automatically synchronized with keep-alive or the special input property.
+ *
  * @param component
  */
 export function deactivate(component: iBlock): void {
 	const
-		ctx = component.unsafe;
+		{unsafe} = component;
 
-	if (ctx.lfc.isBeforeCreate()) {
+	if (unsafe.lfc.isBeforeCreate()) {
 		return;
 	}
 
-	if (ctx.isActivated) {
-		runHook('deactivated', ctx).then(() => ctx.deactivated(), stderr);
+	if (unsafe.isActivated) {
+		runHook('deactivated', unsafe).then(() => unsafe.deactivated(), stderr);
 	}
 
 	const
-		children = ctx.$children;
+		children = unsafe.$children;
 
 	if (children) {
 		for (let i = 0; i < children.length; i++) {
-			const
-				ctx = children[i].unsafe;
-
-			if (ctx.isActivated) {
-				runHook('deactivated', ctx).then(() => ctx.deactivated(), stderr);
-			}
+			children[i].unsafe.deactivate();
 		}
 	}
 }
 
 /**
- * Handler: component activated hook
+ * Hook handler: the component has been activated
  *
  * @param component
  * @param [force] - if true, then the component will be forced to activate, even if it is already activated
  */
 export function onActivated(component: iBlock, force?: boolean): void {
-	const
-		ctx = component.unsafe,
-		{async: $a} = ctx;
+	const {
+		unsafe,
+		unsafe: {async: $a}
+	} = component;
 
-	if (ctx.isActivated || !force && !ctx.activatedProp && !ctx.isReadyOnce) {
+	const cantActivate =
+		unsafe.isActivated ||
+		!force && !unsafe.activatedProp && !unsafe.isReadyOnce;
+
+	if (cantActivate) {
 		return;
 	}
 
-	$a
-		.unmuteAll()
-		.unsuspendAll();
+	$a.unmuteAll().unsuspendAll();
 
-	if (ctx.isReadyOnce && readyStatuses[ctx.componentStatus] == null) {
-		ctx.componentStatus = 'beforeReady';
+	if (unsafe.isReadyOnce && readyStatuses[unsafe.componentStatus] == null) {
+		unsafe.componentStatus = 'beforeReady';
 	}
 
-	if (!ctx.isReadyOnce && force || ctx.reloadOnActivation) {
+	const needInitLoadOrReload =
+		!unsafe.isReadyOnce &&
+		force || unsafe.reloadOnActivation;
+
+	if (needInitLoadOrReload) {
+		const group = {group: 'requestSync:get'};
+		$a.clearAll(group).setImmediate(load, group);
+	}
+
+	if (unsafe.isReadyOnce) {
+		unsafe.componentStatus = 'ready';
+	}
+
+	unsafe.state.initFromRouter();
+	unsafe.isActivated = true;
+
+	function load(): void {
 		const
-			group = {group: 'requestSync:get'};
+			res = unsafe.isReadyOnce ? unsafe.reload() : unsafe.initLoad();
 
-		$a
-			.clearAll(group)
-			.setImmediate(() => {
-				const
-					res = ctx.isReadyOnce ? ctx.reload() : ctx.initLoad();
-
-				if (Object.isPromise(res)) {
-					res.catch(stderr);
-				}
-			}, group);
+		if (Object.isPromise(res)) {
+			res.catch(stderr);
+		}
 	}
-
-	if (ctx.isReadyOnce) {
-		ctx.componentStatus = 'ready';
-	}
-
-	ctx.state.initFromRouter();
-	ctx.isActivated = true;
 }
 
 /**
- * Handler: component deactivated hook
+ * Hook handler: the component has been deactivated
  * @param component
  */
 export function onDeactivated(component: iBlock): void {
@@ -207,10 +217,11 @@ export function onDeactivated(component: iBlock): void {
 		}
 	}
 
-	$a
-		.unmuteAll({group: suspendRgxp})
-		.suspendAll();
+	$a.unmuteAll({group: suspendRgxp}).suspendAll();
 
-	component.componentStatus = 'inactive';
+	if (statuses[component.componentStatus] >= 2) {
+		component.componentStatus = 'inactive';
+	}
+
 	component.isActivated = false;
 }

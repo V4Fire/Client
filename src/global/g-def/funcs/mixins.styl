@@ -38,7 +38,7 @@ useGPU()
 $OVERLAYS = ( "layer" "modal" "overall" )
 
 /**
- * Sets "z-index" for the specified layer position
+ * Sets `z-index` for the specified layer position
  *
  * @param {string} $pos - layer variants: underall, layer, modal, overall
  * @param {number} [$mod] - value modifier
@@ -58,7 +58,7 @@ zIndex($pos, $mod = 0)
 		z-index index($OVERLAYS, $pos) * 1000 + $mod
 
 /**
- * Alias for zIndex mixin
+ * Alias for `zIndex` mixin
  *
  * @example
  * ```stylus
@@ -71,10 +71,10 @@ z-index-pos($pos, $mod = 0)
 	zIndex($pos, $mod)
 
 /**
- * Generates rules for flexbox (direction: row)
+ * Generates rules for `flexbox` (direction: row)
  *
- * @param {string} $justify - justify-content (def for default)
- * @param {string=} [$align] - align-items (def for default)
+ * @param {string} $justify - justify-content (`def` for default)
+ * @param {string=} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -92,10 +92,10 @@ flex-row($justify, $align = $justify)
 		align-items $align
 
 /**
- * Generates rules for flexbox (direction: row-reverse)
+ * Generates rules for `flexbox` (direction: row-reverse)
  *
- * @param {string} $justify - justify-content (def for default)
- * @param {string=} [$align] - align-items (def for default)
+ * @param {string} $justify - justify-content (`def` for default)
+ * @param {string=} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -108,10 +108,10 @@ flex-row-rev($justify, $align = $justify)
 	flex-direction row-reverse
 
 /**
- * Generates rules for flexbox (direction: column)
+ * Generates rules for `flexbox` (direction: column)
  *
- * @param {string} $justify - justify-content (def for default)
- * @param {string=} [$align] - align-items (def for default)
+ * @param {string} $justify - justify-content (`def` for default)
+ * @param {string=} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -124,10 +124,10 @@ flex-col($justify, $align = $justify)
 	flex-direction column
 
 /**
- * Generates rules for flexbox (direction: column-reverse)
+ * Generates rules for `flexbox` (direction: column-reverse)
  *
- * @param {string} $justify - justify-content (def for default)
- * @param {string=} [$align] - align-items (def for default)
+ * @param {string} $justify - justify-content (`def` for default)
+ * @param {string=} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -143,7 +143,7 @@ flex-col-rev($justify, $align = $justify)
  * Generates rules for a stretch modal layer
  *
  * @param {string} $position - position type
- * @param {string=} [$zIndexPos] - zIndex position
+ * @param {string=} [$zIndexPos] - `zIndex` position
  */
 stretch-layer($position, $zIndexPos = "modal")
 	position $position

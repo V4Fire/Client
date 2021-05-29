@@ -10,10 +10,10 @@ import type bRouter from 'base/b-router/b-router';
 import type { AppliedRoute } from 'base/b-router/interface';
 
 /**
- * Fills route parameters with default values and other stuff
+ * Fills route parameters with the default values and other stuff
  *
  * @param route
- * @param router - link to the router instance
+ * @param router - link to a router instance
  */
 export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 	const {

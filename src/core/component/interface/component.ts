@@ -594,35 +594,40 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Handler: "created" hook (only for flyweight components)
+	 * Hook handler: the component has been created
+	 * (only for flyweight components)
 	 */
 	protected onCreatedHook(): void {
 		// Loopback
 	}
 
 	/**
-	 * Handler: "bind" hook (only for functional and flyweight components)
+	 * Hook handler: the component has been bound
+	 * (only for functional and flyweight components)
 	 */
 	protected onBindHook(): void {
 		// Loopback
 	}
 
 	/**
-	 * Handler: "inserted" hook (only for functional and flyweight components)
+	 * Hook handler: the component has been mounted
+	 * (only for functional and flyweight components)
 	 */
 	protected onInsertedHook(): void {
 		// Loopback
 	}
 
 	/**
-	 * Handler: "update" hook (only for functional and flyweight components)
+	 * Hook handler: the component has been updated
+	 * (only for functional and flyweight components)
 	 */
 	protected onUpdateHook(): void {
 		// Loopback
 	}
 
 	/**
-	 * Handler: "unbind" hook (only for functional and flyweight components)
+	 * Hook handler: the component has been unbound
+	 * (only for functional and flyweight components)
 	 */
 	protected onUnbindHook(): void {
 		// Loopback

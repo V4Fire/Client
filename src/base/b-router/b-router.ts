@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
 import { deprecated } from 'core/functools/deprecation';
 
 import globalRoutes from 'routes';
@@ -61,8 +60,8 @@ export default class bRouter extends iData {
 	public async!: Async<this>;
 
 	/**
-	 * Static schema of application routes.
-	 * By default, this value is taken from "routes/index.ts".
+	 * The static schema of application routes.
+	 * By default, this value is taken from `routes/index.ts`.
 	 *
 	 * @example
 	 * ```
@@ -101,9 +100,9 @@ export default class bRouter extends iData {
 	routes!: router.RouteBlueprints;
 
 	/**
-	 * Initial route value.
-	 * Usually, you don't need to manually provide the initial route value,
-	 * because it can be automatically inferred, but sometimes it can be useful.
+	 * An initial route value.
+	 * Usually, you don't need to provide this value manually,
+	 * because it is inferring automatically, but sometimes it can be useful.
 	 *
 	 * @example
 	 * ```
@@ -142,10 +141,7 @@ export default class bRouter extends iData {
 	@prop()
 	readonly basePathProp: string = '/';
 
-	/**
-	 * Base route path: all route paths are concatenated with this path
-	 * @see [[bRouter.basePathProp]]
-	 */
+	/** @see [[bRouter.basePathProp]] */
 	@system<bRouter>({
 		init: (o) => o.sync.link(),
 		watch: 'updateCurrentRoute'
@@ -157,18 +153,17 @@ export default class bRouter extends iData {
 	 * If true, the router will intercept all click events on elements with a `href` attribute to emit a transition.
 	 * An element with `href` can have additional attributes:
 	 *
-	 * * `data-router-method` - a type of the used router method to emit the transition;
-	 * * `data-router-go` - a value for the router "go" method;
+	 * * `data-router-method` - type of the used router method to emit the transition;
+	 * * `data-router-go` - value for the router `go` method;
 	 * * `data-router-params`, `data-router-query`, `data-router-meta` - additional parameters for the used router method
 	 *   (to provide an object use JSON).
-	 *
 	 */
 	@prop(Boolean)
 	readonly interceptLinks: boolean = true;
 
 	/**
-	 * Factory to create router engine.
-	 * By default, this value is taken from "core/router/engines".
+	 * A factory to create router engine.
+	 * By default, this value is taken from `core/router/engines`.
 	 *
 	 * @example
 	 * ```
@@ -184,8 +179,8 @@ export default class bRouter extends iData {
 	readonly engineProp!: () => router.Router;
 
 	/**
-	 * Internal router engine.
-	 * For example, it can be the HTML5 history router or a router that based on URL Hash value.
+	 * An internal router engine.
+	 * For example, it can be the HTML5 history router or a router based on URL hash values.
 	 *
 	 * @see [[bRouter.engine]]
 	 */
@@ -193,7 +188,7 @@ export default class bRouter extends iData {
 	protected engine!: router.Router;
 
 	/**
-	 * Value of the active route
+	 * Raw value of the active route
 	 */
 	@system()
 	protected routeStore?: router.Route;
@@ -277,7 +272,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Replaces the current route.
-	 * The method returns a promise that is resolved when the transition will be completed.
+	 * The method returns a promise that will be resolved when the transition is completed.
 	 *
 	 * @param route - route name or URL
 	 * @param [opts] - additional options
@@ -296,7 +291,7 @@ export default class bRouter extends iData {
 	/**
 	 * Switches to a route from the history,
 	 * identified by its relative position to the current route (with the current route being relative index 0).
-	 * The method returns a promise that is resolved when the transition will be completed.
+	 * The method returns a promise that will be resolved when the transition is completed.
 	 *
 	 * @param pos
 	 *
@@ -315,7 +310,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Switches to the next route from the history.
-	 * The method returns a promise that is resolved when the transition will be completed.
+	 * The method returns a promise that will be resolved when the transition is completed.
 	 */
 	async forward(): Promise<void> {
 		const res = this.promisifyOnce('transition');
@@ -325,7 +320,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Switches to the previous route from the history.
-	 * The method returns a promise that is resolved when the transition will be completed.
+	 * The method returns a promise that will be resolved when the transition is completed.
 	 */
 	async back(): Promise<void> {
 		const res = this.promisifyOnce('transition');
@@ -335,7 +330,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Clears the routes history.
-	 * Mind, this method can't work properly with HistoryAPI based engines.
+	 * Mind, this method can't work properly with `HistoryAPI` based engines.
 	 *
 	 * @param [filter] - filter predicate
 	 */
@@ -345,8 +340,8 @@ export default class bRouter extends iData {
 
 	/**
 	 * Clears all temporary routes from the history.
-	 * The temporary route is a route that has "tmp" flag within its own properties, like, "params", "query" or "meta".
-	 * Mind, this method can't work properly with HistoryAPI based engines.
+	 * The temporary route is a route that has `tmp` flag within its own properties, like, `params`, `query` or `meta`.
+	 * Mind, this method can't work properly with `HistoryAPI` based engines.
 	 *
 	 * @example
 	 * ```js
@@ -386,18 +381,18 @@ export default class bRouter extends iData {
 	/**
 	 * Emits a new transition to the specified route
 	 *
-	 * @param ref - route name or URL or null, if the route is equal to the previous
+	 * @param ref - route name or URL or `null`, if the route is equal to the previous
 	 * @param [opts] - additional transition options
 	 * @param [method] - transition method
 	 *
-	 * @emits `beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)`
+	 * @emits `beforeChange(route: Nullable<string>, params:` [[TransitionOptions]]`, method:` [[TransitionMethod]]`)`
 	 *
-	 * @emits `change(route: Route)`
-	 * @emits `hardChange(route: Route)`
-	 * @emits `softChange(route: Route)`
+	 * @emits `change(route:` [[Route]]`)`
+	 * @emits `hardChange(route:` [[Route]]`)`
+	 * @emits `softChange(route:` [[Route]]`)`
 	 *
-	 * @emits `transition(route: Route, type: TransitionType)`
-	 * @emits `$root.transition(route: Route, type: TransitionType)`
+	 * @emits `transition(route:` [[Route]]`, type:` [[TransitionType]]`)`
+	 * @emits `$root.transition(route:` [[Route]]`, type:` [[TransitionType]]`)`
 	 */
 	async emitTransition(
 		ref: Nullable<string>,
@@ -493,7 +488,7 @@ export default class bRouter extends iData {
 
 		const {meta} = newRouteInfo;
 
-		// If the route support filling from the root object or query parameters
+		// If a route support filling from the root object or query parameters
 		fillRouteParams(newRouteInfo, this);
 
 		// We have two variants of transitions:
@@ -531,13 +526,13 @@ export default class bRouter extends iData {
 			}
 		};
 
-		// Checking that the new route is really needed, i.e. it isn't equal to the previous
+		// Checking that a new route is really needed, i.e., it isn't equal to the previous
 		const newRouteIsReallyNeeded = !Object.fastCompare(
 			router.getComparableRouteParams(currentRoute),
 			router.getComparableRouteParams(newRoute)
 		);
 
-		// The transition is necessary, but now we need to understand should we emit "soft" or "hard" transition
+		// The transition is necessary, but now we need to understand should we emit a "soft" or "hard" transition
 		if (newRouteIsReallyNeeded) {
 			this.field.set('routeStore', newRoute);
 
@@ -554,7 +549,7 @@ export default class bRouter extends iData {
 			}
 
 			// If the used engine doesn't support the requested transition method,
-			// we should fallback to "replace"
+			// we should fallback to `replace`
 			if (!Object.isFunction(engine[method])) {
 				method = 'replace';
 			}
@@ -579,7 +574,7 @@ export default class bRouter extends iData {
 			if (isSoftTransition) {
 				this.emit('softChange', newRoute);
 
-				// We get the prototype by using __proto__ link
+				// We get a prototype by using `__proto__` link,
 				// because `Object.getPrototypeOf` returns a non-watchable object.
 				// This behavior is based on a strategy that every touch to an object property of the watched object
 				// will create a child watch object.
@@ -602,12 +597,12 @@ export default class bRouter extends iData {
 			emitTransition();
 
 		// This route is equal to the previous and we don't actually do transition,
-		// but for a "push" request we need to emit the "fake" transition event anyway
+		// but for a "push" request we need to emit a "fake" transition event anyway
 		} else if (method === 'push') {
 			emitTransition();
 
 		// In this case, we don't do transition, but still,
-		// we should emit the special event, because some methods, like, "back" or "forward" can wait for it
+		// we should emit the special event, because some methods, like, `back` or `forward` can wait for it
 		} else {
 			emitTransition(true);
 		}
@@ -619,21 +614,25 @@ export default class bRouter extends iData {
 					label: $$.autoScroll
 				};
 
-				if (hardChange) {
-					await this.async.wait(() => Object.fastCompare(newRoute, r.route), label);
-				}
+				const setScroll = () => {
+					const
+						s = meta.scroll;
 
+					if (s != null) {
+						this.r.scrollTo(s.x, s.y);
+
+					} else if (hardChange) {
+						this.r.scrollTo(0, 0);
+					}
+				};
+
+				// Restoring of scroll for static height components
 				await this.nextTick(label);
+				setScroll();
 
-				const
-					s = meta.scroll;
-
-				if (s != null) {
-					this.r.scrollTo(s.x, s.y);
-
-				} else if (hardChange) {
-					this.r.scrollTo(0, 0);
-				}
+				// Restoring of scroll for dynamic height components
+				await this.async.sleep(10, label);
+				setScroll();
 			})().catch(stderr);
 		}
 
@@ -759,7 +758,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Initializes the router within an application
-	 * @emits $root.initRouter(router: bRouter)
+	 * @emits `$root.initRouter(router:` [[bRouter]]`)`
 	 */
 	@hook('created')
 	protected init(): void {
@@ -808,7 +807,7 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Handler: click on an element with a href attribute
+	 * Handler: click on an element with the `href` attribute
 	 * @param e
 	 */
 	@watch({

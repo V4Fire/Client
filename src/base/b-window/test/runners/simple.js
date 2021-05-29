@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// @ts-check
+
 /**
  * @typedef {import('playwright').Page} Page
  */
@@ -13,12 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * Starts a test
- *
- * @param {Page} page
- * @returns {!Promise<void>}
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	describe('b-window simple tests', () => {
 		beforeEach(async () => {
@@ -112,7 +109,7 @@ module.exports = (page) => {
 				expect(classList).not.toContain('b-window_opened_true');
 			});
 
-			it('closes the window when "escape" is pressed', async () => {
+			it('closes the window when `escape` is pressed', async () => {
 				const
 					target = await init();
 
@@ -179,8 +176,6 @@ module.exports = (page) => {
 			]);
 		}, attrs);
 
-		await h.bom.waitForIdleCallback(page);
-		await h.component.waitForComponentStatus(page, '#target', 'ready');
 		return h.component.waitForComponent(page, '#target');
 	}
 };

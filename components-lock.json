@@ -1,5 +1,5 @@
 {
-  "hash": "a4966ed8a922d1aa5df15f60e336da78d627cb85c268d8a5c0ac26f9ed2ad447",
+  "hash": "3e95ac3ea7afe589df9b4f8bbada4e1a0354d1a98484dd3d3127881e63da5ef0",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -138,38 +138,6 @@
             "src/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/form/b-checkbox/b-checkbox.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-component-renderer",
-        {
-          "index": "src/base/b-component-renderer/index.js",
-          "declaration": {
-            "name": "b-component-renderer",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-component-renderer",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-component-renderer/b-component-renderer.ts",
-          "styles": [
-            "src/base/b-component-renderer/b-component-renderer.styl"
-          ],
-          "tpl": "src/base/b-component-renderer/b-component-renderer.ss",
           "etpl": null
         }
       ],
@@ -1055,14 +1023,14 @@
           "index": "src/form/b-textarea/index.js",
           "declaration": {
             "name": "b-textarea",
-            "parent": "b-input",
+            "parent": "i-input-text",
             "dependencies": [
               "b-scroll-inline"
             ],
             "libs": []
           },
           "name": "b-textarea",
-          "parent": "b-input",
+          "parent": "i-input-text",
           "dependencies": [
             "b-scroll-inline"
           ],
@@ -1951,20 +1919,20 @@
             "dependencies": [
               "b-dummy",
               "b-v4-component-demo",
-              "b-virtual-scroll",
+              "p-v4-dynamic-page-1",
+              "p-v4-dynamic-page-2",
+              "p-v4-dynamic-page-3",
+              "b-router",
+              "b-dynamic-page",
               "b-tree",
+              "b-list",
               "b-checkbox",
               "b-button",
-              "b-router",
-              "b-list",
               "b-input-hidden",
               "b-form",
               "b-sidebar",
               "b-dummy-text",
-              "b-slider",
-              "b-window",
-              "b-image",
-              "b-input"
+              "b-slider"
             ],
             "libs": []
           },
@@ -1973,20 +1941,20 @@
           "dependencies": [
             "b-dummy",
             "b-v4-component-demo",
-            "b-virtual-scroll",
+            "p-v4-dynamic-page-1",
+            "p-v4-dynamic-page-2",
+            "p-v4-dynamic-page-3",
+            "b-router",
+            "b-dynamic-page",
             "b-tree",
+            "b-list",
             "b-checkbox",
             "b-button",
-            "b-router",
-            "b-list",
             "b-input-hidden",
             "b-form",
             "b-sidebar",
             "b-dummy-text",
-            "b-slider",
-            "b-window",
-            "b-image",
-            "b-input"
+            "b-slider"
           ],
           "libs": [],
           "resolvedLibs": {
@@ -2005,6 +1973,114 @@
           ],
           "tpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ss",
           "etpl": "src/pages/p-v4-components-demo/p-v4-components-demo.ess"
+        }
+      ],
+      [
+        "p-v4-dynamic-page-1",
+        {
+          "index": "src/pages/p-v4-dynamic-page-1/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page-1",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page-1",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "p-v4-dynamic-page-2",
+        {
+          "index": "src/pages/p-v4-dynamic-page-2/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page-2",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page-2",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "p-v4-dynamic-page-3",
+        {
+          "index": "src/pages/p-v4-dynamic-page-3/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page-3",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page-3",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.ss",
+          "etpl": null
         }
       ]
     ]

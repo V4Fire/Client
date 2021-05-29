@@ -56,7 +56,7 @@ export default class bTree extends iData implements iItems {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
-	 * Common filter to render items via `asyncRender`.
+	 * A common filter to render items via `asyncRender`.
 	 * It is used to optimize the process of rendering items.
 	 *
 	 * @see [[AsyncRender.iterate]]
@@ -77,7 +77,7 @@ export default class bTree extends iData implements iItems {
 	readonly renderFilter!: RenderFilter;
 
 	/**
-	 * Filter to render nested items via `asyncRender`.
+	 * A filter to render nested items via `asyncRender`.
 	 * It is used to optimize the process of rendering child items.
 	 *
 	 * @see [[AsyncRender.iterate]]
@@ -115,7 +115,7 @@ export default class bTree extends iData implements iItems {
 	items!: this['Items'];
 
 	/**
-	 * Parameters for an async render task
+	 * Parameters for async render tasks
 	 */
 	protected get renderTaskParams(): TaskParams {
 		return {
@@ -241,10 +241,10 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Handler: fold element click
+	 * Handler: fold element has been clicked
 	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item: Item, value: boolean)`
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
 	 */
 	protected onFoldClick(item: this['Item']): void {
 		const

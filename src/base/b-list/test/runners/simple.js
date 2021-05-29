@@ -15,9 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeEach(async () => {
 		await page.evaluate(() => {
@@ -25,7 +23,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-list simple list with defined items', () => {
+	describe('b-list simple using', () => {
 		it('initialization', async () => {
 			const
 				target = await init();
@@ -335,7 +333,6 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-list', scheme);
 		}, attrs);
 
-		await h.bom.waitForIdleCallback(page);
 		return h.component.waitForComponent(page, '#target');
 	}
 };

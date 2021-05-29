@@ -13,21 +13,28 @@ package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
 		'b-dummy',
+
 		'b-v4-component-demo',
-		'b-virtual-scroll',
+		'p-v4-dynamic-page-1',
+		'p-v4-dynamic-page-2',
+		'p-v4-dynamic-page-3',
+
+		'b-router',
+		'b-dynamic-page',
+
 		'b-tree',
+		'b-list',
+
 		'b-checkbox',
 		'b-button',
-		'b-router',
-		'b-list',
-		'b-checkbox',
+
 		'b-input-hidden',
 		'b-form',
+
 		'b-sidebar',
 		'b-dummy',
 		'b-dummy-text',
 		'b-slider',
-		'b-window',
-		'b-image',
+
 		components
 	);

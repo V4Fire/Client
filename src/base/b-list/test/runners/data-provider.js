@@ -15,9 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeEach(async () => {
 		await page.evaluate(() => {
@@ -25,8 +23,8 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-list list with loading from a data provider', () => {
-		it('simple loading from a provider', async () => {
+	describe('b-list loading from a data provider', () => {
+		it('simple loading', async () => {
 			const target = await init({
 				autoHref: true,
 				dataProvider: 'demo.List'
@@ -57,7 +55,6 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-list', scheme);
 		}, attrs);
 
-		await h.bom.waitForIdleCallback(page);
 		await h.component.waitForComponentStatus(page, '#target', 'ready');
 		return h.component.waitForComponent(page, '#target');
 	}

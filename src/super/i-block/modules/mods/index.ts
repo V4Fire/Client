@@ -113,7 +113,12 @@ export function initMods(component: iBlock): ModsNTable {
 
 		if (modKey in declMods) {
 			const attrVal = attrs[key];
-			ctx.watch(`$attrs.${key}`, (val: Dictionary = {}) => ctx.setMod(modKey, modVal(val[key])));
+			attrs[key] = undefined;
+
+			ctx.watch(`$attrs.${key}`, (val: Dictionary = {}) => {
+				ctx.$el?.removeAttribute(key);
+				void ctx.setMod(modKey, modVal(val[key]));
+			});
 
 			if (attrVal == null) {
 				continue;

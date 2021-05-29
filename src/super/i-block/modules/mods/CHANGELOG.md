@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.191 (2021-05-24)
+
+#### :bug: Bug Fix
+
+* Don't provide attributes that match with modifiers
+
 ## v3.0.0-rc.107 (2020-12-09)
 
 #### :bug: Bug Fix

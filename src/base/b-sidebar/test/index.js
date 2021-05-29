@@ -109,7 +109,7 @@ module.exports = (page) => {
 				expect(classList).not.toContain('b-sidebar_opened_true');
 			});
 
-			it('closes the sidebar when "escape" is pressed', async () => {
+			it('closes the sidebar when `escape` is pressed', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
 				await h.bom.waitForIdleCallback(page);

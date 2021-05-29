@@ -31,7 +31,7 @@ export const
 @component({functional: {}})
 export default class bImage extends iBlock implements iProgress, iVisible {
 	/**
-	 * Image src (fallback if srcset provided)
+	 * Image src (a fallback if `srcset` provided)
 	 */
 	@prop({
 		type: String,
@@ -41,13 +41,13 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	readonly src: string = '';
 
 	/**
-	 * Image "srcset" attribute
+	 * Image `srcset` attribute
 	 */
 	@prop({type: Object, required: false})
 	readonly srcset?: Dictionary<string>;
 
 	/**
-	 * Image "sizes" attribute
+	 * Image `sizes` attribute
 	 */
 	@prop({type: String, required: false})
 	readonly sizes?: string;
@@ -221,7 +221,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	}
 
 	/**
-	 * Handler: image loading successfully completed
+	 * Handler: image loading has successfully completed
 	 *
 	 * @param img
 	 * @emits `loadSuccess()`
@@ -263,7 +263,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	}
 
 	/**
-	 * Handler: image loading failed
+	 * Handler: image loading has failed
 	 *
 	 * @param err
 	 * @emits `loadFail(err: Error)`

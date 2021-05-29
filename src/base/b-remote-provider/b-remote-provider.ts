@@ -48,7 +48,7 @@ export default class bRemoteProvider extends iData {
 
 	/**
 	 * @override
-	 * @emits `error(err:Error | RequestError, retry: RetryRequestFn)`
+	 * @emits `error(err:Error |` [[RequestError]]`, retry:` [[RetryRequestFn]]`)`
 	 */
 	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
 		const
@@ -62,7 +62,7 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
-	 * Synchronization for the .db field
+	 * Synchronization for the `db` field
 	 *
 	 * @param [value]
 	 * @emits `change(db: CanUndef<T>)`

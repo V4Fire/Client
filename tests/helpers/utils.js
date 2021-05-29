@@ -92,7 +92,7 @@ class Utils {
 			const
 				timeout = 4e3,
 				// eslint-disable-next-line no-new-func
-				newFn = new Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
+				newFn = Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
 
 			let
 				isTimeout = false;

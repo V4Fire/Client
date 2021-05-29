@@ -204,9 +204,6 @@ module.exports = async (page, params) => {
 				}
 			}, {items, attrs, content});
 
-			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
-
 			return h.component.waitForComponent(page, '#target');
 		}
 	});
@@ -238,14 +235,12 @@ module.exports = async (page, params) => {
 				globalThis.renderComponents('b-tree', scheme);
 			});
 
-			await h.bom.waitForIdleCallback(page);
-
 			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 			return h.component.waitForComponent(page, '#target');
 		}
 	});
 
-	describe('b-tree providing of the default slot', () => {
+	describe('b-tree providing of the `default` slot', () => {
 		it('initialization', async () => {
 			const
 				target = await init();
@@ -286,9 +281,6 @@ module.exports = async (page, params) => {
 
 				globalThis.renderComponents('b-tree', scheme);
 			}, defaultItems);
-
-			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
 
 			return h.component.waitForComponent(page, '#target');
 		}

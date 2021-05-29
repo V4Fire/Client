@@ -1,6 +1,6 @@
 # base/b-tree
 
-This module provides API to render a recursive list of elements.
+This module provides a component to render a recursive list of elements.
 
 ## Synopsis
 
@@ -16,13 +16,17 @@ This module provides API to render a recursive list of elements.
 
 * Folding of branches.
 
+## Modifiers
+
+See the [[iItems]] trait and the [[iData]] component.
+
 ## Events
 
 | EventName | Description                                            | Payload description                                            | Payload                          |
 | --------- | ------------------------------------------------------ | -------------------------------------------------------------- | -------------------------------- |
 | `fold`    | One of the component items has been folded or unfolded | A link to the DOM element; The item object; The folding status | `HTMLElement`; `Item`; `boolean` |
 
-Also, you can see the parent component and the component traits.
+See the [[iItems]] trait and the [[iData]] component.
 
 ## Associated types
 
@@ -42,7 +46,7 @@ export default class myTree extends bTree {
 
 ## Usage
 
-1. Simple use of the component with a provided list of items and component to render.
+### Simple use of the component with a provided list of items and components to render
 
 ```
 < b-tree &
@@ -68,7 +72,7 @@ export default class myTree extends bTree {
 .
 ```
 
-2. Providing extra attributes to a component to render.
+### Providing extra attributes to a component to render
 
 ```
 < b-tree &
@@ -78,7 +82,7 @@ export default class myTree extends bTree {
 .
 ```
 
-3. Providing a key to the internal `v-for` directive.
+### Providing a key to the internal `v-for` directive
 
 ```
 < b-tree &
@@ -88,7 +92,7 @@ export default class myTree extends bTree {
 .
 ```
 
-4. Providing a component to render via a function.
+### Providing a component to render via a function
 
 ```
 < b-tree &
@@ -97,7 +101,7 @@ export default class myTree extends bTree {
 .
 ```
 
-5. Providing a component to render via a slot.
+### Providing a component to render via a slot
 
 ```
 < b-tree :items = listOfItems
@@ -106,7 +110,7 @@ export default class myTree extends bTree {
     < b-radio-button v-else
 ```
 
-6. Loading items from a data provider.
+### Loading items from a data provider
 
 ```
 < b-tree :item = 'b-checkbox' | :dataProvider = 'MyProvider'
@@ -187,14 +191,20 @@ The component supports a bunch of slots to provide:
       ➕
 ```
 
-## External render parameters
+## API
 
-Module renders elements via `asyncRender` of the root tree node with the default rendering function.
-See [[AsyncRender]] for additional information.
+Also, you can see the implemented traits or the parent component.
+
+### Props
+
+### folded
+
+If true, then all nested elements are folded by default.
 
 ### renderFilter
 
-Common filter to render items via `asyncRender`.
+A common filter to render items via `asyncRender`.
+It is used to optimize the process of rendering items.
 
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderFilter = () => async.idle()
@@ -202,7 +212,8 @@ Common filter to render items via `asyncRender`.
 
 ### nestedRenderFilter
 
-Filter to render nested items via `asyncRender`.
+A filter to render nested items via `asyncRender`.
+It is used to optimize the process of rendering child items.
 
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()

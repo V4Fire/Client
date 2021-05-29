@@ -163,7 +163,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly componentConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
-	 * Function to filter all "default" requests, i.e., all requests that were produced implicitly,
+	 * A function to filter all "default" requests, i.e., all requests that were produced implicitly,
 	 * like an initial component request or requests that are triggered by changing of parameters from
 	 * `request` and `requestParams`. If the filter returns negative value, the tied request will be aborted.
 	 *
@@ -634,7 +634,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Add new data to the provider.
+	 * Adds new data to the provider.
 	 * This method is similar for a POST request.
 	 *
 	 * @see [[Provider.add]]
@@ -1091,7 +1091,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 *
 	 * @param err
 	 * @param retry - retry function
-	 * @emits `requestError(err: Error | RequestError, retry: RetryRequestFn)`
+	 * @emits `requestError(err: Error |` [[RequestError]], retry:` [[RetryRequestFn]]`)`
 	 */
 	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
 		this.emitError('requestError', err, retry);

@@ -55,14 +55,14 @@ export default class bButton implements iAccess {
 
 The trait specifies two optional props.
 
-### autofocus
+### [autofocus]
 
 A boolean prop which, if present, indicates that the component should automatically
 have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed).
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus)
 
-### tabIndex
+### [tabIndex]
 
 An integer prop indicating if the component can take input focus (is focusable),
 if it should participate to sequential keyboard navigation.

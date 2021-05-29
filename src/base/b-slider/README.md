@@ -25,31 +25,9 @@ Slides to show can be defined manually via slots or loaded from some data provid
 | `updateState`     | Content of the component content block has been updated        | –                                                                                            | –                       |
 | `syncState`       | The component state has been updated, sent after `updateState` | –                                                                                            | –                       |
 
-## Render modes
-
-The component can operate in two modes, which will discuss below.
-
-### Slide mode
-
-With the `slide` mode, it is impossible to skip slides. That is, we can't get from the first slide directly to the third or other stuff.
-To activate this mode, set the `mode` prop to `slide`.
-
-```
-< b-slider :mode = 'slide'
-```
-
-### Scroll mode
-
-With the `scroll` mode, to scroll slides is used the browser native scrolling.
-To activate this mode, set the `mode` prop to `scroll`.
-
-```
-< b-slider :mode = 'scroll'
-```
-
 ## Usage
 
-1. Loading slides from a data provider.
+### Loading slides from a data provider
 
 ```
 < b-slider &
@@ -60,7 +38,7 @@ To activate this mode, set the `mode` prop to `scroll`.
 .
 ```
 
-2. Provide data into `default` slot
+### Provide data into the `default` slot
 
 ```
 < b-slider &
@@ -68,58 +46,6 @@ To activate this mode, set the `mode` prop to `scroll`.
 .
   < img.&__test v-for = img in imgArr
 ```
-
-## API
-
-### Props
-
-* `dynamicHeight` – If this prop is set to `true`, the height calculation will be based on rendered elements.
-  The component will create an additional element to contain the rendered elements, while it will not be visible to the user.
-  This may be useful if you need to hide scroll on mobile devices, but you don't know the exact size of the elements
-  that can be rendered into a component. By default, this prop is set to `false`.
-
-* `circular` – If this prop is set to `true`, the user will automatically return to the first slide when scrolling the last slide.
-  That is, the slider will work "in a circle".
-
-* `align` – This prop controls how much the slides will scroll.
-  For example, by specifying the value `center`, the slider will stop when the active slide is in the center of the slider when scrolling.
-
-### Methods
-
-- `slideTo(index: number, animate: boolean)` – Scrolls the slider to the element that matches the provided index.
-
-```typescript
-class Test extends iData {
-  /** @override */
-  protected $refs!: {
-    slider: bSlider
-  };
-
-  test(): void {
-    this.$refs.slider.slideTo(1).catch(stderr);
-  }
-}
-```
-
-- `moveSlide(dir: SlideDirection)` – Scrolls the slider to the next or previous element.
-
-```typescript
-class Test extends iData {
-  /** @override */
-  protected $refs!: {
-    slider: bSlider
-  };
-
-  test(): void {
-    this.$refs.slider.moveSlide(-1); // move to previous element
-    this.$refs.slider.moveSlide(1);  // move to next element
-  }
-}
-```
-
-### Fields
-
-- `isSlideMode` – `true` if the component is rendered by using the `slide` mode.
 
 ## Slots
 
@@ -166,7 +92,7 @@ The component supports a bunch of slots to provide:
     Hello there general Kenobi
 ```
 
-The layout of slots within the component DOM tree:
+A layout of slots within the component DOM tree:
 
 ```
 += self.slot('before')
@@ -185,4 +111,125 @@ The layout of slots within the component DOM tree:
   += self.slot('afterItems)
 
 += self.slot('after')
+```
+
+## API
+
+Also, you can see the implemented traits or the parent component.
+
+### Props
+
+#### [modeProp = 'slide']
+
+A slider mode:
+
+1. With the `slide` mode, it is impossible to skip slides.
+   That is, we can't get from the first slide directly to the third or other stuff.
+
+2. With the `scroll` mode, to scroll slides is used the browser native scrolling.
+
+#### [dynamicHeight = false]
+
+If true, the height calculation will be based on rendered elements.
+The component will create an additional element to contain the rendered elements, while it will not be visible to the user.
+This may be useful if you need to hide scroll on mobile devices, but you don't know the exact size of the elements
+that can be rendered into a component.
+
+#### [circular = false]
+
+If true, a user will automatically return to the first slide when scrolling the last slide.
+That is, the slider will work "in a circle".
+
+#### [align = 'center']
+
+This prop controls how much the slides will scroll.
+For example, by specifying `center`, the slider will stop when the active slide is in the slider's center when scrolling.
+
+#### [alignFirstToStart = true]
+
+If true, the first slide will be aligned to the start position (the left bound).
+
+#### [deltaX = 0.9]
+
+This prop controls how much does the shift along the X-axis corresponds to a finger movement.
+
+#### [threshold = 0.3]
+
+The minimum required percentage to scroll the slider to another slide.
+
+#### [fastSwipeThreshold = 0.05]
+
+The minimum required percentage for the scroll slider to another slide in fast motion on the slider.
+
+#### [fastSwipeDelay = 300]
+
+Time (in milliseconds) after which we can assume that there was a quick swipe.
+
+#### [swipeToleranceX = 10]
+
+The minimum displacement threshold along the X-axis at which the slider will be considered to be used (in px).
+
+#### [swipeToleranceY = 50]
+
+The minimum Y-axis offset threshold at which the slider will be considered to be used (in px).
+
+## Fields
+
+#### current
+
+Pointer to the current slide.
+
+## Getters
+
+#### length
+
+The number of slides in the slider.
+
+#### content
+
+Link to a content node.
+
+#### isSlideMode
+
+True if a slider mode is `slide`.
+
+#### currentOffset
+
+The current slider scroll position.
+
+### Methods
+
+#### slideTo
+
+Switches to the specified slide by an index.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    slider: bSlider
+  };
+
+  test(): void {
+    this.$refs.slider.slideTo(1).catch(stderr);
+  }
+}
+```
+
+#### moveSlide
+
+Moves to the next or previous slide.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    slider: bSlider
+  };
+
+  test(): void {
+    this.$refs.slider.moveSlide(-1); // move to previous element
+    this.$refs.slider.moveSlide(1);  // move to next element
+  }
+}
 ```

@@ -82,7 +82,7 @@
 			.
 
 			: &
-				id = [path, waitFor].join(':'),
+				id = [path, waitFor].concat(opts.wait ? '${componentId}' : []).join(':'),
 				interpolatedId = buble.transform("`" + id + "`").code
 			.
 

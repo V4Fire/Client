@@ -35,19 +35,26 @@ export default abstract class iPage extends iData implements iVisible {
 	readonly syncRouterStoreOnInit: boolean = true;
 
 	/**
-	 * Initial page title
+	 * An initial page title.
+	 * Basically this title is set via `document.title`.
 	 */
 	@prop({type: [String, Function]})
 	readonly pageTitleProp: TitleValue = '';
 
 	/**
-	 * Map of page titles that associated with component state values
+	 * A dictionary of page titles (basically these titles are set via `document.title`).
+	 * The dictionary values are tied to the `stage` values.
+	 * A key with the name `[[DEFAULT]]` is used by default. If a key value is defined as a function,
+	 * it will be invoked (the result will be used as a title).
 	 */
 	@prop({type: Object, required: false})
 	readonly stagePageTitles?: StageTitles<this>;
 
 	/**
-	 * Page title
+	 * Current page title
+	 *
+	 * @see [[iPage.pageTitleProp]]
+	 * @see [[iPage.stagePageTitles]]
 	 */
 	@computed({cache: true, dependencies: ['r.pageTitle']})
 	get pageTitle(): string {
@@ -55,7 +62,8 @@ export default abstract class iPage extends iData implements iVisible {
 	}
 
 	/**
-	 * Sets a new page title
+	 * Sets a new page title.
+	 * Basically this title is set via `document.title`.
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
@@ -64,7 +72,9 @@ export default abstract class iPage extends iData implements iVisible {
 	}
 
 	/**
-	 * The wrapped version of .scrollTo method
+	 * A wrapped version of the `scrollTo` method.
+	 * The calling cancels all previous tasks.
+	 *
 	 * @see [[iPage.scrollTo]]
 	 */
 	get scrollToProxy(): this['scrollTo'] {
@@ -132,7 +142,7 @@ export default abstract class iPage extends iData implements iVisible {
 	}
 
 	/**
-	 * Synchronization for .stagePageTitles field
+	 * Synchronization for the `stagePageTitles` field
 	 */
 	@watch('!:onStageChange')
 	protected syncStageTitles(): CanUndef<string> {

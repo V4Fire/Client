@@ -6,12 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = [
-	{
-		attrs: {
-			':routes': 'r.testRoutes'
-		},
-
-		content: "{{ field.get('route.meta.content') }}"
-	}
-];
+package('p-v4-dynamic-page-1')
+	.extends('i-dynamic-page')
+	.dependencies('b-button');

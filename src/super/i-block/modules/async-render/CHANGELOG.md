@@ -9,6 +9,29 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.194 (2021-05-28)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with referencing a closure' value in the `iterate` method
+
+## v3.0.0-rc.192 (2021-05-27)
+
+#### :rocket: New Feature
+
+* Added a new event `asyncRenderChunkComplete`
+
+#### :bug: Bug Fix
+
+* Prevented the infinity loop when passing non-iterable objects to `iterate`
+
+## v3.0.0-rc.191 (2021-05-24)
+
+#### :rocket: New Feature
+
+* Added overloads for infinite iterators
+* Added `waitForceRender`
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :rocket: New Feature

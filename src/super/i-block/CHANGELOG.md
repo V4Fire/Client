@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.191 (2021-05-24)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when using `self.load modules` with the same options within different components
+
 ## v3.0.0-rc.180 (2021-04-16)
 
 #### :rocket: New Feature

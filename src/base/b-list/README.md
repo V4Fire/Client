@@ -84,7 +84,7 @@ The component can be used with the `v-model` directive.
 
 ## Usage
 
-1. Simple use of the component with a provided list of items and the default active value.
+### Simple use of the component with a provided list of items and the default active value
 
 ```
 < b-list :items = [ &
@@ -93,7 +93,7 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-2. Use of the component with the providing of the active value.
+### Use of the component with the providing of the active value
 
 ```
 < b-list :active = 0 | :items = [ &
@@ -102,7 +102,7 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-3. Use of the component with the providing of links and custom attributes.
+### Use of the component with the providing of links and custom attributes
 
 ```
 < b-list :items = [ &
@@ -111,13 +111,13 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-4. Loading items from a data provider.
+### Loading items from a data provider
 
 ```
 < b-list :active = true | :dataProvider = 'MyProvider'
 ```
 
-5. Use of the component with the creation of additional component for each item.
+### Use of the component with the creation of additional component for each item
 
 ```
 < b-list &
@@ -130,7 +130,7 @@ The component can be used with the `v-model` directive.
 .
 ```
 
-6. Providing a key to the internal `v-for` directive.
+### Providing a key to the internal `v-for` directive
 
 ```
 < b-tree &
@@ -189,4 +189,88 @@ Also, this icon can be provided by a prop.
 < b-list :items = [ &
   {label: 'Foo', progressIcon: 'bCustomLoader'}
 ] .
+```
+
+## API
+
+Also, you can see the implemented traits or the parent component.
+
+### Props
+
+#### [activeProp]
+
+An initial component active value/s.
+If the component is switched to the `multiple` mode, you can pass an array or Set to define several active values.
+
+#### [autoHref = false]
+
+If true, then all items without the `href` option will automatically generate a link by using `value` and other props.
+
+#### [multiple = false]
+
+If true, the component supports a feature of multiple active values.
+
+#### [cancelable]
+
+If true, the active item can be unset by using another click to it.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise to `false`.
+
+### Getters
+
+#### active
+
+The component active value.
+If the component is switched to the `multiple` mode, the getter will return a `Set` object.
+
+### Methods
+
+#### setActive
+
+Activates the specified value.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    list: bList
+  };
+
+  test(): void {
+    this.$refs.list.setActive(1);
+  }
+}
+```
+
+#### unsetActive
+
+Deactivates the specified value.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    list: bList
+  };
+
+  test(): void {
+    this.$refs.list.unsetActive(1);
+  }
+}
+```
+
+#### toggleActive
+
+Toggles activation of the specified value.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    list: bList
+  };
+
+  test(): void {
+    this.$refs.list.toggleActive(1);
+  }
+}
 ```

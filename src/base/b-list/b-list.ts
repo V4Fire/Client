@@ -78,28 +78,28 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly valueProp?: this['Items'];
 
 	/**
-	 * Initial component active value/s.
-	 * If the component is switched to the "multiple" mode, you can pass an array or Set to define several active values.
+	 * An initial component active value/s.
+	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active values.
 	 */
 	@prop({required: false})
 	readonly activeProp?: unknown[] | Active;
 
 	/**
-	 * If true, then all items without the "href" option will automatically generate a link by using "value"
+	 * If true, then all items without the `href` option will automatically generate a link by using `value`
 	 * and other props
 	 */
 	@prop(Boolean)
 	readonly autoHref: boolean = false;
 
 	/**
-	 * If true, the component supports the feature of multiple active values
+	 * If true, the component supports a feature of multiple active values
 	 */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
 
 	/**
 	 * If true, the active item can be unset by using another click to it.
-	 * By default, if the component is switched to the "multiple" mode, this value is set to `true`,
+	 * By default, if the component is switched to the `multiple` mode, this value is set to `true`,
 	 * otherwise to `false`.
 	 */
 	@prop({type: Boolean, required: false})
@@ -137,8 +137,8 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	value?: this['Items'];
 
 	/**
-	 * Component active value.
-	 * If the component is switched to the "multiple" mode, the getter will return a Set object.
+	 * The component active value.
+	 * If the component is switched to the `multiple` mode, the getter will return a `Set` object.
 	 *
 	 * @see [[bList.activeStore]]
 	 */
@@ -197,8 +197,8 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	protected values!: Map<unknown, number>;
 
 	/**
-	 * Internal component active value store.
-	 * If the component is switched to the "multiple" mode, the value is defined as a Set structure.
+	 * An internal component active value store.
+	 * If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
 	 *
 	 * @see [[bList.activeProp]]
 	 * @emits `immediateChange(active: CanArray<unknown>)`
@@ -249,8 +249,8 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	protected activeStore!: Active;
 
 	/**
-	 * Returns a link to the active item element.
-	 * If the component is switched to the "multiple" mode, the getter will return an array of elements.
+	 * A link to the active item element.
+	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
 	 */
 	@computed({
 		cache: true,
@@ -281,29 +281,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 			return getEl(active);
 		});
-	}
-
-	/**
-	 * Toggles activation of the specified value
-	 * @param value - item value to activate
-	 */
-	toggleActive(value: unknown): boolean {
-		const
-			activeStore = this.field.get('activeStore');
-
-		if (this.multiple) {
-			if (Object.has(activeStore, [value])) {
-				return this.unsetActive(value);
-			}
-
-			return this.setActive(value);
-		}
-
-		if (activeStore !== value) {
-			return this.setActive(value);
-		}
-
-		return this.unsetActive(value);
 	}
 
 	/**
@@ -401,6 +378,29 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		this.emit('change', this.active);
 
 		return true;
+	}
+
+	/**
+	 * Toggles activation of the specified value
+	 * @param value - item value to activate
+	 */
+	toggleActive(value: unknown): boolean {
+		const
+			activeStore = this.field.get('activeStore');
+
+		if (this.multiple) {
+			if (Object.has(activeStore, [value])) {
+				return this.unsetActive(value);
+			}
+
+			return this.setActive(value);
+		}
+
+		if (activeStore !== value) {
+			return this.setActive(value);
+		}
+
+		return this.unsetActive(value);
 	}
 
 	/**

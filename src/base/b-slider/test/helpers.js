@@ -16,7 +16,7 @@ const
 	h = include('tests/helpers');
 
 /**
- * Emulates once swipe on slider
+ * Emulates the `once` swipe on a slider
  *
  * @param {Page} page
  * @returns {!Promise<void>}
@@ -45,9 +45,9 @@ async function swipeOnce(page) {
  * Initializes a slider
  *
  * @param {Page} page
- * @param attrs
- * @param content
- * @returns {!Promise<CanUndef<Playwright.JSHandle>|?>}
+ * @param {Object=} [attrs]
+ * @param {Object=} [content]
+ * @returns {Promise<Playwright.JSHandle>}
  */
 async function initSlider(page, {attrs, content} = {}) {
 	await page.evaluate(({attrs, content}) => {
@@ -81,7 +81,6 @@ async function initSlider(page, {attrs, content} = {}) {
 		globalThis.renderComponents('b-slider', scheme);
 	}, {attrs, content});
 
-	await h.bom.waitForIdleCallback(page);
 	await h.component.waitForComponentStatus(page, '.b-slider', 'ready');
 	return h.component.waitForComponent(page, '#target');
 }

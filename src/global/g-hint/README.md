@@ -2,11 +2,15 @@
 
 This module provides a mixin to create tooltips or hints.
 
+## Synopsis
+
+* This module provides a global Styl mixin, not a component.
+
 ## Usage
 
 There are different ways to use this mixin:
 
-1. A tooltip based on pseudo attributes.
+### Tooltip based on pseudo attributes
 
 ```
 - namespace [%fileName%]
@@ -45,7 +49,7 @@ b-example
   })
 ```
 
-2. The global flyweight tooltip is based on pseudo attributes.
+### Global flyweight tooltip is based on pseudo attributes
 
 Just add `g-hint` classes to any node and provide the hint message into the `data-hint` attribute.
 
@@ -72,7 +76,7 @@ $p = {
 p-root extends i-static-page
 ```
 
-3. A tooltip bases on an HTML layout.
+### Tooltip bases on an HTML layout
 
 ```
 - namespace [%fileName%]
@@ -102,10 +106,10 @@ b-example
     // Selector to a hint container
     location: "&__dropdown"
 
-    // Selector to show the hint
+    // Selector to show a hint
     showOn: '&__button:hover + &__dropdown'
 
-    // Hide the hint by default
+    // Hide a hint by default
     hidden: true,
 
     // CSS rules to hide a hint

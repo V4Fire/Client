@@ -15,9 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeEach(async () => {
 		await page.evaluate(() => {
@@ -25,8 +23,8 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-list list with defined items with hrefs', () => {
-		it('providing of href-s manually', async () => {
+	describe('b-list providing items with hrefs', () => {
+		it('providing a list with href-s', async () => {
 			const target = await init({
 				items: [
 					{
