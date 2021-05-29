@@ -58,9 +58,9 @@ After the loading of data, there is stored within the `db` field.
   {{ db.someValue }}
 ```
 
-Every child instance of iData can have no more than one data provider, i.e., you should decompose your data logic between different components,
-but not to combine all in one component. This approach produces a more strict code structure that is easy to support and debug.
-Also, all pending requests with the same hash are joined, and the final result will bee shared between consumers.
+Every child instance of `iData` can have no more than one data provider, i.e., you should decompose your data logic between different components
+but not combine all in one component. This approach produces a more strict code structure that is easy to support and debug.
+Also, all pending requests with the same hash are joined, and the final result will be shared between consumers.
 Don't be afraid about the performance decreasing.
 
 ```
@@ -70,7 +70,7 @@ Don't be afraid about the performance decreasing.
 < b-example :dataProvider = 'User' | :request = {get: {uuid: '2'}}
 ```
 
-To optimize data loading, you may specify the data caching of a data provider.
+To optimize data loading, you may specify the data caching of a provider.
 
 ```typescript
 import { provider, Provider } from 'core/data';
@@ -112,7 +112,7 @@ The component doesn't have any UI representation and provides a flexible API to 
 < b-remote-provider :dataProvider = 'myData' | :field = 'fieldWhenWillBeStoredData'
 ```
 
-This way is useful when you are using it with the `v-if` directive, but be careful if you want to periodically update data from remote providers:
+This way is useful when you are using it with the `v-if` directive, but be careful if you want to update data from remote providers periodically:
 you can emit a bunch of redundant re-renders. Mind, `bRemoteProvider` is a regular component, and initialization of it takes additional time.
 The valid case to use this kind of provider is to submit some data without getting the response, for instance, analytic events.
 
@@ -126,11 +126,11 @@ import iData, { component, system } from 'super/i-data/i-data';
 
 @component()
 export default class bExample extends iData {
-  @system(() => new User())
+  @system((o) => o.async.wrapDataProvider(new User()))
   user!: User;
 
   getUser(): Promise<UserData> {
-    return this.async.request(this.user.get());
+    return this.user.get();
   }
 }
 ```
@@ -201,7 +201,7 @@ You can pass a function or list of functions that will be applied to provider da
 
 #### `initRemoteData` and `componentConverter`
 
-Sometimes you want to create a component that can take data directly from a prop or by loading from a data provider.
+Sometimes you want to create a component that can take data directly from a prop or by loading it from a data provider.
 You can manage this situation by using `sync.link` and `initRemoteData`. See the [[Sync]] class for additional information.
 
 `initRemoteData` is a function that invokes every time the `db` is changed.
@@ -391,6 +391,6 @@ By default, a component won't reload data without the internet, but you can chan
 
 ## Error handling
 
-| Name            | Description                                          | Payload description                          | Payload                                  |
-| --------------- | ---------------------------------------------------- | ---------------------------------------------| ---------------------------------------- |
+| Name            | Description                                          | Payload description                          | Payload                                   |
+| --------------- | ---------------------------------------------------- | ---------------------------------------------| ----------------------------------------- |
 | `requestError`  | An error occurred during the request to the provider | Error object, function to re-try the request | `Error \| RequestError`, `RetryRequestFn` |
