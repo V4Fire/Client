@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.197 (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation `iDynamicPage`
+
 ## v3.0.0-rc.196 (2021-05-28)
 
 #### :boom: Breaking Change
