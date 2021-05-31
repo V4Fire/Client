@@ -16,7 +16,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-button', () => {
+	describe('b-icon', () => {
 		it('empty rendering', async () => {
 			const
 				target = await init();
@@ -53,6 +53,7 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-icon', scheme);
 		}, attrs);
 
+		await h.bom.waitForIdleCallback(page);
 		return h.component.waitForComponent(page, '#target');
 	}
 
