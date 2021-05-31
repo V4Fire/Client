@@ -148,9 +148,13 @@ When you click a child, the parent checkbox will be set to the `indeterminate` s
 ```
 < b-checkbox :id = 'parent'
 
-< b-checkbox :id = 'foo' | :parentId = 'parent' | :name = 'foo'
-< b-checkbox :parentId = 'foo' | :name = 'bla'
+< b-checkbox &
+  :id = 'foo' |
+  :name = 'foo' |
+  :parentId = 'parent'
+.
 
+< b-checkbox :parentId = 'foo' | :name = 'bla'
 < b-checkbox :parentId = 'parent' | :name = 'bar'
 ```
 
@@ -165,6 +169,12 @@ True if the checkbox can be unchecked directly after the first check.
 ```
 < b-checbox :name = 'bar' | :changeable = false | :checked = true
 ```
+
+### Getters
+
+#### isChecked
+
+True if the checkbox is checked.
 
 ### Methods
 

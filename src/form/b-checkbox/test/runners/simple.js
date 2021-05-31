@@ -27,23 +27,6 @@ module.exports = (page) => {
 		const
 			q = '[data-id="target"]';
 
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-checkbox', scheme);
-			}, attrs);
-
-			return h.component.waitForComponent(page, q);
-		};
-
 		it('providing of attributes', async () => {
 			await init({id: 'foo', name: 'bla'});
 
@@ -201,7 +184,7 @@ module.exports = (page) => {
 			).toBeUndefined();
 		});
 
-		it('checkbox with a label prop', async () => {
+		it('checkbox with a `label` prop', async () => {
 			const target = await init({
 				label: 'Foo'
 			});
@@ -220,5 +203,22 @@ module.exports = (page) => {
 				await target.evaluate((ctx) => ctx.value)
 			).toBeTrue();
 		});
+
+		async function init(attrs = {}) {
+			await page.evaluate((attrs) => {
+				const scheme = [
+					{
+						attrs: {
+							'data-id': 'target',
+							...attrs
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-checkbox', scheme);
+			}, attrs);
+
+			return h.component.waitForComponent(page, q);
+		}
 	});
 };

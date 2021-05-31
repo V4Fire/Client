@@ -27,34 +27,6 @@ module.exports = (page) => {
 		const
 			q = '[data-id="target"]';
 
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							name: 'checkbox',
-							validators: ['required'],
-							messageHelpers: true,
-							...attrs
-						}
-					},
-
-					{
-						attrs: {
-							'data-id': 'second',
-							name: 'checkbox',
-							value: 'bar'
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-checkbox', scheme);
-			}, attrs);
-
-			return h.component.waitForComponent(page, q);
-		};
-
 		it('validation', async () => {
 			const
 				target = await init();
@@ -161,5 +133,33 @@ module.exports = (page) => {
 				await target.evaluate((ctx) => ctx.value)
 			).toBeTrue();
 		});
+
+		async function init(attrs = {}) {
+			await page.evaluate((attrs) => {
+				const scheme = [
+					{
+						attrs: {
+							'data-id': 'target',
+							name: 'checkbox',
+							validators: ['required'],
+							messageHelpers: true,
+							...attrs
+						}
+					},
+
+					{
+						attrs: {
+							'data-id': 'second',
+							name: 'checkbox',
+							value: 'bar'
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-checkbox', scheme);
+			}, attrs);
+
+			return h.component.waitForComponent(page, q);
+		}
 	});
 };

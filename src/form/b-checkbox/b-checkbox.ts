@@ -16,12 +16,15 @@ import 'models/demo/checkbox';
 //#endif
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
+
 import iSize from 'traits/i-size/i-size';
 
 import iInput, {
 
 	component,
 	prop,
+	computed,
 	p,
 
 	ModsDecl,
@@ -86,9 +89,13 @@ export default class bCheckbox extends iInput implements iSize {
 	 * ```
 	 * < b-checkbox :id = 'parent'
 	 *
-	 * < b-checkbox :id = 'foo' | :parentId = 'parent' | :name = 'foo'
-	 * < b-checkbox :parentId = 'foo' | :name = 'bla'
+	 * < b-checkbox &
+	 *   :id = 'foo' |
+	 *   :name = 'foo' |
+	 *   :parentId = 'parent'
+	 * .
 	 *
+	 * < b-checkbox :parentId = 'foo' | :name = 'bla'
 	 * < b-checkbox :parentId = 'parent' | :name = 'bar'
 	 * ```
 	 */
@@ -135,6 +142,14 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	set value(value: this['Value']) {
 		super['valueSetter'](value);
+	}
+
+	/**
+	 * True if the checkbox is checked
+	 */
+	@computed({dependencies: ['mods.checked']})
+	get isChecked(): boolean {
+		return this.mods.checked === 'true';
 	}
 
 	/** @inheritDoc */
@@ -290,7 +305,7 @@ export default class bCheckbox extends iInput implements iSize {
 	 * @emits `check(type:` [[CheckType]]`)`
 	 * @emits `uncheck()`
 	 */
-	protected async onCheckedChange(e: ModEvent): Promise<void> {
+	protected onCheckedChange(e: ModEvent): void {
 		if (e.type === 'remove' && e.reason !== 'removeMod') {
 			return;
 		}
@@ -338,15 +353,13 @@ export default class bCheckbox extends iInput implements iSize {
 				?.component;
 
 			if (this.isComponent(parent, bCheckbox)) {
-				const
-					els = await this.groupElements;
+				SyncPromise.resolve(this.groupElements).then((els) => {
+					if (els.every((el) => el.mods.checked == null || el.mods.checked === 'false')) {
+						return parent.uncheck();
+					}
 
-				if (els.every((el) => el.mods.checked == null || el.mods.checked === 'false')) {
-					parent.uncheck().catch(stderr);
-
-				} else {
-					parent.check(els.every((el) => el.mods.checked === 'true') || 'indeterminate').catch(stderr);
-				}
+					return parent.check(els.every((el) => el.mods.checked === 'true') || 'indeterminate');
+				}).catch(stderr);
 			}
 		}
 	}
