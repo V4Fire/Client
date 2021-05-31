@@ -36,6 +36,9 @@ package('p-v4-components-demo')
 		'b-sidebar',
 		'b-slider',
 
+		'b-icon',
+		'b-image',
+
 		'b-dummy',
 		'b-dummy-text',
 
