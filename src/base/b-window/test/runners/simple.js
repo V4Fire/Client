@@ -43,17 +43,12 @@ module.exports = (page) => {
 					subscribe = target.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
 
 				await target.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
-
 				await expectAsync(subscribe).toBeResolved();
 			});
 
 			it('shows the window when `open` is invoked', async () => {
-				const
-					target = await init();
-
+				const target = await init();
 				await target.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-window_opened_true');
@@ -63,19 +58,15 @@ module.exports = (page) => {
 			});
 
 			it('switching to a different stage via `open`', async () => {
-				const
-					target = await init();
-
+				const target = await init();
 				await target.evaluate((ctx) => ctx.open('foo'));
+
 				expect(await target.evaluate((ctx) => ctx.stage)).toBe('foo');
 			});
 
 			it('shows the window when `toggle` is invoked', async () => {
-				const
-					target = await init();
-
+				const target = await init();
 				await target.evaluate((ctx) => ctx.toggle());
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-window_opened_true');
@@ -84,11 +75,8 @@ module.exports = (page) => {
 
 		describe('close', () => {
 			it('emits an event if closing', async () => {
-				const
-					target = await init();
-
+				const target = await init();
 				await target.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 
 				const subscribe = target.evaluate((ctx) => new Promise((res) => ctx.once('close', res)));
 				await target.evaluate((ctx) => ctx.close());
@@ -101,9 +89,7 @@ module.exports = (page) => {
 					target = await init();
 
 				await target.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await page.click('.b-window__wrapper', {position: {x: 10, y: 10}});
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
@@ -114,22 +100,17 @@ module.exports = (page) => {
 					target = await init();
 
 				await target.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await page.press('.b-window', 'Escape');
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
 			});
 
 			it('closes the window when `close` is invoked', async () => {
-				const
-					target = await init();
+				const target = await init();
 
 				await target.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await target.evaluate((ctx) => ctx.close());
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');
@@ -143,9 +124,7 @@ module.exports = (page) => {
 					target = await init();
 
 				await target.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await target.evaluate((ctx) => ctx.toggle());
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await target.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-window_opened_true');

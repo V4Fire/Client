@@ -11,3 +11,5 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- block body
+		+= self.slot()

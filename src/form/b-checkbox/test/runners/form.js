@@ -54,7 +54,6 @@ module.exports = (page) => {
 				globalThis.renderComponents('b-checkbox', scheme);
 			}, attrs);
 
-			await h.bom.waitForIdleCallback(page);
 			return h.component.waitForComponent(page, q);
 		};
 

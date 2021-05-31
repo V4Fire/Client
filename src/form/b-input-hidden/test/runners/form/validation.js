@@ -15,9 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeEach(async () => {
 		await page.evaluate(() => {
@@ -45,7 +43,6 @@ module.exports = (page) => {
 				globalThis.renderComponents('b-input-hidden', scheme);
 			}, attrs);
 
-			await h.bom.waitForIdleCallback(page);
 			return h.component.waitForComponent(page, q);
 		};
 
@@ -79,7 +76,7 @@ module.exports = (page) => {
 				.toBe('Required field');
 		});
 
-		it('required with parameters (the array form)', async () => {
+		it('required with parameters (an array form)', async () => {
 			const target = await init({
 				validators: [['required', {msg: 'REQUIRED!'}]]
 			});
@@ -91,7 +88,7 @@ module.exports = (page) => {
 				.toBe('REQUIRED!');
 		});
 
-		it('required with parameters (the object form)', async () => {
+		it('required with parameters (an object form)', async () => {
 			const target = await init({
 				validators: [{required: {msg: 'REQUIRED!', showMsg: false}}]
 			});

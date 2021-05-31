@@ -15,9 +15,7 @@
 const
 	{initInput} = include('src/dummies/b-dummy-text/test/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeEach(async () => {
 		await page.evaluate(() => {

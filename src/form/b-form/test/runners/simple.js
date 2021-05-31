@@ -15,9 +15,7 @@
 const
 	{createFormAndEnvironment, checkCheckboxes} = include('src/form/b-form/test/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeEach(async () => {
 		await page.evaluate(() => {

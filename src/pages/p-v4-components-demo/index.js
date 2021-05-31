@@ -25,16 +25,19 @@ package('p-v4-components-demo')
 		'b-tree',
 		'b-list',
 
-		'b-checkbox',
-		'b-button',
-
-		'b-input-hidden',
 		'b-form',
+		'b-button',
+		'b-checkbox',
+		'b-input-hidden',
+
+		'b-virtual-scroll',
+		'b-window',
 
 		'b-sidebar',
+		'b-slider',
+
 		'b-dummy',
 		'b-dummy-text',
-		'b-slider',
 
 		components
 	);

@@ -19,7 +19,7 @@ const
  * Initializes an input to test
  *
  * @param {Page} page
- * @param attrs
+ * @param {Object=} attrs
  * @returns {!Promise<CanUndef<Playwright.JSHandle>>}
  */
 async function initInput(page, attrs = {}) {
@@ -39,7 +39,6 @@ async function initInput(page, attrs = {}) {
 		globalThis.renderComponents('b-dummy-text-functional', scheme);
 	}, attrs);
 
-	await h.bom.waitForIdleCallback(page);
 	return h.component.waitForComponent(page, '[data-id="target"]');
 }
 

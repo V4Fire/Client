@@ -58,7 +58,6 @@ module.exports = (page) => {
 				globalThis.renderComponents('b-list', scheme);
 			}, params);
 
-			await h.bom.waitForIdleCallback(page);
 			await h.component.waitForComponentStatus(page, '#target', 'ready');
 			return h.component.waitForComponent(page, '#target');
 		};

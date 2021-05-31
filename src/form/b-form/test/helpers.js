@@ -20,13 +20,12 @@ const
  *
  * @param {Page} page
  * @param {Object=} attrs
- * @return {!Promise<CanUndef<Playwright.JSHandle>>}
+ * @returns {!Promise<CanUndef<Playwright.JSHandle>>}
  */
 exports.createFormAndEnvironment = async (page, attrs = {}) => {
-	const
-		q = '[data-id="target"]';
-
 	await page.evaluate((attrs) => {
+		globalThis.removeCreatedComponents();
+
 		const
 			formConverter = (v) => v.reduce((res, el) => res + Number(el), 0);
 
@@ -123,15 +122,14 @@ exports.createFormAndEnvironment = async (page, attrs = {}) => {
 		globalThis.renderComponents('b-dummy', scheme);
 	}, attrs);
 
-	await h.bom.waitForIdleCallback(page);
-	return h.component.waitForComponent(page, q);
+	return h.component.waitForComponent(page, '[data-id="target"]');
 };
 
 /**
  * Checks all associated with the specified form checkboxes
  *
  * @param {Playwright.JSHandle} form - form target
- * @return {!Promise<void>}
+ * @returns {!Promise<void>}
  */
 exports.checkCheckboxes = async (form) => {
 	await form.evaluate(async (ctx) => {

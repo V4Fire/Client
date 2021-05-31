@@ -15,9 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	beforeEach(async () => {
 		await page.evaluate(() => {
@@ -46,7 +44,6 @@ module.exports = (page) => {
 				globalThis.renderComponents('b-input-hidden', scheme);
 			}, attrs);
 
-			await h.bom.waitForIdleCallback(page);
 			return h.component.waitForComponent(page, q);
 		};
 

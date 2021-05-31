@@ -62,7 +62,6 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-dummy', scheme);
 		}, attrs);
 
-		await h.bom.waitForIdleCallback(page);
 		return h.component.waitForComponent(page, '#target');
 	}
 };

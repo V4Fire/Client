@@ -19,7 +19,7 @@ const
  * Initializes a router
  *
  * @param {Page} page
- * @return {Promise<Playwright.JSHandle>}
+ * @returns {!Promise<Playwright.JSHandle>}
  */
 async function initRouter(page) {
 	await page.evaluate(() => {

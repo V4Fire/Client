@@ -8,9 +8,11 @@
 
 // @ts-check
 
-const
-	h = include('tests/helpers');
+/**
+ * @typedef {import('playwright').Page} Page
+ */
 
+/** @param {Page} page */
 module.exports = (page) => {
 	describe('b-button', () => {
 		beforeAll(async () => {

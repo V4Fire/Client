@@ -1,5 +1,5 @@
 {
-  "hash": "3e95ac3ea7afe589df9b4f8bbada4e1a0354d1a98484dd3d3127881e63da5ef0",
+  "hash": "b4fc70c5357e0b1e58fb3da6003a37eb0d72f11869151f1a64f0db2505451c0c",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1926,13 +1926,15 @@
               "b-dynamic-page",
               "b-tree",
               "b-list",
-              "b-checkbox",
-              "b-button",
-              "b-input-hidden",
               "b-form",
+              "b-button",
+              "b-checkbox",
+              "b-input-hidden",
+              "b-virtual-scroll",
+              "b-window",
               "b-sidebar",
-              "b-dummy-text",
-              "b-slider"
+              "b-slider",
+              "b-dummy-text"
             ],
             "libs": []
           },
@@ -1948,13 +1950,15 @@
             "b-dynamic-page",
             "b-tree",
             "b-list",
-            "b-checkbox",
-            "b-button",
-            "b-input-hidden",
             "b-form",
+            "b-button",
+            "b-checkbox",
+            "b-input-hidden",
+            "b-virtual-scroll",
+            "b-window",
             "b-sidebar",
-            "b-dummy-text",
-            "b-slider"
+            "b-slider",
+            "b-dummy-text"
           ],
           "libs": [],
           "resolvedLibs": {

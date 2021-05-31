@@ -53,7 +53,6 @@ module.exports = (page) => {
 			globalThis.renderComponents('b-icon', scheme);
 		}, attrs);
 
-		await h.bom.waitForIdleCallback(page);
 		return h.component.waitForComponent(page, '#target');
 	}
 
