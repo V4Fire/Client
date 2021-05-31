@@ -33,11 +33,14 @@ Changelog
 * Now `submit` returns a value
 * Improved submit events
 
+#### :memo: Documentation
+
+* Added documentation
+
 #### :house: Internal
 
 * Fixed ESLint warnings
 
 #### :nail_care: Polish
 
-* Added documentation
 * Added tests

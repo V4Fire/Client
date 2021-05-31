@@ -15,7 +15,10 @@ Changelog
 
 * Fixed ESLint warnings
 
-#### :nail_care: Polish
+#### :memo: Documentation
 
 * Added documentation
+
+#### :nail_care: Polish
+
 * Added tests

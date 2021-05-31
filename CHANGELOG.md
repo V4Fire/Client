@@ -43,6 +43,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added `iInputText`
 * Added support of the default slot `bDummy`
 * Added support of interpolation of a data provider response `iInput`
+* Added `isChecked` `bCheckbox`
 
 * `bForm`:
   * Added `getElValueToSubmit`

@@ -31,6 +31,7 @@ import iData, {
 
 	component,
 	prop,
+	computed,
 	p,
 
 	ModsDecl,
@@ -259,6 +260,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	readonly dropdown: string = 'bottom';
 
 	/** @see [[iAccess.isFocused]] */
+	@computed({dependencies: ['mods.focused']})
 	get isFocused(): boolean {
 		const
 			{button} = this.$refs;
