@@ -38,14 +38,14 @@ Also, you can see the parent component and the component traits.
 
 The component has four base scenarios of usage:
 
-1. A simple button with a custom event handler.
+### A simple button with a custom event handler
 
 ```
 < b-button @click = console.log('The button was clicked')
   Click on me!
 ```
 
-2. The trigger for a tied form.
+### A trigger for the tied form
 
 ```
 < b-form
@@ -56,14 +56,14 @@ The component has four base scenarios of usage:
     Submit
 ```
 
-3. A link.
+### A link
 
 ```
 < b-button :type = 'link' | :href = 'https://google.com'
   Go to google
 ```
 
-4. With a custom data provider.
+### Providing a custom data provider
 
 ```
 /// Get data from a provider
@@ -141,4 +141,165 @@ Also, this icon can be provided by a prop.
 ```
 < b-button :progressIcon = 'bCustomLoader'
   Click on me!
+```
+
+## API
+
+Also, you can see the parent component and the component traits.
+
+### Props
+
+#### [type = `'button'`]
+
+A button' type to create. There can be values:
+
+1. `button` - simple button control;
+2. `submit` - button to send the tied form;
+3. `link` - hyperlink to the specified URL (to provide URL, use the `href`prop).
+
+```
+< b-button @click = console.log('boom!')
+  Make boom!
+
+< b-button :type = 'link' | :href = 'https://google.com'
+  Go to Google
+
+< b-form
+  < b-input :name = 'name'
+  < b-button :type = 'submit'
+    Send
+```
+
+#### [href]
+
+If the `type` prop is passed to `link`, this prop contains a value for `<a href>`.
+Otherwise, the prop includes a base URL for a data provider.
+
+```
+< b-button :type = 'link' | :href = 'https://google.com'
+  Go to Google
+
+< b-button :href = '/generate/user'
+  Generate a new user
+```
+
+#### [method = 'get']
+
+A data provider method to use if `dataProvider` or `href` props are passed.
+
+```
+< b-button :href = '/generate/user' | :method = 'put'
+  Generate a new user
+
+< b-button :dataProvider = 'Cities' | :method = 'peek'
+  Fetch cities
+```
+
+#### [form]
+
+A string specifying the `<form>` element with which the component is associated (that is, its form owner).
+This string's value, if present, must match the id of a `<form>` element in the same document.
+If this attribute isn't specified, the component is associated with the nearest containing form, if any.
+
+The form prop lets you place a component anywhere in the document but have it included with a form elsewhere in the document.
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform)
+
+```
+< b-input :name = 'fname' | :form = 'my-form'
+
+< b-button type = 'submit' | :form = 'my-form'
+  Submit
+
+< form id = my-form
+```
+
+#### [preIcon]
+
+An icon to show before a button text.
+
+```
+< b-button :preIcon = 'dropdown'
+  Submit
+```
+
+#### [preIconComponent = `'b-icon'`]
+
+A name of the used component to show `preIcon`.
+
+```
+< b-button :preIconComponent = 'b-my-icon'
+  Submit
+```
+
+#### [icon]
+
+An icon to show after a button text.
+
+```
+< b-button :icon = 'dropdown'
+  Submit
+```
+
+#### [iconComponent = `'b-icon'`]
+
+A name of the used component to show `icon`.
+
+```
+< b-button :iconComponent = 'b-my-icon'
+  Submit
+```
+
+#### [progressIcon = `b-progress-icon`]
+
+```
+< b-button :progressIcon = 'b-my-progress-icon'
+  Submit
+```
+
+#### [progressIcon = `b-progress-icon`]
+
+```
+< b-button :progressIcon = 'b-my-progress-icon'
+  Submit
+```
+
+#### [hint]
+
+A tooltip text to show during hover the cursor.
+
+```
+< b-button :hint = 'Click on me!!!'
+  Submit
+```
+
+#### [hint]
+
+A tooltip text to show during hover the cursor.
+
+```
+< b-button :hint = 'Click on me!!!'
+  Submit
+```
+
+#### [hintPos]
+
+Tooltip position to show during hover the cursor.
+See [[gIcon]] for more information.
+
+```
+< b-button :hint = 'Click on me!!!' | :hintPos = 'bottom-right'
+  Submit
+```
+
+#### [dropdown = `'bottom'`]
+
+The way to show dropdown if the `dropdown` slot is provided.
+
+```
+< b-button :dropdown = 'bottom-right'
+  < template #default
+    Submit
+
+  < template #dropdown
+    Additional information...
 ```

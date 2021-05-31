@@ -67,25 +67,79 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
-	 * Link href
-	 */
-	@prop({type: String, required: false})
-	readonly href?: string;
-
-	/**
-	 * Data provider method
-	 */
-	@prop(String)
-	readonly method: ModelMethod = 'get';
-
-	/**
-	 * Button type
+	 * A button' type to create. There can be values:
+	 *
+	 * 1. `button` - simple button control;
+	 * 2. `submit` - button to send the tied form;
+	 * 3. `link` - hyperlink to the specified URL (to provide URL, use the `href`prop).
+	 *
+	 * @example
+	 * ```
+	 * < b-button @click = console.log('boom!')
+	 *   Make boom!
+	 *
+	 * < b-button :type = 'link' | :href = 'https://google.com'
+	 *   Go to Google
+	 *
+	 * < b-form
+	 *   < b-input :name = 'name'
+	 *   < b-button :type = 'submit'
+	 *     Send
+	 * ```
 	 */
 	@prop(String)
 	readonly type: ButtonType = 'button';
 
 	/**
-	 * Connected form identifier
+	 * If the `type` prop is passed to `link`, this prop contains a value for `<a href>`.
+	 * Otherwise, the prop includes a base URL for a data provider.
+	 *
+	 * @example
+	 * ```
+	 * < b-button :type = 'link' | :href = 'https://google.com'
+	 *   Go to Google
+	 *
+	 * < b-button :href = '/generate/user'
+	 *   Generate a new user
+	 * ```
+	 */
+	@prop({type: String, required: false})
+	readonly href?: string;
+
+	/**
+	 * A data provider method to use if `dataProvider` or `href` props are passed
+	 *
+	 * @example
+	 * ```
+	 * < b-button :href = '/generate/user' | :method = 'put'
+	 *   Generate a new user
+	 *
+	 * < b-button :dataProvider = 'Cities' | :method = 'peek'
+	 *   Fetch cities
+	 * ```
+	 */
+	@prop(String)
+	readonly method: ModelMethod = 'get';
+
+	/**
+	 * A string specifying the `<form>` element with which the component is associated (that is, its form owner).
+	 * This string's value, if present, must match the id of a `<form>` element in the same document.
+	 * If this attribute isn't specified, the component is associated with the nearest containing form, if any.
+	 *
+	 * The form prop lets you place a component anywhere in the document but have it included with a form elsewhere
+	 * in the document.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform
+	 *
+	 * @example
+	 * ```
+	 * < b-input :name = 'fname' | :form = 'my-form'
+	 *
+	 * < b-button type = 'submit' | :form = 'my-form'
+	 *   Submit
+	 *
+	 * < form id = my-form
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly form?: string;
@@ -100,51 +154,106 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/**
 	 * Icon to show before a button text
+	 *
+	 * @example
+	 * ```
+	 * < b-button :preIcon = 'dropdown'
+	 *   Submit
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly preIcon?: string;
 
 	/**
 	 * Name of the used component to show `preIcon`
+	 *
 	 * @default `'b-icon'`
+	 * @example
+	 * ```
+	 * < b-button :preIconComponent = 'b-my-icon'
+	 *   Submit
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly preIconComponent?: string;
 
 	/**
 	 * Icon to show after a button text
+	 *
+	 * @example
+	 * ```
+	 * < b-button :icon = 'dropdown'
+	 *   Submit
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly icon?: string;
 
 	/**
 	 * Name of the used component to show `icon`
+	 *
 	 * @default `'b-icon'`
+	 * @example
+	 * ```
+	 * < b-button :iconComponent = 'b-my-icon'
+	 *   Submit
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly iconComponent?: string;
 
 	/**
-	 * Component to show "in-progress" state or
+	 * A component to show "in-progress" state or
 	 * Boolean, if need to show progress by slot or `b-progress-icon`
+	 *
+	 * @default `'b-progress-icon'`
+	 * @example
+	 * ```
+	 * < b-button :progressIcon = 'b-my-progress-icon'
+	 *   Submit
+	 * ```
 	 */
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
 
 	/**
-	 * Tooltip text
+	 * Tooltip text to show during hover the cursor
+	 *
+	 * @example
+	 * ```
+	 * < b-button :hint = 'Click on me!!!'
+	 *   Submit
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly hint?: string;
 
 	/**
-	 * Tooltip position
+	 * Tooltip position to show during hover the cursor
+	 *
+	 * @see [[gHint]]
+	 * @example
+	 * ```
+	 * < b-button :hint = 'Click on me!!!' | :hintPos = 'bottom-right'
+	 *   Submit
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly hintPos?: HintPosition;
 
 	/**
-	 * Dropdown position
+	 * The way to show dropdown if the `dropdown` slot is provided
+	 * @see [[gHint]]
+	 *
+	 * @example
+	 * ```
+	 * < b-button :dropdown = 'bottom-right'
+	 *   < template #default
+	 *     Submit
+	 *
+	 *   < template #dropdown
+	 *     Additional information...
+	 * ```
 	 */
 	@prop(String)
 	readonly dropdown: string = 'bottom';

@@ -211,8 +211,8 @@ Resets values to the default of all associated components.
 
 Validates values of all associated components and returns:
 
-  1. `ValidationError` - if the validation is failed;
-  2. List of components to send - if the validation is successful.
+1. `ValidationError` - if the validation is failed;
+2. List of components to send - if the validation is successful.
 
 #### submit
 
