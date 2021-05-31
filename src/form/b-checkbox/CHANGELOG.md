@@ -15,11 +15,18 @@ Changelog
 
 * Now `toggle` returns a component value
 
+#### :rocket: New Feature
+
+* Added `isChecked`
+
+#### :memo: Documentation
+
+* Added documentation
+
 #### :house: Internal
 
 * Fixed ESLint warnings
 
 #### :nail_care: Polish
 
-* Added documentation
 * Added tests

@@ -96,20 +96,20 @@ module.exports = (page) => {
 			const
 				target = await init();
 
+			expect(await target.evaluate(switcher, 'bla')).toEqual([
+				['root', false, 'indeterminate', undefined],
+				['foo', false, 'indeterminate', undefined],
+				['foo2', false, 'false', undefined],
+				['bla', true, 'true', true],
+				['bla2', false, 'false', undefined],
+				['baz', false, 'false', undefined]
+			]);
+
 			expect(await target.evaluate(switcher, 'foo')).toEqual([
 				['root', false, 'indeterminate', undefined],
 				['foo', true, 'true', 'foo'],
 				['foo2', false, 'false', undefined],
 				['bla', true, 'true', true],
-				['bla2', true, 'true', 'bla2'],
-				['baz', false, 'false', undefined]
-			]);
-
-			expect(await target.evaluate(switcher, 'bla')).toEqual([
-				['root', false, 'indeterminate', undefined],
-				['foo', false, 'indeterminate', undefined],
-				['foo2', false, 'false', undefined],
-				['bla', false, 'false', undefined],
 				['bla2', true, 'true', 'bla2'],
 				['baz', false, 'false', undefined]
 			]);
@@ -130,16 +130,17 @@ module.exports = (page) => {
 					{
 						attrs: {
 							'data-id': 'root',
-							id: 'root',
-							name: 'root'
+							id: 'root'
 						}
 					},
 
 					{
 						attrs: {
 							'data-id': 'foo',
+
 							id: 'foo',
 							parentId: 'root',
+
 							name: 'lvl2',
 							value: 'foo'
 						}
@@ -148,8 +149,10 @@ module.exports = (page) => {
 					{
 						attrs: {
 							'data-id': 'foo2',
+
 							id: 'foo2',
 							parentId: 'root',
+
 							name: 'lvl2'
 						}
 					},
@@ -157,18 +160,22 @@ module.exports = (page) => {
 					{
 						attrs: {
 							'data-id': 'bla',
+
 							id: 'bla',
 							parentId: 'foo',
-							name: 'lvl2-foo'
+
+							name: 'lvl3-foo'
 						}
 					},
 
 					{
 						attrs: {
 							'data-id': 'bla2',
+
 							id: 'bla2',
 							parentId: 'foo',
-							name: 'lvl2-foo',
+
+							name: 'lvl3-foo',
 							value: 'bla2'
 						}
 					},
@@ -176,9 +183,11 @@ module.exports = (page) => {
 					{
 						attrs: {
 							'data-id': 'baz',
+
 							id: 'baz',
 							parentId: 'foo2',
-							name: 'lvl2-foo2'
+
+							name: 'lvl3-foo2'
 						}
 					}
 				];

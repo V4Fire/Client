@@ -71,7 +71,7 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/**
 	 * An identifier of the "parent" checkbox.
-	 * Use this prop to organize hierarchy of checkboxes.
+	 * Use this prop to organize a hierarchy of checkboxes. Checkboxes of the same level must have the same `name`.
 	 *
 	 * ```
 	 * - [-]
@@ -82,8 +82,10 @@ export default class bCheckbox extends iInput implements iSize {
 	 *     - [X]
 	 * ```
 	 *
-	 * When you click the parent checkbox, all children will be checked or unchecked.
-	 * When you click a child, the parent checkbox will be set to the `indeterminate` status.
+	 * When you click a parent checkbox, all children will be checked or unchecked.
+	 * When you click a child, the parent checkbox will be
+	 *   * checked as `'indeterminate'` - if not all checkboxes with the same `name` are checked;
+	 *   * unchecked - if all checkboxes with the same `name` are checked.
 	 *
 	 * @example
 	 * ```
@@ -91,12 +93,25 @@ export default class bCheckbox extends iInput implements iSize {
 	 *
 	 * < b-checkbox &
 	 *   :id = 'foo' |
-	 *   :name = 'foo' |
+	 *   :name = 'lvl2' |
 	 *   :parentId = 'parent'
 	 * .
 	 *
-	 * < b-checkbox :parentId = 'foo' | :name = 'bla'
-	 * < b-checkbox :parentId = 'parent' | :name = 'bar'
+	 * < b-checkbox &
+	 *   :id = 'foo2' |
+	 *   :parentId = 'parent' |
+	 *   :name = 'lvl2'
+	 * .
+	 *
+	 * < b-checkbox &
+	 *   :parentId = 'foo' |
+	 *   :name = 'lvl3-foo'
+	 * .
+	 *
+	 * < b-checkbox &
+	 *   :parentId = 'foo2' |
+	 *   :name = 'lvl3-foo2'
+	 * .
 	 * ```
 	 */
 	@prop({type: String, required: false})
