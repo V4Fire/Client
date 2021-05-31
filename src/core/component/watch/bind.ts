@@ -271,12 +271,14 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
-						const
-							unwatch = $watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
+						const emitter = (_, handler) =>
+							$watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
 
-						if (Object.isFunction(unwatch)) {
-							$a.worker(unwatch, asyncParams);
-						}
+						$a.on(emitter, 'mutation', handler, {
+							...asyncParams,
+							group: `${asyncParams.group ?? ''}:suspend`
+						});
+
 					}, stderr);
 
 				} else {
@@ -306,12 +308,13 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						continue;
 					}
 
-					const
-						unwatch = $watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
+					const emitter = (_, handler) =>
+						$watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
 
-					if (Object.isFunction(unwatch)) {
-						$a.worker(unwatch, asyncParams);
-					}
+					$a.on(emitter, 'mutation', handler, {
+						...asyncParams,
+						group: `${asyncParams.group ?? ''}:suspend`
+					});
 				}
 			}
 		};

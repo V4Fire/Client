@@ -1585,6 +1585,9 @@ export default abstract class iBlock extends ComponentInterface {
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
+		const
+			{async: $a} = this;
+
 		if (this.isFlyweight || this.isSSR) {
 			return;
 		}
@@ -1606,7 +1609,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
 			bindRemoteWatchers(this, {
-				async: <Async<any>>this.async,
+				async: $a,
 				watchers: {
 					[path]: [
 						{
@@ -1621,16 +1624,11 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		void this.lfc.execCbAfterComponentCreated(() => {
-			const
-				unwatch = this.$watch(<any>path, opts, handler);
-
-			if (unwatch && (opts.group != null || opts.label != null || opts.join != null)) {
-				this.async.worker(unwatch, {
-					group: opts.group,
-					label: opts.label,
-					join: opts.join
-				});
-			}
+			$a.on((_, handler) => this.$watch(<any>path, opts, handler), 'mutation', handler, {
+				group: `${opts.group ?? ''}:suspend`,
+				label: opts.label,
+				join: opts.join
+			});
 		});
 	}
 
