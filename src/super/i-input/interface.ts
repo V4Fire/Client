@@ -14,7 +14,7 @@ export interface ValidatorMsgFn {
 }
 
 /**
- * Error message to show a user.
+ * An error message to show a user.
  * It can be passed as a simple string, a dictionary of strings where the keys represent error names or a
  * function that takes an error object and returns a string.
  */

@@ -64,7 +64,7 @@ Also, you can see the implemented traits or the parent component.
 
 ### Props
 
-#### [lockPageScroll = false]
+#### [lockPageScroll = `false`]
 
 If true, then will be blocked the document' scrolling when the component is opened.
 
@@ -72,7 +72,7 @@ If true, then will be blocked the document' scrolling when the component is open
 < b-sidebar :lockPageScroll = true
 ```
 
-#### [forceInnerRender = true]
+#### [forceInnerRender = `true`]
 
 If false, the inner content of the component won't be rendered if the component isn't opened.
 

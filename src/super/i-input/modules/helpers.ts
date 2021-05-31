@@ -7,11 +7,11 @@
  */
 
 /**
- * Returns the first value of the specified array if it length no more than 1,
- * otherwise returns the original array
+ * If the specified value is an array and if its length no more than 1,
+ * then returns the first array element, otherwise returns the whole passed object
  *
- * @param arr
+ * @param value
  */
-export function unpackIf(arr: unknown[]): CanArray<unknown> {
-	return Object.isArray(arr) && arr.length < 2 ? arr[0] : arr;
+export function unpackIf(value: CanArray<unknown>): CanArray<unknown> {
+	return Object.isArray(value) && value.length < 2 ? value[0] : value;
 }

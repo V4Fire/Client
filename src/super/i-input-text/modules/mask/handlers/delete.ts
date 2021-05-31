@@ -17,7 +17,7 @@ import {
 } from 'super/i-input-text/modules/mask/helpers';
 
 /**
- * Handler: removing characters from the mask via "backspace/delete" buttons
+ * Handler: removing characters from the mask via `backspace/delete` buttons
  *
  * @param component
  * @param e

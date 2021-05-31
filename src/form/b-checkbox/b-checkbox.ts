@@ -66,12 +66,37 @@ export default class bCheckbox extends iInput implements iSize {
 	@prop({type: Boolean, required: false})
 	readonly defaultProp?: this['Value'];
 
-	/** @override */
+	/**
+	 * An identifier of the "parent" checkbox.
+	 * Use this prop to organize hierarchy of checkboxes.
+	 *
+	 * ```
+	 * - [-]
+	 *   - [X]
+	 *   - [ ]
+	 *   - [X]
+	 *     - [X]
+	 *     - [X]
+	 * ```
+	 *
+	 * When you click the parent checkbox, all children will be checked or unchecked.
+	 * When you click a child, the parent checkbox will be set to the `indeterminate` status.
+	 *
+	 * @example
+	 * ```
+	 * < b-checkbox :id = 'parent'
+	 *
+	 * < b-checkbox :id = 'foo' | :parentId = 'parent' | :name = 'foo'
+	 * < b-checkbox :parentId = 'foo' | :name = 'bla'
+	 *
+	 * < b-checkbox :parentId = 'parent' | :name = 'bar'
+	 * ```
+	 */
 	@prop({type: String, required: false})
 	readonly parentId?: string;
 
 	/**
-	 * Checkbox label text
+	 * A checkbox' label text. Basically, it outputs somewhere in the component layout.
 	 */
 	@prop({type: String, required: false})
 	readonly label?: string;
@@ -156,6 +181,15 @@ export default class bCheckbox extends iInput implements iSize {
 		return this.setMod('checked', false);
 	}
 
+	/**
+	 * Toggles the checkbox.
+	 * The method returns a new value.
+	 */
+	async toggle(): Promise<this['Value']> {
+		await (this.mods.checked === 'true' ? this.uncheck() : this.check());
+		return this.value;
+	}
+
 	/** @override */
 	async clear(): Promise<boolean> {
 		const cleared = await super.clear();
@@ -166,15 +200,6 @@ export default class bCheckbox extends iInput implements iSize {
 	async reset(): Promise<boolean> {
 		const cleared = await super.reset();
 		return cleared ? this[`${Object.isTruly(this.default) ? '' : 'un'}check`]() : false;
-	}
-
-	/**
-	 * Toggles the checkbox.
-	 * The methods returns a new value.
-	 */
-	async toggle(): Promise<this['Value']> {
-		await (this.mods.checked === 'true' ? this.uncheck() : this.check());
-		return this.value;
 	}
 
 	/** @override */

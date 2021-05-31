@@ -30,11 +30,11 @@ Also, you can see the [[iInput]] component.
 
 ## API
 
-Also, you can see the [[iInput]] component.
+Also, you can see the implemented traits or the parent component.
 
 ### Props
 
-#### textProp
+#### [textProp]
 
 An initial text value of the input.
 
@@ -42,22 +42,22 @@ An initial text value of the input.
 < my-text-input :text = 'my-input'
 ```
 
-#### type
+#### [type = `'text'`]
 
-UI type of the input.
+A UI type of the input.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#input_types)
 
 ```
 < my-text-input :type = 'color'
 ```
 
-#### autocomplete
+#### [autocomplete = `'off'`]
 
 An autocomplete mode of the input.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefautocomplete)
 
-#### placeholder
+#### [placeholder]
 
 A placeholder text of the input
 
@@ -67,31 +67,31 @@ A placeholder text of the input
 < my-text-input :placeholder = 'Enter you name'
 ```
 
-#### minlength
+#### [minlength]
 
 The minimum text value length of the input.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength)
 
-#### maxlength
+#### [maxlength]
 
 The maximum text value length of the input.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength)
 
-#### min
+#### [min]
 
 The minimum value of the input (for number and date types).
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin)
 
-#### max
+#### [max]
 
 The maximum value of the input (for number and date types).
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax)
 
-#### mask
+#### [mask]
 
 A value of the input's mask.
 
@@ -111,7 +111,7 @@ Supported non-terminal symbols:
 < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d'
 ```
 
-#### maskPlaceholder
+#### [maskPlaceholder = `'_'`]
 
 A value of the mask placeholder.
 All non-terminal symbols from the mask without the specified value will have this placeholder.
@@ -124,7 +124,7 @@ All non-terminal symbols from the mask without the specified value will have thi
 < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d' | :maskPlaceholder = '_'
 ```
 
-#### maskRepetitionsProp
+#### [maskRepetitionsProp]
 
 A number of mask repetitions.
 This parameter allows you to specify how many times the mask pattern needs to apply to the input value.
@@ -138,7 +138,7 @@ The `true` value means that the pattern can be repeated infinitely.
 < b-input :mask = '%d-%d' | :maskRepetitions = 2
 ```
 
-#### maskDelimiter
+#### [maskDelimiter =  = `' '`]
 
 Delimiter for a mask value. This parameter is used when you are using the `maskRepetitions` prop.
 Every next chunk of the mask will have the delimiter as a prefix.
@@ -151,7 +151,7 @@ Every next chunk of the mask will have the delimiter as a prefix.
 < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 ```
 
-#### regExps
+#### [regExps]
 
 A dictionary with RegExp-s as values.
 Keys of the dictionary are interpreted as non-terminal symbols for the component mask, i.e.,
@@ -161,15 +161,17 @@ you can add new non-terminal symbols.
 < b-input :mask = '%l%l%l' | :regExps = {l: /[a-z]/i}
 ```
 
-### Fields and getters
+### Fields
 
 #### text
 
 A text value of the input. It can be modified directly from a component.
 
+### Getters
+
 ### isMaskInfinite
 
-True, if the mask is repeated infinitely.
+True if the mask is repeated infinitely.
 
 ### Methods
 

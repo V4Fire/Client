@@ -72,7 +72,7 @@ export default class bForm extends iData implements iVisible {
 	readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
-	 * Form identifier.
+	 * A form identifier.
 	 * You can use it to connect the form with components that lay "outside"
 	 * from the form body (by using the `form` attribute).
 	 *
@@ -86,7 +86,7 @@ export default class bForm extends iData implements iVisible {
 	readonly id?: string;
 
 	/**
-	 * Form name.
+	 * A form name.
 	 * You can use it to find the form element via `document.forms`.
 	 *
 	 * @example
@@ -102,7 +102,7 @@ export default class bForm extends iData implements iVisible {
 	readonly name?: string;
 
 	/**
-	 * Form action URL (the URL where the data will be sent) or a function to create action.
+	 * A form action URL (the URL where the data will be sent) or a function to create action.
 	 * If the value is not specified, the component will use the default URL-s from the data provider.
 	 *
 	 * @example
@@ -140,6 +140,15 @@ export default class bForm extends iData implements iVisible {
 	 * If true, then form elements is cached.
 	 * The caching is mean that if some component value doesn't change since the last sending of the form,
 	 * it won't be sent again.
+	 *
+	 * @example
+	 * ```
+	 * < b-form :dataProvider = 'User' | :method = 'upd' | :cache = true
+	 *   < b-input :name = 'fname'
+	 *   < b-input :name = 'lname'
+	 *   < b-input :name = 'bd' | :cache = false
+	 *   < b-button :type = 'submit'
+	 * ```
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = false;
@@ -275,8 +284,8 @@ export default class bForm extends iData implements iVisible {
 	/**
 	 * Validates values of all associated components and returns:
 	 *
-	 * * `ValidationError` - if the validation is failed;
-	 * * List of components to send - if the validation is successful.
+	 *   1. `ValidationError` - if the validation is failed;
+	 *   2. List of components to send - if the validation is successful.
 	 *
 	 * @param [opts] - additional validation options
 	 *
@@ -510,7 +519,7 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Returns values of associated components grouped by names
+	 * Returns values of the associated components grouped by names
 	 * @param [validate] - if true, the method returns values only when the data is valid
 	 */
 	async getValues(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
@@ -590,7 +599,7 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Toggles the status of form controls
+	 * Toggles statuses of the form controls
 	 * @param freeze - if true, all controls are freeze
 	 */
 	protected async toggleControls(freeze: boolean): Promise<void> {

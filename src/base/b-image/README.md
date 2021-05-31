@@ -95,11 +95,11 @@ An image `sizes` attribute.
 
 An alternate text for the image.
 
-#### [sizeType = 'contain']
+#### [sizeType = `'contain'`]
 
 The image background size type.
 
-#### [position = '50% 50%']
+#### [position = `'50% 50%'`]
 
 The image background position.
 

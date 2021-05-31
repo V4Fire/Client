@@ -1,7 +1,7 @@
 # form/b-checkbox
 
 This module provides a component to create a checkbox.
-Checkboxes can be combined in groups with the feature of multiple checking.
+Checkboxes can be combined in groups with a feature of the multiple checking.
 
 ## Synopsis
 
@@ -39,7 +39,7 @@ Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
 ## Usage
 
-1. Simple usage.
+### Simple usage
 
 ```
 < b-checkbox :name = 'adult'
@@ -47,13 +47,13 @@ Also, you can see the [[iSize]] trait and the [[iInput]] component.
 < b-checkbox @change = doSomething
 ```
 
-2. Providing of a value.
+### Providing a value
 
 ```
 < b-checkbox :name = 'adult' | :value = '18+'
 ```
 
-3. Providing of a label.
+### Providing a label
 
 You free to use any ways to define a label.
 
@@ -70,7 +70,7 @@ You free to use any ways to define a label.
 < b-checkbox :id = 'adult' | :name = 'adult'
 ```
 
-4. Group of checkboxes.
+### Defining group of checkboxes
 
 To group checkboxes, use the same name.
 
@@ -79,15 +79,16 @@ To group checkboxes, use the same name.
 < b-checkbox :name = 'registration' | :value = 'subscribe'
 ```
 
-5. Loading from a data provider.
+### Loading from a data provider
 
 ```
 < b-checkbox :dataProvider = 'AdultProvider'
 ```
 
-If the provider returns a dictionary, it will be mapped on the component
+If a provider returns a dictionary, it will be mapped on the component
 (you can pass the complex property path using dots as separators).
-If a key from the response data is matched with a component method, this method will be invoked with a value from this key
+
+If a key from the response is matched with a component method, this method will be invoked with a value from this key
 (if the value is an array, it will be spread to the method as arguments).
 
 ```
@@ -98,32 +99,7 @@ If a key from the response data is matched with a component method, this method 
 }
 ```
 
-In other cases, the response value is interpreted as the component value.
-
-## Hierarchy of checkboxes
-
-The component supports the feature of the multilevel checkbox hierarchy. For instance:
-
-```
-- [-]
-  - [X]
-  - [ ]
-  - [X]
-    - [X]
-    - [X]
-```
-
-When you click the parent checkbox, all children will be checked or unchecked.
-When you click a child, the parent checkbox will be set to the indeterminate status.
-
-```
-< b-checbox :id = 'parent'
-
-< b-checbox :id = 'foo' | :parentId = 'parent' | :name = 'foo'
-< b-checbox :parentId = 'foo' | :name = 'bla'
-
-< b-checbox :parentId = 'parent' | :name = 'bar'
-```
+In other cases, the response value is interpreted as a component value.
 
 ## Slots
 
@@ -148,20 +124,67 @@ The component supports a few of slots to provide:
 
 ## API
 
-The component provides a bunch of methods to manage of checking/unchecking: `check`, `uncheck`, `toggle`, `reset`, `clear`.
+Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
-## Validation
+### Props
+
+#### [parentId]
+
+An identifier of the "parent" checkbox.
+Use this prop to organize hierarchy of checkboxes.
+
+```
+- [-]
+  - [X]
+  - [ ]
+  - [X]
+    - [X]
+    - [X]
+```
+
+When you click the parent checkbox, all children will be checked or unchecked.
+When you click a child, the parent checkbox will be set to the `indeterminate` status.
+
+```
+< b-checkbox :id = 'parent'
+
+< b-checkbox :id = 'foo' | :parentId = 'parent' | :name = 'foo'
+< b-checkbox :parentId = 'foo' | :name = 'bla'
+
+< b-checkbox :parentId = 'parent' | :name = 'bar'
+```
+
+#### [label]
+
+A checkbox' label text. Basically, it outputs somewhere in the component layout.
+
+#### [changeable = `true`]
+
+True if the checkbox can be unchecked directly after the first check.
+
+```
+< b-checbox :name = 'bar' | :changeable = false | :checked = true
+```
+
+### Methods
+
+#### check
+
+Checks the checkbox.
+
+#### uncheck
+
+Unchecks the checkbox.
+
+#### toggle
+
+Toggles the checkbox.
+The method returns a new value.
+
+### Validation
 
 Because the component extends from [[iInput]], it supports validation API.
 
 ```
 < b-checkbox :name = 'adult' | :validators = ['required'] | @validationEnd = handler
-```
-
-### Preventing the user manual checking
-
-If you specify the `changeable` prop to `false`, the component can't be checked or unchecked due to a user action.
-
-```
-< b-checbox :name = 'bar' | :changeable = false | :checked = true
 ```

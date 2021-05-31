@@ -167,14 +167,14 @@ Also, you can see the implemented traits or the parent component.
 
 An initial component name to load.
 
-#### [keepAlive = false]
+#### [keepAlive = `false`]
 
 If true, when switching from one page to another, the old page is stored within a cache by its name.
 When occur switching back to this page, it will be restored. It helps to optimize switching between pages but grows memory using.
 Notice, when a page is switching, it will be deactivated by invoking `deactivate`.
 When the page is restoring, it will be activated by invoking `activate`.
 
-#### [keepAliveSize = 10]
+#### [keepAliveSize = `10`]
 
 The maximum number of pages within the global `keepAlive` cache.
 
@@ -211,7 +211,7 @@ An event name of the page switching.
 < b-dynamic-page :emitter = router | :event = 'transition'
 ```
 
-#### [eventConverter = (e) => e?.meta.component ?? e?.name]
+#### [eventConverter = `(e) => e?.meta.component ?? e?.name`]
 
 A function to extract a component name to load from the caught event object.
 

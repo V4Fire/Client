@@ -220,7 +220,7 @@ it will be invoked (the result will be used as a title).
 .
 ```
 
-#### [forceInnerRender = true]
+#### [forceInnerRender = `true`]
 
 If false, the inner content of the component won't be rendered if the component isn't opened.
 

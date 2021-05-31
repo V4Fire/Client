@@ -87,7 +87,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly valueProp?: this['Value'];
 
 	/**
-	 * Initial component default value.
+	 * An initial component default value.
 	 * This value will be used if the value prop is not specified or after invoking of `reset`.
 	 *
 	 * @see [[iInput.default]]
@@ -96,7 +96,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly defaultProp?: this['Value'];
 
 	/**
-	 * Input DOM identifier.
+	 * An input DOM identifier.
 	 * You free to use this prop to connect the component with a label tag or other stuff.
 	 *
 	 * @example
@@ -167,7 +167,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly attrsProp?: Dictionary;
 
 	/**
-	 * Component values are not allowed to send via a form.
+	 * Component values that are not allowed to send via the tied form.
 	 * If a component value matches with one of the denied conditions, the form value will be equal to undefined.
 	 *
 	 * The parameter can take a value or list of values to ban.
@@ -260,7 +260,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly validators: Validators = [];
 
 	/**
-	 * Initial information message that the component needs to show.
+	 * An initial information message that the component needs to show.
 	 * This parameter logically is pretty similar to STDIN output from Unix.
 	 *
 	 * @example
@@ -272,7 +272,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly infoProp?: string;
 
 	/**
-	 * Initial error message that the component needs to show.
+	 * An initial error message that the component needs to show.
 	 * This parameter logically is pretty similar to STDERR output from Unix.
 	 *
 	 * @example
@@ -356,13 +356,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Form value of the component.
+	 * A component form value.
 	 *
-	 * By design, all `iInput` components have "own" value and "form" value.
+	 * By design, all `iInput` components have their "own" values and "form" values.
 	 * The form value is based on the own component value, but they are equal in a simple case.
-	 * The form associated with this component will use the form value, but not the original.
+	 * The form associated with this component will use the form value but not the original.
 	 *
-	 * This value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
+	 * Parameters from `disallow` test this value. If the value doesn't match allowing parameters,
 	 * it will be skipped (the getter returns undefined). The value that passed the validation is converted
 	 * via `formValueConverter` (if it's specified).
 	 *
@@ -498,7 +498,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Information message that the component needs to show.
+	 * An information message that the component needs to show.
 	 * This parameter logically is pretty similar to STD output from Unix.
 	 */
 	@p({replace: false})
@@ -526,7 +526,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Error message that the component needs to show.
+	 * An error message that the component needs to show.
 	 * This parameter logically is pretty similar to STDERR output from Unix.
 	 */
 	@p({replace: false})
@@ -616,7 +616,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	};
 
 	/**
-	 * Additional attributes are provided to an "internal" (native) input tag
+	 * Additional attributes that are provided to an "internal" (native) input tag
 	 * @see [[iInput.attrsProp]]
 	 */
 	@system((o) => o.sync.link())
@@ -880,7 +880,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Resolves the specified component value and returns it.
-	 * If the value argument is undefined, the method can returns the default value.
+	 * If the value argument is `undefined`, the method can returns the default value.
 	 *
 	 * @param value
 	 */
@@ -897,7 +897,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Normalize the specified additional attributes and returns it
+	 * Normalizes the specified additional attributes and returns it
 	 *
 	 * @see [[iInput.attrs]]
 	 * @param [attrs]

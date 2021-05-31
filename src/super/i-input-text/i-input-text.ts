@@ -101,7 +101,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly max?: number | string | Date;
 
 	/**
-	 * Value of the input's mask.
+	 * A value of the input's mask.
 	 *
 	 * The mask is used when you need to "decorate" some input value,
 	 * like a phone number or credit card number. The mask can contain terminal and non-terminal symbols.
@@ -124,7 +124,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly mask?: string;
 
 	/**
-	 * Value of the mask placeholder.
+	 * A value of the mask placeholder.
 	 * All non-terminal symbols from the mask without the specified value will have this placeholder.
 	 *
 	 * @example
@@ -166,7 +166,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly maskRepetitionsProp?: number | boolean;
 
 	/**
-	 * Delimiter for a mask value. This parameter is used when you are using the `maskRepetitions` prop.
+	 * A delimiter for a mask value. This parameter is used when you are using the `maskRepetitions` prop.
 	 * Every next chunk of the mask will have the delimiter as a prefix.
 	 *
 	 * @example
@@ -182,7 +182,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly maskDelimiter: string = ' ';
 
 	/**
-	 * Dictionary with RegExp-s as values.
+	 * A dictionary with RegExp-s as values.
 	 * Keys of the dictionary are interpreted as non-terminal symbols for the component mask, i.e.,
 	 * you can add new non-terminal symbols.
 	 *
@@ -423,7 +423,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: removing characters from the mask via "backspace/delete" buttons
+	 * Handler: removing characters from the mask via `backspace/delete` buttons
 	 * @param e
 	 */
 	protected onMaskDelete(e: KeyboardEvent): void {

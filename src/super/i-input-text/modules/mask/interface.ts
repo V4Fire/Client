@@ -8,19 +8,19 @@
 
 export interface SyncMaskWithTextOptions {
 	/**
-	 * Starting position of the masked text to synchronize.
+	 * A starting position of the masked text to synchronize.
 	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
 	 */
 	from?: Nullable<number>;
 
 	/**
-	 * Ending position of the masked text to synchronize.
+	 * An ending position of the masked text to synchronize.
 	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
 	 */
 	to?: Nullable<number>;
 
 	/**
-	 * Original text from the input (by default it takes from the DOM node).
+	 * An original text from the input (by default it takes from the DOM node).
 	 * The parameter can be provided as a list of Unicode symbols.
 	 */
 	inputText?: CanArray<string>;
@@ -32,7 +32,7 @@ export interface SyncMaskWithTextOptions {
 	fitMask?: boolean;
 
 	/**
-	 * Starting position of the selection cursor.
+	 * A starting position of the selection cursor.
 	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
 	 *
 	 * @default `from`
@@ -93,13 +93,13 @@ export interface CompiledMask {
 	placeholder: string;
 
 	/**
-	 * Starting position of the last input selection.
+	 * A starting position of the last input selection.
 	 * The position refers to a Unicode symbol, but not a UTF 16 char.
 	 */
 	selectionStart: Nullable<number>;
 
 	/**
-	 * Ending position of the last input selection.
+	 * An ending position of the last input selection.
 	 * The position refers to a Unicode symbol, but not a UTF 16 char.
 	 */
 	selectionEnd: Nullable<number>;

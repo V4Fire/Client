@@ -128,48 +128,48 @@ A slider mode:
 
 2. With the `scroll` mode, to scroll slides is used the browser native scrolling.
 
-#### [dynamicHeight = false]
+#### [dynamicHeight = `false`]
 
 If true, the height calculation will be based on rendered elements.
 The component will create an additional element to contain the rendered elements, while it will not be visible to the user.
 This may be useful if you need to hide scroll on mobile devices, but you don't know the exact size of the elements
 that can be rendered into a component.
 
-#### [circular = false]
+#### [circular = `false`]
 
 If true, a user will automatically return to the first slide when scrolling the last slide.
 That is, the slider will work "in a circle".
 
-#### [align = 'center']
+#### [align = `'center'`]
 
 This prop controls how much the slides will scroll.
 For example, by specifying `center`, the slider will stop when the active slide is in the slider's center when scrolling.
 
-#### [alignFirstToStart = true]
+#### [alignFirstToStart = `true`]
 
 If true, the first slide will be aligned to the start position (the left bound).
 
-#### [deltaX = 0.9]
+#### [deltaX = `0.9`]
 
 This prop controls how much does the shift along the X-axis corresponds to a finger movement.
 
-#### [threshold = 0.3]
+#### [threshold = `0.3`]
 
 The minimum required percentage to scroll the slider to another slide.
 
-#### [fastSwipeThreshold = 0.05]
+#### [fastSwipeThreshold = `0.05`]
 
 The minimum required percentage for the scroll slider to another slide in fast motion on the slider.
 
-#### [fastSwipeDelay = 300]
+#### [fastSwipeDelay = `300`]
 
 Time (in milliseconds) after which we can assume that there was a quick swipe.
 
-#### [swipeToleranceX = 10]
+#### [swipeToleranceX = `10`]
 
 The minimum displacement threshold along the X-axis at which the slider will be considered to be used (in px).
 
-#### [swipeToleranceY = 50]
+#### [swipeToleranceY = `50`]
 
 The minimum Y-axis offset threshold at which the slider will be considered to be used (in px).
 
