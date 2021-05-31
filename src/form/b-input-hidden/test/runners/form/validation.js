@@ -24,29 +24,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-input-hidden form API validation', () => {
-		const
-			q = '[data-id="target"]';
-
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							formValueConverter: parseInt.option(),
-							messageHelpers: true,
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-input-hidden', scheme);
-			}, attrs);
-
-			return h.component.waitForComponent(page, q);
-		};
-
-		it('required', async () => {
+		it('`required`', async () => {
 			const target = await init({
 				validators: ['required']
 			});
@@ -76,7 +54,7 @@ module.exports = (page) => {
 				.toBe('Required field');
 		});
 
-		it('required with parameters (an array form)', async () => {
+		it('`required` with parameters (an array form)', async () => {
 			const target = await init({
 				validators: [['required', {msg: 'REQUIRED!'}]]
 			});
@@ -88,7 +66,7 @@ module.exports = (page) => {
 				.toBe('REQUIRED!');
 		});
 
-		it('required with parameters (an object form)', async () => {
+		it('`required` with parameters (an object form)', async () => {
 			const target = await init({
 				validators: [{required: {msg: 'REQUIRED!', showMsg: false}}]
 			});
@@ -99,5 +77,25 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 				.toBe('');
 		});
+
+		async function init(attrs = {}) {
+			await page.evaluate((attrs) => {
+				const scheme = [
+					{
+						attrs: {
+							'data-id': 'target',
+							formValueConverter: parseInt.option(),
+							messageHelpers: true,
+							...attrs
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-input-hidden', scheme);
+			}, attrs);
+
+			return h.component.waitForComponent(page, '[data-id="target"]');
+		}
+
 	});
 };

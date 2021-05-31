@@ -24,42 +24,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-input-hidden form API', () => {
-		const
-			q = '[data-id="target"]';
-
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							name: 'input',
-
-							formValueConverter: [
-								parseInt.option(),
-								((v) => Promise.resolve(v * 2)).option(),
-								((v) => v * 2).option()
-							],
-
-							...attrs
-						}
-					},
-
-					{
-						attrs: {
-							'data-id': 'second',
-							name: 'input',
-							value: 'bar'
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-input-hidden', scheme);
-			}, attrs);
-
-			return h.component.waitForComponent(page, q);
-		};
-
 		it('providing a value', async () => {
 			const target = await init({
 				value: '10'
@@ -240,5 +204,38 @@ module.exports = (page) => {
 
 			).toEqual(['2', '3']);
 		});
+
+		async function init(attrs = {}) {
+			await page.evaluate((attrs) => {
+				const scheme = [
+					{
+						attrs: {
+							'data-id': 'target',
+							name: 'input',
+
+							formValueConverter: [
+								parseInt.option(),
+								((v) => Promise.resolve(v * 2)).option(),
+								((v) => v * 2).option()
+							],
+
+							...attrs
+						}
+					},
+
+					{
+						attrs: {
+							'data-id': 'second',
+							name: 'input',
+							value: 'bar'
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-input-hidden', scheme);
+			}, attrs);
+
+			return h.component.waitForComponent(page, '[data-id="target"]');
+		}
 	});
 };

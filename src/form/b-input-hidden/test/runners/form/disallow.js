@@ -24,29 +24,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-input-hidden form API `disallow`', () => {
-		const
-			q = '[data-id="target"]';
-
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							formValueConverter: parseInt,
-							...attrs,
-							// eslint-disable-next-line no-eval
-							disallow: /new /.test(attrs.disallow) ? eval(attrs.disallow) : attrs.disallow
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-input-hidden', scheme);
-			}, attrs);
-
-			return h.component.waitForComponent(page, q);
-		};
-
 		it('simple', async () => {
 			const target = await init({
 				value: '10',
@@ -179,5 +156,25 @@ module.exports = (page) => {
 				await target.evaluate((ctx) => ctx.formValue)
 			).toBe(11);
 		});
+
+		async function init(attrs = {}) {
+			await page.evaluate((attrs) => {
+				const scheme = [
+					{
+						attrs: {
+							'data-id': 'target',
+							formValueConverter: parseInt,
+							...attrs,
+							// eslint-disable-next-line no-eval
+							disallow: /new /.test(attrs.disallow) ? eval(attrs.disallow) : attrs.disallow
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-input-hidden', scheme);
+			}, attrs);
+
+			return h.component.waitForComponent(page, '[data-id="target"]');
+		}
 	});
 };

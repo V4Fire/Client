@@ -24,26 +24,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-input-hidden form API `info` / `error` messages', () => {
-		const
-			q = '[data-id="target"]';
-
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-input-hidden', scheme);
-			}, attrs);
-
-			return h.component.waitForComponent(page, q);
-		};
-
 		it('without `messageHelpers`', async () => {
 			const target = await init({
 				info: 'Hello',
@@ -166,5 +146,22 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => ctx.mods.showError))
 				.toBe('true');
 		});
+
+		async function init(attrs = {}) {
+			await page.evaluate((attrs) => {
+				const scheme = [
+					{
+						attrs: {
+							'data-id': 'target',
+							...attrs
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-input-hidden', scheme);
+			}, attrs);
+
+			return h.component.waitForComponent(page, '[data-id="target"]');
+		}
 	});
 };

@@ -24,26 +24,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-input-hidden simple usage', () => {
-		const
-			q = '[data-id="target"]';
-
-		const init = async (attrs = {}) => {
-			await page.evaluate((attrs) => {
-				const scheme = [
-					{
-						attrs: {
-							'data-id': 'target',
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-input-hidden', scheme);
-			}, attrs);
-
-			return h.component.waitForComponent(page, q);
-		};
-
 		it('providing of attributes', async () => {
 			await init({
 				id: 'foo',
@@ -105,5 +85,22 @@ module.exports = (page) => {
 
 			).toEqual(['foo', 'bar', 'bar', 'bla']);
 		});
+
+		async function init(attrs = {}) {
+			await page.evaluate((attrs) => {
+				const scheme = [
+					{
+						attrs: {
+							'data-id': 'target',
+							...attrs
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-input-hidden', scheme);
+			}, attrs);
+
+			return h.component.waitForComponent(page, '[data-id="target"]');
+		}
 	});
 };
