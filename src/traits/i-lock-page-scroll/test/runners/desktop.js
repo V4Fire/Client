@@ -15,9 +15,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	describe('i-lock-page-scroll desktop', () => {
 		let
