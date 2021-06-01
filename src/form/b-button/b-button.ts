@@ -154,7 +154,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	readonly tabIndex?: number;
 
 	/**
-	 * Icon to show before a button text
+	 * Icon to show before the button text
 	 *
 	 * @example
 	 * ```
@@ -179,7 +179,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	readonly preIconComponent?: string;
 
 	/**
-	 * Icon to show after a button text
+	 * Icon to show after the button text
 	 *
 	 * @example
 	 * ```

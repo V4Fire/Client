@@ -215,7 +215,7 @@ The form prop lets you place a component anywhere in the document but have it in
 
 #### [preIcon]
 
-An icon to show before a button text.
+An icon to show before the button text.
 
 ```
 < b-button :preIcon = 'dropdown'
@@ -233,7 +233,7 @@ A name of the used component to show `preIcon`.
 
 #### [icon]
 
-An icon to show after a button text.
+An icon to show after the button text.
 
 ```
 < b-button :icon = 'dropdown'
@@ -251,24 +251,11 @@ A name of the used component to show `icon`.
 
 #### [progressIcon = `b-progress-icon`]
 
-```
-< b-button :progressIcon = 'b-my-progress-icon'
-  Submit
-```
-
-#### [progressIcon = `b-progress-icon`]
+A component to show "in-progress" state or
+Boolean, if need to show progress by slot or `b-progress-icon`.
 
 ```
 < b-button :progressIcon = 'b-my-progress-icon'
-  Submit
-```
-
-#### [hint]
-
-A tooltip text to show during hover the cursor.
-
-```
-< b-button :hint = 'Click on me!!!'
   Submit
 ```
 
