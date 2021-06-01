@@ -48,8 +48,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	/**
 	 * Initial text value of the input
 	 */
-	@prop(String)
-	readonly textProp: string = '';
+	@prop({type: String, required: false})
+	readonly textProp?: string;
 
 	/**
 	 * UI type of the input
@@ -256,7 +256,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * Text value store of the input
 	 * @see [[iInputText.textProp]]
 	 */
-	@system((o) => o.sync.link())
+	@system((o) => o.sync.link((v) => v ?? ''))
 	protected textStore!: string;
 
 	/**

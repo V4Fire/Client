@@ -189,6 +189,7 @@ export default class bInput extends iInputText {
 
 	/** @override */
 	get default(): unknown {
+		console.log(111, this.defaultProp != null ? String(this.defaultProp) : '');
 		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 
@@ -207,21 +208,30 @@ export default class bInput extends iInputText {
 		after: 'valueStore',
 		init: (o) => o.sync.link((text) => {
 			o.watch('valueProp', {label: $$.textStore}, () => {
-				o.watch('valueStore', {label: $$.textStoreToValueStore}, () => {
-					o.async.clearAll({label: $$.textStoreToValueStore});
-					return link();
+				const label = {
+					label: $$.textStoreToValueStore
+				};
+
+				o.watch('valueStore', label, (v) => {
+					o.async.clearAll(label);
+					return link(v);
 				});
 			});
 
-			return link();
+			return link(<any>o.valueProp);
 
-			function link(): string {
+			function link(textFromValue: CanUndef<string>): string {
 				const
-					textFromValue = o.field.get<Value>('valueStore'),
-					resolvedText = textFromValue === undefined ? text : textFromValue,
+					resolvedText = textFromValue === undefined ? text ?? o.field.get('valueStore') : textFromValue,
 					str = resolvedText !== undefined ? String(resolvedText) : '';
 
-				void o.waitStatus('ready', () => o.text = str);
+				if (o.isNotRegular) {
+					o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str, stderr);
+
+				} else if (o.hook === 'updated') {
+					o.text = str;
+				}
+
 				return str;
 			}
 		})
