@@ -12,8 +12,9 @@ module.exports = [
 	'--test-entry form/b-form/test',
 	'--test-entry form/b-button/test',
 	'--test-entry form/b-checkbox/test',
-	'--test-entry form/b-input-hidden/test',
 	'--test-entry dummies/b-dummy-text/test',
+	'--test-entry form/b-input-hidden/test',
+	'--test-entry form/b-input/test',
 
 	'--test-entry base/b-router/test',
 	'--test-entry base/b-virtual-scroll/test',
