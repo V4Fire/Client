@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.197 (2021-??-??)
 
+#### :bug: Bug Fix
+
+* Fixed an issue with `b-bottom-slide` not being able to open from the pull `base/b-bottom-slide`
+
 #### :memo: Documentation
 
 * Added documentation `iDynamicPage`
