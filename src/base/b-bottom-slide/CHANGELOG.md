@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed an issue with `b-bottom-slide` not being able to open from the pull
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :memo: Documentation
