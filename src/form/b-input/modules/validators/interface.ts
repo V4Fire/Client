@@ -15,10 +15,10 @@ export interface NumberValidatorParams extends ValidatorParams {
 	/**
 	 * Type of supported numbers:
 	 *
-	 * `int` - integer numbers
-	 * `uint` - non-negative integer numbers
-	 * `float` - numbers with floating point
-	 * `ufloat` - non-negative numbers with floating point
+	 * *) `int` - integer numbers
+	 * *) `uint` - non-negative integer numbers
+	 * *) `float` - numbers with floating point
+	 * *) `ufloat` - non-negative numbers with floating point
 	 */
 	type?: 'int' | 'uint' | 'float' | 'ufloat';
 
@@ -56,7 +56,11 @@ export interface NumberValidatorParams extends ValidatorParams {
 }
 
 export interface NumberValidatorResult extends ValidatorError<string | number> {
-	name: 'INVALID_VALUE' | 'DECIMAL_LENGTH' | 'MIN' | 'MAX';
+	name:
+		'INVALID_VALUE' |
+		'DECIMAL_LENGTH' |
+		'MIN' |
+		'MAX';
 }
 
 /**
@@ -87,7 +91,14 @@ export interface DateValidatorParams extends ValidatorParams {
 }
 
 export interface DateValidatorResult extends ValidatorError<Date | number> {
-	name: 'INVALID_VALUE' | 'NOT_FUTURE' | 'IS_FUTURE' | 'NOT_PAST' | 'IS_PAST' | 'MIN' | 'MAX';
+	name:
+		'INVALID_VALUE' |
+		'NOT_FUTURE' |
+		'IS_FUTURE' |
+		'NOT_PAST' |
+		'IS_PAST' |
+		'MIN' |
+		'MAX';
 }
 
 /**
@@ -153,5 +164,10 @@ export interface PasswordValidatorParams extends PatternValidatorParams {
 }
 
 export interface PasswordValidatorResult extends ValidatorError<string | number | [string, string]> {
-	name: 'INVALID_VALUE' | 'MIN' | 'MAX' | 'OLD_IS_NEW' | 'NOT_CONFIRM';
+	name:
+		'INVALID_VALUE' |
+		'MIN' |
+		'MAX' |
+		'OLD_IS_NEW' |
+		'NOT_CONFIRM';
 }

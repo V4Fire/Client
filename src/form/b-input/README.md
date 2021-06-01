@@ -16,7 +16,11 @@ This module provides a component to create a form input.
 
 * The component has `skeletonMarker`.
 
-## Modifiers & Events
+## Modifiers
+
+See the parent component and the component traits.
+
+## Events
 
 See the parent component and the component traits.
 
@@ -24,7 +28,7 @@ See the parent component and the component traits.
 
 The component has two base scenarios of usage:
 
-1. A simple standalone input component.
+### A simple standalone input component
 
 ```
 < b-input :value = myValue | @onActionChange = console.log($event)
@@ -33,7 +37,7 @@ The component has two base scenarios of usage:
 < b-input :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
-2. A component that tied with some form.
+### A component that tied with some form
 
 ```
 < b-form :dataProvider = 'User' | :method = 'add'
@@ -85,7 +89,7 @@ Also, this icon can be provided by a prop.
 
 ## Validation
 
-Because the component extends from [[iInput]], it supports validation API.``
+Because the component extends from [[iInput]], it supports validation API.
 
 ```
 < b-input :name = 'email' | :validators = ['required', 'email'] | @validationEnd = handler
@@ -157,6 +161,95 @@ Checks that a component value must be matched as a password.
 }]] .
 
 < b-input :id = 'repeat-password'
+```
+
+## API
+
+Also, you can see the parent component and the component traits.
+
+### Props
+
+#### [preIcon]
+
+An icon to show before the input.
+
+```
+< b-input :preIcon = 'dropdown'
+```
+
+#### [preIconComponent]
+
+A name of the used component to show `preIcon`.
+
+```
+< b-input :preIconComponent = 'b-my-icon'
+```
+
+#### [preIconHint]
+
+A tooltip text to show during hover the cursor on `preIcon`.
+
+```
+< b-input :preIcon = 'dropdown' | :preIconHint = 'Show variants'
+```
+
+#### [preIconHintPos]
+
+Tooltip position to show during hover the cursor on `preIcon`.
+See [[gIcon]] for more information.
+
+```
+< b-input &
+  :preIcon = 'dropdown' |
+  :preIconHint = 'Show variants' |
+  :preIconHintPos = 'bottom-right'
+.
+```
+
+#### [icon]
+
+An icon to show after the input.
+
+```
+< b-input :icon = 'dropdown'
+```
+
+#### [iconComponent]
+
+A name of the used component to show `icon`.
+
+```
+< b-input :iconComponent = 'b-my-icon'
+```
+
+#### [iconHint]
+
+A tooltip text to show during hover the cursor on `icon`.
+
+```
+< b-input :icon = 'dropdown' | :iconHint = 'Show variants'
+```
+
+#### [iconHintPos]
+
+Tooltip position to show during hover the cursor on `icon`.
+See [[gIcon]] for more information.
+
+```
+< b-input &
+  :icon = 'dropdown' |
+  :iconHint = 'Show variants' |
+  :iconHintPos = 'bottom-right'
+.
+```
+
+### [progressIcon]
+
+A component to show "in-progress" state or
+Boolean, if need to show progress by slot or `b-progress-icon`.
+
+```
+< b-input :progressIcon = 'b-my-progress-icon'
 ```
 
 ## Styles

@@ -64,58 +64,110 @@ export default class bInput extends iInputText {
 	readonly defaultProp?: this['Value'];
 
 	/**
-	 * Icon to show before an input
+	 * Icon to show before the input
+	 *
+	 * @example
+	 * ```
+	 * < b-input :preIcon = 'dropdown'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly preIcon?: string;
 
 	/**
 	 * Name of the used component to show `preIcon`
+	 *
 	 * @default `'b-icon'`
+	 * @example
+	 * ```
+	 * < b-input :preIconComponent = 'b-my-icon'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly preIconComponent?: string;
 
 	/**
-	 * Tooltip text for `preIcon`
+	 * Tooltip text to show during hover the cursor on `preIcon`
+	 *
+	 * @example
+	 * ```
+	 * < b-input :preIcon = 'dropdown' | :preIconHint = 'Show variants'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHint?: string;
 
 	/**
-	 * Tooltip position for `preIcon`
+	 * Tooltip position to show during hover the cursor on `preIcon`
+	 *
+	 * @see [[gHint]]
+	 * @example
+	 * ```
+	 * < b-input &
+	 *   :preIcon = 'dropdown' |
+	 *   :preIconHint = 'Show variants' |
+	 *   :preIconHintPos = 'bottom-right'
+	 * .
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHintPos?: string;
 
 	/**
-	 * Icon to show after an input
+	 * Icon to show after the input
+	 *
+	 * @example
+	 * ```
+	 * < b-input :icon = 'dropdown'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly icon?: string;
 
 	/**
 	 * Name of the used component to show `icon`
+	 *
 	 * @default `'b-icon'`
+	 * @example
+	 * ```
+	 * < b-input :iconComponent = 'b-my-icon'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly iconComponent?: string;
 
 	/**
-	 * Tooltip text for `icon`
+	 * Tooltip text to show during hover the cursor on `icon`
+	 *
+	 * @example
+	 * ```
+	 * < b-input :icon = 'dropdown' | :iconHint = 'Show variants'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly iconHint?: string;
 
 	/**
-	 * Tooltip position for `icon`
+	 * Tooltip position to show during hover the cursor on `icon`
+	 *
+	 * @see [[gHint]]
+	 * @example
+	 * ```
+	 * < b-input :icon = 'dropdown' | :preIconHint = 'Show variants' | :iconHintPos = 'bottom-right'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly iconHintPos?: string;
 
 	/**
-	 * Component to show "in-progress" state or
+	 * A component to show "in-progress" state or
 	 * Boolean, if need to show progress by slot or `b-progress-icon`
+	 *
+	 * @default `'b-progress-icon'`
+	 * @example
+	 * ```
+	 * < b-input :progressIcon = 'b-my-progress-icon'
+	 * ```
 	 */
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
