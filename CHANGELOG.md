@@ -16,6 +16,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue with `b-bottom-slide` not being able to open from the pull `base/b-bottom-slide`
+* Fixed an issue with `b-bottom-slide` not being able to initialize `i-history` if the component
+was opened via swipe `base/b-bottom-slide`
 
 #### :memo: Documentation
 
