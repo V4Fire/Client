@@ -11,6 +11,10 @@
  * @packageDocumentation
  */
 
+//#if demo
+import 'models/demo/input';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools/deprecation';
 
@@ -201,13 +205,24 @@ export default class bInput extends iInputText {
 	/** @override */
 	@system({
 		after: 'valueStore',
-		init: (o, data) => o.sync.link((text) => {
-			o.sync.link(['textStore', 'valueProp'], link);
-			return link(<any>o.valueProp);
+		init: (o) => o.sync.link((text) => {
+			o.watch('valueProp', {label: $$.textStore}, () => {
+				o.watch('valueStore', {label: $$.textStoreToValueStore}, () => {
+					o.async.clearAll({label: $$.textStoreToValueStore});
+					return link();
+				});
+			});
 
-			function link(textFromValue: CanUndef<Value>): string {
-				text = textFromValue === undefined ? text ?? data.valueStore : textFromValue;
-				return text !== undefined ? String(text) : '';
+			return link();
+
+			function link(): string {
+				const
+					textFromValue = o.field.get<Value>('valueStore'),
+					resolvedText = textFromValue === undefined ? text : textFromValue,
+					str = resolvedText !== undefined ? String(resolvedText) : '';
+
+				void o.waitStatus('ready', () => o.text = str);
+				return str;
 			}
 		})
 	})
@@ -235,7 +250,7 @@ export default class bInput extends iInputText {
 	@watch('text')
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
-		this.value = this.text;
+		this.field.set('valueStore', this.text);
 	}
 
 	/**
