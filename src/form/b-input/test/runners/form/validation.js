@@ -80,6 +80,42 @@ module.exports = (page) => {
 			});
 		});
 
+		describe('`number`', () => {
+			it('simple usage', async () => {
+				const target = await init({
+					validators: ['number']
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
+
+				await target.evaluate((ctx) => {
+					ctx.value = '0';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
+
+				await target.evaluate((ctx) => {
+					ctx.value = 'fff';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
+					validator: 'number',
+
+					error: {
+						name: 'INVALID_VALUE',
+						value: 'NaN'
+					},
+
+					msg: 'The value is not a number'
+				});
+
+				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
+					.toBe('The value is not a number');
+			});
+		});
+
 		async function init(attrs = {}) {
 			await page.evaluate((attrs) => {
 				const scheme = [
@@ -98,6 +134,5 @@ module.exports = (page) => {
 
 			return h.component.waitForComponent(page, '[data-id="target"]');
 		}
-
 	});
 };

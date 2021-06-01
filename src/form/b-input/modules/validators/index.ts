@@ -34,9 +34,9 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	/** @see [[iInput.validators.required]] */
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
-			v = await this.formValue;
+			value = await this.formValue;
 
-		if (v === undefined || v === '') {
+		if (value === undefined || value === '') {
 			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 			return false;
 		}
@@ -72,7 +72,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: NumberValidatorParams): Promise<ValidatorResult<NumberValidatorResult>> {
 		const
-			value = (await this.formValue)?.trim() ?? '';
+			value = String((await this.formValue) ?? '');
 
 		if (!Object.isTruly(value)) {
 			const
@@ -186,7 +186,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		const
 			src = await this.formValue;
 
-		if (!Object.isTruly(src)) {
+		if (src === undefined || src === '') {
 			return true;
 		}
 
@@ -195,12 +195,12 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 		const error = (
 			type: DateValidatorResult['name'] = 'INVALID_VALUE',
-			val: Date | number = value,
+			errorValue: Date | number = value,
 			defMsg = t`Invalid date value`
 		) => {
 			const err = <DateValidatorResult>{
 				name: type,
-				value: val
+				value: errorValue
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
@@ -264,7 +264,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
-			value = (await this.formValue) ?? '';
+			value = String((await this.formValue) ?? '');
 
 		let
 			rgxp: CanUndef<RegExp>;
@@ -278,12 +278,12 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 		const error = (
 			type: PatternValidatorResult['name'] = 'INVALID_VALUE',
-			val: string | number = value,
+			errorValue: string | number = value,
 			defMsg = t`Invalid characters`
 		) => {
 			const err = <PatternValidatorResult>{
 				name: type,
-				value: val
+				value: errorValue
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
@@ -348,16 +348,16 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PasswordValidatorParams): Promise<ValidatorResult> {
 		const
-			value = (await this.formValue) ?? '';
+			value = String((await this.formValue) ?? '');
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'INVALID_VALUE',
-			val: string | number | [string, string] = value,
+			errorValue: string | number | [string, string] = value,
 			defMsg = t`Invalid characters`
 		) => {
 			const err = <PasswordValidatorResult>{
 				name: type,
-				value: val
+				value: errorValue
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);

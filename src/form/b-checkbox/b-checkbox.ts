@@ -184,9 +184,9 @@ export default class bCheckbox extends iInput implements iSize {
 
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			const
-				v = await this.formValue;
+				value = await this.formValue;
 
-			if (v === undefined || v === false) {
+			if (value === undefined || value === false) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}

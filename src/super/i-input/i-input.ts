@@ -821,7 +821,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				validator = this.validatorsMap[key];
 
 			if (validator == null) {
-				throw new Error(`Validator "${key}" is not defined`);
+				throw new Error(`The "${key}" validator is not defined`);
 			}
 
 			const validation = validator.call(
@@ -871,7 +871,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.validationMsg = undefined;
 		this.emit('validationEnd', valid === true, failedValidation);
 
-		return Object.isTruly(valid) ? valid : failedValidation;
+		return valid === true ? valid : failedValidation;
 
 		//#endif
 
