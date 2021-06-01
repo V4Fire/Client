@@ -43,17 +43,6 @@ module.exports = (page) => {
 				.toBeTrue();
 		});
 
-		it('forcing validation by `actionChange`', async () => {
-			const target = await init({
-				validators: ['required']
-			});
-
-			await target.evaluate((ctx) => ctx.emit('actionChange'));
-
-			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
-				.toBe('Required field');
-		});
-
 		it('`required` with parameters (an array form)', async () => {
 			const target = await init({
 				validators: [['required', {msg: 'REQUIRED!'}]]
@@ -76,6 +65,17 @@ module.exports = (page) => {
 
 			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 				.toBe('');
+		});
+
+		it('forcing validation by `actionChange`', async () => {
+			const target = await init({
+				validators: ['required']
+			});
+
+			await target.evaluate((ctx) => ctx.emit('actionChange'));
+
+			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
+				.toBe('Required field');
 		});
 
 		async function init(attrs = {}) {

@@ -33,7 +33,10 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 	/** @see [[iInput.validators.required]] */
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-		if (!Object.isTruly(await this.formValue)) {
+		const
+			v = await this.formValue;
+
+		if (v === undefined || v === '') {
 			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 			return false;
 		}

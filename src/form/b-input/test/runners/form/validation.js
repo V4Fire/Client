@@ -24,58 +24,60 @@ module.exports = (page) => {
 	});
 
 	describe('b-input form API validation', () => {
-		it('`required`', async () => {
-			const target = await init({
-				validators: ['required']
+		describe('`required`', () => {
+			it('simple usage', async () => {
+				const target = await init({
+					validators: ['required']
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toEqual({validator: 'required', error: false, msg: 'Required field'});
+
+				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
+					.toBe('Required field');
+
+				await target.evaluate((ctx) => {
+					ctx.value = '0';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
 			});
 
-			expect(await target.evaluate((ctx) => ctx.validate()))
-				.toEqual({validator: 'required', error: false, msg: 'Required field'});
+			it('`required` with parameters (an array form)', async () => {
+				const target = await init({
+					validators: [['required', {msg: 'REQUIRED!'}]]
+				});
 
-			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
-				.toBe('Required field');
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
 
-			await target.evaluate((ctx) => {
-				ctx.value = '0';
+				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
+					.toBe('REQUIRED!');
 			});
 
-			expect(await target.evaluate((ctx) => ctx.validate()))
-				.toBeTrue();
-		});
+			it('`required` with parameters (an object form)', async () => {
+				const target = await init({
+					validators: [{required: {msg: 'REQUIRED!', showMsg: false}}]
+				});
 
-		it('forcing validation by `actionChange`', async () => {
-			const target = await init({
-				validators: ['required']
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
+
+				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
+					.toBe('');
 			});
 
-			await target.evaluate((ctx) => ctx.emit('actionChange'));
+			it('forcing validation by `actionChange`', async () => {
+				const target = await init({
+					validators: ['required']
+				});
 
-			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
-				.toBe('Required field');
-		});
+				await target.evaluate((ctx) => ctx.emit('actionChange'));
 
-		it('`required` with parameters (an array form)', async () => {
-			const target = await init({
-				validators: [['required', {msg: 'REQUIRED!'}]]
+				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
+					.toBe('Required field');
 			});
-
-			expect(await target.evaluate((ctx) => ctx.validate()))
-				.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
-
-			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
-				.toBe('REQUIRED!');
-		});
-
-		it('`required` with parameters (an object form)', async () => {
-			const target = await init({
-				validators: [{required: {msg: 'REQUIRED!', showMsg: false}}]
-			});
-
-			expect(await target.evaluate((ctx) => ctx.validate()))
-				.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
-
-			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
-				.toBe('');
 		});
 
 		async function init(attrs = {}) {
@@ -84,7 +86,7 @@ module.exports = (page) => {
 					{
 						attrs: {
 							'data-id': 'target',
-							formValueConverter: parseInt.option(),
+							formValueConverter: ((v) => v !== '' ? parseInt(v, 10) : undefined).option(),
 							messageHelpers: true,
 							...attrs
 						}

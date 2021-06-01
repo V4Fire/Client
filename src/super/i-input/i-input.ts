@@ -604,7 +604,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		 * @param showMsg
 		 */
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-			if (await this.formValue == null) {
+			if (await this.formValue === undefined) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
