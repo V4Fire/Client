@@ -87,84 +87,6 @@ Also, this icon can be provided by a prop.
 
 ## API
 
-## Validation
-
-Because the component extends from [[iInput]], it supports validation API.
-
-```
-< b-input :name = 'email' | :validators = ['required', 'email'] | @validationEnd = handler
-```
-
-### Built-in validators
-
-The component provides a bunch of validators.
-
-#### required
-
-Checks that a component value must be filled.
-
-```
-< b-input :validators = ['required']
-< b-input :validators = {required: {showMsg: false}}
-```
-
-#### number
-
-Checks that a component value must be matched as a number.
-
-```
-< b-input :validators = ['number']
-< b-input :validators = {number: {type: 'int', min: 10, max: 20}}
-< b-input :validators = {number: {type: 'float', precision: 3, strictPrecision: true}}
-```
-
-#### date
-
-Checks that a component value must be matched as a date.
-
-```
-< b-input :validators = ['date']
-< b-input :validators = {date: {past: false}}
-< b-input :validators = {date: {min: 'yesterday', max: 'tomorrow'}}
-```
-
-#### pattern
-
-Checks that a component value must be matched to the provided pattern.
-
-```
-< b-input :validators = {pattern: {pattern: '^[\\d$]+'}}
-< b-input :validators = {pattern: {min: 10, max: 20}}
-```
-
-#### email
-
-Checks that a component value must be matched as an email string.
-
-```
-< b-input :validators = ['email']
-< b-input :validators = {email: {showMsg: false}}
-```
-
-#### password
-
-Checks that a component value must be matched as a password.
-
-```
-< b-input :id = 'old-password'
-
-< b-input :name = 'password' | :validators = [['password', { &
-  min: 12,
-  max: 24,
-  old: '#old-password',
-  connected: '#repeat-password'
-}]] .
-
-< b-input :id = 'repeat-password'
-```
-
-## API
-
 Also, you can see the parent component and the component traits.
 
 ### Props
@@ -250,6 +172,82 @@ Boolean, if need to show progress by slot or `b-progress-icon`.
 
 ```
 < b-input :progressIcon = 'b-my-progress-icon'
+```
+
+### Validation
+
+Because the component extends from [[iInput]], it supports validation API.
+
+```
+< b-input :name = 'email' | :validators = ['required', 'email'] | @validationEnd = handler
+```
+
+#### Built-in validators
+
+The component provides a bunch of validators.
+
+##### required
+
+Checks that a component value must be filled.
+
+```
+< b-input :validators = ['required']
+< b-input :validators = {required: {showMsg: false}}
+```
+
+##### number
+
+Checks that a component value must be matched as a number.
+
+```
+< b-input :validators = ['number']
+< b-input :validators = {number: {type: 'int', min: 10, max: 20}}
+< b-input :validators = {number: {type: 'float', precision: 3, strictPrecision: true}}
+```
+
+##### date
+
+Checks that a component value must be matched as a date.
+
+```
+< b-input :validators = ['date']
+< b-input :validators = {date: {past: false}}
+< b-input :validators = {date: {min: 'yesterday', max: 'tomorrow'}}
+```
+
+##### pattern
+
+Checks that a component value must be matched to the provided pattern.
+
+```
+< b-input :validators = {pattern: {pattern: '^[\\d$]+'}}
+< b-input :validators = {pattern: {min: 10, max: 20}}
+```
+
+##### email
+
+Checks that a component value must be matched as an email string.
+
+```
+< b-input :validators = ['email']
+< b-input :validators = {email: {showMsg: false}}
+```
+
+##### password
+
+Checks that a component value must be matched as a password.
+
+```
+< b-input :id = 'old-password'
+
+< b-input :name = 'password' | :validators = [['password', { &
+  min: 12,
+  max: 24,
+  old: '#old-password',
+  connected: '#repeat-password'
+}]] .
+
+< b-input :id = 'repeat-password'
 ```
 
 ## Styles
