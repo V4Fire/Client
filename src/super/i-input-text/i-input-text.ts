@@ -390,7 +390,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	protected mounted(): void {
-		this.$refs.input.value = this.text;
+		this.updateTextStore(this.text);
 	}
 
 	/**

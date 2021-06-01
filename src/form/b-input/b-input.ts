@@ -231,8 +231,14 @@ export default class bInput extends iInputText {
 
 	/** @override */
 	async clear(): Promise<boolean> {
+		const v = this.value;
 		await this.clearText();
-		return super.clear();
+
+		if (v !== '') {
+			return super.clear();
+		}
+
+		return false;
 	}
 
 	/**
