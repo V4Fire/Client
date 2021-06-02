@@ -155,17 +155,17 @@ export interface PasswordValidatorParams extends PatternValidatorParams {
 	/**
 	 * Selector to a component that contains a password that should match the original
 	 */
-	connected?: string;
+	confirmComponent?: string;
 
 	/**
 	 * Selector to a component that contains the old password
 	 */
-	old?: string;
+	oldPassComponent?: string;
 }
 
 export interface PasswordValidatorResult extends ValidatorError<string | number | [string, string]> {
 	name:
-		'INVALID_VALUE' |
+		'NOT_MATCH' |
 		'MIN' |
 		'MAX' |
 		'OLD_IS_NEW' |

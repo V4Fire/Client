@@ -306,7 +306,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value,
 
 				// Skip undefined values
-				params: Object.mixin(false, {}, {pattern, min, max})
+				params: Object.mixin(false, {}, {pattern, min, max, skipLength})
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
@@ -359,8 +359,8 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	 * @param pattern
 	 * @param min
 	 * @param max
-	 * @param connected
-	 * @param old
+	 * @param confirmComponent
+	 * @param oldPassComponent
 	 * @param skipLength
 	 * @param showMsg
 	 */
@@ -369,8 +369,8 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		pattern = /^\w*$/,
 		min = 6,
 		max = 18,
-		connected,
-		old,
+		confirmComponent,
+		oldPassComponent,
 		skipLength,
 		showMsg = true
 	}: PasswordValidatorParams): Promise<ValidatorResult> {
@@ -382,13 +382,23 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		const error = (
-			type: PasswordValidatorResult['name'] = 'INVALID_VALUE',
-			errorValue: string | number | [string, string] = value,
-			defMsg = t`Invalid characters`
+			type: PasswordValidatorResult['name'] = 'NOT_MATCH',
+			defMsg = t`A password must contain only allowed characters`,
+			errorValue: string | number | [string, string] = value
 		) => {
 			const err = <PasswordValidatorResult>{
 				name: type,
-				value: errorValue
+				value: errorValue,
+
+				// Skip undefined values
+				params: Object.mixin(false, {}, {
+					pattern,
+					min,
+					max,
+					confirmComponent,
+					oldPassComponent,
+					skipLength
+				})
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
@@ -410,58 +420,58 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		if (!rgxp.test(value)) {
-			return error('INVALID_VALUE', value, t`Invalid characters`);
+			return error();
 		}
 
 		if (!skipLength) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (min != null && value.length < min) {
-				return error('MIN', min, t`Password length must be at least ${min} characters`);
+				return error('MIN', t`Password length must be at least ${min} characters`);
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (max != null && value.length > max) {
-				return error('MAX', max, t`Password length must be no more than ${max} characters`);
+				return error('MAX', t`Password length must be no more than ${max} characters`);
 			}
 		}
 
 		const
 			{dom} = this.unsafe;
 
-		if (old != null) {
+		if (oldPassComponent != null) {
 			const
-				connectedInput = dom.getComponent<iInput>(old);
+				connectedInput = dom.getComponent<iInput>(oldPassComponent);
 
 			if (connectedInput == null) {
-				throw new ReferenceError(`Can't find a component by the provided selector "${old}"`);
+				throw new ReferenceError(`Can't find a component by the provided selector "${oldPassComponent}"`);
 			}
 
 			const
-				connectedValue = await connectedInput.formValue;
+				connectedValue = String(await connectedInput.formValue ?? '');
 
-			if (Object.isTruly(connectedValue)) {
+			if (connectedValue !== '') {
 				if (connectedValue === value) {
-					return error('OLD_IS_NEW', value, t`The old and new password are the same`);
+					return error('OLD_IS_NEW', t`The old and new password are the same`);
 				}
 
 				void connectedInput.setMod('valid', true);
 			}
 		}
 
-		if (connected != null) {
+		if (confirmComponent != null) {
 			const
-				connectedInput = dom.getComponent<iInput>(connected);
+				connectedInput = dom.getComponent<iInput>(confirmComponent);
 
 			if (connectedInput == null) {
-				throw new ReferenceError(`Can't find a component by the provided selector "${old}"`);
+				throw new ReferenceError(`Can't find a component by the provided selector "${confirmComponent}"`);
 			}
 
 			const
-				connectedValue = await connectedInput.formValue;
+				connectedValue = String(await connectedInput.formValue ?? '');
 
-			if (Object.isTruly(connectedValue)) {
+			if (connectedValue !== '') {
 				if (connectedValue !== value) {
-					return error('NOT_CONFIRM', [value, String(connectedValue)], t`Passwords don't match`);
+					return error('NOT_CONFIRM', t`The passwords aren't match`, [value, String(connectedValue)]);
 				}
 
 				void connectedInput.setMod('valid', true);

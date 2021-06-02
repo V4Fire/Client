@@ -817,6 +817,228 @@ module.exports = (page) => {
 			});
 		});
 
+		describe('`password`', () => {
+			const defParams = {
+				pattern: /^\w*$/,
+				min: 6,
+				max: 18
+			};
+
+			it('simple usage', async () => {
+				const params = {
+					...defParams,
+					confirmComponent: '#confirm',
+					oldPassComponent: '#old-pass'
+				};
+
+				const target = await init({
+					validators: [
+						[
+							'password',
+
+							{
+								confirmComponent: params.confirmComponent,
+								oldPassComponent: params.oldPassComponent
+							}
+						]
+					]
+				});
+
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.value = 'gkbf1';
+
+						ctx.dom.getComponent('#confirm').value = 'gkbf1';
+						ctx.dom.getComponent('#old-pass').value = 'gfs';
+
+						return ctx.validate();
+					})
+				).toEqual({
+					validator: 'password',
+
+					error: {
+						name: 'MIN',
+						value: 'gkbf1',
+						params
+					},
+
+					msg: 'Password length must be at least 6 characters'
+				});
+
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.value = 'jfybf1ghbf1';
+
+						ctx.dom.getComponent('#confirm').value = 'gkbf1';
+						ctx.dom.getComponent('#old-pass').value = 'gfs';
+
+						return ctx.validate();
+					})
+				).toEqual({
+					validator: 'password',
+
+					error: {
+						name: 'NOT_CONFIRM',
+						value: ['jfybf1ghbf1', 'gkbf1'],
+						params
+					},
+
+					msg: "The passwords aren't match"
+				});
+
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.value = 'jfybf1ghbf1';
+
+						ctx.dom.getComponent('#confirm').value = 'jfybf1ghbf1';
+						ctx.dom.getComponent('#old-pass').value = 'jfybf1ghbf1';
+
+						return ctx.validate();
+					})
+				).toEqual({
+					validator: 'password',
+
+					error: {
+						name: 'OLD_IS_NEW',
+						value: 'jfybf1ghbf1',
+						params
+					},
+
+					msg: 'The old and new password are the same'
+				});
+
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.value = 'jfybf1ghbf1';
+
+						ctx.dom.getComponent('#confirm').value = 'jfybf1ghbf1';
+						ctx.dom.getComponent('#old-pass').value = 'fffgh';
+
+						return ctx.validate();
+					})
+				).toBeTrue();
+			});
+
+			it('providing `min` and `max`', async () => {
+				const params = {
+					...defParams,
+					min: 2,
+					max: 4
+				};
+
+				const target = await init({
+					value: 'fdj',
+					validators: [['password', {min: params.min, max: params.max}]]
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
+
+				await target.evaluate((ctx) => {
+					ctx.value = 'vd';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
+
+				await target.evaluate((ctx) => {
+					ctx.value = 'vdfd';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
+
+				await target.evaluate((ctx) => {
+					ctx.value = 'd';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
+					validator: 'password',
+
+					error: {
+						name: 'MIN',
+						value: 'd',
+						params
+					},
+
+					msg: 'Password length must be at least 2 characters'
+				});
+
+				await target.evaluate((ctx) => {
+					ctx.value = 'gkbfd1';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
+					validator: 'password',
+
+					error: {
+						name: 'MAX',
+						value: 'gkbfd1',
+						params
+					},
+
+					msg: 'Password length must be no more than 4 characters'
+				});
+			});
+
+			it('providing `min`, `max` and `skipLength`', async () => {
+				const params = {
+					...defParams,
+					min: 2,
+					max: 4,
+					skipLength: true
+				};
+
+				const target = await init({
+					validators: [['password', {min: params.min, max: params.max, skipLength: params.skipLength}]]
+				});
+
+				await target.evaluate((ctx) => {
+					ctx.value = 'd';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
+
+				await target.evaluate((ctx) => {
+					ctx.value = 'gkbfd1';
+				});
+
+				expect(await target.evaluate((ctx) => ctx.validate()))
+					.toBeTrue();
+			});
+
+			async function init(attrs = {}) {
+				await page.evaluate((attrs) => {
+					const scheme = [
+						{
+							attrs: {
+								'data-id': 'target',
+								messageHelpers: true,
+								...attrs
+							}
+						},
+
+						{
+							attrs: {
+								id: 'confirm'
+							}
+						},
+
+						{
+							attrs: {
+								id: 'old-pass'
+							}
+						}
+					];
+
+					globalThis.renderComponents('b-input', scheme);
+				}, attrs);
+
+				return h.component.waitForComponent(page, '[data-id="target"]');
+			}
+		});
+
 		async function init(attrs = {}) {
 			await page.evaluate((attrs) => {
 				const scheme = [
