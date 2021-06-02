@@ -72,94 +72,90 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: NumberValidatorParams): Promise<ValidatorResult<NumberValidatorResult>> {
 		const
-			value = String((await this.formValue) ?? '');
+			numStyleRgxp = new RegExp(`[${Array.concat([], styleSeparator).join('')}]`, 'g'),
+			sepStyleRgxp = new RegExp(`[${Array.concat([], separator).join('')}]`);
 
-		if (!Object.isTruly(value)) {
-			const
-				{input} = this.unsafe.$refs;
+		const value = String((await this.formValue) ?? '')
+			.replace(numStyleRgxp, '')
+			.replace(sepStyleRgxp, '.');
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (input != null && (input.validity == null || input.validity.valid)) {
-				return true;
-			}
+		if (value === '') {
+			return true;
 		}
 
 		if (precision != null && !Number.isNatural(precision)) {
 			throw new TypeError('The precision value can be defined only as a natural number');
 		}
 
-		const
-			s = `[${Array.concat([], separator).join('')}]`,
-			ss = `[${Array.concat([], styleSeparator).join('')}]`,
-			pr = precision != null ? String(precision) : '';
-
 		const error = (
-			type: NumberValidatorResult['name'] = 'INVALID_VALUE',
-			val: string | number = value,
-			defMsg = t`The value is not a number`
+			defMsg = t`The value is not a number`,
+			errorValue: string | number = value,
+			type: NumberValidatorResult['name'] = 'INVALID_VALUE'
 		) => {
 			const err = <NumberValidatorResult>{
 				name: type,
-				value: val
+				value: errorValue
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<NumberValidatorResult>>err;
 		};
 
+		if (!/^-?\d*(?:\.\d*|$)/.test(value)) {
+			return error();
+		}
+
 		const
-			d = `^\\d(?:\\d|${ss}(?=\\d|$))*`;
+			numValue = parseFloat(value);
 
 		switch (type) {
 			case 'uint':
-				if (!new RegExp(`^${d}$`).test(value)) {
-					return error();
+				if (!Number.isNonNegative(numValue) || !Number.isInteger(numValue)) {
+					return error(t`The value does not match with an unsigned integer type`, numValue);
 				}
 
 				break;
 
 			case 'int':
-				if (!new RegExp(`^-?${d}$`).test(value)) {
-					return error();
+				if (!Number.isInteger(numValue)) {
+					return error(t`The value does not match with an integer type`, numValue);
 				}
 
 				break;
 
 			case 'ufloat':
-				if (!new RegExp(`^${d}?(?:${s}\\d{0,${pr}}|$)`).test(value)) {
-					return error();
+				if (!Number.isNonNegative(numValue)) {
+					return error(t`The value does not match with an unsigned float type`, numValue);
 				}
 
 				break;
 
 			default:
-				if (!new RegExp(`^-?${d}?(?:${s}\\d{0,${pr}}|$)`).test(value)) {
-					return error();
-				}
+				// Do nothing
 		}
 
-		const
-			chunks = value.split(new RegExp(s));
+		if (precision != null) {
+			const
+				chunks = value.split('.', 2);
 
-		if (
-			strictPrecision &&
-			precision != null &&
+			if (strictPrecision) {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (chunks[1] == null || chunks[1].length !== precision) {
+					return error(t`A decimal part should have ${precision} digits`, numValue, 'DECIMAL_LENGTH');
+				}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			chunks[1] != null && chunks[1].length !== precision
-		) {
-			return error('DECIMAL_LENGTH', precision, t`A decimal part should have ${precision} digits`);
+			} else if (chunks[1] != null && chunks[1].length > precision) {
+				return error(t`A decimal part should have no more than ${precision} digits`, numValue, 'DECIMAL_LENGTH');
+			}
 		}
 
-		const
-			numValue = parseFloat(value.replace(new RegExp(s), '.'));
-
 		if (min != null && numValue < min) {
-			return error('MIN', min, t`A value must be at least ${min}`);
+			return error(t`A value must be at least ${min}`, numValue, 'MIN');
 		}
 
 		if (max != null && numValue > max) {
-			return error('MAX', max, t`A value must be no more than ${max}`);
+			return error(t`A value must be no more than ${max}`, numValue, 'MAX');
 		}
 
 		return true;
@@ -184,19 +180,19 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: DateValidatorParams): Promise<ValidatorResult<DateValidatorResult>> {
 		const
-			src = await this.formValue;
+			value = await this.formValue;
 
-		if (src === undefined || src === '') {
+		if (value === undefined || Object.isString(value) && value.trim() === '') {
 			return true;
 		}
 
 		const
-			value = Date.create(src);
+			dateValue = Date.create(isNaN(<any>value) ? value : Number(value));
 
 		const error = (
 			type: DateValidatorResult['name'] = 'INVALID_VALUE',
-			errorValue: Date | number = value,
-			defMsg = t`Invalid date value`
+			defMsg = t`The value can't be parsed as a date`,
+			errorValue: Date | string = dateValue
 		) => {
 			const err = <DateValidatorResult>{
 				name: type,
@@ -207,39 +203,36 @@ export default <ValidatorsDecl<bInput, unknown>>{
 			return <ValidatorResult<DateValidatorResult>>err;
 		};
 
-		if (isNaN(value.valueOf())) {
-			return error();
+		if (isNaN(dateValue.valueOf())) {
+			return error(undefined, undefined, value);
 		}
 
 		const
-			isPast = value.isPast(),
-			isFuture = value.isFuture();
+			isPast = dateValue.isPast(),
+			isFuture = dateValue.isFuture();
 
 		if (past && !isPast) {
-			return error('NOT_PAST', value, t`A date value must be in the past`);
+			return error('NOT_PAST', t`A date value must be in the past`);
 		}
 
 		if (past === false && isPast) {
-			return error('IS_PAST', value, t`A date value can't be in the past`);
+			return error('IS_PAST', t`A date value can't be in the past`);
 		}
 
 		if (future && !isFuture) {
-			return error('NOT_FUTURE', value, t`A date value must be in the future`);
+			return error('NOT_FUTURE', t`A date value must be in the future`);
 		}
 
 		if (future === false && isFuture) {
-			return error('IS_FUTURE', value, t`A date value can't be in the future`);
+			return error('IS_FUTURE', t`A date value can't be in the future`);
 		}
 
-		min = min != null ? Date.create(min) : min;
-		max = max != null ? Date.create(max) : min;
-
-		if (Object.isDate(min) && !min.isBefore(value)) {
-			return error('MIN', min, t`A date value must be at least ${min}`);
+		if (min != null && !dateValue.isAfter(min, 1)) {
+			return error('MIN', t`A date value must be at least "${min}"`);
 		}
 
-		if (Object.isDate(max) && !max.isAfter(value)) {
-			return error('MAX', max, t`A date value must be no more than ${max}`);
+		if (max != null && !dateValue.isBefore(max, 1)) {
+			return error('MAX', t`A date value must be no more than "${max}"`);
 		}
 
 		return true;
@@ -264,7 +257,11 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
-			value = String((await this.formValue) ?? '');
+			value = String(await this.formValue ?? '');
+
+		if (value === '') {
+			return true;
+		}
 
 		let
 			rgxp: CanUndef<RegExp>;
@@ -277,13 +274,12 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		const error = (
-			type: PatternValidatorResult['name'] = 'INVALID_VALUE',
-			errorValue: string | number = value,
-			defMsg = t`Invalid characters`
+			type: PatternValidatorResult['name'] = 'NOT_MATCH',
+			defMsg = t`A value must match the pattern`
 		) => {
 			const err = <PatternValidatorResult>{
 				name: type,
-				value: errorValue
+				value
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
@@ -291,16 +287,16 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		};
 
 		if (rgxp != null && !rgxp.test(value)) {
-			return error('INVALID_VALUE', value, t`Invalid characters`);
+			return error();
 		}
 
 		if (!skipLength) {
 			if (min != null && value.length < min) {
-				return error('MIN', min, t`Value length must be at least ${min} characters`);
+				return error('MIN', t`Value length must be at least ${min} characters`);
 			}
 
 			if (max != null && value.length > max) {
-				return error('MAX', max, t`Value length must be no more than ${max} characters`);
+				return error('MAX', t`Value length must be no more than ${max} characters`);
 			}
 		}
 
@@ -315,9 +311,13 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	 */
 	async email({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
-			value = (await this.formValue)?.trim() ?? '';
+			value = String((await this.formValue) ?? '');
 
-		if (value !== '' && !/.+@.+/.test(value)) {
+		if (value === '') {
+			return true;
+		}
+
+		if (!/.+@.+/.test(value)) {
 			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Invalid email format`), showMsg);
 			return false;
 		}
@@ -349,6 +349,10 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	}: PasswordValidatorParams): Promise<ValidatorResult> {
 		const
 			value = String((await this.formValue) ?? '');
+
+		if (value === '') {
+			return true;
+		}
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'INVALID_VALUE',

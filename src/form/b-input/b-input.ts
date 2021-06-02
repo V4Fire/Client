@@ -189,7 +189,6 @@ export default class bInput extends iInputText {
 
 	/** @override */
 	get default(): unknown {
-		console.log(111, this.defaultProp != null ? String(this.defaultProp) : '');
 		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 

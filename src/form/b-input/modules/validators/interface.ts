@@ -127,7 +127,7 @@ export interface PatternValidatorParams extends ValidatorParams {
 }
 
 export interface PatternValidatorResult extends ValidatorError<string | number> {
-	name: 'INVALID_VALUE' | 'MIN' | 'MAX';
+	name: 'NOT_MATCH' | 'MIN' | 'MAX';
 }
 
 /**
