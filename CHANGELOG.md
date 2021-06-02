@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Moved from `base` to `dummies` `bDummy`
 * Now the component inherits `iInputText` `bInput`
 * Removed `bInputTime`
+* Removed `bScroll`
 
 * `bForm`:
   * Now `validate` returns `ValidationError` in case of failed validation

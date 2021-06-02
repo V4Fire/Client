@@ -10,7 +10,6 @@ package('b-select')
 	.extends('b-input')
 	.dependencies(
 		'b-icon',
-		'b-scroll-inline',
 		'b-progress-icon',
 		'b-option'
 	);

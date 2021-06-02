@@ -7,5 +7,4 @@
  */
 
 package('b-textarea')
-	.extends('i-input-text')
-	.dependencies('b-scroll-inline');
+	.extends('i-input-text');

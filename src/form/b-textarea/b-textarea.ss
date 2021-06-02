@@ -12,37 +12,30 @@
 
 - template index() extends ['i-input-text'].index
 	- block wrapper
-		< b-scroll-inline.&__scroll &
-			ref = scroll |
-			v-func = isFunctional |
-			:width = 'full' |
-			:exterior = scrollExterior
+		< textarea.&__input &
+			ref = input |
+			:id = id |
+			:name = name |
+			:form = form |
+			:placeholder = placeholder |
+			:autofocus = autofocus |
+			:tabindex = tabIndex |
+			:maxlength = maxlength |
+			@focus = onFocus |
+			@input = onEdit |
+			@blur = onBlur |
+			${attrs|!html}
 		.
 
-			< textarea.&__input &
-				ref = input |
-				:id = id |
-				:name = name |
-				:form = form |
-				:placeholder = placeholder |
-				:autofocus = autofocus |
-				:tabindex = tabIndex |
-				:maxlength = maxlength |
-				@focus = onFocus |
-				@input = onEdit |
-				@blur = onBlur |
-				${attrs|!html}
-			.
+- block helpers
+	- super
+	- block limit
+		+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxlength'})
+			< _ v-if = maxlength | :class = provide.elClasses({ &
+				limit: {
+					hidden: limit > maxlength / 1.5,
+					warning: limit < maxlength / 4
+				}
+			}) .
 
-	- block helpers
-		- super
-		- block limit
-			+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxlength'})
-				< _ v-if = maxlength | :class = provide.elClasses({ &
-					limit: {
-						hidden: limit > maxlength / 1.5,
-						warning: limit < maxlength / 4
-					}
-				}) .
-
-					{{ `Characters left:` }} {{ limit }}
+				{{ `Characters left:` }} {{ limit }}
