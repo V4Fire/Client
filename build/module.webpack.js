@@ -178,6 +178,28 @@ module.exports = async function module({plugins}) {
 		}
 	];
 
+	loaders.rules.set('wasm', {
+		test: /\.wasm$/,
+		type: 'asset/resource'
+	});
+
+	loaders.rules.set('wasm.glue.js.auto', {
+		test: /\.wasm\.js$/,
+		type: 'asset'
+	});
+
+	loaders.rules.set('wasm.glue.js.inline', {
+		test: /\.wasm\.js$/,
+		resourceQuery: /inline/,
+		type: 'asset/inline'
+	});
+
+	loaders.rules.set('wasm.glue.js.staticUrl', {
+		test: /\.wasm\.js$/,
+		resourceQuery: /staticUrl/,
+		type: 'asset/resource'
+	});
+
 	loaders.rules.set('js', {
 		test: isNotJSWorker,
 		exclude: isExternalDep,
@@ -423,28 +445,6 @@ module.exports = async function module({plugins}) {
 				{loader: 'svgo-loader', options: imageOpts.svgo} :
 				[]
 		)
-	});
-
-	loaders.rules.set('wasm', {
-		test: /\.wasm$/,
-		type: 'asset/resource'
-	});
-
-	loaders.rules.set('wasm.glue.js.auto', {
-		test: /\.wasm\.js$/,
-		type: 'asset'
-	});
-
-	loaders.rules.set('wasm.glue.js.inline', {
-		test: /\.wasm\.js$/,
-		resourceQuery: /inline/,
-		type: 'asset/inline'
-	});
-
-	loaders.rules.set('wasm.glue.js.staticUrl', {
-		test: /\.wasm\.js$/,
-		resourceQuery: /staticUrl/,
-		type: 'asset/resource'
 	});
 
 	return loaders;
