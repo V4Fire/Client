@@ -39,6 +39,7 @@ export interface ValidatorParams extends Dictionary {
 export interface ValidatorError<E = unknown> extends Dictionary {
 	name: string;
 	value?: E;
+	params?: Dictionary;
 }
 
 export type ValidatorResult<E = unknown> =

@@ -8,6 +8,8 @@
 
 // @ts-check
 
+/* eslint-disable max-lines */
+
 /**
  * @typedef {import('playwright').Page} Page
  */
@@ -81,6 +83,11 @@ module.exports = (page) => {
 		});
 
 		describe('`number`', () => {
+			const defParams = {
+				separator: ['.', ','],
+				styleSeparator: [' ', '_']
+			};
+
 			it('simple usage', async () => {
 				const target = await init({
 					validators: ['number']
@@ -105,7 +112,8 @@ module.exports = (page) => {
 
 					error: {
 						name: 'INVALID_VALUE',
-						value: 'NaN'
+						value: 'NaN',
+						params: defParams
 					},
 
 					msg: 'The value is not a number'
@@ -117,9 +125,14 @@ module.exports = (page) => {
 
 			describe('providing `type` as', () => {
 				it('`uint`', async () => {
+					const params = {
+						...defParams,
+						type: 'uint'
+					};
+
 					const target = await init({
 						value: '1',
-						validators: [['number', {type: 'uint'}]]
+						validators: [['number', {type: params.type}]]
 					});
 
 					expect(await target.evaluate((ctx) => ctx.validate()))
@@ -138,7 +151,7 @@ module.exports = (page) => {
 
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
-						error: {name: 'INVALID_VALUE', value: -4},
+						error: {name: 'INVALID_VALUE', value: -4, params},
 						msg: 'The value does not match with an unsigned integer type'
 					});
 
@@ -148,15 +161,20 @@ module.exports = (page) => {
 
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
-						error: {name: 'INVALID_VALUE', value: 1.354},
+						error: {name: 'INVALID_VALUE', value: 1.354, params},
 						msg: 'The value does not match with an unsigned integer type'
 					});
 				});
 
 				it('`int`', async () => {
+					const params = {
+						...defParams,
+						type: 'int'
+					};
+
 					const target = await init({
 						value: '1',
-						validators: [['number', {type: 'int'}]]
+						validators: [['number', {type: params.type}]]
 					});
 
 					expect(await target.evaluate((ctx) => ctx.validate()))
@@ -182,15 +200,20 @@ module.exports = (page) => {
 
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
-						error: {name: 'INVALID_VALUE', value: 1.354},
+						error: {name: 'INVALID_VALUE', value: 1.354, params},
 						msg: 'The value does not match with an integer type'
 					});
 				});
 
 				it('`ufloat`', async () => {
+					const params = {
+						...defParams,
+						type: 'ufloat'
+					};
+
 					const target = await init({
 						value: '1',
-						validators: [['number', {type: 'ufloat'}]]
+						validators: [['number', {type: params.type}]]
 					});
 
 					expect(await target.evaluate((ctx) => ctx.validate()))
@@ -209,7 +232,7 @@ module.exports = (page) => {
 
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
-						error: {name: 'INVALID_VALUE', value: -4},
+						error: {name: 'INVALID_VALUE', value: -4, params},
 						msg: 'The value does not match with an unsigned float type'
 					});
 
@@ -219,7 +242,7 @@ module.exports = (page) => {
 
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
-						error: {name: 'INVALID_VALUE', value: -4.343},
+						error: {name: 'INVALID_VALUE', value: -4.343, params},
 						msg: 'The value does not match with an unsigned float type'
 					});
 
@@ -271,9 +294,15 @@ module.exports = (page) => {
 			});
 
 			it('providing `min` and `max`', async () => {
+				const params = {
+					...defParams,
+					min: -1,
+					max: 3
+				};
+
 				const target = await init({
 					value: 1,
-					validators: [['number', {min: -1, max: 3}]]
+					validators: [['number', {min: params.min, max: params.max}]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
@@ -299,7 +328,7 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
-					error: {name: 'MIN', value: -4},
+					error: {name: 'MIN', value: -4, params},
 					msg: 'A value must be at least -1'
 				});
 
@@ -309,15 +338,20 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
-					error: {name: 'MAX', value: 6},
+					error: {name: 'MAX', value: 6, params},
 					msg: 'A value must be no more than 3'
 				});
 			});
 
 			it('providing `separator` and `styleSeparator`', async () => {
+				const params = {
+					separator: ['.', ',', ';'],
+					styleSeparator: [' ', '_', '-']
+				};
+
 				const target = await init({
 					value: '100_500,200',
-					validators: [['number', {separator: ['.', ',', ';'], styleSeparator: [' ', '_', '-']}]],
+					validators: [['number', params]],
 					formValueConverter: undefined
 				});
 
@@ -337,15 +371,20 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
-					error: {name: 'INVALID_VALUE', value: '6/2'},
+					error: {name: 'INVALID_VALUE', value: '6/2', params},
 					msg: 'The value is not a number'
 				});
 			});
 
 			it('providing `precision`', async () => {
+				const params = {
+					...defParams,
+					precision: 2
+				};
+
 				const target = await init({
 					value: '100.23',
-					validators: [['number', {precision: 2}]],
+					validators: [['number', {precision: params.precision}]],
 					formValueConverter: undefined
 				});
 
@@ -365,15 +404,21 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
-					error: {name: 'DECIMAL_LENGTH', value: 1.234567},
+					error: {name: 'DECIMAL_LENGTH', value: 1.234567, params},
 					msg: 'A decimal part should have no more than 2 digits'
 				});
 			});
 
 			it('providing `precision` and `strictPrecision`', async () => {
+				const params = {
+					...defParams,
+					precision: 2,
+					strictPrecision: true
+				};
+
 				const target = await init({
 					value: '100.23',
-					validators: [['number', {precision: 2, strictPrecision: true}]],
+					validators: [['number', {precision: params.precision, strictPrecision: params.strictPrecision}]],
 					formValueConverter: undefined
 				});
 
@@ -386,7 +431,7 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
-					error: {name: 'DECIMAL_LENGTH', value: 1.2},
+					error: {name: 'DECIMAL_LENGTH', value: 1.2, params},
 					msg: 'A decimal part should have 2 digits'
 				});
 
@@ -396,7 +441,7 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
-					error: {name: 'DECIMAL_LENGTH', value: 1.234567},
+					error: {name: 'DECIMAL_LENGTH', value: 1.234567, params},
 					msg: 'A decimal part should have 2 digits'
 				});
 
@@ -406,7 +451,7 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
-					error: {name: 'DECIMAL_LENGTH', value: 1},
+					error: {name: 'DECIMAL_LENGTH', value: 1, params},
 					msg: 'A decimal part should have 2 digits'
 				});
 			});
@@ -474,15 +519,20 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
-					error: {name: 'INVALID_VALUE', value: '1989.18.10'},
+					error: {name: 'INVALID_VALUE', value: '1989.18.10', params: {}},
 					msg: "The value can't be parsed as a date"
 				});
 			});
 
 			it('providing `min` and `max`', async () => {
+				const params = {
+					min: '18.10.1989',
+					max: '25.10.1989'
+				};
+
 				const target = await init({
 					value: '19.10.1989',
-					validators: [['date', {min: '18.10.1989', max: '25.10.1989'}]]
+					validators: [['date', params]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
@@ -508,7 +558,7 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
-					error: {name: 'MIN', value: new Date(1989, 2, 25)},
+					error: {name: 'MIN', value: new Date(1989, 2, 25), params},
 					msg: 'A date value must be at least "18.10.1989"'
 				});
 
@@ -518,15 +568,19 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
-					error: {name: 'MAX', value: new Date(1989, 10, 25)},
+					error: {name: 'MAX', value: new Date(1989, 10, 25), params},
 					msg: 'A date value must be no more than "25.10.1989"'
 				});
 			});
 
 			it('providing `past` as `true`', async () => {
+				const params = {
+					past: true
+				};
+
 				const target = await init({
 					value: '19.10.1989',
-					validators: [['date', {past: true}]]
+					validators: [['date', params]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
@@ -541,20 +595,24 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
-					error: {name: 'NOT_PAST', value: new Date(date)},
+					error: {name: 'NOT_PAST', value: new Date(date), params},
 					msg: 'A date value must be in the past'
 				});
 			});
 
 			it('providing `past` as `false`', async () => {
+				const params = {
+					past: false
+				};
+
 				const target = await init({
 					value: '18.10.1989',
-					validators: [['date', {past: false}]]
+					validators: [['date', params]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
-					error: {name: 'IS_PAST', value: new Date(1989, 9, 18)},
+					error: {name: 'IS_PAST', value: new Date(1989, 9, 18), params},
 					msg: "A date value can't be in the past"
 				});
 
@@ -570,12 +628,16 @@ module.exports = (page) => {
 			});
 
 			it('providing `future` as `true`', async () => {
+				const params = {
+					future: true
+				};
+
 				const
 					date = Date.now() + 10e3;
 
 				const target = await init({
 					value: date,
-					validators: [['date', {future: true}]]
+					validators: [['date', params]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
@@ -587,23 +649,27 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
-					error: {name: 'NOT_FUTURE', value: new Date(1989, 9, 18)},
+					error: {name: 'NOT_FUTURE', value: new Date(1989, 9, 18), params},
 					msg: 'A date value must be in the future'
 				});
 			});
 
 			it('providing `future` as `false`', async () => {
+				const params = {
+					future: false
+				};
+
 				const
 					date = Date.now() + 10e3;
 
 				const target = await init({
 					value: date,
-					validators: [['date', {future: false}]]
+					validators: [['date', params]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
-					error: {name: 'IS_FUTURE', value: new Date(date)},
+					error: {name: 'IS_FUTURE', value: new Date(date), params},
 					msg: "A date value can't be in the future"
 				});
 
@@ -618,9 +684,13 @@ module.exports = (page) => {
 
 		describe('`pattern`', () => {
 			it('simple usage', async () => {
+				const params = {
+					pattern: '\\d'
+				};
+
 				const target = await init({
 					value: '1456',
-					validators: [['pattern', {pattern: '\\d'}]]
+					validators: [['pattern', params]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
@@ -632,15 +702,20 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
-					error: {name: 'NOT_MATCH', value: 'dddd'},
+					error: {name: 'NOT_MATCH', value: 'dddd', params},
 					msg: 'A value must match the pattern'
 				});
 			});
 
 			it('providing `min` and `max`', async () => {
+				const params = {
+					min: 2,
+					max: 4
+				};
+
 				const target = await init({
 					value: '123',
-					validators: [['pattern', {min: 2, max: 4}]]
+					validators: [['pattern', params]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
@@ -666,7 +741,7 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
-					error: {name: 'MIN', value: '1'},
+					error: {name: 'MIN', value: '1', params},
 					msg: 'Value length must be at least 2 characters'
 				});
 
@@ -676,7 +751,7 @@ module.exports = (page) => {
 
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
-					error: {name: 'MAX', value: '3456879'},
+					error: {name: 'MAX', value: '3456879', params},
 					msg: 'Value length must be no more than 4 characters'
 				});
 			});

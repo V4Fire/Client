@@ -8,7 +8,14 @@
 
 import type bInput from 'form/b-input/b-input';
 import type iInput from 'super/i-input/i-input';
-import type { ValidatorsDecl, ValidatorParams, ValidatorResult } from 'super/i-input/i-input';
+
+import type {
+
+	ValidatorsDecl,
+	ValidatorParams,
+	ValidatorResult
+
+} from 'super/i-input/i-input';
 
 import type {
 
@@ -90,11 +97,25 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		const error = (
 			defMsg = t`The value is not a number`,
 			errorValue: string | number = value,
-			type: NumberValidatorResult['name'] = 'INVALID_VALUE'
+			errorType: NumberValidatorResult['name'] = 'INVALID_VALUE'
 		) => {
 			const err = <NumberValidatorResult>{
-				name: type,
-				value: errorValue
+				name: errorType,
+				value: errorValue,
+
+				// Skip undefined values
+				params: Object.mixin(false, {}, {
+					type,
+
+					min,
+					max,
+
+					precision,
+					strictPrecision,
+
+					separator,
+					styleSeparator
+				})
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
@@ -196,7 +217,10 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		) => {
 			const err = <DateValidatorResult>{
 				name: type,
-				value: errorValue
+				value: errorValue,
+
+				// Skip undefined values
+				params: Object.mixin(false, {}, {past, future, min, max})
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
@@ -279,7 +303,10 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		) => {
 			const err = <PatternValidatorResult>{
 				name: type,
-				value
+				value,
+
+				// Skip undefined values
+				params: Object.mixin(false, {}, {pattern, min, max})
 			};
 
 			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
