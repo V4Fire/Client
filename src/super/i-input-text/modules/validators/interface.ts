@@ -18,12 +18,12 @@ export interface PatternValidatorParams extends ValidatorParams {
 	pattern?: RegExp | string;
 
 	/**
-	 * The minimum length of a string
+	 * The minimum number of characters within a string
 	 */
 	min?: number;
 
 	/**
-	 * The maximum length of a string
+	 * The maximum number of characters within a string
 	 */
 	max?: number;
 
