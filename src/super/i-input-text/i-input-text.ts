@@ -77,14 +77,14 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength
 	 */
 	@prop({type: Number, required: false})
-	readonly minlength?: number;
+	readonly minLength?: number;
 
 	/**
 	 * The maximum text value length of the input
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
 	 */
 	@prop({type: Number, required: false})
-	readonly maxlength?: number;
+	readonly maxLength?: number;
 
 	/**
 	 * The minimum value of the input (for number and date types)
@@ -374,8 +374,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		attrs.autocomplete = this.autocomplete;
 		attrs.readonly = Object.parse(this.mods.readonly);
 
-		attrs.minlength = this.minlength;
-		attrs.maxlength = this.maxlength;
+		attrs.minlength = this.minLength;
+		attrs.maxlength = this.maxLength;
 
 		attrs.min = this.min;
 		attrs.max = this.max;
