@@ -46,7 +46,7 @@
 
 					- block input
 						< _.&__cell.&__input-cont
-							+= self.nativeInput({'@input': 'onEdit'})
+							+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
