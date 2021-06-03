@@ -70,12 +70,14 @@ A placeholder text of the input
 #### [minLength]
 
 The minimum text value length of the input.
+The option will be ignored if provided `mask`.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength)
 
 #### [maxLength]
 
 The maximum text value length of the input.
+The option will be ignored if provided `mask`.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength)
 

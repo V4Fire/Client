@@ -76,14 +76,18 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly placeholder?: string;
 
 	/**
-	 * The minimum text value length of the input
+	 * The minimum text value length of the input.
+	 * The option will be ignored if provided `mask`.
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength
 	 */
 	@prop({type: Number, required: false})
 	readonly minLength?: number;
 
 	/**
-	 * The maximum text value length of the input
+	 * The maximum text value length of the input.
+	 * The option will be ignored if provided `mask`.
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
 	 */
 	@prop({type: Number, required: false})
