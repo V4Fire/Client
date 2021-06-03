@@ -14,6 +14,8 @@ Changelog
 #### :boom: Breaking Change
 
 * Now the component inherits `iInputText`
+* Removed `&__super-wrapper`
+* New API of component validators
 
 #### :memo: Documentation
 
