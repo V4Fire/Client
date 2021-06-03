@@ -30,6 +30,7 @@ package('p-v4-components-demo')
 		'b-checkbox',
 		'b-input-hidden',
 		'b-input',
+		'b-textarea',
 
 		'b-virtual-scroll',
 		'b-window',
