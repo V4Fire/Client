@@ -11,31 +11,24 @@
 - include 'super/i-input-text'|b as placeholder
 
 - template index() extends ['i-input-text'].index
-	- block wrapper
-		< textarea.&__input &
-			ref = input |
-			:id = id |
-			:name = name |
-			:form = form |
-			:placeholder = placeholder |
-			:autofocus = autofocus |
-			:tabindex = tabIndex |
-			:maxlength = maxlength |
-			@focus = onFocus |
-			@input = onEdit |
-			@blur = onBlur |
-			${attrs|!html}
-		.
+	- rootTag = 'span'
+	- rootWrapper = true
+	- nativeInputTag = 'textarea'
 
-- block helpers
-	- super
-	- block limit
-		+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxlength'})
-			< _ v-if = maxlength | :class = provide.elClasses({ &
-				limit: {
-					hidden: limit > maxlength / 1.5,
-					warning: limit < maxlength / 4
-				}
-			}) .
+	- block body
+		- super
 
-				{{ `Characters left:` }} {{ limit }}
+		- block wrapper
+			< _.&__wrapper ref = wrapper
+				+= self.nativeInput({attrs: {'@input': 'onEdit'}})
+
+	- block helpers
+		- super
+
+		- block limit
+			+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxLength'})
+				< _.&__limit[.&_hidden_true] v-update-on = { &
+					emitter: 'limit',
+					handler: onLimitUpdate,
+					options: {immediate: true}
+				} .

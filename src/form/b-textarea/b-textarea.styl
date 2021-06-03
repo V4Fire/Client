@@ -9,18 +9,18 @@
 @import "super/i-input-text/i-input-text.styl"
 
 $p = {
-
+	widthHelpers: true
+	progressHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
 }
 
 b-textarea extends i-input-text
-	&__super-wrapper
-	&__root-wrapper
-		background inherit
+	display inline-block
 
 	&__input
 		display block
 		width 100%
-		overflow hidden
 		padding 0
 		resize none
 
