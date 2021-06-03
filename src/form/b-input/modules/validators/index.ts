@@ -25,9 +25,6 @@ import type {
 	DateValidatorParams,
 	DateValidatorResult,
 
-	PatternValidatorParams,
-	PatternValidatorResult,
-
 	PasswordValidatorParams,
 	PasswordValidatorResult
 
@@ -36,22 +33,6 @@ import type {
 export * from 'form/b-input/modules/validators/interface';
 
 export default <ValidatorsDecl<bInput, unknown>>{
-	//#if runtime has iInput/validators
-
-	/** @see [[iInput.validators.required]] */
-	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-		const
-			value = await this.formValue;
-
-		if (value === undefined || value === '') {
-			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
-			return false;
-		}
-
-		return true;
-	},
-
-	//#endif
 	//#if runtime has bInput/validators
 
 	/**
@@ -263,74 +244,6 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	},
 
 	/**
-	 * Checks that a component value must be matched to the provided pattern
-	 *
-	 * @param msg
-	 * @param pattern
-	 * @param min
-	 * @param max
-	 * @param skipLength
-	 * @param showMsg
-	 */
-	async pattern({
-		msg,
-		pattern,
-		min,
-		max,
-		skipLength,
-		showMsg = true
-	}: PatternValidatorParams): Promise<ValidatorResult> {
-		const
-			value = String(await this.formValue ?? '');
-
-		if (value === '') {
-			return true;
-		}
-
-		let
-			rgxp: CanUndef<RegExp>;
-
-		if (Object.isString(pattern)) {
-			rgxp = new RegExp(pattern);
-
-		} else if (Object.isRegExp(pattern)) {
-			rgxp = pattern;
-		}
-
-		const error = (
-			type: PatternValidatorResult['name'] = 'NOT_MATCH',
-			defMsg = t`A value must match the pattern`
-		) => {
-			const err = <PatternValidatorResult>{
-				name: type,
-				value,
-
-				// Skip undefined values
-				params: Object.mixin(false, {}, {pattern, min, max, skipLength})
-			};
-
-			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
-			return <ValidatorResult<PatternValidatorResult>>err;
-		};
-
-		if (rgxp != null && !rgxp.test(value)) {
-			return error();
-		}
-
-		if (!skipLength) {
-			if (min != null && value.length < min) {
-				return error('MIN', t`Value length must be at least ${min} characters`);
-			}
-
-			if (max != null && value.length > max) {
-				return error('MAX', t`Value length must be no more than ${max} characters`);
-			}
-		}
-
-		return true;
-	},
-
-	/**
 	 * Checks that a component value must be matched as an email string
 	 *
 	 * @param msg
@@ -424,13 +337,16 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		if (!skipLength) {
+			const
+				{length} = [...value.letters()];
+
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (min != null && value.length < min) {
+			if (min != null && length < min) {
 				return error('MIN', t`Password length must be at least ${min} characters`);
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (max != null && value.length > max) {
+			if (max != null && length > max) {
 				return error('MAX', t`Password length must be no more than ${max} characters`);
 			}
 		}

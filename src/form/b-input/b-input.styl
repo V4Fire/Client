@@ -7,7 +7,6 @@
  */
 
 @import "super/i-input-text/i-input-text.styl"
-@import "traits/i-width/i-width.styl"
 
 $p = {
 	widthHelpers: true
@@ -17,10 +16,6 @@ $p = {
 }
 
 b-input extends i-input-text
-	// @stlint-disable
-	i-width({helpers: $p.widthHelpers})
-	// @stlint-enable
-
 	display inline-block
 
 	&__root-wrapper

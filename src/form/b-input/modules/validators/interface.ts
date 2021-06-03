@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ValidatorParams, ValidatorError } from 'super/i-input/i-input';
+import type { ValidatorParams, ValidatorError, PatternValidatorParams } from 'super/i-input-text/i-input-text';
 
 /**
  * Parameters to validate inputted numbers
@@ -99,35 +99,6 @@ export interface DateValidatorResult extends ValidatorError<Date | number> {
 		'IS_PAST' |
 		'MIN' |
 		'MAX';
-}
-
-/**
- * Parameters to validate inputted strings
- */
-export interface PatternValidatorParams extends ValidatorParams {
-	/***
-	 * RegExp or RegExp text to validate a string
-	 */
-	pattern?: RegExp | string;
-
-	/**
-	 * The minimum length of a string
-	 */
-	min?: number;
-
-	/**
-	 * The maximum length of a string
-	 */
-	max?: number;
-
-	/**
-	 * If true, the specified `min` and `max` values are ignored
-	 */
-	skipLength?: boolean;
-}
-
-export interface PatternValidatorResult extends ValidatorError<string | number> {
-	name: 'NOT_MATCH' | 'MIN' | 'MAX';
 }
 
 /**

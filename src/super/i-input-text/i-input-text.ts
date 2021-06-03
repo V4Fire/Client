@@ -23,7 +23,7 @@ import iInput, {
 	wait,
 
 	ModsDecl,
-	UnsafeGetter
+	UnsafeGetter, ValidatorsDecl
 
 } from 'super/i-input/i-input';
 
@@ -32,10 +32,12 @@ import * as mask from 'super/i-input-text/modules/mask';
 //#endif
 
 import { $$ } from 'super/i-input-text/const';
+import Validators from 'form/b-input/modules/validators';
 import type { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from 'super/i-input-text/interface';
 
 export * from 'super/i-input/i-input';
 export * from 'super/i-input-text/const';
+export * from 'super/i-input-text/modules/validators';
 export * from 'super/i-input-text/interface';
 
 export { $$ };
@@ -235,6 +237,12 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	get isMaskInfinite(): boolean {
 		return this.maskRepetitionsProp === true;
 	}
+
+	/** @override */
+	static validators: ValidatorsDecl = {
+		...<any>iInput.validators,
+		...Validators
+	};
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {

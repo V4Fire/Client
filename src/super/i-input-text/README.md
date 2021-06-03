@@ -182,3 +182,15 @@ Selects all content of the input.
 #### clearText
 
 Clears content of the input.
+
+### Built-in validators
+
+The component provides a bunch of validators.
+
+##### required
+
+Checks that a component value must be filled.
+
+##### pattern
+
+Checks that a component value must be matched to the provided pattern.
