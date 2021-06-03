@@ -23,7 +23,8 @@ import iInput, {
 	wait,
 
 	ModsDecl,
-	UnsafeGetter, ValidatorsDecl
+	UnsafeGetter,
+	ValidatorsDecl
 
 } from 'super/i-input/i-input';
 
