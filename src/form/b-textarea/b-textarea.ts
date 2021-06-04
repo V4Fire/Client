@@ -85,11 +85,8 @@ export default class bTextarea extends iInputText {
 	 */
 	get height(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
-			const
-				{input} = this.$refs;
-
-			const s = getComputedStyle(input);
-			return input.scrollHeight - parseFloat(s.paddingTop) - parseFloat(s.paddingBottom);
+			const {input} = this.$refs;
+			return input.scrollHeight + <number>this.borderHeight - <number>this.paddingHeight;
 		});
 	}
 
@@ -98,8 +95,8 @@ export default class bTextarea extends iInputText {
 	 */
 	get maxHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
-			const s = getComputedStyle(this.$refs.wrapper);
-			return parseFloat(s.maxHeight) - parseFloat(s.paddingTop) - parseFloat(s.paddingBottom);
+			const s = getComputedStyle(this.$refs.input);
+			return this.parse(s.maxHeight) + <number>this.borderHeight - <number>this.paddingHeight;
 		});
 	}
 
@@ -109,8 +106,11 @@ export default class bTextarea extends iInputText {
 	 */
 	get newlineHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
-			const lineHeight = parseFloat(getComputedStyle(this.$refs.input).lineHeight);
-			return isNaN(lineHeight) ? 16 : lineHeight;
+			const
+				s = getComputedStyle(this.$refs.input),
+				lineHeight = parseFloat(s.lineHeight);
+
+			return isNaN(lineHeight) ? parseFloat(s.fontSize) : lineHeight;
 		});
 	}
 
@@ -183,9 +183,28 @@ export default class bTextarea extends iInputText {
 
 	/** @override */
 	protected readonly $refs!: iInputText['$refs'] & {
-		wrapper: HTMLElement;
 		input: HTMLTextAreaElement;
 	};
+
+	/**
+	 * Sum of the textarea `border-top-width` and `border-bottom-width`
+	 */
+	protected get borderHeight(): CanPromise<number> {
+		return this.waitStatus('ready', () => {
+			const s = getComputedStyle(this.$refs.input);
+			return this.parse(s.borderBottomWidth) + this.parse(s.borderTopWidth);
+		});
+	}
+
+	/**
+	 * Sum of the textarea `padding-top` and `padding-bottom`
+	 */
+	protected get paddingHeight(): CanPromise<number> {
+		return this.waitStatus('ready', () => {
+			const s = getComputedStyle(this.$refs.input);
+			return this.parse(s.paddingTop) + this.parse(s.paddingBottom);
+		});
+	}
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -204,7 +223,7 @@ export default class bTextarea extends iInputText {
 	 * The method returns a new height value.
 	 */
 	@wait('ready', {defer: true, label: $$.calcHeight})
-	async fitHeight(): Promise<CanUndef<number>> {
+	fitHeight(): Promise<CanUndef<number>> {
 		const {
 			$refs: {input},
 			value: {length}
@@ -212,24 +231,23 @@ export default class bTextarea extends iInputText {
 
 		if (input.scrollHeight <= input.clientHeight) {
 			if (input.clientHeight > this.minHeight && (this.prevValue ?? '').length > length) {
-				return this.minimizeHeight();
+				return Promise.resolve(this.minimizeHeight());
 			}
 
-			return;
+			return Promise.resolve(undefined);
 		}
 
-		const [height, maxHeight, newlineHeight] = await Promise.all([
-			this.height,
-			this.maxHeight,
-			this.newlineHeight
-		]);
+		const
+			height = <number>this.height,
+			maxHeight = <number>this.maxHeight,
+			newlineHeight = <number>this.newlineHeight;
 
 		const
 			newHeight = height + (this.extRowCount - 1) * newlineHeight,
 			fixedNewHeight = newHeight < maxHeight ? newHeight : maxHeight;
 
 		input.style.height = fixedNewHeight.px;
-		return fixedNewHeight;
+		return Promise.resolve(fixedNewHeight);
 	}
 
 	/**
@@ -249,17 +267,17 @@ export default class bTextarea extends iInputText {
 	 * The method returns a new height value.
 	 */
 	@wait('ready', {defer: true, label: $$.minimize})
-	protected async minimizeHeight(): Promise<number> {
-		const
-			{input} = this.$refs;
+	protected minimizeHeight(): number {
+		const {
+			minHeight,
+			$refs: {input}
+		} = this;
 
-		const [minHeight, maxHeight] = await Promise.all([
-			this.minHeight,
-			this.maxHeight
-		]);
+		const
+			maxHeight = <number>this.maxHeight;
 
 		let
-			newHeight = await this.getTextHeight();
+			newHeight = <number>this.getTextHeight();
 
 		if (newHeight < minHeight) {
 			newHeight = minHeight;
@@ -304,16 +322,28 @@ export default class bTextarea extends iInputText {
 
 		document.body.appendChild(tmp);
 
-		const height = tmpInput.scrollHeight;
-		tmp.remove();
+		const
+			height = tmpInput.scrollHeight + <number>this.borderHeight;
 
+		tmp.remove();
 		return height;
+	}
+
+	/**
+	 * Parses the specified value as a number and returns it or `0`
+	 * (if the parsing is failed)
+	 *
+	 * @param value
+	 */
+	protected parse(value: string): number {
+		const v = parseFloat(value);
+		return isNaN(v) ? 0 : v;
 	}
 
 	/**
 	 * Synchronization for the `text` field
 	 */
-	@watch('value')
+	@watch({path: 'valueStore', immediate: true})
 	protected async syncValueStoreWatcher(): Promise<void> {
 		await this.fitHeight();
 	}

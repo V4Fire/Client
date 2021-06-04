@@ -107,5 +107,42 @@ module.exports = (page) => {
 
 			).toEqual(['foo', 'bar', 'bar', 'bla']);
 		});
+
+		it('auto resizing', async () => {
+			const target = await initTextarea(page);
+
+			expect(await target.evaluate(async (ctx) => {
+				const {input} = ctx.$refs;
+				input.style.maxHeight = '100px';
+
+				const
+					res = [];
+
+				const values = [
+					'',
+					'bla\nbla\nbla\n',
+					'bla\nbla\nbla\nbla\nbla\nbla\n',
+					'bla\nbla\nbla\nbla\nbla\nbla\nbla\nbla\nbla\n',
+					'bla\nbla\nbla\n',
+					''
+				];
+
+				for (const value of values) {
+					ctx.value = value;
+					await ctx.nextTick();
+					res.push([input.clientHeight, input.scrollHeight]);
+				}
+
+				return res;
+
+			})).toEqual([
+				[36, 36],
+				[72, 72],
+				[98, 126],
+				[98, 180],
+				[72, 72],
+				[36, 36]
+			]);
+		});
 	});
 };
