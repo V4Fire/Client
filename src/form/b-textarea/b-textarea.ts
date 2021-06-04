@@ -237,6 +237,7 @@ export default class bTextarea extends iInputText {
 	 */
 	@hook('mounted')
 	protected async initHeight(): Promise<void> {
+		await this.nextTick();
 		await this.dom.putInStream(async () => {
 			this.minHeight = this.$refs.input.clientHeight;
 			await this.fitHeight();

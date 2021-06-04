@@ -33,7 +33,7 @@ import * as mask from 'super/i-input-text/modules/mask';
 //#endif
 
 import { $$ } from 'super/i-input-text/const';
-import Validators from 'form/b-input/modules/validators';
+import Validators from 'super/i-input-text/modules/validators';
 import type { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from 'super/i-input-text/interface';
 
 export * from 'super/i-input/i-input';
