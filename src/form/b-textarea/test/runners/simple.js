@@ -111,37 +111,84 @@ module.exports = (page) => {
 		it('auto resizing', async () => {
 			const target = await initTextarea(page);
 
-			expect(await target.evaluate(async (ctx) => {
-				const {input} = ctx.$refs;
-				input.style.maxHeight = '100px';
+			expect(
+				await target.evaluate(async (ctx) => {
+					const {input} = ctx.$refs;
+					input.style.maxHeight = '100px';
 
-				const
-					res = [];
+					const
+						res = [];
 
-				const values = [
-					'',
-					'bla\nbla\nbla\n',
-					'bla\nbla\nbla\nbla\nbla\nbla\n',
-					'bla\nbla\nbla\nbla\nbla\nbla\nbla\nbla\nbla\n',
-					'bla\nbla\nbla\n',
-					''
-				];
+					const values = [
+						'',
+						'bla\nbla\nbla\n',
+						'bla\nbla\nbla\nbla\nbla\nbla\n',
+						'bla\nbla\nbla\nbla\nbla\nbla\nbla\nbla\nbla\n',
+						'bla\nbla\nbla\n',
+						''
+					];
 
-				for (const value of values) {
-					ctx.value = value;
-					await ctx.nextTick();
-					res.push([input.clientHeight, input.scrollHeight]);
-				}
+					for (const value of values) {
+						ctx.value = value;
+						await ctx.nextTick();
+						res.push([input.clientHeight, input.scrollHeight]);
+					}
 
-				return res;
-
-			})).toEqual([
+					return res;
+				})
+			).toEqual([
 				[36, 36],
 				[72, 72],
 				[98, 126],
 				[98, 180],
 				[72, 72],
 				[36, 36]
+			]);
+		});
+
+		it('providing `maxLength` and `messageHelpers`', async () => {
+			const target = await initTextarea(page, {
+				maxLength: 20,
+				messageHelpers: true
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [],
+						limitEl = ctx.block.element('limit');
+
+					const values = [
+						'',
+						'bla',
+						'bla bla',
+						'bla bla bla bla',
+						'bla bla bla bla bla bla bla bla',
+						'bla bla bla',
+						''
+					];
+
+					for (const value of values) {
+						ctx.value = value;
+						await ctx.nextTick();
+
+						res.push([
+							limitEl.innerText,
+							ctx.block.getElMod(limitEl, 'limit', 'hidden'),
+							ctx.block.getElMod(limitEl, 'limit', 'warning')
+						]);
+					}
+
+					return res;
+				})
+			).toEqual([
+				['', 'true', undefined],
+				['', 'true', undefined],
+				['Characters left: 13', 'false', 'false'],
+				['Characters left: 5', 'false', 'true'],
+				['Characters left: 0', 'false', 'true'],
+				['Characters left: 9', 'false', 'false'],
+				['Characters left: 9', 'true', 'false']
 			]);
 		});
 	});

@@ -25,7 +25,6 @@ import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
 import Friend from 'super/i-block/modules/friend';
 
-import { wait } from 'super/i-block/modules/decorators';
 import { componentRgxp } from 'super/i-block/modules/dom/const';
 import { ElCb, inViewInstanceStore, DOMManipulationOptions } from 'super/i-block/modules/dom/interface';
 
@@ -115,53 +114,54 @@ export default class DOM extends Friend {
 	 * @param cb
 	 * @param [el] - link to a DOM element or component element name
 	 */
-	@wait('ready')
-	async putInStream(
+	putInStream(
 		cb: ElCb<this['C']>,
 		el: CanUndef<Element | string> = this.ctx.$el
 	): Promise<boolean> {
-		const
-			node = Object.isString(el) ? this.block?.element(el) : el;
+		return this.ctx.waitStatus('ready').then(async () => {
+			const
+				node = Object.isString(el) ? this.block?.element(el) : el;
 
-		if (node == null) {
-			return false;
-		}
-
-		if (node.clientHeight > 0) {
-			await cb.call(this.component, node);
-			return false;
-		}
-
-		const wrapper = document.createElement('div');
-		Object.assign(wrapper.style, {
-			display: 'block',
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			'z-index': -1,
-			opacity: 0
-		});
-
-		const
-			parent = node.parentNode,
-			before = node.nextSibling;
-
-		wrapper.appendChild(node);
-		document.body.appendChild(wrapper);
-
-		await cb.call(this.component, node);
-
-		if (parent) {
-			if (before) {
-				parent.insertBefore(node, before);
-
-			} else {
-				parent.appendChild(node);
+			if (node == null) {
+				return false;
 			}
-		}
 
-		wrapper.parentNode?.removeChild(wrapper);
-		return true;
+			if (node.clientHeight > 0) {
+				await cb.call(this.component, node);
+				return false;
+			}
+
+			const wrapper = document.createElement('div');
+			Object.assign(wrapper.style, {
+				display: 'block',
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				'z-index': -1,
+				opacity: 0
+			});
+
+			const
+				parent = node.parentNode,
+				before = node.nextSibling;
+
+			wrapper.appendChild(node);
+			document.body.appendChild(wrapper);
+
+			await cb.call(this.component, node);
+
+			if (parent) {
+				if (before) {
+					parent.insertBefore(node, before);
+
+				} else {
+					parent.appendChild(node);
+				}
+			}
+
+			wrapper.parentNode?.removeChild(wrapper);
+			return true;
+		});
 	}
 
 	/**

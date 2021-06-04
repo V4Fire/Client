@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#if demo
+import 'models/demo/input';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 
 import iInputText, {
@@ -392,7 +396,7 @@ export default class bTextarea extends iInputText {
 
 		} else {
 			block.setElMod(el, 'limit', 'hidden', false);
-			block.setElMod(el, 'limit', 'warning', limit < maxLength / 4);
+			block.setElMod(el, 'limit', 'warning', limit < maxLength / 3);
 			el.innerHTML = t`Characters left: ${limit}`;
 		}
 	}
