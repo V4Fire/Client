@@ -318,18 +318,41 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
+	 * Synchronization of the `limit` slot
+	 */
+	@watch('value')
+	protected syncLimitSlotWatcher(): void {
+		if (this.isNotRegular) {
+			return;
+		}
+
+		if (this.$scopedSlots.limit != null || this.$slots.limit != null) {
+			this.forceUpdate().catch(stderr);
+		}
+	}
+
+	/**
 	 * Handler: updating of a limit warning
 	 * @param el
 	 */
 	protected onLimitUpdate(el: Element): void {
 		const {
 			block,
+			compiledMask,
+			messageHelpers,
+
 			limit,
-			maxLength,
-			compiledMask
+			maxLength
 		} = this;
 
-		if (block == null || limit == null || maxLength == null || compiledMask != null) {
+		if (
+			block == null ||
+			compiledMask != null ||
+			messageHelpers !== true ||
+
+			limit == null ||
+			maxLength == null
+		) {
 			return;
 		}
 

@@ -262,7 +262,7 @@ export default class bInput extends iInputText {
 	/**
 	 * Handler: updating of a component text value
 	 */
-	@watch('text')
+	@watch('textStore')
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
