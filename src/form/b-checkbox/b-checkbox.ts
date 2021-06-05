@@ -39,6 +39,7 @@ import iInput, {
 } from 'super/i-input/i-input';
 
 import type { CheckType, Value, FormValue } from 'form/b-checkbox/interface';
+import {validators} from "@pzlr/build-core";
 
 export * from 'super/i-input/i-input';
 export * from 'form/b-checkbox/interface';
@@ -181,12 +182,13 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	static validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators
+		...iInput.validators,
 
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			const
-				value = await this.formValue;
+				value = await this.groupFormValue;
 
-			if (value === undefined || value === false) {
+			if (value.length === 0) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
@@ -231,8 +233,11 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/** @override */
 	async reset(): Promise<boolean> {
-		const cleared = await super.reset();
-		return cleared ? this[`${Object.isTruly(this.default) ? '' : 'un'}check`]() : false;
+		const
+			cleared = await super.reset(),
+			hasDefault = this.default !== undefined && this.default !== false;
+
+		return cleared ? this[`${hasDefault ? '' : 'un'}check`]() : false;
 	}
 
 	/** @override */
@@ -289,11 +294,11 @@ export default class bCheckbox extends iInput implements iSize {
 
 		if (value === undefined && this.mods.checked === undefined && this.lfc.isBeforeCreate()) {
 			const
-				v = i['defaultGetter'].call(this);
+				defVal = i['defaultGetter'].call(this);
 
-			if (Object.isTruly(v)) {
+			if (defVal !== undefined && defVal !== false) {
 				void this.setMod('checked', true);
-				return v;
+				return defVal;
 			}
 		}
 
@@ -310,7 +315,7 @@ export default class bCheckbox extends iInput implements iSize {
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 
-		if ((!Object.isTruly(this.value) || this.changeable)) {
+		if (this.value === undefined || this.value === false || this.changeable) {
 			await this.toggle();
 			this.emit('actionChange', this.mods.checked === 'true');
 		}

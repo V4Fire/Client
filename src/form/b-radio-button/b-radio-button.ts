@@ -11,15 +11,7 @@
  * @packageDocumentation
  */
 
-import bCheckbox, {
-
-	component,
-
-	ValidatorsDecl,
-	ValidatorParams,
-	ValidatorResult
-
-} from 'form/b-checkbox/b-checkbox';
+import bCheckbox, { component } from 'form/b-checkbox/b-checkbox';
 
 export * from 'super/i-input/i-input';
 
@@ -29,33 +21,17 @@ export * from 'super/i-input/i-input';
 @component({flyweight: true})
 export default class bRadioButton extends bCheckbox {
 	/** @override */
-	static validators: ValidatorsDecl = {
-		//#if runtime has iInput/validators
-
-		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-			const
-				value = await this.groupFormValue;
-
-			if (!Object.isTruly(value)) {
-				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
-				return false;
-			}
-
-			return true;
-		}
-
-		//#endif
-	};
+	readonly changeable: boolean = false;
 
 	/** @override */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 
-		if (await this.check()) {
-			const
-				ctx = <any>this;
+		const
+			ctx = <any>this;
 
+		const uncheckOthers = async () => {
 			for (let els = await this.groupElements, i = 0; i < els.length; i++) {
 				const
 					el = els[i];
@@ -66,6 +42,14 @@ export default class bRadioButton extends bCheckbox {
 			}
 
 			this.emit('actionChange', true);
+		};
+
+		if (this.changeable) {
+			await this.toggle();
+			await uncheckOthers();
+
+		} else if (await this.check()) {
+			await uncheckOthers();
 		}
 	}
 }
