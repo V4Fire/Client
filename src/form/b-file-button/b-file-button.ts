@@ -7,12 +7,14 @@
  */
 
 import bButton, { component, prop, wait } from 'form/b-button/b-button';
+
 export * from 'form/b-button/b-button';
 
 @component({flyweight: true})
 export default class bFileButton extends bButton {
 	/**
-	 * Accept string
+	 * Which file types are selectable in a file upload control
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefaccept
 	 */
 	@prop({type: String, required: false})
 	readonly accept?: string;
@@ -41,8 +43,9 @@ export default class bFileButton extends bButton {
 	}
 
 	/** @override */
-	protected async onClick(e: Event): Promise<void> {
+	protected onClick(e: Event): Promise<void> {
 		this.$refs.file.click();
 		this.emit('click', e);
+		return Promise.resolve();
 	}
 }
