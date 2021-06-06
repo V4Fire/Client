@@ -84,7 +84,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/** @override */
-	get default(): unknown {
+	get default(): this['Value'] {
 		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 
