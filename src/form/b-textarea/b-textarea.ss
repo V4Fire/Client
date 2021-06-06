@@ -25,7 +25,11 @@
 		- super
 
 		- block limit
-			+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxLength'})
+			< template v-if = vdom.getSlot('limit')
+				< _.&__limit
+					+= self.slot('limit', {':limit': 'limit', ':maxLength': 'maxLength'})
+
+			< template v-else
 				< _.&__limit[.&_hidden_true] v-update-on = { &
 					emitter: 'limit',
 					handler: onLimitUpdate,

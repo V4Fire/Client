@@ -191,5 +191,47 @@ module.exports = (page) => {
 				['Characters left: 9', 'true', 'false']
 			]);
 		});
+
+		it('providing `maxLength` and the `limit` slot', async () => {
+			const target = await initTextarea(page, {
+				maxLength: 20,
+				limit: 'return ({limit, maxLength}) => "Characters left: " + limit + ". The maximum characters is " + maxLength'
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [],
+						limitEl = ctx.block.element('limit');
+
+					const values = [
+						'',
+						'bla',
+						'bla bla',
+						'bla bla bla bla',
+						'bla bla bla bla bla bla bla bla',
+						'bla bla bla',
+						''
+					];
+
+					for (const value of values) {
+						ctx.value = value;
+						await ctx.nextTick();
+
+						res.push(limitEl.innerText);
+					}
+
+					return res;
+				})
+			).toEqual([
+				'Characters left: 20. The maximum characters is 20',
+				'Characters left: 17. The maximum characters is 20',
+				'Characters left: 13. The maximum characters is 20',
+				'Characters left: 5. The maximum characters is 20',
+				'Characters left: 0. The maximum characters is 20',
+				'Characters left: 9. The maximum characters is 20',
+				'Characters left: 20. The maximum characters is 20'
+			]);
+		});
 	});
 };

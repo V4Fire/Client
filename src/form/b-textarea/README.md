@@ -39,7 +39,7 @@ You can define your own logic via the `limit` slot.
 < b-textarea :maxLength = 20 | :messageHelpers = true
 
 < b-textarea :maxLength = 20
-  < template #limit = {limit, maxlength}
+  < template #limit = {limit, maxLength}
     < template v-if = limit < maxLength / 1.5
       Characters left: {{ limit }}
 ```
@@ -73,7 +73,7 @@ The component supports one slot to provide:
 
 ```
 < b-textarea :maxLength = 20
-  < template #limit = {limit, maxlength}
+  < template #limit = {limit, maxLength}
     < template v-if = limit < maxLength / 1.5
       Characters left: {{ limit }}
 ```

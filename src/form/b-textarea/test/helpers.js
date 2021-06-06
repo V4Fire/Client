@@ -24,11 +24,20 @@ const
  */
 async function initTextarea(page, attrs = {}) {
 	await page.evaluate((attrs) => {
+		Object.forEach(attrs, (el, key) => {
+			// eslint-disable-next-line no-new-func
+			attrs[key] = /return /.test(el) ? Function(el)() : el;
+		});
+
 		const scheme = [
 			{
+				content: {
+					...Object.select(attrs, 'limit')
+				},
+
 				attrs: {
 					'data-id': 'target',
-					...attrs,
+					...Object.reject(attrs, 'limit'),
 
 					// eslint-disable-next-line no-new-func
 					regExps: /return /.test(attrs.regExps) ? Function(attrs.regExps)() : attrs.regExps
