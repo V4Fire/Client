@@ -24,7 +24,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-textarea component events', () => {
-		it('listening `change` and `actionChange events`', async () => {
+		it('listening `change` and `actionChange` events', async () => {
 			const
 				target = await initTextarea(page);
 
@@ -64,7 +64,7 @@ module.exports = (page) => {
 			]);
 		});
 
-		it('listening `change` and `actionChange events` with the provided `mask`', async () => {
+		it('listening `change` and `actionChange` events with the provided `mask`', async () => {
 			const
 				target = await initTextarea(page, {mask: '%d-%d-%d'});
 

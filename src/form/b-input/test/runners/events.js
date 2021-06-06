@@ -24,7 +24,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-input component events', () => {
-		it('listening `change` and `actionChange events`', async () => {
+		it('listening `change` and `actionChange` events', async () => {
 			const
 				target = await initInput(page);
 
@@ -64,7 +64,7 @@ module.exports = (page) => {
 			]);
 		});
 
-		it('listening `change` and `actionChange events` with the provided `mask`', async () => {
+		it('listening `change` and `actionChange` events with the provided `mask`', async () => {
 			const
 				target = await initInput(page, {mask: '%d-%d-%d'});
 
