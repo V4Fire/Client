@@ -57,7 +57,7 @@ module.exports = (page) => {
 
 					return res;
 				})
-			).toEqual(['baz', 'baz']);
+			).toEqual(['baz', 'bla']);
 		});
 
 		it('providing of attributes', async () => {

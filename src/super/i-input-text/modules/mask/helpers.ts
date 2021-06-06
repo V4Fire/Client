@@ -126,14 +126,14 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
  * Saves a snapshot of the masked input
  * @param component
  */
-export function saveSnapshot<C extends iInputText>(component: C): void {
+export function saveSnapshot<C extends iInputText>(component: C): boolean {
 	const {
 		compiledMask: mask,
 		$refs: {input}
 	} = component.unsafe;
 
 	if (mask == null) {
-		return;
+		return false;
 	}
 
 	mask!.text = component.text;
@@ -159,24 +159,26 @@ export function saveSnapshot<C extends iInputText>(component: C): void {
 			Object.assign(mask, {selectionStart, selectionEnd});
 		}
 	}
+
+	return true;
 }
 
 /**
  * Sets a position of the selection cursor at the first non-terminal symbol from the mask
  * @param component
  */
-export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(component: C): Promise<void> {
+export function setCursorPositionAtFirstNonTerminal<C extends iInputText>(component: C): boolean {
 	const {
 		unsafe,
 		unsafe: {compiledMask: mask}
 	} = component;
 
 	if (mask == null) {
-		return;
+		return false;
 	}
 
 	if (unsafe.mods.empty === 'true') {
-		await unsafe.syncMaskWithText('');
+		void unsafe.syncMaskWithText('');
 	}
 
 	let
@@ -191,41 +193,43 @@ export async function setCursorPositionAtFirstNonTerminal<C extends iInputText>(
 
 	pos = convertCursorPositionToRaw(component, pos);
 	unsafe.$refs.input.setSelectionRange(pos, pos);
+	return true;
 }
 
 /**
  * Synchronizes the `$refs.input.text` property with the `text` field
  * @param component
  */
-export function syncInputWithField<C extends iInputText>(component: C): void {
+export function syncInputWithField<C extends iInputText>(component: C): boolean {
 	const {
 		unsafe,
 		unsafe: {$refs: {input}}
 	} = component;
 
 	if (unsafe.compiledMask == null || !Object.isTruly(input)) {
-		return;
+		return false;
 	}
 
 	input.value = unsafe.text;
+	return true;
 }
 
 /**
  * Synchronizes the `text` field with the `$refs.input.text` property
  * @param component
  */
-export function syncFieldWithInput<C extends iInputText>(component: C): Promise<void> {
+export function syncFieldWithInput<C extends iInputText>(component: C): Promise<boolean> {
 	const {
 		unsafe,
 		unsafe: {compiledMask: mask}
 	} = component;
 
-	return unsafe.async.nextTick({label: $$.syncFieldWithInput}).then(() => {
+	return unsafe.async.nextTick({label: $$.syncFieldWithInput}).then(async () => {
 		const
 			{$refs: {input}} = unsafe;
 
 		if (mask == null || !Object.isTruly(input)) {
-			return;
+			return false;
 		}
 
 		const
@@ -237,8 +241,8 @@ export function syncFieldWithInput<C extends iInputText>(component: C): Promise<
 			normalizedTo = from === to ? to + 1 : to;
 
 		if (from === 0 || to >= maskSymbols.length) {
-			void unsafe.syncMaskWithText(input.value);
-			return;
+			await unsafe.syncMaskWithText(input.value);
+			return false;
 		}
 
 		const
@@ -264,13 +268,15 @@ export function syncFieldWithInput<C extends iInputText>(component: C): Promise<
 			textTail = normalizedTo >= maskSymbols.length ? '' : originalTextChunks.slice(normalizedTo),
 			textToSync = textChunks.concat(textTail);
 
-		void unsafe.syncMaskWithText(textToSync, {
+		await unsafe.syncMaskWithText(textToSync, {
 			from,
 			fitMask: false,
 			cursorPos: to,
 			preserveCursor: true,
 			preservePlaceholders: true
 		});
+
+		return true;
 	});
 }
 

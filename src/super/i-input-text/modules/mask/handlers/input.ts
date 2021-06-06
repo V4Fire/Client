@@ -22,14 +22,14 @@ import {
  * @param component
  * @param e
  */
-export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent): void {
+export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent): boolean {
 	const {
 		unsafe,
 		unsafe: {text, compiledMask: mask, $refs: {input}}
 	} = component;
 
 	if (!Object.isTruly(input)) {
-		return;
+		return false;
 	}
 
 	let
@@ -47,7 +47,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		/^[A-Z][a-z0-9]/.test(valToInput);
 
 	if (canIgnore) {
-		return;
+		 false;
 	}
 
 	e.preventDefault();
@@ -69,7 +69,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		fittedMask = fitForText(component, splicedTextChunks);
 
 	if (fittedMask == null) {
-		return;
+		return false;
 	}
 
 	const
@@ -124,4 +124,6 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 	unsafe.updateTextStore(fittedTextChunks.join(''));
 	cursorPos = convertCursorPositionToRaw(component, cursorPos);
 	input.setSelectionRange(cursorPos, cursorPos);
+
+	return true;
 }

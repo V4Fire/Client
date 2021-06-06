@@ -20,7 +20,7 @@ export const
  * @param component
  * @param e
  */
-export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent | MouseEvent): void {
+export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent | MouseEvent): boolean {
 	let canIgnore =
 		e.altKey ||
 		e.shiftKey ||
@@ -28,7 +28,7 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 		e.metaKey;
 
 	if (canIgnore) {
-		return;
+		return false;
 	}
 
 	const {
@@ -50,7 +50,7 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 	}
 
 	if (canIgnore) {
-		return;
+		return false;
 	}
 
 	if (isKeyboardEvent) {
@@ -60,6 +60,8 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 	} else {
 		unsafe.async.setTimeout(modifySelectionPos, 0, {label: $$.setCursor});
 	}
+
+	return true;
 
 	function modifySelectionPos(): void {
 		const

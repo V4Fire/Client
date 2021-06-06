@@ -22,7 +22,7 @@ import {
  * @param component
  * @param e
  */
-export async function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): Promise<void> {
+export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): boolean {
 	const {
 		unsafe,
 		unsafe: {text, compiledMask: mask, $refs: {input}}
@@ -37,7 +37,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 		!{Backspace: true, Delete: true}[e.key];
 
 	if (canIgnore) {
-		return;
+		return false;
 	}
 
 	e.preventDefault();
@@ -47,7 +47,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 
 	switch (e.key) {
 		case 'Delete': {
-			await unsafe.syncMaskWithText('', {
+			void unsafe.syncMaskWithText('', {
 				from: selectionStart,
 				to: selectionEnd - selectionStart > 1 ? selectionEnd - 1 : selectionEnd,
 				preserveCursor: true
@@ -62,7 +62,7 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 				fittedMask = fitForText(component, textChunks);
 
 			if (fittedMask == null) {
-				return;
+				return false;
 			}
 
 			const
@@ -113,4 +113,6 @@ export async function onDelete<C extends iInputText>(component: C, e: KeyboardEv
 		default:
 			// Do nothing
 	}
+
+	return true;
 }

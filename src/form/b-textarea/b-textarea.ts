@@ -399,7 +399,7 @@ export default class bTextarea extends iInputText {
 	/**
 	 * Handler: updating of a component text value
 	 */
-	@watch('textStore')
+	@watch({path: 'textStore', immediate: true})
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
@@ -418,21 +418,33 @@ export default class bTextarea extends iInputText {
 	}
 
 	/** @override */
-	protected onMaskInput(): Promise<void> {
-		return super.onMaskInput().then(() => {
-			this.emit('actionChange', this.value);
+	protected onMaskInput(): Promise<boolean> {
+		return super.onMaskInput().then((res) => {
+			if (res) {
+				this.emit('actionChange', this.value);
+			}
+
+			return res;
 		});
 	}
 
 	/** @override */
-	protected onMaskKeyPress(e: KeyboardEvent): void {
-		super.onMaskKeyPress(e);
-		this.emit('actionChange', this.value);
+	protected onMaskKeyPress(e: KeyboardEvent): boolean {
+		if (super.onMaskKeyPress(e)) {
+			this.emit('actionChange', this.value);
+			return true;
+		}
+
+		return false;
 	}
 
 	/** @override */
-	protected onMaskDelete(e: KeyboardEvent): void {
-		super.onMaskDelete(e);
-		this.emit('actionChange', this.value);
+	protected onMaskDelete(e: KeyboardEvent): boolean {
+		if (super.onMaskDelete(e)) {
+			this.emit('actionChange', this.value);
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -409,21 +409,21 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	/**
 	 * Handler: the input with a mask has lost the focus
 	 */
-	protected onMaskBlur(): void {
-		mask.syncInputWithField(this);
+	protected onMaskBlur(): boolean {
+		return mask.syncInputWithField(this);
 	}
 
 	/**
 	 * Handler: value of the masked input has been changed and can be saved
 	 */
-	protected onMaskValueReady(): void {
-		mask.saveSnapshot(this);
+	protected onMaskValueReady(): boolean {
+		return mask.saveSnapshot(this);
 	}
 
 	/**
 	 * Handler: there is occur an input action on the masked input
 	 */
-	protected onMaskInput(): Promise<void> {
+	protected onMaskInput(): Promise<boolean> {
 		return mask.syncFieldWithInput(this);
 	}
 
@@ -431,23 +431,23 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * Handler: there is occur a keypress action on the masked input
 	 * @param e
 	 */
-	protected onMaskKeyPress(e: KeyboardEvent): void {
-		mask.onKeyPress(this, e);
+	protected onMaskKeyPress(e: KeyboardEvent): boolean {
+		return mask.onKeyPress(this, e);
 	}
 
 	/**
 	 * Handler: removing characters from the mask via `backspace/delete` buttons
 	 * @param e
 	 */
-	protected onMaskDelete(e: KeyboardEvent): void {
-		void mask.onDelete(this, e);
+	protected onMaskDelete(e: KeyboardEvent): boolean {
+		return mask.onDelete(this, e);
 	}
 
 	/**
 	 * Handler: "navigation" over the mask via "arrow" buttons or click events
 	 * @param e
 	 */
-	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): void {
-		mask.onNavigate(this, e);
+	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): boolean {
+		return mask.onNavigate(this, e);
 	}
 }
