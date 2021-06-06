@@ -704,19 +704,19 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@p({replace: false})
 	@wait('ready')
-	async clear(): Promise<boolean> {
+	clear(): Promise<boolean> {
 		if (this.value !== undefined) {
 			this.value = undefined;
 			this.async.clearAll({group: 'validation'});
-			await this.nextTick();
 
-			void this.removeMod('valid');
-			this.emit('clear', this.value);
-
-			return true;
+			return this.nextTick().then(() => {
+				void this.removeMod('valid');
+				this.emit('clear', this.value);
+				return true;
+			});
 		}
 
-		return false;
+		return SyncPromise.resolve(false);
 	}
 
 	/**
@@ -729,15 +729,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		if (this.value !== this.default) {
 			this.value = this.default;
 			this.async.clearAll({group: 'validation'});
-			await this.nextTick();
 
-			void this.removeMod('valid');
-			this.emit('reset', this.value);
-
-			return true;
+			return this.nextTick().then(() => {
+				void this.removeMod('valid');
+				this.emit('reset', this.value);
+				return true;
+			});
 		}
 
-		return false;
+		return SyncPromise.resolve(false);
 	}
 
 	/**

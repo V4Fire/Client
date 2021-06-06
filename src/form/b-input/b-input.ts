@@ -16,6 +16,8 @@ import 'models/demo/input';
 //#endif
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
+
 import { deprecated } from 'core/functools/deprecation';
 
 import iInputText, {
@@ -239,21 +241,18 @@ export default class bInput extends iInputText {
 	protected textStore!: string;
 
 	/** @override */
-	async clear(): Promise<boolean> {
+	clear(): Promise<boolean> {
 		const v = this.value;
 		void this.clearText();
 
 		if (v !== '') {
 			this.async.clearAll({group: 'validation'});
-			await this.nextTick();
-
 			void this.removeMod('valid');
 			this.emit('clear', this.value);
-
-			return true;
+			return SyncPromise.resolve(true);
 		}
 
-		return false;
+		return SyncPromise.resolve(false);
 	}
 
 	/**
@@ -261,7 +260,7 @@ export default class bInput extends iInputText {
 	 * @see [[bInput.selectText]]
 	 */
 	@deprecated({renamedTo: 'selectText'})
-	async selectAll(): Promise<boolean> {
+	selectAll(): Promise<boolean> {
 		return this.selectText();
 	}
 
