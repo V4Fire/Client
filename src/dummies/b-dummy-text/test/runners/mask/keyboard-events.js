@@ -37,10 +37,7 @@ module.exports = (page) => {
 					res = [],
 					keys = ['1', 'a', '2'];
 
-				for (let i = 0; i < keys.length; i++) {
-					const
-						key = keys[i];
-
+				for (const key of keys) {
 					input.dispatchEvent(new KeyboardEvent('keydown', {
 						key,
 						code: `Key${key.toUpperCase()}`
@@ -71,10 +68,7 @@ module.exports = (page) => {
 					res = [],
 					keys = ['1', 'a', '2', '5', '8'];
 
-				for (let i = 0; i < keys.length; i++) {
-					const
-						key = keys[i];
-
+				for (const key of keys) {
 					input.dispatchEvent(new KeyboardEvent('keydown', {
 						key,
 						code: `Key${key.toUpperCase()}`
@@ -147,14 +141,11 @@ module.exports = (page) => {
 
 				input.focus();
 
-				for (let i = 0; i < 3; i++) {
-					const
-						val = values[i];
-
+				for (const val of values) {
 					ctx.compiledMask.selectionStart = 0;
 					ctx.compiledMask.selectionEnd = input.value.length;
 
-					input.value = values[i];
+					input.value = val;
 					input.dispatchEvent(new InputEvent('input', {data: val}));
 
 					await Promise.resolve((r) => setTimeout(r, 10));
