@@ -108,43 +108,5 @@ module.exports = (page) => {
 
 			).toEqual(['foo', 'bar', 'bar', 'bla']);
 		});
-
-		it('listening `selectText`', async () => {
-			const target = await initInput(page, {
-				text: 'foo'
-			});
-
-			expect(
-				await target.evaluate((ctx) => {
-					const
-						res = [];
-
-					ctx.on('selectText', () => res.push(true));
-					ctx.selectText();
-					ctx.selectText();
-
-					return res;
-				})
-			).toEqual([true]);
-		});
-
-		it('listening `clearText`', async () => {
-			const target = await initInput(page, {
-				text: 'foo'
-			});
-
-			expect(
-				await target.evaluate((ctx) => {
-					const
-						res = [];
-
-					ctx.on('clearText', () => res.push(true));
-					ctx.clearText();
-					ctx.clearText();
-
-					return res;
-				})
-			).toEqual([true]);
-		});
 	});
 };
