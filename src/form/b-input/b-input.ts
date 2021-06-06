@@ -241,10 +241,16 @@ export default class bInput extends iInputText {
 	/** @override */
 	async clear(): Promise<boolean> {
 		const v = this.value;
-		await this.clearText();
+		void this.clearText();
 
 		if (v !== '') {
-			return super.clear();
+			this.async.clearAll({group: 'validation'});
+			await this.nextTick();
+
+			void this.removeMod('valid');
+			this.emit('clear', this.value);
+
+			return true;
 		}
 
 		return false;

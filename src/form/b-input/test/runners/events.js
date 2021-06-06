@@ -127,7 +127,7 @@ module.exports = (page) => {
 
 		it('listening `clearText`', async () => {
 			const target = await initInput(page, {
-				text: 'foo'
+				value: 'foo'
 			});
 
 			expect(
@@ -142,6 +142,47 @@ module.exports = (page) => {
 					return res;
 				})
 			).toEqual([true]);
+		});
+
+		it('listening `clear`', async () => {
+			const target = await initInput(page, {
+				value: 'foo'
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.on('onClear', (val) => res.push(val));
+					ctx.clear();
+					ctx.clear();
+
+					await ctx.nextTick();
+					return res;
+				})
+			).toEqual(['']);
+		});
+
+		it('listening `reset`', async () => {
+			const target = await initInput(page, {
+				text: 'foo',
+				default: 'bla'
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.on('onReset', (val) => res.push(val));
+					ctx.reset();
+					ctx.reset();
+
+					await ctx.nextTick();
+					return res;
+				})
+			).toEqual(['bla']);
 		});
 	});
 };
