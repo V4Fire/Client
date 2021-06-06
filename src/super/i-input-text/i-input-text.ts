@@ -324,7 +324,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 			this.text = '';
 		}
 
-		this.emit('selectText');
+		this.emit('clearText');
 		return true;
 	}
 

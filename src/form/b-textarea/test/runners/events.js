@@ -105,5 +105,43 @@ module.exports = (page) => {
 				['change', '3-_-_']
 			]);
 		});
+
+		it('listening `selectText`', async () => {
+			const target = await initTextarea(page, {
+				text: 'foo'
+			});
+
+			expect(
+				await target.evaluate((ctx) => {
+					const
+						res = [];
+
+					ctx.on('selectText', () => res.push(true));
+					ctx.selectText();
+					ctx.selectText();
+
+					return res;
+				})
+			).toEqual([true]);
+		});
+
+		it('listening `clearText`', async () => {
+			const target = await initTextarea(page, {
+				text: 'foo'
+			});
+
+			expect(
+				await target.evaluate((ctx) => {
+					const
+						res = [];
+
+					ctx.on('clearText', () => res.push(true));
+					ctx.clearText();
+					ctx.clearText();
+
+					return res;
+				})
+			).toEqual([true]);
+		});
 	});
 };
