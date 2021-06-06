@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-textarea/README.md]]
+ * @packageDocumentation
+ */
+
 //#if demo
 import 'models/demo/input';
 //#endif
@@ -21,9 +26,7 @@ import iInputText, {
 
 	hook,
 	wait,
-	watch,
-
-	ModsDecl
+	watch
 
 } from 'super/i-input-text/i-input-text';
 
@@ -62,8 +65,8 @@ export default class bTextarea extends iInputText {
 	readonly defaultProp?: this['Value'];
 
 	/**
-	 * How many rows need to add to extend the textarea height when it can't fit the whole content without
-	 * showing a scrollbar. The value of one row is equal to `line-height` of the textarea or `16`.
+	 * How many rows need to add to extend the textarea height when it can't fit the entire content without
+	 * showing a scrollbar. The value of one row is equal to `line-height` of the textarea or `font-size`.
 	 */
 	@prop(Number)
 	readonly extRowCount: number = 1;
@@ -106,7 +109,7 @@ export default class bTextarea extends iInputText {
 
 	/**
 	 * Height of a newline.
-	 * It depends on `line-height` of the textarea.
+	 * It depends on `line-height/font-size` of the textarea.
 	 */
 	get newlineHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
@@ -119,7 +122,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Number of remaining letters that the component can contain
+	 * Number of remaining characters that the component can contain
 	 */
 	@computed({dependencies: ['value']})
 	get limit(): CanUndef<number> {
@@ -130,14 +133,6 @@ export default class bTextarea extends iInputText {
 		const val = this.maxLength - this.value.length;
 		return val >= 0 ? val : 0;
 	}
-
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		collapsed: [
-			'true',
-			'false'
-		]
-	};
 
 	/** @override */
 	@system()
