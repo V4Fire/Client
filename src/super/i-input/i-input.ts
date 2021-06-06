@@ -352,7 +352,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @see [[iInput.defaultProp]]
 	 */
 	@p({replace: false})
-	get default(): unknown {
+	get default(): this['Value'] {
 		return this.defaultProp;
 	}
 
