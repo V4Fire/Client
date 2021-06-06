@@ -39,7 +39,6 @@ import iInput, {
 } from 'super/i-input/i-input';
 
 import type { CheckType, Value, FormValue } from 'form/b-checkbox/interface';
-import {validators} from "@pzlr/build-core";
 
 export * from 'super/i-input/i-input';
 export * from 'form/b-checkbox/interface';
@@ -348,7 +347,7 @@ export default class bCheckbox extends iInput implements iSize {
 			this.emit('uncheck');
 
 		} else {
-			this.emit('check', e.value);
+			this.emit('check', Object.parse(e.value));
 		}
 
 		if (Object.isTruly(this.id)) {
