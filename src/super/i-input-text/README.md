@@ -128,7 +128,7 @@ All non-terminal symbols from the mask without the specified value will have thi
 
 #### [maskRepetitionsProp]
 
-A number of mask repetitions.
+Number of mask repetitions.
 This parameter allows you to specify how many times the mask pattern needs to apply to the input value.
 The `true` value means that the pattern can be repeated infinitely.
 

@@ -156,7 +156,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly maskPlaceholder: string = '_';
 
 	/**
-	 * A number of mask repetitions.
+	 * Number of mask repetitions.
 	 * This parameter allows you to specify how many times the mask pattern needs to apply to the input value.
 	 * The `true` value means that the pattern can be repeated infinitely.
 	 *
@@ -280,7 +280,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	protected compiledMask?: CompiledMask;
 
 	/**
-	 * A number of mask repetitions
+	 * Number of mask repetitions
 	 * @see [[iInputText.maskRepetitionsProp]]
 	 */
 	@system()

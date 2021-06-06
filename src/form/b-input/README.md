@@ -41,7 +41,7 @@ The component has two base scenarios of usage:
 
 ```
 < b-form :dataProvider = 'User' | :method = 'add'
-  < b-input :name = 'fname' | :value = fName
+  < b-input :name = 'fname'
   < b-button :type = 'submit'
 ```
 
