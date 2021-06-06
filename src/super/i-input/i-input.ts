@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
 import { Option } from 'core/prelude/structures';
 
 import iAccess from 'traits/i-access/i-access';
@@ -676,10 +677,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		if (input != null && !this.isFocused) {
 			input.focus();
-			return Promise.resolve(true);
+			return SyncPromise.resolve(true);
 		}
 
-		return Promise.resolve(false);
+		return SyncPromise.resolve(false);
 	}
 
 	/** @see [[iAccess.blur]] */
@@ -691,10 +692,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		if (input != null && this.isFocused) {
 			input.blur();
-			return Promise.resolve(true);
+			return SyncPromise.resolve(true);
 		}
 
-		return Promise.resolve(false);
+		return SyncPromise.resolve(false);
 	}
 
 	/**

@@ -13,6 +13,8 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
+
 import type iBlock from 'super/i-block/i-block';
 import type { ModsDecl, ModEvent, SetModEvent } from 'super/i-block/i-block';
 import type { CloseHelperEvents } from 'traits/i-open/interface';
@@ -32,11 +34,11 @@ export default abstract class iOpen {
 
 	/** @see [[iOpen.open]] */
 	static open: AddSelf<iOpen['open'], iBlock> =
-		async (component) => component.setMod('opened', true);
+		(component) => SyncPromise.resolve(component.setMod('opened', true));
 
 	/** @see [[iOpen.close]] */
 	static close: AddSelf<iOpen['close'], iBlock> =
-		async (component) => component.setMod('opened', false);
+		(component) => SyncPromise.resolve(component.setMod('opened', false));
 
 	/** @see [[iOpen.onOpenedChange]] */
 	static onOpenedChange: AddSelf<iOpen['onOpenedChange'], iBlock> = async (component) => {
