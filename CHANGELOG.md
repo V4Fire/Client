@@ -20,8 +20,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Removed `bInputTime`
 * Removed `bScroll`
 
+* Now the component inherits `iInputText`:
+  * `bInput`
+  * `bTextarea`
+  * `bSelect`
+
 * `bInput`:
-  * Now the component inherits `iInputText`
   * Removed `&__super-wrapper`
   * New API of component validators
 
@@ -76,6 +80,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bInputHidden`
   * `bForm`
   * `bInput`
+  * `bTextarea`
 
 #### :house: Internal
 
@@ -89,12 +94,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bInputHidden`
   * `bForm`
   * `bInput`
+  * `bTextarea`
 
 * Added tests:
   * `bCheckbox`
   * `bRadioButton`
   * `bInputHidden`
   * `bForm`
+  * `bInput`
+  * `bTextarea`
 
 ## v3.0.0-rc.197 (2021-??-??)
 
