@@ -181,3 +181,23 @@ declare var
 	 * Removes all components created via `globalThis.renderComponents`
 	 */
 	removeCreatedComponents: () => void;
+
+declare module '*.wasm.js' {
+	const content: string;
+	export default content;
+}
+
+declare module '*.wasm.js?staticUrl' {
+	const content: string;
+	export default content;
+}
+
+declare module '*.wasm.js?inline' {
+	const content: string;
+	export default content;
+}
+
+declare module '*.wasm' {
+	const content: string;
+	export default content;
+}
