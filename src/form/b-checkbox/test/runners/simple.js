@@ -80,7 +80,7 @@ module.exports = (page) => {
 			).toBeUndefined();
 		});
 
-		it('checking a non-defined value of the checkbox (user actions)', async () => {
+		it('checking a non-defined value (user actions)', async () => {
 			const target = await init();
 
 			expect(
@@ -100,7 +100,7 @@ module.exports = (page) => {
 			).toBeUndefined();
 		});
 
-		it('checking a predefined value of the checkbox (user actions)', async () => {
+		it('checking a predefined value (user actions)', async () => {
 			const target = await init({value: 'bar'});
 
 			expect(
@@ -120,7 +120,7 @@ module.exports = (page) => {
 			).toBeUndefined();
 		});
 
-		it('checking a non-defined value of the checkbox (API)', async () => {
+		it('checking a non-defined value (API)', async () => {
 			const target = await init();
 
 			expect(
@@ -152,7 +152,7 @@ module.exports = (page) => {
 			).toBeUndefined();
 		});
 
-		it('checking a predefined value of the checkbox (API)', async () => {
+		it('checking a predefined value (API)', async () => {
 			const target = await init({value: 'bar'});
 
 			expect(
