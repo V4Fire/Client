@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Now all watchers support suspending
+
 ## v3.0.0-rc.197 (2021-06-07)
 
 #### :boom: Breaking Change
@@ -21,10 +27,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with `bBottomSlide` not being able to open from the pull
 * Fixed an issue with `bBottomSlide` not being able to initialize `i-history` if the component was opened via swipe
-
-#### :rocket: New Feature
-
-* Now all watchers support suspending
 
 #### :memo: Documentation
 
