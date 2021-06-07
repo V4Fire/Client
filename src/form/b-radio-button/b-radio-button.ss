@@ -12,6 +12,3 @@
 
 - template index() extends ['b-checkbox'].index
 	- nativeInputType = "'radio'"
-
-	- block check
-		< .&__check
