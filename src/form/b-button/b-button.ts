@@ -181,17 +181,6 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		]
 	};
 
-	@watch({path: 'watchTmp.a', collapse: false, immediate: true})
-	onMods(v, o) {
-		console.log(111, v, o);
-	}
-
-	mounted() {
-		this.watch('watchTmp.a', {collapse: false, immediate: true}, (v, o) => {
-			console.log(333, v, o);
-		});
-	}
-
 	/** @override */
 	protected readonly $refs!: {button: HTMLButtonElement};
 

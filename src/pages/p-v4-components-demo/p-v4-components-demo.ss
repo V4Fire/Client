@@ -14,18 +14,6 @@
 	- block body
 		: config = require('config').build
 
-		< b-button ref = a | v-func = false
-			Test
-
-		< button @click = $refs.a.deactivate()
-			Deactivate
-
-		< button @click = $refs.a.activate()
-			Activate
-
-		< button @click = $refs.a.watchTmp.a=($refs.a.watchTmp.a || 0) + 1
-			Mutate
-
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo
