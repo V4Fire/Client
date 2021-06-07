@@ -128,6 +128,15 @@ Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
 ### Props
 
+#### [default = false]
+
+If true, the component is checked by default.
+Also, it will be checked after resetting.
+
+```
+< b-checbox :name = 'bar' | :default = true
+```
+
 #### [parentId]
 
 An identifier of the "parent" checkbox.

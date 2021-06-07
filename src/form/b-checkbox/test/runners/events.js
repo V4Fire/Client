@@ -91,6 +91,49 @@ module.exports = (page) => {
 			]);
 		});
 
+		it('listening `clear`', async () => {
+			const target = await init({
+				value: 'foo',
+				checked: true
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [ctx.value];
+
+					ctx.on('onClear', (val) => res.push(val));
+					ctx.clear();
+					ctx.clear();
+
+					await ctx.nextTick();
+					return res;
+				})
+			).toEqual(['foo', undefined]);
+		});
+
+		it('listening `reset`', async () => {
+			const target = await init({
+				value: 'foo',
+				checked: false,
+				default: true
+			});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						res = [ctx.value];
+
+					ctx.on('onReset', (val) => res.push(val));
+					ctx.reset();
+					ctx.reset();
+
+					await ctx.nextTick();
+					return res;
+				})
+			).toEqual([undefined, 'foo']);
+		});
+
 		async function init(attrs = {}) {
 			await page.evaluate((attrs) => {
 				const scheme = [

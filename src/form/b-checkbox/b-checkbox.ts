@@ -24,6 +24,7 @@ import iInput, {
 
 	component,
 	prop,
+	system,
 	computed,
 	p,
 
@@ -65,9 +66,12 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	readonly FormValue!: FormValue;
 
-	/** @override */
-	@prop({type: Boolean, required: false})
-	readonly defaultProp?: this['Value'];
+	/**
+	 * If true, the component is checked by default.
+	 * Also, it will be checked after resetting.
+	 */
+	@prop(Boolean)
+	readonly defaultProp: boolean = false;
 
 	/**
 	 * An identifier of the "parent" checkbox.
@@ -130,11 +134,6 @@ export default class bCheckbox extends iInput implements iSize {
 	readonly changeable: boolean = true;
 
 	/** @override */
-	get default(): unknown {
-		return this.defaultProp ?? false;
-	}
-
-	/** @override */
 	@p({replace: false})
 	get value(): this['Value'] {
 		const
@@ -157,6 +156,11 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	set value(value: this['Value']) {
 		super['valueSetter'](value);
+	}
+
+	/** @override */
+	get default(): boolean {
+		return this.defaultProp;
 	}
 
 	/**
@@ -199,44 +203,58 @@ export default class bCheckbox extends iInput implements iSize {
 	};
 
 	/** @override */
+	@system()
+	protected valueStore!: this['Value'];
+
+	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
 
 	/**
 	 * Checks the checkbox
 	 */
-	async check(value?: CheckType): Promise<boolean> {
-		return this.setMod('checked', value ?? true);
+	check(value?: CheckType): Promise<boolean> {
+		return SyncPromise.resolve(this.setMod('checked', value ?? true));
 	}
 
 	/**
 	 * Unchecks the checkbox
 	 */
-	async uncheck(): Promise<boolean> {
-		return this.setMod('checked', false);
+	uncheck(): Promise<boolean> {
+		return SyncPromise.resolve(this.setMod('checked', false));
 	}
 
 	/**
 	 * Toggles the checkbox.
 	 * The method returns a new value.
 	 */
-	async toggle(): Promise<this['Value']> {
-		await (this.mods.checked === 'true' ? this.uncheck() : this.check());
-		return this.value;
+	toggle(): Promise<this['Value']> {
+		return (this.mods.checked === 'true' ? this.uncheck() : this.check()).then(() => this.value);
 	}
 
 	/** @override */
-	async clear(): Promise<boolean> {
-		const cleared = await super.clear();
-		return cleared ? this.uncheck() : false;
+	clear(): Promise<boolean> {
+		const res = super.clear();
+		void this.uncheck();
+		return res;
 	}
 
 	/** @override */
-	async reset(): Promise<boolean> {
-		const
-			cleared = await super.reset(),
-			hasDefault = this.default !== undefined && this.default !== false;
+	reset(): Promise<boolean> {
+		const onReset = (res: boolean) => {
+			if (res) {
+				void this.removeMod('valid');
+				this.emit('reset', this.value);
+				return true;
+			}
 
-		return cleared ? this[`${hasDefault ? '' : 'un'}check`]() : false;
+			return false;
+		};
+
+		if (this.default) {
+			return this.check().then(onReset);
+		}
+
+		return this.uncheck().then(onReset);
 	}
 
 	/** @override */
@@ -291,14 +309,14 @@ export default class bCheckbox extends iInput implements iSize {
 		const
 			i = this.instance;
 
-		if (value === undefined && this.mods.checked === undefined && this.lfc.isBeforeCreate()) {
-			const
-				defVal = i['defaultGetter'].call(this);
+		const canApplyDefault =
+			value === undefined &&
+			this.mods.checked === undefined &&
+			this.lfc.isBeforeCreate() &&
+			Boolean(i['defaultGetter'].call(this));
 
-			if (defVal !== undefined && defVal !== false) {
-				void this.setMod('checked', true);
-				return defVal;
-			}
+		if (canApplyDefault) {
+			void this.check();
 		}
 
 		return value;
