@@ -46,15 +46,12 @@ You can define your own logic via the `limit` slot.
 
 ## Usage
 
-The component has two base scenarios of usage:
+The component has several base scenarios of usage:
 
 ### A simple standalone textarea
 
 ```
 < b-textarea :value = myValue | @onActionChange = console.log($event)
-
-/// The component loads data from a provider
-< b-textarea :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
 ### A component that tied with some form
@@ -64,6 +61,28 @@ The component has two base scenarios of usage:
   < b-textarea :name = 'desc'
   < b-button :type = 'submit'
 ```
+
+### Loading from a data provider
+
+```
+< b-textarea :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
+```
+
+If a provider returns a dictionary, it will be mapped on the component
+(you can pass the complex property path using dots as separators).
+
+If a key from the response is matched with a component method, this method will be invoked with a value from this key
+(if the value is an array, it will be spread to the method as arguments).
+
+```
+{
+  value: true,
+  label: 'Are you over 18?',
+  'mods.focused': true
+}
+```
+
+In other cases, the response value is interpreted as a component value.
 
 ## Slots
 

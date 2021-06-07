@@ -26,15 +26,12 @@ See the parent component and the component traits.
 
 ## Usage
 
-The component has two base scenarios of usage:
+The component several base scenarios of usage:
 
 ### A simple standalone input component
 
 ```
 < b-input :value = myValue | @onActionChange = console.log($event)
-
-/// The component loads data from a provider
-< b-input :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
 ### A component that tied with some form
@@ -44,6 +41,28 @@ The component has two base scenarios of usage:
   < b-input :name = 'fname'
   < b-button :type = 'submit'
 ```
+
+### Loading from a data provider
+
+```
+< b-input :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
+```
+
+If a provider returns a dictionary, it will be mapped on the component
+(you can pass the complex property path using dots as separators).
+
+If a key from the response is matched with a component method, this method will be invoked with a value from this key
+(if the value is an array, it will be spread to the method as arguments).
+
+```
+{
+  value: true,
+  label: 'Are you over 18?',
+  'mods.focused': true
+}
+```
+
+In other cases, the response value is interpreted as a component value.
 
 ## Slots
 
