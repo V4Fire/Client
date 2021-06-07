@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.197 (2021-??-??)
+
+#### :rocket: New Feature
+
+* Now all watchers support suspending
+
 ## v3.0.0-rc.188 (2021-05-14)
 
 #### :rocket: New Feature

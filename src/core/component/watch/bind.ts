@@ -294,14 +294,14 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							unsafe.$on(watchPath, handler);
 
 						} else {
-							const watch = (watcherCtx) =>
+							const addListener = (watcherCtx) =>
 								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
 
 							if (Object.isPromise(watcherCtx)) {
-								$a.promise(watcherCtx, asyncParams).then(watch, stderr);
+								$a.promise(watcherCtx, asyncParams).then(addListener, stderr);
 
 							} else {
-								watch(watcherCtx);
+								addListener(watcherCtx);
 							}
 						}
 

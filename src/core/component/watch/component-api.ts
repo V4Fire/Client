@@ -50,7 +50,7 @@ export function implementComponentWatchAPI(
 ): void {
 	const {
 		unsafe,
-		unsafe: {meta: {watchDependencies, computedFields, accessors, params}},
+		unsafe: {$async: $a, meta: {watchDependencies, computedFields, accessors, params}},
 		$renderEngine: {proxyGetters}
 	} = component;
 
@@ -257,9 +257,11 @@ export function implementComponentWatchAPI(
 		if (isNotRegular) {
 			// We need to track all modified fields of a function instance
 			// to restore state if a parent has re-created the component
-			watch(watcher.proxy, {deep: true, collapse: true, immediate: true}, (v, o, i) => {
+			const w = watch(watcher.proxy, {deep: true, collapse: true, immediate: true}, (v, o, i) => {
 				unsafe.$modifiedFields[String(i.path[0])] = true;
 			});
+
+			$a.worker(() => w.unwatch());
 		}
 	};
 
@@ -268,30 +270,51 @@ export function implementComponentWatchAPI(
 	let
 		fieldsWatcher;
 
+	const initFieldsWatcher = () => {
+		const immediateFieldWatchOpts = {
+			...fieldWatchOpts,
+			immediate: true
+		};
+
+		fieldsWatcher = watch(fieldsInfo.value, immediateFieldWatchOpts, invalidateComputedCache());
+		$a.worker(() => fieldsWatcher.unwatch());
+
+		{
+			const w = watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
+			$a.worker(() => w.unwatch());
+		}
+
+		initWatcher(fieldsInfo.key, fieldsWatcher);
+	};
+
 	if (isNotRegular) {
 		// Don't force watching of fields until it becomes necessary
 		fieldsInfo.value[watcherInitializer] = () => {
 			delete fieldsInfo.value[watcherInitializer];
-			fieldsWatcher = watch(fieldsInfo.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
-
-			watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
-			initWatcher(fieldsInfo.key, fieldsWatcher);
+			initFieldsWatcher();
 		};
 
 	} else {
-		fieldsWatcher = watch(fieldsInfo.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache());
-		watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
-		initWatcher(fieldsInfo.key, fieldsWatcher);
+		initFieldsWatcher();
 	}
 
 	// Don't force watching of system fields until it becomes necessary
 	systemFieldsInfo.value[watcherInitializer] = () => {
 		delete systemFieldsInfo.value[watcherInitializer];
 
-		const
-			systemFieldsWatcher = watch(systemFieldsInfo.value, {...watchOpts, immediate: true}, invalidateComputedCache());
+		const immediateSystemWatchOpts = {
+			...watchOpts,
+			immediate: true
+		};
 
-		watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents());
+		const systemFieldsWatcher = watch(systemFieldsInfo.value, immediateSystemWatchOpts, invalidateComputedCache());
+		$a.worker(() => systemFieldsWatcher.unwatch());
+
+		{
+			const w = watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents());
+			$a.worker(() => w.unwatch());
+		}
+
 		initWatcher(systemFieldsInfo.key, systemFieldsWatcher);
 	};
 
@@ -332,7 +355,7 @@ export function implementComponentWatchAPI(
 
 		// We need to attach a watcher for a prop object
 		// and watchers for each non primitive value of that object, like arrays or maps.
-		if (propsStore != null) {
+		if (Object.isTruly(propsStore)) {
 			const propWatchOpts = {
 				...watchOpts,
 				postfixes: ['Prop']
@@ -342,6 +365,7 @@ export function implementComponentWatchAPI(
 			// we need to wrap a prop object
 			if (!('watch' in props)) {
 				const propsWatcher = watch(propsStore, propWatchOpts);
+				$a.worker(() => propsWatcher.unwatch());
 				initWatcher((<Dictionary>props).key, propsWatcher);
 			}
 

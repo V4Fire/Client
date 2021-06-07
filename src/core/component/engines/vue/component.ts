@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set } from 'core/object/watch';
+import watch, { set, WatchHandlerParams } from 'core/object/watch';
 import * as init from 'core/component/construct';
 
 import { beforeRenderHooks } from 'core/component/const';
@@ -55,9 +55,23 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 
 			init.beforeDataCreateState(ctx);
 
-			watch(ctx.$fields, {deep: true, immediate: true}, (value, oldValue, info) => {
+			const emitter = (_, handler) => {
+				const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
+				return unwatch;
+			};
+
+			ctx.$async.on(emitter, 'mutation', watcher, {
+				group: 'watchers:suspend'
+			});
+
+			return ctx.$fields;
+
+			function watcher(value: unknown, oldValue: unknown, info: WatchHandlerParams): void {
+				const
+					{path} = info;
+
 				ctx.lastSelfReasonToRender = {
-					path: info.path,
+					path,
 					value,
 					oldValue
 				};
@@ -66,17 +80,17 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 					return;
 				}
 
-				if (meta.fields[String(info.path[0])]?.forceUpdate !== false) {
+				if (meta.fields[String(path[0])]?.forceUpdate !== false) {
 					ctx.$forceUpdate();
 				}
 
 				let
 					{obj} = info;
 
-				if (info.path.length > 1) {
+				if (path.length > 1) {
 					if (Object.isDictionary(obj)) {
 						const
-							key = String(info.path[info.path.length - 1]),
+							key = String(path[path.length - 1]),
 							desc = Object.getOwnPropertyDescriptor(obj, key);
 
 						// If we register a new property, we must register it to Vue too
@@ -86,7 +100,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 							delete obj[key];
 
 							// Get a link to a proxy object
-							obj = Object.get(ctx.$fields, info.path.slice(0, -1)) ?? {};
+							obj = Object.get(ctx.$fields, path.slice(0, -1)) ?? {};
 							delete obj[key];
 
 							// Finally we can register a Vue watcher
@@ -98,12 +112,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 
 					// Because Vue doesn't see changes from Map/Set structures, we must use this hack
 					} else if (Object.isSet(obj) || Object.isMap(obj) || Object.isWeakMap(obj) || Object.isWeakSet(obj)) {
-						Object.set(ctx, info.path.slice(0, -1), fakeMapSetCopy(obj));
+						Object.set(ctx, path.slice(0, -1), fakeMapSetCopy(obj));
 					}
 				}
-			});
-
-			return ctx.$fields;
+			}
 		},
 
 		beforeCreate(): void {

@@ -1624,7 +1624,10 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		void this.lfc.execCbAfterComponentCreated(() => {
-			$a.on((_, handler) => this.$watch(<any>path, opts, handler), 'mutation', handler, {
+			const
+				emitter = (_, handler) => this.$watch(<any>path, opts, handler) ?? undefined;
+
+			$a.on(emitter, 'mutation', handler, {
 				group: `${opts.group ?? ''}:suspend`,
 				label: opts.label,
 				join: opts.join
