@@ -809,9 +809,19 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 				}
 			}
 
+			const
+				prevStep = this.step;
+
 			if (step === 0) {
 				this.close().catch(stderr);
+
+			} else if (prevStep === 0) {
+				this.open(step).catch(stderr);
+
+			} else {
+				this.step = step;
 			}
+
 		}
 
 		this.stickToStep();
