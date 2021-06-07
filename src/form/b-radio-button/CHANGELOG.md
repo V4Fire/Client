@@ -11,10 +11,14 @@ Changelog
 
 ## v3.0.0-rc.?? ()
 
+#### :memo: Documentation
+
+* Added documentation
+
 #### :house: Internal
 
 * Fixed ESLint warnings
 
-#### :memo: Documentation
+#### :nail_care: Polish
 
-* Added documentation
+* Added tests
