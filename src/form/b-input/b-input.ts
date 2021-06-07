@@ -261,7 +261,7 @@ export default class bInput extends iInputText {
 	 */
 	@deprecated({renamedTo: 'selectText'})
 	selectAll(): Promise<boolean> {
-		return this.selectText();
+		return SyncPromise.resolve(this.selectText());
 	}
 
 	/**
