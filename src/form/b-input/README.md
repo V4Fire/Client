@@ -26,8 +26,6 @@ See the parent component and the component traits.
 
 ## Usage
 
-The component several base scenarios of usage:
-
 ### A simple standalone input component
 
 ```

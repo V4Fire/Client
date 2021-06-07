@@ -46,8 +46,6 @@ You can define your own logic via the `limit` slot.
 
 ## Usage
 
-The component has several base scenarios of usage:
-
 ### A simple standalone textarea
 
 ```
