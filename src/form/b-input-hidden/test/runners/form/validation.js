@@ -24,6 +24,58 @@ module.exports = (page) => {
 	});
 
 	describe('b-input-hidden form API validation', () => {
+		it('validation events', async () => {
+			const target = await init({
+				validators: ['required']
+			});
+
+			const scan = await target.evaluate(async (ctx) => {
+				const
+					res = [];
+
+				ctx.on('onValidationStart', () => {
+					res.push('validationStart');
+				});
+
+				ctx.on('onValidationSuccess', () => {
+					res.push('validationSuccess');
+				});
+
+				ctx.on('onValidationFail', (err) => {
+					res.push(['validationFail', err]);
+				});
+
+				ctx.on('onValidationEnd', (result, err) => {
+					res.push(['validationEnd', result, err]);
+				});
+
+				await ctx.validate();
+				ctx.value = '0';
+				await ctx.validate();
+
+				return res;
+			});
+
+			expect(scan).toEqual([
+					'validationStart',
+
+					[
+						'validationFail',
+						{validator: 'required', error: false, msg: 'Required field'}
+					],
+
+					[
+						'validationEnd',
+						false,
+						{validator: 'required', error: false, msg: 'Required field'}
+					],
+
+					'validationStart',
+					'validationSuccess',
+					['validationEnd', true, undefined]
+			]);
+		});
+
 		it('`required`', async () => {
 			const target = await init({
 				validators: ['required']
@@ -96,6 +148,5 @@ module.exports = (page) => {
 
 			return h.component.waitForComponent(page, '[data-id="target"]');
 		}
-
 	});
 };
