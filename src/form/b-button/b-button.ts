@@ -32,7 +32,6 @@ import iData, {
 	component,
 	prop,
 	p,
-	watch,
 
 	ModsDecl,
 	ModelMethod,
