@@ -47,7 +47,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		/^[A-Z][a-z0-9]/.test(valToInput);
 
 	if (canIgnore) {
-		 false;
+		return false;
 	}
 
 	e.preventDefault();
