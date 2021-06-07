@@ -70,7 +70,7 @@ You free to use any ways to define a label.
 < b-checkbox :id = 'adult' | :name = 'adult'
 ```
 
-### Defining group of checkboxes
+### Defining a group of checkboxes
 
 To group checkboxes, use the same name.
 

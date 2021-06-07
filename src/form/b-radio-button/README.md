@@ -51,7 +51,7 @@ You free to use any ways to define a label.
 < b-radio-button :id = 'adult3' | :name = 'adult3'
 ```
 
-### Defining group of radio buttons
+### Defining a group of radio buttons
 
 To group radio buttons, use the same name.
 
