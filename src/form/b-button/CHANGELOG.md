@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.197 (2021-??-??)
+
+#### :house: Internal
+
+* Added initialization of `iProgress` modifier event listeners
+
 ## v3.0.0-rc.140 (2021-02-05)
 
 #### :bug: Bug Fix

@@ -13,9 +13,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.197 (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Removed initialization of `iProgress` modifier event listeners `iData`
+
 #### :memo: Documentation
 
 * Added documentation `iDynamicPage`
+
+#### :house: Internal
+
+* Added initialization of `iProgress` modifier event listeners `bButton`
 
 ## v3.0.0-rc.196 (2021-05-28)
 

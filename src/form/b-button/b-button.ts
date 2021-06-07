@@ -19,6 +19,7 @@ import 'core/data';
 
 import type bForm from 'form/b-form/b-form';
 
+import iProgress from 'traits/i-progress/i-progress';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
@@ -192,6 +193,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+		iProgress.initModEvents(this);
 		iAccess.initModEvents(this);
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
