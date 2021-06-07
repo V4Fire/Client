@@ -117,7 +117,7 @@ The component supports a few of slots to provide:
 
 ```
 < b-checkbox
-  < template #check = {label}
+  < template #label = {label}
     < .label
       {{ label }}
 ```
@@ -188,7 +188,7 @@ A checkbox' label text. Basically, it outputs somewhere in the component layout.
 
 #### [changeable = `true`]
 
-True if the checkbox can be unchecked directly after the first check.
+If true, the checkbox can be unchecked directly after the first check.
 
 ```
 < b-checbox :name = 'bar' | :changeable = false | :checked = true

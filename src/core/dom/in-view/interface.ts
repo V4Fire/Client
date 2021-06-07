@@ -158,7 +158,7 @@ export interface InViewUnobserveOptions {
 	threshold?: number;
 
 	/**
-	 * If true then the element will not be removed completely,
+	 * If true, the element will not be removed completely,
 	 * later it will be possible to resume tracking the element using `unsuspend` method.
 	 */
 	suspend?: boolean;

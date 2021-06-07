@@ -128,7 +128,7 @@ export default class bCheckbox extends iInput implements iSize {
 	readonly label?: string;
 
 	/**
-	 * True if the checkbox can be unchecked directly after the first check
+	 * If true, the checkbox can be unchecked directly after the first check
 	 */
 	@prop(Boolean)
 	readonly changeable: boolean = true;
