@@ -14,6 +14,7 @@
 import { identity } from 'core/functools';
 
 import iAccess from 'traits/i-access/i-access';
+import iProgress from "traits/i-progress/i-progress";
 import iVisible from 'traits/i-visible/i-visible';
 
 import iData, {
@@ -768,6 +769,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		super.initModEvents();
 
 		iAccess.initModEvents(this);
+		iProgress.initModEvents(this);
 		iVisible.initModEvents(this);
 
 		this.localEmitter.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {

@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.198 (2021-06-07)
+
+#### :boom: Breaking Change
+
+* Removed initialization of `iProgress` modifier event listeners `super/i-data`
+
+#### :house: Internal
+
+* Added initialization of `iProgress` modifier event listeners `super/i-input`
+
 ## v3.0.0-rc.197 (2021-??-??)
 
 #### :memo: Documentation
