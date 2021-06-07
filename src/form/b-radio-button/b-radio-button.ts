@@ -7,10 +7,11 @@
  */
 
 /**
- * [[include:form/b-checkbox/README.md]]
+ * [[include:form/b-radio-button/README.md]]
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
 import bCheckbox, { component } from 'form/b-checkbox/b-checkbox';
 
 export * from 'super/i-input/i-input';
@@ -25,14 +26,14 @@ export default class bRadioButton extends bCheckbox {
 
 	/** @override */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected async onClick(e: Event): Promise<void> {
-		await this.focus();
+	protected onClick(e: Event): Promise<void> {
+		void this.focus();
 
 		const
 			ctx = <any>this;
 
-		const uncheckOthers = async () => {
-			for (let els = await this.groupElements, i = 0; i < els.length; i++) {
+		const uncheckOthers = () => SyncPromise.resolve(this.groupElements).then<undefined>((els) => {
+			for (let i = 0; i < els.length; i++) {
 				const
 					el = els[i];
 
@@ -41,15 +42,17 @@ export default class bRadioButton extends bCheckbox {
 				}
 			}
 
-			this.emit('actionChange', true);
-		};
+			this.emit('actionChange', this.value);
+		});
 
 		if (this.changeable) {
-			await this.toggle();
-			await uncheckOthers();
-
-		} else if (await this.check()) {
-			await uncheckOthers();
+			return this.toggle().then(() => uncheckOthers());
 		}
+
+		return this.check().then((res) => {
+			if (res) {
+				return uncheckOthers();
+			}
+		}, stderr);
 	}
 }

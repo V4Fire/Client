@@ -334,7 +334,7 @@ export default class bCheckbox extends iInput implements iSize {
 
 		if (this.value === undefined || this.value === false || this.changeable) {
 			void this.toggle();
-			this.emit('actionChange', this.mods.checked === 'true');
+			this.emit('actionChange', this.value);
 		}
 	}
 
