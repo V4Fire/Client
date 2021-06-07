@@ -271,10 +271,19 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
-						const emitter = (_, handler) =>
-							$watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
+						// eslint-disable-next-line prefer-const
+						let link;
 
-						$a.on(emitter, 'mutation', handler, {
+						const emitter = (_, handler) => {
+							const
+								i = p.info ?? getPropertyInfo(watchPath, component),
+								unwatch = $watch.call(component, i, watchInfo, handler);
+
+							$a.worker(() => $a.off(link), asyncParams);
+							return unwatch;
+						};
+
+						link = $a.on(emitter, 'mutation', handler, {
 							...asyncParams,
 							group: `${asyncParams.group ?? ''}:suspend`
 						});
@@ -308,10 +317,19 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						continue;
 					}
 
-					const emitter = (_, handler) =>
-						$watch.call(component, p.info ?? getPropertyInfo(watchPath, component), watchInfo, handler);
+					// eslint-disable-next-line prefer-const
+					let link;
 
-					$a.on(emitter, 'mutation', handler, {
+					const emitter = (_, handler) => {
+						const
+							i = p.info ?? getPropertyInfo(watchPath, component),
+							unwatch = $watch.call(component, i, watchInfo, handler);
+
+						$a.worker(() => $a.off(link), asyncParams);
+						return unwatch;
+					};
+
+					link = $a.on(emitter, 'mutation', handler, {
 						...asyncParams,
 						group: `${asyncParams.group ?? ''}:suspend`
 					});

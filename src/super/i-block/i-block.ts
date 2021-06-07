@@ -1609,7 +1609,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
 			bindRemoteWatchers(this, {
-				async: $a,
+				async: <Async<any>>this.async,
 				watchers: {
 					[path]: [
 						{
@@ -1624,10 +1624,16 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		void this.lfc.execCbAfterComponentCreated(() => {
-			const
-				emitter = (_, handler) => this.$watch(<any>path, opts, handler) ?? undefined;
+			// eslint-disable-next-line prefer-const
+			let link;
 
-			$a.on(emitter, 'mutation', handler, {
+			const emitter = (_, handler) => {
+				const unwatch = this.$watch(<any>path, opts, handler) ?? undefined;
+				$a.worker(() => $a.off(link), opts);
+				return unwatch;
+			};
+
+			link = $a.on(emitter, 'mutation', handler, {
 				group: `${opts.group ?? ''}:suspend`,
 				label: opts.label,
 				join: opts.join
