@@ -187,16 +187,6 @@ declare module '*.wasm.js' {
 	export default content;
 }
 
-declare module '*.wasm.js?staticUrl' {
-	const content: string;
-	export default content;
-}
-
-declare module '*.wasm.js?inline' {
-	const content: string;
-	export default content;
-}
-
 declare module '*.wasm' {
 	const content: string;
 	export default content;

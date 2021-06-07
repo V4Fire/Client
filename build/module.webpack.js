@@ -188,18 +188,6 @@ module.exports = async function module({plugins}) {
 		type: 'asset'
 	});
 
-	loaders.rules.set('wasm.glue.js.inline', {
-		test: /\.wasm\.js$/,
-		resourceQuery: /inline/,
-		type: 'asset/inline'
-	});
-
-	loaders.rules.set('wasm.glue.js.staticUrl', {
-		test: /\.wasm\.js$/,
-		resourceQuery: /staticUrl/,
-		type: 'asset/resource'
-	});
-
 	loaders.rules.set('js', {
 		test: isNotJSWorker,
 		exclude: isExternalDep,
