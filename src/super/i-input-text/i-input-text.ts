@@ -11,8 +11,6 @@
  * @packageDocumentation
  */
 
-import SyncPromise from 'core/promise/sync';
-
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
 
@@ -296,17 +294,17 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * @emits `selectText()`
 	 */
 	@wait('ready', {label: $$.selectText})
-	selectText(): Promise<boolean> {
+	selectText(): CanPromise<boolean> {
 		const
 			{input} = this.$refs;
 
 		if (input.selectionStart !== 0 || input.selectionEnd !== input.value.length) {
 			input.select();
 			this.emit('selectText');
-			return SyncPromise.resolve(true);
+			return true;
 		}
 
-		return SyncPromise.resolve(false);
+		return false;
 	}
 
 	/**
@@ -316,7 +314,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@wait('ready', {label: $$.clearText})
 	clearText(): CanPromise<boolean> {
 		if (this.text === '') {
-			return SyncPromise.resolve(false);
+			return false;
 		}
 
 		if (this.mask != null) {
@@ -327,7 +325,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		}
 
 		this.emit('clearText');
-		return SyncPromise.resolve(true);
+		return true;
 	}
 
 	/**

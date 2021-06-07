@@ -709,11 +709,17 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			this.value = undefined;
 			this.async.clearAll({group: 'validation'});
 
-			return this.nextTick().then(() => {
+			const emit = () => {
 				void this.removeMod('valid');
 				this.emit('clear', this.value);
 				return true;
-			});
+			};
+
+			if (this.meta.systemFields.value != null) {
+				return SyncPromise.resolve(emit());
+			}
+
+			return this.nextTick().then(emit);
 		}
 
 		return SyncPromise.resolve(false);
@@ -730,11 +736,17 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			this.value = this.default;
 			this.async.clearAll({group: 'validation'});
 
-			return this.nextTick().then(() => {
+			const emit = () => {
 				void this.removeMod('valid');
 				this.emit('reset', this.value);
 				return true;
-			});
+			};
+
+			if (this.meta.systemFields.value != null) {
+				return SyncPromise.resolve(emit());
+			}
+
+			return this.nextTick().then(emit);
 		}
 
 		return SyncPromise.resolve(false);
