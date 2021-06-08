@@ -31,12 +31,12 @@ export default class bTree implements iItems {
 
 The trait specifies a bunch of optional props.
 
-### items
+### [items]
 
 This prop is used to provide a list of items to render by the component.
 A type of each item is specified as `iItem['Item']`.
 
-### item
+### [item]
 
 By design, the specified items are rendered by using other components.
 This prop allows specifying the name of a component that is used to render.
@@ -47,7 +47,7 @@ The prop can be provided as a function. In that case, a value is taken from the 
 < b-tree :items = myItems | :item = (item, i) => i === 0 ? 'b-checkbox' : 'b-button'
 ```
 
-### itemProps
+### [itemProps]
 
 This prop allows specifying props that are passed to a component to render an item.
 The prop can be provided as a function. In that case, a value is taken from the result of invoking.
@@ -57,7 +57,7 @@ The prop can be provided as a function. In that case, a value is taken from the 
 < b-tree :items = myItems | :item = 'b-checkbox' | :itemProps = (item, i) => i === 0 ? {name: 'foo'} : {name: 'bar'}
 ```
 
-### itemKey
+### [itemKey]
 
 To optimize the re-rendering of items, we can specify the unique identifier for each item.
 The prop value can be provided as a string or function. In the string case, you are providing the name of a property that stores the identifier.

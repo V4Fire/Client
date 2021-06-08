@@ -13,6 +13,8 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
+
 import type iBlock from 'super/i-block/i-block';
 import type { ModsDecl, ModEvent } from 'super/i-block/i-block';
 
@@ -34,19 +36,19 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.disable]] */
 	static disable: AddSelf<iAccess['disable'], iBlock> =
-		async (component) => component.setMod('disabled', true);
+		(component) => SyncPromise.resolve(component.setMod('disabled', true));
 
 	/** @see [[iAccess.enable]] */
 	static enable: AddSelf<iAccess['enable'], iBlock> =
-		async (component) => component.setMod('disabled', false);
+		(component) => SyncPromise.resolve(component.setMod('disabled', false));
 
 	/** @see [[iAccess.focus]] */
 	static focus: AddSelf<iAccess['focus'], iBlock> =
-		async (component) => component.setMod('focused', true);
+		(component) => SyncPromise.resolve(component.setMod('focused', true));
 
 	/** @see [[iAccess.blur]] */
 	static blur: AddSelf<iAccess['blur'], iBlock> =
-		async (component) => component.setMod('focused', false);
+		(component) => SyncPromise.resolve(component.setMod('focused', false));
 
 	/**
 	 * Returns true if the component in focus

@@ -7,13 +7,12 @@
  */
 
 $p = {
-
+	invalidColor: #F00
 }
 
 b-textarea
-	&__super-wrapper
+	&__input
 		max-height 10em
-		padding 0.5em
 
 	&__limit
 		padding 0.3em
@@ -21,6 +20,3 @@ b-textarea
 
 		&_warning_true
 			color $p.invalidColor
-
-	&_collapsed_true &__input
-		height 1.1em

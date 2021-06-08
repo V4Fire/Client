@@ -202,11 +202,11 @@ Also, you can see the implemented traits or the parent component.
 An initial component active value/s.
 If the component is switched to the `multiple` mode, you can pass an array or Set to define several active values.
 
-#### [autoHref = false]
+#### [autoHref = `false`]
 
 If true, then all items without the `href` option will automatically generate a link by using `value` and other props.
 
-#### [multiple = false]
+#### [multiple = `false`]
 
 If true, the component supports a feature of multiple active values.
 

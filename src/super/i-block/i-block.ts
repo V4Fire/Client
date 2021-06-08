@@ -18,7 +18,6 @@ import { deprecated } from 'core/functools/deprecation';
 
 import SyncPromise from 'core/promise/sync';
 import log, { LogMessageOptions } from 'core/log';
-
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import config from 'config';

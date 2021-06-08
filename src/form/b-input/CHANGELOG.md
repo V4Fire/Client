@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Now the component inherits `iInputText`
+* Removed `&__super-wrapper`
+* New API of component validators
+
+#### :memo: Documentation
+
+* Added documentation
+
+#### :house: Internal
+
+* Fixed ESLint warnings
+
 ## v3.0.0-rc.140 (2021-02-05)
 
 #### :bug: Bug Fix

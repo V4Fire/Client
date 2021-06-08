@@ -11,16 +11,15 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- rootTag = 'form'
+
+	- block rootAttrs
+		? Object.assign(rootAttrs, { &
+			novalidate: TRUE,
+			':id': 'id',
+			':name': 'name',
+			'@submit.prevent': 'submit'
+		}, attrs) .
+
 	- block body
-		- super
-		- block form
-			< form.&__form &
-				ref = form |
-				novalidate |
-				:id = id |
-				:name = name |
-				:action = action |
-				@submit.prevent = submit |
-				${attrs|!html}
-			.
-				+= self.slot()
+		+= self.slot()

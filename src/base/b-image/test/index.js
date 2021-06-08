@@ -64,7 +64,7 @@ module.exports = async (page, params) => {
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
 
-				await renderComponent({
+				await init({
 					src: imgUrl
 				});
 
@@ -79,7 +79,7 @@ module.exports = async (page, params) => {
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
 
-				await renderComponent({
+				await init({
 					src: imgUrl
 				});
 
@@ -104,7 +104,7 @@ module.exports = async (page, params) => {
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl);
 
-				await renderComponent({
+				await init({
 					srcset: {'1x': imgUrl}
 				});
 
@@ -124,7 +124,7 @@ module.exports = async (page, params) => {
 				const
 					altText = 'alt text';
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					alt: altText
 				});
@@ -151,7 +151,7 @@ module.exports = async (page, params) => {
 				const
 					position = '40% 40%';
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					position
 				});
@@ -170,7 +170,7 @@ module.exports = async (page, params) => {
 				const
 					position = '50% 50%';
 
-				await renderComponent({
+				await init({
 					src: imgUrl
 				});
 
@@ -191,7 +191,7 @@ module.exports = async (page, params) => {
 					ratio = 100 / 50,
 					expected = `${(1 / (100 / 50)) * 100}%`;
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					ratio
 				});
@@ -212,7 +212,7 @@ module.exports = async (page, params) => {
 				const
 					beforeImg = 'linear-gradient(rgb(230, 100, 101), rgb(145, 152, 229))';
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					beforeImg
 				});
@@ -234,7 +234,7 @@ module.exports = async (page, params) => {
 				const
 					afterImg = 'linear-gradient(rgb(230, 97, 101), rgb(145, 40, 229))';
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					afterImg
 				});
@@ -257,7 +257,7 @@ module.exports = async (page, params) => {
 					beforeImg = 'linear-gradient(rgb(230, 100, 101), rgb(145, 152, 229))',
 					afterImg = 'linear-gradient(rgb(230, 97, 101), rgb(145, 40, 229))';
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					beforeImg,
 					afterImg
@@ -281,7 +281,7 @@ module.exports = async (page, params) => {
 					previewImg = images.preview,
 					reqPromise = handleImageRequest(imgUrl, 1000);
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					overlayImg: previewImg
 				});
@@ -308,7 +308,7 @@ module.exports = async (page, params) => {
 					previewImg = images.preview,
 					reqPromise = handleImageRequest(imgUrl, 300);
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					overlayImg: previewImg
 				});
@@ -329,7 +329,7 @@ module.exports = async (page, params) => {
 					previewImg = images.preview,
 					reqPromise = abortImageRequest(imgUrl, 300);
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					overlayImg: previewImg
 				});
@@ -352,7 +352,7 @@ module.exports = async (page, params) => {
 					brokenImg = images.broken,
 					reqPromise = abortImageRequest(imgUrl, 100);
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					brokenImg
 				});
@@ -380,7 +380,7 @@ module.exports = async (page, params) => {
 					brokenImg = images.broken,
 					reqPromise = abortImageRequest(imgUrl, 300);
 
-				await renderComponent({
+				await init({
 					src: imgUrl,
 					brokenImg
 				});
@@ -402,7 +402,7 @@ module.exports = async (page, params) => {
 					imgUrl = getRandomImgUrl(),
 					reqPromise = abortImageRequest(imgUrl, 300);
 
-				await renderComponent({
+				await init({
 					src: imgUrl
 				});
 
@@ -419,7 +419,7 @@ module.exports = async (page, params) => {
 					imgUrl = getRandomImgUrl(),
 					reqPromise = abortImageRequest(imgUrl, 500);
 
-				await renderComponent({
+				await init({
 					src: imgUrl
 				});
 
@@ -442,7 +442,7 @@ module.exports = async (page, params) => {
 					imgUrl = getRandomImgUrl(),
 					reqPromise = handleImageRequest(imgUrl, 100);
 
-				await renderComponent({
+				await init({
 					src: imgUrl
 				});
 
@@ -485,7 +485,7 @@ module.exports = async (page, params) => {
 		});
 	}
 
-	async function renderComponent(props = {}) {
+	async function init(props = {}) {
 		await page.evaluate((props) => {
 			const scheme = [
 				{

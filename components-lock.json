@@ -1,5 +1,5 @@
 {
-  "hash": "e1c9f236a46691b57912f897abdd30b90579c0e354661e53b27d43999fcfe363",
+  "hash": "5dc7e64b34581b6b735124ae086c7cb849ee16e22a180c0b7c4f1a62a6910f8d",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -180,7 +180,7 @@
       [
         "b-dummy",
         {
-          "index": "src/base/b-dummy/index.js",
+          "index": "src/dummies/b-dummy/index.js",
           "declaration": {
             "name": "b-dummy",
             "parent": "i-data",
@@ -201,11 +201,43 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/base/b-dummy/b-dummy.ts",
+          "logic": "src/dummies/b-dummy/b-dummy.ts",
           "styles": [
-            "src/base/b-dummy/b-dummy.styl"
+            "src/dummies/b-dummy/b-dummy.styl"
           ],
-          "tpl": "src/base/b-dummy/b-dummy.ss",
+          "tpl": "src/dummies/b-dummy/b-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-text",
+        {
+          "index": "src/dummies/b-dummy-text/index.js",
+          "declaration": {
+            "name": "b-dummy-text",
+            "parent": "i-input-text",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-text",
+          "parent": "i-input-text",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-text/b-dummy-text.ts",
+          "styles": [
+            "src/dummies/b-dummy-text/b-dummy-text.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-text/b-dummy-text.ss",
           "etpl": null
         }
       ],
@@ -445,7 +477,7 @@
           "index": "src/form/b-input/index.js",
           "declaration": {
             "name": "b-input",
-            "parent": "i-input",
+            "parent": "i-input-text",
             "dependencies": [
               "b-icon",
               "b-progress-icon"
@@ -453,7 +485,7 @@
             "libs": []
           },
           "name": "b-input",
-          "parent": "i-input",
+          "parent": "i-input-text",
           "dependencies": [
             "b-icon",
             "b-progress-icon"
@@ -542,38 +574,6 @@
             "src/form/b-input-hidden/b-input-hidden.styl"
           ],
           "tpl": "src/form/b-input-hidden/b-input-hidden.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-input-time",
-        {
-          "index": "src/form/b-input-time/index.js",
-          "declaration": {
-            "name": "b-input-time",
-            "parent": "b-input",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-input-time",
-          "parent": "b-input",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/form/b-input-time/b-input-time.ts",
-          "styles": [
-            "src/form/b-input-time/b-input-time.styl"
-          ],
-          "tpl": "src/form/b-input-time/b-input-time.ss",
           "etpl": null
         }
       ],
@@ -776,70 +776,6 @@
         }
       ],
       [
-        "b-scroll",
-        {
-          "index": "src/base/b-scroll/index.js",
-          "declaration": {
-            "name": "b-scroll",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-scroll",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-scroll/b-scroll.ts",
-          "styles": [
-            "src/base/b-scroll/b-scroll.styl"
-          ],
-          "tpl": "src/base/b-scroll/b-scroll.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-scroll-inline",
-        {
-          "index": "src/base/b-scroll/b-scroll-inline/index.js",
-          "declaration": {
-            "name": "b-scroll-inline",
-            "parent": "b-scroll",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-scroll-inline",
-          "parent": "b-scroll",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-scroll/b-scroll-inline/b-scroll-inline.ts",
-          "styles": [
-            "src/base/b-scroll/b-scroll-inline/b-scroll-inline.styl"
-          ],
-          "tpl": "src/base/b-scroll/b-scroll-inline/b-scroll-inline.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-select",
         {
           "index": "src/form/b-select/index.js",
@@ -848,7 +784,6 @@
             "parent": "b-input",
             "dependencies": [
               "b-icon",
-              "b-scroll-inline",
               "b-progress-icon",
               "b-option"
             ],
@@ -858,7 +793,6 @@
           "parent": "b-input",
           "dependencies": [
             "b-icon",
-            "b-scroll-inline",
             "b-progress-icon",
             "b-option"
           ],
@@ -991,17 +925,13 @@
           "index": "src/form/b-textarea/index.js",
           "declaration": {
             "name": "b-textarea",
-            "parent": "b-input",
-            "dependencies": [
-              "b-scroll-inline"
-            ],
+            "parent": "i-input-text",
+            "dependencies": [],
             "libs": []
           },
           "name": "b-textarea",
-          "parent": "b-input",
-          "dependencies": [
-            "b-scroll-inline"
-          ],
+          "parent": "i-input-text",
+          "dependencies": [],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -1504,6 +1434,38 @@
         }
       ],
       [
+        "i-input-text",
+        {
+          "index": "src/super/i-input-text/index.js",
+          "declaration": {
+            "name": "i-input-text",
+            "parent": "i-input",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-input-text",
+          "parent": "i-input",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/super/i-input-text/i-input-text.ts",
+          "styles": [
+            "src/super/i-input-text/i-input-text.styl"
+          ],
+          "tpl": "src/super/i-input-text/i-input-text.ss",
+          "etpl": null
+        }
+      ],
+      [
         "i-items",
         {
           "index": "src/traits/i-items/index.js",
@@ -1862,13 +1824,21 @@
               "b-dynamic-page",
               "b-tree",
               "b-list",
-              "b-checkbox",
+              "b-form",
               "b-button",
-              "b-image",
+              "b-file-button",
+              "b-checkbox",
+              "b-radio-button",
+              "b-input-hidden",
+              "b-input",
+              "b-textarea",
               "b-virtual-scroll",
               "b-window",
               "b-sidebar",
-              "b-slider"
+              "b-slider",
+              "b-icon",
+              "b-image",
+              "b-dummy-text"
             ],
             "libs": []
           },
@@ -1884,13 +1854,21 @@
             "b-dynamic-page",
             "b-tree",
             "b-list",
-            "b-checkbox",
+            "b-form",
             "b-button",
-            "b-image",
+            "b-file-button",
+            "b-checkbox",
+            "b-radio-button",
+            "b-input-hidden",
+            "b-input",
+            "b-textarea",
             "b-virtual-scroll",
             "b-window",
             "b-sidebar",
-            "b-slider"
+            "b-slider",
+            "b-icon",
+            "b-image",
+            "b-dummy-text"
           ],
           "libs": [],
           "resolvedLibs": {

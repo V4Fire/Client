@@ -9,6 +9,5 @@
 export type ButtonType<T extends string = any> =
 	'submit' |
 	'button' |
-	'image' |
 	'link' |
 	T;

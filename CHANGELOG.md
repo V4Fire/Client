@@ -11,6 +11,98 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* Now `toggle` returns a component value `bCheckbox`
+* Moved from `base` to `dummies` `bDummy`
+* Removed `bInputTime`
+* Removed `bScroll`
+
+* Now the component inherits `iInputText`:
+  * `bInput`
+  * `bTextarea`
+
+* `bInput`:
+  * Removed `&__super-wrapper`
+  * New API of component validators
+
+* `bForm`:
+  * Now `validate` returns `ValidationError` in case of failed validation
+  * Renamed `ValidateParams` to `ValidateOptions`
+  * Changed the root tag `div` to `form`
+  * Removed the `form` ref and block
+  * Changed the default value of `method` from `add` to `post`
+  * Removed legacy logic of the `'_'` name
+  * Deprecated `ValidationError.el` and `ValidationError.validator`
+  * Deprecated `values`
+
+* `iInput`:
+  * Removed `valueKey`
+  * Now `groupFormValue` always returns an array
+  * Renamed `dataType` to `formValueConverter`
+  * Renamed `hiddenInputTag` to `nativeInputTag`
+  * Renamed `hiddenInputType` to `nativeInputType`
+  * Renamed `hiddenInputModel` to `nativeInputModel`
+
+#### :rocket: New Feature
+
+* Added `bDummyText`
+* Added `iInputText`
+* Added support of the default slot `bDummy`
+* Added support of interpolation of a data provider response `iInput`
+* Added `isChecked` `bCheckbox`
+
+* `bForm`:
+  * Added `getElValueToSubmit`
+  * Added the `submitEnd` event
+  * Added `ValidationError.name/component/details`
+  * Added `getValues`
+  * Added `toggleControls`
+  * Now `ValidationError` is a class
+  * Now `submit` returns a value
+  * Improved submit events
+
+* `iInput`:
+  * Now `formValueConverter` can be provided as an array
+  * Added support for the `Maybe` structure
+  * Added `attrsProp/attrs` properties
+  * Added the `normalizeAttrs` method
+  * Added the `nativeInput` block
+
+#### :memo: Documentation
+
+* Added documentation:
+  * `bCheckbox`
+  * `bRadioButton`
+  * `bInputHidden`
+  * `bForm`
+  * `bInput`
+  * `bTextarea`
+
+#### :house: Internal
+
+* `iInput`:
+  * Improved error handling
+  * Added `UnsafeIInput`
+
+* Fixed ESLint warnings:
+  * `bCheckbox`
+  * `bRadioButton`
+  * `bInputHidden`
+  * `bForm`
+  * `bInput`
+  * `bTextarea`
+
+* Added tests:
+  * `bCheckbox`
+  * `bRadioButton`
+  * `bInputHidden`
+  * `bForm`
+  * `bInput`
+  * `bTextarea`
+
 ## v3.0.0-rc.198 (2021-06-08)
 
 #### :rocket: New Feature

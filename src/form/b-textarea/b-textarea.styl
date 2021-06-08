@@ -6,21 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "form/b-input/b-input.styl"
+@import "super/i-input-text/i-input-text.styl"
 
 $p = {
-
+	widthHelpers: true
+	progressHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
 }
 
-b-textarea extends b-input
-	&__super-wrapper
-	&__root-wrapper
-		background inherit
+b-textarea extends i-input-text
+	display inline-block
 
 	&__input
 		display block
 		width 100%
-		overflow hidden
 		padding 0
 		resize none
 

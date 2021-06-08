@@ -83,7 +83,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	readonly stepsStore!: number[];
 
 	/**
-	 * Minimum height value of a visible part (in pixels), i.e.,
+	 * The minimum height value of a visible part (in pixels), i.e.,
 	 * even the component is closed, this part still be visible
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
@@ -91,27 +91,27 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	readonly visible: number = 0;
 
 	/**
-	 * Maximum height value to which you can pull the component
+	 * The maximum height value to which you can pull the component
 	 */
 	@prop({type: Number, validator: (v: number) => v >= 0 && v <= 100})
 	readonly maxVisiblePercent: number = 90;
 
 	/**
-	 * Maximum time in milliseconds after which we can assume that there was a quick swipe
+	 * The maximum time in milliseconds after which we can assume that there was a quick swipe
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
-	 * Minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
+	 * The minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeThreshold: number = 10;
 
 	/**
-	 * Minimum required amount of pixels of scrolling to swipe
+	 * The minimum required amount of pixels of scrolling to swipe
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
@@ -124,7 +124,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	readonly overlay: boolean = true;
 
 	/**
-	 * Maximum value of overlay opacity
+	 * The maximum value of overlay opacity
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
@@ -299,7 +299,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	protected contentHeight: number = 0;
 
 	/**
-	 * Maximum content height (in pixels)
+	 * The maximum content height (in pixels)
 	 */
 	@system()
 	protected contentMaxHeight: number = 0;
@@ -380,7 +380,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	}
 
 	/**
-	 * Minimum height value of a component visible part (in percents),
+	 * The minimum height value of a component visible part (in percents),
 	 * i.e. even the component is closed this part still be visible
 	 * @see [[bBottomSlide.visible]]
 	 */
@@ -416,7 +416,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	}
 
 	/** @see [[iLockPageScroll.lock]] */
-	@wait('ready')
+	@wait('ready', {label: $$.lock})
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.view);
 	}
@@ -543,7 +543,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	 * Puts a node of the component to the top level of a DOM tree
 	 */
 	@hook('mounted')
-	@wait('ready')
+	@wait('ready', {label: $$.initNodePosition})
 	protected initNodePosition(): CanPromise<void> {
 		document.body.insertAdjacentElement('afterbegin', this.$el!);
 	}
@@ -634,7 +634,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Updates a position of the window node
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.updateWindowPosition})
 	protected async updateWindowPosition(): Promise<void> {
 		const window = await this.waitRef<HTMLElement>('window');
 		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
@@ -643,7 +643,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Updates an opacity of the overlay node
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.updateOpacity})
 	protected updateOpacity(): CanPromise<void> {
 		const
 			{$refs: {overlay}} = this;
@@ -715,7 +715,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Performs the animation of the component overlay opacity
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.performOpacity})
 	protected performOpacity(): CanPromise<void> {
 		const
 			{$refs: {overlay}, maxOpacity} = this;

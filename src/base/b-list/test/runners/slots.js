@@ -24,45 +24,6 @@ module.exports = (page) => {
 	});
 
 	describe('b-list providing of slots', () => {
-		const init = async (params = {}) => {
-			await page.evaluate(({content, attrs}) => {
-				Object.forEach(content, (el, key) => {
-					// eslint-disable-next-line no-new-func
-					content[key] = /return /.test(el) ? Function(el)() : el;
-				});
-
-				const scheme = [
-					{
-						content,
-
-						attrs: {
-							id: 'target',
-
-							items: [
-								{
-									label: 'Foo',
-									value: 0
-								},
-
-								{
-									label: 'Bla',
-									value: 1
-								}
-							],
-
-							...attrs
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-list', scheme);
-			}, params);
-
-			await h.bom.waitForIdleCallback(page);
-			await h.component.waitForComponentStatus(page, '#target', 'ready');
-			return h.component.waitForComponent(page, '#target');
-		};
-
 		it('default slot', async () => {
 			const target = await init({
 				content: {
@@ -122,5 +83,43 @@ module.exports = (page) => {
 
 			).toEqual(['foo3', 'bla3']);
 		});
+
+		async function init(params = {}) {
+			await page.evaluate(({content, attrs}) => {
+				Object.forEach(content, (el, key) => {
+					// eslint-disable-next-line no-new-func
+					content[key] = /return /.test(el) ? Function(el)() : el;
+				});
+
+				const scheme = [
+					{
+						content,
+
+						attrs: {
+							id: 'target',
+
+							items: [
+								{
+									label: 'Foo',
+									value: 0
+								},
+
+								{
+									label: 'Bla',
+									value: 1
+								}
+							],
+
+							...attrs
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-list', scheme);
+			}, params);
+
+			await h.component.waitForComponentStatus(page, '#target', 'ready');
+			return h.component.waitForComponent(page, '#target');
+		}
 	});
 };

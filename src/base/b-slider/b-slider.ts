@@ -548,7 +548,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Synchronizes the slider state
 	 */
 	@hook('mounted')
-	@wait('loading')
+	@wait('loading', {label: $$.syncState})
 	protected syncState(): void {
 		const
 			{view, content} = this.$refs;
@@ -582,7 +582,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @emits `syncState()`
 	 */
 	@watch(':DOMChange')
-	@wait('ready')
+	@wait('ready', {label: $$.syncStateDefer})
 	protected async syncStateDefer(): Promise<void> {
 		if (!this.isSlideMode) {
 			return;

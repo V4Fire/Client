@@ -6,7 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-form/README.md]]
+ * @packageDocumentation
+ */
+
+//#if demo
+import 'models/demo/form';
+//#endif
+
 import symbolGenerator from 'core/symbol';
+
+import { Option } from 'core/prelude/structures';
+import { deprecated } from 'core/functools/deprecation';
 
 //#if runtime has core/data
 import 'core/data';
@@ -32,21 +44,27 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import type { ActionFn, ValidateParams } from 'form/b-form/modules/interface';
+import ValidationError from 'form/b-form/modules/error';
+import type { ActionFn, ValidateOptions } from 'form/b-form/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'form/b-form/modules/interface';
+export * from 'form/b-form/interface';
+
+export { ValidationError };
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to create a form
+ */
 @component({
 	functional: {
 		dataProvider: undefined
 	}
 })
 
-export default class bForm extends iData {
+export default class bForm extends iData implements iVisible {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
@@ -54,46 +72,93 @@ export default class bForm extends iData {
 	readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
-	 * Form id
+	 * A form identifier.
+	 * You can use it to connect the form with components that lay "outside"
+	 * from the form body (by using the `form` attribute).
+	 *
+	 * @example
+	 * ```
+	 * < b-form :id = 'my-form'
+	 * < b-input :form = 'my-form'
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly id?: string;
 
 	/**
-	 * Form name
+	 * A form name.
+	 * You can use it to find the form element via `document.forms`.
+	 *
+	 * @example
+	 * ```
+	 * < b-form :name = 'my-form'
+	 * ```
+	 *
+	 * ```js
+	 * console.log(document.forms['my-form']);
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly name?: string;
 
 	/**
-	 * Form action URL or an action function
+	 * A form action URL (the URL where the data will be sent) or a function to create action.
+	 * If the value is not specified, the component will use the default URL-s from the data provider.
+	 *
+	 * @example
+	 * ```
+	 * < b-form :action = '/create-user'
+	 * < b-form :action = createUser
+	 * ```
 	 */
 	@prop({type: [String, Function], required: false})
 	readonly action?: string | ActionFn;
 
 	/**
-	 * Data provider method
+	 * Data provider method which is invoked on the form submit
+	 *
+	 * @example
+	 * ```
+	 * < b-form :dataProvider = 'User' | :method = 'upd'
+	 * ```
 	 */
 	@prop(String)
-	readonly method: ModelMethod = 'add';
+	readonly method: ModelMethod = 'post';
 
 	/**
-	 * Form request parameters
+	 * Additional form request parameters
+	 *
+	 * @example
+	 * ```
+	 * < b-form :params = {headers: {'x-foo': 'bla'}}
+	 * ```
 	 */
 	@prop(Object)
 	readonly paramsProp: CreateRequestOptions = {};
 
 	/**
-	 * If true, then form elements will be cached
+	 * If true, then form elements is cached.
+	 * The caching is mean that if some component value doesn't change since the last sending of the form,
+	 * it won't be sent again.
+	 *
+	 * @example
+	 * ```
+	 * < b-form :dataProvider = 'User' | :method = 'upd' | :cache = true
+	 *   < b-input :name = 'fname'
+	 *   < b-input :name = 'lname'
+	 *   < b-input :name = 'bd' | :cache = false
+	 *   < b-button :type = 'submit'
+	 * ```
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = false;
 
 	/**
-	 * Form request parameters store
+	 * Additional request parameters
+	 * @see [[bForm.paramsProp]]
 	 */
-	// tslint:disable-next-line:prefer-object-spread
-	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params || {}, val)))
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))
 	params!: CreateRequestOptions;
 
 	/** @inheritDoc */
@@ -106,13 +171,10 @@ export default class bForm extends iData {
 		]
 	};
 
-	/** @override */
-	protected readonly $refs!: {form: HTMLFormElement};
-
 	/**
-	 * Array of form components
+	 * List of components that are associated with the form
 	 */
-	get elements(): CanPromise<ReadonlyArray<iInput>> {
+	get elements(): CanPromise<readonly iInput[]> {
 		const
 			cache = Object.createDict();
 
@@ -120,11 +182,16 @@ export default class bForm extends iData {
 			const
 				els = <iInput[]>[];
 
-			for (let o = Array.from(this.$refs.form.elements), i = 0; i < o.length; i++) {
+			for (let o = Array.from((<HTMLFormElement>this.$el).elements), i = 0; i < o.length; i++) {
 				const
 					component = this.dom.getComponent<iInput>(o[i], '[class*="_form_true"]');
 
-				if (component && component.instance instanceof iInput && !cache[component.componentId]) {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (component == null) {
+					continue;
+				}
+
+				if (component.instance instanceof iInput && cache[component.componentId] == null) {
 					cache[component.componentId] = true;
 					els.push(component);
 				}
@@ -135,19 +202,31 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Array of form submit components
+	 * List of components to submit that are associated with the form
 	 */
-	get submits(): CanPromise<ReadonlyArray<bButton>> {
+	get submits(): CanPromise<readonly bButton[]> {
 		return this.waitStatus('ready', () => {
-			const list = Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(
-				this.id ? Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) : []
-			);
+			const
+				{$el} = this;
+
+			if ($el == null) {
+				return Object.freeze([]);
+			}
+
+			let
+				list = Array.from($el.querySelectorAll('button[type="submit"]'));
+
+			if (this.id != null) {
+				list = list.concat(
+					Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`))
+				);
+			}
 
 			const
 				els = <bButton[]>[];
 
 			for (let i = 0; i < list.length; i++) {
-				els.push(<bButton>this.dom.getComponent(list[i]));
+				els.push(this.dom.getComponent(list[i]));
 			}
 
 			return Object.freeze(els);
@@ -155,12 +234,12 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Clears child form components
-	 * @emits clear()
+	 * Clears values of all associated components
+	 * @emits `clear()`
 	 */
 	async clear(): Promise<boolean> {
 		const
-			tasks = <Promise<boolean>[]>[];
+			tasks = <Array<Promise<boolean>>>[];
 
 		for (const el of await this.elements) {
 			try {
@@ -179,12 +258,12 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Resets child form components to default
-	 * @emits reset()
+	 * Resets values to the default of all associated components
+	 * @emits `reset()`
 	 */
 	async reset(): Promise<boolean> {
 		const
-			tasks = <Promise<boolean>[]>[];
+			tasks = <Array<Promise<boolean>>>[];
 
 		for (const el of await this.elements) {
 			try {
@@ -203,22 +282,25 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Validates child form components and returns their or false
+	 * Validates values of all associated components and returns:
 	 *
-	 * @param [params] - additional validation parameters
+	 * 1. `ValidationError` - if the validation is failed;
+	 * 2. List of components to send - if the validation is successful.
 	 *
-	 * @emits validationStart()
-	 * @emits validationSuccess()
-	 * @emits validationFail(failedValidation: ValidationError)
-	 * @emits validationEnd(result: boolean, failedValidation: CanUndef<ValidationError>)
+	 * @param [opts] - additional validation options
+	 *
+	 * @emits `validationStart()`
+	 * @emits `validationSuccess()`
+	 * @emits `validationFail(failedValidation:` [[ValidationError]]`)`
+	 * @emits `validationEnd(result: boolean, failedValidation: CanUndef<`[[ValidationError]]`>)`
 	 */
 	@wait('ready', {defer: true, label: $$.validate})
-	async validate(params: ValidateParams = {}): Promise<iInput[] | false> {
+	async validate(opts: ValidateOptions = {}): Promise<iInput[] | ValidationError> {
 		this.emit('validationStart');
 
 		const
-			els = <iInput[]>[],
-			values = Object.createDict();
+			elsToSubmit = <iInput[]>[],
+			elValues = Object.createDict();
 
 		let
 			valid = true,
@@ -227,124 +309,129 @@ export default class bForm extends iData {
 		for (let o = await this.elements, i = 0; i < o.length; i++) {
 			const
 				el = o[i],
-				{name} = el;
+				elName = el.name;
 
-			if (!name) {
-				continue;
-			}
+			const needValidate =
+				elName == null ||
 
-			if (!this.cache || !el.cache || !Object.fastCompare(
-				this.field.get(`tmp.${name}`),
-				values[name] || (values[name] = await el.groupFormValue)
-			)) {
+				!this.cache ||
+				!el.cache ||
+
+				!Object.fastCompare(
+					this.field.get(`tmp.${elName}`),
+					elValues[elName] ?? (elValues[elName] = await el.groupFormValue)
+				);
+
+			if (needValidate) {
 				const
 					canValidate = el.mods.valid !== 'true',
 					validation = canValidate && await el.validate();
 
-				if (canValidate && validation !== true) {
-					if (params.focusOnError) {
+				if (canValidate && !Object.isBoolean(validation)) {
+					if (opts.focusOnError) {
 						try {
 							await el.focus();
 						} catch {}
 					}
 
-					failedValidation = {el, validator: validation};
+					failedValidation = new ValidationError(el, validation);
 					valid = false;
 					break;
 				}
 
-				if (name !== '_') {
-					els.push(el);
+				if (Object.isTruly(el.name)) {
+					elsToSubmit.push(el);
 				}
 			}
 		}
 
 		if (valid) {
 			this.emit('validationSuccess');
+			this.emit('validationEnd', true);
 
 		} else {
 			this.emitError('validationFail', failedValidation);
+			this.emit('validationEnd', false, failedValidation);
 		}
 
-		this.emit('validationEnd', valid, failedValidation);
-		return valid && els;
+		if (!valid) {
+			return failedValidation;
+		}
+
+		return elsToSubmit;
 	}
 
 	/**
 	 * Submits the form
 	 *
-	 * @emits submitStart(body: SubmitBody, ctx: SubmitCtx)
-	 * @emits submitSuccess(result: T, ctx: SubmitCtx)
-	 * @emits submitFail(err: Error, ctx: SubmitCtx)
+	 * @emits `submitStart(body:` [[SubmitBody]]`, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitSuccess(response: unknown, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitFail(err: Error |` [[RequestError]]`, ctx:` [[SubmitCtx]]`)`
+	 * @emits `submitEnd(result:` [[SubmitResult]]`, ctx:` [[SubmitCtx]]`)`
 	 */
 	@wait('ready', {defer: true, label: $$.submit})
-	async submit(): Promise<void> {
+	async submit<D = unknown>(): Promise<D> {
 		const
-			start = Date.now(),
-			[submits, els] = await Promise.all([this.submits, this.elements]);
+			start = Date.now();
 
-		{
-			const
-				elTasks = <CanPromise<boolean>[]>[],
-				submitTasks = <CanPromise<boolean>[]>[];
-
-			for (let i = 0; i < els.length; i++) {
-				elTasks.push(els[i].setMod('disabled', true));
-			}
-
-			for (let i = 0; i < submits.length; i++) {
-				submitTasks.push(submits[i].setMod('progress', true));
-			}
-
-			await Promise.all([...elTasks, ...submitTasks]);
-		}
+		await this.toggleControls(true);
 
 		const
-			elsToSubmit = await this.validate({focusOnError: true}),
-			submitCtx = {elements: elsToSubmit || [], form: <any>this};
+			validation = await this.validate({focusOnError: true}),
+			elsToSubmit = Object.isArray(validation) ? validation : [];
+
+		const submitCtx = {
+			elements: elsToSubmit,
+			form: this
+		};
 
 		let
-			formErr,
-			res;
+			operationErr,
+			formResponse;
 
-		if (elsToSubmit && elsToSubmit.length) {
+		if (elsToSubmit.length === 0) {
+			this.emit('submitStart', {}, submitCtx);
+
+			if (!Object.isArray(validation)) {
+				operationErr = validation;
+			}
+
+		} else {
 			let
 				body = {},
 				isMultipart = false;
 
 			const
-				tasks = <Promise<unknown>[]>[];
+				tasks = <Array<Promise<unknown>>>[];
 
 			for (let i = 0; i < elsToSubmit.length; i++) {
 				const
 					el = elsToSubmit[i],
-					{name} = el;
+					key = el.name ?? '';
 
-				if (!name || body.hasOwnProperty(name)) {
+				if (body.hasOwnProperty(key)) {
 					continue;
 				}
 
-				body[name] = true;
 				tasks.push((async () => {
-					let
-						v = await el.groupFormValue;
+					const
+						val = await this.getElValueToSubmit(el);
 
-					if (el.formConverter) {
-						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
+					if (val === undefined) {
+						return;
 					}
 
-					if (v instanceof Blob || v instanceof File || v instanceof FileList) {
+					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
 						isMultipart = true;
 					}
 
-					body[name] = v;
+					body[key] = val;
 				})());
 			}
 
-			await Promise.all(
-				tasks
-			);
+			await Promise.all(tasks);
 
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (isMultipart) {
 				const
 					form = new FormData();
@@ -370,105 +457,170 @@ export default class bForm extends iData {
 
 			try {
 				if (Object.isFunction(this.action)) {
-					res = await this.action(body, submitCtx);
+					formResponse = await this.action(body, submitCtx);
 
 				} else {
 					let
 						that = this;
 
-					if (this.action) {
+					if (this.action != null) {
 						that = this.base(this.action);
 					}
 
-					res = await (<Function>that[this.method])(body, this.params);
+					formResponse = await (<Function>that[this.method])(body, this.params);
 				}
 
 				Object.assign(this.tmp, body);
 
+				const
+					delay = 0.2.second();
+
+				if (Date.now() - start < delay) {
+					await this.async.sleep(delay);
+				}
+
 			} catch (err) {
-				formErr = err;
+				operationErr = err;
 			}
 		}
 
-		const
-			delay = 0.2.second();
+		await this.toggleControls(false);
 
-		if (elsToSubmit && Date.now() - start < delay) {
-			await this.async.sleep(delay);
-		}
-
-		{
-			const
-				elTasks = <CanPromise<boolean>[]>[],
-				submitTasks = <CanPromise<boolean>[]>[];
-
-			for (let i = 0; i < els.length; i++) {
-				elTasks.push(els[i].setMod('disabled', false));
+		try {
+			if (operationErr != null) {
+				this.emitError('submitFail', operationErr, submitCtx);
+				throw operationErr;
 			}
 
-			for (let i = 0; i < submits.length; i++) {
-				submitTasks.push(submits[i].setMod('progress', false));
+			if (elsToSubmit.length > 0) {
+				this.emit('submitSuccess', formResponse, submitCtx);
 			}
 
-			await Promise.all([...elTasks, ...submitTasks]);
+		} finally {
+			let
+				status = 'success';
+
+			if (operationErr != null) {
+				status = 'fail';
+
+			} else if (elsToSubmit.length === 0) {
+				status = 'empty';
+			}
+
+			const event = {
+				status,
+				response: operationErr != null ? operationErr : formResponse
+			};
+
+			this.emit('submitEnd', event, submitCtx);
 		}
 
-		if (!elsToSubmit) {
-			return;
-		}
-
-		if (formErr) {
-			this.emitError('submitFail', formErr, submitCtx);
-			throw formErr;
-		}
-
-		this.emit('submitSuccess', res, submitCtx);
+		return formResponse;
 	}
 
 	/**
-	 * Returns values of child form elements grouped by names
-	 * @param [validation] - if you need only valid value
+	 * Returns values of the associated components grouped by names
+	 * @param [validate] - if true, the method returns values only when the data is valid
 	 */
-	async values(validation?: ValidateParams): Promise<Dictionary<CanArray<FormValue>>> {
+	async getValues(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
 		const
-			els = validation ? await this.validate(validation) : await this.elements;
+			els = validate ? await this.validate(validate) : await this.elements;
 
-		if (els && els.length) {
+		if (Object.isArray(els)) {
 			const
-				result = {},
-				tasks = <Promise<unknown>[]>[];
+				body = {},
+				tasks = <Array<Promise<unknown>>>[];
 
 			for (let i = 0; i < els.length; i++) {
 				const
-					el = els[i],
-					{name} = el;
+					el = <iInput>els[i],
+					key = el.name ?? '';
 
-				if (!name || result.hasOwnProperty(name)) {
+				if (body.hasOwnProperty(key)) {
 					continue;
 				}
 
 				tasks.push((async () => {
-					let
-						v = await el.groupFormValue;
+					const
+						val = await this.getElValueToSubmit(el);
 
-					if (el.formConverter) {
-						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
-					}
-
-					if (v !== undefined) {
-						result[name] = v;
+					if (val !== undefined) {
+						body[key] = val;
 					}
 				})());
 			}
 
-			await Promise.all(
-				tasks
-			);
-
-			return result;
+			await Promise.all(tasks);
+			return body;
 		}
 
 		return {};
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bForm.getValues]]
+	 */
+	@deprecated({renamedTo: 'getValues'})
+	async values(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
+		return this.getValues(validate);
+	}
+
+	/**
+	 * Returns a value to submit of the specified element
+	 * @param el
+	 */
+	protected async getElValueToSubmit(el: iInput): Promise<unknown> {
+		if (!Object.isTruly(el.name)) {
+			return undefined;
+		}
+
+		let
+			val = await el.groupFormValue;
+
+		if (el.formConverter != null) {
+			const
+				converters = Array.concat([], el.formConverter);
+
+			for (let i = 0; i < converters.length; i++) {
+				const
+					validation = converters[i].call(this, val);
+
+				if (validation instanceof Option) {
+					val = await validation.catch(() => undefined);
+
+				} else {
+					val = await validation;
+				}
+			}
+		}
+
+		return val;
+	}
+
+	/**
+	 * Toggles statuses of the form controls
+	 * @param freeze - if true, all controls are freeze
+	 */
+	protected async toggleControls(freeze: boolean): Promise<void> {
+		const
+			[submits, els] = await Promise.all([this.submits, this.elements]);
+
+		const
+			tasks = <Array<CanPromise<boolean>>>[];
+
+		for (let i = 0; i < els.length; i++) {
+			tasks.push(els[i].setMod('disabled', freeze));
+		}
+
+		for (let i = 0; i < submits.length; i++) {
+			tasks.push(submits[i].setMod('progress', freeze));
+		}
+
+		try {
+			await Promise.all(tasks);
+
+		} catch {}
 	}
 
 	/** @override */

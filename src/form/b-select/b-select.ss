@@ -39,35 +39,29 @@
 			.
 				< _.&__dropdown-content
 					< _.&__dropdown-content-wrapper
-						< b-scroll-inline.&__scroll &
-							ref = scroll |
-							v-func = isFunctional |
-							:fixSize = true |
-							:exterior = scrollExterior
+						< _ &
+							v-for = el in options |
+							:key = :-value, el.value |
+							:class = provide.elClasses({
+								option: {
+									marked: el.marked,
+									selected: isSelected(el)
+								}
+							})
 						.
-							< _ &
-								v-for = el in options |
-								:key = :-value, el.value |
-								:class = provide.elClasses({
-									option: {
-										marked: el.marked,
-										selected: isSelected(el)
-									}
-								})
+
+							< template v-if = vdom.getSlot('default')
+								+= self.slot('default', {':option': 'el'})
+
+							< component &
+								v-else-if = option |
+								:is = option |
+								:p = el |
+								:exterior = el.exterior |
+								:classes = el.classes |
+								:mods = el.mods |
+								:v-attrs = el.attrs
 							.
 
-								< template v-if = vdom.getSlot('default')
-									+= self.slot('default', {':option': 'el'})
-
-								< component &
-									v-else-if = option |
-									:is = option |
-									:p = el |
-									:exterior = el.exterior |
-									:classes = el.classes |
-									:mods = el.mods |
-									:v-attrs = el.attrs
-								.
-
-								< template v-else
-									{{ t(el.label) }}
+							< template v-else
+								{{ t(el.label) }}

@@ -869,12 +869,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			...super.runtime(),
+			engine: this.engine(),
 
 			debug: false,
-			engine: this.engine(),
 			noGlobals: false,
-			svgSprite: true,
 
+			svgSprite: true,
 			'ds/use-css-vars': false,
 
 			blockNames: false,
@@ -897,8 +897,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			bRouter: true,
 
 			'iInput/validators': true,
-			'bInput/mask': false,
-			'bInput/validators': true
+			'bInput/validators': true,
+
+			'iInputText/mask': true
 		};
 	},
 

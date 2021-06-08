@@ -789,15 +789,14 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Initializes data event listeners
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.initDataListeners})
 	protected initDataListeners(): void {
-		const
-			{dataEmitter: $e} = this,
-			group = {group: 'dataProviderSync'};
+		const {
+			dataEmitter: $e
+		} = this;
 
-		$e.off(
-			group
-		);
+		const group = {group: 'dataProviderSync'};
+		$e.off(group);
 
 		$e.on('add', (data) => {
 			if (this.getDefaultRequestParams('get')) {

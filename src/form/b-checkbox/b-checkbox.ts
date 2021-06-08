@@ -6,13 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-checkbox/README.md]]
+ * @packageDocumentation
+ */
+
+//#if demo
+import 'models/demo/checkbox';
+//#endif
+
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
+
 import iSize from 'traits/i-size/i-size';
 
 import iInput, {
 
 	component,
 	prop,
+	system,
+	computed,
 	p,
 
 	ModsDecl,
@@ -26,15 +39,19 @@ import iInput, {
 
 } from 'super/i-input/i-input';
 
-export * from 'super/i-input/i-input';
+import type { CheckType, Value, FormValue } from 'form/b-checkbox/interface';
 
-export type Value = CanUndef<string | boolean>;
-export type FormValue = Value;
-export type CheckType = true | 'indeterminate';
+export * from 'super/i-input/i-input';
+export * from 'form/b-checkbox/interface';
+
+export { Value, FormValue };
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to create a checkbox
+ */
 @component({
 	flyweight: true,
 	functional: {
@@ -49,30 +66,72 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	readonly FormValue!: FormValue;
 
-	/** @override */
-	@prop({type: Boolean, required: false})
-	readonly defaultProp?: this['Value'];
+	/**
+	 * If true, the component is checked by default.
+	 * Also, it will be checked after resetting.
+	 */
+	@prop(Boolean)
+	readonly defaultProp: boolean = false;
 
-	/** @override */
+	/**
+	 * An identifier of the "parent" checkbox.
+	 * Use this prop to organize a hierarchy of checkboxes. Checkboxes of the same level must have the same `name`.
+	 *
+	 * ```
+	 * - [-]
+	 *   - [X]
+	 *   - [ ]
+	 *   - [X]
+	 *     - [X]
+	 *     - [X]
+	 * ```
+	 *
+	 * When you click a parent checkbox, all children will be checked or unchecked.
+	 * When you click a child, the parent checkbox will be
+	 *   * checked as `'indeterminate'` - if not all checkboxes with the same `name` are checked;
+	 *   * unchecked - if all checkboxes with the same `name` are checked.
+	 *
+	 * @example
+	 * ```
+	 * < b-checkbox :id = 'parent'
+	 *
+	 * < b-checkbox &
+	 *   :id = 'foo' |
+	 *   :name = 'lvl2' |
+	 *   :parentId = 'parent'
+	 * .
+	 *
+	 * < b-checkbox &
+	 *   :id = 'foo2' |
+	 *   :parentId = 'parent' |
+	 *   :name = 'lvl2'
+	 * .
+	 *
+	 * < b-checkbox &
+	 *   :parentId = 'foo' |
+	 *   :name = 'lvl3-foo'
+	 * .
+	 *
+	 * < b-checkbox &
+	 *   :parentId = 'foo2' |
+	 *   :name = 'lvl3-foo2'
+	 * .
+	 * ```
+	 */
 	@prop({type: String, required: false})
 	readonly parentId?: string;
 
 	/**
-	 * Checkbox label text
+	 * A checkbox' label text. Basically, it outputs somewhere in the component layout.
 	 */
 	@prop({type: String, required: false})
 	readonly label?: string;
 
 	/**
-	 * True if the checkbox can be unchecked directly
+	 * If true, the checkbox can be unchecked directly after the first check
 	 */
 	@prop(Boolean)
 	readonly changeable: boolean = true;
-
-	/** @override */
-	get default(): unknown {
-		return this.defaultProp || false;
-	}
 
 	/** @override */
 	@p({replace: false})
@@ -82,7 +141,6 @@ export default class bCheckbox extends iInput implements iSize {
 
 		if (checked === 'true' || checked === undefined) {
 			const
-				// tslint:disable-next-line:no-string-literal
 				v = super['valueGetter'].call(this);
 
 			if (checked === undefined) {
@@ -97,8 +155,20 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/** @override */
 	set value(value: this['Value']) {
-		// tslint:disable-next-line:no-string-literal
 		super['valueSetter'](value);
+	}
+
+	/** @override */
+	get default(): boolean {
+		return this.defaultProp;
+	}
+
+	/**
+	 * True if the checkbox is checked
+	 */
+	@computed({dependencies: ['mods.checked']})
+	get isChecked(): boolean {
+		return this.mods.checked === 'true';
 	}
 
 	/** @inheritDoc */
@@ -115,9 +185,13 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	static validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators
+		...iInput.validators,
 
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-			if (!await this.formValue) {
+			const
+				value = await this.groupFormValue;
+
+			if (value.length === 0) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
@@ -129,39 +203,58 @@ export default class bCheckbox extends iInput implements iSize {
 	};
 
 	/** @override */
+	@system()
+	protected valueStore!: this['Value'];
+
+	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
 
 	/**
 	 * Checks the checkbox
 	 */
-	async check(value?: CheckType): Promise<boolean> {
-		return this.setMod('checked', value || true);
+	check(value?: CheckType): Promise<boolean> {
+		return SyncPromise.resolve(this.setMod('checked', value ?? true));
 	}
 
 	/**
 	 * Unchecks the checkbox
 	 */
-	async uncheck(): Promise<boolean> {
-		return this.setMod('checked', false);
-	}
-
-	/** @override */
-	async clear(): Promise<boolean> {
-		const cleared = await super.clear();
-		return cleared ? this.uncheck() : false;
-	}
-
-	/** @override */
-	async reset(): Promise<boolean> {
-		const cleared = await super.reset();
-		return cleared ? this[`${this.default ? '' : 'un'}check`]() : false;
+	uncheck(): Promise<boolean> {
+		return SyncPromise.resolve(this.setMod('checked', false));
 	}
 
 	/**
-	 * Toggles the checkbox
+	 * Toggles the checkbox.
+	 * The method returns a new value.
 	 */
-	toggle(): Promise<boolean> {
-		return this.mods.checked === 'true' ? this.uncheck() : this.check();
+	toggle(): Promise<this['Value']> {
+		return (this.mods.checked === 'true' ? this.uncheck() : this.check()).then(() => this.value);
+	}
+
+	/** @override */
+	clear(): Promise<boolean> {
+		const res = super.clear();
+		void this.uncheck();
+		return res;
+	}
+
+	/** @override */
+	reset(): Promise<boolean> {
+		const onReset = (res: boolean) => {
+			if (res) {
+				void this.removeMod('valid');
+				this.emit('reset', this.value);
+				return true;
+			}
+
+			return false;
+		};
+
+		if (this.default) {
+			return this.check().then(onReset);
+		}
+
+		return this.uncheck().then(onReset);
 	}
 
 	/** @override */
@@ -174,8 +267,8 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('checked', 'value', this.convertValueToChecked);
-		this.localEmitter.on('block.mod.*.checked.*', this.onCheckedChange);
+		this.sync.mod('checked', 'value', this.convertValueToChecked.bind(this));
+		this.localEmitter.on('block.mod.*.checked.*', this.onCheckedChange.bind(this));
 	}
 
 	/** @override */
@@ -210,17 +303,38 @@ export default class bCheckbox extends iInput implements iSize {
 		return checked;
 	}
 
+	/** @override */
+	@p({replace: false})
+	protected resolveValue(value?: this['Value']): this['Value'] {
+		const
+			i = this.instance;
+
+		const canApplyDefault =
+			value === undefined &&
+			this.mods.checked === undefined &&
+			this.lfc.isBeforeCreate() &&
+			Boolean(i['defaultGetter'].call(this));
+
+		if (canApplyDefault) {
+			void this.check();
+		}
+
+		return value;
+	}
+
 	/**
 	 * Handler: checkbox trigger
 	 *
 	 * @param e
-	 * @emits actionChange(value: V)
+	 * @emits `actionChange(value: this['Value'])`
 	 */
-	protected async onClick(e: Event): Promise<void> {
-		await this.focus();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	protected onClick(e: Event): void {
+		void this.focus();
 
-		if ((!this.value || this.changeable) && await this.toggle()) {
-			this.emit('actionChange', this.mods.checked === 'true');
+		if (this.value === undefined || this.value === false || this.changeable) {
+			void this.toggle();
+			this.emit('actionChange', this.value);
 		}
 	}
 
@@ -228,10 +342,10 @@ export default class bCheckbox extends iInput implements iSize {
 	 * Handler: checkbox change
 	 *
 	 * @param e
-	 * @emits check(type: CheckType)
-	 * @emits uncheck()
+	 * @emits `check(type:` [[CheckType]]`)`
+	 * @emits `uncheck()`
 	 */
-	protected async onCheckedChange(e: ModEvent): Promise<void> {
+	protected onCheckedChange(e: ModEvent): void {
 		if (e.type === 'remove' && e.reason !== 'removeMod') {
 			return;
 		}
@@ -251,10 +365,10 @@ export default class bCheckbox extends iInput implements iSize {
 			this.emit('uncheck');
 
 		} else {
-			this.emit('check', e.value);
+			this.emit('check', Object.parse(e.value));
 		}
 
-		if (this.id) {
+		if (Object.isTruly(this.id)) {
 			const
 				els = document.querySelectorAll(`.i-block-helper[data-parent-id="${this.id}"]`);
 
@@ -273,21 +387,19 @@ export default class bCheckbox extends iInput implements iSize {
 			}
 		}
 
-		if (this.parentId) {
-			const parent = (<ComponentElement>document.getElementById(this.parentId)
+		if (Object.isTruly(this.parentId)) {
+			const parent = (<CanUndef<ComponentElement>>document.getElementById(this.parentId!)
 				?.closest('.i-block-helper'))
 				?.component;
 
 			if (this.isComponent(parent, bCheckbox)) {
-				const
-					els = await this.groupElements;
+				SyncPromise.resolve(this.groupElements).then((els) => {
+					if (els.every((el) => el.mods.checked == null || el.mods.checked === 'false')) {
+						return parent.uncheck();
+					}
 
-				if (els.every((el) => !el.mods.checked || el.mods.checked === 'false')) {
-					parent.uncheck().catch(stderr);
-
-				} else {
-					parent.check(els.every((el) => el.mods.checked === 'true') || 'indeterminate').catch(stderr);
-				}
+					return parent.check(els.every((el) => el.mods.checked === 'true') || 'indeterminate');
+				}).catch(stderr);
 			}
 		}
 	}

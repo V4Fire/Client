@@ -6,9 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInput, { component } from 'super/i-input/i-input';
-export * from  'super/i-input/i-input';
+/**
+ * [[include:form/b-input-hidden/README.md]]
+ * @packageDocumentation
+ */
 
+//#if demo
+import 'models/demo/input';
+//#endif
+
+import iInput, { component } from 'super/i-input/i-input';
+
+export * from 'super/i-input/i-input';
+
+/**
+ * Component to create a hidden input
+ */
 @component({
 	functional: {
 		dataProvider: undefined

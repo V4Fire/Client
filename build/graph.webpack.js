@@ -54,7 +54,7 @@ module.exports = Object.assign(buildProjectGraph(), {
 
 /**
  * Builds the project graph
- * @returns {Promise<{entry, processes, dependencies, blockMap}>}
+ * @returns {!Promise<{entry, processes, dependencies, blockMap}>}
  */
 async function buildProjectGraph() {
 	block.setObjToHash(config.componentDependencies());

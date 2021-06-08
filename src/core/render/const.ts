@@ -10,7 +10,7 @@ import Async from 'core/async';
 import type { Task } from 'core/render/interface';
 
 /**
- * Maximum number of tasks per one render iteration
+ * The maximum number of tasks per one render iteration
  */
 export const
 	TASKS_PER_TICK = 5;

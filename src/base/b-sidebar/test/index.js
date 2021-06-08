@@ -36,8 +36,6 @@ module.exports = (page) => {
 
 		it('closed by default', async () => {
 			await render();
-			await h.bom.waitForIdleCallback(page);
-
 			const classList = await sidebar.evaluate((ctx) => ctx.$el.className.split(' '));
 			expect(classList).not.toContain('b-sidebar_opened_true');
 		});
@@ -47,14 +45,12 @@ module.exports = (page) => {
 				await render();
 				const subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
 				await sidebar.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await expectAsync(subscribe).toBeResolved();
 			});
 
 			it('shows the sidebar when `open` is invoked', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await sidebar.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-sidebar_opened_true');
@@ -63,7 +59,6 @@ module.exports = (page) => {
 			it('shows the sidebar when `toggle` is invoked', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.toggle());
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await sidebar.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).toContain('b-sidebar_opened_true');
@@ -74,7 +69,6 @@ module.exports = (page) => {
 			it('emits an event if closing', async () => {
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 
 				const subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('close', res)));
 				await sidebar.evaluate((ctx) => ctx.close());
@@ -101,9 +95,7 @@ module.exports = (page) => {
 
 				await render();
 				await sidebar.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await page.click('.b-sidebar__over-wrapper');
-				await h.bom.waitForIdleCallback(page);
 
 				const classList = await sidebar.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-sidebar_opened_true');
@@ -111,30 +103,30 @@ module.exports = (page) => {
 
 			it('closes the sidebar when `escape` is pressed', async () => {
 				await render();
+
 				await sidebar.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await page.press('.b-sidebar', 'Escape');
-				await h.bom.waitForIdleCallback(page);
+
 				const classList = await sidebar.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-sidebar_opened_true');
 			});
 
 			it('closes the sidebar when `close` is invoked', async () => {
 				await render();
+
 				await sidebar.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await sidebar.evaluate((ctx) => ctx.close());
-				await h.bom.waitForIdleCallback(page);
+
 				const classList = await sidebar.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-sidebar_opened_true');
 			});
 
 			it('closes the sidebar when `toggle` is invoked', async () => {
 				await render();
+
 				await sidebar.evaluate((ctx) => ctx.open());
-				await h.bom.waitForIdleCallback(page);
 				await sidebar.evaluate((ctx) => ctx.toggle());
-				await h.bom.waitForIdleCallback(page);
+
 				const classList = await sidebar.evaluate((ctx) => ctx.$el.className.split(' '));
 				expect(classList).not.toContain('b-sidebar_opened_true');
 			});

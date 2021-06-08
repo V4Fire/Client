@@ -221,7 +221,7 @@ It is used to optimize the process of rendering child items.
 
 ### renderChunks
 
-A number of chunks to render per tick via `asyncRender`.
+Number of chunks to render per tick via `asyncRender`.
 
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderChunks = 3

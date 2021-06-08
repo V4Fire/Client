@@ -8,41 +8,30 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'form/b-input'|b as placeholder
+- include 'super/i-input-text'|b as placeholder
 
-- template index() extends ['b-input'].index
-	- block wrapper
-		< b-scroll-inline.&__scroll &
-			ref = scroll |
-			v-func = isFunctional |
-			:width = 'full' |
-			:exterior = scrollExterior
-		.
+- template index() extends ['i-input-text'].index
+	- rootTag = 'span'
+	- rootWrapper = true
+	- nativeInputTag = 'textarea'
 
-			< textarea.&__input &
-				ref = input |
-				:id = id |
-				:name = name |
-				:form = form |
-				:placeholder = placeholder |
-				:autofocus = autofocus |
-				:tabindex = tabIndex |
-				:maxlength = maxlength |
-				@focus = onFocus |
-				@input = onEdit |
-				@blur = onBlur |
-				${attrs|!html}
-			.
+	- block body
+		- super
+
+		- block wrapper
+			+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
 	- block helpers
 		- super
-		- block limit
-			+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxlength'})
-				< _ v-if = maxlength | :class = provide.elClasses({ &
-					limit: {
-						hidden: limit > maxlength / 1.5,
-						warning: limit < maxlength / 4
-					}
-				}) .
 
-					{{ `Characters left:` }} {{ limit }}
+		- block limit
+			< template v-if = vdom.getSlot('limit')
+				< _.&__limit
+					+= self.slot('limit', {':limit': 'limit', ':maxLength': 'maxLength'})
+
+			< template v-else
+				< _.&__limit[.&_hidden_true] v-update-on = { &
+					emitter: 'limit',
+					handler: onLimitUpdate,
+					options: {immediate: true}
+				} .

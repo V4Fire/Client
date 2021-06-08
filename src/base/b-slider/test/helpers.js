@@ -19,7 +19,7 @@ const
  * Emulates the `once` swipe on a slider
  *
  * @param {Page} page
- * @returns {Promise<void>}
+ * @returns {!Promise<void>}
  */
 async function swipeOnce(page) {
 	const
@@ -47,7 +47,7 @@ async function swipeOnce(page) {
  * @param {Page} page
  * @param {Object=} [attrs]
  * @param {Object=} [content]
- * @returns {Promise<Playwright.JSHandle>}
+ * @returns {!Promise<Playwright.JSHandle>}
  */
 async function initSlider(page, {attrs, content} = {}) {
 	await page.evaluate(({attrs, content}) => {

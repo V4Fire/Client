@@ -16,7 +16,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-button', () => {
+	describe('b-icon', () => {
 		it('empty rendering', async () => {
 			const
 				target = await init();

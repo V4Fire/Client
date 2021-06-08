@@ -16,9 +16,7 @@
 const
 	h = include('tests/helpers');
 
-/**
- * @param {Page} page
- */
+/** @param {Page} page */
 module.exports = (page) => {
 	const components = {
 		renderNextWithSlot: undefined,

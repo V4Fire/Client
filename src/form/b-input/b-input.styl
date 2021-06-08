@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-input/i-input.styl"
-@import "traits/i-width/i-width.styl"
+@import "super/i-input-text/i-input-text.styl"
 
 $p = {
 	widthHelpers: true
@@ -16,20 +15,15 @@ $p = {
 	visibleHelpers: true
 }
 
-b-input extends i-input
-	// @stlint-disable
-	i-width({helpers: $p.widthHelpers})
-	// @stlint-enable
-
+b-input extends i-input-text
 	display inline-block
 
 	&__root-wrapper
-	&__super-wrapper
 	&__wrapper
 		display flex
 		width 100%
 
-	&__super-wrapper
+	&__wrapper
 		cursor text
 
 	&__cell
@@ -73,9 +67,6 @@ b-input extends i-input
 		pointer-events none
 
 	&__valid-status
-		display none
-
-	&_show-error_true &__error-box
 		display none
 
 	&_focused_true&_empty_false:not(&_readonly_true) &__clear

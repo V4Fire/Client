@@ -7,6 +7,7 @@
  */
 
 import bButton, { component } from 'form/b-button/b-button';
+
 export * from 'form/b-button/b-button';
 
 @component({flyweight: true})

@@ -6,47 +6,34 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bCheckbox, {
+/**
+ * [[include:form/b-radio-button/README.md]]
+ * @packageDocumentation
+ */
 
-	component,
-	ValidatorsDecl,
-	ValidatorParams,
-	ValidatorResult
-
-} from 'form/b-checkbox/b-checkbox';
+import SyncPromise from 'core/promise/sync';
+import bCheckbox, { component } from 'form/b-checkbox/b-checkbox';
 
 export * from 'super/i-input/i-input';
 
+/**
+ * Component to create a radio button
+ */
 @component({flyweight: true})
 export default class bRadioButton extends bCheckbox {
 	/** @override */
-	static validators: ValidatorsDecl = {
-		//#if runtime has iInput/validators
-
-		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
-			const
-				value = await this.groupFormValue;
-
-			if (!value) {
-				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
-				return false;
-			}
-
-			return true;
-		}
-
-		//#endif
-	};
+	readonly changeable: boolean = false;
 
 	/** @override */
-	protected async onClick(e: Event): Promise<void> {
-		await this.focus();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	protected onClick(e: Event): Promise<void> {
+		void this.focus();
 
-		if (await this.check()) {
-			const
-				ctx = <any>this;
+		const
+			ctx = <any>this;
 
-			for (let els = await this.groupElements, i = 0; i < els.length; i++) {
+		const uncheckOthers = () => SyncPromise.resolve(this.groupElements).then<undefined>((els) => {
+			for (let i = 0; i < els.length; i++) {
 				const
 					el = els[i];
 
@@ -55,7 +42,17 @@ export default class bRadioButton extends bCheckbox {
 				}
 			}
 
-			this.emit('actionChange', true);
+			this.emit('actionChange', this.value);
+		});
+
+		if (this.changeable) {
+			return this.toggle().then(() => uncheckOthers());
 		}
+
+		return this.check().then((res) => {
+			if (res) {
+				return uncheckOthers();
+			}
+		}, stderr);
 	}
 }

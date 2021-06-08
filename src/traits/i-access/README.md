@@ -84,6 +84,7 @@ The getter has the default implementation via a static method `iAccess.isFocused
 
 ```typescript
 import iAccess from 'traits/i-access/i-access';
+
 export default class bButton implements iAccess {
   /** @see iAccess.isFocused */
   get isFocused(): Promise<boolean> {
