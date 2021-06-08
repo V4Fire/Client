@@ -1584,6 +1584,9 @@ export default abstract class iBlock extends ComponentInterface {
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
+		const
+			{async: $a} = this;
+
 		if (this.isFlyweight || this.isSSR) {
 			return;
 		}
@@ -1605,7 +1608,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
 			bindRemoteWatchers(this, {
-				async: <Async<any>>this.async,
+				async: $a,
 				watchers: {
 					[path]: [
 						{
@@ -1620,16 +1623,28 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		void this.lfc.execCbAfterComponentCreated(() => {
-			const
-				unwatch = this.$watch(<any>path, opts, handler);
+			// eslint-disable-next-line prefer-const
+			let link, unwatch;
 
-			if (unwatch && (opts.group != null || opts.label != null || opts.join != null)) {
-				this.async.worker(unwatch, {
-					group: opts.group,
-					label: opts.label,
-					join: opts.join
-				});
-			}
+			const emitter = (_, wrappedHandler) => {
+				handler = wrappedHandler;
+
+				$a.worker(() => {
+					if (link != null) {
+						$a.off(link);
+					}
+				}, opts);
+
+				return () => unwatch?.();
+			};
+
+			link = $a.on(emitter, 'mutation', handler, {
+				group: `${opts.group ?? ''}:suspend`,
+				label: opts.label,
+				join: opts.join
+			});
+
+			unwatch = this.$watch(<any>path, opts, handler);
 		});
 	}
 

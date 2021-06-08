@@ -462,7 +462,7 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				this.onPageChange(page, oldPage);
-				this.async.clearWorker(label);
+				this.async.terminateWorker(label);
 			});
 
 		} else {

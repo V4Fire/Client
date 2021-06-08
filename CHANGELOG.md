@@ -104,6 +104,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bInput`
   * `bTextarea`
 
+## v3.0.0-rc.198 (2021-06-08)
+
+#### :rocket: New Feature
+
+* Now all watchers support suspending
+
 ## v3.0.0-rc.197 (2021-06-07)
 
 #### :boom: Breaking Change
