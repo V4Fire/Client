@@ -270,7 +270,7 @@ export default class bTextarea extends iInputText {
 	 * The method returns a new height value.
 	 */
 	@wait('ready', {defer: true, label: $$.minimize})
-	protected minimizeHeight(): number {
+	protected minimizeHeight(): Promise<number> {
 		const {
 			minHeight,
 			$refs: {input}
@@ -290,13 +290,13 @@ export default class bTextarea extends iInputText {
 		}
 
 		input.style.height = this.value !== '' ? newHeight.px : '';
-		return newHeight;
+		return SyncPromise.resolve(newHeight);
 	}
 
 	/**
 	 * Returns height of textarea' text content
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.getTextHeight})
 	protected getTextHeight(): CanPromise<number> {
 		const
 			{input} = this.$refs;

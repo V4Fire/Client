@@ -29,7 +29,7 @@ import iInputText, {
 	watch,
 	hook,
 
-	ValidatorsDecl
+	ValidatorsDecl, wait
 
 } from 'super/i-input-text/i-input-text';
 
@@ -241,6 +241,7 @@ export default class bInput extends iInputText {
 	protected textStore!: string;
 
 	/** @override */
+	@wait('ready', {label: $$.clear})
 	clear(): Promise<boolean> {
 		const v = this.value;
 		void this.clearText();

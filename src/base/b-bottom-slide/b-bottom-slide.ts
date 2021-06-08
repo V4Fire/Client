@@ -416,7 +416,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	}
 
 	/** @see [[iLockPageScroll.lock]] */
-	@wait('ready')
+	@wait('ready', {label: $$.lock})
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.view);
 	}
@@ -543,7 +543,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	 * Puts a node of the component to the top level of a DOM tree
 	 */
 	@hook('mounted')
-	@wait('ready')
+	@wait('ready', {label: $$.initNodePosition})
 	protected initNodePosition(): CanPromise<void> {
 		document.body.insertAdjacentElement('afterbegin', this.$el!);
 	}
@@ -634,7 +634,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Updates a position of the window node
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.updateWindowPosition})
 	protected async updateWindowPosition(): Promise<void> {
 		const window = await this.waitRef<HTMLElement>('window');
 		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
@@ -643,7 +643,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Updates an opacity of the overlay node
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.updateOpacity})
 	protected updateOpacity(): CanPromise<void> {
 		const
 			{$refs: {overlay}} = this;
@@ -715,7 +715,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Performs the animation of the component overlay opacity
 	 */
-	@wait('ready')
+	@wait('ready', {label: $$.performOpacity})
 	protected performOpacity(): CanPromise<void> {
 		const
 			{$refs: {overlay}, maxOpacity} = this;

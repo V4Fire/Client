@@ -202,7 +202,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Saves image styles to the cache
 	 */
 	@hook('beforeDestroy')
-	@wait('loading')
+	@wait('loading', {label: $$.memoizeImage})
 	protected memoizeImage(): CanPromise<void> {
 		const
 			{img} = this.$refs;

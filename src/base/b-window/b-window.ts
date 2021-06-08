@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
 import iVisible from 'traits/i-visible/i-visible';
@@ -39,6 +40,9 @@ import type { StageTitles } from 'base/b-window/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
+
+export const
+	$$ = symbolGenerator();
 
 interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScroll> {}
 
@@ -235,7 +239,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	}
 
 	/** @see [[iLockPageScroll.lock]] */
-	@wait('loading')
+	@wait('loading', {label: $$.lock})
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.window);
 	}
@@ -278,7 +282,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	 * Attaches dynamic window styles to the root node
 	 */
 	@watch({path: 'mods.position', immediate: true})
-	@wait('loading')
+	@wait('loading', {label: $$.initRootStyles})
 	protected initRootStyles(): CanPromise<void> {
 		const
 			el = <HTMLElement>this.$el;
