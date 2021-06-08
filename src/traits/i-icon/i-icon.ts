@@ -63,12 +63,17 @@ export default abstract class iIcon {
 	 * @param [href]
 	 */
 	static updateIconHref: AddSelf<iIcon['updateIconHref'], iBlock> = (component, el: SVGUseElement, href?) => {
-		const
-			$a = component.unsafe.async,
-			group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
+		const {
+			async: $a,
+			$normalParent
+		} = component.unsafe;
 
-		$a
-			.clearAll(group);
+		if (component.componentStatus === 'inactive' || $normalParent?.componentStatus === 'inactive') {
+			return;
+		}
+
+		const group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
+		$a.clearAll(group);
 
 		const
 			parent = el.parentNode;

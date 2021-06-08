@@ -148,10 +148,8 @@ export function deactivate(component: iBlock): void {
  * @param [force] - if true, then the component will be forced to activate, even if it is already activated
  */
 export function onActivated(component: iBlock, force?: boolean): void {
-	const {
-		unsafe,
-		unsafe: {async: $a}
-	} = component;
+	const
+		{unsafe} = component;
 
 	const cantActivate =
 		unsafe.isActivated ||
@@ -161,7 +159,15 @@ export function onActivated(component: iBlock, force?: boolean): void {
 		return;
 	}
 
-	$a.unmuteAll().unsuspendAll();
+	const async = [
+		unsafe.$async,
+		unsafe.async
+	];
+
+	for (let i = 0; i < async.length; i++) {
+		const $a = async[i];
+		$a.unmuteAll().unsuspendAll();
+	}
 
 	if (unsafe.isReadyOnce && readyStatuses[unsafe.componentStatus] == null) {
 		unsafe.componentStatus = 'beforeReady';
@@ -172,8 +178,13 @@ export function onActivated(component: iBlock, force?: boolean): void {
 		force || unsafe.reloadOnActivation;
 
 	if (needInitLoadOrReload) {
-		const group = {group: 'requestSync:get'};
-		$a.clearAll(group).setImmediate(load, group);
+		const
+			group = {group: 'requestSync:get'};
+
+		for (let i = 0; i < async.length; i++) {
+			const $a = async[i];
+			$a.clearAll(group).setImmediate(load, group);
+		}
 	}
 
 	if (unsafe.isReadyOnce) {
@@ -199,25 +210,35 @@ export function onActivated(component: iBlock, force?: boolean): void {
  */
 export function onDeactivated(component: iBlock): void {
 	const
-		{async: $a} = component.unsafe;
+		{unsafe} = component;
 
-	for (let keys = Object.keys(asyncNames), i = 0; i < keys.length; i++) {
+	const async = [
+		unsafe.$async,
+		unsafe.async
+	];
+
+	for (let i = 0; i < async.length; i++) {
 		const
-			key = keys[i];
+			$a = async[i];
 
-		if (nonMuteAsyncLinkNames[key] != null) {
-			continue;
+		for (let keys = Object.keys(asyncNames), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			if (nonMuteAsyncLinkNames[key] != null) {
+				continue;
+			}
+
+			const
+				fn = $a[`mute-${asyncNames[key]}`.camelize(false)];
+
+			if (Object.isFunction(fn)) {
+				fn.call($a);
+			}
 		}
 
-		const
-			fn = $a[`mute-${asyncNames[key]}`.camelize(false)];
-
-		if (Object.isFunction(fn)) {
-			fn.call($a);
-		}
+		$a.unmuteAll({group: suspendRgxp}).suspendAll();
 	}
-
-	$a.unmuteAll({group: suspendRgxp}).suspendAll();
 
 	if (statuses[component.componentStatus] >= 2) {
 		component.componentStatus = 'inactive';
