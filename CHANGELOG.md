@@ -23,7 +23,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now the component inherits `iInputText`:
   * `bInput`
   * `bTextarea`
-  * `bSelect`
 
 * `bInput`:
   * Removed `&__super-wrapper`
