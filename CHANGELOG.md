@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.199 (2021-06-08)
+## v3.0.0-rc.199 (2021-06-??)
 
 #### :boom: Breaking Change
 
@@ -70,6 +70,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `attrsProp/attrs` properties
   * Added the `normalizeAttrs` method
   * Added the `nativeInput` block
+
+#### :bug: Bug Fix
+
+* Payload of the `actionChange` event must contains `value`, but not `mods.checked` `bCheckbox`
 
 #### :memo: Documentation
 

@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.199 (2021-06-08)
+## v3.0.0-rc.199 (2021-06-??)
 
 #### :boom: Breaking Change
 
@@ -18,6 +18,10 @@ Changelog
 #### :rocket: New Feature
 
 * Added `isChecked`
+
+#### :bug: Bug Fix
+
+* Payload of the `actionChange` event must contains `value`, but not `mods.checked`
 
 #### :memo: Documentation
 
