@@ -418,6 +418,7 @@ export default class bTextarea extends iInputText {
 			return;
 		}
 
+		this.field.set('textStore', this.value);
 		this.emit('actionChange', this.value);
 	}
 

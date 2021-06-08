@@ -283,6 +283,7 @@ export default class bInput extends iInputText {
 			return;
 		}
 
+		this.field.set('textStore', this.value);
 		this.emit('actionChange', this.value);
 	}
 
