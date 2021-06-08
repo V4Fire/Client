@@ -7,7 +7,6 @@
  */
 
 import { getPropertyInfo } from 'core/component/reflection';
-import type { EventEmitterLike } from 'core/async';
 
 import { beforeHooks } from 'core/component/const';
 import { customWatcherRgxp } from 'core/component/watch/const';
@@ -144,7 +143,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				};
 
 				let
-					handler;
+					handler: AnyFunction;
 
 				// Right now we need to create a wrapper for our "raw" handler,
 				// because there are some conditions for the watcher:
@@ -258,7 +257,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 							} else {
 								const watch = (watcherCtx) =>
-									$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
+									$a.on(watcherCtx, watchPath, <AnyFunction>handler, eventParams, ...watchInfo.args ?? []);
 
 								if (Object.isPromise(watcherCtx)) {
 									$a.promise(watcherCtx, asyncParams).then(watch, stderr);
@@ -272,15 +271,18 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						}
 
 						// eslint-disable-next-line prefer-const
-						let link;
+						let link, unwatch;
 
-						const emitter = (_, handler) => {
-							const
-								i = p.info ?? getPropertyInfo(watchPath, component),
-								unwatch = $watch.call(component, i, watchInfo, handler);
+						const emitter = (_, wrappedHandler) => {
+							handler = wrappedHandler;
 
-							$a.worker(() => $a.off(link), asyncParams);
-							return unwatch;
+							$a.worker(() => {
+								if (link != null) {
+									$a.off(link);
+								}
+							}, asyncParams);
+
+							return () => unwatch?.();
 						};
 
 						link = $a.on(emitter, 'mutation', handler, {
@@ -288,6 +290,8 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							group: `${asyncParams.group ?? ''}:suspend`
 						});
 
+						const toWatch = p.info ?? getPropertyInfo(watchPath, component);
+						unwatch = $watch.call(component, toWatch, watchInfo, handler);
 					}, stderr);
 
 				} else {
@@ -304,7 +308,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 						} else {
 							const addListener = (watcherCtx) =>
-								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
+								$a.on(watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
 
 							if (Object.isPromise(watcherCtx)) {
 								$a.promise(watcherCtx, asyncParams).then(addListener, stderr);
@@ -318,21 +322,27 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					}
 
 					// eslint-disable-next-line prefer-const
-					let link;
+					let link, unwatch;
 
-					const emitter = (_, handler) => {
-						const
-							i = p.info ?? getPropertyInfo(watchPath, component),
-							unwatch = $watch.call(component, i, watchInfo, handler);
+					const emitter = (_, wrappedHandler) => {
+						handler = wrappedHandler;
 
-						$a.worker(() => $a.off(link), asyncParams);
-						return unwatch;
+						$a.worker(() => {
+							if (link != null) {
+								$a.off(link);
+							}
+						}, asyncParams);
+
+						return () => unwatch?.();
 					};
 
 					link = $a.on(emitter, 'mutation', handler, {
 						...asyncParams,
 						group: `${asyncParams.group ?? ''}:suspend`
 					});
+
+					const toWatch = p.info ?? getPropertyInfo(watchPath, component);
+					unwatch = $watch.call(component, toWatch, watchInfo, handler);
 				}
 			}
 		};

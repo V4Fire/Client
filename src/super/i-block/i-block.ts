@@ -1625,12 +1625,18 @@ export default abstract class iBlock extends ComponentInterface {
 
 		void this.lfc.execCbAfterComponentCreated(() => {
 			// eslint-disable-next-line prefer-const
-			let link;
+			let link, unwatch;
 
-			const emitter = (_, handler) => {
-				const unwatch = this.$watch(<any>path, opts, handler) ?? undefined;
-				$a.worker(() => $a.off(link), opts);
-				return unwatch;
+			const emitter = (_, wrappedHandler) => {
+				handler = wrappedHandler;
+
+				$a.worker(() => {
+					if (link != null) {
+						$a.off(link);
+					}
+				}, opts);
+
+				return () => unwatch?.();
 			};
 
 			link = $a.on(emitter, 'mutation', handler, {
@@ -1638,6 +1644,8 @@ export default abstract class iBlock extends ComponentInterface {
 				label: opts.label,
 				join: opts.join
 			});
+
+			unwatch = this.$watch(<any>path, opts, handler);
 		});
 	}
 
