@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Moved from `base` to `dummies` `bDummy`
 * Removed `bInputTime`
 * Removed `bScroll`
+* `Items.classes` was replaced with `Items.mods` `bList`
 
 * Now the component inherits `iInputText`:
   * `bInput`
@@ -53,6 +54,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added support of the default slot `bDummy`
 * Added support of interpolation of a data provider response `iInput`
 * Added `isChecked` `bCheckbox`
+* Now `Items.classes` uses to provide extra non-modifier classes to an element `bList`
 
 * `bForm`:
   * Added `getElValueToSubmit`
@@ -70,6 +72,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `attrsProp/attrs` properties
   * Added the `normalizeAttrs` method
   * Added the `nativeInput` block
+
+#### :bug: Bug Fix
+
+* Now `normalizeItems` doesn't modify the original object `bList`
 
 #### :memo: Documentation
 

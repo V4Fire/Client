@@ -29,13 +29,13 @@
 
 				< ${listElTag}.&__el.&__item
 					< a &
-						:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
+						:class = provide.hintClasses(el.hintPos).concat(el.classes || [], provide.elClasses({link: {
 							id: Object.get(values, [el.value]),
 							active: isActive(el),
 							exterior: el.exterior,
 							hidden: el.hidden,
 							progress: el.progress,
-							...el.classes
+							...el.mods
 						}})) |
 
 						:href = el.href |

@@ -7,6 +7,7 @@
  */
 
 import type { HintPosition } from 'global/g-hint/interface';
+import type { ModsTable } from 'super/i-data';
 
 export interface Item extends Dictionary {
 	/**
@@ -83,9 +84,14 @@ export interface Item extends Dictionary {
 	progressIcon?: string | boolean;
 
 	/**
-	 * Map of additional classes of the item
+	 * Map of additional modifiers of the item
 	 */
-	classes?: Dictionary<string>;
+	mods?: ModsTable;
+
+	/**
+	 * List of additional classes of the item
+	 */
+	classes?: string[];
 
 	/**
 	 * Map of extra attributes of the item

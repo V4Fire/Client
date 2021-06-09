@@ -116,7 +116,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Sets a new list of component items
-	 * @see [[bList.itemsProp]]
+	 * @see [[bList.items]]
 	 */
 	set items(value: this['Items']) {
 		this.field.set(this.deprecated ? 'value' : 'itemsStore', value);
@@ -486,35 +486,33 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		const
 			res = <this['Items']>[];
 
-		if (!items) {
+		if (items == null) {
 			return res;
 		}
 
 		for (let i = 0; i < items.length; i++) {
 			const
-				el = items[i];
+				item = items[i];
 
-			if (el.value === undefined) {
-				el.value = el.href;
+			let
+				{value, href} = item;
+
+			if (value === undefined) {
+				value = href;
 			}
 
-			if (el.href === undefined) {
+			if (href === undefined) {
 				let
-					href = String(el.value);
+					href = String(value);
 
-				const valid = {
-					'/': true,
-					'#': true
-				};
-
-				if (!isAbsURL.test(href) && valid[href[0]] !== true) {
+				if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
 					href = `#${href}`;
 				}
 
-				el.href = this.autoHref && el.value !== undefined ? href : 'javascript:void(0)';
+				href = this.autoHref && value !== undefined ? href : 'javascript:void(0)';
 			}
 
-			res.push(el);
+			res.push({...item, value, href});
 		}
 
 		return res;
