@@ -75,6 +75,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Payload of the `actionChange` event must contain `value`, but not `mods.checked` `bCheckbox`
 * Now `normalizeItems` doesn't modify the original object `bList`
 
 #### :memo: Documentation

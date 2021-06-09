@@ -19,6 +19,10 @@ Changelog
 
 * Added `isChecked`
 
+#### :bug: Bug Fix
+
+* Payload of the `actionChange` event must contain `value`, but not `mods.checked`
+
 #### :memo: Documentation
 
 * Added documentation
