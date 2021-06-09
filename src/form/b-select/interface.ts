@@ -8,6 +8,9 @@
 
 import type { ModsTable } from 'super/i-input-text/i-input-text';
 
+export type Value = unknown | Set<unknown>;
+export type FormValue = CanUndef<Value>;
+
 export interface Item extends Dictionary {
 	/**
 	 * Item label text

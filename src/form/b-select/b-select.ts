@@ -17,16 +17,21 @@ import iInputText, {
 	component,
 	prop,
 	field,
+	system,
+	computed,
+	hook,
 
-	ModsDecl
+	ModsDecl, watch
 
 } from 'super/i-input-text/i-input-text';
 
-import type { Item, Items } from 'form/b-select/interface';
+import type { Value, FormValue, Item, Items } from 'form/b-select/interface';
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
 export * from 'form/b-select/interface';
+
+export { Value, FormValue };
 
 export const
 	$$ = symbolGenerator();
@@ -42,6 +47,12 @@ interface bSelect extends Trait<typeof iOpenToggle> {}
 
 @derive(iOpenToggle)
 class bSelect extends iInputText implements iOpenToggle, iItems {
+	/** @override */
+	readonly Value!: Value;
+
+	/** @override */
+	readonly FormValue!: FormValue;
+
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 
@@ -67,6 +78,12 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, required: false})
 	readonly itemProps?: iItems['itemProps'];
+
+	/**
+	 * If true, the component supports a feature of multiple selected items
+	 */
+	@prop(Boolean)
+	readonly multiple: boolean = false;
 
 	/**
 	 * Icon to show before the input
@@ -183,6 +200,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
 
+	/** @override */
+	get value(): this['Value'] {
+		const
+			v = this.field.get('valueStore');
+
+		if (this.multiple) {
+			return Object.isSet(v) ? new Set(v) : new Set();
+		}
+
+		return v;
+	}
+
 	/**
 	 * List of component items or select options
 	 * @see [[bSelect.itemsProp]]
@@ -208,8 +237,56 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	};
 
 	/** @override */
-	@field()
-	protected readonly valueKey: string = 'selected';
+	@system<bSelect>((o) => o.sync.link((val) => {
+		const
+			beforeDataCreate = o.hook === 'beforeDataCreate';
+
+		if (val === undefined && beforeDataCreate) {
+			if (o.multiple) {
+				if (Object.isSet(o.valueStore)) {
+					return o.valueStore;
+				}
+
+				return new Set(Array.concat([], o.valueStore));
+			}
+
+			return o.valueStore;
+		}
+
+		let
+			newVal;
+
+		if (o.multiple) {
+			const
+				objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
+
+			if (Object.fastCompare(objVal, o.valueStore)) {
+				return o.valueStore;
+			}
+
+			newVal = objVal;
+
+		} else {
+			newVal = val;
+		}
+
+		o.selectValue(newVal);
+		return newVal;
+	}))
+
+	protected valueStore!: this['Value'];
+
+	/**
+	 * Map of item indexes and their values
+	 */
+	@system()
+	protected indexes!: Dictionary;
+
+	/**
+	 * Map of item values and their indexes
+	 */
+	@system()
+	protected values!: Map<unknown, number>;
 
 	/**
 	 * Store of component items
@@ -230,9 +307,159 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		select?: HTMLSelectElement;
 	};
 
-	/** @see [[iItems.getItemKey]] */
-	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
-		return iItems.getItemKey(this, item, i);
+	/**
+	 * A link to the selected item element.
+	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
+	 */
+	@computed({
+		cache: true,
+		dependencies: ['value']
+	})
+
+	protected get selectedElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
+		const
+			{value} = this;
+
+		const getEl = (value) => {
+			const
+				id = this.values.get(value);
+
+			if (id != null) {
+				return this.block?.element<HTMLAnchorElement>('item', {id});
+			}
+		};
+
+		return this.waitStatus('ready', () => {
+			if (this.multiple) {
+				if (!Object.isSet(value)) {
+					return [];
+				}
+
+				return [...value].flatMap((val) => getEl(val) ?? []);
+			}
+
+			return getEl(value);
+		});
+	}
+
+	/**
+	 * Selects the specified value
+	 * @param value
+	 */
+	selectValue(value: unknown): boolean {
+		const
+			valueStore = this.field.get('valueStore');
+
+		if (this.multiple) {
+			if (Object.has(valueStore, [value])) {
+				return false;
+			}
+
+			(<Set<unknown>>valueStore).add(value);
+
+		} else if (valueStore === value) {
+			return false;
+
+		} else {
+			this.field.set('valueStore', Object.freeze(value));
+		}
+
+		const
+			{block: $b} = this;
+
+		if ($b != null) {
+			const
+				id = this.values.get(value),
+				target = id != null ? $b.element('item', {id}) : null;
+
+			if (!this.multiple) {
+				const
+					old = $b.element('item', {selected: true});
+
+				if (old && old !== target) {
+					$b.setElMod(old, 'item', 'selected', false);
+				}
+			}
+
+			if (target) {
+				$b.setElMod(target, 'item', 'selected', true);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Removes selection from the specified value
+	 * @param value
+	 */
+	unselectValue(value: unknown): boolean {
+		const
+			valueStore = this.field.get('valueStore');
+
+		if (this.multiple) {
+			if (!Object.has(valueStore, [value])) {
+				return false;
+			}
+
+			(<Set<unknown>>valueStore).delete(value);
+
+		} else if (valueStore !== value) {
+			return false;
+
+		} else {
+			this.field.set('valueStore', undefined);
+		}
+
+		const
+			{block: $b} = this;
+
+		if ($b) {
+			const
+				id = this.values.get(value),
+				target = id != null ? $b.element('item', {id}) : null;
+
+			if (target) {
+				$b.setElMod(target, 'item', 'selected', false);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Toggles selection of the specified value
+	 * @param value
+	 */
+	toggleValue(value: unknown): boolean {
+		const
+			valueStore = this.field.get('valueStore');
+
+		if (this.multiple) {
+			if (Object.has(valueStore, [value])) {
+				return this.unselectValue(value);
+			}
+
+			return this.selectValue(value);
+		}
+
+		if (valueStore !== value) {
+			return this.selectValue(value);
+		}
+
+		return this.unselectValue(value);
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+
+		const
+			i = this.instance;
+
+		this.normalizeItems = i.normalizeItems.bind(this);
+		this.isSelected = i.isSelected.bind(this);
+		this.selectValue = i.selectValue.bind(this);
 	}
 
 	/**
@@ -240,13 +467,37 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @param item
 	 */
 	protected isSelected(item: Item): boolean {
-		return this.value !== undefined ? item.value === this.value : Boolean(item.selected);
+		const v = this.field.get('valueStore');
+		return this.multiple ? Object.has(v, [item.value]) : item.value === v;
 	}
 
-	/** @override */
-	protected initBaseAPI(): void {
-		super.initBaseAPI();
-		this.normalizeItems = this.instance.normalizeItems.bind(this);
+	/**
+	 * Initializes component values
+	 */
+	@hook('beforeDataCreate')
+	protected initComponentValues(): void {
+		const
+			values = new Map(),
+			indexes = {};
+
+		const
+			valueStore = this.field.get('valueStore');
+
+		for (let i = 0; i < this.items.length; i++) {
+			const
+				item = this.items[i],
+				val = item.value;
+
+			if (item.selected && (this.multiple ? this.valueProp === undefined : valueStore === undefined)) {
+				this.selectValue(val);
+			}
+
+			values.set(val, i);
+			indexes[i] = val;
+		}
+
+		this.values = values;
+		this.indexes = indexes;
 	}
 
 	/**
@@ -272,6 +523,65 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 
 		return res;
+	}
+
+	/**
+	 * Returns a dictionary with props for the specified item
+	 *
+	 * @param item
+	 * @param i - position index
+	 */
+	protected getItemProps(item: this['Item'], i: number): Dictionary {
+		const
+			op = this.itemProps;
+
+		return Object.isFunction(op) ?
+			op(item, i, {
+				key: this.getItemKey(item, i),
+				ctx: this
+			}) :
+
+			op ?? {};
+	}
+
+	/** @see [[iItems.getItemKey]] */
+	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
+		return iItems.getItemKey(this, item, i);
+	}
+
+	/**
+	 * Synchronization of items
+	 *
+	 * @param items
+	 * @param oldItems
+	 * @emits `itemsChange(value: this['Items'])`
+	 */
+	@watch('itemsStore')
+	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+		if (!Object.fastCompare(items, oldItems)) {
+			this.initComponentValues();
+			this.emit('itemsChange', items);
+		}
+	}
+
+	/**
+	 * Handler: click to some item element
+	 *
+	 * @param e
+	 * @emits `actionChange(active: unknown)`
+	 */
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('item', cb)
+	})
+
+	protected onItemClick(e: Event): void {
+		const
+			target = <Element>e.delegateTarget,
+			id = Number(target.getAttribute('data-id'));
+
+		this.toggleValue(this.indexes[id]);
+		this.emit('actionChange', this.value);
 	}
 }
 

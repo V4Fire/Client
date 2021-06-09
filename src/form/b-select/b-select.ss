@@ -104,28 +104,27 @@
 			.
 				< _.&__dropdown-content
 					< _.&__dropdown-content-wrapper
-						< _ &
-							v-for = (el, i) in items |
-							:key = getItemKey(el, i)
+						< template v-for = (el, i) in items | :key = getItemKey(el, i)
+							< _ &
+								:class = Array.concat([], el.classes, provide.elClasses({
+									item: {
+										id: values.get(el.value),
+										selected: isSelected(el),
+										exterior: el.exterior,
+										...el.mods
+									}
+								})) |
 
-							:class = provide.elClasses({
-								item: {
-									selected: isSelected(el)
-								}
-							})
-						.
-							< template v-if = vdom.getSlot('default')
-								+= self.slot('default', {':item': 'el'})
-
-							< component &
-								v-else-if = item |
-								:is = item |
-								:p = el |
-								:exterior = el.exterior |
-								:classes = el.classes |
-								:mods = el.mods |
+								:-id = values.get(el.value) |
 								:v-attrs = el.attrs
 							.
 
-							< template v-else
-								{{ t(el.label) }}
+								+= self.slot('default', {':item': 'el'})
+									< template v-if = item
+										< component &
+											:is = Object.isFunction(item) ? item(el, i) : item |
+											:v-attrs = getItemProps(el, i)
+										.
+
+									< template v-else
+										{{ t(el.label) }}
