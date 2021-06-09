@@ -97,34 +97,33 @@
 
 		- block dropdown
 			< _.&__dropdown[.&_pos_bottom-left] &
+				ref = dropdown |
 				v-if = !browser.is.mobile && items.length && (
 					isFunctional ||
 					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				)
 			.
-				< _.&__dropdown-content
-					< _.&__dropdown-content-wrapper
-						< template v-for = (el, i) in items | :key = getItemKey(el, i)
-							< _ &
-								:class = Array.concat([], el.classes, provide.elClasses({
-									item: {
-										id: values.get(el.value),
-										selected: isSelected(el),
-										exterior: el.exterior,
-										...el.mods
-									}
-								})) |
+				< template v-for = (el, i) in items | :key = getItemKey(el, i)
+					< _ &
+						:class = Array.concat([], el.classes, provide.elClasses({
+							item: {
+								id: values.get(el.value),
+								selected: isSelected(el),
+								exterior: el.exterior,
+								...el.mods
+							}
+						})) |
 
-								:-id = values.get(el.value) |
-								:v-attrs = el.attrs
-							.
+						:-id = values.get(el.value) |
+						:v-attrs = el.attrs
+					.
 
-								+= self.slot('default', {':item': 'el'})
-									< template v-if = item
-										< component &
-											:is = Object.isFunction(item) ? item(el, i) : item |
-											:v-attrs = getItemProps(el, i)
-										.
+						+= self.slot('default', {':item': 'el'})
+							< template v-if = item
+								< component &
+									:is = Object.isFunction(item) ? item(el, i) : item |
+									:v-attrs = getItemProps(el, i)
+								.
 
-									< template v-else
-										{{ t(el.label) }}
+							< template v-else
+								{{ t(el.label) }}

@@ -280,7 +280,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Map of item indexes and their values
 	 */
 	@system()
-	protected indexes!: Dictionary;
+	protected indexes!: Dictionary<this['Item']>;
 
 	/**
 	 * Map of item values and their indexes
@@ -305,6 +305,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @override */
 	protected readonly $refs!: iInputText['$refs'] & {
 		select?: HTMLSelectElement;
+		dropdown?: Element;
 	};
 
 	/**
@@ -493,7 +494,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			}
 
 			values.set(val, i);
-			indexes[i] = val;
+			indexes[i] = item;
 		}
 
 		this.values = values;
@@ -578,9 +579,139 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	protected onItemClick(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,
-			id = Number(target.getAttribute('data-id'));
+			id = Number(target.getAttribute('data-id')),
+			item = this.indexes[id];
 
-		this.toggleValue(this.indexes[id]);
+		if (item == null) {
+			return;
+		}
+
+		if (!this.multiple) {
+			this.text = item.label ?? '';
+		}
+
+		this.toggleValue(item.value);
+		this.emit('actionChange', this.value);
+	}
+
+	/** @override */
+	protected async onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): Promise<void> {
+		super.onValueChange(value, oldValue);
+
+		const
+			{block: $b} = this;
+
+		if ($b == null || this.multiple) {
+			return;
+		}
+
+		const
+			prevSelected = $b.element('option', {selected: true});
+
+		if (prevSelected != null) {
+			$b.setElMod(prevSelected, 'option', 'selected', false);
+		}
+
+		if (this.value === undefined) {
+			this.text = '';
+			return;
+		}
+
+		const
+			id = this.values.get(this.value);
+
+		console.log(111, this.value, this.values);
+
+		if (id == null) {
+			return;
+		}
+
+		const
+			{is} = this.browser,
+			{dropdown} = this.$refs;
+
+		/*if (this.mods.focused !== 'true' || is.mobile !== false) {
+			this.value = this.getOptionLabel(item);
+		}*/
+
+		if (is.mobile !== false || dropdown) {
+			return;
+		}
+
+		try {
+			const
+				dropdown = await this.waitRef<Element>('dropdown', {label: $$.dropdown}),
+				node = $b.element<HTMLElement>(`option[data-value="${id}"]`);
+
+			if (node == null) {
+				return;
+			}
+
+			$b.setElMod(node, 'option', 'selected', true);
+
+			const
+				selTop = node.offsetTop,
+				selHeight = node.offsetHeight,
+				selOffset = selTop + selHeight;
+
+			const {
+				scrollTop,
+				scrollHeight
+			} = dropdown;
+
+			if (selOffset > scrollHeight) {
+				if (selOffset > scrollTop + scrollHeight) {
+					dropdown.scrollTop = selTop - scrollHeight + selHeight;
+
+				} else if (selOffset < scrollTop + node.offsetHeight) {
+					dropdown.scrollTop = selTop;
+				}
+
+			} else if (selOffset < scrollTop) {
+				dropdown.scrollTop = selTop;
+			}
+		} catch {}
+	}
+
+	/**
+	 * Handler: changing of the input' text value
+	 */
+	@watch('text')
+	protected onTextChange(): void {
+		const
+			rgxp = new RegExp(`^${RegExp.escape(this.text)}`, 'i');
+
+		let
+			some = false;
+
+		for (let i = 0; i < this.items.length; i++) {
+			const
+				item = this.items[i];
+
+			if (item.label != null && rgxp.test(item.label)) {
+				this.selectValue(item.value);
+				some = true;
+				break;
+			}
+		}
+
+		if (some) {
+			void this.open();
+		}
+
+		void this.close();
+	}
+
+	/**
+	 * Handler: manual editing of a component text value
+	 * @emits `actionChange(value: V)`
+	 */
+	protected onEdit(): void {
+		if (this.compiledMask != null) {
+			return;
+		}
+
+		this.field.set('textStore', this.value);
 		this.emit('actionChange', this.value);
 	}
 }

@@ -8,6 +8,8 @@
 
 $p = {
 	optionSelectedBackgroundColor: #EBF3F7
+	messageHelpers: true
+	sizeHelpers: false
 }
 
 b-select
@@ -135,8 +137,7 @@ b-select
 			&:hover
 				background @background
 
-	&__dropdown-content-wrapper
-		max-height 20em
-
-	&__dropdown &__dropdown-content
-		padding 0.4em 0
+	&__dropdown
+		display block
+		max-height 160px
+		overflow auto
