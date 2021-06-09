@@ -2,6 +2,7 @@
   "extends": "@v4fire/core/.tsconfig",
   "compilerOptions": {
     "module": "ES2020",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "lib": ["dom", "esnext", "webworker"]
   }
 }
