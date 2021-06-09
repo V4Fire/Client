@@ -94,7 +94,7 @@ export interface Item extends Dictionary {
 	classes?: string[];
 
 	/**
-	 * Map of extra attributes of the item
+	 * Map of additional attributes of the item
 	 */
 	attrs?: Dictionary;
 }
