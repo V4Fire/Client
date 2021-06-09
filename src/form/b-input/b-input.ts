@@ -159,7 +159,11 @@ export default class bInput extends iInputText {
 	 * @see [[gHint]]
 	 * @example
 	 * ```
-	 * < b-input :icon = 'dropdown' | :preIconHint = 'Show variants' | :iconHintPos = 'bottom-right'
+	 * < b-input &
+	 *   :icon = 'dropdown' |
+	 *   :iconHint = 'Show variants' |
+	 *   :iconHintPos = 'bottom-right'
+	 * .
 	 * ```
 	 */
 	@prop({type: String, required: false})
