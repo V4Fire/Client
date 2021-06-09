@@ -7,39 +7,31 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { derive } from 'core/functools/trait';
 
-import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
-import type bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
+import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
 
-import bInput, {
+import iInputText, {
 
 	component,
 	prop,
 	field,
-	system,
-	hook,
-	watch,
-	mod,
-	wait,
 
-	ModEvent,
-	SetModEvent,
-	ModsDecl,
-	InitLoadOptions
+	ModsDecl
 
-} from 'form/b-input/b-input';
+} from 'super/i-input-text/i-input-text';
 
-import type { Option, NOption } from 'form/b-select/modules/interface';
+import type { Item, Items } from 'form/b-select/interface';
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
-export * from 'form/b-select/modules/interface';
+export * from 'form/b-select/interface';
 
 export const
 	$$ = symbolGenerator();
 
-let
-	openedSelect;
+interface bSelect extends Trait<typeof iOpenToggle> {}
 
 @component({
 	model: {
@@ -48,71 +40,169 @@ let
 	}
 })
 
-export default class bSelect extends bInput implements iOpenToggle {
-	/**
-	 * Initial select options
-	 */
+@derive(iOpenToggle)
+class bSelect extends iInputText implements iOpenToggle, iItems {
+	/** @see [[iItems.Item]] */
+	readonly Item!: Item;
+
+	/** @see [[iItems.Items]] */
+	readonly Items!: Array<this['Item']>;
+
+	/** @see [[iItems.items]] */
 	@prop(Array)
-	readonly optionsProp: Option[] = [];
+	readonly itemsProp: this['Items'] = [];
+
+	/** @see [[iItems.item]] */
+	@prop({type: [String, Function], required: false})
+	readonly item?: iItems['item'];
+
+	/** @see [[iItems.itemKey]] */
+	@prop({
+		type: [String, Function],
+		default: () => (item: Item) => item.value
+	})
+
+	readonly itemKey!: iItems['itemKey'];
+
+	/** @see [[iItems.itemProps]] */
+	@prop({type: Function, required: false})
+	readonly itemProps?: iItems['itemProps'];
 
 	/**
-	 * Initial selected value
-	 */
-	@prop({required: false})
-	readonly selectedProp?: unknown;
-
-	/**
-	 * Option component
+	 * Icon to show before the input
+	 *
+	 * @example
+	 * ```
+	 * < b-select :preIcon = 'dropdown' | :items = myItems
+	 * ```
 	 */
 	@prop({type: String, required: false})
-	readonly option?: string;
+	readonly preIcon?: string;
 
 	/**
-	 * Exterior of bScroll component
+	 * Name of the used component to show `preIcon`
+	 *
+	 * @default `'b-icon'`
+	 * @example
+	 * ```
+	 * < b-select :preIconComponent = 'b-my-icon' | :items = myItems
+	 * ```
 	 */
 	@prop({type: String, required: false})
-	readonly scrollExterior?: string;
+	readonly preIconComponent?: string;
 
 	/**
-	 * If true, then .initLoad will be executed after .mods.opened === 'true'
+	 * Tooltip text to show during hover the cursor on `preIcon`
+	 *
+	 * @example
+	 * ```
+	 * < b-select :preIcon = 'dropdown' | :preIconHint = 'Show variants' | :items = myItems
+	 * ```
 	 */
-	@prop(Boolean)
-	readonly initAfterOpen: boolean = false;
+	@prop({type: String, required: false})
+	readonly preIconHint?: string;
 
 	/**
-	 * Selected value store
+	 * Tooltip position to show during hover the cursor on `preIcon`
+	 *
+	 * @see [[gHint]]
+	 * @example
+	 * ```
+	 * < b-select &
+	 *   :preIcon = 'dropdown' |
+	 *   :preIconHint = 'Show variants' |
+	 *   :preIconHintPos = 'bottom-right' |
+	 *   :items = myItems
+	 * .
+	 * ```
 	 */
-	@field<bSelect>((o) => o.sync.link((val) => {
-		val = o.resolveValue(val);
-		return val !== undefined ? String(val) : undefined;
-	}))
-
-	selected?: this['FormValue'];
+	@prop({type: String, required: false})
+	readonly preIconHintPos?: string;
 
 	/**
-	 * Select options
+	 * Icon to show after the input
+	 *
+	 * @example
+	 * ```
+	 * < b-select :icon = 'dropdown' | :items = myItems
+	 * ```
 	 */
-	get options(): NOption[] {
-		return (<NOption[]>this.field.get('optionsStore')).slice();
+	@prop({type: String, required: false})
+	readonly icon?: string;
+
+	/**
+	 * Name of the used component to show `icon`
+	 *
+	 * @default `'b-icon'`
+	 * @example
+	 * ```
+	 * < b-select :iconComponent = 'b-my-icon' | :items = myItems
+	 * ```
+	 */
+	@prop({type: String, required: false})
+	readonly iconComponent?: string;
+
+	/**
+	 * Tooltip text to show during hover the cursor on `icon`
+	 *
+	 * @example
+	 * ```
+	 * < b-select :icon = 'dropdown' | :iconHint = 'Show variants' | :items = myItems
+	 * ```
+	 */
+	@prop({type: String, required: false})
+	readonly iconHint?: string;
+
+	/**
+	 * Tooltip position to show during hover the cursor on `icon`
+	 *
+	 * @see [[gHint]]
+	 * @example
+	 * ```
+	 * < b-select &
+	 *   :icon = 'dropdown' |
+	 *   :iconHint = 'Show variants' | :
+	 *   :iconHintPos = 'bottom-right' |
+	 *   :items = myItems
+	 * .
+	 * ```
+	 */
+	@prop({type: String, required: false})
+	readonly iconHintPos?: string;
+
+	/**
+	 * A component to show "in-progress" state or
+	 * Boolean, if need to show progress by slot or `b-progress-icon`
+	 *
+	 * @default `'b-progress-icon'`
+	 * @example
+	 * ```
+	 * < b-select :progressIcon = 'b-my-progress-icon'
+	 * ```
+	 */
+	@prop({type: [String, Boolean], required: false})
+	readonly progressIcon?: string | boolean;
+
+	/**
+	 * List of component items or select options
+	 * @see [[bSelect.itemsProp]]
+	 */
+	get items(): this['Items'] {
+		return <this['Items']>this.field.get('itemsStore');
 	}
 
 	/**
-	 * Sets new select options
-	 * @param value
+	 * Sets a new list of component items
+	 * @see [[bSelect.items]]
 	 */
-	set options(value: NOption[]) {
-		this.field.set('optionsStore', value);
-	}
-
-	/** @override */
-	get default(): unknown {
-		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
+	set items(value: this['Items']) {
+		this.field.set('itemsStore', value);
 	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		opened: [
-			...iOpenToggle.mods.opened,
+			...iOpenToggle.mods.opened!,
 			['false']
 		]
 	};
@@ -122,583 +212,67 @@ export default class bSelect extends bInput implements iOpenToggle {
 	protected readonly valueKey: string = 'selected';
 
 	/**
-	 * Select options store
+	 * Store of component items
+	 * @see [[bSelect.items]]
 	 */
-	@field<bSelect>({
-		watch: (o) => {
-			o.initComponentValues().catch(stderr);
-		},
+	@field<bSelect>((o) => o.sync.link<Items>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Items>>o.itemsStore ?? [];
+		}
 
-		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
-	})
+		return o.normalizeItems(val);
+	}))
 
-	protected optionsStore!: NOption[];
-
-	/**
-	 * Temporary labels table
-	 */
-	@system()
-	protected labels!: Dictionary<Option>;
-
-	/**
-	 * Temporary values table
-	 */
-	@system()
-	protected values!: Dictionary<Option>;
+	protected itemsStore!: this['Items'];
 
 	/** @override */
-	protected readonly $refs!: bInput['$refs'] & {
-		scroll?: bScrollInline;
+	protected readonly $refs!: iInputText['$refs'] & {
 		select?: HTMLSelectElement;
 	};
 
-	/** @override */
-	initLoad(data?: unknown, params?: InitLoadOptions): CanPromise<void> {
-		/// FIXME
-		if (this.initAfterOpen && !this.browser.is.mobile) {
-			const
-				{mods} = this;
-
-			return this.async
-				.wait(() => mods.opened !== 'false' || mods.focused === 'true')
-				.then(() => super.initLoad(data, params));
-		}
-
-		return super.initLoad(data, params);
+	/** @see [[iItems.getItemKey]] */
+	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
+		return iItems.getItemKey(this, item, i);
 	}
 
-	/** @override */
-	async clear(): Promise<boolean> {
-		await this.close();
-
-		if (this.value || this.selected) {
-			this.value = '';
-			await super.clear();
-			return true;
-		}
-
-		return false;
-	}
-
-	/** @see iOpenToggle.open */
-	@mod('focused', true)
-	@wait('ready')
-	async open(): Promise<boolean> {
-		const
-			{select} = this.$refs;
-
-		if (this.browser.is.mobile) {
-			select && select.focus();
-			this.emit('open');
-			return true;
-		}
-
-		if (await this.setMod('opened', true)) {
-			if (!this.options.length) {
-				return true;
-			}
-
-			if (this.opt.ifOnce('opened') < 2) {
-				// @ts-ignore
-				await Promise.all([this.nextTick(), this.waitRef('scroll')]);
-			}
-
-			const
-				selected = this.block.element<HTMLElement>('option', {selected: true});
-
-			if (this.mods.opened === 'true') {
-				const
-					{scroll} = this.$refs;
-
-				if (scroll) {
-					await scroll.calcScroll();
-					await scroll.setScrollOffset({top: selected ? selected.offsetTop : 0});
-				}
-
-				this.emit('open');
-				return true;
-			}
-
-			return false;
-		}
-
-		return false;
-	}
-
-	/** @see iOpenToggle.close */
-	async close(): Promise<boolean> {
-		if (await iOpenToggle.close(this)) {
-			if (this.selected) {
-				await this.onOptionSelected(this.selected);
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	/** @see iOpenToggle.toggle */
-	toggle(): Promise<boolean> {
-		return iOpenToggle.toggle(this);
-	}
-
-	/** @override */
-	@wait('ready')
-	async focus(): Promise<boolean> {
-		if (this.browser.is.mobile) {
-			const
-				{select} = this.$refs;
-
-			if (select && document.activeElement !== select) {
-				select.focus();
-				return true;
-			}
-
-			return false;
-		}
-
-		return super.focus();
-	}
-
-	/** @override */
-	@wait('ready')
-	async blur(): Promise<boolean> {
-		if (this.browser.is.mobile) {
-			const
-				{select} = this.$refs;
-
-			if (select && document.activeElement === select) {
-				select.blur();
-				return true;
-			}
-
-			return false;
-		}
-
-		return super.blur();
-	}
-
-	/** @see iOpenToggle.onOpenedChange */
-	onOpenedChange(e: ModEvent | SetModEvent): void {
-		const
-			{async: $a} = this;
-
-		// opened == false or opened == null
-		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
-			if (openedSelect === this) {
-				openedSelect = null;
-			}
-
-			if (this.mods.focused !== 'true') {
-				$a.off({
-					group: 'navigation'
-				});
-			}
-
-			return;
-		}
-
-		$a.off({
-			group: 'navigation'
-		});
-
-		if (openedSelect) {
-			openedSelect.close().catch(() => undefined);
-		}
-
-		openedSelect = this;
-
-		$a.on(document, 'keydown', async (e) => {
-			if (!{ArrowUp: true, ArrowDown: true, Enter: true}[e.key]) {
-				return;
-			}
-
-			e.preventDefault();
-
-			const
-				{block: $b} = this,
-				selected = getSelected();
-
-			function getSelected(): CanUndef<HTMLElement> {
-				return $b.element('option', {selected: true});
-			}
-
-			switch (e.key) {
-				case 'Enter':
-					if (selected) {
-						await this.onOptionSelected();
-					}
-
-					break;
-
-				case 'ArrowUp':
-					if (this.selected) {
-						if (selected) {
-							if (selected.previousElementSibling) {
-								this.selected = (<HTMLElement>selected.previousElementSibling).dataset.value;
-								break;
-							}
-
-							await this.close();
-						}
-					}
-
-					break;
-
-				case 'ArrowDown': {
-					const
-						that = this;
-
-					// Use "that" instead of "this" because of TS generates invalid code
-					const select = async (el) => {
-						if (that.mods.opened !== 'true') {
-							await that.open();
-							el = getSelected();
-							if (that.selected) {
-								return;
-							}
-						}
-
-						if (el) {
-							if (!that.selected) {
-								that.selected = el.dataset.value;
-								return;
-							}
-
-							if (el.nextElementSibling) {
-								that.selected = el.nextElementSibling.dataset.value;
-								return;
-							}
-
-							that.selected = $b.element<HTMLElement>('option')!.dataset.value;
-						}
-					};
-
-					if (this.selected) {
-						if (selected) {
-							await select(selected);
-							break;
-						}
-					}
-
-					await select($b.element('option'));
-				}
-			}
-		}, {
-			group: 'navigation'
-		});
-	}
-
-	/** @see iOpenToggle.onKeyClose */
-	onKeyClose(e: KeyboardEvent): Promise<void> {
-		return iOpenToggle.onKeyClose(this, e);
-	}
-
-	/** @see iOpenToggle.onTouchClose */
-	onTouchClose(e: MouseEvent): Promise<void> {
-		return iOpenToggle.onTouchClose(this, e);
-	}
-
-	/** @override */
-	protected initRemoteData(): CanUndef<NOption[]> {
-		if (!this.db) {
-			return;
-		}
-
-		const
-			val = this.convertDBToComponent<Option[]>(this.db);
-
-		if (Object.isArray(val)) {
-			return this.options = this.normalizeOptions(val);
-		}
-
-		return this.options;
+	/**
+	 * Returns true if the specified item is selected
+	 * @param item
+	 */
+	protected isSelected(item: Item): boolean {
+		return this.value !== undefined ? item.value === this.value : Boolean(item.selected);
 	}
 
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.normalizeOptions = this.instance.normalizeOptions.bind(this);
+		this.normalizeItems = this.instance.normalizeItems.bind(this);
 	}
 
 	/**
-	 * Normalizes the specified options and returns it
-	 * @param options
+	 * Normalizes the specified items and returns it
+	 * @param items
 	 */
-	protected normalizeOptions(options?: Option[]): NOption[] {
+	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		const
-			res = <NOption[]>[];
+			res = <this['Items']>[];
 
-		if (options) {
-			for (let i = 0; i < options.length; i++) {
-				const
-					el = options[i];
+		if (items == null) {
+			return res;
+		}
 
-				res.push({
-					label: String(el.label),
-					value: el.value !== undefined ? String(el.value) : el.label
-				});
-			}
+		for (let i = 0; i < items.length; i++) {
+			const
+				item = items[i];
+
+			res.push({
+				...item,
+				value: item.value !== undefined ? item.value : item.label
+			});
 		}
 
 		return res;
 	}
-
-	/**
-	 * Initializes component values
-	 */
-	@hook('beforeDataCreate')
-	protected async initComponentValues(): Promise<void> {
-		const
-			data = this.$fields,
-			labels = {},
-			values = {};
-
-		for (let o = <NOption[]>data.optionsStore, i = 0; i < o.length; i++) {
-			const
-				el = o[i],
-				val = el.value;
-
-			if (el.selected && !this.selected && !this.value) {
-				if (this.mods.focused !== 'true') {
-					this.sync.syncLinks('valueProp', this.getOptionLabel(el));
-				}
-
-				data.selected = val;
-			}
-
-			values[val] = el;
-			labels[el.label] = el;
-		}
-
-		this.labels = labels;
-		this.values = values;
-
-		const
-			{valueStore: value, selected} = data;
-
-		if (selected === undefined) {
-			if (value) {
-				const
-					option = labels[String(value)];
-
-				if (option) {
-					data.selected = option.value;
-				}
-			}
-
-		} else if (!value) {
-			const val = values[String(selected)];
-			data.valueStore = data.valueBufferStore = val ? this.getOptionLabel(val) : '';
-		}
-
-		const
-			{scroll} = this.$refs;
-
-		if (scroll) {
-			await scroll.initScroll();
-		}
-	}
-
-	/**
-	 * Synchronization for the selected field
-	 * @param selected
-	 */
-	@watch('selected')
-	@wait('ready')
-	protected async syncSelectedStoreWatcher(selected: this['FormValue']): Promise<void> {
-		const
-			{block: $b} = this,
-			prevSelected = $b.element('option', {selected: true});
-
-		if (prevSelected) {
-			$b.setElMod(prevSelected, 'option', 'selected', false);
-		}
-
-		if (selected === undefined) {
-			this.value = '';
-			return;
-		}
-
-		const
-			option = this.values[String(selected)];
-
-		if (!option) {
-			return;
-		}
-
-		const
-			{mobile} = this.browser.is;
-
-		if (this.mods.focused !== 'true' || mobile) {
-			this.value = this.getOptionLabel(option);
-		}
-
-		if (mobile) {
-			return;
-		}
-
-		try {
-			// @ts-ignore
-			const [scroll] = await Promise.all([
-				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedWait}),
-				this.nextTick({label: $$.$$selected})
-			]);
-
-			const
-				node = $b.element<HTMLElement>(`option[data-value="${option.value}"]`);
-
-			if (node) {
-				$b.setElMod(node, 'option', 'selected', true);
-
-				const
-					selTop = node.offsetTop,
-					selHeight = node.offsetHeight,
-					selOffset = selTop + selHeight;
-
-				const
-					scrollHeight = await scroll.height,
-					scrollTop = (await scroll.scrollOffset).top;
-
-				if (selOffset > scrollHeight) {
-					if (selOffset > scrollTop + scrollHeight) {
-						await scroll.setScrollOffset({top: selTop - scrollHeight + selHeight});
-
-					} else if (selOffset < scrollTop + node.offsetHeight) {
-						await scroll.setScrollOffset({top: selTop});
-					}
-
-				} else if (selOffset < scrollTop) {
-					await scroll.setScrollOffset({top: selTop});
-				}
-			}
-
-		} catch {}
-	}
-
-	/**
-	 * Returns a label of the specified option
-	 * @param option
-	 */
-	protected getOptionLabel(option: Option): string {
-		return String(option.inputLabel != null ? option.inputLabel : option.label);
-	}
-
-	/**
-	 * Synchronizes :selected and :value
-	 * @param [selected]
-	 */
-	protected syncValue(selected?: string): void {
-		if (selected) {
-			this.selected = selected;
-		}
-
-		if (!this.selected) {
-			return;
-		}
-
-		const
-			label = this.values[String(this.selected)];
-
-		if (label) {
-			this.value = this.getOptionLabel(label);
-		}
-	}
-
-	/**
-	 * Returns true if the specified option is selected
-	 * @param option
-	 */
-	protected isSelected(option: NOption): boolean {
-		return this.selected || this.value ? option.value === this.selected : Boolean(option.selected);
-	}
-
-	/** @see iOpenToggle.initCloseHelpers */
-	@hook('beforeDataCreate')
-	protected initCloseHelpers(events?: CloseHelperEvents): void {
-		if (this.browser.is.mobile) {
-			return;
-		}
-
-		iOpenToggle.initCloseHelpers(this, events);
-	}
-
-	/**
-	 * Handler: option select
-	 *
-	 * @param [value]
-	 * @emits actionChange(selected: FV)
-	 */
-	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) => o.dom.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
-	})
-
-	protected async onOptionSelected(value?: string): Promise<void> {
-		const
-			v = this.values && this.values[String(this.selected)];
-
-		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
-			this.syncValue(value);
-			this.emit('actionChange', this[this.valueKey]);
-		}
-
-		await this.close();
-	}
-
-	/** @override */
-	protected onEdit(e: Event): void {
-		this.valueBuffer =
-			(<HTMLInputElement>e.target).value || '';
-
-		this.async.setTimeout(() => {
-			const
-				rgxp = new RegExp(`^${RegExp.escape(this.value)}`, 'i');
-
-			let
-				some = false;
-
-			for (let keys = Object.keys(this.labels), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = this.labels[key];
-
-				if (el && rgxp.test(key)) {
-					this.selected = String(el.value);
-					some = true;
-					break;
-				}
-			}
-
-			if (some) {
-				return this.open();
-			}
-
-			this.selected = undefined;
-			return this.close();
-
-		}, 0.2.second(), {
-			label: $$.quickSearch
-		});
-	}
-
-	/** @override */
-	protected async onValueChange(newValue: this['Value'], oldValue?: this['Value']): Promise<void> {
-		try {
-			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onValueChange});
-			super.onValueChange(newValue, oldValue);
-		} catch {}
-	}
-
-	/** @override */
-	protected created(): void {
-		if (!this.browser.is.mobile) {
-			this.on('asyncRender', async () => {
-				try {
-					await (await this.waitRef<bScrollInline>('scroll')).initScroll();
-				} catch {}
-			});
-		}
-	}
 }
+
+export default bSelect;
