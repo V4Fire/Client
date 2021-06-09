@@ -33,6 +33,7 @@ package('p-v4-components-demo')
 		'b-input-hidden',
 		'b-input',
 		'b-textarea',
+		'b-select',
 
 		'b-virtual-scroll',
 		'b-window',
