@@ -22,11 +22,7 @@
 		 * @param {!Array<Item>} items - items to render
 		 */
 		- block list(items)
-			< template &
-				v-for = (el, i) in ${items} |
-				:key = getItemKey(el, i)
-			.
-
+			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
 				< ${listElTag}.&__el.&__item
 					< a &
 						:class = provide.hintClasses(el.hintPos).concat(el.classes || [], provide.elClasses({link: {

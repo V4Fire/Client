@@ -22,7 +22,7 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * Support of links and tabs.
 
-* Multiple values (`multiple = true`).
+* Multiple active items (`multiple = true`).
 
 * Cancelation of a choice (`cancelable = true`).
 
@@ -40,9 +40,9 @@ Also, you can see the parent component and the component traits.
 
 | EventName         | Description                                                                                                                  | Payload description                    | Payload  |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | -------- |
-| `change`          | An active value of the component has been changed                                                                            | Active value or a set of active values | `Active` |
-| `immediateChange` | An active value of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active values | `Active` |
-| `actionChange`    | An active value of the component has been changed due to some user action                                                    | Active value or a set of active values | `Active` |
+| `change`          | An active value of the component has been changed                                                                            | Active value or a set of active items | `Active` |
+| `immediateChange` | An active value of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
+| `actionChange`    | An active value of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
 | `itemsChange`     | A list of items has been changed                                                                                             | List of items                          | `Items`  |
 
 Also, you can see the parent component and the component traits.
@@ -200,7 +200,7 @@ Also, you can see the implemented traits or the parent component.
 #### [activeProp]
 
 An initial component active value/s.
-If the component is switched to the `multiple` mode, you can pass an array or Set to define several active values.
+If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 
 #### [autoHref = `false`]
 
@@ -208,7 +208,7 @@ If true, then all items without the `href` option will automatically generate a 
 
 #### [multiple = `false`]
 
-If true, the component supports a feature of multiple active values.
+If true, the component supports a feature of multiple active items.
 
 #### [cancelable]
 

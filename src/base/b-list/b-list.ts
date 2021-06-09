@@ -79,7 +79,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * An initial component active value/s.
-	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active values.
+	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 	 */
 	@prop({required: false})
 	readonly activeProp?: unknown[] | Active;
@@ -92,7 +92,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly autoHref: boolean = false;
 
 	/**
-	 * If true, the component supports a feature of multiple active values
+	 * If true, the component supports a feature of multiple active items
 	 */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
@@ -364,7 +364,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		const
 			{block: $b} = this;
 
-		if ($b) {
+		if ($b != null) {
 			const
 				id = Object.get<number>(this.values, [value]),
 				target = id != null ? $b.element('link', {id}) : null;
@@ -382,7 +382,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Toggles activation of the specified value
-	 * @param value - item value to activate
+	 * @param value
 	 */
 	toggleActive(value: unknown): boolean {
 		const
@@ -545,10 +545,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 		for (let i = 0; i < this.items.length; i++) {
 			const
-				el = this.items[i],
-				val = el.value;
+				item = this.items[i],
+				val = item.value;
 
-			if (el.active && (this.multiple ? this.activeProp === undefined : activeStore === undefined)) {
+			if (item.active && (this.multiple ? this.activeProp === undefined : activeStore === undefined)) {
 				this.setActive(val);
 			}
 
@@ -593,18 +593,18 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	/**
 	 * Synchronization of items
 	 *
-	 * @param value
-	 * @param oldValue
+	 * @param items
+	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch(['value', 'itemsStore'])
-	protected syncItemsWatcher(value: this['Items'], oldValue: this['Items']): void {
-		if (!Object.fastCompare(value, oldValue)) {
+	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
 
 			/** @deprecated */
-			this.emit('valueChange', value);
-			this.emit('itemsChange', value);
+			this.emit('valueChange', items);
+			this.emit('itemsChange', items);
 		}
 	}
 
