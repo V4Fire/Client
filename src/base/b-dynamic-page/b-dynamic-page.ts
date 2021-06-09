@@ -27,7 +27,6 @@ import iDynamicPage, {
 
 	prop,
 	system,
-	computed,
 	watch,
 
 	UnsafeGetter,
@@ -171,7 +170,6 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Link to the loaded page component
 	 */
-	@computed({cache: false, dependencies: ['page']})
 	get component(): CanUndef<iDynamicPage> {
 		const
 			c = this.$refs.component;
