@@ -108,7 +108,7 @@
 						:class = Array.concat([], el.classes, provide.elClasses({
 							item: {
 								id: values.get(el.value),
-								selected: isSelected(el),
+								selected: isSelected(el.value),
 								exterior: el.exterior,
 								...el.mods
 							}

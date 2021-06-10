@@ -7,7 +7,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
@@ -20,9 +19,13 @@ import iInputText, {
 	field,
 	system,
 	computed,
-	hook,
 
-	ModsDecl, watch
+	hook,
+	watch,
+
+	ModsDecl,
+	ModEvent,
+	SetModEvent
 
 } from 'super/i-input-text/i-input-text';
 
@@ -36,6 +39,9 @@ export { Value, FormValue };
 
 export const
 	$$ = symbolGenerator();
+
+let
+	openedSelect;
 
 interface bSelect extends Trait<typeof iOpenToggle> {}
 
@@ -271,7 +277,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			newVal = val;
 		}
 
-		void o.selectValue(newVal);
+		o.selectValue(newVal);
 		return newVal;
 	}))
 
@@ -345,10 +351,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
+	 * Returns true if the specified value is selected
+	 * @param value
+	 */
+	isSelected(value: unknown): boolean {
+		const valueStore = this.field.get('valueStore');
+		return this.multiple ? Object.has(valueStore, [value]) : value === valueStore;
+	}
+
+	/**
 	 * Selects the specified value
 	 * @param value
 	 */
-	async selectValue(value: unknown): Promise<boolean> {
+	selectValue(value: unknown): boolean {
 		const
 			valueStore = this.field.get('valueStore');
 
@@ -366,41 +381,27 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			this.field.set('valueStore', Object.freeze(value));
 		}
 
-		try {
-			const
-				dropdown = await this.waitRef<HTMLDivElement>('dropdown', {label: $$.dropdown});
+		const
+			{block: $b} = this;
 
-			const
-				{block: $b} = this;
-
-			if ($b == null) {
-				return true;
-			}
-
+		if ($b != null) {
 			const
 				id = this.values.get(value),
-				target = id != null ? $b.element<HTMLDivElement>('item', {id}) : null;
+				itemEl = id != null ? $b.element('item', {id}) : null;
 
 			if (!this.multiple) {
 				const
 					old = $b.element('item', {selected: true});
 
-				if (old != null && old !== target) {
+				if (old != null && old !== itemEl) {
 					$b.setElMod(old, 'item', 'selected', false);
-				}
-
-				if (target != null) {
-					const
-						{clientHeight, scrollTop} = dropdown,
-						{offsetTop: itemOffset} = target;
-
-					if (itemOffset > clientHeight + scrollTop || itemOffset - target.clientHeight < scrollTop) {
-						dropdown.scrollTop = itemOffset - clientHeight / 2;
-					}
 				}
 			}
 
-		} catch {}
+			if (itemEl != null) {
+				$b.setElMod(itemEl, 'item', 'selected', true);
+			}
+		}
 
 		return true;
 	}
@@ -409,19 +410,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Removes selection from the specified value
 	 * @param value
 	 */
-	unselectValue(value: unknown): Promise<boolean> {
+	unselectValue(value: unknown): boolean {
 		const
 			valueStore = this.field.get('valueStore');
 
 		if (this.multiple) {
 			if (!Object.has(valueStore, [value])) {
-				return SyncPromise.resolve(false);
+				return false;
 			}
 
 			(<Set<unknown>>valueStore).delete(value);
 
 		} else if (valueStore !== value) {
-			return SyncPromise.resolve(false);
+			return false;
 
 		} else {
 			this.field.set('valueStore', undefined);
@@ -430,24 +431,24 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		const
 			{block: $b} = this;
 
-		if ($b) {
+		if ($b != null) {
 			const
 				id = this.values.get(value),
-				target = id != null ? $b.element('item', {id}) : null;
+				itemEl = id != null ? $b.element('item', {id}) : null;
 
-			if (target) {
-				$b.setElMod(target, 'item', 'selected', false);
+			if (itemEl != null) {
+				$b.setElMod(itemEl, 'item', 'selected', false);
 			}
 		}
 
-		return SyncPromise.resolve(true);
+		return true;
 	}
 
 	/**
 	 * Toggles selection of the specified value
 	 * @param value
 	 */
-	toggleValue(value: unknown): Promise<boolean> {
+	toggleValue(value: unknown): boolean {
 		const
 			valueStore = this.field.get('valueStore');
 
@@ -466,6 +467,42 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return this.unselectValue(value);
 	}
 
+	/**
+	 * Sets the scroll position to the first selected item
+	 */
+	protected async setScrollToSelectedItem(): Promise<boolean> {
+		try {
+			const dropdown = await this.waitRef<HTMLDivElement>('dropdown', {label: $$.setScrollToSelectedItem});
+
+			const
+				{block: $b} = this;
+
+			if ($b == null) {
+				return false;
+			}
+
+			const
+				itemEl = $b.element<HTMLDivElement>('item', {selected: true});
+
+			if (itemEl == null) {
+				return false;
+			}
+
+			const
+				{clientHeight, scrollTop} = dropdown,
+				{offsetTop: itemOffset} = itemEl;
+
+			if (itemOffset > clientHeight + scrollTop || itemOffset - itemEl.clientHeight < scrollTop) {
+				dropdown.scrollTop = itemOffset - clientHeight / 2;
+			}
+
+		} catch {
+			return false;
+		}
+
+		return true;
+	}
+
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
@@ -474,17 +511,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			i = this.instance;
 
 		this.normalizeItems = i.normalizeItems.bind(this);
-		this.isSelected = i.isSelected.bind(this);
 		this.selectValue = i.selectValue.bind(this);
-	}
-
-	/**
-	 * Returns true if the specified item is selected
-	 * @param item
-	 */
-	protected isSelected(item: Item): boolean {
-		const v = this.field.get('valueStore');
-		return this.multiple ? Object.has(v, [item.value]) : item.value === v;
 	}
 
 	/**
@@ -505,7 +532,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				val = item.value;
 
 			if (item.selected && (this.multiple ? this.valueProp === undefined : valueStore === undefined)) {
-				void this.selectValue(val);
+				this.selectValue(val);
 			}
 
 			values.set(val, i);
@@ -605,38 +632,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			this.text = item.label ?? '';
 		}
 
-		this.toggleValue(item.value)
-			.then(() => this.emit('actionChange', this.value))
-			.catch(stderr);
-	}
-
-	/**
-	 * Handler: changing of the input' text value
-	 */
-	@watch('text')
-	protected onTextChange(): void {
-		const
-			rgxp = new RegExp(`^${RegExp.escape(this.text)}`, 'i');
-
-		let
-			some = false;
-
-		for (let i = 0; i < this.items.length; i++) {
-			const
-				item = this.items[i];
-
-			if (item.label != null && rgxp.test(item.label)) {
-				void this.selectValue(item.value);
-				some = true;
-				break;
-			}
-		}
-
-		if (some) {
-			void this.open();
-		}
-
-		void this.close();
+		this.toggleValue(item.value);
+		this.emit('actionChange', this.value);
 	}
 
 	/**
@@ -653,10 +650,35 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			return;
 		}
 
-		const val = this.value;
-		this.field.set('textStore', target.value);
+		this.text = target.value;
 
-		if (val !== this.value) {
+		const
+			prevValue = this.value,
+			rgxp = new RegExp(`^${RegExp.escape(this.text)}`, 'i');
+
+		let
+			some = false;
+
+		for (let i = 0; i < this.items.length; i++) {
+			const
+				item = this.items[i];
+
+			if (item.label != null && rgxp.test(item.label)) {
+				this.selectValue(item.value);
+				some = true;
+				break;
+			}
+		}
+
+		if (some) {
+			void this.open();
+			void this.setScrollToSelectedItem();
+
+		} else {
+			void this.close();
+		}
+
+		if (prevValue !== this.value) {
 			this.emit('actionChange', this.value);
 		}
 	}
