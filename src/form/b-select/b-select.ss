@@ -46,7 +46,7 @@
 
 				- block input
 					< _.&__cell.&__input-wrapper
-						+= self.nativeInput({attrs: {model: 'textStore', '@input': 'onEdit'}})
+						+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onEdit'}})
 
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')

@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
@@ -270,7 +271,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			newVal = val;
 		}
 
-		o.selectValue(newVal);
+		void o.selectValue(newVal);
 		return newVal;
 	}))
 
@@ -347,7 +348,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Selects the specified value
 	 * @param value
 	 */
-	selectValue(value: unknown): boolean {
+	async selectValue(value: unknown): Promise<boolean> {
 		const
 			valueStore = this.field.get('valueStore');
 
@@ -365,27 +366,41 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			this.field.set('valueStore', Object.freeze(value));
 		}
 
-		const
-			{block: $b} = this;
+		try {
+			const
+				dropdown = await this.waitRef<HTMLDivElement>('dropdown', {label: $$.dropdown});
 
-		if ($b != null) {
+			const
+				{block: $b} = this;
+
+			if ($b == null) {
+				return true;
+			}
+
 			const
 				id = this.values.get(value),
-				target = id != null ? $b.element('item', {id}) : null;
+				target = id != null ? $b.element<HTMLDivElement>('item', {id}) : null;
 
 			if (!this.multiple) {
 				const
 					old = $b.element('item', {selected: true});
 
-				if (old && old !== target) {
+				if (old != null && old !== target) {
 					$b.setElMod(old, 'item', 'selected', false);
+				}
+
+				if (target != null) {
+					const
+						{clientHeight, scrollTop} = dropdown,
+						{offsetTop: itemOffset} = target;
+
+					if (itemOffset > clientHeight + scrollTop || itemOffset - target.clientHeight < scrollTop) {
+						dropdown.scrollTop = itemOffset - clientHeight / 2;
+					}
 				}
 			}
 
-			if (target) {
-				$b.setElMod(target, 'item', 'selected', true);
-			}
-		}
+		} catch {}
 
 		return true;
 	}
@@ -394,19 +409,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Removes selection from the specified value
 	 * @param value
 	 */
-	unselectValue(value: unknown): boolean {
+	unselectValue(value: unknown): Promise<boolean> {
 		const
 			valueStore = this.field.get('valueStore');
 
 		if (this.multiple) {
 			if (!Object.has(valueStore, [value])) {
-				return false;
+				return SyncPromise.resolve(false);
 			}
 
 			(<Set<unknown>>valueStore).delete(value);
 
 		} else if (valueStore !== value) {
-			return false;
+			return SyncPromise.resolve(false);
 
 		} else {
 			this.field.set('valueStore', undefined);
@@ -425,14 +440,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			}
 		}
 
-		return true;
+		return SyncPromise.resolve(true);
 	}
 
 	/**
 	 * Toggles selection of the specified value
 	 * @param value
 	 */
-	toggleValue(value: unknown): boolean {
+	toggleValue(value: unknown): Promise<boolean> {
 		const
 			valueStore = this.field.get('valueStore');
 
@@ -490,7 +505,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				val = item.value;
 
 			if (item.selected && (this.multiple ? this.valueProp === undefined : valueStore === undefined)) {
-				this.selectValue(val);
+				void this.selectValue(val);
 			}
 
 			values.set(val, i);
@@ -569,7 +584,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Handler: click to some item element
 	 *
 	 * @param e
-	 * @emits `actionChange(active: unknown)`
+	 * @emits `actionChange(value: V)`
 	 */
 	@watch({
 		field: '?$el:click',
@@ -590,87 +605,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			this.text = item.label ?? '';
 		}
 
-		this.toggleValue(item.value);
-		this.emit('actionChange', this.value);
-	}
-
-	/** @override */
-	protected async onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): Promise<void> {
-		super.onValueChange(value, oldValue);
-
-		const
-			{block: $b} = this;
-
-		if ($b == null || this.multiple) {
-			return;
-		}
-
-		const
-			prevSelected = $b.element('option', {selected: true});
-
-		if (prevSelected != null) {
-			$b.setElMod(prevSelected, 'option', 'selected', false);
-		}
-
-		if (this.value === undefined) {
-			this.text = '';
-			return;
-		}
-
-		const
-			id = this.values.get(this.value);
-
-		console.log(111, this.value, this.values);
-
-		if (id == null) {
-			return;
-		}
-
-		const
-			{is} = this.browser,
-			{dropdown} = this.$refs;
-
-		/*if (this.mods.focused !== 'true' || is.mobile !== false) {
-			this.value = this.getOptionLabel(item);
-		}*/
-
-		if (is.mobile !== false || dropdown) {
-			return;
-		}
-
-		try {
-			const
-				dropdown = await this.waitRef<Element>('dropdown', {label: $$.dropdown}),
-				node = $b.element<HTMLElement>(`option[data-value="${id}"]`);
-
-			if (node == null) {
-				return;
-			}
-
-			$b.setElMod(node, 'option', 'selected', true);
-
-			const
-				selTop = node.offsetTop,
-				selHeight = node.offsetHeight,
-				selOffset = selTop + selHeight;
-
-			const {
-				scrollTop,
-				scrollHeight
-			} = dropdown;
-
-			if (selOffset > scrollHeight) {
-				if (selOffset > scrollTop + scrollHeight) {
-					dropdown.scrollTop = selTop - scrollHeight + selHeight;
-
-				} else if (selOffset < scrollTop + node.offsetHeight) {
-					dropdown.scrollTop = selTop;
-				}
-
-			} else if (selOffset < scrollTop) {
-				dropdown.scrollTop = selTop;
-			}
-		} catch {}
+		this.toggleValue(item.value)
+			.then(() => this.emit('actionChange', this.value))
+			.catch(stderr);
 	}
 
 	/**
@@ -689,7 +626,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				item = this.items[i];
 
 			if (item.label != null && rgxp.test(item.label)) {
-				this.selectValue(item.value);
+				void this.selectValue(item.value);
 				some = true;
 				break;
 			}
@@ -704,15 +641,24 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: manual editing of a component text value
+	 *
+	 * @param e
 	 * @emits `actionChange(value: V)`
 	 */
-	protected onEdit(): void {
+	protected onEdit(e: InputEvent): void {
+		const
+			target = <HTMLInputElement>e.target;
+
 		if (this.compiledMask != null) {
 			return;
 		}
 
-		this.field.set('textStore', this.value);
-		this.emit('actionChange', this.value);
+		const val = this.value;
+		this.field.set('textStore', target.value);
+
+		if (val !== this.value) {
+			this.emit('actionChange', this.value);
+		}
 	}
 }
 
