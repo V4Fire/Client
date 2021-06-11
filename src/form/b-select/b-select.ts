@@ -7,6 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
+
 import { derive } from 'core/functools/trait';
 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
@@ -324,7 +326,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		dependencies: ['value']
 	})
 
-	protected get selectedElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
+	protected get selectedElement(): CanPromise<CanUndef<CanArray<Element>>> {
 		const
 			{value} = this;
 
@@ -360,19 +362,39 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
-	 * Selects the specified value
+	 * Selects selection of an item by the specified value.
+	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
+	 *
 	 * @param value
 	 */
-	selectValue(value: unknown): boolean {
+	selectValue(value: this['Value']): boolean {
 		const
 			valueStore = this.field.get('valueStore');
 
 		if (this.multiple) {
-			if (Object.has(valueStore, [value])) {
-				return false;
+			let
+				res = false;
+
+			const set = (value) => {
+				if (Object.has(valueStore, [value])) {
+					return false;
+				}
+
+				(<Set<unknown>>valueStore).add(value);
+				res = true;
+			};
+
+			if (Object.isSet(value)) {
+				Object.forEach(value, set);
+
+			} else {
+				set(value);
 			}
 
-			(<Set<unknown>>valueStore).add(value);
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!res) {
+				return false;
+			}
 
 		} else if (valueStore === value) {
 			return false;
@@ -398,28 +420,56 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				}
 			}
 
-			if (itemEl != null) {
-				$b.setElMod(itemEl, 'item', 'selected', true);
-			}
+			SyncPromise.resolve(this.selectedElement).then((selectedElement) => {
+				const
+					els = Array.concat([], selectedElement);
+
+				for (let i = 0; i < els.length; i++) {
+					$b.setElMod(els[i], 'item', 'selected', true);
+				}
+			}, stderr);
 		}
 
 		return true;
 	}
 
 	/**
-	 * Removes selection from the specified value
+	 * Removes selection from an item by the specified value.
+	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
+	 *
 	 * @param value
 	 */
-	unselectValue(value: unknown): boolean {
+	unselectValue(value: this['Value']): boolean {
 		const
 			valueStore = this.field.get('valueStore');
 
+		const
+			{selectedElement} = this;
+
 		if (this.multiple) {
-			if (!Object.has(valueStore, [value])) {
-				return false;
+			let
+				res = false;
+
+			const unset = (value) => {
+				if (!Object.has(valueStore, [value])) {
+					return false;
+				}
+
+				(<Set<unknown>>valueStore).delete(value);
+				res = true;
+			};
+
+			if (Object.isSet(value)) {
+				Object.forEach(value, unset);
+
+			} else {
+				unset(value);
 			}
 
-			(<Set<unknown>>valueStore).delete(value);
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!res) {
+				return false;
+			}
 
 		} else if (valueStore !== value) {
 			return false;
@@ -432,43 +482,93 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			{block: $b} = this;
 
 		if ($b != null) {
-			const
-				id = this.values.get(value),
-				itemEl = id != null ? $b.element('item', {id}) : null;
+			SyncPromise.resolve(selectedElement).then((selectedElement) => {
+				const
+					els = Array.concat([], selectedElement);
 
-			if (itemEl != null) {
-				$b.setElMod(itemEl, 'item', 'selected', false);
-			}
+				for (let i = 0; i < els.length; i++) {
+					$b.setElMod(els[i], 'item', 'selected', false);
+				}
+			}, stderr);
 		}
 
 		return true;
 	}
 
 	/**
-	 * Toggles selection of the specified value
+	 * Toggles selection of an item by the specified value.
+	 * The methods return a new selected value/s.
+	 *
 	 * @param value
 	 */
-	toggleValue(value: unknown): boolean {
+	toggleValue(value: this['Value']): this['Value'] {
 		const
 			valueStore = this.field.get('valueStore');
 
 		if (this.multiple) {
-			if (Object.has(valueStore, [value])) {
-				return this.unselectValue(value);
+			const toggle = (value) => {
+				if (Object.has(valueStore, [value])) {
+					this.unselectValue(value);
+					return;
+				}
+
+				this.selectValue(value);
+			};
+
+			if (Object.isSet(value)) {
+				Object.forEach(value, toggle);
+
+			} else {
+				toggle(value);
 			}
 
-			return this.selectValue(value);
+		} else if (valueStore !== value) {
+			this.selectValue(value);
+
+		} else {
+			this.unselectValue(value);
 		}
 
-		if (valueStore !== value) {
-			return this.selectValue(value);
+		return this.value;
+	}
+
+	/** @override */
+	clear(): Promise<boolean> {
+		this.text = '';
+		void this.close();
+		return super.clear();
+	}
+
+	/** @override */
+	reset(): Promise<boolean> {
+		void this.close();
+
+		if (this.value !== this.default) {
+			this.unselectValue(this.value);
+			this.selectValue(this.default);
+			void this.setScrollToMarkedOrSelectedItem();
+
+			if (!this.multiple) {
+				const id = String(this.values.get(this.value));
+				this.text = this.indexes[id]?.label ?? this.text;
+			}
+
+			this.async.clearAll({group: 'validation'});
+			void this.removeMod('valid');
+			this.emit('reset', this.value);
+
+			return SyncPromise.resolve(true);
 		}
 
-		return this.unselectValue(value);
+		return SyncPromise.resolve(false);
 	}
 
 	/** @see [[iOpenToggle.open]] */
 	async open(...args: unknown[]): Promise<boolean> {
+		if (this.multiple) {
+			return false;
+		}
+
 		if (await iOpenToggle.open(this, ...args)) {
 			await this.setScrollToMarkedOrSelectedItem();
 			return true;
@@ -479,7 +579,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @see [[iOpenToggle.open]] */
 	async close(...args: unknown[]): Promise<boolean> {
-		if (await iOpenToggle.close(this, ...args)) {
+		if (this.multiple || await iOpenToggle.close(this, ...args)) {
 			const
 				{block: $b} = this;
 
@@ -523,89 +623,15 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			group: 'navigation'
 		});
 
-		if (openedSelect != null) {
-			openedSelect.close().catch(() => undefined);
+		if (!this.multiple) {
+			if (openedSelect != null) {
+				openedSelect.close().catch(() => undefined);
+			}
+
+			openedSelect = this;
 		}
 
-		openedSelect = this;
-		const onKeyDown = async (e: KeyboardEvent) => {
-			const validKeys = {
-				ArrowUp: true,
-				ArrowDown: true,
-				Enter: true
-			};
-
-			if (validKeys[e.key] !== true) {
-				return;
-			}
-
-			e.preventDefault();
-
-			const
-				{block: $b} = this;
-
-			if ($b == null) {
-				return;
-			}
-
-			const getMarkedOrSelectedItem = () =>
-				$b.element('item', {marked: true}) ??
-				$b.element('item', {selected: true});
-
-			let
-				currentItemEl = getMarkedOrSelectedItem();
-
-			const markItem = (itemEl: Nullable<Element>) => {
-				if (currentItemEl != null) {
-					$b.removeElMod(currentItemEl, 'item', 'marked');
-				}
-
-				if (itemEl == null) {
-					return false;
-				}
-
-				$b.setElMod(itemEl, 'item', 'marked', true);
-				this.setScrollToMarkedOrSelectedItem();
-
-				return true;
-			};
-
-			switch (e.key) {
-				case 'Enter':
-					this.onItemClick(currentItemEl);
-					break;
-
-				case 'ArrowUp':
-					if (currentItemEl?.previousElementSibling != null) {
-						markItem(currentItemEl.previousElementSibling);
-
-					} else {
-						await this.close();
-					}
-
-					break;
-
-				case 'ArrowDown': {
-					if (this.mods.opened !== 'true') {
-						await this.open();
-
-						if (this.value != null) {
-							return;
-						}
-
-						currentItemEl = currentItemEl ?? getMarkedOrSelectedItem();
-					}
-
-					markItem(currentItemEl?.nextElementSibling) || markItem($b.element('item'));
-					break;
-				}
-
-				default:
-					// Do nothing
-			}
-		};
-
-		$a.on(document, 'keydown', onKeyDown, {
+		$a.on(document, 'keydown', this.onNavigate.bind(this), {
 			group: 'navigation'
 		});
 	}
@@ -775,49 +801,38 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.sync.mod('opened', 'multiple', Boolean);
+	}
+
+	/** @override */
 	protected beforeDestroy(): void {
 		super.beforeDestroy();
 
-		if (this === openedSelect) {
+		if (openedSelect === this) {
 			openedSelect = null;
 		}
 	}
 
-	/**
-	 * Handler: click to some item element
-	 *
-	 * @param itemEl
-	 * @emits `actionChange(value: V)`
-	 */
-	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) =>
-			o.dom.delegateElement('item', (e) => cb(e.delegateTarget))
-	})
-
-	protected onItemClick(itemEl?: Element): void {
-		if (itemEl == null) {
-			return;
-		}
-
-		const
-			id = itemEl.getAttribute('data-id'),
-			item = this.indexes[String(id)];
-
-		if (item == null) {
-			return;
-		}
-
-		if (!this.multiple) {
-			this.text = item.label ?? '';
-		}
-
-		this.toggleValue(item.value);
-		this.emit('actionChange', this.value);
+	/** @override */
+	protected onFocus(): void {
+		super.onFocus();
+		void this.open();
 	}
 
 	/**
-	 * Handler: manual editing of a component text value
+	 * Handler: clearing of a component value
+	 * @emits `actionChange(value: V)`
+	 */
+	protected async onClear(): Promise<void> {
+		if (await this.clear()) {
+			this.emit('actionChange', this.value);
+		}
+	}
+
+	/**
+	 * Handler: manual editing of a component text
 	 *
 	 * @param e
 	 * @emits `actionChange(value: V)`
@@ -860,6 +875,125 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 		if (prevValue !== this.value) {
 			this.emit('actionChange', this.value);
+		}
+	}
+
+	/**
+	 * Handler: click to some item element
+	 *
+	 * @param itemEl
+	 * @emits `actionChange(value: V)`
+	 */
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) =>
+			o.dom.delegateElement('item', (e) => cb(e.delegateTarget))
+	})
+
+	protected onItemClick(itemEl?: Element): void {
+		void this.close();
+
+		if (itemEl == null) {
+			return;
+		}
+
+		const
+			id = itemEl.getAttribute('data-id'),
+			item = this.indexes[String(id)];
+
+		if (item == null) {
+			return;
+		}
+
+		if (this.multiple) {
+			this.toggleValue(item.value);
+
+		} else {
+			this.text = item.label ?? this.text;
+			this.selectValue(item.value);
+		}
+
+		this.emit('actionChange', this.value);
+	}
+
+	/**
+	 * Handler: "navigation" over the select via "arrow" buttons
+	 * @param e
+	 */
+	protected async onNavigate(e: KeyboardEvent): Promise<void> {
+		const validKeys = {
+			ArrowUp: true,
+			ArrowDown: true,
+			Enter: true
+		};
+
+		if (validKeys[e.key] !== true || this.mods.focused !== 'true') {
+			return;
+		}
+
+		e.preventDefault();
+
+		const
+			{block: $b} = this;
+
+		if ($b == null) {
+			return;
+		}
+
+		const getMarkedOrSelectedItem = () =>
+			$b.element('item', {marked: true}) ??
+			$b.element('item', {selected: true});
+
+		let
+			currentItemEl = getMarkedOrSelectedItem();
+
+		const markItem = (itemEl: Nullable<Element>) => {
+			if (currentItemEl != null) {
+				$b.removeElMod(currentItemEl, 'item', 'marked');
+			}
+
+			if (itemEl == null) {
+				return false;
+			}
+
+			$b.setElMod(itemEl, 'item', 'marked', true);
+			void this.setScrollToMarkedOrSelectedItem();
+
+			return true;
+		};
+
+		switch (e.key) {
+			case 'Enter':
+				this.onItemClick(currentItemEl);
+				break;
+
+			case 'ArrowUp':
+				if (currentItemEl?.previousElementSibling != null) {
+					markItem(currentItemEl.previousElementSibling);
+
+				} else {
+					await this.close();
+				}
+
+				break;
+
+			case 'ArrowDown': {
+				if (this.mods.opened !== 'true') {
+					await this.open();
+
+					if (this.value != null) {
+						return;
+					}
+
+					currentItemEl = currentItemEl ?? getMarkedOrSelectedItem();
+				}
+
+				markItem(currentItemEl?.nextElementSibling) || markItem($b.element('item'));
+				break;
+			}
+
+			default:
+				// Do nothing
 		}
 	}
 }
