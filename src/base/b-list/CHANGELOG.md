@@ -15,6 +15,8 @@ Changelog
 
 * `Items.classes` was replaced with `Items.mods`
 * Now `toggleActive` returns a new active item
+* New public API for `isActive`
+* Removed deprecated API
 
 #### :rocket: New Feature
 

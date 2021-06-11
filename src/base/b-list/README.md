@@ -224,6 +224,24 @@ If the component is switched to the `multiple` mode, the getter will return a `S
 
 ### Methods
 
+#### isActive
+
+Returns true if the specified value is active.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    list: bList
+  };
+
+  test(): void {
+    this.$refs.list.setActive(1);
+    console.log(this.$refs.list.isActive(1));
+  }
+}
+```
+
 #### setActive
 
 Activates an item by the specified value.

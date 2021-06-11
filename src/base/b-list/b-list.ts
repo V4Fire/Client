@@ -16,9 +16,7 @@ import 'models/demo/list';
 //#endif
 
 import symbolGenerator from 'core/symbol';
-
 import { isAbsURL } from 'core/url';
-import { deprecated, deprecate } from 'core/functools/deprecation';
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
@@ -71,13 +69,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
-	 * @deprecated
-	 * @see [[bList.itemsProp]]
-	 */
-	@prop({type: Array, required: false})
-	readonly valueProp?: this['Items'];
-
-	/**
 	 * An initial component active item/s.
 	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 	 */
@@ -109,9 +100,9 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * List of component items
 	 * @see [[bList.itemsProp]]
 	 */
-	@computed({dependencies: ['value', 'itemsStore', 'deprecated']})
+	@computed({dependencies: ['value', 'itemsStore']})
 	get items(): this['Items'] {
-		return <this['Items']>this.field.get(this.deprecated ? 'value' : 'itemsStore');
+		return <this['Items']>this.field.get('itemsStore');
 	}
 
 	/**
@@ -119,22 +110,8 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * @see [[bList.items]]
 	 */
 	set items(value: this['Items']) {
-		this.field.set(this.deprecated ? 'value' : 'itemsStore', value);
+		this.field.set('itemsStore', value);
 	}
-
-	/**
-	 * @deprecated
-	 * @see [[bList.items]]
-	 */
-	@field<bList>((o) => o.sync.link<CanUndef<Items>>((val) => {
-		if (o.dataProvider != null) {
-			return o.value;
-		}
-
-		return val != null ? o.normalizeItems(val) : val;
-	}))
-
-	value?: this['Items'];
 
 	/**
 	 * A component active item/s.
@@ -177,12 +154,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	}))
 
 	protected itemsStore!: this['Items'];
-
-	/**
-	 * True, if the component works with the deprecated API
-	 */
-	@system()
-	protected deprecated: boolean = false;
 
 	/**
 	 * Map of item indexes and their values
@@ -263,7 +234,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 		const getEl = (value) => {
 			const
-				id = Object.get<number>(this.values, [value]);
+				id = this.values.get(value);
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id});
@@ -284,6 +255,25 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	}
 
 	/**
+	 * Returns true if the specified value is active
+	 * @param value
+	 */
+	isActive(value: unknown): boolean {
+		const
+			activeStore = this.field.get('activeStore');
+
+		if (this.multiple) {
+			if (!Object.isSet(activeStore)) {
+				return false;
+			}
+
+			return activeStore.has(value);
+		}
+
+		return value === activeStore;
+	}
+
+	/**
 	 * Activates an item by the specified value.
 	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 	 *
@@ -296,15 +286,19 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
+			if (!Object.isSet(activeStore)) {
+				return false;
+			}
+
 			let
 				res = false;
 
 			const set = (value) => {
-				if (Object.has(activeStore, [value])) {
+				if (activeStore.has(value)) {
 					return;
 				}
 
-				(<Set<unknown>>activeStore).add(value);
+				activeStore.add(value);
 				res = true;
 			};
 
@@ -332,7 +326,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 		if ($b) {
 			const
-				id = Object.get<number>(this.values, [value]),
+				id = this.values.get(value),
 				target = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple) {
@@ -368,15 +362,19 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
+			if (!Object.isSet(activeStore)) {
+				return false;
+			}
+
 			let
 				res = false;
 
 			const unset = (value) => {
-				if (!Object.has(activeStore, [value]) || this.cancelable === false) {
+				if (!activeStore.has(value) || this.cancelable === false) {
 					return false;
 				}
 
-				(<Set<unknown>>activeStore).delete(value);
+				activeStore.delete(value);
 				res = true;
 			};
 
@@ -404,7 +402,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 		if ($b != null) {
 			const
-				id = Object.get<number>(this.values, [value]),
+				id = this.values.get(value),
 				target = id != null ? $b.element('link', {id}) : null;
 
 			if (target) {
@@ -429,8 +427,12 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
+			if (!Object.isSet(activeStore)) {
+				return this.active;
+			}
+
 			const toggle = (value) => {
-				if (Object.has(activeStore, [value])) {
+				if (activeStore.has(value)) {
 					this.unsetActive(value);
 					return;
 				}
@@ -453,15 +455,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		}
 
 		return this.active;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[bList.unsetActive]]
-	 */
-	@deprecated({renamedTo: 'unsetActive'})
-	removeActive(value: unknown): boolean {
-		return this.unsetActive(value);
 	}
 
 	/** @override */
@@ -491,43 +484,8 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		const
 			i = this.instance;
 
-		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
-
-		if ('deprecated' in i.normalizeOptions) {
-			this.normalizeItems = i.normalizeItems.bind(this);
-
-		} else {
-			deprecate({
-				name: 'valueProp',
-				type: 'property',
-				renamedTo: 'itemsProp'
-			});
-
-			deprecate({
-				name: 'value',
-				type: 'property',
-				renamedTo: 'items'
-			});
-
-			deprecate({
-				name: 'normalizeOptions',
-				type: 'method',
-				renamedTo: 'normalizeItems'
-			});
-
-			this.deprecated = true;
-			this.normalizeItems = i.normalizeOptions.bind(this);
-		}
-	}
-
-	/**
-	 * Returns true if the specified item is active
-	 * @param item
-	 */
-	protected isActive(item: this['Item']): boolean {
-		const v = this.field.get('activeStore');
-		return this.multiple ? Object.has(v, [item.value]) : item.value === v;
+		this.normalizeItems = i.normalizeItems.bind(this);
 	}
 
 	/**
@@ -536,10 +494,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		const
-			res = <this['Items']>[];
+			normalizedItems = <this['Items']>[];
 
 		if (items == null) {
-			return res;
+			return normalizedItems;
 		}
 
 		for (let i = 0; i < items.length; i++) {
@@ -554,29 +512,22 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			}
 
 			if (href === undefined) {
-				let
+				if (this.autoHref && value !== undefined) {
 					href = String(value);
 
-				if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
-					href = `#${href}`;
-				}
+					if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
+						href = `#${href}`;
+					}
 
-				href = this.autoHref && value !== undefined ? href : 'javascript:void(0)';
+				} else {
+					href = 'javascript:void(0)';
+				}
 			}
 
-			res.push({...item, value, href});
+			normalizedItems.push({...item, value, href});
 		}
 
-		return res;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[bList.normalizeItems]]
-	 */
-	@deprecated({renamedTo: 'normalizeItems'})
-	protected normalizeOptions(items: CanUndef<this['Items']>): this['Items'] {
-		return this.normalizeItems(items);
+		return normalizedItems;
 	}
 
 	/**
@@ -584,10 +535,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
-		if (this.valueProp != null || this.field.get('value') != null) {
-			this.deprecated = true;
-		}
-
 		const
 			values = new Map(),
 			indexes = {};
@@ -604,7 +551,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				this.setActive(val);
 			}
 
-			Object.set(values, [val], i);
+			values.set(val, i);
 			indexes[i] = val;
 		}
 
@@ -653,9 +600,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
-
-			/** @deprecated */
-			this.emit('valueChange', items);
 			this.emit('itemsChange', items);
 		}
 	}
