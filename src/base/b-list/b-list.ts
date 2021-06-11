@@ -78,7 +78,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly valueProp?: this['Items'];
 
 	/**
-	 * An initial component active value/s.
+	 * An initial component active item/s.
 	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 	 */
 	@prop({required: false})
@@ -137,7 +137,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	value?: this['Items'];
 
 	/**
-	 * The component active value.
+	 * A component active item/s.
 	 * If the component is switched to the `multiple` mode, the getter will return a `Set` object.
 	 *
 	 * @see [[bList.activeStore]]
@@ -197,7 +197,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	protected values!: Map<unknown, number>;
 
 	/**
-	 * An internal component active value store.
+	 * An internal component active item store.
 	 * If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
 	 *
 	 * @see [[bList.activeProp]]
@@ -284,28 +284,47 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	}
 
 	/**
-	 * Activates the specified value
+	 * Activates an item by the specified value.
+	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 	 *
 	 * @param value
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	setActive(value: unknown): boolean {
+	setActive(value: Active): boolean {
 		const
 			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (Object.has(activeStore, [value])) {
-				return false;
+			let
+				res = false;
+
+			const set = (value) => {
+				if (Object.has(activeStore, [value])) {
+					return;
+				}
+
+				(<Set<unknown>>activeStore).add(value);
+				res = true;
+			};
+
+			if (Object.isSet(value)) {
+				Object.forEach(value, set);
+
+			} else {
+				set(value);
 			}
 
-			(<Set<unknown>>activeStore).add(value);
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!res) {
+				return false;
+			}
 
 		} else if (activeStore === value) {
 			return false;
 
 		} else {
-			this.field.set('activeStore', Object.freeze(value));
+			this.field.set('activeStore', value);
 		}
 
 		const
@@ -337,7 +356,8 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	}
 
 	/**
-	 * Deactivates the specified value
+	 * Deactivates an item by the specified value.
+	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
 	 *
 	 * @param value
 	 * @emits `change(active: unknown)`
@@ -348,11 +368,29 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (!Object.has(activeStore, [value]) || this.cancelable === false) {
-				return false;
+			let
+				res = false;
+
+			const unset = (value) => {
+				if (!Object.has(activeStore, [value]) || this.cancelable === false) {
+					return false;
+				}
+
+				(<Set<unknown>>activeStore).delete(value);
+				res = true;
+			};
+
+			if (Object.isSet(value)) {
+				Object.forEach(value, unset);
+
+			} else {
+				unset(value);
 			}
 
-			(<Set<unknown>>activeStore).delete(value);
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!res) {
+				return false;
+			}
 
 		} else if (activeStore !== value || this.cancelable !== true) {
 			return false;
@@ -381,26 +419,40 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	}
 
 	/**
-	 * Toggles activation of the specified value
+	 * Toggles activation of an item by the specified value.
+	 * The methods return a new active component item/s.
+	 *
 	 * @param value
 	 */
-	toggleActive(value: unknown): boolean {
+	toggleActive(value: Active): Active {
 		const
 			activeStore = this.field.get('activeStore');
 
 		if (this.multiple) {
-			if (Object.has(activeStore, [value])) {
-				return this.unsetActive(value);
+			const toggle = (value) => {
+				if (Object.has(activeStore, [value])) {
+					this.unsetActive(value);
+					return;
+				}
+
+				this.setActive(value);
+			};
+
+			if (Object.isSet(value)) {
+				Object.forEach(value, toggle);
+
+			} else {
+				toggle(value);
 			}
 
-			return this.setActive(value);
+		} else if (activeStore !== value) {
+			this.setActive(value);
+
+		} else {
+			this.unsetActive(value);
 		}
 
-		if (activeStore !== value) {
-			return this.setActive(value);
-		}
-
-		return this.unsetActive(value);
+		return this.active;
 	}
 
 	/**

@@ -14,10 +14,12 @@ Changelog
 #### :boom: Breaking Change
 
 * `Items.classes` was replaced with `Items.mods`
+* Now `toggleActive` returns a new active item
 
 #### :rocket: New Feature
 
 * Now `Items.classes` uses to provide extra non-modifier classes to an element
+* Now `setActive/unsetActive/toggleActive` can take multiple values
 
 #### :bug: Bug Fix
 

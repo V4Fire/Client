@@ -19,7 +19,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Moved from `base` to `dummies` `bDummy`
 * Removed `bInputTime`
 * Removed `bScroll`
-* `Items.classes` was replaced with `Items.mods` `bList`
+
+* `bList`:
+  * `Items.classes` was replaced with `Items.mods`
+  * Now `toggleActive` returns a new active item
 
 * Now the component inherits `iInputText`:
   * `bInput`
@@ -54,7 +57,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added support of the default slot `bDummy`
 * Added support of interpolation of a data provider response `iInput`
 * Added `isChecked` `bCheckbox`
-* Now `Items.classes` uses to provide extra non-modifier classes to an element `bList`
+
+* `bList`:
+  * Now `Items.classes` uses to provide extra non-modifier classes to an element
+  * Now `setActive/unsetActive/toggleActive` can take multiple values
 
 * `bForm`:
   * Added `getElValueToSubmit`
