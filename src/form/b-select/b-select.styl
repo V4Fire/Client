@@ -88,13 +88,14 @@ b-select extends i-input-text
 	&__expand
 		cursor pointer
 
-	&__dropdown-content-wrapper
-		display block
-		overflow hidden
-		background inherit
-
 	&__input[readonly="readonly"]
 		cursor pointer
 
+	&__dropdown
+		display none
+
 	&_opened_true
 		zIndex(layer, 1)
+
+	&_opened_true &__dropdown
+		display block

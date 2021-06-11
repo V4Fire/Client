@@ -10,7 +10,7 @@ import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
-import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
 import iInputText, {
 
@@ -25,7 +25,7 @@ import iInputText, {
 
 	ModsDecl,
 	ModEvent,
-	SetModEvent
+	SetModEvent, p
 
 } from 'super/i-input-text/i-input-text';
 
@@ -467,10 +467,153 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return this.unselectValue(value);
 	}
 
+	/** @see [[iOpenToggle.open]] */
+	async open(...args: unknown[]): Promise<boolean> {
+		if (await iOpenToggle.open(this, ...args)) {
+			await this.setScrollToMarkedOrSelectedItem();
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @see [[iOpenToggle.open]] */
+	async close(...args: unknown[]): Promise<boolean> {
+		if (await iOpenToggle.close(this, ...args)) {
+			const
+				{block: $b} = this;
+
+			if ($b != null) {
+				const
+					markedEl = $b.element('item', {marked: true});
+
+				if (markedEl != null) {
+					$b.removeElMod(markedEl, 'item', 'marked');
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @see [[iOpenToggle.onOpenedChange]] */
+	// eslint-disable-next-line @typescript-eslint/require-await
+	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
+		const
+			{async: $a} = this;
+
+		// Status: opened == false or opened == null
+		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
+			if (openedSelect === this) {
+				openedSelect = null;
+			}
+
+			if (this.mods.focused !== 'true') {
+				$a.off({
+					group: 'navigation'
+				});
+			}
+
+			return;
+		}
+
+		$a.off({
+			group: 'navigation'
+		});
+
+		if (openedSelect != null) {
+			openedSelect.close().catch(() => undefined);
+		}
+
+		openedSelect = this;
+		const onKeyDown = async (e: KeyboardEvent) => {
+			const validKeys = {
+				ArrowUp: true,
+				ArrowDown: true,
+				Enter: true
+			};
+
+			if (validKeys[e.key] !== true) {
+				return;
+			}
+
+			e.preventDefault();
+
+			const
+				{block: $b} = this;
+
+			if ($b == null) {
+				return;
+			}
+
+			const getMarkedOrSelectedItem = () =>
+				$b.element('item', {marked: true}) ??
+				$b.element('item', {selected: true});
+
+			let
+				currentItemEl = getMarkedOrSelectedItem();
+
+			const markItem = (itemEl: Nullable<Element>) => {
+				if (currentItemEl != null) {
+					$b.removeElMod(currentItemEl, 'item', 'marked');
+				}
+
+				if (itemEl == null) {
+					return false;
+				}
+
+				$b.setElMod(itemEl, 'item', 'marked', true);
+				this.setScrollToMarkedOrSelectedItem();
+
+				return true;
+			};
+
+			switch (e.key) {
+				case 'Enter':
+					this.onItemClick(currentItemEl);
+					break;
+
+				case 'ArrowUp':
+					if (currentItemEl?.previousElementSibling != null) {
+						markItem(currentItemEl.previousElementSibling);
+
+					} else {
+						await this.close();
+					}
+
+					break;
+
+				case 'ArrowDown': {
+					if (this.mods.opened !== 'true') {
+						await this.open();
+
+						if (this.value != null) {
+							return;
+						}
+
+						currentItemEl = currentItemEl ?? getMarkedOrSelectedItem();
+					}
+
+					markItem(currentItemEl?.nextElementSibling) || markItem($b.element('item'));
+					break;
+				}
+
+				default:
+					// Do nothing
+			}
+		};
+
+		$a.on(document, 'keydown', onKeyDown, {
+			group: 'navigation'
+		});
+	}
+
 	/**
-	 * Sets the scroll position to the first selected item
+	 * Sets the scroll position to the first marked or selected item
 	 */
-	protected async setScrollToSelectedItem(): Promise<boolean> {
+	protected async setScrollToMarkedOrSelectedItem(): Promise<boolean> {
 		try {
 			const dropdown = await this.waitRef<HTMLDivElement>('dropdown', {label: $$.setScrollToSelectedItem});
 
@@ -481,20 +624,38 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				return false;
 			}
 
-			const
-				itemEl = $b.element<HTMLDivElement>('item', {selected: true});
+			const itemEl =
+				$b.element<HTMLDivElement>('item', {marked: true}) ??
+				$b.element<HTMLDivElement>('item', {selected: true});
 
 			if (itemEl == null) {
 				return false;
 			}
 
-			const
-				{clientHeight, scrollTop} = dropdown,
-				{offsetTop: itemOffset} = itemEl;
+			let {
+				clientHeight,
+				scrollTop
+			} = dropdown;
 
-			if (itemOffset > clientHeight + scrollTop || itemOffset - itemEl.clientHeight < scrollTop) {
-				dropdown.scrollTop = itemOffset - clientHeight / 2;
+			let {
+				offsetTop: itemOffsetTop,
+				offsetHeight: itemOffsetHeight
+			} = itemEl;
+
+			itemOffsetHeight += parseFloat(getComputedStyle(itemEl).marginTop);
+
+			if (itemOffsetTop > clientHeight + scrollTop) {
+				while (itemOffsetTop > clientHeight + scrollTop) {
+					scrollTop += itemOffsetHeight;
+				}
+
+			} else {
+				while (itemOffsetTop < scrollTop) {
+					scrollTop -= itemOffsetHeight;
+				}
 			}
+
+			dropdown.scrollTop = scrollTop;
 
 		} catch {
 			return false;
@@ -512,6 +673,12 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 		this.normalizeItems = i.normalizeItems.bind(this);
 		this.selectValue = i.selectValue.bind(this);
+	}
+
+	/** @see [[iOpenToggle.initCloseHelpers]] */
+	@p({hook: 'beforeDataCreate', replace: false})
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		iOpenToggle.initCloseHelpers(this, events);
 	}
 
 	/**
@@ -607,22 +774,35 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 	}
 
+	/** @override */
+	protected beforeDestroy(): void {
+		super.beforeDestroy();
+
+		if (this === openedSelect) {
+			openedSelect = null;
+		}
+	}
+
 	/**
 	 * Handler: click to some item element
 	 *
-	 * @param e
+	 * @param itemEl
 	 * @emits `actionChange(value: V)`
 	 */
 	@watch({
 		field: '?$el:click',
-		wrapper: (o, cb) => o.dom.delegateElement('item', cb)
+		wrapper: (o, cb) =>
+			o.dom.delegateElement('item', (e) => cb(e.delegateTarget))
 	})
 
-	protected onItemClick(e: Event): void {
+	protected onItemClick(itemEl?: Element): void {
+		if (itemEl == null) {
+			return;
+		}
+
 		const
-			target = <Element>e.delegateTarget,
-			id = Number(target.getAttribute('data-id')),
-			item = this.indexes[id];
+			id = itemEl.getAttribute('data-id'),
+			item = this.indexes[String(id)];
 
 		if (item == null) {
 			return;
@@ -672,7 +852,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 		if (some) {
 			void this.open();
-			void this.setScrollToSelectedItem();
+			void this.setScrollToMarkedOrSelectedItem();
 
 		} else {
 			void this.close();
