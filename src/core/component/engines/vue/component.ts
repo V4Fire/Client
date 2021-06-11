@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, WatchHandlerParams } from 'core/object/watch';
+import watch, { set, mute, unmute, WatchHandlerParams } from 'core/object/watch';
 import * as init from 'core/component/construct';
 
 import { beforeRenderHooks } from 'core/component/const';
@@ -94,7 +94,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 							desc = Object.getOwnPropertyDescriptor(obj, key);
 
 						// If we register a new property, we must register it to Vue too
-						if (!desc?.get) {
+						if (desc?.get == null) {
 							// For correct registering of a property with Vue,
 							// we need to remove it from a proxy and original object
 							delete obj[key];
@@ -107,7 +107,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 							$set.call(ctx, obj, key, value);
 
 							// Don't forget to restore the original watcher
+							mute(obj);
 							set(obj, key, value);
+							unmute(obj);
 						}
 
 					// Because Vue doesn't see changes from Map/Set structures, we must use this hack
