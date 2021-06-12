@@ -14,6 +14,38 @@
 	- rootTag = 'span'
 	- rootWrapper = true
 
+	- block headHelpers
+		- super
+
+		/**
+		 * Generates component items
+		 * @param {string=} [tag]
+		 */
+		- block items(tag = '_')
+			< template v-for = (el, i) in items | :key = getItemKey(el, i)
+				< ${tag} &
+					:class = Array.concat([], el.classes, provide.elClasses({
+						item: {
+							id: values.get(el.value),
+							selected: isSelected(el.value),
+							exterior: el.exterior,
+							...el.mods
+						}
+					})) |
+
+					:-id = values.get(el.value) |
+					:v-attrs = el.attrs
+				.
+					+= self.slot('default', {':item': 'el'})
+						< template v-if = item
+							< component &
+								:is = Object.isFunction(item) ? item(el, i) : item |
+								:v-attrs = getItemProps(el, i)
+							.
+
+						< template v-else
+							{{ t(el.label) }}
+
 	- block body
 		- super
 
@@ -46,7 +78,12 @@
 
 				- block input
 					< _.&__cell.&__input-wrapper
-						+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onEdit'}})
+						< template v-if = native
+							+= self.nativeInput({tag: 'select', model: 'valueStore'})
+								+= self.items('option')
+
+						< template v-else
+							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onEdit'}})
 
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
@@ -98,32 +135,9 @@
 		- block dropdown
 			< _.&__dropdown[.&_pos_bottom-left] &
 				ref = dropdown |
-				v-if = !browser.is.mobile && items.length && (
+				v-if = !native && items.length && (
 					isFunctional ||
 					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				)
 			.
-				< template v-for = (el, i) in items | :key = getItemKey(el, i)
-					< _ &
-						:class = Array.concat([], el.classes, provide.elClasses({
-							item: {
-								id: values.get(el.value),
-								selected: isSelected(el.value),
-								exterior: el.exterior,
-								...el.mods
-							}
-						})) |
-
-						:-id = values.get(el.value) |
-						:v-attrs = el.attrs
-					.
-
-						+= self.slot('default', {':item': 'el'})
-							< template v-if = item
-								< component &
-									:is = Object.isFunction(item) ? item(el, i) : item |
-									:v-attrs = getItemProps(el, i)
-								.
-
-							< template v-else
-								{{ t(el.label) }}
+				+= self.items()

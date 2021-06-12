@@ -10,6 +10,7 @@ import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
+import { is } from 'core/browser';
 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
@@ -47,6 +48,9 @@ let
 
 interface bSelect extends Trait<typeof iOpenToggle> {}
 
+/**
+ * Component to create a form select
+ */
 @component({
 	model: {
 		prop: 'selectedProp',
@@ -93,6 +97,12 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
+
+	/**
+	 * If true, the component will use a native tag to show the select
+	 */
+	@prop(Boolean)
+	readonly native: boolean = Object.isTruly(is.mobile);
 
 	/**
 	 * Icon to show before the input
@@ -313,7 +323,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @override */
 	protected readonly $refs!: iInputText['$refs'] & {
-		select?: HTMLSelectElement;
 		dropdown?: Element;
 	};
 
@@ -372,15 +381,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			valueStore = this.field.get('valueStore');
 
 		if (this.multiple) {
+			if (!Object.isSet(valueStore)) {
+				return false;
+			}
+
 			let
 				res = false;
 
 			const set = (value) => {
-				if (Object.has(valueStore, [value])) {
+				if (valueStore.has(value)) {
 					return false;
 				}
 
-				(<Set<unknown>>valueStore).add(value);
+				valueStore.add(value);
 				res = true;
 			};
 
@@ -406,29 +419,31 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		const
 			{block: $b} = this;
 
-		if ($b != null) {
-			const
-				id = this.values.get(value),
-				itemEl = id != null ? $b.element('item', {id}) : null;
-
-			if (!this.multiple) {
-				const
-					old = $b.element('item', {selected: true});
-
-				if (old != null && old !== itemEl) {
-					$b.setElMod(old, 'item', 'selected', false);
-				}
-			}
-
-			SyncPromise.resolve(this.selectedElement).then((selectedElement) => {
-				const
-					els = Array.concat([], selectedElement);
-
-				for (let i = 0; i < els.length; i++) {
-					$b.setElMod(els[i], 'item', 'selected', true);
-				}
-			}, stderr);
+		if (this.native || $b == null) {
+			return true;
 		}
+
+		const
+			id = this.values.get(value),
+			itemEl = id != null ? $b.element('item', {id}) : null;
+
+		if (!this.multiple) {
+			const
+				old = $b.element('item', {selected: true});
+
+			if (old != null && old !== itemEl) {
+				$b.setElMod(old, 'item', 'selected', false);
+			}
+		}
+
+		SyncPromise.resolve(this.selectedElement).then((selectedElement) => {
+			const
+				els = Array.concat([], selectedElement);
+
+			for (let i = 0; i < els.length; i++) {
+				$b.setElMod(els[i], 'item', 'selected', true);
+			}
+		}, stderr);
 
 		return true;
 	}
@@ -481,16 +496,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		const
 			{block: $b} = this;
 
-		if ($b != null) {
-			SyncPromise.resolve(selectedElement).then((selectedElement) => {
-				const
-					els = Array.concat([], selectedElement);
-
-				for (let i = 0; i < els.length; i++) {
-					$b.setElMod(els[i], 'item', 'selected', false);
-				}
-			}, stderr);
+		if (this.native || $b == null) {
+			return true;
 		}
+
+		SyncPromise.resolve(selectedElement).then((selectedElement) => {
+			const
+				els = Array.concat([], selectedElement);
+
+			for (let i = 0; i < els.length; i++) {
+				$b.setElMod(els[i], 'item', 'selected', false);
+			}
+		}, stderr);
 
 		return true;
 	}
@@ -565,7 +582,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @see [[iOpenToggle.open]] */
 	async open(...args: unknown[]): Promise<boolean> {
-		if (this.multiple) {
+		if (this.multiple || this.native) {
 			return false;
 		}
 
@@ -579,6 +596,10 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @see [[iOpenToggle.open]] */
 	async close(...args: unknown[]): Promise<boolean> {
+		if (this.native) {
+			return false;
+		}
+
 		if (this.multiple || await iOpenToggle.close(this, ...args)) {
 			const
 				{block: $b} = this;
@@ -601,6 +622,10 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @see [[iOpenToggle.onOpenedChange]] */
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
+		if (this.native) {
+			return;
+		}
+
 		const
 			{async: $a} = this;
 
@@ -640,6 +665,10 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Sets the scroll position to the first marked or selected item
 	 */
 	protected async setScrollToMarkedOrSelectedItem(): Promise<boolean> {
+		if (this.native) {
+			return false;
+		}
+
 		try {
 			const dropdown = await this.waitRef<HTMLDivElement>('dropdown', {label: $$.setScrollToSelectedItem});
 
@@ -759,6 +788,17 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 
 		return res;
+	}
+
+	/** @override */
+	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
+		attrs = super.normalizeAttrs(attrs);
+
+		if (this.native) {
+			attrs.multiple = this.multiple;
+		}
+
+		return attrs;
 	}
 
 	/**
@@ -927,7 +967,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			Enter: true
 		};
 
-		if (validKeys[e.key] !== true || this.mods.focused !== 'true') {
+		if (this.native || validKeys[e.key] !== true || this.mods.focused !== 'true') {
 			return;
 		}
 
