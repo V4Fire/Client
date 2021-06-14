@@ -115,6 +115,9 @@
 				- block clear
 					< _.&__cell.&__icon.&__clear @mousedown.prevent | @click = onClear
 
+				- block expand
+					< _.&__cell.&__icon.&__expand @click = open
+
 				- block progress
 					< _.&__cell.&__icon.&__progress v-if = progressIcon != null || vdom.getSlot('progressIcon')
 						+= self.slot('progressIcon', {':icon': 'progressIcon'})
