@@ -301,7 +301,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Synchronization of the "localeStore" field
+	 * Synchronization of the `localeStore` field
 	 * @param locale
 	 */
 	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
