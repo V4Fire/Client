@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ModsTable } from 'super/i-input-text/i-input-text';
+import type { UnsafeIInputText, ModsTable } from 'super/i-input-text/i-input-text';
+import type bSelect from 'form/b-select/b-select';
 
 export type Value = unknown | Set<unknown>;
 export type FormValue = CanUndef<Value>;
@@ -49,3 +50,27 @@ export interface Item extends Dictionary {
 }
 
 export type Items = Item[];
+
+// @ts-ignore (extend)
+export interface UnsafeBSelect<CTX extends bSelect = bSelect> extends UnsafeIInputText<CTX> {
+	// @ts-ignore (access)
+	indexes: CTX['indexes'];
+
+	// @ts-ignore (access)
+	values: CTX['values'];
+
+	// @ts-ignore (access)
+	setScrollToMarkedOrSelectedItem: CTX['setScrollToMarkedOrSelectedItem'];
+
+	// @ts-ignore (access)
+	onNativeChange: CTX['onNativeChange'];
+
+	// @ts-ignore (access)
+	onSearchInput: CTX['onSearchInput'];
+
+	// @ts-ignore (access)
+	onItemClick: CTX['onItemClick'];
+
+	// @ts-ignore (access)
+	onItemsNavigate: CTX['onItemsNavigate'];
+}

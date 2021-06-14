@@ -19,11 +19,13 @@
 
 		/**
 		 * Generates component items
-		 * @param {string=} [tag]
+		 * @param {string=} [tag] - tag to generate item
 		 */
 		- block items(tag = '_')
 			< template v-for = (el, i) in items | :key = getItemKey(el, i)
 				< ${tag} &
+					:selected = isSelected(el.value) |
+
 					:class = Array.concat([], el.classes, provide.elClasses({
 						item: {
 							id: values.get(el.value),
@@ -79,11 +81,11 @@
 				- block input
 					< _.&__cell.&__input-wrapper
 						< template v-if = native
-							+= self.nativeInput({tag: 'select', model: 'valueStore'})
+							+= self.nativeInput({tag: 'select', model: 'undefined', attrs: {'@change': 'onNativeChange'}})
 								+= self.items('option')
 
 						< template v-else
-							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onEdit'}})
+							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
 
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')

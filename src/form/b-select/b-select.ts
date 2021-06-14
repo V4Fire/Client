@@ -23,16 +23,31 @@ import iInputText, {
 	system,
 	computed,
 
+	p,
 	hook,
 	watch,
 
 	ModsDecl,
 	ModEvent,
-	SetModEvent, p
+	SetModEvent,
+
+	UnsafeGetter
 
 } from 'super/i-input-text/i-input-text';
 
-import type { Value, FormValue, Item, Items } from 'form/b-select/interface';
+import * as h from 'form/b-select/modules/handlers';
+
+import type {
+
+	Value,
+	FormValue,
+
+	Item,
+	Items,
+
+	UnsafeBSelect
+
+} from 'form/b-select/interface';
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
@@ -220,6 +235,11 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly progressIcon?: string | boolean;
 
 	/** @override */
+	get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
+		return <any>this;
+	}
+
+	/** @override */
 	get value(): this['Value'] {
 		const
 			v = this.field.get('valueStore');
@@ -252,15 +272,22 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		opened: [
 			...iOpenToggle.mods.opened!,
 			['false']
+		],
+
+		native: [
+			'true',
+			'false'
+		],
+
+		multiple: [
+			'true',
+			'false'
 		]
 	};
 
 	/** @override */
 	@system<bSelect>((o) => o.sync.link((val) => {
-		const
-			beforeDataCreate = o.hook === 'beforeDataCreate';
-
-		if (val === undefined && beforeDataCreate) {
+		if (val === undefined && o.hook === 'beforeDataCreate') {
 			if (o.multiple) {
 				if (Object.isSet(o.valueStore)) {
 					return o.valueStore;
@@ -299,6 +326,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Map of item indexes and their values
 	 */
 	@system()
+	// @ts-ignore (type loop)
 	protected indexes!: Dictionary<this['Item']>;
 
 	/**
@@ -335,7 +363,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		dependencies: ['value']
 	})
 
-	protected get selectedElement(): CanPromise<CanUndef<CanArray<Element>>> {
+	protected get selectedElement(): CanPromise<CanUndef<CanArray<HTMLOptionElement>>> {
 		const
 			{value} = this;
 
@@ -344,7 +372,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				id = this.values.get(value);
 
 			if (id != null) {
-				return this.block?.element<HTMLAnchorElement>('item', {id});
+				return this.block?.element<HTMLOptionElement>('item', {id});
 			}
 		};
 
@@ -366,8 +394,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @param value
 	 */
 	isSelected(value: unknown): boolean {
-		const valueStore = this.field.get('valueStore');
-		return this.multiple ? Object.has(valueStore, [value]) : value === valueStore;
+		const
+			valueStore = this.field.get('valueStore');
+
+		if (this.multiple) {
+			if (!Object.isSet(valueStore)) {
+				return false;
+			}
+
+			return valueStore.has(value);
+		}
+
+		return value === valueStore;
 	}
 
 	/**
@@ -375,14 +413,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 	 *
 	 * @param value
+	 * @param [unselectPrevious] - true, if need to unselect previous items (works only with the `multiple` mode)
 	 */
-	selectValue(value: this['Value']): boolean {
+	selectValue(value: this['Value'], unselectPrevious: boolean = false): boolean {
 		const
 			valueStore = this.field.get('valueStore');
 
 		if (this.multiple) {
 			if (!Object.isSet(valueStore)) {
 				return false;
+			}
+
+			if (unselectPrevious) {
+				valueStore.clear();
 			}
 
 			let
@@ -413,26 +456,32 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			return false;
 
 		} else {
-			this.field.set('valueStore', Object.freeze(value));
+			this.field.set('valueStore', value);
 		}
 
 		const
 			{block: $b} = this;
 
-		if (this.native || $b == null) {
+		if ($b == null) {
 			return true;
 		}
 
 		const
 			id = this.values.get(value),
-			itemEl = id != null ? $b.element('item', {id}) : null;
+			itemEl = id != null ? $b.element<HTMLOptionElement>('item', {id}) : null;
 
-		if (!this.multiple) {
+		if (!this.multiple || unselectPrevious) {
 			const
-				old = $b.element('item', {selected: true});
+				previousItemEls = $b.elements<HTMLOptionElement>('item', {selected: true});
 
-			if (old != null && old !== itemEl) {
-				$b.setElMod(old, 'item', 'selected', false);
+			for (let i = 0; i < previousItemEls.length; i++) {
+				const
+					previousItemEl = previousItemEls[i];
+
+				if (previousItemEl !== itemEl) {
+					$b.setElMod(previousItemEl, 'item', 'selected', false);
+					previousItemEl.selected = false;
+				}
 			}
 		}
 
@@ -441,7 +490,11 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				els = Array.concat([], selectedElement);
 
 			for (let i = 0; i < els.length; i++) {
-				$b.setElMod(els[i], 'item', 'selected', true);
+				const
+					el = els[i];
+
+				$b.setElMod(el, 'item', 'selected', true);
+				el.selected = true;
 			}
 		}, stderr);
 
@@ -462,15 +515,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			{selectedElement} = this;
 
 		if (this.multiple) {
+			if (!Object.isSet(valueStore)) {
+				return false;
+			}
+
 			let
 				res = false;
 
 			const unset = (value) => {
-				if (!Object.has(valueStore, [value])) {
-					return false;
+				if (!valueStore.has(value)) {
+					return;
 				}
 
-				(<Set<unknown>>valueStore).delete(value);
+				valueStore.delete(value);
 				res = true;
 			};
 
@@ -496,7 +553,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		const
 			{block: $b} = this;
 
-		if (this.native || $b == null) {
+		if ($b == null) {
 			return true;
 		}
 
@@ -505,7 +562,23 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				els = Array.concat([], selectedElement);
 
 			for (let i = 0; i < els.length; i++) {
-				$b.setElMod(els[i], 'item', 'selected', false);
+				const
+					el = els[i],
+					id = el.getAttribute('data-id'),
+					item = this.indexes[String(id)];
+
+				if (item == null) {
+					continue;
+				}
+
+				const needChangeMod = this.multiple && Object.isSet(value) ?
+					value.has(item.value) :
+					value === item.value;
+
+				if (needChangeMod) {
+					$b.setElMod(el, 'item', 'selected', false);
+					el.selected = false;
+				}
 			}
 		}, stderr);
 
@@ -517,19 +590,30 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * The methods return a new selected value/s.
 	 *
 	 * @param value
+	 * @param [unselectPrevious] - true, if need to unselect previous items (works only with the `multiple` mode)
 	 */
-	toggleValue(value: this['Value']): this['Value'] {
+	toggleValue(value: this['Value'], unselectPrevious: boolean = false): this['Value'] {
 		const
 			valueStore = this.field.get('valueStore');
 
 		if (this.multiple) {
+			if (!Object.isSet(valueStore)) {
+				return this.value;
+			}
+
 			const toggle = (value) => {
-				if (Object.has(valueStore, [value])) {
-					this.unselectValue(value);
+				if (valueStore.has(value)) {
+					if (unselectPrevious) {
+						this.unselectValue(this.value);
+
+					} else {
+						this.unselectValue(value);
+					}
+
 					return;
 				}
 
-				this.selectValue(value);
+				this.selectValue(value, unselectPrevious);
 			};
 
 			if (Object.isSet(value)) {
@@ -560,9 +644,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	reset(): Promise<boolean> {
 		void this.close();
 
-		if (this.value !== this.default) {
-			this.unselectValue(this.value);
-			this.selectValue(this.default);
+		if (!Object.fastCompare(this.value, this.default)) {
+			this.selectValue(this.default, true);
 			void this.setScrollToMarkedOrSelectedItem();
 
 			if (!this.multiple) {
@@ -656,7 +739,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			openedSelect = this;
 		}
 
-		$a.on(document, 'keydown', this.onNavigate.bind(this), {
+		$a.on(document, 'keydown', this.onItemsNavigate.bind(this), {
 			group: 'navigation'
 		});
 	}
@@ -843,6 +926,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+		this.sync.mod('native', 'native', Boolean);
+		this.sync.mod('multiple', 'multiple', Boolean);
 		this.sync.mod('opened', 'multiple', Boolean);
 	}
 
@@ -872,50 +957,29 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
-	 * Handler: manual editing of a component text
+	 * Handler: value changing of a native component `<select>`
+	 * @emits `actionChange(value: V)`
+	 */
+	protected onNativeChange(): void {
+		h.onNativeChange(this);
+	}
+
+	/**
+	 * Handler: typing text into a helper text input to search select options
+	 */
+	@watch({path: 'text', immediate: true})
+	protected onTextChange(): void {
+		h.onTextChange(this);
+	}
+
+	/**
+	 * Handler: typing text into a helper text input to search select options
 	 *
 	 * @param e
 	 * @emits `actionChange(value: V)`
 	 */
-	protected onEdit(e: InputEvent): void {
-		const
-			target = <HTMLInputElement>e.target;
-
-		if (this.compiledMask != null) {
-			return;
-		}
-
-		this.text = target.value;
-
-		const
-			prevValue = this.value,
-			rgxp = new RegExp(`^${RegExp.escape(this.text)}`, 'i');
-
-		let
-			some = false;
-
-		for (let i = 0; i < this.items.length; i++) {
-			const
-				item = this.items[i];
-
-			if (item.label != null && rgxp.test(item.label)) {
-				this.selectValue(item.value);
-				some = true;
-				break;
-			}
-		}
-
-		if (some) {
-			void this.open();
-			void this.setScrollToMarkedOrSelectedItem();
-
-		} else {
-			void this.close();
-		}
-
-		if (prevValue !== this.value) {
-			this.emit('actionChange', this.value);
-		}
+	protected onSearchInput(e: InputEvent): void {
+		h.onSearchInput(this, e);
 	}
 
 	/**
@@ -927,114 +991,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	@watch({
 		field: '?$el:click',
 		wrapper: (o, cb) =>
-			o.dom.delegateElement('item', (e) => cb(e.delegateTarget))
+			o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
 	})
 
-	protected onItemClick(itemEl?: Element): void {
-		void this.close();
-
-		if (itemEl == null) {
-			return;
-		}
-
-		const
-			id = itemEl.getAttribute('data-id'),
-			item = this.indexes[String(id)];
-
-		if (item == null) {
-			return;
-		}
-
-		if (this.multiple) {
-			this.toggleValue(item.value);
-
-		} else {
-			this.text = item.label ?? this.text;
-			this.selectValue(item.value);
-		}
-
-		this.emit('actionChange', this.value);
+	protected onItemClick(itemEl: CanUndef<Element>): void {
+		h.onItemClick(this, itemEl);
 	}
 
 	/**
 	 * Handler: "navigation" over the select via "arrow" buttons
 	 * @param e
 	 */
-	protected async onNavigate(e: KeyboardEvent): Promise<void> {
-		const validKeys = {
-			ArrowUp: true,
-			ArrowDown: true,
-			Enter: true
-		};
-
-		if (this.native || validKeys[e.key] !== true || this.mods.focused !== 'true') {
-			return;
-		}
-
-		e.preventDefault();
-
-		const
-			{block: $b} = this;
-
-		if ($b == null) {
-			return;
-		}
-
-		const getMarkedOrSelectedItem = () =>
-			$b.element('item', {marked: true}) ??
-			$b.element('item', {selected: true});
-
-		let
-			currentItemEl = getMarkedOrSelectedItem();
-
-		const markItem = (itemEl: Nullable<Element>) => {
-			if (currentItemEl != null) {
-				$b.removeElMod(currentItemEl, 'item', 'marked');
-			}
-
-			if (itemEl == null) {
-				return false;
-			}
-
-			$b.setElMod(itemEl, 'item', 'marked', true);
-			void this.setScrollToMarkedOrSelectedItem();
-
-			return true;
-		};
-
-		switch (e.key) {
-			case 'Enter':
-				this.onItemClick(currentItemEl);
-				break;
-
-			case 'ArrowUp':
-				if (currentItemEl?.previousElementSibling != null) {
-					markItem(currentItemEl.previousElementSibling);
-
-				} else {
-					await this.close();
-				}
-
-				break;
-
-			case 'ArrowDown': {
-				if (this.mods.opened !== 'true') {
-					await this.open();
-
-					if (this.value != null) {
-						return;
-					}
-
-					currentItemEl = currentItemEl ?? getMarkedOrSelectedItem();
-				}
-
-				markItem(currentItemEl?.nextElementSibling) || markItem($b.element('item'));
-				break;
-			}
-
-			default:
-				// Do nothing
-		}
+	protected onItemsNavigate(e: KeyboardEvent): void {
+		void h.onItemsNavigate(this, e);
 	}
 }
 
