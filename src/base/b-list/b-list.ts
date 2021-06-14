@@ -16,6 +16,8 @@ import 'models/demo/list';
 //#endif
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
+
 import { isAbsURL } from 'core/url';
 
 import iVisible from 'traits/i-visible/i-visible';
@@ -278,10 +280,12 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 	 *
 	 * @param value
+	 * @param [unsetPrevious] - true, if need to unset previous active items (works only with the `multiple` mode)
+	 *
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	setActive(value: Active): boolean {
+	setActive(value: Active, unsetPrevious: boolean = false): boolean {
 		const
 			activeStore = this.field.get('activeStore');
 
@@ -324,23 +328,33 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		const
 			{block: $b} = this;
 
-		if ($b) {
+		if ($b != null) {
 			const
 				id = this.values.get(value),
-				target = id != null ? $b.element('link', {id}) : null;
+				linkEl = id != null ? $b.element('link', {id}) : null;
 
-			if (!this.multiple) {
+			if (!this.multiple || unsetPrevious) {
 				const
-					old = $b.element('link', {active: true});
+					previousLinkEls = $b.elements('link', {active: true});
 
-				if (old && old !== target) {
-					$b.setElMod(old, 'link', 'active', false);
+				for (let i = 0; i < previousLinkEls.length; i++) {
+					const
+						previousLinkEl = previousLinkEls[i];
+
+					if (previousLinkEl !== linkEl) {
+						$b.setElMod(previousLinkEl, 'link', 'active', false);
+					}
 				}
 			}
 
-			if (target) {
-				$b.setElMod(target, 'link', 'active', true);
-			}
+			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
+				const
+					els = Array.concat([], selectedElement);
+
+				for (let i = 0; i < els.length; i++) {
+					$b.setElMod(els[i], 'link', 'active', true);
+				}
+			}, stderr);
 		}
 
 		this.emit('immediateChange', this.active);
@@ -360,6 +374,9 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	unsetActive(value: unknown): boolean {
 		const
 			activeStore = this.field.get('activeStore');
+
+		const
+			{activeElement} = this;
 
 		if (this.multiple) {
 			if (!Object.isSet(activeStore)) {
@@ -401,13 +418,29 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			{block: $b} = this;
 
 		if ($b != null) {
-			const
-				id = this.values.get(value),
-				target = id != null ? $b.element('link', {id}) : null;
+			SyncPromise.resolve(activeElement).then((activeElement) => {
+				const
+					els = Array.concat([], activeElement);
 
-			if (target) {
-				$b.setElMod(target, 'link', 'active', false);
-			}
+				for (let i = 0; i < els.length; i++) {
+					const
+						el = els[i],
+						id = el.getAttribute('data-id'),
+						itemValue = this.indexes[String(id)];
+
+					if (itemValue == null) {
+						continue;
+					}
+
+					const needChangeMod = this.multiple && Object.isSet(value) ?
+						value.has(itemValue) :
+						value === itemValue;
+
+					if (needChangeMod) {
+						$b.setElMod(el, 'link', 'active', false);
+					}
+				}
+			}, stderr);
 		}
 
 		this.emit('immediateChange', this.active);
@@ -421,8 +454,9 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * The methods return a new active component item/s.
 	 *
 	 * @param value
+	 * @param [unsetPrevious] - true, if need to unset previous active items (works only with the `multiple` mode)
 	 */
-	toggleActive(value: Active): Active {
+	toggleActive(value: Active, unsetPrevious: boolean = false): Active {
 		const
 			activeStore = this.field.get('activeStore');
 
@@ -433,11 +467,17 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 			const toggle = (value) => {
 				if (activeStore.has(value)) {
-					this.unsetActive(value);
+					if (unsetPrevious) {
+						this.unsetActive(this.active);
+
+					} else {
+						this.unsetActive(value);
+					}
+
 					return;
 				}
 
-				this.setActive(value);
+				this.setActive(value, unsetPrevious);
 			};
 
 			if (Object.isSet(value)) {
