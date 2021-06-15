@@ -29,10 +29,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now the component inherits `iInputText`:
   * `bInput`
   * `bTextarea`
+  * `bSelect`
 
 * `bInput`:
   * Removed `&__super-wrapper`
   * New API of component validators
+
+* `bSelect`
+  * Now the component inherits `iInputText`
+  * Now the component implements `iItems`
 
 * `bForm`:
   * Now `validate` returns `ValidationError` in case of failed validation
@@ -59,6 +64,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added support of the default slot `bDummy`
 * Added support of interpolation of a data provider response `iInput`
 * Added `isChecked` `bCheckbox`
+
+* `bSelect`:
+  * Added a feature of multiple selection
+  * Added `isSelected/selectValue/unselectValue/toggleValue`
 
 * `bList`:
   * Now `Items.classes` uses to provide extra non-modifier classes to an element
@@ -109,6 +118,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bForm`
   * `bInput`
   * `bTextarea`
+  * `bSelect`
 
 * Added tests:
   * `bCheckbox`
