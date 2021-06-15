@@ -110,7 +110,7 @@ export default abstract class iLockPageScroll {
 						html.scrollTop :
 						body.scrollTop;
 
-					component[$$.scrollTop] = scrollTop;
+					r[$$.scrollTop] = scrollTop;
 					body.style.top = `-${scrollTop}px`;
 					r.setRootMod('lockScrollMobile', true);
 
@@ -129,7 +129,7 @@ export default abstract class iLockPageScroll {
 					const
 						scrollBarWidth = globalThis.innerWidth - body.clientWidth;
 
-					component[$$.paddingRight] = body.style.paddingRight;
+					r[$$.paddingRight] = body.style.paddingRight;
 					body.style.paddingRight = `${scrollBarWidth}px`;
 					r.setRootMod('lockScrollDesktop', true);
 
@@ -162,10 +162,10 @@ export default abstract class iLockPageScroll {
 				r[$$.isLocked] = false;
 
 				if (is.mobile !== false) {
-					globalThis.scrollTo(0, component[$$.scrollTop]);
+					globalThis.scrollTo(0, r[$$.scrollTop]);
 				}
 
-				body.style.paddingRight = component[$$.paddingRight] ?? '';
+				body.style.paddingRight = r[$$.paddingRight] ?? '';
 				res();
 
 			}, {group, label: $$.unlockRaf, join: true});
@@ -187,7 +187,7 @@ export default abstract class iLockPageScroll {
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
 		const
-			{$async: $a, localEmitter: $e} = component.unsafe;
+			{$root: r, $async: $a, localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
@@ -199,8 +199,8 @@ export default abstract class iLockPageScroll {
 
 		$a.worker(() => {
 			component.unlock().catch(stderr);
-			delete component[$$.paddingRight];
-			delete component[$$.scrollTop];
+			delete r[$$.paddingRight];
+			delete r[$$.scrollTop];
 		});
 	}
 
