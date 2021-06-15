@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-*[Fixed a bug when using the trait by different components concurrently](https://github.com/V4Fire/Client/issues/549)
+* [Fixed a bug when using the trait by different components concurrently](https://github.com/V4Fire/Client/issues/549)
 
 ## v3.0.0-rc.184 (2021-05-12)
 
