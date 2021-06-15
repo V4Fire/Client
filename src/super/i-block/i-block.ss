@@ -211,7 +211,7 @@
 
 					< template v-else
 						< slot name = ${name}
-							{content}
+							+= content
 
 				- block headHelpers
 

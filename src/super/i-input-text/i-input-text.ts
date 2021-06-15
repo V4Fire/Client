@@ -381,17 +381,20 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/** @override */
 	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
-		attrs.type = this.type;
+		attrs = {
+			...attrs,
+			type: this.type,
 
-		attrs.placeholder = this.placeholder;
-		attrs.autocomplete = this.autocomplete;
-		attrs.readonly = Object.parse(this.mods.readonly);
+			placeholder: this.placeholder,
+			autocomplete: this.autocomplete,
+			readonly: Object.parse(this.mods.readonly),
 
-		attrs.minlength = this.minLength;
-		attrs.maxlength = this.maxLength;
+			minlength: this.minLength,
+			maxlength: this.maxLength,
 
-		attrs.min = this.min;
-		attrs.max = this.max;
+			min: this.min,
+			max: this.max
+		};
 
 		return attrs;
 	}

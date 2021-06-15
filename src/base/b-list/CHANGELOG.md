@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :boom: Breaking Change
+
+* `Items.classes` was replaced with `Items.mods`
+* Now `toggleActive` returns a new active item
+* New public API for `isActive`
+* Removed deprecated API
+
+#### :rocket: New Feature
+
+* Now `Items.classes` uses to provide extra non-modifier classes to an element
+* Now `setActive/unsetActive/toggleActive` can take multiple values
+
+#### :bug: Bug Fix
+
+* Now `normalizeItems` doesn't modify the original object
+
 ## v3.0.0-rc.140 (2021-02-05)
 
 #### :bug: Bug Fix

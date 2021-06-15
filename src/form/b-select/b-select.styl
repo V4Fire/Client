@@ -6,21 +6,81 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "form/b-input/b-input.styl"
+@import "super/i-input-text/i-input-text.styl"
 
 $p = {
+	widthHelpers: true
+	progressHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
 	dropdownHelpers: true
 }
 
-b-select extends b-input
+b-select extends i-input-text
 	position relative
+	display inline-block
+
+	&__root-wrapper
+	&__wrapper
+		display flex
+		width 100%
+
+	&__wrapper
+		cursor text
+
+	&__cell
+		flex auto
+
+	&__input-wrapper
+		width 100%
+
+	&__input
+		width 100%
+		overflow hidden
+		margin 0
+
+		text-overflow ellipsis
+
+		border 0
+		background transparent
+
+		// @stlint-disable
+		&::-ms-clear
+			// @stlint-enable
+			display none
+
+		&:focus
+			-webkit-tap-highlight-color transparent
+
+		&:focus
+		&:valid
+		&:invalid
+			outline 0
+
+	&__post-icon + &__clear
+		display none
+
+	&__clear
+		visibility hidden
+		cursor pointer
+
+	&__progress
+	&__valid-status
+		pointer-events none
+
+	&__valid-status
+		display none
+
+	&_focused_true&_empty_false:not(&_readonly_true) &__clear
+		display block
+		visibility visible
 
 	&__native
 		absolute top 0 left 0
 		size 100%
 		opacity 0
 
-	&__option
+	&__item
 		display block
 		cursor pointer
 		white-space nowrap
@@ -28,13 +88,14 @@ b-select extends b-input
 	&__expand
 		cursor pointer
 
-	&__dropdown-content-wrapper
-		display block
-		overflow hidden
-		background inherit
-
 	&__input[readonly="readonly"]
 		cursor pointer
 
+	&__dropdown
+		display none
+
 	&_opened_true
 		zIndex(layer, 1)
+
+	&_opened_true &__dropdown
+		display block

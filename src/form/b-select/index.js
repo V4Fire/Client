@@ -7,9 +7,8 @@
  */
 
 package('b-select')
-	.extends('b-input')
+	.extends('i-input-text')
 	.dependencies(
 		'b-icon',
-		'b-progress-icon',
-		'b-option'
+		'b-progress-icon'
 	);

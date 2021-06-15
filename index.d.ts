@@ -70,18 +70,6 @@ interface ResizeObserverObserveOptions {
 	box: 'content-box' | 'border-box';
 }
 
-declare class ResizeObserver {
-	constructor(callback: (entries: ResizeObserverEntry[]) => unknown);
-	disconnect(): void;
-	observe(target: Element, opts?: ResizeObserverObserveOptions): void;
-	unobserve(target: Element): void;
-}
-
-declare class ResizeObserverEntry {
-	readonly contentRect: DOMRectReadOnly;
-	readonly target: Element;
-}
-
 declare let ModuleDependencies: {
 	cache: Dictionary;
 	event: {on: Function; once: Function; off: Function};

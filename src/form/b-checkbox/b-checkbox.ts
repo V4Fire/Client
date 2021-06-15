@@ -378,10 +378,10 @@ export default class bCheckbox extends iInput implements iSize {
 
 				if (this.isComponent(el, bCheckbox)) {
 					if (checked) {
-						el.check(<CheckType>e.value).catch(stderr);
+						void el.check(<CheckType>e.value);
 
 					} else if (unchecked) {
-						el.uncheck().catch(stderr);
+						void el.uncheck();
 					}
 				}
 			}

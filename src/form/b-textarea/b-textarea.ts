@@ -361,7 +361,7 @@ export default class bTextarea extends iInputText {
 		}
 
 		if (this.vdom.getSlot('limit') != null) {
-			this.forceUpdate().catch(stderr);
+			void this.forceUpdate();
 		}
 	}
 

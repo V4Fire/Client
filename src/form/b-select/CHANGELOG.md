@@ -13,24 +13,14 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Now `toggle` returns a component value
+* Now the component inherits `iInputText`
+* Now the component implements `iItems`
 
 #### :rocket: New Feature
 
-* Added `isChecked`
-
-#### :bug: Bug Fix
-
-* Payload of the `actionChange` event must contain `value`, but not `mods.checked`
-
-#### :memo: Documentation
-
-* Added documentation
+* Added a feature of multiple selection
+* Added `isSelected/selectValue/unselectValue/toggleValue`
 
 #### :house: Internal
 
 * Fixed ESLint warnings
-
-#### :nail_care: Polish
-
-* Added tests

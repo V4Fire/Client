@@ -22,25 +22,21 @@
 		 * @param {!Array<Item>} items - items to render
 		 */
 		- block list(items)
-			< template &
-				v-for = (el, i) in ${items} |
-				:key = getItemKey(el, i)
-			.
-
-				< ${listElTag}.&__el.&__item
+			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
+				< ${listElTag}.&__item
 					< a &
-						:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
-							id: Object.get(values, [el.value]),
-							active: isActive(el),
+						:class = provide.hintClasses(el.hintPos).concat(el.classes || [], provide.elClasses({link: {
+							id: values.get(el.value),
+							active: isActive(el.value),
 							exterior: el.exterior,
 							hidden: el.hidden,
 							progress: el.progress,
-							...el.classes
+							...el.mods
 						}})) |
 
 						:href = el.href |
 						:-hint = el.hint |
-						:-id = Object.get(values, [el.value]) |
+						:-id = values.get(el.value) |
 						:v-attrs = el.attrs
 					.
 						- block preIcon

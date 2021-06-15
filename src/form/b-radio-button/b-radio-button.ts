@@ -38,7 +38,7 @@ export default class bRadioButton extends bCheckbox {
 					el = els[i];
 
 				if (el !== ctx && this.isComponent(el, bRadioButton)) {
-					el.uncheck().catch(stderr);
+					void el.uncheck();
 				}
 			}
 
@@ -53,6 +53,6 @@ export default class bRadioButton extends bCheckbox {
 			if (res) {
 				return uncheckOthers();
 			}
-		}, stderr);
+		});
 	}
 }

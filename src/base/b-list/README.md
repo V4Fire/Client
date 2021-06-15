@@ -22,7 +22,7 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * Support of links and tabs.
 
-* Multiple values (`multiple = true`).
+* Multiple active items (`multiple = true`).
 
 * Cancelation of a choice (`cancelable = true`).
 
@@ -38,12 +38,12 @@ Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName         | Description                                                                                                                  | Payload description                    | Payload  |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | -------- |
-| `change`          | An active value of the component has been changed                                                                            | Active value or a set of active values | `Active` |
-| `immediateChange` | An active value of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active values | `Active` |
-| `actionChange`    | An active value of the component has been changed due to some user action                                                    | Active value or a set of active values | `Active` |
-| `itemsChange`     | A list of items has been changed                                                                                             | List of items                          | `Items`  |
+| EventName         | Description                                                                                                                 | Payload description                    | Payload  |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | -------- |
+| `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
+| `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
+| `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
+| `itemsChange`     | A list of items has been changed                                                                                            | List of items                          | `Items`  |
 
 Also, you can see the parent component and the component traits.
 
@@ -84,7 +84,7 @@ The component can be used with the `v-model` directive.
 
 ## Usage
 
-### Simple use of the component with a provided list of items and the default active value
+### Simple use of the component with a provided list of items and default active item
 
 ```
 < b-list :items = [ &
@@ -93,7 +93,7 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-### Use of the component with the providing of the active value
+### Use of the component with the providing of an active item
 
 ```
 < b-list :active = 0 | :items = [ &
@@ -199,8 +199,8 @@ Also, you can see the implemented traits or the parent component.
 
 #### [activeProp]
 
-An initial component active value/s.
-If the component is switched to the `multiple` mode, you can pass an array or Set to define several active values.
+An initial component active item/s.
+If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 
 #### [autoHref = `false`]
 
@@ -208,7 +208,7 @@ If true, then all items without the `href` option will automatically generate a 
 
 #### [multiple = `false`]
 
-If true, the component supports a feature of multiple active values.
+If true, the component supports a feature of multiple active items.
 
 #### [cancelable]
 
@@ -219,14 +219,33 @@ By default, if the component is switched to the `multiple` mode, this value is s
 
 #### active
 
-The component active value.
+A component active item/s.
 If the component is switched to the `multiple` mode, the getter will return a `Set` object.
 
 ### Methods
 
+#### isActive
+
+Returns true if the specified value is active.
+
+```typescript
+class Test extends iData {
+  /** @override */
+  protected $refs!: {
+    list: bList
+  };
+
+  test(): void {
+    this.$refs.list.setActive(1);
+    console.log(this.$refs.list.isActive(1));
+  }
+}
+```
+
 #### setActive
 
-Activates the specified value.
+Activates an item by the specified value.
+If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 
 ```typescript
 class Test extends iData {
@@ -243,7 +262,8 @@ class Test extends iData {
 
 #### unsetActive
 
-Deactivates the specified value.
+Deactivates an item by the specified value.
+If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
 
 ```typescript
 class Test extends iData {
@@ -260,7 +280,8 @@ class Test extends iData {
 
 #### toggleActive
 
-Toggles activation of the specified value.
+Toggles activation of an item by the specified value.
+The methods return a new active component item/s.
 
 ```typescript
 class Test extends iData {
@@ -270,7 +291,7 @@ class Test extends iData {
   };
 
   test(): void {
-    this.$refs.list.toggleActive(1);
+    console.log(this.$refs.list.toggleActive(1) === this.$refs.list.active);
   }
 }
 ```

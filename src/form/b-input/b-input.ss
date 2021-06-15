@@ -45,7 +45,7 @@
 						.
 
 				- block input
-					< _.&__cell.&__input-cont
+					< _.&__cell.&__input-wrapper
 						+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
 				- block icon

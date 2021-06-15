@@ -1006,10 +1006,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @emits `change(value: this['Value'])`
 	 */
 	@p({replace: false})
-	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
+	protected onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): void {
 		this.prevValue = oldValue;
 
-		if (newValue !== oldValue || newValue != null && typeof newValue === 'object') {
+		if (value !== oldValue || value != null && typeof value === 'object') {
 			this.emit('change', this.value);
 		}
 	}

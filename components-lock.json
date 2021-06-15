@@ -1,5 +1,5 @@
 {
-  "hash": "5dc7e64b34581b6b735124ae086c7cb849ee16e22a180c0b7c4f1a62a6910f8d",
+  "hash": "1e948d9190adee607e9859391ca57d1379304264200128f4d136acdadc3236aa",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -616,38 +616,6 @@
         }
       ],
       [
-        "b-option",
-        {
-          "index": "src/form/b-select/b-option/index.js",
-          "declaration": {
-            "name": "b-option",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-option",
-          "parent": null,
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/form/b-select/b-option/b-option.styl"
-          ],
-          "tpl": null,
-          "etpl": null
-        }
-      ],
-      [
         "b-progress-icon",
         {
           "index": "src/icons/b-progress-icon/index.js",
@@ -781,20 +749,18 @@
           "index": "src/form/b-select/index.js",
           "declaration": {
             "name": "b-select",
-            "parent": "b-input",
+            "parent": "i-input-text",
             "dependencies": [
               "b-icon",
-              "b-progress-icon",
-              "b-option"
+              "b-progress-icon"
             ],
             "libs": []
           },
           "name": "b-select",
-          "parent": "b-input",
+          "parent": "i-input-text",
           "dependencies": [
             "b-icon",
-            "b-progress-icon",
-            "b-option"
+            "b-progress-icon"
           ],
           "libs": [],
           "resolvedLibs": {
@@ -1832,6 +1798,7 @@
               "b-input-hidden",
               "b-input",
               "b-textarea",
+              "b-select",
               "b-virtual-scroll",
               "b-window",
               "b-sidebar",
@@ -1862,6 +1829,7 @@
             "b-input-hidden",
             "b-input",
             "b-textarea",
+            "b-select",
             "b-virtual-scroll",
             "b-window",
             "b-sidebar",

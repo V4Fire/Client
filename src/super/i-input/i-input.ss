@@ -42,8 +42,10 @@
 		 *   *) [blurHandler] - value of the `@blur` attribute
 		 *
 		 *   *) [attrs] - dictionary with additional attributes
+		 *
+		 * @param {string=} [content] - slot content
 		 */
-		- block nativeInput(@params = {})
+		- block nativeInput(@params = {}, content = '')
 			{{ void(tmp.attrs = normalizeAttrs(attrs)) }}
 
 			< ${@tag || nativeInputTag}.&__${@elName || 'input'} &
@@ -64,6 +66,7 @@
 				:v-attrs = tmp.attrs |
 				${Object.assign({}, attrs, @attrs)|!html}
 			.
+				+= content
 
 		/**
 		 * Generates a hidden form input
