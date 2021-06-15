@@ -18,6 +18,8 @@ import { session } from 'core/kv-storage';
 import { fromQueryString, toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import * as browser from 'core/browser';
+
 import type bRouter from 'base/b-router/b-router';
 import type { Router, Route, HistoryClearFilter } from 'core/router/interface';
 
@@ -34,6 +36,13 @@ export const
 let
 	historyPos = 0,
 	historyInit = false;
+
+let
+	/**
+	 * This flag is needed to get rid of redundant router transition when restoring the page from bfcache in safari
+	 * @see https://github.com/V4Fire/Client/issues/552
+	 */
+	isOpenedFromBfcache = false;
 
 type HistoryLog = Array<{
 	route: string;
@@ -106,6 +115,7 @@ export default function createRouter(component: bRouter): Router {
 	const
 		engineGroup = {group: 'routerEngine'},
 		popstateLabel = {...engineGroup, label: $$.popstate},
+		pageshowLable = {...engineGroup, label: $$.pageshow},
 		modHistoryLabel = {...engineGroup, label: $$.modHistory};
 
 	$a
@@ -391,6 +401,11 @@ export default function createRouter(component: bRouter): Router {
 	});
 
 	$a.on(globalThis, 'popstate', async () => {
+		if (browser.is.iOS !== false && isOpenedFromBfcache) {
+			isOpenedFromBfcache = false;
+			return;
+		}
+
 		truncateHistoryLog();
 
 		const
@@ -413,6 +428,12 @@ export default function createRouter(component: bRouter): Router {
 
 		await component.emitTransition(location.href, history.state, 'event');
 	}, popstateLabel);
+
+	$a.on(globalThis, 'pageshow', (event: PageTransitionEvent) => {
+		if (event.persisted) {
+			isOpenedFromBfcache = true;
+		}
+	}, pageshowLable);
 
 	return router;
 }
