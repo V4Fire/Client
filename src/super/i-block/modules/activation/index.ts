@@ -80,7 +80,7 @@ export function activate(component: iBlock, force?: boolean): void {
 							}
 						}
 
-						if (inactiveStatuses[unsafe.componentStatus] == null) {
+						if (!inactiveStatuses[unsafe.componentStatus]) {
 							state.initFromRouter();
 						}
 
@@ -169,7 +169,7 @@ export function onActivated(component: iBlock, force?: boolean): void {
 		$a.unmuteAll().unsuspendAll();
 	}
 
-	if (unsafe.isReadyOnce && readyStatuses[unsafe.componentStatus] == null) {
+	if (unsafe.isReadyOnce && !readyStatuses[unsafe.componentStatus]) {
 		unsafe.componentStatus = 'beforeReady';
 	}
 
@@ -225,7 +225,7 @@ export function onDeactivated(component: iBlock): void {
 			const
 				key = keys[i];
 
-			if (nonMuteAsyncLinkNames[key] != null) {
+			if (nonMuteAsyncLinkNames[key]) {
 				continue;
 			}
 

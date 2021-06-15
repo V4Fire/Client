@@ -12,18 +12,18 @@ export const
 	suspendRgxp = /:suspend(?:\b|$)/,
 	asyncNames = Async.linkNames;
 
-export const inactiveStatuses = Object.createDict({
+export const inactiveStatuses: Dictionary<boolean> = Object.createDict({
 	destroyed: true,
 	inactive: true
 });
 
-export const readyStatuses = Object.createDict({
+export const readyStatuses: Dictionary<boolean> = Object.createDict({
 	inactive: true,
 	beforeReady: true,
 	ready: true
 });
 
-export const nonMuteAsyncLinkNames = Object.createDict({
+export const nonMuteAsyncLinkNames: Dictionary<boolean> = Object.createDict({
 	[asyncNames.promise]: true,
 	[asyncNames.request]: true
 });
