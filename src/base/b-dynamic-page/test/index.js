@@ -33,27 +33,40 @@ module.exports = async (page, params) => {
 	});
 
 	describe('b-dynamic-page', () => {
-		it('setting `pageProp` and `page`', async () => {
+		it("the `component` getter shouldn't be cached", async () => {
 			const target = await init({
 				page: 'p-v4-dynamic-page-1'
 			});
 
 			expect(
-				await target.evaluate(async (ctx) => {
-					const
-						res = [];
-
-					await ctx.nextTick();
-					res.push(ctx.page, ctx.component.componentName);
-
-					ctx.page = 'p-v4-dynamic-page-2';
-
-					await ctx.nextTick();
-					res.push(ctx.page, ctx.component.componentName);
-
-					return res;
+				await target.evaluate((ctx) => {
+					const {meta} = ctx;
+					return 'component' in meta.accessors && !('component' in meta.computedFields);
 				})
-			).toEqual([
+			).toBeTrue();
+		});
+
+		it('setting `pageProp` and `page`', async () => {
+			const target = await init({
+				page: 'p-v4-dynamic-page-1'
+			});
+
+			const scan = await target.evaluate(async (ctx) => {
+				const
+					res = [];
+
+				await ctx.nextTick();
+				res.push(ctx.page, ctx.component.componentName);
+
+				ctx.page = 'p-v4-dynamic-page-2';
+
+				await ctx.nextTick();
+				res.push(ctx.page, ctx.component.componentName);
+
+				return res;
+			});
+
+			expect(scan).toEqual([
 				'p-v4-dynamic-page-1',
 				'p-v4-dynamic-page-1',
 

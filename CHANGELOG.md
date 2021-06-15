@@ -13,12 +13,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.?? ()
 
-#### :bug: Bug Fix
-
-* [Fixed a bug when using the trait by different components concurrently `traits/i-lock-page-scroll`](https://github.com/V4Fire/Client/issues/549)
-
-## v3.0.0-rc.?? ()
-
 #### :boom: Breaking Change
 
 * Now `toggle` returns a component value `bCheckbox`
@@ -100,6 +94,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Payload of the `actionChange` event must contain `value`, but not `mods.checked` `bCheckbox`
 * Now `normalizeItems` doesn't modify the original object `bList`
+* [Fixed a bug when using the trait by different components concurrently `traits/i-lock-page-scroll`](https://github.com/V4Fire/Client/issues/549)
+* Fixed a bug when the `cache: false` predicate is ignored if provided `dependencies` `core/component/decorators`
 
 #### :memo: Documentation
 

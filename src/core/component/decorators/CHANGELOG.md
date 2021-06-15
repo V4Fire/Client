@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the `cache: false` predicate is ignored if provided `dependencies`
+
 ## v3.0.0-rc.88 (2020-10-13)
 
 #### :rocket: New Feature
