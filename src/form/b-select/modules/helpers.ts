@@ -44,18 +44,6 @@ export function initComponentValues<C extends bSelect>(component: C): void {
 }
 
 /**
- * @param component
- */
-export function initModEvents<C extends bSelect>(component: C): void {
-	const
-		{unsafe} = component;
-
-	unsafe.sync.mod('native', 'native', Boolean);
-	unsafe.sync.mod('multiple', 'multiple', Boolean);
-	unsafe.sync.mod('opened', 'multiple', Boolean);
-}
-
-/**
  * Normalizes the specified items and returns it
  * @param items
  */
@@ -139,4 +127,36 @@ export async function setScrollToMarkedOrSelectedItem<C extends bSelect>(compone
 	}
 
 	return true;
+}
+
+/**
+ * Returns a link to the selected item element.
+ * If the component is switched to the `multiple` mode, the getter will return an array of elements.
+ */
+export function getSelectedElement<C extends bSelect>(component: C): CanPromise<CanUndef<CanArray<HTMLOptionElement>>> {
+	const {
+		value,
+		unsafe
+	} = component;
+
+	const getEl = (value) => {
+		const
+			id = unsafe.values.get(value);
+
+		if (id != null) {
+			return unsafe.block?.element<HTMLOptionElement>('item', {id});
+		}
+	};
+
+	return unsafe.waitStatus('ready', () => {
+		if (unsafe.multiple) {
+			if (!Object.isSet(value)) {
+				return [];
+			}
+
+			return [...value].flatMap((val) => getEl(val) ?? []);
+		}
+
+		return getEl(value);
+	});
 }

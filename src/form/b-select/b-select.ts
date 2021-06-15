@@ -361,29 +361,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	})
 
 	protected get selectedElement(): CanPromise<CanUndef<CanArray<HTMLOptionElement>>> {
-		const
-			{value} = this;
-
-		const getEl = (value) => {
-			const
-				id = this.values.get(value);
-
-			if (id != null) {
-				return this.block?.element<HTMLOptionElement>('item', {id});
-			}
-		};
-
-		return this.waitStatus('ready', () => {
-			if (this.multiple) {
-				if (!Object.isSet(value)) {
-					return [];
-				}
-
-				return [...value].flatMap((val) => getEl(val) ?? []);
-			}
-
-			return getEl(value);
-		});
+		return h.getSelectedElement(this);
 	}
 
 	/**
@@ -798,7 +776,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		h.initModEvents(this);
+		this.sync.mod('native', 'native', Boolean);
+		this.sync.mod('multiple', 'multiple', Boolean);
+		this.sync.mod('opened', 'multiple', Boolean);
 	}
 
 	/** @override */
