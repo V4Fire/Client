@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
@@ -35,7 +34,10 @@ import iInputText, {
 
 } from 'super/i-input-text/i-input-text';
 
-import * as h from 'form/b-select/modules/handlers';
+import * as on from 'form/b-select/modules/handlers';
+import * as h from 'form/b-select/modules/helpers';
+
+import { $$, openedSelect } from 'form/b-select/const';
 
 import type {
 
@@ -51,15 +53,10 @@ import type {
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-select/const';
 export * from 'form/b-select/interface';
 
-export { Value, FormValue };
-
-export const
-	$$ = symbolGenerator();
-
-let
-	openedSelect;
+export { $$, Value, FormValue };
 
 interface bSelect extends Trait<typeof iOpenToggle> {}
 
@@ -705,101 +702,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @see [[iOpenToggle.onOpenedChange]] */
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
-		if (this.native) {
-			return;
-		}
-
-		const
-			{async: $a} = this;
-
-		// Status: opened == false or opened == null
-		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
-			if (openedSelect === this) {
-				openedSelect = null;
-			}
-
-			if (this.mods.focused !== 'true') {
-				$a.off({
-					group: 'navigation'
-				});
-			}
-
-			return;
-		}
-
-		$a.off({
-			group: 'navigation'
-		});
-
-		if (!this.multiple) {
-			if (openedSelect != null) {
-				openedSelect.close().catch(() => undefined);
-			}
-
-			openedSelect = this;
-		}
-
-		$a.on(document, 'keydown', this.onItemsNavigate.bind(this), {
-			group: 'navigation'
-		});
+		await on.openedChange(this, e);
 	}
 
 	/**
 	 * Sets the scroll position to the first marked or selected item
 	 */
-	protected async setScrollToMarkedOrSelectedItem(): Promise<boolean> {
-		if (this.native) {
-			return false;
-		}
-
-		try {
-			const dropdown = await this.waitRef<HTMLDivElement>('dropdown', {label: $$.setScrollToSelectedItem});
-
-			const
-				{block: $b} = this;
-
-			if ($b == null) {
-				return false;
-			}
-
-			const itemEl =
-				$b.element<HTMLDivElement>('item', {marked: true}) ??
-				$b.element<HTMLDivElement>('item', {selected: true});
-
-			if (itemEl == null) {
-				return false;
-			}
-
-			let {
-				clientHeight,
-				scrollTop
-			} = dropdown;
-
-			let {
-				offsetTop: itemOffsetTop,
-				offsetHeight: itemOffsetHeight
-			} = itemEl;
-
-			itemOffsetHeight += parseFloat(getComputedStyle(itemEl).marginTop);
-
-			if (itemOffsetTop > clientHeight + scrollTop) {
-				while (itemOffsetTop > clientHeight + scrollTop) {
-					scrollTop += itemOffsetHeight;
-				}
-
-			} else {
-				while (itemOffsetTop < scrollTop) {
-					scrollTop -= itemOffsetHeight;
-				}
-			}
-
-			dropdown.scrollTop = scrollTop;
-
-		} catch {
-			return false;
-		}
-
-		return true;
+	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
+		return h.setScrollToMarkedOrSelectedItem(this);
 	}
 
 	/** @override */
@@ -824,28 +734,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
-		const
-			values = new Map(),
-			indexes = {};
-
-		const
-			valueStore = this.field.get('valueStore');
-
-		for (let i = 0; i < this.items.length; i++) {
-			const
-				item = this.items[i],
-				val = item.value;
-
-			if (item.selected && (this.multiple ? this.valueProp === undefined : valueStore === undefined)) {
-				this.selectValue(val);
-			}
-
-			values.set(val, i);
-			indexes[i] = item;
-		}
-
-		this.values = values;
-		this.indexes = indexes;
+		h.initComponentValues(this);
 	}
 
 	/**
@@ -853,24 +742,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @param items
 	 */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
-		const
-			res = <this['Items']>[];
-
-		if (items == null) {
-			return res;
-		}
-
-		for (let i = 0; i < items.length; i++) {
-			const
-				item = items[i];
-
-			res.push({
-				...item,
-				value: item.value !== undefined ? item.value : item.label
-			});
-		}
-
-		return res;
+		return h.normalizeItems(items);
 	}
 
 	/** @override */
@@ -926,17 +798,15 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('native', 'native', Boolean);
-		this.sync.mod('multiple', 'multiple', Boolean);
-		this.sync.mod('opened', 'multiple', Boolean);
+		h.initModEvents(this);
 	}
 
 	/** @override */
 	protected beforeDestroy(): void {
 		super.beforeDestroy();
 
-		if (openedSelect === this) {
-			openedSelect = null;
+		if (openedSelect.link === this) {
+			openedSelect.link = null;
 		}
 	}
 
@@ -961,15 +831,61 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @emits `actionChange(value: V)`
 	 */
 	protected onNativeChange(): void {
-		h.onNativeChange(this);
+		on.nativeChange(this);
 	}
 
-	/**
-	 * Handler: typing text into a helper text input to search select options
-	 */
-	@watch({path: 'text', immediate: true})
-	protected onTextChange(): void {
-		h.onTextChange(this);
+	/** @override */
+	protected onMaskInput(): Promise<boolean> {
+		const
+			prevValue = this.value;
+
+		return super.onMaskInput().then((res) => {
+			if (res) {
+				on.textChange(this);
+
+				if (prevValue !== this.value) {
+					this.emit('actionChange', this.value);
+				}
+			}
+
+			return res;
+		});
+	}
+
+	/** @override */
+	protected onMaskKeyPress(e: KeyboardEvent): boolean {
+		const
+			prevValue = this.value;
+
+		if (super.onMaskKeyPress(e)) {
+			on.textChange(this);
+
+			if (prevValue !== this.value) {
+				this.emit('actionChange', this.value);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @override */
+	protected onMaskDelete(e: KeyboardEvent): boolean {
+		const
+			prevValue = this.value;
+
+		if (super.onMaskDelete(e)) {
+			on.textChange(this);
+
+			if (prevValue !== this.value) {
+				this.emit('actionChange', this.value);
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -979,7 +895,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @emits `actionChange(value: V)`
 	 */
 	protected onSearchInput(e: InputEvent): void {
-		h.onSearchInput(this, e);
+		on.searchInput(this, e);
 	}
 
 	/**
@@ -995,7 +911,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	})
 
 	protected onItemClick(itemEl: CanUndef<Element>): void {
-		h.onItemClick(this, itemEl);
+		on.itemClick(this, itemEl);
 	}
 
 	/**
@@ -1003,7 +919,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @param e
 	 */
 	protected onItemsNavigate(e: KeyboardEvent): void {
-		void h.onItemsNavigate(this, e);
+		void on.itemsNavigate(this, e);
 	}
 }
 

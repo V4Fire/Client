@@ -6,7 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { openedSelect } from 'form/b-select/const';
+
 import type bSelect from 'form/b-select/b-select';
+import type { ModEvent, SetModEvent } from 'super/i-input-text';
 
 /**
  * Handler: value changing of a native component `<select>`
@@ -14,7 +17,7 @@ import type bSelect from 'form/b-select/b-select';
  * @param component
  * @emits `actionChange(value: V)`
  */
-export function onNativeChange<C extends bSelect>(component: C): void {
+export function nativeChange<C extends bSelect>(component: C): void {
 	const {
 		unsafe,
 		unsafe: {
@@ -61,15 +64,9 @@ export function onNativeChange<C extends bSelect>(component: C): void {
 
 /**
  * Handler: changing text of a component helper input
- *
  * @param component
- * @emits `actionChange(value: V)`
  */
-export function onTextChange<C extends bSelect>(component: C): void {
-	if (!component.isFocused) {
-		return;
-	}
-
+export function textChange<C extends bSelect>(component: C): void {
 	let
 		{text} = component;
 
@@ -78,7 +75,6 @@ export function onTextChange<C extends bSelect>(component: C): void {
 	}
 
 	const
-		prevValue = component.value,
 		rgxp = new RegExp(`^${RegExp.escape(text)}`, 'i');
 
 	let
@@ -95,10 +91,6 @@ export function onTextChange<C extends bSelect>(component: C): void {
 		}
 	}
 
-	if (prevValue !== component.value) {
-		component.emit('actionChange', component.value);
-	}
-
 	if (some) {
 		void component.open();
 		void component.unsafe.setScrollToMarkedOrSelectedItem();
@@ -113,16 +105,27 @@ export function onTextChange<C extends bSelect>(component: C): void {
  *
  * @param component
  * @param e
+ *
+ * @emits `actionChange(value: V)`
  */
-export function onSearchInput<C extends bSelect>(component: C, e: InputEvent): void {
+export function searchInput<C extends bSelect>(component: C, e: InputEvent): void {
 	const
+		{unsafe} = component;
+
+	const
+		prevValue = component.value,
 		target = <HTMLInputElement>e.target;
 
-	if (component.unsafe.compiledMask != null) {
+	if (unsafe.compiledMask != null) {
 		return;
 	}
 
-	component.text = target.value;
+	unsafe.text = target.value;
+	textChange(component);
+
+	if (prevValue !== component.value) {
+		component.emit('actionChange', component.value);
+	}
 }
 
 /**
@@ -132,7 +135,7 @@ export function onSearchInput<C extends bSelect>(component: C, e: InputEvent): v
  * @param itemEl
  * @emits `actionChange(value: V)`
  */
-export function onItemClick<C extends bSelect>(component: C, itemEl: CanUndef<Element>): void {
+export function itemClick<C extends bSelect>(component: C, itemEl: CanUndef<Element>): void {
 	void component.close();
 
 	if (itemEl == null || component.native) {
@@ -164,7 +167,7 @@ export function onItemClick<C extends bSelect>(component: C, itemEl: CanUndef<El
  * @param component
  * @param e
  */
-export async function onItemsNavigate<C extends bSelect>(component: C, e: KeyboardEvent): Promise<void> {
+export async function itemsNavigate<C extends bSelect>(component: C, e: KeyboardEvent): Promise<void> {
 	const
 		{unsafe} = component;
 
@@ -242,4 +245,51 @@ export async function onItemsNavigate<C extends bSelect>(component: C, e: Keyboa
 		default:
 			// Do nothing
 	}
+}
+
+/**
+ * @see [[iOpenToggle.onOpenedChange]]
+ * @param component
+ * @param e
+ */
+export function openedChange<C extends bSelect>(component: C, e: ModEvent | SetModEvent): void {
+	const {
+		unsafe,
+		unsafe: {async: $a}
+	} = component;
+
+	if (unsafe.native) {
+		return;
+	}
+
+	// Status: opened == false or opened == null
+	if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
+		if (openedSelect.link === unsafe) {
+			openedSelect.link = null;
+		}
+
+		if (unsafe.mods.focused !== 'true') {
+			$a.off({
+				group: 'navigation'
+			});
+		}
+
+		return;
+	}
+
+	$a.off({
+		group: 'navigation'
+	});
+
+	if (!unsafe.multiple) {
+		if (openedSelect.link != null) {
+			openedSelect.link.close().catch(() => undefined);
+		}
+
+		openedSelect.link = unsafe;
+	}
+
+	$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), {
+		group: 'navigation'
+	});
 }
