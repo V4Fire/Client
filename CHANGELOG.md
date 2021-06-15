@@ -96,6 +96,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now `normalizeItems` doesn't modify the original object `bList`
 * [Fixed a bug when using the trait by different components concurrently `traits/i-lock-page-scroll`](https://github.com/V4Fire/Client/issues/549)
 * Fixed a bug when the `cache: false` predicate is ignored if provided `dependencies` `core/component/decorators`
+* Fixed a deadlock during component activation `super/i-block/modules/activation`
 
 #### :memo: Documentation
 

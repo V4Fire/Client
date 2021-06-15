@@ -171,7 +171,7 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * Initializes a custom page title
 	 */
-	@hook('created')
+	@hook(['created', 'activated'])
 	protected initTitle(): void {
 		if (this.syncStageTitles() == null && Object.isTruly(this.pageTitleStore)) {
 			this.pageTitle = this.pageTitleStore;
@@ -182,12 +182,6 @@ export default abstract class iPage extends iData implements iVisible {
 	protected initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);
-	}
-
-	/** @override */
-	protected activated(force?: boolean): void {
-		super.activated(force);
-		this.initTitle();
 	}
 
 	/** @override */

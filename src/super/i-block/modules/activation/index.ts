@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { runHook } from 'core/component';
+import { runHook, callMethodFromComponent } from 'core/component';
 
 import type iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/const';
@@ -97,7 +97,10 @@ export function activate(component: iBlock, force?: boolean): void {
 	}
 
 	if (canActivate) {
-		runHook('activated', unsafe).then(() => unsafe.activated(true), stderr);
+		onActivated(component, true);
+		runHook('activated', component).then(() => {
+			callMethodFromComponent(component, 'activated');
+		}, stderr);
 	}
 
 	const
@@ -128,7 +131,10 @@ export function deactivate(component: iBlock): void {
 	}
 
 	if (unsafe.isActivated) {
-		runHook('deactivated', unsafe).then(() => unsafe.deactivated(), stderr);
+		onDeactivated(component);
+		runHook('deactivated', component).then(() => {
+			callMethodFromComponent(component, 'deactivated');
+		}, stderr);
 	}
 
 	const

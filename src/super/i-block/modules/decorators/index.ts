@@ -295,7 +295,7 @@ export function wait(
 			}
 
 			if (!init) {
-				res = $a.promisifyOnce(ctx, `status-${statuses[status]}`, {
+				res = $a.promisifyOnce(ctx, `componentStatus:${statuses[status]}`, {
 					...p,
 					handler: () => handler.apply(this, args)
 				});

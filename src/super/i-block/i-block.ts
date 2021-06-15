@@ -96,7 +96,7 @@ import {
 } from 'super/i-block/modules/event-emitter';
 
 import { initGlobalListeners, initRemoteWatchers } from 'super/i-block/modules/listeners';
-import { readyStatuses, activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/activation';
+import { readyStatuses, activate, deactivate } from 'super/i-block/modules/activation';
 
 import type {
 
@@ -700,8 +700,8 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * True if the current component is ready
-	 * (componentStatus == ready)
+	 * True if the current component is completely ready to work.
+	 * The "ready" status is mean, that component was mounted an all data provider are loaded.
 	 */
 	@computed({replace: false})
 	get isReady(): boolean {
@@ -2598,21 +2598,6 @@ export default abstract class iBlock extends ComponentInterface {
 	/** @override */
 	protected onUnbindHook(): void {
 		this.$destroy();
-	}
-
-	/**
-	 * Hook handler: the component has been activated
-	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
-	 */
-	protected activated(force?: boolean): void {
-		onActivated(this, force);
-	}
-
-	/**
-	 * Hook handler: the component has been deactivated
-	 */
-	protected deactivated(): void {
-		onDeactivated(this);
 	}
 
 	/**

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :bug: Bug Fix
+
+* Fixed a deadlock during component activation
+
 ## v3.0.0-rc.196 (2021-05-28)
 
 #### :boom: Breaking Change
