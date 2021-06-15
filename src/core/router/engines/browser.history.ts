@@ -211,7 +211,7 @@ export default function createRouter(component: bRouter): Router {
 				return;
 			}
 
-			load().then(() => resolve(), stderr);
+			load().then(() => resolve()).catch(stderr);
 		});
 	}
 

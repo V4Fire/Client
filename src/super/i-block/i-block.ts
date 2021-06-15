@@ -2004,10 +2004,12 @@ export default abstract class iBlock extends ComponentInterface {
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {
-					this.nextTick().then(() => {
-						this.beforeReadyListeners = 0;
-						this.emit('initLoad', get(), opts);
-					}, stderr);
+					this.nextTick()
+						.then(() => {
+							this.beforeReadyListeners = 0;
+							this.emit('initLoad', get(), opts);
+						})
+						.catch(stderr);
 
 				} else {
 					this.emit('initLoad', get(), opts);

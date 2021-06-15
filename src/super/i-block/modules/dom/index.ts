@@ -377,11 +377,17 @@ export default class DOM extends Friend {
 		);
 
 		const destructor = this.ctx.async.worker(
-			() => ResizeWatcher.then(({ResizeWatcher}) => ResizeWatcher.unobserve(el, options), stderr),
+			() => ResizeWatcher
+				.then(({ResizeWatcher}) => ResizeWatcher.unobserve(el, options))
+				.catch(stderr),
+
 			asyncOptions
 		);
 
-		ResizeWatcher.then(({ResizeWatcher}) => ResizeWatcher.observe(el, options), stderr);
+		ResizeWatcher
+			.then(({ResizeWatcher}) => ResizeWatcher.observe(el, options))
+			.catch(stderr);
+
 		return destructor;
 	}
 }

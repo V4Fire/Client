@@ -131,7 +131,7 @@ export class ComponentEngine {
 			}
 
 			this.$mount(el);
-		}, stderr);
+		}).catch(stderr);
 	}
 
 	/**

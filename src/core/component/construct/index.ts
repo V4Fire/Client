@@ -275,7 +275,7 @@ export function createdState(component: ComponentInterface): void {
 				$a.requestIdleCallback(() => {
 					runHook(status, component).then(() => {
 						callMethodFromComponent(component, status);
-					}, stderr);
+					}).catch(stderr);
 
 				}, {
 					label: $$.remoteActivation,
@@ -290,7 +290,7 @@ export function createdState(component: ComponentInterface): void {
 
 	runHook('created', component).then(() => {
 		callMethodFromComponent(component, 'created');
-	}, stderr);
+	}).catch(stderr);
 }
 
 /**
@@ -327,7 +327,7 @@ export function mountedState(component: ComponentInterface): void {
 
 	runHook('mounted', component).then(() => {
 		callMethodFromComponent(component, 'mounted');
-	}, stderr);
+	}).catch(stderr);
 }
 
 /**
@@ -349,7 +349,7 @@ export function updatedState(component: ComponentInterface): void {
 
 	runHook('updated', component).then(() => {
 		callMethodFromComponent(component, 'updated');
-	}, stderr);
+	}).catch(stderr);
 }
 
 /**
@@ -390,7 +390,7 @@ export function beforeDestroyState(component: ComponentInterface): void {
 export function destroyedState(component: ComponentInterface): void {
 	runHook('destroyed', component).then(() => {
 		callMethodFromComponent(component, 'destroyed');
-	}, stderr);
+	}).catch(stderr);
 }
 
 /**
@@ -402,5 +402,5 @@ export function destroyedState(component: ComponentInterface): void {
 export function errorCapturedState(component: ComponentInterface, ...args: unknown[]): void {
 	runHook('errorCaptured', component, ...args).then(() => {
 		callMethodFromComponent(component, 'errorCaptured', ...args);
-	}, stderr);
+	}).catch(stderr);
 }

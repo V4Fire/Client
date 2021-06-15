@@ -100,7 +100,7 @@ export function activate(component: iBlock, force?: boolean): void {
 		onActivated(component, true);
 		runHook('activated', component).then(() => {
 			callMethodFromComponent(component, 'activated');
-		}, stderr);
+		}).catch(stderr);
 	}
 
 	const
@@ -134,7 +134,7 @@ export function deactivate(component: iBlock): void {
 		onDeactivated(component);
 		runHook('deactivated', component).then(() => {
 			callMethodFromComponent(component, 'deactivated');
-		}, stderr);
+		}).catch(stderr);
 	}
 
 	const

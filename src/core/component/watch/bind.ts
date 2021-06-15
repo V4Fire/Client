@@ -260,7 +260,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 									$a.on(watcherCtx, watchPath, <AnyFunction>handler, eventParams, ...watchInfo.args ?? []);
 
 								if (Object.isPromise(watcherCtx)) {
-									$a.promise(watcherCtx, asyncParams).then(watch, stderr);
+									$a.promise(watcherCtx, asyncParams).then(watch).catch(stderr);
 
 								} else {
 									watch(watcherCtx);
@@ -292,7 +292,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 						const toWatch = p.info ?? getPropertyInfo(watchPath, component);
 						unwatch = $watch.call(component, toWatch, watchInfo, handler);
-					}, stderr);
+					}).catch(stderr);
 
 				} else {
 					if (customWatcher) {
@@ -311,7 +311,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 								$a.on(watcherCtx, watchPath, handler, eventParams, ...watchInfo.args ?? []);
 
 							if (Object.isPromise(watcherCtx)) {
-								$a.promise(watcherCtx, asyncParams).then(addListener, stderr);
+								$a.promise(watcherCtx, asyncParams).then(addListener).catch(stderr);
 
 							} else {
 								addListener(watcherCtx);

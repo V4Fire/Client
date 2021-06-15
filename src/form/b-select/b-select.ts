@@ -471,7 +471,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				$b.setElMod(el, 'item', 'selected', true);
 				el.selected = true;
 			}
-		}, stderr);
+		}).catch(stderr);
 
 		return true;
 	}
@@ -555,7 +555,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					el.selected = false;
 				}
 			}
-		}, stderr);
+		}).catch(stderr);
 
 		return true;
 	}

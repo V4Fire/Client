@@ -162,7 +162,7 @@ export default class bTextarea extends iInputText {
 					str = resolvedText !== undefined ? String(resolvedText) : '';
 
 				if (o.isNotRegular) {
-					o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str, stderr);
+					o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str).catch(stderr);
 
 				} else if (o.hook === 'updated') {
 					o.text = str;
