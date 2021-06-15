@@ -28,8 +28,10 @@ const
 export default abstract class iLockPageScroll {
 	/** @see [[iLockPageScroll.lock]] */
 	static lock: AddSelf<iLockPageScroll['lock'], iBlock> = (component, scrollableNode?) => {
-		const
-			{$root: r, $root: {unsafe: {async: $a}}} = component;
+		const {
+			r,
+			r: {unsafe: {async: $a}}
+		} = component;
 
 		let
 			promise = Promise.resolve();
@@ -145,9 +147,10 @@ export default abstract class iLockPageScroll {
 
 	/** @see [[iLockPageScroll.unlock]] */
 	static unlock: AddSelf<iLockPageScroll['unlock'], iBlock> = (component) => {
-		const
-			{$root: r, $root: {unsafe: {async: $a}}} = component.unsafe,
-			{body} = document;
+		const {
+			r,
+			r: {unsafe: {async: $a}}
+		} = component.unsafe;
 
 		if (r[$$.isLocked] !== true) {
 			return Promise.resolve();
@@ -165,7 +168,7 @@ export default abstract class iLockPageScroll {
 					globalThis.scrollTo(0, r[$$.scrollTop]);
 				}
 
-				body.style.paddingRight = r[$$.paddingRight] ?? '';
+				document.body.style.paddingRight = r[$$.paddingRight] ?? '';
 				res();
 
 			}, {group, label: $$.unlockRaf, join: true});
@@ -186,8 +189,11 @@ export default abstract class iLockPageScroll {
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
-		const
-			{$root: r, $async: $a, localEmitter: $e} = component.unsafe;
+		const {
+			r,
+			$async: $a,
+			localEmitter: $e
+		} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
