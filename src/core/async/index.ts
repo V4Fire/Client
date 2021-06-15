@@ -28,6 +28,7 @@ import type {
 
 export * from '@v4fire/core/core/async';
 export * from 'core/async/const';
+export * from 'core/async/helpers';
 export * from 'core/async/interface';
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
@@ -336,10 +337,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 				}
 
 				for (let i = 0; i < links.length; i++) {
-					that.off({
-						id: links[i],
-						group: p.group
-					});
+					that.off(links[i]);
 				}
 			};
 

@@ -14,14 +14,26 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecated } from 'core/functools/deprecation';
-
 import SyncPromise from 'core/promise/sync';
+
 import log, { LogMessageOptions } from 'core/log';
+import { deprecated } from 'core/functools/deprecation';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import config from 'config';
-import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn, EventId } from 'core/async';
+
+import Async, {
+
+	addSuspendingGroup,
+
+	AsyncOptions,
+	ClearOptionsId,
+
+	ProxyCb,
+	BoundFn,
+	EventId
+
+} from 'core/async';
 
 //#if runtime has core/helpers
 import * as helpers from 'core/helpers';
@@ -1638,12 +1650,7 @@ export default abstract class iBlock extends ComponentInterface {
 				return () => unwatch?.();
 			};
 
-			link = $a.on(emitter, 'mutation', handler, {
-				group: `${opts.group ?? ''}:suspend`,
-				label: opts.label,
-				join: opts.join
-			});
-
+			link = $a.on(emitter, 'mutation', handler, addSuspendingGroup(opts, 'watchers'));
 			unwatch = this.$watch(<any>path, opts, handler);
 		});
 	}

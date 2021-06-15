@@ -11,7 +11,12 @@ import { ClientNamespaces } from 'core/async/interface';
 
 export * from '@v4fire/core/core/async/const';
 
-export const
-	namespaces = {...superNamespaces, ...Object.convertEnumToDict(ClientNamespaces)};
+export const namespaces = {
+	...superNamespaces,
+	...Object.convertEnumToDict(ClientNamespaces)
+};
 
 export type NamespacesDictionary = typeof namespaces;
+
+export const
+	unsuspendRgxp = /:!suspend(?:\b|$)/;

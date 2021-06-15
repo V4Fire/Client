@@ -11,9 +11,8 @@
  * @packageDocumentation
  */
 
-import type Async from 'core/async';
-
-import { unsuspendRgxp, emitLikeEvents } from 'super/i-block/modules/event-emitter/const';
+import Async, { addSuspendingGroup } from 'core/async';
+import { emitLikeEvents } from 'super/i-block/modules/event-emitter/const';
 
 import type {
 
@@ -61,17 +60,6 @@ export function wrapEventEmitter(
 	const
 		p = Object.isPlainObject(opts) ? opts : {readonly: Boolean(opts)};
 
-	const group = (p) => {
-		const
-			group = Object.isPlainObject(p) ? p.group : '';
-
-		if (!Object.isString(group) || RegExp.test(unsuspendRgxp, group)) {
-			return p;
-		}
-
-		return {...p, group: `${group}:suspend`};
-	};
-
 	const wrappedEmitter = {
 		on: (event, fn, params, ...args) => {
 			let
@@ -86,7 +74,7 @@ export function wrapEventEmitter(
 			}
 
 			if (p.suspend) {
-				params = group(params);
+				params = addSuspendingGroup(params);
 			}
 
 			return $a.on(e, event, fn, params, ...args);
@@ -105,7 +93,7 @@ export function wrapEventEmitter(
 			}
 
 			if (p.suspend) {
-				params = group(params);
+				params = addSuspendingGroup(params);
 			}
 
 			return $a.once(e, event, fn, params, ...args);
@@ -124,14 +112,14 @@ export function wrapEventEmitter(
 			}
 
 			if (p.suspend) {
-				params = group(params);
+				params = addSuspendingGroup(params);
 			}
 
 			return $a.promisifyOnce(e, event, params, ...args);
 		},
 
 		off: (params) => {
-			$a.off(group(params));
+			$a.off(addSuspendingGroup(params));
 		}
 	};
 
