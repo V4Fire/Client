@@ -40,7 +40,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.50.0",
+    "@v4fire/core": "^3.51.0",
     "escaper": "^3.0.4",
     "eventemitter2": "^6.4.4",
     "jsdom": "^16.6.0",
@@ -134,6 +134,6 @@
     "@v4fire/linters": "^1.7.3",
     "husky": "^4.3.8",
     "nyc": "^15.1.0",
-    "playwright": "^1.11.1"
+    "playwright": "^1.12.2"
   }
 }
