@@ -62,7 +62,7 @@ export function wrapEventEmitter(
 		p = Object.isPlainObject(opts) ? opts : {readonly: Boolean(opts)};
 
 	const wrappedEmitter = {
-		on: (event, fn, params, ...args) => {
+		on: (event, fn, opts, ...args) => {
 			let
 				e = emitter;
 
@@ -74,21 +74,14 @@ export function wrapEventEmitter(
 				return;
 			}
 
-			const normalizedParams = p.suspend ?
-				addSuspendingGroup(params) :
-				params;
+			const normalizedOpts = p.suspend ?
+				addSuspendingGroup(opts) :
+				opts;
 
-			const
-				link = $a.on(e, event, fn, normalizedParams, ...args);
-
-			if (p.suspend && link != null) {
-				$a.worker(() => $a.off(link), params);
-			}
-
-			return link;
+			return $a.on(e, event, fn, normalizedOpts, ...args);
 		},
 
-		once: (event, fn, params, ...args) => {
+		once: (event, fn, opts, ...args) => {
 			let
 				e = emitter;
 
@@ -100,21 +93,14 @@ export function wrapEventEmitter(
 				return;
 			}
 
-			const normalizedParams = p.suspend ?
-				addSuspendingGroup(params) :
-				params;
+			const normalizedOpts = p.suspend ?
+				addSuspendingGroup(opts) :
+				opts;
 
-			const
-				link = $a.once(e, event, fn, normalizedParams, ...args);
-
-			if (p.suspend && link != null) {
-				$a.worker(() => $a.off(link), params);
-			}
-
-			return link;
+			return $a.once(e, event, fn, normalizedOpts, ...args);
 		},
 
-		promisifyOnce: (event, params, ...args) => {
+		promisifyOnce: (event, opts, ...args) => {
 			let
 				e = emitter;
 
@@ -126,26 +112,19 @@ export function wrapEventEmitter(
 				return Promise.resolve();
 			}
 
-			const normalizedParams = p.suspend ?
-				addSuspendingGroup(params) :
-				params;
+			const normalizedOpts = p.suspend ?
+				addSuspendingGroup(opts) :
+				opts;
 
-			return new SyncPromise((resolve, reject) => {
-				const link = $a.once(<any>e, event, resolve, {
-					...normalizedParams,
-					promise: true,
-					onClear: $a.onPromiseClear(resolve, reject),
-					onMerge: $a.onPromiseMerge(resolve, reject)
-				}, ...args);
-
-				if (p.suspend && link != null) {
-					$a.worker(() => $a.off(link), params);
-				}
-			});
+			return $a.promisifyOnce(e, event, normalizedOpts, ...args);
 		},
 
-		off: (params) => {
-			$a.off(addSuspendingGroup(params));
+		off: (opts) => {
+			const normalizedOpts = p.suspend ?
+				addSuspendingGroup(opts) :
+				opts;
+
+			$a.off(normalizedOpts);
 		}
 	};
 

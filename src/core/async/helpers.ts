@@ -17,7 +17,7 @@ import type { AsyncOptions } from 'core/async/interface';
  *
  * @example
  * ```js
- * // {group: ':suspend', label: 'foo'}
+ * // {group: 'e5ef4d62283ef8:suspend', label: 'foo'}
  * console.log(addSuspendingGroup({label: 'foo'}));
  *
  * // {group: 'bar:suspend'}
@@ -26,13 +26,17 @@ import type { AsyncOptions } from 'core/async/interface';
  * // {group: 'bar:baz:suspend'}
  * console.log(addSuspendingGroup({group: 'bar'}, 'baz'));
  *
- * // {group: 'bar:baz'}
+ * // {group: 'bar:!suspend'}
  * console.log(addSuspendingGroup({group: 'bar:!suspend'}, 'baz'))
  * ```
  */
 export function addSuspendingGroup<T extends AsyncOptions>(opts: T, groupMod?: string): T {
 	let
-		group = Object.isPlainObject(opts) ? opts.group : '';
+		group = Object.isPlainObject(opts) ? opts.group : null;
+
+	if (group != null && RegExp.test(unsuspendRgxp, group)) {
+		return opts;
+	}
 
 	if (group == null || group === '') {
 		group = Math.random().toString(16).slice(2);
@@ -42,12 +46,6 @@ export function addSuspendingGroup<T extends AsyncOptions>(opts: T, groupMod?: s
 		group += `:${groupMod}`;
 	}
 
-	if (unsuspendRgxp.test(group)) {
-		group = group.replace(unsuspendRgxp, '');
-
-	} else {
-		group += ':suspend';
-	}
-
+	group += ':suspend';
 	return {...opts, group};
 }
