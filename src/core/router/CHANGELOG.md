@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.?? ()
+
+#### :bug: Bug Fix
+
+* [Get rid of redundant router transition when restoring the page from bfcache in safari in browser engine](https://github.com/V4Fire/Client/issues/552)
+
 ## v3.0.0-rc.182 (2021-04-28)
 
 #### :rocket: New Feature
