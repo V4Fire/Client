@@ -567,7 +567,7 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Returns a value to submit of the specified element
+	 * Returns a value to submit from the specified element
 	 * @param el
 	 */
 	protected async getElValueToSubmit(el: iInput): Promise<unknown> {
