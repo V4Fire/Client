@@ -7,7 +7,7 @@
  */
 
 import { getPropertyInfo } from 'core/component/reflection';
-import { addSuspendingGroup } from 'core/async';
+import { wrapWithSuspending } from 'core/async';
 
 import { beforeHooks } from 'core/component/const';
 import { customWatcherRgxp } from 'core/component/watch/const';
@@ -286,7 +286,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return () => unwatch?.();
 						};
 
-						link = $a.on(emitter, 'mutation', handler, addSuspendingGroup(asyncParams, 'watchers'));
+						link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
 
 						const toWatch = p.info ?? getPropertyInfo(watchPath, component);
 						unwatch = $watch.call(component, toWatch, watchInfo, handler);
@@ -334,7 +334,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						return () => unwatch?.();
 					};
 
-					link = $a.on(emitter, 'mutation', handler, addSuspendingGroup(asyncParams, 'watchers'));
+					link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(asyncParams, 'watchers'));
 
 					const toWatch = p.info ?? getPropertyInfo(watchPath, component);
 					unwatch = $watch.call(component, toWatch, watchInfo, handler);

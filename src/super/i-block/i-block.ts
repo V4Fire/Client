@@ -24,7 +24,7 @@ import config from 'config';
 
 import Async, {
 
-	addSuspendingGroup,
+	wrapWithSuspending,
 
 	AsyncOptions,
 	ClearOptionsId,
@@ -1650,7 +1650,7 @@ export default abstract class iBlock extends ComponentInterface {
 				return () => unwatch?.();
 			};
 
-			link = $a.on(emitter, 'mutation', handler, addSuspendingGroup(opts, 'watchers'));
+			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
 			unwatch = this.$watch(<any>path, opts, handler);
 		});
 	}

@@ -11,15 +11,16 @@
  * @packageDocumentation
  */
 
-import SyncPromise from 'core/promise/sync';
-import Async, { addSuspendingGroup } from 'core/async';
+import Async, { wrapWithSuspending } from 'core/async';
 import { emitLikeEvents } from 'super/i-block/modules/event-emitter/const';
 
 import type {
 
 	EventEmitterLikeP,
+
 	EventEmitterWrapperOptions,
 	ReadonlyEventEmitterWrapperOptions,
+
 	EventEmitterWrapper,
 	ReadonlyEventEmitterWrapper
 
@@ -75,7 +76,7 @@ export function wrapEventEmitter(
 			}
 
 			const normalizedOpts = p.suspend ?
-				addSuspendingGroup(opts) :
+				wrapWithSuspending(opts) :
 				opts;
 
 			return $a.on(e, event, fn, normalizedOpts, ...args);
@@ -94,7 +95,7 @@ export function wrapEventEmitter(
 			}
 
 			const normalizedOpts = p.suspend ?
-				addSuspendingGroup(opts) :
+				wrapWithSuspending(opts) :
 				opts;
 
 			return $a.once(e, event, fn, normalizedOpts, ...args);
@@ -113,7 +114,7 @@ export function wrapEventEmitter(
 			}
 
 			const normalizedOpts = p.suspend ?
-				addSuspendingGroup(opts) :
+				wrapWithSuspending(opts) :
 				opts;
 
 			return $a.promisifyOnce(e, event, normalizedOpts, ...args);
@@ -121,7 +122,7 @@ export function wrapEventEmitter(
 
 		off: (opts) => {
 			const normalizedOpts = p.suspend ?
-				addSuspendingGroup(opts) :
+				wrapWithSuspending(opts) :
 				opts;
 
 			$a.off(normalizedOpts);
@@ -137,7 +138,7 @@ export function wrapEventEmitter(
 				e = e();
 			}
 
-			if (!e) {
+			if (e == null) {
 				return;
 			}
 

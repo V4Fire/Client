@@ -10,27 +10,31 @@ import { unsuspendRgxp } from 'core/async/const';
 import type { AsyncOptions } from 'core/async/interface';
 
 /**
- * Takes an object with async options and returns a new one with a modified group to support task suspending
+ * Takes an object with async options and returns a new one with a modified group to support task suspending.
+ * To prevent suspending provide a group with the  `:!suspend` modifier.
  *
  * @param opts
  * @param [groupMod] - additional group modifier
  *
  * @example
  * ```js
- * // {group: ':suspend', label: 'foo'}
- * console.log(addSuspendingGroup({label: 'foo'}));
+ * // {label: 'foo'}
+ * console.log(wrapWithSuspending({label: 'foo'}));
+ *
+ * // {group: ':baz:suspend', label: 'foo'}
+ * console.log(wrapWithSuspending({label: 'foo'}), 'baz');
  *
  * // {group: 'bar:suspend'}
- * console.log(addSuspendingGroup({group: 'bar'}));
+ * console.log(wrapWithSuspending({group: 'bar'}));
  *
  * // {group: 'bar:baz:suspend'}
- * console.log(addSuspendingGroup({group: 'bar'}, 'baz'));
+ * console.log(wrapWithSuspending({group: 'bar'}, 'baz'));
  *
  * // {group: 'bar:!suspend'}
- * console.log(addSuspendingGroup({group: 'bar:!suspend'}, 'baz'))
+ * console.log(wrapWithSuspending({group: 'bar:!suspend'}, 'baz'))
  * ```
  */
-export function addSuspendingGroup<T extends AsyncOptions>(opts: T, groupMod?: string): T {
+export function wrapWithSuspending<T extends AsyncOptions>(opts: T, groupMod?: string): T {
 	let
 		group = Object.isPlainObject(opts) ? opts.group : null;
 
