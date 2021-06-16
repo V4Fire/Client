@@ -37,12 +37,11 @@ let
 	historyPos = 0,
 	historyInit = false;
 
-let
-	/**
-	 * This flag is needed to get rid of redundant router transition when restoring the page from bfcache in safari
-	 * @see https://github.com/V4Fire/Client/issues/552
-	 */
-	isOpenedFromBfcache = false;
+/**
+ * This flag is needed to get rid of a redundant router transition when restoring the page from bfcache in safari
+ * @see https://github.com/V4Fire/Client/issues/552
+ */
+let isOpenedFromBfcache = false;
 
 type HistoryLog = Array<{
 	route: string;
@@ -115,7 +114,7 @@ export default function createRouter(component: bRouter): Router {
 	const
 		engineGroup = {group: 'routerEngine'},
 		popstateLabel = {...engineGroup, label: $$.popstate},
-		pageshowLable = {...engineGroup, label: $$.pageshow},
+		pageshowLabel = {...engineGroup, label: $$.pageshow},
 		modHistoryLabel = {...engineGroup, label: $$.modHistory};
 
 	$a
@@ -433,7 +432,7 @@ export default function createRouter(component: bRouter): Router {
 		if (event.persisted) {
 			isOpenedFromBfcache = true;
 		}
-	}, pageshowLable);
+	}, pageshowLabel);
 
 	return router;
 }
