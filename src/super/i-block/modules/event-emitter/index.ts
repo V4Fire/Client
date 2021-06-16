@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
 import Async, { addSuspendingGroup } from 'core/async';
 import { emitLikeEvents } from 'super/i-block/modules/event-emitter/const';
 
@@ -69,15 +70,22 @@ export function wrapEventEmitter(
 				e = e();
 			}
 
-			if (!e) {
+			if (e == null) {
 				return;
 			}
 
-			if (p.suspend) {
-				params = addSuspendingGroup(params);
+			const normalizedParams = p.suspend ?
+				addSuspendingGroup(params) :
+				params;
+
+			const
+				link = $a.on(e, event, fn, normalizedParams, ...args);
+
+			if (p.suspend && link != null) {
+				$a.worker(() => $a.off(link), params);
 			}
 
-			return $a.on(e, event, fn, params, ...args);
+			return link;
 		},
 
 		once: (event, fn, params, ...args) => {
@@ -88,15 +96,22 @@ export function wrapEventEmitter(
 				e = e();
 			}
 
-			if (!e) {
+			if (e == null) {
 				return;
 			}
 
-			if (p.suspend) {
-				params = addSuspendingGroup(params);
+			const normalizedParams = p.suspend ?
+				addSuspendingGroup(params) :
+				params;
+
+			const
+				link = $a.once(e, event, fn, normalizedParams, ...args);
+
+			if (p.suspend && link != null) {
+				$a.worker(() => $a.off(link), params);
 			}
 
-			return $a.once(e, event, fn, params, ...args);
+			return link;
 		},
 
 		promisifyOnce: (event, params, ...args) => {
@@ -107,15 +122,26 @@ export function wrapEventEmitter(
 				e = e();
 			}
 
-			if (!e) {
+			if (e == null) {
 				return Promise.resolve();
 			}
 
-			if (p.suspend) {
-				params = addSuspendingGroup(params);
-			}
+			const normalizedParams = p.suspend ?
+				addSuspendingGroup(params) :
+				params;
 
-			return $a.promisifyOnce(e, event, params, ...args);
+			return new SyncPromise((resolve, reject) => {
+				const link = $a.once(<any>e, event, resolve, {
+					...normalizedParams,
+					promise: true,
+					onClear: $a.onPromiseClear(resolve, reject),
+					onMerge: $a.onPromiseMerge(resolve, reject)
+				}, ...args);
+
+				if (p.suspend && link != null) {
+					$a.worker(() => $a.off(link), params);
+				}
+			});
 		},
 
 		off: (params) => {

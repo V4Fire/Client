@@ -32,10 +32,10 @@ import type { AsyncOptions } from 'core/async/interface';
  */
 export function addSuspendingGroup<T extends AsyncOptions>(opts: T, groupMod?: string): T {
 	let
-		group = '';
+		group = Object.isPlainObject(opts) ? opts.group : '';
 
-	if (Object.isPlainObject(opts)) {
-		group = opts.group ?? group;
+	if (group == null || group === '') {
+		group = Math.random().toString(16).slice(2);
 	}
 
 	if (groupMod != null) {
