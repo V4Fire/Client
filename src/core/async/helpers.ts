@@ -17,7 +17,7 @@ import type { AsyncOptions } from 'core/async/interface';
  *
  * @example
  * ```js
- * // {group: 'e5ef4d62283ef8:suspend', label: 'foo'}
+ * // {group: ':suspend', label: 'foo'}
  * console.log(addSuspendingGroup({label: 'foo'}));
  *
  * // {group: 'bar:suspend'}
@@ -34,18 +34,13 @@ export function addSuspendingGroup<T extends AsyncOptions>(opts: T, groupMod?: s
 	let
 		group = Object.isPlainObject(opts) ? opts.group : null;
 
-	if (group != null && RegExp.test(unsuspendRgxp, group)) {
+	if (groupMod != null) {
+		group = `${group ?? ''}:${groupMod}`;
+	}
+
+	if (group == null || RegExp.test(unsuspendRgxp, group)) {
 		return opts;
 	}
 
-	if (group == null || group === '') {
-		group = Math.random().toString(16).slice(2);
-	}
-
-	if (groupMod != null) {
-		group += `:${groupMod}`;
-	}
-
-	group += ':suspend';
-	return {...opts, group};
+	return {...opts, group: `${group}:suspend`};
 }
