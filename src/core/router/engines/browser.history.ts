@@ -26,6 +26,12 @@ import type { Router, Route, HistoryClearFilter } from 'core/router/interface';
 export const
 	$$ = symbolGenerator();
 
+/**
+ * This flag is needed to get rid of a redundant router transition when restoring the page from bfcache in safari
+ * @see https://github.com/V4Fire/Client/issues/552
+ */
+let isOpenedFromBfcache = false;
+
 // The code below is a shim of "clear" logic of the route history:
 // it's used the session storage API to clone native history ans some hacks to clear th history.
 // The way to clear the history is base on the mechanics when we rewind to the previous route of the route we want
@@ -36,12 +42,6 @@ export const
 let
 	historyPos = 0,
 	historyInit = false;
-
-/**
- * This flag is needed to get rid of a redundant router transition when restoring the page from bfcache in safari
- * @see https://github.com/V4Fire/Client/issues/552
- */
-let isOpenedFromBfcache = false;
 
 type HistoryLog = Array<{
 	route: string;
