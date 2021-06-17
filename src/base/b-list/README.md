@@ -215,6 +215,12 @@ If true, the component supports a feature of multiple active items.
 If true, the active item can be unset by using another click to it.
 By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise to `false`.
 
+### Fields
+
+#### items
+
+List of component items.
+
 ### Getters
 
 #### active
