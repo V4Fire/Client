@@ -25,7 +25,7 @@ import type {
 
 export * from 'super/i-input-text/modules/validators/interface';
 
-export default <ValidatorsDecl<iInputText, unknown>>{
+export default <ValidatorsDecl<iInputText>>{
 	//#if runtime has iInput/validators
 
 	/** @see [[iInput.validators.required]] */

@@ -32,7 +32,7 @@ import type {
 
 export * from 'form/b-input/modules/validators/interface';
 
-export default <ValidatorsDecl<bInput, unknown>>{
+export default <ValidatorsDecl<bInput>>{
 	//#if runtime has bInput/validators
 
 	/**
