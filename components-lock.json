@@ -1,5 +1,5 @@
 {
-  "hash": "e7dad3769236ec45806bde3ff6d5f5b3ae7c95f9acb738a06a36bcc883092c98",
+  "hash": "3bc8f75f24ee1deb5975ad6cd0e9906126400d20c648c857ab6e12ec130ce79b",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -270,38 +270,6 @@
             "src/base/b-dynamic-page/b-dynamic-page.styl"
           ],
           "tpl": "src/base/b-dynamic-page/b-dynamic-page.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-file-button",
-        {
-          "index": "src/form/b-file-button/index.js",
-          "declaration": {
-            "name": "b-file-button",
-            "parent": "b-button",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-file-button",
-          "parent": "b-button",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/form/b-file-button/b-file-button.ts",
-          "styles": [
-            "src/form/b-file-button/b-file-button.styl"
-          ],
-          "tpl": "src/form/b-file-button/b-file-button.ss",
           "etpl": null
         }
       ],
@@ -1792,7 +1760,6 @@
               "b-list",
               "b-form",
               "b-button",
-              "b-file-button",
               "b-checkbox",
               "b-radio-button",
               "b-input-hidden",
@@ -1824,7 +1791,6 @@
             "b-list",
             "b-form",
             "b-button",
-            "b-file-button",
             "b-checkbox",
             "b-radio-button",
             "b-input-hidden",
