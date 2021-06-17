@@ -1,5 +1,5 @@
 {
-  "hash": "7dbd2e5bd5c768b0477dfe9f76ab0773fa538a556cc9ddc6eafa60439565763d",
+  "hash": "c49e5b320a85ae685af5592e27b87be75322ea2a0c46311a790e586ff5d1750b",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -510,42 +510,6 @@
         }
       ],
       [
-        "b-input-birthday",
-        {
-          "index": "src/form/b-input-birthday/index.js",
-          "declaration": {
-            "name": "b-input-birthday",
-            "parent": "i-input",
-            "dependencies": [
-              "b-select"
-            ],
-            "libs": []
-          },
-          "name": "b-input-birthday",
-          "parent": "i-input",
-          "dependencies": [
-            "b-select"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/form/b-input-birthday/b-input-birthday.ts",
-          "styles": [
-            "src/form/b-input-birthday/b-input-birthday.styl"
-          ],
-          "tpl": "src/form/b-input-birthday/b-input-birthday.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-input-hidden",
         {
           "index": "src/form/b-input-hidden/index.js",
@@ -778,6 +742,42 @@
             "src/form/b-select/b-select.styl"
           ],
           "tpl": "src/form/b-select/b-select.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-select-birthday",
+        {
+          "index": "src/form/b-select-birthday/index.js",
+          "declaration": {
+            "name": "b-select-birthday",
+            "parent": "i-input",
+            "dependencies": [
+              "b-select"
+            ],
+            "libs": []
+          },
+          "name": "b-select-birthday",
+          "parent": "i-input",
+          "dependencies": [
+            "b-select"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/form/b-select-birthday/b-select-birthday.ts",
+          "styles": [
+            "src/form/b-select-birthday/b-select-birthday.styl"
+          ],
+          "tpl": "src/form/b-select-birthday/b-select-birthday.ss",
           "etpl": null
         }
       ],
@@ -1799,6 +1799,7 @@
               "b-input",
               "b-textarea",
               "b-select",
+              "b-select-birthday",
               "b-virtual-scroll",
               "b-window",
               "b-sidebar",
@@ -1830,6 +1831,7 @@
             "b-input",
             "b-textarea",
             "b-select",
+            "b-select-birthday",
             "b-virtual-scroll",
             "b-window",
             "b-sidebar",
