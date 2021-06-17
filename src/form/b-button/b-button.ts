@@ -99,7 +99,13 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/**
 	 * If the `type` prop is passed to `file`, this prop defines which file types are selectable in a file upload control
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefaccept
+	 * @example
+	 * ```
+	 * < b-button :type = 'file' | :accept = '.txt' | @onChange = console.log($event)
+	 *   Upload a file
+	 * ```
 	 */
 	@prop({type: String, required: false})
 	readonly accept?: string;
