@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.200 (2021-06-17)
+
+#### :bug: Bug Fix
+
+* `bSelect`:
+  * Fixed a bug when changing of `value` doesn't emit selection of items
+  * Fixed built-in `required` validator
+
+#### :memo: Documentation
+
+* Added documentation `bSelect`
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change
