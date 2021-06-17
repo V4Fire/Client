@@ -149,7 +149,11 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 *
 	 * @example
 	 * ```
-	 * < b-select :preIcon = 'dropdown' | :preIconHint = 'Show variants' | :items = myItems
+	 * < b-select &
+	 *   :preIcon = 'dropdown' |
+	 *   :preIconHint = 'Show variants' |
+	 *   :items = myItems
+	 * .
 	 * ```
 	 */
 	@prop({type: String, required: false})
@@ -200,7 +204,11 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 *
 	 * @example
 	 * ```
-	 * < b-select :icon = 'dropdown' | :iconHint = 'Show variants' | :items = myItems
+	 * < b-select &
+	 *   :icon = 'dropdown' |
+	 *   :iconHint = 'Show variants' |
+	 *   :items = myItems
+	 * .
 	 * ```
 	 */
 	@prop({type: String, required: false})
@@ -230,7 +238,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @default `'b-progress-icon'`
 	 * @example
 	 * ```
-	 * < b-select :progressIcon = 'b-my-progress-icon'
+	 * < b-select :progressIcon = 'b-my-progress-icon' | :items = myItems
 	 * ```
 	 */
 	@prop({type: [String, Boolean], required: false})
@@ -401,7 +409,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
-	 * Selects selection of an item by the specified value.
+	 * Selects an item by the specified value.
 	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 	 *
 	 * @param value
