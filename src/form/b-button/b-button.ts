@@ -33,6 +33,7 @@ import iData, {
 	component,
 	prop,
 	computed,
+	wait,
 	p,
 
 	ModsDecl,
@@ -73,12 +74,16 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	 *
 	 * 1. `button` - simple button control;
 	 * 2. `submit` - button to send the tied form;
-	 * 3. `link` - hyperlink to the specified URL (to provide URL, use the `href`prop).
+	 * 3. `file` - button to open the file uploading dialog;
+	 * 4. `link` - hyperlink to the specified URL (to provide URL, use the `href` prop).
 	 *
 	 * @example
 	 * ```
 	 * < b-button @click = console.log('boom!')
 	 *   Make boom!
+	 *
+	 * < b-button :type = 'file' | @onChange = console.log($event)
+	 *   Upload a file
 	 *
 	 * < b-button :type = 'link' | :href = 'https://google.com'
 	 *   Go to Google
@@ -91,6 +96,13 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	 */
 	@prop(String)
 	readonly type: ButtonType = 'button';
+
+	/**
+	 * If the `type` prop is passed to `file`, this prop defines which file types are selectable in a file upload control
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefaccept
+	 */
+	@prop({type: String, required: false})
+	readonly accept?: string;
 
 	/**
 	 * If the `type` prop is passed to `link`, this prop contains a value for `<a href>`.
@@ -274,6 +286,13 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		return iAccess.isFocused(this);
 	}
 
+	/**
+	 * List of selected files (works with the `file` type)
+	 */
+	get files(): CanUndef<FileList> {
+		return this.$refs.file?.files ?? undefined;
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iAccess.mods,
@@ -293,7 +312,23 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	};
 
 	/** @override */
-	protected readonly $refs!: {button: HTMLButtonElement};
+	protected readonly $refs!: {
+		button: HTMLButtonElement;
+		file?: HTMLInputElement;
+	};
+
+	/**
+	 * If the `type` prop is passed to `file`, resets a file input
+	 */
+	@wait('ready')
+	reset(): CanPromise<void> {
+		const
+			{file} = this.$refs;
+
+		if (file != null) {
+			file.value = '';
+		}
+	}
 
 	/** @see [[iOpenToggle.initCloseHelpers]] */
 	@p({hook: 'beforeDataCreate', replace: false})
@@ -317,32 +352,52 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		if (this.type !== 'link') {
-			const
-				dp = this.dataProvider;
+		switch (this.type) {
+			case 'link':
+				break;
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (dp != null && (dp !== 'Provider' || this.href != null)) {
-				let
-					that = this;
+			case 'file':
+				this.$refs.file?.click();
+				break;
 
-				if (this.href != null) {
-					that = this.base(this.href);
+			default: {
+				const
+					dp = this.dataProvider;
+
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (dp != null && (dp !== 'Provider' || this.href != null)) {
+					let
+						that = this;
+
+					if (this.href != null) {
+						that = this.base(this.href);
+					}
+
+					await (<Function>that[this.method])();
+
+					// Form attribute fix for MS Edge && IE
+				} else if (this.form != null && this.type === 'submit') {
+					e.preventDefault();
+					const form = this.dom.getComponent<bForm>(`#${this.form}`);
+					form && await form.submit();
 				}
 
-				await (<Function>that[this.method])();
-
-			// Form attribute fix for MS Edge && IE
-			} else if (this.form != null && this.type === 'submit') {
-				e.preventDefault();
-				const form = this.dom.getComponent<bForm>(`#${this.form}`);
-				form && await form.submit();
+				await this.toggle();
+				break;
 			}
-
-			await this.toggle();
 		}
 
 		this.emit('click', e);
+	}
+
+	/**
+	 * Handler: changing a value of the file input
+	 *
+	 * @param e
+	 * @emits `change(result: InputEvent)`
+	 */
+	protected onFileChange(e: Event): void {
+		this.emit('change', e);
 	}
 }
 

@@ -28,9 +28,10 @@ Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName  | Description            | Payload description | Payload  |
-| ---------- | ---------------------- | ------------------- | -------- |
-| `click`    | Click to the component | `Event` object      | `Event`  |
+| EventName | Description                               | Payload description | Payload      |
+| --------- | ----------------------------------------- | ------------------- | ------------ |
+| `click`   | Click to the component                    | `Event` object      | `Event`      |
+| `change`  | A list of selected files has been changed | `InputEvent` object | `InputEvent` |
 
 Also, you can see the parent component and the component traits.
 
@@ -55,6 +56,14 @@ The component has four base scenarios of usage:
   < b-button :type = 'submit'
     Submit
 ```
+
+### Uploading a file
+
+```
+< b-button :type = 'file' | @onChange = console.log($event)
+  Upload a file
+```
+
 
 ### A link
 
@@ -155,11 +164,15 @@ A button' type to create. There can be values:
 
 1. `button` - simple button control;
 2. `submit` - button to send the tied form;
-3. `link` - hyperlink to the specified URL (to provide URL, use the `href`prop).
+3. `file` - button to open the file uploading dialog;
+4. `link` - hyperlink to the specified URL (to provide URL, use the `href` prop).
 
 ```
 < b-button @click = console.log('boom!')
   Make boom!
+
+< b-button :type = 'file' | @onChange = console.log($event)
+  Upload a file
 
 < b-button :type = 'link' | :href = 'https://google.com'
   Go to Google
@@ -168,6 +181,16 @@ A button' type to create. There can be values:
   < b-input :name = 'name'
   < b-button :type = 'submit'
     Send
+```
+
+#### [accept]
+
+If the `type` prop is passed to `file`, this prop defines which file types are selectable in a file upload control.
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefaccept).
+
+```
+< b-button :type = 'file' | :accept = '.txt' | @onChange = console.log($event)
+  Upload a file
 ```
 
 #### [href]
@@ -290,3 +313,15 @@ The way to show dropdown if the `dropdown` slot is provided.
   < template #dropdown
     Additional information...
 ```
+
+### Getters
+
+#### files
+
+A list of selected files (works with the `file` type).
+
+### Methods
+
+#### reset
+
+If the `type` prop is passed to `file`, resets a file input.

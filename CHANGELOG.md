@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * The component was renamed `b-input-birthday` -> `b-select-date`
 
+#### :rocket: New Feature
+
+* Added a new `file` type `bButton`
+
 #### :memo: Documentation
 
 * Added documentation `bSelectDate`

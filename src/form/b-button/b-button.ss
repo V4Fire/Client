@@ -106,6 +106,15 @@
 		< template v-else
 			+= self.button()
 
+		< template v-if = type === 'file'
+			< input.&__file &
+				ref = file |
+				type = file |
+				:accept = accept |
+				:form = form |
+				@change = onFileChange
+			.
+
 		- block dropdown
 			< . &
 				v-if = vdom.getSlot('dropdown') && (

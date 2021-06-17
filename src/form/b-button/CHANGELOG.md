@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.201 (2021-06-??)
+
+#### :rocket: New Feature
+
+* Added a new `file` type
+
 ## v3.0.0-rc.197 (2021-06-07)
 
 #### :house: Internal
