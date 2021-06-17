@@ -663,7 +663,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * Handler: click to some item element
 	 *
 	 * @param e
-	 * @emits `actionChange(active: unknown)`
+	 * @emits `actionChange(active:` [[Active]]`)`
 	 */
 	@watch({
 		field: '?$el:click',

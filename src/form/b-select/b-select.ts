@@ -845,7 +845,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: clearing of a component value
-	 * @emits `actionChange(value: V)`
+	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected async onClear(): Promise<void> {
 		if (await this.clear()) {
@@ -855,7 +855,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: value changing of a native component `<select>`
-	 * @emits `actionChange(value: V)`
+	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onNativeChange(): void {
 		on.nativeChange(this);
@@ -919,7 +919,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Handler: typing text into a helper text input to search select options
 	 *
 	 * @param e
-	 * @emits `actionChange(value: V)`
+	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onSearchInput(e: InputEvent): void {
 		on.searchInput(this, e);
@@ -929,7 +929,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Handler: click to some item element
 	 *
 	 * @param itemEl
-	 * @emits `actionChange(value: V)`
+	 * @emits `actionChange(value: this['Value'])`
 	 */
 	@watch({
 		field: '?$el:click',

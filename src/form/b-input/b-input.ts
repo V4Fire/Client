@@ -285,7 +285,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * Handler: manual editing of a component text value
-	 * @emits `actionChange(value: V)`
+	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onEdit(): void {
 		if (this.compiledMask != null) {
@@ -298,7 +298,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * Handler: clearing of a component value
-	 * @emits `actionChange(value: V)`
+	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected async onClear(): Promise<void> {
 		if (await this.clear()) {
