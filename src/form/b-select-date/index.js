@@ -6,6 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-select-birthday')
+package('b-select-date')
 	.extends('i-input')
 	.dependencies('b-select');

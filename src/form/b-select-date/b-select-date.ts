@@ -6,28 +6,36 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-select-date/README.md]]
+ * @packageDocumentation
+ */
+
 import type bSelect from 'form/b-select/b-select';
 import type { Item } from 'form/b-select/b-select';
 
 import iWidth from 'traits/i-width/i-width';
 import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
 
-import { selectCache } from 'form/b-select-birthday/const';
-import type { Value, FormValue } from 'form/b-select-birthday/interface';
+import { selectCache, months } from 'form/b-select-date/const';
+import type { Value, FormValue } from 'form/b-select-date/interface';
 
 export * from 'super/i-input/i-input';
-export * from 'form/b-select-birthday/const';
-export * from 'form/b-select-birthday/interface';
+export * from 'form/b-select-date/const';
+export * from 'form/b-select-date/interface';
 
 export { Value, FormValue };
 
+/**
+ * Component to create a form component to specify a date by using select-s
+ */
 @component({
 	functional: {
 		dataProvider: undefined
 	}
 })
 
-export default class bSelectBirthday extends iInput implements iWidth {
+export default class bSelectDate extends iInput implements iWidth {
 	/** @override */
 	readonly Value!: Value;
 
@@ -74,21 +82,6 @@ export default class bSelectBirthday extends iInput implements iWidth {
 	 * List of months to render
 	 */
 	protected get months(): readonly Item[] {
-		const months = [
-			t`January`,
-			t`February`,
-			t`March`,
-			t`April`,
-			t`May`,
-			t`June`,
-			t`July`,
-			t`August`,
-			t`September`,
-			t`October`,
-			t`November`,
-			t`December`
-		];
-
 		const
 			key = JSON.stringify(months),
 			cache = selectCache.create('months'),

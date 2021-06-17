@@ -9,6 +9,21 @@
 import { Cache } from 'super/i-block/i-block';
 import type { Item } from 'form/b-select/b-select';
 
+export const months = [
+	t`January`,
+	t`February`,
+	t`March`,
+	t`April`,
+	t`May`,
+	t`June`,
+	t`July`,
+	t`August`,
+	t`September`,
+	t`October`,
+	t`November`,
+	t`December`
+];
+
 export const selectCache = new Cache<'months' | 'days' | 'years', readonly Item[]>([
 	'months',
 	'days',

@@ -34,7 +34,7 @@ package('p-v4-components-demo')
 		'b-input',
 		'b-textarea',
 		'b-select',
-		'b-select-birthday',
+		'b-select-date',
 
 		'b-virtual-scroll',
 		'b-window',

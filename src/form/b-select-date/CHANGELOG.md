@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* The component was renamed `b-input-birthday` -> `b-select-birthday`
+* The component was renamed `b-input-birthday` -> `b-select-date`
 
 #### :house: Internal
 

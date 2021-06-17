@@ -1,5 +1,5 @@
 {
-  "hash": "c49e5b320a85ae685af5592e27b87be75322ea2a0c46311a790e586ff5d1750b",
+  "hash": "e7dad3769236ec45806bde3ff6d5f5b3ae7c95f9acb738a06a36bcc883092c98",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -746,18 +746,18 @@
         }
       ],
       [
-        "b-select-birthday",
+        "b-select-date",
         {
-          "index": "src/form/b-select-birthday/index.js",
+          "index": "src/form/b-select-date/index.js",
           "declaration": {
-            "name": "b-select-birthday",
+            "name": "b-select-date",
             "parent": "i-input",
             "dependencies": [
               "b-select"
             ],
             "libs": []
           },
-          "name": "b-select-birthday",
+          "name": "b-select-date",
           "parent": "i-input",
           "dependencies": [
             "b-select"
@@ -773,11 +773,11 @@
           },
           "type": "block",
           "mixin": false,
-          "logic": "src/form/b-select-birthday/b-select-birthday.ts",
+          "logic": "src/form/b-select-date/b-select-date.ts",
           "styles": [
-            "src/form/b-select-birthday/b-select-birthday.styl"
+            "src/form/b-select-date/b-select-date.styl"
           ],
-          "tpl": "src/form/b-select-birthday/b-select-birthday.ss",
+          "tpl": "src/form/b-select-date/b-select-date.ss",
           "etpl": null
         }
       ],
@@ -1799,7 +1799,7 @@
               "b-input",
               "b-textarea",
               "b-select",
-              "b-select-birthday",
+              "b-select-date",
               "b-virtual-scroll",
               "b-window",
               "b-sidebar",
@@ -1831,7 +1831,7 @@
             "b-input",
             "b-textarea",
             "b-select",
-            "b-select-birthday",
+            "b-select-date",
             "b-virtual-scroll",
             "b-window",
             "b-sidebar",

@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* The component was renamed `b-input-birthday` -> `b-select-birthday`
+* The component was renamed `b-input-birthday` -> `b-select-date`
 
 #### :house: Internal
 
