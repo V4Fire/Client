@@ -108,6 +108,18 @@ Also, you can see the parent component and the component traits.
 
 ### Props
 
+#### [min]
+
+The minimum value of the input (for number and date types).
+
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin)
+
+#### [max]
+
+The maximum value of the input (for number and date types).
+
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax)
+
 #### [preIcon]
 
 An icon to show before the input.

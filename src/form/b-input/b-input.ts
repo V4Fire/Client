@@ -74,6 +74,20 @@ export default class bInput extends iInputText {
 	readonly defaultProp?: this['Value'];
 
 	/**
+	 * The minimum value of the input (for number and date types)
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
+	 */
+	@prop({type: [Number, String, Date], required: false})
+	readonly min?: number | string | Date;
+
+	/**
+	 * The maximum value of the input (for number and date types)
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax
+	 */
+	@prop({type: [Number, String, Date], required: false})
+	readonly max?: number | string | Date;
+
+	/**
 	 * Icon to show before the input
 	 *
 	 * @example
@@ -272,6 +286,17 @@ export default class bInput extends iInputText {
 	@deprecated({renamedTo: 'selectText'})
 	selectAll(): Promise<boolean> {
 		return SyncPromise.resolve(this.selectText());
+	}
+
+	/** @override */
+	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
+		attrs = {
+			...super.normalizeAttrs(attrs),
+			min: this.min,
+			max: this.max
+		};
+
+		return attrs;
 	}
 
 	/**

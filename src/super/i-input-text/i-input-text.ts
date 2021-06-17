@@ -94,20 +94,6 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly maxLength?: number;
 
 	/**
-	 * The minimum value of the input (for number and date types)
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
-	 */
-	@prop({type: [Number, String, Date], required: false})
-	readonly min?: number | string | Date;
-
-	/**
-	 * The maximum value of the input (for number and date types)
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax
-	 */
-	@prop({type: [Number, String, Date], required: false})
-	readonly max?: number | string | Date;
-
-	/**
 	 * A value of the input's mask.
 	 *
 	 * The mask is used when you need to "decorate" some input value,
@@ -384,10 +370,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 			readonly: Object.parse(this.mods.readonly),
 
 			minlength: this.minLength,
-			maxlength: this.maxLength,
-
-			min: this.min,
-			max: this.max
+			maxlength: this.maxLength
 		};
 
 		return attrs;

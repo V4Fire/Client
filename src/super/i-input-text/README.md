@@ -81,18 +81,6 @@ The option will be ignored if provided `mask`.
 
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength)
 
-#### [min]
-
-The minimum value of the input (for number and date types).
-
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin)
-
-#### [max]
-
-The maximum value of the input (for number and date types).
-
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax)
-
 #### [mask]
 
 A value of the input's mask.
