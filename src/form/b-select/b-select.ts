@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-select/README.md]]
+ * @packageDocumentation
+ */
+
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
@@ -246,6 +251,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 
 		return v;
+	}
+
+	/** @override */
+	set value(value: this['Value']) {
+		this.selectValue(value, true);
+
+		const
+			item = this.indexes[String(this.values.get(value))];
+
+		if (!this.multiple && item != null) {
+			this.text = item.label ?? this.text;
+		}
 	}
 
 	/**
