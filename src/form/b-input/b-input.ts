@@ -28,8 +28,10 @@ import iInputText, {
 
 	watch,
 	hook,
+	wait,
 
-	ValidatorsDecl, wait
+	TextValidators,
+	ValidatorsDecl
 
 } from 'super/i-input-text/i-input-text';
 
@@ -37,8 +39,10 @@ import Validators from 'form/b-input/modules/validators';
 import type { Value, FormValue } from 'form/b-input/interface';
 
 export * from 'super/i-input/i-input';
-export * from 'form/b-input/modules/validators';
 export * from 'form/b-input/interface';
+
+export * from 'form/b-input/modules/validators';
+export { default as InputValidators } from 'form/b-input/modules/validators';
 
 export { Value, FormValue };
 
@@ -201,6 +205,7 @@ export default class bInput extends iInputText {
 	/** @override */
 	static validators: ValidatorsDecl = {
 		...<any>iInputText.validators,
+		...TextValidators,
 		...Validators
 	};
 

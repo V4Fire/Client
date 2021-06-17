@@ -63,7 +63,7 @@ export type Validators = Array<
 	[string, ValidatorParams]
 >;
 
-export type ValidatorsDecl<CTX = iInput, P = ValidatorParams> = Dictionary<
+export type ValidatorsDecl<CTX extends iInput = any, P extends ValidatorParams = any> = Dictionary<
 	(this: CTX, params: P) => CanPromise<boolean | unknown>
 >;
 

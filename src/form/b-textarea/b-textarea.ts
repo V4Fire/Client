@@ -27,7 +27,10 @@ import iInputText, {
 
 	hook,
 	wait,
-	watch
+	watch,
+
+	TextValidators,
+	ValidatorsDecl
 
 } from 'super/i-input-text/i-input-text';
 
@@ -134,6 +137,12 @@ export default class bTextarea extends iInputText {
 		const val = this.maxLength - this.value.length;
 		return val >= 0 ? val : 0;
 	}
+
+	/** @override */
+	static validators: ValidatorsDecl = {
+		...<any>iInputText.validators,
+		...TextValidators
+	};
 
 	/** @override */
 	@system()
