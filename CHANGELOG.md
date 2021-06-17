@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.201 (2021-06-??)
+## v3.0.0-rc.201 (2021-06-17)
 
 #### :boom: Breaking Change
 
