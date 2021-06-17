@@ -35,7 +35,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :memo: Documentation
 
-* Added documentation `bSelect`
+* Added documentation:
+  * `bSelect`
+  * `bIconButton`
 
 ## v3.0.0-rc.199 (2021-06-16)
 
