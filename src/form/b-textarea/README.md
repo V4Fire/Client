@@ -11,7 +11,7 @@ The component supports a feature of auto-resizing till it reaches the specified 
 
 * By default, the root tag of the component is `<span>`.
 
-* The component contains a `<input>` tag within.
+* The component contains an `<input>` tag within.
 
 * The component has `skeletonMarker`.
 

@@ -11,7 +11,7 @@ You can use it to provide some hidden information to a form.
 
 * By default, the root tag of the component is `<span>`.
 
-* The component contains a `<input>` tag within.
+* The component contains an `<input>` tag within.
 
 ## Usage
 

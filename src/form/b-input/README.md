@@ -12,7 +12,7 @@ This module provides a component to create a form input.
 
 * The component supports tooltips.
 
-* The component contains a `<input>` tag within.
+* The component contains an `<input>` tag within.
 
 * The component has `skeletonMarker`.
 

@@ -15,7 +15,7 @@ Checkboxes can be combined in groups with a feature of the multiple checking.
 
 * By default, the root tag of the component is `<span>`.
 
-* The component contains a `<input>` tag within.
+* The component contains an `<input>` tag within.
 
 * The component has `skeletonMarker`.
 
