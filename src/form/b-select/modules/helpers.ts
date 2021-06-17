@@ -26,21 +26,31 @@ export function initComponentValues<C extends bSelect>(component: C): void {
 	const
 		valueStore = unsafe.field.get('valueStore');
 
+	let
+		selectedItem;
+
 	for (let i = 0; i < unsafe.items.length; i++) {
 		const
-			item = unsafe.items[i],
-			val = item.value;
+			item = unsafe.items[i];
 
 		if (item.selected && (unsafe.multiple ? unsafe.valueProp === undefined : valueStore === undefined)) {
-			unsafe.selectValue(val);
+			unsafe.selectValue(item.value);
 		}
 
-		values.set(val, i);
+		if (unsafe.isSelected(item.value)) {
+			selectedItem = item;
+		}
+
+		values.set(item.value, i);
 		indexes[i] = item;
 	}
 
 	unsafe.values = values;
 	unsafe.indexes = indexes;
+
+	if (!unsafe.multiple && selectedItem != null) {
+		unsafe.field.set('textStore', selectedItem.label);
+	}
 }
 
 /**
