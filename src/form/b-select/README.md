@@ -364,3 +364,23 @@ Checks that a component value must be filled.
 < b-select :validators = ['required'] | :items = myItems
 < b-select :validators = {required: {showMsg: false}} | :items = myItems
 ```
+
+## Styles
+
+1. By default, the component provides a button to expand a dropdown with items.
+   You can configure it via CSS by using the `&__expand` selector.
+
+```styl
+&__expand
+  size 20px
+  background-image url("assets/my-icon.svg")
+```
+
+2. By default, the component provides a button to clear the input value.
+   You can configure it via CSS by using the `&__clear` selector.
+
+```styl
+&__clear
+  size 20px
+  background-image url("assets/my-icon.svg")
+```
