@@ -27,6 +27,7 @@
 							ref = month |
 							:value = value.getMonth() |
 							:items = months |
+							:native = native |
 							:mods = provide.mods({width: 'full'}) |
 							@change = onValueUpdate |
 							@actionChange = onActionChange
@@ -38,6 +39,7 @@
 							ref = day |
 							:value = value.getDate() |
 							:items = days |
+							:native = native |
 							:mods = provide.mods({width: 'full'}) |
 							@change = onValueUpdate |
 							@actionChange = onActionChange
@@ -49,6 +51,7 @@
 							ref = year |
 							:value = value.getFullYear() |
 							:items = years |
+							:native = native |
 							:mods = provide.mods({width: 'full'}) |
 							@change = onValueUpdate |
 							@actionChange = onActionChange

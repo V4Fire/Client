@@ -17,9 +17,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * The component was renamed `b-input-birthday` -> `b-select-date`
 
+#### :memo: Documentation
+
+* Added documentation `bSelectDate`
+
 #### :house: Internal
 
-* Fixed ESLint warnings `b-select-birthday`
+* Fixed ESLint warnings `bSelectDate`
 
 ## v3.0.0-rc.200 (2021-06-17)
 

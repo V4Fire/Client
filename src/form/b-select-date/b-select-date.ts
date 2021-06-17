@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import { is } from 'core/browser';
+
 import type bSelect from 'form/b-select/b-select';
 import type { Item } from 'form/b-select/b-select';
 
@@ -49,6 +51,12 @@ export default class bSelectDate extends iInput implements iWidth {
 	/** @override */
 	@prop({type: Date, required: false})
 	readonly defaultProp?: this['Value'];
+
+	/**
+	 * If true, the select components will use a native tag to show the select
+	 */
+	@prop(Boolean)
+	readonly native: boolean = Object.isTruly(is.mobile);
 
 	/** @override */
 	get value(): this['Value'] {

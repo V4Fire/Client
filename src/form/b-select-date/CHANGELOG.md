@@ -15,6 +15,10 @@ Changelog
 
 * The component was renamed `b-input-birthday` -> `b-select-date`
 
+#### :memo: Documentation
+
+* Added documentation
+
 #### :house: Internal
 
 * Fixed ESLint warnings
