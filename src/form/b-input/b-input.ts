@@ -204,7 +204,7 @@ export default class bInput extends iInputText {
 
 	/** @override */
 	static validators: ValidatorsDecl = {
-		...<any>iInputText.validators,
+		...iInputText.validators,
 		...TextValidators,
 		...Validators
 	};

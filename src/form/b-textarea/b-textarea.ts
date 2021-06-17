@@ -140,7 +140,7 @@ export default class bTextarea extends iInputText {
 
 	/** @override */
 	static validators: ValidatorsDecl = {
-		...<any>iInputText.validators,
+		...iInputText.validators,
 		...TextValidators
 	};
 
