@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.201 (2021-06-??)
+
+#### :boom: Breaking Change
+
+* The component was renamed `b-input-birthday` -> `b-select-birthday`
+
+#### :house: Internal
+
+* Fixed ESLint warnings `b-select-birthday`
+
 ## v3.0.0-rc.200 (2021-06-17)
 
 #### :bug: Bug Fix

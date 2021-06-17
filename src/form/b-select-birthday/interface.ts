@@ -6,6 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-input-birthday')
-	.extends('i-input')
-	.dependencies('b-select');
+export type Value = Date;
+export type FormValue = Value;

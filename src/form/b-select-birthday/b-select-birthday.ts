@@ -7,21 +7,19 @@
  */
 
 import type bSelect from 'form/b-select/b-select';
-import type { Option } from 'form/b-select/b-select';
+import type { Item } from 'form/b-select/b-select';
 
 import iWidth from 'traits/i-width/i-width';
-import iInput, { component, prop, Cache, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
+
+import { selectCache } from 'form/b-select-birthday/const';
+import type { Value, FormValue } from 'form/b-select-birthday/interface';
 
 export * from 'super/i-input/i-input';
+export * from 'form/b-select-birthday/const';
+export * from 'form/b-select-birthday/interface';
 
-export type Value = Date;
-export type FormValue = Value;
-
-export const selectCache = new Cache<'months' | 'days' | 'years', readonly Option[]>([
-	'months',
-	'days',
-	'years'
-]);
+export { Value, FormValue };
 
 @component({
 	functional: {
@@ -29,7 +27,7 @@ export const selectCache = new Cache<'months' | 'days' | 'years', readonly Optio
 	}
 })
 
-export default class bInputBirthday extends iInput implements iWidth {
+export default class bSelectBirthday extends iInput implements iWidth {
 	/** @override */
 	readonly Value!: Value;
 
@@ -46,23 +44,36 @@ export default class bInputBirthday extends iInput implements iWidth {
 
 	/** @override */
 	get value(): this['Value'] {
-		return Object.fastClone(this.field.get<this['Value']>('valueStore')!);
+		return Object.fastClone(super['valueGetter']());
 	}
 
 	/** @override */
 	set value(value: this['Value']) {
-		this.field.set('valueStore', value);
+		super['valueSetter'](value);
 	}
 
 	/** @override */
-	get default(): unknown {
-		return this.defaultProp || new Date().beginningOfYear();
+	get default(): this['Value'] {
+		return this.defaultProp ?? new Date().beginningOfYear();
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iWidth.mods
+	};
+
+	/** @override */
+	protected readonly $refs!: {
+		input: HTMLInputElement;
+		month: bSelect;
+		day: bSelect;
+		year: bSelect;
+	};
+
 	/**
-	 * List of accepted months
+	 * List of months to render
 	 */
-	get months(): ReadonlyArray<Option> {
+	protected get months(): readonly Item[] {
 		const months = [
 			t`January`,
 			t`February`,
@@ -91,9 +102,9 @@ export default class bInputBirthday extends iInput implements iWidth {
 	}
 
 	/**
-	 * List of accepted days
+	 * List of days to render
 	 */
-	get days(): ReadonlyArray<Option> {
+	protected get days(): readonly Item[] {
 		const
 			key = this.value.daysInMonth(),
 			cache = selectCache.create('days'),
@@ -103,8 +114,8 @@ export default class bInputBirthday extends iInput implements iWidth {
 			return val;
 		}
 
-		const
-			res = cache[key] = <Option[]>[];
+		const res = <Item[]>[];
+		cache[key] = res;
 
 		for (let i = 1; i <= key; i++) {
 			res.push({
@@ -117,9 +128,9 @@ export default class bInputBirthday extends iInput implements iWidth {
 	}
 
 	/**
-	 * List of accepted years
+	 * List of years to render
 	 */
-	get years(): ReadonlyArray<Option> {
+	protected get years(): readonly Item[] {
 		const
 			key = new Date().getFullYear(),
 			cache = selectCache.create('years'),
@@ -129,8 +140,8 @@ export default class bInputBirthday extends iInput implements iWidth {
 			return val;
 		}
 
-		const
-			res = cache[key] = <Option[]>[];
+		const res = <Item[]>[];
+		cache[key] = res;
 
 		for (let i = 0; i < 125; i++) {
 			const
@@ -146,30 +157,14 @@ export default class bInputBirthday extends iInput implements iWidth {
 	}
 
 	/**
-	 * Array of child selects
+	 * List of child selects
 	 */
-	get elements(): CanPromise<ReadonlyArray<bSelect>> {
+	protected get elements(): CanPromise<readonly bSelect[]> {
 		return this.waitStatus('ready', () => {
 			const r = this.$refs;
 			return Object.freeze([r.month, r.day, r.year]);
 		});
 	}
-
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		...iWidth.mods
-	};
-
-	/** @override */
-	protected readonly $refs!: {
-		input: HTMLInputElement;
-		month: bSelect;
-		day: bSelect;
-		year: bSelect;
-	};
-
-	/** @override */
-	protected valueStore!: this['Value'];
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -230,22 +225,22 @@ export default class bInputBirthday extends iInput implements iWidth {
 	}
 
 	/**
-	 * Handler: value update
+	 * Handler: updating of the component value
 	 */
-	onValueUpdate(): void {
+	protected onValueUpdate(): void {
 		const
 			{month, day, year} = this.$refs;
 
 		const
-			d = new Date(Number(year.selected) || new Date().getFullYear(), Number(month.selected) || 0, 1),
+			d = new Date(Number(year.value ?? new Date().getFullYear()), Number(month.value ?? 0), 1),
 			max = d.daysInMonth();
 
-		if (max < Number(day.selected)) {
-			day.selected = String(max);
+		if (max < Number(day.value)) {
+			day.value = max;
 		}
 
 		d.set({
-			day: day.selected ? Number(day.selected) : 0,
+			day: day.value != null ? Number(day.value) : 0,
 			hours: 0,
 			minutes: 0,
 			seconds: 0,
@@ -258,10 +253,10 @@ export default class bInputBirthday extends iInput implements iWidth {
 	}
 
 	/**
-	 * Handler: action change
-	 * @emits actionChange(value: V)
+	 * Handler: changing the component value via some user actions
+	 * @emits `actionChange(value: this['Value'])`
 	 */
-	async onActionChange(): Promise<void> {
+	protected async onActionChange(): Promise<void> {
 		await this.nextTick();
 		this.emit('actionChange', this.value);
 	}
