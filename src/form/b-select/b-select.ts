@@ -446,15 +446,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/** @override */
-	clear(): Promise<boolean> {
-		void this.close();
-		return super.clear();
-	}
-
-	/** @override */
 	reset(): Promise<boolean> {
-		void this.close();
-
 		const compare = (a, b) => {
 			if (this.multiple && Object.isSet(a) && Object.isSet(b)) {
 				return Object.fastCompare([...a], [...b]);
