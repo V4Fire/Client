@@ -11,6 +11,10 @@
  * @packageDocumentation
  */
 
+//#if demo
+import 'models/demo/select';
+//#endif
+
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
@@ -258,7 +262,11 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			v = this.field.get('valueStore');
 
 		if (this.multiple) {
-			return Object.isSet(v) ? new Set(v) : new Set();
+			if (Object.isSet(v) && v.size > 0) {
+				return new Set(v);
+			}
+
+			return undefined;
 		}
 
 		return v;
@@ -331,6 +339,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @override */
 	@system<bSelect>((o) => o.sync.link((val) => {
+		val = o.resolveValue(val);
+
 		if (val === undefined && o.hook === 'beforeDataCreate') {
 			if (o.multiple) {
 				if (Object.isSet(o.valueStore)) {
@@ -672,7 +682,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 			if (!this.multiple) {
 				const id = String(this.values.get(this.value));
-				this.text = this.indexes[id]?.label ?? this.text;
+				this.text = this.indexes[id]?.label ?? '';
 			}
 
 			this.async.clearAll({group: 'validation'});

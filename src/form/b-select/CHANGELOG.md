@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.202 (2021-06-18)
+
+#### :bug: Bug Fix
+
+* Empty value should be equal to `undefined`
+* Resetting of the component should also reset `text`
+
+#### :house: Internal
+
+* Added tests `bSelect`
+
 ## v3.0.0-rc.200 (2021-06-17)
 
 #### :bug: Bug Fix

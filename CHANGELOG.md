@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.202 (2021-06-18)
+
+#### :bug: Bug Fix
+
+* `bSelect`:
+  * Empty value should be equal to `undefined`
+  * Resetting of the component should also reset `text`
+
+#### :house: Internal
+
+* Added tests `bSelect`
+
 ## v3.0.0-rc.201 (2021-06-17)
 
 #### :boom: Breaking Change
