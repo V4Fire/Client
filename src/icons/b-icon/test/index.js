@@ -32,7 +32,7 @@ module.exports = (page) => {
 			expect(clrfx(await target.evaluate((ctx) => ctx.$el.innerHTML)))
 				.toBe('<use data-update-on-id="id"></use><use xlink:href="/p-v4-components-demo.html#foo" data-tmp=""></use>');
 
-			await 'next tick';
+			await Promise.resolve('next tick');
 
 			expect(clrfx(await target.evaluate((ctx) => ctx.$el.innerHTML)))
 				.toBe('<use data-update-on-id="id"></use><use xlink:href="/p-v4-components-demo.html#foo" data-tmp=""></use>');
