@@ -23,7 +23,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-input-hidden form API `info` / `error` messages', () => {
+	describe('b-textarea form API `info` / `error` messages', () => {
 		it('without `messageHelpers`', async () => {
 			const target = await initTextarea(page, {
 				info: 'Hello',
