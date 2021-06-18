@@ -18,8 +18,6 @@ import { openedSelect } from 'form/b-select/const';
  * @emits `actionChange(value: V)`
  */
 export function nativeChange<C extends bSelect>(component: C): void {
-	console.log(111);
-
 	const {
 		unsafe,
 		unsafe: {
@@ -87,8 +85,9 @@ export function textChange<C extends bSelect>(component: C): void {
 				item = component.items[i];
 
 			if (item.label != null && rgxp.test(item.label)) {
-				component.selectValue(item.value, true);
-				component.emit('actionChange', component.value);
+				if (component.selectValue(item.value, true)) {
+					component.emit('actionChange', component.value);
+				}
 
 				void component.open();
 				void component.unsafe.setScrollToMarkedOrSelectedItem();

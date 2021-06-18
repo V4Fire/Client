@@ -291,13 +291,13 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @override */
 	get default(): this['Value'] {
 		const
-			v = this.field.get('defaultProp');
+			val = this.field.get('defaultProp');
 
-		if (this.multiple && Object.isSet(v) && v.size > 0) {
-			return new Set(v);
+		if (this.multiple) {
+			return new Set(Object.isSet(val) ? val : Array.concat([], val));
 		}
 
-		return v;
+		return val;
 	}
 
 	/**
@@ -443,6 +443,31 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	@computed({cache: true})
 	protected get onTextChange(): Function {
 		return this.async.debounce(on.textChange.bind(null, this), 200);
+	}
+
+	/** @override */
+	clear(): Promise<boolean> {
+		void this.close();
+		return super.clear();
+	}
+
+	/** @override */
+	reset(): Promise<boolean> {
+		void this.close();
+
+		const compare = (a, b) => {
+			if (this.multiple && Object.isSet(a) && Object.isSet(b)) {
+				return Object.fastCompare([...a], [...b]);
+			}
+
+			return a === b;
+		};
+
+		if (!compare(this.value, this.default)) {
+			return super.reset();
+		}
+
+		return SyncPromise.resolve(false);
 	}
 
 	/**

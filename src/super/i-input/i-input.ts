@@ -737,7 +737,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@p({replace: false})
 	@wait('ready', {label: $$.reset})
 	async reset(): Promise<boolean> {
-		if (!Object.fastCompare(this.value, this.default)) {
+		if (this.value !== this.default) {
 			this.value = this.default;
 			this.async.clearAll({group: 'validation'});
 
