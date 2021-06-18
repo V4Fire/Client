@@ -69,6 +69,9 @@ export interface UnsafeBSelect<CTX extends bSelect = bSelect> extends UnsafeIInp
 	onSearchInput: CTX['onSearchInput'];
 
 	// @ts-ignore (access)
+	onTextChange: CTX['onTextChange'];
+
+	// @ts-ignore (access)
 	onItemClick: CTX['onItemClick'];
 
 	// @ts-ignore (access)

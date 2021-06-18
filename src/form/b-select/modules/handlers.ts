@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { openedSelect } from 'form/b-select/const';
-
 import type bSelect from 'form/b-select/b-select';
 import type { ModEvent, SetModEvent } from 'super/i-input-text';
+
+import { openedSelect } from 'form/b-select/const';
 
 /**
  * Handler: value changing of a native component `<select>`
@@ -18,6 +18,8 @@ import type { ModEvent, SetModEvent } from 'super/i-input-text';
  * @emits `actionChange(value: V)`
  */
 export function nativeChange<C extends bSelect>(component: C): void {
+	console.log(111);
+
 	const {
 		unsafe,
 		unsafe: {
@@ -64,7 +66,9 @@ export function nativeChange<C extends bSelect>(component: C): void {
 
 /**
  * Handler: changing text of a component helper input
+ *
  * @param component
+ * @emits `actionChange(value: V)`
  */
 export function textChange<C extends bSelect>(component: C): void {
 	let
@@ -74,30 +78,32 @@ export function textChange<C extends bSelect>(component: C): void {
 		text = text.replace(new RegExp(RegExp.escape(component.maskPlaceholder), 'g'), '');
 	}
 
-	const
-		rgxp = new RegExp(`^${RegExp.escape(text)}`, 'i');
-
-	let
-		some = false;
-
-	for (let i = 0; i < component.items.length; i++) {
+	if (text !== '') {
 		const
-			item = component.items[i];
+			rgxp = new RegExp(`^${RegExp.escape(text)}`, 'i');
 
-		if (item.label != null && rgxp.test(item.label)) {
-			component.selectValue(item.value);
-			some = true;
-			break;
+		for (let i = 0; i < component.items.length; i++) {
+			const
+				item = component.items[i];
+
+			if (item.label != null && rgxp.test(item.label)) {
+				component.selectValue(item.value, true);
+				component.emit('actionChange', component.value);
+
+				void component.open();
+				void component.unsafe.setScrollToMarkedOrSelectedItem();
+
+				return;
+			}
 		}
 	}
 
-	if (some) {
-		void component.open();
-		void component.unsafe.setScrollToMarkedOrSelectedItem();
-
-	} else {
-		void component.close();
+	if (component.value !== undefined) {
+		component.value = undefined;
+		component.emit('actionChange', undefined);
 	}
+
+	void component.close();
 }
 
 /**
@@ -113,7 +119,6 @@ export function searchInput<C extends bSelect>(component: C, e: InputEvent): voi
 		{unsafe} = component;
 
 	const
-		prevValue = component.value,
 		target = <HTMLInputElement>e.target;
 
 	if (unsafe.compiledMask != null) {
@@ -121,11 +126,7 @@ export function searchInput<C extends bSelect>(component: C, e: InputEvent): voi
 	}
 
 	unsafe.text = target.value;
-	textChange(component);
-
-	if (prevValue !== component.value) {
-		component.emit('actionChange', component.value);
-	}
+	unsafe.onTextChange();
 }
 
 /**
@@ -178,6 +179,10 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 	};
 
 	if (unsafe.native || validKeys[e.key] !== true || unsafe.mods.focused !== 'true') {
+		if (e.key.length === 1) {
+			await unsafe.focus();
+		}
+
 		return;
 	}
 

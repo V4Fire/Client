@@ -274,14 +274,30 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @override */
 	set value(value: this['Value']) {
-		this.selectValue(value, true);
+		if (value === undefined) {
+			this.unselectValue(this.value);
 
-		const
-			item = this.indexes[String(this.values.get(value))];
-
-		if (!this.multiple && item != null) {
-			this.text = item.label ?? this.text;
+		} else {
+			this.selectValue(value, true);
+			void this.setScrollToMarkedOrSelectedItem();
 		}
+
+		if (!this.multiple) {
+			const item = this.indexes[String(this.values.get(value))];
+			this.text = item?.label ?? '';
+		}
+	}
+
+	/** @override */
+	get default(): this['Value'] {
+		const
+			v = this.field.get('defaultProp');
+
+		if (this.multiple && Object.isSet(v) && v.size > 0) {
+			return new Set(v);
+		}
+
+		return v;
 	}
 
 	/**
@@ -419,6 +435,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	protected get selectedElement(): CanPromise<CanUndef<CanArray<HTMLOptionElement>>> {
 		return h.getSelectedElement(this);
+	}
+
+	/**
+	 * Handler: changing text of a component helper input
+	 */
+	@computed({cache: true})
+	protected get onTextChange(): Function {
+		return this.async.debounce(on.textChange.bind(null, this), 200);
 	}
 
 	/**
@@ -665,36 +689,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return this.value;
 	}
 
-	/** @override */
-	clear(): Promise<boolean> {
-		this.text = '';
-		void this.close();
-		return super.clear();
-	}
-
-	/** @override */
-	reset(): Promise<boolean> {
-		void this.close();
-
-		if (!Object.fastCompare(this.value, this.default)) {
-			this.selectValue(this.default, true);
-			void this.setScrollToMarkedOrSelectedItem();
-
-			if (!this.multiple) {
-				const id = String(this.values.get(this.value));
-				this.text = this.indexes[id]?.label ?? '';
-			}
-
-			this.async.clearAll({group: 'validation'});
-			void this.removeMod('valid');
-			this.emit('reset', this.value);
-
-			return SyncPromise.resolve(true);
-		}
-
-		return SyncPromise.resolve(false);
-	}
-
 	/** @see [[iOpenToggle.open]] */
 	async open(...args: unknown[]): Promise<boolean> {
 		if (this.multiple || this.native) {
@@ -873,16 +867,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @override */
 	protected onMaskInput(): Promise<boolean> {
-		const
-			prevValue = this.value;
-
 		return super.onMaskInput().then((res) => {
 			if (res) {
-				on.textChange(this);
-
-				if (prevValue !== this.value) {
-					this.emit('actionChange', this.value);
-				}
+				this.onTextChange();
 			}
 
 			return res;
@@ -891,16 +878,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @override */
 	protected onMaskKeyPress(e: KeyboardEvent): boolean {
-		const
-			prevValue = this.value;
-
 		if (super.onMaskKeyPress(e)) {
-			on.textChange(this);
-
-			if (prevValue !== this.value) {
-				this.emit('actionChange', this.value);
-			}
-
+			this.onTextChange();
 			return true;
 		}
 
@@ -909,16 +888,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @override */
 	protected onMaskDelete(e: KeyboardEvent): boolean {
-		const
-			prevValue = this.value;
-
 		if (super.onMaskDelete(e)) {
-			on.textChange(this);
-
-			if (prevValue !== this.value) {
-				this.emit('actionChange', this.value);
-			}
-
+			this.onTextChange();
 			return true;
 		}
 
