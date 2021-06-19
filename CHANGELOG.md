@@ -16,6 +16,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed import of `ModsTable` interface in `base/b-list/interface`
+* Do not take into account page location when constructing icon link in `traits/i-icon/i-icon`.
+  See [issues/554](https://github.com/V4Fire/Client/issues/554)
 
 ## v3.0.0-rc.202 (2021-06-18)
 

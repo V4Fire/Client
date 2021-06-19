@@ -35,24 +35,14 @@ export default abstract class iIcon {
 			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 		}
 
-		let
-			q = '';
-
-		if (location.search !== '') {
-			q = location.search;
-
-		} else {
-			q = location.href.endsWith('?') ? '?' : '';
-		}
-
 		const
 			icon = icons(iconsMap[iconId]);
 
 		if (Object.isPromise(icon)) {
-			return (async () => `${location.pathname + q}#${(await icon).id}`)();
+			return (async () => `#${(await icon).id}`)();
 		}
 
-		return SyncPromise.resolve(`${location.pathname + q}#${icon.id}`);
+		return SyncPromise.resolve(`#${icon.id}`);
 	};
 
 	/**
