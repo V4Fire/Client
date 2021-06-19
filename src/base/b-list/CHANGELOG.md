@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.203 (2021-06-19)
+
+#### :bug: Bug Fix
+
+* Fixed import of `ModsTable` interface
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.203 (2021-06-19)
+
+#### :bug: Bug Fix
+
+* Fixed import of `ModsTable` interface in `base/b-list/interface`
+
 ## v3.0.0-rc.202 (2021-06-18)
 
 #### :bug: Bug Fix
