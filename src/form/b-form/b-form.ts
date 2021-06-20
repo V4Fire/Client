@@ -176,7 +176,7 @@ export default class bForm extends iData implements iVisible {
 	 */
 	get elements(): CanPromise<readonly iInput[]> {
 		const
-			cache = Object.createDict();
+			processedComponents: Dictionary<boolean> = Object.createDict();
 
 		return this.waitStatus('ready', () => {
 			const
@@ -191,8 +191,8 @@ export default class bForm extends iData implements iVisible {
 					continue;
 				}
 
-				if (component.instance instanceof iInput && cache[component.componentId] == null) {
-					cache[component.componentId] = true;
+				if (component.instance instanceof iInput && !processedComponents[component.componentId]) {
+					processedComponents[component.componentId] = true;
 					els.push(component);
 				}
 			}
@@ -258,7 +258,7 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Resets values to the default of all associated components
+	 * Resets values to defaults of all associated components
 	 * @emits `reset()`
 	 */
 	async reset(): Promise<boolean> {
