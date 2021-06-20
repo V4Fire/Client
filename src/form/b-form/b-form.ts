@@ -299,8 +299,8 @@ export default class bForm extends iData implements iVisible {
 		this.emit('validationStart');
 
 		const
-			elsToSubmit = <iInput[]>[],
-			elValues = Object.createDict();
+			values = Object.createDict(),
+			toSubmit = <iInput[]>[];
 
 		let
 			valid = true,
@@ -313,14 +313,8 @@ export default class bForm extends iData implements iVisible {
 
 			const needValidate =
 				elName == null ||
-
-				!this.cache ||
-				!el.cache ||
-
-				!Object.fastCompare(
-					this.field.get(`tmp.${elName}`),
-					elValues[elName] ?? (elValues[elName] = await el.groupFormValue)
-				);
+				!this.cache || !el.cache ||
+				!Object.fastCompare(this.tmp[elName], values[elName] ?? (values[elName] = await el.groupFormValue));
 
 			if (needValidate) {
 				const
@@ -340,8 +334,17 @@ export default class bForm extends iData implements iVisible {
 				}
 
 				if (Object.isTruly(el.name)) {
-					elsToSubmit.push(el);
+					toSubmit.push(el);
 				}
+			}
+		}
+
+		for (let i = 0; i < toSubmit.length; i++) {
+			const
+				{name} = toSubmit[i];
+
+			if (name != null) {
+				this.field.set(`tmp.${name}`, values[name]);
 			}
 		}
 
@@ -358,7 +361,7 @@ export default class bForm extends iData implements iVisible {
 			return failedValidation;
 		}
 
-		return elsToSubmit;
+		return toSubmit;
 	}
 
 	/**
@@ -371,9 +374,7 @@ export default class bForm extends iData implements iVisible {
 	 */
 	@wait('ready', {defer: true, label: $$.submit})
 	async submit<D = unknown>(): Promise<D> {
-		const
-			start = Date.now();
-
+		const start = Date.now();
 		await this.toggleControls(true);
 
 		const
