@@ -48,6 +48,11 @@ export const
 })
 
 export default class bList extends iData implements iVisible, iWidth, iItems {
+	/**
+	 * Type: component active item
+	 */
+	readonly Active!: Active;
+
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 
@@ -75,7 +80,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 	 */
 	@prop({required: false})
-	readonly activeProp?: unknown[] | Active;
+	readonly activeProp?: unknown[] | this['Active'];
 
 	/**
 	 * If true, then all items without the `href` option will automatically generate a link by using `value`
@@ -121,7 +126,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 *
 	 * @see [[bList.activeStore]]
 	 */
-	get active(): Active {
+	get active(): this['Active'] {
 		const
 			v = this.field.get('activeStore');
 
@@ -219,7 +224,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		return newVal;
 	}))
 
-	protected activeStore!: Active;
+	protected activeStore!: this['Active'];
 
 	/**
 	 * A link to the active item element.
@@ -285,7 +290,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	setActive(value: Active, unsetPrevious: boolean = false): boolean {
+	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
 			activeStore = this.field.get('activeStore');
 
@@ -456,7 +461,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * @param value
 	 * @param [unsetPrevious] - true, if need to unset previous active items (works only with the `multiple` mode)
 	 */
-	toggleActive(value: Active, unsetPrevious: boolean = false): Active {
+	toggleActive(value: this['Active'], unsetPrevious: boolean = false): this['Active'] {
 		const
 			activeStore = this.field.get('activeStore');
 
@@ -663,7 +668,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * Handler: click to some item element
 	 *
 	 * @param e
-	 * @emits `actionChange(active:` [[Active]]`)`
+	 * @emits `actionChange(active: this['Active'])`
 	 */
 	@watch({
 		field: '?$el:click',
