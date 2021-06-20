@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-06-??)
 
+#### :boom: Breaking Change
+
+* Now `formValue` returns an array if the component is switched to the `multiple` mode `bSelect`
+
 #### :rocket: New Feature
 
 * Added a new associated type `bList.Active`

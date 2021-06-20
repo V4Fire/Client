@@ -303,6 +303,20 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return val;
 	}
 
+	/** @override */
+	get formValue(): Promise<this['FormValue']> {
+		return (async () => {
+			const
+				val = await super['formValueGetter']();
+
+			if (this.multiple && Object.isSet(val)) {
+				return [...val];
+			}
+
+			return val;
+		})();
+	}
+
 	/**
 	 * List of component items or select options
 	 * @see [[bSelect.itemsProp]]
