@@ -134,7 +134,6 @@ export default class bCheckbox extends iInput implements iSize {
 	readonly changeable: boolean = true;
 
 	/** @override */
-	@p({replace: false})
 	get value(): this['Value'] {
 		const
 			{checked} = this.mods;
@@ -304,7 +303,6 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	/** @override */
-	@p({replace: false})
 	protected resolveValue(value?: this['Value']): this['Value'] {
 		const
 			i = this.instance;
