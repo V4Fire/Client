@@ -379,10 +379,10 @@ export default class bForm extends iData implements iVisible {
 
 		const
 			validation = await this.validate({focusOnError: true}),
-			elsToSubmit = Object.isArray(validation) ? validation : [];
+			toSubmit = Object.isArray(validation) ? validation : [];
 
 		const submitCtx = {
-			elements: elsToSubmit,
+			elements: toSubmit,
 			form: this
 		};
 
@@ -390,7 +390,7 @@ export default class bForm extends iData implements iVisible {
 			operationErr,
 			formResponse;
 
-		if (elsToSubmit.length === 0) {
+		if (toSubmit.length === 0) {
 			this.emit('submitStart', {}, submitCtx);
 
 			if (!Object.isArray(validation)) {
@@ -405,9 +405,9 @@ export default class bForm extends iData implements iVisible {
 			const
 				tasks = <Array<Promise<unknown>>>[];
 
-			for (let i = 0; i < elsToSubmit.length; i++) {
+			for (let i = 0; i < toSubmit.length; i++) {
 				const
-					el = elsToSubmit[i],
+					el = toSubmit[i],
 					key = el.name ?? '';
 
 				if (body.hasOwnProperty(key)) {
@@ -493,7 +493,7 @@ export default class bForm extends iData implements iVisible {
 				throw operationErr;
 			}
 
-			if (elsToSubmit.length > 0) {
+			if (toSubmit.length > 0) {
 				this.emit('submitSuccess', formResponse, submitCtx);
 			}
 
@@ -504,7 +504,7 @@ export default class bForm extends iData implements iVisible {
 			if (operationErr != null) {
 				status = 'fail';
 
-			} else if (elsToSubmit.length === 0) {
+			} else if (toSubmit.length === 0) {
 				status = 'empty';
 			}
 
