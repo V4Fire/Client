@@ -281,7 +281,7 @@ export function syncFieldWithInput<C extends iInputText>(component: C): Promise<
 }
 
 /**
- * Returns the normalized selection position of the passed component.
+ * Returns a normalized selection position of the passed component.
  * The function converts the original selection bounds from UTF 16 characters to Unicode graphemes.
  *
  * @param component
