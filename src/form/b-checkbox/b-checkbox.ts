@@ -26,7 +26,6 @@ import iInput, {
 	prop,
 	system,
 	computed,
-	p,
 
 	ModsDecl,
 	ModEvent,
