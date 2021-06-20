@@ -38,5 +38,96 @@ module.exports = (page) => {
 
 			expect(await componentName.jsonValue()).toBe('b-button');
 		});
+
+		describe('buttonType', () => {
+			it('file', async () => {
+				// ...
+			});
+
+			it('submit', async () => {
+				// ...
+			});
+
+			it('link', async () => {
+				// ...
+			});
+		});
+
+		describe('accept', () => {
+			it('.txt', async () => {
+				// ...
+			});
+		});
+
+		describe('href', () => {
+			it('https://someurl.com', async () => {
+				// ...
+			});
+		});
+
+		describe('autofocus', () => {
+			it('true', async () => {
+				// ...
+			});
+		});
+
+		describe('tabIndex', () => {
+			it('-1', async () => {
+				// ...
+			});
+
+			it('1', async () => {
+				// ...
+			});
+		});
+
+		describe('preIcon', () => {
+			it('dropdown', async () => {
+				// ...
+			});
+		});
+
+		describe('preIconComponent', () => {
+			it('b-icon', async () => {
+				// ...
+			});
+		});
+
+		describe('hint', () => {
+			it('not shown if the cursor is not hovering', async () => {
+				// ...
+			});
+
+			it('shown if the cursor is hovering', async () => {
+				// ...
+			});
+		});
+
+		describe('isFocused', () => {
+			it('true if the button is focused', async () => {
+				// ...
+			});
+
+			it('false if the button is not focused', async () => {
+				// ...
+			});
+		});
+
+		describe('click event', () => {
+			it('emits on click', async () => {
+				// ...
+			});
+
+			it('does not emit an event without click', async () => {
+				// ...
+			});
+		});
+
+		describe('change event', () => {
+			it('emits on file change', async () => {
+				// ...
+			});
+		});
+
 	});
 };
