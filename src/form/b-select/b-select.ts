@@ -96,6 +96,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
+	/** @override */
+	readonly valueProp?: unknown[] | this['Value'];
+
 	/** @see [[iItems.items]] */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
