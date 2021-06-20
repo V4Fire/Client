@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-06-??)
 
+#### :rocket: New Feature
+
+* Added a new associated type `bList.Active`
+
 #### :bug: Bug Fix
 
 * Fixed caching of form values `bForm`
