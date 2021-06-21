@@ -28,7 +28,7 @@ export default class Field extends Friend {
 	/**
 	 * Returns a property from a component by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param getter - function that returns a value from the passed object
 	 *
 	 * @example
@@ -42,7 +42,7 @@ export default class Field extends Friend {
 	/**
 	 * Returns a property from an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param [obj] - source object
 	 * @param [getter] - function that returns a value from the passed object
 	 *
@@ -139,7 +139,7 @@ export default class Field extends Friend {
 	/**
 	 * Sets a new property to an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param value - value to set
 	 * @param getter - function that returns a key name from the passed object
 	 *
@@ -154,7 +154,7 @@ export default class Field extends Friend {
 	/**
 	 * Sets a new property to an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param value - value to set
 	 * @param [obj] - source object
 	 * @param [getter] - function that returns a key name from the passed object
@@ -314,7 +314,7 @@ export default class Field extends Friend {
 	/**
 	 * Deletes a property from an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param getter - function that returns a key name from the passed object
 	 *
 	 * @example
@@ -328,7 +328,7 @@ export default class Field extends Friend {
 	/**
 	 * Deletes a property from an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param [obj] - source object
 	 * @param [getter] - function that returns a key name from the passed object
 	 *
