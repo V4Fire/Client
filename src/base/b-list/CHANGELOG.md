@@ -13,6 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
+* Fixed import of `ModsTable` interface
 * Added a new associated type `Active`
 
 ## v3.0.0-rc.199 (2021-06-16)

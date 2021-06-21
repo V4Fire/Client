@@ -26,6 +26,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed caching of form values `bForm`
 * Fixed a bug after setting a non-exist property that has bound watchers `super/i-block/modules/field`
+* Fixed import of `ModsTable` interface in `base/b-list/interface`
+* Do not take into account page location when constructing icon link in `traits/i-icon/i-icon`.
+  See [issues/554](https://github.com/V4Fire/Client/issues/554)
 
 #### :memo: Documentation
 
