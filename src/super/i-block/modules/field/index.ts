@@ -34,7 +34,7 @@ export default class Field extends Friend {
 	 * @example
 	 * ```js
 	 * this.field.get('bla.foo');
-	 * this.field.get('bla.fooBla', String.underscore.compose(Object.get));
+	 * this.field.get('bla.fooBla', (prop, obj) => Object.get(obj, prop.underscore()));
 	 * ```
 	 */
 	get<T = unknown>(path: ObjectPropertyPath, getter: ValueGetter): CanUndef<T>;
@@ -49,7 +49,7 @@ export default class Field extends Friend {
 	 * @example
 	 * ```js
 	 * this.field.get('bla.foo', obj);
-	 * this.field.get('bla.fooBla', obj, String.underscore.compose(Object.get));
+	 * this.field.get('bla.fooBla', obj, (prop, obj) => Object.get(obj, prop.underscore()));
 	 * ```
 	 */
 	get<T = unknown>(
