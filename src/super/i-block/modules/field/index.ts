@@ -141,7 +141,7 @@ export default class Field extends Friend {
 	 *
 	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param value - value to set
-	 * @param getter - function that returns a key name from the passed object
+	 * @param keyGetter - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -149,7 +149,7 @@ export default class Field extends Friend {
 	 * this.field.get('bla.fooBla', 1, String.underscore);
 	 * ```
 	 */
-	set<T = unknown>(path: string, value: T, getter: KeyGetter): T;
+	set<T = unknown>(path: string, value: T, keyGetter: KeyGetter): T;
 
 	/**
 	 * Sets a new property to an object by the specified path
@@ -157,7 +157,7 @@ export default class Field extends Friend {
 	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param value - value to set
 	 * @param [obj] - source object
-	 * @param [getter] - function that returns a key name from the passed object
+	 * @param [keyGetter] - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -170,17 +170,17 @@ export default class Field extends Friend {
 		path: string,
 		value: T,
 		obj?: Nullable<object>,
-		getter?: KeyGetter
+		keyGetter?: KeyGetter
 	): T;
 
 	set<T = unknown>(
 		path: string,
 		value: T,
 		obj: Nullable<object> = this.ctx,
-		getter?: ValueGetter
+		keyGetter?: ValueGetter
 	): T {
 		if (Object.isFunction(obj)) {
-			getter = obj;
+			keyGetter = obj;
 			obj = this.ctx;
 		}
 
@@ -274,7 +274,7 @@ export default class Field extends Friend {
 			prop;
 
 		for (let i = 0; i < chunks.length; i++) {
-			prop = getter ? getter(chunks[i], ref) : chunks[i];
+			prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
 
 			if (i + 1 === chunks.length) {
 				break;
@@ -315,7 +315,7 @@ export default class Field extends Friend {
 	 * Deletes a property from an object by the specified path
 	 *
 	 * @param path - path to the property (`bla.baz.foo`)
-	 * @param getter - function that returns a key name from the passed object
+	 * @param keyGetter - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -323,14 +323,14 @@ export default class Field extends Friend {
 	 * this.field.delete('bla.fooBla', String.underscore);
 	 * ```
 	 */
-	delete(path: string, getter?: KeyGetter): boolean;
+	delete(path: string, keyGetter?: KeyGetter): boolean;
 
 	/**
 	 * Deletes a property from an object by the specified path
 	 *
 	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param [obj] - source object
-	 * @param [getter] - function that returns a key name from the passed object
+	 * @param [keyGetter] - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -339,15 +339,15 @@ export default class Field extends Friend {
 	 * this.field.delete('bla.fooBla', obj, String.underscore);
 	 * ```
 	 */
-	delete(path: string, obj?: Nullable<object>, getter?: KeyGetter): boolean;
+	delete(path: string, obj?: Nullable<object>, keyGetter?: KeyGetter): boolean;
 
 	delete(
 		path: string,
 		obj: Nullable<object> = this.ctx,
-		getter?: KeyGetter
+		keyGetter?: KeyGetter
 	): boolean {
 		if (Object.isFunction(obj)) {
-			getter = obj;
+			keyGetter = obj;
 			obj = this.ctx;
 		}
 
@@ -430,7 +430,7 @@ export default class Field extends Friend {
 			prop;
 
 		for (let i = 0; i < chunks.length; i++) {
-			prop = getter ? getter(chunks[i], ref) : chunks[i];
+			prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
 
 			if (i + 1 === chunks.length) {
 				break;

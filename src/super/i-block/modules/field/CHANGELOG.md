@@ -15,6 +15,10 @@ Changelog
 
 * Fixed a bug after setting a non-exist property that has bound watchers
 
+#### :memo: Documentation
+
+* Improved documentation
+
 #### :house: Internal
 
 * Added tests

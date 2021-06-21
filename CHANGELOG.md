@@ -26,6 +26,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed caching of form values `bForm`
 * Fixed a bug after setting a non-exist property that has bound watchers `super/i-block/modules/field`
 
+#### :memo: Documentation
+
+* Improved documentation `super/i-block/modules/field`
+
 #### :house: Internal
 
 * Added tests `super/i-block/modules/field`
