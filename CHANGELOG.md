@@ -24,6 +24,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed caching of form values `bForm`
+* Fixed a bug after setting a non-exist property that has bound watchers `super/i-block/modules/field`
 
 ## v3.0.0-rc.202 (2021-06-18)
 

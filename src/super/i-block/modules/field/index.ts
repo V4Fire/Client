@@ -294,7 +294,7 @@ export default class Field extends Friend {
 				}
 			}
 
-			ref = <any>newRef;
+			ref = Object.get<any>(ref, [prop]);
 		}
 
 		if (!needSet || !Object.isArray(ref) && Object.has(ref, [prop])) {
