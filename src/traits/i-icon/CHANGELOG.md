@@ -13,7 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Do not take into account page location when constructing icon link. See [issues/554](https://github.com/V4Fire/Client/issues/554)
+* Do not take into account page location when constructing icon link.
+  See [issues/554](https://github.com/V4Fire/Client/issues/554).
 
 ## v3.0.0-rc.184 (2021-05-12)
 
