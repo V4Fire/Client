@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Now `formValue` returns an array if the component is switched to the `multiple` mode `bSelect`
+* Removed `iBlock.lazy`
 
 #### :rocket: New Feature
 
