@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :boom: Breaking Change
+
+* Now `formValue` returns an array if the component is switched to the `multiple` mode
+
 ## v3.0.0-rc.202 (2021-06-18)
 
 #### :bug: Bug Fix

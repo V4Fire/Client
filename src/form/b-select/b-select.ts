@@ -96,6 +96,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
+	/** @override */
+	readonly valueProp?: unknown[] | this['Value'];
+
 	/** @see [[iItems.items]] */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
@@ -298,6 +301,23 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 
 		return val;
+	}
+
+	/** @override */
+	get formValue(): Promise<this['FormValue']> {
+		const
+			formValue = super['formValueGetter']();
+
+		return (async () => {
+			const
+				val = await formValue;
+
+			if (this.multiple && Object.isSet(val)) {
+				return [...val];
+			}
+
+			return val;
+		})();
 	}
 
 	/**

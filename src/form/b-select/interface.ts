@@ -10,7 +10,7 @@ import type { UnsafeIInputText, ModsTable } from 'super/i-input-text/i-input-tex
 import type bSelect from 'form/b-select/b-select';
 
 export type Value = unknown | Set<unknown>;
-export type FormValue = CanUndef<Value>;
+export type FormValue = CanUndef<CanArray<unknown>>;
 
 export interface Item extends Dictionary {
 	/**

@@ -11,13 +11,32 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.203 (2021-06-19)
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :boom: Breaking Change
+
+* Now `formValue` returns an array if the component is switched to the `multiple` mode `bSelect`
+* Removed `iBlock.lazy`
+
+#### :rocket: New Feature
+
+* Added a new associated type `bList.Active`
 
 #### :bug: Bug Fix
 
+* Fixed caching of form values `bForm`
+* Fixed a bug after setting a non-exist property that has bound watchers `super/i-block/modules/field`
 * Fixed import of `ModsTable` interface in `base/b-list/interface`
 * Do not take into account page location when constructing icon link in `traits/i-icon/i-icon`.
   See [issues/554](https://github.com/V4Fire/Client/issues/554)
+
+#### :memo: Documentation
+
+* Improved documentation `super/i-block/modules/field`
+
+#### :house: Internal
+
+* Added tests `super/i-block/modules/field`
 
 ## v3.0.0-rc.202 (2021-06-18)
 

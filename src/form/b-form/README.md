@@ -205,7 +205,7 @@ Clears values of all associated components.
 
 #### reset
 
-Resets values to the default of all associated components.
+Resets values to defaults of all associated components.
 
 #### validate
 

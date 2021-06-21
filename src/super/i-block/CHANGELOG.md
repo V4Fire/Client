@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :boom: Breaking Change
+
+* Removed `lazy`
+
 ## v3.0.0-rc.198 (2021-06-08)
 
 #### :rocket: New Feature

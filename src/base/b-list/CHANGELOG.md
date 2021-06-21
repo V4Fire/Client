@@ -9,11 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.203 (2021-06-19)
+## v3.0.0-rc.??? (2021-06-??)
 
-#### :bug: Bug Fix
+#### :rocket: New Feature
 
 * Fixed import of `ModsTable` interface
+* Added a new associated type `Active`
 
 ## v3.0.0-rc.199 (2021-06-16)
 

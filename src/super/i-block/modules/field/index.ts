@@ -28,13 +28,13 @@ export default class Field extends Friend {
 	/**
 	 * Returns a property from a component by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param getter - function that returns a value from the passed object
 	 *
 	 * @example
 	 * ```js
 	 * this.field.get('bla.foo');
-	 * this.field.get('bla.fooBla', String.underscore.compose(Object.get));
+	 * this.field.get('bla.fooBla', (prop, obj) => Object.get(obj, prop.underscore()));
 	 * ```
 	 */
 	get<T = unknown>(path: ObjectPropertyPath, getter: ValueGetter): CanUndef<T>;
@@ -42,14 +42,14 @@ export default class Field extends Friend {
 	/**
 	 * Returns a property from an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param [obj] - source object
 	 * @param [getter] - function that returns a value from the passed object
 	 *
 	 * @example
 	 * ```js
 	 * this.field.get('bla.foo', obj);
-	 * this.field.get('bla.fooBla', obj, String.underscore.compose(Object.get));
+	 * this.field.get('bla.fooBla', obj, (prop, obj) => Object.get(obj, prop.underscore()));
 	 * ```
 	 */
 	get<T = unknown>(
@@ -139,9 +139,9 @@ export default class Field extends Friend {
 	/**
 	 * Sets a new property to an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param value - value to set
-	 * @param getter - function that returns a key name from the passed object
+	 * @param keyGetter - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -149,15 +149,15 @@ export default class Field extends Friend {
 	 * this.field.get('bla.fooBla', 1, String.underscore);
 	 * ```
 	 */
-	set<T = unknown>(path: string, value: T, getter: KeyGetter): T;
+	set<T = unknown>(path: string, value: T, keyGetter: KeyGetter): T;
 
 	/**
 	 * Sets a new property to an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param value - value to set
 	 * @param [obj] - source object
-	 * @param [getter] - function that returns a key name from the passed object
+	 * @param [keyGetter] - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -170,17 +170,17 @@ export default class Field extends Friend {
 		path: string,
 		value: T,
 		obj?: Nullable<object>,
-		getter?: KeyGetter
+		keyGetter?: KeyGetter
 	): T;
 
 	set<T = unknown>(
 		path: string,
 		value: T,
 		obj: Nullable<object> = this.ctx,
-		getter?: ValueGetter
+		keyGetter?: ValueGetter
 	): T {
 		if (Object.isFunction(obj)) {
-			getter = obj;
+			keyGetter = obj;
 			obj = this.ctx;
 		}
 
@@ -274,7 +274,7 @@ export default class Field extends Friend {
 			prop;
 
 		for (let i = 0; i < chunks.length; i++) {
-			prop = getter ? getter(chunks[i], ref) : chunks[i];
+			prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
 
 			if (i + 1 === chunks.length) {
 				break;
@@ -294,7 +294,7 @@ export default class Field extends Friend {
 				}
 			}
 
-			ref = <any>newRef;
+			ref = Object.get<any>(ref, [prop]);
 		}
 
 		if (!needSet || !Object.isArray(ref) && Object.has(ref, [prop])) {
@@ -314,8 +314,8 @@ export default class Field extends Friend {
 	/**
 	 * Deletes a property from an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param getter - function that returns a key name from the passed object
+	 * @param path - path to the property (`bla.baz.foo`)
+	 * @param keyGetter - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -323,14 +323,14 @@ export default class Field extends Friend {
 	 * this.field.delete('bla.fooBla', String.underscore);
 	 * ```
 	 */
-	delete(path: string, getter?: KeyGetter): boolean;
+	delete(path: string, keyGetter?: KeyGetter): boolean;
 
 	/**
 	 * Deletes a property from an object by the specified path
 	 *
-	 * @param path - path to the property (bla.baz.foo)
+	 * @param path - path to the property (`bla.baz.foo`)
 	 * @param [obj] - source object
-	 * @param [getter] - function that returns a key name from the passed object
+	 * @param [keyGetter] - function that returns a key name from the passed object
 	 *
 	 * @example
 	 * ```js
@@ -339,15 +339,15 @@ export default class Field extends Friend {
 	 * this.field.delete('bla.fooBla', obj, String.underscore);
 	 * ```
 	 */
-	delete(path: string, obj?: Nullable<object>, getter?: KeyGetter): boolean;
+	delete(path: string, obj?: Nullable<object>, keyGetter?: KeyGetter): boolean;
 
 	delete(
 		path: string,
 		obj: Nullable<object> = this.ctx,
-		getter?: KeyGetter
+		keyGetter?: KeyGetter
 	): boolean {
 		if (Object.isFunction(obj)) {
-			getter = obj;
+			keyGetter = obj;
 			obj = this.ctx;
 		}
 
@@ -430,7 +430,7 @@ export default class Field extends Friend {
 			prop;
 
 		for (let i = 0; i < chunks.length; i++) {
-			prop = getter ? getter(chunks[i], ref) : chunks[i];
+			prop = keyGetter ? keyGetter(chunks[i], ref) : chunks[i];
 
 			if (i + 1 === chunks.length) {
 				break;

@@ -49,7 +49,21 @@ Also, you can see the parent component and the component traits.
 
 ## Associated types
 
-The component has two associated types to specify a type of component items: **Item** and **Items**.
+The component has associated type to specify active component item: **Active**.
+
+```typescript
+import bList, { component } from 'super/b-list/b-list';
+
+export * from 'super/b-list/b-list';
+
+@component()
+export default class myList extends bList {
+  /** @override */
+  readonly Active!: number;
+}
+```
+
+There are associated types to specify a type of component items: **Item** and **Items**.
 
 ```typescript
 import bList, { component } from 'super/b-list/b-list';

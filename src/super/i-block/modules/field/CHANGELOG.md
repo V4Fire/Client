@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug after setting a non-exist property that has bound watchers
+
+#### :memo: Documentation
+
+* Improved documentation
+
+#### :house: Internal
+
+* Added tests
+
 ## v3.0.0-rc.91 (2020-10-29)
 
 #### :bug: Bug Fix

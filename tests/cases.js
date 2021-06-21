@@ -32,6 +32,7 @@ module.exports = [
 	'--test-entry base/b-image/test',
 
 	'--test-entry super/i-block/test',
+	'--test-entry super/i-block/modules/field/test',
 	'--test-entry super/i-block/modules/activation/test',
 	'--test-entry super/i-block/modules/daemons/test',
 

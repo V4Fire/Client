@@ -176,7 +176,7 @@ export default class bForm extends iData implements iVisible {
 	 */
 	get elements(): CanPromise<readonly iInput[]> {
 		const
-			cache = Object.createDict();
+			processedComponents: Dictionary<boolean> = Object.createDict();
 
 		return this.waitStatus('ready', () => {
 			const
@@ -191,8 +191,8 @@ export default class bForm extends iData implements iVisible {
 					continue;
 				}
 
-				if (component.instance instanceof iInput && cache[component.componentId] == null) {
-					cache[component.componentId] = true;
+				if (component.instance instanceof iInput && !processedComponents[component.componentId]) {
+					processedComponents[component.componentId] = true;
 					els.push(component);
 				}
 			}
@@ -258,7 +258,7 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Resets values to the default of all associated components
+	 * Resets values to defaults of all associated components
 	 * @emits `reset()`
 	 */
 	async reset(): Promise<boolean> {
@@ -299,8 +299,8 @@ export default class bForm extends iData implements iVisible {
 		this.emit('validationStart');
 
 		const
-			elsToSubmit = <iInput[]>[],
-			elValues = Object.createDict();
+			values = Object.createDict(),
+			toSubmit = <iInput[]>[];
 
 		let
 			valid = true,
@@ -313,14 +313,8 @@ export default class bForm extends iData implements iVisible {
 
 			const needValidate =
 				elName == null ||
-
-				!this.cache ||
-				!el.cache ||
-
-				!Object.fastCompare(
-					this.field.get(`tmp.${elName}`),
-					elValues[elName] ?? (elValues[elName] = await el.groupFormValue)
-				);
+				!this.cache || !el.cache ||
+				!Object.fastCompare(this.tmp[elName], values[elName] ?? (values[elName] = await el.groupFormValue));
 
 			if (needValidate) {
 				const
@@ -340,8 +334,17 @@ export default class bForm extends iData implements iVisible {
 				}
 
 				if (Object.isTruly(el.name)) {
-					elsToSubmit.push(el);
+					toSubmit.push(el);
 				}
+			}
+		}
+
+		for (let i = 0; i < toSubmit.length; i++) {
+			const
+				{name} = toSubmit[i];
+
+			if (name != null) {
+				this.field.set(`tmp.${name}`, values[name]);
 			}
 		}
 
@@ -358,7 +361,7 @@ export default class bForm extends iData implements iVisible {
 			return failedValidation;
 		}
 
-		return elsToSubmit;
+		return toSubmit;
 	}
 
 	/**
@@ -371,17 +374,15 @@ export default class bForm extends iData implements iVisible {
 	 */
 	@wait('ready', {defer: true, label: $$.submit})
 	async submit<D = unknown>(): Promise<D> {
-		const
-			start = Date.now();
-
+		const start = Date.now();
 		await this.toggleControls(true);
 
 		const
 			validation = await this.validate({focusOnError: true}),
-			elsToSubmit = Object.isArray(validation) ? validation : [];
+			toSubmit = Object.isArray(validation) ? validation : [];
 
 		const submitCtx = {
-			elements: elsToSubmit,
+			elements: toSubmit,
 			form: this
 		};
 
@@ -389,7 +390,7 @@ export default class bForm extends iData implements iVisible {
 			operationErr,
 			formResponse;
 
-		if (elsToSubmit.length === 0) {
+		if (toSubmit.length === 0) {
 			this.emit('submitStart', {}, submitCtx);
 
 			if (!Object.isArray(validation)) {
@@ -404,9 +405,9 @@ export default class bForm extends iData implements iVisible {
 			const
 				tasks = <Array<Promise<unknown>>>[];
 
-			for (let i = 0; i < elsToSubmit.length; i++) {
+			for (let i = 0; i < toSubmit.length; i++) {
 				const
-					el = elsToSubmit[i],
+					el = toSubmit[i],
 					key = el.name ?? '';
 
 				if (body.hasOwnProperty(key)) {
@@ -492,7 +493,7 @@ export default class bForm extends iData implements iVisible {
 				throw operationErr;
 			}
 
-			if (elsToSubmit.length > 0) {
+			if (toSubmit.length > 0) {
 				this.emit('submitSuccess', formResponse, submitCtx);
 			}
 
@@ -503,7 +504,7 @@ export default class bForm extends iData implements iVisible {
 			if (operationErr != null) {
 				status = 'fail';
 
-			} else if (elsToSubmit.length === 0) {
+			} else if (toSubmit.length === 0) {
 				status = 'empty';
 			}
 

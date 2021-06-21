@@ -79,7 +79,6 @@ import { statuses } from 'super/i-block/const';
 
 import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
-import Lazy from 'super/i-block/modules/lazy';
 
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Analytics from 'super/i-block/modules/analytics';
@@ -1021,19 +1020,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({unique: true})
 	protected block?: Block;
-
-	/**
-	 * API for lazy operations.
-	 * This property provides a bunch of helper methods to organize lazy calculations.
-	 * @deprecated
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Lazy(ctx)
-	})
-
-	protected readonly lazy!: Lazy;
 
 	/**
 	 * API for optimizations.
