@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Now to iterate objects is used `Object.entries` `super/i-block/modules/async-render`
+* `super/i-block/modules/async-render`:
+  * Now to iterate objects is used `Object.entries`
+  * Now `filter` with a negative value removes elements from the render queue
 
 #### :bug: Bug Fix
 

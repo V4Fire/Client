@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Now to iterate objects is used `Object.entries`
+* Now `filter` with a negative value removes elements from the render queue
 
 ## v3.0.0-rc.194 (2021-05-28)
 

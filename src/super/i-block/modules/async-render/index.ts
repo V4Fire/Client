@@ -216,7 +216,7 @@ export default class AsyncRender extends Friend {
 					syncTotal++;
 					firstRender.push(val);
 
-				} else {
+				} else if (isPromise) {
 					untreatedEls.push(val);
 				}
 
@@ -281,7 +281,11 @@ export default class AsyncRender extends Friend {
 					}
 				}
 
-				const resolveTask = (filter?) => {
+				const resolveTask = (filter?: boolean) => {
+					if (filter === false) {
+						return;
+					}
+
 					renderBuffer.push(val);
 
 					total++;
@@ -343,7 +347,7 @@ export default class AsyncRender extends Friend {
 						});
 					};
 
-					return this.createTask(task, {group, weight, filter});
+					return this.createTask(task, {group, weight});
 				};
 
 				try {
@@ -365,15 +369,11 @@ export default class AsyncRender extends Friend {
 							res = filter.call(this.ctx, val, i, filterParams);
 
 						if (Object.isPromise(res)) {
-							await $a.promise(res, {group}).then((res) => {
-								if (Object.isTruly(res)) {
-									return resolveTask();
-								}
-							});
+							await $a.promise(res, {group}).then(Object.isTruly.compose(resolveTask));
 
 						} else {
 							const
-								res = resolveTask(filter.bind(this.ctx, val, i, filterParams));
+								res = resolveTask(Object.isTruly(filter.call(this.ctx, val, i, filterParams)));
 
 							if (res != null) {
 								await res;
@@ -518,36 +518,17 @@ export default class AsyncRender extends Friend {
 				weight: params.weight,
 
 				fn: $a.proxy(() => {
-					if (params.filter == null) {
-						return execTask(true);
+					const cb = () => {
+						taskFn();
+						resolve();
+						return true;
+					};
+
+					if (params.useRAF) {
+						return $a.animationFrame({group}).then(cb);
 					}
 
-					const
-						res = params.filter();
-
-					if (Object.isPromise(res)) {
-						return res.then(execTask);
-					}
-
-					return execTask(res);
-
-					function execTask(res: unknown): CanPromise<boolean> {
-						if (Object.isTruly(res)) {
-							const cb = () => {
-								taskFn();
-								resolve();
-								return true;
-							};
-
-							if (params.useRAF) {
-								return $a.animationFrame({group}).then(cb);
-							}
-
-							return cb();
-						}
-
-						return false;
-					}
+					return cb();
 
 				}, {
 					group,
