@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed async rendering with text elements `core/component/engines/vue/vnode`
+
 ## v3.0.0-rc.203 (2021-06-21)
 
 #### :boom: Breaking Change

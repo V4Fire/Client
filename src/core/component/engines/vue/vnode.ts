@@ -52,5 +52,5 @@ export function renderVNode(vnode: CanArray<VNode>, parent: ComponentInterface):
 	const el = document.createElement('div');
 	vue.$mount(el);
 
-	return Object.isArray(vnode) ? Array.from(vue.$el.children) : vue.$el;
+	return Object.isArray(vnode) ? Array.from(vue.$el.childNodes) : vue.$el;
 }

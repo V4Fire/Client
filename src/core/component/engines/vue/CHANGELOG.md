@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed async rendering with text elements
+
 ## v3.0.0-rc.137 (2021-02-04)
 
 #### :bug: Bug fix
