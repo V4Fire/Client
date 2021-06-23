@@ -36,8 +36,8 @@ export default class bRemoteProvider extends iData {
 	/**
 	 * Link to component content nodes
 	 */
-	get content(): CanPromise<HTMLCollection> {
-		return this.waitStatus('loading', () => this.$el!.children);
+	get content(): CanPromise<Element[]> {
+		return this.waitStatus('loading', () => Array.from(this.$el!.children));
 	}
 
 	/** @override */
