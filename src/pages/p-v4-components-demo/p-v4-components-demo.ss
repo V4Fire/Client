@@ -14,9 +14,6 @@
 	- block body
 		: config = require('config').build
 
-		< .bla v-for = el in asyncRender.iterate(100, 5, {filter: (el) => async.idle()})
-			{{ el }}
-
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo
