@@ -401,34 +401,36 @@ export default class bDynamicPage extends iDynamicPage {
 			wrappedCache = addEmitter<AbstractCache<iDynamicPageEl>>(cache);
 
 		let
-			elMap: WeakMap<iDynamicPageEl, number> = new WeakMap();
-
-		const changeCountInMap = (def: number, delta: number) => ({result}: {result: CanUndef<iDynamicPageEl>}) => {
-			if (result == null) {
-				return;
-			}
-
-			const count = elMap.get(result) ?? def;
-			elMap.set(result, count + delta);
-		};
+			instanceCache: WeakMap<iDynamicPageEl, number> = new WeakMap();
 
 		wrappedCache.subscribe('set', cache, changeCountInMap(0, 1));
 		wrappedCache.subscribe('remove', cache, changeCountInMap(1, -1));
 
 		wrappedCache.subscribe('remove', cache, ({result}) => {
-			if (result && (elMap.get(result) ?? 0) > 0) {
+			if (result == null || (instanceCache.get(result) ?? 0) > 0) {
 				return;
 			}
 
-			result?.component?.unsafe.$destroy();
+			result.component?.unsafe.$destroy();
 		});
 
 		wrappedCache.subscribe('clear', cache, ({result}) => {
 			result.forEach((el) => el.component?.unsafe.$destroy());
-			elMap = new WeakMap();
+			instanceCache = new WeakMap();
 		});
 
 		return cache;
+
+		function changeCountInMap(def: number, delta: number) {
+			return ({result}: {result: CanUndef<iDynamicPageEl>}) => {
+				if (result == null) {
+					return;
+				}
+
+				const count = instanceCache.get(result) ?? def;
+				instanceCache.set(result, count + delta);
+			};
+		}
 	}
 
 	/**
