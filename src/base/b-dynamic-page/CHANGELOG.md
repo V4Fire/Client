@@ -9,12 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-06-??)
+## v3.0.0-rc.204 (2021-06-23)
 
 #### :bug: Bug Fix
 
-* Fixed a bug when deleting the keep alive cache element, in some cases
-  the components that were located in other cache keys were destroyed.
+* Fixed a bug when removing a valid keep-alive element from the cache
 
 ## v3.0.0-rc.193 (2021-05-28)
 

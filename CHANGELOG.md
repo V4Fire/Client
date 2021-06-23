@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.??? (2021-06-??)
+## v3.0.0-rc.204 (2021-06-23)
 
 #### :boom: Breaking Change
 
@@ -22,8 +22,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed async rendering with text elements `core/component/engines/vue/vnode`
-* Fixed a bug when deleting the keep alive cache element, in some cases
-  the components that were located in other cache keys were destroyed.
+* Fixed a bug when removing a valid keep-alive element from the cache `bDynamicPage`
 
 ## v3.0.0-rc.203 (2021-06-21)
 
