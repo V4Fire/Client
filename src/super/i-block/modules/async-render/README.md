@@ -99,12 +99,56 @@ The rest primitive types are cast to a single-element iterator.
 
 ## Additional parameters of iterations
 
-As you have already known,  you can specify a chunk' size to render as the second parameter of `asyncRender.iterate`.
+As you have already known, you can specify a chunk' size to render as the second parameter of `asyncRender.iterate`.
 If the passes value to iterate not a promise or not contains promises as elements, the first chunk can be rendered synchronously.
 Also, the iteration method can take an object with additional parameters to iterate.
+
+### [useRaf = `false`]
+
+If true, then rendered chunks are inserted into DOM on the `requestAnimationFrame` callback.
+It may optimize the process of browser rendering.
+
+### [group]
+
+A group name to manual clearing of pending tasks via `async`.
+Providing this value disables automatically canceling of rendering task on the `update` hook.
+
+```
+/// Iterate over only even values
+< .bla v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
+  {{ el }}
+
+/// Notice that we use RegExp to clear tasks.
+/// Because each group has a group based on a template `asyncComponents:listRendering:${chunkIndex}`.
+< button @click = async.clearAll({group: /:listRendering/})
+  Cancel rendering
+```
+
+### [weight = `1`]
+
+Weight of the one rendering chunk.
+In the one tick can be rendered chunks with accumulated weight no more than 5.
+
+### [filter]
+
+A function to filter elements to iterate. If it returns a promise, the rendering will wait for resolving.
+If the promise' value is equal to `undefined`, it will cast to `true`.
 
 ```
 /// Iterate over only even values
 < .bla v-for = el in asyncRender.iterate(100, 5, {filter: (el) => el % 2 === 0})
   {{ el }}
+
+/// Render each element only after the previous with the specified delay
+< .bla v-for = el in asyncRender.iterate(100, {filter: (el) => async.sleep(100)})
+  {{ el }}
+
+/// Render a chunk on the specified event
+< .bla v-for = el in asyncRender.iterate(100, 20, {filter: (el) => promisifyOnce('renderNextChunk')})
+  {{ el }}
+
+< button @click = emit('renderNextChunk')
+  Render the next chunk
 ```
+
+### [destructor]
