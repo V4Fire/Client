@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :boom: Breaking Change
+
+* Now to iterate objects is used `Object.entries`
+
 ## v3.0.0-rc.194 (2021-05-28)
 
 #### :bug: Bug Fix

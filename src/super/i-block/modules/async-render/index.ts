@@ -493,7 +493,7 @@ export default class AsyncRender extends Friend {
 					return <any>value;
 				}
 
-				return Object.keys(value!);
+				return Object.entries(value!);
 			}
 
 			return [value];

@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-06-??)
 
+#### :boom: Breaking Change
+
+* Now to iterate objects is used `Object.entries` `super/i-block/modules/async-render`
+
 #### :bug: Bug Fix
 
 * Fixed async rendering with text elements `core/component/engines/vue/vnode`
