@@ -22,6 +22,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed async rendering with text elements `core/component/engines/vue/vnode`
+* Fixed a bug when deleting the keep alive cache element, in some cases
+  the components that were located in other cache keys were destroyed.
 
 ## v3.0.0-rc.203 (2021-06-21)
 
