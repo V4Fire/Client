@@ -18,6 +18,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed a bug when a hook listener with the `once` modifier doesn't drop after usage
   if there are no more listeners to the same hook `core/component/hook`
 
+* `super/i-block/modules/async-render`:
+  * Now all operations that are registered by asyncRender use only `async`, but not `$async`
+  * Fixed a bug when rendered chunk are destroyed after creation when passed a custom async group
+
 ## v3.0.0-rc.204 (2021-06-23)
 
 #### :boom: Breaking Change

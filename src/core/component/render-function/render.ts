@@ -169,7 +169,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 						// Function that render a chunk of VNodes
 						const fn = () => {
 							iterable[asyncLabel]((iterable, desc, returnEls) => {
-								ctx.$async.setImmediate(syncFn, {
+								desc.async.setImmediate(syncFn, {
 									group: desc.renderGroup
 								});
 
@@ -188,7 +188,9 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									}
 
 									ctx.hook = 'beforeUpdate';
-									Object.set(ctx, 'renderGroup', desc?.renderGroup);
+
+									// @ts-ignore (readonly)
+									ctx['renderGroup'] = desc?.renderGroup;
 
 									for (let o = forEach(iterable, forEachCb), i = 0; i < o.length; i++) {
 										const
@@ -249,9 +251,8 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 										}
 									}
 
-									// @ts-ignore (access)
+									// @ts-ignore (readonly)
 									ctx['renderGroup'] = undefined;
-									runHook('beforeUpdated', ctx, desc).catch(stderr);
 
 									resolveRefs(ctx);
 									ctx.hook = baseHook;

@@ -33,20 +33,11 @@ export default class AsyncRender extends Friend {
 	constructor(component: any) {
 		super(component);
 
-		this.meta.hooks.beforeUpdate.push({fn: () => {
-			const group = {
+		this.meta.hooks.beforeUpdate.push({
+			fn: () => this.async.clearAll({
 				group: 'asyncComponents'
-			};
-
-			this.async.clearAll(group);
-			this.ctx.$async.clearAll(group);
-		}});
-
-		this.meta.hooks.beforeUpdated.push({fn: (desc: TaskDesc = {}) => {
-			if (desc.destructor) {
-				desc.destructor();
-			}
-		}});
+			})
+		});
 	}
 
 	/**
@@ -251,11 +242,11 @@ export default class AsyncRender extends Friend {
 			let
 				group = 'asyncComponents';
 
-			if (opts.group != null) {
-				group = `asyncComponents:${opts.group}:${chunkI}`;
-			}
-
 			for (let o = newIterator, el = o.next(); !el.done; el = o.next()) {
+				if (opts.group != null) {
+					group = `asyncComponents:${opts.group}:${chunkI}`;
+				}
+
 				let
 					val = el.value;
 
@@ -306,12 +297,9 @@ export default class AsyncRender extends Friend {
 
 					const task = () => {
 						const desc: TaskDesc = {
+							async: $a,
 							renderGroup: group
 						};
-
-						if (opts.group != null) {
-							desc.destructor = () => $a.terminateWorker({group});
-						}
 
 						cb(renderBuffer, desc, (els: Node[]) => {
 							chunkI++;
@@ -369,7 +357,8 @@ export default class AsyncRender extends Friend {
 							res = filter.call(this.ctx, val, i, filterParams);
 
 						if (Object.isPromise(res)) {
-							await $a.promise(res, {group}).then(Object.isTruly.compose(resolveTask));
+							await $a.promise(res, {group}).then((res) =>
+								resolveTask(res === undefined || Object.isTruly(res)));
 
 						} else {
 							const
@@ -390,7 +379,7 @@ export default class AsyncRender extends Friend {
 					}
 
 				} catch (err) {
-					if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+					if (err?.type === 'clearAsync' && err.link.group === group) {
 						break;
 					}
 

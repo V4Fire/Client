@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Async from 'core/async';
+
 export interface TaskI<D = unknown> {
 	iterable: Iterable<D>;
 	i: number;
@@ -83,6 +85,6 @@ export interface TaskParams<EL = unknown, I extends number = number, D = unknown
 }
 
 export interface TaskDesc {
-	renderGroup?: string;
-	destructor?: Function;
+	async: Async<any>;
+	renderGroup: string;
 }
