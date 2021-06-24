@@ -130,16 +130,16 @@ export function parseVNodeAsFlyweight(
 		value: componentData.attrs
 	});
 
-	Object.defineProperty(fakeCtx, '$data', {
-		configurable: true,
-		enumerable: true,
-		value: {}
-	});
-
 	Object.defineProperty(fakeCtx, '$systemFields', {
 		configurable: true,
 		enumerable: true,
 		writable: true,
+		value: fakeCtx
+	});
+
+	Object.defineProperty(fakeCtx, '$data', {
+		configurable: true,
+		enumerable: true,
 		value: {}
 	});
 
