@@ -16,6 +16,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed applying of form converters `bForm`
+* Fixed initializing of system fields `core/component/flyweight`
+
 * Fixed a bug when a hook listener with the `once` modifier doesn't drop after usage
   if there are no more listeners to the same hook `core/component/hook`
 

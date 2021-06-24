@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed initializing of system fields
+
 ## v3.0.0-rc.146 (2021-02-15)
 
 #### :bug: Bug Fix
