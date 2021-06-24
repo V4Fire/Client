@@ -65,5 +65,5 @@ Icon
 /db
 
 # NPM ignore list
-/.docs
+/docs
 /.github
