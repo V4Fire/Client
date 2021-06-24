@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Now converter functions `dbConverter`, `componentConverter`, `formConverter`, `formValueConverter` take a context
-  as the seconds argument
+  as the second argument
 
 #### :bug: Bug Fix
 
