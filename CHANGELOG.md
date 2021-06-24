@@ -23,6 +23,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Now all operations that are registered by asyncRender use only `async`, but not `$async`
   * Fixed a bug when rendered chunk are destroyed after creation when passed a custom async group
 
+#### :house: Internal
+
+* Moved form data converting to `core/request` `bForm`
+
 ## v3.0.0-rc.204 (2021-06-23)
 
 #### :boom: Breaking Change

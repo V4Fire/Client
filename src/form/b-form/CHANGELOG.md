@@ -15,6 +15,10 @@ Changelog
 
 * Fixed applying of form converters
 
+#### :house: Internal
+
+* Moved form data converting to `core/request`
+
 ## v3.0.0-rc.203 (2021-06-21)
 
 #### :bug: Bug Fix

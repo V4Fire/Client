@@ -372,7 +372,9 @@ export default class bForm extends iData implements iVisible {
 		await this.toggleControls(true);
 
 		const
-			validation = await this.validate({focusOnError: true}),
+			validation = await this.validate({focusOnError: true});
+
+		const
 			toSubmit = Object.isArray(validation) ? validation : [];
 
 		const submitCtx = {
@@ -392,36 +394,7 @@ export default class bForm extends iData implements iVisible {
 			}
 
 		} else {
-			let
-				body: Dictionary | FormData = await this.getValues(toSubmit);
-
-			const isMultipart = toSubmit.some((el) => {
-				const val = body[el.name ?? ''];
-				return val instanceof Blob || val instanceof File || val instanceof FileList;
-			});
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (isMultipart) {
-				const
-					form = new FormData();
-
-				for (let keys = Object.keys(body), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						val = body[key];
-
-					if (val instanceof Blob) {
-						form.append(key, val, `blob.${val.type.split('/')[1]}`);
-
-					} else {
-						form.append(key, <any>val);
-					}
-				}
-
-				body = form;
-				this.params.responseType = 'text';
-			}
-
+			const body = await this.getValues(toSubmit);
 			this.emit('submitStart', body, submitCtx);
 
 			try {
