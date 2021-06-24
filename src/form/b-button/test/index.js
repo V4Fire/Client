@@ -12,119 +12,128 @@
  * @typedef {import('playwright').Page} Page
  */
 
+const
+	h = include('tests/helpers');
+
 /** @param {Page} page */
 module.exports = (page) => {
 	describe('b-button', () => {
-		beforeAll(async () => {
-			await page.evaluate(() => {
-				globalThis.removeCreatedComponents();
+		let
+			buttonNode,
+			buttonCtx;
 
+		const renderButton = async (props = {}) => {
+			await page.evaluate(() => {
 				const scheme = [
 					{
 						attrs: {
-							id: 'target'
+							id: 'target',
+							...props
 						}
 					}
 				];
 
 				globalThis.renderComponents('b-button', scheme);
 			});
-		});
 
-		it('getting a component instance from a DOM node', async () => {
-			const
-				component = await (await page.$('.b-button')).getProperty('component'),
-				componentName = await component.getProperty('componentName');
+			buttonNode = await page.waitForSelector('#target');
+			buttonCtx = await h.component.getComponentById(page, 'target');
+		};
 
-			expect(await componentName.jsonValue()).toBe('b-button');
+		beforeEach(async () => {
+			await page.evaluate(() => {
+				globalThis.removeCreatedComponents();
+			});
 		});
 
 		describe('buttonType', () => {
-			it('file', async () => {
+			xit('file', async () => {
 				// ...
 			});
 
-			it('submit', async () => {
+			xit('submit', async () => {
 				// ...
 			});
 
-			it('link', async () => {
+			xit('link', async () => {
 				// ...
 			});
 		});
 
 		describe('accept', () => {
-			it('.txt', async () => {
+			xit('.txt', async () => {
 				// ...
 			});
 		});
 
 		describe('href', () => {
 			it('https://someurl.com', async () => {
-				// ...
+				await renderButton({
+					href: 'https://someurl.com'
+				});
 			});
 		});
 
 		describe('autofocus', () => {
-			it('true', async () => {
+			xit('true', async () => {
 				// ...
 			});
 		});
 
 		describe('tabIndex', () => {
-			it('-1', async () => {
+			xit('-1', async () => {
 				// ...
 			});
 
-			it('1', async () => {
+			xit('1', async () => {
 				// ...
 			});
 		});
 
 		describe('preIcon', () => {
-			it('dropdown', async () => {
+			xit('dropdown', async () => {
 				// ...
 			});
 		});
 
 		describe('preIconComponent', () => {
-			it('b-icon', async () => {
+			xit('b-icon', async () => {
 				// ...
 			});
 		});
 
 		describe('hint', () => {
-			it('not shown if the cursor is not hovering', async () => {
+			xit('not shown if the cursor is not hovering', async () => {
 				// ...
 			});
 
-			it('shown if the cursor is hovering', async () => {
+			xit('shown if the cursor is hovering', async () => {
 				// ...
 			});
 		});
 
 		describe('isFocused', () => {
-			it('true if the button is focused', async () => {
+			xit('true if the button is focused', async () => {
 				// ...
 			});
 
-			it('false if the button is not focused', async () => {
+			xit('false if the button is not focused', async () => {
 				// ...
 			});
 		});
 
 		describe('click event', () => {
-			it('emits on click', async () => {
+			xit('emits on click', async () => {
 				// ...
 			});
 
-			it('does not emit an event without click', async () => {
+			xit('does not emit an event without click', async () => {
 				// ...
 			});
 		});
 
 		describe('change event', () => {
-			it('emits on file change', async () => {
+			xit('emits on file change', async () => {
 				// ...
 			});
 		});
