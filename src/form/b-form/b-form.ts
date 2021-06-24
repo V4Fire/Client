@@ -392,23 +392,13 @@ export default class bForm extends iData implements iVisible {
 			}
 
 		} else {
-			const checkMultipart = (val) =>
-				val instanceof Blob || val instanceof File || val instanceof FileList;
-
 			let
-				body: Dictionary | FormData = await this.getValues(toSubmit),
-				isMultipart = false;
+				body: Dictionary | FormData = await this.getValues(toSubmit);
 
-			for (let i = 0; i < toSubmit.length; i++) {
-				const
-					el = toSubmit[i],
-					val = body[el.name ?? ''];
-
-				if (Object.isArray(val) ? val.some(checkMultipart) : checkMultipart(val)) {
-					isMultipart = true;
-					break;
-				}
-			}
+			const isMultipart = toSubmit.some((el) => {
+				const val = body[el.name ?? ''];
+				return val instanceof Blob || val instanceof File || val instanceof FileList;
+			});
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (isMultipart) {
