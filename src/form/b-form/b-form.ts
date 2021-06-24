@@ -32,8 +32,8 @@ import type bButton from 'form/b-button/b-button';
 import iData, {
 
 	component,
-	field,
 	prop,
+	system,
 	wait,
 
 	ModelMethod,
@@ -158,7 +158,7 @@ export default class bForm extends iData implements iVisible {
 	 * @see [[bForm.paramsProp]]
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))
+	@system<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))
 	params!: CreateRequestOptions;
 
 	/** @inheritDoc */
