@@ -84,8 +84,7 @@ exports.createFormAndEnvironment = async (page, attrs = {}) => {
 							name: 'user',
 							value: 2,
 							default: 5,
-							form: 'my-form',
-							formConverter
+							form: 'my-form'
 						}
 					}
 				}

@@ -313,8 +313,11 @@ export default class bForm extends iData implements iVisible {
 
 			const needValidate =
 				elName == null ||
+
 				!this.cache || !el.cache ||
-				!Object.fastCompare(this.tmp[elName], values[elName] ?? (values[elName] = await el.groupFormValue));
+				!this.tmp.hasOwnProperty(elName) ||
+
+				!Object.fastCompare(this.tmp[elName], values[elName] ?? (values[elName] = await this.getElValueToSubmit(el)));
 
 			if (needValidate) {
 				const
@@ -336,15 +339,6 @@ export default class bForm extends iData implements iVisible {
 				if (Object.isTruly(el.name)) {
 					toSubmit.push(el);
 				}
-			}
-		}
-
-		for (let i = 0; i < toSubmit.length; i++) {
-			const
-				{name} = toSubmit[i];
-
-			if (name != null) {
-				this.field.set(`tmp.${name}`, values[name]);
 			}
 		}
 
@@ -398,39 +392,23 @@ export default class bForm extends iData implements iVisible {
 			}
 
 		} else {
-			let
-				body = {},
-				isMultipart = false;
+			const checkMultipart = (val) =>
+				val instanceof Blob || val instanceof File || val instanceof FileList;
 
-			const
-				tasks = <Array<Promise<unknown>>>[];
+			let
+				body: Dictionary | FormData = await this.getValues(toSubmit),
+				isMultipart = false;
 
 			for (let i = 0; i < toSubmit.length; i++) {
 				const
 					el = toSubmit[i],
-					key = el.name ?? '';
+					val = body[el.name ?? ''];
 
-				if (body.hasOwnProperty(key)) {
-					continue;
+				if (Object.isArray(val) ? val.some(checkMultipart) : checkMultipart(val)) {
+					isMultipart = true;
+					break;
 				}
-
-				tasks.push((async () => {
-					const
-						val = await this.getElValueToSubmit(el);
-
-					if (val === undefined) {
-						return;
-					}
-
-					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
-						isMultipart = true;
-					}
-
-					body[key] = val;
-				})());
 			}
-
-			await Promise.all(tasks);
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (isMultipart) {
@@ -440,13 +418,13 @@ export default class bForm extends iData implements iVisible {
 				for (let keys = Object.keys(body), i = 0; i < keys.length; i++) {
 					const
 						key = keys[i],
-						el = body[key];
+						val = body[key];
 
-					if (el instanceof Blob) {
-						form.append(key, el, `blob.${el.type.split('/')[1]}`);
+					if (val instanceof Blob) {
+						form.append(key, val, `blob.${val.type.split('/')[1]}`);
 
 					} else {
-						form.append(key, el);
+						form.append(key, <any>val);
 					}
 				}
 
@@ -461,14 +439,8 @@ export default class bForm extends iData implements iVisible {
 					formResponse = await this.action(body, submitCtx);
 
 				} else {
-					let
-						that = this;
-
-					if (this.action != null) {
-						that = this.base(this.action);
-					}
-
-					formResponse = await (<Function>that[this.method])(body, this.params);
+					const providerCtx = this.action != null ? this.base(this.action) : this;
+					formResponse = await (<Function>providerCtx[this.method])(body, this.params);
 				}
 
 				Object.assign(this.tmp, body);
@@ -523,35 +495,45 @@ export default class bForm extends iData implements iVisible {
 	 * Returns values of the associated components grouped by names
 	 * @param [validate] - if true, the method returns values only when the data is valid
 	 */
-	async getValues(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
-		const
-			els = validate ? await this.validate(validate) : await this.elements;
+	async getValues(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>>;
+
+	/**
+	 * Returns values of the specified iInput components grouped by names
+	 * @param elements
+	 */
+	async getValues(elements: iInput[]): Promise<Dictionary<CanArray<FormValue>>>;
+	async getValues(validateOrElements?: ValidateOptions | iInput[]): Promise<Dictionary<CanArray<FormValue>>> {
+		let
+			els;
+
+		if (Object.isArray(validateOrElements)) {
+			els = validateOrElements;
+
+		} else {
+			els = Object.isTruly(validateOrElements) ? await this.validate(validateOrElements) : await this.elements;
+		}
 
 		if (Object.isArray(els)) {
 			const
-				body = {},
-				tasks = <Array<Promise<unknown>>>[];
+				body = {};
 
 			for (let i = 0; i < els.length; i++) {
 				const
 					el = <iInput>els[i],
-					key = el.name ?? '';
+					elName = el.name ?? '';
 
-				if (body.hasOwnProperty(key)) {
+				if (elName === '' || body.hasOwnProperty(elName)) {
 					continue;
 				}
 
-				tasks.push((async () => {
-					const
-						val = await this.getElValueToSubmit(el);
+				const
+					val = await this.getElValueToSubmit(el);
 
-					if (val !== undefined) {
-						body[key] = val;
-					}
-				})());
+				if (val !== undefined) {
+					body[elName] = val;
+				}
 			}
 
-			await Promise.all(tasks);
 			return body;
 		}
 
