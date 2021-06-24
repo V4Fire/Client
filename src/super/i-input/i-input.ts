@@ -32,7 +32,9 @@ import iData, {
 
 	ModsDecl,
 	ModEvent,
-	UnsafeGetter
+	UnsafeGetter,
+
+	ComponentConverter
 
 } from 'super/i-data/i-data';
 
@@ -220,7 +222,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @see [[iInput.formValue]]
 	 */
 	@prop({type: Function, required: false})
-	readonly formValueConverter?: CanArray<Function>;
+	readonly formValueConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
 	 * Converter/s that is/are used by the associated form.
@@ -244,7 +246,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 */
 	@prop({type: [Function, Array], required: false})
-	readonly formConverter?: CanArray<Function> = unpackIf;
+	readonly formConverter?: CanArray<ComponentConverter<any>> = unpackIf;
 
 	/**
 	 * If false, then a component value isn't cached by the associated form.
@@ -415,7 +417,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 					for (let i = 0; i < converters.length; i++) {
 						const
-							validation = converters[i].call(this, res);
+							validation = converters[i].call(this, res, this);
 
 						if (validation instanceof Option) {
 							res = await validation.catch(() => undefined);

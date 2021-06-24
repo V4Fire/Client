@@ -56,8 +56,8 @@ export interface RetryRequestFn<T = unknown> {
 	(): Promise<CanUndef<T>>;
 }
 
-export interface ComponentConverter<T = unknown> {
-	(value: unknown): T;
+export interface ComponentConverter<T = unknown, CTX extends iData = iData> {
+	(value: unknown, ctx: CTX): T;
 }
 
 export interface CheckDBEqualityFn<T = unknown> {

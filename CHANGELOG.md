@@ -13,6 +13,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-06-??)
 
+#### :rocket: New Feature
+
+* Now converter functions `dbConverter`, `componentConverter`, `formConverter`, `formValueConverter` take a context
+  as the seconds argument
+
 #### :bug: Bug Fix
 
 * Fixed applying of form converters `bForm`

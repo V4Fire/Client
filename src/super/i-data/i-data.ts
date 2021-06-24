@@ -728,7 +728,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
 
 				for (let i = 0; i < converters.length; i++) {
-					val = converters[i].call(this, val);
+					val = converters[i].call(this, val, this);
 				}
 			}
 		}
@@ -763,7 +763,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
 
 				for (let i = 0; i < converters.length; i++) {
-					val = converters[i].call(this, val);
+					val = converters[i].call(this, val, this);
 				}
 			}
 		}

@@ -530,7 +530,7 @@ export default class bForm extends iData implements iVisible {
 
 			for (let i = 0; i < converters.length; i++) {
 				const
-					validation = converters[i].call(this, val);
+					validation = converters[i].call(this, val, this);
 
 				if (validation instanceof Option) {
 					val = await validation.catch(() => undefined);
