@@ -140,14 +140,17 @@ export function parseVNodeAsFlyweight(
 	Object.defineProperty(fakeCtx, '$data', {
 		configurable: true,
 		enumerable: true,
-		value: {}
+		get(): typeof fakeCtx {
+			deprecate({name: '$$data', type: 'property', renamedTo: '$fields'});
+			return fakeCtx;
+		}
 	});
 
 	Object.defineProperty(fakeCtx, '$fields', {
 		configurable: true,
 		enumerable: true,
 		writable: true,
-		value: fakeCtx.$data
+		value: fakeCtx
 	});
 
 	Object.defineProperty(fakeCtx, '$slots', {
@@ -191,17 +194,7 @@ export function parseVNodeAsFlyweight(
 	attachAccessorsFromMeta(fakeCtx);
 
 	initFields(meta.systemFields, fakeCtx, fakeCtx);
-	fakeCtx.$systemFields = fakeCtx;
-
 	initFields(meta.fields, fakeCtx, fakeCtx);
-	fakeCtx.$fields = fakeCtx;
-
-	Object.defineProperty(fakeCtx, '$$data', {
-		get(): typeof fakeCtx {
-			deprecate({name: '$$data', type: 'property', renamedTo: '$fields'});
-			return fakeCtx;
-		}
-	});
 
 	fakeCtx.onCreatedHook();
 

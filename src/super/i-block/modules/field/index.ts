@@ -99,7 +99,7 @@ export default class Field extends Friend {
 			if (info.accessor != null) {
 				chunks[0] = info.accessor;
 
-			} else {
+			} else if (!ctx.isFlyweight) {
 				switch (info.type) {
 					case 'prop':
 						if (ctx.lfc.isBeforeCreate('beforeDataCreate')) {
@@ -201,7 +201,7 @@ export default class Field extends Friend {
 
 		let
 			sync,
-			needSet = isComponent;
+			needSetToWatch = isComponent;
 
 		let
 			ref = obj,
@@ -217,8 +217,11 @@ export default class Field extends Friend {
 			chunks = info.path.split('.');
 
 			if (info.accessor != null) {
-				needSet = false;
+				needSetToWatch = false;
 				chunks[0] = info.accessor;
+
+			} else if (ctx.isFlyweight) {
+				needSetToWatch = false;
 
 			} else {
 				const
@@ -231,12 +234,12 @@ export default class Field extends Friend {
 				if (isSystem || isField) {
 					// If property not already watched, don't force the creation of a proxy
 					// eslint-disable-next-line @typescript-eslint/unbound-method
-					needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+					needSetToWatch = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
 
 					if (isSystem) {
 						// If a component already initialized watchers of system fields,
 						// we have to set these properties directly to the proxy object
-						if (needSet) {
+						if (needSetToWatch) {
 							ref = ctx.$systemFields;
 
 						// Otherwise, we have to synchronize these properties between the proxy object and component instance
@@ -286,7 +289,7 @@ export default class Field extends Friend {
 			if (newRef == null || typeof newRef !== 'object') {
 				newRef = isNaN(Number(chunks[i + 1])) ? {} : [];
 
-				if (needSet) {
+				if (needSetToWatch) {
 					ctx.$set(ref, prop, newRef);
 
 				} else {
@@ -297,7 +300,7 @@ export default class Field extends Friend {
 			ref = Object.get<any>(ref, [prop]);
 		}
 
-		if (!needSet || !Object.isArray(ref) && Object.has(ref, [prop])) {
+		if (!needSetToWatch || !Object.isArray(ref) && Object.has(ref, [prop])) {
 			Object.set(ref, [prop], value);
 
 		} else {
@@ -368,7 +371,7 @@ export default class Field extends Friend {
 
 		let
 			sync,
-			needSet = isComponent;
+			needDeleteToWatch = isComponent;
 
 		let
 			ref = obj,
@@ -388,15 +391,18 @@ export default class Field extends Friend {
 			chunks = info.path.split('.');
 			chunks[0] = info.name;
 
-			if (isSystem || isField) {
+			if (ctx.isFlyweight) {
+				needDeleteToWatch = false;
+
+			} else if (isSystem || isField) {
 				// If property not already watched, don't force the creation of a proxy
 				// eslint-disable-next-line @typescript-eslint/unbound-method
-				needSet = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+				needDeleteToWatch = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
 
 				if (isSystem) {
 					// If a component already initialized watchers of system fields,
 					// we have to set these properties directly to the proxy object
-					if (needSet) {
+					if (needDeleteToWatch) {
 						ref = ctx.$systemFields;
 
 					// Otherwise, we have to synchronize these properties between the proxy object and component instance
@@ -408,13 +414,9 @@ export default class Field extends Friend {
 				} else {
 					ref = ctx.$fields;
 
-					const needSync =
-						(ctx.isFlyweight || ctx.isFunctional) &&
-						unwrap(ref) === ref;
-
 					// If a component doesn't already initialize watchers of fields,
 					// we have to synchronize these properties between the proxy object and component instance
-					if (needSync) {
+					if (ctx.isFunctional && unwrap(ref) === ref) {
 						const name = chunks[0];
 						sync = () => Object.delete(ctx, [name]);
 					}
@@ -448,7 +450,7 @@ export default class Field extends Friend {
 		}
 
 		if (needDelete) {
-			if (needSet) {
+			if (needDeleteToWatch) {
 				ctx.$delete(ref, prop);
 
 			} else {
