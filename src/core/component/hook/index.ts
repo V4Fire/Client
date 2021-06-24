@@ -27,11 +27,7 @@ const
  * @param args - hook arguments
  */
 export function runHook(hook: Hook, component: ComponentInterface, ...args: unknown[]): Promise<void> {
-	const {
-		unsafe,
-		unsafe: {meta}
-	} = component;
-
+	const {unsafe, unsafe: {meta}} = component;
 	unsafe.hook = hook;
 
 	let
@@ -43,73 +39,81 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		}
 
 		const
-			tmp = <ComponentHook[]>[];
+			functionalHooks = <ComponentHook[]>[];
 
 		for (let i = 0; i < hooks.length; i++) {
 			const
 				el = hooks[i];
 
 			if (el.functional !== false) {
-				tmp.push(el);
+				functionalHooks.push(el);
 			}
 		}
 
-		if (tmp.length !== hooks.length) {
-			hooks = tmp;
+		if (functionalHooks.length !== hooks.length) {
+			hooks = functionalHooks;
 		}
 	}
 
-	if (hooks.length === 0) {
-		return resolvedPromise;
-	}
+	switch (hooks.length) {
+		case 0:
+			break;
 
-	if (hooks.length > 1) {
-		const
-			emitter = new QueueEmitter(),
-			filteredHooks = <ComponentHook[]>[];
-
-		for (let i = 0; i < hooks.length; i++) {
+		case 1: {
 			const
-				hook = hooks[i],
-				nm = hook.name;
+				hook = hooks[0],
+				res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
-			if (!hook.once) {
-				filteredHooks.push(hook);
+			if (hook.once) {
+				hooks.splice(0, 1);
 			}
 
-			emitter.on(hook.after, () => {
-				const
-					res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+			if (Object.isPromise(res)) {
+				return <any>res;
+			}
 
-				if (Object.isPromise(res)) {
-					return res.then(() => nm != null ? emitter.emit(nm) : undefined);
-				}
-
-				const
-					tasks = nm != null ? emitter.emit(nm) : null;
-
-				if (tasks != null) {
-					return tasks;
-				}
-			});
+			break;
 		}
 
-		meta.hooks[hook] = filteredHooks;
+		default: {
+			const
+				emitter = new QueueEmitter(),
+				filteredHooks = <ComponentHook[]>[];
 
-		const
-			tasks = emitter.drain();
+			for (let i = 0; i < hooks.length; i++) {
+				const
+					hook = hooks[i],
+					nm = hook.name;
 
-		if (Object.isPromise(tasks)) {
-			return tasks;
-		}
+				if (!hook.once) {
+					filteredHooks.push(hook);
+				}
 
-	} else {
-		const
-			hook = hooks[0],
-			res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
+				emitter.on(hook.after, () => {
+					const
+						res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
-		if (Object.isPromise(res)) {
-			return <any>res;
+					if (Object.isPromise(res)) {
+						return res.then(() => nm != null ? emitter.emit(nm) : undefined);
+					}
+
+					const
+						tasks = nm != null ? emitter.emit(nm) : null;
+
+					if (tasks != null) {
+						return tasks;
+					}
+				});
+			}
+
+			meta.hooks[hook] = filteredHooks;
+
+			const
+				tasks = emitter.drain();
+
+			if (Object.isPromise(tasks)) {
+				return tasks;
+			}
 		}
 	}
 

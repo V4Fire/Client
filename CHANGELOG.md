@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when a hook listener with the `once` modifier doesn't drop after usage
+  if there are no more listeners to the same hook `core/component/hook`
+
 ## v3.0.0-rc.204 (2021-06-23)
 
 #### :boom: Breaking Change
