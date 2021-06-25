@@ -65,7 +65,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 				res = args.length > 0 ? hook.fn.apply(component, args) : hook.fn.call(component);
 
 			if (hook.once) {
-				hooks.splice(0, 1);
+				hooks.pop();
 			}
 
 			if (Object.isPromise(res)) {
