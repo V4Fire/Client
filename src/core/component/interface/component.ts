@@ -453,6 +453,26 @@ export abstract class ComponentInterface {
 	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
 
 	/**
+	 * Activates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it's automatically synchronized with `keep-alive` or the special input property.
+	 *
+	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
+	 */
+	activate(force?: boolean): void {}
+
+	/**
+	 * Deactivates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it's automatically synchronized with `keep-alive` or the special input property.
+	 */
+	deactivate(): void {}
+
+	/**
 	 * Forces the component to re-render
 	 */
 	$forceUpdate(): void {}
