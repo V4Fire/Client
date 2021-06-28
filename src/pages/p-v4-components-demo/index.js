@@ -12,8 +12,6 @@ const
 package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
-		'b-dummy',
-
 		'b-v4-component-demo',
 		'p-v4-dynamic-page-1',
 		'p-v4-dynamic-page-2',
@@ -46,6 +44,7 @@ package('p-v4-components-demo')
 
 		'b-dummy',
 		'b-dummy-text',
+		'b-dummy-async-render',
 
 		components
 	);

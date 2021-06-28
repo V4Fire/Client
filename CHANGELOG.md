@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.207 (2021-06-28)
+
+#### :rocket: New Feature
+
+* Initial release `bDummyAsyncRender`
+
+#### :bug: Bug Fix
+
+* Fixed emitting of `asyncRenderComplete` `super/i-block/modules/async-render`
+
 ## v3.0.0-rc.206 (2021-06-28)
 
 #### :rocket: New Feature

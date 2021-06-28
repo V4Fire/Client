@@ -1,5 +1,5 @@
 {
-  "hash": "f9e33ade8ec01e381aa52c320d31de5433f6d9fdad2d9f1386bbccaa02d1832d",
+  "hash": "fe7e842cf6a3388e735c46d31e2dec5bc9a3dbb51dc0898076f1cf0e666b7b9f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -206,6 +206,38 @@
             "src/dummies/b-dummy/b-dummy.styl"
           ],
           "tpl": "src/dummies/b-dummy/b-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-async-render",
+        {
+          "index": "src/dummies/b-dummy-async-render/index.js",
+          "declaration": {
+            "name": "b-dummy-async-render",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-async-render",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-async-render/b-dummy-async-render.ts",
+          "styles": [
+            "src/dummies/b-dummy-async-render/b-dummy-async-render.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-async-render/b-dummy-async-render.ss",
           "etpl": null
         }
       ],
@@ -1749,7 +1781,6 @@
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
             "dependencies": [
-              "b-dummy",
               "b-v4-component-demo",
               "p-v4-dynamic-page-1",
               "p-v4-dynamic-page-2",
@@ -1773,14 +1804,15 @@
               "b-slider",
               "b-icon",
               "b-image",
-              "b-dummy-text"
+              "b-dummy",
+              "b-dummy-text",
+              "b-dummy-async-render"
             ],
             "libs": []
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
           "dependencies": [
-            "b-dummy",
             "b-v4-component-demo",
             "p-v4-dynamic-page-1",
             "p-v4-dynamic-page-2",
@@ -1804,7 +1836,9 @@
             "b-slider",
             "b-icon",
             "b-image",
-            "b-dummy-text"
+            "b-dummy",
+            "b-dummy-text",
+            "b-dummy-async-render"
           ],
           "libs": [],
           "resolvedLibs": {
