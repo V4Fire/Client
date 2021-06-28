@@ -17,7 +17,7 @@ import { deprecate } from 'core/functools/deprecation';
 export * from '@v4fire/core/core/event';
 
 /**
- * Returns a promise that will be resolved after the DOMContentLoaded event
+ * Returns a promise that will be resolved after the `DOMContentLoaded` event
  */
 export function resolveAfterDOMLoaded(): SyncPromise<void> {
 	return new SyncPromise((resolve) => {
