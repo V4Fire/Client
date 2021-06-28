@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a bug when `isActivated` returns `undefined` `iBlock`
+* Fixed a bug when async rendered components don't call their destructors after removing from DOM `super/i-block/modules/async-render`
 
 ## v3.0.0-rc.205 (2021-06-24)
 

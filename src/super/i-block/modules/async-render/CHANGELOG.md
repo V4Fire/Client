@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when async rendered components don't call their destructors after removing from DOM
+
 ## v3.0.0-rc.205 (2021-06-24)
 
 #### :bug: Bug Fix
