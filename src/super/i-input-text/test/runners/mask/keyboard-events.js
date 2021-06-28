@@ -13,7 +13,7 @@
  */
 
 const
-	{initInput} = include('src/dummies/b-dummy-text/test/helpers');
+	{initInput} = include('src/super/i-input-text/test/helpers');
 
 /** @param {Page} page */
 module.exports = (page) => {
@@ -23,7 +23,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-dummy-text masked input by using keyboard events', () => {
+	describe('i-input-text masked input by using keyboard events', () => {
 		it('typing a text with the static mask', async () => {
 			const target = await initInput(page, {
 				mask: '%d🧑‍🤝‍🧑%d'

@@ -13,14 +13,13 @@ module.exports = [
 	'--test-entry form/b-button/test',
 	'--test-entry form/b-checkbox/test',
 	'--test-entry form/b-radio-button/test',
-	'--test-entry dummies/b-dummy-text/test',
+	'--test-entry super/i-input-text/test',
 	'--test-entry form/b-input-hidden/test',
 	'--test-entry form/b-input/test',
 	'--test-entry form/b-textarea/test',
 
 	'--test-entry base/b-router/test',
 	'--test-entry base/b-virtual-scroll/test',
-	'--test-entry dummies/b-dummy-async-render/test',
 
 	'--test-entry base/b-tree/test',
 	'--test-entry base/b-list/test',
@@ -34,6 +33,7 @@ module.exports = [
 
 	'--test-entry super/i-block/test',
 	'--test-entry super/i-block/modules/field/test',
+	'--test-entry super/i-block/modules/async-render/test',
 	'--test-entry super/i-block/modules/activation/test',
 	'--test-entry super/i-block/modules/daemons/test',
 

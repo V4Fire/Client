@@ -13,7 +13,7 @@
  */
 
 const
-	{initInput} = include('src/dummies/b-dummy-text/test/helpers');
+	{initInput} = include('src/super/i-input-text/test/helpers');
 
 /** @param {Page} page */
 module.exports = (page) => {
@@ -23,7 +23,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-dummy-text masked input simple usage', () => {
+	describe('i-input-text masked input simple usage', () => {
 		it('applying a mask without providing of the text value', async () => {
 			const target = await initInput(page, {
 				mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
