@@ -670,8 +670,10 @@ export default abstract class iBlock extends ComponentInterface {
 		});
 
 		return o.sync.link('activatedProp', (val: CanUndef<boolean>) => {
+			val = val !== false;
+
 			if (o.hook !== 'beforeDataCreate') {
-				o[val !== false ? 'activate' : 'deactivate']();
+				o[val ? 'activate' : 'deactivate']();
 			}
 
 			return val;

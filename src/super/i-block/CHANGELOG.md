@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when `isActivated` returns `undefined`
+
 ## v3.0.0-rc.203 (2021-06-21)
 
 #### :boom: Breaking Change
