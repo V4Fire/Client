@@ -21,7 +21,7 @@ export * from 'core/component/field/const';
  * Initializes the specified fields to a component instance.
  * The function returns an object with initialized fields.
  *
- * This method has some "copy-paste" chunks, but it's done for better performance, because it's a very "hot" function.
+ * This method has some "copy-paste" chunks, but it's done for better performance because it's a very "hot" function.
  * Mind that the initialization of fields is a synchronous operation.
  *
  * @param fields - component fields or system fields
@@ -45,7 +45,7 @@ export function initFields(
 		isNotRegular = params.functional === true || isFlyweight;
 
 	const
-		// Map of fields that we should skip, i.e., not to initialize.
+		// A map of fields that we should skip, i.e., not to initialize.
 		// For instance, some properties don't initialize if a component is a functional.
 		canSkip = Object.createDict(),
 
@@ -65,7 +65,7 @@ export function initFields(
 
 	// At first, we should initialize all atoms, but some atoms wait for other atoms.
 	// That's why we sort the source list of fields and organize a simple synchronous queue.
-	// All atoms that waits for other atoms are added to `atomList`.
+	// All atoms that wait for other atoms are added to `atomList`.
 	// All non-atoms are added to `nonAtomList`.
 	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
@@ -93,7 +93,7 @@ export function initFields(
 			el == null ||
 			sourceVal !== undefined ||
 
-			// Don't initialize a property for a functional component unless explicitly required
+			// Don't initialize a property for the functional component unless explicitly required
 			!ssrMode && isNotRegular && el.functional === false ||
 
 			el.init == null && el.default === undefined && instance[key] === undefined;
