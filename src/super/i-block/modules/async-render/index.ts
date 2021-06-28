@@ -139,7 +139,7 @@ export default class AsyncRender extends Friend {
 
 		if (Object.isPlainObject(sliceOrOpts)) {
 			opts = sliceOrOpts;
-			sliceOrOpts = 1;
+			sliceOrOpts = [];
 		}
 
 		const
@@ -149,16 +149,19 @@ export default class AsyncRender extends Friend {
 			iterable = getIterable(value);
 
 		let
-			startPos = 0,
+			startPos,
 			perChunk;
 
 		if (Object.isArray(sliceOrOpts)) {
-			startPos = sliceOrOpts[0] ?? startPos;
+			startPos = sliceOrOpts[0];
 			perChunk = sliceOrOpts[1];
 
 		} else {
 			perChunk = sliceOrOpts;
 		}
+
+		startPos ??= 0;
+		perChunk ??= 1;
 
 		const
 			firstRender = <unknown[]>[],

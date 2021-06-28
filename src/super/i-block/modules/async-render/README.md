@@ -18,7 +18,16 @@ This method should be used with the `v-for` directive.
 
 As we see in the example, `iterate` splits iteration into separated chunks.
 Basically, the first chunk is rendered immediate, but the rest - asynchronously.
-The chunk' size can be defined with the second parameter of the iteration method (by default, the chunk size is equal to one).
+
+Using the second parameter, we can manage how many items should be contained per one render chunk (by default, the chunk size is equal to one).
+Also, it is possible to skip a number of elements from the start. To do it, provide the second parameter as a tuple,
+where the first parameter is a number to skip, the second one is a render chunk' size.
+
+```
+/// Skip the first fifteen elements and render by three elements per chunk
+< .bla v-for = el in asyncRender.iterate(myData, [15, 3])
+  {{ el }}
+```
 
 The parameter to iterate can be defined as any valid iterable JavaScript value, like arrays, maps, or sets.
 
@@ -96,6 +105,13 @@ The rest primitive types are cast to a single-element iterator.
 < .bla v-for = el in asyncRender.iterate(Symbol('foo'))
   {{ el }}
 ```
+
+## Events
+
+| EventName                  | Description                                              | Payload description | Payload                 |
+| -------------------------- | -------------------------------------------------------- | ------------------- | ----------------------- |
+| `asyncRenderChunkComplete` | One async chunk has been rendered                        | Task description    | `TaskParams & TaskDesc` |
+| `asyncRenderComplete`      | All async chunks from one render task have been rendered | Task description    | `TaskParams & TaskDesc` |
 
 ## Additional parameters of iterations
 
