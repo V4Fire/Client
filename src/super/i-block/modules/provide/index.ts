@@ -51,7 +51,7 @@ export default class Provide extends Friend {
 			componentName = undefined;
 		}
 
-		componentName = componentName ?? this.componentName;
+		componentName ??= this.componentName;
 		return Block.prototype.getFullBlockName.call({componentName}, modName, modValue);
 	}
 
@@ -195,7 +195,7 @@ export default class Provide extends Friend {
 			classes = nameOrClasses;
 		}
 
-		classes = classes ?? {};
+		classes ??= {};
 
 		const
 			key = JSON.stringify(classes) + componentName,
@@ -284,7 +284,7 @@ export default class Provide extends Friend {
 			componentName = nameOrMods;
 		}
 
-		mods = mods ?? {};
+		mods ??= {};
 
 		const
 			key = JSON.stringify(mods) + componentName,

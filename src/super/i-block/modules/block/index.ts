@@ -196,7 +196,7 @@ export default class Block extends Friend {
 			ctx = ctxOrName;
 		}
 
-		ctx = ctx ?? this.node;
+		ctx ??= this.node;
 
 		if (ctx == null) {
 			return fakeCtx.querySelectorAll('.loopback');
@@ -255,7 +255,7 @@ export default class Block extends Friend {
 			ctx = ctxOrName;
 		}
 
-		ctx = ctx ?? this.node;
+		ctx ??= this.node;
 
 		if (ctx == null) {
 			return undefined;

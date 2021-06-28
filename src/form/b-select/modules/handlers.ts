@@ -47,7 +47,7 @@ export function nativeChange<C extends bSelect>(component: C): void {
 		}
 
 		if (unsafe.multiple) {
-			value = value ?? new Set();
+			value ??= new Set();
 			value.add(item.value);
 
 		} else {
@@ -239,7 +239,7 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 					return;
 				}
 
-				currentItemEl = currentItemEl ?? getMarkedOrSelectedItem();
+				currentItemEl ??= getMarkedOrSelectedItem();
 			}
 
 			markItem(currentItemEl?.nextElementSibling) || markItem($b!.element('item'));

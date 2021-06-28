@@ -304,8 +304,8 @@ export function getNormalizedSelectionBounds<C extends iInputText>(
 		$refs: {input}
 	} = component.unsafe;
 
-	selectionStart = selectionStart ?? input.selectionStart ?? 0;
-	selectionEnd = selectionEnd ?? input.selectionEnd ?? 0;
+	selectionStart ??= input.selectionStart ?? 0;
+	selectionEnd ??= input.selectionEnd ?? 0;
 
 	let
 		normalizedSelectionStart = selectionStart,

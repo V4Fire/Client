@@ -97,7 +97,7 @@ export function paramsFactory<T = object>(
 						{watchers, hooks} = info;
 
 					if (p.watch != null) {
-						watchers = watchers ?? {};
+						watchers ??= {};
 
 						for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
 							const
@@ -114,7 +114,7 @@ export function paramsFactory<T = object>(
 					}
 
 					if (p.hook != null) {
-						hooks = hooks ?? {};
+						hooks ??= {};
 
 						for (let o = <Array<typeof p.hook>>[].concat(p.hook), i = 0; i < o.length; i++) {
 							const
@@ -206,7 +206,7 @@ export function paramsFactory<T = object>(
 
 			if (p.watch != null) {
 				for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
-					watchers = watchers ?? new Map();
+					watchers ??= new Map();
 
 					const
 						val = o[i];

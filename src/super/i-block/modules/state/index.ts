@@ -39,7 +39,7 @@ export default class State extends Friend {
 	protected get instance(): this['CTX']['instance'] {
 		// @ts-ignore (access)
 		// eslint-disable-next-line @typescript-eslint/unbound-method
-		baseSyncRouterState = baseSyncRouterState ?? iBlock.prototype.syncRouterState;
+		baseSyncRouterState ??= iBlock.prototype.syncRouterState;
 		return this.ctx.instance;
 	}
 
@@ -330,7 +330,7 @@ export default class State extends Friend {
 							currentVal = Object.get(currentParams, key) ?? Object.get(currentQuery, key);
 
 						if (currentVal === undefined && val !== undefined) {
-							query = query ?? {};
+							query ??= {};
 							query[key] = val;
 						}
 					}

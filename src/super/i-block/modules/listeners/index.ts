@@ -29,7 +29,7 @@ let
  */
 export function initGlobalListeners(component: iBlock, resetListener?: boolean): void {
 	// eslint-disable-next-line @typescript-eslint/unbound-method
-	baseInitLoad = baseInitLoad ?? iBlock.prototype.initLoad;
+	baseInitLoad ??= iBlock.prototype.initLoad;
 
 	const
 		ctx = component.unsafe;

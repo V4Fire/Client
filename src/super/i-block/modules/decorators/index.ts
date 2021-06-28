@@ -248,7 +248,7 @@ export function wait(
 		}
 	}
 
-	opts = opts ?? {};
+	opts ??= {};
 
 	let {
 		join,

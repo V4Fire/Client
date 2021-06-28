@@ -188,7 +188,7 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 				active;
 
 			for (let i = 0; i < modDecl.length; i++) {
-				cache = cache ?? new Map();
+				cache ??= new Map();
 
 				const
 					modVal = modDecl[i];

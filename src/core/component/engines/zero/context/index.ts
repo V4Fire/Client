@@ -213,7 +213,7 @@ export default {
 			nodes;
 
 		if (scopedSlotFn != null) {
-			props = props ?? {};
+			props ??= {};
 
 			if (bindObject) {
 				if (typeof bindObject !== 'object') {
@@ -257,7 +257,7 @@ export default {
 		hasDynamicKeys: boolean,
 		contentHashKey?: string
 	): Dictionary {
-		res = res ?? {$stable: !hasDynamicKeys};
+		res ??= {$stable: !hasDynamicKeys};
 
 		for (let i = 0; i < fns.length; i++) {
 			const

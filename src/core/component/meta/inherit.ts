@@ -92,14 +92,14 @@ export function inheritMeta(
 				if (parent.watchers) {
 					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 						const val = el.value;
-						watchers = watchers ?? new Map();
+						watchers ??= new Map();
 						watchers.set(val.handler, {...el.value});
 					}
 				}
 
 				if ('after' in parent && parent.after) {
 					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
-						after = after ?? new Set();
+						after ??= new Set();
 						after.add(el.value);
 					}
 				}

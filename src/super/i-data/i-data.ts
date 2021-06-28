@@ -701,7 +701,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [key] - key to save data
 	 */
 	protected saveDataToRootStore(data: unknown, key?: string): void {
-		key = key ?? this.globalName ?? this.dataProvider;
+		key ??= this.globalName ?? this.dataProvider;
 
 		if (key == null) {
 			return;

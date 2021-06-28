@@ -73,7 +73,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 
 			// Wrap slot directive to support async rendering
 			unsafe._u = (fns, res) => {
-				res = res ?? {};
+				res ??= {};
 
 				for (let i = 0; i < fns.length; i++) {
 					const
