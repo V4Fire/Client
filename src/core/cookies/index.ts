@@ -16,19 +16,19 @@ import type { SetOptions, RemoveOptions } from 'core/cookies/interface';
 export * from 'core/cookies/interface';
 
 /**
- * Returns a cookie value by the specified name
- */
-export function get(name: string): CanUndef<string> {
-	const matches = new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`).exec(document.cookie);
-	return matches ? decodeURIComponent(matches[1]) : undefined;
-}
-
-/**
  * Returns true, if a cookie by the specified name is defined
  * @param name
  */
 export function has(name: string): boolean {
 	return get(name) !== undefined;
+}
+
+/**
+ * Returns a cookie value by the specified name
+ */
+export function get(name: string): CanUndef<string> {
+	const matches = new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`).exec(document.cookie);
+	return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
 /**
