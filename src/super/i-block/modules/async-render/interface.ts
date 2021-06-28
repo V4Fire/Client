@@ -20,8 +20,8 @@ export interface TaskFilter<EL = unknown, I extends number = number, D = unknown
 	(el: EL, i: I, task: TaskI<D>): CanPromise<boolean>;
 }
 
-export interface TaskDestructor {
-	(el: Node);
+export interface ElementDestructor {
+	(el: Node): any;
 }
 
 export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {
@@ -81,7 +81,11 @@ export interface TaskParams<EL = unknown, I extends number = number, D = unknown
 	 */
 	filter?: TaskFilter<EL, I, D>;
 
-	destructor?: TaskDestructor;
+	/**
+	 * The destructor of the rendered element.
+	 * It will be invoked before removing each async rendered element from DOM.
+	 */
+	destructor?: ElementDestructor;
 }
 
 export interface TaskDesc {

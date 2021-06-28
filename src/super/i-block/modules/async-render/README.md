@@ -152,3 +152,6 @@ If the promise' value is equal to `undefined`, it will cast to `true`.
 ```
 
 ### [destructor]
+
+The destructor of the rendered element.
+It will be invoked before removing each async rendered element from DOM.
