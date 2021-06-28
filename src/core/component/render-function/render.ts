@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { runHook } from 'core/component/hook';
 import { beforeMountHooks, mountedHooks } from 'core/component/const';
 
 import { resolveRefs } from 'core/component/ref';
@@ -180,14 +179,11 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 										nodes = <VNode[]>[];
 
 									const
-										parent = isTemplateParent ? vnode.elm?.parentNode : vnode.elm,
-										baseHook = ctx.hook;
+										parent = isTemplateParent ? vnode.elm?.parentNode : vnode.elm;
 
 									if (parent == null) {
 										return returnEls([]);
 									}
-
-									ctx.hook = 'beforeUpdate';
 
 									// @ts-ignore (readonly)
 									ctx['renderGroup'] = desc?.renderGroup;
@@ -253,9 +249,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 
 									// @ts-ignore (readonly)
 									ctx['renderGroup'] = undefined;
-
 									resolveRefs(ctx);
-									ctx.hook = baseHook;
 
 									return returnEls(els);
 								}
