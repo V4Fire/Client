@@ -163,7 +163,7 @@ export default class AsyncRender extends Friend {
 		const
 			firstRender = <unknown[]>[],
 			untreatedEls = <unknown[]>[],
-			isSrcPromise = Object.isPromise(iterable);
+			srcIsPromise = Object.isPromise(iterable);
 
 		let
 			iterator: Iterator<unknown>,
@@ -173,7 +173,7 @@ export default class AsyncRender extends Friend {
 			syncI = 0,
 			syncTotal = 0;
 
-		if (!isSrcPromise) {
+		if (!srcIsPromise) {
 			iterator = iterable[Symbol.iterator]();
 
 			// eslint-disable-next-line no-multi-assign
@@ -430,7 +430,7 @@ export default class AsyncRender extends Friend {
 			}
 
 			function createIterator() {
-				if (isSrcPromise) {
+				if (srcIsPromise) {
 					const next = () => {
 						if (Object.isPromise(iterable)) {
 							return {
