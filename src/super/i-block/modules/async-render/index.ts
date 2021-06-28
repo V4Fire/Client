@@ -417,12 +417,12 @@ export default class AsyncRender extends Friend {
 				}
 			}
 
-			if (awaiting === 0) {
+			if (awaiting <= 0) {
 				localEmitter.emit('asyncRenderComplete', lastEvent);
 
 			} else {
 				const id = localEmitter.on('asyncRenderChunkComplete', () => {
-					if (awaiting === 0) {
+					if (awaiting <= 0) {
 						localEmitter.emit('asyncRenderComplete', lastEvent);
 						localEmitter.off(id);
 					}
