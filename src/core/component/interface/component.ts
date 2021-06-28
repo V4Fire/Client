@@ -276,6 +276,7 @@ export abstract class ComponentInterface {
 	/**
 	 * Link to a DOM element that is tied with the component
 	 */
+	// @ts-ignore (ts error)
 	readonly $el?: ComponentElement<this['Component']>;
 
 	/**
@@ -291,11 +292,13 @@ export abstract class ComponentInterface {
 	/**
 	 * List of child components
 	 */
+	// @ts-ignore (ts error)
 	readonly $children?: Array<this['Component']>;
 
 	/**
 	 * Link to the parent component
 	 */
+	// @ts-ignore (ts error)
 	readonly $parent?: this['Component'];
 
 	/**
@@ -359,6 +362,7 @@ export abstract class ComponentInterface {
 	 * Link to the parent component
 	 * (using with async rendering)
 	 */
+	// @ts-ignore (ts error)
 	protected readonly $remoteParent?: this['Component'];
 
 	/**
