@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:dummies/b-dummy/README.md]]
+ * @packageDocumentation
+ */
+
 import { derive } from 'core/functools/trait';
 
 import { inViewFactory } from 'core/dom/in-view';
