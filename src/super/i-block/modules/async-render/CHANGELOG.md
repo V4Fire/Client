@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.207 (2021-06-28)
+
+#### :bug: Bug Fix
+
+* Fixed emitting of `asyncRenderComplete`
+
 ## v3.0.0-rc.206 (2021-06-28)
 
 #### :bug: Bug Fix

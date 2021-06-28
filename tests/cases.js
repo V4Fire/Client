@@ -20,6 +20,7 @@ module.exports = [
 
 	'--test-entry base/b-router/test',
 	'--test-entry base/b-virtual-scroll/test',
+	'--test-entry dummies/b-dummy-async-render/test',
 
 	'--test-entry base/b-tree/test',
 	'--test-entry base/b-list/test',
