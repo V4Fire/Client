@@ -17,7 +17,7 @@ import type { BindRemoteWatchersParams } from 'core/component/watch/interface';
 
 /**
  * Binds watchers and event listeners that were registered as remote to the specified component instance.
- * This method has some "copy-paste" chunks, but it's done for better performance, because it's a very hot function.
+ * This method has some "copy-paste" chunks, but it's done for better performance because it's a very hot function.
  *
  * Basically, this function takes watchers from a meta property of the component,
  * but you can provide custom watchers to initialize by using the second parameter of the function.
