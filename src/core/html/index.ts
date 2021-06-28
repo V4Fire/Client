@@ -12,9 +12,9 @@
  */
 
 /**
- * Returns an srcset string for an image tag by the specified resolution map
+ * Returns a srcset string for an image tag by the specified resolution map
  *
- * @param resolutions - map, where key is a picture multiplier and value is a picture url
+ * @param resolutions - map, where the key is a picture multiplier and value is a picture URL
  *
  * @example
  * ```js
