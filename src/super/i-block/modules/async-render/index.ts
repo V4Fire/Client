@@ -41,7 +41,7 @@ export default class AsyncRender extends Friend {
 	}
 
 	/**
-	 * Restarts the async render daemon to force render
+	 * Restarts the `asyncRender` daemon to force rendering
 	 */
 	forceRender(): void {
 		restart();
@@ -49,8 +49,8 @@ export default class AsyncRender extends Friend {
 	}
 
 	/**
-	 * Restarts the async render daemon to force render
-	 * (runs on a next tick)
+	 * Restarts the `asyncRender` daemon to force rendering
+	 * (runs on the next tick)
 	 */
 	deferForceRender(): void {
 		deferRestart();

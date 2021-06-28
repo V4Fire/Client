@@ -267,21 +267,30 @@ export function createdState(component: ComponentInterface): void {
 		$a.worker(() => p.$off('on-component-hook:before-destroy', onBeforeDestroy));
 
 		if (isRegular) {
+			const activationHooks: Dictionary<boolean> = Object.createDict({
+				activated: true,
+				deactivated: true
+			});
+
 			const onActivation = (status: Hook) => {
-				if (status !== 'activated' && status !== 'deactivated') {
+				if (!activationHooks[status]) {
 					return;
 				}
 
-				$a.requestIdleCallback(() => {
-					runHook(status, component).then(() => {
-						callMethodFromComponent(component, status);
-					}).catch(stderr);
+				if (status === 'deactivated') {
+					component.deactivate();
+					return;
+				}
 
-				}, {
+				$a.requestIdleCallback(component.activate.bind(component), {
 					label: $$.remoteActivation,
 					timeout: 50
 				});
 			};
+
+			if (activationHooks[p.hook]) {
+				onActivation(p.hook);
+			}
 
 			p.$on('on-component-hook-change', onActivation);
 			$a.worker(() => p.$off('on-component-hook-change', onActivation));

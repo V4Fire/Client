@@ -244,7 +244,10 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Switches the component to a new hook
+	 *
 	 * @param value
+	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
+	 * @emits `componentHookChange(value: Hook, oldValue: Hook)
 	 */
 	set hook(value: Hook) {
 		// Loopback
@@ -257,14 +260,14 @@ export abstract class ComponentInterface {
 	readonly keepAlive!: boolean;
 
 	/**
-	 * Name of the active render group
+	 * Name of the active rendering group
 	 * (it's used with async rendering)
 	 */
 	readonly renderGroup?: string;
 
 	/**
-	 * API to unsafe invoke of internal properties of the component.
-	 * It can be useful to create friendly classes for a component.
+	 * API for unsafe invoking of internal properties of the component.
+	 * It can be useful to create component' friendly classes.
 	 */
 	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
 		return <any>this;
@@ -277,12 +280,12 @@ export abstract class ComponentInterface {
 	readonly $el?: ComponentElement<this['Component']>;
 
 	/**
-	 * Map of raw component options
+	 * Raw component options
 	 */
 	readonly $options!: ComponentOptions<ComponentEngine>;
 
 	/**
-	 * Map of initialized component input properties
+	 * Dictionary with initialized input properties of the component
 	 */
 	readonly $props!: Dictionary;
 
@@ -293,13 +296,13 @@ export abstract class ComponentInterface {
 	readonly $children?: Array<this['Component']>;
 
 	/**
-	 * Link to a parent component
+	 * Link to the parent component
 	 */
 	// @ts-ignore (ts error)
 	readonly $parent?: this['Component'];
 
 	/**
-	 * Link to the closest non functional parent component
+	 * Link to the closest non-functional parent component
 	 */
 	readonly $normalParent?: this['Component'];
 
@@ -319,8 +322,8 @@ export abstract class ComponentInterface {
 	readonly isFlyweight?: boolean;
 
 	/**
-	 * Temporary unique component string identifier
-	 * (for functional components)
+	 * Temporary unique component' string identifier
+	 * (only for functional components)
 	 */
 	protected readonly $componentId?: string;
 
@@ -336,7 +339,7 @@ export abstract class ComponentInterface {
 
 	/**
 	 * The last reason why the component was re-rendered.
-	 * The null value is means that the component was re-rendered by using $forceUpdate.
+	 * The `null` value is means that the component was re-rendered by using $forceUpdate.
 	 */
 	protected lastSelfReasonToRender?: Nullable<RenderReason>;
 
@@ -356,7 +359,7 @@ export abstract class ComponentInterface {
 	protected readonly $asyncLabel!: symbol;
 
 	/**
-	 * Link to a parent component
+	 * Link to the parent component
 	 * (using with async rendering)
 	 */
 	// @ts-ignore (ts error)
@@ -368,7 +371,7 @@ export abstract class ComponentInterface {
 	protected readonly $async!: Async<ComponentInterface>;
 
 	/**
-	 * Map of component attributes that isn't recognised as an input property
+	 * Map of component attributes that aren't recognized as input properties
 	 */
 	protected readonly $attrs!: Dictionary<string>;
 
@@ -453,25 +456,45 @@ export abstract class ComponentInterface {
 	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
 
 	/**
+	 * Activates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it's automatically synchronized with `keep-alive` or the special input property.
+	 *
+	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
+	 */
+	activate(force?: boolean): void {}
+
+	/**
+	 * Deactivates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it's automatically synchronized with `keep-alive` or the special input property.
+	 */
+	deactivate(): void {}
+
+	/**
 	 * Forces the component to re-render
 	 */
 	$forceUpdate(): void {}
 
 	/**
-	 * Executes the specified function on a next render tick
+	 * Executes the specified function on the next render tick
 	 * @param cb
 	 */
 	$nextTick(cb: Function | BoundFn<this>): void;
 
 	/**
-	 * Returns a promise that will be resolved on a next render tick
+	 * Returns a promise that will be resolved on the next render tick
 	 */
 	$nextTick(): Promise<void>;
 	$nextTick(): CanPromise<void> {}
 
 	/**
 	 * Mounts the component to a DOM element
-	 * @param elementOrSelector - link to an element or a selector to an element
+	 * @param elementOrSelector - link to an element or selector to an element
 	 */
 	protected $mount(elementOrSelector?: Element | string): this {
 		return this;

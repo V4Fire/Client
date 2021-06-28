@@ -205,7 +205,7 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly $root!: this['Root'];
 
 	/**
-	 * If true, then the component will log info messages, but not only errors and warnings
+	 * If true, the component will log info messages, but not only errors and warnings
 	 */
 	@prop(Boolean)
 	readonly verbose: boolean = false;
@@ -222,28 +222,28 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly componentId!: string;
 
 	/**
-	 * Component unique name.
+	 * A unique or global name of the component.
 	 * It's used to enable synchronization of component data with different storages: local, router, etc.
 	 */
 	@prop({type: String, required: false})
 	readonly globalName?: string;
 
 	/**
-	 * Component render cache key.
+	 * A component render cache key.
 	 * It's used to cache the component vnode.
 	 */
 	@prop({required: false})
 	readonly renderKey?: string;
 
 	/**
-	 * Initial component stage value.
+	 * An initial component stage value.
 	 *
 	 * The stage property can be used to mark different states of the component.
-	 * For example, we have a component implements a form of image uploading,
+	 * For example, we have a component that implements a form of image uploading,
 	 * and we have two variants of the form: upload by a link or upload from a computer.
 	 *
-	 * We can create two stage values: 'link' and 'file' to separate the component template by two variant of a markup
-	 * depending on the stage value.
+	 * Therefore, we can create two-stage values: 'link' and 'file' to separate the component template by two variants of
+	 * a markup depending on the stage value.
 	 */
 	@prop({type: [String, Number], required: false})
 	readonly stageProp?: Stage;
@@ -259,7 +259,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Sets a new component stage value.
-	 * Also, by default, clears all async listeners from the group of `stage.${oldGroup}`.
+	 * By default, it clears all async listeners from the group of `stage.${oldGroup}`.
 	 *
 	 * @see [[iBlock.stageProp]]
 	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
@@ -293,8 +293,8 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Initial component modifiers.
-	 * Modifiers represent the special API to bind component state properties directly with CSS classes
-	 * without needless of component re-rendering.
+	 * The modifiers represent API to bind component state properties directly with CSS classes
+	 * without unnecessary component re-rendering.
 	 */
 	@prop({type: Object, required: false})
 	readonly modsProp?: ModsTable;
@@ -312,14 +312,14 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly mods!: ModsNTable;
 
 	/**
-	 * If true, then the component won't be destroyed after removal from the DOM
+	 * If true, the component won't be destroyed after removal from the DOM
 	 * (only for functional components)
 	 */
 	@prop(Boolean)
 	readonly keepAlive: boolean = false;
 
 	/**
-	 * If true, then the component is activated.
+	 * If true, the component is activated.
 	 * The deactivated component won't load data from providers on initializing.
 	 */
 	@prop(Boolean)
@@ -334,9 +334,9 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * If true, then the component will try to reload data on re-activation.
-	 * This parameter can be useful if you are using keep-alive directive within your template.
-	 * For example, you have a page within keep-alive, and after backing to this page the component will be forcely drawn
-	 * from a keep-alive cache, but after this page will try to update data in silent.
+	 * This parameter can be helpful if you are using a keep-alive directive within your template.
+	 * For example, you have a page within keep-alive, and after back to this page, the component will be forcibly drawn
+	 * from a keep-alive cache, but after this page will try to update data in silence.
 	 */
 	@prop(Boolean)
 	readonly reloadOnActivation: boolean = false;
@@ -365,22 +365,22 @@ export default abstract class iBlock extends ComponentInterface {
 	dependencies!: Module[];
 
 	/**
-	 * If true, then the component is marked as a remote provider.
-	 * It means, that a parent component will wait the loading of the current component.
+	 * If true, the component is marked as a remote provider.
+	 * It means, that a parent component will wait for the loading of the current component.
 	 */
 	@prop(Boolean)
 	readonly remoteProvider: boolean = false;
 
 	/**
-	 * If true, then the component will listen the special event of its parent.
+	 * If true, the component will listen for the special event of its parent.
 	 * It's used to provide a common functionality of proxy calls from the parent.
 	 */
 	@prop(Boolean)
 	readonly proxyCall: boolean = false;
 
 	/**
-	 * If true, then the component state will be synchronized with the router after initializing.
-	 * For example, you have a component uses "syncRouterState" method to create two-way binding with the router.
+	 * If true, the component state will be synchronized with a router after initializing.
+	 * For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router.
 	 *
 	 * ```typescript
 	 * @component()
@@ -389,20 +389,20 @@ export default abstract class iBlock extends ComponentInterface {
 	 *   stage: string = 'defaultStage';
 	 *
 	 *   syncRouterState(data?: Dictionary) {
-	 *     // This notation means that if there is a value within "route.query"
-	 *     // it will be mapped to the component as "stage" field.
+	 *     // This notation means that if there is a value within `route.query`
+	 *     // it will be mapped to the component as `stage`.
 	 *     // If a route was changed, the mapping repeat.
-	 *     // Also if "stage" field of the component was changed,
-	 *     // it will be mapped to the router as "stage" query parameter by using "router.push".
+	 *     // Also, if the `stage` field of the component was changed,
+	 *     // it will be mapped to the router query parameters as `stage` by using `router.push`.
 	 *     return {stage: data?.stage || this.stage};
 	 *   }
 	 * }
 	 * ```
 	 *
-	 * But, if in some cases we don't have "stage" within "route.query", and the component have the default value,
+	 * But, if in some cases we don't have `stage` within `route.query`, and the component have the default value,
 	 * we trap in a situation where exists route, which wasn't synchronized with the component, and
 	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match our expectations.
-	 * But if we toggle "syncRouterStoreOnInit" to true, the component will forcibly map own state to
+	 * But if we toggle `syncRouterStoreOnInit` to true, the component will forcibly map its own state to
 	 * the router after initializing.
 	 */
 	@prop(Boolean)
@@ -434,23 +434,23 @@ export default abstract class iBlock extends ComponentInterface {
 	dontWaitRemoteProviders!: boolean;
 
 	/**
-	 * Map of remote component watchers.
+	 * A map of remote component watchers.
 	 * The usage of this mechanism is similar to the "@watch" decorator:
-	 *   *) As a key we declare a name of a component method that we want to call;
-	 *   *) As a value we declare a path to a property/event we want to watch/listen.
+	 *   *) As a key, we declare a name of a component method that we want to call;
+	 *   *) As a value, we declare a path to a property/event we want to watch/listen.
 	 *      Also, the method can take additional parameters of watching.
-	 *      Mind, the properties/events is taken from a component contents the current.
+	 *      Mind, the properties/events are taken from a component that contents the current.
 	 *
 	 * @see [[iBlock.watch]]
 	 * @example
 	 * ```js
 	 * // We have two components: A and B.
-	 * // We want to declare that the component B must calls own "reload" method on an event from the component A.
+	 * // We want to declare that component B must call its own `reload` method on an event from component A.
 	 *
 	 * {
-	 *   // If we want to listen events, we should use the ":" syntax.
-	 *   // Also, we can provide a different event emitter as "link:",
-	 *   // for instance, "document:scroll"
+	 *   // If we want to listen for events, we should use the ":" syntax.
+	 *   // Also, we can provide a different event emitter as `link:`,
+	 *   // for instance, `document:scroll`
 	 *   reload: ':foo'
 	 * }
 	 * ```
@@ -461,14 +461,14 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * {
 	 *   reload: [
-	 *     // Listens "foo" events from A
+	 *     // Listens `foo` events from `A`
 	 *     ':foo',
 	 *
-	 *     // Watches for changes of the "A.bla" property
+	 *     // Watches for changes of the `A.bla` property
 	 *     'bla',
 	 *
-	 *     // Listens window.document scroll event,
-	 *     // doesn't provide event arguments to "reload"
+	 *     // Listens `window.document` scroll event,
+	 *     // doesn't provide event arguments to `reload`
 	 *     {
 	 *       path: 'document:scroll',
 	 *       provideArgs: false
@@ -484,11 +484,11 @@ export default abstract class iBlock extends ComponentInterface {
 	 * If true, then is enabled a dispatching mode of component events.
 	 *
 	 * It means that all component events will bubble to a parent component:
-	 * if the parent also has this property in true, then the events will bubble to the next (from the hierarchy)
+	 * if the parent also has this property as true, then the events will bubble to the next (from the hierarchy)
 	 * parent component.
 	 *
-	 * All dispatching events have special prefixes to avoid collisions with events from another components,
-	 * for example: bButton "click" will bubble as "b-button::click".
+	 * All dispatching events have special prefixes to avoid collisions with events from other components,
+	 * for example: bButton `click` will bubble as `b-button::click`.
 	 * Or if the component has globalName parameter, it will additionally bubble as `${globalName}::click`.
 	 */
 	@prop(Boolean)
@@ -509,9 +509,9 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly p?: Dictionary;
 
 	/**
-	 * Additional classes for component elements.
-	 * It can be useful, if you need to attach some extra classes to internal component elements.
-	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
+	 * Additional classes for the component elements.
+	 * It can be useful if you need to attach some extra classes to internal component elements.
+	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
 	 *
 	 * @example
 	 * ```js
@@ -528,9 +528,9 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly classes?: Dictionary<CanArray<string>>;
 
 	/**
-	 * Additional styles for component elements.
-	 * It can be useful, if you need to attach some extra styles to internal component elements.
-	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
+	 * Additional styles for the component elements.
+	 * It can be useful if you need to attach some extra styles to internal component elements.
+	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
 	 *
 	 * @example
 	 * ```js
@@ -548,17 +548,17 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly styles?: Styles;
 
 	/**
-	 * Link to i18n function, that will be used to localize of string literals
+	 * Link to a `i18n` function that will be used to localize string literals
 	 */
 	@prop(Function)
 	readonly i18n: typeof i18n = ((i18n));
 
 	/**
-	 * Link to a remote state object.
+	 * A Link to the remote state object.
 	 *
 	 * The remote state object is a special watchable object that provides some parameters
-	 * that can't be initialized within a component directly. You can modify this object outside from components,
-	 * but remember, that these mutations may force re-render of all components.
+	 * that can't be initialized within a component directly. You can modify this object outside of components,
+	 * but remember that these mutations may force the re-rendering of all components.
 	 */
 	@computed({watchable: true})
 	get remoteState(): typeof remoteState {
@@ -566,29 +566,29 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Component status.
-	 * This parameter is pretty similar to "hook" parameter.
+	 * A component status.
+	 * This parameter is pretty similar to the `hook` parameter.
 	 * But, the hook represents a component status relative to its MVVM instance: created, mounted, destroyed, etc.
 	 * Opposite to "hook", "componentStatus" represents a logical component status:
 	 *
 	 *   *) unloaded - a component was just created without any initializing:
-	 *      this status can intersect with some hooks, like beforeCreate or created
+	 *      this status can intersect with some hooks, like `beforeCreate` or `created`.
 	 *
-	 *   *) loading - a component starts to load data from own providers:
-	 *      this status can intersect with some hooks, like created or mounted.
-	 *      If the component was mounted with this status, you can show by using UI that data is loading.
+	 *   *) loading - a component starts to load data from its own providers:
+	 *      this status can intersect with some hooks, like `created` or `mounted`.
+	 *      If the component was mounted with this status, you can show by using UI that the data is loading.
 	 *
-	 *   *) beforeReady - a component was fully loaded and starts to prepare to render:
-	 *      this status can intersect with some hooks like created or mounted
+	 *   *) beforeReady - a component was fully loaded and started to prepare to render:
+	 *      this status can intersect with some hooks like `created` or `mounted`.
 	 *
 	 *   *) ready - a component was fully loaded and rendered:
-	 *      this status can intersect with "mounted" hook
+	 *      this status can intersect with the `mounted` hook.
 	 *
 	 *   *) inactive - a component is frozen by keep-alive mechanism or special input property:
-	 *      this status can intersect with "deactivated" hook
+	 *      this status can intersect with the `deactivated` hook.
 	 *
 	 *   *) destroyed - a component was destroyed:
-	 *      this status can intersect with some hooks, like beforeDestroy or destroyed
+	 *      this status can intersect with some hooks, like `beforeDestroy` or `destroyed`.
 	 */
 	@computed({replace: false})
 	get componentStatus(): ComponentStatus {
@@ -597,7 +597,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Sets a new component status.
-	 * Notice, not all statuses emit re-render of the component: unloaded, inactive, destroyed will emit only an event.
+	 * Notice, not all statuses emit component' re-rendering: `unloaded`, `inactive`, `destroyed` will emit only an event.
 	 *
 	 * @param value
 	 * @emits `componentStatus:{$value}(value: ComponentStatus, oldValue: ComponentStatus)`
@@ -637,10 +637,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * @override
-	 *
 	 * @param value
-	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
-	 * @emits `componentHookChange(value: Hook, oldValue: Hook)`
 	 */
 	set hook(value: Hook) {
 		const
@@ -673,8 +670,10 @@ export default abstract class iBlock extends ComponentInterface {
 		});
 
 		return o.sync.link('activatedProp', (val: CanUndef<boolean>) => {
+			val = val !== false;
+
 			if (o.hook !== 'beforeDataCreate') {
-				o[val !== false ? 'activate' : 'deactivate']();
+				o[val ? 'activate' : 'deactivate']();
 			}
 
 			return val;
@@ -684,7 +683,7 @@ export default abstract class iBlock extends ComponentInterface {
 	isActivated!: boolean;
 
 	/**
-	 * True if the component was in ready status at least once
+	 * True if the component was in `ready` status at least once
 	 */
 	@system({unique: true})
 	isReadyOnce: boolean = false;
@@ -712,7 +711,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * True if the current component is completely ready to work.
-	 * The "ready" status is mean, that component was mounted an all data provider are loaded.
+	 * The `ready` status is mean, that component was mounted an all data provider are loaded.
 	 */
 	@computed({replace: false})
 	get isReady(): boolean {
@@ -746,7 +745,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Base component modifiers.
 	 * These modifiers are automatically provided to child components.
-	 * For example, you have a component uses another component within own template,
+	 * So, for example, you have a component that uses another component within your template,
 	 * and you specify to the outer component some theme modifier.
 	 * This modifier will recursively provide to all child components.
 	 */
@@ -801,7 +800,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * API for component field accessors.
-	 * This property provides a bunch of methods to safety access to a component property.
+	 * This property provides a bunch of methods to access a component property safely.
 	 *
 	 * @example
 	 * ```js
@@ -818,7 +817,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * API to synchronize component properties.
-	 * This property provides a bunch of method to organize a "link" from one component property to another.
+	 * This property provides a bunch of methods to organize a "link" from one component property to another.
 	 *
 	 * @example
 	 * ```typescript
@@ -858,7 +857,7 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly asyncRender!: AsyncRender;
 
 	/**
-	 * API to work with a VDOM tree
+	 * API to work with a component' VDOM tree
 	 */
 	@system({
 		atom: true,
@@ -868,17 +867,14 @@ export default abstract class iBlock extends ComponentInterface {
 
 	readonly vdom!: VDOM;
 
-	/**
-	 * API to unsafe invoke of internal properties of the component.
-	 * It can be useful to create friendly classes for a component.
-	 */
+	/** @override */
 	get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return <any>this;
 	}
 
 	/**
 	 * The special link to a parent component.
-	 * This parameter is used with static declaration of modifiers to refer parent modifiers.
+	 * This parameter is used with the static declaration of modifiers to refer to parent modifiers.
 	 *
 	 * @example
 	 * ```js
@@ -905,8 +901,8 @@ export default abstract class iBlock extends ComponentInterface {
 	static readonly PARENT: object = PARENT;
 
 	/**
-	 * Map of component shadow statuses.
-	 * These statuses don't emit re-render of a component.
+	 * A map of component shadow statuses.
+	 * These statuses don't emit re-rendering of a component.
 	 *
 	 * @see [[iBlock.componentStatus]]
 	 */
@@ -918,10 +914,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Static declaration of component modifiers.
-	 * This declaration helps to declare the default value of a modifier: just wrap the value with square brackets.
-	 * Also, all modifiers that are declared can be provided to a component not only by using "modsProp", but as an own
+	 * This declaration helps to declare the default value of a modifier: wrap the value with square brackets.
+	 * Also, all modifiers that are declared can be provided to a component not only by using `modsProp`, but as an own
 	 * prop value. In addition to previous benefits, if you provide all available values of modifiers to the declaration,
-	 * it can be useful for runtime reflection.
+	 * it can be helpful for runtime reflection.
 	 *
 	 * @example
 	 * ```js
@@ -953,9 +949,9 @@ export default abstract class iBlock extends ComponentInterface {
 	};
 
 	/**
-	 * Map of static component daemons.
-	 * Daemon is a special object that can watch component properties,
-	 * listen component events/hooks and do some useful payload, like sending analytic or performance events.
+	 * A map of static component daemons.
+	 * A daemon is a special object that can watch component properties,
+	 * listen to component events/hooks and do some useful payload, like sending analytic or performance events.
 	 */
 	static readonly daemons: DaemonsDict = {};
 
@@ -981,7 +977,7 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly storage!: Storage;
 
 	/**
-	 * API for async operations
+	 * API to wrap async operations
 	 */
 	@system({
 		atom: true,
@@ -993,7 +989,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * API for the component state.
-	 * This property provides a bunch of helper methods to initialize component state.
+	 * This property provides a bunch of helper methods to initialize the component state.
 	 */
 	@system({
 		atom: true,
@@ -1004,7 +1000,7 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly state!: State;
 
 	/**
-	 * API to work with a DOM tree
+	 * API to work with a component' DOM tree
 	 */
 	@system({
 		atom: true,
@@ -1022,7 +1018,7 @@ export default abstract class iBlock extends ComponentInterface {
 	protected block?: Block;
 
 	/**
-	 * API for optimizations.
+	 * API for optimization and debugging.
 	 * This property provides a bunch of helper methods to optimize some operations.
 	 */
 	@system({
@@ -1091,7 +1087,7 @@ export default abstract class iBlock extends ComponentInterface {
 	protected shadowComponentStatusStore?: ComponentStatus;
 
 	/**
-	 * Store of component modifiers that can emit re-render of the component
+	 * Store of component modifiers that can emit re-rendering of the component
 	 */
 	@field({
 		merge: true,
@@ -1110,8 +1106,8 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Special getter for component modifiers:
-	 * on a first touch of a property from that object will be registered a modifier by the property name
-	 * that can emit re-render of the component.
+	 * on the first touch of a property from that object will be registered a modifier by the property name
+	 * that can emit re-rendering of the component.
 	 * Don't use this getter outside the component template.
 	 */
 	@computed({cache: true, replace: false})
@@ -1120,14 +1116,14 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Cache object for opt.ifOnce
+	 * Cache object for `opt.ifOnce`
 	 */
 	@system({merge: true, replace: false})
 	protected readonly ifOnceStore: Dictionary<number> = {};
 
 	/**
-	 * The temporary cache.
-	 * Mutation of this object don't emit re-render of the component.
+	 * A temporary cache.
+	 * Mutation of this object don't emits re-rendering of the component.
 	 */
 	@system({
 		merge: true,
@@ -1138,15 +1134,15 @@ export default abstract class iBlock extends ComponentInterface {
 	protected tmp!: Dictionary;
 
 	/**
-	 * The temporary cache.
-	 * Mutation of this object emit re-render of the component.
+	 * A temporary cache.
+	 * Mutation of this object emits re-rendering of the component.
 	 */
 	@field({merge: true})
 	protected watchTmp: Dictionary = {};
 
 	/**
-	 * The render temporary cache.
-	 * It's used with the "renderKey" directive.
+	 * A render temporary cache.
+	 * It's used with the `renderKey` directive.
 	 */
 	@system({
 		merge: true,
@@ -1213,7 +1209,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Event emitter of the parent component
+	 * Event emitter of a parent component
 	 */
 	@system({
 		atom: true,
@@ -1255,7 +1251,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Global event emitter of an application.
+	 * The global event emitter of an application.
 	 * It can be used to provide external events to a component.
 	 */
 	@system({
@@ -1277,7 +1273,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Map of extra helpers.
+	 * A map of extra helpers.
 	 * It can be useful to provide some helper functions to a component.
 	 */
 	@system({
@@ -1338,21 +1334,21 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Number of beforeReady event listeners:
+	 * Number of `beforeReady` event listeners:
 	 * it's used to optimize component initializing
 	 */
 	@system({unique: true})
 	protected beforeReadyListeners: number = 0;
 
 	/**
-	 * List of block ready listeners:
+	 * A list of `blockReady` listeners:
 	 * it's used to optimize component initializing
 	 */
 	@system({unique: true})
 	protected blockReadyListeners: Function[] = [];
 
 	/**
-	 * Alias for .i18n
+	 * Alias for `i18n`
 	 */
 	@computed({replace: false})
 	protected get t(): this['i18n'] {
@@ -1360,7 +1356,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Link to globalThis.l
+	 * Link to `globalThis.l`
 	 */
 	@system({
 		atom: true,
@@ -1371,7 +1367,7 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly l: typeof l = globalThis.l;
 
 	/**
-	 * Link to console API
+	 * Link to the console API
 	 */
 	@system({
 		atom: true,
@@ -1383,7 +1379,7 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly console!: Console;
 
 	/**
-	 * Link to window.location
+	 * Link to `window.location`
 	 */
 	@system({
 		atom: true,
@@ -1409,9 +1405,9 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Sets a watcher to a component/object property or event by the specified path.
 	 *
-	 * When you watch for changes of some property, the handler function can take the second argument that refers
-	 * to the old value of a property. If the object that watching is non-primitive, the old value will be cloned from the
-	 * original old value to avoid the problem when we have two links to the one object.
+	 * When you watch for some property changes, the handler function can take the second argument that refers
+	 * to the old value of a property. If the object watching is non-primitive, the old value will be cloned from the
+	 * original old value to avoid having two links to one object.
 	 *
 	 * ```typescript
 	 * @component()
@@ -1451,27 +1447,27 @@ export default abstract class iBlock extends ComponentInterface {
 	 * }
 	 * ```
 	 *
-	 * To listen an event you need to use the special delimiter ":" within a path.
-	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 * You need to use the special delimiter ":" within a path to listen to an event.
+	 * Also, you can specify an event emitter to listen to by writing a link before ":".
 	 * For instance:
 	 *
-	 * 1. `':onChange'` - a component will listen own event "onChange";
-	 * 2. `'localEmitter:onChange'` - a component will listen an event "onChange" from "localEmitter";
-	 * 3. `'$parent.localEmitter:onChange'` - a component will listen an event "onChange" from "$parent.localEmitter";
-	 * 4. `'document:scroll'` - a component will listen an event "scroll" from "window.document".
+	 * 1. `':onChange'` - a component will listen to its own event `onChange`;
+	 * 2. `'localEmitter:onChange'` - a component will listen to an event `onChange` from `localEmitter`;
+	 * 3. `'$parent.localEmitter:onChange'` - a component will listen to an event `onChange` from `$parent.localEmitter`;
+	 * 4. `'document:scroll'` - a component will listen to an event `scroll` from `window.document`.
 	 *
-	 * A link to the event emitter is taken from component properties or from the global object.
+	 * A link to the event emitter is taken from component properties or the global object.
 	 * The empty link '' is a link to a component itself.
 	 *
-	 * Also, if you listen an event, you can manage when start to listen the event by using special characters at the
-	 * beginning of a path string:
+	 * Also, if you listen to an event, you can manage when to start to listen to the event by using special characters
+	 * at the beginning of a path string:
 	 *
-	 * 1. `'!'` - start to listen an event on the "beforeCreate" hook, for example: `'!rootEmitter:reset'`;
+	 * 1. `'!'` - start to listen to an event on the "beforeCreate" hook, for example: `'!rootEmitter:reset'`;
 	 * 2. `'?'` - start to listen an event on the "mounted" hook, for example: `'?$el:click'`.
 	 *
 	 * By default, all events start to listen on the "created" hook.
 	 *
-	 * To listen for changes of another watchable object you need to specify the watch path as an object:
+	 * To listen for changes of another watchable object, you need to specify the watch path as an object:
 	 *
 	 * ```
 	 * {
@@ -1486,7 +1482,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * @example
 	 * ```js
-	 * // Watch for changes of "foo"
+	 * // Watch for changes of `foo`
 	 * this.watch('foo', (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
@@ -1496,22 +1492,22 @@ export default abstract class iBlock extends ComponentInterface {
 	 *   console.log(val, oldVal);
 	 * });
 	 *
-	 * // Deep watch for changes of "foo"
+	 * // Deep watch for changes of `foo`
 	 * this.watch('foo', {deep: true}, (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
 	 *
-	 * // Watch for changes of "foo.bla"
+	 * // Watch for changes of `foo.bla`
 	 * this.watch('foo.bla', (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
 	 *
-	 * // Listen "onChange" event of a component
+	 * // Listen to `onChange` event of the current component
 	 * this.watch(':onChange', (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
 	 *
-	 * // Listen "onChange" event of a component parentEmitter
+	 * // Listen to `onChange` event of `parentEmitter`
 	 * this.watch('parentEmitter:onChange', (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
@@ -1704,7 +1700,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Emits a component event to the parent component
+	 * Emits a component event to a parent component
 	 *
 	 * @param event
 	 * @param args
@@ -1784,7 +1780,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Attaches a single event listener to the specified component event
+	 * Attaches a disposable event listener to the specified component event
 	 *
 	 * @see [[Async.once]]
 	 * @param event
@@ -1855,8 +1851,8 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Executes a callback when the component is toggled to the specified status.
-	 * The method returns a promise with a result of invoking the function or raw result without wrapping
-	 * if the component already in the specified status.
+	 * The method returns a promise resulting from invoking the function or raw result without wrapping
+	 * if the component is already in the passed status.
 	 *
 	 * @see [[Async.promise]]
 	 * @param status
@@ -1915,7 +1911,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Executes the specified function on a next render tick
+	 * Executes the specified function on the next render tick
 	 *
 	 * @see [[Async.proxy]]
 	 * @param fn
@@ -1924,7 +1920,7 @@ export default abstract class iBlock extends ComponentInterface {
 	nextTick(fn: BoundFn<this>, opts?: AsyncOptions): void;
 
 	/**
-	 * Returns a promise that will be resolved on a next render tick
+	 * Returns a promise that will be resolved on the next render tick
 	 *
 	 * @see [[Async.promise]]
 	 * @param [opts] - additional options
@@ -1943,7 +1939,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Forces the component re-render
+	 * Forces the component' re-rendering
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
 	forceUpdate(): Promise<void> {
@@ -2185,10 +2181,10 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Sets a modifier to the root element of an application.
 	 *
-	 * This method is useful, when you need to attach a class can affect to the whole application,
+	 * This method is useful when you need to attach a class can affect to the whole application,
 	 * for instance, you want to lock page scrolling, i.e. you need to add a class to the root HTML tag.
 	 *
-	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
+	 * The method uses `globalName` of the component if it's provided. Otherwise, `componentName`.
 	 *
 	 * @param name - modifier name
 	 * @param value - modifier value
@@ -2211,7 +2207,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Removes a modifier from the root element of an application.
-	 * The method uses `globalName` of the component if it's provided, otherwise, `componentName`.
+	 * The method uses `globalName` of the component if it's provided. Otherwise, `componentName`.
 	 *
 	 * @param name - modifier name
 	 * @param [value] - modifier value (if not specified, the method removes the matched modifier with any value)
@@ -2251,26 +2247,16 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Activates the component.
-	 * The deactivated component won't load data from providers on initializing.
-	 *
-	 * Basically, you don't need to think about a component activation,
-	 * because it's automatically synchronized with `keep-alive` or the special input property.
-	 *
+	 * @override
 	 * @see [[iBlock.activatedProp]]
-	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
+	 * @param [force]
 	 */
 	activate(force?: boolean): void {
 		activate(this, force);
 	}
 
 	/**
-	 * Deactivates the component.
-	 * The deactivated component won't load data from providers on initializing.
-	 *
-	 * Basically, you don't need to think about a component activation,
-	 * because it's automatically synchronized with `keep-alive` or the special input property.
-	 *
+	 * @override
 	 * @see [[iBlock.activatedProp]]
 	 */
 	deactivate(): void {
@@ -2278,10 +2264,9 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Puts the specified parameters to log
-	 *
-	 * @param ctxOrOpts - log context or log options (logLevel, context)
-	 * @param [details]
+	 * @override
+	 * @param ctxOrOpts
+	 * @param details
 	 */
 	@p({replace: false})
 	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
@@ -2332,17 +2317,17 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * This method works as a two-way connector between a local storage and a component.
+	 * This method works as a two-way connector between local storage and a component.
 	 *
-	 * When the component initializes, it asks the local storage for data that associated to this component
-	 * by using a global name as a namespace to search. When the local storage is ready to provide data to the component,
-	 * it passes data  to this method. After this, the method returns a dictionary that will be mapped to the
-	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
+	 * When the component initializes, it asks the local storage for data associated with it by using a global name
+	 * as a namespace to search. When the local storage is ready to provide data to the component,
+	 * it passes data to this method. After this, the method returns a dictionary mapped to the component as properties
+	 * (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
 	 *
-	 * Also, the component will watch for changes of every property that was in that dictionary
-	 * and when at least one of these properties is changed, the whole butch of data will be sent to the local storage
-	 * by using this method. When the component provides local storage data the second argument of the method is
-	 * equal to "remote".
+	 * Also, the component will watch for changes of every property in that dictionary.
+	 * When at least one of these properties is changed, the whole butch of data will be sent to the local storage
+	 * by using this method. When the component provides local storage data, the method's second argument
+	 * is equal to `'remote'`.
 	 *
 	 * @param [data] - advanced data
 	 * @param [type] - call type
@@ -2374,15 +2359,15 @@ export default abstract class iBlock extends ComponentInterface {
 	 * This method works as a two-way connector between the global router and a component.
 	 *
 	 * When the component initializes, it asks the router for data. The router provides the data by using this method.
-	 * After this, the method returns a dictionary that will be mapped to the
-	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
+	 * After this, the method returns a dictionary mapped to the
+	 * component as properties (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
 	 *
-	 * Also, the component will watch for changes of every property that was in that dictionary
-	 * and when at least one of these properties is changed, the whole butch of data will be sent to the router
-	 * by using this method (the router will produce a new transition by using "push").
-	 * When the component provides router data the second argument of the method is equal to "remote".
+	 * Also, the component will watch for changes of every property that was in that dictionary.
+	 * When at least one of these properties is changed, the whole butch of data will be sent to the router
+	 * by using this method (the router will produce a new transition by using `push`).
+	 * When the component provides router data, the method's second argument is equal to `'remote'`.
 	 *
-	 * Mind, that the router is global for all components, i.e. a dictionary that this method passes to the router
+	 * Mind that the router is global for all components, i.e., a dictionary that this method passes to the router
 	 * will extend the current route data but not override (`router.push(null, {...route, ...componentData}})`).
 	 *
 	 * @param [data] - advanced data
@@ -2446,7 +2431,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Initializes core component API
+	 * Initializes the core component API
 	 */
 	@hook({beforeRuntime: {functional: false}})
 	protected initBaseAPI(): void {
@@ -2464,7 +2449,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Initializes an instance of the Block class for the current component
+	 * Initializes an instance of the `Block` class for the current component
 	 */
 	@hook('mounted')
 	@p({replace: false})
@@ -2494,7 +2479,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Initializes global event listeners
+	 * Initializes the global event listeners
 	 * @param [resetListener]
 	 */
 	@hook({created: {functional: false}})
@@ -2519,7 +2504,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Initializes "callChild" event listener
+	 * Initializes the `callChild` event listener
 	 */
 	@watch({field: 'proxyCall', immediate: true})
 	protected initCallChildListener(value: boolean): void {
@@ -2531,7 +2516,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Factory to create listeners of internal hook events
+	 * Factory to create listeners from internal hook events
 	 * @param hook - hook name to listen
 	 */
 	protected createInternalHookListener(hook: string): Function {
@@ -2539,7 +2524,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Handler: "callChild" event
+	 * Handler: `callChild` event
 	 * @param e
 	 */
 	protected onCallChild(e: ParentMessage<this>): void {

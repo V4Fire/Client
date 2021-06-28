@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-06-??)
+
+#### :rocket: New Feature
+
+* Added `activate` and `deactivate` to `ComponentInterface` `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed a bug when `isActivated` returns `undefined` `iBlock`
+
 ## v3.0.0-rc.205 (2021-06-24)
 
 #### :rocket: New Feature
