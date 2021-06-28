@@ -16,6 +16,10 @@
 			< template v-for = el in asyncRender.iterate([1, 2, 3, 4])
 				Element: {{ el }}; Hook: {{ hook }}; {{ '' }}
 
+		< .&__array-rendering-with-chunk-size
+			< template v-for = el in asyncRender.iterate([1, 2, 3, 4], 3)
+				Element: {{ el }}; Hook: {{ hook }}; {{ '' }}
+
 		< .&__range-rendering-by-click
 			< template v-for = el in asyncRender.iterate(1, { &
 				filter: (el, i) => promisifyOnce('range-rendering-by-click')

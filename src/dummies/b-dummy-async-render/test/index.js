@@ -57,6 +57,20 @@ module.exports = async (page, params) => {
 			).toBe('Element: 1; Hook: beforeMount; Element: 2; Hook: mounted; Element: 3; Hook: mounted; Element: 4; Hook: mounted; ');
 		});
 
+		it('array rendering with specifying a chunk size', async () => {
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('array-rendering-with-chunk-size');
+
+					if (!/Element: 4/.test(wrapper.innerText)) {
+						await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
+					}
+
+					return wrapper.innerHTML;
+				})
+			).toBe('Element: 1; Hook: beforeMount; Element: 2; Hook: beforeMount; Element: 3; Hook: beforeMount; Element: 4; Hook: mounted; ');
+		});
+
 		it('range rendering emitted by a click', async () => {
 			expect(
 				await target.evaluate((ctx) => ctx.block.element('range-rendering-by-click').innerHTML)

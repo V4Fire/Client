@@ -187,18 +187,18 @@ export default class AsyncRender extends Friend {
 					val = el.value;
 
 				let
-					isPromise = Object.isPromise(val),
-					canRender = !isPromise;
+					valIsPromise = Object.isPromise(val),
+					canRender = !valIsPromise;
 
 				if (canRender && filter != null) {
 					canRender = filter.call(this.component, val, syncI, {
+						iterable,
 						i: syncI,
-						total: syncTotal,
-						iterable
+						total: syncTotal
 					});
 
 					if (Object.isPromise(canRender)) {
-						isPromise = true;
+						valIsPromise = true;
 						canRender = false;
 
 					} else if (!Object.isTruly(canRender)) {
@@ -210,11 +210,11 @@ export default class AsyncRender extends Friend {
 					syncTotal++;
 					firstRender.push(val);
 
-				} else if (isPromise) {
+				} else if (valIsPromise) {
 					untreatedEls.push(val);
 				}
 
-				if (syncTotal >= perChunk || isPromise) {
+				if (syncTotal >= perChunk || valIsPromise) {
 					break;
 				}
 			}
@@ -224,6 +224,11 @@ export default class AsyncRender extends Friend {
 			BREAK = {};
 
 		firstRender[this.asyncLabel] = async (cb) => {
+			const {
+				async: $a,
+				localEmitter
+			} = this;
+
 			const
 				weight = opts.weight ?? 1,
 				newIterator = createIterator();
@@ -232,20 +237,16 @@ export default class AsyncRender extends Friend {
 				i = 0,
 				total = syncTotal,
 				chunkTotal = 0,
-				chunkI = 0;
-
-			let
-				renderBuffer = <unknown[]>[];
-
-			const {
-				async: $a,
-				localEmitter
-			} = this;
+				chunkI = 0,
+				awaiting = 0;
 
 			let
 				group = 'asyncComponents',
-				awaiting = 0,
-				event;
+				renderBuffer = <unknown[]>[];
+
+			let
+				lastTask,
+				lastEvent;
 
 			for (let o = newIterator, el = o.next(); !el.done; el = o.next()) {
 				if (opts.group != null) {
@@ -256,9 +257,9 @@ export default class AsyncRender extends Friend {
 					val = el.value;
 
 				const
-					isValPromise = Object.isPromise(val);
+					valIsPromise = Object.isPromise(val);
 
-				if (isValPromise) {
+				if (valIsPromise) {
 					try {
 						// eslint-disable-next-line require-atomic-updates
 						val = await $a.promise(<Promise<unknown>>val, {group});
@@ -286,53 +287,54 @@ export default class AsyncRender extends Friend {
 					chunkTotal++;
 					renderBuffer.push(val);
 
-					const needRender =
-						Boolean(el.done) ||
-						isValPromise ||
-						chunkTotal >= perChunk;
+					lastTask = () => {
+						lastTask = null;
+						awaiting++;
 
-					if (!needRender) {
-						return;
-					}
+						const task = () => {
+							const desc: TaskDesc = {
+								async: $a,
+								renderGroup: group
+							};
 
-					awaiting++;
+							cb(renderBuffer, desc, (els: Node[]) => {
+								chunkI++;
+								chunkTotal = 0;
+								renderBuffer = [];
 
-					const task = () => {
-						const desc: TaskDesc = {
-							async: $a,
-							renderGroup: group
-						};
+								awaiting--;
+								lastEvent = {...opts, ...desc};
+								localEmitter.emit('asyncRenderChunkComplete', lastEvent);
 
-						cb(renderBuffer, desc, (els: Node[]) => {
-							chunkI++;
-							chunkTotal = 0;
-							renderBuffer = [];
-
-							awaiting--;
-							event = {...opts, ...desc};
-							localEmitter.emit('asyncRenderChunkComplete', event);
-
-							$a.worker(() => {
-								const destroyEl = (el: CanUndef<ComponentElement | Node>) => {
-									if (el == null) {
-										return;
-									}
-
-									if (el[this.asyncLabel] != null) {
-										delete el[this.asyncLabel];
-										$a.worker(() => destroyEl(el), {group});
-
-									} else {
-										if (opts.destructor) {
-											opts.destructor(el);
+								$a.worker(() => {
+									const destroyEl = (el: CanUndef<ComponentElement | Node>) => {
+										if (el == null) {
+											return;
 										}
 
-										el.parentNode?.removeChild(el);
+										if (el[this.asyncLabel] != null) {
+											delete el[this.asyncLabel];
+											$a.worker(() => destroyEl(el), {group});
 
-										if (el instanceof Element) {
-											for (let els = el.querySelectorAll('.i-block-helper'), i = 0; i < els.length; i++) {
-												const
-													el = els[i];
+										} else {
+											if (opts.destructor) {
+												opts.destructor(el);
+											}
+
+											el.parentNode?.removeChild(el);
+
+											if (el instanceof Element) {
+												for (let els = el.querySelectorAll('.i-block-helper'), i = 0; i < els.length; i++) {
+													const
+														el = els[i];
+
+													try {
+														(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+
+													} catch (err) {
+														stderr(err);
+													}
+												}
 
 												try {
 													(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
@@ -341,52 +343,42 @@ export default class AsyncRender extends Friend {
 													stderr(err);
 												}
 											}
-
-											try {
-												(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
-
-											} catch (err) {
-												stderr(err);
-											}
 										}
-									}
-								};
+									};
 
-								for (let i = 0; i < els.length; i++) {
-									destroyEl(els[i]);
-								}
-							}, {group});
-						});
+									for (let i = 0; i < els.length; i++) {
+										destroyEl(els[i]);
+									}
+								}, {group});
+							});
+						};
+
+						return this.createTask(task, {group, weight});
 					};
 
-					return this.createTask(task, {group, weight});
+					if (!valIsPromise && chunkTotal < perChunk) {
+						return;
+					}
+
+					return lastTask();
 				};
 
 				try {
 					if (filter != null) {
-						const filterParams = {
+						const needRender = filter.call(this.ctx, val, i, {
 							iterable,
 							i: syncI + i + 1,
+							chunk: chunkI,
+							total
+						});
 
-							get chunk(): number {
-								return chunkI;
-							},
-
-							get total(): number {
-								return total;
-							}
-						};
-
-						const
-							res = filter.call(this.ctx, val, i, filterParams);
-
-						if (Object.isPromise(res)) {
-							await $a.promise(res, {group})
+						if (Object.isPromise(needRender)) {
+							await $a.promise(needRender, {group})
 								.then((res) => resolveTask(res === undefined || Object.isTruly(res)));
 
 						} else {
 							const
-								res = resolveTask(Object.isTruly(filter.call(this.ctx, val, i, filterParams)));
+								res = resolveTask(Object.isTruly(needRender));
 
 							if (res != null) {
 								await res;
@@ -414,13 +406,24 @@ export default class AsyncRender extends Friend {
 				i++;
 			}
 
+			if (lastTask != null) {
+				awaiting++;
+
+				const
+					res = lastTask();
+
+				if (res != null) {
+					await res;
+				}
+			}
+
 			if (awaiting === 0) {
-				localEmitter.emit('asyncRenderComplete', event);
+				localEmitter.emit('asyncRenderComplete', lastEvent);
 
 			} else {
 				const id = localEmitter.on('asyncRenderChunkComplete', () => {
 					if (awaiting === 0) {
-						localEmitter.emit('asyncRenderComplete', event);
+						localEmitter.emit('asyncRenderComplete', lastEvent);
 						localEmitter.off(id);
 					}
 				});
