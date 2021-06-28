@@ -637,10 +637,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * @override
-	 *
 	 * @param value
-	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
-	 * @emits `componentHookChange(value: Hook, oldValue: Hook)`
 	 */
 	set hook(value: Hook) {
 		const
