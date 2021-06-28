@@ -325,6 +325,7 @@ export default class AsyncRender extends Friend {
 										}
 
 										el.parentNode.removeChild(el);
+										el.component?.$destroy();
 									}
 								};
 
