@@ -128,6 +128,7 @@ Providing this value disables automatically canceling of rendering task on the `
 
 Weight of the one rendering chunk.
 In the one tick can be rendered chunks with accumulated weight no more than 5.
+See `core/render` for more information.
 
 ### [filter]
 
@@ -153,5 +154,61 @@ If the promise' value is equal to `undefined`, it will cast to `true`.
 
 ### [destructor]
 
-The destructor of the rendered element.
+The destructor of a rendered element.
 It will be invoked before removing each async rendered element from DOM.
+
+## Helpers
+
+### forceRender
+
+Restarts the async render daemon to force rendering.
+
+### deferForceRender
+
+Restarts the `asyncRender` daemon to force rendering (runs on the next tick).
+
+### waitForceRender
+
+The method has two overloads:
+
+1. Returns a promise that will be resolved after the firing of the `forceRender` event.
+   Notice, the initial rendering of a component is mean the same as `forceRender`.
+
+2. Returns a function that returns a promise that will be resolved after firing the `forceRender` event.
+   The method takes an element name as the first parameter, the element will be dropped before resolving.
+
+   Notice, the initial rendering of a component is mean the same as `forceRender`.
+   The method is useful to re-render a non-regular component (functional or flyweight) without touching the parent state.
+
+   ```
+   < button @click = asyncRender.forceRender()
+     Re-render the component
+
+   < .&__wrapper
+     < template v-for = el in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('content')})
+       < .&__content
+         {{ Math.random() }}
+   ```
+
+## Snakeskin helpers
+
+### loadModules
+
+Loads modules by the specified paths and dynamically inserted the provided content when it loaded.
+
+```
++= self.loadModules('form/b-button')
+  < b-button
+    Hello world
+
+/// `renderKey` is necessary to prevent any chunk' re-rendering after the first rendering of a template
+/// `wait` is a function to defer the process of loading, it should return a promise with a non-false value
++= self.loadModules(['form/b-button', 'form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+  < b-button
+    Hello world
+
+  < b-input
+
+< button @click = emit('needLoad')
+  Force load
+```

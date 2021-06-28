@@ -82,7 +82,7 @@ export interface TaskParams<EL = unknown, I extends number = number, D = unknown
 	filter?: TaskFilter<EL, I, D>;
 
 	/**
-	 * The destructor of the rendered element.
+	 * The destructor of a rendered element.
 	 * It will be invoked before removing each async rendered element from DOM.
 	 */
 	destructor?: ElementDestructor;
