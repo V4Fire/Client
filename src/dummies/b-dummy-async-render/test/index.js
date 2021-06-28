@@ -42,7 +42,7 @@ module.exports = async (page, params) => {
 		target = await h.component.waitForComponent(page, '#target');
 	});
 
-	describe('`AsyncRender`', () => {
+	describe('`iBlock.asyncRender`', () => {
 		it('simple array rendering', async () => {
 			expect(
 				await target.evaluate(async (ctx) => {
