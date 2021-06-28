@@ -18,6 +18,9 @@ import SyncPromise from 'core/promise/sync';
 import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
+import type iBlock from 'super/i-block/i-block';
+import type { ComponentElement } from 'super/i-block/i-block';
+
 import Friend from 'super/i-block/modules/friend';
 import type { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
 
@@ -314,18 +317,42 @@ export default class AsyncRender extends Friend {
 							}
 
 							$a.worker(() => {
-								const destroyEl = (el) => {
+								const destroyEl = (el: CanUndef<ComponentElement | Node>) => {
+									if (el == null) {
+										return;
+									}
+
 									if (el[this.asyncLabel] != null) {
 										delete el[this.asyncLabel];
 										$a.worker(() => destroyEl(el), {group});
 
-									} else if (el.parentNode != null) {
+									} else {
 										if (opts.destructor) {
 											opts.destructor(el);
 										}
 
-										el.parentNode.removeChild(el);
-										el.component?.$destroy();
+										el.parentNode?.removeChild(el);
+
+										if (el instanceof Element) {
+											for (let els = el.querySelectorAll('.i-block-helper'), i = 0; i < els.length; i++) {
+												const
+													el = els[i];
+
+												try {
+													(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+
+												} catch (err) {
+													stderr(err);
+												}
+											}
+
+											try {
+												(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+
+											} catch (err) {
+												stderr(err);
+											}
+										}
 									}
 								};
 
