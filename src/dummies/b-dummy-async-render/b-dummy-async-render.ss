@@ -12,6 +12,19 @@
 
 - template index() extends ['i-data'].index
 	- block body
+		< .&__infinite-rendering
+			< template v-for = el in asyncRender.iterate(true, { &
+				filter: asyncRender.waitForceRender('infinite-rendering-wrapper')
+			}) .
+				< .&__infinite-rendering-wrapper
+					Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
+
+		< button.&__infinite-rendering-btn @click = asyncRender.forceRender()
+			Force render
+
+		< button.&__infinite-rendering-defer-btn @click = asyncRender.deferForceRender()
+			Defer force render
+
 		: cases = [ &
 			['simple-array-rendering', '[1, 2, 3, 4]'],
 			['array-rendering-with-chunk-size', '[1, 2, 3, 4], 3'],
@@ -21,6 +34,7 @@
 			['simple-string-rendering', '"1😃à🇷🇺"'],
 			['simple-iterable-rendering', 'new Set([1, 2]).values()'],
 			['range-rendering-with-filter', '4, {filter: (el) => el % 2 === 0}'],
+			['range-rendering-with-raf', '2, {useRaf: true}'],
 			['nullish-rendering', 'null'],
 			['range-rendering-by-click', '1', 'by-click'],
 			['iterable-with-promises-rendering-by-click', '[async.sleep(100).then(() => 1), async.sleep(50).then(() => 2)]', 'by-click'],

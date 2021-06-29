@@ -28,7 +28,7 @@ module.exports = async (page, params) => {
 	let
 		target;
 
-	beforeAll(async () => {
+	beforeEach(async () => {
 		await page.evaluate(() => {
 			globalThis.renderComponents('b-dummy-async-render', [
 				{
@@ -48,56 +48,63 @@ module.exports = async (page, params) => {
 				'simple array rendering',
 				'simple-array-rendering',
 				'Element: 4',
-				'Element: 1; Hook: beforeMount; Element: 2; Hook: mounted; Element: 3; Hook: mounted; Element: 4; Hook: mounted; '
+				'Element: 1; Hook: beforeMount; Element: 2; Hook: mounted; Element: 3; Hook: mounted; Element: 4; Hook: mounted;'
 			],
 
 			[
 				'array rendering with specifying a chunk size',
 				'array-rendering-with-chunk-size',
 				'Element: 4',
-				'Element: 1; Hook: beforeMount; Element: 2; Hook: beforeMount; Element: 3; Hook: beforeMount; Element: 4; Hook: mounted; '
+				'Element: 1; Hook: beforeMount; Element: 2; Hook: beforeMount; Element: 3; Hook: beforeMount; Element: 4; Hook: mounted;'
 			],
 
 			[
 				'array rendering with specifying a start position and chunk size',
 				'array-rendering-with-start-and-chunk-size',
 				'Element: 4',
-				'Element: 2; Hook: beforeMount; Element: 3; Hook: beforeMount; Element: 4; Hook: mounted; '
+				'Element: 2; Hook: beforeMount; Element: 3; Hook: beforeMount; Element: 4; Hook: mounted;'
 			],
 
 			[
 				'simple object rendering',
 				'simple-object-rendering',
 				'Element: b,',
-				'Element: a,1; Hook: beforeMount; Element: b,2; Hook: mounted; '
+				'Element: a,1; Hook: beforeMount; Element: b,2; Hook: mounted;'
 			],
 
 			[
 				'object rendering with specifying a start position',
 				'object-rendering-with-start',
 				'Element: b,',
-				'Element: b,2; Hook: beforeMount; '
+				'Element: b,2; Hook: beforeMount;'
 			],
 
 			[
 				'simple string rendering',
 				'simple-string-rendering',
 				'Element: 🇷🇺',
-				'Element: 1; Hook: beforeMount; Element: 😃; Hook: mounted; Element: à; Hook: mounted; Element: 🇷🇺; Hook: mounted; '
+				'Element: 1; Hook: beforeMount; Element: 😃; Hook: mounted; Element: à; Hook: mounted; Element: 🇷🇺; Hook: mounted;'
 			],
 
 			[
 				'simple iterable rendering',
 				'simple-iterable-rendering',
 				'Element: 2',
-				'Element: 1; Hook: beforeMount; Element: 2; Hook: mounted; '
+				'Element: 1; Hook: beforeMount; Element: 2; Hook: mounted;'
 			],
 
 			[
 				'range rendering with specifying a filter',
 				'range-rendering-with-filter',
 				'Element: 2',
-				'Element: 0; Hook: beforeMount; Element: 2; Hook: mounted; '
+				'Element: 0; Hook: beforeMount; Element: 2; Hook: mounted;'
+			],
+
+			[
+				'range rendering with `useRAF`',
+				'range-rendering-with-raf',
+				'Element: 1',
+				'Element: 0; Hook: beforeMount; Element: 1; Hook: mounted;'
 			]
 		].forEach(([des, selector, last, expected]) => {
 			it(des, async () => {
@@ -109,7 +116,7 @@ module.exports = async (page, params) => {
 							await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
 						}
 
-						return wrapper.innerHTML;
+						return wrapper.innerText;
 					}, [selector, last])
 				).toBe(expected);
 			});
@@ -121,11 +128,31 @@ module.exports = async (page, params) => {
 			).toBe('');
 		});
 
+		it('infinite rendering', async () => {
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('infinite-rendering');
+					ctx.block.element('infinite-rendering-btn').click();
+					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
+					return wrapper.innerText;
+				})
+			).toBe('Element: 0; Hook: mounted;');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('infinite-rendering');
+					ctx.block.element('infinite-rendering-defer-btn').click();
+					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
+					return wrapper.innerText;
+				})
+			).toBe('Element: 1; Hook: mounted;');
+		});
+
 		describe('emitted by a click', () => {
 			[
-				['range', 'Element: 0; Hook: mounted; '],
-				['iterable with promises', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted; '],
-				['promise with iterable', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted; '],
+				['range', 'Element: 0; Hook: mounted;'],
+				['iterable with promises', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted;'],
+				['promise with iterable', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted;'],
 				['promise with nullish', '']
 
 			].forEach(([name, expected]) => {
@@ -147,7 +174,7 @@ module.exports = async (page, params) => {
 								ctx.async.sleep(300)
 							]);
 
-							return wrapper.innerHTML;
+							return wrapper.innerText;
 						}, s)
 					).toBe(expected);
 				});
