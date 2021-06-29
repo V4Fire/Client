@@ -61,7 +61,7 @@ export function set(name: string, value: string, opts?: SetOptions): string {
 	}
 
 	let
-		cookie = `${name}=${encodeURIComponent(value)}`;
+		cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
 	for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
 		const
@@ -80,7 +80,8 @@ export function set(name: string, value: string, opts?: SetOptions): string {
 }
 
 /**
- * Removes a cookie by the specified name
+ * Removes a cookie by the specified name.
+ * Notice, the cookie to remove should have the same domain and path used to install it.
  *
  * @param name
  * @param [opts] - additional options
