@@ -115,7 +115,7 @@ export interface SetOptions {
    *
    * @default '`lax`'
    */
-  samesite?: SameSite;
+  samesite?: 'strict' | 'lax' | 'none';
 }
 ````
 

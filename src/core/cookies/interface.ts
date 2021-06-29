@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export type SameSite = 'strict' | 'lax' | 'none';
-
 export interface SetOptions {
 	/**
 	 * Path where the cookie is defined
@@ -61,7 +59,7 @@ export interface SetOptions {
 	 *
 	 * @default '`lax`'
 	 */
-	samesite?: SameSite;
+	samesite?: 'strict' | 'lax' | 'none';
 }
 
 export interface RemoveOptions {
