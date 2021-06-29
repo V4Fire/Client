@@ -12,52 +12,63 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__infinite-rendering
-			< template v-for = el in asyncRender.iterate(true, { &
-				filter: asyncRender.waitForceRender('infinite-rendering-wrapper')
-			}) .
-				< .&__infinite-rendering-wrapper
+		< template v-if = stage === 'infinite rendering'
+			< .&__result
+				< template v-for = el in asyncRender.iterate(true, { &
+					filter: asyncRender.waitForceRender('wrapper')
+				}) .
+					< .&__wrapper
+						Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
+
+			< button.&__force @click = asyncRender.forceRender()
+				Force render
+
+			< button.&__defer-force @click = asyncRender.deferForceRender()
+				Defer force render
+
+		< template v-if = stage === 'deactivating/activating the parent component while rendering'
+			< .&__result
+				< template v-for = el in asyncRender.iterate(2, { &
+					filter: async.sleep.bind(async, 200)
+				}) .
 					Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
 
-		< button.&__infinite-rendering-btn @click = asyncRender.forceRender()
-			Force render
+			< button.&__deactivate @click = deactivate()
+				Deactivate
 
-		< button.&__infinite-rendering-defer-btn @click = asyncRender.deferForceRender()
-			Defer force render
+			< button.&__activate @click = activate()
+				Activate
 
 		: cases = [ &
-			['simple-array-rendering', '[1, 2, 3, 4]'],
-			['array-rendering-with-chunk-size', '[1, 2, 3, 4], 3'],
-			['array-rendering-with-start-and-chunk-size', '[1, 2, 3, 4], [1, 2]'],
-			['simple-object-rendering', '{a: 1, b: 2}'],
-			['object-rendering-with-start', '{a: 1, b: 2}, [1]'],
-			['simple-string-rendering', '"1😃à🇷🇺"'],
-			['simple-iterable-rendering', 'new Set([1, 2]).values()'],
-			['range-rendering-with-filter', '4, {filter: (el) => el % 2 === 0}'],
-			['range-rendering-with-raf', '2, {useRaf: true}'],
-			['nullish-rendering', 'null'],
-			['range-rendering-by-click', '1', 'by-click'],
-			['iterable-with-promises-rendering-by-click', '[async.sleep(100).then(() => 1), async.sleep(50).then(() => 2)]', 'by-click'],
-			['promise-with-iterable-rendering-by-click', 'async.sleep(100).then(() => [1, 2])', 'by-click'],
-			['promise-with-nullish-rendering-by-click', 'async.sleep(100)', 'by-click']
+			['simple array rendering', '[1, 2, 3, 4]'],
+			['array rendering with specifying a chunk size', '[1, 2, 3, 4], 3'],
+			['array rendering with specifying a start position and chunk size', '[1, 2, 3, 4], [1, 2]'],
+			['simple object rendering', '{a: 1, b: 2}'],
+			['object rendering with specifying a start position', '{a: 1, b: 2}, [1]'],
+			['simple string rendering', '"1😃à🇷🇺"'],
+			['simple iterable rendering', 'new Set([1, 2]).values()'],
+			['range rendering with specifying a filter', '4, {filter: (el) => el % 2 === 0}'],
+			['range rendering with `useRAF`', '2, {useRaf: true}'],
+			['nullish rendering', 'null'],
+			['range rendering by click', '1', 'by click'],
+			['iterable with promises rendering by click', '[async.sleep(100).then(() => 1), async.sleep(50).then(() => 2)]', 'by click'],
+			['promise with iterable rendering by click', 'async.sleep(100).then(() => [1, 2])', 'by click'],
+			['promise with nullish rendering by click', 'async.sleep(100)', 'by click']
 		] .
 
 		- forEach cases => el
-			{el[0]}
+			< template v-if = stage === '${el[0]}'
+				- if el[2] === 'by click'
+					< .&__result
+						< template v-for = el in asyncRender.iterate(${el[1]}, { &
+							filter: (el, i) => tmp[stage] || promisifyOnce(stage)
+						}) .
+							Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
 
-			- if el[2] === 'by-click'
-				< .&__${el[0]}
-					< template v-for = el in asyncRender.iterate(${el[1]}, { &
-						filter: (el, i) => tmp['${el[0]}'] || promisifyOnce('${el[0]}')
-					}) .
-						Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
+					< button.&__emit @click = tmp[stage]=true, emit(stage)
+						{el[0]}
 
-				< button.&__${el[0]}-btn @click = tmp['${el[0]}']=true, emit('${el[0]}')
-					{el[0]}
-
-			- else
-				< .&__${el[0]}
-					< template v-for = el in asyncRender.iterate(${el[1]})
-						Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
-
-			< hr
+				- else
+					< .&__result
+						< template v-for = el in asyncRender.iterate(${el[1]})
+							Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
