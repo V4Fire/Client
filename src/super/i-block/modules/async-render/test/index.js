@@ -32,6 +32,120 @@ module.exports = async (page, params) => {
 	});
 
 	describe('`iBlock.asyncRender`', () => {
+		it('nullish rendering', async () => {
+			const target = await init('nullish rendering');
+			expect(await target.evaluate((ctx) => ctx.block.element('result').innerHTML)).toBe('');
+		});
+
+		it('infinite rendering', async () => {
+			const target = await init('infinite rendering');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('result');
+					ctx.block.element('force').click();
+					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
+					return wrapper.textContent.trim();
+				})
+			).toBe('Element: 0; Hook: mounted;');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('result');
+					ctx.block.element('defer-force').click();
+					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
+					return wrapper.textContent.trim();
+				})
+			).toBe('Element: 1; Hook: mounted;');
+		});
+
+		it('deactivating/activating the parent component while rendering', async () => {
+			const target = await init('deactivating/activating the parent component while rendering');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('result');
+
+					const
+						res = [wrapper.textContent.trim()];
+
+					ctx.block.element('deactivate').click();
+					await ctx.async.sleep(500);
+
+					res.push(wrapper.textContent.trim());
+					return res;
+				})
+			).toEqual(['', '']);
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('result');
+					ctx.block.element('activate').click();
+					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
+					return wrapper.textContent.trim();
+				})
+			).toBe('Element: 0; Hook: activated; Element: 1; Hook: activated;');
+		});
+
+		it('updating the parent component state', async () => {
+			const target = await init('updating the parent component state');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('result');
+
+					const
+						res = [wrapper.textContent.trim()];
+
+					ctx.block.element('update').click();
+					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
+
+					res.push(wrapper.textContent.trim());
+
+					res.push(ctx.tmp.oldRefs[0].hook);
+					res.push(ctx.tmp.oldRefs[1].hook);
+
+					return res;
+				})
+			).toEqual([
+				'Element: 0; Hook: beforeMount;  Element: 1; Hook: beforeMount;',
+				'Element: 0; Hook: beforeUpdate;  Element: 1; Hook: beforeMount;',
+
+				'updated',
+				'destroyed'
+			]);
+		});
+
+		it('clearing by the specified group name', async () => {
+			const target = await init('clearing by the specified group name');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('result');
+
+					const
+						res = [wrapper.textContent.trim()];
+
+					ctx.block.element('update').click();
+					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
+
+					res.push(wrapper.textContent.trim());
+					return res;
+				})
+			).toEqual([
+				'Element: 0; Hook: beforeMount; Element: 1; Hook: mounted;',
+				'Element: 0; Hook: beforeUpdate; Element: 1; Hook: mounted; Element: 1; Hook: updated;'
+			]);
+
+			expect(
+				await target.evaluate((ctx) => {
+					const wrapper = ctx.block.element('result');
+					ctx.block.element('clear').click();
+					return wrapper.textContent.trim();
+				})
+			).toBe('Element: 0; Hook: beforeUpdate;');
+		});
+
 		[
 			[
 				'simple array rendering',
@@ -102,61 +216,6 @@ module.exports = async (page, params) => {
 					}, last)
 				).toBe(expected);
 			});
-		});
-
-		it('nullish rendering', async () => {
-			const target = await init('nullish rendering');
-			expect(await target.evaluate((ctx) => ctx.block.element('result').innerHTML)).toBe('');
-		});
-
-		it('infinite rendering', async () => {
-			const target = await init('infinite rendering');
-
-			expect(
-				await target.evaluate(async (ctx) => {
-					const wrapper = ctx.block.element('result');
-					ctx.block.element('force').click();
-					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
-					return wrapper.textContent.trim();
-				})
-			).toBe('Element: 0; Hook: mounted;');
-
-			expect(
-				await target.evaluate(async (ctx) => {
-					const wrapper = ctx.block.element('result');
-					ctx.block.element('defer-force').click();
-					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
-					return wrapper.textContent.trim();
-				})
-			).toBe('Element: 1; Hook: mounted;');
-		});
-
-		it('deactivating/activating the parent component while rendering', async () => {
-			const target = await init('deactivating/activating the parent component while rendering');
-
-			expect(
-				await target.evaluate(async (ctx) => {
-					const wrapper = ctx.block.element('result');
-
-					const
-						res = [wrapper.textContent.trim()];
-
-					ctx.block.element('deactivate').click();
-					await ctx.async.sleep(500);
-
-					res.push(wrapper.textContent.trim());
-					return res;
-				})
-			).toEqual(['', '']);
-
-			expect(
-				await target.evaluate(async (ctx) => {
-					const wrapper = ctx.block.element('result');
-					ctx.block.element('activate').click();
-					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
-					return wrapper.textContent.trim();
-				})
-			).toBe('Element: 0; Hook: activated; Element: 1; Hook: activated;');
 		});
 
 		[

@@ -39,6 +39,31 @@
 			< button.&__activate @click = activate()
 				Activate
 
+		< template v-if = stage === 'updating the parent component state'
+			< .&__result
+				{{ void(tmp.oldRefs = $refs.btn) }}
+
+				< template v-for = el in asyncRender.iterate(2)
+					< b-button ref = btn | v-func = false
+						< template #default = {ctx}
+							Element: {{ el }}; Hook: {{ ctx.hook }};
+
+			< button.&__update @click = watchTmp.foo=Math.random()
+				Update state
+
+		< template v-if = stage === 'clearing by the specified group name'
+			< .&__result
+				< template v-for = el in asyncRender.iterate(2, { &
+					group: 'foo'
+				}) .
+					Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
+
+			< button.&__update @click = watchTmp.foo=Math.random()
+				Update state
+
+			< button.&__clear @click = async.clearAll({group: /foo/})
+				Clear
+
 		: cases = [ &
 			['simple array rendering', '[1, 2, 3, 4]'],
 			['array rendering with specifying a chunk size', '[1, 2, 3, 4], 3'],
