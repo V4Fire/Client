@@ -442,7 +442,15 @@ export default class AsyncRender extends Friend {
 									.then((v) => {
 										iterable = v;
 										iterator = v[Symbol.iterator]();
-										return iterator.next().value;
+
+										const
+											el = iterator.next();
+
+										if (el.done) {
+											return BREAK;
+										}
+
+										return el.value;
 									})
 
 									.catch((err) => {

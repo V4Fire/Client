@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-06-29)
+
+#### :bug: Bug Fix
+
+* Don't render empty iterables
+
 ## v3.0.0-rc.207 (2021-06-28)
 
 #### :bug: Bug Fix
