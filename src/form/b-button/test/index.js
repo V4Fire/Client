@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable max-lines-per-function */
+
 // @ts-check
 
 /**
@@ -15,26 +17,45 @@
 const
 	h = include('tests/helpers');
 
-/** @param {Page} page */
-module.exports = (page) => {
+/**
+ * @param {Page} page
+ */
+module.exports = (page, params) => {
+	const initialUrl = page.url();
+
 	describe('b-button', () => {
+		beforeEach(async () => {
+			page = await params.context.newPage();
+			await page.goto(initialUrl);
+		});
+
+		afterEach(() => page.close());
+
 		let
 			buttonNode,
 			buttonCtx;
 
 		const renderButton = async (props = {}) => {
-			await page.evaluate(() => {
+			await page.evaluate((props) => {
 				const scheme = [
 					{
 						attrs: {
 							id: 'target',
 							...props
+						},
+
+						content: {
+							default: () => 'Hello there general kenobi'
 						}
 					}
 				];
 
 				globalThis.renderComponents('b-button', scheme);
-			});
+
+				globalThis.buttonNode = document.getElementById('target');
+				globalThis.buttonCtx = globalThis.buttonNode.component;
+
+			}, props);
 
 			buttonNode = await page.waitForSelector('#target');
 			buttonCtx = await h.component.getComponentById(page, 'target');
@@ -42,101 +63,335 @@ module.exports = (page) => {
 
 		beforeEach(async () => {
 			await page.evaluate(() => {
+				globalThis._t = undefined;
 				globalThis.removeCreatedComponents();
 			});
 		});
 
 		describe('buttonType', () => {
-			xit('file', async () => {
-				// ...
+			describe('file', () => {
+				beforeEach(async () => {
+					await renderButton({
+						type: 'file'
+					});
+				});
+
+				it('renders button with file type', async () => {
+					const
+						fileEl = await buttonNode.$('[type="file"]');
+
+					expect(fileEl).toBeTruthy();
+				});
+
+				it('opens a file chooser on click', async () => {
+					const
+						event = page.waitForEvent('filechooser');
+
+					await buttonNode.click();
+
+					await expectAsync(event).toBeResolved();
+				});
+
+				describe('file chooser has been open, and the file has been selected', () => {
+					let changeEventPr;
+
+					beforeEach(async () => {
+						const
+							fileChooserPr = page.waitForEvent('filechooser');
+
+						changeEventPr = buttonCtx.evaluate((ctx) => ctx.promisifyOnce('change'));
+
+						await buttonNode.click();
+
+						const
+							fileChooser = await fileChooserPr;
+
+						await fileChooser.setFiles({
+							name: 'somefile.pdf',
+							mimeType: 'application/pdf',
+							buffer: Buffer.from([])
+						});
+					});
+
+					it('stores the provided file', async () => {
+						const
+							filesLength = await buttonCtx.evaluate((ctx) => ctx.files.length);
+
+						expect(filesLength).toBe(1);
+					});
+
+					it('fires a change event', async () => {
+						await expectAsync(changeEventPr).toBeResolved();
+					});
+
+					it('resets the provided files on `reset` method call', async () => {
+						await buttonCtx.evaluate((ctx) => ctx.reset());
+
+						const
+							filesLength = await buttonCtx.evaluate((ctx) => ctx.files.length);
+
+						expect(filesLength).toBe(0);
+					});
+				});
 			});
 
-			xit('submit', async () => {
-				// ...
+			describe('submit', () => {
+				beforeEach(async () => {
+					await renderButton({
+						type: 'submit'
+					});
+				});
+
+				it('renders the button with submit type', async () => {
+					const
+						submitEl = await buttonNode.$('[type="submit"]');
+
+					expect(submitEl).toBeTruthy();
+				});
+
+				it('fires the submit event on click', async () => {
+					const pr = page.evaluate(() => new Promise((res) => {
+						const
+							form = document.createElement('form');
+
+						document.body.prepend(form);
+						form.appendChild(globalThis.buttonNode);
+						form.onsubmit = (e) => {
+							e.preventDefault();
+							res();
+						};
+					}));
+
+					await buttonNode.click();
+
+					await expectAsync(pr).toBeResolved();
+				});
 			});
 
-			xit('link', async () => {
-				// ...
-			});
-		});
+			describe('link', () => {
+				const
+					url = 'https://someurl.com/';
 
-		describe('accept', () => {
-			xit('.txt', async () => {
-				// ...
+				beforeEach(async () => {
+					await renderButton({
+						href: url,
+						type: 'link'
+					});
+				});
+
+				it('renders the button with href', async () => {
+					const
+						linkEl = await buttonNode.$(`[href="${url}"]`);
+
+					expect(linkEl).toBeTruthy();
+				});
+
+				it('navigates to the provided href', async () => {
+					const pr = new Promise(async (res) => {
+						await page.route('**/*', (r) => {
+							if (r.request().isNavigationRequest()) {
+								res(r.request().url());
+								return r.fulfill({
+									status: 200
+								});
+							}
+
+							return r.continue();
+						});
+					});
+
+					await buttonNode.click();
+
+					const
+						navigationUrl = await pr;
+
+					expect(navigationUrl).toBe(url);
+				});
 			});
+
 		});
 
 		describe('href', () => {
-			it('https://someurl.com', async () => {
+			it('provides a base url to the dataProvider', async () => {
+				const pr = new Promise(async (res) => {
+					await page.route('**/api/test/base', (r) => {
+						res();
+						return r.fulfill({
+							status: 200,
+							contentType: 'application/json',
+							body: JSON.stringify({})
+						});
+					});
+				});
+
 				await renderButton({
-					href: 'https://someurl.com'
+					dataProvider: 'demo.List',
+					href: 'test/base',
+					defaultRequestFilter: false
+				});
+
+				await buttonNode.click();
+
+				await expectAsync(pr).toBeResolved();
+			});
+		});
+
+		describe('disabled', () => {
+			describe('true', () => {
+				it('does not fires a click event on click', async () => {
+					await renderButton({
+						disabled: true
+					});
+
+					await buttonCtx.evaluate((ctx) => ctx.on('click', () => globalThis._t = 1));
+					await buttonNode.click();
+					await h.bom.waitForIdleCallback(page);
+
+					const
+						testVal = await page.evaluate(() => globalThis._t);
+
+					expect(testVal).toBeUndefined();
+				});
+
+				it('does not fires a navigation on click', async () => {
+					await renderButton({
+						disabled: true,
+						type: 'link',
+						href: 'https://someurl.com/'
+					});
+
+					let hasNavRequest = false;
+
+					await page.route('**/*', (r) => {
+						if (r.request().isNavigationRequest()) {
+							hasNavRequest = true;
+						}
+
+						return r.continue();
+					});
+
+					await buttonNode.click();
+					await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
+
+					expect(hasNavRequest).toBeFalse();
+				});
+			});
+
+			describe('false', () => {
+				it('fires a click event', async () => {
+					await renderButton({
+						disabled: false
+					});
+
+					await buttonCtx.evaluate((ctx) => ctx.on('click', () => globalThis._t = 1));
+					await buttonNode.click();
+					await h.bom.waitForIdleCallback(page);
+
+					const
+						testVal = await page.evaluate(() => globalThis._t);
+
+					expect(testVal).toBe(1);
 				});
 			});
 		});
 
 		describe('autofocus', () => {
-			xit('true', async () => {
-				// ...
+			it('true', async () => {
+				await renderButton({
+					autofocus: true
+				});
+
+				const
+					autofocusEl = await buttonNode.$('[autofocus="autofocus"]');
+
+				expect(autofocusEl).toBeTruthy();
+			});
+
+			it('false', async () => {
+				await renderButton({
+					autofocus: false
+				});
+
+				const
+					autofocusEl = await buttonNode.$('[autofocus="autofocus"]');
+
+				expect(autofocusEl).toBeNull();
 			});
 		});
 
 		describe('tabIndex', () => {
-			xit('-1', async () => {
-				// ...
+			it('-1', async () => {
+				await renderButton({
+					tabIndex: -1
+				});
+
+				const
+					tabIndexEl = await buttonNode.$('[tabindex="-1"]');
+
+				expect(tabIndexEl).toBeTruthy();
 			});
 
-			xit('1', async () => {
-				// ...
+			it('1', async () => {
+				await renderButton({
+					tabIndex: 1
+				});
+
+				const
+					tabIndexEl = await buttonNode.$('[tabindex="1"]');
+
+				expect(tabIndexEl).toBeTruthy();
 			});
 		});
 
 		describe('preIcon', () => {
-			xit('dropdown', async () => {
-				// ...
-			});
-		});
+			it('dropdown', async () => {
+				await renderButton({
+					preIcon: 'foo'
+				});
 
-		describe('preIconComponent', () => {
-			xit('b-icon', async () => {
-				// ...
-			});
-		});
+				const
+					bIcon = await buttonNode.$('.b-icon'),
+					useSvg = (await bIcon.$$('use')).pop(),
+					href = await useSvg.evaluate((ctx) => ctx.href.baseVal);
 
-		describe('hint', () => {
-			xit('not shown if the cursor is not hovering', async () => {
-				// ...
+				expect(href.endsWith('#foo')).toBeTrue();
 			});
 
-			xit('shown if the cursor is hovering', async () => {
-				// ...
-			});
-		});
+			it('undefined', async () => {
+				await renderButton({
+					preIcon: undefined
+				});
 
-		describe('isFocused', () => {
-			xit('true if the button is focused', async () => {
-				// ...
-			});
+				const
+					bIcon = await buttonNode.$('.b-icon');
 
-			xit('false if the button is not focused', async () => {
-				// ...
+				expect(bIcon).toBeNull();
 			});
 		});
 
 		describe('click event', () => {
-			xit('emits on click', async () => {
-				// ...
+			beforeEach(async () => {
+				await renderButton();
 			});
 
-			xit('does not emit an event without click', async () => {
-				// ...
+			it('emits on click', async () => {
+				const
+					pr = buttonCtx.evaluate((ctx) => ctx.promisifyOnce('click'));
+
+				await buttonNode.click();
+
+				await expectAsync(pr).toBeResolved();
+			});
+
+			it('does not emit an event without click', async () => {
+				await buttonCtx.evaluate((ctx) => ctx.once('click', () => globalThis._t = 1));
+				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 400});
+
+				const
+					res = await page.evaluate(() => globalThis._t);
+
+				expect(res).toBeUndefined();
 			});
 		});
-
-		describe('change event', () => {
-			xit('emits on file change', async () => {
-				// ...
-			});
-		});
-
 	});
 };
