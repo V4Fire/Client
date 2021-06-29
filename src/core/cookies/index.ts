@@ -28,7 +28,7 @@ export function has(name: string): boolean {
  */
 export function get(name: string): CanUndef<string> {
 	const matches = new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`).exec(document.cookie);
-	return matches ? decodeURIComponent(matches[1]) : undefined;
+	return matches != null ? decodeURIComponent(matches[1]) : undefined;
 }
 
 /**
