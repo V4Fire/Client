@@ -146,6 +146,18 @@ module.exports = async (page, params) => {
 			).toBe('Element: 0; Hook: beforeUpdate;');
 		});
 
+		it('loading dynamic modules', async () => {
+			const target = await init('loading dynamic modules');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const wrapper = ctx.block.element('result');
+					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
+					return wrapper.textContent.trim();
+				})
+			).toBe('Ok 1  Ok 2');
+		});
+
 		[
 			[
 				'simple array rendering',

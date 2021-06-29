@@ -64,6 +64,16 @@
 			< button.&__clear @click = async.clearAll({group: /foo/})
 				Clear
 
+		< template v-if = stage === 'loading dynamic modules'
+			< .&__result
+				+= self.loadModules('form/b-button')
+					< b-button
+						Ok 1
+
+				+= self.loadModules(['form/b-button'], {wait: 'async.sleep.bind(async, 300)'})
+					< b-button
+						Ok 2
+
 		: cases = [ &
 			['simple array rendering', '[1, 2, 3, 4]'],
 			['array rendering with specifying a chunk size', '[1, 2, 3, 4], 3'],
