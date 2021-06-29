@@ -12,19 +12,38 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__simple-array-rendering
-			< template v-for = el in asyncRender.iterate([1, 2, 3, 4])
-				Element: {{ el }}; Hook: {{ hook }}; {{ '' }}
+		: cases = [ &
+			['simple-array-rendering', '[1, 2, 3, 4]'],
+			['array-rendering-with-chunk-size', '[1, 2, 3, 4], 3'],
+			['array-rendering-with-start-and-chunk-size', '[1, 2, 3, 4], [1, 2]'],
+			['simple-object-rendering', '{a: 1, b: 2}'],
+			['object-rendering-with-start', '{a: 1, b: 2}, [1]'],
+			['simple-string-rendering', '"1😃à🇷🇺"'],
+			['simple-iterable-rendering', 'new Set([1, 2]).values()'],
+			['range-rendering-with-filter', '4, {filter: (el) => el % 2 === 0}'],
+			['nullish-rendering', 'null'],
+			['range-rendering-by-click', '1', 'by-click'],
+			['iterable-with-promises-rendering-by-click', '[async.sleep(100).then(() => 1), async.sleep(50).then(() => 2)]', 'by-click'],
+			['promise-with-iterable-rendering-by-click', 'async.sleep(100).then(() => [1, 2])', 'by-click'],
+			['promise-with-nullish-rendering-by-click', 'async.sleep(100)', 'by-click']
+		] .
 
-		< .&__array-rendering-with-chunk-size
-			< template v-for = el in asyncRender.iterate([1, 2, 3, 4], 3)
-				Element: {{ el }}; Hook: {{ hook }}; {{ '' }}
+		- forEach cases => el
+			{el[0]}
 
-		< .&__range-rendering-by-click
-			< template v-for = el in asyncRender.iterate(1, { &
-				filter: (el, i) => promisifyOnce('range-rendering-by-click')
-			}) .
-				Element: {{ el }}; Hook: {{ hook }}; {{ '' }}
+			- if el[2] === 'by-click'
+				< .&__${el[0]}
+					< template v-for = el in asyncRender.iterate(${el[1]}, { &
+						filter: (el, i) => tmp['${el[0]}'] || promisifyOnce('${el[0]}')
+					}) .
+						Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
 
-		< button.&__range-rendering-by-click-btn @click = emit('range-rendering-by-click')
+				< button.&__${el[0]}-btn @click = tmp['${el[0]}']=true, emit('${el[0]}')
+					{el[0]}
 
+			- else
+				< .&__${el[0]}
+					< template v-for = el in asyncRender.iterate(${el[1]})
+						Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
+
+			< hr
