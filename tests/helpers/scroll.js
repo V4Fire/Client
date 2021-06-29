@@ -68,7 +68,7 @@ class Scroll {
 			...options
 		};
 
-		checkFn ??= (() => false);
+		checkFn = checkFn ?? (() => false);
 
 		let
 			isDone = await checkFn(),
