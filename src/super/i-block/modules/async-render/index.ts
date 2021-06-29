@@ -61,14 +61,8 @@ export default class AsyncRender extends Friend {
 	}
 
 	/**
-	 * Returns a promise that will be resolved after the firing of the `forceRender` event.
-	 * Notice, the initial rendering of a component is mean the same as `forceRender`.
-	 */
-	waitForceRender(): CanPromise<boolean>;
-
-	/**
 	 * Returns a function that returns a promise that will be resolved after firing the `forceRender` event.
-	 * The method takes an element name as the first parameter, the element will be dropped before resolving.
+	 * The method can take an element name as the first parameter. This element will be dropped before resolving.
 	 *
 	 * Notice, the initial rendering of a component is mean the same as `forceRender`.
 	 * The method is useful to re-render a non-regular component (functional or flyweight)
@@ -87,9 +81,8 @@ export default class AsyncRender extends Friend {
 	 *       {{ Math.random() }}
 	 * ```
 	 */
-	waitForceRender(elementToDrop: string): () => CanPromise<boolean>;
-	waitForceRender(elementToDrop?: string): CanPromise<boolean> | (() => CanPromise<boolean>) {
-		const wait = () => {
+	waitForceRender(elementToDrop?: string): () => CanPromise<boolean> {
+		return () => {
 			if (!this.lfc.isBeforeCreate()) {
 				return this.localEmitter.promisifyOnce('forceRender').then(() => {
 					if (elementToDrop != null) {
@@ -102,12 +95,6 @@ export default class AsyncRender extends Friend {
 
 			return true;
 		};
-
-		if (elementToDrop != null) {
-			return wait;
-		}
-
-		return wait();
 	}
 
 	/**

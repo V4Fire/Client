@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Don't render empty iterables `super/i-block/modules/async-render`
+* `super/i-block/modules/async-render`:
+  * Don't render empty iterables
+  * Fixed infinity loop with `waitForceRender`
 
 ## v3.0.0-rc.207 (2021-06-28)
 

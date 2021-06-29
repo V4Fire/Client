@@ -185,26 +185,21 @@ Restarts the `asyncRender` daemon to force rendering (runs on the next tick).
 
 ### waitForceRender
 
-The method has two overloads:
+Returns a function that returns a promise that will be resolved after firing the `forceRender` event.
+The method can take an element name as the first parameter. This element will be dropped before resolving.
 
-1. Returns a promise that will be resolved after the firing of the `forceRender` event.
-   Notice, the initial rendering of a component is mean the same as `forceRender`.
+Notice, the initial rendering of a component is mean the same as `forceRender`.
+The method is useful to re-render a non-regular component (functional or flyweight) without touching the parent state.
 
-2. Returns a function that returns a promise that will be resolved after firing the `forceRender` event.
-   The method takes an element name as the first parameter, the element will be dropped before resolving.
+```
+< button @click = asyncRender.forceRender()
+ Re-render the component
 
-   Notice, the initial rendering of a component is mean the same as `forceRender`.
-   The method is useful to re-render a non-regular component (functional or flyweight) without touching the parent state.
-
-   ```
-   < button @click = asyncRender.forceRender()
-     Re-render the component
-
-   < .&__wrapper
-     < template v-for = el in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('content')})
-       < .&__content
-         {{ Math.random() }}
-   ```
+< .&__wrapper
+ < template v-for = el in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('content')})
+   < .&__content
+     {{ Math.random() }}
+```
 
 ## Snakeskin helpers
 

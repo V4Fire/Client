@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Don't render empty iterables
+* Fixed infinity loop with `waitForceRender`
 
 ## v3.0.0-rc.207 (2021-06-28)
 
