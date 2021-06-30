@@ -1,0 +1,55 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+@import "traits/i-visible/i-visible.styl"
+
+$p = {
+	minImgSize: 10em
+	visibleHelpers: true
+	controlsPosition: bottom 0 right 0
+}
+
+b-image-editor extends i-block
+	// @stlint-disable
+	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
+
+	&__root-wrapper
+		display flex
+
+	&__super-wrapper
+		position relative
+		display inline-block
+
+	&__img
+		min-width $p.minImgSize
+		min-height @min-width
+
+	&__wrapper
+		absolute top 0 left 0
+		zIndex(layer, 1)
+		display none
+		size 100%
+
+	&__progress
+		display inline-block
+
+	&__controls
+		absolute $p.controlsPosition
+		zIndex(layer, 2)
+		display flex
+
+	&__control
+		cursor pointer
+
+	&_progress_true &__super-wrapper
+		display block
+
+	&_progress_true &__wrapper + &__controls
+		display none
