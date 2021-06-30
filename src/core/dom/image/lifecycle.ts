@@ -74,7 +74,7 @@ export default class Lifecycle {
 			const
 				$a = mainShadowState.mainOptions.ctx?.unsafe.$async;
 
-			if ($a) {
+			if ($a != null) {
 				mainShadowState.loadPromise = $a.promise(mainShadowState.imgNode.init, {group: '[[v-image:main]]', label: el[ID]})
 					.then(this.onMainImageLoad.bind(this, el))
 					.catch(this.onMainImageLoadError.bind(this, el));
@@ -119,7 +119,7 @@ export default class Lifecycle {
 			imgNode[INIT_LOAD]!();
 		}
 
-		if (mainOptions.ctx) {
+		if (mainOptions.ctx != null) {
 			shadowState.loadPromise = mainOptions.ctx.unsafe.$async.promise(
 				imgNode.init,
 

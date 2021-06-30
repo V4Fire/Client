@@ -1,7 +1,15 @@
 src/*/**/index.js
-!src/**/test/*.js
 src/*/**/*.index.js
-dist/**
+
 assets/**
+src/assets/**
+
+tmp/**
+src/entries/tmp/**
+
+!src/**/test/*.js
+
 docs/**
+dist/**
 node_modules/**
+

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { EventEmitterLikeP } from 'core/async';
+import type { EventEmitterLike } from 'core/async';
 import type { WatchOptions, VNodeDirective } from 'core/component';
 
 export interface DirectiveOptions extends VNodeDirective {
@@ -24,7 +24,7 @@ export interface DirectiveValue {
 	 * Also, the emitter can be provided as a function. In that case, it will be invoked,
 	 * and the emitter is taken from the result.
 	 */
-	emitter: EventEmitterLikeP | Promise<unknown> | string;
+	emitter: EventEmitterLike | Function | Promise<unknown> | string;
 
 	/**
 	 * Name of the event to listen

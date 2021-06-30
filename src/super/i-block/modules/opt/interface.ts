@@ -8,6 +8,6 @@
 
 export type MemoizedLiteral<T = unknown> =
 	Readonly<Dictionary<T>> |
-	ReadonlyArray<T>;
+	readonly T[];
 
 export type IfOnceValue = 0 | 1 | 2;

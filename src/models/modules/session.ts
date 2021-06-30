@@ -6,8 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Provider, { provider, Middlewares, RequestResponse, RequestFunctionResponse, Response } from 'core/data';
+import Provider, {
+
+	provider,
+
+	Middlewares,
+	MiddlewareParams,
+
+	RequestResponse,
+	RequestFunctionResponse,
+	Response
+
+} from 'core/data';
+
 import * as s from 'core/session';
+
 export * from 'core/data';
 
 @provider
@@ -41,8 +54,7 @@ export default class Session extends Provider {
 	static readonly middlewares: Middlewares = {
 		...Provider.middlewares,
 
-		// tslint:disable-next-line:typedef
-		async addSession(this: Session, {opts}) {
+		async addSession(this: Session, {opts}: MiddlewareParams): Promise<void> {
 			if (opts.api) {
 				const h = await this.getAuthParams();
 				Object.mixin({traits: true}, opts.headers, h);
@@ -51,14 +63,14 @@ export default class Session extends Provider {
 	};
 
 	/** @override */
-	async getAuthParams(params?: Dictionary): Promise<Dictionary> {
+	async getAuthParams(): Promise<Dictionary> {
 		const
 			session = await s.get();
 
 		if (Object.isString(session.auth)) {
 			return {
 				[this.authHeader]: this.authPrfx + session.auth,
-				[this.csrfHeader]: session?.params?.csrf
+				[this.csrfHeader]: session.params?.csrf
 			};
 		}
 
@@ -79,23 +91,26 @@ export default class Session extends Provider {
 		factory?: RequestFunctionResponse
 	): RequestResponse {
 		const
-			// @ts-ignore
-			req = super.updateRequest(url, event, factory),
+			req = super.updateRequest(url, <any>event, <any>factory),
 			session = s.get();
 
-		const update = (res) => {
+		const update = async (res) => {
 			const
 				info = <Response>res.response,
 				refreshHeader = info.getHeader(this.authRefreshHeader);
 
 			try {
-				if (refreshHeader) {
-					s.set(refreshHeader, {csrf: info.getHeader(this.csrfHeader)});
+				if (refreshHeader != null) {
+					await s.set(refreshHeader, {csrf: info.getHeader(this.csrfHeader)});
 				}
+
 			} catch {}
 		};
 
-		req.then(update);
+		req
+			.then(update)
+			.catch(stderr);
+
 		return req.catch(async (err) => {
 			const
 				response = Object.get<Response>(err, 'details.response'),
@@ -112,12 +127,12 @@ export default class Session extends Provider {
 
 					await s.clear();
 
-					if (auth && this.requestAfterClear) {
+					if (Object.isTruly(auth) && this.requestAfterClear) {
 						return r();
 					}
 				}
 
-				update({response});
+				await update({response});
 			}
 
 			throw err;
