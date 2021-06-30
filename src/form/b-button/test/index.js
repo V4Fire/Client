@@ -76,7 +76,7 @@ module.exports = (page, params) => {
 					});
 				});
 
-				it('renders button with file type', async () => {
+				it('renders a button with file type', async () => {
 					const
 						fileEl = await buttonNode.$('[type="file"]');
 
@@ -142,7 +142,7 @@ module.exports = (page, params) => {
 					});
 				});
 
-				it('renders the button with submit type', async () => {
+				it('renders a button with submit type', async () => {
 					const
 						submitEl = await buttonNode.$('[type="submit"]');
 
@@ -179,7 +179,7 @@ module.exports = (page, params) => {
 					});
 				});
 
-				it('renders the button with href', async () => {
+				it('renders a button with href', async () => {
 					const
 						linkEl = await buttonNode.$(`[href="${url}"]`);
 
@@ -238,7 +238,7 @@ module.exports = (page, params) => {
 
 		describe('disabled', () => {
 			describe('true', () => {
-				it('does not fires a click event on click', async () => {
+				it('does not fires a click event', async () => {
 					await renderButton({
 						disabled: true
 					});
@@ -253,7 +253,7 @@ module.exports = (page, params) => {
 					expect(testVal).toBeUndefined();
 				});
 
-				it('does not fires a navigation on click', async () => {
+				it('does not fires a navigation', async () => {
 					await renderButton({
 						disabled: true,
 						type: 'link',
@@ -374,7 +374,7 @@ module.exports = (page, params) => {
 				await renderButton();
 			});
 
-			it('emits on click', async () => {
+			it('fires on click', async () => {
 				const
 					pr = buttonCtx.evaluate((ctx) => ctx.promisifyOnce('click'));
 
@@ -383,7 +383,7 @@ module.exports = (page, params) => {
 				await expectAsync(pr).toBeResolved();
 			});
 
-			it('does not emit an event without click', async () => {
+			it('does not emit an event without a click', async () => {
 				await buttonCtx.evaluate((ctx) => ctx.once('click', () => globalThis._t = 1));
 				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 400});
 
