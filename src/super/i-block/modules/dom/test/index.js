@@ -44,8 +44,8 @@ module.exports = (page, params) => {
 
 		afterEach(() => page.close());
 
-		describe('getId', () => {
-			it('null | undefined', async () => {
+		describe('`getId`', () => {
+			it('`null | undefined`', async () => {
 				const
 					result = await dummyComponent.evaluate((ctx) => [ctx.dom.getId(undefined), ctx.dom.getId(null)]);
 
@@ -60,8 +60,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('delegate', () => {
-			it('fires a callback inside of #foo', async () => {
+		describe('`delegate`', () => {
+			it('fires a callback inside of `#foo`', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					const fooEl = document.createElement('div');
 					fooEl.id = 'foo';
@@ -80,7 +80,7 @@ module.exports = (page, params) => {
 				expect(testVal).toBe(1);
 			});
 
-			it('does not fires a callback outside of #foo', async () => {
+			it('does not fire a callback outside of `#foo`', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					const fooEl = document.createElement('div');
 					fooEl.id = 'foo';
@@ -101,8 +101,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('putInStream', () => {
-			it('puts a newNode into the document', async () => {
+		describe('`putInStream`', () => {
+			it('puts a new node into the document', async () => {
 				const isConnected = await dummyComponent.evaluate((ctx) => new Promise((res) =>
 					ctx.dom.putInStream((el) => res(el.isConnected), globalThis._testEl)));
 
@@ -110,8 +110,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('appendChild', () => {
-			it('appends newNode to the parentNode', async () => {
+		describe('`appendChild`', () => {
+			it('appends a new node to the parent node', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					ctx.dom.appendChild(ctx.$el, globalThis._testEl);
 				});
@@ -122,7 +122,7 @@ module.exports = (page, params) => {
 				expect(isIn).toBeTrue();
 			});
 
-			it('removes newNode from the parentNode on async clear', async () => {
+			it('removes a node from the parent node on async `clear`', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					ctx.dom.appendChild(ctx.$el, globalThis._testEl, '_test-group');
 				});
@@ -135,7 +135,7 @@ module.exports = (page, params) => {
 				expect(isConnected).toBeFalse();
 			});
 
-			it('destroys newNode component on async clear', async () => {
+			it('destroys a node component on async `clear`', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					const scheme = [
 						{
@@ -167,7 +167,7 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('replaceWith', () => {
+		describe('`replaceWith`', () => {
 			beforeEach(async () => {
 				await dummyComponent.evaluate((ctx) => {
 					globalThis._testEl2 = document.createElement('div');
@@ -175,7 +175,7 @@ module.exports = (page, params) => {
 				});
 			});
 
-			it('replaces oldNode with newNode', async () => {
+			it('replaces an old node with a new one', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					ctx.dom.replaceWith(globalThis._testEl2, globalThis._testEl);
 				});
@@ -189,7 +189,7 @@ module.exports = (page, params) => {
 				expect(bIsConnected).toBeTrue();
 			});
 
-			it('removes newNode on async clear', async () => {
+			it('removes a node on async `clear`', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					ctx.dom.replaceWith(globalThis._testEl2, globalThis._testEl, '_test-group');
 				});
@@ -202,7 +202,7 @@ module.exports = (page, params) => {
 				expect(isConnected).toBeFalse();
 			});
 
-			it('destroys newNode component on async clear', async () => {
+			it('destroys a node component on async `clear`', async () => {
 				await dummyComponent.evaluate((ctx) => {
 					const scheme = [
 						{
@@ -234,7 +234,7 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('getComponent', () => {
+		describe('`getComponent`', () => {
 			let targetComponentId;
 
 			beforeEach(async () => {
@@ -248,14 +248,14 @@ module.exports = (page, params) => {
 				expect(foundedId).toBe(targetComponentId);
 			});
 
-			it('dummyComponent', async () => {
+			it('dummy component', async () => {
 				const
 					foundedId = await dummyComponent.evaluate((ctx) => ctx.dom.getComponent(ctx.$el).componentId);
 
 				expect(foundedId).toBe(targetComponentId);
 			});
 
-			it('nestedNodeInDummyComponent', async () => {
+			it('nested node within the dummy component', async () => {
 				const foundedId = await dummyComponent.evaluate((ctx) => {
 					ctx.$el.appendChild(globalThis._testEl);
 					return ctx.dom.getComponent(globalThis._testEl).componentId;
@@ -272,8 +272,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('createBlockCtxFromNode', () => {
-			it('node without component', async () => {
+		describe('`createBlockCtxFromNode`', () => {
+			it('node without a component', async () => {
 				const [hasMethods, hasCorrectComponentName, hasContext] = await dummyComponent.evaluate((ctx) => {
 					const
 						cName = 'b-test-component';
@@ -294,7 +294,7 @@ module.exports = (page, params) => {
 				expect([hasMethods, hasCorrectComponentName, hasContext]).toEqual([true, true, true]);
 			});
 
-			it('node with component', async () => {
+			it('node with a component', async () => {
 				const [
 					hasMethods,
 					hasCorrectComponentName,
@@ -316,7 +316,7 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('watchForIntersection', () => {
+		describe('`watchForIntersection`', () => {
 			beforeEach(async () => {
 				await dummyComponent.evaluate((ctx) => {
 					ctx.$el.appendChild(globalThis._testEl);
@@ -333,7 +333,7 @@ module.exports = (page, params) => {
 				await expectAsync(page.waitForFunction(() => globalThis._t === 1)).toBeResolved();
 			});
 
-			it('clears on async clear', async () => {
+			it('clears on async `clear`', async () => {
 				await dummyComponent.evaluate((ctx) => ctx.async.clearAll({group: '_test-group'}));
 				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 600});
 
@@ -344,7 +344,7 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('watchForResize', () => {
+		describe('`watchForResize`', () => {
 			beforeEach(async () => {
 				await dummyComponent.evaluate((ctx) => {
 					ctx.$el.appendChild(globalThis._testEl);
@@ -361,7 +361,7 @@ module.exports = (page, params) => {
 				await expectAsync(page.waitForFunction(() => globalThis._t === 1)).toBeResolved();
 			});
 
-			it('clears on async clear', async () => {
+			it('clears on async `clear`', async () => {
 				await dummyComponent.evaluate((ctx) => ctx.async.clearAll({group: '_test-group'}));
 
 				await page.evaluate(() => globalThis._testEl.style.width = '400px');
