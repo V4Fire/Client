@@ -358,7 +358,8 @@ module.exports = function init(gulp = require('gulp')) {
 				page,
 				context,
 				componentDir,
-				tmpDir
+				tmpDir,
+				contextOpts
 			};
 		}
 
