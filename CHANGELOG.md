@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-07-??)
+
+#### :rocket: New Feature
+
+* Initial release `bDummyLfc`
+
 ## v3.0.0-rc.208 (2021-06-29)
 
 #### :bug: Bug Fix

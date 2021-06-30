@@ -46,8 +46,8 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after a "beforeDataCreate" hook or a "beforeReady" event
-	 * and returns a result of invocation
+	 * Executes the specified callback after the `beforeDataCreate` hook or `beforeReady` event
+	 * and returns a result of the invocation
 	 *
 	 * @see [[Async.proxy]]
 	 * @param cb
@@ -77,7 +77,7 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after a block ready event and returns a result of invocation
+	 * Executes the specified callback after a block ready event and returns a result of the invocation
 	 *
 	 * @param cb
 	 * @param [opts] - additional options
@@ -97,7 +97,7 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after a "created" hook and returns a result of invocation
+	 * Executes the specified callback after a `created` hook and returns a result of the invocation
 	 *
 	 * @param cb
 	 * @param [opts] - additional options
