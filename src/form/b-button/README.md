@@ -64,7 +64,6 @@ The component has four base scenarios of usage:
   Upload a file
 ```
 
-
 ### A link
 
 ```

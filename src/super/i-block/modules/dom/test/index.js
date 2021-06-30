@@ -350,20 +350,21 @@ module.exports = (page, params) => {
 					ctx.$el.appendChild(globalThis._testEl);
 
 					return ctx.dom.watchForResize(globalThis._testEl, {
-						callback: () => globalThis._t = 1
+						callback: () => globalThis._t = 1,
+						initial: false
 					}, {group: '_test-group'});
 				});
 			});
 
 			it('starts watch for resizes', async () => {
-				await page.evaluate(() => globalThis._testEl.width = '400px');
+				await page.evaluate(() => globalThis._testEl.style.width = '400px');
 				await expectAsync(page.waitForFunction(() => globalThis._t === 1)).toBeResolved();
 			});
 
 			it('clears on async clear', async () => {
 				await dummyComponent.evaluate((ctx) => ctx.async.clearAll({group: '_test-group'}));
 
-				await page.evaluate(() => globalThis._testEl.width = '400px');
+				await page.evaluate(() => globalThis._testEl.style.width = '400px');
 				await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
 
 				const
