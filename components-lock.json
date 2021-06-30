@@ -1,5 +1,5 @@
 {
-  "hash": "0e27765ef8b585c204cd21606c1cda26edd3a74cf98854d5a32d7903bcf9c843",
+  "hash": "9b1fb7d4a2a9b2a92ccaa66d99c373079fc1d7be4f6918e6b3faa2899a99d303",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -74,42 +74,6 @@
         }
       ],
       [
-        "b-calendar",
-        {
-          "index": "src/form/b-calendar/index.js",
-          "declaration": {
-            "name": "b-calendar",
-            "parent": "i-input",
-            "dependencies": [
-              "b-input-time"
-            ],
-            "libs": []
-          },
-          "name": "b-calendar",
-          "parent": "i-input",
-          "dependencies": [
-            "b-input-time"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/form/b-calendar/b-calendar.ts",
-          "styles": [
-            "src/form/b-calendar/b-calendar.styl"
-          ],
-          "tpl": "src/form/b-calendar/b-calendar.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-checkbox",
         {
           "index": "src/form/b-checkbox/index.js",
@@ -138,42 +102,6 @@
             "src/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/form/b-checkbox/b-checkbox.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-crop",
-        {
-          "index": "src/base/b-crop/index.js",
-          "declaration": {
-            "name": "b-crop",
-            "parent": "i-block",
-            "dependencies": [
-              "b-progress-icon"
-            ],
-            "libs": []
-          },
-          "name": "b-crop",
-          "parent": "i-block",
-          "dependencies": [
-            "b-progress-icon"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-crop/b-crop.ts",
-          "styles": [
-            "src/base/b-crop/b-crop.styl"
-          ],
-          "tpl": "src/base/b-crop/b-crop.ss",
           "etpl": null
         }
       ],
@@ -430,44 +358,6 @@
             "src/base/b-image/b-image.styl"
           ],
           "tpl": "src/base/b-image/b-image.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-image-editor",
-        {
-          "index": "src/base/b-image-editor/index.js",
-          "declaration": {
-            "name": "b-image-editor",
-            "parent": "i-block",
-            "dependencies": [
-              "b-crop",
-              "b-icon"
-            ],
-            "libs": []
-          },
-          "name": "b-image-editor",
-          "parent": "i-block",
-          "dependencies": [
-            "b-crop",
-            "b-icon"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-image-editor/b-image-editor.ts",
-          "styles": [
-            "src/base/b-image-editor/b-image-editor.styl"
-          ],
-          "tpl": "src/base/b-image-editor/b-image-editor.ss",
           "etpl": null
         }
       ],

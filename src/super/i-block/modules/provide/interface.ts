@@ -10,7 +10,7 @@ import type { ModVal } from 'super/i-block/modules/mods';
 
 export type Classes = Dictionary<
 	string |
-	Array<string | true> |
+	Array<string | boolean> |
 	true
 >;
 
