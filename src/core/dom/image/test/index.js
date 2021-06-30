@@ -44,7 +44,7 @@ module.exports = async (page, params) => {
 		await delay(sleep);
 
 		if (base64Img === '') {
-			route.abort('failed');
+			await route.abort('failed');
 			return;
 		}
 
@@ -58,7 +58,7 @@ module.exports = async (page, params) => {
 			return;
 		}
 
-		route.fulfill({
+		await route.fulfill({
 			status: 200,
 			body: Buffer.from(res, 'base64'),
 			contentType: 'image/png',
