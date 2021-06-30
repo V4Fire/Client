@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,8 +7,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-/* eslint-disable max-lines-per-function */
 
 // @ts-check
 
@@ -18,7 +18,11 @@ const
 	h = include('tests/helpers');
 
 /**
+ * Starts a test
+ *
  * @param {Page} page
+ * @param {!Object} params
+ * @returns {void}
  */
 module.exports = (page, params) => {
 	const initialUrl = page.url();
@@ -35,32 +39,6 @@ module.exports = (page, params) => {
 			buttonNode,
 			buttonCtx;
 
-		const renderButton = async (props = {}) => {
-			await page.evaluate((props) => {
-				const scheme = [
-					{
-						attrs: {
-							id: 'target',
-							...props
-						},
-
-						content: {
-							default: () => 'Hello there general kenobi'
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-button', scheme);
-
-				globalThis.buttonNode = document.getElementById('target');
-				globalThis.buttonCtx = globalThis.buttonNode.component;
-
-			}, props);
-
-			buttonNode = await page.waitForSelector('#target');
-			buttonCtx = await h.component.getComponentById(page, 'target');
-		};
-
 		beforeEach(async () => {
 			await page.evaluate(() => {
 				globalThis._t = undefined;
@@ -68,15 +46,15 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('buttonType', () => {
-			describe('file', () => {
+		describe('providing `type`', () => {
+			describe('`file`', () => {
 				beforeEach(async () => {
 					await renderButton({
 						type: 'file'
 					});
 				});
 
-				it('renders a button with file type', async () => {
+				it('renders a button with a `file` type', async () => {
 					const
 						fileEl = await buttonNode.$('[type="file"]');
 
@@ -88,11 +66,10 @@ module.exports = (page, params) => {
 						event = page.waitForEvent('filechooser');
 
 					await buttonNode.click();
-
 					await expectAsync(event).toBeResolved();
 				});
 
-				describe('file chooser has been open, and the file has been selected', () => {
+				describe('file chooser has been opened, and the file has been selected', () => {
 					let changeEventPr;
 
 					beforeEach(async () => {
@@ -120,11 +97,11 @@ module.exports = (page, params) => {
 						expect(filesLength).toBe(1);
 					});
 
-					it('fires a change event', async () => {
+					it('fires a `change` event', async () => {
 						await expectAsync(changeEventPr).toBeResolved();
 					});
 
-					it('resets the provided files on `reset` method call', async () => {
+					it('resets the provided files on the `reset` method call', async () => {
 						await buttonCtx.evaluate((ctx) => ctx.reset());
 
 						const
@@ -135,21 +112,21 @@ module.exports = (page, params) => {
 				});
 			});
 
-			describe('submit', () => {
+			describe('`submit`', () => {
 				beforeEach(async () => {
 					await renderButton({
 						type: 'submit'
 					});
 				});
 
-				it('renders a button with submit type', async () => {
+				it('renders a button with a `submit` type', async () => {
 					const
 						submitEl = await buttonNode.$('[type="submit"]');
 
 					expect(submitEl).toBeTruthy();
 				});
 
-				it('fires the submit event on click', async () => {
+				it('fires a `submit` event on click', async () => {
 					const pr = page.evaluate(() => new Promise((res) => {
 						const
 							form = document.createElement('form');
@@ -168,7 +145,7 @@ module.exports = (page, params) => {
 				});
 			});
 
-			describe('link', () => {
+			describe('`link`', () => {
 				const
 					url = 'https://someurl.com/';
 
@@ -179,14 +156,14 @@ module.exports = (page, params) => {
 					});
 				});
 
-				it('renders a button with href', async () => {
+				it('renders a button with the provided `href`', async () => {
 					const
 						linkEl = await buttonNode.$(`[href="${url}"]`);
 
 					expect(linkEl).toBeTruthy();
 				});
 
-				it('navigates to the provided href', async () => {
+				it('navigates to the provided `href`', async () => {
 					const pr = new Promise(async (res) => {
 						await page.route('**/*', (r) => {
 							if (r.request().isNavigationRequest()) {
@@ -211,8 +188,8 @@ module.exports = (page, params) => {
 
 		});
 
-		describe('href', () => {
-			it('provides a base url to the dataProvider', async () => {
+		describe('`href`', () => {
+			it('provides a base URL to the `dataProvider`', async () => {
 				const pr = new Promise(async (res) => {
 					await page.route('**/api/test/base', (r) => {
 						res();
@@ -236,9 +213,9 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('disabled', () => {
-			describe('true', () => {
-				it('does not fires a click event', async () => {
+		describe('providing `disabled`', () => {
+			describe('`true`', () => {
+				it('does not fire any click event', async () => {
 					await renderButton({
 						disabled: true
 					});
@@ -253,7 +230,7 @@ module.exports = (page, params) => {
 					expect(testVal).toBeUndefined();
 				});
 
-				it('does not fires a navigation', async () => {
+				it('does not fire a navigation', async () => {
 					await renderButton({
 						disabled: true,
 						type: 'link',
@@ -277,8 +254,8 @@ module.exports = (page, params) => {
 				});
 			});
 
-			describe('false', () => {
-				it('fires a click event', async () => {
+			describe('`false`', () => {
+				it('fires a `click` event', async () => {
 					await renderButton({
 						disabled: false
 					});
@@ -295,8 +272,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('autofocus', () => {
-			it('true', async () => {
+		describe('providing `autofocus`', () => {
+			it('`true`', async () => {
 				await renderButton({
 					autofocus: true
 				});
@@ -307,7 +284,7 @@ module.exports = (page, params) => {
 				expect(autofocusEl).toBeTruthy();
 			});
 
-			it('false', async () => {
+			it('`false`', async () => {
 				await renderButton({
 					autofocus: false
 				});
@@ -319,8 +296,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('tabIndex', () => {
-			it('-1', async () => {
+		describe('providing `tabIndex`', () => {
+			it('`-1`', async () => {
 				await renderButton({
 					tabIndex: -1
 				});
@@ -331,7 +308,7 @@ module.exports = (page, params) => {
 				expect(tabIndexEl).toBeTruthy();
 			});
 
-			it('1', async () => {
+			it('`1`', async () => {
 				await renderButton({
 					tabIndex: 1
 				});
@@ -343,8 +320,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		describe('preIcon', () => {
-			it('dropdown', async () => {
+		describe('providing `preIcon`', () => {
+			it('`dropdown`', async () => {
 				await renderButton({
 					preIcon: 'foo'
 				});
@@ -357,7 +334,7 @@ module.exports = (page, params) => {
 				expect(href.endsWith('#foo')).toBeTrue();
 			});
 
-			it('undefined', async () => {
+			it('`undefined`', async () => {
 				await renderButton({
 					preIcon: undefined
 				});
@@ -393,5 +370,31 @@ module.exports = (page, params) => {
 				expect(res).toBeUndefined();
 			});
 		});
+
+		async function renderButton(props = {}) {
+			await page.evaluate((props) => {
+				const scheme = [
+					{
+						attrs: {
+							id: 'target',
+							...props
+						},
+
+						content: {
+							default: () => 'Hello there general kenobi'
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-button', scheme);
+
+				globalThis.buttonNode = document.getElementById('target');
+				globalThis.buttonCtx = globalThis.buttonNode.component;
+
+			}, props);
+
+			buttonNode = await page.waitForSelector('#target');
+			buttonCtx = await h.component.getComponentById(page, 'target');
+		}
 	});
 };
