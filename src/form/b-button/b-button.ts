@@ -381,7 +381,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 					await (<Function>that[this.method])();
 
-					// Form attribute fix for MS Edge && IE
+				// Form attribute fix for MS Edge && IE
 				} else if (this.form != null && this.type === 'submit') {
 					e.preventDefault();
 					const form = this.dom.getComponent<bForm>(`#${this.form}`);
@@ -389,7 +389,6 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 				}
 
 				await this.toggle();
-				break;
 			}
 		}
 
