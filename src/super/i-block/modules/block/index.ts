@@ -105,7 +105,7 @@ export default class Block extends Friend {
 	 *
 	 * @example
 	 * ```js
-	 * // .b-foo__bla
+	 * // b-foo__bla
 	 * this.getFullElName('bla');
 	 *
 	 * // b-foo__bla_focused_true
