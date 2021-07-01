@@ -32,11 +32,11 @@ export * from 'super/i-block/modules/dom/const';
 export * from 'super/i-block/modules/dom/interface';
 
 /**
- * Class provides some methods to work with a DOM tree
+ * Class provides helper methods to work with a component' DOM tree
  */
 export default class DOM extends Friend {
 	/**
-	 * Returns a component in-view instance
+	 * Returns a component `in-view` instance
 	 */
 	get localInView(): Promise<InViewAdapter> {
 		const
@@ -70,184 +70,6 @@ export default class DOM extends Friend {
 		}
 
 		return `${this.ctx.componentId}-${id}`;
-	}
-
-	/**
-	 * Wraps the specified function as an event handler with delegation
-	 *
-	 * @see [[wrapAsDelegateHandler]]
-	 * @param selector - selector to delegate
-	 * @param fn
-	 *
-	 * @example
-	 * ```js
-	 * el.addEventListener('click', this.delegate('.foo', () => {
-	 *   // ...
-	 * }));
-	 * ```
-	 */
-	delegate<T extends Function>(selector: string, fn: T): T {
-		return wrapAsDelegateHandler(selector, fn);
-	}
-
-	/**
-	 * Wraps the specified function as an event handler with delegation of a component element
-	 *
-	 * @param name - element name
-	 * @param fn
-	 *
-	 * @example
-	 * ```js
-	 * el.addEventListener('click', this.delegateElement('myElement', () => {
-	 *   // ...
-	 * }));
-	 * ```
-	 */
-	delegateElement<T extends Function>(name: string, fn: T): T {
-		return this.delegate([''].concat(this.provide.elClasses({[name]: {}})).join('.'), fn);
-	}
-
-	/**
-	 * Puts the specified element to a render stream.
-	 * This method forces the rendering of the element.
-	 *
-	 * @param cb
-	 * @param [el] - link to a DOM element or component element name
-	 */
-	putInStream(
-		cb: ElCb<this['C']>,
-		el: CanUndef<Element | string> = this.ctx.$el
-	): Promise<boolean> {
-		return this.ctx.waitStatus('ready').then(async () => {
-			const
-				node = Object.isString(el) ? this.block?.element(el) : el;
-
-			if (node == null) {
-				return false;
-			}
-
-			if (node.clientHeight > 0) {
-				await cb.call(this.component, node);
-				return false;
-			}
-
-			const wrapper = document.createElement('div');
-			Object.assign(wrapper.style, {
-				display: 'block',
-				position: 'absolute',
-				top: 0,
-				left: 0,
-				'z-index': -1,
-				opacity: 0
-			});
-
-			const
-				parent = node.parentNode,
-				before = node.nextSibling;
-
-			wrapper.appendChild(node);
-			document.body.appendChild(wrapper);
-
-			await cb.call(this.component, node);
-
-			if (parent) {
-				if (before) {
-					parent.insertBefore(node, before);
-
-				} else {
-					parent.appendChild(node);
-				}
-			}
-
-			wrapper.parentNode?.removeChild(wrapper);
-			return true;
-		});
-	}
-
-	/**
-	 * Appends a child node to the specified parent.
-	 * The method returns a link to an Async worker that wraps the operation.
-	 *
-	 * @param parent - element name or a link to the parent node
-	 * @param newNode
-	 * @param [groupOrOptions] - `async` group or a set of options
-	 */
-	appendChild(
-		parent: string | Node | DocumentFragment,
-		newNode: Node,
-		groupOrOptions?: string | DOMManipulationOptions
-	): Function | false {
-		const
-			parentNode = Object.isString(parent) ? this.block?.element(parent) : parent,
-			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
-
-		let
-			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
-
-		if (parentNode == null) {
-			return false;
-		}
-
-		if (group == null && parentNode instanceof Element) {
-			group = parentNode.getAttribute('data-render-group') ?? undefined;
-		}
-
-		parentNode.appendChild(newNode);
-
-		return this.ctx.async.worker(() => {
-			newNode.parentNode?.removeChild(newNode);
-
-			const
-				{component} = <ComponentElement<iBlock>>newNode;
-
-			if (destroyIfComponent === true && component) {
-				component.unsafe.$destroy();
-			}
-
-		}, {
-			group: group ?? 'asyncComponents'
-		});
-	}
-
-	/**
-	 * Replaces a component element with the specified node.
-	 * The method returns a link to an Async worker that wraps the operation.
-	 *
-	 * @param el - element name or a link to the node
-	 * @param newNode
-	 * @param [groupOrOptions] - `async` group or a set of options
-	 */
-	replaceWith(el: string | Element, newNode: Node, groupOrOptions?: string | DOMManipulationOptions): Function | false {
-		const
-			node = Object.isString(el) ? this.block?.element(el) : el,
-			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
-
-		let
-			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
-
-		if (node == null) {
-			return false;
-		}
-
-		if (group == null) {
-			group = node.getAttribute('data-render-group') ?? undefined;
-		}
-
-		node.replaceWith(newNode);
-
-		return this.ctx.async.worker(() => {
-			newNode.parentNode?.removeChild(newNode);
-
-			const
-				{component} = <ComponentElement<iBlock>>newNode;
-
-			if (destroyIfComponent === true && component) {
-				component.unsafe.$destroy();
-			}
-
-		}, {
-			group: group ?? 'asyncComponents'
-		});
 	}
 
 	/**
@@ -286,41 +108,242 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Creates a Block instance from the specified node and component instance
+	 * Wraps the specified function as an event handler with delegation.
+	 * The event object will contain a link to the element to which we are delegating the handler
+	 * by a property `delegateTarget`.
 	 *
-	 * @param node
-	 * @param [component] - component instance, if not specified, the instance is taken from a node
+	 * @see [[wrapAsDelegateHandler]]
+	 * @param selector - selector to delegate
+	 * @param fn
+	 *
+	 * @example
+	 * ```js
+	 * el.addEventListener('click', this.delegate('.foo', () => {
+	 *   // ...
+	 * }));
+	 * ```
 	 */
-	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
-		const
-			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
-			ctxFromNode = component ?? $el?.component;
+	delegate<T extends Function>(selector: string, fn: T): T {
+		return wrapAsDelegateHandler(selector, fn);
+	}
 
-		const componentName = ctxFromNode ?
-			ctxFromNode.componentName :
-			Object.get(componentRgxp.exec($el?.className ?? ''), '1') ?? this.ctx.componentName;
+	/**
+	 * Wraps the specified function as an event handler with delegation of a component element.
+	 * The event object will contain a link to the element to which we are delegating the handler
+	 * by a property `delegateTarget`.
+	 *
+	 * @param name - element name
+	 * @param fn
+	 *
+	 * @example
+	 * ```js
+	 * el.addEventListener('click', this.delegateElement('myElement', () => {
+	 *   // ...
+	 * }));
+	 * ```
+	 */
+	delegateElement<T extends Function>(name: string, fn: T): T {
+		return this.delegate([''].concat(this.provide.elClasses({[name]: {}})).join('.'), fn);
+	}
 
-		const resolvedCtx = ctxFromNode ?? {
-			$el,
-			componentName,
+	/**
+	 * Puts an element to the render stream.
+	 * The method forces rendering of the element, i.e., you can check its geometry.
+	 *
+	 * @param el - link to a DOM element or a component element name
+	 * @param cb - callback function
+	 *
+	 * * @example
+	 * ```js
+	 * this.dom.putInStream(this.$el.querySelector('.foo'), () => {
+	 *   console.log(this.$el.clientHeight);
+	 * })
+	 * ```
+	 */
+	putInStream(el: Element | string, cb: ElCb<this['C']>): Promise<boolean>;
 
-			mods: {},
-			isFlyweight: true,
+	/**
+	 * Puts an element to the render stream.
+	 * The method forces rendering of the element (by default it uses the root component' element), i.e.,
+	 * you can check its geometry.
+	 *
+	 * @param cb - callback function
+	 * @param [el] - link to a DOM element or a component element name
+	 *
+	 * @example
+	 * ```js
+	 * this.dom.putInStream(() => {
+	 *   console.log(this.$el.clientHeight);
+	 * });
+	 * ```
+	 */
+	putInStream(cb: ElCb<this['C']>, el: CanUndef<Element | string>): Promise<boolean>;
+	putInStream(
+		cbOrEl: CanUndef<Element | string> | ElCb<this['C']>,
+		elOrCb: CanUndef<Element | string> | ElCb<this['C']> = this.ctx.$el
+	): Promise<boolean> {
+		let
+			cb,
+			el;
 
-			localEmitter: {
-				emit(): void {
-					// Loopback
-				}
-			},
+		if (Object.isFunction(cbOrEl)) {
+			cb = cbOrEl;
+			el = elOrCb;
 
-			emit(): void {
-				// Loopback
+		} else if (Object.isFunction(elOrCb)) {
+			cb = elOrCb;
+			el = cbOrEl;
+		}
+
+		if (!(el instanceof Node)) {
+			throw new ReferenceError('An element to put in the stream is not specified');
+		}
+
+		if (!Object.isFunction(cb)) {
+			throw new ReferenceError('A callback to invoke is not specified');
+		}
+
+		return this.ctx.waitStatus('ready').then(async () => {
+			const
+				resolvedEl = Object.isString(el) ? this.block?.element(el) : el;
+
+			if (resolvedEl == null) {
+				return false;
 			}
-		};
 
-		return Object.assign(Object.create(Block.prototype), {
-			ctx: resolvedCtx,
-			component: resolvedCtx
+			if (resolvedEl.clientHeight > 0) {
+				await cb.call(this.component, resolvedEl);
+				return false;
+			}
+
+			const wrapper = document.createElement('div');
+			Object.assign(wrapper.style, {
+				display: 'block',
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				'z-index': -1,
+				opacity: 0
+			});
+
+			const
+				parent = resolvedEl.parentNode,
+				before = resolvedEl.nextSibling;
+
+			wrapper.appendChild(resolvedEl);
+			document.body.appendChild(wrapper);
+
+			await cb.call(this.component, resolvedEl);
+
+			if (parent != null) {
+				if (before != null) {
+					parent.insertBefore(resolvedEl, before);
+
+				} else {
+					parent.appendChild(resolvedEl);
+				}
+			}
+
+			wrapper.parentNode?.removeChild(wrapper);
+			return true;
+		});
+	}
+
+	/**
+	 * Appends a node to the specified parent.
+	 * The method returns a link to an `Async` worker that wraps the operation.
+	 *
+	 * @param parent - element name or a link to the parent node
+	 * @param newNode - node to append
+	 * @param [groupOrOptions] - `async` group or a set of options
+	 *
+	 * @example
+	 * ```js
+	 * const id = this.dom.appendChild(this.$el, document.createElement('button'));
+	 * this.async.terminateWorker(id);
+	 * ```
+	 */
+	appendChild(
+		parent: string | Node | DocumentFragment,
+		newNode: Node,
+		groupOrOptions?: string | DOMManipulationOptions
+	): Function | false {
+		const
+			parentNode = Object.isString(parent) ? this.block?.element(parent) : parent,
+			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
+
+		let
+			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
+
+		if (parentNode == null) {
+			return false;
+		}
+
+		if (group == null && parentNode instanceof Element) {
+			group = parentNode.getAttribute('data-render-group') ?? undefined;
+		}
+
+		parentNode.appendChild(newNode);
+
+		return this.ctx.async.worker(() => {
+			newNode.parentNode?.removeChild(newNode);
+
+			const
+				{component} = <ComponentElement<iBlock>>newNode;
+
+			if (component != null && destroyIfComponent === true) {
+				component.unsafe.$destroy();
+			}
+
+		}, {
+			group: group ?? 'asyncComponents'
+		});
+	}
+
+	/**
+	 * Replaces a component element with the specified node.
+	 * The method returns a link to an `Async` worker that wraps the operation.
+	 *
+	 * @param el - element name or a link to the node
+	 * @param newNode - node to append
+	 * @param [groupOrOptions] - `async` group or a set of options
+	 *
+	 * * @example
+	 * ```js
+	 * const id = this.dom.replaceWith(this.block.element('foo'), document.createElement('button'));
+	 * this.async.terminateWorker(id);
+	 * ```
+	 */
+	replaceWith(el: string | Element, newNode: Node, groupOrOptions?: string | DOMManipulationOptions): Function | false {
+		const
+			node = Object.isString(el) ? this.block?.element(el) : el,
+			destroyIfComponent = Object.isPlainObject(groupOrOptions) ? groupOrOptions.destroyIfComponent : undefined;
+
+		let
+			group = Object.isString(groupOrOptions) ? groupOrOptions : groupOrOptions?.group;
+
+		if (node == null) {
+			return false;
+		}
+
+		if (group == null) {
+			group = node.getAttribute('data-render-group') ?? undefined;
+		}
+
+		node.replaceWith(newNode);
+
+		return this.ctx.async.worker(() => {
+			newNode.parentNode?.removeChild(newNode);
+
+			const
+				{component} = <ComponentElement<iBlock>>newNode;
+
+			if (component != null && destroyIfComponent === true) {
+				component.unsafe.$destroy();
+			}
+
+		}, {
+			group: group ?? 'asyncComponents'
 		});
 	}
 
@@ -389,5 +412,45 @@ export default class DOM extends Friend {
 			.catch(stderr);
 
 		return destructor;
+	}
+
+	/**
+	 * Creates a Block instance from the specified node and component instance.
+	 * Basically, you don't need to use this method.
+	 *
+	 * @param node
+	 * @param [component] - component instance, if not specified, the instance is taken from a node
+	 */
+	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
+		const
+			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
+			ctxFromNode = component ?? $el?.component;
+
+		const componentName = ctxFromNode ?
+			ctxFromNode.componentName :
+			Object.get(componentRgxp.exec($el?.className ?? ''), '1') ?? this.ctx.componentName;
+
+		const resolvedCtx = ctxFromNode ?? {
+			$el,
+			componentName,
+
+			mods: {},
+			isFlyweight: true,
+
+			localEmitter: {
+				emit(): void {
+					// Loopback
+				}
+			},
+
+			emit(): void {
+				// Loopback
+			}
+		};
+
+		return Object.assign(Object.create(Block.prototype), {
+			ctx: resolvedCtx,
+			component: resolvedCtx
+		});
 	}
 }
