@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, system } from 'super/i-static-page/i-static-page';
+import iStaticPage, { component, system, field } from 'super/i-static-page/i-static-page';
 
 export * from 'super/i-static-page/i-static-page';
 
@@ -28,6 +28,12 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	 */
 	@system()
 	rootParam?: number;
+
+	/**
+	 * Field for tests purposes
+	 */
+	@field()
+	someField: unknown;
 
 	protected beforeCreate(): void {
 		console.time('Render');
