@@ -25,7 +25,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		dummyComponent,
 		context;
 
-	describe('i-block/dom', () => {
+	describe('`iBlock.dom`', () => {
 		beforeEach(async () => {
 			context = await browser.newContext(contextOpts);
 
@@ -47,7 +47,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(testVal).toBe(1);
 			});
 
-			it('returns undefined if there is no data by the provided key', async () => {
+			it('returns `undefined` if there is no data by the provided key', async () => {
 				const
 					testVal = await dummyComponent.evaluate((ctx) => ctx.storage.get('unreachableKey'));
 

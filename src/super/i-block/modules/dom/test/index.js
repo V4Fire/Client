@@ -24,7 +24,7 @@ module.exports = (page, params) => {
 	let
 		dummyComponent;
 
-	describe('i-block/dom', () => {
+	describe('`iBlock.dom`', () => {
 		beforeEach(async () => {
 			page = await params.context.newPage();
 			await page.goto(initialUrl);
