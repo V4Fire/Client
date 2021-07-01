@@ -129,6 +129,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			const fieldSetPromise = root.evaluate((ctx) =>
 				new Promise((res) => ctx.watch('someField', res)));
 
+			await h.bom.waitForIdleCallback(page);
+
 			await init({
 				dataProvider: 'demo.List',
 				field: 'someField'
