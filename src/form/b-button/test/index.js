@@ -322,16 +322,18 @@ module.exports = (page, params) => {
 
 		describe('providing `preIcon`', () => {
 			it('`dropdown`', async () => {
+				const
+					iconName = 'foo';
+
 				await renderButton({
-					preIcon: 'foo'
+					preIcon: iconName
 				});
 
 				const
 					bIcon = await buttonNode.$('.b-icon'),
-					useSvg = (await bIcon.$$('use')).pop(),
-					href = await useSvg.evaluate((ctx) => ctx.href.baseVal);
+					iconProvidedName = await bIcon.evaluate((ctx) => ctx.component.value);
 
-				expect(href.endsWith('#foo')).toBeTrue();
+				expect(iconProvidedName).toBe(iconName);
 			});
 
 			it('`undefined`', async () => {
