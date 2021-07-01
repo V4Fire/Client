@@ -19,7 +19,7 @@ this.field.get('foo.bla.bar', this.r);
 this.field.delete('foo.bla.bar', this.r);
 ```
 
-### Why not to use `Object.set/get/delete`?
+## Why not to use `Object.set/get/delete`?
 
 There are three reasons to use `Field` instead of Prelude methods.
 
