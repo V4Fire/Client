@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.209 (2021-07-01)
+
+#### :boom: Breaking Change
+
+* `models/modules/session`:
+  * Removed ability to send an additional request after a session was cleared (removed a `requestAfterClear` property)
+  * Sending an additional request after the authorization parameters was changed now has only one attempt
+
 ## v3.0.0-rc.208 (2021-06-29)
 
 #### :bug: Bug Fix
