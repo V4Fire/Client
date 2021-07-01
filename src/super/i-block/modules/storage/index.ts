@@ -42,7 +42,7 @@ export default class Storage extends Friend {
 	}
 
 	/**
-	 * Returns a value from a storage by the specified key
+	 * Returns a value from the storage by the specified key
 	 *
 	 * @param [key]
 	 * @param [args]
@@ -72,7 +72,7 @@ export default class Storage extends Friend {
 	}
 
 	/**
-	 * Saves a value to a storage by the specified key
+	 * Saves a value to the storage by the specified key
 	 *
 	 * @param value
 	 * @param [key]
@@ -104,7 +104,7 @@ export default class Storage extends Friend {
 	}
 
 	/**
-	 * Removes a value from a storage by the specified key
+	 * Removes a value from the storage by the specified key
 	 *
 	 * @param [key]
 	 * @param [args]
