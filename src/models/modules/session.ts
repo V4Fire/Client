@@ -110,8 +110,9 @@ export default class Session extends Provider {
 
 		req
 			.then(update)
-			// logging must be already handled in a request factory. Just do nothing
-			.catch(() => {});
+			.catch(() => {
+				// Do nothing. Logging must be already handled in a request factory.
+			});
 
 		return req.catch(async (err) => {
 			const
