@@ -57,7 +57,7 @@
     "@pzlr/stylus-inheritance": "^3.1.0",
     "@types/fs-extra-promise": "^1.0.9",
     "@types/glob": "^7.1.3",
-    "@types/webpack": "^4.41.25",
+    "@types/webpack": "^5.28.0",
     "@v4fire/design-system": "^1.23.0",
     "arg": "^5.0.0",
     "autoprefixer": "^9.8.6",
