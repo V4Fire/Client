@@ -73,11 +73,7 @@ export default class Session extends Provider {
 	}
 
 	/** @override */
-	protected updateRequest<T = unknown>(
-		url: string,
-		factory: RequestFunctionResponse<T>
-	): RequestResponse<T>;
-
+	protected updateRequest<T = unknown>(url: string, factory: RequestFunctionResponse<T>): RequestResponse<T>;
 	protected updateRequest<T = unknown>(
 		url: string,
 		event: string,
@@ -93,7 +89,7 @@ export default class Session extends Provider {
 	): RequestResponse {
 		const
 			req = super.updateRequest(url, <any>event, <any>factory),
-			sessionPromise = s.get();
+			getSessionPromise = s.get();
 
 		const update = async (res) => {
 			const
@@ -125,7 +121,7 @@ export default class Session extends Provider {
 					await s.isExists()
 				) {
 					const
-						{auth, params} = await sessionPromise;
+						{auth, params} = await getSessionPromise;
 
 					if (!await s.match(auth, params)) {
 						return this.updateRequest(url, <string>event, <RequestFunctionResponse>factory, false);
