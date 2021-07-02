@@ -25,7 +25,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		dummyComponent,
 		context;
 
-	describe('`iBlock.dom`', () => {
+	describe('`iBlock.storage`', () => {
 		beforeEach(async () => {
 			context = await browser.newContext(contextOpts);
 
