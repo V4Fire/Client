@@ -25,7 +25,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		component,
 		context;
 
-	describe('`b-remote-provider`', () => {
+	describe('b-remote-provider', () => {
 		beforeEach(async () => {
 			context = await browser.newContext(contextOpts);
 
@@ -36,7 +36,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		afterEach(() => context.close());
 	});
 
-	describe('events', () => {
+	describe('should emit events', () => {
 		let
 			counter = 1;
 
@@ -117,12 +117,12 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 	});
 
-	describe('`field`', () => {
+	describe('providing a `field` to set', () => {
 		beforeEach(async () => {
 			await createRouteHandler();
 		});
 
-		it('stores db into parent field', async () => {
+		it('stores `db` into the parent field', async () => {
 			const
 				root = await h.component.waitForComponent(page, '#root-component');
 
