@@ -177,7 +177,7 @@ export default class DOM extends Friend {
 	 * });
 	 * ```
 	 */
-	putInStream(cb: ElCb<this['C']>, el: CanUndef<Element | string>): Promise<boolean>;
+	putInStream(cb: ElCb<this['C']>, el?: Element | string): Promise<boolean>;
 	putInStream(
 		cbOrEl: CanUndef<Element | string> | ElCb<this['C']>,
 		elOrCb: CanUndef<Element | string> | ElCb<this['C']> = this.ctx.$el
@@ -253,6 +253,9 @@ export default class DOM extends Friend {
 	 * Appends a node to the specified parent.
 	 * The method returns a link to an `Async` worker that wraps the operation.
 	 *
+	 * You should prefer this method instead of native DOM methods because the component destructor
+	 * doesn't delete elements that are created dynamically.
+	 *
 	 * @param parent - element name or a link to the parent node
 	 * @param newNode - node to append
 	 * @param [groupOrOptions] - `async` group or a set of options
@@ -303,6 +306,9 @@ export default class DOM extends Friend {
 	/**
 	 * Replaces a component element with the specified node.
 	 * The method returns a link to an `Async` worker that wraps the operation.
+	 *
+	 * You should prefer this method instead of native DOM methods because the component destructor
+	 * doesn't delete elements that are created dynamically.
 	 *
 	 * @param el - element name or a link to the node
 	 * @param newNode - node to append
