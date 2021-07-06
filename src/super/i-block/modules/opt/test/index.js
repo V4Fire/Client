@@ -73,7 +73,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(isFrozenArr).toBeTrue();
 			});
 
-			it('stores object into the cache', async () => {
+			it('stores an object into the cache', async () => {
 				const res = await dummyComponent.evaluate((ctx) => {
 					const
 						testObj = {test: 1},
