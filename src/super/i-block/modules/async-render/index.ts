@@ -133,7 +133,7 @@ export default class AsyncRender extends Friend {
 			{filter} = opts;
 
 		let
-			iterable = getIterable(value);
+			iterable = this.getIterable(value, filter != null);
 
 		let
 			startPos,
@@ -476,54 +476,60 @@ export default class AsyncRender extends Friend {
 		};
 
 		return firstRender;
+	}
 
-		function getIterable(value: unknown): CanPromise<Iterable<unknown>> {
-			if (value == null) {
-				return [];
-			}
-
-			if (value === true) {
-				if (filter != null) {
-					return new Range(0, Infinity);
-				}
-
-				return [];
-			}
-
-			if (value === false) {
-				if (filter != null) {
-					return new Range(0, -Infinity);
-				}
-
-				return [];
-			}
-
-			if (Object.isNumber(value)) {
-				return new Range(0, [value]);
-			}
-
-			if (Object.isArray(value)) {
-				return value;
-			}
-
-			if (Object.isString(value)) {
-				return value.letters();
-			}
-
-			if (Object.isPromise(value)) {
-				return value.then(getIterable);
-			}
-
-			if (typeof value === 'object') {
-				if (Object.isFunction(value![Symbol.iterator])) {
-					return <any>value;
-				}
-
-				return Object.entries(value!);
-			}
-
-			return [value];
+	/**
+	 * Returns an iterable object based on the passed value
+	 *
+	 * @param obj
+	 * @param [hasFilter] - true if the passed object will be filtered
+	 */
+	protected getIterable(obj: unknown, hasFilter?: boolean): CanPromise<Iterable<unknown>> {
+		if (obj == null) {
+			return [];
 		}
+
+		if (obj === true) {
+			if (hasFilter) {
+				return new Range(0, Infinity);
+			}
+
+			return [];
+		}
+
+		if (obj === false) {
+			if (hasFilter) {
+				return new Range(0, -Infinity);
+			}
+
+			return [];
+		}
+
+		if (Object.isNumber(obj)) {
+			return new Range(0, [obj]);
+		}
+
+		if (Object.isArray(obj)) {
+			return obj;
+		}
+
+		if (Object.isString(obj)) {
+			return obj.letters();
+		}
+
+		if (Object.isPromise(obj)) {
+			return obj.then(this.getIterable.bind(this));
+		}
+
+		if (typeof obj === 'object') {
+			if (Object.isFunction(obj![Symbol.iterator])) {
+				return <any>obj;
+			}
+
+			return Object.entries(obj!);
+		}
+
+		return [obj];
 	}
 
 	/**
