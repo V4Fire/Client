@@ -23,7 +23,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Updated dependencies `husky@7.0.0`
+* Updated dependencies `husky@7.0.0`, `tslib@2.3.0`, `ts-loader@9.2.3`
 
 ## v3.0.0-rc.208 (2021-06-29)
 
