@@ -22,6 +22,7 @@
     "V4Fire"
   ],
   "scripts": {
+    "prepare": "husky install",
     "build": "gulp build:tsconfig && webpack",
     "build:file": "gulp build:tsconfig && webpack --public-path",
     "dev": "gulp build:tsconfig && webpack --watch",
