@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.209 (2021-07-06)
+
+#### :rocket: New Feature
+
+* Added possibility to provide the element to drop via a function
+
 ## v3.0.0-rc.208 (2021-06-29)
 
 #### :bug: Bug Fix

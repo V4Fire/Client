@@ -68,7 +68,8 @@ export default class AsyncRender extends Friend {
 	 * The method is useful to re-render a non-regular component (functional or flyweight)
 	 * without touching the parent state.
 	 *
-	 * @param elementToDrop - element to drop before resolving of the promise
+	 * @param elementToDrop - element to drop before resolving the promise
+	 *   (if it passed as a function, it would be executed)
 	 *
 	 * @example
 	 * ```
@@ -81,12 +82,29 @@ export default class AsyncRender extends Friend {
 	 *       {{ Math.random() }}
 	 * ```
 	 */
-	waitForceRender(elementToDrop?: string): () => CanPromise<boolean> {
+	waitForceRender(
+		elementToDrop?: string | ((ctx: this['component']) => CanPromise<CanUndef<string | Element>>)
+	): () => CanPromise<boolean> {
 		return () => {
 			if (!this.lfc.isBeforeCreate()) {
-				return this.localEmitter.promisifyOnce('forceRender').then(() => {
+				return this.localEmitter.promisifyOnce('forceRender').then(async () => {
 					if (elementToDrop != null) {
-						this.block?.element(elementToDrop)?.remove();
+						let
+							el;
+
+						if (Object.isFunction(elementToDrop)) {
+							el = await elementToDrop(this.ctx);
+
+						} else {
+							el = elementToDrop;
+						}
+
+						if (Object.isString(el)) {
+							this.block?.element(el)?.remove();
+
+						} else {
+							el?.remove();
+						}
 					}
 
 					return true;

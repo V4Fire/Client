@@ -196,9 +196,18 @@ The method is useful to re-render a non-regular component (functional or flyweig
  Re-render the component
 
 < .&__wrapper
- < template v-for = el in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('content')})
-   < .&__content
-     {{ Math.random() }}
+  < template v-for = el in asyncRender.iterate(true, { &
+    filter: asyncRender.waitForceRender('content')
+  }) .
+    < .&__content
+      {{ Math.random() }}
+
+< .&__wrapper
+  < template v-for = el in asyncRender.iterate(true, { &
+    filter: asyncRender.waitForceRender((ctx) => ctx.$el.querySelector('.foo'))
+  }) .
+    < .foo
+      {{ Math.random() }}
 ```
 
 ## Snakeskin helpers

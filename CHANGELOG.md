@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.209 (2021-07-06)
 
+#### :rocket: New Feature
+
+* Added possibility to provide the element to drop via a function `super/i-block/modules/async-render`
+
 #### :bug: Bug Fix
 
 * Fixed updating of a component' template after changing a modifier that was registered as watchable `iBlock`
