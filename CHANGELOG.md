@@ -21,6 +21,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed updating of a component' template after changing a modifier that was registered as watchable `iBlock`
 
+#### :house: Internal
+
+* Updated dependencies `husky@7.0.0`
+
 ## v3.0.0-rc.208 (2021-06-29)
 
 #### :bug: Bug Fix
