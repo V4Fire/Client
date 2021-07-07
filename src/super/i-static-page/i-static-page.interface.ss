@@ -9,7 +9,7 @@
  */
 
 - include 'super/i-page'|b
-- import fs from 'fs-extra-promise'
+- import fs from 'fs-extra'
 
 /**
  * Injects the specified file to a template

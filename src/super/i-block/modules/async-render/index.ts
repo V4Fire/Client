@@ -68,7 +68,8 @@ export default class AsyncRender extends Friend {
 	 * The method is useful to re-render a non-regular component (functional or flyweight)
 	 * without touching the parent state.
 	 *
-	 * @param elementToDrop - element to drop before resolving of the promise
+	 * @param elementToDrop - element to drop before resolving the promise
+	 *   (if it passed as a function, it would be executed)
 	 *
 	 * @example
 	 * ```
@@ -81,19 +82,39 @@ export default class AsyncRender extends Friend {
 	 *       {{ Math.random() }}
 	 * ```
 	 */
-	waitForceRender(elementToDrop?: string): () => CanPromise<boolean> {
+	waitForceRender(
+		elementToDrop?: string | ((ctx: this['component']) => CanPromise<CanUndef<string | Element>>)
+	): () => CanPromise<boolean> {
 		return () => {
-			if (!this.lfc.isBeforeCreate()) {
-				return this.localEmitter.promisifyOnce('forceRender').then(() => {
-					if (elementToDrop != null) {
-						this.block?.element(elementToDrop)?.remove();
-					}
+			const
+				canImmediateRender = this.lfc.isBeforeCreate() || this.hook === 'beforeMount';
 
-					return true;
-				});
+			if (canImmediateRender) {
+				return true;
 			}
 
-			return true;
+			return this.localEmitter.promisifyOnce('forceRender').then(async () => {
+				if (elementToDrop != null) {
+					let
+						el;
+
+					if (Object.isFunction(elementToDrop)) {
+						el = await elementToDrop(this.ctx);
+
+					} else {
+						el = elementToDrop;
+					}
+
+					if (Object.isString(el)) {
+						this.block?.element(el)?.remove();
+
+					} else {
+						el?.remove();
+					}
+				}
+
+				return true;
+			});
 		};
 	}
 
@@ -133,7 +154,7 @@ export default class AsyncRender extends Friend {
 			{filter} = opts;
 
 		let
-			iterable = getIterable(value);
+			iterable = this.getIterable(value, filter != null);
 
 		let
 			startPos,
@@ -476,54 +497,60 @@ export default class AsyncRender extends Friend {
 		};
 
 		return firstRender;
+	}
 
-		function getIterable(value: unknown): CanPromise<Iterable<unknown>> {
-			if (value == null) {
-				return [];
-			}
-
-			if (value === true) {
-				if (filter != null) {
-					return new Range(0, Infinity);
-				}
-
-				return [];
-			}
-
-			if (value === false) {
-				if (filter != null) {
-					return new Range(0, -Infinity);
-				}
-
-				return [];
-			}
-
-			if (Object.isNumber(value)) {
-				return new Range(0, [value]);
-			}
-
-			if (Object.isArray(value)) {
-				return value;
-			}
-
-			if (Object.isString(value)) {
-				return value.letters();
-			}
-
-			if (Object.isPromise(value)) {
-				return value.then(getIterable);
-			}
-
-			if (typeof value === 'object') {
-				if (Object.isFunction(value![Symbol.iterator])) {
-					return <any>value;
-				}
-
-				return Object.entries(value!);
-			}
-
-			return [value];
+	/**
+	 * Returns an iterable object based on the passed value
+	 *
+	 * @param obj
+	 * @param [hasFilter] - true if the passed object will be filtered
+	 */
+	protected getIterable(obj: unknown, hasFilter?: boolean): CanPromise<Iterable<unknown>> {
+		if (obj == null) {
+			return [];
 		}
+
+		if (obj === true) {
+			if (hasFilter) {
+				return new Range(0, Infinity);
+			}
+
+			return [];
+		}
+
+		if (obj === false) {
+			if (hasFilter) {
+				return new Range(0, -Infinity);
+			}
+
+			return [];
+		}
+
+		if (Object.isNumber(obj)) {
+			return new Range(0, [obj]);
+		}
+
+		if (Object.isArray(obj)) {
+			return obj;
+		}
+
+		if (Object.isString(obj)) {
+			return obj.letters();
+		}
+
+		if (Object.isPromise(obj)) {
+			return obj.then(this.getIterable.bind(this));
+		}
+
+		if (typeof obj === 'object') {
+			if (Object.isFunction(obj![Symbol.iterator])) {
+				return <any>obj;
+			}
+
+			return Object.entries(obj!);
+		}
+
+		return [obj];
 	}
 
 	/**

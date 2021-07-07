@@ -226,7 +226,12 @@ export default class bForm extends iData implements iVisible {
 				els = <bButton[]>[];
 
 			for (let i = 0; i < list.length; i++) {
-				els.push(this.dom.getComponent(list[i]));
+				const
+					component = this.dom.getComponent<bButton>(list[i]);
+
+				if (component != null) {
+					els.push(component);
+				}
 			}
 
 			return Object.freeze(els);

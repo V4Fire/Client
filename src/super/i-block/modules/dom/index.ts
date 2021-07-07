@@ -36,7 +36,7 @@ export * from 'super/i-block/modules/dom/interface';
  */
 export default class DOM extends Friend {
 	/**
-	 * Returns a component `in-view` instance
+	 * Link to a component' `core/dom/in-view` instance
 	 */
 	get localInView(): Promise<InViewAdapter> {
 		const
@@ -73,21 +73,47 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Returns an instance of a component from the specified element
+	 * Returns a component's instance from the specified element.
+	 * There are two scenarios of working the method:
+	 *
+	 * 1. You provide the root element of a component, and the method returns a component's instance from this element.
+	 * 2. You provide not the root element, and the method returns a component's instance from the closest parent
+	 *    component's root element.
 	 *
 	 * @param el
-	 * @param [filter]
+	 * @param [rootSelector] - additional CSS selector that the component' root element should match
+	 *
+	 * @example
+	 * ```js
+	 * console.log(this.dom.getComponent(someElement)?.componentName);
+	 * console.log(this.dom.getComponent(someElement, '.b-form')?.componentName);
+	 * ```
 	 */
-	getComponent<T extends iBlock>(el: ComponentElement<T>, filter?: string): T;
+	getComponent<T extends iBlock>(el: ComponentElement<T>, rootSelector?: string): CanUndef<T>;
 
 	/**
-	 * Returns an instance of a component by the specified CSS selector
+	 * Returns a component's instance by the specified CSS selector.
+	 * There are two scenarios of working the method:
+	 *
+	 * 1. You provide the root element of a component, and the method returns a component's instance from this element.
+	 * 2. You provide not the root element, and the method returns a component's instance from the closest parent
+	 *    component's root element.
 	 *
 	 * @param selector
-	 * @param [filter]
+	 * @param [rootSelector] - additional CSS selector that the component' root element should match
+	 *
+	 * @example
+	 * ```js
+	 * console.log(this.dom.getComponent('.foo')?.componentName);
+	 * console.log(this.dom.getComponent('.foo__bar', '.b-form')?.componentName);
+	 * ```
 	 */
-	getComponent<T extends iBlock>(selector: string, filter?: string): CanUndef<T>;
-	getComponent<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
+	getComponent<T extends iBlock>(selector: string, rootSelector?: string): CanUndef<T>;
+	getComponent<T extends iBlock>(
+		query: string | ComponentElement<T>,
+		rootSelector: string = ''
+	): CanUndef<T> {
 		const
 			q = Object.isString(query) ? document.body.querySelector<ComponentElement<T>>(query) : query;
 
@@ -97,7 +123,7 @@ export default class DOM extends Friend {
 			}
 
 			const
-				el = q.closest<ComponentElement<T>>(`.i-block-helper${filter}`);
+				el = q.closest<ComponentElement<T>>(`.i-block-helper${rootSelector}`);
 
 			if (el != null) {
 				return el.component;
@@ -354,26 +380,36 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Watches for intersections of the specified element by using the `in-view` module
+	 * Watches for intersections of the specified element by using the `core/dom/in-view` module.
+	 * The method returns a link to an `Async` worker that wraps the operation.
+	 *
+	 * You should prefer this method instead of raw `core/dom/in-view` to cancel intersection observing
+	 * when the component is destroyed.
 	 *
 	 * @param el
-	 * @param options
-	 * @param asyncOptions
+	 * @param inViewOpts
+	 * @param [asyncOpts]
+	 *
+	 * @example
+	 * ```js
+	 * const id = this.watchForIntersection(myElem, {delay: 200}, {group: 'inView'})
+	 * this.async.terminateWorker(id);
+	 * ```
 	 */
-	watchForIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
+	watchForIntersection(el: Element, inViewOpts: InViewInitOptions, asyncOpts?: AsyncOptions): Function {
 		const
 			inViewInstance = this.localInView;
 
 		const destructor = this.ctx.async.worker(
 			() => inViewInstance
-				.then((adapter) => adapter.remove(el, options.threshold))
+				.then((adapter) => adapter.remove(el, inViewOpts.threshold))
 				.catch(stderr),
 
-			asyncOptions
+			asyncOpts
 		);
 
 		inViewInstance
-			.then((adapter) => adapter.observe(el, options))
+			.then((adapter) => adapter.observe(el, inViewOpts))
 			.catch(stderr);
 
 		return destructor;
@@ -384,44 +420,53 @@ export default class DOM extends Friend {
 	 * @see [[DOM.watchForIntersection]]
 	 *
 	 * @param el
-	 * @param options
-	 * @param asyncOptions
+	 * @param inViewOpts
+	 * @param [asyncOpts]
 	 */
 	@deprecated({renamedTo: 'watchForIntersection'})
-	watchForNodeIntersection(el: Element, options: InViewInitOptions, asyncOptions: AsyncOptions): Function {
-		return this.watchForIntersection(el, options, asyncOptions);
+	watchForNodeIntersection(el: Element, inViewOpts: InViewInitOptions, asyncOpts?: AsyncOptions): Function {
+		return this.watchForIntersection(el, inViewOpts, asyncOpts);
 	}
 
 	/**
-	 * Watches for size changes of the specified element by using the `resize-observer` module.
-	 * Notice, this functionality depends on `ResizeObserver`.
+	 * Watches for size changes of the specified element by using the `core/dom/resize-observer` module.
+	 * The method returns a link to an `Async` worker that wraps the operation.
+	 *
+	 * You should prefer this method instead of raw `core/dom/resize-observer` to cancel resize observing
+	 * when the component is destroyed.
 	 *
 	 * @param el
-	 * @param options
-	 * @param asyncOptions
+	 * @param resizeOpts
+	 * @param [asyncOpts]
+	 *
+	 * @example
+	 * ```js
+	 * const id = this.watchForResize(myElem, {immediate: true}, {group: 'resize'})
+	 * this.async.terminateWorker(id);
+	 * ```
 	 */
-	watchForResize(el: Element, options: ResizeWatcherInitOptions, asyncOptions: AsyncOptions): Function {
+	watchForResize(el: Element, resizeOpts: ResizeWatcherInitOptions, asyncOpts?: AsyncOptions): Function {
 		const ResizeWatcher = this.async.promise(
 			memoize('core/dom/resize-observer', () => import('core/dom/resize-observer'))
 		);
 
 		const destructor = this.ctx.async.worker(
 			() => ResizeWatcher
-				.then(({ResizeWatcher}) => ResizeWatcher.unobserve(el, options))
+				.then(({ResizeWatcher}) => ResizeWatcher.unobserve(el, resizeOpts))
 				.catch(stderr),
 
-			asyncOptions
+			asyncOpts
 		);
 
 		ResizeWatcher
-			.then(({ResizeWatcher}) => ResizeWatcher.observe(el, options))
+			.then(({ResizeWatcher}) => ResizeWatcher.observe(el, resizeOpts))
 			.catch(stderr);
 
 		return destructor;
 	}
 
 	/**
-	 * Creates a Block instance from the specified node and component instance.
+	 * Creates a [[Block]] instance from the specified node and component instance.
 	 * Basically, you don't need to use this method.
 	 *
 	 * @param node

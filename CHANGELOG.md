@@ -11,6 +11,34 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.210 (2021-07-07)
+
+#### :boom: Breaking Change
+
+* Migration from `fs-extra-promise` to `fs-extra`
+
+#### :bug: Bug Fix
+
+* `AsyncRender.waitForceRender` should allow the initial render of a component
+
+#### :house: Internal
+
+* Updated dependencies `delay@5.0.0`, `glob-promise@4.2.0`
+
+## v3.0.0-rc.209 (2021-07-06)
+
+#### :rocket: New Feature
+
+* Added possibility to provide the element to drop via a function `super/i-block/modules/async-render`
+
+#### :bug: Bug Fix
+
+* Fixed updating of a component' template after changing a modifier that was registered as watchable `iBlock`
+
+#### :house: Internal
+
+* Updated dependencies `husky@7.0.0`, `tslib@2.3.0`, `ts-loader@9.2.3`
+
 ## v3.0.0-rc.208 (2021-06-29)
 
 #### :bug: Bug Fix
