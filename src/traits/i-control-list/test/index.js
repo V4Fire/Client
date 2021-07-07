@@ -60,7 +60,7 @@ module.exports = (page) => {
 					globalThis._tArgsMap = undefined;
 				});
 
-				await renderDummy(p);
+				await init(p);
 			});
 
 			it('renders a provided component', async () => {
@@ -140,7 +140,7 @@ module.exports = (page) => {
 			});
 
 			it('as `string', async () => {
-				await renderDummy({
+				await init({
 					controls: [createControl('target', {action: 'testFn'})]
 				});
 
@@ -151,7 +151,7 @@ module.exports = (page) => {
 
 			describe('as `ControlActionObject`', () => {
 				it('with `args` provided', async () => {
-					await renderDummy({
+					await init({
 						controls: [createControl('target', {action: {method: 'testFn', args: [1, 2, 3, 4]}})]
 					});
 
@@ -167,7 +167,7 @@ module.exports = (page) => {
 				});
 
 				it('with `defArgs` true', async () => {
-					await renderDummy({
+					await init({
 						controls: [createControl('target', {action: {method: 'testFn', defArgs: true, args: [1, 2, 3, 4]}})]
 					});
 
@@ -193,7 +193,7 @@ module.exports = (page) => {
 
 				describe('with `argsMap`', () => {
 					it('as `string`', async () => {
-						await renderDummy({
+						await init({
 							controls: [
 								createControl('target', {
 									action: {
@@ -261,7 +261,7 @@ module.exports = (page) => {
 			};
 		}
 
-		async function renderDummy(props = {}) {
+		async function init(props = {}) {
 			await page.evaluate((props) => {
 				globalThis.removeCreatedComponents();
 
