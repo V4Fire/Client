@@ -157,7 +157,7 @@ module.exports = function init(gulp = require('gulp')) {
 			nodeStatic = require('node-static');
 
 		const
-			fs = require('fs-extra-promise'),
+			fs = require('fs-extra'),
 			path = require('upath');
 
 		const

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Migration from `fs-extra-promise` to `fs-extra`
+
 ## v3.0.0-rc.209 (2021-07-06)
 
 #### :rocket: New Feature
