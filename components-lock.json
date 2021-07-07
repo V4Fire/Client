@@ -1,5 +1,5 @@
 {
-  "hash": "234712fb103933e98e9dd2c1cb6c305d4c23d505a6affc46f5aa316a5b28e0ef",
+  "hash": "ec50ef6ec4fbae82c37b31a1b48550bd72b8f458996d222632ff6927e4b14dde",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -166,6 +166,38 @@
             "src/dummies/b-dummy-async-render/b-dummy-async-render.styl"
           ],
           "tpl": "src/dummies/b-dummy-async-render/b-dummy-async-render.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-control-list",
+        {
+          "index": "src/dummies/b-dummy-control-list/index.js",
+          "declaration": {
+            "name": "b-dummy-control-list",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-control-list",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-control-list/b-dummy-control-list.ts",
+          "styles": [
+            "src/dummies/b-dummy-control-list/b-dummy-control-list.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-control-list/b-dummy-control-list.ss",
           "etpl": null
         }
       ],
@@ -1675,6 +1707,7 @@
               "p-v4-dynamic-page-1",
               "p-v4-dynamic-page-2",
               "p-v4-dynamic-page-3",
+              "b-remote-provider",
               "b-router",
               "b-dynamic-page",
               "b-tree",
@@ -1690,14 +1723,14 @@
               "b-select-date",
               "b-virtual-scroll",
               "b-window",
-              "b-remote-provider",
               "b-sidebar",
               "b-slider",
               "b-icon",
               "b-image",
               "b-dummy",
               "b-dummy-text",
-              "b-dummy-async-render"
+              "b-dummy-async-render",
+              "b-dummy-control-list"
             ],
             "libs": []
           },
@@ -1708,6 +1741,7 @@
             "p-v4-dynamic-page-1",
             "p-v4-dynamic-page-2",
             "p-v4-dynamic-page-3",
+            "b-remote-provider",
             "b-router",
             "b-dynamic-page",
             "b-tree",
@@ -1723,14 +1757,14 @@
             "b-select-date",
             "b-virtual-scroll",
             "b-window",
-            "b-remote-provider",
             "b-sidebar",
             "b-slider",
             "b-icon",
             "b-image",
             "b-dummy",
             "b-dummy-text",
-            "b-dummy-async-render"
+            "b-dummy-async-render",
+            "b-dummy-control-list"
           ],
           "libs": [],
           "resolvedLibs": {
