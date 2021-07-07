@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Migration from `fs-extra-promise` to `fs-extra`
 
+#### :house: Internal
+
+* Updated dependencies `delay@5.0.0`, `glob-promise@4.2.0`
+
 ## v3.0.0-rc.209 (2021-07-06)
 
 #### :rocket: New Feature

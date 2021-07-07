@@ -71,7 +71,7 @@
     "file-loader": "^6.2.0",
     "fs-extra": "^10.0.0",
     "glob": "^7.1.6",
-    "glob-promise": "^3.4.0",
+    "glob-promise": "^4.2.0",
     "gulp": "^4.0.2",
     "gulp-csso": "^4.0.1",
     "gulp-ext-replace": "0.3.0",
