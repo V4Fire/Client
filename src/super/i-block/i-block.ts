@@ -1092,7 +1092,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@field({
 		merge: true,
 		replace: false,
-		forceUpdate: false,
 		functionalWatching: false,
 		init: () => Object.create({})
 	})

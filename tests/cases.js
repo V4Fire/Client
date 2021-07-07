@@ -18,6 +18,7 @@ module.exports = [
 	'--test-entry form/b-input/test',
 	'--test-entry form/b-textarea/test',
 
+	'--test-entry base/b-remote-provider/test',
 	'--test-entry base/b-router/test',
 	'--test-entry base/b-virtual-scroll/test',
 
@@ -33,6 +34,7 @@ module.exports = [
 
 	'--test-entry super/i-block/test',
 	'--test-entry super/i-block/modules/dom/test',
+	'--test-entry super/i-block/modules/opt/test',
 	'--test-entry super/i-block/modules/block/test',
 	'--test-entry super/i-block/modules/field/test',
 	'--test-entry super/i-block/modules/storage/test',

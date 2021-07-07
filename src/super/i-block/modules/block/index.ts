@@ -50,7 +50,7 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Returns the full name of the current block
+	 * Returns a full name of the current block
 	 *
 	 * @param [modName]
 	 * @param [modValue]
@@ -69,9 +69,9 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Returns CSS selector to the current block
+	 * Returns a CSS selector to the current block
 	 *
-	 * @param [mods] - map of additional modifiers
+	 * @param [mods] - additional modifiers
 	 *
 	 * @example
 	 * ```js
@@ -97,7 +97,7 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Returns the full name of the specified element
+	 * Returns a full name of the specified element
 	 *
 	 * @param name - element name
 	 * @param [modName]
@@ -118,10 +118,10 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Returns CSS selector to the specified element
+	 * Returns a CSS selector to the specified element
 	 *
 	 * @param name - element name
-	 * @param [mods] - map of additional modifiers
+	 * @param [mods] - additional modifiers
 	 *
 	 * @example
 	 * ```js
@@ -152,7 +152,7 @@ export default class Block extends Friend {
 	 *
 	 * @param ctx - context node
 	 * @param name - element name
-	 * @param [mods] - map of additional modifiers
+	 * @param [mods] - additional modifiers
 	 *
 	 * @example
 	 * ```js
@@ -166,7 +166,7 @@ export default class Block extends Friend {
 	 * Returns block child elements by the specified request
 	 *
 	 * @param name - element name
-	 * @param [mods] - map of additional modifiers
+	 * @param [mods] - additional modifiers
 	 *
 	 * @example
 	 * ```js
@@ -225,7 +225,7 @@ export default class Block extends Friend {
 	 * Returns a block child element by the specified request
 	 *
 	 * @param name - element name
-	 * @param [mods] - map of additional modifiers
+	 * @param [mods] - additional modifiers
 	 *
 	 * @example
 	 * ```js
@@ -360,7 +360,7 @@ export default class Block extends Friend {
 	}
 
 	/**
-	 * Removes a modifier of the current block.
+	 * Removes a modifier from the current block.
 	 * The method returns false if the block doesn't have this modifier.
 	 *
 	 * @param name - modifier name
@@ -441,7 +441,7 @@ export default class Block extends Friend {
 	 * Returns a value of the specified block modifier
 	 *
 	 * @param name - modifier name
-	 * @param [fromNode] - if true, then the modifier value will always taken from a dom node
+	 * @param [fromNode] - if true, then the modifier value will always taken from a DOM node
 	 *
 	 * @example
 	 * ```js

@@ -30,12 +30,12 @@ export default class Opt extends Friend {
 
 	/**
 	 * Returns a number if the specified label:
-	 *   2 -> already exists in the cache;
-	 *   1 -> just written in the cache;
-	 *   0 -> doesn't exist in the cache.
+	 *   `2` -> already exists in the cache;
+	 *   `1` -> just written in the cache;
+	 *   `0` -> doesn't exist in the cache.
 	 *
 	 * This method is used with conditions to provide a logic: if the condition was switched to true,
-	 * then further it always returns true.
+	 * then further, it always returns true.
 	 *
 	 * @param label
 	 * @param [value] - label value (will be saved in the cache only if true)
@@ -66,7 +66,7 @@ export default class Opt extends Friend {
 	 * or if the value wasn't found in the cache, it would be frozen, cached, and returned.
 	 *
 	 * This method is used to cache raw literals within component templates to avoid redundant re-renders that occurs
-	 * because a link to an object was changed.
+	 * because links to objects were changed.
 	 *
 	 * @param literal
 	 *
@@ -85,8 +85,20 @@ export default class Opt extends Friend {
 	}
 
 	/**
-	 * Shows any changes of component properties.
+	 * Shows in a terminal/console any changes of component properties.
 	 * This method is useful to debug.
+	 *
+	 * @example
+	 * ```typescript
+	 * import iBlock, { component } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * export default class bExample extends iBlock {
+	 *   mounted() {
+	 *     this.opt.showAnyChanges();
+	 *   }
+	 * }
+	 * ```
 	 */
 	showAnyChanges(): void {
 		const cg = (name, key, val, oldVal, info) => {

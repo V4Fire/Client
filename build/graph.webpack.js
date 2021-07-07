@@ -13,7 +13,7 @@ const
 	config = require('config');
 
 const
-	fs = require('fs-extra-promise'),
+	fs = require('fs-extra'),
 	path = require('upath');
 
 const

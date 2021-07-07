@@ -37,26 +37,35 @@ module.exports = async (page, params) => {
 			expect(await target.evaluate((ctx) => ctx.block.element('result').innerHTML)).toBe('');
 		});
 
-		it('infinite rendering', async () => {
-			const target = await init('infinite rendering');
+		[
+			'infinite rendering',
+			'infinite rendering with providing a function'
+		].forEach((desc) => {
+			it(desc, async () => {
+				const target = await init(desc);
 
-			expect(
-				await target.evaluate(async (ctx) => {
-					const wrapper = ctx.block.element('result');
-					ctx.block.element('force').click();
-					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
-					return wrapper.textContent.trim();
-				})
-			).toBe('Element: 0; Hook: mounted;');
+				expect(
+					await target.evaluate((ctx) => ctx.block.element('result').textContent.trim())
+				).toBe('Element: 0; Hook: beforeMount;');
 
-			expect(
-				await target.evaluate(async (ctx) => {
-					const wrapper = ctx.block.element('result');
-					ctx.block.element('defer-force').click();
-					await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
-					return wrapper.textContent.trim();
-				})
-			).toBe('Element: 1; Hook: mounted;');
+				expect(
+					await target.evaluate(async (ctx) => {
+						const wrapper = ctx.block.element('result');
+						ctx.block.element('force').click();
+						await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
+						return wrapper.textContent.trim();
+					})
+				).toBe('Element: 1; Hook: mounted;');
+
+				expect(
+					await target.evaluate(async (ctx) => {
+						const wrapper = ctx.block.element('result');
+						ctx.block.element('defer-force').click();
+						await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
+						return wrapper.textContent.trim();
+					})
+				).toBe('Element: 2; Hook: mounted;');
+			});
 		});
 
 		it('deactivating/activating the parent component while rendering', async () => {
