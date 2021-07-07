@@ -357,8 +357,14 @@ module.exports = (page, params) => {
 			});
 
 			it('starts watch for resizes', async () => {
-				await page.evaluate(() => globalThis._testEl.style.width = '400px');
-				await page.evaluate(() => globalThis._testEl.style.height = '400px');
+				await h.bom.waitForIdleCallback(page);
+
+				await page.evaluate(() => {
+					Object.assign(globalThis._testEl.style, {
+						width: '400px',
+						height: '400px'
+					});
+				});
 
 				await expectAsync(page.waitForFunction(() => globalThis._t === 1)).toBeResolved();
 			});
