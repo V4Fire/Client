@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* `waitForceRender` should allow the initial render of a component
+
 ## v3.0.0-rc.209 (2021-07-06)
 
 #### :rocket: New Feature

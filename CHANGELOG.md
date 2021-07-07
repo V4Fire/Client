@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Migration from `fs-extra-promise` to `fs-extra`
 
+#### :bug: Bug Fix
+
+* `AsyncRender.waitForceRender` should allow the initial render of a component
+
 #### :house: Internal
 
 * Updated dependencies `delay@5.0.0`, `glob-promise@4.2.0`

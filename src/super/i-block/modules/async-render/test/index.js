@@ -45,13 +45,17 @@ module.exports = async (page, params) => {
 				const target = await init(desc);
 
 				expect(
+					await target.evaluate((ctx) => ctx.block.element('result').textContent.trim())
+				).toBe('Element: 0; Hook: beforeMount;');
+
+				expect(
 					await target.evaluate(async (ctx) => {
 						const wrapper = ctx.block.element('result');
 						ctx.block.element('force').click();
 						await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
 						return wrapper.textContent.trim();
 					})
-				).toBe('Element: 0; Hook: mounted;');
+				).toBe('Element: 1; Hook: mounted;');
 
 				expect(
 					await target.evaluate(async (ctx) => {
@@ -60,7 +64,7 @@ module.exports = async (page, params) => {
 						await ctx.localEmitter.promisifyOnce('asyncRenderChunkComplete');
 						return wrapper.textContent.trim();
 					})
-				).toBe('Element: 1; Hook: mounted;');
+				).toBe('Element: 2; Hook: mounted;');
 			});
 		});
 

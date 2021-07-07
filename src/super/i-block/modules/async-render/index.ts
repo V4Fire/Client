@@ -86,32 +86,35 @@ export default class AsyncRender extends Friend {
 		elementToDrop?: string | ((ctx: this['component']) => CanPromise<CanUndef<string | Element>>)
 	): () => CanPromise<boolean> {
 		return () => {
-			if (!this.lfc.isBeforeCreate()) {
-				return this.localEmitter.promisifyOnce('forceRender').then(async () => {
-					if (elementToDrop != null) {
-						let
-							el;
+			const
+				canImmediateRender = this.lfc.isBeforeCreate() || this.hook === 'beforeMount';
 
-						if (Object.isFunction(elementToDrop)) {
-							el = await elementToDrop(this.ctx);
-
-						} else {
-							el = elementToDrop;
-						}
-
-						if (Object.isString(el)) {
-							this.block?.element(el)?.remove();
-
-						} else {
-							el?.remove();
-						}
-					}
-
-					return true;
-				});
+			if (canImmediateRender) {
+				return true;
 			}
 
-			return true;
+			return this.localEmitter.promisifyOnce('forceRender').then(async () => {
+				if (elementToDrop != null) {
+					let
+						el;
+
+					if (Object.isFunction(elementToDrop)) {
+						el = await elementToDrop(this.ctx);
+
+					} else {
+						el = elementToDrop;
+					}
+
+					if (Object.isString(el)) {
+						this.block?.element(el)?.remove();
+
+					} else {
+						el?.remove();
+					}
+				}
+
+				return true;
+			});
 		};
 	}
 
