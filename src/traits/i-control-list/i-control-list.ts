@@ -84,7 +84,7 @@ export default abstract class iControlList {
 	}
 
 	/**
-	 * Returns a type of listening event for the control
+	 * Returns a type of the listening event for the control
 	 *
 	 * @param component
 	 * @param opts - control options
