@@ -26,7 +26,7 @@ module.exports = (page) => {
 		});
 
 		describe('`getSrcSet`', () => {
-			it('returns a `srcset` string', async () => {
+			it('returns an `srcset` string', async () => {
 				const result = (await dummyComponent.evaluate(({modules: {htmlHelpers}}) => htmlHelpers.getSrcSet({
 					'2x': 'http://img-hdpi.png',
 					'3x': 'http://img-xhdpi.png'
