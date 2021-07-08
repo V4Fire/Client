@@ -167,7 +167,7 @@ module.exports = async (page, params) => {
 
 				it('`error` callback', async () => {
 					const imgUrl = getRandomImgUrl();
-					abortImageRequest(imgUrl);
+					const pr = abortImageRequest(imgUrl);
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -175,6 +175,7 @@ module.exports = async (page, params) => {
 					}, [tag, imgUrl]);
 
 					await expectAsync(page.waitForFunction('globalThis.tmp === false')).toBeResolved();
+					await pr;
 				});
 
 				it('`error` callback will not be called if loading was successful', async () => {
@@ -247,7 +248,7 @@ module.exports = async (page, params) => {
 
 				it('with loading error and broken with `src`', async () => {
 					const imgUrl = getRandomImgUrl();
-					abortImageRequest(imgUrl);
+					const pr = abortImageRequest(imgUrl);
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -257,6 +258,8 @@ module.exports = async (page, params) => {
 					await expectAsync(
 						waitFor(getNode(tag), (ctx, broken) => globalThis.getSrc(ctx) === broken, images.broken)
 					).toBeResolved();
+
+					await pr;
 				});
 
 				it('with `src`, preview with `src`, broken with `src`', async () => {
@@ -291,7 +294,7 @@ module.exports = async (page, params) => {
 
 				it('with loading error, preview with `src`, broken with `src`', async () => {
 					const imgUrl = getRandomImgUrl();
-					abortImageRequest(imgUrl, 500);
+					const pr = abortImageRequest(imgUrl, 500);
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images, imgUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -310,6 +313,8 @@ module.exports = async (page, params) => {
 					await expectAsync(
 						waitFor(getNode(tag), (ctx, broken) => globalThis.getSrc(ctx) === broken, images.broken)
 					).toBeResolved();
+
+					await pr;
 				});
 
 				it('tag with `src`, preview with loading error, broken with `src`', async () => {
