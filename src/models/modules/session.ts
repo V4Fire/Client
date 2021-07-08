@@ -45,6 +45,11 @@ export default class Session extends Provider {
 	 */
 	readonly csrfHeader: string = 'X-XSRF-TOKEN';
 
+	/**
+	 * If true, then after clearing the session (in case of answer 401) will be an additional query
+	 */
+	readonly requestAfterClear: boolean = true;
+
 	/** @override */
 	static readonly middlewares: Middlewares = {
 		...Provider.middlewares,
@@ -115,19 +120,24 @@ export default class Session extends Provider {
 				response = Object.get<Response>(err, 'details.response');
 
 			if (response) {
-				if (
-					response.status === 401 &&
-					canRetry &&
-					await s.isExists()
-				) {
+				if (response.status === 401 && canRetry) {
 					const
 						{auth, params} = await getSessionPromise;
 
-					if (!await s.match(auth, params)) {
-						return this.updateRequest(url, <string>event, <RequestFunctionResponse>factory, false);
-					}
+					if (Object.isTruly(auth)) {
+						const
+							retry = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory, false);
 
-					await s.clear();
+						if (!await s.match(auth, params)) {
+							return retry();
+						}
+
+						await s.clear();
+
+						if (this.requestAfterClear) {
+							return retry();
+						}
+					}
 				}
 
 				await update({response});
