@@ -31,7 +31,7 @@ interface bDummyControlList extends
 @derive(iControlList)
 class bDummyControlList extends iBlock implements iControlList {
 	/**
-	 * Group of controls to render
+	 * List of controls to render
 	 */
 	@prop(Array)
 	controls!: Control[];
@@ -46,7 +46,7 @@ class bDummyControlList extends iBlock implements iControlList {
 	}
 
 	/**
-	 * Method for tests purposes
+	 * Method for test purposes
 	 * @param args
 	 */
 	testFn(...args: unknown[]): void {
@@ -55,7 +55,7 @@ class bDummyControlList extends iBlock implements iControlList {
 	}
 
 	/**
-	 * Method for tests purposes
+	 * Method for test purposes
 	 * @param args
 	 */
 	testArgsMapFn(...args: unknown[]): unknown[] {

@@ -11,7 +11,6 @@
 - include 'super/i-block'|b as placeholder
 - include 'traits/i-control-list'|b
 
-
 - template index() extends ['i-block'].index
 	- block body
 		+= self.getTpl('i-control-list/')({ &
