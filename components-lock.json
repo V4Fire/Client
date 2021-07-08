@@ -1,5 +1,5 @@
 {
-  "hash": "a42daeba4b374b163c3acbe89b1d7c4d5db6a7b07d9d16da0e493ee4ebcddae0",
+  "hash": "7878f9895394ba1717d0fa8e7508249d38840636237b3e6282422c5e74229d5e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -166,6 +166,38 @@
             "src/dummies/b-dummy-async-render/b-dummy-async-render.styl"
           ],
           "tpl": "src/dummies/b-dummy-async-render/b-dummy-async-render.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-control-list",
+        {
+          "index": "src/dummies/b-dummy-control-list/index.js",
+          "declaration": {
+            "name": "b-dummy-control-list",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-control-list",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-control-list/b-dummy-control-list.ts",
+          "styles": [
+            "src/dummies/b-dummy-control-list/b-dummy-control-list.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-control-list/b-dummy-control-list.ss",
           "etpl": null
         }
       ],
@@ -1697,7 +1729,8 @@
               "b-image",
               "b-dummy",
               "b-dummy-text",
-              "b-dummy-async-render"
+              "b-dummy-async-render",
+              "b-dummy-control-list"
             ],
             "libs": []
           },
@@ -1730,7 +1763,8 @@
             "b-image",
             "b-dummy",
             "b-dummy-text",
-            "b-dummy-async-render"
+            "b-dummy-async-render",
+            "b-dummy-control-list"
           ],
           "libs": [],
           "resolvedLibs": {

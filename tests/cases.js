@@ -44,6 +44,7 @@ module.exports = [
 	'--test-entry super/i-block/modules/daemons/test',
 
 	'--test-entry traits/i-lock-page-scroll/test',
+	'--test-entry traits/i-control-list/test',
 	'--test-entry traits/i-observe-dom/test',
 
 	'--test-entry core/dom/image/test',

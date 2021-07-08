@@ -123,23 +123,19 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		it('stores `db` into the parent field', async () => {
-			const
-				root = await h.component.waitForComponent(page, '#root-component');
-
-			const fieldSetPromise = root.evaluate((ctx) =>
-				new Promise((res) => ctx.watch('someField', res)));
-
-			await h.bom.waitForIdleCallback(page);
-
 			await init({
 				dataProvider: 'demo.List',
 				field: 'someField'
 			});
 
-			await fieldSetPromise;
+			await page.waitForFunction(() => {
+				// @ts-expect-error
+				const root = document.getElementById('root-component').component;
+				return root.someField?.test === 1;
+			});
 
 			const
-				testVal = await root.evaluate((ctx) => ctx.someField);
+				testVal = await (await h.component.getRoot(page)).evaluate((ctx) => ctx.someField);
 
 			expect(testVal).toEqual({test: 1});
 		});
