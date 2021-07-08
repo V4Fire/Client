@@ -634,7 +634,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 			const
 				browserArgs = cliParams.browserArgs.join(','),
-				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')} --browser-args ${browserArgs} --retries ${cliArgs['--retries']}`,
+				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')} --browser-args ${browserArgs} --retries ${cliArgs['--retries'] ?? 0}`,
 				extraArgs = args._.join(' ');
 
 			totalCases.push(argsString);

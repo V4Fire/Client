@@ -12,7 +12,9 @@
  */
 
 import { derive } from 'core/functools/trait';
+
 import * as cookie from 'core/cookies';
+import * as htmlHelpers from 'core/html';
 
 import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
@@ -80,7 +82,8 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 		return {
 			resizeWatcher: ResizeWatcher,
 			iObserveDOM,
-			cookie
+			cookie,
+			htmlHelpers
 		};
 	}
 
