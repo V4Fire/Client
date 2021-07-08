@@ -207,6 +207,7 @@ module.exports = (page, params) => {
 					defaultRequestFilter: false
 				});
 
+				await h.bom.waitForIdleCallback(page);
 				await buttonNode.click();
 
 				await expectAsync(pr).toBeResolved();
