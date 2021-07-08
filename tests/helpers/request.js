@@ -83,7 +83,7 @@ class Request {
 
 			page.once('close', handleClose);
 
-			const handler = (route) => {
+			const handler = async (route) => {
 				page.removeListener('close', handleClose);
 
 				if (isClosed) {
@@ -91,8 +91,8 @@ class Request {
 					return;
 				}
 
-				route.fulfill({status: 200, ...response});
-				page.unroute(url, handler);
+				await route.fulfill({status: 200, ...response});
+				await page.unroute(url, handler);
 				res();
 			};
 
