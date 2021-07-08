@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.211 (2021-07-08)
+
+#### :boom: Breaking Change
+
+* Sending an additional request after the authorization parameters was changed now has only one attempt `models/modules/session`
+
+#### :house: Internal
+
+* Removed error logging duplication:
+  * `models/modules/session`
+  * `super/i-data`
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :boom: Breaking Change
@@ -38,20 +50,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Updated dependencies `husky@7.0.0`, `tslib@2.3.0`, `ts-loader@9.2.3`
-
-## v3.0.0-rc.209 (2021-07-02)
-
-#### :boom: Breaking Change
-
-* `models/modules/session`:
-  * Removed ability to send an additional request after a session was cleared (removed a `requestAfterClear` property)
-  * Sending an additional request after the authorization parameters was changed now has only one attempt
-
-#### :house: Internal
-
-* Removed error logging duplication:
-  * `models/modules/session`
-  * `super/i-data`
 
 ## v3.0.0-rc.208 (2021-06-29)
 
