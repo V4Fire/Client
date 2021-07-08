@@ -45,6 +45,11 @@ export default class Session extends Provider {
 	 */
 	readonly csrfHeader: string = 'X-XSRF-TOKEN';
 
+	/**
+	 * If true, an additional request will be sent in the case of a 401 response with the new session key returned
+	 */
+	readonly retryOnSessionKeyChanged: boolean = true;
+
 	/** @override */
 	static readonly middlewares: Middlewares = {
 		...Provider.middlewares,
@@ -117,12 +122,15 @@ export default class Session extends Provider {
 			if (response) {
 				await update({response});
 
-				if (response.status === 401 && canRetry && await s.isExists()) {
-					const
-						{auth, params} = await getSessionPromise;
+				if (response.status === 401 && await s.isExists()) {
 
-					if (!await s.match(auth, params)) {
-						return this.updateRequest(url, <string>event, <RequestFunctionResponse>factory, false);
+					if (this.retryOnSessionKeyChanged && canRetry) {
+						const
+							{auth, params} = await getSessionPromise;
+
+						if (!await s.match(auth, params)) {
+							return this.updateRequest(url, <string>event, <RequestFunctionResponse>factory, false);
+						}
 					}
 
 					await s.clear();

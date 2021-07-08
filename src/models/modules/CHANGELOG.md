@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Removed the ability to send an additional request after a session was cleared (removed a `requestAfterClear` property)
+* `requestAfterClear` parameter has been replaced by the `retryOnSessionKeyChanged` parameter
 * Sending an additional request after the authorization parameters was changed now has only one attempt
 
 #### :house: Internal

@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 `models/modules/session`:
-  * Removed the ability to send an additional request after a session was cleared (removed a `requestAfterClear` property)
+  * `requestAfterClear` parameter has been replaced by the `retryOnSessionKeyChanged` parameter
   * Sending an additional request after the authorization parameters was changed now has only one attempt `models/modules/session`
 
 #### :house: Internal
