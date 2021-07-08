@@ -1,6 +1,10 @@
 # traits/i-control-list
 
-This module provides a trait for a component that renders a list of controls.
+This module provides a trait with helpers for a component that renders a list of controls.
+
+Instead of [[iInput]], which declares API for list-like components, this component contains simple helper templates and
+methods to render some list of components within a component' template, like a list of buttons or inputs.
+For example, you can specify some event/analytic listeners with this list.
 
 ## Synopsis
 
@@ -12,7 +16,7 @@ This module provides a trait for a component that renders a list of controls.
 
 ## Methods
 
-The trait specifies a bunch of methods.
+The trait specifies a bunch of methods to implement.
 
 ### getControlEvent
 
@@ -41,7 +45,7 @@ interface bDummyControlList extends
 @derive(iControlList)
 class bDummyControlList extends iBlock implements iControlList {
   /**
-   * Group of controls to render
+   * List of controls to render
    */
   @prop(Array)
   controls!: Control[];
@@ -96,7 +100,7 @@ Calls an event handler for the specified control.
 
 ### Template
 
-The trait also defines a base template for creating a controls list.
+The trait also defines a base template to render a list of controls.
 
 ```snakeskin
 - namespace [%fileName%]
