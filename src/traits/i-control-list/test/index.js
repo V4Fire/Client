@@ -63,22 +63,21 @@ module.exports = (page) => {
 				await init(p);
 			});
 
-			it('renders a provided component', async () => {
+			it('renders the provided component', async () => {
 				const componentName = await page.evaluate(() =>
-					// @ts-ignore
 					document.getElementById('test-button').component.componentName);
 
 				expect(componentName).toBe(p.controls[0].component);
 			});
 
-			it('provides a content from `text` field into component default slot', async () => {
+			it('provides a content from `text` into the `default` slot', async () => {
 				const textContent = await page.evaluate(() =>
 					document.getElementById('test-button').textContent);
 
 				expect(textContent.trim()).toBe(p.controls[0].text.trim());
 			});
 
-			it('provides an attributes to the component', async () => {
+			it('provides attributes to the component', async () => {
 				const attributes = await page.evaluate(() => {
 					// @ts-ignore
 					const c = document.getElementById('link-button').component;
@@ -98,7 +97,7 @@ module.exports = (page) => {
 				expect(bButton).toBeTruthy();
 			});
 
-			it('creates a wrappers for controls with the provided class name', async () => {
+			it('creates control wrappers with the provided class name', async () => {
 				const
 					selector = '.b-dummy-control-list__control-wrapper',
 					wrappers = await page.$$(selector);
@@ -113,7 +112,7 @@ module.exports = (page) => {
 				expect(isContainsLinkButton).toBeTrue();
 			});
 
-			it('provides the specified class name to the controls', async () => {
+			it('provides the specified class name to controls', async () => {
 				const
 					selector = '.b-dummy-control-list__control',
 					elements = await page.$$(selector);
@@ -166,7 +165,7 @@ module.exports = (page) => {
 					expect(args).toEqual([1, 2, 3, 4]);
 				});
 
-				it('with `defArgs` true', async () => {
+				it('providing `defArgs` to `true`', async () => {
 					await init({
 						controls: [createControl('target', {action: {method: 'testFn', defArgs: true, args: [1, 2, 3, 4]}})]
 					});
@@ -191,7 +190,7 @@ module.exports = (page) => {
 					expect(result).toEqual([true, true, 1, 2, 3, 4]);
 				});
 
-				describe('with `argsMap`', () => {
+				describe('providing `argsMap`', () => {
 					it('as `string`', async () => {
 						await init({
 							controls: [
