@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.211 (2021-07-08)
+
+#### :house: Internal
+
+* Removed error logging duplication
+
 ## v3.0.0-rc.197 (2021-06-07)
 
 #### :boom: Breaking Change

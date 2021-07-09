@@ -432,7 +432,10 @@ export default abstract class iData extends iBlock implements iProgress {
 							},
 
 							(err) => {
-								stderr(err);
+								if (err?.name !== 'RequestError') {
+									stderr(err);
+								}
+
 								return callSuper();
 							}
 						);

@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.211 (2021-07-08)
+
+#### :boom: Breaking Change
+
+`models/modules/session`:
+  * `requestAfterClear` parameter has been replaced by the `retryOnSessionKeyChanged` parameter
+  * Sending an additional request after the authorization parameters was changed now has only one attempt `models/modules/session`
+
+#### :house: Internal
+
+* Removed error logging duplication:
+  * `models/modules/session`
+  * `super/i-data`
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :boom: Breaking Change

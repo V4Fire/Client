@@ -46,9 +46,9 @@ export default class Session extends Provider {
 	readonly csrfHeader: string = 'X-XSRF-TOKEN';
 
 	/**
-	 * If true, then after clearing the session (in case of answer 401) will be an additional query
+	 * If true, an additional request will be sent in the case of a 401 response with the new session key returned
 	 */
-	readonly requestAfterClear: boolean = true;
+	readonly retryOnSessionKeyChanged: boolean = true;
 
 	/** @override */
 	static readonly middlewares: Middlewares = {
@@ -82,26 +82,28 @@ export default class Session extends Provider {
 	protected updateRequest<T = unknown>(
 		url: string,
 		event: string,
-		factory: RequestFunctionResponse<T>
+		factory: RequestFunctionResponse<T>,
+		canRetry?: boolean
 	): RequestResponse<T>;
 
 	protected updateRequest(
 		url: string,
 		event: string | RequestFunctionResponse,
-		factory?: RequestFunctionResponse
+		factory?: RequestFunctionResponse,
+		canRetry: boolean = true
 	): RequestResponse {
 		const
 			req = super.updateRequest(url, <any>event, <any>factory),
-			session = s.get();
+			getSessionPromise = s.get();
 
 		const update = async (res) => {
 			const
-				info = <Response>res.response,
-				refreshHeader = info.getHeader(this.authRefreshHeader);
+				{response} = res,
+				refreshHeader = response.getHeader(this.authRefreshHeader);
 
 			try {
 				if (refreshHeader != null) {
-					await s.set(refreshHeader, {csrf: info.getHeader(this.csrfHeader)});
+					await s.set(refreshHeader, {csrf: response.getHeader(this.csrfHeader)});
 				}
 
 			} catch {}
@@ -109,30 +111,30 @@ export default class Session extends Provider {
 
 		req
 			.then(update)
-			.catch(stderr);
+			.catch(() => {
+				// Do nothing. Logging must be already handled in a request factory.
+			});
 
 		return req.catch(async (err) => {
 			const
-				response = Object.get<Response>(err, 'details.response'),
-				{auth, params} = await session;
+				response = Object.get<Response>(err, 'details.response');
 
 			if (response) {
-				const
-					r = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory);
+				await update({response});
 
-				if (response.status === 401) {
-					if (!await s.match(auth, params)) {
-						return r();
+				if (response.status === 401 && await s.isExists()) {
+
+					if (this.retryOnSessionKeyChanged && canRetry) {
+						const
+							{auth, params} = await getSessionPromise;
+
+						if (!await s.match(auth, params)) {
+							return this.updateRequest(url, <string>event, <RequestFunctionResponse>factory, false);
+						}
 					}
 
 					await s.clear();
-
-					if (Object.isTruly(auth) && this.requestAfterClear) {
-						return r();
-					}
 				}
-
-				await update({response});
 			}
 
 			throw err;
