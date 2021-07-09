@@ -49,6 +49,8 @@ module.exports = [
 
 	'--test-entry core/html/test',
 	'--test-entry core/browser/test',
+	'--test-entry core/session/test',
+	'--test-entry core/cookies/test',
 	'--test-entry core/dom/image/test',
 	'--test-entry core/dom/in-view/test',
 
