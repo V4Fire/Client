@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* [Fixed an issue with providing analytics data into `traits/i-control-list`](https://github.com/V4Fire/Client/issues/452)
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :boom: Breaking Change
