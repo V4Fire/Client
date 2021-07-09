@@ -85,8 +85,8 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 			resizeWatcher: ResizeWatcher,
 			iObserveDOM,
 			htmlHelpers,
-			browserHelpers
-			session
+			browserHelpers,
+			session,
 			cookie
 		};
 	}
