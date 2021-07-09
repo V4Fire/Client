@@ -51,7 +51,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(testVal).toBe('testCookieVal');
 			});
 
-			it('returns `undefined` when trying to get the value of a non-existent cookie', async () => {
+			it('returns `undefined` when trying to get a value of the non-existent cookie', async () => {
 				const
 					testVal = await cookie.evaluate((ctx) => ctx.get('unreachableCookie'));
 
@@ -64,14 +64,14 @@ module.exports = (page, {browser, contextOpts}) => {
 				await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
 			});
 
-			it('returns `true` if the cookie does exists', async () => {
+			it('returns `true` if the cookie exists', async () => {
 				const
 					testVal = await cookie.evaluate((ctx) => ctx.has('testCookie'));
 
 				expect(testVal).toBeTrue();
 			});
 
-			it('returns `false` if the cookie does not exists', async () => {
+			it('returns `false` if the cookie does not exist', async () => {
 				const
 					testVal = await cookie.evaluate((ctx) => ctx.has('unreachableCookie'));
 
@@ -105,7 +105,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				]);
 			});
 
-			it('with `path` option provided', async () => {
+			it('with the `path` option provided', async () => {
 				await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal', {path: '/test'}));
 
 				const
@@ -115,7 +115,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(cookies).toEqual([createCookie({path: '/test'})]);
 			});
 
-			it('with `expires` option provided', async () => {
+			it('with the `expires` option provided', async () => {
 				const expires = await page.evaluate(() => {
 					globalThis._expDate = new Date(Date.now() + 86400e3);
 					return Math.floor(globalThis._expDate.getTime() / 1000);
