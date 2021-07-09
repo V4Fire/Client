@@ -12,6 +12,8 @@
  */
 
 import { derive } from 'core/functools/trait';
+
+import * as cookie from 'core/cookies';
 import * as htmlHelpers from 'core/html';
 import * as session from 'core/session';
 
@@ -83,6 +85,7 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 			iObserveDOM,
 			htmlHelpers,
 			session
+			cookie
 		};
 	}
 
