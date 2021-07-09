@@ -37,7 +37,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			session = await dummyComponent.evaluateHandle(({modules: {session}}) => session);
 		});
 
-		// afterEach(() => context.close());
+		afterEach(() => context.close());
 
 		it('provides auth headers if a session exists', async () => {
 			/** @type {object} */
