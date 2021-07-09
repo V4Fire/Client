@@ -11,6 +11,7 @@ import type { InViewAdapter } from 'core/dom/in-view';
 import type { ResizeWatcher } from 'core/dom/resize-observer';
 import type * as cookie from 'core/cookies';
 import type * as htmlHelpers from 'core/html';
+import type * as browserHelpers from 'core/browser';
 import type * as session from 'core/session';
 
 import type updateOn from 'core/component/directives/update-on/engines';
@@ -29,5 +30,6 @@ export interface Modules {
 	iObserveDOM: typeof iObserveDOM;
 	cookie: typeof cookie;
 	htmlHelpers: typeof htmlHelpers;
+	browserHelpers: typeof browserHelpers;
 	session: typeof session;
 }
