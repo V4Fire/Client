@@ -30,8 +30,10 @@ export default abstract class iControlList {
 			{action, analytics} = opts;
 
 		if (analytics) {
-			const {event, details} = analytics;
-			component.analytics.sendEvent(event, details);
+			const
+				analyticsArgs = Object.isArray(analytics) ? analytics : [analytics.event, analytics.details];
+
+			component.analytics.sendEvent(...analyticsArgs);
 		}
 
 		if (action != null) {

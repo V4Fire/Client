@@ -61,11 +61,13 @@ export interface ControlEvent {
 	/**
 	 * Additional information
 	 */
-	analytics?: ControlAnalytics;
+	analytics?: ControlAnalytics | ControlAnalyticsArgs;
 }
 
 /**
  * Additional information for event analytics
+ * @deprecated
+ * @see [[ControlAnalyticsArgs]]
  */
 export interface ControlAnalytics {
 	/**
@@ -78,6 +80,11 @@ export interface ControlAnalytics {
 	 */
 	details?: Dictionary;
 }
+
+/**
+ * Additional information for event analytics
+ */
+export type ControlAnalyticsArgs = unknown[];
 
 /**
  * Parameter of a control component
