@@ -9,6 +9,7 @@
 import type { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import type { InViewAdapter } from 'core/dom/in-view';
 import type { ResizeWatcher } from 'core/dom/resize-observer';
+import type * as cookie from 'core/cookies';
 import type * as htmlHelpers from 'core/html';
 
 import type updateOn from 'core/component/directives/update-on/engines';
@@ -25,5 +26,6 @@ export interface Directives {
 export interface Modules {
 	resizeWatcher: typeof ResizeWatcher;
 	iObserveDOM: typeof iObserveDOM;
+	cookie: typeof cookie;
 	htmlHelpers: typeof htmlHelpers;
 }
