@@ -141,6 +141,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				reqCount = 0;
 
 			await session.evaluate((ctx) => ctx.set('token'));
+			await page.pause();
 
 			const pr = createRouteHandler({
 				handler: (resolver) => {
@@ -168,7 +169,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			await page.evaluate(() => {
 				globalThis.renderComponents('b-dummy', [{
 					attrs: {
-						dataProvider: 'demo.Pagination'
+						dataProvider: 'demo.Session'
 					}
 				}])
 			})
@@ -178,7 +179,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			return new Promise(async (resolver) => {
 				const {handler, status, withNewToken} = opts;
 
-				await page.route('**/pagination', async (route) => {
+				await page.route('**/session', async (route) => {
 					await handler(resolver, route);
 	
 					return route.fulfill({
