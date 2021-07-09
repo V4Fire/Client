@@ -10,7 +10,7 @@ import type { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import type { InViewAdapter } from 'core/dom/in-view';
 import type { ResizeWatcher } from 'core/dom/resize-observer';
 import type * as htmlHelpers from 'core/html';
-import * as session from 'core/session';
+import type * as session from 'core/session';
 
 import type updateOn from 'core/component/directives/update-on/engines';
 import type iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
