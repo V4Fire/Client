@@ -11,8 +11,11 @@
  * @packageDocumentation
  */
 
+import 'models/demo/pagination';
+
 import { derive } from 'core/functools/trait';
 import * as htmlHelpers from 'core/html';
+import * as session from 'core/session';
 
 import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
@@ -80,7 +83,8 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 		return {
 			resizeWatcher: ResizeWatcher,
 			iObserveDOM,
-			htmlHelpers
+			htmlHelpers,
+			session
 		};
 	}
 

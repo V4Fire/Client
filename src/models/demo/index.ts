@@ -14,6 +14,10 @@ export * from 'models/modules/session';
 export default class Demo extends Session {
 	/** @override */
 	static request: typeof Session.request = Session.request({
+		api: {
+			url: 'https://test.v4fire.rocks'
+		},
+
 		responseType: 'json',
 		cacheStrategy: 'never'
 	});
