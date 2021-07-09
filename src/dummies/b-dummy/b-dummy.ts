@@ -13,6 +13,7 @@
 
 import { derive } from 'core/functools/trait';
 import * as htmlHelpers from 'core/html';
+import * as browserHelpers from 'core/browser';
 
 import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
@@ -80,7 +81,8 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 		return {
 			resizeWatcher: ResizeWatcher,
 			iObserveDOM,
-			htmlHelpers
+			htmlHelpers,
+			browserHelpers
 		};
 	}
 
