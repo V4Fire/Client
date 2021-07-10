@@ -9,15 +9,14 @@
  */
 
 const
-	Snakeskin = require('snakeskin'),
-	escaper = require('escaper');
+	Snakeskin = require('snakeskin');
 
 const
-	{isVoidLink, isButtonLink, tagRgxp, componentElRgxp} = include('build/snakeskin/filters/const');
+	{Vars} = Snakeskin;
 
 module.exports = [
 	/**
-	 * Expands tag name snippets
+	 * Expands the `_` snippet as a `<${rootTag}>` tag
 	 *
 	 * @param {string} tag
 	 * @param {!Object} attrs
@@ -26,57 +25,125 @@ module.exports = [
 	 *
 	 * @example
 	 * ```
-	 * < @b-button
-	 * < a:void
-	 * < button:a
+	 * - rootTag = 'span'
+	 *
+	 * /// <span class="foo"><span class="bar"></span</span
+	 * < _.foo
+	 *   < _.bar
 	 * ```
 	 */
-	function expandTagSnippets(tag, attrs, rootTag) {
+	function expandRootTag(tag, attrs, rootTag) {
+		return tag === '_' ? rootTag : tag;
+	},
+
+	/**
+	 * Expands the `:section` and `:/section` snippets.
+	 * These snippets help to use semantics HTML tags, like `article` or `section` and don't care about `h` types.
+	 *
+	 * @param {string} tag
+	 * @returns {string}
+	 *
+	 * @example
+	 * ```
+	 * /// <article><h2>Foo</h2></article>
+	 * < article:section
+	 *   < h1
+	 *     Foo
+	 * < :/section
+	 * ```
+	 */
+	function expandSection(tag) {
+		Vars.h = Vars.h ?? 0;
+
+		if (/^\?:section$/.test(tag)) {
+			if (Vars.h > 0) {
+				Vars.h--;
+			}
+
+			return '?';
+		}
+
+		if (/^(.*):section$/.test(tag)) {
+			if (Vars.h < 6) {
+				Vars.h++;
+			}
+
+			return RegExp.$1.trim() || 'section';
+		}
+
+		if (/^h(\d)$/.test(tag)) {
+			const v = Number(RegExp.$1) + Vars.h;
+			return `h${v < 6 ? v : 6}`;
+		}
+
+		return tag;
+	},
+
+	/**
+	 * Expands the `a:void` snippet as a `<a href="javascript:void(0)">` tag
+	 *
+	 * @param {string} tag
+	 * @param {!Object} attrs
+	 * @returns {string}
+	 *
+	 * @example
+	 * ```
+	 * /// <a class="bar" href="javascript:void(0)"></a>
+	 * < a:void.bar
+	 * ```
+	 */
+	function expandVoidLink(tag, attrs) {
+		if (/^a:void$/.test(tag)) {
+			attrs.href = ['javascript:void(0)'];
+			return 'a';
+		}
+
+		return tag;
+	},
+
+	/**
+	 * Expands the `button:link` snippet as a `<button class="a">` tag
+	 *
+	 * @param {string} tag
+	 * @param {!Object} attrs
+	 * @returns {string}
+	 *
+	 * @example
+	 * ```
+	 * /// <button class="bar a"></button>
+	 * < button:link.bar
+	 * ```
+	 */
+	function expandButtonLink(tag, attrs) {
+		if (/^button:a$/.test(tag)) {
+			attrs.type = ['button'];
+			attrs.class = (attrs.class || []).concat('a');
+			return 'button';
+		}
+
+		return tag;
+	},
+
+	/**
+	 * Expands the `@component` snippet as a `<component v4-flyweight-component>` tag
+	 *
+	 * @param {string} tag
+	 * @param {!Object} attrs
+	 * @returns {string}
+	 *
+	 * @example
+	 * ```
+	 * /// <span v4-flyweight-component="b-button"></span>
+	 * < @b-button
+	 * ```
+	 */
+	function expandFlyweightComponent(tag, attrs) {
 		if (tag[0] === '@') {
 			attrs['v4-flyweight-component'] = [tag.slice(1)];
 			attrs[':instance-of'] = attrs['v4-flyweight-component'];
 			return 'span';
 		}
 
-		if (isVoidLink.test(tag)) {
-			attrs.href = ['javascript:void(0)'];
-			return 'a';
-		}
-
-		if (isButtonLink.test(tag)) {
-			attrs.type = ['button'];
-			attrs.class = (attrs.class || []).concat('a');
-			return 'button';
-		}
-
-		if (tag === '_') {
-			return rootTag;
-		}
-
 		return tag;
 	}
 ];
-
-Snakeskin.importFilters({
-	/**
-	 * Returns the first name of an element
-	 *
-	 * @param {string} decl
-	 * @returns {?string}
-	 */
-	getFirstTagElementName(decl) {
-		const
-			escapedFragments = [],
-			escapedStr = escaper.replace(decl, escapedFragments);
-
-		const
-			tagMatch = tagRgxp.exec(escapedStr);
-
-		if (!tagMatch) {
-			return null;
-		}
-
-		const search = componentElRgxp.exec(escaper.paste(tagMatch[0], escapedFragments));
-		return search ? search[0] : null;
-	}
-});

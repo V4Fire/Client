@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :rocket: New Feature
+
+* Added a new tag name filter `:section` `build/snakeskin`
+
 #### :boom: Breaking Change
 
 * [Fixed an issue with providing analytics data into `traits/i-control-list`](https://github.com/V4Fire/Client/issues/452)

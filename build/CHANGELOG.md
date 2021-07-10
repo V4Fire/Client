@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added a new tag name filter `:section` `snakeskin`
+
 ## v3.0.0-rc.186 (2021-05-13)
 
 #### :bug: Bug Fix
