@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Now the component uses `<section>` within `bWindow`
+
 #### :rocket: New Feature
 
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`

@@ -24,7 +24,7 @@
 				opt.ifOnce('opened', m.opened === 'true') && delete watchModsStore.opened
 			.
 
-				< .&__window ref = window
+				< :section.&__window ref = window
 					- if thirdPartySlots
 						< template v-if = slotName
 							: isSlot = /^windowSlot[A-Z]/
@@ -36,7 +36,7 @@
 
 					< template v-else
 						+= self.slot()
-							< h2.&__title v-if = title || vdom.getSlot('title')
+							< h1.&__title v-if = title || vdom.getSlot('title')
 								+= self.slot('title', {':title': 'title'})
 									- block title
 										{{ title }}
@@ -50,3 +50,5 @@
 									- block controls
 										< b-button @click = close
 											{{ `Close` }}
+
+				< ?:-section
