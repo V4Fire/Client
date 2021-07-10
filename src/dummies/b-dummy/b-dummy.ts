@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import 'models/demo/pagination';
+
 import { derive } from 'core/functools/trait';
 
 import * as cookie from 'core/cookies';
@@ -85,8 +87,8 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 			resizeWatcher: ResizeWatcher,
 			iObserveDOM,
 			htmlHelpers,
-			browserHelpers,
 			session,
+			browserHelpers,
 			cookie
 		};
 	}

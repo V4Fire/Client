@@ -54,5 +54,7 @@ module.exports = [
 	'--test-entry core/dom/image/test',
 	'--test-entry core/dom/in-view/test',
 
+	'--test-entry models/modules/test/session',
+
 	'--test-entry core/component/directives/update-on/test'
 ];
