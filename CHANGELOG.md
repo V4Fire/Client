@@ -16,14 +16,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Now the component uses `<section>` within `bWindow`
+* [Fixed an issue with providing analytics data into `traits/i-control-list`](https://github.com/V4Fire/Client/issues/452)
 
 #### :rocket: New Feature
 
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`
 
-#### :boom: Breaking Change
+#### :bug: Bug Fix
 
-* [Fixed an issue with providing analytics data into `traits/i-control-list`](https://github.com/V4Fire/Client/issues/452)
+* Provided the `lang` attribute to `<html>` `iStaticPage`
 
 ## v3.0.0-rc.210 (2021-07-07)
 

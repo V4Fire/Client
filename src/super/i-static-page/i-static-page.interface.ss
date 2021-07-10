@@ -9,6 +9,8 @@
  */
 
 - include 'super/i-page'|b
+
+- import config from 'config'
 - import fs from 'fs-extra'
 
 /**
@@ -43,7 +45,9 @@
 	} .
 
 	/** Map with attributes of <html> tag */
-	- htmlAttrs = {}
+	- htmlAttrs = { &
+		lang: config.locale
+	} .
 
 	/** @override */
 	- rootAttrs = {}
