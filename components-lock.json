@@ -1,5 +1,5 @@
 {
-  "hash": "0c86769a9de7c5fb87ac4289ba21620ac405d3f5fa9a841c58b4d002abe55d90",
+  "hash": "b4bd2b83fb920305442eb5528e4fd9092c18388ef8a818cd982d860373dc1a03",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1725,6 +1725,7 @@
               "b-window",
               "b-sidebar",
               "b-slider",
+              "b-bottom-slide",
               "b-icon",
               "b-image",
               "b-dummy",
@@ -1759,6 +1760,7 @@
             "b-window",
             "b-sidebar",
             "b-slider",
+            "b-bottom-slide",
             "b-icon",
             "b-image",
             "b-dummy",
