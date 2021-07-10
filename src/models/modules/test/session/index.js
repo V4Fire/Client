@@ -39,7 +39,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		afterEach(() => context.close());
 
-		it('provides auth headers if a session exists', async () => {
+		it('provides auth headers if the session exists', async () => {
 			/** @type {object} */
 			let headers;
 
@@ -57,7 +57,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(headers.authorization).toBe('Bearer token');
 		});
 
-		it('does not provide an auth header if a session does not exist', async () => {
+		it('does not provide auth headers if the session does not exist', async () => {
 			/** @type {object} */
 			let headers;
 
@@ -73,7 +73,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(headers.authorization).toBeUndefined();
 		});
 
-		it('retries request if the response has a 401 status code', async () => {
+		it('retries the request if the response has a 401 status code', async () => {
 			let
 				reqCount = 0;
 
@@ -89,7 +89,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			await expectAsync(pr).toBeResolved();
 		});
 
-		it('clears a session if the response has a 401 status code without a new token', async () => {
+		it('clears the session if the response has a 401 status code without a new token', async () => {
 			let
 				reqCount = 0;
 
@@ -98,7 +98,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			const pr = createRouteHandler({
 				handler: (resolver) => {
 					reqCount++;
-	
+
 					if (reqCount === 2) {
 						resolver();
 					}
@@ -146,7 +146,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			const pr = createRouteHandler({
 				handler: (resolver) => {
 					reqCount++;
-	
+
 					if (reqCount === 2) {
 						resolver();
 					}
@@ -181,7 +181,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 				await page.route('**/session', async (route) => {
 					await handler(resolver, route);
-	
+
 					return route.fulfill({
 						status: Object.isFunction(status) ? status() : status,
 						headers: {
@@ -195,7 +195,6 @@ module.exports = (page, {browser, contextOpts}) => {
 					})
 				});
 			});
-
 		}
 	});
 };
