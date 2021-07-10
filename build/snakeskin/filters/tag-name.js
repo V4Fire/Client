@@ -55,20 +55,20 @@ module.exports = [
 	function expandSection(tag) {
 		Vars.h = Vars.h ?? 0;
 
-		if (/^\?:section$/.test(tag)) {
-			if (Vars.h > 0) {
-				Vars.h--;
-			}
-
-			return '?';
-		}
-
 		if (/^(.*):section$/.test(tag)) {
 			if (Vars.h < 6) {
 				Vars.h++;
 			}
 
 			return RegExp.$1.trim() || 'section';
+		}
+
+		if (/^(.*):-section$/.test(tag)) {
+			if (Vars.h > 0) {
+				Vars.h--;
+			}
+
+			return '?';
 		}
 
 		if (/^h(\d)$/.test(tag)) {

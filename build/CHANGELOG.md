@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new tag name filter `:section` `snakeskin`
+* Added new tag name filters `:section` and `:-section` `snakeskin`
 
 ## v3.0.0-rc.186 (2021-05-13)
 

@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new tag name filter `:section` `build/snakeskin`
+* Added new tag name filters `:section` and `:-section` `build/snakeskin`
 
 #### :boom: Breaking Change
 
