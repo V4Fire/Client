@@ -108,8 +108,8 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	/** @override */
 	get rootAttrs(): Dictionary {
 		return {
-			...super['rootAttrsGetter'],
-			...this.field.get<Dictionary>('rootAttrsStore'),
+			...super['rootAttrsGetter'](),
+			role: 'img',
 			alt: this.alt
 		};
 	}
@@ -123,11 +123,6 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			'true',
 			'false'
 		]
-	};
-
-	/** @override */
-	protected rootAttrsStore: Dictionary = {
-		role: 'img'
 	};
 
 	/** @override */
