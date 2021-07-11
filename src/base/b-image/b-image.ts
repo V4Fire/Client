@@ -110,7 +110,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		return {
 			...super['rootAttrsGetter'](),
 			role: 'img',
-			alt: this.alt
+			'aria-label': this.alt
 		};
 	}
 
