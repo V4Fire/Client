@@ -360,7 +360,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (previousLinkEl !== linkEl) {
 						$b.setElMod(previousLinkEl, 'link', 'active', false);
-						previousLinkEl.setAttribute('aria-selected', 'false');
 					}
 				}
 			}
@@ -370,11 +369,8 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 					els = Array.concat([], selectedElement);
 
 				for (let i = 0; i < els.length; i++) {
-					const
-						el = els[i];
-
+					const el = els[i];
 					$b.setElMod(el, 'link', 'active', true);
-					el.setAttribute('aria-selected', 'true');
 				}
 			}, stderr);
 		}
@@ -460,7 +456,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (needChangeMod) {
 						$b.setElMod(el, 'link', 'active', false);
-						el.setAttribute('aria-selected', 'false');
 					}
 				}
 			}, stderr);

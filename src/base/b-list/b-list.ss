@@ -28,7 +28,7 @@
 			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
 				< tag.&__item :is = listElTag
 					< tag &
-						:is = el.href ? 'a' : 'span' |
+						:is = el.href ? 'a' : 'button' |
 
 						:class = provide.hintClasses(el.hintPos).concat(
 							el.href ? [] : 'a',
