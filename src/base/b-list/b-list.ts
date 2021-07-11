@@ -76,6 +76,18 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
+	 * Type of the list' root tag
+	 */
+	@prop(String)
+	readonly listTag: string = 'ul';
+
+	/**
+	 * Type of list' element tags
+	 */
+	@prop(String)
+	readonly listElTag: string = 'li';
+
+	/**
 	 * An initial component active item/s.
 	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 	 */

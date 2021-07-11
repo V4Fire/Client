@@ -11,9 +11,6 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
-	- listTag = 'ul'
-	- listElTag = 'li'
-
 	- block headHelpers
 		- super
 
@@ -23,7 +20,7 @@
 		 */
 		- block list(items)
 			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
-				< ${listElTag}.&__item
+				< tag.&__item :is = listElTag
 					< a &
 						:class = provide.hintClasses(el.hintPos).concat(el.classes || [], provide.elClasses({link: {
 							id: values.get(el.value),
@@ -88,5 +85,5 @@
 	- block body
 		- super
 
-		< ${listTag}.&__wrapper
+		< tag.&__wrapper :is = listTag
 			+= self.list('items')

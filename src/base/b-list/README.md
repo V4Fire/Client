@@ -211,6 +211,14 @@ Also, you can see the implemented traits or the parent component.
 
 ### Props
 
+#### [listTag = `'ul'`]
+
+A type of the list' root tag.
+
+#### [listElTag = `'li'`]
+
+A type of list' element tags.
+
 #### [activeProp]
 
 An initial component active item/s.
