@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Now the component uses `<aside>` within
+
 ## v3.0.0-rc.112 (2020-12-18)
 
 #### :boom: Breaking Change
