@@ -30,6 +30,9 @@
 	/** Static page title */
 	- title = @@appName
 
+	/** @override */
+	- rootTag = 'div'
+
 	/** Additional static page data */
 	- pageData = {}
 

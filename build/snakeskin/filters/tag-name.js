@@ -33,7 +33,16 @@ module.exports = [
 	 * ```
 	 */
 	function expandRootTag(tag, attrs, rootTag) {
-		return tag === '_' ? rootTag : tag;
+		if (tag === '_') {
+			if (rootTag) {
+				return rootTag;
+			}
+
+			attrs[':is'] = ['rootTag'];
+			return 'tag';
+		}
+
+		return tag;
 	},
 
 	/**

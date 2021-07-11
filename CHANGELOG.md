@@ -22,6 +22,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`
+* Added new props `rootTag` and `rootAttrs` `iBlock`
 
 #### :bug: Bug Fix
 

@@ -30,6 +30,15 @@ export const
 
 @component({functional: {}})
 export default class bImage extends iBlock implements iProgress, iVisible {
+	/** @override */
+	readonly rootTag: string = 'span';
+
+	/** @override */
+	rootAttrs: Dictionary = {
+		role: 'img',
+		'aria-label': 'alt'
+	};
+
 	/**
 	 * Image src (a fallback if `srcset` provided)
 	 */

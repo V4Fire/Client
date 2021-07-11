@@ -16,4 +16,7 @@ import iPage, { component } from 'super/i-page/i-page';
 export * from 'super/i-page/i-page';
 
 @component()
-export default abstract class iDynamicPage extends iPage {}
+export default abstract class iDynamicPage extends iPage {
+	/** @override */
+	readonly rootTag: string = 'main';
+}

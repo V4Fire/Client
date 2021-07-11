@@ -13,9 +13,6 @@
 - template index() extends ['i-block'].index
 	- skeletonMarker = true
 
-	- block rootAttrs
-		? Object.assign(rootAttrs, {role: 'img', ':aria-label': 'alt'})
-
 	- block body
 		- super
 

@@ -65,6 +65,9 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	readonly FormValue!: FormValue;
 
+	/** @override */
+	readonly rootTag: string = 'span';
+
 	/**
 	 * If true, the component is checked by default.
 	 * Also, it will be checked after resetting.

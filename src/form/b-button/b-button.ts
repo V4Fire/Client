@@ -64,6 +64,9 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 @derive(iAccess, iOpenToggle)
 class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
 	/** @override */
+	readonly rootTag: string = 'span';
+
+	/** @override */
 	readonly dataProvider: string = 'Provider';
 
 	/** @override */

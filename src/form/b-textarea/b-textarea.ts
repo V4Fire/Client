@@ -61,6 +61,9 @@ export default class bTextarea extends iInputText {
 	readonly FormValue!: FormValue;
 
 	/** @override */
+	readonly rootTag: string = 'span';
+
+	/** @override */
 	@prop({type: String, required: false})
 	readonly valueProp?: this['Value'];
 
