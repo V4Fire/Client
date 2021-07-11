@@ -18,6 +18,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Now the component uses `<section>` within `bWindow`
 * Now the component uses `<main>` within `bDynamicPage`
 * [Fixed an issue with providing analytics data into `traits/i-control-list`](https://github.com/V4Fire/Client/issues/452)
+* Now the trait sets the `disabled` modifier on progress `traits/i-progress`
 
 #### :rocket: New Feature
 

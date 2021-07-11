@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Now the trait sets the `disabled` modifier on progress
+
 ## v3.0.0-rc.185 (2021-05-13)
 
 #### :bug: Bug Fix
