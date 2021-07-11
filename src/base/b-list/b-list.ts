@@ -568,16 +568,16 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				value = href;
 			}
 
-			if (href === undefined) {
-				if (this.autoHref && value !== undefined) {
-					href = String(value);
+			const needAutoHref =
+				href === undefined &&
+				value !== undefined &&
+				this.autoHref;
 
-					if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
-						href = `#${href}`;
-					}
+			if (needAutoHref) {
+				href = String(value);
 
-				} else {
-					href = 'javascript:void(0)';
+				if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
+					href = `#${href}`;
 				}
 			}
 

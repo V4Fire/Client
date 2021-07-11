@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Now the component uses `<button>` is not specified `href`
+
 #### :rocket: New Feature
 
 * Added new props `listTag` and `listElTag`

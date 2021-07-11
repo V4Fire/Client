@@ -21,15 +21,24 @@
 		- block list(items)
 			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
 				< tag.&__item :is = listElTag
-					< a &
-						:class = provide.hintClasses(el.hintPos).concat(el.classes || [], provide.elClasses({link: {
-							id: values.get(el.value),
-							active: isActive(el.value),
-							exterior: el.exterior,
-							hidden: el.hidden,
-							progress: el.progress,
-							...el.mods
-						}})) |
+					< tag &
+						:is = el.href ? 'a' : 'button' |
+
+						:class = provide.hintClasses(el.hintPos).concat(
+							el.href ? [] : 'a',
+							el.classes || [],
+
+							provide.elClasses({
+								link: {
+									id: values.get(el.value),
+									active: isActive(el.value),
+									exterior: el.exterior,
+									hidden: el.hidden,
+									progress: el.progress,
+									...el.mods
+								}
+							})
+						) |
 
 						:href = el.href |
 						:-hint = el.hint |
