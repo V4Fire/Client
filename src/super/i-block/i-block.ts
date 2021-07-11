@@ -237,8 +237,9 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Dictionary with additional attributes for the component' root tag
 	 */
-	@field()
-	rootAttrs: Dictionary = {};
+	get rootAttrs(): Dictionary {
+		return this.rootAttrsStore;
+	}
 
 	/**
 	 * A component render cache key.
@@ -966,6 +967,13 @@ export default abstract class iBlock extends ComponentInterface {
 	 * listen to component events/hooks and do some useful payload, like sending analytic or performance events.
 	 */
 	static readonly daemons: DaemonsDict = {};
+
+	/**
+	 * Internal dictionary with additional attributes for the component' root tag
+	 * @see [[iBlock.rootAttrsStore]]
+	 */
+	@field()
+	protected rootAttrsStore: Dictionary = {};
 
 	/**
 	 * API for daemons
