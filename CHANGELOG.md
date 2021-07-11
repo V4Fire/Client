@@ -32,7 +32,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `traits/i-access`
 
 * Now the component uses `aria` attributes:
-  * `bList`
   * `bSelect`
 
 #### :bug: Bug Fix

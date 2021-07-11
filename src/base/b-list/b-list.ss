@@ -28,10 +28,7 @@
 			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
 				< tag.&__item :is = listElTag
 					< tag &
-						:is = el.href ? 'a' : 'button' |
-
-						:role = 'option' |
-						:aria-selected = isActive(el.value) |
+						:is = el.href ? 'a' : 'span' |
 
 						:class = provide.hintClasses(el.hintPos).concat(
 							el.href ? [] : 'a',

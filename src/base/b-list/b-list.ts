@@ -115,15 +115,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	@prop({type: Boolean, required: false})
 	readonly cancelable?: boolean;
 
-	/** @override */
-	get rootAttrs(): Dictionary {
-		return {
-			...super['rootAttrsGetter'](),
-			role: 'listbox',
-			'aria-multiselectable': this.multiple
-		};
-	}
-
 	/**
 	 * List of component items
 	 * @see [[bList.itemsProp]]
