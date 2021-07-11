@@ -44,12 +44,12 @@ export default abstract class iVisible {
 			}
 
 			if (e.value === 'false' || e.type === 'remove') {
-				component.emit('show');
 				$el?.setAttribute('aria-hidden', 'true');
+				component.emit('show');
 
 			} else {
-				component.emit('hide');
 				$el?.setAttribute('aria-hidden', 'false');
+				component.emit('hide');
 			}
 		});
 	}

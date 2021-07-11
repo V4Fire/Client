@@ -33,12 +33,6 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	/** @override */
 	readonly rootTag: string = 'span';
 
-	/** @override */
-	rootAttrs: Dictionary = {
-		role: 'img',
-		'aria-label': 'alt'
-	};
-
 	/**
 	 * Image src (a fallback if `srcset` provided)
 	 */
@@ -120,6 +114,12 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			'true',
 			'false'
 		]
+	};
+
+	/** @override */
+	protected rootAttrsStore: Dictionary = {
+		role: 'img',
+		'aria-label': 'alt'
 	};
 
 	/** @override */
