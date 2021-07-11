@@ -6,6 +6,8 @@ This module provides a trait for a component that needs to implement the "access
 
 * This module provides an abstract class, not a component.
 
+* The trait uses `aria` attributes.
+
 * The trait contains TS logic and default styles.
 
 ## Modifiers

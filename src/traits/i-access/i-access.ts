@@ -70,44 +70,95 @@ export default abstract class iAccess {
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
-		const
-			{localEmitter: $e, async: $a} = component.unsafe;
+		const {
+			async: $a,
+			localEmitter: $e
+		} = component.unsafe;
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
+			const asyncGroup = {
+				group: 'disableHelpers'
+			};
+
+			$a.off(asyncGroup);
+
 			const
-				asyncGroup = 'disableHelpers';
+				enabled = e.value === 'false' || e.type === 'remove';
 
-			if (e.value === 'false' || e.type === 'remove') {
-				$a.off({group: asyncGroup});
-
+			if (enabled) {
 				if (e.type !== 'remove' || e.reason === 'removeMod') {
 					component.emit('enable');
 				}
 
-			} else if (component.$el != null) {
+			} else {
 				component.emit('disable');
+			}
 
-				const handler = (e) => {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-				};
+			return component.waitStatus('ready', setAttrs, asyncGroup);
 
-				// @see https://github.com/V4Fire/Client/issues/534
-				$a.on(component.$el, 'click mousedown touchstart keydown input change scroll', handler, {
-					group: asyncGroup,
-					options: {
-						capture: true
-					}
-				});
+			function setAttrs(): void {
+				const
+					{$el} = component;
+
+				if ($el == null) {
+					return;
+				}
+
+				$el.setAttribute('aria-disabled', String(!enabled));
+
+				if (!enabled) {
+					const handler = (e) => {
+						e.preventDefault();
+						e.stopImmediatePropagation();
+					};
+
+					// @see https://github.com/V4Fire/Client/issues/534
+					$a.on($el, 'click mousedown touchstart keydown input change scroll', handler, {
+						...asyncGroup,
+						options: {
+							capture: true
+						}
+					});
+				}
 			}
 		});
 
 		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
-			if (e.type === 'remove' && e.reason !== 'removeMod') {
-				return;
+			const asyncGroup = {
+				group: 'focusHelpers'
+			};
+
+			$a.off(asyncGroup);
+
+			const
+				focused = e.value !== 'false' && e.type !== 'remove';
+
+			if (e.type !== 'remove' || e.reason === 'removeMod') {
+				component.emit(focused ? 'focus' : 'blur');
 			}
 
-			component.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
+			return component.waitStatus('ready', setAttrs, asyncGroup);
+
+			function setAttrs(): void {
+				const
+					{$el} = component;
+
+				if ($el == null) {
+					return;
+				}
+
+				if ($el.hasAttribute('tab-index')) {
+					const
+						el = (<HTMLButtonElement>$el);
+
+					if (focused) {
+						el.focus();
+
+					} else {
+						el.blur();
+					}
+				}
+			}
 		});
 	}
 

@@ -38,6 +38,8 @@ import iData, {
 
 	ModsDecl,
 	ModelMethod,
+	ModEvent,
+
 	RequestFilter
 
 } from 'super/i-data/i-data';
@@ -348,10 +350,37 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+
 		iProgress.initModEvents(this);
 		iAccess.initModEvents(this);
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
+
+		this.localEmitter.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitStatus('ready', () => {
+			const {
+				button,
+				file
+			} = this.$refs;
+
+			const disabled = e.value !== 'false' && e.type !== 'remove';
+			button.disabled = disabled;
+
+			if (file != null) {
+				file.disabled = disabled;
+			}
+		}));
+
+		this.localEmitter.on('block.mod.*.focused.*', (e: ModEvent) => this.waitStatus('ready', () => {
+			const
+				{button} = this.$refs;
+
+			if (e.value !== 'false' && e.type !== 'remove') {
+				button.focus();
+
+			} else {
+				button.blur();
+			}
+		}));
 	}
 
 	/**
