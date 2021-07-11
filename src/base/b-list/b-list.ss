@@ -11,6 +11,12 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	/** @deprecated */
+	- listTag = 'ul'
+
+	/** @deprecated */
+	- listElTag = 'li'
+
 	- block headHelpers
 		- super
 
@@ -23,6 +29,9 @@
 				< tag.&__item :is = listElTag
 					< tag &
 						:is = el.href ? 'a' : 'button' |
+
+						:role = 'option' |
+						:aria-selected = isActive(el.value) |
 
 						:class = provide.hintClasses(el.hintPos).concat(
 							el.href ? [] : 'a',

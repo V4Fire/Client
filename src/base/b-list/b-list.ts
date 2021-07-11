@@ -115,6 +115,15 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	@prop({type: Boolean, required: false})
 	readonly cancelable?: boolean;
 
+	/** @override */
+	get rootAttrs(): Dictionary {
+		return {
+			...super['rootAttrsGetter'](),
+			role: 'listbox',
+			'aria-multiselectable': this.multiple
+		};
+	}
+
 	/**
 	 * List of component items
 	 * @see [[bList.itemsProp]]
@@ -360,6 +369,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (previousLinkEl !== linkEl) {
 						$b.setElMod(previousLinkEl, 'link', 'active', false);
+						previousLinkEl.setAttribute('aria-selected', 'false');
 					}
 				}
 			}
@@ -369,7 +379,11 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 					els = Array.concat([], selectedElement);
 
 				for (let i = 0; i < els.length; i++) {
-					$b.setElMod(els[i], 'link', 'active', true);
+					const
+						el = els[i];
+
+					$b.setElMod(el, 'link', 'active', true);
+					el.setAttribute('aria-selected', 'true');
 				}
 			}, stderr);
 		}
@@ -455,6 +469,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (needChangeMod) {
 						$b.setElMod(el, 'link', 'active', false);
+						el.setAttribute('aria-selected', 'false');
 					}
 				}
 			}, stderr);

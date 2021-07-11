@@ -263,6 +263,15 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/** @override */
+	get rootAttrs(): Dictionary {
+		return {
+			...super['rootAttrsGetter'](),
+			role: 'listbox',
+			'aria-multiselectable': this.multiple
+		};
+	}
+
+	/** @override */
 	get value(): this['Value'] {
 		const
 			v = this.field.get('valueStore');
@@ -575,8 +584,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					previousItemEl = previousItemEls[i];
 
 				if (previousItemEl !== itemEl) {
-					$b.setElMod(previousItemEl, 'item', 'selected', false);
 					previousItemEl.selected = false;
+					previousItemEl.setAttribute('aria-selected', 'false');
+					$b.setElMod(previousItemEl, 'item', 'selected', false);
 				}
 			}
 		}
@@ -589,8 +599,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				const
 					el = els[i];
 
-				$b.setElMod(el, 'item', 'selected', true);
 				el.selected = true;
+				el.setAttribute('aria-selected', 'true');
+				$b.setElMod(el, 'item', 'selected', true);
 			}
 		}).catch(stderr);
 
@@ -672,8 +683,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					value === item.value;
 
 				if (needChangeMod) {
-					$b.setElMod(el, 'item', 'selected', false);
 					el.selected = false;
+					el.setAttribute('aria-selected', 'false');
+					$b.setElMod(el, 'item', 'selected', false);
 				}
 			}
 		}).catch(stderr);

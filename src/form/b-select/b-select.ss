@@ -23,7 +23,9 @@
 		- block items(tag = '_')
 			< template v-for = (el, i) in items | :key = getItemKey(el, i)
 				< ${tag} &
+					:role = 'option' |
 					:selected = isSelected(el.value) |
+					:aria-selected = isSelected(el.value) |
 
 					:class = Array.concat([], el.classes, provide.elClasses({
 						item: {
