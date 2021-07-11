@@ -238,7 +238,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Dictionary with additional attributes for the component' root tag
 	 */
 	get rootAttrs(): Dictionary {
-		return this.rootAttrsStore;
+		return this.field.get<Dictionary>('rootAttrsStore')!;
 	}
 
 	/**

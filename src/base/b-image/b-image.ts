@@ -105,6 +105,15 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	@prop({type: [String, Object], required: false})
 	readonly brokenImg?: string | Dictionary;
 
+	/** @override */
+	get rootAttrs(): Dictionary {
+		return {
+			...super['rootAttrsGetter'],
+			...this.field.get<Dictionary>('rootAttrsStore'),
+			alt: this.alt
+		};
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iProgress.mods,
@@ -118,8 +127,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 	/** @override */
 	protected rootAttrsStore: Dictionary = {
-		role: 'img',
-		'aria-label': 'alt'
+		role: 'img'
 	};
 
 	/** @override */
