@@ -264,11 +264,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/** @override */
 	get rootAttrs(): Dictionary {
-		return {
-			...super['rootAttrsGetter'](),
-			role: 'listbox',
-			'aria-multiselectable': this.multiple
+		const attrs = {
+			...super['rootAttrsGetter']()
 		};
+
+		if (!this.native) {
+			Object.assign(attrs, {
+				role: 'listbox',
+				'aria-multiselectable': this.multiple
+			});
+		}
+
+		return attrs;
 	}
 
 	/** @override */
@@ -584,9 +591,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					previousItemEl = previousItemEls[i];
 
 				if (previousItemEl !== itemEl) {
-					previousItemEl.selected = false;
-					previousItemEl.setAttribute('aria-selected', 'false');
 					$b.setElMod(previousItemEl, 'item', 'selected', false);
+
+					if (this.native) {
+						previousItemEl.selected = false;
+
+					} else {
+						previousItemEl.setAttribute('aria-selected', 'false');
+					}
 				}
 			}
 		}
@@ -596,12 +608,15 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				els = Array.concat([], selectedElement);
 
 			for (let i = 0; i < els.length; i++) {
-				const
-					el = els[i];
-
-				el.selected = true;
-				el.setAttribute('aria-selected', 'true');
+				const el = els[i];
 				$b.setElMod(el, 'item', 'selected', true);
+
+				if (this.native) {
+					el.selected = true;
+
+				} else {
+					el.setAttribute('aria-selected', 'true');
+				}
 			}
 		}).catch(stderr);
 
@@ -683,9 +698,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					value === item.value;
 
 				if (needChangeMod) {
-					el.selected = false;
-					el.setAttribute('aria-selected', 'false');
 					$b.setElMod(el, 'item', 'selected', false);
+
+					if (this.native) {
+						el.selected = false;
+
+					} else {
+						el.setAttribute('aria-selected', 'false');
+					}
 				}
 			}
 		}).catch(stderr);
