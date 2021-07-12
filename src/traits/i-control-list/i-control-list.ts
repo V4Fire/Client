@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -28,8 +30,10 @@ export default abstract class iControlList {
 			{action, analytics} = opts;
 
 		if (analytics) {
-			const {event, details} = analytics;
-			component.analytics.sendEvent(event, details);
+			const
+				analyticsArgs = Object.isArray(analytics) ? analytics : [analytics.event, analytics.details];
+
+			component.analytics.sendEvent(...analyticsArgs);
 		}
 
 		if (action != null) {
@@ -82,7 +86,7 @@ export default abstract class iControlList {
 	}
 
 	/**
-	 * Returns a type of listening event for the control
+	 * Returns a type of the listening event for the control
 	 *
 	 * @param component
 	 * @param opts - control options
@@ -97,11 +101,15 @@ export default abstract class iControlList {
 	 * @param [opts]
 	 * @param [args]
 	 */
-	abstract callControlAction<R = unknown>(opts?: ControlEvent, ...args: unknown[]): CanPromise<CanUndef<R>>;
+	callControlAction<R = unknown>(opts?: ControlEvent, ...args: unknown[]): CanPromise<CanUndef<R>> {
+		return <any>null;
+	}
 
 	/**
 	 * Calls an event handler for the specified control
 	 * @param opts
 	 */
-	abstract getControlEvent(opts: ControlEvent): string;
+	getControlEvent(opts: Control): string {
+		return <any>null;
+	}
 }

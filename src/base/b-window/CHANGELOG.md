@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Now the component uses `<section>` within
+
 ## v3.0.0-rc.121 (2021-01-12)
 
 #### :boom: Breaking Change

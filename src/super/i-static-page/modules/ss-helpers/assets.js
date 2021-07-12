@@ -13,7 +13,7 @@ const
 	$C = require('collection.js');
 
 const
-	fs = require('fs-extra-promise'),
+	fs = require('fs-extra'),
 	delay = require('delay');
 
 const

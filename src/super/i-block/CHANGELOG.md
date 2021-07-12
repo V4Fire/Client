@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added new props `rootTag` and `rootAttrs`
+
+## v3.0.0-rc.209 (2021-07-06)
+
+#### :bug: Bug Fix
+
+* Fixed updating of a component' template after changing a modifier that was registered as watchable
+
 ## v3.0.0-rc.206 (2021-06-28)
 
 #### :bug: Bug Fix

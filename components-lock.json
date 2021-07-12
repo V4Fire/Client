@@ -1,5 +1,5 @@
 {
-  "hash": "9b1fb7d4a2a9b2a92ccaa66d99c373079fc1d7be4f6918e6b3faa2899a99d303",
+  "hash": "0c86769a9de7c5fb87ac4289ba21620ac405d3f5fa9a841c58b4d002abe55d90",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -166,6 +166,38 @@
             "src/dummies/b-dummy-async-render/b-dummy-async-render.styl"
           ],
           "tpl": "src/dummies/b-dummy-async-render/b-dummy-async-render.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-control-list",
+        {
+          "index": "src/dummies/b-dummy-control-list/index.js",
+          "declaration": {
+            "name": "b-dummy-control-list",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-control-list",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-control-list/b-dummy-control-list.ts",
+          "styles": [
+            "src/dummies/b-dummy-control-list/b-dummy-control-list.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-control-list/b-dummy-control-list.ss",
           "etpl": null
         }
       ],
@@ -1675,6 +1707,7 @@
               "p-v4-dynamic-page-1",
               "p-v4-dynamic-page-2",
               "p-v4-dynamic-page-3",
+              "b-remote-provider",
               "b-router",
               "b-dynamic-page",
               "b-tree",
@@ -1696,7 +1729,8 @@
               "b-image",
               "b-dummy",
               "b-dummy-text",
-              "b-dummy-async-render"
+              "b-dummy-async-render",
+              "b-dummy-control-list"
             ],
             "libs": []
           },
@@ -1707,6 +1741,7 @@
             "p-v4-dynamic-page-1",
             "p-v4-dynamic-page-2",
             "p-v4-dynamic-page-3",
+            "b-remote-provider",
             "b-router",
             "b-dynamic-page",
             "b-tree",
@@ -1728,7 +1763,8 @@
             "b-image",
             "b-dummy",
             "b-dummy-text",
-            "b-dummy-async-render"
+            "b-dummy-async-render",
+            "b-dummy-control-list"
           ],
           "libs": [],
           "resolvedLibs": {

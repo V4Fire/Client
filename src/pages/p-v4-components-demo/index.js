@@ -17,6 +17,7 @@ package('p-v4-components-demo')
 		'p-v4-dynamic-page-2',
 		'p-v4-dynamic-page-3',
 
+		'b-remote-provider',
 		'b-router',
 		'b-dynamic-page',
 
@@ -46,6 +47,7 @@ package('p-v4-components-demo')
 		'b-dummy-text',
 		'b-dummy-async-render',
 		'b-dummy-lfc',
+		'b-dummy-control-list',
 
 		components
 	);

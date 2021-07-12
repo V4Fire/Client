@@ -26,6 +26,20 @@
 			< button.&__defer-force @click = asyncRender.deferForceRender()
 				Defer force render
 
+		< template v-if = stage === 'infinite rendering with providing a function'
+			< .&__result
+				< template v-for = el in asyncRender.iterate(true, { &
+					filter: asyncRender.waitForceRender((ctx) => ctx.$el.querySelector('.wrapper'))
+				}) .
+					< .wrapper
+						Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
+
+			< button.&__force @click = asyncRender.forceRender()
+				Force render
+
+			< button.&__defer-force @click = asyncRender.deferForceRender()
+				Defer force render
+
 		< template v-if = stage === 'deactivating/activating the parent component while rendering'
 			< .&__result
 				< template v-for = el in asyncRender.iterate(2, { &

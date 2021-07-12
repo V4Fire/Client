@@ -157,7 +157,7 @@ module.exports = function init(gulp = require('gulp')) {
 			nodeStatic = require('node-static');
 
 		const
-			fs = require('fs-extra-promise'),
+			fs = require('fs-extra'),
 			path = require('upath');
 
 		const
@@ -287,9 +287,10 @@ module.exports = function init(gulp = require('gulp')) {
 		 * Returns the pre-configured `Jasmine` test environment
 		 *
 		 * @param {string} browserType
+		 * @param {number} attempt
 		 * @returns {jasmine.Env}
 		 */
-		function getTestEnv(browserType) {
+		function getTestEnv(browserType, attempt) {
 			const
 				Jasmine = require('jasmine'),
 				jasmine = new Jasmine();
@@ -301,6 +302,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 			console.log('\n-------------');
 			console.log('Starting to test');
+			console.log(`attempt: ${attempt}`);
 			console.log(`typescript version: ${require('typescript/package.json').version}`);
 
 			pzlr.config.dependencies.forEach((dep) => {
@@ -358,7 +360,8 @@ module.exports = function init(gulp = require('gulp')) {
 				page,
 				context,
 				componentDir,
-				tmpDir
+				tmpDir,
+				contextOpts
 			};
 		}
 
@@ -369,6 +372,10 @@ module.exports = function init(gulp = require('gulp')) {
 		 * @returns {!Promise<void>}
 		 */
 		async function runTest(browserType) {
+			const args = arg({
+				'--retries': Number
+			}, {permissive: true});
+
 			const
 				params = browserParams[browserType],
 				test = require(testPath);
@@ -378,36 +385,58 @@ module.exports = function init(gulp = require('gulp')) {
 				page
 			} = params;
 
-			await page.goto(testURL);
-			const testEnv = getTestEnv(browserType);
-			await test(page, params);
+			const
+				retries = args['--retries'] ?? 0;
 
-			const close = () => {
-				if (!cliParams['reinit-browser'] && cliParams.close) {
-					params.browser.close();
-				}
+			let
+				isTestSuccessful = false,
+				attemptsFinished = 0;
 
-				process.exitCode = exitCode;
+			const testExecuter = async () => {
+				const
+					testEnv = getTestEnv(browserType, attemptsFinished + 1);
+
+				await page.goto(testURL);
+				await test(page, params);
+
+				testEnv.addReporter({
+					specDone: (res) => {
+						if (exitCode === 1) {
+							return;
+						}
+
+						exitCode = res.status === 'failed' ? 1 : 0;
+					}
+				});
+
+				await new Promise((resolve) => {
+					testEnv.afterAll(() => {
+						console.log('\n\n\n');
+						resolve();
+					}, 10e3);
+
+					testEnv.execute();
+				});
 			};
 
-			testEnv.addReporter({
-				specDone: (res) => {
-					if (exitCode === 1) {
-						return;
-					}
+			while (!isTestSuccessful && attemptsFinished - 1 < retries) {
+				exitCode = 0;
 
-					exitCode = res.status === 'failed' ? 1 : 0;
+				await testExecuter();
+
+				if (exitCode === 1) {
+					attemptsFinished++;
+
+				} else {
+					isTestSuccessful = true;
 				}
-			});
+			}
 
-			await new Promise((resolve) => {
-				testEnv.afterAll(() => {
-					console.log('\n\n\n');
-					resolve();
-				}, 10e3);
+			if (!cliParams['reinit-browser'] && cliParams.close) {
+				params.browser.close();
+			}
 
-				testEnv.execute();
-			}).then(close, close);
+			process.exitCode = exitCode;
 		}
 	});
 
@@ -468,7 +497,8 @@ module.exports = function init(gulp = require('gulp')) {
 			'--reinit-browser': String,
 			'--only-run': Boolean,
 			'--bail': Boolean,
-			'--browser-args': String
+			'--browser-args': String,
+			'--retries': Number
 		}, {permissive: true});
 
 		const cliParams = {
@@ -604,7 +634,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 			const
 				browserArgs = cliParams.browserArgs.join(','),
-				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')} --browser-args ${browserArgs}`,
+				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')} --browser-args ${browserArgs} --retries ${cliArgs['--retries'] ?? 0}`,
 				extraArgs = args._.join(' ');
 
 			totalCases.push(argsString);

@@ -11,7 +11,6 @@
 - include 'super/i-input-text'|b as placeholder
 
 - template index() extends ['i-input-text'].index
-	- rootTag = 'span'
 	- rootWrapper = true
 
 	- block headHelpers
@@ -23,8 +22,17 @@
 		 */
 		- block items(tag = '_')
 			< template v-for = (el, i) in items | :key = getItemKey(el, i)
+				: itemAttrs = {}
+
+				- if tag === 'option'
+					? itemAttrs[':selected'] = 'isSelected(el.value)'
+
+				- else
+					? itemAttrs.role = 'option'
+					? itemAttrs[':aria-selected'] = 'isSelected(el.value)'
+
 				< ${tag} &
-					:selected = isSelected(el.value) |
+					:-id = values.get(el.value) |
 
 					:class = Array.concat([], el.classes, provide.elClasses({
 						item: {
@@ -35,8 +43,8 @@
 						}
 					})) |
 
-					:-id = values.get(el.value) |
-					:v-attrs = el.attrs
+					:v-attrs = el.attrs |
+					${itemAttrs}
 				.
 					+= self.slot('default', {':item': 'el'})
 						< template v-if = item

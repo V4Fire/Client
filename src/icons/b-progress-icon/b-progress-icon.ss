@@ -11,8 +11,6 @@
 - include 'super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
-	- rootTag = 'span'
-
 	- block body
 		< .&__loader
 		< .&__i

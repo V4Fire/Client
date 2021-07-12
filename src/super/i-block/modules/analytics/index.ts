@@ -23,13 +23,11 @@ import Friend from 'super/i-block/modules/friend';
 export default class Analytics extends Friend {
 	/**
 	 * Sends an analytic event with the specified details
-	 *
-	 * @param event - event name
-	 * @param [details] - event details
+	 * @param args
 	 */
-	sendEvent(event: string, details: Dictionary = {}): void {
+	sendEvent(...args: unknown[]): void {
 		//#if runtime has core/analytics
-		analytics.send(event, details);
+		analytics.send(...args);
 		//#endif
 	}
 }

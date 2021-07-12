@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Now the component uses `aria` attributes
+
 ## v3.0.0-rc.203 (2021-06-21)
 
 #### :boom: Breaking Change

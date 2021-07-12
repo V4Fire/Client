@@ -13,7 +13,7 @@ const
 	{webpack, src, csp} = require('config');
 
 const
-	fs = require('fs-extra-promise'),
+	fs = require('fs-extra'),
 	path = require('upath'),
 	delay = require('delay');
 

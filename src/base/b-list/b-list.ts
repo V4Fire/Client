@@ -76,6 +76,18 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
+	 * Type of the list' root tag
+	 */
+	@prop(String)
+	readonly listTag: string = 'ul';
+
+	/**
+	 * Type of list' element tags
+	 */
+	@prop(String)
+	readonly listElTag: string = 'li';
+
+	/**
 	 * An initial component active item/s.
 	 * If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
 	 */
@@ -102,6 +114,28 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 */
 	@prop({type: Boolean, required: false})
 	readonly cancelable?: boolean;
+
+	/**
+	 * Initial additional attributes are provided to an "internal" (native) list tag
+	 */
+	@prop({type: Object, required: false})
+	readonly attrsProp?: Dictionary;
+
+	/**
+	 * Additional attributes are provided to an "internal" (native) list tag
+	 * @see [[bList.attrsProp]]
+	 */
+	get attrs(): Dictionary {
+		const
+			attrs = {...this.attrsProp};
+
+		if (this.items.some((el) => el.href === undefined)) {
+			attrs.role = 'tablist';
+			attrs['aria-multiselectable'] = this.multiple;
+		}
+
+		return attrs;
+	}
 
 	/**
 	 * List of component items
@@ -348,6 +382,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (previousLinkEl !== linkEl) {
 						$b.setElMod(previousLinkEl, 'link', 'active', false);
+
+						if (previousLinkEl.hasAttribute('aria-selected')) {
+							previousLinkEl.setAttribute('aria-selected', 'false');
+						}
 					}
 				}
 			}
@@ -357,7 +395,12 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 					els = Array.concat([], selectedElement);
 
 				for (let i = 0; i < els.length; i++) {
-					$b.setElMod(els[i], 'link', 'active', true);
+					const el = els[i];
+					$b.setElMod(el, 'link', 'active', true);
+
+					if (el.hasAttribute('aria-selected')) {
+						el.setAttribute('aria-selected', 'true');
+					}
 				}
 			}, stderr);
 		}
@@ -443,6 +486,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (needChangeMod) {
 						$b.setElMod(el, 'link', 'active', false);
+
+						if (el.hasAttribute('aria-selected')) {
+							el.setAttribute('aria-selected', 'false');
+						}
 					}
 				}
 			}, stderr);
@@ -529,6 +576,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		const
 			i = this.instance;
 
+		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
 		this.normalizeItems = i.normalizeItems.bind(this);
 	}
@@ -556,17 +604,30 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				value = href;
 			}
 
-			if (href === undefined) {
-				if (this.autoHref && value !== undefined) {
-					href = String(value);
+			const needAutoHref =
+				href === undefined &&
+				value !== undefined &&
+				this.autoHref;
 
-					if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
-						href = `#${href}`;
-					}
+			if (needAutoHref) {
+				href = String(value);
 
-				} else {
-					href = 'javascript:void(0)';
+				if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
+					href = `#${href}`;
 				}
+			}
+
+			item.classes = this.provide.hintClasses(item.hintPos)
+				.concat(item.classes ?? []);
+
+			if (href === undefined) {
+				item.classes.push('a');
+
+				item.attrs = {
+					...item.attrs,
+					role: 'tab',
+					'aria-selected': this.isActive(value)
+				};
 			}
 
 			normalizedItems.push({...item, value, href});

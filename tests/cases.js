@@ -18,6 +18,7 @@ module.exports = [
 	'--test-entry form/b-input/test',
 	'--test-entry form/b-textarea/test',
 
+	'--test-entry base/b-remote-provider/test',
 	'--test-entry base/b-router/test',
 	'--test-entry base/b-virtual-scroll/test',
 
@@ -32,7 +33,11 @@ module.exports = [
 	'--test-entry base/b-image/test',
 
 	'--test-entry super/i-block/test',
+	'--test-entry super/i-block/modules/dom/test',
+	'--test-entry super/i-block/modules/opt/test',
+	'--test-entry super/i-block/modules/block/test',
 	'--test-entry super/i-block/modules/field/test',
+	'--test-entry super/i-block/modules/storage/test',
 	'--test-entry super/i-block/modules/async-render/test',
 	'--test-entry super/i-block/modules/activation/test',
 	'--test-entry super/i-block/modules/provide/test',
@@ -40,10 +45,17 @@ module.exports = [
 	'--test-entry super/i-block/modules/daemons/test',
 
 	'--test-entry traits/i-lock-page-scroll/test',
+	'--test-entry traits/i-control-list/test',
 	'--test-entry traits/i-observe-dom/test',
 
+	'--test-entry core/html/test',
+	'--test-entry core/browser/test',
+	'--test-entry core/session/test',
+	'--test-entry core/cookies/test',
 	'--test-entry core/dom/image/test',
 	'--test-entry core/dom/in-view/test',
+
+	'--test-entry models/modules/test/session',
 
 	'--test-entry core/component/directives/update-on/test'
 ];

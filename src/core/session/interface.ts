@@ -24,14 +24,17 @@ export interface SessionParams extends Dictionary {
 	csrf?: string;
 }
 
+/**
+ * Object that contains session information
+ */
 export interface Session {
 	/**
-	 * Session key
+	 * Session key or a simple predicate (authorized/non-authorized)
 	 */
 	auth: SessionKey;
 
 	/**
-	 * Additional session parameters
+	 * Additional session parameters, like user non-secure info, etc.
 	 */
 	params?: Nullable<SessionParams>;
 }

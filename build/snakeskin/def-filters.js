@@ -21,7 +21,9 @@ const
 	{isV4Prop} = include('build/snakeskin/filters/const');
 
 const
-	componentsTree = include('build/snakeskin/components-tree'),
+	componentsTree = include('build/snakeskin/components-tree');
+
+const
 	tagFilters = include('build/snakeskin/filters/tag'),
 	tagNameFilters = include('build/snakeskin/filters/tag-name'),
 	bemFilters = include('build/snakeskin/filters/bem');
@@ -160,8 +162,8 @@ function tagFilter({name, attrs = {}}) {
 // eslint-disable-next-line default-param-last
 function tagNameFilter(tag, attrs = {}, rootTag) {
 	tag = $C(tagNameFilters)
-		.to('')
-		.reduce((res, filter) => res + filter(tag, attrs, rootTag));
+		.to(tag)
+		.reduce((tag, filter) => filter(tag, attrs, rootTag));
 
 	const
 		nm = camelize(tag),

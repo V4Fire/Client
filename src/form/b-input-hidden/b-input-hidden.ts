@@ -30,5 +30,8 @@ export * from 'super/i-input/i-input';
 
 export default class bInputHidden extends iInput {
 	/** @override */
+	readonly rootTag: string = 'span';
+
+	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
 }

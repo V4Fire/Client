@@ -20,6 +20,18 @@ export * from 'core/session/const';
 export * from 'core/session/interface';
 
 /**
+ * Returns true if a session is already exists
+ */
+export async function isExists(): Promise<boolean> {
+	try {
+		return Boolean((await get()).auth);
+
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Returns information of the current session
  */
 export async function get(): Promise<Session> {
@@ -100,18 +112,6 @@ export async function match(auth?: SessionKey, params?: Nullable<SessionParams>)
 	try {
 		const s = await get();
 		return auth === s.auth && (params === undefined || Object.fastCompare(params, s.params));
-
-	} catch {
-		return false;
-	}
-}
-
-/**
- * Returns true if a session is already exists
- */
-export async function isExists(): Promise<boolean> {
-	try {
-		return Boolean((await get()).auth);
 
 	} catch {
 		return false;

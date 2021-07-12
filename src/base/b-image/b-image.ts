@@ -30,6 +30,9 @@ export const
 
 @component({functional: {}})
 export default class bImage extends iBlock implements iProgress, iVisible {
+	/** @override */
+	readonly rootTag: string = 'span';
+
 	/**
 	 * Image src (a fallback if `srcset` provided)
 	 */
@@ -101,6 +104,15 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 */
 	@prop({type: [String, Object], required: false})
 	readonly brokenImg?: string | Dictionary;
+
+	/** @override */
+	get rootAttrs(): Dictionary {
+		return {
+			...super['rootAttrsGetter'](),
+			role: 'img',
+			'aria-label': this.alt
+		};
+	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {

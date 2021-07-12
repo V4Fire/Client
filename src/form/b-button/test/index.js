@@ -189,7 +189,7 @@ module.exports = (page, params) => {
 		});
 
 		describe('`href`', () => {
-			it('provides a base URL to the `dataProvider`', async () => {
+			it('provides the base URL to a data provider', async () => {
 				const pr = new Promise(async (res) => {
 					await page.route('**/api/test/base', (r) => {
 						res();
@@ -202,13 +202,10 @@ module.exports = (page, params) => {
 				});
 
 				await renderButton({
-					dataProvider: 'demo.List',
-					href: 'test/base',
-					defaultRequestFilter: false
+					href: 'test/base'
 				});
 
 				await buttonNode.click();
-
 				await expectAsync(pr).toBeResolved();
 			});
 		});
@@ -322,16 +319,18 @@ module.exports = (page, params) => {
 
 		describe('providing `preIcon`', () => {
 			it('`dropdown`', async () => {
+				const
+					iconName = 'foo';
+
 				await renderButton({
-					preIcon: 'foo'
+					preIcon: iconName
 				});
 
 				const
 					bIcon = await buttonNode.$('.b-icon'),
-					useSvg = (await bIcon.$$('use')).pop(),
-					href = await useSvg.evaluate((ctx) => ctx.href.baseVal);
+					iconProvidedName = await bIcon.evaluate((ctx) => ctx.component.value);
 
-				expect(href.endsWith('#foo')).toBeTrue();
+				expect(iconProvidedName).toBe(iconName);
 			});
 
 			it('`undefined`', async () => {
@@ -371,13 +370,20 @@ module.exports = (page, params) => {
 			});
 		});
 
-		async function renderButton(props = {}) {
-			await page.evaluate((props) => {
+		async function renderButton(p = {}) {
+			await page.evaluate((p) => {
+				// @ts-expect-error
+				const defaultRequestFilter = Object.isString(p.defaultRequestFilter) ?
+					// eslint-disable-next-line no-new-func
+					new Function(p.defaultRequestFilter) :
+					p.defaultRequestFilter;
+
 				const scheme = [
 					{
 						attrs: {
 							id: 'target',
-							...props
+							...p,
+							defaultRequestFilter
 						},
 
 						content: {
@@ -391,7 +397,7 @@ module.exports = (page, params) => {
 				globalThis.buttonNode = document.getElementById('target');
 				globalThis.buttonCtx = globalThis.buttonNode.component;
 
-			}, props);
+			}, p);
 
 			buttonNode = await page.waitForSelector('#target');
 			buttonCtx = await h.component.getComponentById(page, 'target');

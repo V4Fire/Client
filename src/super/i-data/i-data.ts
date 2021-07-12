@@ -29,6 +29,7 @@ import type {
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
+
 	ModelMethod,
 	ProviderOptions
 
@@ -512,22 +513,10 @@ export default abstract class iData extends iBlock implements iProgress {
 			return this.dp?.url();
 		}
 
-		if (this.dp) {
+		if (this.dp != null) {
 			const ctx = Object.create(this);
 			ctx.dp = this.dp.url(value);
-
-			for (let i = 0; i < providerMethods.length; i++) {
-				const
-					method = providerMethods[i];
-
-				Object.defineProperty(ctx, method, {
-					writable: true,
-					configurable: true,
-					value: this.instance[method]
-				});
-			}
-
-			return ctx;
+			return this.patchProviderContext(ctx);
 		}
 
 		return this;
@@ -555,22 +544,10 @@ export default abstract class iData extends iBlock implements iProgress {
 			return this.dp?.base();
 		}
 
-		if (this.dp) {
+		if (this.dp != null) {
 			const ctx = Object.create(this);
 			ctx.dp = this.dp.base(value);
-
-			for (let i = 0; i < providerMethods.length; i++) {
-				const
-					method = providerMethods[i];
-
-				Object.defineProperty(ctx, method, {
-					writable: true,
-					configurable: true,
-					value: this.instance[method]
-				});
-			}
-
-			return ctx;
+			return this.patchProviderContext(ctx);
 		}
 
 		return this;
@@ -1022,6 +999,25 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
+	 * Patches the specified component context with the provider' CRUD methods
+	 * @param ctx
+	 */
+	protected patchProviderContext(ctx: this): this {
+		for (let i = 0; i < providerMethods.length; i++) {
+			const
+				method = providerMethods[i];
+
+			Object.defineProperty(ctx, method, {
+				writable: true,
+				configurable: true,
+				value: this.instance[method]
+			});
+		}
+
+		return ctx;
+	}
+
+	/**
 	 * Creates a new request to the data provider
 	 *
 	 * @param method - request method
@@ -1029,8 +1025,8 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [opts] - additional options
 	 */
 	protected createRequest<D = unknown>(
-		method: ModelMethod,
-		body?: RequestBody,
+		method: ModelMethod | Provider[ModelMethod],
+		body?: RequestQuery | RequestBody,
 		opts: CreateRequestOptions<D> = {}
 	): Promise<CanUndef<D>> {
 		if (!this.dp) {
@@ -1044,11 +1040,20 @@ export default abstract class iData extends iBlock implements iProgress {
 
 		const req = this.waitPermissionToRequest()
 			.then(() => {
-				if (this.dp == null) {
-					throw new ReferenceError('The data provider to request is not defined');
+				let
+					rawRequest;
+
+				if (Object.isFunction(method)) {
+					rawRequest = method(<any>body, reqParams);
+
+				} else {
+					if (this.dp == null) {
+						throw new ReferenceError('The data provider to request is not defined');
+					}
+
+					rawRequest = this.dp[method](<any>body, reqParams);
 				}
 
-				const rawRequest = (<Function>this.dp[method])(body, reqParams);
 				return this.async.request<RequestResponseObject<D>>(rawRequest, asyncParams);
 			});
 

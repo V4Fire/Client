@@ -895,6 +895,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		//#endif
 
+		// eslint-disable-next-line no-unreachable
 		return true;
 	}
 
@@ -970,6 +971,31 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				this.error = undefined;
 			}
 		});
+
+		this.localEmitter.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitStatus('ready', () => {
+			const
+				{input} = this.$refs;
+
+			if (input != null) {
+				input.disabled = e.value !== 'false' && e.type !== 'remove';
+			}
+		}));
+
+		this.localEmitter.on('block.mod.*.focused.*', (e: ModEvent) => this.waitStatus('ready', () => {
+			const
+				{input} = this.$refs;
+
+			if (input == null) {
+				return;
+			}
+
+			if (e.value !== 'false' && e.type !== 'remove') {
+				input.focus();
+
+			} else {
+				input.blur();
+			}
+		}));
 
 		const
 			msgInit = Object.createDict();

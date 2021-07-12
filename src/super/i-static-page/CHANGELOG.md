@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Provided the `lang` attribute to `<html>`
+
 ## v3.0.0-rc.169 (2021-03-25)
 
 #### :bug: Bug Fix

@@ -186,7 +186,7 @@ module.exports = (page) => {
 
 		it('checking of `activeElement`', async () => {
 			const target = await init({active: 0});
-			expect(await target.evaluate((ctx) => ctx.activeElement.tagName)).toBe('A');
+			expect(await target.evaluate((ctx) => ctx.activeElement.tagName)).toBe('BUTTON');
 		});
 
 		it('checking of `activeElement` with `multiple = true`', async () => {
@@ -194,7 +194,7 @@ module.exports = (page) => {
 				target = await init({active: [0, 1], multiple: true});
 
 			expect(await target.evaluate((ctx) => Array.from(ctx.activeElement).map((el) => el.tagName)))
-				.toEqual(['A', 'A']);
+				.toEqual(['BUTTON', 'BUTTON']);
 		});
 
 		it('listening of change events', async () => {

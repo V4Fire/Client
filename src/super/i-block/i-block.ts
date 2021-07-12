@@ -229,6 +229,19 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly globalName?: string;
 
 	/**
+	 * Type of the component' root tag
+	 */
+	@prop(String)
+	readonly rootTag: string = 'div';
+
+	/**
+	 * Dictionary with additional attributes for the component' root tag
+	 */
+	get rootAttrs(): Dictionary {
+		return this.field.get<Dictionary>('rootAttrsStore')!;
+	}
+
+	/**
 	 * A component render cache key.
 	 * It's used to cache the component vnode.
 	 */
@@ -956,6 +969,13 @@ export default abstract class iBlock extends ComponentInterface {
 	static readonly daemons: DaemonsDict = {};
 
 	/**
+	 * Internal dictionary with additional attributes for the component' root tag
+	 * @see [[iBlock.rootAttrsStore]]
+	 */
+	@field()
+	protected rootAttrsStore: Dictionary = {};
+
+	/**
 	 * API for daemons
 	 */
 	@system({
@@ -1092,7 +1112,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@field({
 		merge: true,
 		replace: false,
-		forceUpdate: false,
 		functionalWatching: false,
 		init: () => Object.create({})
 	})

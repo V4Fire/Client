@@ -9,6 +9,10 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+* Now the trait uses `aria` attributes
+
 ## v3.0.0-rc.185 (2021-05-13)
 
 #### :bug: Bug Fix

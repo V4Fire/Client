@@ -65,6 +65,9 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	readonly FormValue!: FormValue;
 
+	/** @override */
+	readonly rootTag: string = 'span';
+
 	/**
 	 * If true, the component is checked by default.
 	 * Also, it will be checked after resetting.
@@ -258,8 +261,12 @@ export default class bCheckbox extends iInput implements iSize {
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.convertValueToChecked = this.instance.convertValueToChecked.bind(this);
-		this.onCheckedChange = this.instance.onCheckedChange.bind(this);
+
+		const
+			i = this.instance;
+
+		this.convertValueToChecked = i.convertValueToChecked.bind(this);
+		this.onCheckedChange = i.onCheckedChange.bind(this);
 	}
 
 	/** @override */

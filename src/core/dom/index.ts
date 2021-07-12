@@ -17,6 +17,9 @@ import { deprecate } from 'core/functools/deprecation';
  * Wraps the specified function as an event handler with delegation.
  * This function can be used as a decorator or as a simple function.
  *
+ * The event object will contain a link to the element to which we are delegating the handler
+ * by a property `delegateTarget`.
+ *
  * @param selector - selector to delegate
  * @param [fn]
  *
