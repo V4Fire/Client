@@ -205,9 +205,7 @@ module.exports = (page, params) => {
 					href: 'test/base'
 				});
 
-				await h.bom.waitForIdleCallback(page);
 				await buttonNode.click();
-
 				await expectAsync(pr).toBeResolved();
 			});
 		});
@@ -372,13 +370,20 @@ module.exports = (page, params) => {
 			});
 		});
 
-		async function renderButton(props = {}) {
-			await page.evaluate((props) => {
+		async function renderButton(p = {}) {
+			await page.evaluate((p) => {
+				// @ts-expect-error
+				const defaultRequestFilter = Object.isString(p.defaultRequestFilter) ?
+					// eslint-disable-next-line no-new-func
+					new Function(p.defaultRequestFilter) :
+					p.defaultRequestFilter;
+
 				const scheme = [
 					{
 						attrs: {
 							id: 'target',
-							...props
+							...p,
+							defaultRequestFilter
 						},
 
 						content: {
@@ -392,7 +397,7 @@ module.exports = (page, params) => {
 				globalThis.buttonNode = document.getElementById('target');
 				globalThis.buttonCtx = globalThis.buttonNode.component;
 
-			}, props);
+			}, p);
 
 			buttonNode = await page.waitForSelector('#target');
 			buttonCtx = await h.component.getComponentById(page, 'target');
