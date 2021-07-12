@@ -17,7 +17,9 @@ Changelog
 
 #### :rocket: New Feature
 
+* Added a new prop `attrsProp`
 * Added new props `listTag` and `listElTag`
+* Now the component uses `aria` attributes
 
 ## v3.0.0-rc.203 (2021-06-21)
 

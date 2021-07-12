@@ -116,6 +116,28 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly cancelable?: boolean;
 
 	/**
+	 * Initial additional attributes are provided to an "internal" (native) list tag
+	 */
+	@prop({type: Object, required: false})
+	readonly attrsProp?: Dictionary;
+
+	/**
+	 * Additional attributes are provided to an "internal" (native) list tag
+	 * @see [[bList.attrsProp]]
+	 */
+	get attrs(): Dictionary {
+		const
+			attrs = {...this.attrsProp};
+
+		if (this.items.some((el) => el.href === undefined)) {
+			attrs.role = 'tablist';
+			attrs['aria-multiselectable'] = this.multiple;
+		}
+
+		return attrs;
+	}
+
+	/**
 	 * List of component items
 	 * @see [[bList.itemsProp]]
 	 */
@@ -360,6 +382,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (previousLinkEl !== linkEl) {
 						$b.setElMod(previousLinkEl, 'link', 'active', false);
+
+						if (previousLinkEl.hasAttribute('aria-selected')) {
+							previousLinkEl.setAttribute('aria-selected', 'false');
+						}
 					}
 				}
 			}
@@ -371,6 +397,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				for (let i = 0; i < els.length; i++) {
 					const el = els[i];
 					$b.setElMod(el, 'link', 'active', true);
+
+					if (el.hasAttribute('aria-selected')) {
+						el.setAttribute('aria-selected', 'true');
+					}
 				}
 			}, stderr);
 		}
@@ -456,6 +486,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (needChangeMod) {
 						$b.setElMod(el, 'link', 'active', false);
+
+						if (el.hasAttribute('aria-selected')) {
+							el.setAttribute('aria-selected', 'false');
+						}
 					}
 				}
 			}, stderr);
@@ -542,6 +576,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		const
 			i = this.instance;
 
+		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
 		this.normalizeItems = i.normalizeItems.bind(this);
 	}
@@ -580,6 +615,19 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
 					href = `#${href}`;
 				}
+			}
+
+			item.classes = this.provide.hintClasses(item.hintPos)
+				.concat(item.classes ?? []);
+
+			if (href === undefined) {
+				item.classes.push('a');
+
+				item.attrs = {
+					...item.attrs,
+					role: 'tab',
+					'aria-selected': this.isActive(value)
+				};
 			}
 
 			normalizedItems.push({...item, value, href});

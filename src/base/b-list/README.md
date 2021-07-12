@@ -3,7 +3,7 @@
 This module provides a standard component to create a list of tabs/links.
 You can use it "as it is" or like a superclass.
 
-The component uses the `<a>` tag with a simple text label to render each item.
+The component uses the `<a>` or `<button>` tags with a simple text label to render each item.
 If you need a more complex layout, provide it via a slot or by using `item/itemProps` props.
 
 ## Synopsis
@@ -15,6 +15,8 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
 * The component supports tooltips.
+
+* The component uses `aria` attributes.
 
 * By default, the list will be created using `<ul>` and `<li>` tags.
 
@@ -237,6 +239,10 @@ If true, the component supports a feature of multiple active items.
 If true, the active item can be unset by using another click to it.
 By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise to `false`.
 
+#### [attrsProp]
+
+Initial additional attributes are provided to an "internal" (native) list tag.
+
 ### Fields
 
 #### items
@@ -249,6 +255,10 @@ List of component items.
 
 A component active item/s.
 If the component is switched to the `multiple` mode, the getter will return a `Set` object.
+
+#### attrs
+
+Additional attributes are provided to an "internal" (native) list tag.
 
 ### Methods
 

@@ -26,7 +26,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`
 * Added new props `rootTag` and `rootAttrs` `iBlock`
-* Added new props `listTag` and `listElTag` `bList`
 
 * Now the trait uses `aria` attributes:
   * `traits/i-visible`
@@ -34,7 +33,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now the component uses `aria` attributes:
   * `bSelect`
+  * `bList`
   * `bButton`
+
+* `bList`
+  * Added a new prop `attrsProp`
+  * Added new props `listTag` and `listElTag`
 
 * `bButton`:
   * Added a new prop `attrsProp`

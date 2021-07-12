@@ -30,25 +30,23 @@
 					< tag &
 						:is = el.href ? 'a' : 'button' |
 
-						:class = provide.hintClasses(el.hintPos).concat(
-							el.href ? [] : 'a',
-							el.classes || [],
-
-							provide.elClasses({
-								link: {
-									id: values.get(el.value),
-									active: isActive(el.value),
-									exterior: el.exterior,
-									hidden: el.hidden,
-									progress: el.progress,
-									...el.mods
-								}
-							})
-						) |
-
 						:href = el.href |
-						:-hint = el.hint |
+						:value = el.value |
+
 						:-id = values.get(el.value) |
+						:-hint = el.hint |
+
+						:class = el.classes.concat(provide.elClasses({
+							link: {
+								id: values.get(el.value),
+								active: isActive(el.value),
+								exterior: el.exterior,
+								hidden: el.hidden,
+								progress: el.progress,
+								...el.mods
+							}
+						})) |
+
 						:v-attrs = el.attrs
 					.
 						- block preIcon
@@ -100,5 +98,8 @@
 	- block body
 		- super
 
-		< tag.&__wrapper :is = listTag
+		< tag.&__wrapper &
+			:is = listTag |
+			:v-attrs = attrs
+		.
 			+= self.list('items')
