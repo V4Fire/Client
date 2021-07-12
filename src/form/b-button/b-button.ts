@@ -32,7 +32,6 @@ import iData, {
 
 	component,
 	prop,
-	system,
 	computed,
 	wait,
 	p,
@@ -285,11 +284,37 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	readonly dropdown: string = 'bottom';
 
 	/**
-	 * Additional attributes are provided to an "internal" (native) button tag
+	 * Initial additional attributes are provided to an "internal" (native) button tag
 	 * @see [[bButton.$refs.button]]
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
+
+	/**
+	 * Additional attributes are provided to an "internal" (native) button tag
+	 *
+	 * @see [[bButton.attrsProp]]
+	 * @see [[bButton.$refs.button]]
+	 */
+	get attrs(): Dictionary {
+		const
+			attrs = {...this.attrsProp};
+
+		if (this.type === 'link') {
+			attrs.href = this.href;
+
+		} else {
+			attrs.type = this.type;
+			attrs.form = this.form;
+		}
+
+		if (this.hasDropdown) {
+			attrs['aria-controls'] = this.dom.getId('dropdown');
+			attrs['aria-expanded'] = this.mods.opened;
+		}
+
+		return attrs;
+	}
 
 	/** @see [[iAccess.isFocused]] */
 	@computed({dependencies: ['mods.focused']})
@@ -342,17 +367,6 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		]
 	};
 
-	/**
-	 * Additional attributes that are provided to an "internal" (native) button tag
-	 * @see [[bButton.attrsProp]]
-	 */
-	@system<bButton>({
-		after: 'mods',
-		init: (o) => o.sync.link(o.normalizeAttrs.bind(o))
-	})
-
-	protected attrs?: Dictionary;
-
 	/** @override */
 	protected readonly $refs!: {
 		button: HTMLButtonElement;
@@ -373,41 +387,10 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		}
 	}
 
-	/**
-	 * Normalizes the specified additional attributes and returns it
-	 *
-	 * @see [[bButton.attrs]]
-	 * @param [attrs]
-	 */
-	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
-		attrs = {...attrs};
-
-		if (this.type === 'link') {
-			attrs.href = this.href;
-
-		} else {
-			attrs.type = this.type;
-			attrs.form = this.form;
-		}
-
-		if (this.hasDropdown) {
-			attrs['aria-controls'] = this.dom.getId('dropdown');
-			attrs['aria-expanded'] = this.mods.opened;
-		}
-
-		return attrs;
-	}
-
 	/** @see [[iOpenToggle.initCloseHelpers]] */
 	@p({hook: 'beforeDataCreate', replace: false})
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
-	}
-
-	/** @override */
-	protected initBaseAPI(): void {
-		super.initBaseAPI();
-		this.normalizeAttrs = this.instance.normalizeAttrs.bind(this);
 	}
 
 	/** @override */

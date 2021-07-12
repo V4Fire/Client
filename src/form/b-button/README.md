@@ -315,9 +315,9 @@ The way to show dropdown if the `dropdown` slot is provided.
     Additional information...
 ```
 
-#### [attrs]
+#### [attrsProp]
 
-Additional attributes are provided to an "internal" (native) button tag.
+Initial additional attributes are provided to an "internal" (native) button tag.
 
 ```
 < b-button :attrs = {'aria-label': 'Open contacts'}
@@ -325,6 +325,10 @@ Additional attributes are provided to an "internal" (native) button tag.
 ```
 
 ### Getters
+
+#### attrs
+
+Additional attributes are provided to an "internal" (native) button tag.
 
 #### hasDropdown
 
