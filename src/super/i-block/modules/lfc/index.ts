@@ -46,8 +46,11 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after a "beforeDataCreate" hook or a "beforeReady" event
-	 * and returns a result of invocation
+	 * Executes the specified callback after the `beforeDataCreate` hook or `beforeReady` event
+	 * and returns a result of the invocation. If the callback can be invoked immediately, it will be invoked,
+	 * and the method returns the invocation' result. Otherwise, the method returns a promise.
+	 *
+	 * This method is helpful to execute a function after the component is initialized and doesn't wait for its providers.
 	 *
 	 * @see [[Async.proxy]]
 	 * @param cb
@@ -77,7 +80,9 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after a block ready event and returns a result of invocation
+	 * Executes the specified callback after the Block' instance is ready and returns a result of the invocation.
+	 * If the callback can be invoked immediately, it will be invoked, and the method returns the invocation' result.
+	 * Otherwise, the method returns a promise.
 	 *
 	 * @param cb
 	 * @param [opts] - additional options
@@ -97,7 +102,9 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after a "created" hook and returns a result of invocation
+	 * Executes the specified callback after the component switched to `created` and returns a result of the invocation.
+	 * If the callback can be invoked immediately, it will be invoked, and the method returns the invocation' result.
+	 * Otherwise, the method returns a promise.
 	 *
 	 * @param cb
 	 * @param [opts] - additional options
