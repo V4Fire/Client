@@ -202,9 +202,7 @@ module.exports = (page, params) => {
 				});
 
 				await renderButton({
-					dataProvider: 'demo.List',
-					href: 'test/base',
-					defaultRequestFilter: false
+					href: 'test/base'
 				});
 
 				await h.bom.waitForIdleCallback(page);

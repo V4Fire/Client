@@ -465,7 +465,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 						that = this.base(this.href);
 					}
 
-					await (<Function>that[this.method])();
+					await (<Function>that[this.method])(undefined);
 
 				// Form attribute fix for MS Edge && IE
 				} else if (this.form != null && this.type === 'submit') {

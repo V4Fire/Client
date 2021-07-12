@@ -17,6 +17,10 @@ Changelog
 * Added a new getter `hasDropdown`
 * Now the component uses `aria` attributes
 
+#### :bug: Bug Fix
+
+* Fixed a bug when providing `href` to `dataProvider`
+
 ## v3.0.0-rc.201 (2021-06-17)
 
 #### :rocket: New Feature
