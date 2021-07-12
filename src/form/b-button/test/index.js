@@ -189,7 +189,7 @@ module.exports = (page, params) => {
 		});
 
 		describe('`href`', () => {
-			it('provides the base URL to a `dataProvider`', async () => {
+			it('provides the base URL to a data provider', async () => {
 				const pr = new Promise(async (res) => {
 					await page.route('**/api/test/base', (r) => {
 						res();
