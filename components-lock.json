@@ -1,5 +1,5 @@
 {
-  "hash": "0c86769a9de7c5fb87ac4289ba21620ac405d3f5fa9a841c58b4d002abe55d90",
+  "hash": "dcd94858b48751b7cc78661cef055d49fb5723e7ce12385e96971e504311458d",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -198,6 +198,38 @@
             "src/dummies/b-dummy-control-list/b-dummy-control-list.styl"
           ],
           "tpl": "src/dummies/b-dummy-control-list/b-dummy-control-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-lfc",
+        {
+          "index": "src/dummies/b-dummy-lfc/index.js",
+          "declaration": {
+            "name": "b-dummy-lfc",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-lfc",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-lfc/b-dummy-lfc.ts",
+          "styles": [
+            "src/dummies/b-dummy-lfc/b-dummy-lfc.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-lfc/b-dummy-lfc.ss",
           "etpl": null
         }
       ],
@@ -1730,6 +1762,7 @@
               "b-dummy",
               "b-dummy-text",
               "b-dummy-async-render",
+              "b-dummy-lfc",
               "b-dummy-control-list"
             ],
             "libs": []
@@ -1764,6 +1797,7 @@
             "b-dummy",
             "b-dummy-text",
             "b-dummy-async-render",
+            "b-dummy-lfc",
             "b-dummy-control-list"
           ],
           "libs": [],

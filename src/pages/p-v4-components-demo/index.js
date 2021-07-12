@@ -46,6 +46,7 @@ package('p-v4-components-demo')
 		'b-dummy',
 		'b-dummy-text',
 		'b-dummy-async-render',
+		'b-dummy-lfc',
 		'b-dummy-control-list',
 
 		components

@@ -11,6 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+
 ## v3.0.0-rc.??? (2021-??-??)
 
 #### :boom: Breaking Change
@@ -24,6 +25,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Initial release `bDummyLfc`
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`
 * Added new props `rootTag` and `rootAttrs` `iBlock`
 
