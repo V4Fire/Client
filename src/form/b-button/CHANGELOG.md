@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new prop `attrs`
+* Added a new prop `attrsProp`
 * Added a new getter `hasDropdown`
 * Now the component uses `aria` attributes
 

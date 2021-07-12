@@ -37,7 +37,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bButton`
 
 * `bButton`:
-  * Added a new prop `attrs`
+  * Added a new prop `attrsProp`
   * Added a new getter `hasDropdown`
 
 #### :bug: Bug Fix
