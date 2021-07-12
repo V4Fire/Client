@@ -34,6 +34,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now the component uses `aria` attributes:
   * `bSelect`
+  * `bButton`
+
+* `bButton`:
+  * Added a new prop `attrs`
+  * Added a new getter `hasDropdown`
 
 #### :bug: Bug Fix
 

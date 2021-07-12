@@ -9,6 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added a new prop `attrs`
+* Added a new getter `hasDropdown`
+* Now the component uses `aria` attributes
+
 ## v3.0.0-rc.201 (2021-06-17)
 
 #### :rocket: New Feature

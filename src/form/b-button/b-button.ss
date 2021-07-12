@@ -30,7 +30,7 @@
 			@focus = focus |
 			@blur = blur |
 
-			:v-attrs = type === 'link' ? {href} : {type, form} |
+			:v-attrs = attrs |
 			${attrs|!html}
 		.
 
@@ -87,11 +87,9 @@
 
 		- block dropdown
 			< . &
-				v-if = vdom.getSlot('dropdown') && (
-					isFunctional ||
-					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
-				) |
-
+				ref dropdown |
+				v-if = hasDropdown |
+				:id = dom.getId('dropdown') |
 				:class = provide.elClasses({dropdown: {pos: dropdown}})
 			.
 				< .&__dropdown-content
