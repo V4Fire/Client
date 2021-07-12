@@ -802,8 +802,12 @@ export default class bRouter extends iData {
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.compileStaticRoutes = this.instance.compileStaticRoutes.bind(this);
-		this.emitTransition = this.instance.emitTransition.bind(this);
+
+		const
+			i = this.instance;
+
+		this.compileStaticRoutes = i.compileStaticRoutes.bind(this);
+		this.emitTransition = i.emitTransition.bind(this);
 	}
 
 	/**
