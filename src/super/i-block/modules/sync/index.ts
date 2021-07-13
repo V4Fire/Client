@@ -1051,6 +1051,10 @@ export default class Sync extends Friend {
 		destPath: string,
 		opts: AsyncWatchOptions
 	): boolean {
+		if (opts.collapse === false) {
+			return value === oldValue;
+		}
+
 		return !opts.withProto && (
 			Object.fastCompare(value, oldValue) ||
 			Object.fastCompare(value, this.field.get(destPath))
