@@ -441,7 +441,7 @@ export default class Sync extends Friend {
 	 *
 	 *   @field((ctx) => ctx.sync.object([
 	 *     'bla',
-	 *     ['bar', 'barAlias'],
+	 *     ['barAlias', 'bar'],
 	 *     ['bad', String]
 	 *   ]))
 	 *
@@ -481,7 +481,7 @@ export default class Sync extends Friend {
 	 *
 	 *   @field((ctx) => ctx.sync.object({deep: true}, [
 	 *     'bla',
-	 *     ['bar', 'barAlias'],
+	 *     ['barAlias', 'bar'],
 	 *     ['bad', String]
 	 *   ]))
 	 *
@@ -521,7 +521,7 @@ export default class Sync extends Friend {
 	 *
 	 *   @field((ctx) => ctx.sync.object('links', [
 	 *     'bla',
-	 *     ['bar', 'barAlias'],
+	 *     ['barAlias', 'bar'],
 	 *     ['bad', String]
 	 *   ]))
 	 *
@@ -529,6 +529,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
 	object(path: Link, fields: PropLinks): Dictionary;
 
 	/**
@@ -562,7 +563,7 @@ export default class Sync extends Friend {
 	 *
 	 *   @field((ctx) => ctx.sync.object('links', {deep: true}, [
 	 *     'bla',
-	 *     ['bar', 'barAlias'],
+	 *     ['barAlias', 'bar'],
 	 *     ['bad', String]
 	 *   ]))
 	 *
