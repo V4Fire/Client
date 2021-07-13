@@ -49,7 +49,7 @@ module.exports = async (page, params) => {
 		}
 
 		const
-			res = base64Img.split(',')[1],
+			res = base64Img.split(',', 2)[1],
 			headers = route.request().headers();
 
 		headers['Content-Length'] = String(res?.length ?? 0);
