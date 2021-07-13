@@ -30,6 +30,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`
 * Added new props `rootTag` and `rootAttrs` `iBlock`
+* Added `topPath` and `originalTopPath` `core/component/reflection/getPropertyInfo`
 
 * Now the trait uses `aria` attributes:
   * `traits/i-visible`
