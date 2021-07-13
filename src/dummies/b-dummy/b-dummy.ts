@@ -29,7 +29,16 @@ import updateOn from 'core/component/directives/update-on/engines';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
-import iData, { component, field, computed, hook, wait, ModsNTable } from 'super/i-data/i-data';
+import iData, {
+
+	component,
+	field,
+	computed,
+	hook,
+	wait,
+	ModsNTable
+
+} from 'super/i-data/i-data';
 
 import daemons from 'dummies/b-dummy/daemons';
 import type { Directives, Modules } from 'dummies/b-dummy/interface';
@@ -53,7 +62,7 @@ interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	/**
-	 * Test field
+	 * Field for test purposes
 	 */
 	@field()
 	testField: any = undefined;
