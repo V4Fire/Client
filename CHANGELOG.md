@@ -51,6 +51,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Provided the `lang` attribute to `<html>` `iStaticPage`
 * Fixed a bug when providing `href` to `dataProvider` `bButton`
 
+#### :house: Internal
+
+* Removed `jasmine` deps in the `runtime.debug` mode `super/i-static-page`
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :boom: Breaking Change

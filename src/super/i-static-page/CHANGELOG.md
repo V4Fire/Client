@@ -11,6 +11,12 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
+#### :house: Internal
+
+* Removed `jasmine` deps in the `runtime.debug` mode
+
+## v3.0.0-rc.??? (2021-??-??)
+
 #### :bug: Bug Fix
 
 * Provided the `lang` attribute to `<html>`
