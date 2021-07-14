@@ -181,3 +181,27 @@ declare var
 	 * Removes all components created via `globalThis.renderComponents`
 	 */
 	removeCreatedComponents: () => void;
+
+interface TouchGesturesCreateOptions {
+
+	/**
+	 * Element to dispatch event
+	 */
+	dispatchEl: Element | string;
+
+	/**
+	 * Element that will be provided as `target` in dispatched event
+	 */
+	targetEl: Element | string;
+
+	/**
+	 * Throttle time between steps
+	 * @default 5
+	 */
+	pause?: number;
+}
+
+interface TouchGesturePoint extends Partial<TouchGesturesCreateOptions> {
+	x: number;
+	y: number;
+}

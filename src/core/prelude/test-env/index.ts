@@ -12,3 +12,4 @@
  */
 
 import 'core/prelude/test-env/components';
+import 'core/prelude/test-env/gestures';

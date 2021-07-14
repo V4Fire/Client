@@ -17,6 +17,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed an issue with providing analytics data into `traits/i-control-list`](https://github.com/V4Fire/Client/issues/452)
 
+#### :bug: Bug Fix
+
+[Fixed an issue that allows for pulling an element far away from the bottom `base/b-bottom-slide`](https://github.com/V4Fire/Client/issues/463)
+Fixed an issue with element not being visible if the `visible` prop was provided and the `contentMode` was `content` `base/b-bottom-slide`
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :boom: Breaking Change
