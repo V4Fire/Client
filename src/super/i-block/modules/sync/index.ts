@@ -236,7 +236,8 @@ export default class Sync extends Friend {
 		wrapper?: LinkWrapper<this['C'], D>
 	): CanUndef<R> {
 		let
-			destPath;
+			destPath,
+			resolvedPath: CanUndef<LinkDecl>;
 
 		if (Object.isArray(path)) {
 			destPath = path[0];
@@ -244,6 +245,15 @@ export default class Sync extends Friend {
 
 		} else {
 			destPath = this.activeField;
+
+			if (Object.isFunction(path)) {
+				wrapper = path;
+				path = undefined;
+			}
+		}
+
+		if (Object.isFunction(opts)) {
+			wrapper = opts;
 		}
 
 		if (destPath == null) {
@@ -257,59 +267,68 @@ export default class Sync extends Friend {
 			syncLinkCache
 		} = this;
 
-		if (linksCache[destPath]) {
+		if (linksCache[destPath] != null) {
 			return;
 		}
 
 		let
+			resolvedOpts: AsyncWatchOptions = {};
+
+		if (path == null) {
+			resolvedPath = `${destPath.replace(bindingRgxp, '')}Prop`;
+
+		} else if (Object.isString(path) || isProxy(path) || 'ctx' in path) {
+			resolvedPath = path;
+
+		} else if (Object.isDictionary(path)) {
+			resolvedOpts = path;
+
+		} else if (Object.isDictionary(opts)) {
+			resolvedOpts = opts;
+		}
+
+		if (resolvedPath == null) {
+			throw new ReferenceError('A path or object to watch is not specified');
+		}
+
+		let
 			info,
+			normalizedPath: CanUndef<ObjectPropertyPath>;
+
+		let
 			isMountedWatcher = false,
 			isCustomWatcher = false;
 
-		if (path == null || !Object.isString(path)) {
-			if (isProxy(path)) {
-				isMountedWatcher = true;
-				info = {ctx: path};
-				path = undefined;
+		if (!Object.isString(resolvedPath)) {
+			isMountedWatcher = true;
 
-			} else if (isProxy((<any>path)?.ctx)) {
-				isMountedWatcher = true;
-				info = path;
-				path = info.path;
+			if (isProxy(resolvedPath)) {
+				info = {ctx: resolvedPath};
+				normalizedPath = undefined;
 
 			} else {
-				wrapper = <LinkWrapper<this['C'], D>>opts;
-				opts = path;
-				path = `${destPath.replace(bindingRgxp, '')}Prop`;
+				info = resolvedPath;
+				normalizedPath = info.path;
 			}
 
-		} else if (!RegExp.test(customWatcherRgxp, path)) {
-			info = getPropertyInfo(path, this.ctx);
-
 		} else {
-			isCustomWatcher = true;
-		}
+			normalizedPath = resolvedPath;
 
-		if (Object.isFunction(opts)) {
-			wrapper = opts;
-			opts = {};
-		}
+			if (!RegExp.test(customWatcherRgxp, normalizedPath)) {
+				info = getPropertyInfo(normalizedPath, this.ctx);
 
-		const
-			resolvedOpts = opts ?? {};
+				if (info.type === 'mounted') {
+					isMountedWatcher = true;
+					normalizedPath = info.path;
+				}
 
-		if (info?.type === 'mounted') {
-			isMountedWatcher = true;
-			path = info.path;
+			} else {
+				isCustomWatcher = true;
+			}
 		}
 
 		const isAccessor = info != null ?
-			Boolean(
-				info.type === 'accessor' ||
-				info.type === 'computed' ||
-				info.accessor
-			) :
-
+			Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor) :
 			false;
 
 		if (isAccessor) {
@@ -325,7 +344,7 @@ export default class Sync extends Friend {
 		};
 
 		if (Object.size(wrapper) > 1) {
-			ctx.watch(info ?? path, resolvedOpts, (val, oldVal) => {
+			ctx.watch(info ?? normalizedPath, resolvedOpts, (val, oldVal) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
 
@@ -337,7 +356,7 @@ export default class Sync extends Friend {
 			});
 
 		} else {
-			ctx.watch(info ?? path, resolvedOpts, (val, ...args) => {
+			ctx.watch(info ?? normalizedPath, resolvedOpts, (val, ...args) => {
 				let
 					oldVal;
 
@@ -359,10 +378,10 @@ export default class Sync extends Friend {
 
 			if (isMountedWatcher) {
 				const o = info?.originalPath;
-				key = Object.isString(o) ? o : info?.ctx ?? path;
+				key = Object.isString(o) ? o : info?.ctx ?? normalizedPath;
 
 			} else {
-				key = path;
+				key = normalizedPath;
 			}
 
 			syncLinkCache.set(key, Object.assign(syncLinkCache.get(key) ?? {}, {
@@ -377,19 +396,23 @@ export default class Sync extends Friend {
 			return sync();
 		}
 
+		const
+			needCollapse = resolvedOpts.collapse !== false;
+
 		if (isMountedWatcher) {
 			const
 				obj = info?.ctx;
 
-			if (Object.size(path) > 0) {
-				return sync(Object.get(obj, <any>path));
+			if (needCollapse || Object.size(normalizedPath) === 0) {
+				return sync(obj);
 			}
 
-			return sync(obj);
+			return sync(Object.get(obj, normalizedPath!));
 		}
 
-		const
-			initSync = () => sync(this.field.get(info != null ? info.originalPath : path));
+		const initSync = () => sync(
+			this.field.get(needCollapse ? info.originalTopPath : info.originalPath)
+		);
 
 		if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 			const
@@ -789,6 +812,9 @@ export default class Sync extends Friend {
 			return ['regular', info];
 		};
 
+		const
+			needCollapse = (<CanUndef<AsyncWatchOptions>>opts)?.collapse !== false;
+
 		for (let i = 0; i < fields.length; i++) {
 			const
 				el = fields[i];
@@ -822,7 +848,7 @@ export default class Sync extends Friend {
 						if (init) {
 							switch (type) {
 								case 'regular':
-									val = this.field.get(watchPath);
+									val = this.field.get(needCollapse ? info.originalTopPath : watchPath);
 									break;
 
 								case 'mounted': {
@@ -830,7 +856,19 @@ export default class Sync extends Friend {
 										obj = info.ctx;
 
 									if (Object.size(info.path) > 0) {
-										val = Object.get(obj, info.path);
+										let
+											link = info.path;
+
+										if (needCollapse) {
+											if (Object.isString(link)) {
+												link = link.split('.', 1);
+
+											} else if (Object.isArray(link)) {
+												link = link.slice(0, 1);
+											}
+										}
+
+										val = Object.get(obj, link);
 
 									} else {
 										val = obj;

@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:dummies/b-dummy-async-render/README.md]]
+ * [[include:dummies/b-dummy-sync/README.md]]
  * @packageDocumentation
  */
 
@@ -43,7 +43,11 @@ export default class bDummySync extends iData {
 	/**
 	 * Field for test purposes
 	 */
-	@system((o) => o.sync.link('dict.a.b', {immediate: true, collapse: false}, (val: number) => val + 1))
+	@field({
+		after: 'dict',
+		init: (o) => o.sync.link('dict.a.b', {immediate: true, collapse: false}, (val: number) => val + 1)
+	})
+
 	linkToNestedFieldWithInitializer!: number;
 
 	/**
@@ -51,7 +55,7 @@ export default class bDummySync extends iData {
 	 */
 	@field({
 		after: 'dict',
-		init: (o) => o.sync.object({immediate: true, collapse: false}, [
+		init: (o) => o.sync.object({deep: true, immediate: true, collapse: false}, [
 			'dict',
 			['linkToNestedFieldWithInitializer', (val) => Number(val) * 2],
 			['linkToPath', 'dict.a.b'],
