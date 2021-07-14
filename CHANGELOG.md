@@ -11,6 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed the case when the resolved value of the `waitRef` is an empty array `super/i-block`
 
 ## v3.0.0-rc.??? (2021-??-??)
 
