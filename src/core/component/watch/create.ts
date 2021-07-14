@@ -51,9 +51,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		} else {
 			info = isProxy(path) ? {ctx: path} : path;
-		}
-
-		if (!Object.isString(info.type)) {
 			info.type = 'mounted';
 			info.originalPath = info.path;
 			info.fullPath = info.path;
@@ -101,12 +98,12 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		}
 
 		const
-			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
-			watchInfo = isAccessor ? null : component.$renderEngine.proxyGetters[info.type]?.(info.ctx);
+			isMountedWatcher = info.type === 'mounted';
 
-		let
-			proxy = watchInfo?.value;
+		const
+			isDefinedPath = Object.size(info.path) > 0,
+			watchInfo = isAccessor ? null : component.$renderEngine.proxyGetters[info.type]?.(info.ctx);
 
 		const normalizedOpts = <WatchOptions>{
 			collapse: true,
@@ -116,7 +113,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		const
 			needCollapse = normalizedOpts.collapse,
-			needImmediate = isDefinedPath && normalizedOpts.immediate,
+			needImmediate = normalizedOpts.immediate,
 			needCache = handler.length > 1 && needCollapse;
 
 		if (canSkipWatching && !needImmediate) {
@@ -149,7 +146,12 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			handler = (val, _, i) => {
-				if (isAccessor) {
+				if (isMountedWatcher) {
+					if (needCollapse) {
+						val = info.ctx;
+					}
+
+				} else if (isAccessor) {
 					if (needCollapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
 
@@ -180,7 +182,20 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 		} else {
-			if (isAccessor) {
+			if (isMountedWatcher) {
+				handler = (val, _, i) => {
+					if (needCollapse) {
+						val = info.ctx;
+						oldVal = val;
+
+					} else {
+						oldVal = _;
+					}
+
+					return originalHandler.call(this, val, oldVal, i);
+				};
+
+			} else if (isAccessor) {
 				handler = (val, _, i) => {
 					if (needCollapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
@@ -208,6 +223,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		if (canSkipWatching) {
 			return null;
 		}
+
+		let
+			proxy = watchInfo?.value;
 
 		if (proxy != null) {
 			if (watchInfo == null) {
