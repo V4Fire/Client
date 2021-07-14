@@ -189,7 +189,7 @@ module.exports = (page, params) => {
 		});
 
 		describe('`href`', () => {
-			fit('provides a base URL to the `dataProvider`', async () => {
+			it('provides the base URL to a data provider', async () => {
 				const pr = new Promise(async (res) => {
 					await page.route('**/api/test/base', (r) => {
 						res();
@@ -202,15 +202,10 @@ module.exports = (page, params) => {
 				});
 
 				await renderButton({
-					dataProvider: 'demo.List',
-					href: 'test/base',
-					defaultRequestFilter: 'return Boolean(globalThis.canRequest)'
+					href: 'test/base'
 				});
 
-				await page.evaluate(() => globalThis.canRequest = true);
-
 				await buttonNode.click();
-
 				await expectAsync(pr).toBeResolved();
 			});
 		});

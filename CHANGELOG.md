@@ -11,11 +11,49 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+
 ## v3.0.0-rc.??? (2021-??-??)
 
 #### :boom: Breaking Change
 
+* Now the component uses `<section>` within `bWindow`
+* Now the component uses `<main>` within `bDynamicPage`
+* Now the component uses `<aside>` within `bSidebar`
 * [Fixed an issue with providing analytics data into `traits/i-control-list`](https://github.com/V4Fire/Client/issues/452)
+* Now the trait sets the `disabled` modifier on progress `traits/i-progress`
+* Now the component uses `<button>` is not specified `href` `bList`
+
+#### :rocket: New Feature
+
+* Initial release `bDummyLfc`
+* Added new tag name filters `:section` and `:-section` `build/snakeskin`
+* Added new props `rootTag` and `rootAttrs` `iBlock`
+
+* Now the trait uses `aria` attributes:
+  * `traits/i-visible`
+  * `traits/i-access`
+
+* Now the component uses `aria` attributes:
+  * `bSelect`
+  * `bList`
+  * `bButton`
+
+* `bList`:
+  * Added a new prop `attrsProp`
+  * Added new props `listTag` and `listElTag`
+
+* `bButton`:
+  * Added a new prop `attrsProp`
+  * Added a new getter `hasDropdown`
+
+#### :bug: Bug Fix
+
+* Provided the `lang` attribute to `<html>` `iStaticPage`
+* Fixed a bug when providing `href` to `dataProvider` `bButton`
+
+#### :house: Internal
+
+* Removed `jasmine` deps in the `runtime.debug` mode `super/i-static-page`
 
 #### :bug: Bug Fix
 

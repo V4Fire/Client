@@ -58,7 +58,7 @@
 				:type = ${@type} || tmp.attrs.type || ${nativeInputType} |
 
 				:autofocus = ${@autofocus || 'autofocus'} |
-				:tabIndex = ${@tabIndex || 'tabIndex'} |
+				:tabindex = ${@tabIndex || 'tabIndex'} |
 
 				@focus = ${@focusHandler || 'onFocus'} |
 				@blur = ${@blurHandler || 'onBlur'} |

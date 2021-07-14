@@ -42,6 +42,7 @@ module.exports = [
 	'--test-entry super/i-block/modules/async-render/test',
 	'--test-entry super/i-block/modules/activation/test',
 	'--test-entry super/i-block/modules/provide/test',
+	'--test-entry super/i-block/modules/lfc/test',
 	'--test-entry super/i-block/modules/daemons/test',
 
 	'--test-entry traits/i-lock-page-scroll/test',

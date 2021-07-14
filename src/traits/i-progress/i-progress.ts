@@ -36,35 +36,17 @@ export default abstract class iProgress {
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
-		const
-			{localEmitter: $e, async: $a} = component.unsafe;
-
-		$e.on('block.mod.*.progress.*', (e: ModEvent) => {
-			const
-				asyncGroup = 'progressHelpers';
-
+		component.unsafe.localEmitter.on('block.mod.*.progress.*', (e: ModEvent) => {
 			if (e.value === 'false' || e.type === 'remove') {
-				$a.off({group: asyncGroup});
+				void component.setMod('disabled', false);
 
 				if (e.type !== 'remove' || e.reason === 'removeMod') {
 					component.emit('progressEnd');
 				}
 
-			} else if (component.$el != null) {
+			} else {
+				void component.setMod('disabled', true);
 				component.emit('progressStart');
-
-				const handler = (e) => {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-				};
-
-				// @see https://github.com/V4Fire/Client/issues/534
-				$a.on(component.$el, 'click mousedown touchstart keydown input change scroll', handler, {
-					group: asyncGroup,
-					options: {
-						capture: true
-					}
-				});
 			}
 		});
 	}

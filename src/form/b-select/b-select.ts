@@ -97,6 +97,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly Items!: Array<this['Item']>;
 
 	/** @override */
+	readonly rootTag: string = 'span';
+
+	/** @override */
 	readonly valueProp?: unknown[] | this['Value'];
 
 	/** @see [[iItems.items]] */
@@ -257,6 +260,22 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @override */
 	get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
 		return <any>this;
+	}
+
+	/** @override */
+	get rootAttrs(): Dictionary {
+		const attrs = {
+			...super['rootAttrsGetter']()
+		};
+
+		if (!this.native) {
+			Object.assign(attrs, {
+				role: 'listbox',
+				'aria-multiselectable': this.multiple
+			});
+		}
+
+		return attrs;
 	}
 
 	/** @override */
@@ -573,7 +592,13 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 				if (previousItemEl !== itemEl) {
 					$b.setElMod(previousItemEl, 'item', 'selected', false);
-					previousItemEl.selected = false;
+
+					if (this.native) {
+						previousItemEl.selected = false;
+
+					} else {
+						previousItemEl.setAttribute('aria-selected', 'false');
+					}
 				}
 			}
 		}
@@ -583,11 +608,15 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				els = Array.concat([], selectedElement);
 
 			for (let i = 0; i < els.length; i++) {
-				const
-					el = els[i];
-
+				const el = els[i];
 				$b.setElMod(el, 'item', 'selected', true);
-				el.selected = true;
+
+				if (this.native) {
+					el.selected = true;
+
+				} else {
+					el.setAttribute('aria-selected', 'true');
+				}
 			}
 		}).catch(stderr);
 
@@ -670,7 +699,13 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 				if (needChangeMod) {
 					$b.setElMod(el, 'item', 'selected', false);
-					el.selected = false;
+
+					if (this.native) {
+						el.selected = false;
+
+					} else {
+						el.setAttribute('aria-selected', 'false');
+					}
 				}
 			}
 		}).catch(stderr);

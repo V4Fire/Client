@@ -11,7 +11,10 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	/** @deprecated */
 	- listTag = 'ul'
+
+	/** @deprecated */
 	- listElTag = 'li'
 
 	- block headHelpers
@@ -23,20 +26,27 @@
 		 */
 		- block list(items)
 			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
-				< ${listElTag}.&__item
-					< a &
-						:class = provide.hintClasses(el.hintPos).concat(el.classes || [], provide.elClasses({link: {
-							id: values.get(el.value),
-							active: isActive(el.value),
-							exterior: el.exterior,
-							hidden: el.hidden,
-							progress: el.progress,
-							...el.mods
-						}})) |
+				< tag.&__item :is = listElTag
+					< tag &
+						:is = el.href ? 'a' : 'button' |
 
 						:href = el.href |
-						:-hint = el.hint |
+						:value = el.value |
+
 						:-id = values.get(el.value) |
+						:-hint = el.hint |
+
+						:class = el.classes.concat(provide.elClasses({
+							link: {
+								id: values.get(el.value),
+								active: isActive(el.value),
+								exterior: el.exterior,
+								hidden: el.hidden,
+								progress: el.progress,
+								...el.mods
+							}
+						})) |
+
 						:v-attrs = el.attrs
 					.
 						- block preIcon
@@ -88,5 +98,8 @@
 	- block body
 		- super
 
-		< ${listTag}.&__wrapper
+		< tag.&__wrapper &
+			:is = listTag |
+			:v-attrs = attrs
+		.
 			+= self.list('items')

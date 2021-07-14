@@ -38,6 +38,8 @@ import iData, {
 
 	ModsDecl,
 	ModelMethod,
+	ModEvent,
+
 	RequestFilter
 
 } from 'super/i-data/i-data';
@@ -63,6 +65,9 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
 @derive(iAccess, iOpenToggle)
 class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
+	/** @override */
+	readonly rootTag: string = 'span';
+
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
@@ -278,6 +283,39 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	@prop(String)
 	readonly dropdown: string = 'bottom';
 
+	/**
+	 * Initial additional attributes are provided to an "internal" (native) button tag
+	 * @see [[bButton.$refs.button]]
+	 */
+	@prop({type: Object, required: false})
+	readonly attrsProp?: Dictionary;
+
+	/**
+	 * Additional attributes are provided to an "internal" (native) button tag
+	 *
+	 * @see [[bButton.attrsProp]]
+	 * @see [[bButton.$refs.button]]
+	 */
+	get attrs(): Dictionary {
+		const
+			attrs = {...this.attrsProp};
+
+		if (this.type === 'link') {
+			attrs.href = this.href;
+
+		} else {
+			attrs.type = this.type;
+			attrs.form = this.form;
+		}
+
+		if (this.hasDropdown) {
+			attrs['aria-controls'] = this.dom.getId('dropdown');
+			attrs['aria-expanded'] = this.mods.opened;
+		}
+
+		return attrs;
+	}
+
 	/** @see [[iAccess.isFocused]] */
 	@computed({dependencies: ['mods.focused']})
 	get isFocused(): boolean {
@@ -297,6 +335,18 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	 */
 	get files(): CanUndef<FileList> {
 		return this.$refs.file?.files ?? undefined;
+	}
+
+	/**
+	 * True if the component has a dropdown area
+	 */
+	get hasDropdown(): boolean {
+		return Boolean(
+			this.vdom.getSlot('dropdown') && (
+				this.isFunctional ||
+				this.opt.ifOnce('opened', this.m.opened !== 'false') > 0 && delete this.watchModsStore.opened
+			)
+		);
 	}
 
 	/** @inheritDoc */
@@ -321,6 +371,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	protected readonly $refs!: {
 		button: HTMLButtonElement;
 		file?: HTMLInputElement;
+		dropdown?: Element;
 	};
 
 	/**
@@ -344,11 +395,46 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/** @override */
 	protected initModEvents(): void {
+		const
+			{localEmitter: $e} = this;
+
 		super.initModEvents();
+
 		iProgress.initModEvents(this);
 		iAccess.initModEvents(this);
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
+
+		$e.on('block.mod.*.opened.*', (e: ModEvent) => this.waitStatus('ready', () => {
+			const expanded = e.value !== 'false' && e.type !== 'remove';
+			this.$refs.button.setAttribute('aria-expanded', String(expanded));
+		}));
+
+		$e.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitStatus('ready', () => {
+			const {
+				button,
+				file
+			} = this.$refs;
+
+			const disabled = e.value !== 'false' && e.type !== 'remove';
+			button.disabled = disabled;
+
+			if (file != null) {
+				file.disabled = disabled;
+			}
+		}));
+
+		$e.on('block.mod.*.focused.*', (e: ModEvent) => this.waitStatus('ready', () => {
+			const
+				{button} = this.$refs;
+
+			if (e.value !== 'false' && e.type !== 'remove') {
+				button.focus();
+
+			} else {
+				button.blur();
+			}
+		}));
 	}
 
 	/**
@@ -379,7 +465,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 						that = this.base(this.href);
 					}
 
-					await (<Function>that[this.method])();
+					await (<Function>that[this.method])(undefined);
 
 				// Form attribute fix for MS Edge && IE
 				} else if (this.form != null && this.type === 'submit') {

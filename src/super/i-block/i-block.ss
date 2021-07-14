@@ -18,8 +18,8 @@
 	/** Hardcoded component name */
 	- componentName = ''
 
-	/** Type of the root tag */
-	- rootTag = 'div'
+	/** Type of the root tag (if not specified, it will be taken from the component `rootTag` prop) */
+	- rootTag = null
 
 	/** Should or not generate additional wrapper within the root tag */
 	- rootWrapper = false
@@ -162,7 +162,7 @@
 
 	- block root
 		< ?.${self.name()}
-			< _ ${rootAttrs|!html}
+			< _ :v-attrs = rootAttrs | ${rootAttrs|!html}
 
 				/**
 				 * Generates an icon layout

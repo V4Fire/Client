@@ -14,6 +14,8 @@ This module provides a component to create a button.
 
 * By default, the root tag of the component is `<span>`.
 
+* The component uses `aria` attributes.
+
 * The component supports tooltips.
 
 * The component has `skeletonMarker`.
@@ -313,7 +315,24 @@ The way to show dropdown if the `dropdown` slot is provided.
     Additional information...
 ```
 
+#### [attrsProp]
+
+Initial additional attributes are provided to an "internal" (native) button tag.
+
+```
+< b-button :attrs = {'aria-label': 'Open contacts'}
+  Press to me!
+```
+
 ### Getters
+
+#### attrs
+
+Additional attributes are provided to an "internal" (native) button tag.
+
+#### hasDropdown
+
+True if the component has a dropdown area.
 
 #### files
 

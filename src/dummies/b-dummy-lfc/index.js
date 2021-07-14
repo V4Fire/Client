@@ -1,5 +1,3 @@
-- namespace [%fileName%]
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,9 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-block'|b as placeholder
-
-- template index() extends ['i-block'].index
-	- block body
-		< .&__loader
-		< .&__i
+package('b-dummy-lfc')
+	.extends('i-data');

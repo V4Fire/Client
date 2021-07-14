@@ -12,16 +12,6 @@ const
 	{validators} = require('@pzlr/build-core');
 
 /**
- * RegExp to match the "a:void" tag snippet
- */
-exports.isVoidLink = /^a:void$/;
-
-/**
- * RegExp to match the "button:a" tag snippet
- */
-exports.isButtonLink = /^button:a$/;
-
-/**
  * RegExp to match a tag declaration body
  *
  * @example

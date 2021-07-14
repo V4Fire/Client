@@ -36,14 +36,21 @@ export default abstract class iVisible {
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
 		const
-			{localEmitter: $e} = component.unsafe;
+			{$el, localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
 				return;
 			}
 
-			component.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
+			if (e.value === 'false' || e.type === 'remove') {
+				$el?.setAttribute('aria-hidden', 'true');
+				component.emit('show');
+
+			} else {
+				$el?.setAttribute('aria-hidden', 'false');
+				component.emit('hide');
+			}
 		});
 	}
 }

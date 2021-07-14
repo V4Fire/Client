@@ -10,7 +10,7 @@ This module provides a super component for all non-root page components.
 
 * The component extends [[iPage]].
 
-* By default, the root tag of the component is `<div>`.
+* By default, the root tag of the component is `<main>`.
 
 ## Modifiers
 

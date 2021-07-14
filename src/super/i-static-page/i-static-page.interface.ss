@@ -9,6 +9,8 @@
  */
 
 - include 'super/i-page'|b
+
+- import config from 'config'
 - import fs from 'fs-extra'
 
 /**
@@ -28,6 +30,9 @@
 	/** Static page title */
 	- title = @@appName
 
+	/** @override */
+	- rootTag = 'div'
+
 	/** Additional static page data */
 	- pageData = {}
 
@@ -43,7 +48,9 @@
 	} .
 
 	/** Map with attributes of <html> tag */
-	- htmlAttrs = {}
+	- htmlAttrs = { &
+		lang: config.locale
+	} .
 
 	/** @override */
 	- rootAttrs = {}

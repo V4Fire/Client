@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Now the component uses `<main>` within
+
 ## v3.0.0-rc.197 (2021-06-07)
 
 #### :memo: Documentation

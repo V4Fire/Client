@@ -11,8 +11,6 @@
 - include 'super/i-input'|b as placeholder
 
 - template index() extends ['i-input'].index
-	- rootTag = 'span'
-
 	- nativeInputType = "'checkbox'"
 	- nativeInputModel = undefined
 

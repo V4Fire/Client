@@ -12,7 +12,7 @@ This module provides a component to create a sidebar with the feature of collaps
 
 * The component supports the `overWrapper` layout.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the root tag of the component is `<aside>`.
 
 ## Modifiers
 
