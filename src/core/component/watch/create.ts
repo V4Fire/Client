@@ -74,11 +74,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isFunctional = !isRoot && ctxParams.functional === true;
 		}
 
-		let canSkip =
+		let canSkipWatching =
 			(isRoot || isFunctional) &&
 			(info.type === 'prop' || info.type === 'attr');
 
-		if (!canSkip && isFunctional) {
+		if (!canSkipWatching && isFunctional) {
 			let
 				f;
 
@@ -96,7 +96,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			if (f != null) {
-				canSkip = f.functional === false || f.functionalWatching === false;
+				canSkipWatching = f.functional === false || f.functionalWatching === false;
 			}
 		}
 
@@ -114,12 +114,16 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			...watchInfo?.opts
 		};
 
-		if (canSkip && !normalizedOpts.immediate) {
+		const
+			needCollapse = normalizedOpts.collapse,
+			needImmediate = isDefinedPath && normalizedOpts.immediate,
+			needCache = handler.length > 1 && needCollapse;
+
+		if (canSkipWatching && !needImmediate) {
 			return null;
 		}
 
 		const
-			needCache = handler.length > 1 && normalizedOpts.collapse,
 			originalHandler = handler;
 
 		let
@@ -140,13 +144,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				oldVal = Object.get(watchCache, cacheKey);
 
 			} else {
-				oldVal = normalizedOpts.immediate || !isAccessor ? cloneWatchValue(getVal(), normalizedOpts) : undefined;
+				oldVal = needImmediate || !isAccessor ? cloneWatchValue(getVal(), normalizedOpts) : undefined;
 				Object.set(watchCache, cacheKey, oldVal);
 			}
 
 			handler = (val, _, i) => {
 				if (isAccessor) {
-					if (normalizedOpts.collapse) {
+					if (needCollapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
 
 					} else {
@@ -169,7 +173,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			handler[tiedWatchers] = originalHandler[tiedWatchers];
 
-			if (normalizedOpts.immediate) {
+			if (needImmediate) {
 				const val = oldVal;
 				oldVal = undefined;
 				handler.call(component, val);
@@ -178,7 +182,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		} else {
 			if (isAccessor) {
 				handler = (val, _, i) => {
-					if (normalizedOpts.collapse) {
+					if (needCollapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
 
 					} else {
@@ -196,12 +200,12 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				};
 			}
 
-			if (normalizedOpts.immediate) {
+			if (needImmediate) {
 				handler.call(component, getVal());
 			}
 		}
 
-		if (canSkip) {
+		if (canSkipWatching) {
 			return null;
 		}
 
@@ -302,11 +306,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						oldValueByPath = unwrap(oldValueByPath) ?? oldValueByPath;
 
 						if (valueByPath !== oldValueByPath) {
-							if (normalizedOpts.collapse !== true) {
-								handler.call(this, valueByPath, oldValueByPath, info);
+							if (needCollapse) {
+								handler.call(this, value, oldValue, info);
 
 							} else {
-								handler.call(this, value, oldValue, info);
+								handler.call(this, valueByPath, oldValueByPath, info);
 							}
 						}
 					};
@@ -424,40 +428,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		return attachDynamicWatcher(component, info, opts, handler);
 
 		function getVal(): unknown {
-			let
-				ctx,
-				path;
-
-			switch (info.type) {
-				case 'mounted':
-					ctx = info.ctx;
-
-					if (isDefinedPath) {
-						path = info.path;
-					}
-
-					break;
-
-				case 'field':
-					ctx = proxy;
-					path = info.originalPath;
-					break;
-
-				default:
-					ctx = component;
-					path = info.originalPath;
+			if (info.type !== 'mounted') {
+				return Object.get(component, needCollapse ? info.originalTopPath : info.originalPath);
 			}
 
-			if (path == null) {
-				return ctx;
+			if (!isDefinedPath || needCollapse) {
+				return info.ctx;
 			}
 
-			if (normalizedOpts.collapse) {
-				const normalizedPath = Object.isString(path) ? path.split('.') : path;
-				return Object.get(ctx, normalizedPath.slice(0, info.type === 'mounted' ? 1 : 2));
-			}
-
-			return Object.get(ctx, path);
+			return Object.get(component, info.path);
 		}
 
 		function wrapDestructor<T>(destructor: T): T {
