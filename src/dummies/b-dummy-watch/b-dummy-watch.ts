@@ -23,6 +23,9 @@ export * from 'super/i-data/i-data';
 })
 
 export default class bDummyWatch extends iData {
+	@field(() => new Set([]))
+	setField!: Set<string>;
+
 	@field()
 	complexObjStore: Dictionary = {
 		a: {

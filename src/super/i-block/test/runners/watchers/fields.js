@@ -25,7 +25,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('i-block watch API', () => {
+	describe('i-block watch API fields/systemFields', () => {
 		['regular', 'system'].forEach((type) => {
 			describe(`${type} fields`, () => {
 				const field = type === 'regular' ?
