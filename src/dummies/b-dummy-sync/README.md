@@ -1,3 +1,3 @@
-# dummies/b-dummy-async-render
+# dummies/b-dummy-sync
 
-Dummy component to test async rendering of components.
+Dummy component to test `super/i-block/modules/sync`.

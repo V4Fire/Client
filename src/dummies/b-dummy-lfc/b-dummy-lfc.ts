@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:dummies/b-dummy-async-render/README.md]]
+ * [[include:dummies/b-dummy-lfc/README.md]]
  * @packageDocumentation
  */
 
