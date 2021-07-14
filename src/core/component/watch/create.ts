@@ -114,7 +114,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		const
 			needCollapse = normalizedOpts.collapse,
 			needImmediate = normalizedOpts.immediate,
-			needCache = handler.length > 1 && needCollapse;
+			needCache = (handler['originalLength'] ?? handler.length) > 1 && needCollapse;
 
 		if (canSkipWatching && !needImmediate) {
 			return null;
