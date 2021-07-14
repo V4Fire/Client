@@ -174,8 +174,6 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		accessor = name;
 	}
 
-	console.log(11, storeName, hasStoreField);
-
 	if (hasStoreField || propName != null && props[propName]) {
 		name = propName ?? storeName;
 
