@@ -220,16 +220,16 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				ctxPath;
 
 			if (chunks != null) {
+				ctxPath = chunks.slice(0, rootI + 1);
 				path = chunks.slice(rootI + 1).join('.');
 				topPath = chunks.slice(0, rootI + 2).join('.');
 				originalTopPath = topPath;
-				ctxPath = chunks.slice(0, rootI + 1);
 
 			} else {
+				ctxPath = path;
 				path = '';
 				topPath = '';
 				originalTopPath = '';
-				ctxPath = path;
 			}
 
 			return {
