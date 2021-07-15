@@ -58,7 +58,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				info = path;
 			}
 
-			if (isProxy(path.ctx)) {
+			if (isProxy(info.ctx)) {
 				info.type = 'mounted';
 				info.originalPath = info.path;
 				info.fullPath = info.path;
