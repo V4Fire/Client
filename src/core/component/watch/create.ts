@@ -155,14 +155,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			handler = (val, _, i) => {
-				if (!isDefinedPath) {
-					if (Object.isArray(val) && val.length > 0) {
-						i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
-					}
-
-					if (Object.isArray(i?.path)) {
-						oldVal = Object.get(oldVal, [i.path[0]]);
-					}
+				if (!isDefinedPath && Object.isArray(val) && val.length > 0) {
+					i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
 				}
 
 				if (isMountedWatcher) {
