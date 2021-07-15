@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { mute, unmute, unwrap, getProxyType, isProxy } from 'core/object/watch';
+import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
@@ -200,28 +200,46 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				handler = (val, ...args) => {
 					let
 						oldVal = args[0],
-						i = args[1];
+						handlerParams = args[1];
 
 					if (isDefinedPath ? !needCollapse : needCollapse) {
 						if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
-							i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+							handlerParams = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
 						}
 
 						if (needCollapse) {
 							val = info.ctx;
 							oldVal = val;
-
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							if (i != null && info.name != null) {
-								i.path = [info.name];
-								i.originalPath = i.path;
-							}
 						}
 
-						return originalHandler.call(this, val, oldVal, i);
+					} else if (args.length === 0) {
+						return originalHandler.call(this, val.map(([val, oldVal, i]) => {
+							patchPath(i);
+							return [val, oldVal, i];
+						}));
 					}
 
-					return originalHandler.call(this, val, ...args);
+					patchPath(handlerParams);
+					return originalHandler.call(this, val, oldVal, handlerParams);
+
+					function patchPath(params?: WatchHandlerParams) {
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+						if (params == null || info.name == null) {
+							return;
+						}
+
+						if (needCollapse) {
+							params.path = [info.name];
+							params.originalPath = params.path;
+
+						} else {
+							params.path.unshift(info.name);
+
+							if (params.path !== params.originalPath) {
+								params.originalPath.unshift(info.name);
+							}
+						}
+					}
 				};
 
 			} else if (isAccessor) {

@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import watch from 'core/object/watch';
 import iData, { component, field, system, computed, ModsDecl } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -58,6 +59,16 @@ export default class bDummyWatch extends iData {
 	@computed({cache: false})
 	get systemComplexObj(): Dictionary {
 		return Object.fastClone(this.systemComplexObjStore);
+	}
+
+	@computed({cache: true, watchable: true})
+	get mountedArrayWatcher(): any[] {
+		return watch([]).proxy;
+	}
+
+	@computed({cache: true, watchable: true})
+	get mountedWatcher(): Dictionary {
+		return watch({}).proxy;
 	}
 
 	static mods: ModsDecl = {
