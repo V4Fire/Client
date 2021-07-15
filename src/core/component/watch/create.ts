@@ -50,10 +50,19 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			info = getPropertyInfo(path, component);
 
 		} else {
-			info = isProxy(path) ? {ctx: path} : path;
-			info.type = 'mounted';
-			info.originalPath = info.path;
-			info.fullPath = info.path;
+			if (isProxy(path)) {
+				// @ts-ignore (lazy binding)
+				info = {ctx: path};
+
+			} else {
+				info = path;
+			}
+
+			if (isProxy(path.ctx)) {
+				info.type = 'mounted';
+				info.originalPath = info.path;
+				info.fullPath = info.path;
+			}
 		}
 
 		let
@@ -146,22 +155,27 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			handler = (val, _, i) => {
-				if (isMountedWatcher) {
-					if (needCollapse) {
-						val = info.ctx;
+				if (!isDefinedPath) {
+					if (Object.isArray(val) && val.length > 0) {
+						i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
 					}
 
-				} else if (isAccessor) {
-					if (needCollapse) {
-						val = Object.get(info.ctx, info.accessor ?? info.name);
-
-					} else {
-						val = Object.get(component, info.originalPath);
+					if (Object.isArray(i?.path)) {
+						oldVal = Object.get(oldVal, [i.path[0]]);
 					}
 				}
 
-				if (!isDefinedPath && Object.isArray(i?.path)) {
-					oldVal = Object.get(oldVal, [i.path[0]]);
+				if (isMountedWatcher) {
+					val = info.ctx;
+
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+					if (i != null && info.name != null) {
+						i.path = [info.name];
+						i.originalPath = i.path;
+					}
+
+				} else if (isAccessor) {
+					val = Object.get(info.ctx, info.accessor ?? info.name);
 				}
 
 				const
@@ -183,16 +197,31 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		} else {
 			if (isMountedWatcher) {
-				handler = (val, _, i) => {
-					if (needCollapse) {
-						val = info.ctx;
-						oldVal = val;
+				handler = (val, ...args) => {
+					let
+						oldVal = args[0],
+						i = args[1];
 
-					} else {
-						oldVal = _;
+					if (isDefinedPath ? !needCollapse : needCollapse) {
+						if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
+							i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+						}
+
+						if (needCollapse) {
+							val = info.ctx;
+							oldVal = val;
+
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+							if (i != null && info.name != null) {
+								i.path = [info.name];
+								i.originalPath = i.path;
+							}
+						}
+
+						return originalHandler.call(this, val, oldVal, i);
 					}
 
-					return originalHandler.call(this, val, oldVal, i);
+					return originalHandler.call(this, val, ...args);
 				};
 
 			} else if (isAccessor) {
