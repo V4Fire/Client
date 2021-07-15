@@ -7,4 +7,5 @@
  */
 
 package('b-dummy-watch')
-	.extends('i-data');
+	.extends('i-data')
+	.dependencies('b-button');

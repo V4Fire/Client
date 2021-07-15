@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import iData, { component, field, system, computed } from 'super/i-data/i-data';
+import iData, { component, field, system, computed, ModsDecl } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 
@@ -46,12 +46,29 @@ export default class bDummyWatch extends iData {
 		}
 	};
 
-	get complexObj(): number {
-		return Math.random();
+	get complexObj(): Dictionary {
+		return Object.fastClone(this.complexObjStore);
+	}
+
+	@computed({cache: true, dependencies: ['complexObjStore']})
+	get cachedComplexObj(): Dictionary {
+		return Object.fastClone(this.complexObjStore);
 	}
 
 	@computed({cache: false})
-	get systemComplexObj(): number {
-		return Math.random();
+	get systemComplexObj(): Dictionary {
+		return Object.fastClone(this.systemComplexObjStore);
 	}
+
+	static mods: ModsDecl = {
+		watchable: [
+			'val-1',
+			'val-2'
+		],
+
+		nonWatchable: [
+			['val-1'],
+			'val-2'
+		]
+	};
 }

@@ -18,5 +18,23 @@
 		< .&__complex-obj-store
 			{{ JSON.stringify(complexObjStore) }}
 
+		< .&__complex-obj
+			{{ JSON.stringify(complexObj) }}
+
+		< .&__cached-complex-obj
+			{{ JSON.stringify(cachedComplexObj) }}
+
 		< .&__system-complex-obj-store
 			{{ JSON.stringify(systemComplexObjStore) }}
+
+		< .&__watchable-mod
+			{{ m.watchable }}
+
+		< .&__non-watchable-mod
+			{{ mods.nonWatchable }}
+
+		< .&__component-with-slot
+			< b-button :p = setField
+				< template #default = {ctx}
+					{{ JSON.stringify(Array.from(ctx.p)) }}
+
