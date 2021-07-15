@@ -366,6 +366,280 @@ module.exports = (page) => {
 				]);
 			});
 		});
+
+		describe('with caching of old values', () => {
+			it('non-deep watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch(ctx.mountedArrayWatcher, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i.originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[[1, 2], [], false, [1]],
+					[[1, 2, 3], [1, 2], false, [2]],
+					[[2], [1, 2, 3], false, ['length']]
+				]);
+			});
+
+			it('non-deep immediate watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch(ctx.mountedArrayWatcher, {immediate: true}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[[], undefined, false, undefined],
+					[[1], [], false, [0]],
+					[[1, 2], [1], false, [1]],
+					[[1, 2, 3], [1, 2], false, [2]],
+					[[1, 2], [1, 2, 3], false, ['length']],
+					[[2, 2], [1, 2], false, [0]],
+					[[2], [2, 2], false, ['length']]
+				]);
+			});
+
+			it('non-deep immediate watching without collapsing', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch(ctx.mountedArrayWatcher, {immediate: true, collapse: false}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[[], undefined, false, undefined],
+					[1, undefined, false, [0]],
+					[2, undefined, false, [1]],
+					[3, undefined, false, [2]],
+					[2, 3, false, ['length']],
+					[2, 1, false, [0]],
+					[1, 2, false, ['length']]
+				]);
+			});
+
+			it('deep watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch(ctx.mountedWatcher, {deep: true}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						{a: {b: {c: 2}}},
+						{},
+						false,
+						['a']
+					],
+
+					[
+						{a: {b: {c: 3}}},
+						{a: {b: {c: 2}}},
+						false,
+						['a', 'b', 'c']
+					],
+
+					[
+						{a: {b: {d: 1}}},
+						{a: {b: {c: 3}}},
+						false,
+						['a', 'b']
+					]
+				]);
+			});
+
+			it('deep immediate watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch(ctx.mountedWatcher, {deep: true, immediate: true}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{}, undefined, false, undefined],
+
+					[
+						{a: {b: {c: 1}}},
+						{},
+						false,
+						['a']
+					],
+
+					[
+						{a: {b: {c: 2}}},
+						{a: {b: {c: 1}}},
+						false,
+						['a']
+					],
+
+					[
+						{a: {b: {c: 3}}},
+						{a: {b: {c: 2}}},
+						false,
+						['a', 'b', 'c']
+					],
+
+					[
+						{a: {b: {d: 1}}},
+						{a: {b: {c: 3}}},
+						false,
+						['a', 'b']
+					]
+				]);
+			});
+
+			it('deep immediate watching without collapsing', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch(ctx.mountedWatcher, {deep: true, immediate: true, collapse: false}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{}, undefined, false, undefined],
+					[{b: {c: 1}}, undefined, false, ['a']],
+					[{b: {c: 2}}, {b: {c: 1}}, false, ['a']],
+					[3, 2, false, ['a', 'b', 'c']],
+					[{d: 1}, {c: 3}, false, ['a', 'b']]
+				]);
+			});
+		});
 	});
 
 	async function init(attrs = {}) {
