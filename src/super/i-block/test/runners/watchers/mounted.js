@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -24,526 +26,898 @@ module.exports = (page) => {
 	});
 
 	describe('i-block watch API with mounted objects', () => {
-		it('non-deep watching', async () => {
-			const
-				target = await init();
+		describe('without caching of old values', () => {
+			it('non-deep watching', async () => {
+				const
+					target = await init();
 
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
 
-				ctx.watch('mountedArrayWatcher', (val, ...args) => {
-					res.push([
-						Object.fastClone(val),
-						Object.fastClone(args[0]),
-						args[1].path,
-						args[1].originalPath
-					]);
+					ctx.watch('mountedArrayWatcher', (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1].path,
+							args[1].originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
 				});
 
-				ctx.mountedArrayWatcher.push(1);
-				ctx.mountedArrayWatcher.push(2);
-				await ctx.nextTick();
+				expect(scan).toEqual([
+					[
+						[1, 2],
+						[1, 2],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					],
 
-				ctx.mountedArrayWatcher.push(3);
-				await ctx.nextTick();
+					[
+						[1, 2, 3],
+						[1, 2, 3],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					],
 
-				ctx.mountedArrayWatcher.pop();
-				ctx.mountedArrayWatcher.shift();
-				await ctx.nextTick();
-
-				return res;
+					[
+						[2],
+						[2],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					]
+				]);
 			});
 
-			expect(scan).toEqual([
-				[
-					[1, 2],
-					[1, 2],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				],
+			it('non-deep watching without collapsing', async () => {
+				const
+					target = await init();
 
-				[
-					[1, 2, 3],
-					[1, 2, 3],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				],
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
 
-				[
-					[2],
-					[2],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				]
-			]);
+					ctx.watch('mountedArrayWatcher', {collapse: false}, (mutations) => {
+						mutations.forEach(([val, oldVal, i]) => {
+							res.push([
+								Object.fastClone(val),
+								Object.fastClone(oldVal),
+								i.path,
+								i.originalPath
+							]);
+						});
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						1,
+						undefined,
+						['mountedArrayWatcher', 0],
+						['mountedArrayWatcher', 0]
+					],
+
+					[
+						2,
+						undefined,
+						['mountedArrayWatcher', 1],
+						['mountedArrayWatcher', 1]
+					],
+
+					[
+						3,
+						undefined,
+						['mountedArrayWatcher', 2],
+						['mountedArrayWatcher', 2]
+					],
+
+					[
+						2,
+						3,
+						['mountedArrayWatcher', 'length'],
+						['mountedArrayWatcher', 'length']
+					],
+
+					[
+						2,
+						1,
+						['mountedArrayWatcher', 0],
+						['mountedArrayWatcher', 0]
+					],
+
+					[
+						1,
+						2,
+						['mountedArrayWatcher', 'length'],
+						['mountedArrayWatcher', 'length']
+					]
+				]);
+			});
+
+			it('non-deep immediate watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedArrayWatcher', {immediate: true}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[[], [], undefined, undefined],
+
+					[
+						[1],
+						[1],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					],
+
+					[
+						[1, 2],
+						[1, 2],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					],
+
+					[
+						[1, 2, 3],
+						[1, 2, 3],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					],
+
+					[
+						[1, 2],
+						[1, 2],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					],
+
+					[
+						[2, 2],
+						[2, 2],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					],
+
+					[
+						[2],
+						[2],
+						['mountedArrayWatcher'],
+						['mountedArrayWatcher']
+					]
+				]);
+			});
+
+			it('non-deep immediate watching without collapsing', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedArrayWatcher', {immediate: true, collapse: false}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[[], undefined, undefined, undefined],
+
+					[
+						1,
+						undefined,
+						['mountedArrayWatcher', 0],
+						['mountedArrayWatcher', 0]
+					],
+
+					[
+						2,
+						undefined,
+						['mountedArrayWatcher', 1],
+						['mountedArrayWatcher', 1]
+					],
+
+					[
+						3,
+						undefined,
+						['mountedArrayWatcher', 2],
+						['mountedArrayWatcher', 2]
+					],
+
+					[
+						2,
+						3,
+						['mountedArrayWatcher', 'length'],
+						['mountedArrayWatcher', 'length']
+					],
+
+					[
+						2,
+						1,
+						['mountedArrayWatcher', 0],
+						['mountedArrayWatcher', 0]
+					],
+
+					[
+						1,
+						2,
+						['mountedArrayWatcher', 'length'],
+						['mountedArrayWatcher', 'length']
+					]
+				]);
+			});
+
+			it('deep watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher', {deep: true}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1].path,
+							args[1].originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						{a: {b: {c: 2}}},
+						{a: {b: {c: 2}}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+					[
+						{a: {b: {c: 3}}},
+						{a: {b: {c: 3}}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+					[
+						{a: {b: {d: 1}}},
+						{a: {b: {d: 1}}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					]
+				]);
+			});
+
+			it('deep watching without collapsing', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher', {deep: true, collapse: false}, (mutations) => {
+						mutations.forEach(([val, oldVal, i]) => {
+							res.push([
+								Object.fastClone(val),
+								Object.fastClone(oldVal),
+								i.path,
+								i.originalPath
+							]);
+						});
+					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						{b: {c: 1}},
+						undefined,
+						['mountedWatcher', 'a'],
+						['mountedWatcher', 'a']
+					],
+
+					[
+						{b: {c: 2}},
+						{b: {c: 1}},
+						['mountedWatcher', 'a'],
+						['mountedWatcher', 'a']
+					],
+
+					[
+						3,
+						2,
+						['mountedWatcher', 'a', 'b', 'c'],
+						['mountedWatcher', 'a', 'b', 'c']
+					],
+
+					[
+						{d: 1},
+						{c: 3},
+						['mountedWatcher', 'a', 'b'],
+						['mountedWatcher', 'a', 'b']
+					]
+				]);
+			});
+
+			it('deep immediate watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher', {deep: true, immediate: true}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{}, {}, undefined, undefined],
+
+					[
+						{a: {b: {c: 1}}},
+						{a: {b: {c: 1}}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {b: {c: 2}}},
+						{a: {b: {c: 2}}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {b: {c: 3}}},
+						{a: {b: {c: 3}}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {b: {d: 1}}},
+						{a: {b: {d: 1}}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					]
+				]);
+			});
+
+			it('deep immediate watching without collapsing', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher', {deep: true, immediate: true, collapse: false}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{}, undefined, undefined, undefined],
+
+					[
+						{b: {c: 1}},
+						undefined,
+						['mountedWatcher', 'a'],
+						['mountedWatcher', 'a']
+					],
+
+					[
+						{b: {c: 2}},
+						{b: {c: 1}},
+						['mountedWatcher', 'a'],
+						['mountedWatcher', 'a']
+					],
+
+					[
+						3,
+						2,
+						['mountedWatcher', 'a', 'b', 'c'],
+						['mountedWatcher', 'a', 'b', 'c']
+					],
+
+					[
+						{d: 1},
+						{c: 3},
+						['mountedWatcher', 'a', 'b'],
+						['mountedWatcher', 'a', 'b']
+					]
+				]);
+			});
 		});
 
-		it('non-deep watching without collapsing', async () => {
-			const
-				target = await init();
+		describe('with caching of old values', () => {
+			it('non-deep watching', async () => {
+				const
+					target = await init();
 
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
 
-				ctx.watch('mountedArrayWatcher', {collapse: false}, (mutations) => {
-					mutations.forEach(([val, oldVal, i]) => {
+					ctx.watch('mountedArrayWatcher', (val, oldVal, i) => {
 						res.push([
 							Object.fastClone(val),
 							Object.fastClone(oldVal),
-							i.path,
+							val === oldVal,
 							i.originalPath
 						]);
 					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
 				});
 
-				ctx.mountedArrayWatcher.push(1);
-				ctx.mountedArrayWatcher.push(2);
-				await ctx.nextTick();
-
-				ctx.mountedArrayWatcher.push(3);
-				await ctx.nextTick();
-
-				ctx.mountedArrayWatcher.pop();
-				ctx.mountedArrayWatcher.shift();
-				await ctx.nextTick();
-
-				return res;
+				expect(scan).toEqual([
+					[[1, 2], [], false, ['mountedArrayWatcher']],
+					[[1, 2, 3], [1, 2], false, ['mountedArrayWatcher']],
+					[[2], [1, 2, 3], false, ['mountedArrayWatcher']]
+				]);
 			});
 
-			expect(scan).toEqual([
-				[
-					1,
-					undefined,
-					['mountedArrayWatcher', 0],
-					['mountedArrayWatcher', 0]
-				],
+			it('non-deep immediate watching', async () => {
+				const
+					target = await init();
 
-				[
-					2,
-					undefined,
-					['mountedArrayWatcher', 1],
-					['mountedArrayWatcher', 1]
-				],
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
 
-				[
-					3,
-					undefined,
-					['mountedArrayWatcher', 2],
-					['mountedArrayWatcher', 2]
-				],
-
-				[
-					2,
-					3,
-					['mountedArrayWatcher', 'length'],
-					['mountedArrayWatcher', 'length']
-				],
-
-				[
-					2,
-					1,
-					['mountedArrayWatcher', 0],
-					['mountedArrayWatcher', 0]
-				],
-
-				[
-					1,
-					2,
-					['mountedArrayWatcher', 'length'],
-					['mountedArrayWatcher', 'length']
-				]
-			]);
-		});
-
-		it('non-deep immediate watching', async () => {
-			const
-				target = await init();
-
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
-
-				ctx.watch('mountedArrayWatcher', {immediate: true}, (val, ...args) => {
-					res.push([
-						Object.fastClone(val),
-						Object.fastClone(args[0]),
-						args[1]?.path,
-						args[1]?.originalPath
-					]);
-				});
-
-				ctx.mountedArrayWatcher.push(1);
-				ctx.mountedArrayWatcher.push(2);
-				await ctx.nextTick();
-
-				ctx.mountedArrayWatcher.push(3);
-				await ctx.nextTick();
-
-				ctx.mountedArrayWatcher.pop();
-				ctx.mountedArrayWatcher.shift();
-				await ctx.nextTick();
-
-				return res;
-			});
-
-			expect(scan).toEqual([
-				[[], [], undefined, undefined],
-
-				[
-					[1],
-					[1],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				],
-
-				[
-					[1, 2],
-					[1, 2],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				],
-
-				[
-					[1, 2, 3],
-					[1, 2, 3],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				],
-
-				[
-					[1, 2],
-					[1, 2],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				],
-
-				[
-					[2, 2],
-					[2, 2],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				],
-
-				[
-					[2],
-					[2],
-					['mountedArrayWatcher'],
-					['mountedArrayWatcher']
-				]
-			]);
-		});
-
-		it('non-deep immediate watching without collapsing', async () => {
-			const
-				target = await init();
-
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
-
-				ctx.watch('mountedArrayWatcher', {immediate: true, collapse: false}, (val, ...args) => {
-					res.push([
-						Object.fastClone(val),
-						Object.fastClone(args[0]),
-						args[1]?.path,
-						args[1]?.originalPath
-					]);
-				});
-
-				ctx.mountedArrayWatcher.push(1);
-				ctx.mountedArrayWatcher.push(2);
-				await ctx.nextTick();
-
-				ctx.mountedArrayWatcher.push(3);
-				await ctx.nextTick();
-
-				ctx.mountedArrayWatcher.pop();
-				ctx.mountedArrayWatcher.shift();
-				await ctx.nextTick();
-
-				return res;
-			});
-
-			expect(scan).toEqual([
-				[[], undefined, undefined, undefined],
-
-				[
-					1,
-					undefined,
-					['mountedArrayWatcher', 0],
-					['mountedArrayWatcher', 0]
-				],
-
-				[
-					2,
-					undefined,
-					['mountedArrayWatcher', 1],
-					['mountedArrayWatcher', 1]
-				],
-
-				[
-					3,
-					undefined,
-					['mountedArrayWatcher', 2],
-					['mountedArrayWatcher', 2]
-				],
-
-				[
-					2,
-					3,
-					['mountedArrayWatcher', 'length'],
-					['mountedArrayWatcher', 'length']
-				],
-
-				[
-					2,
-					1,
-					['mountedArrayWatcher', 0],
-					['mountedArrayWatcher', 0]
-				],
-
-				[
-					1,
-					2,
-					['mountedArrayWatcher', 'length'],
-					['mountedArrayWatcher', 'length']
-				]
-			]);
-		});
-
-		it('deep watching', async () => {
-			const
-				target = await init();
-
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
-
-				ctx.watch('mountedWatcher', {deep: true}, (val, ...args) => {
-					res.push([
-						Object.fastClone(val),
-						Object.fastClone(args[0]),
-						args[1].path,
-						args[1].originalPath
-					]);
-				});
-
-				ctx.mountedWatcher.a = {b: {c: 1}};
-				ctx.mountedWatcher.a = {b: {c: 2}};
-				await ctx.nextTick();
-
-				ctx.mountedWatcher.a.b.c++;
-				await ctx.nextTick();
-
-				ctx.mountedWatcher.a.b = {d: 1};
-				await ctx.nextTick();
-
-				return res;
-			});
-
-			expect(scan).toEqual([
-				[
-					{a: {b: {c: 2}}},
-					{a: {b: {c: 2}}},
-					['mountedWatcher'],
-					['mountedWatcher']
-				],
-				[
-					{a: {b: {c: 3}}},
-					{a: {b: {c: 3}}},
-					['mountedWatcher'],
-					['mountedWatcher']
-				],
-				[
-					{a: {b: {d: 1}}},
-					{a: {b: {d: 1}}},
-					['mountedWatcher'],
-					['mountedWatcher']
-				]
-			]);
-		});
-
-		it('deep watching without collapsing', async () => {
-			const
-				target = await init();
-
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
-
-				ctx.watch('mountedWatcher', {deep: true, collapse: false}, (mutations) => {
-					mutations.forEach(([val, oldVal, i]) => {
+					ctx.watch('mountedArrayWatcher', {immediate: true}, (val, oldVal, i) => {
 						res.push([
 							Object.fastClone(val),
 							Object.fastClone(oldVal),
-							i.path,
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[[], undefined, false, undefined],
+
+					[
+						[1],
+						[],
+						false,
+						['mountedArrayWatcher']
+					],
+
+					[
+						[1, 2],
+						[1],
+						false,
+						['mountedArrayWatcher']
+					],
+
+					[
+						[1, 2, 3],
+						[1, 2],
+						false,
+						['mountedArrayWatcher']
+					],
+
+					[
+						[1, 2],
+						[1, 2, 3],
+						false,
+						['mountedArrayWatcher']
+					],
+
+					[
+						[2, 2],
+						[1, 2],
+						false,
+						['mountedArrayWatcher']
+					],
+
+					[
+						[2],
+						[2, 2],
+						false,
+						['mountedArrayWatcher']
+					]
+				]);
+			});
+
+			it('non-deep immediate watching without collapsing', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedArrayWatcher', {immediate: true, collapse: false}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedArrayWatcher.push(1);
+					ctx.mountedArrayWatcher.push(2);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.push(3);
+					await ctx.nextTick();
+
+					ctx.mountedArrayWatcher.pop();
+					ctx.mountedArrayWatcher.shift();
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[[], undefined, false, undefined],
+
+					[
+						1,
+						undefined,
+						false,
+						['mountedArrayWatcher', 0]
+					],
+
+					[
+						2,
+						undefined,
+						false,
+						['mountedArrayWatcher', 1]
+					],
+
+					[
+						3,
+						undefined,
+						false,
+						['mountedArrayWatcher', 2]
+					],
+
+					[
+						2,
+						3,
+						false,
+						['mountedArrayWatcher', 'length']
+					],
+
+					[
+						2,
+						1,
+						false,
+						['mountedArrayWatcher', 0]
+					],
+
+					[
+						1,
+						2,
+						false,
+						['mountedArrayWatcher', 'length']
+					]
+				]);
+			});
+
+			it('deep watching', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher', {deep: true}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
 							i.originalPath
 						]);
 					});
+
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
+
+					return res;
 				});
 
-				ctx.mountedWatcher.a = {b: {c: 1}};
-				ctx.mountedWatcher.a = {b: {c: 2}};
-				await ctx.nextTick();
+				expect(scan).toEqual([
+					[
+						{a: {b: {c: 2}}},
+						{},
+						false,
+						['mountedWatcher']
+					],
 
-				ctx.mountedWatcher.a.b.c++;
-				await ctx.nextTick();
+					[
+						{a: {b: {c: 3}}},
+						{a: {b: {c: 2}}},
+						false,
+						['mountedWatcher']
+					],
 
-				ctx.mountedWatcher.a.b = {d: 1};
-				await ctx.nextTick();
-
-				return res;
+					[
+						{a: {b: {d: 1}}},
+						{a: {b: {c: 3}}},
+						false,
+						['mountedWatcher']
+					]
+				]);
 			});
 
-			expect(scan).toEqual([
-				[
-					{b: {c: 1}},
-					undefined,
-					['mountedWatcher', 'a'],
-					['mountedWatcher', 'a']
-				],
+			it('deep immediate watching', async () => {
+				const
+					target = await init();
 
-				[
-					{b: {c: 2}},
-					{b: {c: 1}},
-					['mountedWatcher', 'a'],
-					['mountedWatcher', 'a']
-				],
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
 
-				[
-					3,
-					2,
-					['mountedWatcher', 'a', 'b', 'c'],
-					['mountedWatcher', 'a', 'b', 'c']
-				],
+					ctx.watch('mountedWatcher', {deep: true, immediate: true}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
 
-				[
-					{d: 1},
-					{c: 3},
-					['mountedWatcher', 'a', 'b'],
-					['mountedWatcher', 'a', 'b']
-				]
-			]);
-		});
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
 
-		it('deep immediate watching', async () => {
-			const
-				target = await init();
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
 
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
 
-				ctx.watch('mountedWatcher', {deep: true, immediate: true}, (val, ...args) => {
-					res.push([
-						Object.fastClone(val),
-						Object.fastClone(args[0]),
-						args[1]?.path,
-						args[1]?.originalPath
-					]);
+					return res;
 				});
 
-				ctx.mountedWatcher.a = {b: {c: 1}};
-				ctx.mountedWatcher.a = {b: {c: 2}};
-				await ctx.nextTick();
+				expect(scan).toEqual([
+					[{}, undefined, false, undefined],
 
-				ctx.mountedWatcher.a.b.c++;
-				await ctx.nextTick();
+					[
+						{a: {b: {c: 1}}},
+						{},
+						false,
+						['mountedWatcher']
+					],
 
-				ctx.mountedWatcher.a.b = {d: 1};
-				await ctx.nextTick();
+					[
+						{a: {b: {c: 2}}},
+						{a: {b: {c: 1}}},
+						false,
+						['mountedWatcher']
+					],
 
-				return res;
+					[
+						{a: {b: {c: 3}}},
+						{a: {b: {c: 2}}},
+						false,
+						['mountedWatcher']
+					],
+
+					[
+						{a: {b: {d: 1}}},
+						{a: {b: {c: 3}}},
+						false,
+						['mountedWatcher']
+					]
+				]);
 			});
 
-			expect(scan).toEqual([
-				[{}, {}, undefined, undefined],
+			it('deep immediate watching without collapsing', async () => {
+				const
+					target = await init();
 
-				[
-					{a: {b: {c: 1}}},
-					{a: {b: {c: 1}}},
-					['mountedWatcher'],
-					['mountedWatcher']
-				],
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
 
-				[
-					{a: {b: {c: 2}}},
-					{a: {b: {c: 2}}},
-					['mountedWatcher'],
-					['mountedWatcher']
-				],
+					ctx.watch('mountedWatcher', {deep: true, immediate: true, collapse: false}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
 
-				[
-					{a: {b: {c: 3}}},
-					{a: {b: {c: 3}}},
-					['mountedWatcher'],
-					['mountedWatcher']
-				],
+					ctx.mountedWatcher.a = {b: {c: 1}};
+					ctx.mountedWatcher.a = {b: {c: 2}};
+					await ctx.nextTick();
 
-				[
-					{a: {b: {d: 1}}},
-					{a: {b: {d: 1}}},
-					['mountedWatcher'],
-					['mountedWatcher']
-				]
-			]);
-		});
+					ctx.mountedWatcher.a.b.c++;
+					await ctx.nextTick();
 
-		it('deep immediate watching without collapsing', async () => {
-			const
-				target = await init();
+					ctx.mountedWatcher.a.b = {d: 1};
+					await ctx.nextTick();
 
-			const scan = await target.evaluate(async (ctx) => {
-				const res = [];
-
-				ctx.watch('mountedWatcher', {deep: true, immediate: true, collapse: false}, (val, ...args) => {
-					res.push([
-						Object.fastClone(val),
-						Object.fastClone(args[0]),
-						args[1]?.path,
-						args[1]?.originalPath
-					]);
+					return res;
 				});
 
-				ctx.mountedWatcher.a = {b: {c: 1}};
-				ctx.mountedWatcher.a = {b: {c: 2}};
-				await ctx.nextTick();
+				expect(scan).toEqual([
+					[{}, undefined, false, undefined],
 
-				ctx.mountedWatcher.a.b.c++;
-				await ctx.nextTick();
+					[
+						{b: {c: 1}},
+						undefined,
+						false,
+						['mountedWatcher', 'a']
+					],
 
-				ctx.mountedWatcher.a.b = {d: 1};
-				await ctx.nextTick();
+					[
+						{b: {c: 2}},
+						{b: {c: 1}},
+						false,
+						['mountedWatcher', 'a']
+					],
 
-				return res;
+					[
+						3,
+						2,
+						false,
+						['mountedWatcher', 'a', 'b', 'c']
+					],
+
+					[
+						{d: 1},
+						{c: 3},
+						false,
+						['mountedWatcher', 'a', 'b']
+					]
+				]);
 			});
-
-			expect(scan).toEqual([
-				[{}, undefined, undefined, undefined],
-
-				[
-					{b: {c: 1}},
-					undefined,
-					['mountedWatcher', 'a'],
-					['mountedWatcher', 'a']
-				],
-
-				[
-					{b: {c: 2}},
-					{b: {c: 1}},
-					['mountedWatcher', 'a'],
-					['mountedWatcher', 'a']
-				],
-
-				[
-					3,
-					2,
-					['mountedWatcher', 'a', 'b', 'c'],
-					['mountedWatcher', 'a', 'b', 'c']
-				],
-
-				[
-					{d: 1},
-					{c: 3},
-					['mountedWatcher', 'a', 'b'],
-					['mountedWatcher', 'a', 'b']
-				]
-			]);
 		});
 	});
 
