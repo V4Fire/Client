@@ -183,6 +183,144 @@ module.exports = (page) => {
 						]);
 					});
 
+					it('watching for the specified path', async () => {
+						const
+							target = await init();
+
+						const scan = await target.evaluate(async (ctx, field) => {
+							const res = [];
+
+							ctx.watch(`${field}.a.c`, (val, ...args) => {
+								res.push([
+									Object.fastClone(val),
+									Object.fastClone(args[0]),
+									args[1].path,
+									args[1].originalPath
+								]);
+							});
+
+							ctx[field] = {a: {b: 1}};
+							ctx[field] = {a: {c: 2}};
+							await ctx.nextTick();
+
+							ctx[field] = {a: {b: 3}};
+							await ctx.nextTick();
+
+							ctx[field] = {a: {c: 3}};
+							await ctx.nextTick();
+
+							ctx[field].a.c++;
+							ctx[field].a.c++;
+							await ctx.nextTick();
+
+							return res;
+						}, field);
+
+						expect(scan).toEqual([
+							[
+								2,
+								undefined,
+								[field, 'a', 'c'],
+								[field]
+							],
+
+							[
+								undefined,
+								2,
+								[field, 'a', 'c'],
+								[field]
+							],
+
+							[
+								3,
+								undefined,
+								[field, 'a', 'c'],
+								[field]
+							],
+
+							[
+								{a: {c: 5}},
+								{a: {c: 5}},
+								[field, 'a', 'c'],
+								[field, 'a', 'c']
+							]
+						]);
+					});
+
+					it('immediate watching for the specified path', async () => {
+						const
+							target = await init();
+
+						const scan = await target.evaluate((ctx, field) => {
+							const res = [];
+
+							ctx.watch(`${field}.a.c`, {immediate: true}, (val, ...args) => {
+								res.push([
+									Object.fastClone(val),
+									Object.fastClone(args[0]),
+									args[1]?.path,
+									args[1]?.originalPath
+								]);
+							});
+
+							ctx[field] = {a: {b: 1}};
+							ctx[field] = {a: {c: 2}};
+
+							ctx[field] = {a: {b: 3}};
+
+							ctx[field] = {a: {c: 3}};
+
+							ctx[field].a.c++;
+							ctx[field].a.c++;
+
+							return res;
+						}, field);
+
+						expect(scan).toEqual([
+							[
+								{a: {b: {c: 1, d: 2}}},
+								undefined,
+								undefined,
+								undefined
+							],
+
+							[
+								2,
+								undefined,
+								[field, 'a', 'c'],
+								[field]
+							],
+
+							[
+								undefined,
+								2,
+								[field, 'a', 'c'],
+								[field]
+							],
+
+							[
+								3,
+								undefined,
+								[field, 'a', 'c'],
+								[field]
+							],
+
+							[
+								{a: {c: 4}},
+								{a: {c: 4}},
+								[field, 'a', 'c'],
+								[field, 'a', 'c']
+							],
+
+							[
+								{a: {c: 5}},
+								{a: {c: 5}},
+								[field, 'a', 'c'],
+								[field, 'a', 'c']
+							]
+						]);
+					});
+
 					it('deep watching', async () => {
 						const
 							target = await init();
