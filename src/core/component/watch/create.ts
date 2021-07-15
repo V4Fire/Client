@@ -192,7 +192,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			if (needImmediate) {
 				const val = oldVal;
 				oldVal = undefined;
-				handler.call(component, val);
+				handler.call(component, val, undefined, undefined);
 			}
 
 		} else {
@@ -263,7 +263,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			if (needImmediate) {
-				handler.call(component, getVal());
+				handler.call(component, getVal(), undefined, undefined);
 			}
 		}
 

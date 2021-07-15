@@ -1,5 +1,5 @@
 {
-  "hash": "236b0a41cff9d021f705770535270e12f7260952ccb6c40e81c2012a7d969624",
+  "hash": "766195b998164a8754719dd056cbcd0f50b955adb531c1729984289ae2419388",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -304,12 +304,16 @@
           "declaration": {
             "name": "b-dummy-watch",
             "parent": "i-data",
-            "dependencies": [],
+            "dependencies": [
+              "b-button"
+            ],
             "libs": []
           },
           "name": "b-dummy-watch",
           "parent": "i-data",
-          "dependencies": [],
+          "dependencies": [
+            "b-button"
+          ],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
