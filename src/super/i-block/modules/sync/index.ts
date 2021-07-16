@@ -279,12 +279,17 @@ export default class Sync extends Friend {
 
 		} else if (Object.isString(path) || isProxy(path) || 'ctx' in path) {
 			resolvedPath = path;
+		}
 
-		} else if (Object.isDictionary(path)) {
+		if (Object.isDictionary(path)) {
 			resolvedOpts = path;
 
 		} else if (Object.isDictionary(opts)) {
 			resolvedOpts = opts;
+		}
+
+		if (wrapper == null && resolvedOpts.collapse !== true) {
+			resolvedOpts.collapse = false;
 		}
 
 		if (resolvedPath == null) {
@@ -343,7 +348,7 @@ export default class Sync extends Friend {
 			return res;
 		};
 
-		if (Object.size(wrapper) > 1) {
+		if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
 			ctx.watch(info ?? normalizedPath, resolvedOpts, (val, oldVal) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
