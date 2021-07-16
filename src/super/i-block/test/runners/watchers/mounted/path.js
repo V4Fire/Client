@@ -312,6 +312,139 @@ module.exports = (page) => {
 				]);
 			});
 
+			it('watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher.a.c', (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1].path,
+							args[1].originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {b: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {c: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						{a: {c: 2}},
+						{a: {c: 2}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {b: 3}},
+						{a: {b: 3}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 3}},
+						{a: {c: 3}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 5}},
+						{a: {c: 5}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					]
+				]);
+			});
+
+			it('immediate watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate((ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher.a.c', {immediate: true}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+
+					ctx.mountedWatcher.a = {b: 3};
+
+					ctx.mountedWatcher.a = {c: 3};
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{}, {}, undefined, undefined],
+
+					[
+						{a: {c: 2}},
+						{a: {c: 2}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {b: 3}},
+						{a: {b: 3}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 3}},
+						{a: {c: 3}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 4}},
+						{a: {c: 4}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 5}},
+						{a: {c: 5}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					]
+				]);
+			});
+
 			it('deep watching', async () => {
 				const
 					target = await init();
@@ -348,12 +481,14 @@ module.exports = (page) => {
 						['mountedWatcher'],
 						['mountedWatcher']
 					],
+
 					[
 						{a: {b: {c: 3}}},
 						{a: {b: {c: 3}}},
 						['mountedWatcher'],
 						['mountedWatcher']
 					],
+
 					[
 						{a: {b: {d: 1}}},
 						{a: {b: {d: 1}}},
@@ -738,6 +873,118 @@ module.exports = (page) => {
 						2,
 						false,
 						['mountedArrayWatcher', 'length']
+					]
+				]);
+			});
+
+			it('watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher.a.c', (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {b: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {c: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{a: {c: 2}}, {}, false, ['mountedWatcher']],
+					[{a: {b: 3}}, {a: {c: 2}}, false, ['mountedWatcher']],
+					[{a: {c: 3}}, {a: {b: 3}}, false, ['mountedWatcher']],
+					[{a: {c: 5}}, {a: {c: 3}}, false, ['mountedWatcher']]
+				]);
+			});
+
+			it('immediate watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate((ctx) => {
+					const res = [];
+
+					ctx.watch('mountedWatcher.a.c', {immediate: true}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							i?.path,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+
+					ctx.mountedWatcher.a = {b: 3};
+
+					ctx.mountedWatcher.a = {c: 3};
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+
+					return res;
+				});
+
+				console.dir(scan, {depth: null});
+
+				expect(scan).toEqual([
+					[{}, undefined, undefined, undefined],
+
+					[
+						{a: {c: 2}},
+						{},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {b: 3}},
+						{a: {c: 2}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 3}},
+						{a: {b: 3}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 4}},
+						{a: {c: 3}},
+						['mountedWatcher'],
+						['mountedWatcher']
+					],
+
+					[
+						{a: {c: 5}},
+						{a: {c: 4}},
+						['mountedWatcher'],
+						['mountedWatcher']
 					]
 				]);
 			});
