@@ -12,7 +12,16 @@
  */
 
 import { isProxy } from 'core/object/watch';
-import { bindingRgxp, customWatcherRgxp, getPropertyInfo, SyncLinkCache } from 'core/component';
+import {
+
+	bindingRgxp,
+	customWatcherRgxp,
+	getPropertyInfo,
+
+	PropertyInfo,
+	SyncLinkCache
+
+} from 'core/component';
 
 import Friend from 'super/i-block/modules/friend';
 import { statuses } from 'super/i-block/const';
@@ -704,7 +713,7 @@ export default class Sync extends Friend {
 			return val;
 		};
 
-		const attachWatcher = (watchPath, destPath, getVal, clone?) => {
+		const attachWatcher = (watchPath, destPath, getVal, wrapper?) => {
 			Object.set(linksCache, destPath, true);
 
 			let
@@ -714,11 +723,10 @@ export default class Sync extends Friend {
 
 			if (!Object.isString(watchPath)) {
 				if (isProxy(watchPath)) {
-					isMountedWatcher = true;
 					info = {ctx: watchPath};
-					watchPath = undefined;
+				}
 
-				} else if (isProxy(watchPath?.ctx)) {
+				if (isProxy(watchPath?.ctx)) {
 					isMountedWatcher = true;
 					info = watchPath;
 					watchPath = info.path;
@@ -737,12 +745,7 @@ export default class Sync extends Friend {
 			}
 
 			const isAccessor = info != null ?
-				Boolean(
-					info.type === 'accessor' ||
-					info.type === 'computed' ||
-					info.accessor
-				) :
-
+				Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor) :
 				false;
 
 			const
@@ -753,7 +756,11 @@ export default class Sync extends Friend {
 				isolatedOpts.immediate = isolatedOpts.immediate !== false;
 			}
 
-			if (clone === true) {
+			if (wrapper == null && isolatedOpts.collapse !== true) {
+				isolatedOpts.collapse = false;
+			}
+
+			if (Object.size(wrapper) > 1) {
 				ctx.watch(info ?? watchPath, isolatedOpts, (val, oldVal) => {
 					if (isCustomWatcher) {
 						oldVal = undefined;
@@ -803,32 +810,69 @@ export default class Sync extends Friend {
 			}
 
 			if (isCustomWatcher) {
-				return ['custom'];
+				return ['custom', isolatedOpts];
 			}
 
 			if (isMountedWatcher) {
-				return ['mounted', info];
+				return ['mounted', isolatedOpts, info];
 			}
 
 			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				hooks.push({fn: () => sync(null, null, true)});
 			}
 
-			return ['regular', info];
+			return ['regular', isolatedOpts, info];
 		};
-
-		const
-			needCollapse = (<CanUndef<AsyncWatchOptions>>opts)?.collapse !== false;
 
 		for (let i = 0; i < fields.length; i++) {
 			const
 				el = fields[i];
 
-			if (Object.isArray(el)) {
-				let
-					wrapper,
-					watchPath;
+			let
+				type: string,
+				opts: AsyncWatchOptions,
+				info: PropertyInfo;
 
+			const createGetVal = (watchPath, wrapper) => (val?, oldVal?, init?: boolean) => {
+				if (init) {
+					switch (type) {
+						case 'regular':
+							val = this.field.get(opts.collapse ? info.originalTopPath : watchPath);
+							break;
+
+						case 'mounted': {
+							const
+								obj = info.ctx;
+
+							if (opts.collapse || Object.size(info.path) === 0) {
+								val = obj;
+
+							} else {
+								val = Object.get(obj, info.path);
+							}
+
+							break;
+						}
+
+						default:
+							val = undefined;
+							break;
+					}
+				}
+
+				if (wrapper == null) {
+					return val;
+				}
+
+				return wrapper.call(this.component, val, oldVal);
+			};
+
+			let
+				wrapper,
+				watchPath,
+				savePath;
+
+			if (Object.isArray(el)) {
 				if (el.length === 3) {
 					watchPath = el[1];
 					wrapper = el[2];
@@ -841,88 +885,20 @@ export default class Sync extends Friend {
 					watchPath = el[1];
 				}
 
-				const
-					savePath = el[0],
-					destPath = [path, savePath].join('.');
-
-				if (Object.get(linksCache, destPath) == null) {
-					// eslint-disable-next-line prefer-const
-					let type, info;
-
-					const getVal = (val?, oldVal?, init?: boolean) => {
-						if (init) {
-							switch (type) {
-								case 'regular':
-									val = this.field.get(needCollapse ? info.originalTopPath : watchPath);
-									break;
-
-								case 'mounted': {
-									const
-										obj = info.ctx;
-
-									if (Object.size(info.path) > 0) {
-										let
-											link = info.path;
-
-										if (needCollapse) {
-											if (Object.isString(link)) {
-												link = link.split('.', 1);
-
-											} else if (Object.isArray(link)) {
-												link = link.slice(0, 1);
-											}
-										}
-
-										val = Object.get(obj, link);
-
-									} else {
-										val = obj;
-									}
-
-									break;
-								}
-
-								default:
-									val = undefined;
-									break;
-							}
-						}
-
-						if (wrapper == null) {
-							return val;
-						}
-
-						return wrapper.call(this.component, val, oldVal);
-					};
-
-					[type, info] =
-						attachWatcher(watchPath, destPath, getVal, Object.size(wrapper) > 1);
-
-					Object.set(cursor, savePath, getVal(null, null, true));
-				}
+				savePath = el[0];
 
 			} else {
-				const
-					savePath = el,
-					destPath = [path, savePath].join('.');
+				watchPath = el;
+				savePath = el;
+			}
 
-				if (Object.get(linksCache, destPath) == null) {
-					// eslint-disable-next-line prefer-const
-					let type;
+			const
+				destPath = [path, savePath].join('.');
 
-					const getVal = (val?, oldVal?, init?: boolean) => {
-						if (init) {
-							return type === 'regular' ? this.field.get(el) : undefined;
-						}
-
-						return val;
-					};
-
-					[type] =
-						attachWatcher(el, destPath, getVal);
-
-					Object.set(cursor, savePath, getVal(null, null, true));
-				}
+			if (Object.get(linksCache, destPath) == null) {
+				const getVal = createGetVal(el, wrapper);
+				[type, opts, info] = attachWatcher(watchPath, destPath, getVal);
+				Object.set(cursor, savePath, getVal(null, null, true));
 			}
 		}
 
