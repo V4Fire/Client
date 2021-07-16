@@ -161,12 +161,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 				if (isMountedWatcher) {
 					val = info.ctx;
-
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					if (i != null && info.name != null) {
-						i.path = [info.name];
-						i.originalPath = i.path;
-					}
+					patchPath(i);
 
 				} else if (isAccessor) {
 					val = Object.get(info.ctx, info.accessor ?? info.name);
@@ -196,15 +191,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						oldVal = args[0],
 						handlerParams = args[1];
 
-					if (isDefinedPath ? !needCollapse : needCollapse) {
-						if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
-							handlerParams = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
-						}
-
-						if (needCollapse) {
-							val = info.ctx;
-							oldVal = val;
-						}
+					if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
+						handlerParams = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
 
 					} else if (args.length === 0) {
 						return originalHandler.call(this, val.map(([val, oldVal, i]) => {
@@ -213,27 +201,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						}));
 					}
 
+					if (needCollapse) {
+						val = info.ctx;
+						oldVal = val;
+					}
+
 					patchPath(handlerParams);
 					return originalHandler.call(this, val, oldVal, handlerParams);
-
-					function patchPath(params?: WatchHandlerParams) {
-						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-						if (params == null || info.name == null) {
-							return;
-						}
-
-						if (needCollapse) {
-							params.path = [info.name];
-							params.originalPath = params.path;
-
-						} else {
-							params.path.unshift(info.name);
-
-							if (params.path !== params.originalPath) {
-								params.originalPath.unshift(info.name);
-							}
-						}
-					}
 				};
 
 			} else if (isAccessor) {
@@ -485,6 +459,25 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		}
 
 		return attachDynamicWatcher(component, info, opts, handler);
+
+		function patchPath(params?: WatchHandlerParams) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (params == null || info.name == null) {
+				return;
+			}
+
+			if (needCollapse) {
+				params.path = [info.name];
+				params.originalPath = params.path;
+
+			} else {
+				params.path.unshift(info.name);
+
+				if (params.path !== params.originalPath) {
+					params.originalPath.unshift(info.name);
+				}
+			}
+		}
 
 		function getVal(): unknown {
 			if (info.type !== 'mounted') {
