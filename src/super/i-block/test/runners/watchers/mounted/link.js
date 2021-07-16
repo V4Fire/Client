@@ -188,6 +188,86 @@ module.exports = (page) => {
 				]);
 			});
 
+			it('watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch({ctx: ctx.mountedWatcher, path: 'a.c'}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1].path,
+							args[1].originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {b: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {c: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{a: {c: 2}}, {a: {c: 2}}, ['a', 'c'], ['a']],
+					[{a: {b: 3}}, {a: {b: 3}}, ['a', 'c'], ['a']],
+					[{a: {c: 3}}, {a: {c: 3}}, ['a', 'c'], ['a']],
+					[{a: {c: 5}}, {a: {c: 5}}, ['a', 'c'], ['a', 'c']]
+				]);
+			});
+
+			it('immediate watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate((ctx) => {
+					const res = [];
+
+					ctx.watch({ctx: ctx.mountedWatcher, path: ['a', 'c']}, {immediate: true}, (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+
+					ctx.mountedWatcher.a = {b: 3};
+
+					ctx.mountedWatcher.a = {c: 3};
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{}, {}, undefined, undefined],
+					[{a: {c: 2}}, {a: {c: 2}}, ['a', 'c'], ['a']],
+					[{a: {b: 3}}, {a: {b: 3}}, ['a', 'c'], ['a']],
+					[{a: {c: 3}}, {a: {c: 3}}, ['a', 'c'], ['a']],
+					[{a: {c: 4}}, {a: {c: 4}}, ['a', 'c'], ['a', 'c']],
+					[{a: {c: 5}}, {a: {c: 5}}, ['a', 'c'], ['a', 'c']]
+				]);
+			});
+
 			it('deep watching', async () => {
 				const
 					target = await init();
@@ -537,6 +617,86 @@ module.exports = (page) => {
 						false,
 						['a', 'b']
 					]
+				]);
+			});
+
+			it('watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch({ctx: ctx.mountedWatcher, path: 'a.c'}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {b: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a = {c: 3};
+					await ctx.nextTick();
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{a: {c: 2}}, {}, false, ['a']],
+					[{a: {b: 3}}, {a: {c: 2}}, false, ['a']],
+					[{a: {c: 3}}, {a: {b: 3}}, false, ['a']],
+					[{a: {c: 5}}, {a: {c: 3}}, false, ['a', 'c']]
+				]);
+			});
+
+			it('immediate watching for the specified path', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate((ctx) => {
+					const res = [];
+
+					ctx.watch({ctx: ctx.mountedWatcher, path: ['a', 'c']}, {immediate: true}, (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					ctx.mountedWatcher.a = {c: 2};
+
+					ctx.mountedWatcher.a = {b: 3};
+
+					ctx.mountedWatcher.a = {c: 3};
+
+					ctx.mountedWatcher.a.c++;
+					ctx.mountedWatcher.a.c++;
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[{}, undefined, false, undefined],
+					[{a: {c: 2}}, {}, false, ['a']],
+					[{a: {b: 3}}, {a: {c: 2}}, false, ['a']],
+					[{a: {c: 3}}, {a: {b: 3}}, false, ['a']],
+					[{a: {c: 4}}, {a: {c: 3}}, false, ['a', 'c']],
+					[{a: {c: 5}}, {a: {c: 4}}, false, ['a', 'c']]
 				]);
 			});
 

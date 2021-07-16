@@ -947,8 +947,6 @@ module.exports = (page) => {
 					return res;
 				});
 
-				console.dir(scan, {depth: null});
-
 				expect(scan).toEqual([
 					[{}, undefined, undefined, undefined],
 
