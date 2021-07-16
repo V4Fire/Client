@@ -68,14 +68,6 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	testField: any = undefined;
 
 	/**
-	 * Getter that depends on a value from the another component
-	 */
-	@computed({dependencies: ['r.isAuth']})
-	get remoteWatchableGetter(): boolean {
-		return this.r.isAuth;
-	}
-
-	/**
 	 * Links to directives
 	 */
 	get directives(): Directives {

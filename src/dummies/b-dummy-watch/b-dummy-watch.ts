@@ -71,6 +71,11 @@ export default class bDummyWatch extends iData {
 		return watch({}).proxy;
 	}
 
+	@computed({dependencies: ['r.isAuth']})
+	get remoteWatchableGetter(): boolean {
+		return this.r.isAuth;
+	}
+
 	static mods: ModsDecl = {
 		watchable: [
 			'val-1',

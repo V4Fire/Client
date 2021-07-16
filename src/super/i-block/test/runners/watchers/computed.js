@@ -27,7 +27,7 @@ module.exports = (page) => {
 		it('that depends on an external property', async () => {
 			const target = await init();
 
-			const res = await target.evaluate(async (ctx) => {
+			const scan = await target.evaluate(async (ctx) => {
 				const
 					res = [ctx.componentName, ctx.remoteWatchableGetter];
 
@@ -42,7 +42,7 @@ module.exports = (page) => {
 				return res;
 			});
 
-			expect(res).toEqual(['b-dummy', false, true, true]);
+			expect(scan).toEqual(['b-dummy-watch', false, true, true]);
 		});
 	});
 
@@ -57,7 +57,7 @@ module.exports = (page) => {
 				}
 			];
 
-			globalThis.renderComponents('b-dummy', scheme);
+			globalThis.renderComponents('b-dummy-watch', scheme);
 		}, attrs);
 
 		return h.component.waitForComponent(page, '#target');
