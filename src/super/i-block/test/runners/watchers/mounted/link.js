@@ -25,7 +25,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('i-block watch API with mounted objects passed by links', () => {
+	describe('i-block watching for mounted objects passed by links', () => {
 		describe('without caching of old values', () => {
 			it('non-deep watching', async () => {
 				const

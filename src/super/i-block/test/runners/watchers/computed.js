@@ -23,7 +23,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('i-block watching for a getter', () => {
+	describe('i-block watching for computed fields', () => {
 		it('that depends on an external property', async () => {
 			const target = await init();
 

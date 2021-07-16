@@ -25,7 +25,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('i-block watch API updating templates on changes', () => {
+	describe('i-block rendering templates on changes', () => {
 		it('updating a root level field should force rendering', async () => {
 			const
 				target = await init();
