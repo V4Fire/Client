@@ -218,26 +218,23 @@ module.exports = (page) => {
 
 						expect(scan).toEqual([
 							[
-								2,
-								undefined,
+								{a: {c: 2}},
+								{a: {b: 1}},
 								[field, 'a', 'c'],
 								[field]
 							],
-
 							[
-								undefined,
-								2,
+								{a: {b: 3}},
+								{a: {c: 2}},
 								[field, 'a', 'c'],
 								[field]
 							],
-
 							[
-								3,
-								undefined,
+								{a: {c: 3}},
+								{a: {b: 3}},
 								[field, 'a', 'c'],
 								[field]
 							],
-
 							[
 								{a: {c: 5}},
 								{a: {c: 5}},
@@ -285,22 +282,22 @@ module.exports = (page) => {
 							],
 
 							[
-								2,
-								undefined,
+								{a: {c: 2}},
+								{a: {b: 1}},
 								[field, 'a', 'c'],
 								[field]
 							],
 
 							[
-								undefined,
-								2,
+								{a: {b: 3}},
+								{a: {c: 2}},
 								[field, 'a', 'c'],
 								[field]
 							],
 
 							[
-								3,
-								undefined,
+								{a: {c: 3}},
+								{a: {b: 3}},
 								[field, 'a', 'c'],
 								[field]
 							],
@@ -699,6 +696,144 @@ module.exports = (page) => {
 								{a: {c: 2}},
 								false,
 								[field]
+							]
+						]);
+					});
+
+					it('watching for the specified path', async () => {
+						const
+							target = await init();
+
+						const scan = await target.evaluate(async (ctx, field) => {
+							const res = [];
+
+							ctx.watch(`${field}.a.c`, (val, oldVal, i) => {
+								res.push([
+									Object.fastClone(val),
+									Object.fastClone(oldVal),
+									val === oldVal,
+									i.originalPath
+								]);
+							});
+
+							ctx[field] = {a: {b: 1}};
+							ctx[field] = {a: {c: 2}};
+							await ctx.nextTick();
+
+							ctx[field] = {a: {b: 3}};
+							await ctx.nextTick();
+
+							ctx[field] = {a: {c: 3}};
+							await ctx.nextTick();
+
+							ctx[field].a.c++;
+							ctx[field].a.c++;
+							await ctx.nextTick();
+
+							return res;
+						}, field);
+
+						expect(scan).toEqual([
+							[
+								{a: {c: 2}},
+								{a: {b: {c: 1, d: 2}}},
+								false,
+								[field]
+							],
+
+							[
+								{a: {b: 3}},
+								{a: {c: 2}},
+								false,
+								[field]
+							],
+
+							[
+								{a: {c: 3}},
+								{a: {b: 3}},
+								false,
+								[field]
+							],
+
+							[
+								{a: {c: 5}},
+								{a: {c: 3}},
+								false,
+								[field, 'a', 'c']
+							]
+						]);
+					});
+
+					it('immediate watching for the specified path', async () => {
+						const
+							target = await init();
+
+						const scan = await target.evaluate((ctx, field) => {
+							const res = [];
+
+							ctx.watch(`${field}.a.c`, {immediate: true}, (val, oldVal, i) => {
+								res.push([
+									Object.fastClone(val),
+									Object.fastClone(oldVal),
+									val === oldVal,
+									i?.originalPath
+								]);
+							});
+
+							ctx[field] = {a: {b: 1}};
+							ctx[field] = {a: {c: 2}};
+
+							ctx[field] = {a: {b: 3}};
+
+							ctx[field] = {a: {c: 3}};
+
+							ctx[field].a.c++;
+							ctx[field].a.c++;
+
+							return res;
+						}, field);
+
+						expect(scan).toEqual([
+							[
+								{a: {b: {c: 1, d: 2}}},
+								undefined,
+								false,
+								undefined
+							],
+
+							[
+								{a: {c: 2}},
+								{a: {b: {c: 1, d: 2}}},
+								false,
+								[field]
+							],
+
+							[
+								{a: {b: 3}},
+								{a: {c: 2}},
+								false,
+								[field]
+							],
+
+							[
+								{a: {c: 3}},
+								{a: {b: 3}},
+								false,
+								[field]
+							],
+
+							[
+								{a: {c: 4}},
+								{a: {c: 3}},
+								false,
+								[field, 'a', 'c']
+							],
+
+							[
+								{a: {c: 5}},
+								{a: {c: 4}},
+								false,
+								[field, 'a', 'c']
 							]
 						]);
 					});
