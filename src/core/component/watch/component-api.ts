@@ -181,7 +181,9 @@ export function implementComponentWatchAPI(
 
 		for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 			const
-				[key, deps] = el.value,
+				[key, deps] = el.value;
+
+			const
 				newDeps = <typeof deps>[];
 
 			let
@@ -198,7 +200,7 @@ export function implementComponentWatchAPI(
 					continue;
 				}
 
-				if (info.ctx === component) {
+				if (info.ctx === component && !watchDependencies.has(dep)) {
 					needForkDeps = true;
 					newDeps[j] = info.path;
 					continue;
