@@ -187,7 +187,7 @@ export function implementComponentWatchAPI(
 				const
 					info = getPropertyInfo(Array.concat([], deps[j]).join('.'), component);
 
-				if (info.type === 'mounted' || info.ctx === component) {
+				if (info.type === 'mounted' || info.ctx === component && info.path === info.fullPath) {
 					continue;
 				}
 
