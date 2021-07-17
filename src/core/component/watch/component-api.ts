@@ -181,18 +181,26 @@ export function implementComponentWatchAPI(
 
 		for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 			const
-				[key, deps] = el.value;
+				[key, deps] = el.value,
+				newDeps = <typeof deps>[];
+
+			let
+				needForkDeps = false;
 
 			for (let j = 0; j < deps.length; j++) {
 				const
-					info = getPropertyInfo(Array.concat([], deps[j]).join('.'), component);
+					dep = deps[j],
+					info = getPropertyInfo(Array.concat([], dep).join('.'), component);
+
+				newDeps[j] = dep;
 
 				if (info.type === 'mounted') {
 					continue;
 				}
 
 				if (info.ctx === component) {
-					deps[j] = info.path;
+					needForkDeps = true;
+					newDeps[j] = info.path;
 					continue;
 				}
 
@@ -234,6 +242,10 @@ export function implementComponentWatchAPI(
 				};
 
 				attachDynamicWatcher(component, info, watchOpts, broadcastEvents, dynamicHandlers);
+			}
+
+			if (needForkDeps) {
+				watchDependencies.set(key, newDeps);
 			}
 		}
 	}
