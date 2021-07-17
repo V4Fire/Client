@@ -28,6 +28,9 @@ module.exports = (page) => {
 			const target = await init();
 
 			const scan = await target.evaluate(async (ctx) => {
+				ctx.r.isAuth = false;
+				await ctx.nextTick();
+
 				const
 					res = [ctx.componentName, ctx.remoteWatchableGetter];
 
@@ -43,6 +46,64 @@ module.exports = (page) => {
 			});
 
 			expect(scan).toEqual(['b-dummy-watch', false, true, true]);
+		});
+
+		it('non-deep watching', async () => {
+			const
+				target = await init();
+
+			const scan = await target.evaluate(async (ctx) => {
+				ctx.r.isAuth = false;
+				await ctx.nextTick();
+
+				const
+					res = [];
+
+				ctx.watch('smartComputed', (val, ...args) => {
+					res.push([
+						Object.fastClone(val),
+						Object.fastClone(args[0]),
+						args[1].path,
+						args[1].originalPath
+					]);
+				});
+
+				ctx.complexObjStore = {a: {b: {c: 3}}};
+				ctx.systemComplexObjStore = {a: {b: {c: 2}}};
+				await ctx.nextTick();
+
+				ctx.r.isAuth = true;
+				await ctx.nextTick();
+
+				ctx.complexObjStore.a.b.c++;
+				ctx.complexObjStore.a.b.c++;
+				await ctx.nextTick();
+
+				return res;
+			});
+
+			expect(scan).toEqual([
+				[
+					{a: {b: {c: 3}}, b: 12, remoteWatchableGetter: false},
+					undefined,
+					['smartComputed'],
+					['complexObjStore']
+				],
+
+				[
+					{a: {b: {c: 3}}, b: 12, remoteWatchableGetter: true},
+					{a: {b: {c: 3}}, b: 12, remoteWatchableGetter: false},
+					['smartComputed'],
+					['isAuth']
+				],
+
+				[
+					{a: {b: {c: 5}}, b: 12, remoteWatchableGetter: true},
+					{a: {b: {c: 3}}, b: 12, remoteWatchableGetter: true},
+					['smartComputed'],
+					['complexObjStore', 'a', 'b', 'c']
+				]
+			]);
 		});
 	});
 

@@ -51,6 +51,11 @@ export default class bDummyWatch extends iData {
 		return Object.fastClone(this.complexObjStore);
 	}
 
+	@computed({dependencies: ['r.isAuth']})
+	get remoteWatchableGetter(): boolean {
+		return this.r.isAuth;
+	}
+
 	@computed({cache: true, dependencies: ['complexObjStore']})
 	get cachedComplexObj(): Dictionary {
 		return Object.fastClone(this.complexObjStore);
@@ -61,6 +66,15 @@ export default class bDummyWatch extends iData {
 		return Object.fastClone(this.systemComplexObjStore);
 	}
 
+	@computed({dependencies: ['cachedComplexObj', 'systemComplexObjStore', 'remoteWatchableGetter']})
+	get smartComputed(): Dictionary {
+		return {
+			a: this.cachedComplexObj.a,
+			b: (this.field.get<number>('systemComplexObjStore.a.b.c') ?? 0) + 10,
+			remoteWatchableGetter: this.remoteWatchableGetter
+		};
+	}
+
 	@computed({cache: true, watchable: true})
 	get mountedArrayWatcher(): any[] {
 		return watch([]).proxy;
@@ -69,11 +83,6 @@ export default class bDummyWatch extends iData {
 	@computed({cache: true, watchable: true})
 	get mountedWatcher(): Dictionary {
 		return watch({}).proxy;
-	}
-
-	@computed({dependencies: ['r.isAuth']})
-	get remoteWatchableGetter(): boolean {
-		return this.r.isAuth;
 	}
 
 	static mods: ModsDecl = {
