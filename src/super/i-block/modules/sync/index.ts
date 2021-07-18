@@ -358,7 +358,15 @@ export default class Sync extends Friend {
 		};
 
 		if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
-			ctx.watch(info ?? normalizedPath, resolvedOpts, (val, oldVal) => {
+			ctx.watch(info ?? normalizedPath, resolvedOpts, (val, oldVal, ...args) => {
+				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+					const
+						mutation = <[unknown, unknown]>val[val.length - 1];
+
+					val = mutation[0];
+					oldVal = mutation[1];
+				}
+
 				if (isCustomWatcher) {
 					oldVal = undefined;
 
@@ -374,8 +382,16 @@ export default class Sync extends Friend {
 				let
 					oldVal;
 
+				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+					const
+						mutation = <[unknown, unknown]>val[val.length - 1];
+
+					val = mutation[0];
+					oldVal = mutation[1];
+				}
+
 				if (!isCustomWatcher) {
-					oldVal = args[0];
+					oldVal ??= args[0];
 
 					if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
 						return;
@@ -760,8 +776,16 @@ export default class Sync extends Friend {
 				isolatedOpts.collapse = false;
 			}
 
-			if (Object.size(wrapper) > 1) {
-				ctx.watch(info ?? watchPath, isolatedOpts, (val, oldVal) => {
+			if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
+				ctx.watch(info ?? watchPath, isolatedOpts, (val, oldVal, ...args) => {
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const
+							mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+					}
+
 					if (isCustomWatcher) {
 						oldVal = undefined;
 
@@ -777,8 +801,16 @@ export default class Sync extends Friend {
 					let
 						oldVal;
 
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const
+							mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+					}
+
 					if (!isCustomWatcher) {
-						oldVal = args[0];
+						oldVal ??= args[0];
 
 						if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
 							return;
