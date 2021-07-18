@@ -171,9 +171,71 @@ module.exports = (page) => {
 					]
 				]);
 			});
+
+			it('watching for chained getters', async () => {
+				const target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.watch('cachedComplexObj', (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.watch('cachedComplexDecorator', (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1]?.path,
+							args[1]?.originalPath
+						]);
+					});
+
+					ctx.complexObjStore = {a: 1};
+					await ctx.nextTick();
+
+					ctx.complexObjStore.a++;
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						{a: 1},
+						undefined,
+						['cachedComplexDecorator'],
+						['complexObjStore']
+					],
+					[
+						{a: 1},
+						undefined,
+						['cachedComplexObj'],
+						['complexObjStore']
+					],
+					[
+						{a: 2},
+						{a: 1},
+						['cachedComplexDecorator'],
+						['complexObjStore', 'a']
+					],
+					[
+						{a: 2},
+						{a: 1},
+						['cachedComplexObj'],
+						['complexObjStore', 'a']
+					]
+				]);
+			});
 		});
 
-		describe('wit caching of old values', () => {
+		describe('with caching of old values', () => {
 			it('non-deep watching', async () => {
 				const
 					target = await init();
@@ -302,6 +364,74 @@ module.exports = (page) => {
 						false,
 						['smartComputed'],
 						['complexObjStore', 'a', 'b', 'c']
+					]
+				]);
+			});
+
+			it('watching for chained getters', async () => {
+				const target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const
+						res = [];
+
+					ctx.watch('cachedComplexObj', (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.path,
+							i?.originalPath
+						]);
+					});
+
+					ctx.watch('cachedComplexDecorator', (val, oldVal, i) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(oldVal),
+							val === oldVal,
+							i?.path,
+							i?.originalPath
+						]);
+					});
+
+					ctx.complexObjStore = {a: 1};
+					await ctx.nextTick();
+
+					ctx.complexObjStore.a++;
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						{a: 1},
+						undefined,
+						false,
+						['cachedComplexDecorator'],
+						['complexObjStore']
+					],
+					[
+						{a: 1},
+						undefined,
+						false,
+						['cachedComplexObj'],
+						['complexObjStore']
+					],
+					[
+						{a: 2},
+						{a: 1},
+						false,
+						['cachedComplexDecorator'],
+						['complexObjStore', 'a']
+					],
+					[
+						{a: 2},
+						{a: 1},
+						false,
+						['cachedComplexObj'],
+						['complexObjStore', 'a']
 					]
 				]);
 			});

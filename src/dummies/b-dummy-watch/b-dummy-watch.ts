@@ -61,6 +61,11 @@ export default class bDummyWatch extends iData {
 		return Object.fastClone(this.complexObjStore);
 	}
 
+	@computed({dependencies: ['cachedComplexObj']})
+	get cachedComplexDecorator(): Dictionary {
+		return Object.fastClone(this.cachedComplexObj);
+	}
+
 	@computed({cache: false})
 	get systemComplexObj(): Dictionary {
 		return Object.fastClone(this.systemComplexObjStore);
