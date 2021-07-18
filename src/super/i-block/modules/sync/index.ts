@@ -896,7 +896,7 @@ export default class Sync extends Friend {
 				destPath = [path, savePath].join('.');
 
 			if (Object.get(linksCache, destPath) == null) {
-				const getVal = createGetVal(el, wrapper);
+				const getVal = createGetVal(watchPath, wrapper);
 				[type, opts, info] = attachWatcher(watchPath, destPath, getVal);
 				Object.set(cursor, savePath, getVal(null, null, true));
 			}
