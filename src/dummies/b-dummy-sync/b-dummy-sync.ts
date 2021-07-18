@@ -11,7 +11,8 @@
  * @packageDocumentation
  */
 
-import iData, { component, field, prop, system } from 'super/i-data/i-data';
+import watch from 'core/object/watch';
+import iData, { component, prop, field, system, computed } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 
@@ -62,4 +63,9 @@ export default class bDummySync extends iData {
 	})
 
 	watchableObject!: Dictionary;
+
+	@computed({cache: true, watchable: true})
+	get mountedWatcher(): Dictionary {
+		return watch({a: {b: 1}}).proxy;
+	}
 }
