@@ -33,7 +33,6 @@ import iData, {
 
 	component,
 	field,
-	computed,
 	hook,
 	wait,
 	ModsNTable
@@ -61,15 +60,9 @@ interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM
 
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
-	/**
-	 * Field for test purposes
-	 */
 	@field()
 	testField: any = undefined;
 
-	/**
-	 * Links to directives
-	 */
 	get directives(): Directives {
 		return {
 			imageFactory: imageLoaderFactory,
@@ -80,9 +73,6 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 		};
 	}
 
-	/**
-	 * Link to the modules
-	 */
 	get modules(): Modules {
 		return {
 			resizeWatcher: ResizeWatcher,

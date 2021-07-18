@@ -23,9 +23,6 @@ export * from 'super/i-data/i-data';
 })
 
 export default class bDummySync extends iData {
-	/**
-	 * Prop for test purposes
-	 */
 	@prop(Object)
 	readonly dictProp: Dictionary = {
 		a: {
@@ -34,25 +31,26 @@ export default class bDummySync extends iData {
 		}
 	};
 
-	/**
-	 * Field for test purposes
-	 */
 	@field((o) => o.sync.link())
 	dict!: Dictionary;
 
-	/**
-	 * Field for test purposes
-	 */
 	@field({
 		after: 'dict',
-		init: (o) => o.sync.link('dict.a.b', {immediate: true, collapse: false}, (val: number) => val + 1)
+		init: (o) => o.sync.link('dict.a.b')
+	})
+
+	linkToNestedField!: number;
+
+	@field({
+		after: 'dict',
+		init: (o) => o.sync.link('dict.a.b', {collapse: false}, (val: number) => val + 1)
 	})
 
 	linkToNestedFieldWithInitializer!: number;
 
-	/**
-	 * Field for test purposes
-	 */
+	@system((o) => o.sync.link('dict.a.b', {immediate: true, collapse: false}, (val: number) => val + 1))
+	immediateLinkToNestedFieldWithInitializerFromSystemToField!: number;
+
 	@field({
 		after: 'dict',
 		init: (o) => o.sync.object({deep: true, immediate: true, collapse: false}, [

@@ -23,15 +23,9 @@ export * from 'super/i-data/i-data';
 })
 
 export default class bDummyLfc extends iData {
-	/**
-	 * Field for test purposes
-	 */
 	@field()
 	foo: number = 1;
 
-	/**
-	 * Field for test purposes
-	 */
 	@field()
 	bar: number = 2;
 
