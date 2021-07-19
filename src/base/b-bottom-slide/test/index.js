@@ -6,10 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// @ts-check
+
 /**
- * [[include:core/prelude/test-env/README.md]]
- * @packageDocumentation
+ * @typedef {import('playwright').Page} Page
  */
 
-import 'core/prelude/test-env/components';
-import 'core/prelude/test-env/gestures';
+const
+	u = include('tests/utils');
+
+module.exports = (...args) => u.getCurrentTest()(...args);

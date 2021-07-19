@@ -17,7 +17,8 @@ const
 	Component = require('./component'),
 	Scroll = require('./scroll'),
 	Router = require('./router'),
-	Request = require('./request');
+	Request = require('./request'),
+	Gestures = require('./gestures');
 
 class Helpers {
 	/** @see Request */
@@ -28,6 +29,9 @@ class Helpers {
 
 	/** @see Component */
 	component = new Component(this);
+
+	/** @see Gestures */
+	gestures = new Gestures();
 
 	/** @see BOM */
 	bom = new BOM(this);

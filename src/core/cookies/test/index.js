@@ -31,7 +31,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			context = await browser.newContext(contextOpts);
 
 			page = await context.newPage();
-			page.goto(initialUrl);
+			await page.goto(initialUrl);
 
 			dummyComponent = await h.component.waitForComponent(page, '.b-dummy');
 			cookie = await dummyComponent.evaluateHandle(({modules: {cookie}}) => cookie);

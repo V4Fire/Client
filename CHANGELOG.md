@@ -61,6 +61,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed `jasmine` deps in the `runtime.debug` mode `super/i-static-page`
 
+#### :bug: Bug Fix
+
+[Fixed an issue that allows for pulling an element far away from the bottom `base/b-bottom-slide`](https://github.com/V4Fire/Client/issues/463)
+Fixed an issue with element not being visible if the `visible` prop was provided and the `contentMode` was `content` `base/b-bottom-slide`
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :boom: Breaking Change

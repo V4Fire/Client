@@ -28,6 +28,7 @@ module.exports = [
 	'--test-entry base/b-sidebar/test',
 	'--test-entry base/b-slider/test --device iPhone_11',
 	'--test-entry base/b-window/test',
+	'--test-entry base/b-bottom-slide/test',
 
 	'--test-entry icons/b-icon/test',
 	'--test-entry base/b-image/test',

@@ -30,7 +30,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			context = await browser.newContext(contextOpts);
 
 			page = await context.newPage();
-			page.goto(initialUrl);
+			await page.goto(initialUrl);
 		});
 
 		afterEach(() => context.close());
