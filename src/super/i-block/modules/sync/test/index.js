@@ -162,6 +162,44 @@ module.exports = async (page, params) => {
 			});
 
 			describe('without using a decorator', () => {
+				it('linking to an event', async () => {
+					const scan = await target.evaluate((ctx) => {
+						const res = [ctx.sync.link(['bla', 'localEmitter:foo'])];
+
+						ctx.localEmitter.emit('foo', 1);
+						res.push(ctx.bla);
+
+						ctx.localEmitter.emit('foo', 2);
+						res.push(ctx.bla);
+
+						ctx.localEmitter.emit('foo', 3);
+						res.push(ctx.bla);
+
+						return res;
+					});
+
+					expect(scan).toEqual([undefined, 1, 2, 3]);
+				});
+
+				it('linking to an event with an initializer', async () => {
+					const scan = await target.evaluate((ctx) => {
+						const res = [ctx.sync.link(['bla', 'localEmitter:foo'], (val) => val + 1)];
+
+						ctx.localEmitter.emit('foo', 1);
+						res.push(ctx.bla);
+
+						ctx.localEmitter.emit('foo', 2);
+						res.push(ctx.bla);
+
+						ctx.localEmitter.emit('foo', 3);
+						res.push(ctx.bla);
+
+						return res;
+					});
+
+					expect(scan).toEqual([NaN, 2, 3, 4]);
+				});
+
 				it('linking to a field', async () => {
 					const scan = await target.evaluate(async (ctx) => {
 						const res = [
@@ -359,6 +397,50 @@ module.exports = async (page, params) => {
 
 		describe('object', () => {
 			describe('without using a decorator', () => {
+				it('linking to an event', async () => {
+					const scan = await target.evaluate((ctx) => {
+						const res = [Object.fastClone(ctx.sync.object('bla', [['foo', 'localEmitter:foo']]))];
+
+						ctx.localEmitter.emit('foo', 1);
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.localEmitter.emit('foo', 2);
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.localEmitter.emit('foo', 3);
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.localEmitter.emit('foo', undefined);
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([{}, {foo: 1}, {foo: 2}, {foo: 3}, {}]);
+				});
+
+				it('linking to an event with an initializer', async () => {
+					const scan = await target.evaluate((ctx) => {
+						const res = [Object.fastClone(ctx.sync.object('bla', [['foo', 'localEmitter:foo', (val) => val + 1]]))];
+
+						ctx.localEmitter.emit('foo', 1);
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.localEmitter.emit('foo', 2);
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.localEmitter.emit('foo', 3);
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.localEmitter.emit('foo', undefined);
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([{foo: null}, {foo: 2}, {foo: 3}, {foo: 4}, {foo: null}]);
+				});
+
 				it('linking to a field', async () => {
 					const scan = await target.evaluate(async (ctx) => {
 						const res = [
