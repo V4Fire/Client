@@ -374,19 +374,21 @@ export default class Sync extends Friend {
 
 		if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
 			ctx.watch(info ?? normalizedPath, resolvedOpts, (val, oldVal, ...args) => {
-				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-					const
-						mutation = <[unknown, unknown]>val[val.length - 1];
-
-					val = mutation[0];
-					oldVal = mutation[1];
-				}
-
 				if (isCustomWatcher) {
 					oldVal = undefined;
 
-				} else if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
-					return;
+				} else {
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const
+							mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+					}
+
+					if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
+						return;
+					}
 				}
 
 				sync(val, oldVal);
@@ -395,18 +397,19 @@ export default class Sync extends Friend {
 		} else {
 			ctx.watch(info ?? normalizedPath, resolvedOpts, (val, ...args) => {
 				let
-					oldVal;
-
-				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-					const
-						mutation = <[unknown, unknown]>val[val.length - 1];
-
-					val = mutation[0];
-					oldVal = mutation[1];
-				}
+					oldVal: unknown = undefined;
 
 				if (!isCustomWatcher) {
-					oldVal ??= args[0];
+					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+						const
+							mutation = <[unknown, unknown]>val[val.length - 1];
+
+						val = mutation[0];
+						oldVal = mutation[1];
+
+					} else {
+						oldVal ??= args[0];
+					}
 
 					if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
 						return;
@@ -808,19 +811,21 @@ export default class Sync extends Friend {
 
 			if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
 				ctx.watch(info ?? watchPath, isolatedOpts, (val, oldVal, ...args) => {
-					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-						const
-							mutation = <[unknown, unknown]>val[val.length - 1];
-
-						val = mutation[0];
-						oldVal = mutation[1];
-					}
-
 					if (isCustomWatcher) {
 						oldVal = undefined;
 
-					} else if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
-						return;
+					} else {
+						if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+							const
+								mutation = <[unknown, unknown]>val[val.length - 1];
+
+							val = mutation[0];
+							oldVal = mutation[1];
+						}
+
+						if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
+							return;
+						}
 					}
 
 					sync(val, oldVal);
@@ -829,18 +834,19 @@ export default class Sync extends Friend {
 			} else {
 				ctx.watch(info ?? watchPath, isolatedOpts, (val, ...args) => {
 					let
-						oldVal;
-
-					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
-						const
-							mutation = <[unknown, unknown]>val[val.length - 1];
-
-						val = mutation[0];
-						oldVal = mutation[1];
-					}
+						oldVal: unknown = undefined;
 
 					if (!isCustomWatcher) {
-						oldVal ??= args[0];
+						if (args.length === 0 && Object.isArray(val) && val.length > 0) {
+							const
+								mutation = <[unknown, unknown]>val[val.length - 1];
+
+							val = mutation[0];
+							oldVal = mutation[1];
+
+						} else {
+							oldVal ??= args[0];
+						}
 
 						if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
 							return;
