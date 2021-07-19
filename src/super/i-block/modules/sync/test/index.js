@@ -231,6 +231,34 @@ module.exports = async (page, params) => {
 					]);
 				});
 
+				it('immediate linking to a field', async () => {
+					const scan = await target.evaluate((ctx) => {
+						const res = [
+							Object.fastClone(ctx.dict),
+							Object.fastClone(ctx.sync.link(['bla', 'dict']))
+						];
+
+						ctx.dict.a.b++;
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a.b++;
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a = {e: 1};
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						{a: {b: 2, c: 3}},
+						{a: {b: 2, c: 3}},
+						{a: {b: 3, c: 3}},
+						{a: {b: 4, c: 3}},
+						{a: {e: 1}}
+					]);
+				});
+
 				it('linking to a nested field', async () => {
 					const scan = await target.evaluate(async (ctx) => {
 						const res = [
@@ -489,6 +517,28 @@ module.exports = async (page, params) => {
 
 						ctx.dict.a = {e: 1};
 						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {}]);
+				});
+
+				it('immediate linking to a nested field', async () => {
+					const scan = await target.evaluate((ctx) => {
+						const res = [
+							ctx.dict.a.b,
+							Object.fastClone(ctx.sync.object('bla', {immediate: true}, [['foo', 'dict.a.b']]))
+						];
+
+						ctx.dict.a.b++;
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a.b++;
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a = {e: 1};
 						res.push(Object.fastClone(ctx.bla));
 
 						return res;
