@@ -953,7 +953,7 @@ export default class Sync extends Friend {
 	 * @param path - path to a property/event that we are referring or
 	 *   [path to a property that contains a link, path to a property/event that we are referring]
 	 *
-	 * @param [value] - additional value for sync
+	 * @param [value] - value to synchronize links
 	 */
 	syncLinks(path?: LinkDecl, value?: unknown): void {
 		let
@@ -975,7 +975,7 @@ export default class Sync extends Friend {
 			const
 				o = cache.get(linkName);
 
-			if (!o) {
+			if (o == null) {
 				return;
 			}
 
@@ -984,12 +984,12 @@ export default class Sync extends Friend {
 					key = keys[i],
 					el = o[key];
 
-				if (!el) {
+				if (el == null) {
 					continue;
 				}
 
 				if (storePath == null || key === storePath) {
-					el.sync(value);
+					el.sync(value ?? this.field.get(linkName));
 				}
 			}
 		};
