@@ -356,5 +356,214 @@ module.exports = async (page, params) => {
 				});
 			});
 		});
+
+		describe('object', () => {
+			describe('without using a decorator', () => {
+				it('linking to a field', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							Object.fastClone(ctx.dict),
+							Object.fastClone(ctx.sync.object('bla', ['dict']))
+						];
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						{a: {b: 2, c: 3}},
+						{dict: {a: {b: 2, c: 3}}},
+						{dict: {a: {b: 3, c: 3}}},
+						{dict: {a: {b: 4, c: 3}}},
+						{dict: {a: {e: 1}}}
+					]);
+				});
+
+				it('linking to a nested field', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							ctx.dict.a.b,
+							Object.fastClone(ctx.sync.object('bla', [['foo', 'dict.a.b']]))
+						];
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: 4}]);
+				});
+
+				it('linking to a nested field with an initializer', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							ctx.dict.a.b,
+							ctx.sync.object('bla.bar', [['foo', 'dict.a.b', (val) => val + 1]])
+						];
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.dict.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						2,
+						{bar: {foo: 3}},
+						{bar: {foo: 4}},
+						{bar: {foo: 5}},
+						{bar: {foo: null}}
+					]);
+				});
+
+				it('linking to a field from the mounted watcher passed by a path', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							Object.fastClone(ctx.mountedWatcher),
+							Object.fastClone(ctx.sync.object('bla', [['bla', 'mountedWatcher']]))
+						];
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						{a: {b: 1}},
+						{bla: {a: {b: 1}}},
+						{bla: {a: {b: 2}}},
+						{bla: {a: {b: 3}}},
+						{bla: {a: {e: 1}}}
+					]);
+				});
+
+				it('linking to a field from the mounted watcher passed by a link', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							Object.fastClone(ctx.mountedWatcher),
+							Object.fastClone(ctx.sync.object('bla', [['bla', ctx.mountedWatcher]]))
+						];
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						{a: {b: 1}},
+						{bla: {a: {b: 1}}},
+						{bla: {a: {b: 2}}},
+						{bla: {a: {b: 3}}},
+						{bla: {a: {e: 1}}}
+					]);
+				});
+
+				it('linking to a nested field from the mounted watcher passed by a path', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							ctx.mountedWatcher.a.b,
+							Object.fastClone(ctx.sync.object('bla', [['bla', 'mountedWatcher.a.b']]))
+						];
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {bla: 3}]);
+				});
+
+				it('linking to a nested field from the mounted watcher passed by a link', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							Object.fastClone(ctx.mountedWatcher.a),
+							Object.fastClone(ctx.sync.object('bla', [['bla', {ctx: ctx.mountedWatcher, path: 'a'}]]))
+						];
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						{b: 1},
+						{bla: {b: 1}},
+						{bla: {b: 2}},
+						{bla: {b: 3}},
+						{bla: {e: 1}}
+					]);
+				});
+			});
+		});
 	});
 };

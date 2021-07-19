@@ -757,12 +757,13 @@ export default class Sync extends Friend {
 				topPathIndex = 1;
 
 			if (!Object.isString(watchPath)) {
+				isMountedWatcher = true;
+
 				if (isProxy(watchPath)) {
 					info = {ctx: watchPath};
-				}
+					watchPath = undefined;
 
-				if (isProxy(watchPath?.ctx)) {
-					isMountedWatcher = true;
+				} else {
 					info = watchPath;
 					watchPath = info.path;
 					topPathIndex = 0;
@@ -970,6 +971,7 @@ export default class Sync extends Friend {
 			}
 		}
 
+		this.field.set(path, cursor);
 		return resObj;
 	}
 
