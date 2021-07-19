@@ -412,7 +412,7 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: 4}]);
+					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {}]);
 				});
 
 				it('linking to a nested field with an initializer', async () => {
@@ -439,7 +439,7 @@ module.exports = async (page, params) => {
 
 					expect(scan).toEqual([
 						2,
-						{bar: {foo: 3}},
+						{bar: {foo: NaN}},
 						{bar: {foo: 4}},
 						{bar: {foo: 5}},
 						{bar: {foo: null}}
@@ -530,7 +530,7 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {bla: 3}]);
+					expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {}]);
 				});
 
 				it('linking to a nested field from the mounted watcher passed by a link', async () => {

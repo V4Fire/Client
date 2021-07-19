@@ -719,34 +719,6 @@ export default class Sync extends Friend {
 		const
 			cursor = Object.get<StrictDictionary>(resObj, localPath);
 
-		const merge = (...args) => Object.mixin({
-			deep: true,
-			extendFilter: (el) => Object.isDictionary(el)
-		}, undefined, ...args);
-
-		const setField = (path, val) => {
-			if (destHead == null) {
-				return val;
-			}
-
-			const
-				localPath = path.split('.').slice(1);
-
-			let
-				newObj;
-
-			if (localPath.length > 0) {
-				newObj = {};
-				Object.set(newObj, localPath, val);
-
-			} else {
-				newObj = val;
-			}
-
-			this.field.set(destHead, merge(this.field.get(destHead), newObj));
-			return val;
-		};
-
 		const attachWatcher = (watchPath, destPath, getVal, wrapper?) => {
 			Object.set(linksCache, destPath, true);
 
@@ -786,7 +758,7 @@ export default class Sync extends Friend {
 				false;
 
 			const
-				sync = (val?, oldVal?, init?) => setField(destPath, getVal(val, oldVal, init)),
+				sync = (val?, oldVal?, init?) => this.field.set(destPath, getVal(val, oldVal, init)),
 				isolatedOpts = <AsyncWatchOptions>{...opts};
 
 			if (isAccessor) {
