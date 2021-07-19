@@ -54,7 +54,7 @@ export default class bDummySync extends iData {
 
 	@field({
 		after: 'dict',
-		init: (o) => o.sync.object({deep: true, immediate: true}, [
+		init: (o) => o.sync.object([
 			'dict',
 			['linkToNestedFieldWithInitializer', (val) => Number(val) * 2],
 			['linkToPath', 'dict.a.b'],

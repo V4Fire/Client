@@ -51,49 +51,49 @@ module.exports = async (page, params) => {
 	});
 
 	describe('`iBlock.sync`', () => {
-		// it('checking the initial values', async () => {
-		// 	expect(
-		// 		await target.evaluate((ctx) => ({
-		// 			dict: Object.fastClone(ctx.dict),
-		// 			linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
-		// 			watchableObject: Object.fastClone(ctx.watchableObject)
-		// 		}))
-		// 	).toEqual({
-		// 		dict: {a: {b: 2, c: 3}},
-		// 		linkToNestedFieldWithInitializer: 3,
-		// 		watchableObject: {
-		// 			dict: {a: {b: 2, c: 3}},
-		// 			linkToNestedFieldWithInitializer: 6,
-		// 			linkToPath: 2,
-		// 			linkToPathWithInitializer: 6
-		// 		}
-		// 	});
-		// });
-		//
-		// it('changing some values', async () => {
-		// 	expect(
-		// 		await target.evaluate(async (ctx) => {
-		// 			ctx.dict.a.b++;
-		// 			ctx.dict.a.c++;
-		// 			await ctx.nextTick();
-		//
-		// 			return {
-		// 				dict: Object.fastClone(ctx.dict),
-		// 				linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
-		// 				watchableObject: Object.fastClone(ctx.watchableObject)
-		// 			};
-		// 		})
-		// 	).toEqual({
-		// 		dict: {a: {b: 3, c: 4}},
-		// 		linkToNestedFieldWithInitializer: 4,
-		// 		watchableObject: {
-		// 			dict: {a: {b: 3, c: 4}},
-		// 			linkToNestedFieldWithInitializer: 8,
-		// 			linkToPath: 3,
-		// 			linkToPathWithInitializer: 8
-		// 		}
-		// 	});
-		// });
+		it('checking the initial values', async () => {
+			expect(
+				await target.evaluate((ctx) => ({
+					dict: Object.fastClone(ctx.dict),
+					linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
+					watchableObject: Object.fastClone(ctx.watchableObject)
+				}))
+			).toEqual({
+				dict: {a: {b: 2, c: 3}},
+				linkToNestedFieldWithInitializer: 3,
+				watchableObject: {
+					dict: {a: {b: 2, c: 3}},
+					linkToNestedFieldWithInitializer: 6,
+					linkToPath: 2,
+					linkToPathWithInitializer: 6
+				}
+			});
+		});
+
+		it('changing some values', async () => {
+			expect(
+				await target.evaluate(async (ctx) => {
+					ctx.dict.a.b++;
+					ctx.dict.a.c++;
+					await ctx.nextTick();
+
+					return {
+						dict: Object.fastClone(ctx.dict),
+						linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
+						watchableObject: Object.fastClone(ctx.watchableObject)
+					};
+				})
+			).toEqual({
+				dict: {a: {b: 3, c: 4}},
+				linkToNestedFieldWithInitializer: 4,
+				watchableObject: {
+					dict: {a: {b: 3, c: 4}},
+					linkToNestedFieldWithInitializer: 8,
+					linkToPath: 3,
+					linkToPathWithInitializer: 8
+				}
+			});
+		});
 
 		describe('link', () => {
 			describe('by using a decorator', () => {
