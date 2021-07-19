@@ -29,7 +29,7 @@ export const
 		for (let i = 0; i < events.length; i++) {
 			const
 				el = events[i],
-				chunks = el.split('.');
+				chunks = el.split('.', 2);
 
 			if (chunks[0] === 'constructor') {
 				initEventOnce(el, listener, opts);

@@ -23,7 +23,7 @@ import type { PropertyInfo } from 'core/component/reflection/interface';
  * @component()
  * class bButton {
  *   @system()
- *   fooStore = 'bla';
+ *   fooStore = {bla: 'bar'};
  *
  *   get foo() {
  *     return this.fooStore;
@@ -32,14 +32,16 @@ import type { PropertyInfo } from 'core/component/reflection/interface';
  *   created() {
  *     // {
  *     //   name: 'fooStore',
- *     //   path: 'fooStore',
- *     //   fullPath: '$root.$refs.button.fooStore',
- *     //   originalPath: '$root.$refs.button.foo',
+ *     //   path: 'fooStore.bar',
+ *     //   fullPath: '$root.$refs.button.fooStore.bar',
+ *     //   topPath: '$root.$refs.button.fooStore',
+ *     //   originalPath: '$root.$refs.button.foo.bar',
+ *     //   originalTopPath: '$root.$refs.button.foo',
  *     //   type: 'system',
  *     //   accessor: 'foo',
  *     //   accessorType: 'computed'
  *     // }
- *     console.log(getPropertyInfo('$root.$refs.button.foo', this));
+ *     console.log(getPropertyInfo('$root.$refs.button.foo.bar', this));
  *   }
  * }
  * ```
@@ -50,7 +52,9 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 	let
 		name = path,
-		fullPath = path;
+		fullPath = path,
+		topPath = path,
+		originalTopPath = path;
 
 	let
 		chunks,
@@ -76,6 +80,8 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		}
 
 		path = chunks.slice(rootI).join('.');
+		topPath = chunks.slice(0, rootI + 1).join('.');
+		originalTopPath = topPath;
 		name = chunks[rootI];
 	}
 
@@ -92,93 +98,68 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		if (chunks != null) {
 			chunks[rootI] = name;
 			path = chunks.slice(rootI).join('.');
+			topPath = chunks.slice(0, rootI + 1).join('.');
+			originalTopPath = topPath;
 			fullPath = chunks.join('.');
 
 		} else {
 			path = name;
 			fullPath = name;
+			topPath = name;
+			originalTopPath = name;
 		}
 	}
 
+	const info: PropertyInfo = {
+		name,
+		type: 'field',
+		ctx: resolveCtx(component),
+
+		path,
+		fullPath,
+		originalPath,
+
+		topPath,
+		originalTopPath
+	};
+
 	if (RegExp.test(propRgxp, name)) {
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: 'prop'
-		};
+		info.type = 'prop';
+		return info;
 	}
 
 	if (RegExp.test(attrRgxp, name)) {
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: 'attr'
-		};
+		info.type = 'attr';
+		return info;
 	}
 
 	if (RegExp.test(storeRgxp, name)) {
-		if (fields[name]) {
-			return {
-				path,
-				fullPath,
-				originalPath,
-				name,
-				ctx: resolveCtx(component),
-				type: 'field'
-			};
+		if (fields[name] != null) {
+			return info;
 		}
 
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: 'system'
-		};
+		info.type = 'system';
+		return info;
 	}
 
-	if (fields[name]) {
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: 'field'
-		};
+	if (fields[name] != null) {
+		return info;
 	}
 
-	if (props[name]) {
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: 'prop'
-		};
+	if (props[name] != null) {
+		info.type = 'prop';
+		return info;
 	}
 
-	if (systemFields[name]) {
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: 'system'
-		};
+	if (systemFields[name] != null) {
+		info.type = 'system';
+		return info;
 	}
 
 	const
-		storeName = `${name}Store`;
+		storeName = `${name}Store`,
+		hasStoreField = fields[storeName] != null || systemFields[storeName] != null,
+		propName = hasStoreField ? null : `${name}Prop`;
 
 	let
 		accessorType,
@@ -193,79 +174,41 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		accessor = name;
 	}
 
-	if (fields[storeName]) {
-		name = storeName;
+	if (hasStoreField || propName != null && props[propName]) {
+		name = propName ?? storeName;
 
 		if (chunks != null) {
-			chunks[rootI] = storeName;
+			chunks[rootI] = name;
 			path = chunks.slice(rootI).join('.');
 			fullPath = chunks.join('.');
+			topPath = chunks.slice(0, rootI + 1).join('.');
 
 		} else {
-			path = storeName;
-			fullPath = storeName;
+			path = name;
+			fullPath = name;
+			topPath = name;
+		}
+
+		let
+			type: PropertyInfo['type'] = 'field';
+
+		if (propName != null) {
+			type = 'prop';
+
+		} else if (systemFields[storeName] != null) {
+			type = 'system';
 		}
 
 		return {
+			...info,
+
+			name,
+			type,
+
 			path,
 			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			accessor,
-			accessorType,
-			type: 'field'
-		};
-	}
+			topPath,
 
-	if (systemFields[storeName]) {
-		name = storeName;
-
-		if (chunks != null) {
-			chunks[rootI] = storeName;
-			path = chunks.slice(rootI).join('.');
-			fullPath = chunks.join('.');
-
-		} else {
-			path = storeName;
-			fullPath = storeName;
-		}
-
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			accessor,
-			accessorType,
-			type: 'system'
-		};
-	}
-
-	const
-		propName = `${name}Prop`;
-
-	if (props[propName]) {
-		name = propName;
-
-		if (chunks != null) {
-			chunks[rootI] = propName;
-			path = chunks.slice(chunks).join('.');
-			fullPath = chunks.join('.');
-
-		} else {
-			path = storeName;
-			fullPath = storeName;
-		}
-
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: 'prop',
 			accessor,
 			accessorType
 		};
@@ -277,43 +220,38 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 				ctxPath;
 
 			if (chunks != null) {
-				path = chunks.slice(rootI + 1).join('.');
-				fullPath = chunks.join('.');
 				ctxPath = chunks.slice(0, rootI + 1);
+				path = chunks.slice(rootI + 1).join('.');
+				topPath = chunks.slice(0, rootI + 2).join('.');
+				originalTopPath = topPath;
 
 			} else {
 				ctxPath = path;
 				path = '';
+				topPath = '';
+				originalTopPath = '';
 			}
 
 			return {
-				path,
-				fullPath,
-				originalPath,
-				name,
+				...info,
+
+				type: 'mounted',
 				ctx: resolveCtx(Object.get(component, ctxPath) ?? {}),
-				type: 'mounted'
+
+				path,
+				originalPath,
+
+				topPath,
+				originalTopPath
 			};
 		}
 
-		return {
-			path,
-			fullPath,
-			originalPath,
-			name,
-			ctx: resolveCtx(component),
-			type: accessorType
-		};
+		info.type = accessorType;
+		return info;
 	}
 
-	return {
-		path,
-		fullPath,
-		originalPath,
-		name,
-		ctx: resolveCtx(component),
-		type: 'system'
-	};
+	info.type = 'system';
+	return info;
 
 	function resolveCtx(component: any): ComponentInterface {
 		if (component?.$remoteParent != null) {

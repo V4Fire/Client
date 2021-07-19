@@ -139,7 +139,7 @@ export function addAttrs(el: DirElement, attrs?: Dictionary<string>): void {
 
 		if (val != null) {
 			if (el instanceof SVGElement) {
-				el.setAttributeNS(key.split(':')[0] === 'xlink' ? XLINK_NMS : null, key, val);
+				el.setAttributeNS(key.split(':', 1)[0] === 'xlink' ? XLINK_NMS : null, key, val);
 
 			} else {
 				el.setAttribute(key, val);

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { mute, unmute, unwrap, getProxyType, isProxy } from 'core/object/watch';
+import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
@@ -50,13 +50,19 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			info = getPropertyInfo(path, component);
 
 		} else {
-			info = isProxy(path) ? {ctx: path} : path;
-		}
+			if (isProxy(path)) {
+				// @ts-ignore (lazy binding)
+				info = {ctx: path};
 
-		if (!Object.isString(info.type)) {
-			info.type = 'mounted';
-			info.originalPath = info.path;
-			info.fullPath = info.path;
+			} else {
+				info = path;
+			}
+
+			if (isProxy(info.ctx)) {
+				info.type = 'mounted';
+				info.originalPath = info.path;
+				info.fullPath = info.path;
+			}
 		}
 
 		let
@@ -74,11 +80,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isFunctional = !isRoot && ctxParams.functional === true;
 		}
 
-		let canSkip =
+		let canSkipWatching =
 			(isRoot || isFunctional) &&
 			(info.type === 'prop' || info.type === 'attr');
 
-		if (!canSkip && isFunctional) {
+		if (!canSkipWatching && isFunctional) {
 			let
 				f;
 
@@ -96,17 +102,17 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			if (f != null) {
-				canSkip = f.functional === false || f.functionalWatching === false;
+				canSkipWatching = f.functional === false || f.functionalWatching === false;
 			}
 		}
 
 		const
-			isDefinedPath = Object.size(info.path) > 0,
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
-			watchInfo = isAccessor ? null : component.$renderEngine.proxyGetters[info.type]?.(info.ctx);
+			isMountedWatcher = info.type === 'mounted';
 
-		let
-			proxy = watchInfo?.value;
+		const
+			isDefinedPath = Object.size(info.path) > 0,
+			watchInfo = isAccessor ? null : component.$renderEngine.proxyGetters[info.type]?.(info.ctx);
 
 		const normalizedOpts = <WatchOptions>{
 			collapse: true,
@@ -114,12 +120,16 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			...watchInfo?.opts
 		};
 
-		if (canSkip && !normalizedOpts.immediate) {
+		const
+			needCollapse = normalizedOpts.collapse,
+			needImmediate = normalizedOpts.immediate,
+			needCache = (handler['originalLength'] ?? handler.length) > 1 && needCollapse;
+
+		if (canSkipWatching && !needImmediate) {
 			return null;
 		}
 
 		const
-			needCache = handler.length > 1 && normalizedOpts.collapse,
 			originalHandler = handler;
 
 		let
@@ -140,22 +150,21 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				oldVal = Object.get(watchCache, cacheKey);
 
 			} else {
-				oldVal = normalizedOpts.immediate || !isAccessor ? cloneWatchValue(getVal(), normalizedOpts) : undefined;
+				oldVal = needImmediate || !isAccessor ? cloneWatchValue(getVal(), normalizedOpts) : undefined;
 				Object.set(watchCache, cacheKey, oldVal);
 			}
 
 			handler = (val, _, i) => {
-				if (isAccessor) {
-					if (normalizedOpts.collapse) {
-						val = Object.get(info.ctx, info.accessor ?? info.name);
-
-					} else {
-						val = Object.get(component, info.originalPath);
-					}
+				if (!isDefinedPath && Object.isArray(val) && val.length > 0) {
+					i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
 				}
 
-				if (!isDefinedPath && Object.isArray(i?.path)) {
-					oldVal = Object.get(oldVal, [i.path[0]]);
+				if (isMountedWatcher) {
+					val = info.ctx;
+					patchPath(i);
+
+				} else if (isAccessor) {
+					val = Object.get(info.ctx, info.accessor ?? info.name);
 				}
 
 				const
@@ -169,16 +178,41 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			handler[tiedWatchers] = originalHandler[tiedWatchers];
 
-			if (normalizedOpts.immediate) {
+			if (needImmediate) {
 				const val = oldVal;
 				oldVal = undefined;
-				handler.call(component, val);
+				handler.call(component, val, undefined, undefined);
 			}
 
 		} else {
-			if (isAccessor) {
+			if (isMountedWatcher) {
+				handler = (val, ...args) => {
+					let
+						oldVal = args[0],
+						handlerParams = args[1];
+
+					if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
+						handlerParams = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+
+					} else if (args.length === 0) {
+						return originalHandler.call(this, val.map(([val, oldVal, i]) => {
+							patchPath(i);
+							return [val, oldVal, i];
+						}));
+					}
+
+					if (needCollapse) {
+						val = info.ctx;
+						oldVal = val;
+					}
+
+					patchPath(handlerParams);
+					return originalHandler.call(this, val, oldVal, handlerParams);
+				};
+
+			} else if (isAccessor) {
 				handler = (val, _, i) => {
-					if (normalizedOpts.collapse) {
+					if (needCollapse) {
 						val = Object.get(info.ctx, info.accessor ?? info.name);
 
 					} else {
@@ -196,14 +230,17 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				};
 			}
 
-			if (normalizedOpts.immediate) {
-				handler.call(component, getVal());
+			if (needImmediate) {
+				handler.call(component, getVal(), undefined, undefined);
 			}
 		}
 
-		if (canSkip) {
+		if (canSkipWatching) {
 			return null;
 		}
+
+		let
+			proxy = watchInfo?.value;
 
 		if (proxy != null) {
 			if (watchInfo == null) {
@@ -302,11 +339,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						oldValueByPath = unwrap(oldValueByPath) ?? oldValueByPath;
 
 						if (valueByPath !== oldValueByPath) {
-							if (normalizedOpts.collapse !== true) {
-								handler.call(this, valueByPath, oldValueByPath, info);
+							if (needCollapse) {
+								handler.call(this, value, oldValue, info);
 
 							} else {
-								handler.call(this, value, oldValue, info);
+								handler.call(this, valueByPath, oldValueByPath, info);
 							}
 						}
 					};
@@ -423,41 +460,35 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		return attachDynamicWatcher(component, info, opts, handler);
 
+		function patchPath(params?: WatchHandlerParams) {
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (params == null || info.name == null) {
+				return;
+			}
+
+			if (needCollapse) {
+				params.path = [info.name];
+				params.originalPath = params.path;
+
+			} else {
+				params.path.unshift(info.name);
+
+				if (params.path !== params.originalPath) {
+					params.originalPath.unshift(info.name);
+				}
+			}
+		}
+
 		function getVal(): unknown {
-			let
-				ctx,
-				path;
-
-			switch (info.type) {
-				case 'mounted':
-					ctx = info.ctx;
-
-					if (isDefinedPath) {
-						path = info.path;
-					}
-
-					break;
-
-				case 'field':
-					ctx = proxy;
-					path = info.originalPath;
-					break;
-
-				default:
-					ctx = component;
-					path = info.originalPath;
+			if (info.type !== 'mounted') {
+				return Object.get(component, needCollapse ? info.originalTopPath : info.originalPath);
 			}
 
-			if (path == null) {
-				return ctx;
+			if (!isDefinedPath || needCollapse) {
+				return info.ctx;
 			}
 
-			if (normalizedOpts.collapse) {
-				const normalizedPath = Object.isString(path) ? path.split('.') : path;
-				return Object.get(ctx, normalizedPath.slice(0, info.type === 'mounted' ? 1 : 2));
-			}
-
-			return Object.get(ctx, path);
+			return Object.get(component, info.path);
 		}
 
 		function wrapDestructor<T>(destructor: T): T {

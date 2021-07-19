@@ -16,6 +16,7 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 	const
 		meta = Object.create(base);
 
+	meta.watchDependencies = new Map(meta.watchDependencies);
 	meta.params = Object.create(base.params);
 	meta.watchers = {};
 	meta.hooks = {};
