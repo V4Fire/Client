@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -695,6 +697,128 @@ module.exports = async (page, params) => {
 						{bla: {e: 1}}
 					]);
 				});
+			});
+		});
+
+		describe('syncLinks', () => {
+			it('global synchronization', async () => {
+				const scan = await target.evaluate((ctx) => {
+					const res = [
+						Object.fastClone(ctx.dict),
+						Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
+					];
+
+					ctx.dict.a.b++;
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.bla = {c: 1};
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.sync.syncLinks();
+					res.push(Object.fastClone(ctx.bla));
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					{a: {b: 2, c: 3}},
+					{a: {b: 2, c: 3}},
+					{a: {b: 3, c: 3}},
+					{c: 1},
+					{a: {b: 3, c: 3}}
+				]);
+			});
+
+			it('synchronization by a main name', async () => {
+				const scan = await target.evaluate((ctx) => {
+					const res = [
+						Object.fastClone(ctx.dict),
+						Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
+					];
+
+					ctx.dict.a.b++;
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.bla = {c: 1};
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.sync.syncLinks('dict');
+					res.push(Object.fastClone(ctx.bla));
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					{a: {b: 2, c: 3}},
+					{a: {b: 2, c: 3}},
+					{a: {b: 3, c: 3}},
+					{c: 1},
+					{a: {b: 3, c: 3}}
+				]);
+			});
+
+			it('synchronization by a link name', async () => {
+				const scan = await target.evaluate((ctx) => {
+					const res = [
+						Object.fastClone(ctx.dict),
+						Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
+					];
+
+					ctx.dict.a.b++;
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.bla = {c: 1};
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.sync.syncLinks(['bla']);
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.bla = {c: 1};
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.sync.syncLinks(['bla', 'dict']);
+					res.push(Object.fastClone(ctx.bla));
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					{a: {b: 2, c: 3}},
+					{a: {b: 2, c: 3}},
+					{a: {b: 3, c: 3}},
+					{c: 1},
+					{a: {b: 3, c: 3}},
+					{c: 1},
+					{a: {b: 3, c: 3}}
+				]);
+			});
+
+			it('providing a value', async () => {
+				const scan = await target.evaluate((ctx) => {
+					const res = [
+						Object.fastClone(ctx.dict),
+						Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
+					];
+
+					ctx.dict.a.b++;
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.bla = {c: 1};
+					res.push(Object.fastClone(ctx.bla));
+
+					ctx.sync.syncLinks('dict', {e: 1});
+					res.push(Object.fastClone(ctx.bla));
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					{a: {b: 2, c: 3}},
+					{a: {b: 2, c: 3}},
+					{a: {b: 3, c: 3}},
+					{c: 1},
+					{e: 1}
+				]);
 			});
 		});
 	});
