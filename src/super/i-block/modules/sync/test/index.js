@@ -51,9 +51,53 @@ module.exports = async (page, params) => {
 	});
 
 	describe('`iBlock.sync`', () => {
+		// it('checking the initial values', async () => {
+		// 	expect(
+		// 		await target.evaluate((ctx) => ({
+		// 			dict: Object.fastClone(ctx.dict),
+		// 			linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
+		// 			watchableObject: Object.fastClone(ctx.watchableObject)
+		// 		}))
+		// 	).toEqual({
+		// 		dict: {a: {b: 2, c: 3}},
+		// 		linkToNestedFieldWithInitializer: 3,
+		// 		watchableObject: {
+		// 			dict: {a: {b: 2, c: 3}},
+		// 			linkToNestedFieldWithInitializer: 6,
+		// 			linkToPath: 2,
+		// 			linkToPathWithInitializer: 6
+		// 		}
+		// 	});
+		// });
+		//
+		// it('changing some values', async () => {
+		// 	expect(
+		// 		await target.evaluate(async (ctx) => {
+		// 			ctx.dict.a.b++;
+		// 			ctx.dict.a.c++;
+		// 			await ctx.nextTick();
+		//
+		// 			return {
+		// 				dict: Object.fastClone(ctx.dict),
+		// 				linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
+		// 				watchableObject: Object.fastClone(ctx.watchableObject)
+		// 			};
+		// 		})
+		// 	).toEqual({
+		// 		dict: {a: {b: 3, c: 4}},
+		// 		linkToNestedFieldWithInitializer: 4,
+		// 		watchableObject: {
+		// 			dict: {a: {b: 3, c: 4}},
+		// 			linkToNestedFieldWithInitializer: 8,
+		// 			linkToPath: 3,
+		// 			linkToPathWithInitializer: 8
+		// 		}
+		// 	});
+		// });
+
 		describe('link', () => {
 			describe('by using a decorator', () => {
-				it('linking to the nested fields', async () => {
+				it('linking to a nested field', async () => {
 					const scan = await target.evaluate(async (ctx) => {
 						const res = [ctx.linkToNestedField];
 
@@ -75,7 +119,7 @@ module.exports = async (page, params) => {
 					expect(scan).toEqual([2, 3, 4, undefined]);
 				});
 
-				it('linking to the nested fields with a initializer', async () => {
+				it('linking to a nested field with an initializer', async () => {
 					const scan = await target.evaluate(async (ctx) => {
 						const res = [ctx.linkToNestedFieldWithInitializer];
 
@@ -97,7 +141,7 @@ module.exports = async (page, params) => {
 					expect(scan).toEqual([3, 4, 5, NaN]);
 				});
 
-				it('immediate linking to the nested fields with a initializer from @system to @field', async () => {
+				it('immediate linking to a nested field with an initializer from @system to @field', async () => {
 					const scan = await target.evaluate((ctx) => {
 						const res = [ctx.immediateLinkToNestedFieldWithInitializerFromSystemToField];
 
@@ -118,31 +162,43 @@ module.exports = async (page, params) => {
 			});
 
 			describe('without using a decorator', () => {
-				it('linking to the nested fields', async () => {
+				it('linking to a field', async () => {
 					const scan = await target.evaluate(async (ctx) => {
-						const res = [ctx.sync.link(['bla', 'dict.a.b'])];
+						const res = [
+							Object.fastClone(ctx.dict),
+							Object.fastClone(ctx.sync.link(['bla', 'dict']))
+						];
 
 						ctx.dict.a.b++;
 						await ctx.nextTick();
-						res.push(ctx.linkToNestedField);
+						res.push(Object.fastClone(ctx.bla));
 
 						ctx.dict.a.b++;
 						await ctx.nextTick();
-						res.push(ctx.linkToNestedField);
+						res.push(Object.fastClone(ctx.bla));
 
 						ctx.dict.a = {e: 1};
 						await ctx.nextTick();
-						res.push(ctx.linkToNestedField);
+						res.push(Object.fastClone(ctx.bla));
 
 						return res;
 					});
 
-					expect(scan).toEqual([2, 3, 4, undefined]);
+					expect(scan).toEqual([
+						{a: {b: 2, c: 3}},
+						{a: {b: 2, c: 3}},
+						{a: {b: 3, c: 3}},
+						{a: {b: 4, c: 3}},
+						{a: {e: 1}}
+					]);
 				});
 
-				it('linking to the nested fields with a initializer', async () => {
+				it('linking to a nested field', async () => {
 					const scan = await target.evaluate(async (ctx) => {
-						const res = [ctx.sync.link(['bla', 'dict.a.b'], {collapse: false}, (val) => val + 1)];
+						const res = [
+							ctx.dict.a.b,
+							ctx.sync.link(['bla', 'dict.a.b'])
+						];
 
 						ctx.dict.a.b++;
 						await ctx.nextTick();
@@ -159,12 +215,102 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([3, 4, 5, NaN]);
+					expect(scan).toEqual([2, 2, 3, 4, undefined]);
 				});
 
-				it('linking to the mounted watcher', async () => {
+				it('linking to a nested field with an initializer', async () => {
 					const scan = await target.evaluate(async (ctx) => {
-						const res = [ctx.sync.link(['bla', 'mountedWatcher.a.b'])];
+						const res = [
+							ctx.dict.a.b,
+							ctx.sync.link(['bla', 'dict.a.b'], (val) => val + 1)
+						];
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(ctx.bla);
+
+						ctx.dict.a.b++;
+						await ctx.nextTick();
+						res.push(ctx.bla);
+
+						ctx.dict.a = {e: 1};
+						await ctx.nextTick();
+						res.push(ctx.bla);
+
+						return res;
+					});
+
+					expect(scan).toEqual([2, 3, 4, 5, NaN]);
+				});
+
+				it('linking to a field from the mounted watcher passed by a path', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							Object.fastClone(ctx.mountedWatcher),
+							Object.fastClone(ctx.sync.link(['bla', 'mountedWatcher']))
+						];
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						{a: {b: 1}},
+						{a: {b: 1}},
+						{a: {b: 2}},
+						{a: {b: 3}},
+						{a: {e: 1}}
+					]);
+				});
+
+				it('linking to a field from the mounted watcher passed by a link', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							Object.fastClone(ctx.mountedWatcher),
+							Object.fastClone(ctx.sync.link(['bla', ctx.mountedWatcher]))
+						];
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						{a: {b: 1}},
+						{a: {b: 1}},
+						{a: {b: 2}},
+						{a: {b: 3}},
+						{a: {e: 1}}
+					]);
+				});
+
+				it('linking to a nested field from the mounted watcher passed by a path', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							ctx.mountedWatcher.a.b,
+							ctx.sync.link(['bla', 'mountedWatcher.a.b'])
+						];
 
 						ctx.mountedWatcher.a.b++;
 						await ctx.nextTick();
@@ -181,52 +327,34 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([1, 2, 3, undefined]);
+					expect(scan).toEqual([1, 1, 2, 3, undefined]);
+				});
+
+				it('linking to a nested field from the mounted watcher passed by a link', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const res = [
+							Object.fastClone(ctx.mountedWatcher.a),
+							Object.fastClone(ctx.sync.link(['bla', {ctx: ctx.mountedWatcher, path: 'a'}]))
+						];
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a.b++;
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						ctx.mountedWatcher.a = {e: 1};
+						await ctx.nextTick();
+						res.push(Object.fastClone(ctx.bla));
+
+						return res;
+					});
+
+					expect(scan).toEqual([{b: 1}, {b: 1}, {b: 2}, {b: 3}, {e: 1}]);
 				});
 			});
 		});
-
-		/*it('checking the initial values', async () => {
-			expect(
-				await target.evaluate((ctx) => ({
-					dict: ctx.dict,
-					linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
-					watchableObject: Object.fastClone(ctx.watchableObject)
-				}))
-			).toEqual({
-				dict: {a: {b: 2, c: 3}},
-				linkToNestedFieldWithInitializer: 3,
-				watchableObject: {
-					dict: {a: {b: 2, c: 3}},
-					linkToNestedFieldWithInitializer: 6,
-					linkToPath: 2,
-					linkToPathWithInitializer: 6
-				}
-			});
-		});
-
-		it('changing some values', async () => {
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.dict.a.b++;
-					ctx.dict.a.c++;
-
-					return {
-						dict: ctx.dict,
-						linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
-						watchableObject: Object.fastClone(ctx.watchableObject)
-					};
-				})
-			).toEqual({
-				dict: {a: {b: 3, c: 4}},
-				linkToNestedFieldWithInitializer: 4,
-				watchableObject: {
-					dict: {a: {b: 3, c: 4}},
-					linkToNestedFieldWithInitializer: 8,
-					linkToPath: 3,
-					linkToPathWithInitializer: 8
-				}
-			});
-		});*/
 	});
 };

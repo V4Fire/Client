@@ -288,17 +288,13 @@ export default class Sync extends Friend {
 
 		} else if (Object.isString(path) || isProxy(path) || 'ctx' in path) {
 			resolvedPath = path;
-		}
 
-		if (Object.isDictionary(path)) {
+		} else if (Object.isDictionary(path)) {
 			resolvedOpts = path;
-
-		} else if (Object.isDictionary(opts)) {
-			resolvedOpts = opts;
 		}
 
-		if (wrapper == null && resolvedOpts.collapse !== true) {
-			resolvedOpts.collapse = false;
+		if (Object.isDictionary(opts)) {
+			resolvedOpts = opts;
 		}
 
 		if (resolvedPath == null) {
@@ -307,7 +303,8 @@ export default class Sync extends Friend {
 
 		let
 			info,
-			normalizedPath: CanUndef<ObjectPropertyPath>;
+			normalizedPath: CanUndef<ObjectPropertyPath>,
+			topPathIndex = 1;
 
 		let
 			isMountedWatcher = false,
@@ -323,6 +320,7 @@ export default class Sync extends Friend {
 			} else {
 				info = resolvedPath;
 				normalizedPath = info.path;
+				topPathIndex = 0;
 			}
 
 		} else {
@@ -347,6 +345,23 @@ export default class Sync extends Friend {
 
 		if (isAccessor) {
 			resolvedOpts.immediate = resolvedOpts.immediate !== false;
+		}
+
+		if (!isCustomWatcher) {
+			if (
+				normalizedPath != null && (
+					Object.isArray(normalizedPath) && normalizedPath.length > topPathIndex ||
+					Object.isString(normalizedPath) && normalizedPath.split('.', 2).length > topPathIndex
+				)
+			) {
+				if (!resolvedOpts.deep && !resolvedOpts.collapse) {
+					resolvedOpts.collapse = false;
+				}
+
+			} else if (resolvedOpts.deep !== false && resolvedOpts.collapse !== false) {
+				resolvedOpts.deep = true;
+				resolvedOpts.collapse = true;
+			}
 		}
 
 		linksCache[destPath] = {};
@@ -735,7 +750,8 @@ export default class Sync extends Friend {
 			let
 				info,
 				isMountedWatcher = false,
-				isCustomWatcher = false;
+				isCustomWatcher = false,
+				topPathIndex = 1;
 
 			if (!Object.isString(watchPath)) {
 				if (isProxy(watchPath)) {
@@ -746,6 +762,7 @@ export default class Sync extends Friend {
 					isMountedWatcher = true;
 					info = watchPath;
 					watchPath = info.path;
+					topPathIndex = 0;
 				}
 
 			} else if (!RegExp.test(customWatcherRgxp, watchPath)) {
@@ -772,8 +789,21 @@ export default class Sync extends Friend {
 				isolatedOpts.immediate = isolatedOpts.immediate !== false;
 			}
 
-			if (wrapper == null && isolatedOpts.collapse !== true) {
-				isolatedOpts.collapse = false;
+			if (!isCustomWatcher) {
+				if (
+					watchPath != null && (
+						Object.isArray(watchPath) && watchPath.length > topPathIndex ||
+						Object.isString(watchPath) && watchPath.split('.', 2).length > topPathIndex
+					)
+				) {
+					if (!isolatedOpts.deep && !isolatedOpts.collapse) {
+						isolatedOpts.collapse = false;
+					}
+
+				} else if (isolatedOpts.deep !== false && isolatedOpts.collapse !== false) {
+					isolatedOpts.deep = true;
+					isolatedOpts.collapse = true;
+				}
 			}
 
 			if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
@@ -1107,7 +1137,7 @@ export default class Sync extends Friend {
 		}
 
 		return !opts.withProto && (
-			Object.fastCompare(value, oldValue) ||
+			Object.fastCompare(value, oldValue) &&
 			Object.fastCompare(value, this.field.get(destPath))
 		);
 	}
