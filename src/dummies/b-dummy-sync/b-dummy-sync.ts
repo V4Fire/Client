@@ -12,7 +12,7 @@
  */
 
 import watch from 'core/object/watch';
-import iData, { component, prop, field, system, computed } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, computed, ModsDecl } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 
@@ -67,5 +67,17 @@ export default class bDummySync extends iData {
 	@computed({cache: true, watchable: true})
 	get mountedWatcher(): Dictionary {
 		return watch({a: {b: 1}}).proxy;
+	}
+
+	static mods: ModsDecl = {
+		foo: [
+			'bar',
+			'bla'
+		]
+	};
+
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.sync.mod('foo', 'dict.a.b', (v) => v === 2 ? 'bar' : 'bla');
 	}
 }

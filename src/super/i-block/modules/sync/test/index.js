@@ -821,5 +821,19 @@ module.exports = async (page, params) => {
 				]);
 			});
 		});
+
+		describe('mod', () => {
+			it('checking the initial value', async () => {
+				expect(await target.evaluate((ctx) => ctx.mods.foo)).toBe('bar');
+			});
+
+			it('changing the tied field', async () => {
+				expect(await target.evaluate(async (ctx) => {
+					ctx.dict.a.b++;
+					await ctx.nextTick();
+					return ctx.mods.foo;
+				})).toBe('bla');
+			});
+		});
 	});
 };
