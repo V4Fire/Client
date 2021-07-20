@@ -41,13 +41,6 @@ const deps = {
 	links: new Map()
 };
 
-if (runtime.debug) {
-	deps.scripts.set('jasmine-core', 'jasmine-core/lib/jasmine-core/jasmine.js');
-	deps.scripts.set('jasmine-html', 'jasmine-core/lib/jasmine-core/jasmine-html.js');
-	deps.scripts.set('jasmine-boot', 'jasmine-core/lib/jasmine-core/boot.js');
-	deps.styles.set('jasmine', 'jasmine-core/lib/jasmine-core/jasmine.css');
-}
-
 switch (runtime.engine) {
 	case 'vue':
 		deps.scripts.set('vue', `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`);

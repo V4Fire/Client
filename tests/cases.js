@@ -28,6 +28,7 @@ module.exports = [
 	'--test-entry base/b-sidebar/test',
 	'--test-entry base/b-slider/test --device iPhone_11',
 	'--test-entry base/b-window/test',
+	'--test-entry base/b-bottom-slide/test',
 
 	'--test-entry icons/b-icon/test',
 	'--test-entry base/b-image/test',
@@ -42,6 +43,7 @@ module.exports = [
 	'--test-entry super/i-block/modules/activation/test',
 	'--test-entry super/i-block/modules/provide/test',
 	'--test-entry super/i-block/modules/lfc/test',
+	'--test-entry super/i-block/modules/sync/test',
 	'--test-entry super/i-block/modules/daemons/test',
 
 	'--test-entry traits/i-lock-page-scroll/test',

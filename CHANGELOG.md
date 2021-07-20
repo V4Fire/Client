@@ -11,7 +11,6 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-
 ## v3.0.0-rc.??? (2021-??-??)
 
 #### :boom: Breaking Change
@@ -25,9 +24,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Initial release `bDummyLfc`
+* Initial release:
+  * `bDummyLfc`
+  * `bDummySync`
+  * `bDummyWatch`
+
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`
 * Added new props `rootTag` and `rootAttrs` `iBlock`
+* Added `topPath` and `originalTopPath` `core/component/reflection/getPropertyInfo`
 
 * Now the trait uses `aria` attributes:
   * `traits/i-visible`
@@ -50,6 +54,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Provided the `lang` attribute to `<html>` `iStaticPage`
 * Fixed a bug when providing `href` to `dataProvider` `bButton`
+* Fixed a bug when mutations of the nested path can't be caught `super/i-block/modules/sync`
+* Fixed watching with parameters `{immediate: true, collapse: true}` `core/component/watch`
+
+#### :house: Internal
+
+* Removed `jasmine` deps in the `runtime.debug` mode `super/i-static-page`
+
+#### :bug: Bug Fix
+
+[Fixed an issue that allows for pulling an element far away from the bottom `base/b-bottom-slide`](https://github.com/V4Fire/Client/issues/463)
+Fixed an issue with element not being visible if the `visible` prop was provided and the `contentMode` was `content` `base/b-bottom-slide`
 
 ## v3.0.0-rc.210 (2021-07-07)
 

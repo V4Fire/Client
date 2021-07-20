@@ -1639,7 +1639,8 @@ export default abstract class iBlock extends ComponentInterface {
 			// eslint-disable-next-line prefer-const
 			let link, unwatch;
 
-			const emitter = (_, wrappedHandler) => {
+			const emitter = (_, wrappedHandler: Function) => {
+				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
 				$a.worker(() => {
