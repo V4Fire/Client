@@ -289,7 +289,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Window height
 	 */
-	@system()
+	@system(() => document.documentElement.clientHeight)
 	protected windowHeight: number = 0;
 
 	/**
@@ -344,6 +344,13 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	 * Sets a new component offset
 	 */
 	protected set offset(value: number) {
+		const
+			lastStepOffset = <CanUndef<number>>this.lastStepOffset;
+
+		if (lastStepOffset != null && value > lastStepOffset) {
+			value = lastStepOffset;
+		}
+
 		this.offsetStore = value;
 		this.endY = value;
 	}
@@ -597,25 +604,26 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
 			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px
 		});
-	}
 
-	/**
-	 * Initializes offset of the component
-	 */
-	@hook('mounted')
-	@watch('visible')
-	protected initOffset(): void {
-		this.offset = this.visible;
-		void this.updateWindowPosition();
+		this.bakeSteps();
+		this.initOffset();
 	}
 
 	/**
 	 * Bakes values of steps in pixels
 	 */
-	@hook('mounted')
 	@watch('steps')
 	protected bakeSteps(): void {
 		this.stepsInPixels = this.steps.map((s) => (s / 100 * this.windowHeight));
+	}
+
+	/**
+	 * Initializes offset of the component
+	 */
+	@watch('visible')
+	protected initOffset(): void {
+		this.offset = this.visible;
+		void this.updateWindowPosition();
 	}
 
 	/**

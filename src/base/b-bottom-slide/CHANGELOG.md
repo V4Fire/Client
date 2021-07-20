@@ -9,6 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue that allows for pulling an element far away from the bottom](https://github.com/V4Fire/Client/issues/463)
+* Fixed an issue with an element not being visible if the `visible` prop was provided and the `contentMode` was `content`
+
+#### :bug: Bug Fix
+
 ## v3.0.0-rc.197 (2021-06-07)
 
 #### :bug: Bug Fix

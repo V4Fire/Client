@@ -91,7 +91,7 @@ export type PropertyType =
  */
 export interface CommonPropertyInfo {
 	/**
-	 * The property root name
+	 * The top property name from a component
 	 *
 	 * @example
 	 * ```js
@@ -101,7 +101,7 @@ export interface CommonPropertyInfo {
 	name: string;
 
 	/**
-	 * Path to the property
+	 * Normalized property path relative the component that owns this property
 	 *
 	 * @example
 	 * ```js
@@ -111,7 +111,7 @@ export interface CommonPropertyInfo {
 	path: string;
 
 	/**
-	 * Full path to the property
+	 * Normalized full path to the property
 	 *
 	 * @example
 	 * ```js
@@ -121,7 +121,17 @@ export interface CommonPropertyInfo {
 	fullPath: string;
 
 	/**
-	 * The original path of the property
+	 * Normalized path to the top property from a component
+	 *
+	 * @example
+	 * ```js
+	 * getPropertyInfo('$root.bla.bar', ctx) // fullPath == '$root.bla'
+	 * ```
+	 */
+	topPath: string;
+
+	/**
+	 * Original path of the property
 	 *
 	 * @example
 	 * ```js
@@ -129,6 +139,16 @@ export interface CommonPropertyInfo {
 	 * ```
 	 */
 	originalPath: string;
+
+	/**
+	 * Original path to the top property from a component
+	 *
+	 * @example
+	 * ```js
+	 * getPropertyInfo('$root.bla.bar', ctx) // originalPath == '$root.bla'
+	 * ```
+	 */
+	originalTopPath: string;
 
 	/**
 	 * Name of an accessor that is tied with the property

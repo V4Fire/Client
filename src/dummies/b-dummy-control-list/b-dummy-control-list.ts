@@ -30,34 +30,20 @@ interface bDummyControlList extends
 
 @derive(iControlList)
 class bDummyControlList extends iBlock implements iControlList {
-	/**
-	 * List of controls to render
-	 */
 	@prop(Array)
 	controls!: Control[];
 
-	/**
-	 * List of modules
-	 */
 	protected get modules(): {iControlList: typeof iControlList} {
 		return {
 			iControlList
 		};
 	}
 
-	/**
-	 * Method for test purposes
-	 * @param args
-	 */
 	testFn(...args: unknown[]): void {
 		globalThis._args = args;
 		globalThis._t = 1;
 	}
 
-	/**
-	 * Method for test purposes
-	 * @param args
-	 */
 	testArgsMapFn(...args: unknown[]): unknown[] {
 		globalThis._tArgsMap = args;
 		return args;
