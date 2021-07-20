@@ -16,6 +16,8 @@ This module provides a component to create bottom sheet behavior that is similar
 | `events`     | The component is ready to process input events | `Boolean` | `false` |
 | `heightMode` | The component height calculation mode          | `string`  | –       |
 
+Also, you can see the parent component and the component traits.
+
 ## Events
 
 | EventName         | Description                                | Payload description          | Payload   |
@@ -24,6 +26,8 @@ This module provides a component to create bottom sheet behavior that is similar
 | `close`           | The component has been closed              | –                            | –         |
 | `stepChange`      | The component opened step has been changed | A number of the current step | `number`  |
 | `moveStateChange` | The component starts or stops moving       | A state of moving            | `Boolean` |
+
+Also, you can see the parent component and the component traits.
 
 ## Usage
 

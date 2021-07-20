@@ -46,8 +46,8 @@ export interface VirtualItemEl<T extends object = object> {
 export type OptionEl<T extends object = object> = VirtualItemEl<T>;
 
 /**
- * @typeParam ITEM - data item to render
- * @typeParam RAW - raw provider data
+ * @typeparam ITEM - data item to render
+ * @typeparam RAW - raw provider data
  */
 export interface DataState<ITEM extends object = object, RAW extends unknown = unknown> {
 	/**
@@ -107,7 +107,7 @@ export interface DataState<ITEM extends object = object, RAW extends unknown = u
 	lastLoadedData: ITEM[];
 
 	/**
-	 * `total` property from loaded data
+	 * `total` property from the loaded data
 	 */
 	total: CanUndef<number>;
 }
@@ -131,7 +131,7 @@ export interface RenderItem<T extends object = object> {
 	data: T;
 
 	/**
-	 * Component DOM node
+	 * Component DOM element
 	 */
 	node: CanUndef<HTMLElement>;
 
@@ -156,8 +156,8 @@ export type ItemAttrs = {
 /**
  * Last loaded data chunk
  *
- * @typeParam DATA - data to render
- * @typeParam RAW - raw provider data
+ * @typeparam DATA - data to render
+ * @typeparam RAW - raw provider data
  */
 export interface LastLoadedChunk<DATA extends object = object[], RAW extends unknown = unknown> {
 	normalized: DATA;
@@ -171,7 +171,7 @@ export interface DataToRender {
 }
 
 /**
- * The local state of a component:
+ * Local state of a component:
  *
  *  * `error` - indicates the component loading error appear
  *  * `init` - indicates the component now loading the first chunk of data

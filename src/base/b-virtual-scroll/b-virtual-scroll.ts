@@ -52,13 +52,17 @@ import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/mod
 import type {
 
 	GetData,
-	RequestFn,
 	RemoteData,
+
+	RequestFn,
+	RequestQueryFn,
+
 	LocalState,
 	LoadStrategy,
-	RequestQueryFn,
+
 	DataState,
 	MergeDataStateParams,
+
 	UnsafeBVirtualScroll
 
 } from 'base/b-virtual-scroll/interface';
@@ -160,20 +164,20 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly tombstonesSize?: number;
 
 	/**
-	 * If true, then elements are dropped from a DOM tree after scrolling:
-	 * this method is recommended to use if you need to display a huge number of elements and prevent an OOM error
+	 * If true, then elements are dropped from a DOM tree after scrolling.
+	 * This method is recommended to use if you need to display a huge number of elements and prevent an OOM error.
 	 */
 	@prop(Boolean)
 	readonly clearNodes: boolean = false;
 
 	/**
-	 * If true, then created nodes will be cached
+	 * If true, then created nodes are cached
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNodes: boolean = true;
 
 	/**
-	 * Function that returns request parameters
+	 * Function that returns parameters to make a request
 	 */
 	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQueryFn;
@@ -183,7 +187,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly request?: RequestParams;
 
 	/**
-	 * Requests a new data chunk to render
+	 * Function to request a new data chunk to render
 	 */
 	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
 	readonly getData!: GetData;
@@ -199,41 +203,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
-
-	/** @see [[iItems.items]] */
-	@field((o) => o.sync.link())
-	protected itemsStore!: iItems['items'];
-
-	/**
-	 * Total amount of items that can be loaded
-	 */
-	@system()
-	protected total?: number;
-
-	/**
-	 * Local component state
-	 */
-	@p({cache: false})
-	protected get localState(): LocalState {
-		return this.localStateStore;
-	}
-
-	/**
-	 * @param state
-	 * @emits localEmitter:localState.loading()
-	 * @emits localEmitter:localState.ready()
-	 * @emits localEmitter:localState.error()
-	 */
-	protected set localState(state: LocalState) {
-		this.localStateStore = state;
-		this.localEmitter.emit(`localState.${state}`);
-	}
-
-	/**
-	 * Local component state store
-	 */
-	@system()
-	protected localStateStore: LocalState = 'init';
 
 	/** @see [[iItems.items]] */
 	@computed({dependencies: ['itemsStore', 'options']})
@@ -261,6 +230,41 @@ export default class bVirtualScroll extends iData implements iItems {
 	get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return <any>this;
 	}
+
+	/** @see [[iItems.items]] */
+	@field((o) => o.sync.link())
+	protected itemsStore!: iItems['items'];
+
+	/**
+	 * Total amount of items that can be loaded
+	 */
+	@system()
+	protected total?: number;
+
+	/**
+	 * Local component state
+	 */
+	@p({cache: false})
+	protected get localState(): LocalState {
+		return this.localStateStore;
+	}
+
+	/**
+	 * @param state
+	 * @emits `localEmitter:localState.loading()`
+	 * @emits `localEmitter:localState.ready()`
+	 * @emits `localEmitter:localState.error()`
+	 */
+	protected set localState(state: LocalState) {
+		this.localStateStore = state;
+		this.localEmitter.emit(`localState.${state}`);
+	}
+
+	/**
+	 * Local component state store
+	 */
+	@system()
+	protected localStateStore: LocalState = 'init';
 
 	/** @override */
 	// @ts-ignore (getter instead readonly)
@@ -310,7 +314,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @override
-	 * @emits chunkLoading(page: number)
+	 * @emits `chunkLoading(page: number)`
 	 */
 	initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
@@ -322,6 +326,15 @@ export default class bVirtualScroll extends iData implements iItems {
 		}
 
 		return super.initLoad(data, opts);
+	}
+
+	/**
+	 * Re-initializes the component
+	 */
+	reInit(): void {
+		this.componentRender.reInit();
+		this.chunkRequest.reset();
+		this.chunkRender.reInit();
 	}
 
 	/**
@@ -352,19 +365,10 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Re-initializes component
-	 */
-	reInit(): void {
-		this.componentRender.reInit();
-		this.chunkRequest.reset();
-		this.chunkRender.reInit();
-	}
-
-	/**
 	 * Returns an object with the current data state of the component
 	 *
-	 * @typeParam ITEM - data item to render
-	 * @typeParam RAW - raw provider data
+	 * @typeparam ITEM - data item to render
+	 * @typeparam RAW - raw provider data
 	 */
 	getCurrentDataState<
 		ITEM extends object = object,
@@ -383,7 +387,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Returns additional props to pass to the specified item component
+	 * Returns additional props to pass to an item component
 	 *
 	 * @param el
 	 * @param i
@@ -458,8 +462,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @param [chunkRequest]
 	 * @param [chunkRender]
 	 *
-	 * @typeParam ITEM - data item to render
-	 * @typeParam RAW - raw provider data
+	 * @typeparam ITEM - data item to render
+	 * @typeparam RAW - raw provider data
 	 */
 	protected getDataStateSnapshot<
 		ITEM extends object = object,
@@ -474,7 +478,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @override
-	 * @emits chunkLoaded(lastLoadedChunk: LastLoadedChunk)
+	 * @emits `chunkLoaded(lastLoadedChunk:` [[LastLoadedChunk]]`)`
 	 */
 	protected initRemoteData(): void {
 		if (!this.db) {

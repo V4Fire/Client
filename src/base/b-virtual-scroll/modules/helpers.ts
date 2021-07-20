@@ -12,14 +12,14 @@ import type { DataState } from 'base/b-virtual-scroll/interface';
 
 /**
  * Returns accumulated data among `b-virtual-scroll`,` chunk-render`, `chunk-request` and passes it to the client
- * to make any decisions, for example, one more chunk of data needs to be loaded
+ * to make any decisions. For instance, one more chunk of data needs to be loaded.
  *
  * @param [chunkRequestCtx]
  * @param [chunkRenderCtx]
  * @param [merge]
  *
- * @typeParam ITEM - data item to render
- * @typeParam RAW - raw provider data
+ * @typeparam ITEM - data item to render
+ * @typeparam RAW - raw provider data
  */
 export function getRequestParams<ITEM extends object = object, RAW extends unknown = unknown>(
 	chunkRequestCtx?: ChunkRequest,

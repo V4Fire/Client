@@ -54,7 +54,7 @@ export default class ChunkRequest extends Friend {
 	};
 
 	/**
-	 * True if all requests for additional data was requested
+	 * True if all requests for additional data has been requested
 	 */
 	isDone: boolean = false;
 
@@ -69,7 +69,7 @@ export default class ChunkRequest extends Friend {
 	pendingData: object[] = [];
 
 	/**
-	 * The object contains data from the main request and from all additional requests.
+	 * A buffer to accumulate data from the main request and all additional requests.
 	 * Sometimes a data provider can't provide the whole batch of data in one request,
 	 * so you need to emit some extra requests till the data batch is filled.
 	 */
@@ -174,13 +174,15 @@ export default class ChunkRequest extends Friend {
 	 *
 	 * @param [initialCall]
 	 *
-	 * @emits dbChange(data: RemoteData)
-	 * @emits chunkLoading(page: number)
+	 * @emits `dbChange(data:` [[RemoteData]]`)`
+	 * @emits `chunkLoading(page: number)`
 	 */
 	try(initialCall: boolean = true): Promise<CanUndef<RemoteData>> {
 		const
 			{ctx, chunkRender} = this,
-			{chunkSize, dataProvider} = ctx,
+			{chunkSize, dataProvider} = ctx;
+
+		const
 			resolved = Promise.resolve(undefined);
 
 		const additionParams = {
@@ -334,11 +336,13 @@ export default class ChunkRequest extends Friend {
 
 	/**
 	 * Loads additional data
-	 * @emits chunkLoaded(lastLoadedChunk: LastLoadedChunk)
+	 * @emits `chunkLoaded(lastLoadedChunk:` [[LastLoadedChunk]]`)`
 	 */
 	protected load(): Promise<CanUndef<RemoteData>> {
-		const
-			{ctx, chunkRender} = this;
+		const {
+			ctx,
+			chunkRender
+		} = this;
 
 		void ctx.setMod('progress', true);
 
