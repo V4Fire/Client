@@ -151,6 +151,11 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	set locale(value: string) {
 		this.field.set('localeStore', value);
+
+		try {
+			document.documentElement.setAttribute('lang', value);
+		} catch {}
+
 		setLocale(value);
 	}
 
