@@ -326,16 +326,17 @@ export default class Sync extends Friend {
 		} else {
 			normalizedPath = resolvedPath;
 
-			if (!RegExp.test(customWatcherRgxp, normalizedPath)) {
+			if (RegExp.test(customWatcherRgxp, normalizedPath)) {
+				isCustomWatcher = true;
+
+			} else {
 				info = getPropertyInfo(normalizedPath, this.ctx);
 
 				if (info.type === 'mounted') {
 					isMountedWatcher = true;
 					normalizedPath = info.path;
+					topPathIndex = Object.size(info.path) > 0 ? 0 : 1;
 				}
-
-			} else {
-				isCustomWatcher = true;
 			}
 		}
 
@@ -741,16 +742,17 @@ export default class Sync extends Friend {
 					topPathIndex = 0;
 				}
 
-			} else if (!RegExp.test(customWatcherRgxp, watchPath)) {
-				info = getPropertyInfo(watchPath, this.ctx);
+			} else if (RegExp.test(customWatcherRgxp, watchPath)) {
+				isCustomWatcher = true;
 
 			} else {
-				isCustomWatcher = true;
-			}
+				info = getPropertyInfo(watchPath, this.ctx);
 
-			if (info?.type === 'mounted') {
-				isMountedWatcher = true;
-				watchPath = info.path;
+				if (info.type === 'mounted') {
+					isMountedWatcher = true;
+					watchPath = info.path;
+					topPathIndex = Object.size(info.path) > 0 ? 0 : 1;
+				}
 			}
 
 			const isAccessor = info != null ?

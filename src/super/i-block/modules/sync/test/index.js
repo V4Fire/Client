@@ -97,7 +97,7 @@ module.exports = async (page, params) => {
 			});
 		});
 
-		describe('link', () => {
+		describe('`link`', () => {
 			describe('by using a decorator', () => {
 				it('linking to a nested field', async () => {
 					const scan = await target.evaluate(async (ctx) => {
@@ -425,7 +425,7 @@ module.exports = async (page, params) => {
 			});
 		});
 
-		describe('object', () => {
+		describe('`object`', () => {
 			describe('without using a decorator', () => {
 				it('linking to an event', async () => {
 					const scan = await target.evaluate((ctx) => {
@@ -580,6 +580,29 @@ module.exports = async (page, params) => {
 					]);
 				});
 
+				it('checking `r.isAuth`', async () => {
+					const scan = await target.evaluate(async (ctx) => {
+						const
+							res = [Object.isBoolean(ctx.r.isAuth)];
+
+						ctx.r.remoteState.isAuth = true;
+						await ctx.nextTick();
+						res.push(ctx.r.isAuth);
+
+						ctx.r.remoteState.isAuth = false;
+						await ctx.nextTick();
+						res.push(ctx.r.isAuth);
+
+						return res;
+					});
+
+					expect(scan).toEqual([
+						true,
+						true,
+						false
+					]);
+				});
+
 				it('linking to a field from the mounted watcher passed by a path', async () => {
 					const scan = await target.evaluate(async (ctx) => {
 						const res = [
@@ -700,7 +723,7 @@ module.exports = async (page, params) => {
 			});
 		});
 
-		describe('syncLinks', () => {
+		describe('`syncLinks`', () => {
 			it('global synchronization', async () => {
 				const scan = await target.evaluate((ctx) => {
 					const res = [
@@ -822,7 +845,7 @@ module.exports = async (page, params) => {
 			});
 		});
 
-		describe('mod', () => {
+		describe('`mod`', () => {
 			it('checking the initial value', async () => {
 				expect(await target.evaluate((ctx) => ctx.mods.foo)).toBe('bar');
 			});
