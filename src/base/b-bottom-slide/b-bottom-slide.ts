@@ -66,6 +66,7 @@ interface bBottomSlide extends
 class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
 	/**
 	 * Component height mode:
+	 *
 	 * 1. `content` – the height value is based on a component content, but no more than the viewport height
 	 * 2. `full` – the height value is equal to the viewport height
 	 */
@@ -143,6 +144,22 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	readonly forceInnerRender: boolean = true;
 
 	/**
+	 * True if the content is fully opened
+	 */
+	@p({cache: false})
+	get isFullyOpened(): boolean {
+		return this.step === this.steps.length - 1;
+	}
+
+	/**
+	 * True if the content is fully closed
+	 */
+	@p({cache: false})
+	get isClosed(): boolean {
+		return this.step === 0;
+	}
+
+	/**
 	 * List of possible component positions relative to the screen height (in percentages)
 	 */
 	@p({cache: false})
@@ -158,22 +175,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		}
 
 		return res.concat(this.field.get<number[]>('stepsStore')!).sort((a, b) => a - b);
-	}
-
-	/**
-	 * True if the content is fully opened
-	 */
-	@p({cache: false})
-	get isFullyOpened(): boolean {
-		return this.step === this.steps.length - 1;
-	}
-
-	/**
-	 * True if the content is fully closed
-	 */
-	@p({cache: false})
-	get isClosed(): boolean {
-		return this.step === 0;
 	}
 
 	/** @see [[iHistory.history]] */
