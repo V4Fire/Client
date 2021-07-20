@@ -103,7 +103,7 @@ module.exports = (page) => {
 		container = await h.dom.waitForRef(node, 'container');
 	});
 
-	describe('b-virtual-scroll getCurrentDataState', () => {
+	describe('b-virtual-scroll `getCurrentDataState`', () => {
 		describe('returns the correct value', () => {
 			it('if there is no `dataProvider`', async () => {
 				const
@@ -221,7 +221,7 @@ module.exports = (page) => {
 		});
 	});
 
-	describe('b-virtual-scroll getDataStateSnapshot', () => {
+	describe('b-virtual-scroll `getDataStateSnapshot`', () => {
 		describe('returns the correct value', () => {
 			it('with `chunkRequest` and `chunkRender`', async () => {
 				const
@@ -260,5 +260,4 @@ module.exports = (page) => {
 			});
 		});
 	});
-
 };

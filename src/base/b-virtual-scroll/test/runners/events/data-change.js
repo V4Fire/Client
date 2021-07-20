@@ -65,7 +65,7 @@ module.exports = (page) => {
 		container = await h.dom.waitForRef(node, 'container');
 	});
 
-	describe('b-virtual-scroll dataChange event', () => {
+	describe('b-virtual-scroll `dataChange` event', () => {
 		describe('emitted', () => {
 			it('after loading the first chunk', async () => {
 				const subscribePromise = subscribe();

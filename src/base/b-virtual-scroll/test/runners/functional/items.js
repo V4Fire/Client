@@ -60,14 +60,14 @@ module.exports = (page) => {
 		await page.evaluate(() => globalThis.removeCreatedComponents());
 	});
 
-	describe('b-virtual-scroll with iItems trait', () => {
-		it('renders correct item', async () => {
+	describe('b-virtual-scroll with the `iItems` trait', () => {
+		it('renders a correct item', async () => {
 			await renderComponent();
 			await h.dom.waitForEl(container, 'section');
 			expect(await container.$('section')).toBeTruthy();
 		});
 
-		it('renders item with provided props', async () => {
+		it('renders an item with provided props', async () => {
 			await renderComponent();
 			await h.dom.waitForEl(container, 'section');
 			const attrVal = await (await container.$('section')).evaluate((el) => el.getAttribute('data-index'));

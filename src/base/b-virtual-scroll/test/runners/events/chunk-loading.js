@@ -60,7 +60,7 @@ module.exports = (page) => {
 		ctx.request = {get: {chunkSize: 12, id: Math.random(), ...requestProps}};
 	}, requestProps);
 
-	describe('b-virtual-scroll chunkLoaded event', () => {
+	describe('b-virtual-scroll `chunkLoading` event', () => {
 		describe('emitted', () => {
 			it('when loading the first chunk', async () => {
 				const subscribePromise = subscribe();
