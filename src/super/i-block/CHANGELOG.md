@@ -11,15 +11,13 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-??-??)
 
-#### :bug: Bug Fix
-
-* Fixed the case when the resolved value of the `waitRef` is an empty array
-
-## v3.0.0-rc.??? (2021-??-??)
-
 #### :rocket: New Feature
 
 * Added new props `rootTag` and `rootAttrs`
+
+#### :bug: Bug Fix
+
+* Fixed a case when the resolved value of `waitRef` is an empty array
 
 ## v3.0.0-rc.209 (2021-07-06)
 

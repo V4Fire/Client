@@ -58,7 +58,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed watching with parameters `{immediate: true, collapse: true}` `core/component/watch`
 * [Fixed an issue that allows for pulling an element far away from the bottom `base/b-bottom-slide`](https://github.com/V4Fire/Client/issues/463)
 * Fixed an issue with an element not being visible if the `visible` prop was provided and the `contentMode` was `content` `base/b-bottom-slide`
-* Fixed a case when the resolved value of `waitRef` is an empty array `super/i-block`
+* Fixed a case when the resolved value of `waitRef` is an empty array `iBlock`
 
 #### :house: Internal
 

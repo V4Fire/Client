@@ -2441,7 +2441,7 @@ export default abstract class iBlock extends ComponentInterface {
 			refVal = that.$refs[ref];
 
 		return this.async.promise(() => new SyncPromise((resolve) => {
-			if (refVal != null && !(Object.isArray(refVal) && refVal.length === 0)) {
+			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
 				resolve(<T>refVal);
 
 			} else {
