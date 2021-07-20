@@ -612,10 +612,10 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Bakes values of steps in pixels
 	 */
-	 @watch('steps')
-	 protected bakeSteps(): void {
-		 this.stepsInPixels = this.steps.map((s) => (s / 100 * this.windowHeight));
-	 }
+	@watch('steps')
+	protected bakeSteps(): void {
+		this.stepsInPixels = this.steps.map((s) => (s / 100 * this.windowHeight));
+	}
 
 	/**
 	 * Initializes offset of the component

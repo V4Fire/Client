@@ -9,10 +9,9 @@
 import Async from 'core/async';
 
 /**
- * Class for creating a touch gestures
+ * Class to create touch gestures
  */
 export default class Gestures {
-
 	/** @see [[TouchGesturesCreateOptions]] */
 	readonly options: TouchGesturesCreateOptions;
 
@@ -20,7 +19,7 @@ export default class Gestures {
 	readonly async: Async = new Async();
 
 	/**
-	 * Styled element that represents touch position
+	 * Styled element that represents a touch position
 	 */
 	readonly cursor: HTMLDivElement = document.createElement('div');
 
@@ -89,7 +88,7 @@ export default class Gestures {
 	}
 
 	/**
-	 * Generates a steps for swipe method
+	 * Generates steps for a swipe method
 	 *
 	 * @param count
 	 * @param initialX
@@ -163,7 +162,7 @@ export default class Gestures {
 	}
 
 	/**
-	 * Fills steps array with points
+	 * Fills an array of steps with points
 	 * @param points
 	 */
 	protected fillSteps(points: TouchGesturePoint[]): void {

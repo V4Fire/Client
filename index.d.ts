@@ -183,20 +183,19 @@ declare var
 	removeCreatedComponents: () => void;
 
 interface TouchGesturesCreateOptions {
-
 	/**
-	 * Element to dispatch event
+	 * Element to dispatch an event
 	 */
 	dispatchEl: Element | string;
 
 	/**
-	 * Element that will be provided as `target` in dispatched event
+	 * Element that will be provided as a target in the dispatched event
 	 */
 	targetEl: Element | string;
 
 	/**
-	 * Throttle time between steps
-	 * @default 5
+	 * Delay between steps
+	 * @default `5`
 	 */
 	pause?: number;
 }

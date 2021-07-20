@@ -9,22 +9,22 @@
 // @ts-check
 
 const {
+	initBottomSlide,
+
 	getAbsoluteComponentWindowOffset,
 	getComponentWindowYPos,
 	getAbsolutePageHeight,
-	open,
-	init
+
+	open
 } = include('src/base/b-bottom-slide/test/helpers');
 
 const
 	h = include('tests/helpers');
 
 /**
- * Starts a test
- *
  * @param {Playwright.Page} page
- * @param {object} params
- * @returns {void}
+ * @param {Playwright.BrowserContext} browser
+ * @param {Object} contextOpts
  */
 module.exports = (page, {browser, contextOpts}) => {
 	const initialUrl = page.url();
@@ -36,7 +36,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		context,
 		gesture;
 
-	describe('`base/b-bottom-slide gestures`', () => {
+	describe('b-bottom-slide gestures', () => {
 		const
 			selector = '.b-bottom-slide__view';
 
@@ -70,8 +70,8 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		afterEach(() => context.close());
 
-		it('opens via fast swipe', async () => {
-			const [component] = await init({
+		it('opens via a fast swipe', async () => {
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 200
 			});
@@ -88,8 +88,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(openedModVal).toBe('true');
 		});
 
-		it('opens via slow pull up', async () => {
-			const [component] = await init({
+		it('opens via a slow pull-up', async () => {
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 200
 			});
@@ -107,7 +107,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		it('pulls up the window with cursor moves up', async () => {
-			const [component] = await init({
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 200
 			});
@@ -123,8 +123,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(windowTopOffset).toBe(400);
 		});
 
-		it('closes via fast swipe', async () => {
-			const [component] = await init({
+		it('closes via a fast swipe', async () => {
+			const [component] = await initBottomSlide({
 				heightMode: 'full'
 			});
 
@@ -144,8 +144,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(openedModVal).toBe('false');
 		});
 
-		it('closes via slow pull down', async () => {
-			const [component] = await init({
+		it('closes via a slow pull-down', async () => {
+			const [component] = await initBottomSlide({
 				heightMode: 'full'
 			});
 
@@ -166,7 +166,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		it('pulls down the window with cursor moves down', async () => {
-			const [component] = await init({
+			const [component] = await initBottomSlide({
 				heightMode: 'full'
 			});
 
@@ -186,8 +186,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(windowTopOffset).toBe(400);
 		});
 
-		it('sticks to the closest step on slow pull up', async () => {
-			const [component] = await init({
+		it('sticks to the closest step on a slow pull-up', async () => {
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 100,
 				steps: [50]
@@ -205,8 +205,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(windowY).toBe(halfPageHeight);
 		});
 
-		it('sticks to the closest step on fast pull up', async () => {
-			const [component] = await init({
+		it('sticks to the closest step on a fast pull-up', async () => {
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 100,
 				steps: [50]
@@ -224,8 +224,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(windowY).toBe(halfPageHeight);
 		});
 
-		it('skips all the steps on full pull up', async () => {
-			const [component] = await init({
+		it('skips all the steps on a full pull-up', async () => {
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 100,
 				steps: [30, 50, 60]
@@ -243,11 +243,11 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(windowTopOffset).toBe(maxWindowHeight);
 		});
 
-		it('does not skips any steps before full pull up', async () => {
+		it('does not skips any steps before a full pull-up', async () => {
 			const
 				steps = [30, 60];
 
-			const [component] = await init({
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 100,
 				steps
@@ -283,7 +283,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				#test-div {height: ${contentHeight}px !important;}
 			`});
 
-			const [component] = await init({
+			const [component] = await initBottomSlide({
 				heightMode: 'content',
 				visible: 80
 			});

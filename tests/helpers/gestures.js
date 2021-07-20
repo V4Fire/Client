@@ -15,9 +15,8 @@
  */
 
 /**
- * Class provides API to work with touch gestures.
+ * Class provides API to work with touch gestures
  */
-
 class Gestures {
 	/** @see [[BrowserTests.Gestures.create]] */
 	create(page, options) {

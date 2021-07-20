@@ -12,29 +12,30 @@ const
 	h = include('tests/helpers');
 
 const {
+	initBottomSlide,
+	getComponentWindowYPos,
+
 	open,
 	close,
+
 	prev,
-	next,
-	init,
-	getComponentWindowYPos
+	next
 } = include('src/base/b-bottom-slide/test/helpers');
 
 /**
- * Starts a test
- *
  * @param {Playwright.Page} page
- * @param {object} params
- * @returns {void}
+ * @param {Playwright.BrowserContext} browser
+ * @param {Object} contextOpts
  */
 module.exports = (page, {browser, contextOpts}) => {
-	const initialUrl = page.url();
+	const
+		initialUrl = page.url();
 
 	let
 		context,
 		gesture;
 
-	describe('`base/b-bottom-slide events`', () => {
+	describe('b-bottom-slide events', () => {
 		const
 			selector = '.b-bottom-slide__view';
 
@@ -65,8 +66,8 @@ module.exports = (page, {browser, contextOpts}) => {
 		afterEach(() => context.close());
 
 		describe('emits `open`', () => {
-			it('`open` method has been called', async () => {
-				const [component] = await init({
+			it('invokes the `open` method', async () => {
+				const [component] = await initBottomSlide({
 					heightMode: 'full'
 				});
 
@@ -78,8 +79,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				await expectAsync(pr).toBeResolved();
 			});
 
-			it('opened via swipe', async () => {
-				const [component] = await init({
+			it('opening via a swipe', async () => {
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					visible: 160
 				});
@@ -95,8 +96,8 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`close`', () => {
-			it('`close` method has been called', async () => {
-				const [component] = await init({
+			it('invokes the `close` method', async () => {
+				const [component] = await initBottomSlide({
 					heightMode: 'full'
 				});
 
@@ -109,8 +110,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				await expectAsync(pr).toBeResolved();
 			});
 
-			it('closed via swipe', async () => {
-				const [component] = await init({
+			it('closing via a swipe', async () => {
+				const [component] = await initBottomSlide({
 					heightMode: 'full'
 				});
 
@@ -130,8 +131,8 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`stepChange`', () => {
-			it('`next` method has been called', async () => {
-				const [component] = await init({
+			it('invokes the `next` method', async () => {
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					steps: [20, 40]
 				});
@@ -145,8 +146,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				await expectAsync(pr).toBeResolved();
 			});
 
-			it('`prev` method has been called', async () => {
-				const [component] = await init({
+			it('invokes the `prev` method', async () => {
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					steps: [20, 40]
 				});
@@ -161,8 +162,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				await expectAsync(pr).toBeResolved();
 			});
 
-			it('step changed via swipe', async () => {
-				const [component] = await init({
+			it('step-changing via a swipe', async () => {
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					visible: 100,
 					steps: [50]
@@ -181,7 +182,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		it('`moveStateChange`', async () => {
-			const [component] = await init({
+			const [component] = await initBottomSlide({
 				heightMode: 'full',
 				visible: 200
 			});

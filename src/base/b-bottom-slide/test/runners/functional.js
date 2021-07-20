@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,29 +8,29 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable max-lines-per-function */
 // @ts-check
 
 const
 	h = include('tests/helpers');
 
 const {
-	open,
-	close,
-	prev,
-	next,
-	init,
+	initBottomSlide,
+
 	getAbsoluteComponentWindowOffset,
 	getAbsoluteComponentWindowHeight,
-	getAbsolutePageHeight
+	getAbsolutePageHeight,
+
+	open,
+	close,
+
+	prev,
+	next
 } = include('src/base/b-bottom-slide/test/helpers');
 
 /**
- * Starts a test
- *
  * @param {Playwright.Page} page
- * @param {object} params
- * @returns {void}
+ * @param {Playwright.BrowserContext} browser
+ * @param {Object} contextOpts
  */
 module.exports = (page, {browser, contextOpts}) => {
 	const initialUrl = page.url();
@@ -39,7 +41,7 @@ module.exports = (page, {browser, contextOpts}) => {
 	let
 		context;
 
-	describe('`base/b-bottom-slide functional`', () => {
+	describe('b-bottom-slide functional cases', () => {
 		beforeEach(async () => {
 			context = await browser.newContext({
 				...contextOpts,
@@ -62,7 +64,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		afterEach(() => context.close());
 
 		it('by default is hidden', async () => {
-			const [component] = await init({
+			const [component] = await initBottomSlide({
 				heightMode: 'content'
 			});
 
@@ -82,7 +84,7 @@ module.exports = (page, {browser, contextOpts}) => {
 						content: `#test-div {height: ${contentHeight}px;}`
 					});
 
-					const [component] = await init({
+					const [component] = await initBottomSlide({
 						heightMode: 'content'
 					});
 
@@ -99,7 +101,7 @@ module.exports = (page, {browser, contextOpts}) => {
 						content: '#test-div {height: 3000px;}'
 					});
 
-					const [component] = await init(
+					const [component] = await initBottomSlide(
 						{
 							heightMode: 'content',
 							maxVisiblePercent: INITIAL_MAX_VISIBLE_PERCENT
@@ -118,7 +120,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 			describe('`full`', () => {
 				it('opens the window to its full height, regardless of the height of the content', async () => {
-					const [component] = await init({
+					const [component] = await initBottomSlide({
 						heightMode: 'full'
 					});
 
@@ -138,7 +140,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					steps = [20, 50];
 
-				const [component] = await init({
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					steps
 				});
@@ -166,7 +168,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					steps = [50];
 
-				const [component] = await init({
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					steps
 				});
@@ -186,7 +188,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					steps = [50];
 
-				const [component] = await init({
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					steps
 				});
@@ -207,7 +209,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					visibleVal = 100;
 
-				const [component] = await init({
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					visible: visibleVal
 				});
@@ -222,7 +224,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					visibleVal = 0;
 
-				const [component] = await init({
+				const [component] = await initBottomSlide({
 					heightMode: 'full',
 					visible: visibleVal
 				});
@@ -243,7 +245,7 @@ module.exports = (page, {browser, contextOpts}) => {
 					content: '#test-div {height: 3000px;}'
 				});
 
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'content',
 						maxVisiblePercent
@@ -262,7 +264,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		describe('`overlay`', () => {
 			it('`false`', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						overlay: false
@@ -278,7 +280,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 
 			it('`true`', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						overlay: true
@@ -299,7 +301,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					maxOpacity = 0.3;
 
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						maxOpacity
@@ -318,7 +320,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					maxOpacity = 1;
 
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						maxOpacity
@@ -336,7 +338,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		describe('`forceInnerRender`', () => {
 			it('`true`', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						forceInnerRender: true
@@ -350,7 +352,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 
 			it('`false`', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						forceInnerRender: false
@@ -364,7 +366,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 
 			it('`false` renders the content after open has been called', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						forceInnerRender: false
@@ -383,7 +385,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		describe('`isFullyOpened`', () => {
 			describe('`true`', () => {
 				it('if the window is fully opened', async () => {
-					const [component] = await init(
+					const [component] = await initBottomSlide(
 						{
 							heightMode: 'full'
 						}
@@ -400,7 +402,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 			describe('`false`', () => {
 				it('if the window is closed', async () => {
-					const [component] = await init(
+					const [component] = await initBottomSlide(
 						{
 							heightMode: 'full'
 						}
@@ -413,7 +415,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				});
 
 				it('if the window is stuck to an intermediate step', async () => {
-					const [component] = await init(
+					const [component] = await initBottomSlide(
 						{
 							heightMode: 'full',
 							steps: [50]
@@ -433,7 +435,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		describe('`isClosed`', () => {
 			describe('`true`', () => {
 				it('if the window is closed', async () => {
-					const [component] = await init(
+					const [component] = await initBottomSlide(
 						{
 							heightMode: 'full'
 						}
@@ -448,7 +450,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 			describe('`false`', () => {
 				it('if the window is opened', async () => {
-					const [component] = await init(
+					const [component] = await initBottomSlide(
 						{
 							heightMode: 'full'
 						}
@@ -463,7 +465,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				});
 
 				it('if the window is stuck to an intermediate step', async () => {
-					const [component] = await init(
+					const [component] = await initBottomSlide(
 						{
 							heightMode: 'full',
 							steps: [20]
@@ -482,7 +484,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		describe('`open`', () => {
 			it('without `steps` provided', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full'
 					}
@@ -501,7 +503,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				const
 					step = 20;
 
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps: [step]
@@ -517,8 +519,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(windowTopOffset).toBe(step1Absolute);
 			});
 
-			it('sets `opened` modifier', async () => {
-				const [component] = await init(
+			it('sets the `opened` modifier', async () => {
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full'
 					}
@@ -532,8 +534,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(testVal).toBe('true');
 			});
 
-			it('removes `hidden` modifier', async () => {
-				const [component] = await init(
+			it('removes the `hidden` modifier', async () => {
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full'
 					}
@@ -550,7 +552,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		describe('`close`', () => {
 			it('closes the window', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full'
 					}
@@ -566,7 +568,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 
 			it('closes the window with `steps` provided', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps: [20, 40, 60]
@@ -582,8 +584,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(windowTopOffset).toBe(0);
 			});
 
-			it('sets `opened` modifier to `false`', async () => {
-				const [component] = await init(
+			it('sets the `opened` modifier to `false`', async () => {
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full'
 					}
@@ -598,8 +600,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(testVal).toBe('false');
 			});
 
-			it('sets `hidden` modifier', async () => {
-				const [component] = await init(
+			it('sets the `hidden` modifier', async () => {
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full'
 					}
@@ -620,7 +622,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				steps = [20, 40, 60];
 
 			it('opens the window', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps
@@ -637,7 +639,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 
 			it('moves the window to the next step', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps
@@ -655,7 +657,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 
 			it('does nothing if the window is fully opened', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps
@@ -682,7 +684,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				steps = [20, 40, 60];
 
 			it('closes the window', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps
@@ -698,8 +700,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(windowTopOffset).toBe(0);
 			});
 
-			it('moves the window to the prev step', async () => {
-				const [component] = await init(
+			it('moves the window to the previous step', async () => {
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps
@@ -718,7 +720,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 
 			it('does nothing if the window is fully closed', async () => {
-				const [component] = await init(
+				const [component] = await initBottomSlide(
 					{
 						heightMode: 'full',
 						steps
@@ -735,7 +737,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`recalculateState`', () => {
-			it('recalculates window geometry', async () => {
+			it('recalculates the window geometry', async () => {
 				const
 					contentHeight = 40;
 
@@ -743,7 +745,7 @@ module.exports = (page, {browser, contextOpts}) => {
 					content: `#test-div {height: ${contentHeight}px;} .test-div {height: ${contentHeight}px}`
 				});
 
-				const [component] = await init({
+				const [component] = await initBottomSlide({
 					heightMode: 'content'
 				});
 

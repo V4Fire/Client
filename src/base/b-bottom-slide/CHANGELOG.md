@@ -13,8 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
-[Fixed an issue that allows for pulling an element far away from the bottom](https://github.com/V4Fire/Client/issues/463)
-Fixed an issue with element not being visible if the `visible` prop was provided and the `contentMode` was `content`
+* [Fixed an issue that allows for pulling an element far away from the bottom](https://github.com/V4Fire/Client/issues/463)
+* Fixed an issue with an element not being visible if the `visible` prop was provided and the `contentMode` was `content`
 
 #### :bug: Bug Fix
 
