@@ -28,11 +28,11 @@
 			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
 				< tag.&__item :is = listElTag
 					< tag &
-						:is = el.href ? 'a' : 'button' |
+						:is = el.href !== undefined ? 'a' : 'button' |
 
 						:href = el.href |
 						:value = el.value |
-						:aria-selected = ? el.href === undefined ? isActive(el.value) : undefined |
+						:aria-selected = el.href === undefined ? isActive(el.value) : undefined |
 
 						:-id = values.get(el.value) |
 						:-hint = el.hint |
