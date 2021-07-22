@@ -11,19 +11,24 @@
  * @packageDocumentation
  */
 
-import Cache from 'core/cache/simple';
+import type { AbstractCache } from 'core/cache';
 import ProviderDataItem from 'super/i-static-page/modules/provider-data-store/item';
 
 export { ProviderDataItem };
 
 /**
- * Class to store data of data providers
+ * Creates a cache to store data of data providers based on the specified cache API
+ * @param cache
  */
-export default class ProviderDataStore extends Cache<ProviderDataItem> {
-	/** @override */
-	set<T>(key: string, value: T): ProviderDataItem<T> {
+export default function createProviderDataStore(cache: AbstractCache): AbstractCache<ProviderDataItem> {
+	const
+		wrappedCache = Object.create(cache);
+
+	wrappedCache.set = function set(key: string, value: unknown): unknown {
 		const item = new ProviderDataItem(key, value);
-		this.storage.set(key, item);
+		cache.set.call(this, key, item);
 		return item;
-	}
+	};
+
+	return wrappedCache;
 }
