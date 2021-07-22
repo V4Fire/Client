@@ -547,6 +547,7 @@ module.exports = function init(gulp = require('gulp')) {
 				}, {argv: c.split(' '), permissive: true});
 
 				args['--client-name'] = getTestClientName(args['--name'], build.suit);
+				args._.push(...cliArgs._.slice(1));
 
 				if (buildCache[args['--client-name']]) {
 					continue;
