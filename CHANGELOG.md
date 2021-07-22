@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.214 (2021-07-22)
+
+#### :boom: Breaking Change
+
+* Now `providerDataStore` implements `core/cache` `i-static-page/modules/provider-data-store`
+
+#### :memo: Documentation
+
+* Added documentation `i-static-page/modules/provider-data-store`
+
 ## v3.0.0-rc.213 (2021-07-22)
 
 #### :bug: Bug Fix

@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
+import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 
@@ -22,11 +23,17 @@ import type { AppliedRoute } from 'core/router';
 import type iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
-import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
+import createProviderDataStore, { ProviderDataStore } from 'super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'super/i-static-page/modules/theme';
+
 import type { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
+export * from 'super/i-static-page/modules/theme';
+
+export { createProviderDataStore };
+export * from 'super/i-static-page/modules/provider-data-store';
+
 export * from 'super/i-static-page/interface';
 
 export const
@@ -65,8 +72,8 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Remote data store
 	 */
-	@system(() => new ProvidedDataStore())
-	readonly providerDataStore!: ProvidedDataStore;
+	@system(() => createProviderDataStore(new RestrictedCache(10)))
+	readonly providerDataStore!: ProviderDataStore;
 
 	/**
 	 * Module to manage app themes
@@ -181,7 +188,7 @@ export default abstract class iStaticPage extends iPage {
 	protected routeStore?: this['CurrentPage'];
 
 	/**
-	 * Internal non-field for route objects: it help to avoid some issues with watchable values from a prototype and Vue
+	 * Internal non-field for route objects: it helps to avoid some issues with watchable values from a prototype and Vue
 	 */
 	@system()
 	protected internalRouteStore?: this['CurrentPage'];
