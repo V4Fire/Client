@@ -39,10 +39,10 @@ jobs:
         run: npx gulp build:tsconfig
 
       - name: Run components test
-        run: npm run test:components
+        run: npm run test:components:chrome
 
       - name: Run components test with --fat-html
-        run: npm run test:components -- --fat-html
+        run: npm run test:components:chrome -- --fat-html
 
   # Run module tests
   modules:
