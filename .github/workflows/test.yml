@@ -39,7 +39,7 @@ jobs:
         run: npx gulp build:tsconfig
 
       - name: Run components test
-        run: npm run test:components:chrome
+        run: npm run test:components:ci
 
   # Run module tests
   modules:
