@@ -706,7 +706,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	get r(): this['$root'] {
 		const r = this.$root;
-		return <any>r.$remoteParent ?? r;
+		return <any>r.$remoteParent?.$root ?? r;
 	}
 
 	/**

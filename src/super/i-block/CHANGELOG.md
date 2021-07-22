@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.213 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed invalid resolving of `r`
+
 ## v3.0.0-rc.212 (2021-07-22)
 
 #### :bug: Bug Fix
