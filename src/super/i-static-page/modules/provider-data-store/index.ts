@@ -20,7 +20,9 @@ export { ProviderDataItem };
  * Creates a cache to store data of data providers based on the specified cache API
  * @param cache
  */
-export default function createProviderDataStore(cache: AbstractCache): AbstractCache<ProviderDataItem> {
+export default function createProviderDataStore(
+	cache: AbstractCache
+): Overwrite<AbstractCache<ProviderDataItem>, {set<T>(key: string, value: T): ProviderDataItem<T>}> {
 	const
 		wrappedCache = Object.create(cache);
 
