@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.212 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with dynamically created components and the `r` getter
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :rocket: New Feature

@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue when Vue drops a prototype from the route object `iStaticPage`
+* Fixed an issue with dynamically created components and the `r` getter `iBlock`
 
 ## v3.0.0-rc.211 (2021-07-21)
 
