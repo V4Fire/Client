@@ -56,7 +56,7 @@ export default class ProviderDataItem<T = unknown> {
 			return;
 		}
 
-		if (provider && Object.isFunction(provider.select)) {
+		if (provider != null && Object.isFunction(provider.select)) {
 			return provider.select(value, params);
 		}
 
