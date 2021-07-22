@@ -102,7 +102,15 @@ export default abstract class iStaticPage extends iPage {
 
 	/** @override */
 	get route(): CanUndef<this['CurrentPage']> {
-		return this.field.get('routeStore');
+		// See explanation within the setter code
+		const
+			route = this.field.get<this['CurrentPage']>('routeStore');
+
+		if (this[$$.routeStore] == null) {
+			return route;
+		}
+
+		return this[$$.routeStore];
 	}
 
 	/**
@@ -113,6 +121,11 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	set route(value: CanUndef<this['CurrentPage']>) {
 		this.field.set('routeStore', value);
+
+		// Preserve the route object within a non-field property because of an issue with Vue when
+		// it drops the original object prototype
+		this[$$.routeStore] = value;
+
 		this.emit('setRoute', value);
 	}
 

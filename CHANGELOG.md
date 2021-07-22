@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.212 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when Vue drops a prototype from the route object `iStaticPage`
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :boom: Breaking Change

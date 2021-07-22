@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.212 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when Vue drops a prototype from the route object
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :house: Internal
