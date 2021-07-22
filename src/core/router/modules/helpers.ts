@@ -96,7 +96,10 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	while (true) {
 		// Reference to a route that passed as ID
 		if (resolvedRef in routes) {
-			resolvedById = true;
+			if (alias == null) {
+				resolvedById = true;
+			}
+
 			resolvedRoute = routes[resolvedRef];
 
 			if (resolvedRoute == null) {

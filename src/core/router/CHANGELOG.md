@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.212 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when passed route parameters ignored if defined the `alias` property
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :bug: Bug Fix
