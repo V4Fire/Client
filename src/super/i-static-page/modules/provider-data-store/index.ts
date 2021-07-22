@@ -12,17 +12,18 @@
  */
 
 import type { AbstractCache } from 'core/cache';
-import ProviderDataItem from 'super/i-static-page/modules/provider-data-store/item';
 
+import ProviderDataItem from 'super/i-static-page/modules/provider-data-store/item';
+import type { ProviderDataStore } from 'super/i-static-page/modules/provider-data-store/interface';
+
+export * from 'super/i-static-page/modules/provider-data-store/interface';
 export { ProviderDataItem };
 
 /**
  * Creates a cache to store data of data providers based on the specified cache API
  * @param cache
  */
-export default function createProviderDataStore(
-	cache: AbstractCache
-): Overwrite<AbstractCache<ProviderDataItem>, {set<T>(key: string, value: T): ProviderDataItem<T>}> {
+export default function createProviderDataStore<T>(cache: AbstractCache<T>): ProviderDataStore<T> {
 	const
 		wrappedCache = Object.create(cache);
 
