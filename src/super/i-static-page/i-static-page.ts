@@ -101,16 +101,17 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
+	@computed({dependencies: ['internalRouteStore']})
 	get route(): CanUndef<this['CurrentPage']> {
 		// See explanation within the setter code
 		const
 			route = this.field.get<this['CurrentPage']>('routeStore');
 
-		if (this[$$.routeStore] == null) {
+		if (this.internalRouteStore == null) {
 			return route;
 		}
 
-		return this[$$.routeStore];
+		return this.internalRouteStore;
 	}
 
 	/**
@@ -124,7 +125,7 @@ export default abstract class iStaticPage extends iPage {
 
 		// Preserve the route object within a non-field property because of an issue with Vue when
 		// it drops the original object prototype
-		this[$$.routeStore] = value;
+		this.internalRouteStore = value;
 
 		this.emit('setRoute', value);
 	}
@@ -178,6 +179,12 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@field({forceUpdate: false})
 	protected routeStore?: this['CurrentPage'];
+
+	/**
+	 * Internal non-field for route objects: it help to avoid some issues with watchable values from a prototype and Vue
+	 */
+	@system()
+	protected internalRouteStore?: this['CurrentPage'];
 
 	/**
 	 * Link to a router instance
