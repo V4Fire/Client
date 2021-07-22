@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.214 (2021-07-22)
+
+#### :boom: Breaking Change
+
+* Now `providerDataStore` implements `core/cache`
+
+#### :memo: Documentation
+
+* Added documentation
+
 ## v3.0.0-rc.212 (2021-07-22)
 
 #### :bug: Bug Fix
