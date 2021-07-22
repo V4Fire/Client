@@ -181,7 +181,7 @@ export default abstract class iStaticPage extends iPage {
 	protected routeStore?: this['CurrentPage'];
 
 	/**
-	 * Internal non-field for route objects: it help to avoid some issues with watchable values from a prototype and Vue
+	 * Internal non-field for route objects: it helps to avoid some issues with watchable values from a prototype and Vue
 	 */
 	@system()
 	protected internalRouteStore?: this['CurrentPage'];
