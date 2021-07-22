@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.213 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed invalid resolving of `r` `iBlock`
+
 ## v3.0.0-rc.212 (2021-07-22)
 
 #### :bug: Bug Fix
