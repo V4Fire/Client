@@ -11,6 +11,10 @@
  * @packageDocumentation
  */
 
+//#if demo
+import 'models/demo/list';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 import iData, { component, prop, RequestError, RetryRequestFn } from 'super/i-data/i-data';
 
