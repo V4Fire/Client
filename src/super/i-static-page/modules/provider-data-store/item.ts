@@ -21,12 +21,12 @@ export default class ProviderDataItem<T = unknown> {
 	/**
 	 * Item key
 	 */
-	protected key: ItemKey;
+	readonly key: ItemKey;
 
 	/**
-	 * Item value
+	 * Item data
 	 */
-	protected value: CanUndef<T>;
+	readonly data: CanUndef<T>;
 
 	/**
 	 * Link to a data provider
@@ -41,7 +41,7 @@ export default class ProviderDataItem<T = unknown> {
 	 */
 	constructor(key: ItemKey, value: T) {
 		this.key = key;
-		this.value = value;
+		this.data = value;
 	}
 
 	/**
@@ -50,16 +50,16 @@ export default class ProviderDataItem<T = unknown> {
 	 */
 	select<D = unknown>(params: SelectParams): CanUndef<D> {
 		const
-			{provider, value} = this;
+			{provider, data} = this;
 
-		if (!value) {
+		if (data == null) {
 			return;
 		}
 
 		if (provider != null && Object.isFunction(provider.select)) {
-			return provider.select(value, params);
+			return provider.select(data, params);
 		}
 
-		return select(value, params);
+		return select(data, params);
 	}
 }
