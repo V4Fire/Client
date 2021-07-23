@@ -538,6 +538,15 @@ el.innerHTML = include('src/base/b-bottom-slide/b-bottom-slide.styl');
 			expect(decl).toBe('<link href="node_modules/font-awesome/dist/font-awesome.css">');
 		});
 
+		console.log(ss.getLinkDecl({
+			js: true,
+			src: 'node_modules/font-awesome/dist/font-awesome.css',
+			staticAttrs: 'rel="manifest"',
+			attrs: {
+				href: [`'fooo.json?from=' + location.pathname + location.search`]
+			}
+		}));
+
 		it('with JS initializing', () => {
 			const decl = collapseSpaces(
 				ss.getLinkDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', js: true})

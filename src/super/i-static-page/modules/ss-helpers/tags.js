@@ -386,13 +386,27 @@ function normalizeAttrs(attrs, dynamic = false) {
 			const normalize = (str) => str.replace(/'/g, "\\'");
 			key = normalize(key);
 
-			if (needWrap) {
-				normalizedAttrs.push(`el.setAttribute('${key}', '${val == null ? key : normalize(val)}');`);
+			let
+				attr;
+
+			if (key === 'staticAttrs') {
+				attr = `
+var tmpEl = document.createElement('div');
+tmpEl.innerHTML = '<div ${normalize(val)}></div>';
+tmpEl = tmpEl.children[0];
+var tmpElAttrs = tmpEl.attributes;
+for (var i = 0; i < tmpElAttrs.length; i++) {
+	el.setAttribute(tmpElAttrs[i].name, tmpElAttrs[i].value);
+}
+`;
+			} else if (needWrap) {
+				attr = `el.setAttribute('${key}', '${val == null ? key : normalize(val)}');`;
 
 			} else {
-				normalizedAttrs.push(`el.setAttribute('${key}', ${val});`);
+				attr = `el.setAttribute('${key}', ${val});`;
 			}
 
+			normalizedAttrs.push(attr);
 			return;
 		}
 

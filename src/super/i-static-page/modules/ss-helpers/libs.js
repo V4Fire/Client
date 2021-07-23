@@ -195,6 +195,7 @@ exports.resolveAsLib = resolveAsLib;
  * @param {string=} [name] - name of the library
  *   (if not specified, the name will be taken from a basename of the source file)
  *
+ * @param {boolean=} [dest='lib'] - where to store the library
  * @param {boolean=} [relative=true] - if false, the function will return an absolute path
  * @param {(Array<string>|string)=} cwd - active working directory (can be defined as an array to enable layers)
  * @param {...string} paths - string paths to join (also, can take URL-s)
@@ -202,11 +203,15 @@ exports.resolveAsLib = resolveAsLib;
  *
  * @example
  * ```js
- * loadAsLib({name: 'jquery'}, 'node_modules', 'jquery/dist/jquery.min.js');
- * loadAsLib({name: 'images'}, 'assets', 'images/');
+ * resolveAsLib({name: 'jquery'}, 'node_modules', 'jquery/dist/jquery.min.js');
+ * resolveAsLib({name: 'images'}, 'assets', 'images/');
  * ```
  */
-function resolveAsLib({name, relative = true} = {}, cwd = null, ...paths) {
+function resolveAsLib(
+	{name, dest = 'lib', relative = true} = {},
+	cwd = null,
+	...paths
+) {
 	const
 		url = paths.find((el) => isURL.test(el));
 
@@ -246,7 +251,7 @@ function resolveAsLib({name, relative = true} = {}, cwd = null, ...paths) {
 	}
 
 	const
-		libDest = src.clientOutput(webpack.output({name: 'lib'}));
+		libDest = src.clientOutput(webpack.output({name: dest}));
 
 	let
 		fileContent,

@@ -14,6 +14,7 @@ const
 	fs = require('fs-extra');
 
 const
+	{resolveAsLib} = include('src/super/i-static-page/modules/ss-helpers/libs'),
 	{getScriptDecl, getLinkDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getFaviconsDecl = getFaviconsDecl;
@@ -24,34 +25,39 @@ exports.getFaviconsDecl = getFaviconsDecl;
  */
 function getFaviconsDecl() {
 	const
-		faviconsSrc = glob.sync(src.assets('favicons', favicons().html))[0];
+		faviconsHTML = glob.sync(src.assets('favicons', favicons().html))[0];
 
-	if (!faviconsSrc) {
+	if (!faviconsHTML) {
 		return '';
 	}
 
+	const
+		dest = resolveAsLib({name: 'favicons', dest: 'assets'}, src.rel('assets'), 'favicons/');
+
+	glob.sync(src.clientOutput(dest, '*.@(json|xml|webapp)')).forEach((file) => {
+		fs.writeFileSync(file, resolveFaviconPath(fs.readFileSync(file).toString()));
+	});
+
 	let
-		faviconsDecl = fs.readFileSync(faviconsSrc).toString();
+		faviconsDecl = resolveFaviconPath(fs.readFileSync(faviconsHTML).toString());
 
 	const
 		manifestRgxp = /<link (.*?) href="(.*?\/manifest.json)">/,
 		manifest = manifestRgxp.exec(faviconsDecl);
 
-	faviconsDecl = faviconsDecl
-		.replace(manifestRgxp, '')
-		.replace(/\$publicPath\//g, webpack.publicPath().replace(/^(.*)\/?$/, (str, path) => {
-			if (str.length) {
-				return `${path}/`;
-			}
-
-			return '';
-		}));
+	faviconsDecl = faviconsDecl.replace(manifestRgxp, '');
 
 	const manifestDecl = getLinkDecl({
 		js: true,
-		defer: false,
-		staticAttrs: `${manifest[1]} href="${manifest[2]}?from=\${location.href}"`
+		staticAttrs: manifest[1],
+		attrs: {
+			href: [`'${manifest[2]}?from=' + location.pathname + location.search`]
+		}
 	});
 
 	return faviconsDecl + getScriptDecl(manifestDecl);
+
+	function resolveFaviconPath(str) {
+		return str.replace(/\$faviconPublicPath\//g, `${webpack.publicPath(dest)}/`.replace(/\/+$/, '/'));
+	}
 }
