@@ -22,7 +22,7 @@ const entryPoints = {
 	'p-v4-components-demo': ['p-v4-components-demo']
 };
 
-describe('super/i-static-page/modules/ss-helpers/tags', () => {
+describe('super/i-static-page/modules/ss-helpers/libs', () => {
 	const assets = ss.getAssets(entryPoints);
 
 	describe('`loadLibs`', () => {
