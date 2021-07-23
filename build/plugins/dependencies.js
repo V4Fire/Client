@@ -62,7 +62,7 @@ module.exports = function DependenciesPlugin() {
 					fd = fs.openSync(assetsJSON, 'r');
 
 					try {
-						assets = JSON.parse(fs.readFileSync(fd, 'utf-8'));
+						assets = JSON.parse(fs.readFileSync(fd).toString());
 
 					} catch {}
 

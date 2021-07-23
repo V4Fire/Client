@@ -28,7 +28,7 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 				name = 'p-v4-components-demo',
 				file = src.clientOutput(`${webpack.output({name})}.init.js`);
 
-			fs.readFileSync(file);
+			fs.unlinkSync(file);
 
 			await ss.generateInitJS(name, {
 				deps,
@@ -42,7 +42,7 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 				}
 			});
 
-			expect(fs.readFileSync(file, 'utf-8')).toBe(
+			expect(fs.readFileSync(file).toString()).toBe(
 				`
 Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
