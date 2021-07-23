@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "api_version": 1,
+  "layout": {
+    "logo": "$faviconPublicPath/yandex-browser-50x50.png",
+    "color": "#2E2929",
+    "show_title": true
+  }
+}
