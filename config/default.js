@@ -829,9 +829,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	favicons() {
 		return {
+			src: 'logo.png',
 			appName: this.appName,
-			path: this.src.assets('favicons'),
-			background: '#FFF',
+			path: '$publicPath/favicons',
+			html: 'favicons.html',
+			background: '#2E2929',
 			display: 'standalone',
 			orientation: 'portrait',
 			version: 1.0,

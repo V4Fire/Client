@@ -7,12 +7,11 @@
  */
 
 const
-	config = require('config');
+	{src, webpack, favicons} = require('config');
 
 const
 	glob = require('glob'),
-	fs = require('fs-extra'),
-	path = require('upath');
+	fs = require('fs-extra');
 
 const
 	{getScriptDecl, getLinkDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
@@ -25,7 +24,7 @@ exports.getFaviconsDecl = getFaviconsDecl;
  */
 function getFaviconsDecl() {
 	const
-		faviconsSrc = glob.sync(path.join(config.favicons().path, '*.html'))[0];
+		faviconsSrc = glob.sync(src.assets('favicons', favicons().html))[0];
 
 	if (!faviconsSrc) {
 		return '';
@@ -38,7 +37,15 @@ function getFaviconsDecl() {
 		manifestRgxp = /<link (.*?) href="(.*?\/manifest.json)">/,
 		manifest = manifestRgxp.exec(faviconsDecl);
 
-	faviconsDecl = faviconsDecl.replace(manifestRgxp, '');
+	faviconsDecl = faviconsDecl
+		.replace(manifestRgxp, '')
+		.replace(/\$publicPath\//g, webpack.publicPath().replace(/^(.*)\/?$/, (str, path) => {
+			if (str.length) {
+				return `${path}/`;
+			}
+
+			return '';
+		}));
 
 	const manifestDecl = getLinkDecl({
 		js: true,
