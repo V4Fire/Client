@@ -42,7 +42,7 @@ exports.getScriptDecl = getScriptDecl;
 
 /**
  * Returns code to load the specified library.
- * If the "inline" parameter is set to true, the function will return a promise.
+ * If the `inline` parameter is set to `true`, the function will return a promise.
  *
  * @param {(InitializedLib|body)} lib - library or raw code
  * @param {string=} [body] - library body
@@ -104,13 +104,16 @@ function getScriptDecl(lib, body) {
 			...lib.attrs
 		};
 
-		if (attrsObj.async === undefined) {
+		if (attrsObj.async) {
 			if (createElement) {
-				props += 'el.async = false;';
-
-			} else if (!lib.js && lib.defer !== false) {
-				attrsObj.defer = null;
+				delete attrsObj.async;
 			}
+
+		} else if (createElement) {
+			props += 'el.async = false;';
+
+		} else if (!lib.js && lib.defer !== false) {
+			attrsObj.defer = null;
 		}
 
 		attrs = normalizeAttrs(attrsObj, createElement);
@@ -170,7 +173,7 @@ exports.getStyleDecl = getStyleDecl;
 
 /**
  * Returns code to load the specified style library.
- * If the "inline" parameter is set to true, the function will return a promise.
+ * If the `inline` parameter is set to `true`, the function will return a promise.
  *
  * @param {(InitializedStyleLib|body)} lib - library or raw code
  * @param {string=} [body] - library body
@@ -279,7 +282,7 @@ function getStyleDecl(lib, body) {
 			if (hasInclude.test(content)) {
 				content = `
 //#set convertToStringLiteral
-el.innerHTML = ${content};
+el.innerHTML = ${content}
 //#unset convertToStringLiteral
 `;
 
