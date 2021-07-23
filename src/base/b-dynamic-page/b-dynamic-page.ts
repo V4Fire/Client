@@ -430,7 +430,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 		return cache;
 
-		function changeCountInMap(def: number, delta: number): Function {
+		function changeCountInMap(def: number, delta: number): AnyFunction {
 			return ({result}: {result: CanUndef<iDynamicPageEl>}) => {
 				if (result == null) {
 					return;
