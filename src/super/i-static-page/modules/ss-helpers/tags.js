@@ -391,13 +391,13 @@ function normalizeAttrs(attrs, dynamic = false) {
 
 			if (key === 'staticAttrs') {
 				attr = `
-var tmpEl = document.createElement('div');
-tmpEl.innerHTML = '<div ${normalize(val)}></div>';
-tmpEl = tmpEl.children[0];
-var tmpElAttrs = tmpEl.attributes;
-for (var i = 0; i < tmpElAttrs.length; i++) {
-	el.setAttribute(tmpElAttrs[i].name, tmpElAttrs[i].value);
-}
+	var tmpEl = document.createElement('div');
+	tmpEl.innerHTML = '<div ${normalize(val)}></div>';
+	tmpEl = tmpEl.children[0];
+	var tmpElAttrs = tmpEl.attributes;
+	for (var i = 0; i < tmpElAttrs.length; i++) {
+		el.setAttribute(tmpElAttrs[i].name, tmpElAttrs[i].value);
+	}
 `;
 			} else if (needWrap) {
 				attr = `el.setAttribute('${key}', '${val == null ? key : normalize(val)}');`;

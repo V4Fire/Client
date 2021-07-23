@@ -62,16 +62,16 @@ try {
 \t\t}
 \t});
 } catch (_) {}
-PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
-PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
-PATH['webpack.runtime'] = 'webpack.runtime.js';
-PATH['vendor'] = 'vendor.js';
-PATH['std'] = 'std.js';
-PATH['std_tpl'] = 'std_tpl.js';
-PATH['std_style'] = 'std_style.css';
-PATH['p-v4-components-demo_style'] = 'p-v4-components-demo_style.css';
-PATH['std_view'] = 'std_view.js';
-PATH['p-v4-components-demo_view'] = 'p-v4-components-demo_view.js';
+PATH['p-v4-components-demo'] = '/dist/client/p-v4-components-demo.js';
+PATH['p-v4-components-demo_tpl'] = '/dist/client/p-v4-components-demo_tpl.js';
+PATH['webpack.runtime'] = '/dist/client/webpack.runtime.js';
+PATH['vendor'] = '/dist/client/vendor.js';
+PATH['std'] = '/dist/client/std.js';
+PATH['std_tpl'] = '/dist/client/std_tpl.js';
+PATH['std_style'] = '/dist/client/std_style.css';
+PATH['p-v4-components-demo_style'] = '/dist/client/p-v4-components-demo_style.css';
+PATH['std_view'] = '/dist/client/std_view.js';
+PATH['p-v4-components-demo_view'] = '/dist/client/p-v4-components-demo_view.js';
 
 
 if ('std_style' in PATH) {

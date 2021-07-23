@@ -538,15 +538,6 @@ el.innerHTML = include('src/base/b-bottom-slide/b-bottom-slide.styl');
 			expect(decl).toBe('<link href="node_modules/font-awesome/dist/font-awesome.css">');
 		});
 
-		console.log(ss.getLinkDecl({
-			js: true,
-			src: 'node_modules/font-awesome/dist/font-awesome.css',
-			staticAttrs: 'rel="manifest"',
-			attrs: {
-				href: [`'fooo.json?from=' + location.pathname + location.search`]
-			}
-		}));
-
 		it('with JS initializing', () => {
 			const decl = collapseSpaces(
 				ss.getLinkDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', js: true})
@@ -624,6 +615,32 @@ el.innerHTML = include('src/base/b-bottom-slide/b-bottom-slide.styl');
 	var el = document.createElement('link');
 	el.setAttribute('href', 'node_modules/font-awesome/dist/font-awesome.css');
 	el.setAttribute('type', type);
+	document.head.appendChild(el);
+})();
+`);
+			});
+
+			it('static attributes with JS initializing and interpolation', () => {
+				const decl = collapseSpaces(ss.getLinkDecl({
+					js: true,
+					src: 'node_modules/font-awesome/dist/font-awesome.css',
+					staticAttrs: 'rel="manifest"',
+					attrs: {
+						href: ["'manifest.json?from=' + location.pathname + location.search"]
+					}
+				}));
+
+				expect(decl).toBe(`
+(function () {
+	var el = document.createElement('link');
+	el.setAttribute('href', 'manifest.json?from=' + location.pathname + location.search);
+	var tmpEl = document.createElement('div');
+	tmpEl.innerHTML = '<div rel="manifest"></div>';
+	tmpEl = tmpEl.children[0];
+	var tmpElAttrs = tmpEl.attributes;
+	for (var i = 0; i < tmpElAttrs.length; i++) {
+		el.setAttribute(tmpElAttrs[i].name, tmpElAttrs[i].value);
+	}
 	document.head.appendChild(el);
 })();
 `);
