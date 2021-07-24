@@ -27,21 +27,21 @@ exports.getFaviconsDecl = getFaviconsDecl;
 function getFaviconsDecl() {
 	const
 		faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'}),
-		faviconsHTML = path.join(faviconsFolder, favicons().html);
+		faviconsHTML = favicons().html;
 
-	if (!fs.existsSync(faviconsHTML)) {
+	if (!fs.existsSync(path.join(faviconsFolder, faviconsHTML))) {
 		return '';
 	}
 
 	const
 		dest = resolveAsLib({name: 'favicons', dest: 'assets'}, src.rel('assets'), 'favicons/');
 
-	glob.sync(src.clientOutput(dest, '*.@(json|xml|webapp)')).forEach((file) => {
+	glob.sync(src.clientOutput(dest, '*.@(json|xml|html|webapp)')).forEach((file) => {
 		fs.writeFileSync(file, resolveFaviconPath(fs.readFileSync(file).toString()));
 	});
 
 	let
-		faviconsDecl = resolveFaviconPath(fs.readFileSync(faviconsHTML).toString());
+		faviconsDecl = fs.readFileSync(src.clientOutput(dest, faviconsHTML)).toString();
 
 	const
 		manifestRgxp = /<link (.*?) href="(.*?\/manifest.json)">/,
