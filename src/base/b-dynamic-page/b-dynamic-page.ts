@@ -172,10 +172,10 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Link to the loaded page component
 	 */
 	@computed({cache: false, dependencies: ['page']})
-	get component(): CanPromise<CanUndef<iDynamicPage>> {
+	get component(): CanPromise<iDynamicPage> {
 		const getComponent = () => {
 			const
-				c = this.$refs.component;
+				c = this.$refs.component!;
 
 			if (Object.isArray(c)) {
 				return c[0];
@@ -186,9 +186,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 		return this.$refs.component != null ?
 			getComponent() :
-			this.waitRef('component', {
-				label: $$.waitComponent
-			}).then(getComponent);
+			this.waitRef('component').then(getComponent);
 	}
 
 	/** @override */
@@ -228,7 +226,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	async reload(params?: InitLoadOptions): Promise<void> {
 		const component = await this.component;
-		return component?.reload(params);
+		return component.reload(params);
 	}
 
 	/**
@@ -278,12 +276,9 @@ export default class bDynamicPage extends iDynamicPage {
 					componentFromCache = newPageStrategy.get();
 
 				if (componentFromCache == null) {
-					const handler = async () => {
+					const handler = () => {
 						if (!newPageStrategy.isLoopback) {
-							const
-								c = await unsafe.component;
-
-							c?.activate(true);
+							return SyncPromise.resolve(unsafe.component).then((c) => c.activate(true));
 						}
 					};
 
