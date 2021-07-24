@@ -172,15 +172,21 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Link to the loaded page component
 	 */
 	@computed({cache: false, dependencies: ['page']})
-	get component(): CanUndef<iDynamicPage> {
-		const
-			c = this.$refs.component;
+	get component(): CanPromise<iDynamicPage> {
+		const getComponent = () => {
+			const
+				c = this.$refs.component!;
 
-		if (Object.isArray(c)) {
-			return c[0];
-		}
+			if (Object.isArray(c)) {
+				return c[0];
+			}
 
-		return c;
+			return c;
+		};
+
+		return this.$refs.component != null ?
+			getComponent() :
+			this.waitRef('component').then(getComponent);
 	}
 
 	/** @override */
@@ -219,8 +225,8 @@ export default class bDynamicPage extends iDynamicPage {
 	 * @override
 	 */
 	async reload(params?: InitLoadOptions): Promise<void> {
-		const {component} = this;
-		return component?.reload(params);
+		const component = await this.component;
+		return component.reload(params);
 	}
 
 	/**
@@ -272,7 +278,7 @@ export default class bDynamicPage extends iDynamicPage {
 				if (componentFromCache == null) {
 					const handler = () => {
 						if (!newPageStrategy.isLoopback) {
-							unsafe.component?.activate(true);
+							return SyncPromise.resolve(unsafe.component).then((c) => c.activate(true));
 						}
 					};
 
@@ -419,7 +425,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 		return cache;
 
-		function changeCountInMap(def: number, delta: number) {
+		function changeCountInMap(def: number, delta: number): AnyFunction {
 			return ({result}: {result: CanUndef<iDynamicPageEl>}) => {
 				if (result == null) {
 					return;
