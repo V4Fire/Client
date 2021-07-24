@@ -38,10 +38,13 @@ jobs:
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
-      - name: Run components test
+      - name: Run components' tests
         run: npm run test:components:chrome
 
-      - name: Run components test with --fat-html
+      - name: Run components' tests with --fat-html
+        run: npm run test:components:chrome -- --fat-html
+
+      - name: Run components' tests with --fat-html --es ES5
         run: npm run test:components:chrome -- --fat-html
 
   # Run module tests
@@ -75,10 +78,10 @@ jobs:
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
-      - name: Build project
+      - name: Build the project
         run: npx webpack
 
-      - name: Run modules test
+      - name: Run modules' tests
         run: npm run test:jasmine
 
   # Run linters
