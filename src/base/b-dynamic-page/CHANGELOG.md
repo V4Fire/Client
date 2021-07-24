@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when a getter to current page component is `undefined`. Now the getter can return a promise.
+
 ## v3.0.0-rc.204 (2021-06-23)
 
 #### :bug: Bug Fix
