@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Restored support of favicons
+
+#### :house: Internal
+
+* Added tests
+
 ## v3.0.0-rc.214 (2021-07-22)
 
 #### :boom: Breaking Change

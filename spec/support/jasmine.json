@@ -1,7 +1,7 @@
 {
   "spec_dir": "",
   "spec_files": [
-    "src/core/**/*[sS]pec.js",
+    "src/**/*[sS]pec.js",
     "build/**/*[sS]pec.js"
   ],
   "stopSpecOnExpectationFailure": false,
