@@ -46,6 +46,7 @@ module.exports = [
 	'--test-entry super/i-block/modules/sync/test',
 	'--test-entry super/i-block/modules/daemons/test',
 
+	'--test-entry super/i-static-page/test',
 	'--test-entry super/i-static-page/modules/provider-data-store/test',
 
 	'--test-entry traits/i-lock-page-scroll/test',
