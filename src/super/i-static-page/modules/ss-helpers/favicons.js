@@ -11,7 +11,8 @@ const
 
 const
 	glob = require('glob'),
-	fs = require('fs-extra');
+	fs = require('fs-extra'),
+	path = require('upath');
 
 const
 	{resolveAsLib} = include('src/super/i-static-page/modules/ss-helpers/libs'),
@@ -25,9 +26,10 @@ exports.getFaviconsDecl = getFaviconsDecl;
  */
 function getFaviconsDecl() {
 	const
-		faviconsHTML = glob.sync(src.assets('favicons', favicons().html))[0];
+		faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'}),
+		faviconsHTML = path.join(faviconsFolder, favicons().html);
 
-	if (!faviconsHTML) {
+	if (!fs.existsSync(faviconsHTML)) {
 		return '';
 	}
 
