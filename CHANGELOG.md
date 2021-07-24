@@ -18,6 +18,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed a bug when the `component` getter is `undefined`.
   Now the getter can return a promise in that case `base/b-dynamic-page`.
 
+* Restored support of favicons `build/static.gulp` `iStaticPage`
+
+#### :house: Internal
+
+* Added tests `iStaticPage`
+
 ## v3.0.0-rc.214 (2021-07-22)
 
 #### :boom: Breaking Change
