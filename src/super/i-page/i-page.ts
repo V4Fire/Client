@@ -44,6 +44,7 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * A dictionary of page titles (basically these titles are set via `document.title`).
 	 * The dictionary values are tied to the `stage` values.
+	 *
 	 * A key with the name `[[DEFAULT]]` is used by default. If a key value is defined as a function,
 	 * it will be invoked (the result will be used as a title).
 	 */
@@ -77,11 +78,13 @@ export default abstract class iPage extends iData implements iVisible {
 	 *
 	 * @see [[iPage.scrollTo]]
 	 */
+	@computed({cache: true})
 	get scrollToProxy(): this['scrollTo'] {
-		return this.async.proxy(this.scrollTo.bind(this), {
-			single: false,
-			label: $$.scrollTo
-		});
+		return (...args) => {
+			this.async.setImmediate(() => this.scrollTo(...args), {
+				label: $$.scrollTo
+			});
+		};
 	}
 
 	/** @inheritDoc */
