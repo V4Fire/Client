@@ -653,9 +653,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param value
 	 */
 	set hook(value: Hook) {
-		const
-			oldValue = this.hook;
-
+		const oldValue = this.hook;
 		this.hookStore = value;
 
 		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {

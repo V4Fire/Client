@@ -12,4 +12,5 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		+= self.slot()
+		< .&__wrapper
+			+= self.slot()
