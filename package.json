@@ -37,7 +37,7 @@
     "up": "npm i && npm up && npm audit fix"
   },
   "dependencies": {
-    "@v4fire/core": "^3.55.0",
+    "@v4fire/core": "^3.56.0",
     "escaper": "^3.0.6",
     "eventemitter2": "^6.4.4",
     "jsdom": "^16.6.0",
