@@ -44,7 +44,7 @@ function getFaviconsDecl() {
 			faviconsDecl = fs.readFileSync(faviconsHTMLSrc).toString();
 
 		return faviconsDecl.replace(tagWithPlaceholderRgxp, (str, tag, attrs1, hrefAttr, href, attrs2) => {
-			href = addPublicPath(href.replace(pathPlaceholderRgxp, ''));
+			href = addPublicPath(href.replace(pathPlaceholderRgxp, `${dest}/`));
 
 			if (/\bmanifest.json$/.test(href)) {
 				href = [`${href} + '?from=' + location.pathname + location.search`];
