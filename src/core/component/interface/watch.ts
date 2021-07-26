@@ -179,7 +179,7 @@ export interface MethodWatcher<
 	options?: Dictionary;
 
 	/**
-	 * Additional arguments to watch
+	 * Additional arguments for the operation (their provides to an event emitter when attaching listeners)
 	 */
 	args?: CanArray<unknown>;
 
