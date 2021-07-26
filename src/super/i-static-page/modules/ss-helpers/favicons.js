@@ -38,10 +38,6 @@ function getFaviconsDecl() {
 		pathPlaceholderRgxp = /\$faviconPublicPath\//g,
 		dest = resolveAsLib({name: 'favicons', dest: 'assets'}, src.rel('assets'), 'favicons/');
 
-	glob.sync(src.clientOutput(dest, '*.@(json|xml|html|webapp)')).forEach((file) => {
-		fs.writeFileSync(file, resolveFaviconPath(fs.readFileSync(file).toString()));
-	});
-
 	if (webpack.dynamicPublicPath()) {
 		const
 			tagWithPlaceholderRgxp = /<(link|meta)\s(.*?)\b(content|href)="(\$faviconPublicPath\/.*?)"(.*?)\/?>/g,
@@ -64,6 +60,10 @@ function getFaviconsDecl() {
 			}));
 		});
 	}
+
+	glob.sync(src.clientOutput(dest, '*.@(json|xml|html|webapp)')).forEach((file) => {
+		fs.writeFileSync(file, resolveFaviconPath(fs.readFileSync(file).toString()));
+	});
 
 	const
 		manifestRgxp = /<link\s(.*?)\bhref="(.*?\bmanifest.json)"(.*?)\/?>/g,
