@@ -16,7 +16,6 @@ const
 	path = require('upath');
 
 const
-	{webpack} = require('config'),
 	{assetsJSON, assetsJS} = include('build/helpers.webpack');
 
 /**
@@ -48,8 +47,7 @@ module.exports = function DependenciesPlugin() {
 						}
 
 						manifest[key] = {
-							path: file,
-							publicPath: webpack.publicPath(file)
+							path: file
 						};
 					}
 				});
@@ -76,7 +74,7 @@ module.exports = function DependenciesPlugin() {
 				fs.writeFileSync(fd, JSON.stringify(assets));
 				fs.closeSync(fd);
 
-				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el.publicPath}';\n`));
+				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el.path}';\n`));
 			});
 		}
 	};
