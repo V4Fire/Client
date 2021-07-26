@@ -30,6 +30,10 @@ module.exports = function output() {
 		publicPath = '';
 	}
 
+	if (publicPath[0] === '\\') {
+		publicPath = publicPath.slice(1);
+	}
+
 	return {
 		path: src.clientOutput(),
 		publicPath,
