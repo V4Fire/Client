@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2021-07-??)
+
+#### :bug: Bug Fix
+
+* Fixed providing `watchProp` in an object form
+
 ## v3.0.0-rc.213 (2021-07-22)
 
 #### :bug: Bug Fix

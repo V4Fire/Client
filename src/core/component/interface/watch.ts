@@ -179,7 +179,7 @@ export interface MethodWatcher<
 	options?: Dictionary;
 
 	/**
-	 * Additional arguments to the operation
+	 * Additional arguments to watch
 	 */
 	args?: CanArray<unknown>;
 

@@ -107,12 +107,10 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
  * @param component
  */
 export function initRemoteWatchers(component: iBlock): void {
-	const
-		ctx = component.unsafe;
-
-	const
-		watchMap = ctx.meta.watchers,
-		{watchProp} = ctx;
+	const {
+		watchProp,
+		meta: {watchers: watchMap}
+	} = component.unsafe;
 
 	if (watchProp == null) {
 		return;
@@ -125,27 +123,26 @@ export function initRemoteWatchers(component: iBlock): void {
 
 		for (let i = 0; i < watchers.length; i++) {
 			const
-				el = watchers[i];
+				watcher = watchers[i];
 
-			if (Object.isString(el)) {
+			if (Object.isString(watcher)) {
 				const
-					field = normalizeField(el),
-					wList = watchMap[field] ?? [];
+					path = normalizePath(watcher),
+					wList = watchMap[path] ?? [];
 
-				watchMap[field] = wList;
+				watchMap[path] = wList;
 				wList.push({method, handler: method});
 
 			} else {
 				const
-					field = normalizeField(el.field),
-					wList = watchMap[field] ?? [];
+					path = normalizePath(watcher.path ?? watcher.field),
+					wList = watchMap[path] ?? [];
 
-				watchMap[field] =
-					wList;
+				watchMap[path] = wList;
 
 				wList.push({
-					...el,
-					args: Array.concat([], el.args),
+					...watcher,
+					args: Array.concat([], watcher.args),
 					method,
 					handler: method
 				});
@@ -153,7 +150,7 @@ export function initRemoteWatchers(component: iBlock): void {
 		}
 	}
 
-	function normalizeField(field?: string): string {
+	function normalizePath(field?: string): string {
 		if (field == null) {
 			return '';
 		}

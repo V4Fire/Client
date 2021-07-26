@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-07-??)
+
+#### :bug: Bug Fix
+
+* Fixed providing `watchProp` in an object form `iBlock`
+
 ## v3.0.0-rc.215 (2021-07-25)
 
 #### :bug: Bug Fix
