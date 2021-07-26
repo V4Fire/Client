@@ -40,6 +40,7 @@ module.exports = [
 	'--test-entry super/i-block/modules/field/test',
 	'--test-entry super/i-block/modules/storage/test',
 	'--test-entry super/i-block/modules/async-render/test',
+	'--test-entry super/i-block/modules/module-loader/test',
 	'--test-entry super/i-block/modules/activation/test',
 	'--test-entry super/i-block/modules/provide/test',
 	'--test-entry super/i-block/modules/lfc/test',

@@ -25,8 +25,16 @@ const
 module.exports = async (page, params) => {
 	await h.utils.setup(page, params.context);
 
+	let
+		root;
+
+	beforeAll(async () => {
+		root = await h.component.waitForComponent(page, '.p-v4-components-demo');
+	});
+
 	beforeEach(async () => {
 		await page.evaluate(() => {
+			globalThis.loadFromProp = undefined;
 			globalThis.removeCreatedComponents();
 		});
 	});
@@ -41,7 +49,22 @@ module.exports = async (page, params) => {
 					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
 					return wrapper.textContent.trim();
 				})
-			).toBe('Ok 1  Ok 2');
+			).toBe('Dummy module #1     Dummy module #1     Dummy module #2');
+		});
+
+		it('loading dynamic modules passed from the prop', async () => {
+			await root.evaluate(() => {
+				globalThis.loadFromProp = true;
+			});
+
+			const target = await init('loading dynamic modules passed from the prop');
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					await ctx.waitStatus('ready');
+					return ctx.block.element('result').textContent.trim();
+				})
+			).toBe('Dummy module #1     Dummy module #2');
 		});
 	});
 
