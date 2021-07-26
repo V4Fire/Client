@@ -27,14 +27,25 @@ exports.addPublicPath = addPublicPath;
  * Attaches `publicPath` to the specified path
  *
  * @param {(string|!Array<string>)} path
- * @returns {!Array<String>}
+ * @returns {(string|!Array<String>)}
  */
 function addPublicPath(path) {
 	const
-		id = 'PUBLIC_PATH',
-		expr = `(typeof ${id} === 'string' ? concatURLs(${id}, ${toExpr(path)}) : concatURLs(${toExpr(webpack.publicPath())}, ${toExpr(path)}))`;
+		staticExpr = `concatURLs(${toExpr(webpack.publicPath())}, ${toExpr(path)})`;
 
-	return [`((function () { ${concatURLs.toString()} return ${expr}; })())`];
+	if (webpack.dynamicPublicPath()) {
+		const
+			id = 'PUBLIC_PATH',
+			expr = `(typeof ${id} === 'string' ? concatURLs(${id}, ${toExpr(path)}) : ${staticExpr})`;
+
+		return [`((function () { ${concatURLs.toString()} return ${expr}; })())`];
+	}
+
+	if (Object.isArray(path)) {
+		return [`((function () { ${concatURLs.toString()} return ${staticExpr}; })())`];
+	}
+
+	return webpack.publicPath(path);
 
 	/* eslint-disable prefer-template */
 

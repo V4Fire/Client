@@ -16,6 +16,7 @@ const
 	path = require('upath');
 
 const
+	{webpack} = require('config'),
 	{assetsJSON, assetsJS} = include('build/helpers.webpack');
 
 /**
@@ -47,7 +48,8 @@ module.exports = function DependenciesPlugin() {
 						}
 
 						manifest[key] = {
-							path: file
+							path: file,
+							publicPath: webpack.publicPath(file)
 						};
 					}
 				});

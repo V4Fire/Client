@@ -394,6 +394,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * If true, a path to load assets can be defined in runtime
+		 * @returns {boolean}
+		 */
+		dynamicPublicPath() {
+			return o('dynamic-public-path', {
+				env: true,
+				type: 'boolean',
+				default: false
+			});
+		},
+
+		/**
 		 * Returns a value for `output.publicPath`.
 		 * The method can take arguments that will be concatenated to the base value.
 		 *

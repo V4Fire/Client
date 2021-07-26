@@ -28,9 +28,9 @@ exports.getFaviconsDecl = getFaviconsDecl;
 function getFaviconsDecl() {
 	const
 		faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'}),
-		faviconsHTML = path.join(faviconsFolder, favicons().html);
+		faviconsHTMLSrc = path.join(faviconsFolder, favicons().html);
 
-	if (!fs.existsSync(faviconsHTML)) {
+	if (!fs.existsSync(faviconsHTMLSrc)) {
 		return '';
 	}
 
@@ -42,26 +42,40 @@ function getFaviconsDecl() {
 		fs.writeFileSync(file, resolveFaviconPath(fs.readFileSync(file).toString()));
 	});
 
-	const
-		manifestRgxp = /<(link|meta)\s(.*?)\b(content|href)="(\$faviconPublicPath\/.*?)"(.*?)\/?>/g,
-		faviconsDecl = fs.readFileSync(faviconsHTML).toString();
+	if (webpack.dynamicPublicPath()) {
+		const
+			tagWithPlaceholderRgxp = /<(link|meta)\s(.*?)\b(content|href)="(\$faviconPublicPath\/.*?)"(.*?)\/?>/g,
+			faviconsDecl = fs.readFileSync(faviconsHTMLSrc).toString();
 
-	return faviconsDecl.replace(manifestRgxp, (str, tag, attrs1, hrefAttr, href, attrs2) => {
-		href = addPublicPath(href.replace(pathPlaceholderRgxp, ''));
+		return faviconsDecl.replace(tagWithPlaceholderRgxp, (str, tag, attrs1, hrefAttr, href, attrs2) => {
+			href = addPublicPath(href.replace(pathPlaceholderRgxp, ''));
 
-		if (/manifest.json$/.test(href)) {
-			href = [`${href} + '?from=' + location.pathname + location.search`];
-		}
-
-		return getScriptDecl(getLinkDecl({
-			tag,
-			js: true,
-			staticAttrs: attrs1 + attrs2,
-			attrs: {
-				[hrefAttr]: href
+			if (/\bmanifest.json$/.test(href)) {
+				href = [`${href} + '?from=' + location.pathname + location.search`];
 			}
-		}));
-	});
+
+			return getScriptDecl(getLinkDecl({
+				tag,
+				js: true,
+				staticAttrs: attrs1 + attrs2,
+				attrs: {
+					[hrefAttr]: href
+				}
+			}));
+		});
+	}
+
+	const
+		manifestRgxp = /<link\s(.*?)\bhref="(.*?\bmanifest.json)"(.*?)\/?>/g,
+		faviconsDecl = fs.readFileSync(src.clientOutput(dest, favicons().html)).toString();
+
+	return faviconsDecl.replace(manifestRgxp, (str, attrs1, href, attrs2) => getScriptDecl(getLinkDecl({
+		js: true,
+		staticAttrs: attrs1 + attrs2,
+		attrs: {
+			href: [`'${href}?from=' + location.pathname + location.search`]
+		}
+	})));
 
 	function resolveFaviconPath(str) {
 		return str.replace(pathPlaceholderRgxp, `${webpack.publicPath(dest)}/`.replace(/\/+$/, '/'));
