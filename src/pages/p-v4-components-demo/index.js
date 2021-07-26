@@ -47,6 +47,7 @@ package('p-v4-components-demo')
 		'b-dummy',
 		'b-dummy-text',
 		'b-dummy-async-render',
+		'b-dummy-module-loader',
 		'b-dummy-lfc',
 		'b-dummy-watch',
 		'b-dummy-sync',
