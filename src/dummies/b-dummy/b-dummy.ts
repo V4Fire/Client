@@ -92,6 +92,10 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	/** @override */
 	static readonly daemons: typeof daemons = daemons;
 
+	setStage(value: string): void {
+		this.stage = value;
+	}
+
 	/** @see [[iObserveDOM.initDOMObservers]] */
 	@hook('mounted')
 	@wait('ready')

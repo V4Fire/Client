@@ -17,9 +17,20 @@ const
 
 /** @param {Page} page */
 module.exports = (page) => {
+	let
+		root;
+
+	beforeAll(async () => {
+		root = await h.component.waitForComponent(page, '.p-v4-components-demo');
+	});
+
 	beforeEach(async () => {
 		await page.evaluate(() => {
 			globalThis.removeCreatedComponents();
+		});
+
+		await root.evaluate((ctx) => {
+			ctx.stage = undefined;
 		});
 	});
 
@@ -104,6 +115,72 @@ module.exports = (page) => {
 			expect(
 				await target.evaluate((ctx) => ctx.block.element('wrapper').getAttribute('style'))
 			).toBe('color: red;');
+		});
+
+		describe('`watchProp`', () => {
+			it('simple usage', async () => {
+				const target = await init({
+					watchProp: {
+						setStage: 'stage'
+					}
+				});
+
+				expect(
+					await target.evaluate(async (ctx) => {
+						ctx.$parent.stage = 'foo';
+						await ctx.nextTick();
+						return ctx.stage;
+					})
+				).toBe('foo');
+			});
+
+			it('providing additional options', async () => {
+				const target = await init({
+					watchProp: {
+						setStage: [
+							'stage',
+
+							{
+								path: 'watchTmp.foo',
+								collapse: false,
+								immediate: true
+							}
+						]
+					}
+				});
+
+				expect(
+					await target.evaluate(async (ctx) => {
+						ctx.$parent.stage = 'foo';
+						await ctx.nextTick();
+						return ctx.stage;
+					})
+				).toBe('foo');
+
+				expect(
+					await target.evaluate(async (ctx) => {
+						ctx.$parent.watchTmp.foo = 'bar';
+						await ctx.nextTick();
+						return ctx.stage;
+					})
+				).toBe('bar');
+			});
+
+			it('watching for events', async () => {
+				const target = await init({
+					watchProp: {
+						setStage: [':onNewStage']
+					}
+				});
+
+				expect(
+					await target.evaluate(async (ctx) => {
+						ctx.$parent.emit('newStage', 'foo');
+						await ctx.nextTick();
+						return ctx.stage;
+					})
+				).toBe('foo');
+			});
 		});
 	});
 
