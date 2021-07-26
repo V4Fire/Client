@@ -33,7 +33,7 @@ if (${webpack.publicPath()}) {
 		var m = /publicPath=([^&]+)/.exec(location.search);
 
 		if (m != null) {
-			PUBLIC_PATH = m[1];
+			PUBLIC_PATH = decodeURIComponent(m[1]);
 		}
 	})();
 }
