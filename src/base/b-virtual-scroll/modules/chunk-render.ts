@@ -130,8 +130,8 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Renders component content
-	 * @emits chunkRender(renderItems: RenderItem[], chunkNumber: number)
+	 * Renders the component content
+	 * @emits `chunkRender(renderItems:` [[RenderItem]]`[], chunkNumber: number)`
 	 */
 	render(): void {
 		if (this.ctx.localState !== 'ready') {
@@ -209,8 +209,9 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Hides or shows refs of the loader and tombstones
+	 *
 	 * @param show
-	 * @param [immediate]
+	 * @param [immediate] - if settled as `true` will immediately update a DOM tree
 	 */
 	setLoadersVisibility(show: boolean, immediate: boolean = false): void {
 		this.setRefVisibility('tombstones', show, immediate);
@@ -236,7 +237,7 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Updates visibility of refs by using requestAnimationFrame
+	 * Updates visibility of refs by using `requestAnimationFrame`
 	 */
 	protected performRefsVisibilityUpdate(): void {
 		this.async.requestAnimationFrame(() => {
@@ -261,8 +262,9 @@ export default class ChunkRender extends Friend {
 	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
-		this.ctx.localEmitter.once('localState.ready', this.onReady.bind(this), {label: $$.reInit});
-		this.ctx.localEmitter.once('localState.error', this.onError.bind(this), {label: $$.reInit});
+		const label = {label: $$.reInit};
+		this.ctx.localEmitter.once('localState.ready', this.onReady.bind(this), label);
+		this.ctx.localEmitter.once('localState.error', this.onError.bind(this), label);
 	}
 
 	/**
@@ -289,7 +291,7 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Wraps the specified item node with the in-view directive
+	 * Wraps the specified item node with the `in-view` directive
 	 * @param item
 	 */
 	protected wrapInView(item: RenderItem): void {
@@ -336,7 +338,7 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Returns options to initialize in-view
+	 * Returns options to initialize the `in-view` directive
 	 * @param index
 	 */
 	protected getInViewOptions(index: number): InViewInitOptions {

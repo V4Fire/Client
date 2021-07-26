@@ -232,6 +232,13 @@ module.exports = (page) => {
 			expect(await root.evaluate(({route}) => route.name)).toBe('aliasToAlias');
 		});
 
+		it('transition to an alias with parameters', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/tpl-alias/foo/bar');
+				return [location.pathname, ctx.route.params];
+			})).toEqual(['/tpl-alias/foo/bar', {param1: 'foo', param2: 'bar'}]);
+		});
+
 		it('transition with redirect', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/second/redirect');

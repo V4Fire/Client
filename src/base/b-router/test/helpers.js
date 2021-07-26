@@ -102,6 +102,11 @@ async function initRouter(page) {
 							path: '/strict-tpl/:param1/:param2?'
 						},
 
+						templateAlias: {
+							path: '/tpl-alias/:param1/:param2?',
+							alias: 'template'
+						},
+
 						notFound: {
 							default: true,
 							content: '404'

@@ -1,3 +1,5 @@
+- namespace [%fileName%]
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,4 +8,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const empty = Symbol('Empty value');
+- include 'super/i-data'|b as placeholder
+
+- template index() extends ['i-data'].index
+	- block body
+		+= self.slot()

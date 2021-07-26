@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.211 (2021-07-21)
 
 * Now the trait uses `aria` attributes
 

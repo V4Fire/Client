@@ -141,3 +141,77 @@ This slot can be useful if you want to provide the ability to manually request a
     < .&__done
       All data are rendered and requested
 ```
+
+## API
+
+Also, you can see the parent component and the component traits.
+
+### Props
+
+#### [cacheSize = `400`]
+
+The maximum number of elements to cache.
+
+#### [renderGap = `10`]
+
+Number of elements till the page bottom that should initialize a new render iteration.
+
+#### [chunkSize = `10`]
+
+Number of elements per one render chunk.
+
+#### [tombstonesSize]
+
+Number of tombstones to render.
+
+#### [clearNodes = `false`]
+
+If true, then elements are dropped from a DOM tree after scrolling.
+This method is recommended to use if you need to display a huge number of elements and prevent an OOM error.
+
+#### [cacheNodes = `true`]
+
+If true, then created nodes are cached.
+
+#### [requestQuery]
+
+A function that returns parameters to make a request.
+
+#### [getData]
+
+A function to request a new data chunk to render.
+
+#### [shouldMakeRequest]
+
+When this function returns true the component will be able to request additional data.
+
+#### [shouldStopRequest]
+
+When this function returns true the component will stop to request new data.
+
+### Methods
+
+#### reInit
+
+Re-initializes the component.
+
+#### reloadLast
+
+Reloads the last request (if there is no `db` or `options` the method calls reload).
+
+#### renderNext
+
+Tries to render the next data chunk.
+The method emits a new request for data if necessary.
+
+#### getCurrentDataState
+
+Returns an object with the current data state of the component.
+
+#### getItemAttrs
+
+Returns additional props to pass to an item component.
+
+#### getItemComponentName
+
+Returns a component name to render an item.

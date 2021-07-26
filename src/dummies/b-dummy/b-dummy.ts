@@ -29,7 +29,15 @@ import updateOn from 'core/component/directives/update-on/engines';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
-import iData, { component, field, computed, hook, wait, ModsNTable } from 'super/i-data/i-data';
+import iData, {
+
+	component,
+	field,
+	hook,
+	wait,
+	ModsNTable
+
+} from 'super/i-data/i-data';
 
 import daemons from 'dummies/b-dummy/daemons';
 import type { Directives, Modules } from 'dummies/b-dummy/interface';
@@ -52,23 +60,9 @@ interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM
 
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
-	/**
-	 * Test field
-	 */
 	@field()
 	testField: any = undefined;
 
-	/**
-	 * Getter that depends on a value from the another component
-	 */
-	@computed({dependencies: ['r.isAuth']})
-	get remoteWatchableGetter(): boolean {
-		return this.r.isAuth;
-	}
-
-	/**
-	 * Links to directives
-	 */
 	get directives(): Directives {
 		return {
 			imageFactory: imageLoaderFactory,
@@ -79,9 +73,6 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 		};
 	}
 
-	/**
-	 * Link to the modules
-	 */
 	get modules(): Modules {
 		return {
 			resizeWatcher: ResizeWatcher,
@@ -100,6 +91,10 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 
 	/** @override */
 	static readonly daemons: typeof daemons = daemons;
+
+	setStage(value: string): void {
+		this.stage = value;
+	}
 
 	/** @see [[iObserveDOM.initDOMObservers]] */
 	@hook('mounted')

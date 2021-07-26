@@ -42,7 +42,7 @@ if (config.runtime().noGlobals) {
 
 	$C(files).forEach((el) => {
 		const
-			file = fs.readFileSync(el, {encoding: 'utf-8'});
+			file = fs.readFileSync(el).toString();
 
 		let
 			decl;

@@ -16,6 +16,8 @@ This module provides a component to create bottom sheet behavior that is similar
 | `events`     | The component is ready to process input events | `Boolean` | `false` |
 | `heightMode` | The component height calculation mode          | `string`  | –       |
 
+Also, you can see the parent component and the component traits.
+
 ## Events
 
 | EventName         | Description                                | Payload description          | Payload   |
@@ -24,6 +26,8 @@ This module provides a component to create bottom sheet behavior that is similar
 | `close`           | The component has been closed              | –                            | –         |
 | `stepChange`      | The component opened step has been changed | A number of the current step | `number`  |
 | `moveStateChange` | The component starts or stops moving       | A state of moving            | `Boolean` |
+
+Also, you can see the parent component and the component traits.
 
 ## Usage
 
@@ -76,7 +80,7 @@ and only after user action or calling special methods, the component is opened o
 It is a good practice not to render or load what a user cannot see on the screen.
 The component supports the ability not to render content until it is open.
 This can be done using the `forceInnerRender` prop.
-You need to set `forceInnerRender` to` false` to avoid rendering the component's content immediately.
+You need to set `forceInnerRender` to` false` to avoid immediately rendering the component's content.
 
 ```
 < b-bottom-slide :forceInnerRender = false
@@ -227,33 +231,90 @@ Alternatively, you can use a string name to render the specific template.
 These are just two of the many approaches that the `V4Fire` framework gives you to use that kind of component.
 There are many more options you can think of to cover your needs.
 
-## API
-
-### Props
-
-- `visible` – The minimum height value of a visible part (in pixels), i.e., even the component is closed, this part still be visible.
-  By default, set to `0`.
-
-- `overlay` – If set to `true`, then when "pulling" the component to the entire height, a semi-transparent back
-  will be displayed below the component. By default, it is set to `true`.
-
-- `scrollToTopOnClose` – If set to `true`, then when the component is closed, the content inside it will be scrolled up.
-
-### Methods
-
-- `next` – Pulls the component to the next step.
-  If the component is completely closed at the method call, it will call the `open` method.
-  If the component is stretched to the maximum, the method will return `false`.
-
-- `prev` – Pulls the component to the previous step.
-  If the component is at the last step, it will call the `close` method.
-  If the component is fully closed, the method will return `false`.
-
 ## Slots
 
-1. `default` to provide the base content of the component.
+The component supports the default slot to provide a content.
 
 ```
 < b-bottom-slide
   < img src = https://fakeimg.pl/300x300
 ```
+
+## API
+
+Also, you can see the parent component and the component traits.
+
+### Props
+
+#### [heightMode = `'full'`]
+
+The component height mode:
+
+1. `content` – the height value is based on a component content, but no more than the viewport height;
+2. `full` – the height value is equal to the viewport height.
+
+#### [stepsProp = `[]`]
+
+A list of allowed component positions relative to the screen height (in percentages).
+
+#### [visible = `0`]
+
+The minimum height value of a visible part (in pixels), i.e., even the component is closed, this part still be visible.
+
+#### [maxVisiblePercent = `90`]
+
+The maximum height value to which you can pull the component.
+
+#### [fastSwipeDelay = `300`]
+
+The maximum time in milliseconds after which we can assume that there was a quick swipe.
+
+#### [fastSwipeThreshold = `10`]
+
+The minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe.
+
+#### [swipeThreshold = `40`]
+
+The minimum required amount of pixels of scrolling to swipe.
+
+#### [overlay = `true`]
+
+If true, the component will overlay background while it's opened.
+
+#### [maxOpacity = `0.8`]
+
+The maximum value of overlay opacity.
+
+#### [scrollToTopOnClose = `true`]
+
+If true, then the content scroll will be automatically reset to the top after closing the component.
+
+#### [forceInnerRender = `true`]
+
+If false, the inner content of the component won't be rendered if the component isn't opened.
+
+### Getters
+
+#### isFullyOpened
+
+True if the content is fully opened.
+
+#### isClosed
+
+True if the content is fully closed.
+
+#### steps
+
+A list of possible component positions relative to the screen height (in percentages).
+
+### Methods
+
+#### next
+
+Switches to the next component step.
+The methods returns false if the component is already fully opened.
+
+#### prev
+
+Switches to the previous component step.
+The methods returns false if the component is already closed.

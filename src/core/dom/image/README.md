@@ -50,7 +50,7 @@ export default class bSomeComponent extends iBlock {
 
 ### Additional stages
 
-Stages of an image:
+Available stages of an image:
 
 1. `preview` – the main image is loading; till the loading complete, there will be shown a placeholder.
 2. `main` – the main image has been loaded.

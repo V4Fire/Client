@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.215 (2021-07-25)
+
+#### :bug: Bug Fix
+
+* Fixed canceling of previous tasks with `scrollToProxy`
+
+#### :house: Internal
+
+* Added tests
+
 ## v3.0.0-rc.195 (2021-05-28)
 
 #### :memo: Documentation

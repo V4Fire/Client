@@ -9,6 +9,7 @@
 // tslint:disable max-classes-per-file
 
 /// <reference types="@v4fire/core" />
+/// <reference path="../index.d.ts" />
 
 declare namespace Playwright {
 	type BrowserContext = import('playwright').BrowserContext;
@@ -84,6 +85,9 @@ declare namespace BrowserTests {
 
 		/** @see Component */
 		component: Component;
+
+		/** @see Gestures */
+		gestures: Gestures;
 
 		/** @see BOM */
 		bom: BOM;
@@ -245,6 +249,19 @@ declare namespace BrowserTests {
 			fn: (this: any, ctx: any, ...args: ARGS) => unknown,
 			...args: ARGS
 		): Promise<void>;
+	}
+
+	/**
+	 * Class provides API to work with gestures on a page
+	 */
+	class Gestures {
+		/**
+		 * Creates a gesture instance
+		 *
+		 * @param page
+		 * @param options
+		 */
+		create(page: Playwright.Page, options: TouchGesturesCreateOptions): Playwright.JSHandle;
 	}
 
 	/**

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.211 (2021-07-21)
+
+#### :bug: Bug Fix
+
+* Fixed watching with parameters `{immediate: true, collapse: true}`
+
 ## v3.0.0-rc.198 (2021-06-08)
 
 #### :rocket: New Feature

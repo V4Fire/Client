@@ -9,13 +9,39 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.215 (2021-07-25)
+
+#### :bug: Bug Fix
+
+* Restored support of favicons
+
+#### :house: Internal
+
+* Added tests
+
+## v3.0.0-rc.214 (2021-07-22)
+
+#### :boom: Breaking Change
+
+* Now `providerDataStore` implements `core/cache`
+
+#### :memo: Documentation
+
+* Added documentation
+
+## v3.0.0-rc.212 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when Vue drops a prototype from the route object
+
+## v3.0.0-rc.211 (2021-07-21)
 
 #### :house: Internal
 
 * Removed `jasmine` deps in the `runtime.debug` mode
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.211 (2021-07-21)
 
 #### :bug: Bug Fix
 

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.211 (2021-07-21)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when mutations of the nested path can't be caught
+
 ## v3.0.0-rc.137 (2021-02-04)
 
 #### :rocket: Bug Fix

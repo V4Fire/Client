@@ -48,7 +48,7 @@ switch (runtime.engine) {
 
 	default:
 		if (!runtime.engine) {
-			throw new Error('The engine to use is not specified');
+			throw new Error('An engine to use is not specified');
 		}
 }
 

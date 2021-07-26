@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
+import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 import { reset, ResetType, ComponentInterface } from 'core/component';
 
@@ -22,11 +23,17 @@ import type { AppliedRoute } from 'core/router';
 import type iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
-import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
+import createProviderDataStore, { ProviderDataStore } from 'super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'super/i-static-page/modules/theme';
+
 import type { RootMod } from 'super/i-static-page/interface';
 
 export * from 'super/i-page/i-page';
+export * from 'super/i-static-page/modules/theme';
+
+export { createProviderDataStore };
+export * from 'super/i-static-page/modules/provider-data-store';
+
 export * from 'super/i-static-page/interface';
 
 export const
@@ -65,8 +72,8 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Remote data store
 	 */
-	@system(() => new ProvidedDataStore())
-	readonly providerDataStore!: ProvidedDataStore;
+	@system(() => createProviderDataStore(new RestrictedCache(10)))
+	readonly providerDataStore!: ProviderDataStore;
 
 	/**
 	 * Module to manage app themes
@@ -101,6 +108,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
+	@computed()
 	get route(): CanUndef<this['CurrentPage']> {
 		return this.field.get('routeStore');
 	}
@@ -151,6 +159,11 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	set locale(value: string) {
 		this.field.set('localeStore', value);
+
+		try {
+			document.documentElement.setAttribute('lang', value);
+		} catch {}
+
 		setLocale(value);
 	}
 
@@ -168,7 +181,19 @@ export default abstract class iStaticPage extends iPage {
 	protected routerStore?: this['Router'];
 
 	/** @see [[iStaticPage.locale]]  */
-	@field(() => locale.value)
+	@field(() => {
+		const
+			lang = locale.value;
+
+		if (Object.isTruly(lang)) {
+			try {
+				document.documentElement.setAttribute('lang', lang);
+			} catch {}
+		}
+
+		return lang;
+	})
+
 	protected localeStore!: string;
 
 	/**

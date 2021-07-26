@@ -63,7 +63,7 @@ Object.assign(componentsTree, {
 $C(componentFiles).forEach((el) => {
 	const
 		escapedFragments = [],
-		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'}), escapedFragments),
+		file = escaper.replace(fs.readFileSync(el).toString(), escapedFragments),
 		componentClass = componentClassRgxp.exec(file);
 
 	const p = ((v) => {

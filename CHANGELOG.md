@@ -11,8 +11,57 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.??? (2021-07-??)
 
-## v3.0.0-rc.??? (2021-??-??)
+#### :bug: Bug Fix
+
+* Fixed providing `watchProp` in an object form `iBlock`
+
+#### :rocket: New Feature
+
+* Initial release `bDummyDecorators`
+
+## v3.0.0-rc.215 (2021-07-25)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the `component` getter is `undefined`.
+  Now the getter can return a promise in that case `base/b-dynamic-page`.
+
+* Fixed canceling of previous tasks with `scrollToProxy` `iPage`
+* Restored support of favicons `build/static.gulp` `iStaticPage`
+
+#### :house: Internal
+
+* Added tests:
+  * `iPage`
+  * `iStaticPage`
+
+## v3.0.0-rc.214 (2021-07-22)
+
+#### :boom: Breaking Change
+
+* Now `providerDataStore` implements `core/cache` `i-static-page/modules/provider-data-store`
+
+#### :memo: Documentation
+
+* Added documentation `i-static-page/modules/provider-data-store`
+
+## v3.0.0-rc.213 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed invalid resolving of `r` `iBlock`
+
+## v3.0.0-rc.212 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when Vue drops a prototype from the route object `iStaticPage`
+* Fixed an issue with dynamically created components and the `r` getter `iBlock`
+* Fixed an issue when passed route parameters ignored if defined the `alias` property `core/router`
+
+## v3.0.0-rc.211 (2021-07-21)
 
 #### :boom: Breaking Change
 
@@ -25,9 +74,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Initial release `bDummyLfc`
+* Initial release:
+  * `bDummyLfc`
+  * `bDummySync`
+  * `bDummyWatch`
+
 * Added new tag name filters `:section` and `:-section` `build/snakeskin`
 * Added new props `rootTag` and `rootAttrs` `iBlock`
+* Added `topPath` and `originalTopPath` `core/component/reflection/getPropertyInfo`
 
 * Now the trait uses `aria` attributes:
   * `traits/i-visible`
@@ -50,6 +104,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Provided the `lang` attribute to `<html>` `iStaticPage`
 * Fixed a bug when providing `href` to `dataProvider` `bButton`
+* Fixed a bug when mutations of the nested path can't be caught `super/i-block/modules/sync`
+* Fixed watching with parameters `{immediate: true, collapse: true}` `core/component/watch`
+* [Fixed an issue that allows for pulling an element far away from the bottom `base/b-bottom-slide`](https://github.com/V4Fire/Client/issues/463)
+* Fixed an issue with an element not being visible if the `visible` prop was provided and the `contentMode` was `content` `base/b-bottom-slide`
+* Fixed a case when the resolved value of `waitRef` is an empty array `iBlock`
 
 #### :house: Internal
 

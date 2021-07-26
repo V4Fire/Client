@@ -428,7 +428,11 @@ export default abstract class iData extends iBlock implements iProgress {
 
 						.then(
 							(data) => {
-								void this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
+								void this.lfc.execCbAtTheRightTime(() => {
+									this.saveDataToRootStore(data);
+									this.db = this.convertDataToDB<this['DB']>(data);
+								}, label);
+
 								return callSuper();
 							},
 
@@ -1077,11 +1081,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			});
 		}
 
-		return req.then((res) => {
-			const v = res.data ?? undefined;
-			this.saveDataToRootStore(v);
-			return v;
-		});
+		return req.then((res) => res.data ?? undefined);
 	}
 
 	/**

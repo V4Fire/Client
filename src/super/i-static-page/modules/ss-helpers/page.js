@@ -292,7 +292,7 @@ async function generateInitJS(pageName, {
 
 	body.push(`
 (function () {
-	var el = document.createElement('${rootTag}');
+	var el = document.createElement('${rootTag || 'div'}');
 	${normalizeAttrs(rootAttrs, true)}
 	el.setAttribute('class', 'i-static-page ${pageName}');
 	document.body.appendChild(el);

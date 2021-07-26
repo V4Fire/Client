@@ -81,7 +81,7 @@ module.exports = (page) => {
 					expect(await getContainerChildCount()).toBe(20);
 				});
 
-				it('requests and renders a next data batch', async () => {
+				it('requests and renders the next data batch', async () => {
 					await component.evaluate((ctx, strategy) => {
 						ctx.loadStrategy = strategy;
 						ctx.request = {get: {chunkSize: 10, id: Math.random()}};

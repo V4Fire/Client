@@ -1,3 +1,5 @@
+/* eslint-disable max-lines,max-lines-per-function */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,9 +9,6 @@
  */
 
 // @ts-check
-
-/* eslint-disable max-lines-per-function */
-/* eslint-disable max-lines */
 
 const
 	h = include('tests/helpers'),
@@ -49,7 +48,7 @@ module.exports = async (page, params) => {
 		}
 
 		const
-			res = base64Img.split(',')[1],
+			res = base64Img.split(',', 2)[1],
 			headers = route.request().headers();
 
 		headers['Content-Length'] = String(res?.length ?? 0);

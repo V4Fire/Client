@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-invalid-this */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,8 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable @typescript-eslint/no-invalid-this */
-
 import symbolGenerator from 'core/symbol';
 
 import {
@@ -15,8 +15,10 @@ import {
 	DefaultImagePlaceholderOptions,
 	ImagePlaceholderOptions,
 	ImagePlaceholderType,
+
 	InitValue,
 	ShadowElState,
+
 	ImageOptions,
 	ImageNode,
 	ImageStage,

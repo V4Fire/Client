@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.211 (2021-07-21)
+
+#### :rocket: New Feature
+
+* Added `topPath` and `originalTopPath` `getPropertyInfo`
+
 ## v3.0.0-rc.165 (2021-03-23)
 
 #### :bug: Bug Fix

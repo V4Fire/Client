@@ -38,7 +38,7 @@ module.exports = [
 				return rootTag;
 			}
 
-			attrs[':is'] = ['rootTag'];
+			attrs[':is'] = ["rootTag || 'div'"];
 			return 'tag';
 		}
 

@@ -653,9 +653,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param value
 	 */
 	set hook(value: Hook) {
-		const
-			oldValue = this.hook;
-
+		const oldValue = this.hook;
 		this.hookStore = value;
 
 		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
@@ -705,7 +703,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Link to the component root
 	 */
 	get r(): this['$root'] {
-		return this.$root;
+		const r = this.$root;
+		return <any>r.$remoteParent?.$root ?? r;
 	}
 
 	/**
@@ -1639,7 +1638,8 @@ export default abstract class iBlock extends ComponentInterface {
 			// eslint-disable-next-line prefer-const
 			let link, unwatch;
 
-			const emitter = (_, wrappedHandler) => {
+			const emitter = (_, wrappedHandler: Function) => {
+				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
 				$a.worker(() => {
@@ -2440,7 +2440,7 @@ export default abstract class iBlock extends ComponentInterface {
 			refVal = that.$refs[ref];
 
 		return this.async.promise(() => new SyncPromise((resolve) => {
-			if (refVal != null) {
+			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
 				resolve(<T>refVal);
 
 			} else {

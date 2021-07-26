@@ -621,12 +621,9 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				.concat(item.classes ?? []);
 
 			if (href === undefined) {
-				item.classes.push('a');
-
 				item.attrs = {
 					...item.attrs,
-					role: 'tab',
-					'aria-selected': this.isActive(value)
+					role: 'tab'
 				};
 			}
 

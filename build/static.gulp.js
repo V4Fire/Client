@@ -57,26 +57,33 @@ module.exports = function init(gulp = require('gulp')) {
 	/**
 	 * Builds project favicons
 	 */
-	gulp.task('static:favicons', () => {
+	gulp.task('static:favicons:build', () => {
 		const faviconsParams = Object.assign(config.favicons(), {
-			start_url: '.',
-			html: 'favicons.html',
 			pipeHTML: true,
 			replace: true
 		});
 
-		return merge([
-			gulp.src(a('logo.svg'))
-				.pipe($.plumber())
-				.pipe($.favicons(faviconsParams))
-				.pipe(gulp.dest(a('favicons'))),
-
-			gulp.src(a('favicons/*'))
-				.pipe($.plumber())
-				.pipe($.imagemin([$.imagemin.optipng({optimizationLevel: 5})]))
-				.pipe(gulp.dest(a('favicons')))
-		]);
+		return gulp.src(a(faviconsParams.src))
+			.pipe($.plumber())
+			.pipe($.favicons(faviconsParams))
+			.pipe(gulp.dest(a('favicons')));
 	});
+
+	/**
+	 * Minifies project favicons
+	 */
+	gulp.task('static:favicons:optimize', () => gulp.src(a('favicons/*'))
+		.pipe($.plumber())
+		.pipe($.imagemin([$.imagemin.optipng({optimizationLevel: 5})]))
+		.pipe(gulp.dest(a('favicons'))));
+
+	/**
+	 * Builds and minifies project favicons
+	 */
+	gulp.task('static:favicons', gulp.series([
+		'static:favicons:build',
+		'static:favicons:optimize'
+	]));
 
 	/**
 	 * Minifies project HTML files

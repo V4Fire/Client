@@ -9,11 +9,33 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2021-??-??)
+## v3.0.0-rc.??? (2021-07-??)
+
+#### :bug: Bug Fix
+
+* Fixed providing `watchProp` in an object form
+
+## v3.0.0-rc.213 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed invalid resolving of `r`
+
+## v3.0.0-rc.212 (2021-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with dynamically created components and the `r` getter
+
+## v3.0.0-rc.211 (2021-07-21)
 
 #### :rocket: New Feature
 
 * Added new props `rootTag` and `rootAttrs`
+
+#### :bug: Bug Fix
+
+* Fixed a case when the resolved value of `waitRef` is an empty array
 
 ## v3.0.0-rc.209 (2021-07-06)
 

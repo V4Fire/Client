@@ -582,8 +582,6 @@ return (page, route, ctx) => ({
 
 		async function init(attrs = {}) {
 			await page.evaluate((attrs) => {
-				globalThis.removeCreatedComponents();
-
 				globalThis.renderComponents('b-router', [
 					{
 						attrs: {

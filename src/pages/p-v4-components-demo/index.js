@@ -39,6 +39,7 @@ package('p-v4-components-demo')
 
 		'b-sidebar',
 		'b-slider',
+		'b-bottom-slide',
 
 		'b-icon',
 		'b-image',
@@ -47,7 +48,10 @@ package('p-v4-components-demo')
 		'b-dummy-text',
 		'b-dummy-async-render',
 		'b-dummy-lfc',
+		'b-dummy-watch',
+		'b-dummy-sync',
 		'b-dummy-control-list',
+		'b-dummy-decorators',
 
 		components
 	);
