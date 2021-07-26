@@ -29,6 +29,15 @@ Object.defineProperty(window, '${csp.nonceStore()}', {
 });
 
 var PATH = Object.create(null);
+var PUBLIC_PATH;
+
+(function () {
+	var m = /publicPath=([^&]+)/.exec(location.search);
+
+	if (m != null) {
+		PUBLIC_PATH = m[1];
+	}
+})();
 
 try {
 	PATH = new Proxy(PATH, {

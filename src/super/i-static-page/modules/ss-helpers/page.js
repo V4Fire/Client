@@ -19,11 +19,13 @@ const
 	monic = require('monic');
 
 const
-	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers'),
 	{getAssetsDecl} = include('src/super/i-static-page/modules/ss-helpers/assets'),
 	{getScriptDecl, getStyleDecl, normalizeAttrs} = include('src/super/i-static-page/modules/ss-helpers/tags'),
-	{loadLibs, loadStyles, loadLinks} = include('src/super/i-static-page/modules/ss-helpers/libs'),
-	{getVarsDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations');
+	{loadLibs, loadStyles, loadLinks} = include('src/super/i-static-page/modules/ss-helpers/libs');
+
+const
+	{getVarsDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations'),
+	{needInline, addPublicPath} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
 const defAttrs = {
 	crossorigin: webpack.publicPath() === '' ? undefined : 'anonymous'
@@ -147,7 +149,7 @@ function getScriptDeclByName(name, {
 
 		} else {
 			if (!optional) {
-				throw new ReferenceError(`Script by a name "${name}" is not defined`);
+				throw new ReferenceError(`A script by the name "${name}" is not defined`);
 			}
 
 			return '';
@@ -158,7 +160,7 @@ function getScriptDeclByName(name, {
 			...defAttrs,
 			defer,
 			js: true,
-			src: [`PATH['${name}']`]
+			src: addPublicPath([`PATH['${name}']`])
 		});
 
 		if (optional) {
@@ -213,7 +215,7 @@ function getStyleDeclByName(name, {
 			}
 
 		} else if (!optional) {
-			throw new ReferenceError(`Style by a name "${name}" is not defined`);
+			throw new ReferenceError(`A style by the name "${name}" is not defined`);
 		}
 
 	} else {
@@ -222,7 +224,7 @@ function getStyleDeclByName(name, {
 			defer,
 			js: true,
 			rel: 'stylesheet',
-			src: [`PATH['${rname}']`]
+			src: addPublicPath([`PATH['${rname}']`])
 		});
 
 		if (optional) {

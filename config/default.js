@@ -437,6 +437,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				}
 			}
 
+			if (pathVal[0] === '\\') {
+				pathVal = pathVal.slice(1);
+			}
+
 			if (args.length) {
 				args = args.map((el) => el.replace(/^\.?/, ''));
 

@@ -20,3 +20,31 @@ exports.needInline = needInline;
 function needInline(forceInline) {
 	return Boolean(webpack.fatHTML() || forceInline);
 }
+
+exports.addPublicPath = addPublicPath;
+
+/**
+ * Attaches `publicPath` to the specified path
+ *
+ * @param {(string|!Array<string>)} path
+ * @returns {!Array<String>}
+ */
+function addPublicPath(path) {
+	const
+		id = 'PUBLIC_PATH',
+		expr = `(typeof ${id} === 'string' ? concatURLs(${id}, ${toExpr(path)}) : concatURLs(${toExpr(webpack.publicPath())}, ${toExpr(path)}))`;
+
+	return [`((function () { ${concatURLs.toString()} return ${expr}; })())`];
+
+	/* eslint-disable prefer-template */
+
+	function concatURLs(a, b) {
+		return a.replace(/\/$/, '') + '/' + b.replace(/^\//, '');
+	}
+
+	/* eslint-enable prefer-template */
+
+	function toExpr(expr) {
+		return Object.isArray(expr) ? expr[0] : `'${expr.replace(/'/g, '\\\'')}'`;
+	}
+}
