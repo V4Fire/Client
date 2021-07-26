@@ -27,7 +27,7 @@ function bind(
 	}
 
 	if (p.arg == null || p.arg === '') {
-		throw new Error('The event type is not defined');
+		throw new Error('An event type is not defined');
 	}
 
 	const
