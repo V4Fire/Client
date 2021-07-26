@@ -1,5 +1,5 @@
 {
-  "hash": "1085a99b250d27d349e750052d4dce3602df8fe917d30ffd6487a243e94293f5",
+  "hash": "78a228f26d565936da3b8950696386b9a7f81a145f7c95a14a66fb0b9de791af",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -198,6 +198,38 @@
             "src/dummies/b-dummy-control-list/b-dummy-control-list.styl"
           ],
           "tpl": "src/dummies/b-dummy-control-list/b-dummy-control-list.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-decorators",
+        {
+          "index": "src/dummies/b-dummy-decorators/index.js",
+          "declaration": {
+            "name": "b-dummy-decorators",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-decorators",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-decorators/b-dummy-decorators.ts",
+          "styles": [
+            "src/dummies/b-dummy-decorators/b-dummy-decorators.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-decorators/b-dummy-decorators.ss",
           "etpl": null
         }
       ],
@@ -1834,7 +1866,8 @@
               "b-dummy-lfc",
               "b-dummy-watch",
               "b-dummy-sync",
-              "b-dummy-control-list"
+              "b-dummy-control-list",
+              "b-dummy-decorators"
             ],
             "libs": []
           },
@@ -1872,7 +1905,8 @@
             "b-dummy-lfc",
             "b-dummy-watch",
             "b-dummy-sync",
-            "b-dummy-control-list"
+            "b-dummy-control-list",
+            "b-dummy-decorators"
           ],
           "libs": [],
           "resolvedLibs": {
