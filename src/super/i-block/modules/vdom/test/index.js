@@ -38,12 +38,18 @@ module.exports = (page, {browser, contextOpts}) => {
 		afterEach(() => context.close());
 
 		describe('`getSlot`', () => {
-			it('returns `true` if the slot exists', async () => {
-				// ...
+			it('returns `slot` if the slot exists', async () => {
+				const
+					slot = await dummyComponent.evaluateHandle((ctx) => ctx.getSlot('default'));
+
+				expect(slot).toBeTruthy();
 			});
 
-			it('returns `false` if the does not exists', async () => {
-				// ...
+			it('returns `undefined` if the does not exists', async () => {
+				const
+					slot = await dummyComponent.evaluateHandle((ctx) => ctx.getSlot('unreachableSlot'));
+
+				expect(slot).toBeUndefined();
 			});
 		});
 
