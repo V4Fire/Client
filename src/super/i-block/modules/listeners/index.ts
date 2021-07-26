@@ -103,7 +103,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 }
 
 /**
- * Initializes watchers from .watchProp for the specified component
+ * Initializes watchers from `watchProp` for the specified component
  * @param component
  */
 export function initRemoteWatchers(component: iBlock): void {
@@ -117,15 +117,6 @@ export function initRemoteWatchers(component: iBlock): void {
 	if (watchProp == null) {
 		return;
 	}
-
-	const normalizeField = (field) => {
-		if (RegExp.test(customWatcherRgxp, field)) {
-			return field.replace(customWatcherRgxp, (str, prfx: string, emitter: string, event: string) =>
-				`${prfx + ['$parent'].concat(Object.isTruly(emitter) ? emitter : []).join('.')}:${event}`);
-		}
-
-		return `$parent.${field}`;
-	};
 
 	for (let keys = Object.keys(watchProp), i = 0; i < keys.length; i++) {
 		const
@@ -160,5 +151,20 @@ export function initRemoteWatchers(component: iBlock): void {
 				});
 			}
 		}
+	}
+
+	function normalizeField(field?: string): string {
+		if (field == null) {
+			return '';
+		}
+
+		if (RegExp.test(customWatcherRgxp, field)) {
+			const replacer = (str, prfx: string, emitter: string, event: string) =>
+				`${prfx + ['$parent'].concat(Object.isTruly(emitter) ? emitter : []).join('.')}:${event}`;
+
+			return field.replace(customWatcherRgxp, replacer);
+		}
+
+		return `$parent.${field}`;
 	}
 }
