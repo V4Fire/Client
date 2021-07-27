@@ -33,7 +33,6 @@ import iData, {
 
 	component,
 	field,
-	prop,
 	hook,
 	wait,
 	ModsNTable
