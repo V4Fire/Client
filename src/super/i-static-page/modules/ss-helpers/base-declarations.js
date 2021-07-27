@@ -30,10 +30,10 @@ var PUBLIC_PATH;
 
 if (${webpack.dynamicPublicPath()}) {
 	(function () {
-		var m = /publicPath=([^&]+)/.exec(location.search);
+		var publicPath = /publicPath=([^&]+)/.exec(location.search);
 
-		if (m != null) {
-			PUBLIC_PATH = decodeURIComponent(m[1]);
+		if (publicPath != null) {
+			PUBLIC_PATH = decodeURIComponent(publicPath[1]);
 		}
 	})();
 }

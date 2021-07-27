@@ -50,7 +50,7 @@ function addPublicPath(path) {
 	/* eslint-disable prefer-template */
 
 	function concatURLs(a, b) {
-		return a.replace(/\/+$/, '') + '/' + b.replace(/^\/+/, '');
+		return a.replace(/[\\/]+$/, '') + '/' + b.replace(/^[\\/]+/, '');
 	}
 
 	/* eslint-enable prefer-template */
