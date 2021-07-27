@@ -35,6 +35,7 @@ module.exports = [
 
 	'--test-entry super/i-block/test',
 	'--test-entry super/i-block/modules/dom/test',
+	'--test-entry super/i-block/modules/vdom/test',
 	'--test-entry super/i-block/modules/opt/test',
 	'--test-entry super/i-block/modules/block/test',
 	'--test-entry super/i-block/modules/field/test',
