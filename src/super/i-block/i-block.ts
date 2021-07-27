@@ -2360,7 +2360,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Returns a dictionary with default component properties to reset a local storage state
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToStorageReset(data?: Dictionary): Dictionary<undefined> {
+	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
 		const
 			stateFields = this.syncStorageState(data),
 			res = {};
@@ -2401,7 +2401,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Returns a dictionary with default component properties to reset a router state
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToRouterReset(data?: Dictionary): Dictionary<undefined> {
+	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
 		const
 			stateFields = this.syncRouterState(data),
 			res = {};
