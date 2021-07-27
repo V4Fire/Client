@@ -13,6 +13,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.??? (2021-07-??)
 
+#### :rocket: New Feature
+
+* Initial release:
+  * `bDummyModuleLoader`
+  * `bDummyState`
+
+#### :bug: Bug Fix
+
+* Fixed removing of modifiers `super/i-block/modules/state`
+
+#### :house: Internal
+
+* Added tests:
+  * `super/i-block/modules/module-loader`
+  * `super/i-block/modules/state`
+
+## v3.0.0-rc.216 (2021-07-26)
+
 #### :bug: Bug Fix
 
 * Fixed providing `watchProp` in an object form `iBlock`

@@ -90,8 +90,15 @@ export default class State extends Friend {
 				}
 
 			} else if (p[0] === 'mods') {
-				const
+				let
+					res;
+
+				if (newVal == null) {
+					res = this.ctx.removeMod(p[1]);
+
+				} else {
 					res = this.ctx.setMod(p[1], newVal);
+				}
 
 				if (Object.isPromise(res)) {
 					promises.push(res);

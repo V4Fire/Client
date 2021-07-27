@@ -1,5 +1,5 @@
 {
-  "hash": "483c4feaed4f47e9d06a949053cc6f2929035619a9aa590c3dc35369553c4637",
+  "hash": "64dd913779d0b7d220edd8dc44a57d3e12df9987c8beb32d141adb4c6a8845b6",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -262,6 +262,134 @@
             "src/dummies/b-dummy-lfc/b-dummy-lfc.styl"
           ],
           "tpl": "src/dummies/b-dummy-lfc/b-dummy-lfc.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module-1",
+        {
+          "index": "src/dummies/b-dummy-module-loader/b-dummy-module-1/index.js",
+          "declaration": {
+            "name": "b-dummy-module-1",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module-1",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module-2",
+        {
+          "index": "src/dummies/b-dummy-module-loader/b-dummy-module-2/index.js",
+          "declaration": {
+            "name": "b-dummy-module-2",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module-2",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module-loader",
+        {
+          "index": "src/dummies/b-dummy-module-loader/index.js",
+          "declaration": {
+            "name": "b-dummy-module-loader",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module-loader",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-loader.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module-loader.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-loader.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-state",
+        {
+          "index": "src/dummies/b-dummy-state/index.js",
+          "declaration": {
+            "name": "b-dummy-state",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-state",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-state/b-dummy-state.ts",
+          "styles": [
+            "src/dummies/b-dummy-state/b-dummy-state.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-state/b-dummy-state.ss",
           "etpl": null
         }
       ],
@@ -1863,9 +1991,11 @@
               "b-dummy",
               "b-dummy-text",
               "b-dummy-async-render",
+              "b-dummy-module-loader",
               "b-dummy-lfc",
               "b-dummy-watch",
               "b-dummy-sync",
+              "b-dummy-state",
               "b-dummy-control-list",
               "b-dummy-decorators"
             ],
@@ -1902,9 +2032,11 @@
             "b-dummy",
             "b-dummy-text",
             "b-dummy-async-render",
+            "b-dummy-module-loader",
             "b-dummy-lfc",
             "b-dummy-watch",
             "b-dummy-sync",
+            "b-dummy-state",
             "b-dummy-control-list",
             "b-dummy-decorators"
           ],
