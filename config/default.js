@@ -394,15 +394,42 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * If true, a path to load assets can be defined in runtime
-		 * @returns {boolean}
+		 * If true, a path to load assets can be defined in runtime via the `publicPath` query parameter
+		 * (only if `dynamicPublicPath` is defined)
+		 *
+		 * @cli dynamic-public-path
+		 * @env DYNAMIC_PUBLIC_PATH
+		 *
+		 * @returns {(?string|boolean)}
 		 */
 		dynamicPublicPath() {
-			return o('dynamic-public-path', {
+			const v = o('dynamic-public-path', {
+				env: true
+			});
+
+			try {
+				return JSON.parse(v);
+
+			} catch {
+				return v;
+			}
+		},
+
+		/**
+		 * If true, a path to load assets can be defined in runtime via the `publicPath` query parameter
+		 *
+		 * @cli provide-public-path-with-query
+		 * @env PROVIDE_PUBLIC_PATH_WITH_QUERY
+		 * @default `true`
+		 *
+		 * @returns {boolean}
+		 */
+		providePublicPathWithQuery() {
+			return Boolean(this.dynamicPublicPath() && o('provide-public-path-with-query', {
 				env: true,
 				type: 'boolean',
-				default: false
-			});
+				default: true
+			}));
 		},
 
 		/**

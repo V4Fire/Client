@@ -26,9 +26,9 @@ Object.defineProperty(window, '${csp.nonceStore()}', {
 });
 
 var PATH = Object.create(null);
-var PUBLIC_PATH;
+var PUBLIC_PATH = ${Object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};
 
-if (${webpack.dynamicPublicPath()}) {
+if (${Boolean(webpack.providePublicPathWithQuery())}) {
 	(function () {
 		var publicPath = /publicPath=([^&]+)/.exec(location.search);
 
