@@ -205,7 +205,7 @@ export default class VDOM extends Friend {
 	 */
 	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T> | Function): CanUndef<T> {
 		const
-			nm = Object.isString(component) ? component.dasherize(true) : undefined;
+			nm = Object.isString(component) ? component.dasherize() : undefined;
 
 		let
 			el = <CanUndef<T>>this.ctx.$parent;
