@@ -45,6 +45,7 @@ module.exports = (page, {browser, contextOpts}) => {
 						attrs: {
 							id: 'test-dummy'
 						},
+
 						content: {
 							default: {
 								tag: 'b-button',
@@ -80,7 +81,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(slotText).toBe(BUTTON_TEXT);
 			});
 
-			it('returns `undefined` if the does not exists', async () => {
+			it('returns `undefined` if the does not exist', async () => {
 				const
 					slot = await vdom.evaluate((ctx) => ctx.getSlot('unreachableSlot'));
 
@@ -89,8 +90,8 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`closest`', () => {
-			describe('component name provided', () => {
-				it('returns a closest component instance', async () => {
+			describe('component name is provided', () => {
+				it('returns the closest component instance', async () => {
 					const [cName, cId] = await vdom.evaluate((ctx) => [
 						ctx.closest('b-dummy').componentName,
 						ctx.closest('b-dummy').componentId
@@ -100,7 +101,7 @@ module.exports = (page, {browser, contextOpts}) => {
 					expect(cId).toBe(DUMMY_COMPONENT_ID);
 				});
 
-				it('returns `undefined` if there is no such parent component', async () => {
+				it('returns `undefined` if there is no such a parent component', async () => {
 					const
 						closest = await vdom.evaluate((ctx) => ctx.closest('b-unreachable-component'));
 
@@ -108,8 +109,8 @@ module.exports = (page, {browser, contextOpts}) => {
 				});
 			});
 
-			describe('component constructor provided', () => {
-				it('returns a closest component instance', async () => {
+			describe('component constructor is provided', () => {
+				it('returns the closest component instance', async () => {
 					const [cName, cId] = await vdom.evaluate((ctx) => {
 						const
 							// @ts-ignore
@@ -126,7 +127,7 @@ module.exports = (page, {browser, contextOpts}) => {
 					expect(cId).toBe(DUMMY_COMPONENT_ID);
 				});
 
-				it('returns `undefined` if there is no such parent component', async () => {
+				it('returns `undefined` if there is no such a parent component', async () => {
 					const closest = await vdom.evaluate((ctx) => {
 						const
 							// @ts-ignore
@@ -141,7 +142,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`findElFromVNode`', () => {
-			it('returns an element if the element does present in the provided `VNode`', async () => {
+			it('returns an element if it presents in the provided `VNode`', async () => {
 				const hasEl = await dummyComponent.evaluate((ctx) => {
 					const
 						vNode = ctx.vdom.findElFromVNode(ctx._vnode, 'wrapper'),
@@ -154,7 +155,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(hasEl).toBeTrue();
 			});
 
-			it('returns `undefined` if the element does not present in the provided `VNode`', async () => {
+			it('returns `undefined` if an element does not presents in the provided `VNode`', async () => {
 				const
 					hasEl = await dummyComponent.evaluate((ctx) => ctx.vdom.findElFromVNode(ctx._vnode, 'unreachableSelector'));
 
@@ -163,7 +164,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`render`', () => {
-			it('single `VNode` provided', async () => {
+			it('single `VNode` is provided', async () => {
 				await buttonComponent.evaluate((ctx) => {
 					const newButton = ctx.vdom.render(ctx.$createElement('b-button', {
 						attrs: {
@@ -184,7 +185,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(newButtonComponentName).toBe('b-button');
 			});
 
-			it('array of `VNode` provided', async () => {
+			it('array of `VNode`-s are provided', async () => {
 				await buttonComponent.evaluate((ctx) => {
 					const newButtons = ctx.vdom.render([
 						ctx.$createElement('b-button', {
@@ -223,7 +224,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`getRenderObject`', () => {
-			it('returns `RenderObject` if the specified template does exists', async () => {
+			it('returns `RenderObject` if the specified template exists', async () => {
 				const isRenderObj = await vdom.evaluate((ctx) => {
 					const
 						renderObj = ctx.getRenderObject('b-button.index');
@@ -234,7 +235,7 @@ module.exports = (page, {browser, contextOpts}) => {
 				expect(isRenderObj).toBeTrue();
 			});
 
-			it('returns `undefined` if the specified template does not exists', async () => {
+			it('returns `undefined` if the specified template does not exist', async () => {
 				const
 					notRenderObj = await vdom.evaluate((ctx) => ctx.getRenderObject('b-button.unreachableTemplate'));
 
@@ -243,14 +244,14 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`bindRenderObject`', () => {
-			it('returns placeholder if the provided template does not exists', async () => {
+			it('returns a placeholder if the provided template does not exist', async () => {
 				const
 					isPlaceholder = await vdom.evaluate((ctx) => ctx.bindRenderObject('bUnreachable.index')().tag === 'span');
 
 				expect(isPlaceholder).toBeTrue();
 			});
 
-			it('returns render function if the provided template does exists', async () => {
+			it('returns a render function if the provided template exists', async () => {
 				const
 					componentName = await vdom.evaluate((ctx) => ctx.bindRenderObject('bButton.index')().context.componentName);
 
@@ -259,14 +260,14 @@ module.exports = (page, {browser, contextOpts}) => {
 		});
 
 		describe('`execRenderObject`', () => {
-			it('returns a `VNode` if the specified template does exists', async () => {
+			it('returns a `VNode` if the specified template exists', async () => {
 				const
 					componentName = await vdom.evaluate((ctx) => ctx.execRenderObject('bButton.index').context.componentName);
 
 				expect(componentName).toBe('b-button');
 			});
 
-			it('returns a placeholder if the specified template does not exists', async () => {
+			it('returns a placeholder if the specified template does not exist', async () => {
 				const
 					isPlaceholder = await vdom.evaluate((ctx) => ctx.execRenderObject('bUnreachable.index').tag === 'span');
 
