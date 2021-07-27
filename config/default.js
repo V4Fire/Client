@@ -394,6 +394,45 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * If true, a path to load assets can be defined in runtime via the `publicPath` query parameter
+		 * (only if `dynamicPublicPath` is defined)
+		 *
+		 * @cli dynamic-public-path
+		 * @env DYNAMIC_PUBLIC_PATH
+		 *
+		 * @returns {(?string|boolean)}
+		 */
+		dynamicPublicPath() {
+			const v = o('dynamic-public-path', {
+				env: true
+			});
+
+			try {
+				return JSON.parse(v);
+
+			} catch {
+				return v;
+			}
+		},
+
+		/**
+		 * If true, a path to load assets can be defined in runtime via the `publicPath` query parameter
+		 *
+		 * @cli provide-public-path-with-query
+		 * @env PROVIDE_PUBLIC_PATH_WITH_QUERY
+		 * @default `true`
+		 *
+		 * @returns {boolean}
+		 */
+		providePublicPathWithQuery() {
+			return Boolean(this.dynamicPublicPath() && o('provide-public-path-with-query', {
+				env: true,
+				type: 'boolean',
+				default: true
+			}));
+		},
+
+		/**
 		 * Returns a value for `output.publicPath`.
 		 * The method can take arguments that will be concatenated to the base value.
 		 *
@@ -435,6 +474,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				if (!Object.isString(pathVal)) {
 					pathVal = '';
 				}
+			}
+
+			if (pathVal[0] === '\\') {
+				pathVal = pathVal.slice(1);
 			}
 
 			if (args.length) {
