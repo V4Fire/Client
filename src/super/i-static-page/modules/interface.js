@@ -82,7 +82,7 @@ exports.Libs = Libs;
  *   src: string,
  *   source?: LibSource,
  *   inline?: boolean,
- *   defer?: boolean
+ *   defer?: boolean,
  *   attrs?: Object
  * }}
  */
@@ -100,7 +100,7 @@ exports.StyleLib = StyleLib;
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
- *   defer?: boolean,,
+ *   defer?: boolean,
  *   js?: boolean,
  *   attrs?: Object,
  *   staticAttrs?: string
