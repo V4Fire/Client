@@ -38,6 +38,7 @@ module.exports = [
 	'--test-entry super/i-block/modules/opt/test',
 	'--test-entry super/i-block/modules/block/test',
 	'--test-entry super/i-block/modules/field/test',
+	'--test-entry super/i-block/modules/state/test',
 	'--test-entry super/i-block/modules/storage/test',
 	'--test-entry super/i-block/modules/async-render/test',
 	'--test-entry super/i-block/modules/module-loader/test',

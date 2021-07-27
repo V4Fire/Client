@@ -51,6 +51,7 @@ package('p-v4-components-demo')
 		'b-dummy-lfc',
 		'b-dummy-watch',
 		'b-dummy-sync',
+		'b-dummy-state',
 		'b-dummy-control-list',
 		'b-dummy-decorators',
 
