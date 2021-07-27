@@ -1,5 +1,5 @@
 {
-  "hash": "a9533afcda47c1ec0857ed54ee1cab49d331efb1e5ecbc4f394aa4eb40bc4145",
+  "hash": "44f910f812708f2a3e0fc24cbba0cbc6955f845e706b00a66c1ecb12314f9a8a",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -358,6 +358,38 @@
             "src/dummies/b-dummy-module-loader/b-dummy-module-loader.styl"
           ],
           "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-loader.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-state",
+        {
+          "index": "src/dummies/b-dummy-state/index.js",
+          "declaration": {
+            "name": "b-dummy-state",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-state",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-state/b-dummy-state.ts",
+          "styles": [
+            "src/dummies/b-dummy-state/b-dummy-state.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-state/b-dummy-state.ss",
           "etpl": null
         }
       ],
@@ -1963,6 +1995,7 @@
               "b-dummy-lfc",
               "b-dummy-watch",
               "b-dummy-sync",
+              "b-dummy-state",
               "b-dummy-control-list",
               "b-dummy-decorators"
             ],
@@ -2003,6 +2036,7 @@
             "b-dummy-lfc",
             "b-dummy-watch",
             "b-dummy-sync",
+            "b-dummy-state",
             "b-dummy-control-list",
             "b-dummy-decorators"
           ],
