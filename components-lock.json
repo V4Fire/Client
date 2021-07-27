@@ -1,5 +1,5 @@
 {
-  "hash": "e9301369211f35498dd360d16aa97c3e43ea674efa47a10fe4e5a8655b778eb4",
+  "hash": "a9533afcda47c1ec0857ed54ee1cab49d331efb1e5ecbc4f394aa4eb40bc4145",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -262,6 +262,102 @@
             "src/dummies/b-dummy-lfc/b-dummy-lfc.styl"
           ],
           "tpl": "src/dummies/b-dummy-lfc/b-dummy-lfc.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module-1",
+        {
+          "index": "src/dummies/b-dummy-module-loader/b-dummy-module-1/index.js",
+          "declaration": {
+            "name": "b-dummy-module-1",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module-1",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module-2",
+        {
+          "index": "src/dummies/b-dummy-module-loader/b-dummy-module-2/index.js",
+          "declaration": {
+            "name": "b-dummy-module-2",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module-2",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module-loader",
+        {
+          "index": "src/dummies/b-dummy-module-loader/index.js",
+          "declaration": {
+            "name": "b-dummy-module-loader",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module-loader",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-loader.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module-loader.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-loader.ss",
           "etpl": null
         }
       ],
@@ -1863,6 +1959,7 @@
               "b-dummy",
               "b-dummy-text",
               "b-dummy-async-render",
+              "b-dummy-module-loader",
               "b-dummy-lfc",
               "b-dummy-watch",
               "b-dummy-sync",
@@ -1902,6 +1999,7 @@
             "b-dummy",
             "b-dummy-text",
             "b-dummy-async-render",
+            "b-dummy-module-loader",
             "b-dummy-lfc",
             "b-dummy-watch",
             "b-dummy-sync",
