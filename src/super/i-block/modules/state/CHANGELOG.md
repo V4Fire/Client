@@ -11,6 +11,10 @@ Changelog
 
 ## v3.0.0-rc.??? (2021-07-??)
 
+#### :bug: Bug Fix
+
+* Fixed removing of modifiers
+
 #### :house: Internal
 
 * Added tests

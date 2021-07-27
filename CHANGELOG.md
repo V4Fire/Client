@@ -19,6 +19,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `bDummyModuleLoader`
   * `bDummyState`
 
+#### :bug: Bug Fix
+
+* Fixed removing of modifiers `super/i-block/modules/state`
+
 #### :house: Internal
 
 * Added tests:
