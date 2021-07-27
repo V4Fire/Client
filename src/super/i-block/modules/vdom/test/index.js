@@ -35,19 +35,19 @@ module.exports = (page, {browser, contextOpts}) => {
 			dummyComponent = await h.component.waitForComponent(page, '.b-dummy');
 		});
 
-		afterEach(() => context.close());
+		// afterEach(() => context.close());
 
 		describe('`getSlot`', () => {
 			it('returns `slot` if the slot exists', async () => {
 				const
-					slot = await dummyComponent.evaluateHandle((ctx) => ctx.getSlot('default'));
+					slot = await dummyComponent.evaluateHandle((ctx) => ctx.vdom.getSlot('default'));
 
 				expect(slot).toBeTruthy();
 			});
 
 			it('returns `undefined` if the does not exists', async () => {
 				const
-					slot = await dummyComponent.evaluateHandle((ctx) => ctx.getSlot('unreachableSlot'));
+					slot = await dummyComponent.evaluate((ctx) => ctx.vdom.getSlot('unreachableSlot'));
 
 				expect(slot).toBeUndefined();
 			});
