@@ -42,9 +42,7 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 				}
 			});
 
-			console.log(fs.readFileSync(file).toString());
-
-			expect(fs.readFileSync(file).toString().replace(/\\\\/g, '')).toBe(
+			expect(fs.readFileSync(file).toString()).toBe(
 `
 Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
@@ -94,18 +92,14 @@ if ('std_style' in PATH) {
 \t
 \tel.setAttribute('rel', 'preload');
 \tel.setAttribute('as', 'style');
-\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['std_style']); })()));
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['std_style']); })()));
 \tdocument.head.appendChild(el);
 })();
 
 (function () {
 \tvar el = document.createElement('link');
 \t
-\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['std_style']); })()));
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['std_style']); })()));
 \tel.setAttribute('rel', 'stylesheet');
 \tel.setAttribute('media', 'print');
 \tel.setAttribute('onload', 'this.media=\\'all\\'; this.onload=null;');
@@ -130,18 +124,14 @@ function $__RENDER_ROOT() {
 \t
 \tel.setAttribute('rel', 'preload');
 \tel.setAttribute('as', 'style');
-\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['p-v4-components-demo_style']); })()));
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['p-v4-components-demo_style']); })()));
 \tdocument.head.appendChild(el);
 })();
 
 (function () {
 \tvar el = document.createElement('link');
 \t
-\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['p-v4-components-demo_style']); })()));
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['p-v4-components-demo_style']); })()));
 \tel.setAttribute('rel', 'stylesheet');
 \tel.setAttribute('media', 'print');
 \tel.setAttribute('onload', 'this.media=\\'all\\'; this.onload=null;');
@@ -154,9 +144,7 @@ if ('std' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['std']); })()));
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['std']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -188,9 +176,7 @@ if ('index-core' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['index-core']); })()));
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['index-core']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -200,9 +186,7 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['vendor']); })()));
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['vendor']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -211,9 +195,7 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['p-v4-components-demo_tpl']); })()));
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['p-v4-components-demo_tpl']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -221,9 +203,7 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['p-v4-components-demo']); })()));
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['p-v4-components-demo']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -232,9 +212,7 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
-\t\treturn a.replace(/[/]+$/, '') + '/' + b.replace(/^[/]+/, '');
-\t} return concatURLs('/dist/client', PATH['webpack.runtime']); })()));
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); } return concatURLs('/dist/client', PATH['webpack.runtime']); })()));
 \tdocument.head.appendChild(el);
 })();
 

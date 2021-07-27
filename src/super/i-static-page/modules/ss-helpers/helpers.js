@@ -31,29 +31,22 @@ exports.addPublicPath = addPublicPath;
  */
 function addPublicPath(path) {
 	const
-		staticExpr = `concatURLs(${toExpr(webpack.publicPath())}, ${toExpr(path)})`;
+		staticExpr = `concatURLs(${toExpr(webpack.publicPath())}, ${toExpr(path)})`,
+		concatURLs = "function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); }";
 
 	if (webpack.dynamicPublicPath()) {
 		const
 			id = 'PUBLIC_PATH',
 			expr = `(typeof ${id} === 'string' ? concatURLs(${id}, ${toExpr(path)}) : ${staticExpr})`;
 
-		return [`((function () { ${concatURLs.toString()} return ${expr}; })())`];
+		return [`((function () { ${concatURLs} return ${expr}; })())`];
 	}
 
 	if (Object.isArray(path)) {
-		return [`((function () { ${concatURLs.toString()} return ${staticExpr}; })())`];
+		return [`((function () { ${concatURLs} return ${staticExpr}; })())`];
 	}
 
 	return webpack.publicPath(path);
-
-	/* eslint-disable prefer-template */
-
-	function concatURLs(a, b) {
-		return a.replace(/[\\/]+$/, '') + '/' + b.replace(/^[\\/]+/, '');
-	}
-
-	/* eslint-enable prefer-template */
 
 	function toExpr(expr) {
 		return Object.isArray(expr) ? expr[0] : `'${expr.replace(/'/g, '\\\'')}'`;
