@@ -28,6 +28,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added tests:
   * `super/i-block/modules/module-loader`
   * `super/i-block/modules/state`
+  * `super/i-block/modules/vdom`
 
 ## v3.0.0-rc.216 (2021-07-26)
 
