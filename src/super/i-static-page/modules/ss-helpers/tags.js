@@ -321,6 +321,8 @@ exports.getLinkDecl = getLinkDecl;
  * ```
  */
 function getLinkDecl(link) {
+	const tag = link.tag || 'link';
+
 	const attrs = normalizeAttrs({
 		href: link.src,
 		staticAttrs: link.staticAttrs,
@@ -331,14 +333,14 @@ function getLinkDecl(link) {
 	if (link.js) {
 		return `
 (function () {
-	var el = document.createElement('link');
+	var el = document.createElement('${tag}');
 	${attrs}
 	document.head.appendChild(el);
 })();
 `;
 	}
 
-	return `<link ${attrs}>`;
+	return `<${tag} ${attrs}>`;
 }
 
 exports.normalizeAttrs = normalizeAttrs;

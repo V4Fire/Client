@@ -116,15 +116,15 @@
 							content = ${content}
 						.
 
+					- block varsDecl
+						+= h.getVarsDecl({wrap: true})
+
 					- block favicons
 						+= h.getFaviconsDecl()
 
 					- block title
 						< title
 							{title}
-
-					- block varsDecl
-						+= h.getVarsDecl({wrap: true})
 
 					- block assets
 						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})

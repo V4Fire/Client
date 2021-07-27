@@ -7,10 +7,7 @@
  */
 
 const
-	config = require('config');
-
-const
-	{csp} = config,
+	{webpack, csp} = require('config'),
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getVarsDecl = getVarsDecl;
@@ -29,6 +26,17 @@ Object.defineProperty(window, '${csp.nonceStore()}', {
 });
 
 var PATH = Object.create(null);
+var PUBLIC_PATH = ${Object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};
+
+if (${Boolean(webpack.providePublicPathWithQuery())}) {
+	(function () {
+		var publicPath = /publicPath=([^&]+)/.exec(location.search);
+
+		if (publicPath != null) {
+			PUBLIC_PATH = decodeURIComponent(publicPath[1]);
+		}
+	})();
+}
 
 try {
 	PATH = new Proxy(PATH, {

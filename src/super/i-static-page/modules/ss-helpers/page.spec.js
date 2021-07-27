@@ -43,12 +43,23 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 			});
 
 			expect(fs.readFileSync(file).toString()).toBe(
-				`
+`
 Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
 });
 
 var PATH = Object.create(null);
+var PUBLIC_PATH = undefined;
+
+if (false) {
+\t(function () {
+\t\tvar publicPath = /publicPath=([^&]+)/.exec(location.search);
+
+\t\tif (publicPath != null) {
+\t\t\tPUBLIC_PATH = decodeURIComponent(publicPath[1]);
+\t\t}
+\t})();
+}
 
 try {
 \tPATH = new Proxy(PATH, {
@@ -62,16 +73,16 @@ try {
 \t\t}
 \t});
 } catch (_) {}
-PATH['p-v4-components-demo'] = '/dist/client/p-v4-components-demo.js';
-PATH['p-v4-components-demo_tpl'] = '/dist/client/p-v4-components-demo_tpl.js';
-PATH['webpack.runtime'] = '/dist/client/webpack.runtime.js';
-PATH['vendor'] = '/dist/client/vendor.js';
-PATH['std'] = '/dist/client/std.js';
-PATH['std_tpl'] = '/dist/client/std_tpl.js';
-PATH['std_style'] = '/dist/client/std_style.css';
-PATH['p-v4-components-demo_style'] = '/dist/client/p-v4-components-demo_style.css';
-PATH['std_view'] = '/dist/client/std_view.js';
-PATH['p-v4-components-demo_view'] = '/dist/client/p-v4-components-demo_view.js';
+PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
+PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
+PATH['webpack.runtime'] = 'webpack.runtime.js';
+PATH['vendor'] = 'vendor.js';
+PATH['std'] = 'std.js';
+PATH['std_tpl'] = 'std_tpl.js';
+PATH['std_style'] = 'std_style.css';
+PATH['p-v4-components-demo_style'] = 'p-v4-components-demo_style.css';
+PATH['std_view'] = 'std_view.js';
+PATH['p-v4-components-demo_view'] = 'p-v4-components-demo_view.js';
 
 
 if ('std_style' in PATH) {
@@ -81,14 +92,18 @@ if ('std_style' in PATH) {
 \t
 \tel.setAttribute('rel', 'preload');
 \tel.setAttribute('as', 'style');
-\tel.setAttribute('href', PATH['std_style']);
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['std_style']); })()));
 \tdocument.head.appendChild(el);
 })();
 
 (function () {
 \tvar el = document.createElement('link');
 \t
-\tel.setAttribute('href', PATH['std_style']);
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['std_style']); })()));
 \tel.setAttribute('rel', 'stylesheet');
 \tel.setAttribute('media', 'print');
 \tel.setAttribute('onload', 'this.media=\\'all\\'; this.onload=null;');
@@ -113,14 +128,18 @@ function $__RENDER_ROOT() {
 \t
 \tel.setAttribute('rel', 'preload');
 \tel.setAttribute('as', 'style');
-\tel.setAttribute('href', PATH['p-v4-components-demo_style']);
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['p-v4-components-demo_style']); })()));
 \tdocument.head.appendChild(el);
 })();
 
 (function () {
 \tvar el = document.createElement('link');
 \t
-\tel.setAttribute('href', PATH['p-v4-components-demo_style']);
+\tel.setAttribute('href', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['p-v4-components-demo_style']); })()));
 \tel.setAttribute('rel', 'stylesheet');
 \tel.setAttribute('media', 'print');
 \tel.setAttribute('onload', 'this.media=\\'all\\'; this.onload=null;');
@@ -133,7 +152,9 @@ if ('std' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', PATH['std']);
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['std']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -165,7 +186,9 @@ if ('index-core' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', PATH['index-core']);
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['index-core']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -175,7 +198,9 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', PATH['vendor']);
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['vendor']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -184,7 +209,9 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', PATH['p-v4-components-demo_tpl']);
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['p-v4-components-demo_tpl']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -192,7 +219,9 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', PATH['p-v4-components-demo']);
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['p-v4-components-demo']); })()));
 \tdocument.head.appendChild(el);
 })();
 
@@ -201,7 +230,9 @@ if ('vendor' in PATH) {
 (function () {
 \tvar el = document.createElement('script');
 \tel.async = false;
-\tel.setAttribute('src', PATH['webpack.runtime']);
+\tel.setAttribute('src', ((function () { function concatURLs(a, b) {
+\t\treturn a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '');
+\t} return concatURLs('/dist/client', PATH['webpack.runtime']); })()));
 \tdocument.head.appendChild(el);
 })();
 

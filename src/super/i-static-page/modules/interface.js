@@ -9,9 +9,9 @@
 /**
  * Source type of a library:
  *
- * 1. lib - external library, i.e, something from node_modules
- * 2. src - internal resource, i.e, something that builds from the /src folder
- * 3. output - output library, i.e, something that builds to the /dist/client folder
+ *   1. `lib` - external library, i.e, something from `node_modules`
+ *   2. `src` - internal resource, i.e, something that builds from the `/src` folder
+ *   3. `output` - output library, i.e, something that builds to the `/dist/client` folder
  *
  * @typedef {('lib'|'src'|'output')}
  */
@@ -21,12 +21,12 @@ exports.LibSource = LibSource;
 /**
  * Parameters of a script library:
  *
- * * src - relative path to a file to load, i.e. without referencing to /node_modules, etc.
- * * [source='lib'] - source type of the library, i.e. where the library is stored
- * * [inline=false] - if true, the library is placed as a text
- * * [defer=true] - if true, the library is declared with the "defer" attribute
- * * [load=true] - if false, the library won't be automatically loaded with a page
- * * [attrs] - dictionary with additional attributes
+ *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - source type of the library, i.e. where the library is stored
+ *   3. [inline=false] - if true, the library is placed as a text
+ *   4. [defer=true] - if true, the library is declared with the `defer` attribute
+ *   5. [load=true] - if false, the library won't be automatically loaded with a page
+ *   6. [attrs] - dictionary with additional attributes
  *
  * @typedef {{
  *   src: string,
@@ -42,9 +42,9 @@ exports.Lib = Lib;
 /**
  * Parameters of an initialized script library:
  *
- * * src - path to a file to load
- * * [js] - if true, the function returns JS code to load the library
- * * [staticAttrs] - string with additional attributes
+ *   1. src - path to a file to load
+ *   2. [js] - if true, the function returns JS code to load the library
+ *   3. [staticAttrs] - string with additional attributes
  *
  * @see Lib
  * @typedef {{
@@ -72,11 +72,11 @@ exports.Libs = Libs;
 /**
  * Parameters of a style library:
  *
- * * src - relative path to a file to load, i.e. without referencing to /node_modules, etc.
- * * [source='lib'] - source type of the library, i.e. where the library is stored
- * * [inline=false] - if true, the library is placed as text into a style tag
- * * [defer=true] - if true, the library is loaded only after loading of the whole page
- * * [attrs] - dictionary with additional attributes
+ *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - source type of the library, i.e. where the library is stored
+ *   3. [inline=false] - if true, the library is placed as text into a style tag
+ *   4. [defer=true] - if true, the library is loaded only after loading of the whole page
+ *   5. [attrs] - dictionary with additional attributes
  *
  * @typedef {{
  *   src: string,
@@ -92,9 +92,9 @@ exports.StyleLib = StyleLib;
 /**
  * Parameters of an initialized style library:
  *
- * * src - path to a file to load
- * * [js] - if true, the function returns JS code to load the library
- * * [staticAttrs] - string with additional attributes
+ *   1. src - path to a file to load
+ *   2. [js] - if true, the function returns JS code to load the library
+ *   3. [staticAttrs] - string with additional attributes
  *
  * @see StyleLib
  * @typedef {{
@@ -121,13 +121,15 @@ exports.StyleLibs = StyleLibs;
 /**
  * Parameters of a link:
  *
- * * src - relative path to a file to load, i.e. without referencing to /node_modules, etc.
- * * [source='lib'] - source type of the library, i.e. where the library is stored
- * * [attrs] - dictionary with additional attributes
+ *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - source type of the library, i.e. where the library is stored
+ *   3. [tag='link'] - tag to create the link
+ *   4. [attrs] - dictionary with additional attributes
  *
  * @typedef {{
  *   src: string,
  *   source?: LibSource,
+ *   tag?: string,
  *   attrs?: Object
  * }}
  */
@@ -137,13 +139,15 @@ exports.Link = Link;
 /**
  * Parameters of an initialized link:
  *
- * * src - path to a file to load
- * * [js] - if true, the function returns JS code to load the library
- * * [staticAttrs] - string with additional attributes
+ *   1. src - path to a file to load
+ *   2. [tag='link'] - tag to create the link
+ *   3. [js] - if true, the function returns JS code to load the library
+ *   4. [staticAttrs] - string with additional attributes
  *
  * @see Link
  * @typedef {{
  *   src: string,
+ *   tag?: string,
  *   js?: boolean,
  *   attrs?: Object,
  *   staticAttrs?: string

@@ -23,7 +23,7 @@ const
 const
 	{isURL, isFolder, files, folders} = include('src/super/i-static-page/modules/const'),
 	{getScriptDecl, getStyleDecl, getLinkDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
-	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
+	{needInline, addPublicPath} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
 exports.loadLibs = loadLibs;
 
@@ -177,7 +177,7 @@ async function initLibs(libs, assets) {
 			}
 
 		} else {
-			p.src = webpack.publicPath(p.src);
+			p.src = addPublicPath(p.src);
 		}
 
 		res.push(p);
