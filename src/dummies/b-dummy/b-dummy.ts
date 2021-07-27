@@ -33,11 +33,14 @@ import iData, {
 
 	component,
 	field,
+	prop,
 	hook,
 	wait,
 	ModsNTable
 
 } from 'super/i-data/i-data';
+
+import bBottomSlide from 'base/b-bottom-slide/b-bottom-slide';
 
 import daemons from 'dummies/b-dummy/daemons';
 import type { Directives, Modules } from 'dummies/b-dummy/interface';
@@ -81,6 +84,13 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 			session,
 			browserHelpers,
 			cookie
+		};
+	}
+
+	get componentInstances(): Dictionary {
+		return {
+			bDummy,
+			bBottomSlide
 		};
 	}
 

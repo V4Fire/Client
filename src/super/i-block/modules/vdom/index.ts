@@ -63,7 +63,8 @@ export default class VDOM extends Friend {
 	 * @example
 	 * ```js
 	 * // Returns the main render object of bExample
-	 * this.getRenderObject('bExample');
+	 * this.getRenderObject('bExample/');
+	 * this.getRenderObject('bExample.index');
 	 *
 	 * this.getRenderObject('bExample.subTemplate');
 	 * ```
@@ -116,7 +117,7 @@ export default class VDOM extends Friend {
 	 *
 	 * @example
 	 * ```js
-	 * this.bindRenderObject(this.getRenderObject('bExample'));
+	 * this.bindRenderObject(this.getRenderObject('bExample/'));
 	 * this.bindRenderObject('bExample.subTemplate');
 	 * ```
 	 */
@@ -190,7 +191,7 @@ export default class VDOM extends Friend {
 	 *
 	 * @example
 	 * ```js
-	 * this.execRenderObject(this.getRenderObject('bExample'));
+	 * this.execRenderObject(this.getRenderObject('bExample/'));
 	 * this.execRenderObject('bExample.subTemplate');
 	 * ```
 	 */
@@ -204,13 +205,13 @@ export default class VDOM extends Friend {
 	 */
 	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T> | Function): CanUndef<T> {
 		const
-			nm = Object.isString(component) ? component.dasherize() : undefined;
+			nm = Object.isString(component) ? component.dasherize(true) : undefined;
 
 		let
 			el = <CanUndef<T>>this.ctx.$parent;
 
 		while (el) {
-			if (Object.isFunction(component) && el.instance instanceof component || el.componentName === nm) {
+			if ((Object.isFunction(component) && el.instance instanceof component) || el.componentName === nm) {
 				return el;
 			}
 
