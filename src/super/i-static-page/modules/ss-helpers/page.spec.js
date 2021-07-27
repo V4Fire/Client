@@ -42,6 +42,8 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 				}
 			});
 
+			console.log(fs.readFileSync(file).toString());
+
 			expect(fs.readFileSync(file).toString().replace(/\\\\/g, '')).toBe(
 `
 Object.defineProperty(window, 'GLOBAL_NONCE', {
