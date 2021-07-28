@@ -58,6 +58,9 @@
 	/** Should or not generate <base> tag */
 	- defineBase = false
 
+	/** Should or not attach favicons */
+	- attachFavicons = true
+
 	/** Should or not do a request for assets.js */
 	- assetsRequest = false
 
@@ -120,7 +123,8 @@
 						+= h.getVarsDecl({wrap: true})
 
 					- block favicons
-						+= h.getFaviconsDecl()
+						- if attachFavicons
+							+= h.getFaviconsDecl()
 
 					- block title
 						< title

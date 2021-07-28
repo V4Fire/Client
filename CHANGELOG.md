@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.1 (2021-07-28)
+
+#### :bug: Bug Fix
+
+* Fixed building favicons from parent layers `iStaticPage`
+
 ## v3.0.0 (2021-07-27)
 
 #### :rocket: New Feature

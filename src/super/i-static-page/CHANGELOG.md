@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.1 (2021-07-28)
+
+#### :bug: Bug Fix
+
+* Fixed building favicons from parent layers
+
 ## v3.0.0-rc.215 (2021-07-25)
 
 #### :bug: Bug Fix

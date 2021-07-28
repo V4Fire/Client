@@ -21,7 +21,7 @@ const
 	genHash = include('build/hash');
 
 const
-	{isURL, isFolder, files, folders} = include('src/super/i-static-page/modules/const'),
+	{isURL, files, folders} = include('src/super/i-static-page/modules/const'),
 	{getScriptDecl, getStyleDecl, getLinkDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline, addPublicPath} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
@@ -236,7 +236,7 @@ function resolveAsLib(
 	}
 
 	const
-		srcIsFolder = isFolder.test(resSrc);
+		srcIsFolder = fs.lstatSync(resSrc).isDirectory();
 
 	name = name ?
 		name + path.extname(resSrc) :

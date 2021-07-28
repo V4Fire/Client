@@ -36,7 +36,7 @@ function getFaviconsDecl() {
 
 	const
 		pathPlaceholderRgxp = /\$faviconPublicPath\//g,
-		dest = resolveAsLib({name: 'favicons', dest: 'assets'}, src.rel('assets'), 'favicons/');
+		dest = resolveAsLib({dest: 'assets'}, faviconsFolder);
 
 	if (webpack.dynamicPublicPath()) {
 		const
