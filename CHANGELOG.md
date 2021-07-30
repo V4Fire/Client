@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a route comparison in the transition handler `super/i-block/modules/activation`
+
 ## v3.0.1 (2021-07-28)
 
 #### :bug: Bug Fix

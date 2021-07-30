@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { unwrap } from 'core/object/watch';
 import { runHook, callMethodFromComponent } from 'core/component';
 
 import type iBlock from 'super/i-block/i-block';
@@ -68,7 +69,7 @@ export function activate(component: iBlock, force?: boolean): void {
 				async function handler(route: typeof r.route, type: string): Promise<void> {
 					try {
 						if (type === 'hard') {
-							if (route !== r.route) {
+							if (unwrap(route) !== unwrap(r.route)) {
 								await unsafe.promisifyOnce('setRoute', {
 									label: $$.activateAfterTransition
 								});
