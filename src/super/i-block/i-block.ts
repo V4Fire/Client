@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines,@typescript-eslint/unified-signatures */
 
 /*!
  * V4Fire Client Core

@@ -1,3 +1,5 @@
+// @ts-check
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,8 +7,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-// @ts-check
 
 /**
  * @typedef {import('playwright').Page} Page
@@ -50,6 +50,8 @@ module.exports = (page) => {
 				});
 
 				await ctx.validate();
+
+				// eslint-disable-next-line require-atomic-updates
 				ctx.value = '0';
 				await ctx.validate();
 

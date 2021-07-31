@@ -39,7 +39,7 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 	}
 
 	const
-		{symbols, nonTerminals} = mask!;
+		{symbols, nonTerminals} = mask;
 
 	const
 		nonTerminalsPerChunk = nonTerminals.length / maskRepetitions;
@@ -90,14 +90,14 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 	if (newMask != null) {
 		const
 			symbolsInNewMask = newMask.symbols.length,
-			diff = mask!.symbols.length - newMask.symbols.length;
+			diff = mask.symbols.length - newMask.symbols.length;
 
-		newMask.text = [...mask!.text.letters()]
+		newMask.text = [...mask.text.letters()]
 			.slice(0, symbolsInNewMask)
 			.join('');
 
-		newMask.selectionStart = mask!.selectionStart;
-		newMask.selectionEnd = mask!.selectionEnd;
+		newMask.selectionStart = mask.selectionStart;
+		newMask.selectionEnd = mask.selectionEnd;
 
 		if (diff > 0) {
 			if (newMask.selectionStart != null && newMask.selectionStart > symbolsInNewMask) {
@@ -136,7 +136,7 @@ export function saveSnapshot<C extends iInputText>(component: C): boolean {
 		return false;
 	}
 
-	mask!.text = component.text;
+	mask.text = component.text;
 
 	const
 		rawSelectionStart = input.selectionStart ?? 0,
@@ -184,7 +184,7 @@ export function setCursorPositionAtFirstNonTerminal<C extends iInputText>(compon
 	let
 		pos = 0;
 
-	for (let o = mask!.symbols, i = 0; i < o.length; i++) {
+	for (let o = mask.symbols, i = 0; i < o.length; i++) {
 		if (Object.isRegExp(o[i])) {
 			pos = i;
 			break;
@@ -233,11 +233,11 @@ export function syncFieldWithInput<C extends iInputText>(component: C): Promise<
 		}
 
 		const
-			{symbols: maskSymbols} = mask!;
+			{symbols: maskSymbols} = mask;
 
 		const
-			from = mask!.selectionStart ?? 0,
-			to = mask!.selectionEnd ?? maskSymbols.length,
+			from = mask.selectionStart ?? 0,
+			to = mask.selectionEnd ?? maskSymbols.length,
 			normalizedTo = from === to ? to + 1 : to;
 
 		if (from === 0 || to >= maskSymbols.length) {

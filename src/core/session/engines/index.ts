@@ -8,8 +8,8 @@
 
 import type { AsyncStorageNamespace } from 'core/kv-storage';
 
-let
-	engine: Promise<AsyncStorageNamespace>;
+// eslint-disable-next-line import/no-mutable-exports
+let engine: Promise<AsyncStorageNamespace>;
 
 //#if runtime has core/kv-storage
 engine = <any>(import('core/kv-storage').then(({asyncLocal}) => asyncLocal.namespace('[[SESSION]]')));
