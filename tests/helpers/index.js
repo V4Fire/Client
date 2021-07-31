@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="../../ts-definitions/tests.d.ts" />
 
 /*!
  * V4Fire Client Core
@@ -7,8 +8,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-/// <reference path="../../ts-definitions/tests.d.ts" />
 
 const
 	DOM = require('./dom'),
