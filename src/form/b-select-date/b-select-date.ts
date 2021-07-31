@@ -38,22 +38,15 @@ export { Value, FormValue };
 })
 
 export default class bSelectDate extends iInput implements iWidth {
-	/** @override */
-	readonly Value!: Value;
+	override readonly Value!: Value;
+	override readonly FormValue!: FormValue;
+	override readonly rootTag: string = 'span';
 
-	/** @override */
-	readonly FormValue!: FormValue;
-
-	/** @override */
-	readonly rootTag: string = 'span';
-
-	/** @override */
 	@prop({type: Date, required: false})
-	readonly valueProp?: this['Value'];
+	override readonly valueProp?: this['Value'];
 
-	/** @override */
 	@prop({type: Date, required: false})
-	readonly defaultProp?: this['Value'];
+	override readonly defaultProp?: this['Value'];
 
 	/**
 	 * If true, the select components will use a native tag to show the select
@@ -61,18 +54,15 @@ export default class bSelectDate extends iInput implements iWidth {
 	@prop(Boolean)
 	readonly native: boolean = Object.isTruly(is.mobile);
 
-	/** @override */
-	get value(): this['Value'] {
+	override get value(): this['Value'] {
 		return Object.fastClone(super['valueGetter']());
 	}
 
-	/** @override */
-	set value(value: this['Value']) {
+	override set value(value: this['Value']) {
 		super['valueSetter'](value);
 	}
 
-	/** @override */
-	get default(): this['Value'] {
+	override get default(): this['Value'] {
 		return this.defaultProp ?? new Date().beginningOfYear();
 	}
 
@@ -81,8 +71,7 @@ export default class bSelectDate extends iInput implements iWidth {
 		...iWidth.mods
 	};
 
-	/** @override */
-	protected readonly $refs!: {
+	protected override readonly $refs!: {
 		input: HTMLInputElement;
 		month: bSelect;
 		day: bSelect;
@@ -170,8 +159,7 @@ export default class bSelectDate extends iInput implements iWidth {
 		});
 	}
 
-	/** @override */
-	async clear(): Promise<boolean> {
+	override async clear(): Promise<boolean> {
 		const
 			res = <boolean[]>[];
 
@@ -199,8 +187,7 @@ export default class bSelectDate extends iInput implements iWidth {
 		return false;
 	}
 
-	/** @override */
-	async reset(): Promise<boolean> {
+	override async reset(): Promise<boolean> {
 		const
 			res = <boolean[]>[];
 

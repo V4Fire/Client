@@ -65,11 +65,8 @@ export const
 })
 
 export default class bForm extends iData implements iVisible {
-	/** @override */
-	readonly dataProvider: string = 'Provider';
-
-	/** @override */
-	readonly defaultRequestFilter: RequestFilter = true;
+	override readonly dataProvider: string = 'Provider';
+	override readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
 	 * A form identifier.
@@ -574,8 +571,7 @@ export default class bForm extends iData implements iVisible {
 		} catch {}
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);
 	}

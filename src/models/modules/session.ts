@@ -50,8 +50,7 @@ export default class Session extends Provider {
 	 */
 	readonly requestAfterClear: boolean = true;
 
-	/** @override */
-	static readonly middlewares: Middlewares = {
+	static override readonly middlewares: Middlewares = {
 		...Provider.middlewares,
 
 		async addSession(this: Session, {opts}: MiddlewareParams): Promise<void> {
@@ -62,8 +61,7 @@ export default class Session extends Provider {
 		}
 	};
 
-	/** @override */
-	async getAuthParams(): Promise<Dictionary> {
+	override async getAuthParams(): Promise<Dictionary> {
 		const
 			session = await s.get();
 
@@ -77,15 +75,14 @@ export default class Session extends Provider {
 		return {};
 	}
 
-	/** @override */
-	protected updateRequest<T = unknown>(url: string, factory: RequestFunctionResponse<T>): RequestResponse<T>;
-	protected updateRequest<T = unknown>(
+	protected override updateRequest<T = unknown>(url: string, factory: RequestFunctionResponse<T>): RequestResponse<T>;
+	protected override updateRequest<T = unknown>(
 		url: string,
 		event: string,
 		factory: RequestFunctionResponse<T>
 	): RequestResponse<T>;
 
-	protected updateRequest(
+	protected override updateRequest(
 		url: string,
 		event: string | RequestFunctionResponse,
 		factory?: RequestFunctionResponse

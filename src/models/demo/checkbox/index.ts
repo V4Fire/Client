@@ -10,9 +10,6 @@ import Demo, { provider, Mocks } from 'models/demo';
 
 @provider('demo')
 export default class Checkbox extends Demo {
-	/** @override */
-	baseURL: string = '/checkbox';
-
-	/** @override */
-	mocks: Mocks = import('models/demo/checkbox/mocks');
+	override baseURL: string = '/checkbox';
+	override mocks: Mocks = import('models/demo/checkbox/mocks');
 }

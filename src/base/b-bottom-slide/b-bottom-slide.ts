@@ -202,8 +202,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		]
 	};
 
-	/** @override */
-	protected $refs!: {
+	protected override $refs!: {
 		view: HTMLElement;
 		window: HTMLElement;
 		header: HTMLElement;
@@ -539,8 +538,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		});
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('heightMode', 'heightMode', String);
 		this.sync.mod('visible', 'visible', Boolean);

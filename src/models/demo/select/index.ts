@@ -10,17 +10,13 @@ import Demo, { provider, Mocks } from 'models/demo';
 
 @provider('demo')
 export class Select extends Demo {
-	/** @override */
-	baseURL: string = '/input';
-
-	/** @override */
-	mocks: Mocks = import('models/demo/select/mocks');
+	override baseURL: string = '/input';
+	override mocks: Mocks = import('models/demo/select/mocks');
 }
 
 @provider('demo')
 export class SelectValue extends Select {
-	/** @override */
-	static request: typeof Select.request = Select.request({
+	static override request: typeof Select.request = Select.request({
 		responseType: 'text',
 		query: {value: 1}
 	});

@@ -303,8 +303,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@system({replace: false})
 	prevValue?: this['Value'];
 
-	/** @override */
-	get unsafe(): UnsafeGetter<UnsafeIInput<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeIInput<this>> {
 		return <any>this;
 	}
 
@@ -646,8 +645,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	protected errorStore?: string;
 
-	/** @override */
-	protected readonly $refs!: {input?: HTMLInputElement};
+	protected override readonly $refs!: {input?: HTMLInputElement};
 
 	/** @see [[iInput.value]] */
 	@field<iInput>({
@@ -936,14 +934,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.on('actionChange', () => this.validate());
 	}
 
-	/** @override */
-	protected initBaseAPI(): void {
+	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 		this.resolveValue = this.instance.resolveValue.bind(this);
 	}
 
-	/** @override */
-	protected initRemoteData(): CanUndef<CanPromise<unknown | Dictionary>> {
+	protected override initRemoteData(): CanUndef<CanPromise<unknown | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
@@ -959,8 +955,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		return val;
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 
 		iAccess.initModEvents(this);

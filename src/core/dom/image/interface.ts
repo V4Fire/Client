@@ -193,16 +193,7 @@ export interface ImageBackgroundOptions {
 	ratio?: number;
 }
 
-export interface ImagePlaceholderOptions extends ImageOptions {
-	/** @override */
-	preview?: never;
-
-	/** @override */
-	broken?: never;
-
-	/** @override */
-	ctx?: never;
-}
+export type ImagePlaceholderOptions = Omit<ImageOptions, 'preview' | 'broken' | 'ctx'>;
 
 export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions {
 	/**

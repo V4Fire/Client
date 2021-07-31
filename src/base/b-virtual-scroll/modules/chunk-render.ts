@@ -23,8 +23,7 @@ export const
 	$$ = symbolGenerator();
 
 export default class ChunkRender extends Friend {
-	/* @override */
-	readonly C!: bVirtualScroll;
+	override readonly C!: bVirtualScroll;
 
 	/**
 	 * Render items
@@ -94,7 +93,6 @@ export default class ChunkRender extends Friend {
 		return Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100;
 	}
 
-	/** @override */
 	constructor(component: any) {
 		super(component);
 		this.component.on('componentHook:mounted', this.initEventHandlers.bind(this));

@@ -84,11 +84,9 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
-	/** @override */
-	readonly DB!: RemoteData;
+	override readonly DB!: RemoteData;
 
-	/** @override */
-	readonly checkDBEquality: CheckDBEquality = false;
+	override readonly checkDBEquality: CheckDBEquality = false;
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
@@ -182,9 +180,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQueryFn;
 
-	/** @override */
 	@prop({type: [Object, Array], required: false})
-	readonly request?: RequestParams;
+	override readonly request?: RequestParams;
 
 	/**
 	 * Function to request a new data chunk to render
@@ -226,8 +223,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.field.set('itemsStore', value);
 	}
 
-	/** @override */
-	get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return <any>this;
 	}
 
@@ -266,9 +262,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	@system()
 	protected localStateStore: LocalState = 'init';
 
-	/** @override */
 	// @ts-ignore (getter instead readonly)
-	protected get requestParams(): RequestParams {
+	protected override get requestParams(): RequestParams {
 		return {
 			get: {
 				...this.requestQuery?.(this.getDataStateSnapshot())?.get,
@@ -277,9 +272,8 @@ export default class bVirtualScroll extends iData implements iItems {
 		};
 	}
 
-	/** @override */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected set requestParams(value: RequestParams) {
+	protected override set requestParams(value: RequestParams) {
 		// Loopback
 	}
 
@@ -301,8 +295,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	@system<bVirtualScroll>((o) => new ComponentRender(o))
 	protected componentRender!: ComponentRender;
 
-	/** @override */
-	protected $refs!: {
+	protected override $refs!: {
 		container: HTMLElement;
 		loader?: HTMLElement;
 		tombstones?: HTMLElement;
@@ -312,11 +305,8 @@ export default class bVirtualScroll extends iData implements iItems {
 		renderNext?: HTMLElement;
 	};
 
-	/**
-	 * @override
-	 * @emits `chunkLoading(page: number)`
-	 */
-	initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
+	/** @emits `chunkLoading(page: number)` */
+	override initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
 			this.reInit();
 		}
@@ -476,11 +466,8 @@ export default class bVirtualScroll extends iData implements iItems {
 		return getRequestParams(chunkRequest, chunkRender, overrideParams);
 	}
 
-	/**
-	 * @override
-	 * @emits `chunkLoaded(lastLoadedChunk:` [[LastLoadedChunk]]`)`
-	 */
-	protected initRemoteData(): void {
+	/** @emits `chunkLoaded(lastLoadedChunk:` [[LastLoadedChunk]]`)` */
+	protected override initRemoteData(): void {
 		if (!this.db) {
 			return;
 		}
@@ -521,8 +508,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.chunkRequest.init().catch(stderr);
 	}
 
-	/** @override */
-	protected convertDataToDB<O>(data: object): O | this['DB'] {
+	protected override convertDataToDB<O>(data: object): O | this['DB'] {
 		this.chunkRequest.lastLoadedChunk.raw = data;
 		return super.convertDataToDB(data);
 	}
@@ -554,8 +540,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return this.reInit();
 	}
 
-	/** @override */
-	protected syncDataProviderWatcher(initLoad?: boolean): void {
+	protected override syncDataProviderWatcher(initLoad?: boolean): void {
 		const
 			provider = this.dataProvider;
 
@@ -567,8 +552,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		}
 	}
 
-	/** @override */
-	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
+	protected override onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
 		if (isAsyncReplaceError(err)) {

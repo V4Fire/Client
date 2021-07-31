@@ -28,11 +28,8 @@ export const
  */
 @component({inheritMods: false})
 export default abstract class iPage extends iData implements iVisible {
-	/** @override */
-	readonly reloadOnActivation: boolean = true;
-
-	/** @override */
-	readonly syncRouterStoreOnInit: boolean = true;
+	override readonly reloadOnActivation: boolean = true;
+	override readonly syncRouterStoreOnInit: boolean = true;
 
 	/**
 	 * An initial page title.
@@ -132,14 +129,12 @@ export default abstract class iPage extends iData implements iVisible {
 		}
 	}
 
-	/** @override */
-	activate(force?: boolean): void {
+	override activate(force?: boolean): void {
 		this.setRootMod('active', true);
 		super.activate(force);
 	}
 
-	/** @override */
-	deactivate(): void {
+	override deactivate(): void {
 		this.setRootMod('active', false);
 		super.deactivate();
 	}
@@ -181,14 +176,12 @@ export default abstract class iPage extends iData implements iVisible {
 		}
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);
 	}
 
-	/** @override */
-	protected beforeDestroy(): void {
+	protected override beforeDestroy(): void {
 		this.removeRootMod('active');
 		super.beforeDestroy();
 	}

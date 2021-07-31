@@ -187,8 +187,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@prop({type: Object, required: false})
 	readonly regExps?: Dictionary<RegExp>;
 
-	/** @override */
-	get unsafe(): UnsafeGetter<UnsafeIInputText<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeIInputText<this>> {
 		return <any>this;
 	}
 
@@ -266,8 +265,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@system()
 	protected maskRepetitions: number = 1;
 
-	/** @override */
-	protected readonly $refs!: {input: HTMLInputElement};
+	protected override readonly $refs!: {input: HTMLInputElement};
 
 	/**
 	 * Selects all content of the input
@@ -359,8 +357,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		}
 	}
 
-	/** @override */
-	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
+	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
 		attrs = {
 			...attrs,
 			type: this.type,
@@ -376,8 +373,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		return attrs;
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('empty', 'text', (v) => v === '');
 	}

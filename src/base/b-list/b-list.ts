@@ -549,8 +549,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		return this.active;
 	}
 
-	/** @override */
-	protected initRemoteData(): CanUndef<CanPromise<this['Items'] | Dictionary>> {
+	protected override initRemoteData(): CanUndef<CanPromise<this['Items'] | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
@@ -569,8 +568,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		return this.items;
 	}
 
-	/** @override */
-	protected initBaseAPI(): void {
+	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
 		const
@@ -686,8 +684,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		return iItems.getItemKey(this, item, i);
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);
 	}
@@ -707,18 +704,15 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		}
 	}
 
-	/** @override */
-	protected onAddData(data: unknown): void {
+	protected override onAddData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
-	/** @override */
-	protected onUpdData(data: unknown): void {
+	protected override onUpdData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
-	/** @override */
-	protected onDelData(data: unknown): void {
+	protected override onDelData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 

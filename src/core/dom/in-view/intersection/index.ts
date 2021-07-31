@@ -53,8 +53,7 @@ export default class InView extends Super {
 		return observable;
 	}
 
-	/** @override */
-	protected remove(observable: InViewObservableElement, suspend?: boolean): boolean {
+	protected override remove(observable: InViewObservableElement, suspend?: boolean): boolean {
 		super.remove(observable, suspend);
 
 		const

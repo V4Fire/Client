@@ -38,7 +38,6 @@ export default class Block extends Friend {
 	 */
 	protected readonly mods?: Dictionary<CanUndef<string>>;
 
-	/** @override */
 	constructor(component: any) {
 		super(component);
 		this.mods = Object.createDict();

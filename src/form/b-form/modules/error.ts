@@ -61,8 +61,7 @@ export default class ValidationError<D = undefined> extends BaseError {
 		this.details = details;
 	}
 
-	/** @override */
-	protected format(): string {
+	protected override format(): string {
 		const
 			parts = [this.details.msg];
 

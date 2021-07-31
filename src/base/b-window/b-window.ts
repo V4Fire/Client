@@ -52,8 +52,7 @@ interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScrol
 @component()
 @derive(iOpenToggle, iLockPageScroll)
 class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
-	/** @override */
-	readonly proxyCall: boolean = true;
+	override readonly proxyCall: boolean = true;
 
 	/**
 	 * Initial window title
@@ -137,8 +136,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		]
 	};
 
-	/** @override */
-	protected readonly $refs!: {
+	protected override readonly $refs!: {
 		window: HTMLElement;
 	};
 
@@ -300,16 +298,14 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
 		iLockPageScroll.initModEvents(this);
 	}
 
-	/** @override */
-	protected beforeDestroy(): void {
+	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 		this.removeRootMod('hidden');
 	}

@@ -65,14 +65,9 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
 @derive(iAccess, iOpenToggle)
 class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
-	/** @override */
-	readonly rootTag: string = 'span';
-
-	/** @override */
-	readonly dataProvider: string = 'Provider';
-
-	/** @override */
-	readonly defaultRequestFilter: RequestFilter = true;
+	override readonly rootTag: string = 'span';
+	override readonly dataProvider: string = 'Provider';
+	override readonly defaultRequestFilter: RequestFilter = true;
 
 	/**
 	 * A button' type to create. There can be values:
@@ -367,8 +362,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		]
 	};
 
-	/** @override */
-	protected readonly $refs!: {
+	protected override readonly $refs!: {
 		button: HTMLButtonElement;
 		file?: HTMLInputElement;
 		dropdown?: Element;
@@ -393,8 +387,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		const
 			{localEmitter: $e} = this;
 

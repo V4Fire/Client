@@ -32,7 +32,6 @@ export * from 'super/i-block/modules/async-render/interface';
 export default class AsyncRender extends Friend {
 	//#if runtime has component/async-render
 
-	/** @override */
 	constructor(component: any) {
 		super(component);
 

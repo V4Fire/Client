@@ -25,9 +25,9 @@ export * from 'super/i-block/modules/mods/interface';
  * @param key - field key
  * @param link - link key
  */
-export function mergeMods<T extends iBlock>(
-	component: T,
-	oldComponent: T,
+export function mergeMods(
+	component: iBlock,
+	oldComponent: iBlock,
 	key: string,
 	link?: string
 ): void {
@@ -194,7 +194,7 @@ export function initMods(component: iBlock): ModsNTable {
  * Returns a dictionary with watchable modifiers
  * @param component
  */
-export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsNTable> {
+export function getWatchableMods(component: iBlock): Readonly<ModsNTable> {
 	const
 		watchMods = {},
 		watchers = component.field.get<ModsNTable>('watchModsStore')!,

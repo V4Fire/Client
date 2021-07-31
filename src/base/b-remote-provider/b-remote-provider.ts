@@ -25,11 +25,9 @@ export const
 
 @component()
 export default class bRemoteProvider extends iData {
-	/** @override */
-	readonly remoteProvider: boolean = true;
+	override readonly remoteProvider: boolean = true;
 
-	/** @override */
-	readonly reloadOnActivation: boolean = true;
+	override readonly reloadOnActivation: boolean = true;
 
 	/**
 	 * Field to set to the component parent
@@ -44,17 +42,15 @@ export default class bRemoteProvider extends iData {
 		return this.waitStatus('loading', () => Array.from(this.$el!.children));
 	}
 
-	/** @override */
-	set db(value: CanUndef<this['DB']>) {
+	override set db(value: CanUndef<this['DB']>) {
 		super['dbSetter'](value);
 		this.syncDBWatcher(value);
 	}
 
 	/**
-	 * @override
 	 * @emits `error(err:Error |` [[RequestError]]`, retry:` [[RetryRequestFn]]`)`
 	 */
-	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
+	protected override onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
 		const
 			l = this.$listeners;
 
@@ -115,10 +111,9 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
-	 * @override
 	 * @emits `addData(data: unknown)`
 	 */
-	protected onAddData(data: unknown): void {
+	protected override onAddData(data: unknown): void {
 		const
 			l = this.$listeners;
 
@@ -130,10 +125,9 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
-	 * @override
 	 * @emits `updData(data: unknown)`
 	 */
-	protected onUpdData(data: unknown): void {
+	protected override onUpdData(data: unknown): void {
 		const
 			l = this.$listeners;
 
@@ -145,10 +139,9 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
-	 * @override
 	 * @emits `delData(data: unknown)`
 	 */
-	protected onDelData(data: unknown): void {
+	protected override onDelData(data: unknown): void {
 		const
 			l = this.$listeners;
 

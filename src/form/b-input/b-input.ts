@@ -59,22 +59,15 @@ export const
 })
 
 export default class bInput extends iInputText {
-	/** @override */
-	readonly Value!: Value;
+	override readonly Value!: Value;
+	override readonly FormValue!: FormValue;
+	override readonly rootTag: string = 'span';
 
-	/** @override */
-	readonly FormValue!: FormValue;
-
-	/** @override */
-	readonly rootTag: string = 'span';
-
-	/** @override */
 	@prop({type: String, required: false})
-	readonly valueProp?: this['Value'];
+	override readonly valueProp?: this['Value'];
 
-	/** @override */
 	@prop({type: String, required: false})
-	readonly defaultProp?: this['Value'];
+	override readonly defaultProp?: this['Value'];
 
 	/**
 	 * The minimum value of the input (for number and date types)
@@ -203,34 +196,28 @@ export default class bInput extends iInputText {
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
 
-	/** @override */
-	get value(): this['Value'] {
+	override get value(): this['Value'] {
 		return this.field.get<this['Value']>('valueStore')!;
 	}
 
-	/** @override */
-	set value(value: this['Value']) {
+	override set value(value: this['Value']) {
 		this.text = value;
 		this.field.set('valueStore', this.text);
 	}
 
-	/** @override */
-	get default(): this['Value'] {
+	override get default(): this['Value'] {
 		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 
-	/** @override */
-	static validators: ValidatorsDecl = {
+	static override validators: ValidatorsDecl = {
 		...iInputText.validators,
 		...TextValidators,
 		...Validators
 	};
 
-	/** @override */
 	@system()
-	protected valueStore!: this['Value'];
+	protected override valueStore!: this['Value'];
 
-	/** @override */
 	@system({
 		after: 'valueStore',
 		init: (o) => o.sync.link((text) => {
@@ -264,11 +251,10 @@ export default class bInput extends iInputText {
 		})
 	})
 
-	protected textStore!: string;
+	protected override textStore!: string;
 
-	/** @override */
 	@wait('ready', {label: $$.clear})
-	clear(): Promise<boolean> {
+	override clear(): Promise<boolean> {
 		const v = this.value;
 		void this.clearText();
 
@@ -291,8 +277,7 @@ export default class bInput extends iInputText {
 		return SyncPromise.resolve(this.selectText());
 	}
 
-	/** @override */
-	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
+	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
 		attrs = {
 			...super.normalizeAttrs(attrs),
 			min: this.min,
@@ -334,8 +319,7 @@ export default class bInput extends iInputText {
 		}
 	}
 
-	/** @override */
-	protected onMaskInput(): Promise<boolean> {
+	protected override onMaskInput(): Promise<boolean> {
 		return super.onMaskInput().then((res) => {
 			if (res) {
 				this.emit('actionChange', this.value);
@@ -345,8 +329,7 @@ export default class bInput extends iInputText {
 		});
 	}
 
-	/** @override */
-	protected onMaskKeyPress(e: KeyboardEvent): boolean {
+	protected override onMaskKeyPress(e: KeyboardEvent): boolean {
 		if (super.onMaskKeyPress(e)) {
 			this.emit('actionChange', this.value);
 			return true;
@@ -355,8 +338,7 @@ export default class bInput extends iInputText {
 		return false;
 	}
 
-	/** @override */
-	protected onMaskDelete(e: KeyboardEvent): boolean {
+	protected override onMaskDelete(e: KeyboardEvent): boolean {
 		if (super.onMaskDelete(e)) {
 			this.emit('actionChange', this.value);
 			return true;

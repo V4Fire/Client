@@ -10,11 +10,9 @@ import Demo, { provider } from 'models/demo';
 
 @provider('demo')
 export default class Session extends Demo {
-	/** @override */
-	baseURL: string = '/session';
+	override baseURL: string = '/session';
 
-	/** @override */
-	static request: typeof Demo.request = Demo.request({
+	static override request: typeof Demo.request = Demo.request({
 		api: {
 			url: 'https://test.v4fire.rocks'
 		}

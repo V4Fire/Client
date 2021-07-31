@@ -194,15 +194,11 @@ export const
  */
 @component()
 export default abstract class iBlock extends ComponentInterface {
-	/** @override */
-	readonly Component!: iBlock;
+	override readonly Component!: iBlock;
+	override readonly Root!: iStaticPage;
 
-	/** @override */
-	readonly Root!: iStaticPage;
-
-	/** @override */
 	// @ts-ignore (override)
-	readonly $root!: this['Root'];
+	override readonly $root!: this['Root'];
 
 	/**
 	 * If true, the component will log info messages, but not only errors and warnings
@@ -643,16 +639,11 @@ export default abstract class iBlock extends ComponentInterface {
 		this.emit('componentStatusChange', value, oldValue);
 	}
 
-	/** @override */
-	get hook(): Hook {
+	override get hook(): Hook {
 		return this.hookStore;
 	}
 
-	/**
-	 * @override
-	 * @param value
-	 */
-	set hook(value: Hook) {
+	override set hook(value: Hook) {
 		const oldValue = this.hook;
 		this.hookStore = value;
 
@@ -879,8 +870,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	readonly vdom!: VDOM;
 
-	/** @override */
-	get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return <any>this;
 	}
 
@@ -1060,9 +1050,8 @@ export default abstract class iBlock extends ComponentInterface {
 
 	protected readonly moduleLoader!: ModuleLoader;
 
-	/** @override */
 	@system()
-	protected renderCounter: number = 0;
+	protected override renderCounter: number = 0;
 
 	/**
 	 * Component stage store
@@ -2266,29 +2255,24 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * @override
 	 * @see [[iBlock.activatedProp]]
 	 * @param [force]
 	 */
-	activate(force?: boolean): void {
+	override activate(force?: boolean): void {
 		activate(this, force);
 	}
 
-	/**
-	 * @override
-	 * @see [[iBlock.activatedProp]]
-	 */
-	deactivate(): void {
+	/** @see [[iBlock.activatedProp]] */
+	override deactivate(): void {
 		deactivate(this);
 	}
 
 	/**
-	 * @override
 	 * @param ctxOrOpts
 	 * @param details
 	 */
 	@p({replace: false})
-	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
+	override log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
 			logLevel;
@@ -2555,26 +2539,22 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 	}
 
-	/** @override */
-	protected onCreatedHook(): void {
+	protected override onCreatedHook(): void {
 		if (this.isFlyweight || this.isSSR) {
 			this.componentStatusStore = 'ready';
 			this.isReadyOnce = true;
 		}
 	}
 
-	/** @override */
-	protected onBindHook(): void {
+	protected override onBindHook(): void {
 		init.beforeMountState(this);
 	}
 
-	/** @override */
-	protected onInsertedHook(): void {
+	protected override onInsertedHook(): void {
 		init.mountedState(this);
 	}
 
-	/** @override */
-	protected async onUpdateHook(): Promise<void> {
+	protected override async onUpdateHook(): Promise<void> {
 		try {
 			await this.nextTick({label: $$.onUpdateHook});
 
@@ -2594,8 +2574,7 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 	}
 
-	/** @override */
-	protected onUnbindHook(): void {
+	protected override onUnbindHook(): void {
 		this.$destroy();
 	}
 

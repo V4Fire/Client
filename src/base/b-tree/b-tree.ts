@@ -155,8 +155,7 @@ export default class bTree extends iData implements iItems {
 		return iItems.getItemKey(this, item, i);
 	}
 
-	/** @override */
-	protected initRemoteData(): CanUndef<this['items']> {
+	protected override initRemoteData(): CanUndef<this['items']> {
 		if (!this.db) {
 			return;
 		}

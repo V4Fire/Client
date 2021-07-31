@@ -56,8 +56,7 @@ export default class bRouter extends iData {
 	 */
 	readonly PageMeta!: RouteOption;
 
-	/** @override */
-	public async!: Async<this>;
+	public override async!: Async<this>;
 
 	/**
 	 * The static schema of application routes.
@@ -735,8 +734,7 @@ export default class bRouter extends iData {
 		return this.routes;
 	}
 
-	/** @override */
-	protected initRemoteData(): CanUndef<CanPromise<router.RouteBlueprints | Dictionary>> {
+	protected override initRemoteData(): CanUndef<CanPromise<router.RouteBlueprints | Dictionary>> {
 		if (!this.db) {
 			return;
 		}
@@ -799,8 +797,7 @@ export default class bRouter extends iData {
 		return router.compileStaticRoutes(routes, {basePath: this.basePath});
 	}
 
-	/** @override */
-	protected initBaseAPI(): void {
+	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
 		const

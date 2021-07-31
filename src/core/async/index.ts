@@ -32,11 +32,8 @@ export * from 'core/async/helpers';
 export * from 'core/async/interface';
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
-	/** @override */
-	static namespaces: NamespacesDictionary = namespaces;
-
-	/** @override */
-	static linkNames: NamespacesDictionary = namespaces;
+	static override namespaces: NamespacesDictionary = namespaces;
+	static override linkNames: NamespacesDictionary = namespaces;
 
 	/**
 	 * Wrapper for requestAnimationFrame

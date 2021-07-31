@@ -312,8 +312,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	protected mode!: Mode;
 
-	/** @override */
-	protected readonly $refs!: {
+	protected override readonly $refs!: {
 		view?: HTMLElement;
 		content?: HTMLElement;
 		contentWrapper?: HTMLElement;
@@ -603,8 +602,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		} catch {}
 	}
 
-	/** @override */
-	protected initRemoteData(): CanUndef<this['Items']> {
+	protected override initRemoteData(): CanUndef<this['Items']> {
 		if (!this.db) {
 			return;
 		}
@@ -652,8 +650,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('mode', 'mode', String);
 		this.sync.mod('align', 'align', String);

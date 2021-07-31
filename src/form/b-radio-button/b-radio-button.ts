@@ -21,12 +21,10 @@ export * from 'super/i-input/i-input';
  */
 @component({flyweight: true})
 export default class bRadioButton extends bCheckbox {
-	/** @override */
-	readonly changeable: boolean = false;
+	override readonly changeable: boolean = false;
 
-	/** @override */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected onClick(e: Event): Promise<void> {
+	protected override onClick(e: Event): Promise<void> {
 		void this.focus();
 
 		const
