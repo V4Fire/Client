@@ -107,9 +107,8 @@ export default abstract class iStaticPage extends iPage {
 		return this.field.get('route.meta.name');
 	}
 
-	/** @override */
 	@computed()
-	get route(): CanUndef<this['CurrentPage']> {
+	override get route(): CanUndef<this['CurrentPage']> {
 		return this.field.get('routeStore');
 	}
 
@@ -124,13 +123,11 @@ export default abstract class iStaticPage extends iPage {
 		this.emit('setRoute', value);
 	}
 
-	/** @override */
-	get pageTitle(): string {
+	override get pageTitle(): string {
 		return this.field.get<string>('pageTitleStore')!;
 	}
 
-	/** @override */
-	set pageTitle(value: string) {
+	override set pageTitle(value: string) {
 		if (!Object.isString(value)) {
 			return;
 		}
@@ -225,12 +222,11 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * @override
 	 * @param name
 	 * @param value
 	 * @param [component] - instance of the component that wants to set a modifier
 	 */
-	setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
+	override setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
@@ -271,12 +267,11 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * @override
 	 * @param name
 	 * @param [value]
 	 * @param [component] - instance of the component that wants to remove a modifier
 	 */
-	removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
+	override removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
@@ -307,11 +302,10 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * @override
 	 * @param name
 	 * @param [component] - instance of the component that wants to get a modifier
 	 */
-	getRootMod(name: string, component: iBlock = this): CanUndef<string> {
+	override getRootMod(name: string, component: iBlock = this): CanUndef<string> {
 		return this.rootMods[this.getRootModKey(name, component)]?.value;
 	}
 

@@ -29,8 +29,7 @@ export default class bDummyState extends iData {
 	@field()
 	regularField?: number;
 
-	/** @override */
-	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected override syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		if (type === 'remote') {
 			return {
 				normalizedSystemField: data?.systemField ?? this.systemField,
@@ -46,8 +45,7 @@ export default class bDummyState extends iData {
 		};
 	}
 
-	/** @override */
-	protected convertStateToStorageReset(): Dictionary {
+	protected override convertStateToStorageReset(): Dictionary {
 		return {
 			systemField: 'foo',
 			regularField: 0,

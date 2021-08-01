@@ -29,7 +29,6 @@ export default class Storage extends Friend {
 	readonly engine: CanUndef<AsyncStorageNamespace>;
 
 	/**
-	 * @override
 	 * @param component
 	 * @param [engine] - custom engine
 	 */

@@ -31,7 +31,7 @@ export function nativeChange<C extends bSelect>(component: C): void {
 	}
 
 	const
-		checkedItems = input.querySelectorAll(`${$b!.getElSelector('item')}:checked`);
+		checkedItems = input.querySelectorAll(`${$b.getElSelector('item')}:checked`);
 
 	let
 		value;
@@ -195,22 +195,22 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 	}
 
 	const getMarkedOrSelectedItem = () =>
-		$b!.element('item', {marked: true}) ??
-		$b!.element('item', {selected: true});
+		$b.element('item', {marked: true}) ??
+		$b.element('item', {selected: true});
 
 	let
 		currentItemEl = getMarkedOrSelectedItem();
 
 	const markItem = (itemEl: Nullable<Element>) => {
 		if (currentItemEl != null) {
-			$b!.removeElMod(currentItemEl, 'item', 'marked');
+			$b.removeElMod(currentItemEl, 'item', 'marked');
 		}
 
 		if (itemEl == null) {
 			return false;
 		}
 
-		$b!.setElMod(itemEl, 'item', 'marked', true);
+		$b.setElMod(itemEl, 'item', 'marked', true);
 		void unsafe.setScrollToMarkedOrSelectedItem();
 
 		return true;
@@ -242,7 +242,7 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 				currentItemEl ??= getMarkedOrSelectedItem();
 			}
 
-			markItem(currentItemEl?.nextElementSibling) || markItem($b!.element('item'));
+			markItem(currentItemEl?.nextElementSibling) || markItem($b.element('item'));
 			break;
 		}
 

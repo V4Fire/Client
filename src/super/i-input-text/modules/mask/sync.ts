@@ -42,12 +42,12 @@ export function syncWithText<C extends iInputText>(
 	}
 
 	const
-		originalText = opts.inputText ?? originalMask!.text,
+		originalText = opts.inputText ?? originalMask.text,
 		originalTextChunks = Object.isArray(originalText) ? originalText.slice() : [...originalText.letters()];
 
 	const
 		from = opts.from ?? 0,
-		to = opts.to ?? originalMask!.symbols.length;
+		to = opts.to ?? originalMask.symbols.length;
 
 	text = originalTextChunks
 		.slice(0, from)

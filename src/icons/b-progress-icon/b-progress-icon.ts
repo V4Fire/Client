@@ -20,6 +20,5 @@ export * from 'super/i-block/i-block';
  */
 @component({functional: true, flyweight: true})
 export default class bProgressIcon extends iBlock {
-	/** @override */
-	readonly rootTag: string = 'span';
+	override readonly rootTag: string = 'span';
 }

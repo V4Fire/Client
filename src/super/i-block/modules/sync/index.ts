@@ -65,7 +65,6 @@ export default class Sync extends Friend {
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
-	/** @override */
 	constructor(component: any) {
 		super(component);
 		this.linksCache = Object.createDict();

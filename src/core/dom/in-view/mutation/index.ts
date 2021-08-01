@@ -131,8 +131,7 @@ export default class InView extends Super {
 		}).catch(stderr);
 	}
 
-	/** @override */
-	observe(el: Element, opts: InViewInitOptions): InViewObservableElement | false {
+	override observe(el: Element, opts: InViewInitOptions): InViewObservableElement | false {
 		const
 			observable = super.observe(el, opts);
 
@@ -153,8 +152,7 @@ export default class InView extends Super {
 		return observable;
 	}
 
-	/** @override */
-	unobserve(el: Element, unobserveOptsOrThreshold?: InViewUnobserveOptions | number): boolean {
+	override unobserve(el: Element, unobserveOptsOrThreshold?: InViewUnobserveOptions | number): boolean {
 		const
 			res = super.unobserve(el, unobserveOptsOrThreshold);
 
@@ -272,8 +270,7 @@ export default class InView extends Super {
 		this.map = map;
 	}
 
-	/** @override */
-	protected maps(): InViewObservableElementsThresholdMap {
+	protected override maps(): InViewObservableElementsThresholdMap {
 		return new Map([
 			...super.maps(),
 			...this.pollingElements
@@ -296,8 +293,7 @@ export default class InView extends Super {
 		return observable;
 	}
 
-	/** @override */
-	protected getElMap(el: Element): InViewObservableElementsThresholdMap {
+	protected override getElMap(el: Element): InViewObservableElementsThresholdMap {
 		const res = super.getElMap(el);
 
 		if (res.has(el)) {
@@ -307,8 +303,7 @@ export default class InView extends Super {
 		return this.pollingElements;
 	}
 
-	/** @override */
-	protected clearAllAsync(el: InViewObservableElement): void {
+	protected override clearAllAsync(el: InViewObservableElement): void {
 		const
 			{async: $a} = this;
 

@@ -13,8 +13,7 @@ import type iStaticPage from 'super/i-static-page/i-static-page';
  * Class to manage interface themes
  */
 export default class ThemeManager extends Friend {
-	/** @override */
-	readonly C!: iStaticPage;
+	override readonly C!: iStaticPage;
 
 	/**
 	 * Set of available themes of the app
@@ -36,7 +35,6 @@ export default class ThemeManager extends Friend {
 	 */
 	protected currentStore!: string;
 
-	/** @override */
 	constructor(component: any) {
 		super(component);
 

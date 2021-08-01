@@ -1,3 +1,5 @@
+// @ts-check
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,8 +7,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-// @ts-check
 
 module.exports = {
 	pngImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAB3UlEQVR4nO2YvYviQBxAn1ExGhMUAjFpbWy0shH/f2y0sbAKwSYQxC9EMxqNueIwV1yxWTfLDsu8LvDjzbzJVFOZz+cZvwDtpzdQFipENlSIbKgQ2VAhsqFCZEOFyIYKkQ0VIhsqRDZqRQf3+z2r1Sr/HgwGmKbJcrnkdrvRbrcZjUZo2sdnU6brReHJJElotVpMp1Mmkwm2bRNFEVmWMR6POZ/P7Ha7fN73fRaLBUIIZrMZl8vlbVepIbfbjTiOmc1m+L4PwOVyQdd1dF2nXq8jhMjnPc9DCEEQBFiWhWEYb7uKUPhq9Xo9HMdhu92yXq9xHIc0TanV/ioqlQpZ9u9lqdVq0e12ORwODIfDL7mKUPiPNBoNdF2n1+sBcL1eqVarpGkKwP1+zzfy4vF4APx3uu+4Sgt5kSQJAPV6HcMwiOOYzWZDlmWYppnPnU4n4jim0+kQhuGXXKWGCCG43++EYYimaViWhed5NJtNgiDAdV0sy8rnwzDEtm1c10UIwfF4fNtVhErRJ1Pf94miCIB+v4/rup9a6LtcLwqHPJ9P4jhG1/VP39/vdL0obNE0jXa7XcqiZbpyZ6m2H0SFyIYKkQ0VIhsqRDZUiGyoENlQIbKhQmRDhcjGrwn5Aw21BwbJxeTIAAAAAElFTkSuQmCC',

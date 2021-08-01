@@ -56,7 +56,7 @@ export * from 'super/i-block/modules/decorators/interface';
 
 /**
  * @see core/component/decorators/base.ts
- * @override
+ * @inheritDoc
  */
 export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
 	params?:
@@ -66,7 +66,7 @@ export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @override
+ * @inheritDoc
  */
 export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -75,7 +75,7 @@ export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @override
+ * @inheritDoc
  */
 export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -84,7 +84,7 @@ export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @override
+ * @inheritDoc
  */
 export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -93,7 +93,7 @@ export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @override
+ * @inheritDoc
  */
 export const watch = watchDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)

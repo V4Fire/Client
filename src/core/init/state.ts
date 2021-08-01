@@ -21,7 +21,7 @@ export default (async () => {
 		tasks = <Array<Promise<unknown>>>[];
 
 	state.isOnline = true;
-	net.isOnline().then((v) => {
+	void net.isOnline().then((v) => {
 		state.isOnline = v.status;
 		state.lastOnlineDate = v.lastOnline;
 	});
@@ -40,5 +40,5 @@ export default (async () => {
 		} catch {}
 	}
 
-	semaphore('stateReady');
+	void semaphore('stateReady');
 })();

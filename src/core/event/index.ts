@@ -44,7 +44,7 @@ export const afterDOMLoaded = deprecate(
 			promise = resolveAfterDOMLoaded();
 
 		if (cb) {
-			promise.then(cb);
+			void promise.then(cb);
 		}
 
 		return promise;

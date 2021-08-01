@@ -1,5 +1,7 @@
 /* eslint-disable max-lines-per-function */
 
+// @ts-check
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,8 +9,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-// @ts-check
 
 /**
  * @typedef {import('playwright').Page} Page

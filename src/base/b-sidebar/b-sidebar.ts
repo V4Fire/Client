@@ -30,8 +30,7 @@ interface bSidebar extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScro
 @component()
 @derive(iOpenToggle, iLockPageScroll)
 class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
-	/** @override */
-	readonly rootTag: string = 'aside';
+	override readonly rootTag: string = 'aside';
 
 	/**
 	 * If true, then will be blocked the document' scrolling when the component is opened
@@ -73,8 +72,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		}
 	}
 
-	/** @override */
-	protected syncStorageState(): Dictionary {
+	protected override syncStorageState(): Dictionary {
 		return {
 			'mods.opened': this.mods.opened
 		};
@@ -86,8 +84,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 
 		iOpenToggle.initModEvents(this);

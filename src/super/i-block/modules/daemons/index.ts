@@ -73,7 +73,6 @@ export default class Daemons extends Friend {
 		return (<typeof iBlock>this.ctx.instance.constructor).daemons;
 	}
 
-	/** @override */
 	constructor(component: any) {
 		super(component);
 		this.init();

@@ -209,8 +209,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	@prop({type: [Boolean, Function]})
 	readonly checkDBEquality: CheckDBEquality = true;
 
-	/** @override */
-	get unsafe(): UnsafeGetter<UnsafeIData<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeIData<this>> {
 		return <any>this;
 	}
 
@@ -340,8 +339,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		}
 	}
 
-	/** @override */
-	initLoad(data?: unknown, opts: InitLoadOptions = {}): CanPromise<void> {
+	override initLoad(data?: unknown, opts: InitLoadOptions = {}): CanPromise<void> {
 		if (!this.isActivated) {
 			return;
 		}
@@ -470,8 +468,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		return super.initLoad(data, opts);
 	}
 
-	/** @override */
-	reload(opts?: InitLoadOptions): Promise<void> {
+	override reload(opts?: InitLoadOptions): Promise<void> {
 		if (!this.r.isOnline && !this.offlineReload) {
 			return Promise.resolve();
 		}
@@ -762,8 +759,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		return undefined;
 	}
 
-	/** @override */
-	protected initGlobalEvents(resetListener?: boolean): void {
+	protected override initGlobalEvents(resetListener?: boolean): void {
 		super.initGlobalEvents(resetListener != null ? resetListener : Boolean(this.dataProvider));
 	}
 

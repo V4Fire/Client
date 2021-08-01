@@ -63,9 +63,8 @@ export const
 })
 
 export default class bDynamicPage extends iDynamicPage {
-	/** @override */
 	@prop({forceDefault: true})
-	readonly selfDispatching: boolean = true;
+	override readonly selfDispatching: boolean = true;
 
 	/**
 	 * Initial component name to load
@@ -189,16 +188,13 @@ export default class bDynamicPage extends iDynamicPage {
 			this.waitRef('component').then(getComponent);
 	}
 
-	/** @override */
-	get unsafe(): UnsafeGetter<UnsafeBDynamicPage<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBDynamicPage<this>> {
 		return <any>this;
 	}
 
-	/** @override */
-	protected readonly componentStatusStore: ComponentStatus = 'ready';
+	protected override readonly componentStatusStore: ComponentStatus = 'ready';
 
-	/** @override */
-	protected readonly $refs!: {
+	protected override readonly $refs!: {
 		component?: iDynamicPage[];
 	};
 
@@ -215,16 +211,14 @@ export default class bDynamicPage extends iDynamicPage {
 		return SyncPromise.resolve(Infinity);
 	}
 
-	/** @override */
-	initLoad(): Promise<void> {
+	override initLoad(): Promise<void> {
 		return Promise.resolve();
 	}
 
 	/**
 	 * Reloads the loaded page component
-	 * @override
 	 */
-	async reload(params?: InitLoadOptions): Promise<void> {
+	override async reload(params?: InitLoadOptions): Promise<void> {
 		const component = await this.component;
 		return component.reload(params);
 	}
@@ -388,8 +382,7 @@ export default class bDynamicPage extends iDynamicPage {
 		return globalStrategy;
 	}
 
-	/** @override */
-	protected initBaseAPI(): void {
+	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 		this.addClearListenersToCache = this.instance.addClearListenersToCache.bind(this);
 	}
@@ -496,8 +489,7 @@ export default class bDynamicPage extends iDynamicPage {
 		}
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
 	}

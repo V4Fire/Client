@@ -100,8 +100,8 @@ export async function setScrollToMarkedOrSelectedItem<C extends bSelect>(compone
 		}
 
 		const itemEl =
-			$b!.element<HTMLDivElement>('item', {marked: true}) ??
-			$b!.element<HTMLDivElement>('item', {selected: true});
+			$b.element<HTMLDivElement>('item', {marked: true}) ??
+			$b.element<HTMLDivElement>('item', {selected: true});
 
 		if (itemEl == null) {
 			return false;

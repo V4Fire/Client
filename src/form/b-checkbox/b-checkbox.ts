@@ -59,14 +59,9 @@ export const
 })
 
 export default class bCheckbox extends iInput implements iSize {
-	/** @override */
-	readonly Value!: Value;
-
-	/** @override */
-	readonly FormValue!: FormValue;
-
-	/** @override */
-	readonly rootTag: string = 'span';
+	override readonly Value!: Value;
+	override readonly FormValue!: FormValue;
+	override readonly rootTag: string = 'span';
 
 	/**
 	 * If true, the component is checked by default.
@@ -135,8 +130,7 @@ export default class bCheckbox extends iInput implements iSize {
 	@prop(Boolean)
 	readonly changeable: boolean = true;
 
-	/** @override */
-	get value(): this['Value'] {
+	override get value(): this['Value'] {
 		const
 			{checked} = this.mods;
 
@@ -154,13 +148,11 @@ export default class bCheckbox extends iInput implements iSize {
 		return undefined;
 	}
 
-	/** @override */
-	set value(value: this['Value']) {
+	override set value(value: this['Value']) {
 		super['valueSetter'](value);
 	}
 
-	/** @override */
-	get default(): boolean {
+	override get default(): boolean {
 		return this.defaultProp;
 	}
 
@@ -183,8 +175,7 @@ export default class bCheckbox extends iInput implements iSize {
 		]
 	};
 
-	/** @override */
-	static validators: ValidatorsDecl = {
+	static override validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators
 		...iInput.validators,
 
@@ -203,12 +194,10 @@ export default class bCheckbox extends iInput implements iSize {
 		//#endif
 	};
 
-	/** @override */
 	@system()
-	protected valueStore!: this['Value'];
+	protected override valueStore!: this['Value'];
 
-	/** @override */
-	protected readonly $refs!: {input: HTMLInputElement};
+	protected override readonly $refs!: {input: HTMLInputElement};
 
 	/**
 	 * Checks the checkbox
@@ -232,15 +221,13 @@ export default class bCheckbox extends iInput implements iSize {
 		return (this.mods.checked === 'true' ? this.uncheck() : this.check()).then(() => this.value);
 	}
 
-	/** @override */
-	clear(): Promise<boolean> {
+	override clear(): Promise<boolean> {
 		const res = super.clear();
 		void this.uncheck();
 		return res;
 	}
 
-	/** @override */
-	reset(): Promise<boolean> {
+	override reset(): Promise<boolean> {
 		const onReset = (res: boolean) => {
 			if (res) {
 				void this.removeMod('valid');
@@ -258,8 +245,7 @@ export default class bCheckbox extends iInput implements iSize {
 		return this.uncheck().then(onReset);
 	}
 
-	/** @override */
-	protected initBaseAPI(): void {
+	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
 		const
@@ -269,15 +255,13 @@ export default class bCheckbox extends iInput implements iSize {
 		this.onCheckedChange = i.onCheckedChange.bind(this);
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('checked', 'value', this.convertValueToChecked.bind(this));
 		this.localEmitter.on('block.mod.*.checked.*', this.onCheckedChange.bind(this));
 	}
 
-	/** @override */
-	protected initValueListeners(): void {
+	protected override initValueListeners(): void {
 		this.on('actionChange', () => this.validate());
 
 		let
@@ -308,8 +292,7 @@ export default class bCheckbox extends iInput implements iSize {
 		return checked;
 	}
 
-	/** @override */
-	protected resolveValue(value?: this['Value']): this['Value'] {
+	protected override resolveValue(value?: this['Value']): this['Value'] {
 		const
 			i = this.instance;
 

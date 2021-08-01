@@ -58,13 +58,13 @@ export function wrapCreateElement(
 			unsafe = <UnsafeComponentInterface><any>(ctx),
 			attrs = Object.isPlainObject(tagData) ? tagData.attrs : undefined;
 
-		const createElement = <typeof nativeCreateElement>function createElement(this: unknown) {
+		const createElement = <typeof nativeCreateElement>function createElement(this: unknown, ...args: unknown[]) {
 			if (supports.boundCreateElement) {
 				const dontProvideBoundContext = nativeCreateElement[$$.wrappedCreateElement] === true;
-				return nativeCreateElement.apply(dontProvideBoundContext ? this : unsafe, arguments);
+				return nativeCreateElement.apply(dontProvideBoundContext ? this : unsafe, args);
 			}
 
-			return nativeCreateElement.apply(this, arguments);
+			return nativeCreateElement.apply(this, args);
 		};
 
 		let
@@ -198,6 +198,7 @@ export function wrapCreateElement(
 		}
 
 		if (vnode == null) {
+			// eslint-disable-next-line prefer-rest-params
 			vnode = createElement.apply(unsafe, arguments);
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -238,14 +239,14 @@ export function wrapCreateElement(
 							return l;
 						}
 
-						return 'fakeInstance' in vnode ? (<FlyweightVNode>vnode).fakeInstance : vnode.elm;
+						return 'fakeInstance' in vnode ? vnode.fakeInstance : vnode.elm;
 					}
 				});
 			}
 
 			// Add $el link if it doesn't exist
 			if (needLinkToEl && 'fakeInstance' in vnode) {
-				Object.defineProperty((<FlyweightVNode>vnode).fakeInstance, '$el', {
+				Object.defineProperty(vnode.fakeInstance, '$el', {
 					enumerable: true,
 					configurable: true,
 

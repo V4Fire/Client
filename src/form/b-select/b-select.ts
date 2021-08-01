@@ -84,11 +84,8 @@ interface bSelect extends Trait<typeof iOpenToggle> {}
 
 @derive(iOpenToggle)
 class bSelect extends iInputText implements iOpenToggle, iItems {
-	/** @override */
-	readonly Value!: Value;
-
-	/** @override */
-	readonly FormValue!: FormValue;
+	override readonly Value!: Value;
+	override readonly FormValue!: FormValue;
 
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
@@ -96,11 +93,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
-	/** @override */
-	readonly rootTag: string = 'span';
+	override readonly rootTag: string = 'span';
 
-	/** @override */
-	readonly valueProp?: unknown[] | this['Value'];
+	override readonly valueProp?: unknown[] | this['Value'];
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
@@ -257,13 +252,11 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
 
-	/** @override */
-	get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
+	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
 		return <any>this;
 	}
 
-	/** @override */
-	get rootAttrs(): Dictionary {
+	override get rootAttrs(): Dictionary {
 		const attrs = {
 			...super['rootAttrsGetter']()
 		};
@@ -278,8 +271,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return attrs;
 	}
 
-	/** @override */
-	get value(): this['Value'] {
+	override get value(): this['Value'] {
 		const
 			v = this.field.get('valueStore');
 
@@ -294,8 +286,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return v;
 	}
 
-	/** @override */
-	set value(value: this['Value']) {
+	override set value(value: this['Value']) {
 		if (value === undefined) {
 			this.unselectValue(this.value);
 
@@ -310,8 +301,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 	}
 
-	/** @override */
-	get default(): this['Value'] {
+	override get default(): this['Value'] {
 		const
 			val = this.field.get('defaultProp');
 
@@ -322,8 +312,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return val;
 	}
 
-	/** @override */
-	get formValue(): Promise<this['FormValue']> {
+	override get formValue(): Promise<this['FormValue']> {
 		const
 			formValue = super['formValueGetter']();
 
@@ -392,7 +381,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		//#endif
 	};
 
-	/** @override */
 	@system<bSelect>((o) => o.sync.link((val) => {
 		val = o.resolveValue(val);
 
@@ -429,7 +417,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return newVal;
 	}))
 
-	protected valueStore!: this['Value'];
+	protected override valueStore!: this['Value'];
 
 	/**
 	 * Map of item indexes and their values
@@ -458,8 +446,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	protected itemsStore!: this['Items'];
 
-	/** @override */
-	protected readonly $refs!: iInputText['$refs'] & {
+	protected override readonly $refs!: iInputText['$refs'] & {
 		dropdown?: Element;
 	};
 
@@ -484,8 +471,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return this.async.debounce(on.textChange.bind(null, this), 200);
 	}
 
-	/** @override */
-	reset(): Promise<boolean> {
+	override reset(): Promise<boolean> {
 		const compare = (a, b) => {
 			if (this.multiple && Object.isSet(a) && Object.isSet(b)) {
 				return Object.fastCompare([...a], [...b]);
@@ -813,8 +799,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return h.setScrollToMarkedOrSelectedItem(this);
 	}
 
-	/** @override */
-	protected initBaseAPI(): void {
+	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
 		const
@@ -846,8 +831,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return h.normalizeItems(items);
 	}
 
-	/** @override */
-	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {
+	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
 		attrs = super.normalizeAttrs(attrs);
 
 		if (this.native) {
@@ -896,16 +880,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('native', 'native', Boolean);
 		this.sync.mod('multiple', 'multiple', Boolean);
 		this.sync.mod('opened', 'multiple', Boolean);
 	}
 
-	/** @override */
-	protected beforeDestroy(): void {
+	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 
 		if (openedSelect.link === this) {
@@ -913,8 +895,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 	}
 
-	/** @override */
-	protected onFocus(): void {
+	protected override onFocus(): void {
 		super.onFocus();
 		void this.open();
 	}
@@ -937,8 +918,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		on.nativeChange(this);
 	}
 
-	/** @override */
-	protected onMaskInput(): Promise<boolean> {
+	protected override onMaskInput(): Promise<boolean> {
 		return super.onMaskInput().then((res) => {
 			if (res) {
 				this.onTextChange();
@@ -948,8 +928,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		});
 	}
 
-	/** @override */
-	protected onMaskKeyPress(e: KeyboardEvent): boolean {
+	protected override onMaskKeyPress(e: KeyboardEvent): boolean {
 		if (super.onMaskKeyPress(e)) {
 			this.onTextChange();
 			return true;
@@ -958,8 +937,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return false;
 	}
 
-	/** @override */
-	protected onMaskDelete(e: KeyboardEvent): boolean {
+	protected override onMaskDelete(e: KeyboardEvent): boolean {
 		if (super.onMaskDelete(e)) {
 			this.onTextChange();
 			return true;

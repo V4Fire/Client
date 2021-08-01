@@ -1,3 +1,7 @@
+/* eslint-disable max-lines,max-lines-per-function */
+
+// @ts-check
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,8 +9,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-// @ts-check
 
 /**
  * @typedef {import('playwright').Page} Page
@@ -145,6 +147,7 @@ module.exports = (page) => {
 							await ctx.async.sleep(300);
 						}
 
+						// eslint-disable-next-line require-atomic-updates
 						ctx.value = 1;
 						await ctx.nextTick();
 

@@ -30,8 +30,7 @@ export const
 
 @component({functional: {}})
 export default class bImage extends iBlock implements iProgress, iVisible {
-	/** @override */
-	readonly rootTag: string = 'span';
+	override readonly rootTag: string = 'span';
 
 	/**
 	 * Image src (a fallback if `srcset` provided)
@@ -105,8 +104,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	@prop({type: [String, Object], required: false})
 	readonly brokenImg?: string | Dictionary;
 
-	/** @override */
-	get rootAttrs(): Dictionary {
+	override get rootAttrs(): Dictionary {
 		return {
 			...super['rootAttrsGetter'](),
 			role: 'img',
@@ -125,8 +123,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		]
 	};
 
-	/** @override */
-	protected readonly $refs!: {
+	protected override readonly $refs!: {
 		img: HTMLImageElement;
 	};
 
@@ -225,8 +222,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		}
 	}
 
-	/** @override */
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		iProgress.initModEvents(this);
 		iVisible.initModEvents(this);
@@ -291,8 +287,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		this.emitError('loadFail', err);
 	}
 
-	/** @override */
-	protected beforeDestroy(): void {
+	protected override beforeDestroy(): void {
 		this.$refs.img.style.backgroundImage = '';
 		super.beforeDestroy();
 	}

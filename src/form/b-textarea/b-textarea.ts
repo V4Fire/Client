@@ -54,22 +54,15 @@ export const
 })
 
 export default class bTextarea extends iInputText {
-	/** @override */
-	readonly Value!: Value;
+	override readonly Value!: Value;
+	override readonly FormValue!: FormValue;
+	override readonly rootTag: string = 'span';
 
-	/** @override */
-	readonly FormValue!: FormValue;
-
-	/** @override */
-	readonly rootTag: string = 'span';
-
-	/** @override */
 	@prop({type: String, required: false})
-	readonly valueProp?: this['Value'];
+	override readonly valueProp?: this['Value'];
 
-	/** @override */
 	@prop({type: String, required: false})
-	readonly defaultProp?: this['Value'];
+	override readonly defaultProp?: this['Value'];
 
 	/**
 	 * How many rows need to add to extend the textarea height when it can't fit the entire content without
@@ -78,19 +71,16 @@ export default class bTextarea extends iInputText {
 	@prop(Number)
 	readonly extRowCount: number = 1;
 
-	/** @override */
-	get value(): this['Value'] {
+	override get value(): this['Value'] {
 		return this.field.get<this['Value']>('valueStore')!;
 	}
 
-	/** @override */
-	set value(value: this['Value']) {
+	override set value(value: this['Value']) {
 		this.text = value;
 		this.field.set('valueStore', this.text);
 	}
 
-	/** @override */
-	get default(): this['Value'] {
+	override get default(): this['Value'] {
 		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 
@@ -141,17 +131,14 @@ export default class bTextarea extends iInputText {
 		return val >= 0 ? val : 0;
 	}
 
-	/** @override */
-	static validators: ValidatorsDecl = {
+	static override validators: ValidatorsDecl = {
 		...iInputText.validators,
 		...TextValidators
 	};
 
-	/** @override */
 	@system()
-	protected valueStore!: this['Value'];
+	protected override valueStore!: this['Value'];
 
-	/** @override */
 	@system({
 		after: 'valueStore',
 		init: (o) => o.sync.link((text) => {
@@ -185,7 +172,7 @@ export default class bTextarea extends iInputText {
 		})
 	})
 
-	protected textStore!: string;
+	protected override textStore!: string;
 
 	/**
 	 * The minimum textarea height
@@ -193,8 +180,7 @@ export default class bTextarea extends iInputText {
 	@system()
 	protected minHeight: number = 0;
 
-	/** @override */
-	protected readonly $refs!: iInputText['$refs'] & {
+	protected override readonly $refs!: iInputText['$refs'] & {
 		input: HTMLTextAreaElement;
 	};
 
@@ -218,8 +204,7 @@ export default class bTextarea extends iInputText {
 		});
 	}
 
-	/** @override */
-	clear(): Promise<boolean> {
+	override clear(): Promise<boolean> {
 		const v = this.value;
 		void this.clearText();
 
@@ -434,8 +419,7 @@ export default class bTextarea extends iInputText {
 		this.emit('actionChange', this.value);
 	}
 
-	/** @override */
-	protected onMaskInput(): Promise<boolean> {
+	protected override onMaskInput(): Promise<boolean> {
 		return super.onMaskInput().then((res) => {
 			if (res) {
 				this.emit('actionChange', this.value);
@@ -445,8 +429,7 @@ export default class bTextarea extends iInputText {
 		});
 	}
 
-	/** @override */
-	protected onMaskKeyPress(e: KeyboardEvent): boolean {
+	protected override onMaskKeyPress(e: KeyboardEvent): boolean {
 		if (super.onMaskKeyPress(e)) {
 			this.emit('actionChange', this.value);
 			return true;
@@ -455,8 +438,7 @@ export default class bTextarea extends iInputText {
 		return false;
 	}
 
-	/** @override */
-	protected onMaskDelete(e: KeyboardEvent): boolean {
+	protected override onMaskDelete(e: KeyboardEvent): boolean {
 		if (super.onMaskDelete(e)) {
 			this.emit('actionChange', this.value);
 			return true;

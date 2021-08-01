@@ -12,8 +12,7 @@ export * from 'models/modules/session';
 
 @provider
 export default class Demo extends Session {
-	/** @override */
-	static request: typeof Session.request = Session.request({
+	static override request: typeof Session.request = Session.request({
 		responseType: 'json',
 		cacheStrategy: 'never'
 	});

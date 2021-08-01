@@ -42,8 +42,7 @@ class bIcon extends iBlock implements iIcon {
 	@prop(String)
 	readonly prfx: string = '';
 
-	/** @override */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		size: [
 			['auto'],
 			'full'

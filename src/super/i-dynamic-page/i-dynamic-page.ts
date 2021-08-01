@@ -17,6 +17,5 @@ export * from 'super/i-page/i-page';
 
 @component()
 export default abstract class iDynamicPage extends iPage {
-	/** @override */
-	readonly rootTag: string = 'main';
+	override readonly rootTag: string = 'main';
 }

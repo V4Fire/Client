@@ -23,7 +23,6 @@ export * from 'super/i-data/i-data';
 })
 
 export default class bDummyModuleLoader extends iData {
-	/** @override */
 	@prop({
 		default: () => globalThis.loadFromProp === true ?
 			[
@@ -41,5 +40,5 @@ export default class bDummyModuleLoader extends iData {
 			[]
 	})
 
-	dependenciesProp!: Module[];
+	override dependenciesProp!: Module[];
 }
