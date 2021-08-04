@@ -32,7 +32,7 @@ exports.addPublicPath = addPublicPath;
 function addPublicPath(path) {
 	const
 		staticExpr = `concatURLs(${toExpr(webpack.publicPath())}, ${toExpr(path)})`,
-		concatURLs = "function concatURLs(a, b) { return a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, ''); }";
+		concatURLs = "function concatURLs(a, b) { return a ? a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '') : b; }";
 
 	if (webpack.dynamicPublicPath()) {
 		const

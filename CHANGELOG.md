@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new `stage` modifier `iBlock`
 
+#### :bug: Bug Fix
+
+* Fixed project building without `--public-path` `iStaticPage`
+
 ## v3.0.1 (2021-07-28)
 
 #### :bug: Bug Fix
