@@ -254,12 +254,6 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * True if the component shouldn't be destroyed after removal from DOM
-	 * (only for functional components)
-	 */
-	readonly keepAlive!: boolean;
-
-	/**
 	 * Name of the active rendering group
 	 * (it's used with async rendering)
 	 */

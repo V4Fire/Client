@@ -321,13 +321,6 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly mods!: ModsNTable;
 
 	/**
-	 * If true, the component won't be destroyed after removal from the DOM
-	 * (only for functional components)
-	 */
-	@prop(Boolean)
-	readonly keepAlive: boolean = false;
-
-	/**
 	 * If true, the component is activated.
 	 * The deactivated component won't load data from providers on initializing.
 	 */
