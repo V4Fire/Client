@@ -27,6 +27,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed project building without `--public-path`
   * Don't attach favicons if they are disabled
 
+#### :house: Internal
+
+* Marked the `hook` setter as protected `iBlock`
+
 ## v3.0.1 (2021-07-28)
 
 #### :bug: Bug Fix

@@ -91,13 +91,16 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// Don't use referring from CTX for primitive types, because it breaks TS
 
+	renderTmp: Dictionary<VNode>;
 	renderCounter: number;
+
 	lastSelfReasonToRender?: Nullable<RenderReason>;
 	lastTimeOfRender?: DOMHighResTimeStamp;
-	renderTmp: Dictionary<VNode>;
 
 	$asyncLabel: symbol;
 	$activeField: CanUndef<string>;
+
+	hook: Hook;
 
 	// @ts-ignore (access)
 	meta: CTX['meta'];
@@ -249,7 +252,7 @@ export abstract class ComponentInterface {
 	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
 	 * @emits `componentHookChange(value: Hook, oldValue: Hook)
 	 */
-	set hook(value: Hook) {
+	protected set hook(value: Hook) {
 		// Loopback
 	}
 

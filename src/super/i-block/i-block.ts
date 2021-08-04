@@ -636,7 +636,7 @@ export default abstract class iBlock extends ComponentInterface {
 		return this.hookStore;
 	}
 
-	override set hook(value: Hook) {
+	protected override set hook(value: Hook) {
 		const oldValue = this.hook;
 		this.hookStore = value;
 
