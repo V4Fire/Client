@@ -2496,7 +2496,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
-		this.sync.mod('stage', 'stage', String);
+		this.sync.mod('stage', 'stageStore', (v) => v == null ? v : String(v));
 	}
 
 	/**
