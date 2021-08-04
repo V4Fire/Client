@@ -475,7 +475,7 @@ A router instance has several methods to manage transitions:
 * `params` — parameters that pass values to path interpolation.
 
   ```js
-  router.push('/friends/:userId', {query: {userId: 1}});
+  router.push('/friends/:userId', {params: {userId: 1}});
   ```
 
 * `meta` — extra parameters that haven't a "side" effect on a route path.
