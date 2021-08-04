@@ -947,7 +947,8 @@ export default abstract class iBlock extends ComponentInterface {
 		],
 
 		theme: [],
-		exterior: []
+		exterior: [],
+		stage: []
 	};
 
 	/**
@@ -2495,7 +2496,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
-		return undefined;
+		this.sync.mod('stage', 'stage', String);
 	}
 
 	/**
