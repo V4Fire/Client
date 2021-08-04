@@ -27,10 +27,11 @@ exports.getFaviconsDecl = getFaviconsDecl;
  */
 function getFaviconsDecl() {
 	const
+		params = favicons(),
 		faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'}),
-		faviconsHTMLSrc = path.join(faviconsFolder, favicons().html);
+		faviconsHTMLSrc = path.join(faviconsFolder, params.html);
 
-	if (!fs.existsSync(faviconsHTMLSrc)) {
+	if (params.src == null || params.html == null || !fs.existsSync(faviconsHTMLSrc)) {
 		return '';
 	}
 
@@ -67,7 +68,7 @@ function getFaviconsDecl() {
 
 	const
 		manifestRgxp = /<link\s(.*?)\bhref="(.*?\bmanifest.json)"(.*?)\/?>/g,
-		faviconsDecl = fs.readFileSync(src.clientOutput(dest, favicons().html)).toString();
+		faviconsDecl = fs.readFileSync(src.clientOutput(dest, params.html)).toString();
 
 	return faviconsDecl.replace(manifestRgxp, (str, attrs1, href, attrs2) => getScriptDecl(getLinkDecl({
 		js: true,

@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed project building without `--public-path`
+* Don't attach favicons if they are disabled
 
 ## v3.0.1 (2021-07-28)
 
