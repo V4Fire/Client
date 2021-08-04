@@ -14,6 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added a new `stage` modifier
+* Added a new event `mounted`
 
 ## v3.0.0-rc.216 (2021-07-26)
 

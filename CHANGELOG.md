@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new `stage` modifier `iBlock`
+* `iBlock`:
+  * Added a new `stage` modifier
+  * Added a new event `mounted`
 
 #### :bug: Bug Fix
 

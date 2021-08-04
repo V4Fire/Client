@@ -2533,6 +2533,15 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 	}
 
+	/**
+	 * Hook handler: the component has been mounted
+	 * @emits `mounted(el: Element)`
+	 */
+	@hook('mounted')
+	protected onMounted(): void {
+		this.emit('mounted', this.$el);
+	}
+
 	protected override onCreatedHook(): void {
 		if (this.isFlyweight || this.isSSR) {
 			this.componentStatusStore = 'ready';
