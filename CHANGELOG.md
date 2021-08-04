@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed project building without `--public-path` `iStaticPage`
+* Fixed a route comparison in the transition handler `super/i-block/modules/activation`
 
 ## v3.0.1 (2021-07-28)
 

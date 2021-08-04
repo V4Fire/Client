@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a route comparison in the transition handler
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :bug: Bug Fix
