@@ -12,7 +12,7 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config');
+	{webpack} = require('config');
 
 const
 	path = require('upath'),
@@ -29,7 +29,7 @@ const
  * @returns {!Promise<string>}
  */
 module.exports = async function attachComponentDependencies(str, filePath) {
-	if (config.webpack.fatHTML()) {
+	if (webpack.fatHTML()) {
 		return str;
 	}
 
