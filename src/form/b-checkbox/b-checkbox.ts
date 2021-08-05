@@ -68,7 +68,7 @@ export default class bCheckbox extends iInput implements iSize {
 	 * Also, it will be checked after resetting.
 	 */
 	@prop(Boolean)
-	readonly defaultProp: boolean = false;
+	override readonly defaultProp: boolean = false;
 
 	/**
 	 * An identifier of the "parent" checkbox.

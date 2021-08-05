@@ -277,11 +277,7 @@ export default class InView extends Super {
 		]);
 	}
 
-	/**
-	 * Initializes an observer
-	 * @param observable
-	 */
-	protected initObserve(observable: InViewObservableElement): InViewObservableElement {
+	protected override initObserve(observable: InViewObservableElement): InViewObservableElement {
 		if (!observable.polling) {
 			this.putInMap(this.elements, observable);
 			this.recalculateDeffer();

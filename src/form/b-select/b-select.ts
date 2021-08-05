@@ -361,7 +361,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		]
 	};
 
-	static validators: ValidatorsDecl<bSelect> = {
+	static override validators: ValidatorsDecl<bSelect> = {
 		//#if runtime has iInput/validators
 		...iInputText.validators,
 
