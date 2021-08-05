@@ -500,10 +500,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				args = args.map((el) => el.replace(/^\.?/, ''));
 
 				if (pathVal && !/^(\w+:)?\/\//.test(args[0])) {
-					return concatUrls(pathVal, ...args);
-				}
+					pathVal = concatUrls(pathVal, ...args);
 
-				return concatUrls(...args);
+				} else {
+					pathVal = concatUrls(...args);
+				}
+			}
+
+			if (pathVal) {
+				pathVal = concatUrls(pathVal, '/').replace(/^[/]+/, '/');
 			}
 
 			return pathVal;
