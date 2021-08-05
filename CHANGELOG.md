@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.2.0 (2021-08-05)
+
+#### :rocket: New Feature
+
+* Added a new parameter `--inline-initial` `config`
+
 ## v3.1.0 (2021-08-04)
 
 #### :rocket: New Feature

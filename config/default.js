@@ -338,6 +338,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns true if all assets from the initial entry point have to inline within HTML files
+		 *
+		 * @cli inline-initial
+		 * @env INLINE_INITIAL
+		 *
+		 * @returns {boolean}
+		 */
+		inlineInitial() {
+			return o('inline-initial', {
+				env: true,
+				type: 'boolean',
+				default: false
+			});
+		},
+
+		/**
 		 * Some webpack options to optimize build
 		 */
 		optimize: {

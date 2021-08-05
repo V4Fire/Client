@@ -18,7 +18,7 @@ exports.needInline = needInline;
  * @returns {boolean}
  */
 function needInline(forceInline) {
-	return Boolean(webpack.fatHTML() || forceInline);
+	return Boolean(webpack.fatHTML() || webpack.inlineInitial() || forceInline);
 }
 
 exports.addPublicPath = addPublicPath;
