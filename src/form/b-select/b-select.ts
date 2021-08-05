@@ -344,8 +344,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		this.field.set('itemsStore', value);
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		opened: [
 			...iOpenToggle.mods.opened!,
 			['false']

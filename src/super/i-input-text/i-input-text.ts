@@ -228,8 +228,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		return this.maskRepetitionsProp === true;
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iWidth.mods,
 		...iSize.mods,
 

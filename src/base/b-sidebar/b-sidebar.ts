@@ -44,8 +44,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	@prop(Boolean)
 	readonly forceInnerRender: boolean = true;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iVisible.mods,
 
 		opened: [

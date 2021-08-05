@@ -120,8 +120,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	@prop(Boolean)
 	readonly forceInnerRender: boolean = true;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iVisible.mods,
 		...iWidth.mods,
 

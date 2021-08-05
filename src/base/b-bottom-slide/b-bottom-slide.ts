@@ -181,8 +181,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	@system<iHistory>((ctx) => new History(ctx))
 	readonly history!: History;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iOpen.mods,
 		...iVisible.mods,
 

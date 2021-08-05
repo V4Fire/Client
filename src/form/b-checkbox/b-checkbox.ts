@@ -164,8 +164,7 @@ export default class bCheckbox extends iInput implements iSize {
 		return this.mods.checked === 'true';
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iSize.mods,
 
 		checked: [

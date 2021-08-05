@@ -23,8 +23,7 @@ To support these events, override `initModEvents` in your component and invoke a
 import iAccess from 'traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @inheritDoc */
-  static readonly mods: ModsDecl = {
+  static override readonly mods: ModsDecl = {
     ...iAccess.mods
   }
 }
