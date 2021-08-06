@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.2.3 (2021-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `keepAlive` `bDynamicPage`
+
 ## v3.2.2 (2021-08-05)
 
 #### :bug: Bug Fix
