@@ -546,8 +546,8 @@ router.push('foo', {query: {bla: 1}});
 router.push('foo', {query: {bla: '1'}});
 
 // These two transitions are equal
-router.push('/friends/:userId', {query: {userId: 1}});
-router.push('/friends/:userId', {query: {userId: '1'}});
+router.push('/friends/:userId', {params: {userId: 1}});
+router.push('/friends/:userId', {params: {userId: '1'}});
 ```
 
 All transition methods return promises that will be resolved when their transitions are finished.
