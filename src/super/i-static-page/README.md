@@ -2,10 +2,10 @@
 
 This module provides a super component for all root components.
 
-A root component is the top component of any application.
-It contains all other components, and all components have a property, which refers to the root component - `r` or `$root`.
+The root component is the top component of any application.
+It contains all other components, and all components have a property, which refers to it: `r` or `$root`.
 
-Also, the root component generates the initial application HTML layout.
+Also, the root component generates an initial application HTML layout.
 The layout contains including of base CSS/JS/... files and a bunch of meta tags, like `<title>`.
 
 ## Synopsis
@@ -24,10 +24,54 @@ See the parent component and the component traits.
 
 See the parent component and the component traits.
 
+## Providing dynamic `webpack.publicPath`
+
+If you run your build with options `webpack.dynamicPublicPath` and `webpack.providePublicPathWithQuery`,
+you can provide the public path to load assets via a `publicPath` query parameter. To enable these options,
+edit the config file or pass CLI options or environment variables.
+
+```
+//https://your-site.com?publicPath=https://static.your-site.com/sf534sad323q
+```
+
+## Attaching project favicons
+
+To attach favicons to the project, you should generate them first.
+Unfortunately, the project building process doesn't generate them because it is an expensive task and slows down the building speed.
+
+To generate favicons, you may use the predefined gulp task.
+
+```bash
+gulp static:favicons
+```
+
+The task uses [gulp-favicons](https://www.npmjs.com/package/gulp-favicons) to generate favicons based on a passed image.
+To configure the task, you must modify the `favicons` property from the project config file.
+
+__config/default.js__
+
+```js
+const
+  config = require('@v4fire/client/config/default');
+
+module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+  favicons() {
+    return {
+      ...super.favicons(),
+      src: 'logo.png',
+      background: '#2E2929'
+    };
+  },
+});
+```
+
+Don't forget to commit all generated files to your version control system.
+You don't need to create favicons in each project because they can be inherited from parent layers.
+
 ## Including custom files to HTML
 
-The component generates an HTML code to initialize applications.
-It contains `<html><head/><body/></html>`structure with including all necessary resources, like CSS or JS files.
+The component generates an HTML code to initialize an application.
+It contains a structure of tags `<html><head/><body/></html>` with including all necessary resources, like CSS or JS files.
 
 You can attach static files to the layout to avoid redundant WebPack compilation and increase building speed.
 Notice, all files that are attached in this way won't be automatically minified. You should do it by yourself.
@@ -248,4 +292,61 @@ const Link = {};
  * @typedef {Map<string, (string|Link)>}
  */
 const Links = new Map();
+```
+
+## Parameters to generate HTML
+
+You can redefine Snakeskin constants to generate static HTML files.
+
+```
+/** Static page title */
+- title = @@appName
+
+/** @override */
+- rootTag = 'div'
+
+/** @override */
+- rootAttrs = {}
+
+/** Additional static page data */
+- pageData = {}
+
+/** Page charset */
+- charset = 'utf-8'
+
+/** Map of meta viewport attributes */
+- viewport = { &
+  'width': 'device-width',
+  'initial-scale': '1.0',
+  'maximum-scale': '1.0',
+  'user-scalable': 'no'
+} .
+
+/** Map with attributes of <html> tag */
+- htmlAttrs = { &
+  lang: config.locale
+} .
+
+/** Should or not generate <base> tag */
+- defineBase = false
+
+/** Should or not attach favicons */
+- attachFavicons = true
+
+/** Should or not do a request for assets.js */
+- assetsRequest = false
+```
+
+For instance:
+
+__pages/p-v4-components-demo/p-v4-components-demo.ess__
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-static-page/i-static-page.interface.ss'|b as placeholder
+
+- template index() extends ['i-static-page.interface'].index
+  - rootTag = 'main'
+  - charset = 'latin-1'
 ```
