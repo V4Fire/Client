@@ -460,6 +460,10 @@ this.r.locale = 'ru';
 
 Sets a new page title.
 
+```js
+this.r.setPageTitle('Hello page');
+```
+
 #### reset
 
 Sends a message to reset data of all components.
@@ -472,3 +476,9 @@ The method can take a reset type:
 5. `'storage'` - reload storage' data of all components;
 6. `'storage.silence'` - reload storage' data of all components without triggering of component' state;
 7. `'silence'` - reload all components without triggering of component' state.
+
+```js
+this.r.reset();
+this.r.reset('silence');
+this.r.reset('storage.silence');
+```
