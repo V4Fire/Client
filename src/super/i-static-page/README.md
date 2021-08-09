@@ -66,7 +66,7 @@ you can provide the public path to load assets via a `publicPath` query paramete
 edit the config file or pass CLI options or environment variables.
 
 ```
-//https://your-site.com?publicPath=https://static.your-site.com/sf534sad323q
+https://your-site.com?publicPath=https://static.your-site.com/sf534sad323q
 ```
 
 ## Attaching project favicons
