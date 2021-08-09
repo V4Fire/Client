@@ -66,8 +66,7 @@ export default class bSelectDate extends iInput implements iWidth {
 		return this.defaultProp ?? new Date().beginningOfYear();
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iWidth.mods
 	};
 

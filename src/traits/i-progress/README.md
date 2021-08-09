@@ -20,8 +20,7 @@ To support these events, override `initModEvents` in your component and invoke a
 import iProgress from 'traits/i-progress/i-progress';
 
 export default class bButton implements iProgress {
-  /** @inheritDoc */
-  static readonly mods: ModsDecl = {
+  static override readonly mods: ModsDecl = {
     ...iProgress.mods
   }
 }

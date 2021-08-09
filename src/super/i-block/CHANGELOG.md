@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.1.0 (2021-08-04)
+
+#### :rocket: New Feature
+
+* Added a new `stage` modifier
+* Added a new event `mounted`
+
+#### :house: Internal
+
+* Marked the `hook` setter as protected
+
 ## v3.0.0-rc.216 (2021-07-26)
 
 #### :bug: Bug Fix

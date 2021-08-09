@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.2.1 (2021-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed normalizing of `--public-path`
+
+## v3.2.0 (2021-08-05)
+
+#### :rocket: New Feature
+
+* Added a new parameter `--inline-initial`
+
 ## v3.0.0-rc.173 (2021-04-09)
 
 #### :boom: Breaking Change

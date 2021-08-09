@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.1.0 (2021-08-04)
+
+#### :bug: Bug Fix
+
+* Fixed project building without `--public-path`
+* Don't attach favicons if they are disabled
+
 ## v3.0.1 (2021-07-28)
 
 #### :bug: Bug Fix

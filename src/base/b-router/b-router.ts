@@ -201,7 +201,7 @@ export default class bRouter extends iData {
 	 * console.log(route?.query)
 	 * ```
 	 */
-	get route(): CanUndef<this['r']['CurrentPage']> {
+	override get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('routeStore');
 	}
 

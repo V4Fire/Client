@@ -171,8 +171,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		return v;
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iVisible.mods,
 		...iWidth.mods,
 

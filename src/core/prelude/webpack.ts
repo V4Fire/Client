@@ -9,4 +9,4 @@
  */
 
 __webpack_nonce__ = Function('return this')()[CSP_NONCE_STORE];
-__webpack_public_path__ = PUBLIC_PATH;
+__webpack_public_path__ = globalThis.PUBLIC_PATH ?? PUBLIC_PATH;

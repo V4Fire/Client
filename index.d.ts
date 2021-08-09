@@ -1,3 +1,5 @@
+/* eslint-disable no-var,camelcase */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,17 +11,14 @@
 /// <reference types="@v4fire/core"/>
 /// <reference types="./build/stylus/ds"/>
 
-// eslint-disable-next-line camelcase
 declare let __webpack_nonce__: CanUndef<string>;
-
-// eslint-disable-next-line camelcase
 declare let __webpack_public_path__: CanUndef<string>;
 
 declare const MODULE: string;
 declare const CSP_NONCE_STORE: string;
 
-declare const PATH: Dictionary<CanUndef<string>>;
-declare const PUBLIC_PATH: CanUndef<string>;
+declare var PATH: Dictionary<CanUndef<string>>;
+declare var PUBLIC_PATH: CanUndef<string>;
 
 declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
 declare const TPLS: Dictionary<Dictionary<Function>>;

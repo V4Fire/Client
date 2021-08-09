@@ -20,8 +20,7 @@ To support these events, override `initModEvents` in your component and invoke a
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @inheritDoc */
-  static readonly mods: ModsDecl = {
+  static override readonly mods: ModsDecl = {
     ...iOpen.mods
   }
 }

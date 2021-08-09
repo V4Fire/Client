@@ -118,7 +118,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param value
 	 * @emits `setRoute(value: CanUndef<this['CurrentPage']>)`
 	 */
-	set route(value: CanUndef<this['CurrentPage']>) {
+	override set route(value: CanUndef<this['CurrentPage']>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
 	}

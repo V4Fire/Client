@@ -11,6 +11,50 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.2.3 (2021-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `keepAlive` `bDynamicPage`
+
+## v3.2.2 (2021-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when `PUBLIC_PATH` is providing via `definePlugin` `core/prelude/webpack`
+
+## v3.2.1 (2021-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed normalizing of `--public-path` `config`
+
+## v3.2.0 (2021-08-05)
+
+#### :rocket: New Feature
+
+* Added a new parameter `--inline-initial` `config`
+
+## v3.1.0 (2021-08-04)
+
+#### :rocket: New Feature
+
+* `iBlock`:
+  * Added a new `stage` modifier
+  * Added a new event `mounted`
+
+#### :bug: Bug Fix
+
+* Fixed a route comparison in the transition handler `super/i-block/modules/activation`
+
+* `iStaticPage`:
+  * Fixed project building without `--public-path`
+  * Don't attach favicons if they are disabled
+
+#### :house: Internal
+
+* Marked the `hook` setter as protected `iBlock`
+
 ## v3.0.1 (2021-07-28)
 
 #### :bug: Bug Fix

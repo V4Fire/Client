@@ -253,8 +253,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		this.emit('dbChange', value);
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iProgress.mods
 	};
 

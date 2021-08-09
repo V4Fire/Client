@@ -464,7 +464,7 @@ A router instance has several methods to manage transitions:
 * `forward` — goes forward to the one step from the history stack;
 * `go` — switches to a route from the history stack, identified by its relative position to the current route.
 
-  `push` and `replace` methods can take additional parameters:
+`push` and `replace` methods can take additional parameters:
 
 * `query` — extra query parameters to a route. Their attaches to the URL `/foo?bla=1`.
 
@@ -475,7 +475,7 @@ A router instance has several methods to manage transitions:
 * `params` — parameters that pass values to path interpolation.
 
   ```js
-  router.push('/friends/:userId', {query: {userId: 1}});
+  router.push('/friends/:userId', {params: {userId: 1}});
   ```
 
 * `meta` — extra parameters that haven't a "side" effect on a route path.

@@ -12,27 +12,14 @@ const
 	{src, webpack} = require('config'),
 	{hash, output: outputPattern} = include('build/helpers.webpack');
 
-const
-	concatUrl = require('urlconcat').concat;
-
 /**
  * Returns options for Webpack ".output"
  * @returns {!Object}
  */
 module.exports = function output() {
-	let
-		publicPath = webpack.publicPath();
-
-	if (publicPath) {
-		publicPath = concatUrl(publicPath, '/').replace(/^[/]+/, '/');
-
-	} else {
-		publicPath = '';
-	}
-
 	return {
 		path: src.clientOutput(),
-		publicPath,
+		publicPath: webpack.publicPath(),
 
 		filename: `${hash(outputPattern, true)}.js`,
 		chunkFilename: `${hash(outputPattern, true)}.js`,

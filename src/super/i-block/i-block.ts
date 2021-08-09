@@ -215,7 +215,7 @@ export default abstract class iBlock extends ComponentInterface {
 		init: () => `uid-${Math.random().toString().slice(2)}`
 	})
 
-	readonly componentId!: string;
+	override readonly componentId!: string;
 
 	/**
 	 * A unique or global name of the component.
@@ -319,13 +319,6 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	readonly mods!: ModsNTable;
-
-	/**
-	 * If true, the component won't be destroyed after removal from the DOM
-	 * (only for functional components)
-	 */
-	@prop(Boolean)
-	readonly keepAlive: boolean = false;
 
 	/**
 	 * If true, the component is activated.
@@ -643,7 +636,7 @@ export default abstract class iBlock extends ComponentInterface {
 		return this.hookStore;
 	}
 
-	override set hook(value: Hook) {
+	protected override set hook(value: Hook) {
 		const oldValue = this.hook;
 		this.hookStore = value;
 
@@ -947,7 +940,8 @@ export default abstract class iBlock extends ComponentInterface {
 		],
 
 		theme: [],
-		exterior: []
+		exterior: [],
+		stage: []
 	};
 
 	/**
@@ -1157,7 +1151,7 @@ export default abstract class iBlock extends ComponentInterface {
 		init: () => Object.createDict()
 	})
 
-	protected renderTmp!: Dictionary<VNode>;
+	protected override renderTmp!: Dictionary<VNode>;
 
 	/**
 	 * Cache of watched values
@@ -2495,7 +2489,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
-		return undefined;
+		this.sync.mod('stage', 'stageStore', (v) => v == null ? v : String(v));
 	}
 
 	/**
@@ -2537,6 +2531,15 @@ export default abstract class iBlock extends ComponentInterface {
 		) {
 			return e.action.call(this);
 		}
+	}
+
+	/**
+	 * Hook handler: the component has been mounted
+	 * @emits `mounted(el: Element)`
+	 */
+	@hook('mounted')
+	protected onMounted(): void {
+		this.emit('mounted', this.$el);
 	}
 
 	protected override onCreatedHook(): void {

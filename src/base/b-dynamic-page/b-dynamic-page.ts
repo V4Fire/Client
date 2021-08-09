@@ -87,6 +87,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Notice, when a page is switching, it will be deactivated by invoking `deactivate`.
 	 * When the page is restoring, it will be activated by invoking `activate`.
 	 */
+	@prop(Boolean)
 	readonly keepAlive: boolean = false;
 
 	/**
@@ -247,29 +248,29 @@ export default class bDynamicPage extends iDynamicPage {
 				componentRef?.pop();
 
 				const
-					currentComponentEl = unsafe.block?.element<iDynamicPageEl>('component'),
-					currentComponent = currentComponentEl?.component?.unsafe;
+					currentPageEl = unsafe.block?.element<iDynamicPageEl>('component'),
+					currentPageComponent = currentPageEl?.component?.unsafe;
 
-				if (currentComponentEl != null && currentComponent != null) {
+				if (currentPageEl != null && currentPageComponent != null) {
 					const
 						currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
 
 					if (currentPageStrategy.isLoopback) {
-						currentComponent.$destroy();
+						currentPageComponent.$destroy();
 
 					} else {
-						currentPageStrategy.add(currentComponentEl);
-						currentComponent.deactivate();
+						currentPageStrategy.add(currentPageEl);
+						currentPageComponent.deactivate();
 					}
 
-					currentComponentEl.remove();
+					currentPageEl.remove();
 				}
 
 				const
 					newPageStrategy = unsafe.getKeepAliveStrategy(newPage),
-					componentFromCache = newPageStrategy.get();
+					pageElFromCache = newPageStrategy.get();
 
-				if (componentFromCache == null) {
+				if (pageElFromCache == null) {
 					const handler = () => {
 						if (!newPageStrategy.isLoopback) {
 							return SyncPromise.resolve(unsafe.component).then((c) => c.activate(true));
@@ -282,13 +283,15 @@ export default class bDynamicPage extends iDynamicPage {
 
 				} else {
 					const
-						c = componentFromCache.component;
+						pageComponentFromCache = pageElFromCache.component;
 
-					if (c != null) {
-						unsafe.$el?.append(componentFromCache);
+					if (pageComponentFromCache != null) {
+						unsafe.$el?.append(pageElFromCache);
 
-						c.activate();
-						componentRef?.push(c);
+						pageComponentFromCache.activate();
+						pageComponentFromCache.emit('mounted', pageElFromCache);
+
+						componentRef?.push(pageComponentFromCache);
 
 					} else {
 						newPageStrategy.remove();

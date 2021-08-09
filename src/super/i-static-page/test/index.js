@@ -1,3 +1,5 @@
+/* eslint-disable require-atomic-updates */
+
 // @ts-check
 
 /*!

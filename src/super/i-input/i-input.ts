@@ -572,8 +572,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		return iAccess.isFocused(this);
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iAccess.mods,
 		...iVisible.mods,
 

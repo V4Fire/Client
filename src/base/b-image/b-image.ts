@@ -112,8 +112,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		};
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iProgress.mods,
 		...iVisible.mods,
 

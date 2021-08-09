@@ -11,8 +11,7 @@ const
 	{webpack, src} = config;
 
 const
-	fs = require('fs-extra'),
-	path = require('upath');
+	fs = require('fs-extra');
 
 const
 	buble = require('buble'),
@@ -141,7 +140,7 @@ function getScriptDeclByName(name, {
 	if (needInline(inline)) {
 		if (assets[name]) {
 			const
-				filePath = path.join(src.clientOutput(assets[name].path));
+				filePath = src.clientOutput(assets[name].path);
 
 			if (fs.existsSync(filePath)) {
 				decl = `include('${filePath}');`;
@@ -208,7 +207,7 @@ function getStyleDeclByName(name, {
 	if (needInline(inline)) {
 		if (assets[rname]) {
 			const
-				filePath = path.join(src.clientOutput(assets[rname].path));
+				filePath = src.clientOutput(assets[rname].path);
 
 			if (fs.existsSync(filePath)) {
 				decl = getStyleDecl({...defAttrs, js}, `include('${filePath}');`);

@@ -344,8 +344,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		);
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iAccess.mods,
 		...iVisible.mods,
 		...iWidth.mods,
