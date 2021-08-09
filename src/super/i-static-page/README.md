@@ -267,7 +267,6 @@ const LibSource = 'lib';
  */
 const Lib = {};
 
-
 /**
  * Map of script libraries to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
