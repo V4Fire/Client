@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-??-??)
+
+#### :memo: Documentation
+
+* Added documentation `iStaticPage`
+
 ## v3.2.3 (2021-08-05)
 
 #### :bug: Bug Fix
