@@ -28,10 +28,16 @@ exports.getFaviconsDecl = getFaviconsDecl;
 function getFaviconsDecl() {
 	const
 		params = favicons(),
-		faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'}),
+		faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'});
+
+	if (params.src == null || params.html == null) {
+		return '';
+	}
+
+	const
 		faviconsHTMLSrc = path.join(faviconsFolder, params.html);
 
-	if (params.src == null || params.html == null || !fs.existsSync(faviconsHTMLSrc)) {
+	if (!fs.existsSync(faviconsHTMLSrc)) {
 		return '';
 	}
 
