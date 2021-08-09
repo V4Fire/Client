@@ -70,31 +70,31 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
-	 * Remote data store
+	 * Module to work with data of data providers globally
 	 */
 	@system(() => createProviderDataStore(new RestrictedCache(10)))
 	readonly providerDataStore!: ProviderDataStore;
 
 	/**
-	 * Module to manage app themes
+	 * Module to manage app themes from the Design System
 	 */
 	@system<iStaticPage>(themeManagerFactory)
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
-	 * Authorization status
+	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
 	isAuth!: boolean;
 
 	/**
-	 * Online status
+	 * True if there is a connection to the Internet
 	 */
 	@field((o) => o.sync.link('remoteState.isOnline'))
 	isOnline!: boolean;
 
 	/**
-	 * Last online date
+	 * Last date when the application was online
 	 */
 	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
 	lastOnlineDate?: Date;
@@ -212,7 +212,17 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Sends a message to reset data of all components
+	 * Sends a message to reset data of all components.
+	 * The method can take a reset type:
+	 *
+	 * 1. `'load'` - reload provider' data of all components;
+	 * 2. `'load.silence'` - reload provider' data of all components without triggering of component' state;
+	 * 3. `'router'` - reload router' data of all components;
+	 * 4. `'router.silence'` - reload router' data of all components without triggering of component' state;
+	 * 5. `'storage'` - reload storage' data of all components;
+	 * 6. `'storage.silence'` - reload storage' data of all components without triggering of component' state;
+	 * 7. `'silence'` - reload all components without triggering of component' state.
+	 *
 	 * @param [type] - reset type
 	 */
 	reset(type?: ResetType): void {

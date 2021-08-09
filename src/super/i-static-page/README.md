@@ -24,6 +24,41 @@ See the parent component and the component traits.
 
 See the parent component and the component traits.
 
+## Associated types
+
+The component has a bunch of associated types to specify page interfaces that are tied with a router.
+
+```typescript
+export default abstract class iStaticPage extends iPage {
+  /**
+   * Type: page parameters
+   */
+  readonly PageParams!: this['Router']['PageParams'];
+
+  /**
+   * Type: page query
+   */
+  readonly PageQuery!: this['Router']['PageQuery'];
+
+  /**
+   * Type: page meta
+   */
+  readonly PageMeta!: this['Router']['PageMeta'];
+
+  /**
+   * Type: router
+   */
+  readonly Router!: bRouter;
+
+  /**
+   * Type: current page
+   */
+  readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
+}
+```
+
+See [[bRouter]] and [[bDynamicPage]] for more information.
+
 ## Providing dynamic `webpack.publicPath`
 
 If you run your build with options `webpack.dynamicPublicPath` and `webpack.providePublicPathWithQuery`,
@@ -350,3 +385,90 @@ __pages/p-v4-components-demo/p-v4-components-demo.ess__
   - rootTag = 'main'
   - charset = 'latin-1'
 ```
+
+## Runtime API
+
+### Getters
+
+#### isAuth
+
+True if the current user is authorized.
+See `core/session` for more information.
+
+#### isOnline
+
+True if there is a connection to the Internet
+See `core/net` for more information.
+
+#### lastOnlineDate
+
+The last date when the application was online.
+See `core/net` for more information.
+
+#### activePage
+
+A name of the active route page.
+See [[bDynamicPage]] for more information.
+
+### providerDataStore
+
+A module to work with data of data providers globally.
+
+```
+< b-select :dataProvider = 'users.List'
+< b-select :dataProvider = 'cities.List' | :globalName = 'foo'
+```
+
+```js
+/// Somewhere in your app code
+if (this.r.providerDataStore.has('users.List')) {
+  /// See `core/object/select`
+  console.log(this.r.providerDataStore.get('users.List').select({where: {id: 1}}));
+}
+
+console.log(this.r.providerDataStore.get('foo')?.data);
+```
+
+See `super/i-static-page/modules/provider-data-store` for more information.
+
+### theme
+
+A module to manage app themes from the Design System.
+
+```js
+console.log(this.r.theme.current);
+
+this.r.theme.current = 'dark';
+```
+
+See `super/i-static-page/modules/theme` for more information.
+
+### Accessors
+
+#### locale
+
+A value of the system locale.
+
+```js
+console.log(this.r);
+this.r.locale = 'ru';
+```
+
+### Methods
+
+#### setPageTitle
+
+Sets a new page title.
+
+#### reset
+
+Sends a message to reset data of all components.
+The method can take a reset type:
+
+1. `'load'` - reload provider' data of all components;
+2. `'load.silence'` - reload provider' data of all components without triggering of component' state;
+3. `'router'` - reload router' data of all components;
+4. `'router.silence'` - reload router' data of all components without triggering of component' state;
+5. `'storage'` - reload storage' data of all components;
+6. `'storage.silence'` - reload storage' data of all components without triggering of component' state;
+7. `'silence'` - reload all components without triggering of component' state.
