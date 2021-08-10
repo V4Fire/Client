@@ -16,6 +16,8 @@ import { ImageLoader } from 'core/dom/image';
 import { ComponentEngine, VNode } from 'core/component/engines';
 import type { DirectiveOptions } from 'core/component/directives/image/interface';
 
+import type iBlock from 'super/i-block/i-block';
+
 export * from 'core/dom/image';
 
 ComponentEngine.directive('image', {
@@ -26,12 +28,12 @@ ComponentEngine.directive('image', {
 
 		if (vnode.fakeContext != null) {
 			if (Object.isPlainObject(value)) {
-				value.ctx = value.ctx ?? vnode.fakeContext;
+				value.ctx = value.ctx ?? <iBlock>vnode.fakeContext;
 
 			} else {
 				value = {
 					src: value,
-					ctx: vnode.fakeContext
+					ctx: <iBlock>vnode.fakeContext
 				};
 			}
 		}
