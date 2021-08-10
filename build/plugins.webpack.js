@@ -17,8 +17,14 @@ const
  * @returns {!Map}
  */
 module.exports = async function plugins() {
+	const
+		globals = include('build/globals.webpack'),
+		DependenciesPlugin = include('build/plugins/dependencies'),
+		IgnoreNotFoundExportPlugin = include('build/plugins/ignore-not-found-export');
+
 	return new Map([
-		['globals', new webpack.DefinePlugin(await $C(include('build/globals.webpack')).async.map())],
-		['dependencies', include('build/plugins/dependencies')()]
+		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
+		['dependencies', new DependenciesPlugin()],
+		['ignoreNotFoundExport', new IgnoreNotFoundExportPlugin()]
 	]);
 };
