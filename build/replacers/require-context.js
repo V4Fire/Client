@@ -28,6 +28,7 @@ const
  * Monic replacer to enable require.context declarations through multiple contexts
  *
  * @param {string} str
+ * @param {string} filePath
  * @returns {string}
  *
  * @example
@@ -48,12 +49,12 @@ const
  * // @endcontext
  * ```
  */
-module.exports = function requireContextReplacer(str) {
-	return str.replace(contextRgxp, (str, values, body) => {
+module.exports = function requireContextReplacer(str, filePath) {
+	return str.replace(contextRgxp, (str, context, body) => {
 		// eslint-disable-next-line no-new-func
-		values = Function('flags', `return ${values}`)(this.flags);
+		context = Function('flags', `return ${context}`)(this.flags);
 
-		if (!Object.isArray(values) || values.length < 2) {
+		if (!Object.isArray(context) || context.length < 2) {
 			throw SyntaxError('Invalid @context format');
 		}
 
@@ -61,10 +62,10 @@ module.exports = function requireContextReplacer(str) {
 			res = '';
 
 		const
-			rgxp = new RegExp(`(['"!])(${RegExp.escape(values[0])})(?=['"])`, 'g'),
+			rgxp = new RegExp(`(['"!])(${RegExp.escape(context[0])})(?=['"])`, 'g'),
 			wrap = (str) => res += `\n(() => {\n${str}\n})();\n`;
 
-		values = values.slice(1).map((el) => {
+		context = context.slice(1).map((el) => {
 			if (el === pzlr.super) {
 				return pzlr.dependencies;
 			}
@@ -72,7 +73,7 @@ module.exports = function requireContextReplacer(str) {
 			return el;
 		});
 
-		[''].concat(...values).forEach((el) => {
+		[''].concat(...context).forEach((el) => {
 			if (el != null) {
 				let
 					exists = false;
@@ -96,6 +97,7 @@ module.exports = function requireContextReplacer(str) {
 						resolvedSrc = [].concat(el || [], src).join('/');
 					}
 
+					resolvedSrc = path.relative(filePath, resolvedSrc);
 					resolvedSrc = resolvedSrc.replace(tplRgxp, (str, key) => {
 						let
 							v = $C(config).get(key);
