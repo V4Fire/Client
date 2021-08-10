@@ -47,38 +47,20 @@ let
 if (MODULE === 'ES2020') {
 	if (IS_PROD) {
 		// @ts-ignore (require)
-		ctx = (<any>require).context(
-			'!!svg-sprite-loader!svgo-loader!@sprite',
-			true,
-			/\.svg$/,
-			'lazy'
-		);
+		ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy');
 
 	} else {
 		// @ts-ignore (require)
-		ctx = (<any>require).context(
-			'!!svg-sprite-loader!@sprite',
-			true,
-			/\.svg$/,
-			'lazy'
-		);
+		ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy');
 	}
 
 } else if (IS_PROD) {
 	// @ts-ignore (require)
-	ctx = (<any>require).context(
-		'!!svg-sprite-loader!svgo-loader!@sprite',
-		true,
-		/\.svg$/
-	);
+	ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/);
 
 } else {
 	// @ts-ignore (require)
-	ctx = (<any>require).context(
-		'!!svg-sprite-loader!@sprite',
-		true,
-		/\.svg$/
-	);
+	ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/);
 }
 
 Object.forEach(ctx.keys(), (el: string) => {
