@@ -18,7 +18,7 @@ module.exports = class IgnoreNotFoundExportPlugin {
 
 		const doneHook = (stats) =>
 			stats.compilation.warnings = stats.compilation.warnings.filter((warn) =>
-				warn.constructor.name === 'ModuleDependencyWarning' && !warningRgxp.test(warn.message));
+				!(warn.constructor.name === 'ModuleDependencyWarning' && warningRgxp.test(warn.message)));
 
 		compiler.hooks.done.tap('IgnoreNotFoundExportPlugin', doneHook);
 	}
