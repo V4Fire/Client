@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added `lazy` option
+
 ## v3.0.0-rc.142 (2021-02-11)
 
 #### :house: Internal
