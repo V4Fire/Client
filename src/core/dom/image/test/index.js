@@ -85,6 +85,9 @@ module.exports = async (page, params) => {
 		await componentNode.evaluate((/** @type HTMLElement */ ctx) => {
 			ctx.innerHTML = '';
 
+			document.body.style.overflow = '';
+			document.body.style.height = '';
+
 			const image = new Image();
 			image.id = 'img-target';
 			image.setAttribute('data-test-ref', 'img-target');
@@ -128,7 +131,7 @@ module.exports = async (page, params) => {
 	describe('v-image', () => {
 		['div', 'img'].forEach((tag) => {
 			describe(tag, () => {
-				it(' with `src`', async () => {
+				it('with `src`', async () => {
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: images.pngImage, ctx: globalThis.dummy});
@@ -148,6 +151,105 @@ module.exports = async (page, params) => {
 					await h.bom.waitForIdleCallback(page);
 
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
+				});
+
+				describe('with `lazy`', () => {
+					beforeEach(async () => {
+						await page.evaluate(() => {
+							document.body.style.height = '2400px';
+							document.body.style.overflow = 'scroll';
+						});
+					});
+
+					it('loads an image', async () => {
+						await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+							const
+								target = document.getElementById(`${tag}-target`);
+
+							imageLoaderCtx.init(target, {
+								src: images.pngImage,
+								ctx: globalThis.dummy,
+								lazy: true
+							});
+
+						}, [tag, images]);
+
+						await h.bom.waitForIdleCallback(page);
+
+						expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
+					});
+
+					it('does not load an image if the main image is not inside of the viewport', async () => {
+						await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+							const
+								target = document.getElementById(`${tag}-target`);
+
+							target.style.marginTop = '2000px';
+
+							imageLoaderCtx.init(target, {
+								src: images.pngImage,
+								ctx: globalThis.dummy,
+								lazy: true
+							});
+
+						}, [tag, images]);
+
+						await h.bom.waitForIdleCallback(page);
+
+						expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe('');
+					});
+
+					it('shows a preview while the main image is not inside of the viewport', async () => {
+						await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+							const
+								target = document.getElementById(`${tag}-target`);
+
+							target.style.marginTop = '2000px';
+
+							imageLoaderCtx.init(target, {
+								src: images.pngImage,
+								preview: images.preview,
+								ctx: globalThis.dummy,
+								lazy: true
+							});
+
+						}, [tag, images]);
+
+						await h.bom.waitForIdleCallback(page);
+
+						expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.preview);
+					});
+
+					it('switches from the preview to the main image if the main image becomes visible in the viewport', async () => {
+						await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
+							const
+								target = document.getElementById(`${tag}-target`);
+
+							Object.assign(target.style, {
+								marginTop: '2000px',
+								height: '50px',
+								width: '50px'
+							});
+
+							imageLoaderCtx.init(target, {
+								src: images.pngImage,
+								preview: images.preview,
+								ctx: globalThis.dummy,
+								lazy: true
+							});
+
+						}, [tag, images]);
+
+						await h.bom.waitForIdleCallback(page);
+
+						const
+							el = await page.$(`#${tag}-target`);
+
+						await el.scrollIntoViewIfNeeded();
+						await h.bom.waitForIdleCallback(page);
+
+						expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
+					});
 				});
 
 				it('`load` callback', async () => {
@@ -990,7 +1092,6 @@ module.exports = async (page, params) => {
 				const testImg = document.createElement('img');
 				testImg.src = mainSrc;
 
-				// @ts-expect-error
 				testImg.onInit(() => {
 					if (testImg.naturalHeight > 0 || testImg.naturalWidth > 0) {
 						const ratio = testImg.naturalHeight === 0 ? 1 : testImg.naturalWidth / testImg.naturalHeight;

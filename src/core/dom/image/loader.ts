@@ -44,17 +44,35 @@ export default class ImageLoader {
 	readonly lifecycle: Lifecycle = new Lifecycle(this);
 
 	/**
+	 * @see [[ImageLoader.defaultOpts]]
+	 */
+	readonly defaultOpts: ImageOptions = {
+		...ImageLoader.defaultOpts
+	};
+
+	/**
+	 * Default image options
+	 */
+	static readonly defaultOpts: ImageOptions = {
+		lazy: false
+	};
+
+	/**
 	 * Normalizes the specified directive value
 	 * @param value
 	 */
 	static normalizeOptions<T extends ImageOptions | ImagePlaceholderOptions = ImageOptions>(value: InitValue): T {
 		if (Object.isString(value)) {
 			return <T>{
-				src: value
+				src: value,
+				...this.defaultOpts
 			};
 		}
 
-		return <T>value;
+		return <T>{
+			...this.defaultOpts,
+			...value
+		};
 	}
 
 	/**
@@ -320,6 +338,8 @@ export default class ImageLoader {
 
 			if (el[shadow] != null) {
 				el[shadow]?.loadPromise != null && async?.clearPromise(el[shadow].loadPromise);
+				el[shadow]?.lazyPromise != null && async?.clearPromise(el[shadow].lazyPromise);
+
 				delete el[shadow];
 			}
 		}

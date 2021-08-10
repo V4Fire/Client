@@ -27,6 +27,31 @@ export default class bSomeComponent extends iBlock {
 }
 ```
 
+### Lazy loading
+
+Sometimes you do not need to load an image immediately. It is considered good practice to load images lazily,
+that is, only when they appear on the user's screen, a special option `lazy` is supported for this.
+
+Set this option to `true`, and the main image will be loaded only when it appears on the user's screen.
+
+```typescript
+import { ImageLoader } from 'core/dom/image';
+
+@component()
+export default class bSomeComponent extends iBlock {
+  @hook('mounted')
+  initImage(): void {
+    ImageLoader.init(<HTMLDivElement | HTMLImageElement>this.$el, {
+      src: 'https://img.src',
+      ctx: this,
+      lazy: true
+    })
+  }
+}
+```
+
+> It is highly recommended to specify the context if you are using the `lazy` option explicitly.
+
 ### Using callbacks
 
 ```typescript
