@@ -34,7 +34,7 @@ const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, 
 });
 
 /**
- * Options for WebPack ".resolveLoader"
+ * Options for `webpack.resolveLoader`
  * @type {{moduleExtensions: [string], alias: !Object}}
  */
 module.exports = {

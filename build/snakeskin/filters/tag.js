@@ -17,7 +17,7 @@ const
 
 module.exports = [
 	/**
-	 * Normalizes WebPack SVG require functions
+	 * Normalizes webpack SVG require functions
 	 *
 	 * @param {string} name
 	 * @param {!Object} attrs

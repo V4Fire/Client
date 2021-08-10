@@ -17,7 +17,7 @@ const
 	symbolRgxp = /\$\$\.([a-z_$][\w$]*)/gi;
 
 /**
- * WebPack loader to shim "core/symbol" module for old browsers
+ * Webpack loader to shim `core/symbol` module for old browsers
  *
  * @param {string} str
  * @returns {string}

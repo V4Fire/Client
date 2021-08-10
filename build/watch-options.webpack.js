@@ -12,7 +12,7 @@ const
 	{isExternalDep} = include('build/const');
 
 /**
- * Options for WebPack ".watchOptions"
+ * Options for `webpack.watchOptions`
  */
 module.exports = {
 	aggregateTimeout: 200,

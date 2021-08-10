@@ -20,7 +20,7 @@ const
 	{assetsJSON, assetsJS} = include('build/helpers.webpack');
 
 /**
- * WebPack plugin to generate ".dependencies.js" files and "assets.json" / "assets.js"
+ * Webpack plugin to generate `.dependencies.js` files and `assets.json` / `assets.js`
  * @returns {!Function}
  */
 module.exports = class DependenciesPlugin {

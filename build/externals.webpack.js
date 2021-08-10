@@ -40,7 +40,7 @@ const externalMap = $C(config.webpack.externals).filter((el, key) => {
 }).map();
 
 /**
- * Returns options for WebPack ".externals"
+ * Returns options for `webpack.externals`
  *
  * @param {(number|string)} buildId - build id
  * @returns {!Array}

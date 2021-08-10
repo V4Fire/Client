@@ -9,7 +9,7 @@
  */
 
 /**
- * Options for WebPack ".snapshot"
+ * Options for `webpack.snapshot`
  */
 module.exports = {
 	...!IS_PROD ? {managedPaths: []} : {}

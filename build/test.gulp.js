@@ -57,8 +57,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 *
 	 * * --name - name of the component to test
 	 * * [--client-output] - directory to save the generated code
-	 * * [--cache-type='memory'] - WebPack cache type
-	 * * [--public-path] - WebPack publicPath value
+	 * * [--cache-type='memory'] - webpack cache type
+	 * * [--public-path] - webpack publicPath value
 	 * * [--es='ES2019'] - version of the used ECMAScript specification to generate
 	 *
 	 * @example

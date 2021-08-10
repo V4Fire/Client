@@ -13,7 +13,7 @@ const
 	{resolve} = require('@pzlr/build-core');
 
 /**
- * Options for WebPack ".resolve"
+ * Options for `webpack.resolve`
  */
 module.exports = {
 	extensions: ['.ts', '.js', '.json'],

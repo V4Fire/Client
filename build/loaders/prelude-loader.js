@@ -16,7 +16,7 @@ const
 	labelRgxp = /\[__ESCAPER_QUOT__(\d+)_]/g;
 
 /**
- * WebPack loader to replace global invokes of prelude methods
+ * Webpack loader to replace global invokes of prelude methods
  *
  * @param {string} str
  * @returns {string}

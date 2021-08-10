@@ -55,7 +55,7 @@ exports.hash = hash;
 exports.hashRgxp = hashRgxp;
 
 /**
- * Returns a WebPack output path string from the specified string with hash parameters
+ * Returns a webpack output path string from the specified string with hash parameters
  * (for the longterm caching)
  *
  * @param {string} output - source string

@@ -12,6 +12,6 @@ const
 	config = require('config');
 
 /**
- * Options for WebPack ".devtool"
+ * Options for `webpack.devtool`
  */
 module.exports = config.webpack.devtool() ?? false;

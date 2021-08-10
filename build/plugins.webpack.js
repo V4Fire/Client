@@ -13,7 +13,7 @@ const
 	webpack = require('webpack');
 
 /**
- * Returns options for Webpack ".plugins"
+ * Returns options for `webpack.plugins`
  * @returns {!Map}
  */
 module.exports = async function plugins() {

@@ -23,7 +23,7 @@ const
 	{RUNTIME} = include('build/graph.webpack');
 
 /**
- * Returns options for Webpack ".optimization"
+ * Returns options for `webpack.optimization`
  *
  * @param {(number|string)} buildId - build id
  * @param {!Map} plugins - map of plugins to use

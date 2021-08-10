@@ -47,7 +47,7 @@ const
 	isNotJSWorker = /^(?:(?!\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/]).)*\.js$/;
 
 /**
- * Returns options for WebPack ".module"
+ * Returns options for `webpack.module`
  *
  * @param {!Map} plugins - list of plugins
  * @returns {!Promise<Object>}

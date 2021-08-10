@@ -46,7 +46,7 @@ const
 	coreFolders = exports.coreFolders.join('|');
 
 /**
- * RegExp to detect file paths that are registered as dependencies within ".pzlrrc" and
+ * RegExp to detect file paths that are registered as dependencies within `.pzlrrc` and
  * are placed within "core" folders
  *
  * @type {RegExp}

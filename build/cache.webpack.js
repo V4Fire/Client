@@ -13,7 +13,7 @@ const
 	{cacheDir} = include('build/helpers.webpack');
 
 /**
- * Returns options for Webpack ".cache"
+ * Returns options for `webpack.cache`
  *
  * @param {(number|string)} buildId - build id
  * @returns {(!Object|boolean)}

@@ -13,7 +13,7 @@ const
 	{hash, output: outputPattern} = include('build/helpers.webpack');
 
 /**
- * Returns options for Webpack ".output"
+ * Returns options for `webpack.output`
  * @returns {!Object}
  */
 module.exports = function output() {

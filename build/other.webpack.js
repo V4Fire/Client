@@ -9,7 +9,7 @@
  */
 
 /**
- * Returns options for other WebPack options
+ * Returns options for other webpack options
  * @returns {!Object}
  */
 module.exports = function other() {

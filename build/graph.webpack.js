@@ -138,7 +138,7 @@ async function buildProjectGraph() {
 		graph = await buildConfig.getUnionEntryPoints({cache: blockMap}),
 		processes = $C(MIN_PROCESS).map(() => ({}));
 
-	// Generate dynamic entries to build with WebPack
+	// Generate dynamic entries to build with webpack
 	const entry = await $C(graph.entry)
 		.parallel()
 		.to({})

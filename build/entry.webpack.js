@@ -15,7 +15,7 @@ const
 	graph = include('build/graph.webpack');
 
 /**
- * Returns an options object of the WebPack entry point
+ * Returns an options object of the webpack entry point
  *
  * @param {string} name - entry point name
  * @param {string} src - entry point src

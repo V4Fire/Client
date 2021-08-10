@@ -12,6 +12,6 @@ const
 	config = require('config');
 
 /**
- * Options for WebPack ".target"
+ * Options for `webpack.target`
  */
 module.exports = config.webpack.target();
