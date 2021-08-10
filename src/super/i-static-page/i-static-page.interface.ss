@@ -169,4 +169,4 @@
 						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
 
 						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
-						+= h.getScriptDeclByName('webpack.runtime', {assets, wrap: true})
+						+= h.getScriptDeclByName('webpack.runtime', {assets, optional: true, wrap: true})

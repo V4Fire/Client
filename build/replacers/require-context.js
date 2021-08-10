@@ -28,7 +28,6 @@ const
  * Monic replacer to enable require.context declarations through multiple contexts
  *
  * @param {string} str
- * @param {string} filePath
  * @returns {string}
  *
  * @example
@@ -49,7 +48,7 @@ const
  * // @endcontext
  * ```
  */
-module.exports = function requireContextReplacer(str, filePath) {
+module.exports = function requireContextReplacer(str) {
 	return str.replace(contextRgxp, (str, context, body) => {
 		// eslint-disable-next-line no-new-func
 		context = Function('flags', `return ${context}`)(this.flags);
@@ -97,7 +96,6 @@ module.exports = function requireContextReplacer(str, filePath) {
 						resolvedSrc = [].concat(el || [], src).join('/');
 					}
 
-					resolvedSrc = path.relative(filePath, resolvedSrc);
 					resolvedSrc = resolvedSrc.replace(tplRgxp, (str, key) => {
 						let
 							v = $C(config).get(key);
@@ -113,7 +111,7 @@ module.exports = function requireContextReplacer(str, filePath) {
 						exists = true;
 					}
 
-					return path.normalize($1 + resolvedSrc);
+					return $1 + path.normalize(resolvedSrc);
 				});
 
 				if (exists) {

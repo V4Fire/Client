@@ -16,13 +16,14 @@ const
  * Returns options for `webpack.output`
  * @returns {!Object}
  */
-module.exports = function output() {
+module.exports = function output({buildId}) {
 	return {
 		path: src.clientOutput(),
 		publicPath: webpack.publicPath(),
 
 		filename: `${hash(outputPattern, true)}.js`,
 		chunkFilename: `${hash(outputPattern, true)}.js`,
+		uniqueName: `v4fire-${buildId}`,
 
 		chunkLoading: 'jsonp',
 		chunkFormat: 'array-push',
