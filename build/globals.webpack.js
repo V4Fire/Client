@@ -28,6 +28,8 @@ const
  * @type {!Object}
  */
 module.exports = {
+	'process.env.NODE_ENV': s(process.env.NODE_ENV),
+
 	IS_PROD,
 	DEBUG: runtime.debug === true,
 	MODULE: s(config.typescript().client.compilerOptions.module),
@@ -38,10 +40,6 @@ module.exports = {
 	LOCALE: s(LOCALE),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 	CSP_NONCE_STORE: s(config.csp.nonceStore()),
-
-	'process.env': {
-		NODE_ENV: s(process.env.NODE_ENV)
-	},
 
 	COMPONENTS: graph.then(({blockMap}) => {
 		if (Object.isMap(blockMap)) {
