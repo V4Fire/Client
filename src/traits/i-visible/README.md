@@ -22,8 +22,7 @@ To support these events, override `initModEvents` in your component and invoke a
 import iVisible from 'traits/i-visible/i-visible';
 
 export default class bButton implements iVisible {
-  /** @inheritDoc */
-  static readonly mods: ModsDecl = {
+  static override readonly mods: ModsDecl = {
     ...iVisible.mods
   }
 }

@@ -33,6 +33,9 @@
 	/** @override */
 	- rootTag = 'div'
 
+	/** @override */
+	- rootAttrs = {}
+
 	/** Additional static page data */
 	- pageData = {}
 
@@ -51,9 +54,6 @@
 	- htmlAttrs = { &
 		lang: config.locale
 	} .
-
-	/** @override */
-	- rootAttrs = {}
 
 	/** Should or not generate <base> tag */
 	- defineBase = false

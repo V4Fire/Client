@@ -193,8 +193,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	@system()
 	length: number = 0;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		swipe: [
 			'true',
 			'false'

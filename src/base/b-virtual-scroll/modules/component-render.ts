@@ -19,7 +19,7 @@ export const
 	$$ = symbolGenerator();
 
 export default class ComponentRender extends Friend {
-	readonly C!: bVirtualScroll;
+	override readonly C!: bVirtualScroll;
 
 	/**
 	 * Async group

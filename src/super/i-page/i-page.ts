@@ -84,8 +84,7 @@ export default abstract class iPage extends iData implements iVisible {
 		};
 	}
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iVisible.mods
 	};
 

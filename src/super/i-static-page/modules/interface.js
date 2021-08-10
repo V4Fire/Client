@@ -160,7 +160,7 @@ exports.InitializedLink = InitializedLink;
  * Map of links to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
  *
- * @typedef {Map<string, (string|StyleLib)>}
+ * @typedef {Map<string, (string|Link)>}
  */
 const Links = new Map();
 exports.Links = Links;

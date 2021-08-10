@@ -322,18 +322,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if all assets from the build have to inline within HTML files
+		 * Returns
+		 *   * `1` if all assets from the build have to inline within HTML files;
+		 *   * `2` if all scripts and links from the build have to inline within HTML files;
+		 *   * `0` if assets from the build shouldn't inline within HTML files.
 		 *
 		 * @cli fat-html
 		 * @env FAT_HTML
 		 *
-		 * @returns {boolean}
+		 * @returns {number}
 		 */
 		fatHTML() {
 			return o('fat-html', {
 				env: true,
-				type: 'boolean',
-				default: false
+				type: 'number',
+				coerce: (value) => value === 'script-link' ? 2 : Number(value),
+				default: 0
 			});
 		},
 
@@ -388,7 +392,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 * @returns {(number|undefined)}
 			 */
 			dataURILimit() {
-				if (require('config').webpack.fatHTML()) {
+				if (require('config').webpack.fatHTML() === 1) {
 					return undefined;
 				}
 

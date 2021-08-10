@@ -11,11 +11,27 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2021-??-??)
+## v3.?.? (2021-??-??)
 
 #### :rocket: New Feature
 
 * Added `lazy` option `core/dom/image`
+
+#### :memo: Documentation
+
+* Added documentation `iStaticPage`
+
+## v3.2.3 (2021-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed providing of `keepAlive` `bDynamicPage`
+
+## v3.2.2 (2021-08-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when `PUBLIC_PATH` is providing via `definePlugin` `core/prelude/webpack`
 
 ## v3.2.1 (2021-08-05)
 

@@ -90,7 +90,7 @@ export default class bDummyWatch extends iData {
 		return watch({}).proxy;
 	}
 
-	static mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		watchable: [
 			'val-1',
 			'val-2'

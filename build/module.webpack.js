@@ -43,8 +43,8 @@ const
 	isJSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?)\.js$/,
 	isJSServiceWorker = /(?:\.servie-worker\b|[\\/]service-workers[\\/].*?)\.js$/,
 	isJSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?)\.js$/,
-	isNotTSWorker = /^(?:(?!(?:\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/])).)*(?:\.d)?\.ts$/,
-	isNotJSWorker = /^(?:(?!(?:\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/])).)*\.js$/;
+	isNotTSWorker = /^(?:(?!\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/]).)*(?:\.d)?\.ts$/,
+	isNotJSWorker = /^(?:(?!\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/]).)*\.js$/;
 
 /**
  * Returns options for WebPack ".module"

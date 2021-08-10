@@ -69,14 +69,14 @@ export default class bDummySync extends iData {
 		return watch({a: {b: 1}}).proxy;
 	}
 
-	static mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		foo: [
 			'bar',
 			'bla'
 		]
 	};
 
-	protected initModEvents(): void {
+	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('foo', 'dict.a.b', (v) => v === 2 ? 'bar' : 'bla');
 	}

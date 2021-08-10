@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function,no-template-curly-in-string */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client

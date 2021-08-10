@@ -87,6 +87,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Notice, when a page is switching, it will be deactivated by invoking `deactivate`.
 	 * When the page is restoring, it will be activated by invoking `activate`.
 	 */
+	@prop(Boolean)
 	readonly keepAlive: boolean = false;
 
 	/**

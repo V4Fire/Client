@@ -39,11 +39,7 @@ export default class InView extends Super {
 	 */
 	protected readonly rootMap: Map<Element, number> = new Map();
 
-	/**
-	 * Initializes an observer
-	 * @param observable
-	 */
-	protected initObserve(observable: InViewObservableElement): InViewObservableElement {
+	protected override initObserve(observable: InViewObservableElement): InViewObservableElement {
 		const
 			observer = this.createObserver(observable);
 

@@ -158,8 +158,7 @@ export default class bForm extends iData implements iVisible {
 	@system<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))
 	params!: CreateRequestOptions;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
+	static override readonly mods: ModsDecl = {
 		...iVisible.mods,
 
 		valid: [
