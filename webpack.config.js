@@ -48,6 +48,7 @@ async function buildFactory(entry, buildId) {
 		cache: await include('build/cache.webpack')({buildId}),
 		watchOptions: include('build/watch-options.webpack'),
 		snapshot: include('build/snapshot.webpack'),
+		stats: include('build/stats.webpack'),
 
 		...await include('build/other.webpack')({buildId})
 	};

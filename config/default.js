@@ -314,6 +314,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Value of `stats`
+		 *
+		 * @cli stats
+		 * @env STATS
+		 *
+		 * @returns {(boolean|string|Object)}
+		 */
+		stats() {
+			return o('stats', {
+				env: true,
+				type: 'json',
+				default: true
+			});
+		},
+
+		/**
 		 * Returns the default hash algorithm to use
 		 * @returns {?string}
 		 */
