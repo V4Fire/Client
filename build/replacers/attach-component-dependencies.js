@@ -82,35 +82,41 @@ try { require('${lib}'); } catch (err) { stderr(err); }
 			const
 				styles = await component.styles;
 
-			decl += `requestAnimationFrame(function () {
-if (!TPLS['${dep}']) {
-	(async () => {
-		var el = document.createElement('div');
-		el.className = '${dep} is-style-loaded';
-		document.body.appendChild(el);
+			decl += `
+requestAnimationFrame(async () => {
+	if (TPLS['${dep}']) {
+		return;
+	}
 
-		var isStylesLoaded = Boolean(getComputedStyle(el).color);
-		document.body.removeChild(el);
+	try {
+		const el = document.createElement('i');
+		el.className = '${dep}-is-style-loaded';
+		docunt.body.appendChild(el);
 
-		if (isStylesLoaded) { return; }
+		const isStylesLoaded = Boolean(getComputedStyle(el).color);
+		docunt.body.removeChild(el);
 
-		try {
-			${
-				styles
-					.map((src) => {
-						if (src == null) {
-							return '';
-						}
+		if (isStylesLoaded) {
+			return;
+		}
+	} catch (err) { stderr(err); }
 
-						src = path.normalize(src);
-						return `await import('${src}');`;
-					})
+	try {
+		${
+			styles
+				.map((src) => {
+					if (src == null) {
+						return '';
+					}
 
-					.join('')
-			}
-		} catch (err) { stderr(err); }
-	})();
-}});`;
+					src = path.normalize(src);
+					return `await import('${src}');`;
+				})
+
+				.join('')
+		}
+	} catch (err) { stderr(err); }
+});`;
 
 		} catch {}
 

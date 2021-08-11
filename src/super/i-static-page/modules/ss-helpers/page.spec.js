@@ -76,7 +76,6 @@ try {
 } catch (_) {}
 PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
 PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
-PATH['webpack.runtime'] = 'webpack.runtime.js';
 PATH['vendor'] = 'vendor.js';
 PATH['std'] = 'std.js';
 PATH['std_tpl'] = 'std_tpl.js';
@@ -208,14 +207,6 @@ if ('vendor' in PATH) {
 \tdocument.head.appendChild(el);
 })();
 
-
-
-(function () {
-\tvar el = document.createElement('script');
-\tel.async = false;
-\tel.setAttribute('src', ((function () { function concatURLs(a, b) { return a ? a.replace(/[\\\\/]+$/, '') + '/' + b.replace(/^[\\\\/]+/, '') : b; } return concatURLs('/dist/client/', PATH['webpack.runtime']); })()));
-\tdocument.head.appendChild(el);
-})();
 
 }
 

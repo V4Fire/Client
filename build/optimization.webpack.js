@@ -41,10 +41,6 @@ module.exports = function optimization({buildId, plugins}) {
 	}
 
 	if (buildId === RUNTIME) {
-		options.runtimeChunk = {
-			name: 'webpack.runtime'
-		};
-
 		options.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
 				index: {

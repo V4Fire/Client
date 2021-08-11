@@ -314,8 +314,7 @@ async function generateInitJS(pageName, {
 		getScriptDeclByName('index-core', {assets, optional: true}),
 		getScriptDeclByName('vendor', {assets, optional: true}),
 
-		getPageScriptDepsDecl(ownDeps, {assets}),
-		getScriptDeclByName('webpack.runtime', {assets})
+		getPageScriptDepsDecl(ownDeps, {assets})
 	);
 
 	const bodyInitializer = `
