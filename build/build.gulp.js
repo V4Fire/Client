@@ -53,7 +53,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * Builds the project as a client (browser) package
 	 */
 	gulp.task('build:client', () => {
-		const t = $.run(`npx parallel-webpack -- ${args}`, {verbosity: 3}).exec();
+		const t = $.run(`npx webpack ${args}`, {verbosity: 3}).exec();
 		return t.on('error', console.error);
 	});
 
