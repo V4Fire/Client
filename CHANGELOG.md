@@ -36,6 +36,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `svgo@2.3.1`
   * `svgo-loader@3.0.0`
   * `css-minimizer-webpack-plugin@2.0.0`
+  * `mini-css-extract-plugin@2.2.0`
 
 ## v3.2.3 (2021-08-05)
 
