@@ -57,6 +57,7 @@ if (false) {
 
 \t\tif (publicPath != null) {
 \t\t\tPUBLIC_PATH = decodeURIComponent(publicPath[1]);
+\t\t\tPUBLIC_PATH = PUBLIC_PATH.replace(/\\/+$/, '') + '/';
 \t\t}
 \t})();
 }
