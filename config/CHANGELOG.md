@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-??-??)
+
+#### :rocket: New Feature
+
+* Added `webpack.stats`
+
 ## v3.2.1 (2021-08-05)
 
 #### :bug: Bug Fix

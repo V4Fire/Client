@@ -11,6 +11,10 @@ Changelog
 
 ## v3.?.? (2021-??-??)
 
+#### :rocket: New Feature
+
+* Added `stats.webpack`
+
 #### :bug: Bug Fix
 
 * Added support for magic comments within imports

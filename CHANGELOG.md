@@ -13,9 +13,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.?.? (2021-??-??)
 
+#### :rocket: New Feature
+
+* Added `webpack.stats` `config`
+* Added `stats.webpack` `build`
+
 #### :bug: Bug Fix
 
 * Added normalizing of trailing slashes from `webpack.publicPath` `iStaticPage`
+* Added `webpack.stats` `config`
 
 * `build`:
   * Added support for magic comments within imports
