@@ -45,7 +45,7 @@ jobs:
         run: npm run test:components:chrome -- --fat-html
 
       - name: Run components' tests with --fat-html --es ES5
-        run: npm run test:components:chrome -- --fat-html
+        run: npm run test:components:chrome -- --fat-html --es ES5
 
   # Run module tests
   modules:
