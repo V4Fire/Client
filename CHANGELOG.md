@@ -47,6 +47,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `postcss@8.3.6`
   * `postcss-loader@6.1.1`
   * `autoprefixer@10.3.1`
+  * `stylus-loader@6.1.0`
 
 ## v3.2.3 (2021-08-05)
 

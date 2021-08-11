@@ -753,7 +753,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	stylus() {
 		return {
-			webpackImporter: false
+			webpackImporter: false,
+
+			stylusOptions: {
+				compress: false
+			}
 		};
 	},
 

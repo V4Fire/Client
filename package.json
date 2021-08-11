@@ -105,7 +105,7 @@
     "string-dasherize": "^1.0.0",
     "style-loader": "^3.2.1",
     "stylus": "^0.54.8",
-    "stylus-loader": "^3.0.2",
+    "stylus-loader": "^6.1.0",
     "svg-sprite-loader": "^6.0.9",
     "svg-url-loader": "^7.1.1",
     "svgo": "^2.3.1",

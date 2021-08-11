@@ -260,7 +260,9 @@ module.exports = async function module({plugins}) {
 				{
 					loader: 'stylus-loader',
 					options: inherit(config.stylus(), {
-						use: include('build/stylus')
+						stylusOptions: {
+							use: include('build/stylus')
+						}
 					})
 				}
 			]
