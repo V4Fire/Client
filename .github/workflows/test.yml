@@ -38,14 +38,14 @@ jobs:
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
-      - name: Run components' tests
-        run: npm run test:components:chrome
+#      - name: Run components' tests
+#        run: npm run test:components:chrome
 
       - name: Run components' tests with --fat-html
         run: npm run test:components:chrome -- --fat-html
 
-      - name: Run components' tests with --fat-html --es ES5
-        run: npm run test:components:chrome -- --fat-html --es ES5
+#      - name: Run components' tests with --fat-html --es ES5
+#        run: npm run test:components:chrome -- --fat-html --es ES5
 
   # Run module tests
   modules:

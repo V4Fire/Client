@@ -42,11 +42,15 @@ async function getAssets(entryPoints) {
 		}
 	});
 
+	console.log(11);
+
 	await $C(assetsBlueprint).async.forEach(fillAssets);
 	return assets;
 
 	async function fillAssets(dep) {
 		while (!assets[dep]) {
+			console.log(11, dep);
+
 			try {
 				$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
 					assets[key] = rawAssets[key];

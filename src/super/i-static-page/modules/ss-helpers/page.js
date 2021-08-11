@@ -276,20 +276,32 @@ async function generateInitJS(pageName, {
 		head = [],
 		body = [];
 
+	console.log(1);
+
 	// - block varsDecl
 	head.push(getVarsDecl());
+
+	console.log(2);
 
 	// - block assets
 	head.push(getAssetsDecl({inline: !assetsRequest, js: true}));
 
+	console.log(3);
+
 	// - block links
 	head.push(await loadLinks(deps.links, {assets, js: true}));
+
+	console.log(4);
 
 	// - block headStyles
 	head.push(await getStyleDeclByName('std', {assets, optional: true, js: true}));
 
+	console.log(5);
+
 	// - block headScripts
 	head.push(await loadLibs(deps.headScripts, {assets, js: true}));
+
+	console.log(6);
 
 	body.push(`
 (function () {
@@ -306,6 +318,8 @@ async function generateInitJS(pageName, {
 		getPageStyleDepsDecl(ownDeps, {assets, js: true})
 	);
 
+	console.log(7);
+
 	// - block scripts
 	body.push(
 		await getScriptDeclByName('std', {assets, optional: true}),
@@ -316,6 +330,8 @@ async function generateInitJS(pageName, {
 
 		getPageScriptDepsDecl(ownDeps, {assets})
 	);
+
+	console.log(8);
 
 	const bodyInitializer = `
 function $__RENDER_ROOT() {
@@ -334,6 +350,8 @@ function $__RENDER_ROOT() {
 		saveFiles: false,
 		replacers: [include('build/replacers/include')]
 	});
+
+	console.log(9);
 
 	if (/ES[35]$/.test(config.es())) {
 		result = buble.transform(result).code;
