@@ -20,11 +20,11 @@ module.exports = async function plugins() {
 	const
 		globals = include('build/globals.webpack'),
 		DependenciesPlugin = include('build/plugins/dependencies'),
-		IgnoreNotFoundExportPlugin = include('build/plugins/ignore-not-found-export');
+		IgnoreInvalidWarningsPlugin = include('build/plugins/ignore-invalid-warnings');
 
 	return new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
 		['dependencies', new DependenciesPlugin()],
-		['ignoreNotFoundExport', new IgnoreNotFoundExportPlugin()]
+		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
 	]);
 };
