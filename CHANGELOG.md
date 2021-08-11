@@ -41,8 +41,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `svg-sprite-loader@6.0.9`
   * `svgo@2.3.1`
   * `svgo-loader@3.0.0`
-  * `css-minimizer-webpack-plugin@2.0.0`
+  * `css-minimizer-webpack-plugin@3.0.2`
   * `mini-css-extract-plugin@2.2.0`
+  * `cssnano@5.0.7`
+  * `postcss@8.3.6`
+  * `postcss-loader@6.1.1`
+  * `autoprefixer@10.3.1`
 
 ## v3.2.3 (2021-08-05)
 
