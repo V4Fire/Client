@@ -36,9 +36,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `svgo@2.3.1`
   * `svgo-loader@3.0.0`
   * `css-minimizer-webpack-plugin@2.0.0`
-  * `css-minimizer-webpack-plugin@2.0.0`
-  * `vue@2.6.14`
-  * `vue-template-compiler@2.6.14`
 
 ## v3.2.3 (2021-08-05)
 
