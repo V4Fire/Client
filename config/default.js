@@ -722,7 +722,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for TerserPlugin
+	 * Returns parameters for `TerserPlugin`
 	 * @returns {{}}
 	 */
 	terser() {
@@ -730,7 +730,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for worker-loader
+	 * Returns parameters for `worker-loader`
 	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
 	 */
 	worker() {
@@ -748,7 +748,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for stylus-loader
+	 * Returns parameters for `stylus-loader`
 	 * @returns {!Object}
 	 */
 	stylus() {
@@ -762,7 +762,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for css-loader
+	 * Returns parameters for `css-loader`
 	 * @returns {!Object}
 	 */
 	css() {
@@ -770,7 +770,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for CssMinimizerPlugin
+	 * Returns parameters for `CssMinimizerPlugin`
 	 * @returns {!Object}
 	 */
 	cssMinimizer() {
@@ -778,7 +778,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for MiniCssExtractPlugin
+	 * Returns parameters for `MiniCssExtractPlugin`
 	 * @returns {!Object}
 	 */
 	miniCssExtractPlugin() {
@@ -786,7 +786,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for postcss-loader
+	 * Returns parameters for `postcss-loader`
 	 * @returns {!Object}
 	 */
 	postcss() {
@@ -794,7 +794,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for postcss/autoprefixer
+	 * Returns parameters for `postcss/autoprefixer`
 	 * @returns {!Object}
 	 */
 	autoprefixer() {
@@ -802,7 +802,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for style-loader
+	 * Returns parameters for `style-loader`
 	 * @returns {!Object}
 	 */
 	style() {
@@ -859,7 +859,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for snakeskin-loader:
+	 * Returns parameters for `snakeskin-loader`:
 	 *
 	 * 1. server - for .ess files
 	 * 2. client - for .ss files
@@ -890,7 +890,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for html-loader
+	 * Returns parameters for `html-loader`
 	 * @returns {!Object}
 	 */
 	html() {
@@ -898,7 +898,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			isProd = this.webpack.mode() === 'production';
 
 		return {
-			attributes: false,
+			sources: false,
 
 			minimize: {
 				useShortDoctype: true,
@@ -929,7 +929,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for image-webpack-loader
+	 * Returns parameters for `image-webpack-loader`
 	 * @returns {!Object}
 	 */
 	imageOpts() {
@@ -945,7 +945,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for Typograf
+	 * Returns parameters for `typograf`
 	 * @returns {!Object}
 	 */
 	typograf() {
