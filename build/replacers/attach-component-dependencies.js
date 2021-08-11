@@ -82,9 +82,18 @@ try { require('${lib}'); } catch (err) { stderr(err); }
 			const
 				styles = await component.styles;
 
-			decl += `
+			decl += `requestAnimationFrame(function () {
 if (!TPLS['${dep}']) {
 	(async () => {
+		var el = document.createElement('div');
+		el.className = '${dep} is-style-loaded';
+		document.body.appendChild(el);
+
+		var isStylesLoaded = Boolean(getComputedStyle(el).color);
+		document.body.removeChild(el);
+
+		if (isStylesLoaded) { return; }
+
 		try {
 			${
 				styles
@@ -101,7 +110,7 @@ if (!TPLS['${dep}']) {
 			}
 		} catch (err) { stderr(err); }
 	})();
-}`;
+}});`;
 
 		} catch {}
 
