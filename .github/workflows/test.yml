@@ -73,9 +73,6 @@ jobs:
       - name: Run components' tests with --fat-html
         run: npm run test:components:chrome -- --fat-html
 
-      - name: Run components' tests with --fat-html --es ES5
-        run: npm run test:components:chrome -- --fat-html --es ES5
-
   components-fat-html-es5:
     runs-on: windows-latest
     timeout-minutes: 60
