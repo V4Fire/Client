@@ -34,6 +34,7 @@ if (${Boolean(webpack.providePublicPathWithQuery())}) {
 
 		if (publicPath != null) {
 			PUBLIC_PATH = decodeURIComponent(publicPath[1]);
+			PUBLIC_PATH = PUBLIC_PATH.replace(/\\/+$/, '') + '/';
 		}
 	})();
 }
