@@ -12,14 +12,17 @@ const
 	config = require('config'),
 	path = require('upath');
 
-const {
-	config: pzlr,
-	resolve
-} = require('@pzlr/build-core');
+const
+	{config: pzlr, resolve} = require('@pzlr/build-core'),
+	{commentModuleExpr: commentExpr} = include('build/const');
 
 const
-	deps = pzlr.dependencies.map((el) => RegExp.escape(el || el.src)),
-	importRgxp = new RegExp(`\\b(import\\s*\\(?|export|from|require\\s*\\()\\s*(['"])(${deps.join('|')})(/.*?|(?=\\2))\\2`, 'g');
+	deps = pzlr.dependencies.map((el) => RegExp.escape(el || el.src));
+
+const importRgxp = new RegExp(
+	`\\b(import${commentExpr}\\(?|export|from|require${commentExpr}\\()${commentExpr}(['"])(${deps.join('|')})(/.*?|(?=\\2))\\2`,
+	'g'
+);
 
 /**
  * Monic replacer to enable the import/export/etc. constructions from one TS project to another TS project,

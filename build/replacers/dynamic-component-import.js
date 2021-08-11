@@ -9,13 +9,16 @@
  */
 
 const
-	{typescript, webpack} = require('config');
+	{typescript, webpack} = require('config'),
+	{commentModuleExpr: commentExpr} = include('build/const');
+
+const importRgxp = new RegExp(
+	`\\bimport${commentExpr}\\(${commentExpr}(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\1${commentExpr}\\)`,
+	'g'
+);
 
 const
-	importRgxp = /\bimport\((["'])((?:.*?[\\/]|)([bp]-[^.\\/"')]+)+)\1\)/g,
-	hasImport = importRgxp.removeFlags('g');
-
-const
+	hasImport = importRgxp.removeFlags('g'),
 	isESImport = typescript().client.compilerOptions.module === 'ES2020',
 	fatHTML = webpack.fatHTML();
 

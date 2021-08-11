@@ -78,3 +78,9 @@ exports.isLayerCoreDep = new RegExp(
 	// Simple imports
 	`(?:src[\\\\/]|^)(?:${coreFolders})(?:(?![\\\\/]node_modules[\\\\/]).)*$`
 );
+
+/**
+ * Pattern to match comments within import/export declarations
+ * @type {string}
+ */
+exports.commentModuleExpr = '\\s*(?:\\/*[\\s\\S]*?\\*\\/)?\\s*';
