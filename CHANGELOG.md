@@ -13,9 +13,32 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.?.? (2021-??-??)
 
+#### :bug: Bug Fix
+
+* Added normalizing of trailing slashes from `webpack.publicPath` `iStaticPage`
+
+* `build`:
+  * Added support for magic comments within imports
+  * Added support for the --json parameter
+  * Hid invalid build warnings
+
 #### :memo: Documentation
 
 * Added documentation `iStaticPage`
+
+#### :house: Internal
+
+* Updated dependencies:
+  * `webpack@5.50.0`
+  * `gulp-favicons@3.0.0`
+  * `style-loader@3.2.1`
+  * `svg-sprite-loader@6.0.9`
+  * `svgo@2.3.1`
+  * `svgo-loader@3.0.0`
+  * `css-minimizer-webpack-plugin@2.0.0`
+  * `css-minimizer-webpack-plugin@2.0.0`
+  * `vue@2.6.14`
+  * `vue-template-compiler@2.6.14`
 
 ## v3.2.3 (2021-08-05)
 

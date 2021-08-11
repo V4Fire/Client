@@ -9,6 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Added support for magic comments within imports
+* Added support for the --json parameter
+* Hid invalid build warnings
+
 ## v3.0.0-rc.215 (2021-07-25)
 
 #### :bug: Bug Fix

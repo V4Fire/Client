@@ -11,6 +11,10 @@ Changelog
 
 ## v3.?.? (2021-??-??)
 
+#### :bug: Bug Fix
+
+* Added normalizing of trailing slashes from `webpack.publicPath`
+
 #### :memo: Documentation
 
 * Added documentation
