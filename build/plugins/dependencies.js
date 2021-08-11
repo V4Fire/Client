@@ -21,7 +21,6 @@ const
 
 /**
  * Webpack plugin to generate `.dependencies.js` files and `assets.json` / `assets.js`
- * @returns {!Function}
  */
 module.exports = class DependenciesPlugin {
 	apply(compiler) {
