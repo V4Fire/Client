@@ -45,7 +45,7 @@
     "snakeskin": "^7.5.1",
     "svg-transform-loader": "^2.0.13",
     "tslib": "2.3.0",
-    "vue": "2.6.10"
+    "vue": "2.6.14"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.11.10",
@@ -119,7 +119,7 @@
     "upath": "^2.0.1",
     "url-loader": "^4.1.1",
     "urlconcat": "0.0.12",
-    "vue-template-compiler": "2.6.10",
+    "vue-template-compiler": "2.6.14",
     "vue-template-es2015-compiler": "^1.9.1",
     "webpack": "^5.50.0",
     "webpack-bundle-analyzer": "^4.4.2",
