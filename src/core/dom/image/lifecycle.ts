@@ -198,22 +198,17 @@ export default class Lifecycle {
 	 * @param type
 	 */
 	protected trySetPlaceholderImage(el: ImageNode, type: ImagePlaceholderType): void {
-		console.log('try set placeholder');
-
 		const
 			shadowState = this.parent.getShadowStateByType(el, type),
 			mainShadowState = this.parent.getShadowStateByType(el, 'main'),
 			imgNode = mainShadowState?.imgNode;
 
-		console.log(shadowState, mainShadowState);
 		if (shadowState == null || mainShadowState == null) {
 			return;
 		}
 
 		const {selfOptions} = shadowState;
 		selfOptions.load?.(el);
-
-		console.log(mainShadowState.imgNode.complete, mainShadowState.isFailed);
 
 		if (
 			mainShadowState.imgNode.complete === true &&
