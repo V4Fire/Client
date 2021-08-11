@@ -9,9 +9,36 @@
  */
 
 const
-	arg = require('arg');
+	arg = require('arg'),
+	stream = require('stream');
 
-Object.assign(exports, include('build/helpers'));
+Object.assign(
+	exports,
+	include('build/helpers')
+);
+
+const
+	STDOUT = Symbol('Original STDOUT');
+
+exports.muteConsole = muteConsole;
+
+/**
+ * Mutes any output from the global console API
+ */
+function muteConsole() {
+	console[STDOUT] = console[STDOUT] ?? console._stdout;
+	console._stdout = new stream.Writable();
+}
+
+exports.unmuteConsole = unmuteConsole;
+
+/**
+ * Unmutes output from the global console API
+ */
+function unmuteConsole() {
+	console._stdout = console[STDOUT] ?? console._stdout;
+	console[STDOUT] = undefined;
+}
 
 exports.wait = wait;
 

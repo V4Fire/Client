@@ -9,11 +9,11 @@
  */
 
 const
-	{webpack} = require('config');
+	$C = require('collection.js');
 
 const
-	$C = require('collection.js'),
-	graph = include('build/graph.webpack');
+	{webpack} = require('config'),
+	{muteConsole, unmuteConsole} = include('build/helpers');
 
 /**
  * Returns WebPack configuration to the specified entry
@@ -65,15 +65,27 @@ async function buildFactory(entry, buildId) {
  * To speed up build you can use "parallel-webpack" or similar modules.
  */
 const tasks = (async () => {
+	const
+		outputJSON = process.argv.some((arg) => /^--json(?:=|$)/.test(arg));
+
+	if (outputJSON) {
+		muteConsole();
+	}
+
 	await include('build/snakeskin');
 
 	const
-		{processes} = await graph;
+		{processes} = await include('build/graph.webpack');
 
 	const
 		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
 
 	globalThis.WEBPACK_CONFIG = tasks;
+
+	if (outputJSON) {
+		unmuteConsole();
+	}
+
 	return tasks;
 })();
 
