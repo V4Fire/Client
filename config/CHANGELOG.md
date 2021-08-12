@@ -14,6 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added `webpack.stats`
+* Added providing of default parameters
 
 ## v3.2.1 (2021-08-05)
 

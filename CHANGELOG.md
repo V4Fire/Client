@@ -15,8 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `webpack.stats` `config`
 * Added `stats.webpack` `build`
+
+* `config`:
+  * Added `webpack.stats`
+  * Added providing of default parameters
 
 #### :bug: Bug Fix
 
@@ -34,6 +37,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
+* Added `webpack-bundle-analyzer`
 * Updated dependencies:
   * `webpack@5.50.0`
   * `gulp-favicons@3.0.0`
