@@ -19,17 +19,24 @@ const
  * Initializes a router
  *
  * @param {Page} page
+ * @param {'historyApiRouterEngine'|'inMemoryRouterEngine'} [engineName='historyApiRouterEngine']
+ *
  * @returns {!Promise<Playwright.JSHandle>}
  */
-async function initRouter(page) {
-	await page.evaluate(() => {
+async function initRouter(page, engineName = 'inMemoryRouterEngine') {
+	await page.evaluate((engineName) => {
 		globalThis.removeCreatedComponents();
+
+		const
+			bDummyComponent = document.querySelector('.b-dummy').component,
+			engine = bDummyComponent.engines.router[engineName];
 
 		const scheme = [
 			{
 				attrs: {
 					id: 'target',
 
+					engine,
 					routes: {
 						main: {
 							path: '/',
@@ -117,7 +124,7 @@ async function initRouter(page) {
 		];
 
 		globalThis.renderComponents('b-router', scheme);
-	});
+	}, engineName);
 
 	await h.component.waitForComponent(page, '#target');
 	return h.component.waitForComponent(page, '#root-component');
