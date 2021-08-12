@@ -318,7 +318,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {string=} [def] - default value
 		 * @returns {?string}
 		 */
-		devtool() {
+		devtool(def) {
 			return o('devtool', {
 				env: true,
 				default: def
