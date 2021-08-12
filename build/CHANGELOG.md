@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.3.2 (2021-08-12)
+
+#### :bug: Bug Fix
+
+* Testing the particular color to detect if a style is already loaded
+
 ## v3.3.1 (2021-08-12)
 
 #### :bug: Bug Fix
