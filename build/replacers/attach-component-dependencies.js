@@ -91,10 +91,10 @@ requestAnimationFrame(async () => {
 	try {
 		const el = document.createElement('i');
 		el.className = '${dep}-is-style-loaded';
-		docunt.body.appendChild(el);
+		document.body.appendChild(el);
 
 		const isStylesLoaded = Boolean(getComputedStyle(el).color);
-		docunt.body.removeChild(el);
+		document.body.removeChild(el);
 
 		if (isStylesLoaded) {
 			return;

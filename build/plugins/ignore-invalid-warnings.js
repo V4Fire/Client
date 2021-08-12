@@ -22,8 +22,9 @@ module.exports = class IgnoreInvalidWarningsPlugin {
 					case 'ModuleDependencyWarning':
 						return !/export '.*'( \(reexported as '.*'\))? was not found in/.test(warn.message);
 
+					// `require.context` goes fucking crazy :(
 					case 'ModuleNotFoundError':
-						return !/Can't resolve 'rc/.test(warn.message);
+						return !/Can't resolve '(?:rc|ode_modules)/.test(warn.message);
 
 					default:
 						return true;
