@@ -83,4 +83,4 @@ exports.isLayerCoreDep = new RegExp(
  * Pattern to match comments within import/export declarations
  * @type {string}
  */
-exports.commentModuleExpr = '\\s*(?:\\/*[\\s\\S]*?\\*\\/)?\\s*';
+exports.commentModuleExpr = '\\s*(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*';
