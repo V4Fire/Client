@@ -13,7 +13,7 @@ const
 	{commentModuleExpr: commentExpr} = include('build/const');
 
 const importRgxp = new RegExp(
-	`\\bimport${commentExpr}\\(${commentExpr}(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\1${commentExpr}\\)`,
+	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`,
 	'g'
 );
 
@@ -36,7 +36,7 @@ const
  * ```
  */
 module.exports = function dynamicComponentImportReplacer(str) {
-	return str.replace(importRgxp, (str, q, path, nm) => {
+	return str.replace(importRgxp, (str, magicComments, q, path, nm) => {
 		const
 			chunks = path.split(/[\\/]/);
 
@@ -53,7 +53,7 @@ module.exports = function dynamicComponentImportReplacer(str) {
 				decl;
 
 			if (isESImport) {
-				decl = `import('${fullPath}')`;
+				decl = `import(${magicComments} '${fullPath}')`;
 
 			} else {
 				decl = `new Promise(function (r) { return r(require('${fullPath}')); })`;
@@ -68,7 +68,7 @@ module.exports = function dynamicComponentImportReplacer(str) {
 				decl;
 
 			if (isESImport) {
-				decl = `import('${fullPath}.styl')`;
+				decl = `import(${magicComments} '${fullPath}.styl')`;
 
 			} else {
 				decl = `new Promise(function (r) { return r(require('${fullPath}.styl')); })`;
@@ -86,7 +86,7 @@ module.exports = function dynamicComponentImportReplacer(str) {
 				decl;
 
 			if (isESImport) {
-				decl = `import('${fullPath}.ss').then(${regTpl})`;
+				decl = `import(${magicComments} '${fullPath}.ss').then(${regTpl})`;
 
 			} else {
 				decl = `new Promise(function (r) { return r(require('${fullPath}.ss')); }).then(${regTpl})`;
