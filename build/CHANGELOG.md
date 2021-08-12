@@ -14,6 +14,8 @@ Changelog
 #### :rocket: New Feature
 
 * Added `stats.webpack`
+* Added providing of default parameters
+* Now `webpack.fatHTML` has different modes
 
 #### :bug: Bug Fix
 

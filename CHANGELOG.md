@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `config`:
   * Added `webpack.stats`
   * Added providing of default parameters
+  * Now `webpack.fatHTML` has different modes
 
 #### :bug: Bug Fix
 
