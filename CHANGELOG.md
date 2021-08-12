@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.3.1 (2021-08-12)
+
+#### :bug: Bug Fix
+
+* Provide magic comments to dynamic imports `build`
+
 ## v3.3.0 (2021-08-12)
 
 #### :rocket: New Feature
