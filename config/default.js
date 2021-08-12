@@ -236,11 +236,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 *
 	 * @cli engine
 	 * @env ENGINE
+	 *
+	 * @param {string=} [def] - default value
+	 * @returns {string}
 	 */
-	engine() {
+	engine(def = 'vue') {
 		return o('engine', {
 			env: true,
-			default: 'vue',
+			default: def,
 			validate(v) {
 				return Boolean({
 					vue: true,
@@ -260,12 +263,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli mode
 		 * @env MODE
 		 *
+		 * @param {string=} [def] - default value
 		 * @returns {string}
 		 */
-		mode() {
+		mode(def = IS_PROD ? 'production' : 'development') {
 			return o('mode', {
 				env: true,
-				default: IS_PROD ? 'production' : 'development'
+				default: def
 			});
 		},
 
@@ -275,12 +279,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli cache-type
 		 * @env CACHE_TYPE
 		 *
+		 * @param {string=} [def] - default value
 		 * @returns {string}
 		 */
-		cacheType() {
+		cacheType(def = 'memory') {
 			return o('cache-type', {
 				env: true,
-				default: 'memory'
+				default: def
 			});
 		},
 
@@ -290,12 +295,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli target
 		 * @env TARGET
 		 *
+		 * @param {string=} [def] - default value
 		 * @returns {?string}
 		 */
-		target() {
+		target(
+			def = /ES[35]$/.test(this.config.es()) ?
+				'browserslist:ie 11' :
+				undefined
+		) {
 			return o('target', {
 				env: true,
-				default: /ES[35]$/.test(this.config.es()) ? 'browserslist:ie 11' : undefined
+				default: def
 			});
 		},
 
@@ -305,11 +315,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli devtool
 		 * @env DEVTOOL
 		 *
+		 * @param {string=} [def] - default value
 		 * @returns {?string}
 		 */
 		devtool() {
 			return o('devtool', {
-				env: true
+				env: true,
+				default: def
 			});
 		},
 
@@ -319,13 +331,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli stats
 		 * @env STATS
 		 *
+		 * @param {boolean=} [def] - default value
 		 * @returns {(boolean|string|Object)}
 		 */
-		stats() {
+		stats(def = true) {
 			return o('stats', {
 				env: true,
 				type: 'json',
-				default: true
+				default: def
 			});
 		},
 
@@ -346,14 +359,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli fat-html
 		 * @env FAT_HTML
 		 *
+		 * @param {number=} [def] - default value
 		 * @returns {number}
 		 */
-		fatHTML() {
+		fatHTML(def = 0) {
 			return o('fat-html', {
 				env: true,
 				type: 'number',
 				coerce: (value) => value === 'script-link' ? 2 : Number(value),
-				default: 0
+				default: def
 			});
 		},
 
@@ -363,13 +377,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli inline-initial
 		 * @env INLINE_INITIAL
 		 *
+		 * @param {boolean=} [def] - default value
 		 * @returns {boolean}
 		 */
-		inlineInitial() {
+		inlineInitial(def = false) {
 			return o('inline-initial', {
 				env: true,
 				type: 'boolean',
-				default: false
+				default: def
 			});
 		},
 
@@ -405,9 +420,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 * @cli optimize-data-uri-limit
 			 * @env OPTIMIZE_DATA_URI_LIMIT
 			 *
+			 * @param {number=} [def] - default value
 			 * @returns {(number|undefined)}
 			 */
-			dataURILimit() {
+			dataURILimit(def = 2 * 1024) {
 				if (require('config').webpack.fatHTML() === 1) {
 					return undefined;
 				}
@@ -415,7 +431,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				return o('optimize-data-uri-limit', {
 					env: true,
 					type: 'number',
-					default: 2 * 1024
+					default: def
 				});
 			}
 		},
@@ -430,17 +446,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * If true, a path to load assets can be defined in runtime via the `publicPath` query parameter
-		 * (only if `dynamicPublicPath` is defined)
+		 * An expression that provides a public path for assets within the runtime.
+		 * If the value is provided as a boolean, it enables runtime modifications of `publicPath`,
+		 * but takes a value from the static build parameter.
 		 *
 		 * @cli dynamic-public-path
 		 * @env DYNAMIC_PUBLIC_PATH
 		 *
+		 * @param {(boolean|string)=} [def] - default value
 		 * @returns {(?string|boolean)}
 		 */
-		dynamicPublicPath() {
+		dynamicPublicPath(def) {
 			const v = o('dynamic-public-path', {
-				env: true
+				env: true,
+				default: def
 			});
 
 			try {
@@ -458,13 +477,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @env PROVIDE_PUBLIC_PATH_WITH_QUERY
 		 * @default `true`
 		 *
+		 * @param {boolean=} [def] - default value
 		 * @returns {boolean}
 		 */
-		providePublicPathWithQuery() {
+		providePublicPathWithQuery(def = true) {
 			return Boolean(this.dynamicPublicPath() && o('provide-public-path-with-query', {
 				env: true,
 				type: 'boolean',
-				default: true
+				default: def
 			}));
 		},
 
@@ -820,12 +840,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @cli t
 		 * @env THEME
+		 *
+		 * @param {string=} [def] - default value
 		 * @returns {string}
 		 */
-		default() {
+		default(def) {
 			return o('theme', {
 				short: 't',
-				env: true
+				env: true,
+				default: def
 			});
 		},
 
@@ -836,11 +859,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli include-themes
 		 * @env INCLUDE_THEMES
 		 *
+		 * @param {string=} [def] - default value
 		 * @returns {!Array<string>|boolean}
 		 */
-		include() {
+		include(def) {
 			return o('include-themes', {
-				env: true
+				env: true,
+				default: def
 			});
 		},
 
