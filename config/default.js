@@ -515,21 +515,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				concatUrls = require('urlconcat').concat;
 
-			let
-				pathVal;
+			let pathVal = o('public-path', {
+				env: true,
+				default: concatUrls('/', this.config.src.rel('clientOutput'))
+			});
 
-			if (this.fatHTML()) {
+			if (!Object.isString(pathVal)) {
 				pathVal = '';
-
-			} else {
-				pathVal = o('public-path', {
-					env: true,
-					default: concatUrls('/', this.config.src.rel('clientOutput'))
-				});
-
-				if (!Object.isString(pathVal)) {
-					pathVal = '';
-				}
 			}
 
 			if (pathVal[0] === '\\') {
