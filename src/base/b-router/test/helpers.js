@@ -27,16 +27,16 @@ const
 async function initRouter(page, engineName = 'historyApiRouterEngine', initialRoute = undefined) {
 	await (await h.component.getRoot(page)).evaluate((ctx) => ctx.router?.clear());
 
+	if (initialRoute === undefined && engineName === 'inMemoryRouterEngine') {
+		initialRoute = 'main';
+	}
+
 	await page.evaluate(([engineName, initialRoute]) => {
 		globalThis.removeCreatedComponents();
 
 		const
 			bDummyComponent = document.querySelector('.b-dummy').component,
 			engine = bDummyComponent.engines.router[engineName];
-
-		if (initialRoute === undefined && engine === 'inMemoryRouterEngine') {
-			initialRoute = 'main';
-		}
 
 		const scheme = [
 			{
