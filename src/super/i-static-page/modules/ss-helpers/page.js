@@ -8,7 +8,7 @@
 
 const
 	config = require('config'),
-	{webpack, src} = config;
+	{src, webpack} = config;
 
 const
 	fs = require('fs-extra');
@@ -25,6 +25,9 @@ const
 const
 	{getVarsDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations'),
 	{needInline, addPublicPath} = include('src/super/i-static-page/modules/ss-helpers/helpers');
+
+const
+	needLoadStylesAsJS = webpack.dynamicPublicPath();
 
 const defAttrs = {
 	crossorigin: webpack.publicPath() === '' ? undefined : 'anonymous'
@@ -52,21 +55,20 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 		decl = '';
 
 	for (const dep of dependencies) {
-		const
-			tpl = `${dep}_tpl`;
+		const scripts = [
+			getScriptDeclByName(`${dep}_tpl`, {assets}),
+			getScriptDeclByName(dep, {assets})
+		];
+
+		if (needLoadStylesAsJS) {
+			scripts.unshift(getScriptDeclByName(`${dep}_style`, {assets}));
+		}
 
 		if (dep === 'index') {
-			decl += getScriptDeclByName(dep, {assets});
-			decl += '\n';
-			decl += getScriptDeclByName(tpl, {assets});
-			decl += '\n';
-
-		} else {
-			decl += getScriptDeclByName(tpl, {assets});
-			decl += '\n';
-			decl += getScriptDeclByName(dep, {assets});
-			decl += '\n';
+			scripts.reverse();
 		}
+
+		decl += `${scripts.join('\n')}\n`;
 	}
 
 	if (wrap) {
@@ -91,7 +93,7 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
  * @returns {string}
  */
 function getPageStyleDepsDecl(dependencies, {assets, wrap, js}) {
-	if (!dependencies) {
+	if (!dependencies || needLoadStylesAsJS) {
 		return '';
 	}
 
@@ -200,6 +202,10 @@ function getStyleDeclByName(name, {
 }) {
 	const
 		rname = `${name}_style`;
+
+	if (needLoadStylesAsJS) {
+		return getScriptDeclByName(rname, {assets, optional, defer, inline, wrap});
+	}
 
 	let
 		decl;
