@@ -13,7 +13,7 @@ const
 	config = require('config');
 
 const
-	{RUNTIME} = include('build/graph.webpack');
+	{STANDALONE} = include('build/graph.webpack');
 
 const
 	externalList = [],
@@ -46,7 +46,7 @@ const externalMap = $C(config.webpack.externals).filter((el, key) => {
  * @returns {!Array}
  */
 module.exports = function externals({buildId}) {
-	if (buildId === RUNTIME) {
+	if (buildId !== STANDALONE) {
 		return [externalMap].concat(externalList);
 	}
 

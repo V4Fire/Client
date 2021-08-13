@@ -9,9 +9,10 @@
  */
 
 const
-	path = require('upath');
+	{webpack} = require('config');
 
 const
+	path = require('upath'),
 	graph = include('build/graph.webpack');
 
 /**
@@ -33,7 +34,7 @@ module.exports = async function entry(name, src) {
 		dependencies.push(name.replace(isTpl, ''), name);
 	}
 
-	if (path.extname(src) === '.styl') {
+	if (path.extname(src) === '.styl' && !webpack.dynamicPublicPath()) {
 		src += '?static';
 	}
 

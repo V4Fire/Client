@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.3.3 (2021-08-13)
+
+#### :bug: Bug Fix
+
+* Fixed providing of a dynamic public path to styles
+
 ## v3.3.2 (2021-08-12)
 
 #### :bug: Bug Fix

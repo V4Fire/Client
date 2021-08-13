@@ -20,7 +20,7 @@ const
 	camelize = require('camelize');
 
 const
-	{build, src} = config,
+	{src, build, webpack} = config,
 	{resolve, entries, block} = require('@pzlr/build-core');
 
 const
@@ -28,15 +28,15 @@ const
 	{isLayerDep} = include('build/const');
 
 let
-	buildIterator = -1;
+	buildIterator = 0;
 
 const
-	STANDALONE = ++buildIterator,
-	RUNTIME = ++buildIterator,
-	HTML = ++buildIterator;
+	HTML = buildIterator++,
+	RUNTIME = buildIterator++,
+	STANDALONE = buildIterator;
 
 const
-	MIN_PROCESS = ++buildIterator,
+	MIN_PROCESS = buildIterator + 1,
 	MAX_PROCESS = build.processes > MIN_PROCESS ? build.processes : MIN_PROCESS,
 	MAX_TASKS_PER_ONE_PROCESS = 3;
 
@@ -52,6 +52,9 @@ module.exports = Object.assign(buildProjectGraph(), {
 	MAX_PROCESS
 });
 
+const
+	needLoadStylesAsJS = webpack.dynamicPublicPath();
+
 /**
  * Builds the project graph
  * @returns {!Promise<{entry, processes, dependencies, blockMap}>}
@@ -64,44 +67,7 @@ async function buildProjectGraph() {
 
 	// Graph already exists in the cache and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
-		const
-			timeout = (1).minute();
-
-		let
-			total = 0;
-
-		return new Promise((r) => {
-			const delay = 500;
-
-			const f = () => {
-				// Sometimes we can be caught in the situation when one of the multiple processes writes something
-				// to the cache file and it breaks the cache for a moment.
-				// To avoid this, we can sleep a little and try again.
-				setTimeout(async () => {
-					try {
-						const
-							graph = fs.readJSONSync(graphCacheFile);
-
-						r({
-							...graph,
-							blockMap: await block.getAll()
-						});
-
-					} catch (err) {
-						total += delay;
-
-						if (total > timeout) {
-							build.buildGraphFromCache = false;
-							return buildProjectGraph();
-						}
-
-						f();
-					}
-				}, delay);
-			};
-
-			f();
-		});
+		return loadFromCache();
 	}
 
 	fs.mkdirpSync(cacheDir);
@@ -142,176 +108,11 @@ async function buildProjectGraph() {
 	const entry = await $C(graph.entry)
 		.parallel()
 		.to({})
-		.reduce(async (entry, list, name) => {
-			// JS / TS
-
-			const
-				componentsToIgnore = /^[iv]-/,
-				cursor = isStandalone(name) ? STANDALONE : RUNTIME;
-
-			let
-				taskProcess = processes[cursor];
-
-			{
-				const
-					entrySrc = path.join(tmpEntries, `${name}.js`);
-
-				const content = await $C(list).async.to('').reduce(async (str, {name}) => {
-					const
-						block = blockMap.get(name),
-						logic = block && await block.logic;
-
-					if (block) {
-						$C(block.libs).forEach((el) => str += `require('${el}');\n`);
-					}
-
-					const needRequireAsLogic = block ?
-						logic :
-						/^$|^\.(?:js|ts)(?:\?|$)/.test(path.extname(name));
-
-					if (needRequireAsLogic) {
-						let
-							entry;
-
-						if (logic) {
-							entry = logic;
-
-						} else if (resolve.isNodeModule(name)) {
-							entry = name;
-
-						} else {
-							entry = path.resolve(tmpEntries, '../', name);
-						}
-
-						str += `require('${getEntryPath(entry)}');\n`;
-					}
-
-					return str;
-				});
-
-				fs.writeFileSync(entrySrc, content);
-				entry[name] = entrySrc;
-				taskProcess[name] = entrySrc;
-			}
-
-			// TEMPLATES
-
-			{
-				const
-					entryName = `${name}_tpl`,
-					entrySrc = path.join(tmpEntries, `${name}.ss.js`);
-
-				const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
-					const
-						block = blockMap.get(name),
-						tpl = block && await block.tpl;
-
-					if (!isParent && tpl && !componentsToIgnore.test(name)) {
-						const entry = getEntryPath(tpl);
-						str += `Object.assign(TPLS, require('./${entry}'));\n`;
-					}
-
-					return str;
-				});
-
-				fs.writeFileSync(entrySrc, ['window.TPLS = window.TPLS || Object.create(null);', content].join('\n'));
-				entry[entryName] = entrySrc;
-				taskProcess[entryName] = entrySrc;
-			}
-
-			taskProcess = processes[processes.length > buildIterator ? processes.length - 1 : STANDALONE];
-
-			if (MAX_PROCESS > processes.length && $C(taskProcess).length() > MAX_TASKS_PER_ONE_PROCESS) {
-				taskProcess = {};
-				processes.push(taskProcess);
-			}
-
-			// CSS
-
-			{
-				const
-					entryName = `${name}_style`,
-					entrySrc = path.join(tmpEntries, `${name}.styl`);
-
-				const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
-					const
-						block = blockMap.get(name),
-						styles = block && await block.styles;
-
-					const needRequireAsStyles = block ?
-						!isParent && styles && styles.length && !componentsToIgnore.test(name) :
-						/^\.(?:styl|css)(?:\?|$)/.test(path.extname(name));
-
-					if (needRequireAsStyles) {
-						const
-							getImport = (filePath) => `@import "${getEntryPath(filePath)}"\n`;
-
-						if (block) {
-							$C(styles).forEach((filePath) => {
-								str += getImport(filePath);
-							});
-
-						} else {
-							str += getImport(name);
-						}
-
-						const
-							normalizedName = path.basename(name, path.extname(name));
-
-						if (/^[bp]-/.test(normalizedName)) {
-							str +=
-								`
-.${normalizedName}
-	extends($${camelize(normalizedName)})
-
-`;
-						}
-					}
-
-					return str;
-				});
-
-				fs.writeFileSync(entrySrc, [content, 'generateImgClasses()'].join('\n'));
-				entry[entryName] = entrySrc;
-				taskProcess[entryName] = entrySrc;
-			}
-
-			// HTML
-
-			{
-				const
-					entryName = `${name}_view`,
-					entrySrc = path.join(tmpEntries, `${entryName}.html.js`);
-
-				const content = await $C(list).async.to('').reduce(async (str, {name}) => {
-					const
-						block = blockMap.get(name),
-						html = block && await block.etpl;
-
-					if (html && !componentsToIgnore.test(name)) {
-						str += `require('./${getEntryPath(html)}');\n`;
-					}
-
-					return str;
-				});
-
-				fs.writeFileSync(entrySrc, content);
-
-				entry[entryName] = entrySrc;
-
-				// eslint-disable-next-line require-atomic-updates
-				processes[HTML][entryName] = entrySrc;
-			}
-
-			return entry;
-		});
+		.reduce(entryReducer);
 
 	// Move HTML tasks to the end of the build queue
 	processes.push(processes[HTML]);
 	processes.splice(HTML, 1);
-
-	// Remove redundant process
-	$C(processes).remove((obj, i) => i >= buildIterator.length && !$C(obj).length());
 
 	const res = {
 		entry,
@@ -324,6 +125,249 @@ async function buildProjectGraph() {
 	console.log('The project graph is initialized');
 
 	return res;
+
+	/**
+	 * Reducer to create an entry point object
+	 */
+	async function entryReducer(entry, list, name) {
+		// JS / TS
+
+		const
+			componentsToIgnore = /^[iv]-/,
+			cursor = isStandalone(name) ? STANDALONE : RUNTIME;
+
+		const
+			webpackRuntime = "require('core/prelude/webpack');";
+
+		let
+			taskProcess = processes[cursor];
+
+		{
+			const
+				entrySrc = path.join(tmpEntries, `${name}.js`);
+
+			const content = await $C(list).async.to('').reduce(async (str, {name}) => {
+				const
+					block = blockMap.get(name),
+					logic = block && await block.logic;
+
+				if (block) {
+					$C(block.libs).forEach((el) => str += `require('${el}');\n`);
+				}
+
+				const needRequireAsLogic = block ?
+					logic :
+					/^$|^\.(?:js|ts)(?:\?|$)/.test(path.extname(name));
+
+				if (needRequireAsLogic) {
+					let
+						entry;
+
+					if (logic) {
+						entry = logic;
+
+					} else if (resolve.isNodeModule(name)) {
+						entry = name;
+
+					} else {
+						entry = path.resolve(tmpEntries, '../', name);
+					}
+
+					str += `require('${getEntryPath(entry)}');\n`;
+				}
+
+				return str;
+			});
+
+			fs.writeFileSync(entrySrc, content);
+			entry[name] = entrySrc;
+			taskProcess[name] = entrySrc;
+		}
+
+		// TEMPLATES
+
+		{
+			const
+				entryName = `${name}_tpl`,
+				entrySrc = path.join(tmpEntries, `${name}.ss.js`);
+
+			const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+				const
+					block = blockMap.get(name),
+					tpl = block && await block.tpl;
+
+				if (!isParent && tpl && !componentsToIgnore.test(name)) {
+					const entry = getEntryPath(tpl);
+					str += `Object.assign(TPLS, require('./${entry}'));\n`;
+				}
+
+				return str;
+			});
+
+			fs.writeFileSync(
+				entrySrc,
+
+				[
+					webpackRuntime,
+					'window.TPLS = window.TPLS || Object.create(null);',
+					content
+				].join('\n')
+			);
+
+			entry[entryName] = entrySrc;
+			taskProcess[entryName] = entrySrc;
+		}
+
+		taskProcess = processes[buildIterator];
+
+		const canAddMoreProcess =
+			cursor !== STANDALONE &&
+			MAX_PROCESS > buildIterator &&
+			$C(taskProcess).length() >= MAX_TASKS_PER_ONE_PROCESS;
+
+		if (canAddMoreProcess) {
+			taskProcess = {};
+			processes.push(taskProcess);
+			buildIterator++;
+		}
+
+		// CSS
+
+		{
+			const
+				entryName = `${name}_style`,
+				stylSrc = path.join(tmpEntries, `${name}.styl`);
+
+			const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+				const
+					block = blockMap.get(name),
+					styles = block && await block.styles;
+
+				const needRequireAsStyles = block ?
+					!isParent && styles && styles.length && !componentsToIgnore.test(name) :
+					/^\.(?:styl|css)(?:\?|$)/.test(path.extname(name));
+
+				if (needRequireAsStyles) {
+					const
+						getImport = (filePath) => `@import "${getEntryPath(filePath)}"\n`;
+
+					if (block) {
+						$C(styles).forEach((filePath) => {
+							str += getImport(filePath);
+						});
+
+					} else {
+						str += getImport(name);
+					}
+
+					if (!needLoadStylesAsJS) {
+						const
+							normalizedName = path.basename(name, path.extname(name));
+
+						if (/^[bp]-/.test(normalizedName)) {
+							str +=
+								`
+.${normalizedName}
+	extends($${camelize(normalizedName)})
+
+`;
+						}
+					}
+				}
+
+				return str;
+			});
+
+			let
+				entrySrc;
+
+			if (needLoadStylesAsJS) {
+				entrySrc = path.join(tmpEntries, `${name}.styl.js`);
+				fs.writeFileSync(stylSrc, content);
+				fs.writeFileSync(entrySrc, [webpackRuntime, `require('${stylSrc}');`].join('\n'));
+
+			} else {
+				entrySrc = stylSrc;
+				fs.writeFileSync(entrySrc, [content, 'generateImgClasses()'].join('\n'));
+			}
+
+			entry[entryName] = entrySrc;
+			taskProcess[entryName] = entrySrc;
+		}
+
+		// HTML
+
+		{
+			const
+				entryName = `${name}_view`,
+				entrySrc = path.join(tmpEntries, `${entryName}.html.js`);
+
+			const content = await $C(list).async.to('').reduce(async (str, {name}) => {
+				const
+					block = blockMap.get(name),
+					html = block && await block.etpl;
+
+				if (html && !componentsToIgnore.test(name)) {
+					str += [webpackRuntime, `require('./${getEntryPath(html)}');\n`].join('\n');
+				}
+
+				return str;
+			});
+
+			fs.writeFileSync(entrySrc, content);
+
+			entry[entryName] = entrySrc;
+
+			// eslint-disable-next-line require-atomic-updates
+			processes[HTML][entryName] = entrySrc;
+		}
+
+		return entry;
+	}
+
+	/**
+	 * Loads the dependency graph from a cache
+	 */
+	function loadFromCache() {
+		const
+			timeout = (1).minute();
+
+		let
+			total = 0;
+
+		return new Promise((r) => {
+			const delay = 500;
+
+			const f = () => {
+				// Sometimes we can be caught in the situation when one of the multiple processes writes something
+				// to the cache file and it breaks the cache for a moment.
+				// To avoid this, we can sleep a little and try again.
+				setTimeout(async () => {
+					try {
+						const
+							graph = fs.readJSONSync(graphCacheFile);
+
+						r({
+							...graph,
+							blockMap: await block.getAll()
+						});
+
+					} catch (err) {
+						total += delay;
+
+						if (total > timeout) {
+							build.buildGraphFromCache = false;
+							return buildProjectGraph();
+						}
+
+						f();
+					}
+				}, delay);
+			};
+
+			f();
+		});
+	}
 
 	/**
 	 * Returns the specified path relative to the entry folder
