@@ -24,7 +24,7 @@ const
  *
  * @returns {!Promise<Playwright.JSHandle>}
  */
-async function initRouter(page, engineName = 'inMemoryRouterEngine', initialRoute = undefined) {
+async function initRouter(page, engineName = 'historyApiRouterEngine', initialRoute = undefined) {
 	await (await h.component.getRoot(page)).evaluate((ctx) => ctx.router?.clear());
 
 	await page.evaluate(([engineName, initialRoute]) => {
