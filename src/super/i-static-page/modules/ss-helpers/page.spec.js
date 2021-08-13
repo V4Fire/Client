@@ -80,6 +80,8 @@ PATH['std_style'] = 'std_style.css';
 PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
 PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
 PATH['p-v4-components-demo_style'] = 'p-v4-components-demo_style.css';
+PATH['std_view'] = 'std_view.js';
+PATH['p-v4-components-demo_view'] = 'p-v4-components-demo_view.js';
 
 
 if ('std_style' in PATH) {
@@ -108,9 +110,8 @@ if ('std_style' in PATH) {
 function $__RENDER_ROOT() {
 \t
 (function () {
-\tvar el = document.createElement('div');
-\tel.setAttribute('data-root-component', 'p-v4-components-demo');
-\tel.setAttribute('data-root-component-params', '{"data":{}}');
+\tvar el = document.createElement('main');
+\tel.setAttribute('data-foo', 'bla');
 \tel.setAttribute('class', 'i-static-page p-v4-components-demo');
 \tdocument.body.appendChild(el);
 })();
