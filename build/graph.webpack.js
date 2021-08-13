@@ -221,6 +221,7 @@ async function buildProjectGraph() {
 		taskProcess = processes[buildIterator];
 
 		const canAddMoreProcess =
+			cursor !== STANDALONE &&
 			MAX_PROCESS > buildIterator &&
 			$C(taskProcess).length() >= MAX_TASKS_PER_ONE_PROCESS;
 
