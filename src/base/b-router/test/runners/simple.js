@@ -20,11 +20,11 @@ module.exports = (page) => {
 	let
 		root;
 
-	beforeAll(async () => {
-		root = await initRouter(page);
-	});
-
 	describe('b-router simple using', () => {
+		beforeEach(async () => {
+			root = await initRouter(page);
+		});
+
 		it('checking the root', async () => {
 			expect(await root.evaluate((ctx) => ctx.meta.params.root)).toBe(true);
 		});
