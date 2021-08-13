@@ -104,14 +104,14 @@ export default function createRouter(ctx: bRouter): Router {
 		},
 
 		push(route: string, params?: TransitionParams): Promise<void> {
-			const
+			let
 				newRoute = getRoute(route, ctx.routes);
 
 			if (newRoute == null) {
 				return Promise.reject();
 			}
 
-			Object.mixin(true, {}, newRoute, params);
+			newRoute = Object.mixin(true, {}, newRoute, params);
 
 			if (historyLogPointer === undefined) {
 				historyLog = [newRoute];
@@ -131,14 +131,14 @@ export default function createRouter(ctx: bRouter): Router {
 		},
 
 		replace(route: string, params?: TransitionParams): Promise<void> {
-			const
+			let
 				newRoute = getRoute(route, ctx.routes);
 
 			if (newRoute == null) {
 				return Promise.reject();
 			}
 
-			Object.mixin(true, {}, newRoute, params);
+			newRoute = Object.mixin(true, {}, newRoute, params);
 
 			if (historyLogPointer === undefined) {
 				historyLog = [newRoute];
