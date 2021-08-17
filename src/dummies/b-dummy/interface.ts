@@ -17,7 +17,7 @@ import type * as session from 'core/session';
 import type updateOn from 'core/component/directives/update-on/engines';
 import type iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
-import type InMemoryRouterEngine from 'core/router/engines/memory';
+import type InMemoryRouterEngine from 'core/router/engines/in-memory';
 import type HistoryApiRouterEngine from 'core/router/engines/browser.history';
 
 export interface Directives {
