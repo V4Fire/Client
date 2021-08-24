@@ -183,7 +183,7 @@ export default class Factory {
 		/*
 		 * Immediate load every image except the `broken` image
 		 */
-		if (type !== 'broken') {
+		if (type !== 'broken' && !selfOptions.lazy) {
 			imgNode[INIT_LOAD]();
 		}
 

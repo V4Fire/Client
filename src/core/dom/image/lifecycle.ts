@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { memoize } from 'core/promise/sync';
 import type ImageLoader from 'core/dom/image/loader';
+import type { InViewAdapter } from 'core/dom/in-view';
 
 import {
 
@@ -16,6 +18,7 @@ import {
 	IS_LOADED,
 	INIT_LOAD,
 	IS_LOADING,
+	SHADOW_MAIN,
 	ID
 
 } from 'core/dom/image';
@@ -24,6 +27,18 @@ import {
  * Helper class that provides API to work with an image lifecycle
  */
 export default class Lifecycle {
+	/** @see [[InViewAdapter]] */
+	protected static get inView(): Promise<InViewAdapter> {
+		if (this.inViewStore) {
+			return this.inViewStore;
+		}
+
+		return this.inViewStore = memoize('core/dom/in-view', () => import('core/dom/in-view')).then(({inViewFactory}) => inViewFactory());
+	}
+
+	/** @see [[InViewAdapter]] */
+	protected static inViewStore?: Promise<InViewAdapter>;
+
 	/**
 	 * Parent class
 	 */
@@ -53,7 +68,12 @@ export default class Lifecycle {
 			this.initPlaceholderImage(el, 'preview');
 		}
 
-		this.initMain(el);
+		if (mainShadowState?.mainOptions.lazy) {
+			this.initLazyMain(el);
+
+		} else {
+			this.initMain(el);
+		}
 	}
 
 	/**
@@ -61,7 +81,8 @@ export default class Lifecycle {
 	 * @param el
 	 */
 	protected initMain(el: ImageNode): void {
-		const mainShadowState = this.parent.getShadowStateByType(el, 'main');
+		const
+			mainShadowState = this.parent.getShadowStateByType(el, 'main');
 
 		if (mainShadowState == null) {
 			return;
@@ -71,10 +92,15 @@ export default class Lifecycle {
 			this.onMainImageLoad(el);
 
 		} else {
+
+			if (mainShadowState.mainOptions.lazy) {
+				mainShadowState.imgNode[INIT_LOAD]();
+			}
+
 			const
 				$a = mainShadowState.mainOptions.ctx?.unsafe.$async;
 
-			if ($a) {
+			if ($a != null) {
 				mainShadowState.loadPromise = $a.promise(mainShadowState.imgNode.init, {group: '[[v-image:main]]', label: el[ID]})
 					.then(this.onMainImageLoad.bind(this, el))
 					.catch(this.onMainImageLoadError.bind(this, el));
@@ -85,6 +111,36 @@ export default class Lifecycle {
 					.catch(this.onMainImageLoadError.bind(this, el));
 			}
 		}
+	}
+
+	/**
+	 * Initializes the main image lazily
+	 * @param el
+	 */
+	protected initLazyMain(el: ImageNode): void {
+		const wrapIntoAsyncIfNeeded = (pr) => {
+			const
+				state = this.parent.getShadowStateByType(el, 'main'),
+				ctx = state?.mainOptions.ctx;
+
+			if (ctx) {
+				const
+					{async} = ctx.unsafe;
+
+				return el[SHADOW_MAIN].lazyPromise = async.promise(pr, {group: '[[v-image:main:lazy]]', label: el[ID]});
+			}
+
+			return pr;
+		};
+
+		wrapIntoAsyncIfNeeded(Lifecycle.inView.then((inView) => {
+			inView.observe(el, {
+				threshold: 0.0001,
+				onEnter: () => this.initMain(el),
+				once: true
+			});
+
+		})).catch(stderr);
 	}
 
 	/**
@@ -119,7 +175,7 @@ export default class Lifecycle {
 			imgNode[INIT_LOAD]!();
 		}
 
-		if (mainOptions.ctx) {
+		if (mainOptions.ctx != null) {
 			shadowState.loadPromise = mainOptions.ctx.unsafe.$async.promise(
 				imgNode.init,
 
@@ -144,7 +200,8 @@ export default class Lifecycle {
 	protected trySetPlaceholderImage(el: ImageNode, type: ImagePlaceholderType): void {
 		const
 			shadowState = this.parent.getShadowStateByType(el, type),
-			mainShadowState = this.parent.getShadowStateByType(el, 'main');
+			mainShadowState = this.parent.getShadowStateByType(el, 'main'),
+			imgNode = mainShadowState?.imgNode;
 
 		if (shadowState == null || mainShadowState == null) {
 			return;
@@ -153,7 +210,11 @@ export default class Lifecycle {
 		const {selfOptions} = shadowState;
 		selfOptions.load?.(el);
 
-		if (mainShadowState.imgNode.complete === true && mainShadowState.isFailed === false) {
+		if (
+			mainShadowState.imgNode.complete === true &&
+			mainShadowState.isFailed === false &&
+			imgNode?.[IS_LOADED] === true
+		) {
 			// If the main image is ready – ignore the preview
 			return;
 		}

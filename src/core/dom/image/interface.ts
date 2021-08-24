@@ -6,15 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from 'super/i-block';
+import type iBlock from 'super/i-block/i-block';
 
 import {
 
 	SHADOW_PREVIEW_SYMBOL,
 	SHADOW_BROKEN_SYMBOL,
 	SHADOW_MAIN_SYMBOL,
+
 	ID_SYMBOL,
 	IS_LOADED_SYMBOL,
+
 	INIT_LOAD_SYMBOL,
 	IS_LOADING_SYMBOL
 
@@ -144,6 +146,16 @@ export interface ImageOptions {
 	ctx?: iBlock;
 
 	/**
+	 * If `true` - the image will be loaded lazily (only when the user scrolls to it).
+	 *
+	 * Make sure you are not using `lazy: true` without the context provided,
+	 * cause this can lead to unexpected results.
+	 *
+	 * @default `false`
+	 */
+	lazy?: boolean;
+
+	/**
 	 * Will be called after successful loading (`img.onload`)
 	 * @param el
 	 */
@@ -191,16 +203,7 @@ export interface ImageBackgroundOptions {
 	ratio?: number;
 }
 
-export interface ImagePlaceholderOptions extends ImageOptions {
-	/** @override */
-	preview?: never;
-
-	/** @override */
-	broken?: never;
-
-	/** @override */
-	ctx?: never;
-}
+export type ImagePlaceholderOptions = Omit<ImageOptions, 'preview' | 'broken' | 'ctx'>;
 
 export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions {
 	/**
@@ -284,6 +287,11 @@ export interface ShadowElState {
 	 * Image loading promise
 	 */
 	loadPromise?: Promise<unknown>;
+
+	/**
+	 * Image lazy initialization promise
+	 */
+	lazyPromise?: Promise<unknown>;
 }
 
 /**
