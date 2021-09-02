@@ -12,7 +12,7 @@
 
 - template index() extends ['i-input'].index
 	- nativeInputType = "'checkbox'"
-	- nativeInputModel = undefined
+	- nativeInputValue = undefined
 
 	- block rootAttrs
 		- super

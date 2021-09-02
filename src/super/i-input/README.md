@@ -441,7 +441,7 @@ You can also manage a type of the created tag and other options by using the pre
 ```
 - nativeInputTag = 'input'
 - nativeInputType = "'hidden'"
-- nativeInputModel = 'valueStore'
+- nativeInputValue = 'valueStore'
 
 /**
  * Generates a native form input
@@ -451,7 +451,7 @@ You can also manage a type of the created tag and other options by using the pre
  *   *) [elName='input'] - element name of the generated tag
  *
  *   *) [ref='input'] - value of the `ref` attribute
- *   *) [model=nativeInputModel] - value of the `v-model` attribute
+ *   *) [value=nativeInputValue] - value of the `:value` attribute
  *
  *   *) [id='id'] - value of the `:id` attribute
  *   *) [name='name'] - value of the `:name` attribute
@@ -471,18 +471,19 @@ You can also manage a type of the created tag and other options by using the pre
 
   < ${@tag || nativeInputTag}.&__${@elName || 'input'} &
     ref = ${@ref || 'input'} |
-    v-model = ${@model || nativeInputModel} |
 
+    :value = ${@value || nativeInputValue} |
     :id = ${@id || 'id'} |
     :name = ${@name || 'name'} |
     :form = ${@form || 'form'} |
     :type = ${@type} || tmp.attrs.type || ${nativeInputType} |
 
     :autofocus = ${@autofocus || 'autofocus'} |
-    :tabIndex = ${@tabIndex || 'tabIndex'} |
+    :tabindex = ${@tabIndex || 'tabIndex'} |
 
     @focus = ${@focusHandler || 'onFocus'} |
     @blur = ${@blurHandler || 'onBlur'} |
+    @input = (e) => field.set('value', e.target.value) |
 
     :v-attrs = tmp.attrs |
     ${Object.assign({}, attrs, @attrs)|!html}

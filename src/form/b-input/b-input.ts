@@ -298,14 +298,18 @@ export default class bInput extends iInputText {
 
 	/**
 	 * Handler: manual editing of a component text value
+	 *
+	 * @param e
 	 * @emits `actionChange(value: this['Value'])`
 	 */
-	protected onEdit(): void {
+	protected onEdit(e: InputEvent): void {
 		if (this.compiledMask != null) {
 			return;
 		}
 
+		this.field.set('value', (<CanUndef<HTMLInputElement>>e.target)?.value);
 		this.field.set('textStore', this.value);
+
 		this.emit('actionChange', this.value);
 	}
 

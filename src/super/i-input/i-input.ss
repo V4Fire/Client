@@ -15,7 +15,7 @@
 
 	- nativeInputTag = 'input'
 	- nativeInputType = "'hidden'"
-	- nativeInputModel = 'valueStore'
+	- nativeInputValue = 'valueStore'
 
 	- block headHelpers
 		- super
@@ -28,7 +28,7 @@
 		 *   *) [elName='input'] - element name of the generated tag
 		 *
 		 *   *) [ref='input'] - value of the `ref` attribute
-		 *   *) [model=nativeInputModel] - value of the `v-model` attribute
+		 *   *) [value=nativeInputValue] - value of the `:value` attribute
 		 *
 		 *   *) [id='id'] - value of the `:id` attribute
 		 *   *) [name='name'] - value of the `:name` attribute
@@ -50,8 +50,8 @@
 
 			< ${@tag || nativeInputTag}.&__${@elName || 'input'} &
 				ref = ${@ref || 'input'} |
-				v-model = ${@model || nativeInputModel} |
 
+				:value = ${@value || nativeInputValue} |
 				:id = ${@id || 'id'} |
 				:name = ${@name || 'name'} |
 				:form = ${@form || 'form'} |
@@ -62,6 +62,7 @@
 
 				@focus = ${@focusHandler || 'onFocus'} |
 				@blur = ${@blurHandler || 'onBlur'} |
+				@input = (e) => field.set('value', e.target.value) |
 
 				:v-attrs = tmp.attrs |
 				${Object.assign({}, attrs, @attrs)|!html}
