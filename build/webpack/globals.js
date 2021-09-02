@@ -17,7 +17,7 @@ const
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
-	graph = include('build/graph.webpack');
+	graph = include('build/graph');
 
 const
 	runtime = config.runtime(),
@@ -39,9 +39,9 @@ module.exports = {
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 	CSP_NONCE_STORE: s(config.csp.nonceStore()),
 
-	COMPONENTS: graph.then(({blockMap}) => {
-		if (Object.isMap(blockMap)) {
-			return $C(blockMap).to({}).reduce((res, el, key) => {
+	COMPONENTS: graph.then(({components}) => {
+		if (Object.isMap(components)) {
+			return $C(components).to({}).reduce((res, el, key) => {
 				res[key] = {
 					dependencies: JSON.stringify(el.dependencies)
 				};
@@ -54,9 +54,9 @@ module.exports = {
 	}),
 
 	BLOCK_NAMES: runtime.blockNames ?
-		graph.then(({blockMap}) => {
-			if (Object.isMap(blockMap)) {
-				const blockNames = Array.from(blockMap.keys()).filter((el) => /^b-/.test(el));
+		graph.then(({components}) => {
+			if (Object.isMap(components)) {
+				const blockNames = Array.from(components.keys()).filter((el) => /^b-/.test(el));
 				return s(blockNames);
 			}
 		}) :

@@ -14,7 +14,7 @@ const
 
 const
 	path = require('upath'),
-	build = include('build/graph.webpack');
+	build = include('build/graph');
 
 const
 	{webpack} = config,

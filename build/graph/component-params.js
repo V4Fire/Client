@@ -9,24 +9,32 @@
  */
 
 const
-	$C = require('collection.js'),
+	$C = require('collection.js');
+
+const
 	escaper = require('escaper'),
-	camelize = require('camelize'),
+	camelize = require('camelize');
+
+const
 	fs = require('fs');
 
 const {
 	componentRgxp,
 	componentClassRgxp,
+
 	propRgxp,
 	genericRgxp,
 	extendsRgxp,
+
 	componentFiles
-} = include('build/snakeskin/const');
+} = include('build/components/const');
 
-const
-	componentsMap = module.exports;
+/**
+ * Map with component runtime parameters
+ */
+const componentParams = module.exports;
 
-Object.assign(componentsMap, {
+Object.assign(componentParams, {
 	getParentParameters,
 
 	/**
@@ -62,7 +70,9 @@ Object.assign(componentsMap, {
  */
 $C(componentFiles).forEach((el) => {
 	const
-		escapedFragments = [],
+		escapedFragments = [];
+
+	const
 		file = escaper.replace(fs.readFileSync(el).toString(), escapedFragments),
 		componentClass = componentClassRgxp.exec(file);
 
@@ -81,16 +91,16 @@ $C(componentFiles).forEach((el) => {
 		component = componentClass[2].replace(genericRgxp, ''),
 		parent = componentClass[1].split(extendsRgxp).slice(-1)[0].replace(genericRgxp, '');
 
-	componentsMap[component] = componentsMap[component] || {
+	componentParams[component] = componentParams[component] ?? {
 		props: {},
 		parent
 	};
 
 	const
-		obj = componentsMap[component];
+		obj = componentParams[component];
 
 	obj.model = p.model;
-	obj.deprecatedProps = p.deprecatedProps || {};
+	obj.deprecatedProps = p.deprecatedProps ?? {};
 
 	if (p.functional != null) {
 		obj.functional = p.functional;
@@ -111,7 +121,7 @@ $C(componentFiles).forEach((el) => {
 /**
  * Inherit parameters from parent components
  */
-$C(componentsMap).forEach((el, key, data) => {
+$C(componentParams).forEach((el, key, data) => {
 	Object.assign(el, getParentParameters(el));
 
 	const
@@ -141,8 +151,8 @@ function getParentParameters(component) {
 	];
 
 	const
-		res = {},
-		parent = getParentParameters(componentsMap[component.parent]);
+		params = {},
+		parent = getParentParameters(componentParams[component.parent]);
 
 	for (let i = 0; i < fields.length; i++) {
 		const
@@ -157,21 +167,21 @@ function getParentParameters(component) {
 				parentVal = parent[key];
 
 			if (Object.isObject(parentVal)) {
-				res[key] = {...parentVal, ...val};
+				params[key] = {...parentVal, ...val};
 				continue;
 			}
 
 			if (isObj) {
-				res[key] = val;
+				params[key] = val;
 				continue;
 			}
 
-			res[key] = parentVal !== undefined ? parentVal : def;
+			params[key] = parentVal !== undefined ? parentVal : def;
 			continue;
 		}
 
-		res[key] = val;
+		params[key] = val;
 	}
 
-	return res;
+	return params;
 }

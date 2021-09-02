@@ -10,5 +10,3 @@
 
 include('build/snakeskin/filters');
 include('build/snakeskin/default-filters');
-
-module.exports = include('build/snakeskin/components-map');

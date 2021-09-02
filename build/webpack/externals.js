@@ -13,7 +13,7 @@ const
 	config = require('config');
 
 const
-	{STANDALONE} = include('build/graph.webpack');
+	{STANDALONE} = include('build/graph');
 
 const
 	externalList = [],

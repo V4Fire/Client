@@ -17,10 +17,12 @@ const
 	CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const
+	{RUNTIME} = include('build/graph'),
+	{isLayerDep, isLayerCoreDep, isExternalDep} = include('build/const');
+
+const
 	{optimize} = config.webpack,
-	{isLayerDep, isLayerCoreDep, isExternalDep} = include('build/const'),
-	{inherit} = include('build/helpers.webpack'),
-	{RUNTIME} = include('build/graph.webpack');
+	{inherit} = include('build/helpers.webpack');
 
 /**
  * Returns options for `webpack.optimization`

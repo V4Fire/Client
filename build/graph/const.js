@@ -16,7 +16,19 @@ const
 	glob = require('glob');
 
 const
+	{build} = require('config'),
 	{validators, resolve} = require('@pzlr/build-core');
+
+let
+	buildIterator = 0;
+
+exports.HTML = buildIterator++;
+exports.RUNTIME = buildIterator++;
+exports.STANDALONE = buildIterator;
+
+exports.MIN_PROCESS = buildIterator + 1;
+exports.MAX_PROCESS = build.processes > exports.MIN_PROCESS ? build.processes : exports.MIN_PROCESS;
+exports.MAX_TASKS_PER_ONE_PROCESS = 3;
 
 /**
  * RegExp to extract parameters from a @component declaration

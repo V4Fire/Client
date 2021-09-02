@@ -21,24 +21,14 @@ const
 
 const
 	{src, build, webpack} = config,
-	{resolve, entries, block} = require('@pzlr/build-core');
+	{resolve, block, entries} = require('@pzlr/build-core');
+
+const
+	componentParams = include('build/graph/component-params');
 
 const
 	{output, cacheDir, isStandalone} = include('build/helpers.webpack'),
 	{isLayerDep} = include('build/const');
-
-let
-	buildIterator = 0;
-
-const
-	HTML = buildIterator++,
-	RUNTIME = buildIterator++,
-	STANDALONE = buildIterator;
-
-const
-	MIN_PROCESS = buildIterator + 1,
-	MAX_PROCESS = build.processes > MIN_PROCESS ? build.processes : MIN_PROCESS,
-	MAX_TASKS_PER_ONE_PROCESS = 3;
 
 /**
  * The project graph
@@ -56,7 +46,7 @@ const
 	needLoadStylesAsJS = webpack.dynamicPublicPath();
 
 /**
- * Builds the project graph
+ * Builds a project graph
  * @returns {!Promise<{entry, processes, dependencies, blockMap}>}
  */
 async function buildProjectGraph() {
@@ -98,10 +88,10 @@ async function buildProjectGraph() {
 
 	const
 		buildConfig = (await entries.getBuildConfig()).filter((el, key) => !entriesFilter || entriesFilter[key]),
-		blockMap = await block.getAll();
+		components = getComponents;
 
 	const
-		graph = await buildConfig.getUnionEntryPoints({cache: blockMap}),
+		graph = await buildConfig.getUnionEntryPoints({cache: components}),
 		processes = $C(MIN_PROCESS).map(() => ({}));
 
 	// Generate dynamic entries to build with webpack
@@ -116,12 +106,12 @@ async function buildProjectGraph() {
 
 	const res = {
 		entry,
-		blockMap,
+		components,
 		processes,
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
-	fs.writeFileSync(graphCacheFile, JSON.stringify(Object.reject(res, 'blockMap'), undefined, 2));
+	fs.writeFileSync(graphCacheFile, JSON.stringify(Object.reject(res, 'components'), undefined, 2));
 	console.log('The project graph is initialized');
 
 	return res;
@@ -148,14 +138,14 @@ async function buildProjectGraph() {
 
 			const content = await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
-					block = blockMap.get(name),
-					logic = block && await block.logic;
+					component = components.get(name),
+					logic = await component?.logic;
 
-				if (block) {
-					$C(block.libs).forEach((el) => str += `require('${el}');\n`);
+				if (component) {
+					$C(component.libs).forEach((el) => str += `require('${el}');\n`);
 				}
 
-				const needRequireAsLogic = block ?
+				const needRequireAsLogic = component ?
 					logic :
 					/^$|^\.(?:js|ts)(?:\?|$)/.test(path.extname(name));
 
@@ -193,8 +183,8 @@ async function buildProjectGraph() {
 
 			const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
 				const
-					block = blockMap.get(name),
-					tpl = block && await block.tpl;
+					component = components.get(name),
+					tpl = await component?.tpl;
 
 				if (!isParent && tpl && !componentsToIgnore.test(name)) {
 					const entry = getEntryPath(tpl);
@@ -240,10 +230,10 @@ async function buildProjectGraph() {
 
 			const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
 				const
-					block = blockMap.get(name),
-					styles = block && await block.styles;
+					component = components.get(name),
+					styles = await component?.styles;
 
-				const needRequireAsStyles = block ?
+				const needRequireAsStyles = component ?
 					!isParent && styles && styles.length && !componentsToIgnore.test(name) :
 					/^\.(?:styl|css)(?:\?|$)/.test(path.extname(name));
 
@@ -251,7 +241,7 @@ async function buildProjectGraph() {
 					const
 						getImport = (filePath) => `@import "${getEntryPath(filePath)}"\n`;
 
-					if (block) {
+					if (component) {
 						$C(styles).forEach((filePath) => {
 							str += getImport(filePath);
 						});
@@ -304,8 +294,8 @@ async function buildProjectGraph() {
 
 			const content = await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
-					block = blockMap.get(name),
-					html = block && await block.etpl;
+					component = components.get(name),
+					html = await component?.etpl;
 
 				if (html && !componentsToIgnore.test(name)) {
 					str += [webpackRuntime, `require('./${getEntryPath(html)}');\n`].join('\n');
@@ -349,7 +339,7 @@ async function buildProjectGraph() {
 
 						r({
 							...graph,
-							blockMap: await block.getAll()
+							components: await getComponents()
 						});
 
 					} catch (err) {
@@ -367,6 +357,20 @@ async function buildProjectGraph() {
 
 			f();
 		});
+	}
+
+	/**
+	 * Returns a map of all existed components
+	 */
+	async function getComponents() {
+		const
+			components = await block.getAll();
+
+		$C(components).forEach((component, name) => {
+			component.params = componentParams[camelize([name])] ?? {};
+		});
+
+		return components;
 	}
 
 	/**

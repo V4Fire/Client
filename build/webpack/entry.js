@@ -13,7 +13,7 @@ const
 
 const
 	path = require('upath'),
-	graph = include('build/graph.webpack');
+	graph = include('build/graph');
 
 /**
  * Returns an options object of the webpack entry point

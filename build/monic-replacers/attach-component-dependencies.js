@@ -16,7 +16,7 @@ const
 
 const
 	path = require('upath'),
-	graph = include('build/graph.webpack');
+	graph = include('build/graph');
 
 const
 	decls = Object.create(null);
@@ -34,11 +34,11 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	}
 
 	const
-		{blockMap} = await graph;
+		{components} = await graph;
 
 	const
 		ext = path.extname(filePath),
-		component = blockMap.get(path.basename(filePath, ext));
+		component = components.get(path.basename(filePath, ext));
 
 	if (component == null) {
 		return str;
@@ -75,7 +75,7 @@ STATIC_DEPENDENCIES.push({name: '${lib}', load: () => import('${lib}').catch(std
 		}
 
 		const
-			component = blockMap.get(dep),
+			component = components.get(dep),
 			componentPath = path.relative(src.src(), path.dirname(component.index));
 
 		if (component == null) {
@@ -160,7 +160,7 @@ requestAnimationFrame(async () => {
 
 		$C(component.dependencies).forEach((dep) => {
 			deps.add(dep);
-			attachComponentDeps(blockMap.get(dep));
+			attachComponentDeps(components.get(dep));
 		});
 
 		$C(component.libs).forEach((lib) => {
