@@ -21,7 +21,7 @@ const
 	{isV4Prop} = include('build/snakeskin/filters/const');
 
 const
-	componentsTree = include('build/snakeskin/components-tree');
+	componentsMap = include('build/snakeskin/components-map');
 
 const
 	tagFilters = include('build/snakeskin/filters/tag'),
@@ -62,7 +62,7 @@ function tagFilter({name, attrs = {}}) {
 	}
 
 	const
-		component = componentsTree[componentName],
+		component = componentsMap[componentName],
 		props = component ? component.props : Object.create(null);
 
 	const
@@ -167,7 +167,7 @@ function tagNameFilter(tag, attrs = {}, rootTag) {
 
 	const
 		nm = camelize(tag),
-		component = componentsTree[nm];
+		component = componentsMap[nm];
 
 	if (component && !Object.isBoolean(component.functional)) {
 		Object.assign(attrs, {

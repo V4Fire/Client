@@ -9,7 +9,9 @@
  */
 
 const
-	$C = require('collection.js'),
+	$C = require('collection.js');
+
+const
 	path = require('upath'),
 	glob = require('glob');
 
@@ -52,7 +54,7 @@ exports.resources = [resolve.blockSync(), ...resolve.dependencies];
 exports.componentQuery = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
 
 /**
- * List of component file paths
+ * List of component files
  */
 exports.componentFiles = $C(exports.resources)
 	.reduce((arr, el) => arr.concat(glob.sync(path.join(el, exports.componentQuery))), [])

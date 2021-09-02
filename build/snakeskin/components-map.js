@@ -24,9 +24,9 @@ const {
 } = include('build/snakeskin/const');
 
 const
-	componentsTree = module.exports;
+	componentsMap = module.exports;
 
-Object.assign(componentsTree, {
+Object.assign(componentsMap, {
 	getParentParameters,
 
 	/**
@@ -58,7 +58,7 @@ Object.assign(componentsTree, {
 });
 
 /**
- * Load component parameters and build a tree from it
+ * Load component runtime parameters to a map
  */
 $C(componentFiles).forEach((el) => {
 	const
@@ -81,13 +81,13 @@ $C(componentFiles).forEach((el) => {
 		component = componentClass[2].replace(genericRgxp, ''),
 		parent = componentClass[1].split(extendsRgxp).slice(-1)[0].replace(genericRgxp, '');
 
-	componentsTree[component] = componentsTree[component] || {
+	componentsMap[component] = componentsMap[component] || {
 		props: {},
 		parent
 	};
 
 	const
-		obj = componentsTree[component];
+		obj = componentsMap[component];
 
 	obj.model = p.model;
 	obj.deprecatedProps = p.deprecatedProps || {};
@@ -109,9 +109,9 @@ $C(componentFiles).forEach((el) => {
 });
 
 /**
- * Inherit parent parameters
+ * Inherit parameters from parent components
  */
-$C(componentsTree).forEach((el, key, data) => {
+$C(componentsMap).forEach((el, key, data) => {
 	Object.assign(el, getParentParameters(el));
 
 	const
@@ -124,7 +124,7 @@ $C(componentsTree).forEach((el, key, data) => {
 });
 
 /**
- * Return parameters of the specified component
+ * Returns runtime parameters of the specified component
  *
  * @param component - component object
  * @returns {!Object}
@@ -142,7 +142,7 @@ function getParentParameters(component) {
 
 	const
 		res = {},
-		parent = getParentParameters(componentsTree[component.parent]);
+		parent = getParentParameters(componentsMap[component.parent]);
 
 	for (let i = 0; i < fields.length; i++) {
 		const
