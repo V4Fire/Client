@@ -62,7 +62,10 @@ STATIC_DEPENDENCIES.push({name: '${lib}', load: () => import('${lib}').catch(std
 `;
 	});
 
-	await $C([...deps].reverse()).async.forEach(async (dep) => {
+	await $C([...deps].reverse()).async.forEach(forEach);
+	return imports + str;
+
+	async function forEach(dep) {
 		const
 			declFromCache = decls[dep];
 
@@ -108,53 +111,47 @@ requestAnimationFrame(async () => {
 
 	try {
 		${
-			styles
-				.map((src) => {
-					if (src == null) {
-						return '';
-					}
+				styles
+					.map((src) => {
+						if (src == null) {
+							return '';
+						}
 
-					src = path.normalize(src);
-					return `await import(/* webpackPreload: true */ '${src}');`;
-				})
+						src = path.normalize(src);
+						return `await import(/* webpackPreload: true */ '${src}');`;
+					})
 
-				.join('')
-		}
+					.join('')
+			}
 	} catch (err) { stderr(err); }
 });`;
 
 		} catch {}
 
-		try {
-			let
-				src = await component.logic;
+		const deps = [
+			'tpl',
+			'logic'
+		];
 
-			if (src != null) {
-				src = path.normalize(src);
-				decl += `import(/* webpackPreload: true */ '${src}').catch(stderr);`;
-			}
+		for (const dep of deps) {
+			try {
+				let
+					src = await component[dep];
 
-		} catch {}
+				if (src != null) {
+					src = path.normalize(src);
+					decl += `import(/* webpackPreload: true */ '${src}').catch(stderr);`;
+				}
 
-		try {
-			let
-				src = await component.tpl;
-
-			if (src != null) {
-				src = path.normalize(src);
-				decl += `import(/* webpackPreload: true */ '${src}').catch(stderr);`;
-			}
-
-		} catch {}
+			} catch {}
+		}
 
 		if (decls[dep] == null) {
 			decls[dep] = decl;
 		}
 
 		imports += decl;
-	});
-
-	return imports + str;
+	}
 
 	function attachComponentDeps(component) {
 		if (component == null) {
