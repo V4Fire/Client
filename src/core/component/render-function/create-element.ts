@@ -9,6 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import * as c from 'core/component/const';
 
+import { attachTemplatesToMeta } from 'core/component/meta';
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
@@ -134,10 +135,15 @@ export function wrapCreateElement(
 			const
 				{componentName} = component;
 
-			const
-				renderObject = c.componentTemplates[componentName];
+			let
+				renderObj = c.componentTemplates[componentName];
 
-			if (renderObject == null) {
+			if (renderObj == null) {
+				attachTemplatesToMeta(component, TPLS[componentName]);
+				renderObj = c.componentTemplates[componentName];
+			}
+
+			if (renderObj == null) {
 				return createElement();
 			}
 
@@ -181,7 +187,7 @@ export function wrapCreateElement(
 
 			const createComponentVNode = () => {
 				const
-					vnode = execRenderObject(renderObject, fakeCtx);
+					vnode = execRenderObject(renderObj!, fakeCtx);
 
 				if (Object.isPromise(vnode)) {
 					return vnode.then((vnode) => initComponentVNode(<any>vnode, fakeCtx, renderCtx));
