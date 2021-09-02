@@ -1008,6 +1008,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
+	 * Handler: manual editing of a component text value
+	 */
+	protected onEdit(e: InputEvent): void {
+		this.field.set('value', (<CanUndef<HTMLInputElement>>e.target)?.value);
+	}
+
+	/**
 	 * Handler: the component in focus
 	 */
 	@p({replace: false})

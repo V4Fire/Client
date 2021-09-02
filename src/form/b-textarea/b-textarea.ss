@@ -18,7 +18,7 @@
 		- super
 
 		- block wrapper
-			+= self.nativeInput({attrs: {'@input': 'onEdit'}})
+			+= self.nativeInput()
 
 	- block helpers
 		- super

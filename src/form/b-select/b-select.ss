@@ -89,11 +89,11 @@
 				- block input
 					< _.&__cell.&__input-wrapper
 						< template v-if = native
-							+= self.nativeInput({tag: 'select', model: 'undefined', attrs: {'@change': 'onNativeChange'}})
+							+= self.nativeInput({tag: 'select', value: 'undefined', attrs: {'@change': 'onNativeChange'}})
 								+= self.items('option')
 
 						< template v-else
-							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
+							+= self.nativeInput({value: 'textStore', attrs: {'@input': 'onSearchInput'}})
 
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')

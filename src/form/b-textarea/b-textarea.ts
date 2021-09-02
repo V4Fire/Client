@@ -407,10 +407,11 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Handler: manual editing of a component text value
 	 * @emits `actionChange(value: this['Value'])`
 	 */
-	protected onEdit(): void {
+	protected onEdit(e: InputEvent): void {
+		super.onEdit(e);
+
 		if (this.compiledMask != null) {
 			return;
 		}

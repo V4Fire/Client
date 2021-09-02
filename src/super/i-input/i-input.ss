@@ -40,6 +40,7 @@
 		 *
 		 *   *) [focusHandler] - value of the `@focus` attribute
 		 *   *) [blurHandler] - value of the `@blur` attribute
+		 *   *) [editHandler] - value of the `@input` attribute
 		 *
 		 *   *) [attrs] - dictionary with additional attributes
 		 *
@@ -62,7 +63,7 @@
 
 				@focus = ${@focusHandler || 'onFocus'} |
 				@blur = ${@blurHandler || 'onBlur'} |
-				@input = (e) => field.set('value', e.target.value) |
+				@input = ${@editHandler || 'onEdit'} |
 
 				:v-attrs = tmp.attrs |
 				${Object.assign({}, attrs, @attrs)|!html}

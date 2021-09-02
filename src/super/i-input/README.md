@@ -463,6 +463,7 @@ You can also manage a type of the created tag and other options by using the pre
  *
  *   *) [focusHandler] - value of the `@focus` attribute
  *   *) [blurHandler] - value of the `@blur` attribute
+ *   *) [editHandler] - value of the `@input` attribute
  *
  *   *) [attrs] - dictionary with additional attributes
  */
@@ -483,7 +484,7 @@ You can also manage a type of the created tag and other options by using the pre
 
     @focus = ${@focusHandler || 'onFocus'} |
     @blur = ${@blurHandler || 'onBlur'} |
-    @input = (e) => field.set('value', e.target.value) |
+    @input = ${@editHandler || 'onEdit'} |
 
     :v-attrs = tmp.attrs |
     ${Object.assign({}, attrs, @attrs)|!html}

@@ -952,6 +952,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onSearchInput(e: InputEvent): void {
+		super.onEdit(e);
 		on.searchInput(this, e);
 	}
 
