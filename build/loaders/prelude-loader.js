@@ -44,10 +44,6 @@ module.exports = function preludeLoader(str) {
 		str = str.replace(replaceRgxp, (str) => {
 			str = str.replace(normalizeRgxp, '$1.');
 
-			if (/Any/.test(str)) {
-				console.log(str, tokens.get(str));
-			}
-
 			let
 				token = tokens.get(str);
 
