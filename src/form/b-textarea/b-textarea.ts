@@ -406,10 +406,7 @@ export default class bTextarea extends iInputText {
 		this.field.set('valueStore', this.text);
 	}
 
-	/**
-	 * @emits `actionChange(value: this['Value'])`
-	 */
-	protected onEdit(e: InputEvent): void {
+	protected override onEdit(e: InputEvent): void {
 		super.onEdit(e);
 
 		if (this.compiledMask != null) {
