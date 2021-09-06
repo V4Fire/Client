@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.3.4 (2021-09-06)
+
+#### :bug: Bug Fix
+
+* Now `fatHTML` can be provided as a boolean `config`
+
 ## v3.3.3 (2021-08-13)
 
 #### :bug: Bug Fix

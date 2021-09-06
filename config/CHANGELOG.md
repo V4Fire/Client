@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.3.4 (2021-09-06)
+
+#### :bug: Bug Fix
+
+* Now `fatHTML` can be provided as a boolean
+
 ## v3.3.0 (2021-08-12)
 
 #### :rocket: New Feature
