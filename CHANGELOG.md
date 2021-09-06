@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now `fatHTML` can be provided as a boolean `config`
 
+#### :house: Internal
+
+* Updated dependencies: `webpack@4.4.2`
+
 ## v3.3.3 (2021-08-13)
 
 #### :bug: Bug Fix
