@@ -843,7 +843,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 			const validation = validator.call(
 				this,
-				Object.assign(isPlainObject ? decl[key] : (isArray && decl[1]) ?? {}, params)
+				Object.assign((isPlainObject ? decl[key] : (isArray && decl[1])) ?? {}, params)
 			);
 
 			if (Object.isPromise(validation)) {
