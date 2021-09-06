@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Updated dependencies: `webpack@4.4.2`
+* Updated dependencies: `typescript@4.4.2`
 
 ## v3.3.3 (2021-08-13)
 
