@@ -378,7 +378,7 @@ async function buildProjectGraph() {
 			components = await block.getAll();
 
 		$C(components).forEach((component, name) => {
-			component.params = componentParams[camelize([name])] ?? {};
+			component.params = componentParams[camelize(name)] ?? {};
 		});
 
 		return components;

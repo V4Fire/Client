@@ -51,15 +51,12 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	attachComponentDeps(component);
 
 	let imports = `
-globalThis.STATIC_DEPENDENCIES = globalThis.STATIC_DEPENDENCIES ?? {};
-const STATIC_DEPENDENCIES = globalThis.STATIC_DEPENDENCIES['${component.name}'] = [];
+let STATIC_DEPENDENCIES = require('config').default.staticDependencies;
+STATIC_DEPENDENCIES = STATIC_DEPENDENCIES['${component.name}'] = STATIC_DEPENDENCIES['${component.name}'] || [];
 `;
 
 	$C([...libs].reverse()).forEach((lib) => {
-		imports += `
-import(/* webpackPreload: true */ '${lib}').catch(stderr);
-STATIC_DEPENDENCIES.push({name: '${lib}', load: () => import('${lib}').catch(stderr)});
-`;
+		imports += `require('${lib}')`;
 	});
 
 	await $C([...deps].reverse()).async.forEach(forEach);
@@ -82,9 +79,18 @@ STATIC_DEPENDENCIES.push({name: '${lib}', load: () => import('${lib}').catch(std
 			return;
 		}
 
-		let decl = `STATIC_DEPENDENCIES.push({name: '${componentPath}', load: () => {
-			return import('${componentPath}');
-		}});`;
+		const
+			p = component.params,
+			needLoadDepsStatically = p.flyweight === true || p.functional != null && p.functional !== false;
+
+		let
+			decl = '';
+
+		if (needLoadDepsStatically) {
+			decl += `STATIC_DEPENDENCIES.push({name: '${componentPath}', load: () => {
+				return import('${componentPath}');
+			}});`;
+		}
 
 		try {
 			const
@@ -118,6 +124,11 @@ requestAnimationFrame(async () => {
 						}
 
 						src = path.normalize(src);
+
+						if (needLoadDepsStatically) {
+							return `return('${src}');`;
+						}
+
 						return `await import(/* webpackPreload: true */ '${src}');`;
 					})
 
@@ -140,7 +151,13 @@ requestAnimationFrame(async () => {
 
 				if (src != null) {
 					src = path.normalize(src);
-					decl += `import(/* webpackPreload: true */ '${src}').catch(stderr);`;
+
+					if (needLoadDepsStatically) {
+						decl += `require('${src}');`;
+
+					} else {
+						decl += `import(/* webpackPreload: true */ '${src}').catch(stderr);`;
+					}
 				}
 
 			} catch {}
