@@ -24,7 +24,7 @@ const {
 	config: {dependencies, super: superLink}
 } = require('@pzlr/build-core');
 
-const extensions = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
+const extensions = $C(include('build/webpack/resolve').extensions).to([]).reduce((list, ext) => {
 	list.push(ext);
 	list.push(`/index${ext}`);
 	return list;

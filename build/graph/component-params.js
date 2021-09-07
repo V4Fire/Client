@@ -27,7 +27,7 @@ const {
 	extendsRgxp,
 
 	componentFiles
-} = include('build/components/const');
+} = include('build/graph/const');
 
 /**
  * Map with component runtime parameters
