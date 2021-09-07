@@ -1,5 +1,5 @@
 {
-  "hash": "28cf89230552094ae2ea6e6715a150da704bb702164b70aac4472cc991200967",
+  "hash": "5ba26a3b72e7b25abd0c5518213e679635d21b3a5548175f22e95b230429ff45",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -44,8 +44,7 @@
             "parent": "i-data",
             "dependencies": [
               "b-icon",
-              "b-progress-icon",
-              "b-input"
+              "b-progress-icon"
             ],
             "libs": []
           },
@@ -53,8 +52,7 @@
           "parent": "i-data",
           "dependencies": [
             "b-icon",
-            "b-progress-icon",
-            "b-input"
+            "b-progress-icon"
           ],
           "libs": [],
           "resolvedLibs": {
@@ -1964,12 +1962,84 @@
           "declaration": {
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
-            "dependencies": [],
+            "dependencies": [
+              "b-v4-component-demo",
+              "p-v4-dynamic-page-1",
+              "p-v4-dynamic-page-2",
+              "p-v4-dynamic-page-3",
+              "b-remote-provider",
+              "b-router",
+              "b-dynamic-page",
+              "b-tree",
+              "b-list",
+              "b-form",
+              "b-button",
+              "b-checkbox",
+              "b-radio-button",
+              "b-input-hidden",
+              "b-input",
+              "b-textarea",
+              "b-select",
+              "b-select-date",
+              "b-virtual-scroll",
+              "b-window",
+              "b-sidebar",
+              "b-slider",
+              "b-bottom-slide",
+              "b-icon",
+              "b-image",
+              "b-dummy",
+              "b-dummy-text",
+              "b-dummy-async-render",
+              "b-dummy-module-loader",
+              "b-dummy-lfc",
+              "b-dummy-watch",
+              "b-dummy-sync",
+              "b-dummy-state",
+              "b-dummy-control-list",
+              "b-dummy-decorators"
+            ],
             "libs": []
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
-          "dependencies": [],
+          "dependencies": [
+            "b-v4-component-demo",
+            "p-v4-dynamic-page-1",
+            "p-v4-dynamic-page-2",
+            "p-v4-dynamic-page-3",
+            "b-remote-provider",
+            "b-router",
+            "b-dynamic-page",
+            "b-tree",
+            "b-list",
+            "b-form",
+            "b-button",
+            "b-checkbox",
+            "b-radio-button",
+            "b-input-hidden",
+            "b-input",
+            "b-textarea",
+            "b-select",
+            "b-select-date",
+            "b-virtual-scroll",
+            "b-window",
+            "b-sidebar",
+            "b-slider",
+            "b-bottom-slide",
+            "b-icon",
+            "b-image",
+            "b-dummy",
+            "b-dummy-text",
+            "b-dummy-async-render",
+            "b-dummy-module-loader",
+            "b-dummy-lfc",
+            "b-dummy-watch",
+            "b-dummy-sync",
+            "b-dummy-state",
+            "b-dummy-control-list",
+            "b-dummy-decorators"
+          ],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
