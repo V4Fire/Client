@@ -364,8 +364,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[iBlock.dependenciesProp]]
 	 */
 	@system((o) => o.sync.link((val) => {
-		const staticDependencies = config.staticDependencies[o.componentName];
-		return Array.concat([], staticDependencies, val);
+		const componentStaticDependencies = config.componentStaticDependencies[o.componentName];
+		return Array.concat([], componentStaticDependencies, val);
 	}))
 
 	dependencies!: Module[];

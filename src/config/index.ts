@@ -18,5 +18,5 @@ export { default } from '@v4fire/core/config';
 
 extend({
 	components: COMPONENTS,
-	staticDependencies: {}
+	componentStaticDependencies: {}
 });

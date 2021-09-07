@@ -51,8 +51,8 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	attachComponentDeps(component);
 
 	let imports = `
-let STATIC_DEPENDENCIES = require('config').default.staticDependencies;
-STATIC_DEPENDENCIES = STATIC_DEPENDENCIES['${component.name}'] = STATIC_DEPENDENCIES['${component.name}'] || [];
+let COMPONENT_STATIC_DEPENDENCIES = require('config').default.componentStaticDependencies;
+COMPONENT_STATIC_DEPENDENCIES = COMPONENT_STATIC_DEPENDENCIES['${component.name}'] = COMPONENT_STATIC_DEPENDENCIES['${component.name}'] || [];
 `;
 
 	$C([...libs].reverse()).forEach((lib) => {
@@ -87,7 +87,7 @@ STATIC_DEPENDENCIES = STATIC_DEPENDENCIES['${component.name}'] = STATIC_DEPENDEN
 			decl = '';
 
 		if (needLoadDepsStatically) {
-			decl += `STATIC_DEPENDENCIES.push({name: '${componentPath}', load: () => {
+			decl += `COMPONENT_STATIC_DEPENDENCIES.push({name: '${componentPath}', load: () => {
 				return import('${componentPath}');
 			}});`;
 		}
