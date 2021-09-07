@@ -13,9 +13,9 @@
 
 - template index() extends ['i-dynamic-page'].index
 	- block body
-		: tree = include('build/snakeskin')
+		: graph = include('build/graph/component-params')
 
-		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
+		? Object.assign(attrs, graph.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
 		? delete attrs[':is']
 		? delete attrs[':keepAlive']
 		? delete attrs[':dispatching']
