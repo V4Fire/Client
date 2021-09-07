@@ -17,7 +17,7 @@ const
 	delay = require('delay');
 
 const
-	{assetsJS, assetsJSON, isStandalone} = include('build/helpers.webpack'),
+	{assetsJS, assetsJSON, isStandalone} = include('build/helpers'),
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 

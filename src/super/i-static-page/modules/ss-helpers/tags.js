@@ -22,7 +22,7 @@ const
 	{Filters} = require('snakeskin');
 
 const
-	{hasInclude, escapeStringLiteralRgxp} = include('build/replacers/include.js'),
+	{hasInclude, escapeStringLiteralRgxp} = include('build/monic/include.js'),
 	{isFolder} = include('src/super/i-static-page/modules/const'),
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
