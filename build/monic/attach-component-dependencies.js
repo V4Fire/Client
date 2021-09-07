@@ -56,7 +56,7 @@ COMPONENT_STATIC_DEPENDENCIES = COMPONENT_STATIC_DEPENDENCIES['${component.name}
 `;
 
 	$C([...libs].reverse()).forEach((lib) => {
-		imports += `require('${lib}')`;
+		imports += `require('${lib}');`;
 	});
 
 	await $C([...deps].reverse()).async.forEach(forEach);
@@ -86,7 +86,7 @@ COMPONENT_STATIC_DEPENDENCIES = COMPONENT_STATIC_DEPENDENCIES['${component.name}
 		let
 			decl = '';
 
-		if (needLoadDepsStatically) {
+		if (!needLoadDepsStatically) {
 			decl += `COMPONENT_STATIC_DEPENDENCIES.push({name: '${componentPath}', load: () => {
 				return import('${componentPath}');
 			}});`;
