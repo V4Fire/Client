@@ -628,6 +628,10 @@ export default abstract class iBlock extends ComponentInterface {
 		} else {
 			this.shadowComponentStatusStore = undefined;
 			this.field.set('componentStatusStore', value);
+
+			if (this.isReady && this.dependencies.length > 0) {
+				void this.forceUpdate();
+			}
 		}
 
 		// @deprecated
