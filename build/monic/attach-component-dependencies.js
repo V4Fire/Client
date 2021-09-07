@@ -45,6 +45,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	}
 
 	const
+		p = component.params,
+		needLoadDepsStatically = p.flyweight === true || p.functional != null && p.functional !== false;
+
+	const
 		deps = new Set(),
 		libs = new Set();
 
@@ -78,10 +82,6 @@ COMPONENT_STATIC_DEPENDENCIES = COMPONENT_STATIC_DEPENDENCIES['${component.name}
 		if (component == null) {
 			return;
 		}
-
-		const
-			p = component.params,
-			needLoadDepsStatically = p.flyweight === true || p.functional != null && p.functional !== false;
 
 		let
 			decl = '';
