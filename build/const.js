@@ -18,8 +18,8 @@ const
 // eslint-disable-next-line no-multi-assign
 module.exports = exports = include('@super/build/const', __dirname);
 
-let buildIterator = 0;
-exports.buildIterator = buildIterator;
+let
+	buildIterator = 0;
 
 /**
  * Index of a process that creates `.html` files
@@ -38,6 +38,12 @@ exports.RUNTIME = buildIterator++;
  * @type {number}
  */
 exports.STANDALONE = buildIterator;
+
+/**
+ * Position of the last available process
+ * @type {number}
+ */
+exports.buildIterator = buildIterator;
 
 /**
  * The minimum number of the used process to build
