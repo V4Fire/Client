@@ -13,7 +13,7 @@ const
 
 const
 	path = require('upath'),
-	graph = include('build/graph');
+	projectGraph = include('build/graph');
 
 /**
  * Returns an options object of the webpack entry point
@@ -24,7 +24,7 @@ const
  */
 module.exports = async function entry(name, src) {
 	const
-		g = await graph,
+		g = await projectGraph,
 		dependencies = (g.dependencies[name] ?? []).filter((nm) => g.dependencies[nm]);
 
 	const

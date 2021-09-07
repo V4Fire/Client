@@ -9,63 +9,7 @@
  */
 
 const
-	arg = require('arg'),
-	stream = require('stream');
-
-Object.assign(
-	exports,
-	include('build/helpers')
-);
-
-const
-	STDOUT = Symbol('Original STDOUT');
-
-exports.muteConsole = muteConsole;
-
-/**
- * Mutes any output from the global console API
- */
-function muteConsole() {
-	console[STDOUT] = console[STDOUT] ?? console._stdout;
-	console._stdout = new stream.Writable();
-}
-
-exports.unmuteConsole = unmuteConsole;
-
-/**
- * Unmutes output from the global console API
- */
-function unmuteConsole() {
-	console._stdout = console[STDOUT] ?? console._stdout;
-	console[STDOUT] = undefined;
-}
-
-exports.wait = wait;
-
-/**
- * Waits till the specified callback function returns true
- *
- * @param {Function} cb
- * @param {number} interval
- * @returns {!Promise<void>}
- */
-function wait(cb, interval = 15) {
-	return new Promise((res) => {
-		if (cb()) {
-			res();
-			return;
-		}
-
-		const intervalId = setInterval(() => {
-			if (cb()) {
-				res();
-				clearInterval(intervalId);
-			}
-		}, interval);
-	});
-}
-
-exports.getBrowserInstance = getBrowserInstance;
+	arg = require('arg');
 
 /**
  * Returns a browser instance by the specified parameters
@@ -75,7 +19,7 @@ exports.getBrowserInstance = getBrowserInstance;
  * @param {!Object} options
  * @returns {!Promise<?>}
  */
-function getBrowserInstance(browserType, params, options = {}) {
+exports.getBrowserInstance = function getBrowserInstance(browserType, params, options = {}) {
 	const
 		playwright = require('playwright');
 
@@ -103,15 +47,13 @@ function getBrowserInstance(browserType, params, options = {}) {
 	}
 
 	return playwright[browserType].launch({args: getBrowserArgs(), ...params});
-}
+};
 
-exports.getSelectedBrowsers = getSelectedBrowsers;
-
-	/**
+/**
  * Returns a list of selected browsers
  * @returns {!Array<string>}
  */
-function getSelectedBrowsers() {
+exports.getSelectedBrowsers = function getSelectedBrowsers() {
 	const
 		args = arg({'--browsers': String}, {permissive: true}),
 		browsers = ['chromium', 'firefox', 'webkit'];
@@ -138,15 +80,13 @@ function getSelectedBrowsers() {
 	}
 
 	return browsers;
-}
-
-exports.getBrowserArgs = getBrowserArgs;
+};
 
 /**
  * Returns a list of arguments that will be provided to a browser
  * @returns {!Array<string>}
  */
-function getBrowserArgs() {
+exports.getBrowserArgs = function getBrowserArgs() {
 	try {
 		const
 			args = arg({'--browser-args': String}, {permissive: true});
@@ -160,20 +100,15 @@ function getBrowserArgs() {
 	} catch {
 		return [];
 	}
-}
+};
 
 /**
  * Generates a `--client-name` using the specified parameters
  *
- * @param {string} name
- * @param {string} suit
+ * @param {string=} name
+ * @param {string=} suit
  * @returns {string}
  */
-function getTestClientName(name, suit) {
-	name = name || 'b-dummy';
-	suit = suit || 'demo';
-
-	return `${name}_${suit}`;
-}
-
-exports.getTestClientName = getTestClientName;
+exports.getTestClientName = function getTestClientName(name, suit) {
+	return `${name || 'b-dummy'}_${suit || 'demo'}`;
+};

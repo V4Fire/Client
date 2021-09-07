@@ -14,14 +14,24 @@
 
 const
 	os = require('os'),
+	arg = require('arg');
+
+const
 	path = require('upath'),
-	arg = require('arg'),
 	glob = require('glob');
 
 const
 	{build, src} = require('config'),
-	{resolve} = require('@pzlr/build-core'),
-	{wait, getBrowserInstance, getSelectedBrowsers, getBrowserArgs, getTestClientName} = include('build/helpers');
+	{resolve} = require('@pzlr/build-core');
+
+const {
+	wait,
+	getTestClientName,
+
+	getBrowserInstance,
+	getSelectedBrowsers,
+	getBrowserArgs
+} = include('build/helpers');
 
 const
 	cpus = os.cpus().length,
@@ -392,7 +402,7 @@ module.exports = function init(gulp = require('gulp')) {
 				isTestSuccessful = false,
 				attemptsFinished = 0;
 
-			const testExecuter = async () => {
+			const testExecutor = async () => {
 				const
 					testEnv = getTestEnv(browserType, attemptsFinished + 1);
 
@@ -422,7 +432,7 @@ module.exports = function init(gulp = require('gulp')) {
 			while (!isTestSuccessful && attemptsFinished - 1 < retries) {
 				exitCode = 0;
 
-				await testExecuter();
+				await testExecutor();
 
 				if (exitCode === 1) {
 					attemptsFinished++;

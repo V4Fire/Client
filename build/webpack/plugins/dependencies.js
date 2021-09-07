@@ -17,7 +17,7 @@ const
 
 const
 	{webpack} = require('config'),
-	{assetsJSON, assetsJS} = include('build/helpers.webpack');
+	{assetsJSON, assetsJS} = include('build/helpers');
 
 /**
  * Webpack plugin to generate `.dependencies.js` files and `assets.json` / `assets.js`

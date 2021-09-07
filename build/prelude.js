@@ -22,7 +22,7 @@ const
 
 // If we have switched to the "runtime.noGlobals" mode,
 // we have to find in our code all invoking of Prelude methods, like, `'foo'.camelize()`,
-// and replaces their with another safety form of the invoking
+// and replaces them with another safety form of the invoking
 if (config.runtime().noGlobals) {
 	const
 		resources = [resolve.sourceDir, ...resolve.rootDependencies],

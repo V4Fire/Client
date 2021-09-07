@@ -11,7 +11,7 @@
 const
 	includeRgxp = /\binclude\((['"`])(.*?)\1\);/g,
 	hasInclude = includeRgxp.removeFlags('g'),
-	escapeStringLiteralRgxp = /(['`\n\\]|${)/g;
+	escapeStringLiteralRgxp = /(['`\n\\]|\${)/g;
 
 /**
  * Monic replacer that adds extra syntax to use the "#include" directive.

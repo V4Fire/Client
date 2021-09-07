@@ -19,8 +19,8 @@ const
 module.exports = async function plugins() {
 	const
 		globals = include('build/globals.webpack'),
-		DependenciesPlugin = include('build/plugins/dependencies'),
-		IgnoreInvalidWarningsPlugin = include('build/plugins/ignore-invalid-warnings');
+		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
+		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings');
 
 	return new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],

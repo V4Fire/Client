@@ -17,7 +17,7 @@ const
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
-	graph = include('build/graph');
+	projectGraph = include('build/graph');
 
 const
 	runtime = config.runtime(),
@@ -30,7 +30,6 @@ const
 module.exports = {
 	IS_PROD,
 	DEBUG: runtime.debug === true,
-	MODULE: s(config.typescript().client.compilerOptions.module),
 
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),
@@ -38,8 +37,9 @@ module.exports = {
 	LOCALE: s(LOCALE),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 	CSP_NONCE_STORE: s(config.csp.nonceStore()),
+	MODULE: s(config.typescript().client.compilerOptions.module),
 
-	COMPONENTS: graph.then(({components}) => {
+	COMPONENTS: projectGraph.then(({components}) => {
 		if (Object.isMap(components)) {
 			return $C(components).to({}).reduce((res, el, key) => {
 				res[key] = {
@@ -54,7 +54,7 @@ module.exports = {
 	}),
 
 	BLOCK_NAMES: runtime.blockNames ?
-		graph.then(({components}) => {
+		projectGraph.then(({components}) => {
 			if (Object.isMap(components)) {
 				const blockNames = Array.from(components.keys()).filter((el) => /^b-/.test(el));
 				return s(blockNames);
@@ -69,11 +69,11 @@ module.exports = {
 		s(getThemes(getDS(), config.theme.include() || [config.theme.default()])) :
 		null,
 
-	DS_COMPONENTS_MODS: pzlr.designSystem ?
-		getDSComponentMods() :
-		null,
-
 	DS: runtime.passDesignSystem && pzlr.designSystem ?
 		s(getDS()) :
+		null,
+
+	DS_COMPONENTS_MODS: pzlr.designSystem ?
+		getDSComponentMods() :
 		null
 };

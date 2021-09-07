@@ -12,10 +12,50 @@ const
 	path = require('upath');
 
 const
+	{build} = require('config'),
 	{config: {projectName, dependencies, sourceDir}, resolve} = require('@pzlr/build-core');
 
 // eslint-disable-next-line no-multi-assign
 module.exports = exports = include('@super/build/const', __dirname);
+
+let buildIterator = 0;
+exports.buildIterator = buildIterator;
+
+/**
+ * Index of a process that creates `.html` files
+ * @type {number}
+ */
+exports.HTML = buildIterator++;
+
+/**
+ * Index of a process that generates `.js` files
+ * @type {number}
+ */
+exports.RUNTIME = buildIterator++;
+
+/**
+ * Index of a process that generates isolated files for workers
+ * @type {number}
+ */
+exports.STANDALONE = buildIterator;
+
+/**
+ * The minimum number of the used process to build
+ * @type {number}
+ */
+exports.MIN_PROCESS = buildIterator + 1;
+
+/**
+ * The maximum number of the used process to build
+ * @type {number}
+ */
+exports.MAX_PROCESS = build.processes > exports.MIN_PROCESS ? build.processes : exports.MIN_PROCESS;
+
+/**
+ * The maximum number of tasks per one building process
+ * @type {number}
+ */
+exports.MAX_TASKS_PER_ONE_PROCESS = 3;
 
 /**
  * List of critical core folders of the framework
@@ -80,7 +120,7 @@ exports.isLayerCoreDep = new RegExp(
 );
 
 /**
- * Pattern to match comments within import/export declarations
+ * Pattern to match comments within `import/export` declarations
  * @type {string}
  */
 exports.commentModuleExpr = '\\s*(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*';

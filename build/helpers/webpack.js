@@ -20,43 +20,52 @@ const
 	hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
 
 /**
+ * RegExp for a hashing output pattern
+ * @type {!RegExp}
+ */
+exports.hashRgxp = hashRgxp;
+
+/**
  * Output pattern
+ * @type {string}
  */
 exports.output = hash(wp.output());
 
 /**
  * Output pattern for assets
+ * @type {string}
  */
 exports.assetsOutput = hash(wp.assetsOutput());
 
 /**
- * Path to assets.json
+ * Path for `assets.json`
+ * @type {string}
  */
 exports.assetsJSON = path.join(src.clientOutput(), wp.assetsJSON());
 
 /**
- * Path to assets.js
+ * Path for `assets.js`
+ * @type {string}
  */
 exports.assetsJS = path.join(src.clientOutput(), wp.assetsJS());
 
 /**
- * Path to dll-manifest.json
+ * Path for `dll-manifest.json`
+ * @type {string}
  */
 exports.dllManifest = path.join(src.clientOutput(), wp.dllOutput({name: 'dll-manifest.json', hash: null}));
 
 /**
  * Cache folder
+ * @type {string}
  */
 exports.cacheDir = path.join(src.cwd(), 'app-cache', build.hash());
 
-// Some helpers
-
 exports.hash = hash;
-exports.hashRgxp = hashRgxp;
 
 /**
- * Returns a webpack output path string from the specified string with hash parameters
- * (for the longterm caching)
+ * Returns a Webpack output path string from the specified string with hash parameters
+ * (for long-term caching)
  *
  * @param {string} output - source string
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
@@ -68,7 +77,7 @@ function hash(output, chunk) {
 exports.inherit = inherit;
 
 /**
- * Alias for $C.extend({deep, concatArray})
+ * Alias for `$C.extend({deep, concatArray})`
  */
 function inherit(...args) {
 	const extOpts = {

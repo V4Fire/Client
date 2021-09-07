@@ -35,7 +35,7 @@ const
 	hasImport = importRgxp.removeFlags('g');
 
 /**
- * Monic replacer to enable the "@super" import alias within TS/JS files.
+ * Monic replacer to enable the `@super` import alias within TS/JS files.
  * This alias always refers to the previous layer that has the specified file.
  *
  * @param {string} str

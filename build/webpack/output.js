@@ -10,7 +10,7 @@
 
 const
 	{src, webpack} = require('config'),
-	{hash, output: outputPattern} = include('build/helpers.webpack');
+	{hash, output: outputPattern} = include('build/helpers');
 
 /**
  * Returns options for `webpack.output`

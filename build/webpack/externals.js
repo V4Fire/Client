@@ -13,7 +13,7 @@ const
 	config = require('config');
 
 const
-	{STANDALONE} = include('build/graph');
+	{STANDALONE} = include('build/const');
 
 const
 	externalList = [],

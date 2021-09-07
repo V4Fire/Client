@@ -1,3 +1,3 @@
-# build/plugins
+# build/webpack/plugins
 
-This module provides a bunch of custom plugins for WebPack.
+This module provides a bunch of custom plugins for Webpack.

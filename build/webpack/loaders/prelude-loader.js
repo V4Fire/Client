@@ -9,8 +9,10 @@
  */
 
 const
-	escaper = require('escaper'),
-	{tokens, globalLink, replaceRgxp} = include('build/prelude.webpack');
+	escaper = require('escaper');
+
+const
+	{tokens, globalLink, replaceRgxp} = include('build/prelude');
 
 const
 	labelRgxp = /\[__ESCAPER_QUOT__(\d+)_]/g;

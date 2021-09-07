@@ -13,8 +13,8 @@ const
 	path = require('path');
 
 const
-	{config: pzlr, resolve} = require('@pzlr/build-core'),
-	{src} = require('config');
+	{src} = require('config'),
+	{config: pzlr, resolve} = require('@pzlr/build-core');
 
 /**
  * Options for `webpack.alias`
@@ -23,22 +23,22 @@ const aliases = {
 	'@super': resolve.rootDependencies[0],
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
-			a = resolve.depMap[el].config.assets;
+			asset = resolve.depMap[el].config.assets;
 
-		if (!a || !a.sprite) {
+		if (asset?.sprite == null) {
 			return map;
 		}
 
-		map[`${el}/sprite`] = path.join(resolve.rootDependencies[i], a.dir, a.sprite);
+		map[`${el}/sprite`] = path.join(resolve.rootDependencies[i], asset.dir, asset.sprite);
 		return map;
 	})
 };
 
-if (pzlr.designSystem) {
+if (pzlr.designSystem != null) {
 	aliases.ds = pzlr.designSystem;
 }
 
-if (pzlr.assets && pzlr.assets.sprite) {
+if (pzlr.assets?.sprite != null) {
 	aliases.sprite = src.assets(pzlr.assets.sprite);
 }
 

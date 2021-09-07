@@ -21,7 +21,7 @@ const
  * @type {!Object}
  */
 const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, i) => {
-	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/loaders/*.js'))).forEach((el) => {
+	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*.js'))).forEach((el) => {
 		const
 			key = path.basename(el, path.extname(el));
 

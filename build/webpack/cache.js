@@ -10,7 +10,7 @@
 
 const
 	{webpack} = require('config'),
-	{cacheDir} = include('build/helpers.webpack');
+	{cacheDir} = include('build/helpers');
 
 /**
  * Returns options for `webpack.cache`

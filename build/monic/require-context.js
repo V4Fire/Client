@@ -25,7 +25,7 @@ const
 	tplRgxp = /\/?\${(.*?)}/g;
 
 /**
- * Monic replacer to enable require.context declarations through multiple contexts
+ * Monic replacer to enable `require.context` declarations through multiple contexts
  *
  * @param {string} str
  * @returns {string}

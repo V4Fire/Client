@@ -8,9 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * Options for `webpack.snapshot`
- */
-module.exports = {
-	...IS_PROD ? {} : {managedPaths: []}
-};
+Object.assign(
+	exports,
+	include('@super/build/helpers', __dirname),
+	include('build/helpers/test'),
+	include('build/helpers/webpack'),
+	include('build/helpers/other')
+);

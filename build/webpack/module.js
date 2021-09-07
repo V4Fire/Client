@@ -14,13 +14,15 @@ const
 
 const
 	path = require('upath'),
-	build = include('build/graph');
+	projectGraph = include('build/graph');
 
 const
 	{webpack} = config,
-	{resolve} = require('@pzlr/build-core'),
+	{resolve} = require('@pzlr/build-core');
+
+const
 	{isExternalDep} = include('build/const'),
-	{output, assetsOutput, inherit, hash, hashRgxp} = include('build/helpers.webpack');
+	{hashRgxp, hash, output, assetsOutput, inherit} = include('build/helpers');
 
 const
 	snakeskin = config.snakeskin(),
@@ -54,15 +56,16 @@ const
  */
 module.exports = async function module({plugins}) {
 	const
-		isProd = webpack.mode() === 'production',
-		fatHTML = webpack.fatHTML();
+		g = await projectGraph,
+		isProd = webpack.mode() === 'production';
 
 	const
-		graph = await build,
-		loaders = {rules: new Map()};
-
-	const
+		fatHTML = webpack.fatHTML(),
 		workerOpts = config.worker();
+
+	const loaders = {
+		rules: new Map()
+	};
 
 	const tsHelperLoaders = [
 		{
@@ -81,14 +84,13 @@ module.exports = async function module({plugins}) {
 				replacers: [].concat(
 					fatHTML ?
 						[] :
-						include('build/replacers/attach-component-dependencies'),
+						include('build/monic/attach-component-dependencies'),
 
 					[
-						include('build/replacers/require-context'),
-						include('build/replacers/super-import'),
-						include('build/replacers/ts-import'),
-						include('build/replacers/dynamic-component-import'),
-						include('build/replacers/require-tests')
+						include('build/monic/require-context'),
+						include('build/monic/super-import'),
+						include('build/monic/ts-import'),
+						include('build/monic/dynamic-component-import')
 					]
 				)
 			})
@@ -169,10 +171,9 @@ module.exports = async function module({plugins}) {
 			loader: 'monic-loader',
 			options: inherit(monic.javascript, {
 				replacers: [
-					include('build/replacers/require-context'),
-					include('build/replacers/super-import'),
-					include('build/replacers/dynamic-component-import'),
-					include('build/replacers/require-tests')
+					include('build/monic/require-context'),
+					include('build/monic/super-import'),
+					include('build/monic/dynamic-component-import')
 				]
 			})
 		}
@@ -283,7 +284,7 @@ module.exports = async function module({plugins}) {
 						options: inherit(monic.stylus, {
 							replacers: [
 								require('@pzlr/stylus-inheritance')({resolveImports: true}),
-								include('build/replacers/project-name')
+								include('build/monic/project-name')
 							]
 						})
 					}
@@ -304,8 +305,8 @@ module.exports = async function module({plugins}) {
 						options: inherit(monic.stylus, {
 							replacers: [
 								require('@pzlr/stylus-inheritance')({resolveImports: true}),
-								include('build/replacers/project-name'),
-								include('build/replacers/apply-dynamic-component-styles')
+								include('build/monic/project-name'),
+								include('build/monic/apply-dynamic-component-styles')
 							]
 						})
 					}
@@ -335,8 +336,8 @@ module.exports = async function module({plugins}) {
 				loader: 'monic-loader',
 				options: inherit(monic.html, {
 					replacers: [
-						include('build/replacers/include'),
-						include('build/replacers/dynamic-component-import')
+						include('build/monic/include'),
+						include('build/monic/dynamic-component-import')
 					]
 				})
 			},
@@ -346,7 +347,7 @@ module.exports = async function module({plugins}) {
 				options: inherit(snakeskin.server, {
 					exec: true,
 					vars: {
-						entryPoints: graph.dependencies
+						entryPoints: g.dependencies
 					}
 				})
 			}
@@ -361,7 +362,7 @@ module.exports = async function module({plugins}) {
 			{
 				loader: 'monic-loader',
 				options: inherit(monic.javascript, {
-					replacers: [include('build/replacers/dynamic-component-import')]
+					replacers: [include('build/monic/dynamic-component-import')]
 				})
 			},
 

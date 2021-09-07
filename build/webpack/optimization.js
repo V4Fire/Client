@@ -16,13 +16,17 @@ const
 	TerserPlugin = require('terser-webpack-plugin'),
 	CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
-const
-	{RUNTIME} = include('build/graph'),
-	{isLayerDep, isLayerCoreDep, isExternalDep} = include('build/const');
+const {
+	isLayerDep,
+	isLayerCoreDep,
+	isExternalDep,
+
+	RUNTIME
+} = include('build/const');
 
 const
-	{optimize} = config.webpack,
-	{inherit} = include('build/helpers.webpack');
+	{inherit} = include('build/helpers'),
+	{optimize} = config.webpack;
 
 /**
  * Returns options for `webpack.optimization`
@@ -33,7 +37,7 @@ const
  */
 module.exports = function optimization({buildId, plugins}) {
 	const
-		options = {};
+		opts = {};
 
 	if (optimize.minChunkSize) {
 		plugins.set(
@@ -43,7 +47,7 @@ module.exports = function optimization({buildId, plugins}) {
 	}
 
 	if (buildId === RUNTIME) {
-		options.splitChunks = inherit(optimize.splitChunks(), {
+		opts.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
 				index: {
 					name: 'index-core',
@@ -76,7 +80,7 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		es = config.es();
 
-	options.minimizer = [
+	opts.minimizer = [
 		new CssMinimizerPlugin(config.cssMinimizer()),
 
 		/* eslint-disable camelcase */
@@ -101,5 +105,5 @@ module.exports = function optimization({buildId, plugins}) {
 		/* eslint-enable camelcase */
 	];
 
-	return options;
+	return opts;
 };
