@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Most of webpack config files moved to the `webpack` folder `build`
+
+#### :house: Internal
+
+* Review `build` modules
+
 ## v3.3.4 (2021-09-06)
 
 #### :bug: Bug Fix

@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Most of webpack config files moved to the `webpack` folder `build`
+
+#### :house: Internal
+
+* Review `build` modules
+
 ## v3.3.3 (2021-08-13)
 
 #### :bug: Bug Fix
