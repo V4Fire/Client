@@ -12,7 +12,7 @@
 
 const
 	$C = require('collection.js'),
-	{src, webpack} = require('config');
+	{webpack} = require('config');
 
 const
 	path = require('upath'),
@@ -76,8 +76,7 @@ COMPONENT_STATIC_DEPENDENCIES = COMPONENT_STATIC_DEPENDENCIES['${component.name}
 		}
 
 		const
-			component = components.get(dep),
-			componentPath = path.relative(src.src(), path.dirname(component.index));
+			component = components.get(dep);
 
 		if (component == null) {
 			return;
@@ -85,12 +84,6 @@ COMPONENT_STATIC_DEPENDENCIES = COMPONENT_STATIC_DEPENDENCIES['${component.name}
 
 		let
 			decl = '';
-
-		if (!needLoadDepsStatically) {
-			decl += `COMPONENT_STATIC_DEPENDENCIES.push({name: '${componentPath}', load: () => {
-				return import('${componentPath}');
-			}});`;
-		}
 
 		try {
 			const
@@ -124,12 +117,7 @@ requestAnimationFrame(async () => {
 						}
 
 						src = path.normalize(src);
-
-						if (needLoadDepsStatically) {
-							return `return('${src}');`;
-						}
-
-						return `await import(/* webpackPreload: true */ '${src}');`;
+						return `await import('${src}');`;
 					})
 
 					.join('')
@@ -156,7 +144,13 @@ requestAnimationFrame(async () => {
 						decl += `require('${src}');`;
 
 					} else {
-						decl += `import(/* webpackPreload: true */ '${src}').catch(stderr);`;
+						decl += `
+COMPONENT_STATIC_DEPENDENCIES.push({
+	name: '${path.basename(src)}',
+	load: () => import('${src}').catch(stderr)
+});
+
+import(/* webpackPreload: true */ '${src}').catch(stderr);`;
 					}
 				}
 
