@@ -23,7 +23,7 @@ const
  * @returns {!Object}
  */
 async function buildFactory(entry, buildId) {
-	await include('build/preconfig.webpack');
+	await include('build/webpack/custom/preconfig');
 
 	const
 		plugins = await include('build/webpack/plugins')({buildId}),
@@ -50,7 +50,7 @@ async function buildFactory(entry, buildId) {
 		snapshot: include('build/webpack/snapshot'),
 		stats: include('build/webpack/stats'),
 
-		...await include('build/other.webpack')({buildId})
+		...await include('build/webpack/custom/options')({buildId})
 	};
 
 	if (target != null) {
