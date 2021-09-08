@@ -424,7 +424,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 * @returns {(number|undefined)}
 			 */
 			dataURILimit(def = 2 * 1024) {
-				if (require('config').webpack.fatHTML() === 1) {
+				const
+					fatHTML = require('config').webpack.fatHTML();
+
+				if (fatHTML === true || fatHTML === 1) {
 					return undefined;
 				}
 
