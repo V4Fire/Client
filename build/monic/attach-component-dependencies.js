@@ -45,19 +45,13 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	}
 
 	const
-		p = component.params,
-		needLoadDepsStatically = p.flyweight === true || p.functional != null && p.functional !== false;
-
-	const
 		deps = new Set(),
 		libs = new Set();
 
 	attachComponentDeps(component);
 
-	let imports = `
-let COMPONENT_STATIC_DEPENDENCIES = require('config').default.componentStaticDependencies;
-COMPONENT_STATIC_DEPENDENCIES = COMPONENT_STATIC_DEPENDENCIES['${component.name}'] = COMPONENT_STATIC_DEPENDENCIES['${component.name}'] || [];
-`;
+	let
+		imports = '';
 
 	$C([...libs].reverse()).forEach((lib) => {
 		imports += `require('${lib}');`;
@@ -139,19 +133,7 @@ requestAnimationFrame(async () => {
 
 				if (src != null) {
 					src = path.normalize(src);
-
-					if (needLoadDepsStatically) {
-						decl += `require('${src}');`;
-
-					} else {
-						decl += `
-COMPONENT_STATIC_DEPENDENCIES.push({
-	name: '${path.basename(src)}',
-	load: () => import('${src}').catch(stderr)
-});
-
-import(/* webpackPreload: true */ '${src}').catch(stderr);`;
-					}
+					decl += `require('${src}');`;
 				}
 
 			} catch {}
