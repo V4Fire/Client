@@ -15,7 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Most of webpack config files moved to the `webpack` folder `build`
+* `build`:
+  * Most of webpack config files moved to the `webpack` folder
+  * Renamed the `replacers` folder to `monic`
 
 #### :house: Internal
 

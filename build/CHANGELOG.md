@@ -13,11 +13,12 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Most of webpack config files moved to the `webpack` folder `build`
+* Most of webpack config files moved to the `webpack` folder
+* Renamed the `replacers` folder to `monic`
 
 #### :house: Internal
 
-* Review `build` modules
+* Review modules
 
 ## v3.3.3 (2021-08-13)
 
