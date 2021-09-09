@@ -1,6 +1,6 @@
 # build/webpack
 
-This module provides options to configure Webpack. Each file in the folder has a name that matches with a Webpack option. For instance, `/output.js` matches with `Webpack.output` or `/watch-options.js` matches with `Webpack.watchOptions.js`. Notice that some modules return not a Webpack config object but a function or another kind of object structure because it is designed to be easy to override and modify with child application layers.
+This module provides options to configure Webpack. Each file in the folder has a name that matches with a Webpack option. For instance, `/output.js` matches with `Webpack.output` or `/watch-options.js` matches with `Webpack.watchOptions`. Notice that some modules return not a Webpack config object but a function or another kind of object structure because it is designed to be easy to override and modify with child application layers.
 
 All loaders are placed within the `loaders` sub-folder, and all plugins are placed within `plugins`.
 The module also exposes some custom modules. These modules are placed within the `custom` sub-folder.
