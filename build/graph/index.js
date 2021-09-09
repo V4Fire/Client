@@ -8,5 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-include('build/snakeskin/filters');
-include('build/snakeskin/default-filters');
+module.exports = Object.assign(
+	include('build/graph/graph'),
+	include('build/graph/const')
+);

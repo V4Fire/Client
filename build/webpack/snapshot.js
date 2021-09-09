@@ -8,5 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-include('build/snakeskin/filters');
-include('build/snakeskin/default-filters');
+/**
+ * Options for `webpack.snapshot`
+ */
+module.exports = {
+	...IS_PROD ? {} : {managedPaths: []}
+};

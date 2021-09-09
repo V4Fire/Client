@@ -351,7 +351,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * ```js
 	 * {
 	 *   dependencies: [
-	 *     {name: 'b-button', module: () => import('form/b-button')}
+	 *     {name: 'b-button', load: () => import('form/b-button')}
 	 *   ]
 	 * }
 	 * ```
@@ -363,7 +363,11 @@ export default abstract class iBlock extends ComponentInterface {
 	 * List of additional dependencies to load
 	 * @see [[iBlock.dependenciesProp]]
 	 */
-	@system((o) => o.sync.link())
+	@system((o) => o.sync.link((val) => {
+		const componentStaticDependencies = config.componentStaticDependencies[o.componentName];
+		return Array.concat([], componentStaticDependencies, val);
+	}))
+
 	dependencies!: Module[];
 
 	/**
@@ -624,6 +628,10 @@ export default abstract class iBlock extends ComponentInterface {
 		} else {
 			this.shadowComponentStatusStore = undefined;
 			this.field.set('componentStatusStore', value);
+
+			if (this.isReady && this.dependencies.length > 0) {
+				void this.forceUpdate();
+			}
 		}
 
 		// @deprecated

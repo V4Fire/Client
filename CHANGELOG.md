@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* `build`:
+  * Most of webpack config files moved to the `webpack` folder
+  * Renamed the `replacers` folder to `monic`
+
+#### :house: Internal
+
+* Review `build` modules
+
 ## v3.3.4 (2021-09-06)
 
 #### :bug: Bug Fix

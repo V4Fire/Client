@@ -82,7 +82,7 @@ export function component(opts?: ComponentOptions): Function {
 				fillMeta(meta, target);
 
 				if (!componentInfo.isAbstract) {
-					loadTemplate(meta.component, true)(identity);
+					loadTemplate(meta.component)(identity);
 				}
 
 			} else if (meta.params.root) {
@@ -98,7 +98,7 @@ export function component(opts?: ComponentOptions): Function {
 			}
 
 			// Function that waits till a component template is loaded
-			function loadTemplate(component: object, dryRun: boolean = false): (resolve: Function) => any {
+			function loadTemplate(component: object, lazy: boolean = false): (resolve: Function) => any {
 				return promiseCb;
 
 				function promiseCb(resolve: Function) {
@@ -116,7 +116,7 @@ export function component(opts?: ComponentOptions): Function {
 							return attachTemplatesAndResolve(fns);
 						}
 
-						if (dryRun) {
+						if (lazy) {
 							return promiseCb;
 						}
 

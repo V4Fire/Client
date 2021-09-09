@@ -17,9 +17,9 @@ require('config');
 module.exports = function initGulp(gulp = require('gulp')) {
 	include('@super/gulpfile', __dirname)(gulp);
 
-	include('build/static.gulp')(gulp);
-	include('build/build.gulp')(gulp);
-	include('build/test.gulp')(gulp);
+	include('build/gulp/static')(gulp);
+	include('build/gulp/build')(gulp);
+	include('build/gulp/test')(gulp);
 
 	globalThis.callGulp(module);
 };

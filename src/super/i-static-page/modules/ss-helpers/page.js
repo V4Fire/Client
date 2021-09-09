@@ -338,7 +338,7 @@ function $__RENDER_ROOT() {
 	let {result} = await monic.compile(initPath, {
 		content,
 		saveFiles: false,
-		replacers: [include('build/replacers/include')]
+		replacers: [include('build/monic/include')]
 	});
 
 	if (/ES[35]$/.test(config.es())) {

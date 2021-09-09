@@ -23,34 +23,34 @@ const
  * @returns {!Object}
  */
 async function buildFactory(entry, buildId) {
-	await include('build/preconfig.webpack');
+	await include('build/webpack/custom/preconfig');
 
 	const
-		plugins = await include('build/plugins.webpack')({buildId}),
-		modules = await include('build/module.webpack')({buildId, plugins}),
-		target = await include('build/target.webpack');
+		plugins = await include('build/webpack/plugins')({buildId}),
+		modules = await include('build/webpack/module')({buildId, plugins}),
+		target = await include('build/webpack/target');
 
 	const config = {
-		entry: await $C(entry).parallel().map((src, name) => include('build/entry.webpack')(name, src)),
-		output: await include('build/output.webpack')({buildId}),
+		entry: await $C(entry).parallel().map((src, name) => include('build/webpack/entry')(name, src)),
+		output: await include('build/webpack/output')({buildId}),
 
-		resolve: await include('build/resolve.webpack'),
-		resolveLoader: await include('build/resolve-loader.webpack'),
-		externals: await include('build/externals.webpack')({buildId}),
+		resolve: await include('build/webpack/resolve'),
+		resolveLoader: await include('build/webpack/resolve-loader'),
+		externals: await include('build/webpack/externals')({buildId}),
 
 		module: {...modules, rules: [...modules.rules.values()]},
 		plugins: [...plugins.values()],
 
 		mode: webpack.mode(),
-		optimization: await include('build/optimization.webpack')({buildId, plugins}),
+		optimization: await include('build/webpack/optimization')({buildId, plugins}),
 
-		devtool: await include('build/devtool.webpack'),
-		cache: await include('build/cache.webpack')({buildId}),
-		watchOptions: include('build/watch-options.webpack'),
-		snapshot: include('build/snapshot.webpack'),
-		stats: include('build/stats.webpack'),
+		devtool: await include('build/webpack/devtool'),
+		cache: await include('build/webpack/cache')({buildId}),
+		watchOptions: include('build/webpack/watch-options'),
+		snapshot: include('build/webpack/snapshot'),
+		stats: include('build/webpack/stats'),
 
-		...await include('build/other.webpack')({buildId})
+		...await include('build/webpack/custom/options')({buildId})
 	};
 
 	if (target != null) {
@@ -75,7 +75,7 @@ const tasks = (async () => {
 	await include('build/snakeskin');
 
 	const
-		{processes} = await include('build/graph.webpack');
+		{processes} = await include('build/graph');
 
 	const
 		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));

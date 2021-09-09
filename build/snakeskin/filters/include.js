@@ -19,8 +19,10 @@ const
 	isPathInside = require('is-path-inside');
 
 const
-	{validators, config: {dependencies, superRgxp}} = require('@pzlr/build-core'),
-	{resources} = include('build/snakeskin/const'),
+	{validators, config: {dependencies, superRgxp}} = require('@pzlr/build-core');
+
+const
+	{resources} = include('build/graph'),
 	{ssExtRgxp} = include('build/snakeskin/filters/const');
 
 const

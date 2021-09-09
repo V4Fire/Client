@@ -8,5 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-include('build/snakeskin/filters');
-include('build/snakeskin/default-filters');
+Object.assign(
+	exports,
+	include('@super/build/helpers', __dirname),
+	include('build/helpers/test'),
+	include('build/helpers/webpack'),
+	include('build/helpers/other')
+);
