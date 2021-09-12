@@ -137,13 +137,12 @@ export default class bRouter extends iData {
 	 * } .
 	 * ```
 	 */
-	@prop()
+	@prop({watch: 'updateCurrentRoute'})
 	readonly basePathProp: string = '/';
 
 	/** @see [[bRouter.basePathProp]] */
 	@system<bRouter>({
-		init: (o) => o.sync.link(),
-		watch: 'updateCurrentRoute'
+		init: (o) => o.sync.link()
 	})
 
 	basePath!: string;
