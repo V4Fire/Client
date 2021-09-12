@@ -1,3 +1,16 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * This package provides a router engine that stores its state completely in memory
+ * @packageDescription
+ */
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import { deprecate } from 'core/functools/deprecation';

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## ???
+
+#### :rocket: New Feature
+
+* New engine for `b-router`: `in-memory`
+
 ## v3.0.0-rc.212 (2021-07-22)
 
 #### :bug: Bug Fix

@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## ???
+
+#### :rocket: New Feature
+
+* Added tests for `in-memory` engine
+
+#### :house: Internal
+
+* Call `updateCurrentRoute` only `basePath` prop changes but not the property itself
+
 ## v3.0.0-rc.195 (2021-05-28)
 
 #### :house: Internal

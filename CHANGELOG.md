@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## ???
+
+#### :rocket: New Feature
+
+* New engine for `b-router` in `core/router`: `in-memory`
+* Added tests for `in-memory` engine for `base/b-router`
+
+#### :bug: Bug Fix
+
+* Fixed calling of `getBrowserArgs` function in `build/helpers/test`
+
+#### :house: Internal
+
+* Call `updateCurrentRoute` only when `basePath` prop changes but not the property itself in `base/b-router`
+
 ## v3.4.0 (2021-09-09)
 
 #### :boom: Breaking Change
