@@ -318,10 +318,7 @@ function generateWatchCommonSpecs(page, engineName) {
 				await router.push('/second');
 				await router.push('/');
 
-				if (engineName === 'historyApiRouterEngine') {
-					result.initialQuery = location.search;
-				}
-
+				result.initialQuery = engineName === 'historyApiRouterEngine' ? location.search : '';
 				result.initialContent = ctx.route.meta.content;
 
 				const
@@ -345,20 +342,12 @@ function generateWatchCommonSpecs(page, engineName) {
 				await router.push('second', {query: {foo: 3}});
 				return result;
 
-			}, engineName)).toEqual(
-				engineName === 'historyApiRouterEngine' ?
-					{
-						initialContent: 'Main page',
-						initialQuery: '',
-						routeChanges: [[{foo: 1}, undefined]],
-						queryChanges: [[{foo: 1}, undefined], [{foo: 2}, {foo: 1}]]
-					} :
-					{
-						initialContent: 'Main page',
-						routeChanges: [[{foo: 1}, undefined]],
-						queryChanges: [[{foo: 1}, undefined], [{foo: 2}, {foo: 1}]]
-					}
-				);
+			}, engineName)).toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+				routeChanges: [[{foo: 1}, undefined]],
+				queryChanges: [[{foo: 1}, undefined], [{foo: 2}, {foo: 1}]]
+			});
 		});
 
 		it('linking for the `route` property', async () => {
@@ -372,10 +361,7 @@ function generateWatchCommonSpecs(page, engineName) {
 				await router.push('/second');
 				await router.push('/');
 
-				if (engineName === 'historyApiRouterEngine') {
-					result.initialQuery = location.search;
-				}
-
+				result.initialQuery = engineName === 'historyApiRouterEngine' ? location.search : '';
 				result.initialContent = ctx.route.meta.content;
 
 				const
@@ -394,20 +380,12 @@ function generateWatchCommonSpecs(page, engineName) {
 
 				return result;
 
-			}, engineName)).toEqual(
-				engineName === 'historyApiRouterEngine' ?
-					{
-						initialContent: 'Main page',
-						initialQuery: '',
-						initialRouteLink: {},
-						routeLink: {foo: 1}
-					} :
-					{
-						initialContent: 'Main page',
-						initialRouteLink: {},
-						routeLink: {foo: 1}
-					}
-				);
+			}, engineName)).toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+				initialRouteLink: {},
+				routeLink: {foo: 1}
+			});
 		});
 	});
 }
