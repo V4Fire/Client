@@ -86,7 +86,7 @@ exports.getSelectedBrowsers = function getSelectedBrowsers() {
  * Returns a list of arguments that will be provided to a browser
  * @returns {!Array<string>}
  */
-exports.getBrowserArgs = function getBrowserArgs() {
+function getBrowserArgs() {
 	try {
 		const
 			args = arg({'--browser-args': String}, {permissive: true});
@@ -100,9 +100,11 @@ exports.getBrowserArgs = function getBrowserArgs() {
 	} catch {
 		return [];
 	}
-};
+}
 
-/**
+exports.getBrowserArgs = getBrowserArgs;
+
+	/**
  * Generates a `--client-name` using the specified parameters
  *
  * @param {string=} name
