@@ -17,5 +17,7 @@ const
 
 /** @param {Page} page */
 module.exports = (page) => {
-	generateWatchCommonSpecs(page, 'inMemoryRouterEngine');
+	describe('b-router watching with in-memory engine', () => {
+		generateWatchCommonSpecs(page, 'inMemoryRouterEngine');
+	});
 };
