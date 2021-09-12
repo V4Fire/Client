@@ -405,7 +405,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			root = await initRouter(page, engineName);
 		});
 
-		// Для in-memory проверять, что путь не поменялся в конце
 		it('transition to the default page', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/some/fake/page');
@@ -419,7 +418,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			}
 		});
 
-		// Для in-memory проверять, что путь не изменился
 		it('transition to an alias with parameters', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/tpl-alias/foo/bar');
@@ -431,7 +429,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			}
 		});
 
-		// Общий
 		it('transition to an alias', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/second/alias');
@@ -441,7 +438,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			expect(await root.evaluate(({route}) => route.name)).toBe('secondAlias');
 		});
 
-		// Общий
 		it('transition to an alias with redirect', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/second/alias-redirect');
@@ -451,7 +447,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			expect(await root.evaluate(({route}) => route.name)).toBe('aliasToRedirect');
 		});
 
-		// Общий
 		it('transition to chained aliases', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/alias-to-alias');
@@ -461,7 +456,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			expect(await root.evaluate(({route}) => route.name)).toBe('aliasToAlias');
 		});
 
-		// Общий
 		it('transition with redirect', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/second/redirect');
@@ -471,7 +465,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			expect(await root.evaluate(({route}) => route.name)).toBe('second');
 		});
 
-		// Общий
 		it('transition with redirect and alias', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/redirect-alias');
@@ -481,7 +474,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			expect(await root.evaluate(({route}) => route.name)).toBe('secondAlias');
 		});
 
-		// Общий
 		it('transition with chained redirect', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/redirect-redirect');
@@ -491,7 +483,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			expect(await root.evaluate(({route}) => route.name)).toBe('second');
 		});
 
-		// Общий
 		it('moving back and forward from one page to another', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('main');
@@ -514,7 +505,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			})).toBe('Second page');
 		});
 
-		// Общий
 		it('moving back and forward from one page to another by using .go', async () => {
 			expect(await root.evaluate(async ({router}) => {
 				await router.push('main');
@@ -535,7 +525,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			})).toBe('Main page');
 		});
 
-		// Для in-memory не проверять query
 		it('soft transition', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
@@ -590,7 +579,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			});
 		});
 
-		// Для in-memory не проверять query
 		it('transition event flow', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
@@ -658,7 +646,6 @@ function generateTransitionCommonSpecs(page, engineName) {
 			});
 		});
 
-		// Заменить проверку location.search на route.query для in-memory
 		it('transition with root parameters', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
