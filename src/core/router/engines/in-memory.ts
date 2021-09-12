@@ -105,7 +105,7 @@ export default function createRouter(ctx: bRouter): Router {
 
 		push(route: string, params?: TransitionParams): Promise<void> {
 			let
-				newRoute = getRoute(route, ctx.routes);
+				newRoute = getRoute(route, ctx.routes, {defaultRoute: ctx.defaultRoute});
 
 			if (newRoute == null) {
 				return Promise.reject();
@@ -132,7 +132,7 @@ export default function createRouter(ctx: bRouter): Router {
 
 		replace(route: string, params?: TransitionParams): Promise<void> {
 			let
-				newRoute = getRoute(route, ctx.routes);
+				newRoute = getRoute(route, ctx.routes, {defaultRoute: ctx.defaultRoute});
 
 			if (newRoute == null) {
 				return Promise.reject();
