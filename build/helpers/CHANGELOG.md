@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed calling of `getBrowserArgs` function in `build/helpers/test`
+* Fixed calling of the `getBrowserArgs` function
 
 ## v3.4.0 (2021-09-09)
 
