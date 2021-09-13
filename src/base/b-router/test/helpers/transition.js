@@ -12,13 +12,16 @@
  * @typedef {import('playwright').Page} Page
  */
 
+const
+	{initRouter} = include('src/base/b-router/test/helpers/init');
+
 /**
  * Generates common specs for all router engines of "transition" runners
  *
  * @param {Page} page
  * @param {'historyApiRouterEngine'|'inMemoryRouterEngine'} engineName
  */
-module.exports = function generateTransitionCommonSpecs(page, engineName) {
+module.exports.generateTransitionCommonSpecs = function generateTransitionCommonSpecs(page, engineName) {
 	describe('common', () => {
 		let
 			root;

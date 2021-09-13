@@ -9,10 +9,10 @@
  */
 
 const
-	{initRouter} = include('base/b-router/test/helpers/init'),
-	{generateWatchCommonSpecs} = include('base/b-router/test/helpers/watch'),
-	{generateSimpleUsageCommonSpecs} = include('base/b-router/test/helpers/simple'),
-	{generateTransitionCommonSpecs} = include('base/b-router/test/helpers/transition');
+	{initRouter} = include('src/base/b-router/test/helpers/init'),
+	{generateWatchCommonSpecs} = include('src/base/b-router/test/helpers/watch'),
+	{generateSimpleUsageCommonSpecs} = include('src/base/b-router/test/helpers/simple'),
+	{generateTransitionCommonSpecs} = include('src/base/b-router/test/helpers/transition');
 
 module.exports = {
 	initRouter,

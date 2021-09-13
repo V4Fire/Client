@@ -24,7 +24,7 @@ const
  * @param {?string} [initOptions.initialRoute] - Pass `null` to remove `initialRoute` for the in-memory engine
  * @returns {!Promise<Playwright.JSHandle>}
  */
-module.exports = async function initRouter(page, engineName, initOptions = {}) {
+module.exports.initRouter = async function initRouter(page, engineName, initOptions = {}) {
 	await (await h.component.getRoot(page)).evaluate((ctx) => ctx.router?.clear());
 
 	if (initOptions.initialRoute === undefined && engineName === 'inMemoryRouterEngine') {

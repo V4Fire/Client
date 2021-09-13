@@ -12,13 +12,16 @@
  * @typedef {import('playwright').Page} Page
  */
 
+const
+	{initRouter} = include('src/base/b-router/test/helpers/init');
+
 /**
  * Generates common specs for all router engines of "watch" runners
  *
  * @param {Page} page
  * @param {'historyApiRouterEngine'|'inMemoryRouterEngine'} engineName
  */
-module.exports = function generateWatchCommonSpecs(page, engineName) {
+module.exports.generateWatchCommonSpecs = function generateWatchCommonSpecs(page, engineName) {
 	describe('common', () => {
 		let
 			root;

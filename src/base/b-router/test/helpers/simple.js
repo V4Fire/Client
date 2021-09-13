@@ -12,13 +12,16 @@
  * @typedef {import('playwright').Page} Page
  */
 
+const
+	{initRouter} = include('src/base/b-router/test/helpers/init');
+
 /**
  * Generates common specs for all router engines of "simple usage" runners
  *
  * @param {Page} page
  * @param {'historyApiRouterEngine'|'inMemoryRouterEngine'} engineName
  */
-module.exports = function generateSimpleUsageCommonSpecs(page, engineName) {
+module.exports.generateSimpleUsageCommonSpecs = function generateSimpleUsageCommonSpecs(page, engineName) {
 	describe('common', () => {
 		let
 			root;
