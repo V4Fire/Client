@@ -82,6 +82,8 @@ exports.getSelectedBrowsers = function getSelectedBrowsers() {
 	return browsers;
 };
 
+exports.getBrowserArgs = getBrowserArgs;
+
 /**
  * Returns a list of arguments that will be provided to a browser
  * @returns {!Array<string>}
@@ -102,9 +104,7 @@ function getBrowserArgs() {
 	}
 }
 
-exports.getBrowserArgs = getBrowserArgs;
-
-	/**
+/**
  * Generates a `--client-name` using the specified parameters
  *
  * @param {string=} name

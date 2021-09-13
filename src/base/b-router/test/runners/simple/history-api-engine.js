@@ -19,7 +19,7 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-	describe('b-router simple usage with history API engine', () => {
+	describe('b-router simple usage with the history API engine', () => {
 		generateSimpleUsageCommonSpecs(page, 'historyApiRouterEngine');
 
 		describe('history API engine specific', () => {

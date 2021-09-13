@@ -19,7 +19,7 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-	describe('b-router simple usage with in-memory engine', () => {
+	describe('b-router simple usage with the in-memory engine', () => {
 		generateSimpleUsageCommonSpecs(page, 'inMemoryRouterEngine');
 
 		describe('in-memory engine specific', () => {
@@ -30,11 +30,11 @@ module.exports = (page) => {
 				root = await initRouter(page, 'inMemoryRouterEngine');
 			});
 
-			it('checking the `route` property with initialRoute', async () => {
+			it('checking the `route` property with `initialRoute`', async () => {
 				expect(await root.evaluate(({route}) => route != null)).toBeTrue();
 			});
 
-			it('checking the `route` property without initialRoute', async () => {
+			it('checking the `route` property without `initialRoute`', async () => {
 				root = await initRouter(page, 'inMemoryRouterEngine', null);
 				expect(await root.evaluate(({route}) => route == null)).toBeTrue();
 			});

@@ -19,7 +19,7 @@ const
  * @param {Page} page
  */
 module.exports = (page) => {
-	describe('b-router advanced transitions with history API engine', () => {
+	describe('b-router advanced transitions with the history API engine', () => {
 		generateTransitionCommonSpecs(page, 'historyApiRouterEngine');
 
 		describe('history API engine specific', () => {

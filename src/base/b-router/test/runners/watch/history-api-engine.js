@@ -17,7 +17,7 @@ const
 
 /** @param {Page} page */
 module.exports = (page) => {
-	describe('b-router watching with history API engine', () => {
+	describe('b-router watching with the history API engine', () => {
 		generateWatchCommonSpecs(page, 'historyApiRouterEngine');
 	});
 };
