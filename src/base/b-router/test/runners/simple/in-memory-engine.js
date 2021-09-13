@@ -35,7 +35,7 @@ module.exports = (page) => {
 			});
 
 			it('checking the `route` property without `initialRoute`', async () => {
-				root = await initRouter(page, 'inMemoryRouterEngine', null);
+				root = await initRouter(page, 'inMemoryRouterEngine', {initialRoute: null});
 				expect(await root.evaluate(({route}) => route == null)).toBeTrue();
 			});
 
