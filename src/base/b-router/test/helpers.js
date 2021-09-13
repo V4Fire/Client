@@ -18,7 +18,7 @@ const
 /**
  * Initializes a router
  *
- * @param {!Page} page
+ * @param {Page} page
  * @param {('historyApiRouterEngine'|'inMemoryRouterEngine')} engineName
  * @param {?string=} [initialRoute]- pass `null` to remove `initialRoute` for the in-memory engine
  * @returns {!Promise<Playwright.JSHandle>}
