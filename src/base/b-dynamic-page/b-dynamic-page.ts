@@ -251,16 +251,18 @@ export default class bDynamicPage extends iDynamicPage {
 					currentPageEl = unsafe.block?.element<iDynamicPageEl>('component'),
 					currentPageComponent = currentPageEl?.component?.unsafe;
 
-				if (currentPageEl != null && currentPageComponent != null) {
-					const
-						currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
+				if (currentPageEl != null) {
+					if (currentPageComponent != null) {
+						const
+							currentPageStrategy = unsafe.getKeepAliveStrategy(currentPage, currentRoute);
 
-					if (currentPageStrategy.isLoopback) {
-						currentPageComponent.$destroy();
+						if (currentPageStrategy.isLoopback) {
+							currentPageComponent.$destroy();
 
-					} else {
-						currentPageStrategy.add(currentPageEl);
-						currentPageComponent.deactivate();
+						} else {
+							currentPageStrategy.add(currentPageEl);
+							currentPageComponent.deactivate();
+						}
 					}
 
 					currentPageEl.remove();
@@ -286,9 +288,9 @@ export default class bDynamicPage extends iDynamicPage {
 						pageComponentFromCache = pageElFromCache.component;
 
 					if (pageComponentFromCache != null) {
-						unsafe.$el?.append(pageElFromCache);
-
 						pageComponentFromCache.activate();
+
+						unsafe.$el?.append(pageElFromCache);
 						pageComponentFromCache.emit('mounted', pageElFromCache);
 
 						componentRef?.push(pageComponentFromCache);
