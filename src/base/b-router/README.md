@@ -505,7 +505,8 @@ In the second example, we just declare an external route.
 
 It uses the `core/router` module as a strategy. This module contains interfaces for the router engine, declaration of routes,
 route object, etc., and provides "strategies" or "engines" to do transitions. The engines are specified within the `engines` directory.
-We have only one engine based on the browser history API by default, but you can create your own engine.
+We have engines based on the browser history API (this is the default engine) and in-memory state storing, but you can
+create engine that meets your own needs by yourself.
 The active or default engine is exported from the `engines/index.ts` file.
 
 ### Transition methods
