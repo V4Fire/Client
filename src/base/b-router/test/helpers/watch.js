@@ -112,4 +112,3 @@ module.exports.generateWatchCommonSpecs = function generateWatchCommonSpecs(page
 		});
 	});
 };
-

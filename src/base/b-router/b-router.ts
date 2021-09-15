@@ -141,10 +141,7 @@ export default class bRouter extends iData {
 	readonly basePathProp: string = '/';
 
 	/** @see [[bRouter.basePathProp]] */
-	@system<bRouter>({
-		init: (o) => o.sync.link()
-	})
-
+	@system<bRouter>((o) => o.sync.link())
 	basePath!: string;
 
 	/**
