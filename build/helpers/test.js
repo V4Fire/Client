@@ -82,7 +82,7 @@ exports.getSelectedBrowsers = function getSelectedBrowsers() {
 	return browsers;
 };
 
-exports.getBrowserArgs = getBrowserArgs();
+exports.getBrowserArgs = getBrowserArgs;
 
 /**
  * Returns a list of arguments that will be provided to a browser
