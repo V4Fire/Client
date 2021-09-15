@@ -243,7 +243,7 @@ export default class bDynamicPage extends iDynamicPage {
 			resolve: Function,
 			currentRoute: typeof route
 		): AnyFunction {
-			return async (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
+			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
 				const componentRef = unsafe.$refs.component;
 				componentRef?.pop();
 
@@ -289,7 +289,6 @@ export default class bDynamicPage extends iDynamicPage {
 
 					if (pageComponentFromCache != null) {
 						pageComponentFromCache.activate();
-						await unsafe.nextTick({label: $$.onPageChange});
 
 						unsafe.$el?.append(pageElFromCache);
 						pageComponentFromCache.emit('mounted', pageElFromCache);
