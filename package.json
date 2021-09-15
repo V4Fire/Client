@@ -131,6 +131,6 @@
     "@v4fire/linters": "^1.7.3",
     "husky": "^7.0.2",
     "nyc": "^15.1.0",
-    "playwright": "^1.14.1"
+    "playwright": "1.13.1"
   }
 }
