@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## ???
 
+#### :boom: Breaking Change
+
+* Renamed `browser.history` to `browser-history` `core/router/engines`
+
 #### :rocket: New Feature
 
 * Added a new router engine `core/router/engines/in-memory`

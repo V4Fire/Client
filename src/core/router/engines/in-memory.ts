@@ -31,7 +31,7 @@ export let
 	historyLogPointer: CanUndef<number> = undefined;
 
 /**
- * Возвращает драйвер для in-memory роутера
+ * Creates an in-memory engine for `bRouter` component
  * @param ctx
  */
 export default function createRouter(ctx: bRouter): Router {

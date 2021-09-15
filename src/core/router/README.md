@@ -7,16 +7,13 @@ The engines aren't used directly, but with [[bRouter]].
 
 ### History API Engine (`browser.history`)
 
-This engine is based on the browser History API. It is hooked with the History API events
-such as `popstate` and `pageShow` and writes all pages states into the native `history` object.
+This engine is based on the browser History API. It is hooked with the History API events such as `popstate` and `pageShow` and writes all pages states into the native `history` object.
 
-> Use this engine if you need to update the URL in the browser and native back/forward buttons bindings
+Use this engine if you need to update a URL after transitions and support of native back/forward actions.
 
 ### In-memory Engine
 
-This engine stores all pages states completely in memory. It doesn't update browser URL and doesn't react to native
-back/forward buttons. It's useful when you have an embedded resource that shouldn't change the main page
-navigation state.
+This engine stores all page states completely in memory. It doesn't update a URL after transitions and doesn't support native
+back/forward actions. It's useful when you have an embedded resource that shouldn't change the main page navigation state.
 
-> Use this engine if you don't care about native browser navigation and avoid changing global navigation state of the
-> browser tab.
+Use this engine if you don't care about native browser navigation or avoid changing the global navigation state of the browser tab.

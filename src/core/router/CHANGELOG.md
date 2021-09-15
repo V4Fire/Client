@@ -11,6 +11,10 @@ Changelog
 
 ## ???
 
+#### :boom: Breaking Change
+
+* Renamed `browser.history` to `browser-history` `engines`
+
 #### :rocket: New Feature
 
 * Added a new router engine `in-memory`
