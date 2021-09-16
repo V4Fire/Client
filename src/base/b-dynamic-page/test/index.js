@@ -36,7 +36,7 @@ module.exports = async (page, params) => {
 	describe('b-dynamic-page', () => {
 		it("the `component` getter shouldn't be cached", async () => {
 			const target = await init({
-				page: 'p-v4-dynamic-page-1'
+				page: 'p-v4-dynamic-page1'
 			});
 
 			expect(
@@ -49,7 +49,7 @@ module.exports = async (page, params) => {
 
 		it('setting `pageProp` and `page`', async () => {
 			const target = await init({
-				page: 'p-v4-dynamic-page-1'
+				page: 'p-v4-dynamic-page1'
 			});
 
 			const scan = await target.evaluate(async (ctx) => {
@@ -59,7 +59,7 @@ module.exports = async (page, params) => {
 				await ctx.nextTick();
 				res.push(ctx.page, ctx.component.componentName);
 
-				ctx.page = 'p-v4-dynamic-page-2';
+				ctx.page = 'p-v4-dynamic-page2';
 
 				await ctx.nextTick();
 				res.push(ctx.page, ctx.component.componentName);
@@ -68,11 +68,11 @@ module.exports = async (page, params) => {
 			});
 
 			expect(scan).toEqual([
-				'p-v4-dynamic-page-1',
-				'p-v4-dynamic-page-1',
+				'p-v4-dynamic-page1',
+				'p-v4-dynamic-page1',
 
-				'p-v4-dynamic-page-2',
-				'p-v4-dynamic-page-2'
+				'p-v4-dynamic-page2',
+				'p-v4-dynamic-page2'
 			]);
 		});
 
@@ -81,10 +81,10 @@ module.exports = async (page, params) => {
 				target = await init();
 
 			expect(await target.evaluate(switcher)).toEqual([
-				'p-v4-dynamic-page-1',
+				'p-v4-dynamic-page1',
 				'mounted',
 
-				'p-v4-dynamic-page-2',
+				'p-v4-dynamic-page1',
 				'mounted',
 
 				'// Previous component',
@@ -92,7 +92,7 @@ module.exports = async (page, params) => {
 				'destroyed',
 				'destroyed',
 
-				'p-v4-dynamic-page-1',
+				'p-v4-dynamic-page1',
 				'mounted',
 
 				'// Previous component',
@@ -109,10 +109,10 @@ module.exports = async (page, params) => {
 				});
 
 				expect(await target.evaluate(switcher)).toEqual([
-					'p-v4-dynamic-page-1',
+					'p-v4-dynamic-page1',
 					'activated',
 
-					'p-v4-dynamic-page-2',
+					'p-v4-dynamic-page1',
 					'activated',
 
 					'// Previous component',
@@ -120,7 +120,7 @@ module.exports = async (page, params) => {
 					'deactivated',
 					'mounted',
 
-					'p-v4-dynamic-page-1',
+					'p-v4-dynamic-page1',
 					'activated',
 
 					'// Previous component',
@@ -158,10 +158,10 @@ module.exports = async (page, params) => {
 						return res;
 					})
 				).toEqual([
-					'p-v4-dynamic-page-3',
+					'p-v4-dynamic-page1',
 					'activated',
 
-					'p-v4-dynamic-page-3',
+					'p-v4-dynamic-page1',
 					'destroyed'
 				]);
 			});
@@ -170,14 +170,14 @@ module.exports = async (page, params) => {
 				it('as a string', async () => {
 					const target = await init({
 						keepAlive: true,
-						include: 'p-v4-dynamic-page-1'
+						include: 'p-v4-dynamic-page1'
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -185,7 +185,7 @@ module.exports = async (page, params) => {
 						'deactivated',
 						'mounted',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -198,14 +198,14 @@ module.exports = async (page, params) => {
 				it('as a string array', async () => {
 					const target = await init({
 						keepAlive: true,
-						include: ['p-v4-dynamic-page-1', 'p-v4-dynamic-page-2']
+						include: ['p-v4-dynamic-page1', 'p-v4-dynamic-page1']
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -213,7 +213,7 @@ module.exports = async (page, params) => {
 						'deactivated',
 						'mounted',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -230,10 +230,10 @@ module.exports = async (page, params) => {
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -241,7 +241,7 @@ module.exports = async (page, params) => {
 						'deactivated',
 						'mounted',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -253,10 +253,10 @@ module.exports = async (page, params) => {
 
 				it('as a function that returns `null` or `false`', async () => {
 					const res = [
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -264,7 +264,7 @@ module.exports = async (page, params) => {
 						'destroyed',
 						'destroyed',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -294,10 +294,10 @@ module.exports = async (page, params) => {
 
 				it('as a function that returns `true` or a string', async () => {
 					const res = [
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -305,7 +305,7 @@ module.exports = async (page, params) => {
 						'deactivated',
 						'mounted',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -347,10 +347,10 @@ return (page, route, ctx) => ({
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -358,7 +358,7 @@ return (page, route, ctx) => ({
 						'deactivated',
 						'mounted',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -373,14 +373,14 @@ return (page, route, ctx) => ({
 				it('as a string', async () => {
 					const target = await init({
 						keepAlive: true,
-						exclude: 'p-v4-dynamic-page-1'
+						exclude: 'p-v4-dynamic-page1'
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -388,7 +388,7 @@ return (page, route, ctx) => ({
 						'destroyed',
 						'destroyed',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -401,14 +401,14 @@ return (page, route, ctx) => ({
 				it('as a string array', async () => {
 					const target = await init({
 						keepAlive: true,
-						exclude: ['p-v4-dynamic-page-1', 'p-v4-dynamic-page-2']
+						exclude: ['p-v4-dynamic-page1', 'p-v4-dynamic-page1']
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -416,7 +416,7 @@ return (page, route, ctx) => ({
 						'destroyed',
 						'destroyed',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -433,10 +433,10 @@ return (page, route, ctx) => ({
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -444,7 +444,7 @@ return (page, route, ctx) => ({
 						'destroyed',
 						'destroyed',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -461,10 +461,10 @@ return (page, route, ctx) => ({
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -472,7 +472,7 @@ return (page, route, ctx) => ({
 						'destroyed',
 						'destroyed',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -489,10 +489,10 @@ return (page, route, ctx) => ({
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -500,7 +500,7 @@ return (page, route, ctx) => ({
 						'deactivated',
 						'mounted',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -516,14 +516,14 @@ return (page, route, ctx) => ({
 					const target = await init({
 						keepAlive: true,
 						include: 'return /p-v4-dynamic-page/',
-						exclude: 'p-v4-dynamic-page-2'
+						exclude: 'p-v4-dynamic-page1'
 					});
 
 					expect(await target.evaluate(switcher)).toEqual([
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
-						'p-v4-dynamic-page-2',
+						'p-v4-dynamic-page1',
 						'mounted',
 
 						'// Previous component',
@@ -531,7 +531,7 @@ return (page, route, ctx) => ({
 						'deactivated',
 						'mounted',
 
-						'p-v4-dynamic-page-1',
+						'p-v4-dynamic-page1',
 						'activated',
 
 						'// Previous component',
@@ -589,17 +589,17 @@ return (page, route, ctx) => ({
 							routes: {
 								page1: {
 									path: '/page-1',
-									component: 'p-v4-dynamic-page-1'
+									component: 'p-v4-dynamic-page1'
 								},
 
 								page2: {
 									path: '/page-2',
-									component: 'p-v4-dynamic-page-2'
+									component: 'p-v4-dynamic-page1'
 								},
 
 								page3: {
 									path: '/page-3',
-									component: 'p-v4-dynamic-page-3'
+									component: 'p-v4-dynamic-page1'
 								}
 							}
 						}

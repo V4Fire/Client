@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-module-2')
+package('b-dummy-module1')
 	.extends('i-data');

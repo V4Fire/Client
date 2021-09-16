@@ -1,5 +1,5 @@
 {
-  "hash": "d6689695eacd6a7bdcb7e5824c7be5e76ecdef4f35d900785c355443d03c9292",
+  "hash": "79a92e80fd890025320770cfeeb2e10fa947975ccbb684bc4e55770a3713aa93",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -266,70 +266,6 @@
         }
       ],
       [
-        "b-dummy-module-1",
-        {
-          "index": "src/dummies/b-dummy-module-loader/b-dummy-module-1/index.js",
-          "declaration": {
-            "name": "b-dummy-module-1",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-module-1",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.ts",
-          "styles": [
-            "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.styl"
-          ],
-          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-1/b-dummy-module-1.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-module-2",
-        {
-          "index": "src/dummies/b-dummy-module-loader/b-dummy-module-2/index.js",
-          "declaration": {
-            "name": "b-dummy-module-2",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-module-2",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.ts",
-          "styles": [
-            "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.styl"
-          ],
-          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-2/b-dummy-module-2.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-dummy-module-loader",
         {
           "index": "src/dummies/b-dummy-module-loader/index.js",
@@ -358,6 +294,70 @@
             "src/dummies/b-dummy-module-loader/b-dummy-module-loader.styl"
           ],
           "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module-loader.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module1",
+        {
+          "index": "src/dummies/b-dummy-module-loader/b-dummy-module1/index.js",
+          "declaration": {
+            "name": "b-dummy-module1",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module1",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module1/b-dummy-module1.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module1/b-dummy-module1.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module1/b-dummy-module1.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-module2",
+        {
+          "index": "src/dummies/b-dummy-module-loader/b-dummy-module2/index.js",
+          "declaration": {
+            "name": "b-dummy-module2",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-module2",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-module-loader/b-dummy-module2/b-dummy-module2.ts",
+          "styles": [
+            "src/dummies/b-dummy-module-loader/b-dummy-module2/b-dummy-module2.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-module-loader/b-dummy-module2/b-dummy-module2.ss",
           "etpl": null
         }
       ],
@@ -1964,9 +1964,9 @@
             "parent": "i-static-page",
             "dependencies": [
               "b-v4-component-demo",
-              "p-v4-dynamic-page-1",
-              "p-v4-dynamic-page-2",
-              "p-v4-dynamic-page-3",
+              "p-v4-dynamic-page1",
+              "p-v4-dynamic-page2",
+              "p-v4-dynamic-page3",
               "b-remote-provider",
               "b-router",
               "b-dynamic-page",
@@ -2005,9 +2005,9 @@
           "parent": "i-static-page",
           "dependencies": [
             "b-v4-component-demo",
-            "p-v4-dynamic-page-1",
-            "p-v4-dynamic-page-2",
-            "p-v4-dynamic-page-3",
+            "p-v4-dynamic-page1",
+            "p-v4-dynamic-page2",
+            "p-v4-dynamic-page3",
             "b-remote-provider",
             "b-router",
             "b-dynamic-page",
@@ -2060,18 +2060,18 @@
         }
       ],
       [
-        "p-v4-dynamic-page-1",
+        "p-v4-dynamic-page1",
         {
-          "index": "src/pages/p-v4-dynamic-page-1/index.js",
+          "index": "src/pages/p-v4-dynamic-page1/index.js",
           "declaration": {
-            "name": "p-v4-dynamic-page-1",
+            "name": "p-v4-dynamic-page1",
             "parent": "i-dynamic-page",
             "dependencies": [
               "b-button"
             ],
             "libs": []
           },
-          "name": "p-v4-dynamic-page-1",
+          "name": "p-v4-dynamic-page1",
           "parent": "i-dynamic-page",
           "dependencies": [
             "b-button"
@@ -2087,27 +2087,27 @@
           },
           "type": "page",
           "mixin": false,
-          "logic": "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.ts",
+          "logic": "src/pages/p-v4-dynamic-page1/p-v4-dynamic-page1.ts",
           "styles": [
-            "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.styl"
+            "src/pages/p-v4-dynamic-page1/p-v4-dynamic-page1.styl"
           ],
-          "tpl": "src/pages/p-v4-dynamic-page-1/p-v4-dynamic-page-1.ss",
+          "tpl": "src/pages/p-v4-dynamic-page1/p-v4-dynamic-page1.ss",
           "etpl": null
         }
       ],
       [
-        "p-v4-dynamic-page-2",
+        "p-v4-dynamic-page2",
         {
-          "index": "src/pages/p-v4-dynamic-page-2/index.js",
+          "index": "src/pages/p-v4-dynamic-page2/index.js",
           "declaration": {
-            "name": "p-v4-dynamic-page-2",
+            "name": "p-v4-dynamic-page2",
             "parent": "i-dynamic-page",
             "dependencies": [
               "b-button"
             ],
             "libs": []
           },
-          "name": "p-v4-dynamic-page-2",
+          "name": "p-v4-dynamic-page2",
           "parent": "i-dynamic-page",
           "dependencies": [
             "b-button"
@@ -2123,27 +2123,27 @@
           },
           "type": "page",
           "mixin": false,
-          "logic": "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.ts",
+          "logic": "src/pages/p-v4-dynamic-page2/p-v4-dynamic-page2.ts",
           "styles": [
-            "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.styl"
+            "src/pages/p-v4-dynamic-page2/p-v4-dynamic-page2.styl"
           ],
-          "tpl": "src/pages/p-v4-dynamic-page-2/p-v4-dynamic-page-2.ss",
+          "tpl": "src/pages/p-v4-dynamic-page2/p-v4-dynamic-page2.ss",
           "etpl": null
         }
       ],
       [
-        "p-v4-dynamic-page-3",
+        "p-v4-dynamic-page3",
         {
-          "index": "src/pages/p-v4-dynamic-page-3/index.js",
+          "index": "src/pages/p-v4-dynamic-page3/index.js",
           "declaration": {
-            "name": "p-v4-dynamic-page-3",
+            "name": "p-v4-dynamic-page3",
             "parent": "i-dynamic-page",
             "dependencies": [
               "b-button"
             ],
             "libs": []
           },
-          "name": "p-v4-dynamic-page-3",
+          "name": "p-v4-dynamic-page3",
           "parent": "i-dynamic-page",
           "dependencies": [
             "b-button"
@@ -2159,11 +2159,11 @@
           },
           "type": "page",
           "mixin": false,
-          "logic": "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.ts",
+          "logic": "src/pages/p-v4-dynamic-page3/p-v4-dynamic-page3.ts",
           "styles": [
-            "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.styl"
+            "src/pages/p-v4-dynamic-page3/p-v4-dynamic-page3.styl"
           ],
-          "tpl": "src/pages/p-v4-dynamic-page-3/p-v4-dynamic-page-3.ss",
+          "tpl": "src/pages/p-v4-dynamic-page3/p-v4-dynamic-page3.ss",
           "etpl": null
         }
       ]

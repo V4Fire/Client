@@ -144,7 +144,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		function createCookie(params = {}) {
 			return {
-				sameSite: 'None',
+				sameSite: 'Lax',
 				name: 'testCookie',
 				value: 'testCookieVal',
 				domain: 'localhost',

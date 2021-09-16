@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:pages/p-v4-dynamic-page-1/README.md]]
+ * [[include:pages/p-v4-dynamic-page3/README.md]]
  * @packageDocumentation
  */
 
@@ -19,4 +19,4 @@ export * from 'super/i-dynamic-page/i-dynamic-page';
  * Simple dynamic page for tests
  */
 @component()
-export default class pV4DynamicPage1 extends iDynamicPage {}
+export default class pV4DynamicPage3 extends iDynamicPage {}
