@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## ???
+## v3.5.0 (2021-09-16)
 
 #### :boom: Breaking Change
 
@@ -24,11 +24,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed calling of the `getBrowserArgs` function `build/helpers/test`
+* Fixed some cases when the previous page `bDynamicPage`
 
 #### :house: Internal
 
-* Added new tests for the `in-memory` engine `bRouter`
-* Call `updateCurrentRoute` only when `basePath` prop changes but not the property itself in `base/b-router`
+* `bRouter`:
+  * Added new tests for the `in-memory` engine
+  * Call `updateCurrentRoute` only when `basePath` prop changes but not the property itself
 
 ## v3.4.0 (2021-09-09)
 
