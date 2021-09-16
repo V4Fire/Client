@@ -26,9 +26,23 @@ import {
 
 import type bRouter from 'base/b-router/b-router';
 
-export let
+let
 	historyLog: Route[] = [],
 	historyLogPointer: CanUndef<number> = undefined;
+
+/**
+ * Returns complete history log
+ */
+export function getHistory(): Route[] {
+	return historyLog;
+}
+
+/**
+ * Returns the position of the current history entry in the history log or `undefined` if the log is empty
+ */
+export function getCurrentHistoryEntryPointer(): CanUndef<number> {
+	return historyLogPointer;
+}
 
 /**
  * Creates an in-memory engine for `bRouter` component
