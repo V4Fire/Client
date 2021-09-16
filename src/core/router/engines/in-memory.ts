@@ -38,7 +38,7 @@ export function getHistory(): Route[] {
 }
 
 /**
- * Returns the position of the current history entry in the history log or `undefined` if the log is empty
+ * Returns a position of the current history entry or `undefined` if the history is empty
  */
 export function getCurrentHistoryEntryPointer(): CanUndef<number> {
 	return historyLogPointer;
@@ -51,58 +51,6 @@ export function getCurrentHistoryEntryPointer(): CanUndef<number> {
 export default function createRouter(ctx: bRouter): Router {
 	const
 		emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
-
-	const clear = (filterFn?: HistoryClearFilter): Promise<void> => new Promise((resolve) => {
-		if (filterFn == null) {
-			historyLog = [];
-			historyLogPointer = undefined;
-
-		} else {
-			const
-				filter = (log: Route[]): Route[] => log.filter((item) => !Object.isTruly(filterFn(item)));
-
-			if (historyLogPointer === undefined) {
-				historyLog = filter(historyLog);
-
-			} else {
-				const
-					backHistoryLog = filter(historyLog.slice(0, historyLogPointer + 1)),
-					forwardHistoryLog = filter(historyLog.slice(historyLogPointer + 1));
-
-				historyLogPointer = backHistoryLog.length === 0 ? undefined : backHistoryLog.length - 1;
-				historyLog = backHistoryLog.concat(forwardHistoryLog);
-			}
-		}
-
-		if (historyLogPointer === undefined) {
-			ctx.field.set('routeStore', undefined);
-			ctx.r.route = undefined;
-		}
-
-		resolve();
-	});
-
-	const go = (delta: number) => {
-		const
-			newHistoryLogPointer = (historyLogPointer ?? -1) + delta;
-
-		if (newHistoryLogPointer < -1 || newHistoryLogPointer > historyLog.length - 1) {
-			return;
-		}
-
-		historyLogPointer = newHistoryLogPointer === -1 ? undefined : newHistoryLogPointer;
-
-		if (historyLogPointer !== undefined) {
-			const
-				route = historyLog[historyLogPointer];
-
-			ctx.emitTransition(route.name, route, 'event').catch(stderr);
-
-		} else {
-			ctx.field.set('routeStore', undefined);
-			ctx.r.route = undefined;
-		}
-	};
 
 	return Object.mixin<Router>({withAccessors: true}, Object.create(emitter), <Router>{
 		get route(): CanUndef<Route> {
@@ -198,4 +146,56 @@ export default function createRouter(ctx: bRouter): Router {
 			);
 		}
 	});
+
+	function clear(filterFn?: HistoryClearFilter): Promise<void> {
+		if (filterFn == null) {
+			historyLog = [];
+			historyLogPointer = undefined;
+
+		} else {
+			const
+				filter = (log: Route[]): Route[] => log.filter((item) => !Object.isTruly(filterFn(item)));
+
+			if (historyLogPointer == null) {
+				historyLog = filter(historyLog);
+
+			} else {
+				const
+					backHistoryLog = filter(historyLog.slice(0, historyLogPointer + 1)),
+					forwardHistoryLog = filter(historyLog.slice(historyLogPointer + 1));
+
+				historyLogPointer = backHistoryLog.length === 0 ? undefined : backHistoryLog.length - 1;
+				historyLog = backHistoryLog.concat(forwardHistoryLog);
+			}
+		}
+
+		if (historyLogPointer == null) {
+			ctx.field.set('routeStore', undefined);
+			ctx.r.route = undefined;
+		}
+
+		return Promise.resolve();
+	}
+
+	function go(delta: number): void {
+		const
+			newHistoryLogPointer = (historyLogPointer ?? -1) + delta;
+
+		if (newHistoryLogPointer < -1 || newHistoryLogPointer > historyLog.length - 1) {
+			return;
+		}
+
+		historyLogPointer = newHistoryLogPointer === -1 ? undefined : newHistoryLogPointer;
+
+		if (historyLogPointer !== undefined) {
+			const
+				route = historyLog[historyLogPointer];
+
+			ctx.emitTransition(route.name, route, 'event').catch(stderr);
+
+		} else {
+			ctx.field.set('routeStore', undefined);
+			ctx.r.route = undefined;
+		}
+	}
 }

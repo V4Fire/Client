@@ -40,8 +40,8 @@ let isOpenedFromBfcache = false;
 // that why we need the history clone.
 
 let
-	historyPos = 0,
-	historyInit = false;
+	historyLogPointer = 0,
+	isHistoryInit = false;
 
 type HistoryLog = Array<{
 	route: string;
@@ -60,8 +60,8 @@ function truncateHistoryLog(): void {
 		return;
 	}
 
-	if (historyPos >= history.length) {
-		historyPos = history.length - 1;
+	if (historyLogPointer >= history.length) {
+		historyLogPointer = history.length - 1;
 		saveHistoryPos();
 	}
 
@@ -83,13 +83,13 @@ function saveHistoryLog(): void {
  */
 function saveHistoryPos(): void {
 	try {
-		historyStorage.set('pos', historyPos);
+		historyStorage.set('pos', historyLogPointer);
 	} catch {}
 }
 
 // Try to load history log from the session storage
 try {
-	historyPos = historyStorage.get('pos') ?? 0;
+	historyLogPointer = historyStorage.get('pos') ?? 0;
 
 	for (let o = <HistoryLog>historyStorage.get('log'), i = 0; i < o.length; i++) {
 		const
@@ -143,10 +143,10 @@ export default function createRouter(component: bRouter): Router {
 			}
 
 			if (method !== 'replaceState') {
-				historyInit = true;
+				isHistoryInit = true;
 
-			} else if (!historyInit) {
-				historyInit = true;
+			} else if (!isHistoryInit) {
+				isHistoryInit = true;
 
 				// Prevent pushing of one route more than one times:
 				// this situation take a place when we reload the browser page
@@ -160,7 +160,7 @@ export default function createRouter(component: bRouter): Router {
 
 			if (historyLog.length === 0 || syncMethod === 'pushState') {
 				historyLog.push({route, params});
-				historyPos = historyLog.length - 1;
+				historyLogPointer = historyLog.length - 1;
 				saveHistoryPos();
 
 			} else {
@@ -348,8 +348,8 @@ export default function createRouter(component: bRouter): Router {
 					from = el[0],
 					to = historyLog[el[1]];
 
-				if (from <= historyPos) {
-					history.go(from - historyPos - 1);
+				if (from <= historyLogPointer) {
+					history.go(from - historyLogPointer - 1);
 				}
 
 				await $a.promisifyOnce(globalThis, 'popstate', modHistoryLabel);
@@ -366,7 +366,7 @@ export default function createRouter(component: bRouter): Router {
 				saveHistoryLog();
 
 				// eslint-disable-next-line require-atomic-updates
-				historyPos = historyLog.length - 1;
+				historyLogPointer = historyLog.length - 1;
 				saveHistoryPos();
 
 				await $a.nextTick();
@@ -376,14 +376,14 @@ export default function createRouter(component: bRouter): Router {
 			truncateHistoryLog();
 
 			const
-				lastPos = historyPos - cutIntervals[0][0];
+				lastPos = historyLogPointer - cutIntervals[0][0];
 
 			if (lastPos > 0) {
 				history.go(lastPos);
 				await $a.promisifyOnce(globalThis, 'popstate', modHistoryLabel);
 
 				// eslint-disable-next-line require-atomic-updates
-				historyPos = lastPos;
+				historyLogPointer = lastPos;
 				saveHistoryPos();
 			}
 		},
@@ -414,7 +414,7 @@ export default function createRouter(component: bRouter): Router {
 			try {
 				for (let i = 0; i < historyLog.length; i++) {
 					if (Object.get(historyLog[i], 'params._id') === routeId) {
-						historyPos = i;
+						historyLogPointer = i;
 						saveHistoryPos();
 						break;
 					}
