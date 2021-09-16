@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:dummies/b-dummy-module-loader/b-dummy-module-1/README.md]]
+ * [[include:dummies/b-dummy-module-loader/b-dummy-module1/README.md]]
  * @packageDocumentation
  */
 

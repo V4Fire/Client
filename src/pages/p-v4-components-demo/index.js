@@ -13,9 +13,9 @@ package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
 		'b-v4-component-demo',
-		'p-v4-dynamic-page-1',
-		'p-v4-dynamic-page-2',
-		'p-v4-dynamic-page-3',
+		'p-v4-dynamic-page1',
+		'p-v4-dynamic-page2',
+		'p-v4-dynamic-page3',
 
 		'b-remote-provider',
 		'b-router',

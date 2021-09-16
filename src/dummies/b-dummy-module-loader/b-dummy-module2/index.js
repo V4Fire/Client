@@ -6,6 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('p-v4-dynamic-page-1')
-	.extends('i-dynamic-page')
-	.dependencies('b-button');
+package('b-dummy-module2')
+	.extends('i-data');

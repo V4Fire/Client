@@ -13,7 +13,7 @@
 - template index() extends ['i-dynamic-page'].index
 	- block body
 		< b-button.&__button v-func = false
-			p-v4-dynamic-page-2
+			p-v4-dynamic-page2
 
 		< b-button.&__button-func
 			Functional button
