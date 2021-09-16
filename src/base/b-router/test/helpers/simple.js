@@ -13,24 +13,25 @@
  */
 
 const
-	{initRouter} = include('src/base/b-router/test/helpers');
+	{initRouter} = include('src/base/b-router/test/helpers/init');
 
-/** @param {Page} page */
-module.exports = (page) => {
-	let
-		root;
+/**
+ * Generates common specs for all router engines of "simple usage" runners
+ *
+ * @param {Page} page
+ * @param {'historyApiRouterEngine'|'inMemoryRouterEngine'} engineName
+ */
+module.exports.generateSimpleUsageCommonSpecs = function generateSimpleUsageCommonSpecs(page, engineName) {
+	describe('common', () => {
+		let
+			root;
 
-	beforeAll(async () => {
-		root = await initRouter(page);
-	});
-
-	describe('b-router simple using', () => {
-		it('checking the root', async () => {
-			expect(await root.evaluate((ctx) => ctx.meta.params.root)).toBe(true);
+		beforeEach(async () => {
+			root = await initRouter(page, engineName);
 		});
 
-		it('checking the `route` property', async () => {
-			expect(await root.evaluate(({route}) => route != null)).toBeTrue();
+		it('checking the root', async () => {
+			expect(await root.evaluate((ctx) => ctx.meta.params.root)).toBe(true);
 		});
 
 		it('checking the `router` property', async () => {
@@ -49,52 +50,6 @@ module.exports = (page) => {
 				await ctx.router.push('/');
 				return ctx.route.meta.content;
 			})).toBe('Main page');
-		});
-
-		it('`replace` a page by a path', async () => {
-			expect(await root.evaluate(async (ctx) => {
-				const
-					historyLength = history.length,
-					res = {};
-
-				await ctx.router.replace('second');
-
-				res.content = ctx.route.meta.content;
-				res.lengthDoesntChange = historyLength === history.length;
-
-				return res;
-
-			})).toEqual({
-				content: 'Second page',
-				lengthDoesntChange: true
-			});
-		});
-
-		it('`replace` a page by null', async () => {
-			expect(await root.evaluate(async (ctx) => {
-				const
-					{router} = ctx;
-
-				await router.replace('/');
-
-				const
-					historyLength = history.length,
-					res = {};
-
-				await router.replace('second');
-				await router.replace(null, {query: {bla: 1}});
-
-				res.content = ctx.route.meta.content;
-				res.query = location.search;
-				res.lengthDoesntChange = historyLength === history.length;
-
-				return res;
-
-			})).toEqual({
-				query: '?bla=1',
-				content: 'Second page',
-				lengthDoesntChange: true
-			});
 		});
 
 		it('checking the `activePage` property', async () => {

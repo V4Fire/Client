@@ -11,6 +11,25 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## ???
+
+#### :boom: Breaking Change
+
+* Renamed `browser.history` to `browser-history` `core/router/engines`
+
+#### :rocket: New Feature
+
+* Added a new router engine `core/router/engines/in-memory`
+
+#### :bug: Bug Fix
+
+* Fixed calling of the `getBrowserArgs` function `build/helpers/test`
+
+#### :house: Internal
+
+* Added new tests for the `in-memory` engine `bRouter`
+* Call `updateCurrentRoute` only when `basePath` prop changes but not the property itself in `base/b-router`
+
 ## v3.4.0 (2021-09-09)
 
 #### :boom: Breaking Change

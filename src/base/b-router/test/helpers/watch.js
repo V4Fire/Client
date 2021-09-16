@@ -13,20 +13,25 @@
  */
 
 const
-	{initRouter} = include('src/base/b-router/test/helpers');
+	{initRouter} = include('src/base/b-router/test/helpers/init');
 
-/** @param {Page} page */
-module.exports = (page) => {
-	let
-		root;
+/**
+ * Generates common specs for all router engines of "watch" runners
+ *
+ * @param {Page} page
+ * @param {'historyApiRouterEngine'|'inMemoryRouterEngine'} engineName
+ */
+module.exports.generateWatchCommonSpecs = function generateWatchCommonSpecs(page, engineName) {
+	describe('common', () => {
+		let
+			root;
 
-	beforeAll(async () => {
-		root = await initRouter(page);
-	});
+		beforeEach(async () => {
+			root = await initRouter(page, engineName);
+		});
 
-	describe('b-router using watchers', () => {
 		it('watching for `route` changes', async () => {
-			expect(await root.evaluate(async (ctx) => {
+			expect(await root.evaluate(async (ctx, engineName) => {
 				const
 					{router} = ctx;
 
@@ -36,7 +41,7 @@ module.exports = (page) => {
 				await router.push('/second');
 				await router.push('/');
 
-				result.initialQuery = location.search;
+				result.initialQuery = engineName === 'historyApiRouterEngine' ? location.search : '';
 				result.initialContent = ctx.route.meta.content;
 
 				const
@@ -60,7 +65,7 @@ module.exports = (page) => {
 				await router.push('second', {query: {foo: 3}});
 				return result;
 
-			})).toEqual({
+			}, engineName)).toEqual({
 				initialContent: 'Main page',
 				initialQuery: '',
 				routeChanges: [[{foo: 1}, undefined]],
@@ -69,7 +74,7 @@ module.exports = (page) => {
 		});
 
 		it('linking for the `route` property', async () => {
-			expect(await root.evaluate(async (ctx) => {
+			expect(await root.evaluate(async (ctx, engineName) => {
 				const
 					{router} = ctx;
 
@@ -79,7 +84,7 @@ module.exports = (page) => {
 				await router.push('/second');
 				await router.push('/');
 
-				result.initialQuery = location.search;
+				result.initialQuery = engineName === 'historyApiRouterEngine' ? location.search : '';
 				result.initialContent = ctx.route.meta.content;
 
 				const
@@ -98,7 +103,7 @@ module.exports = (page) => {
 
 				return result;
 
-			})).toEqual({
+			}, engineName)).toEqual({
 				initialContent: 'Main page',
 				initialQuery: '',
 				initialRouteLink: {},

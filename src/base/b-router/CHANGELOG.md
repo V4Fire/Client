@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## ???
+
+#### :house: Internal
+
+* Added new tests for the `in-memory` engine
+* Call `updateCurrentRoute` only `basePath` prop changes but not the property itself
+
 ## v3.0.0-rc.195 (2021-05-28)
 
 #### :house: Internal

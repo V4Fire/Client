@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## ???
+
+#### :boom: Breaking Change
+
+* Renamed `browser.history` to `browser-history` `engines`
+
+#### :rocket: New Feature
+
+* Added a new router engine `in-memory`
+
 ## v3.0.0-rc.212 (2021-07-22)
 
 #### :bug: Bug Fix

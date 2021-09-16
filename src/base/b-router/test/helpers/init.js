@@ -19,16 +19,32 @@ const
  * Initializes a router
  *
  * @param {Page} page
+ * @param {('historyApiRouterEngine'|'inMemoryRouterEngine')} engineName
+ * @param {?Object=} [initOptions] - Router initializing options
+ * @param {?string} [initOptions.initialRoute] - Pass `null` to remove `initialRoute` for the in-memory engine
  * @returns {!Promise<Playwright.JSHandle>}
  */
-async function initRouter(page) {
-	await page.evaluate(() => {
+module.exports.initRouter = async function initRouter(page, engineName, initOptions = {}) {
+	await (await h.component.getRoot(page)).evaluate((ctx) => ctx.router?.clear());
+
+	if (initOptions.initialRoute === undefined && engineName === 'inMemoryRouterEngine') {
+		initOptions.initialRoute = 'main';
+	}
+
+	await page.evaluate(([engineName, initOptions]) => {
 		globalThis.removeCreatedComponents();
+
+		const
+			bDummyComponent = document.querySelector('.b-dummy').component,
+			engine = bDummyComponent.engines.router[engineName];
 
 		const scheme = [
 			{
 				attrs: {
 					id: 'target',
+
+					engine,
+					initialRoute: initOptions.initialRoute ?? undefined,
 
 					routes: {
 						main: {
@@ -117,12 +133,8 @@ async function initRouter(page) {
 		];
 
 		globalThis.renderComponents('b-router', scheme);
-	});
+	}, [engineName, initOptions]);
 
 	await h.component.waitForComponent(page, '#target');
-	return h.component.waitForComponent(page, '#root-component');
-}
-
-module.exports = {
-	initRouter
+	return h.component.getRoot(page);
 };

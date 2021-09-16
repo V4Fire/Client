@@ -29,6 +29,9 @@ import updateOn from 'core/component/directives/update-on/engines';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
+import inMemoryRouterEngine from 'core/router/engines/in-memory';
+import historyApiRouterEngine from 'core/router/engines/browser.history';
+
 import iData, {
 
 	component,
@@ -42,7 +45,7 @@ import iData, {
 import bBottomSlide from 'base/b-bottom-slide/b-bottom-slide';
 
 import daemons from 'dummies/b-dummy/daemons';
-import type { Directives, Modules } from 'dummies/b-dummy/interface';
+import type { Directives, Modules, Engines } from 'dummies/b-dummy/interface';
 
 const
 	inViewMutation = inViewFactory('mutation'),
@@ -72,6 +75,15 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 			inViewMutation,
 			inViewObserver,
 			updateOn
+		};
+	}
+
+	get engines(): Engines {
+		return {
+			router: {
+				historyApiRouterEngine,
+				inMemoryRouterEngine
+			}
 		};
 	}
 

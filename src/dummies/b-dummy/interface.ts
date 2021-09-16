@@ -17,6 +17,9 @@ import type * as session from 'core/session';
 import type updateOn from 'core/component/directives/update-on/engines';
 import type iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
+import type InMemoryRouterEngine from 'core/router/engines/in-memory';
+import type HistoryApiRouterEngine from 'core/router/engines/browser.history';
+
 export interface Directives {
 	imageFactory: typeof imageLoaderFactory;
 	image: typeof ImageLoader;
@@ -32,4 +35,11 @@ export interface Modules {
 	htmlHelpers: typeof htmlHelpers;
 	browserHelpers: typeof browserHelpers;
 	session: typeof session;
+}
+
+export interface Engines {
+	router: {
+		inMemoryRouterEngine: typeof InMemoryRouterEngine;
+		historyApiRouterEngine: typeof HistoryApiRouterEngine;
+	};
 }

@@ -1,5 +1,5 @@
 {
-  "hash": "d252a1e907227f2c3ea8fe0c54aa02be5bc6606877a94bdfc571127f33aa90aa",
+  "hash": "79a92e80fd890025320770cfeeb2e10fa947975ccbb684bc4e55770a3713aa93",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2092,6 +2092,78 @@
             "src/pages/p-v4-dynamic-page1/p-v4-dynamic-page1.styl"
           ],
           "tpl": "src/pages/p-v4-dynamic-page1/p-v4-dynamic-page1.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "p-v4-dynamic-page2",
+        {
+          "index": "src/pages/p-v4-dynamic-page2/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page2",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page2",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page2/p-v4-dynamic-page2.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page2/p-v4-dynamic-page2.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page2/p-v4-dynamic-page2.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "p-v4-dynamic-page3",
+        {
+          "index": "src/pages/p-v4-dynamic-page3/index.js",
+          "declaration": {
+            "name": "p-v4-dynamic-page3",
+            "parent": "i-dynamic-page",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "p-v4-dynamic-page3",
+          "parent": "i-dynamic-page",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "page",
+          "mixin": false,
+          "logic": "src/pages/p-v4-dynamic-page3/p-v4-dynamic-page3.ts",
+          "styles": [
+            "src/pages/p-v4-dynamic-page3/p-v4-dynamic-page3.styl"
+          ],
+          "tpl": "src/pages/p-v4-dynamic-page3/p-v4-dynamic-page3.ss",
           "etpl": null
         }
       ]
