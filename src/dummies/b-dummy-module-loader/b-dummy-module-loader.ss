@@ -14,16 +14,16 @@
 	- block body
 		< template v-if = stage === 'loading dynamic modules from a template'
 			< .&__result
-				+= self.loadModules('dummies/b-dummy-module-loader/b-dummy-module-1')
-					< b-dummy-module-1
+				+= self.loadModules('dummies/b-dummy-module-loader/b-dummy-module1')
+					< b-dummy-module1
 
-				+= self.loadModules(['dummies/b-dummy-module-loader/b-dummy-module-1', 'dummies/b-dummy-module-loader/b-dummy-module-2'], { &
+				+= self.loadModules(['dummies/b-dummy-module-loader/b-dummy-module1', 'dummies/b-dummy-module-loader/b-dummy-module2'], { &
 					wait: 'async.sleep.bind(async, 300)'
 				}) .
-					< b-dummy-module-1
-					< b-dummy-module-2
+					< b-dummy-module1
+					< b-dummy-module2
 
 		< template v-if = stage === 'loading dynamic modules passed from the prop'
 			< .&__result
-				< b-dummy-module-1
-				< b-dummy-module-2
+				< b-dummy-module1
+				< b-dummy-module2

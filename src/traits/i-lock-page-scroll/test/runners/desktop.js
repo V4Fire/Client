@@ -154,7 +154,7 @@ module.exports = (page) => {
 		async function checkRootMod(res) {
 			const
 				root = await page.$('html'),
-				fullModName = 'p-v-4-components-demo-lock-scroll-desktop-true';
+				fullModName = 'p-v4-components-demo-lock-scroll-desktop-true';
 
 			const containsMod = await root.evaluate(
 				(ctx, mod) => ctx.classList.contains(mod),

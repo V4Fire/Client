@@ -6,10 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-data/i-data.styl"
-
-$p = {
-
-}
-
-b-dummy-module-1 extends i-data
+package('p-v4-dynamic-page2')
+	.extends('i-dynamic-page')
+	.dependencies('b-button');

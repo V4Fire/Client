@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:pages/p-v4-dynamic-page-2/README.md]]
+ * [[include:pages/p-v4-dynamic-page2/README.md]]
  * @packageDocumentation
  */
 

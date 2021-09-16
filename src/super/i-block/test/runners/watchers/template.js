@@ -222,7 +222,7 @@ module.exports = (page) => {
 					el = ctx.block.element('watchable-mod'),
 					res = [el.textContent];
 
-				ctx.setMod('watchable', 'val1');
+				ctx.setMod('watchable', 'val-1');
 				await ctx.nextTick();
 				res.push(el.textContent);
 
@@ -249,7 +249,7 @@ module.exports = (page) => {
 					el = ctx.block.element('non-watchable-mod'),
 					res = [[el.textContent, ctx.mods.nonWatchable, ctx.block.getMod('nonWatchable')]];
 
-				ctx.setMod('nonWatchable', 'val2');
+				ctx.setMod('nonWatchable', 'val-2');
 				await ctx.nextTick();
 				res.push([el.textContent, ctx.mods.nonWatchable, ctx.block.getMod('nonWatchable')]);
 

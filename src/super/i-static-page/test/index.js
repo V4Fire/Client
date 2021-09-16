@@ -86,14 +86,14 @@ module.exports = async (page, params) => {
 					await root.evaluate((ctx) => {
 						ctx.removeRootMod('foo');
 						ctx.setRootMod('foo', 'bar');
-						return document.documentElement.classList.contains('p-v-4-components-demo-foo-bar');
+						return document.documentElement.classList.contains('p-v4-components-demo-foo-bar');
 					})
 				).toBeTrue();
 
 				expect(
 					await root.evaluate((ctx) => {
 						ctx.removeRootMod('foo');
-						return document.documentElement.classList.contains('p-v-4-components-demo-foo-bar');
+						return document.documentElement.classList.contains('p-v4-components-demo-foo-bar');
 					})
 				).toBeFalse();
 			});

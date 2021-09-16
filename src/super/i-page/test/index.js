@@ -54,7 +54,7 @@ module.exports = async (page, params) => {
 
 				expect(
 					await target.evaluate((ctx) => ctx.pageTitle)
-				).toBe('p-v4-dynamic-page-1');
+				).toBe('p-v4-dynamic-page1');
 
 				expect(
 					await target.evaluate((ctx) => {
@@ -77,7 +77,7 @@ module.exports = async (page, params) => {
 
 				expect(
 					await target.evaluate((ctx) => ctx.pageTitle)
-				).toBe('p-v4-dynamic-page-1');
+				).toBe('p-v4-dynamic-page1');
 			});
 
 			it('providing `stagePageTitles` and `pageTitleProp` without [[DEFAULT]]', async () => {
@@ -93,113 +93,6 @@ module.exports = async (page, params) => {
 				expect(
 					await target.evaluate((ctx) => ctx.pageTitle)
 				).toBe('BazBar');
-			});
-		});
-
-		describe('activation/deactivation', () => {
-			it('simple usage', async () => {
-				const target = await init();
-
-				expect(
-					await target.evaluate((ctx) => ctx.isActivated)
-				).toBeTrue();
-
-				expect(
-					await target.evaluate((ctx) => {
-						ctx.deactivate();
-						return ctx.isActivated;
-					})
-				).toBeFalse();
-
-				expect(
-					await target.evaluate((ctx) => {
-						ctx.activate();
-						return ctx.isActivated;
-					})
-				).toBeTrue();
-			});
-
-			it('should set the root attribute', async () => {
-				const target = await init();
-
-				expect(
-					await target.evaluate((ctx) => ctx.getRootMod('active'))
-				).toBe('true');
-
-				expect(
-					await target.evaluate((ctx) => {
-						ctx.deactivate();
-						return ctx.getRootMod('active');
-					})
-				).toBe('false');
-
-				expect(
-					await target.evaluate((ctx) => {
-						ctx.activate();
-						return ctx.getRootMod('active');
-					})
-				).toBe('true');
-			});
-		});
-
-		describe('scrollTo', () => {
-			it('should invoke the native `scrollTo`', async () => {
-				const target = await init();
-
-				const scan = await target.evaluate((ctx) => {
-					const
-						res = [],
-						originalScrollTo = scrollTo;
-
-					globalThis.scrollTo = (...args) => {
-						res.push(args);
-						return originalScrollTo(...args);
-					};
-
-					ctx.scrollTo({x: 10, y: 15});
-					ctx.scrollTo({y: 125});
-					ctx.scrollTo(5, 20);
-					ctx.scrollTo(15);
-
-					globalThis.scrollTo = scrollTo;
-					return res;
-				});
-
-				expect(scan).toEqual([
-					[{left: 10, top: 15}],
-					[{left: undefined, top: 125}],
-					[{left: 5, top: 20}],
-					[{left: 15, top: undefined}]
-				]);
-			});
-
-			it('`scrollToProxy`', async () => {
-				const target = await init();
-
-				const scan = await target.evaluate(async (ctx) => {
-					const
-						res = [],
-						originalScrollTo = scrollTo;
-
-					globalThis.scrollTo = (...args) => {
-						res.push(args);
-						return originalScrollTo(...args);
-					};
-
-					ctx.scrollToProxy({x: 10, y: 15});
-					ctx.scrollToProxy(5, 20);
-
-					await ctx.nextTick();
-					ctx.scrollTo(15);
-
-					globalThis.scrollTo = scrollTo;
-					return res;
-				});
-
-				expect(scan).toEqual([
-					[{left: 5, top: 20}],
-					[{left: 15, top: undefined}]
-				]);
 			});
 		});
 	});
@@ -220,7 +113,7 @@ module.exports = async (page, params) => {
 				}
 			];
 
-			globalThis.renderComponents('p-v4-dynamic-page-1', scheme);
+			globalThis.renderComponents('p-v4-dynamic-page1', scheme);
 		}, attrs);
 
 		return h.component.waitForComponent(page, '#target');
