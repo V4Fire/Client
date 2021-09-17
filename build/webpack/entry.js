@@ -34,6 +34,7 @@ module.exports = async function entry(name, src) {
 		dependencies.push(name.replace(isTpl, ''), name);
 	}
 
+	// We can't compile styles into static CSS files cause we have to provide a dynamic public path to them via runtime
 	if (path.extname(src) === '.styl' && !webpack.dynamicPublicPath()) {
 		src += '?static';
 	}

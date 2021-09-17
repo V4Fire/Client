@@ -270,49 +270,53 @@ module.exports = async function module({plugins}) {
 		);
 	};
 
+	const staticCSSFiles = [].concat(
+		styleHelperLoaders(true),
+
+		{
+			loader: 'monic-loader',
+			options: inherit(monic.stylus, {
+				replacers: [
+					require('@pzlr/stylus-inheritance')({resolveImports: true}),
+					include('build/monic/project-name')
+				]
+			})
+		}
+	);
+
+	// Load via import() functions
+	const dynamicCSSFiles = [].concat(
+		{
+			loader: 'style-loader',
+			options: config.style()
+		},
+
+		styleHelperLoaders(),
+
+		{
+			loader: 'monic-loader',
+			options: inherit(monic.stylus, {
+				replacers: [
+					require('@pzlr/stylus-inheritance')({resolveImports: true}),
+					include('build/monic/project-name'),
+					include('build/monic/apply-dynamic-component-styles')
+				]
+			})
+		}
+	);
+
 	loaders.rules.set('styl', {
 		test: /\.styl$/,
 
-		oneOf: [
+		...webpack.dynamicPublicPath() ?
 			{
-				resourceQuery: /static/,
-				use: [].concat(
-					styleHelperLoaders(true),
+				oneOf: [
+					{resourceQuery: /static/, use: staticCSSFiles},
+					{use: dynamicCSSFiles}
+				]
+			} :
 
-					{
-						loader: 'monic-loader',
-						options: inherit(monic.stylus, {
-							replacers: [
-								require('@pzlr/stylus-inheritance')({resolveImports: true}),
-								include('build/monic/project-name')
-							]
-						})
-					}
-				)
-			},
-
-			{
-				use: [].concat(
-					{
-						loader: 'style-loader',
-						options: config.style()
-					},
-
-					styleHelperLoaders(),
-
-					{
-						loader: 'monic-loader',
-						options: inherit(monic.stylus, {
-							replacers: [
-								require('@pzlr/stylus-inheritance')({resolveImports: true}),
-								include('build/monic/project-name'),
-								include('build/monic/apply-dynamic-component-styles')
-							]
-						})
-					}
-				)
-			}
-		]
+			{use: dynamicCSSFiles}
 	});
 
 	loaders.rules.set('ess', {

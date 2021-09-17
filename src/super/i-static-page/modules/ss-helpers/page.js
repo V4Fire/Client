@@ -60,6 +60,7 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 			getScriptDeclByName(dep, {assets})
 		];
 
+		// We can't compile styles into static CSS files cause we have to provide a dynamic public path to them via runtime
 		if (needLoadStylesAsJS) {
 			scripts.unshift(getScriptDeclByName(`${dep}_style`, {assets}));
 		}
