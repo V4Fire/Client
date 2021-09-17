@@ -309,14 +309,14 @@ module.exports = async function module({plugins}) {
 		test: /\.styl$/,
 
 		...webpack.dynamicPublicPath() ?
+			{use: dynamicCSSFiles} :
+
 			{
 				oneOf: [
 					{resourceQuery: /static/, use: staticCSSFiles},
 					{use: dynamicCSSFiles}
 				]
-			} :
-
-			{use: dynamicCSSFiles}
+			}
 	});
 
 	loaders.rules.set('ess', {
