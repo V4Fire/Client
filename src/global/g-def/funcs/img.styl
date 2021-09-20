@@ -36,6 +36,10 @@ img($img, $isDsAsset = false)
 	if $isDsAsset
 		$img = join("/", ds icons $img)
 
+	//#if runtime.dynamicPublicPath
+	return "url(%s)" % $img
+	//#endif
+
 	if !$IMG[$img]
 		$IMG[$img] = {
 			selectors: ()

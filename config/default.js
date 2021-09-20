@@ -982,6 +982,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			debug: false,
 			noGlobals: false,
+			dynamicPublicPath: this.webpack.dynamicPublicPath(),
 
 			svgSprite: true,
 			'ds/use-css-vars': false,

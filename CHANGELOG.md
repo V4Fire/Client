@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.5.1 (2021-09-20)
+
+#### :bug: Bug Fix
+
+* Fixed crashing when building the app when enabled `dynamicPublicPath` `global/g-def`
+
 ## v3.5.0 (2021-09-16)
 
 #### :boom: Breaking Change

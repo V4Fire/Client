@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.5.1 (2021-09-20)
+
+#### :bug: Bug Fix
+
+* Fixed crashing when building the app when enabled `dynamicPublicPath`
+
 ## v3.0.0-rc.143 (2021-02-11)
 
 #### :rocket: New Feature
