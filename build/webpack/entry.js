@@ -9,9 +9,6 @@
  */
 
 const
-	{webpack} = require('config');
-
-const
 	path = require('upath'),
 	projectGraph = include('build/graph');
 
