@@ -207,7 +207,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 		let
 			exitCode = 0,
-			isTestFailed;
+			isTestFailed = false;
 
 		const cliParams = {
 			headless: true,
@@ -283,7 +283,7 @@ module.exports = function init(gulp = require('gulp')) {
 		function setTestStatus(isFailed) {
 			exitCode = isFailed === true ? 1 : 0;
 
-			if (isTestFailed == null || isTestFailed === false) {
+			if (isTestFailed === false) {
 				isTestFailed = isFailed;
 			}
 		}
