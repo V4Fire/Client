@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-09-22)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with failed tests not being displayed as failed](https://github.com/V4Fire/Client/issues/620)
+
 ## v3.4.0 (2021-09-09)
 
 #### :house: Internal

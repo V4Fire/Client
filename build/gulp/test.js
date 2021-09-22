@@ -205,7 +205,9 @@ module.exports = function init(gulp = require('gulp')) {
 		const
 			browsers = getSelectedBrowsers();
 
-		let exitCode = 0;
+		let
+			exitCode = 0,
+			isTestFailed = false;
 
 		const cliParams = {
 			headless: true,
@@ -273,6 +275,18 @@ module.exports = function init(gulp = require('gulp')) {
 		}
 
 		await server.close();
+
+		/**
+		 * Sets a test status
+		 * @param {boolean} isFailed
+		 */
+		function setTestStatus(isFailed) {
+			exitCode = isFailed === true ? 1 : 0;
+
+			if (isTestFailed === false) {
+				isTestFailed = isFailed;
+			}
+		}
 
 		/**
 		 * Initializes browsers and starts tests
@@ -415,7 +429,7 @@ module.exports = function init(gulp = require('gulp')) {
 							return;
 						}
 
-						exitCode = res.status === 'failed' ? 1 : 0;
+						setTestStatus(res.status === 'failed');
 					}
 				});
 
@@ -430,7 +444,7 @@ module.exports = function init(gulp = require('gulp')) {
 			};
 
 			while (!isTestSuccessful && attemptsFinished - 1 < retries) {
-				exitCode = 0;
+				setTestStatus(false);
 
 				await testExecutor();
 
@@ -446,7 +460,7 @@ module.exports = function init(gulp = require('gulp')) {
 				params.browser.close();
 			}
 
-			process.exitCode = exitCode;
+			process.exitCode = isTestFailed ? 1 : 0;
 		}
 	});
 
