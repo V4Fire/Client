@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-09-22)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with failed tests not being displayed as failed `build/gulp/test`](https://github.com/V4Fire/Client/issues/620)
+
 ## v3.5.1 (2021-09-20)
 
 #### :bug: Bug Fix
