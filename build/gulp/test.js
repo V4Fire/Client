@@ -206,8 +206,8 @@ module.exports = function init(gulp = require('gulp')) {
 			browsers = getSelectedBrowsers();
 
 		let
-			exitCode = 0,
-			isTestFailed = false;
+			/** If the exit code is 1, some of the current runners (or test itself) fail. */
+			exitCode = 0;
 
 		const cliParams = {
 			headless: true,
@@ -275,18 +275,7 @@ module.exports = function init(gulp = require('gulp')) {
 		}
 
 		await server.close();
-
-		/**
-		 * Sets a test status
-		 * @param {boolean} isFailed
-		 */
-		function setTestStatus(isFailed) {
-			exitCode = isFailed === true ? 1 : 0;
-
-			if (isTestFailed === false) {
-				isTestFailed = isFailed;
-			}
-		}
+		process.exitCode = exitCode;
 
 		/**
 		 * Initializes browsers and starts tests
@@ -416,7 +405,12 @@ module.exports = function init(gulp = require('gulp')) {
 				isTestSuccessful = false,
 				attemptsFinished = 0;
 
+			/**
+			 * @returns {!Promise<boolean>}
+			 */
 			const testExecutor = async () => {
+				let isSuccessful = true;
+
 				const
 					testEnv = getTestEnv(browserType, attemptsFinished + 1);
 
@@ -425,18 +419,20 @@ module.exports = function init(gulp = require('gulp')) {
 
 				testEnv.addReporter({
 					specDone: (res) => {
-						if (exitCode === 1) {
+						if (isSuccessful === false) {
 							return;
 						}
 
-						setTestStatus(res.status === 'failed');
+						if (res.status === 'failed') {
+							isSuccessful = false;
+						}
 					}
 				});
 
-				await new Promise((resolve) => {
+				return new Promise((resolve) => {
 					testEnv.afterAll(() => {
 						console.log('\n\n\n');
-						resolve();
+						resolve(isSuccessful);
 					}, 10e3);
 
 					testEnv.execute();
@@ -444,15 +440,11 @@ module.exports = function init(gulp = require('gulp')) {
 			};
 
 			while (!isTestSuccessful && attemptsFinished - 1 < retries) {
-				setTestStatus(false);
+				// eslint-disable-next-line require-atomic-updates
+				isTestSuccessful = await testExecutor();
 
-				await testExecutor();
-
-				if (exitCode === 1) {
+				if (!isTestSuccessful) {
 					attemptsFinished++;
-
-				} else {
-					isTestSuccessful = true;
 				}
 			}
 
@@ -460,7 +452,9 @@ module.exports = function init(gulp = require('gulp')) {
 				params.browser.close();
 			}
 
-			process.exitCode = isTestFailed ? 1 : 0;
+			if (!isTestSuccessful) {
+				exitCode = 1;
+			}
 		}
 	});
 
