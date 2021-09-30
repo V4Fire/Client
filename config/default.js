@@ -240,13 +240,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @param {string=} [def] - default value
 	 * @returns {string}
 	 */
-	engine(def = 'vue') {
+	engine(def = 'vue3') {
 		return o('engine', {
 			env: true,
 			default: def,
 			validate(v) {
 				return Boolean({
 					vue: true,
+					vue3: true,
 					zero: true
 				}[v]);
 			}
@@ -443,7 +444,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Value of `externals`
 		 */
 		externals: {
-			vue: 'Vue',
+			vue: 'root Vue',
 			eventemitter2: 'EventEmitter2',
 			setimmediate: 'setImmediate'
 		},
@@ -892,7 +893,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			client: this.extend(super.snakeskin(), {
-				adapter: 'ss2vue',
+				adapter: 'ss2vue3',
 				adapterOptions: {transpiler: true},
 				tagFilter: 'tagFilter',
 				tagNameFilter: 'tagNameFilter',

@@ -15,6 +15,10 @@
 export * from 'core/component/engines/vue';
 //#endif
 
+//#if runtime.engine = vue3
+export * from 'core/component/engines/vue3';
+//#endif
+
 //#if runtime.engine = zero
 // @ts-ignore (double export)
 export * from 'core/component/engines/zero';
