@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.5.3 (2021-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed synchronization of values during input events:
+  * `bInput`
+  * `bSelect`
+
+#### :nail_care: Polish
+
+* Show Playwright version before tests
+
 ## v3.5.2 (2021-10-06)
 
 #### :bug: Bug Fix
