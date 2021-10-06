@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.5.3 (2021-10-06)
+
+#### :nail_care: Polish
+
+* Show Playwright version before tests
+
 ## v3.5.2 (2021-10-06)
 
 #### :bug: Bug Fix
