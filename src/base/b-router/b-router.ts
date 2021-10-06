@@ -469,7 +469,7 @@ export default class bRouter extends iData {
 
 		const
 			currentRoute = this.field.get<router.Route>('routeStore'),
-			deepMixin = (...args) => Object.mixin({deep: true, withUndef: true}, ...args);
+			deepMixin = (...args) => Object.mixin({deep: true, skipUndefs: false}, ...args);
 
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current
@@ -522,10 +522,18 @@ export default class bRouter extends iData {
 		};
 
 		// Checking that a new route is really needed, i.e., it isn't equal to the previous
-		const newRouteIsReallyNeeded = !Object.fastCompare(
+		let newRouteIsReallyNeeded = !Object.fastCompare(
 			router.getComparableRouteParams(currentRoute),
 			router.getComparableRouteParams(newRoute)
 		);
+
+		// Nothing changes between routes, but there are provided some meta object
+		if (!newRouteIsReallyNeeded && currentRoute != null && opts.meta != null) {
+			newRouteIsReallyNeeded = !Object.fastCompare(
+				Object.select(currentRoute.meta, opts.meta),
+				opts.meta
+			);
+		}
 
 		// The transition is necessary, but now we need to understand should we emit a "soft" or "hard" transition
 		if (newRouteIsReallyNeeded) {
