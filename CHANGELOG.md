@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed providing of meta parameters via transitions
+* Fixed providing of meta parameters via transitions `bRouter`
 * [Fixed an issue with failed tests not being displayed as failed `build/gulp/test`](https://github.com/V4Fire/Client/issues/620)
 
 #### :house: Internal
