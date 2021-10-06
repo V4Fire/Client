@@ -11,11 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.?.? (2021-09-22)
+## v3.5.2 (2021-10-06)
 
 #### :bug: Bug Fix
 
+* Fixed providing of meta parameters via transitions
 * [Fixed an issue with failed tests not being displayed as failed `build/gulp/test`](https://github.com/V4Fire/Client/issues/620)
+
+#### :house: Internal
+
+* Updated dependencies: `eventemitter2@6.4.5`, `playwright@1.15.2`
 
 ## v3.5.1 (2021-09-20)
 
