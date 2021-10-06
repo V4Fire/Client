@@ -20,7 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Updated dependencies: `eventemitter2@6.4.5`, `playwright@1.15.2`
+* Updated dependencies: `typescript@4.4.3`, `eventemitter2@6.4.5`, `playwright@1.15.2`
 
 ## v3.5.1 (2021-09-20)
 
