@@ -13,6 +13,7 @@ Changelog
 #### :nail_care: Polish
 
 * Show browser version before tests
+
 ## v3.5.3 (2021-10-06)
 
 #### :nail_care: Polish
