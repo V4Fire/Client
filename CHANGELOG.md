@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-??-??)
+
+#### :nail_care: Polish
+
+* Show browser version before tests
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix

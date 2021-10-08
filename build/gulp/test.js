@@ -328,6 +328,7 @@ module.exports = function init(gulp = require('gulp')) {
 			console.log(`test entry: ${args['--test-entry']}`);
 			console.log(`runner: ${globalThis.V4FIRE_TEST_ENV.runner}`);
 			console.log(`browser: ${browserType}`);
+			console.log(`browser version: ${browserParams[browserType].version}`);
 			console.log('-------------\n');
 
 			return jasmine.env;
@@ -362,7 +363,8 @@ module.exports = function init(gulp = require('gulp')) {
 
 			const
 				context = await browser.newContext(contextOpts),
-				page = await context.newPage();
+				page = await context.newPage(),
+				version = await browser.version();
 
 			const
 				testURL = `localhost:${args['--port']}/${args['--page']}.html`;
@@ -375,7 +377,8 @@ module.exports = function init(gulp = require('gulp')) {
 				context,
 				componentDir,
 				tmpDir,
-				contextOpts
+				contextOpts,
+				version
 			};
 		}
 
