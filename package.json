@@ -36,7 +36,7 @@
     "up": "npm i && npm up && npm audit fix"
   },
   "dependencies": {
-    "@v4fire/core": "https://github.com/V4Fire/Core.git#exactlynosense/perf",
+    "@v4fire/core": "git+https://github.com/V4Fire/Core.git#exactlynosense/perf",
     "escaper": "^3.0.6",
     "eventemitter2": "^6.4.4",
     "jsdom": "^16.7.0",
