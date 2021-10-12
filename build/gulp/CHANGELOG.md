@@ -8,7 +8,8 @@ Changelog
 > - :memo:       [Documentation]
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
-## v3.?.? (2021-??-??)
+
+## v3.5.4 (2021-10-12)
 
 #### :nail_care: Polish
 
