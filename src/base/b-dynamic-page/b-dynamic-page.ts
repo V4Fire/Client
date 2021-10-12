@@ -173,6 +173,9 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@computed({cache: false, dependencies: ['page']})
 	get component(): CanPromise<iDynamicPage> {
+		const
+			c = this.$refs.component;
+
 		const getComponent = () => {
 			const
 				c = this.$refs.component!;
@@ -184,7 +187,7 @@ export default class bDynamicPage extends iDynamicPage {
 			return c;
 		};
 
-		return this.$refs.component != null ?
+		return c != null && (!Object.isArray(c) || c.length > 0) ?
 			getComponent() :
 			this.waitRef('component').then(getComponent);
 	}

@@ -133,7 +133,13 @@ requestAnimationFrame(async () => {
 
 				if (src != null) {
 					src = path.normalize(src);
-					decl += `require('${src}');`;
+
+					if (dep === 'tpl') {
+						decl += `Object.assign(TPLS, require('${src}'));`;
+
+					} else {
+						decl += `require('${src}');`;
+					}
 				}
 
 			} catch {}
