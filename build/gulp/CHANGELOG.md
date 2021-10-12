@@ -8,6 +8,11 @@ Changelog
 > - :memo:       [Documentation]
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
+## v3.?.? (2021-??-??)
+
+#### :nail_care: Polish
+
+* Show browser version before tests
 
 ## v3.5.3 (2021-10-06)
 
