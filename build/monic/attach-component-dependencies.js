@@ -84,40 +84,42 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 				styles = await component.styles;
 
 			decl += `
-requestAnimationFrame(async () => {
+(() => {
 	if (TPLS['${dep}']) {
 		return;
 	}
 
-	try {
-		const el = document.createElement('i');
-		el.className = '${dep}-is-style-loaded';
-		document.body.appendChild(el);
+	requestAnimationFrame(async () => {
+		try {
+			const el = document.createElement('i');
+			el.className = '${dep}-is-style-loaded';
+			document.body.appendChild(el);
 
-		const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
-		document.body.removeChild(el);
+			const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
+			document.body.removeChild(el);
 
-		if (isStylesLoaded) {
-			return;
-		}
-	} catch (err) { stderr(err); }
-
-	try {
-		${
-				styles
-					.map((src) => {
-						if (src == null) {
-							return '';
-						}
-
-						src = path.normalize(src);
-						return `await import('${src}');`;
-					})
-
-					.join('')
+			if (isStylesLoaded) {
+				return;
 			}
-	} catch (err) { stderr(err); }
-});`;
+		} catch (err) { stderr(err); }
+
+		try {
+			${
+					styles
+						.map((src) => {
+							if (src == null) {
+								return '';
+							}
+
+							src = path.normalize(src);
+							return `await import('${src}');`;
+						})
+
+						.join('')
+				}
+		} catch (err) { stderr(err); }
+	});
+})();`;
 
 		} catch {}
 
