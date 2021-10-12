@@ -11,7 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.?.? (2021-??-??)
+## v3.5.4 (2021-10-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when dynamically loaded templates aren't registered to the global `TPLS` cache `build/monic`
+* Fixed an issue when `component` returns `undefined` `bRouter`
 
 #### :nail_care: Polish
 
