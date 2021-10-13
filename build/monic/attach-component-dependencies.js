@@ -123,25 +123,30 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 		} catch {}
 
-		const deps = [
-			'tpl',
-			'logic'
+		const depChunks = [
+			'logic',
+			'tpl'
 		];
 
-		for (const dep of deps) {
+		for (const chunk of depChunks) {
 			try {
 				let
-					src = await component[dep];
+					src = await component[chunk];
 
 				if (src != null) {
 					src = path.normalize(src);
 
-					if (dep === 'tpl') {
-						decl += `Object.assign(TPLS, require('${src}'));`;
+					let
+						expr;
+
+					if (chunk === 'tpl') {
+						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`;
 
 					} else {
-						decl += `require('${src}');`;
+						expr = `require('${src}');`;
 					}
+
+					decl += `try { ${expr} } catch (err) { stderr(err); }`;
 				}
 
 			} catch {}
