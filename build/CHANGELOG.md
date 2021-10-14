@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.6.0 (2021-10-14)
+
+#### :rocket: New Feature
+
+* Added a new parameter `componentLockPrefix`
+
 ## v3.4.0 (2021-09-09)
 
 #### :boom: Breaking Change

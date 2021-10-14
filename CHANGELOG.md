@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.6.0 (2021-10-14)
+
+#### :rocket: New Feature
+
+* Added a new parameter `componentLockPrefix` `config.build`
+
 ## v3.5.5 (2021-10-13)
 
 #### :bug: Bug Fix

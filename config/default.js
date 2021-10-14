@@ -52,6 +52,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Returns a prefix for the `components-lock.json` file.
+		 * When you have different components loc files related to some execute parameters,
+		 * you need to keep them separately.
+		 *
+		 * @cli component-lock-prefix
+		 * @env COMPONENT_LOCK_PREFIX
+		 *
+		 * @returns {string}
+		 */
+		componentLockPrefix(def = this.config.webpack.fatHTML() ? 'fat-html' : '') {
+			return o('component-lock-prefix', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
 		 * Every client build starts with calculating the project graph.
 		 * The graph contains information about entry points, dependencies, and other stuff.
 		 * This information is used by WebPack to deduplicate code blocks and optimize building,
