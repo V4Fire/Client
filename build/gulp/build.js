@@ -9,7 +9,10 @@
  */
 
 const
-	{src, build} = require('config'),
+	config = require('config');
+
+const
+	{src, build} = config,
 	{block} = require('@pzlr/build-core');
 
 /**
@@ -62,6 +65,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 * Builds a `components-lock` file
 	 */
 	gulp.task('build:components-lock', async () => {
+		block.setObjToHash(config.componentDependencies());
+
 		await block.getAll(null, {
 			lockPrefix: build.componentLockPrefix()
 		});
