@@ -20,6 +20,9 @@ const
  *
  * @example
  * ```bash
+ * # Builds a `components-lock` file
+ * npx gulp build:components-lock
+ *
  * # Builds the application as a node.js package
  * npx gulp build:server
  *
