@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.6.1 (2021-10-14)
+
+#### :house: Internal
+
+* Added a neg Gulp task `gulp build:components-lock`
+
 ## v3.6.0 (2021-10-14)
 
 #### :rocket: New Feature

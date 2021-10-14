@@ -9,7 +9,8 @@
  */
 
 const
-	{src} = require('config');
+	{src, build} = require('config'),
+	{block} = require('@pzlr/build-core');
 
 /**
  * @override
@@ -55,6 +56,15 @@ module.exports = function init(gulp = require('gulp')) {
 	gulp.task('build:client', () => {
 		const t = $.run(`npx webpack ${args}`, {verbosity: 3}).exec();
 		return t.on('error', console.error);
+	});
+
+	/**
+	 * Builds a `components-lock` file
+	 */
+	gulp.task('build:components-lock', async () => {
+		await block.getAll(null, {
+			lockPrefix: build.componentLockPrefix()
+		});
 	});
 
 	/**

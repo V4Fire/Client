@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.6.1 (2021-10-14)
+
+#### :house: Internal
+
+* Added a neg Gulp task `gulp build:components-lock`
+
 ## v3.5.4 (2021-10-12)
 
 #### :nail_care: Polish
