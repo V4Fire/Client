@@ -15,6 +15,8 @@
 import 'models/demo/session';
 //#endif
 
+import type iBlock from 'super/i-block/i-block';
+
 import iStaticPage, { component, system, field } from 'super/i-static-page/i-static-page';
 
 export * from 'super/i-static-page/i-static-page';
@@ -38,6 +40,26 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	 */
 	@field()
 	someField: unknown = {some: 'val'};
+
+	async setDummyMode(): Promise<boolean> {
+		const
+			dummy = <iBlock>this.$refs.dummyComponent;
+
+		const res = await this.setMod(dummy.$el!, 'foo', 'bar');
+		console.log(dummy.$el!.className);
+
+		return res;
+	}
+
+	async removeDummyMode(): Promise<boolean> {
+		const
+			dummy = <iBlock>this.$refs.dummyComponent;
+
+		const res = await this.removeMod(dummy.$el!, 'foo', 'bar');
+		console.log(dummy.$el!.className);
+
+		return res;
+	}
 
 	protected beforeCreate(): void {
 		console.time('Render');
