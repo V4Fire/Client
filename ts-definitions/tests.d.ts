@@ -219,6 +219,8 @@ declare namespace BrowserTests {
 		 * @param page
 		 * @param context
 		 * @param [options]
+		 *
+		 * @deprecated
 		 */
 		setup(page: Playwright.Page, context: Playwright.BrowserContext, options?: SetupOptions): Promise<void>;
 
