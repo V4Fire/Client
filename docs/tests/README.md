@@ -290,7 +290,7 @@ npx gulp test:component --test-entry base/b-component/test --runner "behaviour/*
 
 To test a component, we need to place it on the page.
 For tests, there is a special demo page `p-v4-components-demo`, but nothing prevents you from overriding it or creating your own.
-If you decide to use your page, you should override the `build.demoPag`e config parameter.
+If you decide to use your page, you should override the `build.demoPage` config parameter.
 
 ## Testing modules
 
