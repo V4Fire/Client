@@ -235,14 +235,6 @@ One of our tests mustn't affect the state of another; for this, it is worth isol
 
 You can also not create a new context but do everything on one page. In this case, the performance of tests will improve, but this will create other, more severe problems. For example, one spec can affect the state of another, there are a lot of such issues, so it is highly recommended to use a new context for each spec.
 
-## Request handling
-
-There are two approaches that can solve the problem of request handling.
-
-The first is to intercept the request and return a response using the `playwright` and its [route mechanisms](https://playwright.dev/docs/api/class-route#route-request). You can control each request directly from the test, give the any response and modify it as you like. In addition, you can emit any server errors (wrong answer, bad status code, etc.).
-
-The second option is to install mocks at runtime using specially provided v4fire mechanisms. This option is not very flexible. Suppose you need to emit a bad status response code since mocks are compiled and run in runtime - you need to provide an option (in a component or provider) that will allow you to do this. Accordingly, you will have to write a code that will not carry any useful function, but it will be in your codebase, so the tests worked. In addition, if you want to fix the mock, you will have to build the project, but in the case of intercepting requests, you will not.
-
 ## Splitting specs
 
 Let's imagine that you have a test file with more than 80 specs.
@@ -388,19 +380,19 @@ module.exports = [
 Build a `demo` and then run the test located at the specified `test-entry`:
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test
+npx gulp test:component --test-entry base/b-component/test
 ```
 
 Run (without building) the test located at `test-entry`:
 
 ```bash
-npx gulp test:component:run --runtime-render true --test-entry base/b-popover/test
+npx gulp test:component:run --test-entry base/b-component/test
 ```
 
 Run (without building) the test located at the `test-entry` address only in the `chromium` browser:
 
 ```bash
-npx gulp test:component:run --runtime-render true --test-entry base/b-popover/test --browsers chromium
+npx gulp test:component:run --test-entry base/b-component/test --browsers chromium
 ```
 
 Run all tests defined in `cwd/tests/cases.js`:
@@ -415,10 +407,210 @@ Runs all tests defined in `cwd/tests/cases.js`, maximum 4 builds, and two tests 
 npx gulp test:components --test-processes 2 --build-processes 4
 ```
 
-## Test Writing Guidelines
+## Test writing guidelines
+
+### Request handling
+
+There are two approaches that can solve the problem of request handling.
+
+The first is to intercept the request and return a response using the `playwright` and its [route mechanisms](https://playwright.dev/docs/api/class-route#route-request). You can control each request directly from the test, give the any response and modify it as you like. In addition, you can emit any server errors (wrong answer, bad status code, etc.).
+
+The second option is to install mocks at runtime using specially provided v4fire mechanisms. This option is not very flexible. Suppose you need to emit a bad status response code since mocks are compiled and run in runtime - you need to provide an option (in a component or provider) that will allow you to do this. Accordingly, you will have to write a code that will not carry any useful function, but it will be in your codebase, so the tests worked. In addition, if you want to fix the mock, you will have to build the project, but in the case of intercepting requests, you will not.
 
 ### Nesting
 
-### Keep it clean
+To make the specs cleaner and easier to understand, it is necessary that they contain as little code as possible.
+This can be achieved with `hooks` and `describe` sections.
+
+Let's see this with an example:
+
+```javascript
+describe('b-component test', () => {
+  it('On user click should hide a button and show a tooltip', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      buttonHidePr = page.waitForSelector('.b-component button', {state: 'detached'});
+
+    await expectAsync(buttonHidePr).toBeResolved();
+
+    const
+      tooltip = page.waitForSelector('.b-tooltip');
+
+    await expectAsync(tooltip).toBeResolved();
+  })
+});
+```
+
+Looks pretty good, agree? But let's add two more specs in which the user also clicks on the component:
+
+```javascript
+describe('b-component test', () => {
+  it('On user click should hide a button and show a tooltip', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      buttonHidePr = page.waitForSelector('.b-component button', {state: 'detached'});
+
+    await expectAsync(buttonHidePr).toBeResolved();
+
+    const
+      tooltip = page.waitForSelector('.b-tooltip');
+
+    await expectAsync(tooltip).toBeResolved();
+  });
+
+  it('On user click should not hide a button text', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      textAttachedPr =  page.waitForSelector('.b-component p');
+
+    await expectAsync(textAttachedPr).toBeResolved();
+  });
+
+  it('On user click should add a modifier to the component', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      componentWithMod = page.waitForSelector('.b-component.b-component_clicked_true');
+
+    await expectAsync(componentWithMod).toBeResolved();
+  });
+});
+```
+
+As you can see, we do the same thing for every spec, create a component and click on it.
+We also get lucky, and in our case, we don't have a lot of the code for preparing spec,
+but when refactoring, we will have to correct three places, and besides, this unnecessarily inflates the spec code very much.
+
+Let's rewrite our code using `hooks` and nesting
+
+```javascript
+describe('b-component test', () => {
+  describe('User clicks on the component', () => {
+    beforeEach(async () => {
+      await renderComponent({
+        propsToPrepareComponentForClick: true,
+        anotherProp: false
+      });
+
+      await page.click('.b-component button');
+    });
+
+    it('Should hide a button and show a tooltip', async () => {
+      const
+        buttonHidePr = page.waitForSelector('.b-component button', {state: 'detached'});
+
+      await expectAsync(buttonHidePr).toBeResolved();
+
+      const
+        tooltip = page.waitForSelector('.b-tooltip');
+
+      await expectAsync(tooltip).toBeResolved();
+    });
+
+    it('Should not hide a button text', async () => {
+      const
+        textAttachedPr =  page.waitForSelector('.b-component p');
+
+      await expectAsync(textAttachedPr).toBeResolved();
+    });
+
+    it('Should add a modifier to the component', async () => {
+      const
+        componentWithMod = page.waitForSelector('.b-component.b-component_clicked_true');
+
+      await expectAsync(componentWithMod).toBeResolved();
+    });
+  });
+});
+```
+
+Now when the spec setting is placed in the hook, specs contain only the test itself and no presettings.
 
 ### Auto wait
+
+The `playwright` has many tools and mechanisms that make it much easier to write tests and reduce the amount of code that needs to be written, one of such mechanisms is auto wait.
+For example, the click method waits for the element with the passed selector to appear in the DOM tree, when it is available on the screen, and [much more](https://playwright.dev/docs/input#mouse-click).
+
+Let's take a closer look:
+
+```javascript
+describe('b-component test', () => {
+  // Of course, I would not recommend doing such specs, but we will use it for the example
+  it('Click on the first button show the second button, click on the second button shows a tooltip', async () => {
+    const
+      button1 = await page.waitForSelector('.button-1');
+
+    await button1.click();
+
+    const
+      button2 = await page.waitForSelector('.button-2');
+
+    await button2.click();
+
+    await expectAsync(page.waitForSelector('.b-tooltip')).toBeResolved();
+  });
+});
+```
+
+As you can see from the example above, we have to wait for each element using `waitForSelector` and only then click.
+This example can be rewritten by getting rid of `waitForSelector` since the `click` itself waits for the element to appear in the `DOM` tree.
+
+```javascript
+describe('b-component test', () => {
+  // Of course, I would not recommend doing such specs, but we will use it for the example
+  it('Click on the first button show the second button, click on the second button shows a tooltip', async () => {
+    await Promise.all([
+      page.click('.button-1'),
+      page.click('.button-2')
+    ])
+
+    await expectAsync(page.waitForSelector('.b-tooltip')).toBeResolved();
+  });
+});
+```
+
+
+### Flappy test prevention
+
+The heading also may be titled as "Why you should always use wait".
+
+It is very important always to use wait-like functions to get DOM nodes or something like that.
+Even if you think "yes 100% it is already in the DOM" - you cannot know for sure.
+There are too many links in this chain.
+
+Therefore, I highly recommend that you always use the wait-based API when writing tests.
+Auto wait functions will save you from stupid mistakes that will be very difficult to debug,
+and it will be complicated when such a flap will be reproduced only in your CI, and everything will be fine locally.
+
+### Keep it clean
+
+As I mentioned earlier, for easy refactoring, reading, and rewriting tests, try to keep the specs (and tests in general) as clean as possible, treat them like your production codebase.
+
+Here are some tips to help you achieve this:
+
+- Use the auto-wait API
+- Use the interceptions and routing mechanism provided by `playwright`
+- Use hooks and nesting to keep your specs clean
