@@ -79,6 +79,8 @@ We now have a test file in which we have prepared the environment for writing te
 To create a `b-component`, several helper functions are available in `globalThis` (Only if you built the project in dev mode).
 Let's get to know them.
 
+Also, make sure you add your component to the `index.js` file of the demo page so that your component gets into the bundle and can be created using the helper functions.
+
 ### renderComponents
 
 This function makes it possible to create a component or components on a page at runtime.
@@ -116,7 +118,7 @@ export interface RenderParams {
  *     }
  *   }
  * });
- * \```
+ * ```
  *
  * This schema is the equivalent of such a template:
  *
@@ -124,7 +126,7 @@ export interface RenderParams {
  * < b-button :testProp = 1
  *   < b-button
  *     Test
- * \```
+ * ```
  */
 export interface RenderContent {
   /**
@@ -208,7 +210,7 @@ __src/base/b-component/test/index.js__
 Now that we have added the first spec, we can run the test and check that everything is working correctly.
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-component/test
+npx gulp test:component --test-entry base/b-component/test
 ```
 
 The execution result should be something like that:
@@ -273,16 +275,22 @@ module.exports = (...args) => u.getCurrentTest()(...args);
 To run the specified runner use `--runner` CLI argument:
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-component/test --runner render
+npx gulp test:component --test-entry base/b-component/test --runner render
 ```
 
 Also, you can use glob patterns to execute several runners:
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-component/test --runner "*"
-npx gulp test:component --runtime-render true --test-entry base/b-component/test --runner "**/*"
-npx gulp test:component --runtime-render true --test-entry base/b-component/test --runner "behaviour/*"
+npx gulp test:component --test-entry base/b-component/test --runner "*"
+npx gulp test:component --test-entry base/b-component/test --runner "**/*"
+npx gulp test:component --test-entry base/b-component/test --runner "behaviour/*"
 ```
+
+## Demo page
+
+To test a component, we need to place it on the page.
+For tests, there is a special demo page `p-v4-components-demo`, but nothing prevents you from overriding it or creating your own.
+If you decide to use your page, you should override the `build.demoPag`e config parameter.
 
 ## Testing modules
 
@@ -314,7 +322,7 @@ Later, you will be able to access modules through the component.
 Running a module test using the `in-view` example:
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry core/dom/in-view/test
+npx gulp test:component --test-entry core/dom/in-view/test
 ```
 
 ```javascript
