@@ -86,24 +86,16 @@ module.exports = function init(gulp = require('gulp')) {
 	gulp.task('test:component:build', () => {
 		const args = arg({
 			'--suit': String,
-			'--client-name': String,
-			'--runtime-render': String
+			'--client-name': String
 		}, {permissive: true});
-
-		const
-			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
 
 		try {
 			const name = arg({'--name': String}, {permissive: true})['--name'];
 			args['--name'] = name;
 		} catch {}
 
-		if (isRuntimeRender) {
+		if (!args['--name']) {
 			args['--name'] = 'b-dummy';
-		}
-
-		if (!args['--name'] && !isRuntimeRender) {
-			throw new ReferenceError('"--name" parameter is not specified');
 		}
 
 		const
@@ -186,19 +178,11 @@ module.exports = function init(gulp = require('gulp')) {
 			'--client-name': String,
 			'--reinit-browser': String,
 			'--test-entry': String,
-			'--runner': String,
-			'--runtime-render': String
+			'--runner': String
 		}, {permissive: true});
 
-		const
-			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
-
-		if (isRuntimeRender) {
-			args['--name'] = 'b-dummy';
-		}
-
 		if (!args['--name']) {
-			throw new ReferenceError('"--name" parameter is not specified');
+			args['--name'] = 'b-dummy';
 		}
 
 		args['--client-name'] = args['--client-name'] || args['--name'];
@@ -557,12 +541,8 @@ module.exports = function init(gulp = require('gulp')) {
 
 		if (!cliArgs['--only-run']) {
 			for (let i = 0; i < cases.length; i++) {
-				let
+				const
 					c = cases[i];
-
-				if (!c.includes('--name')) {
-					c = `${c} --runtime-render true`;
-				}
 
 				const args = arg({
 					'--name': String
@@ -641,10 +621,6 @@ module.exports = function init(gulp = require('gulp')) {
 		for (let i = 0; i < cases.length; i++) {
 			let
 				c = cases[i];
-
-			if (!c.includes('--name')) {
-				c = `${c} --runtime-render true`;
-			}
 
 			// Set the beginning of the searching range for a free port
 			c = `${c} --start-port ${START_PORT + i * 10}`;
