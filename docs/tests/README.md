@@ -66,28 +66,30 @@ module.exports = (page, {browser, contextOpts}) => {
 }
 ```
 
-The first thing to pay attention to is that each test file must have a default export - a test run function.
+The first thing to pay attention to is that each test file must have the default export - a test run function.
 
 The next step is to describe the first `describe` section.
 
-After the describe section has been created, add a `beforeEach` hook in which presettings will be made for each spec that will be in this and in subsequent `describe` blocks. Read more about hooks in [jasmine documentation](https://jasmine.github.io/).
+After creating the describe section, add a `beforeEach` hook in which pre-settings will be made for each spec in this and subsequent `describe` blocks.
+Read more about hooks in [jasmine documentation](https://jasmine.github.io/).
 
 ## Creating components at runtime
 
-We now have a test file in which we have prepared the environment for writing tests. But if now we open the page that we created, it will be empty and there will be no `b-component`.
+We now have a test file in which we have prepared the environment for writing tests.
+But if now we open the page that we created, it will be empty, and there will be no `b-component`.
 
-To create a `b-component`, several helper functions are available in `globalThis` (Only if you built the project in dev mode).
+To create a new component, you should use several global helpers are available in `globalThis` (Only if you built the project in dev mode).
 Let's get to know them.
 
-Also, make sure you add your component to the `index.js` file of the demo page so that your component gets into the bundle and can be created using the helper functions.
+Also, make sure you add your component to the `index.js` file of the demo page so that your component gets into the
+bundle and can be created using the helper functions.
 
 ### renderComponents
 
-This function makes it possible to create a component or components on a page at runtime.
-First, let's take a look at the signature of this function.
+This function makes it possible to create components on a page at runtime.
+But, first, let's take a look at the signature of this function.
 
-
-```typescript
+````typescript
 export interface RenderParams {
   /**
    * Component attrs
@@ -144,14 +146,14 @@ export interface RenderContent {
 }
 
 /**
- * Renders specified components
+ * Renders the specified components
  *
  * @param componentName
  * @param scheme
- * @param [options]
+ * @param [opts]
  */
-declare var renderComponents: (componentName: string, scheme: RenderParams[], options?: RenderOptions) => void;
-```
+declare var renderComponents: (componentName: string, scheme: RenderParams[], opts?: RenderOptions) => void;
+````
 
 The `schema` contains a list of parameters to render, i.e., each element represents a component to render.
 
@@ -161,11 +163,11 @@ Let's create our component using this function.
 globalThis.renderComponents('b-component', [{attrs: {id: 'testId'}}]);
 ```
 
-As a result, we will get the created component inserted into the root element on the page.
+As the result, we will get the created component inserted into the root element on the page.
 
 ### removeCreatedComponents
 
-This method is helpful when you need to remove all of the components that was create via `renderComponents`.
+This method is helpful when you need to remove all components created via `renderComponents`.
 
 ```javascript
 globalThis.removeCreatedComponents();
@@ -173,7 +175,7 @@ globalThis.removeCreatedComponents();
 
 ## Creating a first spec
 
-Now that we know how to create a component, let's write our first test spec.
+Now that we know how to create a component let's write our first test spec.
 
 __src/base/b-component/test/index.js__
 ```javascript
@@ -205,9 +207,9 @@ __src/base/b-component/test/index.js__
   });
 ```
 
-## Run test
+## Run a test
 
-Now that we have added the first spec, we can run the test and check that everything is working correctly.
+Now that we have added the first spec, we can test and check that everything is working correctly.
 
 ```bash
 npx gulp test:component --test-entry base/b-component/test
@@ -233,9 +235,14 @@ Finished in 0.054 seconds
 
 ## Specs isolation
 
-One of our tests mustn't affect the state of another; for this, it is worth isolating the specs from each other. This is achieved quite simply, more precisely, in the examples above, we have already achieved this with the help of the `beforeEach` hook and creating a new browser context. `beforeEach` hook will be executed before every spec, so every spec will have its own browser context without any listeners, routes handlers or any other side effects. Don't forget to use `afterEach` hook to close previous browser context.
+One of our tests mustn't affect the state of another test. To implement this, it is worth isolating the specs from each other.
+We have already achieved this with the help of the `beforeEach` hook and creating a new browser context.
+The `beforeEach` hook will be executed before every spec to have its browser context without any listeners, routes handlers, or other side effects.
+Finally, don't forget to use the `afterEach` hook to close the previous browser context.
 
-You can also not create a new context but do everything on one page. In this case, the performance of tests will improve, but this will create other, more severe problems. For example, one spec can affect the state of another, there are a lot of such issues, so it is highly recommended to use a new context for each spec.
+You can also not create a new context but do everything on one page. In this case, the performance of tests will improve,
+but this will create other, more severe problems. For example, one spec can affect the state of another, there are a lot of
+such issues, so it is highly recommended use a new context for each spec.
 
 ## Splitting specs
 
@@ -258,7 +265,7 @@ To split one significant test file into several files, let's create a `runners` 
         └── index.js
 ```
 
-Place your code in runner files and after that in `index.js` file, for the runners to work correctly, you need to call the `getCurrentTest` method in the `index.js` file will launch the current runner (specified in the CLI arguments).
+Place your code in runner files, and after that in the `index.js` file, for the runners to work correctly, you need to call the `getCurrentTest` method in the `index.js` file to launch the current runner (specified in the CLI arguments).
 
 __src/base/b-component/test/index.js__
 
@@ -289,12 +296,13 @@ npx gulp test:component --test-entry base/b-component/test --runner "behaviour/*
 ## Demo page
 
 To test a component, we need to place it on the page.
-For tests, there is a special demo page `p-v4-components-demo`, but nothing prevents you from overriding it or creating your own.
+There is a special demo page `p-v4-components-demo` for tests, but nothing prevents you from overriding it or creating your own.
 If you decide to use your page, you should override the `build.demoPage` config parameter.
 
 ## Testing modules
 
-To test some module or directive, you can add it into the `b-dummy` component or a `demo` page. For example,  the `in-view` directive:
+You can add it into the `b-dummy` component or a `demo` page to test some module or directive.
+For example,  the `in-view` directive:
 
 __base/b-dummy/b-dummy.ts__
 
@@ -344,7 +352,7 @@ describe('`core/cookies`', () => {
   afterEach(() => context.close());
 
   // ...
-});  
+});
 ```
 
 ## Run all tests
@@ -419,15 +427,19 @@ npx gulp test:components --test-processes 2 --build-processes 4
 
 ### Request handling
 
-There are two approaches that can solve the problem of request handling.
+Two approaches can solve the problem of request handling.
 
-The first is to intercept the request and return a response using the `playwright` and its [route mechanisms](https://playwright.dev/docs/api/class-route#route-request). You can control each request directly from the test, give the any response and modify it as you like. In addition, you can emit any server errors (wrong answer, bad status code, etc.).
+The first is to intercept the request and return a response using the Playwright and its [route mechanisms](https://playwright.dev/docs/api/class-route#route-request). After that, you can control each request directly from the test,
+give any response and modify it as you like. In addition, you can emit any server errors (wrong answer, harmful status code, etc.).
 
-The second option is to install mocks at runtime using specially provided v4fire mechanisms. This option is not very flexible. Suppose you need to emit a bad status response code since mocks are compiled and run in runtime - you need to provide an option (in a component or provider) that will allow you to do this. Accordingly, you will have to write a code that will not carry any useful function, but it will be in your codebase, so the tests worked. In addition, if you want to fix the mock, you will have to build the project, but in the case of intercepting requests, you will not.
+The second option is to install mocks at runtime using specially provided v4fire mechanisms. This option is not very flexible.
+Suppose you need to emit a bad response status code since mocks are compiled and run in runtime - you need to provide an option (in a component or provider) that will allow you to do this. Accordingly, you will have to write a code that will not carry any useful function,
+but it will be in your codebase, so the tests worked. In addition, if you want to fix the mock, you will have to build the project,
+but in the case of intercepting requests, you will not.
 
 ### Nesting
 
-To make the specs cleaner and easier to understand, it is necessary that they contain as little code as possible.
+To make the specs cleaner and easier to understand, they must contain as little code as possible.
 This can be achieved with `hooks` and `describe` sections.
 
 Let's see this with an example:
@@ -512,7 +524,7 @@ As you can see, we do the same thing for every spec, create a component and clic
 We also get lucky, and in our case, we don't have a lot of the code for preparing spec,
 but when refactoring, we will have to correct three places, and besides, this unnecessarily inflates the spec code very much.
 
-Let's rewrite our code using `hooks` and nesting
+Let's rewrite our code using `hooks` and nesting.
 
 ```javascript
 describe('b-component test', () => {
@@ -555,12 +567,12 @@ describe('b-component test', () => {
 });
 ```
 
-Now when the spec setting is placed in the hook, specs contain only the test itself and no presettings.
+When the spec setting is placed in the hook, specs contain only the test itself and no pre-settings.
 
 ### Auto wait
 
-The `playwright` has many tools and mechanisms that make it much easier to write tests and reduce the amount of code that needs to be written, one of such mechanisms is auto wait.
-For example, the click method waits for the element with the passed selector to appear in the DOM tree, when it is available on the screen, and [much more](https://playwright.dev/docs/input#mouse-click).
+The Playwright has many tools and mechanisms that make it much easier to write tests and reduce the amount of code that needs to be written. One of such mechanisms is auto wait.
+For example, the click method waits for the element with the passed selector to appear in the DOM tree when it is available on the screen, and [much more](https://playwright.dev/docs/input#mouse-click).
 
 Let's take a closer look:
 
@@ -600,7 +612,6 @@ describe('b-component test', () => {
 });
 ```
 
-
 ### Flappy test prevention
 
 The heading also may be titled as "Why you should always use wait".
@@ -615,10 +626,10 @@ and it will be complicated when such a flap will be reproduced only in your CI, 
 
 ### Keep it clean
 
-As I mentioned earlier, for easy refactoring, reading, and rewriting tests, try to keep the specs (and tests in general) as clean as possible, treat them like your production codebase.
+As mentioned earlier, for easy refactoring, reading, and rewriting tests, try to keep the specs (and tests in general) as clean as possible, treat them like your production codebase.
 
 Here are some tips to help you achieve this:
 
 - Use the auto-wait API
-- Use the interceptions and routing mechanism provided by `playwright`
+- Use the interceptions and routing mechanism provided by Playwright
 - Use hooks and nesting to keep your specs clean
