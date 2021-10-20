@@ -219,6 +219,8 @@ declare namespace BrowserTests {
 		 * @param page
 		 * @param context
 		 * @param [options]
+		 *
+		 * @deprecated
 		 */
 		setup(page: Playwright.Page, context: Playwright.BrowserContext, options?: SetupOptions): Promise<void>;
 
@@ -227,6 +229,8 @@ declare namespace BrowserTests {
 		 *
 		 * @param page
 		 * @param [idleOptions]
+		 *
+		 * @deprecated
 		 */
 		reloadAndWaitForIdle(page: Playwright.Page, idleOptions?: WaitForIdleOptions): Promise<void>;
 
@@ -275,6 +279,8 @@ declare namespace BrowserTests {
 		 * @param componentSelector
 		 * @param props
 		 * @param [idleOptions]
+		 *
+		 * @deprecated
 		 */
 		setPropsToComponent(
 			page: Playwright.Page,
@@ -289,6 +295,8 @@ declare namespace BrowserTests {
 		 * @param page
 		 * @param componentSelector
 		 * @param props
+		 *
+		 * @deprecated
 		 */
 		reloadAndSetProps(
 			page: Playwright.Page,
@@ -459,6 +467,9 @@ declare namespace BrowserTests {
 		 * @param ctx
 		 * @param selector
 		 * @param [options]
+		 *
+		 * @deprecated
+		 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 		 */
 		waitForEl(
 			ctx: PlaywrightElContext,
@@ -484,6 +495,11 @@ declare namespace BrowserTests {
 		 *
 		 * @param selectorOrElement
 		 * @param ctx
+		 *
+		 * @deprecated
+		 *
+		 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-is-visible
+		 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 		 */
 		isVisible(selectorOrElement: PlaywrightElContext | string, ctx?: PlaywrightElContext): Promise<boolean>;
 
@@ -685,6 +701,8 @@ declare namespace BrowserTests {
 		 *
 		 * @param page
 		 * @param urls
+		 *
+		 * @deprecated
 		 */
 		waitForRequests(page: Playwright.Page, urls: string[]): Promise<void>;
 
@@ -694,6 +712,8 @@ declare namespace BrowserTests {
 		 *
 		 * @param page
 		 * @param urls
+		 *
+		 * @deprecated
 		 */
 		waitForRequestsFail(page: Playwright.Page, urls: string[]): Promise<void>;
 
@@ -704,6 +724,8 @@ declare namespace BrowserTests {
 		 * @param urls
 		 * @param response
 		 * @param timeout
+		 *
+		 * @deprecated
 		 */
 		interceptRequest(
 			page: Playwright.Page,
@@ -719,6 +741,8 @@ declare namespace BrowserTests {
 		 * @param urls
 		 * @param response
 		 * @param timeout
+		 *
+		 * @deprecated
 		 */
 		interceptRequests(
 			page: Playwright.Page,
@@ -733,6 +757,8 @@ declare namespace BrowserTests {
 		 * @param page
 		 * @param urls
 		 * @param event
+		 *
+		 * @deprecated
 		 */
 		waitForRequestsEvents(page: Playwright.Page, urls: string[], event: string): Promise<void>;
 
@@ -772,7 +798,6 @@ declare namespace Tests {
 	interface TestUtils {
 		/**
 		 * Returns a test that matches the `runner` parameter and the `name` passed to the `CLI`
-		 *
 		 * @param [options]
 		 */
 		getCurrentTest(options?: GetCurrentTestOptions): Function;

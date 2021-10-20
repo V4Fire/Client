@@ -11,6 +11,31 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Deprecate test methods:
+  * `DOM.waitForEl`
+  * `DOM.isVisible`
+  * `Request.waitForRequests`
+  * `Request.waitForRequestsFail`
+  * `Request.interceptRequest`
+  * `Request.interceptRequests`
+  * `Request.waitForRequestsEvents`
+  * `Utils.setup`
+  * `Utils.reloadAndWaitForIdle`
+  * `Component.setPropsToComponent`
+  * `Component.reloadAndSetProps`
+
+#### :house: Internal
+
+* `runtime-render` test argument is no longer need and supported
+
+#### :nail_care: Polish
+
+* Added better test documentation
+
 ## v3.6.1 (2021-10-14)
 
 #### :house: Internal
