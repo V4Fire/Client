@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added a neg Gulp task `gulp build:components-lock`
+* Added a new Gulp task `gulp build:components-lock`
 
 ## v3.6.0 (2021-10-14)
 
