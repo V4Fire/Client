@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* Added a neg Gulp task `gulp build:components-lock`
+* Added a new Gulp task `gulp build:components-lock`
 
 ## v3.5.4 (2021-10-12)
 
