@@ -28,6 +28,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `Component.setPropsToComponent`
   * `Component.reloadAndSetProps`
 
+#### :rocket: New Feature
+
+* Added a new `?inline` parameter for assets loaders `build/webpack`
+
 #### :house: Internal
 
 * `runtime-render` test argument is no longer need and supported
