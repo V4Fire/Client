@@ -127,8 +127,8 @@
     "worker-loader": "^3.0.7"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.10.0",
-    "@v4fire/linters": "^1.7.3",
+    "@types/jasmine": "^3.10.1",
+    "@v4fire/linters": "^1.8.0",
     "husky": "^7.0.4",
     "nyc": "^15.1.0",
     "playwright": "1.15.2"
