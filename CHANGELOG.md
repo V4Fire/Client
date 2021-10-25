@@ -34,7 +34,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* `runtime-render` test argument is no longer need and supported
+* `runtime-render` test argument is no longer needed and supported
 
 #### :nail_care: Polish
 
