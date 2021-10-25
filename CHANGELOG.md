@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.8.0 (2021-10-25)
+
+#### :rocket: New Feature
+
+* Added a new Snakeskin block `render` `iBlock`
+
 ## v3.7.0 (2021-10-25)
 
 #### :boom: Breaking Change
