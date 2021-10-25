@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.8.1 (2021-10-25)
+
+#### :house: Internal
+
+* Updated dependencies: `playwright@1.16.1`, `webpack@5.60.0`
+
 ## v3.8.0 (2021-10-25)
 
 #### :rocket: New Feature
