@@ -47,7 +47,7 @@
 	 * Loads modules by the specified paths and dynamically inserted the provided content when it loaded
 	 *
 	 * @param {(string|!Array<string>)} path - path or an array of paths
-	 * @param {{renderKey: string, wait: string}} [opts] - additional options
+	 * @param {{renderKey: string, wait: string}=} [opts] - additional options
 	 * @param {string=} [content]
 	 *
 	 * @example
@@ -64,23 +64,26 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
-		: buble = require('buble')
-
 		- if arguments.length < 3
 			? content = opts
 			? opts = {}
 
-		? ids = []
+		: buble = require('buble')
 
-		- forEach [].concat(path || []) => path
-			: &
-				waitFor = opts.wait || 'undefined',
-				interpolatedWaitFor = (opts.wait ? buble.transform("`" + opts.wait + "`").code : 'undefined')
-					.replace(/^\(?['"]/, '')
-					.replace(/['"]\)?$/, '')
-					.replace(/\\(['"])/g, '$1')
-			.
+		: &
+			ids = [],
+			paths = [].concat(path || [])
+		.
 
+		: &
+			waitFor = opts.wait || 'undefined',
+			interpolatedWaitFor = (opts.wait ? buble.transform("`" + opts.wait + "`").code : 'undefined')
+				.replace(/^\(?['"]/, '')
+				.replace(/['"]\)?$/, '')
+				.replace(/\\(['"])/g, '$1')
+		.
+
+		- forEach paths => path
 			: &
 				id = [path, waitFor].concat(opts.wait ? '${componentId}' : []).join(':'),
 				interpolatedId = buble.transform("`" + id + "`").code
@@ -89,6 +92,19 @@
 			? ids.push(interpolatedId)
 			{{ void(moduleLoader.add({id: ${interpolatedId}, load: () => import('${path}'), wait: ${interpolatedWaitFor}})) }}
 
+		: &
+			source,
+			filter
+		.
+
+		- if ids.length
+			? source = 'moduleLoader.values(...[' + ids.join(',') + '])'
+			? filter = 'undefined'
+
+		- else
+			? source = '1'
+			? filter = interpolatedWaitFor
+
 		- if content != null
 			- if opts.renderKey
 				: renderKey = buble.transform("`" + opts.renderKey + "`").code
@@ -96,15 +112,35 @@
 				< template v-if = !field.get('ifOnceStore.' + ${renderKey})
 					{{ void(field.set('ifOnceStore.' + ${renderKey}, true)) }}
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.values(...[${ids}]), 1, { &
+					< template v-for = _ in asyncRender.iterate(${source}, 1, { &
 						useRaf: true,
-						group: 'module:' + ${renderKey}
+						group: 'module:' + ${renderKey},
+						filter: ${filter}
 					}) .
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.values(...[${ids}]), 1, {useRaf: true})
+				< template v-for = _ in asyncRender.iterate(${source}, 1, {useRaf: true, filter: ${filter}})
 					+= content
+
+	/**
+	 * Render the specified content by using passed options
+	 *
+	 * @param {{renderKey: string, wait: string}} opts - options to render
+	 * @param {string} content
+	 *
+	 * @example
+	 * ```
+	 * += self.render({renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
+	 *   < b-button
+	 *     Hello world
+	 *
+	 *   < b-input
+	 * ```
+	 */
+	- block render(opts, content)
+		+= self.loadModules([], opts)
+			+= content
 
 	/**
 	 * Returns a link to a template by the specified path
