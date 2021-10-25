@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.8.0 (2021-10-25)
+
+#### :rocket: New Feature
+
+* Added a new Snakeskin block `render`
+
 ## v3.1.0 (2021-08-04)
 
 #### :rocket: New Feature
