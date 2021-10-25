@@ -154,7 +154,7 @@
 	 * Applies Typograf to the specified content
 	 * @param {string} content
 	 */
-	- block index->typograf(content)
+	- block typograf(content)
 		+= content|typograf
 
 	/**
@@ -207,7 +207,7 @@
 				 * @param {Object=} [classes]
 				 * @param {Object=} [attrs]
 				 */
-				- block index->gIcon(iconId, classes = {}, attrs = {})
+				- block gIcon(iconId, classes = {}, attrs = {})
 					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
 						- if Object.isArray(iconId)
 							< use v-if = value | v-update-on = { &
