@@ -110,7 +110,7 @@ module.exports = function init(gulp = require('gulp')) {
 			['--es', 'ES2019']
 		].flat().join(' ');
 
-		console.log(`playwright version: ${require('playwright/package.json').version}`);
+		// console.log(`playwright version: ${require('playwright/package.json').version}`);
 		console.log(`webpack version: ${require('webpack/package.json').version}`);
 
 		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
