@@ -450,13 +450,13 @@ export default class Block extends Friend {
 	 */
 	getMod(name: string, fromNode?: boolean): CanUndef<string> {
 		const
-			{mods, node, ctx} = this;
+			{mods, node} = this;
 
-		if (mods && !fromNode) {
+		if (mods != null && !fromNode) {
 			return mods[name.camelize(false)];
 		}
 
-		if (!node || ctx.isNotRegular === false) {
+		if (node == null) {
 			return undefined;
 		}
 
@@ -465,10 +465,10 @@ export default class Block extends Friend {
 
 		const
 			pattern = `(?:^| )(${this.getFullBlockName(name, '')}[^_ ]*)`,
-			rgxp = modRgxpCache[pattern] ?? new RegExp(pattern),
-			el = rgxp.exec(node.className);
+			modRgxp = modRgxpCache[pattern] ?? new RegExp(pattern),
+			el = modRgxp.exec(node.className);
 
-		modRgxpCache[pattern] = rgxp;
+		modRgxpCache[pattern] = modRgxp;
 		return el ? el[1].split('_')[MOD_VALUE] : undefined;
 	}
 
@@ -599,10 +599,10 @@ export default class Block extends Friend {
 
 		const
 			pattern = `(?:^| )(${this.getFullElName(elName, modName, '')}[^_ ]*)`,
-			rgxp = pattern[pattern] ?? new RegExp(pattern),
-			el = rgxp.exec(link.className);
+			modRgxp = pattern[pattern] ?? new RegExp(pattern),
+			el = modRgxp.exec(link.className);
 
-		modRgxpCache[pattern] = rgxp;
+		modRgxpCache[pattern] = modRgxp;
 		return el != null ? el[1].split(elRxp)[MOD_VALUE] : undefined;
 	}
 }

@@ -12,6 +12,8 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
+		< b-dummy ref = dummyComponent
+
 		: config = require('config').build
 
 		- forEach config.components => @component
