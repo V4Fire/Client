@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.8.2 (2021-10-26)
+
+#### :bug: Bug Fix
+
+* Fixed providing of hooks to directives within non-regular components
+
 ## v3.0.0-rc.142 (2021-02-11)
 
 #### :rocket: New Feature

@@ -11,14 +11,6 @@
  * @packageDocumentation
  */
 
-//#if runtime.engine = vue
-export * from 'core/component/engines/vue';
-//#endif
+import 'core/component/engines/directive';
 
-//#if runtime.engine = zero
-// @ts-ignore (double export)
-export * from 'core/component/engines/zero';
-//#endif
-
-export * from 'core/component/engines/interface';
-export { VNode } from 'core/component/engines/interface';
+export * from 'core/component/engines/engine';
