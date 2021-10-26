@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.6.1",
+  "version": "3.8.1",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -36,7 +36,7 @@
     "up": "npm i && npm up && npm audit fix"
   },
   "dependencies": {
-    "@v4fire/core": "^3.60.5",
+    "@v4fire/core": "^3.61.0",
     "escaper": "^3.0.6",
     "eventemitter2": "^6.4.5",
     "jsdom": "^16.7.0",
@@ -121,16 +121,16 @@
     "urlconcat": "0.0.12",
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^5.50.0",
+    "webpack": "^5.60.0",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^3.3.12",
     "worker-loader": "^3.0.7"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.9.1",
-    "@v4fire/linters": "^1.7.3",
-    "husky": "^7.0.2",
+    "@types/jasmine": "^3.10.1",
+    "@v4fire/linters": "^1.8.0",
+    "husky": "^7.0.4",
     "nyc": "^15.1.0",
-    "playwright": "^1.15.2"
+    "playwright": "^1.16.1"
   }
 }

@@ -17,6 +17,47 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug with removing a modifier from the passed node `super/i-block/modules/block`
 
+## v3.8.1 (2021-10-25)
+
+#### :house: Internal
+
+* Updated dependencies: `playwright@1.16.1`, `webpack@5.60.0`
+
+## v3.8.0 (2021-10-25)
+
+#### :rocket: New Feature
+
+* Added a new Snakeskin block `render` `iBlock`
+
+## v3.7.0 (2021-10-25)
+
+#### :boom: Breaking Change
+
+* Deprecate test methods:
+  * `DOM.waitForEl`
+  * `DOM.isVisible`
+  * `Request.waitForRequests`
+  * `Request.waitForRequestsFail`
+  * `Request.interceptRequest`
+  * `Request.interceptRequests`
+  * `Request.waitForRequestsEvents`
+  * `Utils.setup`
+  * `Utils.reloadAndWaitForIdle`
+  * `Component.setPropsToComponent`
+  * `Component.reloadAndSetProps`
+
+#### :rocket: New Feature
+
+* Added a new `?inline` parameter for assets loaders `build/webpack`
+
+#### :house: Internal
+
+* `runtime-render` test argument is no longer needed and supported
+
+#### :nail_care: Polish
+
+* Added better test documentation
+
 ## v3.6.1 (2021-10-14)
 
 #### :house: Internal

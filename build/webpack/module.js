@@ -38,6 +38,11 @@ const urlLoaderOpts = {
 	esModule: false
 };
 
+const urlLoaderInlineOpts = {
+	...urlLoaderOpts,
+	limit: undefined
+};
+
 const
 	isTSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?(?:\.d)?)\.ts$/,
 	isTSServiceWorker = /(?:\.service-worker\b|[\\/]service-workers[\\/].*?(?:\.d)?)\.ts$/,
@@ -377,59 +382,91 @@ module.exports = async function module({plugins}) {
 		]
 	});
 
+	const assetsHelperLoaders = (inline) => [
+		{
+			loader: 'url-loader',
+			options: inline ? urlLoaderInlineOpts : urlLoaderOpts
+		}
+	];
+
 	loaders.rules.set('assets', {
 		test: /\.(?:ttf|eot|woff|woff2|mp3|ogg|aac)$/,
-		use: [
+
+		oneOf: [
 			{
-				loader: 'url-loader',
-				options: urlLoaderOpts
-			}
+				resourceQuery: /inline/,
+				use: assetsHelperLoaders(true)
+			},
+
+			{use: assetsHelperLoaders()}
 		]
 	});
 
+	const imgHelperLoaders = (inline) => [
+		{
+			loader: 'url-loader',
+			options: inline ? urlLoaderInlineOpts : urlLoaderOpts
+		}
+	].concat(
+		isProd ? {loader: 'image-webpack-loader', options: Object.reject(imageOpts, ['webp'])} : []
+	);
+
 	loaders.rules.set('img', {
 		test: /\.(?:ico|png|gif|jpe?g)$/,
-		use: [
+
+		oneOf: [
 			{
-				loader: 'url-loader',
-				options: urlLoaderOpts
-			}
-		].concat(
-			isProd ?
-				{loader: 'image-webpack-loader', options: Object.reject(imageOpts, ['webp'])} :
-				[]
-		)
+				resourceQuery: /inline/,
+				use: imgHelperLoaders(true)
+			},
+
+			{use: imgHelperLoaders()}
+		]
 	});
+
+	const webpHelperLoaders = (inline) => [
+		{
+			loader: 'url-loader',
+			options: inline ? urlLoaderInlineOpts : urlLoaderOpts
+		}
+	].concat(
+		isProd ? {loader: 'image-webpack-loader', options: imageOpts} : []
+	);
 
 	loaders.rules.set('img.webp', {
 		test: /\.webp$/,
-		use: [
+		oneOf: [
 			{
-				loader: 'url-loader',
-				options: urlLoaderOpts
-			}
-		].concat(
-			isProd ?
-				{loader: 'image-webpack-loader', options: imageOpts} :
-				[]
-		)
+				resourceQuery: /inline/,
+				use: webpHelperLoaders(true)
+			},
+
+			{use: webpHelperLoaders()}
+		]
 	});
+
+	const svgHelperLoaders = (inline) => [
+		{
+			loader: 'svg-url-loader',
+			options: inline ? urlLoaderInlineOpts : urlLoaderOpts
+		},
+		{
+			loader: 'svg-transform-loader'
+		}
+	].concat(
+		isProd ? {loader: 'svgo-loader', options: imageOpts.svgo} : []
+	);
 
 	loaders.rules.set('img.svg', {
 		test: /\.svg(\?.*)?$/,
-		use: [
+		oneOf: [
 			{
-				loader: 'svg-url-loader',
-				options: urlLoaderOpts
+				resourceQuery: /inline/,
+				use: svgHelperLoaders(true)
 			},
-			{
-				loader: 'svg-transform-loader'
-			}
-		].concat(
-			isProd ?
-				{loader: 'svgo-loader', options: imageOpts.svgo} :
-				[]
-		)
+
+			{use: svgHelperLoaders()}
+		]
 	});
 
 	return loaders;

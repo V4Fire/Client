@@ -166,7 +166,7 @@ export function initComponentVNode(
 										newVal = oldVal;
 
 									if (Object.isPlainObject(val) || Object.isPlainObject(oldVal)) {
-										newVal = {...val, ...oldVal};
+										newVal = {...<object>val, ...oldVal};
 
 									} else if (Object.isArray(val) || Object.isArray(oldVal)) {
 										newVal = Object.assign([], val, oldVal);
