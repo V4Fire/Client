@@ -6,11 +6,11 @@ This module provides a directive to load images by using `background-image` or `
 
 ```
 < .&__not-img v-image = { &
-	src: 'https://fakeimg.com'
+  src: 'https://fakeimg.com'
 } .
 
 < img.&__img v-image = { &
-	src: 'https://fakeimg.com'
+  src: 'https://fakeimg.com'
 } .
 ```
 

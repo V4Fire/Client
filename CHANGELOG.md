@@ -17,6 +17,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug with removing a modifier from the passed node `super/i-block/modules/block`
 
+## v3.8.2 (2021-10-26)
+
+#### :bug: Bug Fix
+
+* Fixed providing of hooks to directives within non-regular components `core/component/engines`
+
 ## v3.8.1 (2021-10-25)
 
 #### :house: Internal
