@@ -78,13 +78,46 @@ declare function include<PATH extends keyof IncludeReturns>(path: PATH, ...args:
 declare namespace BrowserTests {
 
 	interface TestParams {
+		/**
+		 * Base test URL
+		 */
 		testURL: string;
+
+		/**
+		 * Browser instance
+		 */
 		browser: import('playwright').Browser;
+
+		/**
+		 * Initial page
+		 * @deprecated [better to create a new page for every spec](https://github.com/V4Fire/Client/tree/master/docs/tests#specs-isolation)
+		 */
 		page: Playwright.Page;
+
+		/**
+		 * Initial context
+		 * @deprecated [better to create a new context for every spec](https://github.com/V4Fire/Client/tree/master/docs/tests#specs-isolation)
+		 */
 		context: Playwright.BrowserContext;
+
+		/**
+		 * Directory with component files
+		 */
 		componentDir: string;
+
+		/**
+		 * Directory to store some temporary data
+		 */
 		tmpDir: string;
+
+		/**
+		 * Provided context options
+		 */
 		contextOpts: Dictionary;
+
+		/**
+		 * Browser version
+		 */
 		version: string;
 	}
 
