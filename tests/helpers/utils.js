@@ -16,6 +16,8 @@ const
  * @typedef {import('playwright').BrowserContext} BrowserContext
  */
 
+const logs = [];
+
 class Utils {
 	/**
 	 * @param {BrowserTests.Helpers} parent
@@ -74,6 +76,22 @@ class Utils {
 	}
 
 	/**
+	 * @see [[BrowserTests.Utils.collectPageLogs]]
+	 */
+	collectPageLogs(page) {
+		page.on('console', (message) => {
+				logs.push(message.text());
+		});
+	}
+
+	/**
+	 * @see [[BrowserTests.Utils.printPageLogs]]
+	 */
+	printPageLogs() {
+		console.log(logs);
+	}
+
+	/**
 	 * @see [[BrowserTests.Utils.reloadAndWaitForIdle]]
 	 */
 	async reloadAndWaitForIdle(page, idleOptions) {
@@ -112,12 +130,12 @@ class Utils {
 
 						if (isTimeout) {
 							clearInterval(interval);
-							rej();
+							rej(`Function\n${newFn}\nis not truthy`);
 						}
 
-					} catch {
+					} catch (err) {
 						clearInterval(interval);
-						rej();
+						rej(err);
 					}
 				}, 15);
 			});

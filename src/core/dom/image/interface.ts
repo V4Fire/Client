@@ -158,11 +158,17 @@ export interface ImageOptions {
 	error?(el: Element): unknown;
 
 	/**
-	 * Format url of image
-	 * @param url
-	 * @param type
+	 * Preprocess options of image
+	 *
+	 * @example
+	 * ```typescript
+	 * const optionsResolver = (options) => {
+	 * options.src += '?size=42';
+	 * return options;
+	 * }
+	 * ```
 	 */
-	 optionsResolver?: OptionsResolver;
+	optionsResolver?: OptionsResolver;
 }
 
 export type OptionsResolver = (opts: ImageOptions) => ImageOptions;

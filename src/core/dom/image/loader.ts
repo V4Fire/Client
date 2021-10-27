@@ -101,7 +101,7 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Preprocess options for ImageLoader
+	 * Preprocess options for `ImageLoader`
 	 * @param opts
 	 */
 	 preProcessOptions(opts: ImageOptions): ImageOptions {
