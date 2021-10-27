@@ -156,7 +156,16 @@ export interface ImageOptions {
 	 * @param el
 	 */
 	error?(el: Element): unknown;
+
+	/**
+	 * Format url of image
+	 * @param url
+	 * @param type
+	 */
+	 optionsResolver?: OptionsResolver;
 }
+
+export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
 
 /**
  * Options of a background image
@@ -317,6 +326,7 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 export interface DefaultParams {
 	broken?: string | ImageOptions['broken'];
 	preview?: string | ImageOptions['preview'];
+	optionsResolver?: OptionsResolver;
 }
 
 export type ImagePlaceholderType = 'preview' | 'broken';

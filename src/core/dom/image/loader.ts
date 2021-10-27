@@ -15,6 +15,7 @@ import {
 	DefaultImagePlaceholderOptions,
 	ImagePlaceholderOptions,
 	ImagePlaceholderType,
+	OptionsResolver,
 
 	InitValue,
 	ShadowElState,
@@ -100,6 +101,26 @@ export default class ImageLoader {
 	}
 
 	/**
+	 * Preprocess options for ImageLoader
+	 * @param opts
+	 */
+	 preProcessOptions(opts: ImageOptions): ImageOptions {
+		if (opts.optionsResolver) {
+			return opts.optionsResolver(opts);
+		}
+
+		return opts;
+	}
+
+	/**
+	 * Sets the default `optionsResolver` function
+	 * @param optionsResolver
+	 */
+	setDefaultOptionsResolver(optionsResolver: OptionsResolver): void {
+		this.defaultOptionsResolver = optionsResolver;
+	}
+
+	/**
 	 * Initializes rendering of an image to the specified element
 	 *
 	 * @param el
@@ -109,11 +130,12 @@ export default class ImageLoader {
 		const
 			normalized = ImageLoader.normalizeOptions(value);
 
-		const mainOpts: ImageOptions = {
+		const mainOpts: ImageOptions = this.preProcessOptions({
 			preview: 'preview' in normalized ? normalized.preview : this.defaultPreviewImageOptions,
 			broken: 'broken' in normalized ? normalized.broken : this.defaultBrokenImageOptions,
+			optionsResolver: 'optionsResolver' in normalized ? normalized.optionsResolver : this.defaultOptionsResolver,
 			...normalized
-		};
+		});
 
 		const
 			typedEl = <ImageNode>el;
@@ -303,6 +325,11 @@ export default class ImageLoader {
 			this.defaultPreviewShadowState = state;
 		}
 	}
+
+	/**
+	 * Default `optionsResolver` function
+	 */
+	 protected defaultOptionsResolver?: OptionsResolver = (opts) => opts;
 
 	/**
 	 * Clears a shadow state of the specified element
