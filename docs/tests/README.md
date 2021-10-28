@@ -399,6 +399,12 @@ Build a `demo` and then run the test located at the specified `test-entry`:
 npx gulp test:component --test-entry base/b-component/test
 ```
 
+Run the test with browser opened not as `headless`:
+
+```bash
+npx gulp test:component --headless false --close false --browsers chromium --test-entry base/b-component/test
+```
+
 Run (without building) the test located at `test-entry`:
 
 ```bash
