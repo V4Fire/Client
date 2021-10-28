@@ -116,3 +116,48 @@ export const defaultParams: DefaultParams = {
   }
 };
 ```
+
+### Patching options of image
+
+You can provide a function for patching options of image
+
+```typescript
+import { ImageLoader } from 'core/dom/image';
+
+@component()
+export default class bSomeComponent extends iBlock {
+  @hook('mounted')
+  initImage(): void {
+    ImageLoader.init(this.$el, {
+      src: 'https://img.src',
+      optionsResolver: (options) => {
+        options.src += '?size=optimal';
+
+        return options;
+      }
+    })
+  }
+}
+```
+
+Or declare it in the default config
+
+**core/dom/image/const.ts**
+
+```typescript
+import { DefaultParams } from 'core/dom/image';
+
+export * from '@v4fire/client/core/dom/image/const'
+
+/** @override */
+export const defaultParams: DefaultParams = {
+  broken: {
+    src: require('assets/img/no-image.svg'),
+  },
+  optionsResolver: (options) => {
+    options.src += '?size=optimal';
+
+    return options;
+  }
+};
+```

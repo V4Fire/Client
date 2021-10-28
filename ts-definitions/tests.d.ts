@@ -269,18 +269,16 @@ declare namespace BrowserTests {
 		setup(page: Playwright.Page, context: Playwright.BrowserContext, options?: SetupOptions): Promise<void>;
 
 		/**
-		 * Collect all console.log calls on page
+		 * Collects all of the console.log calls on the page
 		 *
 		 * @param page
-     *
 		 */
-    collectPageLogs(page: Playwright.Page);
+		collectPageLogs(page: Playwright.Page);
 
-    /**
-		 * Print all collected console.log calls on page into terminal
-     *
+		/**
+		 * Prints all of the collected console.log calls on the page into the terminal
 		 */
-    printPageLogs()
+		printPageLogs();
 
 		/**
 		 * Reloads the page and waits until `requestIdleCallback`

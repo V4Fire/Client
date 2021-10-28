@@ -163,8 +163,8 @@ export interface ImageOptions {
 	 * @example
 	 * ```typescript
 	 * const optionsResolver = (options) => {
-	 * options.src += '?size=42';
-	 * return options;
+	 *   options.src += '?size=42';
+	 *   return options;
 	 * }
 	 * ```
 	 */
