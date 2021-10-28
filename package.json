@@ -24,6 +24,7 @@
   "scripts": {
     "build": "gulp build:tsconfig && webpack",
     "build:file": "gulp build:tsconfig && webpack --public-path",
+    "build:test": "npx webpack --client-output b-dummy --cache-type memory --public-path",
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --public-path",
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components && npm run test:jasmine",

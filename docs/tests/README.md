@@ -429,6 +429,18 @@ Runs all tests defined in `cwd/tests/cases.js`, maximum 4 builds, and two tests 
 npx gulp test:components --test-processes 2 --build-processes 4
 ```
 
+Incremental build for tests:
+
+```bash
+npx webpack --watch --cache-type memory --client-output b-dummy --public-path
+```
+
+Incremental build for tests (shorthand):
+
+```bash
+npm run build:test -- --watch
+```
+
 ## Test writing guidelines
 
 ### Request handling
