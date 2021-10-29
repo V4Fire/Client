@@ -76,17 +76,21 @@ interface IncludeReturns extends Record<string, any> {
 declare function include<PATH extends keyof IncludeReturns>(path: PATH, ...args: any[]): IncludeReturns[PATH];
 
 declare namespace BrowserTests {
-
 	interface TestParams {
-		/**
-		 * Base test URL
-		 */
-		testURL: string;
-
 		/**
 		 * Browser instance
 		 */
 		browser: import('playwright').Browser;
+
+		/**
+		 * Browser version
+		 */
+		version: string;
+
+		/**
+		 * Base test URL
+		 */
+		testURL: string;
 
 		/**
 		 * Initial page
@@ -101,6 +105,11 @@ declare namespace BrowserTests {
 		context: Playwright.BrowserContext;
 
 		/**
+		 * Context options
+		 */
+		contextOpts: Dictionary;
+
+		/**
 		 * Directory with component files
 		 */
 		componentDir: string;
@@ -109,16 +118,6 @@ declare namespace BrowserTests {
 		 * Directory to store some temporary data
 		 */
 		tmpDir: string;
-
-		/**
-		 * Provided context options
-		 */
-		contextOpts: Dictionary;
-
-		/**
-		 * Browser version
-		 */
-		version: string;
 	}
 
 	/**
