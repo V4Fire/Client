@@ -76,6 +76,50 @@ interface IncludeReturns extends Record<string, any> {
 declare function include<PATH extends keyof IncludeReturns>(path: PATH, ...args: any[]): IncludeReturns[PATH];
 
 declare namespace BrowserTests {
+	interface TestParams {
+		/**
+		 * Browser instance
+		 */
+		browser: import('playwright').Browser;
+
+		/**
+		 * Browser version
+		 */
+		version: string;
+
+		/**
+		 * Base test URL
+		 */
+		testURL: string;
+
+		/**
+		 * Initial page
+		 * @deprecated [better to create a new page for every spec](https://github.com/V4Fire/Client/tree/master/docs/tests#specs-isolation)
+		 */
+		page: Playwright.Page;
+
+		/**
+		 * Initial context
+		 * @deprecated [better to create a new context for every spec](https://github.com/V4Fire/Client/tree/master/docs/tests#specs-isolation)
+		 */
+		context: Playwright.BrowserContext;
+
+		/**
+		 * Context options
+		 */
+		contextOpts: Dictionary;
+
+		/**
+		 * Directory with component files
+		 */
+		componentDir: string;
+
+		/**
+		 * Directory to store some temporary data
+		 */
+		tmpDir: string;
+	}
+
 	/**
 	 * Helpers to write browser tests
 	 */

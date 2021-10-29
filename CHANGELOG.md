@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-??-??)
+
+#### :house: Internal
+
+* Added `TestParams` interface for `BrowserTests` `test.d.ts`
+
 ## v3.8.3 (2021-10-26)
 
 #### :bug: Bug Fix

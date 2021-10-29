@@ -393,19 +393,25 @@ module.exports = [
 
 ## Test arguments
 
-Build a `demo` and then run the test located at the specified `test-entry`:
+Build a demo and then run tests located at the specified entry:
 
 ```bash
 npx gulp test:component --test-entry base/b-component/test
 ```
 
-Run (without building) the test located at `test-entry`:
+Run tests within a non-headless browser:
+
+```bash
+npx gulp test:component --headless false --close false --browsers chromium --test-entry base/b-component/test
+```
+
+Run tests without building:
 
 ```bash
 npx gulp test:component:run --test-entry base/b-component/test
 ```
 
-Run (without building) the test located at the `test-entry` address only in the `chromium` browser:
+Run tests only in Chromium and without building:
 
 ```bash
 npx gulp test:component:run --test-entry base/b-component/test --browsers chromium
@@ -421,6 +427,18 @@ Runs all tests defined in `cwd/tests/cases.js`, maximum 4 builds, and two tests 
 
 ```bash
 npx gulp test:components --test-processes 2 --build-processes 4
+```
+
+Incremental build for tests:
+
+```bash
+npx webpack --watch --cache-type memory --client-output b-dummy --public-path
+```
+
+Incremental build for tests (shorthand):
+
+```bash
+npm run build:test -- --watch
 ```
 
 ## Test writing guidelines
