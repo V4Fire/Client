@@ -39,7 +39,7 @@
 
 				/*
 				 * @deprecated
-				 * @see beforeItems
+				 * @see afterItems
 				 */
 				+= self.slot('afterOptions')
 
@@ -64,6 +64,17 @@
 			.
 				< .&__view-content ref = content
 					+= content
+
+		< .&__controls
+			< template &
+				v-for = index in getControlAmount() |
+				:key = index
+			.
+				+= self.slot('control')
+					< .&__control &
+						:class = provide.elClasses({current: {active: index - 1 === current}}) |
+						@click = onControlClick(index)
+					.
 
 		< .&__window v-else
 			< .&__view ref = view

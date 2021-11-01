@@ -9,10 +9,12 @@
 @import "super/i-data/i-data.styl"
 
 $p = {
-
+	size: 10px
 }
 
 b-slider extends i-data
+	position relative
+
 	if $p.height
 		height $p.height
 
@@ -23,6 +25,22 @@ b-slider extends i-data
 
 	&__window
 		position relative
+
+	&__controls
+		width: 100%
+		absolute left 0 bottom -15px
+		display flex
+		justify-content center
+
+	&__control
+		position relative
+		border-radius 50%
+		size $p.size
+		border 1px solid #000
+		margin 0 10px
+
+	&__current_active_true
+		background-color #000
 
 	&__view
 		useGPU()

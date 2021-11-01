@@ -190,7 +190,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * The number of slides in the slider
 	 */
-	@system()
+	@field()
 	length: number = 0;
 
 	static override readonly mods: ModsDecl = {
@@ -291,7 +291,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected itemsStore!: iItems['items'];
 
 	/** @see [[bSlider.current]] */
-	@system()
+	@field()
 	protected currentStore: number = 0;
 
 	/** @see [[bSlider.modeProp]] */
@@ -649,6 +649,17 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
+	/**
+	 * Returns the amount of controls
+	 */
+	protected getControlAmount(): number {
+		if (this.length > 0) {
+			return this.length;
+		}
+
+		return 0;
+	}
+
 	protected override initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('mode', 'mode', String);
@@ -679,6 +690,16 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		void this.setMod('swipe', true);
 
 		this.startTime = performance.now();
+	}
+
+	/**
+	 * Handler: switches to the specified slide by an index
+	 * @param index - slide index
+	 * @param [animate] - animate transition
+	 */
+	protected onControlClick(index: number, animate: boolean = true): Promise<boolean> {
+		this.console.log('click', index);
+		return this.slideTo(index - 1, animate);
 	}
 
 	/**
