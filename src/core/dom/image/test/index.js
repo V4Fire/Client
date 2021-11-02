@@ -139,7 +139,7 @@ module.exports = async (page, params) => {
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
 				});
 
-				it('with `src` and optionsResolver', async () => {
+				it('with `src` and `optionsResolver`', async () => {
 					const
 						imgUrl = getRandomImgUrl(),
 						newParam = '?size=42',

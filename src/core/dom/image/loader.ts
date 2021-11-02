@@ -79,6 +79,11 @@ export default class ImageLoader {
 	protected defaultBrokenShadowState?: ShadowElState;
 
 	/**
+	 * Default `optionsResolver` function
+	 */
+	 defaultOptionsResolver?: OptionsResolver = (opts) => opts;
+
+	/**
 	 * Sets the default `broken` image
 	 * @param opts
 	 */
@@ -101,26 +106,6 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Preprocess options for `ImageLoader`
-	 * @param opts
-	 */
-	 preProcessOptions(opts: ImageOptions): ImageOptions {
-		if (opts.optionsResolver) {
-			return opts.optionsResolver(opts);
-		}
-
-		return opts;
-	}
-
-	/**
-	 * Sets the default `optionsResolver` function
-	 * @param optionsResolver
-	 */
-	setDefaultOptionsResolver(optionsResolver: OptionsResolver): void {
-		this.defaultOptionsResolver = optionsResolver;
-	}
-
-	/**
 	 * Initializes rendering of an image to the specified element
 	 *
 	 * @param el
@@ -130,7 +115,7 @@ export default class ImageLoader {
 		const
 			normalized = ImageLoader.normalizeOptions(value);
 
-		const mainOpts: ImageOptions = this.preProcessOptions({
+		const mainOpts: ImageOptions = this.resolveOptions({
 			preview: 'preview' in normalized ? normalized.preview : this.defaultPreviewImageOptions,
 			broken: 'broken' in normalized ? normalized.broken : this.defaultBrokenImageOptions,
 			optionsResolver: 'optionsResolver' in normalized ? normalized.optionsResolver : this.defaultOptionsResolver,
@@ -286,6 +271,18 @@ export default class ImageLoader {
 	}
 
 	/**
+	 * Resolves the given operation options
+	 * @param opts
+	 */
+		protected resolveOptions(opts: ImageOptions): ImageOptions {
+		if (opts.optionsResolver) {
+			return opts.optionsResolver(opts);
+		}
+
+		return opts;
+	}
+
+	/**
 	 * Merges the default image state with the provided options
 	 *
 	 * @param mainImageOptions
@@ -325,11 +322,6 @@ export default class ImageLoader {
 			this.defaultPreviewShadowState = state;
 		}
 	}
-
-	/**
-	 * Default `optionsResolver` function
-	 */
-	 protected defaultOptionsResolver?: OptionsResolver = (opts) => opts;
 
 	/**
 	 * Clears a shadow state of the specified element

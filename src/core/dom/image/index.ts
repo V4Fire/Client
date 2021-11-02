@@ -35,7 +35,7 @@ export function imageLoaderFactory(params: CanUndef<DefaultParams> = defaultPara
 	}
 
 	if (params?.optionsResolver != null) {
-		instance.setDefaultOptionsResolver(params.optionsResolver);
+		instance.defaultOptionsResolver = params.optionsResolver;
 	}
 
 	return instance;

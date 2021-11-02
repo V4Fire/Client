@@ -158,7 +158,9 @@ export interface ImageOptions {
 	error?(el: Element): unknown;
 
 	/**
-	 * Preprocess options of image
+	 * A function to resolve given options.
+	 * It takes an object with the passed operation options, can modify them or create new ones.
+	 * It should return resolved options.
 	 *
 	 * @example
 	 * ```typescript

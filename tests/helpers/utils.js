@@ -16,7 +16,7 @@ const
  * @typedef {import('playwright').BrowserContext} BrowserContext
  */
 
-const logs = [];
+const logsMap = new WeakMap();
 
 class Utils {
 	/**
@@ -75,20 +75,28 @@ class Utils {
 		await page.waitForSelector('#root-component', {timeout: (60).seconds(), state: 'attached'});
 	}
 
-	/**
-	 * @see [[BrowserTests.Utils.collectPageLogs]]
-	 */
+	/** @see [[BrowserTests.Utils.collectPageLogs]] */
 	collectPageLogs(page) {
-		page.on('console', (message) => {
-				logs.push(message.text());
-		});
+		const logs = logsMap.get(page);
+
+		if (logs === undefined) {
+			const logsArr = [];
+			logsMap.set(page, logsArr);
+
+			page.on('console', (message) => {
+				logsArr.push(message.text());
+			});
+		}
 	}
 
-	/**
-	 * @see [[BrowserTests.Utils.printPageLogs]]
-	 */
-	printPageLogs() {
-		console.log(logs);
+	/** @see [[BrowserTests.Utils.printPageLogs]] */
+	printPageLogs(page) {
+		const logs = logsMap.get(page);
+
+		if (logs) {
+			console.log(logs.join('\n'));
+			logsMap.delete(page);
+		}
 	}
 
 	/**
@@ -130,7 +138,7 @@ class Utils {
 
 						if (isTimeout) {
 							clearInterval(interval);
-							rej(`Function\n${newFn}\nis not truthy`);
+							rej(`The given function\n${newFn}\nreturns a negative result`);
 						}
 
 					} catch (err) {
