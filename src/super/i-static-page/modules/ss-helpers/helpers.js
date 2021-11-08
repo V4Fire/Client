@@ -57,7 +57,7 @@ function addPublicPath(path) {
 		}
 
 		if (Object.isString(expr) || expr.interpolate === false) {
-			return res.replace(/'/g, '\\\'');
+			return `'${res.replace(/'/g, '\\\'')}'`;
 		}
 
 		return res;
