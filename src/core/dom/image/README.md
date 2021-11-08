@@ -141,7 +141,7 @@ export default class bSomeComponent extends iBlock {
 }
 ```
 
-Or declare it within the default config.
+Or declare these options within the default config.
 
 **core/dom/image/const.ts**
 
