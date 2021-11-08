@@ -50,7 +50,7 @@ function addPublicPath(path) {
 
 	function toExpr(expr) {
 		const
-			res = String(expr) || 'null';
+			res = String(expr);
 
 		if (expr == null) {
 			return res;
