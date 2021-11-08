@@ -277,10 +277,8 @@ declare namespace BrowserTests {
 		collectPageLogs(page: Playwright.Page);
 
 		/**
-		 * Prints all of the intercepted console invokes to a console
-		 *
+		 * Prints all of the intercepted page console invokes to a console
 		 * @param page
-		 *
 		 */
 		printPageLogs(page: Playwright.Page);
 

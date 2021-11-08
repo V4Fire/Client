@@ -274,8 +274,8 @@ export default class ImageLoader {
 	 * Resolves the given operation options
 	 * @param opts
 	 */
-		protected resolveOptions(opts: ImageOptions): ImageOptions {
-		if (opts.optionsResolver) {
+	protected resolveOptions(opts: ImageOptions): ImageOptions {
+		if (opts.optionsResolver != null) {
 			return opts.optionsResolver(opts);
 		}
 

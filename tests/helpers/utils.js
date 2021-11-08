@@ -8,15 +8,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	delay = require('delay');
-
 /**
  * @typedef {import('playwright').Page} Page
  * @typedef {import('playwright').BrowserContext} BrowserContext
  */
 
-const logsMap = new WeakMap();
+const
+	delay = require('delay');
+
+const
+	logsMap = new WeakMap();
 
 class Utils {
 	/**
