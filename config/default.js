@@ -819,14 +819,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `StatoscopePlugin`
+	 *
+	 * @cli statoscope
+	 * @env STATOSCOPE
+	 * @default `false`
+	 *
+	 * @param {boolean=} [def] - default value
 	 * @returns {!Object}
 	 */
-	statoscopePlugin() {
+	statoscopePlugin(def = false) {
 		return {
 			enabled: o('statoscope', {
 				env: 'STATOSCOPE',
 				type: 'boolean',
-				default: false
+				default: def
 			})
 		};
 	},

@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.?.? (2021-??-??)
 
+#### :rocket: New Feature
+
+* Added a new Webpack plugin `statoscopePlugin` `build/webpack`
+
 #### :bug: Bug Fix
 
 * Fixed invalid escaping of `csp.nonce` `iStaticPage`
@@ -20,10 +24,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Added `TestParams` interface for `BrowserTests` `test.d.ts`
-
-#### :rocket: New Feature
-
-* Added a new Webpack plugin `statoscopePlugin` `build/webpack`
 
 ## v3.8.3 (2021-10-26)
 
