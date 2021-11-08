@@ -364,7 +364,7 @@ export default class ChunkRequest extends Friend {
 					this.lastLoadedChunk.normalized = [] :
 					this.lastLoadedChunk.normalized = converted!.data!;
 
-				ctx.emit('chunkLoaded', this.lastLoadedChunk);
+				ctx.emit('chunkLoaded', this.lastLoadedChunk, this.page);
 				return converted;
 			})
 

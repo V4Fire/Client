@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-??-??)
+
+#### :rocket: New Feature
+
+* [Added a new event `chunkRenderStart`](https://github.com/V4Fire/Client/issues/651)
+* [Added `pageNumber` in `chunkLoaded` event](https://github.com/V4Fire/Client/issues/651)
+
 ## v3.0.0-rc.182 (2021-04-28)
 
 #### :bug: Bug Fix
