@@ -28,6 +28,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `TestParams` interface for `BrowserTests` `test.d.ts`
 
+#### :rocket: New Feature
+
+* [Added `optionsResolver` into `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
+
 ## v3.8.3 (2021-10-26)
 
 #### :bug: Bug Fix

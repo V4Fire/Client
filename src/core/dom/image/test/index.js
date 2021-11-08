@@ -128,7 +128,7 @@ module.exports = async (page, params) => {
 	describe('v-image', () => {
 		['div', 'img'].forEach((tag) => {
 			describe(tag, () => {
-				it(' with `src`', async () => {
+				it('with `src`', async () => {
 					await imageLoader.evaluate((imageLoaderCtx, [tag, images]) => {
 						const target = document.getElementById(`${tag}-target`);
 						imageLoaderCtx.init(target, {src: images.pngImage, ctx: globalThis.dummy});
@@ -137,6 +137,33 @@ module.exports = async (page, params) => {
 					await h.bom.waitForIdleCallback(page);
 
 					expect(await getNode(tag).evaluate((ctx) => globalThis.getSrc(ctx))).toBe(images.pngImage);
+				});
+
+				it('with `src` and `optionsResolver`', async () => {
+					const
+						imgUrl = getRandomImgUrl(),
+						newParam = '?size=42',
+						patchedImgUrl = imgUrl + newParam,
+						reqPromise = handleImageRequest(patchedImgUrl);
+
+					await imageLoader.evaluate((imageLoaderCtx, [tag, imgUrl, newParam]) => {
+						const target = document.getElementById(`${tag}-target`);
+
+						const optionsResolver = (options) => {
+							options.src += newParam;
+
+							return options;
+						};
+
+						imageLoaderCtx.init(target, {src: imgUrl, ctx: globalThis.dummy, optionsResolver});
+					}, [tag, imgUrl, newParam]);
+
+					await h.bom.waitForIdleCallback(page);
+
+					await reqPromise;
+					await expectAsync(
+						waitFor(getNode(tag), (ctx, patchedImgUrl) => globalThis.getSrc(ctx) === patchedImgUrl, patchedImgUrl)
+					).toBeResolved();
 				});
 
 				it('with `srcset`', async () => {

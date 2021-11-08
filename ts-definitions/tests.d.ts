@@ -269,6 +269,22 @@ declare namespace BrowserTests {
 		setup(page: Playwright.Page, context: Playwright.BrowserContext, options?: SetupOptions): Promise<void>;
 
 		/**
+		 * Intercepts and collects all invoking of `console` methods on the specified page.
+		 * Mind, the intercepted callings aren't be shown a console till you invoke the `printPageLogs` method.
+		 *
+		 * @param page
+		 */
+		collectPageLogs(page: Playwright.Page);
+
+		/**
+		 * Prints all of the intercepted console invokes to a console
+		 *
+		 * @param page
+		 *
+		 */
+		printPageLogs(page: Playwright.Page);
+
+		/**
 		 * Reloads the page and waits until `requestIdleCallback`
 		 *
 		 * @param page

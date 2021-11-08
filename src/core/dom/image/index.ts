@@ -34,6 +34,10 @@ export function imageLoaderFactory(params: CanUndef<DefaultParams> = defaultPara
 		instance.setDefaultPreviewImage(params.preview);
 	}
 
+	if (params?.optionsResolver != null) {
+		instance.defaultOptionsResolver = params.optionsResolver;
+	}
+
 	return instance;
 }
 
