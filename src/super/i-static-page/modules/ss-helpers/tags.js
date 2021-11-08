@@ -389,7 +389,7 @@ function normalizeAttrs(attrs, dynamic = false) {
 		}
 
 		const
-			isStringLiteral = Object.isString(val) || val.interpolate === false;
+			isStringLiteral = Object.isString(val) || val?.interpolate === false;
 
 		if (dynamic) {
 			const normalize = (str) => String(str).replace(/'/g, "\\'");
