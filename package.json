@@ -11,6 +11,9 @@
     "email": "kobezzza@gmail.com",
     "url": "https://github.com/kobezzza"
   },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/V4Fire/Client.git"
@@ -51,6 +54,7 @@
   "optionalDependencies": {
     "@pzlr/build-core": "^2.12.1",
     "@pzlr/stylus-inheritance": "^3.1.0",
+    "@statoscope/webpack-plugin": "^5.17.0",
     "@types/glob": "^7.1.3",
     "@types/webpack": "^5.28.0",
     "@v4fire/design-system": "^1.23.0",

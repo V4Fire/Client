@@ -818,6 +818,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Returns parameters for `StatoscopePlugin`
+	 * @returns {!Object}
+	 */
+	statoscopePlugin() {
+		return {
+			enabled: o('statoscope', {
+				env: 'STATOSCOPE',
+				type: 'boolean',
+				default: false
+			})
+		};
+	},
+
+	/**
 	 * Returns parameters for `postcss-loader`
 	 * @returns {!Object}
 	 */
