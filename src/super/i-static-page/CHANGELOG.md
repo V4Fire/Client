@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed invalid escaping of `csp.nonce`
+
 ## v3.3.0 (2021-08-12)
 
 #### :bug: Bug Fix

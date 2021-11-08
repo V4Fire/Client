@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.?.? (2021-??-??)
 
+#### :bug: Bug Fix
+
+* Fixed invalid escaping of `csp.nonce` `iStaticPage`
+
 #### :house: Internal
 
 * Added `TestParams` interface for `BrowserTests` `test.d.ts`

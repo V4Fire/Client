@@ -27,15 +27,16 @@ const
 	{needInline} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
 const
-	nonce = csp.nonce();
+	nonce = csp.nonce(),
+	nonceAttr = {toString: () => nonce, escape: false, interpolate: false};
 
 const defAttrs = {
 	// eslint-disable-next-line no-nested-ternary
-	nonce: nonce ? csp.postProcessor ? nonce : [`window['${csp.nonceStore()}']`] : undefined
+	nonce: nonce ? [`window['${csp.nonceStore()}']`] : undefined
 };
 
 const defInlineAttrs = {
-	nonce: nonce != null && csp.postProcessor ? nonce : undefined
+	nonce: nonce != null && csp.postProcessor ? nonceAttr : undefined
 };
 
 exports.getScriptDecl = getScriptDecl;
@@ -348,7 +349,13 @@ exports.normalizeAttrs = normalizeAttrs;
 /**
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
- * @param {Object=} [attrs]
+ * @param {Object=} [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ *   1. a simple string, as `null` (when an attribute doesn't have a value);
+ *   2. an array (to interpolate the value as JS);
+ *   3. an object with the predefined `toString` method
+ *     (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *     and `interpolate: true` to enable interpolation of a value).
+ *
  * @param {boolean=} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
  * @returns {!Array<string>}
  *
@@ -382,10 +389,10 @@ function normalizeAttrs(attrs, dynamic = false) {
 		}
 
 		const
-			needWrap = Object.isString(val);
+			isStringLiteral = Object.isString(val) || val.interpolate === false;
 
 		if (dynamic) {
-			const normalize = (str) => str.replace(/'/g, "\\'");
+			const normalize = (str) => String(str).replace(/'/g, "\\'");
 			key = normalize(key);
 
 			let
@@ -401,11 +408,11 @@ function normalizeAttrs(attrs, dynamic = false) {
 		el.setAttribute(tmpElAttrs[i].name, tmpElAttrs[i].value);
 	}
 `;
-			} else if (needWrap) {
-				attr = `el.setAttribute('${key}', '${val == null ? key : normalize(val)}');`;
+			} else if (isStringLiteral) {
+				attr = `el.setAttribute('${key}', '${normalize(val)}');`;
 
 			} else {
-				attr = `el.setAttribute('${key}', ${val});`;
+				attr = `el.setAttribute('${key}', ${val == null ? key : val});`;
 			}
 
 			normalizedAttrs.push(attr);
@@ -419,8 +426,11 @@ function normalizeAttrs(attrs, dynamic = false) {
 
 		key = Filters.html(key, null, 'attrKey');
 
-		if (needWrap) {
-			val = Filters.html(val, null, 'attrValue');
+		if (isStringLiteral) {
+			if (val.escape !== false) {
+				val = Filters.html(val, null, 'attrValue');
+			}
+
 			normalizedAttrs.push(`${key}="${val}"`);
 
 		} else if (val == null) {
