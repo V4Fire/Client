@@ -16,6 +16,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added a new Webpack plugin `statoscopePlugin` `build/webpack`
+* `base/b-virtual-scroll`:
+  * [Added a new event `chunkRenderStart`](https://github.com/V4Fire/Client/issues/651)
+  * [Added `pageNumber` in `chunkLoaded` event](https://github.com/V4Fire/Client/issues/651)
 
 #### :bug: Bug Fix
 
