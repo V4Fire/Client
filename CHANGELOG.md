@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.9.1 (2021-11-09)
+
+#### :boom: Breaking Change
+
+* Now base CSS styles are synchronously loaded by default if enabled CSP `iStaticPage`
+
 ## v3.9.0 (2021-11-08)
 
 #### :rocket: New Feature

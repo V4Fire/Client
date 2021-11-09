@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.9.1 (2021-11-09)
+
+#### :boom: Breaking Change
+
+* Now base CSS styles are synchronously loaded by default if enabled CSP
+
 ## v3.9.0 (2021-11-08)
 
 #### :bug: Bug Fix
