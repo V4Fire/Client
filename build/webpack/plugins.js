@@ -19,21 +19,31 @@ const
  */
 module.exports = async function plugins({name}) {
 	const
-		globals = include('build/globals.webpack'),
+		globals = include('build/globals.webpack');
+
+	const
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
 		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default,
 		SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin'),
-		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
-		progressWebpackConfig = config.progressWebpackConfig(),
-		statoscopeConfig = config.statoscopePlugin();
+		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings');
 
-	return new Map([
+	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
 		['dependencies', new DependenciesPlugin()],
-		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
-		progressWebpackConfig.enabled &&
-			['simpleProgressWebpackPlugin', new SimpleProgressWebpackPlugin({name, ...progressWebpackConfig})],
-		statoscopeConfig.enabled &&
-			['StatoscopeWebpackPlugin', new StatoscopeWebpackPlugin(statoscopeConfig)]
-	].filter(Boolean));
+		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
+	]);
+
+	const
+		progressWebpackConfig = config.simpleProgressWebpackPlugin(),
+		statoscopeConfig = config.statoscopePlugin();
+
+	if (progressWebpackConfig.enabled) {
+		plugins.set('simpleProgressWebpackPlugin', new SimpleProgressWebpackPlugin({name, ...progressWebpackConfig}));
+	}
+
+	if (statoscopeConfig.enabled) {
+		plugins.set('StatoscopeWebpackPlugin', new StatoscopeWebpackPlugin(statoscopeConfig));
+	}
+
+	return plugins;
 };

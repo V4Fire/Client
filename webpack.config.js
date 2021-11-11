@@ -32,6 +32,8 @@ async function buildFactory(entry, buildId) {
 		target = await include('build/webpack/target');
 
 	const config = {
+		name,
+
 		entry: await $C(entry).parallel().map((src, name) => include('build/webpack/entry')(name, src)),
 		output: await include('build/webpack/output')({buildId}),
 
@@ -43,7 +45,6 @@ async function buildFactory(entry, buildId) {
 		plugins: [...plugins.values()],
 
 		mode: webpack.mode(),
-		name,
 		optimization: await include('build/webpack/optimization')({buildId, plugins}),
 
 		devtool: await include('build/webpack/devtool'),

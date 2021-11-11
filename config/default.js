@@ -837,7 +837,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
-		/**
+	/**
 	 * Returns parameters for `SimpleProgressWebpackPlugin`
 	 *
 	 * @cli progress
@@ -847,13 +847,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @param {boolean=} [def] - default value
 	 * @returns {!Object}
 	 */
-	progressWebpackConfig(def = true) {
+	simpleProgressWebpackPlugin(def = true) {
 		return {
 			enabled: o('progress', {
 				env: 'PROGRESS',
 				type: 'boolean',
 				default: def
 			}),
+
 			format: 'minimal'
 		};
 	},
