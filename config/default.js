@@ -847,7 +847,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @param {boolean=} [def] - default value
 	 * @returns {!Object}
 	 */
-	simpleProgressWebpackPlugin(def = true) {
+	simpleProgressWebpackPlugin(def = !IS_PROD) {
 		return {
 			enabled: o('progress', {
 				env: 'PROGRESS',

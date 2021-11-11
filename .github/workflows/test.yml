@@ -108,6 +108,8 @@ jobs:
   # Run module tests
   modules:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
     timeout-minutes: 30
 
     strategy:
