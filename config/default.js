@@ -838,6 +838,28 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Returns parameters for `SimpleProgressWebpackPlugin`
+	 *
+	 * @cli progress
+	 * @env PROGRESS
+	 * @default `true`
+	 *
+	 * @param {boolean=} [def] - default value
+	 * @returns {!Object}
+	 */
+	simpleProgressWebpackPlugin(def = !IS_PROD) {
+		return {
+			enabled: o('progress', {
+				env: 'PROGRESS',
+				type: 'boolean',
+				default: def
+			}),
+
+			format: 'minimal'
+		};
+	},
+
+	/**
 	 * Returns parameters for `postcss-loader`
 	 * @returns {!Object}
 	 */

@@ -105,6 +105,7 @@
     "postcss": "^8.3.6",
     "postcss-loader": "^6.1.1",
     "raw-loader": "^4.0.2",
+    "simple-progress-webpack-plugin": "^2.0.0",
     "snakeskin-loader": "^8.0.1",
     "ss2vue": "^1.1.0",
     "string-dasherize": "^1.0.0",

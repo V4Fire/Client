@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-11-??)
+
+#### :rocket: New Feature
+
+* Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status `build/webpack`
+
 ## v3.9.1 (2021-11-09)
 
 #### :boom: Breaking Change
