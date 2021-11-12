@@ -100,3 +100,57 @@ exports.isStandalone = isStandalone;
 function isStandalone(entryPoint) {
 	return entryPoint === 'std' || /\.(worker|standalone)\b/.test(entryPoint);
 }
+
+/**
+ * Webpack stats fields that need to be merged
+ */
+const requireStatsFields = [
+	'assets',
+	'chunks',
+	'modules',
+	'entrypoints',
+	'namedChunksGroups',
+	'assetsByChunkName'
+];
+
+/**
+ * Merges child compilations from a Webpack stats file into the one entity
+ *
+ * @param {!Object} stats
+ * @returns {!Object}
+ */
+function mergeStats(stats) {
+	return stats.children.reduce((acc, compilation) => {
+		if (index === 0) {
+			const allFields = Object.keys(item);
+			allFields.forEach((field) => {
+				if (!fields.includes(field)) {
+					acc[field] = item[field];
+				}
+			});
+		}
+
+		requireStatsFields.forEach((field) => {
+			const data = compilation[field];
+
+			if (Array.isArray(data)) {
+				if (!acc[field]) {
+					acc[field] = [];
+				}
+
+				acc[field].push(...data);
+
+			} else {
+				if (!acc[field]) {
+					acc[field] = {};
+				}
+
+				Object.assign(acc[field], data);
+			}
+		});
+
+		return acc;
+	}, {});
+}
+
+exports.mergeStats = mergeStats;

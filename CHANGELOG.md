@@ -15,7 +15,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status `build/webpack`
+* `build/webpack`:
+  * Deleted a Webpack plugin `statoscopePlugin`
+  * Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status
+
+* Added a gulp task to transform `stats` reports from Webpack `build/gulp`
+* Added a config for Statoscope `config`
 
 ## v3.9.1 (2021-11-09)
 
