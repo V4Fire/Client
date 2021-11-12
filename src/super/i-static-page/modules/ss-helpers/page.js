@@ -8,7 +8,7 @@
 
 const
 	config = require('config'),
-	{src, webpack} = config;
+	{src, webpack, csp} = config;
 
 const
 	fs = require('fs-extra');
@@ -27,6 +27,7 @@ const
 	{needInline, addPublicPath} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
 const
+	canLoadStylesDeferred = !csp.nonce(),
 	needLoadStylesAsJS = webpack.dynamicPublicPath();
 
 const defAttrs = {
@@ -187,7 +188,7 @@ exports.getStyleDeclByName = getStyleDeclByName;
  * @param {string} name
  * @param {!Object<string>} assets - map with static page assets
  * @param {boolean=} [optional] - if true, the missing of this style won't throw an error
- * @param {boolean=} [defer=true] - if true, the style is loaded only after loading of the whole page
+ * @param {boolean=} [defer] - if true, the style is loaded only after loading of the whole page
  * @param {boolean=} [inline] - if true, the style is placed as a text
  * @param {boolean=} [wrap] - if true, the final code is wrapped by a tag to load
  * @param {boolean=} [js] - if true, the function will always return JS code to load the dependency
@@ -196,7 +197,7 @@ exports.getStyleDeclByName = getStyleDeclByName;
 function getStyleDeclByName(name, {
 	assets,
 	optional,
-	defer = true,
+	defer = canLoadStylesDeferred,
 	inline,
 	wrap,
 	js

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.5.2 (2021-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed providing of meta parameters via transitions
+
 ## v3.5.0 (2021-09-16)
 
 #### :house: Internal

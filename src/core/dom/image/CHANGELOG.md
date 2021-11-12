@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.9.0 (2021-11-08)
+
+#### :rocket: New Feature
+
+* [Added `optionsResolver`](https://github.com/V4Fire/Client/issues/168)
+
 ## v3.0.0-rc.142 (2021-02-11)
 
 #### :house: Internal

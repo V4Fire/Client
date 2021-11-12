@@ -86,24 +86,16 @@ module.exports = function init(gulp = require('gulp')) {
 	gulp.task('test:component:build', () => {
 		const args = arg({
 			'--suit': String,
-			'--client-name': String,
-			'--runtime-render': String
+			'--client-name': String
 		}, {permissive: true});
-
-		const
-			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
 
 		try {
 			const name = arg({'--name': String}, {permissive: true})['--name'];
 			args['--name'] = name;
 		} catch {}
 
-		if (isRuntimeRender) {
+		if (!args['--name']) {
 			args['--name'] = 'b-dummy';
-		}
-
-		if (!args['--name'] && !isRuntimeRender) {
-			throw new ReferenceError('"--name" parameter is not specified');
 		}
 
 		const
@@ -185,19 +177,11 @@ module.exports = function init(gulp = require('gulp')) {
 			'--client-name': String,
 			'--reinit-browser': String,
 			'--test-entry': String,
-			'--runner': String,
-			'--runtime-render': String
+			'--runner': String
 		}, {permissive: true});
 
-		const
-			isRuntimeRender = args['--runtime-render'] ? JSON.parse(args['--runtime-render']) : false;
-
-		if (isRuntimeRender) {
-			args['--name'] = 'b-dummy';
-		}
-
 		if (!args['--name']) {
-			throw new ReferenceError('"--name" parameter is not specified');
+			args['--name'] = 'b-dummy';
 		}
 
 		args['--client-name'] = args['--client-name'] || args['--name'];
@@ -206,8 +190,8 @@ module.exports = function init(gulp = require('gulp')) {
 			browsers = getSelectedBrowsers();
 
 		let
-			exitCode = 0,
-			isTestFailed = false;
+			/** If the exit code is 1, some of the current runners (or test itself) fail. */
+			exitCode = 0;
 
 		const cliParams = {
 			headless: true,
@@ -275,18 +259,7 @@ module.exports = function init(gulp = require('gulp')) {
 		}
 
 		await server.close();
-
-		/**
-		 * Sets a test status
-		 * @param {boolean} isFailed
-		 */
-		function setTestStatus(isFailed) {
-			exitCode = isFailed === true ? 1 : 0;
-
-			if (isTestFailed === false) {
-				isTestFailed = isFailed;
-			}
-		}
+		process.exitCode = exitCode;
 
 		/**
 		 * Initializes browsers and starts tests
@@ -338,6 +311,7 @@ module.exports = function init(gulp = require('gulp')) {
 			console.log(`test entry: ${args['--test-entry']}`);
 			console.log(`runner: ${globalThis.V4FIRE_TEST_ENV.runner}`);
 			console.log(`browser: ${browserType}`);
+			console.log(`browser version: ${browserParams[browserType].version}`);
 			console.log('-------------\n');
 
 			return jasmine.env;
@@ -372,7 +346,8 @@ module.exports = function init(gulp = require('gulp')) {
 
 			const
 				context = await browser.newContext(contextOpts),
-				page = await context.newPage();
+				page = await context.newPage(),
+				version = await browser.version();
 
 			const
 				testURL = `localhost:${args['--port']}/${args['--page']}.html`;
@@ -385,7 +360,8 @@ module.exports = function init(gulp = require('gulp')) {
 				context,
 				componentDir,
 				tmpDir,
-				contextOpts
+				contextOpts,
+				version
 			};
 		}
 
@@ -416,7 +392,12 @@ module.exports = function init(gulp = require('gulp')) {
 				isTestSuccessful = false,
 				attemptsFinished = 0;
 
+			/**
+			 * @returns {!Promise<boolean>}
+			 */
 			const testExecutor = async () => {
+				let isSuccessful = true;
+
 				const
 					testEnv = getTestEnv(browserType, attemptsFinished + 1);
 
@@ -425,18 +406,20 @@ module.exports = function init(gulp = require('gulp')) {
 
 				testEnv.addReporter({
 					specDone: (res) => {
-						if (exitCode === 1) {
+						if (isSuccessful === false) {
 							return;
 						}
 
-						setTestStatus(res.status === 'failed');
+						if (res.status === 'failed') {
+							isSuccessful = false;
+						}
 					}
 				});
 
-				await new Promise((resolve) => {
+				return new Promise((resolve) => {
 					testEnv.afterAll(() => {
 						console.log('\n\n\n');
-						resolve();
+						resolve(isSuccessful);
 					}, 10e3);
 
 					testEnv.execute();
@@ -444,15 +427,11 @@ module.exports = function init(gulp = require('gulp')) {
 			};
 
 			while (!isTestSuccessful && attemptsFinished - 1 < retries) {
-				setTestStatus(false);
+				// eslint-disable-next-line require-atomic-updates
+				isTestSuccessful = await testExecutor();
 
-				await testExecutor();
-
-				if (exitCode === 1) {
+				if (!isTestSuccessful) {
 					attemptsFinished++;
-
-				} else {
-					isTestSuccessful = true;
 				}
 			}
 
@@ -460,7 +439,9 @@ module.exports = function init(gulp = require('gulp')) {
 				params.browser.close();
 			}
 
-			process.exitCode = isTestFailed ? 1 : 0;
+			if (!isTestSuccessful) {
+				exitCode = 1;
+			}
 		}
 	});
 
@@ -559,12 +540,8 @@ module.exports = function init(gulp = require('gulp')) {
 
 		if (!cliArgs['--only-run']) {
 			for (let i = 0; i < cases.length; i++) {
-				let
+				const
 					c = cases[i];
-
-				if (!c.includes('--name')) {
-					c = `${c} --runtime-render true`;
-				}
 
 				const args = arg({
 					'--name': String
@@ -643,10 +620,6 @@ module.exports = function init(gulp = require('gulp')) {
 		for (let i = 0; i < cases.length; i++) {
 			let
 				c = cases[i];
-
-			if (!c.includes('--name')) {
-				c = `${c} --runtime-render true`;
-			}
 
 			// Set the beginning of the searching range for a free port
 			c = `${c} --start-port ${START_PORT + i * 10}`;

@@ -156,7 +156,24 @@ export interface ImageOptions {
 	 * @param el
 	 */
 	error?(el: Element): unknown;
+
+	/**
+	 * A function to resolve given options.
+	 * It takes an object with the passed operation options, can modify them or create new ones.
+	 * It should return resolved options.
+	 *
+	 * @example
+	 * ```typescript
+	 * const optionsResolver = (options) => {
+	 *   options.src += '?size=42';
+	 *   return options;
+	 * }
+	 * ```
+	 */
+	optionsResolver?: OptionsResolver;
 }
+
+export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
 
 /**
  * Options of a background image
@@ -317,6 +334,7 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 export interface DefaultParams {
 	broken?: string | ImageOptions['broken'];
 	preview?: string | ImageOptions['preview'];
+	optionsResolver?: OptionsResolver;
 }
 
 export type ImagePlaceholderType = 'preview' | 'broken';

@@ -15,6 +15,7 @@ import {
 	DefaultImagePlaceholderOptions,
 	ImagePlaceholderOptions,
 	ImagePlaceholderType,
+	OptionsResolver,
 
 	InitValue,
 	ShadowElState,
@@ -78,6 +79,11 @@ export default class ImageLoader {
 	protected defaultBrokenShadowState?: ShadowElState;
 
 	/**
+	 * Default `optionsResolver` function
+	 */
+	 defaultOptionsResolver?: OptionsResolver = (opts) => opts;
+
+	/**
 	 * Sets the default `broken` image
 	 * @param opts
 	 */
@@ -109,11 +115,12 @@ export default class ImageLoader {
 		const
 			normalized = ImageLoader.normalizeOptions(value);
 
-		const mainOpts: ImageOptions = {
+		const mainOpts: ImageOptions = this.resolveOptions({
 			preview: 'preview' in normalized ? normalized.preview : this.defaultPreviewImageOptions,
 			broken: 'broken' in normalized ? normalized.broken : this.defaultBrokenImageOptions,
+			optionsResolver: 'optionsResolver' in normalized ? normalized.optionsResolver : this.defaultOptionsResolver,
 			...normalized
-		};
+		});
 
 		const
 			typedEl = <ImageNode>el;
@@ -261,6 +268,18 @@ export default class ImageLoader {
 			el.classList.remove(classMap.preview, classMap.main, classMap.broken, classMap.initial);
 			el.classList.add(classMap[type ?? state.stageType]);
 		}
+	}
+
+	/**
+	 * Resolves the given operation options
+	 * @param opts
+	 */
+	protected resolveOptions(opts: ImageOptions): ImageOptions {
+		if (opts.optionsResolver != null) {
+			return opts.optionsResolver(opts);
+		}
+
+		return opts;
 	}
 
 	/**

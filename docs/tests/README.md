@@ -17,62 +17,79 @@ First, you need to create the test file itself. Create a folder with the name `t
 .
 └── src/
   └── base/
-    └── b-popover/
+    └── b-component/
       ├── test/
       │   └── index.js
-      ├── b-popover.ss
-      ├── b-popover.styl
-      ├── b-popover.ts
+      ├── b-component.ss
+      ├── b-component.styl
+      ├── b-component.ts
       └── index.js
 ```
 
-## Setting up the test environment
+## Setting up a test environment
 
-To prepare the environment for tests, you need to make an initial configuration:
+Let's jump in into our test file.
 
-* Enable mocks;
-* Allow geolocation;
-* etc.
+__src/base/b-component/test/index.js__
 
-There is a function `h.utils.setup` for this, open the file` index.js` and call this function:
-
-**base/b-popover/test/index.js**
-
-```js
+```javascript
 // @ts-check
 
-const
-  h = include('tests/helpers');
-
 /**
+ * Starts a test
+ *
  * @param {Playwright.Page} page
- * @param {!Object} params
- * @returns {!Promise<void>}
+ * @param {object} params
+ * @returns {void}
  */
-module.exports = async (page, params) => {
-  await h.utils.setup(page, params.context);
-};
+module.exports = (page, {browser, contextOpts}) => {
+  // Grab the url from the original page
+  const initialUrl = page.url();
+
+  /** @type {Playwright.BrowserContext} */
+  let context;
+
+  describe('b-component render', () => {
+    beforeEach(async () => {
+      // Create a new browser context
+      context = await browser.newContext(contextOpts);
+
+      // Create a new page
+      page = await context.newPage();
+
+      // Route to the page
+      await page.goto(initialUrl, {waitUntil: 'networkidle'});
+    });
+
+    afterEach(() => context.close());
+  })
+}
 ```
 
-> Note the `// @ ts-check` – thanks to this directive works static code analysis within javascript files.
+The first thing to pay attention to is that each test file must have the default export - a test run function.
 
-This code enables data mocks and asks for required permissions.
+The next step is to describe the first `describe` section.
+
+After creating the describe section, add a `beforeEach` hook in which pre-settings will be made for each spec in this and subsequent `describe` blocks.
+Read more about hooks in [jasmine documentation](https://jasmine.github.io/).
 
 ## Creating components at runtime
 
-The first step to create your component during test execution is to add the component as a dependency for a demo page:
+We now have a test file in which we have prepared the environment for writing tests.
+But if now we open the page that we created, it will be empty, and there will be no `b-component`.
 
-**pages/p-demo-page/index.js**
+To create a new component, you should use several global helpers are available in `globalThis` (Only if you built the project in dev mode).
+Let's get to know them.
 
-```js
-package('p-v4-components-demo')
-  .extends('i-root')
-  .dependencies('b-popover');
-```
+Also, make sure you add your component to the `index.js` file of the demo page so that your component gets into the
+bundle and can be created using the helper functions.
 
-To render a component dynamically during runtime, you should use `renderComponents`. The method places globally and has a signature:
+### renderComponents
 
-```typescript
+This function makes it possible to create components on a page at runtime.
+But, first, let's take a look at the signature of this function.
+
+````typescript
 export interface RenderParams {
   /**
    * Component attrs
@@ -103,7 +120,7 @@ export interface RenderParams {
  *     }
  *   }
  * });
- * \```
+ * ```
  *
  * This schema is the equivalent of such a template:
  *
@@ -111,7 +128,7 @@ export interface RenderParams {
  * < b-button :testProp = 1
  *   < b-button
  *     Test
- * \```
+ * ```
  */
 export interface RenderContent {
   /**
@@ -129,352 +146,165 @@ export interface RenderContent {
 }
 
 /**
- * Renders specified components
+ * Renders the specified components
  *
  * @param componentName
  * @param scheme
- * @param options
+ * @param [opts]
  */
-declare var renderComponents: (componentName: string, scheme: RenderParams[], options?: RenderOptions) => void;
-```
+declare var renderComponents: (componentName: string, scheme: RenderParams[], opts?: RenderOptions) => void;
+````
 
 The `schema` contains a list of parameters to render, i.e., each element represents a component to render.
 
-Let's draw our first component on the page, first of all create a `render.js` file in which we will place the rendering scheme.
+Let's create our component using this function.
 
-**base/b-popover/test/render.js**
-
-```js
-module.exports = [
-  {
-    attrs: {
-      id: 'without-slots'
-    }
-  }
-];
+```javascript
+globalThis.renderComponents('b-component', [{attrs: {id: 'testId'}}]);
 ```
 
-Let's import this file to our main test file and call the render function:
+As the result, we will get the created component inserted into the root element on the page.
 
-**base/b-popover/test/index.js**
+### removeCreatedComponents
 
-```js
-// @ts-check
+This method is helpful when you need to remove all components created via `renderComponents`.
 
-const
-  h = include('tests/helpers');
-
-const
-  scheme = include('src/base/b-popover/test/render.js');
-
-/**
- * @param {Playwright.Page} page
- * @param {!Object} params
- * @returns {!Promise<void>}
- */
-module.exports = async (page, params) => {
-  await h.utils.setup(page, params.context);
-
-  await page.evaluate((scheme) => {
-    globalThis.renderComponents('b-popover', scheme);
-  }, scheme);
-
-  const
-    bPopover = await h.component.getComponentById(page, 'without-slots');
-};
+```javascript
+globalThis.removeCreatedComponents();
 ```
 
-The `b-popover` component is now in the DOM tree and ready to interact.
+## Creating a first spec
 
-> Note that a component may not be in a ready state, i.e., `globalThis.renderComponents` creates a component and immediately
->places it into a DOM tree, without waiting for the ready status or anything else.
+Now that we know how to create a component let's write our first test spec.
 
-After creating the component, you can directly start testing; let's make the first spec.
+__src/base/b-component/test/index.js__
+```javascript
+  let componentNode;
 
-**base/b-popover/test/index.js**
+  describe('b-component', () => {
+    beforeEach(async () => {
+      // Create a new browser context
+      context = await browser.newContext(contextOpts);
 
-```js
-module.exports = async (page, params) => {
-  await h.utils.setup(page, params.context);
+      // Create a new page
+      page = await context.newPage();
 
-  await page.evaluate((scheme) => {
-    globalThis.renderComponents('b-popover', scheme);
-  }, scheme);
+      // Route to the page
+      await page.goto(initialUrl, {waitUntil: 'networkidle'});
 
-  const
-    bPopover = await h.component.getComponentById(page, 'without-slots');
+      // Read more about https://playwright.dev/docs/api/class-page#page-evaluate
+      await page.evaluate(() => {
+        globalThis.renderComponents('b-component', [{attrs: {id: 'testId'}}]);
+      });
 
-  describe('bPopover', () => {
-    it('has correct componentName', async () => {
-      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
-      expect(componentName).toBe('b-popover');
-    });
-  });
-};
-```
-
-> Now, we can run our test, but we will talk about this a little later, and now we will continue to write the test.
-
-Each spec runs on the same page, and no automatic state updates are provided. So it's always worth keeping in mind that updating a
-state of components on the page is in your hands.
-
-To update a state of components, you can use several approaches for your taste (but I would recommend the manual reset since it is faster).
-Let's look at each of them separately:
-
-* `Manual reset` – the method involves manually clearing a state of components on the page, for example,  by using the `beforeEach` hook.
-
-* `Page reload` – the method involves reloading the page, as a result of which the page state will be "clean" every time.
-
-Let's write the second spec and add refreshing of the page's components using the `manual reset` strategy.
-
-**base/b-popover/test/index.js**
-
-```js
-module.exports = async (page, params) => {
-  await h.utils.setup(page, params.context);
-
-  let
-    bPopover,
-    bPopoverNode;
-
-  beforeEach(async () => {
-    await page.evaluate((scheme) => {
-      globalThis.removeCreatedComponents();
-      globalThis.renderComponents('b-popover', scheme);
-    }, scheme);
-
-    bPopover = await h.component.getComponentById(page, 'without-slots'),
-    bPopoverNode = await page.$('#without-slots');
-  });
-
-  describe('bPopover', () => {
-    it('has correct componentName', async () => {
-      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
-      expect(componentName).toBe('b-popover');
+      // Read more about waitForSelector https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
+      componentNode = await page.waitForSelector('#testId', {state: 'attached'})
     });
 
-    it('shown when calling `open`', async () => {
-      await bPopover.evaluate((ctx) => ctx.open());
-      expect(await bPopoverNode.evaluate((ctx) => ctx.style.display)).not.toBe('none');
+    it('Should have a `p` tag', async () => {
+      await expectAsync(componentNode.waitForSelector('p')).toBeResolved();
     });
   });
-};
 ```
 
-Take a look at what happens in the code above: we have added the `beforeEach` hook. This hook invokes two methods from the global scope of the page.
+## Run a test
 
-1. `beforeEach` is executed before each spec in the file.
-2. `removeCreatedComponents` removes all components from the page that were created using the` renderComponents` method.
-3. `renderComponents` creates a new component and puts it into the page.
-
-Thus, we have a new component instance for each spec.
-
-Finally, we can run our tests:
+Now that we have added the first spec, we can test and check that everything is working correctly.
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test
+npx gulp test:component --test-entry base/b-component/test
 ```
 
-The execution result should be:
+The execution result should be something like that:
 
 ```bash
 -------------
 Starting to test
-env component: b-dummy
-test entry: base/b-popover/test
+test entry: base/b-component/test
 runner: undefined
-browser: firefox
+browser: chrome
 -------------
 
 Randomized with seed 61427
 Started
-..
+.
 
-2 spec, 0 failures
+1 spec, 0 failures
 Finished in 0.054 seconds
 ```
 
-## Working with pre-compiled components
+## Specs isolation
 
-Above we looked at how to create components dynamically at the runtime, but there is another way that is mainly used to build `demo` component pages.
+One of our tests mustn't affect the state of another test. To implement this, it is worth isolating the specs from each other.
+We have already achieved this with the help of the `beforeEach` hook and creating a new browser context.
+The `beforeEach` hook will be executed before every spec to have its browser context without any listeners, routes handlers, or other side effects.
+Finally, don't forget to use the `afterEach` hook to close the previous browser context.
 
-This method allows you to get a test page with necessary components using a standalone compilation of test-cases.
-Just create a `demo.js` file within your component folder and puts a scheme of rendering within it.
-
-**base/b-popover/demo.js**
-
-```js
-const demo = [
-  {
-    attrs: {
-      id: 'target'
-    }
-  }
-];
-
-const analytics = [
-  {
-    attrs: {
-      ':redirect': '() => false',
-      id: 'target'
-    }
-  },
-
-  {
-    attrs: {
-      ':redirect': '() => false',
-      ':theme': s('demo'),
-      id: 'without-slots'
-    }
-  }
-];
-
-const suits = {
-  demo,
-  analytics
-};
-```
-
-Such a file can have several different suits. According to these suits (depending on the passed parameter `suit`) will be generated components at the page.
-
-> Note that this schema format is different from the schema format of `renderComponents`.
-
-You can get a component in a test as follows:
-
-**base/b-popover/test/index.js**
-
-```js
-module.exports = async (page, params) => {
-  await h.utils.setup(page, params.context);
-
-  const
-    bPopover = await h.component.getComponentById(page, 'without-slots');
-
-  describe('bPopover', () => {
-    it('has correct componentName', async () => {
-      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
-      expect(componentName).toBe('b-popover');
-    });
-  });
-};
-```
-
-> Please note that the component is not removed or cleared between specs, the management of this completely falls on the shoulders of a developer.
-
-Run test:
-
-```bash
-npx gulp test:component --name b-popover --suit demo
-```
+You can also not create a new context but do everything on one page. In this case, the performance of tests will improve,
+but this will create other, more severe problems. For example, one spec can affect the state of another, there are a lot of
+such issues, so it is highly recommended use a new context for each spec.
 
 ## Splitting specs
 
-You can split your specs into different files and run them separately.
-To do this, create the `runners` folder into the `test` folder. Now, you allow adding your spec files to this folder.
+Let's imagine that you have a test file with more than 80 specs.
+It may not be very convenient to contain so much code in one file so that you can split this file into several files,
+according to logical groups, for example, analytics, events, rendering.
 
-**base/b-popover/test/runners/initializing.js**
+To split one significant test file into several files, let's create a `runners` folder in our test folder and put three files into that folder.
 
-```js
-module.exports = async (page, params) => {
-  let
-    bPopover,
-    bPopoverNode;
-
-  beforeEach(async () => {
-    await page.evaluate((scheme) => {
-      globalThis.removeCreatedComponents();
-      globalThis.renderComponents('b-popover', scheme);
-    }, scheme);
-
-    bPopover = await h.component.getComponentById(page, 'without-slots'),
-    bPopoverNode = await page.$('#without-slots');
-  });
-
-  describe('bPopover initializing', () => {
-    it('has correct componentName', async () => {
-      const componentName = await bPopover.evaluate((ctx) => ctx.componentName);
-      expect(componentName).toBe('b-popover');
-    });
-  });
-};
+```
+.
+└── src/
+  └── base/
+    └── b-component/
+      └── test/
+        ├── runners/
+        │   ├── analytics.js
+        │   ├── render.js
+        │   └── functional.js
+        └── index.js
 ```
 
-**base/b-popover/test/runners/behaviour.js**
+Place your code in runner files, and after that in the `index.js` file, for the runners to work correctly, you need to call the `getCurrentTest` method in the `index.js` file to launch the current runner (specified in the CLI arguments).
 
-```js
-module.exports = async (page, params) => {
-  let
-    bPopover,
-    bPopoverNode;
+__src/base/b-component/test/index.js__
 
-  beforeEach(async () => {
-    await page.evaluate((scheme) => {
-      globalThis.removeCreatedComponents();
-      globalThis.renderComponents('b-popover', scheme);
-    }, scheme);
-
-    bPopover = await h.component.getComponentById(page, 'without-slots'),
-    bPopoverNode = await page.$('#without-slots');
-  });
-
-  describe('bPopover behaviour', () => {
-    it('shown when calling `open`', async () => {
-      await bPopover.evaluate((ctx) => ctx.open());
-      expect(await bPopoverNode.evaluate((ctx) => ctx.style.display)).not.toBe('none');
-    });
-  });
-};
-```
-
-The main test file should contain an initializer of specs.
-
-**base/b-popover/test/index.js**
-
-```js
-// @ts-check
-
+```javascript
 /**
  * @typedef {import('playwright').Page} Page
  */
-
 const
-  h = include('tests/helpers'),
-  u = include('tests/utils'),
-  test = u.getCurrentTest();
+	u = include('tests/utils');
 
-/**
- * Starts a test
- *
- * @param {Page} page
- * @param {!Object} params
- * @returns {!Promise<boolean>}
- */
-module.exports = async (page, params) => {
-  await h.utils.setup(page, params.context);
-  return test(page);
-};
+module.exports = (...args) => u.getCurrentTest()(...args);
 ```
 
-To run a runner provide its name within a command.
+To run the specified runner use `--runner` CLI argument:
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner behaviour
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner initializing
+npx gulp test:component --test-entry base/b-component/test --runner render
 ```
 
-Also, you can use glob patterns to define several runners.
+Also, you can use glob patterns to execute several runners:
 
 ```bash
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner "*"
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner "**/*"
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test --runner "behaviour/*"
+npx gulp test:component --test-entry base/b-component/test --runner "*"
+npx gulp test:component --test-entry base/b-component/test --runner "**/*"
+npx gulp test:component --test-entry base/b-component/test --runner "behaviour/*"
 ```
+
+## Demo page
+
+To test a component, we need to place it on the page.
+There is a special demo page `p-v4-components-demo` for tests, but nothing prevents you from overriding it or creating your own.
+If you decide to use your page, you should override the `build.demoPage` config parameter.
 
 ## Testing modules
 
-To test some module or directive, you can add it into the `b-dummy` component or a `demo` page. For example,  the `in-view` directive:
+You can add it into the `b-dummy` component or a `demo` page to test some module or directive.
+For example,  the `in-view` directive:
 
-**base/b-dummy/b-dummy.ts**
+__base/b-dummy/b-dummy.ts__
 
 ```typescript
 const
@@ -500,52 +330,52 @@ Later, you will be able to access modules through the component.
 Running a module test using the `in-view` example:
 
 ```bash
-npx gulp test:component --name b-dummy --test-entry core/dom/in-view/test
+npx gulp test:component --test-entry core/dom/in-view/test
 ```
 
-## Running tests with different options
+```javascript
+let
+  dummyComponent,
+  inViewMutation,
+  context;
 
-Build a `demo` page with components and attributes from` suit: demo`, and then run the test located at `b-popover/test.js`
-or` b-popover/test/index.js`:
+describe('`core/cookies`', () => {
+  beforeEach(async () => {
+    context = await browser.newContext(contextOpts);
+    page = await context.newPage();
+    await page.goto(initialUrl, {waitUntil: 'networkidle'});
 
-```bash
-npx gulp test:component --name b-popover --suit demo
+    dummyComponent = await h.component.waitForComponent(page, '.b-dummy');
+    inViewMutation = await dummyComponent.evaluateHandle(({directives: {inViewMutation}}) => inViewMutation);
+  });
+
+  afterEach(() => context.close());
+
+  // ...
+});
 ```
 
-Build a `demo` page with `b-dummy` and then run the test located at the specified `test-entry`:
+## Run all tests
 
-```bash
-npx gulp test:component --runtime-render true --test-entry base/b-popover/test
+To run all tests, you need to follow several steps:
+
+1. Create a file `cases.js` in the folder` tests`:
+
+```
+.
+├── tests/
+│   └── cases.js
+└── src/
+    └── base
 ```
 
-Run (without building) the test located at `test-entry`:
+2. `cases.js` should export an array of strings containing the parameters with which the test should be run.
+3. Add your test to this file.
+4. Run `npx gulp test:components` command.
 
-```bash
-npx gulp test:component:run --runtime-render true --test-entry base/b-popover/test
-```
+__tests/cases.js__
 
-Run (without building) the test located at the `test-entry` address only in the `chromium` browser:
-
-```bash
-npx gulp test:component:run --runtime-render true --test-entry base/b-popover/test --browsers chromium
-```
-
-Run all tests defined in `cwd/tests/cases.js`:
-
-```bash
-npx gulp test:components
-```
-
-Runs all tests defined in `cwd / tests / cases.js`, maximum 4 builds, and two tests can be run in parallel:
-
-```bash
-npx gulp test:components --test-processes 2 --build-processes 4
-```
-
-To make your test run during the call to `test:components`, you need to add it to a file with test cases.
-This file is located by an address `cwd/tests/cases.js`. It looks something like this:
-
-```js
+```javascript
 module.exports = [
   // b-router
   '--test-entry base/b-router/test',
@@ -561,7 +391,263 @@ module.exports = [
 ];
 ```
 
-`cases.js` should export an array of strings containing the parameters with which the test should be run.
+## Test arguments
 
-> Please note that neither `name` nor `runtime-render` appears anywhere, because when calling `test:components`, all test parameters are checked.
-> If the test does not have the `--name` parameter, the `--runtime-render true` will be set automatically.
+Build a demo and then run tests located at the specified entry:
+
+```bash
+npx gulp test:component --test-entry base/b-component/test
+```
+
+Run tests within a non-headless browser:
+
+```bash
+npx gulp test:component --headless false --close false --browsers chromium --test-entry base/b-component/test
+```
+
+Run tests without building:
+
+```bash
+npx gulp test:component:run --test-entry base/b-component/test
+```
+
+Run tests only in Chromium and without building:
+
+```bash
+npx gulp test:component:run --test-entry base/b-component/test --browsers chromium
+```
+
+Run all tests defined in `cwd/tests/cases.js`:
+
+```bash
+npx gulp test:components
+```
+
+Runs all tests defined in `cwd/tests/cases.js`, maximum 4 builds, and two tests can be run in parallel:
+
+```bash
+npx gulp test:components --test-processes 2 --build-processes 4
+```
+
+Incremental build for tests:
+
+```bash
+npx webpack --watch --cache-type memory --client-output b-dummy --public-path
+```
+
+Incremental build for tests (shorthand):
+
+```bash
+npm run build:test -- --watch
+```
+
+## Test writing guidelines
+
+### Request handling
+
+Two approaches can solve the problem of request handling.
+
+The first is to intercept the request and return a response using the Playwright and its [route mechanisms](https://playwright.dev/docs/api/class-route#route-request). After that, you can control each request directly from the test,
+give any response and modify it as you like. In addition, you can emit any server errors (wrong answer, harmful status code, etc.).
+
+The second option is to install mocks at runtime using specially provided v4fire mechanisms. This option is not very flexible.
+Suppose you need to emit a bad response status code since mocks are compiled and run in runtime - you need to provide an option (in a component or provider) that will allow you to do this. Accordingly, you will have to write a code that will not carry any useful function,
+but it will be in your codebase, so the tests worked. In addition, if you want to fix the mock, you will have to build the project,
+but in the case of intercepting requests, you will not.
+
+### Nesting
+
+To make the specs cleaner and easier to understand, they must contain as little code as possible.
+This can be achieved with `hooks` and `describe` sections.
+
+Let's see this with an example:
+
+```javascript
+describe('b-component test', () => {
+  it('On user click should hide a button and show a tooltip', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      buttonHidePr = page.waitForSelector('.b-component button', {state: 'detached'});
+
+    await expectAsync(buttonHidePr).toBeResolved();
+
+    const
+      tooltip = page.waitForSelector('.b-tooltip');
+
+    await expectAsync(tooltip).toBeResolved();
+  })
+});
+```
+
+Looks pretty good, agree? But let's add two more specs in which the user also clicks on the component:
+
+```javascript
+describe('b-component test', () => {
+  it('On user click should hide a button and show a tooltip', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      buttonHidePr = page.waitForSelector('.b-component button', {state: 'detached'});
+
+    await expectAsync(buttonHidePr).toBeResolved();
+
+    const
+      tooltip = page.waitForSelector('.b-tooltip');
+
+    await expectAsync(tooltip).toBeResolved();
+  });
+
+  it('On user click should not hide a button text', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      textAttachedPr =  page.waitForSelector('.b-component p');
+
+    await expectAsync(textAttachedPr).toBeResolved();
+  });
+
+  it('On user click should add a modifier to the component', async () => {
+    await renderComponent({
+      propsToPrepareComponentForClick: true,
+      anotherProp: false
+    });
+
+    await page.click('.b-component button');
+
+    const
+      componentWithMod = page.waitForSelector('.b-component.b-component_clicked_true');
+
+    await expectAsync(componentWithMod).toBeResolved();
+  });
+});
+```
+
+As you can see, we do the same thing for every spec, create a component and click on it.
+We also get lucky, and in our case, we don't have a lot of the code for preparing spec,
+but when refactoring, we will have to correct three places, and besides, this unnecessarily inflates the spec code very much.
+
+Let's rewrite our code using `hooks` and nesting.
+
+```javascript
+describe('b-component test', () => {
+  describe('User clicks on the component', () => {
+    beforeEach(async () => {
+      await renderComponent({
+        propsToPrepareComponentForClick: true,
+        anotherProp: false
+      });
+
+      await page.click('.b-component button');
+    });
+
+    it('Should hide a button and show a tooltip', async () => {
+      const
+        buttonHidePr = page.waitForSelector('.b-component button', {state: 'detached'});
+
+      await expectAsync(buttonHidePr).toBeResolved();
+
+      const
+        tooltip = page.waitForSelector('.b-tooltip');
+
+      await expectAsync(tooltip).toBeResolved();
+    });
+
+    it('Should not hide a button text', async () => {
+      const
+        textAttachedPr =  page.waitForSelector('.b-component p');
+
+      await expectAsync(textAttachedPr).toBeResolved();
+    });
+
+    it('Should add a modifier to the component', async () => {
+      const
+        componentWithMod = page.waitForSelector('.b-component.b-component_clicked_true');
+
+      await expectAsync(componentWithMod).toBeResolved();
+    });
+  });
+});
+```
+
+When the spec setting is placed in the hook, specs contain only the test itself and no pre-settings.
+
+### Auto wait
+
+The Playwright has many tools and mechanisms that make it much easier to write tests and reduce the amount of code that needs to be written. One of such mechanisms is auto wait.
+For example, the click method waits for the element with the passed selector to appear in the DOM tree when it is available on the screen, and [much more](https://playwright.dev/docs/input#mouse-click).
+
+Let's take a closer look:
+
+```javascript
+describe('b-component test', () => {
+  // Of course, I would not recommend doing such specs, but we will use it for the example
+  it('Click on the first button show the second button, click on the second button shows a tooltip', async () => {
+    const
+      button1 = await page.waitForSelector('.button-1');
+
+    await button1.click();
+
+    const
+      button2 = await page.waitForSelector('.button-2');
+
+    await button2.click();
+
+    await expectAsync(page.waitForSelector('.b-tooltip')).toBeResolved();
+  });
+});
+```
+
+As you can see from the example above, we have to wait for each element using `waitForSelector` and only then click.
+This example can be rewritten by getting rid of `waitForSelector` since the `click` itself waits for the element to appear in the `DOM` tree.
+
+```javascript
+describe('b-component test', () => {
+  // Of course, I would not recommend doing such specs, but we will use it for the example
+  it('Click on the first button show the second button, click on the second button shows a tooltip', async () => {
+    await Promise.all([
+      page.click('.button-1'),
+      page.click('.button-2')
+    ])
+
+    await expectAsync(page.waitForSelector('.b-tooltip')).toBeResolved();
+  });
+});
+```
+
+### Flappy test prevention
+
+The heading also may be titled as "Why you should always use wait".
+
+It is very important always to use wait-like functions to get DOM nodes or something like that.
+Even if you think "yes 100% it is already in the DOM" - you cannot know for sure.
+There are too many links in this chain.
+
+Therefore, I highly recommend that you always use the wait-based API when writing tests.
+Auto wait functions will save you from stupid mistakes that will be very difficult to debug,
+and it will be complicated when such a flap will be reproduced only in your CI, and everything will be fine locally.
+
+### Keep it clean
+
+As mentioned earlier, for easy refactoring, reading, and rewriting tests, try to keep the specs (and tests in general) as clean as possible, treat them like your production codebase.
+
+Here are some tips to help you achieve this:
+
+- Use the auto-wait API
+- Use the interceptions and routing mechanism provided by Playwright
+- Use hooks and nesting to keep your specs clean

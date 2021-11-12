@@ -173,13 +173,13 @@ interface RenderContent {
 // eslint-disable-next-line no-var,vars-on-top
 declare var
 	/**
-	 * Renders specified components
+	 * Renders the specified components
 	 *
 	 * @param componentName
 	 * @param scheme
-	 * @param options
+	 * @param [opts]
 	 */
-	renderComponents: (componentName: string, scheme: RenderParams[], options?: RenderOptions) => void,
+	renderComponents: (componentName: string, scheme: RenderParams[], opts?: RenderOptions) => void,
 
 	/**
 	 * Removes all components created via `globalThis.renderComponents`

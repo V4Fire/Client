@@ -76,7 +76,7 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 		}
 
 		const
-			maskSymbols = mask!.symbols;
+			maskSymbols = mask.symbols;
 
 		const
 			[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);

@@ -24,8 +24,7 @@ const {
 
 /**
  * @param {Playwright.Page} page
- * @param {Playwright.BrowserContext} browser
- * @param {Object} contextOpts
+ * @param {BrowserTests.TestParams} params
  */
 module.exports = (page, {browser, contextOpts}) => {
 	const

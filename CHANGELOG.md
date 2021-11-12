@@ -11,11 +11,141 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.?.? (2021-09-22)
+## v3.?.? (2021-11-??)
+
+#### :rocket: New Feature
+
+* Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status `build/webpack`
+
+## v3.9.1 (2021-11-09)
+
+#### :boom: Breaking Change
+
+* Now base CSS styles are synchronously loaded by default if enabled CSP `iStaticPage`
+
+## v3.9.0 (2021-11-08)
+
+#### :rocket: New Feature
+
+* Added a new Webpack plugin `statoscopePlugin` `build/webpack`
+* [Added `optionsResolver` into `core/dom/image`](https://github.com/V4Fire/Client/issues/168)
+
+* `base/b-virtual-scroll`:
+  * [Added a new event `chunkRenderStart`](https://github.com/V4Fire/Client/issues/651)
+  * [Added `pageNumber` in `chunkLoaded` event](https://github.com/V4Fire/Client/issues/651)
 
 #### :bug: Bug Fix
 
+* Fixed invalid escaping of `csp.nonce` `iStaticPage`
+
+#### :house: Internal
+
+* Added `TestParams` interface for `BrowserTests` `test.d.ts`
+
+## v3.8.3 (2021-10-26)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with removing a modifier from the passed node `super/i-block/modules/block`
+
+## v3.8.2 (2021-10-26)
+
+#### :bug: Bug Fix
+
+* Fixed providing of hooks to directives within non-regular components `core/component/engines`
+
+## v3.8.1 (2021-10-25)
+
+#### :house: Internal
+
+* Updated dependencies: `playwright@1.16.1`, `webpack@5.60.0`
+
+## v3.8.0 (2021-10-25)
+
+#### :rocket: New Feature
+
+* Added a new Snakeskin block `render` `iBlock`
+
+## v3.7.0 (2021-10-25)
+
+#### :boom: Breaking Change
+
+* Deprecate test methods:
+  * `DOM.waitForEl`
+  * `DOM.isVisible`
+  * `Request.waitForRequests`
+  * `Request.waitForRequestsFail`
+  * `Request.interceptRequest`
+  * `Request.interceptRequests`
+  * `Request.waitForRequestsEvents`
+  * `Utils.setup`
+  * `Utils.reloadAndWaitForIdle`
+  * `Component.setPropsToComponent`
+  * `Component.reloadAndSetProps`
+
+#### :rocket: New Feature
+
+* Added a new `?inline` parameter for assets loaders `build/webpack`
+
+#### :house: Internal
+
+* `runtime-render` test argument is no longer needed and supported
+
+#### :nail_care: Polish
+
+* Added better test documentation
+
+## v3.6.1 (2021-10-14)
+
+#### :house: Internal
+
+* Added a new Gulp task `gulp build:components-lock`
+
+## v3.6.0 (2021-10-14)
+
+#### :rocket: New Feature
+
+* Added a new parameter `componentLockPrefix` `config.build`
+
+## v3.5.5 (2021-10-13)
+
+#### :bug: Bug Fix
+
+* Fixed ordering of dependencies loading `build/monic/attach-component-dependencies`
+
+## v3.5.4 (2021-10-12)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when dynamically loaded templates aren't registered to the global `TPLS` cache `build/monic/attach-component-dependencies`
+* Fixed an issue when `component` returns `undefined` `bRouter`
+
+#### :nail_care: Polish
+
+* Show browser version before tests
+
+## v3.5.3 (2021-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed synchronization of values during input events:
+  * `bInput`
+  * `bSelect`
+
+#### :nail_care: Polish
+
+* Show Playwright version before tests
+
+## v3.5.2 (2021-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed providing of meta parameters via transitions `bRouter`
 * [Fixed an issue with failed tests not being displayed as failed `build/gulp/test`](https://github.com/V4Fire/Client/issues/620)
+
+#### :house: Internal
+
+* Updated dependencies: `typescript@4.4.3`, `eventemitter2@6.4.5`, `playwright@1.15.2`
 
 ## v3.5.1 (2021-09-20)
 

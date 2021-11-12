@@ -30,7 +30,7 @@ import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
 import inMemoryRouterEngine from 'core/router/engines/in-memory';
-import historyApiRouterEngine from 'core/router/engines/browser.history';
+import historyApiRouterEngine from 'core/router/engines/browser-history';
 
 import iData, {
 

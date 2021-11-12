@@ -84,56 +84,69 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 				styles = await component.styles;
 
 			decl += `
-requestAnimationFrame(async () => {
+(() => {
 	if (TPLS['${dep}']) {
 		return;
 	}
 
-	try {
-		const el = document.createElement('i');
-		el.className = '${dep}-is-style-loaded';
-		document.body.appendChild(el);
+	requestAnimationFrame(async () => {
+		try {
+			const el = document.createElement('i');
+			el.className = '${dep}-is-style-loaded';
+			document.body.appendChild(el);
 
-		const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
-		document.body.removeChild(el);
+			const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
+			document.body.removeChild(el);
 
-		if (isStylesLoaded) {
-			return;
-		}
-	} catch (err) { stderr(err); }
-
-	try {
-		${
-				styles
-					.map((src) => {
-						if (src == null) {
-							return '';
-						}
-
-						src = path.normalize(src);
-						return `await import('${src}');`;
-					})
-
-					.join('')
+			if (isStylesLoaded) {
+				return;
 			}
-	} catch (err) { stderr(err); }
-});`;
+		} catch (err) { stderr(err); }
+
+		try {
+			${
+					styles
+						.map((src) => {
+							if (src == null) {
+								return '';
+							}
+
+							src = path.normalize(src);
+							return `await import('${src}');`;
+						})
+
+						.join('')
+				}
+		} catch (err) { stderr(err); }
+	});
+})();`;
 
 		} catch {}
 
-		const deps = [
-			'tpl',
-			'logic'
+		const depChunks = [
+			'logic',
+			'tpl'
 		];
 
-		for (const dep of deps) {
+		for (const chunk of depChunks) {
 			try {
 				let
-					src = await component[dep];
+					src = await component[chunk];
 
 				if (src != null) {
 					src = path.normalize(src);
-					decl += `require('${src}');`;
+
+					let
+						expr;
+
+					if (chunk === 'tpl') {
+						expr = `TPLS['${dep}'] = require('${src}')['${dep}'];`;
+
+					} else {
+						expr = `require('${src}');`;
+					}
+
+					decl += `try { ${expr} } catch (err) { stderr(err); }`;
 				}
 
 			} catch {}

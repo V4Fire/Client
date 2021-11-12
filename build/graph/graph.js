@@ -374,8 +374,9 @@ async function buildProjectGraph() {
 	 * Returns a map of all existed components
 	 */
 	async function getComponents() {
-		const
-			components = await block.getAll();
+		const components = await block.getAll(null, {
+			lockPrefix: build.componentLockPrefix()
+		});
 
 		$C(components).forEach((component, name) => {
 			component.params = componentParams[camelize(name)] ?? {};

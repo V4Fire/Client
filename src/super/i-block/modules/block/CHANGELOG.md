@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.8.3 (2021-10-26)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with removing a modifier from the passed node
+
 ## v3.0.0-rc.161 (2021-03-18)
 
 #### :bug: Bug Fix

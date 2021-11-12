@@ -8,13 +8,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	delay = require('delay');
-
 /**
  * @typedef {import('playwright').Page} Page
  * @typedef {import('playwright').BrowserContext} BrowserContext
  */
+
+const
+	delay = require('delay');
+
+const
+	logsMap = new WeakMap();
 
 class Utils {
 	/**
@@ -73,6 +76,30 @@ class Utils {
 		await page.waitForSelector('#root-component', {timeout: (60).seconds(), state: 'attached'});
 	}
 
+	/** @see [[BrowserTests.Utils.collectPageLogs]] */
+	collectPageLogs(page) {
+		const logs = logsMap.get(page);
+
+		if (logs === undefined) {
+			const logsArr = [];
+			logsMap.set(page, logsArr);
+
+			page.on('console', (message) => {
+				logsArr.push(message.text());
+			});
+		}
+	}
+
+	/** @see [[BrowserTests.Utils.printPageLogs]] */
+	printPageLogs(page) {
+		const logs = logsMap.get(page);
+
+		if (logs) {
+			console.log(logs.join('\n'));
+			logsMap.delete(page);
+		}
+	}
+
 	/**
 	 * @see [[BrowserTests.Utils.reloadAndWaitForIdle]]
 	 */
@@ -112,12 +139,12 @@ class Utils {
 
 						if (isTimeout) {
 							clearInterval(interval);
-							rej();
+							rej(`The given function\n${newFn}\nreturns a negative result`);
 						}
 
-					} catch {
+					} catch (err) {
 						clearInterval(interval);
-						rej();
+						rej(err);
 					}
 				}, 15);
 			});

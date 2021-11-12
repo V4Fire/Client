@@ -305,6 +305,7 @@ export default class bInput extends iInputText {
 			return;
 		}
 
+		this.value = this.$refs.input.value;
 		this.field.set('textStore', this.value);
 		this.emit('actionChange', this.value);
 	}

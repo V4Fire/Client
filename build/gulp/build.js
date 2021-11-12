@@ -9,13 +9,20 @@
  */
 
 const
-	{src} = require('config');
+	config = require('config');
+
+const
+	{src, build} = config,
+	{block} = require('@pzlr/build-core');
 
 /**
  * @override
  *
  * @example
  * ```bash
+ * # Builds a `components-lock` file
+ * npx gulp build:components-lock
+ *
  * # Builds the application as a node.js package
  * npx gulp build:server
  *
@@ -55,6 +62,17 @@ module.exports = function init(gulp = require('gulp')) {
 	gulp.task('build:client', () => {
 		const t = $.run(`npx webpack ${args}`, {verbosity: 3}).exec();
 		return t.on('error', console.error);
+	});
+
+	/**
+	 * Builds a `components-lock` file
+	 */
+	gulp.task('build:components-lock', async () => {
+		block.setObjToHash(config.componentDependencies());
+
+		await block.getAll(null, {
+			lockPrefix: build.componentLockPrefix()
+		});
 	});
 
 	/**

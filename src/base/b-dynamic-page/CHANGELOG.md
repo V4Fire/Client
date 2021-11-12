@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.5.4 (2021-10-12)
+
+#### :bug: Bug Fix
+
+* Fixed an issue when `component` returns `undefined`
+
 ## v3.5.0 (2021-09-16)
 
 #### :boom: Breaking Change

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.5.3 (2021-10-06)
+
+#### :bug: Bug Fix
+
+* Fixed synchronization of values during input events
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :rocket: New Feature

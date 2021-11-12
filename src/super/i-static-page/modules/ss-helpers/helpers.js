@@ -49,6 +49,17 @@ function addPublicPath(path) {
 	return webpack.publicPath(path);
 
 	function toExpr(expr) {
-		return Object.isArray(expr) ? expr[0] : `'${expr.replace(/'/g, '\\\'')}'`;
+		const
+			res = String(expr);
+
+		if (expr == null) {
+			return res;
+		}
+
+		if (Object.isString(expr) || expr.interpolate === false) {
+			return `'${res.replace(/'/g, '\\\'')}'`;
+		}
+
+		return res;
 	}
 }

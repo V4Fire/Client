@@ -26,7 +26,12 @@ exports.LibSource = LibSource;
  *   3. [inline=false] - if true, the library is placed as a text
  *   4. [defer=true] - if true, the library is declared with the `defer` attribute
  *   5. [load=true] - if false, the library won't be automatically loaded with a page
- *   6. [attrs] - dictionary with additional attributes
+ *   6. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ *     1. a simple string, as `null` (when an attribute doesn't have a value);
+ *     2. an array (to interpolate the value as JS);
+ *     3. an object with the predefined `toString` method
+ *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *       and `interpolate: true` to enable interpolation of a value).
  *
  * @typedef {{
  *   src: string,
@@ -76,7 +81,12 @@ exports.Libs = Libs;
  *   2. [source='lib'] - source type of the library, i.e. where the library is stored
  *   3. [inline=false] - if true, the library is placed as text into a style tag
  *   4. [defer=true] - if true, the library is loaded only after loading of the whole page
- *   5. [attrs] - dictionary with additional attributes
+ *   5. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ *     1. a simple string, as `null` (when an attribute doesn't have a value);
+ *     2. an array (to interpolate the value as JS);
+ *     3. an object with the predefined `toString` method
+ *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *       and `interpolate: true` to enable interpolation of a value).
  *
  * @typedef {{
  *   src: string,
@@ -124,7 +134,12 @@ exports.StyleLibs = StyleLibs;
  *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
  *   2. [source='lib'] - source type of the library, i.e. where the library is stored
  *   3. [tag='link'] - tag to create the link
- *   4. [attrs] - dictionary with additional attributes
+ *   4. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ *     1. a simple string, as `null` (when an attribute doesn't have a value);
+ *     2. an array (to interpolate the value as JS);
+ *     3. an object with the predefined `toString` method
+ *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *       and `interpolate: true` to enable interpolation of a value).
  *
  * @typedef {{
  *   src: string,

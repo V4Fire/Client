@@ -26,11 +26,14 @@ async function buildFactory(entry, buildId) {
 	await include('build/webpack/custom/preconfig');
 
 	const
-		plugins = await include('build/webpack/plugins')({buildId}),
+		name = Object.keys(entry)[0],
+		plugins = await include('build/webpack/plugins')({buildId, name}),
 		modules = await include('build/webpack/module')({buildId, plugins}),
 		target = await include('build/webpack/target');
 
 	const config = {
+		name,
+
 		entry: await $C(entry).parallel().map((src, name) => include('build/webpack/entry')(name, src)),
 		output: await include('build/webpack/output')({buildId}),
 
