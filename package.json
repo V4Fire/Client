@@ -130,7 +130,8 @@
     "webpack": "^5.60.0",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^3.3.12",
-    "worker-loader": "^3.0.7"
+    "worker-loader": "^3.0.7",
+    "yargs": "^17.2.1"
   },
   "devDependencies": {
     "@types/jasmine": "^3.10.2",
