@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.?.? (2021-11-??)
 
+#### :boom: Breaking Change
+
+* Removed legacy filters for `:key` attributes `build/snakeskin`
+
 #### :rocket: New Feature
 
 * Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status `build/webpack`
