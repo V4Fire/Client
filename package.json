@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.10.0",
+  "version": "3.10.1",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -40,7 +40,7 @@
     "up": "npm i && npm up && npm audit fix"
   },
   "dependencies": {
-    "@v4fire/core": "^3.63.0",
+    "@v4fire/core": "^3.64.0",
     "escaper": "^3.0.6",
     "eventemitter2": "^6.4.5",
     "jsdom": "^16.7.0",
@@ -118,7 +118,7 @@
     "svgo-sync": "^0.5.1",
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^9.2.3",
-    "typescript": "4.4.3",
+    "typescript": "4.4.4",
     "typograf": "^6.11.1",
     "uniconf": "^2.1.1",
     "upath": "^2.0.1",
