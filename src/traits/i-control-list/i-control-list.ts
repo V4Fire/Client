@@ -39,9 +39,13 @@ export default abstract class iControlList {
 		if (action != null) {
 			if (Object.isString(action)) {
 				const
-					fn = component.field.get<Function>(action);
+					fn = component.field.get<CanPromise<Function>>(action);
 
-				if (fn) {
+				if (fn != null) {
+					if (Object.isPromise(fn)) {
+						return fn.then((fn) => fn.call(component));
+					}
+
 					return fn.call(component);
 				}
 

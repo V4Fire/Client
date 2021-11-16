@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.10.1 (2021-11-16)
+
+#### :bug: Bug Fix
+
+* Now `callControlAction` respects promise values `iControlList`
+
 ## v3.10.0 (2021-11-16)
 
 #### :boom: Breaking Change
