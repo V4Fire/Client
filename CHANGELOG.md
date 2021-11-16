@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Now `get` can access properties through promises `super/i-block/modules/field`
 * Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status `build/webpack`
 
 ## v3.9.1 (2021-11-09)
