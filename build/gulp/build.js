@@ -9,10 +9,13 @@
  */
 
 const
-	config = require('config');
+	config = require('config'),
+	through2 = require('through2'),
+	Vinyl = require('vinyl');
 
 const
 	{src, build} = config,
+	{mergeStats} = include('build/helpers/webpack'),
 	{block} = require('@pzlr/build-core');
 
 /**
@@ -40,6 +43,9 @@ const
  *
  * # Cleans the dist directory of a client (browser) package
  * npx gulp clean:client
+ *
+ * # Merge multiple Webpack compilations from a stat file into one
+ * npx gulp stats:merge
  * ```
  */
 module.exports = function init(gulp = require('gulp')) {
@@ -82,4 +88,30 @@ module.exports = function init(gulp = require('gulp')) {
 		const t = $.run(`npx webpack --watch ${args}`, {verbosity: 3}).exec();
 		return t.on('error', console.error);
 	});
+
+	/**
+	 * Merge multiple Webpack compilations from a stat file into one
+	 */
+	 gulp.task('stats:merge', () => {
+			const statoscopeConfig = config.statoscope();
+
+			return gulp
+				.src(statoscopeConfig.statsPath)
+				.pipe($.plumber())
+				.pipe(through2.obj(processStatsFile))
+				.pipe(gulp.dest('./'));
+
+				function processStatsFile(file, _, cb) {
+					const stats = JSON.parse(file.contents.toString());
+
+					this.push(
+						new Vinyl({
+							path: statoscopeConfig.mergedStatsPath,
+							contents: Buffer.from(JSON.stringify(mergeStats(stats)))
+						})
+					);
+
+					cb();
+				}
+		});
 };

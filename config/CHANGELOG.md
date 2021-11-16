@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-11-??)
+
+#### :rocket: New Feature
+
+* Added a config for Statoscope
+
 ## v3.3.4 (2021-09-06)
 
 #### :bug: Bug Fix
