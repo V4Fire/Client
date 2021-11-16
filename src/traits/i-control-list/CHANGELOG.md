@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.10.2 (2021-11-16)
+
+#### :bug: Bug Fix
+
+* Now `callControlAction` fully respects promise values
+
 ## v3.10.1 (2021-11-16)
 
 #### :bug: Bug Fix

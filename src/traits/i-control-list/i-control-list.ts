@@ -43,7 +43,13 @@ export default abstract class iControlList {
 
 				if (fn != null) {
 					if (Object.isPromise(fn)) {
-						return fn.then((fn) => fn.call(component));
+						return fn.then((fn) => {
+							if (!Object.isFunction(fn)) {
+								throw new TypeError(`The action method "${action}" is not a function`);
+							}
+
+							return fn.call(component);
+						});
 					}
 
 					return fn.call(component);
@@ -71,7 +77,7 @@ export default abstract class iControlList {
 				argsMapFn = argsMap;
 
 			} else {
-				argsMapFn = argsMap != null ? field.get<Function>(argsMap) : null;
+				argsMapFn = argsMap != null ? field.get<CanPromise<Function>>(argsMap) : null;
 			}
 
 			if (Object.isFunction(method)) {
@@ -81,8 +87,31 @@ export default abstract class iControlList {
 				methodFn = field.get<Function>(method);
 			}
 
+			const callMethod = (methodFn, argsMapFn) => {
+				const args = argsMapFn != null ? argsMapFn.call(component, fullArgs) ?? [] : fullArgs;
+				return methodFn.call(component, ...args);
+			};
+
 			if (methodFn != null) {
-				return methodFn.call(component, ...(argsMapFn != null ? argsMapFn.call(component, fullArgs) ?? [] : fullArgs));
+				if (Object.isPromise(methodFn)) {
+					return methodFn.then((methodFn) => {
+						if (!Object.isFunction(methodFn)) {
+							throw new TypeError('The action method is not a function');
+						}
+
+						if (Object.isPromise(argsMapFn)) {
+							return argsMapFn.then((argsMapFn) => callMethod(methodFn, argsMapFn));
+						}
+
+						return callMethod(methodFn, argsMapFn);
+					});
+				}
+
+				if (Object.isPromise(argsMapFn)) {
+					return argsMapFn.then((argsMapFn) => callMethod(methodFn, argsMapFn));
+				}
+
+				return callMethod(methodFn, argsMapFn);
 			}
 
 			throw new TypeError('The action method is not a function');
