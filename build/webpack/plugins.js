@@ -23,7 +23,6 @@ module.exports = async function plugins({name}) {
 
 	const
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
-		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default,
 		SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin'),
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings');
 
@@ -34,15 +33,10 @@ module.exports = async function plugins({name}) {
 	]);
 
 	const
-		progressWebpackConfig = config.simpleProgressWebpackPlugin(),
-		statoscopeConfig = config.statoscopePlugin();
+		progressWebpackConfig = config.simpleProgressWebpackPlugin();
 
 	if (progressWebpackConfig.enabled) {
 		plugins.set('simpleProgressWebpackPlugin', new SimpleProgressWebpackPlugin({name, ...progressWebpackConfig}));
-	}
-
-	if (statoscopeConfig.enabled) {
-		plugins.set('StatoscopeWebpackPlugin', new StatoscopeWebpackPlugin(statoscopeConfig));
 	}
 
 	return plugins;
