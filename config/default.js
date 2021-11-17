@@ -819,21 +819,53 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for `StatoscopePlugin`
+	 * Returns parameters for a stats report from Webpack
+	 * @see https://webpack.js.org/api/stats/
 	 *
-	 * @cli statoscope
-	 * @env STATOSCOPE
+	 * @cli stats-path
+	 * @env STATS_PATH
+	 * @default `compilation-stats.json`
+	 *
+	 * @cli merged-stats-path
+	 * @env MERGED_STATS_PATH
+	 * @default `compilation-stats.json`
+	 *
+	 * @cli statoscope-report
+	 * @env STATOSCOPE_REPORT
 	 * @default `false`
 	 *
-	 * @param {boolean=} [def] - default value
+	 * @cli entryDownloadSizeLimits
+	 * @default `1024``
+	 *
+	 * @cli entryDownloadTimeLimits
+	 * @default `1000`
+	 *
+	 * @param {object} [def] - default value
 	 * @returns {!Object}
 	 */
-	statoscopePlugin(def = false) {
+	statoscope(def = {path: 'compilation-stats.json', mergedPath: 'compilation-stats.json'}) {
 		return {
-			enabled: o('statoscope', {
-				env: 'STATOSCOPE',
-				type: 'boolean',
-				default: def
+			statsPath: o('stats-path', {
+				default: def.path,
+				env: true
+			}),
+
+			mergedStatsPath: o('merged-stats-path', {
+				default: def.mergedPath,
+				env: true
+			}),
+
+			openReport: o('statoscope-report', {
+				default: false,
+				env: true
+			}),
+
+			entryDownloadSizeLimits: o('entry-download-size-limits', {
+				default: 1024
+			}),
+
+			entryDownloadTimeLimits: o('entry-download-time-limits', {
+				default: 1000
 			})
 		};
 	},

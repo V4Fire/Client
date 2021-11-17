@@ -11,11 +11,34 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.?.? (2021-11-??)
+## v3.10.2 (2021-11-16)
+
+#### :bug: Bug Fix
+
+* Now `callControlAction` fully respects promise values `iControlList`
+
+## v3.10.1 (2021-11-16)
+
+#### :bug: Bug Fix
+
+* Now `callControlAction` respects promise values `iControlList`
+
+## v3.10.0 (2021-11-16)
+
+#### :boom: Breaking Change
+
+* Removed legacy filters for `:key` attributes `build/snakeskin`
 
 #### :rocket: New Feature
 
-* Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status `build/webpack`
+* Now `get` can access properties through promises `super/i-block/modules/field`
+
+* `build/webpack`:
+  * Deleted a Webpack plugin `statoscopePlugin`
+  * Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status
+
+* Added a gulp task to transform `stats` reports from Webpack `build/gulp`
+* Added a config for Statoscope `config`
 
 ## v3.9.1 (2021-11-09)
 

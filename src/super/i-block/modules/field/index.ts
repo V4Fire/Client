@@ -122,15 +122,28 @@ export default class Field extends Friend {
 		}
 
 		if (getter == null) {
-			return Object.get(res, chunks);
+			res = Object.get<T>(res, chunks);
+
+		} else {
+			for (let i = 0; i < chunks.length; i++) {
+				if (res == null) {
+					return undefined;
+				}
+
+				const
+					key = chunks[i];
+
+				if (Object.isPromiseLike(res) && !(key in res)) {
+					res = res.then((res) => getter!(key, res));
+
+				} else {
+					res = getter(key, res);
+				}
+			}
 		}
 
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
-
-			res = getter(chunks[i], res);
+		if (Object.isPromiseLike(res)) {
+			return <any>this.async.promise(res);
 		}
 
 		return <any>res;

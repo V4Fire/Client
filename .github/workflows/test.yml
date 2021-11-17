@@ -109,7 +109,7 @@ jobs:
   modules:
     runs-on: ubuntu-latest
     env:
-      NODE_ENV: production
+      PROGRESS: false
 
     timeout-minutes: 30
 
