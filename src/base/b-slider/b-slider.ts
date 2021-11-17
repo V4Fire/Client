@@ -434,7 +434,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			}
 
 			this.syncState();
-			this.performSliderAnimation();
+			this.performSliderMove();
 
 			return true;
 		}
@@ -468,7 +468,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			}
 
 			this.current = current;
-			this.performSliderAnimation();
+			this.performSliderMove();
 			return true;
 		}
 
@@ -508,11 +508,11 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Updates slide position
 	 */
-	protected performSliderAnimation(): void {
+	protected performSliderMove(): void {
 		if (this.shouldUseRAF) {
 			this.async.requestAnimationFrame(() => {
 				this.updateSlidePosition();
-			}, {label: $$.performSliderAnimation});
+			}, {label: $$.performSliderMove});
 
 		} else {
 			this.updateSlidePosition();
@@ -523,7 +523,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Stops the slider animation
 	 */
 	protected stopSliderAnimation(): void {
-		this.async.clearAnimationFrame({label: $$.performSliderAnimation});
+		this.async.clearAnimationFrame({label: $$.performSliderMove});
 		this.diffX = 0;
 	}
 
@@ -626,7 +626,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 
 		void this.setMod('swipe', true);
-		this.performSliderAnimation();
+		this.performSliderMove();
 	}
 
 	/**
@@ -768,7 +768,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.swiping = true;
 		this.isTolerancePassed = true;
 		this.diffX = diffX;
-		this.performSliderAnimation();
+
+		this.performSliderMove();
 	}
 
 	/**
@@ -813,7 +814,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 
 		this.diffX = 0;
-		this.performSliderAnimation();
+		this.performSliderMove();
 		void this.removeMod('swipe', true);
 
 		this.emit('swipeEnd', dir, isSwiped);
