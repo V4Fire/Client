@@ -377,14 +377,16 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * True if all animations need to use requestAnimationFrame
 	 */
-	protected get shouldUseRAF(): boolean {
+	@computed({cache: true})
+	get shouldUseRAF(): boolean {
 		return this.browser.is.iOS === false;
 	}
 
 	/**
 	 * True if we need to minimize the amount of non-essential motion used
 	 */
-	protected get doReducedMotion(): boolean {
+	@computed({cache: true})
+	get doReducedMotion(): boolean {
 		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
