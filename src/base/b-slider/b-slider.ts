@@ -506,7 +506,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Updates slide position
+	 * Updates the slider position
 	 */
 	protected performSliderMove(): void {
 		if (this.shouldUseRAF) {
