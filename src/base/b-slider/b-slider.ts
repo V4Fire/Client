@@ -385,7 +385,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * True if we need to minimize the amount of non-essential motion used
 	 */
 	protected get doReducedMotion(): boolean {
-		return globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
 	/** @see [[iItems.items]] */
@@ -408,42 +408,6 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/** @see [[iItems.items]] */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
-	}
-
-	/**
-	 * Performs the slider animation
-	 */
-	protected updateSlidePosition(): void {
-		const
-			{ content } = this;
-		if (!content) return;
-
-		const
-			position = this.doReducedMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
-
-		content.style.transform = `translate3d(${(-position).px}, 0, 0)`;
-	}
-
-	/**
-	 * Updates slide position
-	 */
-	protected performSliderAnimation(): void {
-		if (this.shouldUseRAF) {
-			this.async.requestAnimationFrame(() => {
-				this.updateSlidePosition();
-			}, {label: $$.performSliderAnimation});
-
-		} else {
-			this.updateSlidePosition();
-		}
-	}
-
-	/**
-	 * Stops the slider animation
-	 */
-	protected stopSliderAnimation(): void {
-		this.async.clearAnimationFrame({label: $$.performSliderAnimation});
-		this.diffX = 0;
 	}
 
 	/**
@@ -521,6 +485,44 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				childList: true
 			});
 		}
+	}
+
+	/**
+	 * Performs the slider animation
+	 */
+	protected updateSlidePosition(): void {
+		const
+			{content} = this;
+		if (!content) {
+			return;
+		}
+
+		const
+			position = this.doReducedMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
+
+		content.style.transform = `translate3d(${(-position).px}, 0, 0)`;
+	}
+
+	/**
+	 * Updates slide position
+	 */
+	protected performSliderAnimation(): void {
+		if (this.shouldUseRAF) {
+			this.async.requestAnimationFrame(() => {
+				this.updateSlidePosition();
+			}, {label: $$.performSliderAnimation});
+
+		} else {
+			this.updateSlidePosition();
+		}
+	}
+
+	/**
+	 * Stops the slider animation
+	 */
+	protected stopSliderAnimation(): void {
+		this.async.clearAnimationFrame({label: $$.performSliderAnimation});
+		this.diffX = 0;
 	}
 
 	/**
