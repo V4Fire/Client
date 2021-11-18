@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-11-??)
+
+#### :house: Internal
+
+* Added a new Gulp task `gulp stats:purify`
+
 ## v3.6.1 (2021-10-14)
 
 #### :house: Internal

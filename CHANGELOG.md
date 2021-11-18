@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.10.? (2021-11-??)
+
+#### :rocket: Breaking Change
+
+* Added new gulp task for purify Webpack stats report `build/gulp`
+
+#### :bug: Bug Fix
+
+* Fixed bugs in gulp task for transform `stats` report `build/gulp`
+
 ## v3.10.2 (2021-11-16)
 
 #### :bug: Bug Fix
