@@ -120,12 +120,13 @@ const requireStatsFields = [
  * @returns {!Object}
  */
 function mergeStats(stats) {
-	return stats.children.reduce((acc, compilation) => {
+	return stats.children.reduce((acc, compilation, index) => {
 		if (index === 0) {
-			const allFields = Object.keys(item);
+			const allFields = Object.keys(compilation);
+
 			allFields.forEach((field) => {
-				if (!fields.includes(field)) {
-					acc[field] = item[field];
+				if (!requireStatsFields.includes(field)) {
+					acc[field] = compilation[field];
 				}
 			});
 		}

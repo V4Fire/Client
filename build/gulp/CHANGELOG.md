@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2021-11-??)
+
+#### :rocket: New Feature
+
+* Added a new Gulp task `gulp stats:purify`
+
+#### :bug: Bug Fix
+
+* Fixed bugs with transforming `stats` reports
+
 ## v3.6.1 (2021-10-14)
 
 #### :house: Internal

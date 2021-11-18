@@ -90,6 +90,36 @@ module.exports = function init(gulp = require('gulp')) {
 	});
 
 	/**
+	 * Purify a Webpack stats file from unnecessary content
+	 */
+	gulp.task('stats:purify', () => {
+		const statoscopeConfig = config.statoscope();
+
+		const cutContentBeforeBracket = (content) => content.replace(/^[^{]*/, '');
+		const cutContentAfterBracket = (content) => content.replace(/}[^}]*$/, '}');
+		const selectOnlyBracketsContent = (content) => cutContentAfterBracket(cutContentBeforeBracket(content));
+
+		return gulp
+			.src(statoscopeConfig.statsPath)
+			.pipe($.plumber())
+			.pipe(through2.obj(processStatsFile))
+			.pipe(gulp.dest('./'));
+
+		function processStatsFile(file, _, cb) {
+			const content = selectOnlyBracketsContent(file.contents.toString());
+
+			this.push(
+				new Vinyl({
+					path: statoscopeConfig.mergedStatsPath,
+					contents: Buffer.from(content)
+				})
+			);
+
+			cb();
+		}
+});
+
+	/**
 	 * Merge multiple Webpack compilations from a stat file into one
 	 */
 	 gulp.task('stats:merge', () => {
@@ -101,17 +131,17 @@ module.exports = function init(gulp = require('gulp')) {
 				.pipe(through2.obj(processStatsFile))
 				.pipe(gulp.dest('./'));
 
-				function processStatsFile(file, _, cb) {
-					const stats = JSON.parse(file.contents.toString());
+			function processStatsFile(file, _, cb) {
+				const stats = JSON.parse(file.contents.toString());
 
-					this.push(
-						new Vinyl({
-							path: statoscopeConfig.mergedStatsPath,
-							contents: Buffer.from(JSON.stringify(mergeStats(stats)))
-						})
-					);
+				this.push(
+					new Vinyl({
+						path: statoscopeConfig.mergedStatsPath,
+						contents: Buffer.from(JSON.stringify(mergeStats(stats)))
+					})
+				);
 
-					cb();
-				}
+				cb();
+			}
 		});
 };
