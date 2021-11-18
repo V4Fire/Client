@@ -90,56 +90,17 @@ module.exports = function init(gulp = require('gulp')) {
 	});
 
 	/**
-	 * Purify Webpack stats file from unnecessary content
+	 * Purify a Webpack stats file from unnecessary content
 	 */
 	gulp.task('stats:purify', () => {
 		const statoscopeConfig = config.statoscope();
 
-		const cutContentBeforeBracket = (content) => {
-			let index = 0;
-
-			while (index < content.length) {
-				const current = content[index];
-
-				if (current === '{') {
-					break;
-				} else {
-					index++;
-				}
-			}
-
-			if (index === 0) {
-				return content;
-			}
-
-			return content.substr(index);
-		};
-
-		const cutContentAfterBracket = (content) => {
-			let index = content.length;
-
-			while (index > 0) {
-				const current = content[index];
-
-				if (current === '}') {
-					index++;
-					break;
-				} else {
-					index--;
-				}
-			}
-
-			if (index === content.length) {
-				return content;
-			}
-
-			return content.substr(0, index);
-		};
-
+		const cutContentBeforeBracket = (content) => content.replace(/^[^{]*/, '');
+		const cutContentAfterBracket = (content) => content.replace(/}[^}]*$/, '}');
 		const selectOnlyBracketsContent = (content) => cutContentAfterBracket(cutContentBeforeBracket(content));
 
 		return gulp
-				.src('compilation-stats-android.json')
+				.src(statoscopeConfig.statsPath)
 				.pipe($.plumber())
 				.pipe(through2.obj(processStatsFile))
 				.pipe(gulp.dest('./'));
