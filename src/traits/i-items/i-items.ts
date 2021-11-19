@@ -59,11 +59,7 @@ export default abstract class iItems {
 			id = compiledFn.call(component, item, i);
 		}
 
-		if (Object.isPrimitive(id)) {
-			if (Object.isSymbol(id)) {
-				return String(id);
-			}
-
+		if (Object.isPrimitive(id) && !Object.isSymbol(id)) {
 			return id ?? undefined;
 		}
 
