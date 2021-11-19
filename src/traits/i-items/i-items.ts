@@ -60,6 +60,10 @@ export default abstract class iItems {
 		}
 
 		if (Object.isPrimitive(id)) {
+			if (Object.isSymbol(id)) {
+				return String(id);
+			}
+
 			return id ?? undefined;
 		}
 
