@@ -8,7 +8,7 @@
 
 import type iBlock from 'super/i-block/i-block';
 
-export type IterationKey = Primitive;
+export type IterationKey = Exclude<Primitive, symbol>;
 
 export interface ItemPropParams<CTX = iBlock> {
 	key?: IterationKey;
