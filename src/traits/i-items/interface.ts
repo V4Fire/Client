@@ -8,10 +8,7 @@
 
 import type iBlock from 'super/i-block/i-block';
 
-export type IterationKey =
-	string |
-	number |
-	boolean;
+export type IterationKey = Primitive;
 
 export interface ItemPropParams<CTX = iBlock> {
 	key?: IterationKey;
