@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added possibility to redefine Statoscope size and download time limit
+* Added possibility to redefine Statoscope size and download time limit `config`
 
 ## v3.11.0 (2021-11-18)
 
