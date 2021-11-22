@@ -22,9 +22,9 @@ module.exports = function init(gulp = require('gulp')) {
 	/**
 	 * Запускает перф тесты всех компонентов
 	 *
-	 * `build` - указывает на необходимость сборки при запуске теста (по умолчанию `true`)
-	 * `metrics` - метрики которые будут отслеживаться (по умолчанию все)
-	 * `headless` - если `true` то браузер будет запущен не в `headless` режиме
+	 * `build` - Указывает на необходимость сборки при запуске теста (по умолчанию `true`)
+	 * `metrics` - Метрики которые будут отслеживаться (по умолчанию все)
+	 * `headless` - Если `true` то браузер будет запущен не в `headless` режиме
 	 */
 	gulp.task('test:performance', () => {
 		const
@@ -51,8 +51,6 @@ module.exports = function init(gulp = require('gulp')) {
 				type: 'string',
 				description: 'Metrics that will be observed during the test'
 			});
-
-		if ()
 	});
 
 	/**
