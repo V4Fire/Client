@@ -11,6 +11,12 @@ Changelog
 
 ## v3.?.? (2021-11-??)
 
+#### :house: Internal
+
+* Added posibility to redefine statoscope size and download time limit
+
+## v3.?.? (2021-11-??)
+
 #### :rocket: New Feature
 
 * Added a config for Statoscope
