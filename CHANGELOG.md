@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (2021-11-??)
+
+#### :house: Internal
+
+* Added possibility to redefine Statoscope size and download time limit
+
 ## v3.11.0 (2021-11-18)
 
 #### :rocket: New Feature

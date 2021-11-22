@@ -860,11 +860,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}),
 
 			entryDownloadSizeLimits: o('entry-download-size-limits', {
-				default: 1024
+				default: 1024,
+				env: true
 			}),
 
 			entryDownloadTimeLimits: o('entry-download-time-limits', {
-				default: 1000
+				default: 1000,
+				env: true
 			})
 		};
 	},
