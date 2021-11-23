@@ -39,7 +39,7 @@ ComponentEngine.directive = function directive(name: string, params?: DirectiveO
 	return addDirective(name, {
 		...params,
 
-		bind(_el: HTMLElement, _opts: DirectiveOptions, vnode: VNode) {
+		bind(el: HTMLElement, _opts: DirectiveOptions, vnode: VNode) {
 			const
 				args = Array.from(arguments);
 
@@ -49,7 +49,13 @@ ComponentEngine.directive = function directive(name: string, params?: DirectiveO
 
 			if (vnode.fakeContext != null) {
 				vnode.fakeContext.unsafe.$on('component-hook:before-destroy', () => {
-					originalUnbind.apply(this, args);
+					setImmediate(() => {
+						if (el.isConnected) {
+							return;
+						}
+
+						originalUnbind.apply(this, args);
+					});
 				});
 			}
 		}
