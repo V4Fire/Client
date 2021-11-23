@@ -15,7 +15,7 @@ const
 
 const
 	{src, build} = config,
-	{mergeStats, patchStats} = include('build/helpers/webpack'),
+	{mergeStats, createUnifiedJSONStats} = include('build/helpers/webpack'),
 	{block} = require('@pzlr/build-core');
 
 /**
@@ -146,14 +146,14 @@ module.exports = function init(gulp = require('gulp')) {
 		});
 
 	/**
-	 * Patch a webpack stats files
+	 * Patches Webpack stats files
 	 */
 	gulp.task('stats:patch', () => {
 		const statoscopeConfig = config.statoscope();
 		let statsA;
 
 		return gulp
-			.src([statoscopeConfig.statsPath, statoscopeConfig.compareStatsPath])
+			.src([statoscopeConfig.statsPath, statoscopeConfig.patchStatsPath])
 			.pipe($.plumber())
 			.pipe(through2.obj(processStatsFile))
 			.pipe(gulp.dest('./'));
@@ -170,8 +170,8 @@ module.exports = function init(gulp = require('gulp')) {
 
 			this.push(
 				new Vinyl({
-					path: statoscopeConfig.compareStatsPath,
-					contents: Buffer.from(patchStats(statsA, stats))
+					path: statoscopeConfig.patchStatsPath,
+					contents: Buffer.from(createUnifiedJSONStats(statsA, stats))
 				})
 			);
 

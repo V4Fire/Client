@@ -157,23 +157,13 @@ function mergeStats(stats) {
 exports.mergeStats = mergeStats;
 
 /**
- * Extract tmp folder hash from Webpack stats file
- *
- * @param {!Object} stats
- * @returns {!Object}
- */
-const getHashFromStats = (json) => {
-	const {request} = json.chunks[0].origins[0];
-	return /\/tmp\/(.*)\//.exec(request)[1];
-};
-
-/**
  * Patch Webpack stats file by info extracted from other stats file
  *
- * @param {!Object} stats
+ * @param {!Object} statsA
+ * @param {!Object} statsB
  * @returns {!String}
  */
-function patchStats(statsA, statsB) {
+function createUnifiedJSONStats(statsA, statsB) {
 	const nameToIdentifier = {};
 
 	statsA.modules.forEach((module) => {
@@ -186,11 +176,23 @@ function patchStats(statsA, statsB) {
 		}
 	});
 
-	const hashA = getHashFromStats(statsA);
-	const hashB = getHashFromStats(statsB);
 	statsB.name = statsA.name;
 
-	return JSON.stringify(statsB).replaceAll(hashB, hashA);
+	const hashA = getTmpHashFromStats(statsA);
+	const hashB = getTmpHashFromStats(statsB);
+
+	return JSON.stringify(statsB).replace(new RegExp(hashB, 'g'), hashA);
 }
 
-exports.patchStats = patchStats;
+exports.createUnifiedJSONStats = createUnifiedJSONStats;
+
+/**
+ * Extracts temp folder hash from the passed Webpack stats object
+ *
+ * @param {!Object} stats
+ * @returns {string}
+ */
+ function getTmpHashFromStats(stats) {
+	const {request} = stats.chunks[0].origins[0];
+	return /([\\/])tmp\1(?<hash>.*)\1/.exec(request).groups.hash;
+}

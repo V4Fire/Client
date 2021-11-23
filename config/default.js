@@ -829,8 +829,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @env MERGED_STATS_PATH
 	 * @default `compilation-stats.json`
 	 *
-	 * @cli compareStatsPath
-	 * @env COMPARE_STATS_PATH
+	 * @cli patchStatsPath
+	 * @env PATCH_STATS_PATH
 	 * @default `compilation-stats.json`
 	 *
 	 * @cli statoscope-report
@@ -858,7 +858,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true
 			}),
 
-			compareStatsPath: o('compare-stats-path', {
+			patchStatsPath: o('patch-stats-path', {
 				default: def.path,
 				env: true
 			}),
