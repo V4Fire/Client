@@ -155,3 +155,42 @@ function mergeStats(stats) {
 }
 
 exports.mergeStats = mergeStats;
+
+/**
+ * Extract tmp folder hash from Webpack stats file
+ *
+ * @param {!Object} stats
+ * @returns {!Object}
+ */
+const getHashFromStats = (json) => {
+	const {request} = json.chunks[0].origins[0];
+	return /\/tmp\/(.*)\//.exec(request)[1];
+};
+
+/**
+ * Patch Webpack stats file by info extracted from other stats file
+ *
+ * @param {!Object} stats
+ * @returns {!String}
+ */
+function patchStats(statsA, statsB) {
+	const nameToIdentifier = {};
+
+	statsA.modules.forEach((module) => {
+		nameToIdentifier[module.name] = module.identifier;
+	});
+
+	statsB.modules.forEach((module) => {
+		if (nameToIdentifier[module.name]) {
+			module.identifier = nameToIdentifier[module.name];
+		}
+	});
+
+	const hashA = getHashFromStats(statsA);
+	const hashB = getHashFromStats(statsB);
+	statsB.name = statsA.name;
+
+	return JSON.stringify(statsB).replaceAll(hashB, hashA);
+}
+
+exports.patchStats = patchStats;
