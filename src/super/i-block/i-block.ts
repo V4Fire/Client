@@ -2589,7 +2589,12 @@ export default abstract class iBlock extends ComponentInterface {
 		const
 			parent = this.$normalParent;
 
-		if (parent == null || parent.r === parent) {
+		const needImmediateDestroy =
+			parent == null ||
+			parent.componentStatus === 'destroyed' ||
+			parent.r === parent;
+
+		if (needImmediateDestroy) {
 			this.$destroy();
 
 		} else {
