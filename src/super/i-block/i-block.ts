@@ -2589,13 +2589,16 @@ export default abstract class iBlock extends ComponentInterface {
 		const
 			parent = this.$normalParent;
 
-		if (parent == null) {
+		if (parent == null || parent.r === parent) {
 			this.$destroy();
 
 		} else {
 			this.async.on(parent, 'on-component-hook:before-destroy', this.$destroy.bind(this), {
-				label: $$.onUnbindHook
+				label: $$.onUnbindHook,
+				group: ':zombie'
 			});
+
+			this.async.clearAll().locked = true;
 		}
 	}
 
