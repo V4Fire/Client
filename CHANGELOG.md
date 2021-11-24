@@ -16,7 +16,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Don't immediately destroy functional components `iBlock`
-* Don't wrap `unbind` for `v-hook` directives `core/component/engines`
 
 ## v3.11.2 (2021-11-24)
 

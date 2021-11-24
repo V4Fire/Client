@@ -9,12 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.11.3 (2021-11-24)
-
-#### :bug: Bug Fix
-
-* Don't wrap `unbind` for `v-hook` directives
-
 ## v3.8.2 (2021-10-26)
 
 #### :bug: Bug Fix
