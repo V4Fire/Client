@@ -157,11 +157,11 @@ function mergeStats(stats) {
 exports.mergeStats = mergeStats;
 
 /**
- * Patch Webpack stats file by info extracted from other stats file
+ * Returns a new one Webpack stats JSON by merging the specified two stats objects
  *
  * @param {!Object} statsA
  * @param {!Object} statsB
- * @returns {!String}
+ * @returns {string}
  */
 function createUnifiedJSONStats(statsA, statsB) {
 	const nameToIdentifier = {};
@@ -192,7 +192,7 @@ exports.createUnifiedJSONStats = createUnifiedJSONStats;
  * @param {!Object} stats
  * @returns {string}
  */
- function getTmpHashFromStats(stats) {
+function getTmpHashFromStats(stats) {
 	const {request} = stats.chunks[0].origins[0];
-	return /([\\/])tmp\1(?<hash>.*)\1/.exec(request).groups.hash;
+	return /([\\/])tmp\1(?<hash>.*?)\1/.exec(request).groups.hash;
 }

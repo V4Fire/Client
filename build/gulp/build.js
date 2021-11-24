@@ -149,8 +149,11 @@ module.exports = function init(gulp = require('gulp')) {
 	 * Patches Webpack stats files
 	 */
 	gulp.task('stats:patch', () => {
-		const statoscopeConfig = config.statoscope();
-		let statsA;
+		const
+			statoscopeConfig = config.statoscope();
+
+		let
+			statsA;
 
 		return gulp
 			.src([statoscopeConfig.statsPath, statoscopeConfig.patchStatsPath])
