@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.11.4 (2021-11-24)
+
+#### :bug: Bug Fix
+
+* Don't cache computed properties within flyweight components `core/component/accessor`
+
 ## v3.11.3 (2021-11-24)
 
 #### :bug: Bug Fix
