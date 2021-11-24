@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2021-11-??)
+
+#### :house: Internal
+
+* Added a new Gulp task to patch Webpack stats reports
+
 ## v3.11.0 (2021-11-18)
 
 #### :rocket: New Feature

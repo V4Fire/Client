@@ -829,6 +829,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @env MERGED_STATS_PATH
 	 * @default `compilation-stats.json`
 	 *
+	 * @cli patchStatsPath
+	 * @env PATCH_STATS_PATH
+	 * @default `compilation-stats.json`
+	 *
 	 * @cli statoscope-report
 	 * @env STATOSCOPE_REPORT
 	 * @default `false`
@@ -837,7 +841,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @default `1024``
 	 *
 	 * @cli entryDownloadTimeLimits
-	 * @default `1000`
+	 * @default `250`
 	 *
 	 * @param {object} [def] - default value
 	 * @returns {!Object}
@@ -854,6 +858,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true
 			}),
 
+			patchStatsPath: o('patch-stats-path', {
+				default: def.path,
+				env: true
+			}),
+
 			openReport: o('statoscope-report', {
 				default: false,
 				env: true
@@ -865,7 +874,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}),
 
 			entryDownloadTimeLimits: o('entry-download-time-limits', {
-				default: 1000,
+				default: 250,
 				env: true
 			})
 		};
