@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added a new Gulp task to patch Webpack stats reports
+* Added a new Gulp task to patch Webpack stats reports `build/gulp`
 
 ## v3.11.1 (2021-11-22)
 
