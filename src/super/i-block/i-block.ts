@@ -2586,7 +2586,17 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	protected override onUnbindHook(): void {
-		this.$destroy();
+		const
+			parent = this.$normalParent;
+
+		if (parent == null) {
+			this.$destroy();
+
+		} else {
+			this.async.on(parent, 'on-component-hook:before-destroy', this.$destroy.bind(this), {
+				label: $$.onUnbindHook
+			});
+		}
 	}
 
 	/**
