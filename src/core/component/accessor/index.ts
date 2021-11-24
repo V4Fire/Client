@@ -83,7 +83,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			if (ssrMode) {
+			if (ssrMode || isFlyweight) {
 				return el.get!.call(this);
 			}
 
