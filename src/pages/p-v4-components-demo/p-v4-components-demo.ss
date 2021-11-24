@@ -14,6 +14,8 @@
 	- block body
 		: config = require('config').build
 
+		< @b-card
+
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo

@@ -1,5 +1,5 @@
 {
-  "hash": "2b5e4f6f25ea13bf16732d5016166838b1b548b63a0e87a7f99112446f9b355a",
+  "hash": "55c0720f57d8d2556be9e43a2a3b669e7f355a9ba00d88ff067ab8a74b43dd9f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -70,6 +70,42 @@
             "src/form/b-button/b-button.styl"
           ],
           "tpl": "src/form/b-button/b-button.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-card",
+        {
+          "index": "src/base/b-card/index.js",
+          "declaration": {
+            "name": "b-card",
+            "parent": "i-block",
+            "dependencies": [
+              "b-shopping-list-badge"
+            ],
+            "libs": []
+          },
+          "name": "b-card",
+          "parent": "i-block",
+          "dependencies": [
+            "b-shopping-list-badge"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-card/b-card.ts",
+          "styles": [
+            "src/base/b-card/b-card.styl"
+          ],
+          "tpl": "src/base/b-card/b-card.ss",
           "etpl": null
         }
       ],
@@ -960,6 +996,38 @@
             "src/form/b-select-date/b-select-date.styl"
           ],
           "tpl": "src/form/b-select-date/b-select-date.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-shopping-list-badge",
+        {
+          "index": "src/base/b-shopping-list-badge/index.js",
+          "declaration": {
+            "name": "b-shopping-list-badge",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-shopping-list-badge",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-shopping-list-badge/b-shopping-list-badge.ts",
+          "styles": [
+            "src/base/b-shopping-list-badge/b-shopping-list-badge.styl"
+          ],
+          "tpl": "src/base/b-shopping-list-badge/b-shopping-list-badge.ss",
           "etpl": null
         }
       ],
@@ -1972,6 +2040,7 @@
               "b-dynamic-page",
               "b-tree",
               "b-list",
+              "b-card",
               "b-form",
               "b-button",
               "b-checkbox",
@@ -2013,6 +2082,7 @@
             "b-dynamic-page",
             "b-tree",
             "b-list",
+            "b-card",
             "b-form",
             "b-button",
             "b-checkbox",

@@ -23,6 +23,7 @@ package('p-v4-components-demo')
 
 		'b-tree',
 		'b-list',
+		'b-card',
 
 		'b-form',
 		'b-button',
