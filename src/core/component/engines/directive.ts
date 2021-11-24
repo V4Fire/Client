@@ -47,7 +47,7 @@ ComponentEngine.directive = function directive(name: string, params?: DirectiveO
 				originalBind.apply(this, args);
 			}
 
-			if (vnode.fakeContext != null) {
+			if (vnode.fakeContext != null && name !== 'hook') {
 				vnode.fakeContext.unsafe.$on('component-hook:before-destroy', () => {
 					originalUnbind.apply(this, args);
 				});
