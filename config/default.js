@@ -18,7 +18,7 @@ const
 
 const
 	camelize = require('camelize'),
-	o = require('uniconf/options').option;
+	o = require('@v4fire/config/options').option;
 
 const
 	{nanoid} = require('nanoid');
