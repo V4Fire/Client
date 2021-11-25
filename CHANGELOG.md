@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.11.? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when build was failed without passing a design system package name at the environment `build/stylus`
+
 ## v3.11.2 (2021-11-24)
 
 #### :house: Internal

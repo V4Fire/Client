@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.11.? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when plugins creating started without a design system option at the environment
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :rocket: New Feature
