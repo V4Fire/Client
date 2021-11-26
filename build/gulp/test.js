@@ -14,14 +14,14 @@
 
 const
 	os = require('os'),
-	arg = require('arg');
+	arg = require('arg'),
+	parseArgs = require('@v4fire/config/core/parseArgs');
 
 const
 	path = require('upath'),
 	glob = require('glob');
 
 const
-	parseArgs = require('@v4fire/config/core/parseArgs'),
 	{build, src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
 
