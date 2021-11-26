@@ -432,7 +432,7 @@ npx gulp test:components --test-processes 2 --build-processes 4
 Incremental build for tests:
 
 ```bash
-npx webpack --watch --cache-type memory --client-output b-dummy --public-path
+npx webpack --watch --env cache-type=memory --env client-output=b-dummy --env public-path
 ```
 
 Incremental build for tests (shorthand):

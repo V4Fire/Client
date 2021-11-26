@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.12.2 (2021-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed bugs from migration to `webpack-cli@4`
+
 ## v3.12.1 (2021-11-26)
 
 #### :bug: Bug Fix
