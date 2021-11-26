@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed using `asyncRender` within nested flyweight components `core/component/render-function`
+
 ## v3.12.0 (2021-11-26)
 
 #### :boom: Breaking Change
