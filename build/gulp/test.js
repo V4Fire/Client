@@ -100,16 +100,17 @@ module.exports = function init(gulp = require('gulp')) {
 		}
 
 		const
-			suitArg = args['--suit'] ? `--env suit=${args['--suit']}` : '',
-			extraArgs = Object.entries(
-				parseArgs(args._.slice(1))
-			).map(([key, value]) => {
-				if (value === true) {
-					return `--env ${key}`;
-				}
+			suitArg = args['--suit'] ? `--env suit=${args['--suit']}` : '';
 
-				return `--env ${key}=${value}`;
-			}).join(' ');
+		const extraArgs = Object.entries(
+			parseArgs(args._.slice(1))
+		).map(([key, value]) => {
+			if (value === true) {
+				return `--env ${key}`;
+			}
+
+			return `--env ${key}=${value}`;
+		}).join(' ');
 
 		const argsString = [
 			`client-output=${args['--client-name'] || args['--name']}`,
