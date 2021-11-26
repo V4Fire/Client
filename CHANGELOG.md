@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2021-11-??)
+
+#### :boom: Breaking Change
+
+* Migration to `webpack-cli@4`
+
+#### :house: Internal
+
+* Replaced `uniconf` to `@v4fire/config`
+
 ## v3.11.4 (2021-11-24)
 
 #### :bug: Bug Fix
