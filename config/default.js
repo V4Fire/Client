@@ -43,7 +43,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @example
 		 * ```bash
 		 * # Build only entries foo and bar
-		 * npx webpack --entries foo,bar
+		 * npx webpack --env entries=foo,bar
 		 * ```
 		 */
 		entries: o('entries', {
@@ -154,7 +154,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @example
 		 * ```bash
 		 * # Build the demo page with b-button and b-select
-		 * npx webpack --components b-button,b-select
+		 * npx webpack --env components=b-button,b-select
 		 * ```
 		 */
 		components: o('components', {
@@ -520,10 +520,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @example
 		 * ```bash
-		 * npx webpack --public-path /s3/hash
+		 * npx webpack --env public-path=/s3/hash
 		 *
 		 * # For local build without a static server
-		 * npx webpack --public-path ''
+		 * npx webpack --env public-path
 		 * ```
 		 *
 		 * ```js

@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "build": "gulp build:tsconfig && webpack",
-    "build:file": "gulp build:tsconfig && webpack --public-path",
+    "build:file": "gulp build:tsconfig && webpack --env public-path",
     "build:test": "npx webpack --env client-output=b-dummy --env cache-type=memory --env public-path",
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --env public-path",
@@ -99,7 +99,6 @@
     "nanoid": "^3.1.20",
     "nib": "^1.1.2",
     "node-static": "^0.7.11",
-    "parallel-webpack": "^2.6.0",
     "path-equal": "^1.1.1",
     "portfinder": "^1.0.28",
     "postcss": "^8.3.6",
