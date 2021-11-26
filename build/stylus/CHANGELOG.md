@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.11.? (2021-??-??)
+## v3.??.?? (2021-??-??)
 
 #### :bug: Bug Fix
 
-* Fixed a bug when ds plugins added without a design system at the environment
+* Fixed a bug when a build was failed without passing a design system package name at the environment
 
 ## v3.0.0-rc.176 (2021-04-12)
 
