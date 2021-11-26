@@ -38,11 +38,11 @@ export function wrapCreateElement(
 	nativeCreateElement: CreateElement,
 	baseCtx: ComponentInterface
 ): [CreateElement, Function[]] {
-	const
-		tasks = <Function[]>[],
-		engine = baseCtx.$renderEngine;
+	const tasks = baseCtx[$$.tasks] ?? <Function[]>[];
+	baseCtx[$$.tasks] = tasks;
 
 	const
+		engine = baseCtx.$renderEngine,
 		{supports} = engine;
 
 	const wrappedCreateElement = <CreateElement>function wrappedCreateElement(

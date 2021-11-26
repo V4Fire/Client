@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.11.3 (2021-11-24)
+
+#### :bug: Bug Fix
+
+* Don't immediately destroy functional components
+
 ## v3.8.0 (2021-10-25)
 
 #### :rocket: New Feature

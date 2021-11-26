@@ -11,11 +11,34 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.11.? (2021-??-??)
+## v3.??.?? (2021-??-??)
 
 #### :bug: Bug Fix
 
-* Fixed a bug when build was failed without passing a design system package name at the environment `build/stylus`
+* Fixed using `asyncRender` within nested flyweight components `core/component/render-function`
+* Fixed a bug when a build was failed without passing a design system package name at the environment `build/stylus`
+
+## v3.12.0 (2021-11-26)
+
+#### :boom: Breaking Change
+
+* Migration to `webpack-cli@4`
+
+#### :house: Internal
+
+* Replaced `uniconf` to `@v4fire/config`
+
+## v3.11.4 (2021-11-24)
+
+#### :bug: Bug Fix
+
+* Don't cache computed properties within flyweight components `core/component/accessor`
+
+## v3.11.3 (2021-11-24)
+
+#### :bug: Bug Fix
+
+* Don't immediately destroy functional components `iBlock`
 
 ## v3.11.2 (2021-11-24)
 
