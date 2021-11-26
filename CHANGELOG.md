@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed using `asyncRender` within nested flyweight components `core/component/render-function`
+* Fixed a bug when a build was failed without passing a design system package name at the environment `build/stylus`
 
 ## v3.12.0 (2021-11-26)
 
