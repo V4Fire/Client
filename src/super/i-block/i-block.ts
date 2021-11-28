@@ -2586,7 +2586,25 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	protected override onUnbindHook(): void {
-		this.$destroy();
+		const
+			parent = this.$normalParent;
+
+		const needImmediateDestroy =
+			parent == null ||
+			parent.componentStatus === 'destroyed' ||
+			parent.r === parent;
+
+		if (needImmediateDestroy) {
+			this.$destroy();
+
+		} else {
+			this.async.on(parent, 'on-component-hook:before-destroy', this.$destroy.bind(this), {
+				label: $$.onUnbindHook,
+				group: ':zombie'
+			});
+
+			this.async.clearAll().locked = true;
+		}
 	}
 
 	/**

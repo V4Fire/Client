@@ -65,7 +65,6 @@ async function buildFactory(entry, buildId) {
 
 /**
  * Array of promises with WebPack configs.
- * To speed up build you can use "parallel-webpack" or similar modules.
  */
 const tasks = (async () => {
 	const

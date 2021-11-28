@@ -13,7 +13,7 @@ const
 	dasherize = require('string-dasherize');
 
 const
-	{isObjLiteral, isSvgRequire, isV4Prop, isStaticV4Prop, commaRgxp} = include('build/snakeskin/filters/const');
+	{isObjLiteral, isSvgRequire, isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
 
 module.exports = [
 	/**
@@ -53,25 +53,12 @@ module.exports = [
 				return el;
 			});
 
-			if (key.slice(0, 2) === ':-') {
-				attrs[`:data-${key.slice(2)}`] = el;
+			const
+				dataAttrBind = ':-';
+
+			if (key.startsWith(dataAttrBind)) {
+				attrs[`:data-${key.slice(dataAttrBind.length)}`] = el;
 				delete attrs[key];
-
-			} else if (key === ':key') {
-				const
-					parts = el.join('').split(commaRgxp),
-					val = parts.slice(-1);
-
-				attrs[key] = val;
-
-				$C(parts.slice(0, -1)).forEach((key) => {
-					if (key.slice(0, 2) === ':-') {
-						attrs[`:data-${key.slice(2)}`] = val;
-
-					} else {
-						attrs[key] = val;
-					}
-				});
 
 			} else if (isStaticV4Prop.test(key)) {
 				const

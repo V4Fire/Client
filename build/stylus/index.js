@@ -15,9 +15,9 @@ const
 	url = include('build/stylus/url'),
 	object = include('build/stylus/object'),
 	blendModes = include('build/stylus/blend-modes'),
-	ds = include('build/stylus/ds');
+	pzlr = require('@pzlr/build-core');
 
-module.exports = [
+const plugins = [
 	require('nib')(),
 
 	function addPlugins(api) {
@@ -38,10 +38,15 @@ module.exports = [
 		api.define('log', (...args) => console.log(...args));
 	},
 
-	ds,
 	color,
 	string,
 	url,
 	object,
 	blendModes
 ];
+
+if (pzlr.config.designSystem) {
+	plugins.push(include('build/stylus/ds'));
+}
+
+module.exports = plugins;

@@ -9,10 +9,13 @@
  */
 
 const
-	config = require('config');
+	config = require('config'),
+	through2 = require('through2'),
+	Vinyl = require('vinyl');
 
 const
 	{src, build} = config,
+	{mergeStats, createUnifiedJSONStats} = include('build/helpers/webpack'),
 	{block} = require('@pzlr/build-core');
 
 /**
@@ -40,6 +43,9 @@ const
  *
  * # Cleans the dist directory of a client (browser) package
  * npx gulp clean:client
+ *
+ * # Merge multiple Webpack compilations from a stat file into one
+ * npx gulp stats:merge
  * ```
  */
 module.exports = function init(gulp = require('gulp')) {
@@ -81,5 +87,98 @@ module.exports = function init(gulp = require('gulp')) {
 	gulp.task('watch:client', () => {
 		const t = $.run(`npx webpack --watch ${args}`, {verbosity: 3}).exec();
 		return t.on('error', console.error);
+	});
+
+	/**
+	 * Purify a Webpack stats file from unnecessary content
+	 */
+	gulp.task('stats:purify', () => {
+		const statoscopeConfig = config.statoscope();
+
+		const cutContentBeforeBracket = (content) => content.replace(/^[^{]*/, '');
+		const cutContentAfterBracket = (content) => content.replace(/}[^}]*$/, '}');
+		const selectOnlyBracketsContent = (content) => cutContentAfterBracket(cutContentBeforeBracket(content));
+
+		return gulp
+			.src(statoscopeConfig.statsPath)
+			.pipe($.plumber())
+			.pipe(through2.obj(processStatsFile))
+			.pipe(gulp.dest('./'));
+
+		function processStatsFile(file, _, cb) {
+			const content = selectOnlyBracketsContent(file.contents.toString());
+
+			this.push(
+				new Vinyl({
+					path: statoscopeConfig.mergedStatsPath,
+					contents: Buffer.from(content)
+				})
+			);
+
+			cb();
+		}
+});
+
+	/**
+	 * Merge multiple Webpack compilations from a stat file into one
+	 */
+	 gulp.task('stats:merge', () => {
+			const statoscopeConfig = config.statoscope();
+
+			return gulp
+				.src(statoscopeConfig.statsPath)
+				.pipe($.plumber())
+				.pipe(through2.obj(processStatsFile))
+				.pipe(gulp.dest('./'));
+
+			function processStatsFile(file, _, cb) {
+				const stats = JSON.parse(file.contents.toString());
+
+				this.push(
+					new Vinyl({
+						path: statoscopeConfig.mergedStatsPath,
+						contents: Buffer.from(JSON.stringify(mergeStats(stats)))
+					})
+				);
+
+				cb();
+			}
+		});
+
+	/**
+	 * Patches Webpack stats files
+	 */
+	gulp.task('stats:patch', () => {
+		const
+			statoscopeConfig = config.statoscope();
+
+		let
+			statsA;
+
+		return gulp
+			.src([statoscopeConfig.statsPath, statoscopeConfig.patchStatsPath])
+			.pipe($.plumber())
+			.pipe(through2.obj(processStatsFile))
+			.pipe(gulp.dest('./'));
+
+		function processStatsFile(file, _, cb) {
+			const stats = JSON.parse(file.contents.toString());
+
+			if (!statsA) {
+				statsA = stats;
+				cb();
+
+				return;
+			}
+
+			this.push(
+				new Vinyl({
+					path: statoscopeConfig.patchStatsPath,
+					contents: Buffer.from(createUnifiedJSONStats(statsA, stats))
+				})
+			);
+
+			cb();
+		}
 	});
 };

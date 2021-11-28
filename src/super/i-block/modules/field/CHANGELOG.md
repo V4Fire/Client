@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.10.0 (2021-11-16)
+
+#### :rocket: New Feature
+
+* Now `get` can access properties through promises
+
 ## v3.0.0-rc.203 (2021-06-21)
 
 #### :bug: Bug Fix

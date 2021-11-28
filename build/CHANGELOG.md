@@ -9,11 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.?.? (2021-11-??)
+## v3.10.0 (2021-11-16)
 
 #### :rocket: New Feature
 
-* Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status
+* `webpack`:
+  * Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status
+  * Deleted a Webpack plugin `statoscopePlugin`
+
+* Added a gulp task to transform `stats` reports from Webpack `gulp`
 
 ## v3.6.0 (2021-10-14)
 

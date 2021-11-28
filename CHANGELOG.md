@@ -11,11 +11,91 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.?.? (2021-11-??)
+## v3.12.2 (2021-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed bugs from migration to `webpack-cli@4`
+
+## v3.12.1 (2021-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed using `asyncRender` within nested flyweight components `core/component/render-function`
+* Fixed a bug when a build was failed without passing a design system package name at the environment `build/stylus`
+
+## v3.12.0 (2021-11-26)
+
+#### :boom: Breaking Change
+
+* Migration to `webpack-cli@4`
+
+#### :house: Internal
+
+* Replaced `uniconf` to `@v4fire/config`
+
+## v3.11.4 (2021-11-24)
+
+#### :bug: Bug Fix
+
+* Don't cache computed properties within flyweight components `core/component/accessor`
+
+## v3.11.3 (2021-11-24)
+
+#### :bug: Bug Fix
+
+* Don't immediately destroy functional components `iBlock`
+
+## v3.11.2 (2021-11-24)
+
+#### :house: Internal
+
+* Added a new Gulp task to patch Webpack stats reports `build/gulp`
+
+## v3.11.1 (2021-11-22)
+
+#### :house: Internal
+
+* Added possibility to redefine Statoscope size and download time limit `config`
+
+## v3.11.0 (2021-11-18)
 
 #### :rocket: New Feature
 
-* Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status `build/webpack`
+* Added a new Gulp task to purify Webpack stats reports `build/gulp`
+
+#### :bug: Bug Fix
+
+* Fixed bugs with transforming `stats` reports `build/gulp`
+
+## v3.10.2 (2021-11-16)
+
+#### :bug: Bug Fix
+
+* Now `callControlAction` fully respects promise values `iControlList`
+
+## v3.10.1 (2021-11-16)
+
+#### :bug: Bug Fix
+
+* Now `callControlAction` respects promise values `iControlList`
+
+## v3.10.0 (2021-11-16)
+
+#### :boom: Breaking Change
+
+* Removed legacy filters for `:key` attributes `build/snakeskin`
+
+#### :rocket: New Feature
+
+* Now `get` can access properties through promises `super/i-block/modules/field`
+
+* `build/webpack`:
+  * Deleted a Webpack plugin `statoscopePlugin`
+  * Added a new Webpack plugin `SimpleProgressWebpackPlugin` to view the current build status
+
+* Added a gulp task to transform `stats` reports from Webpack `build/gulp`
+* Added a config for Statoscope `config`
 
 ## v3.9.1 (2021-11-09)
 
