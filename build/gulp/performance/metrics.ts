@@ -1,8 +1,4 @@
-// @ts-check
-
-/// <reference path="../../../ts-definitions/perf.d.ts" />
-
-'use strict';
+/* eslint-disable @typescript-eslint/no-extraneous-class */
 
 /*!
  * V4Fire Client Core
@@ -12,47 +8,41 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-class Metrics {
+export class Metrics {
 
 	/**
 	 * Доступные метрики
-	 * @returns {Perf.Metrics.Type[]}
 	 */
-	static get availableMetrics() {
+	static get availableMetrics(): Perf.Metrics.Type[] {
 		return [
 			'fcp',
 			'tti',
 			'xhr',
 			'long-task',
 			'dom-interactive',
-			'custom'
+			'deltas'
 		];
 	}
 
 	/**
 	 * Начинает запись метрик
-	 *
-	 * @param {Perf.Metrics.Type[]} metrics
-	 * @returns {void}
+	 * @param metrics
 	 */
-	static startRecord(metrics) {
+	static startRecord(metrics: Perf.Metrics.Type[]): Promise<void> {
 		// ...
 	}
 
 	/**
 	 * Останавливает запись метрик
 	 */
-	static stopRecord() {
+	static stopRecord(): Promise<void> {
 		// ...
 	}
 
 	/**
 	 * Возвращает снятые метрики в данный момент времени
-	 * @returns {Perf.Metrics.Data}
 	 */
-	static takeRecords() {
+	static takeRecords(): Promise<Perf.Metrics.Data> {
 		// ...
 	}
 }
-
-module.exports.Metrics = Metrics;

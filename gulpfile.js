@@ -15,11 +15,15 @@ require('config');
  * @param gulp
  */
 module.exports = function initGulp(gulp = require('gulp')) {
+	require('ts-node').register();
+
 	include('@super/gulpfile', __dirname)(gulp);
 
 	include('build/gulp/static')(gulp);
 	include('build/gulp/build')(gulp);
 	include('build/gulp/test')(gulp);
+
+	include('build/gulp/performance')(gulp);
 
 	globalThis.callGulp(module);
 };

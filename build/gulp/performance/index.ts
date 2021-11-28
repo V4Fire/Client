@@ -1,9 +1,3 @@
-// @ts-check
-
-/// <reference path="../../../ts-definitions/perf.d.ts" />
-
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -12,12 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = function init(gulp = require('gulp')) {
-	const
-		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
+import type { Gulp } from 'gulp';
 
+import gulpLoadPlugs from 'gulp-load-plugins';
+import yargs from 'yargs';
+
+import { Validator } from './validator';
+import { Metrics } from './metrics';
+import { Project } from './project';
+import { Logger } from './logger';
+
+module.exports = function init(gulp: Gulp = require('gulp')) {
 	const
-		helpers = require('./helpers');
+		$ = gulpLoadPlugs({scope: ['optionalDependencies']});
 
 	/**
 	 * Запускает перф тесты всех компонентов
@@ -26,11 +27,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 * `metrics` - Метрики которые будут отслеживаться (по умолчанию все)
 	 * `headless` - Если `true` то браузер будет запущен не в `headless` режиме
 	 */
-	gulp.task('test:performance', () => {
-		const
-			yargs = require('yargs');
-
-		yargs
+	gulp.task('test:performance', async () => {
+		const args = yargs
 			.option('build', {
 				default: true,
 				required: false,
@@ -48,9 +46,22 @@ module.exports = function init(gulp = require('gulp')) {
 			.option('metrics', {
 				required: false,
 				isArray: true,
+				default: Metrics.availableMetrics,
 				type: 'string',
 				description: 'Metrics that will be observed during the test'
-			});
+			})
+
+			.argv;
+
+		const
+			{metrics} = args;
+
+		Validator.validateParams({metrics}, true);
+		Logger.logPackagesVersion();
+
+		if (args.build) {
+			await Project.build();
+		}
 	});
 
 	/**
@@ -62,10 +73,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * `headless` - если `true` то браузер будет запущен не в `headless` режиме
 	 */
 	gulp.task('test:performance:run', () => {
-		const
-			yargs = require('yargs');
-
-		yargs
+		const args = yargs
 			.option('test-entry', {
 				required: true,
 				type: 'string',
@@ -89,7 +97,9 @@ module.exports = function init(gulp = require('gulp')) {
 				isArray: true,
 				type: 'string',
 				description: 'Metrics that will be observed during the test'
-			});
+			})
+
+			.argv;
 	});
 
 	/**
@@ -99,15 +109,14 @@ module.exports = function init(gulp = require('gulp')) {
 	 * `entry` - точка входа для теста
 	 */
 	gulp.task('test:performance:snapshot', () => {
-		const
-			yargs = require('yargs');
-
-		yargs
+		const args = yargs
 			.option('test-entry', {
 				required: true,
 				type: 'string',
-				description: 'Test path or glob pattern'
-			});
+				description: 'Path or glob pattern for test file'
+			})
+
+			.argv;
 	});
 };
 

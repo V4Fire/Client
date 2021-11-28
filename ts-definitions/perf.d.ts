@@ -14,6 +14,9 @@ declare namespace Perf {
 	}
 
 	namespace Metrics {
+		/**
+		 * Доступные метрики
+		 */
 		type Type =
 			'fcp' |
 			'tti' |
@@ -22,8 +25,35 @@ declare namespace Perf {
 			'dom-interactive' |
 			'deltas';
 
+		/**
+		 * Данные метрик
+		 */
 		interface Data {
 			// ...
+		}
+	}
+
+	namespace Validator {
+		/**
+		 * Поля доступные для валидации
+		 */
+		interface ParamsToValidate {
+			metrics: unknown;
+		}
+
+		/**
+		 * Результат проверки валидатора
+		 */
+		interface ValidationResult {
+			/**
+			 * Если `true` - результат валидации был успешным
+			 */
+			isOk: boolean;
+
+			/**
+			 * Содержит массив параметров которые зафейлились
+			 */
+			failed: string[];
 		}
 	}
 
