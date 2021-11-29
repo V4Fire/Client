@@ -104,14 +104,14 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
  */
 export function fillMeta(
 	meta: ComponentMeta,
-	constructor: ComponentConstructor<any> = meta.constructor
+	constructor: ComponentConstructor = meta.constructor
 ): ComponentMeta {
 	addMethodsToMeta(meta, constructor);
 
 	const
 		{component, methods, watchers, hooks} = meta;
 
-	const instance = new constructor();
+	const instance = Object.cast<Dictionary>(new constructor());
 	meta.instance = instance;
 
 	if (isAbstractComponent.test(meta.componentName)) {
@@ -152,7 +152,7 @@ export function fillMeta(
 					...watcher,
 					method: nm,
 					args: Array.concat([], watcher.args),
-					handler: <any>method.fn
+					handler: Object.cast(method.fn)
 				});
 			}
 		}

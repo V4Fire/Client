@@ -222,7 +222,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @see [[iInput.formValue]]
 	 */
 	@prop({type: Function, required: false})
-	readonly formValueConverter?: CanArray<ComponentConverter<any>>;
+	readonly formValueConverter?: CanArray<ComponentConverter>;
 
 	/**
 	 * Converter/s that is/are used by the associated form.
@@ -246,7 +246,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 */
 	@prop({type: [Function, Array], required: false})
-	readonly formConverter?: CanArray<ComponentConverter<any>> = unpackIf;
+	readonly formConverter?: CanArray<ComponentConverter> = unpackIf;
 
 	/**
 	 * If false, then a component value isn't cached by the associated form.
@@ -304,7 +304,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	prevValue?: this['Value'];
 
 	override get unsafe(): UnsafeGetter<UnsafeIInput<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/**

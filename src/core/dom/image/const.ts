@@ -30,10 +30,10 @@ export const
 	ID_SYMBOL: unique symbol = Symbol('Element Id');
 
 export const
-	SHADOW_PREVIEW = <any>SHADOW_PREVIEW_SYMBOL,
-	SHADOW_BROKEN = <any>SHADOW_BROKEN_SYMBOL,
-	SHADOW_MAIN = <any>SHADOW_MAIN_SYMBOL,
-	ID = <any>ID_SYMBOL;
+	SHADOW_PREVIEW = SHADOW_PREVIEW_SYMBOL,
+	SHADOW_BROKEN = SHADOW_BROKEN_SYMBOL,
+	SHADOW_MAIN = SHADOW_MAIN_SYMBOL,
+	ID = ID_SYMBOL;
 
 /*
  * @see https://github.com/microsoft/TypeScript/issues/1863
@@ -47,6 +47,6 @@ export const
  * @see https://github.com/microsoft/TypeScript/issues/1863
  */
 export const
-	IS_LOADED = <any>IS_LOADED_SYMBOL,
-	INIT_LOAD = <any>INIT_LOAD_SYMBOL,
-	IS_LOADING = <any>IS_LOADING_SYMBOL;
+	IS_LOADED = IS_LOADED_SYMBOL,
+	INIT_LOAD = INIT_LOAD_SYMBOL,
+	IS_LOADING = IS_LOADING_SYMBOL;

@@ -32,7 +32,7 @@ export default class ProviderDataItem<T = unknown> {
 	 * Link to a data provider
 	 */
 	protected get provider(): CanUndef<typeof Provider> {
-		return <typeof Provider>providers[<any>this.key];
+		return <typeof Provider>providers[this.key];
 	}
 
 	/**

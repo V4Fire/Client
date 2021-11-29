@@ -11,9 +11,10 @@
  * @packageDocumentation
  */
 
-import Friend from 'super/i-block/modules/friend';
-
+import type iBlock from 'super/i-block/i-block';
 import { fakeCtx, modRgxpCache, elRxp } from 'super/i-block/modules/block/const';
+
+import Friend from 'super/i-block/modules/friend';
 import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 
 import type {
@@ -38,7 +39,7 @@ export default class Block extends Friend {
 	 */
 	protected readonly mods?: Dictionary<CanUndef<string>>;
 
-	constructor(component: any) {
+	constructor(component: iBlock) {
 		super(component);
 		this.mods = Object.createDict();
 

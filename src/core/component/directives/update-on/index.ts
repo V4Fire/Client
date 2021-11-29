@@ -55,6 +55,6 @@ function add(el: Element, value: Nullable<CanArray<DirectiveValue>>, vnode: VNod
 	}
 
 	Array.concat([], value).forEach((params) => {
-		engine.add(el, params, <any>ctx);
+		engine.add(el, params, ctx);
 	});
 }

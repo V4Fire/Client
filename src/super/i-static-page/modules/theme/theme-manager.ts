@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { Friend } from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 import type iStaticPage from 'super/i-static-page/i-static-page';
+
+import Friend from 'super/i-block/modules/friend';
 
 /**
  * Class to manage interface themes
@@ -35,7 +37,7 @@ export default class ThemeManager extends Friend {
 	 */
 	protected currentStore!: string;
 
-	constructor(component: any) {
+	constructor(component: iBlock) {
 		super(component);
 
 		if (!Object.isString(THEME)) {

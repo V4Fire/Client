@@ -94,7 +94,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	cancelAnimationFrame(opts: ClearOptionsId<number>): this;
 	cancelAnimationFrame(task?: number | ClearOptionsId<number>): this {
-		return this.clearAnimationFrame(<any>task);
+		return this.clearAnimationFrame(Object.cast(task));
 	}
 
 	/**

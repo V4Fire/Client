@@ -188,7 +188,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly regExps?: Dictionary<RegExp>;
 
 	override get unsafe(): UnsafeGetter<UnsafeIInputText<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/**

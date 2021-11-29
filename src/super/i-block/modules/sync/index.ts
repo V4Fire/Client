@@ -23,8 +23,10 @@ import {
 
 } from 'core/component';
 
-import Friend from 'super/i-block/modules/friend';
+import type iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/const';
+
+import Friend from 'super/i-block/modules/friend';
 
 import type {
 
@@ -65,7 +67,7 @@ export default class Sync extends Friend {
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
-	constructor(component: any) {
+	constructor(component: iBlock) {
 		super(component);
 		this.linksCache = Object.createDict();
 		this.syncLinkCache = new Map();

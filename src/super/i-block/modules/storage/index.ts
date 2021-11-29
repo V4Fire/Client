@@ -15,6 +15,7 @@
 import { asyncLocal, factory, AsyncStorageNamespace } from 'core/kv-storage';
 //#endif
 
+import type iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 /**
@@ -32,7 +33,7 @@ export default class Storage extends Friend {
 	 * @param component
 	 * @param [engine] - custom engine
 	 */
-	constructor(component: any, engine?: Dictionary) {
+	constructor(component: iBlock, engine?: Dictionary) {
 		super(component);
 
 		//#if runtime has core/kv-storage

@@ -187,7 +187,7 @@ export function initMods(component: iBlock): ModsNTable {
 		return mods;
 	}
 
-	return ctx.sync.link<any>(link);
+	return Object.cast(ctx.sync.link(link));
 }
 
 /**

@@ -696,7 +696,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	get r(): this['$root'] {
 		const r = this.$root;
-		return <any>r.$remoteParent?.$root ?? r;
+		return r.$remoteParent?.$root ?? r;
 	}
 
 	/**
@@ -872,7 +872,7 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly vdom!: VDOM;
 
 	override get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/**
@@ -1643,7 +1643,7 @@ export default abstract class iBlock extends ComponentInterface {
 			};
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
-			unwatch = this.$watch(<any>path, opts, handler);
+			unwatch = this.$watch(Object.cast(path), opts, handler);
 		});
 	}
 

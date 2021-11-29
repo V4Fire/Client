@@ -232,7 +232,7 @@ export default class bInput extends iInputText {
 				});
 			});
 
-			return link(<any>o.valueProp);
+			return link(Object.cast(o.valueProp));
 
 			function link(textFromValue: CanUndef<string>): string {
 				const
