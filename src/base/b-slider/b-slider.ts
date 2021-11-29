@@ -375,10 +375,10 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected swiping: boolean = false;
 
 	/**
-	 * True if all animations need to use requestAnimationFrame
+	 * True if all animations need to use `requestAnimationFrame`
 	 */
 	@computed({cache: true})
-	get shouldUseRAF(): boolean {
+	protected get shouldUseRAF(): boolean {
 		return this.browser.is.iOS === false;
 	}
 
@@ -386,7 +386,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * True if we need to minimize the amount of non-essential motion used
 	 */
 	@computed({cache: true})
-	get doReducedMotion(): boolean {
+	protected get needReduceMotion(): boolean {
 		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
@@ -495,12 +495,12 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected updateSlidePosition(): void {
 		const
 			{content} = this;
-		if (!content) {
+		if (content == null) {
 			return;
 		}
 
 		const
-			position = this.doReducedMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
+			position = this.needReduceMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
 
 		content.style.transform = `translate3d(${(-position).px}, 0, 0)`;
 	}
@@ -510,10 +510,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	protected performSliderMove(): void {
 		if (this.shouldUseRAF) {
-			this.async.requestAnimationFrame(() => {
-				this.updateSlidePosition();
-			}, {label: $$.performSliderMove});
-
+			this.async.requestAnimationFrame(this.updateSlidePosition, {label: $$.performSliderMove});
 		} else {
 			this.updateSlidePosition();
 		}
