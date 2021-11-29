@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Removed `typograf-loader`
+
+#### :house: Internal
+
+* Don't apply `symbol-generator-loader` for ES6+
+
 ## v3.7.0 (2021-10-25)
 
 #### :rocket: New Feature

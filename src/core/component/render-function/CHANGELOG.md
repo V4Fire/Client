@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.12.1 (2021-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed using `asyncRender` within nested flyweight components
+
 ## v3.0.0-rc.188 (2021-05-14)
 
 #### :bug: Bug Fix

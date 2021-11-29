@@ -80,7 +80,6 @@ module.exports = async function module({plugins}) {
 			}
 		},
 
-		'typograf-loader',
 		'prelude-loader',
 
 		{

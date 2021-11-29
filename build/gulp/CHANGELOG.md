@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.11.2 (2021-11-24)
+
+#### :house: Internal
+
+* Added a new Gulp task to patch Webpack stats reports
+
+## v3.11.0 (2021-11-18)
+
+#### :rocket: New Feature
+
+* Added a new Gulp task `gulp stats:purify`
+
+#### :bug: Bug Fix
+
+* Fixed bugs with transforming `stats` reports
+
 ## v3.6.1 (2021-10-14)
 
 #### :house: Internal

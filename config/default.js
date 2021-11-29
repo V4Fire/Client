@@ -18,7 +18,7 @@ const
 
 const
 	camelize = require('camelize'),
-	o = require('uniconf/options').option;
+	o = require('@v4fire/config/options').option;
 
 const
 	{nanoid} = require('nanoid');
@@ -43,7 +43,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @example
 		 * ```bash
 		 * # Build only entries foo and bar
-		 * npx webpack --entries foo,bar
+		 * npx webpack --env entries=foo,bar
 		 * ```
 		 */
 		entries: o('entries', {
@@ -154,7 +154,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @example
 		 * ```bash
 		 * # Build the demo page with b-button and b-select
-		 * npx webpack --components b-button,b-select
+		 * npx webpack --env components=b-button,b-select
 		 * ```
 		 */
 		components: o('components', {
@@ -520,10 +520,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @example
 		 * ```bash
-		 * npx webpack --public-path /s3/hash
+		 * npx webpack --env public-path=/s3/hash
 		 *
 		 * # For local build without a static server
-		 * npx webpack --public-path ''
+		 * npx webpack --env public-path
 		 * ```
 		 *
 		 * ```js
@@ -829,6 +829,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @env MERGED_STATS_PATH
 	 * @default `compilation-stats.json`
 	 *
+	 * @cli patchStatsPath
+	 * @env PATCH_STATS_PATH
+	 * @default `compilation-stats.json`
+	 *
 	 * @cli statoscope-report
 	 * @env STATOSCOPE_REPORT
 	 * @default `false`
@@ -837,7 +841,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @default `1024``
 	 *
 	 * @cli entryDownloadTimeLimits
-	 * @default `1000`
+	 * @default `250`
 	 *
 	 * @param {object} [def] - default value
 	 * @returns {!Object}
@@ -854,17 +858,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true
 			}),
 
+			patchStatsPath: o('patch-stats-path', {
+				default: def.path,
+				env: true
+			}),
+
 			openReport: o('statoscope-report', {
 				default: false,
 				env: true
 			}),
 
 			entryDownloadSizeLimits: o('entry-download-size-limits', {
-				default: 1024
+				default: 1024,
+				env: true
 			}),
 
 			entryDownloadTimeLimits: o('entry-download-time-limits', {
-				default: 1000
+				default: 250,
+				env: true
 			})
 		};
 	},

@@ -120,12 +120,13 @@ const requireStatsFields = [
  * @returns {!Object}
  */
 function mergeStats(stats) {
-	return stats.children.reduce((acc, compilation) => {
+	return stats.children.reduce((acc, compilation, index) => {
 		if (index === 0) {
-			const allFields = Object.keys(item);
+			const allFields = Object.keys(compilation);
+
 			allFields.forEach((field) => {
-				if (!fields.includes(field)) {
-					acc[field] = item[field];
+				if (!requireStatsFields.includes(field)) {
+					acc[field] = compilation[field];
 				}
 			});
 		}
@@ -154,3 +155,44 @@ function mergeStats(stats) {
 }
 
 exports.mergeStats = mergeStats;
+
+/**
+ * Returns a new one Webpack stats JSON by merging the specified two stats objects
+ *
+ * @param {!Object} statsA
+ * @param {!Object} statsB
+ * @returns {string}
+ */
+function createUnifiedJSONStats(statsA, statsB) {
+	const nameToIdentifier = {};
+
+	statsA.modules.forEach((module) => {
+		nameToIdentifier[module.name] = module.identifier;
+	});
+
+	statsB.modules.forEach((module) => {
+		if (nameToIdentifier[module.name]) {
+			module.identifier = nameToIdentifier[module.name];
+		}
+	});
+
+	statsB.name = statsA.name;
+
+	const hashA = getTmpHashFromStats(statsA);
+	const hashB = getTmpHashFromStats(statsB);
+
+	return JSON.stringify(statsB).replace(new RegExp(hashB, 'g'), hashA);
+}
+
+exports.createUnifiedJSONStats = createUnifiedJSONStats;
+
+/**
+ * Extracts temp folder hash from the passed Webpack stats object
+ *
+ * @param {!Object} stats
+ * @returns {string}
+ */
+function getTmpHashFromStats(stats) {
+	const {request} = stats.chunks[0].origins[0];
+	return /([\\/])tmp\1(?<hash>.*?)\1/.exec(request).groups.hash;
+}

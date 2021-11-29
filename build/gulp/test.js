@@ -14,7 +14,8 @@
 
 const
 	os = require('os'),
-	arg = require('arg');
+	arg = require('arg'),
+	parseArgs = require('@v4fire/config/core/parseArgs');
 
 const
 	path = require('upath'),
@@ -99,16 +100,26 @@ module.exports = function init(gulp = require('gulp')) {
 		}
 
 		const
-			suitArg = args['--suit'] ? `--suit ${args['--suit']}` : '',
-			extraArgs = args._.slice(1).join(' ');
+			suitArg = args['--suit'] ? `--env suit=${args['--suit']}` : '';
+
+		const extraArgs = Object.entries(
+			parseArgs(args._.slice(1))
+		).map(([key, value]) => {
+			if (value === true) {
+				return `--env ${key}`;
+			}
+
+			return `--env ${key}=${value}`;
+		}).join(' ');
 
 		const argsString = [
-			['--client-output', args['--client-name'] || args['--name']],
-			['--components', args['--name']],
-			['--cache-type', 'memory'],
-			['--public-path', ''],
-			['--es', 'ES2019']
-		].flat().join(' ');
+			`client-output=${args['--client-name'] || args['--name']}`,
+			`components=${args['--name']}`,
+			'cache-type=memory',
+			'progress=false',
+			'public-path',
+			'es=ES2019'
+		].map((el) => ['--env', el]).flat().join(' ');
 
 		console.log(`webpack version: ${require('webpack/package.json').version}`);
 
