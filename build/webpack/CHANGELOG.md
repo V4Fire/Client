@@ -15,6 +15,10 @@ Changelog
 
 * Removed `typograf-loader`
 
+#### :house: Internal
+
+* Don't apply `symbol-generator-loader` for ES6+
+
 ## v3.7.0 (2021-10-25)
 
 #### :rocket: New Feature
