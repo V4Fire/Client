@@ -12,31 +12,21 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		: config = require('config').build
+		< b-button @click = toggleSomeField
+			Toggle someField
 
-		- forEach config.components => @component
-			- if config.inspectComponents
-				< b-v4-component-demo
-					< ${@name} &
-						v-func = false |
-						slot-scope = {ctx} |
-						@statusReady = ctx.debug |
-						${@attrs}
-					.
-						- if Object.isString(@content)
-							+= @content
+		< hr
 
-						- else
-							- forEach @content => el, key
-								< template #${key} = {ctx}
-									+= el
+		< template v-if = someField
+			{{ someField }}
 
-			- else
-				< ${@name} ${@attrs}
-					- if Object.isString(@content)
-						+= @content
+			< b-button
+				True button
 
-					- else
-						- forEach @content => el, key
-							< template #${key} = {ctx}
-								+= el
+			{{ someField }}
+
+		< template v-else
+			{{ someField }}
+
+			< b-bottom-slide
+				test
