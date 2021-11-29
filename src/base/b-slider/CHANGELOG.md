@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (????-??-??)
+
+#### :house: Internal
+
+* Wrapped the animations in `requestAnimationFrame`.
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :memo: Documentation
