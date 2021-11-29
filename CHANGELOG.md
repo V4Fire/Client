@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.13.0 (2021-11-29)
+
+#### :boom: Breaking Change
+
+* Removed `typograf-loader` `build/webpack`
+
+#### :house: Internal
+
+* Don't apply `symbol-generator-loader` for ES6+ `build/webpack`
+
 ## v3.12.2 (2021-11-26)
 
 #### :bug: Bug Fix
