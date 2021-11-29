@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (????-??-??)
+
+#### :house: Internal
+
+* `src/base/b-slider` now has its animations wrapped in `requestAnimationFrame`.
+
 ## v3.13.0 (2021-11-29)
 
 #### :boom: Breaking Change
