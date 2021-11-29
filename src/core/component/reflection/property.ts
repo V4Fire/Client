@@ -253,11 +253,11 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	info.type = 'system';
 	return info;
 
-	function resolveCtx(component: any): ComponentInterface {
-		if (component?.$remoteParent != null) {
+	function resolveCtx(component: object): ComponentInterface {
+		if (Object.cast<Dictionary>(component).$remoteParent != null) {
 			return Object.getPrototypeOf(component);
 		}
 
-		return component;
+		return Object.cast(component);
 	}
 }

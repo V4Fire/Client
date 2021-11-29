@@ -95,7 +95,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					l = customWatcher[2];
 
 				if (l !== '') {
-					watcherCtx = Object.get<any>(component, l) ?? Object.get(globalThis, l) ?? component;
+					watcherCtx = Object.get(component, l) ?? Object.get(globalThis, l) ?? component;
 					watchPath = customWatcher[3].toString();
 
 				} else {

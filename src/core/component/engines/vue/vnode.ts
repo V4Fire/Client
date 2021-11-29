@@ -26,10 +26,12 @@ export function cloneVNode(vnode: VNode): VNode {
  * @param component - component instance
  * @param renderCtx - render context
  */
-export function patchVNode(vnode: VNode, component: ComponentInterface, renderCtx: RenderContext): void {
+export function patchVNode(vnode: VNode, component: ComponentInterface, renderCtx: RenderContext): VNode {
 	patchComponentVData(vnode.data, renderCtx.data, {
 		patchAttrs: Boolean(component.unsafe.meta.params.inheritAttrs)
 	});
+
+	return vnode;
 }
 
 /**

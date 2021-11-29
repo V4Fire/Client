@@ -73,7 +73,7 @@ export default class Daemons extends Friend {
 		return (<typeof iBlock>this.ctx.instance.constructor).daemons;
 	}
 
-	constructor(component: any) {
+	constructor(component: iBlock) {
 		super(component);
 		this.init();
 	}
@@ -135,7 +135,7 @@ export default class Daemons extends Friend {
 				Object.delete(asyncOptions, 'label');
 			}
 
-			ctx.async.setImmediate(() => fn.apply(ctx, args), <any>asyncOptions);
+			ctx.async.setImmediate(() => fn.apply(ctx, args), Object.cast(asyncOptions));
 
 		} else {
 			return fn.apply(ctx, args);

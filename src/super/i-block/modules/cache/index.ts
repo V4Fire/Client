@@ -35,7 +35,8 @@ export default class Cache<K extends string = string, V = unknown> {
 	 * @param [cacheKey] - cache key
 	 */
 	create(nms: K, cacheKey?: string): Dictionary<V> {
-		const cache = this.dict[nms] ?? Object.createDict();
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		const cache = this.dict[nms] ?? Object.createDict<V>();
 		this.dict[nms] = cache;
 
 		if (cacheKey != null) {
@@ -43,6 +44,6 @@ export default class Cache<K extends string = string, V = unknown> {
 			return cache[cacheKey];
 		}
 
-		return <Dictionary<V>>cache;
+		return Object.cast(cache);
 	}
 }

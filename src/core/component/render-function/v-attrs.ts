@@ -172,7 +172,7 @@ export function applyDynamicAttrs(vData: VNodeData, component?: ComponentMeta): 
 					dir.modifiers = modifiers;
 				}
 
-				directiveOpts.push(<any>dir);
+				directiveOpts.push(Object.cast(dir));
 
 			} else if (key === 'staticClass') {
 				vData.staticClass = Array.concat([], vData.staticClass, val).join(' ');

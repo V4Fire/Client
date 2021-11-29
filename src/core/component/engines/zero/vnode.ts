@@ -15,7 +15,7 @@ import * as _ from 'core/component/engines/zero/helpers';
  * @param vnode
  */
 export function cloneVNode(vnode: VNode): VNode {
-	return (<any>vnode).cloneNode(true);
+	return Object.cast(Object.cast<Node>(vnode).cloneNode(true));
 }
 
 /**
@@ -51,5 +51,5 @@ export function renderVNode(vnodes: VNode[], parent: ComponentInterface): Node[]
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 export function renderVNode(vnode: CanArray<VNode>, parent: ComponentInterface): CanArray<Node> {
-	return <any>vnode;
+	return Object.cast(vnode);
 }
