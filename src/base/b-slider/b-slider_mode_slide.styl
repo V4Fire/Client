@@ -22,6 +22,9 @@ b-slider_mode_slide extends b-slider
 
 		transition transform 0.3s
 
+		@media (prefers-reduced-motion reduce)
+			transition none
+
 	/mode &__view-content > *
 		flex-shrink 0
 
