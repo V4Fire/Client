@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.13.1 (2021-12-01)
+## v3.??.?? (2021-12-??)
 
 #### :house: Internal
 
-* Updated `node` and `npm` in `ci`
+* Bumped `node/npm` within `ci`
 
 ## v3.13.0 (2021-11-29)
 
