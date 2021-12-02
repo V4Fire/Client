@@ -61,7 +61,7 @@ export function attachDynamicWatcher(
 			needPack = args.length === 0;
 
 		if (!needPack) {
-			mutations = [<any>[mutations, ...args]];
+			mutations = [Object.cast([mutations, ...args])];
 		}
 
 		const

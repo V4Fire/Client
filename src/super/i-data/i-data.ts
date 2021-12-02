@@ -155,13 +155,13 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * This function (or a list of functions) transforms initial provider data before saving to `db`.
 	 */
 	@prop({type: [Function, Array], required: false})
-	readonly dbConverter?: CanArray<ComponentConverter<any>>;
+	readonly dbConverter?: CanArray<ComponentConverter>;
 
 	/**
 	 * Converter/s from the raw `db` to the component fields
 	 */
 	@prop({type: [Function, Array], required: false})
-	readonly componentConverter?: CanArray<ComponentConverter<any>>;
+	readonly componentConverter?: CanArray<ComponentConverter>;
 
 	/**
 	 * A function to filter all "default" requests, i.e., all requests that were produced implicitly,
@@ -210,7 +210,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly checkDBEquality: CheckDBEquality = true;
 
 	override get unsafe(): UnsafeGetter<UnsafeIData<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/**
@@ -563,10 +563,10 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	get<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
-			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams('get');
+			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams<D>('get');
 
 		if (Object.isArray(args)) {
-			return this.createRequest('get', ...<any>args);
+			return this.createRequest('get', ...Object.cast<[RequestQuery, CreateRequestOptions<D>]>(args));
 		}
 
 		return Promise.resolve(undefined);
@@ -585,7 +585,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams('peek');
 
 		if (Object.isArray(args)) {
-			return this.createRequest('peek', ...<any>args);
+			return this.createRequest('peek', ...Object.cast<[RequestQuery, CreateRequestOptions<D>]>(args));
 		}
 
 		return Promise.resolve(undefined);
@@ -604,7 +604,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('post');
 
 		if (Object.isArray(args)) {
-			return this.createRequest('post', ...<any>args);
+			return this.createRequest('post', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
 		}
 
 		return Promise.resolve(undefined);
@@ -623,7 +623,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('add');
 
 		if (Object.isArray(args)) {
-			return this.createRequest('add', ...<any>args);
+			return this.createRequest('add', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
 		}
 
 		return Promise.resolve(undefined);
@@ -642,7 +642,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('upd');
 
 		if (Object.isArray(args)) {
-			return this.createRequest('upd', ...<any>args);
+			return this.createRequest('upd', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
 		}
 
 		return Promise.resolve(undefined);
@@ -661,7 +661,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('del');
 
 		if (Object.isArray(args)) {
-			return this.createRequest('del', ...<any>args);
+			return this.createRequest('del', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
 		}
 
 		return Promise.resolve(undefined);
@@ -1043,14 +1043,14 @@ export default abstract class iData extends iBlock implements iProgress {
 					rawRequest;
 
 				if (Object.isFunction(method)) {
-					rawRequest = method(<any>body, reqParams);
+					rawRequest = method(Object.cast(body), reqParams);
 
 				} else {
 					if (this.dp == null) {
 						throw new ReferenceError('The data provider to request is not defined');
 					}
 
-					rawRequest = this.dp[method](<any>body, reqParams);
+					rawRequest = this.dp[method](Object.cast(body), reqParams);
 				}
 
 				return this.async.request<RequestResponseObject<D>>(rawRequest, asyncParams);

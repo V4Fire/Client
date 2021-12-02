@@ -25,17 +25,19 @@ export type ProxyGetterType =
 	'attr' |
 	'mounted';
 
-export type ProxyGetter = (ctx: object) => {
-	key: string;
+export type ProxyGetter<T extends object = object> = (ctx: T) => {
+	key: string | null;
 	value: object;
 	watch?(path: string, handler: Function): Function;
 };
 
-export interface RenderEngine {
+export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
+
+export interface RenderEngine<T extends object = object> {
 	minimalCtx: object;
 
 	supports: RenderEngineFeatures;
-	proxyGetters: Record<ProxyGetterType, ProxyGetter>;
+	proxyGetters: ProxyGetters<T>;
 
 	cloneVNode(vnode: VNode): VNode;
 	patchVNode(vnode: VNode, component: ComponentInterface, renderCtx: RenderContext): VNode;

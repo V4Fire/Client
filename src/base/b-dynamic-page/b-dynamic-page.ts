@@ -193,7 +193,7 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	override get unsafe(): UnsafeGetter<UnsafeBDynamicPage<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	protected override readonly componentStatusStore: ComponentStatus = 'ready';

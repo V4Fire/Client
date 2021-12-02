@@ -53,7 +53,7 @@ export default class VDOM extends Friend {
 	render(data: VNode): Node;
 	render(data: VNode[]): Node[];
 	render(data: CanArray<VNode>): CanArray<Node> {
-		return this.ctx.$renderEngine.renderVNode(<any>data, this.ctx);
+		return this.ctx.$renderEngine.renderVNode(Object.cast(data), this.ctx);
 	}
 
 	/**
