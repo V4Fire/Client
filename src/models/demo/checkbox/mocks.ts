@@ -9,10 +9,16 @@
 export default {
 	GET: [
 		{
-			response: {
-				value: 'foo',
-				label: 'Foo',
-				check: true
+			response(_: any, res: any): string {
+				res.status = 400;
+				return JSON.stringify({
+					error: {
+						code: 400,
+						message: 'test message',
+						description: 'test desc',
+						title: 'test tile'
+					}
+				});
 			}
 		}
 	]

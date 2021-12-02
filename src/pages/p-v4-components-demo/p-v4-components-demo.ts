@@ -11,11 +11,14 @@
  * @packageDocumentation
  */
 
+import Checkbox from 'models/demo/checkbox';
+
 //#if demo
 import 'models/demo/session';
 //#endif
 
 import iStaticPage, { component, system, field } from 'super/i-static-page/i-static-page';
+import RequestError from 'core/request/error';
 
 export * from 'super/i-static-page/i-static-page';
 
@@ -46,5 +49,27 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	protected mounted(): void {
 		console.timeEnd('Render');
 		console.timeEnd('Initializing');
+	}
+
+	protected async makeRequest(): Promise<void> {
+		let errorFromServerResponse;
+
+		try {
+			// https://beeceptor.com/console/v4-test-json
+			// отвечает со статусом 400 и телом ответа {"error":{"code":400,"message":"test message","description":"test desc","title":"test tile"}}
+			await new Checkbox().get();
+
+		} catch (err) {
+			try {
+				if (err instanceof RequestError) {
+					errorFromServerResponse = await err.details.response?.json();
+				}
+
+			} catch (e) {
+					console.log('error while parsing json', e);
+			}
+		}
+
+		console.log('error from server response', errorFromServerResponse);
 	}
 }
