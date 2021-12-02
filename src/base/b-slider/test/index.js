@@ -28,5 +28,5 @@ module.exports = async (page, params) => {
 		test = u.getCurrentTest();
 
 	await h.utils.setup(page, params.context);
-	return test(page);
+	return test(page, params);
 };
