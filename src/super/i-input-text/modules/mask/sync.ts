@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from '~/super/i-input-text/i-input-text';
+import type iInputText from '@src/super/i-input-text/i-input-text';
 
-import { fitForText, convertCursorPositionToRaw } from '~/super/i-input-text/modules/mask/helpers';
-import type { SyncMaskWithTextOptions } from '~/super/i-input-text/modules/mask/interface';
+import { fitForText, convertCursorPositionToRaw } from '@src/super/i-input-text/modules/mask/helpers';
+import type { SyncMaskWithTextOptions } from '@src/super/i-input-text/modules/mask/interface';
 
 /**
  * Synchronizes the component mask with the specified text value.

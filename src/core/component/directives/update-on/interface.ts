@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { EventEmitterLike } from '~/core/async';
-import type { WatchOptions, VNodeDirective } from '~/core/component';
+import type { EventEmitterLike } from '@src/core/async';
+import type { WatchOptions, VNodeDirective } from '@src/core/component';
 
 export interface DirectiveOptions extends VNodeDirective {
 	modifiers: {

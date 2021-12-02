@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNode, RenderObject, RenderContext as ComponentRenderContext } from '~/core/component';
+import type { VNode, RenderObject, RenderContext as ComponentRenderContext } from '@src/core/component';
 
 export type RenderFn = (params?: Dictionary) => VNode;
 

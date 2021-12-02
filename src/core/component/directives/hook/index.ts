@@ -13,10 +13,10 @@
  * @packageDocumentation
  */
 
-import { ComponentEngine } from '~/core/component/engines';
-import type { DirectiveOptions } from '~/core/component/directives/hook/interface';
+import { ComponentEngine } from '@src/core/component/engines';
+import type { DirectiveOptions } from '@src/core/component/directives/hook/interface';
 
-export * from '~/core/component/directives/hook/interface';
+export * from '@src/core/component/directives/hook/interface';
 
 ComponentEngine.directive('hook', {
 	bind(el: Element, opts: DirectiveOptions): void {

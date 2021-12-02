@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ValidatorParams, ValidatorError } from '~/super/i-input/i-input';
+import type { ValidatorParams, ValidatorError } from '@src/super/i-input/i-input';
 
 /**
  * Parameters to validate inputted strings

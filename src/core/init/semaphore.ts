@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import flags from '~/core/init/flags';
-import Component, { globalRootComponent, rootComponents } from '~/core/component';
-import { createsAsyncSemaphore } from '~/core/event';
+import flags from '@src/core/init/flags';
+import Component, { globalRootComponent, rootComponents } from '@src/core/component';
+import { createsAsyncSemaphore } from '@src/core/event';
 
 export default createsAsyncSemaphore(async () => {
 	const

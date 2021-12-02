@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { PropOptions } from '~/core/component/decorators';
-import type { WatchObject } from '~/core/component/interface/watch';
-import type { ComponentConstructor, RenderFunction, ModsDecl } from '~/core/component/interface';
+import type { PropOptions } from '@src/core/component/decorators';
+import type { WatchObject } from '@src/core/component/interface/watch';
+import type { ComponentConstructor, RenderFunction, ModsDecl } from '@src/core/component/interface';
 
 import type {
 
@@ -21,9 +21,9 @@ import type {
 	ComponentDirectiveOptions,
 	ComponentWatchDependencies
 
-} from '~/core/component/meta/interface/types';
+} from '@src/core/component/meta/interface/types';
 
-export * from '~/core/component/meta/interface/types';
+export * from '@src/core/component/meta/interface/types';
 
 /**
  * Abstract representation of a component

@@ -15,10 +15,10 @@
 import 'models/demo/input';
 //#endif
 
-import symbolGenerator from '~/core/symbol';
-import SyncPromise from '~/core/promise/sync';
+import symbolGenerator from '@src/core/symbol';
+import SyncPromise from '@src/core/promise/sync';
 
-import { deprecated } from '~/core/functools/deprecation';
+import { deprecated } from '@src/core/functools/deprecation';
 
 import iInputText, {
 
@@ -33,16 +33,16 @@ import iInputText, {
 	TextValidators,
 	ValidatorsDecl
 
-} from '~/super/i-input-text/i-input-text';
+} from '@src/super/i-input-text/i-input-text';
 
-import Validators from '~/form/b-input/modules/validators';
-import type { Value, FormValue } from '~/form/b-input/interface';
+import Validators from '@src/form/b-input/modules/validators';
+import type { Value, FormValue } from '@src/form/b-input/interface';
 
-export * from '~/super/i-input/i-input';
-export * from '~/form/b-input/interface';
+export * from '@src/super/i-input/i-input';
+export * from '@src/form/b-input/interface';
 
-export * from '~/form/b-input/modules/validators';
-export { default as InputValidators } from '~/form/b-input/modules/validators';
+export * from '@src/form/b-input/modules/validators';
+export { default as InputValidators } from '@src/form/b-input/modules/validators';
 
 export { Value, FormValue };
 

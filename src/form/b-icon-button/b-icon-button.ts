@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import bButton, { component } from '~/form/b-button/b-button';
+import bButton, { component } from '@src/form/b-button/b-button';
 
-export * from '~/form/b-button/b-button';
+export * from '@src/form/b-button/b-button';
 
 /**
  * Component to create a button based on icon

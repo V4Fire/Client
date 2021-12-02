@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { InViewInitOptions, InViewAdapteeInstance } from '~/core/dom/in-view/interface';
+import type { InViewInitOptions, InViewAdapteeInstance } from '@src/core/dom/in-view/interface';
 
 /**
  * Returns the first adaptee which is acceptable

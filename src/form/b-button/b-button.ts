@@ -11,22 +11,22 @@
  * @packageDocumentation
  */
 
-import { derive } from '~/core/functools/trait';
+import { derive } from '@src/core/functools/trait';
 
 //#if runtime has core/data
 import 'core/data';
 //#endif
 
-import type bForm from '~/form/b-form/b-form';
+import type bForm from '@src/form/b-form/b-form';
 
-import iProgress from '~/traits/i-progress/i-progress';
-import iAccess from '~/traits/i-access/i-access';
-import iVisible from '~/traits/i-visible/i-visible';
-import iWidth from '~/traits/i-width/i-width';
-import iSize from '~/traits/i-size/i-size';
+import iProgress from '@src/traits/i-progress/i-progress';
+import iAccess from '@src/traits/i-access/i-access';
+import iVisible from '@src/traits/i-visible/i-visible';
+import iWidth from '@src/traits/i-width/i-width';
+import iSize from '@src/traits/i-size/i-size';
 
-import iOpenToggle, { CloseHelperEvents } from '~/traits/i-open-toggle/i-open-toggle';
-import type { HintPosition } from '~/global/g-hint/interface';
+import iOpenToggle, { CloseHelperEvents } from '@src/traits/i-open-toggle/i-open-toggle';
+import type { HintPosition } from '@src/global/g-hint/interface';
 
 import iData, {
 
@@ -42,13 +42,13 @@ import iData, {
 
 	RequestFilter
 
-} from '~/super/i-data/i-data';
+} from '@src/super/i-data/i-data';
 
-import type { ButtonType } from '~/form/b-button/interface';
+import type { ButtonType } from '@src/form/b-button/interface';
 
-export * from '~/super/i-data/i-data';
-export * from '~/traits/i-open-toggle/i-open-toggle';
-export * from '~/form/b-button/interface';
+export * from '@src/super/i-data/i-data';
+export * from '@src/traits/i-open-toggle/i-open-toggle';
+export * from '@src/form/b-button/interface';
 
 interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 

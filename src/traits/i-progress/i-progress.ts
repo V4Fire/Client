@@ -13,8 +13,8 @@
  * @packageDocumentation
  */
 
-import type iBlock from '~/super/i-block/i-block';
-import type { ModsDecl, ModEvent } from '~/super/i-block/i-block';
+import type iBlock from '@src/super/i-block/i-block';
+import type { ModsDecl, ModEvent } from '@src/super/i-block/i-block';
 
 export default abstract class iProgress {
 	/**

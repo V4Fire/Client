@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type bSelect from '~/form/b-select/b-select';
-import type { ModEvent, SetModEvent } from '~/super/i-input-text';
+import type bSelect from '@src/form/b-select/b-select';
+import type { ModEvent, SetModEvent } from '@src/super/i-input-text';
 
-import { openedSelect } from '~/form/b-select/const';
+import { openedSelect } from '@src/form/b-select/const';
 
 /**
  * Handler: value changing of a native component `<select>`

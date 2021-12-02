@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { HintPosition } from '~/global/g-hint/interface';
-import type { ModsTable } from '~/super/i-data/i-data';
+import type { HintPosition } from '@src/global/g-hint/interface';
+import type { ModsTable } from '@src/super/i-data/i-data';
 
 export interface Item extends Dictionary {
 	/**

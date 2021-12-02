@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import iBlock, { component, system, wait, prop } from '~/super/i-block/i-block';
+import iBlock, { component, system, wait, prop } from '@src/super/i-block/i-block';
 
-export * from '~/super/i-block/i-block';
+export * from '@src/super/i-block/i-block';
 
 /**
  * Component to inspect another components

@@ -11,25 +11,25 @@
  * @packageDocumentation
  */
 
-import { memoize } from '~/core/promise/sync';
-import { deprecated } from '~/core/functools/deprecation';
-import { wrapAsDelegateHandler } from '~/core/dom';
+import { memoize } from '@src/core/promise/sync';
+import { deprecated } from '@src/core/functools/deprecation';
+import { wrapAsDelegateHandler } from '@src/core/dom';
 
-import type { InViewInitOptions, InViewAdapter } from '~/core/dom/in-view';
-import type { ResizeWatcherInitOptions } from '~/core/dom/resize-observer';
+import type { InViewInitOptions, InViewAdapter } from '@src/core/dom/in-view';
+import type { ResizeWatcherInitOptions } from '@src/core/dom/resize-observer';
 
-import type { AsyncOptions } from '~/core/async';
-import type { ComponentElement } from '~/core/component';
+import type { AsyncOptions } from '@src/core/async';
+import type { ComponentElement } from '@src/core/component';
 
-import iBlock from '~/super/i-block/i-block';
-import Block from '~/super/i-block/modules/block';
-import Friend from '~/super/i-block/modules/friend';
+import iBlock from '@src/super/i-block/i-block';
+import Block from '@src/super/i-block/modules/block';
+import Friend from '@src/super/i-block/modules/friend';
 
-import { componentRgxp } from '~/super/i-block/modules/dom/const';
-import { ElCb, inViewInstanceStore, DOMManipulationOptions } from '~/super/i-block/modules/dom/interface';
+import { componentRgxp } from '@src/super/i-block/modules/dom/const';
+import { ElCb, inViewInstanceStore, DOMManipulationOptions } from '@src/super/i-block/modules/dom/interface';
 
-export * from '~/super/i-block/modules/dom/const';
-export * from '~/super/i-block/modules/dom/interface';
+export * from '@src/super/i-block/modules/dom/const';
+export * from '@src/super/i-block/modules/dom/interface';
 
 /**
  * Class provides helper methods to work with a component' DOM tree
@@ -47,7 +47,7 @@ export default class DOM extends Friend {
 		}
 
 		return this.ctx.tmp[inViewInstanceStore] = this.async.promise(
-			memoize('core/dom/in-view', () => import('~/core/dom/in-view'))
+			memoize('core/dom/in-view', () => import('@src/core/dom/in-view'))
 		).then(({inViewFactory}) => inViewFactory());
 	}
 
@@ -447,7 +447,7 @@ export default class DOM extends Friend {
 	 */
 	watchForResize(el: Element, resizeOpts: ResizeWatcherInitOptions, asyncOpts?: AsyncOptions): Function {
 		const ResizeWatcher = this.async.promise(
-			memoize('core/dom/resize-observer', () => import('~/core/dom/resize-observer'))
+			memoize('core/dom/resize-observer', () => import('@src/core/dom/resize-observer'))
 		);
 
 		const destructor = this.ctx.async.worker(

@@ -11,12 +11,12 @@
  * @packageDocumentation
  */
 
-import { ImageLoader } from '~/core/dom/image';
+import { ImageLoader } from '@src/core/dom/image';
 
-import { ComponentEngine, VNode } from '~/core/component/engines';
-import type { DirectiveOptions } from '~/core/component/directives/image/interface';
+import { ComponentEngine, VNode } from '@src/core/component/engines';
+import type { DirectiveOptions } from '@src/core/component/directives/image/interface';
 
-export * from '~/core/dom/image';
+export * from '@src/core/dom/image';
 
 ComponentEngine.directive('image', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions, vnode: VNode): void {

@@ -18,7 +18,7 @@ import type {
 
 } from '@v4fire/core/core/async/interface';
 
-import type Async from '~/core/async';
+import type Async from '@src/core/async';
 
 export * from '@v4fire/core/core/async/interface';
 

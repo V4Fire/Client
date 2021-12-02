@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Session, { provider } from '~/models/modules/session';
+import Session, { provider } from '@src/models/modules/session';
 
-export * from '~/models/modules/session';
+export * from '@src/models/modules/session';
 
 @provider
 export default class Demo extends Session {

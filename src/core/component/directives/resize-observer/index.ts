@@ -6,11 +6,11 @@
 * https://github.com/V4Fire/Client/blob/master/LICENSE
 */
 
-import { ComponentEngine, VNode } from '~/core/component/engines';
-import type { ComponentInterface } from '~/core/component/interface';
+import { ComponentEngine, VNode } from '@src/core/component/engines';
+import type { ComponentInterface } from '@src/core/component/interface';
 
-import { ResizeWatcher, ResizeWatcherInitOptions } from '~/core/dom/resize-observer';
-import { DIRECTIVE_BIND } from '~/core/component/directives/resize-observer/const';
+import { ResizeWatcher, ResizeWatcherInitOptions } from '@src/core/dom/resize-observer';
+import { DIRECTIVE_BIND } from '@src/core/component/directives/resize-observer/const';
 
 import type {
 
@@ -18,11 +18,11 @@ import type {
 	ResizeWatcherObservable,
 	ResizeWatcherObserverOptions
 
-} from '~/core/component/directives/resize-observer/interface';
+} from '@src/core/component/directives/resize-observer/interface';
 
-export * from '~/core/component/directives/resize-observer/interface';
-export * from '~/core/component/directives/resize-observer/const';
-export * from '~/core/dom/resize-observer';
+export * from '@src/core/component/directives/resize-observer/interface';
+export * from '@src/core/component/directives/resize-observer/const';
+export * from '@src/core/dom/resize-observer';
 
 ComponentEngine.directive('resize-observer', {
 	inserted(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {

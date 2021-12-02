@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type Async from '~/core/async';
+import type Async from '@src/core/async';
 import type {
 
 	AsyncOnOptions,
@@ -16,7 +16,7 @@ import type {
 	ProxyCb,
 	EventEmitterLike as AsyncEventEmitterLike
 
-} from '~/core/async';
+} from '@src/core/async';
 
 export interface EventEmitterLike extends AsyncEventEmitterLike {
 	fire?: Function;

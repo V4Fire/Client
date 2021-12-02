@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import log from '~/core/log';
+import log from '@src/core/log';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**

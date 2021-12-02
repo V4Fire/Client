@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import type { SetOptions, RemoveOptions } from '~/core/cookies/interface';
+import type { SetOptions, RemoveOptions } from '@src/core/cookies/interface';
 
-export * from '~/core/cookies/interface';
+export * from '@src/core/cookies/interface';
 
 /**
  * Returns true, if a cookie by the specified name is defined

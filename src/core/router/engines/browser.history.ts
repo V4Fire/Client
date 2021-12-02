@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { deprecate } from '~/core/functools/deprecation';
+import { deprecate } from '@src/core/functools/deprecation';
 
-export * from '~/core/router/engines/browser-history';
-export { default } from '~/core/router/engines/browser-history';
+export * from '@src/core/router/engines/browser-history';
+export { default } from '@src/core/router/engines/browser-history';
 
 deprecate({
 	name: 'browser.history',

@@ -7,7 +7,7 @@
  */
 
 import { namespaces as superNamespaces } from '@v4fire/core/core/async/const';
-import { ClientNamespaces } from '~/core/async/interface';
+import { ClientNamespaces } from '@src/core/async/interface';
 
 export * from '@v4fire/core/core/async/const';
 

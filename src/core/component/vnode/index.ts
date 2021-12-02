@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import { components } from '~/core/component/const';
+import { components } from '@src/core/component/const';
 
-import type { RenderContext, VNode, VNodeData, NormalizedScopedSlot } from '~/core/component/engines';
-import type { ComponentInterface, ComponentMeta } from '~/core/component/interface';
+import type { RenderContext, VNode, VNodeData, NormalizedScopedSlot } from '@src/core/component/engines';
+import type { ComponentInterface, ComponentMeta } from '@src/core/component/interface';
 
 import type {
 
@@ -22,9 +22,9 @@ import type {
 	ComponentModelVNodeData,
 	PatchComponentVDataOptions
 
-} from '~/core/component/vnode/interface';
+} from '@src/core/component/vnode/interface';
 
-export * from '~/core/component/vnode/interface';
+export * from '@src/core/component/vnode/interface';
 
 /**
  * Returns a component render context object from the specified vnode

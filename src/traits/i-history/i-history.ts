@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import iBlock from '~/super/i-block/i-block';
-import type History from '~/traits/i-history/history';
+import iBlock from '@src/super/i-block/i-block';
+import type History from '@src/traits/i-history/history';
 
 export default abstract class iHistory extends iBlock {
 	/**

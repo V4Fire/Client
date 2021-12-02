@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import iData, { component, prop, Module } from '~/super/i-data/i-data';
+import iData, { component, prop, Module } from '@src/super/i-data/i-data';
 
-export * from '~/super/i-data/i-data';
+export * from '@src/super/i-data/i-data';
 
 @component({
 	functional: {
@@ -28,12 +28,12 @@ export default class bDummyModuleLoader extends iData {
 			[
 				{
 					id: 'b-dummy-module1',
-					load: () => import('~/dummies/b-dummy-module-loader/b-dummy-module1')
+					load: () => import('@src/dummies/b-dummy-module-loader/b-dummy-module1')
 				},
 
 				{
 					id: 'b-dummy-module2',
-					load: () => import('~/dummies/b-dummy-module-loader/b-dummy-module2')
+					load: () => import('@src/dummies/b-dummy-module-loader/b-dummy-module2')
 				}
 			] :
 

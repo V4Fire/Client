@@ -6,21 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '~/core/symbol';
-import * as c from '~/core/component/const';
+import symbolGenerator from '@src/core/symbol';
+import * as c from '@src/core/component/const';
 
-import { attachTemplatesToMeta } from '~/core/component/meta';
-import { getComponentRenderCtxFromVNode } from '~/core/component/vnode';
-import { execRenderObject } from '~/core/component/render';
+import { attachTemplatesToMeta } from '@src/core/component/meta';
+import { getComponentRenderCtxFromVNode } from '@src/core/component/vnode';
+import { execRenderObject } from '@src/core/component/render';
 
-import { parseVNodeAsFlyweight } from '~/core/component/flyweight';
-import { createFakeCtx, initComponentVNode, FlyweightVNode } from '~/core/component/functional';
+import { parseVNodeAsFlyweight } from '@src/core/component/flyweight';
+import { createFakeCtx, initComponentVNode, FlyweightVNode } from '@src/core/component/functional';
 
-import { applyDynamicAttrs } from '~/core/component/render-function/v-attrs';
-import { registerComponent } from '~/core/component/register';
+import { applyDynamicAttrs } from '@src/core/component/render-function/v-attrs';
+import { registerComponent } from '@src/core/component/register';
 
-import type { CreateElement, VNode, VNodeData } from '~/core/component/engines';
-import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from '~/core/component/interface';
+import type { CreateElement, VNode, VNodeData } from '@src/core/component/engines';
+import type { FunctionalCtx, ComponentInterface, UnsafeComponentInterface } from '@src/core/component/interface';
 
 export const
 	$$ = symbolGenerator();

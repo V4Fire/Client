@@ -13,7 +13,7 @@ import {
 	DirectiveOptions,
 	VNode
 
-} from '~/core/component/engines/engine';
+} from '@src/core/component/engines/engine';
 
 const addDirective = ComponentEngine.directive.bind(ComponentEngine);
 

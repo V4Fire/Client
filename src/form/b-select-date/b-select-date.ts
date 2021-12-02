@@ -11,20 +11,20 @@
  * @packageDocumentation
  */
 
-import { is } from '~/core/browser';
+import { is } from '@src/core/browser';
 
-import type bSelect from '~/form/b-select/b-select';
-import type { Item } from '~/form/b-select/b-select';
+import type bSelect from '@src/form/b-select/b-select';
+import type { Item } from '@src/form/b-select/b-select';
 
-import iWidth from '~/traits/i-width/i-width';
-import iInput, { component, prop, ModsDecl } from '~/super/i-input/i-input';
+import iWidth from '@src/traits/i-width/i-width';
+import iInput, { component, prop, ModsDecl } from '@src/super/i-input/i-input';
 
-import { selectCache, months } from '~/form/b-select-date/const';
-import type { Value, FormValue } from '~/form/b-select-date/interface';
+import { selectCache, months } from '@src/form/b-select-date/const';
+import type { Value, FormValue } from '@src/form/b-select-date/interface';
 
-export * from '~/super/i-input/i-input';
-export * from '~/form/b-select-date/const';
-export * from '~/form/b-select-date/interface';
+export * from '@src/super/i-input/i-input';
+export * from '@src/form/b-select-date/const';
+export * from '@src/form/b-select-date/interface';
 
 export { Value, FormValue };
 

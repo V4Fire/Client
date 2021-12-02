@@ -12,10 +12,10 @@
  */
 
 //#if runtime has core/analytics
-import * as analytics from '~/core/analytics';
+import * as analytics from '@src/core/analytics';
 //#endif
 
-import Friend from '~/super/i-block/modules/friend';
+import Friend from '@src/super/i-block/modules/friend';
 
 /**
  * Class provides some methods to work with analytic engines

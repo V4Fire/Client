@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { metaPointers, PARENT } from '~/core/component/const';
-import type { ComponentMeta, StrictModDeclVal } from '~/core/component/interface';
+import { metaPointers, PARENT } from '@src/core/component/const';
+import type { ComponentMeta, StrictModDeclVal } from '@src/core/component/interface';
 
 /**
  * Inherits the specified meta object from another meta object.

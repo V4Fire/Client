@@ -25,6 +25,8 @@ const
 	{build, src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
 
+console.log(resolve);
+
 const {
 	wait,
 	getTestClientName,

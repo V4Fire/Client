@@ -13,11 +13,11 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '~/core/symbol';
-import { is } from '~/core/browser';
+import symbolGenerator from '@src/core/symbol';
+import { is } from '@src/core/browser';
 
-import type iBlock from '~/super/i-block/i-block';
-import type { ModEvent } from '~/super/i-block/i-block';
+import type iBlock from '@src/super/i-block/i-block';
+import type { ModEvent } from '@src/super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();

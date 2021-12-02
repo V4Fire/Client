@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchOptions, MultipleWatchHandler } from '~/core/object/watch';
+import type { WatchOptions, MultipleWatchHandler } from '@src/core/object/watch';
 
-import type { PropertyInfo } from '~/core/component/reflection';
-import type { ComponentInterface } from '~/core/component/interface';
+import type { PropertyInfo } from '@src/core/component/reflection';
+import type { ComponentInterface } from '@src/core/component/interface';
 
-import { dynamicHandlers } from '~/core/component/watch/const';
-import type { DynamicHandlers } from '~/core/component/watch/interface';
+import { dynamicHandlers } from '@src/core/component/watch/const';
+import type { DynamicHandlers } from '@src/core/component/watch/interface';
 
 /**
  * Attaches a dynamic watcher to the specified property.

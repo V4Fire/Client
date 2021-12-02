@@ -17,11 +17,11 @@ import Provider, {
 	RequestFunctionResponse,
 	Response
 
-} from '~/core/data';
+} from '@src/core/data';
 
-import * as s from '~/core/session';
+import * as s from '@src/core/session';
 
-export * from '~/core/data';
+export * from '@src/core/data';
 
 @provider
 export default class Session extends Provider {

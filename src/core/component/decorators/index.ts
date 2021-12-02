@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { paramsFactory } from '~/core/component/decorators/base';
+import { paramsFactory } from '@src/core/component/decorators/base';
 
 import type {
 
@@ -28,10 +28,10 @@ import type {
 	DecoratorFieldWatcher,
 	DecoratorMethodWatcher
 
-} from '~/core/component/decorators/interface';
+} from '@src/core/component/decorators/interface';
 
-export * from '~/core/component/decorators/base';
-export * from '~/core/component/decorators/interface';
+export * from '@src/core/component/decorators/base';
+export * from '@src/core/component/decorators/interface';
 
 /**
  * Marks a class property as a component prop

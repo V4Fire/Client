@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import extend from '~/core/prelude/extend';
+import extend from '@src/core/prelude/extend';
 
 /**
  * Returns a position of the element relative to the document

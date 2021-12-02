@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type Async from '~/core/async';
+import type Async from '@src/core/async';
 
 export interface TaskI<D = unknown> {
 	iterable: Iterable<D>;

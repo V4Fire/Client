@@ -13,11 +13,11 @@
  * @packageDocumentation
  */
 
-import SyncPromise from '~/core/promise/sync';
-import type iBlock from '~/super/i-block/i-block';
+import SyncPromise from '@src/core/promise/sync';
+import type iBlock from '@src/super/i-block/i-block';
 
-import { ID_ATTRIBUTE } from '~/core/component/directives/update-on';
-import { icons, iconsMap } from '~/traits/i-icon/modules/icons';
+import { ID_ATTRIBUTE } from '@src/core/component/directives/update-on';
+import { icons, iconsMap } from '@src/traits/i-icon/modules/icons';
 
 export default abstract class iIcon {
 	/**

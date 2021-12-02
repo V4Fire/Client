@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AbstractCache } from '~/core/cache';
+import type { AbstractCache } from '@src/core/cache';
 
-import type bDynamicPage from '~/base/b-dynamic-page/b-dynamic-page';
-import type iDynamicPage from '~/super/i-dynamic-page/i-dynamic-page';
-import type { ComponentElement, UnsafeIData } from '~/super/i-dynamic-page/i-dynamic-page';
+import type bDynamicPage from '@src/base/b-dynamic-page/b-dynamic-page';
+import type iDynamicPage from '@src/super/i-dynamic-page/i-dynamic-page';
+import type { ComponentElement, UnsafeIData } from '@src/super/i-dynamic-page/i-dynamic-page';
 
 export type Include =
 	CanArray<string> |

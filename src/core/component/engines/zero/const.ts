@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { IS_NODE } from '~/core/env';
-import type { Options } from '~/core/component/engines/zero/interface';
+import { IS_NODE } from '@src/core/env';
+import type { Options } from '@src/core/component/engines/zero/interface';
 
-export { default as minimalCtx } from '~/core/component/engines/zero/context';
+export { default as minimalCtx } from '@src/core/component/engines/zero/context';
 
 export const supports = {
 	regular: false,

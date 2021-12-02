@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '~/core/symbol';
-import Friend from '~/super/i-block/modules/friend';
+import symbolGenerator from '@src/core/symbol';
+import Friend from '@src/super/i-block/modules/friend';
 
-import type bVirtualScroll from '~/base/b-virtual-scroll/b-virtual-scroll';
-import type ChunkRender from '~/base/b-virtual-scroll/modules/chunk-render';
+import type bVirtualScroll from '@src/base/b-virtual-scroll/b-virtual-scroll';
+import type ChunkRender from '@src/base/b-virtual-scroll/modules/chunk-render';
 
-import { isAsyncClearError } from '~/base/b-virtual-scroll/modules/helpers';
-import type { RemoteData, DataState, LastLoadedChunk } from '~/base/b-virtual-scroll/interface';
+import { isAsyncClearError } from '@src/base/b-virtual-scroll/modules/helpers';
+import type { RemoteData, DataState, LastLoadedChunk } from '@src/base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();

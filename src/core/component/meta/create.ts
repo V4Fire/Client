@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { defaultWrapper } from '~/core/component/const';
+import { defaultWrapper } from '@src/core/component/const';
 
-import { getComponentMods, isAbstractComponent } from '~/core/component/reflection';
-import { isTypeCanBeFunc } from '~/core/component/prop';
-import { wrapRender } from '~/core/component/render-function';
+import { getComponentMods, isAbstractComponent } from '@src/core/component/reflection';
+import { isTypeCanBeFunc } from '@src/core/component/prop';
+import { wrapRender } from '@src/core/component/render-function';
 
-import { inheritMeta } from '~/core/component/meta/inherit';
-import { addMethodsToMeta } from '~/core/component/meta/method';
+import { inheritMeta } from '@src/core/component/meta/inherit';
+import { addMethodsToMeta } from '@src/core/component/meta/method';
 
 import type {
 
@@ -27,7 +27,7 @@ import type {
 
 	RenderFunction
 
-} from '~/core/component/interface';
+} from '@src/core/component/interface';
 
 /**
  * Creates a meta object for the specified component and returns it

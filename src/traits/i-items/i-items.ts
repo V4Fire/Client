@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import type iBlock from '~/super/i-block/i-block';
-import type { IterationKey, ItemPropsFn, CreateFromItemFn } from '~/traits/i-items/interface';
+import type iBlock from '@src/super/i-block/i-block';
+import type { IterationKey, ItemPropsFn, CreateFromItemFn } from '@src/traits/i-items/interface';
 
-export * from '~/traits/i-items/interface';
+export * from '@src/traits/i-items/interface';
 
 export default abstract class iItems {
 	/**

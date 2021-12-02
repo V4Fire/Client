@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import iWidth from '~/traits/i-width/i-width';
-import iSize from '~/traits/i-size/i-size';
+import iWidth from '@src/traits/i-width/i-width';
+import iSize from '@src/traits/i-size/i-size';
 
 import iInput, {
 
@@ -25,21 +25,21 @@ import iInput, {
 	ModsDecl,
 	UnsafeGetter
 
-} from '~/super/i-input/i-input';
+} from '@src/super/i-input/i-input';
 
 //#if runtime has iInputText/mask
-import * as mask from '~/super/i-input-text/modules/mask';
+import * as mask from '@src/super/i-input-text/modules/mask';
 //#endif
 
-import { $$ } from '~/super/i-input-text/const';
-import type { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from '~/super/i-input-text/interface';
+import { $$ } from '@src/super/i-input-text/const';
+import type { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from '@src/super/i-input-text/interface';
 
-export * from '~/super/i-input/i-input';
-export * from '~/super/i-input-text/const';
-export * from '~/super/i-input-text/interface';
+export * from '@src/super/i-input/i-input';
+export * from '@src/super/i-input-text/const';
+export * from '@src/super/i-input-text/interface';
 
-export * from '~/super/i-input-text/modules/validators';
-export { default as TextValidators } from '~/super/i-input-text/modules/validators';
+export * from '@src/super/i-input-text/modules/validators';
+export { default as TextValidators } from '@src/super/i-input-text/modules/validators';
 
 export { $$ };
 

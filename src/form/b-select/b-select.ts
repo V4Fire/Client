@@ -15,13 +15,13 @@
 import 'models/demo/select';
 //#endif
 
-import SyncPromise from '~/core/promise/sync';
+import SyncPromise from '@src/core/promise/sync';
 
-import { derive } from '~/core/functools/trait';
-import { is } from '~/core/browser';
+import { derive } from '@src/core/functools/trait';
+import { is } from '@src/core/browser';
 
-import iItems, { IterationKey } from '~/traits/i-items/i-items';
-import iOpenToggle, { CloseHelperEvents } from '~/traits/i-open-toggle/i-open-toggle';
+import iItems, { IterationKey } from '@src/traits/i-items/i-items';
+import iOpenToggle, { CloseHelperEvents } from '@src/traits/i-open-toggle/i-open-toggle';
 
 import iInputText, {
 
@@ -44,12 +44,12 @@ import iInputText, {
 	ValidatorParams,
 	ValidatorResult
 
-} from '~/super/i-input-text/i-input-text';
+} from '@src/super/i-input-text/i-input-text';
 
-import * as on from '~/form/b-select/modules/handlers';
-import * as h from '~/form/b-select/modules/helpers';
+import * as on from '@src/form/b-select/modules/handlers';
+import * as h from '@src/form/b-select/modules/helpers';
 
-import { $$, openedSelect } from '~/form/b-select/const';
+import { $$, openedSelect } from '@src/form/b-select/const';
 
 import type {
 
@@ -61,12 +61,12 @@ import type {
 
 	UnsafeBSelect
 
-} from '~/form/b-select/interface';
+} from '@src/form/b-select/interface';
 
-export * from '~/form/b-input/b-input';
-export * from '~/traits/i-open-toggle/i-open-toggle';
-export * from '~/form/b-select/const';
-export * from '~/form/b-select/interface';
+export * from '@src/form/b-input/b-input';
+export * from '@src/traits/i-open-toggle/i-open-toggle';
+export * from '@src/form/b-select/const';
+export * from '@src/form/b-select/interface';
 
 export { $$, Value, FormValue };
 

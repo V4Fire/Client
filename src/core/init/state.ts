@@ -6,15 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { locale } from '~/core/i18n';
-import * as net from '~/core/net';
+import { locale } from '@src/core/i18n';
+import * as net from '@src/core/net';
 
 //#if runtime has core/session
-import * as session from '~/core/session';
+import * as session from '@src/core/session';
 //#endif
 
-import state from '~/core/component/state';
-import semaphore from '~/core/init/semaphore';
+import state from '@src/core/component/state';
+import semaphore from '@src/core/init/semaphore';
 
 export default (async () => {
 	const

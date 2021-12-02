@@ -11,5 +11,5 @@
  * @packageDocumentation
  */
 
-export * from '~/core/component/register/helpers';
-export * from '~/core/component/register/decorator';
+export * from '@src/core/component/register/helpers';
+export * from '@src/core/component/register/decorator';

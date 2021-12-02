@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AsyncOptions } from '~/core/async';
-import type { ComponentInterface } from '~/core/component';
+import type { AsyncOptions } from '@src/core/async';
+import type { ComponentInterface } from '@src/core/component';
 
-import type iBlock from '~/super/i-block';
-import type { ComponentStatus } from '~/super/i-block/interface';
+import type iBlock from '@src/super/i-block';
+import type { ComponentStatus } from '@src/super/i-block/interface';
 
 import type {
 
@@ -24,7 +24,7 @@ import type {
 	DecoratorFieldWatcher as BaseDecoratorFieldWatcher,
 	DecoratorMethodWatcher as BaseDecoratorMethodWatcher
 
-} from '~/core/component/decorators';
+} from '@src/core/component/decorators';
 
 export type DecoratorEventListenerMethod = 'on' | 'once';
 

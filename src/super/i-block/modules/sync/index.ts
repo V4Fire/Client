@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { isProxy } from '~/core/object/watch';
+import { isProxy } from '@src/core/object/watch';
 import {
 
 	bindingRgxp,
@@ -21,10 +21,10 @@ import {
 	PropertyInfo,
 	SyncLinkCache
 
-} from '~/core/component';
+} from '@src/core/component';
 
-import Friend from '~/super/i-block/modules/friend';
-import { statuses } from '~/super/i-block/const';
+import Friend from '@src/super/i-block/modules/friend';
+import { statuses } from '@src/super/i-block/const';
 
 import type {
 
@@ -37,9 +37,9 @@ import type {
 	ModValueConverter,
 	AsyncWatchOptions
 
-} from '~/super/i-block/modules/sync/interface';
+} from '@src/super/i-block/modules/sync/interface';
 
-export * from '~/super/i-block/modules/sync/interface';
+export * from '@src/super/i-block/modules/sync/interface';
 
 /**
  * Class provides API to organize a "link" from one component property to another

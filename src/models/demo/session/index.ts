@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Demo, { provider } from '~/models/demo';
+import Demo, { provider } from '@src/models/demo';
 
 @provider('demo')
 export default class Session extends Demo {

@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import { ComponentEngine } from '~/core/component/engines';
-import { InView, Adaptee, InViewDirectiveOptions } from '~/core/dom/in-view';
+import { ComponentEngine } from '@src/core/component/engines';
+import { InView, Adaptee, InViewDirectiveOptions } from '@src/core/dom/in-view';
 
-export * from '~/core/dom/in-view';
+export * from '@src/core/dom/in-view';
 
 ComponentEngine.directive('in-view', {
 	inserted(el: Element, {value}: InViewDirectiveOptions): void {

@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import * as strings from '~/core/helpers/string';
-import { ComponentEngine } from '~/core/component/engines';
+import * as strings from '@src/core/helpers/string';
+import { ComponentEngine } from '@src/core/component/engines';
 
 for (let keys = Object.keys(strings), i = 0; i < keys.length; i++) {
 	const

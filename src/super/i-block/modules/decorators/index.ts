@@ -13,8 +13,8 @@
  * @packageDocumentation
  */
 
-import type { ProxyCb } from '~/core/async';
-import { initEmitter, ModVal } from '~/core/component';
+import type { ProxyCb } from '@src/core/async';
+import { initEmitter, ModVal } from '@src/core/component';
 
 import {
 
@@ -27,12 +27,12 @@ import {
 	DecoratorMethod,
 	DecoratorComponentAccessor
 
-} from '~/core/component/decorators';
+} from '@src/core/component/decorators';
 
-import type iBlock from '~/super/i-block/i-block';
+import type iBlock from '@src/super/i-block/i-block';
 
-import { statuses } from '~/super/i-block/const';
-import { waitCtxRgxp } from '~/super/i-block/modules/decorators/const';
+import { statuses } from '@src/super/i-block/const';
+import { waitCtxRgxp } from '@src/super/i-block/modules/decorators/const';
 
 import type {
 
@@ -49,10 +49,10 @@ import type {
 
 	DecoratorEventListenerMethod
 
-} from '~/super/i-block/modules/decorators/interface';
+} from '@src/super/i-block/modules/decorators/interface';
 
-export { hook, computed } from '~/core/component/decorators';
-export * from '~/super/i-block/modules/decorators/interface';
+export { hook, computed } from '@src/core/component/decorators';
+export * from '@src/super/i-block/modules/decorators/interface';
 
 /**
  * @see core/component/decorators/base.ts

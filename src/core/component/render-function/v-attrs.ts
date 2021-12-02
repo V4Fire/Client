@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { parseStyle } from '~/core/component/vnode';
-import type { VNodeData } from '~/core/component/engines';
+import { parseStyle } from '@src/core/component/vnode';
+import type { VNodeData } from '@src/core/component/engines';
 
-import { vAttrsRgxp } from '~/core/component/render-function/const';
-import type { ComponentMeta } from '~/core/component/interface';
+import { vAttrsRgxp } from '@src/core/component/render-function/const';
+import type { ComponentMeta } from '@src/core/component/interface';
 
 /**
  * Applies dynamic attributes from v-attrs to the specified vnode

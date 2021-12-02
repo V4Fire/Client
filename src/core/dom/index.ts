@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { deprecate } from '~/core/functools/deprecation';
+import { deprecate } from '@src/core/functools/deprecation';
 
 /**
  * Wraps the specified function as an event handler with delegation.

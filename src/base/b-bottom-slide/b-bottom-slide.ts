@@ -11,19 +11,19 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '~/core/symbol';
-import SyncPromise from '~/core/promise/sync';
+import symbolGenerator from '@src/core/symbol';
+import SyncPromise from '@src/core/promise/sync';
 
-import { derive } from '~/core/functools/trait';
+import { derive } from '@src/core/functools/trait';
 
-import History from '~/traits/i-history/history';
-import type iHistory from '~/traits/i-history/i-history';
+import History from '@src/traits/i-history/history';
+import type iHistory from '@src/traits/i-history/i-history';
 
-import iLockPageScroll from '~/traits/i-lock-page-scroll/i-lock-page-scroll';
-import iObserveDOM from '~/traits/i-observe-dom/i-observe-dom';
+import iLockPageScroll from '@src/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iObserveDOM from '@src/traits/i-observe-dom/i-observe-dom';
 
-import iOpen from '~/traits/i-open/i-open';
-import iVisible from '~/traits/i-visible/i-visible';
+import iOpen from '@src/traits/i-open/i-open';
+import iVisible from '@src/traits/i-visible/i-visible';
 
 import iBlock, {
 
@@ -39,15 +39,15 @@ import iBlock, {
 
 	ModsDecl
 
-} from '~/super/i-block/i-block';
+} from '@src/super/i-block/i-block';
 
-import { heightMode } from '~/base/b-bottom-slide/const';
-import type { HeightMode, Direction } from '~/base/b-bottom-slide/interface';
+import { heightMode } from '@src/base/b-bottom-slide/const';
+import type { HeightMode, Direction } from '@src/base/b-bottom-slide/interface';
 
-export * from '~/super/i-data/i-data';
+export * from '@src/super/i-data/i-data';
 
-export * from '~/base/b-bottom-slide/const';
-export * from '~/base/b-bottom-slide/interface';
+export * from '@src/base/b-bottom-slide/const';
+export * from '@src/base/b-bottom-slide/interface';
 
 export const
 	$$ = symbolGenerator();

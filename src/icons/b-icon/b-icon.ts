@@ -11,12 +11,12 @@
  * @packageDocumentation
  */
 
-import { derive } from '~/core/functools/trait';
+import { derive } from '@src/core/functools/trait';
 
-import iIcon from '~/traits/i-icon/i-icon';
-import iBlock, { component, prop, ModsDecl } from '~/super/i-block/i-block';
+import iIcon from '@src/traits/i-icon/i-icon';
+import iBlock, { component, prop, ModsDecl } from '@src/super/i-block/i-block';
 
-export * from '~/super/i-block/i-block';
+export * from '@src/super/i-block/i-block';
 
 interface bIcon extends Trait<typeof iIcon> {}
 

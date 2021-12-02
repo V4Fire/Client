@@ -11,16 +11,16 @@
  * @packageDocumentation
  */
 
-import { derive } from '~/core/functools/trait';
+import { derive } from '@src/core/functools/trait';
 
-import iVisible from '~/traits/i-visible/i-visible';
-import iOpenToggle, { CloseHelperEvents } from '~/traits/i-open-toggle/i-open-toggle';
-import iLockPageScroll from '~/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iVisible from '@src/traits/i-visible/i-visible';
+import iOpenToggle, { CloseHelperEvents } from '@src/traits/i-open-toggle/i-open-toggle';
+import iLockPageScroll from '@src/traits/i-lock-page-scroll/i-lock-page-scroll';
 
-import iData, { component, hook, prop, ModsDecl } from '~/super/i-data/i-data';
+import iData, { component, hook, prop, ModsDecl } from '@src/super/i-data/i-data';
 
-export * from '~/super/i-data/i-data';
-export * from '~/traits/i-open-toggle/i-open-toggle';
+export * from '@src/super/i-data/i-data';
+export * from '@src/traits/i-open-toggle/i-open-toggle';
 
 interface bSidebar extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScroll> {}
 

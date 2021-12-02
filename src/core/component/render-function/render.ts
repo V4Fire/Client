@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { beforeMountHooks, mountedHooks } from '~/core/component/const';
+import { beforeMountHooks, mountedHooks } from '@src/core/component/const';
 
-import { resolveRefs } from '~/core/component/ref';
-import { wrapCreateElement } from '~/core/component/render-function/create-element';
+import { resolveRefs } from '@src/core/component/ref';
+import { wrapCreateElement } from '@src/core/component/render-function/create-element';
 
-import type { CreateElement, RenderContext, VNode } from '~/core/component/engines';
-import type { ComponentInterface, ComponentMeta, RenderFunction } from '~/core/component/interface';
+import type { CreateElement, RenderContext, VNode } from '@src/core/component/engines';
+import type { ComponentInterface, ComponentMeta, RenderFunction } from '@src/core/component/interface';
 
 /**
  * Wraps the specified render function and returns a new function.

@@ -11,14 +11,14 @@
  * @packageDocumentation
  */
 
-import state from '~/core/component/state';
-import adapter from '~/core/abt/engines';
+import state from '@src/core/component/state';
+import adapter from '@src/core/abt/engines';
 
-import { emitter } from '~/core/abt/const';
-import type { ExperimentsSet } from '~/core/abt/interface';
+import { emitter } from '@src/core/abt/const';
+import type { ExperimentsSet } from '@src/core/abt/interface';
 
-export * from '~/core/abt/const';
-export * from '~/core/abt/interface';
+export * from '@src/core/abt/const';
+export * from '@src/core/abt/interface';
 
 /**
  * Saves the specified ABT options

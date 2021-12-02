@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import type { ComponentElement, ComponentInterface } from '~/core/component/interface';
+import type { ComponentElement, ComponentInterface } from '@src/core/component/interface';
 
 /**
  * Resolves reference from the specified component instance.

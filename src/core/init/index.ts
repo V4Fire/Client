@@ -15,7 +15,7 @@ import 'core/init/state';
 import 'core/init/abt';
 import 'core/init/prefetch';
 
-import semaphore from '~/core/init/semaphore';
-import { resolveAfterDOMLoaded } from '~/core/event';
+import semaphore from '@src/core/init/semaphore';
+import { resolveAfterDOMLoaded } from '@src/core/event';
 
 export default resolveAfterDOMLoaded().then(() => semaphore('domReady'));

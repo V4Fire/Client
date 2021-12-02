@@ -15,10 +15,10 @@
 import 'models/demo/pagination';
 //#endif
 
-import symbolGenerator from '~/core/symbol';
-import { deprecate } from '~/core/functools';
+import symbolGenerator from '@src/core/symbol';
+import { deprecate } from '@src/core/functools';
 
-import iItems, { IterationKey } from '~/traits/i-items/i-items';
+import iItems, { IterationKey } from '@src/traits/i-items/i-items';
 
 import iData, {
 
@@ -41,13 +41,13 @@ import iData, {
 
 	UnsafeGetter
 
-} from '~/super/i-data/i-data';
+} from '@src/super/i-data/i-data';
 
-import ComponentRender from '~/base/b-virtual-scroll/modules/component-render';
-import ChunkRender from '~/base/b-virtual-scroll/modules/chunk-render';
-import ChunkRequest from '~/base/b-virtual-scroll/modules/chunk-request';
+import ComponentRender from '@src/base/b-virtual-scroll/modules/component-render';
+import ChunkRender from '@src/base/b-virtual-scroll/modules/chunk-render';
+import ChunkRequest from '@src/base/b-virtual-scroll/modules/chunk-request';
 
-import { getRequestParams, isAsyncReplaceError } from '~/base/b-virtual-scroll/modules/helpers';
+import { getRequestParams, isAsyncReplaceError } from '@src/base/b-virtual-scroll/modules/helpers';
 
 import type {
 
@@ -65,11 +65,11 @@ import type {
 
 	UnsafeBVirtualScroll
 
-} from '~/base/b-virtual-scroll/interface';
+} from '@src/base/b-virtual-scroll/interface';
 
-export * from '~/super/i-data/i-data';
-export * from '~/base/b-virtual-scroll/modules/helpers';
-export * from '~/base/b-virtual-scroll/interface';
+export * from '@src/super/i-data/i-data';
+export * from '@src/base/b-virtual-scroll/modules/helpers';
+export * from '@src/base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 

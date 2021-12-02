@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { deprecate } from '~/core/functools/deprecation';
+import { deprecate } from '@src/core/functools/deprecation';
 
-import type MutationObserverStrategy from '~/core/dom/in-view/mutation';
-import type IntersectionObserverStrategy from '~/core/dom/in-view/intersection';
+import type MutationObserverStrategy from '@src/core/dom/in-view/mutation';
+import type IntersectionObserverStrategy from '@src/core/dom/in-view/intersection';
 
 import type {
 
@@ -18,9 +18,9 @@ import type {
 	InViewObservableElement,
 	InViewObservableThresholdMap
 
-} from '~/core/dom/in-view/interface';
+} from '@src/core/dom/in-view/interface';
 
-import { valueValidator } from '~/core/dom/in-view/helpers';
+import { valueValidator } from '@src/core/dom/in-view/helpers';
 
 export type ObserveStrategy =
 	IntersectionObserverStrategy |

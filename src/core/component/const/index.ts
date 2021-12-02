@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from '~/core/component/const/cache';
-export * from '~/core/component/const/symbols';
-export * from '~/core/component/const/enums';
-export * from '~/core/component/const/emitters';
-export * from '~/core/component/const/validators';
+export * from '@src/core/component/const/cache';
+export * from '@src/core/component/const/symbols';
+export * from '@src/core/component/const/enums';
+export * from '@src/core/component/const/emitters';
+export * from '@src/core/component/const/validators';

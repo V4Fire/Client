@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '~/core/symbol';
-import Async from '~/core/async';
+import symbolGenerator from '@src/core/symbol';
+import Async from '@src/core/async';
 
-import { ID_ATTRIBUTE } from '~/core/component/directives/update-on/const';
+import { ID_ATTRIBUTE } from '@src/core/component/directives/update-on/const';
 
-import type { ComponentInterface } from '~/core/component';
-import type { DirectiveValue } from '~/core/component/directives/update-on/interface';
+import type { ComponentInterface } from '@src/core/component';
+import type { DirectiveValue } from '@src/core/component/directives/update-on/interface';
 
 export const
 	$$ = symbolGenerator();

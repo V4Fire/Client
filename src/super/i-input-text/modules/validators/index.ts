@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from '~/super/i-input-text/i-input-text';
+import type iInputText from '@src/super/i-input-text/i-input-text';
 
 import type {
 
@@ -14,16 +14,16 @@ import type {
 	ValidatorParams,
 	ValidatorResult
 
-} from '~/super/i-input/i-input';
+} from '@src/super/i-input/i-input';
 
 import type {
 
 	PatternValidatorParams,
 	PatternValidatorResult
 
-} from '~/super/i-input-text/modules/validators/interface';
+} from '@src/super/i-input-text/modules/validators/interface';
 
-export * from '~/super/i-input-text/modules/validators/interface';
+export * from '@src/super/i-input-text/modules/validators/interface';
 
 export default <ValidatorsDecl<iInputText>>{
 	//#if runtime has iInput/validators

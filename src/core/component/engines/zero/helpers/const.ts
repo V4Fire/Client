@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Options } from '~/core/component/engines/zero/interface';
+import type { Options } from '@src/core/component/engines/zero/interface';
 
 export const options: Options = {
 	filters: {},

@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchPath as RawWatchPath, WatchOptions, WatchHandlerParams } from '~/core/object/watch';
-import type { Group, Label, Join } from '~/core/async';
+import type { WatchPath as RawWatchPath, WatchOptions, WatchHandlerParams } from '@src/core/object/watch';
+import type { Group, Label, Join } from '@src/core/async';
 
-import type { PropertyInfo } from '~/core/component/reflection';
-import type { ComponentInterface } from '~/core/component/interface';
+import type { PropertyInfo } from '@src/core/component/reflection';
+import type { ComponentInterface } from '@src/core/component/interface';
 
 export { WatchOptions, WatchHandlerParams };
 

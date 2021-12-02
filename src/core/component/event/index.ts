@@ -11,20 +11,20 @@
  * @packageDocumentation
  */
 
-import * as net from '~/core/net';
-import * as i18n from '~/core/i18n';
+import * as net from '@src/core/net';
+import * as i18n from '@src/core/i18n';
 
 //#if runtime has core/session
-import * as session from '~/core/session';
+import * as session from '@src/core/session';
 //#endif
 
-import emitter from '~/core/component/event/emitter';
+import emitter from '@src/core/component/event/emitter';
 import 'core/component/event/providers';
 
-import type { ResetType } from '~/core/component/event/interface';
+import type { ResetType } from '@src/core/component/event/interface';
 
-export * from '~/core/component/event/component-api';
-export * from '~/core/component/event/interface';
+export * from '@src/core/component/event/component-api';
+export * from '@src/core/component/event/interface';
 
 /**
  * Sends a message to reset all components of an application

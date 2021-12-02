@@ -11,4 +11,4 @@
  * @packageDocumentation
  */
 
-export * from '~/core/component/render-function/render';
+export * from '@src/core/component/render-function/render';

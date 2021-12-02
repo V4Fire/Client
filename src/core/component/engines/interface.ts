@@ -7,7 +7,7 @@
  */
 
 import type { VNode as SuperVNode } from 'vue';
-import type { ComponentInterface } from '~/core/component/interface';
+import type { ComponentInterface } from '@src/core/component/interface';
 
 export interface VNode extends SuperVNode {
 	fakeContext?: ComponentInterface;

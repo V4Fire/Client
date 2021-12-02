@@ -13,17 +13,17 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '~/core/symbol';
-import SyncPromise from '~/core/promise/sync';
+import symbolGenerator from '@src/core/symbol';
+import SyncPromise from '@src/core/promise/sync';
 
-import { deprecate, deprecated } from '~/core/functools/deprecation';
+import { deprecate, deprecated } from '@src/core/functools/deprecation';
 
-import RequestError from '~/core/request/error';
-import { providers } from '~/core/data/const';
+import RequestError from '@src/core/request/error';
+import { providers } from '@src/core/data/const';
 
 //#if runtime has core/data
 
-import type Provider from '~/core/data';
+import type Provider from '@src/core/data';
 import type {
 
 	RequestQuery,
@@ -33,14 +33,14 @@ import type {
 	ModelMethod,
 	ProviderOptions
 
-} from '~/core/data';
+} from '@src/core/data';
 
 //#endif
 
-import type Async from '~/core/async';
-import type { AsyncOptions } from '~/core/async';
+import type Async from '@src/core/async';
+import type { AsyncOptions } from '@src/core/async';
 
-import iProgress from '~/traits/i-progress/i-progress';
+import iProgress from '@src/traits/i-progress/i-progress';
 
 import iBlock, {
 
@@ -61,9 +61,9 @@ import iBlock, {
 	ModsDecl,
 	UnsafeGetter
 
-} from '~/super/i-block/i-block';
+} from '@src/super/i-block/i-block';
 
-import { providerMethods } from '~/super/i-data/const';
+import { providerMethods } from '@src/super/i-data/const';
 
 import type {
 
@@ -78,7 +78,7 @@ import type {
 	ComponentConverter,
 	CheckDBEquality
 
-} from '~/super/i-data/interface';
+} from '@src/super/i-data/interface';
 
 export { RequestError };
 
@@ -96,13 +96,13 @@ export {
 	ExtraProvider,
 	ExtraProviders
 
-} from '~/core/data';
+} from '@src/core/data';
 
 //#endif
 
-export * from '~/super/i-block/i-block';
-export * from '~/super/i-data/const';
-export * from '~/super/i-data/interface';
+export * from '@src/super/i-block/i-block';
+export * from '@src/super/i-data/const';
+export * from '@src/super/i-data/interface';
 
 export const
 	$$ = symbolGenerator();

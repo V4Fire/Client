@@ -6,6 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from '~/super/i-block/i-block';
+import type iBlock from '@src/super/i-block/i-block';
 
 export type Cb<CTX extends iBlock = iBlock, R = any> = (this: CTX) => R;
