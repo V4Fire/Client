@@ -16,6 +16,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Bumped `node/npm` within `ci`
+* Updated dependencies:
+  * `stylus@0.55.0`
+  * `gulp-imagemin@8.0.0`
+  * `html-loader@3.0.1`
 
 ## v3.13.0 (2021-11-29)
 
