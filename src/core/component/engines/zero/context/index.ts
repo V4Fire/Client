@@ -284,13 +284,13 @@ export default {
 	}
 };
 
-function resolveAsset(opts: Dictionary<any>, type: string, id: string, warnMissing: boolean): CanUndef<Function> {
+function resolveAsset(opts: Dictionary, type: string, id: string, warnMissing: boolean): CanUndef<Function> {
 	if (!Object.isString(id)) {
 		return;
 	}
 
 	const
-		assets = opts[type];
+		assets = <Nullable<Dictionary<Function>>>opts[type];
 
 	if (assets == null) {
 		return;

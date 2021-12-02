@@ -192,7 +192,7 @@ export default abstract class iAccess {
 	 * @param args
 	 */
 	enable(...args: unknown[]): Promise<boolean> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -200,7 +200,7 @@ export default abstract class iAccess {
 	 * @param args
 	 */
 	disable(...args: unknown[]): Promise<boolean> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -208,7 +208,7 @@ export default abstract class iAccess {
 	 * @param args
 	 */
 	focus(...args: unknown[]): Promise<boolean> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -216,6 +216,6 @@ export default abstract class iAccess {
 	 * @param args
 	 */
 	blur(...args: unknown[]): Promise<boolean> {
-		return <any>null;
+		return Object.throw();
 	}
 }

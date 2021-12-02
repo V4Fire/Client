@@ -91,9 +91,9 @@ export default class bRouter extends iData {
 	 * Compiled schema of application routes
 	 * @see [[bRouter.routesProp]]
 	 */
-	@system({
+	@system<bRouter>({
 		after: 'engine',
-		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
+		init: (o) => o.sync.link(o.compileStaticRoutes)
 	})
 
 	routes!: router.RouteBlueprints;
@@ -583,12 +583,14 @@ export default class bRouter extends iData {
 				// will create a child watch object.
 
 				const
-					proto = <any>r.route!.__proto__;
+					proto = r.route?.__proto__;
 
-				// Correct values from the root route object
-				for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
-					const key = keys[i];
-					proto[key] = nonWatchRouteValues[key];
+				if (Object.isDictionary(proto)) {
+					// Correct values from the root route object
+					for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
+						const key = keys[i];
+						proto[key] = nonWatchRouteValues[key];
+					}
 				}
 
 			} else {

@@ -88,7 +88,7 @@ export default class Session extends Provider {
 		factory?: RequestFunctionResponse
 	): RequestResponse {
 		const
-			req = super.updateRequest(url, <any>event, <any>factory),
+			req = super.updateRequest(url, Object.cast(event), Object.cast<RequestFunctionResponse>(factory)),
 			session = s.get();
 
 		const update = async (res) => {
@@ -115,7 +115,7 @@ export default class Session extends Provider {
 
 			if (response) {
 				const
-					r = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory);
+					r = () => this.updateRequest(url, Object.cast(event), <RequestFunctionResponse>factory);
 
 				if (response.status === 401) {
 					if (!await s.match(auth, params)) {

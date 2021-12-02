@@ -253,7 +253,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly progressIcon?: string | boolean;
 
 	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	override get rootAttrs(): Dictionary {

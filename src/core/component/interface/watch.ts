@@ -20,8 +20,8 @@ export type WatchPath =
 	{ctx: object; path?: RawWatchPath};
 
 export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(a: A, b?: B, params?: WatchHandlerParams): any;
-	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): any;
+	(a: A, b?: B, params?: WatchHandlerParams): AnyToIgnore;
+	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): AnyToIgnore;
 }
 
 export interface WatchHandler<A = unknown, B = A> {

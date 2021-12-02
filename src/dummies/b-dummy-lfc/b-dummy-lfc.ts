@@ -33,7 +33,7 @@ export default class bDummyLfc extends iData {
 		this.tmp.beforeCreateHook = this.hook;
 		this.tmp.beforeCreateIsBefore = this.lfc.isBeforeCreate();
 
-		void (<Promise<any>>this.lfc.execCbAtTheRightTime(() => {
+		void (<Promise<unknown>>this.lfc.execCbAtTheRightTime(() => {
 			this.tmp.rightTimeHookFromBeforeCreate = this.hook;
 			return this.hook;
 
@@ -60,7 +60,7 @@ export default class bDummyLfc extends iData {
 			this.tmp.blockReadyIsBefore = this.lfc.isBeforeCreate();
 		});
 
-		void (<Promise<any>>this.lfc.execCbAfterComponentCreated(() => {
+		void (<Promise<unknown>>this.lfc.execCbAfterComponentCreated(() => {
 			this.tmp.componentCreatedHook = this.hook;
 			return this.hook;
 

@@ -97,7 +97,7 @@ export function implementComponentWatchAPI(
 	const emitAccessorEvents = () => <MultipleWatchHandler>function emitAccessorEvents(mutations, ...args) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (args.length > 0) {
-			mutations = [<any>[mutations, ...args]];
+			mutations = [Object.cast([mutations, ...args])];
 		}
 
 		for (let i = 0; i < mutations.length; i++) {
@@ -219,7 +219,7 @@ export function implementComponentWatchAPI(
 
 				const broadcastEvents = (mutations, ...args) => {
 					if (args.length > 0) {
-						mutations = [<any>[mutations, ...args]];
+						mutations = [Object.cast([mutations, ...args])];
 					}
 
 					const

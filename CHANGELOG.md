@@ -17,6 +17,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `src/base/b-slider` now has its animations wrapped in `requestAnimationFrame`.
 
+## v3.13.1 (2021-12-02)
+
+#### :house: Internal
+
+* Bumped `node/npm` within `ci`
+* Removed unsafe `<any>` casts
+
 ## v3.13.0 (2021-11-29)
 
 #### :boom: Breaking Change

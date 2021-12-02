@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { concatUrls } from 'core/url';
+import { concatURLs } from 'core/url';
 import { getSrcSet } from 'core/html';
 
 import {
@@ -221,7 +221,7 @@ export default class Factory {
 			return src;
 		}
 
-		return concatUrls(baseSrc, src);
+		return concatURLs(baseSrc, src);
 	}
 
 	/**
@@ -251,7 +251,7 @@ export default class Factory {
 			newSrcset = <string[]>[];
 
 		for (let i = 0; i < chunks.length; i++) {
-			newSrcset.push(concatUrls(baseSrc, chunks[i].trim()));
+			newSrcset.push(concatURLs(baseSrc, chunks[i].trim()));
 		}
 
 		return newSrcset.join(',');

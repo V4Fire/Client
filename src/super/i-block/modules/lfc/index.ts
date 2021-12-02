@@ -96,9 +96,11 @@ export default class Lfc extends Friend {
 			return;
 		}
 
-		return this.async.promise(new SyncPromise<any>((r) => {
+		const p = new SyncPromise((r) => {
 			this.ctx.blockReadyListeners.push(() => r(cb.call(this.component)));
-		}), opts).catch(stderr);
+		});
+
+		return Object.cast(this.async.promise(p, opts).catch(stderr));
 	}
 
 	/**

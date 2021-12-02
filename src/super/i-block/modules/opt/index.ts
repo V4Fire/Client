@@ -77,11 +77,11 @@ export default class Opt extends Friend {
 	 */
 	memoizeLiteral<T>(literal: T): T extends Array<infer V> ? readonly V[] : T extends object ? Readonly<T> : T {
 		if (Object.isFrozen(literal)) {
-			return <any>literal;
+			return Object.cast(literal);
 		}
 
 		const key = Object.fastHash(literal);
-		return literalCache[key] = literalCache[key] ?? Object.freeze(<any>literal);
+		return Object.cast(literalCache[key] = literalCache[key] ?? Object.freeze(literal));
 	}
 
 	/**
