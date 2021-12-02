@@ -11,11 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2021-12-??)
+## v3.13.1 (2021-12-02)
 
 #### :house: Internal
 
 * Bumped `node/npm` within `ci`
+* Removed unsafe `<any>` casts
 
 ## v3.13.0 (2021-11-29)
 
