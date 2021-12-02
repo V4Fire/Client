@@ -15,9 +15,9 @@
 import 'models/demo/input';
 //#endif
 
-import iInput, { component } from 'super/i-input/i-input';
+import iInput, { component } from '~/super/i-input/i-input';
 
-export * from 'super/i-input/i-input';
+export * from '~/super/i-input/i-input';
 
 /**
  * Component to create a hidden input

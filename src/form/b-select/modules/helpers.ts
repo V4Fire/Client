@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { $$ } from 'form/b-select/const';
+import { $$ } from '~/form/b-select/const';
 
-import type bSelect from 'form/b-select/b-select';
-import type { Items } from 'form/b-select/interface';
+import type bSelect from '~/form/b-select/b-select';
+import type { Items } from '~/form/b-select/interface';
 
 /**
  * Initializes component values

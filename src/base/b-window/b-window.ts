@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
-import { derive } from 'core/functools/trait';
+import symbolGenerator from '~/core/symbol';
+import { derive } from '~/core/functools/trait';
 
-import iVisible from 'traits/i-visible/i-visible';
-import iWidth from 'traits/i-width/i-width';
-import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
-import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
+import iVisible from '~/traits/i-visible/i-visible';
+import iWidth from '~/traits/i-width/i-width';
+import iLockPageScroll from '~/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iOpenToggle, { CloseHelperEvents } from '~/traits/i-open-toggle/i-open-toggle';
 
 import iData, {
 
@@ -34,12 +34,12 @@ import iData, {
 	ModEvent,
 	SetModEvent
 
-} from 'super/i-data/i-data';
+} from '~/super/i-data/i-data';
 
-import type { StageTitles } from 'base/b-window/interface';
+import type { StageTitles } from '~/base/b-window/interface';
 
-export * from 'super/i-data/i-data';
-export * from 'traits/i-open-toggle/i-open-toggle';
+export * from '~/super/i-data/i-data';
+export * from '~/traits/i-open-toggle/i-open-toggle';
 
 export const
 	$$ = symbolGenerator();

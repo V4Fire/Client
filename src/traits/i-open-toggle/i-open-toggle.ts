@@ -13,10 +13,10 @@
  * @packageDocumentation
  */
 
-import iOpen from 'traits/i-open/i-open';
-import type iBlock from 'super/i-block/i-block';
+import iOpen from '~/traits/i-open/i-open';
+import type iBlock from '~/super/i-block/i-block';
 
-export * from 'traits/i-open/i-open';
+export * from '~/traits/i-open/i-open';
 
 export default abstract class iOpenToggle extends iOpen {
 	/** @see [[iOpenToggle.toggle]] */

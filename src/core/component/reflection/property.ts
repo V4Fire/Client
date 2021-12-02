@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { deprecate } from 'core/functools/deprecation';
-import { ComponentInterface } from 'core/component/interface';
+import { deprecate } from '~/core/functools/deprecation';
+import { ComponentInterface } from '~/core/component/interface';
 
-import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/reflection/const';
-import type { PropertyInfo } from 'core/component/reflection/interface';
+import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from '~/core/component/reflection/const';
+import type { PropertyInfo } from '~/core/component/reflection/interface';
 
 /**
  * Returns an information object of a component property by the specified path

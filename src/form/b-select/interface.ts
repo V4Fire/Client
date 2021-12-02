@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { UnsafeIInputText, ModsTable } from 'super/i-input-text/i-input-text';
-import type bSelect from 'form/b-select/b-select';
+import type { UnsafeIInputText, ModsTable } from '~/super/i-input-text/i-input-text';
+import type bSelect from '~/form/b-select/b-select';
 
 export type Value = unknown | Set<unknown>;
 export type FormValue = CanUndef<CanArray<unknown>>;

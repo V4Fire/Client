@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import type iBlock from 'super/i-block/i-block';
+import type iBlock from '~/super/i-block/i-block';
 
-import Friend from 'super/i-block/modules/friend';
-import { wait } from 'super/i-block/modules/decorators';
+import Friend from '~/super/i-block/modules/friend';
+import { wait } from '~/super/i-block/modules/decorators';
 
 import type {
 
@@ -27,9 +27,9 @@ import type {
 	DaemonHook,
 	DaemonHookOptions
 
-} from 'super/i-block/modules/daemons/interface';
+} from '~/super/i-block/modules/daemons/interface';
 
-export * from 'super/i-block/modules/daemons/interface';
+export * from '~/super/i-block/modules/daemons/interface';
 
 /**
  * Class to manage component daemons

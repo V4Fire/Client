@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
-import SyncPromise from 'core/promise/sync';
+import symbolGenerator from '~/core/symbol';
+import SyncPromise from '~/core/promise/sync';
 
-import { Option } from 'core/prelude/structures';
+import { Option } from '~/core/prelude/structures';
 
-import iAccess from 'traits/i-access/i-access';
-import iVisible from 'traits/i-visible/i-visible';
+import iAccess from '~/traits/i-access/i-access';
+import iVisible from '~/traits/i-visible/i-visible';
 
 import iData, {
 
@@ -36,7 +36,7 @@ import iData, {
 
 	ComponentConverter
 
-} from 'super/i-data/i-data';
+} from '~/super/i-data/i-data';
 
 import type {
 
@@ -51,13 +51,13 @@ import type {
 	ValidationResult,
 	ValidatorsDecl
 
-} from 'super/i-input/interface';
+} from '~/super/i-input/interface';
 
-import { unpackIf } from 'super/i-input/modules/helpers';
+import { unpackIf } from '~/super/i-input/modules/helpers';
 
-export * from 'super/i-data/i-data';
-export * from 'super/i-input/modules/helpers';
-export * from 'super/i-input/interface';
+export * from '~/super/i-data/i-data';
+export * from '~/super/i-input/modules/helpers';
+export * from '~/super/i-input/interface';
 
 export const
 	$$ = symbolGenerator();

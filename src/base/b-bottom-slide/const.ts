@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { HeightMode } from 'base/b-bottom-slide/interface';
+import type { HeightMode } from '~/base/b-bottom-slide/interface';
 
 export const heightMode = <Record<HeightMode, boolean>>Object.createDict({
 	full: true,

@@ -6,19 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { identity } from 'core/functools/helpers';
+import { identity } from '~/core/functools/helpers';
 import type { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
 
-import { registerComponent } from 'core/component/register';
-import type { ComponentInterface } from 'core/component/interface';
+import { registerComponent } from '~/core/component/register';
+import type { ComponentInterface } from '~/core/component/interface';
 
-import config from 'core/component/engines/zero/config';
-import * as _ from 'core/component/engines/zero/helpers';
+import config from '~/core/component/engines/zero/config';
+import * as _ from '~/core/component/engines/zero/helpers';
 
-import { options, document } from 'core/component/engines/zero/const';
-import { getComponent, createComponent, mountComponent } from 'core/component/engines/zero/component';
+import { options, document } from '~/core/component/engines/zero/const';
+import { getComponent, createComponent, mountComponent } from '~/core/component/engines/zero/component';
 
-import type { VNodeData } from 'core/component/engines/zero/interface';
+import type { VNodeData } from '~/core/component/engines/zero/interface';
 
 export class ComponentEngine {
 	/**

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { match } from 'core/browser/helpers';
+import { match } from '~/core/browser/helpers';
 
 /**
  * Map of the supported environment to detect. If the current `navigator.userAgent` matches one of the map' key,

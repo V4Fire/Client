@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNodeDirective, DirectiveFunction } from 'core/component/engines';
+import type { VNodeDirective, DirectiveFunction } from '~/core/component/engines';
 
 export interface DirectiveOptions extends VNodeDirective {
 	value?: {

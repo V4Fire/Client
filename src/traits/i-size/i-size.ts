@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import type { ModsDecl } from 'super/i-block/i-block';
+import type { ModsDecl } from '~/super/i-block/i-block';
 
-export * from 'traits/i-size/interface';
+export * from '~/traits/i-size/interface';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iSize {

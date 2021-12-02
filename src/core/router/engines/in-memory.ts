@@ -13,7 +13,7 @@
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import { deprecate } from 'core/functools/deprecation';
+import { deprecate } from '~/core/functools/deprecation';
 import {
 
 	Route,
@@ -22,9 +22,9 @@ import {
 	HistoryClearFilter,
 	getRoute
 
-} from 'core/router';
+} from '~/core/router';
 
-import type bRouter from 'base/b-router/b-router';
+import type bRouter from '~/base/b-router/b-router';
 
 let
 	historyLog: Route[] = [],

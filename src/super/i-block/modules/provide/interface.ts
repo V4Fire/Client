@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ModVal } from 'super/i-block/modules/mods';
+import type { ModVal } from '~/super/i-block/modules/mods';
 
 export type Classes = Dictionary<
 	string |

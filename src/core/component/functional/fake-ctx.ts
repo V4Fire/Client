@@ -6,21 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as init from 'core/component/construct';
+import * as init from '~/core/component/construct';
 
-import { forkMeta } from 'core/component/meta';
-import { initProps } from 'core/component/prop';
+import { forkMeta } from '~/core/component/meta';
+import { initProps } from '~/core/component/prop';
 
-import type { RenderContext } from 'core/component/render';
-import type { CreateElement } from 'core/component/engines';
+import type { RenderContext } from '~/core/component/render';
+import type { CreateElement } from '~/core/component/engines';
 
-import { $$, componentOpts } from 'core/component/functional/const';
-import { destroyComponent } from 'core/component/functional/helpers';
+import { $$, componentOpts } from '~/core/component/functional/const';
+import { destroyComponent } from '~/core/component/functional/helpers';
 
-import type { FunctionalCtx } from 'core/component/interface';
-import type { CreateFakeCtxOptions } from 'core/component/functional/interface';
+import type { FunctionalCtx } from '~/core/component/interface';
+import type { CreateFakeCtxOptions } from '~/core/component/functional/interface';
 
-export * from 'core/component/functional/interface';
+export * from '~/core/component/functional/interface';
 
 /**
  * Creates the fake context for a functional component is based on the specified parameters

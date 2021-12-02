@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type bInput from 'form/b-input/b-input';
-import type iInput from 'super/i-input/i-input';
+import type bInput from '~/form/b-input/b-input';
+import type iInput from '~/super/i-input/i-input';
 
 import type {
 
@@ -15,7 +15,7 @@ import type {
 	ValidatorParams,
 	ValidatorResult
 
-} from 'super/i-input/i-input';
+} from '~/super/i-input/i-input';
 
 import type {
 
@@ -28,9 +28,9 @@ import type {
 	PasswordValidatorParams,
 	PasswordValidatorResult
 
-} from 'form/b-input/modules/validators/interface';
+} from '~/form/b-input/modules/validators/interface';
 
-export * from 'form/b-input/modules/validators/interface';
+export * from '~/form/b-input/modules/validators/interface';
 
 export default <ValidatorsDecl<bInput>>{
 	//#if runtime has bInput/validators

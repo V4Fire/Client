@@ -15,10 +15,10 @@
 import 'models/demo/checkbox';
 //#endif
 
-import symbolGenerator from 'core/symbol';
-import SyncPromise from 'core/promise/sync';
+import symbolGenerator from '~/core/symbol';
+import SyncPromise from '~/core/promise/sync';
 
-import iSize from 'traits/i-size/i-size';
+import iSize from '~/traits/i-size/i-size';
 
 import iInput, {
 
@@ -36,12 +36,12 @@ import iInput, {
 
 	ComponentElement
 
-} from 'super/i-input/i-input';
+} from '~/super/i-input/i-input';
 
-import type { CheckType, Value, FormValue } from 'form/b-checkbox/interface';
+import type { CheckType, Value, FormValue } from '~/form/b-checkbox/interface';
 
-export * from 'super/i-input/i-input';
-export * from 'form/b-checkbox/interface';
+export * from '~/super/i-input/i-input';
+export * from '~/form/b-checkbox/interface';
 
 export { Value, FormValue };
 

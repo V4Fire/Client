@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter2 as EventEmitter, ListenerFn, OnOptions } from 'eventemitter2';
-import { componentParams } from 'core/component/const/cache';
+import { componentParams } from '~/core/component/const/cache';
 
 /**
  * Event emitter to broadcast component initialize events

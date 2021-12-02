@@ -11,14 +11,14 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
-import iVisible from 'traits/i-visible/i-visible';
+import symbolGenerator from '~/core/symbol';
+import iVisible from '~/traits/i-visible/i-visible';
 
-import iData, { component, prop, system, computed, watch, hook, ModsDecl } from 'super/i-data/i-data';
-import type { TitleValue, StageTitles, ScrollOptions } from 'super/i-page/interface';
+import iData, { component, prop, system, computed, watch, hook, ModsDecl } from '~/super/i-data/i-data';
+import type { TitleValue, StageTitles, ScrollOptions } from '~/super/i-page/interface';
 
-export * from 'super/i-data/i-data';
-export * from 'super/i-page/interface';
+export * from '~/super/i-data/i-data';
+export * from '~/super/i-page/interface';
 
 export const
 	$$ = symbolGenerator();

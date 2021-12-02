@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
-import Async from 'core/async';
+import symbolGenerator from '~/core/symbol';
+import Async from '~/core/async';
 
 import type {
 
@@ -16,17 +16,17 @@ import type {
 	ResizeWatcherInitOptions,
 	ResizeWatcherObservableElStore
 
-} from 'core/dom/resize-observer/interface';
+} from '~/core/dom/resize-observer/interface';
 
 import {
 
 	RESIZE_WATCHER_OBSERVABLE_STORE,
 	RESIZE_WATCHER_ASYNC_GROUP
 
-} from 'core/dom/resize-observer/const';
+} from '~/core/dom/resize-observer/const';
 
-export * from 'core/dom/resize-observer/interface';
-export * from 'core/dom/resize-observer/const';
+export * from '~/core/dom/resize-observer/interface';
+export * from '~/core/dom/resize-observer/const';
 
 export const
 	$$ = symbolGenerator();

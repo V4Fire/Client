@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { defProp } from 'core/const/props';
-import { initEmitter, metaPointers } from 'core/component/const';
-import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
-import { storeRgxp } from 'core/component/reflection';
+import { defProp } from '~/core/const/props';
+import { initEmitter, metaPointers } from '~/core/component/const';
+import { inverseFieldMap, tiedFieldMap } from '~/core/component/decorators/const';
+import { storeRgxp } from '~/core/component/reflection';
 
-import type { ComponentMeta } from 'core/component/interface';
-import type { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
+import type { ComponentMeta } from '~/core/component/interface';
+import type { ParamsFactoryTransformer, FactoryTransformer } from '~/core/component/decorators/interface';
 
 /**
  * Factory to create component property decorators

@@ -7,17 +7,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
+import symbolGenerator from '~/core/symbol';
 
-import { InViewAdapter, InViewInitOptions, inViewFactory } from 'core/dom/in-view';
+import { InViewAdapter, InViewInitOptions, inViewFactory } from '~/core/dom/in-view';
 
-import { Friend } from 'super/i-block/i-block';
-import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import { Friend } from '~/super/i-block/i-block';
+import type bVirtualScroll from '~/base/b-virtual-scroll/b-virtual-scroll';
 
-import type ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import type ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
+import type ComponentRender from '~/base/b-virtual-scroll/modules/component-render';
+import type ChunkRequest from '~/base/b-virtual-scroll/modules/chunk-request';
 
-import type { RenderItem } from 'base/b-virtual-scroll/interface';
+import type { RenderItem } from '~/base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();

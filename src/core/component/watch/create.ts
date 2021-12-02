@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
+import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from '~/core/object/watch';
 
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
-import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
+import { getPropertyInfo, PropertyInfo } from '~/core/component/reflection';
+import type { ComponentInterface, WatchOptions, RawWatchHandler } from '~/core/component/interface';
 
-import { tiedWatchers, watcherInitializer, fakeCopyLabel } from 'core/component/watch/const';
-import { cloneWatchValue } from 'core/component/watch/clone';
-import { attachDynamicWatcher } from 'core/component/watch/helpers';
+import { tiedWatchers, watcherInitializer, fakeCopyLabel } from '~/core/component/watch/const';
+import { cloneWatchValue } from '~/core/component/watch/clone';
+import { attachDynamicWatcher } from '~/core/component/watch/helpers';
 
 /**
  * Creates a function to watch changes from the specified component instance and returns it

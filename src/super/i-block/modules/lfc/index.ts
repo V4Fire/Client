@@ -11,17 +11,17 @@
  * @packageDocumentation
  */
 
-import SyncPromise from 'core/promise/sync';
+import SyncPromise from '~/core/promise/sync';
 
-import type { AsyncOptions } from 'core/async';
-import Friend from 'super/i-block/modules/friend';
+import type { AsyncOptions } from '~/core/async';
+import Friend from '~/super/i-block/modules/friend';
 
-import { statuses } from 'super/i-block/const';
+import { statuses } from '~/super/i-block/const';
 
-import type { Hook } from 'core/component';
-import type { Cb } from 'super/i-block/modules/lfc/interface';
+import type { Hook } from '~/core/component';
+import type { Cb } from '~/super/i-block/modules/lfc/interface';
 
-export * from 'super/i-block/modules/lfc/interface';
+export * from '~/super/i-block/modules/lfc/interface';
 
 /**
  * Class to work with a component life cycle

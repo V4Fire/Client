@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { DaemonsDict } from 'dummies/b-dummy/b-dummy';
+import type { DaemonsDict } from '~/dummies/b-dummy/b-dummy';
 
 export default <DaemonsDict>{
 	execOnCreated: {

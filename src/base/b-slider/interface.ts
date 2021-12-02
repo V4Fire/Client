@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { alignTypes, sliderModes } from 'base/b-slider/const';
+import type { alignTypes, sliderModes } from '~/base/b-slider/const';
 
 export interface SlideRect extends ClientRect {
 	offsetLeft: number;

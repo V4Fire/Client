@@ -11,12 +11,12 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
-import { unwrap } from 'core/object/watch';
-import { runHook, callMethodFromComponent } from 'core/component';
+import symbolGenerator from '~/core/symbol';
+import { unwrap } from '~/core/object/watch';
+import { runHook, callMethodFromComponent } from '~/core/component';
 
-import type iBlock from 'super/i-block/i-block';
-import { statuses } from 'super/i-block/const';
+import type iBlock from '~/super/i-block/i-block';
+import { statuses } from '~/super/i-block/const';
 
 import {
 
@@ -28,9 +28,9 @@ import {
 	asyncNames,
 	nonMuteAsyncLinkNames
 
-} from 'super/i-block/modules/activation/const';
+} from '~/super/i-block/modules/activation/const';
 
-export * from 'super/i-block/modules/activation/const';
+export * from '~/super/i-block/modules/activation/const';
 
 export const
 	$$ = symbolGenerator();

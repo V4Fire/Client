@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
-import type bSelect from 'form/b-select/b-select';
+import symbolGenerator from '~/core/symbol';
+import type bSelect from '~/form/b-select/b-select';
 
 export const
 	$$ = symbolGenerator();

@@ -13,8 +13,8 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
-import type iBlock from 'super/i-block/i-block';
+import symbolGenerator from '~/core/symbol';
+import type iBlock from '~/super/i-block/i-block';
 
 import type {
 
@@ -24,9 +24,9 @@ import type {
 	ObserverMutationRecord,
 	ChangedNodes
 
-} from 'traits/i-observe-dom/interface';
+} from '~/traits/i-observe-dom/interface';
 
-export * from 'traits/i-observe-dom/interface';
+export * from '~/traits/i-observe-dom/interface';
 
 export const
 	$$ = symbolGenerator();

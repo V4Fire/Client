@@ -16,14 +16,14 @@ import type {
 	RequestQuery,
 	CreateRequestOptions as BaseCreateRequestOptions
 
-} from 'core/data';
+} from '~/core/data';
 
 //#endif
 
-import type { AsyncOptions } from 'core/async';
-import type { UnsafeIBlock } from 'super/i-block/i-block';
+import type { AsyncOptions } from '~/core/async';
+import type { UnsafeIBlock } from '~/super/i-block/i-block';
 
-import type iData from 'super/i-data/i-data';
+import type iData from '~/super/i-data/i-data';
 
 export interface RequestFilterOptions<D = unknown> {
 	isEmpty: boolean;

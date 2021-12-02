@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from 'super/i-input-text/i-input-text';
+import type iInputText from '~/super/i-input-text/i-input-text';
 
 /**
  * Initializes the component mask

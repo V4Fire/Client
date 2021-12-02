@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchOptions } from 'core/object/watch';
+import type { WatchOptions } from '~/core/object/watch';
 
 /**
  * Clones the specified watcher value

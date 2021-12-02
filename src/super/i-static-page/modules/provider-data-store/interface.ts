@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AbstractCache } from 'core/cache';
-import type ProviderDataItem from 'super/i-static-page/modules/provider-data-store/item';
+import type { AbstractCache } from '~/core/cache';
+import type ProviderDataItem from '~/super/i-static-page/modules/provider-data-store/item';
 
 export type ItemKey = string | number | symbol;
 

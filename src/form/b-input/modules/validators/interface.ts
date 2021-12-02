@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ValidatorParams, ValidatorError, PatternValidatorParams } from 'super/i-input-text/i-input-text';
+import type { ValidatorParams, ValidatorError, PatternValidatorParams } from '~/super/i-input-text/i-input-text';
 
 /**
  * Parameters to validate inputted numbers

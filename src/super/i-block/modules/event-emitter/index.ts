@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import Async, { wrapWithSuspending } from 'core/async';
-import { emitLikeEvents } from 'super/i-block/modules/event-emitter/const';
+import Async, { wrapWithSuspending } from '~/core/async';
+import { emitLikeEvents } from '~/super/i-block/modules/event-emitter/const';
 
 import type {
 
@@ -24,9 +24,9 @@ import type {
 	EventEmitterWrapper,
 	ReadonlyEventEmitterWrapper
 
-} from 'super/i-block/modules/event-emitter/interface';
+} from '~/super/i-block/modules/event-emitter/interface';
 
-export * from 'super/i-block/modules/event-emitter/interface';
+export * from '~/super/i-block/modules/event-emitter/interface';
 
 /**
  * Wraps the specified event emitter with async

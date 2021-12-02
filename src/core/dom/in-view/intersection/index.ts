@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
-import Super from 'core/dom/in-view/super';
+import symbolGenerator from '~/core/symbol';
+import Super from '~/core/dom/in-view/super';
 
-import { hasIntersection } from 'core/dom/in-view/intersection/helpers';
-import type { InViewObservableElement } from 'core/dom/in-view/interface';
+import { hasIntersection } from '~/core/dom/in-view/intersection/helpers';
+import type { InViewObservableElement } from '~/core/dom/in-view/interface';
 
 export type AdapteeType =
 	'observer';

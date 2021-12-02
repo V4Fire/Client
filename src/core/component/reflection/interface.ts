@@ -13,7 +13,7 @@ import type {
 	ComponentOptions,
 	ComponentMeta
 
-} from 'core/component/interface';
+} from '~/core/component/interface';
 
 /**
  * Information of a component that can be taken from a constructor

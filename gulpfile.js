@@ -23,7 +23,7 @@ module.exports = function initGulp(gulp = require('gulp')) {
 	include('build/gulp/build')(gulp);
 	include('build/gulp/test')(gulp);
 
-	include('build/gulp/performance')(gulp);
+	// include('build/gulp/performance')(gulp);
 
 	globalThis.callGulp(module);
 };

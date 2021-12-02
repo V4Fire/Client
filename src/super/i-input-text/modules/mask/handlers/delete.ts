@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from 'super/i-input-text/i-input-text';
+import type iInputText from '~/super/i-input-text/i-input-text';
 
 import {
 
@@ -14,7 +14,7 @@ import {
 	convertCursorPositionToRaw,
 	getNormalizedSelectionBounds
 
-} from 'super/i-input-text/modules/mask/helpers';
+} from '~/super/i-input-text/modules/mask/helpers';
 
 /**
  * Handler: removing characters from the mask via `backspace/delete` buttons

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentElement } from 'core/component';
+import type { ComponentElement } from '~/core/component';
 
 export type DocumentFragmentP = DocumentFragment & {
 	getAttribute(nm: string): void;

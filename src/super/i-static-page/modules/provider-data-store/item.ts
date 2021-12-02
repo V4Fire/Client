@@ -7,12 +7,12 @@
  */
 
 //#if runtime has core/data
-import type Provider from 'core/data';
+import type Provider from '~/core/data';
 //#endif
 
-import { providers } from 'core/data/const';
-import select, { SelectParams } from 'core/object/select';
-import type { ItemKey } from 'super/i-static-page/modules/provider-data-store/interface';
+import { providers } from '~/core/data/const';
+import select, { SelectParams } from '~/core/object/select';
+import type { ItemKey } from '~/super/i-static-page/modules/provider-data-store/interface';
 
 /**
  * Wrapper for a data item

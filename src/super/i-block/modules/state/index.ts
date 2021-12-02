@@ -11,12 +11,12 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
+import symbolGenerator from '~/core/symbol';
 
-import iBlock from 'super/i-block/i-block';
-import Friend from 'super/i-block/modules/friend';
+import iBlock from '~/super/i-block/i-block';
+import Friend from '~/super/i-block/modules/friend';
 
-export * from 'super/i-block/modules/state/interface';
+export * from '~/super/i-block/modules/state/interface';
 
 export const
 	$$ = symbolGenerator();

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ExperimentsSet } from 'core/abt';
+import type { ExperimentsSet } from '~/core/abt';
 
 export interface State {
 	isAuth?: boolean;

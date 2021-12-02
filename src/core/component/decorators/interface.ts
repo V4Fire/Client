@@ -16,7 +16,7 @@ import type {
 	WatchHandlerParams,
 	MethodWatcher
 
-} from 'core/component/interface';
+} from '~/core/component/interface';
 
 export type Prop<T = unknown> =
 	{(): T} |

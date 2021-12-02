@@ -40,7 +40,7 @@
     "up": "npm i && npm up && npm audit fix"
   },
   "dependencies": {
-    "@v4fire/core": "^3.65.1",
+    "@v4fire/core": "file:.yalc/@v4fire/core",
     "escaper": "^3.0.6",
     "eventemitter2": "^6.4.5",
     "jsdom": "^16.7.0",

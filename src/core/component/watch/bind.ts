@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { getPropertyInfo } from 'core/component/reflection';
-import { wrapWithSuspending } from 'core/async';
+import { getPropertyInfo } from '~/core/component/reflection';
+import { wrapWithSuspending } from '~/core/async';
 
-import { beforeHooks } from 'core/component/const';
-import { customWatcherRgxp } from 'core/component/watch/const';
+import { beforeHooks } from '~/core/component/const';
+import { customWatcherRgxp } from '~/core/component/watch/const';
 
-import type { ComponentInterface } from 'core/component/interface';
-import type { BindRemoteWatchersParams } from 'core/component/watch/interface';
+import type { ComponentInterface } from '~/core/component/interface';
+import type { BindRemoteWatchersParams } from '~/core/component/watch/interface';
 
 /**
  * Binds watchers and event listeners that were registered as remote to the specified component instance.

@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import { defProp } from 'core/const/props';
-import { defaultWrapper } from 'core/component/const';
+import { defProp } from '~/core/const/props';
+import { defaultWrapper } from '~/core/component/const';
 
-import type { ComponentInterface } from 'core/component/interface';
-import type { InitPropsObjectOptions } from 'core/component/prop/interface';
+import type { ComponentInterface } from '~/core/component/interface';
+import type { InitPropsObjectOptions } from '~/core/component/prop/interface';
 
-export * from 'core/component/prop/interface';
+export * from '~/core/component/prop/interface';
 
 /**
  * Initializes input properties of the specified component instance.

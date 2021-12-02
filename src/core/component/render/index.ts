@@ -11,11 +11,11 @@
  * @packageDocumentation
  */
 
-import type { VNode } from 'core/component/engines';
-import type { ComponentInterface } from 'core/component/interface';
-import type { RenderObject } from 'core/component/render/interface';
+import type { VNode } from '~/core/component/engines';
+import type { ComponentInterface } from '~/core/component/interface';
+import type { RenderObject } from '~/core/component/render/interface';
 
-export * from 'core/component/render/interface';
+export * from '~/core/component/render/interface';
 
 /**
  * Executes the specified render object

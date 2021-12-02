@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { Cache } from 'super/i-block/i-block';
-import type { Item } from 'form/b-select/b-select';
+import { Cache } from '~/super/i-block/i-block';
+import type { Item } from '~/form/b-select/b-select';
 
 export const months = [
 	t`January`,

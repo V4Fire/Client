@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Gulp } from 'gulp';
+import type { Gulp } from '~/gulp';
 
 import gulpLoadPlugs from 'gulp-load-plugins';
 import yargs from 'yargs';

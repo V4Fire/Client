@@ -20,10 +20,10 @@ import {
 	TASKS_PER_TICK,
 	DELAY
 
-} from 'core/render/const';
+} from '~/core/render/const';
 
-export * from 'core/render/const';
-export * from 'core/render/interface';
+export * from '~/core/render/const';
+export * from '~/core/render/interface';
 
 let
 	inProgress = false,

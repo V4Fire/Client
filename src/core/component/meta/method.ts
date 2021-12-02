@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { defProp } from 'core/const/props';
-import type { ComponentMeta } from 'core/component/interface';
+import { defProp } from '~/core/const/props';
+import type { ComponentMeta } from '~/core/component/interface';
 
 /**
  * Iterates over a prototype of a component constructor and adds methods/accessors to the specified meta object

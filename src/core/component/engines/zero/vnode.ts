@@ -7,8 +7,8 @@
  */
 
 import type { RenderContext, VNode } from 'vue';
-import type { ComponentInterface } from 'core/component';
-import * as _ from 'core/component/engines/zero/helpers';
+import type { ComponentInterface } from '~/core/component';
+import * as _ from '~/core/component/engines/zero/helpers';
 
 /**
  * Clones the specified vnode

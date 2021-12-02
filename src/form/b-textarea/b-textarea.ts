@@ -15,8 +15,8 @@
 import 'models/demo/input';
 //#endif
 
-import symbolGenerator from 'core/symbol';
-import SyncPromise from 'core/promise/sync';
+import symbolGenerator from '~/core/symbol';
+import SyncPromise from '~/core/promise/sync';
 
 import iInputText, {
 
@@ -32,12 +32,12 @@ import iInputText, {
 	TextValidators,
 	ValidatorsDecl
 
-} from 'super/i-input-text/i-input-text';
+} from '~/super/i-input-text/i-input-text';
 
-import type { Value, FormValue } from 'form/b-textarea/interface';
+import type { Value, FormValue } from '~/form/b-textarea/interface';
 
-export * from 'super/i-input-text/i-input-text';
-export * from 'form/b-textarea/interface';
+export * from '~/super/i-input-text/i-input-text';
+export * from '~/form/b-textarea/interface';
 
 export { Value, FormValue };
 

@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isComponent, componentInitializers, componentParams, components } from 'core/component/const';
+import { isComponent, componentInitializers, componentParams, components } from '~/core/component/const';
 
-import type { ComponentMeta } from 'core/component/interface';
-import type { ComponentConstructorInfo } from 'core/component/reflection';
+import type { ComponentMeta } from '~/core/component/interface';
+import type { ComponentConstructorInfo } from '~/core/component/reflection';
 
 /**
  * Registers a parent component of the specified component to a component library (vue, react, etc.).

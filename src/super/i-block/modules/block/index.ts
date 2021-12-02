@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import Friend from 'super/i-block/modules/friend';
+import Friend from '~/super/i-block/modules/friend';
 
-import { fakeCtx, modRgxpCache, elRxp } from 'super/i-block/modules/block/const';
-import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
+import { fakeCtx, modRgxpCache, elRxp } from '~/super/i-block/modules/block/const';
+import type { ModsTable, ModsNTable } from '~/super/i-block/modules/mods';
 
 import type {
 
@@ -25,9 +25,9 @@ import type {
 	ElementModEvent,
 	SetElementModEvent
 
-} from 'super/i-block/modules/block/interface';
+} from '~/super/i-block/modules/block/interface';
 
-export * from 'super/i-block/modules/block/interface';
+export * from '~/super/i-block/modules/block/interface';
 
 /**
  * Class implements BEM-like API

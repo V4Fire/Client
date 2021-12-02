@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { RenderObject } from 'core/component';
+import type { RenderObject } from '~/core/component';
 
 export const
 	tplCache = Object.createDict<RenderObject>();

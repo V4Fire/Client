@@ -15,20 +15,20 @@
 import 'models/demo/list';
 //#endif
 
-import symbolGenerator from 'core/symbol';
-import SyncPromise from 'core/promise/sync';
+import symbolGenerator from '~/core/symbol';
+import SyncPromise from '~/core/promise/sync';
 
-import { isAbsURL } from 'core/url';
+import { isAbsURL } from '~/core/url';
 
-import iVisible from 'traits/i-visible/i-visible';
-import iWidth from 'traits/i-width/i-width';
-import iItems, { IterationKey } from 'traits/i-items/i-items';
+import iVisible from '~/traits/i-visible/i-visible';
+import iWidth from '~/traits/i-width/i-width';
+import iItems, { IterationKey } from '~/traits/i-items/i-items';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import type { Active, Item, Items } from 'base/b-list/interface';
+import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from '~/super/i-data/i-data';
+import type { Active, Item, Items } from '~/base/b-list/interface';
 
-export * from 'super/i-data/i-data';
-export * from 'base/b-list/interface';
+export * from '~/super/i-data/i-data';
+export * from '~/base/b-list/interface';
 
 export const
 	$$ = symbolGenerator();

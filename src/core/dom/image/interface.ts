@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from 'super/i-block';
+import type iBlock from '~/super/i-block';
 
 import {
 
@@ -20,7 +20,7 @@ import {
 	INIT_LOAD_SYMBOL,
 	IS_LOADING_SYMBOL
 
-} from 'core/dom/image/const';
+} from '~/core/dom/image/const';
 
 export interface ImageOptions {
 	/**

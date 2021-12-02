@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { fakeCopyLabel } from 'core/component/watch';
+import { fakeCopyLabel } from '~/core/component/watch';
 
 const
 	toNonFakeObject = Symbol('Link to a non fake object');

@@ -11,18 +11,18 @@
  * @packageDocumentation
  */
 
-import type iBlock from 'super/i-block/i-block';
+import type iBlock from '~/super/i-block/i-block';
 
-import Friend from 'super/i-block/modules/friend';
-import Block from 'super/i-block/modules/block';
+import Friend from '~/super/i-block/modules/friend';
+import Block from '~/super/i-block/modules/block';
 
-import { classesCache, modsCache } from 'super/i-block/modules/provide/const';
+import { classesCache, modsCache } from '~/super/i-block/modules/provide/const';
 
-import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
-import type { Classes, ProvideMods } from 'super/i-block/modules/provide/interface';
+import type { ModsTable, ModsNTable } from '~/super/i-block/modules/mods';
+import type { Classes, ProvideMods } from '~/super/i-block/modules/provide/interface';
 
-export * from 'super/i-block/modules/provide/const';
-export * from 'super/i-block/modules/provide/interface';
+export * from '~/super/i-block/modules/provide/const';
+export * from '~/super/i-block/modules/provide/interface';
 
 /**
  * Class with methods to provide component classes/styles to another component, etc.
