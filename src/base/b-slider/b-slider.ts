@@ -386,7 +386,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * True if we need to minimize the amount of non-essential motion used
 	 */
 	@computed({cache: true})
-	protected get needReduceMotion(): boolean {
+	protected get shouldReduceMotion(): boolean {
 		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
@@ -500,7 +500,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 
 		const
-			position = this.needReduceMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
+			position = this.shouldReduceMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
 
 		content.style.transform = `translate3d(${(-position).px}, 0, 0)`;
 	}
@@ -510,7 +510,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	protected performSliderMove(): void {
 		if (this.shouldUseRAF) {
-			this.async.requestAnimationFrame(this.updateSlidePosition, {label: $$.performSliderMove});
+			this.async.requestAnimationFrame(this.updateSlidePosition.bind(this), {label: $$.performSliderMove});
+
 		} else {
 			this.updateSlidePosition();
 		}
