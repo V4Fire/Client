@@ -44,7 +44,7 @@ module.exports = (page) => {
 
 			await swipeOnce(page);
 			await h.bom.waitForIdleCallback(page);
-			expect((await current(target))).toBe(1);
+			expect(await current(target)).toBe(1);
 		});
 
 		it('`default` slot with the `scroll` mode', async () => {

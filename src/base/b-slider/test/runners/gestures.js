@@ -8,6 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	h = include('tests/helpers');
+
 const {
 	initDefaultSlider,
 	current,
@@ -15,9 +18,6 @@ const {
 	toLastSlide,
 	currentOffset
 } = include('src/base/b-slider/test/helpers');
-
-const
-	h = include('tests/helpers');
 
 /**
  * @param {Playwright.Page} page
@@ -62,7 +62,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 		afterEach(() => context.close());
 
-		it('swipe left on the first slide', async () => {
+		it('swipes left on the first slide', async () => {
 			const component = await initDefaultSlider(page);
 
 			await gesture.evaluate((ctx) =>
@@ -72,7 +72,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(await currentOffset(component)).toBe(slidesOffset[0]);
 		});
 
-		it('swipe right on the first slide', async () => {
+		it('swipes right on the first slide', async () => {
 			const component = await initDefaultSlider(page);
 
 			await gesture.evaluate((ctx) =>
@@ -82,7 +82,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(await currentOffset(component)).toBe(slidesOffset[1]);
 		});
 
-		it('double swipe right on the first slide', async () => {
+		it('double swipes right on the first slide', async () => {
 			const component = await initDefaultSlider(page);
 
 			await gesture.evaluate((ctx) =>
@@ -95,7 +95,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(await currentOffset(component)).toBe(slidesOffset[2]);
 		});
 
-		it('swipe right on the last slide', async () => {
+		it('swipes right on the last slide', async () => {
 			const component = await initDefaultSlider(page);
 
 			await toLastSlide(component);
@@ -107,7 +107,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(await currentOffset(component)).toBe(slidesOffset[3]);
 		});
 
-		it('swipe left on the last slide', async () => {
+		it('swipes left on the last slide', async () => {
 			const component = await initDefaultSlider(page);
 
 			await toLastSlide(component);
@@ -119,7 +119,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(await currentOffset(component)).toBe(slidesOffset[2]);
 		});
 
-		it('swipe right on the first slide and than swipe back', async () => {
+		it('swipes right on the first slide and than swipes back', async () => {
 			const component = await initDefaultSlider(page);
 
 			await gesture.evaluate((ctx) =>
@@ -135,7 +135,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			expect(await currentOffset(component)).toBe(slidesOffset[0]);
 		});
 
-		it('short swipe - swipeToleranceX not passed', async () => {
+		it('short swipe - `swipeToleranceX` not passed', async () => {
 			const component = await initDefaultSlider(page);
 
 			await gesture.evaluate((ctx) =>

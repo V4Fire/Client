@@ -13,7 +13,7 @@ Changelog
 
 #### :house: Internal
 
-* [Wrapped the animations in `requestAnimationFrame`](https://github.com/V4Fire/Client/issues/170).
+* [Wrapped animations with `requestAnimationFrame`](https://github.com/V4Fire/Client/issues/170)
 
 ## v3.0.0-rc.164 (2021-03-22)
 

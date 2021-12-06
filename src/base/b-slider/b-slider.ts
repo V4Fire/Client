@@ -383,7 +383,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * True if we need to minimize the amount of non-essential motion used
+	 * True if needed to minimize the amount of non-essential motion used
 	 */
 	@computed({cache: true})
 	protected get shouldReduceMotion(): boolean {
@@ -495,14 +495,13 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected updateSlidePosition(): void {
 		const
 			{content} = this;
+
 		if (content == null) {
 			return;
 		}
 
-		const
-			position = this.shouldReduceMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
-
-		content.style.transform = `translate3d(${(-position).px}, 0, 0)`;
+		const pos = this.shouldReduceMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
+		content.style.transform = `translate3d(${(-pos).px}, 0, 0)`;
 	}
 
 	/**

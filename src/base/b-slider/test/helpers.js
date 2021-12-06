@@ -86,7 +86,7 @@ async function initSlider(page, {attrs, content} = {}) {
 }
 
 /**
- * Creates default slots
+ * Creates the default slot
  */
 function defaultSlotFn() {
 	const items = [1, 2, 3, 4].map((i) => ({
@@ -106,7 +106,7 @@ function defaultSlotFn() {
 }
 
 /**
- * Creates a component with the default slots and slide mode for gesture tests
+ * Creates a component with the default slot and a slide mode to test gestures
  *
  * @param {Page} page
  * @returns {!Object} component
@@ -119,6 +119,7 @@ function initDefaultSlider(page) {
  * Returns an index of the current visible slide
  *
  * @param {!Object} component
+ * @returns {!Promise<number>}
  */
 function current(component) {
 	return component.evaluate((ctx) => ctx.current);
@@ -128,6 +129,7 @@ function current(component) {
  * Returns an index of the last slide
  *
  * @param {!Object} component
+ * @returns {!Promise<number>}
  */
 function lastIndex(component) {
 	return component.evaluate((ctx) => ctx.contentLength - 1);
@@ -137,6 +139,7 @@ function lastIndex(component) {
  * Switches to the last slide
  *
  * @param {!Object} component
+ * @returns {!Promise<number>}
  */
 async function toLastSlide(component) {
 	await component.evaluate((ctx) => ctx.current = ctx.contentLength - 1);

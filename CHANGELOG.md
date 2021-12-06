@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* `src/base/b-slider` now has its animations wrapped in `requestAnimationFrame`.
+* [Wrapped animations with `requestAnimationFrame`](https://github.com/V4Fire/Client/issues/170)
 
 ## v3.13.1 (2021-12-02)
 
