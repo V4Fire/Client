@@ -142,6 +142,16 @@ async function toLastSlide(component) {
 	await component.evaluate((ctx) => ctx.current = ctx.contentLength - 1);
 }
 
+/**
+ * Returns the current slider scroll position
+ *
+ * @param {Object} component
+ * @returns {!Promise<number>}
+ */
+function currentOffset(component) {
+	return component.evaluate((ctx) => ctx.currentOffset);
+}
+
 module.exports = {
 	swipeOnce,
 	initSlider,
@@ -149,5 +159,6 @@ module.exports = {
 	initDefaultSlider,
 	current,
 	lastIndex,
-	toLastSlide
+	toLastSlide,
+	currentOffset
 };
