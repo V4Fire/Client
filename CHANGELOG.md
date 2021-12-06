@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (????-??-??)
+
+#### :house: Internal
+
+* [Wrapped animations with `requestAnimationFrame`](https://github.com/V4Fire/Client/issues/170)
+
 ## v3.13.1 (2021-12-02)
 
 #### :house: Internal

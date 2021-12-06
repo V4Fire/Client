@@ -330,13 +330,13 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected startY: number = 0;
 
 	/**
-	 * The difference between a touch position on X axis at the beginning of the slide and at the end
+	 * The difference between a touch position on X axis at the beginning of the swipe and at the end
 	 */
 	@system()
 	protected diffX: number = 0;
 
 	/**
-	 * Is the minimum threshold for starting slide slides passed
+	 * Is the minimum threshold for starting slide content passed
 	 *
 	 * @see [[bSlider.swipeToleranceX]]
 	 * @see [[bSlider.swipeToleranceY]]
@@ -354,7 +354,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Slider viewport rectangle
 	 */
 	@system()
-	protected viewRect?: ClientRect;
+	protected viewRect?: DOMRect;
 
 	/**
 	 * Timestamp of a start touch on the slider
@@ -373,6 +373,22 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@system()
 	protected swiping: boolean = false;
+
+	/**
+	 * True if all animations need to use `requestAnimationFrame`
+	 */
+	@computed({cache: true})
+	protected get shouldUseRAF(): boolean {
+		return this.browser.is.iOS === false;
+	}
+
+	/**
+	 * True if needed to minimize the amount of non-essential motion used
+	 */
+	@computed({cache: true})
+	protected get shouldReduceMotion(): boolean {
+		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	}
 
 	/** @see [[iItems.items]] */
 	@computed({dependencies: ['itemsStore', 'options']})
@@ -418,7 +434,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			}
 
 			this.syncState();
-			content.style.setProperty('--offset', `${this.currentOffset}px`);
+			this.performSliderMove();
 
 			return true;
 		}
@@ -452,7 +468,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			}
 
 			this.current = current;
-			content.style.setProperty('--offset', `${this.currentOffset}px`);
+			this.performSliderMove();
 			return true;
 		}
 
@@ -471,6 +487,41 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				childList: true
 			});
 		}
+	}
+
+	/**
+	 * Performs the slider animation
+	 */
+	protected updateSlidePosition(): void {
+		const
+			{content} = this;
+
+		if (content == null) {
+			return;
+		}
+
+		const pos = this.shouldReduceMotion ? this.currentOffset : this.currentOffset + this.diffX * this.deltaX;
+		content.style.transform = `translate3d(${(-pos).px}, 0, 0)`;
+	}
+
+	/**
+	 * Updates the slider position
+	 */
+	protected performSliderMove(): void {
+		if (this.shouldUseRAF) {
+			this.async.requestAnimationFrame(this.updateSlidePosition.bind(this), {label: $$.performSliderMove});
+
+		} else {
+			this.updateSlidePosition();
+		}
+	}
+
+	/**
+	 * Stops the slider animation
+	 */
+	protected stopSliderAnimation(): void {
+		this.async.clearAnimationFrame({label: $$.performSliderMove});
+		this.diffX = 0;
 	}
 
 	/**
@@ -572,7 +623,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 
 		void this.setMod('swipe', true);
-		content.style.setProperty('--offset', `${this.currentOffset}px`);
+		this.performSliderMove();
 	}
 
 	/**
@@ -582,14 +633,10 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	@watch(':DOMChange')
 	@wait('ready', {label: $$.syncStateDefer})
 	protected async syncStateDefer(): Promise<void> {
-		if (!this.isSlideMode) {
-			return;
-		}
-
 		const
 			{content} = this;
 
-		if (!content) {
+		if (!this.isSlideMode || !content) {
 			return;
 		}
 
@@ -719,7 +766,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.isTolerancePassed = true;
 		this.diffX = diffX;
 
-		content.style.setProperty('--transform', `${this.diffX * this.deltaX}px`);
+		this.performSliderMove();
 	}
 
 	/**
@@ -739,11 +786,11 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			threshold,
 			startTime,
 			fastSwipeDelay,
-			fastSwipeThreshold
+			fastSwipeThreshold,
+			content
 		} = this;
 
 		const
-			{content} = this,
 			dir = <SlideDirection>Math.sign(diffX);
 
 		let
@@ -764,12 +811,13 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 
 		this.diffX = 0;
-		content.style.setProperty('--transform', '0px');
+		this.performSliderMove();
 		void this.removeMod('swipe', true);
 
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
+		this.stopSliderAnimation();
 	}
 }
 

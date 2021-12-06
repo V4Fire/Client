@@ -14,7 +14,7 @@
 
 const
 	h = include('tests/helpers'),
-	{swipeOnce, initSlider} = include('src/base/b-slider/test/helpers');
+	{swipeOnce, initSlider, defaultSlotFn, initDefaultSlider, current} = include('src/base/b-slider/test/helpers');
 
 /** @param {Page} page */
 module.exports = (page) => {
@@ -32,26 +32,9 @@ module.exports = (page) => {
 	});
 
 	describe('b-slider providing of slots', () => {
-		const defaultSlotFn = () => {
-			const items = [1, 2, 3, 4].map((i) => ({
-				tag: 'img',
-				data: {
-					attrs: {
-						'data-test-ref': 'item',
-						id: `slide${i}`,
-						src: `https://picsum.photos/300/200.jpg?random=${i}`,
-						width: 300,
-						height: 200
-					}
-				}
-			}));
-
-			return `return () => ${JSON.stringify(items)}`;
-		};
-
 		it('`default` slot with the `slide` mode', async () => {
 			const
-				target = await initSlider(page, {content: {default: defaultSlotFn()}, attrs: {mode: 'slide'}}),
+				target = await initDefaultSlider(page),
 				viewContent = await h.dom.waitForEl(page, h.dom.elNameGenerator('.b-slider', 'view-content'));
 
 			await h.bom.waitForIdleCallback(page);
@@ -61,7 +44,7 @@ module.exports = (page) => {
 
 			await swipeOnce(page);
 			await h.bom.waitForIdleCallback(page);
-			expect((await target.evaluate((ctx) => ctx.current))).toBe(1);
+			expect(await current(target)).toBe(1);
 		});
 
 		it('`default` slot with the `scroll` mode', async () => {
