@@ -12,10 +12,7 @@ const
 	{webpack} = require('config');
 
 const
-	camelize = require('camelize'),
-	SVGO = require('svgo-sync');
-
-const
+	SVGO = require('svgo-sync'),
 	svgo = new SVGO();
 
 module.exports = function addPlugins(api) {
@@ -44,10 +41,7 @@ module.exports = function addPlugins(api) {
 	 * @param {boolean} [upper]
 	 * @returns {string}
 	 */
-	api.define('camelize', (str, upper) => {
-		const res = camelize(str.string);
-		return upper ? res[0].toUpperCase() + res.slice(1) : res;
-	});
+	api.define('camelize', (str, upper) => String(str.string).camelize(upper));
 
 	/**
 	 * Converts the specified string to lowercase

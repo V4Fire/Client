@@ -17,7 +17,6 @@ const
 	path = require('upath');
 
 const
-	camelize = require('camelize'),
 	o = require('@v4fire/config/options').option;
 
 const
@@ -185,7 +184,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						try {
 							const
 								demo = require(pzlr.resolve.blockSync(`${name}/demo.js`)),
-								suit = camelize(args['--suit'] || 'demo');
+								suit = (args['--suit'] || 'demo').camelize(false);
 
 							const
 								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));

@@ -13,9 +13,6 @@ const
 	Snakeskin = require('snakeskin');
 
 const
-	camelize = require('camelize');
-
-const
 	{validators} = require('@pzlr/build-core'),
 	{isV4Prop} = include('build/snakeskin/filters/const');
 
@@ -53,11 +50,11 @@ function tagFilter({name, attrs = {}}) {
 		componentName;
 
 	if (attrs[':instance-of']) {
-		componentName = camelize(attrs[':instance-of'][0]);
+		componentName = attrs[':instance-of'][0].camelize(false);
 		delete attrs[':instance-of'];
 
 	} else {
-		componentName = name === 'component' ? 'iBlock' : camelize(name);
+		componentName = name === 'component' ? 'iBlock' : name.camelize(false);
 	}
 
 	const
@@ -128,7 +125,7 @@ function tagFilter({name, attrs = {}}) {
 			}
 
 			const
-				basePropName = camelize(key.slice(1)),
+				basePropName = key.slice(1).camelize(false),
 				directPropName = `${basePropName}Prop`;
 
 			let
@@ -165,7 +162,7 @@ function tagNameFilter(tag, attrs = {}, rootTag) {
 		.reduce((tag, filter) => filter(tag, attrs, rootTag));
 
 	const
-		nm = camelize(tag),
+		nm = tag.camelize(false),
 		component = componentParams[nm];
 
 	if (component != null && !Object.isBoolean(component.functional)) {
