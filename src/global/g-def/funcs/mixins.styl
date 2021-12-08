@@ -163,7 +163,7 @@ interpolate-props($opts, $normalize = true)
 	if type($opts) == "object"
 		for $key, $val in $opts
 			$value = type($val) == "string" ? convert($val) : $val
-			{$normalize ? dasherize($key): $key} $value
+			{$normalize ? dasherize($key, true): $key} $value
 
 /**
  * Generates a path from the specified sequence

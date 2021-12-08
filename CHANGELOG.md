@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Moved from `Sugar/camelize/string-dasherize/urlconcat` to `@v4fire/core`
+
 ## v3.13.3 (2021-12-08)
 
 #### :bug: Bug Fix

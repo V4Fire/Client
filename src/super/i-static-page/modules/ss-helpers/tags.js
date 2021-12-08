@@ -9,7 +9,6 @@
 require('../interface');
 
 const
-	$C = require('collection.js'),
 	config = require('config');
 
 const
@@ -229,7 +228,7 @@ function getStyleDecl(lib, body) {
 				onload: `this.media='${lib.attrs?.media ?? 'all'}'; this.onload=null;`
 			});
 
-			const preloadAttrs = $C.extend(true, {}, lib, {
+			const preloadAttrs = Object.mixin(true, {}, lib, {
 				defer: false,
 				attrs: {
 					rel: 'preload',

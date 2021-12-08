@@ -29,7 +29,7 @@ const externalMap = $C(config.webpack.externals).filter((el, key) => {
 
 	externalList.push((ctx, req, cb) => {
 		if (rgxp.test(req)) {
-			return cb(null, `root ${Object.isObject(el) ? el.root : el}`);
+			return cb(null, `root ${Object.isDictionary(el) ? el.root : el}`);
 		}
 
 		cb();
