@@ -533,7 +533,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		publicPath(...args) {
 			const
-				concatURLs = require('urlconcat').concat;
+				{concatURLs} = require('@v4fire/core/lib/core/url');
 
 			let pathVal = o('public-path', {
 				env: true,
