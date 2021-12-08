@@ -29,13 +29,13 @@ module.exports = function addPlugins(api) {
 	api.define('dataURI', (mime, str) => `data:${mime.string};base64,${Buffer(str.string).toString('base64')}`);
 
 	/**
-	 * Link to the "string-dasherize" module
+	 * Returns a dash-style version of the specified string
 	 *
 	 * @param {?} str - source string
 	 * @returns {string}
 	 */
 	api.define('dasherize',
-		(str) => require('string-dasherize')(str.string));
+		(str) => String(str.string).dasherize(true));
 
 	/**
 	 * Link to Sugar.String.camelize
