@@ -160,13 +160,13 @@ function getParentParameters(component) {
 
 		const
 			val = component[key],
-			isObj = Object.isObject(val);
+			isObj = Object.isDictionary(val);
 
 		if (val === undefined || isObj) {
 			const
 				parentVal = parent[key];
 
-			if (Object.isObject(parentVal)) {
+			if (Object.isDictionary(parentVal)) {
 				params[key] = {...parentVal, ...val};
 				continue;
 			}

@@ -171,7 +171,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						return obj;
 					}
 
-					return [Object.isObject(obj) ? obj : {name: obj}];
+					return [Object.isDictionary(obj) ? obj : {name: obj}];
 
 				} catch {}
 
@@ -190,7 +190,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 							const
 								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
 
-							if (Object.isObject(demo)) {
+							if (Object.isDictionary(demo)) {
 								return wrap(demo[suit]);
 							}
 

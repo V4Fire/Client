@@ -33,7 +33,7 @@ let
 const
 	designSystem = getDS();
 
-if (Object.isObject(designSystem)) {
+if (Object.isDictionary(designSystem)) {
 	const
 		{data, variables} = createDesignSystem(designSystem);
 

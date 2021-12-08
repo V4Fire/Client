@@ -141,7 +141,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 
 		$C(obj).forEach((value, key) => {
 			if (theme === true) {
-				if (Object.isObject(value)) {
+				if (Object.isDictionary(value)) {
 					parseRawDS(value, res, createArrayFrom(path, key), key);
 
 				} else {
@@ -149,14 +149,14 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 				}
 
 			} else if (key === 'theme') {
-				if (Object.isObject(value)) {
+				if (Object.isDictionary(value)) {
 					parseRawDS(value, res, createArrayFrom(path, key), true);
 
 				} else {
 					throw new Error('Cannot find themes dictionary');
 				}
 
-			} else if (Object.isObject(value)) {
+			} else if (Object.isDictionary(value)) {
 				parseRawDS(value, res, createArrayFrom(path, key), theme);
 
 			} else if (Object.isArray(value)) {
@@ -239,7 +239,7 @@ function getThemedPathChunks(field, theme, isFieldThemed) {
  * @param {(string|!Array<string>)} path
  */
 function checkDeprecated(ds, path) {
-	if (!Object.isObject($C(ds).get('meta.deprecated'))) {
+	if (!Object.isDictionary($C(ds).get('meta.deprecated'))) {
 		return false;
 	}
 
@@ -254,7 +254,7 @@ function checkDeprecated(ds, path) {
 	const
 		message = [];
 
-	if (Object.isObject(deprecated)) {
+	if (Object.isDictionary(deprecated)) {
 		if (deprecated.renamedTo != null) {
 			message.push(
 				`[stylus] Warning: design system field by path "${strPath}" was renamed to "${deprecated.renamedTo}".`,
