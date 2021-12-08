@@ -97,7 +97,7 @@ function tagFilter({name, attrs = {}}) {
 					return $C(el).includes(attr);
 				}
 
-				return Object.isEqual(el[0], attr);
+				return Object.fastCompare(el[0], attr);
 			}
 
 			if (Object.isRegExp(el)) {
@@ -108,7 +108,7 @@ function tagFilter({name, attrs = {}}) {
 				return el(attr);
 			}
 
-			return Object.isEqual(el, attr);
+			return Object.fastCompare(el, attr);
 		});
 	}
 
