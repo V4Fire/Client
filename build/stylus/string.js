@@ -29,13 +29,14 @@ module.exports = function addPlugins(api) {
 	 * Returns a dash-style version of the specified string
 	 *
 	 * @param {?} str - source string
+	 * @param [stable] - if true, then the operation can be reverted
 	 * @returns {string}
 	 */
 	api.define('dasherize',
-		(str) => String(str.string).dasherize(true));
+		(str, stable) => String(str.string).dasherize(stable));
 
 	/**
-	 * Link to Sugar.String.camelize
+	 * Returns a CamelCaseStyle version of the specified string
 	 *
 	 * @param {?} str - source string
 	 * @param {boolean} [upper]
