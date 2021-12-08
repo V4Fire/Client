@@ -13,7 +13,6 @@ const
 	Snakeskin = require('snakeskin');
 
 const
-	dasherize = require('string-dasherize'),
 	camelize = require('camelize');
 
 const
@@ -77,7 +76,7 @@ function tagFilter({name, attrs = {}}) {
 
 	} else if (!funcMode) {
 		isFunctional = $C(smartProps).every((el, key) => {
-			key = dasherize(key);
+			key = key.dasherize(true);
 
 			if (!isV4Prop.test(key)) {
 				key = `:${key}`;
@@ -141,14 +140,14 @@ function tagFilter({name, attrs = {}}) {
 				alternative = component.deprecatedProps[resolvedPropName];
 
 				if (!alternative) {
-					attrs[`:${dasherize(directPropName)}`] = el;
+					attrs[`:${directPropName.dasherize(true)}`] = el;
 				}
 
 				delete attrs[key];
 			}
 
 			if (alternative) {
-				attrs[`:${dasherize(alternative)}`] = el;
+				attrs[`:${alternative.dasherize(true)}`] = el;
 				delete attrs[key];
 			}
 		});

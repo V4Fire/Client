@@ -80,7 +80,7 @@
 
 	- forEach ['if', 'elseIf', 'else', 'show', 'model'] => el
 		- if p[el]
-			? p.attrs['v-' + String.dasherize(el)] = p[el]
+			? p.attrs['v-' + el.dasherize(true)] = p[el]
 
 	< ${component} ${p.props|!html} | ${p.events|!html} | ${p.attrs|!html}
 		{content}
