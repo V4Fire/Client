@@ -203,6 +203,12 @@ export default class bDynamicPage extends iDynamicPage {
 	};
 
 	/**
+	 * True if the current page is taken from a cache
+	 */
+	@system()
+	protected pageTakenFromCache: boolean = false;
+
+	/**
 	 * Handler: page has been changed
 	 */
 	@system()
@@ -247,6 +253,8 @@ export default class bDynamicPage extends iDynamicPage {
 			currentRoute: typeof route
 		): AnyFunction {
 			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
+				unsafe.pageTakenFromCache = false;
+
 				const componentRef = unsafe.$refs.component;
 				componentRef?.pop();
 
@@ -297,6 +305,7 @@ export default class bDynamicPage extends iDynamicPage {
 						pageComponentFromCache.emit('mounted', pageElFromCache);
 
 						componentRef?.push(pageComponentFromCache);
+						unsafe.pageTakenFromCache = true;
 
 					} else {
 						newPageStrategy.remove();

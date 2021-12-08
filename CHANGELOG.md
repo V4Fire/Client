@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.13.3 (2021-12-08)
+
+#### :bug: Bug Fix
+
+* Removed the race condition while loading a new page `bDynamicPage`
+
 ## v3.13.2 (2021-12-06)
 
 #### :house: Internal
