@@ -9,7 +9,6 @@
 require('../interface');
 
 const
-	$C = require('collection.js'),
 	config = require('config');
 
 const
