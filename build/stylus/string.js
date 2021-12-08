@@ -41,7 +41,8 @@ module.exports = function addPlugins(api) {
 	 * @param {boolean} [upper]
 	 * @returns {string}
 	 */
-	api.define('camelize', (str, upper) => String(str.string).camelize(upper));
+	api.define('camelize',
+		(str, upper) => String(str.string).camelize(upper));
 
 	/**
 	 * Converts the specified string to lowercase
