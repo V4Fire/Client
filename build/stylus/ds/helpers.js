@@ -70,15 +70,16 @@ function saveVariable(value, path, varStorage, mapGroup) {
 function createDesignSystem(raw, stylus = require('stylus')) {
 	const
 		base = Object.create(Object.freeze({meta: raw.meta, raw})),
-		rawCopy = $C.extend(true, {}, raw);
+		rawCopy = Object.mixin(true, {}, raw);
 
 	delete rawCopy.meta;
 
-	const
-		{data, variables} = convertDsToBuildTimeUsableObject(rawCopy, stylus),
-		extendParams = {withProto: true, withAccessors: true};
+	const {
+		data,
+		variables
+	} = convertDsToBuildTimeUsableObject(rawCopy, stylus);
 
-	return {data: $C.extend(extendParams, base, data), variables};
+	return {data: Object.mixin({withProto: true, withDescriptors: 'onlyAccessors'}, base, data), variables};
 }
 
 /**

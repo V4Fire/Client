@@ -9,7 +9,6 @@
  */
 
 const
-	$C = require('collection.js'),
 	config = require('config'),
 	path = require('path');
 
@@ -77,16 +76,15 @@ function hash(output, chunk) {
 exports.inherit = inherit;
 
 /**
- * Alias for `$C.extend({deep, concatArray})`
+ * Alias for `Object.mixin({deep, concatArray})`
  */
 function inherit(...args) {
 	const extOpts = {
 		deep: true,
-		concatArray: true,
-		concatFn: Array.union
+		concatArrays: Array.union
 	};
 
-	return $C.extend(extOpts, {}, ...args);
+	return Object.mixin(extOpts, {}, ...args);
 }
 
 exports.isStandalone = isStandalone;
