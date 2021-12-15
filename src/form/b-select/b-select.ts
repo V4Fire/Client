@@ -510,7 +510,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 	 *
 	 * @param value
-	 * @param [unselectPrevious] - true, if needed to unselect previous selected items (works only with the `multiple` mode)
+	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
+	 *   (works only with the `multiple` mode)
 	 */
 	selectValue(value: this['Value'], unselectPrevious: boolean = false): boolean {
 		const
@@ -703,7 +704,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * The methods return a new selected value/s.
 	 *
 	 * @param value
-	 * @param [unselectPrevious] - true, if needed to unselect previous selected items (works only with the `multiple` mode)
+	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
+	 *   (works only with the `multiple` mode)
 	 */
 	toggleValue(value: this['Value'], unselectPrevious: boolean = false): this['Value'] {
 		const
