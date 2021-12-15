@@ -6,7 +6,7 @@ This module provides a component to organize page routing.
 
 * The component extends [[iData]].
 
-* The component doesn't have the default UI.
+* The component does not have the default UI.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -716,10 +716,10 @@ extend the current route data but not override.
 ### Synchronizing with the router after initializing a component
 
 When a component uses `syncRouterState`, it asks the router data on initializing, but sometimes,
-the router doesn't have requested properties, and we provide default values for these.
+the router does not have requested properties, and we provide default values for these.
 There is a nuance: the default values don't synchronize with the router, i.e., when we move from one page
 to another using `push` and return by using `back/forward` the properties that take values
-from the default state won't be restored. Sometimes, this behavior doesn't match our expectations,
+from the default state won't be restored. Sometimes, this behavior does not match our expectations,
 and that why every component has the `syncRouterStoreOnInit` prop. If we toggle `syncRouterStoreOnInit` to `true`,
 the component will forcibly map its state to the router after initializing.
 

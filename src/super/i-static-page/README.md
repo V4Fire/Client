@@ -72,7 +72,7 @@ https://your-site.com?publicPath=https://static.your-site.com/sf534sad323q
 ## Attaching project favicons
 
 To attach favicons to the project, you should generate them first.
-Unfortunately, the project building process doesn't generate them because it is an expensive task and slows down the building speed.
+Unfortunately, the project building process does not generate them because it is an expensive task and slows down the building speed.
 
 To generate favicons, you may use the predefined gulp task.
 

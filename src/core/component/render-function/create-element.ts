@@ -228,7 +228,7 @@ export function wrapCreateElement(
 				unsafe.renderTmp[renderKey] = engine.cloneVNode(vnode);
 			}
 
-			// Add $refs link if it doesn't exist
+			// Add $refs link if it does not exist
 			if (vData != null && ref != null && ctx !== baseCtx) {
 				vData[$$.ref] = ref;
 				vData.ref = `${ref}:${ctx.componentId}`;
@@ -250,7 +250,7 @@ export function wrapCreateElement(
 				});
 			}
 
-			// Add $el link if it doesn't exist
+			// Add $el link if it does not exist
 			if (needLinkToEl && 'fakeInstance' in vnode) {
 				Object.defineProperty(vnode.fakeInstance, '$el', {
 					enumerable: true,

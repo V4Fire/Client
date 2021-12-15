@@ -13,7 +13,7 @@ This module provides a superclass to create text inputs. The class includes API 
 ## Modifiers
 
 | Name       | Description                            | Values    | Default |
-| ---------- | -------------------------------------- | ----------| ------- |
+|------------|----------------------------------------|-----------|---------|
 | `empty`    | A component text is empty              | `Boolean` | -       |
 | `readonly` | The component is in the read-only mode | `Boolean` | -       |
 
@@ -22,7 +22,7 @@ Also, you can see [[iWidth]] and [[iSize]] traits and the [[iInput]] component.
 ## Events
 
 | Name         | Description                                  | Payload description | Payload |
-| ------------ | -------------------------------------------- | ------------------- | ------- |
+|--------------|----------------------------------------------|---------------------|---------|
 | `selectText` | The component has selected its input content | -                   | -       |
 | `clearText`  | The component has cleared its input content  | -                   | -       |
 
@@ -109,7 +109,7 @@ All non-terminal symbols from the mask without the specified value will have thi
 ```
 /// A user will see an input element with a value:
 /// +_ (___) ___-__-__
-/// When it starts typing, the value will automatically change, like,
+/// When it starts typing, the value will be automatically changed, like,
 /// +7 (49_) ___-__-__
 < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d' | :maskPlaceholder = '_'
 ```
@@ -123,7 +123,7 @@ The `true` value means that the pattern can be repeated infinitely.
 ```
 /// A user will see an input element with a value:
 /// _-_
-/// When it starts typing, the value will automatically change, like,
+/// When it starts typing, the value will be automatically changed, like,
 /// 2-3 1-_
 < b-input :mask = '%d-%d' | :maskRepetitions = 2
 ```
@@ -136,7 +136,7 @@ Every next chunk of the mask will have the delimiter as a prefix.
 ```
 /// A user will see an input element with a value:
 /// _-_
-/// When it starts typing, the value will automatically change, like,
+/// When it starts typing, the value will be automatically changed, like,
 /// 2-3@1-_
 < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 ```

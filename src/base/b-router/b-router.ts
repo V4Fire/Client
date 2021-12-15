@@ -324,7 +324,7 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Clears the routes history.
+	 * Clears the routes' history.
 	 * Mind, this method can't work properly with `HistoryAPI` based engines.
 	 *
 	 * @param [filter] - filter predicate
@@ -551,13 +551,13 @@ export default class bRouter extends iData {
 				method = 'replace';
 			}
 
-			// If the used engine doesn't support the requested transition method,
-			// we should fallback to `replace`
+			// If the used engine does not support the requested transition method,
+			// we should use `replace`
 			if (!Object.isFunction(engine[method])) {
 				method = 'replace';
 			}
 
-			// This transitions is marked as `external`,
+			// This transition is marked as `external`,
 			// i.e. it refers to another site
 			if (newRouteInfo.meta.external) {
 				const u = newRoute.url;
@@ -601,7 +601,7 @@ export default class bRouter extends iData {
 
 			emitTransition();
 
-		// This route is equal to the previous and we don't actually do transition,
+		// This route is equal to the previous, and we don't actually do transition,
 		// but for a "push" request we need to emit a "fake" transition event anyway
 		} else if (method === 'push') {
 			emitTransition();

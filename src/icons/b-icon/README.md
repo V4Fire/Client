@@ -19,8 +19,8 @@ This module provides a component to use an SVG icon from the global SVG sprite.
 ## Modifiers
 
 | Name   | Description                                                                                                                                                              | Values             | Default  |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------ | -------- |
-| `size` | The icon size. The "auto" value specifies the icon to be equal to CSS's defined size (`1em` by default). The "full" value specifies the icon to fill all existed places. | `'auto' \| 'full'` | `'auto'` |
+|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|----------|
+| `size` | The icon size. The "auto" value specifies the icon to be equal to CSS's defined size (`1em` by default). The "full" value specifies the icon to fill all existed places. | `'auto'  │ 'full'` | `'auto'` |
 
 Also, you can see the [[iIcon]] trait and the [[iBlock]] component.
 

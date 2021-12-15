@@ -7,7 +7,7 @@
  */
 
 /**
- * Source type of a library:
+ * Source type of library:
  *
  *   1. `lib` - external library, i.e, something from `node_modules`
  *   2. `src` - internal resource, i.e, something that builds from the `/src` folder
@@ -27,7 +27,7 @@ exports.LibSource = LibSource;
  *   4. [defer=true] - if true, the library is declared with the `defer` attribute
  *   5. [load=true] - if false, the library won't be automatically loaded with a page
  *   6. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
- *     1. a simple string, as `null` (when an attribute doesn't have a value);
+ *     1. a simple string, as `null` (when an attribute does not have a value);
  *     2. an array (to interpolate the value as JS);
  *     3. an object with the predefined `toString` method
  *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
@@ -82,7 +82,7 @@ exports.Libs = Libs;
  *   3. [inline=false] - if true, the library is placed as text into a style tag
  *   4. [defer=true] - if true, the library is loaded only after loading of the whole page
  *   5. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
- *     1. a simple string, as `null` (when an attribute doesn't have a value);
+ *     1. a simple string, as `null` (when an attribute does not have a value);
  *     2. an array (to interpolate the value as JS);
  *     3. an object with the predefined `toString` method
  *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
@@ -135,7 +135,7 @@ exports.StyleLibs = StyleLibs;
  *   2. [source='lib'] - source type of the library, i.e. where the library is stored
  *   3. [tag='link'] - tag to create the link
  *   4. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
- *     1. a simple string, as `null` (when an attribute doesn't have a value);
+ *     1. a simple string, as `null` (when an attribute does not have a value);
  *     2. an array (to interpolate the value as JS);
  *     3. an object with the predefined `toString` method
  *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters

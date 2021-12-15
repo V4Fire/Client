@@ -14,6 +14,9 @@
 	- block body
 		: config = require('config').build
 
+		< b-button
+			Hello world!
+
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo

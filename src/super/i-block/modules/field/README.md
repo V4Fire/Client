@@ -1,7 +1,7 @@
 # super/i-block/modules/field
 
 This module provides a class with some helper methods to safely access component properties, i.e.,
-you can use a complex path to property without fear of exception if the property doesn't exist.
+you can use a complex path to property without fear of exception if the property does not exist.
 
 The class contains three methods to use: `get`, `set`, `delete`.
 

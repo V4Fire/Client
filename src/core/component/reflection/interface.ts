@@ -156,7 +156,7 @@ export interface CommonPropertyInfo {
 	accessor?: string;
 
 	/**
-	 * Type of an accessor that is tied with the property
+	 * Type of accessor that is tied with the property
 	 */
 	accessorType?: AccessorType;
 }
@@ -183,7 +183,7 @@ export interface ComponentPropertyInfo extends CommonPropertyInfo {
 
 /**
  * Information of a mounted component property.
- * The mounted property it's the special kind of a component property that refers to another watchable object.
+ * The mounted property it's the special kind of component property that refers to another watchable object.
  */
 export interface MountedPropertyInfo extends CommonPropertyInfo {
 	/**

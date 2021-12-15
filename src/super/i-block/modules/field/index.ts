@@ -272,7 +272,7 @@ export default class Field extends Friend {
 							ctx.isNotRegular &&
 							unwrap(ref) === ref;
 
-						// If a component doesn't already initialize watchers of fields,
+						// If a component does not already initialize watchers of fields,
 						// we have to synchronize these properties between the proxy object and component instance
 						if (needSync) {
 							const name = chunks[0];
@@ -427,7 +427,7 @@ export default class Field extends Friend {
 				} else {
 					ref = ctx.$fields;
 
-					// If a component doesn't already initialize watchers of fields,
+					// If a component does not already initialize watchers of fields,
 					// we have to synchronize these properties between the proxy object and component instance
 					if (ctx.isFunctional && unwrap(ref) === ref) {
 						const name = chunks[0];

@@ -280,7 +280,7 @@ export default class DOM extends Friend {
 	 * The method returns a link to an `Async` worker that wraps the operation.
 	 *
 	 * You should prefer this method instead of native DOM methods because the component destructor
-	 * doesn't delete elements that are created dynamically.
+	 * does not delete elements that are created dynamically.
 	 *
 	 * @param parent - element name or a link to the parent node
 	 * @param newNode - node to append
@@ -334,7 +334,7 @@ export default class DOM extends Friend {
 	 * The method returns a link to an `Async` worker that wraps the operation.
 	 *
 	 * You should prefer this method instead of native DOM methods because the component destructor
-	 * doesn't delete elements that are created dynamically.
+	 * does not delete elements that are created dynamically.
 	 *
 	 * @param el - element name or a link to the node
 	 * @param newNode - node to append

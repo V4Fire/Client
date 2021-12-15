@@ -11,7 +11,7 @@ This module provides a trait for a component have some "progress" behaviour.
 ## Modifiers
 
 | Name       | Description                                                                                                      | Values    | Default |
-| ---------- | ---------------------------------------------------------------------------------------------------------------- | ----------| ------- |
+|------------|------------------------------------------------------------------------------------------------------------------|-----------|---------|
 | `progress` | The component in the process: loading data, processing something, etc. Maybe, we need to show some progress bar. | `Boolean` | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
@@ -29,7 +29,7 @@ export default class bButton implements iProgress {
 ## Events
 
 | Name            | Description                                    | Payload description | Payload |
-| ----------------| ---------------------------------------------- | --------------------| ------- |
+|-----------------|------------------------------------------------|---------------------|---------|
 | `progressStart` | The component has started to process something | -                   | -       |
 | `progressEnd`   | The component has ended to process something   | -                   | -       |
 

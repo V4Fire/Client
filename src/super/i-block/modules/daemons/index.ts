@@ -79,7 +79,7 @@ export default class Daemons extends Friend {
 	}
 
 	/**
-	 * Returns true if a daemon by the specified name is exist
+	 * Returns true if a daemon by the specified name is exists
 	 * @param name
 	 */
 	isExists(name: string): boolean {

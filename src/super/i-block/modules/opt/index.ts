@@ -32,7 +32,7 @@ export default class Opt extends Friend {
 	 * Returns a number if the specified label:
 	 *   `2` -> already exists in the cache;
 	 *   `1` -> just written in the cache;
-	 *   `0` -> doesn't exist in the cache.
+	 *   `0` -> does not exist in the cache.
 	 *
 	 * This method is used with conditions to provide a logic: if the condition was switched to true,
 	 * then further, it always returns true.

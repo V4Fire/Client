@@ -49,7 +49,7 @@ export interface FieldWatcher<
 	functional?: boolean;
 
 	/**
-	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
+	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -107,7 +107,7 @@ export interface WatchObject<
 	args?: unknown[];
 
 	/**
-	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
+	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -184,7 +184,7 @@ export interface MethodWatcher<
 	args?: CanArray<unknown>;
 
 	/**
-	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
+	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
 	 * @default `true`
 	 */
 	provideArgs?: boolean;

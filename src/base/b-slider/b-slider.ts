@@ -83,14 +83,14 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	readonly dynamicHeight: boolean = false;
 
 	/**
-	 * If true, a user will automatically return to the first slide when scrolling the last slide.
+	 * If true, a user will be automatically returned to the first slide when scrolling the last slide.
 	 * That is, the slider will work "in a circle".
 	 */
 	@prop(Boolean)
 	readonly circular: boolean = false;
 
 	/**
-	 * This prop controls how much slides will scroll.
+	 * This prop controls how many slides will scroll.
 	 * For example, by specifying `center`, the slider will stop when the active slide is
 	 * in the slider's center when scrolling.
 	 */

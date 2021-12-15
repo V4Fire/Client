@@ -690,7 +690,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * (this mode will insert nonce attributes into inline tags too).
 		 *
 		 * If false, nonce attributes will be inserted from the JS runtime.
-		 * Note, this mode doesn't support nonce attributes for inline tags.
+		 * Note, this mode does not support nonce attributes for inline tags.
 		 */
 		postProcessor: true,
 

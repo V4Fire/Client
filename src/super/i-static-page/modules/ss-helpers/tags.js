@@ -349,7 +349,7 @@ exports.normalizeAttrs = normalizeAttrs;
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
  * @param {Object=} [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
- *   1. a simple string, as `null` (when an attribute doesn't have a value);
+ *   1. a simple string, as `null` (when an attribute does not have a value);
  *   2. an array (to interpolate the value as JS);
  *   3. an object with the predefined `toString` method
  *     (in that way you can also provide flags `escape: ` to disable escaping non-secure characters

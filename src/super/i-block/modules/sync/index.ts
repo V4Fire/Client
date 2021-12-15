@@ -80,7 +80,7 @@ export default class Sync extends Friend {
 	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
-	 * Logical connection is based on a name convention: properties that matches the pattern
+	 * Logical connection is based on a name convention: properties that match the pattern
 	 * "${property} -> ${property}Prop | ${property}Store -> ${property}Prop"
 	 * are connected with each other.
 	 *
@@ -109,7 +109,7 @@ export default class Sync extends Friend {
 	 * a value that refers to the link will be also changed.
 	 *
 	 * Logical connection is based on a name convention:
-	 * properties that matches the pattern "${property} -> ${property}Prop" are connected with each other.
+	 * properties that match the pattern "${property} -> ${property}Prop" are connected with each other.
 	 *
 	 * Mind, this method can be used only within a property decorator.
 	 *

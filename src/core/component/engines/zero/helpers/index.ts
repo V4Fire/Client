@@ -112,7 +112,7 @@ export function createSVGChildren(ctx: ComponentInterface, children: Nullable<El
 	return res;
 }
 
-export function addProps(el: DirElement, props?: Dictionary<unknown>): void {
+export function addProps(el: DirElement, props?: Dictionary): void {
 	if (!props) {
 		return;
 	}

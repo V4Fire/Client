@@ -58,7 +58,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified
+* Now `csp.nonceStore` does not affect the project hash when `csp.none` is not specified
 
 ## v3.0.0-rc.137 (2021-02-04)
 

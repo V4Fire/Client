@@ -917,7 +917,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		}
 
 		if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
-			const mixedData = Object.mixin({
+			res[0] = Object.mixin({
 				onlyNew: true,
 				filter: (el) => {
 					if (isGet) {
@@ -927,8 +927,6 @@ export default abstract class iData extends iBlock implements iProgress {
 					return el !== undefined;
 				}
 			}, undefined, res[0], customData);
-
-			res[0] = mixedData;
 
 		} else {
 			res[0] = res[0] != null ? res[0] : customData;

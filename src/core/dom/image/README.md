@@ -4,10 +4,10 @@ This module provides API to load images by using `background-image` or `src`.
 
 ## Callbacks
 
-| Name       | Description                                      | Payload description | Payload   |
-| ---------- | ------------------------------------------------ | ------------------- | --------- |
-| `load`     | Invoked when an image was successfully loaded    | `el` bound node     | `Element` |
-| `error`    | Invoked when a loading error of an image appears | `el` bound node     | `Element` |
+| Name    | Description                                      | Payload description | Payload   |
+|---------|--------------------------------------------------|---------------------|-----------|
+| `load`  | Invoked when an image was successfully loaded    | `el` bound node     | `Element` |
+| `error` | Invoked when a loading error of an image appears | `el` bound node     | `Element` |
 
 ## Usage
 
@@ -46,7 +46,7 @@ export default class bSomeComponent extends iBlock {
 }
 ```
 
-> It is highly recommended to specify the context if you are using callbacks explicitly.
+> It is highly recommended specifying the context if you are using callbacks explicitly.
 
 ### Additional stages
 

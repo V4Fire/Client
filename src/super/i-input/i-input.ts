@@ -250,7 +250,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * If false, then a component value isn't cached by the associated form.
-	 * The caching is mean that if the component value doesn't change since the last sending of the form,
+	 * The caching is mean that if the component value does not change since the last sending of the form,
 	 * it won't be sent again.
 	 */
 	@prop(Boolean)
@@ -369,7 +369,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * The form value is based on the own component value, but they are equal in a simple case.
 	 * The form associated with this component will use the form value but not the original.
 	 *
-	 * Parameters from `disallow` test this value. If the value doesn't match allowing parameters,
+	 * Parameters from `disallow` test this value. If the value does not match allowing parameters,
 	 * it will be skipped (the getter returns undefined). The value that passed the validation is converted
 	 * via `formValueConverter` (if it's specified).
 	 *
@@ -898,7 +898,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Resolves the specified component value and returns it.
-	 * If the value argument is `undefined`, the method can returns the default value.
+	 * If the value argument is `undefined`, the method can return the default value.
 	 *
 	 * @param value
 	 */

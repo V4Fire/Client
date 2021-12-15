@@ -11,7 +11,7 @@ This method should be used with the `v-for` directive.
 ```
 // The first ten elements are rendered synchronously.
 // After that, the rest elements will be split into chunks by ten elements and rendered asynchronously.
-// The rendering of async chunks doesn't force re-rendering of the main component template.
+// The rendering of async chunks does not force re-rendering of the main component template.
 < .bla v-for = el in asyncRender.iterate(myData, 10)
   {{ el }}
 ```
@@ -109,7 +109,7 @@ The rest primitive types are cast to a single-element iterator.
 ## Events
 
 | EventName                  | Description                                              | Payload description | Payload                 |
-| -------------------------- | -------------------------------------------------------- | ------------------- | ----------------------- |
+|----------------------------|----------------------------------------------------------|---------------------|-------------------------|
 | `asyncRenderChunkComplete` | One async chunk has been rendered                        | Task description    | `TaskParams & TaskDesc` |
 | `asyncRenderComplete`      | All async chunks from one render task have been rendered | Task description    | `TaskParams & TaskDesc` |
 

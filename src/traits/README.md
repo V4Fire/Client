@@ -2,7 +2,7 @@
 
 The module provides a bunch of traits for components. A trait is the special kind of abstract class that is used as an interface.
 Why would we need that? Well, unlike Java or Kotlin, TypeScript interfaces can't have default implementations of methods.
-So we need to implement each method in our classes even if the implementation doesn't change.
+So we need to implement each method in our classes even if the implementation does not change.
 This is where traits come into play. How it works? Ok, let's enumerate the steps to create a trait:
 
 1. Create an abstract class, where define all necessary abstract methods and properties (yes, the trait can also define properties,
@@ -140,7 +140,7 @@ We have created a trait. Now we can implement it in a simple class.
   }
   ```
 
-Besides regular methods, you can also define get/set accessors like this:
+Besides, regular methods, you can also define get/set accessors like this:
 
 ```typescript
 abstract class Duckable {

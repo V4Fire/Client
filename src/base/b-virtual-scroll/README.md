@@ -14,7 +14,7 @@ This component can be very efficient if you need to render a good amount of elem
 ## Events
 
 | EventName        | Description                                                                                                  | Payload description                                                      | Payload                     |
-| ---------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ | --------------------------- |
+|------------------|--------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|-----------------------------|
 | dbChange         | The event is fired after receiving data from a data provider. The event won't be fired if the data is empty. | Cumulative data of all tied requests                                     | `RemoteData`                |
 | dataChange       | The event is fired after changing a data batch                                                               | Data batch value                                                         | `unknown[]`                 |
 | chunkLoading     | The event is fired before start to load data from a data provider                                            | Current page                                                             | `number`                    |

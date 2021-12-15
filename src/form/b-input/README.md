@@ -197,7 +197,7 @@ See [[gIcon]] for more information.
 ### [progressIcon]
 
 A component to show "in-progress" state or
-Boolean, if need to show progress by slot or `b-progress-icon`.
+Boolean, if needed to show progress by slot or `b-progress-icon`.
 
 ```
 < b-input :progressIcon = 'b-my-progress-icon'

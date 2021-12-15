@@ -104,7 +104,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 							obj = Object.get(ctx.$fields, path.slice(0, -1)) ?? {};
 							delete obj[key];
 
-							// Finally we can register a Vue watcher
+							// Finally, we can register a Vue watcher
 							$set.call(ctx, obj, key, value);
 
 							// Don't forget to restore the original watcher
@@ -113,7 +113,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 							unmute(obj);
 						}
 
-					// Because Vue doesn't see changes from Map/Set structures, we must use this hack
+					// Because Vue does not see changes from Map/Set structures, we must use this hack
 					} else if (Object.isSet(obj) || Object.isMap(obj) || Object.isWeakMap(obj) || Object.isWeakSet(obj)) {
 						Object.set(ctx, path.slice(0, -1), fakeMapSetCopy(obj));
 					}

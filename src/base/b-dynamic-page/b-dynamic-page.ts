@@ -117,7 +117,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 *
 	 * 1. a component name (or a list of names);
 	 * 2. a regular expression;
-	 * 3. a function that takes a component name and returns `true` (include), `false` (doesn't include),
+	 * 3. a function that takes a component name and returns `true` (include), `false` (does not include),
 	 *    a string key to cache (it uses instead of a component name),
 	 *    or a special object with information of the used cache strategy.
 	 */
@@ -131,7 +131,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * A predicate to exclude some pages from the `keepAlive` caching.
 	 * It can be defined as a component name (or a list of names), regular expression,
-	 * or a function that takes a component name and returns `true` (exclude) or `false` (doesn't exclude).
+	 * or a function that takes a component name and returns `true` (exclude) or `false` (does not exclude).
 	 */
 	@prop({
 		type: [String, Array, RegExp, Function],
@@ -405,7 +405,7 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Wraps the specified cache object and returns a new.
+	 * Wraps the specified cache object and returns a wrapper.
 	 * The method adds listeners to destroy unused pages from the cache.
 	 *
 	 * @param cache

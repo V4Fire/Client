@@ -17,7 +17,7 @@ import {
 } from 'super/i-input-text/modules/mask/helpers';
 
 /**
- * Handler: there is occur a keypress action on the masked input
+ * Handler: there is occurred a keypress action on the masked input
  *
  * @param component
  * @param e

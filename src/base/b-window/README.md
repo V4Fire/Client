@@ -20,19 +20,19 @@ This module provides a component to create a modal window.
 
 ## Modifiers
 
-| Name         | Description                              | Values                  | Default   |
-| ------------ | ---------------------------------------- | ----------------------- | --------- |
-| `opened`     | The component is opened                  | `boolean`               | `false`   |
-| `position`   | A value of the `position` style property | `'fixed' \| 'absolute'` | `'fixed'` |
+| Name       | Description                              | Values                  | Default   |
+|------------|------------------------------------------|-------------------------|-----------|
+| `opened`   | The component is opened                  | `boolean`               | `false`   |
+| `position` | A value of the `position` style property | `'fixed'  │ 'absolute'` | `'fixed'` |
 
 Also, you can see the implemented traits or the parent component.
 
 ## Events
 
-| EventName  | Description                   | Payload description | Payload  |
-| ---------- | ----------------------------- | ------------------- | -------- |
-| `open`     | The component has been opened | -                   | -        |
-| `close`    | The component has been closed | -                   | -        |
+| EventName | Description                   | Payload description | Payload |
+|-----------|-------------------------------|---------------------|---------|
+| `open`    | The component has been opened | -                   | -       |
+| `close`   | The component has been closed | -                   | -       |
 
 Also, you can see the implemented traits or the parent component.
 
@@ -101,7 +101,7 @@ other slots become unavailable to you since the default slot will overwrite all 
     Main content
 ```
 
-4. `controls` to provide additional controls like buttons to hide/unhide.
+4. `controls` to provide additional controls like buttons to hide/show.
 
 ```
 < b-window

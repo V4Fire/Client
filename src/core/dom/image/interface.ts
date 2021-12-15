@@ -129,10 +129,10 @@ export interface ImageOptions {
 	 * Execution context.
 	 *
 	 * The context is used to provide a component environment, like, async, event emitters, etc.
-	 * When API is used as a directive, the context will automatically taken from a VNode instance.
+	 * When API is used as a directive, the context will be automatically taken from a VNode instance.
 	 *
 	 * Make sure you are not using `load` or `error` without the context provided,
-	 * cause this can lead to unexpected results.
+	 * because this can lead to unexpected results.
 	 *
 	 * @example
 	 * ```typescript
