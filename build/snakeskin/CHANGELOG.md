@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed issues with symlinks
+
 ## v3.10.0 (2021-11-16)
 
 #### :boom: Breaking Change
