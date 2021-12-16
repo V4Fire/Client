@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.14.0",
+  "version": "3.15.0",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -40,7 +40,6 @@
     "up": "npm i && npm up && npm audit fix"
   },
   "dependencies": {
-    "@v4fire/core": "^3.71.0",
     "escaper": "^3.0.6",
     "eventemitter2": "^6.4.5",
     "jsdom": "^16.7.0",
@@ -50,6 +49,10 @@
     "svg-transform-loader": "^2.0.13",
     "tslib": "2.3.1",
     "vue": "2.6.10"
+  },
+  "peerDependencies": {
+    "@v4fire/core": "^3.73.1",
+    "webpack": "^5.65.0"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.12.4",
@@ -122,16 +125,17 @@
     "url-loader": "^4.1.1",
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^5.60.0",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.9.1",
     "worker-loader": "^3.0.7"
   },
   "devDependencies": {
     "@types/jasmine": "^3.10.2",
+    "@v4fire/core": "^3.73.1",
     "@v4fire/linters": "^1.9.0",
     "husky": "^7.0.4",
     "nyc": "^15.1.0",
-    "playwright": "^1.16.3"
+    "playwright": "^1.16.3",
+    "webpack": "^5.65.0"
   }
 }

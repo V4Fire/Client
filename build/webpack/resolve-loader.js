@@ -34,9 +34,16 @@ const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, 
 });
 
 /**
+ * Array with paths for resolving loaders nested in node_modules
+ * @type {!Array}
+ */
+const modules = ['node_modules', ...resolve.rootDependencies.map((el) => `${path.parse(el).dir}/node_modules`)];
+
+/**
  * Options for `webpack.resolveLoader`
  * @type {{moduleExtensions: [string], alias: !Object}}
  */
 module.exports = {
-	alias
+	alias,
+	modules
 };

@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.??.?? (2021-??-??)
 
+#### :boom: Breaking Change
+
+* Now `webpack` & `@v4fire/core` are marked as peer-dependencies
+
 #### :bug: Bug Fix
 
 * Fixed issues with symlinks `build`
