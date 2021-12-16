@@ -40,7 +40,6 @@
     "up": "npm i && npm up && npm audit fix"
   },
   "dependencies": {
-    "@v4fire/core": "^3.65.1",
     "escaper": "^3.0.6",
     "eventemitter2": "^6.4.5",
     "jsdom": "^16.7.0",
@@ -99,7 +98,6 @@
     "nanoid": "^3.1.20",
     "nib": "^1.1.2",
     "node-static": "^0.7.11",
-    "parallel-webpack": "^2.6.0",
     "path-equal": "^1.1.1",
     "portfinder": "^1.0.28",
     "postcss": "^8.3.6",
@@ -126,7 +124,6 @@
     "urlconcat": "0.0.12",
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^5.60.0",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.9.1",
     "worker-loader": "^3.0.7"
@@ -137,5 +134,9 @@
     "husky": "^7.0.4",
     "nyc": "^15.1.0",
     "playwright": "^1.16.3"
-  }
+  },
+	"peerDependencies": {
+    "webpack": "^5.60.0",
+    "@v4fire/core": "^3.65.1"
+	}
 }
