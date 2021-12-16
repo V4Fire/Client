@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2021-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with Webpack params forwarding into gulp tasks
+
 ## v3.11.2 (2021-11-24)
 
 #### :house: Internal

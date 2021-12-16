@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed issues with symlinks `build`
+* Fixed a bug with Webpack params forwarding into gulp tasks `build/gulp`
 
 ## v3.14.0 (2021-12-08)
 

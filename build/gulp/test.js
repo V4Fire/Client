@@ -84,7 +84,7 @@ module.exports = function init(gulp = require('gulp')) {
 	 * npx gulp test:component:build --name b-dummy
 	 * ```
 	 */
-	gulp.task('test:component:build', () => {
+	gulp.task('test:component:build', async () => {
 		const args = arg({
 			'--suit': String,
 			'--client-name': String
@@ -102,9 +102,27 @@ module.exports = function init(gulp = require('gulp')) {
 		const
 			suitArg = args['--suit'] ? `--env suit=${args['--suit']}` : '';
 
+		const
+			WebpackCLI = require('webpack-cli/lib/webpack-cli'),
+			webpackCLI = new WebpackCLI();
+
+		webpackCLI.webpack = await webpackCLI.loadWebpack();
+
+		const
+			webpackCommands = webpackCLI.getBuiltInOptions().map(({name, alias}) => ({name, alias})),
+			exceptionOptions = ['name'];
+
 		const extraArgs = Object.entries(
 			parseArgs(args._.slice(1))
 		).map(([key, value]) => {
+			const shouldProvideToWebpack =
+				!exceptionOptions.includes(key) &&
+				webpackCommands.find((wCommand) => wCommand.name === key || wCommand.alias === key);
+
+			if (shouldProvideToWebpack) {
+				return `--${key}`;
+			}
+
 			if (value === true) {
 				return `--env ${key}`;
 			}
