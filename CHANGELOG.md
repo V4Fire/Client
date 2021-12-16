@@ -11,11 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.14.1 (2021-12-16)
+## v3.??.?? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Now `webpack` & `@v4fire/core` are marked as peer-dependencies
 
 #### :bug: Bug Fix
 
-* Fixed bug with webpack params forwarding into gulp tasks
+* Fixed issues with symlinks `build`
+* Fixed a bug with Webpack params forwarding into gulp tasks `build/gulp`
 
 ## v3.14.0 (2021-12-08)
 

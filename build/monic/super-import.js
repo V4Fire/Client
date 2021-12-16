@@ -56,7 +56,7 @@ module.exports = function superImportReplacer(str, filePath) {
 		start = 0;
 
 	for (let i = 0; i < rootDependencies.length; i++) {
-		if (isPathInside(filePath, rootDependencies[i])) {
+		if (isPathInside(fs.realpathSync(filePath), fs.realpathSync(rootDependencies[i]))) {
 			start = i + 1;
 			break;
 		}

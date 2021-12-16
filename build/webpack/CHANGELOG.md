@@ -11,6 +11,12 @@ Changelog
 
 ## v3.??.?? (2021-??-??)
 
+#### :bug: Bug Fix
+
+* Fixed issues with symlinks
+
+## v3.??.?? (2021-??-??)
+
 #### :boom: Breaking Change
 
 * Removed `typograf-loader`

@@ -52,7 +52,7 @@ Snakeskin.importFilters({
 			filePath = filePath.replace(superRgxp, '');
 
 			for (let i = 0; i < resources.length; i++) {
-				if (isPathInside(sourceFilePath, resources[i])) {
+				if (isPathInside(fs.realpathSync(sourceFilePath), fs.realpathSync(resources[i]))) {
 					start = i + 1;
 					break;
 				}
