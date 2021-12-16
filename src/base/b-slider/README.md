@@ -11,19 +11,19 @@ Slides to show can be defined manually via slots or loaded from some data provid
 
 ## Modifiers
 
-| Name         | Description            | Values    | Default |
-| ------------ | ---------------------- | ----------| ------- |
-| `swipe`      | Is swipe in progress   | `Boolean` | –       |
+| Name    | Description          | Values    | Default |
+|---------|----------------------|-----------|---------|
+| `swipe` | Is swipe in progress | `Boolean` | –       |
 
 ## Events
 
-| EventName         | Description                                                    | Payload description                                                                          | Payload                 |
-| ----------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------- |
-| `change`          | The active slide of the component has been changed             | An index of the current slide                                                                | `number`                |
-| `swipeStart`      | A user has started scrolling the slider                        | –                                                                                            | –                       |
-| `swipeEnd`        | A user has finished scrolling the slider                       | The scrolling direction, An indicator showing whether the position of the slider has changed | `-1 | 0 | 1`, `Boolean` |
-| `updateState`     | Content of the component content block has been updated        | –                                                                                            | –                       |
-| `syncState`       | The component state has been updated, sent after `updateState` | –                                                                                            | –                       |
+| EventName     | Description                                                    | Payload description                                                                          | Payload  |
+|---------------|----------------------------------------------------------------|----------------------------------------------------------------------------------------------|----------|
+| `change`      | The active slide of the component has been changed             | An index of the current slide                                                                | `number` |
+| `swipeStart`  | A user has started scrolling the slider                        | –                                                                                            | –        |
+| `swipeEnd`    | A user has finished scrolling the slider                       | The scrolling direction, An indicator showing whether the position of the slider has changed | `-1      | 0 | 1`, `Boolean` |
+| `updateState` | Content of the component content block has been updated        | –                                                                                            | –        |
+| `syncState`   | The component state has been updated, sent after `updateState` | –                                                                                            | –        |
 
 ## Usage
 

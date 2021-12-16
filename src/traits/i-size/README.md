@@ -11,5 +11,5 @@ This module provides a trait for a component that needs to implement the "size" 
 ## Modifiers
 
 | Name   | Description        | Values   | Default |
-| ------ | ------------------ | ---------| ------- |
+|--------|--------------------|----------|---------|
 | `size` | The component size | `String` | `'m'`   |

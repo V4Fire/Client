@@ -22,15 +22,15 @@ Checkboxes can be combined in groups with a feature of the multiple checking.
 ## Modifiers
 
 | Name      | Description             | Values                                 | Default |
-| --------- | ----------------------- | -------------------------------------- | ------- |
-| `checked` | The checkbox is checked | `'true' \| 'false' \| 'indeterminate'` | -       |
+|-----------|-------------------------|----------------------------------------|---------|
+| `checked` | The checkbox is checked | `'true'  │ 'false'  │ 'indeterminate'` | -       |
 
 Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
 ## Events
 
 | EventName      | Description                                                       | Payload description                                                      | Payload         |
-| -------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------- |
+|----------------|-------------------------------------------------------------------|--------------------------------------------------------------------------|-----------------|
 | `check`        | The checkbox has been checked                                     | Type of checking (`indeterminate` if not all child checkbox are checked) | `CheckType`     |
 | `uncheck`      | The checkbox has been unchecked                                   | -                                                                        | -               |
 | `actionChange` | A value of the component has been changed due to some user action | Component value                                                          | `this['Value']` |

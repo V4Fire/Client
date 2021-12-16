@@ -117,7 +117,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 *
 	 * 1. a component name (or a list of names);
 	 * 2. a regular expression;
-	 * 3. a function that takes a component name and returns `true` (include), `false` (doesn't include),
+	 * 3. a function that takes a component name and returns `true` (include), `false` (does not include),
 	 *    a string key to cache (it uses instead of a component name),
 	 *    or a special object with information of the used cache strategy.
 	 */
@@ -131,7 +131,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * A predicate to exclude some pages from the `keepAlive` caching.
 	 * It can be defined as a component name (or a list of names), regular expression,
-	 * or a function that takes a component name and returns `true` (exclude) or `false` (doesn't exclude).
+	 * or a function that takes a component name and returns `true` (exclude) or `false` (does not exclude).
 	 */
 	@prop({
 		type: [String, Array, RegExp, Function],
@@ -193,7 +193,7 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	override get unsafe(): UnsafeGetter<UnsafeBDynamicPage<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	protected override readonly componentStatusStore: ComponentStatus = 'ready';
@@ -201,6 +201,12 @@ export default class bDynamicPage extends iDynamicPage {
 	protected override readonly $refs!: {
 		component?: iDynamicPage[];
 	};
+
+	/**
+	 * True if the current page is taken from a cache
+	 */
+	@system()
+	protected pageTakenFromCache: boolean = false;
 
 	/**
 	 * Handler: page has been changed
@@ -247,6 +253,8 @@ export default class bDynamicPage extends iDynamicPage {
 			currentRoute: typeof route
 		): AnyFunction {
 			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
+				unsafe.pageTakenFromCache = false;
+
 				const componentRef = unsafe.$refs.component;
 				componentRef?.pop();
 
@@ -297,6 +305,7 @@ export default class bDynamicPage extends iDynamicPage {
 						pageComponentFromCache.emit('mounted', pageElFromCache);
 
 						componentRef?.push(pageComponentFromCache);
+						unsafe.pageTakenFromCache = true;
 
 					} else {
 						newPageStrategy.remove();
@@ -396,7 +405,7 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Wraps the specified cache object and returns a new.
+	 * Wraps the specified cache object and returns a wrapper.
 	 * The method adds listeners to destroy unused pages from the cache.
 	 *
 	 * @param cache

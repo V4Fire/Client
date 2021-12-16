@@ -407,7 +407,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * But, if in some cases we don't have `stage` within `route.query`, and the component have the default value,
 	 * we trap in a situation where exists route, which wasn't synchronized with the component, and
-	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match our expectations.
+	 * it can affect to the "back" logic. Sometimes, this behavior does not match our expectations.
 	 * But if we toggle `syncRouterStoreOnInit` to true, the component will forcibly map its own state to
 	 * the router after initializing.
 	 */
@@ -416,7 +416,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * If true, the component will skip waiting of remote providers to avoid redundant re-renders.
-	 * This prop can help optimize your non-functional component when it doesn't contain any remote providers.
+	 * This prop can help optimize your non-functional component when it does not contain any remote providers.
 	 * By default, this prop is calculated automatically based on component dependencies.
 	 */
 	@prop({type: Boolean, required: false})
@@ -474,7 +474,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *     'bla',
 	 *
 	 *     // Listens `window.document` scroll event,
-	 *     // doesn't provide event arguments to `reload`
+	 *     // does not provide event arguments to `reload`
 	 *     {
 	 *       path: 'document:scroll',
 	 *       provideArgs: false
@@ -696,7 +696,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	get r(): this['$root'] {
 		const r = this.$root;
-		return <any>r.$remoteParent?.$root ?? r;
+		return r.$remoteParent?.$root ?? r;
 	}
 
 	/**
@@ -872,7 +872,7 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly vdom!: VDOM;
 
 	override get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/**
@@ -1643,7 +1643,7 @@ export default abstract class iBlock extends ComponentInterface {
 			};
 
 			link = $a.on(emitter, 'mutation', handler, wrapWithSuspending(opts, 'watchers'));
-			unwatch = this.$watch(<any>path, opts, handler);
+			unwatch = this.$watch(Object.cast(path), opts, handler);
 		});
 	}
 
@@ -1862,7 +1862,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Executes a callback when the component is toggled to the specified status.
 	 * The method returns a promise resulting from invoking the function or raw result without wrapping
-	 * if the component is already in the passed status.
+	 * if the component is already in the specified status.
 	 *
 	 * @see [[Async.promise]]
 	 * @param status

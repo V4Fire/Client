@@ -8,7 +8,7 @@ This module provides a superclass to manage the working of a component and data 
 
 * The component is not used on its own. It is a superclass.
 
-* The component API doesn't support functional or flyweight components.
+* The component API does not support functional or flyweight components.
 
 * The component extends [[iBlock]].
 
@@ -105,7 +105,7 @@ After this, the parent component will wait until it is loaded.
 ```
 
 Or you can use the special component - [[bRemoteProvider]].
-The component doesn't have any UI representation and provides a flexible API to use as a remote provider.
+The component does not have any UI representation and provides a flexible API to use as a remote provider.
 
 ```
 < b-remote-provider :dataProvider = 'myData' | @change = onData
@@ -167,13 +167,13 @@ export default class bExample extends iData {
 ### `db` events
 
 | Name          | Description                                          | Payload description          | Payload                |
-| ------------- | ---------------------------------------------------- | -----------------------------| ---------------------- |
+|---------------|------------------------------------------------------|------------------------------|------------------------|
 | `dbCanChange` | There is a possibility of changing the value of `db` | Provider data or `undefined` | `CanUndef<this['DB']>` |
 | `dbChange`    | The value of `db` has been changed                   | Provider data or `undefined` | `CanUndef<this['DB']>` |
 
 ### Changing of `db`
 
-Before setting a new `db` value, it will be compared with the previous. The new data will be applied only if it not equal to the previous.
+Before setting a new `db` value, it will be compared with the previous. The new data will be applied only if it is not equal to the previous.
 To compare, by default is used `Object.fastClone`. This behavior can be canceled by switching the `checkDBEquality` prop to `false`.
 Or you can provide a function to compare within this prop.
 
@@ -272,7 +272,7 @@ export default class bExample extends iData {
 ### Init events
 
 | Name            | Description                                    | Payload description                 | Payload                                   |
-| --------------- | ---------------------------------------------- | ------------------------------------| ----------------------------------------- |
+|-----------------|------------------------------------------------|-------------------------------------|-------------------------------------------|
 | `initLoadStart` | The component starts the initial loading       | Options of the loading              | `InitLoadOptions`                         |
 | `initLoad`      | The component has finished the initial loading | Loaded data, options of the loading | `CanUndef<this['DB']>`, `InitLoadOptions` |
 
@@ -391,6 +391,6 @@ By default, a component won't reload data without the internet, but you can chan
 
 ## Error handling
 
-| Name            | Description                                          | Payload description                          | Payload                                   |
-| --------------- | ---------------------------------------------------- | ---------------------------------------------| ----------------------------------------- |
-| `requestError`  | An error occurred during the request to the provider | Error object, function to re-try the request | `Error \| RequestError`, `RetryRequestFn` |
+| Name           | Description                                          | Payload description                          | Payload                                   |
+|----------------|------------------------------------------------------|----------------------------------------------|-------------------------------------------|
+| `requestError` | An error occurred during the request to the provider | Error object, function to re-try the request | `Error  │ RequestError`, `RetryRequestFn` |

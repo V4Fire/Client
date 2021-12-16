@@ -49,7 +49,7 @@ export interface ControlActionObject {
 }
 
 /**
- * Parameters to handle analytics that is tied with a control' event
+ * Parameters to handle analytics that are tied with a control' event
  */
 export interface ControlEvent {
 	/**

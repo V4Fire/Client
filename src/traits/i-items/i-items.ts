@@ -26,7 +26,7 @@ export default abstract class iItems {
 	 */
 	static getItemKey<T extends iBlock>(
 		component: T & iItems,
-		item: any,
+		item: object,
 		i: number
 	): CanUndef<IterationKey> {
 		const

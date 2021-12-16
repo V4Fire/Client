@@ -12,7 +12,7 @@ It is used if you have a problem with the scrolling page under pop-ups or other 
 ## Events
 
 | Name     | Description                       | Payload description | Payload |
-| -------- | --------------------------------- | ------------------- | ------- |
+|----------|-----------------------------------|---------------------|---------|
 | `lock`   | The page scroll has been locked   | -                   | -       |
 | `unlock` | The page scroll has been unlocked | -                   | -       |
 

@@ -44,7 +44,7 @@ module.exports = function addPlugins(api) {
 			href = parsedOpts.href;
 		}
 
-		if (Object.isObject(parsedOpts.query)) {
+		if (Object.isDictionary(parsedOpts.query)) {
 			search = `?${querystring.stringify(parsedOpts.query)}`;
 		}
 

@@ -47,7 +47,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Now `normalizeItems` doesn't modify the original object
+* Now `normalizeItems` does not modify the original object
 
 ## v3.0.0-rc.140 (2021-02-05)
 

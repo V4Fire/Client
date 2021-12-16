@@ -23,7 +23,7 @@ This module provides a component to create a button.
 ## Modifiers
 
 | Name    | Description                                               | Values    | Default |
-| ------- | --------------------------------------------------------- | ----------| ------- |
+|---------|-----------------------------------------------------------|-----------|---------|
 | `upper` | The component displays the text content in the upper case | `Boolean` | -       |
 
 Also, you can see the parent component and the component traits.
@@ -31,7 +31,7 @@ Also, you can see the parent component and the component traits.
 ## Events
 
 | EventName | Description                               | Payload description | Payload      |
-| --------- | ----------------------------------------- | ------------------- | ------------ |
+|-----------|-------------------------------------------|---------------------|--------------|
 | `click`   | Click to the component                    | `Event` object      | `Event`      |
 | `change`  | A list of selected files has been changed | `InputEvent` object | `InputEvent` |
 
@@ -276,7 +276,7 @@ A name of the used component to show `icon`.
 #### [progressIcon = `b-progress-icon`]
 
 A component to show "in-progress" state or
-Boolean, if need to show progress by slot or `b-progress-icon`.
+Boolean, if needed to show progress by slot or `b-progress-icon`.
 
 ```
 < b-button :progressIcon = 'b-my-progress-icon'

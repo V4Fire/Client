@@ -13,7 +13,7 @@ This module provides a trait for a component that needs to implement the "visibi
 ## Modifiers
 
 | Name     | Description             | Values    | Default |
-| -------- | ----------------------- | ----------| ------- |
+|----------|-------------------------|-----------|---------|
 | `hidden` | The component is hidden | `Boolean` | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
@@ -30,10 +30,10 @@ export default class bButton implements iVisible {
 
 ## Events
 
-| Name    | Description                   | Payload description | Payload |
-| --------| ----------------------------- | --------------------| ------- |
-| `show`  | The component has been shown  | -                   | -       |
-| `hide`  | The component has been hidden | -                   | -       |
+| Name   | Description                   | Payload description | Payload |
+|--------|-------------------------------|---------------------|---------|
+| `show` | The component has been shown  | -                   | -       |
+| `hide` | The component has been hidden | -                   | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 

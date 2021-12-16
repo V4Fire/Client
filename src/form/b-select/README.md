@@ -20,7 +20,7 @@ The select can contain multiple values.
 ## Modifiers
 
 | Name       | Description                                      | Values    | Default |
-| ---------- | ------------------------------------------------ | ----------| ------- |
+|------------|--------------------------------------------------|-----------|---------|
 | `native`   | The component uses native `<select>`             | `Boolean` | `false` |
 | `multiple` | The component is switched to the `multiple` mode | `Boolean` | `false` |
 
@@ -28,9 +28,9 @@ Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName         | Description                      | Payload description | Payload  |
-| ----------------- | -------------------------------- | ------------------- | -------- |
-| `itemsChange`     | A list of items has been changed | List of items       | `Items`  |
+| EventName     | Description                      | Payload description | Payload |
+|---------------|----------------------------------|---------------------|---------|
+| `itemsChange` | A list of items has been changed | List of items       | `Items` |
 
 Also, you can see the parent component and the component traits.
 
@@ -253,7 +253,7 @@ See [[gIcon]] for more information.
 ### [progressIcon]
 
 A component to show "in-progress" state or
-Boolean, if need to show progress by slot or `b-progress-icon`.
+Boolean, if needed to show progress by slot or `b-progress-icon`.
 
 ```
 < b-select :progressIcon = 'b-my-progress-icon' | :items = myItems

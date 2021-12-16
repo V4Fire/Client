@@ -224,7 +224,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/** @see [[iItems.items]] */

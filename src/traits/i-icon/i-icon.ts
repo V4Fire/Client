@@ -111,7 +111,7 @@ export default abstract class iIcon {
 	 * Link to iIcon.getIconLink
 	 */
 	getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -121,7 +121,7 @@ export default abstract class iIcon {
 	 * @param [href]
 	 */
 	updateIconHref(el: SVGUseElement, href?: string): void {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -131,6 +131,6 @@ export default abstract class iIcon {
 	 * @param err
 	 */
 	handleIconError(el: SVGUseElement, err: Error): void {
-		return <any>null;
+		return Object.throw();
 	}
 }

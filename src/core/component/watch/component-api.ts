@@ -97,7 +97,7 @@ export function implementComponentWatchAPI(
 	const emitAccessorEvents = () => <MultipleWatchHandler>function emitAccessorEvents(mutations, ...args) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (args.length > 0) {
-			mutations = [<any>[mutations, ...args]];
+			mutations = [Object.cast([mutations, ...args])];
 		}
 
 		for (let i = 0; i < mutations.length; i++) {
@@ -219,7 +219,7 @@ export function implementComponentWatchAPI(
 
 				const broadcastEvents = (mutations, ...args) => {
 					if (args.length > 0) {
-						mutations = [<any>[mutations, ...args]];
+						mutations = [Object.cast([mutations, ...args])];
 					}
 
 					const
@@ -373,14 +373,14 @@ export function implementComponentWatchAPI(
 			propsStore = props.value;
 
 		// We need to attach a watcher for a prop object
-		// and watchers for each non primitive value of that object, like arrays or maps.
+		// and watchers for each non-primitive value of that object, like arrays or maps.
 		if (Object.isTruly(propsStore)) {
 			const propWatchOpts = {
 				...watchOpts,
 				postfixes: ['Prop']
 			};
 
-			// If a component engine doesn't have the own mechanism of watching
+			// If a component engine does not have the own mechanism of watching
 			// we need to wrap a prop object
 			if (!('watch' in props)) {
 				const propsWatcher = watch(propsStore, propWatchOpts);

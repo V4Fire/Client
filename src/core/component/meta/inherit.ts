@@ -127,7 +127,7 @@ export function inheritMeta(
 
 			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
 				const key = keys[i];
-				o[key] = {...<any>parentObj[key]};
+				o[key] = {...parentObj[key]!};
 			}
 		}
 	}

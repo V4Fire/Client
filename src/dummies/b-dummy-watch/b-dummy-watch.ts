@@ -81,7 +81,7 @@ export default class bDummyWatch extends iData {
 	}
 
 	@computed({cache: true, watchable: true})
-	get mountedArrayWatcher(): any[] {
+	get mountedArrayWatcher(): unknown[] {
 		return watch([]).proxy;
 	}
 

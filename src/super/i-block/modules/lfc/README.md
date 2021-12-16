@@ -19,7 +19,7 @@ Executes the specified callback after the `beforeDataCreate` hook or `beforeRead
 and returns a result of the invocation. If the callback can be invoked immediately, it will be invoked,
 and the method returns the invocation' result. Otherwise, the method returns a promise.
 
-This method is helpful to execute a function after the component is initialized and doesn't wait for its providers.
+This method is helpful to execute a function after the component is initialized and does not wait for its providers.
 
 ```js
 this.lfc.execCbAtTheRightTime(() => {

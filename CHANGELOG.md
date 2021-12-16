@@ -11,6 +11,64 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2021-??-??)
+
+#### :boom: Breaking Change
+
+* Now `webpack` & `@v4fire/core` are marked as peer-dependencies
+
+#### :bug: Bug Fix
+
+* Fixed issues with symlinks `build`
+
+## v3.14.0 (2021-12-08)
+
+#### :boom: Breaking Change
+
+* Moved from `Sugar/camelize/string-dasherize/urlconcat` to `@v4fire/core`
+
+## v3.13.3 (2021-12-08)
+
+#### :bug: Bug Fix
+
+* Removed the race condition while loading a new page `bDynamicPage`
+
+## v3.13.2 (2021-12-06)
+
+#### :house: Internal
+
+* [Wrapped animations with `requestAnimationFrame`](https://github.com/V4Fire/Client/issues/170)
+
+## v3.13.1 (2021-12-02)
+
+#### :house: Internal
+
+* Bumped `node/npm` within `ci`
+* Removed unsafe `<any>` casts
+
+## v3.13.0 (2021-11-29)
+
+#### :boom: Breaking Change
+
+* Removed `typograf-loader` `build/webpack`
+
+#### :house: Internal
+
+* Don't apply `symbol-generator-loader` for ES6+ `build/webpack`
+
+## v3.12.2 (2021-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed bugs from migration to `webpack-cli@4`
+
+## v3.12.1 (2021-11-26)
+
+#### :bug: Bug Fix
+
+* Fixed using `asyncRender` within nested flyweight components `core/component/render-function`
+* Fixed a bug when a build was failed without passing a design system package name at the environment `build/stylus`
+
 ## v3.12.0 (2021-11-26)
 
 #### :boom: Breaking Change
@@ -566,7 +624,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed applying of form converters `bForm`
 * Fixed initializing of system fields `core/component/flyweight`
 
-* Fixed a bug when a hook listener with the `once` modifier doesn't drop after usage
+* Fixed a bug when a hook listener with the `once` modifier does not drop after usage
   if there are no more listeners to the same hook `core/component/hook`
 
 * `super/i-block/modules/async-render`:
@@ -653,7 +711,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * `bSelect`:
-  * Fixed a bug when changing of `value` doesn't emit selection of items
+  * Fixed a bug when changing of `value` does not emit selection of items
   * Fixed built-in `required` validator
 
 #### :memo: Documentation
@@ -744,7 +802,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Payload of the `actionChange` event must contain `value`, but not `mods.checked` `bCheckbox`
-* Now `normalizeItems` doesn't modify the original object `bList`
+* Now `normalizeItems` does not modify the original object `bList`
 * [Fixed a bug when using the trait by different components concurrently `traits/i-lock-page-scroll`](https://github.com/V4Fire/Client/issues/549)
 * Fixed a bug when the `cache: false` predicate is ignored if provided `dependencies` `core/component/decorators`
 * Fixed a deadlock during component activation `super/i-block/modules/activation`
@@ -1026,7 +1084,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Now `csp.nonceStore` doesn't affect the project hash when `csp.none` is not specified `config`
+* Now `csp.nonceStore` does not affect the project hash when `csp.none` is not specified `config`
 
 ## v3.0.0-rc.172 (2021-04-06)
 

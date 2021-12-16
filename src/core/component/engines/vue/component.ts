@@ -19,7 +19,7 @@ import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines/vue/
 import { fakeMapSetCopy } from 'core/component/engines/helpers';
 
 import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
-import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentInterface, UnsafeComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
  * Returns a component declaration object from the specified component meta object
@@ -34,7 +34,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 		m = p.model;
 
 	return {
-		...<any>(component),
+		...Object.cast(component),
 		inheritAttrs: p.inheritAttrs,
 
 		model: m && {
@@ -42,18 +42,18 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 			event: m.event?.dasherize() ?? ''
 		},
 
-		data(): Dictionary {
+		data(this: ComponentInterface): Dictionary {
 			const
-				ctx = <any>this,
+				ctx = Object.cast<UnsafeComponentInterface>(this),
 
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				{$watch, $set, $delete} = this;
 
-			ctx.$vueWatch = $watch;
-			ctx.$vueSet = $set;
-			ctx.$vueDelete = $delete;
+			this['$vueWatch'] = $watch;
+			this['$vueSet'] = $set;
+			this['$vueDelete'] = $delete;
 
-			init.beforeDataCreateState(ctx);
+			init.beforeDataCreateState(this);
 
 			const emitter = (_, handler) => {
 				// eslint-disable-next-line @typescript-eslint/unbound-method
@@ -104,7 +104,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 							obj = Object.get(ctx.$fields, path.slice(0, -1)) ?? {};
 							delete obj[key];
 
-							// Finally we can register a Vue watcher
+							// Finally, we can register a Vue watcher
 							$set.call(ctx, obj, key, value);
 
 							// Don't forget to restore the original watcher
@@ -113,7 +113,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 							unmute(obj);
 						}
 
-					// Because Vue doesn't see changes from Map/Set structures, we must use this hack
+					// Because Vue does not see changes from Map/Set structures, we must use this hack
 					} else if (Object.isSet(obj) || Object.isMap(obj) || Object.isWeakMap(obj) || Object.isWeakSet(obj)) {
 						Object.set(ctx, path.slice(0, -1), fakeMapSetCopy(obj));
 					}
@@ -123,9 +123,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 
 		beforeCreate(): void {
 			const
-				ctx = <any>this;
+				ctx = Object.cast<ComponentInterface>(this),
+				unsafe = Object.cast<UnsafeComponentInterface>(this);
 
-			ctx.$renderEngine = {
+			unsafe.$renderEngine = {
 				supports,
 				minimalCtx,
 				proxyGetters,
@@ -138,43 +139,43 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 			implementComponentForceUpdateAPI(ctx, this.$forceUpdate.bind(this));
 		},
 
-		created(this: any): void {
+		created(this: ComponentInterface): void {
 			init.createdState(this);
 		},
 
-		beforeMount(this: any): void {
+		beforeMount(this: ComponentInterface): void {
 			init.beforeMountState(this);
 		},
 
-		mounted(this: any): void {
+		mounted(this: ComponentInterface): void {
 			init.mountedState(this);
 		},
 
-		beforeUpdate(this: any): void {
+		beforeUpdate(this: ComponentInterface): void {
 			init.beforeUpdateState(this);
 		},
 
-		updated(this: any): void {
+		updated(this: ComponentInterface): void {
 			init.updatedState(this);
 		},
 
-		activated(this: any): void {
+		activated(this: ComponentInterface): void {
 			init.activatedState(this);
 		},
 
-		deactivated(this: any): void {
+		deactivated(this: ComponentInterface): void {
 			init.deactivatedState(this);
 		},
 
-		beforeDestroy(this: any): void {
+		beforeDestroy(this: ComponentInterface): void {
 			init.beforeDestroyState(this);
 		},
 
-		destroyed(this: any): void {
+		destroyed(this: ComponentInterface): void {
 			init.destroyedState(this);
 		},
 
-		errorCaptured(this: any): void {
+		errorCaptured(this: ComponentInterface): void {
 			init.errorCapturedState(this);
 		}
 	};

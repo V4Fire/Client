@@ -47,5 +47,5 @@ Changelog
 
 #### :bug: Bug Fix
 
-* [Fixed issue with `in-view` that element did not becomes observable](https://github.com/V4Fire/Client/pull/201)
+* [Fixed issue with `in-view` that element did not become observable](https://github.com/V4Fire/Client/pull/201)
 * [Fixed `stopObserver` method in `in-view`](https://github.com/V4Fire/Client/pull/201)

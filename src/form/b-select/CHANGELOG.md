@@ -42,7 +42,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a bug when changing of `value` doesn't emit selection of items
+* Fixed a bug when changing of `value` does not emit selection of items
 * Fixed built-in `required` validator
 
 #### :memo: Documentation

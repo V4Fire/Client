@@ -13,10 +13,6 @@ const
 	Snakeskin = require('snakeskin');
 
 const
-	dasherize = require('string-dasherize'),
-	camelize = require('camelize');
-
-const
 	{validators} = require('@pzlr/build-core'),
 	{isV4Prop} = include('build/snakeskin/filters/const');
 
@@ -54,11 +50,11 @@ function tagFilter({name, attrs = {}}) {
 		componentName;
 
 	if (attrs[':instance-of']) {
-		componentName = camelize(attrs[':instance-of'][0]);
+		componentName = attrs[':instance-of'][0].camelize(false);
 		delete attrs[':instance-of'];
 
 	} else {
-		componentName = name === 'component' ? 'iBlock' : camelize(name);
+		componentName = name === 'component' ? 'iBlock' : name.camelize(false);
 	}
 
 	const
@@ -77,7 +73,7 @@ function tagFilter({name, attrs = {}}) {
 
 	} else if (!funcMode) {
 		isFunctional = $C(smartProps).every((el, key) => {
-			key = dasherize(key);
+			key = key.dasherize(true);
 
 			if (!isV4Prop.test(key)) {
 				key = `:${key}`;
@@ -97,7 +93,7 @@ function tagFilter({name, attrs = {}}) {
 					return $C(el).includes(attr);
 				}
 
-				return Object.isEqual(el[0], attr);
+				return Object.fastCompare(el[0], attr);
 			}
 
 			if (Object.isRegExp(el)) {
@@ -108,7 +104,7 @@ function tagFilter({name, attrs = {}}) {
 				return el(attr);
 			}
 
-			return Object.isEqual(el, attr);
+			return Object.fastCompare(el, attr);
 		});
 	}
 
@@ -129,7 +125,7 @@ function tagFilter({name, attrs = {}}) {
 			}
 
 			const
-				basePropName = camelize(key.slice(1)),
+				basePropName = key.slice(1).camelize(false),
 				directPropName = `${basePropName}Prop`;
 
 			let
@@ -141,14 +137,14 @@ function tagFilter({name, attrs = {}}) {
 				alternative = component.deprecatedProps[resolvedPropName];
 
 				if (!alternative) {
-					attrs[`:${dasherize(directPropName)}`] = el;
+					attrs[`:${directPropName.dasherize(true)}`] = el;
 				}
 
 				delete attrs[key];
 			}
 
 			if (alternative) {
-				attrs[`:${dasherize(alternative)}`] = el;
+				attrs[`:${alternative.dasherize(true)}`] = el;
 				delete attrs[key];
 			}
 		});
@@ -166,7 +162,7 @@ function tagNameFilter(tag, attrs = {}, rootTag) {
 		.reduce((tag, filter) => filter(tag, attrs, rootTag));
 
 	const
-		nm = camelize(tag),
+		nm = tag.camelize(false),
 		component = componentParams[nm];
 
 	if (component != null && !Object.isBoolean(component.functional)) {

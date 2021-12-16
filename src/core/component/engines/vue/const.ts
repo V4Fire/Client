@@ -7,6 +7,7 @@
  */
 
 import Vue from 'vue';
+import type { UnsafeComponentInterface, ProxyGetters } from 'core/component/interface';
 
 export const supports = {
 	regular: true,
@@ -31,11 +32,16 @@ export const minimalCtx = (() => {
 	return ctx;
 })();
 
-export const proxyGetters = Object.createDict({
+type VueProxyGetters = ProxyGetters<UnsafeComponentInterface & {
+	$vueWatch: Function;
+	_props: Dictionary;
+}>;
+
+export const proxyGetters = Object.createDict<VueProxyGetters>({
 	prop: (ctx) => ({
 		key: '_props',
 
-		get value(): typeof ctx._props {
+		get value(): Dictionary {
 			return ctx._props;
 		},
 

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.13.3 (2021-12-08)
+
+#### :bug: Bug Fix
+
+* Removed the race condition while loading a new page
+
 ## v3.5.4 (2021-10-12)
 
 #### :bug: Bug Fix

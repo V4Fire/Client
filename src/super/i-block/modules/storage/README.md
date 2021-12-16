@@ -36,7 +36,7 @@ There are two reasons to use `Storage` instead of the pure `core/kv-storage` mod
   < b-example
 
   /// This component stores its data as `myComponent_${key}`,
-  /// i.e., it doesn't conflict with the previous components.
+  /// i.e., it does not conflict with the previous components.
   < b-example :globalName = 'myComponent'
   ```
 

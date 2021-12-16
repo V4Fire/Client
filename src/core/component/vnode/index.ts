@@ -42,7 +42,7 @@ export function getComponentRenderCtxFromVNode(
 		data = getComponentDataFromVNode(component, vnode);
 
 	return {
-		parent: <any>parent,
+		parent: Object.cast(parent),
 		children: vnode.children ?? [],
 		props: data.props,
 		listeners: <Record<string, CanArray<Function>>>data.on,

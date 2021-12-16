@@ -12,10 +12,7 @@ const
 	{webpack} = require('config');
 
 const
-	camelize = require('camelize'),
-	SVGO = require('svgo-sync');
-
-const
+	SVGO = require('svgo-sync'),
 	svgo = new SVGO();
 
 module.exports = function addPlugins(api) {
@@ -29,25 +26,24 @@ module.exports = function addPlugins(api) {
 	api.define('dataURI', (mime, str) => `data:${mime.string};base64,${Buffer(str.string).toString('base64')}`);
 
 	/**
-	 * Link to the "string-dasherize" module
+	 * Returns a dash-style version of the specified string
 	 *
 	 * @param {?} str - source string
+	 * @param [stable] - if true, then the operation can be reverted
 	 * @returns {string}
 	 */
 	api.define('dasherize',
-		(str) => require('string-dasherize')(str.string));
+		(str, stable) => String(str.string).dasherize(stable));
 
 	/**
-	 * Link to Sugar.String.camelize
+	 * Returns a CamelCaseStyle version of the specified string
 	 *
 	 * @param {?} str - source string
 	 * @param {boolean} [upper]
 	 * @returns {string}
 	 */
-	api.define('camelize', (str, upper) => {
-		const res = camelize(str.string);
-		return upper ? res[0].toUpperCase() + res.slice(1) : res;
-	});
+	api.define('camelize',
+		(str, upper) => String(str.string).camelize(upper));
 
 	/**
 	 * Converts the specified string to lowercase

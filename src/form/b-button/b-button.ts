@@ -224,7 +224,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/**
 	 * A component to show "in-progress" state or
-	 * Boolean, if need to show progress by slot or `b-progress-icon`
+	 * Boolean, if needed to show progress by slot or `b-progress-icon`
 	 *
 	 * @default `'b-progress-icon'`
 	 * @example

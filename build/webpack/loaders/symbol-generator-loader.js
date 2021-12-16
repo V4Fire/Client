@@ -9,7 +9,11 @@
  */
 
 const
-	$C = require('collection.js'),
+	config = require('config'),
+	$C = require('collection.js');
+
+const
+	fs = require('fs'),
 	isPathInside = require('is-path-inside');
 
 const
@@ -33,7 +37,14 @@ const
  * ```
  */
 module.exports = function symbolGeneratorLoader(str) {
-	if (!$C(this.query.modules).some((src) => isPathInside(this.context, src))) {
+	if (!/ES[35]$/.test(config.es())) {
+		return str;
+	}
+
+	if (
+		!$C(this.query.modules)
+			.some((src) => isPathInside(fs.realpathSync(this.context), fs.realpathSync(src)))
+	) {
 		return str;
 	}
 

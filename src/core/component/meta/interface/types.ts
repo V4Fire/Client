@@ -44,7 +44,7 @@ export interface ComponentOptions {
 	/**
 	 * If true, then the component is registered as a root component.
 	 *
-	 * The root component is the top of components hierarchy, i.e it contains all components in an application,
+	 * The root component is the top of components hierarchy, i.e. it contains all components in an application,
 	 * and the application can't exist without the root.
 	 *
 	 * All components, even the root component, have a link to the root component.
@@ -82,7 +82,7 @@ export interface ComponentOptions {
 	 *      If the component invocation take these properties with the values that
 	 *      declared within "functional" parameters, it will be created as functional.
 	 *      Also, you can specify multiple values of one input property by using a list of values.
-	 *      Mind that inferring of a component type is compile based, i.e. you can't depend on values from runtime,
+	 *      Mind that inferring of a component type is compile-based, i.e. you can't depend on values from runtime,
 	 *      but you can directly cast the type by using "v-func" directive;
 	 *   3. If null, all components watchers and listeners that directly specified in a class don't
 	 *      be attached to a functional component. It is useful to create superclass behaviour depending

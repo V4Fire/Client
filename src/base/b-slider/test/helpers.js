@@ -85,7 +85,83 @@ async function initSlider(page, {attrs, content} = {}) {
 	return h.component.waitForComponent(page, '#target');
 }
 
+/**
+ * Creates the default slot
+ */
+function defaultSlotFn() {
+	const items = [1, 2, 3, 4].map((i) => ({
+		tag: 'img',
+		data: {
+			attrs: {
+				'data-test-ref': 'item',
+				id: `slide${i}`,
+				src: 'https://fakeimg.pl/300x200',
+				width: 300,
+				height: 200
+			}
+		}
+	}));
+
+	return `return () => ${JSON.stringify(items)}`;
+}
+
+/**
+ * Creates a component with the default slot and a slide mode to test gestures
+ *
+ * @param {Page} page
+ * @returns {!Object} component
+ */
+function initDefaultSlider(page) {
+	return initSlider(page, {content: {default: defaultSlotFn()}, attrs: {mode: 'slide'}});
+}
+
+/**
+ * Returns an index of the current visible slide
+ *
+ * @param {!Object} component
+ * @returns {!Promise<number>}
+ */
+function current(component) {
+	return component.evaluate((ctx) => ctx.current);
+}
+
+/**
+ * Returns an index of the last slide
+ *
+ * @param {!Object} component
+ * @returns {!Promise<number>}
+ */
+function lastIndex(component) {
+	return component.evaluate((ctx) => ctx.contentLength - 1);
+}
+
+/**
+ * Switches to the last slide
+ *
+ * @param {!Object} component
+ * @returns {!Promise<number>}
+ */
+async function toLastSlide(component) {
+	await component.evaluate((ctx) => ctx.current = ctx.contentLength - 1);
+}
+
+/**
+ * Returns the current slider scroll position
+ *
+ * @param {Object} component
+ * @returns {!Promise<number>}
+ */
+function currentOffset(component) {
+	return component.evaluate((ctx) => ctx.currentOffset);
+}
+
 module.exports = {
 	swipeOnce,
-	initSlider
+	initSlider,
+	defaultSlotFn,
+	initDefaultSlider,
+	current,
+	lastIndex,
+	toLastSlide,
+	currentOffset
 };

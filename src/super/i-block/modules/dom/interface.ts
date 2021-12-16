@@ -9,7 +9,7 @@
 import type iBlock from 'super/i-block/i-block';
 
 export interface ElCb<CTX extends iBlock = iBlock> {
-	(this: CTX, el: Element): any;
+	(this: CTX, el: Element): AnyToIgnore;
 }
 
 export const
@@ -19,7 +19,7 @@ export const
  * @see https://github.com/microsoft/TypeScript/issues/1863
  */
 export const
-	inViewInstanceStore = <any>inViewInstanceStoreSymbol;
+	inViewInstanceStore = inViewInstanceStoreSymbol;
 
 export interface DOMManipulationOptions {
 	/**

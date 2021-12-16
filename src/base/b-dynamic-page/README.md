@@ -12,7 +12,7 @@ This module provides a component to dynamically load page components. Basically,
 
 * The component automatically dispatches all events from an internal page component.
 
-* The component doesn't have the default UI.
+* The component does not have the default UI.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -185,7 +185,7 @@ It can be defined as:
 
 1. a component name (or a list of names);
 2. a regular expression;
-3. a function that takes a component name and returns `true` (include), `false` (doesn't include),
+3. a function that takes a component name and returns `true` (include), `false` (does not include),
    a string key to cache (it uses instead of a component name),
    or a special object with information of the used cache strategy.
 
@@ -193,7 +193,7 @@ It can be defined as:
 
 A predicate to exclude some pages from the `keepAlive` caching.
 It can be defined as a component name (or a list of names), regular expression,
-or a function that takes a component name and returns `true` (exclude) or `false` (doesn't exclude).
+or a function that takes a component name and returns `true` (exclude) or `false` (does not exclude).
 
 #### [emitter]
 
