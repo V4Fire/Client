@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed bug with forwarding webpack params
+* Fixed a bug with forwarding Webpack params `build/gulp`
 
 ## v3.15.0 (2021-12-16)
 
