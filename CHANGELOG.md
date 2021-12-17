@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.15.1 (2021-12-17)
+
+#### :bug: Bug Fix
+
+* Fixed bug with forwarding webpack params
+
 ## v3.15.0 (2021-12-16)
 
 #### :boom: Breaking Change
