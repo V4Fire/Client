@@ -225,8 +225,6 @@ export function implementComponentWatchAPI(
 				);
 
 				const broadcastEvents = (mutations, ...args) => {
-					console.log(mutations);
-
 					if (args.length > 0) {
 						mutations = [Object.cast([mutations, ...args])];
 					}
