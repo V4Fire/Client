@@ -90,6 +90,11 @@ export default class bDummyWatch extends iData {
 		return watch({}).proxy;
 	}
 
+	@computed({dependencies: ['mountedWatcher']})
+	get mountedComputed(): Dictionary {
+		return this.mountedWatcher;
+	}
+
 	static override readonly mods: ModsDecl = {
 		watchable: [
 			'val-1',
