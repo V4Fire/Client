@@ -196,10 +196,6 @@ export function implementComponentWatchAPI(
 
 				newDeps[j] = dep;
 
-				if (info.type === 'mounted') {
-					continue;
-				}
-
 				if (info.ctx === component && !watchDependencies.has(dep)) {
 					needForkDeps = true;
 					newDeps[j] = info.path;
@@ -215,9 +211,22 @@ export function implementComponentWatchAPI(
 					immediateHandler(value, oldValue, info);
 				};
 
-				attachDynamicWatcher(component, info, watchOpts, invalidateCache, immediateDynamicHandlers);
+				attachDynamicWatcher(
+					component,
+					info,
+
+					{
+						...watchOpts,
+						immediate: true
+					},
+
+					invalidateCache,
+					immediateDynamicHandlers
+				);
 
 				const broadcastEvents = (mutations, ...args) => {
+					console.log(mutations);
+
 					if (args.length > 0) {
 						mutations = [Object.cast([mutations, ...args])];
 					}

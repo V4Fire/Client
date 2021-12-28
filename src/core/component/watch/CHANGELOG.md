@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.15.2 (2021-12-28)
+
+#### :bug: Bug Fix
+
+* Fixed watching of computed properties that tied with mounted watchers
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :bug: Bug Fix
