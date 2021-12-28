@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.15.3 (2021-12-28)
+
+#### :bug: Bug Fix
+
+* Fixed linking to `globalThis` `webpack`
+
 ## v3.2.2 (2021-08-05)
 
 #### :bug: Bug Fix
