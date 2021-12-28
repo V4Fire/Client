@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.15.2 (2021-12-28)
+
+#### :bug: Bug Fix
+
+* Fixed watching of computed properties that tied with mounted watchers `core/object/watch`
+
 ## v3.15.1 (2021-12-17)
 
 #### :bug: Bug Fix

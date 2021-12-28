@@ -192,17 +192,13 @@ export function implementComponentWatchAPI(
 			for (let j = 0; j < deps.length; j++) {
 				const
 					dep = deps[j],
-					info = getPropertyInfo(Array.concat([], dep).join('.'), component);
+					watchInfo = getPropertyInfo(Array.concat([], dep).join('.'), component);
 
 				newDeps[j] = dep;
 
-				if (info.type === 'mounted') {
-					continue;
-				}
-
-				if (info.ctx === component && !watchDependencies.has(dep)) {
+				if (watchInfo.ctx === component && !watchDependencies.has(dep)) {
 					needForkDeps = true;
-					newDeps[j] = info.path;
+					newDeps[j] = watchInfo.path;
 					continue;
 				}
 
@@ -215,7 +211,18 @@ export function implementComponentWatchAPI(
 					immediateHandler(value, oldValue, info);
 				};
 
-				attachDynamicWatcher(component, info, watchOpts, invalidateCache, immediateDynamicHandlers);
+				attachDynamicWatcher(
+					component,
+					watchInfo,
+
+					{
+						...watchOpts,
+						immediate: true
+					},
+
+					invalidateCache,
+					immediateDynamicHandlers
+				);
 
 				const broadcastEvents = (mutations, ...args) => {
 					if (args.length > 0) {
@@ -235,6 +242,11 @@ export function implementComponentWatchAPI(
 
 							Object.assign(Object.create(info), {
 								path: [key],
+
+								originalPath: watchInfo.type === 'mounted' ?
+									[watchInfo.name, ...info.originalPath] :
+									info.originalPath,
+
 								parent: {value, oldValue, info}
 							})
 						]);
@@ -243,7 +255,7 @@ export function implementComponentWatchAPI(
 					handler(modifiedMutations);
 				};
 
-				attachDynamicWatcher(component, info, watchOpts, broadcastEvents, dynamicHandlers);
+				attachDynamicWatcher(component, watchInfo, watchOpts, broadcastEvents, dynamicHandlers);
 			}
 
 			if (needForkDeps) {

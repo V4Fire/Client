@@ -120,7 +120,7 @@ module.exports = function init(gulp = require('gulp')) {
 				webpackCommands.find((wCommand) => wCommand.name === key || wCommand.alias === key);
 
 			if (shouldProvideToWebpack) {
-				if (value) {
+				if (value && value !== true) {
 					return `--${key}=${value}`;
 				}
 
