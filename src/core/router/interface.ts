@@ -76,7 +76,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * If the route is an alias to another route, the parameter contains the route name we refer to.
-	 * The alias preserves its original name of the route (but rest parameters are taken from a refer route).
+	 * The alias preserves its original name of the route (but rest parameters are taken from a referrer route).
 	 * If you want to organize some redirect logic, please see the "redirect" parameter.
 	 */
 	alias?: string;
@@ -111,7 +111,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	meta?: Dictionary;
 
 	/**
-	 * If false, the router doesn't automatically scroll a page to coordinates tied with the route.
+	 * If false, the router does not automatically scroll a page to coordinates tied with the route.
 	 * Mind, if you switch off this parameter, the scroll position of a page won't be restored
 	 * on a back or forward tap too.
 	 *

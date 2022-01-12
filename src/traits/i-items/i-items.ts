@@ -26,7 +26,7 @@ export default abstract class iItems {
 	 */
 	static getItemKey<T extends iBlock>(
 		component: T & iItems,
-		item: any,
+		item: object,
 		i: number
 	): CanUndef<IterationKey> {
 		const
@@ -59,7 +59,7 @@ export default abstract class iItems {
 			id = compiledFn.call(component, item, i);
 		}
 
-		if (Object.isPrimitive(id)) {
+		if (Object.isPrimitive(id) && !Object.isSymbol(id)) {
 			return id ?? undefined;
 		}
 

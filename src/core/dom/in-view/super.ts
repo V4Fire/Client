@@ -109,9 +109,7 @@ export default abstract class AbstractInView {
 			this.unobserve(node, {threshold, suspend: true});
 
 		} else {
-			const group = groupOrElement;
-
-			this.observablesByGroup.get(group)?.forEach((elMap) => {
+			this.observablesByGroup.get(groupOrElement)?.forEach((elMap) => {
 				elMap.forEach((observable) => {
 					this.unobserve(observable.node, {threshold: observable.threshold, suspend: true});
 				});

@@ -8,19 +8,19 @@ The component can be useful in creating a composition of data.
 
 * The component extends [[iData]].
 
-* The component doesn't have the default UI.
+* The component does not have the default UI.
 
 * By default, the root tag of the component is `<div>`.
 
 ## Events
 
-| EventName     | Description                                            | Payload description                     | Payload                                   |
-| ------------- | ------------------------------------------------------ | --------------------------------------- | ----------------------------------------- |
-| `change`      | The provider has uploaded and changed data             | Provider data                           | `DB`                                      |
-| `addData`     | There have occur adding of new data to the provider    | Data                                    | `unknown`                                 |
-| `updData`     | There have occur updating of data of the provider      | Data                                    | `unknown`                                 |
-| `delData`     | There have occur deleting of data from the provider    | Data                                    | `unknown`                                 |
-| `error`       | There have occur an error with the provider            | Error object; Function to retry request | `Error \| RequestError`; `RetryRequestFn` |
+| EventName | Description                                         | Payload description                     | Payload                                   |
+|-----------|-----------------------------------------------------|-----------------------------------------|-------------------------------------------|
+| `change`  | The provider has uploaded and changed data          | Provider data                           | `DB`                                      |
+| `addData` | There have occur adding of new data to the provider | Data                                    | `unknown`                                 |
+| `updData` | There have occur updating of data of the provider   | Data                                    | `unknown`                                 |
+| `delData` | There have occur deleting of data from the provider | Data                                    | `unknown`                                 |
+| `error`   | There have occur an error with the provider         | Error object; Function to retry request | `Error  │ RequestError`; `RetryRequestFn` |
 
 Also, you can see the parent component.
 

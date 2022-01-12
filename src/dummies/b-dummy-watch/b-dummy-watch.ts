@@ -81,13 +81,18 @@ export default class bDummyWatch extends iData {
 	}
 
 	@computed({cache: true, watchable: true})
-	get mountedArrayWatcher(): any[] {
+	get mountedArrayWatcher(): unknown[] {
 		return watch([]).proxy;
 	}
 
 	@computed({cache: true, watchable: true})
 	get mountedWatcher(): Dictionary {
 		return watch({}).proxy;
+	}
+
+	@computed({dependencies: ['mountedWatcher']})
+	get mountedComputed(): Dictionary {
+		return this.mountedWatcher;
 	}
 
 	static override readonly mods: ModsDecl = {

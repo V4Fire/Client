@@ -29,17 +29,17 @@ This module provides a component to load an image with the support of features:
 ## Modifiers
 
 | Name        | Description                                                           | Values    | Default |
-| ----------- | --------------------------------------------------------------------- | --------- | ------- |
+|-------------|-----------------------------------------------------------------------|-----------|---------|
 | `showError` | The component is showing an image or template that indicates an error | `Boolean` | -       |
 
 Also, you can see [[iProgress]] and [[iVisible]] traits and the [[iBlock]] component.
 
 ## Events
 
-| EventName     | Description                            | Payload description | Payload  |
-| ------------- | -------------------------------------- | ------------------- | -------- |
-| `loadSuccess` | The image has been successfully loaded | -                   | -        |
-| `loadFail`    | The image hasn't been loaded           | `Error` object      | `Error`  |
+| EventName     | Description                            | Payload description | Payload |
+|---------------|----------------------------------------|---------------------|---------|
+| `loadSuccess` | The image has been successfully loaded | -                   | -       |
+| `loadFail`    | The image hasn't been loaded           | `Error` object      | `Error` |
 
 Also, you can see [[iProgress]] and [[iVisible]] traits and the [[iBlock]] component.
 

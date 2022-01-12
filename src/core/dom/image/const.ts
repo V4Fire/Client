@@ -20,33 +20,13 @@ import type { DefaultParams } from 'core/dom/image/interface';
  */
 export const defaultParams: CanUndef<DefaultParams> = undefined;
 
-/*
- * @see https://github.com/microsoft/TypeScript/issues/1863
- */
 export const
-	SHADOW_PREVIEW_SYMBOL: unique symbol = Symbol('Preview element stage'),
-	SHADOW_BROKEN_SYMBOL: unique symbol = Symbol('Broken element stage'),
-	SHADOW_MAIN_SYMBOL: unique symbol = Symbol('Main element stage'),
-	ID_SYMBOL: unique symbol = Symbol('Element Id');
+	SHADOW_PREVIEW = Symbol('Preview element stage'),
+	SHADOW_BROKEN = Symbol('Broken element stage'),
+	SHADOW_MAIN = Symbol('Main element stage'),
+	ID = Symbol('Element Id');
 
 export const
-	SHADOW_PREVIEW = <any>SHADOW_PREVIEW_SYMBOL,
-	SHADOW_BROKEN = <any>SHADOW_BROKEN_SYMBOL,
-	SHADOW_MAIN = <any>SHADOW_MAIN_SYMBOL,
-	ID = <any>ID_SYMBOL;
-
-/*
- * @see https://github.com/microsoft/TypeScript/issues/1863
- */
-export const
-	IS_LOADED_SYMBOL: unique symbol = Symbol('Load indicator'),
-	INIT_LOAD_SYMBOL: unique symbol = Symbol('Load initializer'),
-	IS_LOADING_SYMBOL: unique symbol = Symbol('Loading indicator');
-
-/*
- * @see https://github.com/microsoft/TypeScript/issues/1863
- */
-export const
-	IS_LOADED = <any>IS_LOADED_SYMBOL,
-	INIT_LOAD = <any>INIT_LOAD_SYMBOL,
-	IS_LOADING = <any>IS_LOADING_SYMBOL;
+	INIT_LOAD = Symbol('Load initializer'),
+	IS_LOADED = Symbol('Load indicator'),
+	IS_LOADING = Symbol('Loading indicator');

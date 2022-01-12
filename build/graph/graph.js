@@ -17,9 +17,6 @@ const
 	path = require('upath');
 
 const
-	camelize = require('camelize');
-
-const
 	{src, build, webpack} = config,
 	{resolve, block, entries} = require('@pzlr/build-core');
 
@@ -269,7 +266,7 @@ async function buildProjectGraph() {
 							str +=
 								`
 .${normalizedName}
-	extends($${camelize(normalizedName)})
+	extends($${normalizedName.camelize(false)})
 
 `;
 						}
@@ -379,7 +376,7 @@ async function buildProjectGraph() {
 		});
 
 		$C(components).forEach((component, name) => {
-			component.params = componentParams[camelize(name)] ?? {};
+			component.params = componentParams[name.camelize(false)] ?? {};
 		});
 
 		return components;

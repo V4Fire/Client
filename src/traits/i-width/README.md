@@ -11,8 +11,8 @@ This module provides a trait for a component that needs to implement the "width"
 ## Modifiers
 
 | Name    | Description         | Values                          | Default |
-| ------- | ------------------- | --------------------------------| ------- |
-| `width` | The component width | `'full' \| 'auto' \| 'inherit'` | -       |
+|---------|---------------------|---------------------------------|---------|
+| `width` | The component width | `'full'  │ 'auto'  │ 'inherit'` | -       |
 
 ## Styles
 

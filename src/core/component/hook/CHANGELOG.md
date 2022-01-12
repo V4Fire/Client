@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a bug when a hook listener with the `once` modifier doesn't drop after usage if there are no more listeners to the same hook
+* Fixed a bug when a hook listener with the `once` modifier does not drop after usage if there are no more listeners to the same hook
 
 ## v3.0.0-rc.129 (2021-01-28)
 

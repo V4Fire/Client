@@ -10,5 +10,5 @@ import type { Config as SuperConfig } from '@v4fire/core/config/interface';
 
 export interface Config extends SuperConfig {
 	components: typeof COMPONENTS;
-	componentStaticDependencies: Dictionary<Array<() => Promise<any>>>;
+	componentStaticDependencies: Dictionary<Array<() => Promise<unknown>>>;
 }

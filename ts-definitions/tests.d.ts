@@ -449,7 +449,7 @@ declare namespace BrowserTests {
 			componentCtx: PlaywrightElContext,
 			componentName: string,
 			props?: Dictionary
-		): Playwright.ElementHandle<any>;
+		): Playwright.ElementHandle;
 	}
 
 	/**

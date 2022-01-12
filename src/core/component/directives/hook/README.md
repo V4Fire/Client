@@ -1,7 +1,7 @@
 # core/component/directives/hook
 
 This module brings a directive to provide any directive hooks into a component.
-This directive is extremely useful to combine with a flyweight component because it doesn't have API to
+This directive is extremely useful to combine with a flyweight component because it does not have API to
 attach the hook listeners.
 
 ## Usage

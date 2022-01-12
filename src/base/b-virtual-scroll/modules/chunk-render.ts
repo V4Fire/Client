@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 
 import { InViewAdapter, InViewInitOptions, inViewFactory } from 'core/dom/in-view';
 
-import { Friend } from 'super/i-block/i-block';
+import iBlock, { Friend } from 'super/i-block/i-block';
 import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 import type ComponentRender from 'base/b-virtual-scroll/modules/component-render';
@@ -93,7 +93,7 @@ export default class ChunkRender extends Friend {
 		return Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100;
 	}
 
-	constructor(component: any) {
+	constructor(component: iBlock) {
 		super(component);
 		this.component.on('componentHook:mounted', this.initEventHandlers.bind(this));
 	}

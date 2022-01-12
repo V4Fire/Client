@@ -23,7 +23,7 @@ See the [[iItems]] trait and the [[iData]] component.
 ## Events
 
 | EventName | Description                                            | Payload description                                            | Payload                          |
-| --------- | ------------------------------------------------------ | -------------------------------------------------------------- | -------------------------------- |
+|-----------|--------------------------------------------------------|----------------------------------------------------------------|----------------------------------|
 | `fold`    | One of the component items has been folded or unfolded | A link to the DOM element; The item object; The folding status | `HTMLElement`; `Item`; `boolean` |
 
 See the [[iItems]] trait and the [[iData]] component.

@@ -48,7 +48,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 	const
 		{meta} = ds;
 
-	if (Object.isObject(meta) && meta.themes !== undefined) {
+	if (Object.isDictionary(meta) && meta.themes !== undefined) {
 		if (buildThemes === undefined) {
 			throw new Error(dsHasThemesNotIncluded);
 		}
@@ -84,7 +84,7 @@ exports.getDSComponentMods = function getDSComponentMods() {
 		const
 			{components} = require(pzlr.designSystem);
 
-		if (Object.isObject(components)) {
+		if (Object.isDictionary(components)) {
 			return JSON.stringify(Object.keys(components).reduce((res, componentName) => {
 				const
 					comp = components[componentName],

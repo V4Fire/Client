@@ -26,14 +26,14 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * Multiple active items (`multiple = true`).
 
-* Cancelation of a choice (`cancelable = true`).
+* Cancellation of a choice (`cancelable = true`).
 
 * Dynamic data loading.
 
 ## Modifiers
 
 | Name         | Description            | Values    | Default |
-| ------------ | ---------------------- | ----------| ------- |
+|--------------|------------------------|-----------|---------|
 | `hideLabels` | Item labels are hidden | `Boolean` | `false` |
 
 Also, you can see the parent component and the component traits.
@@ -41,7 +41,7 @@ Also, you can see the parent component and the component traits.
 ## Events
 
 | EventName         | Description                                                                                                                 | Payload description                   | Payload  |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | -------- |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------|---------------------------------------|----------|
 | `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
 | `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
 | `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |

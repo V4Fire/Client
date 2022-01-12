@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.15.0 (2021-12-16)
+
+#### :bug: Bug Fix
+
+* Fixed issues with symlinks
+
+## v3.15.0 (2021-12-16)
+
+#### :boom: Breaking Change
+
+* Removed `typograf-loader`
+
+#### :house: Internal
+
+* Don't apply `symbol-generator-loader` for ES6+
+
 ## v3.7.0 (2021-10-25)
 
 #### :rocket: New Feature

@@ -9,11 +9,8 @@
  */
 
 const
-	$C = require('collection.js');
-
-const
-	escaper = require('escaper'),
-	camelize = require('camelize');
+	$C = require('collection.js'),
+	escaper = require('escaper');
 
 const
 	fs = require('fs');
@@ -49,7 +46,7 @@ Object.assign(componentParams, {
 	 * ```
 	 */
 	getComponentPropAttrs(name) {
-		name = camelize(name);
+		name = name.camelize(false);
 
 		if (!this[name]) {
 			throw new ReferenceError(`The specified component "${name}" is not defined`);
@@ -160,13 +157,13 @@ function getParentParameters(component) {
 
 		const
 			val = component[key],
-			isObj = Object.isObject(val);
+			isObj = Object.isDictionary(val);
 
 		if (val === undefined || isObj) {
 			const
 				parentVal = parent[key];
 
-			if (Object.isObject(parentVal)) {
+			if (Object.isDictionary(parentVal)) {
 				params[key] = {...parentVal, ...val};
 				continue;
 			}

@@ -11,7 +11,7 @@ This module provides a trait for a component that needs to implement the "openin
 ## Modifiers
 
 | Name     | Description             | Values    | Default |
-| -------- | ----------------------- | ----------| ------- |
+|----------|-------------------------|-----------|---------|
 | `opened` | The component is opened | `Boolean` | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
@@ -29,7 +29,7 @@ export default class bButton implements iOpen {
 ## Events
 
 | Name    | Description                   | Payload description | Payload |
-| ------- | ----------------------------- | ------------------- | ------- |
+|---------|-------------------------------|---------------------|---------|
 | `open`  | The component has been opened | -                   | -       |
 | `close` | The component has been closed | -                   | -       |
 

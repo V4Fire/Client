@@ -389,7 +389,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						};
 
 						// eslint-disable-next-line @typescript-eslint/unbound-method
-						unwatch = watch(proxy, prop, <any>topOpts, <any>watchHandler).unwatch;
+						unwatch = watch(proxy, prop, topOpts, Object.cast(watchHandler)).unwatch;
 					}
 
 					destructors.push(unwatch);

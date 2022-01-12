@@ -189,7 +189,7 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		const
-			dateValue = Date.create(isNaN(<any>value) ? value : Number(value));
+			dateValue = Date.create(isNaN(Object.cast(value)) ? value : Number(value));
 
 		const error = (
 			type: DateValidatorResult['name'] = 'INVALID_VALUE',

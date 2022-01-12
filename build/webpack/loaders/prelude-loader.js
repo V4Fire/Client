@@ -29,7 +29,7 @@ const
  * ```
  */
 module.exports = function preludeLoader(str) {
-	if (replaceRgxp) {
+	if (replaceRgxp != null) {
 		const
 			escapedFragments = [];
 

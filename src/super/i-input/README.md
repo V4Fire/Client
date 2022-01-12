@@ -13,7 +13,7 @@ This module provides a superclass for all form components.
 ## Modifiers
 
 | Name        | Description                                                                                                            | Values    | Default |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------- | ----------| ------- |
+|-------------|------------------------------------------------------------------------------------------------------------------------|-----------|---------|
 | `form`      | The system modifier. Is used to find form components from DOM.                                                         | `Boolean` | `true`  |
 | `valid`     | The component has passed data validation                                                                               | `Boolean` | -       |
 | `showInfo`  | The component is showing some info message (like advices to generate a password) through output                        | `Boolean` | -       |
@@ -24,7 +24,7 @@ Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] componen
 ## Events
 
 | Name                | Description                                                                                | Payload description                      | Payload                                         |
-| ------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------- | ----------------------------------------------- |
+|---------------------|--------------------------------------------------------------------------------------------|------------------------------------------|-------------------------------------------------|
 | `change`            | A value of the component has been changed                                                  | Component value                          | `this['Value']`                                 |
 | `actionChange`      | A value of the component has been changed due to some user action                          | Component value                          | `this['Value']`                                 |
 | `clear`             | A value of the component has been cleared via `clear`                                      | Component value                          | `this['Value']`                                 |
@@ -181,7 +181,7 @@ Additional attributes are provided to the "internal" (native) input tag.
 #### [cache]
 
 A boolean value that enables or disables caching of a component value by the associated form.
-The caching is mean that if the component value doesn't change since the last sending of the form, it won't be sent again.
+The caching is mean that if the component value does not change since the last sending of the form, it won't be sent again.
 
 #### [disallow]
 
@@ -400,7 +400,7 @@ By design, all `iInput` components have their "own" values and "form" values.
 The form value is based on the own component value, but they are equal in a simple case.
 The form associated with this component will use the form value, but not the original.
 
-This value is tested by parameters from `disallow`. If the value doesn't match allowing parameters,
+This value is tested by parameters from `disallow`. If the value does not match allowing parameters,
 it will be skipped (the getter returns undefined). The value that passed the validation is converted
 via `formValueConverter` (if it's specified).
 

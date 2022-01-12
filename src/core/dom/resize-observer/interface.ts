@@ -46,7 +46,7 @@ export interface ResizeWatcherObserverOptions {
 	 * Execution context.
 	 *
 	 * The context is used to provide a component environment, like, async, event emitters, etc.
-	 * When API is used as a directive, the context will automatically taken from a VNode instance.
+	 * When API is used as a directive, the context will be automatically taken from a VNode instance.
 	 *
 	 * Using a `callback` option without the context provided can lead to unexpected results.
 	 *

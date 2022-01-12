@@ -101,10 +101,10 @@ export const field = paramsFactory<InitFieldFn | DecoratorField>('fields', (p) =
  * ```typescript
  * @component()
  * class bExample extends iBlock {
- *   @field()
+ *   @system()
  *   bla: number = 0;
  *
- *   @field(() => Math.random())
+ *   @system(() => Math.random())
  *   baz?: number;
  * }
  * ```

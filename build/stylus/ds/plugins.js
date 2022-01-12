@@ -221,7 +221,7 @@ module.exports = function getPlugins({
 				const
 					initial = $C(ds).get(path);
 
-				if (!Object.isObject(initial)) {
+				if (!Object.isDictionary(initial)) {
 					throw new Error(`getDSTextStyles: the design system has no "${theme}" styles for the specified name: ${name}`);
 				}
 

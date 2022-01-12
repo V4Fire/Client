@@ -16,7 +16,7 @@ The component is based on a native `<form>` element and realizes the same behavi
 ## Modifiers
 
 | Name    | Description                                          | Values    | Default |
-| ------- | ---------------------------------------------------- | ----------| ------- |
+|---------|------------------------------------------------------|-----------|---------|
 | `valid` | All associated components have passed the validation | `Boolean` | -       |
 
 Also, you can see the [[iVisible]] trait and the [[iData]] component.
@@ -24,7 +24,7 @@ Also, you can see the [[iVisible]] trait and the [[iData]] component.
 ## Events
 
 | Name                | Description                                                                                                | Payload description                      | Payload                                         |
-| ------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------- |
+|---------------------|------------------------------------------------------------------------------------------------------------|------------------------------------------|-------------------------------------------------|
 | `clear`             | All associated components have been cleared via `clear`                                                    | -                                        | -                                               |
 | `reset`             | All associated components have been reset via `reset`                                                      | -                                        | -                                               |
 | `validationStart`   | Validation of the associated components has been started                                                   | -                                        | -                                               |
@@ -33,7 +33,7 @@ Also, you can see the [[iVisible]] trait and the [[iData]] component.
 | `validationEnd`     | Validation of the associated components has been ended                                                     | Validation result \[, Failed validation] | `boolean`, `ValidationError<this['FormValue']>` |
 | `submitStart`       | The component started to submit data                                                                       | Data to submit, Submit context           | `SubmitBody`, `SubmitCtx`                       |
 | `submitSuccess`     | Submission of the form has been successfully finished                                                      | Operation response, Submit context       | `unknown`, `ValidationError<this['FormValue']>` |
-| `submitFail`        | Submission of the form hasn't been successfully finished                                                   | Error object, Submit context             | `Error \| RequestError`, `SubmitCtx`            |
+| `submitFail`        | Submission of the form hasn't been successfully finished                                                   | Error object, Submit context             | `Error  │ RequestError`, `SubmitCtx`            |
 | `submitEnd`         | Submission of the form has been ended                                                                      | Operation result, Submit context         | `SubmitResult`, `SubmitCtx`                     |
 
 Also, you can see the [[iVisible]] trait and the [[iData]] component.
@@ -171,7 +171,7 @@ Additional form request parameters.
 #### [cache = `false`]
 
 If true, then form elements is cached.
-The caching is mean that if some component value doesn't change since the last sending of the form, it won't be sent again.
+The caching is mean that if some component value does not change since the last sending of the form, it won't be sent again.
 
 ```
 < b-form :dataProvider = 'User' | :method = 'upd' | :cache = true
@@ -201,7 +201,7 @@ A list of components to submit that are associated with the form.
 
 #### clear
 
-Clears values of all associated components.
+Clears all values of associated components.
 
 #### reset
 
@@ -209,7 +209,7 @@ Resets values to defaults of all associated components.
 
 #### validate
 
-Validates values of all associated components and returns:
+Validates all values of associated components and returns:
 
 1. `ValidationError` - if the validation is failed;
 2. List of components to send - if the validation is successful.

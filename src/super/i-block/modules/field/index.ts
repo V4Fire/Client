@@ -91,7 +91,7 @@ export default class Field extends Friend {
 			const
 				info = getPropertyInfo(path, ctx);
 
-			ctx = <any>info.ctx;
+			ctx = Object.cast(info.ctx);
 			res = ctx;
 
 			chunks = info.path.split('.');
@@ -143,10 +143,10 @@ export default class Field extends Friend {
 		}
 
 		if (Object.isPromiseLike(res)) {
-			return <any>this.async.promise(res);
+			return Object.cast(this.async.promise(res));
 		}
 
-		return <any>res;
+		return Object.cast(res);
 	}
 
 	/**
@@ -224,7 +224,7 @@ export default class Field extends Friend {
 			const
 				info = getPropertyInfo(path, ctx);
 
-			ctx = <any>info.ctx;
+			ctx = Object.cast(info.ctx);
 			ref = ctx;
 
 			chunks = info.path.split('.');
@@ -272,7 +272,7 @@ export default class Field extends Friend {
 							ctx.isNotRegular &&
 							unwrap(ref) === ref;
 
-						// If a component doesn't already initialize watchers of fields,
+						// If a component does not already initialize watchers of fields,
 						// we have to synchronize these properties between the proxy object and component instance
 						if (needSync) {
 							const name = chunks[0];
@@ -310,7 +310,7 @@ export default class Field extends Friend {
 				}
 			}
 
-			ref = Object.get<any>(ref, [prop]);
+			ref = Object.get(ref, [prop])!;
 		}
 
 		if (!needSetToWatch || !Object.isArray(ref) && Object.has(ref, [prop])) {
@@ -399,7 +399,7 @@ export default class Field extends Friend {
 				isSystem = info.type === 'system',
 				isField = !isSystem && info.type === 'field';
 
-			ctx = <any>info.ctx;
+			ctx = Object.cast(info.ctx);
 
 			chunks = info.path.split('.');
 			chunks[0] = info.name;
@@ -427,7 +427,7 @@ export default class Field extends Friend {
 				} else {
 					ref = ctx.$fields;
 
-					// If a component doesn't already initialize watchers of fields,
+					// If a component does not already initialize watchers of fields,
 					// we have to synchronize these properties between the proxy object and component instance
 					if (ctx.isFunctional && unwrap(ref) === ref) {
 						const name = chunks[0];
@@ -459,7 +459,7 @@ export default class Field extends Friend {
 				break;
 			}
 
-			ref = <any>newRef;
+			ref = newRef!;
 		}
 
 		if (needDelete) {

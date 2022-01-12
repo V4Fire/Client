@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import type { ModsDecl, ComponentHooks } from 'core/component';
 import { InView } from 'core/dom/in-view';
 
-import Friend from 'super/i-block/modules/friend';
+import iBlock, { Friend } from 'super/i-block/i-block';
 import type iHistory from 'traits/i-history/i-history';
 
 import { INITIAL_STAGE } from 'traits/i-history/history/const';
@@ -73,7 +73,7 @@ export default class History extends Friend {
 	 * @param component
 	 * @param [config]
 	 */
-	constructor(component: any, config?: HistoryConfig) {
+	constructor(component: iBlock, config?: HistoryConfig) {
 		super(component);
 		this.config = {...History.defaultConfig, ...config};
 	}

@@ -30,7 +30,7 @@
 	- forEach b => el, key
 		: val = p[key]
 
-		- if Object.isObject(val) && Object.isObject(el)
+		- if Object.isDictionary(val) && Object.isDictionary(el)
 			? Object.assign(val, el)
 
 		- else if Array.isArray(val) && Array.isArray(el)
@@ -58,7 +58,7 @@
 	}, params) .
 
 	- forEach p => el, cluster
-		- if Object.isObject(el)
+		- if Object.isDictionary(el)
 			- forEach el => val, key
 				- switch cluster
 					> 'props'
@@ -80,7 +80,7 @@
 
 	- forEach ['if', 'elseIf', 'else', 'show', 'model'] => el
 		- if p[el]
-			? p.attrs['v-' + String.dasherize(el)] = p[el]
+			? p.attrs['v-' + el.dasherize(true)] = p[el]
 
 	< ${component} ${p.props|!html} | ${p.events|!html} | ${p.attrs|!html}
 		{content}

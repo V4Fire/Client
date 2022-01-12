@@ -14,7 +14,6 @@
  */
 
 const
-	pzlr = require('@pzlr/build-core'),
 	config = require('config');
 
 const
@@ -31,23 +30,18 @@ let
 	ds = {},
 	cssVariables = {};
 
-if (pzlr.config.designSystem) {
+const
+	designSystem = getDS();
+
+if (Object.isDictionary(designSystem)) {
 	const
-		designSystem = getDS();
+		{data, variables} = createDesignSystem(designSystem);
 
-	if (Object.isObject(designSystem)) {
-		const
-			{data, variables} = createDesignSystem(designSystem);
-
-		ds = data;
-		cssVariables = variables;
-
-	} else {
-		console.warn('[stylus] Design system must be an object');
-	}
+	ds = data;
+	cssVariables = variables;
 
 } else {
-	console.warn('[stylus] Design system package is not specified');
+	throw new TypeError('[stylus] Design system must be an object');
 }
 
 module.exports = getPlugins({ds, cssVariables, theme, useCSSVarsInRuntime, includeThemes});

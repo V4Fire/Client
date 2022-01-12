@@ -1,7 +1,7 @@
 # core/init
 
 This module provides an initializer for the application.
-All tasks from the module will be guaranty finished before the initialization of an MVVM library.
+All tasks from the module will be finished before the initialization of an MVVM library.
 You may add more tasks to do before initializing.
 
 **core/init/flags.js**
