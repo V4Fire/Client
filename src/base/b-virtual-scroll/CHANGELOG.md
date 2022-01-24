@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.15.4 (2021-24-01)
+
+#### :rocket: New Feature
+
+* Added a new events `chunkRender:*`
+
+#### :boom: Breaking Change
+
+* `chunkRenderStart` is renamed and now will be emitted before the component driver renders component
+
 ## v3.9.0 (2021-11-08)
 
 #### :rocket: New Feature

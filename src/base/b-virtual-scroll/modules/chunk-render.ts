@@ -129,7 +129,11 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Renders the component content
-	 * @emits `chunkRender(renderItems:` [[RenderItem]]`[], chunkNumber: number)`
+	 *
+	 * @emits `chunkRender:driverRenderStart(chunkNumber: number)`
+	 * @emits `chunkRender:driverRenderDone(chunkNumber: number)`
+	 * @emits `chunkRender:domInsertStart(chunkNumber: number)`
+	 * @emits `chunkRender:domInserted(renderItems:` [[RenderItem]]`[], chunkNumber: number)`
 	 */
 	render(): void {
 		if (this.ctx.localState !== 'ready') {
@@ -158,10 +162,13 @@ export default class ChunkRender extends Friend {
 		this.chunk++;
 		this.lastRenderRange = [renderFrom, renderTo];
 
+		ctx.emit('chunkRender:driverRenderStart', currentChunk);
+
 		const
 			nodes = this.renderItems(renderItems);
 
-		ctx.emit('chunkRenderStart', currentChunk);
+		ctx.emit('chunkRender:driverRenderDone', currentChunk);
+		ctx.emit('chunkRender:domInsertStart', currentChunk);
 
 		if (nodes.length === 0) {
 			return;
@@ -179,7 +186,7 @@ export default class ChunkRender extends Friend {
 
 		this.async.requestAnimationFrame(() => {
 			this.refs.container.appendChild(fragment);
-			ctx.emit('chunkRender', renderItems, currentChunk);
+			ctx.emit('chunkRender:domInserted', renderItems, currentChunk);
 		}, {group: this.asyncGroup});
 	}
 
