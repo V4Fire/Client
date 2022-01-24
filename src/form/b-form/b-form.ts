@@ -12,7 +12,7 @@
  */
 
 //#if demo
-import 'models/demo/form';
+import '@src/models/demo/form';
 //#endif
 
 import symbolGenerator from '@src/core/symbol';
@@ -21,7 +21,7 @@ import { Option } from '@src/core/prelude/structures';
 import { deprecated } from '@src/core/functools/deprecation';
 
 //#if runtime has core/data
-import 'core/data';
+import '@src/core/data';
 //#endif
 
 import iVisible from '@src/traits/i-visible/i-visible';

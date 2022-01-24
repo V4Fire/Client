@@ -20,7 +20,7 @@ const
  * Options for `webpack.alias`
  */
 const aliases = {
-	'~': [src.src(), ...resolve.rootDependencies],
+	'@src': [src.src(), ...resolve.rootDependencies],
 
 	'@super': resolve.rootDependencies[0],
 

@@ -12,7 +12,7 @@
  */
 
 //#if demo
-import 'models/demo/select';
+import '@src/models/demo/select';
 //#endif
 
 import SyncPromise from '@src/core/promise/sync';

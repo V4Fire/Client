@@ -12,7 +12,7 @@
  */
 
 //#if demo
-import 'models/demo/checkbox';
+import '@src/models/demo/checkbox';
 //#endif
 
 import symbolGenerator from '@src/core/symbol';

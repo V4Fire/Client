@@ -8,9 +8,9 @@
 
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 
-import BaseError from '@v4fire/core/core/error';
+import BaseError from '@src/core/error';
 
-import { Metrics } from './metrics';
+import { Metrics } from '@build/gulp/performance/metrics';
 
 class ValidationError extends BaseError {}
 

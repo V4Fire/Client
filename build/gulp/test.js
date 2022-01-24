@@ -390,8 +390,12 @@ module.exports = function init(gulp = require('gulp')) {
 			}, {permissive: true});
 
 			const
-				params = browserParams[browserType],
+				params = browserParams[browserType];
+
+			let
 				test = require(testPath);
+
+			test = test.default ?? test;
 
 			const {
 				testURL,

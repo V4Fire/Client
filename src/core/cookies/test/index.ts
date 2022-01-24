@@ -1,5 +1,3 @@
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,23 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	h = include('tests/helpers');
+import type { BrowserContext, Page, JSHandle, Cookie } from 'playwright';
+
+import type * as cookieModule from '@src/core/cookies';
+import type bDummy from '@src/dummies/b-dummy/b-dummy';
+
+import h from '@tests/helpers';
 
 /**
  * Starts a test
  *
- * @param {Playwright.Page} page
- * @param {object} params
- * @returns {void}
+ * @param page
+ * @param params
  */
-module.exports = (page, {browser, contextOpts}) => {
+export default function test(page: Page, {browser, contextOpts}: BrowserTests.TestParams): void {
 	const initialUrl = page.url();
 
 	let
-		dummyComponent,
-		cookie,
-		context;
+		dummyComponent: JSHandle<bDummy>,
+		cookie: JSHandle<typeof cookieModule>,
+		context: BrowserContext;
 
 	describe('`core/cookies`', () => {
 		beforeEach(async () => {
@@ -142,7 +143,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 		});
 
-		function createCookie(params = {}) {
+		function createCookie(params: Dictionary = {}): Cookie {
 			return {
 				sameSite: 'Lax',
 				name: 'testCookie',
@@ -156,4 +157,4 @@ module.exports = (page, {browser, contextOpts}) => {
 			};
 		}
 	});
-};
+}
