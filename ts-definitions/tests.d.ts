@@ -122,21 +122,6 @@ declare namespace BrowserTests {
 		/** @see Utils */
 		utils: Utils;
 
-		/** @see Component */
-		component: Component;
-
-		/** @see Gestures */
-		gestures: Gestures;
-
-		/** @see BOM */
-		bom: BOM;
-
-		/** @see DOM */
-		dom: DOM;
-
-		/** @see Router */
-		router: Router;
-
 		/** @see Scroll */
 		scroll: Scroll;
 
