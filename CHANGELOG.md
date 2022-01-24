@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.15.4 (2021-24-01)
+## v3.15.4 (2021-01-24)
 
 #### :rocket: New Feature
 
@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* `chunkRenderStart` is renamed and now will be emitted before the component driver renders components `base/b-virtual-scroll`
+* `chunkRenderStart` is renamed and now will be emitted before the component driver render components `base/b-virtual-scroll`
 
 ## v3.15.3 (2021-12-28)
 
