@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new events `chunkRender:*`
+* Added new events `chunkRender:*`
 
 #### :boom: Breaking Change
 

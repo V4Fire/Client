@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new events `chunkRender:*` `base/b-virtual-scroll`
+* Added new events `chunkRender:*` `base/b-virtual-scroll`
 
 #### :boom: Breaking Change
 
