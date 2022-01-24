@@ -13,7 +13,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.15.4 (2021-01-24)
 
-
 #### :boom: Breaking Change
 
 * The event`chunkRenderStart` is renamed to `chunkRender:renderStart` and now it emits before a component driver renders components `base/b-virtual-scroll`
