@@ -11,13 +11,13 @@ Changelog
 
 ## v3.15.4 (2021-01-24)
 
-#### :rocket: New Feature
-
-* Added new events `chunkRender:*`
-
 #### :boom: Breaking Change
 
 * `chunkRenderStart` is renamed and now will be emitted before the component driver renders component
+
+#### :rocket: New Feature
+
+* Added new events `chunkRender:*`
 
 ## v3.9.0 (2021-11-08)
 
