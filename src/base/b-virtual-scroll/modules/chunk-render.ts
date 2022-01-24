@@ -167,7 +167,7 @@ export default class ChunkRender extends Friend {
 		const
 			nodes = this.renderItems(renderItems);
 
-		ctx.emit('chunkRender:renderDone', currentChunk);
+		ctx.emit('chunkRender:renderComplete', currentChunk);
 		ctx.emit('chunkRender:beforeMount', currentChunk);
 
 		if (nodes.length === 0) {
