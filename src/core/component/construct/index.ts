@@ -148,7 +148,7 @@ export function beforeCreateState(
 		}
 
 		// If a computed property a field or system field as a dependency,
-		// and the host component doesn't have any watchers to this field,
+		// and the host component does not have any watchers to this field,
 		// we need to register the "fake" watcher to force watching
 		if (watchSet.size > 0) {
 			for (let o = watchSet.values(), el = o.next(); !el.done; el = o.next()) {
@@ -175,7 +175,7 @@ export function beforeCreateState(
 	}
 
 	// If a computed property is tied with a field or system field
-	// and the host component doesn't have any watchers to this field,
+	// and the host component does not have any watchers to this field,
 	// we need to register the "fake" watcher to force watching
 	for (let keys = Object.keys(tiedFields), i = 0; i < keys.length; i++) {
 		const

@@ -69,7 +69,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 			}
 
 			if (Object.isPromise(res)) {
-				return <any>res;
+				return res.then(() => undefined);
 			}
 
 			break;

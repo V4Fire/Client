@@ -11,9 +11,10 @@
  * @packageDocumentation
  */
 
-import Friend from '@src/super/i-block/modules/friend';
-
+import type iBlock from '@src/super/i-block/i-block';
 import { fakeCtx, modRgxpCache, elRxp } from '@src/super/i-block/modules/block/const';
+
+import Friend from '@src/super/i-block/modules/friend';
 import type { ModsTable, ModsNTable } from '@src/super/i-block/modules/mods';
 
 import type {
@@ -38,7 +39,7 @@ export default class Block extends Friend {
 	 */
 	protected readonly mods?: Dictionary<CanUndef<string>>;
 
-	constructor(component: any) {
+	constructor(component: iBlock) {
 		super(component);
 		this.mods = Object.createDict();
 
@@ -360,7 +361,7 @@ export default class Block extends Friend {
 
 	/**
 	 * Removes a modifier from the current block.
-	 * The method returns false if the block doesn't have this modifier.
+	 * The method returns false if the block does not have this modifier.
 	 *
 	 * @param name - modifier name
 	 * @param [value]
@@ -440,7 +441,7 @@ export default class Block extends Friend {
 	 * Returns a value of the specified block modifier
 	 *
 	 * @param name - modifier name
-	 * @param [fromNode] - if true, then the modifier value will always taken from a DOM node
+	 * @param [fromNode] - if true, then the modifier value will be taken from a DOM node
 	 *
 	 * @example
 	 * ```js
@@ -528,7 +529,7 @@ export default class Block extends Friend {
 
 	/**
 	 * Removes a modifier from the specified element.
-	 * The method returns false if the element doesn't have this modifier.
+	 * The method returns false if the element does not have this modifier.
 	 *
 	 * @param link - link to the element
 	 * @param elName - element name

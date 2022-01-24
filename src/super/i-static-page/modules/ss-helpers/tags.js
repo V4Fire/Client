@@ -9,7 +9,6 @@
 require('../interface');
 
 const
-	$C = require('collection.js'),
 	config = require('config');
 
 const
@@ -229,7 +228,7 @@ function getStyleDecl(lib, body) {
 				onload: `this.media='${lib.attrs?.media ?? 'all'}'; this.onload=null;`
 			});
 
-			const preloadAttrs = $C.extend(true, {}, lib, {
+			const preloadAttrs = Object.mixin(true, {}, lib, {
 				defer: false,
 				attrs: {
 					rel: 'preload',
@@ -350,7 +349,7 @@ exports.normalizeAttrs = normalizeAttrs;
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
  * @param {Object=} [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
- *   1. a simple string, as `null` (when an attribute doesn't have a value);
+ *   1. a simple string, as `null` (when an attribute does not have a value);
  *   2. an array (to interpolate the value as JS);
  *   3. an object with the predefined `toString` method
  *     (in that way you can also provide flags `escape: ` to disable escaping non-secure characters

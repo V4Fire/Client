@@ -119,8 +119,6 @@ declare namespace BrowserTests {
 	 * Helpers to write browser tests
 	 */
 	class Helpers {
-		/** @see Utils */
-		utils: Utils;
 
 		/** @see Scroll */
 		scroll: Scroll;
@@ -202,13 +200,6 @@ declare namespace BrowserTests {
 		 * @default `100`
 		 */
 		sleepAfterRAF?: number;
-	}
-
-	/**
-	 * Provides API to set browser environment
-	 */
-	class Utils {
-
 	}
 
 	interface ScrollToBottomWhileOptions extends ScrollOptions {

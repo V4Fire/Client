@@ -318,7 +318,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
 	 *
 	 * @param value
-	 * @param [unsetPrevious] - true, if need to unset previous active items (works only with the `multiple` mode)
+	 * @param [unsetPrevious] - true, if needed to unset previous active items (works only with the `multiple` mode)
 	 *
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
@@ -505,7 +505,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * The methods return a new active component item/s.
 	 *
 	 * @param value
-	 * @param [unsetPrevious] - true, if need to unset previous active items (works only with the `multiple` mode)
+	 * @param [unsetPrevious] - true, if needed to unset previous active items (works only with the `multiple` mode)
 	 */
 	toggleActive(value: this['Active'], unsetPrevious: boolean = false): this['Active'] {
 		const

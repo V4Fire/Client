@@ -139,7 +139,7 @@ export default abstract class iOpen {
 	 * @param args
 	 */
 	open(...args: unknown[]): Promise<boolean> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -147,7 +147,7 @@ export default abstract class iOpen {
 	 * @param args
 	 */
 	close(...args: unknown[]): Promise<boolean> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -155,7 +155,7 @@ export default abstract class iOpen {
 	 * @param e
 	 */
 	onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -163,7 +163,7 @@ export default abstract class iOpen {
 	 * @param e
 	 */
 	onKeyClose(e: KeyboardEvent): Promise<void> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -171,6 +171,6 @@ export default abstract class iOpen {
 	 * @param e
 	 */
 	onTouchClose(e: MouseEvent): Promise<void> {
-		return <any>null;
+		return Object.throw();
 	}
 }

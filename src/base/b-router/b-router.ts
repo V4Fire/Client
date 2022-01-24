@@ -91,9 +91,9 @@ export default class bRouter extends iData {
 	 * Compiled schema of application routes
 	 * @see [[bRouter.routesProp]]
 	 */
-	@system({
+	@system<bRouter>({
 		after: 'engine',
-		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
+		init: (o) => o.sync.link(o.compileStaticRoutes)
 	})
 
 	routes!: router.RouteBlueprints;
@@ -324,7 +324,7 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Clears the routes history.
+	 * Clears the routes' history.
 	 * Mind, this method can't work properly with `HistoryAPI` based engines.
 	 *
 	 * @param [filter] - filter predicate
@@ -551,13 +551,13 @@ export default class bRouter extends iData {
 				method = 'replace';
 			}
 
-			// If the used engine doesn't support the requested transition method,
-			// we should fallback to `replace`
+			// If the used engine does not support the requested transition method,
+			// we should use `replace`
 			if (!Object.isFunction(engine[method])) {
 				method = 'replace';
 			}
 
-			// This transitions is marked as `external`,
+			// This transition is marked as `external`,
 			// i.e. it refers to another site
 			if (newRouteInfo.meta.external) {
 				const u = newRoute.url;
@@ -583,12 +583,14 @@ export default class bRouter extends iData {
 				// will create a child watch object.
 
 				const
-					proto = <any>r.route!.__proto__;
+					proto = r.route?.__proto__;
 
-				// Correct values from the root route object
-				for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
-					const key = keys[i];
-					proto[key] = nonWatchRouteValues[key];
+				if (Object.isDictionary(proto)) {
+					// Correct values from the root route object
+					for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
+						const key = keys[i];
+						proto[key] = nonWatchRouteValues[key];
+					}
 				}
 
 			} else {
@@ -599,7 +601,7 @@ export default class bRouter extends iData {
 
 			emitTransition();
 
-		// This route is equal to the previous and we don't actually do transition,
+		// This route is equal to the previous, and we don't actually do transition,
 		// but for a "push" request we need to emit a "fake" transition event anyway
 		} else if (method === 'push') {
 			emitTransition();

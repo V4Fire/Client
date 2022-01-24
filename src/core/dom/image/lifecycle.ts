@@ -13,10 +13,11 @@ import {
 	ImageNode,
 	ImagePlaceholderType,
 
-	IS_LOADED,
+	ID,
 	INIT_LOAD,
-	IS_LOADING,
-	ID
+
+	IS_LOADED,
+	IS_LOADING
 
 } from '@src/core/dom/image';
 

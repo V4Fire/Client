@@ -270,7 +270,7 @@ module.exports = async (page, params) => {
 				expect(await page.evaluate(() => globalThis.tmp)).toEqual({2: true});
 			});
 
-			it('suspending/unsuspending with `callback`: fires the callback', async () => {
+			it('suspending/unsuspecting with `callback`: fires the callback', async () => {
 				await getInView(strategy).evaluate((ctx) => {
 					ctx.observe(globalThis.target, {
 						callback: () => globalThis.tmp = true,

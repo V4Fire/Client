@@ -162,7 +162,7 @@ export default class Gestures {
 	}
 
 	/**
-	 * Fills an array of steps with points
+	 * Fills an array with steps of points
 	 * @param points
 	 */
 	protected fillSteps(points: TouchGesturePoint[]): void {

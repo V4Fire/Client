@@ -8,7 +8,7 @@
 
 import type { alignTypes, sliderModes } from '@src/base/b-slider/const';
 
-export interface SlideRect extends ClientRect {
+export interface SlideRect extends DOMRect {
 	offsetLeft: number;
 }
 

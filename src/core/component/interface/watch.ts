@@ -20,8 +20,8 @@ export type WatchPath =
 	{ctx: object; path?: RawWatchPath};
 
 export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(a: A, b?: B, params?: WatchHandlerParams): any;
-	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): any;
+	(a: A, b?: B, params?: WatchHandlerParams): AnyToIgnore;
+	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): AnyToIgnore;
 }
 
 export interface WatchHandler<A = unknown, B = A> {
@@ -49,7 +49,7 @@ export interface FieldWatcher<
 	functional?: boolean;
 
 	/**
-	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
+	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -107,7 +107,7 @@ export interface WatchObject<
 	args?: unknown[];
 
 	/**
-	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
+	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -184,7 +184,7 @@ export interface MethodWatcher<
 	args?: CanArray<unknown>;
 
 	/**
-	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
+	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
 	 * @default `true`
 	 */
 	provideArgs?: boolean;

@@ -134,7 +134,7 @@ export interface DecoratorFieldWatcherObject<
 	fn?: string | DecoratorWatchHandler<CTX, A, B>;
 
 	/**
-	 * If false, then the handler that is invoked on watcher events doesn't take any arguments from an event
+	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -152,7 +152,7 @@ export interface DecoratorProp<
 	B = A
 > extends PropOptions {
 	/**
-	 * If true, then the property always uses own default property when it necessary
+	 * If true, then the property always uses own default property when it is necessary
 	 * @default `false`
 	 */
 	forceDefault?: boolean;

@@ -110,7 +110,7 @@ export function activate(component: iBlock, force?: boolean): void {
 	const
 		children = unsafe.$children;
 
-	if (children) {
+	if (children != null) {
 		for (let i = 0; i < children.length; i++) {
 			children[i].unsafe.activate(true);
 		}
@@ -144,7 +144,7 @@ export function deactivate(component: iBlock): void {
 	const
 		children = unsafe.$children;
 
-	if (children) {
+	if (children != null) {
 		for (let i = 0; i < children.length; i++) {
 			children[i].unsafe.deactivate();
 		}

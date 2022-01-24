@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.13.2 (2021-12-06)
+
+#### :house: Internal
+
+* [Wrapped animations with `requestAnimationFrame`](https://github.com/V4Fire/Client/issues/170)
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :memo: Documentation

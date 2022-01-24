@@ -17,7 +17,6 @@ const
 	path = require('upath');
 
 const
-	camelize = require('camelize'),
 	o = require('@v4fire/config/options').option;
 
 const
@@ -171,7 +170,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						return obj;
 					}
 
-					return [Object.isObject(obj) ? obj : {name: obj}];
+					return [Object.isDictionary(obj) ? obj : {name: obj}];
 
 				} catch {}
 
@@ -185,12 +184,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						try {
 							const
 								demo = require(pzlr.resolve.blockSync(`${name}/demo.js`)),
-								suit = camelize(args['--suit'] || 'demo');
+								suit = (args['--suit'] || 'demo').camelize(false);
 
 							const
 								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
 
-							if (Object.isObject(demo)) {
+							if (Object.isDictionary(demo)) {
 								return wrap(demo[suit]);
 							}
 
@@ -533,11 +532,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		publicPath(...args) {
 			const
-				concatUrls = require('urlconcat').concat;
+				{concatURLs} = require('@v4fire/core/lib/core/url');
 
 			let pathVal = o('public-path', {
 				env: true,
-				default: concatUrls('/', this.config.src.rel('clientOutput'))
+				default: concatURLs('/', this.config.src.rel('clientOutput'))
 			});
 
 			if (!Object.isString(pathVal)) {
@@ -552,14 +551,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				args = args.map((el) => el.replace(/^\.?/, ''));
 
 				if (pathVal && !/^(\w+:)?\/\//.test(args[0])) {
-					return concatUrls(pathVal, ...args);
+					return concatURLs(pathVal, ...args);
 				}
 
-				return concatUrls(...args);
+				return concatURLs(...args);
 			}
 
 			if (pathVal) {
-				return concatUrls(pathVal, '/').replace(/^[/]+/, '/');
+				return concatURLs(pathVal, '/').replace(/^[/]+/, '/');
 			}
 
 			return pathVal;
@@ -691,7 +690,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * (this mode will insert nonce attributes into inline tags too).
 		 *
 		 * If false, nonce attributes will be inserted from the JS runtime.
-		 * Note, this mode doesn't support nonce attributes for inline tags.
+		 * Note, this mode does not support nonce attributes for inline tags.
 		 */
 		postProcessor: true,
 

@@ -25,16 +25,16 @@ import type {
 	ComponentOptions,
 	FunctionalComponentOptions,
 
-	CreateElement,
+	VNode,
 	ScopedSlot,
-	VNode
+	CreateElement
 
 } from '@src/core/component/engines';
 
 import type {
 
-	ComponentMeta,
 	Hook,
+	ComponentMeta,
 	SyncLinkCache,
 
 	WatchPath,
@@ -49,8 +49,7 @@ import type {
  * Component render function
  */
 export type RenderFunction =
-	ComponentOptions<ComponentEngine>['render'] |
-	FunctionalComponentOptions['render'];
+	ComponentOptions<ComponentEngine>['render'] | FunctionalComponentOptions['render'];
 
 /**
  * Base context of a functional component
@@ -80,130 +79,7 @@ export interface RenderReason {
 }
 
 /**
- * Special interface to provide access to protected properties and methods outside the component.
- * It's used to create the "friendly classes" feature.
- */
-export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
-	/**
-	 * Type: context type
-	 */
-	readonly CTX: CTX;
-
-	// Don't use referring from CTX for primitive types, because it breaks TS
-
-	renderTmp: Dictionary<VNode>;
-	renderCounter: number;
-
-	lastSelfReasonToRender?: Nullable<RenderReason>;
-	lastTimeOfRender?: DOMHighResTimeStamp;
-
-	$asyncLabel: symbol;
-	$activeField: CanUndef<string>;
-
-	hook: Hook;
-
-	// @ts-ignore (access)
-	meta: CTX['meta'];
-
-	// @ts-ignore (access)
-	$componentId: CTX['$componentId'];
-
-	// @ts-ignore (access)
-	$async: CTX['$async'];
-
-	// @ts-ignore (access)
-	$attrs: CTX['$attrs'];
-
-	// @ts-ignore (access)
-	$fields: CTX['$fields'];
-
-	// @ts-ignore (access)
-	$systemFields: CTX['$fields'];
-
-	// @ts-ignore (access)
-	$modifiedFields: CTX['$modifiedFields'];
-
-	// @ts-ignore (access)
-	$syncLinkCache: CTX['$syncLinkCache'];
-
-	// @ts-ignore (access)
-	$refs: CTX['$refs'];
-
-	// @ts-ignore (access)
-	$refHandlers: CTX['$refHandlers'];
-
-	// @ts-ignore (access)
-	$remoteParent: CTX['$remoteParent'];
-
-	// @ts-ignore (access)
-	$watch: CTX['$watch'];
-
-	// @ts-ignore (access)
-	$on: CTX['$on'];
-
-	// @ts-ignore (access)
-	$once: CTX['$once'];
-
-	// @ts-ignore (access)
-	$off: CTX['$off'];
-
-	// @ts-ignore (access)
-	$emit: CTX['$emit'];
-
-	// @ts-ignore (access)
-	$set: CTX['$set'];
-
-	// @ts-ignore (access)
-	$delete: CTX['$delete'];
-
-	// @ts-ignore (access)
-	$createElement: CTX['$createElement'];
-
-	// @ts-ignore (access)
-	$initializer: CTX['$initializer'];
-
-	// @ts-ignore (access)
-	$destroy: CTX['$destroy'];
-
-	// @ts-ignore (access)
-	onCreatedHook: CTX['onCreatedHook'];
-
-	// @ts-ignore (access)
-	onBindHook: CTX['onBindHook'];
-
-	// @ts-ignore (access)
-	onInsertedHook: CTX['onInsertedHook'];
-
-	// @ts-ignore (access)
-	onUpdateHook: CTX['onUpdateHook'];
-
-	// @ts-ignore (access)
-	onUnbindHook: CTX['onUnbindHook'];
-
-	// Internal render helpers
-
-	// @ts-ignore (access)
-	_c: CTX['$createElement'];
-
-	_o: Function;
-	_q: Function;
-	_s: Function;
-	_v: Function;
-	_e: Function;
-	_f: Function;
-	_n: Function;
-	_i: Function;
-	_m: Function;
-	_l: Function;
-	_g: Function;
-	_k: Function;
-	_b: Function;
-	_t: Function;
-	_u: Function;
-}
-
-/**
- * Helper structure to pack the unsafe interface:
+ * A helper structure to pack the unsafe interface:
  * it fixes some ambiguous TS warnings
  */
 export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
@@ -267,7 +143,7 @@ export abstract class ComponentInterface {
 	 * It can be useful to create component' friendly classes.
 	 */
 	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/**
@@ -311,7 +187,7 @@ export abstract class ComponentInterface {
 	/**
 	 * Description object of the used rendering engine
 	 */
-	readonly $renderEngine!: RenderEngine;
+	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
 	 * True if the component can be attached to a parent render function
@@ -652,4 +528,168 @@ export abstract class ComponentInterface {
 	protected onUnbindHook(): void {
 		// Loopback
 	}
+}
+
+/**
+ * A special interface to provide access to protected properties and methods outside the component.
+ * It's used to create the "friendly classes" feature.
+ */
+export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
+	/**
+	 * Type: context type
+	 */
+	readonly CTX: CTX;
+
+	// Don't use referring from CTX for primitive types, because it breaks TS
+
+	componentId: string;
+
+	// @ts-ignore (access)
+	$componentId: CTX['$componentId'];
+
+	componentName: string;
+	instance: this;
+
+	// @ts-ignore (access)
+	meta: CTX['meta'];
+	hook: Hook;
+
+	renderGroup: string;
+	renderCounter: number;
+	renderTmp: Dictionary<VNode>;
+
+	lastSelfReasonToRender?: Nullable<RenderReason>;
+	lastTimeOfRender?: DOMHighResTimeStamp;
+
+	$asyncLabel: symbol;
+	$activeField: CanUndef<string>;
+
+	// @ts-ignore (access)
+	$initializer: CTX['$initializer'];
+
+	// @ts-ignore (access)
+	$renderEngine: CTX['$renderEngine'];
+
+	// @ts-ignore (access)
+	$parent: CTX['$parent'];
+
+	// @ts-ignore (access)
+	$remoteParent: CTX['$remoteParent'];
+
+	// @ts-ignore (access)
+	$children: CTX['$children'];
+
+	// @ts-ignore (access)
+	$async: CTX['$async'];
+
+	// @ts-ignore (access)
+	$attrs: CTX['$attrs'];
+
+	// @ts-ignore (access)
+	$listeners: CTX['$listeners'];
+
+	// @ts-ignore (access)
+	$refs: CTX['$refs'];
+
+	// @ts-ignore (access)
+	$refHandlers: CTX['$refHandlers'];
+
+	// @ts-ignore (access)
+	$slots: CTX['$slots'];
+
+	// @ts-ignore (access)
+	$scopedSlots: CTX['$scopedSlots'];
+
+	// @ts-ignore (access)
+	$data: CTX['$data'];
+
+	// @ts-ignore (access)
+	$fields: CTX['$fields'];
+
+	// @ts-ignore (access)
+	$systemFields: CTX['$fields'];
+
+	// @ts-ignore (access)
+	$modifiedFields: CTX['$modifiedFields'];
+
+	// @ts-ignore (access)
+	$syncLinkCache: CTX['$syncLinkCache'];
+
+	// @ts-ignore (access)
+	$createElement: CTX['$createElement'];
+
+	// @ts-ignore (access)
+	$watch: CTX['$watch'];
+
+	// @ts-ignore (access)
+	$on: CTX['$on'];
+
+	// @ts-ignore (access)
+	$once: CTX['$once'];
+
+	// @ts-ignore (access)
+	$off: CTX['$off'];
+
+	// @ts-ignore (access)
+	$emit: CTX['$emit'];
+
+	// @ts-ignore (access)
+	$set: CTX['$set'];
+
+	// @ts-ignore (access)
+	$delete: CTX['$delete'];
+
+	// @ts-ignore (access)
+	$forceUpdate: CTX['$forceUpdate'];
+
+	// @ts-ignore (access)
+	$nextTick: CTX['$nextTick'];
+
+	// @ts-ignore (access)
+	$destroy: CTX['$destroy'];
+
+	// @ts-ignore (access)
+	log: CTX['log'];
+
+	// @ts-ignore (access)
+	activate: CTX['activate'];
+
+	// @ts-ignore (access)
+	deactivate: CTX['deactivate'];
+
+	// @ts-ignore (access)
+	onCreatedHook: CTX['onCreatedHook'];
+
+	// @ts-ignore (access)
+	onBindHook: CTX['onBindHook'];
+
+	// @ts-ignore (access)
+	onInsertedHook: CTX['onInsertedHook'];
+
+	// @ts-ignore (access)
+	onUpdateHook: CTX['onUpdateHook'];
+
+	// @ts-ignore (access)
+	onUnbindHook: CTX['onUnbindHook'];
+
+	// Internal render helpers
+
+	// @ts-ignore (access)
+	_c: CTX['$createElement'];
+
+	_o: Function;
+	_q: Function;
+	_s: Function;
+	_v: Function;
+	_e: Function;
+	_f: Function;
+	_n: Function;
+	_i: Function;
+	_m: Function;
+	_l: Function;
+	_g: Function;
+	_k: Function;
+	_b: Function;
+	_t: Function;
+	_u: Function;
 }

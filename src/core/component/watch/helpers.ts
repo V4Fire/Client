@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchOptions, MultipleWatchHandler } from '@src/core/object/watch';
+import watch, { WatchOptions, MultipleWatchHandler } from '@src/core/object/watch';
 
 import type { PropertyInfo } from '@src/core/component/reflection';
 import type { ComponentInterface } from '@src/core/component/interface';
@@ -31,41 +31,18 @@ export function attachDynamicWatcher(
 	handler: Function,
 	store: DynamicHandlers = dynamicHandlers
 ): Function {
-	if (prop.type === 'mounted') {
-		throw new TypeError("The mounted accessor can't be watched in this way");
-	}
-
-	let
-		handlersStore = store.get(prop.ctx);
-
-	if (!handlersStore) {
-		handlersStore = Object.createDict();
-		store.set(prop.ctx, handlersStore);
-	}
-
-	const
-		nm = prop.accessor ?? prop.name;
-
-	let
-		handlersSet = handlersStore[nm];
-
-	if (!handlersSet) {
-		handlersSet = new Set<Function>();
-		handlersStore[nm] = handlersSet;
-	}
-
 	// eslint-disable-next-line @typescript-eslint/typedef
 	const wrapper = <MultipleWatchHandler>function wrapper(this: unknown, mutations, ...args) {
 		const
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			needPack = args.length === 0;
+			isPacked = args.length === 0;
 
-		if (!needPack) {
-			mutations = [<any>[mutations, ...args]];
+		if (!isPacked) {
+			mutations = [Object.cast([mutations, ...args])];
 		}
 
 		const
-			filteredMutations = <any[]>[];
+			filteredMutations = <unknown[]>[];
 
 		for (let i = 0; i < mutations.length; i++) {
 			const
@@ -88,7 +65,7 @@ export function attachDynamicWatcher(
 		}
 
 		if (filteredMutations.length > 0) {
-			if (needPack) {
+			if (isPacked) {
 				handler.call(this, filteredMutations);
 
 			} else {
@@ -97,11 +74,50 @@ export function attachDynamicWatcher(
 		}
 	};
 
-	handlersSet.add(wrapper);
+	let
+		destructor;
 
-	const destructor = () => {
-		handlersSet?.delete(wrapper);
-	};
+	if (prop.type === 'mounted') {
+		let
+			watcher;
+
+		if (Object.size(prop.path) > 0) {
+			watcher = watch(prop.ctx, prop.path, opts, wrapper);
+
+		} else {
+			watcher = watch(prop.ctx, opts, wrapper);
+		}
+
+		destructor = () => {
+			watcher.unwatch();
+		};
+
+	} else {
+		let
+			handlersStore = store.get(prop.ctx);
+
+		if (!handlersStore) {
+			handlersStore = Object.createDict();
+			store.set(prop.ctx, handlersStore);
+		}
+
+		const
+			nm = prop.accessor ?? prop.name;
+
+		let
+			handlersSet = handlersStore[nm];
+
+		if (!handlersSet) {
+			handlersSet = new Set<Function>();
+			handlersStore[nm] = handlersSet;
+		}
+
+		handlersSet.add(wrapper);
+
+		destructor = () => {
+			handlersSet?.delete(wrapper);
+		};
+	}
 
 	// Every worker that passed to async have a counter with number of consumers of this worker,
 	// but in this case this behaviour is redundant and can produce an error,

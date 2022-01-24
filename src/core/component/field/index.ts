@@ -105,7 +105,7 @@ export function initFields(
 		}
 
 		if (el.atom) {
-			// If true, then the field doesn't have any dependencies and can be initialized right now
+			// If true, then the field does not have any dependencies and can be initialized right now
 			let canInit = true;
 
 			const
@@ -179,7 +179,7 @@ export function initFields(
 				continue;
 			}
 
-			// If true, then the field doesn't have any dependencies and can be initialized right now
+			// If true, then the field does not have any dependencies and can be initialized right now
 			let canInit = true;
 
 			const
@@ -268,7 +268,7 @@ export function initFields(
 				continue;
 			}
 
-			// If true, then the field doesn't have any dependencies and can be initialized right now
+			// If true, then the field does not have any dependencies and can be initialized right now
 			let canInit = true;
 
 			const

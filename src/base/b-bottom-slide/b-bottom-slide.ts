@@ -477,7 +477,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 	/**
 	 * Switches to the next component step.
-	 * The methods returns false if the component is already fully opened.
+	 * The method returns false if the component is already fully opened.
 	 */
 	async next(): Promise<boolean> {
 		if (this.isFullyOpened) {
@@ -494,7 +494,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 	/**
 	 * Switches to the previous component step.
-	 * The methods returns false if the component is already closed.
+	 * The method returns false if the component is already closed.
 	 */
 	async prev(): Promise<boolean> {
 		if (this.isClosed) {
@@ -959,7 +959,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	}
 
 	/**
-	 * Handler: finish to pull the component
+	 * Handler: the component has been released after pulling
 	 */
 	protected onPullEnd(): void {
 		if (this.currentY === 0) {

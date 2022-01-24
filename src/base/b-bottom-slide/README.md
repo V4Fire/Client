@@ -11,7 +11,7 @@ This module provides a component to create bottom sheet behavior that is similar
 ## Modifiers
 
 | Name         | Description                                    | Values    | Default |
-| ------------ | ---------------------------------------------- | ----------| ------- |
+|--------------|------------------------------------------------|-----------|---------|
 | `stick`      | The component sticks to the current position   | `Boolean` | `true`  |
 | `events`     | The component is ready to process input events | `Boolean` | `false` |
 | `heightMode` | The component height calculation mode          | `string`  | –       |
@@ -21,7 +21,7 @@ Also, you can see the parent component and the component traits.
 ## Events
 
 | EventName         | Description                                | Payload description          | Payload   |
-| ----------------- | ------------------------------------------ | ---------------------------- | --------- |
+|-------------------|--------------------------------------------|------------------------------|-----------|
 | `open`            | The component has been opened              | –                            | –         |
 | `close`           | The component has been closed              | –                            | –         |
 | `stepChange`      | The component opened step has been changed | A number of the current step | `number`  |
@@ -92,7 +92,7 @@ You need to set `forceInnerRender` to` false` to avoid immediately rendering the
 It is also a good practice to use a component as [singleton](https://en.wikipedia.org/wiki/Singleton_pattern).
 This approach implementation remains entirely on clients of this component, but we will consider few options.
 
-First of all, let's create a wrapper component that will contain `b-bottom-slide` and provide methods to open and close `b-bottom-slide`.
+First, let's create a wrapper component that will contain `b-bottom-slide` and provide methods to open and close `b-bottom-slide`.
 
 __b-modal.ts__
 
@@ -175,7 +175,7 @@ export default class bSomeComponent extends iBlock {
 Okay, now we can access `b-bottom-slide` from anywhere, but what's the point in the `b-modal` component?
 The point is simple. It will implement the logic of a wrapper component that will render templates inside `b-bottom-slide`.
 
-Many different approaches can be used here.
+Many approaches can be used here.
 For example, the `open` method of the `b-modal `component can take an object on which to draw the content in `b-bottom-slide`.
 
 __b-modal.ts__
@@ -312,9 +312,9 @@ A list of possible component positions relative to the screen height (in percent
 #### next
 
 Switches to the next component step.
-The methods returns false if the component is already fully opened.
+The method returns false if the component is already fully opened.
 
 #### prev
 
 Switches to the previous component step.
-The methods returns false if the component is already closed.
+The method returns false if the component is already closed.

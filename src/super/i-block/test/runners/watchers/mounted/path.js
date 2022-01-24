@@ -376,6 +376,38 @@ module.exports = (page) => {
 				]);
 			});
 
+			it('watching for a computed field', async () => {
+				const
+					target = await init();
+
+				const scan = await target.evaluate(async (ctx) => {
+					const res = [];
+
+					ctx.watch('mountedComputed', (val, ...args) => {
+						res.push([
+							Object.fastClone(val),
+							Object.fastClone(args[0]),
+							args[1].path,
+							args[1].originalPath
+						]);
+					});
+
+					ctx.mountedWatcher.a = {b: 1};
+					await ctx.nextTick();
+
+					return res;
+				});
+
+				expect(scan).toEqual([
+					[
+						{a: {b: 1}},
+						undefined,
+						['mountedComputed'],
+						['mountedWatcher', 'a']
+					]
+				]);
+			});
+
 			it('immediate watching for the specified path', async () => {
 				const
 					target = await init();

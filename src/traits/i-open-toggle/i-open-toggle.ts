@@ -28,6 +28,6 @@ export default abstract class iOpenToggle extends iOpen {
 	 * @param args
 	 */
 	toggle(...args: unknown[]): Promise<boolean> {
-		return <any>null;
+		return Object.throw();
 	}
 }

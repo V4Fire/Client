@@ -13,7 +13,7 @@ Use this engine if you need to update a URL after transitions and support of nat
 
 ### In-memory Engine
 
-This engine stores all page states completely in memory. It doesn't update a URL after transitions and doesn't support native
+This engine stores all page states completely in memory. It does not update a URL after transitions and does not support native
 back/forward actions. It's useful when you have an embedded resource that shouldn't change the main page navigation state.
 
 Use this engine if you don't care about native browser navigation or avoid changing the global navigation state of the browser tab.

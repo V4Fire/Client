@@ -202,6 +202,6 @@ export default abstract class iObserveDOM {
 	 * @param options
 	 */
 	onDOMChange(records: MutationRecord[], options: ObserveOptions): void {
-		return <any>null;
+		return Object.throw();
 	}
 }

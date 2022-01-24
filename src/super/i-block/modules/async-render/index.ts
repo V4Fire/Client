@@ -32,7 +32,7 @@ export * from '@src/super/i-block/modules/async-render/interface';
 export default class AsyncRender extends Friend {
 	//#if runtime has component/async-render
 
-	constructor(component: any) {
+	constructor(component: iBlock) {
 		super(component);
 
 		this.meta.hooks.beforeUpdate.push({
@@ -177,7 +177,7 @@ export default class AsyncRender extends Friend {
 
 		let
 			iterator: Iterator<unknown>,
-			lastSyncEl: IteratorResult<any>;
+			lastSyncEl: IteratorResult<unknown>;
 
 		let
 			syncI = 0,
@@ -542,8 +542,8 @@ export default class AsyncRender extends Friend {
 		}
 
 		if (typeof obj === 'object') {
-			if (Object.isFunction(obj![Symbol.iterator])) {
-				return <any>obj;
+			if (Object.isIterable(obj)) {
+				return obj;
 			}
 
 			return Object.entries(obj!);

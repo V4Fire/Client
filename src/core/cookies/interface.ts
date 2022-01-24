@@ -54,7 +54,7 @@ export interface SetOptions {
 	 * 2. `strict` - cookies will only be sent in a first-party context and not be sent along with
 	 *     requests initiated by third party websites.
 	 *
-	 * 3. `none` - cookies will be sent in all contexts, i.e in responses to both first-party and cross-origin requests.
+	 * 3. `none` - cookies will be sent in all contexts, i.e. in responses to both first-party and cross-origin requests.
 	 *     If this value is set, the cookie `secure` option must also be set (or the cookie will be blocked).
 	 *
 	 * @default '`lax`'

@@ -124,7 +124,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * ```
 	 * /// A user will see an input element with a value:
 	 * /// +_ (___) ___-__-__
-	 * /// When it starts typing, the value will automatically change, like,
+	 * /// When it starts typing, the value will be automatically changed, like,
 	 * /// +7 (49_) ___-__-__
 	 * < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d' | :maskPlaceholder = '_'
 	 * ```
@@ -150,7 +150,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * ```
 	 * /// A user will see an input element with a value:
 	 * /// _-_
-	 * /// When it starts typing, the value will automatically change, like,
+	 * /// When it starts typing, the value will be automatically changed, like,
 	 * /// 2-3 1-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2
 	 * ```
@@ -166,7 +166,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * ```
 	 * /// A user will see an input element with a value:
 	 * /// _-_
-	 * /// When it starts typing, the value will automatically change, like,
+	 * /// When it starts typing, the value will be automatically changed, like,
 	 * /// 2-3@1-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 	 * ```
@@ -188,7 +188,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly regExps?: Dictionary<RegExp>;
 
 	override get unsafe(): UnsafeGetter<UnsafeIInputText<this>> {
-		return <any>this;
+		return Object.cast(this);
 	}
 
 	/**
@@ -396,14 +396,14 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Handler: there is occur an input action on the masked input
+	 * Handler: there is occurred an input action on the masked input
 	 */
 	protected onMaskInput(): Promise<boolean> {
 		return mask.syncFieldWithInput(this);
 	}
 
 	/**
-	 * Handler: there is occur a keypress action on the masked input
+	 * Handler: there is occurred a keypress action on the masked input
 	 * @param e
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): boolean {

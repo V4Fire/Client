@@ -112,7 +112,7 @@ export function createSVGChildren(ctx: ComponentInterface, children: Nullable<El
 	return res;
 }
 
-export function addProps(el: DirElement, props?: Dictionary<unknown>): void {
+export function addProps(el: DirElement, props?: Dictionary): void {
 	if (!props) {
 		return;
 	}
@@ -195,13 +195,13 @@ export function addStyles(el: DirElement, styles?: CanArray<Nullable<string | ob
 
 export function createTemplate(): DocumentFragmentP {
 	const
-		el = <any>document.createDocumentFragment(),
+		el = document.createDocumentFragment(),
 		attrs = {};
 
-	el.getAttribute = (key) => attrs[key];
-	el.setAttribute = (key, val) => attrs[key] = val;
+	el['getAttribute'] = (key) => attrs[key];
+	el['setAttribute'] = (key, val) => attrs[key] = val;
 
-	return el;
+	return Object.cast(el);
 }
 
 export function addClass(el: Element, opts: VNodeData): void {
@@ -381,7 +381,7 @@ export function addDirectives(
 		vnode.context = component;
 
 		if (Object.isFunction(dirParams)) {
-			dirParams(<HTMLElement>node, <any>dir, vnode, <any>undefined);
+			dirParams(Object.cast(node), Object.cast(dir), vnode, Object.cast(undefined));
 
 		} else {
 			if (dirParams.bind) {

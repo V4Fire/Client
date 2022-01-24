@@ -79,7 +79,7 @@ export interface Item extends Dictionary {
 
 	/**
 	 * Component to show "in-progress" state of the item or
-	 * Boolean, if need to show progress by slot or `b-progress-icon`
+	 * Boolean, if needed to show progress by slot or `b-progress-icon`
 	 */
 	progressIcon?: string | boolean;
 

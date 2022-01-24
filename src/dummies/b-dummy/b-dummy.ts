@@ -66,7 +66,7 @@ interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	@field()
-	testField: any = undefined;
+	testField: unknown = undefined;
 
 	get directives(): Directives {
 		return {

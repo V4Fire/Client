@@ -28,14 +28,14 @@ export default class bRadioButton extends bCheckbox {
 		void this.focus();
 
 		const
-			ctx = <any>this;
+			that = this;
 
 		const uncheckOthers = () => SyncPromise.resolve(this.groupElements).then<undefined>((els) => {
 			for (let i = 0; i < els.length; i++) {
 				const
 					el = els[i];
 
-				if (el !== ctx && this.isComponent(el, bRadioButton)) {
+				if (el !== that && this.isComponent(el, bRadioButton)) {
 					void el.uncheck();
 				}
 			}

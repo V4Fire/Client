@@ -171,7 +171,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		const
 			{meta} = resolvedRoute;
 
-		// If we haven't found a route that matches the provided ref or the founded route doesn't redirect or refer
+		// If we haven't found a route that matches the provided ref or the founded route does not redirect or refer
 		// to another route, we can exit from the search loop. Otherwise, we need to resolve the redirect/alias.
 		if (meta.redirect == null && meta.alias == null) {
 			break;

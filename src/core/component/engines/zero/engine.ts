@@ -74,7 +74,7 @@ export class ComponentEngine {
 	 * @param name
 	 * @param params
 	 */
-	static component(name: string, params: any): Promise<ComponentOptions<any>> {
+	static component(name: string, params: object): Promise<ComponentOptions<any>> {
 		if (Object.isFunction(params)) {
 			return new Promise(params);
 		}

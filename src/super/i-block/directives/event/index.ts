@@ -33,7 +33,7 @@ function bind(
 	const
 		m = p.modifiers ?? {},
 		obj = vNode.context.unsafe.async,
-		raw = <string>(<any>p).rawName;
+		raw = Object.cast<{rawName: string}>(p).rawName;
 
 	const
 		isObj = Object.isPlainObject(p.value),
@@ -117,4 +117,4 @@ function bind(
 	}
 }
 
-Component.directive('e', {bind: <any>bind});
+Component.directive('e', {bind: Object.cast(bind)});

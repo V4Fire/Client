@@ -135,7 +135,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * If true, then form elements is cached.
-	 * The caching is mean that if some component value doesn't change since the last sending of the form,
+	 * The caching is mean that if some component value does not change since the last sending of the form,
 	 * it won't be sent again.
 	 *
 	 * @example
@@ -547,7 +547,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Toggles statuses of the form controls
-	 * @param freeze - if true, all controls are freeze
+	 * @param freeze - if true, all controls are frozen
 	 */
 	protected async toggleControls(freeze: boolean): Promise<void> {
 		const

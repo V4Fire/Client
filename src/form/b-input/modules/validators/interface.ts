@@ -15,10 +15,10 @@ export interface NumberValidatorParams extends ValidatorParams {
 	/**
 	 * Type of supported numbers:
 	 *
-	 * *) `int` - integer numbers
-	 * *) `uint` - non-negative integer numbers
-	 * *) `float` - numbers with floating point
-	 * *) `ufloat` - non-negative numbers with floating point
+	 * 1. `int` - integer numbers
+	 * 2. `uint` - non-negative integer numbers
+	 * 3. `float` - numbers with floating point
+	 * 4. `ufloat` - non-negative numbers with floating point
 	 */
 	type?: 'int' | 'uint' | 'float' | 'ufloat';
 

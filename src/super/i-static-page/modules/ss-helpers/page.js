@@ -61,7 +61,8 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 			getScriptDeclByName(dep, {assets})
 		];
 
-		// We can't compile styles into static CSS files cause we have to provide a dynamic public path to them via runtime
+		// We can't compile styles into static CSS files because
+		// we have to provide a dynamic public path to them via runtime
 		if (needLoadStylesAsJS) {
 			scripts.unshift(getScriptDeclByName(`${dep}_style`, {assets}));
 		}
@@ -85,7 +86,7 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
 /**
  * Returns code to load style dependencies of a page.
  *
- * The function can return JS code to load the style by using document.write or pure CSS to inline.
+ * The function can return JS code to load the style by using `document.write` or pure CSS to inline.
  * You may use the "wrap" option to wrap the final code with a tag to load.
  *
  * @param {Array<string>} dependencies - list of dependencies to load

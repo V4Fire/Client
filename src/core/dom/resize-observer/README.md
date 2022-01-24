@@ -4,9 +4,9 @@ This module provides an API to track changes in the size of DOM elements using `
 
 ## Callbacks
 
-| Name       | Description                                       | Payload                                         |
-| ---------- | ------------------------------------------------- | ----------------------------------------------- |
-| `callback` | Invoked when an element size has been changed     | `ResizeWatcherObservable`, `newRect`, `oldRect` |
+| Name       | Description                                   | Payload                                         |
+|------------|-----------------------------------------------|-------------------------------------------------|
+| `callback` | Invoked when an element size has been changed | `ResizeWatcherObservable`, `newRect`, `oldRect` |
 
 ## Usage
 

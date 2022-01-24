@@ -135,7 +135,7 @@ export default abstract class iControlList {
 	 * @param [args]
 	 */
 	callControlAction<R = unknown>(opts?: ControlEvent, ...args: unknown[]): CanPromise<CanUndef<R>> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
@@ -143,6 +143,6 @@ export default abstract class iControlList {
 	 * @param opts
 	 */
 	getControlEvent(opts: Control): string {
-		return <any>null;
+		return Object.throw();
 	}
 }

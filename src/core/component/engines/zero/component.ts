@@ -39,7 +39,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<Vue> {
 		m = p.model;
 
 	return {
-		...<ComponentOptions<any>>Any(component),
+		...Object.cast(component),
 		inheritAttrs: p.inheritAttrs,
 
 		model: m && {

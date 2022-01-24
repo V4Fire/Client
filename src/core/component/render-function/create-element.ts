@@ -56,7 +56,7 @@ export function wrapCreateElement(
 
 		const
 			ctx = this ?? baseCtx,
-			unsafe = <UnsafeComponentInterface><any>(ctx),
+			unsafe = Object.cast<UnsafeComponentInterface>(ctx),
 			attrs = Object.isPlainObject(tagData) ? tagData.attrs : undefined;
 
 		const createElement = <typeof nativeCreateElement>function createElement(this: unknown, ...args: unknown[]) {
@@ -181,7 +181,7 @@ export function wrapCreateElement(
 			// @ts-ignore (access)
 			baseCtx._u = ctx._u;
 
-			const fakeCtx = createFakeCtx<ComponentInterface>(<any>wrappedCreateElement, renderCtx, baseCtx!, {
+			const fakeCtx = createFakeCtx<ComponentInterface>(Object.cast(wrappedCreateElement), renderCtx, baseCtx!, {
 				initProps: true
 			});
 
@@ -190,7 +190,7 @@ export function wrapCreateElement(
 					vnode = execRenderObject(renderObj!, fakeCtx);
 
 				if (Object.isPromise(vnode)) {
-					return vnode.then((vnode) => initComponentVNode(<any>vnode, fakeCtx, renderCtx));
+					return vnode.then((vnode) => initComponentVNode(Object.cast(vnode), fakeCtx, renderCtx));
 				}
 
 				return initComponentVNode(vnode, fakeCtx, renderCtx);
@@ -228,7 +228,7 @@ export function wrapCreateElement(
 				unsafe.renderTmp[renderKey] = engine.cloneVNode(vnode);
 			}
 
-			// Add $refs link if it doesn't exist
+			// Add $refs link if it does not exist
 			if (vData != null && ref != null && ctx !== baseCtx) {
 				vData[$$.ref] = ref;
 				vData.ref = `${ref}:${ctx.componentId}`;
@@ -250,7 +250,7 @@ export function wrapCreateElement(
 				});
 			}
 
-			// Add $el link if it doesn't exist
+			// Add $el link if it does not exist
 			if (needLinkToEl && 'fakeInstance' in vnode) {
 				Object.defineProperty(vnode.fakeInstance, '$el', {
 					enumerable: true,

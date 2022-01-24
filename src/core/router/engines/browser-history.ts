@@ -27,16 +27,16 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * This flag is needed to get rid of a redundant router transition when restoring the page from bfcache in safari
+ * This flag is needed to get rid of a redundant router transition when restoring the page from BFCache in safari
  * @see https://github.com/V4Fire/Client/issues/552
  */
-let isOpenedFromBfcache = false;
+let isOpenedFromBFCache = false;
 
 // The code below is a shim of "clear" logic of the route history:
-// it's used the session storage API to clone native history ans some hacks to clear th history.
+// it's used the session storage API to clone native history and some hacks to clear th history.
 // The way to clear the history is base on the mechanics when we rewind to the previous route of the route we want
-// to clear and after the router emit a new transition to erase the all the all upcoming routes.
-// After this, we need to restore some routes, that were unnecessary dropped from the history,
+// to clear and after the router emit a new transition to erase the all upcoming routes.
+// After this, we need to restore some routes, that were unnecessarily dropped from the history,
 // that why we need the history clone.
 
 let
@@ -53,7 +53,7 @@ const
 	historyStorage = session.namespace('[[BROWSER_HISTORY]]');
 
 /**
- * Truncates the the history clone log to the real history size
+ * Truncates the history clone log to the real history size
  */
 function truncateHistoryLog(): void {
 	if (historyLog.length <= history.length) {
@@ -400,8 +400,8 @@ export default function createRouter(component: bRouter): Router {
 	});
 
 	$a.on(globalThis, 'popstate', async () => {
-		if (browser.is.iOS !== false && isOpenedFromBfcache) {
-			isOpenedFromBfcache = false;
+		if (browser.is.iOS !== false && isOpenedFromBFCache) {
+			isOpenedFromBFCache = false;
 			return;
 		}
 
@@ -430,7 +430,7 @@ export default function createRouter(component: bRouter): Router {
 
 	$a.on(globalThis, 'pageshow', (event: PageTransitionEvent) => {
 		if (event.persisted) {
-			isOpenedFromBfcache = true;
+			isOpenedFromBFCache = true;
 		}
 	}, pageshowLabel);
 

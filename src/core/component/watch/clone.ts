@@ -27,7 +27,7 @@ export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
 
 	if (Object.isArray(value)) {
 		if (!isDeep) {
-			return <any>value.slice();
+			return Object.cast(value.slice());
 		}
 
 		needClone = true;
@@ -43,7 +43,7 @@ export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
 
 	if (Object.isMap(value)) {
 		if (!isDeep) {
-			return <any>new Map(value);
+			return Object.cast(new Map(value));
 		}
 
 		needClone = true;
@@ -51,7 +51,7 @@ export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
 
 	if (Object.isSet(value)) {
 		if (!isDeep) {
-			return <any>new Set(value);
+			return Object.cast(new Set(value));
 		}
 
 		needClone = true;

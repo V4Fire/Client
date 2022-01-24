@@ -27,7 +27,7 @@ export default {
 					chunkSize: 12,
 					id: String(Math.random()),
 					sleep: 300,
-					...Object.isObject(opts.query) ? opts.query : {}
+					...Object.isDictionary(opts.query) ? opts.query : {}
 				};
 
 				await sleep(<number>query.sleep);

@@ -23,17 +23,16 @@ export * from '@src/core/component/render/interface';
  * @param renderObject
  * @param ctx - component context
  */
-export function execRenderObject(renderObject: RenderObject, ctx: Dictionary<any>): VNode {
+export function execRenderObject(renderObject: RenderObject, ctx: object): VNode {
 	const
 		fns = renderObject.staticRenderFns;
 
 	if (fns) {
-		if (!Object.isArray(ctx._staticTrees)) {
-			ctx._staticTrees = [];
-		}
+		const staticTrees: VNode[] = Object.cast(ctx['_staticTrees'] ?? []);
+		ctx['_staticTrees'] = staticTrees;
 
 		for (let i = 0; i < fns.length; i++) {
-			ctx._staticTrees.push(fns[i].call(ctx));
+			staticTrees.push(fns[i].call(ctx));
 		}
 	}
 

@@ -10,15 +10,15 @@ import type iBlock from '@src/super/i-block';
 
 import {
 
-	SHADOW_PREVIEW_SYMBOL,
-	SHADOW_BROKEN_SYMBOL,
-	SHADOW_MAIN_SYMBOL,
+	ID,
+	INIT_LOAD,
 
-	ID_SYMBOL,
-	IS_LOADED_SYMBOL,
+	SHADOW_PREVIEW,
+	SHADOW_BROKEN,
+	SHADOW_MAIN,
 
-	INIT_LOAD_SYMBOL,
-	IS_LOADING_SYMBOL
+	IS_LOADED,
+	IS_LOADING
 
 } from '@src/core/dom/image/const';
 
@@ -129,10 +129,10 @@ export interface ImageOptions {
 	 * Execution context.
 	 *
 	 * The context is used to provide a component environment, like, async, event emitters, etc.
-	 * When API is used as a directive, the context will automatically taken from a VNode instance.
+	 * When API is used as a directive, the context will be automatically taken from a VNode instance.
 	 *
 	 * Make sure you are not using `load` or `error` without the context provided,
-	 * cause this can lead to unexpected results.
+	 * because this can lead to unexpected results.
 	 *
 	 * @example
 	 * ```typescript
@@ -305,30 +305,30 @@ export interface PictureFactoryResult {
 }
 
 export interface ImageNode extends HTMLElement {
-	[SHADOW_PREVIEW_SYMBOL]?: ShadowElState;
-	[SHADOW_BROKEN_SYMBOL]?: ShadowElState;
-	[SHADOW_MAIN_SYMBOL]: ShadowElState;
-	[ID_SYMBOL]: string;
+	[SHADOW_PREVIEW]?: ShadowElState;
+	[SHADOW_BROKEN]?: ShadowElState;
+	[SHADOW_MAIN]: ShadowElState;
+	[ID]: string;
 }
 
 interface HTMLShadowImageElement extends HTMLImageElement {
+	/**
+	 * Initializes loading of the image
+	 */
+	[INIT_LOAD]?: Function;
+
 	/**
 	 * If
 	 *   - `true` – the image has been successfully loaded;
 	 *   - `false`– the image loading has been failed;
 	 *   - `undefined` – initial state, loading isn't finished
 	 */
-	[IS_LOADED_SYMBOL]?: boolean;
-
-	/**
-	 * Initializes loading of the image
-	 */
-	[INIT_LOAD_SYMBOL]?: Function;
+	[IS_LOADED]?: boolean;
 
 	/**
 	 * True if the image is loading
 	 */
-	[IS_LOADING_SYMBOL]?: true;
+	[IS_LOADING]?: true;
 }
 
 export interface DefaultParams {

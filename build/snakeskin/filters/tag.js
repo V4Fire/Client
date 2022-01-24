@@ -9,8 +9,7 @@
  */
 
 const
-	$C = require('collection.js'),
-	dasherize = require('string-dasherize');
+	$C = require('collection.js');
 
 const
 	{isObjLiteral, isSvgRequire, isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
@@ -62,7 +61,7 @@ module.exports = [
 
 			} else if (isStaticV4Prop.test(key)) {
 				const
-					tmp = key[0] === ':' ? dasherize(key) : key.dasherize();
+					tmp = key.dasherize(key[0] === ':');
 
 				if (tmp !== key) {
 					delete attrs[key];

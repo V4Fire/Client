@@ -95,7 +95,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					l = customWatcher[2];
 
 				if (l !== '') {
-					watcherCtx = Object.get<any>(component, l) ?? Object.get(globalThis, l) ?? component;
+					watcherCtx = Object.get(component, l) ?? Object.get(globalThis, l) ?? component;
 					watchPath = customWatcher[3].toString();
 
 				} else {
@@ -247,7 +247,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 						if (customWatcher) {
 							// True if an event can listen by using the component itself,
-							// because the `watcherCtx` doesn't look like an event emitter
+							// because the `watcherCtx` does not look like an event emitter
 							const needDefEmitter =
 								watcherCtx === component &&
 								!Object.isFunction(watcherCtx['on']) &&
@@ -295,7 +295,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				} else {
 					if (customWatcher) {
 						// True if an event can listen by using the component itself,
-						// because the `watcherCtx` doesn't look like an event emitter
+						// because the `watcherCtx` does not look like an event emitter
 						const needDefEmitter =
 							watcherCtx === component &&
 							!Object.isFunction(watcherCtx['on']) &&

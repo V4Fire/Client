@@ -128,8 +128,8 @@ export default class Friend {
 		return this.ctx.dom;
 	}
 
-	constructor(component: any) {
-		if (!(component?.instance instanceof iBlock)) {
+	constructor(component: iBlock) {
+		if (!(Object.get(component, 'instance') instanceof iBlock)) {
 			throw new TypeError("The specified component isn't inherited from iBlock");
 		}
 

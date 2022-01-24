@@ -217,13 +217,13 @@ export default abstract class iLockPageScroll {
 	 * @param [scrollableNode] - node inside which is allowed to scroll
 	 */
 	lock(scrollableNode?: Element): Promise<void> {
-		return <any>null;
+		return Object.throw();
 	}
 
 	/**
 	 * Unlocks the document scroll
 	 */
 	unlock(): Promise<void> {
-		return <any>null;
+		return Object.throw();
 	}
 }
