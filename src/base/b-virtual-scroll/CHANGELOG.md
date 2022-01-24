@@ -17,7 +17,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* `chunkRenderStart` is renamed and now will be emitted before the component driver renders component
+* The event`chunkRenderStart` is renamed to `chunkRender:renderStart` and now it emits before a component driver renders components
 
 ## v3.9.0 (2021-11-08)
 
