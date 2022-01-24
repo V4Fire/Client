@@ -131,9 +131,9 @@ export default class ChunkRender extends Friend {
 	 * Renders the component content
 	 *
 	 * @emits `chunkRender:renderStart(chunkNumber: number)`
-	 * @emits `chunkRender:renderDone(chunkNumber: number)`
-	 * @emits `chunkRender:domInsertStart(chunkNumber: number)`
-	 * @emits `chunkRender:domInsertDone(renderItems:` [[RenderItem]]`[], chunkNumber: number)`
+	 * @emits `chunkRender:renderComplete(chunkNumber: number)`
+	 * @emits `chunkRender:beforeMount(chunkNumber: number)`
+	 * @emits `chunkRender:mounted(renderItems:` [[RenderItem]]`[], chunkNumber: number)`
 	 */
 	render(): void {
 		if (this.ctx.localState !== 'ready') {
@@ -168,7 +168,7 @@ export default class ChunkRender extends Friend {
 			nodes = this.renderItems(renderItems);
 
 		ctx.emit('chunkRender:renderDone', currentChunk);
-		ctx.emit('chunkRender:domInsertStart', currentChunk);
+		ctx.emit('chunkRender:beforeMount', currentChunk);
 
 		if (nodes.length === 0) {
 			return;
@@ -186,7 +186,7 @@ export default class ChunkRender extends Friend {
 
 		this.async.requestAnimationFrame(() => {
 			this.refs.container.appendChild(fragment);
-			ctx.emit('chunkRender:domInsertDone', renderItems, currentChunk);
+			ctx.emit('chunkRender:mounted', renderItems, currentChunk);
 		}, {group: this.asyncGroup});
 	}
 
