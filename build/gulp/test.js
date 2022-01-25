@@ -147,9 +147,18 @@ module.exports = function init(gulp = require('gulp')) {
 
 		console.log(`webpack version: ${require('webpack/package.json').version}`);
 
-		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
-			.exec()
-			.on('error', console.error);
+		const
+			cmdString = `npx webpack ${argsString} ${suitArg} ${extraArgs}`;
+
+		const promisifyRun = new Promise((res, rej) => $.run(cmdString, {verbosity: 3}).exec('', (err) => {
+			if (err != null) {
+				rej(err);
+			}
+
+			res();
+		}));
+
+		return promisifyRun;
 	});
 
 	/**
