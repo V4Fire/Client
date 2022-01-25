@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.15.5 (2021-01-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with test command `test:component:build` did not wait for the completion of the project build operation `build/gulp/test`
+
 ## v3.15.4 (2021-01-24)
 
 #### :boom: Breaking Change
