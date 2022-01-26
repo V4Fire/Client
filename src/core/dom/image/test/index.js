@@ -11,7 +11,7 @@
  */
 
 const
-	h = include('tests/helpers'),
+	h = include('tests/helpers').default,
 	delay = require('delay'),
 	images = require('./const');
 

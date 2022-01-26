@@ -12,7 +12,7 @@
 
 const
 	delay = require('delay'),
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /**
  * Starts a test

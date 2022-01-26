@@ -6,9 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, ElementHandle } from 'playwright';
+import type { Page, ElementHandle, PageWaitForSelectorOptionsNotHidden } from 'playwright';
 
 import type Helpers from '@tests/helpers';
+
+import type { WaitForElOptions } from '@tests/helpers/dom/interface';
 
 /**
  * Class provides API to work with `DOM`.
@@ -84,9 +86,36 @@ export default class DOM {
 	 *
 	 * @param ctx
 	 * @param refName
+	 * @param [options] - @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 	 */
-	waitForRef(ctx: Page | ElementHandle, refName: string): Promise<CanUndef<ElementHandle>> {
-		return ctx.waitForSelector(this.getRefSelector(refName));
+	waitForRef(ctx: Page | ElementHandle, refName: string, options?: Dictionary): Promise<ElementHandle> {
+		return ctx.waitForSelector(this.getRefSelector(refName), {state: 'attached', ...options});
+	}
+
+	/**
+	 * Waits for the specified element to appear in the DOM and returns it
+	 *
+	 * @param ctx
+	 * @param selector
+	 * @param [options]
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
+	 */
+	waitForEl(ctx: Page | ElementHandle, selector: string, options: WaitForElOptions): Promise<Nullable<ElementHandle>> {
+		const normalizedOptions = <Required<WaitForElOptions>>{
+			sleep: 100,
+			timeout: 5000,
+			to: 'mount',
+			...options
+		};
+
+		if (normalizedOptions.to === 'mount') {
+			return ctx.waitForSelector(selector, {state: 'attached', timeout: normalizedOptions.timeout});
+
+		}
+
+		return ctx.waitForSelector(selector, {state: 'detached', timeout: normalizedOptions.timeout});
 	}
 
 	/**
