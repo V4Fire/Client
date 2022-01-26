@@ -1,5 +1,5 @@
 {
-  "hash": "bc3847eb00e00b02f314ba209c12593014cf14cb3d42044843764826b3b10609",
+  "hash": "97e064a9772042444dc1e501e080c179bc21b8133bb05abbfc4e713957a6c9d8",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1068,6 +1068,74 @@
         }
       ],
       [
+        "b-test-component",
+        {
+          "index": "src/base/b-test-component/index.js",
+          "declaration": {
+            "name": "b-test-component",
+            "parent": "i-block",
+            "dependencies": [
+              "b-test-component-inner"
+            ],
+            "libs": []
+          },
+          "name": "b-test-component",
+          "parent": "i-block",
+          "dependencies": [
+            "b-test-component-inner"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-test-component/b-test-component.ts",
+          "styles": [
+            "src/base/b-test-component/b-test-component.styl"
+          ],
+          "tpl": "src/base/b-test-component/b-test-component.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-test-component-inner",
+        {
+          "index": "src/base/b-test-component/modules/b-test-component-inner/index.js",
+          "declaration": {
+            "name": "b-test-component-inner",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-test-component-inner",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-test-component/modules/b-test-component-inner/b-test-component-inner.ts",
+          "styles": [
+            "src/base/b-test-component/modules/b-test-component-inner/b-test-component-inner.styl"
+          ],
+          "tpl": "src/base/b-test-component/modules/b-test-component-inner/b-test-component-inner.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-textarea",
         {
           "index": "src/form/b-textarea/index.js",
@@ -1962,84 +2030,12 @@
           "declaration": {
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
-            "dependencies": [
-              "b-v4-component-demo",
-              "p-v4-dynamic-page1",
-              "p-v4-dynamic-page2",
-              "p-v4-dynamic-page3",
-              "b-remote-provider",
-              "b-router",
-              "b-dynamic-page",
-              "b-tree",
-              "b-list",
-              "b-form",
-              "b-button",
-              "b-checkbox",
-              "b-radio-button",
-              "b-input-hidden",
-              "b-input",
-              "b-textarea",
-              "b-select",
-              "b-select-date",
-              "b-virtual-scroll",
-              "b-window",
-              "b-sidebar",
-              "b-slider",
-              "b-bottom-slide",
-              "b-icon",
-              "b-image",
-              "b-dummy",
-              "b-dummy-text",
-              "b-dummy-async-render",
-              "b-dummy-module-loader",
-              "b-dummy-lfc",
-              "b-dummy-watch",
-              "b-dummy-sync",
-              "b-dummy-state",
-              "b-dummy-control-list",
-              "b-dummy-decorators"
-            ],
+            "dependencies": [],
             "libs": []
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
-          "dependencies": [
-            "b-v4-component-demo",
-            "p-v4-dynamic-page1",
-            "p-v4-dynamic-page2",
-            "p-v4-dynamic-page3",
-            "b-remote-provider",
-            "b-router",
-            "b-dynamic-page",
-            "b-tree",
-            "b-list",
-            "b-form",
-            "b-button",
-            "b-checkbox",
-            "b-radio-button",
-            "b-input-hidden",
-            "b-input",
-            "b-textarea",
-            "b-select",
-            "b-select-date",
-            "b-virtual-scroll",
-            "b-window",
-            "b-sidebar",
-            "b-slider",
-            "b-bottom-slide",
-            "b-icon",
-            "b-image",
-            "b-dummy",
-            "b-dummy-text",
-            "b-dummy-async-render",
-            "b-dummy-module-loader",
-            "b-dummy-lfc",
-            "b-dummy-watch",
-            "b-dummy-sync",
-            "b-dummy-state",
-            "b-dummy-control-list",
-            "b-dummy-decorators"
-          ],
+          "dependencies": [],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
