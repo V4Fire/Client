@@ -11,7 +11,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Two new attributes added to `i-input-text`: `inputmode` and `pattern`
+* Added `inputmode` and `pattern` attributes
 
 ## v3.0.0-rc.199 (2021-06-16)
 

@@ -11,6 +11,10 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+#### :rocket: New Feature
+
+* Added `inputmode` and `pattern` attributes `super/i-input-text`
+
 ## v3.15.4 (2021-01-24)
 
 #### :boom: Breaking Change
