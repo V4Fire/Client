@@ -15,7 +15,7 @@
 import 'models/demo/session';
 //#endif
 
-import iStaticPage, { component, system, field } from 'super/i-static-page/i-static-page';
+import iStaticPage, { component, system, field, prop } from 'super/i-static-page/i-static-page';
 
 export * from 'super/i-static-page/i-static-page';
 
@@ -27,6 +27,26 @@ console.time('Initializing');
  */
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
+	@prop({default: {
+		a: 1,
+		b: 2,
+		c: {d: 4, e: 5}
+	}})
+
+	readonly contentProp!: Dictionary;
+
+	@field((ctx) => ctx.sync.link((val) => ctx.normalizeContent(val)))
+	content!: Dictionary;
+
+	normalizeContent(content: Dictionary): Dictionary {
+		const newContent = {
+			...content,
+			c: {...Object.reject(content.c, 'test')}
+		};
+
+		return newContent;
+	}
+
 	/**
 	 * Parameter to test
 	 */
