@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-export { default } from '@src/core/router/engines';
+export { default } from '/core/router/engines';
 
-export * from '@src/core/router/const';
-export * from '@src/core/router/modules/helpers';
-export * from '@src/core/router/modules/normalizers';
-export * from '@src/core/router/interface';
+export * from '/core/router/const';
+export * from '/core/router/modules/helpers';
+export * from '/core/router/modules/normalizers';
+export * from '/core/router/interface';

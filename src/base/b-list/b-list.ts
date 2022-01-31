@@ -12,23 +12,23 @@
  */
 
 //#if demo
-import '@src/models/demo/list';
+import '/models/demo/list';
 //#endif
 
-import symbolGenerator from '@src/core/symbol';
-import SyncPromise from '@src/core/promise/sync';
+import symbolGenerator from '/core/symbol';
+import SyncPromise from '/core/promise/sync';
 
-import { isAbsURL } from '@src/core/url';
+import { isAbsURL } from '/core/url';
 
-import iVisible from '@src/traits/i-visible/i-visible';
-import iWidth from '@src/traits/i-width/i-width';
-import iItems, { IterationKey } from '@src/traits/i-items/i-items';
+import iVisible from '/traits/i-visible/i-visible';
+import iWidth from '/traits/i-width/i-width';
+import iItems, { IterationKey } from '/traits/i-items/i-items';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from '@src/super/i-data/i-data';
-import type { Active, Item, Items } from '@src/base/b-list/interface';
+import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from '/super/i-data/i-data';
+import type { Active, Item, Items } from '/base/b-list/interface';
 
-export * from '@src/super/i-data/i-data';
-export * from '@src/base/b-list/interface';
+export * from '/super/i-data/i-data';
+export * from '/base/b-list/interface';
 
 export const
 	$$ = symbolGenerator();

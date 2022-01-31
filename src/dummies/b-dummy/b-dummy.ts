@@ -11,26 +11,26 @@
  * @packageDocumentation
  */
 
-import '@src/models/demo/pagination';
+import '/models/demo/pagination';
 
-import { derive } from '@src/core/functools/trait';
+import { derive } from '/core/functools/trait';
 
-import * as cookie from '@src/core/cookies';
-import * as htmlHelpers from '@src/core/html';
-import * as browserHelpers from '@src/core/browser';
-import * as session from '@src/core/session';
+import * as cookie from '/core/cookies';
+import * as htmlHelpers from '/core/html';
+import * as browserHelpers from '/core/browser';
+import * as session from '/core/session';
 
-import { inViewFactory } from '@src/core/dom/in-view';
-import { ImageLoader, imageLoaderFactory } from '@src/core/dom/image';
-import { ResizeWatcher } from '@src/core/dom/resize-observer';
+import { inViewFactory } from '/core/dom/in-view';
+import { ImageLoader, imageLoaderFactory } from '/core/dom/image';
+import { ResizeWatcher } from '/core/dom/resize-observer';
 
-import updateOn from '@src/core/component/directives/update-on/engines';
+import updateOn from '/core/component/directives/update-on/engines';
 
-import iLockPageScroll from '@src/traits/i-lock-page-scroll/i-lock-page-scroll';
-import iObserveDOM from '@src/traits/i-observe-dom/i-observe-dom';
+import iLockPageScroll from '/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iObserveDOM from '/traits/i-observe-dom/i-observe-dom';
 
-import inMemoryRouterEngine from '@src/core/router/engines/in-memory';
-import historyApiRouterEngine from '@src/core/router/engines/browser-history';
+import inMemoryRouterEngine from '/core/router/engines/in-memory';
+import historyApiRouterEngine from '/core/router/engines/browser-history';
 
 import iData, {
 
@@ -40,19 +40,19 @@ import iData, {
 	wait,
 	ModsNTable
 
-} from '@src/super/i-data/i-data';
+} from '/super/i-data/i-data';
 
-import bBottomSlide from '@src/base/b-bottom-slide/b-bottom-slide';
+import bBottomSlide from '/base/b-bottom-slide/b-bottom-slide';
 
-import daemons from '@src/dummies/b-dummy/daemons';
-import type { Directives, Modules, Engines } from '@src/dummies/b-dummy/interface';
+import daemons from '/dummies/b-dummy/daemons';
+import type { Directives, Modules, Engines } from '/dummies/b-dummy/interface';
 
 const
 	inViewMutation = inViewFactory('mutation'),
 	inViewObserver = inViewFactory('observer');
 
-export * from '@src/super/i-data/i-data';
-export * from '@src/dummies/b-dummy/interface';
+export * from '/super/i-data/i-data';
+export * from '/dummies/b-dummy/interface';
 
 interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM> {}
 

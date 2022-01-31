@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import { deprecate } from '@src/core/functools/deprecation';
-import { cacheStatus, ComponentInterface } from '@src/core/component';
+import { deprecate } from '/core/functools/deprecation';
+import { cacheStatus, ComponentInterface } from '/core/component';
 
 /**
  * Attaches accessors and computed fields from a meta object to the specified component instance

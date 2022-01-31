@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import SyncPromise from '@src/core/promise/sync';
-import QueueEmitter from '@src/core/component/queue-emitter';
+import SyncPromise from '/core/promise/sync';
+import QueueEmitter from '/core/component/queue-emitter';
 
-import type { Hook, ComponentHook, ComponentInterface } from '@src/core/component/interface';
+import type { Hook, ComponentHook, ComponentInterface } from '/core/component/interface';
 
 const
 	resolvedPromise = SyncPromise.resolve();

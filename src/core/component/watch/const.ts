@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { DynamicHandlers } from '@src/core/component/watch/interface';
+import type { DynamicHandlers } from '/core/component/watch/interface';
 
 export const
 	dynamicHandlers: DynamicHandlers = new WeakMap(),

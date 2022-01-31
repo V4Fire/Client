@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import extend from '@src/core/prelude/extend';
+import extend from '/core/prelude/extend';
 
 /**
  * Executes the specified callbacks after loading of the image

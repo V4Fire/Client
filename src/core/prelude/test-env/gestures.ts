@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from '@src/core/async';
+import Async from '/core/async';
 
 /**
  * Class to create touch gestures

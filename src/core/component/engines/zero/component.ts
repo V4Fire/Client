@@ -6,22 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '@src/core/symbol';
-import { HAS_WINDOW } from '@src/core/env';
+import symbolGenerator from '/core/symbol';
+import { HAS_WINDOW } from '/core/env';
 
 import type Vue from 'vue';
 import type { ComponentOptions } from 'vue';
 
-import * as init from '@src/core/component/construct';
+import * as init from '/core/component/construct';
 
-import { fillMeta } from '@src/core/component/meta';
-import { createFakeCtx } from '@src/core/component/functional';
+import { fillMeta } from '/core/component/meta';
+import { createFakeCtx } from '/core/component/functional';
 
-import { components } from '@src/core/component/const';
-import type { ComponentInterface, ComponentMeta } from '@src/core/component/interface';
+import { components } from '/core/component/const';
+import type { ComponentInterface, ComponentMeta } from '/core/component/interface';
 
-import { document, supports, minimalCtx } from '@src/core/component/engines/zero/const';
-import { cloneVNode, patchVNode, renderVNode } from '@src/core/component/engines';
+import { document, supports, minimalCtx } from '/core/component/engines/zero/const';
+import { cloneVNode, patchVNode, renderVNode } from '/core/component/engines';
 
 const
 	$$ = symbolGenerator();

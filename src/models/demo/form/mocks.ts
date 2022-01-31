@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { MiddlewareParams } from '@src/models/demo';
+import type { MiddlewareParams } from '/models/demo';
 
 export default {
 	POST: [

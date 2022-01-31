@@ -11,17 +11,17 @@
  * @packageDescription
  */
 
-import symbolGenerator from '@src/core/symbol';
-import { deprecate } from '@src/core/functools/deprecation';
+import symbolGenerator from '/core/symbol';
+import { deprecate } from '/core/functools/deprecation';
 
-import { session } from '@src/core/kv-storage';
-import { fromQueryString, toQueryString } from '@src/core/url';
+import { session } from '/core/kv-storage';
+import { fromQueryString, toQueryString } from '/core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import * as browser from '@src/core/browser';
+import * as browser from '/core/browser';
 
-import type bRouter from '@src/base/b-router/b-router';
-import type { Router, Route, HistoryClearFilter } from '@src/core/router/interface';
+import type bRouter from '/base/b-router/b-router';
+import type { Router, Route, HistoryClearFilter } from '/core/router/interface';
 
 export const
 	$$ = symbolGenerator();

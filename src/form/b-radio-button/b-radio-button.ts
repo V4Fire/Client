@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import SyncPromise from '@src/core/promise/sync';
-import bCheckbox, { component } from '@src/form/b-checkbox/b-checkbox';
+import SyncPromise from '/core/promise/sync';
+import bCheckbox, { component } from '/form/b-checkbox/b-checkbox';
 
-export * from '@src/super/i-input/i-input';
+export * from '/super/i-input/i-input';
 
 /**
  * Component to create a radio button

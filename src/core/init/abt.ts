@@ -6,6 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semaphore from '@src/core/init/semaphore';
+import semaphore from '/core/init/semaphore';
 
 export default (() => semaphore('ABTReady'))();

@@ -11,12 +11,12 @@
  * @packageDocumentation
  */
 
-import type { AbstractCache } from '@src/core/cache';
+import type { AbstractCache } from '/core/cache';
 
-import ProviderDataItem from '@src/super/i-static-page/modules/provider-data-store/item';
-import type { ProviderDataStore } from '@src/super/i-static-page/modules/provider-data-store/interface';
+import ProviderDataItem from '/super/i-static-page/modules/provider-data-store/item';
+import type { ProviderDataStore } from '/super/i-static-page/modules/provider-data-store/interface';
 
-export * from '@src/super/i-static-page/modules/provider-data-store/interface';
+export * from '/super/i-static-page/modules/provider-data-store/interface';
 export { ProviderDataItem };
 
 /**

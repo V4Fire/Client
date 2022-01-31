@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import BaseError from '@src/core/error';
-import { deprecated } from '@src/core/functools/deprecation';
+import BaseError from '/core/error';
+import { deprecated } from '/core/functools/deprecation';
 
-import type iInput from '@src/super/i-input/i-input';
-import type { ValidationError as InputValidationError } from '@src/super/i-input/i-input';
+import type iInput from '/super/i-input/i-input';
+import type { ValidationError as InputValidationError } from '/super/i-input/i-input';
 
 /**
  * Class to wrap a validation error

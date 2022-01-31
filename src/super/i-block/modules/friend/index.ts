@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import iBlock from '@src/super/i-block/i-block';
+import iBlock from '/super/i-block/i-block';
 
 /**
  * Class that friendly to a component

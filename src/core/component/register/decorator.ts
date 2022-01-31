@@ -6,17 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { identity } from '@src/core/functools';
+import { identity } from '/core/functools';
 
-import * as c from '@src/core/component/const';
+import * as c from '/core/component/const';
 
-import { createMeta, fillMeta, attachTemplatesToMeta } from '@src/core/component/meta';
-import { getInfoFromConstructor } from '@src/core/component/reflection';
+import { createMeta, fillMeta, attachTemplatesToMeta } from '/core/component/meta';
+import { getInfoFromConstructor } from '/core/component/reflection';
 
-import { getComponent, ComponentEngine } from '@src/core/component/engines';
-import { registerParentComponents } from '@src/core/component/register/helpers';
+import { getComponent, ComponentEngine } from '/core/component/engines';
+import { registerParentComponents } from '/core/component/register/helpers';
 
-import type { ComponentOptions } from '@src/core/component/interface';
+import type { ComponentOptions } from '/core/component/interface';
 
 /**
  * Registers a new component

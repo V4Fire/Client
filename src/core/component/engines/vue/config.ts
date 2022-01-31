@@ -7,9 +7,9 @@
  */
 
 import Vue from 'vue';
-import log from '@src/core/log';
+import log from '/core/log';
 
-import type { ComponentInterface } from '@src/core/component/interface';
+import type { ComponentInterface } from '/core/component/interface';
 
 const
 	logger = log.namespace('vue');

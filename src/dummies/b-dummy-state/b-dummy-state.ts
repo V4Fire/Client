@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import iData, { component, field, system, ConverterCallType } from '@src/super/i-data/i-data';
+import iData, { component, field, system, ConverterCallType } from '/super/i-data/i-data';
 
-export * from '@src/super/i-data/i-data';
+export * from '/super/i-data/i-data';
 
 @component({
 	functional: {

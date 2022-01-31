@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import Component, { VNode, VNodeDirective, ComponentElement } from '@src/core/component';
+import Component, { VNode, VNodeDirective, ComponentElement } from '/core/component';
 
-import type iBlock from '@src/super/i-block/i-block';
-import { cache, commaRgxp, keyValRgxp } from '@src/super/i-block/directives/event/const';
+import type iBlock from '/super/i-block/i-block';
+import { cache, commaRgxp, keyValRgxp } from '/super/i-block/directives/event/const';
 
 function bind(
 	node: ComponentElement<iBlock>,

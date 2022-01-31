@@ -12,7 +12,7 @@
 
 const
 	path = require('upath'),
-	config = require('config');
+	config = require('@config/config');
 
 /**
  * Registers gulp tasks to minify/generate project static assets

@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-export * from '@src/core/component/reflection/const';
-export * from '@src/core/component/reflection/types';
-export * from '@src/core/component/reflection/constructor';
-export * from '@src/core/component/reflection/property';
-export * from '@src/core/component/reflection/interface';
+export * from '/core/component/reflection/const';
+export * from '/core/component/reflection/types';
+export * from '/core/component/reflection/constructor';
+export * from '/core/component/reflection/property';
+export * from '/core/component/reflection/interface';

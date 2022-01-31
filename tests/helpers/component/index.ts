@@ -8,7 +8,7 @@
 
 import type { ElementHandle, JSHandle, Page } from 'playwright';
 
-import type iBlock from '@src/super/i-block/i-block';
+import type iBlock from '/super/i-block/i-block';
 import type Helpers from '@tests/helpers';
 
 /**

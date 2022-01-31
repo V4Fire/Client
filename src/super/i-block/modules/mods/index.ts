@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import type iBlock from '@src/super/i-block/i-block';
-import type { ModsTable, ModsNTable } from '@src/super/i-block/modules/mods/interface';
+import type iBlock from '/super/i-block/i-block';
+import type { ModsTable, ModsNTable } from '/super/i-block/modules/mods/interface';
 
-export * from '@src/super/i-block/modules/mods/interface';
+export * from '/super/i-block/modules/mods/interface';
 
 /**
  * Merges old component modifiers with new modifiers

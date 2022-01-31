@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const {statoscope} = require('config');
+const {statoscope} = require('@config/config');
 
 const statoscopeConfig = statoscope();
 

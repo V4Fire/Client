@@ -12,12 +12,12 @@
  */
 
 //#if demo
-import '@src/models/demo/input';
+import '/models/demo/input';
 //#endif
 
-import iInput, { component } from '@src/super/i-input/i-input';
+import iInput, { component } from '/super/i-input/i-input';
 
-export * from '@src/super/i-input/i-input';
+export * from '/super/i-input/i-input';
 
 /**
  * Component to create a hidden input

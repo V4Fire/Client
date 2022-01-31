@@ -22,7 +22,7 @@ const
 	glob = require('glob');
 
 const
-	{build, src} = require('config'),
+	{build, src} = require('@config/config'),
 	{resolve} = require('@pzlr/build-core');
 
 console.log(resolve);

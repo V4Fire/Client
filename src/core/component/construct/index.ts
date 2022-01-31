@@ -11,33 +11,33 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '@src/core/symbol';
+import symbolGenerator from '/core/symbol';
 
-import { deprecate } from '@src/core/functools/deprecation';
-import { unmute } from '@src/core/object/watch';
+import { deprecate } from '/core/functools/deprecation';
+import { unmute } from '/core/object/watch';
 
-import Async from '@src/core/async';
+import Async from '/core/async';
 
-import { asyncLabel } from '@src/core/component/const';
-import { getPropertyInfo, PropertyInfo } from '@src/core/component/reflection';
+import { asyncLabel } from '/core/component/const';
+import { getPropertyInfo, PropertyInfo } from '/core/component/reflection';
 
-import { initFields } from '@src/core/component/field';
-import { attachAccessorsFromMeta } from '@src/core/component/accessor';
-import { attachMethodsFromMeta, callMethodFromComponent } from '@src/core/component/method';
+import { initFields } from '/core/component/field';
+import { attachAccessorsFromMeta } from '/core/component/accessor';
+import { attachMethodsFromMeta, callMethodFromComponent } from '/core/component/method';
 
-import { implementEventAPI } from '@src/core/component/event';
-import { bindRemoteWatchers, implementComponentWatchAPI } from '@src/core/component/watch';
+import { implementEventAPI } from '/core/component/event';
+import { bindRemoteWatchers, implementComponentWatchAPI } from '/core/component/watch';
 
-import { runHook } from '@src/core/component/hook';
-import { resolveRefs } from '@src/core/component/ref';
+import { runHook } from '/core/component/hook';
+import { resolveRefs } from '/core/component/ref';
 
-import { getNormalParent } from '@src/core/component/traverse';
-import { forkMeta } from '@src/core/component/meta';
+import { getNormalParent } from '/core/component/traverse';
+import { forkMeta } from '/core/component/meta';
 
-import type { ComponentInterface, ComponentMeta, Hook } from '@src/core/component/interface';
-import type { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from '@src/core/component/construct/interface';
+import type { ComponentInterface, ComponentMeta, Hook } from '/core/component/interface';
+import type { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from '/core/component/construct/interface';
 
-export * from '@src/core/component/construct/interface';
+export * from '/core/component/construct/interface';
 
 export const
 	$$ = symbolGenerator();

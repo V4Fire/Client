@@ -11,14 +11,14 @@
  * @packageDocumentation
  */
 
-import watch from '@src/core/object/watch';
+import watch from '/core/object/watch';
 
-import { emitter as NetEmitter, NetStatus } from '@src/core/net';
-import { emitter as SessionEmitter, Session } from '@src/core/session';
+import { emitter as NetEmitter, NetStatus } from '/core/net';
+import { emitter as SessionEmitter, Session } from '/core/session';
 
-import type { State } from '@src/core/component/state/interface';
+import type { State } from '/core/component/state/interface';
 
-export * from '@src/core/component/state/interface';
+export * from '/core/component/state/interface';
 
 const state = watch<State>({
 	isAuth: undefined,

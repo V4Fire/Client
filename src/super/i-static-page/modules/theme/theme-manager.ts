@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from '@src/super/i-block/i-block';
-import type iStaticPage from '@src/super/i-static-page/i-static-page';
+import type iBlock from '/super/i-block/i-block';
+import type iStaticPage from '/super/i-static-page/i-static-page';
 
-import Friend from '@src/super/i-block/modules/friend';
+import Friend from '/super/i-block/modules/friend';
 
 /**
  * Class to manage interface themes

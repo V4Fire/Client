@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { unsuspendRgxp } from '@src/core/async/const';
-import type { AsyncOptions } from '@src/core/async/interface';
+import { unsuspendRgxp } from '/core/async/const';
+import type { AsyncOptions } from '/core/async/interface';
 
 /**
  * Takes an object with async options and returns a new one with a modified group to support task suspending.

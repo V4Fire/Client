@@ -8,10 +8,10 @@
 
 import path, { Key, RegExpOptions } from 'path-to-regexp';
 
-import { concatURLs, toQueryString, fromQueryString } from '@src/core/url';
-import { deprecate } from '@src/core/functools/deprecation';
+import { concatURLs, toQueryString, fromQueryString } from '/core/url';
+import { deprecate } from '/core/functools/deprecation';
 
-import { qsClearFixRgxp, routeNames, defaultRouteNames, isExternal } from '@src/core/router/const';
+import { qsClearFixRgxp, routeNames, defaultRouteNames, isExternal } from '/core/router/const';
 
 import type {
 
@@ -29,7 +29,7 @@ import type {
 	AdditionalGetRouteOpts,
 	CompileRoutesOpts
 
-} from '@src/core/router/interface';
+} from '/core/router/interface';
 
 /**
  * Returns a name of the specified route

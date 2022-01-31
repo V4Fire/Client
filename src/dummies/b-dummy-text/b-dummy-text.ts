@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import iInputText, { component } from '@src/super/i-input-text/i-input-text';
+import iInputText, { component } from '/super/i-input-text/i-input-text';
 
-export * from '@src/super/i-input-text/i-input-text';
+export * from '/super/i-input-text/i-input-text';
 
 @component({
 	functional: {

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type ImageLoader from '@src/core/dom/image/loader';
+import type ImageLoader from '/core/dom/image/loader';
 
 import {
 
@@ -19,7 +19,7 @@ import {
 	IS_LOADED,
 	IS_LOADING
 
-} from '@src/core/dom/image';
+} from '/core/dom/image';
 
 /**
  * Helper class that provides API to work with an image lifecycle

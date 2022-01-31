@@ -6,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from '@src/core/dom/in-view/helpers';
+export * from '/core/dom/in-view/helpers';

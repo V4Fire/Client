@@ -12,16 +12,16 @@
  */
 
 //#if demo
-import '@src/models/demo/list';
+import '/models/demo/list';
 //#endif
 
-import symbolGenerator from '@src/core/symbol';
+import symbolGenerator from '/core/symbol';
 
-import { derive } from '@src/core/functools/trait';
-import { deprecated, deprecate } from '@src/core/functools';
+import { derive } from '/core/functools/trait';
+import { deprecated, deprecate } from '/core/functools';
 
-import iObserveDOM from '@src/traits/i-observe-dom/i-observe-dom';
-import iItems, { IterationKey } from '@src/traits/i-items/i-items';
+import iObserveDOM from '/traits/i-observe-dom/i-observe-dom';
+import iItems, { IterationKey } from '/traits/i-items/i-items';
 
 import iData, {
 
@@ -37,13 +37,13 @@ import iData, {
 
 	ModsDecl
 
-} from '@src/super/i-data/i-data';
+} from '/super/i-data/i-data';
 
-import { sliderModes, alignTypes } from '@src/base/b-slider/const';
-import type { Mode, SlideRect, SlideDirection, AlignType } from '@src/base/b-slider/interface';
+import { sliderModes, alignTypes } from '/base/b-slider/const';
+import type { Mode, SlideRect, SlideDirection, AlignType } from '/base/b-slider/interface';
 
-export * from '@src/super/i-data/i-data';
-export * from '@src/base/b-slider/interface';
+export * from '/super/i-data/i-data';
+export * from '/base/b-slider/interface';
 
 export const
 	$$ = symbolGenerator();

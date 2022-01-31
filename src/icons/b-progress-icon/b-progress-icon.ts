@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import iBlock, { component } from '@src/super/i-block/i-block';
+import iBlock, { component } from '/super/i-block/i-block';
 
-export * from '@src/super/i-block/i-block';
+export * from '/super/i-block/i-block';
 
 /**
  * Component to indicate loading

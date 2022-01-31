@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '@src/core/symbol';
-import { customWatcherRgxp } from '@src/core/component';
-import iBlock from '@src/super/i-block/i-block';
+import symbolGenerator from '/core/symbol';
+import { customWatcherRgxp } from '/core/component';
+import iBlock from '/super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();

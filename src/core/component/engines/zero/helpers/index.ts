@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '@src/core/symbol';
+import symbolGenerator from '/core/symbol';
 
 import type {
 
@@ -17,8 +17,8 @@ import type {
 
 } from 'vue';
 
-import config from '@src/core/component/engines/zero/config';
-import { document } from '@src/core/component/engines/zero/const';
+import config from '/core/component/engines/zero/config';
+import { document } from '/core/component/engines/zero/const';
 
 import {
 
@@ -28,13 +28,13 @@ import {
 	SVG_NMS,
 	XLINK_NMS
 
-} from '@src/core/component/engines/zero/helpers/const';
+} from '/core/component/engines/zero/helpers/const';
 
-import type { ComponentInterface } from '@src/core/component/interface';
-import type { DirElement, DocumentFragmentP } from '@src/core/component/engines/zero/helpers/interface';
+import type { ComponentInterface } from '/core/component/interface';
+import type { DirElement, DocumentFragmentP } from '/core/component/engines/zero/helpers/interface';
 
-export * from '@src/core/component/engines/zero/helpers/const';
-export * from '@src/core/component/engines/zero/helpers/interface';
+export * from '/core/component/engines/zero/helpers/const';
+export * from '/core/component/engines/zero/helpers/interface';
 
 export const
 	$$ = symbolGenerator();

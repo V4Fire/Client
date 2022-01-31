@@ -7,7 +7,7 @@
  */
 
 const
-	{webpack} = require('config');
+	{webpack} = require('@config/config');
 
 exports.needInline = needInline;
 

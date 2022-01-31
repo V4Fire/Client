@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iPage from '@src/super/i-page/i-page';
+import type iPage from '/super/i-page/i-page';
 
 export type TitleValue<CTX extends iPage = iPage['unsafe']> =
 	string |

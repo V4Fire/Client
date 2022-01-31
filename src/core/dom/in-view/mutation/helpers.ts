@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementRect } from '@src/core/dom/in-view/interface';
+import type { ElementRect } from '/core/dom/in-view/interface';
 
 // tslint:disable-next-line strict-type-predicates
 export const hasMutationObserver = typeof MutationObserver === 'function';

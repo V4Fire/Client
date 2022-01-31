@@ -11,11 +11,11 @@
  * @packageDocumentation
  */
 
-import semver, { Operation } from '@src/core/semver';
-import { is } from '@src/core/browser/const';
+import semver, { Operation } from '/core/semver';
+import { is } from '/core/browser/const';
 
-export * from '@src/core/browser/const';
-export * from '@src/core/browser/helpers';
+export * from '/core/browser/const';
+export * from '/core/browser/helpers';
 
 /**
  * Returns true if `navigator.userAgent` matches with the specified parameters

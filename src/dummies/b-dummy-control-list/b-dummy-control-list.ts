@@ -11,12 +11,12 @@
  * @packageDocumentation
  */
 
-import { derive } from '@src/core/functools/trait';
+import { derive } from '/core/functools/trait';
 
-import iControlList, { Control } from '@src/traits/i-control-list/i-control-list';
-import iBlock, { component, prop } from '@src/super/i-block/i-block';
+import iControlList, { Control } from '/traits/i-control-list/i-control-list';
+import iBlock, { component, prop } from '/super/i-block/i-block';
 
-export * from '@src/super/i-block/i-block';
+export * from '/super/i-block/i-block';
 
 interface bDummyControlList extends
 	Trait<typeof iControlList> {}

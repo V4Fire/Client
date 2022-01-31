@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import iPage, { component } from '@src/super/i-page/i-page';
+import iPage, { component } from '/super/i-page/i-page';
 
-export * from '@src/super/i-page/i-page';
+export * from '/super/i-page/i-page';
 
 @component()
 export default abstract class iDynamicPage extends iPage {

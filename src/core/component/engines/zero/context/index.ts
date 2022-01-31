@@ -6,18 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { identity } from '@src/core/functools/helpers';
+import { identity } from '/core/functools/helpers';
 import type { VNodeData } from 'vue';
 
-import config from '@src/core/component/engines/zero/config';
+import config from '/core/component/engines/zero/config';
 
-import { document } from '@src/core/component/engines/zero/const';
-import { warn } from '@src/core/component/engines/zero/helpers';
+import { document } from '/core/component/engines/zero/const';
+import { warn } from '/core/component/engines/zero/helpers';
 
-import { reservedAttrs } from '@src/core/component/engines/zero/context/const';
-import type { KeyCode } from '@src/core/component/engines/zero/context/interface';
+import { reservedAttrs } from '/core/component/engines/zero/context/const';
+import type { KeyCode } from '/core/component/engines/zero/context/interface';
 
-export * from '@src/core/component/engines/zero/context/const';
+export * from '/core/component/engines/zero/context/const';
 
 export default {
 	_o: identity,

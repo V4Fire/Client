@@ -7,10 +7,10 @@
  */
 
 // @ts-ignore (ss import)
-import * as defTpls from '@src/core/block.ss';
+import * as defTpls from '/core/block.ss';
 
-import { componentTemplates } from '@src/core/component/const';
-import type { ComponentMeta, ComponentMethod } from '@src/core/component/interface';
+import { componentTemplates } from '/core/component/const';
+import type { ComponentMeta, ComponentMethod } from '/core/component/interface';
 
 /**
  * Attaches templates to the specified meta object

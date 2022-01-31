@@ -11,10 +11,10 @@
  * @packageDocumentation
  */
 
-import watch from '@src/core/object/watch';
-import iData, { component, field, system, computed, ModsDecl } from '@src/super/i-data/i-data';
+import watch from '/core/object/watch';
+import iData, { component, field, system, computed, ModsDecl } from '/super/i-data/i-data';
 
-export * from '@src/super/i-data/i-data';
+export * from '/super/i-data/i-data';
 
 @component({
 	functional: {

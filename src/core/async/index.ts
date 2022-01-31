@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import SyncPromise from '@src/core/promise/sync';
+import SyncPromise from '/core/promise/sync';
 import Super, { AsyncCbOptions, ClearOptionsId, isAsyncOptions } from '@v4fire/core/core/async';
-import { namespaces, NamespacesDictionary } from '@src/core/async/const';
+import { namespaces, NamespacesDictionary } from '/core/async/const';
 
 import type {
 
@@ -24,12 +24,12 @@ import type {
 	AsyncCb,
 	AnimationFrameCb
 
-} from '@src/core/async/interface';
+} from '/core/async/interface';
 
 export * from '@v4fire/core/core/async';
-export * from '@src/core/async/const';
-export * from '@src/core/async/helpers';
-export * from '@src/core/async/interface';
+export * from '/core/async/const';
+export * from '/core/async/helpers';
+export * from '/core/async/interface';
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	static override namespaces: NamespacesDictionary = namespaces;

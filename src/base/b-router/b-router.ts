@@ -11,21 +11,21 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '@src/core/symbol';
-import { deprecated } from '@src/core/functools/deprecation';
+import symbolGenerator from '/core/symbol';
+import { deprecated } from '/core/functools/deprecation';
 
-import globalRoutes from '@src/routes';
-import type Async from '@src/core/async';
+import globalRoutes from '/routes';
+import type Async from '/core/async';
 
-import iData, { component, prop, system, computed, hook, wait, watch } from '@src/super/i-data/i-data';
-import engine, * as router from '@src/core/router';
+import iData, { component, prop, system, computed, hook, wait, watch } from '/super/i-data/i-data';
+import engine, * as router from '/core/router';
 
-import { fillRouteParams } from '@src/base/b-router/modules/normalizers';
-import type { StaticRoutes, RouteOption, TransitionMethod } from '@src/base/b-router/interface';
+import { fillRouteParams } from '/base/b-router/modules/normalizers';
+import type { StaticRoutes, RouteOption, TransitionMethod } from '/base/b-router/interface';
 
-export * from '@src/super/i-data/i-data';
-export * from '@src/core/router/const';
-export * from '@src/base/b-router/interface';
+export * from '/super/i-data/i-data';
+export * from '/core/router/const';
+export * from '/base/b-router/interface';
 
 export const
 	$$ = symbolGenerator();

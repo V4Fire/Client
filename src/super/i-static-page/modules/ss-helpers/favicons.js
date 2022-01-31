@@ -7,7 +7,7 @@
  */
 
 const
-	{src, webpack, favicons} = require('config');
+	{src, webpack, favicons} = require('@config/config');
 
 const
 	glob = require('glob'),

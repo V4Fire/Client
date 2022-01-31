@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import type { EventListener } from '@src/core/component/queue-emitter/interface';
+import type { EventListener } from '/core/component/queue-emitter/interface';
 
-export * from '@src/core/component/queue-emitter/interface';
+export * from '/core/component/queue-emitter/interface';
 
 /**
  * The special kind of event emitter that supports queues of events

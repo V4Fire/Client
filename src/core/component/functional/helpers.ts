@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { $$ } from '@src/core/component/functional/const';
+import { $$ } from '/core/component/functional/const';
 
-import * as init from '@src/core/component/construct';
-import type { ComponentInterface } from '@src/core/component/interface';
+import * as init from '/core/component/construct';
+import type { ComponentInterface } from '/core/component/interface';
 
 /**
  * Emits destroying of the specified component

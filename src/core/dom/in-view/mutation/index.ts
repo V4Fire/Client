@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '@src/core/symbol';
-import type { AsyncOptions } from '@src/core/async';
+import symbolGenerator from '/core/symbol';
+import type { AsyncOptions } from '/core/async';
 
 import type {
 
@@ -17,7 +17,7 @@ import type {
 	InViewInitOptions,
 	InViewUnobserveOptions
 
-} from '@src/core/dom/in-view/interface';
+} from '/core/dom/in-view/interface';
 
 import {
 
@@ -27,10 +27,10 @@ import {
 	isElementInView,
 	isElementVisible
 
-} from '@src/core/dom/in-view/mutation/helpers';
+} from '/core/dom/in-view/mutation/helpers';
 
-import Super from '@src/core/dom/in-view/super';
-import { isInView } from '@src/core/dom/in-view/helpers';
+import Super from '/core/dom/in-view/super';
+import { isInView } from '/core/dom/in-view/helpers';
 
 export const
 	$$ = symbolGenerator();

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { DefaultParams } from '@src/core/dom/image/interface';
+import type { DefaultParams } from '/core/dom/image/interface';
 
 /**
  * Default parameters for image placeholders: `defaultBrokenImageOptions` and `defaultPreviewImageOptions`

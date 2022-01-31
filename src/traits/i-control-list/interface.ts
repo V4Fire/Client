@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from '@src/super/i-block/i-block';
+import type iBlock from '/super/i-block/i-block';
 
 /**
  * A handler function to invoke on the specified control' event, like `click` or `change`.

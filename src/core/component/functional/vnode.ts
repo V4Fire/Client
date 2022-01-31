@@ -6,15 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as init from '@src/core/component/construct';
+import * as init from '/core/component/construct';
 
-import type { VNode } from '@src/core/component/engines';
-import type { RenderContext } from '@src/core/component/render';
+import type { VNode } from '/core/component/engines';
+import type { RenderContext } from '/core/component/render';
 
-import { $$ } from '@src/core/component/functional/const';
+import { $$ } from '/core/component/functional/const';
 
-import type { ComponentField, ComponentInterface } from '@src/core/component/interface';
-import type { FlyweightVNode } from '@src/core/component/functional/interface';
+import type { ComponentField, ComponentInterface } from '/core/component/interface';
+import type { FlyweightVNode } from '/core/component/functional/interface';
 
 /**
  * Initializes a component from the specified VNode.

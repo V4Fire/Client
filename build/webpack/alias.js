@@ -13,14 +13,14 @@ const
 	path = require('path');
 
 const
-	{src} = require('config'),
+	{src} = require('@config/config'),
 	{config: pzlr, resolve} = require('@pzlr/build-core');
 
 /**
  * Options for `webpack.alias`
  */
 const aliases = {
-	'@src': [src.src(), ...resolve.rootDependencies],
+	'': [src.src(), ...resolve.rootDependencies],
 
 	'@super': resolve.rootDependencies[0],
 

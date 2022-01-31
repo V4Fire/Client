@@ -12,18 +12,18 @@
  */
 
 //#if demo
-import '@src/models/demo/nested-list';
+import '/models/demo/nested-list';
 //#endif
 
-import symbolGenerator from '@src/core/symbol';
+import symbolGenerator from '/core/symbol';
 
-import iItems, { IterationKey } from '@src/traits/i-items/i-items';
+import iItems, { IterationKey } from '/traits/i-items/i-items';
 
-import iData, { component, prop, field, TaskParams, TaskI } from '@src/super/i-data/i-data';
-import type { Item, RenderFilter } from '@src/base/b-tree/interface';
+import iData, { component, prop, field, TaskParams, TaskI } from '/super/i-data/i-data';
+import type { Item, RenderFilter } from '/base/b-tree/interface';
 
-export * from '@src/super/i-data/i-data';
-export * from '@src/base/b-tree/interface';
+export * from '/super/i-data/i-data';
+export * from '/base/b-tree/interface';
 
 export const
 	$$ = symbolGenerator();

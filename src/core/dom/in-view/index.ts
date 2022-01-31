@@ -11,17 +11,17 @@
  * @packageDocumentation
  */
 
-import IntersectionObserverStrategy from '@src/core/dom/in-view/intersection';
-import InViewAdapter from '@src/core/dom/in-view/adapter';
+import IntersectionObserverStrategy from '/core/dom/in-view/intersection';
+import InViewAdapter from '/core/dom/in-view/adapter';
 
-import { getAdaptee } from '@src/core/dom/in-view/helpers';
+import { getAdaptee } from '/core/dom/in-view/helpers';
 
-import MutationObserverStrategy from '@src/core/dom/in-view/mutation';
-import type { InViewAdapteeType } from '@src/core/dom/in-view/interface';
+import MutationObserverStrategy from '/core/dom/in-view/mutation';
+import type { InViewAdapteeType } from '/core/dom/in-view/interface';
 
-export { default as InViewAdapter } from '@src/core/dom/in-view/adapter';
-export * from '@src/core/dom/in-view/interface';
-export * from '@src/core/dom/in-view/helpers';
+export { default as InViewAdapter } from '/core/dom/in-view/adapter';
+export * from '/core/dom/in-view/interface';
+export * from '/core/dom/in-view/helpers';
 
 export const Adaptee = getAdaptee([
 	IntersectionObserverStrategy,

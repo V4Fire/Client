@@ -19,19 +19,19 @@ import {
 	VNode,
 	ScopedSlot
 
-} from '@src/core/component';
+} from '/core/component';
 
-import type iBlock from '@src/super/i-block/i-block';
-import Friend from '@src/super/i-block/modules/friend';
+import type iBlock from '/super/i-block/i-block';
+import Friend from '/super/i-block/modules/friend';
 
-import Opt from '@src/super/i-block/modules/opt';
-import Field from '@src/super/i-block/modules/field';
-import Provide from '@src/super/i-block/modules/provide';
+import Opt from '/super/i-block/modules/opt';
+import Field from '/super/i-block/modules/field';
+import Provide from '/super/i-block/modules/provide';
 
-import { tplCache } from '@src/super/i-block/modules/vdom/const';
-import type { RenderFn, RenderPath, RenderContext } from '@src/super/i-block/modules/vdom/interface';
+import { tplCache } from '/super/i-block/modules/vdom/const';
+import type { RenderFn, RenderPath, RenderContext } from '/super/i-block/modules/vdom/interface';
 
-export * from '@src/super/i-block/modules/vdom/interface';
+export * from '/super/i-block/modules/vdom/interface';
 
 /**
  * Class provides API to work with a VDOM tree

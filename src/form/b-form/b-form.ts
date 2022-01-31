@@ -12,22 +12,22 @@
  */
 
 //#if demo
-import '@src/models/demo/form';
+import '/models/demo/form';
 //#endif
 
-import symbolGenerator from '@src/core/symbol';
+import symbolGenerator from '/core/symbol';
 
-import { Option } from '@src/core/prelude/structures';
-import { deprecated } from '@src/core/functools/deprecation';
+import { Option } from '/core/prelude/structures';
+import { deprecated } from '/core/functools/deprecation';
 
 //#if runtime has core/data
-import '@src/core/data';
+import '/core/data';
 //#endif
 
-import iVisible from '@src/traits/i-visible/i-visible';
-import iInput, { FormValue } from '@src/super/i-input/i-input';
+import iVisible from '/traits/i-visible/i-visible';
+import iInput, { FormValue } from '/super/i-input/i-input';
 
-import type bButton from '@src/form/b-button/b-button';
+import type bButton from '/form/b-button/b-button';
 
 import iData, {
 
@@ -42,13 +42,13 @@ import iData, {
 
 	ModsDecl
 
-} from '@src/super/i-data/i-data';
+} from '/super/i-data/i-data';
 
-import ValidationError from '@src/form/b-form/modules/error';
-import type { ActionFn, ValidateOptions } from '@src/form/b-form/interface';
+import ValidationError from '/form/b-form/modules/error';
+import type { ActionFn, ValidateOptions } from '/form/b-form/interface';
 
-export * from '@src/super/i-data/i-data';
-export * from '@src/form/b-form/interface';
+export * from '/super/i-data/i-data';
+export * from '/form/b-form/interface';
 
 export { ValidationError };
 

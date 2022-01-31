@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '@src/core/symbol';
+import symbolGenerator from '/core/symbol';
 
 import {
 
@@ -29,10 +29,10 @@ import {
 	SHADOW_MAIN,
 	ID
 
-} from '@src/core/dom/image';
+} from '/core/dom/image';
 
-import Factory from '@src/core/dom/image/factory';
-import Lifecycle from '@src/core/dom/image/lifecycle';
+import Factory from '/core/dom/image/factory';
+import Lifecycle from '/core/dom/image/lifecycle';
 
 export const
 	$$ = symbolGenerator();

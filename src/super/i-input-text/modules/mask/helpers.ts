@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { $$ } from '@src/super/i-input-text/const';
+import { $$ } from '/super/i-input-text/const';
 
-import type iInputText from '@src/super/i-input-text/i-input-text';
-import type { CompiledMask } from '@src/super/i-input-text/interface';
+import type iInputText from '/super/i-input-text/i-input-text';
+import type { CompiledMask } from '/super/i-input-text/interface';
 
 /**
  * Takes the specified text, and:

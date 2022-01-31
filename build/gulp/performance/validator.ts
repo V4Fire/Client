@@ -8,7 +8,7 @@
 
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 
-import BaseError from '@src/core/error';
+import BaseError from '/core/error';
 
 import { Metrics } from '@build/gulp/performance/metrics';
 

@@ -9,7 +9,7 @@
  */
 
 const
-	{webpack} = require('config'),
+	{webpack} = require('@config/config'),
 	{cacheDir} = include('build/helpers');
 
 /**

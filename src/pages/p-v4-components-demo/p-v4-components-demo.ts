@@ -12,12 +12,12 @@
  */
 
 //#if demo
-import '@src/models/demo/session';
+import '/models/demo/session';
 //#endif
 
-import iStaticPage, { component, system, field } from '@src/super/i-static-page/i-static-page';
+import iStaticPage, { component, system, field } from '/super/i-static-page/i-static-page';
 
-export * from '@src/super/i-static-page/i-static-page';
+export * from '/super/i-static-page/i-static-page';
 
 console.time('Initializing');
 

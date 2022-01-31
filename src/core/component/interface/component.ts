@@ -13,10 +13,10 @@ eslint-disable
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { LogMessageOptions } from '@src/core/log';
+import type { LogMessageOptions } from '/core/log';
 
-import type Async from '@src/core/async';
-import type { BoundFn, ProxyCb } from '@src/core/async';
+import type Async from '/core/async';
+import type { BoundFn, ProxyCb } from '/core/async';
 
 import type {
 
@@ -29,7 +29,7 @@ import type {
 	ScopedSlot,
 	CreateElement
 
-} from '@src/core/component/engines';
+} from '/core/component/engines';
 
 import type {
 
@@ -43,7 +43,7 @@ import type {
 
 	RenderEngine
 
-} from '@src/core/component/interface';
+} from '/core/component/interface';
 
 /**
  * Component render function

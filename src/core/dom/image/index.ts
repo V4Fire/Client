@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import ImageLoader from '@src/core/dom/image/loader';
+import ImageLoader from '/core/dom/image/loader';
 
-import { defaultParams } from '@src/core/dom/image/const';
-import type { DefaultParams } from '@src/core/dom/image/interface';
+import { defaultParams } from '/core/dom/image/const';
+import type { DefaultParams } from '/core/dom/image/interface';
 
-export * from '@src/core/dom/image/const';
-export * from '@src/core/dom/image/interface';
+export * from '/core/dom/image/const';
+export * from '/core/dom/image/interface';
 
 /**
  * Creates an image module

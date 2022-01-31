@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Demo, { provider, Mocks } from '@src/models/demo';
+import Demo, { provider, Mocks } from '/models/demo';
 
 @provider('demo')
 export class Select extends Demo {
 	override baseURL: string = '/input';
-	override mocks: Mocks = import('@src/models/demo/select/mocks');
+	override mocks: Mocks = import('/models/demo/select/mocks');
 }
 
 @provider('demo')

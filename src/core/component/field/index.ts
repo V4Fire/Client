@@ -11,11 +11,11 @@
  * @packageDocumentation
  */
 
-import { defProp } from '@src/core/const/props';
-import { fieldQueue } from '@src/core/component/field/const';
-import type { ComponentInterface, ComponentField } from '@src/core/component/interface';
+import { defProp } from '/core/const/props';
+import { fieldQueue } from '/core/component/field/const';
+import type { ComponentInterface, ComponentField } from '/core/component/interface';
 
-export * from '@src/core/component/field/const';
+export * from '/core/component/field/const';
 
 /**
  * Initializes the specified fields to a component instance.

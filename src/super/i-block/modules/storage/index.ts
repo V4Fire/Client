@@ -12,11 +12,11 @@
  */
 
 //#if runtime has core/kv-storage
-import { asyncLocal, factory, AsyncStorageNamespace } from '@src/core/kv-storage';
+import { asyncLocal, factory, AsyncStorageNamespace } from '/core/kv-storage';
 //#endif
 
-import type iBlock from '@src/super/i-block/i-block';
-import Friend from '@src/super/i-block/modules/friend';
+import type iBlock from '/super/i-block/i-block';
+import Friend from '/super/i-block/modules/friend';
 
 /**
  * Class to work with a local storage
