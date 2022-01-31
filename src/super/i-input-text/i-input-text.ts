@@ -69,6 +69,20 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly autocomplete: string = 'off';
 
 	/**
+	 * `inputmode` attribute of the input
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode
+	 */
+	@prop(String)
+	readonly inputmode: string = 'text';
+
+	/**
+	 * `pattern` attribute of the input
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/pattern
+	 */
+	@prop(String)
+	readonly pattern: string = '';
+
+	/**
 	 * Placeholder text of the input
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefplaceholder
 	 */
@@ -363,6 +377,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 			placeholder: this.placeholder,
 			autocomplete: this.autocomplete,
+			inputmode: this.inputmode,
+			pattern: this.pattern,
 			readonly: Object.parse(this.mods.readonly),
 
 			minlength: this.minLength,
