@@ -6,60 +6,57 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue from 'core/component/engines/vue3/lib';
 import log from 'core/log';
 
-console.log(Vue);
+import type { ComponentPublicInstance } from 'vue';
+import Vue from 'core/component/engines/vue3/lib';
 
 import type { ComponentInterface } from 'core/component/interface';
 
 const
 	logger = log.namespace('vue');
 
-/*
 Vue.config.errorHandler = (err, vm, info) => {
-	logger.error('errorHandler', err, info, getComponentInfo(vm));
+	logger.error('errorHandler', err, info, getComponentInfoLog(vm));
 };
 
 Vue.config.warnHandler = (msg, vm, trace) => {
-	logger.warn('warnHandler', msg, trace, getComponentInfo(vm));
+	logger.warn('warnHandler', msg, trace, getComponentInfoLog(vm));
 };
-*/
 
 const
 	UNRECOGNIZED_COMPONENT_NAME = 'unrecognized-component',
 	ROOT_COMPONENT_NAME = 'root-component';
 
 /**
- * Returns component info to log
+ * Returns information of the specified component to log
  * @param component
  */
-function getComponentInfo(component: Vue | ComponentInterface): Dictionary {
-	try {
-		if ('componentName' in component) {
-			return {
-				name: getComponentName(component),
-				hook: component.hook,
-				status: component.unsafe.componentStatus
-			};
-		}
-
-		return {
-			name: getComponentName(component)
-		};
-
-	} catch {
+function getComponentInfoLog(component: Nullable<ComponentPublicInstance | ComponentInterface>): Dictionary {
+	if (component == null) {
 		return {
 			name: UNRECOGNIZED_COMPONENT_NAME
 		};
 	}
+
+	if ('componentName' in component) {
+		return {
+			name: getComponentName(component),
+			hook: component.hook,
+			status: component.unsafe.componentStatus
+		};
+	}
+
+	return {
+		name: getComponentName(component)
+	};
 }
 
 /**
  * Returns a name of the specified component
  * @param component
  */
-function getComponentName(component: Vue | ComponentInterface): string {
+function getComponentName(component: ComponentPublicInstance | ComponentInterface): string {
 	if ('componentName' in component) {
 		return component.componentName;
 	}
