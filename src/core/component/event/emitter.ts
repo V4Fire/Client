@@ -13,7 +13,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
  * Event emitter to broadcast external events to components
  */
 const emitter = new EventEmitter({
-	maxListeners: 1e6,
+	maxListeners: 1e3,
 	newListener: false,
 	wildcard: true
 });
