@@ -6,42 +6,73 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { EventEmitter2 as EventEmitter, ListenerFn } from 'eventemitter2';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import type { UnsafeComponentInterface } from 'core/component/interface';
 
 /**
  * Implements the base event API to a component instance
- * @param component
+ * @param obj
  */
-export function implementEventAPI(component: object): void {
+export function implementEventAPI(obj: object): void {
+	/* eslint-disable @typescript-eslint/typedef */
+
+	const
+		component = Object.cast<UnsafeComponentInterface>(obj);
+
 	const $e = new EventEmitter({
-		maxListeners: 1e6,
+		maxListeners: 1e3,
 		newListener: false,
 		wildcard: true
 	});
 
-	// @ts-ignore (access)
-	component.$emit = $e.emit.bind($e);
+	const
+		nativeEmit = Object.cast<CanUndef<typeof component.$emit>>(component.$emit);
 
-	// @ts-ignore (access)
-	component.$once = $e.once.bind($e);
+	Object.defineProperty(component, '$emit', {
+		configurable: true,
+		enumerable: false,
+		writable: false,
 
-	// @ts-ignore (access)
-	component.$on = function $on(e: CanArray<string>, cb: ListenerFn): void {
-		const
-			events = Array.concat([], e);
-
-		for (let i = 0; i < events.length; i++) {
-			$e.on(events[i], cb);
+		value(event, ...args) {
+			nativeEmit?.(event, ...args);
+			$e.emit(event, ...args);
+			return this;
 		}
-	};
+	});
 
-	// @ts-ignore (access)
-	component.$off = function $off(e: CanArray<string>, cb: ListenerFn): void {
-		const
-			events = Array.concat([], e);
+	Object.defineProperty(component, '$on', {
+		configurable: true,
+		enumerable: false,
+		writable: false,
+		value: getMethod('on')
+	});
 
-		for (let i = 0; i < events.length; i++) {
-			$e.off(events[i], cb);
-		}
-	};
+	Object.defineProperty(component, '$once', {
+		configurable: true,
+		enumerable: false,
+		writable: false,
+		value: getMethod('once')
+	});
+
+	Object.defineProperty(component, '$off', {
+		configurable: true,
+		enumerable: false,
+		writable: false,
+		value: getMethod('off')
+	});
+
+	function getMethod(method: 'on' | 'once' | 'off') {
+		return function wrapper(this: unknown, e, cb) {
+			const
+				events = Array.concat([], e);
+
+			for (let i = 0; i < events.length; i++) {
+				$e[method](events[i], Object.cast(cb));
+			}
+
+			return this;
+		};
+	}
+
+	/* eslint-enable @typescript-eslint/typedef */
 }
