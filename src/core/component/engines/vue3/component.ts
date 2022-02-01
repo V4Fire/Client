@@ -30,17 +30,11 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 		{component} = fillMeta(meta);
 
 	const
-		p = meta.params,
-		m = p.model;
+		p = meta.params;
 
 	return {
-		...<any>(component),
+		...Object.cast(component),
 		inheritAttrs: p.inheritAttrs,
-
-		model: m && {
-			prop: m.prop,
-			event: m.event?.dasherize() ?? ''
-		},
 
 		data(): Dictionary {
 			const
@@ -53,7 +47,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 			ctx.$vueSet = $set;
 			ctx.$vueDelete = $delete;
 
-			init.beforeDataCreateState(ctx);
+			init.beforeDataCreateState(this);
 
 			const emitter = (_, handler) => {
 				// eslint-disable-next-line @typescript-eslint/unbound-method
@@ -134,7 +128,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 				renderVNode
 			};
 
-			init.beforeCreateState(ctx, meta);
+			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 			implementComponentForceUpdateAPI(ctx, this.$forceUpdate.bind(this));
 		},
 
@@ -166,11 +160,11 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 			init.deactivatedState(this);
 		},
 
-		beforeDestroy(this: any): void {
+		beforeUnmount(this: any): void {
 			init.beforeDestroyState(this);
 		},
 
-		destroyed(this: any): void {
+		unmounted(this: any): void {
 			init.destroyedState(this);
 		},
 

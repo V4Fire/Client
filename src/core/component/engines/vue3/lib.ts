@@ -7,9 +7,15 @@
  */
 
 import makeLazy from 'core/lazy';
-import { createApp } from 'vue';
+import { createApp, Component } from 'vue';
 
-const Vue = makeLazy(createApp, {
+const App = <typeof createApp>function App(component: Component & {el: Element}, rootProps: Nullable<Dictionary>) {
+	const app = createApp(component, rootProps);
+	app.mount(component.el);
+	return app;
+};
+
+const Vue = makeLazy(App, {
 	use: Function,
 
 	component: Function,

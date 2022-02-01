@@ -26,8 +26,6 @@ export default createsAsyncSemaphore(async () => {
 		throw new ReferenceError('The root component is not found');
 	}
 
-	return;
-
 	const
 		getData = component.data,
 		params = JSON.parse(node.getAttribute('data-root-component-params') ?? '{}');
