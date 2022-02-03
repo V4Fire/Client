@@ -707,6 +707,10 @@ export default abstract class iData extends iBlock implements iProgress {
 				for (let i = 0; i < converters.length; i++) {
 					val = converters[i].call(this, val, this);
 				}
+
+				if (!Object.isFrozen(val) && Object.isDictionary(val) && Object.values(val).some(Object.isFrozen)) {
+					Object.freeze(val);
+				}
 			}
 		}
 
