@@ -15,7 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Changed a script to patch the Webpack stats' file for Statoscope `build/webpack`
+* Fixed an issue with the `test:component:build` command did not wait for completion of the project build operation `build/gulp/test`
+* Changed a script to patch the Webpack stats' file for Statoscope `build/helpers/webpack`
 
 ## v3.15.4 (2021-01-24)
 
