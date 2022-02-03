@@ -167,7 +167,9 @@ function createUnifiedJSONStats(statsA, statsB) {
 	const hashA = getTmpHashFromStats(statsA);
 	const hashB = getTmpHashFromStats(statsB);
 
-	statsB = JSON.parse(JSON.stringify(statsB).replace(new RegExp(hashB, 'g'), hashA));
+	statsB = JSON.parse(
+		JSON.stringify(statsB).replace(new RegExp(hashB, 'g'), hashA)
+	);
 
 	statsA.modules.forEach((module) => {
 		nameToIdentifier[module.name] = module.identifier;
@@ -213,7 +215,6 @@ function createUnifiedJSONStats(statsA, statsB) {
 	});
 
 	statsB.name = statsA.name;
-
 	return JSON.stringify(statsB);
 }
 
