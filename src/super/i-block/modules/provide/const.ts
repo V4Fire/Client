@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Cache from '/super/i-block/modules/cache';
+import Cache from 'super/i-block/modules/cache';
 
-import type { ModsNTable } from '/super/i-block/modules/mods';
-import type { ClassesCacheNms, ClassesCacheValue } from '/super/i-block/modules/provide/interface';
+import type { ModsNTable } from 'super/i-block/modules/mods';
+import type { ClassesCacheNms, ClassesCacheValue } from 'super/i-block/modules/provide/interface';
 
 export const
 	modsCache = Object.createDict<ModsNTable>();

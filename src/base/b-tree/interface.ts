@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type bTree from '/base/b-tree/b-tree';
-import type { TaskI } from '/base/b-tree/b-tree';
+import type bTree from 'base/b-tree/b-tree';
+import type { TaskI } from 'base/b-tree/b-tree';
 
 /**
  * Tree element data

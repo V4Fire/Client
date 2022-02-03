@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '/core/symbol';
-import Async from '/core/async';
+import symbolGenerator from 'core/symbol';
+import Async from 'core/async';
 
 import type {
 
@@ -22,7 +22,7 @@ import type {
 	InViewUnobserveOptions,
 	InViewObservablesByGroup
 
-} from '/core/dom/in-view/interface';
+} from 'core/dom/in-view/interface';
 
 export const
 	$$ = symbolGenerator();

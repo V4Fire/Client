@@ -11,26 +11,26 @@
  * @packageDocumentation
  */
 
-import { deprecate } from '/core/functools/deprecation';
-import Async from '/core/async';
+import { deprecate } from 'core/functools/deprecation';
+import Async from 'core/async';
 
-import { components } from '/core/component/const';
-import type { CreateElement, VNode } from '/core/component/engines';
+import { components } from 'core/component/const';
+import type { CreateElement, VNode } from 'core/component/engines';
 
-import { forkMeta } from '/core/component/meta';
-import { initProps } from '/core/component/prop';
-import { initFields } from '/core/component/field';
-import { destroyComponent, FlyweightVNode } from '/core/component/functional';
+import { forkMeta } from 'core/component/meta';
+import { initProps } from 'core/component/prop';
+import { initFields } from 'core/component/field';
+import { destroyComponent, FlyweightVNode } from 'core/component/functional';
 
-import { attachMethodsFromMeta } from '/core/component/method';
-import { implementEventAPI } from '/core/component/event';
-import { attachAccessorsFromMeta } from '/core/component/accessor';
+import { attachMethodsFromMeta } from 'core/component/method';
+import { implementEventAPI } from 'core/component/event';
+import { attachAccessorsFromMeta } from 'core/component/accessor';
 
-import { getNormalParent } from '/core/component/traverse';
-import { getComponentDataFromVNode } from '/core/component/vnode';
-import { execRenderObject } from '/core/component/render';
+import { getNormalParent } from 'core/component/traverse';
+import { getComponentDataFromVNode } from 'core/component/vnode';
+import { execRenderObject } from 'core/component/render';
 
-import type { ComponentInterface } from '/core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Takes a vnode and, if it has the composite attribute, returns a new vnode that contains a flyweight component,

@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentEngine, VNode } from '/core/component/engines';
+import { ComponentEngine, VNode } from 'core/component/engines';
 
-import engine from '/core/component/directives/update-on/engines';
-import type { DirectiveOptions, DirectiveValue } from '/core/component/directives/update-on/interface';
+import engine from 'core/component/directives/update-on/engines';
+import type { DirectiveOptions, DirectiveValue } from 'core/component/directives/update-on/interface';
 
-export * from '/core/component/directives/update-on/const';
-export * from '/core/component/directives/update-on/interface';
+export * from 'core/component/directives/update-on/const';
+export * from 'core/component/directives/update-on/interface';
 
 /**
  * Directive to manually update an element by using special events

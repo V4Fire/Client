@@ -8,7 +8,7 @@
 
 import type { Page, JSHandle } from 'playwright';
 
-import type GesturesInterface from '/core/prelude/test-env/gestures';
+import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 /**
  * Class provides API to work with touch gestures

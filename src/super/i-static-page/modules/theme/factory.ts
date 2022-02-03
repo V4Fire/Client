@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from '/super/i-block/i-block';
-import ThemeManager from '/super/i-static-page/modules/theme/theme-manager';
+import type iBlock from 'super/i-block/i-block';
+import ThemeManager from 'super/i-static-page/modules/theme/theme-manager';
 
 /**
  * Returns a class instance to manage interface themes if that functionality is available

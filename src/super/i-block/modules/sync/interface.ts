@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AsyncOptions } from '/core/async';
-import type { WatchOptions, WatchPath } from '/core/component';
+import type { AsyncOptions } from 'core/async';
+import type { WatchOptions, WatchPath } from 'core/component';
 
-import type iBlock from '/super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 
 export type AsyncWatchOptions =
 	WatchOptions & AsyncOptions;

@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Group, Label, Join } from '/core/async';
-import type { Hook, WatchOptions } from '/core/component';
+import type { Group, Label, Join } from 'core/async';
+import type { Hook, WatchOptions } from 'core/component';
 
-import type iBlock from '/super/i-block';
-import type { ComponentStatus } from '/super/i-block/interface';
+import type iBlock from 'super/i-block';
+import type { ComponentStatus } from 'super/i-block/interface';
 
 export interface DaemonsAsyncOptions {
 	group?: Group;

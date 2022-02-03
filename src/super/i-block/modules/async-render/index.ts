@@ -11,20 +11,20 @@
  * @packageDocumentation
  */
 
-import Range from '/core/range';
-import SyncPromise from '/core/promise/sync';
+import Range from 'core/range';
+import SyncPromise from 'core/promise/sync';
 
 //#if runtime has component/async-render
-import { queue, restart, deferRestart } from '/core/render';
+import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
-import type iBlock from '/super/i-block/i-block';
-import type { ComponentElement } from '/super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
+import type { ComponentElement } from 'super/i-block/i-block';
 
-import Friend from '/super/i-block/modules/friend';
-import type { TaskParams, TaskDesc } from '/super/i-block/modules/async-render/interface';
+import Friend from 'super/i-block/modules/friend';
+import type { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
 
-export * from '/super/i-block/modules/async-render/interface';
+export * from 'super/i-block/modules/async-render/interface';
 
 /**
  * Class provides API to render chunks of a component template asynchronously

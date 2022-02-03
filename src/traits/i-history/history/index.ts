@@ -6,19 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '/core/symbol';
+import symbolGenerator from 'core/symbol';
 
-import type { ModsDecl, ComponentHooks } from '/core/component';
-import { InView } from '/core/dom/in-view';
+import type { ModsDecl, ComponentHooks } from 'core/component';
+import { InView } from 'core/dom/in-view';
 
-import iBlock, { Friend } from '/super/i-block/i-block';
-import type iHistory from '/traits/i-history/i-history';
+import iBlock, { Friend } from 'super/i-block/i-block';
+import type iHistory from 'traits/i-history/i-history';
 
-import { INITIAL_STAGE } from '/traits/i-history/history/const';
-import type { Page, HistoryItem, HistoryConfig, Transition } from '/traits/i-history/history/interface';
+import { INITIAL_STAGE } from 'traits/i-history/history/const';
+import type { Page, HistoryItem, HistoryConfig, Transition } from 'traits/i-history/history/interface';
 
-export * from '/traits/i-history/history/const';
-export * from '/traits/i-history/history/interface';
+export * from 'traits/i-history/history/const';
+export * from 'traits/i-history/history/interface';
 
 export const
 	$$ = symbolGenerator();

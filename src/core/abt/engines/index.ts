@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ExperimentsSet } from '/core/abt/interface';
+import type { ExperimentsSet } from 'core/abt/interface';
 
 /**
  * Provides a set of abt options

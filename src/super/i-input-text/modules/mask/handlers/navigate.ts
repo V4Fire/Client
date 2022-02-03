@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from '/core/symbol';
+import symbolGenerator from 'core/symbol';
 
-import type iInputText from '/super/i-input-text/i-input-text';
-import { convertCursorPositionToRaw, getNormalizedSelectionBounds } from '/super/i-input-text/modules/mask/helpers';
+import type iInputText from 'super/i-input-text/i-input-text';
+import { convertCursorPositionToRaw, getNormalizedSelectionBounds } from 'super/i-input-text/modules/mask/helpers';
 
 export const
 	$$ = symbolGenerator();

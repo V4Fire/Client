@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ModVal, ModsDecl } from '/core/component';
+import type { ModVal, ModsDecl } from 'core/component';
 
 /**
  * Raw modifiers

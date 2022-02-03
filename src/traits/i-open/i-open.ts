@@ -13,13 +13,13 @@
  * @packageDocumentation
  */
 
-import SyncPromise from '/core/promise/sync';
+import SyncPromise from 'core/promise/sync';
 
-import type iBlock from '/super/i-block/i-block';
-import type { ModsDecl, ModEvent, SetModEvent } from '/super/i-block/i-block';
-import type { CloseHelperEvents } from '/traits/i-open/interface';
+import type iBlock from 'super/i-block/i-block';
+import type { ModsDecl, ModEvent, SetModEvent } from 'super/i-block/i-block';
+import type { CloseHelperEvents } from 'traits/i-open/interface';
 
-export * from '/traits/i-open/interface';
+export * from 'traits/i-open/interface';
 
 export default abstract class iOpen {
 	/**

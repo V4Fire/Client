@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Demo, { provider, Mocks } from '/models/demo';
+import Demo, { provider, Mocks } from 'models/demo';
 
 @provider('demo')
 export class Form extends Demo {

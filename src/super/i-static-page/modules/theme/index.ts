@@ -11,5 +11,5 @@
  * @packageDocumentation
  */
 
-export { default } from '/super/i-static-page/modules/theme/factory';
-export { default as ThemeManager } from '/super/i-static-page/modules/theme/theme-manager';
+export { default } from 'super/i-static-page/modules/theme/factory';
+export { default as ThemeManager } from 'super/i-static-page/modules/theme/theme-manager';

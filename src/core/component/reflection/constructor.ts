@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { componentParams, components } from '/core/component/const';
-import { dsComponentsMods } from '/core/component/reflection/const';
-import { isAbstractComponent, isSmartComponent } from '/core/component/reflection/types';
+import { componentParams, components } from 'core/component/const';
+import { dsComponentsMods } from 'core/component/reflection/const';
+import { isAbstractComponent, isSmartComponent } from 'core/component/reflection/types';
 
-import type { ComponentOptions, ComponentMeta, ComponentConstructor, ModsDecl } from '/core/component/interface';
-import type { ComponentConstructorInfo } from '/core/component/reflection/interface';
+import type { ComponentOptions, ComponentMeta, ComponentConstructor, ModsDecl } from 'core/component/interface';
+import type { ComponentConstructorInfo } from 'core/component/reflection/interface';
 
 /**
  * Returns a component name by the specified constructor.

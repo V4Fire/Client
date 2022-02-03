@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { MemoizedLiteral } from '/super/i-block/modules/opt/interface';
+import type { MemoizedLiteral } from 'super/i-block/modules/opt/interface';
 
 export const
 	literalCache = Object.createDict<MemoizedLiteral>();

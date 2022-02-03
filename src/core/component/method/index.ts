@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentInterface } from '/core/component';
+import type { ComponentInterface } from 'core/component';
 
 /**
  * [[include:core/component/method/README.md]]

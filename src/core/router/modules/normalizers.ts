@@ -20,7 +20,7 @@ import {
 	TransitionOptions,
 	RouteParamsFilter
 
-} from '/core/router';
+} from 'core/router';
 
 /**
  * Normalizes the specified transitions options and returns a new object

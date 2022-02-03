@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentMeta } from '/core/component/interface';
+import type { ComponentMeta } from 'core/component/interface';
 
 /**
  * Creates a new meta object from the specified

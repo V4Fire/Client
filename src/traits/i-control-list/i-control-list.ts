@@ -8,10 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from '/super/i-block/i-block';
-import type { Control, ControlEvent } from '/traits/i-control-list/interface';
+import type iBlock from 'super/i-block/i-block';
+import type { Control, ControlEvent } from 'traits/i-control-list/interface';
 
-export * from '/traits/i-control-list/interface';
+export * from 'traits/i-control-list/interface';
 
 export default abstract class iControlList {
 	/**

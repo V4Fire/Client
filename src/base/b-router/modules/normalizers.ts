@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type bRouter from '/base/b-router/b-router';
-import type { AppliedRoute } from '/base/b-router/interface';
+import type bRouter from 'base/b-router/b-router';
+import type { AppliedRoute } from 'base/b-router/interface';
 
 /**
  * Fills route parameters with the default values and other stuff

@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import session from '/core/session/engines';
+import session from 'core/session/engines';
 
-import { emitter } from '/core/session/const';
-import type { Session, SessionKey, SessionParams } from '/core/session/interface';
+import { emitter } from 'core/session/const';
+import type { Session, SessionKey, SessionParams } from 'core/session/interface';
 
-export * from '/core/session/const';
-export * from '/core/session/interface';
+export * from 'core/session/const';
+export * from 'core/session/interface';
 
 /**
  * Returns true if a session is already exists

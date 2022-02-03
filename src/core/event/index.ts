@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import SyncPromise from '/core/promise/sync';
-import { deprecate } from '/core/functools/deprecation';
+import SyncPromise from 'core/promise/sync';
+import { deprecate } from 'core/functools/deprecation';
 
 export * from '@v4fire/core/core/event';
 

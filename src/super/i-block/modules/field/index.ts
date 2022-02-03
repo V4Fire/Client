@@ -11,15 +11,15 @@
  * @packageDocumentation
  */
 
-import { unwrap } from '/core/object/watch';
-import { getPropertyInfo } from '/core/component';
+import { unwrap } from 'core/object/watch';
+import { getPropertyInfo } from 'core/component';
 
-import iBlock from '/super/i-block/i-block';
-import Friend from '/super/i-block/modules/friend';
+import iBlock from 'super/i-block/i-block';
+import Friend from 'super/i-block/modules/friend';
 
-import type { KeyGetter, ValueGetter } from '/super/i-block/modules/field/interface';
+import type { KeyGetter, ValueGetter } from 'super/i-block/modules/field/interface';
 
-export * from '/super/i-block/modules/field/interface';
+export * from 'super/i-block/modules/field/interface';
 
 /**
  * Class provides helper methods to safety access to a component property

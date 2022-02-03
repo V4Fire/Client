@@ -11,9 +11,9 @@
  * @packageDocumentation
  */
 
-import iData, { component, hook, field } from '/super/i-data/i-data';
+import iData, { component, hook, field } from 'super/i-data/i-data';
 
-export * from '/super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 @component({
 	functional: {

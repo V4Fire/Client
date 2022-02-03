@@ -15,10 +15,10 @@
 import '/models/demo/list';
 //#endif
 
-import symbolGenerator from '/core/symbol';
-import iData, { component, prop, RequestError, RetryRequestFn } from '/super/i-data/i-data';
+import symbolGenerator from 'core/symbol';
+import iData, { component, prop, RequestError, RetryRequestFn } from 'super/i-data/i-data';
 
-export * from '/super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();

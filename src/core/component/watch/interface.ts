@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type Async from '/core/async';
-import type { ComponentInterface, PropertyInfo, WatchObject } from '/core/component/interface';
+import type Async from 'core/async';
+import type { ComponentInterface, PropertyInfo, WatchObject } from 'core/component/interface';
 
 export type DynamicHandlers = WeakMap<
 	ComponentInterface,

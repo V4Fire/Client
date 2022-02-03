@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { UnsafeIInput } from '/super/i-input/i-input';
-import type iInputText from '/super/i-input-text/i-input-text';
+import type { UnsafeIInput } from 'super/i-input/i-input';
+import type iInputText from 'super/i-input-text/i-input-text';
 
-export * from '/super/i-input-text/modules/mask/interface';
+export * from 'super/i-input-text/modules/mask/interface';
 
 // @ts-ignore (extend)
 export interface UnsafeIInputText<CTX extends iInputText = iInputText> extends UnsafeIInput<CTX> {

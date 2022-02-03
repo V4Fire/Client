@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { concatURLs } from '/core/url';
-import { getSrcSet } from '/core/html';
+import { concatURLs } from 'core/url';
+import { getSrcSet } from 'core/html';
 
 import {
 
@@ -20,7 +20,7 @@ import {
 	IS_LOADED,
 	IS_LOADING
 
-} from '/core/dom/image';
+} from 'core/dom/image';
 
 /**
  * Helper class that provides API to create DOM elements

@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from '/core/async';
-import type { Task } from '/core/render/interface';
+import Async from 'core/async';
+import type { Task } from 'core/render/interface';
 
 /**
  * The maximum number of tasks per one render iteration

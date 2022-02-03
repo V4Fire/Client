@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { PARENT } from '/core/component/const';
+import type { PARENT } from 'core/component/const';
 
 export type ModVal = string | boolean | number;
 export type StrictModDeclVal = CanArray<ModVal>;

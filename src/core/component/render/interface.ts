@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { FunctionalCtx } from '/core/component/interface';
-import type { CreateElement, VNode, RenderContext as SuperRenderContext } from '/core/component/engines';
+import type { FunctionalCtx } from 'core/component/interface';
+import type { CreateElement, VNode, RenderContext as SuperRenderContext } from 'core/component/engines';
 
 export interface RenderContext extends SuperRenderContext {
 	$root?: FunctionalCtx;

@@ -11,25 +11,25 @@
  * @packageDocumentation
  */
 
-import { memoize } from '/core/promise/sync';
-import { deprecated } from '/core/functools/deprecation';
-import { wrapAsDelegateHandler } from '/core/dom';
+import { memoize } from 'core/promise/sync';
+import { deprecated } from 'core/functools/deprecation';
+import { wrapAsDelegateHandler } from 'core/dom';
 
-import type { InViewInitOptions, InViewAdapter } from '/core/dom/in-view';
-import type { ResizeWatcherInitOptions } from '/core/dom/resize-observer';
+import type { InViewInitOptions, InViewAdapter } from 'core/dom/in-view';
+import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
-import type { AsyncOptions } from '/core/async';
-import type { ComponentElement } from '/core/component';
+import type { AsyncOptions } from 'core/async';
+import type { ComponentElement } from 'core/component';
 
-import iBlock from '/super/i-block/i-block';
-import Block from '/super/i-block/modules/block';
-import Friend from '/super/i-block/modules/friend';
+import iBlock from 'super/i-block/i-block';
+import Block from 'super/i-block/modules/block';
+import Friend from 'super/i-block/modules/friend';
 
-import { componentRgxp } from '/super/i-block/modules/dom/const';
-import { ElCb, inViewInstanceStore, DOMManipulationOptions } from '/super/i-block/modules/dom/interface';
+import { componentRgxp } from 'super/i-block/modules/dom/const';
+import { ElCb, inViewInstanceStore, DOMManipulationOptions } from 'super/i-block/modules/dom/interface';
 
-export * from '/super/i-block/modules/dom/const';
-export * from '/super/i-block/modules/dom/interface';
+export * from 'super/i-block/modules/dom/const';
+export * from 'super/i-block/modules/dom/interface';
 
 /**
  * Class provides helper methods to work with a component' DOM tree

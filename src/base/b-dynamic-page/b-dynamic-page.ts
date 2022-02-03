@@ -11,15 +11,15 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '/core/symbol';
+import symbolGenerator from 'core/symbol';
 
-import addEmitter from '/core/cache/decorators/helpers/add-emitter';
-import { Cache, RestrictedCache, AbstractCache } from '/core/cache';
+import addEmitter from 'core/cache/decorators/helpers/add-emitter';
+import { Cache, RestrictedCache, AbstractCache } from 'core/cache';
 
-import SyncPromise from '/core/promise/sync';
-import type { EventEmitterLike } from '/core/async';
+import SyncPromise from 'core/promise/sync';
+import type { EventEmitterLike } from 'core/async';
 
-import iBlock from '/super/i-block/i-block';
+import iBlock from 'super/i-block/i-block';
 
 import iDynamicPage, {
 
@@ -34,7 +34,7 @@ import iDynamicPage, {
 	ComponentStatus,
 	InitLoadOptions
 
-} from '/super/i-dynamic-page/i-dynamic-page';
+} from 'super/i-dynamic-page/i-dynamic-page';
 
 import type {
 
@@ -45,10 +45,10 @@ import type {
 	KeepAliveStrategy,
 	UnsafeBDynamicPage
 
-} from '/base/b-dynamic-page/interface';
+} from 'base/b-dynamic-page/interface';
 
-export * from '/super/i-data/i-data';
-export * from '/base/b-dynamic-page/interface';
+export * from 'super/i-data/i-data';
+export * from 'base/b-dynamic-page/interface';
 
 export const
 	$$ = symbolGenerator();

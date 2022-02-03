@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import Friend from '/super/i-block/modules/friend';
+import Friend from 'super/i-block/modules/friend';
 
-import { literalCache } from '/super/i-block/modules/opt/const';
-import type { IfOnceValue } from '/super/i-block/modules/opt/interface';
+import { literalCache } from 'super/i-block/modules/opt/const';
+import type { IfOnceValue } from 'super/i-block/modules/opt/interface';
 
-export * from '/super/i-block/modules/opt/const';
-export * from '/super/i-block/modules/opt/interface';
+export * from 'super/i-block/modules/opt/const';
+export * from 'super/i-block/modules/opt/interface';
 
 /**
  * Class provides some methods to optimize an application
@@ -90,7 +90,7 @@ export default class Opt extends Friend {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component } from '/super/i-block/i-block';
+	 * import iBlock, { component } from 'super/i-block/i-block';
 	 *
 	 * @component()
 	 * export default class bExample extends iBlock {

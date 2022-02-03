@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AsyncStorageNamespace } from '/core/kv-storage';
+import type { AsyncStorageNamespace } from 'core/kv-storage';
 
 // eslint-disable-next-line import/no-mutable-exports
 let engine: Promise<AsyncStorageNamespace>;

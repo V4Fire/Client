@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from '/core/component/interface/component';
-export * from '/core/component/meta/interface';
-export * from '/core/component/reflection/interface';
-export * from '/core/component/interface/mod';
-export * from '/core/component/interface/watch';
-export * from '/core/component/interface/link';
-export * from '/core/component/interface/life-cycle';
-export * from '/core/component/interface/engine';
-export * from '/core/component/render/interface';
+export * from 'core/component/interface/component';
+export * from 'core/component/meta/interface';
+export * from 'core/component/reflection/interface';
+export * from 'core/component/interface/mod';
+export * from 'core/component/interface/watch';
+export * from 'core/component/interface/link';
+export * from 'core/component/interface/life-cycle';
+export * from 'core/component/interface/engine';
+export * from 'core/component/render/interface';

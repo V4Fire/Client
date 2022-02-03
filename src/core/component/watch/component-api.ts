@@ -15,9 +15,9 @@ import watch, {
 	watchHandlers,
 	MultipleWatchHandler
 
-} from '/core/object/watch';
+} from 'core/object/watch';
 
-import { getPropertyInfo, bindingRgxp } from '/core/component/reflection';
+import { getPropertyInfo, bindingRgxp } from 'core/component/reflection';
 
 import {
 
@@ -30,13 +30,13 @@ import {
 	watcherInitializer,
 	toComponentObject
 
-} from '/core/component/watch/const';
+} from 'core/component/watch/const';
 
-import { createWatchFn } from '/core/component/watch/create';
-import { attachDynamicWatcher } from '/core/component/watch/helpers';
+import { createWatchFn } from 'core/component/watch/create';
+import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
-import type { ComponentInterface, RawWatchHandler } from '/core/component/interface';
-import type { ImplementComponentWatchAPIOptions } from '/core/component/watch/interface';
+import type { ComponentInterface, RawWatchHandler } from 'core/component/interface';
+import type { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
 
 /**
  * Implements the base component watch API to a component instance

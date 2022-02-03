@@ -13,10 +13,10 @@
  * @packageDocumentation
  */
 
-import SyncPromise from '/core/promise/sync';
+import SyncPromise from 'core/promise/sync';
 
-import type iBlock from '/super/i-block/i-block';
-import type { ModsDecl, ModEvent } from '/super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
+import type { ModsDecl, ModEvent } from 'super/i-block/i-block';
 
 export default abstract class iAccess {
 	/**

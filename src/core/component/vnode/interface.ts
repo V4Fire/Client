@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNode, VNodeDirective, NormalizedScopedSlot } from '/core/component/engines';
+import type { VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
 
 export interface ComponentVNodeData {
 	ref?: string;

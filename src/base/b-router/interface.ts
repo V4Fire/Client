@@ -12,9 +12,9 @@ import type {
 	AppliedRoute as EngineAppliedRoute,
 	RouteAPI
 
-} from '/core/router';
+} from 'core/router';
 
-import type bRouter from '/base/b-router/b-router';
+import type bRouter from 'base/b-router/b-router';
 
 export { EngineRoute };
 
@@ -29,7 +29,7 @@ export {
 	TransitionParams,
 	HistoryClearFilter
 
-} from '/core/router/interface';
+} from 'core/router/interface';
 
 export type AppliedRoute = EngineAppliedRoute<
 	bRouter['PageParams'],

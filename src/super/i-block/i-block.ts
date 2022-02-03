@@ -13,14 +13,14 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '/core/symbol';
-import SyncPromise from '/core/promise/sync';
+import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
 
-import log, { LogMessageOptions } from '/core/log';
-import { deprecated } from '/core/functools/deprecation';
+import log, { LogMessageOptions } from 'core/log';
+import { deprecated } from 'core/functools/deprecation';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import config from '/config';
+import config from 'config';
 
 import Async, {
 
@@ -33,20 +33,20 @@ import Async, {
 	BoundFn,
 	EventId
 
-} from '/core/async';
+} from 'core/async';
 
 //#if runtime has core/helpers
-import * as helpers from '/core/helpers';
+import * as helpers from 'core/helpers';
 //#endif
 
 //#if runtime has core/browser
-import * as browser from '/core/browser';
+import * as browser from 'core/browser';
 //#endif
 
-import * as presets from '/presets';
+import * as presets from 'presets';
 
-import type bRouter from '/base/b-router/b-router';
-import type iStaticPage from '/super/i-static-page/i-static-page';
+import type bRouter from 'base/b-router/b-router';
+import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import {
 
@@ -69,34 +69,34 @@ import {
 
 	VNode
 
-} from '/core/component';
+} from 'core/component';
 
-import remoteState from '/core/component/state';
-import * as init from '/core/component/construct';
+import remoteState from 'core/component/state';
+import * as init from 'core/component/construct';
 
 import 'super/i-block/directives';
-import { statuses } from '/super/i-block/const';
+import { statuses } from 'super/i-block/const';
 
-import Cache from '/super/i-block/modules/cache';
-import Opt from '/super/i-block/modules/opt';
+import Cache from 'super/i-block/modules/cache';
+import Opt from 'super/i-block/modules/opt';
 
-import Daemons, { DaemonsDict } from '/super/i-block/modules/daemons';
-import Analytics from '/super/i-block/modules/analytics';
+import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+import Analytics from 'super/i-block/modules/analytics';
 
-import DOM from '/super/i-block/modules/dom';
-import VDOM from '/super/i-block/modules/vdom';
+import DOM from 'super/i-block/modules/dom';
+import VDOM from 'super/i-block/modules/vdom';
 
-import Lfc from '/super/i-block/modules/lfc';
-import AsyncRender from '/super/i-block/modules/async-render';
-import Sync, { AsyncWatchOptions } from '/super/i-block/modules/sync';
+import Lfc from 'super/i-block/modules/lfc';
+import AsyncRender from 'super/i-block/modules/async-render';
+import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
 
-import Block from '/super/i-block/modules/block';
-import Field from '/super/i-block/modules/field';
+import Block from 'super/i-block/modules/block';
+import Field from 'super/i-block/modules/field';
 
-import Provide, { classesCache, Classes, Styles } from '/super/i-block/modules/provide';
-import State, { ConverterCallType } from '/super/i-block/modules/state';
-import Storage from '/super/i-block/modules/storage';
-import ModuleLoader, { Module } from '/super/i-block/modules/module-loader';
+import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
+import State, { ConverterCallType } from 'super/i-block/modules/state';
+import Storage from 'super/i-block/modules/storage';
+import ModuleLoader, { Module } from 'super/i-block/modules/module-loader';
 
 import {
 
@@ -104,10 +104,10 @@ import {
 	EventEmitterWrapper,
 	ReadonlyEventEmitterWrapper
 
-} from '/super/i-block/modules/event-emitter';
+} from 'super/i-block/modules/event-emitter';
 
-import { initGlobalListeners, initRemoteWatchers } from '/super/i-block/modules/listeners';
-import { readyStatuses, activate, deactivate } from '/super/i-block/modules/activation';
+import { initGlobalListeners, initRemoteWatchers } from 'super/i-block/modules/listeners';
+import { readyStatuses, activate, deactivate } from 'super/i-block/modules/activation';
 
 import type {
 
@@ -123,7 +123,7 @@ import type {
 	ParentMessage,
 	UnsafeIBlock
 
-} from '/super/i-block/interface';
+} from 'super/i-block/interface';
 
 import {
 
@@ -136,7 +136,7 @@ import {
 	ModsTable,
 	ModsNTable
 
-} from '/super/i-block/modules/mods';
+} from 'super/i-block/modules/mods';
 
 import {
 
@@ -154,25 +154,25 @@ import {
 	WaitDecoratorOptions,
 	DecoratorMethodWatcher
 
-} from '/super/i-block/modules/decorators';
+} from 'super/i-block/modules/decorators';
 
-export * from '/core/component';
-export * from '/super/i-block/const';
-export * from '/super/i-block/interface';
+export * from 'core/component';
+export * from 'super/i-block/const';
+export * from 'super/i-block/interface';
 
-export * from '/super/i-block/modules/block';
-export * from '/super/i-block/modules/field';
-export * from '/super/i-block/modules/state';
-export * from '/super/i-block/modules/module-loader';
+export * from 'super/i-block/modules/block';
+export * from 'super/i-block/modules/field';
+export * from 'super/i-block/modules/state';
+export * from 'super/i-block/modules/module-loader';
 
-export * from '/super/i-block/modules/daemons';
-export * from '/super/i-block/modules/event-emitter';
+export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/event-emitter';
 
-export * from '/super/i-block/modules/sync';
-export * from '/super/i-block/modules/async-render';
-export * from '/super/i-block/modules/decorators';
+export * from 'super/i-block/modules/sync';
+export * from 'super/i-block/modules/async-render';
+export * from 'super/i-block/modules/decorators';
 
-export { default as Friend } from '/super/i-block/modules/friend';
+export { default as Friend } from 'super/i-block/modules/friend';
 
 export {
 

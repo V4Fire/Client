@@ -11,30 +11,30 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from '/core/symbol';
+import symbolGenerator from 'core/symbol';
 
-import { RestrictedCache } from '/core/cache';
-import { setLocale, locale } from '/core/i18n';
-import { reset, ResetType, ComponentInterface } from '/core/component';
+import { RestrictedCache } from 'core/cache';
+import { setLocale, locale } from 'core/i18n';
+import { reset, ResetType, ComponentInterface } from 'core/component';
 
-import type bRouter from '/base/b-router/b-router';
-import type { AppliedRoute } from '/core/router';
+import type bRouter from 'base/b-router/b-router';
+import type { AppliedRoute } from 'core/router';
 
-import type iBlock from '/super/i-block/i-block';
-import iPage, { component, field, system, computed, watch } from '/super/i-page/i-page';
+import type iBlock from 'super/i-block/i-block';
+import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
-import createProviderDataStore, { ProviderDataStore } from '/super/i-static-page/modules/provider-data-store';
-import themeManagerFactory, { ThemeManager } from '/super/i-static-page/modules/theme';
+import createProviderDataStore, { ProviderDataStore } from 'super/i-static-page/modules/provider-data-store';
+import themeManagerFactory, { ThemeManager } from 'super/i-static-page/modules/theme';
 
-import type { RootMod } from '/super/i-static-page/interface';
+import type { RootMod } from 'super/i-static-page/interface';
 
-export * from '/super/i-page/i-page';
-export * from '/super/i-static-page/modules/theme';
+export * from 'super/i-page/i-page';
+export * from 'super/i-static-page/modules/theme';
 
 export { createProviderDataStore };
-export * from '/super/i-static-page/modules/provider-data-store';
+export * from 'super/i-static-page/modules/provider-data-store';
 
-export * from '/super/i-static-page/interface';
+export * from 'super/i-static-page/interface';
 
 export const
 	$$ = symbolGenerator();

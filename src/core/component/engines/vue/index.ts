@@ -21,9 +21,9 @@ export { Vue as ComponentDriver };
 export { Vue as ComponentEngine };
 export { Vue as default };
 
-export * from '/core/component/engines/vue/const';
-export * from '/core/component/engines/vue/vnode';
-export * from '/core/component/engines/vue/component';
+export * from 'core/component/engines/vue/const';
+export * from 'core/component/engines/vue/vnode';
+export * from 'core/component/engines/vue/component';
 
 //#if VueInterfaces
 export { VNode, ScopedSlot, NormalizedScopedSlot } from 'vue/types/vnode';

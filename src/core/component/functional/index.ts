@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-export * from '/core/component/functional/const';
-export * from '/core/component/functional/fake-ctx';
-export * from '/core/component/functional/vnode';
-export * from '/core/component/functional/helpers';
-export * from '/core/component/functional/interface';
+export * from 'core/component/functional/const';
+export * from 'core/component/functional/fake-ctx';
+export * from 'core/component/functional/vnode';
+export * from 'core/component/functional/helpers';
+export * from 'core/component/functional/interface';
