@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.15.5 (2021-02-03)
+
+#### :bug: Bug Fix
+
+* Changed script for patching `webpack` stats file for `statoscope` `build/webpack`
+
 ## v3.15.4 (2021-01-24)
 
 #### :boom: Breaking Change
