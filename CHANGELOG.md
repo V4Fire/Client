@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Changed script for patching `webpack` stats file for `statoscope` `build/webpack`
+* Changed a script to patch the Webpack stats' file for Statoscope `build/webpack`
 
 ## v3.15.4 (2021-01-24)
 
