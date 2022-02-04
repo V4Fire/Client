@@ -11,7 +11,7 @@ import type { BrowserContext, Page, JSHandle, Cookie } from 'playwright';
 import type * as cookieModule from 'core/cookies';
 import type bDummy from 'dummies/b-dummy/b-dummy';
 
-import h from '@tests/helpers';
+import h from 'tests/helpers';
 
 /**
  * Starts a test

@@ -227,7 +227,7 @@ declare namespace BrowserTests {
 		 * @param page
 		 * @param [options]
 		 */
-		scrollToBottom(page: Playwright.Page, options?: ScrollOptions): Promise<void>;
+		scrollToBottom(page: import('playwright').Page, options?: ScrollOptions): Promise<void>;
 
 		/**
 		 * Scrolls the page until the value returned by the function is `true`
@@ -238,7 +238,7 @@ declare namespace BrowserTests {
 		 * @param [options]
 		 */
 		scrollToBottomWhile(
-			page: Playwright.Page,
+			page: import('playwright').Page,
 			checkFn?: () => CanPromise<boolean>,
 			options?: ScrollToBottomWhileOptions
 		): Promise<void>;

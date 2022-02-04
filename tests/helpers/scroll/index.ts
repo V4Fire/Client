@@ -10,10 +10,10 @@
 import delay from 'delay';
 import type { Page, ElementHandle } from 'playwright';
 
-import type Helpers from '@tests/helpers';
-import type { ScrollToBottomWhileOptions } from '@tests/helpers/scroll/interface';
+import type Helpers from 'tests/helpers';
+import type { ScrollToBottomWhileOptions } from 'tests/helpers/scroll/interface';
 
-export * from '@tests/helpers/scroll/interface';
+export * from 'tests/helpers/scroll/interface';
 
 /**
  * Class provides API to work with scroll on the page

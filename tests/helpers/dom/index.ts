@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, ElementHandle, PageWaitForSelectorOptionsNotHidden } from 'playwright';
+import type { Page, ElementHandle } from 'playwright';
 
-import type Helpers from '@tests/helpers';
+import type Helpers from 'tests/helpers';
 
-import type { WaitForElOptions } from '@tests/helpers/dom/interface';
+import type { WaitForElOptions } from 'tests/helpers/dom/interface';
 
 /**
  * Class provides API to work with `DOM`.

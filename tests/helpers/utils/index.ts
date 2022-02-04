@@ -9,10 +9,10 @@
 import delay from 'delay';
 import type { Page, BrowserContext, ElementHandle } from 'playwright';
 
-import type { SetupOptions } from '@tests/helpers/utils/interface';
-import type { WaitForIdleOptions } from '@tests/helpers/bom';
+import type { SetupOptions } from 'tests/helpers/utils/interface';
+import type { WaitForIdleOptions } from 'tests/helpers/bom';
 
-import type Helpers from '@tests/helpers';
+import type Helpers from 'tests/helpers';
 
 const
 	logsMap = new WeakMap<Page, string[]>();

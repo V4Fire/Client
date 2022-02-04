@@ -10,10 +10,10 @@ import delay from 'delay';
 
 import type { Page } from 'playwright';
 
-import type Helpers from '@tests/helpers';
-import type { WaitForIdleOptions, WaitForRAFOptions } from '@tests/helpers/bom/interface';
+import type Helpers from 'tests/helpers';
+import type { WaitForIdleOptions, WaitForRAFOptions } from 'tests/helpers/bom/interface';
 
-export * from '@tests/helpers/bom/interface';
+export * from 'tests/helpers/bom/interface';
 
 /**
  * Class provides API to work with `BOM` (browser object model)

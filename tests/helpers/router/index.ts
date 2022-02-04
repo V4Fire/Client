@@ -10,7 +10,7 @@
 
 import type { Page } from 'playwright';
 
-import type Helpers from '@tests/helpers';
+import type Helpers from 'tests/helpers';
 
 /**
  * Class provides API to work with `b-router`.

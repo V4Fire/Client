@@ -9,7 +9,7 @@
 import type { ElementHandle, JSHandle, Page } from 'playwright';
 
 import type iBlock from 'super/i-block/i-block';
-import type Helpers from '@tests/helpers';
+import type Helpers from 'tests/helpers';
 
 /**
  * Class provides API to work with components on a page
