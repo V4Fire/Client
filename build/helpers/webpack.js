@@ -164,8 +164,23 @@ exports.mergeStats = mergeStats;
 function createUnifiedJSONStats(statsA, statsB) {
 	const nameToIdentifier = {};
 
+	const hashA = getTmpHashFromStats(statsA);
+	const hashB = getTmpHashFromStats(statsB);
+
+	statsB = JSON.parse(
+		JSON.stringify(statsB).replace(new RegExp(hashB, 'g'), hashA)
+	);
+
 	statsA.modules.forEach((module) => {
 		nameToIdentifier[module.name] = module.identifier;
+	});
+
+	statsA.chunks.forEach((chunk) => {
+		chunk.modules.forEach((module) => {
+			if (!nameToIdentifier[module.issuerName]) {
+				nameToIdentifier[module.issuerName] = module.issuer;
+			}
+		});
 	});
 
 	statsB.modules.forEach((module) => {
@@ -174,12 +189,33 @@ function createUnifiedJSONStats(statsA, statsB) {
 		}
 	});
 
+	statsB.chunks.forEach((chunk) => {
+		chunk.modules.forEach((module) => {
+			if (nameToIdentifier[module.name]) {
+				module.identifier = nameToIdentifier[module.name];
+			}
+
+			if (module.issuer) {
+				module.issuerPath.forEach((path) => {
+					if (nameToIdentifier[path.name]) {
+						path.identifier = nameToIdentifier[path.name];
+					}
+				});
+
+				module.issuer = module.issuerPath[module.issuerPath.length - 1].identifier;
+			}
+
+			module.reasons.forEach((reason) => {
+				if (nameToIdentifier[reason.moduleName]) {
+					reason.moduleIdentifier = nameToIdentifier[reason.moduleName];
+					reason.resolvedModuleIdentifier = reason.moduleIdentifier;
+				}
+			});
+		});
+	});
+
 	statsB.name = statsA.name;
-
-	const hashA = getTmpHashFromStats(statsA);
-	const hashB = getTmpHashFromStats(statsB);
-
-	return JSON.stringify(statsB).replace(new RegExp(hashB, 'g'), hashA);
+	return JSON.stringify(statsB);
 }
 
 exports.createUnifiedJSONStats = createUnifiedJSONStats;

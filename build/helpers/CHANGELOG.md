@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.15.5 (2021-02-03)
+
+#### :bug: Bug Fix
+
+* Changed a script to patch the Webpack stats' file for Statoscope
+
 ## v3.5.0 (2021-09-16)
 
 #### :bug: Bug Fix
