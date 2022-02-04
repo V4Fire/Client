@@ -12,7 +12,7 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		: config = require('config').build
+		: config = require('@config/config').build
 
 		- forEach config.components => @component
 			- if config.inspectComponents

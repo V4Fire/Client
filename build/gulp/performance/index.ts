@@ -11,10 +11,10 @@ import type { Gulp } from 'gulp';
 import gulpLoadPlugs from 'gulp-load-plugins';
 import yargs from 'yargs';
 
-import { Validator } from './validator';
-import { Metrics } from './metrics';
-import { Project } from './project';
-import { Logger } from './logger';
+import { Validator } from 'build/gulp/performance/validator';
+import { Metrics } from 'build/gulp/performance/metrics';
+import { Project } from 'build/gulp/performance/project';
+import { Logger } from 'build/gulp/performance/logger';
 
 module.exports = function init(gulp: Gulp = require('gulp')) {
 	const
