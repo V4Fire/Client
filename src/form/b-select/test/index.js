@@ -14,7 +14,7 @@
 
 const
 	h = include('tests/helpers').default,
-	u = include('tests/utils'),
+	u = include('tests/utils').default,
 	test = u.getCurrentTest();
 
 /**

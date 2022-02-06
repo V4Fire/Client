@@ -41,4 +41,6 @@ class TestUtils {
 	}
 }
 
-module.exports = new TestUtils();
+const instance = new TestUtils();
+
+export default instance;
