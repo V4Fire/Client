@@ -1,5 +1,3 @@
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	arg = require('arg'),
-	path = require('upath');
+import arg from 'arg';
+import path from 'upath';
 
-const
-	pzlr = require('@pzlr/build-core');
+import pzlr from '@pzlr/build-core';
+
+import type { GetCurrentTestOptions } from 'tests/utils/interface';
 
 /**
  * Class provides API to work with launching / configuring / receiving tests
@@ -23,12 +21,13 @@ class TestUtils {
 	 * @param {Object=} [options]
 	 * @returns {Function}
 	 */
-	getCurrentTest(options) {
+	getCurrentTest(options: GetCurrentTestOptions) {
 		const
 			args = arg({'--name': String, '--test-entry': String}, {permissive: true}),
 			{runner} = globalThis.V4FIRE_TEST_ENV;
 
 		options = {
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			testDirPath: args['--test-entry'] || `${args['--name']}/test`,
 			runnerPath: runner,
 			...options
