@@ -125,7 +125,7 @@ You free to use this prop to connect the component with a label tag or other stu
 A string specifying a name for the form control.
 This name is submitted along with the control's value when the form data is submitted.
 If you don't provide the name, your component will be ignored by the form.
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
 
 ```
 < form
@@ -160,7 +160,7 @@ This string's value, if present, must match the id of a `<form>` element in the 
 If this attribute isn't specified, the component is associated with the nearest containing form, if any.
 
 The form prop lets you place a component anywhere in the document but have it included with a form elsewhere in the document.
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform).
 
 ```
 < b-input :name = 'fname' | :form = 'my-form'

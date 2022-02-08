@@ -226,7 +226,7 @@ This string's value, if present, must match the id of a `<form>` element in the 
 If this attribute isn't specified, the component is associated with the nearest containing form, if any.
 
 The form prop lets you place a component anywhere in the document but have it included with a form elsewhere in the document.
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform).
 
 ```
 < b-input :name = 'fname' | :form = 'my-form'
