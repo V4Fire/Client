@@ -236,7 +236,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {string}
 		 */
 		 mode(def = IS_PROD ? 'production' : 'development') {
-			return o('mode', {
+			return o('build-mode', {
 				env: true,
 				default: def
 			});
@@ -1160,6 +1160,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			es = this.es(),
 			{mode} = this.build,
 			demo = Boolean(this.build.components && this.build.components.length);
+
+		console.log(mode);
 
 		return {
 			stylus: {
