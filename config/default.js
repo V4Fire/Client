@@ -235,7 +235,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {string=} [def] - default value
 		 * @returns {string}
 		 */
-		 mode(def = IS_PROD ? 'production' : 'development') {
+		mode(def = IS_PROD ? 'production' : 'development') {
 			return o('build-mode', {
 				env: true,
 				default: def
@@ -1156,9 +1156,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	/** @override */
 	monic() {
 		const
+			mode = this.build.mode(),
 			runtime = this.runtime(),
 			es = this.es(),
-			{mode} = this.build,
 			demo = Boolean(this.build.components && this.build.components.length);
 
 		console.log(mode);
@@ -1166,28 +1166,28 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			stylus: {
 				flags: {
+					mode,
 					runtime,
 					'+:*': true,
-					demo,
-					mode
+					demo
 				}
 			},
 
 			typescript: {
 				flags: {
+					mode,
 					runtime,
 					es,
-					demo,
-					mode
+					demo
 				}
 			},
 
 			javascript: {
 				flags: {
+					mode,
 					runtime,
 					es,
-					demo,
-					mode
+					demo
 				}
 			}
 		};

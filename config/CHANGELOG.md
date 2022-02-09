@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* [Added `build.mode` config variable](https://github.com/V4Fire/Client/issues/685)
+* [Added a new `build.mode` config variable](https://github.com/V4Fire/Client/issues/685)
 
 ## v3.11.1 (2021-11-22)
 

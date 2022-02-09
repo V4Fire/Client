@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * [Now `monic` options are passed to `pzlr` when building a dependency graph `build/graph`](https://github.com/V4Fire/Client/issues/684)
-* [Added `build.mode` config variable `config/default`](https://github.com/V4Fire/Client/issues/685)
+* [Added a new `build.mode` config variable `config/default`](https://github.com/V4Fire/Client/issues/685)
 
 ## v3.15.5 (2021-02-03)
 
