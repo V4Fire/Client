@@ -1162,7 +1162,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const
 			runtime = this.runtime(),
 			es = this.es(),
-			testEnv = this.build.testEnv,
+			{testEnv} = this.build,
 			demo = Boolean(this.build.components && this.build.components.length);
 
 		return {
