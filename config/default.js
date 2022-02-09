@@ -227,6 +227,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Project build mode
+		 *
+		 * @cli build-mode
+		 * @env BUILD_MODE
+		 *
+		 * @param {string=} [def] - default value
+		 * @returns {string}
+		 */
+		 mode(def = IS_PROD ? 'production' : 'development') {
+			return o('mode', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
 		 * This option is used with component test files.
 		 *
 		 * For instance, you have the "b-button/test.js" file that contains tests for the component.
