@@ -30,6 +30,7 @@ const
 module.exports = {
 	IS_PROD,
 	DEBUG: runtime.debug === true,
+	TEST_ENV: s(config.build.testEnv),
 
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),

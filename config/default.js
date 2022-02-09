@@ -51,6 +51,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * This flag indicates that the project is running in a mode for tests execution
+		 *
+		 * @cli test-env
+		 * @env TEST_ENV
+		 *
+		 * @type {string}
+		 *
+		 * * @example
+		 * ```bash
+		 * # Build project with test environment
+		 * npx webpack --env test-env=true
+		 * ```
+		 */
+		testEnv: o('test-env', {
+			env: true,
+			default: false,
+			type: 'boolean'
+		}),
+
+		/**
 		 * Returns a prefix for the `components-lock.json` file.
 		 * When you have different components loc files related to some execute parameters,
 		 * you need to keep them separately.
@@ -1142,6 +1162,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const
 			runtime = this.runtime(),
 			es = this.es(),
+			testEnv = this.build.testEnv,
 			demo = Boolean(this.build.components && this.build.components.length);
 
 		return {
@@ -1149,7 +1170,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				flags: {
 					runtime,
 					'+:*': true,
-					demo
+					demo,
+					testEnv
 				}
 			},
 
@@ -1157,7 +1179,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				flags: {
 					runtime,
 					es,
-					demo
+					demo,
+					testEnv
 				}
 			},
 
@@ -1165,7 +1188,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				flags: {
 					runtime,
 					es,
-					demo
+					demo,
+					testEnv
 				}
 			}
 		};
