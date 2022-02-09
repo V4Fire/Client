@@ -13,15 +13,16 @@ import pzlr from '@pzlr/build-core';
 
 import type { GetCurrentTestOptions } from 'tests/utils/interface';
 
+export * from 'tests/utils/interface';
+
 /**
  * Class provides API to work with launching / configuring / receiving tests
  */
 class TestUtils {
 	/**
 	 * @param {Object=} [options]
-	 * @returns {Function}
 	 */
-	getCurrentTest(options: GetCurrentTestOptions) {
+	getCurrentTest(options?: GetCurrentTestOptions) {
 		const
 			args = arg({'--name': String, '--test-entry': String}, {permissive: true}),
 			{runner} = globalThis.V4FIRE_TEST_ENV;
