@@ -31,6 +31,11 @@ async function buildFactory(entry, buildId) {
 		modules = await include('build/webpack/module')({buildId, plugins}),
 		target = await include('build/webpack/target');
 
+	const isDevMode = {
+		testing: true,
+		development: true
+	};
+
 	const config = {
 		name,
 
@@ -44,7 +49,7 @@ async function buildFactory(entry, buildId) {
 		module: {...modules, rules: [...modules.rules.values()]},
 		plugins: [...plugins.values()],
 
-		mode: webpack.mode(),
+		mode: isDevMode[webpack.mode()] ? 'development' : 'production',
 		optimization: await include('build/webpack/optimization')({buildId, plugins}),
 
 		devtool: await include('build/webpack/devtool'),
