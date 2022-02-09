@@ -140,7 +140,8 @@ module.exports = function init(gulp = require('gulp')) {
 			'cache-type=memory',
 			'progress=false',
 			'public-path',
-			'es=ES2019'
+			'es=ES2019',
+			'build-mode=testing'
 		].map((el) => ['--env', el]).flat().join(' ');
 
 		console.log(`webpack version: ${require('webpack/package.json').version}`);
@@ -238,6 +239,7 @@ module.exports = function init(gulp = require('gulp')) {
 		const cliParams = {
 			headless: true,
 			close: true,
+			'build-mode': 'testing',
 			'reinit-browser': false
 		};
 

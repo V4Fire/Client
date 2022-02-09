@@ -227,6 +227,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Project build mode
+		 *
+		 * @cli build-mode
+		 * @env BUILD_MODE
+		 *
+		 * @param {string=} [def] - default value
+		 * @returns {string}
+		 */
+		mode(def = IS_PROD ? 'production' : 'development') {
+			return o('build-mode', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
 		 * This option is used with component test files.
 		 *
 		 * For instance, you have the "b-button/test.js" file that contains tests for the component.
@@ -1140,13 +1156,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	/** @override */
 	monic() {
 		const
+			mode = this.build.mode(),
 			runtime = this.runtime(),
 			es = this.es(),
 			demo = Boolean(this.build.components && this.build.components.length);
 
+		console.log(mode);
+
 		return {
 			stylus: {
 				flags: {
+					mode,
 					runtime,
 					'+:*': true,
 					demo
@@ -1155,6 +1175,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			typescript: {
 				flags: {
+					mode,
 					runtime,
 					es,
 					demo
@@ -1163,6 +1184,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			javascript: {
 				flags: {
+					mode,
 					runtime,
 					es,
 					demo
