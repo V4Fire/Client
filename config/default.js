@@ -1161,8 +1161,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			es = this.es(),
 			demo = Boolean(this.build.components && this.build.components.length);
 
-		console.log(mode);
-
 		return {
 			stylus: {
 				flags: {
