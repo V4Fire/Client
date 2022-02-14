@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.16.1 (2022-02-14)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with `b-slider` works incorrectly in slider mode](https://github.com/V4Fire/Client/issues/691)
+
 ## v3.13.2 (2021-12-06)
 
 #### :house: Internal
