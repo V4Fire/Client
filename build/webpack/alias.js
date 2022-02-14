@@ -20,10 +20,7 @@ const
  * Options for `webpack.alias`
  */
 const aliases = {
-	'': [src.src(), ...resolve.rootDependencies],
-
 	'@super': resolve.rootDependencies[0],
-
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
 			asset = resolve.depMap[el].config.assets;
