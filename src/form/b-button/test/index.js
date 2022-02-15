@@ -218,7 +218,7 @@ module.exports = (page, params) => {
 					});
 
 					await buttonCtx.evaluate((ctx) => ctx.on('click', () => globalThis._t = 1));
-					await buttonNode.click();
+					await buttonNode.click({force: true});
 					await h.bom.waitForIdleCallback(page);
 
 					const
@@ -244,7 +244,7 @@ module.exports = (page, params) => {
 						return r.continue();
 					});
 
-					await buttonNode.click();
+					await buttonNode.click({force: true});
 					await h.bom.waitForIdleCallback(page, {sleepAfterIdles: 300});
 
 					expect(hasNavRequest).toBeFalse();
