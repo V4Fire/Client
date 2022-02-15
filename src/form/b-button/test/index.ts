@@ -1,7 +1,3 @@
-/* eslint-disable max-lines-per-function */
-
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -10,12 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * @typedef {import('playwright').Page} Page
- */
+/* eslint-disable max-lines-per-function */
 
-const
-	h = include('tests/helpers').default;
+import type { Page } from 'playwright';
+
+import h from 'tests/helpers';
 
 /**
  * Starts a test
@@ -24,7 +19,7 @@ const
  * @param {!Object} params
  * @returns {void}
  */
-module.exports = (page, params) => {
+export default function run(page: Page, params: BrowserTests.TestParams): void {
 	const initialUrl = page.url();
 
 	describe('b-button', () => {
@@ -127,7 +122,7 @@ module.exports = (page, params) => {
 				});
 
 				it('fires a `submit` event on click', async () => {
-					const pr = page.evaluate(() => new Promise((res) => {
+					const pr = page.evaluate(() => new Promise<void>((res) => {
 						const
 							form = document.createElement('form');
 
@@ -190,9 +185,10 @@ module.exports = (page, params) => {
 
 		describe('`href`', () => {
 			it('provides the base URL to a data provider', async () => {
-				const pr = new Promise(async (res) => {
+				const pr = new Promise<void>(async (res) => {
 					await page.route('**/api/test/base', (r) => {
 						res();
+
 						return r.fulfill({
 							status: 200,
 							contentType: 'application/json',
@@ -370,9 +366,8 @@ module.exports = (page, params) => {
 			});
 		});
 
-		async function renderButton(p = {}) {
+		async function renderButton(p: Dictionary = {}) {
 			await page.evaluate((p) => {
-				// @ts-expect-error
 				const defaultRequestFilter = Object.isString(p.defaultRequestFilter) ?
 					// eslint-disable-next-line no-new-func
 					new Function(p.defaultRequestFilter) :
@@ -403,4 +398,4 @@ module.exports = (page, params) => {
 			buttonCtx = await h.component.getComponentById(page, 'target');
 		}
 	});
-};
+}

@@ -47,7 +47,7 @@ export default class DOM extends Friend {
 		}
 
 		return this.ctx.tmp[inViewInstanceStore] = this.async.promise(
-			memoize('core/dom/in-view', () => import('/core/dom/in-view'))
+			memoize('core/dom/in-view', () => import('core/dom/in-view'))
 		).then(({inViewFactory}) => inViewFactory());
 	}
 
@@ -447,7 +447,7 @@ export default class DOM extends Friend {
 	 */
 	watchForResize(el: Element, resizeOpts: ResizeWatcherInitOptions, asyncOpts?: AsyncOptions): Function {
 		const ResizeWatcher = this.async.promise(
-			memoize('core/dom/resize-observer', () => import('/core/dom/resize-observer'))
+			memoize('core/dom/resize-observer', () => import('core/dom/resize-observer'))
 		);
 
 		const destructor = this.ctx.async.worker(

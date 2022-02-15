@@ -12,7 +12,7 @@
  */
 
 //#if demo
-import '/models/demo/pagination';
+import 'models/demo/pagination';
 //#endif
 
 import symbolGenerator from 'core/symbol';

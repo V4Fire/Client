@@ -11,5 +11,5 @@ import Demo, { provider, Mocks } from 'models/demo';
 @provider('demo')
 export class Form extends Demo {
 	override baseURL: string = '/form';
-	override mocks: Mocks = import('/models/demo/form/mocks');
+	override mocks: Mocks = import('models/demo/form/mocks');
 }

@@ -351,7 +351,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * ```js
 	 * {
 	 *   dependencies: [
-	 *     {name: 'b-button', load: () => import('/form/b-button')}
+	 *     {name: 'b-button', load: () => import('form/b-button')}
 	 *   ]
 	 * }
 	 * ```

@@ -11,5 +11,5 @@ import Demo, { provider, Mocks } from 'models/demo';
 @provider('demo')
 export default class Pagination extends Demo {
 	override baseURL: string = '/pagination';
-	override mocks: Mocks = import('/models/demo/pagination/mocks');
+	override mocks: Mocks = import('models/demo/pagination/mocks');
 }

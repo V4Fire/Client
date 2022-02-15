@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import '/models/demo/pagination';
+import 'models/demo/pagination';
 
 import { derive } from 'core/functools/trait';
 

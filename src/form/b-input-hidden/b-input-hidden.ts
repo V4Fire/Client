@@ -12,7 +12,7 @@
  */
 
 //#if demo
-import '/models/demo/input';
+import 'models/demo/input';
 //#endif
 
 import iInput, { component } from 'super/i-input/i-input';

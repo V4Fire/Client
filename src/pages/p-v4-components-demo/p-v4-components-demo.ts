@@ -12,7 +12,7 @@
  */
 
 //#if demo
-import '/models/demo/session';
+import 'models/demo/session';
 //#endif
 
 import iStaticPage, { component, system, field } from 'super/i-static-page/i-static-page';

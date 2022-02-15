@@ -12,7 +12,7 @@
  */
 
 //#if demo
-import '/models/demo/nested-list';
+import 'models/demo/nested-list';
 //#endif
 
 import symbolGenerator from 'core/symbol';

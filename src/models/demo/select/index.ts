@@ -11,7 +11,7 @@ import Demo, { provider, Mocks } from 'models/demo';
 @provider('demo')
 export class Select extends Demo {
 	override baseURL: string = '/input';
-	override mocks: Mocks = import('/models/demo/select/mocks');
+	override mocks: Mocks = import('models/demo/select/mocks');
 }
 
 @provider('demo')

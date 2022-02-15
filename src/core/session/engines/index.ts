@@ -12,11 +12,11 @@ import type { AsyncStorageNamespace } from 'core/kv-storage';
 let engine: Promise<AsyncStorageNamespace>;
 
 //#if runtime has core/kv-storage
-engine = Object.cast(import('/core/kv-storage').then(({asyncLocal}) => asyncLocal.namespace('[[SESSION]]')));
+engine = Object.cast(import('core/kv-storage').then(({asyncLocal}) => asyncLocal.namespace('[[SESSION]]')));
 //#endif
 
 //#unless runtime has core/kv-storage
-engine = Object.cast(import('/core/cache').then(({Cache}) => new Cache()));
+engine = Object.cast(import('core/cache').then(({Cache}) => new Cache()));
 //#endunless
 
 export default engine;

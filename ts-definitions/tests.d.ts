@@ -89,13 +89,11 @@ declare namespace BrowserTests {
 
 		/**
 		 * Initial page
-		 * @deprecated [better to create a new page for every spec](https://github.com/V4Fire/Client/tree/master/docs/tests#specs-isolation)
 		 */
 		page: import('playwright').Page;
 
 		/**
 		 * Initial context
-		 * @deprecated [better to create a new context for every spec](https://github.com/V4Fire/Client/tree/master/docs/tests#specs-isolation)
 		 */
 		context: import('playwright').BrowserContext;
 
@@ -220,8 +218,6 @@ declare namespace BrowserTests {
 	 * Class provides API to work with scroll on the page
 	 */
 	class Scroll {
-
-
 
 		/**
 		 * @param page
