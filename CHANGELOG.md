@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.16.1 (2022-02-14)
+## v3.16.1 (2022-02-15)
 
 #### :bug: Bug Fix
 
-* [Fixed an issue with `b-slider` works incorrectly in slider mode `base/b-slider`](https://github.com/V4Fire/Client/issues/691)
+* [Fixed an issue with `b-slider` works incorrectly in a slider mode `base/b-slider`](https://github.com/V4Fire/Client/issues/691)
 
 ## v3.16.0 (2022-02-09)
 
