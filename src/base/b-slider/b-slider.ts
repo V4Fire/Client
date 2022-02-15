@@ -517,14 +517,6 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Stops the slider animation
-	 */
-	protected stopSliderAnimation(): void {
-		this.async.clearAnimationFrame({label: $$.performSliderMove});
-		this.diffX = 0;
-	}
-
-	/**
 	 * Returns additional props to pass to the specified item component
 	 *
 	 * @param el
@@ -817,7 +809,6 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
-		this.stopSliderAnimation();
 	}
 }
 
