@@ -152,7 +152,7 @@ async function toLastSlide(component) {
  * @returns {!Promise<number>}
  */
 function currentOffset(component) {
-	return component.evaluate((ctx) => ctx.currentOffset);
+	return component.evaluate((ctx) => Math.ceil(Number(ctx.$refs.content.style.transform.match(/translate3d\((-?[0-9.]+)/)[1])));
 }
 
 module.exports = {

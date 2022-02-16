@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.16.0 (2022-02-09)
+
+#### :rocket: New Feature
+
+* [Added a new `build.mode` config variable](https://github.com/V4Fire/Client/issues/685)
+
 ## v3.11.1 (2021-11-22)
 
 #### :house: Internal

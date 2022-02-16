@@ -61,7 +61,7 @@ The trait specifies two optional props.
 A boolean prop which, if present, indicates that the component should automatically
 have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed).
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus).
 
 ### [tabIndex]
 
@@ -72,7 +72,7 @@ As all input types except for input of type hidden are focusable, this attribute
 form controls, because doing so would require the management of the focus order for all elements within
 the document with the risk of harming usability and accessibility if done incorrectly.
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).
 
 ## Accessors
 

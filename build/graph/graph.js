@@ -95,7 +95,10 @@ async function buildProjectGraph() {
 	}
 
 	const
-		buildConfig = (await entries.getBuildConfig()).filter((el, key) => !entriesFilter || entriesFilter[key]),
+		monic = config.monic().javascript;
+
+	const
+		buildConfig = (await entries.getBuildConfig({monic})).filter((el, key) => !entriesFilter || entriesFilter[key]),
 		components = await getComponents();
 
 	const

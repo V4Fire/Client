@@ -51,8 +51,8 @@ module.exports = (page) => {
 
 					changes: [
 						[7, 6, ['i']],
-						[null, null, null],
-						['boom!', null, null]
+						[undefined, undefined, undefined],
+						['boom!', undefined, undefined]
 					]
 				}
 			});

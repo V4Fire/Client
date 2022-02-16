@@ -58,7 +58,12 @@ module.exports = (page) => {
 			).toEqual({
 				foo: '1',
 				bla: 'true',
-				baz: 'ban'
+				baz: 'ban',
+				progress: undefined,
+				diff: undefined,
+				theme: undefined,
+				exterior: undefined,
+				stage: undefined
 			});
 		});
 
@@ -73,7 +78,10 @@ module.exports = (page) => {
 
 			).toEqual({
 				exterior: 'foo',
-				diff: 'true'
+				diff: 'true',
+				progress: undefined,
+				theme: undefined,
+				stage: undefined
 			});
 		});
 
