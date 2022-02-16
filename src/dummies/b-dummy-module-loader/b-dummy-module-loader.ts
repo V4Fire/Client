@@ -28,12 +28,12 @@ export default class bDummyModuleLoader extends iData {
 			[
 				{
 					id: 'b-dummy-module1',
-					load: () => import('/dummies/b-dummy-module-loader/b-dummy-module1')
+					load: () => import('dummies/b-dummy-module-loader/b-dummy-module1')
 				},
 
 				{
 					id: 'b-dummy-module2',
-					load: () => import('/dummies/b-dummy-module-loader/b-dummy-module2')
+					load: () => import('dummies/b-dummy-module-loader/b-dummy-module2')
 				}
 			] :
 
