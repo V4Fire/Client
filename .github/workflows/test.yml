@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Build tsconfig
-        run: npx gulp build:tsconfig
+        run: npm run build:tsconfig
 
       - name: Run components' tests
         run: npm run test:components:chrome
@@ -68,7 +68,7 @@ jobs:
         run: npm ci
 
       - name: Build tsconfig
-        run: npx gulp build:tsconfig
+        run: npm run build:tsconfig
 
       - name: Run components' tests with --fat-html --mode production
         run: npm run test:components:chrome -- --fat-html --mode production
@@ -100,7 +100,7 @@ jobs:
         run: npm ci
 
       - name: Build tsconfig
-        run: npx gulp build:tsconfig
+        run: npm run build:tsconfig
 
       - name: Run components' tests with --fat-html --es ES5
         run: npm run test:components:chrome -- --fat-html --es ES5
@@ -137,7 +137,7 @@ jobs:
         run: npm ci
 
       - name: Build tsconfig
-        run: npx gulp build:tsconfig
+        run: npm run build:tsconfig
 
       - name: Build the project
         run: npx webpack
@@ -165,7 +165,7 @@ jobs:
         run: npm ci
 
       - name: Build tsconfig
-        run: npx gulp build:tsconfig
+        run: npm run build:tsconfig
 
       - name: Run tests
         run: npm run test:linters
