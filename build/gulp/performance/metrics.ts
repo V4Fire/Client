@@ -28,21 +28,21 @@ export class Metrics {
 	 * Начинает запись метрик
 	 * @param metrics
 	 */
-	static startRecord(metrics: Perf.Metrics.Type[]): Promise<void> {
-		// ...
+	static startRecord(_metrics: Perf.Metrics.Type[]): Promise<void> {
+		throw new Error('Not implemented');
 	}
 
 	/**
 	 * Останавливает запись метрик
 	 */
 	static stopRecord(): Promise<void> {
-		// ...
+		throw new Error('Not implemented');
 	}
 
 	/**
 	 * Возвращает снятые метрики в данный момент времени
 	 */
 	static takeRecords(): Promise<Perf.Metrics.Data> {
-		// ...
+		throw new Error('Not implemented');
 	}
 }

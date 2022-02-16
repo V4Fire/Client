@@ -15,8 +15,8 @@ export class Snapshot {
 	 * @param entry
 	 * @param result
 	 */
-	static save(entry: string, result: Perf.Metrics.Data): Promise<Perf.Metrics.Data> {
-		// ...
+	static save(_entry: string, _result: Perf.Metrics.Data): Promise<Perf.Metrics.Data> {
+		throw new Error('Not implemented');
 	}
 
 	/**
@@ -25,7 +25,7 @@ export class Snapshot {
 	 * @param entry
 	 * @param result
 	 */
-	static compareWithReference(entry: string, result: Perf.Metrics.Data): any {
+	static compareWithReference(_entry: string, _result: Perf.Metrics.Data): any {
 		// ...
 	}
 
@@ -35,7 +35,7 @@ export class Snapshot {
 	 * @param result1
 	 * @param result2
 	 */
-	static compareBetween(result1: Perf.Metrics.Data, result2: Perf.Metrics.Data): any {
+	static compareBetween(_result1: Perf.Metrics.Data, _result2: Perf.Metrics.Data): any {
 		// ...
 	}
 }

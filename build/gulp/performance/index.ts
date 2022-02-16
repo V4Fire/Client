@@ -8,7 +8,6 @@
 
 import type { Gulp } from 'gulp';
 
-import gulpLoadPlugs from 'gulp-load-plugins';
 import yargs from 'yargs';
 
 import { Validator } from 'build/gulp/performance/validator';
@@ -16,10 +15,7 @@ import { Metrics } from 'build/gulp/performance/metrics';
 import { Project } from 'build/gulp/performance/project';
 import { Logger } from 'build/gulp/performance/logger';
 
-module.exports = function init(gulp: Gulp = require('gulp')) {
-	const
-		$ = gulpLoadPlugs({scope: ['optionalDependencies']});
-
+export default function init(gulp: Gulp): void {
 	/**
 	 * Запускает перф тесты всех компонентов
 	 *
@@ -73,6 +69,7 @@ module.exports = function init(gulp: Gulp = require('gulp')) {
 	 * `headless` - если `true` то браузер будет запущен не в `headless` режиме
 	 */
 	gulp.task('test:performance:run', () => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 		const args = yargs
 			.option('test-entry', {
 				required: true,
@@ -109,6 +106,7 @@ module.exports = function init(gulp: Gulp = require('gulp')) {
 	 * `entry` - точка входа для теста
 	 */
 	gulp.task('test:performance:snapshot', () => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 		const args = yargs
 			.option('test-entry', {
 				required: true,
@@ -118,5 +116,5 @@ module.exports = function init(gulp: Gulp = require('gulp')) {
 
 			.argv;
 	});
-};
+}
 
