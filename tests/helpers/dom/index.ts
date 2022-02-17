@@ -255,9 +255,6 @@ export default class DOM {
 	 *
 	 * @param selectorOrElement
 	 * @param ctx
-	 *
-	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-is-visible
-	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 	 */
 	async isVisible(selectorOrElement: string, ctx: Page | ElementHandle): Promise<boolean>;
 	async isVisible(selectorOrElement: ElementHandle, ctx?: Page | ElementHandle): Promise<boolean>;

@@ -9,7 +9,9 @@
 import type { ElementHandle, JSHandle, Page } from 'playwright';
 
 import type iBlock from 'super/i-block/i-block';
+
 import type Helpers from 'tests/helpers';
+import type { WaitForIdleOptions } from 'tests/helpers/bom';
 
 /**
  * Class provides API to work with components on a page
@@ -104,6 +106,39 @@ export default class Component {
 	}
 
 	/**
+	 * Sets props to a component by the specified selector and waits for nextTick after that
+	 *
+	 * @param page
+	 * @param componentSelector
+	 * @param props
+	 * @param [idleOptions]
+	 */
+	async setPropsToComponent<T extends iBlock>(
+		page: Page,
+		componentSelector: string,
+		props: Dictionary,
+		options?: WaitForIdleOptions
+	): Promise<CanUndef<JSHandle<T>>> {
+		const ctx = await this.getComponentByQuery(page, componentSelector);
+
+		await ctx?.evaluate(async (ctx, props) => {
+			for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+				const
+					prop = keys[i],
+					val = props[prop];
+
+				ctx.field.set(prop, val);
+			}
+
+			await ctx.nextTick();
+		}, props);
+
+		await this.parent.bom.waitForIdleCallback(page, options);
+
+		return this.getComponentByQuery(page, componentSelector);
+	}
+
+	/**
 	 * Waits until the component has the specified status and returns the component
 	 *
 	 * @param ctx
@@ -145,5 +180,3 @@ export default class Component {
 			ctx.vdom.render(ctx.unsafe.$createElement(componentName, {attrs: {'v-attrs': props}})), [componentName, props]);
 	}
 }
-
-module.exports = Component;
