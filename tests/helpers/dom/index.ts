@@ -249,4 +249,35 @@ export default class DOM {
 
 		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
 	}
+
+	/**
+	 * Returns `true` if the specified item is visible in the viewport
+	 *
+	 * @param selectorOrElement
+	 * @param ctx
+	 *
+	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-is-visible
+	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
+	 */
+	async isVisible(selectorOrElement: string, ctx: Page | ElementHandle): Promise<boolean>;
+	async isVisible(selectorOrElement: ElementHandle, ctx?: Page | ElementHandle): Promise<boolean>;
+	async isVisible(selectorOrElement: ElementHandle | string, ctx?: Page | ElementHandle): Promise<boolean> {
+		const element = typeof selectorOrElement === 'string' ?
+			await ctx!.$(selectorOrElement) :
+			selectorOrElement;
+
+		if (!element) {
+			return Promise.resolve(false);
+		}
+
+		return element.evaluate<boolean, Element>((el) => {
+			const
+				style = globalThis.getComputedStyle(el),
+				rect = el.getBoundingClientRect(),
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+				hasVisibleBoundingBox = Boolean(rect.top || rect.bottom || rect.width || rect.height);
+
+			return Object.isTruly(style) && style.visibility !== 'hidden' && hasVisibleBoundingBox;
+		});
+	}
 }
