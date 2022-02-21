@@ -10,10 +10,10 @@ import type { Gulp } from 'gulp';
 
 import yargs from 'yargs';
 
-import { Validator } from 'build/gulp/performance/validator';
-import { Metrics } from 'build/gulp/performance/metrics';
-import { Project } from 'build/gulp/performance/project';
-import { Logger } from 'build/gulp/performance/logger';
+import { Validator } from 'build/gulp/tests/performance/validator';
+import { Metrics } from 'build/gulp/tests/performance/metrics';
+import { Project } from 'build/gulp/tests/helpers/project';
+import { Logger } from 'build/gulp/tests/helpers/logger';
 
 export default function init(gulp: Gulp): void {
 	/**

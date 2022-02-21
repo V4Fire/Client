@@ -10,7 +10,7 @@
 
 import BaseError from 'core/error';
 
-import { Metrics } from 'build/gulp/performance/metrics';
+import { Metrics } from 'build/gulp/tests/performance/metrics';
 
 class ValidationError extends BaseError {}
 
