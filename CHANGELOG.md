@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.16.2 (2022-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the `nonceStore.result` field `config`
+
 ## v3.16.1 (2022-02-15)
 
 #### :bug: Bug Fix
