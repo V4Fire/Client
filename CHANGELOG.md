@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed an issue with nonceStore result field in prototype
+* Fixed an issue with the `nonceStore.result` field `config`
 
 ## v3.16.1 (2022-02-15)
 
