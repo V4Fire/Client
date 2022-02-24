@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.17.0 (2022-02-24)
+
+#### :boom: Breaking Change
+
+* Now components don't force rendering on re-activation `iBlock`
+
+#### :rocket: New Feature
+
+* Added a new prop `renderOnActivation` `iBlock`
+
 ## v3.16.2 (2022-02-22)
 
 #### :bug: Bug Fix
