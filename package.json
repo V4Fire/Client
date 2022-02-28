@@ -128,8 +128,7 @@
     "vue-template-es2015-compiler": "^1.9.1",
     "webpack": "^5.60.0",
     "webpack-bundle-analyzer": "^4.4.2",
-    "webpack-cli": "^3.3.12",
-    "worker-loader": "^3.0.7"
+    "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
     "@types/jasmine": "^3.10.2",

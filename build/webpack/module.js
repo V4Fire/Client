@@ -120,11 +120,6 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker-loader',
-				options: workerOpts.worker
-			},
-
-			{
 				loader: 'ts-loader',
 				options: typescript.worker
 			},
@@ -138,11 +133,6 @@ module.exports = async function module({plugins}) {
 		exclude: isExternalDep,
 		use: [
 			{
-				loader: 'worker-loader',
-				options: workerOpts.serviceWorker
-			},
-
-			{
 				loader: 'ts-loader',
 				options: typescript.worker
 			},
@@ -155,11 +145,6 @@ module.exports = async function module({plugins}) {
 		test: isTSSharedWorker,
 		exclude: isExternalDep,
 		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.sharedWorker
-			},
-
 			{
 				loader: 'ts-loader',
 				options: typescript.worker
@@ -188,45 +173,6 @@ module.exports = async function module({plugins}) {
 		test: isNotJSWorker,
 		exclude: isExternalDep,
 		use: jsHelperLoaders
-	});
-
-	loaders.rules.set('js.workers', {
-		test: isJSWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.worker
-			},
-
-			...jsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('js.serviceWorkers', {
-		test: isJSServiceWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.serviceWorker
-			},
-
-			...jsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('js.sharedWorkers', {
-		test: isJSSharedWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.sharedWorker
-			},
-
-			...jsHelperLoaders
-		]
 	});
 
 	plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
