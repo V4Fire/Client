@@ -43,16 +43,6 @@ const urlLoaderInlineOpts = {
 	limit: undefined
 };
 
-const
-	isTSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?(?:\.d)?)\.ts$/,
-	isTSServiceWorker = /(?:\.service-worker\b|[\\/]service-workers[\\/].*?(?:\.d)?)\.ts$/,
-	isTSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?(?:\.d)?)\.ts$/,
-	isJSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?)\.js$/,
-	isJSServiceWorker = /(?:\.servie-worker\b|[\\/]service-workers[\\/].*?)\.js$/,
-	isJSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?)\.js$/,
-	isNotTSWorker = /^(?:(?!\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/]).)*(?:\.d)?\.ts$/,
-	isNotJSWorker = /^(?:(?!\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/]).)*\.js$/;
-
 /**
  * Returns options for `webpack.module`
  *
@@ -65,8 +55,7 @@ module.exports = async function module({plugins}) {
 		isProd = webpack.mode() === 'production';
 
 	const
-		fatHTML = webpack.fatHTML(),
-		workerOpts = config.worker();
+		fatHTML = webpack.fatHTML();
 
 	const loaders = {
 		rules: new Map()
@@ -103,51 +92,11 @@ module.exports = async function module({plugins}) {
 	];
 
 	loaders.rules.set('ts', {
-		test: isNotTSWorker,
 		exclude: isExternalDep,
 		use: [
 			{
 				loader: 'ts-loader',
 				options: typescript.client
-			},
-
-			...tsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('ts.workers', {
-		test: isTSWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'ts-loader',
-				options: typescript.worker
-			},
-
-			...tsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('ts.serviceWorkers', {
-		test: isTSServiceWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'ts-loader',
-				options: typescript.worker
-			},
-
-			...tsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('ts.sharedWorkers', {
-		test: isTSSharedWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'ts-loader',
-				options: typescript.worker
 			},
 
 			...tsHelperLoaders
@@ -170,7 +119,6 @@ module.exports = async function module({plugins}) {
 	];
 
 	loaders.rules.set('js', {
-		test: isNotJSWorker,
 		exclude: isExternalDep,
 		use: jsHelperLoaders
 	});
@@ -419,13 +367,5 @@ module.exports = async function module({plugins}) {
 };
 
 Object.assign(module.exports, {
-	urlLoaderOpts,
-	isTSWorker,
-	isTSServiceWorker,
-	isTSSharedWorker,
-	isJSWorker,
-	isJSServiceWorker,
-	isJSSharedWorker,
-	isNotTSWorker,
-	isNotJSWorker
+	urlLoaderOpts
 });
