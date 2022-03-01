@@ -8,11 +8,9 @@
 
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 
-import BaseError from 'core/error';
+import ValidationError from 'build/gulp/tests/helpers/validator/error';
 
 import { Metrics } from 'build/gulp/tests/performance/metrics';
-
-class ValidationError extends BaseError {}
 
 export class Validator {
 	/**
