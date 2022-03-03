@@ -232,3 +232,10 @@ Loads modules by the specified paths and dynamically inserted the provided conte
 < button @click = emit('needLoad')
   Force load
 ```
+
+## Attributes
+
+### data-async-prevent-destroy
+
+Setting this attribute on a component node will prevent the destructor call of a component (but still will be removed from DOM tree).
+That may be useful when you want to reuse components between states.

@@ -32,6 +32,11 @@ export * from 'super/i-block/modules/async-render/interface';
 export default class AsyncRender extends Friend {
 	//#if runtime has component/async-render
 
+	/**
+	 * Attribute indicating that the destructor should not be called for a component when clearing the state
+	 */
+	static preventDestroyAttribute: string = 'data-async-prevent-destroy';
+
 	constructor(component: iBlock) {
 		super(component);
 
@@ -339,7 +344,9 @@ export default class AsyncRender extends Friend {
 														el = els[i];
 
 													try {
-														(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+														if (this.isDestroyable(el)) {
+															(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+														}
 
 													} catch (err) {
 														stderr(err);
@@ -347,7 +354,9 @@ export default class AsyncRender extends Friend {
 												}
 
 												try {
-													(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+													if (this.isDestroyable(el)) {
+														(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+													}
 
 												} catch (err) {
 													stderr(err);
@@ -596,5 +605,12 @@ export default class AsyncRender extends Friend {
 		});
 	}
 
+	/**
+	 * Returns `true` if the specified element does not has a prevent destroy attribute
+	 * @param el
+	 */
+	protected isDestroyable(el: Element): boolean {
+		return el.getAttribute(AsyncRender.preventDestroyAttribute) == null;
+	}
 	//#endif
 }

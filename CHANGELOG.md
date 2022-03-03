@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.17.1 (2022-03-03)
+
+#### :rocket: New Feature
+
+* Added an attribute to prevent destruction of the component between state changes `super/i-block/modules/async-render`
+
 ## v3.17.0 (2022-02-24)
 
 #### :boom: Breaking Change

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.17.1 (2022-03-03)
+
+#### :rocket: New Feature
+
+* Added an attribute to prevent destruction of the component between state changes
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :bug: Bug Fix
