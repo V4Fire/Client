@@ -170,7 +170,7 @@ If the promise' value is equal to `undefined`, it will cast to `true`.
 
 ### [destructor]
 
-The destructor of a rendered element.
+The destructor of a rendered element. If the destructor returns `true` then the `destroy` method of the `asyncRender` module will not be called.
 It will be invoked before removing each async rendered element from DOM.
 
 ## Helpers
