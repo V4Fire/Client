@@ -328,7 +328,7 @@ export default class AsyncRender extends Friend {
 
 										} else {
 											const
-												els = el instanceof Element ? el.querySelectorAll('.i-block-helper') : undefined;
+												els = el instanceof Element ? Array.from(el.querySelectorAll('.i-block-helper')) : [];
 
 											if (opts.destructor?.(el, els) !== true) {
 												this.destroy(el, els);
@@ -536,21 +536,12 @@ export default class AsyncRender extends Friend {
 	 * Removes the given elements from the DOM tree and destroys the component attached to it
 	 * @param el
 	 */
-	protected destroy(el: Node, els?: NodeListOf<Element> | Element[]): void {
+	protected destroy(el: Node, els: Element[]): void {
 		el.parentNode?.removeChild(el);
 
-		if (els) {
-			for (let i = 0; i < els.length; i++) {
-				const
-					el = els[i];
-
-				try {
-					(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
-
-				} catch (err) {
-					stderr(err);
-				}
-			}
+		for (let i = 0; i < els.length; i++) {
+			const
+				el = els[i];
 
 			try {
 				(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
@@ -558,6 +549,13 @@ export default class AsyncRender extends Friend {
 			} catch (err) {
 				stderr(err);
 			}
+		}
+
+		try {
+			(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+
+		} catch (err) {
+			stderr(err);
 		}
 	}
 
