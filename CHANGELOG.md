@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.18.0 (2022-03-04)
+
+#### :house: Internal
+
+* Freeze all versions of dependencies in package.json
+
 ## v3.17.0 (2022-02-24)
 
 #### :boom: Breaking Change
