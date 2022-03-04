@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* If the destructor returns `true` then the `destroy` method will not be called
+* If an element destructor returns `true` then the element won't be destroyed
 
 ## v3.0.0-rc.210 (2021-07-07)
 

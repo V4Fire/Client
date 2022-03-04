@@ -533,11 +533,12 @@ export default class AsyncRender extends Friend {
 	}
 
 	/**
-	 * Removes the given elements from the DOM tree and destroys the component attached to it
+	 * Removes the given element from the DOM tree and destroys all tied components
+	 *
 	 * @param el
-	 * @param childComponentEls
+	 * @param [childComponentEls] - list of child component nodes
 	 */
-	protected destroy(el: Node, childComponentEls: Element[]): void {
+	protected destroy(el: Node, childComponentEls: Element[] = []): void {
 		el.parentNode?.removeChild(el);
 
 		for (let i = 0; i < childComponentEls.length; i++) {

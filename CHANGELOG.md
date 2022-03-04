@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* If the destructor returns `true` then the `destroy` method will not be called `super/i-block/modules/async-render`
+* If an element destructor returns `true` then the element won't be destroyed `super/i-block/modules/async-render`
 
 ## v3.17.0 (2022-02-24)
 
