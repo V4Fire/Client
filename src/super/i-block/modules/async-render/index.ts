@@ -330,11 +330,9 @@ export default class AsyncRender extends Friend {
 											const
 												els = el instanceof Element ? el.querySelectorAll('.i-block-helper') : undefined;
 
-											if (opts.destructor) {
-												opts.destructor(el, els);
+											if (opts.destructor?.(el, els) !== true) {
+												this.destroy(el, els);
 											}
-
-											this.destroy(el, els);
 										}
 									};
 
