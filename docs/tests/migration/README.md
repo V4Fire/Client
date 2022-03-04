@@ -66,7 +66,6 @@ test('should remove an item', async ({ todoPage }) => {
 });
 ```
 
-
 ## Запуск:
 
 ### Give failing tests 3 retry attempts
@@ -78,6 +77,8 @@ npx playwright test --retries=3
 ## Идеи
 
 ### Разработать механизм моков
+
+Тут пока ниче непонятно и непонятно нужно ли
 
 ### Загружать файлы прямо во время выполнения теста в рантайме
 
@@ -96,7 +97,7 @@ https://edadeal.slack.com/archives/C018CFMBZM4/p1645035786228399
 test.component.js
 test.spec.js
 test.e2e.js
-test.performance.js
+test.perf.js
 
 Можно выбрать что запустить, либо e2e либо unit тесты
 
@@ -104,7 +105,55 @@ test.performance.js
 
 Добавить фикстуру для тестовой страницы https://playwright.dev/docs/test-fixtures#creating-a-fixture
 
-## Не забыть про
+### Не забыть про
 
 - Как запускать демо страницу для unit тестов, не хочется постоянно ее создавать и прочее из проекта в проект
 - Сделать возможность запускать обычные тесты
+
+## Proposal
+
+### Запуск в разных окружениях
+
+Для запуска в разных окружениях будет использоваться всеми нами знакомая концепция "движок/бридж/адаптер".
+
+У нас будет класс-адаптер который будет иметь общие методы, он будет реализовать какую-либо общую логику и делегировать
+вызовы на выбранный движок.
+
+```typescript
+class EngineProvider {
+  goToPage<T extends string>(pageNameWithPrefix: T, params: deeplinkParams[T], options: GoToPageOptions): Promise<void> {
+    this.currentEngine.goToPage(pageNameWithPrefix, param, options);
+  }
+}
+
+class BrowserEngine {
+  goToPage<T extends string>(pageNameWithPrefix: T, params: deeplinkParams[T], options: GoToPageOptions): Promise<void> {
+    const
+      url = this.transformParamsIntoUrl(pageNameWithPrefix, params);
+
+    const
+      context = await this.engine.newContext(),
+      page = await context.newPage();
+
+    return page.goto(transformParamsIntoUrl);
+  }
+}
+
+class AndroidWebviewEngine {
+  goToPage<T extends string>(pageNameWithPrefix: T, params: deeplinkParams[T], options: GoToPageOptions): Promise<void> {
+    const
+      url = this.transformParamsIntoDeeplink(pageNameWithPrefix, params);
+
+    const
+      context = await this.engine.newContext(),
+      page = await context.newPage();
+
+    return page.goto(transformParamsIntoUrl);
+  }
+}
+```
+
+Выбор движка для запуска теста:
+
+TEST_ENGINE = android-webview | ios-webview | browser
+
