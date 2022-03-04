@@ -21,7 +21,7 @@ export interface TaskFilter<EL = unknown, I extends number = number, D = unknown
 }
 
 export interface ElementDestructor {
-	(el: Node, elements: Element[]): AnyToIgnore;
+	(el: Node, childComponentEls: Element[]): AnyToIgnore;
 }
 
 export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {

@@ -535,14 +535,14 @@ export default class AsyncRender extends Friend {
 	/**
 	 * Removes the given elements from the DOM tree and destroys the component attached to it
 	 * @param el
-	 * @param elements
+	 * @param childComponentEls
 	 */
-	protected destroy(el: Node, elements: Element[]): void {
+	protected destroy(el: Node, childComponentEls: Element[]): void {
 		el.parentNode?.removeChild(el);
 
-		for (let i = 0; i < elements.length; i++) {
+		for (let i = 0; i < childComponentEls.length; i++) {
 			const
-				el = elements[i];
+				el = childComponentEls[i];
 
 			try {
 				(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
