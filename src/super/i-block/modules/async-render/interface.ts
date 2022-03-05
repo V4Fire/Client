@@ -21,7 +21,7 @@ export interface TaskFilter<EL = unknown, I extends number = number, D = unknown
 }
 
 export interface ElementDestructor {
-	(el: Node): AnyToIgnore;
+	(el: Node, childComponentEls: Element[]): AnyToIgnore;
 }
 
 export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {
@@ -84,6 +84,9 @@ export interface TaskParams<EL = unknown, I extends number = number, D = unknown
 	/**
 	 * The destructor of a rendered element.
 	 * It will be invoked before removing each async rendered element from DOM.
+	 *
+	 * - If the function returns `true` then the `destroy` method of the `asyncRender` module will not be called
+	 * - Any value other than `true` will cause the `destroy` method to be called
 	 */
 	destructor?: ElementDestructor;
 }

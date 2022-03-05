@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.18.0 (2022-03-04)
+## v3.18.1 (2022-03-05)
 
 #### :house: Internal
 
-* Freeze all versions of dependencies in package.json
+* Freezing versions of all dependencies from package.json
+
+## v3.18.0 (2022-03-04)
+
+#### :boom: Breaking Change
+
+* If an element destructor returns `true` then the element won't be destroyed `super/i-block/modules/async-render`
 
 ## v3.17.0 (2022-02-24)
 
