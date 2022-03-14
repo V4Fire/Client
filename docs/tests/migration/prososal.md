@@ -1,8 +1,8 @@
-## Proposal
+# Proposal
 
-### Требования к тестам
+## Требования к тестам
 
-#### Stage 0
+### Stage 0
 
 - Возможность запуск тестов в разных окружениях
 - Возможность использовать typescript для тестов
@@ -12,55 +12,18 @@
 - Поддержка unit тестов и проектных тестов
 - 
 
-#### Stage 1
+### Stage 1
 
 - Импорт модулей прямо в тесте
 
-### Запуск тестов
+## Запуск тестов
 
 - export NODE_OPTIONS="-r @v4fire/core/build/tsnode.js"
+- npx playwright test
 
-### Запуск в разных окружениях (not final)
+## Конфигурационный файл
 
-Для запуска в разных окружениях будет использоваться всеми нами знакомая концепция "движок/бридж/адаптер".
+## Импорт состояний
 
-У нас будет класс-адаптер который будет иметь общие методы, он будет реализовать какую-либо общую логику и делегировать
-вызовы на выбранный движок.
+## Page object model
 
-```typescript
-class EngineProvider {
-  goToPage<T extends string>(pageNameWithPrefix: T, params: deeplinkParams[T], options: GoToPageOptions): Promise<void> {
-    this.currentEngine.goToPage(pageNameWithPrefix, param, options);
-  }
-}
-
-class BrowserEngine {
-  goToPage<T extends string>(pageNameWithPrefix: T, params: deeplinkParams[T], options: GoToPageOptions): Promise<void> {
-    const
-      url = this.transformParamsIntoUrl(pageNameWithPrefix, params);
-
-    const
-      context = await this.engine.newContext(),
-      page = await context.newPage();
-
-    return page.goto(transformParamsIntoUrl);
-  }
-}
-
-class AndroidWebviewEngine {
-  goToPage<T extends string>(pageNameWithPrefix: T, params: deeplinkParams[T], options: GoToPageOptions): Promise<void> {
-    const
-      url = this.transformParamsIntoDeeplink(pageNameWithPrefix, params);
-
-    const
-      context = await this.engine.newContext(),
-      page = await context.newPage();
-
-    return page.goto(transformParamsIntoUrl);
-  }
-}
-```
-
-Выбор движка для запуска теста:
-
-TEST_ENGINE = android-webview | ios-webview | browser
