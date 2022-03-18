@@ -139,10 +139,6 @@ export default class ChunkRequest extends Friend {
 	async init(): Promise<void> {
 		await this.async.sleep(15, {label: $$.waitForInitCalls});
 
-		if (!this.ctx.isRemoteDataInitialized) {
-			return;
-		}
-
 		const
 			{chunkSize, dataProvider} = this.ctx;
 

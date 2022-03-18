@@ -45,7 +45,7 @@ import iData, {
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
-import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
+import ChunkRequest, { $$ as $$ChunkRequest } from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/modules/helpers';
 
@@ -232,12 +232,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected itemsStore!: iItems['items'];
 
 	/**
-	 * True if the loaded data was initialized via `initRemoteData` after loading
-	 */
-	@system()
-	protected isRemoteDataInitialized: boolean = true;
-
-	/**
 	 * Total amount of items that can be loaded
 	 */
 	@system()
@@ -313,7 +307,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @emits `chunkLoading(page: number)` */
 	override initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
-		this.isRemoteDataInitialized = false;
+		this.async.clearAll({label: $$ChunkRequest.waitForInitCalls});
 
 		if (!this.lfc.isBeforeCreate()) {
 			this.reInit();
@@ -476,8 +470,6 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @emits `chunkLoaded(lastLoadedChunk:` [[LastLoadedChunk]]`)` */
 	protected override initRemoteData(): void {
-		this.isRemoteDataInitialized = true;
-
 		if (!this.db) {
 			return;
 		}
@@ -533,8 +525,6 @@ export default class bVirtualScroll extends iData implements iItems {
 		if (this.dataProvider !== undefined) {
 			return;
 		}
-
-		this.isRemoteDataInitialized = true;
 
 		if (this.localState === 'ready') {
 			this.reInit();

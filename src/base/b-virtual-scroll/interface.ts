@@ -219,9 +219,6 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 
 	// @ts-ignore (access)
 	onRequestError: CTX['onRequestError'];
-
-	// @ts-ignore (access)
-	isRemoteDataInitialized: CTX['isRemoteDataInitialized'];
 }
 
 export type MergeDataStateParams = {
