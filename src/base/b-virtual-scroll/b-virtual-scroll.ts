@@ -232,6 +232,12 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected itemsStore!: iItems['items'];
 
 	/**
+	 * True if the loaded data was initialized via `initRemoteData` after loading
+	 */
+	@system()
+	protected isRemoteDataInitialized: boolean = true;
+
+	/**
 	 * Total amount of items that can be loaded
 	 */
 	@system()
@@ -307,6 +313,8 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @emits `chunkLoading(page: number)` */
 	override initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
+		this.isRemoteDataInitialized = false;
+
 		if (!this.lfc.isBeforeCreate()) {
 			this.reInit();
 		}
@@ -468,6 +476,8 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @emits `chunkLoaded(lastLoadedChunk:` [[LastLoadedChunk]]`)` */
 	protected override initRemoteData(): void {
+		this.isRemoteDataInitialized = true;
+
 		if (!this.db) {
 			return;
 		}
@@ -523,6 +533,8 @@ export default class bVirtualScroll extends iData implements iItems {
 		if (this.dataProvider !== undefined) {
 			return;
 		}
+
+		this.isRemoteDataInitialized = true;
 
 		if (this.localState === 'ready') {
 			this.reInit();
