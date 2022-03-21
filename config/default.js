@@ -728,12 +728,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				return 'GLOBAL_NONCE';
 			}
 
-			if (this.nonceStore.result) {
-				return this.nonceStore.result;
+			if (this.nonceStore.cachedResult) {
+				return this.nonceStore.cachedResult;
 			}
 
-			this.nonceStore.result = nanoid();
-			return this.nonceStore.result;
+			this.nonceStore.cachedResult = nanoid();
+			return this.nonceStore.cachedResult;
 		},
 
 		/**

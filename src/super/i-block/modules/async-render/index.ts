@@ -327,31 +327,11 @@ export default class AsyncRender extends Friend {
 											$a.worker(() => destroyEl(el), {group});
 
 										} else {
-											if (opts.destructor) {
-												opts.destructor(el);
-											}
+											const
+												els = el instanceof Element ? Array.from(el.querySelectorAll('.i-block-helper')) : [];
 
-											el.parentNode?.removeChild(el);
-
-											if (el instanceof Element) {
-												for (let els = el.querySelectorAll('.i-block-helper'), i = 0; i < els.length; i++) {
-													const
-														el = els[i];
-
-													try {
-														(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
-
-													} catch (err) {
-														stderr(err);
-													}
-												}
-
-												try {
-													(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
-
-												} catch (err) {
-													stderr(err);
-												}
+											if (opts.destructor?.(el, els) !== true) {
+												this.destroy(el, els);
 											}
 										}
 									};
@@ -550,6 +530,35 @@ export default class AsyncRender extends Friend {
 		}
 
 		return [obj];
+	}
+
+	/**
+	 * Removes the given element from the DOM tree and destroys all tied components
+	 *
+	 * @param el
+	 * @param [childComponentEls] - list of child component nodes
+	 */
+	protected destroy(el: Node, childComponentEls: Element[] = []): void {
+		el.parentNode?.removeChild(el);
+
+		for (let i = 0; i < childComponentEls.length; i++) {
+			const
+				el = childComponentEls[i];
+
+			try {
+				(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+
+			} catch (err) {
+				stderr(err);
+			}
+		}
+
+		try {
+			(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+
+		} catch (err) {
+			stderr(err);
+		}
 	}
 
 	/**

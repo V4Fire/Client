@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.16.2 (2022-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the `nonceStore.result` field
+
 ## v3.16.0 (2022-02-09)
 
 #### :rocket: New Feature

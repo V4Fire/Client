@@ -11,6 +11,34 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.18.1 (2022-03-05)
+
+#### :house: Internal
+
+* Freezing versions of all dependencies from package.json
+
+## v3.18.0 (2022-03-04)
+
+#### :boom: Breaking Change
+
+* If an element destructor returns `true` then the element won't be destroyed `super/i-block/modules/async-render`
+
+## v3.17.0 (2022-02-24)
+
+#### :boom: Breaking Change
+
+* Now components don't force rendering on re-activation `iBlock`
+
+#### :rocket: New Feature
+
+* Added a new prop `renderOnActivation` `iBlock`
+
+## v3.16.2 (2022-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the `nonceStore.result` field `config`
+
 ## v3.16.1 (2022-02-15)
 
 #### :bug: Bug Fix
