@@ -71,6 +71,9 @@ jobs:
       - name: Build tsconfig
         run: npm run build:tsconfig
 
+      - name: Build project
+        run: npx webpack
+
       - name: Run components' tests
         run: npm run test:components:chrome
 
