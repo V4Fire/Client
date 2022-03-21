@@ -21,8 +21,6 @@ module.exports = function initGulp(gulp = require('gulp')) {
 	include('build/gulp/build')(gulp);
 	include('build/gulp/test')(gulp);
 
-	include('build/gulp/performance').default(gulp);
-
 	globalThis.callGulp(module);
 };
 
