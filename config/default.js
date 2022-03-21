@@ -211,6 +211,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Port for a test server
+		 * @env TEST_PORT
+		 */
+		testPort: o('test-port', {
+			env: true,
+			default: 8000
+		}),
+
+		/**
 		 * Enables the special kind of a demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *

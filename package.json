@@ -32,6 +32,8 @@
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --env public-path",
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components && npm run test:jasmine",
+    "test:server": "node tests/server",
+    "test:unit": "NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" npx playwright test --config tests/config/unit/index.ts",
     "test:linters": "npm run test:typescript && npm run test:eslint",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
     "test:eslint": "eslint \"./config/**/*.js\" \"./build/**/*.js\" \"./build/**/*.ts\" \"./src/**/*.js\" \"./src/**/*.ts\"",
@@ -140,8 +142,8 @@
     "@v4fire/linters": "^1.9.0",
     "husky": "^7.0.4",
     "nyc": "^15.1.0",
-    "playwright": "1.20.0-beta-1646791472000",
-    "@playwright/test": "1.20.0-beta-1646791472000",
+    "playwright": "1.20.0",
+    "@playwright/test": "1.20.0",
     "webpack": "^5.65.0"
   }
 }

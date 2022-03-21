@@ -18,10 +18,11 @@
 
 ## Запуск тестов
 
-- export NODE_OPTIONS="-r @v4fire/core/build/tsnode.js"
-- npx playwright test
+- npx playwright test --config path/to/config.ts
 
 ## Конфигурационный файл
+
+## Тестовый сервер
 
 ## Импорт состояний
 

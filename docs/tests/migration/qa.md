@@ -1,8 +1,27 @@
 # Проблемы при запуске
 
+## Зависает выполнение теста при использовании fixture
+
+- Убедитесь что вы заиспользовали функцию `use` для регистрации вашей `fixture`
+
+```typescript
+export const test = base.extend<MyFixtures>({
+  todoPage: async ({ page }, use) => {
+    // Set up the fixture.
+    const todoPage = new TodoPage(page);
+
+    // Use the fixture value in the test.
+    await use(todoPage);
+
+    // Clean up the fixture.
+    await todoPage.removeAll();
+  },
+}
+```
+
 ## Не находит тесты по переданному пути
 
-- Убедитесь что установили флаг для запуска TS тестов `export NODE_OPTIONS="-r @v4fire/core/build/tsnode.js"`
+- Убедитесь что установили флаг для запуска TS тестов `export NODE_OPTIONS="-r @v4fire/core/build/tsnode.js"` (TBD)
 - Убедитесь что тесты соответствуют паттернам именования
 
 ## Помните что импорты ведут к выполнению кода

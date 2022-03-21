@@ -17,6 +17,70 @@ import type { WaitForIdleOptions } from 'tests/helpers/bom';
  * Class provides API to work with components on a page
  */
 export default class Component {
+	/**
+	 * Renders components and mounts it into DOM tree
+	 *
+	 * @param componentName
+	 * @param scheme
+	 * @param opts
+	 */
+	 static async createComponents(
+		page: Page,
+		componentName: string,
+		scheme: RenderParams[],
+		opts?: RenderOptions
+	): Promise<void> {
+		await page.evaluate(() => {
+			globalThis.renderComponents(componentName, scheme, opts);
+
+		}, [{componentName, scheme, opts}]);
+	}
+
+	/**
+	 * Creates a component by using `$createElement` and `vdom.render` methods
+	 *
+	 * @param componentCtx
+	 * @param componentName
+	 * @param [props]
+	 */
+	static async createComponent<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		scheme: Partial<RenderParams> = {},
+		opts?: RenderOptions
+	): Promise<JSHandle<T>> {
+		const
+			renderId = String(Math.random());
+
+		const normalizedScheme = <RenderParams>{
+			...scheme,
+
+			attrs: {
+				...scheme.attrs,
+				'data-render-id': renderId
+			}
+		};
+
+		await page.evaluate(([{componentName, normalizedScheme, opts}]) => {
+			globalThis.renderComponents(componentName, [normalizedScheme], opts);
+
+		}, [{componentName, normalizedScheme, opts}]);
+
+		return <Promise<JSHandle<T>>>this.getComponentByQuery(page, `[data-render-id="${renderId}"]`);
+	}
+
+	/**
+	 * Returns a component by the specified query
+	 *
+	 * @param ctx
+	 * @param selector
+	 */
+	static async getComponentByQuery<T extends iBlock>(
+		ctx: Page | ElementHandle,
+		selector: string
+	): Promise<CanUndef<JSHandle<T>>> {
+		return (await ctx.$(selector))?.getProperty('component');
+	}
 
 	/** @see [[Helpers]] */
 	protected parent: typeof Helpers;
@@ -62,10 +126,8 @@ export default class Component {
 	}
 
 	/**
-	 * Returns a component by id
-	 *
-	 * @param page
-	 * @param id
+	 * @deprecated
+	 * @see [[Component.getComponentByQuery]]
 	 */
 	async getComponentById<T extends iBlock>(
 		page: Page | ElementHandle,
@@ -84,7 +146,7 @@ export default class Component {
 		ctx: Page | ElementHandle,
 		selector: string
 	): Promise<CanUndef<JSHandle<T>>> {
-		return (await ctx.$(selector))?.getProperty('component');
+		return Component.getComponentByQuery(ctx, selector);
 	}
 
 	/**
@@ -162,21 +224,5 @@ export default class Component {
 		}), status);
 
 		return component;
-	}
-
-	/**
-	 * Creates a component by using `$createElement` and `vdom.render` methods
-	 *
-	 * @param componentCtx
-	 * @param componentName
-	 * @param [props]
-	 */
-	renderComponent<T extends iBlock>(
-		componentCtx: ElementHandle<iBlock>,
-		componentName: string,
-		props?: Dictionary
-	): Promise<ElementHandle<T>> {
-		return <Promise<ElementHandle<any>>>componentCtx.evaluateHandle((ctx, [componentName, props]) =>
-			ctx.vdom.render(ctx.unsafe.$createElement(componentName, {attrs: {'v-attrs': props}})), [componentName, props]);
 	}
 }
