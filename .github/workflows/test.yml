@@ -10,7 +10,7 @@ on:
 jobs:
   # Run playwright tests
   unit-tests:
-    runs-on: mac-os
+    runs-on: windows-latest
     timeout-minutes: 60
 
     strategy:
