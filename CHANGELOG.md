@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed an issue with initLoad race condition `base/b-virtual-scroll`
+* Fixed an issue with `initLoad` race condition `base/b-virtual-scroll`
 
 ## v3.18.1 (2022-03-05)
 

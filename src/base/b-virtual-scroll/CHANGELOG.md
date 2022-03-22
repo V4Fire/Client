@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed an issue with initLoad race condition
+* Fixed an issue with `initLoad` race condition
 
 ## v3.15.4 (2022-01-24)
 
