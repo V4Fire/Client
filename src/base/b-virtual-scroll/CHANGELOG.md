@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.18.2 (2022-03-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `initLoad` race condition
+
 ## v3.15.4 (2022-01-24)
 
 #### :boom: Breaking Change
