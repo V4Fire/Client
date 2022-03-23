@@ -116,6 +116,22 @@ export default class Component {
 	}
 
 	/**
+	 * @see [[Component.createComponent]]
+	 * @param page
+	 * @param componentName
+	 * @param scheme
+	 * @param opts
+	 */
+	async createComponent<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		scheme: Partial<RenderParams> = {},
+		opts?: RenderOptions
+	): Promise<JSHandle<T>> {
+		return Component.createComponent(page, componentName, scheme, opts);
+	}
+
+	/**
 	 * Returns the root component
 	 *
 	 * @param ctx
