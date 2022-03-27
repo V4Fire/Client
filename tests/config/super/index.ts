@@ -15,6 +15,8 @@ import type { PlaywrightTestConfig } from '@playwright/test';
 
 import serverConfig from 'tests/server/config';
 
+import 'tests/config/super/matchers';
+
 const config: PlaywrightTestConfig = {
 	webServer: serverConfig,
 

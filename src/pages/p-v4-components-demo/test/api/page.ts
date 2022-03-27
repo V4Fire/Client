@@ -7,6 +7,7 @@
  */
 
 import type { JSHandle, Page } from 'playwright';
+import { build } from '@config/config';
 
 import { concatURLs } from 'core/url';
 import Component from 'tests/helpers/component';
@@ -27,6 +28,13 @@ export default class DemoPage {
 	readonly baseUrl: string;
 
 	/**
+	 * Returns an initial page name
+	 */
+	get pageName(): string {
+		return '';
+	}
+
+	/**
 	 * @param page
 	 */
 	constructor(page: Page, baseUrl: string) {
@@ -38,7 +46,7 @@ export default class DemoPage {
 	 * Opens a demo page
 	 */
 	async goto(): Promise<DemoPage> {
-		await this.page.goto(concatURLs(this.baseUrl, 'p-v4-components-demo.html'), {waitUntil: 'networkidle'});
+		await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage}.html`), {waitUntil: 'networkidle'});
 		await this.page.waitForSelector('#root-component', {state: 'attached'});
 
 		return this;
@@ -47,7 +55,7 @@ export default class DemoPage {
 	/**
 	 * Creates a new dummy component
 	 */
-	async getDummy(): Promise<JSHandle<bDummy>> {
+	async createDummy(): Promise<JSHandle<bDummy>> {
 		return Component.createComponent<bDummy>(this.page, 'b-dummy');
 	}
 }

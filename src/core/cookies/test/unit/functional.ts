@@ -18,7 +18,7 @@ test.describe('core/cookies', () => {
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
-		cookie = await (await demoPage.getDummy()).evaluateHandle(({modules: {cookie}}) => cookie);
+		cookie = await (await demoPage.createDummy()).evaluateHandle(({modules: {cookie}}) => cookie);
 	});
 
 	test.describe('`get`', () => {

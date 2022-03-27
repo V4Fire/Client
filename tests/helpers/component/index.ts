@@ -10,8 +10,7 @@ import type { ElementHandle, JSHandle, Page } from 'playwright';
 
 import type iBlock from 'super/i-block/i-block';
 
-import type Helpers from 'tests/helpers';
-import type { WaitForIdleOptions } from 'tests/helpers/bom';
+import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
 
 /**
  * Class provides API to work with components on a page
@@ -30,7 +29,9 @@ export default class Component {
 		scheme: RenderParams[],
 		opts?: RenderOptions
 	): Promise<void> {
-		await page.evaluate(() => {
+		scheme = <RenderParams[]>this.replaceFnsReviver(scheme);
+
+		await page.evaluate(([{componentName, scheme, opts}]) => {
 			globalThis.renderComponents(componentName, scheme, opts);
 
 		}, [{componentName, scheme, opts}]);
@@ -52,21 +53,34 @@ export default class Component {
 		const
 			renderId = String(Math.random());
 
-		const normalizedScheme = <RenderParams>{
+		const normalizedScheme = <RenderParams>this.replaceFnsReviver({
 			...scheme,
 
 			attrs: {
 				...scheme.attrs,
 				'data-render-id': renderId
 			}
+		});
+
+		const normalizedOptions = {
+			...opts,
+			rootSelector: '#root-component'
 		};
 
-		await page.evaluate(([{componentName, normalizedScheme, opts}]) => {
-			globalThis.renderComponents(componentName, [normalizedScheme], opts);
+		await page.evaluate(([{componentName, normalizedScheme, normalizedOptions}]) => {
+			globalThis.renderComponents(componentName, [normalizedScheme], normalizedOptions);
 
-		}, [{componentName, normalizedScheme, opts}]);
+		}, [{componentName, normalizedScheme, normalizedOptions}]);
 
 		return <Promise<JSHandle<T>>>this.getComponentByQuery(page, `[data-render-id="${renderId}"]`);
+	}
+
+	/**
+	 * Removes all created components
+	 * @param page
+	 */
+	static removeCreatedComponents(page: Page): Promise<void> {
+		return page.evaluate(() => globalThis.removeCreatedComponents());
 	}
 
 	/**
@@ -82,14 +96,93 @@ export default class Component {
 		return (await ctx.$(selector))?.getProperty('component');
 	}
 
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
+	/**
+	 * Returns a component by the specified query
+	 *
+	 * @param ctx
+	 * @param selector
+	 */
+	 static async waitForComponentByQuery<T extends iBlock>(
+		ctx: Page | ElementHandle,
+		selector: string
+	): Promise<JSHandle<T>> {
+		return (await ctx.waitForSelector(selector, {state: 'attached'})).getProperty('component');
+	}
 
 	/**
-	 * @param parent
+	 * Returns a component by the specified selector
+	 *
+	 * @param ctx
+	 * @param selector
 	 */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
+	static async getComponents(ctx: Page | ElementHandle, selector: string): Promise<JSHandle[]> {
+		const
+			els = await ctx.$$(selector),
+			components = <JSHandle[]>[];
+
+		for (let i = 0; i < els.length; i++) {
+			components[i] = await els[i].getProperty('component');
+		}
+
+		return components;
+	}
+
+	/**
+	 * Sets props to a component by the specified selector and waits for nextTick after that
+	 *
+	 * @param page
+	 * @param componentSelector
+	 * @param props
+	 * @param [idleOptions]
+	 */
+	static async setPropsToComponent<T extends iBlock>(
+		page: Page,
+		componentSelector: string,
+		props: Dictionary,
+		options?: WaitForIdleOptions
+	): Promise<JSHandle<T>> {
+		const ctx = await this.waitForComponentByQuery(page, componentSelector);
+
+		await ctx.evaluate(async (ctx, props) => {
+			for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+				const
+					prop = keys[i],
+					val = props[prop];
+
+				ctx.field.set(prop, val);
+			}
+
+			await ctx.nextTick();
+		}, props);
+
+		await BOM.waitForIdleCallback(page, options);
+
+		return this.waitForComponentByQuery(page, componentSelector);
+	}
+
+	/**
+	 * Returns the root component
+	 *
+	 * @param ctx
+	 * @param [selector]
+	 */
+	static waitForRoot<T extends iBlock>(ctx: Page | ElementHandle, selector: string = '#root-component'): Promise<JSHandle<T>> {
+		return this.waitForComponentByQuery(ctx, selector);
+	}
+
+	/**
+	 * Заменяет все функции на строковое представление с префиксом
+	 *
+	 * @param val
+	 */
+	protected static replaceFnsReviver(val: object): unknown {
+		return JSON.parse(JSON.stringify(val, (key, val) => {
+			if (Object.isFunction(val)) {
+				return `FN__${val.toString()}`;
+			}
+
+			return val;
+		}));
 	}
 
 	/**
@@ -132,13 +225,13 @@ export default class Component {
 	}
 
 	/**
-	 * Returns the root component
-	 *
 	 * @param ctx
 	 * @param [selector]
+	 * @deprecated
+	 * @see [[Component.waitForRoot]]
 	 */
 	getRoot<T extends iBlock>(ctx: Page | ElementHandle, selector: string = '#root-component'): Promise<CanUndef<JSHandle<T>>> {
-		return this.waitForComponent(ctx, selector);
+		return Component.waitForRoot(ctx, selector);
 	}
 
 	/**
@@ -166,30 +259,22 @@ export default class Component {
 	}
 
 	/**
-	 * Returns a component by the specified selector
-	 *
 	 * @param ctx
 	 * @param selector
+	 * @deprecated
+	 * @see [[Component.getComponents]]
 	 */
-	async getComponents(ctx: Page | ElementHandle, selector: string): Promise<JSHandle[]> {
-		const
-			els = await ctx.$$(selector),
-			components = <JSHandle[]>[];
-
-		for (let i = 0; i < els.length; i++) {
-			components[i] = await els[i].getProperty('component');
-		}
-
-		return components;
+	getComponents(ctx: Page | ElementHandle, selector: string): Promise<JSHandle[]> {
+		return Component.getComponents(ctx, selector);
 	}
 
 	/**
-	 * Sets props to a component by the specified selector and waits for nextTick after that
-	 *
 	 * @param page
 	 * @param componentSelector
 	 * @param props
-	 * @param [idleOptions]
+	 * @param options
+	 * @deprecated
+	 * @see [[Component.setPropsToComponent]]
 	 */
 	async setPropsToComponent<T extends iBlock>(
 		page: Page,
@@ -197,23 +282,7 @@ export default class Component {
 		props: Dictionary,
 		options?: WaitForIdleOptions
 	): Promise<CanUndef<JSHandle<T>>> {
-		const ctx = await this.getComponentByQuery(page, componentSelector);
-
-		await ctx?.evaluate(async (ctx, props) => {
-			for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
-				const
-					prop = keys[i],
-					val = props[prop];
-
-				ctx.field.set(prop, val);
-			}
-
-			await ctx.nextTick();
-		}, props);
-
-		await this.parent.bom.waitForIdleCallback(page, options);
-
-		return this.getComponentByQuery(page, componentSelector);
+		return Component.setPropsToComponent(page, componentSelector, props, options);
 	}
 
 	/**

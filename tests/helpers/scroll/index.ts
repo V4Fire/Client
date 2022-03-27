@@ -19,6 +19,15 @@ export * from 'tests/helpers/scroll/interface';
  * Class provides API to work with scroll on the page
  */
 export default class Scroll {
+
+	/**
+	 * @param page
+	 * @param options
+	 */
+	static scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
+		return page.evaluate((options) => globalThis.scrollBy(options), options);
+	}
+
 	/** @see [[Helpers]] */
 	protected parent: typeof Helpers;
 
@@ -62,15 +71,17 @@ export default class Scroll {
 		scrollIntoViewOptions: Dictionary
 	): Promise<void> {
 		const ref = await this.parent.dom.waitForRef(ctx, refName);
-		return ref?.scrollIntoViewIfNeeded(scrollIntoViewOptions);
+		return ref.scrollIntoViewIfNeeded(scrollIntoViewOptions);
 	}
 
 	/**
 	 * @param page
 	 * @param options
+	 * @deprecated
+	 * @see [[Scroll.scrollBy]]
 	 */
 	scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
-		return page.evaluate((options) => globalThis.scrollBy(options), options);
+		return Scroll.scrollBy(page, options);
 	}
 
 	/**

@@ -12,7 +12,7 @@ import superConfig from 'tests/config/super';
 
 const config: PlaywrightTestConfig = {
 	name: 'unit',
-	testMatch: ['src/**/test/unit/*.ts'],
+	testMatch: ['src/**/test/unit/**/*.ts'],
 
 	globalSetup: require.resolve('tests/config/unit/setup'),
 

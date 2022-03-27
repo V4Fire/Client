@@ -35,7 +35,7 @@ export default class Router {
 		const
 			c = await this.parent.component.waitForComponent(page, '#root-component');
 
-		await c?.evaluate((ctx, args) =>
+		await c.evaluate((ctx, args) =>
 			ctx.router?.[<string>args[0]](...args.slice(1, args.length)), [method, ...argsToProvideIntoRouter]);
 
 		await page.waitForLoadState('networkidle');

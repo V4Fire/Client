@@ -6,15 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable import/no-nodejs-modules */
-
 import type { PlaywrightTestConfig } from '@playwright/test';
 
 import superConfig from 'tests/config/super';
 
 const config: PlaywrightTestConfig = {
 	name: 'project',
-	testMatch: /.project-test.ts/,
+
+	testMatch: ['src/**/test/project/**/*.ts'],
+
 	globalSetup: require.resolve('tests/config/project/setup'),
 
 	...superConfig

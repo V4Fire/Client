@@ -20,21 +20,13 @@ export * from 'tests/helpers/bom/interface';
  */
 export default class BOM {
 
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
-
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Waits until `requestIdleCallback` (`setTimeout 50` for safari) on the page
 	 *
 	 * @param page
 	 * @param [idleOptions]
 	 */
-	async waitForIdleCallback(page: Page, idleOptions: WaitForIdleOptions = {}): Promise<void> {
+	static async waitForIdleCallback(page: Page, idleOptions: WaitForIdleOptions = {}): Promise<void> {
 		const normalizedIdleOptions = <Required<WaitForIdleOptions>>{
 			waitForIdleTimes: 1,
 			sleepAfterIdles: 100,
@@ -64,6 +56,22 @@ export default class BOM {
 		} catch {}
 
 		await delay(normalizedIdleOptions.sleepAfterIdles);
+	}
+
+	/** @see [[Helpers]] */
+	protected parent: typeof Helpers;
+
+	/** @param parent */
+	constructor(parent: typeof Helpers) {
+		this.parent = parent;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[BOM.waitForIdleCallback]]
+	 */
+	waitForIdleCallback(page: Page, idleOptions: WaitForIdleOptions = {}): Promise<void> {
+		return BOM.waitForIdleCallback(page, idleOptions);
 	}
 
 	/**

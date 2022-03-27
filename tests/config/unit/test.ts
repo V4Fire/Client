@@ -6,14 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page } from 'playwright';
 import { test as base } from '@playwright/test';
 
 import DemoPage from 'pages/p-v4-components-demo/test/api/page';
 
 export interface Fixtures {
 	demoPage: DemoPage;
-	something: Page;
 }
 
 const test = base.extend<Fixtures>({

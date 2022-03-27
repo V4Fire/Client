@@ -8,38 +8,27 @@
 
 import type { Page, ElementHandle } from 'playwright';
 
-import type Helpers from 'tests/helpers';
-
 import type { WaitForElOptions } from 'tests/helpers/dom/interface';
 
 /**
  * Class provides API to work with `DOM`.
  */
 export default class DOM {
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
-
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
-	}
 
 	/**
-	 * Returns a selector for test refs
-	 * @param refName
-	 */
-	getRefSelector(refName: string): string {
-		return `[data-test-ref="${refName}"]`;
-	}
-
-	/**
-	 * Returns elements that match the specified `refName`
+	 * Returns an element that matches the specified `refName`
 	 *
 	 * @param ctx
 	 * @param refName
 	 */
-	getRefs(ctx: Page | ElementHandle, refName: string): Promise<ElementHandle[]> {
-		return ctx.$$(this.getRefSelector(refName));
+	 static async getRef<T extends HTMLElement>(
+		ctx: Page | ElementHandle,
+		refName: string
+	): Promise<Nullable<ElementHandle<T>>> {
+		const
+			res = await ctx.$(this.getRefSelector(refName));
+
+		return <ElementHandle<T>>res;
 	}
 
 	/**
@@ -48,11 +37,237 @@ export default class DOM {
 	 * @param ctx
 	 * @param refName
 	 */
-	async getRef<T extends HTMLElement>(ctx: Page | ElementHandle, refName: string): Promise<Nullable<ElementHandle<T>>> {
+	static async waitRef<T extends HTMLElement>(
+		ctx: Page | ElementHandle,
+		refName: string
+	): Promise<ElementHandle<T>> {
 		const
-			res = await ctx.$(this.getRefSelector(refName));
+			res = await ctx.waitForSelector(this.getRefSelector(refName), {state: 'attached'});
 
 		return <ElementHandle<T>>res;
+	}
+
+	/**
+	 * Returns elements that match the specified `refName`
+	 *
+	 * @param ctx
+	 * @param refName
+	 */
+	static getRefs(ctx: Page | ElementHandle, refName: string): Promise<ElementHandle[]> {
+		return ctx.$$(this.getRefSelector(refName));
+	}
+
+	/**
+	 * Returns a selector for test refs
+	 * @param refName
+	 */
+	static getRefSelector(refName: string): string {
+		return `[data-test-ref="${refName}"]`;
+	}
+
+	/**
+	 * Click on the element that matches the specified `refName`
+	 *
+	 * @param ctx
+	 * @param refName
+	 * @param [clickOptions]
+	 *
+	 * @see https://playwright.dev/#version=v1.2.0&path=docs%2Fapi.md&q=pageclickselector-options
+	 */
+	static clickToRef(ctx: Page | ElementHandle, refName: string, clickOptions?: Dictionary): Promise<void> {
+		return ctx.click(this.getRefSelector(refName), {
+			force: true,
+			...clickOptions
+		});
+	}
+
+	/**
+	 * Returns a generator of an element names
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   base = elNameGenerator('p-index'), // Function
+	 *   elName = base('page'); // 'p-index__page'
+	 * ```
+	 */
+	static elNameGenerator(blockName: string): (elName: string) => string;
+
+	/**
+	 * Returns an element name
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   elName = elNameGenerator('p-index', 'page'); // 'p-index__page'
+	 * ```
+	 */
+	static elNameGenerator(blockName: string, elName: string): string;
+
+	static elNameGenerator(blockName: string, elName?: string): any {
+		if (elName != null) {
+			return `${blockName}__${elName}`;
+		}
+
+		return (elName) => `${blockName}__${elName}`;
+	}
+
+	/**
+	 * Returns a generator of an element class names
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   base = elNameSelectorGenerator('p-index'), // Function
+	 *   elName = base('page'); // '.p-index__page'
+	 * ```
+	 */
+	static elNameSelectorGenerator(blockName: string): (elName: string) => string;
+
+	/**
+	 * Returns an element class name
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   elName = elNameGenerator('p-index', 'page'); // '.p-index__page'
+	 * ```
+	 */
+	static elNameSelectorGenerator(blockName: string, elName: string): string;
+
+	static elNameSelectorGenerator(blockName: string, elName?: string): any {
+		if (elName != null) {
+			return `.${blockName}__${elName}`;
+		}
+
+		return (elName) => `.${blockName}__${elName}`;
+	}
+
+	/**
+	 * Returns a generator of an element names with modifiers
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   base = elNameGenerator('p-index') // Function,
+	 *   elName = base('page'), // 'p-index__page'
+	 *   modsBase = elModNameGenerator(elName), // Function
+	 *   elNameWithMods = modsBase('type', 'test'); // 'p-index__page_type_test'
+	 * ```
+	 */
+	static elModNameGenerator(fullElName: string): (modName: string, modVal: string) => string;
+
+	/**
+	 * Returns a string of an element name with modifiers
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   base = elNameGenerator('p-index') // Function,
+	 *   elName = base('page'), // 'p-index__page'
+	 *   modsBase = elModNameGenerator(elName, 'type', 'test'); // 'p-index__page_type_test'
+	 * ```
+	 */
+	static elModNameGenerator(fullElName: string, modName: string, modVal: string): string;
+
+	static elModNameGenerator(fullElName: string, modName?: string, modVal?: string): any {
+		if (modName != null) {
+			return `${fullElName}_${modName}_${modVal}`;
+		}
+
+		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
+	}
+
+	/**
+	 * Returns a generator of an element class names with modifiers
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   base = elNameGenerator('p-index') // Function,
+	 *   elName = base('page'), // 'p-index__page'
+	 *   modsBase = elModNameGenerator(elName), // Function
+	 *   elNameWithMods = modsBase('type', 'test'); // '.p-index__page_type_test'
+	 * ```
+	 */
+	static elModSelectorGenerator(fullElName: string): (modName: string, modVal: string) => string;
+
+	/**
+	 * Returns a string of an element class name with modifiers
+	 *
+	 * @example
+	 * ```typescript
+	 * const
+	 *   base = elNameGenerator('p-index') // Function,
+	 *   elName = base('page'), // 'p-index__page'
+	 *   modsBase = elModSelectorGenerator(elName, 'type', 'test'); // '.p-index__page_type_test'
+	 * ```
+	 */
+	static elModSelectorGenerator(fullElName: string, modName: string, modVal: string): string;
+
+	static elModSelectorGenerator(fullElName: string, modName?: string, modVal?: string): any {
+		if (modName != null) {
+			return `.${fullElName}_${modName}_${modVal}`;
+		}
+
+		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
+	}
+
+	/**
+	 * Returns `true` if the specified item is visible in the viewport
+	 *
+	 * @param selectorOrElement
+	 * @param ctx
+	 */
+	static async isVisible(selectorOrElement: string, ctx: Page | ElementHandle): Promise<boolean>;
+	static async isVisible(selectorOrElement: ElementHandle, ctx?: Page | ElementHandle): Promise<boolean>;
+	static async isVisible(selectorOrElement: ElementHandle | string, ctx?: Page | ElementHandle): Promise<boolean> {
+		const element = typeof selectorOrElement === 'string' ?
+			await ctx!.$(selectorOrElement) :
+			selectorOrElement;
+
+		if (!element) {
+			return Promise.resolve(false);
+		}
+
+		return element.evaluate<boolean, Element>((el) => {
+			const
+				style = globalThis.getComputedStyle(el),
+				rect = el.getBoundingClientRect(),
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+				hasVisibleBoundingBox = Boolean(rect.top || rect.bottom || rect.width || rect.height);
+
+			return Object.isTruly(style) && style.visibility !== 'hidden' && hasVisibleBoundingBox;
+		});
+	}
+
+	/**
+	 * @param refName
+	 * @deprecated
+	 * @see [[DOM.getRefSelector]]
+	 */
+	getRefSelector(refName: string): string {
+		return DOM.getRefSelector(refName);
+	}
+
+	/**
+	 * @param ctx
+	 * @param refName
+	 * @deprecated
+	 * @see [[DOM.getRefs]]
+	 */
+	getRefs(ctx: Page | ElementHandle, refName: string): Promise<ElementHandle[]> {
+		return DOM.getRefs(ctx, refName);
+	}
+
+	/**
+	 * @param ctx
+	 * @param refName
+	 * @deprecated
+	 * @see [[DOM.getRef]]
+	 */
+	getRef<T extends HTMLElement>(ctx: Page | ElementHandle, refName: string): Promise<Nullable<ElementHandle<T>>> {
+		return DOM.getRef(ctx, refName);
 	}
 
 	/**
@@ -65,20 +280,16 @@ export default class DOM {
 	async getRefAttr(ctx: Page | ElementHandle, refName: string, attr: string): Promise<Nullable<string>> {
 		return (await this.getRef(ctx, refName))?.getAttribute(attr);
 	}
+
 	/**
-	 * Click on the element that matches the specified `refName`
-	 *
 	 * @param ctx
 	 * @param refName
 	 * @param [clickOptions]
-	 *
-	 * @see https://playwright.dev/#version=v1.2.0&path=docs%2Fapi.md&q=pageclickselector-options
+	 * @deprecated
+	 * @see [[DOM.clickToRef]]
 	 */
 	clickToRef(ctx: Page | ElementHandle, refName: string, clickOptions?: Dictionary): Promise<void> {
-		return ctx.click(this.getRefSelector(refName), {
-			force: true,
-			...clickOptions
-		});
+		return DOM.clickToRef(ctx, refName, clickOptions);
 	}
 
 	/**
@@ -119,28 +330,11 @@ export default class DOM {
 	}
 
 	/**
-	 * Returns a generator of an element names
-	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   base = elNameGenerator('p-index'), // Function
-	 *   elName = base('page'); // 'p-index__page'
-	 * ```
+	 * @param blockName
+	 * @param elName
+	 * @deprecated
+	 * @see [[DOM.elNameGenerator]]
 	 */
-	elNameGenerator(blockName: string): (elName: string) => string;
-
-	/**
-	 * Returns an element name
-	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   elName = elNameGenerator('p-index', 'page'); // 'p-index__page'
-	 * ```
-	 */
-	elNameGenerator(blockName: string, elName: string): string;
-
 	elNameGenerator(blockName: string, elName?: string): any {
 		if (elName != null) {
 			return `${blockName}__${elName}`;
@@ -150,28 +344,11 @@ export default class DOM {
 	}
 
 	/**
-	 * Returns a generator of an element class names
-	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   base = elNameSelectorGenerator('p-index'), // Function
-	 *   elName = base('page'); // '.p-index__page'
-	 * ```
+	 * @param blockName
+	 * @param elName
+	 * @deprecated
+	 * @see [[DOM.elNameSelectorGenerator]]
 	 */
-	elNameSelectorGenerator(blockName: string): (elName: string) => string;
-
-	/**
-	 * Returns an element class name
-	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   elName = elNameGenerator('p-index', 'page'); // '.p-index__page'
-	 * ```
-	 */
-	elNameSelectorGenerator(blockName: string, elName: string): string;
-
 	elNameSelectorGenerator(blockName: string, elName?: string): any {
 		if (elName != null) {
 			return `.${blockName}__${elName}`;
@@ -181,32 +358,12 @@ export default class DOM {
 	}
 
 	/**
-	 * Returns a generator of an element names with modifiers
-	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   base = elNameGenerator('p-index') // Function,
-	 *   elName = base('page'), // 'p-index__page'
-	 *   modsBase = elModNameGenerator(elName), // Function
-	 *   elNameWithMods = modsBase('type', 'test'); // 'p-index__page_type_test'
-	 * ```
+	 * @param fullElName
+	 * @param modName
+	 * @param modVal
+	 * @deprecated
+	 * @see [[DOM.elModNameGenerator]]
 	 */
-	elModNameGenerator(fullElName: string): (modName: string, modVal: string) => string;
-
-	/**
-	 * Returns a string of an element name with modifiers
-	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   base = elNameGenerator('p-index') // Function,
-	 *   elName = base('page'), // 'p-index__page'
-	 *   modsBase = elModNameGenerator(elName, 'type', 'test'); // 'p-index__page_type_test'
-	 * ```
-	 */
-	elModNameGenerator(fullElName: string, modName: string, modVal: string): string;
-
 	elModNameGenerator(fullElName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
 			return `${fullElName}_${modName}_${modVal}`;
@@ -216,32 +373,13 @@ export default class DOM {
 	}
 
 	/**
-	 * Returns a generator of an element class names with modifiers
+	 * @param fullElName
+	 * @param modName
+	 * @param modVal
+	 * @deprecated
 	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   base = elNameGenerator('p-index') // Function,
-	 *   elName = base('page'), // 'p-index__page'
-	 *   modsBase = elModNameGenerator(elName), // Function
-	 *   elNameWithMods = modsBase('type', 'test'); // '.p-index__page_type_test'
-	 * ```
+	 * @see [[DOM.elModSelectorGenerator]]
 	 */
-	elModSelectorGenerator(fullElName: string): (modName: string, modVal: string) => string;
-
-	/**
-	 * Returns a string of an element class name with modifiers
-	 *
-	 * @example
-	 * ```typescript
-	 * const
-	 *   base = elNameGenerator('p-index') // Function,
-	 *   elName = base('page'), // 'p-index__page'
-	 *   modsBase = elModSelectorGenerator(elName, 'type', 'test'); // '.p-index__page_type_test'
-	 * ```
-	 */
-	elModSelectorGenerator(fullElName: string, modName: string, modVal: string): string;
-
 	elModSelectorGenerator(fullElName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
 			return `.${fullElName}_${modName}_${modVal}`;
@@ -251,30 +389,12 @@ export default class DOM {
 	}
 
 	/**
-	 * Returns `true` if the specified item is visible in the viewport
-	 *
 	 * @param selectorOrElement
 	 * @param ctx
+	 * @deprecated
+	 * @see [[DOM.isVisible]]
 	 */
-	async isVisible(selectorOrElement: string, ctx: Page | ElementHandle): Promise<boolean>;
-	async isVisible(selectorOrElement: ElementHandle, ctx?: Page | ElementHandle): Promise<boolean>;
 	async isVisible(selectorOrElement: ElementHandle | string, ctx?: Page | ElementHandle): Promise<boolean> {
-		const element = typeof selectorOrElement === 'string' ?
-			await ctx!.$(selectorOrElement) :
-			selectorOrElement;
-
-		if (!element) {
-			return Promise.resolve(false);
-		}
-
-		return element.evaluate<boolean, Element>((el) => {
-			const
-				style = globalThis.getComputedStyle(el),
-				rect = el.getBoundingClientRect(),
-				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				hasVisibleBoundingBox = Boolean(rect.top || rect.bottom || rect.width || rect.height);
-
-			return Object.isTruly(style) && style.visibility !== 'hidden' && hasVisibleBoundingBox;
-		});
+		return DOM.isVisible(<any>selectorOrElement, ctx);
 	}
 }
