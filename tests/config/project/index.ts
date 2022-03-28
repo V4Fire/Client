@@ -11,13 +11,12 @@ import type { PlaywrightTestConfig } from '@playwright/test';
 import superConfig from 'tests/config/super';
 
 const config: PlaywrightTestConfig = {
+	...superConfig,
 	name: 'project',
 
 	testMatch: ['src/**/test/project/**/*.ts'],
 
-	globalSetup: require.resolve('tests/config/project/setup'),
-
-	...superConfig
+	globalSetup: require.resolve('tests/config/project/setup')
 };
 
 export default config;
