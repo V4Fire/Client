@@ -12,6 +12,7 @@ import superConfig from 'tests/config/super';
 
 const config: PlaywrightTestConfig = {
 	...superConfig,
+
 	name: 'project',
 
 	testMatch: ['src/**/test/project/**/*.ts'],

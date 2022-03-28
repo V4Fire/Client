@@ -30,6 +30,8 @@ const config: PlaywrightTestConfig = {
 
 	forbidOnly: Boolean(process.env.CI),
 
+	retries: 2,
+
 	reportSlowTests: {
 		max: 0,
 		threshold: (4).minutes()

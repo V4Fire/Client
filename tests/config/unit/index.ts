@@ -14,6 +14,7 @@ const config: PlaywrightTestConfig = {
 	...superConfig,
 
 	name: 'unit',
+
 	testMatch: ['src/**/test/unit/**/*.ts'],
 
 	globalSetup: require.resolve('tests/config/unit/setup')
