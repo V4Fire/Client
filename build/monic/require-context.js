@@ -72,51 +72,55 @@ module.exports = function requireContextReplacer(str) {
 			return el;
 		});
 
-		[''].concat(...context).forEach((el) => {
-			if (el != null) {
+		[''].concat(...context).forEach((paths) => {
+			if (paths == null) {
+				return;
+			}
+
+			paths = paths || [];
+
+			let
+				exists = false;
+
+			const res = body.replace(rgxp, (str, $1, src) => {
 				let
-					exists = false;
+					resolvedSrc;
 
-				const res = body.replace(rgxp, (str, $1, src) => {
+				if (src[0] === '@') {
+					const
+						parts = src.split('/'),
+						key = [].concat(paths, parts[0].slice(1)).join('/');
+
+					if (!aliases[key]) {
+						return str;
+					}
+
+					resolvedSrc = [aliases[key], ...parts.slice(1)].join('/');
+
+				} else {
+					resolvedSrc = [].concat(paths, src).join('/');
+				}
+
+				resolvedSrc = resolvedSrc.replace(tplRgxp, (str, key) => {
 					let
-						resolvedSrc;
+						v = $C(config).get(key);
 
-					if (src[0] === '@') {
-						const
-							parts = src.split('/'),
-							key = [].concat(el || [], parts[0].slice(1)).join('/');
-
-						if (!aliases[key]) {
-							return str;
-						}
-
-						resolvedSrc = [aliases[key], ...parts.slice(1)].join('/');
-
-					} else {
-						resolvedSrc = [].concat(el || [], src).join('/');
+					if (Object.isFunction(v)) {
+						v = v();
 					}
 
-					resolvedSrc = resolvedSrc.replace(tplRgxp, (str, key) => {
-						let
-							v = $C(config).get(key);
-
-						if (Object.isFunction(v)) {
-							v = v();
-						}
-
-						return v ? `/${v}` : v;
-					});
-
-					if (fs.existsSync(resolvedSrc)) {
-						exists = true;
-					}
-
-					return $1 + path.normalize(resolvedSrc);
+					return v ? `/${v}` : v;
 				});
 
-				if (exists) {
-					wrap(res);
+				if (fs.existsSync(resolvedSrc)) {
+					exists = true;
 				}
+
+				return $1 + path.normalize(resolvedSrc);
+			});
+
+			if (exists) {
+				wrap(res);
 			}
 		});
 
