@@ -1,12 +1,17 @@
 # Проблемы при запуске
 
+## COMPONENTS is not defined
+
+Где-то импортится `config` и вместо пакета из-за алиасинга импортится `config/index.ts`.
+Для решения проблемы замените `config` на алиас `@config/config`, более подробно узнать про это можно в миграционном гайде.
+
 ## Тесты стартуют, но все фейлятся
 
-- Убедитесь что проект собран `npx webpack`
+Убедитесь что проект собран `npx webpack`
 
 ## Зависает выполнение теста при использовании fixture
 
-- Убедитесь что вы заиспользовали функцию `use` для регистрации вашей `fixture`
+Убедитесь что вы используете функцию `use` для регистрации вашей `fixture`
 
 ```typescript
 export const test = base.extend<MyFixtures>({
@@ -25,8 +30,19 @@ export const test = base.extend<MyFixtures>({
 
 ## Не находит тесты по переданному пути
 
-- Убедитесь что установили флаг для запуска TS тестов `cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" npx playwright test` (TBD)
-- Убедитесь что тесты соответствуют паттернам именования
+1. Убедитесь что установили флаг для запуска TS тестов `cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" npx playwright test --config config`
+2. Убедитесь что указали конфиг при запуске команды
+
+## h.dom.something cannot read property something of undefined
+
+Возникает в JS файлах при импорте TS файлов (хелперов)
+
+Поправить импорт модуля
+
+```js
+const
+  h = include('tests/helpers').default;
+```
 
 ## Помните что импорты ведут к выполнению кода
 
@@ -49,4 +65,3 @@ test('something', () => {
 ```
 
 Запуск такого теста приведет к ошибке во время исполнения из-за того что в `nodejs` окружении нет `navigator`.
-
