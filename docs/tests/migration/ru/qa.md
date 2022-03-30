@@ -1,5 +1,13 @@
 # Проблемы при запуске
 
+Содержание:
+
+- [COMPONENTS is not defined](#COMPONENTS-is-not-defined)
+- [Тесты стартуют, но все фейлятся](#Тесты-стартуют,-но-все-фейлятся)
+- [Зависает выполнение теста при использовании fixture](#Зависает-выполнение-теста-при-использовании-fixture)
+- [h.dom.something cannot read property something of undefined](#h.dom.something-cannot-read-property-something-of-undefined)
+- [Помните что импорты ведут к выполнению кода](#Помните-что-импорты-ведут-к-выполнению-кода)
+
 ## COMPONENTS is not defined
 
 Где-то импортится `config` и вместо пакета из-за алиасинга импортится `config/index.ts`.
