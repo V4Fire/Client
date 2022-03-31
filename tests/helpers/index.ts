@@ -15,6 +15,9 @@ import Router from 'tests/helpers/router';
 import Request from 'tests/helpers/request';
 import Gestures from 'tests/helpers/gestures';
 
+/**
+ * @deprecated - Use static of the modules methods instead
+ */
 export class Helpers {
 	/** @see [[Request]] */
 	request: Request = new Request();
@@ -23,7 +26,7 @@ export class Helpers {
 	utils: Utils = new Utils(this);
 
 	/** @see [[Component]] */
-	component: Component = new Component(this);
+	component: Component = new Component();
 
 	/** @see [[Gestures]] */
 	gestures: Gestures = new Gestures();
@@ -35,7 +38,7 @@ export class Helpers {
 	router: Router = new Router(this);
 
 	/** @see [[DOM]] */
-	dom: DOM = new DOM(this);
+	dom: DOM = new DOM();
 
 	/** @see [[Scroll]] */
 	scroll: Scroll = new Scroll(this);
