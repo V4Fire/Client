@@ -184,7 +184,7 @@ export default abstract class iStaticPage extends iPage {
 
 		if (Object.isTruly(lang)) {
 			try {
-				document.documentElement.setAttribute('lang', lang);
+				document.documentElement.setAttribute('lang', lang!);
 			} catch {}
 		}
 

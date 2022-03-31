@@ -523,7 +523,7 @@ export default class bForm extends iData implements iVisible {
 		}
 
 		let
-			val = await el.groupFormValue;
+			val: CanUndef<unknown[]> = await el.groupFormValue;
 
 		if (el.formConverter != null) {
 			const
