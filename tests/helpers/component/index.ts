@@ -40,16 +40,50 @@ export default class Component {
 	/**
 	 * Creates a component by using `$createElement` and `vdom.render` methods
 	 *
-	 * @param componentCtx
+	 * @param page
 	 * @param componentName
-	 * @param [props]
+	 * @param [scheme]
+	 * @param [opts]
+	 */
+	 static async createComponent<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		scheme?: Partial<RenderParams>,
+		opts?: RenderOptions
+	): Promise<JSHandle<T>>;
+
+	/**
+	 * Creates a components by using `$createElement` and `vdom.render` methods
+	 *
+	 * @param page
+	 * @param componentName
+	 * @param [scheme]
+	 * @param [opts]
+	 */
+	 static async createComponent<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		scheme: RenderParams[],
+		opts?: RenderOptions
+	): Promise<undefined>;
+
+	/**
+	 * @param page
+	 * @param componentName
+	 * @param [scheme]
+	 * @param [opts]
 	 */
 	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme: Partial<RenderParams> = {},
+		scheme: Partial<RenderParams> | RenderParams[] = {},
 		opts?: RenderOptions
-	): Promise<JSHandle<T>> {
+	): Promise<CanUndef<JSHandle<T>>> {
+		if (Array.isArray(scheme)) {
+			await this.createComponents(page, componentName, scheme, opts);
+			return;
+		}
+
 		const
 			renderId = String(Math.random());
 
@@ -165,9 +199,12 @@ export default class Component {
 	 *
 	 * @param ctx
 	 * @param [selector]
+	 * @typeParam T - type of the root
 	 */
-	static waitForRoot<T extends iBlock>(ctx: Page | ElementHandle, selector: string = '#root-component'): Promise<JSHandle<T>> {
-		return this.waitForComponentByQuery(ctx, selector);
+	static waitForRoot<T>(ctx: Page | ElementHandle, selector: string = '#root-component'): Promise<JSHandle<T>> {
+		const res = this.waitForComponentByQuery(ctx, selector);
+
+		return <any>res;
 	}
 
 	/**

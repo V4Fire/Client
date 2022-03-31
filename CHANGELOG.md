@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.18.2 (2022-03-22)
+## v3.19.0 (2022-03-31)
 
 #### :rocket: New Feature
 
-* [Added new test API]()
+* [Add new test API](docs/tests/migration/ru/README.md)
 
 ## v3.18.2 (2022-03-22)
 
