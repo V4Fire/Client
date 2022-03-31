@@ -24,7 +24,7 @@ This module provides a component to create a button.
 
 | Name    | Description                                               | Values    | Default |
 |---------|-----------------------------------------------------------|-----------|---------|
-| `upper` | The component displays the text content in the upper case | `Boolean` | -       |
+| `upper` | The component displays the text content in the upper case | `boolean` | -       |
 
 Also, you can see the parent component and the component traits.
 

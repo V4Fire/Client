@@ -12,7 +12,7 @@ This module provides a trait for a component that needs to implement the "openin
 
 | Name     | Description             | Values    | Default |
 |----------|-------------------------|-----------|---------|
-| `opened` | The component is opened | `Boolean` | -       |
+| `opened` | The component is opened | `boolean` | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 
