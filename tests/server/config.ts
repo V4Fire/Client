@@ -11,7 +11,7 @@ import { build } from '@config/config';
 
 const webServerConfig: WebServerConfig = {
 	port: build.testPort,
-	reuseExistingServer: true,
+	reuseExistingServer: false,
 	command: 'npm run test:server'
 };
 
