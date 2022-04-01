@@ -774,25 +774,27 @@ export default abstract class iData extends iBlock implements iProgress {
 		const group = {group: 'dataProviderSync'};
 		$e.off(group);
 
-		$e.on('add', (data) => {
+		$e.on('add', async (data) => {
 			if (this.getDefaultRequestParams('get')) {
-				return this.onAddData(Object.isFunction(data) ? data() : data);
+				void this.onAddData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
-		$e.on('upd', (data) => {
+		$e.on('upd', async (data) => {
 			if (this.getDefaultRequestParams('get')) {
-				return this.onUpdData(Object.isFunction(data) ? data() : data);
+				void this.onUpdData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
-		$e.on('del', (data) => {
+		$e.on('del', async (data) => {
 			if (this.getDefaultRequestParams('get')) {
-				return this.onDelData(Object.isFunction(data) ? data() : data);
+				void this.onDelData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
-		$e.on('refresh', (data) => this.onRefreshData(Object.isFunction(data) ? data() : data), group);
+		$e.on('refresh', (data) => {
+			void this.onRefreshData(Object.isFunction(data) ? data() : data);
+		}, group);
 	}
 
 	/**
