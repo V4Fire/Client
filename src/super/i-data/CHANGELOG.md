@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.18.3 (2022-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when event data is provided as a promise
+
 ## v3.0.0-rc.197 (2021-06-07)
 
 #### :boom: Breaking Change

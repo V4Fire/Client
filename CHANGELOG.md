@@ -17,6 +17,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Add new test API](docs/tests/migration/ru/README.md)
 
+## v3.18.4 (2022-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when event data is provided as a promise `iData`
+
 ## v3.18.2 (2022-03-22)
 
 #### :bug: Bug Fix

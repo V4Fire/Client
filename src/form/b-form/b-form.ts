@@ -523,7 +523,7 @@ export default class bForm extends iData implements iVisible {
 		}
 
 		let
-			val: CanUndef<unknown[]> = await el.groupFormValue;
+			val: unknown = await el.groupFormValue;
 
 		if (el.formConverter != null) {
 			const
@@ -531,13 +531,13 @@ export default class bForm extends iData implements iVisible {
 
 			for (let i = 0; i < converters.length; i++) {
 				const
-					validation = converters[i].call(this, val, this);
+					newVal = converters[i].call(this, val, this);
 
-				if (validation instanceof Option) {
-					val = await validation.catch(() => undefined);
+				if (newVal instanceof Option) {
+					val = await newVal.catch(() => undefined);
 
 				} else {
-					val = await validation;
+					val = await newVal;
 				}
 			}
 		}
