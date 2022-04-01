@@ -561,7 +561,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [query] - request query
 	 * @param [opts] - additional request options
 	 */
-	get<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<Nullable<D>> {
+	get<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
 			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams<D>('get');
 
@@ -580,7 +580,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [query] - request query
 	 * @param [opts] - additional request options
 	 */
-	peek<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<Nullable<D>> {
+	peek<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
 			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams('peek');
 
@@ -599,7 +599,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
-	post<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<Nullable<D>> {
+	post<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('post');
 
@@ -618,7 +618,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
-	add<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<Nullable<D>> {
+	add<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('add');
 
@@ -637,7 +637,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
-	upd<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<Nullable<D>> {
+	upd<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('upd');
 
@@ -656,7 +656,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
-	del<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<Nullable<D>> {
+	del<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
 			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('del');
 
@@ -1025,7 +1025,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		method: ModelMethod | Provider[ModelMethod],
 		body?: RequestQuery | RequestBody,
 		opts: CreateRequestOptions<D> = {}
-	): Promise<Nullable<D>> {
+	): Promise<CanUndef<D>> {
 		if (!this.dp) {
 			return Promise.resolve(undefined);
 		}
@@ -1074,7 +1074,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			});
 		}
 
-		return req.then((res) => res.data);
+		return req.then((res) => res.data).then((data) => data ?? undefined);
 	}
 
 	/**
