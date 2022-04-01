@@ -6,33 +6,29 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	iconsMap = Object.createDict<CanUndef<string>>(),
-	iconsList = <Function[]>[];
+import type { Icon } from 'traits/i-icon/modules/interface';
 
-interface SpriteEl {
-	id: string;
-	content: string;
-	viewBox: string;
-	stringify(): string;
-	destroy(): undefined;
-}
+export const
+	iconsStore = Object.createDict<{ctx: Function; path: string}>();
 
-function icons(id?: string): CanPromise<SpriteEl> {
+/**
+ * Returns an icon by the specified identifier
+ * @param id
+ */
+export function getIcon(id?: string): CanPromise<Icon> {
+	id = id != null && iconsStore[id] != null ?
+		iconsStore[id]?.path :
+		id;
+
 	if (id != null) {
-		for (let i = 0; i < iconsList.length; i++) {
-			try {
-				const
-					icon = iconsList[i](id);
+		const
+			icon = iconsStore[id]?.ctx(id);
 
-				if (MODULE === 'ES2020') {
-					return (async () => (await icon).default)();
-				}
-
-				return icon.default;
-
-			} catch {}
+		if (MODULE === 'ES2020') {
+			return (async () => (await icon).default)();
 		}
+
+		return icon.default;
 	}
 
 	throw new Error(`Cannot find a module "${id}"`);
@@ -63,16 +59,18 @@ if (MODULE === 'ES2020') {
 	ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/);
 }
 
-Object.forEach(ctx.keys(), (el: string) => {
-	iconsMap[normalize(el)] = el;
+Object.forEach(ctx.keys(), (path: string) => {
+	const
+		id = normalize(path);
+
+	if (iconsStore[id] == null) {
+		iconsStore[id] = {ctx, path};
+	}
 });
 
-iconsList.push(ctx);
 // @endcontext
 //#endif
 
 function normalize(key: string): string {
 	return key.replace(/\.\//, '').replace(/\.svg$/, '');
 }
-
-export { icons, iconsMap };
