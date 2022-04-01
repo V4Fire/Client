@@ -16,13 +16,13 @@ export const
  * @param id
  */
 export function getIcon(id?: string): CanPromise<Icon> {
-	id = id != null && iconsStore[id] != null ?
+	const path = id != null && iconsStore[id] != null ?
 		iconsStore[id]?.path :
 		id;
 
 	if (id != null) {
 		const
-			icon = iconsStore[id]?.ctx(id);
+			icon = iconsStore[id]?.ctx(path);
 
 		if (MODULE === 'ES2020') {
 			return (async () => (await icon).default)();
