@@ -11,7 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.18.4 (2022-04-01)
+## v3.??.?? (2022-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed sprite inheritance `traits/i-icon`
+
+# v3.18.4 (2022-04-01)
 
 #### :bug: Bug Fix
 
