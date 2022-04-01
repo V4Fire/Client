@@ -180,17 +180,12 @@ declare var
 	 * @param scheme
 	 * @param [opts]
 	 */
-	renderComponents: (componentName: string, scheme: RenderParams[], opts?: RenderOptions) => void,
+	renderComponents: (componentName: string, scheme: RenderParams[] | string, opts?: RenderOptions) => void,
 
 	/**
 	 * Removes all components created via `globalThis.renderComponents`
 	 */
-	removeCreatedComponents: () => void,
-
-	/**
-	 * Раскрывает функции которые были превращены в строки при вызове метода `Component.create`
-	 */
-	unzipRenderParams: (scheme: object) => unknown;
+	removeCreatedComponents: () => void;
 
 interface TouchGesturesCreateOptions {
 	/**

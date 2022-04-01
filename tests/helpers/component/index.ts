@@ -8,6 +8,8 @@
 
 import type { ElementHandle, JSHandle, Page } from 'playwright';
 
+import { zipJson } from 'core/prelude/test-env/components/json-parser';
+
 import type iBlock from 'super/i-block/i-block';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
@@ -29,12 +31,12 @@ export default class Component {
 		scheme: RenderParams[],
 		opts?: RenderOptions
 	): Promise<void> {
-		scheme = <RenderParams[]>this.replaceFnsReviver(scheme);
+		const schemeAsString = zipJson(scheme);
 
-		await page.evaluate(([{componentName, scheme, opts}]) => {
-			globalThis.renderComponents(componentName, scheme, opts);
+		await page.evaluate(([{componentName, schemeAsString, opts}]) => {
+			globalThis.renderComponents(componentName, schemeAsString, opts);
 
-		}, [{componentName, scheme, opts}]);
+		}, [{componentName, schemeAsString, opts}]);
 	}
 
 	/**
@@ -87,24 +89,26 @@ export default class Component {
 		const
 			renderId = String(Math.random());
 
-		const normalizedScheme = <RenderParams>this.replaceFnsReviver({
-			...scheme,
+		const schemeAsString = zipJson([
+			{
+				...scheme,
 
-			attrs: {
-				...scheme.attrs,
-				'data-render-id': renderId
+				attrs: {
+					...scheme.attrs,
+					'data-render-id': renderId
+				}
 			}
-		});
+		]);
 
 		const normalizedOptions = {
 			...opts,
 			rootSelector: '#root-component'
 		};
 
-		await page.evaluate(([{componentName, normalizedScheme, normalizedOptions}]) => {
-			globalThis.renderComponents(componentName, [normalizedScheme], normalizedOptions);
+		await page.evaluate(([{componentName, schemeAsString, normalizedOptions}]) => {
+			globalThis.renderComponents(componentName, schemeAsString, normalizedOptions);
 
-		}, [{componentName, normalizedScheme, normalizedOptions}]);
+		}, [{componentName, schemeAsString, normalizedOptions}]);
 
 		return <Promise<JSHandle<T>>>this.getComponentByQuery(page, `[data-render-id="${renderId}"]`);
 	}

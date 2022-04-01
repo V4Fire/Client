@@ -8,22 +8,16 @@
 
 import type iStaticPage from 'super/i-static-page/i-static-page';
 import type { ComponentElement } from 'super/i-static-page/i-static-page';
-
-globalThis.unzipRenderParams = (scheme: object) => JSON.parse(JSON.stringify(scheme), (key, val) => {
-	if (Object.isString(val) && val.startsWith('FN__')) {
-		// eslint-disable-next-line no-eval
-		return eval(val.replace('FN__', ''));
-	}
-
-	return val;
-});
+import { unzipJson } from 'core/prelude/test-env/components/json-parser';
 
 globalThis.renderComponents = (
 	componentName: string,
-	scheme: RenderParams[],
+	scheme: RenderParams[] | string,
 	options?: RenderOptions | string
 ) => {
-	scheme = <RenderParams[]>unzipRenderParams(scheme);
+	if (Object.isString(scheme)) {
+		scheme = <RenderParams[]>unzipJson(scheme);
+	}
 
 	if (Object.isString(options) || Object.size(options) === 0) {
 		options = {rootSelector: '#root-component'};
