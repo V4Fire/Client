@@ -190,6 +190,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```
 	 */
 	gulp.task('test:component:run', async () => {
+		require('@v4fire/core/build/tsnode');
+
 		const
 			pzlr = require('@pzlr/build-core');
 
@@ -527,6 +529,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```
 	 */
 	gulp.task('test:components', async (cb) => {
+		require('@v4fire/core/build/tsnode');
+
 		console.log(`CPUS available: ${cpus}`);
 
 		const
