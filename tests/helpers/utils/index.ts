@@ -18,6 +18,66 @@ const
 	logsMap = new WeakMap<Page, string[]>();
 
 export default class Utils {
+
+	/**
+	 * Waits for the specified function to return `Boolean(result) === true`.
+	 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.
+	 *
+	 * @param ctx – context that will be available as the first argument of the provided function
+	 * @param fn
+	 * @param args
+	 *
+	 * @example
+	 * ```typescript
+	 * // ctx refers to the imgNode
+	 * h.utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
+	 * ```
+	 */
+	static waitForFunction<ARGS extends any[] = any[]>(
+		ctx: ElementHandle,
+		fn: (this: any, ctx: any, ...args: ARGS) => unknown,
+		...args: ARGS
+	): Promise<void> {
+		const
+			strFn = fn.toString();
+
+		return ctx.evaluate((ctx, [strFn, ...args]) => {
+			const
+				timeout = 4e3,
+				// eslint-disable-next-line no-new-func
+				newFn = Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
+
+			let
+				isTimeout = false;
+
+			return new Promise<void>((res, rej) => {
+				const timeoutTimer = setTimeout(() => isTimeout = true, timeout);
+
+				const interval = setInterval(() => {
+					try {
+						const fnRes = Boolean(newFn.call(ctx));
+
+						if (fnRes) {
+							clearTimeout(timeoutTimer);
+							clearInterval(interval);
+							res();
+						}
+
+						if (isTimeout) {
+							clearInterval(interval);
+							rej(`The given function\n${newFn.toString()}\nreturns a negative result`);
+						}
+
+					} catch (err) {
+						clearInterval(interval);
+						rej(err);
+					}
+				}, 15);
+			});
+
+		}, [strFn, ...args]);
+	}
+
 	/** @see [[Helpers]] */
 	protected parent: typeof Helpers;
 
@@ -127,62 +187,18 @@ export default class Utils {
 	}
 
 	/**
-	 * Waits for the specified function to return `Boolean(result) === true`.
-	 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.
-	 *
-	 * @param ctx – context that will be available as the first argument of the provided function
+	 * @param ctx
 	 * @param fn
 	 * @param args
-	 *
-	 * @example
-	 * ```typescript
-	 * // ctx refers to the imgNode
-	 * h.utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
-	 * ```
+	 * @deprecated
+	 * @see [[Utils.waitForFunction]]
 	 */
 	waitForFunction<ARGS extends any[] = any[]>(
 		ctx: ElementHandle,
 		fn: (this: any, ctx: any, ...args: ARGS) => unknown,
 		...args: ARGS
 	): Promise<void> {
-		const
-			strFn = fn.toString();
-
-		return ctx.evaluate((ctx, [strFn, ...args]) => {
-			const
-				timeout = 4e3,
-				// eslint-disable-next-line no-new-func
-				newFn = Function(`return (${strFn}).apply(this, [this, ...${JSON.stringify(args)}])`);
-
-			let
-				isTimeout = false;
-
-			return new Promise<void>((res, rej) => {
-				const timeoutTimer = setTimeout(() => isTimeout = true, timeout);
-
-				const interval = setInterval(() => {
-					try {
-						const fnRes = Boolean(newFn.call(ctx));
-
-						if (fnRes) {
-							clearTimeout(timeoutTimer);
-							clearInterval(interval);
-							res();
-						}
-
-						if (isTimeout) {
-							clearInterval(interval);
-							rej(`The given function\n${newFn.toString()}\nreturns a negative result`);
-						}
-
-					} catch (err) {
-						clearInterval(interval);
-						rej(err);
-					}
-				}, 15);
-			});
-
-		}, [strFn, ...args]);
+		return Utils.waitForFunction(ctx, fn, ...args);
 	}
 }
 
