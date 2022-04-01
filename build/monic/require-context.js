@@ -87,7 +87,7 @@ module.exports = function requireContextReplacer(str) {
 
 				if (src[0] === '@') {
 					const
-						srcChunks = src.split('/'),
+						srcChunks = src.split(/[\\/]/),
 						key = path.join(contextPath, srcChunks[0].slice(1));
 
 					if (!aliases[key]) {
