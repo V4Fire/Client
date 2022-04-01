@@ -1076,7 +1076,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			});
 		}
 
-		return req.then((res) => res.data ?? undefined);
+		return req.then((res) => res.data).then((data) => data ?? undefined);
 	}
 
 	/**
