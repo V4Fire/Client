@@ -9,7 +9,6 @@
  */
 
 const
-	$C = require('collection.js'),
 	config = require('@config/config');
 
 const
@@ -17,7 +16,9 @@ const
 	path = require('upath');
 
 const
-	{config: pzlr} = require('@pzlr/build-core'),
+	{config: pzlr} = require('@pzlr/build-core');
+
+const
 	aliases = include('build/webpack/alias');
 
 const
@@ -49,11 +50,11 @@ const
  * ```
  */
 module.exports = function requireContextReplacer(str) {
-	return str.replace(contextRgxp, (str, context, body) => {
+	return str.replace(contextRgxp, (str, contextPaths, wrappedCode) => {
 		// eslint-disable-next-line no-new-func
-		context = Function('flags', `return ${context}`)(this.flags);
+		contextPaths = Function('flags', `return ${contextPaths}`)(this.flags);
 
-		if (!Object.isArray(context) || context.length < 2) {
+		if (!Object.isArray(contextPaths) || contextPaths.length < 2) {
 			throw SyntaxError('Invalid @context format');
 		}
 
@@ -61,10 +62,10 @@ module.exports = function requireContextReplacer(str) {
 			res = '';
 
 		const
-			rgxp = new RegExp(`(['"!])(${RegExp.escape(context[0])})(?=['"])`, 'g'),
-			wrap = (str) => res += `\n(() => {\n${str}\n})();\n`;
+			contextVarRgxp = new RegExp(`(?<=['"!])(${RegExp.escape(contextPaths[0])})(?=['"])`, 'g'),
+			wrapWithIIFE = (str) => res += `\n(() => {\n${str}\n})();\n`;
 
-		context = context.slice(1).map((el) => {
+		contextPaths = contextPaths.slice(1).flatMap((el) => {
 			if (el === pzlr.super) {
 				return pzlr.dependencies;
 			}
@@ -72,38 +73,37 @@ module.exports = function requireContextReplacer(str) {
 			return el;
 		});
 
-		[''].concat(...context).forEach((paths) => {
-			if (paths == null) {
+		['', ...contextPaths].forEach((contextPath) => {
+			if (contextPath == null) {
 				return;
 			}
 
-			paths = paths || [];
-
 			let
-				exists = false;
+				isPathExists = false;
 
-			const res = body.replace(rgxp, (str, $1, src) => {
+			const res = wrappedCode.replace(contextVarRgxp, (str, src) => {
 				let
 					resolvedSrc;
 
 				if (src[0] === '@') {
 					const
-						parts = src.split('/'),
-						key = [].concat(paths, parts[0].slice(1)).join('/');
+						srcChunks = src.split(/[\\/]/),
+						key = path.join(contextPath, srcChunks[0].slice(1));
 
 					if (!aliases[key]) {
 						return str;
 					}
 
-					resolvedSrc = [aliases[key], ...parts.slice(1)].join('/');
+					resolvedSrc = path.join(aliases[key], ...srcChunks.slice(1));
 
 				} else {
-					resolvedSrc = [].concat(paths, src).join('/');
+					resolvedSrc = path.join(contextPath, src);
 				}
 
+				// Interpolate templates from the path string
 				resolvedSrc = resolvedSrc.replace(tplRgxp, (str, key) => {
 					let
-						v = $C(config).get(key);
+						v = Object.get(config, key);
 
 					if (Object.isFunction(v)) {
 						v = v();
@@ -113,14 +113,14 @@ module.exports = function requireContextReplacer(str) {
 				});
 
 				if (fs.existsSync(resolvedSrc)) {
-					exists = true;
+					isPathExists = true;
 				}
 
-				return $1 + path.normalize(resolvedSrc);
+				return path.normalize(resolvedSrc);
 			});
 
-			if (exists) {
-				wrap(res);
+			if (isPathExists) {
+				wrapWithIIFE(res);
 			}
 		});
 

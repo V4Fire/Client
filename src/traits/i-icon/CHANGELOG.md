@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+# v3.18.5 (2022-04-02)
+
+#### :bug: Bug Fix
+
+* Fixed sprite inheritance
+
 ## v3.0.0-rc.203 (2021-06-19)
 
 #### :bug: Bug Fix

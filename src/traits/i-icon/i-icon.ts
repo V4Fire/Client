@@ -17,7 +17,7 @@ import SyncPromise from 'core/promise/sync';
 import type iBlock from 'super/i-block/i-block';
 
 import { ID_ATTRIBUTE } from 'core/component/directives/update-on';
-import { icons, iconsMap } from 'traits/i-icon/modules/icons';
+import { getIcon, iconsStore } from 'traits/i-icon/modules/icons';
 
 export default abstract class iIcon {
 	/**
@@ -31,12 +31,12 @@ export default abstract class iIcon {
 			return SyncPromise.resolve(undefined);
 		}
 
-		if (!(iconId in iconsMap)) {
+		if (!(iconId in iconsStore)) {
 			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 		}
 
 		const
-			icon = icons(iconsMap[iconId]);
+			icon = getIcon(iconId);
 
 		if (Object.isPromise(icon)) {
 			return (async () => `#${(await icon).id}`)();
