@@ -52,7 +52,10 @@
     "svg-transform-loader": "2.0.13",
     "cross-env": "7.0.3",
     "tslib": "2.3.1",
-    "vue": "2.6.10"
+    "vue": "2.6.10",
+    "@swc/core": "1.2.147",
+    "@swc/helpers": "0.3.8",
+    "regenerator-runtime": "0.13.9"
   },
   "peerDependencies": {
     "@v4fire/core": "https://github.com/v4fire/core#client/issues/490",
