@@ -4,6 +4,7 @@
 - [Тесты стартуют, но все фейлятся](#Тесты-стартуют,-но-все-фейлятся)
 - [Зависает выполнение теста при использовании fixture](#Зависает-выполнение-теста-при-использовании-fixture)
 - [h.dom.something cannot read property something of undefined](#h.dom.something-cannot-read-property-something-of-undefined)
+- [Работает ли typescript в старых тестах](#работает-ли-typescript-в-старых-тестах)
 - [Помните что импорты ведут к выполнению кода](#Помните-что-импорты-ведут-к-выполнению-кода)
 
 ## COMPONENTS is not defined
@@ -49,6 +50,10 @@ export const test = base.extend<MyFixtures>({
 const
   h = include('tests/helpers').default;
 ```
+
+## Работает ли typescript в старых тестах
+
+Работает, то есть можно вполне импортить хэлперы написанные на typescript.
 
 ## Помните что импорты ведут к выполнению кода
 

@@ -5,6 +5,7 @@
 - [Test execution freezes when using fixture](#test-execution-freezes-when-using-fixture)
 - [Playwright can't find tests](#playwright-cant-find-tests)
 - [h.dom.something cannot read property something of undefined](#hdomsomething-cannot-read-property-something-of-undefined)
+- [Does typescript work in old tests](#does-typescript-work-in-old-tests)
 - [Imports leads to code execution](#imports-leads-to-code-execution)
 
 ## COMPONENTS is not defined
@@ -51,6 +52,10 @@ Fix module import:
 const
   h = include('tests/helpers').default;
 ```
+
+## Does typescript work in old tests
+
+Yes, you can import helpers written in typescript.
 
 ## Imports leads to code execution
 
