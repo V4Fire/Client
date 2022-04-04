@@ -15,7 +15,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* [Add new test API](docs/tests/migration/ru/README.md)
+* [Add new test API](docs/tests/migration/en/README.md)
+
+#### :boom: Breaking Change
+
+* `test.d.ts` was removed
+* `config` package now uses alias `@config/config`
+* Old test API is now deprecated
+* [Test helpers was rewritten to `Typescript`](docs/tests/migration/en/README.md#changing-the-test-helper-api)
 
 # v3.18.5 (2022-04-02)
 
