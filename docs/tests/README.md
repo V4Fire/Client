@@ -5,5 +5,4 @@
   - [Migration from outdated API](./migration/en/README.md)
   - [QA](./migration/en/qa.md)
 
-- Outdated test API
-  - [en](./legacy/README.md)
+- [Outdated test API](./legacy/README.md)
