@@ -7,6 +7,8 @@
 - [Run a test](#run-a-test)
 - [Creating components at runtime](#creating-components-at-runtime)
   - [`Component.createComponent`](#componentcreatecomponent)
+- [Configuration file](#configuration-file)
+- [CLI flags](#cli-flags)
 
 ## Test environment
 
@@ -206,3 +208,72 @@ test.describe('b-component functional test', () => {
   });
 });
 ```
+
+## Configuration file
+
+V4fire provides two configuration files by default.
+
+### Unit configuration
+
+```typescript
+const config: PlaywrightTestConfig = {
+  ...superConfig,
+
+  name: 'unit',
+
+  testMatch: ['src/**/test/unit/**/*.ts'],
+
+  globalSetup: require.resolve('tests/config/unit/setup')
+};
+```
+
+When using this configuration file when running tests - the tests will be searched in the `unit` folder, all files with the extension `.ts` will be imported when the tests are run.
+
+### Project configuration
+
+```typescript
+const config: PlaywrightTestConfig = {
+  ...superConfig,
+
+  name: 'project',
+
+  testMatch: ['src/**/test/project/**/*.ts'],
+
+  globalSetup: require.resolve('tests/config/project/setup')
+};
+
+```
+
+When using this configuration file when running tests - the tests will be searched in the `project` folder, all files with the extension `.ts` will be imported when the tests are run.
+
+More about configuration file: https://playwright.dev/docs/test-configuration.
+
+## CLI flags
+
+Run tests:
+
+```
+npx playwright --config path/to/config/index.ts
+```
+
+Run tests with headed browser:
+
+```
+npx playwright --config path/to/config/index.ts --headed
+```
+
+Run tests in debug mode:
+
+```
+npx playwright --config path/to/config/index.ts --debug
+```
+
+Run tests that only has `functional` substring in path:
+
+```
+npx playwright --config path/to/config/index.ts --grep functional
+```
+
+More about CLI flags:
+
+https://playwright.dev/docs/test-cli

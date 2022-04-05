@@ -19,7 +19,7 @@ const test = base.extend<Fixtures>({
 	 * Navigates to the demo page and returns an instance of the page
 	 * @param obj
 	 */
-	demoPage: async ({page, baseURL}, use) => use(new DemoPage(page, <string>baseURL))
+	demoPage: ({page, baseURL}, use) => use(new DemoPage(page, <string>baseURL))
 });
 
 export default test;
