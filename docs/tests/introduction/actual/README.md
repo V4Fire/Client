@@ -103,7 +103,8 @@ test.describe('Some test', () => {
 });
 ```
 
-> Pay attention to the import of the `test` module, it is not imported from `@playwright/test`, but from a file prepared in advance. This is necessary to be able to expand specs with [fixture](https://playwright.dev/docs/api/class-fixtures).
+> Pay attention to the import of the `test` module, it is not imported from `@playwright/test`, but from a file prepared in advance. This is necessary to be able to expand specs with [fixture](https://playwright.dev/docs/api/class-fixtures). You also can override
+export of the `test` module and extend it with yours fixtures.
 
 Navigating with `${baseURL}/p-v4-components-demo.html` is awkward, this is where [`fixture`](https://playwright.dev/docs/api/class-fixtures) comes into play.
 
@@ -170,7 +171,15 @@ Now we have a test file, a test page, and a command to run tests. But at the mom
 
 In order to render a new component, V4Fire provides an API that allows you to render any component included in the bundle.
 
-> Make sure you add the components you want to test to the bundle, for example by adding a dependency to the component's `index.js`.
+Make sure you add the components you want to test to the bundle, for example by adding a dependency to the component's `index.js`.
+
+```javascript
+package('p-v4-components-demo')
+	.extends('i-static-page')
+	.dependencies(
+		'b-component-that-you-wanna-to-create-in-runtime'
+	);
+```
 
 ### `Component.createComponent`
 
@@ -229,6 +238,8 @@ const config: PlaywrightTestConfig = {
 
 When using this configuration file when running tests - the tests will be searched in the `unit` folder, all files with the extension `.ts` will be imported when the tests are run.
 
+This configuration is suggested for running unit (components, modules) tests.
+
 ### Project configuration
 
 ```typescript
@@ -246,6 +257,8 @@ const config: PlaywrightTestConfig = {
 
 When using this configuration file when running tests - the tests will be searched in the `project` folder, all files with the extension `.ts` will be imported when the tests are run.
 
+This configuration is suggested for running project (e2e) tests.
+
 More about configuration file: https://playwright.dev/docs/test-configuration.
 
 ## CLI flags
@@ -253,25 +266,49 @@ More about configuration file: https://playwright.dev/docs/test-configuration.
 Run tests:
 
 ```
-npx playwright --config path/to/config/index.ts
+npx cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" playwright --config path/to/config/index.ts
 ```
 
 Run tests with headed browser:
 
 ```
-npx playwright --config path/to/config/index.ts --headed
+npx cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" playwright --config path/to/config/index.ts --headed
 ```
 
 Run tests in debug mode:
 
 ```
-npx playwright --config path/to/config/index.ts --debug
+npx cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" playwright --config path/to/config/index.ts --debug
 ```
 
 Run tests that only has `functional` substring in path:
 
 ```
-npx playwright --config path/to/config/index.ts --grep functional
+npx cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" playwright --config path/to/config/index.ts --grep functional
+```
+
+Run unit tests:
+
+```
+npx cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" playwright --config tests/config/unit/index.ts
+```
+
+Run project tests:
+
+```
+npx cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" playwright --config tests/config/project/index.ts
+```
+
+With npm script and npm run:
+
+```
+npm run test:unit -- --headed
+```
+
+With npm script and yarn:
+
+```
+yarn test:unit --headed
 ```
 
 More about CLI flags:
