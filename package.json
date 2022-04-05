@@ -131,7 +131,7 @@
   },
   "devDependencies": {
     "@types/jasmine": "3.10.3",
-    "@v4fire/core": "3.81.1",
+    "@v4fire/core": "3.83.0",
     "@v4fire/linters": "1.9.0",
     "husky": "7.0.4",
     "nyc": "15.1.0",

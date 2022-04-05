@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+# v3.18.6 (2022-05-02)
+
+* `updateRequest` is now returns a `RequestPromise` `core/session`
+
+#### :bug: Bug Fix
+
+* Fixed sprite inheritance `traits/i-icon`
+
 # v3.18.5 (2022-04-02)
 
 #### :bug: Bug Fix

@@ -13,9 +13,9 @@ import Provider, {
 	Middlewares,
 	MiddlewareParams,
 
-	RequestResponse,
 	RequestFunctionResponse,
-	Response
+	Response,
+	RequestPromise
 
 } from 'core/data';
 
@@ -75,18 +75,18 @@ export default class Session extends Provider {
 		return {};
 	}
 
-	protected override updateRequest<T = unknown>(url: string, factory: RequestFunctionResponse<T>): RequestResponse<T>;
+	protected override updateRequest<T = unknown>(url: string, factory: RequestFunctionResponse<T>): RequestPromise<T>;
 	protected override updateRequest<T = unknown>(
 		url: string,
 		event: string,
 		factory: RequestFunctionResponse<T>
-	): RequestResponse<T>;
+	): RequestPromise<T>;
 
 	protected override updateRequest(
 		url: string,
 		event: string | RequestFunctionResponse,
 		factory?: RequestFunctionResponse
-	): RequestResponse {
+	): RequestPromise {
 		const
 			req = super.updateRequest(url, Object.cast(event), Object.cast<RequestFunctionResponse>(factory)),
 			session = s.get();
@@ -108,7 +108,7 @@ export default class Session extends Provider {
 			.then(update)
 			.catch(stderr);
 
-		return req.catch(async (err) => {
+		return Provider.borrowRequestPromiseAPI(req, req.catch(async (err) => {
 			const
 				response = Object.get<Response>(err, 'details.response'),
 				{auth, params} = await session;
@@ -133,6 +133,6 @@ export default class Session extends Provider {
 			}
 
 			throw err;
-		});
+		}));
 	}
 }
