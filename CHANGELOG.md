@@ -24,6 +24,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `config` package now uses alias `@config/config`
   * [Test helpers was rewritten to `Typescript`](docs/tests/migration/README.md#changing-the-test-helper-api)
 
+# v3.18.6 (2022-05-02)
+
+#### :bug: Bug Fix
+
+* `updateRequest` is now returns a `RequestPromise` `core/session`
+
 # v3.18.5 (2022-04-02)
 
 #### :bug: Bug Fix
