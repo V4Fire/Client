@@ -16,7 +16,7 @@ export interface Fixtures {
 
 const test = base.extend<Fixtures>({
 	/**
-	 * Navigates to the demo page and returns an instance of the page
+	 * Returns an instance of the demo page
 	 * @param obj
 	 */
 	demoPage: async ({page, baseURL}, use) => use(new DemoPage(page, <string>baseURL))
