@@ -1,3 +1,3 @@
 # tests/helpers/dom
 
-This module provides an API to work with `DOM`
+This module provides API to work with the document object model.

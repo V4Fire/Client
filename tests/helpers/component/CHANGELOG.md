@@ -13,4 +13,4 @@ Changelog
 
 #### :rocket: New Feature
 
-* Migrated to typescript
+* Migrated to TS

@@ -1,3 +1,3 @@
 # tests/helpers/request
 
-This module provides an API to work with requests on the page
+This module provides API to work with requests on a page.

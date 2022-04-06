@@ -19,7 +19,6 @@ export * from 'tests/helpers/bom/interface';
  * Class provides API to work with `BOM` (browser object model)
  */
 export default class BOM {
-
 	/**
 	 * Waits until `requestIdleCallback` (`setTimeout 50` for safari) on the page
 	 *

@@ -18,7 +18,6 @@ const
 	logsMap = new WeakMap<Page, string[]>();
 
 export default class Utils {
-
 	/**
 	 * Waits for the specified function to return `Boolean(result) === true`.
 	 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.

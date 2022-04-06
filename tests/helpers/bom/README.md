@@ -1,3 +1,3 @@
 # tests/helpers/bom
 
-This module provides an API to work with `BOM`
+This module provides API to work with the browser object model.

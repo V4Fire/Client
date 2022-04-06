@@ -1,3 +1,3 @@
 # tests/helpers/scroll
 
-This module provides an API to work with scroll
+This module provides API to work with scrolling.

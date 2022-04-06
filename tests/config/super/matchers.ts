@@ -1,10 +1,18 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import { expect } from '@playwright/test';
 
 expect.extend({
 	async toBeResolved(received: Promise<unknown>) {
 		if (!Object.isPromise(received)) {
 			return {
-				message: () => `Expected promise to be provided, got ${typeof received}`,
+				message: () => `Expected a promise to be provided, got ${typeof received}`,
 				pass: false
 			};
 		}
@@ -19,7 +27,7 @@ expect.extend({
 
 		} catch (err) {
 			return {
-				message: () => `Expected promise to be resolved but it was rejected \n ${err}`,
+				message: () => `Expected a promise to be resolved but it was rejected \n ${err}`,
 				pass: false
 			};
 		}
@@ -28,7 +36,7 @@ expect.extend({
 	async toBeResolvedTo(received: Promise<unknown>, expected: unknown) {
 		if (!Object.isPromise(received)) {
 			return {
-				message: () => `Expected promise to be provided, got ${typeof received}`,
+				message: () => `Expected a promise to be provided, got ${typeof received}`,
 				pass: false
 			};
 		}
@@ -45,13 +53,13 @@ expect.extend({
 			}
 
 			return {
-				message: () => 'Provided value is not equal to expected',
+				message: () => 'A value is not equal to the expected',
 				pass: false
 			};
 
 		} catch (err) {
 			return {
-				message: () => `Expected promise to be resolved but it was rejected \n ${err}`,
+				message: () => `Expected a promise to be resolved but it was rejected \n ${err}`,
 				pass: false
 			};
 		}
@@ -60,7 +68,7 @@ expect.extend({
 	async toReRejected(received: Promise<unknown>) {
 		if (!Object.isPromise(received)) {
 			return {
-				message: () => `Expected promise to be provided, got ${typeof received}`,
+				message: () => `Expected a promise to be provided, got ${typeof received}`,
 				pass: false
 			};
 		}
@@ -69,7 +77,7 @@ expect.extend({
 			await received;
 
 			return {
-				message: () => 'Expected promise to be rejected but it was resolved',
+				message: () => 'Expected a promise to be rejected but it was resolved',
 				pass: false
 			};
 
@@ -84,14 +92,14 @@ expect.extend({
 	async toBeRejectedWith(received: Promise<unknown>, expected: unknown) {
 		if (!Object.isPromise(received)) {
 			return {
-				message: () => `Expected promise to be provided, got ${typeof received}`,
+				message: () => `Expected a promise to be provided, got ${typeof received}`,
 				pass: false
 			};
 		}
 
 		return received
 			.then(() => ({
-				message: () => 'Expected promise to be rejected but it was resolved',
+				message: () => 'Expected a promise to be rejected but it was resolved',
 				pass: false
 			}))
 
@@ -105,7 +113,7 @@ expect.extend({
 				}
 
 				return {
-					message: () => 'Provided value is not equal to expected',
+					message: () => 'A value is not equal to the expected',
 					pass: false
 				};
 			});
@@ -114,7 +122,7 @@ expect.extend({
 	async toBePending(received: Promise<unknown>) {
 		if (!Object.isPromise(received)) {
 			return {
-				message: () => `Expected promise to be provided, got ${typeof received}`,
+				message: () => `Expected a promise to be provided, got ${typeof received}`,
 				pass: false
 			};
 		}
@@ -136,12 +144,12 @@ expect.extend({
 				}
 
 				return {
-					message: () => 'Expected promise to be in the pending state but it was fulfilled',
+					message: () => 'Expected a promise to be in the pending state but it was fulfilled',
 					pass: false
 				};
 			})
 			.catch(() => ({
-				message: () => 'Expected promise to be in the pending state but it was rejected',
+				message: () => 'Expected a promise to be in the pending state but it was rejected',
 				pass: false
 			}));
 	}
