@@ -14,7 +14,7 @@
  */
 
 const
-	config = require('config');
+	config = require('@config/config');
 
 const
 	{createDesignSystem} = include('build/stylus/ds/helpers'),

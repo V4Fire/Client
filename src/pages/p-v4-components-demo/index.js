@@ -7,7 +7,7 @@
  */
 
 const
-	components = (require('config').build.components ?? []).map(({name}) => name);
+	components = (require('@config/config').build.components ?? []).map(({name}) => name);
 
 package('p-v4-components-demo')
 	.extends('i-static-page')

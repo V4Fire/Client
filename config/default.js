@@ -211,6 +211,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Port for a test server
+		 * @env TEST_PORT
+		 */
+		testPort: o('test-port', {
+			env: true,
+			default: 8000
+		}),
+
+		/**
 		 * Enables the special kind of a demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *
@@ -457,7 +466,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 */
 			dataURILimit(def = 2 * 1024) {
 				const
-					fatHTML = require('config').webpack.fatHTML();
+					fatHTML = require('@config/config').webpack.fatHTML();
 
 				if (fatHTML === true || fatHTML === 1) {
 					return undefined;
@@ -1146,7 +1155,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * ```
 	 * package('b-dummy')
 	 *   .extends('i-data')
-	 *   .dependencies(...require('config').componentDependencies()['b-dummy'] ?? []);
+	 *   .dependencies(...require('@config/config').componentDependencies()['b-dummy'] ?? []);
 	 * ```
 	 */
 	componentDependencies() {

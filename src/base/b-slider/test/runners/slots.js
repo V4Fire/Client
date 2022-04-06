@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers'),
+	h = include('tests/helpers').default,
 	{swipeOnce, initSlider, defaultSlotFn, initDefaultSlider, current} = include('src/base/b-slider/test/helpers');
 
 /** @param {Page} page */

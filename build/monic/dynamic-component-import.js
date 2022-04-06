@@ -9,7 +9,7 @@
  */
 
 const
-	{typescript, webpack} = require('config'),
+	{typescript, webpack} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
 const importRgxp = new RegExp(

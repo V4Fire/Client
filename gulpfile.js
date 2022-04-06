@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('config');
+require('@config/config');
 
 /**
  * Initializes the specified gulp instance

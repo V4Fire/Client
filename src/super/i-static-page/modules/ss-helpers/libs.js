@@ -10,7 +10,7 @@ require('../interface');
 
 const
 	{resolve} = require('@pzlr/build-core'),
-	{webpack, src, csp} = require('config');
+	{webpack, src, csp} = require('@config/config');
 
 const
 	fs = require('fs-extra'),

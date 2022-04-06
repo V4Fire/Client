@@ -12,7 +12,7 @@ const
 	$C = require('collection.js');
 
 const
-	{webpack} = require('config'),
+	{webpack} = require('@config/config'),
 	{muteConsole, unmuteConsole} = include('build/helpers');
 
 /**

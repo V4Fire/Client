@@ -12,7 +12,7 @@ const
 	path = require('upath');
 
 const
-	{build} = require('config'),
+	{build} = require('@config/config'),
 	{config: {projectName, dependencies, sourceDir}, resolve} = require('@pzlr/build-core');
 
 // eslint-disable-next-line no-multi-assign
