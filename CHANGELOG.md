@@ -13,16 +13,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.19.0 (2022-04-06)
 
+#### :boom: Breaking Change
+
+* The old test API is now deprecated:
+  * `test.d.ts` was removed
+  * The `config` package now uses an alias `@config/config`
+  * [Test helpers was rewritten to `TS`](docs/tests/migration/README.md#changing-the-test-helper-api)
+
 #### :rocket: New Feature
 
 * [Add new test API](docs/tests/migration/README.md)
-
-#### :boom: Breaking Change
-
-* Old test API is now deprecated
-  * `test.d.ts` was removed
-  * `config` package now uses alias `@config/config`
-  * [Test helpers was rewritten to `Typescript`](docs/tests/migration/README.md#changing-the-test-helper-api)
 
 # v3.18.6 (2022-05-02)
 
