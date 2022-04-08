@@ -83,7 +83,6 @@ export default class Utils {
 	 * @param moduleName
 	 */
 	static import<T>(page: Page, moduleName: string): Promise<JSHandle<T>> {
-
 		if (!moduleName.startsWith('./')) {
 			moduleName = `./src/${moduleName}`;
 		}

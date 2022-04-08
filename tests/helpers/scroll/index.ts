@@ -38,7 +38,7 @@ export default class Scroll {
 	 * @param selector
 	 * @param [scrollIntoViewOptions]
 	 */
-	async scrollIntoViewIfNeeded(
+	static async scrollIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
 		selector: string,
 		scrollIntoViewOptions: Dictionary
@@ -57,7 +57,7 @@ export default class Scroll {
 	 * @param refName
 	 * @param [scrollIntoViewOptions]
 	 */
-	async scrollRefIntoViewIfNeeded(
+	static async scrollRefIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
 		refName: string,
 		scrollIntoViewOptions: Dictionary
@@ -68,19 +68,9 @@ export default class Scroll {
 
 	/**
 	 * @param page
-	 * @param options
-	 * @deprecated
-	 * @see [[Scroll.scrollBy]]
-	 */
-	scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
-		return Scroll.scrollBy(page, options);
-	}
-
-	/**
-	 * @param page
 	 * @param [options]
 	 */
-	scrollToBottom(page: Page, options?: ScrollOptions): Promise<void> {
+	static scrollToBottom(page: Page, options?: ScrollOptions): Promise<void> {
 		return this.scrollBy(page, {top: 1e7, left: 0, ...options});
 	}
 
@@ -92,7 +82,7 @@ export default class Scroll {
 	 * @param [checkFn]
 	 * @param [options]
 	 */
-	async scrollToBottomWhile(
+	static async scrollToBottomWhile(
 		page: Page,
 		checkFn?: () => CanPromise<boolean>,
 		options?: ScrollToBottomWhileOptions
@@ -129,4 +119,68 @@ export default class Scroll {
 		clearTimeout(timeout);
 	}
 
+	/**
+	 * @param ctx
+	 * @param selector
+	 * @param [scrollIntoViewOptions]
+	 * @deprecated
+	 * @see [[Scroll.scrollIntoViewIfNeeded]]
+	 */
+	async scrollIntoViewIfNeeded(
+		ctx: Page | ElementHandle,
+		selector: string,
+		scrollIntoViewOptions: Dictionary
+	): Promise<void> {
+		return Scroll.scrollRefIntoViewIfNeeded(ctx, selector, scrollIntoViewOptions);
+	}
+
+	/**
+	 * @param ctx
+	 * @param refName
+	 * @param [scrollIntoViewOptions]
+	 * @deprecated
+	 * @see [[Scroll.scrollRefIntoViewIfNeeded]]
+	 */
+	async scrollRefIntoViewIfNeeded(
+		ctx: Page | ElementHandle,
+		refName: string,
+		scrollIntoViewOptions: Dictionary
+	): Promise<void> {
+		return Scroll.scrollRefIntoViewIfNeeded(ctx, refName, scrollIntoViewOptions);
+	}
+
+	/**
+	 * @param page
+	 * @param options
+	 * @deprecated
+	 * @see [[Scroll.scrollBy]]
+	 */
+	scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
+		return Scroll.scrollBy(page, options);
+	}
+
+	/**
+	 * @param page
+	 * @param [options]
+	 * @deprecated
+	 * @see [[Scroll.scrollToBottom]]
+	 */
+	scrollToBottom(page: Page, options?: ScrollOptions): Promise<void> {
+		return Scroll.scrollToBottom(page, options);
+	}
+
+	/**
+	 * @param page
+	 * @param [checkFn]
+	 * @param [options]
+	 * @deprecated
+	 * @see [[Scroll.scrollToBottomWhile]]
+	 */
+	async scrollToBottomWhile(
+		page: Page,
+		checkFn?: () => CanPromise<boolean>,
+		options?: ScrollToBottomWhileOptions
+	): Promise<void> {
+		return Scroll.scrollToBottomWhile(page, checkFn, options);
+	}
 }
