@@ -212,18 +212,29 @@ export default class Component {
 	}
 
 	/**
-	 * Заменяет все функции на строковое представление с префиксом
+	 * Waits until the component has the specified status and returns the component
 	 *
-	 * @param val
+	 * @param ctx
+	 * @param selector
+	 * @param status
 	 */
-	protected static replaceFnsReviver(val: object): unknown {
-		return JSON.parse(JSON.stringify(val, (key, val) => {
-			if (Object.isFunction(val)) {
-				return `FN__${val.toString()}`;
+	static async waitForComponentStatus<T extends iBlock>(
+		ctx: Page | ElementHandle,
+		selector: string,
+		status: string
+	): Promise<CanUndef<JSHandle<T>>> {
+		const
+			component = await this.waitForComponentByQuery<T>(ctx, selector);
+
+		await component.evaluate((ctx, status) => new Promise<void>((res) => {
+			if (ctx.componentStatus === status) {
+				res();
 			}
 
-			return val;
-		}));
+			ctx.on(`status${status.camelize(true)}`, res);
+		}), status);
+
+		return component;
 	}
 
 	/**
@@ -232,6 +243,8 @@ export default class Component {
 	 * @param ctx
 	 * @param selector
 	 * @param [options]
+	 * @deprecated
+	 * @see [[Component.waitForComponentByQuery]]
 	 */
 	async waitForComponent<T extends iBlock>(
 		ctx: Page | ElementHandle,
@@ -250,11 +263,12 @@ export default class Component {
 	}
 
 	/**
-	 * @see [[Component.createComponent]]
 	 * @param page
 	 * @param componentName
 	 * @param scheme
 	 * @param opts
+	 * @deprecated
+	 * @see [[Component.createComponent]]
 	 */
 	async createComponent<T extends iBlock>(
 		page: Page,
@@ -291,6 +305,8 @@ export default class Component {
 	 *
 	 * @param ctx
 	 * @param selector
+	 * @deprecated
+	 * @see [[Component.getComponentByQuery]]
 	 */
 	async getComponentByQuery<T extends iBlock>(
 		ctx: Page | ElementHandle,
@@ -327,28 +343,17 @@ export default class Component {
 	}
 
 	/**
-	 * Waits until the component has the specified status and returns the component
-	 *
 	 * @param ctx
 	 * @param selector
 	 * @param status
+	 * @deprecated
+	 * @see [[Component.waitForComponentStatus]]
 	 */
 	async waitForComponentStatus<T extends iBlock>(
 		ctx: Page | ElementHandle,
 		selector: string,
 		status: string
 	): Promise<CanUndef<JSHandle<T>>> {
-		const
-			component = await this.waitForComponent<T>(ctx, selector);
-
-		await component.evaluate((ctx, status) => new Promise<void>((res) => {
-			if (ctx.componentStatus === status) {
-				res();
-			}
-
-			ctx.on(`status${status.camelize(true)}`, res);
-		}), status);
-
-		return component;
+		return Component.waitForComponentStatus(ctx, selector, status);
 	}
 }
