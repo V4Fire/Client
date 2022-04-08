@@ -32,7 +32,7 @@ export class Helpers {
 	gestures: Gestures = new Gestures();
 
 	/** @see [[BOM]] */
-	bom: BOM = new BOM(this);
+	bom: BOM = new BOM();
 
 	/** @see [[Router]] */
 	router: Router = new Router();
