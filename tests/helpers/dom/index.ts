@@ -21,7 +21,7 @@ export default class DOM {
 	 * @param ctx
 	 * @param refName
 	 */
-	 static async getRef<T extends HTMLElement>(
+	static async getRef<T extends HTMLElement>(
 		ctx: Page | ElementHandle,
 		refName: string
 	): Promise<Nullable<ElementHandle<T>>> {
@@ -242,6 +242,36 @@ export default class DOM {
 	}
 
 	/**
+	 * Waits for the specified element to appear in the DOM and returns it
+	 *
+	 * @param ctx
+	 * @param selector
+	 * @param [options]
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
+	 */
+	static waitForEl(
+		ctx: Page | ElementHandle,
+		selector: string,
+		options: WaitForElOptions
+	): Promise<Nullable<ElementHandle>> {
+		const normalizedOptions = <Required<WaitForElOptions>>{
+			sleep: 100,
+			timeout: 5000,
+			to: 'mount',
+			...options
+		};
+
+		if (normalizedOptions.to === 'mount') {
+			return ctx.waitForSelector(selector, {state: 'attached', timeout: normalizedOptions.timeout});
+
+		}
+
+		return ctx.waitForSelector(selector, {state: 'detached', timeout: normalizedOptions.timeout});
+	}
+
+	/**
 	 * @param refName
 	 * @deprecated
 	 * @see [[DOM.getRefSelector]]
@@ -293,24 +323,22 @@ export default class DOM {
 	}
 
 	/**
-	 * Waits for an element in the DOM that matches the specified `refName` and returns it
-	 *
 	 * @param ctx
 	 * @param refName
 	 * @param [options] - @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
+	 * @deprecated
+	 * @see [[DOM.waitRef]]
 	 */
 	waitForRef(ctx: Page | ElementHandle, refName: string, options?: Dictionary): Promise<ElementHandle> {
 		return ctx.waitForSelector(this.getRefSelector(refName), {state: 'attached', ...options});
 	}
 
 	/**
-	 * Waits for the specified element to appear in the DOM and returns it
-	 *
 	 * @param ctx
 	 * @param selector
 	 * @param [options]
-	 *
 	 * @deprecated
+	 * @see [[DOM.waitForEl]]
 	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 	 */
 	waitForEl(ctx: Page | ElementHandle, selector: string, options: WaitForElOptions): Promise<Nullable<ElementHandle>> {
