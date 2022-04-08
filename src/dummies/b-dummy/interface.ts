@@ -31,7 +31,6 @@ export interface Directives {
 export interface Modules {
 	resizeWatcher: typeof ResizeWatcher;
 	iObserveDOM: typeof iObserveDOM;
-	cookie: typeof cookie;
 	htmlHelpers: typeof htmlHelpers;
 	browserHelpers: typeof browserHelpers;
 	session: typeof session;

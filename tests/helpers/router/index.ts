@@ -8,20 +8,15 @@
 
 import type { Page } from 'playwright';
 
-import type Helpers from 'tests/helpers';
+import Component from 'tests/helpers/component';
+import BOM from 'tests/helpers/BOM';
+
+import type iStaticPage from 'super/i-static-page/i-static-page';
 
 /**
  * Class provides API to work with `b-router`.
  */
 export default class Router {
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
-
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Calls the specified method on a router with providing of arguments
 	 *
@@ -31,12 +26,12 @@ export default class Router {
 	 */
 	async call(page: Page, method: string, ...argsToProvideIntoRouter: unknown[]): Promise<void> {
 		const
-			c = await this.parent.component.waitForComponent(page, '#root-component');
+			c = await Component.waitForRoot<iStaticPage>(page);
 
 		await c.evaluate((ctx, args) =>
 			ctx.router?.[<string>args[0]](...args.slice(1, args.length)), [method, ...argsToProvideIntoRouter]);
 
 		await page.waitForLoadState('networkidle');
-		await this.parent.bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 	}
 }

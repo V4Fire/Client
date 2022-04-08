@@ -23,7 +23,7 @@ export class Helpers {
 	request: Request = new Request();
 
 	/** @see [[Utils]] */
-	utils: Utils = new Utils(this);
+	utils: Utils = new Utils();
 
 	/** @see [[Component]] */
 	component: Component = new Component();
@@ -35,13 +35,13 @@ export class Helpers {
 	bom: BOM = new BOM(this);
 
 	/** @see [[Router]] */
-	router: Router = new Router(this);
+	router: Router = new Router();
 
 	/** @see [[DOM]] */
 	dom: DOM = new DOM();
 
 	/** @see [[Scroll]] */
-	scroll: Scroll = new Scroll(this);
+	scroll: Scroll = new Scroll();
 }
 
 export default new Helpers();

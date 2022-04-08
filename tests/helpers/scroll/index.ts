@@ -9,7 +9,8 @@
 import delay from 'delay';
 import type { Page, ElementHandle } from 'playwright';
 
-import type Helpers from 'tests/helpers';
+import DOM from 'tests/helpers/dom';
+
 import type { ScrollToBottomWhileOptions } from 'tests/helpers/scroll/interface';
 
 export * from 'tests/helpers/scroll/interface';
@@ -27,19 +28,11 @@ export default class Scroll {
 		return page.evaluate((options) => globalThis.scrollBy(options), options);
 	}
 
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
-
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
-	}
-
 	/**
 	 * This method waits for actionability checks, then tries to scroll element into view,
 	 * unless it is completely visible as defined by IntersectionObserver's ratio.
 	 *
-	 * Throws an error when elementHandle does not point to an element connected to a Document or a ShadowRoot.
+	 * Throws an error when `elementHandle` does not point to an element connected to a Document or a ShadowRoot.
 	 *
 	 * @param ctx
 	 * @param selector
@@ -69,7 +62,7 @@ export default class Scroll {
 		refName: string,
 		scrollIntoViewOptions: Dictionary
 	): Promise<void> {
-		const ref = await this.parent.dom.waitForRef(ctx, refName);
+		const ref = await DOM.waitRef(ctx, refName);
 		return ref.scrollIntoViewIfNeeded(scrollIntoViewOptions);
 	}
 

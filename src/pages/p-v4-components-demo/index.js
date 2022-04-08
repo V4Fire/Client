@@ -56,4 +56,7 @@ package('p-v4-components-demo')
 		'b-dummy-decorators',
 
 		components
-	);
+	)
+	.libs([
+		'core/cookies'
+	])
