@@ -24,7 +24,7 @@ export default class Router {
 	 * @param method
 	 * @param argsToProvideIntoRouter
 	 */
-	async call(page: Page, method: string, ...argsToProvideIntoRouter: unknown[]): Promise<void> {
+	static async call(page: Page, method: string, ...argsToProvideIntoRouter: unknown[]): Promise<void> {
 		const
 			c = await Component.waitForRoot<iStaticPage>(page);
 
@@ -33,5 +33,16 @@ export default class Router {
 
 		await page.waitForLoadState('networkidle');
 		await BOM.waitForIdleCallback(page);
+	}
+
+	/**
+	 * @param page
+	 * @param method
+	 * @param argsToProvideIntoRouter
+	 * @deprecated
+	 * @see [[Router.call]]
+	 */
+	async call(page: Page, method: string, ...argsToProvideIntoRouter: unknown[]): Promise<void> {
+		return Router.call(page, method, ...argsToProvideIntoRouter);
 	}
 }
