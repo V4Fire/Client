@@ -10,6 +10,7 @@ import type bSelect from 'form/b-select/b-select';
 import type { ModEvent, SetModEvent } from 'super/i-input-text';
 
 import { openedSelect } from 'form/b-select/const';
+import type Block from 'super/i-block/modules/block';
 
 /**
  * Handler: value changing of a native component `<select>`
@@ -19,12 +20,13 @@ import { openedSelect } from 'form/b-select/const';
  */
 export function nativeChange<C extends bSelect>(component: C): void {
 	const {
-		unsafe,
-		unsafe: {
-			block: $b,
-			$refs: {input}
-		}
+		unsafe
 	} = component;
+
+	const {
+		block: $b,
+		$refs: {input}
+	}: { block: Block | undefined; $refs: { input: HTMLInputElement } } = unsafe;
 
 	if ($b == null || !unsafe.native) {
 		return;
@@ -34,7 +36,7 @@ export function nativeChange<C extends bSelect>(component: C): void {
 		checkedItems = input.querySelectorAll(`${$b.getElSelector('item')}:checked`);
 
 	let
-		value;
+		value: any = null;
 
 	for (let i = 0; i < checkedItems.length; i++) {
 		const
@@ -188,15 +190,15 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 	e.preventDefault();
 
 	const
-		{block: $b} = unsafe;
+		{block: $b}: { block: Block | undefined } = unsafe;
 
 	if ($b == null) {
 		return;
 	}
 
 	const getMarkedOrSelectedItem = () =>
-		$b.element('item', {marked: true}) ??
-		$b.element('item', {selected: true});
+		$b.element<HTMLDivElement>('item', {marked: true}) ??
+		$b.element<HTMLDivElement>('item', {selected: true});
 
 	let
 		currentItemEl = getMarkedOrSelectedItem();
@@ -247,7 +249,7 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 		}
 
 		default:
-			// Do nothing
+		// Do nothing
 	}
 }
 
