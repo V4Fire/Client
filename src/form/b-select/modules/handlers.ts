@@ -197,8 +197,8 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 	}
 
 	const getMarkedOrSelectedItem = () =>
-		$b.element<HTMLDivElement>('item', {marked: true}) ??
-		$b.element<HTMLDivElement>('item', {selected: true});
+		$b.element('item', {marked: true}) ??
+		$b.element('item', {selected: true});
 
 	let
 		currentItemEl = getMarkedOrSelectedItem();
