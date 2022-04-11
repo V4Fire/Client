@@ -13,7 +13,7 @@ const
 	Typograf = require('typograf');
 
 const
-	config = require('config');
+	config = require('@config/config');
 
 const
 	tp = new Typograf(config.typograf());

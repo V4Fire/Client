@@ -14,8 +14,8 @@ This module provides a trait for a component that needs to implement the "access
 
 | Name       | Description                                                                                  | Values    | Default |
 |------------|----------------------------------------------------------------------------------------------|-----------|---------|
-| `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented              | `Boolean` | -       |
-| `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `Boolean` | -       |
+| `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented              | `boolean` | -       |
+| `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `boolean` | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 

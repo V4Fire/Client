@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config');
+	config = require('@config/config');
 
 const
 	fs = require('fs-extra'),

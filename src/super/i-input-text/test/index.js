@@ -13,8 +13,8 @@
  */
 
 const
-	h = include('tests/helpers'),
-	u = include('tests/utils'),
+	h = include('tests/helpers').default,
+	u = include('tests/utils').default,
 	test = u.getCurrentTest();
 
 /**

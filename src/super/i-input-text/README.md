@@ -14,8 +14,8 @@ This module provides a superclass to create text inputs. The class includes API 
 
 | Name       | Description                            | Values    | Default |
 |------------|----------------------------------------|-----------|---------|
-| `empty`    | A component text is empty              | `Boolean` | -       |
-| `readonly` | The component is in the read-only mode | `Boolean` | -       |
+| `empty`    | A component text is empty              | `boolean` | -       |
+| `readonly` | The component is in the read-only mode | `boolean` | -       |
 
 Also, you can see [[iWidth]] and [[iSize]] traits and the [[iInput]] component.
 

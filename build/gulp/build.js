@@ -9,7 +9,7 @@
  */
 
 const
-	config = require('config'),
+	config = require('@config/config'),
 	through2 = require('through2'),
 	Vinyl = require('vinyl');
 

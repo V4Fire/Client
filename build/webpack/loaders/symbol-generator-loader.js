@@ -9,7 +9,7 @@
  */
 
 const
-	config = require('config'),
+	config = require('@config/config'),
 	$C = require('collection.js');
 
 const

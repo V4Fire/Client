@@ -8,7 +8,7 @@
 
 const
 	fs = require('fs-extra'),
-	{src, webpack} = require('config');
+	{src, webpack} = require('@config/config');
 
 const
 	ss = include('src/super/i-static-page/modules/ss-helpers'),

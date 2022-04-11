@@ -13,7 +13,7 @@ const
 	path = require('path');
 
 const
-	{src} = require('config'),
+	{src} = require('@config/config'),
 	{config: pzlr, resolve} = require('@pzlr/build-core');
 
 /**

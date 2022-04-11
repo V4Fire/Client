@@ -11,6 +11,43 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.19.0 (2022-04-06)
+
+#### :boom: Breaking Change
+
+* The old test API is now deprecated:
+  * `test.d.ts` was removed
+  * The `config` package now uses an alias `@config/config`
+  * [Test helpers was rewritten to `TS`](docs/tests/migration/README.md#changing-the-test-helper-api)
+
+#### :rocket: New Feature
+
+* [Add new test API](docs/tests/migration/README.md)
+
+# v3.18.6 (2022-05-02)
+
+#### :bug: Bug Fix
+
+* `updateRequest` is now returns a `RequestPromise` `core/session`
+
+# v3.18.5 (2022-04-02)
+
+#### :bug: Bug Fix
+
+* Fixed sprite inheritance `traits/i-icon`
+
+# v3.18.4 (2022-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when event data is provided as a promise `iData`
+
+## v3.18.2 (2022-03-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `initLoad` race condition `base/b-virtual-scroll`
+
 ## v3.18.1 (2022-03-05)
 
 #### :house: Internal

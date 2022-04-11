@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('config');
+require('@config/config');
 
 const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),

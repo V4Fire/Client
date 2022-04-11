@@ -184,7 +184,17 @@ export default abstract class iStaticPage extends iPage {
 
 		if (Object.isTruly(lang)) {
 			try {
-				document.documentElement.setAttribute('lang', lang);
+				const
+					el = document.documentElement;
+
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (lang != null) {
+					el.setAttribute('lang', lang);
+
+				} else {
+					el.removeAttribute('lang');
+				}
+
 			} catch {}
 		}
 
