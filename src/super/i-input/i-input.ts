@@ -412,7 +412,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 						converters = Array.concat([], this.formValueConverter);
 
 					let
-						res = value;
+						res: CanUndef<typeof value> = value;
 
 					for (let i = 0; i < converters.length; i++) {
 						const

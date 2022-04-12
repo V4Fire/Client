@@ -526,7 +526,7 @@ export default class AsyncRender extends Friend {
 				return obj;
 			}
 
-			return Object.entries(obj!);
+			return Object.entries(obj);
 		}
 
 		return [obj];
