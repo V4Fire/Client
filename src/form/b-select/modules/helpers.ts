@@ -10,7 +10,6 @@ import { $$ } from 'form/b-select/const';
 
 import type bSelect from 'form/b-select/b-select';
 import type { Items } from 'form/b-select/interface';
-import type Block from 'super/i-block/modules/block';
 
 /**
  * Initializes component values
@@ -94,13 +93,14 @@ export async function setScrollToMarkedOrSelectedItem<C extends bSelect>(compone
 		const dropdown = await unsafe.waitRef<HTMLDivElement>('dropdown', {label: $$.setScrollToSelectedItem});
 
 		const
-			{block: $b}: { block: Block | undefined } = unsafe;
+			{block: $b} = unsafe;
 
 		if ($b == null) {
 			return false;
 		}
 
 		const itemEl =
+			// @ts-ignore (TS 4.6.3)
 			$b.element<HTMLDivElement>('item', {marked: true}) ??
 			$b.element<HTMLDivElement>('item', {selected: true});
 
