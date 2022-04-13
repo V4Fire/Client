@@ -10,7 +10,7 @@
 
 - include 'super/i-page'|b
 
-- import config from 'config'
+- import config from '@config/config'
 - import fs from 'fs-extra'
 
 /**

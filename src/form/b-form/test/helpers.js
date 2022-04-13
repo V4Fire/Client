@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /**
  * Creates the `bForm` component with the environment to test

@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /** @param {Page} page */
 module.exports = (page) => {

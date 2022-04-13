@@ -12,7 +12,7 @@ This module provides a trait for a component have some "progress" behaviour.
 
 | Name       | Description                                                                                                      | Values    | Default |
 |------------|------------------------------------------------------------------------------------------------------------------|-----------|---------|
-| `progress` | The component in the process: loading data, processing something, etc. Maybe, we need to show some progress bar. | `Boolean` | -       |
+| `progress` | The component in the process: loading data, processing something, etc. Maybe, we need to show some progress bar. | `boolean` | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 

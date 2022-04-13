@@ -99,12 +99,12 @@ export default {
 			}
 
 		} else if (value != null && typeof value === 'object') {
-			const keys = Object.keys(value!);
+			const keys = Object.keys(value);
 			res = new Array(keys.length);
 
 			for (let i = 0, l = keys.length; i < l; i++) {
 				const key = keys[i];
-				res[i] = render(value![key], key, i);
+				res[i] = render(value[key], key, i);
 			}
 		}
 

@@ -9,7 +9,7 @@
  */
 
 const
-	{src, webpack} = require('config'),
+	{src, webpack} = require('@config/config'),
 	{hash, output: outputPattern} = include('build/helpers');
 
 /**

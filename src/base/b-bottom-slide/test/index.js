@@ -13,6 +13,6 @@
  */
 
 const
-	u = include('tests/utils');
+	u = include('tests/utils').default;
 
 module.exports = (...args) => u.getCurrentTest()(...args);

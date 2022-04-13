@@ -9,7 +9,7 @@
  */
 
 const
-	{src} = require('config'),
+	{src} = require('@config/config'),
 	{resolve} = require('@pzlr/build-core');
 
 /**

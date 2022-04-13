@@ -14,7 +14,7 @@ This module provides a trait for a component that needs to implement the "visibi
 
 | Name     | Description             | Values    | Default |
 |----------|-------------------------|-----------|---------|
-| `hidden` | The component is hidden | `Boolean` | -       |
+| `hidden` | The component is hidden | `boolean` | -       |
 
 To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
 

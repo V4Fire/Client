@@ -19,7 +19,7 @@ const {
 } = include('src/base/b-bottom-slide/test/helpers');
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /**
  * @param {Playwright.Page} page

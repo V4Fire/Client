@@ -15,7 +15,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /**
  * Starts a test
@@ -446,7 +446,7 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([{}, {foo: 1}, {foo: 2}, {foo: 3}, {}]);
+					expect(scan).toEqual([{foo: undefined}, {foo: 1}, {foo: 2}, {foo: 3}, {foo: undefined}]);
 				});
 
 				it('linking to an event with an initializer', async () => {
@@ -468,7 +468,7 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([{foo: null}, {foo: 2}, {foo: 3}, {foo: 4}, {foo: null}]);
+					expect(scan).toEqual([{foo: NaN}, {foo: 2}, {foo: 3}, {foo: 4}, {foo: NaN}]);
 				});
 
 				it('linking to a field', async () => {
@@ -524,7 +524,7 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {}]);
+					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: undefined}]);
 				});
 
 				it('immediate linking to a nested field', async () => {
@@ -546,7 +546,7 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {}]);
+					expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: undefined}]);
 				});
 
 				it('linking to a nested field with an initializer', async () => {
@@ -576,7 +576,7 @@ module.exports = async (page, params) => {
 						{bar: {foo: NaN}},
 						{bar: {foo: 4}},
 						{bar: {foo: 5}},
-						{bar: {foo: null}}
+						{bar: {foo: NaN}}
 					]);
 				});
 
@@ -687,7 +687,7 @@ module.exports = async (page, params) => {
 						return res;
 					});
 
-					expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {}]);
+					expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {bla: undefined}]);
 				});
 
 				it('linking to a nested field from the mounted watcher passed by a link', async () => {

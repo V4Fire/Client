@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /** @param {Page} page */
 module.exports = (page) => {
@@ -109,7 +109,7 @@ module.exports = (page) => {
 
 			it('if there is data', async () => {
 				expect(await components.emptyWithData.evaluate((ctx) => Boolean(ctx.vdom.getSlot('empty')))).toBe(true);
-				expect(await h.dom.isVisible('#empty', nodes.emptyWithData)).toBeFalsy();
+				expect(await nodes.emptyWithData.waitForSelector('#empty', {state: 'hidden'})).toBeFalsy();
 			});
 		});
 

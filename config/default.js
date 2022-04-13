@@ -211,6 +211,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Port for a test server
+		 * @env TEST_PORT
+		 */
+		testPort: o('test-port', {
+			env: true,
+			default: 8000
+		}),
+
+		/**
 		 * Enables the special kind of a demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *
@@ -225,6 +234,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			env: true,
 			type: 'boolean'
 		}),
+
+		/**
+		 * Project build mode
+		 *
+		 * @cli build-mode
+		 * @env BUILD_MODE
+		 *
+		 * @param {string=} [def] - default value
+		 * @returns {string}
+		 */
+		mode(def = IS_PROD ? 'production' : 'development') {
+			return o('build-mode', {
+				env: true,
+				default: def
+			});
+		},
 
 		/**
 		 * This option is used with component test files.
@@ -442,7 +467,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 */
 			dataURILimit(def = 2 * 1024) {
 				const
-					fatHTML = require('config').webpack.fatHTML();
+					fatHTML = require('@config/config').webpack.fatHTML();
 
 				if (fatHTML === true || fatHTML === 1) {
 					return undefined;
@@ -704,12 +729,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				return 'GLOBAL_NONCE';
 			}
 
-			if (this.nonceStore.result) {
-				return this.nonceStore.result;
+			if (this.nonceStore.cachedResult) {
+				return this.nonceStore.cachedResult;
 			}
 
-			this.nonceStore.result = nanoid();
-			return this.nonceStore.result;
+			this.nonceStore.cachedResult = nanoid();
+			return this.nonceStore.cachedResult;
 		},
 
 		/**
@@ -1131,7 +1156,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * ```
 	 * package('b-dummy')
 	 *   .extends('i-data')
-	 *   .dependencies(...require('config').componentDependencies()['b-dummy'] ?? []);
+	 *   .dependencies(...require('@config/config').componentDependencies()['b-dummy'] ?? []);
 	 * ```
 	 */
 	componentDependencies() {
@@ -1141,6 +1166,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	/** @override */
 	monic() {
 		const
+			mode = this.build.mode(),
 			runtime = this.runtime(),
 			es = this.es(),
 			demo = Boolean(this.build.components && this.build.components.length);
@@ -1148,6 +1174,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			stylus: {
 				flags: {
+					mode,
 					runtime,
 					'+:*': true,
 					demo
@@ -1156,6 +1183,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			typescript: {
 				flags: {
+					mode,
 					runtime,
 					es,
 					demo
@@ -1164,6 +1192,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			javascript: {
 				flags: {
+					mode,
 					runtime,
 					es,
 					demo

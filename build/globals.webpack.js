@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config');
+	config = require('@config/config');
 
 const
 	{config: pzlr} = require('@pzlr/build-core'),
@@ -30,6 +30,7 @@ const
 module.exports = {
 	IS_PROD,
 	DEBUG: runtime.debug === true,
+	BUILD_MODE: s(config.build.mode),
 
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),

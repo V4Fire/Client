@@ -12,8 +12,8 @@ This module provides a component to create bottom sheet behavior that is similar
 
 | Name         | Description                                    | Values    | Default |
 |--------------|------------------------------------------------|-----------|---------|
-| `stick`      | The component sticks to the current position   | `Boolean` | `true`  |
-| `events`     | The component is ready to process input events | `Boolean` | `false` |
+| `stick`      | The component sticks to the current position   | `boolean` | `true`  |
+| `events`     | The component is ready to process input events | `boolean` | `false` |
 | `heightMode` | The component height calculation mode          | `string`  | –       |
 
 Also, you can see the parent component and the component traits.
@@ -25,7 +25,7 @@ Also, you can see the parent component and the component traits.
 | `open`            | The component has been opened              | –                            | –         |
 | `close`           | The component has been closed              | –                            | –         |
 | `stepChange`      | The component opened step has been changed | A number of the current step | `number`  |
-| `moveStateChange` | The component starts or stops moving       | A state of moving            | `Boolean` |
+| `moveStateChange` | The component starts or stops moving       | A state of moving            | `boolean` |
 
 Also, you can see the parent component and the component traits.
 

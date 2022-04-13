@@ -14,8 +14,8 @@ This module provides a superclass to create text inputs. The class includes API 
 
 | Name       | Description                            | Values    | Default |
 |------------|----------------------------------------|-----------|---------|
-| `empty`    | A component text is empty              | `Boolean` | -       |
-| `readonly` | The component is in the read-only mode | `Boolean` | -       |
+| `empty`    | A component text is empty              | `boolean` | -       |
+| `readonly` | The component is in the read-only mode | `boolean` | -       |
 
 Also, you can see [[iWidth]] and [[iSize]] traits and the [[iInput]] component.
 
@@ -45,7 +45,7 @@ An initial text value of the input.
 #### [type = `'text'`]
 
 A UI type of the input.
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#input_types)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#input_types).
 
 ```
 < my-text-input :type = 'color'
@@ -55,13 +55,13 @@ A UI type of the input.
 
 An autocomplete mode of the input.
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefautocomplete)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefautocomplete).
 
 #### [placeholder]
 
 A placeholder text of the input
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefplaceholder)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefplaceholder).
 
 ```
 < my-text-input :placeholder = 'Enter you name'
@@ -72,14 +72,14 @@ A placeholder text of the input
 The minimum text value length of the input.
 The option will be ignored if provided `mask`.
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength).
 
 #### [maxLength]
 
 The maximum text value length of the input.
 The option will be ignored if provided `mask`.
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength).
 
 #### [mask]
 

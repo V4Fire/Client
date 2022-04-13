@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.17.0 (2022-02-24)
+
+#### :boom: Breaking Change
+
+* Now components don't force rendering on re-activation
+
+#### :rocket: New Feature
+
+* Added a new prop `renderOnActivation`
+
 ## v3.11.3 (2021-11-24)
 
 #### :bug: Bug Fix

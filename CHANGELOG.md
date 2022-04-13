@@ -11,6 +11,107 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2022-??-??)
+
+#### :house: Internal
+
+* Updated dependencies: typescript@4.6.3
+
+## v3.19.0 (2022-04-06)
+
+#### :boom: Breaking Change
+
+* The old test API is now deprecated:
+  * `test.d.ts` was removed
+  * The `config` package now uses an alias `@config/config`
+  * [Test helpers was rewritten to `TS`](docs/tests/migration/README.md#changing-the-test-helper-api)
+
+#### :rocket: New Feature
+
+* [Add new test API](docs/tests/migration/README.md)
+
+# v3.18.6 (2022-05-02)
+
+#### :bug: Bug Fix
+
+* `updateRequest` is now returns a `RequestPromise` `core/session`
+
+# v3.18.5 (2022-04-02)
+
+#### :bug: Bug Fix
+
+* Fixed sprite inheritance `traits/i-icon`
+
+# v3.18.4 (2022-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when event data is provided as a promise `iData`
+
+## v3.18.2 (2022-03-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `initLoad` race condition `base/b-virtual-scroll`
+
+## v3.18.1 (2022-03-05)
+
+#### :house: Internal
+
+* Freezing versions of all dependencies from package.json
+
+## v3.18.0 (2022-03-04)
+
+#### :boom: Breaking Change
+
+* If an element destructor returns `true` then the element won't be destroyed `super/i-block/modules/async-render`
+
+## v3.17.0 (2022-02-24)
+
+#### :boom: Breaking Change
+
+* Now components don't force rendering on re-activation `iBlock`
+
+#### :rocket: New Feature
+
+* Added a new prop `renderOnActivation` `iBlock`
+
+## v3.16.2 (2022-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the `nonceStore.result` field `config`
+
+## v3.16.1 (2022-02-15)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with `b-slider` works incorrectly in a slider mode `base/b-slider`](https://github.com/V4Fire/Client/issues/691)
+
+## v3.16.0 (2022-02-09)
+
+#### :rocket: New Feature
+
+* [Now `monic` options are passed to `pzlr` when building a dependency graph `build/graph`](https://github.com/V4Fire/Client/issues/684)
+* [Added a new `build.mode` config variable `config/default`](https://github.com/V4Fire/Client/issues/685)
+
+## v3.15.5 (2022-02-03)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the `test:component:build` command did not wait for completion of the project build operation `build/gulp/test`
+* Changed a script to patch the Webpack stats' file for Statoscope `build/helpers/webpack`
+
+## v3.15.4 (2022-01-24)
+
+#### :boom: Breaking Change
+
+* The event`chunkRenderStart` is renamed to `chunkRender:renderStart` and now it emits before a component driver renders components `base/b-virtual-scroll`
+
+#### :rocket: New Feature
+
+* Added new events `chunkRender:*` `base/b-virtual-scroll`
+
 ## v3.15.3 (2021-12-28)
 
 #### :bug: Bug Fix

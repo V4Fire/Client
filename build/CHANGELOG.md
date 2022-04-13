@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.15.5 (2021-01-24)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with test command `test:component:build` did not wait for the completion of the project build operation
+
 ## v3.10.0 (2021-11-16)
 
 #### :rocket: New Feature

@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /** @param {Page} page */
 module.exports = (page) => {
@@ -51,8 +51,8 @@ module.exports = (page) => {
 
 					changes: [
 						[7, 6, ['i']],
-						[null, null, null],
-						['boom!', null, null]
+						[undefined, undefined, undefined],
+						['boom!', undefined, undefined]
 					]
 				}
 			});

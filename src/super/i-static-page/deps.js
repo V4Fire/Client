@@ -9,7 +9,7 @@
 require('./modules/interface');
 
 const
-	config = require('config'),
+	config = require('@config/config'),
 	runtime = config.runtime();
 
 const deps = {

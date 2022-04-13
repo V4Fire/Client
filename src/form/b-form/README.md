@@ -17,7 +17,7 @@ The component is based on a native `<form>` element and realizes the same behavi
 
 | Name    | Description                                          | Values    | Default |
 |---------|------------------------------------------------------|-----------|---------|
-| `valid` | All associated components have passed the validation | `Boolean` | -       |
+| `valid` | All associated components have passed the validation | `boolean` | -       |
 
 Also, you can see the [[iVisible]] trait and the [[iData]] component.
 

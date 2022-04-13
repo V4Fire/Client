@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.18.0 (2022-03-04)
+
+#### :boom: Breaking Change
+
+* If an element destructor returns `true` then the element won't be destroyed
+
 ## v3.0.0-rc.210 (2021-07-07)
 
 #### :bug: Bug Fix

@@ -203,7 +203,7 @@ export default class VDOM extends Friend {
 	 * Returns a link to the closest parent component from the current
 	 * @param component - component name or a link to the component constructor
 	 */
-	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T> | Function): CanUndef<T> {
+	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<any[], T> | Function): CanUndef<T> {
 		const
 			nm = Object.isString(component) ? component.dasherize() : undefined;
 

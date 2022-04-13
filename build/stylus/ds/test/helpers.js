@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('config');
+require('@config/config');
 
 const
 	{getVariableName} = include('build/stylus/ds/helpers');

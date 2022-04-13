@@ -26,13 +26,13 @@ export default class Gestures {
 	/**
 	 * Steps to perform
 	 */
-	 steps: Array<Required<TouchGesturePoint>> = [];
+	steps: Array<Required<TouchGesturePoint>> = [];
 
 	/**
-	 * @param options
+	 * @param opts
 	 */
-	constructor(options: TouchGesturesCreateOptions) {
-		this.options = options;
+	constructor(opts: TouchGesturesCreateOptions) {
+		this.options = opts;
 
 		Object.assign(this.cursor.style, {
 			height: '20px',

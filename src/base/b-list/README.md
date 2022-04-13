@@ -34,7 +34,7 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 | Name         | Description            | Values    | Default |
 |--------------|------------------------|-----------|---------|
-| `hideLabels` | Item labels are hidden | `Boolean` | `false` |
+| `hideLabels` | Item labels are hidden | `boolean` | `false` |
 
 Also, you can see the parent component and the component traits.
 

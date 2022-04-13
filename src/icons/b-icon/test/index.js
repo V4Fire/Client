@@ -7,7 +7,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 module.exports = (page) => {
 	beforeEach(async () => {

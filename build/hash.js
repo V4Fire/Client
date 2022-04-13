@@ -9,7 +9,7 @@
  */
 
 const
-	{build} = require('config');
+	{build} = require('@config/config');
 
 /**
  * Returns a hash value of the specified file or text (glob pattern also supported)

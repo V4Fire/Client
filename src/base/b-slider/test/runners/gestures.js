@@ -9,7 +9,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 const {
 	initDefaultSlider,
@@ -30,7 +30,10 @@ module.exports = (page, {browser, contextOpts}) => {
 		context,
 		gesture;
 
-	const slidesOffset = [0, 262.5, 562.5, 862.5];
+	const slidesOffset = [0, -262, -562, -862];
+
+	const
+		idle = () => h.bom.waitForIdleCallback(page);
 
 	describe('b-slider gestures', () => {
 		const
@@ -68,6 +71,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, 150, 0)));
 
+			await idle();
+
 			expect(await current(component)).toBe(0);
 			expect(await currentOffset(component)).toBe(slidesOffset[0]);
 		});
@@ -77,6 +82,8 @@ module.exports = (page, {browser, contextOpts}) => {
 
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, -150, 0)));
+
+			await idle();
 
 			expect(await current(component)).toBe(1);
 			expect(await currentOffset(component)).toBe(slidesOffset[1]);
@@ -88,8 +95,12 @@ module.exports = (page, {browser, contextOpts}) => {
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, -150, 0)));
 
+			await idle();
+
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, -150, 0)));
+
+			await idle();
 
 			expect(await current(component)).toBe(2);
 			expect(await currentOffset(component)).toBe(slidesOffset[2]);
@@ -103,6 +114,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, -150, 0)));
 
+			await idle();
+
 			expect(await current(component)).toBe(await lastIndex(component));
 			expect(await currentOffset(component)).toBe(slidesOffset[3]);
 		});
@@ -115,6 +128,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, 150, 0)));
 
+			await idle();
+
 			expect(await current(component)).toBe(await lastIndex(component) - 1);
 			expect(await currentOffset(component)).toBe(slidesOffset[2]);
 		});
@@ -125,11 +140,15 @@ module.exports = (page, {browser, contextOpts}) => {
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, -150, 0)));
 
+			await idle();
+
 			expect(await current(component)).toBe(1);
 			expect(await currentOffset(component)).toBe(slidesOffset[1]);
 
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, 150, 0)));
+
+			await idle();
 
 			expect(await current(component)).toBe(0);
 			expect(await currentOffset(component)).toBe(slidesOffset[0]);
@@ -141,6 +160,8 @@ module.exports = (page, {browser, contextOpts}) => {
 			await gesture.evaluate((ctx) =>
 				ctx.swipe(ctx.buildSteps(2, 150, 50, -30, 0, {pause: 300})));
 
+			await idle();
+
 			expect(await current(component)).toBe(0);
 			expect(await currentOffset(component)).toBe(slidesOffset[0]);
 		});
@@ -149,7 +170,9 @@ module.exports = (page, {browser, contextOpts}) => {
 			const component = await initDefaultSlider(page);
 
 			await gesture.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(2, 150, 50, -30, 0)));
+				ctx.swipe(ctx.buildSteps(2, 150, 50, -30, 0, {pause: 5})));
+
+			await idle();
 
 			expect(await current(component)).toBe(1);
 			expect(await currentOffset(component)).toBe(slidesOffset[1]);

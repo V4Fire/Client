@@ -11,7 +11,7 @@
  */
 
 const
-	h = include('tests/helpers'),
+	h = include('tests/helpers').default,
 	delay = require('delay'),
 	images = require('./const');
 
@@ -778,8 +778,8 @@ module.exports = async (page, params) => {
 						mainSrcUrl = getRandomImgUrl(),
 						imgReq = handleImageRequest(mainSrcUrl, 300);
 
-					const targetComponent = await h.component.renderComponent(component, 'b-dummy', {});
-					await targetComponent.evaluate((ctx) => globalThis.tmpComponent = ctx.component);
+					const targetComponent = await h.component.createComponent(page, 'b-dummy');
+					await targetComponent.evaluate((ctx) => globalThis.tmpComponent = ctx);
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainSrcUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -791,7 +791,7 @@ module.exports = async (page, params) => {
 						});
 					}, [tag, mainSrcUrl]);
 
-					await targetComponent.evaluate((ctx) => ctx.component.$destroy());
+					await targetComponent.evaluate((ctx) => ctx.$destroy());
 					await imgReq;
 					await h.bom.waitForIdleCallback(page);
 

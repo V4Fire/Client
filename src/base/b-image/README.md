@@ -30,7 +30,7 @@ This module provides a component to load an image with the support of features:
 
 | Name        | Description                                                           | Values    | Default |
 |-------------|-----------------------------------------------------------------------|-----------|---------|
-| `showError` | The component is showing an image or template that indicates an error | `Boolean` | -       |
+| `showError` | The component is showing an image or template that indicates an error | `boolean` | -       |
 
 Also, you can see [[iProgress]] and [[iVisible]] traits and the [[iBlock]] component.
 

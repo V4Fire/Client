@@ -112,13 +112,13 @@ Also, you can see the parent component and the component traits.
 
 The minimum value of the input (for number and date types).
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin).
 
 #### [max]
 
 The maximum value of the input (for number and date types).
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax)
+[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax).
 
 #### [preIcon]
 

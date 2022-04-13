@@ -13,7 +13,7 @@
  */
 
 const
-	h = include('tests/helpers'),
+	h = include('tests/helpers').default,
 	{initSlider} = include('src/base/b-slider/test/helpers');
 
 /** @param {Page} page */

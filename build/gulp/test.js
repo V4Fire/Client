@@ -22,7 +22,7 @@ const
 	glob = require('glob');
 
 const
-	{build, src} = require('config'),
+	{build, src} = require('@config/config'),
 	{resolve} = require('@pzlr/build-core');
 
 const {
@@ -140,14 +140,24 @@ module.exports = function init(gulp = require('gulp')) {
 			'cache-type=memory',
 			'progress=false',
 			'public-path',
-			'es=ES2019'
+			'es=ES2019',
+			'build-mode=testing'
 		].map((el) => ['--env', el]).flat().join(' ');
 
 		console.log(`webpack version: ${require('webpack/package.json').version}`);
 
-		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
-			.exec()
-			.on('error', console.error);
+		const
+			cmdString = `npx webpack ${argsString} ${suitArg} ${extraArgs}`;
+
+		const promisifyRun = new Promise((res, rej) => $.run(cmdString, {verbosity: 3}).exec('', (err) => {
+			if (err != null) {
+				rej(err);
+			}
+
+			res();
+		}));
+
+		return promisifyRun;
 	});
 
 	/**
@@ -180,6 +190,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```
 	 */
 	gulp.task('test:component:run', async () => {
+		require('@v4fire/core/build/tsnode');
+
 		const
 			pzlr = require('@pzlr/build-core');
 
@@ -229,6 +241,7 @@ module.exports = function init(gulp = require('gulp')) {
 		const cliParams = {
 			headless: true,
 			close: true,
+			'build-mode': 'testing',
 			'reinit-browser': false
 		};
 
@@ -410,8 +423,12 @@ module.exports = function init(gulp = require('gulp')) {
 			}, {permissive: true});
 
 			const
-				params = browserParams[browserType],
+				params = browserParams[browserType];
+
+			let
 				test = require(testPath);
+
+			test = test.default ?? test;
 
 			const {
 				testURL,
@@ -512,6 +529,8 @@ module.exports = function init(gulp = require('gulp')) {
 	 * ```
 	 */
 	gulp.task('test:components', async (cb) => {
+		require('@v4fire/core/build/tsnode');
+
 		console.log(`CPUS available: ${cpus}`);
 
 		const

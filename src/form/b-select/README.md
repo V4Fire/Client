@@ -21,8 +21,8 @@ The select can contain multiple values.
 
 | Name       | Description                                      | Values    | Default |
 |------------|--------------------------------------------------|-----------|---------|
-| `native`   | The component uses native `<select>`             | `Boolean` | `false` |
-| `multiple` | The component is switched to the `multiple` mode | `Boolean` | `false` |
+| `native`   | The component uses native `<select>`             | `boolean` | `false` |
+| `multiple` | The component is switched to the `multiple` mode | `boolean` | `false` |
 
 Also, you can see the parent component and the component traits.
 

@@ -9,7 +9,7 @@
  */
 
 const
-	h = include('tests/helpers');
+	h = include('tests/helpers').default;
 
 /**
  * Initializes a bottom slide component to test

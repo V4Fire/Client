@@ -344,6 +344,13 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly reloadOnActivation: boolean = false;
 
 	/**
+	 * If true, then the component will force rendering on re-activation.
+	 * This parameter can be helpful if you are using a keep-alive directive within your template.
+	 */
+	@prop(Boolean)
+	readonly renderOnActivation: boolean = false;
+
+	/**
 	 * List of additional dependencies to load.
 	 * These dependencies will be dynamically loaded during the `initLoad` invoking.
 	 *
@@ -619,8 +626,11 @@ export default abstract class iBlock extends ComponentInterface {
 
 		const isShadowStatus =
 			this.isNotRegular ||
-			(<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value] ||
-			value === 'ready' && oldValue === 'beforeReady';
+
+			value === 'ready' && oldValue === 'beforeReady' ||
+			value === 'inactive' && !this.renderOnActivation ||
+
+			(<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
 
 		if (isShadowStatus) {
 			this.shadowComponentStatusStore = value;
@@ -2425,7 +2435,7 @@ export default abstract class iBlock extends ComponentInterface {
 			watchers = that.$refHandlers[ref],
 			refVal = that.$refs[ref];
 
-		return this.async.promise(() => new SyncPromise((resolve) => {
+		return this.async.promise<T>(() => new SyncPromise((resolve) => {
 			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
 				resolve(<T>refVal);
 

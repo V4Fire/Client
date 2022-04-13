@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config');
+	config = require('@config/config');
 
 const
 	fs = require('fs-extra'),
@@ -95,7 +95,10 @@ async function buildProjectGraph() {
 	}
 
 	const
-		buildConfig = (await entries.getBuildConfig()).filter((el, key) => !entriesFilter || entriesFilter[key]),
+		monic = config.monic().javascript;
+
+	const
+		buildConfig = (await entries.getBuildConfig({monic})).filter((el, key) => !entriesFilter || entriesFilter[key]),
 		components = await getComponents();
 
 	const

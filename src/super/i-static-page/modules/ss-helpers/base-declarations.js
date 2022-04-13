@@ -7,7 +7,7 @@
  */
 
 const
-	{webpack, csp} = require('config'),
+	{webpack, csp} = require('@config/config'),
 	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getVarsDecl = getVarsDecl;

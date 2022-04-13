@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.18.2 (2022-03-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `initLoad` race condition
+
+## v3.15.4 (2022-01-24)
+
+#### :boom: Breaking Change
+
+* The event`chunkRenderStart` is renamed to `chunkRender:renderStart` and now it emits before a component driver renders components
+
+#### :rocket: New Feature
+
+* Added new events `chunkRender:*`
+
 ## v3.9.0 (2021-11-08)
 
 #### :rocket: New Feature
