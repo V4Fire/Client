@@ -13,6 +13,7 @@
 
 import { defProp } from 'core/const/props';
 import { fieldQueue } from 'core/component/field/const';
+
 import type { ComponentInterface, ComponentField } from 'core/component/interface';
 
 export * from 'core/component/field/const';
@@ -34,11 +35,12 @@ export function initFields(
 	component: ComponentInterface,
 	store: Dictionary = {}
 ): Dictionary {
-	const {
-		unsafe,
-		unsafe: {meta: {componentName, params, instance}},
-		isFlyweight
-	} = component;
+	const
+		unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component.unsafe);
+
+	const
+		{isFlyweight} = component,
+		{componentName, params, instance} = unsafe.meta;
 
 	const
 		ssrMode = component.$renderEngine.supports.ssr,
@@ -70,7 +72,7 @@ export function initFields(
 	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = fields[key];
+			field = fields[key];
 
 		let
 			sourceVal = store[key],
@@ -78,9 +80,9 @@ export function initFields(
 
 		if (isFlyweight) {
 			if (
-				el != null && (
-					el.replace !== true && (Object.isTruly(el.unique) || el.src === componentName) ||
-					el.replace === false
+				field != null && (
+					field.replace !== true && (Object.isTruly(field.unique) || field.src === componentName) ||
+					field.replace === false
 				)
 			) {
 				Object.defineProperty(store, key, defField);
@@ -90,26 +92,26 @@ export function initFields(
 		}
 
 		const dontNeedInit =
-			el == null ||
+			field == null ||
 			sourceVal !== undefined ||
 
 			// Don't initialize a property for the functional component unless explicitly required
-			!ssrMode && isNotRegular && el.functional === false ||
+			!ssrMode && isNotRegular && field.functional === false ||
 
-			el.init == null && el.default === undefined && instance[key] === undefined;
+			field.init == null && field.default === undefined && instance[key] === undefined;
 
-		if (el == null || dontNeedInit) {
+		if (field == null || dontNeedInit) {
 			canSkip[key] = true;
 			store[key] = sourceVal;
 			continue;
 		}
 
-		if (el.atom) {
+		if (field.atom) {
 			// If true, then the field does not have any dependencies and can be initialized right now
 			let canInit = true;
 
 			const
-				{after} = el;
+				{after} = field;
 
 			if (after && after.size > 0) {
 				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
@@ -134,21 +136,20 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				unsafe['$activeField'] = key;
+				unsafe.$activeField = key;
 
 				let
 					val;
 
-				if (el.init != null) {
-					val = el.init(unsafe, store);
+				if (field.init != null) {
+					val = field.init(component.unsafe, store);
 				}
 
 				if (val === undefined) {
 					if (store[key] === undefined) {
 						// We need to clone the default value from a constructor
 						// to prevent linking to the same object for a non-primitive value
-						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						val = field.default !== undefined ? field.default : Object.fastClone(instance[key]);
 						store[key] = val;
 					}
 
@@ -156,8 +157,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				unsafe['$activeField'] = undefined;
+				unsafe.$activeField = undefined;
 			}
 
 		} else {
@@ -170,12 +170,17 @@ export function initFields(
 		for (let i = 0; i < atomList.length; i++) {
 			const
 				key = nonAtomList[i],
-				el = key != null ? fields[key] : null;
+				field = key != null ? fields[key] : null;
 
 			let
 				isNull = false;
 
-			if (el == null || key == null || key in store && !(isNull = store[key] === NULL)) {
+			const canSkip =
+				field == null ||
+				key == null ||
+				key in store && !(isNull = store[key] === NULL);
+
+			if (canSkip) {
 				continue;
 			}
 
@@ -183,7 +188,7 @@ export function initFields(
 			let canInit = true;
 
 			const
-				{after} = el;
+				{after} = field;
 
 			if (after && after.size > 0) {
 				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
@@ -220,22 +225,21 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				unsafe['$activeField'] = key;
+				unsafe.$activeField = key;
 				fieldQueue.delete(key);
 
 				let
 					val;
 
-				if (el.init != null) {
-					val = el.init(unsafe, store);
+				if (field.init != null) {
+					val = field.init(component.unsafe, store);
 				}
 
 				if (val === undefined) {
 					if (store[key] === undefined) {
 						// We need to clone the default value from a constructor
 						// to prevent linking to the same object for a non-primitive value
-						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						val = field.default !== undefined ? field.default : Object.fastClone(instance[key]);
 						store[key] = val;
 					}
 
@@ -243,8 +247,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				unsafe['$activeField'] = undefined;
+				unsafe.$activeField = undefined;
 			}
 		}
 
@@ -259,12 +262,17 @@ export function initFields(
 		for (let i = 0; i < nonAtomList.length; i++) {
 			const
 				key = nonAtomList[i],
-				el = key != null ? fields[key] : null;
+				field = key != null ? fields[key] : null;
 
 			let
 				isNull = false;
 
-			if (el == null || key == null || key in store && !(isNull = store[key] === NULL)) {
+			const canSkip =
+				field == null ||
+				key == null ||
+				key in store && !(isNull = store[key] === NULL);
+
+			if (canSkip) {
 				continue;
 			}
 
@@ -272,7 +280,7 @@ export function initFields(
 			let canInit = true;
 
 			const
-				{after} = el;
+				{after} = field;
 
 			if (after && after.size > 0) {
 				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
@@ -305,22 +313,21 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				unsafe['$activeField'] = key;
+				unsafe.$activeField = key;
 				fieldQueue.delete(key);
 
 				let
 					val;
 
-				if (el.init != null) {
-					val = el.init(unsafe, store);
+				if (field.init != null) {
+					val = field.init(component.unsafe, store);
 				}
 
 				if (val === undefined) {
 					if (store[key] === undefined) {
 						// We need to clone the default value from a constructor
 						// to prevent linking to the same object for a non-primitive value
-						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						val = field.default !== undefined ? field.default : Object.fastClone(instance[key]);
 						store[key] = val;
 					}
 
@@ -328,8 +335,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				unsafe['$activeField'] = undefined;
+				unsafe.$activeField = undefined;
 			}
 		}
 
