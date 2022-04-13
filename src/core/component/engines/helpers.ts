@@ -10,6 +10,7 @@ import { fakeCopyLabel } from 'core/component/watch';
 import type { ComponentInterface } from 'core/component';
 
 const
+	toRaw = Symbol('Link to a RAW component'),
 	ctxMap = new WeakMap();
 
 /**
@@ -17,11 +18,14 @@ const
  * @param component
  */
 export function getComponentContext(component: object): Dictionary & ComponentInterface['unsafe'] {
+	component = component[toRaw] ?? component;
+
 	let
 		v = ctxMap.get(component);
 
 	if (v == null) {
 		v = Object.create(component);
+		Object.defineProperty(v, toRaw, {value: component});
 		ctxMap.set(component, v);
 	}
 
