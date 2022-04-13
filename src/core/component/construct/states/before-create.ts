@@ -72,7 +72,12 @@ export function beforeCreateState(
 			val = unsafe[key];
 
 		if (val != null) {
-			unsafe[key] = getComponentContext(Object.cast(val));
+			Object.defineProperty(unsafe, key, {
+				configurable: true,
+				enumerable: true,
+				writable: false,
+				value: getComponentContext(Object.cast(val))
+			});
 		}
 	}
 
