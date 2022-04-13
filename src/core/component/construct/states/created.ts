@@ -45,11 +45,11 @@ export function createdState(component: ComponentInterface): void {
 		p.$on('on-component-hook:before-destroy', destroy);
 		$a.worker(() => p.$off('on-component-hook:before-destroy', destroy));
 
-		const isRegularComponent =
+		const isRegular =
 			unsafe.meta.params.functional !== true &&
 			!unsafe.isFlyweight;
 
-		if (isRegularComponent) {
+		if (isRegular) {
 			const activationHooks = Object.createDict({
 				activated: true,
 				deactivated: true
