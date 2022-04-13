@@ -13,4 +13,5 @@
 
 import 'core/component/engines/directive';
 
+export * from 'core/component/engines/helpers';
 export * from 'core/component/engines/engine';

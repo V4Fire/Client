@@ -7,6 +7,26 @@
  */
 
 import { fakeCopyLabel } from 'core/component/watch';
+import type { ComponentInterface } from 'core/component';
+
+const
+	ctxMap = new WeakMap();
+
+/**
+ * Returns a component context object by the specified component instance
+ * @param component
+ */
+export function getComponentContext(component: object): Dictionary & ComponentInterface['unsafe'] {
+	let
+		v = ctxMap.get(component);
+
+	if (v == null) {
+		v = Object.create(component);
+		ctxMap.set(component, v);
+	}
+
+	return v;
+}
 
 const
 	toNonFakeObject = Symbol('Link to a non fake object');

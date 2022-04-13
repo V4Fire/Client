@@ -7,17 +7,18 @@
  */
 
 import watch, { WatchHandlerParams } from 'core/object/watch';
-import * as init from 'core/component/construct';
 
+import * as init from 'core/component/construct';
 import { beforeRenderHooks } from 'core/component/const';
+
 import { fillMeta } from 'core/component/meta';
 import { implementComponentForceUpdateAPI } from 'core/component/render';
 
+import { getComponentContext, ComponentEngine, ComponentOptions } from 'core/component/engines';
+import type { ComponentMeta } from 'core/component/interface';
+
 import { supports, minimalCtx, proxyGetters } from 'core/component/engines/vue3/const';
 import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines/vue3/vnode';
-
-import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
-import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
  * Returns a component declaration object from the specified component meta object
@@ -28,8 +29,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		{component} = fillMeta(meta);
 
 	const
-		p = meta.params,
-		ctxMap = new WeakMap();
+		p = meta.params;
 
 	return {
 		...Object.cast(component),
@@ -37,7 +37,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 		data(): Dictionary {
 			const
-				ctx = getCtx(this);
+				ctx = getComponentContext(this);
 
 			ctx.$vueWatch = this.$watch.bind(this);
 			init.beforeDataCreateState(ctx);
@@ -80,7 +80,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 		beforeCreate(): void {
 			const
-				ctx = getCtx(this);
+				ctx = getComponentContext(this);
 
 			Object.set(ctx, '$renderEngine', {
 				supports,
@@ -96,55 +96,43 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		created(this: any): void {
-			init.createdState(getCtx(this));
+			init.createdState(getComponentContext(this));
 		},
 
 		beforeMount(this: any): void {
-			init.beforeMountState(getCtx(this));
+			init.beforeMountState(getComponentContext(this));
 		},
 
 		mounted(): void {
-			init.mountedState(getCtx(this));
+			init.mountedState(getComponentContext(this));
 		},
 
 		beforeUpdate(): void {
-			init.beforeUpdateState(getCtx(this));
+			init.beforeUpdateState(getComponentContext(this));
 		},
 
 		updated(): void {
-			init.updatedState(getCtx(this));
+			init.updatedState(getComponentContext(this));
 		},
 
 		activated(): void {
-			init.activatedState(getCtx(this));
+			init.activatedState(getComponentContext(this));
 		},
 
 		deactivated(): void {
-			init.deactivatedState(getCtx(this));
+			init.deactivatedState(getComponentContext(this));
 		},
 
 		beforeUnmount(): void {
-			init.beforeDestroyState(getCtx(this));
+			init.beforeDestroyState(getComponentContext(this));
 		},
 
 		unmounted(): void {
-			init.destroyedState(getCtx(this));
+			init.destroyedState(getComponentContext(this));
 		},
 
 		errorCaptured(): void {
-			init.errorCapturedState(getCtx(this));
+			init.errorCapturedState(getComponentContext(this));
 		}
 	};
-
-	function getCtx(ctx: object): Dictionary & ComponentInterface['unsafe'] {
-		let
-			v = ctxMap.get(ctx);
-
-		if (v == null) {
-			v = Object.create(ctx);
-			ctxMap.set(ctx, v);
-		}
-
-		return v;
-	}
 }
