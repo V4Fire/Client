@@ -8,7 +8,7 @@
 
 import type { ElementHandle, JSHandle, Page } from 'playwright';
 
-import { zipJson } from 'core/prelude/test-env/components/json-parser';
+import { expandedStringify } from 'core/prelude/test-env/components/json';
 
 import type iBlock from 'super/i-block/i-block';
 
@@ -32,7 +32,7 @@ export default class Component {
 		scheme: RenderParams[],
 		opts?: RenderOptions
 	): Promise<void> {
-		const schemeAsString = zipJson(scheme);
+		const schemeAsString = expandedStringify(scheme);
 
 		await page.evaluate(([{componentName, schemeAsString, opts}]) => {
 			globalThis.renderComponents(componentName, schemeAsString, opts);
@@ -90,7 +90,7 @@ export default class Component {
 		const
 			renderId = String(Math.random());
 
-		const schemeAsString = zipJson([
+		const schemeAsString = expandedStringify([
 			{
 				...scheme,
 
