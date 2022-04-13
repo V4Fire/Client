@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, mute, unmute, WatchHandlerParams } from 'core/object/watch';
+import watch, { WatchHandlerParams } from 'core/object/watch';
 import * as init from 'core/component/construct';
 
 import { beforeRenderHooks } from 'core/component/const';
@@ -16,21 +16,20 @@ import { implementComponentForceUpdateAPI } from 'core/component/render';
 import { supports, minimalCtx, proxyGetters } from 'core/component/engines/vue3/const';
 import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines/vue3/vnode';
 
-import { fakeMapSetCopy } from 'core/component/engines/helpers';
-
 import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
-import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
  * Returns a component declaration object from the specified component meta object
  * @param meta
  */
-export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEngine> {
+export function getComponent(meta: ComponentMeta): ComponentOptions<typeof ComponentEngine> {
 	const
 		{component} = fillMeta(meta);
 
 	const
-		p = meta.params;
+		p = meta.params,
+		ctxMap = new WeakMap();
 
 	return {
 		...Object.cast(component),
@@ -38,16 +37,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 
 		data(): Dictionary {
 			const
-				ctx = <any>this,
+				ctx = getCtx(this);
 
-				// eslint-disable-next-line @typescript-eslint/unbound-method
-				{$watch, $set, $delete} = this;
-
-			ctx.$vueWatch = $watch;
-			ctx.$vueSet = $set;
-			ctx.$vueDelete = $delete;
-
-			init.beforeDataCreateState(this);
+			ctx.$vueWatch = this.$watch.bind(this);
+			init.beforeDataCreateState(ctx);
 
 			const emitter = (_, handler) => {
 				// eslint-disable-next-line @typescript-eslint/unbound-method
@@ -65,111 +58,93 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 				const
 					{path} = info;
 
+				if (beforeRenderHooks[ctx.hook] != null) {
+					return;
+				}
+
 				ctx.lastSelfReasonToRender = {
 					path,
 					value,
 					oldValue
 				};
 
-				if (beforeRenderHooks[ctx.hook] === true) {
-					return;
-				}
+				const
+					firstPathProp = String(path[0]),
+					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate !== false;
 
-				if (meta.fields[String(path[0])]?.forceUpdate !== false) {
+				if (shouldUpdate) {
 					ctx.$forceUpdate();
-				}
-
-				let
-					{obj} = info;
-
-				if (path.length > 1) {
-					if (Object.isDictionary(obj)) {
-						const
-							key = String(path[path.length - 1]),
-							desc = Object.getOwnPropertyDescriptor(obj, key);
-
-						// If we register a new property, we must register it to Vue too
-						if (desc?.get == null) {
-							// For correct registering of a property with Vue,
-							// we need to remove it from a proxy and original object
-							delete obj[key];
-
-							// Get a link to a proxy object
-							obj = Object.get(ctx.$fields, path.slice(0, -1)) ?? {};
-							delete obj[key];
-
-							// Finally we can register a Vue watcher
-							$set.call(ctx, obj, key, value);
-
-							// Don't forget to restore the original watcher
-							mute(obj);
-							set(obj, key, value);
-							unmute(obj);
-						}
-
-					// Because Vue doesn't see changes from Map/Set structures, we must use this hack
-					} else if (Object.isSet(obj) || Object.isMap(obj) || Object.isWeakMap(obj) || Object.isWeakSet(obj)) {
-						Object.set(ctx, path.slice(0, -1), fakeMapSetCopy(obj));
-					}
 				}
 			}
 		},
 
 		beforeCreate(): void {
 			const
-				ctx = <any>this;
+				ctx = getCtx(this);
 
-			ctx.$renderEngine = {
+			Object.set(ctx, '$renderEngine', {
 				supports,
 				minimalCtx,
 				proxyGetters,
 				cloneVNode,
 				patchVNode,
 				renderVNode
-			};
+			});
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
 			implementComponentForceUpdateAPI(ctx, this.$forceUpdate.bind(this));
 		},
 
 		created(this: any): void {
-			init.createdState(this);
+			init.createdState(getCtx(this));
 		},
 
 		beforeMount(this: any): void {
-			init.beforeMountState(this);
+			init.beforeMountState(getCtx(this));
 		},
 
-		mounted(this: any): void {
-			init.mountedState(this);
+		mounted(): void {
+			init.mountedState(getCtx(this));
 		},
 
-		beforeUpdate(this: any): void {
-			init.beforeUpdateState(this);
+		beforeUpdate(): void {
+			init.beforeUpdateState(getCtx(this));
 		},
 
-		updated(this: any): void {
-			init.updatedState(this);
+		updated(): void {
+			init.updatedState(getCtx(this));
 		},
 
-		activated(this: any): void {
-			init.activatedState(this);
+		activated(): void {
+			init.activatedState(getCtx(this));
 		},
 
-		deactivated(this: any): void {
-			init.deactivatedState(this);
+		deactivated(): void {
+			init.deactivatedState(getCtx(this));
 		},
 
-		beforeUnmount(this: any): void {
-			init.beforeDestroyState(this);
+		beforeUnmount(): void {
+			init.beforeDestroyState(getCtx(this));
 		},
 
-		unmounted(this: any): void {
-			init.destroyedState(this);
+		unmounted(): void {
+			init.destroyedState(getCtx(this));
 		},
 
-		errorCaptured(this: any): void {
-			init.errorCapturedState(this);
+		errorCaptured(): void {
+			init.errorCapturedState(getCtx(this));
 		}
 	};
+
+	function getCtx(ctx: object): Dictionary & ComponentInterface['unsafe'] {
+		let
+			v = ctxMap.get(ctx);
+
+		if (v == null) {
+			v = Object.create(ctx);
+			ctxMap.set(ctx, v);
+		}
+
+		return v;
+	}
 }
