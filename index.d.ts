@@ -9,8 +9,8 @@
  */
 
 /// <reference types="@v4fire/core"/>
-/// <reference types="./build/stylus/ds"/>
 /// <reference path="./ts-definitions/playwright.d.ts"/>
+/// <reference path="./ts-definitions/stylus-ds.d.ts"/>
 
 declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;

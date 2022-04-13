@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-interface DesignSystemDeprecatedOptions {
+declare interface DesignSystemDeprecatedOptions {
 	/**
 	 * Indicates that a style or component was renamed, but its interface still actual,
 	 * the value contains a name after renaming
@@ -24,7 +24,7 @@ interface DesignSystemDeprecatedOptions {
 	notice?: string;
 }
 
-interface DesignSystem {
+declare interface DesignSystem {
 	meta?: {
 		themes: string[];
 
@@ -80,7 +80,7 @@ interface DesignSystem {
  * }
  * ```
  */
-interface DesignSystemVariables extends Dictionary {
+declare interface DesignSystemVariables extends Dictionary {
 	/**
 	 * Dictionary of couples `[cssVariable, value]`.
 	 * It may be separated by groups (e.g., themes).
@@ -104,9 +104,9 @@ interface DesignSystemVariables extends Dictionary {
 	map: Dictionary<DesignSystemVariableMapValue>;
 }
 
-type DesignSystemVariableMapValue = [string, unknown];
+declare type DesignSystemVariableMapValue = [string, unknown];
 
-interface BuildTimeDesignSystemParams {
+declare interface BuildTimeDesignSystemParams {
 	data: DesignSystem;
 	variables: DesignSystemVariables;
 }
