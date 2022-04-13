@@ -11,7 +11,7 @@ import type { Page } from 'playwright';
 import type Helpers from 'tests/helpers';
 
 /**
- * Class provides API to work with `b-router`.
+ * Class provides API to work with an application router
  */
 export default class Router {
 	/** @see [[Helpers]] */
@@ -23,18 +23,18 @@ export default class Router {
 	}
 
 	/**
-	 * Calls the specified method on a router with providing of arguments
+	 * Calls the specified method on a router by providing the passed arguments
 	 *
 	 * @param page
 	 * @param method
-	 * @param argsToProvideIntoRouter
+	 * @param args
 	 */
-	async call(page: Page, method: string, ...argsToProvideIntoRouter: unknown[]): Promise<void> {
+	async call(page: Page, method: string, ...args: unknown[]): Promise<void> {
 		const
 			c = await this.parent.component.waitForComponent(page, '#root-component');
 
 		await c.evaluate((ctx, args) =>
-			ctx.router?.[<string>args[0]](...args.slice(1, args.length)), [method, ...argsToProvideIntoRouter]);
+			ctx.router?.[<string>args[0]](...args.slice(1, args.length)), [method, ...args]);
 
 		await page.waitForLoadState('networkidle');
 		await this.parent.bom.waitForIdleCallback(page);

@@ -19,7 +19,7 @@ const
 
 export default class Utils {
 	/**
-	 * Waits for the specified function to return `Boolean(result) === true`.
+	 * Waits for the specified function returns true (`Boolean(result) === true`).
 	 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.
 	 *
 	 * @param ctx – context that will be available as the first argument of the provided function
@@ -28,7 +28,7 @@ export default class Utils {
 	 *
 	 * @example
 	 * ```typescript
-	 * // ctx refers to the imgNode
+	 * // `ctx` refers to `imgNode`
 	 * h.utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
 	 * ```
 	 */
@@ -50,11 +50,13 @@ export default class Utils {
 				isTimeout = false;
 
 			return new Promise<void>((res, rej) => {
-				const timeoutTimer = setTimeout(() => isTimeout = true, timeout);
+				const
+					timeoutTimer = setTimeout(() => isTimeout = true, timeout);
 
 				const interval = setInterval(() => {
 					try {
-						const fnRes = Boolean(newFn.call(ctx));
+						const
+							fnRes = Boolean(newFn.call(ctx));
 
 						if (fnRes) {
 							clearTimeout(timeoutTimer);
@@ -86,16 +88,15 @@ export default class Utils {
 	}
 
 	/**
-	 * Performs a pre-setting environment
-	 *
-	 * @param page
-	 * @param context
-	 * @param [options]
+	 * Performs the pre-setting environment
 	 *
 	 * @deprecated
+	 * @param page
+	 * @param context
+	 * @param [opts]
 	 */
-	async setup(page: Page, context: BrowserContext, options?: SetupOptions): Promise<void> {
-		options = {
+	async setup(page: Page, context: BrowserContext, opts?: SetupOptions): Promise<void> {
+		opts = {
 			// eslint-disable-next-line quotes
 			mocks: '[\'.*\']',
 			permissions: ['geolocation'],
@@ -106,35 +107,35 @@ export default class Utils {
 
 			waitForEl: undefined,
 
-			...options
+			...opts
 		};
 
-		if (Object.size(options.permissions) > 0) {
-			await context.grantPermissions(options.permissions!);
+		if (Object.size(opts.permissions) > 0) {
+			await context.grantPermissions(opts.permissions!);
 		}
 
-		if (options.location) {
-			await context.setGeolocation(options.location);
-		}
-
-		await page.waitForLoadState('networkidle');
-
-		if (options.mocks != null) {
-			await page.evaluate(`setEnv('mock', {patterns: ${options.mocks}});`);
+		if (opts.location) {
+			await context.setGeolocation(opts.location);
 		}
 
 		await page.waitForLoadState('networkidle');
 
-		if (options.reload) {
+		if (opts.mocks != null) {
+			await page.evaluate(`setEnv('mock', {patterns: ${opts.mocks}});`);
+		}
+
+		await page.waitForLoadState('networkidle');
+
+		if (opts.reload) {
 			await this.reloadAndWaitForIdle(page);
 		}
 
-		if (options.waitForEl != null) {
-			await page.waitForSelector(options.waitForEl);
+		if (opts.waitForEl != null) {
+			await page.waitForSelector(opts.waitForEl);
 		}
 
-		if (options.sleepAfter != null) {
-			await delay(options.sleepAfter);
+		if (opts.sleepAfter != null) {
+			await delay(opts.sleepAfter);
 		}
 
 		await page.waitForSelector('#root-component', {timeout: (60).seconds(), state: 'attached'});
@@ -160,11 +161,12 @@ export default class Utils {
 	}
 
 	/**
-	 * Prints all of the intercepted page console invokes to a console
+	 * Prints all of intercepted page console invokes to the console
 	 * @param page
 	 */
 	printPageLogs(page: Page): void {
-		const logs = logsMap.get(page);
+		const
+			logs = logsMap.get(page);
 
 		if (logs) {
 			console.log(logs.join('\n'));
@@ -173,24 +175,24 @@ export default class Utils {
 	}
 
 	/**
-	 * Reloads the page and waits until `requestIdleCallback`
-	 *
-	 * @param page
-	 * @param [idleOptions]
+	 * Reloads the passed page and waits until `requestIdleCallback` occurred
 	 *
 	 * @deprecated
+	 * @param page
+	 * @param [idleOpts]
 	 */
-	async reloadAndWaitForIdle(page: Page, idleOptions?: WaitForIdleOptions): Promise<void> {
+	async reloadAndWaitForIdle(page: Page, idleOpts?: WaitForIdleOptions): Promise<void> {
 		await page.reload({waitUntil: 'networkidle'});
-		await this.parent.bom.waitForIdleCallback(page, idleOptions);
+		await this.parent.bom.waitForIdleCallback(page, idleOpts);
 	}
 
 	/**
+	 * @deprecated
+	 * @see [[Utils.waitForFunction]]
+	 *
 	 * @param ctx
 	 * @param fn
 	 * @param args
-	 * @deprecated
-	 * @see [[Utils.waitForFunction]]
 	 */
 	waitForFunction<ARGS extends any[] = any[]>(
 		ctx: ElementHandle,

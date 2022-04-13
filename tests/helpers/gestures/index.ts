@@ -18,11 +18,11 @@ export default class Gestures {
 	 * Creates a gesture instance
 	 *
 	 * @param page
-	 * @param options
+	 * @param opts
 	 */
-	async create(page: Page, options: TouchGesturesCreateOptions): Promise<JSHandle<GesturesInterface>> {
+	async create(page: Page, opts: TouchGesturesCreateOptions): Promise<JSHandle<GesturesInterface>> {
 		const
-			res = await page.evaluateHandle((options) => new globalThis._Gestures(options), options);
+			res = await page.evaluateHandle((options) => new globalThis._Gestures(options), opts);
 
 		return <JSHandle<GesturesInterface>>res;
 	}

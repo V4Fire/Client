@@ -15,16 +15,17 @@ import type { ScrollToBottomWhileOptions } from 'tests/helpers/scroll/interface'
 export * from 'tests/helpers/scroll/interface';
 
 /**
- * Class provides API to work with scroll on the page
+ * Class provides API to work with scroll on a page
  */
 export default class Scroll {
-
 	/**
+	 * Scrolls a page by the specified parameters
+	 *
 	 * @param page
-	 * @param options
+	 * @param opts
 	 */
-	static scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
-		return page.evaluate((options) => globalThis.scrollBy(options), options);
+	static scrollBy(page: Page, opts: ScrollToOptions): Promise<void> {
+		return page.evaluate((options) => globalThis.scrollBy(options), opts);
 	}
 
 	/** @see [[Helpers]] */
@@ -36,78 +37,55 @@ export default class Scroll {
 	}
 
 	/**
-	 * This method waits for actionability checks, then tries to scroll element into view,
-	 * unless it is completely visible as defined by IntersectionObserver's ratio.
-	 *
-	 * Throws an error when elementHandle does not point to an element connected to a Document or a ShadowRoot.
+	 * Waits an element by the specified selector appear and scrolls a page to it if needed.
+	 * Throws an error when `elementHandle` does not refer to an element connected to a document or shadow root.
 	 *
 	 * @param ctx
 	 * @param selector
-	 * @param [scrollIntoViewOptions]
+	 * @param [scrollIntoViewOpts]
 	 */
 	async scrollIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
 		selector: string,
-		scrollIntoViewOptions: Dictionary
+		scrollIntoViewOpts: Dictionary
 	): Promise<void> {
 		const el = await ctx.waitForSelector(selector);
-		return el.scrollIntoViewIfNeeded(scrollIntoViewOptions);
+		return el.scrollIntoViewIfNeeded(scrollIntoViewOpts);
 	}
 
 	/**
-	 * This method waits for actionability checks, then tries to scroll element into view,
-	 * unless it is completely visible as defined by IntersectionObserver's ratio.
-	 *
-	 * Throws an error when `elementHandle` does not point to an element connected to a `Document` or a `ShadowRoot`.
+	 * Waits a ref by the specified name appear and scrolls a page to it if needed.
+	 * Throws an error when `elementHandle` does not refer to an element connected to a document or shadow root.
 	 *
 	 * @param ctx
 	 * @param refName
-	 * @param [scrollIntoViewOptions]
+	 * @param [scrollIntoViewOpts]
 	 */
 	async scrollRefIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
 		refName: string,
-		scrollIntoViewOptions: Dictionary
+		scrollIntoViewOpts: Dictionary
 	): Promise<void> {
 		const ref = await this.parent.dom.waitForRef(ctx, refName);
-		return ref.scrollIntoViewIfNeeded(scrollIntoViewOptions);
+		return ref.scrollIntoViewIfNeeded(scrollIntoViewOpts);
 	}
 
 	/**
-	 * @param page
-	 * @param options
-	 * @deprecated
-	 * @see [[Scroll.scrollBy]]
-	 */
-	scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
-		return Scroll.scrollBy(page, options);
-	}
-
-	/**
-	 * @param page
-	 * @param [options]
-	 */
-	scrollToBottom(page: Page, options?: ScrollOptions): Promise<void> {
-		return this.scrollBy(page, {top: 1e7, left: 0, ...options});
-	}
-
-	/**
-	 * Scrolls the page until the value returned by the function is `true`
-	 * or until the time specified in` timeout` expires.
+	 * Scrolls a page until the passed function returns true, or until a time specified in` timeout` expires
 	 *
 	 * @param page
 	 * @param [checkFn]
-	 * @param [options]
+	 * @param [opts]
 	 */
 	async scrollToBottomWhile(
 		page: Page,
 		checkFn?: () => CanPromise<boolean>,
-		options?: ScrollToBottomWhileOptions
+		opts?: ScrollToBottomWhileOptions
 	): Promise<void> {
 		const normalizedOptions = {
 			timeout: 1000,
 			tick: 100,
-			...options
+			...opts
 		};
 
 		checkFn = checkFn ?? (() => false);
@@ -136,4 +114,24 @@ export default class Scroll {
 		clearTimeout(timeout);
 	}
 
+	/**
+	 * Scrolls a page to the bottom
+	 *
+	 * @param page
+	 * @param [opts]
+	 */
+	scrollToBottom(page: Page, opts?: ScrollOptions): Promise<void> {
+		return this.scrollBy(page, {top: 1e7, left: 0, ...opts});
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[Scroll.scrollBy]]
+	 *
+	 * @param page
+	 * @param options
+	 */
+	scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
+		return Scroll.scrollBy(page, options);
+	}
 }
