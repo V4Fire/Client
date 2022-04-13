@@ -11,13 +11,14 @@
  * @packageDocumentation
  */
 
+import { getComponentContext } from 'core/component/engines/helpers';
 import type { ComponentElement, ComponentInterface } from 'core/component/interface';
 
 /**
- * Resolves reference from the specified component instance.
+ * Resolves references from the specified component instance.
  *
  * This function replaces refs from component DOM nodes to component instances.
- * Also, this function fires events of appearance refs.
+ * Also, this function fires events of ref appearances.
  *
  * @param component
  */
@@ -33,37 +34,45 @@ export function resolveRefs(component: ComponentInterface): void {
 	for (let keys = Object.keys($refs), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = $refs[key];
+			ref = $refs[key];
 
-		if (el == null) {
+		if (ref == null) {
 			continue;
 		}
 
-		if (Object.isArray(el)) {
+		if (Object.isArray(ref)) {
 			const
-				arr = <unknown[]>[];
+				refList = <unknown[]>[];
 
 			let
 				needRewrite = false;
 
-			for (let i = 0; i < el.length; i++) {
+			for (let i = 0; i < ref.length; i++) {
 				const
-					listEl = el[i];
+					nestedRef = ref[i];
 
 				let
 					component;
 
-				if (listEl instanceof Node) {
-					component = (<ComponentElement>listEl).component;
-					needRewrite = Boolean(component) && component.$el === listEl;
+				if (nestedRef instanceof Node) {
+					component = (<ComponentElement>nestedRef).component;
+					needRewrite = Boolean(component) && component.$el === nestedRef;
 
 				} else {
-					const {$el} = <ComponentInterface>listEl;
+					const {$el} = <ComponentInterface>nestedRef;
 					component = $el?.component;
-					needRewrite = listEl !== component;
+					needRewrite = nestedRef !== component;
 				}
 
-				arr.push(needRewrite ? component : listEl);
+				let
+					newRef = needRewrite ? component : nestedRef;
+
+				if (!(newRef instanceof Node)) {
+					needRewrite = true;
+					newRef = getComponentContext(newRef);
+				}
+
+				refList.push(newRef);
 			}
 
 			if (needRewrite) {
@@ -71,7 +80,7 @@ export function resolveRefs(component: ComponentInterface): void {
 					configurable: true,
 					enumerable: true,
 					writable: true,
-					value: arr
+					value: refList
 				});
 			}
 
@@ -80,14 +89,22 @@ export function resolveRefs(component: ComponentInterface): void {
 				component,
 				needRewrite = false;
 
-			if (el instanceof Node) {
-				component = (<ComponentElement>el).component;
-				needRewrite = Boolean(component) && component.$el === el;
+			if (ref instanceof Node) {
+				component = (<ComponentElement>ref).component;
+				needRewrite = Boolean(component) && component.$el === ref;
 
 			} else {
-				const {$el} = <ComponentInterface>el;
+				const {$el} = <ComponentInterface>ref;
 				component = $el?.component;
-				needRewrite = el !== component;
+				needRewrite = ref !== component;
+			}
+
+			let
+				newRef = needRewrite ? component : ref;
+
+			if (!(newRef instanceof Node)) {
+				needRewrite = true;
+				newRef = getComponentContext(newRef);
 			}
 
 			if (needRewrite) {
@@ -95,7 +112,7 @@ export function resolveRefs(component: ComponentInterface): void {
 					configurable: true,
 					enumerable: true,
 					writable: true,
-					value: component
+					value: newRef
 				});
 			}
 		}
@@ -106,11 +123,11 @@ export function resolveRefs(component: ComponentInterface): void {
 			const
 				key = keys[i],
 				watchers = $refHandlers[key],
-				el = $refs[key];
+				ref = $refs[key];
 
-			if (el != null && watchers) {
+			if (ref != null && watchers != null) {
 				for (let i = 0; i < watchers.length; i++) {
-					watchers[i](el);
+					watchers[i](ref);
 				}
 
 				delete $refHandlers[key];
