@@ -95,11 +95,11 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			implementComponentForceUpdateAPI(ctx, this.$forceUpdate.bind(this));
 		},
 
-		created(this: any): void {
+		created(): void {
 			init.createdState(getComponentContext(this));
 		},
 
-		beforeMount(this: any): void {
+		beforeMount(): void {
 			init.beforeMountState(getComponentContext(this));
 		},
 
