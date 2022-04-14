@@ -8,10 +8,12 @@ attach the hook listeners.
 
 ```
 < .&__class v-hook = { &
-  bind: (el, opts, vnode, oldVnode) => console.log(el, opts, vnode, oldVnode),
-  inserted: onInserted,
-  update: onUpdate,
-  componentUpdated: onComponentUpdated,
-  unbind: onUnbind
+  created: (el, opts, vnode, oldVnode) => console.log(el, opts, vnode, oldVnode),
+  beforeMount: onBeforeMount,
+  mounted: onMounted,
+  beforeUpdate: onBeforeUpdate,
+  updated: onUpdated,
+  beforeUnmount: onBeforeUnmount,
+  unmounted: onUnmounted
 } .
 ```

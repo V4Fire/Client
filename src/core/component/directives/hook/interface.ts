@@ -6,14 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNodeDirective, DirectiveFunction } from 'core/component/engines';
+import type { ObjectDirective, DirectiveHook } from 'core/component/engines';
 
-export interface DirectiveOptions extends VNodeDirective {
+export interface DirectiveOptions extends ObjectDirective {
 	value?: {
-		bind?: DirectiveFunction;
-		inserted?: DirectiveFunction;
-		update?: DirectiveFunction;
-		componentUpdated?: DirectiveFunction;
-		unbind?: DirectiveFunction;
+		created?: DirectiveHook;
+		beforeMount?: DirectiveHook;
+		mounted?: DirectiveHook;
+		beforeUpdate?: DirectiveHook;
+		updated?: DirectiveHook;
+		beforeUnmount?: DirectiveHook;
+		unmounted?: DirectiveHook;
 	};
 }
