@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNode, RenderContext } from 'core/component/engines';
-import type { ComponentInterface } from 'core/component/interface/component';
+import type { VNode } from 'core/component/engines';
+import type { ComponentInterface } from 'core/component/interface/component/component';
 
 export interface RenderEngineFeatures {
 	regular: boolean;
@@ -40,7 +40,7 @@ export interface RenderEngine<T extends object = object> {
 	proxyGetters: ProxyGetters<T>;
 
 	cloneVNode(vnode: VNode): VNode;
-	patchVNode(vnode: VNode, component: ComponentInterface, renderCtx: RenderContext): VNode;
+	patchVNode(vnode: VNode, component: ComponentInterface): VNode;
 
 	renderVNode(vnode: VNode, parent: ComponentInterface): Node;
 	renderVNode(vnodes: VNode[], parent: ComponentInterface): Node[];
