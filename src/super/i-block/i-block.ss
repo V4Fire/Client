@@ -176,10 +176,10 @@
 
 		'v-hook': "!isVirtualTpl && (isFunctional || isFlyweight) ?" +
 			"{" +
-				"bind: createInternalHookListener('bind')," +
-				"inserted: createInternalHookListener('inserted')," +
-				"update: createInternalHookListener('update')," +
-				"unbind: createInternalHookListener('unbind')" +
+				"created: createInternalHookListener('bind')," +
+				"mounted: createInternalHookListener('inserted')," +
+				"updated: createInternalHookListener('update')," +
+				"unmounted: createInternalHookListener('unbind')" +
 			"} :" +
 
 			"null"
