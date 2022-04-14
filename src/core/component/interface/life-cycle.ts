@@ -6,6 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * List of supported life-cycle hooks of a component
+ */
 export type Hook =
 	'beforeRuntime' |
 	'beforeCreate' |
@@ -21,4 +24,6 @@ export type Hook =
 	'deactivated' |
 	'beforeDestroy' |
 	'destroyed' |
+	'renderTracked' |
+	'renderTriggered' |
 	'errorCaptured';
