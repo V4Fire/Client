@@ -6,50 +6,51 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import {
+import { ComponentEngine, Directive, DirectiveBinding, VNode } from 'core/component/engines/engine';
 
-	ComponentEngine,
-	DirectiveFunction,
-	DirectiveOptions,
-	VNode
-
-} from 'core/component/engines/engine';
-
-const addDirective = ComponentEngine.directive.bind(ComponentEngine);
+let originalDirective = ComponentEngine.directive.length > 0 ?
+	ComponentEngine.directive.bind(ComponentEngine) :
+	null;
 
 /**
  * A wrapped version of the `ComponentEngine.directive` function with providing of hooks for non-regular components
  *
  * @param name
- * @param params
+ * @param [directive]
  */
-ComponentEngine.directive = function directive(name: string, params?: DirectiveOptions | DirectiveFunction) {
-	if (Object.isFunction(params)) {
-		return addDirective(name, params);
+ComponentEngine.directive = function directive(name: string, directive?: Directive) {
+	if (originalDirective == null) {
+		const ctx = Object.getPrototypeOf(this);
+		originalDirective = ctx.directive.bind(ctx);
+	}
+
+	if (directive == null || Object.isFunction(directive)) {
+		return originalDirective(name, directive);
 	}
 
 	const
-		originalBind = params?.bind,
-		originalUnbind = params?.unbind;
+		originalCreated = directive.created,
+		originalUnmounted = directive.unmounted;
 
-	if (originalUnbind == null) {
-		return addDirective(name, params);
+	if (originalUnmounted == null) {
+		return originalDirective(name, directive);
 	}
 
-	return addDirective(name, {
-		...params,
+	return originalDirective(name, {
+		...directive,
 
-		bind(_el: HTMLElement, _opts: DirectiveOptions, vnode: VNode) {
+		created(_el: Element, _opts: DirectiveBinding, vnode: VNode) {
 			const
+				// eslint-disable-next-line prefer-rest-params
 				args = Array.from(arguments);
 
-			if (Object.isFunction(originalBind)) {
-				originalBind.apply(this, args);
+			if (Object.isFunction(originalCreated)) {
+				originalCreated.apply(this, args);
 			}
 
 			if (vnode.fakeContext != null) {
 				vnode.fakeContext.unsafe.$on('component-hook:before-destroy', () => {
-					originalUnbind.apply(this, args);
+					originalUnmounted.apply(this, args);
 				});
 			}
 		}
