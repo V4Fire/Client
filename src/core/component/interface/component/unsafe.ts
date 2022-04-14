@@ -35,9 +35,6 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$componentId: CTX['$componentId'];
 
 	// @ts-ignore (access)
-	$remoteParent: CTX['$remoteParent'];
-
-	// @ts-ignore (access)
 	$fields: CTX['$fields'];
 
 	// @ts-ignore (access)

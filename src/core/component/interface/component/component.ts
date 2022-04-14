@@ -137,6 +137,11 @@ export abstract class ComponentInterface {
 	readonly $normalParent?: this['Component'];
 
 	/**
+	 * Link to a parent component if the current component was dynamically created and mounted
+	 */
+	readonly $remoteParent?: this['Component'];
+
+	/**
 	 * API of the used rendering engine
 	 */
 	readonly $renderEngine!: RenderEngine<any>;
@@ -157,11 +162,6 @@ export abstract class ComponentInterface {
 	 * Temporary unique component string identifier for functional components
 	 */
 	protected readonly $componentId?: string;
-
-	/**
-	 * Link to a parent component if the current component was dynamically created and mounted
-	 */
-	protected readonly $remoteParent?: this['Component'];
 
 	/**
 	 * Map of watchable component properties that can force re-rendering
