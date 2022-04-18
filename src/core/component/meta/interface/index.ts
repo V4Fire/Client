@@ -7,22 +7,26 @@
  */
 
 import type { PropOptions } from 'core/component/decorators';
-import type { WatchObject } from 'core/component/interface/watch';
-import type { ComponentConstructor, RenderFunction, ModsDecl } from 'core/component/interface';
+import type { RenderFunction } from 'core/component/engines';
+
+import type { WatchObject, ComponentConstructor, ModsDecl } from 'core/component/interface';
+import type { ComponentOptions } from 'core/component/meta/interface/options';
 
 import type {
 
-	ComponentOptions,
 	ComponentProp,
 	ComponentField,
+
 	ComponentAccessor,
 	ComponentMethod,
 	ComponentHooks,
+
 	ComponentDirectiveOptions,
 	ComponentWatchDependencies
 
 } from 'core/component/meta/interface/types';
 
+export * from 'core/component/meta/interface/options';
 export * from 'core/component/meta/interface/types';
 
 /**
@@ -30,8 +34,8 @@ export * from 'core/component/meta/interface/types';
  */
 export interface ComponentMeta {
 	/**
-	 * Full name of a component.
-	 * If the component is smart the name can be equal to `b-foo-functional`.
+	 * The full component name.
+	 * If the component is smart the name can contain a `-functional` postfix.
 	 */
 	name: string;
 
@@ -51,7 +55,7 @@ export interface ComponentMeta {
 	instance: Dictionary;
 
 	/**
-	 * Map of component parameters that was provided to a @component decorator
+	 * Map of component parameters that were provided to a `@component` decorator
 	 */
 	params: ComponentOptions;
 
@@ -76,17 +80,17 @@ export interface ComponentMeta {
 	fields: Dictionary<ComponentField>;
 
 	/**
-	 * Map of component computed fields with support of caching
-	 */
-	computedFields: Dictionary<ComponentAccessor>;
-
-	/**
 	 * Map of component fields that can't force re-rendering
 	 */
 	systemFields: Dictionary<ComponentField>;
 
 	/**
-	 * Map of fields that contains the "Store" postfix
+	 * Map of component computed fields with support of caching
+	 */
+	computedFields: Dictionary<ComponentAccessor>;
+
+	/**
+	 * Map of component fields that contains the `Store` postfix
 	 */
 	tiedFields: Dictionary<string>;
 
@@ -121,8 +125,8 @@ export interface ComponentMeta {
 	 */
 	component: {
 		/**
-		 * Full name of a component.
-		 * If the component is smart the name can be equal to `b-foo-functional`.
+		 * The full component name.
+		 * If the component is smart the name can contain a `-functional` postfix.
 		 */
 		name: string;
 
@@ -157,12 +161,7 @@ export interface ComponentMeta {
 		components?: Dictionary<ComponentMeta['component']>;
 
 		/**
-		 * List of static render functions
-		 */
-		staticRenderFns: RenderFunction[];
-
-		/**
-		 * Main render function of the component
+		 * Component render function
 		 */
 		render: RenderFunction;
 	};
