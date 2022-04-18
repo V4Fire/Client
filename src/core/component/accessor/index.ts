@@ -21,92 +21,61 @@ import { cacheStatus, ComponentInterface } from 'core/component';
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
 		meta,
-		meta: {params: {deprecatedProps}},
-		isFlyweight
+		meta: {params: {deprecatedProps}}
 	} = component.unsafe;
 
 	const
 		ssrMode = component.$renderEngine.supports.ssr,
-		isNotRegular = meta.params.functional === true || isFlyweight;
+		isFunctional = meta.params.functional === true;
 
 	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = o[key];
+			accessor = o[key];
 
-		const canSkip = Boolean(
-			el == null ||
-			!ssrMode && isNotRegular && el.functional === false ||
-
-			(
-				isFlyweight ?
-					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
-					component[key]
-			)
-		);
-
-		if (el == null || canSkip) {
+		if (accessor == null || component[key] != null || !ssrMode && isFunctional && accessor.functional === false) {
 			continue;
 		}
 
 		Object.defineProperty(component, keys[i], {
 			configurable: true,
 			enumerable: true,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			get: el.get,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			set: el.set
+			get: accessor.get,
+			set: accessor.set
 		});
 	}
 
 	for (let o = meta.computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = o[key];
+			computed = o[key];
 
-		const canSkip = Boolean(
-			el == null ||
-			!ssrMode && isNotRegular && el.functional === false ||
-
-			(
-				isFlyweight ?
-					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
-					component[key]
-			)
-		);
-
-		if (el == null || canSkip) {
+		if (computed == null || component[key] != null || !ssrMode && isFunctional && computed.functional === false) {
 			continue;
 		}
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			if (ssrMode || isFlyweight) {
-				return el.get!.call(this);
+			if (ssrMode) {
+				return computed.get!.call(this);
 			}
 
 			if (cacheStatus in get) {
 				return get[cacheStatus];
 			}
 
-			return get[cacheStatus] = el.get!.call(this);
+			return get[cacheStatus] = computed.get!.call(this);
 		};
 
 		Object.defineProperty(component, keys[i], {
 			configurable: true,
 			enumerable: true,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			get: el.get != null ? get : undefined,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			set: el.set
+			get: computed.get != null ? get : undefined,
+			set: computed.set
 		});
 	}
 
-	if (deprecatedProps) {
+	if (deprecatedProps != null) {
 		for (let keys = Object.keys(deprecatedProps), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
