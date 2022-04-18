@@ -27,33 +27,15 @@ const
  * @param args - hook arguments
  */
 export function runHook(hook: Hook, component: ComponentInterface, ...args: unknown[]): Promise<void> {
-	const {unsafe, unsafe: {meta}} = component;
+	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(
+		component
+	);
+
 	unsafe.hook = hook;
 
-	let
-		hooks = meta.hooks[hook];
-
-	if (component.isFlyweight && hooks.length > 0) {
-		if (hooks.length === 1 && hooks[0].functional === false) {
-			return resolvedPromise;
-		}
-
-		const
-			functionalHooks = <ComponentHook[]>[];
-
-		for (let i = 0; i < hooks.length; i++) {
-			const
-				el = hooks[i];
-
-			if (el.functional !== false) {
-				functionalHooks.push(el);
-			}
-		}
-
-		if (functionalHooks.length !== hooks.length) {
-			hooks = functionalHooks;
-		}
-	}
+	const
+		m = component.unsafe.meta,
+		hooks = m.hooks[hook];
 
 	switch (hooks.length) {
 		case 0:
@@ -106,7 +88,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 				});
 			}
 
-			meta.hooks[hook] = filteredHooks;
+			m.hooks[hook] = filteredHooks;
 
 			const
 				tasks = emitter.drain();
