@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentInterface } from 'core/component';
-
 /**
  * [[include:core/component/method/README.md]]
  * @packageDocumentation
  */
+
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Invokes a method from the specified component instance
@@ -45,26 +45,20 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
 	const {
-		unsafe: {
-			meta,
-			meta: {methods}
-		}
-	} = component;
+		meta,
+		meta: {methods}
+	} = component.unsafe;
 
 	const
 		ssrMode = component.$renderEngine.supports.ssr,
-		isNotRegular = meta.params.functional === true || component.isFlyweight;
+		isFunctional = meta.params.functional === true;
 
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			el = methods[key];
 
-		if (!el) {
-			continue;
-		}
-
-		if (!ssrMode && isNotRegular && el.functional === false) {
+		if (el == null || !ssrMode && isFunctional && el.functional === false) {
 			continue;
 		}
 
