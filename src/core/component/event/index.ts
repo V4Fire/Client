@@ -27,7 +27,7 @@ export * from 'core/component/event/component-api';
 export * from 'core/component/event/interface';
 
 /**
- * Sends a message to reset all components of an application
+ * Sends a message to reset all components of the application
  * @param [type] - reset type
  */
 export function reset(type?: ResetType): void {
