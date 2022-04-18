@@ -17,7 +17,7 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
 export * from 'core/component/field/interface';
 
 /**
- * Initializes the specified fields to a component instance.
+ * Initializes the specified fields of a component instance.
  * The function returns a dictionary with the initialized fields.
  *
  * @param fields - fields scope to initialize
