@@ -56,12 +56,12 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = methods[key];
+			method = methods[key];
 
-		if (el == null || !ssrMode && isFunctional && el.functional === false) {
+		if (method == null || !ssrMode && isFunctional && method.functional === false) {
 			continue;
 		}
 
-		component[key] = el.fn.bind(component);
+		component[key] = method.fn.bind(component);
 	}
 }

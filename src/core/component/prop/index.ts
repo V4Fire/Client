@@ -50,9 +50,9 @@ export function initProps(
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = props[key];
+			prop = props[key];
 
-		if (el == null || !ssrMode && isFunctional && el.functional === false) {
+		if (prop == null || !ssrMode && isFunctional && prop.functional === false) {
 			continue;
 		}
 
@@ -62,7 +62,7 @@ export function initProps(
 			val = (from ?? component)[key];
 
 		if (val === undefined) {
-			val = el.default !== undefined ? el.default : Object.fastClone(meta.instance[key]);
+			val = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[key]);
 		}
 
 		if (val === undefined) {
@@ -79,7 +79,7 @@ export function initProps(
 
 		if (Object.isFunction(val)) {
 			if (opts.saveToStore || val[defaultWrapper] !== true) {
-				val = isTypeCanBeFunc(el.type) ? val.bind(component) : val.call(component);
+				val = isTypeCanBeFunc(prop.type) ? val.bind(component) : val.call(component);
 				needSaveToStore = true;
 			}
 		}
