@@ -1,4 +1,4 @@
-# core/component/reflection
+# core/component/reflect
 
 This module provides a bunch of functions to reflect component classes.
 

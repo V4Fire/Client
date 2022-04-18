@@ -9,8 +9,8 @@
 import { deprecate } from 'core/functools/deprecation';
 import { ComponentInterface } from 'core/component/interface';
 
-import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/reflection/const';
-import type { PropertyInfo } from 'core/component/reflection/interface';
+import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/reflect/const';
+import type { PropertyInfo } from 'core/component/reflect/interface';
 
 /**
  * Returns an information object of a component property by the specified path
@@ -85,8 +85,14 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		name = chunks[rootI];
 	}
 
-	const
-		{props, fields, systemFields, computedFields, accessors, params: {deprecatedProps}} = component.unsafe.meta;
+	const {
+		props,
+		fields,
+		systemFields,
+		computedFields,
+		accessors,
+		params: {deprecatedProps}
+	} = component.unsafe.meta;
 
 	const
 		alternative = deprecatedProps?.[name];

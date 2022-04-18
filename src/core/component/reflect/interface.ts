@@ -20,8 +20,8 @@ import type {
  */
 export interface ComponentConstructorInfo {
 	/**
-	 * The full name of a component.
-	 * If the component is smart the name can be equal to `b-foo-functional`.
+	 * The full component name.
+	 * If the component is smart the name can contain a `-functional` postfix.
 	 */
 	name: string;
 
@@ -31,7 +31,7 @@ export interface ComponentConstructorInfo {
 	componentName: string;
 
 	/**
-	 * True if the component is abstract, i.e., has a prefix in the name
+	 * True if the component is abstract, i.e., has an abstract `i` prefix within the name
 	 */
 	isAbstract: boolean;
 
@@ -46,7 +46,7 @@ export interface ComponentConstructorInfo {
 	constructor: ComponentConstructor;
 
 	/**
-	 * Map of component parameters that was provided to a @component decorator
+	 * Map of component parameters that were provided to a `@component` decorator
 	 */
 	params: ComponentOptions;
 
@@ -56,7 +56,7 @@ export interface ComponentConstructorInfo {
 	parent?: Function;
 
 	/**
-	 * Map of parent component parameters that was provided to a @component decorator
+	 * Map of parent component parameters that were provided to a `@component` decorator
 	 */
 	parentParams?: ComponentOptions;
 
@@ -69,8 +69,8 @@ export interface ComponentConstructorInfo {
 /**
  * Available types of a property accessor:
  *
- * 1. computed - the cached type
- * 2. accessor - the non-cached type
+ * 1. computed - the cached type;
+ * 2. accessor - the non-cached type.
  */
 export type AccessorType =
 	'computed' |
@@ -131,7 +131,7 @@ export interface CommonPropertyInfo {
 	topPath: string;
 
 	/**
-	 * Original path of the property
+	 * Original path to the property
 	 *
 	 * @example
 	 * ```js
@@ -151,7 +151,7 @@ export interface CommonPropertyInfo {
 	originalTopPath: string;
 
 	/**
-	 * Name of an accessor that is tied with the property
+	 * Name of accessor that is tied with the property
 	 */
 	accessor?: string;
 
