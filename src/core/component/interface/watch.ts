@@ -9,7 +9,7 @@
 import type { WatchPath as RawWatchPath, WatchOptions, WatchHandlerParams } from 'core/object/watch';
 import type { Group, Label, Join } from 'core/async';
 
-import type { PropertyInfo } from 'core/component/reflection';
+import type { PropertyInfo } from 'core/component/reflect';
 import type { ComponentInterface } from 'core/component/interface/component';
 
 export { WatchOptions, WatchHandlerParams };

@@ -7,7 +7,7 @@
  */
 
 import { inheritMeta } from 'core/component/meta/inherit';
-import { getComponentMods } from 'core/component/reflection';
+import { getComponentMods } from 'core/component/reflect';
 import { wrapRender } from 'core/component/render-function';
 
 import type { RenderFunction } from 'core/component/engines';

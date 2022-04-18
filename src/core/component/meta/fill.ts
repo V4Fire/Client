@@ -10,7 +10,7 @@ import { defaultWrapper } from 'core/component/const';
 import { getComponentContext } from 'core/component/engines/helpers';
 
 import { isTypeCanBeFunc } from 'core/component/prop';
-import { isAbstractComponent } from 'core/component/reflection';
+import { isAbstractComponent } from 'core/component/reflect';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
 import type { ComponentConstructor, ComponentMeta, ComponentField, WatchObject } from 'core/component/interface';

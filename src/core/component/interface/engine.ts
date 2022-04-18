@@ -34,8 +34,6 @@ export type ProxyGetter<T extends object = object> = (ctx: T) => {
 export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
 
 export interface RenderEngine<T extends object = object> {
-	minimalCtx: object;
-
 	supports: RenderEngineFeatures;
 	proxyGetters: ProxyGetters<T>;
 
