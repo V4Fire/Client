@@ -93,11 +93,6 @@ export abstract class ComponentInterface {
 	readonly renderGroup?: string;
 
 	/**
-	 * True if the component is attached to the parent render function as a flyweight
-	 */
-	readonly isFlyweight?: boolean;
-
-	/**
 	 * API to invoke unsafely of internal properties of the component.
 	 * This parameter helps to avoid TS errors of using protected properties and methods outside from the component class.
 	 * It's useful to create component’ friendly classes.
@@ -386,16 +381,8 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Hook handler: the component has been created
-	 * (only for flyweight components)
-	 */
-	protected onCreatedHook(): void {
-		// Loopback
-	}
-
-	/**
 	 * Hook handler: the component has been bound
-	 * (only for functional and flyweight components)
+	 * (only for functional components)
 	 */
 	protected onBindHook(): void {
 		// Loopback
@@ -403,7 +390,7 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Hook handler: the component has been mounted
-	 * (only for functional and flyweight components)
+	 * (only for functional components)
 	 */
 	protected onInsertedHook(): void {
 		// Loopback
@@ -411,7 +398,7 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Hook handler: the component has been updated
-	 * (only for functional and flyweight components)
+	 * (only for functional components)
 	 */
 	protected onUpdateHook(): void {
 		// Loopback
@@ -419,7 +406,7 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Hook handler: the component has been unbound
-	 * (only for functional and flyweight components)
+	 * (only for functional components)
 	 */
 	protected onUnbindHook(): void {
 		// Loopback
