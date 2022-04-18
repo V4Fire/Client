@@ -10,7 +10,7 @@ import { defProp } from 'core/const/props';
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
- * Iterates over a prototype of a component constructor and adds methods/accessors to the specified meta object
+ * Iterates over a prototype of a component constructor and adds methods/accessors to the passed meta object
  *
  * @param meta
  * @param [constructor]
@@ -18,8 +18,7 @@ import type { ComponentMeta } from 'core/component/interface';
 export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = meta.constructor): void {
 	const
 		proto = constructor.prototype,
-		ownProps = Object.getOwnPropertyNames(proto),
-		replace = !meta.params.flyweight;
+		ownProps = Object.getOwnPropertyNames(proto);
 
 	const {
 		componentName: src,
@@ -40,7 +39,11 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		}
 
 		const
-			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
+			desc = Object.getOwnPropertyDescriptor(proto, key);
+
+		if (desc == null) {
+			continue;
+		}
 
 		// Methods
 		if ('value' in desc) {
@@ -51,7 +54,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				continue;
 			}
 
-			methods[key] = Object.assign(methods[key] ?? {replace, watchers: {}, hooks: {}}, {src, fn});
+			methods[key] = Object.assign(methods[key] ?? {watchers: {}, hooks: {}}, {src, fn});
 
 		// Accessors
 		} else {
@@ -89,7 +92,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			const
 				obj = meta[metaKey];
 
-			// If we already have a property by this key, like a prop or a field,
+			// If we already have a property by this key, like a prop or field,
 			// we need to delete it to correct override
 			if (field[key] != null) {
 				Object.defineProperty(proto, key, defProp);
@@ -103,7 +106,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get = desc.get ?? old?.get;
 
-			// For using "super" within a setter we also create a method with a name of form `${key}Setter`
+			// To use `super` within a setter we also create a method with a name `${key}Setter`
 			if (set != null) {
 				const
 					k = `${key}Setter`;
@@ -111,14 +114,13 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				proto[k] = set;
 				meta.methods[k] = {
 					src,
-					replace,
 					fn: set,
 					watchers: {},
 					hooks: {}
 				};
 			}
 
-			// For using "super" within a getter we also create a method with a name of form `${key}Getter`
+			// To using `super` within a getter we also create a method with a name `${key}Getter`
 			if (get != null) {
 				const
 					k = `${key}Getter`;
@@ -126,14 +128,13 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				proto[k] = get;
 				meta.methods[k] = {
 					src,
-					replace,
 					fn: get,
 					watchers: {},
 					hooks: {}
 				};
 			}
 
-			obj[key] = Object.assign(obj[key] ?? {replace}, {
+			obj[key] = Object.assign(obj[key] ?? {}, {
 				src,
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get: desc.get ?? old?.get,

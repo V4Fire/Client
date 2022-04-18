@@ -31,7 +31,6 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
-	replace?: boolean;
 	functional?: boolean;
 	functionalWatching?: boolean;
 	after?: Set<string>;
@@ -51,7 +50,6 @@ export interface ComponentComputedField<T = unknown> extends Partial<WritableCom
 
 export interface ComponentAccessor<T = unknown> extends Partial<WritableComputedOptions<T>> {
 	src: string;
-	replace?: boolean;
 	functional?: boolean;
 	watchable?: boolean;
 }
@@ -60,7 +58,6 @@ export interface ComponentMethod {
 	fn: Function;
 	src: string;
 	wrapper?: boolean;
-	replace?: boolean;
 	functional?: boolean;
 	watchers?: Dictionary<MethodWatcher>;
 	hooks?: ComponentMethodHooks;

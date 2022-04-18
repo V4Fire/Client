@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :house: Internal
+
+* Refactoring
+
 ## v3.0.0-rc.177 (2021-04-14)
 
 #### :house: Internal

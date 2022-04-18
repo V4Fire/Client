@@ -27,9 +27,9 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 		return;
 	}
 
-	// In this case, we don't automatically attaches a render function
+	// In this case, we don't automatically attach a render function
 	if (meta.params.tpl === false) {
-		// Loopback render function
+		// A loopback render function
 		return attachTemplatesToMeta(meta, defTpls.block);
 	}
 
@@ -39,9 +39,6 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 
 	const renderObj = componentTemplates[meta.componentName] ?? tpls.index();
 	componentTemplates[meta.componentName] = renderObj;
-
-	meta.component.staticRenderFns =
-		renderObj.staticRenderFns ?? [];
 
 	methods.render = <ComponentMethod>{
 		wrapper: true,
