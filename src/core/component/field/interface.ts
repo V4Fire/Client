@@ -7,9 +7,5 @@
  */
 
 import type { ComponentField } from 'core/component/interface';
-import type { SortedFields } from 'core/component/field/interface';
 
-/**
- * Cache for sorted component fields
- */
-export const sortedFields = new WeakMap<Dictionary<ComponentField>, SortedFields>();
+export type SortedFields = Array<[string, CanUndef<ComponentField>]>;
