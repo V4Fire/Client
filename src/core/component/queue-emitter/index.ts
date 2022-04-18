@@ -20,28 +20,31 @@ export * from 'core/component/queue-emitter/interface';
  */
 export default class QueueEmitter {
 	/**
-	 * Queue of event listeners that is ready to fire
+	 * Queue of event listeners that are ready to fire
 	 */
 	protected queue: Function[] = [];
 
 	/**
-	 * Map of tied event listeners that isn't ready to fire
+	 * Map of tied event listeners that aren't ready to fire
 	 */
 	protected listeners: Dictionary<EventListener[]> = Object.createDict();
 
 	/**
 	 * Attaches a callback for the specified set of events.
-	 * The callback will be invoked only when all specified events was emitted.
+	 * The callback will be invoked only when all specified events are fired.
 	 *
 	 * @param event - set of events (can be undefined)
 	 * @param cb
 	 */
 	on(event: Nullable<Set<string>>, cb: Function): void {
 		if (event != null && event.size > 0) {
-			for (let v = event.values(), el = v.next(); !el.done; el = v.next()) {
-				const key = el.value;
-				this.listeners[key] = this.listeners[key] ?? [];
-				this.listeners[key]!.push({event, cb});
+			for (let o = event.values(), el = o.next(); !el.done; el = o.next()) {
+				const
+					key = el.value,
+					listeners = this.listeners[key] ?? [];
+
+				listeners.push({event, cb});
+				this.listeners[key] = listeners;
 			}
 
 			return;
@@ -53,7 +56,7 @@ export default class QueueEmitter {
 	/**
 	 * Emits the specified event.
 	 * If at least one of listeners returns a promise,
-	 * the method returns promise that is resolved after all internal promises are resolved.
+	 * the method returns promise that will be resolved after all internal promises are resolved.
 	 *
 	 * @param event
 	 */
@@ -61,7 +64,7 @@ export default class QueueEmitter {
 		const
 			queue = this.listeners[event];
 
-		if (!queue) {
+		if (queue == null) {
 			return;
 		}
 
@@ -94,9 +97,9 @@ export default class QueueEmitter {
 	}
 
 	/**
-	 * Drains the queue of listeners that is ready to fire.
+	 * Drains the queue of listeners that are ready to fire.
 	 * If at least one of listeners returns a promise,
-	 * the method returns promise that is resolved after all internal promises are resolved.
+	 * the method returns promise that will be resolved after all internal promises are resolved.
 	 */
 	drain(): CanPromise<void> {
 		const
