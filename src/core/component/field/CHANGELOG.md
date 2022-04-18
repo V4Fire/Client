@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :house: Internal
+
+* The module is rewritten to use static sorting of dependencies
+
 ## v3.0.0-rc.126 (2021-01-26)
 
 #### :bug: Bug Fix
