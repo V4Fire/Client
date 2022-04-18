@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import { defProp } from 'core/const/props';
 import { defaultWrapper } from 'core/component/const';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -20,8 +19,8 @@ import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 export * from 'core/component/prop/interface';
 
 /**
- * Initializes input properties of the specified component instance.
- * The method returns an object with initialized properties.
+ * Initializes the specified input properties of a component instance.
+ * The method returns a dictionary with the initialized properties.
  *
  * @param component
  * @param [opts] - additional options
@@ -32,38 +31,32 @@ export function initProps(
 ): Dictionary {
 	opts.store = opts.store ?? {};
 
+	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(
+		component
+	);
+
 	const {
-		unsafe,
-		unsafe: {meta, meta: {component: {props}}},
-		isFlyweight
-	} = component;
+		meta,
+		meta: {component: {props}}
+	} = unsafe;
 
 	const
 		{store, from} = opts;
 
 	const
 		ssrMode = component.$renderEngine.supports.ssr,
-		isNotRegular = meta.params.functional === true || component.isFlyweight;
+		isFunctional = meta.params.functional === true;
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			el = props[key];
 
-		let
-			needSave = Boolean(isFlyweight) || opts.saveToStore;
-
-		if (el == null) {
+		if (el == null || !ssrMode && isFunctional && el.functional === false) {
 			continue;
 		}
 
-		// Don't initialize a property for a functional component unless explicitly required
-		if (!ssrMode && isNotRegular && el.functional === false) {
-			continue;
-		}
-
-		// @ts-ignore (access)
-		unsafe['$activeField'] = key;
+		unsafe.$activeField = key;
 
 		let
 			val = (from ?? component)[key];
@@ -81,36 +74,22 @@ export function initProps(
 			}
 		}
 
+		let
+			needSaveToStore = opts.saveToStore;
+
 		if (Object.isFunction(val)) {
 			if (opts.saveToStore || val[defaultWrapper] !== true) {
 				val = isTypeCanBeFunc(el.type) ? val.bind(component) : val.call(component);
-				needSave = true;
+				needSaveToStore = true;
 			}
 		}
 
-		if (needSave) {
-			if (isFlyweight) {
-				const prop = val === undefined ?
-					defProp :
-
-					{
-						configurable: true,
-						enumerable: true,
-						writable: true,
-						value: val
-					};
-
-				Object.defineProperty(store, key, prop);
-				component.$props[key] = val;
-
-			} else {
-				store[key] = val;
-			}
+		if (needSaveToStore) {
+			store[key] = val;
 		}
 	}
 
-	// @ts-ignore (access)
-	unsafe['$activeField'] = undefined;
+	unsafe.$activeField = undefined;
 	return store;
 }
 

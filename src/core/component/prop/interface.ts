@@ -11,18 +11,18 @@
  */
 export interface InitPropsObjectOptions {
 	/**
-	 * Object where is stored raw modifiers
+	 * Dictionary where is stored the raw modifiers
 	 */
 	from?: Dictionary;
 
 	/**
-	 * Storage object for initialized properties
+	 * Store for initialized properties
 	 * @default `{}`
 	 */
 	store?: Dictionary;
 
 	/**
-	 * If true, then property values is written to a store object
+	 * If true, then property values will be written to the store object
 	 * @default `false`
 	 */
 	saveToStore?: boolean;
