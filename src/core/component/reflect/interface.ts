@@ -162,7 +162,7 @@ export interface CommonPropertyInfo {
 }
 
 /**
- * Information of a regular component property: prop, field, computedField, etc.
+ * Information of a regular component property: `prop`, `field`, `computedField`, etc.
  */
 export interface ComponentPropertyInfo extends CommonPropertyInfo {
 	/**
