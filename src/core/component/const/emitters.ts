@@ -15,8 +15,8 @@ import { componentParams } from 'core/component/const/cache';
 export const
 	initEmitter = new EventEmitter({maxListeners: 1e3, newListener: false});
 
-// We need wrap an original "once" function of the emitter
-// to attach logic to register smart components
+// We need to wrap an original `once` function of the emitter
+// to attach logic of registering smart components
 ((initEventOnce) => {
 	initEmitter.once = function once(
 		event: CanArray<string>,
