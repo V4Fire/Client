@@ -6,11 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentInterface } from 'core/component';
+/**
+ * [[include:core/component/context/README.md]]
+ * @packageDocumentation
+ */
 
-const
-	toRaw = Symbol('Link to a RAW component'),
-	ctxMap = new WeakMap();
+import { toRaw, ctxMap } from 'core/component/context/const';
+import type { ComponentInterface } from 'core/component/interface';
+
+export * from 'core/component/context/const';
 
 /**
  * Returns a component context object by the specified component instance
