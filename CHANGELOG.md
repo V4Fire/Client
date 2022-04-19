@@ -11,7 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2022-??-??)
+## v3.19.2 (2022-04-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `iHistory` repeatedly initializing when opening bottom-slide from a non-zero step `base/b-bottom-slide`
+
+#### :house: Internal
+
+* Downgraded TS to `4.6.2`
+
+## v3.19.1 (2022-04-12)
 
 #### :house: Internal
 
