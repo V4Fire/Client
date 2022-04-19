@@ -7,10 +7,11 @@
  */
 
 import { defaultWrapper } from 'core/component/const';
-import { getComponentContext } from 'core/component/engines/helpers';
+
+import { getComponentContext } from 'core/component/context';
+import { isAbstractComponent } from 'core/component/reflect';
 
 import { isTypeCanBeFunc } from 'core/component/prop';
-import { isAbstractComponent } from 'core/component/reflect';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
 import type { ComponentConstructor, ComponentMeta, ComponentField, WatchObject } from 'core/component/interface';
@@ -56,6 +57,7 @@ export function fillMeta(
 		}
 
 		component.methods[nm] = function wrapper() {
+			// eslint-disable-next-line prefer-rest-params
 			return method.fn.apply(getComponentContext(this), arguments);
 		};
 

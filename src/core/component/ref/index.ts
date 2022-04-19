@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { getComponentContext } from 'core/component/engines/helpers';
+import { getComponentContext } from 'core/component/context';
 import type { ComponentElement, ComponentInterface } from 'core/component/interface';
 
 /**

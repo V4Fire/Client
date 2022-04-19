@@ -9,7 +9,7 @@
 import Async from 'core/async';
 
 import { asyncLabel } from 'core/component/const';
-import { getComponentContext } from 'core/component/engines/helpers';
+import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
