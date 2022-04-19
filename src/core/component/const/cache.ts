@@ -18,7 +18,7 @@ export const componentParams = new Map<Function | string, ComponentOptions>();
 /**
  * Map of root components
  */
-export const rootComponents = Object.createDict<Promise<ComponentEngineOptions<ComponentEngine>>>();
+export const rootComponents = Object.createDict<Promise<ComponentEngineOptions<typeof ComponentEngine>>>();
 
 /**
  * Link to an instance of the global root component
