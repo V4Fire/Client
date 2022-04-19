@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.19.1 (2022-04-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `iHistory` repeatedly initializing when opening bottom-slide from a non-zero step
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :bug: Bug Fix
