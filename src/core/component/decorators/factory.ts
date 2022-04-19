@@ -7,15 +7,22 @@
  */
 
 import { defProp } from 'core/const/props';
+
+import { storeRgxp } from 'core/component/reflect';
 import { initEmitter, metaPointers } from 'core/component/const';
 import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
-import { storeRgxp } from 'core/component/reflection';
 
 import type { ComponentMeta } from 'core/component/interface';
-import type { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
+import type {
+
+	DecoratorFunctionalOptions,
+	ParamsFactoryTransformer,
+	FactoryTransformer
+
+} from 'core/component/decorators/interface';
 
 /**
- * Factory to create component property decorators
+ * Factory to create a component property decorator
  *
  * @param cluster - property cluster
  * @param [transformer] - transformer for parameters
@@ -29,34 +36,23 @@ export function paramsFactory<T = object>(
 			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
 
 			const
-				link = metaPointers[componentName]!;
+				link = metaPointers[componentName];
+
+			if (link == null) {
+				return;
+			}
 
 			link[key] = true;
 			initEmitter.once(`constructor.${componentName}`, reg);
 		});
 
 		function reg({meta}: {meta: ComponentMeta}): void {
-			const wrapOpts = (opts) => {
-				const
-					p = meta.params;
-
-				if (opts.replace === undefined && p.flyweight) {
-					opts.replace = false;
-				}
-
-				// eslint-disable-next-line eqeqeq
-				if (opts.functional === undefined && p.functional === null) {
-					opts.functional = false;
-				}
-
-				return opts;
-			};
+			delete meta.tiedFields[key];
 
 			let
 				p = params;
 
-			delete meta.tiedFields[key];
-
+			// Decorator for a method or accessor
 			if (desc != null) {
 				delete meta.props[key];
 				delete meta.fields[key];
@@ -93,8 +89,10 @@ export function paramsFactory<T = object>(
 					const
 						name = key;
 
-					let
-						{watchers, hooks} = info;
+					let {
+						watchers,
+						hooks
+					} = info;
 
 					if (p.watch != null) {
 						watchers ??= {};
@@ -160,12 +158,15 @@ export function paramsFactory<T = object>(
 				return;
 			}
 
+			// Decorator for a prop or field
+
 			delete meta.methods[key];
 			delete meta.accessors[key];
 			delete meta.computedFields[key];
 
-			const
-				accessors = meta.accessors[key] ? meta.accessors : meta.computedFields;
+			const accessors = meta.accessors[key] ?
+				meta.accessors :
+				meta.computedFields;
 
 			if (accessors[key]) {
 				Object.defineProperty(meta.constructor.prototype, key, defProp);
@@ -197,8 +198,10 @@ export function paramsFactory<T = object>(
 			const
 				info = metaCluster[key] ?? {src: meta.componentName};
 
-			let
-				{watchers, after} = info;
+			let {
+				watchers,
+				after
+			} = info;
 
 			if (p.after != null) {
 				after = new Set([].concat(p.after));
@@ -235,6 +238,18 @@ export function paramsFactory<T = object>(
 
 			if (tiedFieldMap[metaKey] != null && RegExp.test(storeRgxp, key)) {
 				meta.tiedFields[key] = key.replace(storeRgxp, '');
+			}
+
+			function wrapOpts<T extends Dictionary & DecoratorFunctionalOptions>(opts: T): T {
+				const
+					p = meta.params;
+
+				// eslint-disable-next-line eqeqeq
+				if (opts.functional === undefined && p.functional === null) {
+					opts.functional = false;
+				}
+
+				return opts;
 			}
 		}
 	};
