@@ -23,8 +23,6 @@ export function beforeMountState(component: ComponentInterface): void {
 		$el.component = component;
 	}
 
-	if (!component.isFlyweight) {
-		runHook('beforeMount', component).catch(stderr);
-		callMethodFromComponent(component, 'beforeMount');
-	}
+	runHook('beforeMount', component).catch(stderr);
+	callMethodFromComponent(component, 'beforeMount');
 }

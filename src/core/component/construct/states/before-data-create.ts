@@ -36,7 +36,6 @@ export function beforeDataCreateState(
 		.catch(stderr);
 
 	const hasWatchAPI =
-		!component.isFlyweight &&
 		!component.$renderEngine.supports.ssr;
 
 	if (hasWatchAPI) {

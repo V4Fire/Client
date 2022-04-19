@@ -12,7 +12,7 @@ import { asyncLabel } from 'core/component/const';
 import { getComponentContext } from 'core/component/engines/helpers';
 
 import { forkMeta } from 'core/component/meta';
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
+import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 import { getNormalParent } from 'core/component/traverse';
 
 import { initFields } from 'core/component/field';
