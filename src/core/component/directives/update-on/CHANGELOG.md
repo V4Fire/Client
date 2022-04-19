@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :house: Internal
+
+* Migration to Vue3
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :house: Internal

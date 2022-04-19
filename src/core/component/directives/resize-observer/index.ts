@@ -6,26 +6,20 @@
 * https://github.com/V4Fire/Client/blob/master/LICENSE
 */
 
-import { ComponentEngine, VNode } from 'core/component/engines';
-import type { ComponentInterface } from 'core/component/interface';
-
 import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
+import { ComponentEngine, VNode } from 'core/component/engines';
+
 import { DIRECTIVE_BIND } from 'core/component/directives/resize-observer/const';
+import { normalizeOptions, setCreatedViaDirectiveFlag } from 'core/component/directives/resize-observer/helpers';
 
-import type {
+import type { DirectiveOptions, ResizeWatcherObservable } from 'core/component/directives/resize-observer/interface';
 
-	DirectiveOptions,
-	ResizeWatcherObservable,
-	ResizeWatcherObserverOptions
-
-} from 'core/component/directives/resize-observer/interface';
-
-export * from 'core/component/directives/resize-observer/interface';
-export * from 'core/component/directives/resize-observer/const';
 export * from 'core/dom/resize-observer';
+export * from 'core/component/directives/resize-observer/const';
+export * from 'core/component/directives/resize-observer/interface';
 
 ComponentEngine.directive('resize-observer', {
-	inserted(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
+	mounted(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
 		const
 			val = opts.value;
 
@@ -39,7 +33,7 @@ ComponentEngine.directive('resize-observer', {
 		});
 	},
 
-	update(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
+	updated(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
 		const
 			oldOptions = opts.oldValue,
 			newOptions = opts.value;
@@ -49,22 +43,22 @@ ComponentEngine.directive('resize-observer', {
 		}
 
 		if (Array.isArray(oldOptions)) {
-			oldOptions.forEach((options) => {
-				ResizeWatcher.unobserve(el, options);
+			(<ResizeWatcherInitOptions[]>oldOptions).forEach((opts) => {
+				ResizeWatcher.unobserve(el, opts);
 			});
 		}
 
-		Array.concat([], newOptions).forEach((options: CanUndef<ResizeWatcherInitOptions>) => {
-			if (options == null) {
+		Array.concat([], newOptions).forEach((opts) => {
+			if (opts == null) {
 				return;
 			}
 
-			options = normalizeOptions(options, vnode.fakeContext);
-			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, options));
+			opts = normalizeOptions(opts, vnode.fakeContext);
+			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, opts));
 		});
 	},
 
-	unbind(el: HTMLElement): void {
+	unmounted(el: HTMLElement): void {
 		const
 			store = ResizeWatcher.getObservableElStore(el);
 
@@ -80,36 +74,3 @@ ComponentEngine.directive('resize-observer', {
 	}
 });
 
-/**
- * Sets a flag which indicates that the specified observable was created via the directive
- * @param observable
- */
-function setCreatedViaDirectiveFlag(observable: Nullable<ResizeWatcherObservable>): void {
-	if (observable == null) {
-		return;
-	}
-
-	observable[DIRECTIVE_BIND] = true;
-}
-
-/**
- * Normalizes the specified directive options
- *
- * @param opts
- * @param ctx
- */
-function normalizeOptions(
-	opts: ResizeWatcherInitOptions,
-	ctx: CanUndef<ComponentInterface>
-): ResizeWatcherObserverOptions {
-	return Object.isFunction(opts) ?
-		{
-			callback: opts,
-			ctx
-		} :
-
-		{
-			...opts,
-			ctx: opts.ctx ?? ctx
-		};
-}

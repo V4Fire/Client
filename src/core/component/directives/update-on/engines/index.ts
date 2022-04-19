@@ -38,7 +38,7 @@ export default {
 			group = {group: id};
 
 		const
-			handler = (...args) => (params.listener ?? params.handler)(el, ...args),
+			handler = (...args) => params.handler(el, ...args),
 			errorHandler = (err) => params.errorHandler != null ? params.errorHandler(el, err) : stderr(err);
 
 		const emitter = Object.isFunction(params.emitter) ? params.emitter() : params.emitter;
@@ -63,7 +63,7 @@ export default {
 				throw new Error('An event to listen is not specified');
 			}
 
-			$a[params.single ?? params.once ? 'once' : 'on'](emitter, params.event, handler, {
+			$a[params.single ? 'once' : 'on'](emitter, params.event, handler, {
 				options: params.options,
 				...group
 			});

@@ -6,13 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNodeDirective } from 'core/component/engines';
 import type { InitValue } from 'core/dom/image';
+import type { DirectiveBinding } from 'core/component/engines';
 
-export interface DirectiveOptions extends VNodeDirective {
+export interface DirectiveOptions extends DirectiveBinding<CanUndef<InitValue>> {
 	modifiers: {
 		[key: string]: boolean;
 	};
 
-	value?: InitValue;
+	value: CanUndef<InitValue>;
+	oldValue: CanUndef<InitValue>;
 }

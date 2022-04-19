@@ -17,7 +17,7 @@ import { InView, Adaptee, InViewDirectiveOptions } from 'core/dom/in-view';
 export * from 'core/dom/in-view';
 
 ComponentEngine.directive('in-view', {
-	inserted(el: Element, {value}: InViewDirectiveOptions): void {
+	mounted(el: Element, {value}: InViewDirectiveOptions): void {
 		if (!Adaptee || !value) {
 			return;
 		}
@@ -25,7 +25,7 @@ ComponentEngine.directive('in-view', {
 		InView.observe(el, value);
 	},
 
-	unbind(el: Element): void {
+	unmounted(el: Element): void {
 		InView.remove(el);
 	}
 });

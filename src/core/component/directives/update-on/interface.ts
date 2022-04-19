@@ -7,20 +7,24 @@
  */
 
 import type { EventEmitterLike } from 'core/async';
-import type { WatchOptions, VNodeDirective } from 'core/component';
+import type { DirectiveBinding } from 'core/component/engines';
+import type { WatchOptions } from 'core/component/interface';
 
-export interface DirectiveOptions extends VNodeDirective {
+export interface DirectiveOptions extends DirectiveBinding {
 	modifiers: {
 		[key: string]: boolean;
 	};
 
-	value?: CanArray<DirectiveValue>;
+	value: CanUndef<CanArray<DirectiveValue>>;
 }
 
 export interface DirectiveValue {
 	/**
-	 * Event emitter. It can be specified as a simple event emitter, a promise, or a string.
-	 * In the string case, the string represents the name of the component property to watch.
+	 * The event emitter.
+	 *
+	 * It can be specified as a simple event emitter, a promise or string.
+	 * In a string case, the string represents a name of the component property to watch.
+	 *
 	 * Also, the emitter can be provided as a function. In that case, it will be invoked,
 	 * and the emitter is taken from the result.
 	 */
@@ -44,12 +48,6 @@ export interface DirectiveValue {
 	single?: boolean;
 
 	/**
-	 * @deprecated
-	 * @see [[DirectiveValue.single]]
-	 */
-	once?: boolean;
-
-	/**
 	 * Additional options for an event emitter or watcher
 	 */
 	options?: Dictionary | WatchOptions;
@@ -63,10 +61,4 @@ export interface DirectiveValue {
 	 * Function to handle error (if the emitter is specified as a promise)
 	 */
 	errorHandler?: Function;
-
-	/**
-	 * @deprecated
-	 * @see [[DirectiveValue.handler]]
-	 */
-	listener?: Function;
 }

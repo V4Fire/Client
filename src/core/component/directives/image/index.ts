@@ -19,7 +19,7 @@ import type { DirectiveOptions } from 'core/component/directives/image/interface
 export * from 'core/dom/image';
 
 ComponentEngine.directive('image', {
-	inserted(el: HTMLElement, {value}: DirectiveOptions, vnode: VNode): void {
+	mounted(el: HTMLElement, {value}: DirectiveOptions, vnode: VNode): void {
 		if (value == null) {
 			return;
 		}
@@ -39,11 +39,11 @@ ComponentEngine.directive('image', {
 		ImageLoader.init(el, value);
 	},
 
-	update(el: HTMLElement, {value, oldValue}: DirectiveOptions): void {
+	updated(el: HTMLElement, {value, oldValue}: DirectiveOptions): void {
 		ImageLoader.update(el, value, oldValue);
 	},
 
-	unbind(el: HTMLElement): void {
+	unmounted(el: HTMLElement): void {
 		ImageLoader.clearElement(el);
 	}
 });

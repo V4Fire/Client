@@ -18,11 +18,11 @@ export * from 'core/component/directives/update-on/interface';
  * Directive to manually update an element by using special events
  */
 ComponentEngine.directive('update-on', {
-	inserted(el: Element, {value}: DirectiveOptions, vnode: VNode): void {
+	mounted(el: Element, {value}: DirectiveOptions, vnode: VNode): void {
 		add(el, value, vnode);
 	},
 
-	update(el: Element, {value, oldValue}: DirectiveOptions, vnode: VNode): void {
+	updated(el: Element, {value, oldValue}: DirectiveOptions, vnode: VNode): void {
 		if (Object.fastCompare(value, oldValue)) {
 			return;
 		}
@@ -30,7 +30,7 @@ ComponentEngine.directive('update-on', {
 		add(el, value, vnode);
 	},
 
-	unbind(el: Element, opts: DirectiveOptions, vnode: VNode): void {
+	unmounted(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 		const
 			ctx = vnode.fakeContext;
 
