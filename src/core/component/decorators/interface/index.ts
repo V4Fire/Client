@@ -249,12 +249,6 @@ export interface DecoratorField<
 
 export interface DecoratorFunctionalOptions {
 	/**
-	 * If false, the instance won't be borrowed from a parent when the owner component is a flyweight
-	 * @default `true`
-	 */
-	replace?: boolean;
-
-	/**
 	 * If false, the instance can't be used with functional components
 	 * @default `true`
 	 */
