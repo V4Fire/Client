@@ -9,7 +9,7 @@ export default class bExample {
 
   @watch('foo')
   onFoo() {
-    console.log('Foo was changed');
+    console.log('`Foo` was changed');
   }
 }
 ```
