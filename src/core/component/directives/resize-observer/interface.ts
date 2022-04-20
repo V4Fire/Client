@@ -11,11 +11,6 @@ import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 
 export * from 'core/dom/resize-observer/interface';
 
-export interface DirectiveOptions extends DirectiveBinding {
-	modifiers: {
-		[key: string]: boolean;
-	};
-
-	value: CanUndef<CanArray<ResizeWatcherInitOptions>>;
-	oldValue: CanUndef<CanArray<ResizeWatcherInitOptions>>;
+export interface DirectiveOptions extends DirectiveBinding<CanUndef<CanArray<ResizeWatcherInitOptions>>> {
+	modifiers: Record<string, boolean>;
 }

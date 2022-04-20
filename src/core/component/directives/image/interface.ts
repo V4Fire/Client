@@ -10,10 +10,5 @@ import type { InitValue } from 'core/dom/image';
 import type { DirectiveBinding } from 'core/component/engines';
 
 export interface DirectiveOptions extends DirectiveBinding<CanUndef<InitValue>> {
-	modifiers: {
-		[key: string]: boolean;
-	};
-
-	value: CanUndef<InitValue>;
-	oldValue: CanUndef<InitValue>;
+	modifiers: Record<string, boolean>;
 }

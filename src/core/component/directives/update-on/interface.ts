@@ -10,12 +10,8 @@ import type { EventEmitterLike } from 'core/async';
 import type { DirectiveBinding } from 'core/component/engines';
 import type { WatchOptions } from 'core/component/interface';
 
-export interface DirectiveOptions extends DirectiveBinding {
-	modifiers: {
-		[key: string]: boolean;
-	};
-
-	value: CanUndef<CanArray<DirectiveValue>>;
+export interface DirectiveOptions extends DirectiveBinding<CanUndef<CanArray<DirectiveValue>>> {
+	modifiers: Record<string, boolean>;
 }
 
 export interface DirectiveValue {
