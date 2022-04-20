@@ -6,4 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export type KeyCode = string | number;
+import type { VNode } from 'core/component/engines';
+
+export interface CreateVNode {
+	(...args: any[]): VNode;
+}
