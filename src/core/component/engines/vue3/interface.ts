@@ -17,15 +17,23 @@ import type {
 
 } from 'vue';
 
-export interface ObjectDirective<T = any, V = any> extends SuperObjectDirective<T, V> {
-	beforeCreate?(binding: DirectiveBinding<V>, vnode: VNode<any, T>): void;
+export interface ResolveDirective<E = Element> {
+	directive(name: string): CanUndef<Directive>;
+	directive(name: string, directive: Directive): ReturnType<CreateAppFunction<E>>;
 }
 
-export declare type Directive<T = any, V = any> = ObjectDirective<T, V> | FunctionDirective<T, V>;
+export interface ObjectDirective<T = any, V = any> extends SuperObjectDirective<T, V> {
+	beforeCreate?(
+		this: ResolveDirective & ObjectDirective<T, V>,
+		binding: DirectiveBinding<V>,
+		vnode: VNode<any, T>
+	): void;
+}
+
+export declare type Directive<T = any, V = any> =
+	ObjectDirective<T, V> |
+	FunctionDirective<T, V>;
 
 export interface CreateAppFunction<E = Element> {
-	(...args: Parameters<SuperCreateAppFunction<E>>): Overwrite<SuperCreateAppFunction<E>, {
-		directive(name: string): CanUndef<Directive>;
-		directive(name: string, directive: Directive): ReturnType<CreateAppFunction<E>>;
-	}>;
+	(...args: Parameters<SuperCreateAppFunction<E>>): Overwrite<SuperCreateAppFunction<E>, ResolveDirective<E>>;
 }

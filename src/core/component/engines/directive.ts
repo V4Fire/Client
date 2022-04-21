@@ -24,8 +24,17 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 		originalDirective = ctx.directive.bind(ctx);
 	}
 
-	if (directive == null || Object.isFunction(directive)) {
+	if (directive == null) {
+		return originalDirective(name);
+	}
+
+	if (Object.isFunction(directive)) {
 		return originalDirective(name, directive);
+	}
+
+	if (directive.beforeCreate != null) {
+		const directiveCtx = Object.assign(Object.create(directive), {directive: originalDirective});
+		directive.beforeCreate = directive.beforeCreate.bind(directiveCtx);
 	}
 
 	const
