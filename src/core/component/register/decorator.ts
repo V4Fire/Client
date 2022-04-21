@@ -11,7 +11,7 @@ import { identity } from 'core/functools';
 import * as c from 'core/component/const';
 
 import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
-import { getInfoFromConstructor } from 'core/component/reflection';
+import { getInfoFromConstructor } from 'core/component/reflect';
 
 import { getComponent, ComponentEngine } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/register/helpers';
@@ -125,10 +125,6 @@ export function component(opts?: ComponentOptions): Function {
 
 					function attachTemplatesAndResolve(tpls?: Dictionary) {
 						attachTemplatesToMeta(meta, tpls);
-
-						// @ts-ignore (access)
-						component.staticRenderFns = meta.component.staticRenderFns;
-
 						return resolve(component);
 					}
 				}
