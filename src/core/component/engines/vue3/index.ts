@@ -14,17 +14,9 @@
 import Vue from 'core/component/engines/vue3/lib';
 import 'core/component/engines/vue3/config';
 
-export * from 'vue';
+export * from 'core/component/engines/vue3/const';
+export * from 'core/component/engines/vue3/component';
+export * from 'core/component/engines/vue3/interface';
 
-/** @deprecated */
-export { Vue as ComponentDriver };
 export { Vue as ComponentEngine };
 export { Vue as default };
-
-export * from 'core/component/engines/vue3/const';
-export * from 'core/component/engines/vue3/vnode';
-export * from 'core/component/engines/vue3/component';
-
-//#if VueInterfaces
-export { VNode } from 'vue';
-//#endif

@@ -6,34 +6,65 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import {
+
+	resolveComponent as resolveComponentSuper,
+	createVNode as createVNodeSuper,
+	createElementVNode as createElementVNodeSuper,
+	withDirectives as withDirectivesSuper
+
+} from 'vue';
+
+import {
+
+	wrapResolveComponent,
+	wrapCreateVNode,
+	wrapCreateElementVNode,
+	wrapWithDirectives
+
+} from 'core/component/render/wrappers';
+
 export {
 
 	Fragment,
 	Transition,
 	TransitionGroup,
 
-	openBlock,
+	toHandlers,
 	toDisplayString,
 
 	renderList,
 	renderSlot,
 
+	openBlock,
 	createBlock,
 	createElementBlock,
 
-	createVNode,
 	createStaticVNode,
-	createElementVNode,
 	createTextVNode,
 	createCommentVNode,
 
 	normalizeClass,
 	normalizeStyle,
+	mergeProps,
 
-	resolveComponent,
 	resolveDirective,
 
 	withCtx,
-	withDirectives
+	withKeys,
+	withModifiers,
+
+	vShow,
+	vModelText,
+	vModelSelect,
+	vModelCheckbox,
+	vModelRadio,
+	vModelDynamic
 
 } from 'vue';
+
+export const
+	resolveComponent = wrapResolveComponent(resolveComponentSuper),
+	createVNode = wrapCreateVNode(createVNodeSuper),
+	createElementVNode = wrapCreateElementVNode(createElementVNodeSuper),
+	withDirectives = wrapWithDirectives(withDirectivesSuper);

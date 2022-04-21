@@ -7,8 +7,17 @@
  */
 
 import type { VNode as SuperVNode } from 'vue';
+import type { RendererElement, RendererNode } from 'core/component/engines';
 import type { ComponentInterface } from 'core/component/interface';
 
-export interface VNode extends SuperVNode {
+//#if @ignore
+export * from '@vue/runtime-dom';
+//#endif
+
+export interface VNode<
+	HostNode = RendererNode,
+	HostElement = RendererElement,
+	ExtraProps = {[key: string]: any}
+> extends SuperVNode<HostNode, HostElement, ExtraProps> {
 	fakeContext?: ComponentInterface;
 }

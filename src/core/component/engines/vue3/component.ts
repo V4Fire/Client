@@ -13,12 +13,14 @@ import { beforeRenderHooks } from 'core/component/const';
 
 import { fillMeta } from 'core/component/meta';
 import { implementComponentForceUpdateAPI } from 'core/component/render';
+import { getComponentContext } from 'core/component/context';
 
-import { getComponentContext, ComponentEngine, ComponentOptions } from 'core/component/engines';
+import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/interface';
 
-import { supports, minimalCtx, proxyGetters } from 'core/component/engines/vue3/const';
-import { cloneVNode, patchVNode, renderVNode } from 'core/component/engines/vue3/vnode';
+import { supports, proxyGetters } from 'core/component/engines/vue3/const';
+
+import * as r from 'core/component/engines/vue3/render';
 
 /**
  * Returns a component declaration object from the specified component meta object
@@ -83,12 +85,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				ctx = getComponentContext(this);
 
 			Object.set(ctx, '$renderEngine', {
+				r,
 				supports,
-				minimalCtx,
-				proxyGetters,
-				cloneVNode,
-				patchVNode,
-				renderVNode
+				proxyGetters
 			});
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});

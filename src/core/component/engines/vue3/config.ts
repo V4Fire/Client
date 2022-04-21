@@ -17,11 +17,12 @@ const
 	logger = log.namespace('vue');
 
 Vue.config.errorHandler = (err, vm, info) => {
-	logger.error('errorHandler', err, info, getComponentInfoLog(vm));
+	console.log(err);
+	//logger.error('errorHandler', err, info, getComponentInfoLog(vm));
 };
 
 Vue.config.warnHandler = (msg, vm, trace) => {
-	logger.warn('warnHandler', msg, trace, getComponentInfoLog(vm));
+	//logger.warn('warnHandler', msg, trace, getComponentInfoLog(vm));
 };
 
 const

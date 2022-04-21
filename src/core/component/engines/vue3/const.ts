@@ -6,30 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue from 'core/component/engines/vue3/lib';
-
 export const supports = {
 	regular: true,
 	functional: true,
-	composite: true,
-
-	ssr: false,
-	boundCreateElement: true
+	ssr: false
 };
-
-export const minimalCtx = (() => {
-	const
-		obj = Vue.prototype,
-		ctx = {};
-
-	for (const key in obj) {
-		if (key.length === 2) {
-			ctx[key] = obj[key];
-		}
-	}
-
-	return ctx;
-})();
 
 export const proxyGetters = Object.createDict({
 	prop: (ctx) => ({
