@@ -11,66 +11,152 @@
  * @packageDocumentation
  */
 
-import { ComponentEngine, VNode } from 'core/component/engines';
+import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
+import type { ComponentInterface } from 'core/component/interface';
+
+import { modRgxp, directiveRgxp, handlers } from 'core/component/directives/attrs/const';
 import type { DirectiveOptions } from 'core/component/directives/attrs/interface';
 
+export * from 'core/component/directives/attrs/const';
 export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
 	beforeCreate(opts: DirectiveOptions, vnode: VNode) {
-		const props = vnode.props ?? {};
-		vnode.props ??= props;
-
-		console.log(vnode);
-
-		const
+		let
+			handlerStore,
 			attrs = opts.value;
 
 		if (attrs == null) {
 			return;
 		}
 
+		const
+			ctx = Object.cast<ComponentInterface>(opts.instance),
+			props = vnode.props ?? {};
+
+		attrs = {...attrs};
+		vnode.props ??= props;
+
 		for (let keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
 			let
-				val = attrs[key];
+				attrName = keys[i],
+				attrVal = attrs[attrName];
 
-			if (key.startsWith('v-')) {
+			if (attrName.startsWith('v-')) {
 				const
-					[, rawName, name, arg, rawModifiers] = /(v-(.*?))(?::(.*?))?(\..*)?$/.exec(key)!;
+					[, name, arg = '', rawModifiers = ''] = directiveRgxp.exec(attrName)!;
 
 				let
-					modifiers;
+					dir;
 
-				if (Object.isTruly(rawModifiers)) {
+				switch (name) {
+					case 'show': {
+						const
+							{r} = ctx.$renderEngine;
+
+						dir = r.vShow;
+						break;
+					}
+
+					case 'on': {
+						if (Object.isDictionary(attrVal)) {
+							for (let events = Object.keys(attrVal), i = 0; i < events.length; i++) {
+								const
+									key = events[i],
+									event = `@${key}`;
+
+								attrs[event] = attrVal[key];
+								keys.push(event);
+							}
+						}
+
+						continue;
+					}
+
+					case 'bind': {
+						if (Object.isDictionary(attrVal)) {
+							for (let events = Object.keys(attrVal), i = 0; i < events.length; i++) {
+								const key = events[i];
+								attrs[key] = attrVal[key];
+								keys.push(key);
+							}
+						}
+
+						continue;
+					}
+
+					case 'model': {
+						const
+							{r} = ctx.$renderEngine;
+
+						switch (vnode.type) {
+							case 'input':
+								dir = r[`vModel${(props.type ?? '').capitalize()}`] ?? r.vModelText;
+								break;
+
+							case 'select':
+								dir = r.vModelSelect;
+								break;
+
+							default:
+								dir = r.vModelDynamic;
+						}
+
+						const
+							cache = getHandlerStore(),
+							modelProp = String(attrVal),
+							handlerKey = `onUpdate:modelValue:${modelProp}`;
+
+						let
+							handler = cache.get(handlerKey);
+
+						if (handler == null) {
+							handler = (newVal) => ctx[modelProp] = newVal;
+							cache.set(handlerKey, handler);
+						}
+
+						props['onUpdate:modelValue'] = handler;
+						attrVal = ctx[modelProp];
+
+						break;
+					}
+
+					default:
+						dir = this.directive(name);
+				}
+
+				if (dir == null) {
+					throw new ReferenceError(`The specified directive "${name}" is not registered`);
+				}
+
+				const
 					modifiers = {};
 
+				if (rawModifiers.length > 0) {
 					for (let o = rawModifiers.split('.'), i = 0; i < o.length; i++) {
 						modifiers[o[i]] = true;
 					}
 				}
 
-				const
-					dir = <Dictionary>{name, rawName, value: val};
+				const dirDecl: DirectiveBinding = {
+					arg,
+					modifiers,
 
-				if (Object.isTruly(arg)) {
-					dir.arg = arg;
-				}
+					value: attrVal,
+					oldValue: null,
 
-				if (Object.isTruly(modifiers)) {
-					dir.modifiers = modifiers;
-				}
+					instance: opts.instance,
+					dir: Object.isFunction(dir) ? {created: dir} : dir
+				};
 
 				const dirs = vnode.dirs ?? [];
 				vnode.dirs = dirs;
 
-				dirs.push();
+				dirs.push(dirDecl);
 
-			} else if (key.startsWith('@')) {
+			} else if (attrName.startsWith('@')) {
 				let
-					event = key.slice(1);
+					event = attrName.slice(1);
 
 				const
 					eventChunks = event.split('.'),
@@ -110,9 +196,9 @@ ComponentEngine.directive('attrs', {
 
 				if (Object.keys(flags).length > 0) {
 					const
-						original = val;
+						originalHandler = attrVal;
 
-					val = (e: MouseEvent | KeyboardEvent, ...args) => {
+					attrVal = (e: MouseEvent | KeyboardEvent, ...args) => {
 						if (
 							flags.ctrl && !e.ctrlKey ||
 							flags.alt && !e.altKey ||
@@ -161,15 +247,58 @@ ComponentEngine.directive('attrs', {
 							e.stopPropagation();
 						}
 
-						return (<Function>original)(e, ...args);
+						return (<Function>originalHandler)(e, ...args);
 					};
 				}
 
-				props[event] = val;
+				props[event] = attrVal;
 
 			} else {
-				props[key] = val;
+				attrName = attrName.startsWith(':') ? attrName.slice(1) : attrName;
+
+				if (modRgxp.test(attrName)) {
+					const attrChunks = attrName.split('.');
+					attrName = attrName.startsWith('.') ? `.${attrChunks[1]}` : attrChunks[0];
+
+					if (attrChunks.includes('camel')) {
+						attrName = attrName.camelize(false);
+					}
+
+					if (attrChunks.includes('prop') && !attrName.startsWith('.')) {
+						if (attrName.startsWith('^')) {
+							throw new SyntaxError('Invalid v-bind modifiers');
+						}
+
+						attrName = `.${attrName}`;
+					}
+
+					if (attrChunks.includes('attr') && !attrName.startsWith('^')) {
+						if (attrName.startsWith('.')) {
+							throw new SyntaxError('Invalid v-bind modifiers');
+						}
+
+						attrName = `^${attrName}`;
+					}
+				}
+
+				console.log(attrName, attrVal);
+				props[attrName] = attrVal;
 			}
+		}
+
+		function getHandlerStore() {
+			if (handlerStore != null) {
+				return handlerStore;
+			}
+
+			handlerStore = handlers.get(ctx);
+
+			if (handlerStore == null) {
+				handlerStore = new Map();
+				handlers.set(ctx, handlerStore);
+			}
+
+			return handlerStore;
 		}
 	}
 });
