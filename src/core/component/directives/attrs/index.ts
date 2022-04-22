@@ -283,6 +283,10 @@ ComponentEngine.directive('attrs', {
 					vnode.patchFlag = 14;
 				}
 
+				if (attrName.startsWith('-')) {
+					attrName = `data${attrName}`;
+				}
+
 				const dynamicProps = vnode['dynamicProps'] ?? [];
 				vnode['dynamicProps'] = Array.union(dynamicProps, attrName);
 			}
