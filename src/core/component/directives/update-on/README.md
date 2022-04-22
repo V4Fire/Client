@@ -8,7 +8,7 @@ Use this directive if you want to update some parts of your template without re-
 1. Simple event listener.
 
 ```
-< .&__example v-update-on = { &
+< div v-update-on = { &
   emitter: parentEmitter,
   event: 'foo',
   handler: (el, event) => myHandler(el, event)
@@ -18,7 +18,7 @@ Use this directive if you want to update some parts of your template without re-
 2. Listening to a one-time event.
 
 ```
-< .&__example v-update-on = { &
+< div v-update-on = { &
   emitter: parentEmitter,
   single: true,
   event: 'foo',
@@ -29,7 +29,7 @@ Use this directive if you want to update some parts of your template without re-
 3. Providing extra options to the emitter.
 
 ```
-< .&__example v-update-on = { &
+< div v-update-on = { &
   emitter: document,
   event: 'touchmove',
   handler: myHandler,
@@ -42,7 +42,7 @@ Use this directive if you want to update some parts of your template without re-
 4. Multiple event listeners.
 
 ```
-< .&__example v-update-on = [ &
+< div v-update-on = [ &
   {
     emitter: parentEmitter,
     event: ['foo', 'baz'],
@@ -61,7 +61,7 @@ Use this directive if you want to update some parts of your template without re-
 4. Handling of a promise.
 
 ```
-< .&__example v-update-on = { &
+< div v-update-on = { &
   emitter: somePromiseValue,
   handler: myHandler,
   errorHandler: myErrorHandler
@@ -71,7 +71,7 @@ Use this directive if you want to update some parts of your template without re-
 4. Watching for a component property.
 
 ```
-< .&__example v-update-on = { &
+< div v-update-on = { &
   emitter: 'bla.bar',
   handler: myHandler,
   options: {deep: true}
@@ -81,7 +81,7 @@ Use this directive if you want to update some parts of your template without re-
 5. Providing an async group prefix.
 
 ```
-< .&__example v-update-on = { &
+< div v-update-on = { &
   emitter: 'bla.bar',
   handler: myHandler,
   options: {deep: true},

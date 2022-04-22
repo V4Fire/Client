@@ -40,7 +40,7 @@ ComponentEngine.directive('image', {
 	},
 
 	updated(el: HTMLElement, {value, oldValue}: DirectiveOptions): void {
-		ImageLoader.update(el, value, oldValue);
+		ImageLoader.update(el, value, oldValue ?? undefined);
 	},
 
 	unmounted(el: HTMLElement): void {

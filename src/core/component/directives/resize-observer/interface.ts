@@ -6,8 +6,9 @@
 * https://github.com/V4Fire/Client/blob/master/LICENSE
 */
 
-import type { DirectiveBinding } from 'core/component/engines';
 import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
+
+import type { DirectiveBinding } from 'core/component/engines';
 
 export * from 'core/dom/resize-observer/interface';
 

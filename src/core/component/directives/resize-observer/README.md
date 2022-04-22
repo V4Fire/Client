@@ -5,7 +5,7 @@ This module provides a directive to track changes in the size of DOM elements us
 ## Usage
 
 ```
-< .&__class v-resize-observer = { &
+< div v-resize-observer = { &
   callback: () => emit('elementResized')
 } .
 ```

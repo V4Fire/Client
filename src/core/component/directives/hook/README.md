@@ -7,7 +7,7 @@ attach the hook listeners.
 ## Usage
 
 ```
-< .&__class v-hook = { &
+< div v-hook = { &
   created: (el, opts, vnode, oldVnode) => console.log(el, opts, vnode, oldVnode),
   beforeMount: onBeforeMount,
   mounted: onMounted,

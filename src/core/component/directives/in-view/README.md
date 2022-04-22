@@ -5,7 +5,7 @@ This module provides a directive to track elements entering or leaving the viewp
 ## Usage
 
 ```
-< .&__class v-in-view = [{ &
+< div v-in-view = [{ &
   threshold: 0.7,
   delay: 2000,
   callback: () => emit('elementInViewport'),

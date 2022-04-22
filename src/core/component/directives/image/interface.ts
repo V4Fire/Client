@@ -9,6 +9,4 @@
 import type { InitValue } from 'core/dom/image';
 import type { DirectiveBinding } from 'core/component/engines';
 
-export interface DirectiveOptions extends DirectiveBinding<CanUndef<InitValue>> {
-	modifiers: Record<string, boolean>;
-}
+export interface DirectiveOptions extends DirectiveBinding<CanUndef<InitValue>> {}
