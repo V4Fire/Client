@@ -22,5 +22,6 @@ import 'core/component/directives/image';
 import 'core/component/directives/update-on';
 //#endif
 
+import 'core/component/directives/tag';
 import 'core/component/directives/hook';
 import 'core/component/directives/attrs';
