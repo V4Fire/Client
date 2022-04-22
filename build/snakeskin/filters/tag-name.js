@@ -38,8 +38,8 @@ module.exports = [
 				return rootTag;
 			}
 
-			attrs[':is'] = ["rootTag || 'div'"];
-			return 'tag';
+			attrs['v-tag'] = ["rootTag || 'div'"];
+			return 'div';
 		}
 
 		return tag;
