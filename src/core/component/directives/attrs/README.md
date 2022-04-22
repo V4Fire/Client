@@ -1,19 +1,27 @@
-# core/component/directives/hook
+# core/component/directives/attrs
 
-This module brings a directive to provide any directive hooks into a component.
-This directive is extremely useful to combine with a flyweight component because it does not have API to
-attach the hook listeners.
+This module brings a directive to set any component or tag attributes from the passed dictionary.
 
 ## Usage
 
 ```
-< .&__class v-hook = { &
-  created: (el, opts, vnode, oldVnode) => console.log(el, opts, vnode, oldVnode),
-  beforeMount: onBeforeMount,
-  mounted: onMounted,
-  beforeUpdate: onBeforeUpdate,
-  updated: onUpdated,
-  beforeUnmount: onBeforeUnmount,
-  unmounted: onUnmounted
+< div v-attrs = { &
+  /// We can pass any available directive except `v-if`
+  'v-show': showCondition,
+
+  /// We can pass any event listeners with support of Vue modifiers
+  '@click.capture.self': clickHandler,
+
+  /// Or just regular props or attributes
+  ':style': styles,
+
+  /// `:` is optional
+  class: extraClasses
+
+  /// Attribute modifiers are also supported
+  '.some-field.camel': someFieldValue
 } .
+
+/// To use `v-model`, provide a model store name as a string
+< input v-attrs = {'v-model': 'textStore'}
 ```
