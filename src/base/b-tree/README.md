@@ -187,7 +187,7 @@ The component supports a bunch of slots to provide:
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems
   < template #fold = o
-    < .&__fold :v-attrs = o.params
+    < .&__fold v-attrs = o.params
       ➕
 ```
 

@@ -43,14 +43,14 @@
 						}
 					})) |
 
-					:v-attrs = el.attrs |
+					v-attrs = el.attrs |
 					${itemAttrs}
 				.
 					+= self.slot('default', {':item': 'el'})
 						< template v-if = item
 							< component &
 								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
+								v-attrs = getItemProps(el, i)
 							.
 
 						< template v-else

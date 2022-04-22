@@ -48,7 +48,7 @@
 							}
 						})) |
 
-						:v-attrs = el.attrs
+						v-attrs = el.attrs
 					.
 						- block preIcon
 							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon || vdom.getSlot('preIcon')
@@ -68,7 +68,7 @@
 									< template v-if = item
 										< component &
 											:is = Object.isFunction(item) ? item(el, i) : item |
-											:v-attrs = getItemProps(el, i)
+											v-attrs = getItemProps(el, i)
 										.
 
 									< template v-else
@@ -101,6 +101,6 @@
 
 		< tag.&__wrapper &
 			:is = listTag |
-			:v-attrs = attrs
+			v-attrs = attrs
 		.
 			+= self.list('items')

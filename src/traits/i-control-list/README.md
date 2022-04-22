@@ -71,7 +71,7 @@ __b-dummy-control-list.ss__
   < .&__primary-control
     < component &
       v-func = false |
-      :v-attrs = {...controls[0].attrs} |
+      v-attrs = {...controls[0].attrs} |
       :is = controls[0].component || 'b-button' |
       :instanceOf = bButton |
       @[getControlEvent(controls[0])] = callControlAction(controls[0], ...arguments)
@@ -88,7 +88,7 @@ Calls an event handler for the specified control.
   < .&__primary-control
     < component &
       v-func = false |
-      :v-attrs = {...controls[0].attrs} |
+      v-attrs = {...controls[0].attrs} |
       :is = controls[0].component || 'b-button' |
       :instanceOf = bButton |
       @[getControlEvent(controls[0])] = callControlAction(controls[0], ...arguments)

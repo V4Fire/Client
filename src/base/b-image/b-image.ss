@@ -26,7 +26,7 @@
 
 					< b-image.&__overlay-img &
 						v-else-if = Object.isPlainObject(overlayImg) |
-						:v-attrs = overlayImg
+						v-attrs = overlayImg
 					.
 
 		- block broken
@@ -39,7 +39,7 @@
 
 					< b-image.&__broken-img &
 						v-else-if = Object.isPlainObject(brokenImg) |
-						:v-attrs = brokenImg
+						v-attrs = brokenImg
 					.
 
 		- block image

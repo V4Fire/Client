@@ -34,7 +34,7 @@
 				.
 					< component.&__option.&__item &
 						:is = getItemComponentName(el, i) |
-						:v-attrs = getItemAttrs(el, i)
+						v-attrs = getItemAttrs(el, i)
 					.
 
 				/*

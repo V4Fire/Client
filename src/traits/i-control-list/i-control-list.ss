@@ -52,7 +52,7 @@
 			:is = el.component || 'b-button-functional' |
 			:instanceOf = bButton |
 			:class = ${componentName} ? provide.elClasses(${componentName}, ${elClassesJSON}) : provide.elClasses(${elClassesJSON}) |
-			:v-attrs = el.attrs |
+			v-attrs = el.attrs |
 			@[getControlEvent(el)] = callControlAction(el, ...arguments)
 		.
 			- if content

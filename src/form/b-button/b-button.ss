@@ -30,7 +30,7 @@
 			@focus = focus |
 			@blur = blur |
 
-			:v-attrs = attrs |
+			v-attrs = attrs |
 			${attrs|!html}
 		.
 

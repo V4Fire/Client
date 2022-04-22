@@ -484,7 +484,7 @@ You can also manage a type of the created tag and other options by using the pre
     @focus = ${@focusHandler || 'onFocus'} |
     @blur = ${@blurHandler || 'onBlur'} |
 
-    :v-attrs = tmp.attrs |
+    v-attrs = tmp.attrs |
     ${Object.assign({}, attrs, @attrs)|!html}
   .
 

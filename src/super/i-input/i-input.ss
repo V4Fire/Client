@@ -63,7 +63,7 @@
 				@focus = ${@focusHandler || 'onFocus'} |
 				@blur = ${@blurHandler || 'onBlur'} |
 
-				:v-attrs = tmp.attrs |
+				v-attrs = tmp.attrs |
 				${Object.assign({}, attrs, @attrs)|!html}
 			.
 				+= content

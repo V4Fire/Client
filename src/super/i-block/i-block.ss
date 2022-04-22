@@ -198,7 +198,7 @@
 
 	- block root
 		< ?.${self.name()}
-			< _ :v-attrs = rootAttrs | ${rootAttrs|!html}
+			< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 
 				/**
 				 * Generates an icon layout
