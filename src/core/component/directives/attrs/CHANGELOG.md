@@ -11,12 +11,6 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
-#### :house: Internal
-
-* Migration to Vue3
-
-## v3.0.0-rc.97 (2020-11-11)
-
 #### :rocket: New Feature
 
 * Initial release
