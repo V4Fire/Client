@@ -18,6 +18,6 @@ export * from 'core/component/directives/tag/interface';
 
 ComponentEngine.directive('tag', {
 	beforeCreate(opts: DirectiveOptions, vnode: VNode) {
-		vnode.type = opts.value;
+		vnode.type = opts.value ?? vnode.type;
 	}
 });
