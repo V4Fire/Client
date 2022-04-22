@@ -10,4 +10,13 @@ export * from 'core/component/engines/vue3';
 export * from 'core/component/engines/interface';
 
 export { VNode } from 'core/component/engines/interface';
-export { CreateAppFunction, Directive, ObjectDirective } from 'core/component/engines/vue3';
+
+export {
+
+	CreateAppFunction,
+
+	Directive,
+	DirectiveArguments,
+	ObjectDirective
+
+} from 'core/component/engines/vue3';

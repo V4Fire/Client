@@ -34,6 +34,13 @@ export declare type Directive<T = any, V = any> =
 	ObjectDirective<T, V> |
 	FunctionDirective<T, V>;
 
+export declare type DirectiveArguments = Array<
+	[Directive] |
+	[Directive, any] |
+	[Directive, any, string] |
+	[Directive, any, string, Record<string, boolean>]
+>;
+
 export interface CreateAppFunction<E = Element> {
 	(...args: Parameters<SuperCreateAppFunction<E>>): Overwrite<SuperCreateAppFunction<E>, ResolveDirective<E>>;
 }
