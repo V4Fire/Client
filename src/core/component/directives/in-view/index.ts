@@ -11,8 +11,8 @@
  * @packageDocumentation
  */
 
-import { ComponentEngine } from 'core/component/engines';
 import { InView, Adaptee, InViewDirectiveOptions } from 'core/dom/in-view';
+import { ComponentEngine } from 'core/component/engines';
 
 export * from 'core/dom/in-view';
 

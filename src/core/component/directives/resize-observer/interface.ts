@@ -7,7 +7,6 @@
 */
 
 import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
-
 import type { DirectiveBinding } from 'core/component/engines';
 
 export * from 'core/dom/resize-observer/interface';

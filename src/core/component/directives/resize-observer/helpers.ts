@@ -7,9 +7,9 @@
 */
 
 import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
-import { DIRECTIVE_BIND } from 'core/component/directives/resize-observer/const';
-
 import type { ComponentInterface } from 'core/component/interface';
+
+import { DIRECTIVE_BIND } from 'core/component/directives/resize-observer/const';
 import type { ResizeWatcherObservable, ResizeWatcherObserverOptions } from 'core/component/directives/resize-observer/interface';
 
 /**
