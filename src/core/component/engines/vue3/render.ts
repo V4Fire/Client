@@ -10,7 +10,6 @@ import {
 
 	resolveComponent as resolveComponentSuper,
 	createVNode as createVNodeSuper,
-	createElementVNode as createElementVNodeSuper,
 	withDirectives as withDirectivesSuper
 
 } from 'vue';
@@ -19,7 +18,6 @@ import {
 
 	wrapResolveComponent,
 	wrapCreateVNode,
-	wrapCreateElementVNode,
 	wrapWithDirectives
 
 } from 'core/component/render/wrappers';
@@ -40,6 +38,7 @@ export {
 	createBlock,
 	createElementBlock,
 
+	createElementVNode,
 	createStaticVNode,
 	createTextVNode,
 	createCommentVNode,
@@ -66,5 +65,4 @@ export {
 export const
 	resolveComponent = wrapResolveComponent(resolveComponentSuper),
 	createVNode = wrapCreateVNode(createVNodeSuper),
-	createElementVNode = wrapCreateElementVNode(createElementVNodeSuper),
 	withDirectives = wrapWithDirectives(withDirectivesSuper);

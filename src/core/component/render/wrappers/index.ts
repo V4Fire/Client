@@ -6,19 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { createVNode, createElementVNode, resolveComponent, withDirectives } from 'vue';
+import type { createVNode, resolveComponent, withDirectives } from 'vue';
 
-import * as dir from 'core/component/render/directives';
 import * as comp from 'core/component/render/components';
 
 import { isSpecialComponent } from 'core/component/render/wrappers/helpers';
 
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
 	return Object.cast((type, ...args) => comp.createVNodeWithDirectives(original, type, ...args));
-}
-
-export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
-	return Object.cast((...args) => dir.createVNodeWithDirectives(original, ...args));
 }
 
 export function wrapResolveComponent<T extends typeof resolveComponent>(original: T): T {
@@ -32,13 +27,13 @@ export function wrapResolveComponent<T extends typeof resolveComponent>(original
 }
 
 export function wrapWithDirectives<T extends typeof withDirectives>(original: T): T {
-	return Object.cast((vnode, dirs) => {
+	return Object.cast(function withDirectives(vnode, dirs) {
 		for (let i = 0; i < dirs.length; i++) {
 			const
 				[dir, value, arg, modifiers] = dirs[i];
 
 			if (dir.beforeCreate != null) {
-				dir.beforeCreate({value, arg, modifiers, dir}, vnode);
+				dir.beforeCreate({value, arg, modifiers, dir, instance: this}, vnode);
 			}
 		}
 
