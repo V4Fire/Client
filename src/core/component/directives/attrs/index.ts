@@ -14,13 +14,28 @@
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 import type { ComponentInterface } from 'core/component/interface';
 
-import { modRgxp, directiveRgxp, handlers } from 'core/component/directives/attrs/const';
+import {
+
+	modRgxp,
+	directiveRgxp,
+
+	handlers,
+
+	modifiers,
+	keyModifiers,
+
+	classAttrs,
+	styleAttrs
+
+} from 'core/component/directives/attrs/const';
+
 import type { DirectiveOptions } from 'core/component/directives/attrs/interface';
 
 export * from 'core/component/directives/attrs/const';
 export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
+	// eslint-disable-next-line complexity
 	beforeCreate(opts: DirectiveOptions, vnode: VNode) {
 		let
 			handlerStore,
@@ -37,11 +52,15 @@ ComponentEngine.directive('attrs', {
 		attrs = {...attrs};
 		vnode.props ??= props;
 
+		const
+			{r} = ctx.$renderEngine;
+
 		for (let keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 			let
 				attrName = keys[i],
 				attrVal = attrs[attrName];
 
+			// Directive
 			if (attrName.startsWith('v-')) {
 				const
 					[, name, arg = '', rawModifiers = ''] = directiveRgxp.exec(attrName)!;
@@ -51,9 +70,6 @@ ComponentEngine.directive('attrs', {
 
 				switch (name) {
 					case 'show': {
-						const
-							{r} = ctx.$renderEngine;
-
 						dir = r.vShow;
 						break;
 					}
@@ -86,9 +102,6 @@ ComponentEngine.directive('attrs', {
 					}
 
 					case 'model': {
-						const
-							{r} = ctx.$renderEngine;
-
 						switch (vnode.type) {
 							case 'input':
 								dir = r[`vModel${(props.type ?? '').capitalize()}`] ?? r.vModelText;
@@ -153,8 +166,11 @@ ComponentEngine.directive('attrs', {
 				vnode.dirs = dirs;
 
 				dirs.push(dirDecl);
+				continue;
+			}
 
-			} else if (attrName.startsWith('@')) {
+			// Event listener
+			if (attrName.startsWith('@')) {
 				let
 					event = attrName.slice(1);
 
@@ -196,92 +212,80 @@ ComponentEngine.directive('attrs', {
 
 				if (Object.keys(flags).length > 0) {
 					const
-						originalHandler = attrVal;
+						registeredModifiers = Object.keys(Object.select(flags, modifiers)),
+						registeredKeyModifiers = Object.keys(Object.select(flags, keyModifiers));
 
-					attrVal = (e: MouseEvent | KeyboardEvent, ...args) => {
-						if (
-							flags.ctrl && !e.ctrlKey ||
-							flags.alt && !e.altKey ||
-							flags.shift && !e.shiftKey ||
-							flags.meta && !e.metaKey ||
-							flags.exact && (
-								!flags.ctrl && e.ctrlKey ||
-								!flags.alt && e.altKey ||
-								!flags.shift && e.shiftKey ||
-								!flags.meta && e.metaKey
-							)
-						) {
-							return;
-						}
+					if (registeredModifiers.length > 0) {
+						attrVal = r.withModifiers.call(ctx, attrVal, registeredKeyModifiers);
+					}
 
-						if (e instanceof MouseEvent) {
-							if (flags.middle && e.button !== 1) {
-								return;
-							}
-
-						} else if (e instanceof KeyboardEvent) {
-							if (
-								flags.enter && e.key !== 'Enter' ||
-								flags.tab && e.key !== 'Tab' ||
-								flags.delete && (e.key !== 'Delete' && e.key !== 'Backspace') ||
-								flags.esc && e.key !== 'Escape' ||
-								flags.space && e.key !== ' ' ||
-								flags.up && e.key !== 'ArrowUp' ||
-								flags.down && e.key !== 'ArrowDown' ||
-								flags.left && e.key !== 'ArrowLeft' ||
-								flags.right && e.key !== 'ArrowRight'
-							) {
-								return;
-							}
-						}
-
-						if (flags.self && e.target !== e.currentTarget) {
-							return;
-						}
-
-						if (flags.prevent) {
-							e.preventDefault();
-						}
-
-						if (flags.stop) {
-							e.stopPropagation();
-						}
-
-						return (<Function>originalHandler)(e, ...args);
-					};
+					if (registeredKeyModifiers.length > 0) {
+						attrVal = r.withKeys.call(ctx, attrVal, registeredKeyModifiers);
+					}
 				}
 
 				props[event] = attrVal;
+				continue;
+			}
 
-			} else {
-				attrName = attrName.startsWith(':') ? attrName.slice(1) : attrName;
+			// Simple property
+			attrName = attrName.startsWith(':') ?
+				attrName.slice(1) :
+				attrName;
 
-				if (modRgxp.test(attrName)) {
-					const attrChunks = attrName.split('.');
-					attrName = attrName.startsWith('.') ? `.${attrChunks[1]}` : attrChunks[0];
+			if (modRgxp.test(attrName)) {
+				const attrChunks = attrName.split('.');
+				attrName = attrName.startsWith('.') ? `.${attrChunks[1]}` : attrChunks[0];
 
-					if (attrChunks.includes('camel')) {
-						attrName = attrName.camelize(false);
-					}
-
-					if (attrChunks.includes('prop') && !attrName.startsWith('.')) {
-						if (attrName.startsWith('^')) {
-							throw new SyntaxError('Invalid v-bind modifiers');
-						}
-
-						attrName = `.${attrName}`;
-					}
-
-					if (attrChunks.includes('attr') && !attrName.startsWith('^')) {
-						if (attrName.startsWith('.')) {
-							throw new SyntaxError('Invalid v-bind modifiers');
-						}
-
-						attrName = `^${attrName}`;
-					}
+				if (attrChunks.includes('camel')) {
+					attrName = attrName.camelize(false);
 				}
 
-				console.log(attrName, attrVal);
+				if (attrChunks.includes('prop') && !attrName.startsWith('.')) {
+					if (attrName.startsWith('^')) {
+						throw new SyntaxError('Invalid v-bind modifiers');
+					}
+
+					attrName = `.${attrName}`;
+				}
+
+				if (attrChunks.includes('attr') && !attrName.startsWith('^')) {
+					if (attrName.startsWith('.')) {
+						throw new SyntaxError('Invalid v-bind modifiers');
+					}
+
+					attrName = `^${attrName}`;
+				}
+			}
+
+			if (classAttrs[attrName] != null) {
+				attrName = classAttrs[attrName];
+				attrVal = r.normalizeClass.call(ctx, attrVal);
+
+				if (vnode.patchFlag < 6) {
+					vnode.patchFlag = 6;
+				}
+
+			} else if (styleAttrs[attrName] != null) {
+				attrVal = r.normalizeStyle.call(ctx, attrVal);
+
+				if (vnode.patchFlag < 6) {
+					vnode.patchFlag = 6;
+				}
+
+			} else {
+				if (vnode.patchFlag < 14) {
+					vnode.patchFlag = 14;
+				}
+
+				const dynamicProps = vnode['dynamicProps'] ?? [];
+				vnode['dynamicProps'] = Array.union(dynamicProps, attrName);
+			}
+
+			if (props[attrName] != null) {
+				Object.assign(props, r.mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
+
+			} else {
 				props[attrName] = attrVal;
 			}
 		}
