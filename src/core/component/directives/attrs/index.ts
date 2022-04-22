@@ -52,8 +52,13 @@ ComponentEngine.directive('attrs', {
 		attrs = {...attrs};
 		vnode.props ??= props;
 
-		const
-			{r} = ctx.$renderEngine;
+		let
+			r: CanUndef<ComponentInterface['$renderEngine']['r']>;
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (ctx != null) {
+			r = ctx.$renderEngine.r;
+		}
 
 		for (let keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 			let
@@ -70,7 +75,7 @@ ComponentEngine.directive('attrs', {
 
 				switch (name) {
 					case 'show': {
-						dir = r.vShow;
+						dir = r?.vShow;
 						break;
 					}
 
@@ -104,15 +109,15 @@ ComponentEngine.directive('attrs', {
 					case 'model': {
 						switch (vnode.type) {
 							case 'input':
-								dir = r[`vModel${(props.type ?? '').capitalize()}`] ?? r.vModelText;
+								dir = r?.[`vModel${(props.type ?? '').capitalize()}`] ?? r?.vModelText;
 								break;
 
 							case 'select':
-								dir = r.vModelSelect;
+								dir = r?.vModelSelect;
 								break;
 
 							default:
-								dir = r.vModelDynamic;
+								dir = r?.vModelDynamic;
 						}
 
 						const
@@ -216,11 +221,11 @@ ComponentEngine.directive('attrs', {
 						registeredKeyModifiers = Object.keys(Object.select(flags, keyModifiers));
 
 					if (registeredModifiers.length > 0) {
-						attrVal = r.withModifiers.call(ctx, attrVal, registeredKeyModifiers);
+						attrVal = r?.withModifiers.call(ctx, attrVal, registeredKeyModifiers);
 					}
 
 					if (registeredKeyModifiers.length > 0) {
-						attrVal = r.withKeys.call(ctx, attrVal, registeredKeyModifiers);
+						attrVal = r?.withKeys.call(ctx, attrVal, registeredKeyModifiers);
 					}
 				}
 
@@ -260,14 +265,14 @@ ComponentEngine.directive('attrs', {
 
 			if (classAttrs[attrName] != null) {
 				attrName = classAttrs[attrName];
-				attrVal = r.normalizeClass.call(ctx, attrVal);
+				attrVal = r?.normalizeClass.call(ctx, attrVal);
 
 				if (vnode.patchFlag < 6) {
 					vnode.patchFlag = 6;
 				}
 
 			} else if (styleAttrs[attrName] != null) {
-				attrVal = r.normalizeStyle.call(ctx, attrVal);
+				attrVal = r?.normalizeStyle.call(ctx, attrVal);
 
 				if (vnode.patchFlag < 6) {
 					vnode.patchFlag = 6;
@@ -283,7 +288,7 @@ ComponentEngine.directive('attrs', {
 			}
 
 			if (props[attrName] != null) {
-				Object.assign(props, r.mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
+				Object.assign(props, r?.mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
 
 			} else {
 				props[attrName] = attrVal;
