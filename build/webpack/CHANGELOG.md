@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.20.0 (2022-04-25)
+
+#### :boom: Breaking Change
+
+* Removed `worker-loader`
+
 ## v3.15.0 (2021-12-16)
 
 #### :bug: Bug Fix
