@@ -8,19 +8,23 @@
 
 import {
 
-	resolveComponent as resolveComponentSuper,
-	createVNode as createVNodeSuper,
-	withDirectives as withDirectivesSuper
+	resolveComponent as superResolveComponent,
+	resolveDynamicComponent as superResolveDynamicComponent,
+
+	createVNode as superCreateVNode,
+	withDirectives as superWithDirectives
 
 } from 'vue';
 
 import {
 
+	resolveStaticalAttrs,
+
 	wrapResolveComponent,
 	wrapCreateVNode,
 	wrapWithDirectives
 
-} from 'core/component/render/wrappers';
+} from 'core/component/render';
 
 export {
 
@@ -48,6 +52,7 @@ export {
 	mergeProps,
 
 	resolveDirective,
+	resolveTransitionHooks,
 
 	withCtx,
 	withKeys,
@@ -62,7 +67,10 @@ export {
 
 } from 'vue';
 
+export { resolveStaticalAttrs };
+
 export const
-	resolveComponent = wrapResolveComponent(resolveComponentSuper),
-	createVNode = wrapCreateVNode(createVNodeSuper),
-	withDirectives = wrapWithDirectives(withDirectivesSuper);
+	resolveComponent = wrapResolveComponent(superResolveComponent),
+	resolveDynamicComponent = wrapResolveComponent(superResolveDynamicComponent),
+	createVNode = wrapCreateVNode(superCreateVNode),
+	withDirectives = wrapWithDirectives(superWithDirectives);
