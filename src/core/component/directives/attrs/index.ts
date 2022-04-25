@@ -12,7 +12,7 @@
  */
 
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
-import type { ComponentInterface } from 'core/component/interface';
+import { mergeProps, normalizeStyle, normalizeClass } from 'core/component/render';
 
 import {
 
@@ -29,6 +29,7 @@ import {
 
 } from 'core/component/directives/attrs/const';
 
+import type { ComponentInterface } from 'core/component/interface';
 import type { DirectiveOptions } from 'core/component/directives/attrs/interface';
 
 export * from 'core/component/directives/attrs/const';
@@ -265,14 +266,14 @@ ComponentEngine.directive('attrs', {
 
 			if (classAttrs[attrName] != null) {
 				attrName = classAttrs[attrName];
-				attrVal = r?.normalizeClass.call(ctx, attrVal);
+				attrVal = normalizeClass(Object.cast(attrVal));
 
 				if (vnode.patchFlag < 6) {
 					vnode.patchFlag = 6;
 				}
 
 			} else if (styleAttrs[attrName] != null) {
-				attrVal = r?.normalizeStyle.call(ctx, attrVal);
+				attrVal = normalizeStyle(Object.cast(attrVal));
 
 				if (vnode.patchFlag < 4) {
 					vnode.patchFlag = 4;
@@ -292,7 +293,7 @@ ComponentEngine.directive('attrs', {
 			}
 
 			if (props[attrName] != null) {
-				Object.assign(props, r?.mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
+				Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
 
 			} else {
 				props[attrName] = attrVal;
