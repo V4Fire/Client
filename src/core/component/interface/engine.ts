@@ -33,6 +33,8 @@ import type {
 	mergeProps,
 
 	resolveComponent,
+	resolveDynamicComponent,
+	resolveTransitionHooks,
 	resolveDirective,
 
 	withCtx,
@@ -87,6 +89,8 @@ export interface RenderAPI {
 	mergeProps: typeof mergeProps;
 
 	resolveComponent: typeof resolveComponent;
+	resolveDynamicComponent: typeof resolveDynamicComponent;
+	resolveTransitionHooks: typeof resolveTransitionHooks;
 	resolveDirective: typeof resolveDirective;
 
 	withCtx: typeof withCtx;
