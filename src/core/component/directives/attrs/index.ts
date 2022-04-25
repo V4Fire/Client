@@ -274,8 +274,8 @@ ComponentEngine.directive('attrs', {
 			} else if (styleAttrs[attrName] != null) {
 				attrVal = r?.normalizeStyle.call(ctx, attrVal);
 
-				if (vnode.patchFlag < 6) {
-					vnode.patchFlag = 6;
+				if (vnode.patchFlag < 4) {
+					vnode.patchFlag = 4;
 				}
 
 			} else {
