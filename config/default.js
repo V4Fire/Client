@@ -750,10 +750,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 *
 	 * 1. server - to compile node.js modules
 	 * 2. client - to compile client modules
-	 * 3. worker - to compile web-worker modules
 	 *
 	 * @override
-	 * @returns {{server: !Object, client: !Object, worker: !Object}}
+	 * @returns {{server: !Object, client: !Object}}
 	 */
 	typescript() {
 		const
@@ -772,8 +771,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			client,
-			server,
-			worker: client
+			server
 		};
 	},
 
@@ -783,24 +781,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	terser() {
 		return {};
-	},
-
-	/**
-	 * Returns parameters for `worker-loader`
-	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
-	 */
-	worker() {
-		return {
-			worker: {},
-
-			serviceWorker: {
-				workerType: 'ServiceWorker'
-			},
-
-			sharedWorker: {
-				workerType: 'SharedWorker'
-			}
-		};
 	},
 
 	/**

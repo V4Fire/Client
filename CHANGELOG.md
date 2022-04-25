@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.19.3 (2022-04-22)
+
+#### :house: Internal
+
+* Removed `worker-loader` `build`
+* Removed all options associated with `worker-loader` `build`
+
 ## v3.19.2 (2022-04-19)
 
 #### :bug: Bug Fix
