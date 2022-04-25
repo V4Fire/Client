@@ -8,8 +8,8 @@
 
 import type { VNode, VNodeTypes, VNodeProps } from 'core/component/engines';
 
-import { components } from 'core/component/render/components/const';
-import type { CreateVNode } from 'core/component/render/components/interface';
+import { components } from 'core/component/render/const';
+import type { CreateVNode } from 'core/component/render/interface';
 
 export default vRender;
 components['v-render'] = vRender;
