@@ -9,7 +9,6 @@
  */
 
 const
-	$C = require('collection.js'),
 	{wrapAttrArray} = include('build/snakeskin/filters/helpers');
 
 const
@@ -26,23 +25,15 @@ module.exports = [
 	 * @returns {string}
 	 */
 	function bem2Component(block, attrs, rootTag, value) {
-		attrs[':class'] = attrs[':class'] || [];
-
 		const
-			elName = value.replace(elSeparatorRgxp, ''),
-			classes = attrs[':class'],
-			styles = attrs[':style'];
+			elName = value.replace(elSeparatorRgxp, '');
 
-		const newClasses = classes.concat(
-			$C(classes).includes('componentId') ? [] : 'componentId',
-			`classes && classes['${elName}']`
-		);
+		attrs['data-cached-dynamic-class'] = wrapAttrArray([
+			'self.componentId',
+			`self.classes && self.classes['${elName}']`
+		]);
 
-		attrs[':class'] = wrapAttrArray(newClasses);
-
-		if (!styles || !styles.length) {
-			attrs[':style'] = [`styles && styles['${elName}']`];
-		}
+		attrs['data-cached-dynamic-style'] = wrapAttrArray([`self.styles && self.styles['${elName}']`]);
 
 		return block + value;
 	}
