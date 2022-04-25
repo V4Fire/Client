@@ -70,6 +70,43 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
+	 * Additional classes for the component elements.
+	 * It can be useful if you need to attach some extra classes to internal component elements.
+	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
+	 *
+	 * @example
+	 * ```js
+	 * // Key names are tied with component elements,
+	 * // and values contain a CSS class or list of classes we want to add
+	 *
+	 * {
+	 *   foo: 'bla',
+	 *   bar: ['bla', 'baz']
+	 * }
+	 * ```
+	 */
+	readonly classes?: Dictionary<CanArray<string>>;
+
+	/**
+	 * Additional styles for the component elements.
+	 * It can be useful if you need to attach some extra styles to internal component elements.
+	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
+	 *
+	 * @example
+	 * ```js
+	 * // Key names are tied with component elements,
+	 * // and values contains a CSS style string, a style object or list of style strings
+	 *
+	 * {
+	 *   foo: 'color: red',
+	 *   bar: {color: 'blue'},
+	 *   baz: ['color: red', 'background: green']
+	 * }
+	 * ```
+	 */
+	readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
+
+	/**
 	 * Name of the active component hook
 	 */
 	get hook(): Hook {
