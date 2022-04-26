@@ -63,7 +63,8 @@ const Vue = makeLazy(
 					return;
 				}
 
-				return contexts.at(-1)?.component.apply(ctx, args);
+				const ctx = contexts.at(-1);
+				return ctx?.component.apply(ctx, args);
 			},
 
 			directive: (contexts, ...args: any[]) => {
@@ -73,7 +74,8 @@ const Vue = makeLazy(
 					});
 				}
 
-				return contexts.at(-1)?.component.apply(ctx, args);
+				const ctx = contexts.at(-1);
+				return ctx?.directive.apply(ctx, args);
 			},
 
 			mixin: (contexts, ...args) => {
