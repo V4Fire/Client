@@ -25,16 +25,8 @@ module.exports = [
 	 * @returns {string}
 	 */
 	function bem2Component(block, attrs, rootTag, value) {
-		const
-			elName = value.replace(elSeparatorRgxp, '');
-
-		attrs['data-cached-dynamic-class'] = wrapAttrArray([
-			'self.componentId',
-			`self.classes && self.classes['${elName}']`
-		]);
-
-		attrs['data-cached-dynamic-style'] = wrapAttrArray([`self.styles && self.styles['${elName}']`]);
-
+		attrs['data-cached-class-component-id'] = wrapAttrArray([true]);
+		attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray([value.replace(elSeparatorRgxp, '')]);
 		return block + value;
 	}
 ];

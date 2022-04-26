@@ -37,13 +37,14 @@ const
  * ```js
  * // `.componentId = 'id-1'`
  * // `.componentName = 'b-example'`
- * // `.color = 'red'`
+ * // `.classes = {'elem-name': 'alias'}`
  * const ctx = this;
  *
- * // {class: 'id-1 b-example', style: {color: 'red'}}
+ * // {class: 'id-1 b-example alias'}
  * interpolateStaticAttrs.call(ctx, {
- *   'data-cached-dynamic-class': '[self.componentId, self.componentName]',
- *   'data-cached-dynamic-style': '{color: self.color}'
+ *   'data-cached-class-component-id': ''
+ *   'data-cached-class-provided-classes-styles': 'elem-name'
+ *   'data-cached-dynamic-class': '[self.componentName]'
  * })
  * ```
  */
@@ -55,34 +56,46 @@ export function interpolateStaticAttrs<T extends VNode | Dictionary>(this: Compo
 		return vnode;
 	}
 
-	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+	{
 		const
-			key = keys[i],
-			fnBody = String(props[key]);
+			key = 'data-cached-class-component-id',
+			val = props[key];
 
-		switch (key) {
-			case 'data-cached-dynamic-class': {
-				// eslint-disable-next-line no-new-func
-				const classes = compileFn(fnBody)(this);
+		if (val != null) {
+			Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
+			delete props[key];
+		}
+	}
 
-				Object.assign(props, mergeProps({class: props.class}, {class: classes}));
-				delete props[key];
+	{
+		const
+			key = 'data-cached-class-provided-classes-styles',
+			name = props[key];
 
-				break;
+		if (name != null) {
+			if (this.classes?.[name] != null) {
+				Object.assign(props, mergeProps({class: props.class}, {class: this.classes[name]}));
 			}
 
-			case 'data-cached-dynamic-style': {
-				// eslint-disable-next-line no-new-func
-				const style = compileFn(fnBody)(this);
-
-				Object.assign(props, mergeProps({style: props.style}, {style}));
-				delete props[key];
-
-				break;
+			if (this.styles?.[name] != null) {
+				Object.assign(props, mergeProps({style: props.style}, {style: this.styles[name]}));
 			}
 
-			default:
-				// Do nothing
+			delete props[key];
+		}
+	}
+
+	{
+		const
+			key = 'data-cached-dynamic-class',
+			fnBody = props[key];
+
+		if (fnBody != null) {
+			// eslint-disable-next-line no-new-func
+			const classVal = compileFn(fnBody)(this);
+
+			Object.assign(props, mergeProps({class: props.class}, {class: classVal}));
+			delete props[key];
 		}
 	}
 
@@ -96,17 +109,17 @@ export function interpolateStaticAttrs<T extends VNode | Dictionary>(this: Compo
 	}
 
 	return vnode;
+}
 
-	function compileFn(fnBody: string): Function {
-		let
-			fn = staticAttrsCache[fnBody];
+function compileFn(fnBody: string): Function {
+	let
+		fn = staticAttrsCache[fnBody];
 
-		if (fn == null) {
-			// eslint-disable-next-line no-new-func
-			fn = Function('self', `return ${fnBody}`);
-			staticAttrsCache[fnBody] = fn;
-		}
-
-		return fn;
+	if (fn == null) {
+		// eslint-disable-next-line no-new-func
+		fn = Function('self', `return ${fnBody}`);
+		staticAttrsCache[fnBody] = fn;
 	}
+
+	return fn;
 }

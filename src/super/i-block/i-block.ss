@@ -169,12 +169,12 @@
 			rootAttrs[':class'] = value
 
 	- rootAttrs = { &
-		':class': '[...provide.componentClasses("' + self.name() + '", mods), "i-block-helper", componentId]',
+		'class': 'i-block-helper',
 
-		':-render-group': 'renderGroup',
-		':-render-counter': 'renderCounter',
+		'data-cached-class-component-id': '',
+		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)',
 
-		'v-hook': "!isVirtualTpl && (isFunctional || isFlyweight) ?" +
+		'v-hook': "!isVirtualTpl && isFunctional ?" +
 			"{" +
 				"created: createInternalHookListener('bind')," +
 				"mounted: createInternalHookListener('inserted')," +
@@ -242,12 +242,7 @@
 								? content = attrs
 								? attrs = {}
 
-					< template v-if = $scopedSlots['${name}']
-						< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
-
-					< template v-else
-						< slot name = ${name}
-							+= content
+					< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
 
 				- block headHelpers
 
