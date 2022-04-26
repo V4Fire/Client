@@ -18,7 +18,7 @@ import {
 
 import {
 
-	resolveStaticalAttrs,
+	interpolateStaticAttrs,
 
 	wrapResolveComponent,
 	wrapCreateVNode,
@@ -67,7 +67,7 @@ export {
 
 } from 'vue';
 
-export { resolveStaticalAttrs };
+export { interpolateStaticAttrs };
 
 export const
 	resolveComponent = wrapResolveComponent(superResolveComponent),
