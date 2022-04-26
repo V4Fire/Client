@@ -42,5 +42,8 @@ export declare type DirectiveArguments = Array<
 >;
 
 export interface CreateAppFunction<E = Element> {
-	(...args: Parameters<SuperCreateAppFunction<E>>): Overwrite<SuperCreateAppFunction<E>, ResolveDirective<E>>;
+	(...args: Parameters<SuperCreateAppFunction<E>>): Overwrite<
+		ReturnType<SuperCreateAppFunction<E>>,
+		ResolveDirective<E>
+	>;
 }
