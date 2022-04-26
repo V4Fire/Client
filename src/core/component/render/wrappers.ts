@@ -44,15 +44,33 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 
 export function wrapWithDirectives<T extends typeof withDirectives>(original: T): T {
 	return Object.cast(function withDirectives(this: ComponentInterface, vnode: VNode, dirs: DirectiveArguments) {
+		const
+			resolvedDirs: DirectiveArguments = [];
+
 		for (let i = 0; i < dirs.length; i++) {
+			const
+				decl = dirs[i];
+
 			const
 				[dir, value, arg, modifiers] = dirs[i];
 
-			if (Object.isDictionary(dir) && Object.isFunction(dir.beforeCreate)) {
-				dir.beforeCreate({value, arg, modifiers, dir, instance: this}, vnode);
+			if (Object.isDictionary(dir)) {
+				if (Object.isFunction(dir.beforeCreate)) {
+					dir.beforeCreate({value, arg, modifiers, dir, instance: this}, vnode);
+
+					if (Object.keys(dir).length > 1 && value != null) {
+						resolvedDirs.push(decl);
+					}
+
+				} else if (Object.keys(dir).length > 0 && value != null) {
+					resolvedDirs.push(decl);
+				}
+
+			} else if (value != null) {
+				resolvedDirs.push(decl);
 			}
 		}
 
-		return original(vnode, dirs);
+		return original(vnode, resolvedDirs);
 	});
 }
