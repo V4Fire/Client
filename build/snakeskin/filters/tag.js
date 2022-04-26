@@ -12,7 +12,7 @@ const
 	$C = require('collection.js');
 
 const
-	{isObjLiteral, isSvgRequire, isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
+	{isSvgRequire, isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
 
 module.exports = [
 	/**
@@ -44,14 +44,6 @@ module.exports = [
 				return;
 			}
 
-			el = $C(el).map((el) => {
-				if (Object.isString(el) && isObjLiteral.test(el) && isStaticLiteral(el)) {
-					return `opt.memoizeLiteral(${el})`;
-				}
-
-				return el;
-			});
-
 			const
 				dataAttrBind = ':-';
 
@@ -71,14 +63,3 @@ module.exports = [
 		});
 	}
 ];
-
-function isStaticLiteral(v) {
-	try {
-		// eslint-disable-next-line no-new-func
-		Function(`return ${v}`)();
-		return true;
-
-	} catch {
-		return false;
-	}
-}

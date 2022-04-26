@@ -34,18 +34,6 @@ exports.tagRgxp = /<[^>]+>/;
 exports.componentElRgxp = new RegExp(`\\b${validators.baseBlockName}__[a-z0-9][a-z0-9-_]*\\b`);
 
 /**
- * RegExp to match declaration of an object literal
- *
- * @type {!RegExp}
- * @example
- * ```
- * [1, 2]
- * {a: 1}
- * ```
- */
-exports.isObjLiteral = /^\s*[[{]/;
-
-/**
  * RegExp to match requiring of svg images
  *
  * @type {!RegExp}
