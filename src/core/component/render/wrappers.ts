@@ -12,6 +12,11 @@ import type {
 	resolveDynamicComponent,
 
 	createVNode,
+	createElementVNode,
+
+	createBlock,
+	createElementBlock,
+
 	withDirectives,
 
 	VNode,
@@ -20,13 +25,37 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/register';
-import { createVNodeWithDirectives } from 'core/component/render/vnode';
+import { createVNodeWithDirectives, interpolateStaticAttrs } from 'core/component/render/vnode';
 import { isSpecialComponent } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
-	return Object.cast((type, ...args) => createVNodeWithDirectives(original, type, ...args));
+	return Object.cast(function createVNode(this: ComponentInterface, type: string, ...args: unknown[]) {
+		const vnode = createVNodeWithDirectives(original, type, ...args);
+		return interpolateStaticAttrs.call(this, vnode);
+	});
+}
+
+export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
+	return Object.cast(function createElementVNode(this: ComponentInterface) {
+		// eslint-disable-next-line prefer-spread
+		return interpolateStaticAttrs.call(this, original.apply(null, arguments));
+	});
+}
+
+export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
+	return Object.cast(function wrapCreateBlock(this: ComponentInterface) {
+		// eslint-disable-next-line prefer-spread
+		return interpolateStaticAttrs.call(this, original.apply(null, arguments));
+	});
+}
+
+export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
+	return Object.cast(function createElementBlock(this: ComponentInterface) {
+		// eslint-disable-next-line prefer-spread
+		return interpolateStaticAttrs.call(this, original.apply(null, arguments));
+	});
 }
 
 export function wrapResolveComponent<T extends typeof resolveComponent | typeof resolveDynamicComponent>(

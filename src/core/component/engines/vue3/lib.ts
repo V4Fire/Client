@@ -1,3 +1,5 @@
+/* eslint-disable prefer-spread */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -22,29 +24,71 @@ const App = <CreateAppFunction>function App(component: Component & {el: Element}
 	return app;
 };
 
-const Vue = makeLazy(App, {
-	use: Function,
+const Vue = makeLazy(
+	App,
 
-	component: Function,
-	directive: Function,
+	{
+		use: Function,
 
-	mixin: Function,
-	provide: Function,
-	version: '',
+		component: Function,
+		directive: Function,
 
-	mount: Function,
-	unmount: Function,
+		mixin: Function,
+		provide: Function,
+		version: '',
 
-	config: {
-		performance: false,
+		mount: Function,
+		unmount: Function,
 
-		errorHandler: Function,
-		warnHandler: Function,
+		config: {
+			performance: false,
 
-		compilerOptions: {},
-		globalProperties: {},
-		optionMergeStrategies: {}
+			errorHandler: Function,
+			warnHandler: Function,
+
+			compilerOptions: {},
+			globalProperties: {},
+			optionMergeStrategies: {}
+		}
+	},
+
+	{
+		call: {
+			component: (contexts, ...args) => {
+				if (args.length === 1) {
+					contexts.forEach((ctx) => {
+						ctx.component.apply(ctx, args);
+					});
+
+					return;
+				}
+
+				return contexts.at(-1)?.component.apply(ctx, args);
+			},
+
+			directive: (contexts, ...args: any[]) => {
+				if (args.length === 1) {
+					contexts.forEach((ctx) => {
+						ctx.directive.apply(ctx, args);
+					});
+				}
+
+				return contexts.at(-1)?.component.apply(ctx, args);
+			},
+
+			mixin: (contexts, ...args) => {
+				contexts.forEach((ctx) => {
+					ctx.mixin.apply(ctx, args);
+				});
+			},
+
+			provide: (contexts, ...args) => {
+				contexts.forEach((ctx) => {
+					ctx.provide.apply(ctx, args);
+				});
+			}
+		}
 	}
-});
+);
 
 export default Vue;
