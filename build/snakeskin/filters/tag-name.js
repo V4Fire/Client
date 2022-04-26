@@ -131,31 +131,5 @@ module.exports = [
 		}
 
 		return tag;
-	},
-
-	/**
-	 * Expands the `@component` snippet as a `<component v4-flyweight-component>` tag
-	 *
-	 * @param {string} tag
-	 * @param {!Object} attrs
-	 * @returns {string}
-	 *
-	 * @example
-	 * ```
-	 * /// <span v4-flyweight-component="b-button"></span>
-	 * < @b-button
-	 * ```
-	 */
-	function expandFlyweightComponent(tag, attrs) {
-		const
-			flyweightPrfx = '@';
-
-		if (tag.startsWith(flyweightPrfx)) {
-			attrs['v4-flyweight-component'] = [tag.slice(flyweightPrfx.length)];
-			attrs[':instance-of'] = attrs['v4-flyweight-component'];
-			return 'span';
-		}
-
-		return tag;
 	}
 ];
