@@ -72,6 +72,8 @@ const Vue = makeLazy(
 					contexts.forEach((ctx) => {
 						ctx.directive.apply(ctx, args);
 					});
+
+					return;
 				}
 
 				const ctx = contexts.at(-1);
