@@ -72,7 +72,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 				const
 					firstPathProp = String(path[0]),
-					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate !== false;
+					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate === true;
 
 				if (shouldUpdate) {
 					ctx.$forceUpdate();
