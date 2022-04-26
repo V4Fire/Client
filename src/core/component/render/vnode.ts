@@ -26,7 +26,28 @@ export function createVNodeWithDirectives(createVNode: CreateVNode, type: string
 	return components[type]?.(createVNode, type, ...args) ?? createVNode(...args);
 }
 
-export function resolveStaticalAttrs<T extends VNode | Dictionary>(this: ComponentInterface, vnode: T): T {
+const
+	staticAttrsCache: Dictionary<Function> = Object.createDict();
+
+/**
+ * Interpolates values from some static attributes of the passed VNode
+ *
+ * @param vnode
+ * @example
+ * ```js
+ * // `.componentId = 'id-1'`
+ * // `.componentName = 'b-example'`
+ * // `.color = 'red'`
+ * const ctx = this;
+ *
+ * // {class: 'id-1 b-example', style: {color: 'red'}}
+ * interpolateStaticAttrs.call(ctx, {
+ *   'data-cached-dynamic-class': '[self.componentId, self.componentName]',
+ *   'data-cached-dynamic-style': '{color: self.color}'
+ * })
+ * ```
+ */
+export function interpolateStaticAttrs<T extends VNode | Dictionary>(this: ComponentInterface, vnode: T): T {
 	const
 		props = <CanUndef<Dictionary<string>>>(Object.isString(vnode.type) ? vnode.props : vnode);
 
@@ -36,12 +57,13 @@ export function resolveStaticalAttrs<T extends VNode | Dictionary>(this: Compone
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i];
+			key = keys[i],
+			fnBody = String(props[key]);
 
 		switch (key) {
 			case 'data-cached-dynamic-class': {
 				// eslint-disable-next-line no-new-func
-				const classes = Function('self', `return ${props[key]}`)(this);
+				const classes = compileFn(fnBody)(this);
 
 				Object.assign(props, mergeProps({class: props.class}, {class: classes}));
 				delete props[key];
@@ -51,7 +73,7 @@ export function resolveStaticalAttrs<T extends VNode | Dictionary>(this: Compone
 
 			case 'data-cached-dynamic-style': {
 				// eslint-disable-next-line no-new-func
-				const style = Function('self', `return ${props[key]}`)(this);
+				const style = compileFn(fnBody)(this);
 
 				Object.assign(props, mergeProps({style: props.style}, {style}));
 				delete props[key];
@@ -69,9 +91,22 @@ export function resolveStaticalAttrs<T extends VNode | Dictionary>(this: Compone
 
 	if (Object.isArray(children)) {
 		for (let i = 0; i < children.length; i++) {
-			resolveStaticalAttrs.call(this, children[i]);
+			interpolateStaticAttrs.call(this, children[i]);
 		}
 	}
 
 	return vnode;
+
+	function compileFn(fnBody: string): Function {
+		let
+			fn = staticAttrsCache[fnBody];
+
+		if (fn == null) {
+			// eslint-disable-next-line no-new-func
+			fn = Function('self', `return ${fnBody}`);
+			staticAttrsCache[fnBody] = fn;
+		}
+
+		return fn;
+	}
 }
