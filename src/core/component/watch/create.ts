@@ -7,16 +7,16 @@
  */
 
 import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
+import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
-import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
-
-import { tiedWatchers, watcherInitializer, fakeCopyLabel } from 'core/component/watch/const';
+import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
+import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
+
 /**
- * Creates a function to watch changes from the specified component instance and returns it
+ * Creates a function to watch property changes from the specified component instance and returns it
  * @param component
  */
 // eslint-disable-next-line max-lines-per-function
@@ -26,10 +26,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function
 	return function watchFn(this: unknown, path, optsOrHandler, rawHandler?) {
-		if (component.isFlyweight) {
-			return null;
-		}
-
 		let
 			handler: RawWatchHandler,
 			opts: WatchOptions;
@@ -51,8 +47,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		} else {
 			if (isProxy(path)) {
-				// @ts-ignore (lazy binding)
-				info = {ctx: path};
+				info = Object.cast({ctx: path});
 
 			} else {
 				info = path;
@@ -114,7 +109,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isDefinedPath = Object.size(info.path) > 0,
 			watchInfo = isAccessor ? null : component.$renderEngine.proxyGetters[info.type]?.(info.ctx);
 
-		const normalizedOpts = <WatchOptions>{
+		const normalizedOpts: WatchOptions = {
 			collapse: true,
 			...opts,
 			...watchInfo?.opts
@@ -266,8 +261,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						unmute(proxy);
 
 						Object.defineProperty(propCtx, info.name, {
-							enumerable: true,
 							configurable: true,
+							enumerable: true,
 
 							get: () =>
 								proxy[info.name],
@@ -327,10 +322,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 						// eslint-disable-next-line @typescript-eslint/no-use-before-define
 						attachDeepProxy();
-
-						if (value?.[fakeCopyLabel] === true) {
-							return;
-						}
 
 						let valueByPath = Object.get(value, slicedPathChunks);
 						valueByPath = unwrap(valueByPath) ?? valueByPath;
