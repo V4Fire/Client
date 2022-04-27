@@ -26,7 +26,7 @@ export interface BindRemoteWatchersParams<A extends object = ComponentInterface>
 	watchers?: Dictionary<WatchObject[]>;
 
 	/**
-	 * Information object about a property to watch
+	 * Information object of a property to watch
 	 */
 	info?: PropertyInfo;
 }
