@@ -8,26 +8,26 @@
 
 import watch, { WatchOptions, MultipleWatchHandler } from 'core/object/watch';
 
-import type { PropertyInfo } from 'core/component/reflection';
-import type { ComponentInterface } from 'core/component/interface';
-
+import type { PropertyInfo } from 'core/component/reflect';
 import { dynamicHandlers } from 'core/component/watch/const';
+
+import type { ComponentInterface } from 'core/component/interface';
 import type { DynamicHandlers } from 'core/component/watch/interface';
 
 /**
  * Attaches a dynamic watcher to the specified property.
- * This function is used to manage the situation when we are watching some accessor.
+ * This function is used to manage a situation when we are watching some accessor.
  *
  * @param component - component that is watched
  * @param prop - property to watch
- * @param opts - options for watching
- * @param handler
+ * @param watchOpts - options of watching
+ * @param handler - handler of mutations
  * @param [store] - store with dynamic handlers
  */
 export function attachDynamicWatcher(
 	component: ComponentInterface,
 	prop: PropertyInfo,
-	opts: WatchOptions,
+	watchOpts: WatchOptions,
 	handler: Function,
 	store: DynamicHandlers = dynamicHandlers
 ): Function {
@@ -50,13 +50,13 @@ export function attachDynamicWatcher(
 
 			if (
 				// We don't watch deep mutations
-				!opts.deep && info.path.length > (Object.isDictionary(info.obj) ? 1 : 2) ||
+				!watchOpts.deep && info.path.length > (Object.isDictionary(info.obj) ? 1 : 2) ||
 
 				// We don't watch prototype mutations
-				!opts.withProto && info.fromProto ||
+				!watchOpts.withProto && info.fromProto ||
 
-				// The mutation was already fired
-				opts.eventFilter && !Object.isTruly(opts.eventFilter(value, oldValue, info))
+				// The mutation has been already fired
+				watchOpts.eventFilter && !Object.isTruly(watchOpts.eventFilter(value, oldValue, info))
 			) {
 				continue;
 			}
@@ -82,10 +82,10 @@ export function attachDynamicWatcher(
 			watcher;
 
 		if (Object.size(prop.path) > 0) {
-			watcher = watch(prop.ctx, prop.path, opts, wrapper);
+			watcher = watch(prop.ctx, prop.path, watchOpts, wrapper);
 
 		} else {
-			watcher = watch(prop.ctx, opts, wrapper);
+			watcher = watch(prop.ctx, watchOpts, wrapper);
 		}
 
 		destructor = () => {
