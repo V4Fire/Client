@@ -54,7 +54,7 @@ export function inheritMeta(
 		}
 
 	} else {
-		meta.watchDependencies = new Map(pWatchDependencies.entries());
+		meta.watchDependencies = new Map(pWatchDependencies);
 	}
 
 	// Props/fields inheritance
