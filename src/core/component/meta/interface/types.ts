@@ -56,7 +56,7 @@ export interface ComponentAccessor<T = unknown> extends Partial<WritableComputed
 
 export interface ComponentMethod {
 	fn: Function;
-	src: string;
+	src?: string;
 	wrapper?: boolean;
 	functional?: boolean;
 	watchers?: Dictionary<MethodWatcher>;

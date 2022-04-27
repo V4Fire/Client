@@ -6,11 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { inheritMeta } from 'core/component/meta/inherit';
 import { getComponentMods } from 'core/component/reflect';
-import { wrapRender } from 'core/component/render-function';
+import { getComponentContext } from 'core/component/context';
+import { inheritMeta } from 'core/component/meta/inherit';
 
-import type { RenderFunction } from 'core/component/engines';
 import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
 
 /**
@@ -18,12 +17,13 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
  * @param component - component constructor info
  */
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
-	const meta = {
+	const meta: ComponentMeta = {
 		name: component.name,
 		componentName: component.componentName,
 
 		parentMeta: component.parentMeta,
 		constructor: component.constructor,
+
 		instance: {},
 		params: component.params,
 
@@ -32,14 +32,15 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 		fields: {},
 		tiedFields: {},
-		computedFields: {},
 		systemFields: {},
-		tiedSystemFields: {},
+		computedFields: {},
 
-		accessors: {},
 		methods: {},
+		accessors: {},
 		watchers: {},
+
 		watchDependencies: new Map(),
+		watchPropDependencies: new Map(),
 
 		hooks: {
 			beforeRuntime: [],
@@ -66,14 +67,29 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			mods: {},
 			props: {},
 			methods: {},
-			staticRenderFns: [],
-			render: <RenderFunction>(() => {
+			render: (() => {
 				throw new ReferenceError(`A render function for the component "${component.componentName}" is not specified`);
 			})
 		}
 	};
 
-	meta.component.render = wrapRender(meta);
+	const
+		map = new WeakMap();
+
+	meta.component.render = Object.cast((ctx, cache) => {
+		const
+			unsafe = getComponentContext(ctx);
+
+		if (map.has(ctx)) {
+			return map.get(ctx)();
+		}
+
+		const
+			fn = meta.methods.render!.fn(unsafe, cache);
+
+		map.set(ctx, fn);
+		return fn();
+	});
 
 	if (component.parentMeta) {
 		inheritMeta(meta, component.parentMeta);

@@ -10,7 +10,7 @@
 import * as defTpls from 'core/block.ss';
 
 import { componentTemplates } from 'core/component/const';
-import type { ComponentMeta, ComponentMethod } from 'core/component/interface';
+import type { ComponentMeta } from 'core/component/interface';
 
 /**
  * Attaches templates to the specified meta object
@@ -23,7 +23,7 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 		{methods, methods: {render}} = meta;
 
 	// We have a custom render function
-	if (render && !render.wrapper) {
+	if (render != null && !render.wrapper) {
 		return;
 	}
 
@@ -40,10 +40,10 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 	const renderObj = componentTemplates[meta.componentName] ?? tpls.index();
 	componentTemplates[meta.componentName] = renderObj;
 
-	methods.render = <ComponentMethod>{
+	methods.render = {
 		wrapper: true,
 		watchers: {},
 		hooks: {},
-		fn: renderObj.render
+		fn: renderObj
 	};
 }
