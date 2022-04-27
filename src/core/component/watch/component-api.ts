@@ -15,7 +15,8 @@ import watch, {
 	watchHandlers,
 	MultipleWatchHandler,
 
-	Watcher
+	Watcher,
+	WatchHandlerParams
 
 } from 'core/object/watch';
 
@@ -143,7 +144,7 @@ export function implementComponentWatchAPI(
 					}
 
 					const
-						modifiedMutations: any[] = [];
+						modifiedMutations: Array<[unknown, unknown, WatchHandlerParams]> = [];
 
 					for (let i = 0; i < mutations.length; i++) {
 						const
