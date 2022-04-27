@@ -7,10 +7,10 @@
  */
 
 export const
-	bindingRgxp = /(?:Prop|Store)$/,
 	propRgxp = /Prop$|^\$props/,
-	attrRgxp = /^\$attrs/,
 	storeRgxp = /Store$/,
+	attrRgxp = /^\$attrs/,
+	bindingRgxp = /(?:Prop|Store)$/,
 	hasSeparator = /\./;
 
 export const
