@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -36,7 +38,6 @@ export * from 'core/component/directives/attrs/const';
 export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
-	// eslint-disable-next-line complexity
 	beforeCreate(opts: DirectiveOptions, vnode: VNode) {
 		let
 			handlerStore,
