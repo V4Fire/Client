@@ -42,7 +42,7 @@ export function attachDynamicWatcher(
 		}
 
 		const
-			filteredMutations = <unknown[]>[];
+			filteredMutations: unknown[] = [];
 
 		for (let i = 0; i < mutations.length; i++) {
 			const

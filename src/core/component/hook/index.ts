@@ -60,7 +60,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		default: {
 			const
 				emitter = new QueueEmitter(),
-				filteredHooks = <ComponentHook[]>[];
+				filteredHooks: ComponentHook[] = [];
 
 			for (let i = 0; i < hooks.length; i++) {
 				const

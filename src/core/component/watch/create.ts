@@ -312,7 +312,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						slicedPathChunks = pathChunks.slice(1);
 
 					const
-						destructors = <Function[]>[];
+						destructors: Function[] = [];
 
 					const watchHandler = (value, oldValue, info) => {
 						for (let i = destructors.length; --i > 0;) {

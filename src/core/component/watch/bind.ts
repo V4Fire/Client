@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { getPropertyInfo } from 'core/component/reflection';
+import { getPropertyInfo } from 'core/component/reflect';
 import { wrapWithSuspending } from 'core/async';
 
 import { beforeHooks } from 'core/component/const';

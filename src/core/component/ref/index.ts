@@ -42,7 +42,7 @@ export function resolveRefs(component: ComponentInterface): void {
 
 		if (Object.isArray(ref)) {
 			const
-				refList = <unknown[]>[];
+				refList: unknown[] = [];
 
 			let
 				needRewrite = false;

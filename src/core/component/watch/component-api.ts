@@ -96,7 +96,7 @@ export function implementComponentWatchAPI(
 				[key, deps] = el.value;
 
 			const
-				newDeps = <typeof deps>[];
+				newDeps: typeof deps = [];
 
 			let
 				needForkDeps = false;
@@ -143,7 +143,7 @@ export function implementComponentWatchAPI(
 					}
 
 					const
-						modifiedMutations = <any[]>[];
+						modifiedMutations: any[] = [];
 
 					for (let i = 0; i < mutations.length; i++) {
 						const
