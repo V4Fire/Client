@@ -14,12 +14,11 @@ export const
 
 export const
 	tiedWatchers = Symbol('List of tied watchers'),
-	watcherInitializer = Symbol('Watcher initializer'),
-	toComponentObject = Symbol('Link to a component object');
+	watcherInitializer = Symbol('Watcher initializer');
 
 export const
 	cacheStatus = Symbol('Cache status'),
-	fakeCopyLabel = Symbol('Fake copy label');
+	toComponentObject = Symbol('Link to a component object');
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
