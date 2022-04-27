@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,7 +11,7 @@
 import { defaultWrapper } from 'core/component/const';
 
 import { getComponentContext } from 'core/component/context';
-import { isAbstractComponent } from 'core/component/reflect';
+import { isAbstractComponent, bindingRgxp } from 'core/component/reflect';
 
 import { isTypeCanBeFunc } from 'core/component/prop';
 import { addMethodsToMeta } from 'core/component/meta/method';
@@ -17,7 +19,7 @@ import { addMethodsToMeta } from 'core/component/meta/method';
 import type { ComponentConstructor, ComponentMeta, ComponentField, WatchObject } from 'core/component/interface';
 
 /**
- * Fills the passed meta object with methods and properties from the specified component class
+ * Fills the passed meta object with methods and properties from the specified component class constructor
  *
  * @param meta
  * @param [constructor] - component constructor
@@ -30,9 +32,17 @@ export function fillMeta(
 
 	const {
 		component,
+		params,
+
 		methods,
+		accessors,
+		computedFields,
+
 		watchers,
-		hooks
+		hooks,
+
+		watchDependencies,
+		watchPropDependencies
 	} = meta;
 
 	const instance = Object.cast<Dictionary>(new constructor());
@@ -43,7 +53,8 @@ export function fillMeta(
 	}
 
 	const
-		isFunctional = meta.params.functional === true;
+		isRoot = params.root === true,
+		isFunctional = params.functional === true;
 
 	// Methods
 
@@ -104,7 +115,7 @@ export function fillMeta(
 	// Props
 
 	const
-		defaultProps = meta.params.defaultProps !== false;
+		defaultProps = params.defaultProps !== false;
 
 	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
@@ -138,28 +149,52 @@ export function fillMeta(
 			defValue = prop.default !== undefined ? prop.default : defWrapper;
 		}
 
-		component.props[key] = {
-			type: prop.type,
-			required: prop.required !== false && defaultProps && defValue === undefined,
-			default: defValue,
-			functional: prop.functional,
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			validator: prop.validator
-		};
+		if (!isRoot || defValue !== undefined) {
+			component.props[key] = {
+				type: prop.type,
+				required: prop.required !== false && defaultProps && defValue === undefined,
 
-		if (Object.size(prop.watchers) > 0) {
-			const watcherListeners = watchers[key] ?? [];
-			watchers[key] = watcherListeners;
+				default: defValue,
+				functional: prop.functional,
 
-			for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-				const
-					watcher = el.value;
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				validator: prop.validator
+			};
+		}
 
-				if (isFunctional && watcher.functional === false) {
-					continue;
+		if (!isRoot && !isFunctional) {
+			if (Object.size(prop.watchers) > 0) {
+				const watcherListeners = watchers[key] ?? [];
+				watchers[key] = watcherListeners;
+
+				for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+					watcherListeners.push(el.value);
 				}
+			}
 
-				watcherListeners.push(watcher);
+			const
+				normalizedKey = key.replace(bindingRgxp, '');
+
+			if ((computedFields[normalizedKey] ?? accessors[normalizedKey]) != null) {
+				const props = watchPropDependencies.get(normalizedKey) ?? new Set();
+				watchPropDependencies.set(normalizedKey, props);
+
+			} else if (watchDependencies.size > 0) {
+				for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
+					const
+						[key, deps] = el.value;
+
+					for (let j = 0; j < deps.length; j++) {
+						const
+							dep = deps[j];
+
+						if ((Object.isArray(dep) ? dep : dep.split('.'))[0] === prop) {
+							const props = watchPropDependencies.get(key) ?? new Set();
+							watchPropDependencies.set(key, props);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}

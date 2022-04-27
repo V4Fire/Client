@@ -17,12 +17,13 @@ import type {
 	ComponentProp,
 	ComponentField,
 
-	ComponentAccessor,
 	ComponentMethod,
+	ComponentAccessor,
 	ComponentHooks,
 
 	ComponentDirectiveOptions,
-	ComponentWatchDependencies
+	ComponentWatchDependencies,
+	ComponentWatchPropDependencies
 
 } from 'core/component/meta/interface/types';
 
@@ -110,9 +111,14 @@ export interface ComponentMeta {
 	watchers: Dictionary<WatchObject[]>;
 
 	/**
-	 * Map of dependencies to watch (to invalidate the cache of computed fields)
+	 * Map of dependencies to watch (to invalidate cache of computed fields)
 	 */
 	watchDependencies: ComponentWatchDependencies;
+
+	/**
+	 * Map of prop dependencies to watch (to invalidate cache of computed fields)
+	 */
+	watchPropDependencies: ComponentWatchPropDependencies;
 
 	/**
 	 * Map of component hook listeners
