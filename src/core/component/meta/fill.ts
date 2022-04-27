@@ -119,8 +119,8 @@ export function fillMeta(
 
 	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i],
-			prop = o[key];
+			propName = keys[i],
+			prop = o[propName];
 
 		if (prop == null) {
 			continue;
@@ -133,7 +133,7 @@ export function fillMeta(
 
 		if (defaultProps || prop.forceDefault) {
 			skipDefault = false;
-			def = instance[key];
+			def = instance[propName];
 			defWrapper = def;
 
 			if (def != null && typeof def === 'object' && (!isTypeCanBeFunc(prop.type) || !Object.isFunction(def))) {
@@ -150,7 +150,7 @@ export function fillMeta(
 		}
 
 		if (!isRoot || defValue !== undefined) {
-			component.props[key] = {
+			component.props[propName] = {
 				type: prop.type,
 				required: prop.required !== false && defaultProps && defValue === undefined,
 
@@ -164,8 +164,8 @@ export function fillMeta(
 
 		if (!isRoot && !isFunctional) {
 			if (Object.size(prop.watchers) > 0) {
-				const watcherListeners = watchers[key] ?? [];
-				watchers[key] = watcherListeners;
+				const watcherListeners = watchers[propName] ?? [];
+				watchers[propName] = watcherListeners;
 
 				for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 					watcherListeners.push(el.value);
@@ -173,10 +173,13 @@ export function fillMeta(
 			}
 
 			const
-				normalizedKey = key.replace(bindingRgxp, '');
+				normalizedKey = propName.replace(bindingRgxp, '');
 
 			if ((computedFields[normalizedKey] ?? accessors[normalizedKey]) != null) {
-				const props = watchPropDependencies.get(normalizedKey) ?? new Set();
+				const
+					props = watchPropDependencies.get(normalizedKey) ?? new Set();
+
+				props.add(normalizedKey);
 				watchPropDependencies.set(normalizedKey, props);
 
 			} else if (watchDependencies.size > 0) {
@@ -188,8 +191,11 @@ export function fillMeta(
 						const
 							dep = deps[j];
 
-						if ((Object.isArray(dep) ? dep : dep.split('.'))[0] === prop) {
-							const props = watchPropDependencies.get(key) ?? new Set();
+						if ((Object.isArray(dep) ? dep : dep.split('.'))[0] === propName) {
+							const
+								props = watchPropDependencies.get(key) ?? new Set();
+
+							props.add(propName);
 							watchPropDependencies.set(key, props);
 							break;
 						}
