@@ -173,7 +173,7 @@ export interface ComponentOptions {
 	inheritMods?: boolean;
 
 	/**
-	 * If false, then all default values of the component input properties are ignored
+	 * If false, then all default values of the component input properties are ignored.
 	 * This parameter can be inherited from a parent.
 	 *
 	 * @default `true`
