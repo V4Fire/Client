@@ -19,7 +19,7 @@ import watch, {
 
 } from 'core/object/watch';
 
-import { getPropertyInfo, bindingRgxp } from 'core/component/reflect';
+import { getPropertyInfo } from 'core/component/reflect';
 
 import {
 
@@ -52,7 +52,7 @@ export function implementComponentWatchAPI(
 ): void {
 	const {
 		unsafe,
-		unsafe: {$async: $a, meta: {watchDependencies, computedFields, accessors, params}},
+		unsafe: {$async: $a, meta: {computedFields, watchDependencies, watchPropDependencies, params}},
 		$renderEngine: {proxyGetters}
 	} = component;
 
@@ -266,8 +266,8 @@ export function implementComponentWatchAPI(
 				postfixes: ['Prop']
 			};
 
-			// If a component engine does not have the own mechanism of watching
-			// we need to wrap a prop object
+			// If a component engine does not have the own mechanism of watching,
+			// we need to wrap a prop object by myself
 			if (!('watch' in props)) {
 				const propsWatcher = watch(propsStore, propWatchOpts);
 				$a.worker(() => propsWatcher.unwatch());
@@ -275,54 +275,22 @@ export function implementComponentWatchAPI(
 			}
 
 			// We need to attach default watchers for all props that can affect component computed fields
-			if (Object.size(computedFields) > 0 || Object.size(accessors) > 0) {
-				for (let keys = Object.keys(propsStore), i = 0; i < keys.length; i++) {
+			if (watchPropDependencies.size > 0) {
+				for (let o = watchPropDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 					const
-						prop = keys[i],
+						[computed, props] = el.value,
+						tiedLinks = [computed];
 
-						// Remove from the prop name "Store" and "Prop" postfixes
-						normalizedKey = prop.replace(bindingRgxp, '');
+					const
+						immediateHandler = invalidateComputedCache(),
+						handler = emitAccessorEvents();
 
-					let
-						tiedLinks,
-						needWatch = Boolean(computedFields[normalizedKey] ?? accessors[normalizedKey]);
+					// Provide a list of connections to the handlers
+					immediateHandler[tiedWatchers] = tiedLinks;
+					handler[tiedWatchers] = tiedLinks;
 
-					// We have some accessor that tied with this prop
-					if (needWatch) {
-						tiedLinks = [[normalizedKey]];
-
-					// We don't have the direct connection between the prop and any accessor,
-					// but we have a set of dependencies, so we need to check it
-					} else if (watchDependencies.size > 0) {
-						tiedLinks = [];
-
-						for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
-							const
-								[key, deps] = el.value;
-
-							for (let j = 0; j < deps.length; j++) {
-								const
-									dep = deps[j];
-
-								if ((Object.isArray(dep) ? dep[0] : dep) === prop) {
-									needWatch = true;
-									tiedLinks.push([key]);
-									break;
-								}
-							}
-						}
-					}
-
-					// Skip redundant watchers
-					if (needWatch) {
-						const
-							immediateHandler = invalidateComputedCache(),
-							handler = emitAccessorEvents();
-
-						// Provide the list of connections to handlers
-						invalidateComputedCache[tiedWatchers] = tiedLinks;
-						emitAccessorEvents[tiedWatchers] = tiedLinks;
-
+					for (let o = props.values(), el = o.next(); !el.done; el = o.next()) {
+						const prop = el.value;
 						unsafe.$watch(prop, {...propWatchOpts, immediate: true}, immediateHandler);
 						unsafe.$watch(prop, propWatchOpts, handler);
 					}
