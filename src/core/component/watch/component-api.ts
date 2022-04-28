@@ -99,10 +99,6 @@ export function implementComponentWatchAPI(
 				[path, deps] = el.value;
 
 			const
-				rootProp = (Object.isArray(path) ? path : path.split('.'))[0],
-				canCached = computedFields[rootProp] != null && computedFields[rootProp]!.cache !== 'auto';
-
-			const
 				newDeps: typeof deps = [];
 
 			let
@@ -122,29 +118,27 @@ export function implementComponentWatchAPI(
 					continue;
 				}
 
-				if (canCached) {
-					const invalidateCache = (value, oldValue, info) => {
-						info = Object.assign(Object.create(info), {
-							path: Array.concat([], path),
-							parent: {value, oldValue, info}
-						});
+				const invalidateCache = (value, oldValue, info) => {
+					info = Object.assign(Object.create(info), {
+						path: Array.concat([], path),
+						parent: {value, oldValue, info}
+					});
 
-						invalidateComputedCache(value, oldValue, info);
-					};
+					invalidateComputedCache(value, oldValue, info);
+				};
 
-					attachDynamicWatcher(
-						component,
-						watchInfo,
+				attachDynamicWatcher(
+					component,
+					watchInfo,
 
-						{
-							...watchOpts,
-							immediate: true
-						},
+					{
+						...watchOpts,
+						immediate: true
+					},
 
-						invalidateCache,
-						immediateDynamicHandlers
-					);
-				}
+					invalidateCache,
+					immediateDynamicHandlers
+				);
 
 				const broadcastMutations = (mutations, ...args) => {
 					if (args.length > 0) {
@@ -303,35 +297,18 @@ export function implementComponentWatchAPI(
 						invalidateComputedCache = createComputedCacheInvalidator(),
 						broadcastAccessorMutations = createAccessorMutationEmitter();
 
-					let
-						rootProp,
-						tiedLinks;
-
-					if (Object.isArray(path)) {
-						rootProp = path;
-						tiedLinks = [path];
-
-					} else {
-						rootProp = path.split('.')[0];
-						tiedLinks = [[path]];
-					}
+					const
+						tiedLinks = Object.isArray(path) ? [path] : [[path]];
 
 					// Provide a list of connections to the handlers
 					invalidateComputedCache[tiedWatchers] = tiedLinks;
 					broadcastAccessorMutations[tiedWatchers] = tiedLinks;
 
-					const canCached =
-						computedFields[rootProp] != null &&
-						computedFields[rootProp]!.cache !== 'auto';
-
 					for (let o = props.values(), el = o.next(); !el.done; el = o.next()) {
 						const
 							prop = el.value;
 
-						if (canCached) {
-							unsafe.$watch(prop, {...propWatchOpts, flush: 'sync'}, invalidateComputedCache);
-						}
-
+						unsafe.$watch(prop, {...propWatchOpts, flush: 'sync'}, invalidateComputedCache);
 						unsafe.$watch(prop, propWatchOpts, broadcastAccessorMutations);
 					}
 				}
