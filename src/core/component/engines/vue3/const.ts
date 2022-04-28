@@ -14,10 +14,10 @@ export const supports = {
 
 export const proxyGetters = Object.createDict({
 	prop: (ctx) => ({
-		key: '_props',
+		key: '$props',
 
-		get value(): typeof ctx._props {
-			return ctx._props;
+		get value(): typeof ctx.$props {
+			return ctx.$props;
 		},
 
 		watch: (path, handler) => ctx.$vueWatch(path, (val, oldVal) => {
