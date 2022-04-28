@@ -280,7 +280,7 @@ export function implementComponentWatchAPI(
 				for (let o = watchPropDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 					const
 						[computed, props] = el.value,
-						tiedLinks = [computed];
+						tiedLinks = [[computed]];
 
 					const
 						immediateHandler = invalidateComputedCache(),
@@ -292,7 +292,7 @@ export function implementComponentWatchAPI(
 
 					for (let o = props.values(), el = o.next(); !el.done; el = o.next()) {
 						const prop = el.value;
-						unsafe.$watch(prop, {...propWatchOpts, immediate: true}, immediateHandler);
+						unsafe.$watch(prop, {...propWatchOpts, flush: 'sync'}, immediateHandler);
 						unsafe.$watch(prop, propWatchOpts, handler);
 					}
 				}
@@ -347,14 +347,17 @@ export function implementComponentWatchAPI(
 	// The handler to invalidate cache of computed fields
 	function invalidateComputedCache(): RawWatchHandler {
 		// eslint-disable-next-line @typescript-eslint/typedef
-		return function invalidateComputedCache(val, oldVal, info) {
+		return function invalidateComputedCache(val, ...args) {
+			const
+				oldVal = args[0],
+				info = args[1];
+
 			if (info == null) {
 				return;
 			}
 
 			const
-				{path} = info,
-				rootKey = String(path[0]);
+				rootKey = String(info.path[0]);
 
 			// If there has been changed properties that can affect memoized computed fields,
 			// then we need to invalidate these caches
@@ -388,10 +391,7 @@ export function implementComponentWatchAPI(
 
 			for (let i = 0; i < mutations.length; i++) {
 				const
-					eventArgs = mutations[i],
-					info = eventArgs[2];
-
-				const
+					[val, oldVal, info] = mutations[i],
 					{path} = info;
 
 				if (path[path.length - 1] === '__proto__') {
@@ -423,7 +423,7 @@ export function implementComponentWatchAPI(
 							continue;
 						}
 
-						handler(...eventArgs);
+						handler(val, oldVal, info);
 						usedHandlers.add(handler);
 
 						if (timerId == null) {
