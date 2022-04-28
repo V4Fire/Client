@@ -1,3 +1,5 @@
+/* eslint-disable max-lines-per-function */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -343,8 +345,8 @@ export function implementComponentWatchAPI(
 		}
 
 		mute(watcher.proxy);
-
 		watcher.proxy[toComponentObject] = component;
+
 		Object.defineProperty(component, name, {
 			enumerable: true,
 			configurable: true,
@@ -368,11 +370,21 @@ export function implementComponentWatchAPI(
 			immediate: true
 		};
 
-		fieldsWatcher = watch(fieldsInfo.value, immediateFieldWatchOpts, createComputedCacheInvalidator());
+		fieldsWatcher = watch(
+			fieldsInfo.value,
+			immediateFieldWatchOpts,
+			createComputedCacheInvalidator()
+		);
+
 		$a.worker(() => fieldsWatcher.unwatch());
 
 		{
-			const w = watch(fieldsWatcher.proxy, fieldWatchOpts, createAccessorMutationEmitter());
+			const w = watch(
+				fieldsWatcher.proxy,
+				fieldWatchOpts,
+				createAccessorMutationEmitter()
+			);
+
 			$a.worker(() => w.unwatch());
 		}
 
