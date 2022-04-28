@@ -129,12 +129,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			return null;
 		}
 
-		const {flush} = normalizedOpts;
-		delete normalizedOpts.flush;
+		const
+			{flush} = normalizedOpts;
 
-		if (flush === 'sync') {
-			normalizedOpts.immediate = true;
-		}
+		delete normalizedOpts.flush;
+		normalizedOpts.immediate = flush === 'sync';
 
 		let
 			oldVal;
