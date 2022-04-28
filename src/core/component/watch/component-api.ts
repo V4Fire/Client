@@ -81,11 +81,11 @@ export function implementComponentWatchAPI(
 	// find external dependencies and attach watchers that directly update state
 	if (watchDependencies.size > 0) {
 		const
-			immediateHandler = invalidateComputedCache(),
-			handler = emitAccessorEvents();
+			invalidateComputedCache = createComputedCacheInvalidator(),
+			broadcastAccessorMutations = createAccessorMutationEmitter();
 
-		handler[tiedWatchers] = [];
-		immediateHandler[tiedWatchers] = handler[tiedWatchers];
+		broadcastAccessorMutations[tiedWatchers] = [];
+		invalidateComputedCache[tiedWatchers] = broadcastAccessorMutations[tiedWatchers];
 
 		const watchOpts = {
 			deep: true,
@@ -94,7 +94,11 @@ export function implementComponentWatchAPI(
 
 		for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 			const
-				[key, deps] = el.value;
+				[path, deps] = el.value;
+
+			const
+				rootProp = (Object.isArray(path) ? path : path.split('.'))[0],
+				canCached = computedFields[rootProp] != null && computedFields[rootProp]!.cache !== 'auto';
 
 			const
 				newDeps: typeof deps = [];
@@ -103,12 +107,12 @@ export function implementComponentWatchAPI(
 				needForkDeps = false;
 
 			for (let j = 0; j < deps.length; j++) {
+				const dep = deps[j];
+				newDeps[j] = dep;
+
 				const
-					dep = deps[j],
 					depPath = Object.isString(dep) ? dep : dep.join('.'),
 					watchInfo = getPropertyInfo(depPath, component);
-
-				newDeps[j] = dep;
 
 				if (watchInfo.ctx === component && !watchDependencies.has(dep)) {
 					needForkDeps = true;
@@ -116,29 +120,31 @@ export function implementComponentWatchAPI(
 					continue;
 				}
 
-				const invalidateCache = (value, oldValue, info) => {
-					info = Object.assign(Object.create(info), {
-						path: [key],
-						parent: {value, oldValue, info}
-					});
+				if (canCached) {
+					const invalidateCache = (value, oldValue, info) => {
+						info = Object.assign(Object.create(info), {
+							path: Array.concat([], path),
+							parent: {value, oldValue, info}
+						});
 
-					immediateHandler(value, oldValue, info);
-				};
+						invalidateComputedCache(value, oldValue, info);
+					};
 
-				attachDynamicWatcher(
-					component,
-					watchInfo,
+					attachDynamicWatcher(
+						component,
+						watchInfo,
 
-					{
-						...watchOpts,
-						immediate: true
-					},
+						{
+							...watchOpts,
+							immediate: true
+						},
 
-					invalidateCache,
-					immediateDynamicHandlers
-				);
+						invalidateCache,
+						immediateDynamicHandlers
+					);
+				}
 
-				const broadcastEvents = (mutations, ...args) => {
+				const broadcastMutations = (mutations, ...args) => {
 					if (args.length > 0) {
 						mutations = [Object.cast([mutations, ...args])];
 					}
@@ -155,7 +161,7 @@ export function implementComponentWatchAPI(
 							oldValue,
 
 							Object.assign(Object.create(info), {
-								path: [key],
+								path: Array.concat([], path),
 
 								originalPath: watchInfo.type === 'mounted' ?
 									[watchInfo.name, ...info.originalPath] :
@@ -166,14 +172,14 @@ export function implementComponentWatchAPI(
 						]);
 					}
 
-					handler(modifiedMutations);
+					broadcastAccessorMutations(modifiedMutations);
 				};
 
-				attachDynamicWatcher(component, watchInfo, watchOpts, broadcastEvents, dynamicHandlers);
+				attachDynamicWatcher(component, watchInfo, watchOpts, broadcastMutations, dynamicHandlers);
 			}
 
 			if (needForkDeps) {
-				watchDependencies.set(key, newDeps);
+				watchDependencies.set(path, newDeps);
 			}
 		}
 	}
@@ -213,11 +219,21 @@ export function implementComponentWatchAPI(
 			immediate: true
 		};
 
-		const systemFieldsWatcher = watch(systemFieldsInfo.value, immediateSystemWatchOpts, invalidateComputedCache());
+		const systemFieldsWatcher = watch(
+			systemFieldsInfo.value,
+			immediateSystemWatchOpts,
+			createComputedCacheInvalidator()
+		);
+
 		$a.worker(() => systemFieldsWatcher.unwatch());
 
 		{
-			const w = watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents());
+			const w = watch(
+				systemFieldsWatcher.proxy,
+				watchOpts,
+				createAccessorMutationEmitter()
+			);
+
 			$a.worker(() => w.unwatch());
 		}
 
@@ -279,28 +295,48 @@ export function implementComponentWatchAPI(
 			if (watchPropDependencies.size > 0) {
 				for (let o = watchPropDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 					const
-						[computed, props] = el.value,
-						tiedLinks = [[computed]];
+						[path, props] = el.value;
 
 					const
-						immediateHandler = invalidateComputedCache(),
-						handler = emitAccessorEvents();
+						invalidateComputedCache = createComputedCacheInvalidator(),
+						broadcastAccessorMutations = createAccessorMutationEmitter();
+
+					let
+						rootProp,
+						tiedLinks;
+
+					if (Object.isArray(path)) {
+						rootProp = path;
+						tiedLinks = [path];
+
+					} else {
+						rootProp = path.split('.')[0];
+						tiedLinks = [[path]];
+					}
 
 					// Provide a list of connections to the handlers
-					immediateHandler[tiedWatchers] = tiedLinks;
-					handler[tiedWatchers] = tiedLinks;
+					invalidateComputedCache[tiedWatchers] = tiedLinks;
+					broadcastAccessorMutations[tiedWatchers] = tiedLinks;
+
+					const canCached =
+						computedFields[rootProp] != null &&
+						computedFields[rootProp]!.cache !== 'auto';
 
 					for (let o = props.values(), el = o.next(); !el.done; el = o.next()) {
-						const prop = el.value;
-						unsafe.$watch(prop, {...propWatchOpts, flush: 'sync'}, immediateHandler);
-						unsafe.$watch(prop, propWatchOpts, handler);
+						const
+							prop = el.value;
+
+						if (canCached) {
+							unsafe.$watch(prop, {...propWatchOpts, flush: 'sync'}, invalidateComputedCache);
+						}
+
+						unsafe.$watch(prop, propWatchOpts, broadcastAccessorMutations);
 					}
 				}
 			}
 		}
 	}
 
-	// Initializes the specified watcher on a component instance
 	function initWatcher(name: Nullable<string>, watcher: Watcher) {
 		if (name == null) {
 			return;
@@ -326,26 +362,24 @@ export function implementComponentWatchAPI(
 		}
 	}
 
-	// Initializes the field watcher on a component instance
 	function initFieldsWatcher() {
 		const immediateFieldWatchOpts = {
 			...fieldWatchOpts,
 			immediate: true
 		};
 
-		fieldsWatcher = watch(fieldsInfo.value, immediateFieldWatchOpts, invalidateComputedCache());
+		fieldsWatcher = watch(fieldsInfo.value, immediateFieldWatchOpts, createComputedCacheInvalidator());
 		$a.worker(() => fieldsWatcher.unwatch());
 
 		{
-			const w = watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
+			const w = watch(fieldsWatcher.proxy, fieldWatchOpts, createAccessorMutationEmitter());
 			$a.worker(() => w.unwatch());
 		}
 
 		initWatcher(fieldsInfo.key, fieldsWatcher);
 	}
 
-	// The handler to invalidate cache of computed fields
-	function invalidateComputedCache(): RawWatchHandler {
+	function createComputedCacheInvalidator(): RawWatchHandler {
 		// eslint-disable-next-line @typescript-eslint/typedef
 		return function invalidateComputedCache(val, ...args) {
 			const
@@ -380,8 +414,7 @@ export function implementComponentWatchAPI(
 		};
 	}
 
-	// The handler to broadcast events of accessors
-	function emitAccessorEvents(): MultipleWatchHandler {
+	function createAccessorMutationEmitter(): MultipleWatchHandler {
 		// eslint-disable-next-line @typescript-eslint/typedef
 		return function emitAccessorEvents(mutations, ...args) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
