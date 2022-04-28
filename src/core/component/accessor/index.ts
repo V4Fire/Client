@@ -30,29 +30,18 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
-	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			accessor = o[key];
-
-		if (accessor == null || component[key] != null || !ssrMode && isFunctional && accessor.functional === false) {
-			continue;
-		}
-
-		Object.defineProperty(component, keys[i], {
-			configurable: true,
-			enumerable: true,
-			get: accessor.get,
-			set: accessor.set
-		});
-	}
-
 	for (let o = meta.computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			computed = o[key];
 
-		if (computed == null || component[key] != null || !ssrMode && isFunctional && computed.functional === false) {
+		const canSkip =
+			computed == null ||
+			computed.cache === 'auto' ||
+			component[key] != null ||
+			!ssrMode && isFunctional && computed.functional === false;
+
+		if (canSkip) {
 			continue;
 		}
 
@@ -69,11 +58,33 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			return get[cacheStatus] = computed.get!.call(this);
 		};
 
-		Object.defineProperty(component, keys[i], {
+		Object.defineProperty(component, key, {
 			configurable: true,
 			enumerable: true,
 			get: computed.get != null ? get : undefined,
 			set: computed.set
+		});
+	}
+
+	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			accessor = o[key];
+
+		const canSkip =
+			accessor == null ||
+			component[key] != null ||
+			!ssrMode && isFunctional && accessor.functional === false;
+
+		if (canSkip) {
+			continue;
+		}
+
+		Object.defineProperty(component, key, {
+			configurable: true,
+			enumerable: true,
+			get: accessor.get,
+			set: accessor.set
 		});
 	}
 

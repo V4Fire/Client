@@ -6,14 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchPath } from 'core/component/interface';
+import type { WatchPath, ComponentAccessorCacheType } from 'core/component/interface';
 import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface/types';
 
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	/**
-	 * If true, the accessor value will be cached every time it read or changed
+	 * If true, the accessor value will be cached every time it read or changed.
+	 * The option is set to true by default if also provided `dependencies` or the bound accessor matches by a name with
+	 * another prop or field. If the options value is passed as `auto`, caching will be delegated to the used render
+	 * engine.
 	 */
-	cache?: boolean;
+	cache?: ComponentAccessorCacheType;
 
 	/**
 	 * If true, mutations of the accessor value can be watched

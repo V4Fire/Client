@@ -69,6 +69,7 @@ export function paramsFactory<T = object>(
 
 				} else if (
 					p.cache === true ||
+					p.cache === 'auto' ||
 					p.cache !== false && (Object.isArray(p.dependencies) || key in meta.computedFields)
 				) {
 					metaKey = 'computedFields';
@@ -140,15 +141,20 @@ export function paramsFactory<T = object>(
 					return;
 				}
 
-				const hasCache = 'cache' in p;
-				delete p.cache;
+				const needOverrideComputed = metaKey === 'accessors' ?
+					key in meta.computedFields :
+					!('cache' in p) && key in meta.accessors;
 
-				if (metaKey === 'accessors' ? key in meta.computedFields : !hasCache && key in meta.accessors) {
-					metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p});
+				if (needOverrideComputed) {
+					metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p, cache: false});
 					delete meta.computedFields[key];
 
 				} else {
-					metaCluster[key] = wrapOpts({...info, ...p});
+					metaCluster[key] = wrapOpts({
+						...info,
+						...p,
+						cache: metaKey === 'computedFields' ? p.cache ?? true : false
+					});
 				}
 
 				if (p.dependencies != null) {
