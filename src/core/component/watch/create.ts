@@ -13,6 +13,7 @@ import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
+import type { ComponentMeta } from 'core/component/meta';
 import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 /**
@@ -27,8 +28,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 	// eslint-disable-next-line @typescript-eslint/typedef,max-lines-per-function
 	return function watchFn(this: unknown, path, optsOrHandler, rawHandler?) {
 		let
-			handler: RawWatchHandler,
-			opts: WatchOptions;
+			info: PropertyInfo,
+			opts: WatchOptions,
+			handler: RawWatchHandler;
 
 		if (Object.isFunction(optsOrHandler)) {
 			handler = optsOrHandler;
@@ -39,8 +41,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			opts = optsOrHandler ?? {};
 		}
 
-		let
-			info: PropertyInfo;
+		const
+			originalHandler = handler;
 
 		if (Object.isString(path)) {
 			info = getPropertyInfo(path, component);
@@ -60,10 +62,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 		}
 
+		const
+			isDefinedPath = Object.size(info.path) > 0;
+
 		let
-			meta,
 			isRoot = false,
-			isFunctional = false;
+			isFunctional = false,
+			meta: CanUndef<ComponentMeta> = undefined;
 
 		if (info.type !== 'mounted') {
 			const
@@ -85,11 +90,11 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			switch (info.type) {
 				case 'system':
-					f = meta.systemFields[info.name];
+					f = meta?.systemFields[info.name];
 					break;
 
 				case 'field':
-					f = meta.fields[info.name];
+					f = meta?.fields[info.name];
 					break;
 
 				default:
@@ -105,9 +110,9 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			isAccessor = Boolean(info.type === 'accessor' || info.type === 'computed' || info.accessor),
 			isMountedWatcher = info.type === 'mounted';
 
-		const
-			isDefinedPath = Object.size(info.path) > 0,
-			watchInfo = isAccessor ? null : component.$renderEngine.proxyGetters[info.type]?.(info.ctx);
+		const watchInfo = !isAccessor ?
+			component.$renderEngine.proxyGetters[info.type]?.(info.ctx) :
+			null;
 
 		const normalizedOpts: WatchOptions = {
 			collapse: true,
@@ -124,8 +129,12 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			return null;
 		}
 
-		const
-			originalHandler = handler;
+		const {flush} = normalizedOpts;
+		delete normalizedOpts.flush;
+
+		if (flush === 'sync') {
+			normalizedOpts.immediate = true;
+		}
 
 		let
 			oldVal;
@@ -150,25 +159,33 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			}
 
 			handler = (val, _, i) => {
-				if (!isDefinedPath && Object.isArray(val) && val.length > 0) {
-					i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+				const h = () => {
+					if (!isDefinedPath && Object.isArray(val) && val.length > 0) {
+						i = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+					}
+
+					if (isMountedWatcher) {
+						val = info.ctx;
+						patchPath(i);
+
+					} else if (isAccessor) {
+						val = Object.get(info.ctx, info.accessor ?? info.name);
+					}
+
+					const
+						res = originalHandler.call(this, val, oldVal, i);
+
+					oldVal = cloneWatchValue(isDefinedPath ? val : getVal(), normalizedOpts);
+					Object.set(watchCache, cacheKey, oldVal);
+
+					return res;
+				};
+
+				if (flush === 'post') {
+					return component.$nextTick().then(h);
 				}
 
-				if (isMountedWatcher) {
-					val = info.ctx;
-					patchPath(i);
-
-				} else if (isAccessor) {
-					val = Object.get(info.ctx, info.accessor ?? info.name);
-				}
-
-				const
-					res = originalHandler.call(this, val, oldVal, i);
-
-				oldVal = cloneWatchValue(isDefinedPath ? val : getVal(), normalizedOpts);
-				Object.set(watchCache, cacheKey, oldVal);
-
-				return res;
+				return h();
 			};
 
 			handler[tiedWatchers] = originalHandler[tiedWatchers];
@@ -182,46 +199,62 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		} else {
 			if (isMountedWatcher) {
 				handler = (val, ...args) => {
-					let
-						oldVal = args[0],
-						handlerParams = args[1];
+					const h = () => {
+						let
+							oldVal = args[0],
+							handlerParams = args[1];
 
-					if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
-						handlerParams = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
+						if (!isDefinedPath && needCollapse && Object.isArray(val) && val.length > 0) {
+							handlerParams = (<[unknown, unknown, PropertyInfo]>val[val.length - 1])[2];
 
-					} else if (args.length === 0) {
-						return originalHandler.call(this, val.map(([val, oldVal, i]) => {
-							patchPath(i);
-							return [val, oldVal, i];
-						}));
+						} else if (args.length === 0) {
+							return originalHandler.call(this, val.map(([val, oldVal, i]) => {
+								patchPath(i);
+								return [val, oldVal, i];
+							}));
+						}
+
+						if (needCollapse) {
+							val = info.ctx;
+							oldVal = val;
+						}
+
+						patchPath(handlerParams);
+						return originalHandler.call(this, val, oldVal, handlerParams);
+					};
+
+					if (flush === 'post') {
+						return component.$nextTick().then(h);
 					}
 
-					if (needCollapse) {
-						val = info.ctx;
-						oldVal = val;
-					}
-
-					patchPath(handlerParams);
-					return originalHandler.call(this, val, oldVal, handlerParams);
+					return h();
 				};
 
 			} else if (isAccessor) {
 				handler = (val, _, i) => {
-					if (needCollapse) {
-						val = Object.get(info.ctx, info.accessor ?? info.name);
+					const h = () => {
+						if (needCollapse) {
+							val = Object.get(info.ctx, info.accessor ?? info.name);
 
-					} else {
-						val = Object.get(component, info.originalPath);
+						} else {
+							val = Object.get(component, info.originalPath);
+						}
+
+						if (!isDefinedPath && Object.isArray(i?.path)) {
+							oldVal = Object.get(oldVal, [i.path[0]]);
+						}
+
+						const res = originalHandler.call(this, val, oldVal, i);
+						oldVal = isDefinedPath ? val : getVal();
+
+						return res;
+					};
+
+					if (flush === 'post') {
+						return component.$nextTick().then(h);
 					}
 
-					if (!isDefinedPath && Object.isArray(i?.path)) {
-						oldVal = Object.get(oldVal, [i.path[0]]);
-					}
-
-					const res = originalHandler.call(this, val, oldVal, i);
-					oldVal = isDefinedPath ? val : getVal();
-
-					return res;
+					return h();
 				};
 			}
 

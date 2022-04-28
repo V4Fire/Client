@@ -6,13 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchPath as RawWatchPath, WatchOptions, WatchHandlerParams } from 'core/object/watch';
+import type {
+
+	WatchPath as RawWatchPath,
+	WatchOptions as RawWatchOptions,
+	WatchHandlerParams
+
+} from 'core/object/watch';
+
 import type { Group, Label, Join } from 'core/async';
 
 import type { PropertyInfo } from 'core/component/reflect';
 import type { ComponentInterface } from 'core/component/interface/component';
 
-export { WatchOptions, WatchHandlerParams };
+export { WatchHandlerParams };
+
+export type Flush = 'post' | 'pre' | 'sync';
+
+export interface WatchOptions extends RawWatchOptions {
+	flush?: Flush;
+}
 
 export interface FieldWatcher<
 	A = unknown,
