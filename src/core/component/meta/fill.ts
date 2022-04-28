@@ -179,7 +179,7 @@ export function fillMeta(
 				const
 					props = watchPropDependencies.get(normalizedKey) ?? new Set();
 
-				props.add(normalizedKey);
+				props.add(propName);
 				watchPropDependencies.set(normalizedKey, props);
 
 			} else if (watchDependencies.size > 0) {
