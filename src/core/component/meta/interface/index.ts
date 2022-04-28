@@ -7,7 +7,7 @@
  */
 
 import type { PropOptions } from 'core/component/decorators';
-import type { RenderFunction } from 'core/component/engines';
+import type { RenderFunction, WritableComputedOptions } from 'core/component/engines';
 
 import type { WatchObject, ComponentConstructor, ModsDecl } from 'core/component/interface';
 import type { ComponentOptions } from 'core/component/meta/interface/options';
@@ -145,6 +145,11 @@ export interface ComponentMeta {
 		 * Map of component input properties
 		 */
 		props: Dictionary<PropOptions>;
+
+		/**
+		 * Map of component computed fields
+		 */
+		computed: Dictionary<Partial<WritableComputedOptions<unknown>>>;
 
 		/**
 		 * Map of component methods

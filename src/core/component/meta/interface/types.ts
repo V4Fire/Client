@@ -48,8 +48,13 @@ export interface ComponentComputedField<T = unknown> extends Partial<WritableCom
 
 }
 
+export type ComponentAccessorCacheType =
+	boolean |
+	'auto';
+
 export interface ComponentAccessor<T = unknown> extends Partial<WritableComputedOptions<T>> {
 	src: string;
+	cache: ComponentAccessorCacheType;
 	functional?: boolean;
 	watchable?: boolean;
 }

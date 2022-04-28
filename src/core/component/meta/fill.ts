@@ -56,62 +56,6 @@ export function fillMeta(
 		isRoot = params.root === true,
 		isFunctional = params.functional === true;
 
-	// Methods
-
-	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			nm = keys[i],
-			method = o[nm];
-
-		if (method == null) {
-			continue;
-		}
-
-		component.methods[nm] = function wrapper() {
-			// eslint-disable-next-line prefer-rest-params
-			return method.fn.apply(getComponentContext(this), arguments);
-		};
-
-		if (method.watchers != null) {
-			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					watcher = <NonNullable<WatchObject>>o[key];
-
-				if (isFunctional && watcher.functional === false) {
-					continue;
-				}
-
-				const
-					watcherListeners = watchers[key] ?? [];
-
-				watchers[key] = watcherListeners;
-				watcherListeners.push({
-					...watcher,
-					method: nm,
-					args: Array.concat([], watcher.args),
-					handler: Object.cast(method.fn)
-				});
-			}
-		}
-
-		// Hooks
-
-		if (method.hooks) {
-			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					hook = o[key];
-
-				if (isFunctional && hook.functional === false) {
-					continue;
-				}
-
-				hooks[key].push({...hook, fn: method.fn});
-			}
-		}
-	}
-
 	// Props
 
 	const
@@ -228,6 +172,79 @@ export function fillMeta(
 					watchers[key] = watcherListeners;
 					watcherListeners.push(watcher);
 				}
+			}
+		}
+	}
+
+	// Computed fields
+
+	for (let o = computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			nm = keys[i],
+			computed = o[nm];
+
+		if (computed == null || computed.cache !== 'auto') {
+			continue;
+		}
+
+		component.computed[nm] = {
+			get: computed.get,
+			set: computed.set
+		};
+	}
+
+	// Methods
+
+	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			nm = keys[i],
+			method = o[nm];
+
+		if (method == null) {
+			continue;
+		}
+
+		component.methods[nm] = function wrapper() {
+			// eslint-disable-next-line prefer-rest-params
+			return method.fn.apply(getComponentContext(this), arguments);
+		};
+
+		if (method.watchers != null) {
+			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					watcher = <NonNullable<WatchObject>>o[key];
+
+				if (isFunctional && watcher.functional === false) {
+					continue;
+				}
+
+				const
+					watcherListeners = watchers[key] ?? [];
+
+				watchers[key] = watcherListeners;
+				watcherListeners.push({
+					...watcher,
+					method: nm,
+					args: Array.concat([], watcher.args),
+					handler: Object.cast(method.fn)
+				});
+			}
+		}
+
+		// Method hooks
+
+		if (method.hooks) {
+			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					hook = o[key];
+
+				if (isFunctional && hook.functional === false) {
+					continue;
+				}
+
+				hooks[key].push({...hook, fn: method.fn});
 			}
 		}
 	}
