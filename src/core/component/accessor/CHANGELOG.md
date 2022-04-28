@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :rocket: New Feature
+
+* Added a new cache type for accessors `auto`
+
 #### :house: Internal
 
 * Refactoring
