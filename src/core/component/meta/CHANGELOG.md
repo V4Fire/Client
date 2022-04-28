@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :rocket: New Feature
+
+* Added support for cache delegation of computed fields
+
 #### :house: Internal
 
 * Refactoring
