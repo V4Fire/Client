@@ -31,6 +31,7 @@ b-input extends i-input-text
 
 	&__input-wrapper
 		width 100%
+		position relative
 
 	&__input
 		width 100%
@@ -72,3 +73,18 @@ b-input extends i-input-text
 	&_focused_true&_empty_false:not(&_readonly_true) &__clear
 		display block
 		visibility visible
+
+	&__input:first-child
+		position relative
+		z-index 2
+
+	&__additional-phrase
+		position absolute
+		left 0
+		border none
+		outline none
+		color $p.exterior_material_labelColor
+		z-index 1
+
+	&_empty_true &__additional-phrase
+		display none

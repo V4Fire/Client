@@ -196,6 +196,12 @@ export default class bInput extends iInputText {
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
 
+	/**
+	 * Additional phrase, which will display after input value as placeholder
+	 */
+	@prop({type: String, required: false})
+	additionalPhrase?: string;
+
 	override get value(): this['Value'] {
 		return this.field.get<this['Value']>('valueStore')!;
 	}
@@ -207,6 +213,13 @@ export default class bInput extends iInputText {
 
 	override get default(): this['Value'] {
 		return this.defaultProp != null ? String(this.defaultProp) : '';
+	}
+
+	/**
+	 * True, if component has additional phrase
+	 */
+	get hasAdditionalPhrase(): boolean {
+		return Object.isString(this.additionalPhrase) && this.additionalPhrase !== '';
 	}
 
 	static override validators: ValidatorsDecl = {
@@ -320,6 +333,10 @@ export default class bInput extends iInputText {
 		}
 	}
 
+	protected override readonly $refs!: iInputText['$refs'] & {
+		additionalPhrase?: HTMLInputElement;
+	};
+
 	protected override onMaskInput(): Promise<boolean> {
 		return super.onMaskInput().then((res) => {
 			if (res) {
@@ -346,5 +363,17 @@ export default class bInput extends iInputText {
 		}
 
 		return false;
+	}
+
+	override onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): void {
+		super.onValueChange(value, oldValue);
+
+		if (this.hasAdditionalPhrase) {
+			const {additionalPhrase} = this.$refs;
+
+			if (additionalPhrase) {
+				additionalPhrase.value = `${value} ${this.additionalPhrase}`;
+			}
+		}
 	}
 }

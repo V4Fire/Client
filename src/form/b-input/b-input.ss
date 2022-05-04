@@ -47,6 +47,13 @@
 					< _.&__cell.&__input-wrapper
 						+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
+						< input.&__additional-phrase &
+							v-if = hasAdditionalPhrase |
+							ref = additionalPhrase |
+							:class = provide.elClasses({input: {}}) |
+							@click = focus
+						.
+
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
 						+= self.slot('icon', { &
