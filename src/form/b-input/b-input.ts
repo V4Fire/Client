@@ -228,6 +228,10 @@ export default class bInput extends iInputText {
 		...Validators
 	};
 
+	protected override readonly $refs!: iInputText['$refs'] & {
+		additionalPhrase?: HTMLInputElement;
+	};
+
 	@system()
 	protected override valueStore!: this['Value'];
 
@@ -332,10 +336,6 @@ export default class bInput extends iInputText {
 			this.emit('actionChange', this.value);
 		}
 	}
-
-	protected override readonly $refs!: iInputText['$refs'] & {
-		additionalPhrase?: HTMLInputElement;
-	};
 
 	protected override onMaskInput(): Promise<boolean> {
 		return super.onMaskInput().then((res) => {
