@@ -324,6 +324,7 @@ export default class bInput extends iInputText {
 
 		this.value = this.$refs.input.value;
 		this.field.set('textStore', this.value);
+		this.updateAdditionalInputValue(this.value);
 		this.emit('actionChange', this.value);
 	}
 
@@ -365,9 +366,7 @@ export default class bInput extends iInputText {
 		return false;
 	}
 
-	protected override onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): void {
-		super.onValueChange(value, oldValue);
-
+	protected updateAdditionalInputValue(value: string): void {
 		if (this.hasAdditionalPhrase) {
 			const {additionalPhrase} = this.$refs;
 

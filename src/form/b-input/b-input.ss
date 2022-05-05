@@ -47,10 +47,10 @@
 					< _.&__cell.&__input-wrapper
 						+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
-						< input.&__additional-phrase &
+						< input.&__additional-phrase.&__input &
 							v-if = hasAdditionalPhrase |
 							ref = additionalPhrase |
-							:class = provide.elClasses({input: {}}) |
+							:value = value + ' ' + additionalPhrase |
 							@click = focus
 						.
 
