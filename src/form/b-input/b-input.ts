@@ -365,7 +365,7 @@ export default class bInput extends iInputText {
 		return false;
 	}
 
-	override onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): void {
+	protected override onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): void {
 		super.onValueChange(value, oldValue);
 
 		if (this.hasAdditionalPhrase) {
