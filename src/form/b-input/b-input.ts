@@ -311,6 +311,7 @@ export default class bInput extends iInputText {
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
+		this.updateAdditionalInputValue(this.text);
 	}
 
 	/**
@@ -324,7 +325,6 @@ export default class bInput extends iInputText {
 
 		this.value = this.$refs.input.value;
 		this.field.set('textStore', this.value);
-		this.updateAdditionalInputValue(this.value);
 		this.emit('actionChange', this.value);
 	}
 
