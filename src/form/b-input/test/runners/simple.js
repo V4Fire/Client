@@ -108,5 +108,68 @@ module.exports = (page) => {
 
 			).toEqual(['foo', 'bar', 'bar', 'bla']);
 		});
+
+		it('hide additional phrase if it not provided', async () => {
+			const target = await initInput(page);
+
+			expect(
+				await target.evaluate((ctx) => Object.isTruly(ctx.$refs.additionalPhrase))
+			).toBeFalsy();
+		});
+
+		it('show additional phrase if it provided', async () => {
+			const target = await initInput(page, {additionalPhrase: 'extra text'});
+
+			expect(
+				await target.evaluate((ctx) => Object.isTruly(ctx.$refs.additionalPhrase))
+			).toBeTruthy();
+		});
+
+		it('value of additional phrase input', async () => {
+			const target = await initInput(page, {value: 'text', additionalPhrase: 'extra text'});
+
+			expect(
+				await target.evaluate((ctx) => ctx.$refs.additionalPhrase.value)
+			).toBe('text extra text');
+
+			expect(
+				await target.evaluate((ctx) => {
+					ctx.value = '10';
+					return ctx.$refs.additionalPhrase.value;
+				})
+			).toBe('10 extra text');
+		});
+
+		it('additional input can not be focused', async () => {
+			const target = await initInput(page, {value: 'text', additionalPhrase: 'extra text'});
+
+			expect(
+				await target.evaluate((ctx) => {
+					const {additionalPhrase, input} = ctx.$refs;
+					additionalPhrase.dispatchEvent(new FocusEvent('focus', {data: additionalPhrase}));
+					return document.activeElement === input;
+				})
+			).toBeTruthy();
+		});
+
+		it('additional input can not be focused by click', async () => {
+			const target = await initInput(page, {value: 'text', additionalPhrase: 'extra text'});
+
+			expect(
+				await target.evaluate((ctx) => {
+					const {additionalPhrase, input} = ctx.$refs;
+					additionalPhrase.dispatchEvent(new Event('click', {data: additionalPhrase}));
+					return document.activeElement === input;
+				})
+			).toBeTruthy();
+		});
+
+		it('additional input has "display: none" if value empty ', async () => {
+			const target = await initInput(page, {additionalPhrase: 'extra text'});
+
+			expect(
+				await target.evaluate((ctx) => getComputedStyle(ctx.$refs.additionalPhrase).display)
+			).toBe('none');
+		});
 	});
 };
