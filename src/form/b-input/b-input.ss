@@ -49,9 +49,11 @@
 
 						< input.&__additional-phrase.&__input &
 							v-if = hasAdditionalPhrase |
+							tabindex = -1 |
 							ref = additionalPhrase |
 							:value = value + ' ' + additionalPhrase |
-							@click = focus
+							@click = focus |
+							@focus = focus
 						.
 
 				- block icon
