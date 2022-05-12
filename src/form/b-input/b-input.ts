@@ -367,12 +367,18 @@ export default class bInput extends iInputText {
 	}
 
 	protected updateAdditionalInputValue(value: string): void {
-		if (this.hasAdditionalPhrase) {
-			const {additionalPhrase} = this.$refs;
-
-			if (additionalPhrase) {
-				additionalPhrase.value = `${value} ${this.additionalPhrase}`;
-			}
+		if (!this.hasAdditionalPhrase) {
+			return;
 		}
+
+		const {additionalPhrase, input} = this.$refs;
+
+		if (!additionalPhrase) {
+			return;
+		}
+
+		additionalPhrase.value = input.scrollWidth > input.clientWidth ?
+			'' :
+			`${value} ${this.additionalPhrase}`;
 	}
 }
