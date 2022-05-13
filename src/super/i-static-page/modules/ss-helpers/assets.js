@@ -10,11 +10,8 @@ const
 	{webpack} = require('@config/config');
 
 const
-	$C = require('collection.js');
-
-const
 	fs = require('fs-extra'),
-	delay = require('delay');
+	$C = require('collection.js');
 
 const
 	{assetsJS, assetsJSON, isStandalone} = include('build/helpers'),
@@ -29,7 +26,7 @@ exports.getAssets = getAssets;
  * @param {!Object<!Array<string>>} entryPoints
  * @returns {!Promise<!Object<string>>}
  */
-async function getAssets(entryPoints) {
+function getAssets(entryPoints) {
 	const
 		assets = {},
 		assetsBlueprint = [];
@@ -42,21 +39,13 @@ async function getAssets(entryPoints) {
 		}
 	});
 
-	await $C(assetsBlueprint).async.forEach(fillAssets);
+	assetsBlueprint.forEach(() => {
+		$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
+			assets[key] = rawAssets[key];
+		});
+	});
+
 	return assets;
-
-	async function fillAssets(dep) {
-		while (!assets[dep]) {
-			try {
-				$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
-					assets[key] = rawAssets[key];
-				});
-
-			} catch {}
-
-			await delay((1).second());
-		}
-	}
 }
 
 exports.getAssetsDecl = getAssetsDecl;

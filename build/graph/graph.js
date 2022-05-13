@@ -103,7 +103,7 @@ async function buildProjectGraph() {
 
 	const
 		graph = await buildConfig.getUnionEntryPoints({cache: components}),
-		processes = $C(MIN_PROCESS).map(() => ({}));
+		processes = $C(MIN_PROCESS).map(() => ({entries: {}}));
 
 	// Generate dynamic entries to build with webpack
 	const entry = await $C(graph.entry)
@@ -111,7 +111,24 @@ async function buildProjectGraph() {
 		.to({})
 		.reduce(entryReducer);
 
-	// Move HTML tasks to the end of the build queue
+	processes[HTML].name = 'snakeskin';
+	processes[RUNTIME].name = 'runtime';
+	processes[STANDALONE].name = 'standalone';
+
+	processes.forEach((proc, i) => {
+		if (!proc.name) {
+			if (Object.values(proc.entries).some((entry) => /\.styl/.test(entry))) {
+				proc.name = 'styles';
+			} else {
+				proc.name = `assets_${i}`;
+			}
+		}
+	});
+
+	processes[HTML].dependencies = processes
+		.map((proc) => proc.name)
+		.filter((name) => name !== processes[HTML].name);
+
 	processes.push(processes[HTML]);
 	processes.splice(HTML, 1);
 
@@ -180,9 +197,11 @@ async function buildProjectGraph() {
 				return str;
 			});
 
-			fs.writeFileSync(entrySrc, content);
-			entry[name] = entrySrc;
-			taskProcess[name] = entrySrc;
+			if (content) {
+				fs.writeFileSync(entrySrc, content);
+				entry[name] = entrySrc;
+				taskProcess.entries[name] = entrySrc;
+			}
 		}
 
 		// TEMPLATES
@@ -205,18 +224,20 @@ async function buildProjectGraph() {
 				return str;
 			});
 
-			fs.writeFileSync(
-				entrySrc,
+			if (content) {
+				fs.writeFileSync(
+					entrySrc,
 
-				[
-					webpackRuntime,
-					'window.TPLS = window.TPLS || Object.create(null);',
-					content
-				].join('\n')
-			);
+					[
+						webpackRuntime,
+						'window.TPLS = window.TPLS || Object.create(null);',
+						content
+					].join('\n')
+				);
 
-			entry[entryName] = entrySrc;
-			taskProcess[entryName] = entrySrc;
+				entry[entryName] = entrySrc;
+				taskProcess.entries[entryName] = entrySrc;
+			}
 		}
 
 		taskProcess = processes[buildIterator];
@@ -227,7 +248,7 @@ async function buildProjectGraph() {
 			$C(taskProcess).length() >= MAX_TASKS_PER_ONE_PROCESS;
 
 		if (canAddMoreProcess) {
-			taskProcess = {};
+			taskProcess = {entries: {}};
 			processes.push(taskProcess);
 			buildIterator++;
 		}
@@ -279,21 +300,27 @@ async function buildProjectGraph() {
 				return str;
 			});
 
-			let
-				entrySrc;
+			if (content) {
+				let entrySrc;
 
-			if (needLoadStylesAsJS) {
-				entrySrc = path.join(tmpEntries, `${name}.styl.js`);
-				fs.writeFileSync(stylSrc, content);
-				fs.writeFileSync(entrySrc, [webpackRuntime, `require('${stylSrc}');`].join('\n'));
+				if (needLoadStylesAsJS) {
+					entrySrc = path.join(tmpEntries, `${name}.styl.js`);
+					fs.writeFileSync(stylSrc, content);
+					fs.writeFileSync(
+						entrySrc,
+						[webpackRuntime, `require('${stylSrc}');`].join('\n')
+					);
+				} else {
+					entrySrc = stylSrc;
+					fs.writeFileSync(
+						entrySrc,
+						[content, 'generateImgClasses()'].join('\n')
+					);
+				}
 
-			} else {
-				entrySrc = stylSrc;
-				fs.writeFileSync(entrySrc, [content, 'generateImgClasses()'].join('\n'));
+				entry[entryName] = entrySrc;
+				taskProcess.entries[entryName] = entrySrc;
 			}
-
-			entry[entryName] = entrySrc;
-			taskProcess[entryName] = entrySrc;
 		}
 
 		// HTML
@@ -315,12 +342,14 @@ async function buildProjectGraph() {
 				return str;
 			});
 
-			fs.writeFileSync(entrySrc, content);
+			if (content) {
+				fs.writeFileSync(entrySrc, content);
 
-			entry[entryName] = entrySrc;
+				entry[entryName] = entrySrc;
 
-			// eslint-disable-next-line require-atomic-updates
-			processes[HTML][entryName] = entrySrc;
+				// eslint-disable-next-line require-atomic-updates
+				processes[HTML].entries[entryName] = entrySrc;
+			}
 		}
 
 		return entry;
