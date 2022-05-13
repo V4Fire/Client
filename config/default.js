@@ -294,6 +294,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	isCI() {
+		return Boolean(process.env.CI);
+	},
+
 	/**
 	 * WebPack configuration
 	 */
@@ -746,6 +750,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Returns parameters for webpack progress plugin
+	 *
+	 */
+	progressPlugin() {
+		return {
+			enabled: !this.isCI(),
+			clearOnComplete: true,
+			stopOnComplete: true,
+			hideCursor: null
+		};
+	},
+
+	/**
 	 * Returns parameters for TypeScript:
 	 *
 	 * 1. server - to compile node.js modules
@@ -881,28 +898,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				default: 250,
 				env: true
 			})
-		};
-	},
-
-	/**
-	 * Returns parameters for `SimpleProgressWebpackPlugin`
-	 *
-	 * @cli progress
-	 * @env PROGRESS
-	 * @default `true`
-	 *
-	 * @param {boolean=} [def] - default value
-	 * @returns {!Object}
-	 */
-	simpleProgressWebpackPlugin(def = !IS_PROD) {
-		return {
-			enabled: o('progress', {
-				env: 'PROGRESS',
-				type: 'boolean',
-				default: def
-			}),
-
-			format: 'minimal'
 		};
 	},
 

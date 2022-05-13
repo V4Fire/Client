@@ -23,7 +23,7 @@ module.exports = async function plugins({name}) {
 
 	const
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
-		SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin'),
+		createProgressPlugin = include('build/webpack/plugins/progress-plugin'),
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings');
 
 	const plugins = new Map([
@@ -32,11 +32,8 @@ module.exports = async function plugins({name}) {
 		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
 	]);
 
-	const
-		progressWebpackConfig = config.simpleProgressWebpackPlugin();
-
-	if (progressWebpackConfig.enabled) {
-		plugins.set('simpleProgressWebpackPlugin', new SimpleProgressWebpackPlugin({name, ...progressWebpackConfig}));
+	if (config.progressPlugin().enabled) {
+		plugins.set('progress-plugin', createProgressPlugin(name));
 	}
 
 	return plugins;

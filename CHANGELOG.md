@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.21.0 (2022-05-13)
+
+#### :boom: Breaking Change
+
+* Removed `simpleProgressWebpackPlugin` with custom progress plugin
+
+#### :house: Internal
+
+* Removed comments from css files into dev build
+* Removed deadlock for build while snakeskin waits artifacts
+* Added names for build processes
+* Removed generation of redunant artifacts (license.txt, empty entry files)
+
 ## v3.21.0 (2022-05-24)
 
 #### :rocket: New Feature
