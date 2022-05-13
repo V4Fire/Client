@@ -87,6 +87,7 @@ module.exports = function optimization({buildId, plugins}) {
 
 		new TerserPlugin({
 			parallel: true,
+      extractComments: false,
 			terserOptions: inherit({
 				ecma: es,
 
