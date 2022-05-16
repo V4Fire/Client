@@ -203,12 +203,12 @@ Boolean, if needed to show progress by slot or `b-progress-icon`.
 < b-input :progressIcon = 'b-my-progress-icon'
 ```
 
-### [additionalPhrase]
+### [textHint]
 
 Text, which will display after input value as placeholder
 
 ```
-< b-input :additionalPhrase = 'in catalog'
+< b-input :textHint = 'in catalog'
 ```
 
 ### Validation
