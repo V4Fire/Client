@@ -373,7 +373,7 @@ export default class bInput extends iInputText {
 
 		const {additionalPhrase, input} = this.$refs;
 
-		if (!additionalPhrase) {
+		if (additionalPhrase == null) {
 			return;
 		}
 
