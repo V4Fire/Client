@@ -229,7 +229,7 @@ export default class bInput extends iInputText {
 	};
 
 	protected override readonly $refs!: iInputText['$refs'] & {
-		additionalPhrase?: HTMLInputElement;
+		textHint?: HTMLInputElement;
 	};
 
 	@system()
