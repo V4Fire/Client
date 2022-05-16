@@ -70,6 +70,13 @@ export default class bInput extends iInputText {
 	override readonly defaultProp?: this['Value'];
 
 	/**
+	 * An additional text hint that is shown after the non-empty input text.
+	 * Mind, the hint value does not affect a component value.
+	 */
+	@prop({type: String, required: false})
+	textHint?: string;
+
+	/**
 	 * The minimum value of the input (for number and date types)
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
 	 */
@@ -196,12 +203,6 @@ export default class bInput extends iInputText {
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
 
-	/**
-	 * Additional phrase, which will display after input value as placeholder
-	 */
-	@prop({type: String, required: false})
-	additionalPhrase?: string;
-
 	override get value(): this['Value'] {
 		return this.field.get<this['Value']>('valueStore')!;
 	}
@@ -216,10 +217,17 @@ export default class bInput extends iInputText {
 	}
 
 	/**
+	 * Value for textHint input
+	 */
+	protected get textHintInputValue(): string {
+		return `${this.text} ${this.textHint}`;
+	}
+
+	/**
 	 * True, if the component has a text hint
 	 */
 	get hasTextHint(): boolean {
-		return Object.isString(this.additionalPhrase) && this.additionalPhrase !== '';
+		return Object.isString(this.textHint) && this.textHint !== '';
 	}
 
 	static override validators: ValidatorsDecl = {
@@ -305,13 +313,32 @@ export default class bInput extends iInputText {
 	}
 
 	/**
+	 * Updates textHint input value
+	 */
+	protected updateTextHintValue(): void {
+		if (!this.hasTextHint) {
+			return;
+		}
+
+		const {textHint, input} = this.$refs;
+
+		if (textHint == null) {
+			return;
+		}
+
+		textHint.value = input.scrollWidth > input.clientWidth ?
+			'' :
+			this.textHintInputValue;
+	}
+
+	/**
 	 * Handler: updating of a component text value
 	 */
 	@watch({path: 'textStore', immediate: true})
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
-		this.updateTextHintValue(this.text);
+		this.updateTextHintValue();
 	}
 
 	/**
@@ -364,21 +391,5 @@ export default class bInput extends iInputText {
 		}
 
 		return false;
-	}
-
-	protected updateAdditionalInputValue(value: string): void {
-		if (!this.hasAdditionalPhrase) {
-			return;
-		}
-
-		const {additionalPhrase, input} = this.$refs;
-
-		if (additionalPhrase == null) {
-			return;
-		}
-
-		additionalPhrase.value = input.scrollWidth > input.clientWidth ?
-			'' :
-			`${value} ${this.additionalPhrase}`;
 	}
 }

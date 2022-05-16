@@ -48,10 +48,10 @@
 						+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
 						< input.&__additional-phrase.&__input &
-							v-if = hasAdditionalPhrase |
+							v-if = hasTextHint |
 							tabindex = -1 |
-							ref = additionalPhrase |
-							:value = value + ' ' + additionalPhrase |
+							ref = textHint |
+							:value = textHintInputValue |
 							@click = focus |
 							@focus = focus
 						.
