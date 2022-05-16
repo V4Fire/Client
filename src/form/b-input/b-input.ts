@@ -311,7 +311,7 @@ export default class bInput extends iInputText {
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
-		this.updateAdditionalInputValue(this.text);
+		this.updateTextHintValue(this.text);
 	}
 
 	/**
