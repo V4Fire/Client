@@ -218,7 +218,7 @@ export default class bInput extends iInputText {
 	/**
 	 * True, if component has additional phrase
 	 */
-	get hasAdditionalPhrase(): boolean {
+	get hasTextHint(): boolean {
 		return Object.isString(this.additionalPhrase) && this.additionalPhrase !== '';
 	}
 
