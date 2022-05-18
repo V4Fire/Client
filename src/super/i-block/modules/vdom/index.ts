@@ -11,15 +11,7 @@
  * @packageDocumentation
  */
 
-import {
-
-	execRenderObject,
-
-	RenderObject,
-	VNode,
-	ScopedSlot
-
-} from 'core/component';
+import type { VNode } from 'core/component';
 
 import type iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
@@ -38,22 +30,37 @@ export * from 'super/i-block/modules/vdom/interface';
  */
 export default class VDOM extends Friend {
 	/**
-	 * Renders the specified data
-	 * @param data
+	 * Renders the specified VNode and returns the result
+	 * @param vnode
 	 *
 	 * @example
 	 * ```js
-	 * this.render(this.$createElement('b-example', {
-	 *   attrs: {
-	 *     prop1: 'foo'
-	 *   }
-	 * }));
+	 * const div = this.render(Vue.h('div', {class: 'foo'}));
+	 *
+	 * console.log(div.tagName); // DIV
+	 * console.log(div.classList.contains('foo')); // true
 	 * ```
 	 */
-	render(data: VNode): Node;
-	render(data: VNode[]): Node[];
-	render(data: CanArray<VNode>): CanArray<Node> {
-		return this.ctx.$renderEngine.renderVNode(Object.cast(data), this.ctx);
+	render(vnode: VNode): Node;
+
+	/**
+	 * Renders the specified list of VNode-s and returns the result
+	 * @param vnodes
+	 *
+	 * @example
+	 * ```js
+	 * const divs = this.render([
+	 *   Vue.h('div', {class: 'foo'}),
+	 *   Vue.h('div', {class: 'bar'}),
+	 * ]);
+	 *
+	 * console.log(div[0].tagName); // DIV
+	 * console.log(div[1].classList.contains('bar')); // true
+	 * ```
+	 */
+	render(vnodes: VNode[]): Node[];
+	render(vnode: CanArray<VNode>): CanArray<Node> {
+		return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.ctx);
 	}
 
 	/**
