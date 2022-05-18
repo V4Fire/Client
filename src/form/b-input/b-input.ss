@@ -47,7 +47,7 @@
 					< _.&__cell.&__input-wrapper
 						+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
-						< input.&__additional-phrase.&__input &
+						< input.&__text-hint.&__input &
 							v-if = hasTextHint |
 							tabindex = -1 |
 							ref = textHint |
