@@ -13,13 +13,15 @@ import makeLazy from 'core/lazy';
 import { createApp, Component } from 'vue';
 import type { CreateAppFunction } from 'core/component/engines/vue3/interface';
 
-const App = <CreateAppFunction>function App(component: Component & {el: Element}, rootProps: Nullable<Dictionary>) {
+const App = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
 	const
 		app = Object.create(createApp(component, rootProps));
 
-	setImmediate(() => {
-		app.mount(component.el);
-	});
+	if (component.el != null) {
+		setImmediate(() => {
+			app.mount(component.el);
+		});
+	}
 
 	return app;
 };

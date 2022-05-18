@@ -8,7 +8,9 @@
 
 import type {
 
+	VNode,
 	Fragment,
+
 	Transition,
 	TransitionGroup,
 
@@ -27,6 +29,7 @@ import type {
 	createElementVNode,
 	createTextVNode,
 	createCommentVNode,
+	cloneVNode,
 
 	normalizeClass,
 	normalizeStyle,
@@ -51,6 +54,8 @@ import type {
 
 } from 'vue';
 
+import type { ComponentInterface } from 'core/component/interface';
+
 export interface RenderEngineFeatures {
 	regular: boolean;
 	functional: boolean;
@@ -64,6 +69,9 @@ export interface RenderEngine<T extends object = object> {
 }
 
 export interface RenderAPI {
+	render(vnode: VNode, parent?: ComponentInterface): Node;
+	render(vnode: VNode[], parent?: ComponentInterface): Node[];
+
 	Fragment: typeof Fragment;
 	Transition: typeof Transition;
 	TransitionGroup: typeof TransitionGroup;
@@ -83,6 +91,7 @@ export interface RenderAPI {
 	createElementVNode: typeof createElementVNode;
 	createTextVNode: typeof createTextVNode;
 	createCommentVNode: typeof createCommentVNode;
+	cloneVNode: typeof cloneVNode;
 
 	normalizeClass: typeof normalizeClass;
 	normalizeStyle: typeof normalizeStyle;

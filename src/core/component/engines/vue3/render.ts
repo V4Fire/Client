@@ -18,9 +18,13 @@ import {
 	createElementBlock as superCreateElementBlock,
 
 	renderList as superRenderList,
-	withDirectives as superWithDirectives
+	withDirectives as superWithDirectives,
+
+	VNode
 
 } from 'vue';
+
+import Vue from 'core/component/engines/vue3/lib';
 
 import {
 
@@ -38,6 +42,8 @@ import {
 
 } from 'core/component/render';
 
+import type { ComponentInterface } from 'core/component/interface';
+
 export {
 
 	Fragment,
@@ -53,6 +59,7 @@ export {
 	createStaticVNode,
 	createTextVNode,
 	createCommentVNode,
+	cloneVNode,
 
 	normalizeClass,
 	normalizeStyle,
@@ -91,3 +98,36 @@ export const
 export const
 	renderList = wrapRenderList(superRenderList),
 	withDirectives = wrapWithDirectives(superWithDirectives);
+
+/**
+ * Renders the specified VNode and returns the result
+ *
+ * @param vnode
+ * @param [parent] - parent component
+ */
+export function render(vnode: VNode, parent?: ComponentInterface): Node;
+
+/**
+ * Renders the specified list of VNode-s and returns the result
+ *
+ * @param vnodes
+ * @param [parent] - parent component
+ */
+export function render(vnodes: VNode[], parent?: ComponentInterface): Node[];
+export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): CanArray<Node> {
+	const vue = new Vue({
+		render: () => vnode
+	});
+
+	if (parent != null) {
+		Object.set(vue, '$root', Object.create(parent.$root));
+		Object.set(vue, '$root.$remoteParent', parent);
+		Object.set(vue, '$root.unsafe', vue['$root']);
+	}
+
+	const
+		el = document.createElement('div'),
+		root = vue.mount(el);
+
+	return Object.isArray(vnode) ? Array.from(el.childNodes) : root.$el;
+}
