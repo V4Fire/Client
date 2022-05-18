@@ -25,3 +25,4 @@ import 'core/component/directives/update-on';
 import 'core/component/directives/tag';
 import 'core/component/directives/hook';
 import 'core/component/directives/attrs';
+import 'core/component/directives/async';
