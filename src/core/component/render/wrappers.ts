@@ -17,6 +17,7 @@ import type {
 	createBlock,
 	createElementBlock,
 
+	renderList,
 	withDirectives,
 
 	VNode,
@@ -71,6 +72,17 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 	});
 }
 
+export function wrapRenderList<T extends typeof renderList>(original: T): T {
+	return Object.cast(function renderList(
+		this: ComponentInterface,
+		src: Iterable<unknown> | Dictionary,
+		cb: AnyFunction
+	) {
+		this.$emit('[[V-FOR-CB]]', cb);
+		return original(src, cb);
+	});
+}
+
 export function wrapWithDirectives<T extends typeof withDirectives>(original: T): T {
 	return Object.cast(function withDirectives(this: ComponentInterface, vnode: VNode, dirs: DirectiveArguments) {
 		const
@@ -78,24 +90,25 @@ export function wrapWithDirectives<T extends typeof withDirectives>(original: T)
 
 		for (let i = 0; i < dirs.length; i++) {
 			const
-				decl = dirs[i];
+				decl = dirs[i],
+				[dir, value, arg, modifiers] = decl;
 
 			const
-				[dir, value, arg, modifiers] = dirs[i];
+				cantIgnoreDir = value != null || decl.length !== 2;
 
 			if (Object.isDictionary(dir)) {
 				if (Object.isFunction(dir.beforeCreate)) {
 					dir.beforeCreate({value, arg, modifiers, dir, instance: this}, vnode);
 
-					if (Object.keys(dir).length > 1 && value != null) {
+					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
 						resolvedDirs.push(decl);
 					}
 
-				} else if (Object.keys(dir).length > 0 && value != null) {
+				} else if (Object.keys(dir).length > 0 && cantIgnoreDir) {
 					resolvedDirs.push(decl);
 				}
 
-			} else if (value != null) {
+			} else if (cantIgnoreDir) {
 				resolvedDirs.push(decl);
 			}
 		}

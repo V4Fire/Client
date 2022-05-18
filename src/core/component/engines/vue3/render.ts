@@ -17,6 +17,7 @@ import {
 	createBlock as superCreateBlock,
 	createElementBlock as superCreateElementBlock,
 
+	renderList as superRenderList,
 	withDirectives as superWithDirectives
 
 } from 'vue';
@@ -24,12 +25,16 @@ import {
 import {
 
 	interpolateStaticAttrs,
-
 	wrapResolveComponent,
-	wrapWithDirectives,
 
 	wrapCreateVNode,
-	wrapCreateElementVNode, wrapCreateBlock, wrapCreateElementBlock
+	wrapCreateElementVNode,
+
+	wrapCreateBlock,
+	wrapCreateElementBlock,
+
+	wrapRenderList,
+	wrapWithDirectives
 
 } from 'core/component/render';
 
@@ -42,9 +47,7 @@ export {
 	toHandlers,
 	toDisplayString,
 
-	renderList,
 	renderSlot,
-
 	openBlock,
 
 	createStaticVNode,
@@ -86,4 +89,5 @@ export const
 	createElementBlock = wrapCreateElementBlock(superCreateElementBlock);
 
 export const
+	renderList = wrapRenderList(superRenderList),
 	withDirectives = wrapWithDirectives(superWithDirectives);
