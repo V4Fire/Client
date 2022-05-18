@@ -264,17 +264,4 @@ export default class VDOM extends Friend {
 
 		return search(vnode);
 	}
-
-	/**
-	 * Returns a slot by the specified name
-	 *
-	 * @param name
-	 * @param [ctx] - component context to get the slot
-	 */
-	getSlot(
-		name: string,
-		ctx: iBlock = this.component
-	): CanUndef<VNode | ScopedSlot> {
-		return Object.get(ctx, `$slots.${name}`) ?? Object.get(ctx, `$scopedSlots.${name}`);
-	}
 }
