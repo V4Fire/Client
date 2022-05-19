@@ -74,7 +74,7 @@ export default class bInput extends iInputText {
 	 * Mind, the hint value does not affect a component value.
 	 */
 	@prop({type: String, required: false})
-	textHint?: string;
+	readonly textHint?: string;
 
 	/**
 	 * The minimum value of the input (for number and date types)
