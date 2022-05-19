@@ -209,7 +209,19 @@ An additional text hint that is shown after the non-empty input text.
 Mind, the hint value does not affect a component value.
 
 ```
-< b-input :textHint = 'in catalog'
+/// You will see "value in catalog" in the input
+/// But input.value will be just "value" as provided
+< b-input &
+  :value = 'value' |
+  :textHint = 'in catalog'
+.
+
+/// You will see the empty input in that case or an input placeholder, if it provided
+/// When you will input text you will see "<your input> in catalog"
+< b-input &
+  :textHint = 'in catalog'
+  [:placeholer = 'search']
+.
 ```
 
 ### Validation
