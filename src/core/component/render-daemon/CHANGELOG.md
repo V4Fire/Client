@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Renamed the module to `component/render-daemon`
+
 ## v3.0.0-rc.131 (2021-01-29)
 
 #### :house: Internal

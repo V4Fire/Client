@@ -7,13 +7,14 @@
  */
 
 /**
- * [[include:core/render/README.md]]
+ * [[include:core/component/render-daemon/README.md]]
  * @packageDocumentation
  */
 
 import {
 
 	daemon,
+
 	queue,
 	add as addToQueue,
 
