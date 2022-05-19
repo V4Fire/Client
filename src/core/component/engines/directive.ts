@@ -8,9 +8,8 @@
 
 import { ComponentEngine, Directive, DirectiveBinding, VNode } from 'core/component/engines/engine';
 
-let originalDirective = ComponentEngine.directive.length > 0 ?
-	ComponentEngine.directive.bind(ComponentEngine) :
-	null;
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.directive : null;
 
 /**
  * A wrapped version of the `ComponentEngine.directive` function with providing of hooks for non-regular components
@@ -19,17 +18,20 @@ let originalDirective = ComponentEngine.directive.length > 0 ?
  * @param [directive]
  */
 ComponentEngine.directive = function directive(name: string, directive?: Directive) {
+	const
+		ctx = Object.getPrototypeOf(this),
+		originalDirective = staticDirective ?? ctx.directive;
+
 	if (originalDirective == null) {
-		const ctx = Object.getPrototypeOf(this);
-		originalDirective = ctx.directive.bind(ctx);
+		throw new Error("A function to register directives isn't found");
 	}
 
 	if (directive == null) {
-		return originalDirective(name);
+		return originalDirective.call(ctx, name);
 	}
 
 	if (Object.isFunction(directive)) {
-		return originalDirective(name, directive);
+		return originalDirective.call(ctx, name, directive);
 	}
 
 	if (directive.beforeCreate != null) {
@@ -42,10 +44,10 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 		originalUnmounted = directive.unmounted;
 
 	if (originalUnmounted == null) {
-		return originalDirective(name, directive);
+		return originalDirective.call(ctx, name, directive);
 	}
 
-	return originalDirective(name, {
+	return originalDirective.call(ctx, name, {
 		...directive,
 
 		created(_el: Element, _opts: DirectiveBinding, vnode: VNode) {
