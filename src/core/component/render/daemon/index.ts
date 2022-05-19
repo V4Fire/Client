@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/component/render-daemon/README.md]]
+ * [[include:core/component/render/daemon/README.md]]
  * @packageDocumentation
  */
 
@@ -21,10 +21,10 @@ import {
 	TASKS_PER_TICK,
 	DELAY
 
-} from 'core/component/render-daemon/const';
+} from 'core/component/render/daemon/const';
 
-export * from 'core/component/render-daemon/const';
-export * from 'core/component/render-daemon/interface';
+export * from 'core/component/render/daemon/const';
+export * from 'core/component/render/daemon/interface';
 
 let
 	inProgress = false,

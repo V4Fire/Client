@@ -7,7 +7,7 @@
  */
 
 import Async from 'core/async';
-import type { Task } from 'core/component/render-daemon/interface';
+import type { Task } from 'core/component/render/daemon/interface';
 
 /**
  * The maximum number of tasks per one render iteration

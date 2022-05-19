@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Renamed the module to `component/render-daemon`
+* Renamed the module to `component/render/daemon`
 
 ## v3.0.0-rc.131 (2021-01-29)
 
