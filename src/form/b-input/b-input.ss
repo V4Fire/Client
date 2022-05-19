@@ -51,7 +51,7 @@
 							v-if = hasTextHint |
 							tabindex = -1 |
 							ref = textHint |
-							:value = textHintInputValue |
+							:value = textHintWithIndent |
 							@click = focus |
 							@focus = focus
 						.

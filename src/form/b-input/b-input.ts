@@ -219,7 +219,7 @@ export default class bInput extends iInputText {
 	/**
 	 * Value for textHint input
 	 */
-	protected get textHintInputValue(): string {
+	protected get textHintWithIndent(): string {
 		return `${this.text} ${this.textHint}`;
 	}
 
@@ -315,20 +315,22 @@ export default class bInput extends iInputText {
 	/**
 	 * Updates textHint input value
 	 */
-	protected updateTextHintValue(): void {
+	protected syncTextHintValue(): boolean {
 		if (!this.hasTextHint) {
-			return;
+			return false;
 		}
 
 		const {textHint, input} = this.$refs;
 
 		if (textHint == null) {
-			return;
+			return false;
 		}
 
 		textHint.value = input.scrollWidth > input.clientWidth ?
 			'' :
-			this.textHintInputValue;
+			this.textHintWithIndent;
+
+		return true;
 	}
 
 	/**
@@ -338,7 +340,7 @@ export default class bInput extends iInputText {
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
-		this.updateTextHintValue();
+		this.syncTextHintValue();
 	}
 
 	/**
