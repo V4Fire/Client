@@ -20,10 +20,10 @@ import {
 	TASKS_PER_TICK,
 	DELAY
 
-} from 'core/render-daemon/const';
+} from 'core/component/render-daemon/const';
 
-export * from 'core/render-daemon/const';
-export * from 'core/render-daemon/interface';
+export * from 'core/component/render-daemon/const';
+export * from 'core/component/render-daemon/interface';
 
 let
 	inProgress = false,
