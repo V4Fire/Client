@@ -6,12 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Range from 'core/range';
-
 import type { ComponentElement } from 'super/i-block/i-block';
 import type { TaskParams, TaskDesc } from 'super/i-block/modules/async-render/interface';
 
-import Super from 'super/i-block/modules/async-render/modules/base';
+import Super from 'super/i-block/modules/async-render/modules/iter-helpers';
 
 export * from 'super/i-block/modules/async-render/modules/base';
 export * from 'super/i-block/modules/async-render/interface';
@@ -46,6 +44,11 @@ export default class AsyncRender extends Super {
 			return [];
 		}
 
+		const {
+			async: $a,
+			localEmitter
+		} = this;
+
 		if (Object.isPlainObject(sliceOrOpts)) {
 			opts = sliceOrOpts;
 			sliceOrOpts = [];
@@ -55,89 +58,19 @@ export default class AsyncRender extends Super {
 			{filter} = opts;
 
 		let
-			iterable = this.getIterable(value, filter != null);
-
-		let
-			startIterPos,
-			elsPerChunk;
+			start,
+			perChunk;
 
 		if (Object.isArray(sliceOrOpts)) {
-			startIterPos = sliceOrOpts[0];
-			elsPerChunk = sliceOrOpts[1];
+			start = sliceOrOpts[0];
+			perChunk = sliceOrOpts[1];
 
 		} else {
-			elsPerChunk = sliceOrOpts;
+			perChunk = sliceOrOpts;
 		}
 
-		startIterPos ??= 0;
-		elsPerChunk ??= 1;
-
 		const
-			iterableIsPromise = Object.isPromise(iterable);
-
-		const
-			firstRenderEls = <unknown[]>[],
-			asyncRenderEls = <unknown[]>[];
-
-		let
-			iterator: Iterator<unknown>,
-			lastSyncEl: IteratorResult<unknown>;
-
-		let
-			syncI = 0,
-			syncTotal = 0;
-
-		if (!iterableIsPromise) {
-			iterator = iterable[Symbol.iterator]();
-
-			// eslint-disable-next-line no-multi-assign
-			for (let o = iterator, el = lastSyncEl = o.next(); !el.done; el = o.next(), syncI++) {
-				if (startIterPos > 0) {
-					startIterPos--;
-					continue;
-				}
-
-				const
-					val = el.value;
-
-				let
-					valIsPromise = Object.isPromise(val),
-					canRender = !valIsPromise;
-
-				if (canRender && filter != null) {
-					canRender = filter.call(this.component, val, syncI, {
-						iterable,
-						i: syncI,
-						total: syncTotal
-					});
-
-					if (Object.isPromise(canRender)) {
-						valIsPromise = true;
-						canRender = false;
-
-					} else if (!Object.isTruly(canRender)) {
-						canRender = false;
-					}
-				}
-
-				if (canRender) {
-					syncTotal++;
-					firstRenderEls.push(val);
-
-				} else if (valIsPromise) {
-					asyncRenderEls.push(val);
-				}
-
-				if (syncTotal >= elsPerChunk || valIsPromise) {
-					break;
-				}
-			}
-		}
-
-		const {
-			async: $a,
-			localEmitter
-		} = this;
+			iter = this.getIterDescriptor(value, {start, perChunk, filter});
 
 		let
 			render: CanUndef<Function>,
@@ -145,9 +78,6 @@ export default class AsyncRender extends Super {
 
 		this.ctx.$once('[[V-FOR-CB]]', setRender);
 		this.ctx.$once('[[V-ASYNC-TARGET]]', setTarget);
-
-		const
-			BREAK = {};
 
 		$a.setImmediate(async () => {
 			this.ctx.$off('[[V-FOR-CB]]', setRender);
@@ -158,14 +88,13 @@ export default class AsyncRender extends Super {
 			}
 
 			const
-				weight = opts.weight ?? 1,
-				newIterator = createIterator();
+				weight = opts.weight ?? 1;
 
 			let
 				i = 0,
-				total = syncTotal,
-				chunkTotal = 0,
 				chunkI = 0,
+				total = iter.readTotal,
+				chunkTotal = 0,
 				awaiting = 0;
 
 			let
@@ -176,118 +105,101 @@ export default class AsyncRender extends Super {
 				lastTask,
 				lastEvent;
 
-			for (let o = newIterator, el = o.next(); !el.done; el = o.next()) {
-				if (opts.group != null) {
-					group = `asyncComponents:${opts.group}:${chunkI}`;
-				}
+			const doIter = async (val: unknown) => {
+				try {
+					if (opts.group != null) {
+						group = `asyncComponents:${opts.group}:${chunkI}`;
+					}
 
-				let
-					val = el.value;
+					const
+						valIsPromise = Object.isPromise(val);
 
-				const
-					valIsPromise = Object.isPromise(val);
-
-				if (valIsPromise) {
-					try {
+					if (valIsPromise) {
 						// eslint-disable-next-line require-atomic-updates
-						val = await $a.promise(<Promise<unknown>>val, {group});
-
-						if (val === BREAK) {
-							break;
-						}
-
-					} catch (err) {
-						if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
-							break;
-						}
-
-						stderr(err);
-						continue;
-					}
-				}
-
-				const cb = (chunk, desc, cb) => {
-					const res = [];
-
-					Object.forEach(chunk, (el) => {
-						const node = this.ctx.$renderEngine.r.render(render(el));
-						target.el.appendChild(node);
-						res.push(node);
-					});
-
-					cb(res);
-				};
-
-				const resolveTask = (filter?: boolean) => {
-					if (filter === false) {
-						return;
+						val = await $a.promise(Object.cast(val), {group});
 					}
 
-					total++;
-					chunkTotal++;
-					renderBuffer.push(val);
+					const cb = (chunk, desc, cb) => {
+						const res = [];
 
-					lastTask = () => {
-						lastTask = null;
-						awaiting++;
+						Object.forEach(chunk, (el) => {
+							const node = this.ctx.$renderEngine.r.render(render(el));
+							target.el.appendChild(node);
+							res.push(node);
+						});
 
-						const task = () => {
-							const desc: TaskDesc = {
-								async: $a,
-								renderGroup: group
-							};
-
-							cb(renderBuffer, desc, (els: Node[]) => {
-								chunkI++;
-								chunkTotal = 0;
-								renderBuffer = [];
-
-								awaiting--;
-								lastEvent = {...opts, ...desc};
-								localEmitter.emit('asyncRenderChunkComplete', lastEvent);
-
-								$a.worker(() => {
-									const destroyEl = (el: CanUndef<ComponentElement | Node>) => {
-										if (el == null) {
-											return;
-										}
-
-										if (el[this.asyncLabel] != null) {
-											delete el[this.asyncLabel];
-											$a.worker(() => destroyEl(el), {group});
-
-										} else {
-											const
-												els = el instanceof Element ? Array.from(el.querySelectorAll('.i-block-helper')) : [];
-
-											if (opts.destructor?.(el, els) !== true) {
-												this.destroy(el, els);
-											}
-										}
-									};
-
-									for (let i = 0; i < els.length; i++) {
-										destroyEl(els[i]);
-									}
-								}, {group});
-							});
-						};
-
-						return this.createTask(task, {group, weight});
+						cb(res);
 					};
 
-					if (!valIsPromise && chunkTotal < elsPerChunk) {
-						return;
-					}
+					const resolveTask = (filter?: boolean) => {
+						if (filter === false) {
+							return;
+						}
 
-					return lastTask();
-				};
+						total++;
+						chunkTotal++;
+						renderBuffer.push(val);
 
-				try {
+						lastTask = () => {
+							lastTask = null;
+							awaiting++;
+
+							const task = () => {
+								const desc: TaskDesc = {
+									async: $a,
+									renderGroup: group
+								};
+
+								cb(renderBuffer, desc, (els: Node[]) => {
+									chunkI++;
+									chunkTotal = 0;
+									renderBuffer = [];
+
+									awaiting--;
+									lastEvent = {...opts, ...desc};
+									localEmitter.emit('asyncRenderChunkComplete', lastEvent);
+
+									$a.worker(() => {
+										const destroyEl = (el: CanUndef<ComponentElement | Node>) => {
+											if (el == null) {
+												return;
+											}
+
+											if (el[this.asyncLabel] != null) {
+												delete el[this.asyncLabel];
+												$a.worker(() => destroyEl(el), {group});
+
+											} else {
+												const
+													els = el instanceof Element ? Array.from(el.querySelectorAll('.i-block-helper')) : [];
+
+												if (opts.destructor?.(el, els) !== true) {
+													this.destroy(el, els);
+												}
+											}
+										};
+
+										for (let i = 0; i < els.length; i++) {
+											destroyEl(els[i]);
+										}
+									}, {group});
+								});
+							};
+
+							return this.createTask(task, {group, weight});
+						};
+
+						if (!valIsPromise && chunkTotal < perChunk) {
+							return;
+						}
+
+						return lastTask();
+					};
+
 					if (filter != null) {
 						const needRender = filter.call(this.ctx, val, i, {
-							iterable,
-							i: syncI + i + 1,
+							iterable: iter.iterable,
+							i: iter.readI + i + 1,
 							chunk: chunkI,
 							total
 						});
@@ -314,16 +226,26 @@ export default class AsyncRender extends Super {
 						}
 					}
 
+					i++;
+
 				} catch (err) {
-					if (err?.type === 'clearAsync' && err.link.group === group) {
-						break;
+					if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+						return false;
 					}
 
 					stderr(err);
-					continue;
+				}
+			};
+
+			if (Object.isAsyncIterable(iter.iterator)) {
+				for await (const el of iter.iterator) {
+					await doIter(el);
 				}
 
-				i++;
+			} else {
+				for (const el of iter.iterator) {
+					await doIter(el);
+				}
 			}
 
 			if (lastTask != null) {
@@ -348,64 +270,9 @@ export default class AsyncRender extends Super {
 					}
 				});
 			}
-
-			function createIterator() {
-				if (iterableIsPromise) {
-					const next = () => {
-						if (Object.isPromise(iterable)) {
-							return {
-								done: false,
-								value: iterable
-									.then((v) => {
-										iterable = v;
-										iterator = v[Symbol.iterator]();
-
-										const
-											el = iterator.next();
-
-										if (el.done) {
-											return BREAK;
-										}
-
-										return el.value;
-									})
-
-									.catch((err) => {
-										stderr(err);
-										return BREAK;
-									})
-							};
-						}
-
-						return iterator.next();
-					};
-
-					return {next};
-				}
-
-				let
-					i = 0;
-
-				const next = () => {
-					if (asyncRenderEls.length === 0 && lastSyncEl.done) {
-						return lastSyncEl;
-					}
-
-					if (i < asyncRenderEls.length) {
-						return {
-							value: asyncRenderEls[i++],
-							done: false
-						};
-					}
-
-					return iterator.next();
-				};
-
-				return {next};
-			}
 		});
 
-		return firstRenderEls;
+		return iter.readEls;
 
 		function setRender(r: Function) {
 			return render = r;
@@ -414,60 +281,6 @@ export default class AsyncRender extends Super {
 		function setTarget(r: Element) {
 			return target = r;
 		}
-	}
-
-	/**
-	 * Returns an iterable object based on the passed value
-	 *
-	 * @param obj
-	 * @param [hasFilter] - true if the passed object will be filtered
-	 */
-	protected getIterable(obj: unknown, hasFilter?: boolean): CanPromise<Iterable<unknown>> {
-		if (obj == null) {
-			return [];
-		}
-
-		if (obj === true) {
-			if (hasFilter) {
-				return new Range(0, Infinity);
-			}
-
-			return [];
-		}
-
-		if (obj === false) {
-			if (hasFilter) {
-				return new Range(0, -Infinity);
-			}
-
-			return [];
-		}
-
-		if (Object.isNumber(obj)) {
-			return new Range(0, [obj]);
-		}
-
-		if (Object.isArray(obj)) {
-			return obj;
-		}
-
-		if (Object.isString(obj)) {
-			return obj.letters();
-		}
-
-		if (Object.isPromise(obj)) {
-			return obj.then(this.getIterable.bind(this));
-		}
-
-		if (typeof obj === 'object') {
-			if (Object.isIterable(obj)) {
-				return obj;
-			}
-
-			return Object.entries(obj);
-		}
-
-		return [obj];
 	}
 
 	//#endif
