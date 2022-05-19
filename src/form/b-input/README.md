@@ -205,7 +205,8 @@ Boolean, if needed to show progress by slot or `b-progress-icon`.
 
 ### [textHint]
 
-Text, which will display after input value as placeholder
+An additional text hint that is shown after the non-empty input text.
+Mind, the hint value does not affect a component value.
 
 ```
 < b-input :textHint = 'in catalog'
