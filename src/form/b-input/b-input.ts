@@ -237,7 +237,7 @@ export default class bInput extends iInputText {
 	};
 
 	protected override readonly $refs!: iInputText['$refs'] & {
-		textHint?: HTMLInputElement;
+		textHint?: HTMLSpanElement;
 	};
 
 	@system()
@@ -326,7 +326,7 @@ export default class bInput extends iInputText {
 			return false;
 		}
 
-		textHint.value = input.scrollWidth > input.clientWidth ?
+		textHint.innerText = input.scrollWidth > input.clientWidth ?
 			'' :
 			this.textHintWithIndent;
 
