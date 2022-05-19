@@ -18,8 +18,6 @@ import type { ComponentElement } from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 import type { TaskParams } from 'super/i-block/modules/async-render/interface';
 
-export * from 'super/i-block/modules/async-render/interface';
-
 export default class AsyncRender extends Friend {
 	//#if runtime has component/async-render
 

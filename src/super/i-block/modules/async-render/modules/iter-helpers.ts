@@ -7,12 +7,11 @@
  */
 
 import Range from 'core/range';
-import Super from 'super/i-block/modules/async-render/modules/base';
 
-import type { IterOptions, IterDescriptor } from 'super/i-block/modules/async-render/modules/interface';
+import Super from 'super/i-block/modules/async-render/modules/base';
+import type { IterOptions, IterDescriptor } from 'super/i-block/modules/async-render/interface';
 
 export * from 'super/i-block/modules/async-render/modules/base';
-export * from 'super/i-block/modules/async-render/interface';
 
 export default class AsyncRender extends Super {
 	//#if runtime has component/async-render

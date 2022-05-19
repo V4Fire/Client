@@ -6,24 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type Async from 'core/async';
-
-export interface TaskI<D = unknown> {
-	iterable: Iterable<D>;
-	i: number;
-	total: number;
-	chunk?: number;
-}
-
-export interface TaskFilter<EL = unknown, I extends number = number, D = unknown> {
-	(): CanPromise<boolean>;
-	(el: EL, i: I, task: TaskI<D>): CanPromise<boolean>;
-}
-
-export interface ElementDestructor {
-	(el: Node, childComponentEls: Element[]): AnyToIgnore;
-}
-
 export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {
 	/**
 	 * If true, then rendered chunks are inserted into DOM on the `requestAnimationFrame` callback.
@@ -91,7 +73,35 @@ export interface TaskParams<EL = unknown, I extends number = number, D = unknown
 	destructor?: ElementDestructor;
 }
 
-export interface TaskDesc {
-	async: Async<any>;
-	renderGroup: string;
+export interface TaskI<D = unknown> {
+	iterable: Iterable<D>;
+	i: number;
+	total: number;
+	chunk?: number;
+}
+
+export interface TaskFilter<EL = unknown, I extends number = number, D = unknown> {
+	(): CanPromise<boolean>;
+	(el: EL, i: I, task: TaskI<D>): CanPromise<boolean>;
+}
+
+export interface ElementDestructor {
+	(el: Node, childComponentEls: Element[]): AnyToIgnore;
+}
+
+export interface IterOptions {
+	start?: number;
+	perChunk?: number;
+	filter?: TaskFilter;
+}
+
+export interface IterDescriptor {
+	isAsync: boolean;
+
+	readI: number;
+	readTotal: number;
+	readEls: unknown[];
+
+	iterable: CanPromise<AnyIterable>;
+	iterator: IterableIterator<unknown> | AsyncIterableIterator<unknown>;
 }
