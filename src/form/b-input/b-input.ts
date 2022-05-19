@@ -217,7 +217,12 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Value for textHint input
+	 * Returns the input value from [text] and [textHint] joined together with a space
+	 *
+	 * textHint is displayed after the input text due to the fact
+	 * that it is placed under the native input, duplicates the entered value and adds [textTint].
+	 * ie, if the input value is "value" and [textHint] is "some hint",
+	 * the getter will return "value some hint"
 	 */
 	protected get textHintWithIndent(): string {
 		return `${this.text} ${this.textHint}`;
@@ -313,7 +318,8 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Updates textHint input value
+	 * Synchronizes the contents of the textHint block with the input value
+	 * Returns true if synchronization was successful
 	 */
 	protected syncTextHintValue(): boolean {
 		if (!this.hasTextHint) {
