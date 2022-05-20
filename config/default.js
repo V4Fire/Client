@@ -294,6 +294,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	/**
+	 * Is process running in ci environment
+	 *
+	 * @returns {boolean}
+	 */
 	isCI() {
 		return Boolean(process.env.CI);
 	},
@@ -755,7 +760,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	progressPlugin() {
 		return {
-			enabled: !this.isCI(),
+			enabled: true,
+			version: this.isCI() ? 'static' : 'dynamic',
 			clearOnComplete: true,
 			stopOnComplete: true,
 			hideCursor: null

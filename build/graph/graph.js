@@ -23,19 +23,16 @@ const
 const
 	componentParams = include('build/graph/component-params');
 
-let
-	{buildIterator} = include('build/const');
-
 const {
 	isLayerDep,
 
 	HTML,
 	RUNTIME,
 	STANDALONE,
+	STYLES,
 
 	MIN_PROCESS,
-	MAX_PROCESS,
-	MAX_TASKS_PER_ONE_PROCESS
+	MAX_PROCESS
 } = include('build/const');
 
 const {
@@ -52,6 +49,9 @@ module.exports = buildProjectGraph();
 
 const
 	needLoadStylesAsJS = webpack.dynamicPublicPath();
+
+let
+	styleIndex = 1;
 
 /**
  * Builds a project graph
@@ -111,26 +111,15 @@ async function buildProjectGraph() {
 		.to({})
 		.reduce(entryReducer);
 
-	processes[HTML].name = 'snakeskin';
+	processes[HTML].name = 'html';
 	processes[RUNTIME].name = 'runtime';
 	processes[STANDALONE].name = 'standalone';
+	processes[STYLES].name = 'styles';
 
-	processes.forEach((proc, i) => {
-		if (!proc.name) {
-			if (Object.values(proc.entries).some((entry) => /\.styl/.test(entry))) {
-				proc.name = 'styles';
-			} else {
-				proc.name = `assets_${i}`;
-			}
-		}
-	});
-
+	// Add to HTML task all other tasks as dependencies
 	processes[HTML].dependencies = processes
 		.map((proc) => proc.name)
-		.filter((name) => name !== processes[HTML].name);
-
-	processes.push(processes[HTML]);
-	processes.splice(HTML, 1);
+		.filter((name) => name !== 'html');
 
 	const res = {
 		entry,
@@ -155,9 +144,7 @@ async function buildProjectGraph() {
 			cursor = isStandalone(name) ? STANDALONE : RUNTIME;
 
 		const
-			webpackRuntime = "require('core/prelude/webpack');";
-
-		let
+			webpackRuntime = "require('core/prelude/webpack');",
 			taskProcess = processes[cursor];
 
 		{
@@ -240,19 +227,6 @@ async function buildProjectGraph() {
 			}
 		}
 
-		taskProcess = processes[buildIterator];
-
-		const canAddMoreProcess =
-			cursor !== STANDALONE &&
-			MAX_PROCESS > buildIterator &&
-			$C(taskProcess).length() >= MAX_TASKS_PER_ONE_PROCESS;
-
-		if (canAddMoreProcess) {
-			taskProcess = {entries: {}};
-			processes.push(taskProcess);
-			buildIterator++;
-		}
-
 		// CSS
 
 		{
@@ -319,7 +293,14 @@ async function buildProjectGraph() {
 				}
 
 				entry[entryName] = entrySrc;
-				taskProcess.entries[entryName] = entrySrc;
+				let processStyleIndex = STYLES;
+
+				if (MAX_PROCESS > processes.length && Object.keys(processes[STYLES].entries).length) {
+					processes.push({entries: {}, name: `styles_${styleIndex++}`});
+					processStyleIndex = processes.length - 1;
+				}
+
+				processes[processStyleIndex].entries[entryName] = entrySrc;
 			}
 		}
 

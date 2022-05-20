@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	{webpack} = require('config');
+	{webpack} = require('@config/config');
 
 /**
  * Returns WebPack configuration to the specified entry

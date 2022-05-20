@@ -40,7 +40,9 @@ function getAssets(entryPoints) {
 	});
 
 	assetsBlueprint.forEach(() => {
-		$C(fs.readJSONSync(assetsJSON)).forEach((el, key, rawAssets) => {
+		const fileList = fs.readJSONSync(assetsJSON);
+
+		$C(fileList).forEach((el, key, rawAssets) => {
 			assets[key] = rawAssets[key];
 		});
 	});
