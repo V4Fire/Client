@@ -87,11 +87,11 @@ export default class AsyncRender extends Super {
 			toVNode: AnyFunction<unknown[], CanArray<VNode>>,
 			target: VNode;
 
-		ctx.$once('[[V-FOR-CB]]', setVNodeCompiler);
-		ctx.$once('[[V-ASYNC-TARGET]]', setTarget);
+		ctx.$once('[[V_FOR_CB]]', setVNodeCompiler);
+		ctx.$once('[[V_ASYNC_TARGET]]', setTarget);
 
 		let
-			i = 0,
+			iterI = iter.readI + 1,
 			chunkI = 0;
 
 		let
@@ -110,8 +110,8 @@ export default class AsyncRender extends Super {
 			lastEvent;
 
 		$a.setImmediate(async () => {
-			ctx.$off('[[V-FOR-CB]]', setVNodeCompiler);
-			ctx.$off('[[V-ASYNC-TARGET]]', setTarget);
+			ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
+			ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (target == null) {
@@ -124,6 +124,7 @@ export default class AsyncRender extends Super {
 			}
 
 			// eslint-disable-next-line no-constant-condition
+			// TODO: add description
 			while (true) {
 				if (opts.group != null) {
 					group = `asyncComponents:${opts.group}:${chunkI}`;
@@ -149,12 +150,9 @@ export default class AsyncRender extends Super {
 						iterVal = Object.isPromise(el.value) ? await $a.promise(el.value, {group}) : el.value;
 
 					if (filter != null) {
-						const needRender = filter.call(this.ctx, iterVal, i, {
+						const needRender = filter.call(this.ctx, iterVal, iterI, {
 							total,
-
-							i: iter.readI + i + 1,
 							chunk: chunkI,
-
 							iterable: iter.iterable
 						});
 
@@ -181,7 +179,7 @@ export default class AsyncRender extends Super {
 						}
 					}
 
-					i++;
+					iterI++;
 
 				} catch (err) {
 					if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
@@ -255,7 +253,7 @@ export default class AsyncRender extends Super {
 				for (let i = 0; i < valsToRender.length; i++) {
 					const
 						el = valsToRender[i],
-						vnodes = toVNode(el);
+						vnodes = toVNode(el, iterI);
 
 					if (Object.isArray(vnodes)) {
 						for (let i = 0; i < vnodes.length; i++) {

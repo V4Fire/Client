@@ -105,7 +105,7 @@ export default class AsyncRender extends Super {
 						});
 					}
 
-					return Promise.resolve(syncIterator.next());
+					return Promise.resolve(iterable[Symbol.asyncIterator]().next());
 				};
 
 				return {

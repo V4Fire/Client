@@ -78,7 +78,7 @@ export function wrapRenderList<T extends typeof renderList>(original: T): T {
 		src: Iterable<unknown> | Dictionary,
 		cb: AnyFunction
 	) {
-		this.$emit('[[V-FOR-CB]]', cb);
+		this.$emit('[[V_FOR_CB]]', cb);
 		return original(src, cb);
 	});
 }
