@@ -17,7 +17,6 @@ import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import log, { LogMessageOptions } from 'core/log';
-import { deprecated } from 'core/functools/deprecation';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import config from 'config';
@@ -65,9 +64,7 @@ import {
 	Hook,
 
 	ComponentInterface,
-	UnsafeGetter,
-
-	VNode
+	UnsafeGetter
 
 } from 'core/component';
 
@@ -261,7 +258,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Component stage value
 	 * @see [[iBlock.stageProp]]
 	 */
-	@computed({replace: false})
+	@computed()
 	get stage(): CanUndef<Stage> {
 		return this.field.get('stageStore');
 	}
@@ -295,7 +292,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Group name of the current stage
 	 */
-	@computed({replace: false})
+	@computed()
 	get stageGroup(): string {
 		return `stage.${this.stage}`;
 	}
@@ -313,7 +310,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[iBlock.modsProp]]
 	 */
 	@system({
-		replace: false,
 		merge: mergeMods,
 		init: initMods
 	})
@@ -521,44 +517,11 @@ export default abstract class iBlock extends ComponentInterface {
 	@prop({type: Object, required: false})
 	readonly p?: Dictionary;
 
-	/**
-	 * Additional classes for the component elements.
-	 * It can be useful if you need to attach some extra classes to internal component elements.
-	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
-	 *
-	 * @example
-	 * ```js
-	 * // Key names are tied with component elements,
-	 * // and values contain a CSS class or list of classes we want to add
-	 *
-	 * {
-	 *   foo: 'bla',
-	 *   bar: ['bla', 'baz']
-	 * }
-	 * ```
-	 */
 	@prop({type: Object, required: false})
-	readonly classes?: Dictionary<CanArray<string>>;
+	override readonly classes?: Dictionary<CanArray<string>>;
 
-	/**
-	 * Additional styles for the component elements.
-	 * It can be useful if you need to attach some extra styles to internal component elements.
-	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
-	 *
-	 * @example
-	 * ```js
-	 * // Key names are tied with component elements,
-	 * // and values contains a CSS style string, a style object or list of style strings
-	 *
-	 * {
-	 *   foo: 'color: red',
-	 *   bar: {color: 'blue'},
-	 *   baz: ['color: red', 'background: green']
-	 * }
-	 * ```
-	 */
 	@prop({type: Object, required: false})
-	readonly styles?: Styles;
+	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
 	 * Link to a `i18n` function that will be used to localize string literals
@@ -603,7 +566,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *   *) destroyed - a component was destroyed:
 	 *      this status can intersect with some hooks, like `beforeDestroy` or `destroyed`.
 	 */
-	@computed({replace: false})
+	@computed()
 	get componentStatus(): ComponentStatus {
 		return this.shadowComponentStatusStore ?? this.field.get<ComponentStatus>('componentStatusStore') ?? 'unloaded';
 	}
@@ -644,8 +607,6 @@ export default abstract class iBlock extends ComponentInterface {
 			}
 		}
 
-		// @deprecated
-		this.emit(`status-${value}`, value);
 		this.emit(`componentStatus:${value}`, value, oldValue);
 		this.emit('componentStatusChange', value, oldValue);
 	}
@@ -727,7 +688,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * True if the current component is completely ready to work.
 	 * The `ready` status is mean, that component was mounted an all data provider are loaded.
 	 */
-	@computed({replace: false})
+	@computed()
 	get isReady(): boolean {
 		return Boolean(readyStatuses[this.componentStatus]);
 	}
@@ -735,7 +696,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * True if the current component is a functional
 	 */
-	@computed({replace: false})
+	@computed()
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
 	}
@@ -743,15 +704,15 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * True if the current component is a functional or flyweight
 	 */
-	@computed({replace: false})
+	@computed()
 	get isNotRegular(): boolean {
-		return Boolean(this.isFunctional || this.isFlyweight);
+		return Boolean(this.isFunctional);
 	}
 
 	/**
 	 * True if the current component is rendered by using server-side rendering
 	 */
-	@computed({replace: false})
+	@computed()
 	get isSSR(): boolean {
 		return this.$renderEngine.supports.ssr;
 	}
@@ -763,7 +724,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * and you specify to the outer component some theme modifier.
 	 * This modifier will recursively provide to all child components.
 	 */
-	@computed({replace: false})
+	@computed()
 	get baseMods(): CanUndef<Readonly<ModsNTable>> {
 		const
 			m = this.mods;
@@ -1070,7 +1031,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[iBlock.stageProp]]
 	 */
 	@field({
-		replace: false,
 		forceUpdate: false,
 		functionalWatching: false,
 		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
@@ -1111,7 +1071,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@field({
 		merge: true,
-		replace: false,
 		functionalWatching: false,
 		init: () => Object.create({})
 	})
@@ -1129,7 +1088,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * that can emit re-rendering of the component.
 	 * Don't use this getter outside the component template.
 	 */
-	@computed({cache: true, replace: false})
+	@computed({cache: true})
 	protected get m(): Readonly<ModsNTable> {
 		return getWatchableMods(this);
 	}
@@ -1137,7 +1096,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Cache object for `opt.ifOnce`
 	 */
-	@system({merge: true, replace: false})
+	@system({merge: true})
 	protected readonly ifOnceStore: Dictionary<number> = {};
 
 	/**
@@ -1146,7 +1105,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		merge: true,
-		replace: false,
 		init: () => Object.createDict()
 	})
 
@@ -1160,23 +1118,10 @@ export default abstract class iBlock extends ComponentInterface {
 	protected watchTmp: Dictionary = {};
 
 	/**
-	 * A render temporary cache.
-	 * It's used with the `renderKey` directive.
-	 */
-	@system({
-		merge: true,
-		replace: false,
-		init: () => Object.createDict()
-	})
-
-	protected override renderTmp!: Dictionary<VNode>;
-
-	/**
 	 * Cache of watched values
 	 */
 	@system({
 		merge: true,
-		replace: false,
 		init: () => Object.createDict()
 	})
 
@@ -1185,7 +1130,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Link to the current component
 	 */
-	@computed({replace: false})
+	@computed()
 	protected get self(): this {
 		return this;
 	}
@@ -1219,15 +1164,6 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly localEmitter!: EventEmitterWrapper<this>;
 
 	/**
-	 * @deprecated
-	 * @see [[iBlock.localEmitter]]
-	 */
-	@deprecated({renamedTo: 'localEmitter'})
-	get localEvent(): EventEmitterWrapper<this> {
-		return this.localEmitter;
-	}
-
-	/**
 	 * Event emitter of a parent component
 	 */
 	@system({
@@ -1240,15 +1176,6 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly parentEmitter!: ReadonlyEventEmitterWrapper<this>;
 
 	/**
-	 * @deprecated
-	 * @see [[iBlock.parentEmitter]]
-	 */
-	@deprecated({renamedTo: 'parentEmitter'})
-	get parentEvent(): ReadonlyEventEmitterWrapper<this> {
-		return this.parentEmitter;
-	}
-
-	/**
 	 * Event emitter of the root component
 	 */
 	@system({
@@ -1259,15 +1186,6 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected readonly rootEmitter!: EventEmitterWrapper<this>;
-
-	/**
-	 * @deprecated
-	 * @see [[iBlock.rootEmitter]]
-	 */
-	@deprecated({renamedTo: 'rootEmitter'})
-	get rootEvent(): ReadonlyEventEmitterWrapper<this> {
-		return this.rootEmitter;
-	}
 
 	/**
 	 * The global event emitter of an application.
@@ -1283,22 +1201,12 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly globalEmitter!: EventEmitterWrapper<this>;
 
 	/**
-	 * @deprecated
-	 * @see [[iBlock.globalEmitter]]
-	 */
-	@deprecated({renamedTo: 'globalEmitter'})
-	get globalEvent(): ReadonlyEventEmitterWrapper<this> {
-		return this.globalEmitter;
-	}
-
-	/**
 	 * A map of extra helpers.
 	 * It can be useful to provide some helper functions to a component.
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: () => {
 			//#if runtime has core/helpers
 			return helpers;
@@ -1319,7 +1227,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: () => {
 			//#if runtime has core/browser
 			return browser;
@@ -1340,17 +1247,10 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: () => presets
 	})
 
 	protected readonly presets!: typeof presets;
-
-	/** @see [[iBlock.presets]] */
-	@deprecated({renamedTo: 'presets'})
-	get preset(): typeof presets {
-		return this.presets;
-	}
 
 	/**
 	 * Number of `beforeReady` event listeners:
@@ -1369,7 +1269,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Alias for `i18n`
 	 */
-	@computed({replace: false})
+	@computed()
 	protected get t(): this['i18n'] {
 		return this.i18n;
 	}
@@ -1379,8 +1279,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		unique: true,
-		replace: true
+		unique: true
 	})
 
 	protected readonly l: typeof l = globalThis.l;
@@ -1391,7 +1290,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: () => console
 	})
 
@@ -1403,7 +1301,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: () => location
 	})
 
@@ -1415,7 +1312,6 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
 		init: () => globalThis
 	})
 
@@ -1591,7 +1487,7 @@ export default abstract class iBlock extends ComponentInterface {
 		opts?: AsyncWatchOptions
 	): void;
 
-	@p({replace: false})
+	@p()
 	watch<T = unknown>(
 		path: WatchPath | object,
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
@@ -1600,7 +1496,7 @@ export default abstract class iBlock extends ComponentInterface {
 		const
 			{async: $a} = this;
 
-		if (this.isFlyweight || this.isSSR) {
+		if (this.isSSR) {
 			return;
 		}
 
@@ -1675,7 +1571,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param args
 	 */
-	@p({replace: false})
+	@p()
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			eventDecl = Object.isString(event) ? {event} : event,
@@ -1714,7 +1610,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param args
 	 */
-	@p({replace: false})
+	@p()
 	emitError(event: string, ...args: unknown[]): void {
 		this.emit({event, type: 'error'}, ...args);
 	}
@@ -1725,7 +1621,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param args
 	 */
-	@p({replace: false})
+	@p()
 	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			eventDecl = Object.isString(event) ? {event} : event,
@@ -1787,7 +1683,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	@p({replace: false})
+	@p()
 	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
@@ -1807,7 +1703,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	@p({replace: false})
+	@p()
 	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
@@ -1826,7 +1722,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param [opts] - additional options
 	 */
-	@p({replace: false})
+	@p()
 	promisifyOnce<T = unknown>(event: string, opts?: AsyncOptions): Promise<T> {
 		return this.async.promisifyOnce(this, event.dasherize(), opts);
 	}
@@ -1847,7 +1743,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	off(opts: ClearOptionsId<EventId>): void;
 
-	@p({replace: false})
+	@p()
 	off(eventOrParams?: string | ClearOptionsId<EventId>, handler?: Function): void {
 		const
 			e = eventOrParams;
@@ -1885,7 +1781,7 @@ export default abstract class iBlock extends ComponentInterface {
 		opts?: WaitDecoratorOptions
 	): CanPromise<ReturnType<F>>;
 
-	@p({replace: false})
+	@p()
 	waitStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cbOrOpts?: F | WaitDecoratorOptions,
@@ -2159,7 +2055,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 
-	@p({replace: false})
+	@p()
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.setMod(nodeOrName, name));
@@ -2187,7 +2083,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 
-	@p({replace: false})
+	@p()
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.removeMod(nodeOrName, name));
@@ -2220,7 +2116,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * console.log(document.documentElement.classList.contains('b-az-foo-bla'));
 	 * ```
 	 */
-	@p({replace: false})
+	@p()
 	setRootMod(name: string, value: unknown): boolean {
 		return this.r.setRootMod(name, value, this);
 	}
@@ -2244,7 +2140,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * console.log(document.documentElement.classList.contains('b-az-foo-bla') === false);
 	 * ```
 	 */
-	@p({replace: false})
+	@p()
 	removeRootMod(name: string, value?: unknown): boolean {
 		return this.r.removeRootMod(name, value, this);
 	}
@@ -2261,7 +2157,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * console.log(this.getRootMod('foo') === 'bla-bar');
 	 * ```
 	 */
-	@p({replace: false})
+	@p()
 	getRootMod(name: string): CanUndef<string> {
 		return this.r.getRootMod(name, this);
 	}
@@ -2283,7 +2179,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param ctxOrOpts
 	 * @param details
 	 */
-	@p({replace: false})
+	@p()
 	override log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
@@ -2419,7 +2315,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param ref - ref name
 	 * @param [opts] - additional options
 	 */
-	@p({replace: false})
+	@p()
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
 		let
 			that = <iBlock>this;
@@ -2467,7 +2363,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Initializes an instance of the `Block` class for the current component
 	 */
 	@hook('mounted')
-	@p({replace: false})
+	@p()
 	protected initBlockInstance(): void {
 		if (this.block != null) {
 			const
@@ -2561,7 +2457,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	protected override onCreatedHook(): void {
-		if (this.isFlyweight || this.isSSR) {
+		if (this.isSSR) {
 			this.componentStatusStore = 'ready';
 			this.isReadyOnce = true;
 		}
@@ -2578,10 +2474,6 @@ export default abstract class iBlock extends ComponentInterface {
 	protected override async onUpdateHook(): Promise<void> {
 		try {
 			await this.nextTick({label: $$.onUpdateHook});
-
-			if (this.isFlyweight) {
-				this.$el?.component?.onUnbindHook();
-			}
 
 			this.onBindHook();
 			this.onInsertedHook();
@@ -2620,7 +2512,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Hook handler: component will be destroyed
 	 */
-	@p({replace: false})
+	@p()
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll().locked = true;
