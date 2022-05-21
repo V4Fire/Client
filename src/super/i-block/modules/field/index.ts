@@ -99,7 +99,7 @@ export default class Field extends Friend {
 			if (info.accessor != null) {
 				chunks[0] = info.accessor;
 
-			} else if (!ctx.isFlyweight) {
+			} else {
 				switch (info.type) {
 					case 'prop':
 						if (ctx.lfc.isBeforeCreate('beforeDataCreate')) {

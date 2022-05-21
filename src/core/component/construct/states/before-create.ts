@@ -8,7 +8,6 @@
 
 import Async from 'core/async';
 
-import { asyncLabel } from 'core/component/const';
 import { getComponentContext } from 'core/component/context';
 
 import { forkMeta } from 'core/component/meta';
@@ -54,7 +53,6 @@ export function beforeCreateState(
 	unsafe.$refHandlers = {};
 
 	unsafe.$async = new Async(component);
-	unsafe.$asyncLabel = asyncLabel;
 
 	const
 		parent = unsafe.$parent,
