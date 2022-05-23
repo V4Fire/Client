@@ -47,14 +47,11 @@
 					< _.&__cell.&__input-wrapper
 						+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
-						< input.&__additional-phrase.&__input &
+						< span.&__text-hint &
 							v-if = hasTextHint |
-							tabindex = -1 |
-							ref = textHint |
-							:value = textHintInputValue |
-							@click = focus |
-							@focus = focus
+							ref = textHint
 						.
+							{{ textHintWithIndent }}
 
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')

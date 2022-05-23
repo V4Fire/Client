@@ -74,14 +74,20 @@ b-input extends i-input-text
 		display block
 		visibility visible
 
-	&__input:first-child
+	&__input
 		position relative
 		z-index 2
 
-	&__additional-phrase
+	&__text-hint
+		width 100%
 		position absolute
 		left 0
+		overflow hidden
+		margin 0
+		text-overflow ellipsis
+		border 0
+		background transparent
 		z-index 1
 
-	&_empty_true &__additional-phrase
+	&_empty_true &__text-hint
 		display none

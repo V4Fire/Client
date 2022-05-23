@@ -74,7 +74,7 @@ export default class bInput extends iInputText {
 	 * Mind, the hint value does not affect a component value.
 	 */
 	@prop({type: String, required: false})
-	textHint?: string;
+	readonly textHint?: string;
 
 	/**
 	 * The minimum value of the input (for number and date types)
@@ -217,9 +217,14 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Value for textHint input
+	 * Returns the input value from [text] and [textHint] joined together with a space
+	 *
+	 * textHint is displayed after the input text due to the fact
+	 * that it is placed under the native input, duplicates the entered value and adds [textTint].
+	 * ie, if the input value is "value" and [textHint] is "some hint",
+	 * the getter will return "value some hint"
 	 */
-	protected get textHintInputValue(): string {
+	protected get textHintWithIndent(): string {
 		return `${this.text} ${this.textHint}`;
 	}
 
@@ -237,7 +242,7 @@ export default class bInput extends iInputText {
 	};
 
 	protected override readonly $refs!: iInputText['$refs'] & {
-		textHint?: HTMLInputElement;
+		textHint?: HTMLSpanElement;
 	};
 
 	@system()
@@ -313,22 +318,25 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Updates textHint input value
+	 * Synchronizes the contents of the textHint block with the input value
+	 * Returns true if synchronization was successful
 	 */
-	protected updateTextHintValue(): void {
+	protected syncTextHintValue(): boolean {
 		if (!this.hasTextHint) {
-			return;
+			return false;
 		}
 
 		const {textHint, input} = this.$refs;
 
 		if (textHint == null) {
-			return;
+			return false;
 		}
 
-		textHint.value = input.scrollWidth > input.clientWidth ?
+		textHint.innerText = input.scrollWidth > input.clientWidth ?
 			'' :
-			this.textHintInputValue;
+			this.textHintWithIndent;
+
+		return true;
 	}
 
 	/**
@@ -338,7 +346,7 @@ export default class bInput extends iInputText {
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
-		this.updateTextHintValue();
+		this.syncTextHintValue();
 	}
 
 	/**
