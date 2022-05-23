@@ -80,14 +80,17 @@ b-input extends i-input-text
 
 	&__text-hint
 		width 100%
+		margin 0
+
 		position absolute
 		left 0
+		z-index 1
+
 		overflow hidden
-		margin 0
 		text-overflow ellipsis
+
 		border 0
 		background transparent
-		z-index 1
 
 	&_empty_true &__text-hint
 		display none

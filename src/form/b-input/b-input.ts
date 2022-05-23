@@ -217,19 +217,8 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Returns the input value from [text] and [textHint] joined together with a space
-	 *
-	 * textHint is displayed after the input text due to the fact
-	 * that it is placed under the native input, duplicates the entered value and adds [textTint].
-	 * ie, if the input value is "value" and [textHint] is "some hint",
-	 * the getter will return "value some hint"
-	 */
-	protected get textHintWithIndent(): string {
-		return `${this.text} ${this.textHint}`;
-	}
-
-	/**
 	 * True, if the component has a text hint
+	 * @see [[bInput.textHint]]
 	 */
 	get hasTextHint(): boolean {
 		return Object.isString(this.textHint) && this.textHint !== '';
@@ -247,6 +236,17 @@ export default class bInput extends iInputText {
 
 	@system()
 	protected override valueStore!: this['Value'];
+
+	/**
+	 * Returns a value from `text` and `textHint` joined together with a space.
+	 *
+	 * A hint is shown after the input text. Technically, it’s placed under the native input and duplicates the entered
+	 * value with adding a hint message. If `value` is set to "value" and `textHint` is set to "some hint",
+	 * the getter will return "value some hint".
+	 */
+	protected get textHintWithIndent(): string {
+		return `${this.text} ${this.textHint}`;
+	}
 
 	@system({
 		after: 'valueStore',
@@ -318,15 +318,16 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Synchronizes the contents of the textHint block with the input value
-	 * Returns true if synchronization was successful
+	 * Synchronizes the typed text with a text hint, if it specified.
+	 * Returns true if synchronization has been successful.
 	 */
 	protected syncTextHintValue(): boolean {
 		if (!this.hasTextHint) {
 			return false;
 		}
 
-		const {textHint, input} = this.$refs;
+		const
+			{textHint, input} = this.$refs;
 
 		if (textHint == null) {
 			return false;
