@@ -24,7 +24,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-input simple usage', () => {
-		xit('providing `value` and checking `text`', async () => {
+		it('providing `value` and checking `text`', async () => {
 			const target = await initInput(page, {
 				value: 'baz'
 			});
@@ -42,7 +42,7 @@ module.exports = (page) => {
 			).toEqual(['baz', 'bla']);
 		});
 
-		xit('providing `text` and checking `value`', async () => {
+		it('providing `text` and checking `value`', async () => {
 			const target = await initInput(page, {
 				text: 'baz'
 			});
@@ -60,7 +60,7 @@ module.exports = (page) => {
 			).toEqual(['baz', 'bla']);
 		});
 
-		xit('providing of attributes', async () => {
+		it('providing of attributes', async () => {
 			await initInput(page, {
 				id: 'foo',
 				name: 'bla',
@@ -81,7 +81,7 @@ module.exports = (page) => {
 			).toEqual(['INPUT', 'text', 'bla', 'baz']);
 		});
 
-		xit('loading from a data provider', async () => {
+		it('loading from a data provider', async () => {
 			const
 				target = await initInput(page, {name: 'baz', dataProvider: 'demo.InputValue'});
 
@@ -94,7 +94,7 @@ module.exports = (page) => {
 			).toEqual(['baz', 'bar2']);
 		});
 
-		xit('loading from a data provider and interpolation', async () => {
+		it('loading from a data provider and interpolation', async () => {
 			const
 				target = await initInput(page, {dataProvider: 'demo.Input'});
 
@@ -109,67 +109,45 @@ module.exports = (page) => {
 			).toEqual(['foo', 'bar', 'bar', 'bla']);
 		});
 
-		it('hide additional phrase if it not provided', async () => {
-			const target = await initInput(page);
+		describe('`textHint`', () => {
+			it('providing a hint', async () => {
+				const target = await initInput(page, {value: 'text', textHint: 'extra text'});
 
-			expect(
-				await target.evaluate((ctx) => ctx.$refs.textHint == null)
-			).toBeTruthy();
-		});
+				expect(
+					await target.evaluate((ctx) => ctx.$refs.textHint.value)
+				).toBe('text extra text');
 
-		it('show additional phrase if it provided', async () => {
-			const target = await initInput(page, {textHint: 'extra text'});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.value = '10';
+						return ctx.$refs.textHint.value;
+					})
+				).toBe('10 extra text');
+			});
 
-			expect(
-				await target.evaluate((ctx) => ctx.$refs.textHint != null)
-			).toBeTruthy();
-		});
+			it('should create a node for the passed hint text', async () => {
+				const target = await initInput(page, {textHint: 'extra text'});
 
-		it('value of additional phrase input', async () => {
-			const target = await initInput(page, {value: 'text', textHint: 'extra text'});
+				expect(
+					await target.evaluate((ctx) => ctx.$refs.textHint != null)
+				).toBeTruthy();
+			});
 
-			expect(
-				await target.evaluate((ctx) => ctx.$refs.textHint.value)
-			).toBe('text extra text');
+			it("shouldn't create a node if there is no hint passed", async () => {
+				const target = await initInput(page);
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.value = '10';
-					return ctx.$refs.textHint.value;
-				})
-			).toBe('10 extra text');
-		});
+				expect(
+					await target.evaluate((ctx) => ctx.$refs.textHint == null)
+				).toBeTruthy();
+			});
 
-		it('additional input can not be focused', async () => {
-			const target = await initInput(page, {value: 'text', textHint: 'extra text'});
+			it('should hide a hint if the component input is empty', async () => {
+				const target = await initInput(page, {textHint: 'extra text'});
 
-			expect(
-				await target.evaluate((ctx) => {
-					const {textHint, input} = ctx.$refs;
-					textHint.dispatchEvent(new FocusEvent('focus', {data: textHint}));
-					return document.activeElement === input;
-				})
-			).toBeTruthy();
-		});
-
-		it('additional input can not be focused by click', async () => {
-			const target = await initInput(page, {value: 'text', textHint: 'extra text'});
-
-			expect(
-				await target.evaluate((ctx) => {
-					const {textHint, input} = ctx.$refs;
-					textHint.dispatchEvent(new Event('click', {data: textHint}));
-					return document.activeElement === input;
-				})
-			).toBeTruthy();
-		});
-
-		it('additional input has "display: none" if value empty ', async () => {
-			const target = await initInput(page, {textHint: 'extra text'});
-
-			expect(
-				await target.evaluate((ctx) => getComputedStyle(ctx.$refs.textHint).display)
-			).toBe('none');
+				expect(
+					await target.evaluate((ctx) => getComputedStyle(ctx.$refs.textHint).display)
+				).toBe('none');
+			});
 		});
 	});
 };
