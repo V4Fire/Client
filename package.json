@@ -52,6 +52,7 @@
     "@babel/preset-typescript": "7.16.7",
     "@swc/core": "1.2.153",
     "@swc/helpers": "0.3.8",
+    "chalk": "^4.1.2",
     "cross-env": "7.0.3",
     "escaper": "3.0.6",
     "eventemitter2": "6.4.5",

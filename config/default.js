@@ -28,6 +28,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	/** @inheritDoc */
 	build: {
 		/**
+		 * Is process running in ci environment
+		 *
+		* @returns {boolean}
+		 */
+		ci: o('build_ci', {
+			env: true,
+			default: Boolean(process.env.CI)
+		}),
+
+		/**
 		 * List of entries to build.
 		 * The entries are taken from the "core/entries" directory.
 		 *
@@ -292,15 +302,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				}[v]);
 			}
 		});
-	},
-
-	/**
-	 * Is process running in ci environment
-	 *
-	 * @returns {boolean}
-	 */
-	isCI() {
-		return Boolean(process.env.CI);
 	},
 
 	/**
@@ -755,13 +756,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for webpack progress plugin
+	 * Returns parameters for `build/webpack/plugins/progress-plugin`
 	 *
+	 * @see https://github.com/npkgz/cli-progress
+	 * @returns {object}
 	 */
 	progressPlugin() {
 		return {
 			enabled: true,
-			version: this.isCI() ? 'static' : 'dynamic',
+			type: this.build.ci ? 'static' : 'dynamic',
 			clearOnComplete: true,
 			stopOnComplete: true,
 			hideCursor: null

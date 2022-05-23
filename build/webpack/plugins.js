@@ -33,7 +33,8 @@ module.exports = async function plugins({name}) {
 	]);
 
 	if (config.progressPlugin().enabled) {
-		plugins.set('progress-plugin', createProgressPlugin(name));
+		const progressPlugin = createProgressPlugin(name);
+		plugins.set('progress-plugin', progressPlugin);
 	}
 
 	return plugins;

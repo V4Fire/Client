@@ -88,7 +88,7 @@ module.exports = function optimization({buildId, plugins}) {
 		new TerserPlugin({
 			parallel: true,
 			// Disable extraction of license headers into separate files
-      extractComments: false,
+			extractComments: false,
 			terserOptions: inherit({
 				ecma: es,
 

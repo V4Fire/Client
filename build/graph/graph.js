@@ -32,6 +32,7 @@ const {
 	STYLES,
 
 	MIN_PROCESS,
+	MAX_TASKS_PER_ONE_PROCESS,
 	MAX_PROCESS
 } = include('build/const');
 
@@ -111,7 +112,7 @@ async function buildProjectGraph() {
 		.to({})
 		.reduce(entryReducer);
 
-	processes[HTML].name = 'html';
+	processes[HTML].name = 'HTML';
 	processes[RUNTIME].name = 'runtime';
 	processes[STANDALONE].name = 'standalone';
 	processes[STYLES].name = 'styles';
@@ -119,7 +120,7 @@ async function buildProjectGraph() {
 	// Add to HTML task all other tasks as dependencies
 	processes[HTML].dependencies = processes
 		.map((proc) => proc.name)
-		.filter((name) => name !== 'html');
+		.filter((name) => name !== 'HTML');
 
 	const res = {
 		entry,
@@ -128,7 +129,11 @@ async function buildProjectGraph() {
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
-	fs.writeFileSync(graphCacheFile, JSON.stringify(Object.reject(res, 'components'), undefined, 2));
+	fs.writeFileSync(
+		graphCacheFile,
+		JSON.stringify(Object.reject(res, 'components'), undefined, 2)
+	);
+
 	console.log('The project graph is initialized');
 
 	return res;
@@ -279,13 +284,17 @@ async function buildProjectGraph() {
 
 				if (needLoadStylesAsJS) {
 					entrySrc = path.join(tmpEntries, `${name}.styl.js`);
+
 					fs.writeFileSync(stylSrc, content);
+
 					fs.writeFileSync(
 						entrySrc,
 						[webpackRuntime, `require('${stylSrc}');`].join('\n')
 					);
+
 				} else {
 					entrySrc = stylSrc;
+
 					fs.writeFileSync(
 						entrySrc,
 						[content, 'generateImgClasses()'].join('\n')
@@ -293,9 +302,14 @@ async function buildProjectGraph() {
 				}
 
 				entry[entryName] = entrySrc;
-				let processStyleIndex = STYLES;
 
-				if (MAX_PROCESS > processes.length && Object.keys(processes[STYLES].entries).length) {
+				let
+					processStyleIndex = STYLES;
+
+				const canMoveBuildToNewProcess = MAX_PROCESS > processes.length &&
+					Object.keys(processes[STYLES].entries).length > MAX_TASKS_PER_ONE_PROCESS;
+
+				if (canMoveBuildToNewProcess) {
 					processes.push({entries: {}, name: `styles_${styleIndex++}`});
 					processStyleIndex = processes.length - 1;
 				}

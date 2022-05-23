@@ -43,7 +43,7 @@ exports.STANDALONE = buildIterator++;
  * Index of a process that generates styles
  * @type {number}
  */
- exports.STYLES = buildIterator;
+exports.STYLES = buildIterator;
 
 /**
  * Position of the last available process

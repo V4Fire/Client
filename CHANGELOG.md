@@ -11,18 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.21.0 (2022-05-13)
+## v3.??.? (20??-??-??)
 
 #### :boom: Breaking Change
 
-* Removed `simpleProgressWebpackPlugin` with custom progress plugin
+* Replaced `simpleProgressWebpackPlugin` to a custom plugin
+* Removed generation of redunant artifacts (`license.txt`, empty entry files) `build`
+* Now all comments are removed from compiled CSS files by default
+
+#### 🐛 Bug Fix
+
+* Removed deadlock during execution of Snakeskin templates `i-static-page/modules/ss-helpers`
 
 #### :house: Internal
 
-* Removed comments from css files into dev build
-* Removed deadlock for build while snakeskin waits artifacts
-* Added names for build processes
-* Removed generation of redunant artifacts (license.txt, empty entry files)
+* Added human readable names for all registered webpack process `build/webpack`
 
 ## v3.21.0 (2022-05-24)
 
