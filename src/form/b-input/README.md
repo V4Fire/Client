@@ -203,6 +203,27 @@ Boolean, if needed to show progress by slot or `b-progress-icon`.
 < b-input :progressIcon = 'b-my-progress-icon'
 ```
 
+### [textHint]
+
+An additional text hint that is shown after the non-empty input text.
+Mind, the hint value does not affect a component value.
+
+```
+/// You will see "value in the catalog" in the input.
+/// Mind, `bInput.value` will be just "value" as provided.
+< b-input &
+  :value = 'value' |
+  :textHint = 'in the catalog'
+.
+
+/// You will see the empty input in that case or a placeholder, if it provided.
+/// If you type a message, then you’ll see "<your message> in catalog" in the input.
+< b-input &
+  :textHint = 'in catalog'
+  [:placeholer = 'search']
+.
+```
+
 ### Validation
 
 Because the component extends from [[iInput]], it supports validation API.

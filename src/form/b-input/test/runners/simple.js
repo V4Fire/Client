@@ -108,5 +108,46 @@ module.exports = (page) => {
 
 			).toEqual(['foo', 'bar', 'bar', 'bla']);
 		});
+
+		describe('`textHint`', () => {
+			it('providing a hint', async () => {
+				const target = await initInput(page, {value: 'text', textHint: 'extra text'});
+
+				expect(
+					await target.evaluate((ctx) => ctx.$refs.textHint.value)
+				).toBe('text extra text');
+
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.value = '10';
+						return ctx.$refs.textHint.value;
+					})
+				).toBe('10 extra text');
+			});
+
+			it('should create a node for the passed hint text', async () => {
+				const target = await initInput(page, {textHint: 'extra text'});
+
+				expect(
+					await target.evaluate((ctx) => ctx.$refs.textHint != null)
+				).toBeTruthy();
+			});
+
+			it("shouldn't create a node if there is no hint passed", async () => {
+				const target = await initInput(page);
+
+				expect(
+					await target.evaluate((ctx) => ctx.$refs.textHint == null)
+				).toBeTruthy();
+			});
+
+			it('should hide a hint if the component input is empty', async () => {
+				const target = await initInput(page, {textHint: 'extra text'});
+
+				expect(
+					await target.evaluate((ctx) => getComputedStyle(ctx.$refs.textHint).display)
+				).toBe('none');
+			});
+		});
 	});
 };
