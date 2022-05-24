@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (????-??-??)
+
+#### :rocket: New Feature
+
+* Add props `textHint` with additional text hint that is shown after the non-empty input text
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix
