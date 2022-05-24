@@ -14,8 +14,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 ## v3.??.?? (????-??-??)
 
 #### :rocket: New Feature
-* `form/b-input`:
-  * Add prop `textHint` with additional text hint that is shown after the non-empty input text
+
+* Added a new prop `textHint` to show extra text after the component non-empty input `form/b-input`
 
 ## v3.20.0 (2022-04-25)
 
