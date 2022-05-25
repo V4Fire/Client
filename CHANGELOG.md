@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Replaced `simpleProgressWebpackPlugin` to a custom plugin
-* Removed generation of redunant artifacts (`license.txt`, empty entry files) `build`
+* Removed generation of redundant artifacts (`license.txt`, empty entry files) `build`
 * Now all comments are removed from compiled CSS files by default
 
 #### 🐛 Bug Fix
@@ -26,7 +26,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added human readable names for all registered webpack process `build/webpack`
+* Added human-readable names for all registered webpack process `build/webpack`
+
+## v3.21.1 (2022-05-25)
+
+#### 🐛 Bug Fix
+
+* Fixed `b-input` overflowing when `textHint` provided `form/b-input`
 
 ## v3.21.0 (2022-05-24)
 
