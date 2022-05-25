@@ -366,8 +366,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		/**
 		 * Return parameters to show webpack build progress
 		 *
+		 * @cli progress
+		 * @env PROGRESS
+		 *
 		 * @see https://github.com/npkgz/cli-progress
-		 * @param [enabled]
+		 * @param [def] - default value
 		 * @returns {Object}
 		 */
 		progress(def = true) {

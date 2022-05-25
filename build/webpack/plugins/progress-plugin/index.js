@@ -16,10 +16,6 @@ const
 	ProgressbarView = include('build/webpack/plugins/progress-plugin/progressbar-view'),
 	PrintlnProgressView = include('build/webpack/plugins/progress-plugin/println-progress-view');
 
-const
-	progressBarView = new ProgressbarView(),
-	printlnProgressView = new PrintlnProgressView();
-
 /**
  * Create a webpack plugin to show a build process by the passed name
  * @param {string} processName
@@ -33,15 +29,15 @@ module.exports = function createProgressPlugin(processName) {
 
 	switch (type) {
 		case 'println':
-			logger = printlnProgressView;
+			logger = new PrintlnProgressView();
 			break;
 
 		case 'progressbar':
-			logger = progressBarView;
+			logger = new ProgressbarView();
 			break;
 
 		default:
-			logger = () => undefined;
+			logger = {getProgressHandler: () => () => undefined};
 	}
 
 	return new webpack.ProgressPlugin(logger.getProgressHandler(processName));
