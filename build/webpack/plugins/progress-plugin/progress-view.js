@@ -75,6 +75,8 @@ module.exports = class ProgressView {
 		this.finishedProcess++;
 
 		if (this.finishedProcess === Object.size(this.handlers)) {
+			console.log('\n');
+
 			console.log(
 				chalk.blue(`Webpack build takes ${executionTimeInSeconds} seconds`)
 			);
