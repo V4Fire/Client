@@ -35,9 +35,9 @@ module.exports = class ProgressbarView extends ProgressView {
 			incompleteSize = opts.barsize - completeSize;
 
 		const bar =
-			opts.barCompleteString.substr(0, completeSize) +
+			opts.barCompleteString.substring(0, completeSize) +
 			opts.barGlue +
-			opts.barIncompleteString.substr(0, incompleteSize);
+			opts.barIncompleteString.substring(0, incompleteSize);
 
 		return `# ${name} ${bar} ${params.value}%`;
 	}
@@ -48,7 +48,7 @@ module.exports = class ProgressbarView extends ProgressView {
 		this.multibar = new cliProgress.MultiBar(
 			{
 				format: ProgressbarView.formatter,
-				...config.progressPlugin()
+				...config.progressPlugin().opts
 			},
 
 			cliProgress.Presets.shades_grey
