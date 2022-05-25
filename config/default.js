@@ -373,7 +373,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		progress(enabled = true) {
 			if (enabled) {
 				return {
-					type: this.build.ci ? 'println' : 'progressbar',
+					type: this.config.build.ci ? 'println' : 'progressbar',
 					opts: {
 						clearOnComplete: true,
 						stopOnComplete: true,
