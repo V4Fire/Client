@@ -10,7 +10,9 @@
 
 const
 	config = require('@config/config'),
-	webpack = require('webpack'),
+	webpack = require('webpack');
+
+const
 	ProgressbarView = include('build/webpack/plugins/progress-plugin/progressbar-view'),
 	PrintlnProgressView = include('build/webpack/plugins/progress-plugin/println-progress-view');
 
@@ -19,27 +21,28 @@ const
 	printlnProgressView = new PrintlnProgressView();
 
 /**
- * Create webpack plugin to show progress of build
+ * Create a webpack plugin to show a build process by the passed name
+ * @param {string} processName
  */
-function createProgressPlugin(name) {
-	const {type} = config.progressPlugin();
-	let activeProgressIndicator;
+module.exports = function createProgressPlugin(processName) {
+	const
+		{type} = config.progressPlugin();
+
+	let
+		logger;
 
 	switch (type) {
-		case 'static':
-			activeProgressIndicator = printlnProgressView;
+		case 'println':
+			logger = printlnProgressView;
 			break;
 
-		case 'dynamic':
-			activeProgressIndicator = progressBarView;
+		case 'progressbar':
+			logger = progressBarView;
 			break;
 
 		default:
-			// eslint-disable-next-line no-empty-function
-			activeProgressIndicator = () => {};
+			logger = () => undefined;
 	}
 
-	return new webpack.ProgressPlugin(activeProgressIndicator.getProgressHandler(name));
-}
-
-module.exports = createProgressPlugin;
+	return new webpack.ProgressPlugin(logger.getProgressHandler(processName));
+};

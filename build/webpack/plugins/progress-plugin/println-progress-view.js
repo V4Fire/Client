@@ -8,87 +8,49 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const chalk = require('chalk');
+const
+	chalk = require('chalk');
+
+const
+	ProgressView = include('build/webpack/plugins/progress-plugin/progress-view');
 
 /**
- * Class for simple display of build progress
- * prints the status to the console at every change in the build progress
+ * Class to print progress status by simple `console.log` messages
  */
-class PrintlnProgressView {
+module.exports = class PrintlnProgressView extends ProgressView {
 	constructor() {
-		this.handlers = {};
-		this.finishedProcessCounter = 0;
+		super();
+		this.finishedProcess = 0;
 		this.startTime = new Date();
-		this.enableLog = true;
+	}
+
+	/** @override */
+	getProgressHandler(processName) {
+		console.log(`Started a build step ${processName}`);
+		return super.getProgressHandler(processName);
+	}
+
+	/** @override */
+	_updateProgress(processName, newProgress) {
+		console.log(`${processName}: ${this._convertProgressToPercent(newProgress)}%`);
+		super._updateProgress(processName);
 	}
 
 	/**
-	 * Convert value into percentage representation
+	 * Prints a message with the execution time of a build process by the passed name
 	 *
-	 * @param {number} value
+	 * @override
+	 * @param {string} processName
 	 */
-	convertToPercentage(value) {
-		return Math.floor(value * 100);
+	_finishProgress(processName) {
+		const
+			executionTime = Date.now() - this.startTime,
+			executionTimeInSeconds = Math.round(executionTime.seconds());
+
+		console.log(
+			chalk.green(`Build step ${processName} has finished in ${executionTimeInSeconds} seconds`)
+		);
+
+		super._finishProgress(processName);
 	}
-
-	/**
-	 * Adds a handler to log the build process
-	 *
-	 * @param {string} name
-	 */
-	getProgressHandler(name) {
-		this.handlers[name] = true;
-
-		if (this.enableLog) {
-			console.log(`Started build step ${name}`);
-		}
-
-		return this.progressUpdate.bind(this, name);
-	}
-
-	/**
-	 * Handler: updates a build progress status by the passed name
-	 *
-	 * @param {string} name
-	 * @param {number} newProgress - a number between 0 and 1 indicating the completion of the build
-	 */
-	progressUpdate(name, newProgress) {
-		const percentage = this.convertToPercentage(newProgress);
-
-		if (this.enableLog) {
-			console.log(`${name}: ${percentage}%`);
-		}
-
-		if (percentage === 100) {
-			this.finishProcess(name);
-		}
-	}
-
-	/**
-	 * Prints the message with execution time of the build process
-	 *
-	 * @param {string} name
-	 */
-	finishProcess(name) {
-		const executionTime = new Date() - this.startTime,
-			executionTimeInSeconds = Math.round(executionTime / 1000);
-
-		if (this.enableLog) {
-			console.log(
-				chalk.green(
-					`Build step ${name} has finished in ${executionTimeInSeconds} seconds`
-				)
-			);
-		}
-
-		this.finishedProcessCounter++;
-
-		if (this.finishedProcessCounter === Object.size(this.handlers)) {
-			console.log(
-				chalk.blue(`Webpack build takes ${executionTimeInSeconds} seconds`)
-			);
-		}
-	}
-}
-
-module.exports = PrintlnProgressView;
+};
