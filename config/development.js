@@ -11,7 +11,11 @@
 const config = include('config/default');
 
 module.exports = config.createConfig(
-	{dirs: [__dirname], mod: '@super/config/development'},
+	{
+		dirs: [__dirname],
+		mod: '@super/config/development'
+	},
+
 	{
 		__proto__: config,
 
