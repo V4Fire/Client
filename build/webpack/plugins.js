@@ -32,7 +32,7 @@ module.exports = async function plugins({name}) {
 		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
 	]);
 
-	if (config.webpack.progress()) {
+	if (config.webpack.progress().enabled) {
 		plugins.set('progress-plugin', createProgressPlugin(name));
 	}
 

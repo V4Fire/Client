@@ -370,7 +370,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param [enabled]
 		 * @returns {Object}
 		 */
-		progress(enabled = true) {
+		progress(def = true) {
+			const enabled = o('progress', {
+				env: true,
+				default: def,
+				type: 'boolean',
+				coerce: (value) => value !== 'false'
+			});
+
 			if (enabled) {
 				return {
 					type: this.config.build.ci ? 'println' : 'progressbar',
