@@ -30,7 +30,7 @@ module.exports = class ProgressbarView extends ProgressView {
 	 */
 	static formatter(opts, params, payload) {
 		const
-			name = payload.name.padEnd(15),
+			name = payload.processName.padEnd(15),
 			completeSize = Math.round(params.progress * opts.barsize),
 			incompleteSize = opts.barsize - completeSize;
 
@@ -56,9 +56,9 @@ module.exports = class ProgressbarView extends ProgressView {
 	}
 
 	/** @override */
-	getProgressHandler(name) {
-		this.handlers[name] = this.multibar.create(100, 0, {name});
-		return this._updateProgress.bind(this, name);
+	getProgressHandler(processName) {
+		this.handlers[processName] = this.multibar.create(100, 0, {processName});
+		return this._updateProgress.bind(this, processName);
 	}
 
 	/** @override */

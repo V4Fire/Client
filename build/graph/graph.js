@@ -112,7 +112,7 @@ async function buildProjectGraph() {
 		.to({})
 		.reduce(entryReducer);
 
-	processes[HTML].name = 'HTML';
+	processes[HTML].name = 'html';
 	processes[RUNTIME].name = 'runtime';
 	processes[STANDALONE].name = 'standalone';
 	processes[STYLES].name = 'styles';
@@ -120,7 +120,7 @@ async function buildProjectGraph() {
 	// Add to HTML task all other tasks as dependencies
 	processes[HTML].dependencies = processes
 		.map((proc) => proc.name)
-		.filter((name) => name !== 'HTML');
+		.filter((name) => name !== 'html');
 
 	const res = {
 		entry,
