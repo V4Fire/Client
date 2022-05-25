@@ -32,7 +32,7 @@ module.exports = class PrintlnProgressView extends ProgressView {
 
 	/** @override */
 	_updateProgress(processName, newProgress) {
-		console.log(`# ${processName.padEnd(15)}: ${this._convertProgressToPercent(newProgress)}%`);
+		console.log(`# ${processName.padEnd(10)} : ${this._convertProgressToPercent(newProgress)}%`);
 		super._updateProgress(processName);
 	}
 

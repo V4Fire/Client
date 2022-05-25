@@ -40,16 +40,16 @@ This option defines which engine to show progress is used.
 * `println` - a simple println based engine. The output will be look like:
 
   ```
-  # standalone: 93%
-  # standalone: 93%
-  # standalone: 94%
-  # standalone: 94%
-  # standalone: 95%
-  # runtime:    10%
-  # runtime:    15%
-  # runtime:    20%
-  # runtime:    30%
-  # runtime:    40%
+  # standalone : 93%
+  # standalone : 93%
+  # standalone : 94%
+  # standalone : 94%
+  # standalone : 95%
+  # runtime    : 10%
+  # runtime    : 15%
+  # runtime    : 20%
+  # runtime    : 30%
+  # runtime    : 40%
   ```
 
 * `progressbar` - an engine that used the `cli-progress` library to show progress. The output will be look like:
