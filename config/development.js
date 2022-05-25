@@ -22,13 +22,9 @@ module.exports = config.createConfig(
 		cssMinimizer() {
 			return {
 				minimizerOptions: {
-					preset: [
-						{
-							discardComments: {
-								removeAll: true
-							}
-						}
-					]
+					discardComments: {
+						removeAll: true
+					}
 				}
 			};
 		}
