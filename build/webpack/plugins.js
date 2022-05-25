@@ -9,7 +9,9 @@
  */
 
 const
-	$C = require('collection.js'),
+	$C = require('collection.js');
+
+const
 	config = require('@config/config'),
 	webpack = require('webpack');
 

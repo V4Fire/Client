@@ -26,7 +26,7 @@ let
 module.exports = function createProgressPlugin(processName) {
 	if (logger == null) {
 		const
-			{type} = config.webpack.progress();
+			{type} = config.webpack.progress() ?? {};
 
 		switch (type) {
 			case 'println':

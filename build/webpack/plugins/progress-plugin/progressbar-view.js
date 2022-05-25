@@ -48,7 +48,7 @@ module.exports = class ProgressbarView extends ProgressView {
 		this.multibar = new cliProgress.MultiBar(
 			{
 				format: ProgressbarView.formatter,
-				...config.webpack.progress().opts
+				...config.webpack.progress()?.opts
 			},
 
 			cliProgress.Presets.shades_grey
