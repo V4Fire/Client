@@ -13,20 +13,8 @@
 const
 	chalk = require('chalk');
 
-const
-	cache = Object.createDict();
-
 module.exports = class ProgressView {
 	constructor() {
-		const
-			nm = this.constructor.name;
-
-		if (cache[nm] != null) {
-			return cache[nm];
-		}
-
-		cache[nm] = this;
-
 		this.handlers = {};
 		this.finishedProcess = 0;
 		this.startTime = new Date();
