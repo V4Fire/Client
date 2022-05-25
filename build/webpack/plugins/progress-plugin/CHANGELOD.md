@@ -14,7 +14,3 @@ Changelog
 #### :rocket: New Feature
 
 * Added a new webpack plugin for progress visualization
-
-#### :memo: Documentation
-
-* Added `CHANGELOG`

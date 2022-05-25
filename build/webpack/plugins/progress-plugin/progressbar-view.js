@@ -30,7 +30,7 @@ module.exports = class ProgressbarView extends ProgressView {
 	 */
 	static formatter(opts, params, payload) {
 		const
-			name = payload.name.padEnd(15).capitalize(),
+			name = payload.name.padEnd(15),
 			completeSize = Math.round(params.progress * opts.barsize),
 			incompleteSize = opts.barsize - completeSize;
 
@@ -48,7 +48,7 @@ module.exports = class ProgressbarView extends ProgressView {
 		this.multibar = new cliProgress.MultiBar(
 			{
 				format: ProgressbarView.formatter,
-				...config.progressPlugin().opts
+				...config.webpack.progress().opts
 			},
 
 			cliProgress.Presets.shades_grey

@@ -26,7 +26,7 @@ const
  */
 module.exports = function createProgressPlugin(processName) {
 	const
-		{type} = config.progressPlugin();
+		{type} = config.webpack.progress();
 
 	let
 		logger;

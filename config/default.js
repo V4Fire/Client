@@ -25,12 +25,37 @@ const
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
+	/**
+	 * Name of the used MVVM library, like Vue or React
+	 *
+	 * @cli engine
+	 * @env ENGINE
+	 *
+	 * @param {string=} [def] - default value
+	 * @returns {string}
+	 */
+	engine(def = 'vue') {
+		return o('engine', {
+			env: true,
+			default: def,
+			validate(v) {
+				return Boolean({
+					vue: true,
+					zero: true
+				}[v]);
+			}
+		});
+	},
+
 	/** @inheritDoc */
 	build: {
 		/**
-		 * Is process running in ci environment
+		 * True, if the build process is running within CI
 		 *
-		* @returns {boolean}
+		 * @cli build_ci
+		 * @env BUILD_CI
+		 *
+		 * @type {boolean}
 		 */
 		ci: o('build_ci', {
 			env: true,
@@ -58,6 +83,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		entries: o('entries', {
 			env: true,
 			coerce: (v) => v ? v.split(',') : []
+		}),
+
+		/**
+		 * The number of available CPUs that can be used with application building
+		 *
+		 * @cli processes
+		 * @env PROCESSES
+		 *
+		 * @type {number}
+		 * @default `require('os').cpus().length - 1`
+		 */
+		processes: o('processes', {
+			env: true,
+			short: 'p',
+			type: 'number',
+			default: require('os').cpus().length - 1
 		}),
 
 		/**
@@ -95,22 +136,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		buildGraphFromCache: o('build-graph-from-cache', {
 			env: true,
 			type: 'boolean'
-		}),
-
-		/**
-		 * The number of available CPUs that can be used with application building
-		 *
-		 * @cli processes
-		 * @env PROCESSES
-		 *
-		 * @type {number}
-		 * @default `require('os').cpus().length - 1`
-		 */
-		processes: o('processes', {
-			env: true,
-			short: 'p',
-			type: 'number',
-			default: require('os').cpus().length - 1
 		}),
 
 		/**
@@ -230,7 +255,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Enables the special kind of a demo page to build with
+		 * Enables the special kind of demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *
 		 * The inspection mode allows us to see all component modifiers/props and dynamically change it.
@@ -283,33 +308,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of the used MVVM library, like Vue or React
-	 *
-	 * @cli engine
-	 * @env ENGINE
-	 *
-	 * @param {string=} [def] - default value
-	 * @returns {string}
-	 */
-	engine(def = 'vue') {
-		return o('engine', {
-			env: true,
-			default: def,
-			validate(v) {
-				return Boolean({
-					vue: true,
-					zero: true
-				}[v]);
-			}
-		});
-	},
-
-	/**
 	 * WebPack configuration
 	 */
 	webpack: {
 		/**
-		 * Value of `mode`
+		 * Returns a value of `mode`
 		 *
 		 * @cli mode
 		 * @env MODE
@@ -325,7 +328,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `cache.type`
+		 * Returns a value of `cache.type`
 		 *
 		 * @cli cache-type
 		 * @env CACHE_TYPE
@@ -341,7 +344,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `target`
+		 * Returns a value of `target`
 		 *
 		 * @cli target
 		 * @env TARGET
@@ -361,7 +364,27 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `devtool`
+		 * Return parameters to show webpack build progress
+		 *
+		 * @see https://github.com/npkgz/cli-progress
+		 * @param [enabled]
+		 * @returns {Object}
+		 */
+		progress(enabled = true) {
+			if (enabled) {
+				return {
+					type: this.build.ci ? 'println' : 'progressbar',
+					opts: {
+						clearOnComplete: true,
+						stopOnComplete: true,
+						hideCursor: null
+					}
+				};
+			}
+		},
+
+		/**
+		 * Returns a value of `devtool`
 		 *
 		 * @cli devtool
 		 * @env DEVTOOL
@@ -377,7 +400,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `stats`
+		 * Returns a value of `stats`
 		 *
 		 * @cli stats
 		 * @env STATS
@@ -440,7 +463,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Some webpack options to optimize build
+		 * Webpack options to optimize build
 		 */
 		optimize: {
 			/**
@@ -753,22 +776,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		nonce() {
 			return undefined;
 		}
-	},
-
-	/**
-	 * Returns parameters for `build/webpack/plugins/progress-plugin`
-	 *
-	 * @see https://github.com/npkgz/cli-progress
-	 * @returns {object}
-	 */
-	progressPlugin() {
-		return {
-			enabled: true,
-			type: this.build.ci ? 'static' : 'dynamic',
-			clearOnComplete: true,
-			stopOnComplete: true,
-			hideCursor: null
-		};
 	},
 
 	/**
