@@ -377,8 +377,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const enabled = o('progress', {
 				env: true,
 				default: def,
-				type: 'boolean',
-				coerce: (value) => value !== 'false'
+				type: 'boolean'
 			});
 
 			if (enabled) {
