@@ -55,6 +55,8 @@ This option defines which engine to show progress is used.
 * `progressbar` - an engine that used the `cli-progress` library to show progress. The output will be look like:
 
   ```
-  # standalone █████████████████████░░░░░░░░░░░░░░░░░░░ 50%
-  # runtime    ████████████████████████████████████████ 100%
+  # html            ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 0%
+  # runtime         ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10%
+  # standalone      ██████████████████████████████████████░░ 95%
+  # styles          ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10%
   ```
