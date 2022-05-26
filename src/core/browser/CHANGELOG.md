@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (????-??-??)
+
+#### :rocket: New Feature
+
+* Added `is.Safari` check
+
 ## v3.0.0-rc.57 (2020-08-06)
 
 #### :bug: Bug Fix

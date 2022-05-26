@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (????-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed bug in `browser-history` engine with first `history.back` inside `iOS iFrame`
+
 ## v3.5.0 (2021-09-16)
 
 #### :boom: Breaking Change

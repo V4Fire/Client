@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (????-??-??)
+
+#### :rocket: New Feature
+
+* To `core/browser` added `is.Safari` check
+
+#### :bug: Bug Fix
+
+* Fixed bug in `browser-history` engine of router with first `history.back` inside `iOS iFrame`
+
 ## v3.21.0 (2022-05-24)
 
 #### :rocket: New Feature
