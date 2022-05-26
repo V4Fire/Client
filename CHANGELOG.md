@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* To `core/browser` added `is.Safari` check
+* Added a new checker `is.Safari` `core/browser`
 
 #### :bug: Bug Fix
 
