@@ -30,7 +30,7 @@ const
 	isIFrame = location !== parent.location;
 
 /**
- * This code is needed to fix bug with the History API router engine when backing to the
+ * This code is needed to fix a bug with the History API router engine when backing to the
  * first history item doesn’t emit a popstate event in Safari if the script is running within an iframe
  * @see https://github.com/V4Fire/Client/issues/717
  */
