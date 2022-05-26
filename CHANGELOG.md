@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (????-??-??)
+
+#### :rocket: New Feature
+
+* Added a new checker `is.Safari` `core/browser`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the History API router engine when backing to the first history item doesn’t emit a popstate event in Safari if the script is running within an iframe `core/router/engines/browser-history`
+
 ## v3.22.0 (2022-05-26)
 
 #### :boom: Breaking Change
