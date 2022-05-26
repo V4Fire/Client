@@ -364,7 +364,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Return parameters to show webpack build progress
+		 * Returns parameters to show webpack build progress
 		 *
 		 * @cli progress
 		 * @env PROGRESS
