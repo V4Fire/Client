@@ -22,7 +22,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### 🐛 Bug Fix
 
 * Removed deadlock during execution of Snakeskin templates `i-static-page/modules/ss-helpers`
-* Fixed `b-input` overflowing when `textHint` provided `form/b-input`
 
 #### :house: Internal
 
