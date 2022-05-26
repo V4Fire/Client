@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed bug in `browser-history` engine of router with first `history.back` inside `iOS iFrame`
+* Fixed a bug with the History API router engine when backing to the first history item doesn’t emit a popstate event in Safari if the script is running within an iframe `core/router/engines/browser-history`
 
 ## v3.21.0 (2022-05-24)
 
