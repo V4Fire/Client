@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `is.Safari` check
+* Added a new checker `is.Safari`
 
 ## v3.0.0-rc.57 (2020-08-06)
 
