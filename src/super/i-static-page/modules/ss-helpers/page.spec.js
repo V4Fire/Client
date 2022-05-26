@@ -75,12 +75,10 @@ try {
 \t});
 } catch (_) {}
 PATH['std'] = 'std.js';
-PATH['std_tpl'] = 'std_tpl.js';
-PATH['std_style'] = 'std_style.css';
 PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
 PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
+PATH['vendor'] = 'vendor.js';
 PATH['p-v4-components-demo_style'] = 'p-v4-components-demo_style.css';
-PATH['std_view'] = 'std_view.js';
 PATH['p-v4-components-demo_view'] = 'p-v4-components-demo_view.js';
 
 

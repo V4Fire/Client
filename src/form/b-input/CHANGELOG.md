@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.21.1 (2022-05-25)
+
+#### :bug: Bug Fix
+
+* Fixed `b-input` overflowing when `textHint` provided
+
 ## v3.21.0 (2022-05-24)
 
 #### :rocket: New Feature

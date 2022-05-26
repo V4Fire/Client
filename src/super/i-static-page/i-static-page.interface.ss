@@ -71,7 +71,7 @@
 	- ownDeps = @@entryPoints[self.name()] || {}
 
 	/** Map with static page assets */
-	- assets = await h.getAssets(@@entryPoints)
+	- assets = h.getAssets(@@entryPoints)
 
 	- block root
 		- block pageData

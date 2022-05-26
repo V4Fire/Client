@@ -21,6 +21,28 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug with the History API router engine when backing to the first history item doesn’t emit a popstate event in Safari if the script is running within an iframe `core/router/engines/browser-history`
 
+## v3.22.0 (2022-05-26)
+
+#### :boom: Breaking Change
+
+* Replaced `simpleProgressWebpackPlugin` to a custom plugin
+* Removed generation of redundant artifacts (`license.txt`, empty entry files) `build`
+* Now all comments are removed from compiled CSS files by default
+
+#### 🐛 Bug Fix
+
+* Removed deadlock during execution of Snakeskin templates `i-static-page/modules/ss-helpers`
+
+#### :house: Internal
+
+* Added human-readable names for all registered webpack process `build/webpack`
+
+## v3.21.1 (2022-05-25)
+
+#### 🐛 Bug Fix
+
+* Fixed `b-input` overflowing when `textHint` provided `form/b-input`
+
 ## v3.21.0 (2022-05-24)
 
 #### :rocket: New Feature
