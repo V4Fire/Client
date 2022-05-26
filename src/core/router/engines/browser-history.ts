@@ -434,5 +434,12 @@ export default function createRouter(component: bRouter): Router {
 		}
 	}, pageshowLabel);
 
+	const
+		isIFrame = location !== parent.location;
+
+	if (isIFrame && (browser.is.Safari !== false || browser.is.iOS !== false)) {
+		history.pushState({}, '', location.href);
+	}
+
 	return router;
 }
