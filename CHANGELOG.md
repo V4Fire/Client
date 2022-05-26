@@ -11,9 +11,26 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (????-??-??)
+
+#### :boom: Breaking Change
+
+* Replaced `simpleProgressWebpackPlugin` to a custom plugin
+* Removed generation of redundant artifacts (`license.txt`, empty entry files) `build`
+* Now all comments are removed from compiled CSS files by default
+
+#### 🐛 Bug Fix
+
+* Removed deadlock during execution of Snakeskin templates `i-static-page/modules/ss-helpers`
+* Fixed `b-input` overflowing when `textHint` provided `form/b-input`
+
+#### :house: Internal
+
+* Added human-readable names for all registered webpack process `build/webpack`
+
 ## v3.21.1 (2022-05-25)
 
-#### :bug: Bug Fix
+#### 🐛 Bug Fix
 
 * Fixed `b-input` overflowing when `textHint` provided `form/b-input`
 

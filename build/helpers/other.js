@@ -8,32 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	stream = require('stream');
-
 Object.assign(
 	exports,
 	include('build/helpers')
 );
-
-const
-	STDOUT = Symbol('Original STDOUT');
-
-/**
- * Mutes any output from the global console API
- */
-exports.muteConsole = function muteConsole() {
-	console[STDOUT] = console[STDOUT] ?? console._stdout;
-	console._stdout = new stream.Writable();
-};
-
-/**
- * Unmutes output from the global console API
- */
-exports.unmuteConsole = function unmuteConsole() {
-	console._stdout = console[STDOUT] ?? console._stdout;
-	console[STDOUT] = undefined;
-};
 
 /**
  * Waits till the specified callback function returns true
