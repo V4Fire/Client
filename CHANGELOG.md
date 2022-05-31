@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (????-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed `textHint` position `form/b-input`
+
 ## v3.23.0 (2022-05-27)
 
 #### :rocket: New Feature
