@@ -16,7 +16,7 @@ import { asyncLocal, factory, AsyncStorageNamespace } from 'core/kv-storage';
 //#endif
 
 import type iBlock from 'super/i-block/i-block';
-import Friend from 'super/i-block/modules/friend';
+import Friend from 'super/i-block/friend';
 
 /**
  * Class to work with a local storage

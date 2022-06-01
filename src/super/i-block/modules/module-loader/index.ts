@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import Friend from 'super/i-block/modules/friend';
+import Friend from 'super/i-block/friend';
 
 import { cache, cachedModules } from 'super/i-block/modules/module-loader/const';
 import type { Module } from 'super/i-block/modules/module-loader/interface';

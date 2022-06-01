@@ -13,7 +13,7 @@
 
 import type iBlock from 'super/i-block/i-block';
 
-import Friend from 'super/i-block/modules/friend';
+import Friend from 'super/i-block/friend';
 import { wait } from 'super/i-block/modules/decorators';
 
 import type {

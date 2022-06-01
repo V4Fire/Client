@@ -15,7 +15,7 @@ import { unwrap } from 'core/object/watch';
 import { getPropertyInfo } from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
-import Friend from 'super/i-block/modules/friend';
+import Friend from 'super/i-block/friend';
 
 import type { KeyGetter, ValueGetter } from 'super/i-block/modules/field/interface';
 
