@@ -7,10 +7,18 @@
  */
 
 import Friend from 'friends/friend';
-
 import type iBlock from 'super/i-block/i-block';
 
-export default class AsyncRender extends Friend {
+import type * as iter from 'friends/async-render/iter';
+import type * as render from 'friends/async-render/render';
+
+interface AsyncRender {
+	forceRender: typeof render.forceRender;
+	deferForceRender: typeof render.deferForceRender;
+	iterate: typeof iter.iterate;
+}
+
+class AsyncRender extends Friend {
 	constructor(component: iBlock) {
 		super(component);
 
@@ -21,3 +29,5 @@ export default class AsyncRender extends Friend {
 		});
 	}
 }
+
+export default AsyncRender;
