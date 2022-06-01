@@ -1,168 +1,214 @@
 # friends/async-render
 
-This module provides a class to render chunks of a component template asynchronously.
-It helps to optimize component' rendering.
+This module provides a class to render component fragments asynchronously.
+It helps to optimize component rendering.
+
+## How to include this module to your component
+
+By default, any components that inherited from [[iBlock]] have the `asyncRender` property.
+But to use module methods, you should attach them explicitly to enable tree-shake code optimizations.
+Just place a necessary import declaration within your component file.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+import AsyncRender, { iterate, forceRender } from 'friends/async-render';
+
+// Import `iterate` and `forceRender` methods
+AsyncRender.addToPrototype(iterate, forceRender);
+
+@component()
+export default class bExample extends iBlock {}
+```
 
 ## How does it work?
 
-The class brings a new method to create iterable objects: `asyncRender.iterate`.
-This method should be used with the `v-for` directive.
+The class brings a new method to create iterable objects: `asyncRender.iterate` that should be used with the `v-for` directive.
+Don't forget to declare where to mount dynamically rendered fragments.
+To do it, place your code within another node that marked by the `v-async-target` directive.
 
 ```
-// The first ten elements are rendered synchronously.
-// After that, the rest elements will be split into chunks by ten elements and rendered asynchronously.
-// The rendering of async chunks does not force re-rendering of the main component template.
-< .bla v-for = el in asyncRender.iterate(myData, 10)
-  {{ el }}
+< .container v-async-target
+  /// The first ten elements are rendered synchronously.
+  /// After that, the rest elements will be split into chunks by ten elements and rendered asynchronously.
+  /// The rendering of async fragments does not force re-rendering of the main component template.
+  < .&__item v-for = el in asyncRender.iterate(myData, 10)
+    {{ el }}
 ```
 
 As we see in the example, `iterate` splits iteration into separated chunks.
 Basically, the first chunk is rendered immediate, but the rest - asynchronously.
 
-Using the second parameter, we can manage how many items should be contained per one render chunk (by default, the chunk size is equal to one).
-Also, it is possible to skip a number of elements from the start. To do it, provide the second parameter as a tuple,
-where the first parameter is a number to skip, the second one is a render chunk' size.
+Using the second parameter, we can manage how many fragments can be placed within one render chunk (by default, the chunk size is equal to one).
+Also, it is possible to skip several elements from the start. To do it, provide the second parameter as a tuple,
+where the first parameter is a number to skip, the second one is a render chunk size.
 
 ```
-/// Skip the first fifteen elements and render by three elements per chunk
-< .bla v-for = el in asyncRender.iterate(myData, [15, 3])
-  {{ el }}
+< .container v-async-target
+  /// Skip the first fifteen elements and render by three elements per chunk
+  < .&__item  v-for = el in asyncRender.iterate(myData, [15, 3])
+    {{ el }}
 ```
 
-The parameter to iterate can be defined as any valid iterable JavaScript value, like arrays, maps, or sets.
+The parameter to iterate can be any iterable JS value, like arrays, maps, or sets.
 
 ```
-< .bla v-for = el in asyncRender.iterate([1, 2, 3])
-  {{ el }}
+< .container v-async-target
+  < .&__item v-for = el in asyncRender.iterate([1, 2, 3])
+    {{ el }}
 
-< .bla v-for = el in asyncRender.iterate(new Set([1, 2, 3]))
-  {{ el }}
+< .container v-async-target
+  < .&__item v-for = el in asyncRender.iterate(new Set([1, 2, 3]))
+    {{ el }}
 
-/// All JS iterators are iterable objects
-< .bla v-for = el in asyncRender.iterate(new Map([['a', 1], ['b', 2]]).entries())
-  {{ el }}
+< .container v-async-target
+  /// All built-in JS iterators are iterable objects
+  < .&__item v-for = el in asyncRender.iterate(new Map([['a', 1], ['b', 2]]).entries())
+    {{ el }}
 ```
 
-The string values are iterated by graphemes or letters, but not Unicode symbols.
+Any string values are iterated by graphemes or letters, but not Unicode symbols.
 
 ```
-/// 1, 😃, à, 🇷🇺, 👩🏽‍❤️‍💋‍👨
-< .bla v-for = letter in asyncRender.iterate('1😃à🇷🇺👩🏽‍❤️‍💋‍👨')
-  {{ letter }}
+< .container v-async-target
+  /// 1, 😃, à, 🇷🇺, 👩🏽‍❤️‍💋‍👨
+  < .&__item v-for = letter in asyncRender.iterate('1😃à🇷🇺👩🏽‍❤️‍💋‍👨')
+    {{ letter }}
 ```
 
-Any iterable element can return a promise. In that case, it will be rendered after resolving.
+Any iterable element can be a promise. In that case, it will be rendered after resolving.
 
 ```
-< .bla v-for = user in asyncRender.iterate([fetch('/user/1'), fetch('/user/2')])
-  {{ user }}
+< .container v-async-target
+  < .&__item v-for = user in asyncRender.iterate([fetch('/user/1'), fetch('/user/2')])
+    {{ user }}
 ```
 
-In addition to elements with promises, `asyncRender.iterate` can take a promise that returns a valid value to iterate.
+Or, we can use asynchronous iterable structures.
 
 ```
-< .bla v-for = user in asyncRender.iterate(fetch('/users'))
-  {{ user }}
+< .container v-async-target
+  < .&__item v-for = user in asyncRender.iterate(asyncEventStream)
+    {{ user }}
 ```
 
-Also, the method supports iterating over JS object (without prototype' values).
+In addition to elements with promises or asynchronous iterable structures,
+`asyncRender.iterate` can take a promise that returns a valid value to iterate.
 
 ```
-// To iterate objects is used `Object.entries`
-< .bla v-for = [key, value] in asyncRender.iterate({a: 1, b: 2})
-  {{ key }} = {{ value }}
+< .container v-async-target
+  < .&__item v-for = user in asyncRender.iterate(fetch('/users'))
+    {{ user }}
+```
+
+Also, the method supports iterating over JS objects.
+
+```
+< .container v-async-target
+  /// To iterate objects is used `Object.entries`
+  < .&__item v-for = [key, value] in asyncRender.iterate({a: 1, b: 2})
+    {{ key }} = {{ value }}
 ```
 
 Finally, the method can create ranges and iterate through them if provided a value as a number.
 
 ```
-< .bla v-for = i in asyncRender.iterate(10)
-  {{ i }}
+< .container v-async-target
+  < .&__item v-for = i in asyncRender.iterate(10)
+    {{ i }}
 
-/// `true` is an alias for `Infinity`
-< .bla v-for = i in asyncRender.iterate(true)
-  {{ i }}
+< .container v-async-target
+  /// `true` is an alias for `Infinity`
+  < .&__item v-for = i in asyncRender.iterate(true)
+    {{ i }}
 
-/// `false` is an alias for `-Infinity`
-< .bla v-for = i in asyncRender.iterate(false)
-  {{ i }}
+< .container v-async-target
+  /// `false` is an alias for `-Infinity`
+  < .&__item v-for = i in asyncRender.iterate(false)
+    {{ i }}
 ```
 
-`null` and `undefined` are cast to an empty iterator. It is useful when you provide a promise to iterate that can return a null value.
+`null` and `undefined` are cast to the empty iterator. It is useful when you provide a promise to iterate that can return a nullish value.
 
 ```
-< .bla v-for = el in asyncRender.iterate(null)
-  {{ i }}
+< .container v-async-target
+  < .&__item v-for = el in asyncRender.iterate(null)
+    {{ i }}
 
-/// It's ok if `fetch` returns `null`
-< .bla v-for = el in asyncRender.iterate(fetch('/users'))
-  {{ i }}
+< .container v-async-target
+  /// It's ok if `fetch` returns `null`
+  < .&__item v-for = el in asyncRender.iterate(fetch('/users'))
+    {{ i }}
 ```
 
 The rest primitive types are cast to a single-element iterator.
 
 ```
-< .bla v-for = el in asyncRender.iterate(Symbol('foo'))
-  {{ el }}
+< .container v-async-target
+  < .&__item v-for = el in asyncRender.iterate(Symbol('foo'))
+    {{ el }}
 ```
 
 ## Events
 
-| EventName                  | Description                                              | Payload description | Payload                 |
-|----------------------------|----------------------------------------------------------|---------------------|-------------------------|
-| `asyncRenderChunkComplete` | One async chunk has been rendered                        | Task description    | `TaskParams & TaskDesc` |
-| `asyncRenderComplete`      | All async chunks from one render task have been rendered | Task description    | `TaskParams & TaskDesc` |
+| EventName                  | Description                                              | Payload description | Payload      |
+|----------------------------|----------------------------------------------------------|---------------------|--------------|
+| `asyncRenderChunkComplete` | One async chunk has been rendered                        | Task description    | `TaskParams` |
+| `asyncRenderComplete`      | All async chunks from one render task have been rendered | Task description    | `TaskParams` |
 
-## Additional parameters of iterations
+## Additional options of iterations
 
-As you have already known, you can specify a chunk' size to render as the second parameter of `asyncRender.iterate`.
-If the passes value to iterate not a promise or not contains promises as elements, the first chunk can be rendered synchronously.
-Also, the iteration method can take an object with additional parameters to iterate.
+As you have already known, you can specify a chunk size to render as the second parameter of `asyncRender.iterate`.
+If the passed value to iterate not a promise, asynchronous iterable structure, or not contains promises as elements,
+the first chunk can be rendered synchronously. Also, the iteration method can take an object with additional options to iterate.
+
+### [weight = `1`]
+
+The weight of one render chunk.
+At the same tick can be rendered chunks with the accumulated weight no more than the `TASKS_PER_TICK` constant.
+See `core/component/render/daemon` for more information.
 
 ### [useRaf = `false`]
 
-If true, then rendered chunks are inserted into DOM on the `requestAnimationFrame` callback.
-It may optimize the process of browser rendering.
+If true, then all rendered fragments are inserted into the DOM by using a `requestAnimationFrame` callback.
+This can optimize the browser rendering process.
 
 ### [group]
 
-A group name to manual clearing of pending tasks via `async`.
-Providing this value disables automatically canceling of rendering task on the `update` hook.
+A group name to manual clearing of pending tasks via the `async` module.
+Providing this value disables automatically cleanup of render tasks on the `update` hook.
 
 ```
-/// Iterate over only even values
-< .bla v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
-  {{ el }}
+< .container v-async-target
+  < .&__item v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
+    {{ el }}
 
-/// Notice that we use RegExp to clear tasks.
-/// Because each group has a group based on a template `asyncComponents:listRendering:${chunkIndex}`.
+/// We should use a RegExp to clear tasks,
+/// because each group has a group based on a template `asyncComponents:listRendering:${chunkIndex}`.
 < button @click = async.clearAll({group: /:listRendering/})
   Cancel rendering
 ```
 
-### [weight = `1`]
-
-Weight of the one rendering chunk.
-In the one tick can be rendered chunks with accumulated weight no more than 5.
-See `core/render` for more information.
-
 ### [filter]
 
-A function to filter elements to iterate. If it returns a promise, the rendering will wait for resolving.
-If the promise' value is equal to `undefined`, it will cast to `true`.
+A function to filter elements to render.
+If it returns a promise, the rendering process will wait for the promise to resolve.
+If the promise is resolved with `undefined`, the value will be interpreted as `true`.
 
 ```
-/// Iterate over only even values
-< .bla v-for = el in asyncRender.iterate(100, 5, {filter: (el) => el % 2 === 0})
-  {{ el }}
+< .container v-async-target
+  /// Render only even values
+  < .&__item v-for = el in asyncRender.iterate(100, 5, {filter: (el) => el % 2 === 0})
+    {{ el }}
 
-/// Render each element only after the previous with the specified delay
-< .bla v-for = el in asyncRender.iterate(100, {filter: (el) => async.sleep(100)})
-  {{ el }}
+< .container v-async-target
+  /// Render each element with the specified delay
+  < .&__item v-for = el in asyncRender.iterate(100, {filter: (el) => async.sleep(100)})
+    {{ el }}
 
-/// Render a chunk on the specified event
-< .bla v-for = el in asyncRender.iterate(100, 20, {filter: (el) => promisifyOnce('renderNextChunk')})
-  {{ el }}
+< .container v-async-target
+  /// Render each element after the specified event
+  < .&__item v-for = el in asyncRender.iterate(100, 20, {filter: (el) => promisifyOnce('renderNextChunk')})
+    {{ el }}
 
 < button @click = emit('renderNextChunk')
   Render the next chunk
@@ -170,44 +216,64 @@ If the promise' value is equal to `undefined`, it will cast to `true`.
 
 ### [destructor]
 
-The destructor of a rendered element. If the destructor returns `true` then the `destroy` method of the `asyncRender` module will not be called.
-It will be invoked before removing each async rendered element from DOM.
+The destructor of a rendered fragment.
+It will be called before each asynchronously rendered fragment is removed from the DOM.
+If the function returns true, the internal destructor of the `asyncRender` module won’t be called.
 
-## Helpers
+## Methods
 
 ### forceRender
 
-Restarts the async render daemon to force rendering.
+Restarts the `asyncRender` daemon to force rendering of async chunks.
+See `core/component/render/daemon` for more information.
 
 ### deferForceRender
 
-Restarts the `asyncRender` daemon to force rendering (runs on the next tick).
+Creates a task to restart the `asyncRender` daemon on the next tick.
+See `core/component/render/daemon` for more information.
 
 ### waitForceRender
 
-Returns a function that returns a promise that will be resolved after firing the `forceRender` event.
-The method can take an element name as the first parameter. This element will be dropped before resolving.
+A factory to create filters for `AsyncRender`, it returns a new function.
+The new function can return a boolean or promise. If the function returns a promise, it will be resolved after firing a `forceRender` event.
 
-Notice, the initial rendering of a component is mean the same as `forceRender`.
-The method is useful to re-render a non-regular component (functional or flyweight) without touching the parent state.
+The main function can take an element name as the first parameter.
+This element will be dropped before resolving the resulting promise.
+
+Notice, the initial component rendering is mean the same as `forceRender`.
+This function is useful to re-render a functional component without touching the parent state.
 
 ```
 < button @click = asyncRender.forceRender()
  Re-render the component
 
-< .&__wrapper
+< .container v-async-target
   < template v-for = el in asyncRender.iterate(true, { &
     filter: asyncRender.waitForceRender('content')
   }) .
     < .&__content
       {{ Math.random() }}
 
-< .&__wrapper
+< .container v-async-target
   < template v-for = el in asyncRender.iterate(true, { &
     filter: asyncRender.waitForceRender((ctx) => ctx.$el.querySelector('.foo'))
   }) .
-    < .foo
+    < .&__content
       {{ Math.random() }}
+```
+
+### iterate
+
+Creates an asynchronous render stream from the specified value.
+It returns a list of element to the first synchronous render.
+This function helps optimize component rendering by splitting big render tasks into smaller ones.
+
+```
+/// Where to append asynchronous elements
+< .container v-async-target
+  /// Asynchronous rendering of components: only five elements per chunk
+  < template v-for = el in asyncRender.iterate(largeList, 5)
+    < my-component :data = el
 ```
 
 ## Snakeskin helpers

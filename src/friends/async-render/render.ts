@@ -12,6 +12,7 @@ import type AsyncRender from 'friends/async-render/class';
 
 /**
  * Restarts the `asyncRender` daemon to force rendering of async chunks
+ * @see core/component/render/daemon
  */
 export function forceRender(this: AsyncRender): void {
 	restart();
@@ -20,7 +21,9 @@ export function forceRender(this: AsyncRender): void {
 
 /**
  * Creates a task to restart the `asyncRender` daemon on the next tick
+ *
  * @see forceRender
+ * @see core/component/render/daemon
  */
 export function deferForceRender(this: AsyncRender): void {
 	deferRestart();
@@ -46,8 +49,8 @@ export function deferForceRender(this: AsyncRender): void {
  * < button @click = asyncRender.forceRender()
  *   Re-render the component
  *
- * < .&__wrapper v-async-target
- *   < template v-for = el in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('content')})
+ * < .container v-async-target
+ *   < .&__item v-for = el in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('content')})
  *     < .&__content
  *       {{ Math.random() }}
  * ```

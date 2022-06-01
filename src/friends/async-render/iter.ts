@@ -27,13 +27,13 @@ const
  * @param [sliceOrOpts] - elements per chunk or `[start position, elements per chunk]` or additional options
  * @param [opts] - additional options
  *
- * @emits `localEmitter.asyncRenderChunkComplete(e: TaskParams & {renderGroup: string})`
- * @emits `localEmitter.asyncRenderComplete(e: TaskParams & {renderGroup: string})`
+ * @emits `localEmitter.asyncRenderChunkComplete(e: TaskParams)`
+ * @emits `localEmitter.asyncRenderComplete(e: TaskParams)`
  *
  * @example
  * ```
  * /// Where to append asynchronous elements
- * < .target v-async-target
+ * < .container v-async-target
  *   /// Asynchronous rendering of components: only five elements per chunk
  *   < template v-for = el in asyncRender.iterate(largeList, 5)
  *     < my-component :data = el

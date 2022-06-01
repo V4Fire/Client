@@ -35,8 +35,8 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	 *
 	 * @example
 	 * ```
-	 * < .bla v-async-target
-	 *   < template v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
+	 * < .container v-async-target
+	 *   < .&__item v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
 	 *     {{ el }}
 	 *
 	 * /// We should use a RegExp to clear tasks,
@@ -55,17 +55,20 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	 *
 	 * @example
 	 * ```
-	 * /// Render only even values
-	 * < .bla v-for = el in asyncRender.iterate(100, 5, {filter: (el) => el % 2 === 0})
-	 *   {{ el }}
+	 * < .container v-async-target
+	 *   /// Render only even values
+	 *   < .&__item v-for = el in asyncRender.iterate(100, 5, {filter: (el) => el % 2 === 0})
+	 *     {{ el }}
 	 *
-	 * /// Render each element with the specified delay
-	 * < .bla v-for = el in asyncRender.iterate(100, {filter: (el) => async.sleep(100)})
-	 *   {{ el }}
+	 * < .container v-async-target
+	 *   /// Render each element with the specified delay
+	 *   < .&__item v-for = el in asyncRender.iterate(100, {filter: (el) => async.sleep(100)})
+	 *     {{ el }}
 	 *
-	 * /// Render each element after the specified event
-	 * < .bla v-for = el in asyncRender.iterate(100, 20, {filter: (el) => promisifyOnce('renderNextChunk')})
-	 *   {{ el }}
+	 * < .container v-async-target
+	 *   /// Render each element after the specified event
+	 *   < .&__item v-for = el in asyncRender.iterate(100, 20, {filter: (el) => promisifyOnce('renderNextChunk')})
+	 *     {{ el }}
 	 *
 	 * < button @click = emit('renderNextChunk')
 	 *   Render the next chunk
@@ -79,6 +82,10 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	 * If the function returns true, the internal destructor of the `asyncRender` module won’t be called.
 	 */
 	destructor?: NodeDestructor;
+}
+
+export interface TaskParams extends TaskOptions {
+	renderGroup: string;
 }
 
 /**
