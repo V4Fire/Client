@@ -6,27 +6,41 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface TaskParams<EL = unknown, I extends number = number, D = unknown> {
+/**
+ * Additional options for a render task
+ *
+ * @typeparam El - a data element to render
+ * @typeparam D - a data collection to render
+ */
+export interface TaskOptions<El = unknown, D = unknown> {
 	/**
-	 * If true, then rendered chunks are inserted into DOM on the `requestAnimationFrame` callback.
-	 * It may optimize the process of browser rendering.
+	 * The weight of one render chunk.
+	 * At the same tick can be rendered chunks with the accumulated weight no more than the `TASKS_PER_TICK` constant.
+	 *
+	 * @see core/component/render/daemon
+	 */
+	weight?: number;
+
+	/**
+	 * If true, then all rendered fragments are inserted into the DOM by using a `requestAnimationFrame` callback.
+	 * This can optimize the browser rendering process.
 	 *
 	 * @default `false`
 	 */
 	useRAF?: boolean;
 
 	/**
-	 * A group name to manual clearing of pending tasks via `async`.
-	 * Providing this value disables automatically canceling of rendering task on the `update` hook.
+	 * A group name to manual clearing of pending tasks via the `async` module.
+	 * Providing this value disables automatically cleanup of render tasks on the `update` hook.
 	 *
 	 * @example
 	 * ```
-	 * /// Iterate over only even values
-	 * < .bla v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
-	 *   {{ el }}
+	 * < .bla v-async-target
+	 *   < template v-for = el in asyncRender.iterate(100, 10, {group: 'listRendering'})
+	 *     {{ el }}
 	 *
-	 * /// Notice that we use RegExp to clear tasks.
-	 * /// Because each group has a group based on a template `asyncComponents:listRendering:${chunkIndex}`.
+	 * /// We should use a RegExp to clear tasks,
+	 * /// because each group has a group based on a template `asyncComponents:listRendering:${chunkIndex}`.
 	 * < button @click = async.clearAll({group: /:listRendering/})
 	 *   Cancel rendering
 	 * ```
@@ -34,26 +48,22 @@ export interface TaskParams<EL = unknown, I extends number = number, D = unknown
 	group?: string;
 
 	/**
-	 * Weight of the one rendering chunk.
-	 * In the one tick can be rendered chunks with accumulated weight no more than 5.
-	 */
-	weight?: number;
-
-	/**
-	 * A function to filter elements to iterate. If it returns a promise, the rendering will wait for resolving.
-	 * If the promise' value is equal to `undefined`, it will cast to `true`.
+	 * A function to filter elements to render.
+	 *
+	 * If it returns a promise, the rendering process will wait for the promise to resolve.
+	 * If the promise is resolved with `undefined`, the value will be interpreted as `true`.
 	 *
 	 * @example
 	 * ```
-	 * /// Iterate over only even values
+	 * /// Render only even values
 	 * < .bla v-for = el in asyncRender.iterate(100, 5, {filter: (el) => el % 2 === 0})
 	 *   {{ el }}
 	 *
-	 * /// Render each element only after the previous with the specified delay
+	 * /// Render each element with the specified delay
 	 * < .bla v-for = el in asyncRender.iterate(100, {filter: (el) => async.sleep(100)})
 	 *   {{ el }}
 	 *
-	 * /// Render a chunk on the specified event
+	 * /// Render each element after the specified event
 	 * < .bla v-for = el in asyncRender.iterate(100, 20, {filter: (el) => promisifyOnce('renderNextChunk')})
 	 *   {{ el }}
 	 *
@@ -61,47 +71,117 @@ export interface TaskParams<EL = unknown, I extends number = number, D = unknown
 	 *   Render the next chunk
 	 * ```
 	 */
-	filter?: TaskFilter<EL, I, D>;
+	filter?: TaskFilter<El, D>;
 
 	/**
-	 * The destructor of a rendered element.
-	 * It will be invoked before removing each async rendered element from DOM.
-	 *
-	 * - If the function returns `true` then the `destroy` method of the `asyncRender` module will not be called
-	 * - Any value other than `true` will cause the `destroy` method to be called
+	 * The destructor of a rendered fragment.
+	 * It will be called before each asynchronously rendered fragment is removed from the DOM.
+	 * If the function returns true, the internal destructor of the `asyncRender` module won’t be called.
 	 */
-	destructor?: ElementDestructor;
+	destructor?: NodeDestructor;
 }
 
-export interface TaskI<D = unknown> {
+/**
+ * An element of the render task
+ */
+export interface TaskEl<D = unknown> {
+	/**
+	 * The original structure that we iterate
+	 */
 	iterable: Iterable<D>;
+
+	/**
+	 * An iteration index
+	 */
 	i: number;
+
+	/**
+	 * Number of rendered tasks
+	 */
 	total: number;
+
+	/**
+	 * An index of the render chunk that own this operation
+	 */
 	chunk?: number;
 }
 
-export interface TaskFilter<EL = unknown, I extends number = number, D = unknown> {
-	(): CanPromise<boolean>;
-	(el: EL, i: I, task: TaskI<D>): CanPromise<boolean>;
-}
-
-export interface ElementDestructor {
-	(el: Node, childComponentEls: Element[]): AnyToIgnore;
-}
-
+/**
+ * Additional options to render an iterable structure
+ */
 export interface IterOptions {
+	/**
+	 * A start index to iterate
+	 */
 	start?: number;
+
+	/**
+	 * How many fragments can be rendered at the same time
+	 */
 	perChunk?: number;
+
+	/**
+	 * A function to filter elements to render
+	 */
 	filter?: TaskFilter;
 }
 
+/**
+ * A filter function for render tasks
+ */
+export interface TaskFilter<E = unknown, D = unknown> {
+	(): CanPromise<boolean>;
+
+	/**
+	 * @param el - a data element to render
+	 * @param i - an iteration index
+	 * @param task - an element of the render task
+	 */
+	(el: E, i: number, task: TaskEl<D>): CanPromise<boolean>;
+}
+
+/**
+ * A function to destroy the unmounted node
+ */
+export interface NodeDestructor {
+	/**
+	 * @param node - a node to remove
+	 * @param childComponentEls - root elements of the child components
+	 */
+	(node: Node, childComponentEls: Element[]): void;
+}
+
+/**
+ * A descriptor of the iterable-based rendering structure
+ */
 export interface IterDescriptor {
+	/**
+	 * Is this iterator asynchronous or not
+	 */
 	isAsync: boolean;
 
+	/**
+	 * An index of the last synchronously read element for the first render
+	 */
 	readI: number;
+
+	/**
+	 * Number of synchronously read elements for the first render
+	 */
 	readTotal: number;
+
+	/**
+	 * An array of the synchronously read elements for the first render
+	 */
 	readEls: unknown[];
 
+	/**
+	 * The original structure that we iterate
+	 */
 	iterable: CanPromise<AnyIterable>;
-	iterator: IterableIterator<unknown> | AsyncIterableIterator<unknown>;
+
+	/**
+	 * An iterator for the structure that we iterate
+	 */
+	iterator: AnyIterableIterator;
 }
