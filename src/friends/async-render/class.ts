@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from 'super/i-block/i-block';
+import Friend from 'friends/friend';
 
-import Friend from 'super/i-block/modules/friend';
+import type iBlock from 'super/i-block/i-block';
 
 export default class AsyncRender extends Friend {
 	constructor(component: iBlock) {

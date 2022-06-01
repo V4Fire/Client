@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Moved the module to `friends/async-render`
+* The module has been rewritten to a new tree-shake friendly API
+
 ## v3.18.0 (2022-03-04)
 
 #### :boom: Breaking Change

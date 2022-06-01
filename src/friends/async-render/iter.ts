@@ -7,12 +7,12 @@
  */
 
 import type { ComponentElement, VNode } from 'super/i-block/i-block';
-import type AsyncRender from 'super/i-block/modules/async-render/class';
+import type AsyncRender from 'friends/async-render/class';
 
-import { addRenderTask, destroyNode as nodeDestructor } from 'super/i-block/modules/async-render/modules/render';
-import { getIterDescriptor } from 'super/i-block/modules/async-render/modules/iter';
+import { addRenderTask, destroyNode as nodeDestructor } from 'friends/async-render/modules/render';
+import { getIterDescriptor } from 'friends/async-render/modules/iter';
 
-import type { TaskOptions } from 'super/i-block/modules/async-render/interface';
+import type { TaskOptions } from 'friends/async-render/interface';
 
 const
 	isCached = Symbol('Is cached')

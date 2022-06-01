@@ -1,4 +1,4 @@
-# super/i-block/modules/async-render
+# friends/async-render
 
 This module provides a class to render chunks of a component template asynchronously.
 It helps to optimize component' rendering.

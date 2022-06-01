@@ -9,8 +9,8 @@
 import Range from 'core/range';
 import { seq } from 'core/iter/combinators';
 
-import type AsyncRender from 'super/i-block/modules/async-render/class';
-import type { IterOptions, IterDescriptor } from 'super/i-block/modules/async-render/interface';
+import type AsyncRender from 'friends/async-render/class';
+import type { IterOptions, IterDescriptor } from 'friends/async-render/interface';
 
 /**
  * Returns an iterator descriptor based on the passed value and options

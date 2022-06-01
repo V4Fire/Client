@@ -12,8 +12,8 @@ import { queue } from 'core/component/render/daemon';
 import type iBlock from 'super/i-block/i-block';
 import type { ComponentElement } from 'super/i-block/i-block';
 
-import type AsyncRender from 'super/i-block/modules/async-render/class';
-import type { TaskOptions } from 'super/i-block/modules/async-render/interface';
+import type AsyncRender from 'friends/async-render/class';
+import type { TaskOptions } from 'friends/async-render/interface';
 
 /**
  * Adds a new render task to the global render queue and returns a promise.
