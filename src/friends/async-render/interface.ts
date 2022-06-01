@@ -95,12 +95,7 @@ export interface TaskEl<D = unknown> {
 	/**
 	 * The original structure that we iterate
 	 */
-	iterable: Iterable<D>;
-
-	/**
-	 * An iteration index
-	 */
-	i: number;
+	iterable: CanPromise<AnyIterable<D>>;
 
 	/**
 	 * Number of rendered tasks

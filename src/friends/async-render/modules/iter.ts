@@ -66,7 +66,7 @@ export function getIterDescriptor(
 					return pendedResult;
 				}
 
-				const res = (<Promise<unknown>>iterable).then(async (v) => {
+				const res = iterable.then(async (v) => {
 					const i = await getIterable.call(this, v);
 					innerIter = i[Object.isAsyncIterable(i) ? Symbol.asyncIterator : Symbol.iterator]();
 					return innerIter.next();
@@ -95,18 +95,17 @@ export function getIterDescriptor(
 				canRender = !valIsPromise;
 
 			if (canRender && filter != null) {
-				canRender = filter.call(this.component, iterVal, readI, {
+				const filterRes = filter.call(this.component, iterVal, readI, {
 					iterable,
-					i: readI,
 					total: readTotal
 				});
 
-				if (Object.isPromise(canRender)) {
+				if (Object.isPromise(filterRes)) {
 					valIsPromise = true;
 					canRender = false;
 
-				} else if (!Object.isTruly(canRender)) {
-					canRender = false;
+				} else {
+					canRender = Object.isTruly(filterRes);
 				}
 			}
 

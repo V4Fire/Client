@@ -15,7 +15,7 @@ import { getIterDescriptor } from 'friends/async-render/modules/iter';
 import type { TaskOptions } from 'friends/async-render/interface';
 
 const
-	isCached = Symbol('Is cached')
+	isCached = Symbol('Is cached');
 
 /**
  * Creates an asynchronous render stream from the specified value.
@@ -123,15 +123,15 @@ export function iterate(
 			return;
 		}
 
-		// eslint-disable-next-line no-constant-condition
 		// Using `while` instead of `for of` helps to iterate over synchronous and asynchronous iterators with a single loop
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			if (opts.group != null) {
 				group = `asyncComponents:${opts.group}:${chunkI}`;
 			}
 
 			let
-				el = iter.iterator.next();
+				el: CanPromise<IteratorResult<unknown>> = iter.iterator.next();
 
 			try {
 				el = Object.isPromise(el) ? await $a.promise(el, {group}) : el;
@@ -158,6 +158,7 @@ export function iterate(
 
 					if (Object.isPromise(needRender)) {
 						await $a.promise(needRender, {group}).then(
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 							(res) => resolveTask(iterVal, res === undefined || Object.isTruly(res))
 						);
 
@@ -182,7 +183,11 @@ export function iterate(
 				iterI++;
 
 			} catch (err) {
-				if (err?.type === 'clearAsync' && err.reason === 'group' && err.link.group === group) {
+				if (
+					Object.get(err, 'type') === 'clearAsync' &&
+					Object.get(err, 'reason') === 'group' &&
+					Object.get(err, 'link.group') === 'group'
+				) {
 					break;
 				}
 
