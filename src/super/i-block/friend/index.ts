@@ -7,34 +7,33 @@
  */
 
 /**
- * [[include:super/i-block/modules/friend/README.md]]
+ * [[include:super/i-block/friend/README.md]]
  * @packageDocumentation
  */
 
 import iBlock from 'super/i-block/i-block';
 
 /**
- * Class that friendly to a component
- * @typeparam T - component
+ * Superclass to create classes friendly to the main component class
  */
 export default class Friend {
 	/**
-	 * Type: component instance
+	 * Type: the main component instance
 	 */
 	readonly C!: iBlock;
 
 	/**
-	 * Type: component context
+	 * Type: the main component context
 	 */
 	readonly CTX!: this['C']['unsafe'];
 
 	/**
-	 * Component instance
+	 * The main component instance
 	 */
 	readonly component: this['C'];
 
 	/**
-	 * Component context
+	 * The main component context
 	 */
 	protected readonly ctx: this['CTX'];
 
@@ -56,11 +55,6 @@ export default class Friend {
 	/** @see [[iBlock.componentStatus]] */
 	get componentStatus(): this['CTX']['componentStatus'] {
 		return this.ctx.componentStatus;
-	}
-
-	/** @see [[iBlock.$asyncLabel]] */
-	get asyncLabel(): symbol {
-		return this.ctx.$asyncLabel;
 	}
 
 	/** @see [[iBlock.hook]] */
@@ -130,7 +124,7 @@ export default class Friend {
 
 	constructor(component: iBlock) {
 		if (!(Object.get(component, 'instance') instanceof iBlock)) {
-			throw new TypeError("The specified component isn't inherited from iBlock");
+			throw new TypeError("The specified component isn't inherited from `iBlock`");
 		}
 
 		this.ctx = component.unsafe;
