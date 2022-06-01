@@ -148,7 +148,7 @@ export interface NodeDestructor {
 	 * @param node - a node to remove
 	 * @param childComponentEls - root elements of the child components
 	 */
-	(node: Node, childComponentEls: Element[]): void;
+	(node: Node, childComponentEls: Element[]): AnyToBoolean;
 }
 
 /**
