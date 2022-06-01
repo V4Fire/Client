@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:super/i-block/friend/README.md]]
+ * [[include:friends/friend/README.md]]
  * @packageDocumentation
  */
 

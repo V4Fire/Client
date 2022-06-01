@@ -26,7 +26,7 @@ import {
 import type iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/const';
 
-import Friend from 'super/i-block/friend';
+import Friend from 'friends/friend';
 
 import type {
 

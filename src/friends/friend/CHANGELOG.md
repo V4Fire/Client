@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :boom: Breaking Change
+
+* Moved the module to `friends/friend`
+
 #### :house: Internal
 
 * Refactoring

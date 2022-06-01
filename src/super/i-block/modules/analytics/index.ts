@@ -15,7 +15,7 @@
 import * as analytics from 'core/analytics';
 //#endif
 
-import Friend from 'super/i-block/friend';
+import Friend from 'friends/friend';
 
 /**
  * Class provides some methods to work with analytic engines

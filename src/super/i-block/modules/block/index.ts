@@ -14,7 +14,7 @@
 import type iBlock from 'super/i-block/i-block';
 import { fakeCtx, modRgxpCache, elRxp } from 'super/i-block/modules/block/const';
 
-import Friend from 'super/i-block/friend';
+import Friend from 'friends/friend';
 import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 
 import type {

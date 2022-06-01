@@ -23,7 +23,7 @@ import type { ComponentElement } from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
-import Friend from 'super/i-block/friend';
+import Friend from 'friends/friend';
 
 import { componentRgxp } from 'super/i-block/modules/dom/const';
 import { ElCb, inViewInstanceStore, DOMManipulationOptions } from 'super/i-block/modules/dom/interface';

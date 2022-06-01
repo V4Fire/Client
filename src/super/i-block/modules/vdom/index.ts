@@ -14,7 +14,7 @@
 import type { VNode } from 'core/component';
 
 import type iBlock from 'super/i-block/i-block';
-import Friend from 'super/i-block/friend';
+import Friend from 'friends/friend';
 
 import Opt from 'super/i-block/modules/opt';
 import Field from 'super/i-block/modules/field';

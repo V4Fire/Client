@@ -13,7 +13,7 @@
 
 import type iBlock from 'super/i-block/i-block';
 
-import Friend from 'super/i-block/friend';
+import Friend from 'friends/friend';
 import Block from 'super/i-block/modules/block';
 
 import { classesCache, modsCache } from 'super/i-block/modules/provide/const';

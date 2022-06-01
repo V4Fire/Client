@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import Friend from 'super/i-block/friend';
+import Friend from 'friends/friend';
 
 import { literalCache } from 'super/i-block/modules/opt/const';
 import type { IfOnceValue } from 'super/i-block/modules/opt/interface';
