@@ -14,7 +14,7 @@ This module provides a directive to track elements entering or leaving the viewp
 }, {
   threshold: 0.5,
   delay: 1000,
-  callback: () => console.log('half of the element in the viewport for 1 second')
+  callback: () => console.log('Half of the element was visible for one second')
 }] .
 ```
 

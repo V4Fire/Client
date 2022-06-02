@@ -14,7 +14,7 @@
 import { InView, Adaptee, InViewDirectiveOptions } from 'core/dom/in-view';
 import { ComponentEngine } from 'core/component/engines';
 
-export * from 'core/dom/in-view';
+export * from 'core/component/directives/in-view/interface';
 
 ComponentEngine.directive('in-view', {
 	mounted(el: Element, {value}: InViewDirectiveOptions): void {
