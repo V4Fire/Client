@@ -18,7 +18,13 @@ export * from 'core/component/directives/async/async/interface';
 
 ComponentEngine.directive('async-target', {
 	beforeCreate(opts: DirectiveBinding, vnode: VNode): void {
-		const ctx = Object.cast<ComponentInterface['unsafe']>(opts.instance);
+		const
+			ctx = Object.cast<CanUndef<ComponentInterface['unsafe']>>(opts.instance);
+
+		if (ctx == null) {
+			return;
+		}
+
 		ctx.$emit('[[V_ASYNC_TARGET]]', vnode);
 	}
 });
