@@ -1,13 +1,14 @@
 # core/component/directives/hook
 
 This module brings a directive to provide any directive hooks into a component.
-This directive is extremely useful to combine with a flyweight component because it does not have API to
-attach the hook listeners.
+This directive is extremely useful to combine with functional components because they don't have API to
+attach any hook listeners.
 
 ## Usage
 
 ```
 < div v-hook = { &
+  beforeCreate: (opts, vnode) => console.log(opts, vnode),
   created: (el, opts, vnode, oldVnode) => console.log(el, opts, vnode, oldVnode),
   beforeMount: onBeforeMount,
   mounted: onMounted,
