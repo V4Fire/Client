@@ -18,7 +18,7 @@ export interface DirectiveValue {
 	 * The event emitter.
 	 *
 	 * It can be specified as a simple event emitter, a promise or string.
-	 * In a string case, the string represents a name of the component property to watch.
+	 * In the case of a string, the string represents a name of the component property to watch.
 	 *
 	 * Also, the emitter can be provided as a function. In that case, it will be invoked,
 	 * and the emitter is taken from the result.
@@ -26,13 +26,12 @@ export interface DirectiveValue {
 	emitter: EventEmitterLike | Function | Promise<unknown> | string;
 
 	/**
-	 * Name of the event to listen
+	 * A name of the event to listen
 	 */
 	event?: CanArray<string>;
 
 	/**
-	 * Group name of the operation
-	 * (for Async)
+	 * A group name to manual clearing of pending tasks via the [[Async]] module
 	 */
 	group?: string;
 
@@ -43,17 +42,17 @@ export interface DirectiveValue {
 	single?: boolean;
 
 	/**
-	 * Additional options for an event emitter or watcher
+	 * Additional options for the event emitter or watcher
 	 */
 	options?: Dictionary | WatchOptions;
 
 	/**
-	 * Function to handle events
+	 * A function to handle events
 	 */
 	handler: Function;
 
 	/**
-	 * Function to handle error (if the emitter is specified as a promise)
+	 * A function to handle errors (if the emitter is specified as a promise)
 	 */
 	errorHandler?: Function;
 }

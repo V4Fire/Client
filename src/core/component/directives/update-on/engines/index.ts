@@ -14,6 +14,8 @@ import { ID_ATTRIBUTE } from 'core/component/directives/update-on/const';
 import type { ComponentInterface } from 'core/component';
 import type { DirectiveValue } from 'core/component/directives/update-on/interface';
 
+export * from 'core/component/directives/update-on/interface';
+
 export const
 	$$ = symbolGenerator();
 

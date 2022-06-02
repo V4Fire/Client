@@ -14,9 +14,6 @@ import type { DirectiveOptions, DirectiveValue } from 'core/component/directives
 export * from 'core/component/directives/update-on/const';
 export * from 'core/component/directives/update-on/interface';
 
-/**
- * Directive to manually update an element by using special events
- */
 ComponentEngine.directive('update-on', {
 	mounted(el: Element, {value}: DirectiveOptions, vnode: VNode): void {
 		add(el, value, vnode);

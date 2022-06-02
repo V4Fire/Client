@@ -1,7 +1,8 @@
 # core/component/directives/update-on
 
 This module provides a directive to manually update an element using various event(s) from multiple emitters.
-Use this directive if you want to update some parts of your template without re-rendering of a whole template or with functional components.
+Use this directive if you want to update some fragments of your template without re-rendering of the whole template or
+with functional components.
 
 ## Usage
 
