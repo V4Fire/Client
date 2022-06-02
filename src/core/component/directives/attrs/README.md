@@ -1,6 +1,6 @@
 # core/component/directives/attrs
 
-This module brings a directive to set any component or tag attributes from the passed dictionary.
+This module provides a directive to set any component or tag attributes from the passed dictionary.
 
 ## Usage
 

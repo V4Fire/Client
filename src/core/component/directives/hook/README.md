@@ -1,6 +1,6 @@
 # core/component/directives/hook
 
-This module brings a directive to provide any directive hooks into a component.
+This module provides a directive to provide any directive hooks into a component.
 This directive is extremely useful to combine with functional components because they don't have API to
 attach any hook listeners.
 
