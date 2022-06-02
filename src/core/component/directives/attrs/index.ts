@@ -223,11 +223,11 @@ ComponentEngine.directive('attrs', {
 						registeredKeyModifiers = Object.keys(Object.select(flags, keyModifiers));
 
 					if (registeredModifiers.length > 0) {
-						attrVal = r?.withModifiers.call(ctx, attrVal, registeredKeyModifiers);
+						attrVal = r?.withModifiers.call(ctx, Object.cast(attrVal), registeredKeyModifiers);
 					}
 
 					if (registeredKeyModifiers.length > 0) {
-						attrVal = r?.withKeys.call(ctx, attrVal, registeredKeyModifiers);
+						attrVal = r?.withKeys.call(ctx, Object.cast(attrVal), registeredKeyModifiers);
 					}
 				}
 
