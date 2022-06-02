@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Moved the module to `core/module-loader`
+* The module has been rewritten to a new tree-shake friendly API
+
 ## v3.0.0 (2021-07-27)
 
 #### :house: Internal
