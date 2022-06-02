@@ -30,7 +30,7 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	useRAF?: boolean;
 
 	/**
-	 * A group name to manual clearing of pending tasks via the `async` module.
+	 * A group name to manual clearing of pending tasks via the [[Async]] module.
 	 * Providing this value disables automatically cleanup of render tasks on the `update` hook.
 	 *
 	 * @example
