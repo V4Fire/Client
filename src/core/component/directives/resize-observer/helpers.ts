@@ -9,7 +9,7 @@
 import type { ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 import type { ComponentInterface } from 'core/component/interface';
 
-import { DIRECTIVE_BIND } from 'core/component/directives/resize-observer/const';
+import { DIRECTIVE } from 'core/component/directives/resize-observer/const';
 import type { ResizeWatcherObservable, ResizeWatcherObserverOptions } from 'core/component/directives/resize-observer/interface';
 
 /**
@@ -21,7 +21,7 @@ export function setCreatedViaDirectiveFlag(observable: Nullable<ResizeWatcherObs
 		return;
 	}
 
-	observable[DIRECTIVE_BIND] = true;
+	observable[DIRECTIVE] = true;
 }
 
 /**

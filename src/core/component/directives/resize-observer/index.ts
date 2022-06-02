@@ -9,13 +9,13 @@
 import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
-import { DIRECTIVE_BIND } from 'core/component/directives/resize-observer/const';
+import { DIRECTIVE } from 'core/component/directives/resize-observer/const';
 import { normalizeOptions, setCreatedViaDirectiveFlag } from 'core/component/directives/resize-observer/helpers';
 
-import type { DirectiveOptions, ResizeWatcherObservable } from 'core/component/directives/resize-observer/interface';
+import type { DirectiveOptions } from 'core/component/directives/resize-observer/interface';
 
-export * from 'core/dom/resize-observer';
 export * from 'core/component/directives/resize-observer/const';
+export * from 'core/component/directives/resize-observer/helpers';
 export * from 'core/component/directives/resize-observer/interface';
 
 ComponentEngine.directive('resize-observer', {
@@ -66,8 +66,8 @@ ComponentEngine.directive('resize-observer', {
 			return;
 		}
 
-		store.forEach((observable: ResizeWatcherObservable) => {
-			if (observable[DIRECTIVE_BIND] === true) {
+		store.forEach((observable) => {
+			if (observable[DIRECTIVE] === true) {
 				observable.destructor();
 			}
 		});

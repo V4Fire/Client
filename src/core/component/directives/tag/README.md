@@ -1,6 +1,6 @@
 # core/component/directives/tag
 
-This module brings a directive to specify dynamically a tag name to create.
+This module provides a directive to specify dynamically a tag name to create.
 
 ## Usage
 

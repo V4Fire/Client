@@ -7,4 +7,4 @@
 */
 
 export const
-	DIRECTIVE_BIND: unique symbol = Symbol('Indicator for observable bound via a directive');
+	DIRECTIVE = Symbol('An indicator that observer was initialized via the directive');
