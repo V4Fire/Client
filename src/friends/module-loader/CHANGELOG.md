@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `core/module-loader`
+* Moved the module to `friends/module-loader`
 * The module has been rewritten to a new tree-shake friendly API
 
 ## v3.0.0 (2021-07-27)
