@@ -16,6 +16,38 @@ import type { Module } from 'friends/module-loader/interface';
 export * from 'friends/module-loader/interface';
 
 /**
+ * Loads the specified modules.
+ * If some modules are already loaded, they won’t be loaded twice.
+ * If all specified modules are already loaded, the function returns a simple value, but not a promise.
+ * The resulting value is designed to use with [[AsyncRender]].
+ *
+ * @param modules
+ */
+export function load(this: ModuleLoader, ...modules: Module[]): CanPromise<IterableIterator<Module[]>> {
+	const
+		tasks: Array<Promise<unknown>> = [];
+
+	for (let i = 0; i < modules.length; i++) {
+		const
+			module = modules[i],
+			resolvedModule = resolveModule.call(this, module);
+
+		if (Object.isPromise(resolvedModule)) {
+			tasks.push(resolvedModule);
+		}
+	}
+
+	const
+		i = [modules].values();
+
+	if (tasks.length === 0) {
+		return i;
+	}
+
+	return this.async.promise(Promise.all(tasks)).then(() => i);
+}
+
+/**
  * Adds the specified modules to a load bucket by the specified name.
  * Notice, adding modules don’t force them to load. To load the created bucket, use the `loadBucket` method.
  * The function returns the number of added modules in the bucket.
@@ -46,38 +78,6 @@ export function addModulesToBucket(this: ModuleLoader, bucketName: string, ...mo
 	}
 
 	return bucket.size;
-}
-
-/**
- * Loads the specified modules.
- * If some modules are already loaded, they won’t be loaded twice.
- * If all specified modules are already loaded, the function returns a simple value, but not a promise.
- * The resulting value is designed to use with [[AsyncRender]].
- *
- * @param modules
- */
-export function load(this: ModuleLoader, ...modules: Module[]): CanPromise<IterableIterator<Module[]>> {
-	const
-		tasks: Array<Promise<unknown>> = [];
-
-	for (let i = 0; i < modules.length; i++) {
-		const
-			module = modules[i],
-			resolvedModule = resolveModule.call(this, module);
-
-		if (Object.isPromise(resolvedModule)) {
-			tasks.push(resolvedModule);
-		}
-	}
-
-	const
-		i = [modules].values();
-
-	if (tasks.length === 0) {
-		return i;
-	}
-
-	return this.async.promise(Promise.all(tasks)).then(() => i);
 }
 
 /**
