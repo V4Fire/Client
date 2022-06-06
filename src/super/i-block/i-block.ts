@@ -959,17 +959,6 @@ export default abstract class iBlock extends ComponentInterface {
 	protected readonly storage!: Storage;
 
 	/**
-	 * API to wrap async operations
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx) => new Async(ctx)
-	})
-
-	protected readonly async!: Async<this>;
-
-	/**
 	 * API for the component state.
 	 * This property provides a bunch of helper methods to initialize the component state.
 	 */
