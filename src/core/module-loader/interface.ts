@@ -19,12 +19,6 @@ export interface Module extends Dictionary {
 	 * A function to load the module
 	 */
 	load(): Promise<unknown>;
-
-	/**
-	 * A function that returns a promise.
-	 * The module loading won't start until this promise is fulfilled.
-	 */
-	wait?(): Promise<unknown>;
 }
 
 export interface ResolvedModule extends Module {
