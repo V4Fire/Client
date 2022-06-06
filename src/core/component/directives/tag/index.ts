@@ -17,7 +17,7 @@ import type { DirectiveOptions } from 'core/component/directives/tag/interface';
 export * from 'core/component/directives/tag/interface';
 
 ComponentEngine.directive('tag', {
-	beforeCreate(opts: DirectiveOptions, vnode: VNode) {
+	beforeCreate(opts: DirectiveOptions, vnode: VNode): void {
 		vnode.type = opts.value ?? vnode.type;
 	}
 });
