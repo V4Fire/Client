@@ -7,23 +7,23 @@
  */
 
 /**
- * Link structure
+ * A link structure
  */
 export interface SyncLink<T = unknown> {
 	/**
-	 * Link path
+	 * The link path
 	 */
 	path: string;
 
 	/**
-	 * Synchronize the link value and with all tied objects
-	 * @param [value] - new value to set
+	 * Synchronizes the link value with all tied objects
+	 * @param [value] - a new value to set
 	 */
 	sync(value?: T): void;
 }
 
 /**
- * Map of registered links
+ * A dictionary with all registered links
  */
 export type SyncLinkCache<T = unknown> = Map<
 	string | object,

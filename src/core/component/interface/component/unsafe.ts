@@ -9,19 +9,19 @@
 import type { ComponentInterface } from 'core/component/interface/component/component';
 
 /**
- * A helper structure to pack the unsafe interface:
- * it fixes some ambiguous TS warnings
+ * A helper structure to pack the unsafe interface.
+ * It fixes some ambiguous TS warnings.
  */
 export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
 	Dictionary & U['CTX'] & U & {unsafe: any};
 
 /**
- * A special interface to provide access to protected properties and methods outside the component.
- * It's used to create the "friendly classes" feature.
+ * A special interface to provide access for protected properties and methods outside the main component.
+ * It's used to create a "friendly classes" feature.
  */
 export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
 	/**
-	 * Type: context type
+	 * Type: the context type
 	 */
 	readonly CTX: CTX;
 
@@ -62,6 +62,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$syncLinkCache: CTX['$syncLinkCache'];
+
+	// @ts-ignore (access)
+	async: CTX['async'];
 
 	// @ts-ignore (access)
 	$async: CTX['$async'];

@@ -14,4 +14,3 @@ export * from 'core/component/interface/watch';
 export * from 'core/component/interface/link';
 export * from 'core/component/interface/life-cycle';
 export * from 'core/component/interface/engine';
-export * from 'core/component/render/interface';

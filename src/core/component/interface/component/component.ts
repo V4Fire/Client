@@ -42,42 +42,41 @@ import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/inte
  */
 export abstract class ComponentInterface {
 	/**
-	 * Type: root component
+	 * Type: the root component
 	 */
 	readonly Root!: ComponentInterface;
 
 	/**
-	 * Type: base super class for all components
+	 * Type: the base super class for all components
 	 */
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * Unique component string identifier
+	 * The component string unique identifier
 	 */
 	readonly componentId!: string;
 
 	/**
-	 * Name of the component without special postfixes like `-functional`
+	 * The component name without special postfixes like `-functional`
 	 */
 	readonly componentName!: string;
 
 	/**
-	 * Link to a class instance that is used to describe the component.
-	 * Basically, this parameter is used for `instanceof` checks and to get default values of properties.
-	 * Mind, every kind of components has only the one instance of that kind,
-	 * i.e. one instance is shared between components of the same type.
+	 * A link to the component class instance.
+	 * Basically, this parameter is mainly used for `instanceof` checks and to get component default property values.
+	 * Mind, all components of the same type refer to the one shareable class instance.
 	 */
 	readonly instance!: this;
 
 	/**
-	 * Additional classes for the component elements.
-	 * It can be useful if you need to attach some extra classes to internal component elements.
-	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
+	 * Additional classes for component elements.
+	 * This option can be useful if you need to attach some extra classes to the internal component elements.
+	 * Be sure you know what you are doing because this mechanism is tied to the private component markup.
 	 *
 	 * @example
 	 * ```js
-	 * // Key names are tied with component elements,
-	 * // and values contain a CSS class or list of classes we want to add
+	 * // Key names are tied with the component elements
+	 * // Values contain a CSS class or list of classes we want to add
 	 *
 	 * {
 	 *   foo: 'bla',
@@ -88,14 +87,14 @@ export abstract class ComponentInterface {
 	readonly classes?: Dictionary<CanArray<string>>;
 
 	/**
-	 * Additional styles for the component elements.
-	 * It can be useful if you need to attach some extra styles to internal component elements.
-	 * Be sure you know what you are doing because this mechanism is tied to an internal component markup.
+	 * Additional styles for component elements.
+	 * This option can be useful if you need to attach some extra styles to the internal component elements.
+	 * Be sure you know what you are doing because this mechanism is tied to the private component markup.
 	 *
 	 * @example
 	 * ```js
 	 * // Key names are tied with component elements,
-	 * // and values contains a CSS style string, a style object or list of style strings
+	 * // Values contains a CSS style string, a style object or list of style strings
 	 *
 	 * {
 	 *   foo: 'color: red',
@@ -107,7 +106,7 @@ export abstract class ComponentInterface {
 	readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
-	 * Name of the active component hook
+	 * The active component hook name
 	 */
 	get hook(): Hook {
 		return 'beforeRuntime';
@@ -125,159 +124,161 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Name of the active rendering group to use with async rendering
-	 */
-	readonly renderGroup?: string;
-
-	/**
-	 * API to invoke unsafely of internal properties of the component.
-	 * This parameter helps to avoid TS errors of using protected properties and methods outside from the component class.
-	 * It's useful to create component’ friendly classes.
+	 * An API for unsafely invoking of some internal properties of the component.
+	 * This parameter allows to avoid TS errors while using protected properties and methods outside from the main class.
+	 * Use it when you need to decompose the component class into a composition of friendly classes.
 	 */
 	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
 		return Object.cast(this);
 	}
 
 	/**
-	 * Link to a DOM element that is the root for the component
+	 * A link to the component root element
 	 */
 	readonly $el?: ComponentElement<this['Component']>;
 
 	/**
-	 * Raw parameters of the component with which it was created by an engine
+	 * Raw options of the component with which it was created by an engine
 	 */
 	readonly $options!: ComponentOptions;
 
 	/**
-	 * Map of initialized input properties of the component
+	 * A dictionary with the initialized component props
 	 */
 	readonly $props!: Dictionary;
 
 	/**
-	 * Link to the root component of the application
+	 * A link to the root component
 	 */
 	readonly $root!: this['Root'];
 
 	/**
-	 * Link to a parent component of the current component
+	 * A link to the component parent
 	 */
 	readonly $parent?: this['Component'];
 
 	/**
-	 * Link to the closest non-functional parent component of the current component
+	 * A link to the closest non-functional parent component
 	 */
 	readonly $normalParent?: this['Component'];
 
 	/**
-	 * Link to a parent component if the current component was dynamically created and mounted
+	 * A link to the component parent if the current component was dynamically created and mounted
 	 */
 	readonly $remoteParent?: this['Component'];
 
 	/**
-	 * API of the used rendering engine
+	 * An API of the used render engine
 	 */
 	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
 	 * A link to the component meta object.
-	 * This object contains all information of component properties, methods and other stuff.
-	 * It's used to create a "real" component by the used engine and some optimizations based on reflect.
+	 * This object contains all information of the component properties, methods and other stuff.
+	 * It's used to create a "real" component by the used render engine.
 	 */
 	protected readonly meta!: ComponentMeta;
 
 	/**
-	 * Number that increments on every re-rendering of the component
+	 * A number that is incremented each time the component is re-rendered
 	 */
 	protected renderCounter!: number;
 
 	/**
-	 * Temporary unique component string identifier for functional components
+	 * A temporary string identifier of the component
+	 * (only for functional components)
 	 */
 	protected readonly $componentId?: string;
 
 	/**
-	 * Map of watchable component properties that can force re-rendering
+	 * A dictionary with the watchable component properties that can force re-rendering
 	 */
 	protected readonly $fields!: Dictionary;
 
 	/**
-	 * Map of watchable component properties that can't force re-rendering
+	 * A dictionary with the watchable component properties that can't force re-rendering
 	 */
 	protected readonly $systemFields!: Dictionary;
 
 	/**
-	 * Map of component properties that were modified and need to synchronize
+	 * A dictionary with component properties that have been modified and need to be synchronized
 	 * (only for functional components)
 	 */
 	protected readonly $modifiedFields!: Dictionary;
 
 	/**
-	 * Map of component attributes that aren't recognized as input properties
+	 * A dictionary with component attributes that aren't recognized as input properties
 	 */
 	protected readonly $attrs!: Dictionary<string>;
 
 	/**
-	 * Map of external listeners of component events
+	 * A dictionary with external listeners of the component events
 	 */
 	protected readonly $listeners!: Dictionary<CanArray<Function>>;
 
 	/**
-	 * Map of references to elements that have a "ref" attribute
+	 * A dictionary with references to component elements that have the "ref" attribute
 	 */
 	protected readonly $refs!: Dictionary;
 
 	/**
-	 * Map of handlers that wait appearing of references to elements that have a "ref" attribute
+	 * A dictionary with handlers that wait appearing of references to elements that have the "ref" attribute
 	 */
 	protected readonly $refHandlers!: Dictionary<Function[]>;
 
 	/**
-	 * Map of available render slots
+	 * A dictionary with available render slots
 	 */
 	protected readonly $slots!: Slots;
 
 	/**
-	 * Name of the active property to initialize
+	 * The active property name to initialize
 	 */
 	protected readonly $activeField?: string;
 
 	/**
-	 * Cache for component links
+	 * The cache for component links
 	 */
 	protected readonly $syncLinkCache!: SyncLinkCache;
 
 	/**
-	 * API to tie and control async operations
+	 * An API to tie and control async operations
+	 */
+	protected readonly async!: Async<ComponentInterface>;
+
+	/**
+	 * An API to tie and control async operations
+	 * (this parameter is used by a render engine)
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
 
 	/**
-	 * Promise of the component initializing
+	 * A promise of the component initializing
 	 */
 	protected $initializer?: Promise<unknown>;
 
 	/**
 	 * Logs an event with the specified context
 	 *
-	 * @param ctxOrOpts - logging context or logging options (logLevel, context)
+	 * @param ctxOrOpts - the logging context or logging options
 	 * @param [details] - event details
 	 */
 	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
 
 	/**
 	 * Activates the component.
-	 * The deactivated component won't load data from providers during initializing.
+	 * The deactivated component won't load data from its providers during initializing.
 	 *
 	 * Basically, you don't need to think about the component activation,
 	 * because it's automatically synchronized with `keep-alive` or the component prop.
 	 *
-	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
+	 * @param [force] - if true, then the component will be forced to activate, even if it's already activated
 	 */
 	activate(force?: boolean): void {}
 
 	/**
 	 * Deactivates the component.
-	 * The deactivated component won't load data from providers during initializing.
+	 * The deactivated component won't load data from its providers during initializing.
 	 *
 	 * Basically, you don't need to think about the component activation,
 	 * because it's automatically synchronized with `keep-alive` or the component prop.
@@ -307,7 +308,7 @@ export abstract class ComponentInterface {
 	protected $destroy(): void {}
 
 	/**
-	 * Sets a new reactive value to the specified property of an object
+	 * Sets a new reactive value to the specified property of the passed object
 	 *
 	 * @param object
 	 * @param key
@@ -318,7 +319,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Deletes the specified reactive property from an object
+	 * Deletes the specified reactive property from the passed object
 	 *
 	 * @param object
 	 * @param key
@@ -398,7 +399,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Detaches an event listeners from the component
+	 * Detaches the specified event listeners from the component
 	 *
 	 * @param [event]
 	 * @param [handler]
@@ -408,7 +409,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Emits a component event
+	 * Emits the specified component event
 	 *
 	 * @param event
 	 * @param args

@@ -9,21 +9,21 @@
 import type { ComponentMeta } from 'core/component/meta';
 
 /**
- * Constructor function of a component
+ * A component constructor function
  */
 export interface ComponentConstructor<T = unknown> {
 	new(): T;
 }
 
 /**
- * Root DOM element that is tied with a component
+ * A component root DOM element
  */
 export type ComponentElement<T = unknown> = Element & {
 	component?: T;
 };
 
 /**
- * Base context of a functional component
+ * The base context of a functional component
  */
 export interface FunctionalCtx {
 	componentName: string;

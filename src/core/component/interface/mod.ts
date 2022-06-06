@@ -9,24 +9,24 @@
 import type { PARENT } from 'core/component/const';
 
 /**
- * Available "pure" types of a modifier value
+ * Modifier value primitives
  */
 export type ModVal = string | boolean | number;
 
 /**
- * Available types of a modifier value.
- * If a value wrapped with an array, it interprets as a value by default.
+ * Modifier value types.
+ * If a value is wrapped by an array, it interprets as the value by default.
  */
 export type ModDeclVal = CanArray<ModVal>;
 
 /**
- * Expanded available types of a modifier value with support a feature of referring to a parent.
- * If a value wrapped with an array, it interprets as a value by default.
+ * Expanded modifier types with parent reference support.
+ * If a value is wrapped by an array, it interprets as the value by default.
  */
 export type ExpandedModDeclVal = ModDeclVal | typeof PARENT;
 
 /**
- * Dictionary of registered modifiers and their possible values
+ * A dictionary with registered modifiers and their possible values
  *
  * @example
  * ```typescript
