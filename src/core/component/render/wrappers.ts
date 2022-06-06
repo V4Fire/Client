@@ -1,3 +1,5 @@
+/* eslint-disable prefer-spread, prefer-rest-params */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -26,36 +28,31 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/register';
-import { createVNodeWithDirectives, interpolateStaticAttrs } from 'core/component/render/vnode';
-import { isSpecialComponent } from 'core/component/render/helpers';
+import { interpolateStaticAttrs } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
-	return Object.cast(function createVNode(this: ComponentInterface, type: string, ...args: unknown[]) {
-		const vnode = createVNodeWithDirectives(original, type, ...args);
-		return interpolateStaticAttrs.call(this, vnode);
+	return Object.cast(function createVNode(this: ComponentInterface) {
+		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
 	});
 }
 
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
 	return Object.cast(function createElementVNode(this: ComponentInterface) {
-		// eslint-disable-next-line prefer-spread
-		return interpolateStaticAttrs.call(this, original.apply(null, arguments));
+		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
 	});
 }
 
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface) {
-		// eslint-disable-next-line prefer-spread
-		return interpolateStaticAttrs.call(this, original.apply(null, arguments));
+		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
 	});
 }
 
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(function createElementBlock(this: ComponentInterface) {
-		// eslint-disable-next-line prefer-spread
-		return interpolateStaticAttrs.call(this, original.apply(null, arguments));
+		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
 	});
 }
 
@@ -63,10 +60,6 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 	original: T
 ): T {
 	return Object.cast((name, ...args) => {
-		if (isSpecialComponent(name)) {
-			return name;
-		}
-
 		registerComponent(name);
 		return original(name, ...args);
 	});
@@ -98,7 +91,12 @@ export function wrapWithDirectives<T extends typeof withDirectives>(original: T)
 
 			if (Object.isDictionary(dir)) {
 				if (Object.isFunction(dir.beforeCreate)) {
-					dir.beforeCreate({value, arg, modifiers, dir, instance: this}, vnode);
+					const
+						newVnode = dir.beforeCreate({value, arg, modifiers, dir, instance: this}, vnode);
+
+					if (newVnode != null) {
+						vnode = newVnode;
+					}
 
 					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
 						resolvedDirs.push(decl);

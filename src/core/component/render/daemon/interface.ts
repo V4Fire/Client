@@ -7,6 +7,7 @@
  */
 
 export interface Task {
-	fn: Function;
+	task: Function;
+	useRAF?: boolean;
 	weight?: number;
 }

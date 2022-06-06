@@ -23,6 +23,8 @@ import {
 
 } from 'core/component/render/daemon/const';
 
+import type { Task } from 'core/component/render/daemon/interface';
+
 export * from 'core/component/render/daemon/const';
 export * from 'core/component/render/daemon/interface';
 
@@ -30,15 +32,14 @@ let
 	inProgress = false,
 	isStarted = false;
 
-queue.add = function add<T = unknown>(...args: unknown[]): T {
-	const
-		res = addToQueue(...args);
+queue.add = function add(task: Task): typeof queue {
+	addToQueue(task);
 
 	if (!isStarted) {
 		run();
 	}
 
-	return res;
+	return this;
 };
 
 /**
@@ -51,8 +52,7 @@ export function restart(): void {
 }
 
 /**
- * Restarts the render daemon
- * (it runs on the next tick)
+ * Creates a task to restart the render daemon on the next tick
  */
 export function deferRestart(): void {
 	isStarted = false;
@@ -79,8 +79,6 @@ function run(): void {
 			if (done <= 0 || Date.now() - time > DELAY) {
 				await daemon.idle({timeout: DELAY});
 				time = Date.now();
-
-				// eslint-disable-next-line require-atomic-updates
 				done = TASKS_PER_TICK;
 			}
 
@@ -92,7 +90,7 @@ function run(): void {
 			}
 
 			const
-				canRender = val.fn();
+				canRender = val.useRAF ? daemon.animationFrame().then(val.task) : val.task();
 
 			const exec = (canRender) => {
 				if (Object.isTruly(canRender)) {

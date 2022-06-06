@@ -11,10 +11,6 @@
  * @packageDocumentation
  */
 
-import 'core/component/render/components';
-
 export * from 'core/component/render/api';
-export * from 'core/component/render/vnode';
 export * from 'core/component/render/wrappers';
 export * from 'core/component/render/helpers';
-export * from 'core/component/render/interface';
