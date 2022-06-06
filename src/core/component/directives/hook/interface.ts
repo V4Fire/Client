@@ -6,10 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { DirectiveBinding, DirectiveHook, ObjectDirective } from 'core/component/engines';
+import type {
+
+	DirectiveBinding,
+	DirectiveHook,
+	ObjectDirective,
+
+	VNode
+
+} from 'core/component/engines';
 
 export interface DirectiveOptions extends DirectiveBinding<CanUndef<DirectiveValue>> {}
 
 export type DirectiveValue = Overwrite<Omit<ObjectDirective, 'deep' | 'getSSRProps'>, {
-	beforeCreate?: DirectiveHook;
+	beforeCreate?(...args: Parameters<DirectiveHook>): CanUndef<VNode>;
 }>;
