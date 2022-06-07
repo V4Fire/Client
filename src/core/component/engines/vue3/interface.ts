@@ -27,7 +27,7 @@ export interface ObjectDirective<T = any, V = any> extends SuperObjectDirective<
 		this: ResolveDirective & ObjectDirective<T, V>,
 		binding: DirectiveBinding<V>,
 		vnode: VNode<any, T>
-	): void;
+	): CanVoid<VNode>;
 }
 
 export declare type Directive<T = any, V = any> =
