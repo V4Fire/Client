@@ -20,6 +20,9 @@ import {
 	renderList as superRenderList,
 	withDirectives as superWithDirectives,
 
+	// @ts-ignore (private)
+	withAsyncContext as superWithAsyncContext,
+
 	VNode
 
 } from 'vue';
@@ -83,6 +86,12 @@ export {
 
 export { interpolateStaticAttrs };
 
+type Awaitable = () => PromiseLike<unknown>;
+
+export function withAsyncContext<T extends Awaitable>(awaitable: T): [Awaited<ReturnType<T>>, Function] {
+	return superWithAsyncContext(awaitable);
+}
+
 export const
 	resolveComponent = wrapResolveComponent(superResolveComponent),
 	resolveDynamicComponent = wrapResolveComponent(superResolveDynamicComponent);
@@ -116,14 +125,27 @@ export function render(vnode: VNode, parent?: ComponentInterface): Node;
 export function render(vnodes: VNode[], parent?: ComponentInterface): Node[];
 export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): CanArray<Node> {
 	const vue = new Vue({
-		render: () => vnode
-	});
+		render: () => vnode,
+		beforeCreate() {
+			if (parent != null) {
+				this.root = Object.create(parent.$root);
 
-	if (parent != null) {
-		Object.set(vue, '$root', Object.create(parent.$root));
-		Object.set(vue, '$root.$remoteParent', parent);
-		Object.set(vue, '$root.unsafe', vue['$root']);
-	}
+				Object.defineProperty(this.root, '$remoteParent', {
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value: parent
+				});
+
+				Object.defineProperty(this, 'unsafe', {
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value: this.root
+				});
+			}
+		}
+	});
 
 	const
 		el = document.createElement('div'),
