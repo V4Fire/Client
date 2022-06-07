@@ -59,8 +59,21 @@ export function beforeCreateState(
 		parent = unsafe.$parent,
 		isFunctional = meta.params.functional === true;
 
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (parent != null && parent.componentName == null) {
-		unsafe.$parent = unsafe.$root.unsafe.$remoteParent;
+		Object.defineProperty(unsafe, '$root', {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+			value: unsafe.$root.unsafe
+		});
+
+		Object.defineProperty(unsafe, '$parent', {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+			value: unsafe.$root.$remoteParent
+		});
 	}
 
 	unsafe.$normalParent = getNormalParent(component);

@@ -123,9 +123,10 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 		render: () => vnode,
 		beforeCreate() {
 			if (parent != null) {
-				this.root = Object.create(parent.$root);
+				const
+					root = Object.create(parent.$root);
 
-				Object.defineProperty(this.root, '$remoteParent', {
+				Object.defineProperty(root, '$remoteParent', {
 					configurable: true,
 					enumerable: true,
 					writable: true,
@@ -136,7 +137,7 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 					configurable: true,
 					enumerable: true,
 					writable: true,
-					value: this.root
+					value: root
 				});
 			}
 		}
