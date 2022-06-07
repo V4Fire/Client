@@ -7,14 +7,14 @@
  */
 
 /**
- * [[include:core/component/directives/async/target/README.md]]
+ * [[include:core/component/directives/async-target/README.md]]
  * @packageDocumentation
  */
 
 import { ComponentEngine, VNode, DirectiveBinding } from 'core/component/engines';
 import type { ComponentInterface } from 'core/component/interface';
 
-export * from 'core/component/directives/async/async/interface';
+export * from 'core/component/directives/async-target/interface';
 
 ComponentEngine.directive('async-target', {
 	beforeCreate(opts: DirectiveBinding, vnode: VNode): void {
