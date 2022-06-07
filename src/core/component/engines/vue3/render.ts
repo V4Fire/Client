@@ -20,9 +20,6 @@ import {
 	renderList as superRenderList,
 	withDirectives as superWithDirectives,
 
-	// @ts-ignore (private)
-	withAsyncContext as superWithAsyncContext,
-
 	VNode
 
 } from 'vue';
@@ -72,6 +69,10 @@ export {
 	resolveTransitionHooks,
 
 	withCtx,
+
+	// @ts-ignore (private)
+	withAsyncContext,
+
 	withKeys,
 	withModifiers,
 
@@ -85,12 +86,6 @@ export {
 } from 'vue';
 
 export { interpolateStaticAttrs };
-
-type Awaitable = () => PromiseLike<unknown>;
-
-export function withAsyncContext<T extends Awaitable>(awaitable: T): [Awaited<ReturnType<T>>, Function] {
-	return superWithAsyncContext(awaitable);
-}
 
 export const
 	resolveComponent = wrapResolveComponent(superResolveComponent),

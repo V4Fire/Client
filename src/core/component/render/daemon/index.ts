@@ -90,7 +90,7 @@ function run(): void {
 			}
 
 			const
-				canRender = val.useRAF ? daemon.animationFrame().then(val.task) : val.task();
+				canRender = val.task();
 
 			const exec = (canRender) => {
 				if (Object.isTruly(canRender)) {

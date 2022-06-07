@@ -8,6 +8,5 @@
 
 export interface Task {
 	task: Function;
-	useRAF?: boolean;
 	weight?: number;
 }

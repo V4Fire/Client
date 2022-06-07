@@ -109,6 +109,9 @@ export function iterate(
 		lastTask,
 		lastEvent;
 
+	const
+		[_, setCurrentInstance] = r.withAsyncContext(() => undefined);
+
 	$a.setImmediate(async () => {
 		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
 		ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
@@ -252,6 +255,8 @@ export function iterate(
 		return lastTask();
 
 		function task() {
+			setCurrentInstance();
+
 			const
 				renderedVNodes: Node[] = [];
 
@@ -290,7 +295,7 @@ export function iterate(
 					renderedVnode = Object.cast(vnode.el);
 
 				} else {
-					renderedVnode = r.render(vnode);
+					renderedVnode = ctx.vdom.render(vnode);
 				}
 
 				renderedVNodes.push(renderedVnode);

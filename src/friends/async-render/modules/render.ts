@@ -34,21 +34,7 @@ export function addRenderTask(
 	return new SyncPromise((resolve, reject) => {
 		const taskDesc = {
 			weight: opts.weight,
-
-			fn: $a.proxy(() => {
-				const cb = () => {
-					task();
-					resolve();
-					return true;
-				};
-
-				if (opts.useRAF) {
-					return $a.animationFrame({group}).then(cb);
-				}
-
-				return cb();
-
-			}, {
+			task: $a.proxy(runTask, {
 				group,
 				single: false,
 				onClear: (err) => {
@@ -59,6 +45,20 @@ export function addRenderTask(
 		};
 
 		queue.add(taskDesc);
+
+		function runTask() {
+			const cb = () => {
+				task();
+				resolve();
+				return true;
+			};
+
+			if (opts.useRAF) {
+				return $a.animationFrame({group}).then(cb);
+			}
+
+			return cb();
+		}
 	});
 }
 
