@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Module } from 'core/module-loader/interface';
+import type { Module } from 'friends/module-loader/interface';
 
 export const
 	cache = new Map<unknown, Module>();

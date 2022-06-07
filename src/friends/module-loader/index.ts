@@ -14,4 +14,3 @@
 export { default } from 'friends/module-loader/class';
 
 export * from 'friends/module-loader/api';
-export * from 'friends/module-loader/interface';

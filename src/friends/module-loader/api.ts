@@ -9,9 +9,7 @@
 import type ModuleLoader from 'friends/module-loader/class';
 
 import { cache } from 'friends/module-loader/const';
-import { resolveModule } from 'friends/module-loader/helpers';
-
-import type { Module } from 'friends/module-loader/interface';
+import type { Module, ResolvedModule } from 'friends/module-loader/interface';
 
 export * from 'friends/module-loader/interface';
 
@@ -91,4 +89,55 @@ export function addModulesToBucket(this: ModuleLoader, bucketName: string, ...mo
 export function loadBucket(this: ModuleLoader, bucketName: string): CanPromise<IterableIterator<Module[]>> {
 	const bucket = this.loadBuckets.get(bucketName) ?? new Set();
 	return load.call(this, ...bucket);
+}
+
+/**
+ * Resolves the specified module: if the module already exists in the cache, the function simply returns it.
+ * Otherwise, the module will be loaded.
+ *
+ * @param module
+ */
+export function resolveModule(this: ModuleLoader, module: Module): CanPromise<ResolvedModule> {
+	let
+		resolvedModule: ResolvedModule;
+
+	if (module.id != null) {
+		resolvedModule = Object.cast(cache.get(module.id) ?? module);
+
+	} else {
+		resolvedModule = Object.cast(module);
+	}
+
+	let
+		promise;
+
+	switch (resolvedModule.status) {
+		case 'loaded':
+			break;
+
+		case 'pending':
+			promise = resolvedModule.promise;
+			break;
+
+		default: {
+			resolvedModule.status = 'pending';
+			resolvedModule.promise = module.load();
+
+			promise = resolvedModule.promise
+				.then(() => {
+					module.status = 'loaded';
+				})
+
+				.catch((err) => {
+					stderr(err);
+					module.status = 'failed';
+				});
+		}
+	}
+
+	if (promise != null) {
+		return promise.then(() => resolvedModule);
+	}
+
+	return resolvedModule;
 }

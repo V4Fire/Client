@@ -14,7 +14,7 @@ import type { Module } from 'friends/module-loader/interface';
 interface ModuleLoader {
 	load: typeof api.load;
 	loadBucket: typeof api.loadBucket;
-	addModulesToLoadBucket: typeof api.addModulesToBucket;
+	addModulesToBucket: typeof api.addModulesToBucket;
 }
 
 class ModuleLoader extends Friend {
