@@ -1130,7 +1130,11 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, o)
+		init: (o, d) => wrapEventEmitter(<Async>d.async, {
+			on: o.$on.bind(o),
+			once: o.$once.bind(o),
+			off: o.$off.bind(o)
+		})
 	})
 
 	protected readonly selfEmitter!: EventEmitterWrapper<this>;
@@ -1667,16 +1671,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	@p()
 	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
-		event = event.dasherize();
-
-		if (opts) {
-			this.async.on(this, event, handler, opts);
-			return;
-		}
-
-		this.$on(event, handler);
+		this.selfEmitter.on(event.dasherize(), handler, opts);
 	}
 
 	/**
@@ -1687,16 +1683,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	@p()
 	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
-		event = event.dasherize();
-
-		if (opts) {
-			this.async.once(this, event, handler, opts);
-			return;
-		}
-
-		this.$once(event, handler);
+		this.selfEmitter.once(event.dasherize(), handler, opts);
 	}
 
 	/**
@@ -1706,18 +1694,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param [opts] - additional options
 	 */
-	@p()
 	promisifyOnce<T = unknown>(event: string, opts?: AsyncOptions): Promise<T> {
-		return this.async.promisifyOnce(this, event.dasherize(), opts);
+		return this.selfEmitter.promisifyOnce(event.dasherize(), opts);
 	}
-
-	/**
-	 * Detaches an event listeners from the component
-	 *
-	 * @param [event]
-	 * @param [handler]
-	 */
-	off(event?: string, handler?: Function): void;
 
 	/**
 	 * Detaches an event listeners from the component
@@ -1725,19 +1704,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @see [[Async.off]]
 	 * @param [opts] - additional options
 	 */
-	off(opts: ClearOptionsId<EventId>): void;
-
-	@p()
-	off(eventOrParams?: string | ClearOptionsId<EventId>, handler?: Function): void {
-		const
-			e = eventOrParams;
-
-		if (e == null || Object.isString(e)) {
-			this.$off(e?.dasherize(), handler);
-			return;
-		}
-
-		this.async.off(e);
+	off(opts?: ClearOptionsId<EventId>): void {
+		this.selfEmitter.off(opts);
 	}
 
 	/**
