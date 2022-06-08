@@ -44,9 +44,9 @@
 		- return name.split('.').slice(-1)[0].dasherize()
 
 	/**
-	 * Loads modules by the specified paths and dynamically inserted the provided content when it loaded
+	 * Loads modules by the specified paths and dynamically inserted the provided content when them are loaded
 	 *
-	 * @param {(string|!Array<string>)} path - path or an array of paths
+	 * @param {(string|!Array<string>)} path - the module path or list of paths
 	 * @param {{renderKey: string, wait: string}=} [opts] - additional options
 	 * @param {string=} [content]
 	 *
@@ -88,7 +88,11 @@
 			.
 
 			{{
-				void(moduleLoader.addModulesToBucket('global', {
+				void(require('friends/module-loader').default.addToPrototype(require('friends/module-loader')))
+			}}
+
+			{{
+				void(moduleLoader.addToBucket('global', {
 					id: ${interpolatedId},
 					load: () => import('${path}')
 				}))
