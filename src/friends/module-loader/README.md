@@ -163,11 +163,11 @@ i.e. it won’t be re-rendered during the component state change. Mind, the rend
 #### Conditional rendering
 
 If you want render a fragment only after some event, provide the `wait` option.
-This option expects a function that returns a promise.
+This option expects a string expression (cause it code-generation) with a function that returns a promise.
 
 ```
 < .container v-async-target
-  += self.loadModules(['form/b-button', 'form/b-input'], {wait: promisifyOnce.bind(null, 'forceRender')})
+  += self.loadModules(['form/b-button', 'form/b-input'], {wait: 'promisifyOnce.bind(null, "forceRender")'})
     < b-button
       Press on me!
 
@@ -184,7 +184,7 @@ You can use it when you need to create asynchronous conditional rendering of tem
 
 ```
 < .container v-async-target
-  += self.render({renderKey: 'Login Form', wait: promisifyOnce.bind(null, 'forceRender')})
+  += self.render({renderKey: 'Login Form', wait: 'promisifyOnce.bind(null, "forceRender")'})
     < b-button
       Press on me!
 
