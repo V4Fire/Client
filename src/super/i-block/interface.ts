@@ -84,7 +84,10 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 	block: CTX['block'];
 
 	// @ts-ignore (access)
-	async: CTX['async'];
+	asyncRender: CTX['asyncRender'];
+
+	// @ts-ignore (access)
+	moduleLoader: CTX['moduleLoader'];
 
 	// @ts-ignore (access)
 	sync: CTX['sync'];
@@ -112,9 +115,6 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	watchTmp: CTX['watchTmp'];
-
-	// @ts-ignore (access)
-	renderTmp: CTX['renderTmp'];
 
 	// @ts-ignore (access)
 	ifOnceStore: CTX['ifOnceStore'];
