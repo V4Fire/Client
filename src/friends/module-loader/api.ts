@@ -53,13 +53,13 @@ export function load(this: ModuleLoader, ...modules: Module[]): CanPromise<Itera
  * @param bucketName
  * @param modules
  */
-export function addModulesToBucket(this: ModuleLoader, bucketName: string, ...modules: Module[]): number {
+export function addToBucket(this: ModuleLoader, bucketName: string, ...modules: Module[]): number {
 	let
-		bucket = this.loadBuckets.get(bucketName);
+		bucket = this.moduleBuckets.get(bucketName);
 
 	if (bucket == null) {
 		bucket = new Set();
-		this.loadBuckets.set(bucketName, bucket);
+		this.moduleBuckets.set(bucketName, bucket);
 	}
 
 	for (let i = 0; i < modules.length; i++) {
@@ -87,7 +87,7 @@ export function addModulesToBucket(this: ModuleLoader, bucketName: string, ...mo
  * @param bucketName
  */
 export function loadBucket(this: ModuleLoader, bucketName: string): CanPromise<IterableIterator<Module[]>> {
-	const bucket = this.loadBuckets.get(bucketName) ?? new Set();
+	const bucket = this.moduleBuckets.get(bucketName) ?? new Set();
 	return load.call(this, ...bucket);
 }
 

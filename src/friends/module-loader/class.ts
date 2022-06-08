@@ -14,14 +14,14 @@ import type { Module } from 'friends/module-loader/interface';
 interface ModuleLoader {
 	load: typeof api.load;
 	loadBucket: typeof api.loadBucket;
-	addModulesToBucket: typeof api.addModulesToBucket;
+	addToBucket: typeof api.addToBucket;
 }
 
 class ModuleLoader extends Friend {
 	/**
-	 * A map of registered buckets to load
+	 * A dictionary with registered buckets to load
 	 */
-	protected loadBuckets: Map<string, Set<Module>> = new Map();
+	protected moduleBuckets: Map<string, Set<Module>> = new Map();
 }
 
 export default ModuleLoader;
