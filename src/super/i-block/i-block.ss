@@ -92,6 +92,10 @@
 			}}
 
 			{{
+				void(require('friends/async-render').default.addToPrototype(require('friends/async-render').iterate))
+			}}
+
+			{{
 				void(moduleLoader.addToBucket('global', {
 					id: ${interpolatedId},
 					load: () => import('${path}')
