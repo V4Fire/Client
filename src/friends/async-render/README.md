@@ -5,9 +5,9 @@ It helps to optimize component rendering.
 
 ## How to include this module to your component
 
-By default, any components that inherited from [[iBlock]] have the `asyncRender` property.
-But to use module methods, you should attach them explicitly to enable tree-shake code optimizations.
-Just place a necessary import declaration within your component file.
+By default, any component that inherited from [[iBlock]] has the `asyncRender` property.
+But to use module methods, attach them explicitly to enable tree-shake code optimizations.
+Just place the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'super/i-block/i-block';
@@ -274,27 +274,4 @@ This function helps optimize component rendering by splitting big render tasks i
   /// Asynchronous rendering of components: only five elements per chunk
   < template v-for = el in asyncRender.iterate(largeList, 5)
     < my-component :data = el
-```
-
-## Snakeskin helpers
-
-### loadModules
-
-Loads modules by the specified paths and dynamically inserted the provided content when it loaded.
-
-```
-+= self.loadModules('form/b-button')
-  < b-button
-    Hello world
-
-/// `renderKey` is necessary to prevent any chunk' re-rendering after the first rendering of a template
-/// `wait` is a function to defer the process of loading, it should return a promise with a non-false value
-+= self.loadModules(['form/b-button', 'form/b-input'], {renderKey: 'controls', wait: 'promisifyOnce.bind(null, "needLoad")'})
-  < b-button
-    Hello world
-
-  < b-input
-
-< button @click = emit('needLoad')
-  Force load
 ```
