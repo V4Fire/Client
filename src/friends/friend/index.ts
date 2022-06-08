@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 
 /**
  * Superclass to create classes friendly to the main component class
@@ -123,10 +123,6 @@ export default class Friend {
 	}
 
 	constructor(component: iBlock) {
-		if (!(Object.get(component, 'instance') instanceof iBlock)) {
-			throw new TypeError("The specified component isn't inherited from `iBlock`");
-		}
-
 		this.ctx = component.unsafe;
 		this.component = component;
 	}
