@@ -262,7 +262,6 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	@system<iData>({
 		atom: true,
-		after: 'async',
 		unique: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.dp?.emitter, true)
 	})

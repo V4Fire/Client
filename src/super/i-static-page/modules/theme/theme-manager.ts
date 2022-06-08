@@ -9,7 +9,7 @@
 import type iBlock from 'super/i-block/i-block';
 import type iStaticPage from 'super/i-static-page/i-static-page';
 
-import Friend from 'super/i-block/modules/friend';
+import Friend from 'friends/friend';
 
 /**
  * Class to manage interface themes

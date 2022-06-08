@@ -84,16 +84,16 @@ import DOM from 'super/i-block/modules/dom';
 import VDOM from 'super/i-block/modules/vdom';
 
 import Lfc from 'super/i-block/modules/lfc';
-import AsyncRender from 'super/i-block/modules/async-render';
+import AsyncRender from 'friends/async-render';
 import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
 
 import Block from 'super/i-block/modules/block';
 import Field from 'super/i-block/modules/field';
 
-import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
+import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
-import ModuleLoader, { Module } from 'super/i-block/modules/module-loader';
+import ModuleLoader, { Module } from 'friends/module-loader';
 
 import {
 
@@ -160,16 +160,16 @@ export * from 'super/i-block/interface';
 export * from 'super/i-block/modules/block';
 export * from 'super/i-block/modules/field';
 export * from 'super/i-block/modules/state';
-export * from 'super/i-block/modules/module-loader';
+export * from 'friends/module-loader';
 
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/event-emitter';
 
 export * from 'super/i-block/modules/sync';
-export * from 'super/i-block/modules/async-render';
+export * from 'friends/async-render';
 export * from 'super/i-block/modules/decorators';
 
-export { default as Friend } from 'super/i-block/modules/friend';
+export { default as Friend } from 'friends/friend';
 
 export {
 
@@ -667,7 +667,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	get r(): this['$root'] {
 		const r = this.$root;
-		return r.$remoteParent?.$root ?? r;
+		return r.unsafe.$remoteParent?.$root ?? r;
 	}
 
 	/**
@@ -1129,7 +1129,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		after: 'async',
 		unique: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, o)
 	})
@@ -1141,7 +1140,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		after: 'async',
 		unique: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, new EventEmitter({
 			maxListeners: 1e3,
@@ -1157,7 +1155,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		after: 'async',
 		unique: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.$parent, true)
 	})
@@ -1169,7 +1166,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		after: 'async',
 		unique: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, o.r)
 	})
@@ -1182,7 +1178,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({
 		atom: true,
-		after: 'async',
 		unique: true,
 		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEmitter)
 	})
@@ -1929,7 +1924,7 @@ export default abstract class iBlock extends ComponentInterface {
 				[],
 
 				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				this.moduleLoader.load(...this.dependencies) || [],
+				this.moduleLoader.load?.(...this.dependencies) || [],
 
 				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				this.state.initFromStorage() || []
