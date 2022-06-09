@@ -40,17 +40,17 @@ export function closest<T extends iBlock = iBlock>(
 /**
  * Searches a VNode element by the specified element name from another VNode and context
  *
- * @param name
+ * @param elName
  * @param vnode
  * @param [ctx] - a component context to resolve the passed element name
  */
 export function findElFromVNode(
 	this: VDOM,
-	name: string,
+	elName: string,
 	vnode: VNode,
 	ctx: iBlock = this.component
 ): CanUndef<VNode> {
-	const selector = ctx.provide.fullElName(name);
+	const selector = ctx.provide.fullElName(elName);
 	return search(vnode);
 
 	function search(vnode: VNode) {
