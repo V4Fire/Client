@@ -87,7 +87,7 @@ export function getRenderFactory(this: VDOM, path: string): CanUndef<RenderFacto
 		fn = Object.get(tpl, chunks.slice(1));
 
 	if (Object.isFunction(fn)) {
-		return fn;
+		return fn();
 	}
 }
 
@@ -106,7 +106,7 @@ export function getRenderFactory(this: VDOM, path: string): CanUndef<RenderFacto
 export function getRenderFn(
 	this: VDOM,
 	factoryOrPath: CanUndef<RenderFactory> | string,
-	ctx?: ComponentInterface
+	ctx: ComponentInterface = this.ctx
 ): RenderFn {
 	const
 		factory = Object.isString(factoryOrPath) ? getRenderFactory.call(this, factoryOrPath) : factoryOrPath;
@@ -140,6 +140,6 @@ export function getRenderFn(
 			}
 		}
 
-		return Object.cast(factory(instanceCtx, cache));
+		return Object.cast(factory(instanceCtx, cache)());
 	};
 }
