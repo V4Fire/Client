@@ -41,7 +41,7 @@ export function create(this: VDOM, type: string, opts?: VNodeOptions): VNode;
  * @param descriptors
  * @example
  * ```js
- * const vnode = this.vdom.create(
+ * const vnodes = this.vdom.create(
  *   {
  *     type: 'b-button',
  *
@@ -69,7 +69,7 @@ export function create(this: VDOM, ...descriptors: VNodeDescriptor[]): VNode[];
  * @param descriptors
  * @example
  * ```js
- * const vnode = this.vdom.create([
+ * const vnodes = this.vdom.create([
  *   {
  *     type: 'b-button',
  *

@@ -14,7 +14,16 @@ import type { VNode } from 'super/i-block';
 
 /**
  * Returns a link to the closest parent component from the current
+ *
  * @param component - the component name to search or a link to the component constructor
+ * @example
+ * ```js
+ * // Returns a link to the closes `b-wrapper` component or undefined
+ * console.log(this.vdom.closest('b-wrapper'));
+ *
+ * // By a constructor
+ * console.log(this.vdom.closest('bWrapper'));
+ * ```
  */
 export function closest<T extends iBlock = iBlock>(
 	this: VDOM,
@@ -43,6 +52,20 @@ export function closest<T extends iBlock = iBlock>(
  * @param elName
  * @param vnode
  * @param [ctx] - a component context to resolve the passed element name
+ *
+ * @example
+ * ```js
+ * const vnode = this.vdom.create('div', {
+ *   children: [
+ *     {
+ *       type: 'div',
+ *       attrs: {class: this.block.getFullElName('elem')}
+ *     }
+ *   ]
+ * });
+ *
+ * console.log(this.vdom.findElFromVNode('elem', vnode));
+ * ```
  */
 export function findElFromVNode(
 	this: VDOM,

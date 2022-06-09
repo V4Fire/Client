@@ -18,7 +18,7 @@ import type { RenderFactory, RenderFn } from 'friends/vdom/interface';
  *
  * @example
  * ```js
- * const div = this.render(Vue.h('div', {class: 'foo'}));
+ * const div = this.vdom.render(this.create('div', {attrs: {class: 'foo'}}));
  *
  * console.log(div.tagName); // DIV
  * console.log(div.classList.contains('foo')); // true
@@ -32,10 +32,10 @@ export function render(this: VDOM, vnode: VNode): Node;
  *
  * @example
  * ```js
- * const divs = this.vdom.render([
- *   Vue.h('div', {class: 'foo'}),
- *   Vue.h('div', {class: 'bar'}),
- * ]);
+ * const divs = this.vdom.render(this.vdom.create(
+ *   {type: 'div', attrs: {class: 'foo'}},
+ *   {type: 'div', attrs: {class: 'bar'}}
+ * ));
  *
  * console.log(div[0].tagName); // DIV
  * console.log(div[1].classList.contains('bar')); // true
@@ -47,16 +47,18 @@ export function render(this: VDOM, vnode: CanArray<VNode>): CanArray<Node> {
 }
 
 /**
- * Returns a render function factory by the specified path
+ * Returns a render function factory by the specified path.
+ * This function is useful when you want to decompose your component template into separated render functions.
+ *
  * @param path - a path to the render factory
  *
  * @example
  * ```js
  * // Returns the main render factory of bExample
- * this.getRenderFactory('bExample/');
- * this.getRenderFactory('bExample.index');
+ * this.vdom.getRenderFactory('bExample/');
+ * this.vdom.getRenderFactory('bExample.index');
  *
- * this.getRenderFactory('bExample.subTemplate');
+ * this.vdom.getRenderFactory('bExample.subTemplate');
  * ```
  */
 export function getRenderFactory(this: VDOM, path: string): CanUndef<RenderFactory> {
@@ -92,15 +94,27 @@ export function getRenderFactory(this: VDOM, path: string): CanUndef<RenderFacto
 }
 
 /**
- * Returns a render function using the specified factory or path
+ * Returns a render function using the specified factory or path.
+ * This function is useful when you want to decompose your component template into separated render functions.
  *
  * @param factoryOrPath - the render factory or a path to it
  * @param [ctx] - a component context for rendering
  *
  * @example
- * ```js
- * this.getRenderFn(this.getRenderObject('bExample/'));
- * this.getRenderFn('bExample.subTemplate');
+ * ```
+ * - namespace [%fileName%]
+ *
+ * - include 'super/i-static-page/i-static-page.component.ss'|b as placeholder
+ *
+ * - template sayHello()
+ *   < .hello
+ *     Hello {{ p.name }}
+ *
+ * - template index() extends ['i-static-page.component'].index
+ *   - block body
+ *     /// Invokes the passed render function and joins the result fragment with the main fragment.
+ *     /// Notice, you can pass parameters to another render function.
+ *     < .content v-render = vdom.getRenderFn('pV4ComponentsDemo.sayHello')({p: {name: 'Bob'}})
  * ```
  */
 export function getRenderFn(
