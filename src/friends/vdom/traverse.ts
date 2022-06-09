@@ -7,6 +7,7 @@
  */
 
 import type VDOM from 'friends/vdom/class';
+import { normalizeClass } from 'core/component';
 
 import type iBlock from 'super/i-block';
 import type { VNode } from 'super/i-block';
@@ -37,31 +38,32 @@ export function closest<T extends iBlock = iBlock>(
 }
 
 /**
- * Searches a VNode element by the specified name from the passed component virtual tree and context
+ * Searches a VNode element by the specified element name from another VNode and context
  *
- * @param vtree
- * @param elName - the element name to search
- * @param [ctx] - the component context to resolve element names
+ * @param name
+ * @param vnode
+ * @param [ctx] - a component context to resolve the passed element name
  */
 export function findElFromVNode(
 	this: VDOM,
-	vtree: VNode,
-	elName: string,
+	name: string,
+	vnode: VNode,
 	ctx: iBlock = this.component
 ): CanUndef<VNode> {
-	const selector = ctx.provide.fullElName(elName);
-	return search(vtree);
+	const selector = ctx.provide.fullElName(name);
+	return search(vnode);
 
 	function search(vnode: VNode) {
 		const
-			data = vnode.data ?? {};
+			props = vnode.props ?? {};
 
-		const classes = Object.fromArray(
-			Array.concat([], (data.staticClass ?? '').split(' '), data.class)
-		);
+		if (props.class != null) {
+			const
+				classes = normalizeClass(props.class).split(' ');
 
-		if (classes[selector] != null) {
-			return vnode;
+			if (classes.includes(selector)) {
+				return vnode;
+			}
 		}
 
 		if (vnode.children != null) {
