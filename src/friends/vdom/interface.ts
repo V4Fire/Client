@@ -10,15 +10,7 @@ import type { VNode } from 'core/component/engines';
 
 export type { RenderFactory, RenderFn } from 'core/component';
 
-/**
- * A structure to describe a VNode
- */
-export interface VNodeDescriptor {
-	/**
-	 * A simple tag name or component name
-	 */
-	type: string;
-
+export interface VNodeOptions {
 	/**
 	 * A dictionary with attributes to pass to the created VNode
 	 */
@@ -27,5 +19,12 @@ export interface VNodeDescriptor {
 	/**
 	 * An array of children VNode descriptors or dictionary with slot functions
 	 */
-	children?: string | VNodeDescriptor[] | Dictionary<string | ((...args: any[]) => CanArray<VNode>)>;
+	children?: Array<string | VNodeDescriptor> | Dictionary<string | ((...args: any[]) => CanArray<VNode>)>;
+}
+
+export interface VNodeDescriptor extends VNodeOptions {
+	/**
+	 * A simple tag name or component name
+	 */
+	type: string;
 }

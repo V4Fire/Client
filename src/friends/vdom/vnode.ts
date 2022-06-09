@@ -12,17 +12,17 @@ import type { VNode, ObjectDirective } from 'core/component/engines';
 import type { ComponentInterface } from 'super/i-block';
 
 import type VDOM from 'friends/vdom/class';
-import type { VNodeDescriptor } from 'friends/vdom/interface';
+import type { VNodeOptions, VNodeDescriptor } from 'friends/vdom/interface';
 
 /**
- * Creates a VNode by the specified descriptor
+ * Creates a VNode with the specified parameters
  *
- * @param descriptor
+ * @param type - a simple tag name or component name
+ * @param [opts] - additional options
+ *
  * @example
  * ```js
- * const vnode = this.vdom.create({
- *   type: 'b-button',
- *
+ * const vnode = this.vdom.create('b-button', {
  *   attrs: {
  *     exterior: 'warning',
  *     'v-show': true,
@@ -33,7 +33,35 @@ import type { VNodeDescriptor } from 'friends/vdom/interface';
  * });
  * ```
  */
-export function create(this: VDOM, descriptor: VNodeDescriptor): VNode;
+export function create(this: VDOM, type: string, opts?: VNodeOptions): VNode;
+
+/**
+ * Creates a VNodes by the specified descriptors
+ *
+ * @param descriptors
+ * @example
+ * ```js
+ * const vnode = this.vdom.create(
+ *   {
+ *     type: 'b-button',
+ *
+ *     attrs: {
+ *       exterior: 'warning',
+ *       'v-show': true,
+ *       '@click': console.log
+ *     },
+ *
+ *     children: {default: () => 'Press on me!'}
+ *   },
+ *
+ *   {
+ *     type: 'div',
+ *     children: ['Hello div']
+ *   }
+ * );
+ * ```
+ */
+export function create(this: VDOM, ...descriptors: VNodeDescriptor[]): VNode[];
 
 /**
  * Creates a VNodes by the specified descriptors
@@ -57,25 +85,31 @@ export function create(this: VDOM, descriptor: VNodeDescriptor): VNode;
  *   {
  *     type: 'div',
  *     children: ['Hello div']
- *   },
+ *   }
  * ]);
  * ```
  */
 export function create(this: VDOM, descriptors: VNodeDescriptor[]): VNode[];
 
-export function create(this: VDOM, descriptors: CanArray<VNodeDescriptor>): CanArray<VNode> {
-	if (Object.isArray(descriptors)) {
-		const
-			vnodes = new Array(descriptors.length);
-
-		for (let i = 0; i < descriptors.length; i++) {
-			vnodes[i] = createVNode.call(this, descriptors[i]);
-		}
-
-		return vnodes;
+export function create(
+	this: VDOM,
+	typeOrDesc?: string | CanArray<VNodeDescriptor>,
+	...descriptors: [VNodeOptions?] | VNodeDescriptor[]
+): CanArray<VNode> {
+	if (Object.isString(typeOrDesc)) {
+		return createVNode.call(this, typeOrDesc, descriptors[0]);
 	}
 
-	return createVNode.call(this, descriptors);
+	const
+		resolvedDescriptors = Array.concat([], typeOrDesc, Object.cast(descriptors)),
+		vnodes = new Array(resolvedDescriptors.length);
+
+	for (let i = 0; i < resolvedDescriptors.length; i++) {
+		const el = resolvedDescriptors[i];
+		vnodes[i] = createVNode.call(this, el.type, el);
+	}
+
+	return vnodes;
 }
 
 /**
@@ -87,7 +121,8 @@ export function create(this: VDOM, descriptors: CanArray<VNodeDescriptor>): CanA
  */
 function createVNode(
 	this: VDOM,
-	{type, attrs, children}: VNodeDescriptor
+	type: string,
+	{attrs, children}: VNodeOptions = {}
 ): VNode {
 	this.setInstance?.();
 
@@ -107,8 +142,12 @@ function createVNode(
 			resolvedChildren = new Array(children.length);
 
 			for (let i = 0; i < children.length; i++) {
-				const el = children[i];
-				resolvedChildren[i] = Object.isString(el) ? r.createTextVNode.call(ctx, el) : createVNode.call(this, el);
+				const
+					el = children[i];
+
+				resolvedChildren[i] = Object.isString(el) ?
+					r.createTextVNode.call(ctx, el) :
+					createVNode.call(this, el.type, el);
 			}
 
 		} else {
