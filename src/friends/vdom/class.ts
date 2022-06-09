@@ -27,7 +27,7 @@ class VDOM extends Friend {
 	 * Sets the current component instance as active.
 	 * This function is necessary to render components asynchronously.
 	 */
-	protected setInstance?: Function;
+	setInstance?: Function;
 
 	constructor(component: iBlock) {
 		super(component);
