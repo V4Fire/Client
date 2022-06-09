@@ -1,4 +1,4 @@
-# super/i-block/modules/vdom
+# friends/vdom
 
 This module provides a class to low-level working with a component VDOM tree.
 
