@@ -115,11 +115,12 @@ export function getRenderFn(
 		return () => this.ctx.$renderEngine.r.createCommentVNode('loopback');
 	}
 
-	return (bindings) => {
-		const
-			cache = [],
-			instanceCtx = Object.create(ctx);
+	const
+		cache = [],
+		instanceCtx = Object.create(ctx),
+		render = factory(instanceCtx, cache);
 
+	return (bindings) => {
 		if (bindings != null) {
 			for (let keys = Object.keys(bindings), i = 0; i < keys.length; i++) {
 				const
@@ -140,6 +141,6 @@ export function getRenderFn(
 			}
 		}
 
-		return Object.cast(factory(instanceCtx, cache)());
+		return Object.cast(render());
 	};
 }
