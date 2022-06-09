@@ -36,6 +36,7 @@ console.log(this.vdom.closest('bWrapper'));
 ### findElFromVNode
 
 Searches a VNode element by the specified element name from another VNode and context.
+The function returns the found VNode or undefined.
 
 ```js
 const vnode = this.vdom.create('div', {

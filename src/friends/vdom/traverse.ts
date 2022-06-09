@@ -47,7 +47,8 @@ export function closest<T extends iBlock = iBlock>(
 }
 
 /**
- * Searches a VNode element by the specified element name from another VNode and context
+ * Searches a VNode element by the specified element name from another VNode and context.
+ * The function returns the found VNode or undefined.
  *
  * @param elName
  * @param vnode
