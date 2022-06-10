@@ -23,7 +23,7 @@ export function fakeMethods(...methods: string[]): ClassDecorator {
 
 			if (!Object.isFunction(prototype[method])) {
 				prototype[method] = () => Object.throw(
-					`This is a loopback method. To use the read \`${method}\` method, register it to the ${target.name} class.`
+					`This is a loopback method. To use the real \`${method}\` method, register it to the ${target.name} class.`
 				);
 			}
 		}
