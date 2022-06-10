@@ -22,27 +22,27 @@ export type ModEventReason =
 	'removeMod';
 
 export interface ModEvent {
-	event: ModEventName;
 	type: ModEventType;
+	event: ModEventName;
 	reason: ModEventReason;
 	name: string;
 	value: string;
 }
 
 export interface SetModEvent extends ModEvent {
-	prev: CanUndef<string>;
+	oldValue: CanUndef<string>;
 }
 
 export interface ElementModEvent {
-	event: ModEventName;
 	type: ModEventType;
+	event: ModEventName;
 	reason: ModEventReason;
+	link: Element;
 	element: string;
-	link: HTMLElement;
-	modName: string;
+	name: string;
 	value: string;
 }
 
 export interface SetElementModEvent extends ElementModEvent {
-	prev: CanUndef<string>;
+	oldValue: CanUndef<string>;
 }
