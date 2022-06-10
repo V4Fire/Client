@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Friend from 'friends/friend';
+import Friend, { fakeMethods } from 'friends/friend';
 import type iBlock from 'super/i-block/i-block';
 
 import type * as traverse from 'friends/vdom/traverse';
@@ -15,12 +15,21 @@ import type * as render from 'friends/vdom/render';
 
 interface VDOM {
 	closest: typeof traverse.closest;
-	findElFromVNode: typeof traverse.findElem;
+	findElem: typeof traverse.findElem;
 	create: typeof vnode.create;
 	render: typeof render.render;
 	getRenderFactory: typeof render.getRenderFactory;
 	getRenderFn: typeof render.getRenderFn;
 }
+
+@fakeMethods(
+	'closest',
+	'findElem',
+	'create',
+	'render',
+	'getRenderFactory',
+	'getRenderFn'
+)
 
 class VDOM extends Friend {
 	/**
@@ -34,7 +43,7 @@ class VDOM extends Friend {
 
 		this.meta.hooks.mounted.push({
 			fn: () => {
-				this.setInstance = this.ctx.$renderEngine.r.withAsyncContext(Promise.resolve.bind(Promise))[1];
+				this.setInstance = this.ctx.$renderEngine.r.withAsyncContext.call(this.ctx, Promise.resolve.bind(Promise))[1];
 			}
 		});
 	}

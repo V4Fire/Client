@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Friend from 'friends/friend';
+import Friend, { fakeMethods } from 'friends/friend';
 
 import type * as api from 'friends/module-loader/api';
 import type { Module } from 'friends/module-loader/interface';
@@ -16,6 +16,12 @@ interface ModuleLoader {
 	loadBucket: typeof api.loadBucket;
 	addToBucket: typeof api.addToBucket;
 }
+
+@fakeMethods(
+	'load',
+	'loadBucket',
+	'addToBucket'
+)
 
 class ModuleLoader extends Friend {
 	/**

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Friend from 'friends/friend';
+import Friend, { fakeMethods } from 'friends/friend';
 import type iBlock from 'super/i-block/i-block';
 
 import type * as iter from 'friends/async-render/iter';
@@ -17,6 +17,12 @@ interface AsyncRender {
 	deferForceRender: typeof render.deferForceRender;
 	iterate: typeof iter.iterate;
 }
+
+@fakeMethods(
+	'forceRender',
+	'deferForceRender',
+	'iterate'
+)
 
 class AsyncRender extends Friend {
 	constructor(component: iBlock) {
