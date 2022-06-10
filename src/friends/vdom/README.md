@@ -33,7 +33,7 @@ console.log(this.vdom.closest('b-wrapper'));
 console.log(this.vdom.closest('bWrapper'));
 ```
 
-### findElFromVNode
+### findElem
 
 Searches a VNode element by the specified element name from another VNode and context.
 The function returns the found VNode or undefined.

@@ -15,7 +15,7 @@ import type * as render from 'friends/vdom/render';
 
 interface VDOM {
 	closest: typeof traverse.closest;
-	findElFromVNode: typeof traverse.findElFromVNode;
+	findElFromVNode: typeof traverse.findElem;
 	create: typeof vnode.create;
 	render: typeof render.render;
 	getRenderFactory: typeof render.getRenderFactory;
