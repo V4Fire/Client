@@ -81,7 +81,7 @@ import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Analytics from 'super/i-block/modules/analytics';
 
 import DOM from 'super/i-block/modules/dom';
-import VDOM from 'super/i-block/modules/vdom';
+import VDOM from 'friends/vdom';
 
 import Lfc from 'super/i-block/modules/lfc';
 import AsyncRender from 'friends/async-render';
@@ -1888,15 +1888,16 @@ export default abstract class iBlock extends ComponentInterface {
 				this.componentStatus = 'loading';
 			}
 
-			const tasks = <Array<Promise<unknown>>>Array.concat(
+			const tasks = <Array<CanPromise<unknown>>>Array.concat(
 				[],
-
-				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				this.moduleLoader.load?.(...this.dependencies) || [],
 
 				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				this.state.initFromStorage() || []
 			);
+
+			if (this.dependencies.length > 0) {
+				tasks.push(this.moduleLoader.load(...this.dependencies));
+			}
 
 			if (
 				(this.isNotRegular || this.dontWaitRemoteProviders) &&

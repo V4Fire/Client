@@ -252,6 +252,8 @@ export function iterate(
 		return lastTask();
 
 		function task() {
+			ctx.vdom.setInstance?.();
+
 			const
 				renderedVNodes: Node[] = [];
 
@@ -291,7 +293,6 @@ export function iterate(
 
 				} else {
 					VDOM.addToPrototype(render);
-					ctx.vdom.setInstance?.();
 					renderedVnode = ctx.vdom.render(vnode);
 				}
 
