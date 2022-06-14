@@ -15,6 +15,10 @@ Changelog
 
 * Added a new cache type for accessors `auto`
 
+#### :memo: Documentation
+
+* Added the normal documentation
+
 #### :house: Internal
 
 * Refactoring
