@@ -9,15 +9,26 @@
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import type { UnsafeComponentInterface } from 'core/component/interface';
 
+import emitter from 'core/component/event/emitter';
+import type { ResetType } from 'core/component/event/interface';
+
 /**
- * Implements the base event API to a component instance
- * @param obj
+ * Sends a message to reset all components of the application
+ * @param [type] - the reset type
  */
-export function implementEventAPI(obj: object): void {
+export function reset(type?: ResetType): void {
+	emitter.emit(type != null ? `reset.${type}` : 'reset');
+}
+
+/**
+ * Implements event emitter API for the specified component instance
+ * @param component
+ */
+export function implementEventEmitterAPI(component: object): void {
 	/* eslint-disable @typescript-eslint/typedef */
 
 	const
-		component = Object.cast<UnsafeComponentInterface>(obj);
+		ctx = Object.cast<UnsafeComponentInterface>(component);
 
 	const $e = new EventEmitter({
 		maxListeners: 1e3,
@@ -26,9 +37,9 @@ export function implementEventAPI(obj: object): void {
 	});
 
 	const
-		nativeEmit = Object.cast<CanUndef<typeof component.$emit>>(component.$emit);
+		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
 
-	Object.defineProperty(component, '$emit', {
+	Object.defineProperty(ctx, '$emit', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
@@ -40,21 +51,21 @@ export function implementEventAPI(obj: object): void {
 		}
 	});
 
-	Object.defineProperty(component, '$on', {
+	Object.defineProperty(ctx, '$on', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
 		value: getMethod('on')
 	});
 
-	Object.defineProperty(component, '$once', {
+	Object.defineProperty(ctx, '$once', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
 		value: getMethod('once')
 	});
 
-	Object.defineProperty(component, '$off', {
+	Object.defineProperty(ctx, '$off', {
 		configurable: true,
 		enumerable: false,
 		writable: false,
