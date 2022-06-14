@@ -5,9 +5,9 @@ This module provides API to initialize component accessors and computed fields t
 ## What differences between accessors and computed fields?
 
 A computed field is an accessor that value can be cached or watched.
-To enable value caching use the `computed` decorator when define or override your accessor.
+To enable value caching, use the `computed` decorator when define or override your accessor.
 After this, the first time you touch the accessor value it will be cached.
-To support cache invalidation or watching of changes provide a list of dependencies of your accessor or
+To support cache invalidation or watching of changes, provide a list of dependencies of your accessor or
 use the `cache = 'auto'` option.
 
 ## Methods
