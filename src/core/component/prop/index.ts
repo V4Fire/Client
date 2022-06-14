@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { defaultWrapper } from 'core/component/const';
+import { DEFAULT_WRAPPER } from 'core/component/const';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { InitPropsObjectOptions } from 'core/component/prop/interface';
@@ -79,7 +79,7 @@ export function initProps(
 			needSaveToStore = opts.saveToStore;
 
 		if (Object.isFunction(val)) {
-			if (opts.saveToStore || val[defaultWrapper] !== true) {
+			if (opts.saveToStore || val[DEFAULT_WRAPPER] !== true) {
 				val = isTypeCanBeFunc(prop.type) ? val.bind(component) : val.call(component);
 				needSaveToStore = true;
 			}
