@@ -17,8 +17,45 @@ import { cacheStatus } from 'core/component/watch';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Attaches accessors and computed fields from a meta object to the specified component instance
+ * Attaches accessors and computed fields to the specified component instance from its tied meta object.
+ * The function creates cacheable wrappers for computed fields.
+ * Also, it creates accessors for deprecated component props.
+ *
  * @param component
+ * @example
+ * ```typescript
+ * import iBlock, { component, prop, computed } from 'super/i-block/i-block';
+ *
+ * @component({
+ *   // Will create an accessor for `name` that refers to `fName` and emits a warning
+ *   deprecatedProps: {name: 'fName'}
+ * })
+ *
+ * export default class bUser extends iBlock {
+ *   @prop()
+ *   readonly fName: string;
+ *
+ *   @prop()
+ *   readonly lName: string;
+ *
+ *   // This is a cacheable computed field with feature of watching and cache invalidation
+ *   @computed({cache: true, dependencies: ['fName', 'lName']})
+ *   get fullName() {
+ *     return `${this.fName} ${this.lName}`;
+ *   }
+ *
+ *   // This is a cacheable computed field without cache invalidation
+ *   @computed({cache: true})
+ *   get id() {
+ *     return Math.random();
+ *   }
+ *
+ *   // This is a simple accessor (a getter)
+ *   get element() {
+ *     return this.$el;
+ *   }
+ * }
+ * ```
  */
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
