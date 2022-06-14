@@ -6,5 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const
-	isComponent = /^([bpg]-[^_ ]+)$/;
+/**
+ * A RegExp to check if the given string is the name of a component
+ *
+ * @example
+ * ```js
+ * console.log(isComponent.test('b-button')); // true
+ * console.log(isComponent.test('button'));   // false
+ * ```
+ */
+export const isComponent = /^([bpg]-[^_ ]+)$/;

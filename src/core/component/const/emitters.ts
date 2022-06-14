@@ -10,12 +10,14 @@ import { EventEmitter2 as EventEmitter, ListenerFn, OnOptions } from 'eventemitt
 import { componentParams } from 'core/component/const/cache';
 
 /**
- * Event emitter to broadcast component initialize events
+ * An event emitter to broadcast component initialize events
  */
-export const
-	initEmitter = new EventEmitter({maxListeners: 1e3, newListener: false});
+export const initEmitter = new EventEmitter({
+	maxListeners: 1e3,
+	newListener: false
+});
 
-// We need to wrap an original `once` function of the emitter
+// We need to wrap the original `once` function of the emitter
 // to attach logic of registering smart components
 ((initEventOnce) => {
 	initEmitter.once = function once(
