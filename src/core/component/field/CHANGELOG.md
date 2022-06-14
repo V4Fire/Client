@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :memo: Documentation
+
+* Added the normal documentation
+
 #### :house: Internal
 
 * The module is rewritten to use static sorting of dependencies

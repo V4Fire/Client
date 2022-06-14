@@ -17,15 +17,16 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
 export * from 'core/component/field/interface';
 
 /**
- * Initializes the specified fields of a component instance.
+ * Initializes all fields of the passed component instance.
+ * While a component field is being initialized, its name will be stored in the `$activeField` property.
  * The function returns a dictionary with the initialized fields.
  *
- * @param fields - fields scope to initialize
- * @param component - component instance
- * @param [store] - store for initialized fields
+ * @param from - a dictionary where is stored the passed component fields, like `$fields` or `$systemFields`
+ * @param component - the component instance
+ * @param [store] - a store for initialized fields
  */
 export function initFields(
-	fields: Dictionary<ComponentField>,
+	from: Dictionary<ComponentField>,
 	component: ComponentInterface,
 	store: Dictionary = {}
 ): Dictionary {
@@ -40,14 +41,14 @@ export function initFields(
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = params.functional === true;
 
-	for (let sortedFields = sortFields(fields), i = 0; i < sortedFields.length; i++) {
+	for (let sortedFields = sortFields(from), i = 0; i < sortedFields.length; i++) {
 		const
 			[key, field] = sortedFields[i];
 
 		const
 			sourceVal = store[key];
 
-		const dontNeedInit =
+		const canSkip =
 			field == null ||
 			sourceVal !== undefined ||
 
@@ -56,7 +57,7 @@ export function initFields(
 
 			field.init == null && field.default === undefined && instance[key] === undefined;
 
-		if (field == null || dontNeedInit) {
+		if (field == null || canSkip) {
 			store[key] = sourceVal;
 			continue;
 		}
@@ -72,7 +73,7 @@ export function initFields(
 
 		if (val === undefined) {
 			if (store[key] === undefined) {
-				// We need to clone the default value from a constructor
+				// We need to clone the default value from the constructor
 				// to prevent linking to the same type component for a non-primitive value
 				val = field.default !== undefined ? field.default : Object.fastClone(instance[key]);
 				store[key] = val;

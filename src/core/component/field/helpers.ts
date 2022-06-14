@@ -12,15 +12,16 @@ import type { ComponentField } from 'core/component/interface';
 import type { SortedFields } from 'core/component/field/interface';
 
 /**
- * Returns a weight of the specified field relative to other fields in a scope.
- * The weight describes when a field should initialize relative to other fields.
- * At start are init all fields with a zero weight.
- * After will be init fields with the minimal non-zero weight, etc.
+ * Returns a weight of the specified field from the given scope.
+ * The weight describes when a field should initialize relative to other fields:
  *
- * @param field - field to calculate the weight
- * @param fields - field scope
+ *   1. First, we initialize all fields with the zero weight.
+ *   2. After that, all fields with a minimum non-zero weight will be initialized, and so on.
+ *
+ * @param field - the field to calculate the weight
+ * @param scope - the scope where is stored the passed component field, like `$fields` or `$systemFields`
  */
-export function getFieldWeight(field: CanUndef<ComponentField>, fields: Dictionary<ComponentField>): number {
+export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionary<ComponentField>): number {
 	if (field == null) {
 		return 0;
 	}
@@ -36,13 +37,13 @@ export function getFieldWeight(field: CanUndef<ComponentField>, fields: Dictiona
 
 		for (let o = after.values(), el = o.next(); !el.done; el = o.next()) {
 			const
-				dep = fields[el.value];
+				dep = scope[el.value];
 
 			if (dep == null) {
-				throw new ReferenceError(`The specified dependency "${dep}" is not found in a scope`);
+				throw new ReferenceError(`The specified dependency "${dep}" is not found in the given scope`);
 			}
 
-			weight += getFieldWeight(dep, fields);
+			weight += getFieldWeight(dep, scope);
 		}
 	}
 
