@@ -19,11 +19,12 @@ import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 export * from 'core/component/prop/interface';
 
 /**
- * Initializes the specified input properties of a component instance.
- * The method returns a dictionary with the initialized properties.
+ * Initializes input properties (aka "props") of the passed component instance.
+ * While a component prop is being initialized, its name will be stored in the `$activeField` property.
+ * The function returns a dictionary with the initialized props.
  *
  * @param component
- * @param [opts] - additional options
+ * @param [opts] - additional options of initialization
  */
 export function initProps(
 	component: ComponentInterface,
@@ -70,7 +71,7 @@ export function initProps(
 				obj = props[key];
 
 			if (obj?.required) {
-				throw new TypeError(`Missing the required property "${key}" (component "${component.componentName}")`);
+				throw new TypeError(`Missing the required property "${key}" of the "${component.componentName}" component`);
 			}
 		}
 
@@ -94,14 +95,14 @@ export function initProps(
 }
 
 /**
- * Returns true if the specified type can be a function
+ * Returns true if the specified prop type can be a function
  *
  * @param type
  * @example
  * ```js
- * isTypeCanBeFunc(Boolean); // false
- * isTypeCanBeFunc(Function); // true
- * isTypeCanBeFunc([Function, Boolean]); // true
+ * console.log(isTypeCanBeFunc(Boolean));             // false
+ * console.log(isTypeCanBeFunc(Function));            // true
+ * console.log(isTypeCanBeFunc([Function, Boolean])); // true
  * ```
  */
 export function isTypeCanBeFunc(type: CanUndef<CanArray<Function | FunctionConstructor>>): boolean {

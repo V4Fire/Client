@@ -7,22 +7,22 @@
  */
 
 /**
- * Additional options of component properties initializing
+ * Additional options of component props initialization
  */
 export interface InitPropsObjectOptions {
 	/**
-	 * Dictionary where is stored the raw modifiers
+	 * A dictionary where is stored the passed component props, like `$props`
 	 */
 	from?: Dictionary;
 
 	/**
-	 * Store for initialized properties
+	 * A store for the initialized props
 	 * @default `{}`
 	 */
 	store?: Dictionary;
 
 	/**
-	 * If true, then property values will be written to the store object
+	 * If true, then initialized prop values will be written to the passed store object
 	 * @default `false`
 	 */
 	saveToStore?: boolean;
