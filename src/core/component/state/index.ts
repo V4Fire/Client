@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import watch from 'core/object/watch';
+import watchObj from 'core/object/watch';
 
 import { emitter as NetEmitter, NetStatus } from 'core/net';
 import { emitter as SessionEmitter, Session } from 'core/session';
@@ -20,24 +20,29 @@ import type { State } from 'core/component/state/interface';
 
 export * from 'core/component/state/interface';
 
-const state = watch<State>({
+const watcher = watchObj<State>({
 	isAuth: undefined,
 	isOnline: undefined,
 	lastOnlineDate: undefined,
 	experiments: undefined
-}).proxy;
+});
+
+export default watcher.proxy;
+
+export const
+	watch = watchObj.bind(null, watcher.proxy),
+	set = watcher.set.bind(watcher),
+	unset = watcher.delete.bind(watcher);
 
 SessionEmitter.on('set', (e: Session) => {
-	state.isAuth = Boolean(e.auth);
+	set('isAuth', Boolean(e.auth));
 });
 
 SessionEmitter.on('clear', () => {
-	state.isAuth = false;
+	set('isAuth', false);
 });
 
 NetEmitter.on('status', (netStatus: NetStatus) => {
-	state.isOnline = netStatus.status;
-	state.lastOnlineDate = netStatus.lastOnline;
+	set('isOnline', netStatus.status);
+	set('lastOnlineDate', netStatus.lastOnline);
 });
-
-export default state;
