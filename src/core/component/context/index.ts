@@ -11,25 +11,28 @@
  * @packageDocumentation
  */
 
-import { toRaw, ctxMap } from 'core/component/context/const';
+import { toRaw, wrappedContexts } from 'core/component/context/const';
 import type { ComponentInterface } from 'core/component/interface';
 
 export * from 'core/component/context/const';
 
 /**
- * Returns a component context object by the specified component instance
+ * Returns a wrapped component context object based on the passed one.
+ * This function is used to allow overwriting component properties and methods without hacking the original object.
+ * Basically, this function returns a new object that contains the original object as a prototype.
+ *
  * @param component
  */
 export function getComponentContext(component: object): Dictionary & ComponentInterface['unsafe'] {
 	component = component[toRaw] ?? component;
 
 	let
-		v = ctxMap.get(component);
+		v = wrappedContexts.get(component);
 
 	if (v == null) {
 		v = Object.create(component);
 		Object.defineProperty(v, toRaw, {value: component});
-		ctxMap.set(component, v);
+		wrappedContexts.set(component, v);
 	}
 
 	return v;

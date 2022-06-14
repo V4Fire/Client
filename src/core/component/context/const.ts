@@ -6,6 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const
-	toRaw = Symbol('Link to a RAW component'),
-	ctxMap = new WeakMap();
+/**
+ * A symbol to extract the raw component object
+ */
+export const toRaw = Symbol('A link to the raw component object');
+
+/**
+ * A cache for the wrapped component contexts
+ */
+export const wrappedContexts = new WeakMap();
