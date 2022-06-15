@@ -68,6 +68,14 @@ export interface RenderEngine<T extends object = object> {
 	r: RenderAPI;
 }
 
+export interface RenderFactory {
+	(ctx: ComponentInterface, cache: unknown[]): () => CanArray<VNode>;
+}
+
+export interface RenderFn {
+	(bindings?: Dictionary): CanArray<VNode>;
+}
+
 export interface RenderAPI {
 	render(vnode: VNode, parent?: ComponentInterface): Node;
 	render(vnode: VNode[], parent?: ComponentInterface): Node[];
@@ -103,6 +111,8 @@ export interface RenderAPI {
 	resolveDirective: typeof resolveDirective;
 
 	withCtx: typeof withCtx;
+	withAsyncContext<T extends AnyFunction>(awaitable: T): [Awaited<ReturnType<T>>, Function];
+
 	withKeys: typeof withKeys;
 	withModifiers: typeof withModifiers;
 	withDirectives: typeof withDirectives;

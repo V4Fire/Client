@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/interface/README.md]]
+ * @packageDocumentation
+ */
+
 export * from 'core/component/interface/component';
 export * from 'core/component/meta/interface';
 export * from 'core/component/reflect/interface';

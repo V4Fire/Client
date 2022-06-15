@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentMeta } from 'core/component/meta';
-
 /**
  * A component constructor function
  */
@@ -21,13 +19,3 @@ export interface ComponentConstructor<T = unknown> {
 export type ComponentElement<T = unknown> = Element & {
 	component?: T;
 };
-
-/**
- * The base context of a functional component
- */
-export interface FunctionalCtx {
-	componentName: string;
-	meta: ComponentMeta;
-	instance: Dictionary;
-	$options: Dictionary;
-}

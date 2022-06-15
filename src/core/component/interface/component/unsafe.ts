@@ -47,9 +47,6 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$attrs: CTX['$attrs'];
 
 	// @ts-ignore (access)
-	$listeners: CTX['$listeners'];
-
-	// @ts-ignore (access)
 	$refs: CTX['$refs'];
 
 	// @ts-ignore (access)
@@ -115,14 +112,11 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	onCreatedHook: CTX['onCreatedHook'];
 
 	// @ts-ignore (access)
-	onBindHook: CTX['onBindHook'];
+	onMountedHook: CTX['onMountedHook'];
 
 	// @ts-ignore (access)
-	onInsertedHook: CTX['onInsertedHook'];
+	onUpdatedHook: CTX['onUpdatedHook'];
 
 	// @ts-ignore (access)
-	onUpdateHook: CTX['onUpdateHook'];
-
-	// @ts-ignore (access)
-	onUnbindHook: CTX['onUnbindHook'];
+	onUnmountedHook: CTX['onUnmountedHook'];
 }

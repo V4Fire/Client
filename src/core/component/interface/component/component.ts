@@ -212,11 +212,6 @@ export abstract class ComponentInterface {
 	protected readonly $attrs!: Dictionary<string>;
 
 	/**
-	 * A dictionary with external listeners of the component events
-	 */
-	protected readonly $listeners!: Dictionary<CanArray<Function>>;
-
-	/**
 	 * A dictionary with references to component elements that have the "ref" attribute
 	 */
 	protected readonly $refs!: Dictionary;
@@ -419,10 +414,10 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Hook handler: the component has been bound
+	 * Hook handler: the component has been created
 	 * (only for functional components)
 	 */
-	protected onBindHook(): void {
+	protected onCreatedHook(): void {
 		// Loopback
 	}
 
@@ -430,7 +425,7 @@ export abstract class ComponentInterface {
 	 * Hook handler: the component has been mounted
 	 * (only for functional components)
 	 */
-	protected onInsertedHook(): void {
+	protected onMountedHook(): void {
 		// Loopback
 	}
 
@@ -438,15 +433,15 @@ export abstract class ComponentInterface {
 	 * Hook handler: the component has been updated
 	 * (only for functional components)
 	 */
-	protected onUpdateHook(): void {
+	protected onUpdatedHook(): void {
 		// Loopback
 	}
 
 	/**
-	 * Hook handler: the component has been unbound
+	 * Hook handler: the component has been unmounted
 	 * (only for functional components)
 	 */
-	protected onUnbindHook(): void {
+	protected onUnmountedHook(): void {
 		// Loopback
 	}
 }
