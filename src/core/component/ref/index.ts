@@ -15,10 +15,10 @@ import { getComponentContext } from 'core/component/context';
 import type { ComponentElement, ComponentInterface } from 'core/component/interface';
 
 /**
- * Resolves references from the specified component instance.
+ * Resolves `ref` attributes from the specified component instance.
  *
- * This function replaces refs from component DOM nodes to component instances.
- * Also, this function fires events of ref appearances.
+ * This function replaces refs from component DOM nodes to the component instance.
+ * Also, this function fires events of refs appearances.
  *
  * @param component
  */
