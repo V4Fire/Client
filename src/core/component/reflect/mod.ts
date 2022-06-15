@@ -12,11 +12,11 @@ import type { ModsDecl } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect/interface';
 
 /**
- * Returns a map of component modifiers from the specified component.
+ * Returns a dictionary with modifiers from the specified component.
  * This function takes the raw declaration of modifiers, normalizes it, and mixes with the design system modifiers
  * (if there are specified).
  *
- * @param component - information object of the component
+ * @param component - the component information object
  *
  * @example
  * ```js

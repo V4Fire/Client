@@ -16,7 +16,7 @@ import type { PropertyInfo } from 'core/component/reflect/interface';
  * Returns an information object of a component property by the specified path
  *
  * @param path
- * @param component - component instance
+ * @param component - the tied component instance
  *
  * @example
  * ```js

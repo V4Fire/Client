@@ -12,7 +12,7 @@
  */
 
 export * from 'core/component/reflect/const';
-export * from 'core/component/reflect/types';
+export * from 'core/component/reflect/validators';
 export * from 'core/component/reflect/constructor';
 export * from 'core/component/reflect/mod';
 export * from 'core/component/reflect/property';

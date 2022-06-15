@@ -7,7 +7,7 @@
  */
 
 import { componentParams, components } from 'core/component/const';
-import { isAbstractComponent, isSmartComponent } from 'core/component/reflect/types';
+import { isAbstractComponent, isSmartComponent } from 'core/component/reflect/validators';
 
 import type { ComponentOptions, ComponentMeta, ComponentConstructor } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect/interface';
@@ -42,7 +42,7 @@ export function getComponentName(constructor: Function): string {
  * Returns an object with information from the specified component constructor
  *
  * @param constructor
- * @param [declParams] - component declaration parameters
+ * @param [declParams] - the component declaration parameters
  *
  * @example
  * ```js
@@ -57,7 +57,7 @@ export function getComponentName(constructor: Function): string {
  * //   parent: iBlock,
  * //   ...
  * // }
- * getInfoFromConstructor(bButton);
+ * console.log(getInfoFromConstructor(bButton));
  * ```
  */
 export function getInfoFromConstructor(
@@ -71,7 +71,7 @@ export function getInfoFromConstructor(
 		parent = Object.getPrototypeOf(constructor),
 		parentParams = parent != null ? componentParams.get(parent) : undefined;
 
-	// Create an object with parameters of a component
+	// Create an object with the component parameters
 	const params = parentParams != null ?
 		{
 			root: parentParams.root,
@@ -88,7 +88,7 @@ export function getInfoFromConstructor(
 			name
 		};
 
-	// Mix the "functional" parameter from a parent @component declaration
+	// Mix the "functional" parameter from the parent @component declaration
 	if (parentParams) {
 		let
 			functional;
