@@ -106,5 +106,5 @@ class bButton extends iBlock {
 }
 
 // {openedWindow: ['true', ['false'], bButton.PARENT]}
-getComponentMods(getInfoFromConstructor());
+console.log(getComponentMods(getInfoFromConstructor()));
 ```

@@ -34,7 +34,7 @@ import type { ComponentConstructorInfo } from 'core/component/reflect/interface'
  * }
  *
  * // {openedWindow: ['true', ['false'], bButton.PARENT]}
- * getComponentMods(getInfoFromConstructor());
+ * console.log(getComponentMods(getInfoFromConstructor()));
  * ```
  */
 export function getComponentMods(component: ComponentConstructorInfo): ModsDecl {
