@@ -1,6 +1,6 @@
 # core/component/method
 
-This module provides API to initialize component methods to a component instance.
+This module provides an API to initialize component methods to a component instance.
 
 ## Functions
 

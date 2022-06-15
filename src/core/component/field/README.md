@@ -1,6 +1,6 @@
 # core/component/field
 
-This module provides API to initialize component fields to a component instance.
+This module provides an API to initialize component fields to a component instance.
 
 ## What differences between fields and system fields?
 

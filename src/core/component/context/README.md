@@ -10,7 +10,7 @@ In order for a component library to be used as an engine for V4Fire, it must imp
 methods that are described in the [[ComponentInterface]] interface. Also, for the correct working of the entire platform,
 V4Fire must redefine some properties and methods from the engine. But since these properties can be marked as read-only,
 i.e. we can’t do simple property override. To solve these problems, this module was created.
-It provides API to create a new context object whose properties can be overridden.
+It provides an API to create a new context object whose properties can be overridden.
 
 ## Functions
 

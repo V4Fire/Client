@@ -1,6 +1,6 @@
 # core/component/prop
 
-This module provides API to initialize component props to a component instance.
+This module provides an API to initialize component props to a component instance.
 
 ## Functions
 

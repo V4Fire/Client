@@ -1,6 +1,6 @@
 # core/component/accessor
 
-This module provides API to initialize component accessors and computed fields to a component instance.
+This module provides an API to initialize component accessors and computed fields to a component instance.
 
 ## What differences between accessors and computed fields?
 
