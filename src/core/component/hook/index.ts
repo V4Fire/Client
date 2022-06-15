@@ -20,11 +20,17 @@ const
 	resolvedPromise = SyncPromise.resolve();
 
 /**
- * Runs a component hook from the specified component instance
+ * Runs a hook on the specified component instance.
+ * The function returns a promise that is resolved when all hook handlers are executed.
  *
- * @param hook - hook name
- * @param component - component instance
- * @param args - hook arguments
+ * @param hook - the hook name to run
+ * @param component - the tied component instance
+ * @param args - the hook arguments
+ *
+ * @example
+ * ```js
+ * runHook('beforeCreate', component).then(() => console.log('Done!'));
+ * ```
  */
 export function runHook(hook: Hook, component: ComponentInterface, ...args: unknown[]): Promise<void> {
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(
