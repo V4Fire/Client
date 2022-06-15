@@ -20,7 +20,7 @@ watch('isAuth', (value, oldValue) => {
 set('newProp', someValue);
 ```
 
-## Embedded state
+## Built-in state
 
 V4Fire supports out of the box integration with `core/session`, `core/net` and `core/abt` modules.
 
