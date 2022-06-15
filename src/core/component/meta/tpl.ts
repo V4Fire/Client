@@ -15,8 +15,8 @@ import type { ComponentMeta } from 'core/component/interface';
 /**
  * Attaches templates to the specified meta object
  *
- * @param meta - component meta object
- * @param [tpls] - dictionary with templates
+ * @param meta - the component meta object
+ * @param [tpls] - a dictionary with the registered templates
  */
 export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): void {
 	const
@@ -29,7 +29,7 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 
 	// In this case, we don't automatically attach a render function
 	if (meta.params.tpl === false) {
-		// A loopback render function
+		// The loopback render function
 		return attachTemplatesToMeta(meta, defTpls.block);
 	}
 
