@@ -10,7 +10,7 @@ import { metaPointers, PARENT } from 'core/component/const';
 import type { ComponentMeta, ModDeclVal } from 'core/component/interface';
 
 /**
- * Inherits the specified meta object from another meta object.
+ * Inherits the specified meta object from other one.
  * The function modifies the original object and returns it.
  *
  * @param meta

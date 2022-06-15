@@ -14,7 +14,7 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
 
 /**
  * Creates a meta object for the specified component and returns it
- * @param component - component constructor info
+ * @param component - the component constructor info
  */
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const meta: ComponentMeta = {
@@ -68,9 +68,9 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			props: {},
 			computed: {},
 			methods: {},
-			render: (() => {
+			render() {
 				throw new ReferenceError(`A render function for the component "${component.componentName}" is not specified`);
-			})
+			}
 		}
 	};
 

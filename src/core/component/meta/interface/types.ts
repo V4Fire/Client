@@ -13,11 +13,6 @@ import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core
 import type { WritableComputedOptions, DirectiveBinding } from 'core/component/engines';
 
 import type { ComponentInterface, FieldWatcher, MethodWatcher } from 'core/component/interface';
-import type { ComponentOptions } from 'core/component/meta/interface/options';
-
-export type ComponentInfo = ComponentOptions & {
-	name: string;
-};
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
@@ -42,10 +37,6 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends ComponentSystemField<CTX> {
 	watchers?: Map<string | Function, FieldWatcher>;
 	forceUpdate?: boolean;
-}
-
-export interface ComponentComputedField<T = unknown> extends Partial<WritableComputedOptions<T>> {
-
 }
 
 export type ComponentAccessorCacheType =

@@ -15,6 +15,10 @@ Changelog
 
 * Added support for cache delegation of computed fields
 
+#### :memo: Documentation
+
+* Added the normal documentation
+
 #### :house: Internal
 
 * Refactoring

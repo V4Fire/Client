@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { defaultWrapper } from 'core/component/const';
+import { DEFAULT_WRAPPER } from 'core/component/const';
 
 import { getComponentContext } from 'core/component/context';
 import { isAbstractComponent, bindingRgxp } from 'core/component/reflect';
@@ -82,7 +82,7 @@ export function fillMeta(
 
 			if (def != null && typeof def === 'object' && (!isTypeCanBeFunc(prop.type) || !Object.isFunction(def))) {
 				defWrapper = () => Object.fastClone(def);
-				defWrapper[defaultWrapper] = true;
+				defWrapper[DEFAULT_WRAPPER] = true;
 			}
 		}
 

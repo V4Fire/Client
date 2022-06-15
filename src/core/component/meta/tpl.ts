@@ -9,7 +9,7 @@
 // @ts-ignore (ss import)
 import * as defTpls from 'core/block.ss';
 
-import { componentTemplates } from 'core/component/const';
+import { componentRenderFactories } from 'core/component/const';
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
@@ -37,8 +37,8 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 		return;
 	}
 
-	const renderObj = componentTemplates[meta.componentName] ?? tpls.index();
-	componentTemplates[meta.componentName] = renderObj;
+	const renderObj = componentRenderFactories[meta.componentName] ?? tpls.index();
+	componentRenderFactories[meta.componentName] = renderObj;
 
 	methods.render = {
 		wrapper: true,
