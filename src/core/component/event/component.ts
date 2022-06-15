@@ -13,8 +13,24 @@ import emitter from 'core/component/event/emitter';
 import type { ResetType } from 'core/component/event/interface';
 
 /**
- * Sends a message to reset all components of the application
- * @param [type] - the reset type
+ * Emits the special event for all component to reset the passed component state.
+ * By default, this means a complete reload of all providers and storages bound to components.
+ *
+ * @param [type] - the reset type:
+ *   1. `'load'` - reloads all data providers bound to components;
+ *   2. `'load.silence'` - reloads all data providers bound to components,
+ *      but without changing components statuses to `loading`;
+ *
+ *   3. `'router'` - resets all component bindings to the application router;
+ *   4. `'router.silence'` - resets all component bindings to the application router,
+ *      but without changing components statuses to `loading`;
+ *
+ *   5. `'storage'` - reloads all storages bound to components;
+ *   6. `'storage'` - reloads all storages bound to components,
+ *      but without changing components statuses to `loading`;
+ *
+ *   7. `'silence'` - reloads all providers and storages bound to components,
+ *      but without changing components statuses to `loading`.
  */
 export function reset(type?: ResetType): void {
 	emitter.emit(type != null ? `reset.${type}` : 'reset');
