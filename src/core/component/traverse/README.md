@@ -2,7 +2,7 @@
 
 This module provides a bunch of functions to iterate over a component vnode tree.
 
-## Methods
+## Functions
 
 ### getNormalParent
 

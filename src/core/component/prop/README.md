@@ -2,7 +2,7 @@
 
 This module provides API to initialize component props to a component instance.
 
-## Methods
+## Functions
 
 ### initProps
 

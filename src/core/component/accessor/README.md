@@ -10,7 +10,7 @@ After this, the first time you touch the accessor value it will be cached.
 To support cache invalidation or watching of changes, provide a list of dependencies of your accessor or
 use the `cache = 'auto'` option.
 
-## Methods
+## Functions
 
 ### attachAccessorsFromMeta
 

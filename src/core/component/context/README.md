@@ -12,7 +12,7 @@ V4Fire must redefine some properties and methods from the engine. But since thes
 i.e. we can’t do simple property override. To solve these problems, this module was created.
 It provides API to create a new context object whose properties can be overridden.
 
-## Methods
+## Functions
 
 ### getComponentContext
 

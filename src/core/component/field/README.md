@@ -11,7 +11,7 @@ Mind, changes in any system field still can be watched using built-in API.
 The second difference is that system fields are initialized on the `beforeCreate` hook,
 but not on the `created` hook like the regular fields do.
 
-## Methods
+## Functions
 
 ### initFields
 
