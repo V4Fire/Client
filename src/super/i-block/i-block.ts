@@ -606,10 +606,18 @@ export default abstract class iBlock extends ComponentInterface {
 		this.emit('componentStatusChange', value, oldValue);
 	}
 
+	/** @inheritDoc */
 	get hook(): Hook {
 		return this.hookStore;
 	}
 
+	/**
+	 * Switches the component to a new hook
+	 *
+	 * @param value
+	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
+	 * @emits `componentHookChange(value: Hook, oldValue: Hook)
+	 */
 	protected set hook(value: Hook) {
 		const oldValue = this.hook;
 		this.hookStore = value;
@@ -1059,11 +1067,12 @@ export default abstract class iBlock extends ComponentInterface {
 		init: () => Object.create({})
 	})
 
-	protected watchModsStore!: ModsNTable;
+	protected watchModsStore!: ModsDict;
 
 	/**
 	 * True if the component context is based on another component via `vdom.bindRenderObject`
 	 */
+	@system()
 	protected readonly isVirtualTpl: boolean = false;
 
 	/**
@@ -1299,6 +1308,15 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected readonly global!: Window;
+
+	/** @inheritDoc */
+	getComponentInfo(): Dictionary {
+		return {
+			name: this.componentName,
+			hook: this.hook,
+			componentStatus: this.componentStatus
+		};
+	}
 
 	/**
 	 * Sets a watcher to a component/object property or event by the specified path.
@@ -2124,11 +2142,13 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * @param ctxOrOpts
-	 * @param details
+	 * Logs an event with the specified context
+	 *
+	 * @param ctxOrOpts - the logging context or logging options
+	 * @param [details] - event details
 	 */
 	@p()
-	override log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
+	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
 			logLevel;
@@ -2404,15 +2424,27 @@ export default abstract class iBlock extends ComponentInterface {
 		this.emit('mounted', this.$el);
 	}
 
-	protected override onCreatedHook(): void {
+	/**
+	 * Hook handler: the component has been created
+	 * (only for functional components)
+	 */
+	protected onCreatedHook(): void {
 		init.beforeMountState(this);
 	}
 
-	protected override onMountedHook(): void {
+	/**
+	 * Hook handler: the component has been mounted
+	 * (only for functional components)
+	 */
+	protected onMountedHook(): void {
 		init.mountedState(this);
 	}
 
-	protected override async onUpdatedHook(): Promise<void> {
+	/**
+	 * Hook handler: the component has been updated
+	 * (only for functional components)
+	 */
+	protected async onUpdatedHook(): Promise<void> {
 		try {
 			await this.nextTick({label: $$.onUpdateHook});
 
@@ -2428,7 +2460,11 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 	}
 
-	protected override onUnmountedHook(): void {
+	/**
+	 * Hook handler: the component has been unmounted
+	 * (only for functional components)
+	 */
+	protected onUnmountedHook(): void {
 		const
 			parent = this.$normalParent;
 

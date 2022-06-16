@@ -17,12 +17,11 @@ const
 	logger = log.namespace('vue');
 
 Vue.config.errorHandler = (err, vm, info) => {
-	console.log(err);
-	//logger.error('errorHandler', err, info, getComponentInfoLog(vm));
+	logger.error('errorHandler', err, info, getComponentInfo(vm));
 };
 
 Vue.config.warnHandler = (msg, vm, trace) => {
-	//logger.warn('warnHandler', msg, trace, getComponentInfoLog(vm));
+	logger.warn('warnHandler', msg, trace, getComponentInfo(vm));
 };
 
 const
@@ -30,10 +29,10 @@ const
 	ROOT_COMPONENT_NAME = 'root-component';
 
 /**
- * Returns information of the specified component to log
+ * Returns a dictionary with information for debugging or logging the component
  * @param component
  */
-function getComponentInfoLog(component: Nullable<ComponentPublicInstance | ComponentInterface>): Dictionary {
+function getComponentInfo(component: Nullable<ComponentPublicInstance | ComponentInterface>): Dictionary {
 	if (component == null) {
 		return {
 			name: UNRECOGNIZED_COMPONENT_NAME
@@ -43,8 +42,7 @@ function getComponentInfoLog(component: Nullable<ComponentPublicInstance | Compo
 	if ('componentName' in component) {
 		return {
 			name: getComponentName(component),
-			hook: component.hook,
-			status: component.unsafe.componentStatus
+			...component.getComponentInfo?.()
 		};
 	}
 
@@ -66,5 +64,5 @@ function getComponentName(component: ComponentPublicInstance | ComponentInterfac
 		return ROOT_COMPONENT_NAME;
 	}
 
-	return Object.get<string>(component, '$options.name') ?? UNRECOGNIZED_COMPONENT_NAME;
+	return Object.get(component, '$options.name') ?? UNRECOGNIZED_COMPONENT_NAME;
 }

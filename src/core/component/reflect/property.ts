@@ -260,7 +260,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	return info;
 
 	function resolveCtx(component: object): ComponentInterface {
-		if (Object.cast<Dictionary>(component).$remoteParent != null) {
+		if ('$remoteParent' in component) {
 			return Object.getPrototypeOf(component);
 		}
 

@@ -24,7 +24,7 @@ export * from 'core/component/context/const';
  * @param component
  */
 export function getComponentContext(component: object): Dictionary & ComponentInterface['unsafe'] {
-	component = component[toRaw] ?? component;
+	component = toRaw in component ? component[toRaw] : component;
 
 	let
 		v = wrappedContexts.get(component);

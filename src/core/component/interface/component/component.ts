@@ -13,8 +13,6 @@ eslint-disable
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { LogMessageOptions } from 'core/log';
-
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb } from 'core/async';
 
@@ -116,16 +114,7 @@ export abstract class ComponentInterface {
 	/**
 	 * The active component hook name
 	 */
-	abstract get hook(): Hook;
-
-	/**
-	 * Switches the component to a new hook
-	 *
-	 * @param value
-	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
-	 * @emits `componentHookChange(value: Hook, oldValue: Hook)
-	 */
-	protected abstract set hook(value: Hook);
+	abstract hook: Hook;
 
 	/**
 	 * An API for unsafely invoking of some internal properties of the component.
@@ -257,14 +246,6 @@ export abstract class ComponentInterface {
 	protected $initializer?: Promise<unknown>;
 
 	/**
-	 * Logs an event with the specified context
-	 *
-	 * @param ctxOrOpts - the logging context or logging options
-	 * @param [details] - event details
-	 */
-	abstract log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
-
-	/**
 	 * Activates the component.
 	 * The deactivated component won't load data from its providers during initializing.
 	 *
@@ -283,6 +264,11 @@ export abstract class ComponentInterface {
 	 * because it's automatically synchronized with `keep-alive` or the component prop.
 	 */
 	abstract deactivate(): void;
+
+	/**
+	 * Returns a dictionary with information for debugging or logging the component
+	 */
+	abstract getComponentInfo?(): Dictionary;
 
 	/**
 	 * Forces the component to re-render
@@ -416,28 +402,4 @@ export abstract class ComponentInterface {
 	protected $emit(event: string, ...args: unknown[]): this {
 		return this;
 	}
-
-	/**
-	 * Hook handler: the component has been created
-	 * (only for functional components)
-	 */
-	protected abstract onCreatedHook(): void;
-
-	/**
-	 * Hook handler: the component has been mounted
-	 * (only for functional components)
-	 */
-	protected abstract onMountedHook(): void;
-
-	/**
-	 * Hook handler: the component has been updated
-	 * (only for functional components)
-	 */
-	protected abstract onUpdatedHook(): void;
-
-	/**
-	 * Hook handler: the component has been unmounted
-	 * (only for functional components)
-	 */
-	protected abstract onUnmountedHook(): void;
 }
