@@ -107,17 +107,24 @@ export const
  * Renders the specified VNode and returns the result
  *
  * @param vnode
- * @param [parent] - parent component
+ * @param [parent] - the parent component
  */
-export function render(vnode: VNode, parent?: ComponentInterface): Node;
+export function render(
+	vnode: VNode,
+	parent?: ComponentInterface
+): Node;
 
 /**
  * Renders the specified list of VNode-s and returns the result
  *
  * @param vnodes
- * @param [parent] - parent component
+ * @param [parent] - the parent component
  */
-export function render(vnodes: VNode[], parent?: ComponentInterface): Node[];
+export function render(
+	vnodes: VNode[],
+	parent?: ComponentInterface
+): Node[];
+
 export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): CanArray<Node> {
 	const vue = new Vue({
 		render: () => vnode,

@@ -6,13 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentEngine, Directive, DirectiveBinding, VNode } from 'core/component/engines/engine';
+import { ComponentEngine } from 'core/component/engines/engine';
+import type { Directive, DirectiveBinding, VNode } from 'core/component/engines/interface';
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.directive : null;
 
 /**
- * A wrapped version of the `ComponentEngine.directive` function with providing of hooks for non-regular components
+ * A wrapped version of the `ComponentEngine.directive` function, providing hooks for functional components
  *
  * @param name
  * @param [directive]
@@ -23,7 +24,7 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 		originalDirective = staticDirective ?? ctx.directive;
 
 	if (originalDirective == null) {
-		throw new Error("A function to register directives isn't found");
+		throw new ReferenceError("A function to register directives isn't found");
 	}
 
 	if (directive == null) {
@@ -51,9 +52,10 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 		...directive,
 
 		created(_el: Element, _opts: DirectiveBinding, vnode: VNode) {
-			const
+			const args = Object.cast<Parameters<NonNullable<typeof originalCreated>>>(
 				// eslint-disable-next-line prefer-rest-params
-				args = Array.from(arguments);
+				Array.from(arguments)
+			);
 
 			if (Object.isFunction(originalCreated)) {
 				originalCreated.apply(this, args);

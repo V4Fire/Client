@@ -11,7 +11,7 @@
 import makeLazy from 'core/lazy';
 
 import { createApp, Component } from 'vue';
-import type { CreateAppFunction } from 'core/component/engines/vue3/interface';
+import type { CreateAppFunction } from 'core/component/engines/interface';
 
 const App = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
 	const
@@ -59,38 +59,38 @@ const Vue = makeLazy(
 			component: (contexts, ...args) => {
 				if (args.length === 1) {
 					contexts.forEach((ctx) => {
-						ctx.component.apply(ctx, args);
+						ctx.component.apply(ctx, Object.cast(args));
 					});
 
 					return;
 				}
 
 				const ctx = contexts.at(-1);
-				return ctx?.component.apply(ctx, args);
+				return ctx?.component.apply(ctx, Object.cast(args));
 			},
 
 			directive: (contexts, ...args: any[]) => {
 				if (args.length === 1) {
 					contexts.forEach((ctx) => {
-						ctx.directive.apply(ctx, args);
+						ctx.directive.apply(ctx, Object.cast(args));
 					});
 
 					return;
 				}
 
 				const ctx = contexts.at(-1);
-				return ctx?.directive.apply(ctx, args);
+				return ctx?.directive.apply(ctx, Object.cast(args));
 			},
 
 			mixin: (contexts, ...args) => {
 				contexts.forEach((ctx) => {
-					ctx.mixin.apply(ctx, args);
+					ctx.mixin.apply(ctx, Object.cast(args));
 				});
 			},
 
 			provide: (contexts, ...args) => {
 				contexts.forEach((ctx) => {
-					ctx.provide.apply(ctx, args);
+					ctx.provide.apply(ctx, Object.cast(args));
 				});
 			}
 		}

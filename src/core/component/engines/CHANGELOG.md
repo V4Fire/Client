@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Removed the `Vue.js@2` engine
+
+#### :rocket: New Feature
+
+* Added a new engine for the [Vue.js@3](https://vuejs.org/) library
+
 ## v3.8.2 (2021-10-26)
 
 #### :bug: Bug Fix

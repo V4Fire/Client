@@ -1,3 +1,3 @@
-# core/component/engines/vue
+# core/component/engines/vue3
 
-This module provides an adaptor for Vue.js.
+This module provides an adaptor to use the [Vue.js@3](https://vuejs.org/) component library as an engine for the V4Fire platform.

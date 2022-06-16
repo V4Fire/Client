@@ -23,7 +23,7 @@ import { supports, proxyGetters } from 'core/component/engines/vue3/const';
 import * as r from 'core/component/engines/vue3/render';
 
 /**
- * Returns a component declaration object from the specified component meta object
+ * Returns a component declaration object from the specified meta object
  * @param meta
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<typeof ComponentEngine> {
@@ -63,12 +63,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				if (beforeRenderHooks[ctx.hook] != null) {
 					return;
 				}
-
-				ctx.lastSelfReasonToRender = {
-					path,
-					value,
-					oldValue
-				};
 
 				const
 					firstPathProp = String(path[0]),

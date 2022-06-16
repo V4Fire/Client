@@ -52,7 +52,7 @@ import type {
 	vModelRadio,
 	vModelDynamic
 
-} from 'vue';
+} from 'core/component/engines';
 
 import type { ComponentInterface } from 'core/component/interface';
 

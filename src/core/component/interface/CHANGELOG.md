@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Migration to Vue3
+
 ## v3.0.0-rc.206 (2021-06-28)
 
 #### :rocket: New Feature
