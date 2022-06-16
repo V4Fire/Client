@@ -131,7 +131,7 @@ export function getRenderFn(
 
 	const
 		cache = [],
-		instanceCtx = Object.create(ctx),
+		instanceCtx = Object.create(ctx, {isVirtualTpl: {value: true}}),
 		render = factory(instanceCtx, cache);
 
 	return (bindings) => {
