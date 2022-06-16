@@ -19,22 +19,15 @@ import type Async from 'core/async';
 import type { BoundFn, ProxyCb } from 'core/async';
 
 import type { Slots, ComponentOptions } from 'core/component/engines';
+import type { ComponentMeta } from 'core/component/meta';
 
-import type {
-
-	Hook,
-	ComponentMeta,
-	SyncLinkCache,
-
-	WatchPath,
-	WatchOptions,
-	RawWatchHandler,
-
-	RenderEngine
-
-} from 'core/component/interface';
+import type { Hook } from 'core/component/interface/lc';
+import type { ModsProp, ModsDict } from 'core/component/interface/mod';
+import type { SyncLinkCache } from 'core/component/interface/link';
+import type { RenderEngine } from 'core/component/interface/engine';
 
 import type { ComponentElement } from 'core/component/interface/component/types';
+import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
 /**
@@ -69,6 +62,21 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
+	 * Additional modifiers for the component.
+	 * Modifiers allow binding component state properties directly to CSS classes without
+	 * unnecessary re-rendering of a component.
+	 */
+	abstract readonly modsProp?: ModsProp;
+
+	/**
+	 * Shareable component modifiers.
+	 * These modifiers are automatically provided to all child components.
+	 * So, for example, you have a component that uses another component within your template,
+	 * and you specify to the outer component some theme modifier.
+	 */
+	abstract get shareableMods(): CanUndef<Readonly<ModsDict>>;
+
+	/**
 	 * Additional classes for component elements.
 	 * This option can be useful if you need to attach some extra classes to the internal component elements.
 	 * Be sure you know what you are doing because this mechanism is tied to the private component markup.
@@ -84,7 +92,7 @@ export abstract class ComponentInterface {
 	 * }
 	 * ```
 	 */
-	readonly classes?: Dictionary<CanArray<string>>;
+	abstract readonly classes?: Dictionary<CanArray<string>>;
 
 	/**
 	 * Additional styles for component elements.
@@ -103,14 +111,12 @@ export abstract class ComponentInterface {
 	 * }
 	 * ```
 	 */
-	readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
+	abstract readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
 	 * The active component hook name
 	 */
-	get hook(): Hook {
-		return 'beforeRuntime';
-	}
+	abstract get hook(): Hook;
 
 	/**
 	 * Switches the component to a new hook
@@ -119,9 +125,7 @@ export abstract class ComponentInterface {
 	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
 	 * @emits `componentHookChange(value: Hook, oldValue: Hook)
 	 */
-	protected set hook(value: Hook) {
-		// Loopback
-	}
+	protected abstract set hook(value: Hook);
 
 	/**
 	 * An API for unsafely invoking of some internal properties of the component.
@@ -182,7 +186,7 @@ export abstract class ComponentInterface {
 	/**
 	 * A number that is incremented each time the component is re-rendered
 	 */
-	protected renderCounter!: number;
+	protected abstract renderCounter: number;
 
 	/**
 	 * A temporary string identifier of the component
@@ -258,7 +262,7 @@ export abstract class ComponentInterface {
 	 * @param ctxOrOpts - the logging context or logging options
 	 * @param [details] - event details
 	 */
-	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
+	abstract log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
 
 	/**
 	 * Activates the component.
@@ -269,7 +273,7 @@ export abstract class ComponentInterface {
 	 *
 	 * @param [force] - if true, then the component will be forced to activate, even if it's already activated
 	 */
-	activate(force?: boolean): void {}
+	abstract activate(force?: boolean): void;
 
 	/**
 	 * Deactivates the component.
@@ -278,7 +282,7 @@ export abstract class ComponentInterface {
 	 * Basically, you don't need to think about the component activation,
 	 * because it's automatically synchronized with `keep-alive` or the component prop.
 	 */
-	deactivate(): void {}
+	abstract deactivate(): void;
 
 	/**
 	 * Forces the component to re-render
@@ -417,31 +421,23 @@ export abstract class ComponentInterface {
 	 * Hook handler: the component has been created
 	 * (only for functional components)
 	 */
-	protected onCreatedHook(): void {
-		// Loopback
-	}
+	protected abstract onCreatedHook(): void;
 
 	/**
 	 * Hook handler: the component has been mounted
 	 * (only for functional components)
 	 */
-	protected onMountedHook(): void {
-		// Loopback
-	}
+	protected abstract onMountedHook(): void;
 
 	/**
 	 * Hook handler: the component has been updated
 	 * (only for functional components)
 	 */
-	protected onUpdatedHook(): void {
-		// Loopback
-	}
+	protected abstract onUpdatedHook(): void;
 
 	/**
 	 * Hook handler: the component has been unmounted
 	 * (only for functional components)
 	 */
-	protected onUnmountedHook(): void {
-		// Loopback
-	}
+	protected abstract onUnmountedHook(): void;
 }

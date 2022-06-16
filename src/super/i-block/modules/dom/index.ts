@@ -12,7 +12,6 @@
  */
 
 import { memoize } from 'core/promise/sync';
-import { deprecated } from 'core/functools/deprecation';
 import { wrapAsDelegateHandler } from 'core/dom';
 
 import type { InViewInitOptions, InViewAdapter } from 'core/dom/in-view';
@@ -22,10 +21,8 @@ import type { AsyncOptions } from 'core/async';
 import type { ComponentElement } from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
-import Block from 'super/i-block/modules/block';
 import Friend from 'friends/friend';
 
-import { componentRgxp } from 'super/i-block/modules/dom/const';
 import { ElCb, inViewInstanceStore, DOMManipulationOptions } from 'super/i-block/modules/dom/interface';
 
 export * from 'super/i-block/modules/dom/const';
@@ -416,19 +413,6 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * @deprecated
-	 * @see [[DOM.watchForIntersection]]
-	 *
-	 * @param el
-	 * @param inViewOpts
-	 * @param [asyncOpts]
-	 */
-	@deprecated({renamedTo: 'watchForIntersection'})
-	watchForNodeIntersection(el: Element, inViewOpts: InViewInitOptions, asyncOpts?: AsyncOptions): Function {
-		return this.watchForIntersection(el, inViewOpts, asyncOpts);
-	}
-
-	/**
 	 * Watches for size changes of the specified element by using the `core/dom/resize-observer` module.
 	 * The method returns a link to an `Async` worker that wraps the operation.
 	 *
@@ -463,45 +447,5 @@ export default class DOM extends Friend {
 			.catch(stderr);
 
 		return destructor;
-	}
-
-	/**
-	 * Creates a [[Block]] instance from the specified node and component instance.
-	 * Basically, you don't need to use this method.
-	 *
-	 * @param node
-	 * @param [component] - component instance, if not specified, the instance is taken from a node
-	 */
-	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
-		const
-			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
-			ctxFromNode = component ?? $el?.component;
-
-		const componentName = ctxFromNode ?
-			ctxFromNode.componentName :
-			Object.get(componentRgxp.exec($el?.className ?? ''), '1') ?? this.ctx.componentName;
-
-		const resolvedCtx = ctxFromNode ?? {
-			$el,
-			componentName,
-
-			mods: {},
-			isFlyweight: true,
-
-			localEmitter: {
-				emit(): void {
-					// Loopback
-				}
-			},
-
-			emit(): void {
-				// Loopback
-			}
-		};
-
-		return Object.assign(Object.create(Block.prototype), {
-			ctx: resolvedCtx,
-			component: resolvedCtx
-		});
 	}
 }

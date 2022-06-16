@@ -14,7 +14,7 @@
 import type iBlock from 'super/i-block/i-block';
 
 import Friend from 'friends/friend';
-import Block from 'super/i-block/modules/block';
+import Block from 'friends/block';
 
 import { classesCache, modsCache } from 'super/i-block/modules/provide/const';
 
@@ -133,14 +133,14 @@ export default class Provide extends Friend {
 
 	/**
 	 * Returns a dictionary with the base component modifiers.
-	 * The base modifiers are taken from the `baseMods` getter and can be mix in with the specified additional modifiers.
+	 * The base modifiers are taken from the `shareableMods` getter and can be mix in with the specified additional modifiers.
 	 *
-	 * @see [[iBlock.baseMods]]
+	 * @see [[iBlock.shareableMods]]
 	 * @param [mods] - additional modifiers (`{modifier: value}`)
 	 *
 	 * @example
 	 * ```js
-	 * this.provide.baseMods === {theme: 'foo'};
+	 * this.provide.shareableMods === {theme: 'foo'};
 	 *
 	 * // {theme: 'foo'}
 	 * console.log(this.provide.mods());
@@ -151,14 +151,14 @@ export default class Provide extends Friend {
 	 */
 	mods(mods?: ProvideMods): CanUndef<Readonly<ModsNTable>> {
 		const
-			{baseMods} = this.ctx;
+			{shareableMods} = this.ctx;
 
-		if (!baseMods && !mods) {
+		if (!shareableMods && !mods) {
 			return;
 		}
 
 		const
-			key = JSON.stringify(baseMods) + JSON.stringify(mods),
+			key = JSON.stringify(shareableMods) + JSON.stringify(mods),
 			cacheVal = modsCache[key];
 
 		if (cacheVal != null) {
@@ -166,7 +166,7 @@ export default class Provide extends Friend {
 		}
 
 		const
-			res = {...baseMods};
+			res = {...shareableMods};
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {

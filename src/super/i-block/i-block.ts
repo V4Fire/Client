@@ -87,7 +87,7 @@ import Lfc from 'super/i-block/modules/lfc';
 import AsyncRender from 'friends/async-render';
 import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
 
-import Block from 'super/i-block/modules/block';
+import Block from 'friends/block';
 import Field from 'super/i-block/modules/field';
 
 import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
@@ -130,8 +130,8 @@ import {
 
 	ModVal,
 	ModsDecl,
-	ModsTable,
-	ModsNTable
+	ModsProp,
+	ModsDict
 
 } from 'super/i-block/modules/mods';
 
@@ -157,7 +157,7 @@ export * from 'core/component';
 export * from 'super/i-block/const';
 export * from 'super/i-block/interface';
 
-export * from 'super/i-block/modules/block';
+export * from 'friends/block';
 export * from 'super/i-block/modules/field';
 export * from 'super/i-block/modules/state';
 export * from 'friends/module-loader';
@@ -178,8 +178,8 @@ export {
 
 	ModVal,
 	ModsDecl,
-	ModsTable,
-	ModsNTable
+	ModsProp,
+	ModsDict
 
 };
 
@@ -297,13 +297,8 @@ export default abstract class iBlock extends ComponentInterface {
 		return `stage.${this.stage}`;
 	}
 
-	/**
-	 * Initial component modifiers.
-	 * The modifiers represent API to bind component state properties directly with CSS classes
-	 * without unnecessary component re-rendering.
-	 */
 	@prop({type: Object, required: false})
-	readonly modsProp?: ModsTable;
+	override readonly modsProp?: ModsProp;
 
 	/**
 	 * Component modifiers
@@ -314,7 +309,7 @@ export default abstract class iBlock extends ComponentInterface {
 		init: initMods
 	})
 
-	readonly mods!: ModsNTable;
+	readonly mods!: ModsDict;
 
 	/**
 	 * If true, the component is activated.
@@ -611,11 +606,11 @@ export default abstract class iBlock extends ComponentInterface {
 		this.emit('componentStatusChange', value, oldValue);
 	}
 
-	override get hook(): Hook {
+	get hook(): Hook {
 		return this.hookStore;
 	}
 
-	protected override set hook(value: Hook) {
+	protected set hook(value: Hook) {
 		const oldValue = this.hook;
 		this.hookStore = value;
 
@@ -724,8 +719,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * and you specify to the outer component some theme modifier.
 	 * This modifier will recursively provide to all child components.
 	 */
-	@computed()
-	get baseMods(): CanUndef<Readonly<ModsNTable>> {
+	@computed({cache: 'auto'})
+	get shareableMods(): CanUndef<Readonly<ModsDict>> {
 		const
 			m = this.mods;
 
@@ -2410,26 +2405,19 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	protected override onCreatedHook(): void {
-		if (this.isSSR) {
-			this.componentStatusStore = 'ready';
-			this.isReadyOnce = true;
-		}
-	}
-
-	protected override onBindHook(): void {
 		init.beforeMountState(this);
 	}
 
-	protected override onInsertedHook(): void {
+	protected override onMountedHook(): void {
 		init.mountedState(this);
 	}
 
-	protected override async onUpdateHook(): Promise<void> {
+	protected override async onUpdatedHook(): Promise<void> {
 		try {
 			await this.nextTick({label: $$.onUpdateHook});
 
-			this.onBindHook();
-			this.onInsertedHook();
+			this.onCreatedHook();
+			this.onMountedHook();
 
 			if (this.$normalParent != null) {
 				resolveRefs(this.$normalParent);
@@ -2440,7 +2428,7 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 	}
 
-	protected override onUnbindHook(): void {
+	protected override onUnmountedHook(): void {
 		const
 			parent = this.$normalParent;
 

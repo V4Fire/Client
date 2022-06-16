@@ -173,10 +173,10 @@
 
 		'v-hook': "!isVirtualTpl && isFunctional ?" +
 			"{" +
-				"created: createInternalHookListener('bind')," +
-				"mounted: createInternalHookListener('inserted')," +
-				"updated: createInternalHookListener('update')," +
-				"unmounted: createInternalHookListener('unbind')" +
+				"created: createInternalHookListener('created')," +
+				"mounted: createInternalHookListener('mounted')," +
+				"updated: createInternalHookListener('updated')," +
+				"unmounted: createInternalHookListener('unmounted')" +
 			"} :" +
 
 			"null"

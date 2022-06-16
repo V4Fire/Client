@@ -6,16 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ModVal, ModsDecl } from 'core/component';
-
-/**
- * Raw modifiers
- */
-export type ModsTable = Dictionary<ModVal>;
-
-/**
- * Normalized modifiers
- */
-export type ModsNTable = Dictionary<CanUndef<string>>;
-
-export { ModVal, ModsDecl };
+export type { ModVal, ModsDecl, ModsProp, ModsDict } from 'core/component';
