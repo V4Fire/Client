@@ -43,10 +43,9 @@ export function interpolateStaticAttrs<T extends VNode | Dictionary>(this: Compo
 
 	{
 		const
-			key = 'data-cached-class-component-id',
-			val = props[key];
+			key = 'data-cached-class-component-id';
 
-		if (val != null) {
+		if (key in props && props[key] != null) {
 			Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
 			delete props[key];
 		}
@@ -58,11 +57,11 @@ export function interpolateStaticAttrs<T extends VNode | Dictionary>(this: Compo
 			name = props[key];
 
 		if (name != null) {
-			if (this.classes?.[name] != null) {
+			if ('classes' in this && this.classes?.[name] != null) {
 				Object.assign(props, mergeProps({class: props.class}, {class: this.classes[name]}));
 			}
 
-			if (this.styles?.[name] != null) {
+			if ('styles' in this && this.styles?.[name] != null) {
 				Object.assign(props, mergeProps({style: props.style}, {style: this.styles[name]}));
 			}
 
