@@ -272,7 +272,7 @@ export function implementComponentWatchAPI(
 			propsStore = props.value;
 
 		// We need to attach a watcher for a prop object
-		// and watchers for each non-primitive value of that object, like arrays or maps.
+		// and watchers for each non-primitive value of that object, like arrays or maps
 		if (Object.isTruly(propsStore)) {
 			const propWatchOpts = {
 				...watchOpts,
@@ -331,7 +331,7 @@ export function implementComponentWatchAPI(
 		});
 
 		if (isFunctional) {
-			// We need to track all modified fields of a function instance
+			// We need to track all modified fields of the functional instance
 			// to restore state if a parent has re-created the component
 			const w = watch(watcher.proxy, {deep: true, collapse: true, immediate: true}, (v, o, i) => {
 				unsafe.$modifiedFields[String(i.path[0])] = true;

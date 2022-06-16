@@ -20,7 +20,7 @@ import type { BindRemoteWatchersParams } from 'core/component/watch/interface';
  * This method has some "copy-paste" chunks, but it's done for better performance because it's a very hot function.
  *
  * Basically, this function takes watchers from a meta property of the component,
- * but you can provide custom watchers to initialize by using the second parameter of the function.
+ * but you can provide the custom watchers to initialize by using the second parameter of the function.
  *
  * @param component
  * @param [params] - additional parameters
@@ -36,7 +36,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		// Link to the self component async instance
 		selfAsync = unsafe.$async,
 
-		// Link to an async instance
+		// Link to the resolved async instance
 		$a = p.async ?? selfAsync;
 
 	const
@@ -49,7 +49,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 	const
 		watchersMap = p.watchers ?? meta.watchers,
 
-		// True if the method has been invoked with passing custom async instance as a property
+		// True if the method has been invoked with passing the custom async instance as a property
 		customAsync = $a !== unsafe.$async;
 
 	// Iterate over all registered watchers and listeners and initialize their
@@ -86,7 +86,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		}
 
 		const attachWatcher = () => {
-			// If we have a custom watcher we need to find a link to the event emitter.
+			// If we have the custom watcher we need to find a link to the event emitter.
 			// For instance:
 			// `':foo'` -> watcherCtx == ctx; key = `'foo'`
 			// `'document:foo'` -> watcherCtx == document; key = `'foo'`
@@ -148,7 +148,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 				// Right now, we need to create a wrapper for our handler because there are some conditions for the watcher:
 				//
-				// 1. It can provide or not provide arguments from an event that it listens.
+				// 1. It can provide or not provide arguments from the listened event.
 				// 2. The handler can be specified as a function or as a component method name.
 				//
 				// Also, we have two different cases:

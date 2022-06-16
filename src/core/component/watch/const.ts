@@ -13,12 +13,12 @@ export const
 	immediateDynamicHandlers: DynamicHandlers = new WeakMap();
 
 export const
-	tiedWatchers = Symbol('List of tied watchers'),
-	watcherInitializer = Symbol('Watcher initializer');
+	tiedWatchers = Symbol('A list of tied watchers'),
+	watcherInitializer = Symbol('The watcher initializer');
 
 export const
 	cacheStatus = Symbol('Cache status'),
-	toComponentObject = Symbol('Link to a component object');
+	toComponentObject = Symbol('A link to the component object');
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;

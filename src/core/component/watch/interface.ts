@@ -16,12 +16,12 @@ export type DynamicHandlers = WeakMap<
 
 export interface BindRemoteWatchersParams<A extends object = ComponentInterface> {
 	/**
-	 * Link to an instance of Async
+	 * A link to the `Async` instance
 	 */
 	async?: Async<A>;
 
 	/**
-	 * Dictionary of watchers
+	 * A dictionary with watchers
 	 */
 	watchers?: Dictionary<WatchObject[]>;
 

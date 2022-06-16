@@ -18,11 +18,11 @@ import type { DynamicHandlers } from 'core/component/watch/interface';
  * Attaches a dynamic watcher to the specified property.
  * This function is used to manage a situation when we are watching some accessor.
  *
- * @param component - component that is watched
- * @param prop - property to watch
+ * @param component - the component that is watched
+ * @param prop - the property to watch
  * @param watchOpts - options of watching
- * @param handler - handler of mutations
- * @param [store] - store with dynamic handlers
+ * @param handler - a function to handle mutations
+ * @param [store] - store for dynamic handlers
  */
 export function attachDynamicWatcher(
 	component: ComponentInterface,
@@ -119,7 +119,7 @@ export function attachDynamicWatcher(
 		};
 	}
 
-	// Every worker that passed to async have a counter with number of consumers of this worker,
+	// Every worker that passed to Async have a counter with a number of consumers of this worker,
 	// but in this case this behaviour is redundant and can produce an error,
 	// that why we wrap original destructor with a new function
 	component.unsafe.$async.worker(() => destructor());
