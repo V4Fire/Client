@@ -36,7 +36,7 @@ export type ModsProp = Dictionary<ModVal>;
 export type ModsDict = Dictionary<CanUndef<string>>;
 
 /**
- * A dictionary with registered modifiers and their possible values
+ * A dictionary with predefined modifiers and their possible values
  *
  * @example
  * ```typescript
