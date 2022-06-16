@@ -69,7 +69,7 @@ import {
 } from 'core/component';
 
 import remoteState from 'core/component/state';
-import * as init from 'core/component/construct';
+import * as init from 'core/component/init';
 
 import 'super/i-block/directives';
 import { statuses } from 'super/i-block/const';
