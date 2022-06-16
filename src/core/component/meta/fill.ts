@@ -16,7 +16,7 @@ import { isAbstractComponent, bindingRgxp } from 'core/component/reflect';
 import { isTypeCanBeFunc } from 'core/component/prop';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
-import type { ComponentConstructor, ComponentMeta, ComponentField, WatchObject } from 'core/component/interface';
+import type { ComponentConstructor, ComponentMeta, ComponentField, WatchObject, Hook } from 'core/component/interface';
 
 /**
  * Fills the passed meta object with methods and properties from the specified component class constructor
@@ -237,10 +237,10 @@ export function fillMeta(
 		if (method.hooks) {
 			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
-					key = keys[i],
+					key = <Hook>keys[i],
 					hook = o[key];
 
-				if (isFunctional && hook.functional === false) {
+				if (hook == null || isFunctional && hook.functional === false) {
 					continue;
 				}
 

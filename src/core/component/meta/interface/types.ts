@@ -8,11 +8,9 @@
 
 import type { WatchPath } from 'core/object/watch';
 
-import type { Hook } from 'core/component/interface/life-cycle';
-import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
 import type { WritableComputedOptions, DirectiveBinding } from 'core/component/engines';
-
-import type { ComponentInterface, FieldWatcher, MethodWatcher } from 'core/component/interface';
+import type { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
+import type { ComponentInterface, FieldWatcher, MethodWatcher, Hook } from 'core/component/interface';
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
@@ -75,7 +73,8 @@ export type ComponentMethodHooks = {
 	[hook in Hook]?: {
 		name: string;
 		hook: string;
-		after: Set<string>;
+		functional?: boolean;
+		after?: Set<string>;
 	};
 };
 
