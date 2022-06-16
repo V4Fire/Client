@@ -34,8 +34,7 @@ export function createdState(component: ComponentInterface): void {
 	unmute(unsafe.$systemFields);
 
 	const isDynamicallyMountedComponent =
-		parent != null &&
-		'$remoteParent' in r;
+		parent != null && '$remoteParent' in r;
 
 	if (isDynamicallyMountedComponent) {
 		const

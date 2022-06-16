@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Renamed the module to `init`
+
+#### :rocket: New Feature
+
+* Added new state initializers `render-tracked` and `render-trigered`
+
+#### :memo: Documentation
+
+* Added the normal documentation
+
 ## v3.0.0-rc.147 (2021-02-18)
 
 #### :bug: Bug Fix

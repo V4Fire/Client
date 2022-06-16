@@ -7,9 +7,9 @@
  */
 
 /**
- * [[include:core/component/construct/README.md]]
+ * [[include:core/component/init/README.md]]
  * @packageDocumentation
  */
 
-export * from 'core/component/construct/states';
-export * from 'core/component/construct/interface';
+export * from 'core/component/init/states';
+export * from 'core/component/init/interface';

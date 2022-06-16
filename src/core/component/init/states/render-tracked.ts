@@ -7,20 +7,18 @@
  */
 
 import { callMethodFromComponent } from 'core/component/method';
-import { resolveRefs } from 'core/component/ref';
 import { runHook } from 'core/component/hook';
 
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Initializes the "updated" state to the specified component instance
+ * Initializes the "renderTracked" state to the specified component instance
+ *
  * @param component
+ * @param args - additional arguments
  */
-export function updatedState(component: ComponentInterface): void {
-	runHook('beforeUpdated', component).catch(stderr);
-	resolveRefs(component);
-
-	runHook('updated', component).then(() => {
-		callMethodFromComponent(component, 'updated');
+export function renderTrackedState(component: ComponentInterface, ...args: unknown[]): void {
+	runHook('renderTracked', component, ...args).then(() => {
+		callMethodFromComponent(component, 'renderTracked', ...args);
 	}).catch(stderr);
 }

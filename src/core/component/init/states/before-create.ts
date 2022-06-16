@@ -19,16 +19,16 @@ import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
 
 import { runHook } from 'core/component/hook';
-import { implementEventAPI } from 'core/component/event';
+import { implementEventEmitterAPI } from 'core/component/event';
 
 import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
-import type { InitBeforeCreateStateOptions } from 'core/component/construct/interface';
+import type { InitBeforeCreateStateOptions } from 'core/component/init/interface';
 
 /**
  * Initializes the "beforeCreate" state to the specified component instance
  *
  * @param component
- * @param meta - component meta object
+ * @param meta - the component meta object
  * @param [opts] - additional options
  */
 export function beforeCreateState(
@@ -98,7 +98,7 @@ export function beforeCreateState(
 	}
 
 	if (opts?.implementEventAPI) {
-		implementEventAPI(component);
+		implementEventEmitterAPI(component);
 	}
 
 	attachAccessorsFromMeta(component);
