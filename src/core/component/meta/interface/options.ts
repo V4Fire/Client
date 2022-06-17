@@ -23,9 +23,9 @@ export interface ComponentOptions {
 	 *
 	 * }
 	 *
-	 * // name == 'Bar'
+	 * // name == 'bExample'
 	 * @component()
-	 * class Bar extends iBlock {
+	 * class bExample extends iBlock {
 	 *
 	 * }
 	 * ```
@@ -116,7 +116,15 @@ export interface ComponentOptions {
 	functional?: Nullable<boolean> | Dictionary;
 
 	/**
-	 * A dictionary with the deprecated component props with specified alternatives.
+	 * If false, then all default values of the component input properties are ignored.
+	 * This parameter can be inherited from the parent component.
+	 *
+	 * @default `true`
+	 */
+	defaultProps?: boolean;
+
+	/**
+	 * A dictionary with the deprecated component props with the specified alternatives.
 	 * The keys represent deprecated props; the values represent alternatives.
 	 * This parameter can be inherited from the parent component.
 	 *
@@ -124,7 +132,7 @@ export interface ComponentOptions {
 	 * ```typescript
 	 * @component({deprecatedProps: {
 	 *   value: 'items'
-	 * }}}})
+	 * }})
 	 *
 	 * class bList extends iData {
 	 *   @prop()
@@ -168,12 +176,4 @@ export interface ComponentOptions {
 	 * @default `true`
 	 */
 	inheritMods?: boolean;
-
-	/**
-	 * If false, then all default values of the component input properties are ignored.
-	 * This parameter can be inherited from the parent component.
-	 *
-	 * @default `true`
-	 */
-	defaultProps?: boolean;
 }
