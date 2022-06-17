@@ -10,6 +10,7 @@ import { identity } from 'core/functools';
 
 import * as c from 'core/component/const';
 
+import { initEmitter } from 'core/component/event';
 import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflect';
 
@@ -49,7 +50,7 @@ export function component(opts?: ComponentOptions): Function {
 			componentInfo = getInfoFromConstructor(target, opts),
 			componentParams = componentInfo.params;
 
-		c.initEmitter
+		initEmitter
 			.emit('bindConstructor', componentInfo.name);
 
 		if (!Object.isTruly(componentInfo.name) || componentParams.root || componentInfo.isAbstract) {
@@ -86,7 +87,7 @@ export function component(opts?: ComponentOptions): Function {
 			}
 
 			c.components.set(componentName, meta);
-			c.initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
+			initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
 
 			if (componentInfo.isAbstract || meta.params.functional === true) {
 				fillMeta(meta, target);

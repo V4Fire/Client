@@ -9,8 +9,8 @@
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import type { UnsafeComponentInterface } from 'core/component/interface';
 
-import emitter from 'core/component/event/emitter';
-import type { ResetType } from 'core/component/event/interface';
+import { globalEmitter } from 'core/component/event/emitter';
+import type { ComponentResetType } from 'core/component/event/interface';
 
 /**
  * Emits the special event for all component to reset the passed component state.
@@ -32,8 +32,8 @@ import type { ResetType } from 'core/component/event/interface';
  *   7. `'silence'` - reloads all providers and storages bound to components,
  *      but without changing components statuses to `loading`.
  */
-export function reset(type?: ResetType): void {
-	emitter.emit(type != null ? `reset.${type}` : 'reset');
+export function resetComponents(type?: ComponentResetType): void {
+	globalEmitter.emit(type != null ? `reset.${type}` : 'reset');
 }
 
 /**

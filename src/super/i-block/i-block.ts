@@ -49,14 +49,17 @@ import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import {
 
+	init,
 	component,
 	PARENT,
 
+	globalState,
 	globalEmitter,
-	customWatcherRgxp,
 
 	resolveRefs,
+
 	bindRemoteWatchers,
+	customWatcherRgxp,
 
 	WatchPath,
 	RawWatchHandler,
@@ -67,9 +70,6 @@ import {
 	UnsafeGetter
 
 } from 'core/component';
-
-import remoteState from 'core/component/state';
-import * as init from 'core/component/init';
 
 import 'super/i-block/directives';
 import { statuses } from 'super/i-block/const';
@@ -532,8 +532,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * but remember that these mutations may force the re-rendering of all components.
 	 */
 	@computed({watchable: true})
-	get remoteState(): typeof remoteState {
-		return remoteState;
+	get remoteState(): typeof globalState {
+		return globalState;
 	}
 
 	/**

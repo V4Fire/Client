@@ -9,7 +9,9 @@
 import { defProp } from 'core/const/props';
 
 import { storeRgxp } from 'core/component/reflect';
-import { initEmitter, metaPointers } from 'core/component/const';
+import { initEmitter } from 'core/component/event';
+
+import { metaPointers } from 'core/component/const';
 import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 
 import type { ComponentMeta } from 'core/component/interface';

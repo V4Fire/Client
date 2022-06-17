@@ -15,7 +15,7 @@ import symbolGenerator from 'core/symbol';
 
 import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
-import { reset, ResetType, ComponentInterface } from 'core/component';
+import { resetComponents, ComponentResetType, ComponentInterface } from 'core/component';
 
 import type bRouter from 'base/b-router/b-router';
 import type { AppliedRoute } from 'core/router';
@@ -235,8 +235,8 @@ export default abstract class iStaticPage extends iPage {
 	 *
 	 * @param [type] - reset type
 	 */
-	reset(type?: ResetType): void {
-		this.nextTick(() => reset(type), {
+	reset(type?: ComponentResetType): void {
+		this.nextTick(() => resetComponents(type), {
 			label: $$.reset
 		});
 	}

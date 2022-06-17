@@ -9,7 +9,7 @@
 import type remoteState from 'core/component/state';
 import type { ComponentInterface } from 'core/component';
 
-export { globalEmitter, ResetType } from 'core/component';
+export { globalEmitter, ComponentResetType } from 'core/component';
 export type RemoteState = typeof remoteState;
 
 export interface RootMod {

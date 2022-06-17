@@ -45,17 +45,21 @@ See the `core/session` module for details.
 
 #### emitter
 
-An event emitter to broadcast external events to components.
+The event emitter to broadcast external events to components.
 
 ```js
-import { emitter } from 'core/component/event';
+import { globalEmitter } from 'core/component/event';
 
-emitter.emit('reloadAllComponents', {provider: true, storage: true});
+globalEmitter.emit('reloadAllComponents', {provider: true, storage: true});
 ```
+
+#### initEmitter
+
+The event emitter to broadcast component initialization events.
 
 ### Functions
 
-#### reset
+#### resetComponents
 
 Emits the special event for all component to reset the passed component state.
 By default, this means a complete reload of all providers and storages bound to components.

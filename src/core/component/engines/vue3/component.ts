@@ -8,7 +8,7 @@
 
 import watch, { WatchHandlerParams } from 'core/object/watch';
 
-import * as init from 'core/component/construct';
+import * as init from 'core/component/init';
 import { beforeRenderHooks } from 'core/component/const';
 
 import { fillMeta } from 'core/component/meta';
@@ -124,8 +124,16 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.destroyedState(getComponentContext(this));
 		},
 
-		errorCaptured(): void {
-			init.errorCapturedState(getComponentContext(this));
+		errorCaptured(...args: unknown[]): void {
+			init.errorCapturedState(getComponentContext(this), ...args);
+		},
+
+		renderTracked(...args: unknown[]): void {
+			init.renderTrackedState(getComponentContext(this), ...args);
+		},
+
+		renderTriggered(...args: unknown[]): void {
+			init.errorCapturedState(getComponentContext(this), ...args);
 		}
 	};
 }

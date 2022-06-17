@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export type ResetType =
+export type ComponentResetType =
 	'load' |
 	'load.silence' |
 	'router' |

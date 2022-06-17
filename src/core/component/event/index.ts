@@ -13,7 +13,6 @@
 
 import 'core/component/event/providers';
 
-export { default as emitter } from 'core/component/event/emitter';
-
+export * from 'core/component/event/emitter';
 export * from 'core/component/event/component';
 export * from 'core/component/event/interface';

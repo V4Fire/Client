@@ -11,11 +11,12 @@
  * @packageDocumentation
  */
 
-export * from 'core/component/interface/component';
 export * from 'core/component/meta/interface';
 export * from 'core/component/reflect/interface';
-export * from 'core/component/interface/mod';
-export * from 'core/component/interface/watch';
-export * from 'core/component/interface/link';
+
 export * from 'core/component/interface/lc';
+export * from 'core/component/interface/mod';
+export * from 'core/component/interface/link';
+export * from 'core/component/interface/watch';
+export * from 'core/component/interface/component';
 export * from 'core/component/interface/engine';
