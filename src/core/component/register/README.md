@@ -17,8 +17,8 @@ export default class bUser extends iBlock {
 
 ## How to create a component?
 
-Also, you can pass additional parameters to this decorator to create a component.
-For example, that a component should be created as functional.
+To register a new component, you need to create a simple JS class and add the `@component` decorator to it.
+Also, you can pass additional parameters to this decorator. For example, in order for a component to be created as functional.
 
 ```typescript
 import iBlock, { component, prop } from 'super/i-block/i-block';
@@ -35,7 +35,7 @@ export default class bUser extends iBlock {
 
 ### How does it work?
 
-The decorator aggregates information of the class received from other nested decorators and
+The `@component` decorator aggregates information of the class received from other nested decorators and
 with the help of reflection and forms a special structure of the [[ComponentMeta]] type.
 Next, the created structure will be passed to the used component library adapter, which will create a "real" component.
 
@@ -198,7 +198,7 @@ This parameter can be inherited from the parent component.
 
 ### Decorators
 
-#### component
+#### @component
 
 The decorator to register a new component based on the tied class.
 

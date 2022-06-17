@@ -11,7 +11,7 @@ import type { InitFieldFn, DecoratorField } from 'core/component/decorators/inte
 
 /**
  * Marks a class property as a component field.
- * In regular components, mutations of field properties force component re-rendering.
+ * In non-functional components, field property mutations typically cause the component to re-render.
  *
  * @decorator
  *

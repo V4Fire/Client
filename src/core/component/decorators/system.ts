@@ -11,7 +11,7 @@ import type { InitFieldFn, DecoratorSystem } from 'core/component/decorators/int
 
 /**
  * Marks a class property as a system field.
- * Mutations of system properties never force component re-rendering.
+ * System property mutations never cause components to re-render.
  *
  * @decorator
  *

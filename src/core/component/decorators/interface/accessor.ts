@@ -11,30 +11,30 @@ import type { DecoratorFunctionalOptions } from 'core/component/decorators/inter
 
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	/**
-	 * If true, the accessor value will be cached every time it read or changed.
-	 * The option is set to true by default if also provided `dependencies` or the bound accessor matches by a name with
-	 * another prop or field. If the options value is passed as `auto`, caching will be delegated to the used render
-	 * engine.
+	 * If true, the accessor value will be cached after the first touch.
+	 * The option is set to true by default if also provided `dependencies` or the bound accessor matches
+	 * by the name with another prop or field. If the option value is passed as `auto`, caching will be delegated to
+	 * the used component library.
 	 */
 	cache?: ComponentAccessorCacheType;
 
 	/**
-	 * If true, mutations of the accessor value can be watched
+	 * If true, the accessor returns a link to another watchable object
 	 */
 	watchable?: boolean;
 
 	/**
 	 * A list of dependencies for the accessor.
-	 * The dependencies are needed to watch for changes of the accessor or to invalidate the cache.
+	 * The dependencies are needed to watch for the accessor mutations or to invalidate its cache.
 	 *
 	 * Also, when the accessor has a logically connected prop/field
-	 * (by using a name convention "${property} -> ${property}Prop | ${property}Store"),
+	 * (by using the name convention "${property} -> ${property}Prop | ${property}Store"),
 	 * we don't need to add additional dependencies.
 	 *
 	 * @example
 	 * ```typescript
 	 * @component()
-	 * class Foo extends iBlock {
+	 * class bExample extends iBlock {
 	 *   @field()
 	 *   blaStore: number = 0;
 	 *
@@ -43,7 +43,6 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	 *     return this.blaStore * 2;
 	 *   }
 	 *
-	 *   @computed({cache: true})
 	 *   get bla(): number {
 	 *     return blaStore * 3;
 	 *   }

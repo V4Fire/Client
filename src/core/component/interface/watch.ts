@@ -24,6 +24,17 @@ export { WatchHandlerParams };
 export type Flush = 'post' | 'pre' | 'sync';
 
 export interface WatchOptions extends RawWatchOptions {
+	/**
+	 * How the event handler should be called:
+	 *
+	 * 1. `'post'` - the handler will be called on the next tick after the mutation and
+	 *    guaranteed after updating all tied templates;
+	 *
+	 * 2. `'pre'` - the handler will be called on the next tick after the mutation and
+	 *    guaranteed before updating all tied templates;
+	 *
+	 * 3. `'sync'` - the handler will be invoked immediately after each mutation.
+	 */
 	flush?: Flush;
 }
 
