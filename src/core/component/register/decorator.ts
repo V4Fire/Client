@@ -19,16 +19,27 @@ import { registerParentComponents } from 'core/component/register/helpers';
 import type { ComponentOptions } from 'core/component/interface';
 
 /**
- * Registers a new component
+ * Registers a new component based on the tied class
  *
  * @decorator
  * @param [opts] - additional options
  *
  * @example
- * ```js
- * @component()
- * class Button {
+ * ```typescript
+ * import iBlock, { component, prop, computed } from 'super/i-block/i-block';
  *
+ * @component({functional: true})
+ * export default class bUser extends iBlock {
+ *   @prop(String)
+ *   readonly fName: string;
+ *
+ *   @prop(String)
+ *   readonly lName: string;
+ *
+ *   @computed({cache: true, dependencies: ['fName', 'lName']})
+ *   get fullName() {
+ *     return `${this.fName} ${this.lName}`;
+ *   }
  * }
  * ```
  */
@@ -51,7 +62,7 @@ export function component(opts?: ComponentOptions): Function {
 		}
 
 		// If we have a smart component,
-		// we need to compile 2 components in the runtime
+		// we need to compile two components in the runtime
 		if (Object.isPlainObject(componentParams.functional)) {
 			component({
 				...opts,
@@ -61,7 +72,6 @@ export function component(opts?: ComponentOptions): Function {
 		}
 
 		function regComponent(): void {
-			// Lazy initializing of parent components
 			registerParentComponents(componentInfo);
 
 			const
