@@ -8,11 +8,17 @@ import iBlock, { component, field } from 'super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
+  // The decorator can be called either without parameters
   @field()
   bla: number = 0;
 
+  // Or by passing a value initializer function
   @field(() => Math.random())
-  baz?: number;
+  baz!: number;
+
+  // Or a dictionary with additional options
+  @field({unique: true, init: () => Math.random()})
+  ban!: number;
 }
 ```
 
@@ -25,7 +31,18 @@ Also, the parameter can take a function that returns a boolean value.
 
 ##### [default]
 
-Default field value.
+This option allows you to set a default value for the field.
+But using it, as a rule, is not explicitly required, since a default value can be passed through the native syntax of class properties.
+
+```typescript
+import iBlock, { component, field } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @field()
+  bla: number = 0;
+}
+```
 
 ##### [init]
 
@@ -41,12 +58,16 @@ import iBlock, { component, field } from 'super/i-block/i-block';
 class bExample extends iBlock {
   @field({init: () => Math.random()})
   bla!: number;
+
+  @field(() => Math.random())
+  bar!: number;
 }
 ```
 
-##### [atom = `false`]
+##### [forceUpdate = `true`]
 
-Indicates that property should be initialized before all non-atomic properties.
+If false, then property changes don't directly force re-rendering the template.
+Keep in mind that the template can still be re-rendered, but only at the initiative of the engine being used.
 
 ##### [after]
 
@@ -70,10 +91,32 @@ class bExample extends iBlock {
 }
 ```
 
+##### [atom = `false`]
+
+Indicates that property should be initialized before all non-atom properties.
+This option is needed when you have a field that must be guaranteed to be initialized before other fields,
+and you don't want to use `after` everywhere. But you can still use `after` along with other atomic fields.
+
+```typescript
+import iBlock, { component, field } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @field({atom: true, init: () => Math.random()})
+  bla!: number;
+
+  @field((ctx, data) => data.bla + 10)
+  baz!: number;
+}
+```
+
 ##### [watch]
 
 A watcher or list of watchers for the current field.
 The watcher can be defined as a component method to invoke, callback function, or watch handle.
+
+The `core/watch` module is used to make objects watchable.
+Therefore, for more information, please refer to its documentation.
 
 ```typescript
 import iBlock, { component, field } from 'super/i-block/i-block';
@@ -117,7 +160,7 @@ class bExample extends iBlock {
 
 ##### [functionalWatching = `false`]
 
-If false, the field cannot be watched if created inside a functional component
+If false, the field can't be watched if created inside a functional component.
 
 ##### [merge = `false`]
 

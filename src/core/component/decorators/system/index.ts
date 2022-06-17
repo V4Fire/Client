@@ -28,7 +28,7 @@ import type { InitFieldFn, DecoratorSystem } from 'core/component/decorators/int
  *   bla: number = 0;
  *
  *   @system(() => Math.random())
- *   baz?: number;
+ *   baz!: number;
  * }
  * ```
  */

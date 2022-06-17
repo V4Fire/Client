@@ -24,7 +24,20 @@ export interface DecoratorSystem<
 	unique?: boolean | UniqueFieldFn<CTX>;
 
 	/**
-	 * Default field value
+	 * This option allows you to set a default value for the field.
+	 * But using it, as a rule, is not explicitly required, since a default value can be passed through the
+	 * native syntax of class properties.
+	 *
+	 * @example
+	 * ```typescript
+	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
+	 *   @system()
+	 *   bla: number = 0;
+	 * }
+	 * ```
 	 */
 	default?: unknown;
 
@@ -38,18 +51,15 @@ export interface DecoratorSystem<
 	 * ```typescript
 	 * @component()
 	 * class bExample extends iBlock {
-	 *   @field({init: () => Math.random()})
+	 *   @system({init: () => Math.random()})
 	 *   bla!: number;
+	 *
+	 *   @system(() => Math.random())
+	 *   bar!: number;
 	 * }
 	 * ```
 	 */
 	init?: InitFieldFn<CTX>;
-
-	/**
-	 * Indicates that property should be initialized before all non-atomic properties
-	 * @default `false`
-	 */
-	atom?: boolean;
 
 	/**
 	 * A name or list of names after which this property should be initialized.
@@ -74,8 +84,33 @@ export interface DecoratorSystem<
 	after?: CanArray<string>;
 
 	/**
+	 * Indicates that property should be initialized before all non-atom properties.
+	 * This option is needed when you have a field that must be guaranteed to be initialized before other fields,
+	 * and you don't want to use `after` everywhere. But you can still use `after` along with other atomic fields.
+	 *
+	 * @default `false`
+	 * @example
+	 * ```typescript
+	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
+	 *   @system({atom: true, init: () => Math.random()})
+	 *   bla!: number;
+	 *
+	 *   @system((ctx, data) => data.bla + 10)
+	 *   baz!: number;
+	 * }
+	 * ```
+	 */
+	atom?: boolean;
+
+	/**
 	 * A watcher or list of watchers for the current field.
 	 * The watcher can be defined as a component method to invoke, callback function, or watch handle.
+	 *
+	 * The `core/watch` module is used to make objects watchable.
+	 * Therefore, for more information, please refer to its documentation.
 	 *
 	 * @example
 	 * ```typescript
@@ -121,7 +156,7 @@ export interface DecoratorSystem<
 	watch?: DecoratorFieldWatcher<CTX, A, B>;
 
 	/**
-	 * If false, the field cannot be watched if created inside a functional component
+	 * If false, the field can't be watched if created inside a functional component
 	 * @default `true`
 	 */
 	functionalWatching?: boolean;
