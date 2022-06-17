@@ -1,15 +1,17 @@
 # core/component/decorators
 
-This module provides a bunch of decorators to annotate a component.
+This module provides a bunch of decorators to annotate component properties.
+Using these and the `@component` decorator, you can register a component based on your JS class.
 
 ```typescript
-export default class bExample {
-  @prop(String)
-  readonly foo: string;
+import iBlock, { component, prop } from 'super/i-block/i-block';
 
-  @watch('foo')
-  onFoo() {
-    console.log('`Foo` was changed');
-  }
+@component()
+export default class bUser extends iBlock {
+  @prop(String)
+  readonly fName: string;
+
+  @prop(String)
+  readonly lName: string;
 }
 ```

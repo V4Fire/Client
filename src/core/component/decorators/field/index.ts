@@ -6,12 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/decorators/field/README.md]]
+ * @packageDocumentation
+ */
+
 import { paramsFactory } from 'core/component/decorators/factory';
-import type { InitFieldFn, DecoratorSystem } from 'core/component/decorators/interface';
+import type { InitFieldFn, DecoratorField } from 'core/component/decorators/interface';
 
 /**
- * Marks a class property as a system field.
- * System property mutations never cause components to re-render.
+ * Marks a class property as a component field.
+ * In non-functional components, field property mutations typically cause the component to re-render.
  *
  * @decorator
  *
@@ -19,15 +24,15 @@ import type { InitFieldFn, DecoratorSystem } from 'core/component/decorators/int
  * ```typescript
  * @component()
  * class bExample extends iBlock {
- *   @system()
+ *   @field()
  *   bla: number = 0;
  *
- *   @system(() => Math.random())
+ *   @field(() => Math.random())
  *   baz?: number;
  * }
  * ```
  */
-export const system = paramsFactory<InitFieldFn | DecoratorSystem>('systemFields', (p) => {
+export const field = paramsFactory<InitFieldFn | DecoratorField>('fields', (p) => {
 	if (Object.isFunction(p)) {
 		return {init: p};
 	}
