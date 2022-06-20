@@ -24,8 +24,8 @@ import type { DecoratorComponentAccessor } from 'core/component/decorators/inter
  * @component()
  * class bExample extends iBlock {
  *   @computed({cache: true})
- *   get foo() {
- *     return 42;
+ *   get hashCode(): number {
+ *     return Math.random();
  *   }
  * }
  * ```
