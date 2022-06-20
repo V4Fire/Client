@@ -36,7 +36,7 @@ export const components = new Map<Function | string, ComponentMeta>();
  * By default, all components don't register automatically, but the first call from some template.
  * This structure contains functions to register components.
  */
-export const componentInitializers = Object.createDict<Function[]>();
+export const componentRegInitializers = Object.createDict<Function[]>();
 
 /**
  * A dictionary with the registered component render factories
