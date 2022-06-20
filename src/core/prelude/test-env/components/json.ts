@@ -11,9 +11,12 @@ export const
 	regExpAlias = 'REGEX__';
 
 /**
+ * Stringifies the passed object into a JSON string and returns it.
+ * The function is also supports serialization of functions and regular expressions.
+ *
  * @param obj
  */
-export function zipJson(obj: Dictionary<any>): string {
+export function expandedStringify(obj: object): string {
 	return JSON.stringify(obj, (_key, val) => {
 		if (Object.isFunction(val)) {
 			return `${fnAlias}${val.toString()}`;
@@ -28,10 +31,13 @@ export function zipJson(obj: Dictionary<any>): string {
 }
 
 /**
- * @param obj
+ * Parses the specified JSON string into a JS value and returns it.
+ * The function is also supports parsing of functions and regular expressions.
+ *
+ * @param str
  */
-export function unzipJson(obj: string): Dictionary<any> {
-	return JSON.parse(obj, (_key, val) => {
+export function expandedParse<T = JSONLikeValue>(str: string): T {
+	return JSON.parse(str, (_key, val) => {
 		if (Object.isString(val)) {
 			if (val.startsWith(fnAlias)) {
 				// eslint-disable-next-line no-eval

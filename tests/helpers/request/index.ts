@@ -7,7 +7,7 @@
  */
 
 /**
- * Class provides API to work with requests
+ * Class provides API to work with requests on a page
  */
 export default class Request {
 	/**

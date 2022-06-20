@@ -14,7 +14,7 @@ export interface WaitForIdleOptions {
 	waitForIdleTimes?: number;
 
 	/**
-	 * Delay before exiting the function
+	 * Delay before resolving the function promise
 	 * @default `100`
 	 */
 	sleepAfterIdles?: number;
@@ -28,7 +28,7 @@ export interface WaitForRAFOptions {
 	waitForRafTimes?: number;
 
 	/**
-	 * Delay before exiting the function
+	 * Delay before resolving the function promise
 	 * @default `100`
 	 */
 	sleepAfterRAF?: number;

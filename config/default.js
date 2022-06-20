@@ -25,8 +25,43 @@ const
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
+	/**
+	 * Name of the used MVVM library, like Vue or React
+	 *
+	 * @cli engine
+	 * @env ENGINE
+	 *
+	 * @param {string=} [def] - default value
+	 * @returns {string}
+	 */
+	engine(def = 'vue') {
+		return o('engine', {
+			env: true,
+			default: def,
+			validate(v) {
+				return Boolean({
+					vue: true,
+					zero: true
+				}[v]);
+			}
+		});
+	},
+
 	/** @inheritDoc */
 	build: {
+		/**
+		 * True, if the build process is running within CI
+		 *
+		 * @cli build_ci
+		 * @env BUILD_CI
+		 *
+		 * @type {boolean}
+		 */
+		ci: o('build_ci', {
+			env: true,
+			default: Boolean(process.env.CI)
+		}),
+
 		/**
 		 * List of entries to build.
 		 * The entries are taken from the "core/entries" directory.
@@ -48,6 +83,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		entries: o('entries', {
 			env: true,
 			coerce: (v) => v ? v.split(',') : []
+		}),
+
+		/**
+		 * The number of available CPUs that can be used with application building
+		 *
+		 * @cli processes
+		 * @env PROCESSES
+		 *
+		 * @type {number}
+		 * @default `require('os').cpus().length - 1`
+		 */
+		processes: o('processes', {
+			env: true,
+			short: 'p',
+			type: 'number',
+			default: require('os').cpus().length - 1
 		}),
 
 		/**
@@ -85,22 +136,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		buildGraphFromCache: o('build-graph-from-cache', {
 			env: true,
 			type: 'boolean'
-		}),
-
-		/**
-		 * The number of available CPUs that can be used with application building
-		 *
-		 * @cli processes
-		 * @env PROCESSES
-		 *
-		 * @type {number}
-		 * @default `require('os').cpus().length - 1`
-		 */
-		processes: o('processes', {
-			env: true,
-			short: 'p',
-			type: 'number',
-			default: require('os').cpus().length - 1
 		}),
 
 		/**
@@ -220,7 +255,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Enables the special kind of a demo page to build with
+		 * Enables the special kind of demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *
 		 * The inspection mode allows us to see all component modifiers/props and dynamically change it.
@@ -273,33 +308,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of the used MVVM library, like Vue or React
-	 *
-	 * @cli engine
-	 * @env ENGINE
-	 *
-	 * @param {string=} [def] - default value
-	 * @returns {string}
-	 */
-	engine(def = 'vue') {
-		return o('engine', {
-			env: true,
-			default: def,
-			validate(v) {
-				return Boolean({
-					vue: true,
-					zero: true
-				}[v]);
-			}
-		});
-	},
-
-	/**
 	 * WebPack configuration
 	 */
 	webpack: {
 		/**
-		 * Value of `mode`
+		 * Returns a value of `mode`
 		 *
 		 * @cli mode
 		 * @env MODE
@@ -315,7 +328,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `cache.type`
+		 * Returns a value of `cache.type`
 		 *
 		 * @cli cache-type
 		 * @env CACHE_TYPE
@@ -331,7 +344,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `target`
+		 * Returns a value of `target`
 		 *
 		 * @cli target
 		 * @env TARGET
@@ -351,7 +364,36 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `devtool`
+		 * Returns parameters to show webpack build progress
+		 *
+		 * @cli progress
+		 * @env PROGRESS
+		 *
+		 * @see https://github.com/npkgz/cli-progress
+		 * @param [def] - default value
+		 * @returns {Object}
+		 */
+		progress(def = true) {
+			const enabled = o('progress', {
+				env: true,
+				default: def,
+				type: 'boolean'
+			});
+
+			if (enabled) {
+				return {
+					type: this.config.build.ci ? 'println' : 'progressbar',
+					opts: {
+						clearOnComplete: true,
+						stopOnComplete: true,
+						hideCursor: null
+					}
+				};
+			}
+		},
+
+		/**
+		 * Returns a value of `devtool`
 		 *
 		 * @cli devtool
 		 * @env DEVTOOL
@@ -367,7 +409,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `stats`
+		 * Returns a value of `stats`
 		 *
 		 * @cli stats
 		 * @env STATS
@@ -430,7 +472,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Some webpack options to optimize build
+		 * Webpack options to optimize build
 		 */
 		optimize: {
 			/**
@@ -750,10 +792,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 *
 	 * 1. server - to compile node.js modules
 	 * 2. client - to compile client modules
-	 * 3. worker - to compile web-worker modules
 	 *
 	 * @override
-	 * @returns {{server: !Object, client: !Object, worker: !Object}}
+	 * @returns {{server: !Object, client: !Object}}
 	 */
 	typescript() {
 		const
@@ -772,8 +813,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			client,
-			server,
-			worker: client
+			server
 		};
 	},
 
@@ -783,24 +823,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	terser() {
 		return {};
-	},
-
-	/**
-	 * Returns parameters for `worker-loader`
-	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
-	 */
-	worker() {
-		return {
-			worker: {},
-
-			serviceWorker: {
-				workerType: 'ServiceWorker'
-			},
-
-			sharedWorker: {
-				workerType: 'SharedWorker'
-			}
-		};
 	},
 
 	/**
@@ -901,28 +923,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				default: 250,
 				env: true
 			})
-		};
-	},
-
-	/**
-	 * Returns parameters for `SimpleProgressWebpackPlugin`
-	 *
-	 * @cli progress
-	 * @env PROGRESS
-	 * @default `true`
-	 *
-	 * @param {boolean=} [def] - default value
-	 * @returns {!Object}
-	 */
-	simpleProgressWebpackPlugin(def = !IS_PROD) {
-		return {
-			enabled: o('progress', {
-				env: 'PROGRESS',
-				type: 'boolean',
-				default: def
-			}),
-
-			format: 'minimal'
 		};
 	},
 

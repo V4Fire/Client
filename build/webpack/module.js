@@ -43,15 +43,8 @@ const urlLoaderInlineOpts = {
 	limit: undefined
 };
 
-const
-	isTSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?(?:\.d)?)\.ts$/,
-	isTSServiceWorker = /(?:\.service-worker\b|[\\/]service-workers[\\/].*?(?:\.d)?)\.ts$/,
-	isTSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?(?:\.d)?)\.ts$/,
-	isJSWorker = /(?:\.worker\b|[\\/]workers[\\/].*?)\.js$/,
-	isJSServiceWorker = /(?:\.servie-worker\b|[\\/]service-workers[\\/].*?)\.js$/,
-	isJSSharedWorker = /(?:\.shared-worker\b|[\\/]shared-workers[\\/].*?)\.js$/,
-	isNotTSWorker = /^(?:(?!\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/]).)*(?:\.d)?\.ts$/,
-	isNotJSWorker = /^(?:(?!\.(?:service-|shared-)?worker\b|[\\/](?:service-|shared-)?workers[\\/]).)*\.js$/;
+const isTsFile = /\.ts$/,
+	isJsFile = /\.js$/;
 
 /**
  * Returns options for `webpack.module`
@@ -65,8 +58,7 @@ module.exports = async function module({plugins}) {
 		isProd = webpack.mode() === 'production';
 
 	const
-		fatHTML = webpack.fatHTML(),
-		workerOpts = config.worker();
+		fatHTML = webpack.fatHTML();
 
 	const loaders = {
 		rules: new Map()
@@ -102,66 +94,12 @@ module.exports = async function module({plugins}) {
 	];
 
 	loaders.rules.set('ts', {
-		test: isNotTSWorker,
+		test: isTsFile,
 		exclude: isExternalDep,
 		use: [
 			{
 				loader: 'ts-loader',
 				options: typescript.client
-			},
-
-			...tsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('ts.workers', {
-		test: isTSWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.worker
-			},
-
-			{
-				loader: 'ts-loader',
-				options: typescript.worker
-			},
-
-			...tsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('ts.serviceWorkers', {
-		test: isTSServiceWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.serviceWorker
-			},
-
-			{
-				loader: 'ts-loader',
-				options: typescript.worker
-			},
-
-			...tsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('ts.sharedWorkers', {
-		test: isTSSharedWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.sharedWorker
-			},
-
-			{
-				loader: 'ts-loader',
-				options: typescript.worker
 			},
 
 			...tsHelperLoaders
@@ -184,48 +122,9 @@ module.exports = async function module({plugins}) {
 	];
 
 	loaders.rules.set('js', {
-		test: isNotJSWorker,
+		test: isJsFile,
 		exclude: isExternalDep,
 		use: jsHelperLoaders
-	});
-
-	loaders.rules.set('js.workers', {
-		test: isJSWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.worker
-			},
-
-			...jsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('js.serviceWorkers', {
-		test: isJSServiceWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.serviceWorker
-			},
-
-			...jsHelperLoaders
-		]
-	});
-
-	loaders.rules.set('js.sharedWorkers', {
-		test: isJSSharedWorker,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'worker-loader',
-				options: workerOpts.sharedWorker
-			},
-
-			...jsHelperLoaders
-		]
 	});
 
 	plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
@@ -473,12 +372,6 @@ module.exports = async function module({plugins}) {
 
 Object.assign(module.exports, {
 	urlLoaderOpts,
-	isTSWorker,
-	isTSServiceWorker,
-	isTSSharedWorker,
-	isJSWorker,
-	isJSServiceWorker,
-	isJSSharedWorker,
-	isNotTSWorker,
-	isNotJSWorker
+	isNotTSWorker: isTsFile,
+	isNotJSWorker: isJsFile
 });

@@ -70,6 +70,13 @@ export default class bInput extends iInputText {
 	override readonly defaultProp?: this['Value'];
 
 	/**
+	 * An additional text hint that is shown after the non-empty input text.
+	 * Mind, the hint value does not affect a component value.
+	 */
+	@prop({type: String, required: false})
+	readonly textHint?: string;
+
+	/**
 	 * The minimum value of the input (for number and date types)
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
 	 */
@@ -209,14 +216,37 @@ export default class bInput extends iInputText {
 		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 
+	/**
+	 * True, if the component has a text hint
+	 * @see [[bInput.textHint]]
+	 */
+	get hasTextHint(): boolean {
+		return Object.isString(this.textHint) && this.textHint !== '';
+	}
+
 	static override validators: ValidatorsDecl = {
 		...iInputText.validators,
 		...TextValidators,
 		...Validators
 	};
 
+	protected override readonly $refs!: iInputText['$refs'] & {
+		textHint?: HTMLSpanElement;
+	};
+
 	@system()
 	protected override valueStore!: this['Value'];
+
+	/**
+	 * Returns a value from `text` and `textHint` joined together with a space.
+	 *
+	 * A hint is shown after the input text. Technically, it’s placed under the native input and duplicates the entered
+	 * value with adding a hint message. If `value` is set to "value" and `textHint` is set to "some hint",
+	 * the getter will return "value some hint".
+	 */
+	protected get textHintWithIndent(): string {
+		return `${this.text} ${this.textHint}`;
+	}
 
 	@system({
 		after: 'valueStore',
@@ -288,12 +318,36 @@ export default class bInput extends iInputText {
 	}
 
 	/**
+	 * Synchronizes the typed text with a text hint, if it specified.
+	 * Returns true if synchronization has been successful.
+	 */
+	protected syncTextHintValue(): boolean {
+		if (!this.hasTextHint) {
+			return false;
+		}
+
+		const
+			{textHint, input} = this.$refs;
+
+		if (textHint == null) {
+			return false;
+		}
+
+		textHint.innerText = input.scrollWidth > input.clientWidth ?
+			'' :
+			this.textHintWithIndent;
+
+		return true;
+	}
+
+	/**
 	 * Handler: updating of a component text value
 	 */
 	@watch({path: 'textStore', immediate: true})
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
+		this.syncTextHintValue();
 	}
 
 	/**

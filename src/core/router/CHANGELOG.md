@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.23.0 (2022-05-27)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the History API router engine when backing to the first history item doesn’t emit a popstate event in Safari if the script is running within an iframe `core/router/engines/browser-history`
+
 ## v3.5.0 (2021-09-16)
 
 #### :boom: Breaking Change

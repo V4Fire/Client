@@ -31,7 +31,9 @@ export function nativeChange<C extends bSelect>(component: C): void {
 	}
 
 	const
-		checkedItems = input.querySelectorAll(`${$b.getElSelector('item')}:checked`);
+		// @ts-ignore (TS 4.6.3)
+		itemName = $b.getElSelector('item'),
+		checkedItems = input.querySelectorAll(`${itemName}:checked`);
 
 	let
 		value;
@@ -195,6 +197,7 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 	}
 
 	const getMarkedOrSelectedItem = () =>
+		// @ts-ignore (TS 4.6.3)
 		$b.element('item', {marked: true}) ??
 		$b.element('item', {selected: true});
 
@@ -247,7 +250,7 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 		}
 
 		default:
-			// Do nothing
+		// Do nothing
 	}
 }
 

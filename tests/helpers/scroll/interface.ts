@@ -8,7 +8,7 @@
 
 export interface ScrollToBottomWhileOptions extends ScrollOptions {
 	/**
-	 * Timeout after which the function will complete execution
+	 * Timeout after which the function is forced to finish execution
 	 * @default `1000`
 	 */
 	timeout?: number;

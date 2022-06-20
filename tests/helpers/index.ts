@@ -16,7 +16,7 @@ import Request from 'tests/helpers/request';
 import Gestures from 'tests/helpers/gestures';
 
 /**
- * @deprecated - Use static of the modules methods instead
+ * @deprecated - use static methods instead
  */
 export class Helpers {
 	/** @see [[Request]] */

@@ -8,7 +8,8 @@
 
 import type iStaticPage from 'super/i-static-page/i-static-page';
 import type { ComponentElement } from 'super/i-static-page/i-static-page';
-import { unzipJson } from 'core/prelude/test-env/components/json-parser';
+
+import { expandedParse } from 'core/prelude/test-env/components/json';
 
 globalThis.renderComponents = (
 	componentName: string,
@@ -16,7 +17,7 @@ globalThis.renderComponents = (
 	options?: RenderOptions | string
 ) => {
 	if (Object.isString(scheme)) {
-		scheme = <RenderParams[]>unzipJson(scheme);
+		scheme = expandedParse<RenderParams[]>(scheme);
 	}
 
 	if (Object.isString(options) || Object.size(options) === 0) {

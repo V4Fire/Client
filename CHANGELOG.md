@@ -11,6 +11,73 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.23.1 (2022-06-14)
+
+#### :bug: Bug Fix
+
+* Fixed `textHint` position `form/b-input`
+
+## v3.23.0 (2022-05-27)
+
+#### :rocket: New Feature
+
+* Added a new checker `is.Safari` `core/browser`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the History API router engine when backing to the first history item doesn’t emit a popstate event in Safari if the script is running within an iframe `core/router/engines/browser-history`
+
+## v3.22.0 (2022-05-26)
+
+#### :boom: Breaking Change
+
+* Replaced `simpleProgressWebpackPlugin` to a custom plugin
+* Removed generation of redundant artifacts (`license.txt`, empty entry files) `build`
+* Now all comments are removed from compiled CSS files by default
+
+#### 🐛 Bug Fix
+
+* Removed deadlock during execution of Snakeskin templates `i-static-page/modules/ss-helpers`
+
+#### :house: Internal
+
+* Added human-readable names for all registered webpack process `build/webpack`
+
+## v3.21.1 (2022-05-25)
+
+#### 🐛 Bug Fix
+
+* Fixed `b-input` overflowing when `textHint` provided `form/b-input`
+
+## v3.21.0 (2022-05-24)
+
+#### :rocket: New Feature
+
+* Added a new prop `textHint` to show extra text after the component non-empty input `form/b-input`
+
+## v3.20.0 (2022-04-25)
+
+#### :boom: Breaking Change
+
+* Removed `worker-loader` `build`
+* Removed all options associated with `worker-loader` `config`
+
+## v3.19.2 (2022-04-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `iHistory` repeatedly initializing when opening bottom-slide from a non-zero step `base/b-bottom-slide`
+
+#### :house: Internal
+
+* Downgraded TS to `4.6.2`
+
+## v3.19.1 (2022-04-12)
+
+#### :house: Internal
+
+* Updated dependencies: typescript@4.6.3
+
 ## v3.19.0 (2022-04-06)
 
 #### :boom: Breaking Change

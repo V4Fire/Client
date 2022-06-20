@@ -1,3 +1,3 @@
 # tests/helpers/utils
 
-This module provides test utilities.
+This module provides some test utilities.

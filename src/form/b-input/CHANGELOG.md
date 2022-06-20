@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.23.1 (2022-06-14)
+
+#### :bug: Bug Fix
+
+* Fixed `textHint` position
+
+## v3.21.1 (2022-05-25)
+
+#### :bug: Bug Fix
+
+* Fixed `b-input` overflowing when `textHint` provided
+
+## v3.21.0 (2022-05-24)
+
+#### :rocket: New Feature
+
+* Added a new prop `textHint` to show extra text after the component non-empty input
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix

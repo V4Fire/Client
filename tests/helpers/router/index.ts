@@ -14,22 +14,22 @@ import BOM from 'tests/helpers/BOM';
 import type iStaticPage from 'super/i-static-page/i-static-page';
 
 /**
- * Class provides API to work with `b-router`.
+ * Class provides API to work with an application router
  */
 export default class Router {
 	/**
-	 * Calls the specified method on a router with providing of arguments
+	 * Calls the specified method on a router by providing the passed arguments
 	 *
 	 * @param page
 	 * @param method
-	 * @param argsToProvideIntoRouter
+	 * @param args
 	 */
-	static async call(page: Page, method: string, ...argsToProvideIntoRouter: unknown[]): Promise<void> {
+	static async call(page: Page, method: string, ...args: unknown[]): Promise<void> {
 		const
 			c = await Component.waitForRoot<iStaticPage>(page);
 
 		await c.evaluate((ctx, args) =>
-			ctx.router?.[<string>args[0]](...args.slice(1, args.length)), [method, ...argsToProvideIntoRouter]);
+			ctx.router?.[<string>args[0]](...args.slice(1, args.length)), [method, ...args]);
 
 		await page.waitForLoadState('networkidle');
 		await BOM.waitForIdleCallback(page);
@@ -38,11 +38,11 @@ export default class Router {
 	/**
 	 * @param page
 	 * @param method
-	 * @param argsToProvideIntoRouter
+	 * @param args
 	 * @deprecated
 	 * @see [[Router.call]]
 	 */
-	async call(page: Page, method: string, ...argsToProvideIntoRouter: unknown[]): Promise<void> {
-		return Router.call(page, method, ...argsToProvideIntoRouter);
+	async call(page: Page, method: string, ...args: unknown[]): Promise<void> {
+		return Router.call(page, method, ...args);
 	}
 }

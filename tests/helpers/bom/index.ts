@@ -15,20 +15,20 @@ import type { WaitForIdleOptions, WaitForRAFOptions } from 'tests/helpers/bom/in
 export * from 'tests/helpers/bom/interface';
 
 /**
- * Class provides API to work with `BOM` (browser object model)
+ * Class provides API to work with BOM (browser object model)
  */
 export default class BOM {
 	/**
-	 * Waits until `requestIdleCallback` (`setTimeout 50` for safari) on the page
+	 * Returns a promise that will be resolved when the passed page process is switched to idle
 	 *
 	 * @param page
-	 * @param [idleOptions]
+	 * @param [idleOpts]
 	 */
-	static async waitForIdleCallback(page: Page, idleOptions: WaitForIdleOptions = {}): Promise<void> {
+	static async waitForIdleCallback(page: Page, idleOpts: WaitForIdleOptions = {}): Promise<void> {
 		const normalizedIdleOptions = <Required<WaitForIdleOptions>>{
 			waitForIdleTimes: 1,
 			sleepAfterIdles: 100,
-			...idleOptions
+			...idleOpts
 		};
 
 		try {
@@ -60,13 +60,13 @@ export default class BOM {
 	 * Waits until `requestAnimationFrame` fires on the page
 	 *
 	 * @param page
-	 * @param [rafOptions]
+	 * @param [rafOpts]
 	 */
-	static async waitForRAF(page: Page, rafOptions: WaitForRAFOptions = {}): Promise<void> {
+	static async waitForRAF(page: Page, rafOpts: WaitForRAFOptions = {}): Promise<void> {
 		const normalizedRafOptions = <Required<WaitForRAFOptions>>{
 			waitForRafTimes: 1,
 			sleepAfterRAF: 100,
-			...rafOptions
+			...rafOpts
 		};
 
 		try {
