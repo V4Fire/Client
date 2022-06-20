@@ -1,6 +1,6 @@
 # core/component/decorators/component
 
-This module provides an API to register components.
+The decorator creates a component based on the specified class and its properties.
 
 ```typescript
 import iBlock, { component, prop } from 'super/i-block/i-block';
@@ -39,11 +39,11 @@ The `@component` decorator aggregates information of the class received from oth
 with the help of reflection and forms a special structure of the [[ComponentMeta]] type.
 Next, the created structure will be passed to the used component library adapter, which will create a "real" component.
 
-### Additional register options
+## Additional options
 
-#### [name]
+### [name]
 
-A name of the component we are registering.
+The name of the component we are registering.
 If the name isn't specified, it will be taken from the tied class name by using reflection.
 This parameter can't be inherited from the parent component.
 
@@ -63,7 +63,7 @@ class bExample extends iBlock {
 }
 ```
 
-#### [root = `false`]
+### [root = `false`]
 
 If true, then the component is registered as the root component.
 The root component is the top of components hierarchy, i.e. it contains all components in our application.
@@ -80,12 +80,12 @@ class pRoot extends iStaticPage {
 }
 ```
 
-#### [tpl = `true`]
+### [tpl = `true`]
 
 If false, then the component will use the default loopback render function, instead of loading the own template.
 This parameter is useful for components without templates, and it can be inherited from the parent component.
 
-#### [functional = `false`]
+### [functional = `false`]
 
 The component functional mode:
 
@@ -141,12 +141,12 @@ class bLink extends iData {
 < b-button-functional
 ```
 
-#### [defaultProps = `true`]
+### [defaultProps = `true`]
 
 If false, then all default values of the component input properties are ignored.
 This parameter can be inherited from the parent component.
 
-#### [deprecatedProps]
+### [deprecatedProps]
 
 A dictionary with the deprecated component props with the specified alternatives.
 The keys represent deprecated props; the values represent alternatives.
@@ -169,7 +169,7 @@ class bList extends iData {
 }
 ```
 
-#### [inheritAttrs = `true`]
+### [inheritAttrs = `true`]
 
 If true, then the component input properties that aren't registered as props
 will be attached to a component node as attributes.
@@ -182,6 +182,10 @@ import iData, { component, prop } from 'super/i-data/i-data';
 class bInput extends iData {
   @prop()
   value: string = '';
+
+  mounted() {
+    console.log(this.$attrs['data-title']);
+  }
 }
 ```
 
@@ -189,45 +193,7 @@ class bInput extends iData {
 < b-input :data-title = 'hello'
 ```
 
-#### [inheritMods = `true`]
+### [inheritMods = `true`]
 
 If true, then the component is automatically inherited base modifiers from its parent.
 This parameter can be inherited from the parent component.
-
-## API
-
-### Decorators
-
-#### @component
-
-The decorator to register a new component based on the tied class.
-
-```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
-
-@component()
-export default class bUser extends iBlock {
-  @prop(String)
-  readonly fName: string;
-
-  @prop(String)
-  readonly lName: string;
-}
-```
-
-### Helpers
-
-#### registerParentComponents
-
-Registers parent components for the given one.
-This function is needed because we have lazy component registration: when we see the "foo" component for
-the first time in a template, we need to check the registration of all its parent components.
-The function returns false if all parent components are already registered.
-
-#### registerComponent
-
-Register a component by the specified name.
-This function is needed because we have lazy component registration.
-Keep in mind that you must call `registerParentComponents` before calling this function.
-The function returns a meta object of the created component, or undefined if the component isn't found.
-If the component is already registered, it won't be registered twice.

@@ -10,10 +10,8 @@ import type { Hook } from 'core/component/interface';
 import type { DecoratorFunctionalOptions } from 'core/component/decorators/interface/types';
 
 export type DecoratorHook =
-	Hook |
-	Hook[] |
-	DecoratorHookOptions |
-	DecoratorHookOptions[];
+	CanArray<Hook> |
+	CanArray<DecoratorHookOptions>;
 
 export type DecoratorHookOptions = {
 	[hook in Hook]?: DecoratorFunctionalOptions & {

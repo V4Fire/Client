@@ -33,9 +33,9 @@ class bExample extends iBlock {
 }
 ```
 
-#### Additional options
+## Additional options
 
-##### [unique = `false`]
+### [unique = `false`]
 
 Marks the field as unique for each component instance.
 Also, the parameter can take a function that returns a boolean value.
@@ -54,7 +54,7 @@ class bExample extends iBlock {
 }
 ```
 
-##### [default]
+### [default]
 
 This option allows you to set the default value of the field.
 But using it, as a rule, is not explicitly required, since the default value can be passed through
@@ -92,7 +92,7 @@ class bExample extends iBlock {
 }
 ```
 
-##### [init]
+### [init]
 
 A function to initialize the field value.
 The function takes as its first argument a reference to the component context.
@@ -112,12 +112,12 @@ class bExample extends iBlock {
 }
 ```
 
-##### [forceUpdate = `true`]
+### [forceUpdate = `true`]
 
 If false, then property changes don't directly force re-rendering the template.
 Keep in mind that the template can still be re-rendered, but only at the initiative of the engine being used.
 
-##### [after]
+### [after]
 
 A name or list of names after which this property should be initialized.
 Keep in mind, you can only specify names that are of the same type as the current field (`@system` or `@field`).
@@ -139,7 +139,7 @@ class bExample extends iBlock {
 }
 ```
 
-##### [atom = `false`]
+### [atom = `false`]
 
 Indicates that property should be initialized before all non-atom properties.
 This option is needed when you have a field that must be guaranteed to be initialized before other fields,
@@ -159,7 +159,7 @@ class bExample extends iBlock {
 }
 ```
 
-##### [watch]
+### [watch]
 
 A watcher or list of watchers for the current field.
 The watcher can be defined as a component method to invoke, callback function, or watch handle.
@@ -207,12 +207,12 @@ class bExample extends iBlock {
 }
 ```
 
-##### [functionalWatching = `false`]
+### [functionalWatching = `false`]
 
 If false, the field can't be watched if created inside a functional component.
 This option is useful when you are writing a superclass or a smart component that can be created as regular or functional.
 
-##### [merge = `false`]
+### [merge = `false`]
 
 This option is only relevant for functional components.
 The fact is that when a component state changes, all its child functional components are recreated from scratch.
@@ -224,7 +224,7 @@ Set this property to true to enable the strategy of merging old and new values.
 Or specify a function that will perform the merge. This function takes contexts of the old and new components,
 the name of the field to restore, and optionally a path to a property to which the given is bound.
 
-##### [meta]
+### [meta]
 
 A dictionary with some extra information of the field.
 You can access this information using `meta.fields`.

@@ -49,9 +49,9 @@ export default class bUser extends iBlock {
 }
 ```
 
-#### Additional options
+## Additional options
 
-##### [cache]
+### [cache]
 
 If true, the accessor value will be cached after the first touch.
 The option is set to true by default if also provided `dependencies` or the bound accessor matches
@@ -106,7 +106,7 @@ class bExample extends iBlock {
 }
 ```
 
-##### [watchable]
+### [watchable]
 
 If true, the accessor returns a link to another watchable object.
 This option allows you to mount external watchable objects to the component.
@@ -141,7 +141,7 @@ class bExample extends iBlock {
 }
 ```
 
-##### [dependencies]
+### [dependencies]
 
 A list of dependencies for the accessor.
 The dependencies are needed to watch for the accessor mutations or to invalidate its cache.
