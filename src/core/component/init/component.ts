@@ -1,21 +1,14 @@
-/*!
- * V4Fire Client Core
- * https://github.com/V4Fire/Client
- *
- * Released under the MIT license
- * https://github.com/V4Fire/Client/blob/master/LICENSE
- */
-
-import { isComponent, componentInitializers, componentParams, components } from 'core/component/const';
+import { isComponent, componentRegInitializers, componentParams, components } from 'core/component/const';
 
 import type { ComponentMeta } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect';
 
 /**
  * Registers parent components for the given one.
- * This function is needed because we have lazy component registration: when we see the "foo" component for
- * the first time in a template, we need to check the registration of all its parent components.
  * The function returns false if all parent components are already registered.
+ *
+ * This function is needed because we have lazy component registration: when we see the "foo" component for
+ * the first time in the template, we need to check the registration of all its parent components.
  *
  * @param component - the component information object
  */
@@ -27,7 +20,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 		parentName = component.parentParams?.name,
 		parentComponent = component.parent;
 
-	if (!Object.isTruly(parentName) || !componentInitializers[<string>parentName]) {
+	if (!Object.isTruly(parentName) || !componentRegInitializers[<string>parentName]) {
 		return false;
 	}
 
@@ -44,14 +37,14 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 		parentName = <string>parentName;
 
 		const
-			regParentComponent = componentInitializers[parentName];
+			regParentComponent = componentRegInitializers[parentName];
 
 		if (regParentComponent != null) {
 			for (let i = 0; i < regParentComponent.length; i++) {
 				regParentComponent[i]();
 			}
 
-			delete componentInitializers[parentName];
+			delete componentRegInitializers[parentName];
 			return true;
 		}
 	}
@@ -60,11 +53,12 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 }
 
 /**
- * Register a component by the specified name.
+ * Registers a component by the specified name.
+ * The function returns the meta object of the created component, or undefined if the component isn't found.
+ * If the component is already registered, it won't be registered twice.
+ *
  * This function is needed because we have lazy component registration.
  * Keep in mind that you must call `registerParentComponents` before calling this function.
- * The function returns a meta object of the created component, or undefined if the component isn't found.
- * If the component is already registered, it won't be registered twice.
  *
  * @param name - the component name
  */
@@ -74,14 +68,14 @@ export function registerComponent(name: CanUndef<string>): CanUndef<ComponentMet
 	}
 
 	const
-		regComponent = componentInitializers[name];
+		regComponent = componentRegInitializers[name];
 
 	if (regComponent != null) {
 		for (let i = 0; i < regComponent.length; i++) {
 			regComponent[i]();
 		}
 
-		delete componentInitializers[name];
+		delete componentRegInitializers[name];
 	}
 
 	return components.get(name);
