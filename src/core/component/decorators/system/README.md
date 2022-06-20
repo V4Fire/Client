@@ -3,6 +3,17 @@
 The decorator marks a class property as a system field.
 System property mutations never cause components to re-render.
 
+## What differences between fields and system fields?
+
+The major difference between fields and system fields, that any changes of a component field can force re-rendering of its template.
+I.e., if you are totally sure that your component field doesn't need to force rendering, prefer system fields instead of regular.
+Mind, changes in any system field still can be watched using built-in API.
+
+The second difference is that system fields are initialized on the `beforeCreate` hook,
+but not on the `created` hook like the regular fields do.
+
+## Usage
+
 ```typescript
 import iBlock, { component, system } from 'super/i-block/i-block';
 
@@ -28,11 +39,26 @@ class bExample extends iBlock {
 
 Marks the field as unique for each component instance.
 Also, the parameter can take a function that returns a boolean value.
+If this value is true, then the parameter is considered unique.
+
+Please note that the uniqueness guarantee must be provided by the "external" code,
+because V4Fire does not perform special checks for uniqueness.
+
+```typescript
+import iBlock, { component, system } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @system({unique: true, init: Math.random})
+  hashCode!: number;
+}
+```
 
 ##### [default]
 
-This option allows you to set a default value for the field.
-But using it, as a rule, is not explicitly required, since a default value can be passed through the native syntax of class properties.
+This option allows you to set the default value of the field.
+But using it, as a rule, is not explicitly required, since the default value can be passed through
+the native syntax of class properties.
 
 ```typescript
 import iBlock, { component, system } from 'super/i-block/i-block';
@@ -41,6 +67,28 @@ import iBlock, { component, system } from 'super/i-block/i-block';
 class bExample extends iBlock {
   @system()
   bla: number = 0;
+
+  @system({default: 0})
+  bar!: number;
+}
+```
+
+Note that the default value provided is a prototype, not a real value. That is, when set to each new instance,
+it will be cloned using `Object.fastClone`. If this behavior does not suit you, then use the init option and pass the
+initializer function.
+
+```typescript
+import iBlock, { component, system } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  // There will be a trouble here when cloning the value
+  @system()
+  body: Element = document.body;
+
+  // All fine
+  @system(() => document.body)
+  validBody!: Element;
 }
 ```
 
@@ -52,37 +100,37 @@ As the second argument, the function takes a reference to a dictionary with othe
 have already been initialized.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, prop, system } from 'super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
-  @system({init: () => Math.random()})
-  bla!: number;
+  @system({init: Math.random})
+  hashCode!: number;
 
-  @system(() => Math.random())
-  bar!: number;
+  @system((ctx, {hashCode}) => String(hashCode))
+  normalizedHashCode!: string;
 }
 ```
 
 ##### [after]
 
 A name or list of names after which this property should be initialized.
-Keep in mind, you can only specify names that are of the same type as the current field (fields or system).
+Keep in mind, you can only specify names that are of the same type as the current field (`@system` or `@field`).
 
 ```typescript
 import iBlock, { component, system } from 'super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
-  @system(() => Math.random())
-  bla!: number;
+  @system(Math.random)
+  hashCode!: number;
 
   @system({
-    after: 'bla',
-    init: (ctx, data) => data.bla + 10
+    after: 'hashCode',
+    init: (ctx, {hashCode}) => String(hashCode)
   })
 
-  baz!: number;
+  normalizedHashCode!: string;
 }
 ```
 
@@ -93,15 +141,16 @@ This option is needed when you have a field that must be guaranteed to be initia
 and you don't want to use `after` everywhere. But you can still use `after` along with other atomic fields.
 
 ```typescript
+import Async from 'core/async';
 import iBlock, { component, system } from 'super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
-  @system({atom: true, init: () => Math.random()})
-  bla!: number;
+  @system({atom: true, init: (ctx) => new Async(ctx)})
+  async!: Async<this>;
 
-  @system((ctx, data) => data.bla + 10)
-  baz!: number;
+  @system((ctx, data) => data.async.proxy(() => { /* ... */ }))
+  handler!: Function;
 }
 ```
 
@@ -114,11 +163,11 @@ The `core/watch` module is used to make objects watchable.
 Therefore, for more information, please refer to its documentation.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, field } from 'super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
-  @system({watch: [
+  @field({watch: [
     'onIncrement',
 
     (ctx, val, oldVal, info) =>
@@ -156,13 +205,36 @@ class bExample extends iBlock {
 ##### [functionalWatching = `false`]
 
 If false, the field can't be watched if created inside a functional component.
+This option is useful when you are writing a superclass or a smart component that can be created as regular or functional.
 
 ##### [merge = `false`]
 
-If true, then if the component will restore its own state from the old component
-(this happens when using a functional component), then the actual value will be merged with the previous one.
-Also, this parameter can take a function to merge.
+This option is only relevant for functional components.
+The fact is that when a component state changes, all its child functional components are recreated from scratch.
+But we need to restore the state of such components. By default, properties are simply copied from old instances to
+new ones, but sometimes this strategy does not suit us. This option helps here - it allows you to declare that
+a certain property should be mixed based on the old and new values.
+
+Set this property to true to enable the strategy of merging old and new values.
+Or specify a function that will perform the merge. This function takes contexts of the old and new components,
+the name of the field to restore, and optionally a path to a property to which the given is bound.
 
 ##### [meta]
 
 A dictionary with some extra information of the field.
+You can access this information using `meta.fields`.
+
+```typescript
+import iBlock, { component, system } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @system({init: Math.random, meta: {debug: true}})
+  hashCode!: number;
+
+  created() {
+    // {debug: true}
+    console.log(this.meta.systemFields.hashCode.meta);
+  }
+}
+```

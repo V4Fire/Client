@@ -18,15 +18,23 @@ export interface DecoratorSystem<
 	/**
 	 * Marks the field as unique for each component instance.
 	 * Also, the parameter can take a function that returns a boolean value.
+	 * If this value is true, then the parameter is considered unique.
+	 *
+	 * Please note that the uniqueness guarantee must be provided by the "external" code,
+	 * because V4Fire does not perform special checks for uniqueness.
 	 *
 	 * @default `false`
 	 */
 	unique?: boolean | UniqueFieldFn<CTX>;
 
 	/**
-	 * This option allows you to set a default value for the field.
-	 * But using it, as a rule, is not explicitly required, since a default value can be passed through the
-	 * native syntax of class properties.
+	 * This option allows you to set the default value of the field.
+	 * But using it, as a rule, is not explicitly required, since the default value can be passed through
+	 * the native syntax of class properties.
+	 *
+	 * Note that the default value provided is a prototype, not a real value. That is, when set to each new instance,
+	 * it will be cloned using `Object.fastClone`. If this behavior does not suit you, then use the init option and
+	 * pass the initializer function.
 	 *
 	 * @example
 	 * ```typescript
@@ -36,6 +44,17 @@ export interface DecoratorSystem<
 	 * class bExample extends iBlock {
 	 *   @system()
 	 *   bla: number = 0;
+	 *
+	 *   @field({default: 0})
+	 *   bar!: number;
+	 *
+	 *   // There will be a trouble here when cloning the value
+	 *   @field()
+	 *   body: Element = document.body;
+	 *
+	 *   // All fine
+	 *   @field(() => document.body)
+	 *   validBody!: Element;
 	 * }
 	 * ```
 	 */
@@ -49,13 +68,15 @@ export interface DecoratorSystem<
 	 *
 	 * @example
 	 * ```typescript
+	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 *
 	 * @component()
 	 * class bExample extends iBlock {
-	 *   @system({init: () => Math.random()})
-	 *   bla!: number;
+	 *   @system({init: Math.random})
+	 *   hashCode!: number;
 	 *
-	 *   @system(() => Math.random())
-	 *   bar!: number;
+	 *   @system((ctx, {hashCode}) => String(hashCode))
+	 *   normalizedHashCode!: string;
 	 * }
 	 * ```
 	 */
@@ -63,21 +84,23 @@ export interface DecoratorSystem<
 
 	/**
 	 * A name or list of names after which this property should be initialized.
-	 * Keep in mind, you can only specify names that are of the same type as the current field (fields or system).
+	 * Keep in mind, you can only specify names that are of the same type as the current field (`@system` or `@field`).
 	 *
 	 * @example
 	 * ```typescript
+	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 *
 	 * @component()
 	 * class bExample extends iBlock {
-	 *   @system(() => Math.random())
-	 *   bla!: number;
+	 *   @system(Math.random)
+	 *   hashCode!: number;
 	 *
 	 *   @system({
-	 *     after: 'bla',
-	 *     init: (ctx, data) => data.bla + 10
+	 *     after: 'hashCode',
+	 *     init: (ctx, {hashCode}) => String(hashCode)
 	 *   })
 	 *
-	 *   baz!: number;
+	 *   normalizedHashCode!: string;
 	 * }
 	 * ```
 	 */
@@ -91,15 +114,16 @@ export interface DecoratorSystem<
 	 * @default `false`
 	 * @example
 	 * ```typescript
+	 * import Async from 'core/async';
 	 * import iBlock, { component, system } from 'super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
-	 *   @system({atom: true, init: () => Math.random()})
-	 *   bla!: number;
+	 *   @system({atom: true, init: (ctx) => new Async(ctx)})
+	 *   async!: Async<this>;
 	 *
-	 *   @system((ctx, data) => data.bla + 10)
-	 *   baz!: number;
+	 *   @system((ctx, data) => data.async.proxy(() => { /* ... *\/ }))
+	 *   handler!: Function;
 	 * }
 	 * ```
 	 */
@@ -156,22 +180,48 @@ export interface DecoratorSystem<
 	watch?: DecoratorFieldWatcher<CTX, A, B>;
 
 	/**
-	 * If false, the field can't be watched if created inside a functional component
+	 * If false, the field can't be watched if created inside a functional component.
+	 * This option is useful when you are writing a superclass or a smart component that can be created
+	 * as regular or functional.
+	 *
 	 * @default `true`
 	 */
 	functionalWatching?: boolean;
 
 	/**
-	 * If true, then if the component will restore its own state from the old component
-	 * (this happens when using a functional component), then the actual value will be merged with the previous one.
-	 * Also, this parameter can take a function to merge.
+	 * This option is only relevant for functional components.
+	 * The fact is that when a component state changes, all its child functional components are recreated from scratch.
+	 * But we need to restore the state of such components. By default, properties are simply copied from old instances to
+	 * new ones, but sometimes this strategy does not suit us. This option helps here - it allows you to declare that
+	 * a certain property should be mixed based on the old and new values.
+	 *
+	 * Set this property to true to enable the strategy of merging old and new values.
+	 * Or specify a function that will perform the merge. This function takes contexts of the old and new components,
+	 * the name of the field to restore, and optionally a path to a property to which the given is bound.
 	 *
 	 * @default `false`
 	 */
 	merge?: MergeFieldFn<CTX> | boolean;
 
 	/**
-	 * A dictionary with some extra information of the field
+	 * A dictionary with some extra information of the field.
+	 * You can access this information using `meta.fields` or `meta.systemFields`.
+	 *
+	 * @example
+	 * ```typescript
+	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
+	 *   @system({init: Math.random, meta: {debug: true}})
+	 *   hashCode!: number;
+	 *
+	 *   created() {
+	 *     // {debug: true}}
+	 *     console.log(this.meta.systemFields.hashCode.meta);
+	 *   }
+	 * }
+	 * ```
 	 */
 	meta?: Dictionary;
 }
