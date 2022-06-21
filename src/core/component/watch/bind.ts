@@ -158,7 +158,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				// 2. We watch for some component property, and we need to analyze the old property value.
 				//
 				// These cases are based on one problem: if we watch for some property that isn't primitive,
-				// like a hash table or list, and we add a new item to this structure but don't change the original object,
+				// like a hash table or a list, and we add a new item to this structure but don't change the original object,
 				// the new and old values will be equal.
 				//
 				// class bButton {

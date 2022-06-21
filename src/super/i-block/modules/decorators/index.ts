@@ -18,7 +18,6 @@ import { initEmitter, ModVal } from 'core/component';
 
 import {
 
-	p as pDecorator,
 	prop as propDecorator,
 	field as fieldDecorator,
 	system as systemDecorator,
@@ -53,16 +52,6 @@ import type {
 
 export { hook, computed } from 'core/component/decorators';
 export * from 'super/i-block/modules/decorators/interface';
-
-/**
- * @see core/component/decorators/base.ts
- * @inheritDoc
- */
-export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
-	params?:
-		// @ts-ignore (unsafe cast)
-		DecoratorProp<CTX, A, B> | DecoratorField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
-) => Function;
 
 /**
  * @see core/component/decorators/base.ts

@@ -156,10 +156,16 @@ export interface ComponentOptions {
 	 *
 	 * @example
 	 * ```typescript
+	 * import iData, { component, prop } from 'super/i-data/i-data';
+	 *
 	 * @component()
 	 * class bInput extends iData {
 	 *   @prop()
 	 *   value: string = '';
+	 *
+	 *   mounted() {
+	 *     console.log(this.$attrs['data-title']);
+	 *   }
 	 * }
 	 * ```
 	 *

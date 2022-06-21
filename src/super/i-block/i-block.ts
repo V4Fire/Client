@@ -137,8 +137,6 @@ import {
 
 import {
 
-	p,
-
 	prop,
 	field,
 	system,
@@ -167,7 +165,7 @@ export * from 'super/i-block/modules/event-emitter';
 
 export * from 'super/i-block/modules/sync';
 export * from 'friends/async-render';
-export * from 'super/i-block/modules/decorators';
+export { prop, field, system, computed, hook, watch, wait } from 'super/i-block/modules/decorators';
 
 export { default as Friend } from 'friends/friend';
 
@@ -1488,7 +1486,6 @@ export default abstract class iBlock extends ComponentInterface {
 		opts?: AsyncWatchOptions
 	): void;
 
-	@p()
 	watch<T = unknown>(
 		path: WatchPath | object,
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
@@ -1572,7 +1569,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param args
 	 */
-	@p()
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			eventDecl = Object.isString(event) ? {event} : event,
@@ -1611,7 +1607,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param args
 	 */
-	@p()
 	emitError(event: string, ...args: unknown[]): void {
 		this.emit({event, type: 'error'}, ...args);
 	}
@@ -1622,7 +1617,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param event
 	 * @param args
 	 */
-	@p()
 	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			eventDecl = Object.isString(event) ? {event} : event,
@@ -1746,7 +1740,6 @@ export default abstract class iBlock extends ComponentInterface {
 		opts?: WaitDecoratorOptions
 	): CanPromise<ReturnType<F>>;
 
-	@p()
 	waitStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cbOrOpts?: F | WaitDecoratorOptions,
@@ -2021,7 +2014,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 
-	@p()
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.setMod(nodeOrName, name));
@@ -2049,7 +2041,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 
-	@p()
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
 			const res = this.lfc.execCbAfterBlockReady(() => this.block!.removeMod(nodeOrName, name));
@@ -2082,7 +2073,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * console.log(document.documentElement.classList.contains('b-az-foo-bla'));
 	 * ```
 	 */
-	@p()
 	setRootMod(name: string, value: unknown): boolean {
 		return this.r.setRootMod(name, value, this);
 	}
@@ -2106,7 +2096,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * console.log(document.documentElement.classList.contains('b-az-foo-bla') === false);
 	 * ```
 	 */
-	@p()
 	removeRootMod(name: string, value?: unknown): boolean {
 		return this.r.removeRootMod(name, value, this);
 	}
@@ -2123,7 +2112,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * console.log(this.getRootMod('foo') === 'bla-bar');
 	 * ```
 	 */
-	@p()
 	getRootMod(name: string): CanUndef<string> {
 		return this.r.getRootMod(name, this);
 	}
@@ -2147,7 +2135,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param ctxOrOpts - the logging context or logging options
 	 * @param [details] - event details
 	 */
-	@p()
 	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
@@ -2283,7 +2270,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param ref - ref name
 	 * @param [opts] - additional options
 	 */
-	@p()
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
 		let
 			that = <iBlock>this;
@@ -2331,7 +2317,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Initializes an instance of the `Block` class for the current component
 	 */
 	@hook('mounted')
-	@p()
 	protected initBlockInstance(): void {
 		if (this.block != null) {
 			const
@@ -2489,7 +2474,6 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Hook handler: component will be destroyed
 	 */
-	@p()
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll().locked = true;

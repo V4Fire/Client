@@ -82,7 +82,7 @@ export abstract class ComponentInterface {
 	 * @example
 	 * ```js
 	 * // Key names are tied with the component elements
-	 * // Values contain a CSS class or list of classes we want to add
+	 * // Values contain a CSS class or a list of classes we want to add
 	 *
 	 * {
 	 *   foo: 'bla',
@@ -100,7 +100,7 @@ export abstract class ComponentInterface {
 	 * @example
 	 * ```js
 	 * // Key names are tied with component elements,
-	 * // Values contains a CSS style string, a style object or list of style strings
+	 * // Values contains a CSS style string, a style object or a list of style strings
 	 *
 	 * {
 	 *   foo: 'color: red',

@@ -18,7 +18,6 @@ export { runHook } from 'core/component/hook';
 export { resolveRefs } from 'core/component/ref';
 export { bindRemoteWatchers, customWatcherRgxp } from 'core/component/watch';
 
-export { component } from 'core/component/register';
 export { callMethodFromComponent } from 'core/component/method';
 export { normalizeClass, normalizeStyle } from 'core/component/render';
 
@@ -44,4 +43,5 @@ export {
 } from 'core/component/event';
 
 export * from 'core/component/reflect';
+export * from 'core/component/decorators';
 export * from 'core/component/interface';
