@@ -121,7 +121,7 @@ interface RenderParams {
 	/**
 	 * Component attrs
 	 */
-	attrs: Dictionary;
+	attrs?: Dictionary;
 
 	/** @see [[RenderContent]] */
 	content?: Dictionary<RenderContent | RenderContentFn | string>;

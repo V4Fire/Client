@@ -9,7 +9,6 @@
  */
 
 module.exports = [
-	'--test-entry form/b-form/test',
 	'--test-entry form/b-button/test',
 	'--test-entry form/b-checkbox/test',
 	'--test-entry form/b-radio-button/test',

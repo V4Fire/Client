@@ -58,5 +58,6 @@ package('p-v4-components-demo')
 		components
 	)
 	.libs([
-		'core/cookies'
+		'core/cookies',
+		'models/demo/form'
 	])
