@@ -14,7 +14,7 @@ import type { DecoratorFieldWatcher } from 'core/component/decorators/interface/
  */
 export interface PropOptions<T = unknown> {
 	/**
-	 * Property type constructor or a list of constructors (if the property can have several types)
+	 * A prop type constructor or a list of constructors (if the property can have multiple types)
 	 *
 	 * @example
 	 * ```typescript

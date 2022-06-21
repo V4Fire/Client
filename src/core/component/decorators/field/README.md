@@ -119,7 +119,7 @@ Keep in mind that the template can still be re-rendered, but only at the initiat
 
 ### [after]
 
-A name or list of names after which this property should be initialized.
+A name or a list of names after which this property should be initialized.
 Keep in mind, you can only specify names that are of the same type as the current field (`@system` or `@field`).
 
 ```typescript
@@ -161,7 +161,7 @@ class bExample extends iBlock {
 
 ### [watch]
 
-A watcher or list of watchers for the current field.
+A watcher or a list of watchers for the current field.
 The watcher can be defined as a component method to invoke, callback function, or watch handle.
 
 The `core/watch` module is used to make objects watchable.
@@ -222,7 +222,7 @@ a certain property should be mixed based on the old and new values.
 
 Set this property to true to enable the strategy of merging old and new values.
 Or specify a function that will perform the merge. This function takes contexts of the old and new components,
-the name of the field to restore, and optionally a path to a property to which the given is bound.
+the name of the field to restore, and optionally, a path to a property to which the given is bound.
 
 ### [meta]
 
