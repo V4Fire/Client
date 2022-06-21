@@ -14,13 +14,44 @@ export interface DecoratorFieldWatcherObject<
 	B = A
 > extends WatchOptions {
 	/**
-	 * Handler (or a name of a component method) that is invoked on watcher events
+	 * A handler (or a name of the component method) that is invoked on watcher events
+	 *
+	 * @example
+	 * ```typescript
+	 * import iBlock, { component, field, watch } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
+	 *   @watch({handler: 'onIncrement'})
+	 *   @field()
+	 *   i: number = 0;
+	 *
+	 *   onIncrement(val, oldVal, info) {
+	 *     console.log(val, oldVal, info);
+	 *   }
+	 * }
+	 * ```
 	 */
 	handler: string | DecoratorWatchHandler<CTX, A, B>;
 
 	/**
 	 * If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+	 *
 	 * @default `true`
+	 * @example
+	 * ```typescript
+	 * import iBlock, { component, field } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
+	 *   @field({watch: {handler: 'onIncrement', provideArgs: false}})
+	 *   i: number = 0;
+	 *
+	 *   onIncrement(val) {
+	 *     console.log(val === undefined);
+	 *   }
+	 * }
+	 * ```
 	 */
 	provideArgs?: boolean;
 }

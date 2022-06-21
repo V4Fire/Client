@@ -21,6 +21,8 @@ import type { DecoratorProp } from 'core/component/decorators/interface';
  *
  * @example
  * ```typescript
+ * import iBlock, { component, prop } from 'super/i-block/i-block';
+ *
  * @component()
  * class bExample extends iBlock {
  *   @prop(Number)

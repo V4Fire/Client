@@ -21,6 +21,8 @@ import type { DecoratorComponentAccessor } from 'core/component/decorators/inter
  *
  * @example
  * ```typescript
+ * import iBlock, { component, computed } from 'super/i-block/i-block';
+ *
  * @component()
  * class bExample extends iBlock {
  *   @computed({cache: true})
