@@ -239,6 +239,7 @@ export interface DecoratorField<
 	/**
 	 * If false, then property changes don't directly force re-rendering the template.
 	 * Keep in mind that the template can still be re-rendered, but only at the initiative of the engine being used.
+	 *
 	 * @default `true`
 	 */
 	forceUpdate?: boolean;

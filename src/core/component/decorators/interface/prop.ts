@@ -14,12 +14,15 @@ import type { DecoratorFieldWatcher } from 'core/component/decorators/interface/
  */
 export interface PropOptions<T = unknown> {
 	/**
-	 * A prop type constructor or a list of constructors (if the property can have multiple types)
+	 * A constructor function of the prop type.
+	 * If the prop can be of different types, then you need to specify a list of constructors.
 	 *
 	 * @example
 	 * ```typescript
+	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 *
 	 * @component()
-	 * class Foo extends iBlock {
+	 * class bExample extends iBlock {
 	 *   @prop({type: Number})
 	 *   bla!: number;
 	 *
@@ -31,13 +34,17 @@ export interface PropOptions<T = unknown> {
 	type?: PropType<T>;
 
 	/**
-	 * Should or not the property has always a value
-	 * @default `true`
+	 * By default, all component props must be value-initialized.
+	 * The values are either passed explicitly when a component is called, or are taken from the default values.
+	 * If you set the `required` option to false, then the prop can be non-initialized.
 	 *
+	 * @default `true`
 	 * @example
 	 * ```typescript
+	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 *
 	 * @component()
-	 * class Foo extends iBlock {
+	 * class bExample extends iBlock {
 	 *   @prop({required: false})
 	 *   bla?: number;
 	 *
@@ -49,63 +56,144 @@ export interface PropOptions<T = unknown> {
 	required?: boolean;
 
 	/**
-	 * Default value for the property
+	 * This option allows you to set the default value of the prop.
+	 * But using it, as a rule, is not explicitly required, since the default value can be passed through
+	 * the native syntax of class properties.
+	 *
+	 * Note that if the default value is set using class property syntax, then it is a prototype, not a real value.
+	 * That is, when set to each new instance, it will be cloned using `Object.fastClone`.
+	 * If this behavior does not suit you, then pass the value explicitly via `default`.
+	 *
+	 * Also, you can pass the default value as a function.
+	 * It will be called, and its result will become the default value.
+	 * Note that if your prop type is `Function`, then the default value will be treated "as is".
 	 *
 	 * @example
 	 * ```typescript
-	 * @component()
-	 * class Foo extends iBlock {
-	 *   @prop({default: 1})
-	 *   bla!: number;
+	 * import iBlock, { component, prop } from 'super/i-block/i-block';
 	 *
+	 * @component()
+	 * class bExample extends iBlock {
 	 *   @prop()
-	 *   baz: number = 0;
+	 *   bla: number = 0;
+	 *
+	 *   @prop({default: 1})
+	 *   baz!: number;
+	 *
+	 *   @prop({default: Math.random})
+	 *   hashCode!: number;
 	 * }
 	 * ```
 	 */
-	default?: T | null | undefined | (() => T | null | undefined);
+	default?: Nullable<T> | (() => Nullable<T>);
 
 	/**
-	 * If false, the property can't work within functional or flyweight components
-	 * @default `true`
-	 */
-	functional?: boolean;
-
-	/**
-	 * Property validator
+	 * A function to check the passed value for compliance with the requirements.
+	 * Use it if you want to impose additional checks besides checking the prop type.
 	 *
 	 * @param value
-	 *
 	 * @example
 	 * ```typescript
+	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 *
 	 * @component()
-	 * class Foo extends iBlock {
-	 *   @prop({type: Number, validator: (v) => v > 0}})
+	 * class bExample extends iBlock {
+	 *   @prop({type: Number, validator: Number.isPositive})
 	 *   bla!: number;
 	 * }
 	 * ```
 	 */
 	validator?(value: T): boolean;
+
+	/**
+	 * If false, the prop can't be passed to a functional component
+	 * @default `true`
+	 */
+	functional?: boolean;
 }
 
 export interface DecoratorProp<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
-	> extends PropOptions {
+> extends PropOptions {
 	/**
-	 * If true, then the property always uses own default property when it is necessary
+	 * If true, the prop always uses its own default value when needed.
+	 * In fact, this option is used when the `defaultProps` property is set to false on the class being described,
+	 * and we want to cancel this behaviour for a particular prop.
+	 *
 	 * @default `false`
 	 */
 	forceDefault?: boolean;
 
 	/**
-	 * Watcher for changes of the property
+	 * A watcher or a list of watchers for the current prop.
+	 * The watcher can be defined as a component method to invoke, callback function, or watch handle.
+	 *
+	 * The `core/watch` module is used to make objects watchable.
+	 * Therefore, for more information, please refer to its documentation.
+	 *
+	 * @example
+	 * ```typescript
+	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
+	 *   @prop({watch: [
+	 *     'onIncrement',
+	 *
+	 *     (ctx, val, oldVal, info) =>
+	 *       console.log(val, oldVal, info),
+	 *
+	 *     // Also, see core/object/watch
+	 *     {
+	 *       // If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+	 *       provideArgs: false,
+	 *
+	 *       // How the event handler should be called:
+	 *       //
+	 *       // 1. `'post'` - the handler will be called on the next tick after the mutation and
+	 *       //    guaranteed after updating all tied templates;
+	 *       //
+	 *       // 2. `'pre'` - the handler will be called on the next tick after the mutation and
+	 *       //    guaranteed before updating all tied templates;
+	 *       //
+	 *       // 3. `'sync'` - the handler will be invoked immediately after each mutation.
+	 *       flush: 'sync',
+	 *
+	 *       // Can define as a function too
+	 *       handler: 'onIncrement'
+	 *     }
+	 *   ]})
+	 *
+	 *   i: number = 0;
+	 *
+	 *   onIncrement(val, oldVal, info) {
+	 *     console.log(val, oldVal, info);
+	 *   }
+	 * }
+	 * ```
 	 */
 	watch?: DecoratorFieldWatcher<CTX, A, B>;
 
 	/**
-	 * Additional information about the property
+	 * A dictionary with some extra information of the prop.
+	 * You can access this information using `meta.props`.
+	 *
+	 * ```typescript
+	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
+	 *   @prop({default: Math.random, meta: {debug: true}})
+	 *   hashCode!: number;
+	 *
+	 *   created() {
+	 *     // {debug: true}
+	 *     console.log(this.meta.props.hashCode.meta);
+	 *   }
+	 * }
+	 * ```
 	 */
 	meta?: Dictionary;
 }
