@@ -73,9 +73,10 @@ class bExample extends iBlock {
 }
 ```
 
-Note that the default value provided is a prototype, not a real value. That is, when set to each new instance,
-it will be cloned using `Object.fastClone`. If this behavior does not suit you, then use the init option and pass the
-initializer function.
+Note that if the default value is set using class property syntax, then it is a prototype, not a real value.
+That is, when set to each new instance, it will be cloned using `Object.fastClone`.
+If this behavior does not suit you, then pass the value explicitly via `default` or using the `init` option and
+an initializer function.
 
 ```typescript
 import iBlock, { component, field } from 'super/i-block/i-block';
@@ -87,8 +88,12 @@ class bExample extends iBlock {
   body: Element = document.body;
 
   // All fine
-  @field(() => document.body)
+  @field({default: document.body})
   validBody!: Element;
+
+  // All fine
+  @field(() => document.body)
+  validBody2!: Element;
 }
 ```
 
