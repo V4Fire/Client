@@ -9,8 +9,9 @@
  */
 
 import * as c from 'core/component/const';
+
 import { attachTemplatesToMeta } from 'core/component/meta';
-import { createVirtualContext, initComponentVNode } from 'core/component/functional';
+import { createVirtualContext } from 'core/component/functional';
 
 import type {
 
@@ -52,7 +53,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
 			[name] = args,
-			{supports, r} = this.$renderEngine;
+			{supports} = this.$renderEngine;
 
 		const
 			supportFunctionalComponents = !supports.regular || supports.functional;
@@ -62,23 +63,29 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 				component = registerComponent(name);
 
 			if (component?.params.functional === true) {
-				// const
-				// 	{componentName} = component;
-				//
-				// if (c.componentRenderFactories[componentName] == null) {
-				// 	attachTemplatesToMeta(component, TPLS[componentName]);
-				// }
-				//
-				// const virtualCtx = createVirtualContext(component, {
-				// 	parent: this,
-				// 	props: args[1],
-				// 	slots: args[2]
-				// });
-				//
-				// const vnode = virtualCtx.render(virtualCtx, []);
+				const
+					{componentName} = component;
 
-				console.log(args);
-				return original.apply(null, args);
+				if (c.componentRenderFactories[componentName] == null) {
+					attachTemplatesToMeta(component, TPLS[componentName]);
+				}
+
+				const virtualCtx = createVirtualContext(component, {
+					parent: this,
+					props: args[1],
+					slots: args[2]
+				});
+
+				const
+					vnode: VNode = original.apply(null, args),
+					functionalVNode = virtualCtx.render(virtualCtx, []);
+
+				vnode.type = functionalVNode.type;
+				vnode.props = functionalVNode.props;
+				vnode.children = functionalVNode.children;
+				vnode.dynamicChildren = functionalVNode.dynamicChildren;
+
+				return vnode;
 			}
 		}
 
