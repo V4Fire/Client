@@ -21,10 +21,7 @@ import {
 	prop as propDecorator,
 	field as fieldDecorator,
 	system as systemDecorator,
-	watch as watchDecorator,
-
-	DecoratorMethod,
-	DecoratorComponentAccessor
+	watch as watchDecorator
 
 } from 'core/component/decorators';
 

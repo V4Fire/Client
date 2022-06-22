@@ -667,8 +667,14 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Link to the component root
 	 */
 	get r(): this['$root'] {
-		const r = this.$root;
-		return r.unsafe.$remoteParent?.$root ?? r;
+		const
+			r = this.$root;
+
+		if ('$remoteParent' in r.unsafe) {
+			return r.unsafe.$remoteParent!.$root;
+		}
+
+		return r;
 	}
 
 	/**
@@ -2380,14 +2386,6 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Factory to create listeners from internal hook events
-	 * @param hook - hook name to listen
-	 */
-	protected createInternalHookListener(hook: string): Function {
-		return (...args) => (<Function>this[`on-${hook}-hook`.camelize(false)]).call(this, ...args);
-	}
-
-	/**
 	 * Handler: `callChild` event
 	 * @param e
 	 */
@@ -2397,77 +2395,6 @@ export default abstract class iBlock extends ComponentInterface {
 			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
 		) {
 			return e.action.call(this);
-		}
-	}
-
-	/**
-	 * Hook handler: the component has been mounted
-	 * @emits `mounted(el: Element)`
-	 */
-	@hook('mounted')
-	protected onMounted(): void {
-		this.emit('mounted', this.$el);
-	}
-
-	/**
-	 * Hook handler: the component has been created
-	 * (only for functional components)
-	 */
-	protected onCreatedHook(): void {
-		init.beforeMountState(this);
-	}
-
-	/**
-	 * Hook handler: the component has been mounted
-	 * (only for functional components)
-	 */
-	protected onMountedHook(): void {
-		init.mountedState(this);
-	}
-
-	/**
-	 * Hook handler: the component has been updated
-	 * (only for functional components)
-	 */
-	protected async onUpdatedHook(): Promise<void> {
-		try {
-			await this.nextTick({label: $$.onUpdateHook});
-
-			this.onCreatedHook();
-			this.onMountedHook();
-
-			if (this.$normalParent != null) {
-				resolveRefs(this.$normalParent);
-			}
-
-		} catch (err) {
-			stderr(err);
-		}
-	}
-
-	/**
-	 * Hook handler: the component has been unmounted
-	 * (only for functional components)
-	 */
-	protected onUnmountedHook(): void {
-		const
-			parent = this.$normalParent;
-
-		const needImmediateDestroy =
-			parent == null ||
-			parent.componentStatus === 'destroyed' ||
-			parent.r === parent;
-
-		if (needImmediateDestroy) {
-			this.$destroy();
-
-		} else {
-			this.async.on(parent, 'on-component-hook:before-destroy', this.$destroy.bind(this), {
-				label: $$.onUnbindHook,
-				group: ':zombie'
-			});
-
-			this.async.clearAll().locked = true;
 		}
 	}
 

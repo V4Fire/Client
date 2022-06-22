@@ -173,10 +173,15 @@
 
 		'v-hook': "!isVirtualTpl && isFunctional ?" +
 			"{" +
-				"created: createInternalHookListener('created')," +
-				"mounted: createInternalHookListener('mounted')," +
-				"updated: createInternalHookListener('updated')," +
-				"unmounted: createInternalHookListener('unmounted')" +
+				"created      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'created'      )," +
+				"beforeMount  : $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeMount'  )," +
+				"mounted      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'mounted'      )," +
+				"beforeUpdate : $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeUpdate' )," +
+				"updated      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'updated'      )," +
+				"beforeUpdate : $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeUpdate' )," +
+				"updated      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'updated'      )," +
+				"beforeUnmount: $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeDestroy')," +
+				"unmounted    : $emit.bind(self, '[[COMPONENT_HOOK]]', 'destroyed'    )"  +
 			"} :" +
 
 			"null"
