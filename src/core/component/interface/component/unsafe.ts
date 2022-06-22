@@ -107,16 +107,4 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	deactivate: CTX['deactivate'];
-
-	// @ts-ignore (access)
-	onCreatedHook: CTX['onCreatedHook'];
-
-	// @ts-ignore (access)
-	onMountedHook: CTX['onMountedHook'];
-
-	// @ts-ignore (access)
-	onUpdatedHook: CTX['onUpdatedHook'];
-
-	// @ts-ignore (access)
-	onUnmountedHook: CTX['onUnmountedHook'];
 }

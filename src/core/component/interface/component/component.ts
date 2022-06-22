@@ -16,7 +16,7 @@ eslint-disable
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb } from 'core/async';
 
-import type { Slots, ComponentOptions } from 'core/component/engines';
+import type { VNode, Slots, ComponentOptions } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
 
 import type { Hook } from 'core/component/interface/lc';
@@ -271,9 +271,21 @@ export abstract class ComponentInterface {
 	abstract getComponentInfo?(): Dictionary;
 
 	/**
+	 * The component render function
+	 *
+	 * @param ctx
+	 * @param cache
+	 */
+	render(ctx: ComponentInterface, cache: unknown[]): VNode {
+		return Object.throw();
+	}
+
+	/**
 	 * Forces the component to re-render
 	 */
-	$forceUpdate(): void {}
+	$forceUpdate(): void {
+		return Object.throw();
+	}
 
 	/**
 	 * Executes the specified function on the next render tick
@@ -285,12 +297,16 @@ export abstract class ComponentInterface {
 	 * Returns a promise that will be resolved on the next render tick
 	 */
 	$nextTick(): Promise<void>;
-	$nextTick(): CanPromise<void> {}
+	$nextTick(): CanPromise<void> {
+		return Object.throw();
+	}
 
 	/**
 	 * Destroys the component
 	 */
-	protected $destroy(): void {}
+	protected $destroy(): void {
+		return Object.throw();
+	}
 
 	/**
 	 * Sets a new reactive value to the specified property of the passed object
@@ -300,7 +316,7 @@ export abstract class ComponentInterface {
 	 * @param value
 	 */
 	protected $set<T = unknown>(object: object, key: unknown, value: T): T {
-		return value;
+		return Object.throw();
 	}
 
 	/**
@@ -309,7 +325,9 @@ export abstract class ComponentInterface {
 	 * @param object
 	 * @param key
 	 */
-	protected $delete(object: object, key: unknown): void {}
+	protected $delete(object: object, key: unknown): void {
+		Object.throw();
+	}
 
 	/**
 	 * Sets a watcher to a component/object property by the specified path
@@ -360,7 +378,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	protected $watch(): Nullable<Function> {
-		return null;
+		return Object.throw();
 	}
 
 	/**
@@ -370,7 +388,7 @@ export abstract class ComponentInterface {
 	 * @param handler
 	 */
 	protected $on<E = unknown, R = unknown>(event: CanArray<string>, handler: ProxyCb<E, R, this>): this {
-		return this;
+		return Object.throw();
 	}
 
 	/**
@@ -380,7 +398,7 @@ export abstract class ComponentInterface {
 	 * @param handler
 	 */
 	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): this {
-		return this;
+		return Object.throw();
 	}
 
 	/**
@@ -390,7 +408,7 @@ export abstract class ComponentInterface {
 	 * @param [handler]
 	 */
 	protected $off(event?: CanArray<string>, handler?: Function): this {
-		return this;
+		return Object.throw();
 	}
 
 	/**
@@ -400,6 +418,6 @@ export abstract class ComponentInterface {
 	 * @param args
 	 */
 	protected $emit(event: string, ...args: unknown[]): this {
-		return this;
+		return Object.throw();
 	}
 }
