@@ -24,14 +24,14 @@ ComponentEngine.directive('image', {
 			return;
 		}
 
-		if (vnode.fakeContext != null) {
+		if (vnode.virtualContext != null) {
 			if (Object.isPlainObject(value)) {
-				value.ctx = value.ctx ?? vnode.fakeContext;
+				value.ctx = value.ctx ?? vnode.virtualContext;
 
 			} else {
 				value = {
 					src: value,
-					ctx: vnode.fakeContext
+					ctx: vnode.virtualContext
 				};
 			}
 		}

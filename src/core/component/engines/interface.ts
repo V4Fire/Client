@@ -29,7 +29,7 @@ export interface VNode<
 	HostElement = RendererElement,
 	ExtraProps = {[key: string]: any}
 > extends SuperVNode<HostNode, HostElement, ExtraProps> {
-	fakeContext?: ComponentInterface;
+	virtualContext?: ComponentInterface;
 }
 
 export interface ResolveDirective<E = Element> {

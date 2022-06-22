@@ -61,8 +61,8 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 				originalCreated.apply(this, args);
 			}
 
-			if (vnode.fakeContext != null) {
-				vnode.fakeContext.unsafe.$on('component-hook:before-destroy', () => {
+			if (vnode.virtualContext != null) {
+				vnode.virtualContext.unsafe.$on('component-hook:before-destroy', () => {
 					originalUnmounted.apply(this, args);
 				});
 			}

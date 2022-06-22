@@ -28,7 +28,7 @@ ComponentEngine.directive('resize-observer', {
 		}
 
 		Array.concat([], val).forEach((options) => {
-			options = normalizeOptions(options, vnode.fakeContext);
+			options = normalizeOptions(options, vnode.virtualContext);
 			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, options));
 		});
 	},
@@ -53,7 +53,7 @@ ComponentEngine.directive('resize-observer', {
 				return;
 			}
 
-			opts = normalizeOptions(opts, vnode.fakeContext);
+			opts = normalizeOptions(opts, vnode.virtualContext);
 			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, opts));
 		});
 	},

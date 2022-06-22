@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Removed the `Vue.js@2` engine
+* Renamed the `fakeContext` property to `virtualContext`
 
 #### :rocket: New Feature
 
