@@ -10,9 +10,3 @@ import symbolGenerator from 'core/symbol';
 
 export const
 	$$ = symbolGenerator();
-
-export const componentOpts = [
-	'filters',
-	'directives',
-	'components'
-];

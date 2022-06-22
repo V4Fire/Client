@@ -8,7 +8,7 @@
 
 import { $$ } from 'core/component/functional/const';
 
-import * as init from 'core/component/construct';
+import * as init from 'core/component/init';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
@@ -22,8 +22,5 @@ export function destroyComponent(component: ComponentInterface): void {
 
 	component[$$.destroyed] = true;
 	init.beforeDestroyState(component);
-
-	if (!component.isFlyweight) {
-		init.destroyedState(component);
-	}
+	init.destroyedState(component);
 }

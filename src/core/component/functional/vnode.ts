@@ -6,15 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as init from 'core/component/construct';
+import * as init from 'core/component/init';
 
 import type { VNode } from 'core/component/engines';
-import type { RenderContext } from 'core/component/render';
 
 import { $$ } from 'core/component/functional/const';
 
 import type { ComponentField, ComponentInterface } from 'core/component/interface';
-import type { FlyweightVNode } from 'core/component/functional/interface';
+import type { FunctionalVNode } from 'core/component/functional/interface';
 
 /**
  * Initializes a component from the specified VNode.
@@ -22,37 +21,17 @@ import type { FlyweightVNode } from 'core/component/functional/interface';
  *
  * @param vnode
  * @param component - component instance
- * @param renderCtx - render context
  */
 export function initComponentVNode(
 	vnode: VNode,
-	component: ComponentInterface,
-	renderCtx: RenderContext
-): FlyweightVNode {
+	component: ComponentInterface
+): FunctionalVNode {
 	const
-		{unsafe} = component,
-		{data} = renderCtx;
+		{unsafe} = component;
 
 	const flyweightVNode = Object.assign(vnode, {fakeInstance: component});
-	component.$renderEngine.patchVNode(flyweightVNode, component, renderCtx);
 
-	// Attach component event listeners
-	if (data.on != null) {
-		for (let o = data.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				fns = Array.concat([], o[key]);
-
-			for (let i = 0; i < fns.length; i++) {
-				const
-					fn = fns[i];
-
-				if (Object.isFunction(fn)) {
-					unsafe.$on(key, fn);
-				}
-			}
-		}
-	}
+	return flyweightVNode;
 
 	const originalOnBindHook = unsafe.onBindHook;
 	unsafe.onBindHook = onBindHook;

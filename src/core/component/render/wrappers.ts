@@ -8,6 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import * as c from 'core/component/const';
+import { attachTemplatesToMeta } from 'core/component/meta';
+import { createVirtualContext, initComponentVNode } from 'core/component/functional';
+
 import type {
 
 	resolveComponent,
@@ -27,32 +31,64 @@ import type {
 
 } from 'core/component/engines';
 
-import { registerComponent } from 'core/component/register';
+import { registerComponent } from 'core/component/init';
 import { interpolateStaticAttrs } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
-	return Object.cast(function createVNode(this: ComponentInterface) {
-		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
+	return Object.cast(function createVNode(this: ComponentInterface, ...args: Parameters<T>) {
+		return interpolateStaticAttrs.call(this, original.apply(null, args));
 	});
 }
 
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
-	return Object.cast(function createElementVNode(this: ComponentInterface) {
-		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
+	return Object.cast(function createElementVNode(this: ComponentInterface, ...args: Parameters<T>) {
+		return interpolateStaticAttrs.call(this, original.apply(null, args));
 	});
 }
 
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
-	return Object.cast(function wrapCreateBlock(this: ComponentInterface) {
-		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
+	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
+		const
+			[name] = args,
+			{supports, r} = this.$renderEngine;
+
+		const
+			supportFunctionalComponents = !supports.regular || supports.functional;
+
+		if (Object.isString(name) && supportFunctionalComponents) {
+			const
+				component = registerComponent(name);
+
+			if (component?.params.functional === true) {
+				// const
+				// 	{componentName} = component;
+				//
+				// if (c.componentRenderFactories[componentName] == null) {
+				// 	attachTemplatesToMeta(component, TPLS[componentName]);
+				// }
+				//
+				// const virtualCtx = createVirtualContext(component, {
+				// 	parent: this,
+				// 	props: args[1],
+				// 	slots: args[2]
+				// });
+				//
+				// const vnode = virtualCtx.render(virtualCtx, []);
+
+				console.log(args);
+				return original.apply(null, args);
+			}
+		}
+
+		return interpolateStaticAttrs.call(this, original.apply(null, args));
 	});
 }
 
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
-	return Object.cast(function createElementBlock(this: ComponentInterface) {
-		return interpolateStaticAttrs.call(this, original.apply(null, Object.cast(arguments)));
+	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
+		return interpolateStaticAttrs.call(this, original.apply(null, args));
 	});
 }
 
