@@ -37,13 +37,13 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 		return;
 	}
 
-	const renderObj = componentRenderFactories[meta.componentName] ?? tpls.index();
-	componentRenderFactories[meta.componentName] = renderObj;
+	const renderFactory = componentRenderFactories[meta.componentName] ?? tpls.index();
+	componentRenderFactories[meta.componentName] = renderFactory;
 
 	methods.render = {
 		wrapper: true,
 		watchers: {},
 		hooks: {},
-		fn: renderObj
+		fn: renderFactory
 	};
 }
