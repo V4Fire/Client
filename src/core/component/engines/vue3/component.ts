@@ -12,7 +12,6 @@ import * as init from 'core/component/init';
 import { beforeRenderHooks } from 'core/component/const';
 
 import { fillMeta } from 'core/component/meta';
-import { implementComponentForceUpdateAPI } from 'core/component/render';
 import { getComponentContext } from 'core/component/context';
 
 import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
@@ -85,7 +84,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			});
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});
-			implementComponentForceUpdateAPI(ctx, this.$forceUpdate.bind(this));
 		},
 
 		created(): void {

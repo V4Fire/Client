@@ -11,6 +11,5 @@
  * @packageDocumentation
  */
 
-export * from 'core/component/render/api';
 export * from 'core/component/render/wrappers';
 export * from 'core/component/render/helpers';
