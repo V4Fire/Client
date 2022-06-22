@@ -41,11 +41,22 @@ class VDOM extends Friend {
 	constructor(component: iBlock) {
 		super(component);
 
-		this.meta.hooks.mounted.push({
-			fn: () => {
-				this.setInstance = this.ctx.$renderEngine.r.withAsyncContext.call(this.ctx, Promise.resolve.bind(Promise))[1];
-			}
-		});
+		if (this.ctx.isFunctional) {
+			Object.defineProperty(this, 'setInstance', {
+				configurable: true,
+				enumerable: true,
+				get() {
+					return this.ctx.$normalParent?.unsafe.vdom.setInstance;
+				}
+			});
+
+		} else {
+			this.meta.hooks.mounted.push({
+				fn: () => {
+					this.setInstance = this.ctx.$renderEngine.r.withAsyncContext.call(this.ctx, Promise.resolve.bind(Promise))[1];
+				}
+			});
+		}
 	}
 }
 
