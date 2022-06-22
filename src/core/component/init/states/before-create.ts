@@ -56,7 +56,10 @@ export function beforeCreateState(
 	unsafe.$async = new Async(component);
 
 	const
-		parent = unsafe.$parent,
+		root = unsafe.$root,
+		parent = unsafe.$parent;
+
+	const
 		isFunctional = meta.params.functional === true;
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -65,14 +68,14 @@ export function beforeCreateState(
 			configurable: true,
 			enumerable: true,
 			writable: true,
-			value: unsafe.$root.unsafe
+			value: root.unsafe
 		});
 
 		Object.defineProperty(unsafe, '$parent', {
 			configurable: true,
 			enumerable: true,
 			writable: true,
-			value: unsafe.$root.$remoteParent
+			value: root.$remoteParent
 		});
 	}
 

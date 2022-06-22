@@ -14,7 +14,7 @@ import { runHook } from 'core/component/hook';
 import type { ComponentInterface, Hook } from 'core/component/interface';
 
 const
-	remoteActivationLabel = Symbol('Remote activation label');
+	remoteActivationLabel = Symbol('The remote activation label');
 
 /**
  * Initializes the "created" state to the specified component instance
