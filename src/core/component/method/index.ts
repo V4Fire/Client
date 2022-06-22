@@ -38,6 +38,10 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 
 		component[key] = method.fn.bind(component);
 	}
+
+	if (isFunctional) {
+		component.render = Object.cast(meta.component.render);
+	}
 }
 
 /**
