@@ -60,8 +60,11 @@ export function implementEventEmitterAPI(component: object): void {
 		enumerable: false,
 		writable: false,
 
-		value(event, ...args) {
-			nativeEmit?.(event, ...args);
+		value(event: string, ...args) {
+			if (!event.startsWith('[[')) {
+				nativeEmit?.(event, ...args);
+			}
+
 			$e.emit(event, ...args);
 			return this;
 		}
