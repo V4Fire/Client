@@ -24,7 +24,10 @@
 				opt.ifOnce('opened', m.opened === 'true') && delete watchModsStore.opened
 			.
 
-				< :section.&__window ref = window
+				< :section.&__window &
+					ref = window |
+					v-aria:dialog.#title
+				.
 					- if thirdPartySlots
 						< template v-if = slotName
 							: isSlot = /^windowSlot[A-Z]/
@@ -36,7 +39,10 @@
 
 					< template v-else
 						+= self.slot()
-							< h1.&__title v-if = title || vdom.getSlot('title')
+							< h1.&__title &
+								v-if = title || vdom.getSlot('title') |
+								:id = dom.getId('title')
+							.
 								+= self.slot('title', {':title': 'title'})
 									- block title
 										{{ title }}
