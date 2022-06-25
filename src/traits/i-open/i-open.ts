@@ -135,6 +135,20 @@ export default abstract class iOpen {
 	}
 
 	/**
+	 * Checks if the component realize current trait
+	 *
+	 * @param obj
+	 */
+	static is(obj: unknown): obj is iOpen {
+		if (Object.isPrimitive(obj)) {
+			return true;
+		}
+
+		const dict = Object.cast<Dictionary>(obj);
+		return Object.isFunction(dict.open) && Object.isFunction(dict.close);
+	}
+
+	/**
 	 * Opens the component
 	 * @param args
 	 */

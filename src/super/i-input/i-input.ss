@@ -36,7 +36,7 @@
 		 *   *) [type=nativeInputType] - value of the `:type` attribute
 		 *
 		 *   *) [autofocus] - value of the `:autofocus` attribute
-		 *   *) [tabIndex] - value of the `:autofocus` attribute
+		 *   *) [tabIndex] - value of the `:tabindex` attribute
 		 *
 		 *   *) [focusHandler] - value of the `@focus` attribute
 		 *   *) [blurHandler] - value of the `@blur` attribute
