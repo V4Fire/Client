@@ -11,8 +11,5 @@
  * @packageDocumentation
  */
 
-export * from 'core/component/functional/const';
 export * from 'core/component/functional/context';
-export * from 'core/component/functional/vnode';
-export * from 'core/component/functional/helpers';
 export * from 'core/component/functional/interface';

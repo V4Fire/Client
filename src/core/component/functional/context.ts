@@ -8,15 +8,13 @@
 
 import * as init from 'core/component/init';
 
-import { resolveRefs } from 'core/component/ref';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 
+import { initDynamicComponentLifeCycle } from 'core/component/functional/helpers';
+
 import type { ComponentInterface } from 'core/component/interface';
 import type { VirtualContextOptions } from 'core/component/functional/interface';
-
-const
-	componentInitLabel = Symbol('The component initialization label');
 
 /**
  * Creates a virtual context for the passed functional component
@@ -109,17 +107,17 @@ export function createVirtualContext(
 		meta,
 		instance: Object.cast(meta.instance),
 
+		$props,
+		$attrs,
+
+		$refs: {},
+		$slots: slots ?? {},
+
 		$parent: parent,
 		$root: parent.$root,
 
 		$options,
 		$renderEngine: parent.$renderEngine,
-
-		$refs: {},
-		$slots: slots ?? {},
-
-		$props,
-		$attrs,
 
 		$nextTick(cb?: AnyFunction): CanVoid<Promise<void>> {
 			if (cb != null) {
@@ -159,58 +157,5 @@ export function createVirtualContext(
 	}
 
 	init.beforeDataCreateState(virtualCtx, {tieFields: true});
-
-	virtualCtx.$on('[[COMPONENT_HOOK]]', async (hook) => {
-		switch (hook) {
-			case 'beforeUpdate':
-				init.createdState(virtualCtx);
-				break;
-
-			case 'updated': {
-				await virtualCtx.$async.promise(virtualCtx.$nextTick(), {
-					label: componentInitLabel
-				});
-
-				init.mountedState(virtualCtx);
-
-				const
-					parent = virtualCtx.$normalParent;
-
-				if (parent != null) {
-					resolveRefs(parent);
-				}
-
-				break;
-			}
-
-			case 'beforeDestroy': {
-				// const
-				// 	parent = virtualCtx.$normalParent;
-				//
-				// const needImmediateDestroy =
-				// 	parent == null ||
-				// 	parent.componentStatus === 'destroyed' ||
-				// 	parent.$root === parent;
-				//
-				// if (needImmediateDestroy) {
-				// 	this.$destroy();
-				//
-				// } else {
-				// 	virtualCtx.async.on(parent, 'on-component-hook:before-destroy', virtualCtx.$destroy.bind(virtualCtx), {
-				// 		label: $$.onUnbindHook,
-				// 		group: ':zombie'
-				// 	});
-				//
-				// 	virtualCtx.async.clearAll().locked = true;
-				// }
-
-				break;
-			}
-
-			default:
-				init[`${hook}State`](virtualCtx);
-		}
-	});
-
-	return virtualCtx;
+	return initDynamicComponentLifeCycle(virtualCtx);
 }
