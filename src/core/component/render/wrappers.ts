@@ -53,7 +53,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
 			[name] = args,
-			{supports} = this.$renderEngine;
+			{supports, r} = this.$renderEngine;
 
 		const
 			supportFunctionalComponents = !supports.regular || supports.functional;
@@ -84,6 +84,32 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 				vnode.props = functionalVNode.props;
 				vnode.children = functionalVNode.children;
 				vnode.dynamicChildren = functionalVNode.dynamicChildren;
+
+				vnode.dirs = functionalVNode.dirs ?? [];
+				vnode.dirs.push({
+					dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
+
+					modifiers: {},
+					arg: undefined,
+
+					value: {
+						created: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+						beforeMount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
+						mounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+						beforeUpdate: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
+						updated: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
+						beforeUnmount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
+						unmounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+					},
+
+					oldValue: undefined,
+					instance: Object.cast(virtualCtx)
+				});
+
+				functionalVNode.props = {};
+				functionalVNode.dirs = null;
+				functionalVNode.children = [];
+				functionalVNode.dynamicChildren = [];
 
 				return vnode;
 			}

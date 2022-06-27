@@ -167,24 +167,8 @@
 
 	- rootAttrs = { &
 		'class': 'i-block-helper',
-
 		'data-cached-class-component-id': '',
-		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)',
-
-		'v-hook': "!isVirtualTpl && isFunctional ?" +
-			"{" +
-				"created      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'created'      )," +
-				"beforeMount  : $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeMount'  )," +
-				"mounted      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'mounted'      )," +
-				"beforeUpdate : $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeUpdate' )," +
-				"updated      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'updated'      )," +
-				"beforeUpdate : $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeUpdate' )," +
-				"updated      : $emit.bind(self, '[[COMPONENT_HOOK]]', 'updated'      )," +
-				"beforeUnmount: $emit.bind(self, '[[COMPONENT_HOOK]]', 'beforeDestroy')," +
-				"unmounted    : $emit.bind(self, '[[COMPONENT_HOOK]]', 'destroyed'    )"  +
-			"} :" +
-
-			"null"
+		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)'
 	} .
 
 	- if skeletonMarker
