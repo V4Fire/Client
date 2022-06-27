@@ -29,10 +29,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	meta: CTX['meta'];
 
 	// Don't use referring from CTX for primitive types, because it breaks TS
-	renderCounter: number;
-
-	// @ts-ignore (access)
-	$componentId: CTX['$componentId'];
+	$renderCounter: number;
 
 	// @ts-ignore (access)
 	$fields: CTX['$fields'];

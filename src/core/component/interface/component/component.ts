@@ -175,13 +175,7 @@ export abstract class ComponentInterface {
 	/**
 	 * A number that is incremented each time the component is re-rendered
 	 */
-	protected abstract renderCounter: number;
-
-	/**
-	 * A temporary string identifier of the component
-	 * (only for functional components)
-	 */
-	protected readonly $componentId?: string;
+	protected readonly $renderCounter!: number;
 
 	/**
 	 * A dictionary with the watchable component properties that can force re-rendering
