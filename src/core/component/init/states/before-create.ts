@@ -21,6 +21,9 @@ import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/m
 import { runHook } from 'core/component/hook';
 import { implementEventEmitterAPI } from 'core/component/event';
 
+import { beforeDestroyState } from 'core/component/init/states/before-destroy';
+import { destroyedState } from 'core/component/init/states/destroyed';
+
 import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
 import type { InitBeforeCreateStateOptions } from 'core/component/init/interface';
 
@@ -42,25 +45,38 @@ export function beforeCreateState(
 	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(component);
 
 	unsafe.unsafe = unsafe;
-	unsafe.meta = meta;
-
 	unsafe.componentName = meta.componentName;
+
+	unsafe.meta = meta;
 	unsafe.instance = Object.cast(meta.instance);
 
 	unsafe.$fields = {};
 	unsafe.$systemFields = {};
 	unsafe.$modifiedFields = {};
 	unsafe.$refHandlers = {};
+	unsafe.$renderCounter = 0;
 
 	unsafe.async = new Async(component);
 	unsafe.$async = new Async(component);
 
+	Object.defineProperty(unsafe, '$destroy', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: () => {
+			if (component.hook !== 'beforeDestroy' && component.hook !== 'destroyed') {
+				beforeDestroyState(component);
+			}
+
+			if (component.hook !== 'destroyed') {
+				destroyedState(component);
+			}
+		}
+	});
+
 	const
 		root = unsafe.$root,
 		parent = unsafe.$parent;
-
-	const
-		isFunctional = meta.params.functional === true;
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (parent != null && parent.componentName == null) {
@@ -124,6 +140,9 @@ export function beforeCreateState(
 		fakeHandler = () => undefined;
 
 	if (watchDependencies.size > 0) {
+		const
+			isFunctional = meta.params.functional === true;
+
 		const
 			watchSet = new Set<PropertyInfo>();
 
