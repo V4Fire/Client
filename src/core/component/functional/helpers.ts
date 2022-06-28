@@ -14,6 +14,13 @@ import type { ComponentInterface } from 'core/component/interface';
 const
 	componentInitLabel = Symbol('The component initialization label');
 
+/**
+ * Initializes the default component dynamic lifecycle handlers for the passed functional component.
+ * Also, the function adds the ability for the component to emit lifecycle events,
+ * such as `mounted` or `destroyed` hooks.
+ *
+ * @param component
+ */
 export function initDynamicComponentLifeCycle(component: ComponentInterface): ComponentInterface {
 	const
 		{unsafe} = component;
@@ -49,29 +56,7 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 			}
 
 			case 'beforeDestroy': {
-				const
-					parent = unsafe.$normalParent;
-
-				const needImmediateDestroy =
-					parent == null ||
-					parent.hook === 'beforeDestroy' ||
-					parent.hook === 'destroyed' ||
-					parent.$root === parent;
-
-				if (needImmediateDestroy) {
-					unsafe.$destroy();
-
-				} else {
-					const eventHandle = ['on-component-hook:before-destroy', unsafe.$destroy.bind(unsafe)] as const;
-					parent.unsafe.$once(...eventHandle);
-
-					unsafe.async.worker(() => parent.unsafe.$off(...eventHandle), {
-						group: ':zombie'
-					});
-
-					unsafe.async.clearAll().locked = true;
-				}
-
+				unsafe.$destroy();
 				break;
 			}
 
@@ -83,6 +68,12 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 	return component;
 }
 
+/**
+ * Overrides inheritable parameters to the given functional component context from the parent
+ *
+ * @param ctx
+ * @param parentCtx
+ */
 export function inheritContext(
 	ctx: ComponentInterface['unsafe'],
 	parentCtx: CanUndef<ComponentInterface['unsafe']>

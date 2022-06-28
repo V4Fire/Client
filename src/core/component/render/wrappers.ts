@@ -81,6 +81,8 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 					functionalVNode = virtualCtx.render(virtualCtx, []);
 
 				vnode.type = functionalVNode.type;
+				vnode.virtualComponent = virtualCtx;
+
 				vnode.props = functionalVNode.props;
 				vnode.children = functionalVNode.children;
 				vnode.dynamicChildren = functionalVNode.dynamicChildren;
@@ -115,7 +117,18 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			}
 		}
 
-		return interpolateStaticAttrs.call(this, original.apply(null, args));
+		const vnode = <VNode>interpolateStaticAttrs.call(
+			this,
+			original.apply(null, args)
+		);
+
+		Object.defineProperty(vnode, 'virtualComponent', {
+			configurable: true,
+			enumerable: true,
+			get: () => vnode.component?.['ctx']
+		});
+
+		return vnode;
 	});
 }
 
@@ -146,9 +159,21 @@ export function wrapRenderList<T extends typeof renderList>(original: T): T {
 }
 
 export function wrapWithDirectives<T extends typeof withDirectives>(original: T): T {
-	return Object.cast(function withDirectives(this: ComponentInterface, vnode: VNode, dirs: DirectiveArguments) {
+	return Object.cast(function withDirectives(
+		this: CanUndef<ComponentInterface>,
+		vnode: VNode,
+		dirs: DirectiveArguments
+	) {
 		const
 			resolvedDirs: DirectiveArguments = [];
+
+		if (this == null) {
+			Object.defineProperty(vnode, 'virtualComponent', {
+				configurable: true,
+				enumerable: true,
+				get: () => vnode.el?.component
+			});
+		}
 
 		for (let i = 0; i < dirs.length; i++) {
 			const

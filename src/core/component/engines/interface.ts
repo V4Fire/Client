@@ -30,7 +30,7 @@ export interface VNode<
 	ExtraProps = {[key: string]: any}
 > extends SuperVNode<HostNode, HostElement, ExtraProps> {
 	dynamicChildren?: VNode[];
-	virtualContext?: ComponentInterface;
+	virtualComponent?: ComponentInterface;
 }
 
 export interface ResolveDirective<E = Element> {
