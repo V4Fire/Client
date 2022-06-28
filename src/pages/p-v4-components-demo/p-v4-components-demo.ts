@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import { debounce } from 'core/functools/lazy';
+
 //#if demo
 import 'models/demo/session';
 //#endif
@@ -46,5 +48,10 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	protected mounted(): void {
 		console.timeEnd('Render');
 		console.timeEnd('Initializing');
+	}
+
+	@debounce(1000)
+	protected onInputChange(): void {
+		console.log('input change');
 	}
 }
