@@ -7,7 +7,7 @@
  */
 
 /**
- * A list of supported life-cycle component hooks
+ * A list of supported lifecycle component hooks
  */
 export type Hook =
 	'beforeRuntime' |

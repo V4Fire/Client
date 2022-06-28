@@ -229,8 +229,8 @@ export abstract class ComponentInterface {
 	protected readonly async!: Async<ComponentInterface>;
 
 	/**
-	 * An API to tie and control async operations
-	 * (this parameter is used by a render engine)
+	 * An API to tie and control async operations.
+	 * This API is used for protected/private consumers, such as directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
 
