@@ -10,7 +10,7 @@
 
 import * as c from 'core/component/const';
 
-import { attachTemplatesToMeta } from 'core/component/meta';
+import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 import { createVirtualContext } from 'core/component/functional';
 
 import type {
@@ -33,7 +33,7 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { interpolateStaticAttrs } from 'core/component/render/helpers';
+import { interpolateStaticAttrs, normalizeComponentAttrs } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -52,69 +52,77 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
-			[name] = args,
-			{supports, r} = this.$renderEngine;
+			[name, attrs] = args;
+
+		let
+			component: CanUndef<ComponentMeta>;
+
+		if (Object.isString(name)) {
+			component = registerComponent(name);
+
+		} else if (!Object.isPrimitive(name) && 'name' in name) {
+			component = registerComponent(name.name);
+		}
+
+		if (component == null) {
+			return original.apply(null, args);
+		}
+
+		normalizeComponentAttrs(attrs, component);
 
 		const
-			supportFunctionalComponents = !supports.regular || supports.functional;
+			{componentName, params} = component,
+			{supports, r} = this.$renderEngine;
 
-		if (Object.isString(name) && supportFunctionalComponents) {
-			const
-				component = registerComponent(name);
-
-			if (component?.params.functional === true) {
-				const
-					{componentName} = component;
-
-				if (c.componentRenderFactories[componentName] == null) {
-					attachTemplatesToMeta(component, TPLS[componentName]);
-				}
-
-				const virtualCtx = createVirtualContext(component, {
-					parent: this,
-					props: args[1],
-					slots: args[2]
-				});
-
-				const
-					vnode: VNode = original.apply(null, args),
-					functionalVNode = virtualCtx.render(virtualCtx, []);
-
-				vnode.type = functionalVNode.type;
-				vnode.virtualComponent = virtualCtx;
-
-				vnode.props = functionalVNode.props;
-				vnode.children = functionalVNode.children;
-				vnode.dynamicChildren = functionalVNode.dynamicChildren;
-
-				vnode.dirs = functionalVNode.dirs ?? [];
-				vnode.dirs.push({
-					dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
-
-					modifiers: {},
-					arg: undefined,
-
-					value: {
-						created: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
-						beforeMount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
-						mounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
-						beforeUpdate: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
-						updated: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-						beforeUnmount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
-						unmounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
-					},
-
-					oldValue: undefined,
-					instance: Object.cast(virtualCtx)
-				});
-
-				functionalVNode.props = {};
-				functionalVNode.dirs = null;
-				functionalVNode.children = [];
-				functionalVNode.dynamicChildren = [];
-
-				return vnode;
+		if ((!supports.regular || supports.functional) && params.functional === true) {
+			if (c.componentRenderFactories[componentName] == null) {
+				attachTemplatesToMeta(component, TPLS[componentName]);
 			}
+
+			const virtualCtx = createVirtualContext(component, {
+				parent: this,
+				props: args[1],
+				slots: args[2]
+			});
+
+			const
+				vnode: VNode = original.apply(null, args),
+				functionalVNode = virtualCtx.render(virtualCtx, []);
+
+			vnode.type = functionalVNode.type;
+			vnode.virtualComponent = virtualCtx;
+
+			vnode.props = functionalVNode.props;
+			vnode.children = functionalVNode.children;
+			vnode.dynamicChildren = functionalVNode.dynamicChildren;
+
+			vnode.dirs = functionalVNode.dirs ?? [];
+			vnode.dirs.push({
+				dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
+
+				modifiers: {},
+				arg: undefined,
+
+				value: {
+					created: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+					beforeMount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
+					mounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+					beforeUpdate: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
+					updated: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
+					beforeUnmount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
+					unmounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+				},
+
+				oldValue: undefined,
+				instance: Object.cast(virtualCtx)
+			});
+
+			functionalVNode.props = {};
+			functionalVNode.dirs = null;
+			functionalVNode.children = [];
+			functionalVNode.dynamicChildren = [];
+
+			return vnode;
 		}
 
 		const vnode = <VNode>interpolateStaticAttrs.call(

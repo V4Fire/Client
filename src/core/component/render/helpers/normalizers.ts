@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { ComponentMeta } from 'core/component/meta';
+
 /**
  * Normalizes the passed class attribute and returns the result
  * @param classValue
@@ -103,4 +105,41 @@ export function parseStringStyle(style: string): Dictionary<string> {
 	});
 
 	return res;
+}
+
+/**
+ * Normalizes the passed attributes using the specified component meta object
+ *
+ * @param attrs
+ * @param component
+ */
+export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: ComponentMeta): void {
+	const
+		{props, params: {deprecatedProps}} = component;
+
+	if (attrs == null) {
+		return;
+	}
+
+	for (let keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+		let
+			key = keys[i],
+			propKey = `${key}Prop`;
+
+		if (deprecatedProps != null) {
+			const
+				alternativeKey = deprecatedProps[key] ?? deprecatedProps[propKey] ?? key;
+
+			attrs[alternativeKey] = attrs[key];
+			delete attrs[key];
+
+			key = alternativeKey;
+			propKey = `${alternativeKey}Prop`;
+		}
+
+		if (propKey in props) {
+			attrs[propKey] = attrs[key];
+			delete attrs[key];
+		}
+	}
 }
