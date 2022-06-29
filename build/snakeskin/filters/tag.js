@@ -9,14 +9,11 @@
  */
 
 const
-	$C = require('collection.js');
-
-const
-	{isSvgRequire, isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
+	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
 
 module.exports = [
 	/**
-	 * Normalizes webpack SVG require functions
+	 * Normalizes Webpack SVG `require` attributes
 	 *
 	 * @param {string} name
 	 * @param {!Object} attrs
@@ -29,17 +26,17 @@ module.exports = [
 		const
 			src = attrs[':src'];
 
-		if (src && isSvgRequire.test(src[0])) {
+		if (src && /require\(.*?\.svg[\\"']+\)/.test(src[0])) {
 			src[0] += '.replace(/^"|"$/g, \'\')';
 		}
 	},
 
 	/**
-	 * Normalizes component attributes: adds memoization, expands aliases, etc.
+	 * Normalizes component attributes
 	 * @param {!Object} attrs
 	 */
 	function normalizeComponentAttrs({attrs}) {
-		$C(attrs).forEach((el, key) => {
+		Object.forEach(attrs, (el, key) => {
 			if (!isV4Prop.test(key)) {
 				return;
 			}

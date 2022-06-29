@@ -24,6 +24,9 @@ const
 	tagNameFilters = include('build/snakeskin/filters/tag-name'),
 	bemFilters = include('build/snakeskin/filters/bem');
 
+const
+	SMART_PROPS = Symbol('The component smart props');
+
 const bind = {
 	bind: [
 		(o) => o.getVar('$attrs'),
@@ -38,11 +41,14 @@ Snakeskin.importFilters({
 });
 
 function tagFilter({name, attrs = {}}) {
-	$C(tagFilters).forEach((filter) => {
-		filter({name, attrs});
-	});
+	Object.forEach(tagFilters, (filter) => filter({name, attrs}));
 
-	if (name !== 'component' && !attrs[':instance-of'] && !validators.blockName(name)) {
+	const isSimpleTag =
+		name !== 'component' &&
+		!attrs[':instance-of'] &&
+		!validators.blockName(name);
+
+	if (isSimpleTag) {
 		return;
 	}
 
@@ -59,11 +65,10 @@ function tagFilter({name, attrs = {}}) {
 
 	const
 		component = componentParams[componentName],
-		props = component ? component.props : Object.create(null);
+		smartProps = attrs[SMART_PROPS];
 
-	const
-		smartProps = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && component && component.functional,
-		funcMode = [attrs['v-func'], delete attrs['v-func']][0];
+	const funcDir = attrs['v-func']?.[0];
+	delete attrs['v-func'];
 
 	let
 		isFunctional = false;
@@ -71,16 +76,16 @@ function tagFilter({name, attrs = {}}) {
 	if (component && component.functional === true) {
 		isFunctional = true;
 
-	} else if (!funcMode) {
-		isFunctional = $C(smartProps).every((el, key) => {
-			key = key.dasherize(true);
+	} else if (!funcDir) {
+		isFunctional = $C(smartProps).every((propVal, prop) => {
+			prop = prop.dasherize(true);
 
-			if (!isV4Prop.test(key)) {
-				key = `:${key}`;
+			if (!isV4Prop.test(prop)) {
+				prop = `:${prop}`;
 			}
 
 			let
-				attr = attrs[key] && attrs[key][0];
+				attr = attrs[prop]?.[0];
 
 			try {
 				// eslint-disable-next-line no-new-func
@@ -88,89 +93,60 @@ function tagFilter({name, attrs = {}}) {
 
 			} catch {}
 
-			if (Object.isArray(el)) {
-				if (!Object.isArray(el[0])) {
-					return $C(el).includes(attr);
+			if (Object.isArray(propVal)) {
+				if (!Object.isArray(propVal[0])) {
+					return $C(propVal).includes(attr);
 				}
 
-				return Object.fastCompare(el[0], attr);
+				return Object.fastCompare(propVal[0], attr);
 			}
 
-			if (Object.isRegExp(el)) {
-				return el.test(attr);
+			if (Object.isRegExp(propVal)) {
+				return propVal.test(attr);
 			}
 
-			if (Object.isFunction(el)) {
-				return el(attr);
+			if (Object.isFunction(propVal)) {
+				return propVal(attr);
 			}
 
-			return Object.fastCompare(el, attr);
+			return Object.fastCompare(propVal, attr);
 		});
 	}
 
-	if ((isFunctional || funcMode) && smartProps) {
-		if (funcMode) {
-			attrs[':is'] = [`'${attrs['is'][0]}' + (${funcMode[0]} ? '-functional' : '')`];
-			delete attrs['is'];
+	const
+		isSmartFunctional = smartProps && (isFunctional || funcDir);
 
-		} else {
+	if (isSmartFunctional) {
+		if (funcDir == null || funcDir === 'true') {
 			attrs['is'] = [`${attrs['is'][0]}-functional`];
-		}
-	}
 
-	if (component) {
-		$C(attrs).forEach((el, key) => {
-			if (key[0] !== ':') {
-				return;
-			}
-
-			const
-				basePropName = key.slice(1).camelize(false),
-				directPropName = `${basePropName}Prop`;
-
-			let
-				resolvedPropName = basePropName,
-				alternative = component.deprecatedProps[resolvedPropName];
-
-			if (!props[basePropName] && props[directPropName]) {
-				resolvedPropName = directPropName;
-				alternative = component.deprecatedProps[resolvedPropName];
-
-				if (!alternative) {
-					attrs[`:${directPropName.dasherize(true)}`] = el;
-				}
-
-				delete attrs[key];
-			}
-
-			if (alternative) {
-				attrs[`:${alternative.dasherize(true)}`] = el;
-				delete attrs[key];
-			}
-		});
-
-		if (component.inheritMods !== false && !attrs[':mods-prop']) {
-			attrs[':mods-prop'] = ['provide.mods()'];
+		} else if (funcDir !== 'false') {
+			attrs[':is'] = [`'${attrs['is'][0]}' + (${funcDir} ? '-functional' : '')`];
+			delete attrs['is'];
 		}
 	}
 }
 
-// eslint-disable-next-line default-param-last
-function tagNameFilter(tag, attrs = {}, rootTag) {
+function tagNameFilter(tag, attrs, rootTag) {
+	attrs ??= {};
+
 	tag = $C(tagNameFilters)
 		.to(tag)
 		.reduce((tag, filter) => filter(tag, attrs, rootTag));
 
 	const
-		nm = tag.camelize(false),
-		component = componentParams[nm];
+		componentName = tag.camelize(false),
+		component = componentParams[componentName];
 
-	if (component != null && !Object.isBoolean(component.functional)) {
-		Object.assign(attrs, {
-			':instance-of': [nm],
-			'v-func-placeholder': [true],
-			is: [tag]
-		});
+	const isSmartComponent =
+		component != null &&
+		!Object.isBoolean(component.functional);
+
+	if (isSmartComponent) {
+		attrs.is = [tag];
+
+		attrs[':instance-of'] = [componentName];
+		attrs[SMART_PROPS] = component.functional;
 
 		return 'component';
 	}
@@ -178,8 +154,9 @@ function tagNameFilter(tag, attrs = {}, rootTag) {
 	return tag;
 }
 
-// eslint-disable-next-line default-param-last
-function bemFilter(block, attrs = {}, rootTag, value) {
+function bemFilter(block, attrs, rootTag, value) {
+	attrs ??= {};
+
 	return $C(bemFilters)
 		.to('')
 		.reduce((res, filter) => res + filter(block, attrs, rootTag, value));

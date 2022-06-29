@@ -16,7 +16,7 @@ const
 
 module.exports = [
 	/**
-	 * Expands the `_` snippet as a `<${rootTag}>` tag
+	 * Expands the `_` snippet as a `<div v-tag=${rootTag}>` tag
 	 *
 	 * @param {string} tag
 	 * @param {!Object} attrs

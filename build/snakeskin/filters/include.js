@@ -34,7 +34,7 @@ Snakeskin.importFilters({
 	 * The filter adds the support of layers.
 	 *
 	 * @param {string} filePath
-	 * @param {string} sourceFilePath - original file source path
+	 * @param {string} sourceFilePath - the original source file path
 	 * @returns {(string|!Array<string>)}
 	 *
 	 * @example
@@ -48,7 +48,7 @@ Snakeskin.importFilters({
 		let
 			start = 0;
 
-		if (superRgxp.removeFlags('g').test(filePath)) {
+		if (RegExp.test(superRgxp, filePath)) {
 			filePath = filePath.replace(superRgxp, '');
 
 			for (let i = 0; i < resources.length; i++) {

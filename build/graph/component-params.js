@@ -19,7 +19,6 @@ const {
 	componentRgxp,
 	componentClassRgxp,
 
-	propRgxp,
 	genericRgxp,
 	extendsRgxp,
 
@@ -105,13 +104,6 @@ $C(componentFiles).forEach((el) => {
 
 	if (p.inheritMods != null) {
 		obj.inheritMods = p.inheritMods;
-	}
-
-	let s;
-
-	// eslint-disable-next-line no-cond-assign
-	while (s = propRgxp.exec(file)) {
-		obj.props[s[2].split(' ').slice(-1)[0]] = true;
 	}
 });
 

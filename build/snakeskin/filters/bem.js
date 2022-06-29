@@ -11,22 +11,24 @@
 const
 	{wrapAttrArray} = include('build/snakeskin/filters/helpers');
 
-const
-	elSeparatorRgxp = /^_+/;
-
 module.exports = [
 	/**
-	 * Integrates BEM classes to a component: attaches identifiers, provides runtime transformers, etc.
+	 * Integrates BEM classes to components: attaches identifiers, provides runtime transformers, etc.
 	 *
-	 * @param {string} block
-	 * @param {!Object} attrs
-	 * @param {string} rootTag
-	 * @param {string} value
+	 * @param {string} block - a name of the active BEM block
+	 * @param {!Object} attrs - a dictionary with attributes of the node to which the filter is applied
+	 * @param {string} rootTag - a type of the component root tag within which the directive is applied
+	 * @param {string} element - a name of the BEM element to create, with a prefix
 	 * @returns {string}
 	 */
-	function bem2Component(block, attrs, rootTag, value) {
+	function bem2Component(block, attrs, rootTag, element) {
 		attrs['data-cached-class-component-id'] = wrapAttrArray([true]);
-		attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray([value.replace(elSeparatorRgxp, '')]);
-		return block + value;
+
+		attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray(
+			[element.replace(/^_+/, '')]
+		);
+
+		return block + element;
+
 	}
 ];

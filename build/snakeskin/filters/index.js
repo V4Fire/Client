@@ -10,4 +10,3 @@
 
 include('build/snakeskin/filters/include');
 include('build/snakeskin/filters/typograf');
-include('build/snakeskin/filters/element');

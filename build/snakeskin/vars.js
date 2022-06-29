@@ -8,18 +8,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	$C = require('collection.js'),
-	Snakeskin = require('snakeskin'),
-	path = require('upath');
+const path = require('upath');
+
+/** @type {!Object} */
+const {Vars} = require('snakeskin');
 
 module.exports = {
 	/**
-	 * Saves a basename of the specified directory by the passed name in the global namespace.
+	 * Saves a basename of the specified dirname to the global namespace by the passed aliases.
 	 * The function should be used via the `eval` directive.
 	 *
-	 * @param dirName
-	 * @param names
+	 * @param dirname
+	 * @param aliases
 	 *
 	 * @example
 	 * ```
@@ -33,19 +33,19 @@ module.exports = {
 	 *     Hello world!
 	 * ```
 	 */
-	saveTplDir(dirName, ...names) {
+	saveTplDir(dirname, ...aliases) {
 		const
-			dir = path.basename(dirName);
+			dir = path.basename(dirname);
 
-		if (!Snakeskin.Vars['globalTplDirs']) {
-			Snakeskin.Vars['globalTplDirs'] = {};
+		if (!Vars['globalTplDirs']) {
+			Vars['globalTplDirs'] = {};
 		}
 
-		$C(names).forEach((name) => {
-			if (!Snakeskin.Vars['globalTplDirs'][name]) {
-				Snakeskin.Vars['globalTplDirs'][name] = dir;
+		Object.forEach(aliases, (name) => {
+			if (!Vars['globalTplDirs'][name]) {
+				Vars['globalTplDirs'][name] = dir;
 
-			} else if (Snakeskin.Vars['globalTplDirs'][name] !== dir) {
+			} else if (Vars['globalTplDirs'][name] !== dir) {
 				throw new Error(`The name "${name}" is already exist in the global namespace`);
 			}
 		});

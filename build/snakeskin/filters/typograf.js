@@ -9,18 +9,18 @@
  */
 
 const
-	Snakeskin = require('snakeskin'),
-	Typograf = require('typograf');
+	config = require('@config/config');
 
 const
-	config = require('@config/config');
+	Snakeskin = require('snakeskin'),
+	Typograf = require('typograf');
 
 const
 	tp = new Typograf(config.typograf());
 
 Snakeskin.importFilters({
 	/**
-	 * Applies Typograf to the specified string and returns it
+	 * Applies Typograf to the specified string and returns the result
 	 *
 	 * @param {string} str
 	 * @returns {string}
