@@ -116,8 +116,8 @@ There are two ways to declare a functional component.
    ```typescript
    import iData, { component } from 'super/i-data/i-data';
 
-   // `bLink` will be created as a functional component if its `dataProvider` prop is not passed or is undefined or null
-   @component({functional: {dataProvider: [undefined, null]}})
+   // `bLink` will be created as a functional component if its `dataProvider` prop is not passed or undefined
+   @component({functional: {dataProvider: undefined}})
    class bLink extends iData {
 
    }

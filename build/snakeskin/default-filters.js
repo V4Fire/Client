@@ -94,19 +94,7 @@ function tagFilter({name, attrs = {}}) {
 			} catch {}
 
 			if (Object.isArray(propVal)) {
-				if (!Object.isArray(propVal[0])) {
-					return $C(propVal).includes(attr);
-				}
-
-				return Object.fastCompare(propVal[0], attr);
-			}
-
-			if (Object.isRegExp(propVal)) {
-				return propVal.test(attr);
-			}
-
-			if (Object.isFunction(propVal)) {
-				return propVal(attr);
+				return $C(propVal).some((propVal) => Object.fastCompare(propVal, attr));
 			}
 
 			return Object.fastCompare(propVal, attr);
