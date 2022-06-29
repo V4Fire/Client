@@ -37,18 +37,30 @@ import { interpolateStaticAttrs, normalizeComponentAttrs } from 'core/component/
 
 import type { ComponentInterface } from 'core/component/interface';
 
+/**
+ * Wrapper for the component library `createVNode` function
+ * @param original
+ */
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
 	return Object.cast(function createVNode(this: ComponentInterface, ...args: Parameters<T>) {
 		return interpolateStaticAttrs.call(this, original.apply(null, args));
 	});
 }
 
+/**
+ * Wrapper for the component library `createElementVNode` function
+ * @param original
+ */
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
 	return Object.cast(function createElementVNode(this: ComponentInterface, ...args: Parameters<T>) {
 		return interpolateStaticAttrs.call(this, original.apply(null, args));
 	});
 }
 
+/**
+ * Wrapper for the component library `createBlock` function
+ * @param original
+ */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
@@ -140,12 +152,20 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	});
 }
 
+/**
+ * Wrapper for the component library `createElementBlock` function
+ * @param original
+ */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		return interpolateStaticAttrs.call(this, original.apply(null, args));
 	});
 }
 
+/**
+ * Wrapper for the component library `resolveComponent` or `resolveDynamicComponent` functions
+ * @param original
+ */
 export function wrapResolveComponent<T extends typeof resolveComponent | typeof resolveDynamicComponent>(
 	original: T
 ): T {
@@ -155,6 +175,10 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 	});
 }
 
+/**
+ * Wrapper for the component library `renderList` function
+ * @param original
+ */
 export function wrapRenderList<T extends typeof renderList>(original: T): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
@@ -166,6 +190,10 @@ export function wrapRenderList<T extends typeof renderList>(original: T): T {
 	});
 }
 
+/**
+ * Wrapper for the component library `withDirectives` function
+ * @param original
+ */
 export function wrapWithDirectives<T extends typeof withDirectives>(original: T): T {
 	return Object.cast(function withDirectives(
 		this: CanUndef<ComponentInterface>,
