@@ -95,7 +95,6 @@ $C(componentFiles).forEach((el) => {
 	const
 		obj = componentParams[component];
 
-	obj.model = p.model;
 	obj.deprecatedProps = p.deprecatedProps ?? {};
 
 	if (p.functional != null) {
@@ -134,7 +133,6 @@ function getParentParameters(component) {
 	}
 
 	const fields = [
-		['model'],
 		['deprecatedProps'],
 		['functional', false]
 	];
