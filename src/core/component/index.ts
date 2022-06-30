@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/README.md]]
+ * @packageDocumentation
+ */
+
 import 'core/component/directives';
 
 import * as init from 'core/component/init';
