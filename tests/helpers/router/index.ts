@@ -9,7 +9,7 @@
 import type { Page } from 'playwright';
 
 import Component from 'tests/helpers/component';
-import BOM from 'tests/helpers/BOM';
+import BOM from 'tests/helpers/bom';
 
 import type iStaticPage from 'super/i-static-page/i-static-page';
 
