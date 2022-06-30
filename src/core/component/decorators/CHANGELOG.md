@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :boom: Breaking Change
+
+* Removed the `p` decorator
+
 #### :rocket: New Feature
 
 * Added a new cache type for accessors `auto`
