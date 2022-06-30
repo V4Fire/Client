@@ -10,28 +10,16 @@ import Async from 'core/async';
 import type { Task } from 'core/component/render/daemon/interface';
 
 /**
- * The maximum number of tasks per one render iteration
- */
-export const
-	TASKS_PER_TICK = 5;
-
-/**
- * Delay in milliseconds between render iterations
- */
-export const
-	DELAY = 40;
-
-/**
- * Render queue
+ * The rendering queue
  */
 export const queue = new Set<Task>();
 
 /**
- * Render daemon
+ * The rendering daemon
  */
 export const daemon = new Async();
 
 /**
- * Adds a task to the queue
+ * Adds a task to the rendering queue
  */
 export const add = queue.add.bind(queue);

@@ -11,22 +11,16 @@
  * @packageDocumentation
  */
 
-import {
+import config from 'config';
 
-	daemon,
-
-	queue,
-	add as addToQueue,
-
-	TASKS_PER_TICK,
-	DELAY
-
-} from 'core/component/render/daemon/const';
-
+import { daemon, queue, add as addToQueue } from 'core/component/render/daemon/const';
 import type { Task } from 'core/component/render/daemon/interface';
 
 export * from 'core/component/render/daemon/const';
 export * from 'core/component/render/daemon/interface';
+
+const
+	opts = config.asyncRender;
 
 let
 	inProgress = false,
@@ -43,7 +37,7 @@ queue.add = function add(task: Task): typeof queue {
 };
 
 /**
- * Restarts the render daemon
+ * Restarts the rendering daemon
  */
 export function restart(): void {
 	isStarted = false;
@@ -52,7 +46,7 @@ export function restart(): void {
 }
 
 /**
- * Creates a task to restart the render daemon on the next tick
+ * Creates a task to restart the rendering daemon on the next tick
  */
 export function deferRestart(): void {
 	isStarted = false;
@@ -70,22 +64,24 @@ function run(): void {
 
 		let
 			time = Date.now(),
-			done = TASKS_PER_TICK;
+			done = opts.weightPerTick;
 
 		for (let w = queue.values(), el = w.next(); !el.done; el = w.next()) {
 			const
 				val = el.value;
 
-			if (done <= 0 || Date.now() - time > DELAY) {
-				await daemon.idle({timeout: DELAY});
+			if (done <= 0 || Date.now() - time > opts.delay) {
+				await daemon.idle({timeout: opts.delay});
 				time = Date.now();
-				done = TASKS_PER_TICK;
+
+				// eslint-disable-next-line require-atomic-updates
+				done = opts.weightPerTick;
 			}
 
 			const
 				w = val.weight ?? 1;
 
-			if (done - w < 0 && done !== TASKS_PER_TICK) {
+			if (done - w < 0 && done !== opts.weightPerTick) {
 				continue;
 			}
 
@@ -103,7 +99,7 @@ function run(): void {
 				const now = Date.now();
 				await canRender.then(exec);
 
-				if (now - time > DELAY) {
+				if (now - time > opts.delay) {
 					time = now;
 					done += val.weight ?? 1;
 				}
@@ -125,7 +121,7 @@ function run(): void {
 		}
 	};
 
-	if (inProgress || queue.size >= TASKS_PER_TICK) {
+	if (inProgress || queue.size >= opts.weightPerTick) {
 		exec().catch(stderr);
 
 	} else {
@@ -139,7 +135,7 @@ function canProcessing(): boolean {
 
 function runOnNextTick(): boolean {
 	if (canProcessing()) {
-		daemon.requestIdleCallback(run, {timeout: DELAY});
+		daemon.requestIdleCallback(run, {timeout: opts.delay});
 		return true;
 	}
 
