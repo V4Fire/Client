@@ -16,7 +16,7 @@ const
 
 module.exports = [
 	/**
-	 * Expands the `_` snippet as a `<div v-tag=${rootTag}>` tag
+	 * Expands the `_` snippet as `<div v-tag=${rootTag}>`
 	 *
 	 * @param {string} tag
 	 * @param {!Object} attrs
@@ -47,7 +47,7 @@ module.exports = [
 
 	/**
 	 * Expands the `:section` and `:/section` snippets.
-	 * These snippets help to use semantics HTML tags, like `article` or `section` and don't care about `h` types.
+	 * These snippets help to use semantics HTML tags, like `article` or `section` and don't care about the `h` levels.
 	 *
 	 * @param {string} tag
 	 * @returns {string}
@@ -89,7 +89,7 @@ module.exports = [
 	},
 
 	/**
-	 * Expands the `a:void` snippet as a `<a href="javascript:void(0)">` tag
+	 * Expands the `a:void` snippet as `<a href="javascript:void(0)">`
 	 *
 	 * @param {string} tag
 	 * @param {!Object} attrs
@@ -111,7 +111,7 @@ module.exports = [
 	},
 
 	/**
-	 * Expands the `button:link` snippet as a `<button class="a">` tag
+	 * Expands the `button:link` snippet as `<button class="a">`
 	 *
 	 * @param {string} tag
 	 * @param {!Object} attrs
@@ -126,7 +126,7 @@ module.exports = [
 	function expandButtonLink(tag, attrs) {
 		if (/^button:a$/.test(tag)) {
 			attrs.type = ['button'];
-			attrs.class = (attrs.class || []).concat('a');
+			attrs.class = Array.concat([], attrs.class, 'a');
 			return 'button';
 		}
 

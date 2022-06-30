@@ -25,6 +25,7 @@ const
 	bemFilters = include('build/snakeskin/filters/bem');
 
 const
+	TYPE_OF = Symbol('A type of the component to create'),
 	SMART_PROPS = Symbol('The component smart props');
 
 const bind = {
@@ -45,7 +46,7 @@ function tagFilter({name, attrs = {}}) {
 
 	const isSimpleTag =
 		name !== 'component' &&
-		!attrs[':instance-of'] &&
+		!attrs[TYPE_OF] &&
 		!validators.blockName(name);
 
 	if (isSimpleTag) {
@@ -55,17 +56,23 @@ function tagFilter({name, attrs = {}}) {
 	let
 		componentName;
 
-	if (attrs[':instance-of']) {
-		componentName = attrs[':instance-of'][0].camelize(false);
-		delete attrs[':instance-of'];
+	if (attrs[TYPE_OF]) {
+		componentName = attrs[TYPE_OF];
 
 	} else {
 		componentName = name === 'component' ? 'iBlock' : name.camelize(false);
 	}
 
 	const
-		component = componentParams[componentName],
-		smartProps = attrs[SMART_PROPS];
+		component = componentParams[componentName];
+
+	if (!component) {
+		return;
+	}
+
+	if (component.inheritMods !== false && !attrs[':mods-prop']) {
+		attrs[':mods-prop'] = ['shareableMods'];
+	}
 
 	const funcDir = attrs['v-func']?.[0];
 	delete attrs['v-func'];
@@ -77,7 +84,7 @@ function tagFilter({name, attrs = {}}) {
 		isFunctional = true;
 
 	} else if (!funcDir) {
-		isFunctional = $C(smartProps).every((propVal, prop) => {
+		isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
 			prop = prop.dasherize(true);
 
 			if (!isV4Prop.test(prop)) {
@@ -102,7 +109,7 @@ function tagFilter({name, attrs = {}}) {
 	}
 
 	const
-		isSmartFunctional = smartProps && (isFunctional || funcDir);
+		isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
 
 	if (isSmartFunctional) {
 		if (funcDir == null || funcDir === 'true') {
@@ -133,7 +140,7 @@ function tagNameFilter(tag, attrs, rootTag) {
 	if (isSmartComponent) {
 		attrs.is = [tag];
 
-		attrs[':instance-of'] = [componentName];
+		attrs[TYPE_OF] = componentName.camelize(false);
 		attrs[SMART_PROPS] = component.functional;
 
 		return 'component';

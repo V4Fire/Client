@@ -29,6 +29,5 @@ module.exports = [
 		);
 
 		return block + element;
-
 	}
 ];

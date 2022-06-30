@@ -32,10 +32,10 @@ module.exports = [
 	},
 
 	/**
-	 * Normalizes component attributes
+	 * Normalizes V4Fire tag attributes
 	 * @param {!Object} attrs
 	 */
-	function normalizeComponentAttrs({attrs}) {
+	function normalizeV4Attrs({attrs}) {
 		Object.forEach(attrs, (el, key) => {
 			if (!isV4Prop.test(key)) {
 				return;
