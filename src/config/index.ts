@@ -13,10 +13,17 @@
 
 import { extend } from '@v4fire/core/config';
 
-export * from '@v4fire/core/config';
 export { default } from '@v4fire/core/config';
 
+export * from '@v4fire/core/config';
+export * from 'config/interface';
+
 extend({
+	asyncRender: {
+		weightPerTick: 5,
+		delay: 40
+	},
+
 	components: COMPONENTS,
 	componentStaticDependencies: {}
 });
