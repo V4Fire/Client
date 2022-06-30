@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import test from 'tests/config/unit/test';
 
 import { createFormAndEnvironment, checkCheckboxes, interceptFormRequest } from 'form/b-form/test/helpers';
