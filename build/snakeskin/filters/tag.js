@@ -36,7 +36,17 @@ module.exports = [
 	 * @param {!Object} attrs
 	 */
 	function normalizeV4Attrs({attrs}) {
-		Object.forEach(attrs, (el, key) => {
+		Object.forEach(attrs, (attr, key) => {
+			if (key === 'ref') {
+				const
+					ref = attrs[key];
+
+				attrs[':ref'] = [`'${ref}:' + componentId`];
+				attrs[`v-ref:${ref}`] = [];
+
+				delete attrs[key];
+			}
+
 			if (!isV4Prop.test(key)) {
 				return;
 			}
@@ -45,7 +55,7 @@ module.exports = [
 				dataAttrBind = ':-';
 
 			if (key.startsWith(dataAttrBind)) {
-				attrs[`:data-${key.slice(dataAttrBind.length)}`] = el;
+				attrs[`:data-${key.slice(dataAttrBind.length)}`] = attr;
 				delete attrs[key];
 
 			} else if (isStaticV4Prop.test(key)) {
@@ -54,7 +64,7 @@ module.exports = [
 
 				if (tmp !== key) {
 					delete attrs[key];
-					attrs[tmp] = el;
+					attrs[tmp] = attr;
 				}
 			}
 		});

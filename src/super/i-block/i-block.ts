@@ -1019,9 +1019,6 @@ export default abstract class iBlock extends ComponentInterface {
 
 	protected readonly moduleLoader!: ModuleLoader;
 
-	@system()
-	protected override renderCounter: number = 0;
-
 	/**
 	 * Component stage store
 	 * @see [[iBlock.stageProp]]
@@ -2285,10 +2282,7 @@ export default abstract class iBlock extends ComponentInterface {
 			that = this.$normalParent ?? that;
 		}
 
-		that.$refHandlers[ref] = that.$refHandlers[ref] ?? [];
-
 		const
-			watchers = that.$refHandlers[ref],
 			refVal = that.$refs[ref];
 
 		return this.async.promise<T>(() => new SyncPromise((resolve) => {
@@ -2296,7 +2290,7 @@ export default abstract class iBlock extends ComponentInterface {
 				resolve(<T>refVal);
 
 			} else {
-				watchers?.push(resolve);
+				this.once(`[[REF:${ref}]]`, resolve, opts);
 			}
 		}), opts);
 	}
@@ -2403,7 +2397,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
-		this.async.clearAll().locked = true;
 
 		try {
 			delete classesCache.dict.els?.[this.componentId];

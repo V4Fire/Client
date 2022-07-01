@@ -126,6 +126,10 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 			key = keys[i],
 			propKey = `${key}Prop`;
 
+		if (key === 'ref' || key === 'ref_for') {
+			continue;
+		}
+
 		if (deprecatedProps != null) {
 			const
 				alternativeKey = deprecatedProps[key] ?? deprecatedProps[propKey] ?? key;

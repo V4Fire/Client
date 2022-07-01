@@ -11,12 +11,6 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
-#### :memo: Documentation
+#### :rocket: New Feature
 
-* Added the normal documentation
-
-## v3.0.0-rc.37 (2020-07-20)
-
-#### :house: Internal
-
-* Fixed ESLint warnings
+* Initial release
