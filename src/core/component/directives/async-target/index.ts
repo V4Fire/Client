@@ -12,14 +12,13 @@
  */
 
 import { ComponentEngine, VNode, DirectiveBinding } from 'core/component/engines';
-import type { ComponentInterface } from 'core/component/interface';
 
 export * from 'core/component/directives/async-target/interface';
 
 ComponentEngine.directive('async-target', {
 	beforeCreate(opts: DirectiveBinding, vnode: VNode): void {
 		const
-			ctx = Object.cast<CanUndef<ComponentInterface['unsafe']>>(opts.instance);
+			ctx = vnode.virtualContext?.unsafe;
 
 		if (ctx == null) {
 			return;

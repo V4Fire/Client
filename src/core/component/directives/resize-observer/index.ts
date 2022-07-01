@@ -7,7 +7,7 @@
 */
 
 import { ResizeWatcher, ResizeWatcherInitOptions } from 'core/dom/resize-observer';
-import { ComponentEngine, VNode } from 'core/component/engines';
+import { ComponentEngine } from 'core/component/engines';
 
 import { DIRECTIVE } from 'core/component/directives/resize-observer/const';
 import { normalizeOptions, setCreatedViaDirectiveFlag } from 'core/component/directives/resize-observer/helpers';
@@ -19,24 +19,21 @@ export * from 'core/component/directives/resize-observer/helpers';
 export * from 'core/component/directives/resize-observer/interface';
 
 ComponentEngine.directive('resize-observer', {
-	mounted(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
-		const
-			val = opts.value;
-
-		if (val == null) {
+	mounted(el: HTMLElement, {value, instance}: DirectiveOptions): void {
+		if (value == null) {
 			return;
 		}
 
-		Array.concat([], val).forEach((options) => {
-			options = normalizeOptions(options, vnode.virtualContext);
-			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, options));
+		Array.concat([], value).forEach((opts) => {
+			opts = normalizeOptions(opts, Object.cast(instance));
+			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, opts));
 		});
 	},
 
-	updated(el: HTMLElement, opts: DirectiveOptions, vnode: VNode): void {
+	updated(el: HTMLElement, {value, oldValue, instance}: DirectiveOptions): void {
 		const
-			oldOptions = opts.oldValue,
-			newOptions = opts.value;
+			oldOptions = oldValue,
+			newOptions = value;
 
 		if (Object.fastCompare(oldOptions, newOptions)) {
 			return;
@@ -53,7 +50,7 @@ ComponentEngine.directive('resize-observer', {
 				return;
 			}
 
-			opts = normalizeOptions(opts, vnode.virtualContext);
+			opts = normalizeOptions(opts, Object.cast(instance));
 			setCreatedViaDirectiveFlag(ResizeWatcher.observe(el, opts));
 		});
 	},

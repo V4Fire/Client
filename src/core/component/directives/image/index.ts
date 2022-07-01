@@ -13,25 +13,25 @@
 
 import { ImageLoader } from 'core/dom/image';
 
-import { ComponentEngine, VNode } from 'core/component/engines';
+import { ComponentEngine } from 'core/component/engines';
 import type { DirectiveOptions } from 'core/component/directives/image/interface';
 
 export * from 'core/component/directives/image/interface';
 
 ComponentEngine.directive('image', {
-	mounted(el: HTMLElement, {value}: DirectiveOptions, vnode: VNode): void {
+	mounted(el: HTMLElement, {value, instance}: DirectiveOptions): void {
 		if (value == null) {
 			return;
 		}
 
-		if (vnode.virtualContext != null) {
+		if (instance != null) {
 			if (Object.isPlainObject(value)) {
-				value.ctx = value.ctx ?? vnode.virtualContext;
+				value.ctx = value.ctx ?? instance;
 
 			} else {
 				value = {
 					src: value,
-					ctx: vnode.virtualContext
+					ctx: instance
 				};
 			}
 		}

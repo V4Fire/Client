@@ -1,6 +1,6 @@
 # core/component/directives/async-target
 
-This module provides a directive to mark an element where should be appended dynamically render fragments.
+This module provides a directive to mark the element where should be appended dynamically render fragments.
 You should use it with the [[AsyncRender]] module.
 
 ## Usage

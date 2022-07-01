@@ -14,7 +14,7 @@
 import { ComponentEngine, VNode } from 'core/component/engines';
 import { REF_ID } from 'core/component/directives/ref/const';
 
-import type { ComponentInterface, ComponentElement } from 'core/component/interface';
+import type { ComponentElement } from 'core/component/interface';
 import type { DirectiveOptions } from 'core/component/directives/ref/interface';
 
 export * from 'core/component/directives/ref/const';
@@ -27,7 +27,7 @@ ComponentEngine.directive('ref', {
 
 function updateRef(node: Element, {arg: ref, instance}: DirectiveOptions, vnode: VNode): void {
 	const
-		ctx = <CanUndef<ComponentInterface['unsafe']>>vnode.virtualContext;
+		ctx = vnode.virtualContext?.unsafe;
 
 	if (ref == null || instance == null || ctx == null) {
 		return;

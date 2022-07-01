@@ -48,7 +48,7 @@ ComponentEngine.directive('attrs', {
 		}
 
 		const
-			ctx = Object.cast<ComponentInterface>(opts.instance),
+			ctx = vnode.virtualContext?.unsafe,
 			props = vnode.props ?? {};
 
 		attrs = {...attrs};
@@ -131,12 +131,19 @@ ComponentEngine.directive('attrs', {
 							handler = cache.get(handlerKey);
 
 						if (handler == null) {
-							handler = (newVal) => ctx[modelProp] = newVal;
+							handler = (newVal) => {
+								if (ctx == null) {
+									throw new ReferenceError('The directive context is not found');
+								}
+
+								ctx[modelProp] = newVal;
+							};
+
 							cache.set(handlerKey, handler);
 						}
 
 						props['onUpdate:modelValue'] = handler;
-						attrVal = ctx[modelProp];
+						attrVal = ctx?.[modelProp];
 
 						break;
 					}
@@ -302,6 +309,10 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function getHandlerStore() {
+			if (ctx == null) {
+				throw new ReferenceError('The directive context is not found');
+			}
+
 			if (handlerStore != null) {
 				return handlerStore;
 			}

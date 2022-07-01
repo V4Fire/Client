@@ -1,8 +1,7 @@
 # core/component/directives/hook
 
-This module provides a directive to provide any directive hooks into a component.
-This directive is extremely useful to combine with functional components because they don't have API to
-attach any hook listeners.
+This module provides a directive with which you can listen to any directive lifecycle hooks from a component.
+This directive is used by default with functional components, as they don't have their own life cycle API.
 
 ## Usage
 

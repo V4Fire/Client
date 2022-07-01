@@ -4,9 +4,9 @@ This module provides a directive to create a composition of multiple functions t
 
 ## Usage
 
-### Replacing a VNode with another one
+### Replacing the VNode with another one
 
-If you use the directive with a `template` tag without custom properties, a VNode that passed to `v-render` will replace the original VNode.
+If you use the directive with a `template` tag without custom properties, the VNode that passed to `v-render` will replace the original one.
 If the passed value is undefined or null, the directive will do nothing.
 
 ```
@@ -16,8 +16,8 @@ If the passed value is undefined or null, the directive will do nothing.
 
 ### Adding child nodes
 
-If you use the directive with a regular tag, a VNode that passed to `v-render`
-will replace all children VNode-s of the original VNode. Also, in this case, you can provide a list of VNode-s to insert.
+If you use the directive with a regular tag, the VNode that passed to `v-render`
+will replace all children VNode-s of the original one. Also, in this case, you can provide a list of VNode-s to insert.
 If the passed value is undefined or null, the directive will do nothing.
 
 ```
@@ -30,10 +30,9 @@ If the passed value is undefined or null, the directive will do nothing.
 
 ### Adding component slots
 
-If you use the directive with a component, a VNode that passed to `v-render` will replace the default or named
-(if the name passed via the `slot` attribute) children slot of the original VNode.
-Also, in this case, you can provide a list of VNode-s or slots to insert.
-If the passed value is undefined or null, the directive will do nothing.
+If you use the directive with a component, the VNode that passed to `v-render` will replace the default or named
+(if the name passed via the `slot` attribute) children slot of the original VNode. Also, in this case,
+you can provide a list of VNode-s or slots to insert. If the passed value is undefined or null, the directive will do nothing.
 
 ```
 < b-button v-render = mySlot
