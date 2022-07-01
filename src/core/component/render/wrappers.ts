@@ -209,6 +209,14 @@ export function wrapWithDirectives<T extends typeof withDirectives>(original: T)
 				enumerable: true,
 				get: () => vnode.el?.component
 			});
+
+		} else if (!('virtualContext' in vnode)) {
+			Object.defineProperty(vnode, 'virtualContext', {
+				configurable: true,
+				enumerable: true,
+				writable: true,
+				value: this
+			});
 		}
 
 		for (let i = 0; i < dirs.length; i++) {
