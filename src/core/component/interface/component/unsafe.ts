@@ -28,9 +28,6 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	// @ts-ignore (access)
 	meta: CTX['meta'];
 
-	// Don't use referring from CTX for primitive types, because it breaks TS
-	$renderCounter: number;
-
 	// @ts-ignore (access)
 	$fields: CTX['$fields'];
 
@@ -40,6 +37,12 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	// @ts-ignore (access)
 	$modifiedFields: CTX['$modifiedFields'];
 
+	// Don't use referring from CTX for primitive types, because it breaks TS
+
+	$activeField: CanUndef<string>;
+
+	$renderCounter: number;
+
 	// @ts-ignore (access)
 	$attrs: CTX['$attrs'];
 
@@ -47,12 +50,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$refs: CTX['$refs'];
 
 	// @ts-ignore (access)
-	$refHandlers: CTX['$refHandlers'];
-
-	// @ts-ignore (access)
 	$slots: CTX['$slots'];
-
-	$activeField: CanUndef<string>;
 
 	// @ts-ignore (access)
 	$syncLinkCache: CTX['$syncLinkCache'];

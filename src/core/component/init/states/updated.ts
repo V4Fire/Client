@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { resolveRefs } from 'core/component/ref';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
@@ -17,9 +16,6 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function updatedState(component: ComponentInterface): void {
-	runHook('beforeUpdated', component).catch(stderr);
-	resolveRefs(component);
-
 	runHook('updated', component).then(() => {
 		callMethodFromComponent(component, 'updated');
 	}).catch(stderr);

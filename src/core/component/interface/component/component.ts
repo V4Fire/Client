@@ -173,11 +173,6 @@ export abstract class ComponentInterface {
 	protected readonly meta!: ComponentMeta;
 
 	/**
-	 * A number that is incremented each time the component is re-rendered
-	 */
-	protected readonly $renderCounter!: number;
-
-	/**
 	 * A dictionary with the watchable component properties that can force re-rendering
 	 */
 	protected readonly $fields!: Dictionary;
@@ -194,6 +189,16 @@ export abstract class ComponentInterface {
 	protected readonly $modifiedFields!: Dictionary;
 
 	/**
+	 * The active property name to initialize
+	 */
+	protected readonly $activeField?: string;
+
+	/**
+	 * A number that is incremented each time the component is re-rendered
+	 */
+	protected readonly $renderCounter!: number;
+
+	/**
 	 * A dictionary with component attributes that aren't recognized as input properties
 	 */
 	protected readonly $attrs!: Dictionary<string>;
@@ -204,19 +209,9 @@ export abstract class ComponentInterface {
 	protected readonly $refs!: Dictionary;
 
 	/**
-	 * A dictionary with handlers that wait appearing of references to elements that have the "ref" attribute
-	 */
-	protected readonly $refHandlers!: Dictionary<Function[]>;
-
-	/**
 	 * A dictionary with available render slots
 	 */
 	protected readonly $slots!: Slots;
-
-	/**
-	 * The active property name to initialize
-	 */
-	protected readonly $activeField?: string;
 
 	/**
 	 * The cache for component links

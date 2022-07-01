@@ -7,8 +7,6 @@
  */
 
 import * as init from 'core/component/init';
-
-import { resolveRefs } from 'core/component/ref';
 import type { ComponentInterface } from 'core/component/interface';
 
 const
@@ -44,13 +42,6 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 
 				init.createdState(unsafe);
 				init.mountedState(unsafe);
-
-				const
-					parent = unsafe.$normalParent;
-
-				if (parent != null) {
-					resolveRefs(parent);
-				}
 
 				break;
 			}

@@ -53,7 +53,6 @@ export function beforeCreateState(
 	unsafe.$fields = {};
 	unsafe.$systemFields = {};
 	unsafe.$modifiedFields = {};
-	unsafe.$refHandlers = {};
 	unsafe.$renderCounter = 0;
 
 	unsafe.async = new Async(component);

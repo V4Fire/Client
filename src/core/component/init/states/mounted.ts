@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { resolveRefs } from 'core/component/ref';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
@@ -23,8 +22,6 @@ export function mountedState(component: ComponentInterface): void {
 	if ($el != null && $el.component !== component) {
 		$el.component = component;
 	}
-
-	resolveRefs(component);
 
 	runHook('mounted', component).then(() => {
 		callMethodFromComponent(component, 'mounted');

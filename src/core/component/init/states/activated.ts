@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { resolveRefs } from 'core/component/ref';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
@@ -17,9 +16,6 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function activatedState(component: ComponentInterface): void {
-	runHook('beforeActivated', component).catch(stderr);
-	resolveRefs(component);
-
 	runHook('activated', component).catch(stderr);
 	callMethodFromComponent(component, 'activated');
 }

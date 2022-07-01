@@ -17,9 +17,7 @@ export type Hook =
 	'beforeMount' |
 	'mounted' |
 	'beforeUpdate' |
-	'beforeUpdated' |
 	'updated' |
-	'beforeActivated' |
 	'activated' |
 	'deactivated' |
 	'beforeDestroy' |
