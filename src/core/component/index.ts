@@ -20,7 +20,6 @@ export { init, globalState };
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';
-export { resolveRefs } from 'core/component/ref';
 export { bindRemoteWatchers, customWatcherRgxp } from 'core/component/watch';
 
 export { callMethodFromComponent } from 'core/component/method';

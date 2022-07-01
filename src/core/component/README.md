@@ -12,6 +12,7 @@ But there are several submodules that you should familiarize yourself with.
 * `core/component/state` - this module provides an object that can be shared between any component and used as a global state;
 * `core/component/event` - this module provides a global event emitter that any component in the application can listen;
 * `core/component/functional` - this module contains the implementation of the V4Fire functional components;
+* `core/component/render/daemon` - this module provides an API to register and manage tasks of async rendering;
 * `core/component/engines` - this module contains adaptors for component libraries and the V4Fire DSL.
 
 ## How it works?
