@@ -7,6 +7,7 @@
  */
 
 import 'core/component/directives/tag';
+import 'core/component/directives/ref';
 import 'core/component/directives/hook';
 import 'core/component/directives/attrs';
 import 'core/component/directives/async-target';
