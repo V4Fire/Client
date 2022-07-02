@@ -133,14 +133,14 @@ export default class Provide extends Friend {
 
 	/**
 	 * Returns a dictionary with the base component modifiers.
-	 * The base modifiers are taken from the `shareableMods` getter and can be mix in with the specified additional modifiers.
+	 * The base modifiers are taken from the `sharedMods` getter and can be mix in with the specified additional modifiers.
 	 *
-	 * @see [[iBlock.shareableMods]]
+	 * @see [[iBlock.sharedMods]]
 	 * @param [mods] - additional modifiers (`{modifier: value}`)
 	 *
 	 * @example
 	 * ```js
-	 * this.provide.shareableMods === {theme: 'foo'};
+	 * this.provide.sharedMods === {theme: 'foo'};
 	 *
 	 * // {theme: 'foo'}
 	 * console.log(this.provide.mods());
@@ -151,14 +151,14 @@ export default class Provide extends Friend {
 	 */
 	mods(mods?: ProvideMods): CanUndef<Readonly<ModsNTable>> {
 		const
-			{shareableMods} = this.ctx;
+			{sharedMods} = this.ctx;
 
-		if (!shareableMods && !mods) {
+		if (!sharedMods && !mods) {
 			return;
 		}
 
 		const
-			key = JSON.stringify(shareableMods) + JSON.stringify(mods),
+			key = JSON.stringify(sharedMods) + JSON.stringify(mods),
 			cacheVal = modsCache[key];
 
 		if (cacheVal != null) {
@@ -166,7 +166,7 @@ export default class Provide extends Friend {
 		}
 
 		const
-			res = {...shareableMods};
+			res = {...sharedMods};
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {

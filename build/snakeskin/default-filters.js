@@ -71,7 +71,7 @@ function tagFilter({name, attrs = {}}) {
 	}
 
 	if (component.inheritMods !== false && !attrs[':mods-prop']) {
-		attrs[':mods-prop'] = ['shareableMods'];
+		attrs[':mods-prop'] = ['sharedMods'];
 	}
 
 	const funcDir = attrs['v-func']?.[0];

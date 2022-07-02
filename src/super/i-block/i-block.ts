@@ -56,8 +56,6 @@ import {
 	globalState,
 	globalEmitter,
 
-	resolveRefs,
-
 	bindRemoteWatchers,
 	customWatcherRgxp,
 
@@ -298,16 +296,8 @@ export default abstract class iBlock extends ComponentInterface {
 	@prop({type: Object, required: false})
 	override readonly modsProp?: ModsProp;
 
-	/**
-	 * Component modifiers
-	 * @see [[iBlock.modsProp]]
-	 */
-	@system({
-		merge: mergeMods,
-		init: initMods
-	})
-
-	readonly mods!: ModsDict;
+	@system({merge: mergeMods, init: initMods})
+	override readonly mods!: ModsDict;
 
 	/**
 	 * If true, the component is activated.
@@ -732,7 +722,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * This modifier will recursively provide to all child components.
 	 */
 	@computed({cache: 'auto'})
-	get shareableMods(): CanUndef<Readonly<ModsDict>> {
+	get sharedMods(): CanUndef<Readonly<ModsDict>> {
 		const
 			m = this.mods;
 

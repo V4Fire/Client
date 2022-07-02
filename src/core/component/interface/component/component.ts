@@ -67,12 +67,17 @@ export abstract class ComponentInterface {
 	abstract readonly modsProp?: ModsProp;
 
 	/**
+	 * A dictionary with applied component modifiers
+	 */
+	abstract readonly mods: ModsDict;
+
+	/**
 	 * Shareable component modifiers.
 	 * These modifiers are automatically provided to all child components.
 	 * So, for example, you have a component that uses another component within your template,
 	 * and you specify to the outer component some theme modifier.
 	 */
-	abstract get shareableMods(): CanUndef<Readonly<ModsDict>>;
+	abstract get sharedMods(): CanUndef<Readonly<ModsDict>>;
 
 	/**
 	 * Additional classes for component elements.
@@ -225,7 +230,7 @@ export abstract class ComponentInterface {
 
 	/**
 	 * An API to tie and control async operations.
-	 * This API is used for protected/private consumers, such as directives or component engines.
+	 * This API is used for protected/private consumers, such as private directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
 

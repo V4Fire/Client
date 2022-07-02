@@ -50,10 +50,10 @@ console.log(this.provide.fullElName('b-foo', 'foo', 'opened', true));
 ## mods
 
 Returns a dictionary with the base component modifiers.
-The base modifiers are taken from the `shareableMods` getter and can be mix in with the specified additional modifiers.
+The base modifiers are taken from the `sharedMods` getter and can be mix in with the specified additional modifiers.
 
 ```js
-this.provide.shareableMods === {theme: 'foo'};
+this.provide.sharedMods === {theme: 'foo'};
 
 // {theme: 'foo'}
 console.log(this.provide.mods());
