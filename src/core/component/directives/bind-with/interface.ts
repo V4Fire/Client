@@ -13,13 +13,13 @@ import type { WatchOptions } from 'core/component/interface';
 
 export interface DirectiveOptions extends DirectiveBinding<CanUndef<DirectiveValue>> {}
 
-export type DirectiveValue = CanArray<Binding>;
+export type DirectiveValue = CanArray<Listener>;
 
-export type Binding<A extends any[] = any[], E extends any[] = any[]> =
-	PathBinding<A> |
-	EventBinding<A> |
-	PromiseBinding<A, E> |
-	CallbackBinding<A, E>;
+export type Listener<A extends any[] = any[], E extends any[] = any[]> =
+	PathListener<A> |
+	EventListener<A> |
+	PromiseListener<A, E> |
+	CallbackListener<A, E>;
 
 export interface Handle<A extends any[]> {
 	/**
@@ -40,7 +40,7 @@ export interface ErrorHandle<A extends any[], E extends any[]> extends Handle<A>
 	catch?(el: Element, ...args: E): void;
 }
 
-export interface PathBinding<A extends any[]> extends Handle<A> {
+export interface PathListener<A extends any[]> extends Handle<A> {
 	/**
 	 * A path to the watched property
 	 */
@@ -52,7 +52,7 @@ export interface PathBinding<A extends any[]> extends Handle<A> {
 	options?: WatchOptions;
 }
 
-export interface EventBinding<A extends any[]> extends Handle<A> {
+export interface EventListener<A extends any[]> extends Handle<A> {
 	/**
 	 * An event emitter to listen
 	 */
@@ -74,14 +74,14 @@ export interface EventBinding<A extends any[]> extends Handle<A> {
 	options?: Dictionary;
 }
 
-export interface CallbackBinding<A extends any[], E extends any[]> extends ErrorHandle<A, E> {
+export interface CallbackListener<A extends any[], E extends any[]> extends ErrorHandle<A, E> {
 	/**
 	 * A function to add handlers
 	 */
 	callback(handler: AnyFunction, errorHandler?: AnyFunction): void;
 }
 
-export interface PromiseBinding<A extends any[], E extends any[]> extends ErrorHandle<A, E> {
+export interface PromiseListener<A extends any[], E extends any[]> extends ErrorHandle<A, E> {
 	/**
 	 * A promise to process, or a function that returns one
 	 */

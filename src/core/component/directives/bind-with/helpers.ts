@@ -9,7 +9,7 @@
 import { idsCache } from 'core/component/directives/bind-with/const';
 
 import type { ComponentInterface } from 'core/component/interface';
-import type { DirectiveValue, Binding } from 'core/component/directives/bind-with/interface';
+import type { DirectiveValue, Listener } from 'core/component/directives/bind-with/interface';
 
 /**
  * Returns the unique directive identifier for the passed element
@@ -69,7 +69,7 @@ export function bindListenerToElement(
 		group: new RegExp(`:${id}`)
 	});
 
-	Array.concat([], listener).forEach((listener: Binding) => {
+	Array.concat([], listener).forEach((listener: Listener) => {
 		const
 			group = {group: `${listener.group ?? ''}:${id}`};
 
