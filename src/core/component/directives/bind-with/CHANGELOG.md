@@ -11,6 +11,11 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :boom: Breaking Change
+
+* New API
+* Renamed to `v-bind-with`
+
 #### :house: Internal
 
 * Migration to Vue3

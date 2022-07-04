@@ -6,4 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const ID_ATTRIBUTE = 'data-update-on-id';
+export const
+	idsCache = new WeakMap<Element, string>();
