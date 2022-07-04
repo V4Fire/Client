@@ -35,7 +35,7 @@ test.describe('b-checkbox form API', () => {
 		await target.evaluate((ctx) => ctx.check());
 
 		test.expect(await target.evaluate((ctx) => ctx.validate()))
-			.toBe(true);
+			.toBe(false);
 	});
 
 	test('getting a form value', async ({page}) => {
