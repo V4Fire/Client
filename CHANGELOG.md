@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.23.2 (2022-07-04)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with test server being spawned with incorrect `cwd`](tests/server/config.ts)
+
 ## v3.23.1 (2022-06-14)
 
 #### :bug: Bug Fix
