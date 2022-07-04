@@ -25,7 +25,7 @@ ComponentEngine.directive('ref', {
 	updated: updateRef
 });
 
-function updateRef(node: Element, {arg: ref, instance}: DirectiveOptions, vnode: VNode): void {
+function updateRef(el: Element, {arg: ref, instance}: DirectiveOptions, vnode: VNode): void {
 	const
 		ctx = vnode.virtualContext?.unsafe;
 
@@ -60,7 +60,7 @@ function updateRef(node: Element, {arg: ref, instance}: DirectiveOptions, vnode:
 			}
 
 			const
-				refIndex = refVal.indexOf(node);
+				refIndex = refVal.indexOf(el);
 
 			Object.defineProperty(virtualRefs, refIndex, {
 				configurable: true,
