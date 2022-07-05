@@ -10,5 +10,5 @@ This directive is used in conjunction with the standard `ref` directive.
 < b-button ref = button
 
 // To this code
-< b-button :ref = 'button:' + componentId | v-ref:button
+< b-button :ref = $resolveRef('button') | v-ref = 'button'
 ```

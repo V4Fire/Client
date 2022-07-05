@@ -25,17 +25,21 @@ ComponentEngine.directive('ref', {
 	updated: updateRef
 });
 
-function updateRef(el: Element, {arg: ref, instance}: DirectiveOptions, vnode: VNode): void {
+function updateRef(el: Element, {value, instance}: DirectiveOptions, vnode: VNode): void {
 	const
 		ctx = vnode.virtualContext?.unsafe;
 
-	if (ref == null || instance == null || ctx == null) {
+	if (
+		value == null || Object.isFunction(value) || instance == null || ctx == null) {
 		return;
 	}
 
 	const
-		refs = ctx.$refs,
-		getRefVal = () => instance.$refs[`${ref}:${ctx.componentId}`];
+		ref = String(value),
+		refs = ctx.$refs;
+
+	const
+		getRefVal = () => instance.$refs[ctx.$resolveRef(ref)];
 
 	if (vnode.virtualComponent != null) {
 		const

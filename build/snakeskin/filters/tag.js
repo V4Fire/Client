@@ -39,10 +39,21 @@ module.exports = [
 		Object.forEach(attrs, (attr, key) => {
 			if (key === 'ref') {
 				const
+					ref = attrs[key][0];
+
+				attrs[':ref'] = [`$resolveRef('${ref}')`];
+				attrs['v-ref'] = [`'${ref}'`];
+
+				delete attrs['ref'];
+				return;
+			}
+
+			if (key === ':ref') {
+				const
 					ref = attrs[key];
 
-				attrs[':ref'] = [`'${ref}:' + componentId`];
-				attrs[`v-ref:${ref}`] = [];
+				attrs[':ref'] = [`$resolveRef(${ref})`];
+				attrs['v-ref'] = ref;
 
 				delete attrs[key];
 			}
@@ -57,10 +68,12 @@ module.exports = [
 			if (key.startsWith(dataAttrBind)) {
 				attrs[`:data-${key.slice(dataAttrBind.length)}`] = attr;
 				delete attrs[key];
+				return;
+			}
 
-			} else if (isStaticV4Prop.test(key)) {
+			if (isStaticV4Prop.test(key)) {
 				const
-					tmp = key.dasherize(key[0] === ':');
+					tmp = key.dasherize(key.startsWith(':'));
 
 				if (tmp !== key) {
 					delete attrs[key];
