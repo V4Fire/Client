@@ -414,4 +414,15 @@ export abstract class ComponentInterface {
 	protected $emit(event: string, ...args: unknown[]): this {
 		return Object.throw();
 	}
+
+	/**
+	 * Resolves the specified ref attribute
+	 * @param ref
+	 */
+	protected $resolveRef(ref: Function): Function;
+	protected $resolveRef(ref: null | undefined): undefined;
+	protected $resolveRef(ref: unknown): string;
+	protected $resolveRef(ref: unknown): CanUndef<string | Function> {
+		return Object.throw();
+	}
 }

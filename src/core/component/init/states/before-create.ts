@@ -73,6 +73,23 @@ export function beforeCreateState(
 		}
 	});
 
+	Object.defineProperty(unsafe, '$resolveRef', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: (ref) => {
+			if (ref == null) {
+				return undefined;
+			}
+
+			if (Object.isFunction(ref)) {
+				return ref;
+			}
+
+			return `${String(ref)}:${unsafe.componentId}`;
+		}
+	});
+
 	const
 		root = unsafe.$root,
 		parent = unsafe.$parent;

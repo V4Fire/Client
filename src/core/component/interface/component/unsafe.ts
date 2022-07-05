@@ -95,11 +95,5 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$destroy: CTX['$destroy'];
 
 	// @ts-ignore (access)
-	log: CTX['log'];
-
-	// @ts-ignore (access)
-	activate: CTX['activate'];
-
-	// @ts-ignore (access)
-	deactivate: CTX['deactivate'];
+	$resolveRef: CTX['$resolveRef'];
 }
