@@ -15,7 +15,7 @@ const
 	staticAttrsCache: Dictionary<Function> = Object.createDict();
 
 /**
- * Interpolates values from some static attributes of the passed VNode
+ * Resolves values from some attributes of the passed VNode
  *
  * @param vnode
  * @example
@@ -26,7 +26,7 @@ const
  * const ctx = this;
  *
  * // {class: 'id-1 b-example alias'}
- * interpolateStaticAttrs.call(ctx, {
+ * resolveAttrs.call(ctx, {
  *   props: {
  *     'data-cached-class-component-id': ''
  *     'data-cached-class-provided-classes-styles': 'elem-name'
@@ -35,9 +35,13 @@ const
  * })
  * ```
  */
-export function interpolateStaticAttrs<T extends VNode>(this: ComponentInterface, vnode: T): T {
+export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T): T {
 	const
 		{props} = vnode;
+
+	if (vnode.ref != null && vnode.ref['i'] == null) {
+		vnode.ref['i'] = this.$renderEngine.r.getCurrentInstance();
+	}
 
 	if (props == null) {
 		return vnode;
@@ -119,7 +123,7 @@ export function interpolateStaticAttrs<T extends VNode>(this: ComponentInterface
 
 	if (Object.isArray(children)) {
 		for (let i = 0; i < children.length; i++) {
-			interpolateStaticAttrs.call(this, Object.cast(children[i]));
+			resolveAttrs.call(this, Object.cast(children[i]));
 		}
 	}
 

@@ -25,6 +25,8 @@ import type {
 	createElementBlock,
 
 	renderList,
+	renderSlot,
+
 	withDirectives,
 
 	VNode,
@@ -33,7 +35,7 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { interpolateStaticAttrs, normalizeComponentAttrs } from 'core/component/render/helpers';
+import { resolveAttrs, normalizeComponentAttrs } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -43,7 +45,7 @@ import type { ComponentInterface } from 'core/component/interface';
  */
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
 	return Object.cast(function createVNode(this: ComponentInterface, ...args: Parameters<T>) {
-		return interpolateStaticAttrs.call(this, original.apply(null, args));
+		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
 
@@ -53,7 +55,7 @@ export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
  */
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
 	return Object.cast(function createElementVNode(this: ComponentInterface, ...args: Parameters<T>) {
-		return interpolateStaticAttrs.call(this, original.apply(null, args));
+		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
 
@@ -137,7 +139,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			return vnode;
 		}
 
-		const vnode = interpolateStaticAttrs.call(
+		const vnode = resolveAttrs.call(
 			this,
 			original.apply(null, args)
 		);
@@ -158,7 +160,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
  */
 export function wrapCreateElementBlock<T extends typeof createElementBlock>(original: T): T {
 	return Object.cast(function createElementBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		return interpolateStaticAttrs.call(this, original.apply(null, args));
+		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
 
@@ -187,6 +189,29 @@ export function wrapRenderList<T extends typeof renderList>(original: T): T {
 	) {
 		this.$emit('[[V_FOR_CB]]', cb);
 		return original(src, cb);
+	});
+}
+
+/**
+ * Wrapper for the component library `renderSlot` function
+ * @param original
+ */
+export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
+	return Object.cast(function renderSlot(this: ComponentInterface, ...args: Parameters<T>) {
+		if (this.meta.params.functional === true) {
+			try {
+				return original.apply(null, args);
+
+			} catch (e) {
+				const
+					[slots, name, props] = args,
+					{r} = this.$renderEngine;
+
+				return r.createBlock(r.Fragment, {key: props?.key ?? `_${name}`}, slots[name]?.(props));
+			}
+		}
+
+		return original.apply(null, args);
 	});
 }
 
@@ -247,6 +272,36 @@ export function wrapWithDirectives<T extends typeof withDirectives>(original: T)
 			} else if (cantIgnoreDir) {
 				resolvedDirs.push(decl);
 			}
+		}
+
+		if (this != null && this.unsafe.meta.params.functional === true) {
+			const bindings = vnode.dirs ?? [];
+			vnode.dirs = [];
+
+			for (let i = 0; i < resolvedDirs.length; i++) {
+				let
+					[dir, value, arg, modifiers = {}] = resolvedDirs[i];
+
+				if (Object.isFunction(dir)) {
+					dir = {
+						mounted: dir,
+						updated: dir
+					};
+				}
+
+				bindings.push({
+					dir,
+					instance: Object.cast(this.$normalParent),
+
+					value,
+					oldValue: undefined,
+
+					arg,
+					modifiers
+				});
+			}
+
+			return vnode;
 		}
 
 		return original(vnode, resolvedDirs);

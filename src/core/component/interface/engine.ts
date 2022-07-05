@@ -14,6 +14,8 @@ import type {
 	Transition,
 	TransitionGroup,
 
+	getCurrentInstance,
+
 	toHandlers,
 	toDisplayString,
 
@@ -79,6 +81,8 @@ export interface RenderFn {
 export interface RenderAPI {
 	render(vnode: VNode, parent?: ComponentInterface): Node;
 	render(vnode: VNode[], parent?: ComponentInterface): Node[];
+
+	getCurrentInstance: typeof getCurrentInstance;
 
 	Fragment: typeof Fragment;
 	Transition: typeof Transition;

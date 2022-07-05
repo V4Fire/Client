@@ -18,6 +18,8 @@ import {
 	createElementBlock as superCreateElementBlock,
 
 	renderList as superRenderList,
+	renderSlot as superRenderSlot,
+
 	withDirectives as superWithDirectives,
 
 	VNode
@@ -28,7 +30,7 @@ import Vue from 'core/component/engines/vue3/lib';
 
 import {
 
-	interpolateStaticAttrs,
+	resolveAttrs,
 	wrapResolveComponent,
 
 	wrapCreateVNode,
@@ -38,6 +40,8 @@ import {
 	wrapCreateElementBlock,
 
 	wrapRenderList,
+	wrapRenderSlot,
+
 	wrapWithDirectives
 
 } from 'core/component/render';
@@ -50,10 +54,11 @@ export {
 	Transition,
 	TransitionGroup,
 
+	getCurrentInstance,
+
 	toHandlers,
 	toDisplayString,
 
-	renderSlot,
 	openBlock,
 
 	createStaticVNode,
@@ -85,7 +90,7 @@ export {
 
 } from 'vue';
 
-export { interpolateStaticAttrs };
+export { resolveAttrs };
 
 export const
 	resolveComponent = wrapResolveComponent(superResolveComponent),
@@ -101,6 +106,9 @@ export const
 
 export const
 	renderList = wrapRenderList(superRenderList),
+	renderSlot = wrapRenderSlot(superRenderSlot);
+
+export const
 	withDirectives = wrapWithDirectives(superWithDirectives);
 
 /**
@@ -128,6 +136,7 @@ export function render(
 export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): CanArray<Node> {
 	const vue = new Vue({
 		render: () => vnode,
+
 		beforeCreate() {
 			if (parent != null) {
 				const
