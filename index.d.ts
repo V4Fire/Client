@@ -189,9 +189,9 @@ declare var
 	removeCreatedComponents: () => void,
 
 	/**
-	 * Requires a module by the specified name
+	 * Requires a module by the specified path
 	 */
-	runtimeRequire: (moduleId: string) => any;
+	require: (path: string) => any;
 
 interface TouchGesturesCreateOptions {
 	/**

@@ -11,13 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.23.3 (2022-07-05)
+## v3.23.3 (2022-??-??)
+
 #### :rocket: New Feature
 
-* [Add method to import modules into test environment `tests/helpers/utils#import`](tests/helpers/utils.ts)
+* [Added a new method to import modules into the test environment `tests/helpers/utils#import`](tests/helpers/utils.ts)
 
 #### :house: Internal
 
+* [`optimization.moduleIds` is now set as `named`](build/webpack/optimization.js)
 * All test helpers now have static methods (similar to prototype methods)
 * Test migration from outdated API:
   * `b-form`

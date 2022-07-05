@@ -107,5 +107,7 @@ module.exports = function optimization({buildId, plugins}) {
 		/* eslint-enable camelcase */
 	];
 
+	opts.moduleIds = 'named';
+
 	return opts;
 };
