@@ -55,7 +55,16 @@ module.exports = [
 				attrs[':ref'] = [`$resolveRef(${ref})`];
 				attrs['v-ref'] = ref;
 
-				delete attrs[key];
+				return;
+			}
+
+			if (
+				key === 'v-on' ||
+				key.startsWith('@') ||
+				key.startsWith('v-on:')
+			) {
+				attrs['data-has-v-on-directives'] = [];
+				return;
 			}
 
 			if (!isV4Prop.test(key)) {

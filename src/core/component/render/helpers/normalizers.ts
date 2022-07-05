@@ -132,13 +132,15 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 
 		if (deprecatedProps != null) {
 			const
-				alternativeKey = deprecatedProps[key] ?? deprecatedProps[propKey] ?? key;
+				alternativeKey = deprecatedProps[key] ?? deprecatedProps[propKey];
 
-			attrs[alternativeKey] = attrs[key];
-			delete attrs[key];
+			if (alternativeKey != null) {
+				attrs[alternativeKey] = attrs[key];
+				delete attrs[key];
 
-			key = alternativeKey;
-			propKey = `${alternativeKey}Prop`;
+				key = alternativeKey;
+				propKey = `${alternativeKey}Prop`;
+			}
 		}
 
 		if (propKey in props) {

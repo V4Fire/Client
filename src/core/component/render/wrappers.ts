@@ -137,7 +137,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			return vnode;
 		}
 
-		const vnode = <VNode>interpolateStaticAttrs.call(
+		const vnode = interpolateStaticAttrs.call(
 			this,
 			original.apply(null, args)
 		);
@@ -230,7 +230,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(original: T)
 			if (Object.isDictionary(dir)) {
 				if (Object.isFunction(dir.beforeCreate)) {
 					const
-						newVnode = dir.beforeCreate({value, arg, modifiers, dir, instance: this}, vnode);
+						newVnode = dir.beforeCreate({value, arg, modifiers, dir}, vnode);
 
 					if (newVnode != null) {
 						vnode = newVnode;

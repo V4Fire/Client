@@ -29,6 +29,7 @@ export interface VNode<
 	HostElement = RendererElement,
 	ExtraProps = {[key: string]: any}
 > extends SuperVNode<HostNode, HostElement, ExtraProps> {
+	dynamicProps?: string[];
 	dynamicChildren?: VNode[];
 	virtualContext?: ComponentInterface;
 	virtualComponent?: ComponentInterface;

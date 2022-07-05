@@ -57,7 +57,11 @@ export function getBlockSelector(this: Block, mods?: ModsTable): string {
  */
 export function getElSelector(this: Block, name: string, mods?: ModsTable): string {
 	let
-		res = `.${this.componentId}.${getFullElName.call(this, name)}`;
+		res = `.${getFullElName.call(this, name)}`;
+
+	if (!this.ctx.isFunctional) {
+		res += `.${this.componentId}`;
+	}
 
 	if (mods != null) {
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -88,7 +92,7 @@ export function elements<E extends Element = Element>(
 	ctx: Element,
 	name: string,
 	mods?: ModsTable
-): NodeListOf<E>;
+): ArrayLike<E>;
 
 /**
  * Returns block child elements by the specified selector
@@ -106,16 +110,19 @@ export function elements<E extends Element = Element>(
 	this: Block,
 	name: string,
 	mods?: ModsTable
-): NodeListOf<E>;
+): ArrayLike<E>;
 
 export function elements<E extends Element = Element>(
 	this: Block,
 	ctxOrName: Element | string,
 	name?: string | ModsTable,
 	mods?: ModsTable
-): NodeListOf<E> {
+): ArrayLike<E> {
+	const
+		$el = this.node;
+
 	let
-		ctx = this.node,
+		ctxToSearch = $el,
 		elName;
 
 		if (Object.isString(ctxOrName)) {
@@ -127,16 +134,40 @@ export function elements<E extends Element = Element>(
 
 	} else {
 		elName = name;
-		ctx = ctxOrName;
+		ctxToSearch = ctxOrName;
 	}
 
-	ctx ??= this.node;
+	ctxToSearch ??= $el;
 
-	if (ctx == null) {
+	if (ctxToSearch == null || $el == null) {
 		return fakeCtx.querySelectorAll('.loopback');
 	}
 
-	return ctx.querySelectorAll(getElSelector.call(this, elName, mods));
+	const
+		selector = getElSelector.call(this, elName, mods),
+		elements = ctxToSearch.querySelectorAll<E>(selector);
+
+	if (this.ctx.isFunctional) {
+		$el.classList.remove('i-block-helper');
+
+		const
+			redundantElements = ctxToSearch.querySelectorAll(`.i-block-helper${getBlockSelector.call(this)} ${selector}`);
+
+		$el.classList.add('i-block-helper');
+
+		if (redundantElements.length > 0) {
+			const
+				filteredElements = new Set(Object.cast(elements));
+
+			for (let i = 0; i < redundantElements.length; i++) {
+				filteredElements.delete(redundantElements[i]);
+			}
+
+			return Object.cast(Array.from(filteredElements));
+		}
+	}
+
+	return elements;
 }
 
 /**
@@ -204,6 +235,10 @@ export function element<E extends Element = Element>(
 
 	if (ctx == null) {
 		return undefined;
+	}
+
+	if (this.ctx.isFunctional) {
+		return this.elements<E>(elName, mods)[0];
 	}
 
 	return ctx.querySelector<E>(getElSelector.call(this, elName, mods)) ?? undefined;

@@ -41,6 +41,8 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 				});
 
 				init.createdState(unsafe);
+
+				unsafe.unsafe.$el = node;
 				init.mountedState(unsafe);
 
 				break;

@@ -8,7 +8,7 @@
 
 import { normalizeClass, normalizeStyle } from 'core/component/render/helpers/normalizers';
 
-const
+export const
 	isHandler = /^on[^a-z]/;
 
 /**

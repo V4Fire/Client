@@ -239,6 +239,16 @@ ComponentEngine.directive('attrs', {
 				}
 
 				props[event] = attrVal;
+
+				// eslint-disable-next-line no-bitwise
+				if ((vnode.patchFlag & 8) === 0) {
+					vnode.patchFlag += 8;
+				}
+
+				const dynamicProps = vnode.dynamicProps ?? [];
+				vnode.dynamicProps = dynamicProps;
+				dynamicProps.push(event);
+
 				continue;
 			}
 
@@ -276,28 +286,35 @@ ComponentEngine.directive('attrs', {
 				attrName = classAttrs[attrName];
 				attrVal = normalizeClass(Object.cast(attrVal));
 
-				if (vnode.patchFlag < 6) {
-					vnode.patchFlag = 6;
+				// eslint-disable-next-line no-bitwise
+				if ((vnode.patchFlag & 2) === 0) {
+					vnode.patchFlag += 2;
 				}
 
 			} else if (styleAttrs[attrName] != null) {
 				attrVal = normalizeStyle(Object.cast(attrVal));
 
-				if (vnode.patchFlag < 4) {
-					vnode.patchFlag = 4;
+				// eslint-disable-next-line no-bitwise
+				if ((vnode.patchFlag & 4) === 0) {
+					vnode.patchFlag += 4;
 				}
 
 			} else {
-				if (vnode.patchFlag < 14) {
-					vnode.patchFlag = 14;
+				// eslint-disable-next-line no-bitwise
+				if ((vnode.patchFlag & 8) === 0) {
+					vnode.patchFlag += 8;
 				}
 
 				if (attrName.startsWith('-')) {
 					attrName = `data${attrName}`;
 				}
 
-				const dynamicProps = vnode['dynamicProps'] ?? [];
-				vnode['dynamicProps'] = Array.union(dynamicProps, attrName);
+				const dynamicProps = vnode.dynamicProps ?? [];
+				vnode.dynamicProps = dynamicProps;
+
+				if (!dynamicProps.includes(attrName)) {
+					dynamicProps.push(attrName);
+				}
 			}
 
 			if (props[attrName] != null) {

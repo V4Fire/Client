@@ -7,7 +7,7 @@
  */
 
 import type { VNode } from 'core/component/engines';
-import { mergeProps } from 'core/component/render/helpers/props';
+import { isHandler, mergeProps } from 'core/component/render/helpers/props';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -27,15 +27,17 @@ const
  *
  * // {class: 'id-1 b-example alias'}
  * interpolateStaticAttrs.call(ctx, {
- *   'data-cached-class-component-id': ''
- *   'data-cached-class-provided-classes-styles': 'elem-name'
- *   'data-cached-dynamic-class': '[self.componentName]'
+ *   props: {
+ *     'data-cached-class-component-id': ''
+ *     'data-cached-class-provided-classes-styles': 'elem-name'
+ *     'data-cached-dynamic-class': '[self.componentName]'
+ *   }
  * })
  * ```
  */
-export function interpolateStaticAttrs<T extends VNode | Dictionary>(this: ComponentInterface, vnode: T): T {
+export function interpolateStaticAttrs<T extends VNode>(this: ComponentInterface, vnode: T): T {
 	const
-		props = <CanUndef<Dictionary<string>>>(Object.isString(vnode.type) ? vnode.props : vnode);
+		{props} = vnode;
 
 	if (props == null) {
 		return vnode;
@@ -43,10 +45,39 @@ export function interpolateStaticAttrs<T extends VNode | Dictionary>(this: Compo
 
 	{
 		const
+			key = 'data-has-v-on-directives';
+
+		if (props[key] != null) {
+			// eslint-disable-next-line no-bitwise
+			if ((vnode.patchFlag & 8) === 0) {
+				vnode.patchFlag += 8;
+			}
+
+			const dynamicProps = vnode.dynamicProps ?? [];
+			vnode.dynamicProps = dynamicProps;
+
+			for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i];
+
+				if (isHandler.test(key)) {
+					dynamicProps.push(key);
+				}
+			}
+
+			delete props[key];
+		}
+	}
+
+	{
+		const
 			key = 'data-cached-class-component-id';
 
-		if (key in props && props[key] != null) {
-			Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
+		if (props[key] != null) {
+			if (this.meta.params.functional !== true) {
+				Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
+			}
+
 			delete props[key];
 		}
 	}
