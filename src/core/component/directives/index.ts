@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/directives/README.md]]
+ * @packageDocumentation
+ */
+
 import 'core/component/directives/tag';
 import 'core/component/directives/ref';
 import 'core/component/directives/hook';
