@@ -6,8 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import VDOM, { render } from 'friends/vdom';
-import type { ComponentElement, VNode } from 'super/i-block/i-block';
+import VDOM from 'friends/vdom';
+import { render } from 'friends/vdom/render';
+
+import type { VNode } from 'core/component/engines';
+import type { ComponentElement } from 'super/i-block/i-block';
 
 import type AsyncRender from 'friends/async-render/class';
 
@@ -292,7 +295,7 @@ export function iterate(
 					renderedVnode = Object.cast(vnode.el);
 
 				} else {
-					VDOM.addToPrototype(render);
+					VDOM.addToPrototype(Object.cast(render));
 					renderedVnode = ctx.vdom.render(vnode);
 				}
 

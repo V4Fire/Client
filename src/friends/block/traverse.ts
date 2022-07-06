@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { ModsDict } from 'super/i-block/i-block';
 import type Block from 'friends/block/class';
 
 import { fakeCtx } from 'friends/block/const';
 import { getFullElName } from 'friends/block/element';
-import type { ModsTable } from 'super/i-block/modules/mods';
 
 /**
  * Returns a CSS selector to the current component block
@@ -26,7 +26,7 @@ import type { ModsTable } from 'super/i-block/modules/mods';
  * console.log(this.getBlockSelector({focused: true}));
  * ```
  */
-export function getBlockSelector(this: Block, mods?: ModsTable): string {
+export function getBlockSelector(this: Block, mods?: ModsDict): string {
 	let
 		res = `.${this.getFullBlockName()}`;
 
@@ -55,7 +55,7 @@ export function getBlockSelector(this: Block, mods?: ModsTable): string {
  * console.log(this.getElSelector('bla', {focused: true}));
  * ```
  */
-export function getElSelector(this: Block, name: string, mods?: ModsTable): string {
+export function getElSelector(this: Block, name: string, mods?: ModsDict): string {
 	let
 		res = `.${getFullElName.call(this, name)}`;
 
@@ -91,7 +91,7 @@ export function elements<E extends Element = Element>(
 	this: Block,
 	ctx: Element,
 	name: string,
-	mods?: ModsTable
+	mods?: ModsDict
 ): ArrayLike<E>;
 
 /**
@@ -109,14 +109,14 @@ export function elements<E extends Element = Element>(
 export function elements<E extends Element = Element>(
 	this: Block,
 	name: string,
-	mods?: ModsTable
+	mods?: ModsDict
 ): ArrayLike<E>;
 
 export function elements<E extends Element = Element>(
 	this: Block,
 	ctxOrName: Element | string,
-	name?: string | ModsTable,
-	mods?: ModsTable
+	name?: string | ModsDict,
+	mods?: ModsDict
 ): ArrayLike<E> {
 	const
 		$el = this.node;
@@ -188,7 +188,7 @@ export function element<E extends Element = Element>(
 	this: Block,
 	ctx: Element,
 	name: string,
-	mods?: ModsTable
+	mods?: ModsDict
 ): CanUndef<E>;
 
 /**
@@ -206,14 +206,14 @@ export function element<E extends Element = Element>(
 export function element<E extends Element = Element>(
 	this: Block,
 	name: string,
-	mods?: ModsTable
+	mods?: ModsDict
 ): CanUndef<E>;
 
 export function element<E extends Element = Element>(
 	this: Block,
 	ctxOrName: Element | string,
-	name?: string | ModsTable,
-	mods?: ModsTable
+	name?: string | ModsDict,
+	mods?: ModsDict
 ): CanUndef<E> {
 	let
 		ctx = this.node,
