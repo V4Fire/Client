@@ -12,34 +12,34 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
+import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import { idsCache } from 'core/component/directives/bind-with/const';
 import { bindListenerToElement, clearElementBindings } from 'core/component/directives/bind-with/helpers';
-
-import type { DirectiveOptions } from 'core/component/directives/bind-with/interface';
+import type { DirectiveParams } from 'core/component/directives/bind-with/interface';
 
 export * from 'core/component/directives/bind-with/const';
 export * from 'core/component/directives/bind-with/helpers';
 export * from 'core/component/directives/bind-with/interface';
 
 ComponentEngine.directive('bind-with', {
-	mounted(el: Element, {value}: DirectiveOptions, {virtualContext}: VNode): void {
-		bindListenerToElement(value, el, virtualContext);
+	mounted(el: Element, params: DirectiveParams, vnode: VNode): void {
+		bindListenerToElement(params.value, el, getDirectiveContext(params, vnode));
 	},
 
-	updated(el: Element, {value, oldValue}: DirectiveOptions, {virtualContext}: VNode): void {
+	updated(el: Element, params: DirectiveParams, vnode: VNode): void {
 		const
-			ctx = virtualContext?.unsafe;
+			ctx = getDirectiveContext(params, vnode);
 
-		if (ctx == null || ctx.meta.params.functional !== true && Object.fastCompare(value, oldValue)) {
+		if (ctx == null || ctx.meta.params.functional !== true && Object.fastCompare(params.value, params.oldValue)) {
 			return;
 		}
 
-		bindListenerToElement(value, el, ctx);
+		bindListenerToElement(params.value, el, ctx);
 	},
 
-	unmounted(el: Element, opts: DirectiveOptions, {virtualContext}: VNode): void {
-		clearElementBindings(el, virtualContext);
+	unmounted(el: Element, params: DirectiveParams, vnode: VNode): void {
+		clearElementBindings(el, getDirectiveContext(params, vnode));
 		idsCache.delete(el);
 	}
 });

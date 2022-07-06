@@ -11,7 +11,7 @@ import type { EventEmitterLike, PromiseLikeP } from 'core/async';
 import type { DirectiveBinding } from 'core/component/engines';
 import type { WatchOptions } from 'core/component/interface';
 
-export interface DirectiveOptions extends DirectiveBinding<CanUndef<DirectiveValue>> {}
+export interface DirectiveParams extends DirectiveBinding<CanUndef<DirectiveValue>> {}
 
 export type DirectiveValue = CanArray<Listener>;
 

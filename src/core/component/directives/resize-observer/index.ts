@@ -12,14 +12,14 @@ import { ComponentEngine } from 'core/component/engines';
 import { DIRECTIVE } from 'core/component/directives/resize-observer/const';
 import { normalizeOptions, setCreatedViaDirectiveFlag } from 'core/component/directives/resize-observer/helpers';
 
-import type { DirectiveOptions } from 'core/component/directives/resize-observer/interface';
+import type { DirectiveParams } from 'core/component/directives/resize-observer/interface';
 
 export * from 'core/component/directives/resize-observer/const';
 export * from 'core/component/directives/resize-observer/helpers';
 export * from 'core/component/directives/resize-observer/interface';
 
 ComponentEngine.directive('resize-observer', {
-	mounted(el: HTMLElement, {value, instance}: DirectiveOptions): void {
+	mounted(el: HTMLElement, {value, instance}: DirectiveParams): void {
 		if (value == null) {
 			return;
 		}
@@ -30,7 +30,7 @@ ComponentEngine.directive('resize-observer', {
 		});
 	},
 
-	updated(el: HTMLElement, {value, oldValue, instance}: DirectiveOptions): void {
+	updated(el: HTMLElement, {value, oldValue, instance}: DirectiveParams): void {
 		const
 			oldOptions = oldValue,
 			newOptions = value;

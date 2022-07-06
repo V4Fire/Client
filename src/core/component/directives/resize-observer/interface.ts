@@ -11,6 +11,6 @@ import type { DirectiveBinding } from 'core/component/engines';
 
 export * from 'core/dom/resize-observer/interface';
 
-export interface DirectiveOptions extends DirectiveBinding<CanUndef<CanArray<ResizeWatcherInitOptions>>> {
+export interface DirectiveParams extends DirectiveBinding<CanUndef<CanArray<ResizeWatcherInitOptions>>> {
 	modifiers: Record<string, boolean>;
 }

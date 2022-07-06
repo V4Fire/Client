@@ -12,14 +12,14 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
-import type { DirectiveOptions } from 'core/component/directives/render/interface';
+import type { DirectiveParams } from 'core/component/directives/render/interface';
 
 export * from 'core/component/directives/render/interface';
 
 ComponentEngine.directive('render', {
-	beforeCreate(opts: DirectiveOptions, vnode: VNode): CanUndef<VNode> {
+	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		const
-			newVNode = opts.value,
+			newVNode = params.value,
 			originalChildren = vnode.children;
 
 		if (newVNode != null) {

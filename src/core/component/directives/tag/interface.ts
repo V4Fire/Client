@@ -8,4 +8,4 @@
 
 import type { DirectiveBinding } from 'core/component/engines';
 
-export interface DirectiveOptions extends DirectiveBinding<CanUndef<string>> {}
+export interface DirectiveParams extends DirectiveBinding<CanUndef<string>> {}

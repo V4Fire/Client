@@ -8,4 +8,4 @@
 
 import type { DirectiveBinding } from 'core/component/engines';
 
-export interface DirectiveOptions extends DirectiveBinding<void> {}
+export interface DirectiveParams extends DirectiveBinding<void> {}

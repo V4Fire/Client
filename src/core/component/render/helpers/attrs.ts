@@ -25,7 +25,7 @@ const
  * // `.classes = {'elem-name': 'alias'}`
  * const ctx = this;
  *
- * // {class: 'id-1 b-example alias'}
+ * // {props: {class: 'id-1 b-example alias'}}
  * resolveAttrs.call(ctx, {
  *   props: {
  *     'data-cached-class-component-id': ''
@@ -39,8 +39,8 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	const
 		{props} = vnode;
 
-	if (vnode.ref != null && vnode.ref['i'] == null) {
-		vnode.ref['i'] = this.$renderEngine.r.getCurrentInstance();
+	if (vnode.ref != null) {
+		vnode.ref['i'] ??= this.$renderEngine.r.getCurrentInstance();
 	}
 
 	if (props == null) {

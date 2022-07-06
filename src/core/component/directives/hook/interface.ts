@@ -16,7 +16,7 @@ import type {
 
 } from 'core/component/engines';
 
-export interface DirectiveOptions extends DirectiveBinding<CanUndef<DirectiveValue>> {}
+export interface DirectiveParams extends DirectiveBinding<CanUndef<DirectiveValue>> {}
 
 export type DirectiveValue = Overwrite<Omit<ObjectDirective, 'deep' | 'getSSRProps'>, {
 	beforeCreate?(...args: Parameters<DirectiveHook>): CanUndef<VNode>;

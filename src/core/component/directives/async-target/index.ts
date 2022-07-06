@@ -11,14 +11,17 @@
  * @packageDocumentation
  */
 
-import { ComponentEngine, VNode, DirectiveBinding } from 'core/component/engines';
+import { ComponentEngine, VNode } from 'core/component/engines';
+
+import { getDirectiveContext } from 'core/component/directives/helpers';
+import type { DirectiveParams } from 'core/component/directives/async-target/interface';
 
 export * from 'core/component/directives/async-target/interface';
 
 ComponentEngine.directive('async-target', {
-	beforeCreate(opts: DirectiveBinding, vnode: VNode): void {
+	beforeCreate(params: DirectiveParams, vnode: VNode): void {
 		const
-			ctx = vnode.virtualContext?.unsafe;
+			ctx = getDirectiveContext(params, vnode);
 
 		if (ctx == null) {
 			return;

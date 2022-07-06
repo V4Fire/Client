@@ -8,4 +8,4 @@
 
 import type { DirectiveBinding, VNode } from 'core/component/engines';
 
-export interface DirectiveOptions extends DirectiveBinding<CanUndef<CanArray<VNode>>> {}
+export interface DirectiveParams extends DirectiveBinding<CanUndef<CanArray<VNode>>> {}

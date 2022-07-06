@@ -12,6 +12,8 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
+import { getDirectiveContext } from 'core/component/directives/helpers';
+
 import { REF_ID } from 'core/component/directives/ref/const';
 
 import type { ComponentElement } from 'core/component/interface';
@@ -25,9 +27,14 @@ ComponentEngine.directive('ref', {
 	updated: updateRef
 });
 
-function updateRef(el: Element, {value, instance}: DirectiveOptions, vnode: VNode): void {
+function updateRef(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 	const
-		ctx = vnode.virtualContext?.unsafe;
+		ctx = getDirectiveContext(opts, vnode);
+
+	const {
+		value,
+		instance
+	} = opts;
 
 	if (
 		value == null || Object.isFunction(value) || instance == null || ctx == null) {

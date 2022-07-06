@@ -15,6 +15,7 @@
 
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 import { mergeProps, normalizeStyle, normalizeClass } from 'core/component/render';
+import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import {
 
@@ -32,26 +33,21 @@ import {
 } from 'core/component/directives/attrs/const';
 
 import type { ComponentInterface } from 'core/component/interface';
-import type { DirectiveOptions } from 'core/component/directives/attrs/interface';
+import type { DirectiveParams } from 'core/component/directives/attrs/interface';
 
 export * from 'core/component/directives/attrs/const';
 export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
-	beforeCreate(opts: DirectiveOptions, vnode: VNode) {
+	beforeCreate(params: DirectiveParams, vnode: VNode) {
 		let
-			handlerStore,
-			attrs = opts.value;
-
-		if (attrs == null) {
-			return;
-		}
+			handlerStore;
 
 		const
-			ctx = vnode.virtualContext?.unsafe,
-			props = vnode.props ?? {};
+			ctx = getDirectiveContext(params, vnode),
+			props = vnode.props ?? {},
+			attrs = {...params.value};
 
-		attrs = {...attrs};
 		vnode.props ??= props;
 
 		let
@@ -166,14 +162,14 @@ ComponentEngine.directive('attrs', {
 				}
 
 				const dirDecl: DirectiveBinding = {
-					arg,
-					modifiers,
+					dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
+					instance: params.instance,
 
 					value: attrVal,
-					oldValue: null,
+					oldValue: undefined,
 
-					instance: opts.instance,
-					dir: Object.isFunction(dir) ? {created: dir} : dir
+					arg,
+					modifiers
 				};
 
 				const dirs = vnode.dirs ?? [];

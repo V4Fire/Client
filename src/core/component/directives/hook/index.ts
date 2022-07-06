@@ -14,40 +14,40 @@
  */
 
 import { ComponentEngine } from 'core/component/engines';
-import type { DirectiveOptions } from 'core/component/directives/hook/interface';
+import type { DirectiveParams } from 'core/component/directives/hook/interface';
 
 export * from 'core/component/directives/hook/interface';
 
 ComponentEngine.directive('hook', {
-	beforeCreate(opts: DirectiveOptions): void {
-		opts.value?.beforeCreate?.apply(opts.value, Object.cast(arguments));
+	beforeCreate(params: DirectiveParams): void {
+		params.value?.beforeCreate?.apply(params.value, Object.cast(arguments));
 	},
 
-	created(el: Element, opts: DirectiveOptions): void {
-		opts.value?.created?.apply(opts.value, Object.cast(arguments));
+	created(el: Element, params: DirectiveParams): void {
+		params.value?.created?.apply(params.value, Object.cast(arguments));
 	},
 
-	beforeMount(el: Element, opts: DirectiveOptions): void {
-		opts.value?.beforeMount?.apply(opts.value, Object.cast(arguments));
+	beforeMount(el: Element, params: DirectiveParams): void {
+		params.value?.beforeMount?.apply(params.value, Object.cast(arguments));
 	},
 
-	mounted(el: Element, opts: DirectiveOptions): void {
-		opts.value?.mounted?.apply(opts.value, Object.cast(arguments));
+	mounted(el: Element, params: DirectiveParams): void {
+		params.value?.mounted?.apply(params.value, Object.cast(arguments));
 	},
 
-	beforeUpdate(el: Element, opts: DirectiveOptions): void {
-		opts.value?.beforeUpdate?.apply(opts.value, Object.cast(arguments));
+	beforeUpdate(el: Element, params: DirectiveParams): void {
+		params.value?.beforeUpdate?.apply(params.value, Object.cast(arguments));
 	},
 
-	updated(el: Element, opts: DirectiveOptions): void {
-		opts.value?.updated?.apply(opts.value, Object.cast(arguments));
+	updated(el: Element, params: DirectiveParams): void {
+		params.value?.updated?.apply(params.value, Object.cast(arguments));
 	},
 
-	beforeUnmount(el: Element, opts: DirectiveOptions): void {
-		opts.value?.beforeUnmount?.apply(opts.value, Object.cast(arguments));
+	beforeUnmount(el: Element, params: DirectiveParams): void {
+		params.value?.beforeUnmount?.apply(params.value, Object.cast(arguments));
 	},
 
-	unmounted(el: Element, opts: DirectiveOptions): void {
-		opts.value?.unmounted?.apply(opts.value, Object.cast(arguments));
+	unmounted(el: Element, params: DirectiveParams): void {
+		params.value?.unmounted?.apply(params.value, Object.cast(arguments));
 	}
 });

@@ -12,12 +12,12 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
-import type { DirectiveOptions } from 'core/component/directives/tag/interface';
+import type { DirectiveParams } from 'core/component/directives/tag/interface';
 
 export * from 'core/component/directives/tag/interface';
 
 ComponentEngine.directive('tag', {
-	beforeCreate(opts: DirectiveOptions, vnode: VNode): void {
-		vnode.type = opts.value ?? vnode.type;
+	beforeCreate(params: DirectiveParams, vnode: VNode): void {
+		vnode.type = params.value ?? vnode.type;
 	}
 });

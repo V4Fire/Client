@@ -30,7 +30,8 @@ import type {
 	withDirectives,
 
 	VNode,
-	DirectiveArguments
+	DirectiveArguments,
+	DirectiveBinding
 
 } from 'core/component/engines';
 
@@ -144,12 +145,6 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			original.apply(null, args)
 		);
 
-		Object.defineProperty(vnode, 'virtualComponent', {
-			configurable: true,
-			enumerable: true,
-			get: () => vnode.component?.['ctx']
-		});
-
 		return vnode;
 	});
 }
@@ -217,17 +212,14 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 
 /**
  * Wrapper for the component library `withDirectives` function
- * @param original
+ * @param _
  */
-export function wrapWithDirectives<T extends typeof withDirectives>(original: T): T {
+export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 	return Object.cast(function withDirectives(
 		this: CanUndef<ComponentInterface>,
 		vnode: VNode,
 		dirs: DirectiveArguments
 	) {
-		const
-			resolvedDirs: DirectiveArguments = [];
-
 		if (this == null) {
 			Object.defineProperty(vnode, 'virtualComponent', {
 				configurable: true,
@@ -244,10 +236,28 @@ export function wrapWithDirectives<T extends typeof withDirectives>(original: T)
 			});
 		}
 
+		const bindings = vnode.dirs ?? [];
+		vnode.dirs = bindings;
+
+		const instance = this?.unsafe.meta.params.functional === true ?
+			Object.cast(this.$normalParent) :
+			this;
+
 		for (let i = 0; i < dirs.length; i++) {
 			const
 				decl = dirs[i],
 				[dir, value, arg, modifiers] = decl;
+
+			const binding: DirectiveBinding = {
+				dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
+				instance: Object.cast(instance),
+
+				value,
+				oldValue: undefined,
+
+				arg,
+				modifiers: modifiers ?? {}
+			};
 
 			const
 				cantIgnoreDir = value != null || decl.length !== 2;
@@ -255,55 +265,25 @@ export function wrapWithDirectives<T extends typeof withDirectives>(original: T)
 			if (Object.isDictionary(dir)) {
 				if (Object.isFunction(dir.beforeCreate)) {
 					const
-						newVnode = dir.beforeCreate({value, arg, modifiers, dir}, vnode);
+						newVnode = dir.beforeCreate(binding, vnode);
 
 					if (newVnode != null) {
 						vnode = newVnode;
 					}
 
 					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
-						resolvedDirs.push(decl);
+						bindings.push(binding);
 					}
 
 				} else if (Object.keys(dir).length > 0 && cantIgnoreDir) {
-					resolvedDirs.push(decl);
+					bindings.push(binding);
 				}
 
 			} else if (cantIgnoreDir) {
-				resolvedDirs.push(decl);
+				bindings.push(binding);
 			}
 		}
 
-		if (this != null && this.unsafe.meta.params.functional === true) {
-			const bindings = vnode.dirs ?? [];
-			vnode.dirs = [];
-
-			for (let i = 0; i < resolvedDirs.length; i++) {
-				let
-					[dir, value, arg, modifiers = {}] = resolvedDirs[i];
-
-				if (Object.isFunction(dir)) {
-					dir = {
-						mounted: dir,
-						updated: dir
-					};
-				}
-
-				bindings.push({
-					dir,
-					instance: Object.cast(this.$normalParent),
-
-					value,
-					oldValue: undefined,
-
-					arg,
-					modifiers
-				});
-			}
-
-			return vnode;
-		}
-
-		return original(vnode, resolvedDirs);
+		return vnode;
 	});
 }
