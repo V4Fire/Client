@@ -11,6 +11,6 @@
  * @packageDocumentation
  */
 
-import 'core/prelude/test-env/runtime-require';
+import 'core/prelude/test-env/require';
 import 'core/prelude/test-env/components';
 import 'core/prelude/test-env/gestures';
