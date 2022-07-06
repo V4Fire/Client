@@ -20,6 +20,20 @@ AsyncRender.addToPrototype(iterate, forceRender);
 export default class bExample extends iBlock {}
 ```
 
+Or, if you're using the module with Snakeskin helpers, all dependencies will be installed automatically.
+
+```
+< .container v-async-target
+  += self.render({renderKey: 'Login Form', wait: 'promisifyOnce.bind(null, "forceRender")'})
+    < b-button
+      Press on me!
+
+    < b-input :placeholder = 'Enter your name'
+
+< button @click = emit('forceRender')
+  Show form
+```
+
 ## How does it work?
 
 The class brings a new method to create iterable objects: `asyncRender.iterate` that should be used with the `v-for` directive.
@@ -245,9 +259,9 @@ This function is useful to re-render a functional component without touching the
 
 ```
 < button @click = asyncRender.forceRender()
- Re-render the component
+  Re-render the component
 
-< .container v-async-target
+< .&__container v-async-target
   < template v-for = el in asyncRender.iterate(true, { &
     filter: asyncRender.waitForceRender('content')
   }) .
@@ -274,4 +288,52 @@ This function helps optimize component rendering by splitting big render tasks i
   /// Asynchronous rendering of components: only five elements per chunk
   < template v-for = el in asyncRender.iterate(largeList, 5)
     < my-component :data = el
+```
+
+## Snakeskin helpers
+
+### render
+
+This helper provides a convenient facade for the [[AsyncRender]] API.
+You can use it when you need to create asynchronous conditional rendering of template fragments.
+
+```
+< .container v-async-target
+  += self.render({renderKey: 'Login Form', wait: 'promisifyOnce.bind(null, "forceRender")'})
+    < b-button
+      Press on me!
+
+    < b-input :placeholder = 'Enter your name'
+
+< button @click = emit('forceRender')
+  Show form
+```
+
+#### Enabling one time rendering
+
+Providing the `renderKey` option you declare this template fragment should be rendered once,
+i.e. it won’t be re-rendered during the component state change. Mind, the render key should be unique.
+
+```
+< .container v-async-target
+  += self.render({renderKey: 'Login Form'})
+    < b-button
+      Login
+```
+
+#### Conditional rendering
+
+If you want render the fragment only after some event, provide the `wait` option.
+This option expects a string expression (cause it code-generation) with a function that returns a promise.
+
+```
+< .container v-async-target
+  += self.render({wait: 'promisifyOnce.bind(null, "forceRender")'})
+    < b-button
+      Press on me!
+
+    < b-input :placeholder = 'Enter your name'
+
+< button @click = emit('forceRender')
+  Show form
 ```

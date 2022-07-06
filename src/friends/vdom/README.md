@@ -48,12 +48,12 @@ const vnode = this.vdom.create('div', {
   ]
 });
 
-console.log(this.vdom.findElFromVNode('elem', vnode));
+console.log(this.vdom.findElem('elem', vnode));
 ```
 
 ### create
 
-Creates a VNode or list of VNode-s with the specified parameters.
+Creates a VNode or a list of VNode-s with the specified parameters.
 
 ```js
 const vnode = this.vdom.create('b-button', {

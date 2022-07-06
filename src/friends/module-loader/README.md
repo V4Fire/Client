@@ -19,7 +19,7 @@ ModuleLoader.addToPrototype(load);
 export default class bExample extends iBlock {}
 ```
 
-Or, if you're using a module with Snakeskin helpers, all dependencies will be installed automatically.
+Or, if you're using the module with Snakeskin helpers, all dependencies will be installed automatically.
 
 ```
 < .container v-async-target
@@ -162,29 +162,12 @@ i.e. it won’t be re-rendered during the component state change. Mind, the rend
 
 #### Conditional rendering
 
-If you want render a fragment only after some event, provide the `wait` option.
+If you want render the fragment only after some event, provide the `wait` option.
 This option expects a string expression (cause it code-generation) with a function that returns a promise.
 
 ```
 < .container v-async-target
   += self.loadModules(['form/b-button', 'form/b-input'], {wait: 'promisifyOnce.bind(null, "forceRender")'})
-    < b-button
-      Press on me!
-
-    < b-input :placeholder = 'Enter your name'
-
-< button @click = emit('forceRender')
-  Show form
-```
-
-### render
-
-This helper is like `loadModules`, but without loading of modules.
-You can use it when you need to create asynchronous conditional rendering of template fragments.
-
-```
-< .container v-async-target
-  += self.render({renderKey: 'Login Form', wait: 'promisifyOnce.bind(null, "forceRender")'})
     < b-button
       Press on me!
 
