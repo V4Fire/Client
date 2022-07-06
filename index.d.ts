@@ -191,7 +191,7 @@ declare var
 	/**
 	 * Requires a module by the specified path
 	 */
-	require: (path: string) => any;
+	importModule: (path: string) => any;
 
 interface TouchGesturesCreateOptions {
 	/**

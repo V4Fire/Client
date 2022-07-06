@@ -94,7 +94,7 @@ export default class Utils {
 		}
 
 		return <Promise<JSHandle<T>>>page.evaluateHandle(
-			([{moduleName}]) => globalThis.require(moduleName), [{moduleName}]
+			([{moduleName}]) => globalThis.importModule(moduleName), [{moduleName}]
 		);
 	}
 
