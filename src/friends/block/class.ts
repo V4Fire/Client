@@ -9,7 +9,7 @@
 import Friend, { fakeMethods } from 'friends/friend';
 
 import type iBlock from 'super/i-block/i-block';
-import type { ModsNTable } from 'super/i-block/modules/mods';
+import type { ModsDict } from 'super/i-block/i-block';
 
 import { modRgxpCache } from 'friends/block/const';
 import type { ModEvent, ModEventReason, SetModEvent } from 'friends/block/interface';
@@ -180,7 +180,7 @@ class Block extends Friend {
 
 		if (!ctx.isFunctional) {
 			const
-				watchModsStore = ctx.field.get<ModsNTable>('watchModsStore');
+				watchModsStore = ctx.field.get<ModsDict>('watchModsStore');
 
 			if (watchModsStore != null && name in watchModsStore && watchModsStore[name] !== normalizedValue) {
 				delete Object.getPrototypeOf(watchModsStore)[name];
@@ -254,7 +254,7 @@ class Block extends Friend {
 
 			if (!ctx.isFunctional) {
 				const
-					watchModsStore = ctx.field.get<ModsNTable>('watchModsStore');
+					watchModsStore = ctx.field.get<ModsDict>('watchModsStore');
 
 				if (watchModsStore != null && name in watchModsStore && watchModsStore[name] != null) {
 					delete Object.getPrototypeOf(watchModsStore)[name];
