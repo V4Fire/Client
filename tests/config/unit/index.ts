@@ -17,6 +17,8 @@ const config: PlaywrightTestConfig = {
 
 	testMatch: ['src/**/test/unit/**/*.ts'],
 
+	reporter: Object.isTruly(process.env.GITHUB_ACTIONS) ? 'github' : undefined,
+
 	globalSetup: require.resolve('tests/config/unit/setup')
 };
 

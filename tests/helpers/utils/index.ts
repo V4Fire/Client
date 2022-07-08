@@ -7,12 +7,11 @@
  */
 
 import delay from 'delay';
-import type { Page, BrowserContext, ElementHandle } from 'playwright';
+import type { Page, JSHandle, BrowserContext, ElementHandle } from 'playwright';
+
+import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
 
 import type { SetupOptions } from 'tests/helpers/utils/interface';
-import type { WaitForIdleOptions } from 'tests/helpers/bom';
-
-import type Helpers from 'tests/helpers';
 
 const
 	logsMap = new WeakMap<Page, string[]>();
@@ -79,12 +78,37 @@ export default class Utils {
 		}, [strFn, ...args]);
 	}
 
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
+	/**
+	 * Imports the specified module into page and returns `JSHandle` for this module
+	 *
+	 * @param page
+	 * @param moduleName
+	 */
+	static import<T>(page: Page, moduleName: string): Promise<JSHandle<T>> {
+		if (!moduleName.startsWith('./')) {
+			moduleName = `./src/${moduleName}`;
+		}
 
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
+		if (!moduleName.endsWith('.ts')) {
+			moduleName = `${moduleName}/index.ts`;
+		}
+
+		return <Promise<JSHandle<T>>>page.evaluateHandle(
+			([{moduleName}]) => globalThis.importModule(moduleName), [{moduleName}]
+		);
+	}
+
+	/**
+	 * Reloads the page and waits until `requestIdleCallback`
+	 *
+	 * @param page
+	 * @param [idleOptions]
+	 *
+	 * @deprecated
+	 */
+	static async reloadAndWaitForIdle(page: Page, idleOptions?: WaitForIdleOptions): Promise<void> {
+		await page.reload({waitUntil: 'networkidle'});
+		await BOM.waitForIdleCallback(page, idleOptions);
 	}
 
 	/**
@@ -95,7 +119,7 @@ export default class Utils {
 	 * @param context
 	 * @param [opts]
 	 */
-	async setup(page: Page, context: BrowserContext, opts?: SetupOptions): Promise<void> {
+	static async setup(page: Page, context: BrowserContext, opts?: SetupOptions): Promise<void> {
 		opts = {
 			// eslint-disable-next-line quotes
 			mocks: '[\'.*\']',
@@ -147,7 +171,7 @@ export default class Utils {
 	 *
 	 * @param page
 	 */
-	collectPageLogs(page: Page): void {
+	static collectPageLogs(page: Page): void {
 		const logs = logsMap.get(page);
 
 		if (logs === undefined) {
@@ -164,7 +188,7 @@ export default class Utils {
 	 * Prints all of intercepted page console invokes to the console
 	 * @param page
 	 */
-	printPageLogs(page: Page): void {
+	static printPageLogs(page: Page): void {
 		const
 			logs = logsMap.get(page);
 
@@ -175,15 +199,45 @@ export default class Utils {
 	}
 
 	/**
-	 * Reloads the passed page and waits until `requestIdleCallback` occurred
+	 * Performs a pre-setting environment
+	 *
+	 * @param page
+	 * @param context
+	 * @param [opts]
 	 *
 	 * @deprecated
+	 */
+	async setup(page: Page, context: BrowserContext, opts?: SetupOptions): Promise<void> {
+		return Utils.setup(page, context, opts);
+	}
+
+	/**
+	 * @param page
+	 * @deprecated
+	 * @see [[Utils.collectPageLogs]]
+	 */
+	collectPageLogs(page: Page): void {
+		return Utils.collectPageLogs(page);
+	}
+
+	/**
+	 * @param page
+	 * @deprecated
+	 * @see [[Utils.printPageLogs]]
+	 */
+	printPageLogs(page: Page): void {
+		return Utils.printPageLogs(page);
+	}
+
+	/**
 	 * @param page
 	 * @param [idleOpts]
+	 *
+	 * @deprecated
+	 * @see [[Utils.reloadAndWaitForIdle]]
 	 */
 	async reloadAndWaitForIdle(page: Page, idleOpts?: WaitForIdleOptions): Promise<void> {
-		await page.reload({waitUntil: 'networkidle'});
-		await this.parent.bom.waitForIdleCallback(page, idleOpts);
+		return Utils.reloadAndWaitForIdle(page, idleOpts);
 	}
 
 	/**

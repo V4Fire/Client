@@ -212,18 +212,48 @@ export default class Component {
 	}
 
 	/**
-	 * @see [[Component.waitForComponentByQuery]]
+	 * Waits until the component has the specified status and returns the component
+	 *
 	 * @param ctx
-	 * @param selector
+	 * @param componentSelector
+	 * @param status
+	 */
+	static async waitForComponentStatus<T extends iBlock>(
+		ctx: Page | ElementHandle,
+		componentSelector: string,
+		status: string
+	): Promise<CanUndef<JSHandle<T>>> {
+		const
+			component = await this.waitForComponentByQuery<T>(ctx, componentSelector);
+
+		await component.evaluate((ctx, status) => new Promise<void>((res) => {
+			if (ctx.componentStatus === status) {
+				res();
+			}
+
+			ctx.on(`status${status.camelize(true)}`, res);
+		}), status);
+
+		return component;
+	}
+
+	/**
+	 * Waits until a component by the passed selector switches to the specified status, then returns it
+	 *
+	 * @param ctx
+	 * @param componentSelector
+	 * @param [options]
+	 * @deprecated
+	 * @see [[Component.waitForComponentByQuery]]
 	 */
 	async waitForComponent<T extends iBlock>(
 		ctx: Page | ElementHandle,
-		selector: string
+		componentSelector: string
 	): Promise<JSHandle<T>> {
-		await ctx.waitForSelector(selector, {state: 'attached'});
+		await ctx.waitForSelector(componentSelector, {state: 'attached'});
 
 		const
-			component = await this.getComponentByQuery<T>(ctx, selector);
+			component = await this.getComponentByQuery<T>(ctx, componentSelector);
 
 		if (!component) {
 			throw new Error('There is no component by the passed selector');
@@ -233,11 +263,12 @@ export default class Component {
 	}
 
 	/**
-	 * @see [[Component.createComponent]]
 	 * @param page
 	 * @param componentName
 	 * @param scheme
 	 * @param opts
+	 * @deprecated
+	 * @see [[Component.createComponent]]
 	 */
 	async createComponent<T extends iBlock>(
 		page: Page,
@@ -275,6 +306,8 @@ export default class Component {
 	 *
 	 * @param ctx
 	 * @param selector
+	 * @deprecated
+	 * @see [[Component.getComponentByQuery]]
 	 */
 	async getComponentByQuery<T extends iBlock>(
 		ctx: Page | ElementHandle,
@@ -313,28 +346,17 @@ export default class Component {
 	}
 
 	/**
-	 * Waits until a component by the passed selector switches to the specified status, then returns it
-	 *
 	 * @param ctx
 	 * @param componentSelector
 	 * @param status
+	 * @deprecated
+	 * @see [[Component.waitForComponentStatus]]
 	 */
 	async waitForComponentStatus<T extends iBlock>(
 		ctx: Page | ElementHandle,
 		componentSelector: string,
 		status: string
 	): Promise<CanUndef<JSHandle<T>>> {
-		const
-			component = await this.waitForComponent<T>(ctx, componentSelector);
-
-		await component.evaluate((ctx, status) => new Promise<void>((res) => {
-			if (ctx.componentStatus === status) {
-				res();
-			}
-
-			ctx.on(`status${status.camelize(true)}`, res);
-		}), status);
-
-		return component;
+		return Component.waitForComponentStatus(ctx, componentSelector, status);
 	}
 }

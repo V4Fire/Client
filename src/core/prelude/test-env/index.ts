@@ -11,5 +11,6 @@
  * @packageDocumentation
  */
 
+import 'core/prelude/test-env/import';
 import 'core/prelude/test-env/components';
 import 'core/prelude/test-env/gestures';

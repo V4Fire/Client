@@ -20,7 +20,7 @@ export default class DOM {
 	 * @param ctx
 	 * @param refName
 	 */
-	 static async getRef<T extends HTMLElement>(
+	static async getRef<T extends HTMLElement>(
 		ctx: Page | ElementHandle,
 		refName: string
 	): Promise<Nullable<ElementHandle<T>>> {
@@ -241,6 +241,33 @@ export default class DOM {
 	 * Returns a promise that will be resolved with an element matched by the specified ref name
 	 *
 	 * @param ctx
+	 * @param selector
+	 * @param [options]
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
+	 */
+	static waitForEl(
+		ctx: Page | ElementHandle,
+		selector: string,
+		options: WaitForElOptions
+	): Promise<Nullable<ElementHandle>> {
+		const normalizedOptions = <Required<WaitForElOptions>>{
+			sleep: 100,
+			timeout: 5000,
+			to: 'mount',
+			...options
+		};
+
+		if (normalizedOptions.to === 'mount') {
+			return ctx.waitForSelector(selector, {state: 'attached', timeout: normalizedOptions.timeout});
+
+		}
+
+		return ctx.waitForSelector(selector, {state: 'detached', timeout: normalizedOptions.timeout});
+	}
+
+	/**
 	 * @param refName
 	 * @param [opts] - @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 	 */
@@ -291,21 +318,19 @@ export default class DOM {
 	}
 
 	/**
-	 * @deprecated
-	 * @see [[DOM.clickToRef]]
-	 *
 	 * @param ctx
 	 * @param refName
-	 * @param [clickOpts]
+	 * @param [clickOpts] - @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
+	 * @deprecated
+	 * @see [[DOM.clickToRef]]
 	 */
-	clickToRef(ctx: Page | ElementHandle, refName: string, clickOpts?: Dictionary): Promise<void> {
-		return DOM.clickToRef(ctx, refName, clickOpts);
+	clickToRef(ctx: Page | ElementHandle, refName: string, clickOptions?: Dictionary): Promise<void> {
+		return DOM.clickToRef(ctx, refName, clickOptions);
 	}
 
 	/**
-	 * Returns a promise that will be resolved with an element matched by the specified selector
-	 *
 	 * @deprecated
+	 * @see [[DOM.waitForEl]]
 	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 	 *
 	 * @param ctx

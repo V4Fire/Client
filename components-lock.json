@@ -1,5 +1,5 @@
 {
-  "hash": "651baaecdd03a2e664b17804eb6f97fea60d65794652c8d429020b5aaaef3c99",
+  "hash": "18506bae5f4874b01c4ad66a342b83571739c7f8713e0762997f1b75b4e9b26f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1999,7 +1999,10 @@
               "b-dummy-control-list",
               "b-dummy-decorators"
             ],
-            "libs": []
+            "libs": [
+              "core/cookies",
+              "models/demo/form"
+            ]
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
@@ -2040,14 +2043,23 @@
             "b-dummy-control-list",
             "b-dummy-decorators"
           ],
-          "libs": [],
+          "libs": [
+            "core/cookies",
+            "models/demo/form"
+          ],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/cookies",
+              "models/demo/form"
+            ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/cookies",
+              "models/demo/form"
+            ]
           },
           "type": "page",
           "mixin": false,
