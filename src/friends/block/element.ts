@@ -9,28 +9,9 @@
 import type Block from 'friends/block/class';
 
 import { modRgxpCache, elRxp } from 'friends/block/const';
-import type { ModEventReason, ElementModEvent, SetElementModEvent } from 'friends/block/interface';
+import { getFullElName } from 'friends/block/traverse';
 
-/**
- * Returns the full name of the specified block element
- *
- * @param name - the element name
- * @param [modName] - an additional modifier name
- * @param [modValue] - an additional value name
- *
- * @example
- * ```js
- * // b-foo__bla
- * console.log(this.getFullElName('bla'));
- *
- * // b-foo__bla_focused_true
- * console.log(this.getBlockSelector('bla', 'focused', true));
- * ```
- */
-export function getFullElName(this: Block, name: string, modName?: string, modValue?: unknown): string {
-	const modStr = modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
-	return `${this.componentName}__${name.dasherize()}${modStr}`;
-}
+import type { ModEventReason, ElementModEvent, SetElementModEvent } from 'friends/block/interface';
 
 /**
  * Returns a modifier value from the specified element
@@ -38,6 +19,11 @@ export function getFullElName(this: Block, name: string, modName?: string, modVa
  * @param link - a link to the element
  * @param elName - the element name
  * @param modName - the modifier name
+ *
+ * @example
+ * ```js
+ * this.block.getElMod(element, 'foo', 'focused');
+ * ```
  */
 export function getElMod(this: Block, link: Nullable<Element>, elName: string, modName: string): CanUndef<string> {
 	if (link == null) {
@@ -66,10 +52,12 @@ export function getElMod(this: Block, link: Nullable<Element>, elName: string, m
  * @param value - the modifier name to set
  * @param [reason] - a reason to set the modifier
  *
+ * @emits `localEmitter` `el.mod.set.$name.$value(event: SetElementModEvent)`
+ *
  * @example
  * ```js
- * this.setElMod(node, 'foo', 'focused', true);
- * this.setElMod(node, 'foo', 'focused', true, 'initSetMod');
+ * this.block.setElMod(element, 'foo', 'focused', true);
+ * this.block.setElMod(element, 'foo', 'focused', true, 'initSetMod');
  * ```
  */
 export function setElMod(
@@ -123,11 +111,13 @@ export function setElMod(
  * @param [value] - the modifier value to remove
  * @param [reason] - a reason to remove the modifier
  *
+ * @emits `localEmitter` `el.mod.remove.$name.$value(event: ElementModEvent)`
+ *
  * @example
  * ```js
- * this.removeElMod(node, 'foo', 'focused');
- * this.removeElMod(node, 'foo', 'focused', true);
- * this.removeElMod(node, 'foo', 'focused', true, 'setMod');
+ * this.block.removeElMod(element, 'foo', 'focused');
+ * this.block.removeElMod(element, 'foo', 'focused', true);
+ * this.block.removeElMod(element, 'foo', 'focused', true, 'setMod');
  * ```
  */
 export function removeElMod(

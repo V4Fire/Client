@@ -1,8 +1,9 @@
 # friends/block
 
 This module provides an API to work with a component in terms of [BEM](https://en.bem.info/methodology/quick-start/).
-Typically, you won't need to work with this API directly, because more convenient facades are available for it.
-However, this API can be used to work with element modifiers.
+This API includes all the necessary methods for working with block modifiers and element modifiers,
+methods to find elements in the DOM tree, as well as various auxiliary methods. However, to work with block modifiers,
+you should not use this API directly, but prefer more convenient wrappers that are in the context of the component.
 
 ## How to include this module to your component?
 
@@ -21,20 +22,46 @@ Block.addToPrototype(getElMod, setElMod);
 export default class bExample extends iBlock {}
 ```
 
+Note that the `block` property only appears on the component after the `mounted` hook.
+To ensure that the given API was available when the method was called, use the `@wait` decorator.
+Or use special wrapper methods.
+
+```typescript
+import iBlock, { component, wait } from 'super/i-block/i-block';
+import Block, { getElMod, setElMod } from 'friends/block';
+
+// Import `getElMod` and `setElMod` methods
+Block.addToPrototype(getElMod, setElMod);
+
+@component()
+export default class bExample extends iBlock {
+  @wait('loading') // Or @wait('ready')
+  open(): CanPromise<void> {
+    this.block.setMod('opened', true);
+  }
+
+  close() {
+    // Using wrapper method
+    this.setMod('opened', false);
+  }
+}
+```
+
 ## Basic concepts
 
-BEM allows us to use a component-based CSS approach to describe our widgets. If you look at it from a programming point of view,
-the block is the root node of our component, and the block modifiers are its input parameters that have a contract that
-they also put the necessary CSS classes. In addition to this, we can programmatically watch modifiers change using
-the standard component property watching API.
+The BEM methodology describes how to apply the component-based approach to CSS when declaring a widget.
+The methodology defines 3 basic entities: block, element and modifier. Looking at it from a component UI programming perspective,
+a block is the component root node, which have a special CSS class; elements are regular child nodes of a component that
+have specially styled CSS classes; block modifiers are its inputs that have a contract that they also place the necessary CSS classes.
+In addition, elements can also have their own modifiers, which are convenient to apply at the micro-level of component markup.
 
 ### How to declare component props as modifiers?
 
-To declare modifiers for a component, you must use the `mods` static property.
-Just pass it a dictionary where keys are modifier names and values are lists of modifier values.
-Modifier values are always converted to a string. However, when describing them, it is allowed to use numbers and boolean values.
-Also, all modifier names and them values are forced to normalize to the dash style, so you can use whatever style you feel comfortable with.
-To assign any of the values as the default, just wrap it in another array.
+To declare modifiers for a component, you must use the `mods` static property. Just pass it a dictionary where keys are
+modifier names and values are lists of them values. Modifier values are always converted to a string. However,
+when describing them, it is allowed to use numbers and boolean values. Also, all modifier names and them values are
+forced to normalize to the dash style, so you can use whatever style you feel comfortable with. To assign any of the values
+as the default, just wrap it in another array.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'super/i-block/i-block';
@@ -75,7 +102,7 @@ class Parent extends iBlock {
 
 @component()
 class Children extends Parent {
-  // All Parent modifiers are inerited
+  // All `Parent` modifiers are inerited
   static mods: ModsDecl = {
     visible: [
       [true],
@@ -158,11 +185,17 @@ This way is useful when you want to pass multiple modifiers at once, such as par
 < b-example :mods = mods
 ```
 
+Of course, you can combine both methods.
+
+```
+< b-example :theme = 'dark' | :mods = mods
+```
+
 #### Automatically inherited modifiers
 
 All V4Fire components have the `sharedMods` getter that returns a dictionary of modifiers that can be passed to any child components.
-If you don't explicitly pass a `mods` prop when creating a component, then the `sharedMods` getter will automatically be passed to it.
-This is very useful when the modifier needs to be propagated to all nested components. By default, the getter returns
+If you don't explicitly pass the `mods` prop when creating a component, then the `sharedMods` getter will automatically be passed to it.
+This is very useful when some modifiers need to be propagated to all nested components. By default, the getter returns
 a dictionary only with the `theme` modifier or undefined if it is not specified.
 
 ```
@@ -178,6 +211,13 @@ To pass not only `sharedMods` but also your own via the `mods` prop, use the `pr
 ```
 /// {theme: '...', visible: true}
 < b-example :mods = provide.mods({visible: true})
+```
+
+Or just pass modifiers as regular props.
+
+```
+/// {theme: '...', visible: true}
+< b-example :visible = true
 ```
 
 To disable modifier inheritance, pass the `inheridMods: false` option when creating the component.
@@ -235,9 +275,8 @@ class bExample extends iBlock {
 ```
 
 Note that the `mods` field is created as a "system" field, i.e. no changes to its properties will cause the component to
-be re-rendered. However, the associated CSS class will still be assigned to the component’s root element.
-This is especially useful when we are working in the context of a functional component, which in principle
-never updates its template after the first render.
+be re-rendered. However, the associated CSS class will still be assigned to the component root element. This is especially
+useful when we are working in the context of a functional component, which in principle never updates its template after the first render.
 
 ```
 /// Changing the `opened` modifier won't re-render the template
@@ -289,7 +328,6 @@ inside and outside the component.
 | `mod:set:$name`           | The modifier named $name has been set                           | Operation parameters | `SetModEvent` |
 | `mod:set:$name:$value`    | The modifier named $name has been set to $value                 | Operation parameters | `SetModEvent` |
 | `mod:remove:$name`        | The modifier under $name has been removed                       | Operation parameters | `ModEvent`    |
-| `mod:remove:$name:$value` | The modifier named $name has been removed with the value $value | Operation parameters | `ModEvent`    |
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'super/i-block/i-block';
@@ -307,7 +345,7 @@ class bExample extends iBlock {
 
   mounted() {
     this.$el.addEventListener('click', () => {
-      this.setMod('opened', !this.mods.opened);
+      this.setMod('opened', this.mods.opened !== 'true');
     });
 
     this.on('mod:set:opened', console.log);
@@ -318,7 +356,7 @@ class bExample extends iBlock {
 ##### Local events
 
 All setting or removing modifiers also fire local component events, i.e. which cannot be handled externally.
-Since all the component local events can be listened to using the wildcard, this can be more convenient than handling each event individually.
+Since all the component local events can be listened to using wildcards, this can be more convenient than handling each event individually.
 
 | EventName                       | Description                                                             | Payload description  | Payload              |
 |---------------------------------|-------------------------------------------------------------------------|----------------------|----------------------|
@@ -343,7 +381,7 @@ class bExample extends iBlock {
 
   mounted() {
     this.$el.addEventListener('click', () => {
-      this.setMod('opened', !this.mods.opened);
+      this.setMod('opened', this.mods.opened !== 'true');
     });
 
     this.localEmitter.on('block.mod.*.opened.*', console.log);
@@ -352,3 +390,175 @@ class bExample extends iBlock {
 ```
 
 ### Element modifiers
+
+As mentioned earlier, any element can have its own modifiers. From a component point of view, these modifiers are
+simply custom CSS classes for elements. However, this module provides a set of methods for convenient work with them.
+
+__b-example.ss__
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < .&__button
+
+    < .&__dropdown.&_pos_bottom-left
+      Hello world!
+```
+
+__b-example.ts__
+
+```typescript
+import iBlock, { component, ModsDecl } from 'super/i-block/i-block';
+
+@component({inheritMods: false})
+class bExample extends iBlock {
+  mounted() {
+    const
+      {block: $b} = this;
+
+    $b.element('button').addEventListener('click', () => {
+      const dropdown = $b.element('dropdown');
+      $b.setElMod(dropdown, 'opened', $b.getElMod(dropdown, 'dropdown', 'opened') !== 'true');
+    })
+  }
+}
+```
+
+## Methods
+
+### getFullBlockName
+
+Returns the full block name of the tied component.
+This method is plugged by default.
+
+```js
+// b-foo
+console.log(this.block.getFullBlockName());
+
+// b-foo_focused_true
+console.log(this.block.getFullBlockName('focused', true));
+```
+
+### getBlockSelector
+
+Returns a CSS selector to the current component block.
+
+```js
+// .b-foo
+console.log(this.block.getBlockSelector());
+
+// .b-foo.b-foo_focused_true
+console.log(this.block.getBlockSelector({focused: true}));
+```
+
+### getFullElName
+
+Returns the full name of the specified block element.
+
+```js
+// b-foo__bla
+console.log(this.block.getFullElName('bla'));
+
+// b-foo__bla_focused_true
+console.log(this.block.getBlockSelector('bla', 'focused', true));
+```
+
+### getElSelector
+
+Returns a CSS selector to the specified block element.
+
+```js
+// .$componentId.b-foo__bla
+console.log(this.block.getElSelector('bla'));
+
+// .$componentId.b-foo__bla.b-foo__bla_focused_true
+console.log(this.block.getElSelector('bla', {focused: true}));
+```
+
+### elements
+
+Returns block child elements by the specified selector.
+
+```js
+console.log(this.block.elements(node, 'foo'));
+console.log(this.block.elements(node, 'foo', {focused: true}));
+
+console.log(this.block.elements('foo'));
+console.log(this.block.elements('foo', {focused: true}));
+```
+
+### element
+
+Returns a block child element by the specified selector.
+
+```js
+console.log(this.block.element(node, 'foo'));
+console.log(this.block.element(node, 'foo', {focused: true}));
+
+console.log(this.block.element('foo'));
+console.log(this.block.element('foo', {focused: true}));
+```
+
+### getMod
+
+Returns a value of the specified block modifier.
+This method is plugged by default.
+
+```js
+console.log(this.block.getMod('focused'));
+console.log(this.block.getMod('focused', true));
+```
+
+### setMod
+
+Sets a block modifier to the current component.
+The method returns false if the modifier is already set. This method is plugged by default.
+
+```js
+this.block.setMod('focused', true);
+this.block.setMod('focused', true, 'removeMod');
+```
+
+### removeMod
+
+Removes a block modifier from the current component.
+The method returns false if the block does not have this modifier.
+
+```js
+this.block.removeMod('focused');
+this.block.removeMod('focused', true);
+this.block.removeMod('focused', true, 'setMod');
+```
+
+### getElMod
+
+Returns a modifier value from the specified element.
+
+```js
+this.block.getElMod(element, 'foo', 'focused');
+```
+
+### setElMod
+
+Sets a modifier to the specified block element.
+The method returns false if the modifier is already set.
+
+```js
+this.block.setElMod(element, 'foo', 'focused', true);
+this.block.setElMod(element, 'foo', 'focused', true, 'initSetMod');
+```
+
+### removeElMod
+
+Removes a modifier from the specified block element.
+The method returns false if the element does not have this modifier.
+
+```js
+this.block.removeElMod(element, 'foo', 'focused');
+this.block.removeElMod(element, 'foo', 'focused', true);
+this.block.removeElMod(element, 'foo', 'focused', true, 'setMod');
+```

@@ -32,8 +32,8 @@ const
  * @param [sliceOrOpts] - elements per chunk or `[start position, elements per chunk]` or additional options
  * @param [opts] - additional options
  *
- * @emits `localEmitter.asyncRenderChunkComplete(e: TaskParams)`
- * @emits `localEmitter.asyncRenderComplete(e: TaskParams)`
+ * @emits `localEmitter` `asyncRenderChunkComplete(e: TaskParams)`
+ * @emits `localEmitter` `asyncRenderComplete(e: TaskParams)`
  *
  * @example
  * ```

@@ -16,6 +16,10 @@ Changelog
 * Moved the module to `friends/block`
 * The module has been rewritten to a new tree-shake friendly API
 
+#### :memo: Documentation
+
+* Added the normal documentation
+
 ## v3.8.3 (2021-10-26)
 
 #### :bug: Bug Fix

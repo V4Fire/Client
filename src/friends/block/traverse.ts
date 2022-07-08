@@ -7,10 +7,9 @@
  */
 
 import type { ModsDict } from 'super/i-block/i-block';
-import type Block from 'friends/block/class';
 
+import type Block from 'friends/block/class';
 import { fakeCtx } from 'friends/block/const';
-import { getFullElName } from 'friends/block/element';
 
 /**
  * Returns a CSS selector to the current component block
@@ -20,10 +19,10 @@ import { getFullElName } from 'friends/block/element';
  * @example
  * ```js
  * // .b-foo
- * console.log(this.getBlockSelector());
+ * console.log(this.block.getBlockSelector());
  *
  * // .b-foo.b-foo_focused_true
- * console.log(this.getBlockSelector({focused: true}));
+ * console.log(this.block.getBlockSelector({focused: true}));
  * ```
  */
 export function getBlockSelector(this: Block, mods?: ModsDict): string {
@@ -41,6 +40,27 @@ export function getBlockSelector(this: Block, mods?: ModsDict): string {
 }
 
 /**
+ * Returns the full name of the specified block element
+ *
+ * @param name - the element name
+ * @param [modName] - an additional modifier name
+ * @param [modValue] - an additional value name
+ *
+ * @example
+ * ```js
+ * // b-foo__bla
+ * console.log(this.block.getFullElName('bla'));
+ *
+ * // b-foo__bla_focused_true
+ * console.log(this.block.getBlockSelector('bla', 'focused', true));
+ * ```
+ */
+export function getFullElName(this: Block, name: string, modName?: string, modValue?: unknown): string {
+	const modStr = modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
+	return `${this.componentName}__${name.dasherize()}${modStr}`;
+}
+
+/**
  * Returns a CSS selector to the specified block element
  *
  * @param name - the element name
@@ -49,10 +69,10 @@ export function getBlockSelector(this: Block, mods?: ModsDict): string {
  * @example
  * ```js
  * // .$componentId.b-foo__bla
- * console.log(this.getElSelector('bla'));
+ * console.log(this.block.getElSelector('bla'));
  *
  * // .$componentId.b-foo__bla.b-foo__bla_focused_true
- * console.log(this.getElSelector('bla', {focused: true}));
+ * console.log(this.block.getElSelector('bla', {focused: true}));
  * ```
  */
 export function getElSelector(this: Block, name: string, mods?: ModsDict): string {
@@ -83,8 +103,8 @@ export function getElSelector(this: Block, name: string, mods?: ModsDict): strin
  *
  * @example
  * ```js
- * console.log(this.elements(node, 'foo'));
- * console.log(this.elements(node, 'foo', {focused: true}));
+ * console.log(this.block.elements(node, 'foo'));
+ * console.log(this.block.elements(node, 'foo', {focused: true}));
  * ```
  */
 export function elements<E extends Element = Element>(
@@ -102,8 +122,8 @@ export function elements<E extends Element = Element>(
  *
  * @example
  * ```js
- * console.log(this.elements('foo'));
- * console.log(this.elements('foo', {focused: true}));
+ * console.log(this.block.elements('foo'));
+ * console.log(this.block.elements('foo', {focused: true}));
  * ```
  */
 export function elements<E extends Element = Element>(
@@ -180,8 +200,8 @@ export function elements<E extends Element = Element>(
  *
  * @example
  * ```js
- * console.log(this.element(node, 'foo'));
- * console.log(this.element(node, 'foo', {focused: true}));
+ * console.log(this.block.element(node, 'foo'));
+ * console.log(this.block.element(node, 'foo', {focused: true}));
  * ```
  */
 export function element<E extends Element = Element>(
@@ -192,15 +212,15 @@ export function element<E extends Element = Element>(
 ): CanUndef<E>;
 
 /**
- * Returns a block child element by the specified request
+ * Returns a block child element by the specified selector
  *
  * @param name - the element name to search
  * @param [mods] - additional modifiers
  *
  * @example
  * ```js
- * console.log(this.element('foo'));
- * console.log(this.element('foo', {focused: true}));
+ * console.log(this.block.element('foo'));
+ * console.log(this.block.element('foo', {focused: true}));
  * ```
  */
 export function element<E extends Element = Element>(

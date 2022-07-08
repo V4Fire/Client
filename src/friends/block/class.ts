@@ -68,10 +68,10 @@ class Block extends Friend {
 	 * @example
 	 * ```js
 	 * // b-foo
-	 * console.log(this.getFullBlockName());
+	 * console.log(this.block.getFullBlockName());
 	 *
 	 * // b-foo_focused_true
-	 * console.log(this.getFullBlockName('focused', true));
+	 * console.log(this.block.getFullBlockName('focused', true));
 	 * ```
 	 */
 	getFullBlockName(modName?: string, modValue?: unknown): string {
@@ -86,8 +86,8 @@ class Block extends Friend {
 	 *
 	 * @example
 	 * ```js
-	 * console.log(this.getMod('focused'));
-	 * console.log(this.getMod('focused', true));
+	 * console.log(this.block.getMod('focused'));
+	 * console.log(this.block.getMod('focused', true));
 	 * ```
 	 */
 	getMod(name: string, fromNode?: boolean): CanUndef<string> {
@@ -122,10 +122,14 @@ class Block extends Friend {
 	 * @param value - the modifier value to set
 	 * @param [reason] - a reason to set the modifier
 	 *
+	 * @emits `localEmitter` `block.mod.set.$name.$value(event: SetModEvent)`
+	 * @emits `mod:set:$name(event: SetModEvent)`
+	 * @emits `mod:set:$name:$value(event: SetModEvent)`
+	 *
 	 * @example
 	 * ```js
-	 * this.setMod('focused', true);
-	 * this.setMod('focused', true, 'removeMod');
+	 * this.block.setMod('focused', true);
+	 * this.block.setMod('focused', true, 'removeMod');
 	 * ```
 	 */
 	setMod(name: string, value: unknown, reason: ModEventReason = 'setMod'): boolean {
@@ -199,6 +203,8 @@ class Block extends Friend {
 			};
 
 			this.localEmitter.emit(`block.mod.set.${name}.${normalizedValue}`, event);
+
+			ctx.emit(`mod:set:${name}`, event);
 			ctx.emit(`mod:set:${name}:${normalizedValue}`, event);
 		}
 
@@ -213,11 +219,14 @@ class Block extends Friend {
 	 * @param [value] - the modifier value to remove
 	 * @param [reason] - a reason to remove the modifier
 	 *
+	 * @emits `localEmitter` `block.mod.remove.$name.$value(event: ModEvent)`
+	 * @emits `mod:remove:$name(event: ModEvent)`
+	 *
 	 * @example
 	 * ```js
-	 * this.removeMod('focused');
-	 * this.removeMod('focused', true);
-	 * this.removeMod('focused', true, 'setMod');
+	 * this.block.removeMod('focused');
+	 * this.block.removeMod('focused', true);
+	 * this.block.removeMod('focused', true, 'setMod');
 	 * ```
 	 */
 	removeMod(name: string, value?: unknown, reason: ModEventReason = 'removeMod'): boolean {
@@ -272,11 +281,10 @@ class Block extends Friend {
 				value: currentValue
 			};
 
-			this.localEmitter
-				.emit(`block.mod.remove.${name}.${currentValue}`, event);
+			this.localEmitter.emit(`block.mod.remove.${name}.${currentValue}`, event);
 
 			if (needNotify) {
-				ctx.emit(`mod:remove:${name}:${currentValue}`, event);
+				ctx.emit(`mod:remove:${name}`, event);
 			}
 		}
 

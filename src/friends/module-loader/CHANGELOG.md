@@ -16,6 +16,10 @@ Changelog
 * Moved the module to `friends/module-loader`
 * The module has been rewritten to a new tree-shake friendly API
 
+#### :memo: Documentation
+
+* Added the normal documentation
+
 ## v3.0.0 (2021-07-27)
 
 #### :house: Internal
