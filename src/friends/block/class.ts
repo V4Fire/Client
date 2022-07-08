@@ -18,12 +18,12 @@ import type * as element from 'friends/block/element';
 import type * as traverse from 'friends/block/traverse';
 
 interface Block {
-	getFullElName: typeof element.getFullElName;
 	getElMod: typeof element.getElMod;
 	setElMod: typeof element.setElMod;
 	removeElMod: typeof element.removeElMod;
 
 	getBlockSelector: typeof traverse.getBlockSelector;
+	getFullElName: typeof traverse.getFullElName;
 	getElSelector: typeof traverse.getElSelector;
 
 	element: typeof traverse.element;
