@@ -22,6 +22,7 @@ const
 
 const
 	{isExternalDep} = include('build/const'),
+	tsTransformers = include('build/ts-transformers'),
 	{hashRgxp, hash, output, assetsOutput, inherit} = include('build/helpers');
 
 const
@@ -99,7 +100,12 @@ module.exports = async function module({plugins}) {
 		use: [
 			{
 				loader: 'ts-loader',
-				options: typescript.client
+				options: {
+					...typescript.client,
+					getCustomTransformers: () => ({
+						after: [...Object.values(tsTransformers.before)]
+					})
+				}
 			},
 
 			...tsHelperLoaders
