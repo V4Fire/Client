@@ -11,7 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2022-??-??)
+
+#### :bug: Bug Fix
+
+* [Added a new TypeScript transformer to transpile modern regexps for interability with polyfills](build/ts-transformers)
+
 ## v3.23.4 (2022-07-08)
+
 #### :house: Internal
 
 * [Removed setting of `optimization.moduleIds`](build/webpack/optimization.js)
