@@ -22,12 +22,14 @@ const
 
 const
 	{isExternalDep} = include('build/const'),
-	tsTransformers = include('build/ts-transformers'),
 	{hashRgxp, hash, output, assetsOutput, inherit} = include('build/helpers');
 
 const
-	snakeskin = config.snakeskin(),
 	typescript = config.typescript(),
+	tsTransformers = include('build/ts-transformers');
+
+const
+	snakeskin = config.snakeskin(),
 	monic = config.monic(),
 	imageOpts = config.imageOpts();
 

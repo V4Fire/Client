@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (2022-??-??)
+## v3.23.5 (2022-07-12)
 
 #### :bug: Bug Fix
 
-* [Added a new TypeScript transformer to transpile modern regexps for interability with polyfills](build/ts-transformers)
+* [Added a new TypeScript transformer to transpile modern regexps for integrability with polyfills](build/ts-transformers)
 
 ## v3.23.4 (2022-07-08)
 
