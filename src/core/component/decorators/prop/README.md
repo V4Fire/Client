@@ -73,7 +73,6 @@ This code works, however, it has a number of disadvantages:
 
    ```typescript
    import iBlock, { component, prop, field } from 'super/i-block/i-block';
-   export * from 'super/i-block/i-block';
 
    @component()
    export default class bInput extends iBlock {
