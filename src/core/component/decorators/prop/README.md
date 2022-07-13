@@ -25,6 +25,128 @@ class bExample extends iBlock {
 }
 ```
 
+Keep in mind that any component prop is a readonly value, i.e. you cannot change it or any of its properties from within the component.
+To emphasize this, it is recommended to use the readonly modifier in TypeScript along with prop declarations.
+
+```typescript
+import iBlock, { component, prop } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @prop(Number)
+  readonly foo: number = 0;
+}
+```
+
+## Naming conventions and linking fields with props
+
+As mentioned earlier, component props cannot be changed from within the component. However, very often there is a need
+to violate this rule. For example, we have a component that implements an input field. The component has some initial value,
+as well as its own, which can be changed during the component life-cycle, for instance, a user entered new text.
+Technically, this can be done with two parameters: `initialValue` and `value`, which gets its initial value
+from `initialValue`. Next, we need to set watching for the `initialValue` because if the component value changes outside,
+then the internal value must also be updated.
+
+One way to implement the above is to use the `watch` method and an initializer function for the field to be observed.
+For instance:
+
+```typescript
+import iBlock, { component, prop, field } from 'super/i-block/i-block';
+
+@component()
+export default class bInput extends iBlock {
+  @prop(String)
+  initialValue: string = '';
+
+  @field((o) => {
+    o.watch('initialValue', (v) => o.value = v);
+    return o.initialValue;
+  })
+
+  value!: string;
+}
+```
+
+This code works, however, it has a number of disadvantages:
+
+1. If the `initialValue` value needs to be normalized or converted somehow, then this logic will have to be duplicated in two places at once.
+
+   ```typescript
+   import iBlock, { component, prop, field } from 'super/i-block/i-block';
+   export * from 'super/i-block/i-block';
+
+   @component()
+   export default class bInput extends iBlock {
+     @prop(String)
+     initialValue: string = '';
+
+     @field((o) => {
+       o.watch('initialValue', (v) => o.value = Date.parse(v));
+       return Date.parse(o.initialValue);
+     })
+
+     value!: Date;
+   }
+   ```
+
+2. You must explicitly set the field value `((v) => o.value = v)` when setting up the watch function.
+3. Redundant component API: outside we pass the `initialValue`, and inside we use the `value`.
+
+To solve these problems, V4 has a special `sync.link` method, which, in fact, does the mechanism described above,
+but hides it "under the hood". Let's rewrite our example using `sync.link`.
+
+```typescript
+import iBlock, { component, prop, field } from 'super/i-block/i-block';
+
+@component()
+export default class bInput extends iBlock {
+  @prop(String)
+  initialValue: string = '';
+
+  @field({
+    type: String,
+    init: (o) => o.sync.link('initialValue', (v) => v)
+  })
+
+  value!: string;
+}
+```
+
+As you can see, the method takes a string with the watchable property as the first parameter
+(you can specify a complex path, like `foo.bar.bla`), and the second parameter is a converter function.
+And, the method itself returns the starting value of the watched property.
+
+So, problems 1 and 2 are solved, but what about the third problem? We still have two properties, and they have different
+names that we need to keep in mind. However, V4 has a simple convention: if a prop conflicts with a field or getter that
+depends on it, then the `Prop` postfix is added to the prop name, i.e. in our case, this will be `valueProp`. If a similar
+conflict occurs between a getter and a field, then `Store` postfix is added to the field name.
+
+Moreover, V4 is aware of this convention, so when calling the component "outside" we can just write `:value`,
+and V4 itself will substitute `:valueProp`. Also in this case, we get rid of the need to explicitly specify the name of
+the watched property when calling `sync.link`. And finally, if we don’t need a converter function when linking a property,
+then we can simply not write it. Let's rewrite our example again.
+
+```typescript
+import iBlock, { component, prop, field } from 'super/i-block/i-block';
+
+@component()
+export default class bInput extends iBlock {
+  @prop(String)
+  valueProp: string = '';
+
+  @field((o) => o.sync.link())
+  value!: string;
+}
+```
+
+And calling our component from another template will be like this.
+
+```
+< b-input :value = 'V4 is awesome!'
+```
+
+As you can see, we got rid of unnecessary boilerplate code and the need to remember the name of the component prop.
+
 ## Additional options
 
 ### [type]
