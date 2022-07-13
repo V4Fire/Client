@@ -3,17 +3,6 @@
 The decorator marks a class property as a component field.
 In non-functional components, field property mutations typically cause the component to re-render.
 
-## What differences between fields and system fields?
-
-The major difference between fields and system fields, that any changes of a component field can force re-rendering of its template.
-I.e., if you are totally sure that your component field doesn't need to force rendering, prefer system fields instead of regular.
-Mind, changes in any system field still can be watched using built-in API.
-
-The second difference is that system fields are initialized on the `beforeCreate` hook,
-but not on the `created` hook like the regular fields do.
-
-## Usage
-
 ```typescript
 import iBlock, { component, field } from 'super/i-block/i-block';
 
@@ -30,6 +19,108 @@ class bExample extends iBlock {
   // Or a dictionary with additional options
   @field({unique: true, init: Math.random})
   hashCode!: number;
+}
+```
+
+## What differences between fields and system fields?
+
+The major difference between fields and system fields, that any changes of a component field can force re-rendering of its template.
+I.e., if you are totally sure that your component field doesn't need to force rendering, prefer system fields instead of regular.
+Mind, changes in any system field still can be watched using built-in API.
+
+The second difference is that system fields are initialized on the `beforeCreate` hook,
+but not on the `created` hook like the regular fields do.
+
+## Field initialization order
+
+Because the `init` function takes a reference to the fields store as the second argument, then we can generate field
+values from other fields. But, if we just write something like this.
+
+```typescript
+import iBlock, { component, field } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  @field()
+  a: number = 1;
+
+  @field((o, d) => d.a + 1)
+  b!: number;
+}
+```
+
+There is no guarantee that this code will work as expected. The fact is that property values can be initialized in a random order,
+and it may turn out that the property we need is not yet initialized. To solve this problem, we must declare the
+dependencies explicitly. We must pass the `@field` decorator the `after` parameter, which can be the expected
+property name or a list of names.
+
+```typescript
+import iBlock, { component, field } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  @field()
+  a: number = 1;
+
+  @field({
+    after: 'a',
+    init: (o, d) => d.a + 1
+  })
+
+  b!: number;
+}
+```
+
+Now everything will work as expected. Note that `after` only specifies the names of other `@field` properties.
+That is, you cannot specify `@prop` or `@system` properties, but this is not a problem, because by the time the `@field`
+properties are initialized, the rest of the properties will already be ready.
+
+### Atomic properties
+
+There are properties that are required for most other properties. It would be very tedious to write `after` in each place,
+especially since there can be many such properties. Therefore, there is another way, you need to mark such a property
+with the `atom` parameter, and it will always be guaranteed to be initialized before non-atoms.
+
+```typescript
+import iBlock, { component, field } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  @field({atom: true})
+  basis: number = 2;
+
+  @field((o, d) => d.basis * 2)
+  a!: number;
+
+  @field((o, d) => d.basis * 4)
+  b!: number;
+}
+```
+
+An atom can also use `after`, however, only other atoms can be used as dependencies (because otherwise it results in a deadlock).
+
+## Initialization loop and asynchronous operations
+
+All component properties are initialized synchronously. That is, you cannot return a Promise from the property initializer
+and expect the component to not be initialized until it resolves. This behavior can be disastrous for performance.
+However, technically, any initializer can return both a promise and return nothing, and later change the value of its field.
+
+While the data is being loaded, the component can show a loading indicator or somehow play around with this situation.
+This approach may well be considered idiomatic, since there are no unpredictable consequences. For example,
+the `db` property is implemented in iData heirs in approximately the same way. However, it should be noted that
+all asynchronous "permutations" of the property must be written using the `field.set` method or directly to
+the component instance (the first argument of the `init` function).
+
+```typescript
+import iBlock, { component, field } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  @field((o) => {
+    o.async.setTimeout(() => o.a = 1, 100);
+  })
+
+  a!: number;
 }
 ```
 

@@ -42,7 +42,7 @@ class bExample extends iBlock {
 
 As mentioned earlier, component props cannot be changed from within the component. However, very often there is a need
 to violate this rule. For example, we have a component that implements an input field. The component has some initial value,
-as well as its own, which can be changed during the component life-cycle, for instance, a user entered new text.
+as well as its own, which can be changed during the component life cycle, for instance, a user entered new text.
 Technically, this can be done with two parameters: `initialValue` and `value`, which gets its initial value
 from `initialValue`. Next, we need to set watching for the `initialValue` because if the component value changes outside,
 then the internal value must also be updated.

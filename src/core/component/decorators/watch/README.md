@@ -153,6 +153,26 @@ class bExample extends iBlock {
 }
 ```
 
+### [wrapper]
+
+A wrapper function for the registered handler. This option is useful for delegating DOM events, for instance:
+
+```typescript
+import iBlock, { component, field, watch } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  @watch({
+    field: 'document:click',
+    wrapper: (o, fn) => o.dom.delegateElement('button', fn)
+  })
+
+  onClick() {
+    this.emit('Click!');
+  }
+}
+```
+
 ### [flush = `'sync'`]
 
 How the event handler should be called:

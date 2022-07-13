@@ -2,15 +2,6 @@
 
 The decorator attaches meta information to a component computed field or accessor.
 
-## What differences between accessors and computed fields?
-
-A computed field is an accessor that value can be cached or watched.
-To enable value caching, use the `@computed` decorator when define or override your accessor.
-After that, the first time the getter value is touched, it will be cached. To support cache invalidation or
-adding change watching capabilities, provide a list of your accessor dependencies or use the `cache = 'auto'` option.
-
-## Usage
-
 ```typescript
 import iBlock, {component, prop, computed} from 'super/i-block/i-block';
 
@@ -48,6 +39,13 @@ export default class bUser extends iBlock {
   }
 }
 ```
+
+## What differences between accessors and computed fields?
+
+A computed field is an accessor that value can be cached or watched.
+To enable value caching, use the `@computed` decorator when define or override your accessor.
+After that, the first time the getter value is touched, it will be cached. To support cache invalidation or
+adding change watching capabilities, provide a list of your accessor dependencies or use the `cache = 'auto'` option.
 
 ## Additional options
 
