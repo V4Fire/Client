@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-export { default } from 'friends/block/class';
+export { default } from 'friends/sync/class';
 
 export * from 'friends/sync/mod';
 export * from 'friends/sync/link';

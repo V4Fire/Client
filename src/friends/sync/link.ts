@@ -75,7 +75,7 @@ export function link<D = unknown, R = D>(
  *   @prop()
  *   fooProp: Dictionary = {a: {b: {c: 1}}};
  *
- *   @field((ctx) => ctx.sync.link({deep: true}, (val) => val + 1}))
+ *   @field((ctx) => ctx.sync.link({deep: true}, (val) => val + 1))
  *   foo!: number;
  * }
  * ```
@@ -187,7 +187,7 @@ export function link<D = unknown, R = D>(
  *   @field((ctx) => ctx.sync.link('foo', {deep: true}, (value, oldValue?) => value.a.b + 1))
  *   bla!: number;
  *
- *   @field((ctx) => ctx.sync.link({ctx: remoteObject, path: 'bla'}, {deep: true}, (value) => value + 1)))
+ *   @field((ctx) => ctx.sync.link({ctx: remoteObject, path: 'bla'}, {deep: true}, (value) => value + 1))
  *   bar!: number;
  *
  *   @field((ctx) => ctx.sync.link('document:click', (e) => e.pageY))
@@ -214,8 +214,8 @@ export function link<D = unknown, R = D>(
  *   baz?: number;
  *
  *   created() {
- *     this.bla = this.sync.link(['bla', 'foo'], {deep: true}, (value, oldValue?) => value.a.b + 1));
- *     this.bar = this.sync.link(['bar', watch({bla: 1}).proxy], {deep: true}, (value, oldValue?) => value.bla + 1));
+ *     this.bla = this.sync.link(['bla', 'foo'], {deep: true}, (value, oldValue?) => value.a.b + 1);
+ *     this.bar = this.sync.link(['bar', watch({bla: 1}).proxy], {deep: true}, (value, oldValue?) => value.bla + 1);
  *     this.baz = this.sync.link(['baz', 'document:click'], (e) => e.pageY);
  *   }
  * }
