@@ -24,7 +24,7 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 		originalDirective = staticDirective ?? ctx.directive;
 
 	if (originalDirective == null) {
-		throw new ReferenceError("A function to register directives isn't found");
+		throw new ReferenceError("The function to register directives isn't found");
 	}
 
 	if (directive == null) {
