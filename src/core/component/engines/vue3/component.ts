@@ -131,7 +131,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		renderTriggered(...args: unknown[]): void {
-			init.errorCapturedState(getComponentContext(this), ...args);
+			init.renderTriggeredState(getComponentContext(this), ...args);
 		}
 	};
 }
