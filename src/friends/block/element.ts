@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type Block from 'friends/block/class';
+import type Friend from 'friends/friend';
 
 import { modRgxpCache, elRxp } from 'friends/block/const';
 import { getFullElName } from 'friends/block/traverse';
@@ -25,7 +25,7 @@ import type { ModEventReason, ElementModEvent, SetElementModEvent } from 'friend
  * this.block.getElMod(element, 'foo', 'focused');
  * ```
  */
-export function getElMod(this: Block, link: Nullable<Element>, elName: string, modName: string): CanUndef<string> {
+export function getElMod(this: Friend, link: Nullable<Element>, elName: string, modName: string): CanUndef<string> {
 	if (link == null) {
 		return undefined;
 	}
@@ -61,7 +61,7 @@ export function getElMod(this: Block, link: Nullable<Element>, elName: string, m
  * ```
  */
 export function setElMod(
-	this: Block,
+	this: Friend,
 	link: Nullable<Element>,
 	elName: string,
 	modName: string,
@@ -121,7 +121,7 @@ export function setElMod(
  * ```
  */
 export function removeElMod(
-	this: Block,
+	this: Friend,
 	link: Nullable<Element>,
 	elName: string,
 	modName: string,

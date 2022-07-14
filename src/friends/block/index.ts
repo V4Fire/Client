@@ -13,6 +13,7 @@
 
 export { default } from 'friends/block/class';
 
+export * from 'friends/block/block';
 export * from 'friends/block/element';
 export * from 'friends/block/traverse';
 

@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Friend from 'friends/friend';
 import type { ModsDict } from 'super/i-block/i-block';
 
-import type Block from 'friends/block/class';
 import { fakeCtx } from 'friends/block/const';
+import { getFullBlockName } from 'friends/block/block';
 
 /**
  * Returns a CSS selector to the current component block
@@ -25,14 +26,14 @@ import { fakeCtx } from 'friends/block/const';
  * console.log(this.block.getBlockSelector({focused: true}));
  * ```
  */
-export function getBlockSelector(this: Block, mods?: ModsDict): string {
+export function getBlockSelector(this: Friend, mods?: ModsDict): string {
 	let
-		res = `.${this.getFullBlockName()}`;
+		res = `.${getFullBlockName.call(this)}`;
 
 	if (mods != null) {
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const key = keys[i];
-			res += `.${this.getFullBlockName(key, mods[key])}`;
+			res += `.${getFullBlockName.call(this, key, mods[key])}`;
 		}
 	}
 
@@ -55,7 +56,7 @@ export function getBlockSelector(this: Block, mods?: ModsDict): string {
  * console.log(this.block.getBlockSelector('bla', 'focused', true));
  * ```
  */
-export function getFullElName(this: Block, name: string, modName?: string, modValue?: unknown): string {
+export function getFullElName(this: Friend, name: string, modName?: string, modValue?: unknown): string {
 	const modStr = modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
 	return `${this.componentName}__${name.dasherize()}${modStr}`;
 }
@@ -75,7 +76,7 @@ export function getFullElName(this: Block, name: string, modName?: string, modVa
  * console.log(this.block.getElSelector('bla', {focused: true}));
  * ```
  */
-export function getElSelector(this: Block, name: string, mods?: ModsDict): string {
+export function getElSelector(this: Friend, name: string, mods?: ModsDict): string {
 	let
 		res = `.${getFullElName.call(this, name)}`;
 
@@ -108,7 +109,7 @@ export function getElSelector(this: Block, name: string, mods?: ModsDict): strin
  * ```
  */
 export function elements<E extends Element = Element>(
-	this: Block,
+	this: Friend,
 	ctx: Element,
 	name: string,
 	mods?: ModsDict
@@ -127,13 +128,13 @@ export function elements<E extends Element = Element>(
  * ```
  */
 export function elements<E extends Element = Element>(
-	this: Block,
+	this: Friend,
 	name: string,
 	mods?: ModsDict
 ): ArrayLike<E>;
 
 export function elements<E extends Element = Element>(
-	this: Block,
+	this: Friend,
 	ctxOrName: Element | string,
 	name?: string | ModsDict,
 	mods?: ModsDict
@@ -205,7 +206,7 @@ export function elements<E extends Element = Element>(
  * ```
  */
 export function element<E extends Element = Element>(
-	this: Block,
+	this: Friend,
 	ctx: Element,
 	name: string,
 	mods?: ModsDict
@@ -224,13 +225,13 @@ export function element<E extends Element = Element>(
  * ```
  */
 export function element<E extends Element = Element>(
-	this: Block,
+	this: Friend,
 	name: string,
 	mods?: ModsDict
 ): CanUndef<E>;
 
 export function element<E extends Element = Element>(
-	this: Block,
+	this: Friend,
 	ctxOrName: Element | string,
 	name?: string | ModsDict,
 	mods?: ModsDict
@@ -258,7 +259,7 @@ export function element<E extends Element = Element>(
 	}
 
 	if (this.ctx.isFunctional) {
-		return this.elements<E>(elName, mods)[0];
+		return Object.cast(elements.call(this, elName, mods)[0]);
 	}
 
 	return ctx.querySelector<E>(getElSelector.call(this, elName, mods)) ?? undefined;
