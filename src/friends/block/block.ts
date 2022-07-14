@@ -15,20 +15,29 @@ import { modRgxpCache } from 'friends/block/const';
 import type { ModEvent, ModEventReason, SetModEvent } from 'friends/block/interface';
 
 /**
- * Returns the full block name of the tied component
- *
- * @param [modName] - an additional modifier name
- * @param [modValue] - an additional value name
+ * Returns the fully qualified block name of the associated component
  *
  * @example
  * ```js
- * // b-foo
+ * // b-example
  * console.log(this.block.getFullBlockName());
+ * ```
+ */
+export function getFullBlockName(this: Friend): string;
+
+/**
+ * Returns the fully qualified block name of the associated component, given the passed modifier
  *
- * // b-foo_focused_true
+ * @param modName - the modifier name
+ * @param modValue - the modifier value
+ *
+ * @example
+ * ```js
+ * // b-example_focused_true
  * console.log(this.block.getFullBlockName('focused', true));
  * ```
  */
+export function getFullBlockName(this: Friend, modName: string, modValue: unknown): string;
 export function getFullBlockName(this: Friend, modName?: string, modValue?: unknown): string {
 	return this.componentName + (modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
 }

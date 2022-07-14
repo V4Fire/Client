@@ -432,7 +432,7 @@ class bExample extends iBlock {
 
 ### getFullBlockName
 
-Returns the full block name of the tied component.
+Returns the fully qualified block name of the associated component.
 This method is plugged by default.
 
 ```js
@@ -457,7 +457,7 @@ console.log(this.block.getBlockSelector({focused: true}));
 
 ### getFullElName
 
-Returns the full name of the specified block element.
+Returns the fully qualified name of the specified block element.
 
 ```js
 // b-foo__bla

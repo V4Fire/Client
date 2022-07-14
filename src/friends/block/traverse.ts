@@ -16,7 +16,6 @@ import { getFullBlockName } from 'friends/block/block';
  * Returns a CSS selector to the current component block
  *
  * @param [mods] - additional modifiers
- *
  * @example
  * ```js
  * // .b-foo
@@ -28,7 +27,7 @@ import { getFullBlockName } from 'friends/block/block';
  */
 export function getBlockSelector(this: Friend, mods?: ModsDict): string {
 	let
-		res = `.${getFullBlockName.call(this)}`;
+		res = `.${(<Function>getFullBlockName).call(this)}`;
 
 	if (mods != null) {
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -41,21 +40,31 @@ export function getBlockSelector(this: Friend, mods?: ModsDict): string {
 }
 
 /**
- * Returns the full name of the specified block element
+ * Returns the fully qualified name of the specified block element
  *
  * @param name - the element name
- * @param [modName] - an additional modifier name
- * @param [modValue] - an additional value name
- *
  * @example
  * ```js
  * // b-foo__bla
  * console.log(this.block.getFullElName('bla'));
+ * ```
+ */
+export function getFullElName(this: Friend, name: string): string;
+
+/**
+ * Returns the fully qualified name of the specified block element, given the passed modifier
  *
+ * @param name - the element name
+ * @param modName - the modifier name
+ * @param modValue - the modifier value
+ *
+ * @example
+ * ```js
  * // b-foo__bla_focused_true
  * console.log(this.block.getBlockSelector('bla', 'focused', true));
  * ```
  */
+export function getFullElName(this: Friend, name: string, modName: string, modValue: unknown): string;
 export function getFullElName(this: Friend, name: string, modName?: string, modValue?: unknown): string {
 	const modStr = modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
 	return `${this.componentName}__${name.dasherize()}${modStr}`;
@@ -78,7 +87,7 @@ export function getFullElName(this: Friend, name: string, modName?: string, modV
  */
 export function getElSelector(this: Friend, name: string, mods?: ModsDict): string {
 	let
-		res = `.${getFullElName.call(this, name)}`;
+		res = `.${(<Function>getFullElName).call(this, name)}`;
 
 	if (!this.ctx.isFunctional) {
 		res += `.${this.componentId}`;
