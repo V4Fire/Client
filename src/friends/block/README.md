@@ -436,10 +436,12 @@ Returns the fully qualified block name of the associated component.
 This method is plugged by default.
 
 ```js
-// b-foo
+this.componentName === 'b-example';
+
+// 'b-example'
 console.log(this.block.getFullBlockName());
 
-// b-foo_focused_true
+// 'b-example_focused_true'
 console.log(this.block.getFullBlockName('focused', true));
 ```
 
@@ -448,10 +450,12 @@ console.log(this.block.getFullBlockName('focused', true));
 Returns a CSS selector to the current component block.
 
 ```js
-// .b-foo
+this.componentName === 'b-example';
+
+// '.b-example'
 console.log(this.block.getBlockSelector());
 
-// .b-foo.b-foo_focused_true
+// '.b-example.b-example_focused_true'
 console.log(this.block.getBlockSelector({focused: true}));
 ```
 
@@ -460,11 +464,13 @@ console.log(this.block.getBlockSelector({focused: true}));
 Returns the fully qualified name of the specified block element.
 
 ```js
-// b-foo__bla
-console.log(this.block.getFullElName('bla'));
+this.componentName === 'b-example';
 
-// b-foo__bla_focused_true
-console.log(this.block.getBlockSelector('bla', 'focused', true));
+// 'b-example__foo'
+console.log(this.block.getFullElName('foo'));
+
+// 'b-example__foo_focused_true'
+console.log(this.block.getBlockSelector('foo', 'focused', true));
 ```
 
 ### getElSelector
@@ -472,11 +478,14 @@ console.log(this.block.getBlockSelector('bla', 'focused', true));
 Returns a CSS selector to the specified block element.
 
 ```js
-// .$componentId.b-foo__bla
-console.log(this.block.getElSelector('bla'));
+this.componentId === 'uid-123';
+this.componentName === 'b-example';
 
-// .$componentId.b-foo__bla.b-foo__bla_focused_true
-console.log(this.block.getElSelector('bla', {focused: true}));
+// '.uid-123.b-example__foo'
+console.log(this.block.getElSelector('foo'));
+
+// '.uid-123.b-example__foo.b-example__foo_focused_true'
+console.log(this.block.getElSelector('foo', {focused: true}));
 ```
 
 ### elements

@@ -19,7 +19,9 @@ import type { ModEvent, ModEventReason, SetModEvent } from 'friends/block/interf
  *
  * @example
  * ```js
- * // b-example
+ * this.componentName === 'b-example';
+ *
+ * // 'b-example'
  * console.log(this.block.getFullBlockName());
  * ```
  */
@@ -33,7 +35,9 @@ export function getFullBlockName(this: Friend): string;
  *
  * @example
  * ```js
- * // b-example_focused_true
+ * this.componentName === 'b-example';
+ *
+ * // 'b-example_focused_true'
  * console.log(this.block.getFullBlockName('focused', true));
  * ```
  */

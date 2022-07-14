@@ -18,10 +18,12 @@ import { getFullBlockName } from 'friends/block/block';
  * @param [mods] - additional modifiers
  * @example
  * ```js
- * // .b-foo
+ * this.componentName === 'b-example';
+ *
+ * // '.b-example'
  * console.log(this.block.getBlockSelector());
  *
- * // .b-foo.b-foo_focused_true
+ * // '.b-example.b-example_focused_true'
  * console.log(this.block.getBlockSelector({focused: true}));
  * ```
  */
@@ -45,8 +47,10 @@ export function getBlockSelector(this: Friend, mods?: ModsDict): string {
  * @param name - the element name
  * @example
  * ```js
- * // b-foo__bla
- * console.log(this.block.getFullElName('bla'));
+ * this.componentName === 'b-example';
+ *
+ * // 'b-example__foo'
+ * console.log(this.block.getFullElName('foo'));
  * ```
  */
 export function getFullElName(this: Friend, name: string): string;
@@ -60,8 +64,10 @@ export function getFullElName(this: Friend, name: string): string;
  *
  * @example
  * ```js
- * // b-foo__bla_focused_true
- * console.log(this.block.getBlockSelector('bla', 'focused', true));
+ * this.componentName === 'b-example';
+ *
+ * // b-example__foo_focused_true
+ * console.log(this.block.getBlockSelector('foo', 'focused', true));
  * ```
  */
 export function getFullElName(this: Friend, name: string, modName: string, modValue: unknown): string;
@@ -78,11 +84,14 @@ export function getFullElName(this: Friend, name: string, modName?: string, modV
  *
  * @example
  * ```js
- * // .$componentId.b-foo__bla
- * console.log(this.block.getElSelector('bla'));
+ * this.componentId === 'uid-123';
+ * this.componentName === 'b-example';
  *
- * // .$componentId.b-foo__bla.b-foo__bla_focused_true
- * console.log(this.block.getElSelector('bla', {focused: true}));
+ * // '.uid-123.b-example__foo'
+ * console.log(this.block.getElSelector('foo'));
+ *
+ * // '.uid-123.b-example__foo.b-example__foo_focused_true'
+ * console.log(this.block.getElSelector('foo', {focused: true}));
  * ```
  */
 export function getElSelector(this: Friend, name: string, mods?: ModsDict): string {
