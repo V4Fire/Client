@@ -9,7 +9,7 @@
 import { statuses } from 'super/i-block/const';
 
 import type Sync from 'friends/sync/class';
-import type { ModValueConverter, LinkWrapper, AsyncWatchOptions } from 'friends/sync/interface';
+import type { ModValueConverter, LinkGetter, AsyncWatchOptions } from 'friends/sync/interface';
 
 /**
  * Binds a modifier to a property by the specified path
@@ -17,6 +17,24 @@ import type { ModValueConverter, LinkWrapper, AsyncWatchOptions } from 'friends/
  * @param modName - the modifier name to bind
  * @param path - the property path to bind
  * @param [converter] - a converter function
+ *
+ * @example
+ * ```typescript
+ * import iBlock, { component, prop } from 'super/i-block/i-block';
+ *
+ * @component()
+ * class bExample extends iBlock {
+ *   @prop(Object)
+ *   params: Dictionary = {
+ *     opened: true
+ *   };
+ *
+ *   protected override initModEvents(): void {
+ *     // Each time the `params.opened` prop changes, the `opened` modifier will also change
+ *     this.sync.mod('opened', 'params.opened');
+ *   }
+ * }
+ * ```
  */
 export function mod<D = unknown, R = unknown>(
 	this: Sync,
@@ -32,6 +50,24 @@ export function mod<D = unknown, R = unknown>(
  * @param path - the property path to bind
  * @param opts - additional options
  * @param [converter] - converter function
+ *
+ * @example
+ * ```typescript
+ * import iBlock, { component, prop } from 'super/i-block/i-block';
+ *
+ * @component()
+ * class bExample extends iBlock {
+ *   @prop(Object)
+ *   params: Dictionary = {
+ *     opened: true
+ *   };
+ *
+ *   protected override initModEvents(): void {
+ *     // Each time the `params` prop changes, the `opened` modifier will also change
+ *     this.sync.mod('params', 'opened', {deep: true}, ({opened}) => Boolean(opened));
+ *   }
+ * }
+ * ```
  */
 export function mod<D = unknown, R = unknown>(
 	this: Sync,
@@ -65,7 +101,7 @@ export function mod<D = unknown, R = unknown>(
 
 	const setWatcher = () => {
 		const wrapper = (val, ...args) => {
-			val = (<LinkWrapper>converter).call(this.component, val, ...args);
+			val = (<LinkGetter>converter).call(this.component, val, ...args);
 
 			if (val !== undefined) {
 				void this.ctx.setMod(modName, val);
@@ -83,7 +119,7 @@ export function mod<D = unknown, R = unknown>(
 	if (this.lfc.isBeforeCreate()) {
 		const sync = () => {
 			const
-				v = (<LinkWrapper>converter).call(this.component, this.field.get(path));
+				v = (<LinkGetter>converter).call(this.component, this.field.get(path));
 
 			if (v !== undefined) {
 				ctx.mods[modName] = String(v);

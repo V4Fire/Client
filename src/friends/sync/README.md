@@ -1,4 +1,4 @@
-# friends/sync
+_# friends/sync
 
 This module provides an API to synchronize fields and props of a component.
 
@@ -98,7 +98,7 @@ export default class bInput extends iBlock {
 ```
 
 As you can see, the method takes a string with the watchable property as the first parameter
-(you can specify a complex path, like `foo.bar.bla`), and the second parameter is a converter function.
+(you can specify a complex path, like `foo.bar.bla`), and the second parameter is a getter function.
 And, the method itself returns the starting value of the watched property.
 
 So, problems 1 and 2 are solved, but what about the third problem? We still have two properties, and they have different
@@ -137,10 +137,11 @@ As you can see, we got rid of unnecessary boilerplate code and the need to remem
 ### link
 
 Sets a link to a component/object property or event by the specified path.
+This method is plugged by default.
 
 Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
 If the link is set to an event, then every time this event fires, then the value of A will change to the value of
-the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
 that will take parameters from the link and return the value to the original field.
 
 To listen an event you need to use the special delimiter ":" within a path.
@@ -262,7 +263,7 @@ Creates a dictionary where all keys refer to other properties/events as links.
 
 Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
 If the link is set to an event, then every time this event fires, then the value of A will change to the value of
-the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
 that will take parameters from the link and return the value to the original field.
 
 To listen an event you need to use the special delimiter ":" within a path.
@@ -339,7 +340,58 @@ class bExample3 extends iBlock {
 ### mod
 
 Binds a modifier to a property by the specified path.
+This method is plugged by default.
 
 ```typescript
-this.sync.mod('opened', 'visible', Boolean);
+import iBlock, { component, prop } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  @prop(Object)
+  params: Dictionary = {
+    opened: true,
+    visible: true
+  };
+
+  protected override initModEvents(): void {
+    // Each time the `params.opened` prop changes, the `opened` modifier will also change
+    this.sync.mod('opened', 'params.opened');
+
+    // Each time the `params` prop changes, the `visible` modifier will also change
+    this.sync.mod('visible', 'params', {deep: true}, ({visible}) => Boolean(visible));
+  }
+}
+```
+
+### syncLinks
+
+Synchronizes component reference values with the values they are linked with.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+import Sync, { object, syncLinks } from 'friends/sync';
+
+Sync.addToPrototype(syncLinks);
+
+@component()
+export default class bInput extends iBlock {
+  @prop(String)
+  valueProp: string = '';
+
+  @field((o) => o.sync.link())
+  value!: string;
+
+  created() {
+    // Synchronize all existing links with their values
+    this.sync.syncLinks();
+
+    // Synchronize all links to `valueProp`
+    this.sync.syncLinks('valueProp');
+
+    // Synchronize all links to `valueProp` and set all values to `'foo'`
+    this.sync.syncLinks('valueProp', 'foo');
+
+    console.log(this.value === 'foo');
+  }
+}
 ```

@@ -17,7 +17,7 @@ import type { Link, PropLinks, AsyncWatchOptions } from 'friends/sync/interface'
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
  * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+ * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
  * that will take parameters from the link and return the value to the original field.
  *
  * To listen an event you need to use the special delimiter ":" within a path.
@@ -62,7 +62,7 @@ export function object(this: Sync, decl: PropLinks): Dictionary;
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
  * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+ * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
  * that will take parameters from the link and return the value to the original field.
  *
  * To listen an event you need to use the special delimiter ":" within a path.
@@ -108,7 +108,7 @@ export function object(this: Sync, opts: AsyncWatchOptions, fields: PropLinks): 
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
  * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+ * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
  * that will take parameters from the link and return the value to the original field.
  *
  * To listen an event you need to use the special delimiter ":" within a path.
@@ -155,7 +155,7 @@ export function object(this: Sync, path: Link, fields: PropLinks): Dictionary;
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
  * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+ * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
  * that will take parameters from the link and return the value to the original field.
  *
  * To listen an event you need to use the special delimiter ":" within a path.
@@ -274,7 +274,7 @@ export function object(
 	const
 		cursor = Object.get<StrictDictionary>(resObj, localPath);
 
-	const attachWatcher = (watchPath, destPath, getVal, wrapper?) => {
+	const attachWatcher = (watchPath, destPath, getVal, getter?) => {
 		Object.set(linksCache, destPath, true);
 
 		let
@@ -338,7 +338,7 @@ export function object(
 			}
 		}
 
-		if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
+		if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
 			ctx.watch(info ?? watchPath, isolatedOpts, (val, oldVal, ...args) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
@@ -430,7 +430,7 @@ export function object(
 			opts: AsyncWatchOptions,
 			info: PropertyInfo;
 
-		const createGetVal = (watchPath, wrapper) => (val?, oldVal?, init?: boolean) => {
+		const createGetVal = (watchPath, getter) => (val?, oldVal?, init?: boolean) => {
 			if (init) {
 				switch (type) {
 					case 'regular':
@@ -457,26 +457,26 @@ export function object(
 				}
 			}
 
-			if (wrapper == null) {
+			if (getter == null) {
 				return val;
 			}
 
-			return wrapper.call(this.component, val, oldVal);
+			return getter.call(this.component, val, oldVal);
 		};
 
 		let
-			wrapper,
+			getter,
 			watchPath,
 			savePath;
 
 		if (Object.isArray(el)) {
 			if (el.length === 3) {
 				watchPath = el[1];
-				wrapper = el[2];
+				getter = el[2];
 
 			} else if (Object.isFunction(el[1])) {
 				watchPath = el[0];
-				wrapper = el[1];
+				getter = el[1];
 
 			} else {
 				watchPath = el[1];
@@ -493,7 +493,7 @@ export function object(
 			destPath = [path, savePath].join('.');
 
 		if (Object.get(linksCache, destPath) == null) {
-			const getVal = createGetVal(watchPath, wrapper);
+			const getVal = createGetVal(watchPath, getter);
 			[type, opts, info] = attachWatcher(watchPath, destPath, getVal);
 			Object.set(cursor, savePath, getVal(null, null, true));
 		}

@@ -10,13 +10,13 @@ import { isProxy } from 'core/object/watch';
 import { bindingRgxp, customWatcherRgxp, getPropertyInfo } from 'core/component';
 
 import type Sync from 'friends/sync/class';
-import type { LinkDecl, LinkWrapper, AsyncWatchOptions } from 'friends/sync/interface';
+import type { LinkDecl, LinkGetter, AsyncWatchOptions } from 'friends/sync/interface';
 
 /**
  * Sets a reference to a property that is logically connected to the current field.
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
- * You can refer to a value as a whole or to a part of it. Just pass a special wrapper function that will take
+ * You can refer to a value as a whole or to a part of it. Just pass a special getter function that will take
  * parameters from the link and return the value to the original field.
  *
  * Logical connection is based on a name convention: properties that match the patterns
@@ -24,7 +24,7 @@ import type { LinkDecl, LinkWrapper, AsyncWatchOptions } from 'friends/sync/inte
  *
  * Mind, this function can be used only within a property decorator.
  *
- * @param [optsOrWrapper] - additional options or a wrapper
+ * @param [optsOrGetter] - additional options or a getter function
  *
  * @example
  * ```typescript
@@ -48,14 +48,14 @@ import type { LinkDecl, LinkWrapper, AsyncWatchOptions } from 'friends/sync/inte
  */
 export function link<D = unknown, R = D>(
 	this: Sync,
-	optsOrWrapper?: AsyncWatchOptions | LinkWrapper<Sync['C'], D, R>
+	optsOrGetter?: AsyncWatchOptions | LinkGetter<Sync['C'], D, R>
 ): CanUndef<R>;
 
 /**
  * Sets a reference to a property that is logically connected to the current field.
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
- * You can refer to a value as a whole or to a part of it. Just pass a special wrapper function that will take
+ * You can refer to a value as a whole or to a part of it. Just pass a special getter function that will take
  * parameters from the link and return the value to the original field.
  *
  * Logical connection is based on a name convention: properties that match the patterns
@@ -64,7 +64,7 @@ export function link<D = unknown, R = D>(
  * Mind, this method can be used only within a property decorator.
  *
  * @param opts - additional options
- * @param [wrapper]
+ * @param [getter]
  *
  * @example
  * ```typescript
@@ -83,7 +83,7 @@ export function link<D = unknown, R = D>(
 export function link<D = unknown, R = D>(
 	this: Sync,
 	opts: AsyncWatchOptions,
-	wrapper?: LinkWrapper<Sync['C'], D, R>
+	getter?: LinkGetter<Sync['C'], D, R>
 ): CanUndef<R>;
 
 /**
@@ -91,7 +91,7 @@ export function link<D = unknown, R = D>(
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
  * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+ * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
  * that will take parameters from the link and return the value to the original field.
  *
  * To listen an event you need to use the special delimiter ":" within a path.
@@ -101,7 +101,7 @@ export function link<D = unknown, R = D>(
  * @param path - a path to the property/event we are referring to, or
  *   [a path to the property containing the reference, a path to the property/event we are referring to]
  *
- * @param [optsOrWrapper] - additional options or a wrapper
+ * @param [optsOrGetter] - additional options or a getter function
  *
  * @example
  * ```typescript
@@ -153,7 +153,7 @@ export function link<D = unknown, R = D>(
 export function link<D = unknown, R = D>(
 	this: Sync,
 	path: LinkDecl,
-	optsOrWrapper?: AsyncWatchOptions | LinkWrapper<Sync['C'], D, R>
+	optsOrGetter?: AsyncWatchOptions | LinkGetter<Sync['C'], D, R>
 ): CanUndef<R>;
 
 /**
@@ -161,7 +161,7 @@ export function link<D = unknown, R = D>(
  *
  * Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
  * If the link is set to an event, then every time this event fires, then the value of A will change to the value of
- * the event object. You can refer to a value as a whole or to a part of it. Just pass a special wrapper function
+ * the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
  * that will take parameters from the link and return the value to the original field.
  *
  * To listen an event you need to use the special delimiter ":" within a path.
@@ -172,7 +172,7 @@ export function link<D = unknown, R = D>(
  *   [a path to the property containing the reference, a path to the property/event we are referring to]
  *
  * @param opts - additional options
- * @param [wrapper]
+ * @param [getter]
  *
  * @example
  * ```typescript
@@ -225,14 +225,14 @@ export function link<D = unknown, R = D>(
 	this: Sync,
 	path: LinkDecl,
 	opts: AsyncWatchOptions,
-	wrapper?: LinkWrapper<Sync['C'], D, R>
+	getter?: LinkGetter<Sync['C'], D, R>
 ): CanUndef<R>;
 
 export function link<D = unknown, R = D>(
 	this: Sync,
-	path?: LinkDecl | AsyncWatchOptions | LinkWrapper<Sync['C'], D>,
-	opts?: AsyncWatchOptions | LinkWrapper<Sync['C'], D>,
-	wrapper?: LinkWrapper<Sync['C'], D>
+	path?: LinkDecl | AsyncWatchOptions | LinkGetter<Sync['C'], D>,
+	opts?: AsyncWatchOptions | LinkGetter<Sync['C'], D>,
+	getter?: LinkGetter<Sync['C'], D>
 ): CanUndef<R> {
 	let
 		destPath,
@@ -246,13 +246,13 @@ export function link<D = unknown, R = D>(
 		destPath = this.activeField;
 
 		if (Object.isFunction(path)) {
-			wrapper = path;
+			getter = path;
 			path = undefined;
 		}
 	}
 
 	if (Object.isFunction(opts)) {
-		wrapper = opts;
+		getter = opts;
 	}
 
 	if (destPath == null) {
@@ -288,7 +288,7 @@ export function link<D = unknown, R = D>(
 	}
 
 	if (resolvedPath == null) {
-		throw new ReferenceError('A path or object to watch is not specified');
+		throw new ReferenceError('The path or object to watch is not specified');
 	}
 
 	let
@@ -358,12 +358,12 @@ export function link<D = unknown, R = D>(
 	linksCache[destPath] = {};
 
 	const sync = (val?, oldVal?) => {
-		const res = wrapper ? wrapper.call(this.component, val, oldVal) : val;
+		const res = getter ? getter.call(this.component, val, oldVal) : val;
 		this.field.set(destPath, res);
 		return res;
 	};
 
-	if (wrapper != null && (wrapper.length > 1 || wrapper['originalLength'] > 1)) {
+	if (getter != null && (getter.length > 1 || getter['originalLength'] > 1)) {
 		ctx.watch(info ?? normalizedPath, resolvedOpts, (val, oldVal, ...args) => {
 			if (isCustomWatcher) {
 				oldVal = undefined;

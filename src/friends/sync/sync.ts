@@ -16,6 +16,35 @@ import type { LinkDecl } from 'friends/sync/interface';
  *   [a path to the property containing the reference, a path to the property/event we are referring to]
  *
  * @param [value] - the value to synchronize links
+ *
+ * @example
+ * ```typescript
+ * import iBlock, { component } from 'super/i-block/i-block';
+ * import Sync, { object, syncLinks } from 'friends/sync';
+ *
+ * Sync.addToPrototype(syncLinks);
+ *
+ * @component()
+ * export default class bInput extends iBlock {
+ *   @prop(String)
+ *   valueProp: string = '';
+ *
+ *   @field((o) => o.sync.link())
+ *   value!: string;
+ *
+ *   created() {
+ *     // Synchronize all existing links with their values
+ *     this.sync.syncLinks();
+ *
+ *     // Synchronize all links to `valueProp`
+ *     this.sync.syncLinks('valueProp');
+ *
+ *     // Synchronize all links to `valueProp` and set all values to `'foo'`
+ *     this.sync.syncLinks('valueProp', 'foo');
+ *
+ *     console.log(this.value === 'foo');
+ *   }
+ * }
  */
 export function syncLinks(this: Sync, path?: LinkDecl, value?: unknown): void {
 	let

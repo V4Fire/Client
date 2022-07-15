@@ -14,12 +14,12 @@ import type iBlock from 'super/i-block/i-block';
 export type AsyncWatchOptions =
 	WatchOptions & AsyncOptions;
 
-export interface LinkWrapper<CTX extends iBlock = iBlock, V = unknown, R = unknown> {
+export interface LinkGetter<CTX extends iBlock = iBlock, V = unknown, R = unknown> {
 	(this: CTX, value: V, oldValue?: V): R;
 }
 
 export type ModValueConverter<CTX extends iBlock = iBlock, V = unknown, R = unknown> =
-	LinkWrapper<CTX, V, CanUndef<R>> |
+	LinkGetter<CTX, V, CanUndef<R>> |
 	Function;
 
 export type Link = string;
@@ -34,7 +34,7 @@ export type PropLink =
 	Link |
 	[Link] |
 	[LinkContainer, ObjectLink] |
-	[Link, LinkWrapper] |
-	[LinkContainer, ObjectLink, LinkWrapper];
+	[Link, LinkGetter] |
+	[LinkContainer, ObjectLink, LinkGetter];
 
 export type PropLinks = PropLink[];
