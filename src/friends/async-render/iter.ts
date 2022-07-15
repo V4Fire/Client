@@ -6,13 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import VDOM from 'friends/vdom';
-import { render } from 'friends/vdom/render';
-
+import type { ComponentElement } from 'core/component';
 import type { VNode } from 'core/component/engines';
-import type { ComponentElement } from 'super/i-block/i-block';
 
-import type AsyncRender from 'friends/async-render/class';
+import type Friend from 'friends/friend';
+import { render } from 'friends/vdom';
 
 import { addRenderTask, destroyNode as nodeDestructor } from 'friends/async-render/modules/render';
 import { getIterDescriptor } from 'friends/async-render/modules/iter';
@@ -45,7 +43,7 @@ const
  * ```
  */
 export function iterate(
-	this: AsyncRender,
+	this: Friend,
 	value: unknown,
 	sliceOrOpts: number | [number?, number?] | TaskOptions = 1,
 	opts: TaskOptions = {}
@@ -288,18 +286,23 @@ export function iterate(
 
 			function renderVNode(vnode: VNode) {
 				let
-					renderedVnode: Node;
+					renderedVnode: CanArray<Node>;
 
 				if (vnode.el != null) {
 					vnode.el[Object.cast<string>(isCached)] = true;
 					renderedVnode = Object.cast(vnode.el);
 
 				} else {
-					VDOM.addToPrototype(Object.cast(render));
-					renderedVnode = ctx.vdom.render(vnode);
+					renderedVnode = render.call(that, Object.cast(vnode));
 				}
 
-				renderedVNodes.push(renderedVnode);
+				if (Object.isArray(renderedVnode)) {
+					renderedVNodes.push(...renderedVnode);
+
+				} else {
+					renderedVNodes.push(renderedVnode);
+				}
+
 				target.el?.appendChild(renderedVnode);
 			}
 

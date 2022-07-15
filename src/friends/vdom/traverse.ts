@@ -12,8 +12,6 @@ import type { VNode } from 'core/component/engines';
 import type Friend from 'friends/friend';
 import type iBlock from 'super/i-block/i-block';
 
-import type VDOM from 'friends/vdom/class';
-
 /**
  * Returns a link to the closest parent component from the current
  *
@@ -72,7 +70,7 @@ export function closest<T extends iBlock = iBlock>(
  * ```
  */
 export function findElement(
-	this: VDOM,
+	this: Friend,
 	name: string,
 	where: VNode,
 	ctx: iBlock = this.component

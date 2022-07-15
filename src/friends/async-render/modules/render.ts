@@ -9,10 +9,11 @@
 import SyncPromise from 'core/promise/sync';
 import { queue } from 'core/component/render/daemon';
 
+import type Friend from 'friends/friend';
+
 import type iBlock from 'super/i-block/i-block';
 import type { ComponentElement } from 'super/i-block/i-block';
 
-import type AsyncRender from 'friends/async-render/class';
 import type { TaskOptions } from 'friends/async-render/interface';
 
 /**
@@ -23,7 +24,7 @@ import type { TaskOptions } from 'friends/async-render/interface';
  * @param [opts] - additional options
  */
 export function addRenderTask(
-	this: AsyncRender,
+	this: Friend,
 	task: Function,
 	opts: TaskOptions = {}
 ): Promise<void> {
@@ -68,7 +69,7 @@ export function addRenderTask(
  * @param node - a node to remove
  * @param [childComponentEls] - root elements of the child components
  */
-export function destroyNode(this: AsyncRender, node: Node, childComponentEls: Element[] = []): void {
+export function destroyNode(this: Friend, node: Node, childComponentEls: Element[] = []): void {
 	node.parentNode?.removeChild(node);
 
 	for (let i = 0; i < childComponentEls.length; i++) {

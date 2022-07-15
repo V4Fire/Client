@@ -7,9 +7,10 @@
  */
 
 import { unwrap } from 'core/object/watch';
+
+import type Friend from 'friends/friend';
 import iBlock, { getPropertyInfo } from 'super/i-block/i-block';
 
-import type Field from 'friends/field/class';
 import type { KeyGetter } from 'friends/field/interface';
 
 /**
@@ -38,7 +39,7 @@ import type { KeyGetter } from 'friends/field/interface';
  * }
  * ```
  */
-export function setField<T = unknown>(this: Field, path: string, value: T, keyGetter: KeyGetter): T;
+export function setField<T = unknown>(this: Friend, path: string, value: T, keyGetter: KeyGetter): T;
 
 /**
  * Sets a new property to the passed object by the specified path
@@ -60,7 +61,7 @@ export function setField<T = unknown>(this: Field, path: string, value: T, keyGe
  * ```
  */
 export function setField<T = unknown>(
-	this: Field,
+	this: Friend,
 	path: string,
 	value: T,
 	obj?: Nullable<object>,
@@ -68,7 +69,7 @@ export function setField<T = unknown>(
 ): T;
 
 export function setField<T = unknown>(
-	this: Field,
+	this: Friend,
 	path: string,
 	value: T,
 	obj: Nullable<object> = this.ctx,

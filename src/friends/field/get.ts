@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Friend from 'friends/friend';
 import iBlock, { getPropertyInfo } from 'super/i-block/i-block';
 
-import type Field from 'friends/field/class';
 import type { ValueGetter } from 'friends/field/interface';
 
 /**
@@ -39,7 +39,7 @@ import type { ValueGetter } from 'friends/field/interface';
  * }
  * ```
  */
-export function getField<T = unknown>(this: Field, path: string, getter: ValueGetter): CanUndef<T>;
+export function getField<T = unknown>(this: Friend, path: string, getter: ValueGetter): CanUndef<T>;
 
 /**
  * Returns a property from the passed object by the specified path
@@ -58,14 +58,14 @@ export function getField<T = unknown>(this: Field, path: string, getter: ValueGe
  * ```
  */
 export function getField<T = unknown>(
-	this: Field,
+	this: Friend,
 	path: string,
 	obj?: Nullable<object>,
 	getter?: ValueGetter
 ): CanUndef<T>;
 
 export function getField<T = unknown>(
-	this: Field,
+	this: Friend,
 	path: string,
 	obj: Nullable<object | ValueGetter> = this.ctx,
 	getter?: ValueGetter

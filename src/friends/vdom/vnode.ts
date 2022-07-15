@@ -7,9 +7,7 @@
  */
 
 import { isComponent } from 'core/component';
-
-import type { VNode, ObjectDirective } from 'core/component/engines';
-import type { ComponentInterface } from 'super/i-block';
+import type { VNode, ObjectDirective, ComponentPublicInstance } from 'core/component/engines';
 
 import type VDOM from 'friends/vdom/class';
 import type { VNodeOptions, VNodeDescriptor } from 'friends/vdom/interface';
@@ -174,7 +172,7 @@ function createVNode(
 			oldValue: undefined,
 
 			dir: Object.cast<ObjectDirective>(vAttrs),
-			instance: Object.cast<ComponentInterface>(ctx)
+			instance: Object.cast<ComponentPublicInstance>(ctx)
 		}, vnode);
 	}
 

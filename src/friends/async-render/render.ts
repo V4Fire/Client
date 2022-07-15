@@ -8,13 +8,13 @@
 
 import { restart, deferRestart } from 'core/component/render/daemon';
 
-import type AsyncRender from 'friends/async-render/class';
+import type Friend from 'friends/friend';
 
 /**
  * Restarts the `asyncRender` daemon to force rendering of async chunks
  * @see core/component/render/daemon
  */
-export function forceRender(this: AsyncRender): void {
+export function forceRender(this: Friend): void {
 	restart();
 	this.localEmitter.emit('forceRender');
 }
@@ -25,7 +25,7 @@ export function forceRender(this: AsyncRender): void {
  * @see forceRender
  * @see core/component/render/daemon
  */
-export function deferForceRender(this: AsyncRender): void {
+export function deferForceRender(this: Friend): void {
 	deferRestart();
 	this.localEmitter.emit('forceRender');
 }
@@ -56,8 +56,8 @@ export function deferForceRender(this: AsyncRender): void {
  * ```
  */
 export function waitForceRender(
-	this: AsyncRender,
-	elementToDrop?: string | ((ctx: AsyncRender['component']) => CanPromise<CanUndef<string | Element>>)
+	this: Friend,
+	elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)
 ): () => CanPromise<boolean> {
 	return () => {
 		const

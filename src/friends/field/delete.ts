@@ -7,9 +7,10 @@
  */
 
 import { unwrap } from 'core/object/watch';
+
+import type Friend from 'friends/friend';
 import iBlock, { getPropertyInfo } from 'super/i-block/i-block';
 
-import type Field from 'friends/field/class';
 import type { KeyGetter } from 'friends/field/interface';
 
 /**
@@ -40,7 +41,7 @@ import type { KeyGetter } from 'friends/field/interface';
  * }
  * ```
  */
-export function deleteField(this: Field, path: string, keyGetter?: KeyGetter): boolean;
+export function deleteField(this: Friend, path: string, keyGetter?: KeyGetter): boolean;
 
 /**
  * Deletes a property from the passed object by the specified path
@@ -63,10 +64,15 @@ export function deleteField(this: Field, path: string, keyGetter?: KeyGetter): b
  * console.log('bla_bar' in obj.foo === false);
  * ```
  */
-export function deleteField(this: Field, path: string, obj?: Nullable<object>, keyGetter?: KeyGetter): boolean;
+export function deleteField(
+	this: Friend,
+	path: string,
+	obj?: Nullable<object>,
+	keyGetter?: KeyGetter
+): boolean;
 
 export function deleteField(
-	this: Field,
+	this: Friend,
 	path: string,
 	obj: Nullable<object> = this.ctx,
 	keyGetter?: KeyGetter

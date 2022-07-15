@@ -18,8 +18,8 @@ this.field.delete('foo.bla.bar', this.r);
 ## How to include this module to your component?
 
 By default, any component that inherited from [[iBlock]] has the `field` property.
-Some methods, such as `get` and `set` are always available, and the rest must be
-included explicitly to enable tree-shake code optimization. Just place the necessary import declaration within your component file.
+Some methods, such as `get` and `set` are always available, and the rest must be included explicitly to enable tree-shake
+code optimization. Just place the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'super/i-block/i-block';
@@ -133,6 +133,7 @@ There are three reasons to use `Field` instead of Prelude methods.
 ### get
 
 Returns a property by the specified path.
+This method is plugged by default.
 
 ```typescript
 import iBlock, { component, field } from 'super/i-block/i-block';
@@ -164,6 +165,7 @@ export default class bInput extends iBlock {
 ### set
 
 Sets a new property by the specified path.
+This method is plugged by default.
 
 ```typescript
 import iBlock, { component, field } from 'super/i-block/i-block';

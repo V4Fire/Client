@@ -9,7 +9,7 @@
 import Range from 'core/range';
 import { seq } from 'core/iter/combinators';
 
-import type AsyncRender from 'friends/async-render/class';
+import type Friend from 'friends/friend';
 import type { IterOptions, IterDescriptor } from 'friends/async-render/interface';
 
 /**
@@ -21,7 +21,7 @@ import type { IterOptions, IterDescriptor } from 'friends/async-render/interface
  * @param [filter]
  */
 export function getIterDescriptor(
-	this: AsyncRender,
+	this: Friend,
 	value: unknown,
 	{start = 0, perChunk = 1, filter}: IterOptions = {}
 ): IterDescriptor {
@@ -167,7 +167,7 @@ export function getIterDescriptor(
  * @param [hasFilter] - true if the passed value will be filtered
  */
 export function getIterable(
-	this: AsyncRender,
+	this: Friend,
 	value: unknown,
 	hasFilter?: boolean
 ): CanPromise<AnyIterable> {

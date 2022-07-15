@@ -9,7 +9,7 @@
 import type { VNode } from 'core/component/engines';
 import type { ComponentInterface } from 'super/i-block';
 
-import type VDOM from 'friends/vdom/class';
+import type Friend from 'friends/friend';
 import type { RenderFactory, RenderFn } from 'friends/vdom/interface';
 
 /**
@@ -24,7 +24,7 @@ import type { RenderFactory, RenderFn } from 'friends/vdom/interface';
  * console.log(div.classList.contains('foo')); // true
  * ```
  */
-export function render(this: VDOM, vnode: VNode): Node;
+export function render(this: Friend, vnode: VNode): Node;
 
 /**
  * Renders the specified list of VNode-s and returns the result
@@ -41,8 +41,8 @@ export function render(this: VDOM, vnode: VNode): Node;
  * console.log(div[1].classList.contains('bar')); // true
  * ```
  */
-export function render(this: VDOM, vnodes: VNode[]): Node[];
-export function render(this: VDOM, vnode: CanArray<VNode>): CanArray<Node> {
+export function render(this: Friend, vnodes: VNode[]): Node[];
+export function render(this: Friend, vnode: CanArray<VNode>): CanArray<Node> {
 	return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.ctx);
 }
 
@@ -61,7 +61,7 @@ export function render(this: VDOM, vnode: CanArray<VNode>): CanArray<Node> {
  * this.vdom.getRenderFactory('bExample.subTemplate');
  * ```
  */
-export function getRenderFactory(this: VDOM, path: string): CanUndef<RenderFactory> {
+export function getRenderFactory(this: Friend, path: string): CanUndef<RenderFactory> {
 	const
 		chunks = path.split('.');
 
@@ -118,7 +118,7 @@ export function getRenderFactory(this: VDOM, path: string): CanUndef<RenderFacto
  * ```
  */
 export function getRenderFn(
-	this: VDOM,
+	this: Friend,
 	factoryOrPath: CanUndef<RenderFactory> | string,
 	ctx: ComponentInterface = this.ctx
 ): RenderFn {
