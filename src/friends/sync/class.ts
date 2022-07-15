@@ -27,9 +27,14 @@ interface Sync {
 @fakeMethods('object')
 class Sync extends Friend {
 	/**
+	 * Cache for links
+	 */
+	protected readonly linksCache!: Dictionary<Dictionary>;
+
+	/**
 	 * Cache of functions to synchronize modifiers
 	 */
-	readonly syncModCache!: Dictionary<Function>;
+	protected readonly syncModCache!: Dictionary<Function>;
 
 	/** @see [[iBlock.$syncLinkCache]] */
 	protected get syncLinkCache(): SyncLinkCache {
@@ -41,17 +46,12 @@ class Sync extends Friend {
 		Object.set(this.ctx, '$syncLinkCache', value);
 	}
 
-	/**
-	 * Cache for links
-	 */
-	protected readonly linksCache!: Dictionary<Dictionary>;
-
 	constructor(component: iBlock) {
 		super(component);
 
 		this.linksCache = Object.createDict();
-		this.syncLinkCache = new Map();
 		this.syncModCache = Object.createDict();
+		this.syncLinkCache = new Map();
 	}
 }
 
