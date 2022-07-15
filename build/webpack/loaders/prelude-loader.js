@@ -73,7 +73,7 @@ module.exports = function preludeLoader(str) {
 		str = escaper.paste(str, escapedFragments, labelRgxp);
 
 		if (initGlobals) {
-			str = `const ${globalLink} = Function('return this')();\n\n${str}`;
+			str = `var ${globalLink} = Function('return this')();\n\n${str}`;
 		}
 	}
 
