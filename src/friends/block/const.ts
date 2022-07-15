@@ -11,4 +11,4 @@ export const
 	modRgxpCache = Object.createDict<RegExp>();
 
 export const
-	elRxp = /_+/;
+	elementRxp = /_+/;

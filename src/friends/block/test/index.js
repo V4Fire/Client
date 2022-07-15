@@ -71,33 +71,33 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 		});
 
-		describe('`getFullElName`', () => {
+		describe('`getFullElementName`', () => {
 			it('simple usage', async () => {
 				const
-					testVal = await dummyComponent.evaluate((ctx) => ctx.block.getFullElName('test'));
+					testVal = await dummyComponent.evaluate((ctx) => ctx.block.getFullElementName('test'));
 
 				expect(testVal).toBe('b-dummy__test');
 			});
 
 			it('providing modifiers', async () => {
 				const testVal = await dummyComponent.evaluate((ctx) =>
-					ctx.block.getFullElName('test', 'focused', true));
+					ctx.block.getFullElementName('test', 'focused', true));
 
 				expect(testVal).toBe('b-dummy__test_focused_true');
 			});
 		});
 
-		describe('`getElSelector`', () => {
+		describe('`getElementSelector`', () => {
 			it('simple usage', async () => {
 				const
-					testVal = await dummyComponent.evaluate((ctx) => ctx.block.getElSelector('test'));
+					testVal = await dummyComponent.evaluate((ctx) => ctx.block.getElementSelector('test'));
 
 				expect(testVal).toBe(`.${componentId}.b-dummy__test`);
 			});
 
 			it('providing modifiers', async () => {
 				const testVal = await dummyComponent.evaluate((ctx) =>
-					ctx.block.getElSelector('test', {focused: true}));
+					ctx.block.getElementSelector('test', {focused: true}));
 
 				expect(testVal).toBe(`.${componentId}.b-dummy__test.b-dummy__test_focused_true`);
 			});
@@ -269,7 +269,7 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 		});
 
-		describe('`setElMod`', () => {
+		describe('`setElementMod`', () => {
 			beforeEach(async () => {
 				await dummyComponent.evaluate((ctx) => {
 					const
@@ -285,7 +285,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 			it('sets a class name to the element', async () => {
 				await dummyComponent.evaluate((ctx) =>
-					ctx.block.setElMod(globalThis._testEl, 'test', 'focused', 'true'));
+					ctx.block.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
 
 				const hasClass = await page.evaluate(() =>
 					globalThis._testEl.classList.contains('b-dummy__test_focused_true'));
@@ -298,13 +298,13 @@ module.exports = (page, {browser, contextOpts}) => {
 					ctx.localEmitter.promisifyOnce('el.mod.set.test.focused.true'));
 
 				await dummyComponent.evaluate((ctx) =>
-					ctx.block.setElMod(globalThis._testEl, 'test', 'focused', 'true'));
+					ctx.block.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
 
 				await expectAsync(elModSetEvent).toBeResolved();
 			});
 		});
 
-		describe('`removeElMod`', () => {
+		describe('`removeElementMod`', () => {
 			beforeEach(async () => {
 				await dummyComponent.evaluate((ctx) => {
 					const
@@ -317,12 +317,12 @@ module.exports = (page, {browser, contextOpts}) => {
 				});
 
 				await dummyComponent.evaluate((ctx) =>
-					ctx.block.setElMod(globalThis._testEl, 'test', 'focused', 'true'));
+					ctx.block.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
 			});
 
 			it('removed a class name from the element', async () => {
 				await dummyComponent.evaluate((ctx) =>
-					ctx.block.removeElMod(globalThis._testEl, 'test', 'focused'));
+					ctx.block.removeElementMod(globalThis._testEl, 'test', 'focused'));
 
 				const hasClass = await page.evaluate(() =>
 					globalThis._testEl.classList.contains('b-dummy__test_focused_true'));
@@ -335,13 +335,13 @@ module.exports = (page, {browser, contextOpts}) => {
 					ctx.localEmitter.promisifyOnce('el.mod.remove.test.focused.true'));
 
 				await dummyComponent.evaluate((ctx) =>
-					ctx.block.removeElMod(globalThis._testEl, 'test', 'focused'));
+					ctx.block.removeElementMod(globalThis._testEl, 'test', 'focused'));
 
 				await expectAsync(elModSetEvent).toBeResolved();
 			});
 		});
 
-		describe('`getElMod`', () => {
+		describe('`getElementMod`', () => {
 			beforeEach(async () => {
 				await dummyComponent.evaluate((ctx) => {
 					const
@@ -357,17 +357,17 @@ module.exports = (page, {browser, contextOpts}) => {
 
 			it('gets a modifier value', async () => {
 				await dummyComponent.evaluate((ctx) =>
-					ctx.block.setElMod(globalThis._testEl, 'test', 'focused', 'true'));
+					ctx.block.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
 
 				const modVal = await dummyComponent.evaluate((ctx) =>
-					ctx.block.getElMod(globalThis._testEl, 'test', 'focused'));
+					ctx.block.getElementMod(globalThis._testEl, 'test', 'focused'));
 
 				expect(modVal).toBe('true');
 			});
 
 			it('returns `undefined` if the modifier was not settled', async () => {
 				const modVal = await dummyComponent.evaluate((ctx) =>
-					ctx.block.getElMod(globalThis._testEl, 'test', 'focused'));
+					ctx.block.getElementMod(globalThis._testEl, 'test', 'focused'));
 
 				expect(modVal).toBeUndefined();
 			});

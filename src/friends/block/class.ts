@@ -18,28 +18,28 @@ interface Block {
 	setMod: typeof block.setMod;
 	removeMod: typeof block.removeMod;
 
-	getElMod: typeof element.getElMod;
-	setElMod: typeof element.setElMod;
-	removeElMod: typeof element.removeElMod;
+	getElementMod: typeof element.getElementMod;
+	setElementMod: typeof element.setElementMod;
+	removeElementMod: typeof element.removeElementMod;
 
 	getFullBlockName: typeof block.getFullBlockName;
 	getBlockSelector: typeof traverse.getBlockSelector;
 
-	getFullElName: typeof traverse.getFullElName;
-	getElSelector: typeof traverse.getElSelector;
+	getFullElementName: typeof traverse.getFullElementName;
+	getElementSelector: typeof traverse.getElementSelector;
 
 	element: typeof traverse.element;
 	elements: typeof traverse.elements;
 }
 
 @fakeMethods(
-	'getElMod',
-	'setElMod',
-	'removeElMod',
+	'getElementMod',
+	'setElementMod',
+	'removeElementMod',
 
 	'getBlockSelector',
-	'getFullElName',
-	'getElSelector',
+	'getFullElementName',
+	'getElementSelector',
 
 	'element',
 	'elements'

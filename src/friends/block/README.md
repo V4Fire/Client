@@ -13,10 +13,10 @@ included explicitly to enable tree-shake code optimization. Just place the neces
 
 ```typescript
 import iBlock, { component } from 'super/i-block/i-block';
-import Block, { getElMod, setElMod } from 'friends/block';
+import Block, { getElementMod, setElementMod } from 'friends/block';
 
-// Import `getElMod` and `setElMod` methods
-Block.addToPrototype(getElMod, setElMod);
+// Import `getElementMod` and `setElementMod` methods
+Block.addToPrototype(getElementMod, setElementMod);
 
 @component()
 export default class bExample extends iBlock {}
@@ -28,10 +28,10 @@ Or use special wrapper methods.
 
 ```typescript
 import iBlock, { component, wait } from 'super/i-block/i-block';
-import Block, { getElMod, setElMod } from 'friends/block';
+import Block, { getElementMod, setElementMod } from 'friends/block';
 
-// Import `getElMod` and `setElMod` methods
-Block.addToPrototype(getElMod, setElMod);
+// Import `getElementMod` and `setElementMod` methods
+Block.addToPrototype(getElementMod, setElementMod);
 
 @component()
 export default class bExample extends iBlock {
@@ -422,7 +422,7 @@ class bExample extends iBlock {
 
     $b.element('button').addEventListener('click', () => {
       const dropdown = $b.element('dropdown');
-      $b.setElMod(dropdown, 'opened', $b.getElMod(dropdown, 'dropdown', 'opened') !== 'true');
+      $b.setElementMod(dropdown, 'opened', $b.getElementMod(dropdown, 'dropdown', 'opened') !== 'true');
     })
   }
 }
@@ -459,7 +459,7 @@ console.log(this.block.getBlockSelector());
 console.log(this.block.getBlockSelector({focused: true}));
 ```
 
-### getFullElName
+### getFullElementName
 
 Returns the fully qualified name of the specified block element.
 
@@ -467,13 +467,13 @@ Returns the fully qualified name of the specified block element.
 this.componentName === 'b-example';
 
 // 'b-example__foo'
-console.log(this.block.getFullElName('foo'));
+console.log(this.block.getFullElementName('foo'));
 
 // 'b-example__foo_focused_true'
 console.log(this.block.getBlockSelector('foo', 'focused', true));
 ```
 
-### getElSelector
+### getElementSelector
 
 Returns a CSS selector to the specified block element.
 
@@ -482,10 +482,10 @@ this.componentId === 'uid-123';
 this.componentName === 'b-example';
 
 // '.uid-123.b-example__foo'
-console.log(this.block.getElSelector('foo'));
+console.log(this.block.getElementSelector('foo'));
 
 // '.uid-123.b-example__foo.b-example__foo_focused_true'
-console.log(this.block.getElSelector('foo', {focused: true}));
+console.log(this.block.getElementSelector('foo', {focused: true}));
 ```
 
 ### elements
@@ -543,31 +543,31 @@ this.block.removeMod('focused', true);
 this.block.removeMod('focused', true, 'setMod');
 ```
 
-### getElMod
+### getElementMod
 
 Returns a modifier value from the specified element.
 
 ```js
-this.block.getElMod(element, 'foo', 'focused');
+this.block.getElementMod(element, 'foo', 'focused');
 ```
 
-### setElMod
+### setElementMod
 
 Sets a modifier to the specified block element.
 The method returns false if the modifier is already set.
 
 ```js
-this.block.setElMod(element, 'foo', 'focused', true);
-this.block.setElMod(element, 'foo', 'focused', true, 'initSetMod');
+this.block.setElementMod(element, 'foo', 'focused', true);
+this.block.setElementMod(element, 'foo', 'focused', true, 'initSetMod');
 ```
 
-### removeElMod
+### removeElementMod
 
 Removes a modifier from the specified block element.
 The method returns false if the element does not have this modifier.
 
 ```js
-this.block.removeElMod(element, 'foo', 'focused');
-this.block.removeElMod(element, 'foo', 'focused', true);
-this.block.removeElMod(element, 'foo', 'focused', true, 'setMod');
+this.block.removeElementMod(element, 'foo', 'focused');
+this.block.removeElementMod(element, 'foo', 'focused', true);
+this.block.removeElementMod(element, 'foo', 'focused', true, 'setMod');
 ```

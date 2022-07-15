@@ -16,6 +16,7 @@ import { getFullBlockName } from 'friends/block/block';
  * Returns a CSS selector to the current component block
  *
  * @param [mods] - additional modifiers
+ *
  * @example
  * ```js
  * this.componentName === 'b-example';
@@ -45,15 +46,16 @@ export function getBlockSelector(this: Friend, mods?: ModsDict): string {
  * Returns the fully qualified name of the specified block element
  *
  * @param name - the element name
+ *
  * @example
  * ```js
  * this.componentName === 'b-example';
  *
  * // 'b-example__foo'
- * console.log(this.block.getFullElName('foo'));
+ * console.log(this.block.getFullElementName('foo'));
  * ```
  */
-export function getFullElName(this: Friend, name: string): string;
+export function getFullElementName(this: Friend, name: string): string;
 
 /**
  * Returns the fully qualified name of the specified block element, given the passed modifier
@@ -67,11 +69,11 @@ export function getFullElName(this: Friend, name: string): string;
  * this.componentName === 'b-example';
  *
  * // b-example__foo_focused_true
- * console.log(this.block.getBlockSelector('foo', 'focused', true));
+ * console.log(this.block.getFullElementName('foo', 'focused', true));
  * ```
  */
-export function getFullElName(this: Friend, name: string, modName: string, modValue: unknown): string;
-export function getFullElName(this: Friend, name: string, modName?: string, modValue?: unknown): string {
+export function getFullElementName(this: Friend, name: string, modName: string, modValue: unknown): string;
+export function getFullElementName(this: Friend, name: string, modName?: string, modValue?: unknown): string {
 	const modStr = modName != null ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
 	return `${this.componentName}__${name.dasherize()}${modStr}`;
 }
@@ -88,15 +90,15 @@ export function getFullElName(this: Friend, name: string, modName?: string, modV
  * this.componentName === 'b-example';
  *
  * // '.uid-123.b-example__foo'
- * console.log(this.block.getElSelector('foo'));
+ * console.log(this.block.getElementSelector('foo'));
  *
  * // '.uid-123.b-example__foo.b-example__foo_focused_true'
- * console.log(this.block.getElSelector('foo', {focused: true}));
+ * console.log(this.block.getElementSelector('foo', {focused: true}));
  * ```
  */
-export function getElSelector(this: Friend, name: string, mods?: ModsDict): string {
+export function getElementSelector(this: Friend, name: string, mods?: ModsDict): string {
 	let
-		res = `.${(<Function>getFullElName).call(this, name)}`;
+		res = `.${(<Function>getFullElementName).call(this, name)}`;
 
 	if (!this.ctx.isFunctional) {
 		res += `.${this.componentId}`;
@@ -105,7 +107,7 @@ export function getElSelector(this: Friend, name: string, mods?: ModsDict): stri
 	if (mods != null) {
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const key = keys[i];
-			res += `.${getFullElName.call(this, name, key, mods[key])}`;
+			res += `.${getFullElementName.call(this, name, key, mods[key])}`;
 		}
 	}
 
@@ -183,7 +185,7 @@ export function elements<E extends Element = Element>(
 	}
 
 	const
-		selector = getElSelector.call(this, elName, mods),
+		selector = getElementSelector.call(this, elName, mods),
 		elements = ctxToSearch.querySelectorAll<E>(selector);
 
 	if (this.ctx.isFunctional) {
@@ -280,5 +282,5 @@ export function element<E extends Element = Element>(
 		return Object.cast(elements.call(this, elName, mods)[0]);
 	}
 
-	return ctx.querySelector<E>(getElSelector.call(this, elName, mods)) ?? undefined;
+	return ctx.querySelector<E>(getElementSelector.call(this, elName, mods)) ?? undefined;
 }

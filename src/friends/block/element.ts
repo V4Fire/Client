@@ -8,8 +8,8 @@
 
 import type Friend from 'friends/friend';
 
-import { modRgxpCache, elRxp } from 'friends/block/const';
-import { getFullElName } from 'friends/block/traverse';
+import { modRgxpCache, elementRxp } from 'friends/block/const';
+import { getFullElementName } from 'friends/block/traverse';
 
 import type { ModEventReason, ElementModEvent, SetElementModEvent } from 'friends/block/interface';
 
@@ -22,10 +22,15 @@ import type { ModEventReason, ElementModEvent, SetElementModEvent } from 'friend
  *
  * @example
  * ```js
- * this.block.getElMod(element, 'foo', 'focused');
+ * this.block.getElementMod(element, 'foo', 'focused');
  * ```
  */
-export function getElMod(this: Friend, link: Nullable<Element>, elName: string, modName: string): CanUndef<string> {
+export function getElementMod(
+	this: Friend,
+	link: Nullable<Element>,
+	elName: string,
+	modName: string
+): CanUndef<string> {
 	if (link == null) {
 		return undefined;
 	}
@@ -34,12 +39,12 @@ export function getElMod(this: Friend, link: Nullable<Element>, elName: string, 
 		MOD_VALUE = 3;
 
 	const
-		pattern = `(?:^| )(${getFullElName.call(this, elName, modName, '')}[^_ ]*)`,
+		pattern = `(?:^| )(${getFullElementName.call(this, elName, modName, '')}[^_ ]*)`,
 		modRgxp = pattern[pattern] ?? new RegExp(pattern),
 		el = modRgxp.exec(link.className);
 
 	modRgxpCache[pattern] = modRgxp;
-	return el != null ? el[1].split(elRxp)[MOD_VALUE] : undefined;
+	return el != null ? el[1].split(elementRxp)[MOD_VALUE] : undefined;
 }
 
 /**
@@ -56,11 +61,11 @@ export function getElMod(this: Friend, link: Nullable<Element>, elName: string, 
  *
  * @example
  * ```js
- * this.block.setElMod(element, 'foo', 'focused', true);
- * this.block.setElMod(element, 'foo', 'focused', true, 'initSetMod');
+ * this.block.setElementMod(element, 'foo', 'focused', true);
+ * this.block.setElementMod(element, 'foo', 'focused', true, 'initSetMod');
  * ```
  */
-export function setElMod(
+export function setElementMod(
 	this: Friend,
 	link: Nullable<Element>,
 	elName: string,
@@ -77,14 +82,14 @@ export function setElMod(
 
 	const
 		normalizedValue = String(value).dasherize(),
-		oldValue = getElMod.call(this, link, elName, modName);
+		oldValue = getElementMod.call(this, link, elName, modName);
 
 	if (oldValue === normalizedValue) {
 		return false;
 	}
 
-	removeElMod.call(this, link, elName, modName, undefined, 'setMod');
-	link.classList.add(getFullElName.call(this, elName, modName, normalizedValue));
+	removeElementMod.call(this, link, elName, modName, undefined, 'setMod');
+	link.classList.add(getFullElementName.call(this, elName, modName, normalizedValue));
 
 	const event: SetElementModEvent = {
 		type: 'set',
@@ -115,12 +120,12 @@ export function setElMod(
  *
  * @example
  * ```js
- * this.block.removeElMod(element, 'foo', 'focused');
- * this.block.removeElMod(element, 'foo', 'focused', true);
- * this.block.removeElMod(element, 'foo', 'focused', true, 'setMod');
+ * this.block.removeElementMod(element, 'foo', 'focused');
+ * this.block.removeElementMod(element, 'foo', 'focused', true);
+ * this.block.removeElementMod(element, 'foo', 'focused', true, 'setMod');
  * ```
  */
-export function removeElMod(
+export function removeElementMod(
 	this: Friend,
 	link: Nullable<Element>,
 	elName: string,
@@ -137,14 +142,14 @@ export function removeElMod(
 
 	const
 		normalizedVal = value != null ? String(value).dasherize() : undefined,
-		currentVal = getElMod.call(this, link, elName, modName);
+		currentVal = getElementMod.call(this, link, elName, modName);
 
 	if (currentVal === undefined || normalizedVal !== undefined && currentVal !== normalizedVal) {
 		return false;
 	}
 
 	link.classList.remove(
-		getFullElName.call(this, elName, modName, currentVal)
+		getFullElementName.call(this, elName, modName, currentVal)
 	);
 
 	const event: ElementModEvent = {

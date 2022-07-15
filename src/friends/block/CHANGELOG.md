@@ -15,6 +15,8 @@ Changelog
 
 * Moved the module to `friends/block`
 * The module has been rewritten to a new tree-shake friendly API
+* Renamed `getElMod`, `setElMod`, `removeElMod`, `getElSelector`, `getFullElName` to
+  `getElementMod`, `setElementMod`, `removeElementMod`, `getElementSelector`, `getFullElementName`
 
 #### :memo: Documentation
 
