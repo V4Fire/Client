@@ -31,7 +31,7 @@ module.exports = (page) => {
 			});
 
 			const selector = await target.evaluate((ctx) => {
-				const classes = ctx.block.elements('item')[1].querySelector(ctx.block.getElSelector('link')).className;
+				const classes = ctx.block.elements('item')[1].querySelector(ctx.block.getElementSelector('link')).className;
 				return `.${classes.split(' ').join('.')}`;
 			});
 

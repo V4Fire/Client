@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ExperimentsSet } from 'core/abt/interface';
+import type { Experiments } from 'core/abt/interface';
 
 /**
  * Provides a set of abt options
  * @param opts - experiments options
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-export default function abtAdapter(opts: unknown): CanPromise<ExperimentsSet> {
+export default function abtAdapter(opts: unknown): CanPromise<Experiments> {
 	return [];
 }

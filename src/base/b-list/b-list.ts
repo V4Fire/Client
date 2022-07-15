@@ -380,7 +380,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 						previousLinkEl = previousLinkEls[i];
 
 					if (previousLinkEl !== linkEl) {
-						$b.setElMod(previousLinkEl, 'link', 'active', false);
+						$b.setElementMod(previousLinkEl, 'link', 'active', false);
 
 						if (previousLinkEl.hasAttribute('aria-selected')) {
 							previousLinkEl.setAttribute('aria-selected', 'false');
@@ -395,7 +395,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 				for (let i = 0; i < els.length; i++) {
 					const el = els[i];
-					$b.setElMod(el, 'link', 'active', true);
+					$b.setElementMod(el, 'link', 'active', true);
 
 					if (el.hasAttribute('aria-selected')) {
 						el.setAttribute('aria-selected', 'true');
@@ -484,7 +484,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 						value === itemValue;
 
 					if (needChangeMod) {
-						$b.setElMod(el, 'link', 'active', false);
+						$b.setElementMod(el, 'link', 'active', false);
 
 						if (el.hasAttribute('aria-selected')) {
 							el.setAttribute('aria-selected', 'false');

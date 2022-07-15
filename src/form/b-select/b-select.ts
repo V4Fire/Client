@@ -31,7 +31,6 @@ import iInputText, {
 	system,
 	computed,
 
-	p,
 	hook,
 	watch,
 
@@ -577,7 +576,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					previousItemEl = previousItemEls[i];
 
 				if (previousItemEl !== itemEl) {
-					$b.setElMod(previousItemEl, 'item', 'selected', false);
+					$b.setElementMod(previousItemEl, 'item', 'selected', false);
 
 					if (this.native) {
 						previousItemEl.selected = false;
@@ -595,7 +594,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 			for (let i = 0; i < els.length; i++) {
 				const el = els[i];
-				$b.setElMod(el, 'item', 'selected', true);
+				$b.setElementMod(el, 'item', 'selected', true);
 
 				if (this.native) {
 					el.selected = true;
@@ -684,7 +683,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					value === item.value;
 
 				if (needChangeMod) {
-					$b.setElMod(el, 'item', 'selected', false);
+					$b.setElementMod(el, 'item', 'selected', false);
 
 					if (this.native) {
 						el.selected = false;
@@ -777,7 +776,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					markedEl = $b.element('item', {marked: true});
 
 				if (markedEl != null) {
-					$b.removeElMod(markedEl, 'item', 'marked');
+					$b.removeElementMod(markedEl, 'item', 'marked');
 				}
 			}
 
@@ -811,7 +810,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/** @see [[iOpenToggle.initCloseHelpers]] */
-	@p({hook: 'beforeDataCreate', replace: false})
+	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
 	}

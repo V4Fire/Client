@@ -63,7 +63,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		}
 
 		const
-			overWrapperSelector = this.block?.getElSelector('overWrapper');
+			overWrapperSelector = this.block?.getElementSelector('overWrapper');
 
 		if (overWrapperSelector != null && target.matches(overWrapperSelector)) {
 			e.preventDefault();

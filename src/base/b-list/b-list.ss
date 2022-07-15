@@ -37,7 +37,7 @@
 						:-id = values.get(el.value) |
 						:-hint = el.hint |
 
-						:class = el.classes.concat(provide.elClasses({
+						:class = el.classes.concat(provide.elementClasses({
 							link: {
 								id: values.get(el.value),
 								active: isActive(el.value),

@@ -304,7 +304,7 @@ export default class bTextarea extends iInputText {
 
 		const
 			tmp = <HTMLElement>this.$el.cloneNode(true),
-			tmpInput = <HTMLTextAreaElement>tmp.querySelector(this.block.getElSelector('input'));
+			tmpInput = <HTMLTextAreaElement>tmp.querySelector(this.block.getElementSelector('input'));
 
 		tmpInput.value = input.value;
 
@@ -388,11 +388,11 @@ export default class bTextarea extends iInputText {
 		}
 
 		if (limit > maxLength / 1.5) {
-			block.setElMod(el, 'limit', 'hidden', true);
+			block.setElementMod(el, 'limit', 'hidden', true);
 
 		} else {
-			block.setElMod(el, 'limit', 'hidden', false);
-			block.setElMod(el, 'limit', 'warning', limit < maxLength / 3);
+			block.setElementMod(el, 'limit', 'hidden', false);
+			block.setElementMod(el, 'limit', 'warning', limit < maxLength / 3);
 			el.innerHTML = t`Characters left: ${limit}`;
 		}
 	}

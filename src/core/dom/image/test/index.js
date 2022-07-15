@@ -710,8 +710,8 @@ module.exports = async (page, params) => {
 					handleImageRequest(mainSrcUrl, 100);
 
 					const
-						previewClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'preview', 'true')),
-						mainClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'main', 'true'));
+						previewClass = await component.evaluate((ctx) => ctx.block.getFullElementName('v-image', 'preview', 'true')),
+						mainClass = await component.evaluate((ctx) => ctx.block.getFullElementName('v-image', 'main', 'true'));
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainSrcUrl, previewSrcUrl]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -744,9 +744,9 @@ module.exports = async (page, params) => {
 					abortImageRequest(mainSrcUrl, 600);
 
 					const
-						brokenClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'broken', 'true')),
-						previewClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'preview', 'true')),
-						initialClass = await component.evaluate((ctx) => ctx.block.getFullElName('v-image', 'initial', 'true'));
+						brokenClass = await component.evaluate((ctx) => ctx.block.getFullElementName('v-image', 'broken', 'true')),
+						previewClass = await component.evaluate((ctx) => ctx.block.getFullElementName('v-image', 'preview', 'true')),
+						initialClass = await component.evaluate((ctx) => ctx.block.getFullElementName('v-image', 'initial', 'true'));
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, mainSrcUrl, previewSrcUrl, brokenSrcUrl]) => {
 						const target = document.getElementById(`${tag}-target`);

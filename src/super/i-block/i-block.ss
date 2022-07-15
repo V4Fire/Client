@@ -193,7 +193,7 @@
 				 * @param {Object=} [attrs]
 				 */
 				- block gIcon(iconId, classes = {}, attrs = {})
-					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
+					< svg[.g-icon] :class = provide.elementClasses(${classes|json}) | ${attrs}
 						- if Object.isArray(iconId)
 							< use v-if = value | v-update-on = { &
 								emitter: getIconLink(${iconId}),

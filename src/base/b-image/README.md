@@ -79,7 +79,7 @@ Also, you can see the implemented traits or the parent component.
 
 ### Props
 
-#### [src = '']
+#### [src = `'''`]
 
 The image src (a fallback if `srcset` provided).
 

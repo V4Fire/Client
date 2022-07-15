@@ -22,6 +22,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * Also, it creates accessors for deprecated component props.
  *
  * @param component
+ *
  * @example
  * ```typescript
  * import iBlock, { component, prop, computed } from 'super/i-block/i-block';

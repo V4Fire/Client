@@ -259,7 +259,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 			return;
 		}
 
-		if (target.matches(this.block.getElSelector('wrapper'))) {
+		if (target.matches(this.block.getElementSelector('wrapper'))) {
 			e.preventDefault();
 			await this.close();
 		}

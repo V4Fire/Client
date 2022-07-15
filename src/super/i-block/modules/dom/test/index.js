@@ -287,7 +287,7 @@ module.exports = (page, params) => {
 						Object.isFunction(bl.getFullBlockName),
 						bl.componentName === cName,
 						ctx != null,
-						bl.getFullElName('test') === 'b-test-component__test'
+						bl.getFullElementName('test') === 'b-test-component__test'
 					];
 				});
 
@@ -307,7 +307,7 @@ module.exports = (page, params) => {
 						Object.isFunction(bl.getFullBlockName),
 						bl.componentName === ctx.componentName,
 						ctx != null,
-						bl.getFullElName('test') === 'b-dummy__test'
+						bl.getFullElementName('test') === 'b-dummy__test'
 					];
 				});
 

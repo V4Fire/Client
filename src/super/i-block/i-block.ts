@@ -49,7 +49,6 @@ import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import {
 
-	init,
 	component,
 	PARENT,
 
@@ -83,12 +82,12 @@ import VDOM from 'friends/vdom';
 
 import Lfc from 'super/i-block/modules/lfc';
 import AsyncRender from 'friends/async-render';
-import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
+import Sync, { AsyncWatchOptions } from 'friends/sync';
 
 import Block from 'friends/block';
-import Field from 'super/i-block/modules/field';
+import Field from 'friends/field';
 
-import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
+import Provide, { classesCache, Classes } from 'friends/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import ModuleLoader, { Module } from 'friends/module-loader';
@@ -161,7 +160,7 @@ export * from 'friends/module-loader';
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/event-emitter';
 
-export * from 'super/i-block/modules/sync';
+export * from 'friends/sync';
 export * from 'friends/async-render';
 export { prop, field, system, computed, hook, watch, wait } from 'super/i-block/modules/decorators';
 

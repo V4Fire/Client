@@ -39,6 +39,7 @@ export interface PropOptions<T = unknown> {
 	 * If you set the `required` option to false, then the prop can be non-initialized.
 	 *
 	 * @default `true`
+	 *
 	 * @example
 	 * ```typescript
 	 * import iBlock, { component, prop } from 'super/i-block/i-block';
@@ -92,6 +93,7 @@ export interface PropOptions<T = unknown> {
 	 * Use it if you want to impose additional checks besides checking the prop type.
 	 *
 	 * @param value
+	 *
 	 * @example
 	 * ```typescript
 	 * import iBlock, { component, prop } from 'super/i-block/i-block';

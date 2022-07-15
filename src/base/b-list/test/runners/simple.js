@@ -221,7 +221,7 @@ module.exports = (page) => {
 					log.push(ctx.setActive(0));
 
 					const event = new Event('click', {bubbles: true});
-					ctx.block.elements('item')[1].querySelector(ctx.block.getElSelector('link')).dispatchEvent(event);
+					ctx.block.elements('item')[1].querySelector(ctx.block.getElementSelector('link')).dispatchEvent(event);
 
 					return log;
 				})

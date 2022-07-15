@@ -35,7 +35,6 @@ import iBlock, {
 	hook,
 	watch,
 	wait,
-	p,
 
 	ModsDecl
 
@@ -146,7 +145,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * True if the content is fully opened
 	 */
-	@p({cache: false})
 	get isFullyOpened(): boolean {
 		return this.step === this.steps.length - 1;
 	}
@@ -154,7 +152,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * True if the content is fully closed
 	 */
-	@p({cache: false})
 	get isClosed(): boolean {
 		return this.step === 0;
 	}
@@ -162,7 +159,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * List of possible component positions relative to the screen height (in percentages)
 	 */
-	@p({cache: false})
 	get steps(): number[] {
 		const
 			res = [this.visibleInPercent];
@@ -216,7 +212,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Current component step
 	 */
-	@p({cache: false})
 	protected get step(): number {
 		return this.stepStore;
 	}
@@ -334,7 +329,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Current component offset
 	 */
-	@p({cache: false})
 	protected get offset(): number {
 		return this.offsetStore;
 	}
@@ -361,7 +355,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * True if the component is being pulled now
 	 */
-	@p({cache: false})
 	protected get isPulling(): boolean {
 		return this.isPullingStore;
 	}
@@ -390,7 +383,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	 * i.e. even the component is closed this part still be visible
 	 * @see [[bBottomSlide.visible]]
 	 */
-	@p({cache: false})
 	protected get visibleInPercent(): number {
 		return this.windowHeight === 0 ? 0 : this.visible / this.windowHeight * 100;
 	}

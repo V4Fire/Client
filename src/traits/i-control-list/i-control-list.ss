@@ -46,12 +46,12 @@
 
 	< ${@wrapperClasses ? 'span' : 'template'} &
 		v-for = el in ${@from} |
-		:class = ${componentName} ? provide.elClasses(${componentName}, ${wrapperClassesJSON}) : provide.elClasses(${wrapperClassesJSON})
+		:class = ${componentName} ? provide.elementClasses(${componentName}, ${wrapperClassesJSON}) : provide.elementClasses(${wrapperClassesJSON})
 	.
 		< component &
 			:is = el.component || 'b-button-functional' |
 			:instanceOf = bButton |
-			:class = ${componentName} ? provide.elClasses(${componentName}, ${elClassesJSON}) : provide.elClasses(${elClassesJSON}) |
+			:class = ${componentName} ? provide.elementClasses(${componentName}, ${elClassesJSON}) : provide.elementClasses(${elClassesJSON}) |
 			v-attrs = el.attrs |
 			@[getControlEvent(el)] = callControlAction(el, ...arguments)
 		.

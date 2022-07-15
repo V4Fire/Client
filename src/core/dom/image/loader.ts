@@ -259,10 +259,10 @@ export default class ImageLoader {
 			}
 
 			const classMap = {
-				initial: ctx.block.getFullElName('v-image', 'initial', 'true'),
-				preview: ctx.block.getFullElName('v-image', 'preview', 'true'),
-				main: ctx.block.getFullElName('v-image', 'main', 'true'),
-				broken: ctx.block.getFullElName('v-image', 'broken', 'true')
+				initial: ctx.block.getFullElementName('v-image', 'initial', 'true'),
+				preview: ctx.block.getFullElementName('v-image', 'preview', 'true'),
+				main: ctx.block.getFullElementName('v-image', 'main', 'true'),
+				broken: ctx.block.getFullElementName('v-image', 'broken', 'true')
 			};
 
 			el.classList.remove(classMap.preview, classMap.main, classMap.broken, classMap.initial);

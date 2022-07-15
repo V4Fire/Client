@@ -188,7 +188,7 @@ The caching is mean that if the component value does not change since the last s
 Component values that are not allowed to send via a form.
 If a component value matches with one of the denied conditions, the form value will be equal to `undefined`.
 
-The parameter can take a value or list of values to ban.
+The parameter can take a value or a list of values to ban.
 Also, the parameter can be passed as a function or regular expression.
 
 ```
@@ -198,7 +198,7 @@ Also, the parameter can be passed as a function or regular expression.
 
 #### [formValueConverter]
 
-Converter/s of the original component value to a form value.
+Converter(s) of the original component value to a form value.
 
 You can provide one or more functions to convert the original value to a new form value.
 For instance, you have an input component. The input's original value is string, but you provide a function
@@ -227,7 +227,7 @@ It helps to combine validators and converters.
 
 #### [formConverter = `(v) => Object.isArray(v) && v.length < 2 ? v[0] : v`]
 
-Converter/s that is/are used by the associated form.
+Converter(s) that is/are used by the associated form.
 The form applies these converters to the group form value of the component.
 
 To provide more than one function, use the array form. Functions from the array are invoked from

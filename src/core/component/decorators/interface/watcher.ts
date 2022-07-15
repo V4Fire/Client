@@ -38,6 +38,7 @@ export interface DecoratorFieldWatcherObject<
 	 * If false, then a handler that is invoked on the watcher event does not take any arguments from the event
 	 *
 	 * @default `true`
+	 *
 	 * @example
 	 * ```typescript
 	 * import iBlock, { component, field } from 'super/i-block/i-block';

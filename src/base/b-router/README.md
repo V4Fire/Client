@@ -22,7 +22,7 @@ There are a few reasons why this API has implemented as a component:
 
 3. The router automatically compatible with all supported render engines.
 
-## How to use
+## How to use?
 
 Just put the component to a template of the root component like it presented below.
 

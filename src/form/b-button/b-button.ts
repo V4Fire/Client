@@ -34,7 +34,7 @@ import iData, {
 	prop,
 	computed,
 	wait,
-	p,
+	hook,
 
 	ModsDecl,
 	ModelMethod,
@@ -56,7 +56,6 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
  * Component to create a button
  */
 @component({
-	flyweight: true,
 	functional: {
 		dataProvider: undefined,
 		href: undefined
@@ -64,7 +63,7 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 })
 
 @derive(iAccess, iOpenToggle)
-class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
+class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	override readonly rootTag: string = 'span';
 	override readonly dataProvider: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
@@ -337,7 +336,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	 */
 	get hasDropdown(): boolean {
 		return Boolean(
-			this.vdom.getSlot('dropdown') && (
+			this.$slots['dropdown'] && (
 				this.isFunctional ||
 				this.opt.ifOnce('opened', this.m.opened !== 'false') > 0 && delete this.watchModsStore.opened
 			)
@@ -381,7 +380,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	}
 
 	/** @see [[iOpenToggle.initCloseHelpers]] */
-	@p({hook: 'beforeDataCreate', replace: false})
+	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
 	}
@@ -436,6 +435,8 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
+		console.log(this.componentStatus, this.componentId, this.$el?.className);
+
 		switch (this.type) {
 			case 'link':
 				break;

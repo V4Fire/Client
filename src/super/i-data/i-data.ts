@@ -158,7 +158,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly dbConverter?: CanArray<ComponentConverter>;
 
 	/**
-	 * Converter/s from the raw `db` to the component fields
+	 * Converter(s) from the raw `db` to the component fields
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly componentConverter?: CanArray<ComponentConverter>;

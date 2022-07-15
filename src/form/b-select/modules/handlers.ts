@@ -32,7 +32,7 @@ export function nativeChange<C extends bSelect>(component: C): void {
 
 	const
 		// @ts-ignore (TS 4.6.3)
-		itemName = $b.getElSelector('item'),
+		itemName = $b.getElementSelector('item'),
 		checkedItems = input.querySelectorAll(`${itemName}:checked`);
 
 	let
@@ -206,14 +206,14 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 
 	const markItem = (itemEl: Nullable<Element>) => {
 		if (currentItemEl != null) {
-			$b.removeElMod(currentItemEl, 'item', 'marked');
+			$b.removeElementMod(currentItemEl, 'item', 'marked');
 		}
 
 		if (itemEl == null) {
 			return false;
 		}
 
-		$b.setElMod(itemEl, 'item', 'marked', true);
+		$b.setElementMod(itemEl, 'item', 'marked', true);
 		void unsafe.setScrollToMarkedOrSelectedItem();
 
 		return true;

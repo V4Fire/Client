@@ -293,7 +293,7 @@ module.exports = async (page, params) => {
 
 	function getFoldedClass(target, value = true) {
 		return target.evaluate(
-			(ctx, v) => ctx.block.getFullElName('node', 'folded', v),
+			(ctx, v) => ctx.block.getFullElementName('node', 'folded', v),
 			value
 		);
 	}
@@ -320,7 +320,7 @@ module.exports = async (page, params) => {
 
 				if (isBranch) {
 					const
-						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElName('fold')}`),
+						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElementName('fold')}`),
 						fold = await h.dom.waitForEl(element, selector);
 
 					await expectAsync(

@@ -16,7 +16,7 @@
 import SyncPromise from 'core/promise/sync';
 import type iBlock from 'super/i-block/i-block';
 
-import { ID_ATTRIBUTE } from 'core/component/directives/update-on';
+import { getElementId } from 'core/component/directives/bind-with';
 import { getIcon, iconsStore } from 'traits/i-icon/modules/icons';
 
 export default abstract class iIcon {
@@ -62,7 +62,7 @@ export default abstract class iIcon {
 			return;
 		}
 
-		const group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
+		const group = {group: getElementId(el)};
 		$a.clearAll(group);
 
 		const

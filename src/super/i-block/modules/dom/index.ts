@@ -166,7 +166,7 @@ export default class DOM extends Friend {
 	 * ```
 	 */
 	delegateElement<T extends Function>(name: string, fn: T): T {
-		return this.delegate([''].concat(this.provide.elClasses({[name]: {}})).join('.'), fn);
+		return this.delegate([''].concat(this.provide.elementClasses({[name]: {}})).join('.'), fn);
 	}
 
 	/**

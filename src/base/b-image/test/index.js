@@ -289,7 +289,7 @@ module.exports = async (page, params) => {
 				await h.bom.waitForIdleCallback(page);
 
 				const previewElSelector = await component.evaluate(
-					(ctx) => ctx.block.getElSelector('overlay-img')
+					(ctx) => ctx.block.getElementSelector('overlay-img')
 				);
 
 				const previewSrc = await component.evaluate(
@@ -360,7 +360,7 @@ module.exports = async (page, params) => {
 				await h.bom.waitForIdleCallback(page);
 
 				const brokenElSelector = await component.evaluate(
-					(ctx) => ctx.block.getElSelector('broken-img')
+					(ctx) => ctx.block.getElementSelector('broken-img')
 				);
 
 				const brokenElSrc = await component.evaluate(

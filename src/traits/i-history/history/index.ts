@@ -122,15 +122,15 @@ export default class History extends Friend {
 
 		if (els?.content.el) {
 			const
-				isBelow = block.getElMod(els.content.el, 'page', 'below') === 'true';
+				isBelow = block.getElementMod(els.content.el, 'page', 'below') === 'true';
 
 			if (isBelow || currentPage === els.content.el) {
 				throw new Error(`A page for the stage "${stage}" is already opened`);
 			}
 
 			this.async.requestAnimationFrame(() => {
-				block.setElMod(els.content.el, 'page', 'turning', 'in');
-				block.setElMod(currentPage, 'page', 'below', true);
+				block.setElementMod(els.content.el, 'page', 'turning', 'in');
+				block.setElementMod(currentPage, 'page', 'below', true);
 				void this.ctx.setMod('blankHistory', false);
 			}, {label: $$.addNewPage});
 
@@ -166,7 +166,7 @@ export default class History extends Friend {
 				pageBelow = this.store[this.store.length - 1],
 				pageBelowEl = pageBelow.content?.el;
 
-			this.block?.removeElMod(pageBelowEl, 'page', 'below');
+			this.block?.removeElementMod(pageBelowEl, 'page', 'below');
 			this.ctx.emit('history:transition', <Transition>{page: current, type: 'back'});
 		}
 
@@ -188,7 +188,7 @@ export default class History extends Friend {
 
 		this.store = [];
 		this.async.requestAnimationFrame(() => {
-			this.block?.removeElMod(this.store[0]?.content?.el, 'page', 'below');
+			this.block?.removeElementMod(this.store[0]?.content?.el, 'page', 'below');
 		}, {label: $$.pageChange});
 
 		const
@@ -253,8 +253,8 @@ export default class History extends Friend {
 			}
 
 			if (page != null && block != null) {
-				block.removeElMod(page, 'page', 'turning');
-				block.removeElMod(page, 'page', 'below');
+				block.removeElementMod(page, 'page', 'turning');
+				block.removeElementMod(page, 'page', 'below');
 			}
 		}, group);
 	}
@@ -352,7 +352,7 @@ export default class History extends Friend {
 			}
 
 			const
-				nm = block.getFullElName('page');
+				nm = block.getFullElementName('page');
 
 			if (!page.classList.contains(nm)) {
 				page.classList.add(nm);
@@ -432,7 +432,7 @@ export default class History extends Friend {
 	 */
 	protected initTitleInView(visible?: boolean): void {
 		const {current} = this;
-		this.block?.setElMod(current?.title?.el, 'title', 'in-view', visible);
+		this.block?.setElementMod(current?.title?.el, 'title', 'in-view', visible);
 		this.ctx.emit('history:titleInView', visible);
 	}
 

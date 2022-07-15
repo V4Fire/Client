@@ -17,7 +17,7 @@
 	- block body
 		- super
 
-		< tag.&__button &
+		< .&__button &
 			ref = button |
 
 			:is = type === 'link' ? 'a' : 'button' |
@@ -31,12 +31,14 @@
 			@blur = blur |
 
 			v-attrs = attrs |
+			v-tag = type === 'link' ? 'a' : 'button' |
+
 			${attrs|!html}
 		.
 
 			< _.&__wrapper
 				- block preIcon
-					< _.&__cell.&__icon.&__pre-icon v-if = preIcon || vdom.getSlot('preIcon')
+					< _.&__cell.&__icon.&__pre-icon v-if = preIcon || $slots['preIcon']
 						+= self.slot('preIcon', {':icon': 'preIcon'})
 							< component &
 								v-if = preIconComponent |
@@ -52,10 +54,10 @@
 						+= self.slot()
 
 				- block expand
-					< _.&__cell.&__icon.&__expand v-if = vdom.getSlot('dropdown')
+					< _.&__cell.&__icon.&__expand v-if = $slots['dropdown']
 
 				- block icons
-					< _.&__cell.&__icon.&__post-icon v-if = icon || vdom.getSlot('icon')
+					< _.&__cell.&__icon.&__post-icon v-if = icon || $slots['icon']
 						+= self.slot('icon', {':icon': 'icon'})
 							< component &
 								v-if = iconComponent |
@@ -67,7 +69,7 @@
 							< @b-icon v-else | :value = icon
 
 				- block progress
-					< _.&__cell.&__icon.&__progress v-if = progressIcon != null || vdom.getSlot('progressIcon')
+					< _.&__cell.&__icon.&__progress v-if = progressIcon != null || $slots['progressIcon']
 						+= self.slot('progressIcon', {':icon': 'progressIcon'})
 							< component &
 								v-if = Object.isString(progressIcon) |
@@ -90,7 +92,7 @@
 				ref dropdown |
 				v-if = hasDropdown |
 				:id = dom.getId('dropdown') |
-				:class = provide.elClasses({dropdown: {pos: dropdown}})
+				:class = provide.elementClasses({dropdown: {pos: dropdown}})
 			.
 				< .&__dropdown-content
 					+= self.slot('dropdown')

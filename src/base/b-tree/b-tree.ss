@@ -19,7 +19,7 @@
 			< .&__node &
 				:-id = dom.getId(el.id) |
 				:-level = level |
-				:class = provide.elClasses({
+				:class = provide.elementClasses({
 					node: {
 						level,
 						folded: getFoldedPropValue(el)

@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import iData, { component, field, hook, watch, p, WatchHandlerParams } from 'super/i-data/i-data';
+import iData, { component, field, hook, watch, WatchHandlerParams } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 
@@ -68,11 +68,8 @@ export default class bDummyDecorators extends iData {
 		(<any[]>this.tmp.changes).push([value, oldValue, i?.path]);
 	}
 
-	@p({
-		watch: ['i', 'j'],
-		watchParams: {immediate: true},
-		hook: ['created', 'mounted']
-	})
+	@watch([{path: 'i', immediate: true}, {path: 'j', immediate: true}])
+	@hook(['created', 'mounted'])
 
 	onSome(): void {
 		const changes = <any[]>(this.tmp.someChanges ?? []);

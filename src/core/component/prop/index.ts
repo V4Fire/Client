@@ -98,6 +98,7 @@ export function initProps(
  * Returns true if the specified prop type can be a function
  *
  * @param type
+ *
  * @example
  * ```js
  * console.log(isTypeCanBeFunc(Boolean));             // false

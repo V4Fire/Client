@@ -18,6 +18,7 @@ const
  * Resolves values from some attributes of the passed VNode
  *
  * @param vnode
+ *
  * @example
  * ```js
  * // `.componentId = 'id-1'`

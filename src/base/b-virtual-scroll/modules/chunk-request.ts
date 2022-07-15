@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import Friend from 'super/i-block/modules/friend';
+import Friend from 'friends/friend';
 
 import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import type ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';

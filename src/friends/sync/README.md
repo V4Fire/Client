@@ -132,7 +132,7 @@ And calling our component from another template will be like this.
 
 As you can see, we got rid of unnecessary boilerplate code and the need to remember the name of the component prop.
 
-## Functions
+## Methods
 
 ### link
 

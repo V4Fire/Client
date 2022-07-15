@@ -34,7 +34,7 @@
 				< ${tag} &
 					:-id = values.get(el.value) |
 
-					:class = Array.concat([], el.classes, provide.elClasses({
+					:class = Array.concat([], el.classes, provide.elementClasses({
 						item: {
 							id: values.get(el.value),
 							selected: isSelected(el.value),

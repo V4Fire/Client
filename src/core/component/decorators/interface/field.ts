@@ -117,6 +117,7 @@ export interface DecoratorSystem<
 	 * and you don't want to use `after` everywhere. But you can still use `after` along with other atomic fields.
 	 *
 	 * @default `false`
+	 *
 	 * @example
 	 * ```typescript
 	 * import Async from 'core/async';

@@ -227,7 +227,7 @@ export default class bTree extends iData implements iItems {
 			return;
 		}
 
-		return this.block?.getElMod(target, 'node', 'folded');
+		return this.block?.getElementMod(target, 'node', 'folded');
 	}
 
 	/**
@@ -251,7 +251,7 @@ export default class bTree extends iData implements iItems {
 			newVal = this.getFoldedModById(item.id) === 'false';
 
 		if (target) {
-			this.block?.setElMod(target, 'node', 'folded', newVal);
+			this.block?.setElementMod(target, 'node', 'folded', newVal);
 			this.emit('fold', target, item, newVal);
 		}
 	}

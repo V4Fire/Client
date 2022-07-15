@@ -174,8 +174,8 @@ module.exports = (page) => {
 
 						res.push([
 							limitEl.innerText,
-							ctx.block.getElMod(limitEl, 'limit', 'hidden'),
-							ctx.block.getElMod(limitEl, 'limit', 'warning')
+							ctx.block.getElementMod(limitEl, 'limit', 'hidden'),
+							ctx.block.getElementMod(limitEl, 'limit', 'warning')
 						]);
 					}
 

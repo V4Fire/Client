@@ -24,7 +24,7 @@ import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
 import { ResizeWatcher } from 'core/dom/resize-observer';
 
-import updateOn from 'core/component/directives/update-on/engines';
+import updateOn from 'core/component/directives/bind-with/engines';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
@@ -105,7 +105,7 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 		};
 	}
 
-	override get baseMods(): CanUndef<Readonly<ModsNTable>> {
+	override get sharedMods(): CanUndef<Readonly<ModsNTable>> {
 		return {foo: 'bar'};
 	}
 
