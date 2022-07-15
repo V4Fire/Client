@@ -89,7 +89,7 @@ import Field from 'friends/field';
 
 import Provide, { classesCache, Classes } from 'friends/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
-import Storage from 'super/i-block/modules/storage';
+import Storage from 'friends/storage';
 import ModuleLoader, { Module } from 'friends/module-loader';
 
 import {
@@ -153,7 +153,7 @@ export * from 'super/i-block/const';
 export * from 'super/i-block/interface';
 
 export * from 'friends/block';
-export * from 'super/i-block/modules/field';
+export * from 'friends/field';
 export * from 'super/i-block/modules/state';
 export * from 'friends/module-loader';
 

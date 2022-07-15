@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Moved the module to `friends/storage`
+* The module has been rewritten to a new tree-shake friendly API
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :house: Internal
