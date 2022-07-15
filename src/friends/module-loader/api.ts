@@ -6,12 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Friend from 'friends/friend';
 import type ModuleLoader from 'friends/module-loader/class';
 
 import { cache } from 'friends/module-loader/const';
 import type { Module, ResolvedModule } from 'friends/module-loader/interface';
-
-export * from 'friends/module-loader/interface';
 
 /**
  * Loads the specified modules.
@@ -21,7 +20,7 @@ export * from 'friends/module-loader/interface';
  *
  * @param modules
  */
-export function load(this: ModuleLoader, ...modules: Module[]): CanPromise<IterableIterator<Module[]>> {
+export function load(this: Friend, ...modules: Module[]): CanPromise<IterableIterator<Module[]>> {
 	const
 		tasks: Array<Promise<unknown>> = [];
 
@@ -97,7 +96,7 @@ export function loadBucket(this: ModuleLoader, bucketName: string): CanPromise<I
  *
  * @param module
  */
-export function resolveModule(this: ModuleLoader, module: Module): CanPromise<ResolvedModule> {
+export function resolveModule(this: Friend, module: Module): CanPromise<ResolvedModule> {
 	let
 		resolvedModule: ResolvedModule;
 
