@@ -17,8 +17,6 @@ import { link } from 'friends/sync/link';
 import type { object } from 'friends/sync/object';
 import type { syncLinks } from 'friends/sync/sync';
 
-import type { AsyncWatchOptions } from 'friends/sync/interface';
-
 interface Sync {
 	mod: typeof mod;
 	link: typeof link;
@@ -52,33 +50,8 @@ class Sync extends Friend {
 		super(component);
 
 		this.linksCache = Object.createDict();
-
 		this.syncLinkCache = new Map();
 		this.syncModCache = Object.createDict();
-	}
-
-	/**
-	 * Wrapper of `Object.fastCompare` to compare watchable values
-	 *
-	 * @param value
-	 * @param oldValue
-	 * @param destPath - path to the property
-	 * @param opts - watch options
-	 */
-	protected fastCompare(
-		value: unknown,
-		oldValue: unknown,
-		destPath: string,
-		opts: AsyncWatchOptions
-	): boolean {
-		if (opts.collapse === false) {
-			return value === oldValue;
-		}
-
-		return !opts.withProto && (
-			Object.fastCompare(value, oldValue) &&
-			Object.fastCompare(value, this.field.get(destPath))
-		);
 	}
 }
 

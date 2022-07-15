@@ -12,8 +12,8 @@ import type { VNode } from 'core/component/engines';
 import type Friend from 'friends/friend';
 import { render } from 'friends/vdom';
 
-import { addRenderTask, destroyNode as nodeDestructor } from 'friends/async-render/modules/render';
-import { getIterDescriptor } from 'friends/async-render/modules/iter';
+import { addRenderTask, destroyNode as nodeDestructor } from 'friends/async-render/helpers/render';
+import { getIterDescriptor } from 'friends/async-render/helpers/iter';
 
 import type { TaskOptions } from 'friends/async-render/interface';
 

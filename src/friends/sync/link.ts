@@ -10,6 +10,8 @@ import { isProxy } from 'core/object/watch';
 import { bindingRgxp, customWatcherRgxp, getPropertyInfo } from 'core/component';
 
 import type Sync from 'friends/sync/class';
+import { compareNewAndOldValue } from 'friends/sync/helpers';
+
 import type { LinkDecl, LinkGetter, AsyncWatchOptions } from 'friends/sync/interface';
 
 /**
@@ -377,7 +379,7 @@ export function link<D = unknown, R = D>(
 					oldVal = mutation[1];
 				}
 
-				if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
+				if (compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts)) {
 					return;
 				}
 			}
@@ -402,7 +404,7 @@ export function link<D = unknown, R = D>(
 					oldVal ??= args[0];
 				}
 
-				if (this.fastCompare(val, oldVal, destPath, resolvedOpts)) {
+				if (compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts)) {
 					return;
 				}
 			}
