@@ -141,11 +141,11 @@ module.exports = (page, {browser, contextOpts}) => {
 			});
 		});
 
-		describe('`findElFromVNode`', () => {
+		describe('`findElement`', () => {
 			it('returns an element if it presents in the provided `VNode`', async () => {
 				const hasEl = await dummyComponent.evaluate((ctx) => {
 					const
-						vNode = ctx.vdom.findElFromVNode(ctx._vnode, 'wrapper'),
+						vNode = ctx.vdom.findElement(ctx._vnode, 'wrapper'),
 						className = 'b-dummy__wrapper',
 						{elm} = vNode;
 
@@ -157,7 +157,7 @@ module.exports = (page, {browser, contextOpts}) => {
 
 			it('returns `undefined` if an element does not presents in the provided `VNode`', async () => {
 				const
-					hasEl = await dummyComponent.evaluate((ctx) => ctx.vdom.findElFromVNode(ctx._vnode, 'unreachableSelector'));
+					hasEl = await dummyComponent.evaluate((ctx) => ctx.vdom.findElement(ctx._vnode, 'unreachableSelector'));
 
 				expect(hasEl).toBeUndefined();
 			});

@@ -33,7 +33,7 @@ console.log(this.vdom.closest('b-wrapper'));
 console.log(this.vdom.closest('bWrapper'));
 ```
 
-### findElem
+### findElement
 
 Searches a VNode element by the specified element name from another VNode and context.
 The function returns the found VNode or undefined.
@@ -43,12 +43,12 @@ const vnode = this.vdom.create('div', {
   children: [
     {
       type: 'div',
-      attrs: {class: this.block.getFullElName('elem')}
+      attrs: {class: this.block.getFullElementName('elem')}
     }
   ]
 });
 
-console.log(this.vdom.findElem('elem', vnode));
+console.log(this.vdom.findElement('elem', vnode));
 ```
 
 ### create

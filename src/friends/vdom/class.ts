@@ -15,9 +15,11 @@ import type * as render from 'friends/vdom/render';
 
 interface VDOM {
 	closest: typeof traverse.closest;
-	findElem: typeof traverse.findElem;
+	findElement: typeof traverse.findElement;
+
 	create: typeof vnode.create;
 	render: typeof render.render;
+
 	getRenderFactory: typeof render.getRenderFactory;
 	getRenderFn: typeof render.getRenderFn;
 }
@@ -25,8 +27,10 @@ interface VDOM {
 @fakeMethods(
 	'closest',
 	'findElem',
+
 	'create',
 	'render',
+
 	'getRenderFactory',
 	'getRenderFn'
 )

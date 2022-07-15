@@ -15,6 +15,7 @@ Changelog
 
 * Moved the module to `friends/vdom`
 * The module has been rewritten to a new tree-shake friendly API
+* Renamed `findElFromVNode` to `findElement`
 
 #### :memo: Documentation
 

@@ -6,16 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type VDOM from 'friends/vdom/class';
 import { normalizeClass } from 'core/component';
+import type { VNode } from 'core/component/engines';
 
-import type iBlock from 'super/i-block';
-import type { VNode } from 'super/i-block';
+import type Friend from 'friends/friend';
+import type iBlock from 'super/i-block/i-block';
+
+import type VDOM from 'friends/vdom/class';
 
 /**
  * Returns a link to the closest parent component from the current
  *
  * @param component - the component name to search or a link to the component constructor
+ *
  * @example
  * ```js
  * // Returns a link to the closes `b-wrapper` component or undefined
@@ -26,7 +29,7 @@ import type { VNode } from 'super/i-block';
  * ```
  */
 export function closest<T extends iBlock = iBlock>(
-	this: VDOM,
+	this: Friend,
 	component: string | ClassConstructor<any[], T> | Function
 ): CanUndef<T> {
 	const
@@ -60,21 +63,21 @@ export function closest<T extends iBlock = iBlock>(
  *   children: [
  *     {
  *       type: 'div',
- *       attrs: {class: this.block.getFullElName('elem')}
+ *       attrs: {class: this.block.getFullElementName('elem')}
  *     }
  *   ]
  * });
  *
- * console.log(this.vdom.findElFromVNode('elem', vnode));
+ * console.log(this.vdom.findElement('elem', vnode));
  * ```
  */
-export function findElem(
+export function findElement(
 	this: VDOM,
 	name: string,
 	where: VNode,
 	ctx: iBlock = this.component
 ): CanUndef<VNode> {
-	const selector = ctx.provide.fullElName(name);
+	const selector = ctx.provide.fullElementName(name);
 	return search(where);
 
 	function search(vnode: VNode) {
@@ -90,10 +93,20 @@ export function findElem(
 			}
 		}
 
-		if (vnode.children != null) {
-			for (let i = 0; i < vnode.children.length; i++) {
+		const
+			{children} = vnode;
+
+		if (Object.isArray(children)) {
+			for (let i = 0; i < children.length; i++) {
 				const
-					res = search(vnode.children[i]);
+					el = children[i];
+
+				if (Object.isPrimitive(el) || Object.isArray(el)) {
+					continue;
+				}
+
+				const
+					res = search(Object.cast(el));
 
 				if (res != null) {
 					return res;
