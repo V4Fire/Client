@@ -71,7 +71,6 @@ import {
 import 'super/i-block/directives';
 import { statuses } from 'super/i-block/const';
 
-import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
 
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
@@ -168,7 +167,6 @@ export { default as Friend } from 'friends/friend';
 
 export {
 
-	Cache,
 	Classes,
 
 	ModVal,
