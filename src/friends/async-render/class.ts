@@ -9,7 +9,7 @@
 import Friend, { fakeMethods } from 'friends/friend';
 import type iBlock from 'super/i-block/i-block';
 
-import type * as iter from 'friends/async-render/iter';
+import type * as iter from 'friends/async-render/iterate';
 import type * as render from 'friends/async-render/render';
 
 interface AsyncRender {

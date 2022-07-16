@@ -13,6 +13,6 @@
 
 export { default } from 'friends/async-render/class';
 
-export * from 'friends/async-render/iter';
 export * from 'friends/async-render/render';
+export * from 'friends/async-render/iterate';
 export * from 'friends/async-render/interface';
