@@ -152,7 +152,6 @@ export * from 'super/i-block/modules/state';
 export * from 'friends/module-loader';
 
 export * from 'super/i-block/modules/daemons';
-export * from 'super/i-block/modules/event-emitter';
 
 export * from 'friends/sync';
 export * from 'friends/async-render';
