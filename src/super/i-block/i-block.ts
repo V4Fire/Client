@@ -77,7 +77,7 @@ import { statuses } from 'super/i-block/const';
 import Opt from 'super/i-block/modules/opt';
 
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
-import Analytics from 'super/i-block/modules/analytics';
+import Analytics from 'friends/analytics';
 
 import DOM from 'super/i-block/modules/dom';
 import VDOM from 'friends/vdom';
@@ -89,7 +89,7 @@ import Sync, { AsyncWatchOptions } from 'friends/sync';
 import Block from 'friends/block';
 import Field from 'friends/field';
 
-import Provide, { classesCache, Classes } from 'friends/provide';
+import Provide, { Classes } from 'friends/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'friends/storage';
 import ModuleLoader, { Module } from 'friends/module-loader';

@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Moved the module to `friends/analytics`
+* The module has been rewritten to a new tree-shake friendly API
+* Renamed `sendEvent` to `send`
+
+#### :memo: Documentation
+
+* Added the normal documentation
+
 ## v3.0.0-rc.46 (2020-07-31)
 
 #### :house: Internal
