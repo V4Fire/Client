@@ -38,22 +38,19 @@ import type {
 //#endif
 
 import type Async from 'core/async';
-import type { AsyncOptions } from 'core/async';
+import type { AsyncOptions, ReadonlyEventEmitterWrapper } from 'core/async';
 
 import iProgress from 'traits/i-progress/i-progress';
 
 import iBlock, {
 
 	component,
-	wrapEventEmitter,
 
 	prop,
 	field,
 	system,
 	watch,
 	wait,
-
-	ReadonlyEventEmitterWrapper,
 
 	InitLoadCb,
 	InitLoadOptions,
@@ -263,7 +260,19 @@ export default abstract class iData extends iBlock implements iProgress {
 	@system<iData>({
 		atom: true,
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.dp?.emitter, true)
+		init: (o, d) => (<Async>d.async).wrapEventEmitter({
+			get on() {
+				return o.dp?.emitter.on.bind(o.dp) ?? (() => Object.throw());
+			},
+
+			get once() {
+				return o.dp?.emitter.once.bind(o.dp) ?? (() => Object.throw());
+			},
+
+			get off() {
+				return o.dp?.emitter.off.bind(o.dp) ?? (() => Object.throw());
+			}
+		})
 	})
 
 	protected readonly dataEmitter!: ReadonlyEventEmitterWrapper<this>;

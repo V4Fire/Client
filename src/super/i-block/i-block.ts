@@ -30,7 +30,10 @@ import Async, {
 
 	ProxyCb,
 	BoundFn,
-	EventId
+	EventId,
+
+	ReadonlyEventEmitterWrapper,
+	EventEmitterWrapper
 
 } from 'core/async';
 
@@ -90,14 +93,6 @@ import Provide, { classesCache, Classes } from 'friends/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'friends/storage';
 import ModuleLoader, { Module } from 'friends/module-loader';
-
-import {
-
-	wrapEventEmitter,
-	EventEmitterWrapper,
-	ReadonlyEventEmitterWrapper
-
-} from 'super/i-block/modules/event-emitter';
 
 import { initGlobalListeners, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { readyStatuses, activate, deactivate } from 'super/i-block/modules/activation';
@@ -1122,7 +1117,7 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, {
+		init: (o, d) => (<Async>d.async).wrapEventEmitter({
 			on: o.$on.bind(o),
 			once: o.$once.bind(o),
 			off: o.$off.bind(o)
@@ -1137,11 +1132,11 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, new EventEmitter({
+		init: (o, d) => (<Async>d.async).wrapEventEmitter(new EventEmitter({
 			maxListeners: 1e3,
 			newListener: false,
 			wildcard: true
-		}), {suspend: true})
+		}), {group: ':suspend'})
 	})
 
 	protected readonly localEmitter!: EventEmitterWrapper<this>;
@@ -1152,7 +1147,19 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.$parent, true)
+		init: (o, d) => (<Async>d.async).wrapEventEmitter({
+			get on() {
+				return o.$parent?.$on.bind(o.$parent) ?? (() => Object.throw());
+			},
+
+			get once() {
+				return o.$parent?.$once.bind(o.$parent) ?? (() => Object.throw());
+			},
+
+			get off() {
+				return o.$parent?.$off.bind(o.$parent) ?? (() => Object.throw());
+			}
+		})
 	})
 
 	protected readonly parentEmitter!: ReadonlyEventEmitterWrapper<this>;
@@ -1163,7 +1170,11 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, o.r)
+		init: (o, d) => (<Async>d.async).wrapEventEmitter({
+			on: o.$root.$on.bind(o.$root),
+			once: o.$root.$once.bind(o.$root),
+			off: o.$root.$off.bind(o.$root)
+		})
 	})
 
 	protected readonly rootEmitter!: EventEmitterWrapper<this>;
@@ -1175,7 +1186,7 @@ export default abstract class iBlock extends ComponentInterface {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEmitter)
+		init: (o, d) => (<Async>d.async).wrapEventEmitter(globalEmitter)
 	})
 
 	protected readonly globalEmitter!: EventEmitterWrapper<this>;
