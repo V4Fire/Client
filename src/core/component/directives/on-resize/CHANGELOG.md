@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :boom: Breaking Change
+
+* The directive has been renamed to `v-on-resize` and now uses the new `core/dom/resize-watcher` module API
+
 #### :house: Internal
 
 * Migration to Vue3
