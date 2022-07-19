@@ -30,8 +30,8 @@ This module allows you to do it more gracefully.
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.observe(document.body, handler1);
-ResizeWatcher.observe(document.body, handler2);
+ResizeWatcher.watch(document.body, handler1);
+ResizeWatcher.watch(document.body, handler2);
 ```
 
 In addition, this module provides a number of useful options.
@@ -40,7 +40,7 @@ And all adjacent resize events are collapsed into one by default, which helps av
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.observe(document.body, {once: true, box: 'border-box'}, handler);
+ResizeWatcher.watch(document.body, {once: true, box: 'border-box'}, handler);
 ```
 
 ## Functions
