@@ -19,7 +19,7 @@ import type { DirectiveValue, DirectiveParams } from 'core/component/directives/
 export * from 'core/component/directives/on-resize/interface';
 
 const
-	DIRECTIVE = Symbol('The indicator that watcher was initialized via the directive');
+	DIRECTIVE = Symbol('The indicator that a watcher was initialized via the directive');
 
 ComponentEngine.directive('resize-observer', {
 	mounted(el: HTMLElement, {value}: DirectiveParams): void {
