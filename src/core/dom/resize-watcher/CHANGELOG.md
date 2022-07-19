@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* The module has been renamed to `resize-watcher` and completely rewritten with the new API
+
 ## v3.0.0-rc.131 (2021-01-29)
 
 * Now using `requestIdleCallback` instead of `setTimeout`
