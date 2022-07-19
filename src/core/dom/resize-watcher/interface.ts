@@ -80,7 +80,7 @@ export interface Watcher extends Readonly<WatchOptions> {
 	/**
 	 * The operation destructor
 	 */
-	unobserve(): void;
+	unwatch(): void;
 }
 
 /**

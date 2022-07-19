@@ -80,7 +80,7 @@ export function watch(
 	const watcher: Writable<Watcher> = {
 		id: Math.random().toString().slice(2),
 		target: el,
-		unobserve: () => unwatch(el, handler)
+		unwatch: () => unwatch(el, handler)
 	};
 
 	if (!support.ResizeObserver) {
@@ -120,7 +120,7 @@ export function watch(
 				handler!(contentRect, oldRect, watcher);
 
 				if (watcher.once) {
-					watcher.unobserve();
+					watcher.unwatch();
 				}
 			};
 
@@ -180,7 +180,7 @@ export function unwatch(el: Element, handler?: Nullable<WatchHandler>): boolean 
 			return false;
 		}
 
-		store.forEach((handle) => handle.unobserve());
+		store.forEach((handle) => handle.unwatch());
 		return true;
 	}
 
