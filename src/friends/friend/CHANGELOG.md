@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `friends/friend`
+* The module has been moved to`friends/friend`
 
 #### :house: Internal
 

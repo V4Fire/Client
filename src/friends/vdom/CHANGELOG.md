@@ -13,13 +13,13 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `friends/vdom`
+* The module has been moved to`friends/vdom`
 * The module has been rewritten to a new tree-shake friendly API
 * Renamed `findElFromVNode` to `findElement`
 
 #### :memo: Documentation
 
-* Added the normal documentation
+* Added complete documentation for the module
 
 ## v3.0.0 (2021-07-27)
 

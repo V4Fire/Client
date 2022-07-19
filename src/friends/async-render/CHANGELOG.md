@@ -13,12 +13,12 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `friends/async-render`
+* The module has been moved to`friends/async-render`
 * The module has been rewritten to a new tree-shake friendly API
 
 #### :memo: Documentation
 
-* Added the normal documentation
+* Added complete documentation for the module
 
 ## v3.18.0 (2022-03-04)
 

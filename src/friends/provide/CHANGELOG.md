@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `friends/provide`
+* The module has been moved to`friends/provide`
 * The module has been rewritten to a new tree-shake friendly API
 * Renamed `fullElName`, `elClasses` to `fullElementName`, `elementClasses`
 

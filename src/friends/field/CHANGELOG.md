@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `friends/field`
+* The module has been moved to`friends/field`
 * The module has been rewritten to a new tree-shake friendly API
 
 ## v3.10.0 (2021-11-16)

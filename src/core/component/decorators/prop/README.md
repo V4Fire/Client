@@ -112,7 +112,7 @@ export default class bInput extends iBlock {
 ```
 
 As you can see, the method takes a string with the watchable property as the first parameter
-(you can specify a complex path, like `foo.bar.bla`), and the second parameter is a converter function.
+(you can specify a complex path, like `foo.bar.bla`), and the second parameter is a getter function.
 And, the method itself returns the starting value of the watched property.
 
 So, problems 1 and 2 are solved, but what about the third problem? We still have two properties, and they have different

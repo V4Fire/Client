@@ -13,12 +13,12 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `friends/sync`
+* The module has been moved to`friends/sync`
 * The module has been rewritten to a new tree-shake friendly API
 
 #### :memo: Documentation
 
-* Added the normal documentation
+* Added complete documentation for the module
 
 ## v3.0.0-rc.211 (2021-07-21)
 

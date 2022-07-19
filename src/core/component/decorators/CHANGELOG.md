@@ -17,11 +17,11 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new cache type for accessors `auto`
+* Added a new cache type `auto` for accessors
 
 #### :memo: Documentation
 
-* Added the normal documentation
+* Added complete documentation for the module
 
 #### :house: Internal
 

@@ -13,14 +13,14 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Moved the module to `friends/block`
+* The module has been moved to`friends/block`
 * The module has been rewritten to a new tree-shake friendly API
 * Renamed `getElMod`, `setElMod`, `removeElMod`, `getElSelector`, `getFullElName` to
   `getElementMod`, `setElementMod`, `removeElementMod`, `getElementSelector`, `getFullElementName`
 
 #### :memo: Documentation
 
-* Added the normal documentation
+* Added complete documentation for the module
 
 ## v3.8.3 (2021-10-26)
 

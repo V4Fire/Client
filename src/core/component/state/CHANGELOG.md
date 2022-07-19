@@ -17,7 +17,7 @@ Changelog
 
 #### :memo: Documentation
 
-* Added the normal documentation
+* Added complete documentation for the module
 
 ## v3.0.0-rc.109 (2020-12-15)
 

@@ -13,7 +13,7 @@ Changelog
 
 #### :memo: Documentation
 
-* Added the normal documentation
+* Added complete documentation for the module
 
 ## v3.0.0-rc.37 (2020-07-20)
 

@@ -2753,7 +2753,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
 
 #### :bug: Bug Fix
 
-* Fixed `fullElName` overloads `iBlock/provide`
+* Fixed `fullElementName` overloads `iBlock/provide`
 
 #### :house: Internal
 
@@ -3903,7 +3903,7 @@ export default class bExample extends iBlock {
 * Removed `bWindowForm`
 * Removed `bNotifier`
 * Removed `bFlagIcon`
-* Removed `@bindModTo`, `@elMod`, `@removeElMod` decorators
+* Removed `@bindModTo`, `@elMod`, `@removeElementMod` decorators
 
 #### :bug: Bug Fix
 

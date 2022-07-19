@@ -13,8 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* New API
-* Renamed to `v-bind-with`
+* The module has been renamed to `bind-with` and completely rewritten with the new API
 
 #### :house: Internal
 
