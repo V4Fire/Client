@@ -55,7 +55,10 @@ export interface WatchOptions {
 	once?: boolean;
 }
 
-export interface Watcher extends Readonly<WatchOptions> {
+export interface Watcher extends Readonly<
+	WatchOptions &
+	Required<Pick<WatchOptions, 'watchWidth' | 'watchHeight' | 'immediate' | 'watchInit' | 'once'>>
+> {
 	/**
 	 * The unique watcher identifier
 	 */
@@ -78,7 +81,7 @@ export interface Watcher extends Readonly<WatchOptions> {
 	readonly observer?: ResizeObserver;
 
 	/**
-	 * The operation destructor
+	 * Cancels watching for the element geometry
 	 */
 	unwatch(): void;
 }
