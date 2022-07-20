@@ -36,7 +36,7 @@ export interface WatchOptions {
 	 *
 	 * @default `0`
 	 */
-	threshold: number;
+	threshold?: number;
 
 	/**
 	 * The minimum delay in milliseconds before calling the intersection handler.
@@ -77,7 +77,7 @@ export interface WatchOptions {
 	 *
 	 * @param watcher
 	 */
-	onEnter?(watcher: Watcher): void;
+	onEnter?: WatchHandler;
 
 	/**
 	 * Handler: the observable element has leaved the viewport.
@@ -85,7 +85,7 @@ export interface WatchOptions {
 	 *
 	 * @param watcher
 	 */
-	onLeave?(watcher: Watcher): void;
+	onLeave?: WatchHandler;
 }
 
 export interface UnwatchOptions {
@@ -101,7 +101,7 @@ export interface UnwatchOptions {
 	suspend?: boolean;
 }
 
-export interface Watcher extends Readonly<WatchOptions> {
+export interface Watcher extends Readonly<WatchOptions & Required<Pick<WatchOptions, 'once' | 'threshold'>>> {
 	/**
 	 * The unique watcher identifier
 	 */
@@ -139,6 +139,11 @@ export interface Watcher extends Readonly<WatchOptions> {
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserverEntry/time
 	 */
 	readonly time?: DOMHighResTimeStamp;
+
+	/**
+	 * Cancels watching for the element intersection
+	 */
+	unwatch(): void;
 }
 
 export interface ElementSize {
@@ -152,3 +157,11 @@ export interface ElementRect extends ElementSize {
 	bottom: number;
 	right: number;
 }
+
+export interface WatchHandler {
+	(watcher: Watcher): void;
+}
+
+export type RegisteredWatchers = Map<number | Function, Watcher>;
+export type ObservableElements = Map<Element, RegisteredWatchers>;
+export type ObservableGroups = Record<PropertyKey, CanUndef<ObservableElements>>;
