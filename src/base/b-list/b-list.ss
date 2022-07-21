@@ -48,15 +48,14 @@
 						})) |
 
 						:v-attrs = isTablist
-							? {
+							? Object.assign(el.attrs, {
 									'v-aria:tab': {
 										isFirst: i === 0,
 										isVertical: vertical,
 										onChange: onActiveChange,
 										activeElement
-									},
-								  ...el.attrs
-								}
+									}
+								})
 							: el.attrs
 					.
 						- block preIcon
@@ -111,13 +110,12 @@
 		< tag.&__wrapper &
 			:is = listTag |
 			:v-attrs = isTablist
-				? {
+				? Object.assign(attrs, {
 						'v-aria:tablist': {
 							isMultiple: multiple,
-							isVertical: vertical
-						},
-					  ...attrs
-					}
+            	isVertical: vertical
+						}
+					})
 				: attrs
 		.
 			+= self.list('items')

@@ -49,6 +49,7 @@
 					- block label
 						< label.&__label &
 							v-if = label || vdom.getSlot('label') |
-							:for = id || dom.getId('input') .
+							:for = id || dom.getId('input')
+						.
 							+= self.slot('label', {':label': 'label'})
 								{{ t(label) }}

@@ -54,8 +54,8 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		this.el.setAttribute('role', 'treeitem');
 
 		this.ctx.$nextTick(() => {
-			if (this.isExpandable) {
-				this.el.setAttribute('aria-expanded', String(this.isExpanded));
+			if (this.$v.isExpandable) {
+				this.el.setAttribute('aria-expanded', String(this.$v.isExpanded()));
 			}
 		});
 	}
@@ -79,8 +79,8 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				break;
 
 			case keyCodes.RIGHT:
-				if (this.isExpandable) {
-					if (this.isExpanded) {
+				if (this.$v.isExpandable) {
+					if (this.$v.isExpanded()) {
 						this.moveFocus(1);
 
 					} else {
@@ -91,7 +91,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				break;
 
 			case keyCodes.LEFT:
-				if (this.isExpandable && this.isExpanded) {
+				if (this.$v.isExpandable && this.$v.isExpanded()) {
 					this.closeFold();
 
 				} else {
@@ -129,14 +129,6 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		if (nextEl != null) {
 			this.focusNext(nextEl);
 		}
-	}
-
-	get isExpandable(): boolean {
-		return this.$v.getFoldedMod() != null;
-	}
-
-	get isExpanded(): boolean {
-		return this.$v.getFoldedMod() === 'false';
 	}
 
 	openFold(): void {

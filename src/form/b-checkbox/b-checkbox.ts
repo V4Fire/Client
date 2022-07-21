@@ -316,6 +316,13 @@ export default class bCheckbox extends iInput implements iSize {
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected onClick(e: Event): void {
+		const
+			target = <HTMLElement>e.target;
+
+		if (target.tagName === 'LABEL') {
+			e.preventDefault();
+		}
+
 		void this.focus();
 
 		if (this.value === undefined || this.value === false || this.changeable) {

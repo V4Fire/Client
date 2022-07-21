@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Added `for` link for label and `id` for nativeInput in template
+* Added `label` tag with `for` attribute to label and `id` to nativeInput in template
 
 ## v3.0.0-rc.199 (2021-06-16)
 

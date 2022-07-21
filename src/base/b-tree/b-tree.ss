@@ -29,14 +29,15 @@
 					:class = provide.elClasses({
 						node: {
 							level,
-							folded: el.children && getFoldedPropValue(el)
+							folded: getFoldedPropValue(el)
 						}
 					}) |
 					v-aria:treeitem = {
 						getRootElement: () => (top ? top.$el : $el),
-						toggleFold: changeFoldedMod.bind(this, el),
-						getFoldedMod: getFoldedModById.bind(this, el.id),
-						isVeryFirstItem: top == null && i === 0,
+						toggleFold: changeFoldedMod.bind(this, el) ,
+						isExpanded: () => getFoldedModById(el.id) === 'false',
+						isExpandable: el.children != null,
+						isVeryFirstItem: top == null && i === 0
 					}
 				.
 					< .&__item-wrapper
@@ -51,8 +52,7 @@
 								< component.&__item &
 									v-if = item |
 									:is = Object.isFunction(item) ? item(el, i) : item |
-									:v-attrs = getItemProps(el, i) |
-									dispatching = true
+									:v-attrs = getItemProps(el, i)
 								.
 
 					- block children
@@ -69,8 +69,8 @@
 								.
 									+= self.slot('default', {':item': 'o.item'})
 
-									< template &
-										#fold = o |
-										v-if = vdom.getSlot('fold')
-									.
-										+= self.slot('fold', {':params': 'o.params'})
+								< template &
+									#fold = o |
+									v-if = vdom.getSlot('fold')
+								.
+									+= self.slot('fold', {':params': 'o.params'})
