@@ -18,9 +18,10 @@ export interface TreeBindingValue {
 
 export interface TreeitemBindingValue {
 	isVeryFirstItem: boolean;
+	isExpandable: boolean;
+	isExpanded(): boolean;
 	getRootElement(): CanUndef<HTMLElement>;
 	toggleFold(el: Element, value?: boolean): void;
-	getFoldedMod(): CanUndef<string>;
 }
 
 export interface ComboboxBindingValue {
