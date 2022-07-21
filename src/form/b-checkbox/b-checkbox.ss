@@ -14,6 +14,16 @@
 	- nativeInputType = "'checkbox'"
 	- nativeInputModel = undefined
 
+	- block hiddenInput()
+		+= self.nativeInput({ &
+			elName: 'hidden-input',
+			id: 'id || dom.getId("input")',
+
+			attrs: {
+				autocomplete: 'off'
+			}
+		}) .
+
 	- block rootAttrs
 		- super
 		? rootAttrs[':-parent-id'] = 'parentId'
@@ -37,6 +47,8 @@
 								< _.&__check
 
 					- block label
-						< span.&__label v-if = label || vdom.getSlot('label')
+						< label.&__label &
+							v-if = label || vdom.getSlot('label') |
+							:for = id || dom.getId('input') .
 							+= self.slot('label', {':label': 'label'})
 								{{ t(label) }}

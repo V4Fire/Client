@@ -11,30 +11,48 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
 import { ComponentEngine, VNode, VNodeDirective } from 'core/component/engines';
-import { setAriaLabel, setAriaRole, setAriaTabIndex } from 'core/component/directives/aria/helpers';
+import AriaSetter from 'core/component/directives/aria/aria-setter';
+
+const
+	ariaMap = new Map();
+
+const
+	$$ = symbolGenerator();
 
 ComponentEngine.directive('aria', {
-	inserted(el: Element, opts: VNodeDirective, vnode: VNode): void {
+	inserted(el: HTMLElement, binding: VNodeDirective, vnode: VNode): void {
 		const
-			{value, arg, modifiers} = opts;
+			{value, arg, modifiers} = binding;
 
 		if (value == null && arg == null && modifiers == null) {
 			return;
 		}
 
 		const
-			options = {el, opts, vnode};
+			aria = new AriaSetter({el, binding, vnode});
 
-		setAriaLabel(options);
-		setAriaTabIndex(options);
-		setAriaRole(options)?.init();
+		aria.init();
+
+		ariaMap.set($$.aria, aria);
 	},
 
-	unbind(el: Element, opts: VNodeDirective, vnode: VNode) {
+	update(el: HTMLElement, binding: VNodeDirective, vnode: VNode) {
 		const
-			options = {el, opts, vnode};
+			aria: AriaSetter = ariaMap.get($$.aria);
 
-		setAriaRole(options)?.clear();
+		aria.options = {el, binding, vnode};
+
+		aria.update();
+	},
+
+	unbind(el: HTMLElement, binding: VNodeDirective, vnode: VNode) {
+		const
+			aria: AriaSetter = ariaMap.get($$.aria);
+
+		aria.options = {el, binding, vnode};
+
+		aria.clear();
 	}
 });

@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added `v-aria` directive
+* Added `onItemMarked`
+* Added `onOpen`
+* Now the component derive `iAccess`
+
+#### :bug: Bug Fix
+
+* Fixed the component to emit `iOpen` events
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix

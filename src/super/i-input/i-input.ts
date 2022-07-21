@@ -16,6 +16,7 @@ import SyncPromise from 'core/promise/sync';
 
 import { Option } from 'core/prelude/structures';
 
+import { derive } from 'core/functools/trait';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -62,6 +63,8 @@ export * from 'super/i-input/interface';
 export const
 	$$ = symbolGenerator();
 
+interface iInput extends Trait<typeof iAccess> {}
+
 /**
  * Superclass for all form components
  */
@@ -76,7 +79,8 @@ export const
 	}
 })
 
-export default abstract class iInput extends iData implements iVisible, iAccess {
+@derive(iAccess)
+abstract class iInput extends iData implements iVisible, iAccess {
 	/**
 	 * Type: component value
 	 */
@@ -1040,3 +1044,5 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 	}
 }
+
+export default iInput;

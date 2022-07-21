@@ -12,51 +12,65 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< template &
-			v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
-			:key = getItemKey(el, i)
+		< .&__root &
+			v-aria:tree = {
+				isVertical: vertical,
+				isRootTree: top == null,
+				onChange: (cb) => on('fold', (ctx, el, item, value) => cb(el, value))
+			}
 		.
-			< .&__node &
-				:-id = dom.getId(el.id) |
-				:-level = level |
-				:class = provide.elClasses({
-					node: {
-						level,
-						folded: getFoldedPropValue(el)
-					}
-				})
+			< template &
+				v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
+				:key = getItemKey(el, i)
 			.
-				< .&__item-wrapper
-					< .&__marker
-						- block fold
-							< template v-if = Object.size(field.get('children.length', el)) > 0
-								+= self.slot('fold', {':params': 'getFoldProps(el)'})
-									< .&__fold :v-attrs = getFoldProps(el)
+				< .&__node &
+					:-id = dom.getId(el.id) |
+					:-level = level |
+					:class = provide.elClasses({
+						node: {
+							level,
+							folded: el.children && getFoldedPropValue(el)
+						}
+					}) |
+					v-aria:treeitem = {
+						getRootElement: () => (top ? top.$el : $el),
+						toggleFold: changeFoldedMod.bind(this, el),
+						getFoldedMod: getFoldedModById.bind(this, el.id),
+						isVeryFirstItem: top == null && i === 0,
+					}
+				.
+					< .&__item-wrapper
+						< .&__marker
+							- block fold
+								< template v-if = Object.size(field.get('children.length', el)) > 0
+									+= self.slot('fold', {':params': 'getFoldProps(el)'})
+										< .&__fold :v-attrs = getFoldProps(el)
 
-					- block item
-						+= self.slot('default', {':item': 'getItemProps(el, i)'})
-							< component.&__item &
-								v-if = item |
-								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
-							.
+						- block item
+							+= self.slot('default', {':item': 'getItemProps(el, i)'})
+								< component.&__item &
+									v-if = item |
+									:is = Object.isFunction(item) ? item(el, i) : item |
+									:v-attrs = getItemProps(el, i) |
+									dispatching = true
+								.
 
-				- block children
-					< .&__children v-if = Object.size(field.get('children', el)) > 0
-						< b-tree.&__child &
-							:items = el.children |
-							:folded = getFoldedPropValue(el) |
-							:item = item |
-							:v-attrs = nestedTreeProps
-						.
-							< template &
-								#default = o |
-								v-if = vdom.getSlot('default')
+					- block children
+						< .&__children v-if = Object.size(field.get('children', el)) > 0
+							< b-tree.&__child &
+								:items = el.children |
+								:folded = getFoldedPropValue(el) |
+								:item = item |
+								:v-attrs = nestedTreeProps
 							.
-								+= self.slot('default', {':item': 'o.item'})
+								< template &
+									#default = o |
+									v-if = vdom.getSlot('default')
+								.
+									+= self.slot('default', {':item': 'o.item'})
 
-							< template &
-								#fold = o |
-								v-if = vdom.getSlot('fold')
-							.
-								+= self.slot('fold', {':params': 'o.params'})
+									< template &
+										#fold = o |
+										v-if = vdom.getSlot('fold')
+									.
+										+= self.slot('fold', {':params': 'o.params'})

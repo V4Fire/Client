@@ -22,8 +22,6 @@ import 'core/component/directives/image';
 import 'core/component/directives/update-on';
 //#endif
 
-//#if runtime has directives/aria
 import 'core/component/directives/aria';
-//#endif
 
 import 'core/component/directives/hook';

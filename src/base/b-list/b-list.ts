@@ -20,18 +20,22 @@ import SyncPromise from 'core/promise/sync';
 
 import { isAbsURL } from 'core/url';
 
+import { derive } from 'core/functools/trait';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
 import type { Active, Item, Items } from 'base/b-list/interface';
+import iAccess from 'traits/i-access/i-access';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
 
 export const
 	$$ = symbolGenerator();
+
+interface bList extends Trait<typeof iAccess> {}
 
 /**
  * Component to create a list of tabs/links
@@ -47,7 +51,8 @@ export const
 	}
 })
 
-export default class bList extends iData implements iVisible, iWidth, iItems {
+@derive(iAccess)
+class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	/** @see [[iVisible.prototype.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
@@ -112,6 +117,12 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly multiple: boolean = false;
 
 	/**
+	 * If true, the component view orientation is vertical. Horizontal is default
+	 */
+	@prop(Boolean)
+	readonly vertical: boolean = false;
+
+	/**
 	 * If true, the active item can be unset by using another click to it.
 	 * By default, if the component is switched to the `multiple` mode, this value is set to `true`,
 	 * otherwise to `false`.
@@ -130,15 +141,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * @see [[bList.attrsProp]]
 	 */
 	get attrs(): Dictionary {
-		const
-			attrs = {...this.attrsProp};
-
-		if (this.items.some((el) => el.href === undefined)) {
-			attrs.role = 'tablist';
-			attrs['aria-multiselectable'] = this.multiple;
-		}
-
-		return attrs;
+		return {...this.attrsProp};
 	}
 
 	/**
@@ -385,10 +388,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (previousLinkEl !== linkEl) {
 						$b.setElMod(previousLinkEl, 'link', 'active', false);
-
-						if (previousLinkEl.hasAttribute('aria-selected')) {
-							previousLinkEl.setAttribute('aria-selected', 'false');
-						}
 					}
 				}
 			}
@@ -400,10 +399,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				for (let i = 0; i < els.length; i++) {
 					const el = els[i];
 					$b.setElMod(el, 'link', 'active', true);
-
-					if (el.hasAttribute('aria-selected')) {
-						el.setAttribute('aria-selected', 'true');
-					}
 				}
 			}, stderr);
 		}
@@ -489,10 +484,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (needChangeMod) {
 						$b.setElMod(el, 'link', 'active', false);
-
-						if (el.hasAttribute('aria-selected')) {
-							el.setAttribute('aria-selected', 'false');
-						}
 					}
 				}
 			}, stderr);
@@ -621,13 +612,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			item.classes = this.provide.hintClasses(item.hintPos)
 				.concat(item.classes ?? []);
 
-			if (href === undefined) {
-				item.attrs = {
-					...item.attrs,
-					role: 'tab'
-				};
-			}
-
 			normalizedItems.push({...item, value, href});
 		}
 
@@ -707,6 +691,13 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		}
 	}
 
+	/**
+	 * Returns true if the component is used as tab list
+	 */
+	protected get isTablist(): boolean {
+		return this.items.some((el) => el.href === undefined);
+	}
+
 	protected override onAddData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
@@ -738,4 +729,21 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);
 	}
+
+	/**
+	 * Handler: on active element changes
+	 * @param cb
+	 */
+	protected onActiveChange(cb: Function): void {
+		this.on('change', () => {
+			if (Object.isSet(this.active)) {
+				cb(this.block?.elements('link', {active: true}));
+
+			} else {
+				cb(this.block?.element('link', {active: true}));
+			}
+		});
+	}
 }
+
+export default bList;
