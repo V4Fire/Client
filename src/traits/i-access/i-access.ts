@@ -17,6 +17,7 @@ import SyncPromise from 'core/promise/sync';
 
 import type iBlock from 'super/i-block/i-block';
 import type { ModsDecl, ModEvent } from 'super/i-block/i-block';
+import { FOCUSABLE_SELECTOR } from 'traits/i-access/const';
 
 export default abstract class iAccess {
 	/**
@@ -147,10 +148,10 @@ export default abstract class iAccess {
 					return;
 				}
 
-				if ($el.hasAttribute('tab-index')) {
-					const
-						el = (<HTMLButtonElement>$el);
+				const
+					el = (<HTMLButtonElement>$el);
 
+				if (el.hasAttribute('tabindex') || el.tabIndex > -1) {
 					if (focused) {
 						el.focus();
 
@@ -160,6 +161,114 @@ export default abstract class iAccess {
 				}
 			}
 		});
+	}
+
+	/** @see [[iAccess.muteTabIndexes]] */
+	static muteTabIndexes: AddSelf<iAccess['muteTabIndexes'], iBlock> =
+		(component, ctx?): boolean => {
+			const
+				el = ctx ?? component.$el;
+
+			if (el == null) {
+				return false;
+			}
+
+			const
+				elems = el.querySelectorAll(FOCUSABLE_SELECTOR);
+
+			for (let i = 0; i < elems.length; i++) {
+				const
+					elem = (<HTMLElement>elems[i]);
+
+				if (elem.dataset.tabindex == null) {
+					elem.dataset.tabindex = String(elem.tabIndex);
+				}
+
+				elem.tabIndex = -1;
+			}
+
+			if (ctx != null && ctx.tabIndex > -1) {
+				if (ctx.dataset.tabindex == null) {
+					ctx.dataset.tabindex = String(ctx.tabIndex);
+				}
+
+				ctx.tabIndex = -1;
+
+				return true;
+			}
+
+			return elems.length > 0;
+		};
+
+	/** @see [[iAccess.unmuteTabIndexes]] */
+	static unmuteTabIndexes: AddSelf<iAccess['unmuteTabIndexes'], iBlock> =
+		(component, ctx?): boolean => {
+			const
+				el = ctx ?? component.$el;
+
+			if (el == null) {
+				return false;
+			}
+
+			const
+				elems = el.querySelectorAll('[data-tabindex]');
+
+			for (let i = 0; i < elems.length; i++) {
+				const
+					elem = (<HTMLElement>elems[i]);
+
+				elem.tabIndex = Number(elem.dataset.tabindex);
+				delete elem.dataset.tabindex;
+			}
+
+			if (ctx?.dataset.tabindex != null) {
+				ctx.tabIndex = Number(ctx.dataset.tabindex);
+				delete ctx.dataset.tabindex;
+
+				return true;
+			}
+
+			return elems.length > 0;
+		};
+
+	/** @see [[iAccess.unmuteTabIndexes]] */
+	static nextFocusableElement: AddSelf<iAccess['nextFocusableElement'], iBlock> =
+		(component, step, el?): CanUndef<HTMLElement> => {
+			if (document.activeElement == null) {
+				return;
+			}
+
+			const
+				nodeListOfFocusable = (el ?? document).querySelectorAll(FOCUSABLE_SELECTOR);
+
+			const focusable: HTMLElement[] = [].filter.call(
+					nodeListOfFocusable,
+				 (el: HTMLElement) => (
+					 el.offsetWidth > 0 ||
+					 el.offsetHeight > 0 ||
+					 el === document.activeElement
+				 )
+			);
+
+			const
+				index = focusable.indexOf(<HTMLElement>document.activeElement);
+
+			if (index > -1) {
+				return focusable[index + step];
+			}
+		};
+
+	/**
+	 * Checks if the component realize current trait
+	 * @param obj
+	 */
+	static is(obj: unknown): obj is iAccess {
+		if (Object.isPrimitive(obj)) {
+			return false;
+		}
+
+		const dict = Object.cast<Dictionary>(obj);
+		return Object.isFunction(dict.muteTabIndexes) && Object.isFunction(dict.nextFocusableElement);
 	}
 
 	/**
@@ -216,6 +325,30 @@ export default abstract class iAccess {
 	 * @param args
 	 */
 	blur(...args: unknown[]): Promise<boolean> {
+		return Object.throw();
+	}
+
+	/**
+	 * Remove all descendants with tabindex attribute from tab sequence and saves previous value.
+	 * @param el
+	 */
+	muteTabIndexes(el?: HTMLElement): boolean {
+		return Object.throw();
+	}
+
+	/**
+	 * Recovers previous saved tabindex values to the elements that were changed.
+	 * @param el
+	 */
+	unmuteTabIndexes(el?: HTMLElement): boolean {
+		return Object.throw();
+	}
+
+	/**
+	 * Sets the focus to the next or previous focusable element via the step parameter
+	 * @params step, el?
+	 */
+	nextFocusableElement(step: 1 | -1, el?: HTMLElement): CanUndef<HTMLElement> {
 		return Object.throw();
 	}
 }

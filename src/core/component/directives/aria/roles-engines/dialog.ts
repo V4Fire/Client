@@ -1,41 +1,29 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import iOpen from 'traits/i-open/i-open';
-import type iBlock from 'super/i-block/i-block';
-import type { DirectiveHookParams } from 'core/component/directives/aria/interface';
-import RoleEngine from 'core/component/directives/aria/roles-engines/interface';
+import AriaRoleEngine from 'core/component/directives/aria/interface';
+import type { DirectiveOptions } from 'core/component/directives/aria/interface';
 
-export default class DialogEngine extends RoleEngine {
-	group: Dictionary = {};
-
-	constructor(options: DirectiveHookParams) {
+export default class DialogEngine extends AriaRoleEngine {
+	constructor(options: DirectiveOptions) {
 		super(options);
 
 		if (!iOpen.is(options.vnode.fakeContext)) {
-			Object.throw('Dialog directive expects the component to realize iOpen interface');
+			Object.throw('Dialog aria directive expects the component to realize iOpen interface');
 		}
 	}
 
-	override init(): void {
+	init(): void {
 		const
-			{localEmitter: $e} = Object.cast<iBlock['unsafe']>(this.vnode.fakeContext);
+			{el} = this.options;
 
-		this.el.setAttribute('role', 'dialog');
-		this.el.setAttribute('aria-modal', 'false');
-
-		this.group = {group: 'ariaAttributes'};
-
-		$e.on('open', () => {
-			this.el.setAttribute('aria-modal', 'true');
-		}, this.group);
-
-		$e.on('close', () => {
-			this.el.setAttribute('aria-modal', 'false');
-		}, this.group);
-	}
-
-	override clear(): void {
-		const
-			{localEmitter: $e} = Object.cast<iBlock['unsafe']>(this.vnode.fakeContext);
-
-		$e.off(this.group);
+		el.setAttribute('role', 'dialog');
+		el.setAttribute('aria-modal', 'true');
 	}
 }

@@ -257,18 +257,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	override get rootAttrs(): Dictionary {
-		const attrs = {
+		return {
 			...super['rootAttrsGetter']()
 		};
-
-		if (!this.native) {
-			Object.assign(attrs, {
-				role: 'listbox',
-				'aria-multiselectable': this.multiple
-			});
-		}
-
-		return attrs;
 	}
 
 	override get value(): this['Value'] {
@@ -581,9 +572,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 					if (this.native) {
 						previousItemEl.selected = false;
-
-					} else {
-						previousItemEl.setAttribute('aria-selected', 'false');
 					}
 				}
 			}
@@ -599,9 +587,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 				if (this.native) {
 					el.selected = true;
-
-				} else {
-					el.setAttribute('aria-selected', 'true');
 				}
 			}
 		}).catch(stderr);
@@ -688,9 +673,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 					if (this.native) {
 						el.selected = false;
-
-					} else {
-						el.setAttribute('aria-selected', 'false');
 					}
 				}
 			}
@@ -883,6 +865,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	protected override initModEvents(): void {
 		super.initModEvents();
+
+		iOpenToggle.initModEvents(this);
+
 		this.sync.mod('native', 'native', Boolean);
 		this.sync.mod('multiple', 'multiple', Boolean);
 		this.sync.mod('opened', 'multiple', Boolean);
@@ -979,6 +964,26 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 */
 	protected onItemsNavigate(e: KeyboardEvent): void {
 		void on.itemsNavigate(this, e);
+	}
+
+	/**
+	 * Handler: executes callback on "open" event
+	 * @param cb
+	 */
+	protected onOpen(cb: Function): void {
+		this.on('open', () => {
+			void this.$nextTick(() => {
+				cb.call(this, this.selectedElement);
+			});
+		});
+	}
+
+	/**
+	 * Handler: executes callback on item set "marked" mod
+	 * @param cb
+	 */
+	protected onItemMarked(cb: Function): void {
+		this.localEmitter.on('el.mod.set.**', ({link}) => cb(link));
 	}
 }
 

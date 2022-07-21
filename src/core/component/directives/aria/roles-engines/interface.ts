@@ -1,22 +1,31 @@
-import type { AriaRoleEngine, DirectiveHookParams } from 'core/component/directives/aria/interface';
-import type { VNode } from 'core/component';
+export interface TabBindingValue {
+	isFirst: boolean;
+	isVertical: boolean;
+	activeElement: CanUndef<Promise<CanArray<HTMLElement>>>;
+	onChange(cb: Function): void;
+}
 
-export default abstract class RoleEngine implements AriaRoleEngine {
-	el: Element;
-	value: any;
-	vnode: VNode;
+export interface TablistBindingValue {
+	isVertical: boolean;
+	isMultiple: boolean;
+}
 
-	constructor({el, opts, vnode}: DirectiveHookParams) {
-		this.el = el;
-		this.value = opts.value;
-		this.vnode = vnode;
-	}
+export interface TreeBindingValue {
+	isVertical: boolean;
+	isRootTree: boolean;
+	onChange(cb: Function): void;
+}
 
-	init(): void {
-		//
-	}
+export interface TreeitemBindingValue {
+	isVeryFirstItem: boolean;
+	getRootElement(): CanUndef<HTMLElement>;
+	toggleFold(el: Element, value?: boolean): void;
+	getFoldedMod(): CanUndef<string>;
+}
 
-	clear(): void {
-		//
-	}
+export interface ComboboxBindingValue {
+	isMultiple: boolean;
+	onChange(cb: Function): void;
+	onOpen(cb: Function): void;
+	onClose(cb: Function): void;
 }

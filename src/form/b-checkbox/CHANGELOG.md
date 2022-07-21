@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2022-??-??)
+
+#### :bug: Bug Fix
+
+* Added `for` link for label and `id` for nativeInput in template
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change

@@ -27,10 +27,6 @@
 				- if tag === 'option'
 					? itemAttrs[':selected'] = 'isSelected(el.value)'
 
-				- else
-					? itemAttrs.role = 'option'
-					? itemAttrs[':aria-selected'] = 'isSelected(el.value)'
-
 				< ${tag} &
 					:-id = values.get(el.value) |
 
@@ -43,7 +39,16 @@
 						}
 					})) |
 
-					:v-attrs = el.attrs |
+					:v-attrs = native
+						? el.attrs
+						: {'v-aria:option': {
+									preSelected: isSelected(el.value),
+									onChange: (cb) => on('actionChange', () => cb(isSelected(el.value)))
+               	},
+               ...el.attrs
+              } |
+
+					:id = dom.getId(el.value) |
 					${itemAttrs}
 				.
 					+= self.slot('default', {':item': 'el'})
@@ -87,12 +92,19 @@
 						.
 
 				- block input
-					< _.&__cell.&__input-wrapper
-						< template v-if = native
+					< template v-if = native
+						< _.&__cell.&__input-wrapper
 							+= self.nativeInput({tag: 'select', model: 'undefined', attrs: {'@change': 'onNativeChange'}})
 								+= self.items('option')
 
-						< template v-else
+					< template v-else
+						< _.&__cell.&__input-wrapper &
+							v-aria:combobox = {
+								onOpen,
+                onClose: (cb) => on('close', cb),
+								onChange: onItemMarked,
+								isMultiple: multiple
+							} .
 							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
 
 				- block icon
@@ -151,6 +163,7 @@
 				v-if = !native && items.length && (
 					isFunctional ||
 					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
-				)
+				) |
+				v-aria:listbox
 			.
 				+= self.items()

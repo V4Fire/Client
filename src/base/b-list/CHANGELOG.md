@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.??? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added `v-aria` directive
+* Added a new prop `vertical`
+* Added `isTablist`
+* Added `onActiveChange`
+* Now the component derive `iAccess`
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :boom: Breaking Change

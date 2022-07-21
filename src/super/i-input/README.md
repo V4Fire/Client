@@ -459,7 +459,7 @@ You can also manage a type of the created tag and other options by using the pre
  *   *) [type=nativeInputType] - value of the `:type` attribute
  *
  *   *) [autofocus] - value of the `:autofocus` attribute
- *   *) [tabIndex] - value of the `:autofocus` attribute
+ *   *) [tabIndex] - value of the `:tabindex` attribute
  *
  *   *) [focusHandler] - value of the `@focus` attribute
  *   *) [blurHandler] - value of the `@blur` attribute

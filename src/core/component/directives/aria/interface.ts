@@ -6,19 +6,34 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNodeDirective, VNode } from 'core/component/engines';
+import type { VNode, VNodeDirective } from 'core/component/engines';
+import type Async from 'core/async';
 
-export interface DirectiveHookParams {
-	el: Element;
-	opts: VNodeDirective;
+export interface DirectiveOptions {
+	el: HTMLElement;
+	binding: VNodeDirective;
 	vnode: VNode;
 }
 
-export interface AriaRoleEngine {
-	el: Element;
-	value: any;
-	vnode: VNode;
+export default abstract class AriaRoleEngine {
+	options: DirectiveOptions;
+	$a: CanUndef<Async>;
 
-	init(): void;
-	clear(): void;
+	protected constructor(options: DirectiveOptions) {
+		this.options = options;
+	}
+
+	abstract init(): void;
+	update?(): void;
+	clear?(): void;
+}
+
+export enum keyCodes {
+	ENTER = 'Enter',
+	END = 'End',
+	HOME = 'Home',
+	LEFT = 'ArrowLeft',
+	UP = 'ArrowUp',
+	RIGHT = 'ArrowRight',
+	DOWN = 'ArrowDown'
 }

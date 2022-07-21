@@ -17,10 +17,12 @@ import 'models/demo/nested-list';
 
 import symbolGenerator from 'core/symbol';
 
+import { derive } from 'core/functools/trait';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
 import type { Item, RenderFilter } from 'base/b-tree/interface';
+import iAccess from 'traits/i-access/i-access';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
@@ -28,11 +30,14 @@ export * from 'base/b-tree/interface';
 export const
 	$$ = symbolGenerator();
 
+interface bTree extends Trait<typeof iAccess> {}
+
 /**
  * Component to render tree of any elements
  */
 @component()
-export default class bTree extends iData implements iItems {
+@derive(iAccess)
+class bTree extends iData implements iItems, iAccess {
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 
@@ -97,6 +102,12 @@ export default class bTree extends iData implements iItems {
 	 */
 	@prop(Boolean)
 	readonly folded: boolean = true;
+
+	/**
+	 * If true, the component view orientation is vertical. Horizontal is default
+	 */
+	@prop(Boolean)
+	readonly vertical: boolean = false;
 
 	/**
 	 * Link to the top level component (internal parameter)
@@ -255,4 +266,27 @@ export default class bTree extends iData implements iItems {
 			this.emit('fold', target, item, newVal);
 		}
 	}
+
+	/**
+	 * Toggle folded state
+	 *
+	 * @params target, value
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 */
+	protected changeFoldedMod(item: this['Item'], target: HTMLElement, value?: boolean): void {
+		const
+			mod = this.block?.getElMod(target, 'node', 'folded');
+
+		if (mod == null) {
+			return;
+		}
+
+		const
+			newVal = value ? value : mod === 'false';
+
+		this.block?.setElMod(target, 'node', 'folded', newVal);
+		this.emit('fold', target, item, newVal);
+	}
 }
+
+export default bTree;
