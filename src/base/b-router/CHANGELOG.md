@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed opening a link in new tab with CMD meta key on macOS
+* Fixed opening a link in a new tab with the CMD meta key on macOS
 
 ## v3.5.2 (2021-10-06)
 
