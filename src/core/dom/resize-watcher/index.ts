@@ -147,8 +147,7 @@ export function watch(
 
 /**
  * Cancels watching for the geometry of the specified element geometry.
- * If you pass a handler, then only it will be cancelled. The function returns `false` if the passed element is not
- * watched or if the specified handler is not registered.
+ * If you pass a handler, then only it will be cancelled.
  *
  * @param el - the element to unobserve
  * @param [handler] - the registered handler
@@ -167,34 +166,28 @@ export function watch(
  * ResizeWatcher.unwatch(document.body);
  * ```
  */
-export function unwatch(el: Element, handler?: Nullable<WatchHandler>): boolean {
+export function unwatch(el: Element, handler?: Nullable<WatchHandler>): void {
 	const
 		store = registeredWatchers.get(el);
 
 	// eslint-disable-next-line eqeqeq
 	if (store == null || handler === null) {
-		return false;
+		return;
 	}
 
 	if (handler == null) {
-		if (store.size === 0) {
-			return false;
-		}
-
 		store.forEach((handle) => handle.unwatch());
-		return true;
+		return;
 	}
 
 	const
 		watcher = store.get(handler);
 
 	if (watcher == null) {
-		return false;
+		return;
 	}
 
 	watcher.observer?.disconnect();
 	asyncTasks.clearAll({label: watcher.id});
 	store.delete(handler);
-
-	return true;
 }
