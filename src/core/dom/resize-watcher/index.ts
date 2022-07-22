@@ -80,7 +80,8 @@ export function watch(
 	const watcher: Writable<Watcher> = {
 		id: Math.random().toString().slice(2),
 		target: el,
-		unwatch: () => unwatch(el, handler)
+		unwatch: () => unwatch(el, handler),
+		...opts
 	};
 
 	if (!support.ResizeObserver) {
