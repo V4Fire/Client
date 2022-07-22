@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.23.8 (2022-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed opening a link in a new tab with the CMD meta key on macOS `base/b-router`
+
 ## v3.23.7 (2022-07-22)
 
 #### :bug: Bug Fix
