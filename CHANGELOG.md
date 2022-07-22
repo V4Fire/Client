@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (2022-??-??)
+## v3.23.7 (2022-07-22)
 
 #### :bug: Bug Fix
 
-* [Removed ES6 code from prelude loader](build/webpack/loaders/prelude-loader.js)
+* [Removed ES6 code from the prelude loader](build/webpack/loaders/prelude-loader.js)
 
 ## v3.23.6 (2022-07-13)
 
