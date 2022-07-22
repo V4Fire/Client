@@ -70,6 +70,11 @@ export interface Watcher extends Readonly<
 	readonly target: Element;
 
 	/**
+	 * A function that will be called when the size of the observable element is changed
+	 */
+	readonly handler: WatchHandler;
+
+	/**
 	 * The observable element geometry
 	 */
 	readonly rect?: DOMRectReadOnly;
@@ -87,7 +92,7 @@ export interface Watcher extends Readonly<
 }
 
 /**
- * The function that will be called when the size of the observable element is changed
+ * A function that will be called when the size of the observable element is changed
  *
  * @param newGeometry - the new element geometry
  * @param oldGeometry - the old element geometry

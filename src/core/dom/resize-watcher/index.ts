@@ -80,6 +80,7 @@ export function watch(
 	const watcher: Writable<Watcher> = {
 		id: Math.random().toString().slice(2),
 		target: el,
+		handler: handler!,
 		unwatch: () => unwatch(el, handler),
 		...opts
 	};
