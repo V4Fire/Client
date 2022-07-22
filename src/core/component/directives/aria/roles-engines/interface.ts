@@ -1,7 +1,7 @@
 export interface TabBindingValue {
 	isFirst: boolean;
 	isVertical: boolean;
-	activeElement: CanUndef<Promise<CanArray<HTMLElement>>>;
+	isActive: boolean;
 	onChange(cb: Function): void;
 }
 

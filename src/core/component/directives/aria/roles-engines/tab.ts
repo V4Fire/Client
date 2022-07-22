@@ -32,7 +32,7 @@ export default class TabEngine extends AriaRoleEngine {
 			{isFirst} = this.$v;
 
 		el.setAttribute('role', 'tab');
-		el.setAttribute('aria-selected', 'false');
+		el.setAttribute('aria-selected', String(this.$v.isActive));
 
 		if (isFirst) {
 			if (el.tabIndex < 0) {
@@ -42,25 +42,6 @@ export default class TabEngine extends AriaRoleEngine {
 		} else {
 			el.setAttribute('tabindex', '-1');
 		}
-
-		this.$v.activeElement?.then((el) => {
-			if (Object.isArray(el)) {
-				for (let i = 0; i < el.length; i++) {
-					const
-						activeEl = el[i];
-
-					if (activeEl.getAttribute('aria-selected') !== 'true') {
-						activeEl.setAttribute('aria-selected', 'true');
-					}
-				}
-
-				return;
-			}
-
-			if (el.getAttribute('aria-selected') !== 'true') {
-				el.setAttribute('aria-selected', 'true');
-			}
-		});
 
 		if (this.$a != null) {
 			this.$a.on(el, 'keydown', this.onKeydown);

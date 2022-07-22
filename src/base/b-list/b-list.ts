@@ -694,7 +694,7 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	/**
 	 * Returns true if the component is used as tab list
 	 */
-	protected get isTablist(): boolean {
+	protected isTablist(): boolean {
 		return this.items.some((el) => el.href === undefined);
 	}
 
