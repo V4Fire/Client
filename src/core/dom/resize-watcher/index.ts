@@ -29,7 +29,7 @@ export * from 'core/dom/resize-watcher/interface';
  * the `immediate: true` option.
  *
  * @param el - the element to observe
- * @param handler - the function that will be called when the size of the observable element is changed
+ * @param handler - a function that will be called when the size of the observable element is changed
  */
 export function watch(el: Element, handler: WatchHandler): Watcher;
 
@@ -42,7 +42,7 @@ export function watch(el: Element, handler: WatchHandler): Watcher;
  *
  * @param el - the element to observe
  * @param opts - additional observation options
- * @param handler - the function that will be called when the size of the observable element is changed
+ * @param handler - a function that will be called when the size of the observable element is changed
  *
  * @example
  * ```js
@@ -77,10 +77,14 @@ export function watch(
 		Object.assign(opts, optsOrHandler);
 	}
 
+	if (handler == null) {
+		throw new ReferenceError('The watcher handler is not specified');
+	}
+
 	const watcher: Writable<Watcher> = {
 		id: Math.random().toString().slice(2),
 		target: el,
-		handler: handler!,
+		handler,
 		unwatch: () => unwatch(el, handler),
 		...opts
 	};
@@ -97,7 +101,7 @@ export function watch(
 		registeredWatchers.set(el, store);
 	}
 
-	if (store.has(handler!)) {
+	if (store.has(handler)) {
 		unwatch(el, handler);
 	}
 
@@ -141,7 +145,7 @@ export function watch(
 
 	watcher.observer = observer;
 	observer.observe(el, Object.select(optsOrHandler, 'box'));
-	store.set(handler!, watcher);
+	store.set(handler, watcher);
 
 	return watcher;
 }
