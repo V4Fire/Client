@@ -148,7 +148,7 @@ ResizeWatcher.watch(document.body, {once: true}, (newGeometry, oldGeometry, watc
 
 ### unwatch
 
-Cancels watching for the geometry of the specified element geometry.
+Cancels watching for the specified element geometry.
 If you pass a handler, then only it will be cancelled.
 
 ```js
