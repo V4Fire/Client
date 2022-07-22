@@ -844,7 +844,7 @@ export default class bRouter extends iData {
 		const
 			l = Object.assign(document.createElement('a'), {href});
 
-		if (a.getAttribute('target') === '_blank' || e.ctrlKey) {
+		if (a.getAttribute('target') === '_blank' || e.ctrlKey || e.metaKey) {
 			globalThis.open(l.href, '_blank');
 			return;
 		}
