@@ -42,7 +42,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		const
 			isMuted = this.ctx.muteTabIndexes(this.el);
 
-		if (this.$v.isVeryFirstItem) {
+		if (this.$v.isRootFirstItem) {
 			if (isMuted) {
 				this.ctx.unmuteTabIndexes(this.el);
 
@@ -55,7 +55,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 
 		this.ctx.$nextTick(() => {
 			if (this.$v.isExpandable) {
-				this.el.setAttribute('aria-expanded', String(this.$v.isExpanded()));
+				this.el.setAttribute('aria-expanded', String(this.$v.isExpanded));
 			}
 		});
 	}
@@ -80,7 +80,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 
 			case keyCodes.RIGHT:
 				if (this.$v.isExpandable) {
-					if (this.$v.isExpanded()) {
+					if (this.$v.isExpanded) {
 						this.moveFocus(1);
 
 					} else {
@@ -91,7 +91,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				break;
 
 			case keyCodes.LEFT:
-				if (this.$v.isExpandable && this.$v.isExpanded()) {
+				if (this.$v.isExpandable && this.$v.isExpanded) {
 					this.closeFold();
 
 				} else {
@@ -101,11 +101,11 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				break;
 
 			case keyCodes.HOME:
-				void this.setFocusToFirstItem();
+				this.setFocusToFirstItem();
 				break;
 
 			case keyCodes.END:
-				void this.setFocusToLastItem();
+				this.setFocusToLastItem();
 				break;
 
 			default:
@@ -159,28 +159,18 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		}
 	}
 
-	async setFocusToFirstItem(): Promise<void> {
-		await this.ctx.async.wait(
-			this.$v.getRootElement.bind(this),
-			{label: $$.waitRoot}
-		);
-
+	setFocusToFirstItem(): void {
 		const
-			firstEl = <CanUndef<HTMLElement>>this.$v.getRootElement()?.querySelector(FOCUSABLE_SELECTOR);
+			firstEl = <CanUndef<HTMLElement>>this.$v.rootElement?.querySelector(FOCUSABLE_SELECTOR);
 
 		if (firstEl != null) {
 			this.focusNext(firstEl);
 		}
 	}
 
-	async setFocusToLastItem(): Promise<void> {
-		await this.ctx.async.wait(
-			this.$v.getRootElement.bind(this),
-			{label: $$.waitRoot}
-		);
-
+	setFocusToLastItem(): void {
 		const
-			items = <CanUndef<NodeListOf<HTMLElement>>>this.$v.getRootElement()?.querySelectorAll(FOCUSABLE_SELECTOR);
+			items = <CanUndef<NodeListOf<HTMLElement>>>this.$v.rootElement?.querySelectorAll(FOCUSABLE_SELECTOR);
 
 		const visibleItems: HTMLElement[] = [].filter.call(
 			items,

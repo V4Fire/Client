@@ -37,3 +37,9 @@ export enum keyCodes {
 	RIGHT = 'ArrowRight',
 	DOWN = 'ArrowDown'
 }
+
+export enum eventsNames {
+	openEvent = 'onOpen',
+	closeEvent = 'onClose',
+	changeEvent = 'onChange'
+}

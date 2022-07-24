@@ -47,14 +47,9 @@
 							}
 						})) |
 
-						:v-attrs = isTablist()
+						:v-attrs = isTablist
 							? {
-									'v-aria:tab': {
-										isFirst: i === 0,
-										isVertical: vertical,
-										onChange: onActiveChange,
-										isActive: isActive(el.value)
-									},
+									'v-aria:tab': getAriaOpt('tab', el, i),
 									...el.attrs
 								}
 							: el.attrs
@@ -110,12 +105,9 @@
 
 		< tag.&__wrapper &
 			:is = listTag |
-			:v-attrs = isTablist()
+			:v-attrs = isTablist
 				? {
-						'v-aria:tablist': {
-							isMultiple: multiple,
-            	isVertical: vertical
-						},
+						'v-aria:tablist': getAriaOpt('tablist'),
 						...attrs
 					}
 				: attrs

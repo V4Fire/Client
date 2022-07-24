@@ -251,26 +251,11 @@ class bTree extends iData implements iItems, iAccess {
 	}
 
 	/**
-	 * Handler: fold element has been clicked
-	 *
-	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
-	 */
-	protected onFoldClick(item: this['Item']): void {
-		const
-			target = this.findItemElement(item.id),
-			newVal = this.getFoldedModById(item.id) === 'false';
-
-		if (target) {
-			this.block?.setElMod(target, 'node', 'folded', newVal);
-			this.emit('fold', target, item, newVal);
-		}
-	}
-
-	/**
 	 * Toggle folded state
 	 *
-	 * @params target, value
+	 * @param item
+	 * @param target
+	 * @param value?
 	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
 	 */
 	protected changeFoldedMod(item: this['Item'], target: HTMLElement, value?: boolean): void {
@@ -286,6 +271,69 @@ class bTree extends iData implements iItems, iAccess {
 
 		this.block?.setElMod(target, 'node', 'folded', newVal);
 		this.emit('fold', target, item, newVal);
+	}
+
+	/**
+	 * Returns a dictionary with options for aria directive for tree role
+	 * @param role
+	 */
+		protected getAriaOpt(role: 'tree'): Dictionary
+
+	/**
+	 * Returns a dictionary with options for aria directive for treeitem role
+	 *
+	 * @param role
+	 * @param item
+	 * @param i - position index
+	 */
+	protected getAriaOpt(role: 'treeitem', item: this['Item'], i: number): Dictionary
+
+	protected getAriaOpt(role: 'tree' | 'treeitem', item?: this['Item'], i?: number): Dictionary {
+		const
+			getFoldedMod = this.getFoldedModById.bind(this, item?.id),
+			root = () => this.top?.$el ?? this.$el;
+
+		const opts = {
+			tree: {
+				isVertical: this.vertical,
+				isRoot: this.top == null,
+				changeEvent: (cb: Function) => {
+					this.on('fold', (ctx, el, item, value) => cb(el, value));
+				}
+			},
+			treeitem: {
+				isRootFirstItem: this.top == null && i === 0,
+				toggleFold: this.changeFoldedMod.bind(this, item),
+				get rootElement() {
+					return root();
+				},
+				get isExpanded() {
+					return getFoldedMod() === 'false';
+				},
+				get isExpandable() {
+					return item?.children != null;
+				}
+			}
+		};
+
+		return opts[role];
+	}
+
+	/**
+	 * Handler: fold element has been clicked
+	 *
+	 * @param item
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 */
+	protected onFoldClick(item: this['Item']): void {
+		const
+			target = this.findItemElement(item.id),
+			newVal = this.getFoldedModById(item.id) === 'false';
+
+		if (target) {
+			this.block?.setElMod(target, 'node', 'folded', newVal);
+			this.emit('fold', target, item, newVal);
+		}
 	}
 }
 

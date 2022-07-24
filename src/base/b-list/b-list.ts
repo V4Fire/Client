@@ -690,7 +690,7 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	/**
 	 * Returns true if the component is used as tab list
 	 */
-	protected isTablist(): boolean {
+	protected get isTablist(): boolean {
 		return this.items.some((el) => el.href === undefined);
 	}
 
@@ -704,6 +704,58 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 
 	protected override onDelData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
+	}
+
+	/**
+	 * Returns a dictionary with options for aria directive for tab role
+	 * @param role
+	 */
+	protected getAriaOpt(role: 'tab'): Dictionary;
+
+	/**
+	 * Returns a dictionary with options for aria directive for tablist role
+	 *
+	 * @param role
+	 * @param item
+	 * @param i - position index
+	 */
+	protected getAriaOpt(role: 'tablist', item: this['Item'], i: number): Dictionary;
+
+	protected getAriaOpt(role: 'tab' | 'tablist', item?: this['Item'], i?: number): Dictionary {
+		const
+			isActive = this.isActive.bind(this, item?.value);
+
+		const opts = {
+				tablist: {
+					isMultiple: this.multiple,
+					isVertical: this.vertical
+				},
+				tab: {
+					isFirst: i === 0,
+					isVertical: this.vertical,
+					changeEvent: this.bindToChange.bind(this),
+					get isActive() {
+						return isActive();
+					}
+				}
+			};
+
+		return opts[role];
+	}
+
+	/**
+	 * Binds callback to change event
+	 * @param cb
+	 */
+	protected bindToChange(cb: Function): void {
+		this.on('change', () => {
+			if (Object.isSet(this.active)) {
+				cb(this.block?.elements('link', {active: true}));
+
+			} else {
+				cb(this.block?.element('link', {active: true}));
+			}
+		});
 	}
 
 	/**
@@ -724,21 +776,6 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 
 		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);
-	}
-
-	/**
-	 * Handler: on active element changes
-	 * @param cb
-	 */
-	protected onActiveChange(cb: Function): void {
-		this.on('change', () => {
-			if (Object.isSet(this.active)) {
-				cb(this.block?.elements('link', {active: true}));
-
-			} else {
-				cb(this.block?.element('link', {active: true}));
-			}
-		});
 	}
 }
 
