@@ -2,7 +2,7 @@ export interface TabBindingValue {
 	isFirst: boolean;
 	isVertical: boolean;
 	isActive: boolean;
-	onChange(cb: Function): void;
+	changeEvent(cb: Function): void;
 }
 
 export interface TablistBindingValue {
@@ -11,22 +11,22 @@ export interface TablistBindingValue {
 }
 
 export interface TreeBindingValue {
+	isRoot: boolean;
 	isVertical: boolean;
-	isRootTree: boolean;
-	onChange(cb: Function): void;
+	changeEvent(cb: Function): void;
 }
 
 export interface TreeitemBindingValue {
-	isVeryFirstItem: boolean;
+	isRootFirstItem: boolean;
 	isExpandable: boolean;
-	isExpanded(): boolean;
-	getRootElement(): CanUndef<HTMLElement>;
+	isExpanded: boolean;
+	rootElement: CanUndef<HTMLElement>;
 	toggleFold(el: Element, value?: boolean): void;
 }
 
 export interface ComboboxBindingValue {
 	isMultiple: boolean;
-	onChange(cb: Function): void;
-	onOpen(cb: Function): void;
-	onClose(cb: Function): void;
+	changeEvent(cb: Function): void;
+	openEvent(cb: Function): void;
+	closeEvent(cb: Function): void;
 }

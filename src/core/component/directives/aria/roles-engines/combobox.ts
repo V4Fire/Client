@@ -35,13 +35,11 @@ export default class ComboboxEngine extends AriaRoleEngine {
 
 	onOpen = (element: HTMLElement): void => {
 		this.el.setAttribute('aria-expanded', 'true');
-
 		this.setAriaActive(element);
 	};
 
 	onClose = (): void => {
 		this.el.setAttribute('aria-expanded', 'false');
-
 		this.setAriaActive();
 	};
 

@@ -13,11 +13,7 @@
 - template index() extends ['i-data'].index
 	- block body
 		< .&__root &
-			v-aria:tree = {
-				isVertical: vertical,
-				isRootTree: top == null,
-				onChange: (cb) => on('fold', (ctx, el, item, value) => cb(el, value))
-			}
+			v-aria:tree = getAriaOpt('tree')
 		.
 			< template &
 				v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
@@ -32,13 +28,7 @@
 							folded: getFoldedPropValue(el)
 						}
 					}) |
-					v-aria:treeitem = {
-						getRootElement: () => (top ? top.$el : $el),
-						toggleFold: changeFoldedMod.bind(this, el) ,
-						isExpanded: () => getFoldedModById(el.id) === 'false',
-						isExpandable: el.children != null,
-						isVeryFirstItem: top == null && i === 0
-					}
+					v-aria:treeitem = getAriaOpt('treeitem', el, i)
 				.
 					< .&__item-wrapper
 						< .&__marker

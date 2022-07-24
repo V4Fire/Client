@@ -41,12 +41,10 @@
 
 					:v-attrs = native
 						? el.attrs
-						: {'v-aria:option': {
-									preSelected: isSelected(el.value),
-									onChange: (cb) => on('actionChange', () => cb(isSelected(el.value)))
-               	},
-               ...el.attrs
-              } |
+						: {
+								'v-aria:option': getAriaOpt('option', el),
+								...el.attrs
+							} |
 
 					:id = dom.getId(el.value) |
 					${itemAttrs}
@@ -98,13 +96,7 @@
 								+= self.items('option')
 
 					< template v-else
-						< _.&__cell.&__input-wrapper &
-							v-aria:combobox = {
-								onOpen,
-                onClose: (cb) => on('close', cb),
-								onChange: onItemMarked,
-								isMultiple: multiple
-							} .
+						< _.&__cell.&__input-wrapper v-aria:combobox = getAriaOpt('combobox')
 							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
 
 				- block icon

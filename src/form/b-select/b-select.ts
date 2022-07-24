@@ -933,6 +933,46 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
+	 * Returns a dictionary with options for aria directive for combobox role
+	 * @param role
+	 */
+	protected getAriaOpt(role: 'combobox'): Dictionary;
+
+	/**
+	 * Returns a dictionary with options for aria directive for option role
+	 *
+	 * @param role
+	 * @param item
+	 */
+	protected getAriaOpt(role: 'option', item: this['Item']): Dictionary;
+
+	protected getAriaOpt(role: 'combobox' | 'option', item?: this['Item']): Dictionary {
+		const
+			event = 'el.mod.set.*.marked.*',
+			isSelected = this.isSelected.bind(this, item?.value);
+
+		const
+			opts = {
+				combobox: {
+					isMultiple: this.multiple,
+					changeEvent: (cb) => this.localEmitter.on(event, ({link}) => cb(link)),
+					closeEvent: (cb) => this.on('close', cb),
+					openEvent: (cb) => this.on('open', () => {
+						void this.$nextTick(() => cb(this.selectedElement));
+					})
+				},
+				option: {
+					get preSelected() {
+						return isSelected();
+					},
+					changeEvent: (cb) => this.on('actionChange', () => cb(isSelected()))
+				}
+			};
+
+		return opts[role];
+	}
+
+	/**
 	 * Handler: typing text into a helper text input to search select options
 	 *
 	 * @param e
@@ -964,26 +1004,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 */
 	protected onItemsNavigate(e: KeyboardEvent): void {
 		void on.itemsNavigate(this, e);
-	}
-
-	/**
-	 * Handler: executes callback on "open" event
-	 * @param cb
-	 */
-	protected onOpen(cb: Function): void {
-		this.on('open', () => {
-			void this.$nextTick(() => {
-				cb.call(this, this.selectedElement);
-			});
-		});
-	}
-
-	/**
-	 * Handler: executes callback on item set "marked" mod
-	 * @param cb
-	 */
-	protected onItemMarked(cb: Function): void {
-		this.localEmitter.on('el.mod.set.**', ({link}) => cb(link));
 	}
 }
 

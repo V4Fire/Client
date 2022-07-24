@@ -8,7 +8,7 @@
 
 import AriaRoleEngine from 'core/component/directives/aria/interface';
 
-export default class ListboxEngine extends AriaRoleEngine {
+export default class OptionEngine extends AriaRoleEngine {
 	init(): void {
 		const
 			{el} = this.options,
@@ -21,7 +21,7 @@ export default class ListboxEngine extends AriaRoleEngine {
 	onChange = (isSelected: boolean): void => {
 		const
 			{el} = this.options;
-
+		console.log(isSelected)
 		el.setAttribute('aria-selected', String(isSelected));
 	};
 }

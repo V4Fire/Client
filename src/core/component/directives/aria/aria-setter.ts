@@ -8,7 +8,7 @@
 
 import * as ariaRoles from 'core/component/directives/aria/roles-engines';
 import Async from 'core/async';
-import AriaRoleEngine from 'core/component/directives/aria/interface';
+import AriaRoleEngine, { eventsNames } from 'core/component/directives/aria/interface';
 import type iBlock from 'super/i-block/i-block';
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
 
@@ -62,11 +62,11 @@ export default class AriaSetter extends AriaRoleEngine {
 		const
 			$v = this.options.binding.value;
 
-		for (const p in $v) {
-			if (p === 'onOpen' || p === 'onClose' || p === 'onChange') {
+		for (const key in $v) {
+			if (key in eventsNames) {
 				const
-					callback = this.role[p],
-					property = $v[p];
+					callback = this.role[eventsNames[key]],
+					property = $v[key];
 
 				if (Object.isFunction(property)) {
 					property(callback);

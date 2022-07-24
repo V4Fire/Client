@@ -29,7 +29,7 @@ export default class TreeEngine extends AriaRoleEngine {
 	}
 
 	setRootRole(): void {
-		this.el.setAttribute('role', this.$v.isRootTree ? 'tree' : 'group');
+		this.el.setAttribute('role', this.$v.isRoot ? 'tree' : 'group');
 	}
 
 	onChange = (el: HTMLElement, isFolded: boolean): void => {
