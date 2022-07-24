@@ -16,12 +16,16 @@ export default class OptionEngine extends AriaRoleEngine {
 
 		el.setAttribute('role', 'option');
 		el.setAttribute('aria-selected', String(preSelected));
+
+		if (!el.hasAttribute('id')) {
+			Object.throw('Option aria directive expects the Element id to be added');
+		}
 	}
 
 	onChange = (isSelected: boolean): void => {
 		const
 			{el} = this.options;
-		console.log(isSelected)
+
 		el.setAttribute('aria-selected', String(isSelected));
 	};
 }
