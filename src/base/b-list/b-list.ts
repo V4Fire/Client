@@ -21,13 +21,14 @@ import SyncPromise from 'core/promise/sync';
 import { isAbsURL } from 'core/url';
 
 import { derive } from 'core/functools/trait';
+
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
-
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import type { Active, Item, Items } from 'base/b-list/interface';
 import iAccess from 'traits/i-access/i-access';
+import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
+
+import type { Active, Item, Items, Orientation } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
@@ -117,10 +118,10 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	readonly multiple: boolean = false;
 
 	/**
-	 * If true, the component view orientation is vertical. Horizontal is default
+	 * The component view orientation
 	 */
-	@prop(Boolean)
-	readonly vertical: boolean = false;
+	@prop(String)
+	readonly orientation: Orientation = 'horizontal';
 
 	/**
 	 * If true, the active item can be unset by using another click to it.
@@ -267,14 +268,18 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	protected activeStore!: this['Active'];
 
 	/**
+	 * True if the component is used as a tablist
+	 */
+	@computed({dependencies: ['items']})
+	protected get isTablist(): boolean {
+		return this.items.some((el) => el.href === undefined);
+	}
+
+	/**
 	 * A link to the active item element.
 	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
 	 */
-	@computed({
-		cache: true,
-		dependencies: ['active']
-	})
-
+	@computed({dependencies: ['active']})
 	protected get activeElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
 		const
 			{active} = this;
@@ -692,10 +697,55 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	}
 
 	/**
-	 * Returns true if the component is used as tab list
+	 * Returns a dictionary with configurations for the v-aria directive used as a tablist
+	 * @param role
 	 */
-	protected get isTablist(): boolean {
-		return this.items.some((el) => el.href === undefined);
+	protected getAriaConfig(role: 'tablist'): Dictionary;
+
+	/**
+	 * Returns a dictionary with configurations for the v-aria directive used as a tab
+	 *
+	 * @param role
+	 * @param item - tab item data
+	 * @param i - tab item position index
+	 */
+	protected getAriaConfig(role: 'tab', item: this['Item'], i: number): Dictionary;
+
+	protected getAriaConfig(role: 'tab' | 'tablist', item?: this['Item'], i?: number): Dictionary {
+		const
+			isActive = this.isActive.bind(this, item?.value),
+			isVertical = this.orientation === 'vertical';
+
+		const changeEvent = (cb: Function) => {
+			this.on('change', () => {
+				if (Object.isSet(this.active)) {
+					cb(this.block?.elements('link', {active: true}));
+
+				} else {
+					cb(this.block?.element('link', {active: true}));
+				}
+			});
+		};
+
+		const tablistConfig = {
+			isVertical,
+			isMultiple: this.multiple
+		};
+
+		const tabConfig = {
+			isVertical,
+			isFirst: i === 0,
+			changeEvent,
+			get isActive() {
+				return isActive();
+			}
+		};
+
+		switch (role) {
+			case 'tablist': return tablistConfig;
+			case 'tab': return tabConfig;
+			default: return {};
+		}
 	}
 
 	protected override onAddData(data: unknown): void {
@@ -708,58 +758,6 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 
 	protected override onDelData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
-	}
-
-	/**
-	 * Returns a dictionary with options for aria directive for tab role
-	 * @param role
-	 */
-	protected getAriaOpt(role: 'tab'): Dictionary;
-
-	/**
-	 * Returns a dictionary with options for aria directive for tablist role
-	 *
-	 * @param role
-	 * @param item
-	 * @param i - position index
-	 */
-	protected getAriaOpt(role: 'tablist', item: this['Item'], i: number): Dictionary;
-
-	protected getAriaOpt(role: 'tab' | 'tablist', item?: this['Item'], i?: number): Dictionary {
-		const
-			isActive = this.isActive.bind(this, item?.value);
-
-		const opts = {
-				tablist: {
-					isMultiple: this.multiple,
-					isVertical: this.vertical
-				},
-				tab: {
-					isFirst: i === 0,
-					isVertical: this.vertical,
-					changeEvent: this.bindToChange.bind(this),
-					get isActive() {
-						return isActive();
-					}
-				}
-			};
-
-		return opts[role];
-	}
-
-	/**
-	 * Binds callback to change event
-	 * @param cb
-	 */
-	protected bindToChange(cb: Function): void {
-		this.on('change', () => {
-			if (Object.isSet(this.active)) {
-				cb(this.block?.elements('link', {active: true}));
-
-			} else {
-				cb(this.block?.element('link', {active: true}));
-			}
-		});
 	}
 
 	/**

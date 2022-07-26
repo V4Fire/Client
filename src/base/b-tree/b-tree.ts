@@ -18,11 +18,12 @@ import 'models/demo/nested-list';
 import symbolGenerator from 'core/symbol';
 
 import { derive } from 'core/functools/trait';
-import iItems, { IterationKey } from 'traits/i-items/i-items';
 
+import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
-import type { Item, RenderFilter } from 'base/b-tree/interface';
 import iAccess from 'traits/i-access/i-access';
+
+import type { Item, Orientation, RenderFilter } from 'base/b-tree/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
@@ -30,7 +31,8 @@ export * from 'base/b-tree/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iAccess> {}
+interface bTree extends Trait<typeof iAccess> {
+}
 
 /**
  * Component to render tree of any elements
@@ -104,10 +106,10 @@ class bTree extends iData implements iItems, iAccess {
 	readonly folded: boolean = true;
 
 	/**
-	 * If true, the component view orientation is vertical. Horizontal is default
+	 * The component view orientation
 	 */
-	@prop(Boolean)
-	readonly vertical: boolean = false;
+	@prop(String)
+	readonly orientation: Orientation = 'horizontal';
 
 	/**
 	 * Link to the top level component (internal parameter)
@@ -251,72 +253,67 @@ class bTree extends iData implements iItems, iAccess {
 	}
 
 	/**
-	 * Toggle folded state
-	 *
-	 * @param item
-	 * @param target
-	 * @param value?
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
-	 */
-	protected changeFoldedMod(item: this['Item'], target: HTMLElement, value?: boolean): void {
-		const
-			mod = this.block?.getElMod(target, 'node', 'folded');
-
-		if (mod == null) {
-			return;
-		}
-
-		const
-			newVal = value ? value : mod === 'false';
-
-		this.block?.setElMod(target, 'node', 'folded', newVal);
-		this.emit('fold', target, item, newVal);
-	}
-
-	/**
-	 * Returns a dictionary with options for aria directive for tree role
+	 * Returns a dictionary with configurations for the v-aria directive used as a tree
 	 * @param role
 	 */
-		protected getAriaOpt(role: 'tree'): Dictionary
+	protected getAriaConfig(role: 'tree'): Dictionary
 
 	/**
-	 * Returns a dictionary with options for aria directive for treeitem role
+	 * Returns a dictionary with configurations for the v-aria directive used as a treeitem
 	 *
 	 * @param role
-	 * @param item
-	 * @param i - position index
+	 * @param item - tab item data
+	 * @param i - tab item position index
 	 */
-	protected getAriaOpt(role: 'treeitem', item: this['Item'], i: number): Dictionary
+	protected getAriaConfig(role: 'treeitem', item: this['Item'], i: number): Dictionary
 
-	protected getAriaOpt(role: 'tree' | 'treeitem', item?: this['Item'], i?: number): Dictionary {
+	protected getAriaConfig(role: 'tree' | 'treeitem', item?: this['Item'], i?: number): Dictionary {
 		const
 			getFoldedMod = this.getFoldedModById.bind(this, item?.id),
 			root = () => this.top?.$el ?? this.$el;
 
-		const opts = {
-			tree: {
-				isVertical: this.vertical,
-				isRoot: this.top == null,
-				changeEvent: (cb: Function) => {
-					this.on('fold', (ctx, el, item, value) => cb(el, value));
-				}
-			},
-			treeitem: {
-				isRootFirstItem: this.top == null && i === 0,
-				toggleFold: this.changeFoldedMod.bind(this, item),
-				get rootElement() {
-					return root();
-				},
-				get isExpanded() {
-					return getFoldedMod() === 'false';
-				},
-				get isExpandable() {
-					return item?.children != null;
-				}
+		const toggleFold = (target: HTMLElement, value?: boolean): void => {
+			const
+				mod = this.block?.getElMod(target, 'node', 'folded');
+
+			if (mod == null) {
+				return;
+			}
+
+			const
+				newVal = value ? value : mod === 'false';
+
+			this.block?.setElMod(target, 'node', 'folded', newVal);
+			this.emit('fold', target, item, newVal);
+		};
+
+		const treeConfig = {
+			isRoot: this.top == null,
+			isVertical: this.orientation === 'vertical',
+			changeEvent: (cb: Function) => {
+				this.on('fold', (ctx, el, item, value) => cb(el, value));
 			}
 		};
 
-		return opts[role];
+		const treeitemConfig = {
+			isRootFirstItem: this.top == null && i === 0,
+			toggleFold,
+			get rootElement() {
+				return root();
+			},
+			get isExpanded() {
+				return getFoldedMod() === 'false';
+			},
+			get isExpandable() {
+				return item?.children != null;
+			}
+		};
+
+		switch (role) {
+			case 'tree': return treeConfig;
+			case 'treeitem': return treeitemConfig;
+			default: return {};
+		}
 	}
 
 	/**

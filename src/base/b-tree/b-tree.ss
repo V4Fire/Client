@@ -12,9 +12,7 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__root &
-			v-aria:tree = getAriaOpt('tree')
-		.
+		< .&__root v-aria:tree = getAriaConfig('tree')
 			< template &
 				v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
 				:key = getItemKey(el, i)
@@ -28,7 +26,8 @@
 							folded: getFoldedPropValue(el)
 						}
 					}) |
-					v-aria:treeitem = getAriaOpt('treeitem', el, i)
+
+					v-aria:treeitem = getAriaConfig('treeitem', el, i)
 				.
 					< .&__item-wrapper
 						< .&__marker

@@ -40,11 +40,11 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		this.$a?.on(this.el, 'keydown', this.onKeyDown);
 
 		const
-			isMuted = this.ctx.muteTabIndexes(this.el);
+			isMuted = this.ctx.removeAllFromTabSequence(this.el);
 
 		if (this.$v.isRootFirstItem) {
 			if (isMuted) {
-				this.ctx.unmuteTabIndexes(this.el);
+				this.ctx.restoreAllToTabSequence(this.el);
 
 			} else {
 				this.el.tabIndex = 0;
@@ -117,14 +117,14 @@ export default class TreeItemEngine extends AriaRoleEngine {
 	};
 
 	focusNext(nextEl: HTMLElement): void {
-		this.ctx.muteTabIndexes(this.el);
-		this.ctx.unmuteTabIndexes(nextEl);
+		this.ctx.removeAllFromTabSequence(this.el);
+		this.ctx.restoreAllToTabSequence(nextEl);
 		nextEl.focus();
 	}
 
 	moveFocus(step: 1 | -1): void {
 		const
-			nextEl = this.ctx.nextFocusableElement(step);
+			nextEl = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
 
 		if (nextEl != null) {
 			this.focusNext(nextEl);

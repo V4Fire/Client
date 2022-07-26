@@ -47,12 +47,12 @@
 							}
 						})) |
 
-						:v-attrs = isTablist
-							? {
-									'v-aria:tab': getAriaOpt('tab', el, i),
-									...el.attrs
-								}
-							: el.attrs
+						:v-attrs = isTablist ?
+							{
+								'v-aria:tab': getAriaConfig('tab', el, i),
+								...el.attrs
+							} :
+							el.attrs
 					.
 						- block preIcon
 							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon || vdom.getSlot('preIcon')
@@ -105,11 +105,11 @@
 
 		< tag.&__wrapper &
 			:is = listTag |
-			:v-attrs = isTablist
-				? {
-						'v-aria:tablist': getAriaOpt('tablist'),
-						...attrs
-					}
-				: attrs
+			:v-attrs = isTablist ?
+				{
+					'v-aria:tablist': getAriaConfig('tablist'),
+					...attrs
+				} :
+				attrs
 		.
 			+= self.list('items')
