@@ -184,15 +184,10 @@ export function unwatch(el: Element, handler?: Nullable<WatchHandler>): void {
 	const
 		store = registeredWatchers.get(el);
 
-	// eslint-disable-next-line eqeqeq
-	if (store == null || handler === null) {
-		return;
-	}
-
 	if (handler == null) {
-		store.forEach((watcher) => watcher.unwatch());
+		store?.forEach((watcher) => watcher.unwatch());
 		return;
 	}
 
-	store.get(handler)?.unwatch();
+	store?.get(handler)?.unwatch();
 }
