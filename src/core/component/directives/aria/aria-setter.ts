@@ -117,14 +117,14 @@ export default class AriaSetter extends AriaRoleEngine {
 			el.setAttribute('aria-label', value.label);
 
 		} else if (value.labelledby != null) {
-			el.setAttribute('aria-labelledby', dom.getId(value.labelledby));
+			el.setAttribute('aria-labelledby', value.labelledby);
 		}
 
 		if (value.description != null) {
 			el.setAttribute('aria-description', value.description);
 
 		} else if (value.describedby != null) {
-			el.setAttribute('aria-describedby', dom.getId(value.describedby));
+			el.setAttribute('aria-describedby', value.describedby);
 		}
 	}
 }

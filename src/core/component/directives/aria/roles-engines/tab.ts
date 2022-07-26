@@ -80,11 +80,17 @@ export default class TabEngine extends AriaRoleEngine {
 	}
 
 	focusNext(): void {
-		this.ctx.nextFocusableElement(1)?.focus();
+		const
+			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(1);
+
+		focusable?.focus();
 	}
 
 	focusPrev(): void {
-		this.ctx.nextFocusableElement(-1)?.focus();
+		const
+			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(-1);
+
+		focusable?.focus();
 	}
 
 	onKeydown = (event: Event): void => {

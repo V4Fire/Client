@@ -13,9 +13,9 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `muteTabIndexes`
-* Added `unmuteTabIndexes`
-* Added `nextFocusableElement`
+* Added `removeAllFromTabSequence`
+* Added `restoreAllToTabSequence`
+* Added `getNextFocusableElement`
 * Added `is`
 
 ## v3.0.0-rc.211 (2021-07-21)
