@@ -180,9 +180,9 @@ export default abstract class iAccess {
 				areElementsRemoved = false;
 
 			const
-				focusableIter = this.findAllFocusableElements(component, ctx);
+				focusableElems = <IterableIterator<HTMLElement>>this.findAllFocusableElements(component, ctx);
 
-			for (const focusableEl of <IterableIterator<HTMLElement>>focusableIter) {
+			for (const focusableEl of focusableElems) {
 				if (!focusableEl.hasAttribute('data-tabindex')) {
 					focusableEl.setAttribute('data-tabindex', String(focusableEl.tabIndex));
 				}
@@ -208,13 +208,13 @@ export default abstract class iAccess {
 				areElementsRestored = false;
 
 			let
-				removedElemsIter = intoIter(ctx.querySelectorAll<HTMLElement>('[data-tabindex]'));
+				removedElems = intoIter(ctx.querySelectorAll<HTMLElement>('[data-tabindex]'));
 
 			if (el?.hasAttribute('data-tabindex')) {
-				removedElemsIter = sequence(removedElemsIter, intoIter([el]));
+				removedElems = sequence(removedElems, intoIter([el]));
 			}
 
-			for (const elem of <IterableIterator<HTMLElement>>removedElemsIter) {
+			for (const elem of <IterableIterator<HTMLElement>>removedElems) {
 				const
 					originalTabIndex = elem.getAttribute('data-tabindex');
 
@@ -238,16 +238,16 @@ export default abstract class iAccess {
 
 			const
 				ctx = el ?? document.documentElement,
-				focusableIter = this.findAllFocusableElements(component, ctx),
+				focusableElems = <IterableIterator<HTMLElement>>this.findAllFocusableElements(component, ctx),
 				visibleFocusable: HTMLElement[] = [];
 
-			for (const element of <IterableIterator<HTMLElement>>focusableIter) {
+			for (const focusableEl of focusableElems) {
 				if (
-					element.offsetWidth > 0 ||
-					element.offsetHeight > 0 ||
-					element === document.activeElement
+					focusableEl.offsetWidth > 0 ||
+					focusableEl.offsetHeight > 0 ||
+					focusableEl === document.activeElement
 				) {
-					visibleFocusable.push(element);
+					visibleFocusable.push(focusableEl);
 				}
 			}
 
@@ -264,11 +264,11 @@ export default abstract class iAccess {
 		(component, el?): CanUndef<Element> => {
 			const
 				ctx = el ?? component.$el,
-				focusableIter = this.findAllFocusableElements(component, ctx);
+				focusableElems = this.findAllFocusableElements(component, ctx);
 
-			for (const element of focusableIter) {
-				if (!element.hasAttribute('disabled')) {
-					return element;
+			for (const focusableEl of focusableElems) {
+				if (!focusableEl.hasAttribute('disabled')) {
+					return focusableEl;
 				}
 			}
 		};

@@ -9,20 +9,16 @@
  * Copyright © [2022] W3C® (MIT, ERCIM, Keio, Beihang).
  */
 
-import symbolGenerator from 'core/symbol';
 import AriaRoleEngine, { DirectiveOptions, keyCodes } from 'core/component/directives/aria/interface';
 import iAccess from 'traits/i-access/i-access';
-import { FOCUSABLE_SELECTOR } from 'traits/i-access/const';
-import type { TreeitemBindingValue } from 'core/component/directives/aria/roles-engines/interface';
-import type iBlock from 'super/i-block/i-block';
 
-export const
-	$$ = symbolGenerator();
+import type { TreeitemParams } from 'core/component/directives/aria/roles-engines/interface';
+import type iBlock from 'super/i-block/i-block';
 
 export default class TreeItemEngine extends AriaRoleEngine {
 	ctx: iAccess & iBlock['unsafe'];
 	el: HTMLElement;
-	$v: TreeitemBindingValue;
+	params: TreeitemParams;
 
 	constructor(options: DirectiveOptions) {
 		super(options);
@@ -33,16 +29,16 @@ export default class TreeItemEngine extends AriaRoleEngine {
 
 		this.ctx = Object.cast<iAccess & iBlock['unsafe']>(options.vnode.fakeContext);
 		this.el = this.options.el;
-		this.$v = this.options.binding.value;
+		this.params = this.options.binding.value;
 	}
 
 	init(): void {
-		this.$a?.on(this.el, 'keydown', this.onKeyDown);
+		this.async?.on(this.el, 'keydown', this.onKeyDown);
 
 		const
 			isMuted = this.ctx.removeAllFromTabSequence(this.el);
 
-		if (this.$v.isRootFirstItem) {
+		if (this.params.isRootFirstItem) {
 			if (isMuted) {
 				this.ctx.restoreAllToTabSequence(this.el);
 
@@ -54,8 +50,8 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		this.el.setAttribute('role', 'treeitem');
 
 		this.ctx.$nextTick(() => {
-			if (this.$v.isExpandable) {
-				this.el.setAttribute('aria-expanded', String(this.$v.isExpanded));
+			if (this.params.isExpandable) {
+				this.el.setAttribute('aria-expanded', String(this.params.isExpanded));
 			}
 		});
 	}
@@ -75,12 +71,12 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				break;
 
 			case keyCodes.ENTER:
-				this.$v.toggleFold(this.el);
+				this.params.toggleFold(this.el);
 				break;
 
 			case keyCodes.RIGHT:
-				if (this.$v.isExpandable) {
-					if (this.$v.isExpanded) {
+				if (this.params.isExpandable) {
+					if (this.params.isExpanded) {
 						this.moveFocus(1);
 
 					} else {
@@ -91,7 +87,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				break;
 
 			case keyCodes.LEFT:
-				if (this.$v.isExpandable && this.$v.isExpanded) {
+				if (this.params.isExpandable && this.params.isExpanded) {
 					this.closeFold();
 
 				} else {
@@ -119,6 +115,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 	focusNext(nextEl: HTMLElement): void {
 		this.ctx.removeAllFromTabSequence(this.el);
 		this.ctx.restoreAllToTabSequence(nextEl);
+
 		nextEl.focus();
 	}
 
@@ -132,11 +129,11 @@ export default class TreeItemEngine extends AriaRoleEngine {
 	}
 
 	openFold(): void {
-		this.$v.toggleFold(this.el, false);
+		this.params.toggleFold(this.el, false);
 	}
 
 	closeFold(): void {
-		this.$v.toggleFold(this.el, true);
+		this.params.toggleFold(this.el, true);
 	}
 
 	focusParent(): void {
@@ -151,8 +148,12 @@ export default class TreeItemEngine extends AriaRoleEngine {
 			parent = parent.parentElement;
 		}
 
+		if (parent == null) {
+			return;
+		}
+
 		const
-			focusableParent = (<CanUndef<HTMLElement>>parent?.querySelector(FOCUSABLE_SELECTOR));
+			focusableParent = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(parent);
 
 		if (focusableParent != null) {
 			this.focusNext(focusableParent);
@@ -161,30 +162,28 @@ export default class TreeItemEngine extends AriaRoleEngine {
 
 	setFocusToFirstItem(): void {
 		const
-			firstEl = <CanUndef<HTMLElement>>this.$v.rootElement?.querySelector(FOCUSABLE_SELECTOR);
+			firstItem = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(this.params.rootElement);
 
-		if (firstEl != null) {
-			this.focusNext(firstEl);
+		if (firstItem != null) {
+			this.focusNext(firstItem);
 		}
 	}
 
 	setFocusToLastItem(): void {
 		const
-			items = <CanUndef<NodeListOf<HTMLElement>>>this.$v.rootElement?.querySelectorAll(FOCUSABLE_SELECTOR);
+			items = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements(this.params.rootElement);
 
-		const visibleItems: HTMLElement[] = [].filter.call(
-			items,
-			(el: HTMLElement) => (
-				el.offsetWidth > 0 ||
-				el.offsetHeight > 0
-			)
-		);
+		let
+			lastItem: CanUndef<HTMLElement>;
 
-		const
-			lastEl = visibleItems.at(-1);
+		for (const item of items) {
+			if (item.offsetWidth > 0 || item.offsetHeight > 0) {
+				lastItem = item;
+			}
+		}
 
-		if (lastEl != null) {
-			this.focusNext(lastEl);
+		if (lastItem != null) {
+			this.focusNext(lastItem);
 		}
 	}
 }

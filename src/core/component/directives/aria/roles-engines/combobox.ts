@@ -7,28 +7,29 @@
  */
 
 import AriaRoleEngine, { DirectiveOptions } from 'core/component/directives/aria/interface';
-import { FOCUSABLE_SELECTOR } from 'traits/i-access/const';
-import type { ComboboxBindingValue } from 'core/component/directives/aria/roles-engines/interface';
+import type { ComboboxParams } from 'core/component/directives/aria/roles-engines/interface';
+import type iAccess from 'traits/i-access/i-access';
 
 export default class ComboboxEngine extends AriaRoleEngine {
 	el: Element;
-	$v: ComboboxBindingValue;
+	params: ComboboxParams;
 
 	constructor(options: DirectiveOptions) {
 		super(options);
 
 		const
-			{el} = this.options;
+			{el} = this.options,
+			ctx = Object.cast<iAccess>(this.options.vnode.fakeContext);
 
-		this.el = el.querySelector(FOCUSABLE_SELECTOR) ?? el;
-		this.$v = this.options.binding.value;
+		this.el = ctx.findFocusableElement() ?? el;
+		this.params = this.options.binding.value;
 	}
 
 	init(): void {
 		this.el.setAttribute('role', 'combobox');
 		this.el.setAttribute('aria-expanded', 'false');
 
-		if (this.$v.isMultiple) {
+		if (this.params.isMultiple) {
 			this.el.setAttribute('aria-multiselectable', 'true');
 		}
 	}

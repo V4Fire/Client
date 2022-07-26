@@ -7,29 +7,29 @@
  */
 
 import AriaRoleEngine, { DirectiveOptions } from 'core/component/directives/aria/interface';
-import type { TreeBindingValue } from 'core/component/directives/aria/roles-engines/interface';
+import type { TreeParams } from 'core/component/directives/aria/roles-engines/interface';
 
 export default class TreeEngine extends AriaRoleEngine {
-	$v: TreeBindingValue;
+	params: TreeParams;
 	el: HTMLElement;
 
 	constructor(options: DirectiveOptions) {
 		super(options);
 
-		this.$v = options.binding.value;
+		this.params = options.binding.value;
 		this.el = this.options.el;
 	}
 
 	init(): void {
 		this.setRootRole();
 
-		if (this.$v.isVertical) {
+		if (this.params.isVertical) {
 			this.el.setAttribute('aria-orientation', 'vertical');
 		}
 	}
 
 	setRootRole(): void {
-		this.el.setAttribute('role', this.$v.isRoot ? 'tree' : 'group');
+		this.el.setAttribute('role', this.params.isRoot ? 'tree' : 'group');
 	}
 
 	onChange = (el: HTMLElement, isFolded: boolean): void => {

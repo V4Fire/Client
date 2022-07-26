@@ -17,18 +17,16 @@ export interface DirectiveOptions {
 
 export default abstract class AriaRoleEngine {
 	options: DirectiveOptions;
-	$a: CanUndef<Async>;
+	async: CanUndef<Async>;
 
 	protected constructor(options: DirectiveOptions) {
 		this.options = options;
 	}
 
 	abstract init(): void;
-	update?(): void;
-	clear?(): void;
 }
 
-export enum keyCodes {
+export const enum keyCodes {
 	ENTER = 'Enter',
 	END = 'End',
 	HOME = 'Home',
@@ -38,7 +36,7 @@ export enum keyCodes {
 	DOWN = 'ArrowDown'
 }
 
-export enum eventsNames {
+export const enum eventsNames {
 	openEvent = 'onOpen',
 	closeEvent = 'onClose',
 	changeEvent = 'onChange'
