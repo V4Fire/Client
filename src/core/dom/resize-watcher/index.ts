@@ -85,7 +85,11 @@ export function watch(
 		id: Math.random().toString().slice(2),
 		target: el,
 		handler,
-		unwatch: () => unwatch(el, handler),
+
+		unwatch() {
+			return undefined;
+		},
+
 		...opts
 	};
 
@@ -143,7 +147,12 @@ export function watch(
 		}
 	});
 
-	watcher.observer = observer;
+	watcher.unwatch = () => {
+		observer.disconnect();
+		asyncTasks.clearAll({label: watcher.id});
+		store!.delete(handler!);
+	};
+
 	observer.observe(el, Object.select(optsOrHandler, 'box'));
 	store.set(handler, watcher);
 
@@ -181,18 +190,9 @@ export function unwatch(el: Element, handler?: Nullable<WatchHandler>): void {
 	}
 
 	if (handler == null) {
-		store.forEach((handle) => handle.unwatch());
+		store.forEach((watcher) => watcher.unwatch());
 		return;
 	}
 
-	const
-		watcher = store.get(handler);
-
-	if (watcher == null) {
-		return;
-	}
-
-	watcher.observer?.disconnect();
-	asyncTasks.clearAll({label: watcher.id});
-	store.delete(handler);
+	store.get(handler)?.unwatch();
 }

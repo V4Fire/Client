@@ -80,12 +80,6 @@ export interface Watcher extends Readonly<
 	readonly rect?: DOMRectReadOnly;
 
 	/**
-	 * An instance of [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) that is used to
-	 * observe the element
-	 */
-	readonly observer?: ResizeObserver;
-
-	/**
 	 * Cancels watching for the element geometry
 	 */
 	unwatch(): void;
