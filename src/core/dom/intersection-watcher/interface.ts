@@ -8,12 +8,6 @@
 
 export interface WatchOptions {
 	/**
-	 * A name of the group this operation belongs to.
-	 * This name can be used to disable or suspend multiple items in a single call.
-	 */
-	group?: PropertyKey;
-
-	/**
 	 * An element whose bounds are treated as the bounding box of the viewport for the element which is the
 	 * observer target. This option can also be given as a function that returns the root element.
 	 *
@@ -88,19 +82,6 @@ export interface WatchOptions {
 	onLeave?: WatchHandler;
 }
 
-export interface UnwatchOptions {
-	/**
-	 * Threshold for which the handler needs to be removed
-	 */
-	threshold?: number;
-
-	/**
-	 * If true, the element observation won't be canceled, but suspended.
-	 * You can later resume observing the element with the `unsuspend` method.
-	 */
-	suspend?: boolean;
-}
-
 export interface Watcher extends Readonly<WatchOptions & Required<Pick<WatchOptions, 'once' | 'threshold'>>> {
 	/**
 	 * The unique watcher identifier
@@ -111,6 +92,11 @@ export interface Watcher extends Readonly<WatchOptions & Required<Pick<WatchOpti
 	 * The observed element
 	 */
 	readonly target: Element;
+
+	/**
+	 * A function that will be called when the element enters the viewport
+	 */
+	readonly handler: WatchHandler;
 
 	/**
 	 * The observable target size
@@ -158,10 +144,19 @@ export interface ElementRect extends ElementSize {
 	right: number;
 }
 
+/**
+ * A link to the intersection watcher.
+ * Can be given as a `threshold` value or a handler.
+ */
+export type WatchLink = WatchHandler | number;
+
+/**
+ * A function that will be called when the element enters the viewport
+ * @param watcher - the element watcher
+ */
 export interface WatchHandler {
 	(watcher: Watcher): void;
 }
 
-export type RegisteredWatchers = Map<number | Function, Watcher>;
+export type RegisteredWatchers = Map<WatchLink, Watcher | Set<Watcher>>;
 export type ObservableElements = Map<Element, RegisteredWatchers>;
-export type ObservableGroups = Record<PropertyKey, CanUndef<ObservableElements>>;
