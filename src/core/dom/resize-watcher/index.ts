@@ -25,10 +25,10 @@ export * from 'core/dom/resize-watcher/interface';
  * Watches for the geometry of the passed element and invokes the specified handler when it changes.
  * The function returns a special watcher object that can be used to cancel the watching.
  *
- * Note, changes occurring in the same tick are merged into one. You can disable this behavior by passing
- * the `immediate: true` option.
+ * Note, changes occurring in the same tick are merged into one.
+ * You can disable this behavior by passing the `immediate: true` option.
  *
- * @param el - the element to observe
+ * @param el - the element to watch
  * @param handler - a function that will be called when the size of the observable element is changed
  */
 export function watch(el: Element, handler: WatchHandler): Watcher;
@@ -37,11 +37,11 @@ export function watch(el: Element, handler: WatchHandler): Watcher;
  * Watches for the geometry of the passed element and invokes the specified handler when it changes.
  * The function returns a special watcher object that can be used to cancel the watching.
  *
- * Note, changes occurring in the same tick are merged into one. You can disable this behavior by passing
- * the `immediate: true` option.
+ * Note, changes occurring in the same tick are merged into one.
+ * You can disable this behavior by passing the `immediate: true` option.
  *
- * @param el - the element to observe
- * @param opts - additional observation options
+ * @param el - the element to watch
+ * @param opts - additional watch options
  * @param handler - a function that will be called when the size of the observable element is changed
  *
  * @example
