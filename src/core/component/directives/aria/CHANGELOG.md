@@ -8,3 +8,9 @@ Changelog
 > - :memo:       [Documentation]
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
+
+## v?.??.? (2022-0?-??)
+
+#### :rocket: New Feature
+
+* Initial release

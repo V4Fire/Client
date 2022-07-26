@@ -13,18 +13,20 @@ import type iBlock from 'super/i-block/i-block';
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
 
 export default class AriaSetter extends AriaRoleEngine {
-	override $a: Async;
+	override async: Async;
 	role: CanUndef<AriaRoleEngine>;
 
 	constructor(options: DirectiveOptions) {
 		super(options);
 
-		this.$a = new Async();
+		this.async = new Async();
 		this.setAriaRole();
 
 		if (this.role != null) {
-			this.role.$a = this.$a;
+			this.role.async = this.async;
 		}
+
+		this.init();
 	}
 
 	init(): void {
@@ -34,54 +36,17 @@ export default class AriaSetter extends AriaRoleEngine {
 		this.role?.init();
 	}
 
-	override update(): void {
+	update(): void {
 		const
 			ctx = <iBlock>this.options.vnode.fakeContext;
 
 		if (ctx.isFunctional) {
 			ctx.off();
 		}
-
-		if (this.role != null) {
-			this.role.options = this.options;
-			this.role.update?.();
-		}
 	}
 
-	override clear(): void {
-		this.$a.clearAll();
-
-		this.role?.clear?.();
-	}
-
-	addEventHandlers(): void {
-		if (this.role == null) {
-			return;
-		}
-
-		const
-			$v = this.options.binding.value;
-
-		for (const key in $v) {
-			if (key in eventsNames) {
-				const
-					callback = this.role[eventsNames[key]],
-					property = $v[key];
-
-				if (Object.isFunction(property)) {
-					property(callback);
-
-				} else if (Object.isPromiseLike(property)) {
-					void property.then(callback);
-
-				} else if (Object.isString(property)) {
-					const
-						ctx = <iBlock>this.options.vnode.fakeContext;
-
-					ctx.on(property, callback);
-				}
-			}
-		}
+	destroy(): void {
+		this.async.clearAll();
 	}
 
 	setAriaRole(): CanUndef<AriaRoleEngine> {
@@ -99,7 +64,7 @@ export default class AriaSetter extends AriaRoleEngine {
 		const
 			{vnode, binding, el} = this.options,
 			{dom} = Object.cast<iBlock['unsafe']>(vnode.fakeContext),
-			value = Object.isCustomObject(binding.value) ? binding.value : {};
+			params = Object.isCustomObject(binding.value) ? binding.value : {};
 
 		for (const mod in binding.modifiers) {
 			if (!mod.startsWith('#')) {
@@ -113,18 +78,48 @@ export default class AriaSetter extends AriaRoleEngine {
 			el.setAttribute('aria-labelledby', id);
 		}
 
-		if (value.label != null) {
-			el.setAttribute('aria-label', value.label);
+		if (params.label != null) {
+			el.setAttribute('aria-label', params.label);
 
-		} else if (value.labelledby != null) {
-			el.setAttribute('aria-labelledby', value.labelledby);
+		} else if (params.labelledby != null) {
+			el.setAttribute('aria-labelledby', params.labelledby);
 		}
 
-		if (value.description != null) {
-			el.setAttribute('aria-description', value.description);
+		if (params.description != null) {
+			el.setAttribute('aria-description', params.description);
 
-		} else if (value.describedby != null) {
-			el.setAttribute('aria-describedby', value.describedby);
+		} else if (params.describedby != null) {
+			el.setAttribute('aria-describedby', params.describedby);
+		}
+	}
+
+	addEventHandlers(): void {
+		if (this.role == null) {
+			return;
+		}
+
+		const
+			params = this.options.binding.value;
+
+		for (const key in params) {
+			if (key in eventsNames) {
+				const
+					callback = this.role[eventsNames[key]],
+					property = params[key];
+
+				if (Object.isFunction(property)) {
+					property(callback);
+
+				} else if (Object.isPromiseLike(property)) {
+					void property.then(callback);
+
+				} else if (Object.isString(property)) {
+					const
+						ctx = <iBlock>this.options.vnode.fakeContext;
+
+					ctx.on(property, callback);
+				}
+			}
 		}
 	}
 }

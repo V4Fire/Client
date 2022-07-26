@@ -14,8 +14,6 @@
 	- block body
 		: config = require('@config/config').build
 
-		< b-checkbox label = 'bla' | :id = 55
-
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo

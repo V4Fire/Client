@@ -10,29 +10,28 @@
  */
 
 import AriaRoleEngine, { DirectiveOptions, keyCodes } from 'core/component/directives/aria/interface';
-import type { TabBindingValue } from 'core/component/directives/aria/roles-engines/interface';
+import type { TabParams } from 'core/component/directives/aria/roles-engines/interface';
 import type iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
-import { FOCUSABLE_SELECTOR } from 'traits/i-access/const';
 
 export default class TabEngine extends AriaRoleEngine {
-	$v: TabBindingValue;
+	params: TabParams;
 	ctx: iAccess & iBlock;
 
 	constructor(options: DirectiveOptions) {
 		super(options);
 
-		this.$v = this.options.binding.value;
+		this.params = this.options.binding.value;
 		this.ctx = Object.cast<iAccess & iBlock>(this.options.vnode.fakeContext);
 	}
 
 	init(): void {
 		const
 			{el} = this.options,
-			{isFirst} = this.$v;
+			{isFirst} = this.params;
 
 		el.setAttribute('role', 'tab');
-		el.setAttribute('aria-selected', String(this.$v.isActive));
+		el.setAttribute('aria-selected', String(this.params.isActive));
 
 		if (isFirst) {
 			if (el.tabIndex < 0) {
@@ -43,8 +42,8 @@ export default class TabEngine extends AriaRoleEngine {
 			el.setAttribute('tabindex', '-1');
 		}
 
-		if (this.$a != null) {
-			this.$a.on(el, 'keydown', this.onKeydown);
+		if (this.async != null) {
+			this.async.on(el, 'keydown', this.onKeydown);
 		}
 	}
 
@@ -52,43 +51,46 @@ export default class TabEngine extends AriaRoleEngine {
 		const
 			{el} = this.options;
 
+		function setAttributes(isSelected: boolean) {
+			el.setAttribute('aria-selected', String(isSelected));
+			el.setAttribute('tabindex', isSelected ? '0' : '-1');
+		}
+
 		if (Object.isArrayLike(active)) {
 			for (let i = 0; i < active.length; i++) {
-				el.setAttribute('aria-selected', String(el === active[i]));
+				setAttributes(el === active[i]);
 			}
 
 			return;
 		}
 
-		el.setAttribute('aria-selected', String(el === active));
+		setAttributes(el === active);
 	};
 
 	moveFocusToFirstTab(): void {
 		const
-			firstEl = <CanUndef<HTMLElement>>this.ctx.$el?.querySelector(FOCUSABLE_SELECTOR);
+			firstTab = <CanUndef<HTMLElement>>this.ctx.findFocusableElement();
 
-		firstEl?.focus();
+		firstTab?.focus();
 	}
 
 	moveFocusToLastTab(): void {
 		const
-			focusable = <CanUndef<NodeListOf<HTMLElement>>>this.ctx.$el?.querySelectorAll(FOCUSABLE_SELECTOR);
+			tabs = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements();
 
-		if (focusable != null && focusable.length > 0) {
-			focusable[focusable.length - 1].focus();
+		let
+			lastTab: CanUndef<HTMLElement>;
+
+		for (const tab of tabs) {
+			lastTab = tab;
 		}
+
+		lastTab?.focus();
 	}
 
-	focusNext(): void {
+	moveFocus(step: 1 | -1): void {
 		const
-			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(1);
-
-		focusable?.focus();
-	}
-
-	focusPrev(): void {
-		const
-			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(-1);
+			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
 
 		focusable?.focus();
 	}
@@ -96,28 +98,28 @@ export default class TabEngine extends AriaRoleEngine {
 	onKeydown = (event: Event): void => {
 		const
 			evt = (<KeyboardEvent>event),
-			{isVertical} = this.$v;
+			{isVertical} = this.params;
 
 		switch (evt.key) {
 			case keyCodes.LEFT:
-				this.focusPrev();
+				this.moveFocus(-1);
 				break;
 
 			case keyCodes.UP:
 				if (isVertical) {
-					this.focusPrev();
+					this.moveFocus(-1);
 					break;
 				}
 
 				return;
 
 			case keyCodes.RIGHT:
-				this.focusNext();
+				this.moveFocus(1);
 				break;
 
 			case keyCodes.DOWN:
 				if (isVertical) {
-					this.focusNext();
+					this.moveFocus(1);
 					break;
 				}
 

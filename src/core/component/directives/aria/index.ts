@@ -11,15 +11,11 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
 import { ComponentEngine, VNode, VNodeDirective } from 'core/component/engines';
 import AriaSetter from 'core/component/directives/aria/aria-setter';
 
 const
-	ariaMap = new Map();
-
-const
-	$$ = symbolGenerator();
+	ariaMap = new WeakMap();
 
 ComponentEngine.directive('aria', {
 	inserted(el: HTMLElement, binding: VNodeDirective, vnode: VNode): void {
@@ -33,26 +29,20 @@ ComponentEngine.directive('aria', {
 		const
 			aria = new AriaSetter({el, binding, vnode});
 
-		aria.init();
-
-		ariaMap.set($$.aria, aria);
+		ariaMap.set(el, aria);
 	},
 
-	update(el: HTMLElement, binding: VNodeDirective, vnode: VNode) {
+	update(el: HTMLElement) {
 		const
-			aria: AriaSetter = ariaMap.get($$.aria);
-
-		aria.options = {el, binding, vnode};
+			aria: AriaSetter = ariaMap.get(el);
 
 		aria.update();
 	},
 
-	unbind(el: HTMLElement, binding: VNodeDirective, vnode: VNode) {
+	unbind(el: HTMLElement) {
 		const
-			aria: AriaSetter = ariaMap.get($$.aria);
+			aria: AriaSetter = ariaMap.get(el);
 
-		aria.options = {el, binding, vnode};
-
-		aria.clear();
+		aria.destroy();
 	}
 });

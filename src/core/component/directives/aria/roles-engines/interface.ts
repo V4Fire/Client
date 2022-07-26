@@ -1,22 +1,22 @@
-export interface TabBindingValue {
+export interface TabParams {
 	isFirst: boolean;
 	isVertical: boolean;
 	isActive: boolean;
 	changeEvent(cb: Function): void;
 }
 
-export interface TablistBindingValue {
+export interface TablistParams {
 	isVertical: boolean;
 	isMultiple: boolean;
 }
 
-export interface TreeBindingValue {
+export interface TreeParams {
 	isRoot: boolean;
 	isVertical: boolean;
 	changeEvent(cb: Function): void;
 }
 
-export interface TreeitemBindingValue {
+export interface TreeitemParams {
 	isRootFirstItem: boolean;
 	isExpandable: boolean;
 	isExpanded: boolean;
@@ -24,7 +24,7 @@ export interface TreeitemBindingValue {
 	toggleFold(el: Element, value?: boolean): void;
 }
 
-export interface ComboboxBindingValue {
+export interface ComboboxParams {
 	isMultiple: boolean;
 	changeEvent(cb: Function): void;
 	openEvent(cb: Function): void;
