@@ -36,7 +36,7 @@ export const enum keyCodes {
 	DOWN = 'ArrowDown'
 }
 
-export const enum eventsNames {
+export enum eventNames {
 	openEvent = 'onOpen',
 	closeEvent = 'onClose',
 	changeEvent = 'onChange'

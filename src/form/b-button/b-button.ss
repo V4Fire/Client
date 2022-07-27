@@ -89,7 +89,7 @@
 			< . &
 				ref dropdown |
 				v-if = hasDropdown |
-				:id = dom.getId('dropdown') |
+				v-id = 'dropdown' |
 				:class = provide.elClasses({dropdown: {pos: dropdown}})
 			.
 				< .&__dropdown-content

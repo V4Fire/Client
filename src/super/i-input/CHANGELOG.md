@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Now the component derive `iAccess`
+* Now the component derives `iAccess`
 
 ## v3.0.0-rc.199 (2021-06-16)
 

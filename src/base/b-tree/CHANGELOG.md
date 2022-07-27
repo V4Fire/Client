@@ -14,9 +14,9 @@ Changelog
 #### :rocket: New Feature
 
 * Added a new directive `v-aria`
-* Added a new prop `vertical`
-* Added `changeFoldedMod`
-* Now the component derive `iAccess`
+* Added a new prop `orientation`
+* Added `getAriaConfig`
+* Now the component derives `iAccess`
 
 ## v3.0.0-rc.164 (2021-03-22)
 

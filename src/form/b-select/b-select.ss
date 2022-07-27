@@ -42,11 +42,11 @@
 					:v-attrs = native
 						? el.attrs
 						: {
-								'v-aria:option': getAriaOpt('option', el),
+								'v-aria:option': getAriaConfig('option', el),
 								...el.attrs
 							} |
 
-					:id = dom.getId(el.value) |
+					v-id = el.value |
 					${itemAttrs}
 				.
 					+= self.slot('default', {':item': 'el'})
@@ -96,7 +96,7 @@
 								+= self.items('option')
 
 					< template v-else
-						< _.&__cell.&__input-wrapper v-aria:combobox = getAriaOpt('combobox')
+						< _.&__cell.&__input-wrapper v-aria:combobox = getAriaConfig('combobox')
 							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
 
 				- block icon

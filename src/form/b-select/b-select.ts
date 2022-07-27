@@ -936,7 +936,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * Returns a dictionary with options for aria directive for combobox role
 	 * @param role
 	 */
-	protected getAriaOpt(role: 'combobox'): Dictionary;
+	protected getAriaConfig(role: 'combobox'): Dictionary;
 
 	/**
 	 * Returns a dictionary with options for aria directive for option role
@@ -944,32 +944,35 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @param role
 	 * @param item
 	 */
-	protected getAriaOpt(role: 'option', item: this['Item']): Dictionary;
+	protected getAriaConfig(role: 'option', item: this['Item']): Dictionary;
 
-	protected getAriaOpt(role: 'combobox' | 'option', item?: this['Item']): Dictionary {
+	protected getAriaConfig(role: 'combobox' | 'option', item?: this['Item']): Dictionary {
 		const
 			event = 'el.mod.set.*.marked.*',
 			isSelected = this.isSelected.bind(this, item?.value);
 
 		const
-			opts = {
-				combobox: {
-					isMultiple: this.multiple,
-					changeEvent: (cb) => this.localEmitter.on(event, ({link}) => cb(link)),
-					closeEvent: (cb) => this.on('close', cb),
-					openEvent: (cb) => this.on('open', () => {
-						void this.$nextTick(() => cb(this.selectedElement));
-					})
-				},
-				option: {
-					get preSelected() {
-						return isSelected();
-					},
-					changeEvent: (cb) => this.on('actionChange', () => cb(isSelected()))
-				}
+			comboboxConfig = {
+				isMultiple: this.multiple,
+				changeEvent: (cb) => this.localEmitter.on(event, ({link}) => cb(link)),
+				closeEvent: (cb) => this.on('close', cb),
+				openEvent: (cb) => this.on('open', () => {
+					void this.$nextTick(() => cb(this.selectedElement));
+				})
 			};
 
-		return opts[role];
+		const optionConfig = {
+			get preSelected() {
+				return isSelected();
+			},
+			changeEvent: (cb) => this.on('actionChange', () => cb(isSelected()))
+		};
+
+		switch (role) {
+			case 'combobox': return comboboxConfig;
+			case 'option': return optionConfig;
+			default: return {};
+		}
 	}
 
 	/**

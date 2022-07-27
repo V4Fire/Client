@@ -14,10 +14,10 @@ Changelog
 #### :rocket: New Feature
 
 * Added a new directive `v-aria`
-* Added a new prop `vertical`
+* Added a new prop `orientation`
 * Added `isTablist`
-* Added `onActiveChange`
-* Now the component derive `iAccess`
+* Added `getAriaConfig`
+* Now the component derives `iAccess`
 
 ## v3.0.0-rc.211 (2021-07-21)
 
