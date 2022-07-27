@@ -49,9 +49,9 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 		observer.value.observe(watcher.target);
 
 		watcher.unwatch = () => {
+			unwatch();
 			observer.value.unobserve(watcher.target);
 			observer.free();
-			unwatch();
 		};
 
 		this.observers.set(watcher, observer.value);
@@ -104,20 +104,10 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	protected onObservableIn(watcher: Writable<Watcher>, entry: IntersectionObserverEntry): void {
 		watcher.time = entry.time;
 		watcher.timeIn = entry.time;
+		watcher.isLeaving = false;
 
-		if (Object.isFunction(watcher.onEnter)) {
-			watcher.onEnter(watcher);
-		}
-
-		if (watcher.delay != null && watcher.delay > 0) {
-			this.async.setTimeout(() => this.callWatcherHandler(watcher), watcher.delay, {
-				label: watcher.id,
-				join: true
-			});
-
-		} else {
-			this.callWatcherHandler(watcher);
-		}
+		watcher.onEnter?.(watcher);
+		this.callWatcherHandler(watcher);
 
 		watcher.isLeaving = true;
 	}
@@ -132,11 +122,9 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 		watcher.time = entry.time;
 		watcher.timeOut = entry.time;
 
-		if (Object.isFunction(watcher.onLeave)) {
-			watcher.onLeave(watcher);
-		}
-
+		watcher.onLeave?.(watcher);
 		watcher.isLeaving = false;
-		this.async.clearAll({label: watcher.id});
+
+		this.async.clearAll({group: watcher.id});
 	}
 }

@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
 import type {
@@ -16,22 +17,26 @@ import type {
 	WatchLink,
 	WatchHandler,
 
-	ElementSize,
-	ObservableElements
+	ElementSize
 
 } from 'core/dom/intersection-watcher/interface';
+
+import type { ObservableElements } from 'core/dom/intersection-watcher/engines/interface';
+
+export const
+	$$ = symbolGenerator();
 
 export default abstract class AbstractEngine {
 	/**
 	 * A map of observable elements
 	 */
-	protected readonly elements: ObservableElements = new Map();
+	protected elements: ObservableElements = new Map();
 
 	/** @see [[Async]] */
-	protected readonly async: Async<this> = new Async(this);
+	protected async: Async<this> = new Async(this);
 
 	/**
-	 * Watches for the intersection of the passed element and the viewport.
+	 * Watches for the intersection of the passed element with the viewport.
 	 * Calls the specified handler each time the element enters the viewport.
 	 *
 	 * @param el - the element to watch
@@ -40,7 +45,7 @@ export default abstract class AbstractEngine {
 	watch(el: Element, handler: WatchHandler): Watcher;
 
 	/**
-	 * Watches for the intersection of the passed element and the viewport.
+	 * Watches for the intersection of the passed element with the viewport.
 	 * Calls the specified handler each time the element enters the viewport.
 	 *
 	 * @param el - the element to watch
@@ -91,8 +96,8 @@ export default abstract class AbstractEngine {
 
 			unwatch: () => {
 				if (Object.isPlainObject(watcher)) {
-					this.removeWatcherFromStore(watcher);
-					this.async.clearAll({label: watcher.id});
+					this.removeWatcherFromStore(watcher, this.elements);
+					this.async.clearAll({group: watcher.id});
 				}
 			},
 
@@ -100,7 +105,7 @@ export default abstract class AbstractEngine {
 		};
 
 		this.initWatcher(watcher);
-		this.addWatcherToStore(watcher);
+		this.addWatcherToStore(watcher, this.elements);
 
 		return watcher;
 	}
@@ -112,7 +117,7 @@ export default abstract class AbstractEngine {
 	protected abstract initWatcher(watcher: Watcher): void;
 
 	/**
-	 * Cancels watching for viewport intersection for the passed element or group.
+	 * Cancels watching for viewport intersection of the passed element or group.
 	 * In addition, you can filter the watchers that will be canceled by specifying a handler or threshold value.
 	 *
 	 * @param target - the element or group to iterate
@@ -163,61 +168,78 @@ export default abstract class AbstractEngine {
 			return;
 		}
 
-		watcher.handler(watcher);
+		if (watcher.delay != null && watcher.delay > 0) {
+			this.async.setTimeout(call, watcher.delay, {
+				group: watcher.id,
+				label: $$.callWatcherHandler,
+				join: true
+			});
 
-		if (watcher.once) {
-			watcher.unwatch();
+		} else {
+			call();
+		}
+
+		function call() {
+			watcher.handler(watcher);
+
+			if (watcher.once) {
+				watcher.unwatch();
+			}
 		}
 	}
 
 	/**
 	 * Adds the specified watcher to the store
+	 *
 	 * @param watcher
+	 * @param store
 	 */
-	protected addWatcherToStore(watcher: Watcher): void {
+	protected addWatcherToStore(watcher: Watcher, store: ObservableElements): void {
 		let
-			store = this.elements.get(watcher.target);
+			s = store.get(watcher.target);
 
-		if (store == null) {
-			store = new Map();
-			this.elements.set(watcher.target, store);
+		if (s == null) {
+			s = new Map();
+			store.set(watcher.target, s);
 		}
 
-		store.set(watcher.handler, watcher);
+		s.set(watcher.handler, watcher);
 
 		const
-			thresholdGroup = store.get(watcher.threshold);
+			thresholdGroup = s.get(watcher.threshold);
 
 		if (Object.isSet(thresholdGroup)) {
 			thresholdGroup.add(watcher);
 
 		} else {
-			store.set(watcher.threshold, new Set([watcher]));
+			s.set(watcher.threshold, new Set([watcher]));
 		}
 	}
 
 	/**
 	 * Removes the specified watcher from the store
+	 *
 	 * @param watcher
+	 * @param store
 	 */
-	protected removeWatcherFromStore(watcher: Watcher): void {
+	protected removeWatcherFromStore(watcher: Watcher, store: ObservableElements): void {
 		const
-			store = this.elements.get(watcher.target);
+			s = store.get(watcher.target);
 
-		if (store == null) {
+		if (s == null) {
 			return;
 		}
 
-		store.delete(watcher.handler);
+		s.delete(watcher.handler);
 
 		const
-			thresholdGroup = store.get(watcher.threshold);
+			thresholdGroup = s.get(watcher.threshold);
 
 		if (Object.isSet(thresholdGroup)) {
 			thresholdGroup.delete(watcher);
 
 		} else {
-			store.delete(watcher.threshold);
+			s.delete(watcher.threshold);
 		}
 	}
 }

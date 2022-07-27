@@ -137,13 +137,6 @@ export interface ElementSize {
 	height: number;
 }
 
-export interface ElementRect extends ElementSize {
-	top: number;
-	left: number;
-	bottom: number;
-	right: number;
-}
-
 /**
  * A link to the intersection watcher.
  * Can be given as a `threshold` value or a handler.
@@ -157,6 +150,3 @@ export type WatchLink = WatchHandler | number;
 export interface WatchHandler {
 	(watcher: Watcher): void;
 }
-
-export type RegisteredWatchers = Map<WatchLink, Watcher | Set<Watcher>>;
-export type ObservableElements = Map<Element, RegisteredWatchers>;
