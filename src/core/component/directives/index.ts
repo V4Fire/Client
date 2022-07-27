@@ -25,3 +25,5 @@ import 'core/component/directives/update-on';
 import 'core/component/directives/aria';
 
 import 'core/component/directives/hook';
+
+import 'core/component/directives/id';
