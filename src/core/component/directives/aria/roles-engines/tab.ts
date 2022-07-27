@@ -15,7 +15,14 @@ import type iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
 
 export default class TabEngine extends AriaRoleEngine {
+	/**
+	 * Passed directive params
+	 */
 	params: TabParams;
+
+	/**
+	 * Component instance
+	 */
 	ctx: iAccess & iBlock;
 
 	constructor(options: DirectiveOptions) {
@@ -25,6 +32,9 @@ export default class TabEngine extends AriaRoleEngine {
 		this.ctx = Object.cast<iAccess & iBlock>(this.options.vnode.fakeContext);
 	}
 
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
 		const
 			{el} = this.options,
@@ -43,11 +53,53 @@ export default class TabEngine extends AriaRoleEngine {
 		}
 
 		if (this.async != null) {
-			this.async.on(el, 'keydown', this.onKeydown);
+			this.async.on(el, 'keydown', this.onKeydown.bind(this));
 		}
 	}
 
-	onChange = (active: Element | NodeListOf<Element>): void => {
+	/**
+	 * Moves focus to the first tab in tablist
+	 */
+	protected moveFocusToFirstTab(): void {
+		const
+			firstTab = <CanUndef<HTMLElement>>this.ctx.findFocusableElement();
+
+		firstTab?.focus();
+	}
+
+	/**
+	 * Moves focus to the last tab in tablist
+	 */
+	protected moveFocusToLastTab(): void {
+		const
+			tabs = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements();
+
+		let
+			lastTab: CanUndef<HTMLElement>;
+
+		for (const tab of tabs) {
+			lastTab = tab;
+		}
+
+		lastTab?.focus();
+	}
+
+	/**
+	 * Moves focus to the next or previous focusable element via the step parameter
+	 * @param step
+	 */
+	protected moveFocus(step: 1 | -1): void {
+		const
+			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
+
+		focusable?.focus();
+	}
+
+	/**
+	 * Handler: active tab changes
+	 * @param active
+	 */
+	protected onChange(active: Element | NodeListOf<Element>): void {
 		const
 			{el} = this.options;
 
@@ -65,39 +117,14 @@ export default class TabEngine extends AriaRoleEngine {
 		}
 
 		setAttributes(el === active);
-	};
-
-	moveFocusToFirstTab(): void {
-		const
-			firstTab = <CanUndef<HTMLElement>>this.ctx.findFocusableElement();
-
-		firstTab?.focus();
 	}
 
-	moveFocusToLastTab(): void {
+	/**
+	 * Handler: keyboard event
+	 */
+	protected onKeydown(e: Event): void {
 		const
-			tabs = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements();
-
-		let
-			lastTab: CanUndef<HTMLElement>;
-
-		for (const tab of tabs) {
-			lastTab = tab;
-		}
-
-		lastTab?.focus();
-	}
-
-	moveFocus(step: 1 | -1): void {
-		const
-			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
-
-		focusable?.focus();
-	}
-
-	onKeydown = (event: Event): void => {
-		const
-			evt = (<KeyboardEvent>event),
+			evt = (<KeyboardEvent>e),
 			{isVertical} = this.params;
 
 		switch (evt.key) {
@@ -137,7 +164,7 @@ export default class TabEngine extends AriaRoleEngine {
 				return;
 		}
 
-		event.stopPropagation();
-		event.preventDefault();
-	};
+		e.stopPropagation();
+		e.preventDefault();
+	}
 }

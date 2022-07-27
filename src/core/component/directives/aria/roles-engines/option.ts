@@ -9,6 +9,9 @@
 import AriaRoleEngine from 'core/component/directives/aria/interface';
 
 export default class OptionEngine extends AriaRoleEngine {
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
 		const
 			{el} = this.options,
@@ -22,10 +25,14 @@ export default class OptionEngine extends AriaRoleEngine {
 		}
 	}
 
-	onChange = (isSelected: boolean): void => {
+	/**
+	 * Handler: selected option changes
+	 * @param isSelected
+	 */
+	protected onChange(isSelected: boolean): void {
 		const
 			{el} = this.options;
 
 		el.setAttribute('aria-selected', String(isSelected));
-	};
+	}
 }

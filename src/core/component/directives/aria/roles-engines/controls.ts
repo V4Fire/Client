@@ -9,6 +9,9 @@
 import AriaRoleEngine from 'core/component/directives/aria/interface';
 
 export default class ControlsEngine extends AriaRoleEngine {
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
 		const
 			{vnode, binding, el} = this.options,
@@ -19,8 +22,8 @@ export default class ControlsEngine extends AriaRoleEngine {
 			return;
 		}
 
-		if (binding.value?.controls == null) {
-			Object.throw('Controls aria directive expects the controls value to be passed');
+		if (binding.value?.id == null) {
+			Object.throw('Controls aria directive expects the id of controlling elements to be passed');
 			return;
 		}
 

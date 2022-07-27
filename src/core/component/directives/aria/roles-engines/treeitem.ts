@@ -16,9 +16,20 @@ import type { TreeitemParams } from 'core/component/directives/aria/roles-engine
 import type iBlock from 'super/i-block/i-block';
 
 export default class TreeItemEngine extends AriaRoleEngine {
-	ctx: iAccess & iBlock['unsafe'];
-	el: HTMLElement;
+	/**
+	 * Passed directive params
+	 */
 	params: TreeitemParams;
+
+	/**
+	 * Component instance
+	 */
+	ctx: iAccess & iBlock['unsafe'];
+
+	/**
+	 * Element with current directive
+	 */
+	el: HTMLElement;
 
 	constructor(options: DirectiveOptions) {
 		super(options);
@@ -32,8 +43,11 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		this.params = this.options.binding.value;
 	}
 
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
-		this.async?.on(this.el, 'keydown', this.onKeyDown);
+		this.async?.on(this.el, 'keydown', this.onKeyDown.bind(this));
 
 		const
 			isMuted = this.ctx.removeAllFromTabSequence(this.el);
@@ -56,12 +70,113 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		});
 	}
 
-	onKeyDown = (e: KeyboardEvent): void => {
+	/**
+	 * Changes focus from the current focused element to the passed one
+	 * @param el
+	 */
+	protected focusNext(el: HTMLElement): void {
+		this.ctx.removeAllFromTabSequence(this.el);
+		this.ctx.restoreAllToTabSequence(el);
+
+		el.focus();
+	}
+
+	/**
+	 * Moves focus to the next or previous focusable element via the step parameter
+	 * @param step
+	 */
+	protected moveFocus(step: 1 | -1): void {
+		const
+			nextEl = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
+
+		if (nextEl != null) {
+			this.focusNext(nextEl);
+		}
+	}
+
+	/**
+	 * Expands the treeitem
+	 */
+	protected openFold(): void {
+		this.params.toggleFold(this.el, false);
+	}
+
+	/**
+	 * Closes the treeitem
+	 */
+	protected closeFold(): void {
+		this.params.toggleFold(this.el, true);
+	}
+
+	/**
+	 * Moves focus to the parent treeitem
+	 */
+	protected focusParent(): void {
+		let
+			parent = this.el.parentElement;
+
+		while (parent != null) {
+			if (parent.getAttribute('role') === 'treeitem') {
+				break;
+			}
+
+			parent = parent.parentElement;
+		}
+
+		if (parent == null) {
+			return;
+		}
+
+		const
+			focusableParent = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(parent);
+
+		if (focusableParent != null) {
+			this.focusNext(focusableParent);
+		}
+	}
+
+	/**
+	 * Moves focus to the first visible treeitem
+	 */
+	protected setFocusToFirstItem(): void {
+		const
+			firstItem = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(this.params.rootElement);
+
+		if (firstItem != null) {
+			this.focusNext(firstItem);
+		}
+	}
+
+	/**
+	 * Moves focus to the last visible treeitem
+	 */
+	protected setFocusToLastItem(): void {
+		const
+			items = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements(this.params.rootElement);
+
+		let
+			lastItem: CanUndef<HTMLElement>;
+
+		for (const item of items) {
+			if (item.offsetWidth > 0 || item.offsetHeight > 0) {
+				lastItem = item;
+			}
+		}
+
+		if (lastItem != null) {
+			this.focusNext(lastItem);
+		}
+	}
+
+	/**
+	 * Handler: keyboard event
+	 */
+	protected onKeyDown(e: KeyboardEvent): void {
 		if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
 			return;
 		}
 
-		switch (e.code) {
+		switch (e.key) {
 			case keyCodes.UP:
 				this.moveFocus(-1);
 				break;
@@ -110,80 +225,5 @@ export default class TreeItemEngine extends AriaRoleEngine {
 
 		e.stopPropagation();
 		e.preventDefault();
-	};
-
-	focusNext(nextEl: HTMLElement): void {
-		this.ctx.removeAllFromTabSequence(this.el);
-		this.ctx.restoreAllToTabSequence(nextEl);
-
-		nextEl.focus();
-	}
-
-	moveFocus(step: 1 | -1): void {
-		const
-			nextEl = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
-
-		if (nextEl != null) {
-			this.focusNext(nextEl);
-		}
-	}
-
-	openFold(): void {
-		this.params.toggleFold(this.el, false);
-	}
-
-	closeFold(): void {
-		this.params.toggleFold(this.el, true);
-	}
-
-	focusParent(): void {
-		let
-			parent = this.el.parentElement;
-
-		while (parent != null) {
-			if (parent.getAttribute('role') === 'treeitem') {
-				break;
-			}
-
-			parent = parent.parentElement;
-		}
-
-		if (parent == null) {
-			return;
-		}
-
-		const
-			focusableParent = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(parent);
-
-		if (focusableParent != null) {
-			this.focusNext(focusableParent);
-		}
-	}
-
-	setFocusToFirstItem(): void {
-		const
-			firstItem = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(this.params.rootElement);
-
-		if (firstItem != null) {
-			this.focusNext(firstItem);
-		}
-	}
-
-	setFocusToLastItem(): void {
-		const
-			items = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements(this.params.rootElement);
-
-		let
-			lastItem: CanUndef<HTMLElement>;
-
-		for (const item of items) {
-			if (item.offsetWidth > 0 || item.offsetHeight > 0) {
-				lastItem = item;
-			}
-		}
-
-		if (lastItem != null) {
-			this.focusNext(lastItem);
-		}
 	}
 }

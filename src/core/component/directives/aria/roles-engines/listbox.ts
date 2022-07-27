@@ -9,6 +9,9 @@
 import AriaRoleEngine from 'core/component/directives/aria/interface';
 
 export default class ListboxEngine extends AriaRoleEngine {
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
 		const
 			{el} = this.options;

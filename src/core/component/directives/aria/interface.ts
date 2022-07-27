@@ -16,7 +16,7 @@ export interface DirectiveOptions {
 }
 
 export default abstract class AriaRoleEngine {
-	options: DirectiveOptions;
+	readonly options: DirectiveOptions;
 	async: CanUndef<Async>;
 
 	protected constructor(options: DirectiveOptions) {

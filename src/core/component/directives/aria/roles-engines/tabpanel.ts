@@ -9,6 +9,9 @@
 import AriaRoleEngine from 'core/component/directives/aria/interface';
 
 export default class TabpanelEngine extends AriaRoleEngine {
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
 		const
 			{el, binding} = this.options;
