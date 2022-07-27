@@ -10,6 +10,9 @@ import AriaRoleEngine from 'core/component/directives/aria/interface';
 import type { TablistParams } from 'core/component/directives/aria/roles-engines/interface';
 
 export default class TablistEngine extends AriaRoleEngine {
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
 		const
 			{el, binding} = this.options,

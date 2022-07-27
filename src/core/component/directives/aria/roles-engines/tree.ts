@@ -10,29 +10,47 @@ import AriaRoleEngine, { DirectiveOptions } from 'core/component/directives/aria
 import type { TreeParams } from 'core/component/directives/aria/roles-engines/interface';
 
 export default class TreeEngine extends AriaRoleEngine {
+	/**
+	 * Passed directive params
+	 */
 	params: TreeParams;
-	el: HTMLElement;
 
 	constructor(options: DirectiveOptions) {
 		super(options);
 
 		this.params = options.binding.value;
-		this.el = this.options.el;
 	}
 
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	init(): void {
+		const
+			{el} = this.options;
+
 		this.setRootRole();
 
 		if (this.params.isVertical) {
-			this.el.setAttribute('aria-orientation', 'vertical');
+			el.setAttribute('aria-orientation', 'vertical');
 		}
 	}
 
-	setRootRole(): void {
-		this.el.setAttribute('role', this.params.isRoot ? 'tree' : 'group');
+	/**
+	 * Sets the role to the element depending on whether the tree is root or nested
+	 */
+	protected setRootRole(): void {
+		const
+			{el} = this.options;
+
+		el.setAttribute('role', this.params.isRoot ? 'tree' : 'group');
 	}
 
-	onChange = (el: HTMLElement, isFolded: boolean): void => {
+	/**
+	 * Handler: treeitem was expanded or closed
+	 * @param el
+	 * @param isFolded
+	 */
+	protected onChange(el: HTMLElement, isFolded: boolean): void {
 		el.setAttribute('aria-expanded', String(!isFolded));
-	};
+	}
 }
