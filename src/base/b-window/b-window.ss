@@ -41,7 +41,7 @@
 						+= self.slot()
 							< h1.&__title &
 								v-if = title || vdom.getSlot('title') |
-								:id = dom.getId('title')
+								v-id = 'title'
 							.
 								+= self.slot('title', {':title': 'title'})
 									- block title
