@@ -14,9 +14,9 @@ Changelog
 #### :rocket: New Feature
 
 * Added a new directive `v-aria`
-* Added `onItemMarked`
-* Added `onOpen`
-* Now the component derive `iAccess`
+* Added a new directive `v-id`
+* Added `getAriaConfig`
+* Now the component derives `iAccess`
 
 #### :bug: Bug Fix
 
