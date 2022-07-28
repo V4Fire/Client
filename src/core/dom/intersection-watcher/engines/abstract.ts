@@ -41,7 +41,7 @@ export default abstract class AbstractEngine {
 	 * The method returns a watcher object that can be used to cancel the watching.
 	 *
 	 * @param el - the element to watch
-	 * @param handler - the function that will be called when the element enters the viewport
+	 * @param handler - a function that will be called when the element enters the viewport
 	 */
 	watch(el: Element, handler: WatchHandler): Watcher;
 
@@ -52,7 +52,7 @@ export default abstract class AbstractEngine {
 	 *
 	 * @param el - the element to watch
 	 * @param opts - additional watch options
-	 * @param handler - the function that will be called when the element enters the viewport
+	 * @param handler - a function that will be called when the element enters the viewport
 	 */
 	watch(el: Element, opts: WatchOptions, handler: WatchHandler): Watcher;
 
@@ -136,10 +136,12 @@ export default abstract class AbstractEngine {
 					this.unwatch(watcher.target);
 				});
 			});
+
+			return;
 		}
 
 		const
-			watchers = this.elements.get(el!);
+			watchers = this.elements.get(el);
 
 		if (filter == null) {
 			watchers?.forEach((watcher) => {
