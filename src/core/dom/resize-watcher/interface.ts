@@ -33,7 +33,7 @@ export interface WatchOptions {
 	watchHeight?: boolean;
 
 	/**
-	 * If true, then the handler will be called immediately after the initialization of [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
+	 * If true, then the handler will be called after the first resizing
 	 * @default `true`
 	 */
 	watchInit?: boolean;
@@ -70,7 +70,7 @@ export interface Watcher extends Readonly<
 	readonly target: Element;
 
 	/**
-	 * A function that will be called when the size of the observable element is changed
+	 * A function that will be called when the observable element is resized
 	 */
 	readonly handler: WatchHandler;
 
@@ -86,16 +86,18 @@ export interface Watcher extends Readonly<
 }
 
 /**
- * A function that will be called when the size of the observable element is changed
+ * A function that will be called when the observable element is resized
  *
- * @param newGeometry - the new element geometry
- * @param oldGeometry - the old element geometry
+ * @param newRect - the new element geometry
+ * @param oldRect - the old element geometry
  * @param watcher - the element watcher
  */
 export interface WatchHandler {
 	(
-		newGeometry: DOMRectReadOnly,
-		oldGeometry: CanUndef<DOMRectReadOnly>,
+		newRect: DOMRectReadOnly,
+		oldRect: CanUndef<DOMRectReadOnly>,
 		watcher: Watcher
 	): void;
 }
+
+export type ObservableElements = Map<Element, Map<WatchHandler, Writable<Watcher>>>;

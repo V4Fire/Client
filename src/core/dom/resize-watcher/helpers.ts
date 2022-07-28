@@ -9,15 +9,15 @@
 import type { Watcher } from 'core/dom/resize-watcher/interface';
 
 /**
- * Returns true if geometry changes should cause the registered handler to be called
+ * Returns true if geometry changes should cause the watcher handler to be called
  *
- * @param newGeometry
- * @param oldGeometry
+ * @param newRect
+ * @param oldRect
  * @param watcher
  */
 export function shouldInvokeHandler(
-	newGeometry: DOMRectReadOnly,
-	oldGeometry: DOMRectReadOnly,
+	newRect: DOMRectReadOnly,
+	oldRect: DOMRectReadOnly,
 	watcher: Watcher
 ): boolean {
 	const {
@@ -28,12 +28,12 @@ export function shouldInvokeHandler(
 	const {
 		width: oldWidth,
 		height: oldHeight
-	} = oldGeometry;
+	} = oldRect;
 
 	const {
 		width: newWidth,
 		height: newHeight
-	} = newGeometry;
+	} = newRect;
 
 	let
 		res = false;
