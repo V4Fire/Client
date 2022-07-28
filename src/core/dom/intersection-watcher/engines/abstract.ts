@@ -38,7 +38,7 @@ export default abstract class AbstractEngine {
 	/**
 	 * Tracks the intersection of the passed element with the viewport,
 	 * and invokes the specified handler each time the element enters the viewport.
-	 * The method returns a watcher object that has a method to cancel the observation.
+	 * The method returns a watcher object that can be used to cancel the watching.
 	 *
 	 * @param el - the element to watch
 	 * @param handler - the function that will be called when the element enters the viewport
@@ -48,7 +48,7 @@ export default abstract class AbstractEngine {
 	/**
 	 * Tracks the intersection of the passed element with the viewport,
 	 * and invokes the specified handler each time the element enters the viewport.
-	 * The method returns a watcher object that has a method to cancel the observation.
+	 * The method returns a watcher object that can be used to cancel the watching.
 	 *
 	 * @param el - the element to watch
 	 * @param opts - additional watch options
@@ -167,6 +167,7 @@ export default abstract class AbstractEngine {
 	 */
 	destroy(): void {
 		this.unwatch();
+		this.elements.clear();
 		this.async.clearAll().locked = true;
 	}
 

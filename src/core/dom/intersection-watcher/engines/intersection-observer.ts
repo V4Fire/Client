@@ -15,12 +15,24 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	/**
 	 * A map of IntersectionObserver instances
 	 */
-	protected observers: WeakMap<Watcher, IntersectionObserver> = new WeakMap();
+	protected observers: Map<Watcher, IntersectionObserver> = new Map();
 
 	/**
 	 * A map of IntersectionObserver pools
 	 */
-	protected observersPool: WeakMap<Element, Pool<IntersectionObserver>> = new WeakMap();
+	protected observersPool: Map<Element, Pool<IntersectionObserver>> = new Map();
+
+	override destroy(): void {
+		this.observers.forEach((observer) => {
+			observer.disconnect();
+		});
+
+		this.elements.clear();
+		this.observers.clear();
+		this.observersPool.clear();
+
+		super.destroy();
+	}
 
 	protected override initWatcher(watcher: Watcher): void {
 		const
@@ -50,8 +62,17 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 
 		watcher.unwatch = () => {
 			unwatch();
-			observer.value.unobserve(watcher.target);
-			observer.free();
+			this.observers.delete(watcher);
+
+			if (this.elements.has(watcher.target)) {
+				observer.value.unobserve(watcher.target);
+				observer.free();
+
+			} else {
+				this.observersPool.delete(watcher.target);
+				observer.value.disconnect();
+				observer.destroy();
+			}
 		};
 
 		this.observers.set(watcher, observer.value);

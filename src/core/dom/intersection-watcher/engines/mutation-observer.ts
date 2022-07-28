@@ -75,6 +75,13 @@ export default class MutationObserverEngine extends AbstractEngine {
 		});
 	}
 
+	override destroy(): void {
+		super.destroy();
+		this.watchersPositions = [];
+		this.intersectionWindow = [];
+		this.dynamicalElements.clear();
+	}
+
 	protected override initWatcher(watcher: Watcher): void {
 		if (watcher.polling) {
 			this.addWatcherToStore(watcher, this.dynamicalElements);
