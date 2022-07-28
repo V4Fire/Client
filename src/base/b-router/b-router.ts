@@ -232,19 +232,14 @@ export default class bRouter extends iData {
 	 */
 	@computed({cache: true, dependencies: ['routes']})
 	get defaultRoute(): CanUndef<router.RouteBlueprint> {
-		let route;
-
-		for (let keys = Object.keys(this.routes), i = 0; i < keys.length; i++) {
+		for (let routes = Object.values(this.routes), i = 0; i < routes.length; i++) {
 			const
-				el = this.routes[keys[i]];
+				route = routes[i];
 
-			if (el?.meta.default) {
-				route = el;
-				break;
+			if (route?.meta.default) {
+				return route;
 			}
 		}
-
-		return route;
 	}
 
 	/**
@@ -587,10 +582,9 @@ export default class bRouter extends iData {
 
 				if (Object.isDictionary(proto)) {
 					// Correct values from the root route object
-					for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
-						const key = keys[i];
+					Object.keys(nonWatchRouteValues).forEach((key) => {
 						proto[key] = nonWatchRouteValues[key];
-					}
+					});
 				}
 
 			} else {

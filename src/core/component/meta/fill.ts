@@ -126,8 +126,8 @@ export function fillMeta(
 				props.add(propName);
 				watchPropDependencies.set(normalizedKey, props);
 
-			} else if (watchDependencies.size > 0) {
-				for (const [key, deps] of watchDependencies.entries()) {
+			} else {
+				watchDependencies.forEach((deps, key) => {
 					for (let i = 0; i < deps.length; i++) {
 						const
 							dep = deps[i];
@@ -141,7 +141,7 @@ export function fillMeta(
 							break;
 						}
 					}
-				}
+				});
 			}
 		}
 	}

@@ -94,16 +94,16 @@ export function implementComponentWatchAPI(
 			withProto: true
 		};
 
-		for (const [path, deps] of watchDependencies.entries()) {
+		watchDependencies.forEach((deps, path) => {
 			const
 				newDeps: typeof deps = [];
 
 			let
 				needForkDeps = false;
 
-			for (let j = 0; j < deps.length; j++) {
-				const dep = deps[j];
-				newDeps[j] = dep;
+			for (let i = 0; i < deps.length; i++) {
+				const dep = deps[i];
+				newDeps[i] = dep;
 
 				const
 					depPath = Object.isString(dep) ? dep : dep.join('.'),
@@ -111,7 +111,7 @@ export function implementComponentWatchAPI(
 
 				if (watchInfo.ctx === component && !watchDependencies.has(dep)) {
 					needForkDeps = true;
-					newDeps[j] = watchInfo.path;
+					newDeps[i] = watchInfo.path;
 					continue;
 				}
 
@@ -174,7 +174,7 @@ export function implementComponentWatchAPI(
 			if (needForkDeps) {
 				watchDependencies.set(path, newDeps);
 			}
-		}
+		});
 	}
 
 	let

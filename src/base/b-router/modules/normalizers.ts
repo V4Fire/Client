@@ -36,13 +36,7 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 			continue;
 		}
 
-		for (let keys = Object.keys(def), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
-			let
-				val = def[key];
-
+		Object.entries(def).forEach(([key, val]) => {
 			if (Object.isFunction(val)) {
 				val = val(router);
 				def[key] = val;
@@ -51,7 +45,7 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 			if (val !== undefined && original[key] === undefined) {
 				original[key] = val;
 			}
-		}
+		});
 	}
 
 	if (meta.paramsFromQuery !== false && Object.isArray(route.pathParams)) {

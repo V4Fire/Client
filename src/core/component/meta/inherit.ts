@@ -48,9 +48,9 @@ export function inheritMeta(
 	// Watcher dependencies inheritance
 
 	if (meta.watchDependencies.size > 0) {
-		for (const [key, pVal] of pWatchDependencies.entries()) {
+		pWatchDependencies.forEach((pVal, key) => {
 			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) ?? []).concat(pVal));
-		}
+		});
 
 	} else {
 		meta.watchDependencies = new Map(pWatchDependencies);
