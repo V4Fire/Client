@@ -35,16 +35,16 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 	if (after != null) {
 		weight += after.size;
 
-		for (let o = after.values(), el = o.next(); !el.done; el = o.next()) {
+		after.forEach((name) => {
 			const
-				dep = scope[el.value];
+				dep = scope[name];
 
 			if (dep == null) {
 				throw new ReferenceError(`The specified dependency "${dep}" is not found in the given scope`);
 			}
 
 			weight += getFieldWeight(dep, scope);
-		}
+		});
 	}
 
 	if (!field.atom) {

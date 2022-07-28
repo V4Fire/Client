@@ -162,10 +162,7 @@ export function beforeCreateState(
 		const
 			watchSet = new Set<PropertyInfo>();
 
-		for (let o = watchDependencies.values(), el = o.next(); !el.done; el = o.next()) {
-			const
-				deps = el.value;
-
+		watchDependencies.forEach((deps) => {
 			for (let i = 0; i < deps.length; i++) {
 				const
 					dep = deps[i],
@@ -175,33 +172,28 @@ export function beforeCreateState(
 					watchSet.add(info);
 				}
 			}
-		}
+		});
 
 		// If a computed property has a field or system field as a dependency
 		// and the host component does not have any watchers to this field,
 		// we need to register the "fake" watcher to force watching
-		if (watchSet.size > 0) {
-			for (let o = watchSet.values(), el = o.next(); !el.done; el = o.next()) {
-				const
-					info = el.value;
+		watchSet.forEach((info) => {
+			const needToForceWatching =
+				watchers[info.name] == null &&
+				watchers[info.originalPath] == null &&
+				watchers[info.path] == null;
 
-				const needToForceWatching =
-					watchers[info.name] == null &&
-					watchers[info.originalPath] == null &&
-					watchers[info.path] == null;
-
-				if (needToForceWatching) {
-					watchers[info.name] = [
-						{
-							deep: true,
-							immediate: true,
-							provideArgs: false,
-							handler: fakeHandler
-						}
-					];
-				}
+			if (needToForceWatching) {
+				watchers[info.name] = [
+					{
+						deep: true,
+						immediate: true,
+						provideArgs: false,
+						handler: fakeHandler
+					}
+				];
 			}
-		}
+		});
 	}
 
 	// If a computed property is tied with a field or system field

@@ -94,10 +94,7 @@ export function implementComponentWatchAPI(
 			withProto: true
 		};
 
-		for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
-			const
-				[path, deps] = el.value;
-
+		for (const [path, deps] of watchDependencies.entries()) {
 			const
 				newDeps: typeof deps = [];
 
@@ -289,10 +286,7 @@ export function implementComponentWatchAPI(
 
 			// We need to attach default watchers for all props that can affect component computed fields
 			if (watchPropDependencies.size > 0) {
-				for (let o = watchPropDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
-					const
-						[path, props] = el.value;
-
+				for (const [path, props] of watchPropDependencies.entries()) {
 					const
 						invalidateComputedCache = createComputedCacheInvalidator(),
 						broadcastAccessorMutations = createAccessorMutationEmitter();
@@ -304,13 +298,10 @@ export function implementComponentWatchAPI(
 					invalidateComputedCache[tiedWatchers] = tiedLinks;
 					broadcastAccessorMutations[tiedWatchers] = tiedLinks;
 
-					for (let o = props.values(), el = o.next(); !el.done; el = o.next()) {
-						const
-							prop = el.value;
-
+					props.forEach((prop) => {
 						unsafe.$watch(prop, {...propWatchOpts, flush: 'sync'}, invalidateComputedCache);
 						unsafe.$watch(prop, propWatchOpts, broadcastAccessorMutations);
-					}
+					});
 				}
 			}
 		}
@@ -395,11 +386,9 @@ export function implementComponentWatchAPI(
 				ctx = invalidateComputedCache[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
 				currentDynamicHandlers = immediateDynamicHandlers.get(ctx)?.[rootKey];
 
-			if (currentDynamicHandlers) {
-				for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
-					el.value(val, oldVal, info);
-				}
-			}
+			currentDynamicHandlers?.forEach((handler) => {
+				handler(val, oldVal, info);
+			});
 		};
 	}
 
@@ -434,28 +423,23 @@ export function implementComponentWatchAPI(
 					ctx = emitAccessorEvents[tiedWatchers] != null ? component : info.root[toComponentObject] ?? component,
 					currentDynamicHandlers = dynamicHandlers.get(ctx)?.[rootKey];
 
-				if (currentDynamicHandlers) {
-					for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
-						const
-							handler = el.value;
-
-						// Because we register several watchers (props, fields, etc.) at the same time,
-						// we need to control that every dynamic handler must be invoked no more than one time per tick
-						if (usedHandlers.has(handler)) {
-							continue;
-						}
-
-						handler(val, oldVal, info);
-						usedHandlers.add(handler);
-
-						if (timerId == null) {
-							timerId = setImmediate(() => {
-								timerId = undefined;
-								usedHandlers.clear();
-							});
-						}
+				currentDynamicHandlers?.forEach((handler) => {
+					// Because we register several watchers (props, fields, etc.) at the same time,
+					// we need to control that every dynamic handler must be invoked no more than one time per tick
+					if (usedHandlers.has(handler)) {
+						return;
 					}
-				}
+
+					handler(val, oldVal, info);
+					usedHandlers.add(handler);
+
+					if (timerId == null) {
+						timerId = setImmediate(() => {
+							timerId = undefined;
+							usedHandlers.clear();
+						});
+					}
+				});
 			}
 		};
 	}

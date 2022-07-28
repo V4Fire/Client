@@ -111,9 +111,9 @@ export function fillMeta(
 				const watcherListeners = watchers[propName] ?? [];
 				watchers[propName] = watcherListeners;
 
-				for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-					watcherListeners.push(el.value);
-				}
+				prop.watchers.forEach((watcher) => {
+					watcherListeners.push(watcher);
+				});
 			}
 
 			const
@@ -127,13 +127,10 @@ export function fillMeta(
 				watchPropDependencies.set(normalizedKey, props);
 
 			} else if (watchDependencies.size > 0) {
-				for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
-					const
-						[key, deps] = el.value;
-
-					for (let j = 0; j < deps.length; j++) {
+				for (const [key, deps] of watchDependencies.entries()) {
+					for (let i = 0; i < deps.length; i++) {
 						const
-							dep = deps[j];
+							dep = deps[i];
 
 						if ((Object.isArray(dep) ? dep : dep.split('.'))[0] === propName) {
 							const
@@ -157,22 +154,17 @@ export function fillMeta(
 				key = keys[j],
 				field = <NonNullable<ComponentField>>o[key];
 
-			if (field.watchers) {
-				for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-					const
-						watcher = el.value;
-
-					if (isFunctional && watcher.functional === false) {
-						continue;
-					}
-
-					const
-						watcherListeners = watchers[key] ?? [];
-
-					watchers[key] = watcherListeners;
-					watcherListeners.push(watcher);
+			field.watchers?.forEach((watcher) => {
+				if (isFunctional && watcher.functional === false) {
+					return;
 				}
-			}
+
+				const
+					watcherListeners = watchers[key] ?? [];
+
+				watchers[key] = watcherListeners;
+				watcherListeners.push(watcher);
+			});
 		}
 	}
 

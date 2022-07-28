@@ -48,8 +48,7 @@ export function inheritMeta(
 	// Watcher dependencies inheritance
 
 	if (meta.watchDependencies.size > 0) {
-		for (let o = pWatchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
-			const [key, pVal] = el.value;
+		for (const [key, pVal] of pWatchDependencies.entries()) {
 			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) ?? []).concat(pVal));
 		}
 
@@ -88,19 +87,16 @@ export function inheritMeta(
 					after,
 					watchers;
 
-				if (parent.watchers != null) {
-					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-						const val = el.value;
-						watchers ??= new Map();
-						watchers.set(val.handler, {...el.value});
-					}
-				}
+				parent.watchers?.forEach((val) => {
+					watchers ??= new Map();
+					watchers.set(val.handler, {...val});
+				});
 
-				if ('after' in parent && parent.after != null) {
-					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
+				if ('after' in parent) {
+					parent.after?.forEach((name) => {
 						after ??= new Set();
-						after.add(el.value);
-					}
+						after.add(name);
+					});
 				}
 
 				store[key] = {...parent, after, watchers};

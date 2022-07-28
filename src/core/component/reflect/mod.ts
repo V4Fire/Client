@@ -94,11 +94,9 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 				}
 			}
 
-			if (cache != null) {
-				for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
-					modValues.push(el.value);
-				}
-			}
+			cache?.forEach((val) => {
+				modValues.push(val);
+			});
 		}
 
 		mods[key.camelize(false)] = modValues;

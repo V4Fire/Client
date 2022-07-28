@@ -66,10 +66,7 @@ function run(): void {
 			time = Date.now(),
 			done = opts.weightPerTick;
 
-		for (let w = queue.values(), el = w.next(); !el.done; el = w.next()) {
-			const
-				val = el.value;
-
+		for (const val of queue) {
 			if (done <= 0 || Date.now() - time > opts.delay) {
 				await daemon.idle({timeout: opts.delay});
 				time = Date.now();
