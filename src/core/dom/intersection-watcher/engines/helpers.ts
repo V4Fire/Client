@@ -6,15 +6,47 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ScrollRect, ElementRect, WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
+import type { ScrollRect, ElementPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 /**
- * Returns the geometry and position of the specified element relative to the given root
+ * Returns the root scrollable element geometry
+ */
+export function getRootScrollRect(): ScrollRect {
+	const
+		root = document.documentElement,
+		scrollRoot = document.scrollingElement;
+
+	if (scrollRoot == null) {
+		throw new ReferenceError('`document.scrollingElement` is undefined');
+	}
+
+	return {
+		width: root.clientWidth,
+		height: root.clientHeight,
+		scrollLeft: scrollRoot.scrollLeft,
+		scrollTop: scrollRoot.scrollTop
+	};
+}
+
+/**
+ * Returns the scrollable geometry of the passed element
+ */
+export function getElementScrollRect(el: Element): ScrollRect {
+	return {
+		width: el.clientWidth,
+		height: el.clientHeight,
+		scrollLeft: el.scrollLeft,
+		scrollTop: el.scrollTop
+	};
+}
+
+/**
+ * Returns the geometry and position of the specified element relative to the given scrollable parent
  *
  * @param el
- * @param root
+ * @param scrollParent
  */
-export function getElementRect(el: Element, root: ScrollRect): ElementRect {
+export function getElementPosition(el: Element, scrollParent: ScrollRect): ElementPosition {
 	const
 		rect = el.getBoundingClientRect();
 
@@ -22,8 +54,8 @@ export function getElementRect(el: Element, root: ScrollRect): ElementRect {
 		{width, height} = rect;
 
 	const
-		top = root.scrollTop + rect.top,
-		left = root.scrollLeft + rect.left;
+		top = scrollParent.scrollTop + rect.top,
+		left = scrollParent.scrollLeft + rect.left;
 
 	return {
 		bottom: top + height,
@@ -38,65 +70,43 @@ export function getElementRect(el: Element, root: ScrollRect): ElementRect {
 }
 
 /**
- * Returns the root element geometry
- */
-export function getScrollRect(): ScrollRect {
-	const
-		r = document.documentElement,
-		s = <Element>document.scrollingElement;
-
-	return {
-		width: r.clientWidth,
-		height: r.clientHeight,
-		scrollLeft: s.scrollLeft,
-		scrollTop: s.scrollTop
-	};
-}
-
-/**
- * Returns true if the specified element is in view
+ * Returns true if the specified element is in view relative to the given scrollable parent
  *
- * @param elRect
- * @param rootRect
- * @param threshold
+ * @param el
+ * @param scrollParent
+ * @param threshold - the percentage of element visibility at which this function will return true
  */
-export function isInView(elRect: WatcherPosition, rootRect: RootRect, threshold: number): boolean {
-	if (elRect.width === 0 || elRect.height === 0) {
+export function isElementInView(
+	el: Element | ElementPosition,
+	scrollParent: ScrollRect,
+	threshold: number
+): boolean {
+	const
+		pos = el instanceof Element ? getElementPosition(el, scrollParent) : el;
+
+	if (pos.width === 0 || pos.height === 0) {
 		return false;
 	}
 
 	const
-		isBoxInRootY = rootRect.scrollTop + rootRect.height >= elRect.top + elRect.height * threshold,
-		isBoxInRootX = rootRect.scrollLeft + rootRect.width >= elRect.left + elRect.width * threshold,
-		isVisibleYTop = elRect.top + elRect.height * threshold >= rootRect.scrollTop,
-		isVisibleYBottom = elRect.bottom - elRect.height * threshold < rootRect.scrollTop,
-		isVisibleX = elRect.left > 0 ?
-			elRect.left - elRect.width * threshold <= rootRect.scrollLeft + rootRect.width :
-			elRect.left + elRect.width * threshold >= rootRect.scrollLeft;
-
-	return isBoxInRootY && isBoxInRootX && isVisibleYTop && isVisibleX && !isVisibleYBottom;
-}
-
-/**
- * Returns true if the specified element is in view
- *
- * @param elRect
- * @param rootRect
- * @param threshold
- */
-export function isElementInView(elRect: ElementRect, rootRect: RootRect, threshold: number): boolean {
-	if (elRect.width === 0 || elRect.height === 0) {
-		return false;
-	}
+		minElVisibleHeight = pos.top + pos.height * threshold,
+		minElVisibleWidth = pos.left + pos.width * threshold;
 
 	const
-		isBoxInRootY = rootRect.scrollTop + rootRect.height >= elRect.top + elRect.height * threshold,
-		isBoxInRootX = rootRect.scrollLeft + rootRect.width >= elRect.left + elRect.width * threshold,
-		isVisibleYTop = elRect.top + elRect.height * threshold >= rootRect.scrollTop,
-		isVisibleYBottom = elRect.bottom - elRect.height * threshold < rootRect.scrollTop,
-		isVisibleX = elRect.left > 0 ?
-			elRect.left - elRect.width * threshold <= rootRect.scrollLeft + rootRect.width :
-			elRect.left + elRect.width * threshold >= rootRect.scrollLeft;
+		parentScrollHeight = scrollParent.scrollTop + scrollParent.height,
+		parentScrollWidth = scrollParent.scrollLeft + scrollParent.width;
 
-	return isBoxInRootY && isBoxInRootX && isVisibleYTop && isVisibleX && !isVisibleYBottom;
+	const
+		isElInParentY = parentScrollHeight >= minElVisibleHeight,
+		isElInParentX = parentScrollWidth >= minElVisibleWidth;
+
+	const
+		isVisibleElYTop = minElVisibleHeight >= scrollParent.scrollTop,
+		isVisibleElYBottom = pos.bottom - pos.height * threshold < scrollParent.scrollTop;
+
+	const isVisibleElX = pos.left > 0 ?
+		pos.left - pos.width * threshold <= scrollParent.scrollLeft + scrollParent.width :
+		minElVisibleWidth >= scrollParent.scrollLeft;
+
+	return isElInParentY && isElInParentX && isVisibleElYTop && isVisibleElX && !isVisibleElYBottom;
 }

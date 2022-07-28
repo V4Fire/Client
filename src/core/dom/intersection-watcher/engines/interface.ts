@@ -13,14 +13,14 @@ export interface ScrollRect extends ElementSize {
 	scrollLeft: number;
 }
 
-export interface ElementRect extends ElementSize {
+export interface ElementPosition extends ElementSize {
 	top: number;
 	left: number;
 	bottom: number;
 	right: number;
 }
 
-export interface WatcherPosition extends ElementRect {
+export interface WatcherPosition extends ElementPosition {
 	watcher: Watcher;
 }
 

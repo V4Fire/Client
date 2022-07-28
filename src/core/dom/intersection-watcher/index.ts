@@ -10,3 +10,7 @@
  * [[include:core/dom/intersection-watcher/README.md]]
  * @packageDocumentation
  */
+
+export * from 'core/dom/intersection-watcher/interface';
+
+export { default } from 'core/dom/intersection-watcher/engines';

@@ -7,58 +7,53 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import type { AsyncOptions } from 'core/async';
 
 import { resolveAfterDOMLoaded } from 'core/event';
+import type { AsyncOptions } from 'core/async';
+
+import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
+
+import {
+
+	getRootScrollRect,
+	getElementScrollRect,
+
+	isElementInView,
+	getElementPosition
+
+} from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 import type { WatcherPosition, ObservableElements } from 'core/dom/intersection-watcher/engines/interface';
 
-import {
-
-	getScrollRect,
-	getElementRect
-
-} from 'core/dom/intersection-watcher/engines/helpers';
-
-import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-
 export const
 	$$ = symbolGenerator();
 
-const
-	CHECK_TIMEOUT = 50;
-
 export default class MutationObserverEngine extends AbstractEngine {
 	/**
-	 * A map of elements that needs to be polled
-	 */
-	protected pollingElements: ObservableElements = new Map();
-
-	/**
-	 * A sorted array of watchers positions
+	 * A sorted array of static watchers positions
 	 */
 	protected watchersPositions: WatcherPosition[] = [];
 
+	/**
+	 * A sorted array of static watchers positions that are currently in the viewport
+	 */
 	protected intersectionWindow: WatcherPosition[] = [];
 
 	/**
-	 * Initializes an observer
+	 * A map of elements whose position needs to be checked dynamically using a frequent polling strategy
 	 */
+	protected dynamicalElements: ObservableElements = new Map();
+
 	constructor() {
 		super();
 
 		const
 			{async: $a} = this;
 
-		const checkDeffer = () => $a.setTimeout(() => this.check(), CHECK_TIMEOUT, {
-			label: $$.check,
-			join: true
-		});
-
 		void resolveAfterDOMLoaded().then(() => {
 			const observer = new MutationObserver(() => {
-				this.reinit();
+				this.checkViewportFromScratch();
 			});
 
 			observer.observe(document.body, {
@@ -68,35 +63,30 @@ export default class MutationObserverEngine extends AbstractEngine {
 				characterData: true
 			});
 
-			$a.setInterval(() => this.poll(), 75);
+			$a.worker(() => observer.disconnect());
 
-			$a.on(document, 'scroll', checkDeffer, true);
-			$a.on(globalThis, 'resize', () => this.reinit({join: false}));
-		});
-	}
-
-	/**
-	 * Polls elements
-	 */
-	poll(): void {
-		this.pollingElements.forEach((map) => {
-			map.forEach((watcher) => {
-				if (Object.isSet(watcher)) {
-					return;
-				}
-
-				this.setWatcherSize(watcher, watcher.target.getBoundingClientRect());
+			const checkViewport = () => $a.setTimeout(this.checkViewport.bind(this), 50, {
+				label: $$.checkViewport,
+				join: true
 			});
+
+			$a.on(document, 'scroll', checkViewport, {capture: true});
+			$a.on(globalThis, 'resize', () => this.checkViewportFromScratch({join: false}));
 		});
 	}
 
 	protected override initWatcher(watcher: Watcher): void {
 		if (watcher.polling) {
-			this.addWatcherToStore(watcher, this.pollingElements);
+			this.addWatcherToStore(watcher, this.dynamicalElements);
 			this.removeWatcherFromStore(watcher, this.elements);
 
+			this.async.setInterval(() => this.checkPollingElements(), 75, {
+				label: $$.initWatcher,
+				join: true
+			});
+
 		} else {
-			this.recalculateDeffer();
+			this.checkViewportFromScratch();
 		}
 
 		const
@@ -105,27 +95,36 @@ export default class MutationObserverEngine extends AbstractEngine {
 		watcher.unwatch = () => {
 			unwatch();
 
-			if (this.pollingElements.has(watcher.target)) {
-				this.removeWatcherFromStore(watcher, this.pollingElements);
+			if (this.dynamicalElements.has(watcher.target)) {
+				this.removeWatcherFromStore(watcher, this.dynamicalElements);
+
+				if (this.dynamicalElements.size === 0) {
+					this.async.clearInterval({label: $$.initWatcher});
+				}
 
 			} else {
-				this.recalculateDeffer();
+				this.checkViewportFromScratch();
 			}
 		};
 	}
 
 	/**
-	 * Re-initializes watching for elements
-	 * @param [immediate] - if
+	 * Rebuilds the watcher positions and checks the viewport to see if them have been appeared or disappeared.
+	 * Keep in mind that this operation is quite expensive, so it is delayed by default.
+	 *
+	 * @param [immediate] - if true, then the check will be performed immediately
 	 */
-	protected reinit(immediate?: boolean): void;
+	protected checkViewportFromScratch(immediate?: boolean): void;
 
 	/**
-	 * Re-initializes watching for elements
+	 * Rebuilds the watcher positions and checks the viewport to see if them have been appeared or disappeared.
+	 * Please note that the operation is performed with some delay to improve performance.
+	 *
+	 * @param opts - additional options for the deferred task
 	 */
-	protected reinit(opts: AsyncOptions): void;
+	protected checkViewportFromScratch(opts: AsyncOptions): void;
 
-	protected reinit(opts?: boolean | AsyncOptions): void {
+	protected checkViewportFromScratch(opts?: boolean | AsyncOptions): void {
 		const run = () => {
 			this.buildWatchersPositions();
 			this.checkViewport();
@@ -144,11 +143,11 @@ export default class MutationObserverEngine extends AbstractEngine {
 	}
 
 	/**
-	 * Checks the viewport to see if elements have been appear or disappear
+	 * Checks the viewport to see if watchers have been appeared or disappeared
 	 */
 	protected checkViewport(): void {
 		const
-			rootRect = getScrollRect();
+			scrollRect = getRootScrollRect();
 
 		const {
 			watchersPositions,
@@ -156,7 +155,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 		} = this;
 
 		const
-			{scrollTop} = rootRect;
+			{scrollTop} = scrollRect;
 
 		const
 			from = searchWatcher(true),
@@ -190,43 +189,71 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		function searchWatcher(
 			start: boolean,
-			index?: number,
+			res?: number,
 			from: number = 0,
 			to: number = watchersPositions.length
 		): CanUndef<number> {
 			if (from >= to) {
-				return isMatches(to) ? to : index;
+				return isWatcherInView(to) ? to : res;
 			}
 
 			const
-				pos = from + Math.floor((to - from) / 2);
+				cursor = from + Math.floor((to - from) / 2);
 
-			if (scrollTop > watchersPositions[pos].top) {
-				return searchWatcher(start, index, pos + 1, to);
+			if (scrollTop > watchersPositions[cursor].top) {
+				return searchWatcher(start, res, cursor + 1, to);
 			}
 
-			if (isMatches(pos)) {
-				index = pos;
+			if (isWatcherInView(cursor)) {
+				res = cursor;
 			}
 
-			return searchWatcher(start, index, 0, pos);
+			return searchWatcher(start, res, 0, cursor);
 
-			function isMatches(pos: number): boolean {
+			function isWatcherInView(cursor: number): boolean {
 				const
-					{watcher} = watchersPositions[pos];
+					pos = watchersPositions[cursor],
 
-				const
 					// Old versions of Chromium don't support `isConnected`
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					isConnected = watcher.target.isConnected ?? true;
+					isConnected = pos.watcher.target.isConnected ?? true;
 
-				if (!isConnected || !isInView(pos, rootRect, watcher.threshold)) {
+				if (!isConnected || !isElementInView(pos, scrollRect, pos.watcher.threshold)) {
 					return false;
 				}
 
-				return index == null || (start ? index > pos : index < pos);
+				return res == null || (start ? res > cursor : res < cursor);
 			}
 		}
+	}
+
+	/**
+	 * Checks "polled" watchers to see if they have appeared or disappeared
+	 */
+	protected checkPollingElements(): void {
+		this.dynamicalElements.forEach((map) => {
+			map.forEach((watcher) => {
+				if (Object.isSet(watcher)) {
+					return;
+				}
+
+				const
+					root = (Object.isFunction(watcher.root) ? watcher.root() : watcher.root) ?? document.documentElement,
+					watcherRect = watcher.target.getBoundingClientRect();
+
+				const
+					isWatcherInView = isElementInView(watcherRect, getElementScrollRect(root), watcher.threshold);
+
+				this.setWatcherSize(watcher, watcherRect);
+
+				if (isWatcherInView && !watcher.isLeaving) {
+					this.onObservableIn(watcher);
+
+				} else if (!isWatcherInView && watcher.isLeaving) {
+					this.onObservableOut(watcher);
+				}
+			});
+		});
 	}
 
 	/**
@@ -238,7 +265,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		const
 			positions = this.watchersPositions,
-			rootRect = getScrollRect();
+			scrollRect = getRootScrollRect();
 
 		this.elements.forEach((watchers) => {
 			watchers.forEach((watcher) => {
@@ -246,15 +273,15 @@ export default class MutationObserverEngine extends AbstractEngine {
 					return;
 				}
 
-				const watcherRect = getElementRect(rootRect, watcher.target);
-				this.setWatcherSize(watcher, watcherRect);
+				const pos = getElementPosition(watcher.target, scrollRect);
+				this.setWatcherSize(watcher, pos);
 
-				if (watcherRect.width === 0 || watcherRect.height === 0) {
+				if (pos.width === 0 || pos.height === 0) {
 					this.async.clearAll({group: watcher.id});
 					return;
 				}
 
-				positions.push({...watcherRect, watcher});
+				positions.push({...pos, watcher});
 			});
 		});
 
@@ -271,23 +298,12 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		watcher.time = timestamp;
 		watcher.timeIn = timestamp;
+		watcher.isLeaving = false;
 
-		if (Object.isFunction(watcher.onEnter)) {
-			watcher.onEnter(watcher);
-		}
+		watcher.onEnter?.(watcher);
+		this.callWatcherHandler(watcher);
 
 		watcher.isLeaving = true;
-
-		if (watcher.delay != null && watcher.delay > 0) {
-			this.async.setTimeout(() => this.callWatcherHandler(watcher), watcher.delay, {
-				group: watcher.id,
-				label: $$.onObservableIn,
-				join: true
-			});
-
-		} else {
-			this.callWatcherHandler(watcher);
-		}
 	}
 
 	/**
@@ -301,11 +317,9 @@ export default class MutationObserverEngine extends AbstractEngine {
 		watcher.time = timestamp;
 		watcher.timeOut = timestamp;
 
-		if (Object.isFunction(watcher.onLeave)) {
-			watcher.onLeave(watcher);
-		}
-
+		watcher.onLeave?.(watcher);
 		watcher.isLeaving = false;
+
 		this.async.clearAll({group: watcher.id});
 	}
 }

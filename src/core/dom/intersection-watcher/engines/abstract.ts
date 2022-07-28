@@ -36,8 +36,9 @@ export default abstract class AbstractEngine {
 	protected async: Async<this> = new Async(this);
 
 	/**
-	 * Watches for the intersection of the passed element with the viewport.
-	 * Calls the specified handler each time the element enters the viewport.
+	 * Tracks the intersection of the passed element with the viewport,
+	 * and invokes the specified handler each time the element enters the viewport.
+	 * The method returns a watcher object that has a method to cancel the observation.
 	 *
 	 * @param el - the element to watch
 	 * @param handler - the function that will be called when the element enters the viewport
@@ -45,8 +46,9 @@ export default abstract class AbstractEngine {
 	watch(el: Element, handler: WatchHandler): Watcher;
 
 	/**
-	 * Watches for the intersection of the passed element with the viewport.
-	 * Calls the specified handler each time the element enters the viewport.
+	 * Tracks the intersection of the passed element with the viewport,
+	 * and invokes the specified handler each time the element enters the viewport.
+	 * The method returns a watcher object that has a method to cancel the observation.
 	 *
 	 * @param el - the element to watch
 	 * @param opts - additional watch options
@@ -59,6 +61,10 @@ export default abstract class AbstractEngine {
 		optsOrHandler?: WatchHandler | WatchOptions,
 		handler?: WatchHandler
 	): Watcher {
+		if (this.async.locked) {
+			throw new Error("It isn't possible to add an element to watch because the watcher instance is destroyed");
+		}
+
 		const opts = {
 			once: false,
 			threshold: 1
@@ -111,21 +117,29 @@ export default abstract class AbstractEngine {
 	}
 
 	/**
-	 * Initializes the specified watcher
-	 * @param watcher
-	 */
-	protected abstract initWatcher(watcher: Watcher): void;
-
-	/**
-	 * Cancels watching for viewport intersection of the passed element or group.
-	 * In addition, you can filter the watchers that will be canceled by specifying a handler or threshold value.
+	 * Cancels watching for the registered elements.
 	 *
-	 * @param target - the element or group to iterate
+	 * If the method takes an element, then only that element will be unwatched.
+	 * Additionally, you can filter the watchers to be canceled by specifying a handler or a threshold.
+	 *
+	 * @param [el] - the element to unwatch
 	 * @param [filter] - the handler or threshold to filter
 	 */
-	unwatch(target: Element, filter?: WatchLink): void {
+	unwatch(el?: Element, filter?: WatchLink): void {
+		if (el == null) {
+			this.elements.forEach((watchers) => {
+				watchers.forEach((watcher) => {
+					if (Object.isSet(watcher)) {
+						return;
+					}
+
+					this.unwatch(watcher.target);
+				});
+			});
+		}
+
 		const
-			watchers = this.elements.get(target);
+			watchers = this.elements.get(el!);
 
 		if (filter == null) {
 			watchers?.forEach((watcher) => {
@@ -147,6 +161,20 @@ export default abstract class AbstractEngine {
 
 		watcher?.unwatch();
 	}
+
+	/**
+	 * Cancels watching for the all registered elements and destroys the instance
+	 */
+	destroy(): void {
+		this.unwatch();
+		this.async.clearAll().locked = true;
+	}
+
+	/**
+	 * Initializes the specified watcher
+	 * @param watcher
+	 */
+	protected abstract initWatcher(watcher: Watcher): void;
 
 	/**
 	 * Sets a new size for the specified watcher
@@ -240,6 +268,10 @@ export default abstract class AbstractEngine {
 
 		} else {
 			s.delete(watcher.threshold);
+		}
+
+		if (s.size === 0) {
+			store.delete(watcher.target);
 		}
 	}
 }
