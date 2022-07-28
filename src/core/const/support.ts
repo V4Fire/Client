@@ -8,9 +8,6 @@
 
 export * from '@v4fire/core/core/const/support';
 
-export const ResizeObserver =
-	Object.isFunction(globalThis.ResizeObserver);
-
 export const IntersectionObserver =
 	Object.isFunction(globalThis.IntersectionObserver) &&
 	Object.isFunction(globalThis.IntersectionObserverEntry) &&
