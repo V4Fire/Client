@@ -11,6 +11,14 @@
  * @packageDocumentation
  */
 
-export * from 'core/dom/intersection-watcher/interface';
+import IntersectionWatcher from 'core/dom/intersection-watcher/engines';
 
-export { default } from 'core/dom/intersection-watcher/engines';
+export * from 'core/dom/intersection-watcher/interface';
+export { IntersectionWatcher as default };
+
+const
+	intersectionWatcher = new IntersectionWatcher();
+
+export const
+	watch = intersectionWatcher.watch.bind(intersectionWatcher),
+	unwatch = intersectionWatcher.unwatch.bind(intersectionWatcher);
