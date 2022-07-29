@@ -241,10 +241,16 @@ export default class ResizeWatcher {
 	 *
 	 * @example
 	 * ```js
-	 * import * as ResizeWatcher from 'core/dom/resize-watcher';
+	 * import ResizeWatcher from 'core/dom/resize-watcher';
+	 *
+	 * const
+	 *   resizeWatcher = new ResizeWatcher();
+	 *
+	 * resizeWatcher.watch(document.getElementById('my-elem'), {once: true, box: 'border-box'}, handler1);
+	 * resizeWatcher.watch(document.getElementById('my-elem'), handler2);
 	 *
 	 * // Cancel the all registered handlers and prevent new ones
-	 * ResizeWatcher.destroy();
+	 * resizeWatcher.destroy();
 	 * ```
 	 */
 	destroy(): void {

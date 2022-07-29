@@ -6,7 +6,7 @@ Keep in mind that this module does not contain any polyfills and relies on the n
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, (newGeometry, oldGeometry, watcher) => {
+ResizeWatcher.watch(document.getElementById('my-elem'), (newGeometry, oldGeometry, watcher) => {
   console.log('The element has been resized', newGeometry, oldGeometry);
 });
 ```
@@ -19,10 +19,10 @@ pass the handler to it, and then register the element.
 
 ```js
 const observer1 = new ResizeObserver(handler1);
-observer1.observe(document.body);
+observer1.observe(document.getElementById('my-elem'));
 
 const observer2 = new ResizeObserver(handler2);
-observer2.observe(document.body);
+observer2.observe(document.getElementById('my-elem'));
 ```
 
 This module allows you to do it more gracefully.
@@ -30,8 +30,8 @@ This module allows you to do it more gracefully.
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, handler1);
-ResizeWatcher.watch(document.body, handler2);
+ResizeWatcher.watch(document.getElementById('my-elem'), handler1);
+ResizeWatcher.watch(document.getElementById('my-elem'), handler2);
 ```
 
 All registered handlers share the same ResizeObserver instance, which helps improve performance.
@@ -41,7 +41,7 @@ which helps avoid application performance issues.
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, {once: true, box: 'border-box'}, handler);
+ResizeWatcher.watch(document.getElementById('my-elem'), {once: true, box: 'border-box'}, handler);
 ```
 
 However, you can use this module just like the original ResizeObserver by creating your own watcher instance.
@@ -53,8 +53,8 @@ import ResizeWatcher from 'core/dom/resize-watcher';
 
 const resizeWatcher = new ResizeWatcher();
 
-resizeWatcher.watch(document.body, {once: true, box: 'border-box'}, handler1);
-resizeWatcher.watch(document.body, handler2);
+resizeWatcher.watch(document.getElementById('my-elem'), {once: true, box: 'border-box'}, handler1);
+resizeWatcher.watch(document.getElementById('my-elem'), handler2);
 
 // Cancel the all registered handlers
 resizeWatcher.unwatch();
@@ -73,7 +73,7 @@ Note, changes occurring at the same tick are merged into one. You can disable th
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, {immediate: true}, (newGeometry, oldGeometry, watcher) => {
+ResizeWatcher.watch(document.getElementById('my-elem'), {immediate: true}, (newGeometry, oldGeometry, watcher) => {
   console.log('The element has been resized', newGeometry, oldGeometry);
 });
 ```
@@ -83,7 +83,7 @@ The function returns a watcher object that can be used to cancel the watching.
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-const watcher = ResizeWatcher.watch(document.body, (newGeometry, oldGeometry, watcher) => {
+const watcher = ResizeWatcher.watch(document.getElementById('my-elem'), (newGeometry, oldGeometry, watcher) => {
   console.log('The element has been resized', newGeometry, oldGeometry);
 });
 
@@ -105,7 +105,7 @@ This property allows you to change which box model is used to determine size cha
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, {box: 'border-box'}, console.log);
+ResizeWatcher.watch(document.getElementById('my-elem'), {box: 'border-box'}, console.log);
 ```
 
 ##### [watchWidth = `true`]
@@ -115,7 +115,7 @@ If false, then the handler won't be called when only the width of the observed e
 ```js
 import * as resizeWatcher from 'core/dom/resize-watcher';
 
-resizeWatcher.watch(document.body, {watchWidth: false}, (newGeometry, oldGeometry) => {
+resizeWatcher.watch(document.getElementById('my-elem'), {watchWidth: false}, (newGeometry, oldGeometry) => {
   console.log('The element height has been changed', newGeometry, oldGeometry);
 });
 ```
@@ -127,7 +127,7 @@ If false, then the handler won't be called when only the height of the observed 
 ```js
 import * as resizeWatcher from 'core/dom/resize-watcher';
 
-resizeWatcher.watch(document.body, {watchHeight: false}, (newGeometry, oldGeometry) => {
+resizeWatcher.watch(document.getElementById('my-elem'), {watchHeight: false}, (newGeometry, oldGeometry) => {
   console.log('The element width has been changed', newGeometry, oldGeometry);
 });
 ```
@@ -139,7 +139,7 @@ If true, then the handler will be called after the first resizing.
 ```js
 import * as resizeWatcher from 'core/dom/resize-watcher';
 
-resizeWatcher.watch(document.body, {watchInit: false}, console.log);
+resizeWatcher.watch(document.getElementById('my-elem'), {watchInit: false}, console.log);
 ```
 
 ##### [immediate = `false`]
@@ -150,7 +150,7 @@ Be careful using this option as it can degrade application performance.
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, {immediate: true}, console.log);
+ResizeWatcher.watch(document.getElementById('my-elem'), {immediate: true}, console.log);
 ```
 
 ##### [once = `false`]
@@ -161,9 +161,42 @@ Note that the handler firing caused by the `watchInit` option is ignored.
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, {once: true}, (newGeometry, oldGeometry, watcher) => {
+ResizeWatcher.watch(document.getElementById('my-elem'), {once: true}, (newGeometry, oldGeometry, watcher) => {
   console.log('The element has been resized', newGeometry, oldGeometry);
 });
+```
+
+#### Watcher object
+
+The `watch` method returns a special watcher object with a set of useful properties and methods.
+
+```typescript
+interface Watcher extends Readonly<WatchOptions> {
+  /**
+   * The unique watcher identifier
+   */
+  readonly id: string;
+
+  /**
+   * The observed element
+   */
+  readonly target: Element;
+
+  /**
+   * A function that will be called when the observable element is resized
+   */
+  readonly handler: WatchHandler;
+
+  /**
+   * The observable element geometry
+   */
+  readonly rect?: DOMRectReadOnly;
+
+  /**
+   * Cancels watching for the element geometry
+   */
+  unwatch(): void;
+}
 ```
 
 ### unwatch
@@ -176,14 +209,14 @@ Additionally, you can filter the watchers to be canceled by specifying a handler
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
-ResizeWatcher.watch(document.body, handler1);
-ResizeWatcher.watch(document.body, handler2);
+ResizeWatcher.watch(document.getElementById('my-elem'), handler1);
+ResizeWatcher.watch(document.getElementById('my-elem'), handler2);
 
-// Cancel only `handler2` from `document.body`
-ResizeWatcher.unwatch(document.body, handler2);
+// Cancel only `handler2` from the passed element
+ResizeWatcher.unwatch(document.getElementById('my-elem'), handler2);
 
-// Cancel the all registered handlers from `document.body`
-ResizeWatcher.unwatch(document.body);
+// Cancel the all registered handlers from the passed element
+ResizeWatcher.unwatch(document.getElementById('my-elem'));
 
 // Cancel the all registered handlers
 ResizeWatcher.unwatch();
@@ -195,8 +228,14 @@ Cancels watching for the all registered elements and destroys the instance.
 This method is available only when you explicitly instantiate ResizeWatcher.
 
 ```js
-import * as ResizeWatcher from 'core/dom/resize-watcher';
+import ResizeWatcher from 'core/dom/resize-watcher';
+
+const
+  resizeWatcher = new ResizeWatcher();
+
+resizeWatcher.watch(document.getElementById('my-elem'), {once: true, box: 'border-box'}, handler1);
+resizeWatcher.watch(document.getElementById('my-elem'), handler2);
 
 // Cancel the all registered handlers and prevent new ones
-ResizeWatcher.destroy();
+resizeWatcher.destroy();
 ```
