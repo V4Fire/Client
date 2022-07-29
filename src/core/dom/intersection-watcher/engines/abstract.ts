@@ -42,6 +42,15 @@ export default abstract class AbstractEngine {
 	 *
 	 * @param el - the element to watch
 	 * @param handler - a function that will be called when the element enters the viewport
+	 *
+	 * @example
+	 * ```js
+	 * import * as IntersectionWatcher from 'core/dom/intersection-watcher';
+	 *
+	 * IntersectionWatcher.watch(document.getElementById('my-elem'), (watcher) => {
+	 *   console.log('The element has entered the viewport', watcher.target);
+	 * });
+	 * ```
 	 */
 	watch(el: Element, handler: WatchHandler): Watcher;
 
@@ -53,6 +62,15 @@ export default abstract class AbstractEngine {
 	 * @param el - the element to watch
 	 * @param opts - additional watch options
 	 * @param handler - a function that will be called when the element enters the viewport
+	 *
+	 * @example
+	 * ```js
+	 * import * as IntersectionWatcher from 'core/dom/intersection-watcher';
+	 *
+	 * IntersectionWatcher.watch(document.getElementById('my-elem'), {threshold: 0.5}, (watcher) => {
+	 *   console.log('The element has entered the viewport', watcher.target);
+	 * });
+	 * ```
 	 */
 	watch(el: Element, opts: WatchOptions, handler: WatchHandler): Watcher;
 
@@ -67,7 +85,8 @@ export default abstract class AbstractEngine {
 
 		const opts = {
 			once: false,
-			threshold: 1
+			threshold: 1,
+			delay: 0
 		};
 
 		if (Object.isFunction(optsOrHandler)) {
@@ -124,6 +143,27 @@ export default abstract class AbstractEngine {
 	 *
 	 * @param [el] - the element to unwatch
 	 * @param [filter] - the handler or threshold to filter
+	 *
+	 * @example
+	 * ```js
+	 * import * as IntersectionWatcher from 'core/dom/intersection-watcher';
+	 *
+	 * IntersectionWatcher.watch(document.getElementById('my-elem'), handler1);
+	 * IntersectionWatcher.watch(document.getElementById('my-elem'), {threshold: 0.5}, handler2);
+	 * IntersectionWatcher.watch(document.getElementById('my-elem'), {threshold: 0.5}, handler3);
+	 *
+	 * // Cancel only `handler1` from the passed element
+	 * IntersectionWatcher.unwatch(document.getElementById('my-elem'), handler1);
+	 *
+	 * // Cancel the all registered handlers with the `threshold = 0.5` from the passed element
+	 * IntersectionWatcher.unwatch(document.getElementById('my-elem'), 0.5);
+	 *
+	 * // Cancel the all registered handlers from the passed element
+	 * IntersectionWatcher.unwatch(document.getElementById('my-elem'));
+	 *
+	 * // Cancel the all registered handlers
+	 * IntersectionWatcher.unwatch();
+	 * ```
 	 */
 	unwatch(el?: Element, filter?: WatchLink): void {
 		if (el == null) {
@@ -177,7 +217,7 @@ export default abstract class AbstractEngine {
 	 * Initializes the specified watcher
 	 * @param watcher
 	 */
-	protected abstract initWatcher(watcher: Watcher): void;
+	protected abstract initWatcher(watcher: Writable<Watcher>): void;
 
 	/**
 	 * Sets a new size for the specified watcher
@@ -185,7 +225,7 @@ export default abstract class AbstractEngine {
 	 * @param size
 	 * @param watcher
 	 */
-	protected setWatcherSize(watcher: Watcher, size: ElementSize): void {
+	protected setWatcherSize(watcher: Writable<Watcher>, size: ElementSize): void {
 		watcher.size.width = size.width;
 		watcher.size.height = size.height;
 	}
@@ -195,11 +235,11 @@ export default abstract class AbstractEngine {
 	 * @param watcher
 	 */
 	protected callWatcherHandler(watcher: Watcher): void {
-		if (watcher.shouldHandle != null && !Object.isTruly(watcher.shouldHandle(watcher))) {
+		if (watcher.onEnter != null && !Object.isTruly(watcher.onEnter(watcher))) {
 			return;
 		}
 
-		if (watcher.delay != null && watcher.delay > 0) {
+		if (watcher.delay > 0) {
 			this.async.setTimeout(call, watcher.delay, {
 				group: watcher.id,
 				label: $$.callWatcherHandler,

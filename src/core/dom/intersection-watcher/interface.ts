@@ -16,12 +16,6 @@ export interface WatchOptions {
 	root?: Element | (() => Element);
 
 	/**
-	 * If true, then after the first intersection handler firing, the observation will be canceled
-	 * @default `false`
-	 */
-	once?: boolean;
-
-	/**
 	 * A number which indicate at what percentage of the observable element visibility the intersection callback
 	 * should be executed. If you only want to detect when visibility passes the 50% mark, you can use a value of `0.5`.
 	 *
@@ -35,8 +29,16 @@ export interface WatchOptions {
 	/**
 	 * The minimum delay in milliseconds before calling the intersection handler.
 	 * If after this delay the observable element leaves the viewport, then the intersection handler won't be called.
+	 *
+	 * @default `0`
 	 */
 	delay?: number;
+
+	/**
+	 * If true, then after the first intersection handler firing, the observation will be canceled
+	 * @default `false`
+	 */
+	once?: boolean;
 
 	/**
 	 * If true, then the position and geometry of the observable element will be updated every 75 milliseconds using
@@ -45,6 +47,8 @@ export interface WatchOptions {
 	 *
 	 * This option is only meaningful for environments that do not support the native IntersectionObserver API.
 	 * Be careful using this option as it can degrade the performance of your application.
+	 *
+	 * @default `false`
 	 */
 	polling?: boolean;
 
@@ -56,33 +60,31 @@ export interface WatchOptions {
 	 * For that reason, IntersectionObserver2 is not intended to be used broadly in the way that IntersectionObserver1 is.
 	 * IntersectionObserver2 is focused on combating fraud and should be used only when IntersectionObserver1
 	 * functionality is truly insufficient.
+	 *
+	 * @see https://web.dev/intersectionobserver-v2
+	 * @default `false`
 	 */
 	trackVisibility?: boolean;
 
 	/**
-	 * A function that returns a boolean whether the intersection handler should be called on the observed element
-	 * @param watcher
-	 */
-	shouldHandle?(watcher: Watcher): AnyToBoolean;
-
-	/**
 	 * Handler: the observable element has entered the viewport.
-	 * Note that this handler ignores the `shouldHandle` option.
+	 * If the handler returns false, then the main watcher handler won't be called.
+	 * Note that this handler is always called immediately, i.e. ignores the `delay` option.
 	 *
 	 * @param watcher
 	 */
-	onEnter?: WatchHandler;
+	onEnter?(watcher: Watcher): AnyToBoolean;
 
 	/**
 	 * Handler: the observable element has leaved the viewport.
-	 * Note that this handler ignores the `shouldHandle` option.
+	 * Note that this handler is always called immediately, i.e. ignores the `delay` option.
 	 *
 	 * @param watcher
 	 */
 	onLeave?: WatchHandler;
 }
 
-export interface Watcher extends Readonly<WatchOptions & Required<Pick<WatchOptions, 'once' | 'threshold'>>> {
+export interface Watcher extends Readonly<WatchOptions & Required<Pick<WatchOptions, 'once' | 'threshold' | 'delay'>>> {
 	/**
 	 * The unique watcher identifier
 	 */

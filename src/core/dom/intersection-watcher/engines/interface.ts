@@ -24,5 +24,5 @@ export interface WatcherPosition extends ElementPosition {
 	watcher: Watcher;
 }
 
-export type RegisteredWatchers = Map<WatchLink, Watcher | Set<Watcher>>;
+export type RegisteredWatchers = Map<WatchLink, Writable<Watcher> | Set<Writable<Watcher>>>;
 export type ObservableElements = Map<Element, RegisteredWatchers>;

@@ -34,7 +34,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 		super.destroy();
 	}
 
-	protected override initWatcher(watcher: Watcher): void {
+	protected override initWatcher(watcher: Writable<Watcher>): void {
 		const
 			handler = this.onObserver.bind(this, watcher.threshold),
 			unwatch = watcher.unwatch.bind(watcher);
@@ -45,6 +45,11 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 
 		const
 			opts = Object.reject({...watcher, root}, 'delay');
+
+		if (opts.trackVisibility) {
+			opts['delay'] = 100;
+			watcher.delay += 100;
+		}
 
 		let
 			observerPool = this.observersPool.get(resolvedRoot);
@@ -125,11 +130,9 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	protected onObservableIn(watcher: Writable<Watcher>, entry: IntersectionObserverEntry): void {
 		watcher.time = entry.time;
 		watcher.timeIn = entry.time;
+
 		watcher.isLeaving = false;
-
-		watcher.onEnter?.(watcher);
 		this.callWatcherHandler(watcher);
-
 		watcher.isLeaving = true;
 	}
 

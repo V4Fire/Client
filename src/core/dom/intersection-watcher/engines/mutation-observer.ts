@@ -82,7 +82,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 		this.dynamicalElements.clear();
 	}
 
-	protected override initWatcher(watcher: Watcher): void {
+	protected override initWatcher(watcher: Writable<Watcher>): void {
 		if (watcher.polling) {
 			this.addWatcherToStore(watcher, this.dynamicalElements);
 			this.removeWatcherFromStore(watcher, this.elements);
@@ -305,11 +305,9 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		watcher.time = timestamp;
 		watcher.timeIn = timestamp;
+
 		watcher.isLeaving = false;
-
-		watcher.onEnter?.(watcher);
 		this.callWatcherHandler(watcher);
-
 		watcher.isLeaving = true;
 	}
 
