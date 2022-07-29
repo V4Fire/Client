@@ -34,8 +34,9 @@ ResizeWatcher.watch(document.body, handler1);
 ResizeWatcher.watch(document.body, handler2);
 ```
 
-In addition, this module provides a number of useful options.
-And all adjacent resize events are collapsed into one by default, which helps avoid application performance issues.
+All registered handlers share the same ResizeObserver instance, which helps improve performance.
+In addition, this module provides a number of useful options. And all adjacent resize events are collapsed into one by default,
+which helps avoid application performance issues.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -43,12 +44,31 @@ import * as ResizeWatcher from 'core/dom/resize-watcher';
 ResizeWatcher.watch(document.body, {once: true, box: 'border-box'}, handler);
 ```
 
-## Functions
+However, you can use this module just like the original ResizeObserver by creating your own watcher instance.
+This approach allows you to cancel all registered handlers at once within a single instance.
+Keep in mind, each instance has its own ResizeObserver instance.
+
+```js
+import ResizeWatcher from 'core/dom/resize-watcher';
+
+const resizeWatcher = new ResizeWatcher();
+
+resizeWatcher.watch(document.body, {once: true, box: 'border-box'}, handler1);
+resizeWatcher.watch(document.body, handler2);
+
+// Cancel the all registered handlers
+resizeWatcher.unwatch();
+
+// Cancel the all registered handlers and prevent new ones
+resizeWatcher.destroy();
+```
+
+## API
 
 ### watch
 
-Watches for the geometry of the passed element and invokes the specified handler when it changes.
-Note, changes occurring in the same tick are merged into one. You can disable this behavior by passing the `immediate: true` option.
+Watches for the size of the given element and invokes the specified handler when it changes.
+Note, changes occurring at the same tick are merged into one. You can disable this behavior by passing the `immediate: true` option.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -58,7 +78,7 @@ ResizeWatcher.watch(document.body, {immediate: true}, (newGeometry, oldGeometry,
 });
 ```
 
-The function returns a special watcher object that can be used to cancel the watching.
+The function returns a watcher object that can be used to cancel the watching.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -114,7 +134,7 @@ resizeWatcher.watch(document.body, {watchHeight: false}, (newGeometry, oldGeomet
 
 ##### [watchInit = `true`]
 
-If true, then the handler will be called immediately after the initialization of [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
+If true, then the handler will be called after the first resizing.
 
 ```js
 import * as resizeWatcher from 'core/dom/resize-watcher';
@@ -135,7 +155,7 @@ ResizeWatcher.watch(document.body, {immediate: true}, console.log);
 
 ##### [once = `false`]
 
-If true, then after the first handler firing, the observation of the element will be canceled.
+If true, then after the first handler invoking, the observation of the element will be canceled.
 Note that the handler firing caused by the `watchInit` option is ignored.
 
 ```js
@@ -148,8 +168,10 @@ ResizeWatcher.watch(document.body, {once: true}, (newGeometry, oldGeometry, watc
 
 ### unwatch
 
-Cancels watching for the specified element geometry.
-If you pass a handler, then only it will be cancelled.
+Cancels watching for the registered elements.
+
+If the method takes an element, then only that element will be unwatched.
+Additionally, you can filter the watchers to be canceled by specifying a handler.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -160,6 +182,21 @@ ResizeWatcher.watch(document.body, handler2);
 // Cancel only `handler2` from `document.body`
 ResizeWatcher.unwatch(document.body, handler2);
 
-// Cancel all handlers from `document.body`
+// Cancel the all registered handlers from `document.body`
 ResizeWatcher.unwatch(document.body);
+
+// Cancel the all registered handlers
+ResizeWatcher.unwatch();
+```
+
+## destroy
+
+Cancels watching for the all registered elements and destroys the instance.
+This method is available only when you explicitly instantiate ResizeWatcher.
+
+```js
+import * as ResizeWatcher from 'core/dom/resize-watcher';
+
+// Cancel the all registered handlers and prevent new ones
+ResizeWatcher.destroy();
 ```

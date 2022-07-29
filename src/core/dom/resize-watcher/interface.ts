@@ -47,7 +47,7 @@ export interface WatchOptions {
 	immediate?: boolean;
 
 	/**
-	 * If true, then after the first handler firing, the observation of the element will be canceled.
+	 * If true, then after the first handler invoking, the observation of the element will be canceled.
 	 * Note that the handler firing caused by the `watchInit` option is ignored.
 	 *
 	 * @default `false`

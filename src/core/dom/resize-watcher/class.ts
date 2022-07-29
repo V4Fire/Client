@@ -83,6 +83,17 @@ export default class ResizeWatcher {
 	 *
 	 * @param el - the element to watch
 	 * @param handler - a function that will be called when the observable element is resized
+	 *
+	 * @example
+	 * ```js
+	 * import * as ResizeWatcher from 'core/dom/resize-watcher';
+	 *
+	 * const watcher = ResizeWatcher.watch(document.body, (newGeometry, oldGeometry, watcher) => {
+	 *   console.log('The element has been resized', newGeometry, oldGeometry);
+	 * });
+	 *
+	 * watcher.unwatch();
+	 * ```
 	 */
 	watch(el: Element, handler: WatchHandler): Watcher;
 
@@ -196,8 +207,11 @@ export default class ResizeWatcher {
 	 * // Cancel only `handler2` from `document.body`
 	 * ResizeWatcher.unwatch(document.body, handler2);
 	 *
-	 * // Cancel all handlers from `document.body`
+	 * // Cancel the all registered handlers from `document.body`
 	 * ResizeWatcher.unwatch(document.body);
+	 *
+	 * // Cancel the all registered handlers
+	 * ResizeWatcher.unwatch();
 	 * ```
 	 */
 	unwatch(el?: Element, handler?: Nullable<WatchHandler>): void {
@@ -224,6 +238,14 @@ export default class ResizeWatcher {
 
 	/**
 	 * Cancels watching for the all registered elements and destroys the instance
+	 *
+	 * @example
+	 * ```js
+	 * import * as ResizeWatcher from 'core/dom/resize-watcher';
+	 *
+	 * // Cancel the all registered handlers and prevent new ones
+	 * ResizeWatcher.destroy();
+	 * ```
 	 */
 	destroy(): void {
 		this.elements.clear();
