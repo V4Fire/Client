@@ -43,11 +43,15 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 			root = Object.isFunction(watcher.root) ? watcher.root() : watcher.root,
 			resolvedRoot = root ?? document.documentElement;
 
-		const
-			opts = Object.reject({...watcher, root}, 'delay');
+		const opts = {
+			root,
+			trackVisibility: watcher.trackVisibility,
+			threshold: watcher.threshold,
+			delay: 0
+		};
 
 		if (opts.trackVisibility) {
-			opts['delay'] = 100;
+			opts.delay = 100;
 			watcher.delay += 100;
 		}
 
@@ -56,7 +60,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 
 		if (observerPool == null) {
 			observerPool = new Pool((handler, opts) => new IntersectionObserver(handler, opts), {
-				hashFn: (_, opts) => Object.fastHash(opts)
+				hashFn: (_, opts) => Object.fastHash(Object.reject(opts, 'root'))
 			});
 
 			this.observersPool.set(resolvedRoot, observerPool);
