@@ -132,15 +132,6 @@ IntersectionWatcher.watch(document.getElementById('my-elem'), {once: true}, (wat
 });
 ```
 
-##### [polling = `false`]
-
-If true, then the position and geometry of the observable element will be updated every 75 milliseconds using
-`getBoundingClientRect`. This strategy is necessary for elements that can change their size or position without
-changing in its node tree.
-
-This option is only meaningful for environments that do not support the native IntersectionObserver API.
-Be careful using this option as it can degrade the performance of your application.
-
 ##### [trackVisibility = `false`]
 
 A boolean indicating whether the watcher will track changes in the element visibility.

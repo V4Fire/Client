@@ -9,26 +9,6 @@
 import type { ScrollRect, ElementPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 /**
- * Returns the root scrollable element geometry
- */
-export function getRootScrollRect(): ScrollRect {
-	const
-		root = document.documentElement,
-		scrollRoot = document.scrollingElement;
-
-	if (scrollRoot == null) {
-		throw new ReferenceError('`document.scrollingElement` is undefined');
-	}
-
-	return {
-		width: root.clientWidth,
-		height: root.clientHeight,
-		scrollLeft: scrollRoot.scrollLeft,
-		scrollTop: scrollRoot.scrollTop
-	};
-}
-
-/**
  * Returns the scrollable geometry of the passed element
  */
 export function getElementScrollRect(el: Element): ScrollRect {

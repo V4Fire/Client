@@ -11,4 +11,4 @@ import * as support from 'core/const/support';
 import IntersectionObserverEngine from 'core/dom/intersection-watcher/engines/intersection-observer';
 import MutationObserverEngine from 'core/dom/intersection-watcher/engines/mutation-observer';
 
-export default support.IntersectionObserver ? IntersectionObserverEngine : MutationObserverEngine;
+export default MutationObserverEngine;

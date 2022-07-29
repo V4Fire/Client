@@ -41,18 +41,6 @@ export interface WatchOptions {
 	once?: boolean;
 
 	/**
-	 * If true, then the position and geometry of the observable element will be updated every 75 milliseconds using
-	 * `getBoundingClientRect`. This strategy is necessary for elements that can change their size or position without
-	 * changing in its node tree.
-	 *
-	 * This option is only meaningful for environments that do not support the native IntersectionObserver API.
-	 * Be careful using this option as it can degrade the performance of your application.
-	 *
-	 * @default `false`
-	 */
-	polling?: boolean;
-
-	/**
 	 * A boolean indicating whether the watcher will track changes in the element visibility.
 	 * This option is only meaningful for environments that support the native IntersectionObserver2 API.
 	 *
@@ -84,11 +72,21 @@ export interface WatchOptions {
 	onLeave?: WatchHandler;
 }
 
-export interface Watcher extends Readonly<WatchOptions & Required<Pick<WatchOptions, 'once' | 'threshold' | 'delay'>>> {
+export interface Watcher extends Readonly<
+	Omit<WatchOptions, 'root'> & Required<Pick<WatchOptions, 'once' | 'threshold' | 'delay'>>
+> {
 	/**
 	 * The unique watcher identifier
 	 */
 	readonly id: string;
+
+	/**
+	 * An element whose bounds are treated as the bounding box of the viewport for the element which is the
+	 * observer target
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/root
+	 */
+	readonly root: Element;
 
 	/**
 	 * The observed element
