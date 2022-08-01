@@ -12,7 +12,7 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import type { AsyncOptions } from 'core/async';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-import { isElementInViewport, getElementPosition } from 'core/dom/intersection-watcher/engines/helpers';
+import { isElementInView, getElementPosition } from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 import type { WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
@@ -168,7 +168,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 			to: number = watchersPositions.length
 		): CanUndef<number> {
 			if (from >= to) {
-				return isWatcherInViewport(to) ? to : res;
+				return needToSaveCursor(to) ? to : res;
 			}
 
 			const
@@ -176,19 +176,20 @@ export default class MutationObserverEngine extends AbstractEngine {
 				watcherPos = watchersPositions[cursor];
 
 			const
-				top = scrollY + innerHeight + watcherPos.watcher.root.scrollTop;
+				r = watcherPos.watcher.root,
+				top = innerHeight + r.scrollTop + (r === document.documentElement ? 0 : scrollY);
 
 			if (top < watcherPos.top) {
 				return searchWatcher(start, res, 0, cursor);
 			}
 
-			if (isWatcherInViewport(cursor)) {
+			if (needToSaveCursor(cursor)) {
 				res = cursor;
 			}
 
 			return searchWatcher(start, res, cursor + 1, to);
 
-			function isWatcherInViewport(cursor: number): boolean {
+			function needToSaveCursor(cursor: number): boolean {
 				const
 					pos = watchersPositions[cursor];
 
@@ -200,12 +201,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 				const
 					{watcher} = pos;
 
-				const
-					// Old versions of Chromium don't support `isConnected`
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					isConnected = watcher.target.isConnected ?? true;
-
-				if (!isConnected || !isElementInViewport(watcher.target, watcher.root, watcher.threshold)) {
+				if (!isElementInView(watcher.target, watcher.root, watcher.threshold)) {
 					return false;
 				}
 

@@ -8,6 +8,41 @@
 
 import type { ElementPosition } from 'core/dom/intersection-watcher/engines/interface';
 
+const
+	rectCache = new Map<Element, DOMRect>();
+
+{
+	const
+		getFromRectCache = rectCache.get.bind(rectCache),
+		addToRectCache = rectCache.set.bind(rectCache);
+
+	let
+		timer;
+
+	rectCache.get = (key) => {
+		let
+			val = getFromRectCache(key);
+
+		if (val == null) {
+			val = key.getBoundingClientRect();
+			rectCache.set(key, val);
+		}
+
+		return val;
+	};
+
+	rectCache.set = (key, value) => {
+		if (timer == null) {
+			timer = setTimeout(() => {
+				rectCache.clear();
+				timer = null;
+			}, 15);
+		}
+
+		return addToRectCache(key, value);
+	};
+}
+
 /**
  * Returns the geometry and position of the specified element relative to the given scrollable root
  *
@@ -16,15 +51,15 @@ import type { ElementPosition } from 'core/dom/intersection-watcher/engines/inte
  */
 export function getElementPosition(el: Element, root: Element): ElementPosition {
 	const
-		rect = el.getBoundingClientRect(),
+		rect = rectCache.get(el)!,
 		isGlobalRoot = root === document.documentElement;
 
 	const
 		{width, height} = rect;
 
 	const
-		top = root.scrollTop + rect.top + (isGlobalRoot ? 0 : scrollY),
-		left = root.scrollLeft + rect.left + (isGlobalRoot ? 0 : scrollX);
+		top = rect.top + root.scrollTop + (isGlobalRoot ? 0 : scrollY),
+		left = rect.left + root.scrollLeft + (isGlobalRoot ? 0 : scrollX);
 
 	return {
 		bottom: top + height,
@@ -38,28 +73,6 @@ export function getElementPosition(el: Element, root: Element): ElementPosition 
 	};
 }
 
-const
-	rectCache = new Map<Element, DOMRect>();
-
-{
-	const
-		addToRectCache = rectCache.set.bind(rectCache);
-
-	let
-		timer;
-
-	rectCache.set = function set(key: Element, value: DOMRect) {
-		if (timer == null) {
-			timer = setTimeout(() => {
-				rectCache.clear();
-				timer = null;
-			}, 15);
-		}
-
-		return addToRectCache(key, value);
-	};
-}
-
 /**
  * Returns true if the specified element is in view relative to the given scrollable root
  *
@@ -67,27 +80,30 @@ const
  * @param root
  * @param threshold - the percentage of element visibility at which this function will return true
  */
-export function isElementInViewport(el: Element, root: Element, threshold: number): boolean {
-	let
-		rect = rectCache.get(el),
-		rootRect = rectCache.get(root);
+export function isElementInView(el: Element, root: Element, threshold: number): boolean {
+	const
+		// Old versions of Chromium don't support `isConnected`
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		isConnected = el.isConnected ?? true;
 
-	if (rect == null) {
-		rect = el.getBoundingClientRect();
-		rectCache.set(el, rect);
-	}
-
-	if (rootRect == null) {
-		rootRect = root.getBoundingClientRect();
-		rectCache.set(root, rootRect);
-	}
-
-	if (rootRect.top > rect.top + rect.height * threshold) {
+	if (!isConnected) {
 		return false;
 	}
 
-	if (rootRect.top + rootRect.height < rect.bottom - rect.height * threshold) {
-		return false;
+	const
+		rect = rectCache.get(el)!;
+
+	if (root !== document.documentElement) {
+		const
+			rootRect = rectCache.get(root)!;
+
+		if (rootRect.top > rect.top + rect.height * threshold) {
+			return false;
+		}
+
+		if (rootRect.top + rootRect.height < rect.bottom - rect.height * threshold) {
+			return false;
+		}
 	}
 
 	return !(
