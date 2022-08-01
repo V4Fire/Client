@@ -4,6 +4,9 @@ This module provides API to track elements entering or leaving the viewport.
 The module supports several element tracking strategies. The default is IntersectionObserver, but if the environment does not support it,
 then a strategy based on the heightmap of the elements and MutationObserver will be used.
 
+_Note that the MutationObserver-based strategy tracks viewport intersection only along the Y axis and does not support
+scrollable elements nesting more than two layers._
+
 ## Why is this module needed?
 
 Often when working with Intersection we just want to register some kind of handler on an element.
