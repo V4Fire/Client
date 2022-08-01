@@ -8,11 +8,6 @@
 
 import type { ElementSize, Watcher, WatchLink } from 'core/dom/intersection-watcher/interface';
 
-export interface ScrollRect extends ElementSize {
-	scrollTop: number;
-	scrollLeft: number;
-}
-
 export interface ElementPosition extends ElementSize {
 	top: number;
 	left: number;

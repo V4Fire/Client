@@ -12,14 +12,7 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import type { AsyncOptions } from 'core/async';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-
-import {
-
-	isElementInView,
-	getElementPosition,
-	getElementScrollRect
-
-} from 'core/dom/intersection-watcher/engines/helpers';
+import { isElementInViewport, getElementPosition } from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 import type { WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
@@ -60,7 +53,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 			const checkViewport = () => $a.setTimeout(this.checkViewport.bind(this), 50, {
 				label: $$.checkViewport,
-				join: true
+				join: false
 			});
 
 			$a.on(document, 'scroll', checkViewport, {options: {capture: true}});
@@ -147,7 +140,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 		}
 
 		const
-			newIntersectionWindow = watchersPositions.slice(0, to + 1),
+			newIntersectionWindow = watchersPositions.slice(from, to + 1),
 			newIntersectionSet = new Set(newIntersectionWindow);
 
 		for (let i = 0; i < intersectionWindow.length; i++) {
@@ -175,24 +168,27 @@ export default class MutationObserverEngine extends AbstractEngine {
 			to: number = watchersPositions.length
 		): CanUndef<number> {
 			if (from >= to) {
-				return isWatcherInView(to) ? to : res;
+				return isWatcherInViewport(to) ? to : res;
 			}
 
 			const
 				cursor = from + Math.floor((to - from) / 2),
-				pos = watchersPositions[cursor];
+				watcherPos = watchersPositions[cursor];
 
-			if (getElementScrollRect(pos.watcher.root).scrollTop > pos.top) {
-				return searchWatcher(start, res, cursor + 1, to);
+			const
+				top = scrollY + innerHeight + watcherPos.watcher.root.scrollTop;
+
+			if (top < watcherPos.top) {
+				return searchWatcher(start, res, 0, cursor);
 			}
 
-			if (isWatcherInView(cursor)) {
+			if (isWatcherInViewport(cursor)) {
 				res = cursor;
 			}
 
-			return searchWatcher(start, res, 0, cursor);
+			return searchWatcher(start, res, cursor + 1, to);
 
-			function isWatcherInView(cursor: number): boolean {
+			function isWatcherInViewport(cursor: number): boolean {
 				const
 					pos = watchersPositions[cursor];
 
@@ -202,11 +198,14 @@ export default class MutationObserverEngine extends AbstractEngine {
 				}
 
 				const
+					{watcher} = pos;
+
+				const
 					// Old versions of Chromium don't support `isConnected`
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					isConnected = pos.watcher.target.isConnected ?? true;
+					isConnected = watcher.target.isConnected ?? true;
 
-				if (!isConnected || !isElementInView(pos, getElementScrollRect(pos.watcher.root), pos.watcher.threshold)) {
+				if (!isConnected || !isElementInViewport(watcher.target, watcher.root, watcher.threshold)) {
 					return false;
 				}
 
@@ -231,7 +230,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 					return;
 				}
 
-				const pos = getElementPosition(watcher.target, getElementScrollRect(watcher.root));
+				const pos = getElementPosition(watcher.target, watcher.root);
 				this.setWatcherSize(watcher, pos);
 
 				if (pos.width === 0 || pos.height === 0) {

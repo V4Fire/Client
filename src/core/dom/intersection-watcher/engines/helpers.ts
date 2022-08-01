@@ -6,36 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ScrollRect, ElementPosition } from 'core/dom/intersection-watcher/engines/interface';
+import type { ElementPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 /**
- * Returns the scrollable geometry of the passed element
- */
-export function getElementScrollRect(el: Element): ScrollRect {
-	return {
-		width: el.clientWidth,
-		height: el.clientHeight,
-		scrollLeft: el.scrollLeft,
-		scrollTop: el.scrollTop
-	};
-}
-
-/**
- * Returns the geometry and position of the specified element relative to the given scrollable parent
+ * Returns the geometry and position of the specified element relative to the given scrollable root
  *
  * @param el
- * @param scrollParent
+ * @param root
  */
-export function getElementPosition(el: Element, scrollParent: ScrollRect): ElementPosition {
+export function getElementPosition(el: Element, root: Element): ElementPosition {
 	const
-		rect = el.getBoundingClientRect();
+		rect = el.getBoundingClientRect(),
+		isGlobalRoot = root === document.documentElement;
 
 	const
 		{width, height} = rect;
 
 	const
-		top = scrollParent.scrollTop + rect.top,
-		left = scrollParent.scrollLeft + rect.left;
+		top = root.scrollTop + rect.top + (isGlobalRoot ? 0 : scrollY),
+		left = root.scrollLeft + rect.left + (isGlobalRoot ? 0 : scrollX);
 
 	return {
 		bottom: top + height,
@@ -49,44 +38,60 @@ export function getElementPosition(el: Element, scrollParent: ScrollRect): Eleme
 	};
 }
 
+const
+	rectCache = new Map<Element, DOMRect>();
+
+{
+	const
+		addToRectCache = rectCache.set.bind(rectCache);
+
+	let
+		timer;
+
+	rectCache.set = function set(key: Element, value: DOMRect) {
+		if (timer == null) {
+			timer = setTimeout(() => {
+				rectCache.clear();
+				timer = null;
+			}, 15);
+		}
+
+		return addToRectCache(key, value);
+	};
+}
+
 /**
- * Returns true if the specified element is in view relative to the given scrollable parent
+ * Returns true if the specified element is in view relative to the given scrollable root
  *
  * @param el
- * @param scrollParent
+ * @param root
  * @param threshold - the percentage of element visibility at which this function will return true
  */
-export function isElementInView(
-	el: Element | ElementPosition,
-	scrollParent: ScrollRect,
-	threshold: number
-): boolean {
-	const
-		pos = el instanceof Element ? getElementPosition(el, scrollParent) : el;
+export function isElementInViewport(el: Element, root: Element, threshold: number): boolean {
+	let
+		rect = rectCache.get(el),
+		rootRect = rectCache.get(root);
 
-	if (pos.width === 0 || pos.height === 0) {
+	if (rect == null) {
+		rect = el.getBoundingClientRect();
+		rectCache.set(el, rect);
+	}
+
+	if (rootRect == null) {
+		rootRect = root.getBoundingClientRect();
+		rectCache.set(root, rootRect);
+	}
+
+	if (rootRect.top > rect.top + rect.height * threshold) {
 		return false;
 	}
 
-	const
-		minElVisibleHeight = pos.top + pos.height * threshold,
-		minElVisibleWidth = pos.left + pos.width * threshold;
+	if (rootRect.top + rootRect.height < rect.bottom - rect.height * threshold) {
+		return false;
+	}
 
-	const
-		parentScrollHeight = scrollParent.scrollTop + scrollParent.height,
-		parentScrollWidth = scrollParent.scrollLeft + scrollParent.width;
-
-	const
-		isElInParentY = parentScrollHeight >= minElVisibleHeight,
-		isElInParentX = parentScrollWidth >= minElVisibleWidth;
-
-	const
-		isVisibleElYTop = minElVisibleHeight >= scrollParent.scrollTop,
-		isVisibleElYBottom = pos.bottom - pos.height * threshold < scrollParent.scrollTop;
-
-	const isVisibleElX = pos.left > 0 ?
-		pos.left - pos.width * threshold <= scrollParent.scrollLeft + scrollParent.width :
-		minElVisibleWidth >= scrollParent.scrollLeft;
-
-	return isElInParentY && isElInParentX && isVisibleElYTop && isVisibleElX && !isVisibleElYBottom;
+	return !(
+		1 - (rect.top >= 0 ? 0 : -rect.top) / rect.height < threshold ||
+		1 - (rect.bottom - innerHeight) / rect.height < threshold
+	);
 }
