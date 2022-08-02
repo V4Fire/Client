@@ -28,7 +28,7 @@ const
 			rectCache.set(key, val);
 		}
 
-		return val;
+		return key.getBoundingClientRect();
 	};
 
 	rectCache.set = (key, value) => {
@@ -93,21 +93,32 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 	const
 		rect = rectCache.get(el)!;
 
+	const
+		topHeight = rect.top + rect.height * threshold,
+		bottomHeight = rect.bottom - rect.height * threshold;
+
+	const
+		leftWidth = rect.left + rect.width * threshold,
+		rightWidth = rect.right - rect.width * threshold;
+
 	if (root !== document.documentElement) {
 		const
 			rootRect = rectCache.get(root)!;
 
-		if (rootRect.top > rect.top + rect.height * threshold) {
-			return false;
-		}
-
-		if (rootRect.top + rootRect.height < rect.bottom - rect.height * threshold) {
+		if (
+			rootRect.top > topHeight ||
+			rootRect.top + rootRect.height < bottomHeight ||
+			rootRect.left > leftWidth ||
+			rootRect.left + rootRect.width < rightWidth
+		) {
 			return false;
 		}
 	}
 
-	return !(
-		1 - (rect.top >= 0 ? 0 : -rect.top) / rect.height < threshold ||
-		1 - (rect.bottom - innerHeight) / rect.height < threshold
+	return (
+		topHeight >= 0 &&
+		leftWidth >= 0 &&
+		bottomHeight <= innerHeight &&
+		rightWidth <= innerWidth
 	);
 }

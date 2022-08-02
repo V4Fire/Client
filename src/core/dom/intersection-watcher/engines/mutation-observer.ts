@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { seq } from 'core/iter/combinators';
 
 import { resolveAfterDOMLoaded } from 'core/event';
 import type { AsyncOptions } from 'core/async';
@@ -22,9 +23,14 @@ export const
 
 export default class MutationObserverEngine extends AbstractEngine {
 	/**
-	 * A sorted array of static watchers positions
+	 * An Y-sorted array of static watchers positions
 	 */
-	protected watchersPositions: WatcherPosition[] = [];
+	protected watchersYPositions: WatcherPosition[] = [];
+
+	/**
+	 * An X-sorted array of static watchers positions
+	 */
+	protected watchersXPositions: WatcherPosition[] = [];
 
 	/**
 	 * A sorted array of static watchers positions that are currently in the viewport
@@ -51,9 +57,8 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 			$a.worker(() => observer.disconnect());
 
-			const checkViewport = () => $a.setTimeout(this.checkViewport.bind(this), 50, {
-				label: $$.checkViewport,
-				join: false
+			const checkViewport = $a.throttle(this.checkViewport.bind(this), 50, {
+				label: $$.checkViewport
 			});
 
 			$a.on(document, 'scroll', checkViewport, {options: {capture: true}});
@@ -63,7 +68,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 	override destroy(): void {
 		super.destroy();
-		this.watchersPositions = [];
+		this.watchersYPositions = [];
 		this.intersectionWindow = [];
 	}
 
@@ -123,15 +128,20 @@ export default class MutationObserverEngine extends AbstractEngine {
 	 */
 	protected checkViewport(): void {
 		const {
-			watchersPositions,
+			watchersXPositions,
+			watchersYPositions,
 			intersectionWindow
 		} = this;
 
 		const
-			from = searchWatcher(true),
-			to = searchWatcher(false);
+			fromY = searchWatcher(true, watchersYPositions),
+			toY = fromY != null ? searchWatcher(false, watchersYPositions) : null;
 
-		if (from == null || to == null) {
+		const
+			fromX = fromY != null ? searchWatcher(true, watchersXPositions) : null,
+			toX = fromY != null ? searchWatcher(false, watchersXPositions) : null;
+
+		if (fromY == null || toY == null || fromX == null || toX == null) {
 			if (this.intersectionWindow.length > 0) {
 				this.intersectionWindow = [];
 			}
@@ -139,9 +149,13 @@ export default class MutationObserverEngine extends AbstractEngine {
 			return;
 		}
 
+		const newIntersectionSet = new Set(seq(
+			watchersYPositions.slice(fromY, toY + 1),
+			watchersXPositions.slice(fromX, toX + 1)
+		));
+
 		const
-			newIntersectionWindow = watchersPositions.slice(from, to + 1),
-			newIntersectionSet = new Set(newIntersectionWindow);
+			newIntersectionWindow = [...newIntersectionSet];
 
 		for (let i = 0; i < intersectionWindow.length; i++) {
 			const
@@ -163,43 +177,57 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		function searchWatcher(
 			start: boolean,
+			where: WatcherPosition[],
 			res?: number,
 			from: number = 0,
-			to: number = watchersPositions.length
+			to: number = where.length - 1
 		): CanUndef<number> {
+			if (to < 0 || from >= where.length || where.length === 0) {
+				return res;
+			}
+
+			if (where.length === 1) {
+				return needToSaveCursor(0) ? 0 : res;
+			}
+
 			if (from >= to) {
 				return needToSaveCursor(to) ? to : res;
 			}
 
 			const
 				cursor = from + Math.floor((to - from) / 2),
-				watcherPos = watchersPositions[cursor];
+				watcherPos = where[cursor];
 
 			const
 				r = watcherPos.watcher.root,
-				top = innerHeight + r.scrollTop + (r === document.documentElement ? 0 : scrollY);
-
-			if (top < watcherPos.top) {
-				return searchWatcher(start, res, 0, cursor);
-			}
+				isGlobalRoot = r === document.documentElement;
 
 			if (needToSaveCursor(cursor)) {
 				res = cursor;
 			}
 
-			return searchWatcher(start, res, cursor + 1, to);
+			if (where === watchersXPositions) {
+				const
+					left = innerWidth + r.scrollLeft + (isGlobalRoot ? 0 : scrollX);
+
+				if (left < watcherPos.left) {
+					return searchWatcher(start, where, res, 0, cursor - 1);
+				}
+
+			} else {
+				const
+					top = innerHeight + r.scrollTop + (isGlobalRoot ? 0 : scrollY);
+
+				if (top < watcherPos.top) {
+					return searchWatcher(start, where, res, 0, cursor - 1);
+				}
+			}
+
+			return searchWatcher(start, where, res, cursor + 1, to);
 
 			function needToSaveCursor(cursor: number): boolean {
 				const
-					pos = watchersPositions[cursor];
-
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				if (pos == null) {
-					return false;
-				}
-
-				const
-					{watcher} = pos;
+					{watcher} = where[cursor];
 
 				if (!isElementInView(watcher.target, watcher.root, watcher.threshold)) {
 					return false;
@@ -214,11 +242,11 @@ export default class MutationObserverEngine extends AbstractEngine {
 	 * Builds a sorted array of the watchers positions
 	 */
 	protected buildWatchersPositions(): void {
-		this.watchersPositions = [];
+		this.watchersYPositions = [];
 		this.intersectionWindow = [];
 
 		const
-			positions = this.watchersPositions;
+			positions = this.watchersYPositions;
 
 		this.elements.forEach((watchers) => {
 			watchers.forEach((watcher) => {
@@ -239,6 +267,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 		});
 
 		positions.sort((a, b) => a.top - b.top);
+		this.watchersXPositions = positions.slice().sort((a, b) => a.left - b.left);
 	}
 
 	/**
