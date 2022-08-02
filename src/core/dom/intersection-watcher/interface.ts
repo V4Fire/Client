@@ -11,9 +11,20 @@ export interface WatchOptions {
 	 * An element whose bounds are treated as the bounding box of the viewport for the element which is the
 	 * observer target. This option can also be given as a function that returns the root element.
 	 *
+	 * Note, when using the heightmap-based watching strategy, this element will be used to calculate the geometry of
+	 * the observed elements.
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/root
 	 */
 	root?: Element | (() => Element);
+
+	/**
+	 * This option only affects the heightmap-based watching strategy and when the `root` option is passed.
+	 * If false, then registered handlers will be called for any scroll event, not just root events.
+	 *
+	 * @default `true`
+	 */
+	onlyRoot?: boolean;
 
 	/**
 	 * A number which indicate at what percentage of the observable element visibility the intersection callback
@@ -86,7 +97,7 @@ export interface Watcher extends Readonly<
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/root
 	 */
-	readonly root: Element;
+	readonly root?: Element;
 
 	/**
 	 * The observed element

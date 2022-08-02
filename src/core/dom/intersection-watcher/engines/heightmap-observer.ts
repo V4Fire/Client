@@ -13,7 +13,7 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import type { AsyncOptions } from 'core/async';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-import { isElementInView, getElementPosition } from 'core/dom/intersection-watcher/engines/helpers';
+import { isElementInView, getElementPosition, getRootScrollPosition } from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 import type { WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
@@ -44,24 +44,29 @@ export default class MutationObserverEngine extends AbstractEngine {
 			{async: $a} = this;
 
 		void resolveAfterDOMLoaded().then(() => {
-			const observer = new MutationObserver(() => {
+			if (typeof MutationObserver !== 'undefined') {
+				const observer = new MutationObserver(() => {
+					this.checkViewportFromScratch();
+				});
+
+				observer.observe(document.body, {
+					subtree: true,
+					childList: true,
+					attributes: true,
+					characterData: true
+				});
+
+				$a.worker(() => observer.disconnect());
+
+			} else {
 				this.checkViewportFromScratch();
-			});
-
-			observer.observe(document.body, {
-				subtree: true,
-				childList: true,
-				attributes: true,
-				characterData: true
-			});
-
-			$a.worker(() => observer.disconnect());
+			}
 
 			const checkViewport = $a.throttle(this.checkViewport.bind(this), 50, {
 				label: $$.checkViewport
 			});
 
-			$a.on(document, 'scroll', checkViewport, {options: {capture: true}});
+			$a.on(document, 'scroll', (e) => checkViewport(e.target), {options: {capture: true}});
 			$a.on(globalThis, 'resize', () => this.checkViewportFromScratch({join: false}));
 		});
 	}
@@ -70,6 +75,40 @@ export default class MutationObserverEngine extends AbstractEngine {
 		super.destroy();
 		this.watchersYPositions = [];
 		this.intersectionWindow = [];
+	}
+
+	/**
+	 * Rebuilds the watcher positions and checks the viewport to see if them have been appeared or disappeared.
+	 * Keep in mind that this operation is quite expensive, so it is delayed by default.
+	 *
+	 * @param [immediate] - if true, then the check will be performed immediately
+	 */
+	checkViewportFromScratch(immediate?: boolean): void;
+
+	/**
+	 * Rebuilds the watcher positions and checks the viewport to see if them have been appeared or disappeared.
+	 * Please note that the operation is performed with some delay to improve performance.
+	 *
+	 * @param opts - additional options for the deferred task
+	 */
+	checkViewportFromScratch(opts: AsyncOptions): void;
+
+	checkViewportFromScratch(opts?: boolean | AsyncOptions): void {
+		const run = () => {
+			this.buildWatchersPositions();
+			this.checkViewport();
+		};
+
+		if (opts === false) {
+			run();
+			return;
+		}
+
+		this.async.setTimeout(run, 100, {
+			label: $$.recalculate,
+			join: true,
+			...Object.isDictionary(opts) ? opts : null
+		});
 	}
 
 	protected override initWatcher(watcher: Writable<Watcher>): void {
@@ -90,43 +129,10 @@ export default class MutationObserverEngine extends AbstractEngine {
 	}
 
 	/**
-	 * Rebuilds the watcher positions and checks the viewport to see if them have been appeared or disappeared.
-	 * Keep in mind that this operation is quite expensive, so it is delayed by default.
-	 *
-	 * @param [immediate] - if true, then the check will be performed immediately
-	 */
-	protected checkViewportFromScratch(immediate?: boolean): void;
-
-	/**
-	 * Rebuilds the watcher positions and checks the viewport to see if them have been appeared or disappeared.
-	 * Please note that the operation is performed with some delay to improve performance.
-	 *
-	 * @param opts - additional options for the deferred task
-	 */
-	protected checkViewportFromScratch(opts: AsyncOptions): void;
-
-	protected checkViewportFromScratch(opts?: boolean | AsyncOptions): void {
-		const run = () => {
-			this.buildWatchersPositions();
-			this.checkViewport();
-		};
-
-		if (opts === false) {
-			run();
-			return;
-		}
-
-		this.async.setTimeout(run, 100, {
-			label: $$.recalculate,
-			join: true,
-			...Object.isDictionary(opts) ? opts : null
-		});
-	}
-
-	/**
 	 * Checks the viewport to see if watchers have been appeared or disappeared
+	 * @param [scrollTarget] - the element on which the scroll change event occurred
 	 */
-	protected checkViewport(): void {
+	protected checkViewport(scrollTarget?: Element): void {
 		const {
 			watchersXPositions,
 			watchersYPositions,
@@ -139,7 +145,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		const
 			fromX = fromY != null ? searchWatcher(true, watchersXPositions) : null,
-			toX = fromY != null ? searchWatcher(false, watchersXPositions) : null;
+			toX = fromX != null && fromY != null ? searchWatcher(false, watchersXPositions) : null;
 
 		if (fromY == null || toY == null || fromX == null || toX == null) {
 			if (this.intersectionWindow.length > 0) {
@@ -165,12 +171,12 @@ export default class MutationObserverEngine extends AbstractEngine {
 				newIntersectionSet.delete(el);
 
 			} else {
-				this.onObservableOut(el.watcher);
+				this.onObservableOut(el.watcher, scrollTarget);
 			}
 		}
 
 		newIntersectionSet.forEach((el) => {
-			this.onObservableIn(el.watcher);
+			this.onObservableIn(el.watcher, scrollTarget);
 		});
 
 		this.intersectionWindow = newIntersectionWindow;
@@ -195,12 +201,11 @@ export default class MutationObserverEngine extends AbstractEngine {
 			}
 
 			const
-				cursor = from + Math.floor((to - from) / 2),
-				watcherPos = where[cursor];
+				cursor = from + Math.floor((to - from) / 2);
 
 			const
-				r = watcherPos.watcher.root,
-				isGlobalRoot = r === document.documentElement;
+				watcherPos = where[cursor],
+				scrollPos = getRootScrollPosition(watcherPos.watcher.root!);
 
 			if (needToSaveCursor(cursor)) {
 				res = cursor;
@@ -208,7 +213,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 			if (where === watchersXPositions) {
 				const
-					left = innerWidth + r.scrollLeft + (isGlobalRoot ? 0 : scrollX);
+					left = innerWidth + scrollPos.left;
 
 				if (left < watcherPos.left) {
 					return searchWatcher(start, where, res, 0, cursor - 1);
@@ -216,7 +221,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 			} else {
 				const
-					top = innerHeight + r.scrollTop + (isGlobalRoot ? 0 : scrollY);
+					top = innerHeight + scrollPos.top;
 
 				if (top < watcherPos.top) {
 					return searchWatcher(start, where, res, 0, cursor - 1);
@@ -229,7 +234,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 				const
 					{watcher} = where[cursor];
 
-				if (!isElementInView(watcher.target, watcher.root, watcher.threshold)) {
+				if (!isElementInView(watcher.target, watcher.root!, watcher.threshold)) {
 					return false;
 				}
 
@@ -254,7 +259,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 					return;
 				}
 
-				const pos = getElementPosition(watcher.target, watcher.root);
+				const pos = getElementPosition(watcher.target, watcher.root!);
 				this.setWatcherSize(watcher, pos);
 
 				if (pos.width === 0 || pos.height === 0) {
@@ -272,34 +277,43 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 	/**
 	 * Handler: the observed element has entered the viewport
+	 *
 	 * @param watcher
+	 * @param [scrollTarget] - the element on which the scroll change event occurred
 	 */
-	protected onObservableIn(watcher: Writable<Watcher>): void {
+	protected onObservableIn(watcher: Writable<Watcher>, scrollTarget?: Element): void {
 		const
 			timestamp = performance.now();
 
 		watcher.time = timestamp;
 		watcher.timeIn = timestamp;
-
 		watcher.isLeaving = false;
-		this.callWatcherHandler(watcher);
+
+		if (scrollTarget == null || watcher.onlyRoot === false || watcher.root === scrollTarget) {
+			this.callWatcherHandler(watcher);
+		}
+
 		watcher.isLeaving = true;
 	}
 
 	/**
 	 * Handler: the observed element has left the viewport
+	 *
 	 * @param watcher
+	 * @param [scrollTarget] - the element on which the scroll change event occurred
 	 */
-	protected onObservableOut(watcher: Writable<Watcher>): void {
+	protected onObservableOut(watcher: Writable<Watcher>, scrollTarget?: Element): void {
 		const
 			timestamp = performance.now();
 
 		watcher.time = timestamp;
 		watcher.timeOut = timestamp;
 
-		watcher.onLeave?.(watcher);
-		watcher.isLeaving = false;
+		if (scrollTarget == null || watcher.onlyRoot === false || watcher.root === scrollTarget) {
+			watcher.onLeave?.(watcher);
+		}
 
+		watcher.isLeaving = false;
 		this.async.clearAll({group: watcher.id});
 	}
 }

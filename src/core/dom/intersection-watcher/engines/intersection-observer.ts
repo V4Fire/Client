@@ -9,6 +9,8 @@
 import Pool from 'core/pool';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
+import { isElementInView } from 'core/dom/intersection-watcher/engines/helpers';
+
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 
 export default class IntersectionObserverEngine extends AbstractEngine {
@@ -118,7 +120,11 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 				if (watcher.isLeaving) {
 					this.onObservableOut(watcher, entry);
 
-				} else if (entry.intersectionRatio >= watcher.threshold) {
+				} else if (
+					watcher.root != null ?
+						isElementInView(watcher.target, watcher.root, watcher.threshold) :
+						entry.intersectionRatio >= watcher.threshold
+				) {
 					this.onObservableIn(watcher, entry);
 				}
 			});

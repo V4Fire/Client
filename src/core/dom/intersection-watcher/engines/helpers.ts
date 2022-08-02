@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementPosition } from 'core/dom/intersection-watcher/engines/interface';
+import type { ElementPosition, ScrollPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 const
 	rectCache = new Map<Element, DOMRect>();
@@ -28,7 +28,7 @@ const
 			rectCache.set(key, val);
 		}
 
-		return key.getBoundingClientRect();
+		return val;
 	};
 
 	rectCache.set = (key, value) => {
@@ -44,6 +44,20 @@ const
 }
 
 /**
+ * Returns the overall scroll position of the given element and the document
+ * @param el
+ */
+export function getRootScrollPosition(el: Element): ScrollPosition {
+	const
+		isGlobalRoot = el === document.documentElement;
+
+	return {
+		top: el.scrollTop + (isGlobalRoot ? 0 : scrollY),
+		left: el.scrollLeft + (isGlobalRoot ? 0 : scrollX)
+	};
+}
+
+/**
  * Returns the geometry and position of the specified element relative to the given scrollable root
  *
  * @param el
@@ -52,14 +66,14 @@ const
 export function getElementPosition(el: Element, root: Element): ElementPosition {
 	const
 		rect = rectCache.get(el)!,
-		isGlobalRoot = root === document.documentElement;
+		scrollPos = getRootScrollPosition(root);
 
 	const
 		{width, height} = rect;
 
 	const
-		top = rect.top + root.scrollTop + (isGlobalRoot ? 0 : scrollY),
-		left = rect.left + root.scrollLeft + (isGlobalRoot ? 0 : scrollX);
+		top = rect.top + scrollPos.top,
+		left = rect.left + scrollPos.left;
 
 	return {
 		bottom: top + height,
@@ -94,31 +108,27 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 		rect = rectCache.get(el)!;
 
 	const
-		topHeight = rect.top + rect.height * threshold,
-		bottomHeight = rect.bottom - rect.height * threshold;
-
-	const
-		leftWidth = rect.left + rect.width * threshold,
-		rightWidth = rect.right - rect.width * threshold;
+		minWidth = rect.width * threshold,
+		minHeight = rect.height * threshold;
 
 	if (root !== document.documentElement) {
 		const
 			rootRect = rectCache.get(root)!;
 
 		if (
-			rootRect.top > topHeight ||
-			rootRect.top + rootRect.height < bottomHeight ||
-			rootRect.left > leftWidth ||
-			rootRect.left + rootRect.width < rightWidth
+			rootRect.bottom - rect.top < minHeight ||
+			rect.top - rootRect.top + rect.height < minHeight ||
+			rootRect.right - rect.left < minWidth ||
+			rect.left - rootRect.left + rect.width < minWidth
 		) {
 			return false;
 		}
 	}
 
 	return (
-		topHeight >= 0 &&
-		leftWidth >= 0 &&
-		bottomHeight <= innerHeight &&
-		rightWidth <= innerWidth
+		rect.top + minHeight >= 0 &&
+		rect.left + minWidth >= 0 &&
+		rect.bottom - minHeight <= innerHeight &&
+		rect.right - minWidth <= innerWidth
 	);
 }

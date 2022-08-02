@@ -2,10 +2,7 @@
 
 This module provides API to track elements entering or leaving the viewport.
 The module supports several element tracking strategies. The default is IntersectionObserver, but if the environment does not support it,
-then a strategy based on the heightmap of the elements and MutationObserver will be used.
-
-_Note that the MutationObserver-based strategy tracks viewport intersection only along the Y axis and does not support
-scrollable elements nesting more than two layers._
+then a strategy based on the elements heightmap and MutationObserver will be used.
 
 ## Why is this module needed?
 
@@ -90,9 +87,16 @@ watcher.unwatch();
 
 ##### [root]
 
-An element whose bounds are treated as the bounding box of the viewport for the element which is the
-observer target. This option can also be given as a function that returns the root element.
+An element whose bounds are treated as the bounding box of the viewport for the element which is the observer target.
+This option can also be given as a function that returns the root element.
+
+Note, when using a heightmap-based watching strategy, this element will be used to calculate the geometry of the observed elements.
 See [this](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/root) for more information.
+
+##### [onlyRoot = `true`]
+
+This option only affects the heightmap-based watching strategy and when the `root` option is passed.
+If false, then registered handlers will be called for any scroll event, not just root events.
 
 ##### [threshold = `0`]
 
