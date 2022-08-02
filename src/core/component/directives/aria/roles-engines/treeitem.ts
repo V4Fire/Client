@@ -176,39 +176,68 @@ export default class TreeItemEngine extends AriaRoleEngine {
 			return;
 		}
 
+		const
+			isHorizontal = this.params.orientation === 'horizontal';
+
+		const open = () => {
+			if (this.params.isExpandable) {
+				if (this.params.isExpanded) {
+					this.moveFocus(1);
+
+				} else {
+					this.openFold();
+				}
+			}
+		};
+
+		const close = () => {
+			if (this.params.isExpandable && this.params.isExpanded) {
+				this.closeFold();
+
+			} else {
+				this.focusParent();
+			}
+		};
+
 		switch (e.key) {
 			case keyCodes.UP:
+				if (isHorizontal) {
+					close();
+					break;
+				}
+
 				this.moveFocus(-1);
 				break;
 
 			case keyCodes.DOWN:
+				if (isHorizontal) {
+					open();
+					break;
+				}
+
 				this.moveFocus(1);
+				break;
+
+			case keyCodes.RIGHT:
+				if (isHorizontal) {
+					this.moveFocus(1);
+					break;
+				}
+
+				open();
+				break;
+
+			case keyCodes.LEFT:
+				if (isHorizontal) {
+					this.moveFocus(-1);
+					break;
+				}
+
+				close();
 				break;
 
 			case keyCodes.ENTER:
 				this.params.toggleFold(this.el);
-				break;
-
-			case keyCodes.RIGHT:
-				if (this.params.isExpandable) {
-					if (this.params.isExpanded) {
-						this.moveFocus(1);
-
-					} else {
-						this.openFold();
-					}
-				}
-
-				break;
-
-			case keyCodes.LEFT:
-				if (this.params.isExpandable && this.params.isExpanded) {
-					this.closeFold();
-
-				} else {
-					this.focusParent();
-				}
-
 				break;
 
 			case keyCodes.HOME:

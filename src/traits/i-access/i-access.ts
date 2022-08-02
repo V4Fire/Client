@@ -267,7 +267,7 @@ export default abstract class iAccess {
 				focusableElems = this.findAllFocusableElements(component, ctx);
 
 			for (const focusableEl of focusableElems) {
-				if (!focusableEl.hasAttribute('disabled')) {
+				if (!focusableEl?.hasAttribute('disabled')) {
 					return focusableEl;
 				}
 			}
@@ -275,7 +275,7 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.findAllFocusableElements]] */
 	static findAllFocusableElements: AddSelf<iAccess['findAllFocusableElements'], iBlock> =
-		(component, el?): IterableIterator<Element> => {
+		(component, el?): IterableIterator<CanUndef<Element>> => {
 			const
 				ctx = el ?? component.$el,
 				focusableElems = ctx?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
@@ -419,7 +419,7 @@ export default abstract class iAccess {
 	 * Find all focusable elements except disabled ones. Search includes the specified element
 	 * @param el - a context to search, if not set, component will be used
 	 */
-	findAllFocusableElements(el?: Element): IterableIterator<Element> {
+	findAllFocusableElements(el?: Element): IterableIterator<CanUndef<Element>> {
 		return Object.throw();
 	}
 }

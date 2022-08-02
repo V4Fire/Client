@@ -15,3 +15,12 @@ The same as
 
 ```
 
+## Modifiers
+
+1. `preserve` means that if there is already an id attribute on the element,
+the directive will left it and will not set another one
+
+```
+< &__foo v-id.preserve = 'title'
+
+```

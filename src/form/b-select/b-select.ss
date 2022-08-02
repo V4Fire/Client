@@ -39,14 +39,15 @@
 						}
 					})) |
 
-					:v-attrs = native
-						? el.attrs
-						: {
-								'v-aria:option': getAriaConfig('option', el),
-								...el.attrs
-							} |
+					:v-attrs = native ?
+						el.attrs :
+						{
+							'v-aria:option': getAriaConfig('option', el),
+							...el.attrs
+						} |
 
-					v-id = el.value |
+					v-id.preserve = el.value |
+
 					${itemAttrs}
 				.
 					+= self.slot('default', {':item': 'el'})

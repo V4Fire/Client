@@ -38,12 +38,17 @@ export default class TabEngine extends AriaRoleEngine {
 	init(): void {
 		const
 			{el} = this.options,
-			{isFirst} = this.params;
+			{isFirst, preSelected} = this.params;
 
 		el.setAttribute('role', 'tab');
 		el.setAttribute('aria-selected', String(this.params.isActive));
 
-		if (isFirst) {
+		if (isFirst && !preSelected) {
+			if (el.tabIndex < 0) {
+				el.setAttribute('tabindex', '0');
+			}
+
+		} else if (preSelected && this.params.isActive) {
 			if (el.tabIndex < 0) {
 				el.setAttribute('tabindex', '0');
 			}
@@ -125,10 +130,14 @@ export default class TabEngine extends AriaRoleEngine {
 	protected onKeydown(e: Event): void {
 		const
 			evt = (<KeyboardEvent>e),
-			{isVertical} = this.params;
+			isVertical = this.params.orientation === 'vertical';
 
 		switch (evt.key) {
 			case keyCodes.LEFT:
+				if (isVertical) {
+					return;
+				}
+
 				this.moveFocus(-1);
 				break;
 
@@ -141,6 +150,10 @@ export default class TabEngine extends AriaRoleEngine {
 				return;
 
 			case keyCodes.RIGHT:
+				if (isVertical) {
+					return;
+				}
+
 				this.moveFocus(1);
 				break;
 

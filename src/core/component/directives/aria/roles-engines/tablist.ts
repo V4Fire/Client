@@ -24,8 +24,8 @@ export default class TablistEngine extends AriaRoleEngine {
 			el.setAttribute('aria-multiselectable', 'true');
 		}
 
-		if (params.isVertical) {
-			el.setAttribute('aria-orientation', 'vertical');
+		if (params.orientation === 'vertical') {
+			el.setAttribute('aria-orientation', params.orientation);
 		}
 	}
 }

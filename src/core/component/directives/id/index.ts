@@ -17,7 +17,12 @@ import type iBlock from 'super/i-block/i-block';
 ComponentEngine.directive('id', {
 	inserted(el: HTMLElement, binding: VNodeDirective, vnode: VNode): void {
 		const
-			ctx = Object.cast<iBlock['unsafe']>(vnode.fakeContext);
+			ctx = Object.cast<iBlock['unsafe']>(vnode.fakeContext),
+			{modifiers: mod} = binding;
+
+		if (mod?.preserve != null && el.hasAttribute('id')) {
+			return;
+		}
 
 		const
 			id = ctx.dom.getId(binding.value);

@@ -109,7 +109,7 @@ class bTree extends iData implements iItems, iAccess {
 	 * The component view orientation
 	 */
 	@prop(String)
-	readonly orientation: Orientation = 'horizontal';
+	readonly orientation: Orientation = 'vertical';
 
 	/**
 	 * Link to the top level component (internal parameter)
@@ -289,7 +289,7 @@ class bTree extends iData implements iItems, iAccess {
 
 		const treeConfig = {
 			isRoot: this.top == null,
-			isVertical: this.orientation === 'vertical',
+			orientation: this.orientation,
 			changeEvent: (cb: Function) => {
 				this.on('fold', (ctx, el, item, value) => cb(el, value));
 			}
@@ -297,6 +297,7 @@ class bTree extends iData implements iItems, iAccess {
 
 		const treeitemConfig = {
 			isRootFirstItem: this.top == null && i === 0,
+			orientation: this.orientation,
 			toggleFold,
 			get rootElement() {
 				return root();
