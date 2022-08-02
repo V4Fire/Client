@@ -14,12 +14,13 @@ export default class TabpanelEngine extends AriaRoleEngine {
 	 */
 	init(): void {
 		const
-			{el, binding} = this.options;
+			{el} = this.options;
+
+		if (!el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) {
+			Object.throw('Tabpanel aria directive expects "label" or "labelledby" value to be passed');
+			return;
+		}
 
 		el.setAttribute('role', 'tabpanel');
-
-		if (binding.value?.labelledby == null) {
-			Object.throw('Tabpanel aria directive expects "label" or "labelledby" value to be passed');
-		}
 	}
 }

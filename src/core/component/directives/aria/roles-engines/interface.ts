@@ -1,18 +1,19 @@
 export interface TabParams {
+	preSelected: boolean;
 	isFirst: boolean;
-	isVertical: boolean;
 	isActive: boolean;
+	orientation: string;
 	changeEvent(cb: Function): void;
 }
 
 export interface TablistParams {
-	isVertical: boolean;
 	isMultiple: boolean;
+	orientation: string;
 }
 
 export interface TreeParams {
 	isRoot: boolean;
-	isVertical: boolean;
+	orientation: string;
 	changeEvent(cb: Function): void;
 }
 
@@ -20,6 +21,7 @@ export interface TreeitemParams {
 	isRootFirstItem: boolean;
 	isExpandable: boolean;
 	isExpanded: boolean;
+	orientation: string;
 	rootElement: CanUndef<HTMLElement>;
 	toggleFold(el: Element, value?: boolean): void;
 }

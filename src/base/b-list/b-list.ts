@@ -709,8 +709,7 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 
 	protected getAriaConfig(role: 'tab' | 'tablist', item?: this['Item'], i?: number): Dictionary {
 		const
-			isActive = this.isActive.bind(this, item?.value),
-			isVertical = this.orientation === 'vertical';
+			isActive = this.isActive.bind(this, item?.value);
 
 		const changeEvent = (cb: Function) => {
 			this.on('change', () => {
@@ -724,13 +723,14 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 		};
 
 		const tablistConfig = {
-			isVertical,
-			isMultiple: this.multiple
+			isMultiple: this.multiple,
+			orientation: this.orientation
 		};
 
 		const tabConfig = {
-			isVertical,
+			preSelected: this.active != null,
 			isFirst: i === 0,
+			orientation: this.orientation,
 			changeEvent,
 			get isActive() {
 				return isActive();

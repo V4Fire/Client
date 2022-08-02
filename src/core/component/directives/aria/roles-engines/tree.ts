@@ -26,12 +26,13 @@ export default class TreeEngine extends AriaRoleEngine {
 	 */
 	init(): void {
 		const
-			{el} = this.options;
+			{el} = this.options,
+			{orientation} = this.params;
 
 		this.setRootRole();
 
-		if (this.params.isVertical) {
-			el.setAttribute('aria-orientation', 'vertical');
+		if (orientation === 'horizontal' && this.params.isRoot) {
+			el.setAttribute('aria-orientation', orientation);
 		}
 	}
 
