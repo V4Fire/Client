@@ -283,7 +283,7 @@ export default abstract class iAccess {
 			let
 				focusableIter = intoIter(focusableElems ?? []);
 
-			if (el?.hasAttribute('tabindex')) {
+			if (ctx?.matches(FOCUSABLE_SELECTOR)) {
 				focusableIter = sequence(focusableIter, intoIter([el]));
 			}
 
@@ -379,7 +379,8 @@ export default abstract class iAccess {
 
 	/**
 	 * Removes all children of the specified element that can be focused from the Tab toggle sequence.
-	 * In effect, these elements are set to -1 for the tabindex attribute
+	 * In effect, these elements are set to -1 for the tabindex attribute.
+	 *
 	 * @param el - a context to search, if not set, the root element of the component will be used
 	 */
 	removeAllFromTabSequence(el?: Element): boolean {
@@ -389,7 +390,7 @@ export default abstract class iAccess {
 	/**
 	 * Reverts all children of the specified element that can be focused to the Tab toggle sequence.
 	 * This method is used to restore the state of elements to the state
-	 * they had before removeAllFromTabSequence was applied
+	 * they had before 'removeAllFromTabSequence' was applied.
 	 *
 	 * @param el - a context to search, if not set, the root element of the component will be used
 	 */
