@@ -10,6 +10,7 @@
  */
 
 import AriaRoleEngine, { DirectiveOptions, keyCodes } from 'core/component/directives/aria/interface';
+
 import type { TabParams } from 'core/component/directives/aria/roles-engines/interface';
 import type iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
