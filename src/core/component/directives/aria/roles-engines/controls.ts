@@ -31,6 +31,7 @@ export default class ControlsEngine extends AriaRoleEngine {
 			{fakeContext: ctx} = vnode,
 			{for: forId} = this.params;
 
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (forId == null) {
 			Object.throw('Controls aria directive expects the id of controlling elements to be passed as "for" prop');
 			return;
