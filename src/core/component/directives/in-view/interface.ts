@@ -6,4 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from 'core/dom/in-view/interface';
+import type { WatchOptions, WatchHandler } from 'core/dom/intersection-watcher';
+import type { DirectiveBinding } from 'core/component/engines';
+
+export * from 'core/dom/intersection-watcher/interface';
+
+export interface DirectiveParams extends DirectiveBinding<CanUndef<DirectiveValue>> {}
+
+export type DirectiveValue = CanArray<WatchOptions & {handler: WatchHandler} | WatchHandler>;

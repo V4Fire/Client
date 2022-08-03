@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :boom: Breaking Change
+
+* The directive now uses the new `core/dom/intersection-watcher` module API
+
 #### :house: Internal
 
 * Migration to Vue3
