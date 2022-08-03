@@ -118,7 +118,7 @@ test.describe('v-aria:treeitem', () => {
 					items = ctx.unsafe.block.elements('node'),
 					labels = document.querySelectorAll('label');
 
-				const res: any[] = [];
+				const res: Array<Nullable<boolean | string>> = [];
 
 				input?.focus();
 

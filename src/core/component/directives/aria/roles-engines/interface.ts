@@ -34,5 +34,5 @@ export interface ComboboxParams {
 }
 
 export interface ControlsParams {
-	for: CanArray<string> | Array<[string, string]> | undefined;
+	for: CanArray<string> | Array<[string, string]>;
 }
