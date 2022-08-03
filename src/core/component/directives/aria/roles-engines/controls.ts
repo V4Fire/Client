@@ -6,26 +6,39 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import AriaRoleEngine from 'core/component/directives/aria/interface';
+import AriaRoleEngine, { DirectiveOptions } from 'core/component/directives/aria/interface';
+import type { ControlsParams } from 'core/component/directives/aria/roles-engines/interface';
 
 export default class ControlsEngine extends AriaRoleEngine {
+	/**
+	 * Passed directive params
+	 */
+	params: ControlsParams;
+
+	constructor(options: DirectiveOptions) {
+		super(options);
+
+		this.params = this.options.binding.value;
+	}
+
 	/**
 	 * Sets base aria attributes for current role
 	 */
 	init(): void {
 		const
 			{vnode, binding, el} = this.options,
-			{modifiers, value} = binding,
-			{fakeContext: ctx} = vnode;
+			{modifiers} = binding,
+			{fakeContext: ctx} = vnode,
+			{for: forId} = this.params;
 
-		if (value?.for == null) {
+		if (forId == null) {
 			Object.throw('Controls aria directive expects the id of controlling elements to be passed as "for" prop');
 			return;
 		}
 
 		const
-			isForPropArray = Object.isArray(value.for),
-			isForPropArrayOfTuples = Object.isArray(value.for) && Object.isArray(value.for[0]);
+			isForPropArray = Object.isArray(forId),
+			isForPropArrayOfTuples = isForPropArray && Object.isArray(forId[0]);
 
 		if (modifiers != null && Object.size(modifiers) > 0) {
 			ctx?.$nextTick().then(() => {
@@ -33,19 +46,31 @@ export default class ControlsEngine extends AriaRoleEngine {
 					roleName = Object.keys(modifiers)[0],
 					elems = el.querySelectorAll(`[role=${roleName}]`);
 
-				if (isForPropArray && value.for.length !== elems.length) {
+				if (isForPropArray && forId.length !== elems.length) {
 					Object.throw('Controls aria directive expects prop "for" length to be equal to amount of elements with specified role or string type');
 					return;
 				}
 
 				elems.forEach((el, i) => {
-					el.setAttribute('aria-controls', isForPropArray ? value.for[i] : value.for);
+					if (Object.isString(forId)) {
+						el.setAttribute('aria-controls', forId);
+						return;
+					}
+
+					const
+						id = forId[i];
+
+					if (Object.isString(id)) {
+						el.setAttribute('aria-controls', id);
+					}
 				});
 			});
 
 		} else if (isForPropArrayOfTuples) {
-			value.for.forEach(([elId, controlsId]) => {
-				const element = el.querySelector(`#${elId}`);
+			forId.forEach((param) => {
+				const
+					[elId, controlsId] = param,
+					element = el.querySelector(`#${elId}`);
 
 				element?.setAttribute('aria-controls', controlsId);
 			});
