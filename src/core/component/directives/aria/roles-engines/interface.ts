@@ -32,3 +32,7 @@ export interface ComboboxParams {
 	openEvent(cb: Function): void;
 	closeEvent(cb: Function): void;
 }
+
+export interface ControlsParams {
+	for: CanArray<string> | Array<[string, string]> | undefined;
+}

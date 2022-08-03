@@ -7,6 +7,7 @@
  */
 
 import AriaRoleEngine from 'core/component/directives/aria/interface';
+import iOpen from 'traits/i-open/i-open';
 
 export default class DialogEngine extends AriaRoleEngine {
 	/**
@@ -14,9 +15,13 @@ export default class DialogEngine extends AriaRoleEngine {
 	 */
 	init(): void {
 		const
-			{el} = this.options;
+			{el, vnode} = this.options;
 
 		el.setAttribute('role', 'dialog');
 		el.setAttribute('aria-modal', 'true');
+
+		if (!iOpen.is(vnode.fakeContext)) {
+			Object.throw('Dialog aria directive expects the component to realize iOpen interface');
+		}
 	}
 }
