@@ -66,13 +66,13 @@ the same as
 The engine to set `dialog` role attribute.
 For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/dialog_role`].
 
-Always expects `iOpen` trait to be realized.
+Expects `iOpen` trait to be realized.
 
 - `tab`:
 The engine to set `tab` role attribute.
 For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tab_role`].
 
-Tabs always expect the `controls` role engine to be added. It should 'point' to the element with role `tabpanel`.
+Tabs expect the `controls` role engine to be added in addition. ID passed to `controls` engine should be the id of the element with role `tabpanel`.
 
 Example:
 ```
@@ -91,7 +91,7 @@ For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Access
 The engine to set `tablist` role attribute.
 For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tabpanel_role`].
 
-Always expects `label` or `labelledby` params to be passed.
+Expects `label` or `labelledby` params to be passed.
 
 Example:
 ```
@@ -107,6 +107,8 @@ For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Access
 - `treeitem`:
 The engine to set `treeitem` role attribute.
 For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/treeitem_role`].
+
+Expects `iAccess` trait to be realized.
 
 - `combobox`:
 The engine to set `combobox` role attribute.
