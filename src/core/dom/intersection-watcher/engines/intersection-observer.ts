@@ -122,7 +122,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 
 				} else if (
 					watcher.root != null ?
-						isElementInView(watcher.target, watcher.root, watcher.threshold) === true :
+						isElementInView(watcher.target, watcher.root, watcher.threshold) > 0 :
 						entry.intersectionRatio >= watcher.threshold
 				) {
 					this.onObservableIn(watcher, entry);

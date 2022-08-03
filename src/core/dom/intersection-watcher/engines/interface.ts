@@ -18,11 +18,6 @@ export interface ElementPosition extends ElementSize {
 	left: number;
 }
 
-export enum SearchDirection {
-	left,
-	right
-}
-
 export interface WatcherPosition extends ElementPosition {
 	watcher: Watcher;
 }

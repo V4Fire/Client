@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { SearchDirection, ElementPosition, ScrollPosition } from 'core/dom/intersection-watcher/engines/interface';
+import type { ElementPosition, ScrollPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 const
 	rectCache = new Map<Element, DOMRect>();
@@ -77,22 +77,29 @@ export function getElementPosition(el: Element, root: Element): ElementPosition 
 	};
 }
 
+export enum InViewStatus {
+	left = -2,
+	right = -1,
+	false = 0,
+	true = 1
+}
+
 /**
- * Returns true if the specified element is in view relative to the given scrollable root.
- * If the element is out of view, then the method returns the direction for the binary search.
+ * Checks if the specified element is in view relative to the given scrollable root.
+ * The function returns a special enum that can be used for binary search.
  *
  * @param el
  * @param root
  * @param threshold - the percentage of element visibility at which this function will return true
  */
-export function isElementInView(el: Element, root: Element, threshold: number): boolean | SearchDirection {
+export function isElementInView(el: Element, root: Element, threshold: number): InViewStatus {
 	const
 		// Old versions of Chromium don't support `isConnected`
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		isConnected = el.isConnected ?? true;
 
 	if (!isConnected) {
-		return false;
+		return InViewStatus.false;
 	}
 
 	const
@@ -110,14 +117,14 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 			rootRect.bottom - rect.top < minHeight ||
 			rootRect.right - rect.left < minWidth
 		) {
-			return SearchDirection.left;
+			return InViewStatus.left;
 		}
 
 		if (
 			rect.top - rootRect.top + rect.height < minHeight ||
 			rect.left - rootRect.left + rect.width < minWidth
 		) {
-			return SearchDirection.right;
+			return InViewStatus.right;
 		}
 	}
 
@@ -125,15 +132,15 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 		rect.bottom - minHeight > innerHeight ||
 		rect.right - minWidth > innerWidth
 	) {
-		return SearchDirection.left;
+		return InViewStatus.left;
 	}
 
 	if (
 		rect.top + minHeight < 0 ||
 		rect.left + minWidth < 0
 	) {
-		return SearchDirection.right;
+		return InViewStatus.right;
 	}
 
-	return true;
+	return InViewStatus.true;
 }

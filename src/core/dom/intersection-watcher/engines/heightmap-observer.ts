@@ -13,10 +13,10 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import type { AsyncOptions } from 'core/async';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-import { getElementPosition, isElementInView } from 'core/dom/intersection-watcher/engines/helpers';
+import { InViewStatus, getElementPosition, isElementInView } from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
-import { SearchDirection, WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
+import type { WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -185,7 +185,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 		this.intersectionWindow = newIntersectionWindow;
 
 		function searchWatcher(
-			start: boolean,
+			left: boolean,
 			where: WatcherPosition[],
 			res?: number,
 			from: number = 0,
@@ -210,27 +210,27 @@ export default class MutationObserverEngine extends AbstractEngine {
 			const
 				inView = isWatcherInView(el.watcher);
 
-			if (inView === true && start || inView === SearchDirection.left) {
-				return searchWatcher(start, where, res, from, cursor);
+			if (inView === InViewStatus.true && left || inView === InViewStatus.left) {
+				return searchWatcher(left, where, res, from, cursor);
 			}
 
-			return searchWatcher(start, where, res, cursor + 1, to);
+			return searchWatcher(left, where, res, cursor + 1, to);
 
 			function needToSaveCursor(cursor: number): boolean {
 				const
 					watcher = where[cursor]?.watcher;
 
-				if (isWatcherInView(watcher) !== true) {
+				if (isWatcherInView(watcher) !== InViewStatus.true) {
 					return false;
 				}
 
-				return res == null || (start ? res > cursor : res < cursor);
+				return res == null || (left ? res > cursor : res < cursor);
 			}
 		}
 
 		function isWatcherInView(watcher: CanUndef<Watcher>): ReturnType<typeof isElementInView> {
 			if (watcher == null) {
-				return false;
+				return InViewStatus.false;
 			}
 
 			if (inViewCache.has(watcher)) {
