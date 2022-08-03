@@ -27,4 +27,5 @@ class bExample extends iBlock {}
 ## Optional directives
 
 * `core/component/directives/bind-with` - this module provides a directive to bind a component template element to some property or event;
-* `core/component/directives/on-resize` - this module provides a directive to watch element resizing.
+* `core/component/directives/on-resize` - this module provides a directive to watch element resizing;
+* `core/component/directives/in-view` - this module provides a directive to track elements entering or leaving the viewport.
