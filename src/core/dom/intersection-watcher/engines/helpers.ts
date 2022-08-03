@@ -6,22 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementPosition, ScrollPosition } from 'core/dom/intersection-watcher/engines/interface';
+import { SearchDirection, ElementPosition, ScrollPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 const
 	rectCache = new Map<Element, DOMRect>();
 
 {
 	const
-		getFromRectCache = rectCache.get.bind(rectCache),
-		addToRectCache = rectCache.set.bind(rectCache);
+		getFromCache = rectCache.get.bind(rectCache),
+		setToCache = rectCache.set.bind(rectCache);
 
 	let
 		timer;
 
 	rectCache.get = (key) => {
 		let
-			val = getFromRectCache(key);
+			val = getFromCache(key);
 
 		if (val == null) {
 			val = key.getBoundingClientRect();
@@ -39,7 +39,7 @@ const
 			}, 15);
 		}
 
-		return addToRectCache(key, value);
+		return setToCache(key, value);
 	};
 }
 
@@ -68,33 +68,24 @@ export function getElementPosition(el: Element, root: Element): ElementPosition 
 		rect = rectCache.get(el)!,
 		scrollPos = getRootScrollPosition(root);
 
-	const
-		{width, height} = rect;
-
-	const
-		top = rect.top + scrollPos.top,
-		left = rect.left + scrollPos.left;
-
 	return {
-		bottom: top + height,
-		right: left + width,
+		width: rect.width,
+		height: rect.height,
 
-		top,
-		left,
-
-		width,
-		height
+		top: rect.top + scrollPos.top,
+		left: rect.left + scrollPos.left
 	};
 }
 
 /**
- * Returns true if the specified element is in view relative to the given scrollable root
+ * Returns true if the specified element is in view relative to the given scrollable root.
+ * If the element is out of view, then the method returns the direction for the binary search.
  *
  * @param el
  * @param root
  * @param threshold - the percentage of element visibility at which this function will return true
  */
-export function isElementInView(el: Element, root: Element, threshold: number): boolean {
+export function isElementInView(el: Element, root: Element, threshold: number): boolean | SearchDirection {
 	const
 		// Old versions of Chromium don't support `isConnected`
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -117,18 +108,32 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 
 		if (
 			rootRect.bottom - rect.top < minHeight ||
+			rootRect.right - rect.left < minWidth
+		) {
+			return SearchDirection.left;
+		}
+
+		if (
 			rect.top - rootRect.top + rect.height < minHeight ||
-			rootRect.right - rect.left < minWidth ||
 			rect.left - rootRect.left + rect.width < minWidth
 		) {
-			return false;
+			return SearchDirection.right;
 		}
 	}
 
-	return (
-		rect.top + minHeight >= 0 &&
-		rect.left + minWidth >= 0 &&
-		rect.bottom - minHeight <= innerHeight &&
-		rect.right - minWidth <= innerWidth
-	);
+	if (
+		rect.bottom - minHeight > innerHeight ||
+		rect.right - minWidth > innerWidth
+	) {
+		return SearchDirection.left;
+	}
+
+	if (
+		rect.top + minHeight < 0 ||
+		rect.left + minWidth < 0
+	) {
+		return SearchDirection.right;
+	}
+
+	return true;
 }

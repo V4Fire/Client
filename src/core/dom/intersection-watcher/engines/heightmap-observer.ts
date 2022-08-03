@@ -13,10 +13,10 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import type { AsyncOptions } from 'core/async';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-import { isElementInView, getElementPosition, getRootScrollPosition } from 'core/dom/intersection-watcher/engines/helpers';
+import { getElementPosition, isElementInView } from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
-import type { WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
+import { SearchDirection, WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -140,6 +140,9 @@ export default class MutationObserverEngine extends AbstractEngine {
 		} = this;
 
 		const
+			inViewCache = new Map<Watcher, ReturnType<typeof isElementInView>>();
+
+		const
 			fromY = searchWatcher(true, watchersYPositions),
 			toY = fromY != null ? searchWatcher(false, watchersYPositions) : null;
 
@@ -188,11 +191,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 			from: number = 0,
 			to: number = where.length - 1
 		): CanUndef<number> {
-			if (to < 0 || from >= where.length || where.length === 0) {
-				return res;
-			}
-
-			if (where.length === 1) {
+			if (where.length <= 1) {
 				return needToSaveCursor(0) ? 0 : res;
 			}
 
@@ -201,45 +200,46 @@ export default class MutationObserverEngine extends AbstractEngine {
 			}
 
 			const
-				cursor = from + Math.floor((to - from) / 2);
-
-			const
-				watcherPos = where[cursor],
-				scrollPos = getRootScrollPosition(watcherPos.watcher.root!);
+				cursor = Math.floor((to + from) / 2),
+				el = where[cursor];
 
 			if (needToSaveCursor(cursor)) {
 				res = cursor;
 			}
 
-			if (where === watchersXPositions) {
-				const
-					left = innerWidth + scrollPos.left;
+			const
+				inView = isWatcherInView(el.watcher);
 
-				if (left < watcherPos.left) {
-					return searchWatcher(start, where, res, 0, cursor - 1);
-				}
-
-			} else {
-				const
-					top = innerHeight + scrollPos.top;
-
-				if (top < watcherPos.top) {
-					return searchWatcher(start, where, res, 0, cursor - 1);
-				}
+			if (inView === true && start || inView === SearchDirection.left) {
+				return searchWatcher(start, where, res, from, cursor);
 			}
 
 			return searchWatcher(start, where, res, cursor + 1, to);
 
 			function needToSaveCursor(cursor: number): boolean {
 				const
-					{watcher} = where[cursor];
+					watcher = where[cursor]?.watcher;
 
-				if (!isElementInView(watcher.target, watcher.root!, watcher.threshold)) {
+				if (isWatcherInView(watcher) !== true) {
 					return false;
 				}
 
 				return res == null || (start ? res > cursor : res < cursor);
 			}
+		}
+
+		function isWatcherInView(watcher: CanUndef<Watcher>): ReturnType<typeof isElementInView> {
+			if (watcher == null) {
+				return false;
+			}
+
+			if (inViewCache.has(watcher)) {
+				return inViewCache.get(watcher)!;
+			}
+
+			const res = isElementInView(watcher.target, watcher.root!, watcher.threshold);
+			inViewCache.set(watcher, res);
+			return res;
 		}
 	}
 

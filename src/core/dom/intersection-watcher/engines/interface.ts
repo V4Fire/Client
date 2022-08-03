@@ -16,8 +16,11 @@ export interface ScrollPosition {
 export interface ElementPosition extends ElementSize {
 	top: number;
 	left: number;
-	bottom: number;
-	right: number;
+}
+
+export enum SearchDirection {
+	left,
+	right
 }
 
 export interface WatcherPosition extends ElementPosition {
