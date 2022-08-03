@@ -1,8 +1,21 @@
 # core/component/directives/on-resize
 
 This module provides a directive to watch element resizing.
-The directive uses the `core/dom/resize-watcher` module to watch element geometry.
+The directive uses the `core/dom/resize-watcher` module to watch elements.
 For more information, please refer its documentation.
+
+## How to include a directive?
+
+Just add the directive import in your component code.
+
+```js
+import 'core/component/directives/on-resize';
+
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {}
+```
 
 ## Usage
 

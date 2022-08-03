@@ -7,6 +7,19 @@ the element to which the directive is applied.
 It is convenient to use this directive to describe the logic of point-by-point updating of template fragments without
 forced re-rendering of the entire template. For example, you can use this directive with your functional components.
 
+## How to include a directive?
+
+Just add the directive import in your component code.
+
+```js
+import 'core/component/directives/bind-with';
+
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {}
+```
+
 ## Usage
 
 ### Binding to a property
