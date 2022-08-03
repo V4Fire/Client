@@ -230,7 +230,7 @@ export function element<E extends Element = Element>(
 	ctx: Element,
 	name: string,
 	mods?: ModsDict
-): CanUndef<E>;
+): E | null;
 
 /**
  * Returns a block child element by the specified selector
@@ -248,14 +248,14 @@ export function element<E extends Element = Element>(
 	this: Friend,
 	name: string,
 	mods?: ModsDict
-): CanUndef<E>;
+): E | null;
 
 export function element<E extends Element = Element>(
 	this: Friend,
 	ctxOrName: Element | string,
 	name?: string | ModsDict,
 	mods?: ModsDict
-): CanUndef<E> {
+): E | null {
 	let
 		ctx = this.node,
 		elName;
@@ -275,12 +275,12 @@ export function element<E extends Element = Element>(
 	ctx ??= this.node;
 
 	if (ctx == null) {
-		return undefined;
+		return null;
 	}
 
 	if (this.ctx.isFunctional) {
 		return Object.cast(elements.call(this, elName, mods)[0]);
 	}
 
-	return ctx.querySelector<E>(getElementSelector.call(this, elName, mods)) ?? undefined;
+	return ctx.querySelector<E>(getElementSelector.call(this, elName, mods));
 }
