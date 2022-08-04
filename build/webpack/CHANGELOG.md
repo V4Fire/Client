@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-08-??)
+
+#### :rocket: New Feature
+
+* Added ability to enable or disable code minification `build/webpack/optimization`
+
 ## v3.24.0 (2022-08-12)
 
 #### :rocket: New Feature
