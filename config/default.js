@@ -476,6 +476,25 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		optimize: {
 			/**
+			 * Returns true if code have to be minimized
+			 *
+			 * @cli optimize-minify
+			 * @env OPTIMIZE_MINIFY
+			 *
+			 * @returns {boolean}
+			 */
+			minify() {
+				const
+					mode = require('@config/config').webpack.mode();
+
+				return o('optimize-minify', {
+					env: true,
+					type: 'boolean',
+					default: mode === 'production'
+				});
+			},
+
+			/**
 			 * The minimum size of a chunk file in bytes that can be separated into a single file
 			 *
 			 * @cli optimize-min-chunk-size
