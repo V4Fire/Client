@@ -107,5 +107,7 @@ module.exports = function optimization({buildId, plugins}) {
 		/* eslint-enable camelcase */
 	];
 
+	opts.minimize = optimize.minify();
+
 	return opts;
 };
