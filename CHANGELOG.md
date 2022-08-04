@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2022-??-?)
+
+#### :bug: Bug Fix
+
+* Fixed issues with global components
+
 ## v3.23.8 (2022-07-22)
 
 #### :bug: Bug Fix
