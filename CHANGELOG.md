@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (2022-??-?)
+## v3.23.9 (2022-08-04)
 
 #### :bug: Bug Fix
 
-* Fixed issues with global components
+* Global component styles are no longer loaded using `import()` `build/monic`
 
 ## v3.23.8 (2022-07-22)
 
