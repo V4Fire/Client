@@ -36,7 +36,7 @@
     "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" npx playwright test --config tests/config/unit/index.ts",
     "test:linters": "npm run test:typescript && npm run test:eslint",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
-    "test:eslint": "eslint \"./config/**/*.js\" \"./build/**/*.js\" \"./build/**/*.ts\" \"./src/**/*.js\" \"./src/**/*.ts\"",
+    "test:eslint": "node node_modules/eslint/bin/eslint.js \"./config/**/*.js\" \"./build/**/*.js\" \"./build/**/*.ts\" \"./src/**/*.js\" \"./src/**/*.ts\" --cache",
     "test:components": "gulp test:components --test-processes 2",
     "test:components:chrome": "npm run test:components -- --browsers chrome --retries 2",
     "test:jasmine": "nyc --reporter=lcov --reporter=text npx jasmine",
@@ -52,7 +52,7 @@
     "@babel/preset-typescript": "7.16.7",
     "@swc/core": "1.2.153",
     "@swc/helpers": "0.3.8",
-    "chalk": "^4.1.2",
+    "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "escaper": "3.0.6",
     "eventemitter2": "6.4.5",
@@ -64,10 +64,6 @@
     "tslib": "2.3.1",
     "vue": "2.6.10"
   },
-  "peerDependencies": {
-    "@v4fire/core": "3.86.2",
-    "webpack": "^5.65.0"
-  },
   "optionalDependencies": {
     "@config/config": "npm:config@1.31.0",
     "@pzlr/build-core": "2.13.0",
@@ -75,6 +71,7 @@
     "@types/glob": "7.2.0",
     "@types/webpack": "5.28.0",
     "@v4fire/config": "1.0.0",
+    "@v4fire/core": "3.86.2",
     "@v4fire/design-system": "1.23.0",
     "arg": "5.0.1",
     "autoprefixer": "10.4.2",
@@ -140,17 +137,20 @@
     "url-loader": "4.1.1",
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "1.9.1",
-    "webpack-bundle-analyzer": "4.5.0",
     "webpack-cli": "4.9.2"
   },
   "devDependencies": {
     "@playwright/test": "1.20.0",
+    "@statoscope/webpack-plugin": "5.24.0",
     "@types/jasmine": "3.10.3",
-    "@v4fire/core": "3.86.2",
-    "@v4fire/linters": "1.9.0",
+    "@v4fire/linters": "github:V4Fire/linters#up_dependencies",
     "husky": "7.0.4",
     "nyc": "15.1.0",
     "playwright": "1.20.0",
     "webpack": "5.70.0"
+  },
+  "peerDependencies": {
+    "@v4fire/core": "3.86.2",
+    "webpack": "^5.70.0"
   }
 }

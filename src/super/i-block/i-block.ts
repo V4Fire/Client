@@ -2347,7 +2347,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
@@ -2388,7 +2388,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {};
 	}

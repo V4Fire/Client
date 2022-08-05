@@ -1133,7 +1133,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Handler: `dataProvider.refresh`
 	 * @param data
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected onRefreshData(data: this['DB']): Promise<void> {
 		return this.reload();
 	}

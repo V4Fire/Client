@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 /*!
  * V4Fire Client Core

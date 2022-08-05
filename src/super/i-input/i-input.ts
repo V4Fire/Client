@@ -324,7 +324,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			let
 				form;
 
-			// tslint:disable-next-line:prefer-conditional-expression
 			if (this.form != null) {
 				form = document.querySelector<HTMLFormElement>(`#${this.form}`);
 

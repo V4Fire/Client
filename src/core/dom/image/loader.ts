@@ -81,7 +81,7 @@ export default class ImageLoader {
 	/**
 	 * Default `optionsResolver` function
 	 */
-	 defaultOptionsResolver?: OptionsResolver = (opts) => opts;
+	defaultOptionsResolver?: OptionsResolver = (opts) => opts;
 
 	/**
 	 * Sets the default `broken` image

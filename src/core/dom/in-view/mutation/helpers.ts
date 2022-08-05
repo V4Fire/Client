@@ -8,7 +8,6 @@
 
 import type { ElementRect } from 'core/dom/in-view/interface';
 
-// tslint:disable-next-line strict-type-predicates
 export const hasMutationObserver = typeof MutationObserver === 'function';
 
 /**

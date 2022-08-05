@@ -64,3 +64,6 @@ Icon
 /app-std-cache
 /src/entries/tmp
 /db
+
+# Cache files
+.eslintcache

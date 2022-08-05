@@ -137,7 +137,6 @@ export default abstract class iStaticPage extends iPage {
 			title = div.textContent ?? '';
 
 		// Fix strange Chrome bug
-		// tslint:disable-next-line:no-irregular-whitespace
 		document.title = `${title} `;
 		document.title = title;
 
@@ -215,7 +214,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param value
 	 * @param [component]
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
 		this.pageTitle = value;
 		return this.pageTitle === value;

@@ -272,7 +272,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		};
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected override set requestParams(value: RequestParams) {
 		// Loopback
 	}

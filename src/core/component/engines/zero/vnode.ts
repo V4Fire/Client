@@ -49,7 +49,7 @@ export function patchVNode(vnode: Element, component: ComponentInterface, render
 export function renderVNode(vnode: VNode, parent: ComponentInterface): Node;
 export function renderVNode(vnodes: VNode[], parent: ComponentInterface): Node[];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function renderVNode(vnode: CanArray<VNode>, parent: ComponentInterface): CanArray<Node> {
 	return Object.cast(vnode);
 }

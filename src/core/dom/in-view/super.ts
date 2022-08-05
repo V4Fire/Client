@@ -439,7 +439,7 @@ export default abstract class AbstractInView {
 	 * Initializes observing for the specified element
 	 * @param observable
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected initObserve(observable: InViewObservableElement): CanUndef<InViewObservableElement> {
 		return undefined;
 	}

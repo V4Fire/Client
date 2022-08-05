@@ -176,10 +176,10 @@ test.describe('b-checkbox hierarchical groups', () => {
 	 * @param ctx
 	 * @param id
 	 */
-	function switcher(ctx: bCheckbox, id: string = 'foo'): Array<[string | undefined, boolean, string | undefined, boolean | string | undefined]> {
+	async function switcher(ctx: bCheckbox, id: string = 'foo'): Promise<Array<[string | undefined, boolean, string | undefined, boolean | string | undefined]>> {
 		const {$el} = ctx.r;
 
-		(<ComponentElement<bCheckbox>>$el!.querySelector(`[data-id="${id}"]`)).component?.toggle();
+		await (<ComponentElement<bCheckbox>>$el!.querySelector(`[data-id="${id}"]`)).component?.toggle();
 
 		const
 			els = Array.from<Required<ComponentElement<bCheckbox>>>($el!.querySelectorAll('.b-checkbox'));

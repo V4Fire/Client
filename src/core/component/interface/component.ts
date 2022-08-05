@@ -1,6 +1,6 @@
 /*
 eslint-disable
-@typescript-eslint/no-unused-vars-experimental,
+@typescript-eslint/no-unused-vars,
 @typescript-eslint/no-empty-function,
 @typescript-eslint/unified-signatures
 */
