@@ -73,6 +73,7 @@
     "@v4fire/config": "1.0.0",
     "@v4fire/core": "3.86.2",
     "@v4fire/design-system": "1.23.0",
+    "@statoscope/webpack-plugin": "5.24.0",
     "arg": "5.0.1",
     "autoprefixer": "10.4.2",
     "browserslist": "4.19.1",
@@ -141,7 +142,6 @@
   },
   "devDependencies": {
     "@playwright/test": "1.20.0",
-    "@statoscope/webpack-plugin": "5.24.0",
     "@types/jasmine": "3.10.3",
     "@v4fire/linters": "github:V4Fire/linters#up_dependencies",
     "husky": "7.0.4",
