@@ -6,21 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import AriaRoleEngine from 'core/component/directives/aria/interface';
+import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 import iOpen from 'traits/i-open/i-open';
 
-export default class DialogEngine extends AriaRoleEngine {
+export class DialogEngine extends AriaRoleEngine {
 	/**
 	 * Sets base aria attributes for current role
 	 */
 	init(): void {
-		const
-			{el, vnode} = this.options;
+		this.el.setAttribute('role', 'dialog');
+		this.el.setAttribute('aria-modal', 'true');
 
-		el.setAttribute('role', 'dialog');
-		el.setAttribute('aria-modal', 'true');
-
-		if (!iOpen.is(vnode.fakeContext)) {
+		if (!iOpen.is(this.ctx)) {
 			Object.throw('Dialog aria directive expects the component to realize iOpen interface');
 		}
 	}

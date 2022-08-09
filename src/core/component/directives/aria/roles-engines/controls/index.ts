@@ -6,19 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import AriaRoleEngine, { DirectiveOptions } from 'core/component/directives/aria/interface';
-import type { ControlsParams } from 'core/component/directives/aria/roles-engines/interface';
+import type { ControlsParams } from 'core/component/directives/aria/roles-engines/controls/interface';
+import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
 
-export default class ControlsEngine extends AriaRoleEngine {
+export class ControlsEngine extends AriaRoleEngine {
 	/**
-	 * Passed directive params
+	 * Engine params
 	 */
 	params: ControlsParams;
 
-	constructor(options: DirectiveOptions) {
+	constructor(options: EngineOptions) {
 		super(options);
 
-		this.params = this.options.binding.value;
+		this.params = options.params;
 	}
 
 	/**
@@ -26,9 +26,7 @@ export default class ControlsEngine extends AriaRoleEngine {
 	 */
 	init(): void {
 		const
-			{vnode, binding, el} = this.options,
-			{modifiers} = binding,
-			{fakeContext: ctx} = vnode,
+			{ctx, modifiers, el} = this,
 			{for: forId} = this.params;
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

@@ -211,10 +211,10 @@ export default abstract class iAccess {
 				removedElems = intoIter(ctx.querySelectorAll<HTMLElement>('[data-tabindex]'));
 
 			if (el?.hasAttribute('data-tabindex')) {
-				removedElems = sequence(removedElems, intoIter([el]));
+				removedElems = sequence(removedElems, intoIter([<HTMLElement>el]));
 			}
 
-			for (const elem of <IterableIterator<HTMLElement>>removedElems) {
+			for (const elem of removedElems) {
 				const
 					originalTabIndex = elem.getAttribute('data-tabindex');
 
@@ -261,7 +261,7 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.findFocusableElement]] */
 	static findFocusableElement: AddSelf<iAccess['findFocusableElement'], iBlock> =
-		(component, el?): CanUndef<Element> => {
+		(component, el?) => {
 			const
 				ctx = el ?? component.$el,
 				focusableElems = this.findAllFocusableElements(component, ctx);
@@ -284,7 +284,7 @@ export default abstract class iAccess {
 				focusableIter = intoIter(focusableElems ?? []);
 
 			if (ctx?.matches(FOCUSABLE_SELECTOR)) {
-				focusableIter = sequence(focusableIter, intoIter([el]));
+				focusableIter = sequence(focusableIter, intoIter([<HTMLElement>el]));
 			}
 
 			function* createFocusableWithoutDisabled(iter: IterableIterator<Element>): IterableIterator<Element> {
@@ -404,7 +404,7 @@ export default abstract class iAccess {
 	 * @param step
 	 * @param el - a context to search, if not set, document will be used
 	 */
-	getNextFocusableElement(step: 1 | -1, el?: Element): CanUndef<Element> {
+	getNextFocusableElement<T extends Element = Element>(step: 1 | -1, el?: T): CanUndef<T> {
 		return Object.throw();
 	}
 
@@ -412,7 +412,7 @@ export default abstract class iAccess {
 	 * Find focusable element except disabled ones
 	 * @param el - a context to search, if not set, component will be used
 	 */
-	findFocusableElement(el?: Element): CanUndef<Element> {
+	findFocusableElement<T extends Element = Element>(el?: T): CanUndef<T> {
 		return Object.throw();
 	}
 
@@ -420,7 +420,7 @@ export default abstract class iAccess {
 	 * Find all focusable elements except disabled ones. Search includes the specified element
 	 * @param el - a context to search, if not set, component will be used
 	 */
-	findAllFocusableElements(el?: Element): IterableIterator<CanUndef<Element>> {
+	findAllFocusableElements<T extends Element = Element>(el?: T): IterableIterator<CanUndef<T>> {
 		return Object.throw();
 	}
 }

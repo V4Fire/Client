@@ -6,17 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import AriaRoleEngine from 'core/component/directives/aria/interface';
+import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
-export default class ListboxEngine extends AriaRoleEngine {
+export class ListboxEngine extends AriaRoleEngine {
 	/**
 	 * Sets base aria attributes for current role
 	 */
 	init(): void {
-		const
-			{el} = this.options;
-
-		el.setAttribute('role', 'listbox');
-		el.setAttribute('tabindex', '-1');
+		this.el.setAttribute('role', 'listbox');
+		this.el.setAttribute('tabindex', '-1');
 	}
 }

@@ -8,18 +8,26 @@
 
 import * as ariaRoles from 'core/component/directives/aria/roles-engines';
 import Async from 'core/async';
-import AriaRoleEngine, { eventNames } from 'core/component/directives/aria/interface';
+
 import type iBlock from 'super/i-block/i-block';
+import type iAccess from 'traits/i-access/i-access';
+
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
+import { AriaRoleEngine, EngineOptions, EventNames } from 'core/component/directives/aria/roles-engines';
 
 /**
  * Class-helper for making base operations for the directive
  */
-export default class AriaSetter extends AriaRoleEngine {
+export default class AriaSetter {
+	/**
+	 * Aria directive options
+	 */
+	readonly options: DirectiveOptions;
+
 	/**
 	 * Async instance for aria directive
 	 */
-	override readonly async: Async;
+	readonly async: Async;
 
 	/**
 	 * Role engine instance
@@ -27,8 +35,7 @@ export default class AriaSetter extends AriaRoleEngine {
 	role: CanUndef<AriaRoleEngine>;
 
 	constructor(options: DirectiveOptions) {
-		super(options);
-
+		this.options = options;
 		this.async = new Async();
 		this.setAriaRole();
 
@@ -79,12 +86,40 @@ export default class AriaSetter extends AriaRoleEngine {
 			return;
 		}
 
-		this.role = new ariaRoles[role](this.options);
+		const
+			engine = this.createEngineName(role),
+			options = this.createRoleOptions();
+
+		this.role = new ariaRoles[engine](options);
+	}
+
+	/**
+	 * Creates an engine name from a passed parameter
+	 * @param role
+	 */
+	protected createEngineName(role: string): string {
+		return `${role.capitalize()}Engine`;
+	}
+
+	/**
+	 * Creates a dictionary with engine options
+	 */
+	protected createRoleOptions(): EngineOptions {
+		const
+			{el, binding, vnode} = this.options,
+			{value, modifiers} = binding;
+
+		return {
+			el,
+			modifiers,
+			params: value,
+			ctx: Object.cast<iBlock & iAccess>(vnode.fakeContext)
+		};
 	}
 
 	/**
 	 * Sets aria-label, aria-labelledby, aria-description and aria-describedby attributes to the element
-	 * from passed parameters
+	 * from directive parameters
 	 */
 	protected setAriaLabel(): void {
 		const
@@ -132,9 +167,10 @@ export default class AriaSetter extends AriaRoleEngine {
 			params = this.options.binding.value;
 
 		for (const key in params) {
-			if (key in eventNames) {
+			if (key in EventNames) {
+
 				const
-					callback = this.role[eventNames[key]].bind(this.role),
+					callback = this.role[EventNames[key]].bind(this.role),
 					property = params[key];
 
 				if (Object.isFunction(property)) {

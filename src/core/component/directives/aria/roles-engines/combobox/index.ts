@@ -6,31 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import AriaRoleEngine, { DirectiveOptions } from 'core/component/directives/aria/interface';
+import type { ComboboxParams } from 'core/component/directives/aria/roles-engines/combobox/interface';
+import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
 
-import type { ComboboxParams } from 'core/component/directives/aria/roles-engines/interface';
-import type iAccess from 'traits/i-access/i-access';
-
-export default class ComboboxEngine extends AriaRoleEngine {
+export class ComboboxEngine extends AriaRoleEngine {
 	/**
-	 * Passed directive params
+	 * Engine params
 	 */
 	params: ComboboxParams;
 
 	/**
 	 * First focusable element inside the element with directive or this element if there is no focusable inside
 	 */
-	el: HTMLElement;
+	override el: HTMLElement;
 
-	constructor(options: DirectiveOptions) {
+	constructor(options: EngineOptions) {
 		super(options);
 
 		const
-			{el} = this.options,
-			ctx = Object.cast<iAccess>(this.options.vnode.fakeContext);
+			{el} = this;
 
-		this.el = (<CanUndef<HTMLElement>>ctx.findFocusableElement()) ?? el;
-		this.params = this.options.binding.value;
+		this.el = this.ctx?.findFocusableElement<HTMLElement>() ?? el;
+		this.params = options.params;
 	}
 
 	/**

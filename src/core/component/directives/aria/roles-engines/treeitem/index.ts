@@ -9,38 +9,25 @@
  * Copyright © [2022] W3C® (MIT, ERCIM, Keio, Beihang).
  */
 
-import AriaRoleEngine, { DirectiveOptions, keyCodes } from 'core/component/directives/aria/interface';
 import iAccess from 'traits/i-access/i-access';
 
-import type { TreeitemParams } from 'core/component/directives/aria/roles-engines/interface';
-import type iBlock from 'super/i-block/i-block';
+import type { TreeitemParams } from 'core/component/directives/aria/roles-engines/treeitem/interface';
+import { AriaRoleEngine, KeyCodes, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
 
-export default class TreeItemEngine extends AriaRoleEngine {
+export class TreeitemEngine extends AriaRoleEngine {
 	/**
-	 * Passed directive params
+	 * Engine params
 	 */
 	params: TreeitemParams;
 
-	/**
-	 * Component instance
-	 */
-	ctx: iAccess & iBlock['unsafe'];
-
-	/**
-	 * Element with current directive
-	 */
-	el: HTMLElement;
-
-	constructor(options: DirectiveOptions) {
+	constructor(options: EngineOptions) {
 		super(options);
 
-		if (!iAccess.is(options.vnode.fakeContext)) {
+		if (!iAccess.is(this.ctx)) {
 			Object.throw('Treeitem aria directive expects the component to realize iAccess interface');
 		}
 
-		this.ctx = Object.cast<iAccess & iBlock['unsafe']>(options.vnode.fakeContext);
-		this.el = this.options.el;
-		this.params = this.options.binding.value;
+		this.params = options.params;
 	}
 
 	/**
@@ -50,11 +37,11 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		this.async?.on(this.el, 'keydown', this.onKeyDown.bind(this));
 
 		const
-			isMuted = this.ctx.removeAllFromTabSequence(this.el);
+			isMuted = this.ctx?.removeAllFromTabSequence(this.el);
 
-		if (this.params.isRootFirstItem) {
+		if (this.params.isFirstRootItem) {
 			if (isMuted) {
-				this.ctx.restoreAllToTabSequence(this.el);
+				this.ctx?.restoreAllToTabSequence(this.el);
 
 			} else {
 				this.el.tabIndex = 0;
@@ -63,7 +50,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 
 		this.el.setAttribute('role', 'treeitem');
 
-		this.ctx.$nextTick(() => {
+		this.ctx?.$nextTick(() => {
 			if (this.params.isExpandable) {
 				this.el.setAttribute('aria-expanded', String(this.params.isExpanded));
 			}
@@ -75,8 +62,8 @@ export default class TreeItemEngine extends AriaRoleEngine {
 	 * @param el
 	 */
 	protected focusNext(el: HTMLElement): void {
-		this.ctx.removeAllFromTabSequence(this.el);
-		this.ctx.restoreAllToTabSequence(el);
+		this.ctx?.removeAllFromTabSequence(this.el);
+		this.ctx?.restoreAllToTabSequence(el);
 
 		el.focus();
 	}
@@ -87,7 +74,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 	 */
 	protected moveFocus(step: 1 | -1): void {
 		const
-			nextEl = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
+			nextEl = this.ctx?.getNextFocusableElement<HTMLElement>(step);
 
 		if (nextEl != null) {
 			this.focusNext(nextEl);
@@ -128,7 +115,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		}
 
 		const
-			focusableParent = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(parent);
+			focusableParent = this.ctx?.findFocusableElement(parent);
 
 		if (focusableParent != null) {
 			this.focusNext(focusableParent);
@@ -140,7 +127,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 	 */
 	protected setFocusToFirstItem(): void {
 		const
-			firstItem = <CanUndef<HTMLElement>>this.ctx.findFocusableElement(this.params.rootElement);
+			firstItem = this.ctx?.findFocusableElement(this.params.rootElement);
 
 		if (firstItem != null) {
 			this.focusNext(firstItem);
@@ -152,7 +139,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 	 */
 	protected setFocusToLastItem(): void {
 		const
-			items = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements(this.params.rootElement);
+			items = <IterableIterator<HTMLElement>>this.ctx?.findAllFocusableElements(this.params.rootElement);
 
 		let
 			lastItem: CanUndef<HTMLElement>;
@@ -200,7 +187,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 		};
 
 		switch (e.key) {
-			case keyCodes.UP:
+			case KeyCodes.UP:
 				if (isHorizontal) {
 					close();
 					break;
@@ -209,7 +196,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				this.moveFocus(-1);
 				break;
 
-			case keyCodes.DOWN:
+			case KeyCodes.DOWN:
 				if (isHorizontal) {
 					open();
 					break;
@@ -218,7 +205,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				this.moveFocus(1);
 				break;
 
-			case keyCodes.RIGHT:
+			case KeyCodes.RIGHT:
 				if (isHorizontal) {
 					this.moveFocus(1);
 					break;
@@ -227,7 +214,7 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				open();
 				break;
 
-			case keyCodes.LEFT:
+			case KeyCodes.LEFT:
 				if (isHorizontal) {
 					this.moveFocus(-1);
 					break;
@@ -236,15 +223,15 @@ export default class TreeItemEngine extends AriaRoleEngine {
 				close();
 				break;
 
-			case keyCodes.ENTER:
+			case KeyCodes.ENTER:
 				this.params.toggleFold(this.el);
 				break;
 
-			case keyCodes.HOME:
+			case KeyCodes.HOME:
 				this.setFocusToFirstItem();
 				break;
 
-			case keyCodes.END:
+			case KeyCodes.END:
 				this.setFocusToLastItem();
 				break;
 
