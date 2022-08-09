@@ -252,13 +252,13 @@ class bTree extends iData implements iItems, iAccess {
 	}
 
 	/**
-	 * Returns a dictionary with configurations for the v-aria directive used as a tree
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a tree
 	 * @param role
 	 */
 	protected getAriaConfig(role: 'tree'): Dictionary
 
 	/**
-	 * Returns a dictionary with configurations for the v-aria directive used as a treeitem
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a treeitem
 	 *
 	 * @param role
 	 * @param item - tab item data
@@ -289,21 +289,24 @@ class bTree extends iData implements iItems, iAccess {
 		const treeConfig = {
 			isRoot: this.top == null,
 			orientation: this.orientation,
-			changeEvent: (cb: Function) => {
+			'@change': (cb: Function) => {
 				this.on('fold', (ctx, el, item, value) => cb(el, value));
 			}
 		};
 
 		const treeitemConfig = {
-			isRootFirstItem: this.top == null && i === 0,
+			isFirstRootItem: this.top == null && i === 0,
 			orientation: this.orientation,
 			toggleFold,
+
 			get rootElement() {
 				return root();
 			},
+
 			get isExpanded() {
 				return getFoldedMod() === 'false';
 			},
+
 			get isExpandable() {
 				return item?.children != null;
 			}

@@ -6,17 +6,27 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import AriaRoleEngine from 'core/component/directives/aria/interface';
-import type { TablistParams } from 'core/component/directives/aria/roles-engines/interface';
+import type { TablistParams } from 'core/component/directives/aria/roles-engines/tablist/interface';
+import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
 
-export default class TablistEngine extends AriaRoleEngine {
+export class TablistEngine extends AriaRoleEngine {
+	/**
+	 * Engine params
+	 */
+	params: TablistParams;
+
+	constructor(options: EngineOptions) {
+		super(options);
+
+		this.params = options.params;
+	}
+
 	/**
 	 * Sets base aria attributes for current role
 	 */
 	init(): void {
 		const
-			{el, binding} = this.options,
-			params: TablistParams = binding.value;
+			{el, params} = this;
 
 		el.setAttribute('role', 'tablist');
 

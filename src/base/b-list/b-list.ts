@@ -36,7 +36,8 @@ export * from 'base/b-list/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bList extends Trait<typeof iAccess> {}
+interface bList extends Trait<typeof iAccess> {
+}
 
 /**
  * Component to create a list of tabs/links
@@ -693,13 +694,13 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	}
 
 	/**
-	 * Returns a dictionary with configurations for the v-aria directive used as a tablist
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a tablist
 	 * @param role
 	 */
 	protected getAriaConfig(role: 'tablist'): Dictionary;
 
 	/**
-	 * Returns a dictionary with configurations for the v-aria directive used as a tab
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a tab
 	 *
 	 * @param role
 	 * @param item - tab item data
@@ -711,7 +712,7 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 		const
 			isActive = this.isActive.bind(this, item?.value);
 
-		const changeEvent = (cb: Function) => {
+		const bindChangeEvent = (cb: Function) => {
 			this.on('change', () => {
 				if (Object.isSet(this.active)) {
 					cb(this.block?.elements('link', {active: true}));
@@ -728,19 +729,23 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 		};
 
 		const tabConfig = {
-			preSelected: this.active != null,
+			hasDefaultSelectedTabs: this.active != null,
 			isFirst: i === 0,
 			orientation: this.orientation,
-			changeEvent,
-			get isActive() {
+			'@change': bindChangeEvent,
+
+			get isSelected() {
 				return isActive();
 			}
 		};
 
 		switch (role) {
-			case 'tablist': return tablistConfig;
-			case 'tab': return tabConfig;
-			default: return {};
+			case 'tablist':
+				return tablistConfig;
+			case 'tab':
+				return tabConfig;
+			default:
+				return {};
 		}
 	}
 

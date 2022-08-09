@@ -9,28 +9,19 @@
  * Copyright © [2022] W3C® (MIT, ERCIM, Keio, Beihang).
  */
 
-import AriaRoleEngine, { DirectiveOptions, keyCodes } from 'core/component/directives/aria/interface';
+import type { TabParams } from 'core/component/directives/aria/roles-engines/tab/interface';
+import { AriaRoleEngine, EngineOptions, KeyCodes } from 'core/component/directives/aria/roles-engines/interface';
 
-import type { TabParams } from 'core/component/directives/aria/roles-engines/interface';
-import type iAccess from 'traits/i-access/i-access';
-import type iBlock from 'super/i-block/i-block';
-
-export default class TabEngine extends AriaRoleEngine {
+export class TabEngine extends AriaRoleEngine {
 	/**
-	 * Passed directive params
+	 * Engine params
 	 */
 	params: TabParams;
 
-	/**
-	 * Component instance
-	 */
-	ctx: iAccess & iBlock;
-
-	constructor(options: DirectiveOptions) {
+	constructor(options: EngineOptions) {
 		super(options);
 
-		this.params = this.options.binding.value;
-		this.ctx = Object.cast<iAccess & iBlock>(this.options.vnode.fakeContext);
+		this.params = options.params;
 	}
 
 	/**
@@ -38,18 +29,18 @@ export default class TabEngine extends AriaRoleEngine {
 	 */
 	init(): void {
 		const
-			{el} = this.options,
-			{isFirst, preSelected} = this.params;
+			{el} = this,
+			{isFirst, isSelected, hasDefaultSelectedTabs} = this.params;
 
 		el.setAttribute('role', 'tab');
-		el.setAttribute('aria-selected', String(this.params.isActive));
+		el.setAttribute('aria-selected', String(isSelected));
 
-		if (isFirst && !preSelected) {
+		if (isFirst && !hasDefaultSelectedTabs) {
 			if (el.tabIndex < 0) {
 				el.setAttribute('tabindex', '0');
 			}
 
-		} else if (preSelected && this.params.isActive) {
+		} else if (hasDefaultSelectedTabs && isSelected) {
 			if (el.tabIndex < 0) {
 				el.setAttribute('tabindex', '0');
 			}
@@ -68,7 +59,7 @@ export default class TabEngine extends AriaRoleEngine {
 	 */
 	protected moveFocusToFirstTab(): void {
 		const
-			firstTab = <CanUndef<HTMLElement>>this.ctx.findFocusableElement();
+			firstTab = this.ctx?.findFocusableElement<HTMLElement>();
 
 		firstTab?.focus();
 	}
@@ -78,7 +69,11 @@ export default class TabEngine extends AriaRoleEngine {
 	 */
 	protected moveFocusToLastTab(): void {
 		const
-			tabs = <IterableIterator<HTMLElement>>this.ctx.findAllFocusableElements();
+			tabs = this.ctx?.findAllFocusableElements<HTMLElement>();
+
+		if (tabs == null) {
+			return;
+		}
 
 		let
 			lastTab: CanUndef<HTMLElement>;
@@ -96,7 +91,7 @@ export default class TabEngine extends AriaRoleEngine {
 	 */
 	protected moveFocus(step: 1 | -1): void {
 		const
-			focusable = <CanUndef<HTMLElement>>this.ctx.getNextFocusableElement(step);
+			focusable = this.ctx?.getNextFocusableElement<HTMLElement>(step);
 
 		focusable?.focus();
 	}
@@ -107,7 +102,7 @@ export default class TabEngine extends AriaRoleEngine {
 	 */
 	protected onChange(active: Element | NodeListOf<Element>): void {
 		const
-			{el} = this.options;
+			{el} = this;
 
 		function setAttributes(isSelected: boolean) {
 			el.setAttribute('aria-selected', String(isSelected));
@@ -134,7 +129,7 @@ export default class TabEngine extends AriaRoleEngine {
 			isVertical = this.params.orientation === 'vertical';
 
 		switch (evt.key) {
-			case keyCodes.LEFT:
+			case KeyCodes.LEFT:
 				if (isVertical) {
 					return;
 				}
@@ -142,7 +137,7 @@ export default class TabEngine extends AriaRoleEngine {
 				this.moveFocus(-1);
 				break;
 
-			case keyCodes.UP:
+			case KeyCodes.UP:
 				if (isVertical) {
 					this.moveFocus(-1);
 					break;
@@ -150,7 +145,7 @@ export default class TabEngine extends AriaRoleEngine {
 
 				return;
 
-			case keyCodes.RIGHT:
+			case KeyCodes.RIGHT:
 				if (isVertical) {
 					return;
 				}
@@ -158,7 +153,7 @@ export default class TabEngine extends AriaRoleEngine {
 				this.moveFocus(1);
 				break;
 
-			case keyCodes.DOWN:
+			case KeyCodes.DOWN:
 				if (isVertical) {
 					this.moveFocus(1);
 					break;
@@ -166,11 +161,11 @@ export default class TabEngine extends AriaRoleEngine {
 
 				return;
 
-			case keyCodes.HOME:
+			case KeyCodes.HOME:
 				this.moveFocusToFirstTab();
 				break;
 
-			case keyCodes.END:
+			case KeyCodes.END:
 				this.moveFocusToLastTab();
 				break;
 

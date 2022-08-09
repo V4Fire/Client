@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2022-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed `v-attrs` regexp for parsing incoming modifiers
+
 ## v3.12.1 (2021-11-26)
 
 #### :bug: Bug Fix

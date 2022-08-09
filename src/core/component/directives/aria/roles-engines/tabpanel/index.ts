@@ -6,19 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import AriaRoleEngine from 'core/component/directives/aria/interface';
+import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
-export default class TabpanelEngine extends AriaRoleEngine {
+export class TabpanelEngine extends AriaRoleEngine {
 	/**
 	 * Sets base aria attributes for current role
 	 */
 	init(): void {
 		const
-			{el} = this.options;
+			{el} = this;
 
 		if (!el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) {
 			Object.throw('Tabpanel aria directive expects "label" or "labelledby" value to be passed');
-			return;
 		}
 
 		el.setAttribute('role', 'tabpanel');

@@ -14,8 +14,10 @@
 import { ComponentEngine, VNode, VNodeDirective } from 'core/component/engines';
 import AriaSetter from 'core/component/directives/aria/aria-setter';
 
+export * from 'core/component/directives/aria/interface';
+
 const
-	ariaMap = new WeakMap();
+	ariaInstances = new WeakMap<Element, AriaSetter>();
 
 ComponentEngine.directive('aria', {
 	inserted(el: HTMLElement, binding: VNodeDirective, vnode: VNode): void {
@@ -26,23 +28,14 @@ ComponentEngine.directive('aria', {
 			return;
 		}
 
-		const
-			aria = new AriaSetter({el, binding, vnode});
-
-		ariaMap.set(el, aria);
+		ariaInstances.set(el, new AriaSetter({el, binding, vnode}));
 	},
 
 	update(el: HTMLElement) {
-		const
-			aria: AriaSetter = ariaMap.get(el);
-
-		aria.update();
+		ariaInstances.get(el)?.update();
 	},
 
 	unbind(el: HTMLElement) {
-		const
-			aria: AriaSetter = ariaMap.get(el);
-
-		aria.destroy();
+		ariaInstances.get(el)?.destroy();
 	}
 });
