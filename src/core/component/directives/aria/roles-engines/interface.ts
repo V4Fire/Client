@@ -47,7 +47,7 @@ export interface EngineOptions {
 	ctx: iBlock & iAccess;
 }
 
-export type EventBinder = (cb: Function) => void;
+export type HandlerAttachment = (cb: Function) => void;
 
 export const enum KeyCodes {
 	ENTER = 'Enter',
