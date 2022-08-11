@@ -65,5 +65,9 @@ Icon
 /src/entries/tmp
 /db
 
+# Statoscope
+statoscope-*/*
+statoscope-*.config.js
+
 # Cache files
 .eslintcache

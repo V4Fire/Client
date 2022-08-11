@@ -875,10 +875,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true
 			}),
 
+			entryDownloadDiffSizeLimits: {
+				runtime: 50 * 1024,
+				standalone: 50 * 1024,
+				styles: 50 * 1024,
+				html: 10 * 1024
+			},
+
+			entryDownloadDiffTimeLimits: {
+				runtime: 50,
+				standalone: 50,
+				styles: 50,
+				html: 10
+			},
+
 			webpackPluginConfig: {
 				saveStatsTo: 'statoscope-stats/stats-[name].json',
 				saveOnlyStats: true,
-				normalizeStats: true,
+				normalizeStats: false,
 				watchMode: false,
 				open: false
 			}

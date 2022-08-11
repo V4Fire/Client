@@ -27,10 +27,10 @@
   "scripts": {
     "build": "npm run build:tsconfig && webpack",
     "build:tsconfig": "node node_modules/@v4fire/core/build/build-tsconfig",
-    "build:file": "gulp build:tsconfig && webpack --env public-path",
+    "build:file": "npm run build:tsconfig && webpack --env public-path",
     "build:test": "npx webpack --env client-output=b-dummy --env cache-type=memory --env public-path",
-    "dev": "gulp build:tsconfig && webpack --watch",
-    "dev:file": "gulp build:tsconfig && webpack --watch --env public-path",
+    "dev": "npm run build:tsconfig && webpack --watch",
+    "dev:file": "npm run build:tsconfig && webpack --watch --env public-path",
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components && npm run test:jasmine",
     "test:server": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" node tests/server",
     "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" npx playwright test --config tests/config/unit/index.ts",
