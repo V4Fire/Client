@@ -9,6 +9,9 @@
  * Copyright © [2022] W3C® (MIT, ERCIM, Keio, Beihang).
  */
 
+import type iBlock from 'super/i-block/i-block';
+import type iAccess from 'traits/i-access/i-access';
+
 import type { TabParams } from 'core/component/directives/aria/roles-engines/tab/interface';
 import { AriaRoleEngine, EngineOptions, KeyCodes } from 'core/component/directives/aria/roles-engines/interface';
 
@@ -16,9 +19,12 @@ export class TabEngine extends AriaRoleEngine {
 	/**
 	 * Engine params
 	 */
-	params: TabParams;
+	override params: TabParams;
 
-	constructor(options: EngineOptions) {
+	/** @see [[AriaRoleEngine.ctx]] */
+	override ctx?: iBlock & iAccess;
+
+	constructor(options: EngineOptions<TabParams>) {
 		super(options);
 
 		this.params = options.params;
@@ -91,7 +97,7 @@ export class TabEngine extends AriaRoleEngine {
 	 */
 	protected moveFocus(step: 1 | -1): void {
 		const
-			focusable = this.ctx?.getNextFocusableElement<HTMLElement>(step);
+			focusable = this.ctx?.getNextFocusableElement(step);
 
 		focusable?.focus();
 	}

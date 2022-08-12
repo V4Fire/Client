@@ -6,14 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as ariaRoles from 'core/component/directives/aria/roles-engines';
 import Async from 'core/async';
-
 import type iBlock from 'super/i-block/i-block';
-import type iAccess from 'traits/i-access/i-access';
 
+import * as ariaRoles from 'core/component/directives/aria/roles-engines';
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
-import { AriaRoleEngine, EngineOptions, EventNames } from 'core/component/directives/aria/roles-engines';
+import type { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines';
 
 /**
  * Class-helper for making base operations for the directive
@@ -39,10 +37,6 @@ export default class AriaSetter {
 		this.async = new Async();
 		this.setAriaRole();
 
-		if (this.role != null) {
-			this.role.async = this.async;
-		}
-
 		this.init();
 	}
 
@@ -57,7 +51,7 @@ export default class AriaSetter {
 	}
 
 	/**
-	 * Runs on update directive hook. Removes listeners from component if the component is Functional
+	 * Runs on update directive hook. Removes listeners from component if the component is Functional.
 	 */
 	update(): void {
 		const
@@ -69,7 +63,7 @@ export default class AriaSetter {
 	}
 
 	/**
-	 * Runs on unbind directive hook. Clears the Async instance
+	 * Runs on unbind directive hook. Clears the Async instance.
 	 */
 	destroy(): void {
 		this.async.clearAll();
@@ -104,7 +98,7 @@ export default class AriaSetter {
 	/**
 	 * Creates a dictionary with engine options
 	 */
-	protected createRoleOptions(): EngineOptions {
+	protected createRoleOptions(): EngineOptions<AriaRoleEngine['Params']> {
 		const
 			{el, binding, vnode} = this.options,
 			{value, modifiers} = binding;
@@ -113,7 +107,8 @@ export default class AriaSetter {
 			el,
 			modifiers,
 			params: value,
-			ctx: Object.cast<iBlock & iAccess>(vnode.fakeContext)
+			ctx: Object.cast<iBlock>(vnode.fakeContext),
+			async: this.async
 		};
 	}
 
@@ -156,7 +151,7 @@ export default class AriaSetter {
 
 	/**
 	 * Sets handlers for the base role events: open, close, change.
-	 * Expects the passed into directive specified event properties to be Function, Promise or String
+	 * Expects the passed into directive specified event properties to be Function, Promise or String.
 	 */
 	protected addEventHandlers(): void {
 		if (this.role == null) {
@@ -166,11 +161,20 @@ export default class AriaSetter {
 		const
 			params = this.options.binding.value;
 
+		const
+			getCallbackName = (key: string) => `on-${key.slice(1)}`.camelize(false);
+
 		for (const key in params) {
-			if (key in EventNames) {
+			if (key.startsWith('@')) {
+				const
+					callbackName = getCallbackName(key);
+
+				if (!Object.isFunction(this.role[callbackName])) {
+					Object.throw('Aria role engine does not contains event handler for passed event name or the type of engine\'s property is not a function');
+				}
 
 				const
-					callback = this.role[EventNames[key]].bind(this.role),
+					callback = this.role[callbackName].bind(this.role),
 					property = params[key];
 
 				if (Object.isFunction(property)) {

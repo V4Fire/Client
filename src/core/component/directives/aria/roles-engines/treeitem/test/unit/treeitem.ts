@@ -1,5 +1,3 @@
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { JSHandle, Page } from 'playwright';
 import type iBlock from 'super/i-block/i-block';
 
@@ -62,40 +61,48 @@ test.describe('v-aria:treeitem', () => {
 					items = ctx.unsafe.block.elements('node'),
 					labels = document.querySelectorAll('label');
 
-				const res: any[] = [];
+				const
+					res: Array<Nullable<boolean | string>> = [];
+
+				const
+					eq = (index: number) => document.activeElement?.id === labels[index].getAttribute('for'),
+					att = (): Nullable<string> => items[1].getAttribute('aria-expanded'),
+					dis = (key: string) => document.activeElement?.dispatchEvent(
+							new KeyboardEvent('keydown', {key, bubbles: true})
+						);
 
 				input?.focus();
 
 				input?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown', bubbles: true}));
-				res.push(document.activeElement?.id === labels[1].getAttribute('for'));
+				res.push(eq(1));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowUp', bubbles: true}));
-				res.push(document.activeElement?.id === labels[0].getAttribute('for'));
+				dis('ArrowUp');
+				res.push(eq(0));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown', bubbles: true}));
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('ArrowDown');
+				dis('Enter');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('Enter');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('ArrowRight');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true}));
-				res.push(document.activeElement?.id === labels[2].getAttribute('for'));
+				dis('ArrowRight');
+				res.push(eq(2));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowLeft', bubbles: true}));
-				res.push(document.activeElement?.id === labels[1].getAttribute('for'));
+				dis('ArrowLeft');
+				res.push(eq(1));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowLeft', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('ArrowLeft');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home', bubbles: true}));
-				res.push(document.activeElement?.id === labels[0].getAttribute('for'));
+				dis('Home');
+				res.push(eq(0));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'End', bubbles: true}));
-				res.push(document.activeElement?.id === labels[3].getAttribute('for'));
+				dis('End');
+				res.push(eq(3));
 
 				return res;
 			})
@@ -118,40 +125,48 @@ test.describe('v-aria:treeitem', () => {
 					items = ctx.unsafe.block.elements('node'),
 					labels = document.querySelectorAll('label');
 
-				const res: Array<Nullable<boolean | string>> = [];
+				const
+					res: Array<Nullable<boolean | string>> = [];
+
+				const
+					eq = (index: number) => document.activeElement?.id === labels[index].getAttribute('for'),
+					att = (): Nullable<string> => items[1].getAttribute('aria-expanded'),
+					dis = (key: string) => document.activeElement?.dispatchEvent(
+						new KeyboardEvent('keydown', {key, bubbles: true})
+					);
 
 				input?.focus();
 
 				input?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true}));
-				res.push(document.activeElement?.id === labels[1].getAttribute('for'));
+				res.push(eq(1));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowLeft', bubbles: true}));
-				res.push(document.activeElement?.id === labels[0].getAttribute('for'));
+				dis('ArrowLeft');
+				res.push(eq(0));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true}));
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('ArrowRight');
+				dis('Enter');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('Enter');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('ArrowDown');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown', bubbles: true}));
-				res.push(document.activeElement?.id === labels[2].getAttribute('for'));
+				dis('ArrowDown');
+				res.push(eq(2));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowUp', bubbles: true}));
-				res.push(document.activeElement?.id === labels[1].getAttribute('for'));
+				dis('ArrowUp');
+				res.push(eq(1));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowUp', bubbles: true}));
-				res.push(items[1].getAttribute('aria-expanded'));
+				dis('ArrowUp');
+				res.push(att());
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'Home', bubbles: true}));
-				res.push(document.activeElement?.id === labels[0].getAttribute('for'));
+				dis('Home');
+				res.push(eq(0));
 
-				document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', {key: 'End', bubbles: true}));
-				res.push(document.activeElement?.id === labels[3].getAttribute('for'));
+				dis('End');
+				res.push(eq(3));
 
 				return res;
 			})

@@ -13,9 +13,9 @@ export class TreeEngine extends AriaRoleEngine {
 	/**
 	 * Engine params
 	 */
-	params: TreeParams;
+	override params: TreeParams;
 
-	constructor(options: EngineOptions) {
+	constructor(options: EngineOptions<TreeParams>) {
 		super(options);
 
 		this.params = options.params;

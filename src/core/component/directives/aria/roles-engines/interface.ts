@@ -7,10 +7,19 @@
  */
 
 import type Async from 'core/async';
-import type iAccess from 'traits/i-access/i-access';
-import type iBlock from 'super/i-block/i-block';
+import type { ComponentInterface } from 'super/i-block/i-block';
 
 export abstract class AriaRoleEngine {
+	/**
+	 * Type: directive passed params
+	 */
+	readonly Params!: AbstractParams;
+
+	/**
+	 * Type: component on which the directive is set
+	 */
+	readonly Ctx!: ComponentInterface;
+
 	/**
 	 * Element on which the directive is set
 	 */
@@ -19,32 +28,42 @@ export abstract class AriaRoleEngine {
 	/**
 	 * Component on which the directive is set
 	 */
-	readonly ctx: CanUndef<iAccess & iBlock>;
+	readonly ctx?: this['Ctx'];
 
 	/**
 	 * Directive passed modifiers
 	 */
-	readonly modifiers: CanUndef<Dictionary<boolean>>;
+	readonly modifiers?: Dictionary<boolean>;
+
+	/**
+	 * Directive passed params
+	 */
+	readonly params: this['Params'];
 
 	/**
 	 * Async instance
 	 */
 	async: CanUndef<Async>;
 
-	constructor({el, ctx, modifiers}: EngineOptions) {
+	constructor({el, ctx, modifiers, params, async}: EngineOptions<AriaRoleEngine['Params']>) {
 		this.el = el;
 		this.ctx = ctx;
 		this.modifiers = modifiers;
+		this.params = params;
+		this.async = async;
 	}
 
 	abstract init(): void;
 }
 
-export interface EngineOptions {
+export interface AbstractParams {}
+
+export interface EngineOptions<P extends AbstractParams, C extends ComponentInterface = ComponentInterface> {
 	el: HTMLElement;
-	modifiers: CanUndef<Dictionary<boolean>>;
-	params: DictionaryType<any>;
-	ctx: iBlock & iAccess;
+	ctx?: C;
+	modifiers?: Dictionary<boolean>;
+	params: P;
+	async: Async;
 }
 
 export type HandlerAttachment = (cb: Function) => void;
@@ -57,10 +76,4 @@ export const enum KeyCodes {
 	UP = 'ArrowUp',
 	RIGHT = 'ArrowRight',
 	DOWN = 'ArrowDown'
-}
-
-export enum EventNames {
-	'@open' = 'onOpen',
-	'@close' = 'onClose',
-	'@change' = 'onChange'
 }

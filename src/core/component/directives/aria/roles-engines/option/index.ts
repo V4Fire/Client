@@ -13,9 +13,9 @@ export class OptionEngine extends AriaRoleEngine {
 	/**
 	 * Engine params
 	 */
-	params: OptionParams;
+	override params: OptionParams;
 
-	constructor(options: EngineOptions) {
+	constructor(options: EngineOptions<OptionParams>) {
 		super(options);
 
 		this.params = options.params;
