@@ -64,14 +64,11 @@
     "tslib": "2.3.1",
     "vue": "2.6.10"
   },
-  "peerDependencies": {
-    "@v4fire/core": "3.86.2",
-    "webpack": "^5.65.0"
-  },
   "optionalDependencies": {
     "@config/config": "npm:config@1.31.0",
     "@pzlr/build-core": "2.13.0",
     "@pzlr/stylus-inheritance": "3.1.0",
+    "@statoscope/webpack-plugin": "5.24.0",
     "@types/glob": "7.2.0",
     "@types/webpack": "5.28.0",
     "@v4fire/config": "1.0.0",
@@ -152,5 +149,9 @@
     "nyc": "15.1.0",
     "playwright": "1.20.0",
     "webpack": "5.70.0"
+  },
+  "peerDependencies": {
+    "@v4fire/core": "^3.86.2",
+    "webpack": "^5.70.0"
   }
 }

@@ -26,13 +26,24 @@ module.exports = async function plugins({name}) {
 	const
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
 		createProgressPlugin = include('build/webpack/plugins/progress-plugin'),
-		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings');
+		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
+		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
 		['dependencies', new DependenciesPlugin()],
 		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
 	]);
+
+	const
+		statoscopeConfig = config.statoscope();
+
+	if (statoscopeConfig.enabled) {
+		plugins.set(
+			'statoscope-webpack-plugin',
+			new StatoscopeWebpackPlugin(statoscopeConfig.webpackPluginConfig)
+		);
+	}
 
 	if (config.webpack.progress()) {
 		plugins.set('progress-plugin', createProgressPlugin(name));
