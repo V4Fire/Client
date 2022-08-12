@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.24.0 (2022-??-??)
+
+#### :boom: Breaking change
+
+* Removed outdated helpers for webpack stats files
+
 ## v3.15.5 (2022-02-03)
 
 #### :bug: Bug Fix

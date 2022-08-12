@@ -867,6 +867,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns parameters for statoscope
 	 *
 	 * @see https://github.com/statoscope/statoscope/tree/master/packages/webpack-plugin#usage
+	 * @returns {!Object}
 	 */
 	statoscope() {
 		return {

@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.24.0 (2022-??-??)
+
+#### :boom: Breaking change
+
+* Removed outdated helpers for webpack stats files
+
+#### :rocket: New Feature
+
+* Added `statoscope-webpack-plugin`
+
 ## v3.23.10 (2022-08-12)
 
 #### :bug: Bug Fix
