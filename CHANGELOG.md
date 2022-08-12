@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.23.9 (2022-08-04)
+## v3.23.10 (2022-08-12)
 
 #### :bug: Bug Fix
 
