@@ -23,6 +23,7 @@ exports.getFaviconsDecl = getFaviconsDecl;
 
 /**
  * Returns declaration of project favicons
+ *
  * @returns {string}
  */
 function getFaviconsDecl() {
@@ -42,7 +43,7 @@ function getFaviconsDecl() {
 	}
 
 	const
-		pathPlaceholderRgxp = /\$faviconPublicPath\//g,
+		pathPlaceholderRgxp = /\/\$faviconPublicPath\//g,
 		dest = resolveAsLib({dest: 'assets'}, faviconsFolder);
 
 	if (webpack.dynamicPublicPath()) {
@@ -71,6 +72,10 @@ function getFaviconsDecl() {
 	glob.sync(src.clientOutput(dest, '*.@(json|xml|html|webapp)')).forEach((file) => {
 		fs.writeFileSync(file, resolveFaviconPath(fs.readFileSync(file).toString()));
 	});
+
+	if (params.copyManifest) {
+		fs.copyFileSync(src.clientOutput(dest, 'manifest.json'), src.clientOutput('manifest.json'));
+	}
 
 	const
 		manifestRgxp = /<link\s(.*?)\bhref="(.*?\bmanifest.json)"(.*?)\/?>/g,

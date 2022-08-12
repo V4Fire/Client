@@ -64,6 +64,10 @@ export default class bForm extends iData implements iVisible {
 	override readonly dataProvider: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
+	/** @see [[iVisible.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
+
 	/**
 	 * A form identifier.
 	 * You can use it to connect the form with components that lay "outside"

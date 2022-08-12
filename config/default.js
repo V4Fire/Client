@@ -1051,7 +1051,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			display: 'standalone',
 			orientation: 'portrait',
 			version: 1.0,
-			logging: false
+			logging: false,
+			manifestName: 'manifest.json'
 		};
 	},
 
