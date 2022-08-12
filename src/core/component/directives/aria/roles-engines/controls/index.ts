@@ -13,9 +13,9 @@ export class ControlsEngine extends AriaRoleEngine {
 	/**
 	 * Engine params
 	 */
-	params: ControlsParams;
+	override params: ControlsParams;
 
-	constructor(options: EngineOptions) {
+	constructor(options: EngineOptions<ControlsParams>) {
 		super(options);
 
 		this.params = options.params;

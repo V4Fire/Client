@@ -231,7 +231,7 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.getNextFocusableElement]] */
 	static getNextFocusableElement: AddSelf<iAccess['getNextFocusableElement'], iBlock> =
-		(component, step, el?): CanUndef<Element> => {
+		(component, step, el?): CanUndef<HTMLElement> => {
 			if (document.activeElement == null) {
 				return;
 			}
@@ -404,7 +404,7 @@ export default abstract class iAccess {
 	 * @param step
 	 * @param el - a context to search, if not set, document will be used
 	 */
-	getNextFocusableElement<T extends Element = Element>(step: 1 | -1, el?: T): CanUndef<T> {
+	getNextFocusableElement<T extends HTMLElement = HTMLElement>(step: 1 | -1, el?: T): CanUndef<T> {
 		return Object.throw();
 	}
 
@@ -417,7 +417,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Find all focusable elements except disabled ones. Search includes the specified element
+	 * Find all focusable elements except disabled ones. Search includes the specified element.
 	 * @param el - a context to search, if not set, component will be used
 	 */
 	findAllFocusableElements<T extends Element = Element>(el?: T): IterableIterator<CanUndef<T>> {

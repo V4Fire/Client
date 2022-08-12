@@ -17,4 +17,4 @@ export * from 'core/component/directives/aria/roles-engines/option';
 export * from 'core/component/directives/aria/roles-engines/tree';
 export * from 'core/component/directives/aria/roles-engines/treeitem';
 
-export { AriaRoleEngine, EngineOptions, EventNames } from 'core/component/directives/aria/roles-engines/interface';
+export { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';

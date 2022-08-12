@@ -10,6 +10,7 @@
  */
 
 import iAccess from 'traits/i-access/i-access';
+import type iBlock from 'super/i-block/i-block';
 
 import type { TreeitemParams } from 'core/component/directives/aria/roles-engines/treeitem/interface';
 import { AriaRoleEngine, KeyCodes, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
@@ -18,9 +19,12 @@ export class TreeitemEngine extends AriaRoleEngine {
 	/**
 	 * Engine params
 	 */
-	params: TreeitemParams;
+	override params: TreeitemParams;
 
-	constructor(options: EngineOptions) {
+	/** @see [[AriaRoleEngine.ctx]] */
+	override ctx?: iBlock & iAccess;
+
+	constructor(options: EngineOptions<TreeitemParams>) {
 		super(options);
 
 		if (!iAccess.is(this.ctx)) {
@@ -74,7 +78,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 	 */
 	protected moveFocus(step: 1 | -1): void {
 		const
-			nextEl = this.ctx?.getNextFocusableElement<HTMLElement>(step);
+			nextEl = this.ctx?.getNextFocusableElement(step);
 
 		if (nextEl != null) {
 			this.focusNext(nextEl);

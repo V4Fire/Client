@@ -13,9 +13,9 @@ export class TablistEngine extends AriaRoleEngine {
 	/**
 	 * Engine params
 	 */
-	params: TablistParams;
+	override params: TablistParams;
 
-	constructor(options: EngineOptions) {
+	constructor(options: EngineOptions<TablistParams>) {
 		super(options);
 
 		this.params = options.params;
