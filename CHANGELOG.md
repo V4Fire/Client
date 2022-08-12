@@ -11,15 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.24.0 (2022-??-??)
+## v3.24.0 (2022-08-12)
 
 #### :boom: Breaking change
 
-* Removed outdated helpers for webpack stats files
+* Removed outdated helpers for webpack stats files `build/gulp`
 
 #### :rocket: New Feature
 
-* Added `statoscope-webpack-plugin`
+* Added `statoscope-webpack-plugin` `build/webpack`
+* Added script for building statoscope config `build/build-statoscope`
 
 ## v3.23.10 (2022-08-12)
 
