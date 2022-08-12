@@ -54,6 +54,10 @@ interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScrol
 class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	override readonly proxyCall: boolean = true;
 
+	/** @see [[iVisible.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
+
 	/**
 	 * Initial window title
 	 */

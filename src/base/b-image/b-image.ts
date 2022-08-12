@@ -30,6 +30,10 @@ export const
 
 @component({functional: {}})
 export default class bImage extends iBlock implements iProgress, iVisible {
+	/** @see [[iVisible.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
+
 	override readonly rootTag: string = 'span';
 
 	/**

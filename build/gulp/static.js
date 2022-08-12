@@ -12,7 +12,15 @@
 
 const
 	path = require('upath'),
+	through2 = require('through2'),
 	config = require('@config/config');
+
+const {
+	faviconsStream,
+	vinylToBuffer,
+	bufferToVinyl,
+	patchFaviconsAssets
+} = include('build/helpers');
 
 /**
  * Registers gulp tasks to minify/generate project static assets
@@ -65,7 +73,10 @@ module.exports = function init(gulp = require('gulp')) {
 
 		return gulp.src(a(faviconsParams.src))
 			.pipe($.plumber())
-			.pipe($.favicons(faviconsParams))
+			.pipe(through2.obj(vinylToBuffer))
+			.pipe(faviconsStream(faviconsParams))
+			.pipe(through2.obj(patchFaviconsAssets))
+			.pipe(through2.obj(bufferToVinyl))
 			.pipe(gulp.dest(a('favicons')));
 	});
 
