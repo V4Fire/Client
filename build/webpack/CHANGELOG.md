@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.24.0 (2022-08-12)
+
+#### :rocket: New Feature
+
+* Added `statoscope-webpack-plugin`
+
 ## v3.20.0 (2022-04-25)
 
 #### :boom: Breaking Change

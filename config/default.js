@@ -864,65 +864,39 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for a stats report from Webpack
-	 * @see https://webpack.js.org/api/stats/
+	 * Returns parameters for statoscope
 	 *
-	 * @cli stats-path
-	 * @env STATS_PATH
-	 * @default `compilation-stats.json`
-	 *
-	 * @cli merged-stats-path
-	 * @env MERGED_STATS_PATH
-	 * @default `compilation-stats.json`
-	 *
-	 * @cli patchStatsPath
-	 * @env PATCH_STATS_PATH
-	 * @default `compilation-stats.json`
-	 *
-	 * @cli statoscope-report
-	 * @env STATOSCOPE_REPORT
-	 * @default `false`
-	 *
-	 * @cli entryDownloadSizeLimits
-	 * @default `1024``
-	 *
-	 * @cli entryDownloadTimeLimits
-	 * @default `250`
-	 *
-	 * @param {object} [def] - default value
+	 * @see https://github.com/statoscope/statoscope/tree/master/packages/webpack-plugin#usage
 	 * @returns {!Object}
 	 */
-	statoscope(def = {path: 'compilation-stats.json', mergedPath: 'compilation-stats.json'}) {
+	statoscope() {
 		return {
-			statsPath: o('stats-path', {
-				default: def.path,
-				env: true
-			}),
-
-			mergedStatsPath: o('merged-stats-path', {
-				default: def.mergedPath,
-				env: true
-			}),
-
-			patchStatsPath: o('patch-stats-path', {
-				default: def.path,
-				env: true
-			}),
-
-			openReport: o('statoscope-report', {
+			enabled: o('statoscope-webpack-plugin', {
 				default: false,
 				env: true
 			}),
 
-			entryDownloadSizeLimits: o('entry-download-size-limits', {
-				default: 1024,
-				env: true
-			}),
+			entryDownloadDiffSizeLimits: {
+				runtime: 50 * 1024,
+				standalone: 50 * 1024,
+				styles: 50 * 1024,
+				html: 10 * 1024
+			},
 
-			entryDownloadTimeLimits: o('entry-download-time-limits', {
-				default: 250,
-				env: true
-			})
+			entryDownloadDiffTimeLimits: {
+				runtime: 50,
+				standalone: 50,
+				styles: 50,
+				html: 10
+			},
+
+			webpackPluginConfig: {
+				saveStatsTo: 'statoscope-stats/stats-[name].json',
+				saveOnlyStats: true,
+				normalizeStats: false,
+				watchMode: false,
+				open: false
+			}
 		};
 	},
 
