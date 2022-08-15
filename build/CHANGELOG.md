@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Refactor of the statoscope config build script `build-statoscope`
+
+## v3.24.0 (2022-08-12)
+
+#### :rocket: New Feature
+
+* Added a new script to build the statoscope config file `build-statoscope`
+
 ## v3.15.5 (2021-01-24)
 
 #### :bug: Bug Fix
