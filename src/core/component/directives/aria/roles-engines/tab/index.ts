@@ -65,7 +65,7 @@ export class TabEngine extends AriaRoleEngine {
 	 */
 	protected moveFocusToFirstTab(): void {
 		const
-			firstTab = this.ctx?.findFocusableElement<HTMLElement>();
+			firstTab = this.ctx?.findFocusableElement();
 
 		firstTab?.focus();
 	}
@@ -75,14 +75,14 @@ export class TabEngine extends AriaRoleEngine {
 	 */
 	protected moveFocusToLastTab(): void {
 		const
-			tabs = this.ctx?.findAllFocusableElements<HTMLElement>();
+			tabs = this.ctx?.findAllFocusableElements();
 
 		if (tabs == null) {
 			return;
 		}
 
 		let
-			lastTab: CanUndef<HTMLElement>;
+			lastTab: CanUndef<AccessibleElement>;
 
 		for (const tab of tabs) {
 			lastTab = tab;
