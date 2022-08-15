@@ -32,7 +32,7 @@ export class ComboboxEngine extends AriaRoleEngine {
 		const
 			{el} = this;
 
-		this.el = this.ctx?.findFocusableElement<HTMLElement>() ?? el;
+		this.el = this.ctx?.findFocusableElement() ?? el;
 		this.params = options.params;
 	}
 

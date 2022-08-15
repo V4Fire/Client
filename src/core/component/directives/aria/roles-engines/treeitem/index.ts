@@ -65,7 +65,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 	 * Changes focus from the current focused element to the passed one
 	 * @param el
 	 */
-	protected focusNext(el: HTMLElement): void {
+	protected focusNext(el: AccessibleElement): void {
 		this.ctx?.removeAllFromTabSequence(this.el);
 		this.ctx?.restoreAllToTabSequence(el);
 
@@ -143,10 +143,14 @@ export class TreeitemEngine extends AriaRoleEngine {
 	 */
 	protected setFocusToLastItem(): void {
 		const
-			items = <IterableIterator<HTMLElement>>this.ctx?.findAllFocusableElements(this.params.rootElement);
+			items = this.ctx?.findAllFocusableElements(this.params.rootElement);
+
+		if (items == null) {
+			return;
+		}
 
 		let
-			lastItem: CanUndef<HTMLElement>;
+			lastItem: CanUndef<AccessibleElement>;
 
 		for (const item of items) {
 			if (item.offsetWidth > 0 || item.offsetHeight > 0) {

@@ -180,7 +180,7 @@ export default abstract class iAccess {
 				areElementsRemoved = false;
 
 			const
-				focusableElems = <IterableIterator<HTMLElement>>this.findAllFocusableElements(component, ctx);
+				focusableElems = this.findAllFocusableElements(component, <AccessibleElement>ctx);
 
 			for (const focusableEl of focusableElems) {
 				if (!focusableEl.hasAttribute('data-tabindex')) {
@@ -231,7 +231,7 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.getNextFocusableElement]] */
 	static getNextFocusableElement: AddSelf<iAccess['getNextFocusableElement'], iBlock> =
-		(component, step, el?): CanUndef<HTMLElement> => {
+		(component, step, el?): CanUndef<AccessibleElement> => {
 			if (document.activeElement == null) {
 				return;
 			}
@@ -239,7 +239,7 @@ export default abstract class iAccess {
 			const
 				ctx = el ?? document.documentElement,
 				focusableElems = <IterableIterator<HTMLElement>>this.findAllFocusableElements(component, ctx),
-				visibleFocusable: HTMLElement[] = [];
+				visibleFocusable: AccessibleElement[] = [];
 
 			for (const focusableEl of focusableElems) {
 				if (
@@ -252,7 +252,7 @@ export default abstract class iAccess {
 			}
 
 			const
-				index = visibleFocusable.indexOf(<HTMLElement>document.activeElement);
+				index = visibleFocusable.indexOf(<AccessibleElement>document.activeElement);
 
 			if (index > -1) {
 				return visibleFocusable[index + step];
@@ -261,13 +261,13 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.findFocusableElement]] */
 	static findFocusableElement: AddSelf<iAccess['findFocusableElement'], iBlock> =
-		(component, el?) => {
+		(component, el?): CanUndef<AccessibleElement> => {
 			const
-				ctx = el ?? component.$el,
+				ctx = el ?? <AccessibleElement>component.$el,
 				focusableElems = this.findAllFocusableElements(component, ctx);
 
 			for (const focusableEl of focusableElems) {
-				if (!focusableEl?.hasAttribute('disabled')) {
+				if (!focusableEl.hasAttribute('disabled')) {
 					return focusableEl;
 				}
 			}
@@ -275,7 +275,7 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.findAllFocusableElements]] */
 	static findAllFocusableElements: AddSelf<iAccess['findAllFocusableElements'], iBlock> =
-		(component, el?): IterableIterator<CanUndef<Element>> => {
+		(component, el?): IterableIterator<AccessibleElement> => {
 			const
 				ctx = el ?? component.$el,
 				focusableElems = ctx?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
@@ -287,7 +287,9 @@ export default abstract class iAccess {
 				focusableIter = sequence(focusableIter, intoIter([<HTMLElement>el]));
 			}
 
-			function* createFocusableWithoutDisabled(iter: IterableIterator<Element>): IterableIterator<Element> {
+			function* createFocusableWithoutDisabled(
+				iter: IterableIterator<AccessibleElement>
+			): IterableIterator<AccessibleElement> {
 				for (const iterEl of iter) {
 					if (!iterEl.hasAttribute('disabled')) {
 						yield iterEl;
@@ -404,7 +406,7 @@ export default abstract class iAccess {
 	 * @param step
 	 * @param el - a context to search, if not set, document will be used
 	 */
-	getNextFocusableElement<T extends HTMLElement = HTMLElement>(step: 1 | -1, el?: T): CanUndef<T> {
+	getNextFocusableElement<T extends AccessibleElement = AccessibleElement>(step: 1 | -1, el?: T): CanUndef<T> {
 		return Object.throw();
 	}
 
@@ -412,7 +414,7 @@ export default abstract class iAccess {
 	 * Find focusable element except disabled ones
 	 * @param el - a context to search, if not set, component will be used
 	 */
-	findFocusableElement<T extends Element = Element>(el?: T): CanUndef<T> {
+	findFocusableElement<T extends AccessibleElement = AccessibleElement>(el?: T): CanUndef<T> {
 		return Object.throw();
 	}
 
@@ -420,7 +422,7 @@ export default abstract class iAccess {
 	 * Find all focusable elements except disabled ones. Search includes the specified element.
 	 * @param el - a context to search, if not set, component will be used
 	 */
-	findAllFocusableElements<T extends Element = Element>(el?: T): IterableIterator<CanUndef<T>> {
+	findAllFocusableElements<T extends AccessibleElement = AccessibleElement>(el?: T): IterableIterator<T> {
 		return Object.throw();
 	}
 }
