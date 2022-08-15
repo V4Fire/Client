@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2022-??-??)
+
+#### :house: Internal
+
+* Small refactor of statoscope build script `build/build-statoscope`
+
 ## v3.24.0 (2022-08-12)
 
 #### :boom: Breaking change

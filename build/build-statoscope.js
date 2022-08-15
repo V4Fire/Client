@@ -9,11 +9,9 @@
  */
 
 const
-	{promises: fs} = require('fs'),
-	path = require('path');
-
-const
+	fs = require('fs'),
 	{statoscope} = require('@config/config'),
+	configTemplate = include('.statoscope', {return: 'source'}),
 	{entryDownloadDiffSizeLimits, entryDownloadDiffTimeLimits} = statoscope();
 
 /**
@@ -37,15 +35,14 @@ const resolveLimits =
  *
  * @param buildType - name of build process
  */
-async function buildStatoscopeConfig(buildType) {
+function buildStatoscopeConfig(buildType) {
 	const
-		configTemplate = await fs.readFile(path.resolve(__dirname, '../.statoscope')),
 		diffSizeLimit = entryDownloadDiffSizeLimits[buildType],
 		diffTimeLimit = entryDownloadDiffTimeLimits[buildType],
 		configPath = `./statoscope-${buildType}.config.js`,
 		config = `module.exports = ${configTemplate}`;
 
-	await fs.writeFile(configPath, resolveLimits(config, diffSizeLimit, diffTimeLimit));
+	fs.writeFileSync(configPath, resolveLimits(config, diffSizeLimit, diffTimeLimit));
 }
 
 const [buildType] = process.argv.slice(2);
