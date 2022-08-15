@@ -19,7 +19,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added script for building statoscope config `build/build-statoscope`
+* Added a new script to build the statoscope config file `build-statoscope`
 
 ## v3.15.5 (2021-01-24)
 
