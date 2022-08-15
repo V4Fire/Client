@@ -11,38 +11,29 @@
 const
 	fs = require('fs'),
 	{statoscope} = require('@config/config'),
-	configTemplate = include('.statoscope', {return: 'source'}),
 	{entryDownloadDiffSizeLimits, entryDownloadDiffTimeLimits} = statoscope();
 
-/**
- * The function generates statoscope configuration file
- * using values from config and template.
- *
- * @param {string} config
- * @param {number} diffSizeLimit
- * @param {number} diffTimeLimit
- * @returns {string}
- */
-const resolveLimits =
-	(config, diffSizeLimit, diffTimeLimit) => config
-		.replace('$entryDownloadDiffSizeLimits', diffSizeLimit)
-		.replace('$entryDownloadDiffTimeLimits', diffTimeLimit);
+const
+	configTemplate = include('.statoscope', {return: 'source'});
 
 /**
- * Builds `.statoscope` file.
+ * Builds the statoscope configuration file.
+ *
  * The function processes template statoscope config file and
  * generates actual statoscope config with predefined limits from config.
  *
- * @param buildType - name of build process
+ * @param buildName - name of build process
  */
-function buildStatoscopeConfig(buildType) {
+function buildStatoscopeConfig(buildName) {
 	const
-		diffSizeLimit = entryDownloadDiffSizeLimits[buildType],
-		diffTimeLimit = entryDownloadDiffTimeLimits[buildType],
-		configPath = `./statoscope-${buildType}.config.js`,
-		config = `module.exports = ${configTemplate}`;
+		diffSizeLimit = entryDownloadDiffSizeLimits[buildName],
+		diffTimeLimit = entryDownloadDiffTimeLimits[buildName];
 
-	fs.writeFileSync(configPath, resolveLimits(config, diffSizeLimit, diffTimeLimit));
+	const config = `module.exports = ${configTemplate}`
+		.replace('$entryDownloadDiffSizeLimits', diffSizeLimit)
+		.replace('$entryDownloadDiffTimeLimits', diffTimeLimit);
+
+	fs.writeFileSync(`./statoscope-${buildName}.config.js`, config);
 }
 
 const [buildType] = process.argv.slice(2);
