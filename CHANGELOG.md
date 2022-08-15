@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Small refactor of statoscope build script `build/build-statoscope`
+* Refactor of the statoscope config build script `build/build-statoscope`
 
 ## v3.24.0 (2022-08-12)
 
@@ -25,8 +25,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `statoscope-webpack-plugin` `build/webpack`
-* Added script for building statoscope config `build/build-statoscope`
+* Added a new plugin `statoscope-webpack-plugin` `build/webpack`
+* Added a new script to build the statoscope config file `build/build-statoscope`
 
 ## v3.23.10 (2022-08-12)
 

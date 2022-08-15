@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Small refactor of statoscope build script `build/build-statoscope`
+* Refactor of the statoscope config build script `build-statoscope`
 
 ## v3.24.0 (2022-08-12)
 
