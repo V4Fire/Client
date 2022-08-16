@@ -7,6 +7,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { JSHandle, Page } from 'playwright';
 import type bDummy from 'dummies/b-dummy/b-dummy';
 
@@ -18,16 +19,25 @@ test.describe('v-id', () => {
 		await demoPage.goto();
 	});
 
-	test('id is added', async ({page}) => {
-		const target = await init(page);
-		const id = await target.evaluate((ctx) => ctx.$root.unsafe.dom.getId('dummy'));
+	test('should add an id to the element', async ({page}) => {
+		const
+			target = await init(page),
+			id = await target.evaluate((ctx) => ctx.$root.unsafe.dom.getId('dummy'));
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.$el?.id)
 		).toBe(id);
 	});
 
-	test('preserve mod', async ({page}) => {
+	test('should not preserve the original element id', async ({page}) => {
+		const target = await init(page, {'v-id': 'dummy', id: 'foo'});
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.$el?.id)
+		).toBe('dummy');
+	});
+
+	test('should preserve the original element id', async ({page}) => {
 		const target = await init(page, {'v-id.preserve': 'dummy', id: 'foo'});
 
 		test.expect(
@@ -35,10 +45,6 @@ test.describe('v-id', () => {
 		).toBe('foo');
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function init(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bDummy>> {
 		return Component.createComponent(page, 'b-dummy', {
 			attrs: {'v-id': 'dummy', ...attrs}
