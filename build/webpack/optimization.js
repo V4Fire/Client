@@ -107,7 +107,12 @@ module.exports = function optimization({buildId, plugins}) {
 		/* eslint-enable camelcase */
 	];
 
-	opts.minimize = optimize.minify();
+	if (config.build.debugMode) {
+		opts.minimize = false;
+		opts.chunkIds = 'named';
+		opts.moduleIds = 'named';
+		opts.mangleExports = false;
+	}
 
 	return opts;
 };
