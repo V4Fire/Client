@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `is`
+* Added a new static method `is`
 
 ## v3.0.0-rc.184 (2021-05-12)
 
