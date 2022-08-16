@@ -133,7 +133,23 @@ export default class bButton implements iOpen {
 
 ## Helpers
 
-The trait provides a bunch of helper functions to initialize event listeners.
+The trait provides a bunch of helper functions to work with it.
+
+### is
+
+Checks if the passed object realize the current trait.
+
+```typescript
+import iOpen from 'traits/i-open/i-open';
+
+export default class bButton {
+  created() {
+    if (iOpen.is(this)) {
+      this.open();
+    }
+  }
+}
+```
 
 ### initCloseHelpers
 
