@@ -15,8 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added new method `minify` to `webpack.optimize` object `config/default`
-* Added ability to enable or disable code minification `build/webpack/optimization`
+* Added new property `debugMode` to `build` object `config/default`
+* Added ability to disable code optimizations for debug mode `build/webpack/optimization`
 
 ## v3.??.? (2022-??-??)
 

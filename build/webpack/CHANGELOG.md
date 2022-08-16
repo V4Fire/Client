@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added ability to enable or disable code minification `build/webpack/optimization`
+* Added ability to disable code optimizations for debug mode `build/webpack/optimization`
 
 ## v3.24.0 (2022-08-12)
 

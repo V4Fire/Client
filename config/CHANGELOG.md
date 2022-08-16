@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added new method `minify` to `webpack.optimize` object
+* Added new property `debugMode` to `build` object
 
 ## v3.20.0 (2022-04-25)
 
