@@ -30,11 +30,13 @@ test.describe('v-id', () => {
 	});
 
 	test('should not preserve the original element id', async ({page}) => {
-		const target = await init(page, {'v-id': 'dummy', id: 'foo'});
+		const
+			target = await init(page),
+			id = await target.evaluate((ctx) => ctx.$root.unsafe.dom.getId('dummy'));
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.$el?.id)
-		).toBe('dummy');
+		).toBe(id);
 	});
 
 	test('should preserve the original element id', async ({page}) => {
