@@ -31,7 +31,8 @@ export * from 'base/b-tree/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iAccess> {}
+interface bTree extends Trait<typeof iAccess> {
+}
 
 /**
  * Component to render tree of any elements
@@ -267,8 +268,11 @@ class bTree extends iData implements iItems, iAccess {
 	protected getAriaConfig(role: 'treeitem', item: this['Item'], i: number): Dictionary
 
 	protected getAriaConfig(role: 'tree' | 'treeitem', item?: this['Item'], i?: number): Dictionary {
+		const getFoldedMod = (item?.id != null) ?
+			this.getFoldedModById.bind(this, item.id) :
+			() => '';
+
 		const
-			getFoldedMod = this.getFoldedModById.bind(this, item?.id ?? ''),
 			root = () => this.top?.$el ?? this.$el;
 
 		const treeConfig = {
