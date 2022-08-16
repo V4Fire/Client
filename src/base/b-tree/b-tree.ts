@@ -268,7 +268,7 @@ class bTree extends iData implements iItems, iAccess {
 
 	protected getAriaConfig(role: 'tree' | 'treeitem', item?: this['Item'], i?: number): Dictionary {
 		const
-			getFoldedMod = this.getFoldedModById.bind(this, item?.id),
+			getFoldedMod = this.getFoldedModById.bind(this, item?.id ?? ''),
 			root = () => this.top?.$el ?? this.$el;
 
 		const treeConfig = {
