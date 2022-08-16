@@ -135,7 +135,7 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Checks if the component realize current trait
+	 * Checks if the passed object realize the current trait
 	 * @param obj
 	 */
 	static is(obj: unknown): obj is iOpen {
@@ -143,8 +143,8 @@ export default abstract class iOpen {
 			return false;
 		}
 
-		const dict = Object.cast<Dictionary>(obj);
-		return Object.isFunction(dict.open) && Object.isFunction(dict.close);
+		const unsafe = Object.cast<Dictionary>(obj);
+		return Object.isFunction(unsafe.open) && Object.isFunction(unsafe.close);
 	}
 
 	/**
