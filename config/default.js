@@ -304,6 +304,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		suit: o('suit', {
 			env: true,
 			default: 'demo'
+		}),
+
+		/**
+		 * If true, all code optimizations will be disabled which is suitable for application debugging
+		 *
+		 * @cli debug-mode
+		 * @env DEBUG_MODE
+		 *
+		 * @returns {boolean}
+		 */
+		debugMode: o('debug-mode', {
+			env: true,
+			type: 'boolean'
 		})
 	},
 

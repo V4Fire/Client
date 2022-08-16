@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-08-??)
+
+#### :rocket: New Feature
+
+* Added new property `debugMode` to `build` object
+
 ## v3.20.0 (2022-04-25)
 
 #### :boom: Breaking Change
