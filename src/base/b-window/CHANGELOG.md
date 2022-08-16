@@ -9,12 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.?.? (2022-0?-??)
+## v3.?.? (2022-??-??)
 
-#### :rocket: New Feature
+#### :house: Internal
 
-* Added a new directive `v-aria`
-* Added a new directive `v-id`
+* Improved component accessibility
 
 ## v3.0.0-rc.211 (2021-07-21)
 

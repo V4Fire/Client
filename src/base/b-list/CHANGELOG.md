@@ -9,15 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.??? (2022-??-??)
+## v3.?.? (2022-??-??)
 
 #### :rocket: New Feature
 
-* Added a new directive `v-aria`
 * Added a new prop `orientation`
-* Added `isTablist`
-* Added `getAriaConfig`
 * Now the component derives `iAccess`
+
+#### :house: Internal
+
+* Improved component accessibility
 
 ## v3.0.0-rc.211 (2021-07-21)
 
