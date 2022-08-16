@@ -36,8 +36,7 @@ export * from 'base/b-list/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bList extends Trait<typeof iAccess> {
-}
+interface bList extends Trait<typeof iAccess> {}
 
 /**
  * Component to create a list of tabs/links
@@ -265,14 +264,6 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	protected activeStore!: this['Active'];
 
 	/**
-	 * True if the component is used as a tablist
-	 */
-	@computed({dependencies: ['items']})
-	protected get isTablist(): boolean {
-		return this.items.some((el) => el.href === undefined);
-	}
-
-	/**
 	 * A link to the active item element.
 	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
 	 */
@@ -301,6 +292,14 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 
 			return getEl(active);
 		});
+	}
+
+	/**
+	 * True if the component is used as a tablist
+	 */
+	@computed({dependencies: ['items']})
+	protected get isTablist(): boolean {
+		return this.items.some((el) => el.href === undefined);
 	}
 
 	/**
@@ -712,7 +711,31 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 		const
 			isActive = this.isActive.bind(this, item?.value);
 
-		const bindChangeEvent = (cb: Function) => {
+		const tablistConfig = {
+			isMultiple: this.multiple,
+			orientation: this.orientation
+		};
+
+		const tabConfig = {
+			orientation: this.orientation,
+
+			isFirst: i === 0,
+			hasDefaultSelectedTabs: this.active != null,
+
+			get isSelected() {
+				return isActive();
+			},
+
+			'@change': bindChangeEvent.bind(this)
+		};
+
+		switch (role) {
+			case 'tablist': return tablistConfig;
+			case 'tab': return tabConfig;
+			default: return {};
+		}
+
+		function bindChangeEvent(this: bList, cb: Function) {
 			this.on('change', () => {
 				if (Object.isSet(this.active)) {
 					cb(this.block?.elements('link', {active: true}));
@@ -721,31 +744,6 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 					cb(this.block?.element('link', {active: true}));
 				}
 			});
-		};
-
-		const tablistConfig = {
-			isMultiple: this.multiple,
-			orientation: this.orientation
-		};
-
-		const tabConfig = {
-			hasDefaultSelectedTabs: this.active != null,
-			isFirst: i === 0,
-			orientation: this.orientation,
-			'@change': bindChangeEvent,
-
-			get isSelected() {
-				return isActive();
-			}
-		};
-
-		switch (role) {
-			case 'tablist':
-				return tablistConfig;
-			case 'tab':
-				return tabConfig;
-			default:
-				return {};
 		}
 	}
 

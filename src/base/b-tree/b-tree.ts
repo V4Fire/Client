@@ -261,8 +261,8 @@ class bTree extends iData implements iItems, iAccess {
 	 * Returns a dictionary with configurations for the `v-aria` directive used as a treeitem
 	 *
 	 * @param role
-	 * @param item - tab item data
-	 * @param i - tab item position index
+	 * @param item - tree item data
+	 * @param i - tree item position index
 	 */
 	protected getAriaConfig(role: 'treeitem', item: this['Item'], i: number): Dictionary
 
@@ -271,7 +271,40 @@ class bTree extends iData implements iItems, iAccess {
 			getFoldedMod = this.getFoldedModById.bind(this, item?.id),
 			root = () => this.top?.$el ?? this.$el;
 
-		const toggleFold = (target: HTMLElement, value?: boolean): void => {
+		const treeConfig = {
+			isRoot: this.top == null,
+			orientation: this.orientation,
+			'@change': (cb: Function) => {
+				this.on('fold', (ctx, el, item, value) => cb(el, value));
+			}
+		};
+
+		const treeitemConfig = {
+			orientation: this.orientation,
+			isFirstRootItem: this.top == null && i === 0,
+
+			get isExpanded() {
+				return getFoldedMod() === 'false';
+			},
+
+			get isExpandable() {
+				return item?.children != null;
+			},
+
+			toggleFold: toggleFold.bind(this),
+
+			get rootElement() {
+				return root();
+			}
+		};
+
+		switch (role) {
+			case 'tree': return treeConfig;
+			case 'treeitem': return treeitemConfig;
+			default: return {};
+		}
+
+		function toggleFold(this: bTree, target: HTMLElement, value?: boolean) {
 			const
 				mod = this.block?.getElMod(target, 'node', 'folded');
 
@@ -284,38 +317,6 @@ class bTree extends iData implements iItems, iAccess {
 
 			this.block?.setElMod(target, 'node', 'folded', newVal);
 			this.emit('fold', target, item, newVal);
-		};
-
-		const treeConfig = {
-			isRoot: this.top == null,
-			orientation: this.orientation,
-			'@change': (cb: Function) => {
-				this.on('fold', (ctx, el, item, value) => cb(el, value));
-			}
-		};
-
-		const treeitemConfig = {
-			isFirstRootItem: this.top == null && i === 0,
-			orientation: this.orientation,
-			toggleFold,
-
-			get rootElement() {
-				return root();
-			},
-
-			get isExpanded() {
-				return getFoldedMod() === 'false';
-			},
-
-			get isExpandable() {
-				return item?.children != null;
-			}
-		};
-
-		switch (role) {
-			case 'tree': return treeConfig;
-			case 'treeitem': return treeitemConfig;
-			default: return {};
 		}
 	}
 
