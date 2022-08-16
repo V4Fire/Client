@@ -17,16 +17,28 @@ import type iBlock from 'super/i-block/i-block';
 ComponentEngine.directive('id', {
 	inserted(el: HTMLElement, binding: VNodeDirective, vnode: VNode): void {
 		const
-			ctx = Object.cast<iBlock['unsafe']>(vnode.fakeContext),
-			{modifiers: mod} = binding;
+			ctx = Object.cast<iBlock['unsafe']>(vnode.fakeContext);
 
-		if (mod?.preserve != null && el.hasAttribute('id')) {
+		if (el.hasAttribute('id') && binding.modifiers?.preserve != null) {
+			el.setAttribute('data-v-id-preserve', 'true');
 			return;
 		}
 
-		const
-			id = ctx.dom.getId(binding.value);
+		el.setAttribute('id', ctx.dom.getId(binding.value));
+	},
 
-		el.setAttribute('id', id);
+	update(el: HTMLElement, binding: VNodeDirective, vnode: VNode) {
+		const
+			ctx = Object.cast<iBlock['unsafe']>(vnode.fakeContext);
+
+		if (el.hasAttribute('data-v-id-preserve')) {
+			return;
+		}
+
+		el.setAttribute('id', ctx.dom.getId(binding.value));
+	},
+
+	unbind(el: HTMLElement) {
+		el.removeAttribute('data-v-id-preserve');
 	}
 });
