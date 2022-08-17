@@ -56,7 +56,7 @@ export default abstract class iAccess {
 		(component) => SyncPromise.resolve(component.setMod('focused', false));
 
 	/**
-	 * Checks if the component realize current trait
+	 * Checks if the passed object realize the current trait
 	 * @param obj
 	 */
 	static is(obj: unknown): obj is iAccess {
