@@ -15,8 +15,8 @@ import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import { Option } from 'core/prelude/structures';
-
 import { derive } from 'core/functools/trait';
+
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
