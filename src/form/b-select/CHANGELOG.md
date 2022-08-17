@@ -13,14 +13,15 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new directive `v-aria`
-* Added a new directive `v-id`
-* Added `getAriaConfig`
 * Now the component derives `iAccess`
 
 #### :bug: Bug Fix
 
-* Fixed the component to emit `iOpen` events
+* Fixed a bug due to which the component did not emit `iOpen` events
+
+#### :house: Internal
+
+* Improved component accessibility
 
 ## v3.5.3 (2021-10-06)
 
