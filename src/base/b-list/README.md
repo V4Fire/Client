@@ -10,13 +10,13 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * The component extends [[iData]].
 
-* The component implements [[iVisible]], [[iWidth]], [[iItems]] traits.
+* The component implements [[iAccess]], [[iVisible]], [[iWidth]], [[iItems]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
 * The component supports tooltips.
 
-* The component uses `aria` attributes.
+* The component is accessible.
 
 * By default, the list will be created using `<ul>` and `<li>` tags.
 
@@ -243,6 +243,10 @@ By default, if the component is switched to the `multiple` mode, this value is s
 
 Initial additional attributes are provided to an "internal" (native) list tag.
 
+#### [orientation = `horizontal`]
+
+The component view orientation.
+
 ### Fields
 
 #### items
@@ -333,3 +337,14 @@ class Test extends iData {
   }
 }
 ```
+
+## Accessibility
+
+If the component is used as a list of tabs it will implement an ARIA role [tablist](https://www.w3.org/TR/wai-aria/#tablist).
+All the accessible functionality included in this [widget](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/) is supported.
+
+When the component is used as a list of links it bases on internal HTML semantics of list tags.
+
+The component includes the following roles:
+- [tablist](https://www.w3.org/TR/wai-aria/#tablist)
+- [tab](https://www.w3.org/TR/wai-aria/#tab)
