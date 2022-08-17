@@ -11,9 +11,9 @@ Changelog
 
 ## v3.?.? (2022-0?-??)
 
-#### :rocket: New Feature
+#### :house: Internal
 
-* Added a new directive `v-id`
+* Now element's `id` attribute is added with `v-id` directive
 
 ## v3.0.0-rc.211 (2021-07-21)
 
