@@ -67,6 +67,19 @@ export default abstract class iOpen {
 	};
 
 	/**
+	 * Checks if the passed object realize the current trait
+	 * @param obj
+	 */
+	static is(obj: unknown): obj is iOpen {
+		if (Object.isPrimitive(obj)) {
+			return false;
+		}
+
+		const unsafe = Object.cast<Dictionary>(obj);
+		return Object.isFunction(unsafe.open) && Object.isFunction(unsafe.close);
+	}
+
+	/**
 	 * Initialize default event listeners to close a component by a keyboard or mouse
 	 *
 	 * @param component
@@ -132,19 +145,6 @@ export default abstract class iOpen {
 
 			component.emit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
 		});
-	}
-
-	/**
-	 * Checks if the passed object realize the current trait
-	 * @param obj
-	 */
-	static is(obj: unknown): obj is iOpen {
-		if (Object.isPrimitive(obj)) {
-			return false;
-		}
-
-		const unsafe = Object.cast<Dictionary>(obj);
-		return Object.isFunction(unsafe.open) && Object.isFunction(unsafe.close);
 	}
 
 	/**
