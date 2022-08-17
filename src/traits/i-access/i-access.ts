@@ -191,7 +191,7 @@ export default abstract class iAccess {
 			}
 
 			const
-				focusableEls = this.findAllFocusableElements(component, searchCtx);
+				focusableEls = this.findFocusableElements(component, searchCtx);
 
 			for (const el of focusableEls) {
 				if (!el.hasAttribute('data-tabindex')) {
@@ -244,18 +244,10 @@ export default abstract class iAccess {
 			}
 
 			const
-				focusableEls = <IterableIterator<HTMLElement>>this.findAllFocusableElements(component, searchCtx),
-				visibleFocusableEls: AccessibleElement[] = [];
+				focusableEls = this.findFocusableElements(component, searchCtx),
+				visibleFocusableEls: AccessibleElement[] = [...focusableEls];
 
-			for (const el of focusableEls) {
-				if (
-					el.offsetWidth > 0 ||
-					el.offsetHeight > 0 ||
-					el === document.activeElement
-				) {
-					visibleFocusableEls.push(el);
-				}
-			}
+			visibleFocusableEls.sort((el1, el2) => el2.tabIndex - el1.tabIndex);
 
 			const
 				index = visibleFocusableEls.indexOf(<AccessibleElement>document.activeElement);
@@ -271,7 +263,7 @@ export default abstract class iAccess {
 	static findFocusableElement: AddSelf<iAccess['findFocusableElement'], iBlock> =
 		(component, searchCtx?): AccessibleElement | null => {
 			const
-				search = this.findAllFocusableElements(component, searchCtx).next();
+				search = this.findFocusableElements(component, searchCtx).next();
 
 			if (search.done) {
 				return null;
@@ -280,8 +272,8 @@ export default abstract class iAccess {
 			return search.value;
 		};
 
-	/** @see [[iAccess.findAllFocusableElements]] */
-	static findAllFocusableElements: AddSelf<iAccess['findAllFocusableElements'], iBlock> =
+	/** @see [[iAccess.findFocusableElements]] */
+	static findFocusableElements: AddSelf<iAccess['findFocusableElements'], iBlock> =
 		(component, searchCtx = component.$el): IterableIterator<AccessibleElement> => {
 			const
 				accessibleEls = searchCtx?.querySelectorAll<AccessibleElement>(FOCUSABLE_SELECTOR);
@@ -308,7 +300,11 @@ export default abstract class iAccess {
 				iter: IterableIterator<AccessibleElement>
 			): IterableIterator<AccessibleElement> {
 				for (const el of iter) {
-					if (!el.hasAttribute('disabled')) {
+					if (
+						!el.hasAttribute('disabled') ||
+						el.getAttribute('visibility') !== 'hidden' ||
+						el.getAttribute('display') !== 'none'
+					) {
 						yield el;
 					}
 				}
@@ -409,7 +405,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Finds the first non-disabled focusable element from the passed context to search and returns it.
+	 * Finds the first non-disabled visible focusable element from the passed context to search and returns it.
 	 * The element that is the search context is also taken into account in the search.
 	 *
 	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
@@ -419,12 +415,12 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Finds all non-disabled focusable elements and returns an iterator with the found ones.
+	 * Finds all non-disabled visible focusable elements and returns an iterator with the found ones.
 	 * The element that is the search context is also taken into account in the search.
 	 *
 	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
 	 */
-	findAllFocusableElements<T extends AccessibleElement = AccessibleElement>(searchCtx?: Element): IterableIterator<T> {
+	findFocusableElements<T extends AccessibleElement = AccessibleElement>(searchCtx?: Element): IterableIterator<T> {
 		return Object.throw();
 	}
 }

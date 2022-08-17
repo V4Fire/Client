@@ -75,7 +75,7 @@ export class TabEngine extends AriaRoleEngine {
 	 */
 	protected moveFocusToLastTab(): void {
 		const
-			tabs = this.ctx?.findAllFocusableElements();
+			tabs = this.ctx?.findFocusableElements();
 
 		if (tabs == null) {
 			return;

@@ -143,7 +143,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 	 */
 	protected setFocusToLastItem(): void {
 		const
-			items = this.ctx?.findAllFocusableElements(this.params.rootElement);
+			items = this.ctx?.findFocusableElements(this.params.rootElement);
 
 		if (items == null) {
 			return;
@@ -153,9 +153,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 			lastItem: CanUndef<AccessibleElement>;
 
 		for (const item of items) {
-			if (item.offsetWidth > 0 || item.offsetHeight > 0) {
-				lastItem = item;
-			}
+			lastItem = item;
 		}
 
 		if (lastItem != null) {
