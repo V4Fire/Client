@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Changed calculation of `textHintWithIndent` to concatenation `bInput.value` and `textHint` without space between it
+
 ## v3.23.1 (2022-06-14)
 
 #### :bug: Bug Fix

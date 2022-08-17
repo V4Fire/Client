@@ -213,13 +213,13 @@ Mind, the hint value does not affect a component value.
 /// Mind, `bInput.value` will be just "value" as provided.
 < b-input &
   :value = 'value' |
-  :textHint = 'in the catalog'
+  :textHint = ' in the catalog'
 .
 
 /// You will see the empty input in that case or a placeholder, if it provided.
 /// If you type a message, then you’ll see "<your message> in catalog" in the input.
 < b-input &
-  :textHint = 'in catalog'
+  :textHint = ' in catalog'
   [:placeholer = 'search']
 .
 ```

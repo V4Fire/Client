@@ -241,11 +241,11 @@ export default class bInput extends iInputText {
 	 * Returns a value from `text` and `textHint` joined together with a space.
 	 *
 	 * A hint is shown after the input text. Technically, it’s placed under the native input and duplicates the entered
-	 * value with adding a hint message. If `value` is set to "value" and `textHint` is set to "some hint",
-	 * the getter will return "value some hint".
+	 * value with adding a hint message. If `value` is set to "value" and `textHint` is set to "Some hint",
+	 * the getter will return "valueSome hint".
 	 */
 	protected get textHintWithIndent(): string {
-		return `${this.text} ${this.textHint}`;
+		return `${this.text}${this.textHint}`;
 	}
 
 	@system({
