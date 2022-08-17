@@ -352,4 +352,9 @@ export default abstract class iStaticPage extends iPage {
 		this.locale = locale;
 		this.forceUpdate().catch(stderr);
 	}
+
+	@watch('isOnline')
+	protected onOnlineChange(val: string): void {
+		this.setRootMod('online', val);
+	}
 }
