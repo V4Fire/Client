@@ -18,6 +18,8 @@ This module provides a component to create a modal window.
 
 * By default, the root tag of the component is `<div>`.
 
+* The component is accessible.
+
 ## Modifiers
 
 | Name       | Description                              | Values                  | Default   |
@@ -263,3 +265,8 @@ When opening the window, you can specify at which `stage` the component should s
 < span @click = $refs.window.open('loading')
   Open the window
 ```
+
+## Accessibility
+
+The component implements an ARIA role [dialog](https://www.w3.org/TR/wai-aria/#dialog).
+All the accessible functionality included in this [widget](https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/) is supported.
