@@ -81,6 +81,14 @@ See [this](https://www.w3.org/TR/wai-aria/#aria-labelledby) for more information
 Defines a string value that describes or annotates the current element.
 See [this](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description) for more information.
 
+```
+< div role = application | v-aria = {label: 'calendar', decription: 'Game schedule for the Boston Red Sox 2021 Season'}
+  < h1
+    Red Sox 2021
+
+  ...
+```
+
 ### [describedby]
 
 Identifies the element (or elements) that describes the object.
