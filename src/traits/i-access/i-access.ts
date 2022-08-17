@@ -14,8 +14,9 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import { sequence } from 'core/iter/combinators';
+
 import { intoIter } from 'core/iter';
+import { sequence } from 'core/iter/combinators';
 
 import type iBlock from 'super/i-block/i-block';
 import type { ModsDecl, ModEvent } from 'super/i-block/i-block';
@@ -53,6 +54,19 @@ export default abstract class iAccess {
 	/** @see [[iAccess.blur]] */
 	static blur: AddSelf<iAccess['blur'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('focused', false));
+
+	/**
+	 * Checks if the component realize current trait
+	 * @param obj
+	 */
+	static is(obj: unknown): obj is iAccess {
+		if (Object.isPrimitive(obj)) {
+			return false;
+		}
+
+		const dict = Object.cast<Dictionary>(obj);
+		return Object.isFunction(dict.removeAllFromTabSequence) && Object.isFunction(dict.getNextFocusableElement);
+	}
 
 	/**
 	 * Returns true if the component in focus
@@ -168,26 +182,23 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.removeAllFromTabSequence]] */
 	static removeAllFromTabSequence: AddSelf<iAccess['removeAllFromTabSequence'], iBlock> =
-		(component, el?): boolean => {
-			const
-				ctx = el ?? component.$el;
-
-			if (ctx == null) {
-				return false;
-			}
-
+		(component, searchCtx = component.$el): boolean => {
 			let
 				areElementsRemoved = false;
 
-			const
-				focusableElems = this.findAllFocusableElements(component, <AccessibleElement>ctx);
+			if (searchCtx == null) {
+				return areElementsRemoved;
+			}
 
-			for (const focusableEl of focusableElems) {
-				if (!focusableEl.hasAttribute('data-tabindex')) {
-					focusableEl.setAttribute('data-tabindex', String(focusableEl.tabIndex));
+			const
+				focusableEls = this.findAllFocusableElements(component, searchCtx);
+
+			for (const el of focusableEls) {
+				if (!el.hasAttribute('data-tabindex')) {
+					el.setAttribute('data-tabindex', String(el.tabIndex));
 				}
 
-				focusableEl.tabIndex = -1;
+				el.tabIndex = -1;
 				areElementsRemoved = true;
 			}
 
@@ -196,32 +207,28 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.restoreAllToTabSequence]] */
 	static restoreAllToTabSequence: AddSelf<iAccess['restoreAllToTabSequence'], iBlock> =
-		(component, el?): boolean => {
-			const
-				ctx = el ?? component.$el;
-
-			if (ctx == null) {
-				return false;
-			}
-
+		(component, searchCtx = component.$el): boolean => {
 			let
 				areElementsRestored = false;
 
-			let
-				removedElems = intoIter(ctx.querySelectorAll<HTMLElement>('[data-tabindex]'));
-
-			if (el?.hasAttribute('data-tabindex')) {
-				removedElems = sequence(removedElems, intoIter([<HTMLElement>el]));
+			if (searchCtx == null) {
+				return areElementsRestored;
 			}
 
-			for (const elem of removedElems) {
+			let
+				removedEls = intoIter(searchCtx.querySelectorAll<AccessibleElement>('[data-tabindex]'));
+
+			if (searchCtx.hasAttribute('data-tabindex')) {
+				removedEls = sequence(removedEls, intoIter([<HTMLElement>searchCtx]));
+			}
+
+			for (const elem of removedEls) {
 				const
 					originalTabIndex = elem.getAttribute('data-tabindex');
 
 				if (originalTabIndex != null) {
 					elem.tabIndex = Number(originalTabIndex);
 					elem.removeAttribute('data-tabindex');
-
 					areElementsRestored = true;
 				}
 			}
@@ -231,74 +238,63 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.getNextFocusableElement]] */
 	static getNextFocusableElement: AddSelf<iAccess['getNextFocusableElement'], iBlock> =
-		(component, step, el?): CanUndef<AccessibleElement> => {
+		(component, step, searchCtx = document.documentElement): AccessibleElement | null => {
 			if (document.activeElement == null) {
-				return;
+				return null;
 			}
 
 			const
-				ctx = el ?? document.documentElement,
-				focusableElems = <IterableIterator<HTMLElement>>this.findAllFocusableElements(component, ctx),
-				visibleFocusable: AccessibleElement[] = [];
+				focusableEls = <IterableIterator<HTMLElement>>this.findAllFocusableElements(component, searchCtx),
+				visibleFocusableEls: AccessibleElement[] = [];
 
-			for (const focusableEl of focusableElems) {
+			for (const el of focusableEls) {
 				if (
-					focusableEl.offsetWidth > 0 ||
-					focusableEl.offsetHeight > 0 ||
-					focusableEl === document.activeElement
+					el.offsetWidth > 0 ||
+					el.offsetHeight > 0 ||
+					el === document.activeElement
 				) {
-					visibleFocusable.push(focusableEl);
+					visibleFocusableEls.push(el);
 				}
 			}
 
 			const
-				index = visibleFocusable.indexOf(<AccessibleElement>document.activeElement);
+				index = visibleFocusableEls.indexOf(<AccessibleElement>document.activeElement);
 
 			if (index > -1) {
-				return visibleFocusable[index + step];
+				return visibleFocusableEls[index + step] ?? null;
 			}
+
+			return null;
 		};
 
 	/** @see [[iAccess.findFocusableElement]] */
 	static findFocusableElement: AddSelf<iAccess['findFocusableElement'], iBlock> =
-		(component, el?): CanUndef<AccessibleElement> => {
+		(component, searchCtx?): AccessibleElement | null => {
 			const
-				ctx = el ?? <AccessibleElement>component.$el,
-				focusableElems = this.findAllFocusableElements(component, ctx);
+				search = this.findAllFocusableElements(component, searchCtx).next();
 
-			for (const focusableEl of focusableElems) {
-				if (!focusableEl.hasAttribute('disabled')) {
-					return focusableEl;
-				}
+			if (search.done) {
+				return null;
 			}
+
+			return search.value;
 		};
 
 	/** @see [[iAccess.findAllFocusableElements]] */
 	static findAllFocusableElements: AddSelf<iAccess['findAllFocusableElements'], iBlock> =
-		(component, el?): IterableIterator<AccessibleElement> => {
+		(component, searchCtx = component.$el): IterableIterator<AccessibleElement> => {
 			const
-				ctx = el ?? component.$el,
-				focusableElems = ctx?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+				accessibleEls = searchCtx?.querySelectorAll<AccessibleElement>(FOCUSABLE_SELECTOR);
 
 			let
-				focusableIter = intoIter(focusableElems ?? []);
+				searchIter = intoIter(accessibleEls ?? []);
 
-			if (ctx?.matches(FOCUSABLE_SELECTOR)) {
-				focusableIter = sequence(focusableIter, intoIter([<HTMLElement>el]));
-			}
-
-			function* createFocusableWithoutDisabled(
-				iter: IterableIterator<AccessibleElement>
-			): IterableIterator<AccessibleElement> {
-				for (const iterEl of iter) {
-					if (!iterEl.hasAttribute('disabled')) {
-						yield iterEl;
-					}
-				}
+			if (searchCtx?.matches(FOCUSABLE_SELECTOR)) {
+				searchIter = sequence(searchIter, intoIter([<AccessibleElement>searchCtx]));
 			}
 
 			const
-				focusableWithoutDisabled = createFocusableWithoutDisabled(focusableIter);
+				focusableWithoutDisabled = filterDisabledElements(searchIter);
 
 			return {
 				[Symbol.iterator]() {
@@ -307,20 +303,17 @@ export default abstract class iAccess {
 
 				next: focusableWithoutDisabled.next.bind(focusableWithoutDisabled)
 			};
+
+			function* filterDisabledElements(
+				iter: IterableIterator<AccessibleElement>
+			): IterableIterator<AccessibleElement> {
+				for (const el of iter) {
+					if (!el.hasAttribute('disabled')) {
+						yield el;
+					}
+				}
+			}
 		};
-
-	/**
-	 * Checks if the component realize current trait
-	 * @param obj
-	 */
-	static is(obj: unknown): obj is iAccess {
-		if (Object.isPrimitive(obj)) {
-			return false;
-		}
-
-		const dict = Object.cast<Dictionary>(obj);
-		return Object.isFunction(dict.removeAllFromTabSequence) && Object.isFunction(dict.getNextFocusableElement);
-	}
 
 	/**
 	 * A Boolean attribute which, if present, indicates that the component should automatically
@@ -383,46 +376,55 @@ export default abstract class iAccess {
 	 * Removes all children of the specified element that can be focused from the Tab toggle sequence.
 	 * In effect, these elements are set to -1 for the tabindex attribute.
 	 *
-	 * @param el - a context to search, if not set, the root element of the component will be used
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
 	 */
-	removeAllFromTabSequence(el?: Element): boolean {
+	removeAllFromTabSequence(searchCtx?: Element): boolean {
 		return Object.throw();
 	}
 
 	/**
-	 * Reverts all children of the specified element that can be focused to the Tab toggle sequence.
-	 * This method is used to restore the state of elements to the state
-	 * they had before 'removeAllFromTabSequence' was applied.
+	 * Restores all children of the specified element that can be focused to the Tab toggle sequence.
+	 * This method is used to restore the state of elements to the state they had before `removeAllFromTabSequence` was
+	 * applied.
 	 *
-	 * @param el - a context to search, if not set, the root element of the component will be used
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
 	 */
-	restoreAllToTabSequence(el?: Element): boolean {
+	restoreAllToTabSequence(searchCtx?: Element): boolean {
 		return Object.throw();
 	}
 
 	/**
-	 * Gets a next or previous focusable element via the step parameter from the current focused element
+	 * Returns the next (or previous) element to which focus will be switched by pressing Tab.
+	 * The method takes a "step" parameter, i.e. you can control the Tab sequence direction. For example,
+	 * by setting the step to `-1` you will get an element that will be switched to focus by pressing Shift+Tab.
 	 *
 	 * @param step
-	 * @param el - a context to search, if not set, document will be used
+	 * @param [searchCtx] - a context to search, if not set, document will be used
 	 */
-	getNextFocusableElement<T extends AccessibleElement = AccessibleElement>(step: 1 | -1, el?: T): CanUndef<T> {
+	getNextFocusableElement<T extends AccessibleElement = AccessibleElement>(
+		step: 1 | -1,
+		searchCtx?: Element
+	): T | null {
 		return Object.throw();
 	}
 
 	/**
-	 * Find focusable element except disabled ones
-	 * @param el - a context to search, if not set, component will be used
+	 * Finds the first non-disabled focusable element from the passed context to search and returns it.
+	 * The element that is the search context is also taken into account in the search.
+	 *
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
 	 */
-	findFocusableElement<T extends AccessibleElement = AccessibleElement>(el?: T): CanUndef<T> {
+	findFocusableElement<T extends AccessibleElement = AccessibleElement>(searchCtx?: Element): T | null {
 		return Object.throw();
 	}
 
 	/**
-	 * Find all focusable elements except disabled ones. Search includes the specified element.
-	 * @param el - a context to search, if not set, component will be used
+	 * Finds all non-disabled focusable elements and returns an iterator with the found ones.
+	 * The element that is the search context is also taken into account in the search.
+	 *
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
 	 */
-	findAllFocusableElements<T extends AccessibleElement = AccessibleElement>(el?: T): IterableIterator<T> {
+	findAllFocusableElements<T extends AccessibleElement = AccessibleElement>(searchCtx?: Element): IterableIterator<T> {
 		return Object.throw();
 	}
 }
