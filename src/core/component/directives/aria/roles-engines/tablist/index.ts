@@ -15,6 +15,11 @@ export class TablistEngine extends AriaRoleEngine {
 	 */
 	override params: TablistParams;
 
+	/**
+	 * Engine params list
+	 */
+	static override params: string[] = ['isMultiple', 'orientation'];
+
 	constructor(options: EngineOptions<TablistParams>) {
 		super(options);
 

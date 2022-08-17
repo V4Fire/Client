@@ -15,6 +15,11 @@ export class ControlsEngine extends AriaRoleEngine {
 	 */
 	override params: ControlsParams;
 
+	/**
+	 * Engine params
+	 */
+	static override params: string[];
+
 	constructor(options: EngineOptions<ControlsParams>) {
 		super(options);
 

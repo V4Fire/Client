@@ -24,6 +24,11 @@ export class TreeitemEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.ctx]] */
 	override ctx?: iBlock & iAccess;
 
+	/**
+	 * Engine params list
+	 */
+	static override params: string[] = ['isFirstRootItem', 'isExpandable', 'isExpanded', 'orientation', 'rootElement', 'toggleFold'];
+
 	constructor(options: EngineOptions<TreeitemParams>) {
 		super(options);
 

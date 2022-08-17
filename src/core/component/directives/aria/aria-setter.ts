@@ -9,7 +9,7 @@
 import Async from 'core/async';
 import type iBlock from 'super/i-block/i-block';
 
-import * as ariaRoles from 'core/component/directives/aria/roles-engines';
+import * as roles from 'core/component/directives/aria/roles-engines';
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
 import type { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines';
 
@@ -32,6 +32,11 @@ export default class AriaSetter {
 	 */
 	role: CanUndef<AriaRoleEngine>;
 
+	/**
+	 * Role engine params list
+	 */
+	roleParams: CanUndef<string[]>;
+
 	constructor(options: DirectiveOptions) {
 		this.options = options;
 		this.async = new Async();
@@ -44,7 +49,8 @@ export default class AriaSetter {
 	 * Initiates the base logic of the directive
 	 */
 	init(): void {
-		this.setAriaLabel();
+		this.setAriaLabelledBy();
+		this.setAriaAttributes();
 		this.addEventHandlers();
 
 		this.role?.init();
@@ -84,7 +90,8 @@ export default class AriaSetter {
 			engine = this.createEngineName(role),
 			options = this.createRoleOptions();
 
-		this.role = new ariaRoles[engine](options);
+		this.role = new roles[engine](options);
+		this.roleParams = roles[engine].params;
 	}
 
 	/**
@@ -113,10 +120,9 @@ export default class AriaSetter {
 	}
 
 	/**
-	 * Sets aria-label, aria-labelledby, aria-description and aria-describedby attributes to the element
-	 * from directive parameters
+	 * Sets aria-labelledby attribute to the element from directive parameters
 	 */
-	protected setAriaLabel(): void {
+	protected setAriaLabelledBy(): void {
 		const
 			{vnode, binding, el} = this.options,
 			{dom} = Object.cast<iBlock['unsafe']>(vnode.fakeContext),
@@ -134,18 +140,30 @@ export default class AriaSetter {
 			el.setAttribute('aria-labelledby', id);
 		}
 
-		if (params.label != null) {
-			el.setAttribute('aria-label', params.label);
-
-		} else if (params.labelledby != null) {
-			el.setAttribute('aria-labelledby', params.labelledby);
+		if (params.labelledby == null) {
+			return;
 		}
 
-		if (params.description != null) {
-			el.setAttribute('aria-description', params.description);
+		if (Object.isArray(params.labelledby)) {
+			el.setAttribute('aria-labelledby', params.labelledby.join(' '));
 
-		} else if (params.describedby != null) {
-			el.setAttribute('aria-describedby', params.describedby);
+		} else {
+			el.setAttribute('aria-labelledby', params.labelledby);
+		}
+	}
+
+	/**
+	 * Sets aria attributes from passed params except `aria-labelledby`
+	 */
+	protected setAriaAttributes(): void {
+		const
+			{el, binding} = this.options,
+			params = binding.value;
+
+		for (const key in params) {
+			if (!this.roleParams?.includes(key) && key !== 'labelledby') {
+				el.setAttribute(`aria-${key}`, params[key]);
+			}
 		}
 	}
 
@@ -160,9 +178,6 @@ export default class AriaSetter {
 
 		const
 			params = this.options.binding.value;
-
-		const
-			getCallbackName = (key: string) => `on-${key.slice(1)}`.camelize(false);
 
 		for (const key in params) {
 			if (key.startsWith('@')) {
@@ -190,6 +205,10 @@ export default class AriaSetter {
 					ctx.on(property, callback);
 				}
 			}
+		}
+
+		function getCallbackName(key: string) {
+			return `on-${key.slice(1)}`.camelize(false);
 		}
 	}
 }

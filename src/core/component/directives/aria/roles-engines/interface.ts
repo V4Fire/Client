@@ -45,6 +45,11 @@ export abstract class AriaRoleEngine {
 	 */
 	async: CanUndef<Async>;
 
+	/**
+	 * Directive expected params list
+	 */
+	static params: string[];
+
 	constructor({el, ctx, modifiers, params, async}: EngineOptions<AriaRoleEngine['Params']>) {
 		this.el = el;
 		this.ctx = ctx;
