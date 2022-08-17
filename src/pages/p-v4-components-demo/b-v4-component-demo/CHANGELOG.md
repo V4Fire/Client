@@ -11,7 +11,7 @@ Changelog
 
 ## v3.?.? (2022-0?-??)
 
-#### :rocket: New Feature
+#### :house: Internal
 
 * Added a new directive `v-id`
 
