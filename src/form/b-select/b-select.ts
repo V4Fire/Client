@@ -865,12 +865,51 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	protected override initModEvents(): void {
 		super.initModEvents();
-
 		iOpenToggle.initModEvents(this);
 
 		this.sync.mod('native', 'native', Boolean);
 		this.sync.mod('multiple', 'multiple', Boolean);
 		this.sync.mod('opened', 'multiple', Boolean);
+	}
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a combobox
+	 * @param role
+	 */
+	protected getAriaConfig(role: 'combobox'): Dictionary;
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as an option
+	 *
+	 * @param role
+	 * @param item - option item data
+	 */
+	protected getAriaConfig(role: 'option', item: this['Item']): Dictionary;
+
+	protected getAriaConfig(role: 'combobox' | 'option', item?: this['Item']): Dictionary {
+		const
+			isSelected = this.isSelected.bind(this, item?.value);
+
+		const comboboxConfig = {
+			isMultiple: this.multiple,
+			'@change': (cb) => this.localEmitter.on('el.mod.set.*.marked.*', ({link}) => cb(link)),
+			'@close': (cb) => this.on('close', cb),
+			'@open': (cb) => this.on('open', () => this.$nextTick(() => cb(this.selectedElement)))
+		};
+
+		const optionConfig = {
+			get isSelected() {
+				return isSelected();
+			},
+
+			'@change': (cb) => this.on('actionChange', () => cb(isSelected()))
+		};
+
+		switch (role) {
+			case 'combobox': return comboboxConfig;
+			case 'option': return optionConfig;
+			default: return {};
+		}
 	}
 
 	protected override beforeDestroy(): void {
@@ -930,49 +969,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Returns a dictionary with options for aria directive for combobox role
-	 * @param role
-	 */
-	protected getAriaConfig(role: 'combobox'): Dictionary;
-
-	/**
-	 * Returns a dictionary with options for aria directive for option role
-	 *
-	 * @param role
-	 * @param item
-	 */
-	protected getAriaConfig(role: 'option', item: this['Item']): Dictionary;
-
-	protected getAriaConfig(role: 'combobox' | 'option', item?: this['Item']): Dictionary {
-		const
-			event = 'el.mod.set.*.marked.*',
-			isSelected = this.isSelected.bind(this, item?.value);
-
-		const
-			comboboxConfig = {
-				isMultiple: this.multiple,
-				'@change': (cb) => this.localEmitter.on(event, ({link}) => cb(link)),
-				'@close': (cb) => this.on('close', cb),
-				'@open': (cb) => this.on('open', () => {
-					void this.$nextTick(() => cb(this.selectedElement));
-				})
-			};
-
-		const optionConfig = {
-			get isSelected() {
-				return isSelected();
-			},
-			'@change': (cb) => this.on('actionChange', () => cb(isSelected()))
-		};
-
-		switch (role) {
-			case 'combobox': return comboboxConfig;
-			case 'option': return optionConfig;
-			default: return {};
-		}
 	}
 
 	/**
