@@ -17,7 +17,7 @@ test.describe('v-aria', () => {
 		await demoPage.goto();
 	});
 
-	test('aria-label is added', async ({page}) => {
+	test('one aria attribute is added', async ({page}) => {
 		const target = await init(page, {'v-aria': {label: 'bla'}});
 
 		test.expect(
@@ -25,7 +25,19 @@ test.describe('v-aria', () => {
 		).toBe('bla');
 	});
 
-	test('aria-labelledby is added', async ({page}) => {
+	test('two aria attributes are added', async ({page}) => {
+		const target = await init(page, {'v-aria': {describedby: 'bla', label: 'foo'}});
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.$el?.getAttribute('aria-describedby'))
+		).toBe('bla');
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.$el?.getAttribute('aria-label'))
+		).toBe('foo');
+	});
+
+	test('aria-labelledby is added by string', async ({page}) => {
 		const target = await init(page, {'v-aria': {labelledby: 'bla'}});
 
 		test.expect(
@@ -33,20 +45,12 @@ test.describe('v-aria', () => {
 		).toBe('bla');
 	});
 
-	test('aria-description is added', async ({page}) => {
-		const target = await init(page, {'v-aria': {description: 'bla'}});
+	test('aria-labelledby is added by array', async ({page}) => {
+		const target = await init(page, {'v-aria': {labelledby: ['bla', 'bar', 'foo']}});
 
 		test.expect(
-			await target.evaluate((ctx) => ctx.$el?.getAttribute('aria-description'))
-		).toBe('bla');
-	});
-
-	test('aria-describedby is added', async ({page}) => {
-		const target = await init(page, {'v-aria': {describedby: 'bla'}});
-
-		test.expect(
-			await target.evaluate((ctx) => ctx.$el?.getAttribute('aria-describedby'))
-		).toBe('bla');
+			await target.evaluate((ctx) => ctx.$el?.getAttribute('aria-labelledby'))
+		).toBe('bla bar foo');
 	});
 
 	test('aria-labelledby sugar syntax', async ({page}) => {

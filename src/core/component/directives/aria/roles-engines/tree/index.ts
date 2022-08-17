@@ -15,6 +15,11 @@ export class TreeEngine extends AriaRoleEngine {
 	 */
 	override params: TreeParams;
 
+	/**
+	 * Engine params list
+	 */
+	static override params: string[] = ['isRoot', 'orientation', '@change'];
+
 	constructor(options: EngineOptions<TreeParams>) {
 		super(options);
 

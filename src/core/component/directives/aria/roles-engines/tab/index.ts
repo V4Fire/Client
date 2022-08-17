@@ -24,6 +24,11 @@ export class TabEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.ctx]] */
 	override ctx?: iBlock & iAccess;
 
+	/**
+	 * Engine params list
+	 */
+	static override params: string[] = ['isFirst', 'isSelected', 'hasDefaultSelectedTabs', 'orientation', '@change'];
+
 	constructor(options: EngineOptions<TabParams>) {
 		super(options);
 

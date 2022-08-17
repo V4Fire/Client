@@ -15,6 +15,11 @@ export class OptionEngine extends AriaRoleEngine {
 	 */
 	override params: OptionParams;
 
+	/**
+	 * Engine params list
+	 */
+	static override params: string[] = ['isSelected', '@change'];
+
 	constructor(options: EngineOptions<OptionParams>) {
 		super(options);
 

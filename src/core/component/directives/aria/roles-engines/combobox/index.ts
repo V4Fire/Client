@@ -26,6 +26,11 @@ export class ComboboxEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.Ctx]] */
 	override Ctx!: ComponentInterface & iAccess;
 
+	/**
+	 * Engine params list
+	 */
+	static override params: string[] = ['isMultiple', '@change', '@open', '@close'];
+
 	constructor(options: EngineOptions<ComboboxParams, ComponentInterface & iAccess>) {
 		super(options);
 
