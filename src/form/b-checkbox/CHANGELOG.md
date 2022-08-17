@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Added `label` tag with `for` attribute to label and `id` to nativeInput in template
+* The `for` attribute has been added to the label to link to the checkbox
 
 #### :house: Internal
 
