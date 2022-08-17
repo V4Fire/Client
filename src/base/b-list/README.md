@@ -348,3 +348,6 @@ When the component is used as a list of links it bases on internal HTML semantic
 The component includes the following roles:
 - [tablist](https://www.w3.org/TR/wai-aria/#tablist)
 - [tab](https://www.w3.org/TR/wai-aria/#tab)
+
+The widget should also include [tabpanel](https://www.w3.org/TR/wai-aria/#tabpanel) role which is a block that contains the content of each tab.
+But the component does not provide such block. So the 'connection' with other component should be set with the help of [`v-aria:controls`](core/component/directives/aria/aria-engines/controls/README.md)

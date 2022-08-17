@@ -23,6 +23,8 @@ Changelog
 
 * Improved component accessibility
 
+* Changed keyboard keys handling according to ARIA specification
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix
