@@ -31,8 +31,7 @@ export * from 'base/b-tree/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iAccess> {
-}
+interface bTree extends Trait<typeof iAccess> {}
 
 /**
  * Component to render tree of any elements
