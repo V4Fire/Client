@@ -111,7 +111,7 @@ module.exports = (page) => {
 
 		describe('`textHint`', () => {
 			it('providing a hint', async () => {
-				const target = await initInput(page, {value: 'text', textHint: 'extra text'});
+				const target = await initInput(page, {value: 'text', textHint: ' extra text'});
 
 				expect(
 					await target.evaluate((ctx) => ctx.$refs.textHint.value)
@@ -126,7 +126,7 @@ module.exports = (page) => {
 			});
 
 			it('should create a node for the passed hint text', async () => {
-				const target = await initInput(page, {textHint: 'extra text'});
+				const target = await initInput(page, {textHint: ' extra text'});
 
 				expect(
 					await target.evaluate((ctx) => ctx.$refs.textHint != null)
@@ -142,7 +142,7 @@ module.exports = (page) => {
 			});
 
 			it('should hide a hint if the component input is empty', async () => {
-				const target = await initInput(page, {textHint: 'extra text'});
+				const target = await initInput(page, {textHint: ' extra text'});
 
 				expect(
 					await target.evaluate((ctx) => getComputedStyle(ctx.$refs.textHint).display)
