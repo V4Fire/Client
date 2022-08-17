@@ -239,24 +239,32 @@ export default abstract class iAccess {
 	/** @see [[iAccess.getNextFocusableElement]] */
 	static getNextFocusableElement: AddSelf<iAccess['getNextFocusableElement'], iBlock> =
 		(component, step, searchCtx = document.documentElement): AccessibleElement | null => {
-			if (document.activeElement == null) {
+			const
+				{activeElement} = document;
+
+			if (activeElement == null) {
 				return null;
 			}
 
 			const
-				focusableEls = this.findFocusableElements(component, searchCtx),
-				visibleFocusableEls: AccessibleElement[] = [...focusableEls];
+				focusableEls = [...this.findFocusableElements(component, searchCtx)],
+				index = focusableEls.indexOf(<AccessibleElement>activeElement);
 
-			visibleFocusableEls.sort((el1, el2) => el2.tabIndex - el1.tabIndex);
-
-			const
-				index = visibleFocusableEls.indexOf(<AccessibleElement>document.activeElement);
-
-			if (index > -1) {
-				return visibleFocusableEls[index + step] ?? null;
+			if (index < 0) {
+				return null;
 			}
 
-			return null;
+			if (step > 0) {
+				const next = focusableEls
+					.slice(index + 1)
+					.find((el) => el.tabIndex > 0);
+
+				if (next != null) {
+					return next;
+				}
+			}
+
+			return focusableEls[index + step] ?? null;
 		};
 
 	/** @see [[iAccess.findFocusableElement]] */
@@ -300,10 +308,14 @@ export default abstract class iAccess {
 				iter: IterableIterator<AccessibleElement>
 			): IterableIterator<AccessibleElement> {
 				for (const el of iter) {
+					const
+						rect = el.getBoundingClientRect();
+
 					if (
-						!el.hasAttribute('disabled') ||
-						el.getAttribute('visibility') !== 'hidden' ||
-						el.getAttribute('display') !== 'none'
+						!el.hasAttribute('disabled') &&
+						el.getAttribute('visibility') !== 'hidden' &&
+						el.getAttribute('display') !== 'none' &&
+						rect.height > 0 || rect.width > 0
 					) {
 						yield el;
 					}
