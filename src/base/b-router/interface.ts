@@ -15,6 +15,7 @@ import type {
 } from 'core/router';
 
 import type bRouter from 'base/b-router/b-router';
+import type { UnsafeIData } from 'super/i-data/i-data';
 
 export { EngineRoute };
 
@@ -50,3 +51,9 @@ export type RouteOption = Dictionary<unknown | ComputeParamFn>;
 
 export type TransitionType = 'soft' | 'hard';
 export type TransitionMethod = 'push' | 'replace' | 'event';
+
+// @ts-ignore (extend)
+export interface UnsafeBRouter<CTX extends bRouter = bRouter> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	engine: CTX['engine'];
+}
