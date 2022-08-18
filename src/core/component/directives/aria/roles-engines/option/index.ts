@@ -16,7 +16,7 @@ export class OptionEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isSelected', '@change'];
 
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		this.el.setAttribute('role', 'option');
 		this.el.setAttribute('aria-selected', String(this.params.isSelected));

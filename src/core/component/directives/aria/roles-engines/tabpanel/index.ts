@@ -9,7 +9,7 @@
 import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TabpanelEngine extends AriaRoleEngine {
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		const
 			{el} = this;

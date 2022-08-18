@@ -25,7 +25,7 @@ export class TabEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isFirst', 'isSelected', 'hasDefaultSelectedTabs', 'orientation', '@change'];
 
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		const
 			{el} = this,
