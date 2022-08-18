@@ -9,12 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.??.?? (2022-??-??)
-
-#### :house: Internal
-
-* Added unsafe access to the `router` field
-
 ## v3.17.0 (2022-02-24)
 
 #### :boom: Breaking Change
