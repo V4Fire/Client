@@ -137,7 +137,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 	protected setFocusToFirstItem(): void {
 		const
 			firstItem = this.ctx?.findFocusableElement(this.params.rootElement);
-
+debugger;
 		if (firstItem != null) {
 			this.focusNext(firstItem);
 		}
@@ -235,7 +235,10 @@ export class TreeitemEngine extends AriaRoleEngine {
 				break;
 
 			case KeyCodes.ENTER:
-				this.params.toggleFold(this.el);
+				if (this.params.isExpandable) {
+					this.params.toggleFold(this.el);
+				}
+
 				break;
 
 			case KeyCodes.HOME:

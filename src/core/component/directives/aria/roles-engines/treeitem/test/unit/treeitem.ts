@@ -48,8 +48,6 @@ test.describe('v-aria:treeitem', () => {
 	test('keyboard keys handle on vertical orientation', async ({page}) => {
 		const target = await init(page);
 
-		await page.waitForSelector('[role="group"]');
-
 		test.expect(
 			await target.evaluate((ctx) => {
 				if (ctx.unsafe.block == null) {
@@ -78,6 +76,8 @@ test.describe('v-aria:treeitem', () => {
 
 				dis('ArrowUp');
 				res.push(eq(0));
+				dis('Enter');
+				res.push(items[0].getAttribute('aria-expanded'));
 
 				dis('ArrowDown');
 				dis('Enter');
@@ -106,7 +106,7 @@ test.describe('v-aria:treeitem', () => {
 
 				return res;
 			})
-		).toEqual([true, true, 'true', 'false', 'true', true, true, 'false', true, true]);
+		).toEqual([true, true, null, 'true', 'false', 'true', true, true, 'false', true, true]);
 	});
 
 	test('keyboard keys handle on horizontal orientation', async ({page}) => {

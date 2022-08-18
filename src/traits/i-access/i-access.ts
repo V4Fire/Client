@@ -247,22 +247,18 @@ export default abstract class iAccess {
 			}
 
 			const
-				focusableEls = [...this.findFocusableElements(component, searchCtx)],
+				focusableEls = [...this.findFocusableElements(component, searchCtx, {native: false})],
 				index = focusableEls.indexOf(<AccessibleElement>activeElement);
 
 			if (index < 0) {
 				return null;
 			}
 
-			if (step > 0) {
-				const next = focusableEls
-					.slice(index + 1)
-					.find((el) => el.tabIndex > 0);
-
-				if (next != null) {
-					return next;
+			focusableEls.forEach((el) => {
+				if (el.tabIndex > 0) {
+					Object.throw('The tab sequence has an element with tabindex more than 0. The sequence would be different in different browsers. It is strongly recommended not to use tabindexes more than 0.');
 				}
-			}
+			});
 
 			return focusableEls[index + step] ?? null;
 		};
@@ -282,7 +278,7 @@ export default abstract class iAccess {
 
 	/** @see [[iAccess.findFocusableElements]] */
 	static findFocusableElements: AddSelf<iAccess['findFocusableElements'], iBlock> =
-		(component, searchCtx = component.$el): IterableIterator<AccessibleElement> => {
+		(component, searchCtx = component.$el, opts = {native: true}): IterableIterator<AccessibleElement> => {
 			const
 				accessibleEls = searchCtx?.querySelectorAll<AccessibleElement>(FOCUSABLE_SELECTOR);
 
@@ -314,10 +310,16 @@ export default abstract class iAccess {
 					if (
 						!el.hasAttribute('disabled') &&
 						el.getAttribute('visibility') !== 'hidden' &&
-						el.getAttribute('display') !== 'none' &&
-						rect.height > 0 || rect.width > 0
+						el.getAttribute('display') !== 'none'
 					) {
-						yield el;
+						if (!opts.native) {
+							if (rect.height > 0 || rect.width > 0) {
+								yield el;
+							}
+
+						} else {
+							yield el;
+						}
 					}
 				}
 			}
@@ -429,10 +431,17 @@ export default abstract class iAccess {
 	/**
 	 * Finds all non-disabled visible focusable elements and returns an iterator with the found ones.
 	 * The element that is the search context is also taken into account in the search.
+	 * Also expects a dictionary with option of filtration  invisible elements.
+	 * If native property is set to true, the method filters invisible elements by css properties
+	 * `disabled`, `visible` and `display`.
+	 * Native in false also adds the filtration by element's current visibility on the screen.
 	 *
 	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
+	 * @param [opts] - dictionary with options of elements' visibility filtration, {native: true} by default
 	 */
-	findFocusableElements<T extends AccessibleElement = AccessibleElement>(searchCtx?: Element): IterableIterator<T> {
+	findFocusableElements<
+		T extends AccessibleElement = AccessibleElement
+		>(searchCtx?: Element, opts?: {native: boolean}): IterableIterator<T> {
 		return Object.throw();
 	}
 }
