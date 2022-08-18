@@ -9,7 +9,7 @@
 import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class ListboxEngine extends AriaRoleEngine {
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		this.el.setAttribute('role', 'listbox');
 		this.el.setAttribute('tabindex', '-1');

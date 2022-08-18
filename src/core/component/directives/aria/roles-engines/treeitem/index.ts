@@ -25,7 +25,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isFirstRootItem', 'isExpandable', 'isExpanded', 'orientation', 'rootElement', 'toggleFold'];
 
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		if (!iAccess.is(this.ctx)) {
 			Object.throw('Treeitem aria directive expects the component to realize iAccess interface');
@@ -41,7 +41,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 				this.ctx?.restoreAllToTabSequence(this.el);
 
 			} else {
-				this.el.tabIndex = 0;
+				this.el.setAttribute('tabindex', '0');
 			}
 		}
 

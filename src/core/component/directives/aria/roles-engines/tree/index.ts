@@ -16,7 +16,7 @@ export class TreeEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isRoot', 'orientation', '@change'];
 
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		const
 			{orientation, isRoot} = this.params;

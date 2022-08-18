@@ -16,7 +16,7 @@ export class ControlsEngine extends AriaRoleEngine {
 	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[];
 
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		const
 			{ctx, modifiers, el} = this,

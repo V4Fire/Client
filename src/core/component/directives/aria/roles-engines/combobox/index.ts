@@ -34,7 +34,7 @@ export class ComboboxEngine extends AriaRoleEngine {
 		this.el = this.ctx?.findFocusableElement() ?? el;
 	}
 
-	/* @inheritDoc */
+	/** @inheritDoc */
 	init(): void {
 		this.el.setAttribute('role', 'combobox');
 		this.el.setAttribute('aria-expanded', 'false');
