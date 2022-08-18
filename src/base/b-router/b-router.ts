@@ -17,11 +17,11 @@ import { deprecated } from 'core/functools/deprecation';
 import globalRoutes from 'routes';
 import type Async from 'core/async';
 
-import iData, { component, prop, system, computed, hook, wait, watch } from 'super/i-data/i-data';
+import iData, { component, prop, system, computed, hook, wait, watch, UnsafeGetter } from 'super/i-data/i-data';
 import engine, * as router from 'core/router';
 
 import { fillRouteParams } from 'base/b-router/modules/normalizers';
-import type { StaticRoutes, RouteOption, TransitionMethod } from 'base/b-router/interface';
+import type { StaticRoutes, RouteOption, TransitionMethod, UnsafeBRouter } from 'base/b-router/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'core/router/const';
@@ -187,6 +187,10 @@ export default class bRouter extends iData {
 	 */
 	@system()
 	protected routeStore?: router.Route;
+
+	override get unsafe(): UnsafeGetter<UnsafeBRouter<this>> {
+		return Object.cast(this);
+	}
 
 	/**
 	 * Value of the active route

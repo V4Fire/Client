@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :house: Internal
+
+* Provided unsafe access to the `engine` field
+
 ## v3.23.8 (2022-07-22)
 
 #### :bug: Bug Fix
