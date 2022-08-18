@@ -15,7 +15,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Added unsafe access to the `router` field `super/i-block`
 * Provided unsafe access to the `engine` field `base/b-router`
 
 ## v3.24.1 (2022-08-19)
