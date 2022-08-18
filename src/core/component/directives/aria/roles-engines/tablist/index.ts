@@ -7,28 +7,16 @@
  */
 
 import type { TablistParams } from 'core/component/directives/aria/roles-engines/tablist/interface';
-import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
+import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TablistEngine extends AriaRoleEngine {
-	/**
-	 * Engine params
-	 */
-	override params: TablistParams;
+	/** @see [[AriaRoleEngine.Params]] */
+	override Params!: TablistParams;
 
-	/**
-	 * Engine params list
-	 */
+	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isMultiple', 'orientation'];
 
-	constructor(options: EngineOptions<TablistParams>) {
-		super(options);
-
-		this.params = options.params;
-	}
-
-	/**
-	 * Sets base aria attributes for current role
-	 */
+	/* @inheritDoc */
 	init(): void {
 		const
 			{el, params} = this;

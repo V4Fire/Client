@@ -15,6 +15,8 @@
 import 'models/demo/select';
 //#endif
 
+import 'core/component/directives/aria';
+
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
@@ -887,8 +889,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	protected getAriaConfig(role: 'option', item: this['Item']): Dictionary;
 
 	protected getAriaConfig(role: 'combobox' | 'option', item?: this['Item']): Dictionary {
-		const
-			isSelected = this.isSelected.bind(this, item?.value);
+		const isSelected = item?.value != null ?
+			this.isSelected.bind(this, item.value) :
+			() => undefined;
 
 		const comboboxConfig = {
 			isMultiple: this.multiple,

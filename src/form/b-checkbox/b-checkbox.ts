@@ -15,6 +15,8 @@
 import 'models/demo/checkbox';
 //#endif
 
+import 'core/component/directives/aria';
+
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 

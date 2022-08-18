@@ -13,22 +13,16 @@ import type { ComboboxParams } from 'core/component/directives/aria/roles-engine
 import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
 
 export class ComboboxEngine extends AriaRoleEngine {
-	/**
-	 * Engine params
-	 */
-	override params: ComboboxParams;
+	/** @see [[AriaRoleEngine.Prams]] */
+	override Params!: ComboboxParams;
 
-	/**
-	 * First focusable element inside the element with directive or this element if there is no focusable inside
-	 */
+	/** @see [[AriaRoleEngine.el]] */
 	override el: HTMLElement;
 
 	/** @see [[AriaRoleEngine.Ctx]] */
 	override Ctx!: ComponentInterface & iAccess;
 
-	/**
-	 * Engine params list
-	 */
+	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isMultiple', '@change', '@open', '@close'];
 
 	constructor(options: EngineOptions<ComboboxParams, ComponentInterface & iAccess>) {
@@ -38,12 +32,9 @@ export class ComboboxEngine extends AriaRoleEngine {
 			{el} = this;
 
 		this.el = this.ctx?.findFocusableElement() ?? el;
-		this.params = options.params;
 	}
 
-	/**
-	 * Sets base aria attributes for current role
-	 */
+	/* @inheritDoc */
 	init(): void {
 		this.el.setAttribute('role', 'combobox');
 		this.el.setAttribute('aria-expanded', 'false');

@@ -13,36 +13,24 @@ import iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
 
 import type { TreeitemParams } from 'core/component/directives/aria/roles-engines/treeitem/interface';
-import { AriaRoleEngine, KeyCodes, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
+import { AriaRoleEngine, KeyCodes } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TreeitemEngine extends AriaRoleEngine {
-	/**
-	 * Engine params
-	 */
-	override params: TreeitemParams;
+	/** @see [[AriaRoleEngine.Params]] */
+	override Params!: TreeitemParams;
 
 	/** @see [[AriaRoleEngine.ctx]] */
 	override ctx?: iBlock & iAccess;
 
-	/**
-	 * Engine params list
-	 */
+	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isFirstRootItem', 'isExpandable', 'isExpanded', 'orientation', 'rootElement', 'toggleFold'];
 
-	constructor(options: EngineOptions<TreeitemParams>) {
-		super(options);
-
+	/* @inheritDoc */
+	init(): void {
 		if (!iAccess.is(this.ctx)) {
 			Object.throw('Treeitem aria directive expects the component to realize iAccess interface');
 		}
 
-		this.params = options.params;
-	}
-
-	/**
-	 * Sets base aria attributes for current role
-	 */
-	init(): void {
 		this.async?.on(this.el, 'keydown', this.onKeyDown.bind(this));
 
 		const
@@ -137,7 +125,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 	protected setFocusToFirstItem(): void {
 		const
 			firstItem = this.ctx?.findFocusableElement(this.params.rootElement);
-debugger;
+		debugger;
 		if (firstItem != null) {
 			this.focusNext(firstItem);
 		}

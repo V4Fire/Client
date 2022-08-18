@@ -14,34 +14,30 @@ import type { DirectiveOptions } from 'core/component/directives/aria/interface'
 import type { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines';
 
 /**
- * Class-helper for making base operations for the directive
+ * An adapter to create an ARIA role instance based on the passed directive options and to add common attributes
  */
-export default class AriaSetter {
+export default class AriaAdapter {
 	/**
-	 * Aria directive options
+	 * Parameters passed from the directive
 	 */
-	readonly options: DirectiveOptions;
+	protected readonly options: DirectiveOptions;
+
+	/** @see [[Async]] */
+	protected readonly async: Async = new Async();
 
 	/**
-	 * Async instance for aria directive
+	 * An instance of the associated ARIA role
 	 */
-	readonly async: Async;
-
-	/**
-	 * Role engine instance
-	 */
-	role: CanUndef<AriaRoleEngine>;
+	protected role: CanUndef<AriaRoleEngine>;
 
 	/**
 	 * Role engine params list
 	 */
-	roleParams: CanUndef<string[]>;
+	protected roleParams: CanUndef<string[]>;
 
 	constructor(options: DirectiveOptions) {
 		this.options = options;
-		this.async = new Async();
 		this.setAriaRole();
-
 		this.init();
 	}
 
@@ -57,22 +53,14 @@ export default class AriaSetter {
 	}
 
 	/**
-	 * Runs on update directive hook. Removes listeners from component if the component is Functional.
-	 */
-	update(): void {
-		const
-			ctx = <iBlock>this.options.vnode.fakeContext;
-
-		if (ctx.isFunctional) {
-			ctx.off();
-		}
-	}
-
-	/**
 	 * Runs on unbind directive hook. Clears the Async instance.
 	 */
 	destroy(): void {
 		this.async.clearAll();
+	}
+
+	protected get ctx(): iBlock['unsafe'] {
+		return Object.cast<iBlock['unsafe']>(this.options.vnode.fakeContext);
 	}
 
 	/**
@@ -80,43 +68,26 @@ export default class AriaSetter {
 	 */
 	protected setAriaRole(): CanUndef<AriaRoleEngine> {
 		const
-			{arg: role} = this.options.binding;
+			{el, binding} = this.options,
+			{value, modifiers, arg: role} = binding;
 
 		if (role == null) {
 			return;
 		}
 
 		const
-			engine = this.createEngineName(role),
-			options = this.createRoleOptions();
+			engine = `${role.capitalize()}Engine`;
 
-		this.role = new roles[engine](options);
-		this.roleParams = roles[engine].params;
-	}
-
-	/**
-	 * Creates an engine name from a passed parameter
-	 * @param role
-	 */
-	protected createEngineName(role: string): string {
-		return `${role.capitalize()}Engine`;
-	}
-
-	/**
-	 * Creates a dictionary with engine options
-	 */
-	protected createRoleOptions(): EngineOptions<AriaRoleEngine['Params']> {
-		const
-			{el, binding, vnode} = this.options,
-			{value, modifiers} = binding;
-
-		return {
+		const options: EngineOptions<AriaRoleEngine['Params']> = {
 			el,
 			modifiers,
 			params: value,
-			ctx: Object.cast<iBlock>(vnode.fakeContext),
+			ctx: this.ctx,
 			async: this.async
 		};
+
+		this.role = new roles[engine](options);
+		this.roleParams = roles[engine].params;
 	}
 
 	/**
@@ -124,8 +95,8 @@ export default class AriaSetter {
 	 */
 	protected setAriaLabelledBy(): void {
 		const
-			{vnode, binding, el} = this.options,
-			{dom} = Object.cast<iBlock['unsafe']>(vnode.fakeContext),
+			{binding, el} = this.options,
+			{dom} = this.ctx,
 			params = Object.isCustomObject(binding.value) ? binding.value : {};
 
 		for (const mod in binding.modifiers) {
@@ -182,7 +153,7 @@ export default class AriaSetter {
 		for (const key in params) {
 			if (key.startsWith('@')) {
 				const
-					callbackName = getCallbackName(key);
+					callbackName = `on-${key.slice(1)}`.camelize(false);
 
 				if (!Object.isFunction(this.role[callbackName])) {
 					Object.throw('Aria role engine does not contains event handler for passed event name or the type of engine\'s property is not a function');
@@ -199,16 +170,9 @@ export default class AriaSetter {
 					void property.then(callback);
 
 				} else if (Object.isString(property)) {
-					const
-						ctx = <iBlock>this.options.vnode.fakeContext;
-
-					ctx.on(property, callback);
+					this.ctx.on(property, callback);
 				}
 			}
-		}
-
-		function getCallbackName(key: string) {
-			return `on-${key.slice(1)}`.camelize(false);
 		}
 	}
 }

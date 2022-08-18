@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import 'core/component/directives/aria';
+
 import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 

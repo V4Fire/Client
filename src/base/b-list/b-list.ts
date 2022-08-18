@@ -15,6 +15,8 @@
 import 'models/demo/list';
 //#endif
 
+import 'core/component/directives/aria';
+
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 

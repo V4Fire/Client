@@ -13,31 +13,19 @@ import type iBlock from 'super/i-block/i-block';
 import type iAccess from 'traits/i-access/i-access';
 
 import type { TabParams } from 'core/component/directives/aria/roles-engines/tab/interface';
-import { AriaRoleEngine, EngineOptions, KeyCodes } from 'core/component/directives/aria/roles-engines/interface';
+import { AriaRoleEngine, KeyCodes } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TabEngine extends AriaRoleEngine {
-	/**
-	 * Engine params
-	 */
-	override params: TabParams;
+	/** @see [[AriaRoleEngine.Params]] */
+	override Params!: TabParams;
 
 	/** @see [[AriaRoleEngine.ctx]] */
 	override ctx?: iBlock & iAccess;
 
-	/**
-	 * Engine params list
-	 */
+	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isFirst', 'isSelected', 'hasDefaultSelectedTabs', 'orientation', '@change'];
 
-	constructor(options: EngineOptions<TabParams>) {
-		super(options);
-
-		this.params = options.params;
-	}
-
-	/**
-	 * Sets base aria attributes for current role
-	 */
+	/* @inheritDoc */
 	init(): void {
 		const
 			{el} = this,

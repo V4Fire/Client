@@ -7,28 +7,16 @@
  */
 
 import type { ControlsParams } from 'core/component/directives/aria/roles-engines/controls/interface';
-import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
+import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class ControlsEngine extends AriaRoleEngine {
-	/**
-	 * Engine params
-	 */
-	override params: ControlsParams;
+	/** @see [[AriaRoleEngine.Params]] */
+	override Params!: ControlsParams;
 
-	/**
-	 * Engine params
-	 */
+	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[];
 
-	constructor(options: EngineOptions<ControlsParams>) {
-		super(options);
-
-		this.params = options.params;
-	}
-
-	/**
-	 * Sets base aria attributes for current role
-	 */
+	/* @inheritDoc */
 	init(): void {
 		const
 			{ctx, modifiers, el} = this,
