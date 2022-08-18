@@ -10,9 +10,7 @@ import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/int
 import iOpen from 'traits/i-open/i-open';
 
 export class DialogEngine extends AriaRoleEngine {
-	/**
-	 * Sets base aria attributes for current role
-	 */
+	/* @inheritDoc */
 	init(): void {
 		this.el.setAttribute('role', 'dialog');
 		this.el.setAttribute('aria-modal', 'true');

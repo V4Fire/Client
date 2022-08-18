@@ -58,6 +58,9 @@ export abstract class AriaRoleEngine {
 		this.async = async;
 	}
 
+	/**
+	 * Sets base aria attributes for current role
+	 */
 	abstract init(): void;
 }
 

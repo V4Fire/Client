@@ -7,28 +7,16 @@
  */
 
 import type { TreeParams } from 'core/component/directives/aria/roles-engines/tree/interface';
-import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
+import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TreeEngine extends AriaRoleEngine {
-	/**
-	 * Engine params
-	 */
-	override params: TreeParams;
+	/** @see [[AriaRoleEngine.Params]] */
+	override Params!: TreeParams;
 
-	/**
-	 * Engine params list
-	 */
+	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isRoot', 'orientation', '@change'];
 
-	constructor(options: EngineOptions<TreeParams>) {
-		super(options);
-
-		this.params = options.params;
-	}
-
-	/**
-	 * Sets base aria attributes for current role
-	 */
+	/* @inheritDoc */
 	init(): void {
 		const
 			{orientation, isRoot} = this.params;

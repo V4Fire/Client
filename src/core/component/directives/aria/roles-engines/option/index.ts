@@ -7,28 +7,16 @@
  */
 
 import type { OptionParams } from 'core/component/directives/aria/roles-engines/option/interface';
-import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines/interface';
+import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class OptionEngine extends AriaRoleEngine {
-	/**
-	 * Engine params
-	 */
-	override params: OptionParams;
+	/** @see [[AriaRoleEngine.Params]] */
+	override Params!: OptionParams;
 
-	/**
-	 * Engine params list
-	 */
+	/** @see [[AriaRoleEngine.params]] */
 	static override params: string[] = ['isSelected', '@change'];
 
-	constructor(options: EngineOptions<OptionParams>) {
-		super(options);
-
-		this.params = options.params;
-	}
-
-	/**
-	 * Sets base aria attributes for current role
-	 */
+	/* @inheritDoc */
 	init(): void {
 		this.el.setAttribute('role', 'option');
 		this.el.setAttribute('aria-selected', String(this.params.isSelected));
