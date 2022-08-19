@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.25.0 (2022-08-19)
+
+#### :boom: Breaking Change
+
+* Changed calculation of `textHintWithIndent` to concatenation `bInput.value` and `textHint` without space between it `form/b-input`
+
 ## v3.24.2 (2022-08-19)
 
 #### :house: Internal
@@ -18,12 +24,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Provided unsafe access to the `engine` field `base/b-router`
 
 ## v3.24.1 (2022-08-19)
-
-#### :boom: Breaking Change
-
-* Changed calculation of `textHintWithIndent` to concatenation `bInput.value` and `textHint` without space between it `form/b-input`
-
-## v3.??.? (2022-??-??)
 
 #### :house: Internal
 
