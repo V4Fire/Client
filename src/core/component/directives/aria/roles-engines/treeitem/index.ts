@@ -12,18 +12,12 @@
 import iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
 
-import type { TreeitemParams } from 'core/component/directives/aria/roles-engines/treeitem/interface';
+import { TreeitemParams } from 'core/component/directives/aria/roles-engines/treeitem/interface';
 import { AriaRoleEngine, KeyCodes } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TreeitemEngine extends AriaRoleEngine {
-	/** @see [[AriaRoleEngine.Params]] */
-	override Params!: TreeitemParams;
-
-	/** @see [[AriaRoleEngine.ctx]] */
-	override ctx?: iBlock & iAccess;
-
-	/** @see [[AriaRoleEngine.params]] */
-	static override params: string[] = ['isFirstRootItem', 'isExpandable', 'isExpanded', 'orientation', 'rootElement', 'toggleFold'];
+	override Params: TreeitemParams = new TreeitemParams();
+	override Ctx!: iBlock & iAccess;
 
 	/** @inheritDoc */
 	init(): void {
@@ -31,7 +25,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 			Object.throw('Treeitem aria directive expects the component to realize iAccess interface');
 		}
 
-		this.async?.on(this.el, 'keydown', this.onKeyDown.bind(this));
+		this.async.on(this.el, 'keydown', this.onKeyDown.bind(this));
 
 		const
 			isMuted = this.ctx?.removeAllFromTabSequence(this.el);
@@ -41,15 +35,15 @@ export class TreeitemEngine extends AriaRoleEngine {
 				this.ctx?.restoreAllToTabSequence(this.el);
 
 			} else {
-				this.el.setAttribute('tabindex', '0');
+				this.setAttribute('tabindex', '0');
 			}
 		}
 
-		this.el.setAttribute('role', 'treeitem');
+		this.setAttribute('role', 'treeitem');
 
 		this.ctx?.$nextTick(() => {
 			if (this.params.isExpandable) {
-				this.el.setAttribute('aria-expanded', String(this.params.isExpanded));
+				this.setAttribute('aria-expanded', String(this.params.isExpanded));
 			}
 		});
 	}
@@ -125,7 +119,7 @@ export class TreeitemEngine extends AriaRoleEngine {
 	protected setFocusToFirstItem(): void {
 		const
 			firstItem = this.ctx?.findFocusableElement(this.params.rootElement);
-		debugger;
+
 		if (firstItem != null) {
 			this.focusNext(firstItem);
 		}

@@ -6,11 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AbstractParams, HandlerAttachment } from 'core/component/directives/aria/roles-engines/interface';
+import type { HandlerAttachment } from 'core/component/directives/aria/roles-engines/interface';
 
-export interface ComboboxParams extends AbstractParams {
-	isMultiple: boolean;
-	'@change': HandlerAttachment;
-	'@open': HandlerAttachment;
-	'@close': HandlerAttachment;
+const defaultFn = (): void => undefined;
+
+export class ComboboxParams {
+	isMultiple: boolean = false;
+	'@change': HandlerAttachment = defaultFn;
+	'@open': HandlerAttachment = defaultFn;
+	'@close': HandlerAttachment = defaultFn;
 }

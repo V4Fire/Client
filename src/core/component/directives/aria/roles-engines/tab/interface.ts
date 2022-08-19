@@ -8,10 +8,10 @@
 
 import type { HandlerAttachment } from 'core/component/directives/aria/roles-engines/interface';
 
-export interface TabParams {
-	isFirst: boolean;
-	isSelected: boolean;
-	hasDefaultSelectedTabs: boolean;
-	orientation: string;
-	'@change': HandlerAttachment;
+export class TabParams {
+	isFirst: boolean = false;
+	isSelected: boolean = false;
+	hasDefaultSelectedTabs: boolean = false;
+	orientation: string = 'false';
+	'@change': HandlerAttachment = () => undefined;
 }

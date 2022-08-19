@@ -8,7 +8,7 @@
 
 import type { HandlerAttachment } from 'core/component/directives/aria/roles-engines/interface';
 
-export interface OptionParams {
-	isSelected: boolean;
-	'@change': HandlerAttachment;
+export class OptionParams {
+	isSelected: boolean = false;
+	'@change': HandlerAttachment = () => undefined;
 }

@@ -40,15 +40,8 @@ export abstract class AriaRoleEngine {
 	 */
 	readonly params: this['Params'];
 
-	/**
-	 * Async instance
-	 */
-	async: CanUndef<Async>;
-
-	/**
-	 * Directive expected params list
-	 */
-	static params: string[];
+	/** @see [[Async]] */
+	async: Async;
 
 	constructor({el, ctx, modifiers, params, async}: EngineOptions<AriaRoleEngine['Params']>) {
 		this.el = el;
@@ -62,9 +55,17 @@ export abstract class AriaRoleEngine {
 	 * Sets base aria attributes for current role
 	 */
 	abstract init(): void;
+
+	/**
+	 * Sets aria attributes and the `Async` destructor
+	 */
+	setAttribute(attr: string, value: string, el: Element = this.el): void {
+		el.setAttribute(attr, value);
+		this.async.worker(() => el.removeAttribute(attr));
+	}
 }
 
-export interface AbstractParams {}
+interface AbstractParams {}
 
 export interface EngineOptions<P extends AbstractParams, C extends ComponentInterface = ComponentInterface> {
 	el: HTMLElement;

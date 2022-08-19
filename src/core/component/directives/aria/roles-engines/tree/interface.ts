@@ -8,8 +8,8 @@
 
 import type { HandlerAttachment } from 'core/component/directives/aria/roles-engines/interface';
 
-export interface TreeParams {
-	isRoot: boolean;
-	orientation: string;
-	'@change': HandlerAttachment;
+export class TreeParams {
+	isRoot: boolean = false;
+	orientation: string = 'false';
+	'@change': HandlerAttachment = () => undefined;
 }

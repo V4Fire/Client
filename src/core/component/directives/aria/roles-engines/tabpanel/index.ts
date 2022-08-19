@@ -18,6 +18,6 @@ export class TabpanelEngine extends AriaRoleEngine {
 			Object.throw('Tabpanel aria directive expects "label" or "labelledby" value to be passed');
 		}
 
-		el.setAttribute('role', 'tabpanel');
+		this.setAttribute('role', 'tabpanel');
 	}
 }

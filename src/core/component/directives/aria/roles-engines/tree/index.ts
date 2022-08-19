@@ -6,15 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { TreeParams } from 'core/component/directives/aria/roles-engines/tree/interface';
+import { TreeParams } from 'core/component/directives/aria/roles-engines/tree/interface';
 import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TreeEngine extends AriaRoleEngine {
-	/** @see [[AriaRoleEngine.Params]] */
-	override Params!: TreeParams;
-
-	/** @see [[AriaRoleEngine.params]] */
-	static override params: string[] = ['isRoot', 'orientation', '@change'];
+	override Params: TreeParams = new TreeParams();
 
 	/** @inheritDoc */
 	init(): void {
@@ -24,7 +20,7 @@ export class TreeEngine extends AriaRoleEngine {
 		this.setRootRole();
 
 		if (orientation === 'horizontal' && isRoot) {
-			this.el.setAttribute('aria-orientation', orientation);
+			this.setAttribute('aria-orientation', orientation);
 		}
 	}
 
@@ -32,7 +28,7 @@ export class TreeEngine extends AriaRoleEngine {
 	 * Sets the role to the element depending on whether the tree is root or nested
 	 */
 	protected setRootRole(): void {
-		this.el.setAttribute('role', this.params.isRoot ? 'tree' : 'group');
+		this.setAttribute('role', this.params.isRoot ? 'tree' : 'group');
 	}
 
 	/**
@@ -41,6 +37,6 @@ export class TreeEngine extends AriaRoleEngine {
 	 * @param isFolded
 	 */
 	protected onChange(el: Element, isFolded: boolean): void {
-		el.setAttribute('aria-expanded', String(!isFolded));
+		this.setAttribute('aria-expanded', String(!isFolded), el);
 	}
 }

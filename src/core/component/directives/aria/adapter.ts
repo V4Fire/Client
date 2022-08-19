@@ -30,11 +30,6 @@ export default class AriaAdapter {
 	 */
 	protected role: CanUndef<AriaRoleEngine>;
 
-	/**
-	 * Role engine params list
-	 */
-	protected roleParams: CanUndef<string[]>;
-
 	constructor(options: DirectiveOptions) {
 		this.options = options;
 		this.setAriaRole();
@@ -87,7 +82,6 @@ export default class AriaAdapter {
 		};
 
 		this.role = new roles[engine](options);
-		this.roleParams = roles[engine].params;
 	}
 
 	/**
@@ -97,7 +91,11 @@ export default class AriaAdapter {
 		const
 			{binding, el} = this.options,
 			{dom} = this.ctx,
-			params = Object.isCustomObject(binding.value) ? binding.value : {};
+			{labelledby} = binding.value ?? {},
+			attr = 'aria-labelledby';
+
+		let
+			isAttrSet = false;
 
 		for (const mod in binding.modifiers) {
 			if (!mod.startsWith('#')) {
@@ -108,18 +106,17 @@ export default class AriaAdapter {
 				title = mod.slice(1),
 				id = dom.getId(title);
 
-			el.setAttribute('aria-labelledby', id);
+			el.setAttribute(attr, id);
+			isAttrSet = true;
 		}
 
-		if (params.labelledby == null) {
-			return;
+		if (labelledby != null) {
+			el.setAttribute(attr, Object.isArray(labelledby) ? labelledby.join(' ') : labelledby);
+			isAttrSet = true;
 		}
 
-		if (Object.isArray(params.labelledby)) {
-			el.setAttribute('aria-labelledby', params.labelledby.join(' '));
-
-		} else {
-			el.setAttribute('aria-labelledby', params.labelledby);
+		if (isAttrSet) {
+			this.async.worker(() => el.removeAttribute(attr));
 		}
 	}
 
@@ -129,11 +126,23 @@ export default class AriaAdapter {
 	protected setAriaAttributes(): void {
 		const
 			{el, binding} = this.options,
-			params = binding.value;
+			params: Dictionary<string> = binding.value;
 
 		for (const key in params) {
-			if (!this.roleParams?.includes(key) && key !== 'labelledby') {
-				el.setAttribute(`aria-${key}`, params[key]);
+			if (!params.hasOwnProperty(key)) {
+				continue;
+			}
+
+			const
+				roleParams = this.role?.Params,
+				param = params[key];
+
+			if (!roleParams?.hasOwnProperty(key) && key !== 'labelledby' && param != null) {
+				const
+					attr = `aria-${key}`;
+
+				el.setAttribute(attr, param);
+				this.async.worker(() => el.removeAttribute(attr));
 			}
 		}
 	}

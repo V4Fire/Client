@@ -6,6 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface ControlsParams {
-	for: CanArray<string> | Array<[string, string]>;
+export class ControlsParams {
+	for: CanArray<string> | Array<[string, string]> = 'for';
 }
