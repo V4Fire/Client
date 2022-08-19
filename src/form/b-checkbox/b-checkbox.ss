@@ -14,16 +14,6 @@
 	- nativeInputType = "'checkbox'"
 	- nativeInputModel = undefined
 
-	- block hiddenInput()
-		+= self.nativeInput({ &
-			elName: 'hidden-input',
-			id: 'id || dom.getId("input")',
-
-			attrs: {
-				autocomplete: 'off'
-			}
-		}) .
-
 	- block rootAttrs
 		- super
 		? rootAttrs[':-parent-id'] = 'parentId'

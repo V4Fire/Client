@@ -158,6 +158,9 @@ export default class bCheckbox extends iInput implements iSize {
 		return this.defaultProp;
 	}
 
+	@system((ctx) => ctx.sync.link((v: Dictionary) => ({...v, id: ctx.id ?? 'hidden-input'})))
+	override attrs?: Dictionary;
+
 	/**
 	 * True if the checkbox is checked
 	 */
@@ -198,7 +201,7 @@ export default class bCheckbox extends iInput implements iSize {
 	@system()
 	protected override valueStore!: this['Value'];
 
-	protected override readonly $refs!: {input: HTMLInputElement};
+	protected override readonly $refs!: { input: HTMLInputElement };
 
 	/**
 	 * Checks the checkbox
