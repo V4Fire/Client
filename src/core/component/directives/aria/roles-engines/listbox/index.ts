@@ -11,7 +11,7 @@ import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/int
 export class ListboxEngine extends AriaRoleEngine {
 	/** @inheritDoc */
 	init(): void {
-		this.el.setAttribute('role', 'listbox');
-		this.el.setAttribute('tabindex', '-1');
+		this.setAttribute('role', 'listbox');
+		this.setAttribute('tabindex', '-1');
 	}
 }

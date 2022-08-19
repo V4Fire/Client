@@ -6,11 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface TreeitemParams {
-	isFirstRootItem: boolean;
-	isExpandable: boolean;
-	isExpanded: boolean;
-	orientation: string;
-	rootElement: CanUndef<HTMLElement>;
-	toggleFold(el: Element, value?: boolean): void;
+type FoldToggle = (el: Element, value?: boolean) => void;
+
+export class TreeitemParams {
+	isFirstRootItem: boolean = false;
+	isExpandable: boolean = false;
+	isExpanded: boolean = false;
+	orientation: string = 'false';
+	rootElement?: HTMLElement = undefined;
+	toggleFold: FoldToggle = () => undefined;
 }

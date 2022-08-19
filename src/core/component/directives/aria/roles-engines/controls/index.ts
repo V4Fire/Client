@@ -6,15 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ControlsParams } from 'core/component/directives/aria/roles-engines/controls/interface';
+import { ControlsParams } from 'core/component/directives/aria/roles-engines/controls/interface';
 import { AriaRoleEngine } from 'core/component/directives/aria/roles-engines/interface';
 
 export class ControlsEngine extends AriaRoleEngine {
-	/** @see [[AriaRoleEngine.Params]] */
-	override Params!: ControlsParams;
-
-	/** @see [[AriaRoleEngine.params]] */
-	static override params: string[];
+	override Params: ControlsParams = new ControlsParams();
 
 	/** @inheritDoc */
 	init(): void {
@@ -45,7 +41,7 @@ export class ControlsEngine extends AriaRoleEngine {
 
 				elems.forEach((el, i) => {
 					if (Object.isString(forId)) {
-						el.setAttribute('aria-controls', forId);
+						this.setAttribute('aria-controls', forId, el);
 						return;
 					}
 
@@ -53,7 +49,7 @@ export class ControlsEngine extends AriaRoleEngine {
 						id = forId[i];
 
 					if (Object.isString(id)) {
-						el.setAttribute('aria-controls', id);
+						this.setAttribute('aria-controls', id, el);
 					}
 				});
 			});
@@ -64,7 +60,9 @@ export class ControlsEngine extends AriaRoleEngine {
 					[elId, controlsId] = param,
 					element = el.querySelector(`#${elId}`);
 
-				element?.setAttribute('aria-controls', controlsId);
+				if (element != null) {
+					this.setAttribute('aria-controls', controlsId, element);
+				}
 			});
 		}
 	}

@@ -12,8 +12,8 @@ import iOpen from 'traits/i-open/i-open';
 export class DialogEngine extends AriaRoleEngine {
 	/** @inheritDoc */
 	init(): void {
-		this.el.setAttribute('role', 'dialog');
-		this.el.setAttribute('aria-modal', 'true');
+		this.setAttribute('role', 'dialog');
+		this.setAttribute('aria-modal', 'true');
 
 		if (!iOpen.is(this.ctx)) {
 			Object.throw('Dialog aria directive expects the component to realize iOpen interface');

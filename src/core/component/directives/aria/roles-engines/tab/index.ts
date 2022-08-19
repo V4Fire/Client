@@ -12,18 +12,12 @@
 import type iBlock from 'super/i-block/i-block';
 import type iAccess from 'traits/i-access/i-access';
 
-import type { TabParams } from 'core/component/directives/aria/roles-engines/tab/interface';
+import { TabParams } from 'core/component/directives/aria/roles-engines/tab/interface';
 import { AriaRoleEngine, KeyCodes } from 'core/component/directives/aria/roles-engines/interface';
 
 export class TabEngine extends AriaRoleEngine {
-	/** @see [[AriaRoleEngine.Params]] */
-	override Params!: TabParams;
-
-	/** @see [[AriaRoleEngine.ctx]] */
-	override ctx?: iBlock & iAccess;
-
-	/** @see [[AriaRoleEngine.params]] */
-	static override params: string[] = ['isFirst', 'isSelected', 'hasDefaultSelectedTabs', 'orientation', '@change'];
+	override Params: TabParams = new TabParams();
+	override Ctx!: iBlock & iAccess;
 
 	/** @inheritDoc */
 	init(): void {
@@ -31,26 +25,24 @@ export class TabEngine extends AriaRoleEngine {
 			{el} = this,
 			{isFirst, isSelected, hasDefaultSelectedTabs} = this.params;
 
-		el.setAttribute('role', 'tab');
-		el.setAttribute('aria-selected', String(isSelected));
+		this.setAttribute('role', 'tab');
+		this.setAttribute('aria-selected', String(isSelected));
 
 		if (isFirst && !hasDefaultSelectedTabs) {
 			if (el.tabIndex < 0) {
-				el.setAttribute('tabindex', '0');
+				this.setAttribute('tabindex', '0');
 			}
 
 		} else if (hasDefaultSelectedTabs && isSelected) {
 			if (el.tabIndex < 0) {
-				el.setAttribute('tabindex', '0');
+				this.setAttribute('tabindex', '0');
 			}
 
 		} else {
-			el.setAttribute('tabindex', '-1');
+			this.setAttribute('tabindex', '-1');
 		}
 
-		if (this.async != null) {
-			this.async.on(el, 'keydown', this.onKeydown.bind(this));
-		}
+		this.async.on(el, 'keydown', this.onKeydown.bind(this));
 	}
 
 	/**
@@ -100,23 +92,20 @@ export class TabEngine extends AriaRoleEngine {
 	 * @param active
 	 */
 	protected onChange(active: Element | NodeListOf<Element>): void {
-		const
-			{el} = this;
-
-		function setAttributes(isSelected: boolean) {
-			el.setAttribute('aria-selected', String(isSelected));
-			el.setAttribute('tabindex', isSelected ? '0' : '-1');
-		}
+		const setAttributes = (isSelected: boolean) => {
+			this.setAttribute('aria-selected', String(isSelected));
+			this.setAttribute('tabindex', isSelected ? '0' : '-1');
+		};
 
 		if (Object.isArrayLike(active)) {
 			for (let i = 0; i < active.length; i++) {
-				setAttributes(el === active[i]);
+				setAttributes(this.el === active[i]);
 			}
 
 			return;
 		}
 
-		setAttributes(el === active);
+		setAttributes(this.el === active);
 	}
 
 	/**
