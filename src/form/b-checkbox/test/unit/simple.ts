@@ -179,6 +179,23 @@ test.describe('b-checkbox simple usage', () => {
 		).toBeUndefined();
 	});
 
+	test('checking with id prop', async ({page}) => {
+		const target = await init(page, {value: 'bar', id: 'foo'});
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.unsafe.block!.element('hidden-input')?.id)
+		).toBe('foo');
+	});
+
+	test('checking without id prop', async ({page}) => {
+		const target = await init(page, {value: 'bar'});
+		const id = await target.evaluate((ctx) => ctx.unsafe.dom.getId(''));
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.unsafe.block!.element('hidden-input')?.id)
+		).toBe(`${id}hidden-input`);
+	});
+
 	test('checkbox with a `label` prop', async ({page}) => {
 		const target = await init(page, {
 			label: 'Foo'
@@ -197,6 +214,21 @@ test.describe('b-checkbox simple usage', () => {
 		test.expect(
 			await target.evaluate((ctx) => ctx.value)
 		).toBe(true);
+
+		const id = await target.evaluate((ctx) => ctx.unsafe.dom.getId(''));
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.unsafe.block!.element('label')?.getAttribute('for'))
+		).toBe(`${id}hidden-input`);
+
+		const target2 = await init(page, {
+			label: 'Foo',
+			id: 'bla'
+		});
+
+		test.expect(
+			await target2.evaluate((ctx) => ctx.unsafe.block!.element('label')?.getAttribute('for'))
+		).toBe('bla');
 	});
 
 	/**
