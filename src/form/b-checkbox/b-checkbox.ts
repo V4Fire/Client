@@ -158,7 +158,7 @@ export default class bCheckbox extends iInput implements iSize {
 		return this.defaultProp;
 	}
 
-	@system((ctx) => ctx.sync.link((v: Dictionary) => ({...v, id: ctx.id ?? 'hidden-input'})))
+	@system((ctx) => ctx.sync.link((v: Dictionary) => ({...v, id: ctx.id ?? ctx.dom.getId('hidden-input')})))
 	override attrs?: Dictionary;
 
 	/**
