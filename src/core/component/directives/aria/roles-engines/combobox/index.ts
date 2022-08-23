@@ -43,7 +43,7 @@ export class ComboboxEngine extends AriaRoleEngine {
 	/**
 	 * Sets or deletes the id of active descendant element
 	 */
-	protected setAriaActive(el?: HTMLElement): void {
+	protected setAriaActive(el?: Element): void {
 		this.setAttribute('aria-activedescendant', el?.id ?? '');
 	}
 
@@ -51,7 +51,7 @@ export class ComboboxEngine extends AriaRoleEngine {
 	 * Handler: the option list is expanded
 	 * @param el
 	 */
-	protected onOpen(el: HTMLElement): void {
+	protected onOpen(el: Element): void {
 		this.setAttribute('aria-expanded', 'true');
 		this.setAriaActive(el);
 	}
@@ -68,7 +68,7 @@ export class ComboboxEngine extends AriaRoleEngine {
 	 * Handler: active option element was changed
 	 * @param el
 	 */
-	protected onChange(el: HTMLElement): void {
+	protected onChange(el: Element): void {
 		this.setAriaActive(el);
 	}
 }

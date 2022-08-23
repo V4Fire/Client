@@ -13,6 +13,6 @@ export class TreeitemParams {
 	isExpandable: boolean = false;
 	isExpanded: boolean = false;
 	orientation: string = 'false';
-	rootElement?: HTMLElement = undefined;
+	rootElement?: Element = undefined;
 	toggleFold: FoldToggle = () => undefined;
 }

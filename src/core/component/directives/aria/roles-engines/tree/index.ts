@@ -34,9 +34,9 @@ export class TreeEngine extends AriaRoleEngine {
 	/**
 	 * Handler: treeitem was expanded or closed
 	 * @param el
-	 * @param isFolded
+	 * @param isExpanded
 	 */
-	protected onChange(el: Element, isFolded: boolean): void {
-		this.setAttribute('aria-expanded', String(!isFolded), el);
+	protected onChange(el: Element, isExpanded: boolean): void {
+		this.setAttribute('aria-expanded', String(isExpanded), el);
 	}
 }

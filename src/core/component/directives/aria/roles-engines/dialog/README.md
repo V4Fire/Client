@@ -3,14 +3,16 @@
 This module provides an engine for `v-aria` directive.
 
 The engine to set `dialog` role attribute.
-For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/dialog_role`].
+The `dialog` role is used to mark up an HTML based application dialog or window that separates content or UI from the rest of the web application or page.
 
-Expects `iOpen` trait to be realized.
+For more information go to [dialog](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/dialog_role`).
 
+## API
+
+The engine expects the component to realize the`iOpen` trait.
 
 ## Usage
 
 ```
-< &__foo v-aria:dialog
-
+< div v-aria:dialog
 ```

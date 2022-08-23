@@ -3,25 +3,39 @@
 This module provides an engine for `v-aria` directive.
 
 The engine to set `treeitem` role attribute.
-For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/treeitem_role`].
+A `treeitem` is an item in a `tree`.
 
-For recommendations how to make accessible widget go to [`https://www.w3.org/WAI/ARIA/apg/patterns/treeview/`].
+For more information go to [treeitem](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/treeitem_role`).
+For recommendations how to make accessible widget go to [treeitem](`https://www.w3.org/WAI/ARIA/apg/patterns/treeview/`).
 
-Expects `iAccess` trait to be realized.
+## API
+
+The engine expects specific parameters to be passed.
+- `isFirstRootItem`: `boolean`.
+If true the item is first one in the root tree.
+- `isExpandable`: `boolean`.
+If true the item has children and can be expanded.
+- `isExpanded`: `boolean`.
+If true the item is expanded in the current moment.
+- `orientation`: `string`.
+The tablist widget view orientation.
+- `rootElement`: `Element`.
+The link to the root tree element.
+- `toggleFold`: `function`.
+The function to toggle the expandable item.
+
+The engine expects the component to realize`iAccess` trait.
 
 ## Usage
 
 ```
-< &__foo v-aria:treeitem = {...}
-
+< div v-aria:treeitem = { &
+    isFirstRootItem: el === top;
+    isExpandable: el.children != null;
+    isExpanded: !el.folded;
+    orientation: 'orientation';
+    rootElement?: top;
+    toggleFold: () => ...;
+  }
+.
 ```
-
-## Adding new role engines
-When creating a new role engine which handles some components events the contract of passed params types and naming should be respected.
-
-The name of handlers in engine should be like `onChange`, `onOpen`, etc.
-The name of property in passed params should be like `@change`, `@open`, etc.
-Types of the property on passed params could be:
-- `Function` that accepts callback parameter;
-- `Promise`, so the handler will be passed in `.then` method;
-- `String` that is the name of component's event, so the handler will be added as a listener to this event.
