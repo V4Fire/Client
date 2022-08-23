@@ -47,6 +47,18 @@ Each role can accept its own set of options, which are described in its document
 
 ## Available options
 
+All ARIA attributes could be added in options through short syntax.
+
+```
+< div v-aria = {label: 'foo', desribedby: 'id1', details: 'id2'}
+
+/// The same as
+
+< div :aria-label = 'foo' | :aria-desribedby = 'id1' | :aria-details = 'id2'
+```
+
+The most common are described below:
+
 ### [label]
 
 Defines a string value that labels the current element.
@@ -74,19 +86,6 @@ See [this](https://www.w3.org/TR/wai-aria/#aria-labelledby) for more information
   Address
 
 < input type = text | v-aria = {labelledby: 'billing address'}
-```
-
-### [description]
-
-Defines a string value that describes or annotates the current element.
-See [this](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-description) for more information.
-
-```
-< div role = application | v-aria = {label: 'calendar', decription: 'Game schedule for the Boston Red Sox 2021 Season'}
-  < h1
-    Red Sox 2021
-
-  ...
 ```
 
 ### [describedby]

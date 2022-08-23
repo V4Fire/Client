@@ -280,7 +280,7 @@ class bTree extends iData implements iItems, iAccess {
 			isRoot: this.top == null,
 			orientation: this.orientation,
 			'@change': (cb: Function) => {
-				this.on('fold', (ctx, el, item, value) => cb(el, value));
+				this.on('fold', (ctx, el: Element, item, value: boolean) => cb(el, !value));
 			}
 		};
 

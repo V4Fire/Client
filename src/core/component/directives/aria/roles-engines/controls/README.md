@@ -2,17 +2,12 @@
 
 This module provides an engine for `v-aria` directive.
 
-The engine to set aria-controls attribute.
-For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-controls`].
+The engine is used to set `aria-controls` attribute.
+The global `aria-controls` property identifies the element (or elements) whose contents or presence are controlled by the element on which this attribute is set.
 
-## Usage
+For more information go to [controls](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-controls`).
 
-```
-< &__foo v-aria:controls = {...}
-
-```
-
-## How to use
+## API
 
 Directive can be added to any tag that includes tag with needed role. Role should be passed as a modifier.
 ID or IDs are passed as value.
@@ -25,10 +20,10 @@ If element controls several elements `for` should be passed as a string with IDs
 
 Example:
 ```
-< &__foo v-aria:controls.tab = {for: 'id1 id2 id3'}
+< div v-aria:controls.tab = {for: 'id1 id2 id3'}
 
-the same as
-< &__foo
+// the same as
+< div
   < button aria-controls = "id1 id2 id3" role = "tab"
 ```
 
@@ -39,12 +34,18 @@ The second one is an id of an element to set as value in aria-controls attribute
 
 Example:
 ```
-< &__foo v-aria:controls = {for: [[id1, id3], [id2, id4]]}
+< div v-aria:controls = {for: [[id1, id3], [id2, id4]]}
   < span :id = "id1"
   < span :id = "id2"
 
-the same as
-< &__foo
+// the same as
+< div
   < span :id = "id1" aria-controls = "id3"
   < span :id = "id2" aria-controls = "id4"
+```
+
+## Usage
+
+```
+< div v-aria:controls = {...}
 ```

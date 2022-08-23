@@ -75,7 +75,7 @@ export interface EngineOptions<P extends AbstractParams, C extends ComponentInte
 	async: Async;
 }
 
-export type HandlerAttachment = (cb: Function) => void;
+export type HandlerAttachment = ((cb: Function) => void) | Promise<any> | string;
 
 export const enum KeyCodes {
 	ENTER = 'Enter',

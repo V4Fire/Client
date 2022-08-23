@@ -3,23 +3,24 @@
 This module provides an engine for `v-aria` directive.
 
 The engine to set `tabpanel` role attribute.
-For more information go to [`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tabpanel_role`].
-For recommendations how to make accessible widget go to [`https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/`].
+The ARIA `tabpanel` is a container for the resources of layered content associated with a `tab`.
 
-## Usage
+For more information go to [tabpanel](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tabpanel_role`).
+For recommendations how to make accessible widget go to [tabpanel](`https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/`).
 
-```
-< &__foo v-aria:tabpanel = {...}
+## API
 
-```
-
-## How to use
-
-Expects `label` or `labelledby` params to be passed.
+The engine expects `label` or `labelledby` params to be passed.
 
 Example:
 ```
 < v-aria:tabpanel = {labelledby: 'id1'}
   < span :id = 'id1'
     // content
+```
+
+## Usage
+
+```
+< div v-aria:tabpanel = {label: 'content'}
 ```
