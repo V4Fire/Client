@@ -239,11 +239,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * A name of the component to build demo examples or tests
+		 *
+		 * @cli demo-page
+		 * @env DEMO_PAGE
+		 *
+		 * @returns {string}
 		 */
-		demoPage: o('demo-page', {
-			env: true,
-			default: 'p-v4-components-demo'
-		}),
+		demoPage() {
+			return o('demo-page', {
+				env: true,
+				default: 'p-v4-components-demo'
+			});
+		},
 
 		/**
 		 * Port for a test server

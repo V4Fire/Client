@@ -255,7 +255,7 @@ module.exports = function init(gulp = require('gulp')) {
 		});
 
 		// eslint-disable-next-line require-atomic-updates
-		args['--page'] = args['--page'] || build.demoPage;
+		args['--page'] = args['--page'] || build.demoPage();
 
 		const
 			fileServer = new nodeStatic.Server(src.output(args['--client-name']));
