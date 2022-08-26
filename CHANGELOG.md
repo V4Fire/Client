@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.26.0 (2022-08-26)
+
+#### :boom: Breaking Change
+
+* `build.demoPage` is a function now `config/default`
+
 ## v3.25.0 (2022-08-19)
 
 #### :boom: Breaking Change
