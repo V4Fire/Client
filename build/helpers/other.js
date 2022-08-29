@@ -102,15 +102,24 @@ exports.bufferToVinyl = function bufferToVinyl(file, enc, cb) {
  * @param {TransformCallback} cb
  */
 exports.patchFaviconsAssets = function patchFaviconsAssets(file, enc, cb) {
-	const {manifestName, removeManifestInit} = config.favicons();
+	const
+		{manifestName, removeManifestInit} = config.favicons(),
+		oldManifestName = 'manifest.webmanifest';
 
-	if (removeManifestInit && file.name.includes('html')) {
-		debugger;
-		const
-			fileContent = file.contents.toString().split('\n'),
-			manifestLineIndex = fileContent.findIndex((line) => line.includes('manifest.webmanifest'));
+	if (file.name.includes('html')) {
+		let
+			fileContent = file.contents.toString().split('\n');
 
-		fileContent.splice(manifestLineIndex, 1);
+		if (removeManifestInit) {
+			const
+				manifestLineIndex = fileContent.findIndex((line) => line.includes(oldManifestName));
+
+			fileContent.splice(manifestLineIndex, 1);
+
+		} else {
+			fileContent = fileContent.map((line) => line.replace(oldManifestName, manifestName));
+		}
+
 		file.contents = Buffer.from(fileContent.join('\n'));
 	}
 
