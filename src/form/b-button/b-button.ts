@@ -69,7 +69,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	override readonly dataProvider: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** @see [[iVisible.prototype.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 

@@ -31,7 +31,7 @@ export default abstract class iPage extends iData implements iVisible {
 	override readonly reloadOnActivation: boolean = true;
 	override readonly syncRouterStoreOnInit: boolean = true;
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** @see [[iVisible.prototype.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 

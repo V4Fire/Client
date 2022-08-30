@@ -87,7 +87,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	readonly FormValue!: FormValue;
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** @see [[iVisible.prototype.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 

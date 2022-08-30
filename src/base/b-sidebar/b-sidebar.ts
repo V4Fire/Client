@@ -32,7 +32,7 @@ interface bSidebar extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScro
 class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	override readonly rootTag: string = 'aside';
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** @see [[iVisible.prototype.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
