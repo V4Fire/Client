@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Now the trait can hide components if no internet presented
+* Now the iVisibile trait can hide components if there is no internet connection
 
 ## v3.0.0-rc.211 (2021-07-21)
 
