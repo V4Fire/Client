@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.27.0 (2022-08-30)
+
+#### :rocket: New Feature
+
+* Now the trait can hide components if no internet presented
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :rocket: New Feature

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.27.0 (2022-08-30)
+
+#### :boom: Breaking change
+
+* Now `static:favicons:build` working with `favicons@7`
+
 ## v3.24.0 (2022-08-12)
 
 #### :boom: Breaking change

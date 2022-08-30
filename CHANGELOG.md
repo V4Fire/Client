@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.27.0 (2022-08-30)
+
+#### :boom: Breaking Change
+
+* Update `favicons` dependency on beta version `favicons@7.0.0`
+* Now `static:favicons:build` working with `favicons@7`
+
+#### :rocket: New Feature
+
+* Added helpers for working with favicons assets
+* Added favicons folder path in globla `PATH` variable `build/webpack/plugins`
+* Added global style for hiding elements if no internet connection
+* Now the trait can hide components if no internet presented
+
 ## v3.26.0 (2022-08-26)
 
 #### :boom: Breaking Change
