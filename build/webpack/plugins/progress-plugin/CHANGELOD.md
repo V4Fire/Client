@@ -13,15 +13,15 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Removed printLn-progress-view
+* Removed `printLn-progress-view`
 
 ### :bug: Bug Fix
 
-* Now progressbar work in watch mode
+* Now `WebpackProgressPlugin` properly work with the Webpack watch mode
 
 ### :rocket: New Feature
 
-* Now progressbar work in CI environment
+* Now `WebpackProgressPlugin` work within the CI environment
 
 ## v3.?.? (20??-??-??)
 
