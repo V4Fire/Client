@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (20??-??-??)
+
+#### :boom: Breaking Change
+
+* Removed printLn-progress-view `build/webpack/plugins/progress-plugin`
+
+### :bug: Bug Fix
+
+* Now webpack progress plugin properly work in webpack watch mode `build/webpack/plugins/progress-plugin`
+
+### :rocket: New Feature
+
+* Now webpack progress plugin work in CI environment `build/webpack/plugins/progress-plugin`
+
 ## v3.27.0 (2022-08-30)
 
 #### :boom: Breaking Change
