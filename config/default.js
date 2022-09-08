@@ -389,10 +389,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			if (enabled) {
 				return {
-					type: this.config.build.ci ? 'println' : 'progressbar',
 					opts: {
 						clearOnComplete: true,
 						stopOnComplete: true,
+						forceRedraw: true,
+						noTTYOutput: this.config.build.ci,
 						hideCursor: null
 					}
 				};

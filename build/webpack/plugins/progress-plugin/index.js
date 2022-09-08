@@ -9,12 +9,10 @@
  */
 
 const
-	config = require('@config/config'),
 	webpack = require('webpack');
 
 const
-	ProgressbarView = include('build/webpack/plugins/progress-plugin/progressbar-view'),
-	PrintlnProgressView = include('build/webpack/plugins/progress-plugin/println-progress-view');
+	ProgressbarView = include('build/webpack/plugins/progress-plugin/progressbar-view');
 
 let
 	logger;
@@ -25,21 +23,7 @@ let
  */
 module.exports = function createProgressPlugin(processName) {
 	if (logger == null) {
-		const
-			{type} = config.webpack.progress() ?? {};
-
-		switch (type) {
-			case 'println':
-				logger = new PrintlnProgressView();
-				break;
-
-			case 'progressbar':
-				logger = new ProgressbarView();
-				break;
-
-			default:
-				logger = {getProgressHandler: () => () => undefined};
-		}
+			logger = new ProgressbarView();
 	}
 
 	return new webpack.ProgressPlugin(logger.getProgressHandler(processName));
