@@ -59,6 +59,10 @@ module.exports = class ProgressbarView extends ProgressView {
 		this.handlers[processName] = this.multibar.create(100, 0, {processName});
 	}
 
+	_removeProgressBar(processName) {
+		this.multibar.remove(this.handlers[processName]);
+	}
+
 	/** @override */
 	getProgressHandler(processName) {
 		this._createProgressBar(processName);
@@ -69,7 +73,7 @@ module.exports = class ProgressbarView extends ProgressView {
 	/** @override */
 	_updateProgress(processName, newProgress) {
 		if (!this.handlers[processName].isActive) {
-			this.multibar.remove(this.handlers[processName]);
+			this._removeProgressBar(processName);
 			this._createProgressBar(processName);
 		}
 
