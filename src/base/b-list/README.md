@@ -30,6 +30,25 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * Dynamic data loading.
 
+## Modifiers
+
+| Name         | Description            | Values    | Default |
+|--------------|------------------------|-----------|---------|
+| `hideLabels` | Item labels are hidden | `boolean` | `false` |
+
+Also, you can see the parent component and the component traits.
+
+## Events
+
+| EventName         | Description                                                                                                                 | Payload description                   | Payload  |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------|---------------------------------------|----------|
+| `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
+| `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
+| `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
+| `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
+
+Also, you can see the parent component and the component traits.
+
 ## Accessibility
 
 The component supports two standard logical roles.
@@ -66,25 +85,6 @@ You need to do it yourself using the ARIA [tabpanel](https://www.w3.org/TR/wai-a
   < p
     Content for the third panel
 ```
-
-## Modifiers
-
-| Name         | Description            | Values    | Default |
-|--------------|------------------------|-----------|---------|
-| `hideLabels` | Item labels are hidden | `boolean` | `false` |
-
-Also, you can see the parent component and the component traits.
-
-## Events
-
-| EventName         | Description                                                                                                                 | Payload description                   | Payload  |
-|-------------------|-----------------------------------------------------------------------------------------------------------------------------|---------------------------------------|----------|
-| `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
-| `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
-| `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
-| `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
-
-Also, you can see the parent component and the component traits.
 
 ## Associated types
 
