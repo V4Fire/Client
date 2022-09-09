@@ -88,13 +88,13 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
-	 * Type of the list' root tag
+	 * Type of the list root tag
 	 */
 	@prop(String)
 	readonly listTag: string = 'ul';
 
 	/**
-	 * Type of list' element tags
+	 * Type of list element tags
 	 */
 	@prop(String)
 	readonly listElTag: string = 'li';
@@ -120,7 +120,8 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	readonly multiple: boolean = false;
 
 	/**
-	 * The component view orientation
+	 * Indicates whether the component orientation is `horizontal`, `vertical`, or unknown/ambiguous.
+	 * This props affects the ARIA component role.
 	 */
 	@prop(String)
 	readonly orientation: Orientation = 'horizontal';

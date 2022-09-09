@@ -30,6 +30,43 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * Dynamic data loading.
 
+## Accessibility
+
+The component supports two standard logical roles.
+
+### List of links
+
+If the component is used as a list of links, then standard HTML link semantics will be used.
+That is, links can be navigated using the Tab key, etc.
+
+### List of tabs
+
+If the component is used as a list of tabs it will implement the ARIA [tablist](https://www.w3.org/TR/wai-aria/#tablist) role.
+All available features included in this [widget] (https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/) are supported.
+
+Please note that the component does not support the ability to set the content of the tabs.
+You need to do it yourself using the ARIA [tabpanel](https://www.w3.org/TR/wai-aria/#tabpanel) role.
+
+```
+< b-list :items = [ &
+  {label: 'First tab', id: 'tab-1', controls: 'panel-1'},
+  {label: 'Second tag', id: 'tab-2', controls: 'panel-2'},
+  {label: 'Third tab', id: 'tab-3', controls: 'panel-3'}
+] .
+
+< div id = panel-1" | v-aria:tabpanel = {labelledby: 'tab-1'}
+  < p
+    Content for the first panel
+
+< div id = panel-2" | v-aria:tabpanel = {labelledby: 'tab-2'}
+  < p
+    Content for the second panel
+
+< div id = panel-3" | v-aria:tabpanel = {labelledby: 'tab-3'}
+  < p
+    Content for the third panel
+```
+
 ## Modifiers
 
 | Name         | Description            | Values    | Default |
@@ -213,13 +250,18 @@ Also, you can see the implemented traits or the parent component.
 
 ### Props
 
+#### [orientation = `horizontal`]
+
+Indicates whether the component orientation is `horizontal`, `vertical`, or unknown/ambiguous.
+This props affects the ARIA component role.
+
 #### [listTag = `'ul'`]
 
-A type of the list' root tag.
+A type of the list root tag.
 
 #### [listElTag = `'li'`]
 
-A type of list' element tags.
+A type of list element tags.
 
 #### [activeProp]
 
@@ -242,10 +284,6 @@ By default, if the component is switched to the `multiple` mode, this value is s
 #### [attrsProp]
 
 Initial additional attributes are provided to an "internal" (native) list tag.
-
-#### [orientation = `horizontal`]
-
-The component view orientation.
 
 ### Fields
 
@@ -337,17 +375,3 @@ class Test extends iData {
   }
 }
 ```
-
-## Accessibility
-
-If the component is used as a list of tabs it will implement an ARIA role [tablist](https://www.w3.org/TR/wai-aria/#tablist).
-All the accessible functionality included in this [widget](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/) is supported.
-
-When the component is used as a list of links it bases on internal HTML semantics of list tags.
-
-The component includes the following roles:
-- [tablist](https://www.w3.org/TR/wai-aria/#tablist)
-- [tab](https://www.w3.org/TR/wai-aria/#tab)
-
-The widget should also include [tabpanel](https://www.w3.org/TR/wai-aria/#tabpanel) role which is a block that contains the content of each tab.
-But the component does not provide such block. So the 'connection' with other component should be set with the help of [`v-aria:controls`](core/component/directives/aria/aria-engines/controls/README.md)
