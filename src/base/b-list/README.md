@@ -73,15 +73,15 @@ You need to do it yourself using the ARIA [tabpanel](https://www.w3.org/TR/wai-a
   {label: 'Third tab', id: 'tab-3', controls: 'panel-3'}
 ] .
 
-< div id = panel-1" | v-aria:tabpanel = {labelledby: 'tab-1'}
+< div id = panel-1 | v-aria:tabpanel = {labelledby: 'tab-1'}
   < p
     Content for the first panel
 
-< div id = panel-2" | v-aria:tabpanel = {labelledby: 'tab-2'}
+< div id = panel-2 | v-aria:tabpanel = {labelledby: 'tab-2'}
   < p
     Content for the second panel
 
-< div id = panel-3" | v-aria:tabpanel = {labelledby: 'tab-3'}
+< div id = panel-3 | v-aria:tabpanel = {labelledby: 'tab-3'}
   < p
     Content for the third panel
 ```
