@@ -353,8 +353,12 @@ export default abstract class iStaticPage extends iPage {
 		this.forceUpdate().catch(stderr);
 	}
 
-	@watch('isOnline')
-	protected onOnlineChange(val: string): void {
-		this.setRootMod('online', val);
+	/**
+	 * Handler: the online status has been changed
+	 * @param status
+	 */
+	@watch({path: 'isOnline', immediate: true})
+	protected onOnlineChange(status: string): void {
+		this.setRootMod('online', status);
 	}
 }
