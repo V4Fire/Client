@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Removed `global/g-visible`
+* Renamed the global `hide-if-offline` attribute to `data-hide-if-offline` `iStaticPage`
+
+#### :bug: Bug Fix
+
+* The online watcher is now created with the `immediate` flag `iStaticPage`
+
+#### :memo: Documentation
+
+* Added missing documentation `data-hide-if-offline` `iStaticPage`
+
 ## v3.28.0 (2022-09-12)
 
 #### :boom: Breaking Change
