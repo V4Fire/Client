@@ -34,3 +34,6 @@ i-static-page extends i-page
 	if $p.globalIconHelpers
 		/.g-icon
 			extends($gIcon)
+
+	&-online-false [data-hide-if-offline="true"]
+		display none
