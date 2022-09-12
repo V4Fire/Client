@@ -23,7 +23,7 @@ let
  */
 module.exports = function createProgressPlugin(processName) {
 	if (logger == null) {
-			logger = new ProgressbarView();
+		logger = new ProgressbarView();
 	}
 
 	return new webpack.ProgressPlugin(logger.getProgressHandler(processName));
