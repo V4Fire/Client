@@ -54,7 +54,10 @@ export class ControlsEngine extends AriaRoleEngine {
 				});
 			});
 
-		} else if (isForPropArrayOfTuples) {
+			return;
+		}
+
+		if (isForPropArrayOfTuples) {
 			forId.forEach((param) => {
 				const
 					[elId, controlsId] = param,
@@ -64,6 +67,12 @@ export class ControlsEngine extends AriaRoleEngine {
 					this.setAttribute('aria-controls', controlsId, element);
 				}
 			});
+
+			return;
+		}
+
+		if (Object.isString(forId)) {
+			this.setAttribute('aria-controls', forId, el);
 		}
 	}
 }

@@ -51,7 +51,7 @@
 						:v-attrs = isTablist ?
 							{
 								'v-aria:tab': getAriaConfig('tab', el, i),
-								'v-aria:controls': el.controls,
+								'v-aria:controls': {for: el.controls},
 								...el.attrs
 							} :
 							el.attrs

@@ -40,6 +40,26 @@ test.describe('v-aria:tab', () => {
 		).toEqual(['tab', 'tab', 'tab']);
 	});
 
+	test('aria-controls is set', async ({page}) => {
+		const target = await init(page);
+
+		test.expect(
+			await target.evaluate((ctx) => {
+				if (ctx.unsafe.block == null) {
+					return;
+				}
+
+				const tabs = ctx.unsafe.block.elements('link');
+
+				const res: Array<Nullable<string>> = [];
+
+				tabs.forEach((el) => res.push(el.getAttribute('aria-controls')));
+
+				return res;
+			})
+		).toEqual(['id4', 'id5', 'id6']);
+	});
+
 	test('has active value', async ({page}) => {
 		const target = await init(page, {active: 1});
 
@@ -213,9 +233,9 @@ test.describe('v-aria:tab', () => {
 			attrs: {
 				'data-id': 'target',
 				items: [
-					{label: 'Male', value: 0, attrs: {id: 'id1'}},
-					{label: 'Female', value: 1, attrs: {id: 'id2'}},
-					{label: 'Other', value: 2, attrs: {id: 'id3'}}
+					{label: 'Male', value: 0, id: 'id1', controls: 'id4'},
+					{label: 'Female', value: 1, id: 'id2', controls: 'id5'},
+					{label: 'Other', value: 2, id: 'id3', controls: 'id6'}
 				],
 				...attrs
 			}

@@ -149,8 +149,8 @@ test.describe('v-aria:controls', () => {
 			attrs: {
 				[directive]: ariaConfig,
 				items: [
-					{label: 'foo', value: 0, attrs: {id: 'id1'}},
-					{label: 'bla', value: 1, attrs: {id: 'id2'}}
+					{label: 'foo', value: 0, id: 'id1'},
+					{label: 'bla', value: 1, id: 'id2'}
 				]
 			}
 		});
