@@ -20,11 +20,18 @@ If element controls several elements `for` should be passed as a string with IDs
 
 Example:
 ```
-< div v-aria:controls.tab = {for: 'id1 id2 id3'}
+< div id = 'tab' | v-aria:tablist | v-aria:controls.tab = {for: 'id1 id2 id3'}
+  < div v-aria:tab
+    Tab
 
-// the same as
-< div
-  < button aria-controls = "id1 id2 id3" role = "tab"
+< div id = 'id1' | v-aria:tabpanel = {labelledby: 'tab'}
+  Content
+
+< div id = 'id2' | v-aria:tabpanel = {labelledby: 'tab'}
+  Content
+
+< div id = 'id3' | v-aria:tabpanel = {labelledby: 'tab'}
+  Content
 ```
 
 2. To pass value `for` as an array of tuples.
@@ -34,14 +41,18 @@ The second one is an id of an element to set as value in aria-controls attribute
 
 Example:
 ```
-< div v-aria:controls = {for: [[id1, id3], [id2, id4]]}
-  < span :id = "id1"
-  < span :id = "id2"
+< div v-aria:tablist | v-aria:controls = {for: [['tab-1', 'panel-1'], ['tab-2', 'panel-2']]}
+  < div id = 'tab-1' | v-aria:tab
+    First tab
 
-// the same as
-< div
-  < span :id = "id1" aria-controls = "id3"
-  < span :id = "id2" aria-controls = "id4"
+  < div id = 'tab-2' | v-aria:tab
+    Second tab
+
+< div id = 'panel-1' | v-aria:tabpanel = {labelledby: 'tab-1'}
+  Content for the first panel
+
+< div id = 'panel-2' | v-aria:tabpanel = {labelledby: 'tab-2'}
+  Content for the second panel
 ```
 
 ## Usage
