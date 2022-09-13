@@ -81,13 +81,12 @@ module.exports = class DependenciesPlugin {
 				faviconsPath = `${assetsDest}/${faviconsHash}_${faviconsKey}`,
 				faviconsDest = webpack.publicPath(faviconsPath);
 
-			const
-				staticAssetsPath = {
-					[faviconsKey]: {
-						path: faviconsPath,
-						publicPath: faviconsDest
-					}
-				};
+			const staticAssetsPath = {
+				[faviconsKey]: {
+					path: faviconsPath,
+					publicPath: faviconsDest
+				}
+			};
 
 			Object.assign(assets, manifest, staticAssetsPath);
 
