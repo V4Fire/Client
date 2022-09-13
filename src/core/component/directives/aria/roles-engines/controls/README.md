@@ -75,19 +75,19 @@ Example with custom tab list:
   < div v-aria.tablist = {label: 'Sample Tabs'}
     < span &
       id = 'tab-1' |
-      v-aria.tab = {...} |
+      v-aria.tab = {...config} |
       v-aria.controls = {for: 'panel-1'}
         First Tab
 
     < span &
       id = 'tab-2' |
-      v-aria.tab = {...} |
+      v-aria.tab = {...config} |
       v-aria.controls = {for: 'panel-2'}
         Second Tab
 
     < span &
       id = 'tab-3' |
-      v-aria.tab = {...} |
+      v-aria.tab = {...config} |
       v-aria.controls = {for: 'panel-3'}
         Third Tab
 

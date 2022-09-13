@@ -10,17 +10,20 @@ For recommendations how to make accessible widget go to [tabpanel](`https://www.
 
 ## API
 
-The engine expects `label` or `labelledby` params to be passed.
+The engine expects `label` or `labelledby` params to be passed and the element `id`
 
-Example:
-```
-< v-aria:tabpanel = {labelledby: 'id1'}
-  < span :id = 'id1'
-    // content
-```
 
 ## Usage
 
+Example:
 ```
-< div v-aria:tabpanel = {label: 'content'}
+< div &
+  id = 'tab-1' |
+  v-aria:tab = {...config} |
+  v-aria:controls = {for: 'tabpanel-1'}
+    Tab
+
+< div id = 'tabpanel-1' | v-aria:tabpanel = {labelledby: 'tab-1'}
+  < p
+    Content for the panel
 ```

@@ -37,6 +37,7 @@ The engine expects the component to realize`iAccess` trait.
 
 ## Usage
 
+Example of passing parameters:
 ```
 < div v-aria:tab = { &
     isFirst: i === 0,
@@ -46,4 +47,17 @@ The engine expects the component to realize`iAccess` trait.
     '@change': (cb) => cb(el.active)
   }
 .
+```
+
+Example of external usage:
+```
+< div &
+  id = 'tab-1' |
+  v-aria:tab = {...config} |
+  v-aria:controls = {for: 'tabpanel-1'}
+    Tab
+
+< div id = 'tabpanel-1' | v-aria:tabpanel = {labelledby: 'tab-1'}
+  < p
+    Content for the panel
 ```
