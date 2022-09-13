@@ -30,6 +30,7 @@
 					< tag &
 						:is = el.href !== undefined ? 'a' : 'button' |
 
+						:id = el.id |
 						:href = el.href |
 						:value = el.value |
 
@@ -50,6 +51,7 @@
 						:v-attrs = isTablist ?
 							{
 								'v-aria:tab': getAriaConfig('tab', el, i),
+								'v-aria:controls': el.controls,
 								...el.attrs
 							} :
 							el.attrs

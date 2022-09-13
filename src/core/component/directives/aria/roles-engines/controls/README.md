@@ -46,6 +46,61 @@ Example:
 
 ## Usage
 
+Example with `b-list`:
+
 ```
-< div v-aria:controls = {...}
+< b-list :items = [ &
+  {label: 'First tab', id: 'tab-1', controls: 'panel-1'},
+  {label: 'Second tag', id: 'tab-2', controls: 'panel-2'},
+  {label: 'Third tab', id: 'tab-3', controls: 'panel-3'}
+] .
+
+< div id = 'panel-1' | v-aria:tabpanel = {labelledby: 'tab-1'}
+  < p
+    Content for the first panel
+
+< div id = 'panel-2' | v-aria:tabpanel = {labelledby: 'tab-2'}
+  < p
+    Content for the second panel
+
+< div id = 'panel-3' | v-aria:tabpanel = {labelledby: 'tab-3'}
+  < p
+    Content for the third panel
+```
+
+Example with custom tab list:
+
+```
+< div.custom-page
+  < div v-aria.tablist = {label: 'Sample Tabs'}
+    < span &
+      id = 'tab-1' |
+      v-aria.tab = {...} |
+      v-aria.controls = {for: 'panel-1'}
+        First Tab
+
+    < span &
+      id = 'tab-2' |
+      v-aria.tab = {...} |
+      v-aria.controls = {for: 'panel-2'}
+        Second Tab
+
+    < span &
+      id = 'tab-3' |
+      v-aria.tab = {...} |
+      v-aria.controls = {for: 'panel-3'}
+        Third Tab
+
+  < div id = 'panel-1' | v-aria.tabpanel = {labelledby = 'tab-1'}
+    < p
+      Content for the first panel
+
+  < div id = 'panel-2' | v-aria.tabpanel = {labelledby = 'tab-2'}
+    < p
+      Content for the second panel
+
+  < div id = 'panel-3' | v-aria.tabpanel = {labelledby = 'tab-3'}
+    < p
+     Content for the third panel
+
 ```
