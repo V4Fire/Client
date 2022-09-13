@@ -9,9 +9,9 @@
 import Async from 'core/async';
 import type iBlock from 'super/i-block/i-block';
 
-import * as roles from 'core/component/directives/aria/roles-engines';
+import * as roles from 'core/component/directives/aria/roles';
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
-import type { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles-engines';
+import type { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles';
 
 /**
  * An adapter to create an ARIA role instance based on the passed directive options and to add common attributes
