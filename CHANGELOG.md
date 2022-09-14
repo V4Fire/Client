@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2022-??-??)
+## v3.29.0 (2022-09-13)
 
 #### :boom: Breaking Change
 
@@ -50,7 +50,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added helpers for working with favicons assets `build/helpers`
-* Added favicons folder path in global `PATH` variable `build/webpack/plugins`
+* Added favicons folder path in the global `PATH` variable `build/webpack/plugins`
 * Added global styles to hide elements if there is no internet connection `src/global/g-visible`
 * Now the `iVisibile` trait can hide components if there is no internet connection `src/traits/i-visible`
 
