@@ -1,6 +1,6 @@
 # core/component/directives/aria
 
-This module provides a directive to add aria attributes and logic to elements through a single API.
+This module provides a directive to add aria attributes and logic to elements via a common API.
 
 ```
 < div v-aria = {labelledby: dom.getId('title')}
@@ -10,7 +10,7 @@ This module provides a directive to add aria attributes and logic to elements th
 < div :aria-labelledby = dom.getId('title')
 ```
 
-The [Aria](https://www.w3.org/TR/wai-aria) specification consists of a set of entities called roles.
+The [ARIA](https://www.w3.org/TR/wai-aria) specification consists of a set of entities called roles.
 For example, [Tablist](https://www.w3.org/TR/wai-aria/#tablist) or [Combobox](https://www.w3.org/TR/wai-aria/#combobox).
 Therefore, the directive also consists of many engines, each of which implements a particular role.
 
@@ -47,7 +47,7 @@ Each role can accept its own set of options, which are described in its document
 
 ## Available options
 
-All ARIA attributes could be added in options through short syntax.
+Any ARIA attributes could be added in options through the short syntax.
 
 ```
 < div v-aria = {label: 'foo', desribedby: 'id1', details: 'id2'}
