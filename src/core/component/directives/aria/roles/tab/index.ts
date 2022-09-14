@@ -13,9 +13,9 @@ import type iBlock from 'super/i-block/i-block';
 import type iAccess from 'traits/i-access/i-access';
 
 import { TabParams } from 'core/component/directives/aria/roles/tab/interface';
-import { AriaRole, KeyCodes } from 'core/component/directives/aria/roles/interface';
+import { ARIARole, KeyCodes } from 'core/component/directives/aria/roles/interface';
 
-export class TabEngine extends AriaRole {
+export class Tab extends ARIARole {
 	override Params: TabParams = new TabParams();
 	override Ctx!: iBlock & iAccess;
 

@@ -7,9 +7,9 @@
  */
 
 import { TreeParams } from 'core/component/directives/aria/roles/tree/interface';
-import { AriaRole } from 'core/component/directives/aria/roles/interface';
+import { ARIARole } from 'core/component/directives/aria/roles/interface';
 
-export class TreeEngine extends AriaRole {
+export class Tree extends ARIARole {
 	override Params: TreeParams = new TreeParams();
 
 	/** @inheritDoc */

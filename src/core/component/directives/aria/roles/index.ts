@@ -17,4 +17,4 @@ export * from 'core/component/directives/aria/roles/option';
 export * from 'core/component/directives/aria/roles/tree';
 export * from 'core/component/directives/aria/roles/treeitem';
 
-export { AriaRole, EngineOptions } from 'core/component/directives/aria/roles/interface';
+export { ARIARole, EngineOptions } from 'core/component/directives/aria/roles/interface';

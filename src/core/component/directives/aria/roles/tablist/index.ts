@@ -7,9 +7,9 @@
  */
 
 import { TablistParams } from 'core/component/directives/aria/roles/tablist/interface';
-import { AriaRole } from 'core/component/directives/aria/roles/interface';
+import { ARIARole } from 'core/component/directives/aria/roles/interface';
 
-export class TablistEngine extends AriaRole {
+export class Tablist extends ARIARole {
 	override Params: TablistParams = new TablistParams();
 
 	/** @inheritDoc */

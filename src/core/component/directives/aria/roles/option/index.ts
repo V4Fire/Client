@@ -7,9 +7,9 @@
  */
 
 import { OptionParams } from 'core/component/directives/aria/roles/option/interface';
-import { AriaRole } from 'core/component/directives/aria/roles/interface';
+import { ARIARole } from 'core/component/directives/aria/roles/interface';
 
-export class OptionEngine extends AriaRole {
+export class Option extends ARIARole {
 	override Params: OptionParams = new OptionParams();
 
 	/** @inheritDoc */

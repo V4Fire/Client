@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AriaRole } from 'core/component/directives/aria/roles/interface';
+import { ARIARole } from 'core/component/directives/aria/roles/interface';
 
-export class ListboxEngine extends AriaRole {
+export class Listbox extends ARIARole {
 	/** @inheritDoc */
 	init(): void {
 		this.setAttribute('role', 'listbox');

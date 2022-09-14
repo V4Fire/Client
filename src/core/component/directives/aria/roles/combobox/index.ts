@@ -10,9 +10,9 @@ import type iAccess from 'traits/i-access/i-access';
 import type { ComponentInterface } from 'super/i-block/i-block';
 
 import { ComboboxParams } from 'core/component/directives/aria/roles/combobox/interface';
-import { AriaRole, EngineOptions } from 'core/component/directives/aria/roles/interface';
+import { ARIARole, EngineOptions } from 'core/component/directives/aria/roles/interface';
 
-export class ComboboxEngine extends AriaRole {
+export class Combobox extends ARIARole {
 	override Params: ComboboxParams = new ComboboxParams();
 	override Ctx!: ComponentInterface & iAccess;
 	override el: HTMLElement;
@@ -43,7 +43,7 @@ export class ComboboxEngine extends AriaRole {
 	/**
 	 * Sets or deletes the id of active descendant element
 	 */
-	protected setAriaActive(el?: Element): void {
+	protected setARIAActive(el?: Element): void {
 		this.setAttribute('aria-activedescendant', el?.id ?? '');
 	}
 
@@ -53,7 +53,7 @@ export class ComboboxEngine extends AriaRole {
 	 */
 	protected onOpen(el: Element): void {
 		this.setAttribute('aria-expanded', 'true');
-		this.setAriaActive(el);
+		this.setARIAActive(el);
 	}
 
 	/**
@@ -61,7 +61,7 @@ export class ComboboxEngine extends AriaRole {
 	 */
 	protected onClose(): void {
 		this.setAttribute('aria-expanded', 'false');
-		this.setAriaActive();
+		this.setARIAActive();
 	}
 
 	/**
@@ -69,6 +69,6 @@ export class ComboboxEngine extends AriaRole {
 	 * @param el
 	 */
 	protected onChange(el: Element): void {
-		this.setAriaActive(el);
+		this.setARIAActive(el);
 	}
 }
