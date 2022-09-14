@@ -13,9 +13,9 @@ import iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
 
 import { TreeitemParams } from 'core/component/directives/aria/roles/treeitem/interface';
-import { AriaRoleEngine, KeyCodes } from 'core/component/directives/aria/roles/interface';
+import { AriaRole, KeyCodes } from 'core/component/directives/aria/roles/interface';
 
-export class TreeitemEngine extends AriaRoleEngine {
+export class TreeitemEngine extends AriaRole {
 	override Params: TreeitemParams = new TreeitemParams();
 	override Ctx!: iBlock & iAccess;
 

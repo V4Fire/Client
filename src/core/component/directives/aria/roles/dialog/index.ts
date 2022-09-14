@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AriaRoleEngine } from 'core/component/directives/aria/roles/interface';
+import { AriaRole } from 'core/component/directives/aria/roles/interface';
 import iOpen from 'traits/i-open/i-open';
 
-export class DialogEngine extends AriaRoleEngine {
+export class DialogEngine extends AriaRole {
 	/** @inheritDoc */
 	init(): void {
 		this.setAttribute('role', 'dialog');

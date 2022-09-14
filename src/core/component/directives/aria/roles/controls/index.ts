@@ -7,9 +7,9 @@
  */
 
 import { ControlsParams } from 'core/component/directives/aria/roles/controls/interface';
-import { AriaRoleEngine } from 'core/component/directives/aria/roles/interface';
+import { AriaRole } from 'core/component/directives/aria/roles/interface';
 
-export class ControlsEngine extends AriaRoleEngine {
+export class ControlsEngine extends AriaRole {
 	override Params: ControlsParams = new ControlsParams();
 
 	/** @inheritDoc */

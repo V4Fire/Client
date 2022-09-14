@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AriaRoleEngine } from 'core/component/directives/aria/roles/interface';
+import { AriaRole } from 'core/component/directives/aria/roles/interface';
 
-export class TabpanelEngine extends AriaRoleEngine {
+export class TabpanelEngine extends AriaRole {
 	/** @inheritDoc */
 	init(): void {
 		const

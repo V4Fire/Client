@@ -11,7 +11,7 @@ import type iBlock from 'super/i-block/i-block';
 
 import * as roles from 'core/component/directives/aria/roles';
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
-import type { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles';
+import type { AriaRole, EngineOptions } from 'core/component/directives/aria/roles';
 
 /**
  * An adapter to create an ARIA role instance based on the passed directive options and to add common attributes
@@ -28,7 +28,7 @@ export default class AriaAdapter {
 	/**
 	 * An instance of the associated ARIA role
 	 */
-	protected role: CanUndef<AriaRoleEngine>;
+	protected role: CanUndef<AriaRole>;
 
 	constructor(options: DirectiveOptions) {
 		this.options = options;
@@ -61,7 +61,7 @@ export default class AriaAdapter {
 	/**
 	 * If the role was passed as a directive argument sets specified engine
 	 */
-	protected setAriaRole(): CanUndef<AriaRoleEngine> {
+	protected setAriaRole(): CanUndef<AriaRole> {
 		const
 			{el, binding} = this.options,
 			{value, modifiers, arg: role} = binding;
@@ -73,7 +73,7 @@ export default class AriaAdapter {
 		const
 			engine = `${role.capitalize()}Engine`;
 
-		const options: EngineOptions<AriaRoleEngine['Params']> = {
+		const options: EngineOptions<AriaRole['Params']> = {
 			el,
 			modifiers,
 			params: value,

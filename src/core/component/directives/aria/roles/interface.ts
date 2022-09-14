@@ -9,7 +9,7 @@
 import type Async from 'core/async';
 import type { ComponentInterface } from 'super/i-block/i-block';
 
-export abstract class AriaRoleEngine {
+export abstract class AriaRole {
 	/**
 	 * Type: directive passed params
 	 */
@@ -43,7 +43,7 @@ export abstract class AriaRoleEngine {
 	/** @see [[Async]] */
 	async: Async;
 
-	constructor({el, ctx, modifiers, params, async}: EngineOptions<AriaRoleEngine['Params']>) {
+	constructor({el, ctx, modifiers, params, async}: EngineOptions<AriaRole['Params']>) {
 		this.el = el;
 		this.ctx = ctx;
 		this.modifiers = modifiers;

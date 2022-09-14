@@ -10,9 +10,9 @@ import type iAccess from 'traits/i-access/i-access';
 import type { ComponentInterface } from 'super/i-block/i-block';
 
 import { ComboboxParams } from 'core/component/directives/aria/roles/combobox/interface';
-import { AriaRoleEngine, EngineOptions } from 'core/component/directives/aria/roles/interface';
+import { AriaRole, EngineOptions } from 'core/component/directives/aria/roles/interface';
 
-export class ComboboxEngine extends AriaRoleEngine {
+export class ComboboxEngine extends AriaRole {
 	override Params: ComboboxParams = new ComboboxParams();
 	override Ctx!: ComponentInterface & iAccess;
 	override el: HTMLElement;
