@@ -43,7 +43,7 @@ export abstract class ARIARole {
 	/** @see [[Async]] */
 	protected async: Async;
 
-	constructor({el, ctx, modifiers, params, async}: RoleOptions<ARIARole['Params']>) {
+	constructor({el, ctx, modifiers, params = {}, async}: RoleOptions<ARIARole['Params']>) {
 		this.el = el;
 		this.ctx = ctx;
 		this.modifiers = modifiers;
@@ -78,7 +78,7 @@ interface AbstractParams {}
 export interface RoleOptions<P extends AbstractParams, C extends ComponentInterface = ComponentInterface> {
 	el: AccessibleElement;
 	ctx?: C;
-	params: P;
+	params?: P;
 	modifiers?: Dictionary<boolean>;
 	async: Async;
 }
