@@ -118,7 +118,7 @@ export default class ARIAAdapter {
 	}
 
 	/**
-	 * Sets the value of the specified attribute to the node on which the ARIA directive is initialized
+	 * Sets a new value of the specified attribute to the node on which the ARIA directive is initialized
 	 *
 	 * @param name - the attribute name
 	 * @param value - the attribute value or a list of values
