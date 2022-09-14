@@ -9,6 +9,11 @@
  * Copyright © [2022] W3C® (MIT, ERCIM, Keio, Beihang).
  */
 
+/**
+ * [[include:core/component/directives/aria/roles/tab/README.md]]
+ * @packageDocumentation
+ */
+
 import type iBlock from 'super/i-block/i-block';
 import type iAccess from 'traits/i-access/i-access';
 
@@ -21,9 +26,14 @@ export class Tab extends ARIARole {
 
 	/** @inheritDoc */
 	init(): void {
-		const
-			{el} = this,
-			{isFirst, isSelected, hasDefaultSelectedTabs} = this.params;
+		const {
+			el,
+			params: {
+				isFirst,
+				isSelected,
+				hasDefaultSelectedTabs
+			}
+		} = this;
 
 		this.setAttribute('role', 'tab');
 		this.setAttribute('aria-selected', String(isSelected));
@@ -46,17 +56,15 @@ export class Tab extends ARIARole {
 	}
 
 	/**
-	 * Moves focus to the first tab in tablist
+	 * Moves focus to the first tab in the tablist
 	 */
 	protected moveFocusToFirstTab(): void {
-		const
-			firstTab = this.ctx?.findFocusableElement();
-
+		const firstTab = this.ctx?.findFocusableElement();
 		firstTab?.focus();
 	}
 
 	/**
-	 * Moves focus to the last tab in tablist
+	 * Moves focus to the last tab in the tablist
 	 */
 	protected moveFocusToLastTab(): void {
 		const
@@ -77,18 +85,16 @@ export class Tab extends ARIARole {
 	}
 
 	/**
-	 * Moves focus to the next or previous focusable element via the step parameter
+	 * Moves focus to the next or previous focusable element, according to the step parameter
 	 * @param step
 	 */
 	protected moveFocus(step: 1 | -1): void {
-		const
-			focusable = this.ctx?.getNextFocusableElement(step);
-
+		const focusable = this.ctx?.getNextFocusableElement(step);
 		focusable?.focus();
 	}
 
 	/**
-	 * Handler: active tab changes
+	 * Handler: the active tab has been changed
 	 * @param active
 	 */
 	protected onChange(active: Element | NodeListOf<Element>): void {
@@ -109,14 +115,13 @@ export class Tab extends ARIARole {
 	}
 
 	/**
-	 * Handler: keyboard event
+	 * Handler: a keyboard event has occurred
 	 */
-	protected onKeydown(e: Event): void {
+	protected onKeydown(e: KeyboardEvent): void {
 		const
-			evt = (<KeyboardEvent>e),
 			isVertical = this.params.orientation === 'vertical';
 
-		switch (evt.key) {
+		switch (e.key) {
 			case KeyCodes.LEFT:
 				if (isVertical) {
 					return;

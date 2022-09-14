@@ -1,63 +1,55 @@
 # core/component/directives/aria/roles/tab
 
-This module provides an engine for `v-aria` directive.
+This module provides an implementation of the ARIA [tab](https://www.w3.org/TR/wai-aria/#tab) role.
+An element with this role should be used in conjunction with elements with the roles [tablist](https://www.w3.org/TR/wai-aria/#tablist) and [tabpanel](https://www.w3 .org/TR /wai-aria/#tabpanel)
+The role expects the component within which the directive is used to implement the [[iAccess]] characteristic.
 
-The engine to set `tab` role attribute.
-The ARIA tab role indicates an interactive element inside a `tablist` that, when activated, displays its associated `tabpanel`.
+For more information see [this](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tab_role`).
 
-For more information go to [tab](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tab_role`).
-For recommendations how to make accessible widget go to [tab](`https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/`).
-
-## API
-
-The engine expects specific parameters to be passed.
-- `isFirst`: `boolean`.
-If true current tab is the first one in the list of tabs.
-- `isSelected`: `boolean`.
-If true current tab is active.
-- `hasDefaultSelectedTabs`: `boolean`.
-If true there are active tabs in the tablist widget by default.
-- `orientation`: `string`.
-The tablist widget view orientation.
-- `@change`:`HandlerAttachment`, see `core/component/directives/aria/roles/README.md`.
-Internal callback `onChange` expects an `Element` or `NodeListOf<Element>` to be passed.
-
-In addition, tabs expect the `controls` role engine to be added. An id passed to `controls` engine should be the id of the element with role `tabpanel`.
-
-Example:
 ```
-< button v-aria:tab | v-aria:controls = {for: 'id1'}
+< div v-aria:tablist
+  < template v-for = (tab, i) of tabs
+    < div :id = 'tab-' + i | v-aria:tab = { &
+      controls: 'content-' + i,
 
-< v-aria:tabpanel = {labelledby: 'id2'} | :id = 'id1'
-  < span :id = 'id2'
-    // content
+      isFirst: i === 0,
+      isSelected: tab.active,
+      hasDefaultSelectedTabs: tab.some((tab) => Boolean(tab.active)),
+
+      '@change': (cb) => cb(tab.active)
+    } .
+
+< template v-for = (content, i) of tabsContent
+  < div :id = 'content-' + i | v-aria:tabpanel = {labelledby: 'tab-' + i}
+    {{ content }}
 ```
 
-The engine expects the component to realize`iAccess` trait.
+## Available options
 
-## Usage
+Any ARIA attributes could be added in options through the short syntax.
 
-Example of passing parameters:
 ```
-< div v-aria:tab = { &
-    isFirst: i === 0,
-    isSelected: el.active,
-    hasDefaultSelectedTabs: items.some((el) => !!el.active),
-    orientation: orientation,
-    '@change': (cb) => cb(el.active)
-  }
-.
+< div v-aria = {label: 'foo', desribedby: 'id1', details: 'id2'}
+
+/// The same as
+
+< div :aria-label = 'foo' | :aria-desribedby = 'id1' | :aria-details = 'id2'
 ```
 
-Example of external usage:
-```
-< div &
-  id = 'tab-1' |
-  v-aria:tab = {...config} |
-  v-aria:controls = {for: 'tabpanel-1'}
-    Tab
+Also, the role introduces several additional settings.
 
-< div id = 'tabpanel-1' | v-aria:tabpanel = {labelledby: 'tab-1'}
-  < p
-    Content for the panel
-```
+### [isFirst = `false`]
+
+Whether the tab is the first in the tablist.
+
+### [isSelected = `false`]
+
+Whether the tab is selected.
+
+### [hasDefaultSelectedTabs = `false`]
+
+Whether there is at least one selected tab by default.
+
+### [@change]
+
+A handler for changing the active tab.
