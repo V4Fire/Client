@@ -1,33 +1,63 @@
-# core/component/directives/aria/roles/combobox
+# core/component/directives/aria/roles
 
-This module provides engines for `v-aria` directive.
+This module re-exports implementations of various ARIA roles for the `v-aria` directive,
+and also provides a basic set of types and interfaces for adding new roles.
 
-## API
+## List of supported roles
 
-Some roles need to handle components state changes or react to some events (add, delete or change certain attributes).
-The fields in directive passed options which name starts with `@` respond for this (ex. `@change`, `@open`).
-The certain contract should be followed:
-the name of the callback, which should be 'connected' with such field should start with `on` and be named in camelCase style (ex. `onChange`, `onOpen`).
+Each role is named after the appropriate name from the ARIA specification.
+Each role can accept its own set of options, which are described in its documentation.
 
-Directive supports this field type to be function, promise or string (type [`HandlerAttachment`](`core/component/directives/aria/roles/interface.ts`)).
-- Function:
-expects a callback to be passed.
-In this function callback could be added as a listener to certain component events or provide to the callback some component's state.
+* [Combobox](https://www.w3.org/TR/wai-aria/#combobox)
+* [Dialog](https://www.w3.org/TR/wai-aria/#dialog)
+* [Listbox](https://www.w3.org/TR/wai-aria/#listbox)
+* [Option](https://www.w3.org/TR/wai-aria/#option)
+* [Tab](https://www.w3.org/TR/wai-aria/#tab)
+* [Tablist](https://www.w3.org/TR/wai-aria/#tablist)
+* [Tabpanel](https://www.w3.org/TR/wai-aria/#tabpanel)
+* [Tree](https://www.w3.org/TR/wai-aria/#tree)
+* [Treeitem](https://www.w3.org/TR/wai-aria/#treeitem)
+* [Controls](https://www.w3.org/TR/wai-aria/#aria-controls)
+
+## Adding handlers for a role
+
+Some roles need to handle component state changes or respond to certain events (add, remove, or change certain attributes).
+Such handlers are specified as regular directive parameters, but with the special character `@` added to the beginning of the parameter names.
+The value of such parameters can be different types of data.
+
+### Listening a component event
+
+If you pass a string as the value of a handler parameter, then that string will be treated as the name of the component event.
+When such an event fires, the corresponding role method will be called, where the `@` symbol is replaced with `on` and
+everything is translated into camelCase. For instance, the `@change` key means calling the `onChange` method on the role.
+The called method will receive the event parameters as arguments.
+
+```
+< div v-aria:somerole = {'@change': 'myComponentEvent'}
+```
+
+### Handling a promise
+
+If you pass a promise as the value of a handler parameter, then when this promise is resolved, the corresponding role method
+will be called, where the `@` character is replaced with `on`, and everything is converted to camelCase. For instance,
+the `@change` key means calling the `onChange` method on the role. The called method will receive the unwrapped promise value
+as an argument.
+
+```
+< div v-aria:somerole = {'@change': myComponentPromise}
+```
+
+### Providing a callback
+
+If you pass a function, it will be called immediately and will receive as a parameter a reference to the corresponding role method,
+where the `@` character is replaced with `on` and everything is converted to camelCase. For instance,
+the `@change` key means calling the `onChange` method on the role. This approach is the most flexible, because allows you
+to register any handlers in this way.
 
 ```
 < div v-aria:somerole = {'@change': (cb) => on('event', cb)}
-```
 
-- Promise:
-If the field is a `Promise` or a `PromiseLike` object the callback would be passed to `then`.
+// Similar to
 
-- String:
-If the field is a `string`, the callback would be added as a listener to component's event similar to the string.
-
-```
 < div v-aria:somerole = {'@change': 'event'}
-
-// the same as
-
-< div v-aria:somerole = {'@change': (cb) => on('event', cb)}
 ```
