@@ -10,14 +10,14 @@ import type iAccess from 'traits/i-access/i-access';
 import type { ComponentInterface } from 'super/i-block/i-block';
 
 import { ComboboxParams } from 'core/component/directives/aria/roles/combobox/interface';
-import { ARIARole, EngineOptions } from 'core/component/directives/aria/roles/interface';
+import { ARIARole, RoleOptions } from 'core/component/directives/aria/roles/interface';
 
 export class Combobox extends ARIARole {
 	override Params: ComboboxParams = new ComboboxParams();
 	override Ctx!: ComponentInterface & iAccess;
 	override el: HTMLElement;
 
-	constructor(options: EngineOptions<ComboboxParams, ComponentInterface & iAccess>) {
+	constructor(options: RoleOptions<ComboboxParams, ComponentInterface & iAccess>) {
 		super(options);
 
 		const
