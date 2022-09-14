@@ -112,7 +112,7 @@ export default class ARIAAdapter {
 					return;
 				}
 
-				this.setAttribute(`aria-${key}`.dasherize(), param);
+				this.setAttribute(key === 'role' ? key : `aria-${key}`.dasherize(), param);
 			});
 		}
 	}
