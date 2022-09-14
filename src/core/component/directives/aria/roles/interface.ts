@@ -23,7 +23,7 @@ export abstract class ARIARole {
 	/**
 	 * An element to which the associated directive is applied
 	 */
-	readonly el: Element;
+	readonly el: AccessibleElement;
 
 	/**
 	 * A component context within which the associated directive is used
@@ -76,7 +76,7 @@ export abstract class ARIARole {
 interface AbstractParams {}
 
 export interface RoleOptions<P extends AbstractParams, C extends ComponentInterface = ComponentInterface> {
-	el: Element;
+	el: AccessibleElement;
 	ctx?: C;
 	params: P;
 	modifiers?: Dictionary<boolean>;
