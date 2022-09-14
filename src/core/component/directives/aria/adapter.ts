@@ -50,7 +50,7 @@ export default class ARIAAdapter {
 	 * Initializes the adapter according to the associated directive parameters
 	 */
 	init(): void {
-		this.setAttributes();
+		this.setRoleAttributes();
 		this.attachRoleHandlers();
 		this.role?.init();
 	}
@@ -90,7 +90,7 @@ export default class ARIAAdapter {
 	/**
 	 * Sets the ARIA attributes passed in the associated directive parameters
 	 */
-	protected setAttributes(): void {
+	protected setRoleAttributes(): void {
 		const
 			{binding} = this.params;
 
@@ -115,24 +115,6 @@ export default class ARIAAdapter {
 				this.setAttribute(`aria-${key}`.dasherize(), param);
 			});
 		}
-	}
-
-	/**
-	 * Sets a new value of the specified attribute to the node on which the ARIA directive is initialized
-	 *
-	 * @param name - the attribute name
-	 * @param value - the attribute value or a list of values
-	 */
-	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>): void {
-		const
-			{el} = this.params;
-
-		if (value == null) {
-			return;
-		}
-
-		el.setAttribute(name, Object.isArray(value) ? value.join(' ') : String(value));
-		this.async.worker(() => el.removeAttribute(name));
 	}
 
 	/**
@@ -175,5 +157,23 @@ export default class ARIAAdapter {
 				this.async.on(this.ctx, val, handler);
 			}
 		});
+	}
+
+	/**
+	 * Sets a new value of the specified attribute to the node on which the ARIA directive is initialized
+	 *
+	 * @param name - the attribute name
+	 * @param value - the attribute value or a list of values
+	 */
+	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>): void {
+		const
+			{el} = this.params;
+
+		if (value == null) {
+			return;
+		}
+
+		el.setAttribute(name, Object.isArray(value) ? value.join(' ') : String(value));
+		this.async.worker(() => el.removeAttribute(name));
 	}
 }
