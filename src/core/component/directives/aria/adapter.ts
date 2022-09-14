@@ -99,7 +99,7 @@ export default class ARIAAdapter {
 				continue;
 			}
 
-			this.setAttr('aria-labelledby', this.ctx.dom.getId(mod.slice(1)));
+			this.setAttribute('aria-labelledby', this.ctx.dom.getId(mod.slice(1)));
 			break;
 		}
 
@@ -112,7 +112,7 @@ export default class ARIAAdapter {
 					return;
 				}
 
-				this.setAttr(`aria-${key}`.dasherize(), param);
+				this.setAttribute(`aria-${key}`.dasherize(), param);
 			});
 		}
 	}
@@ -123,7 +123,7 @@ export default class ARIAAdapter {
 	 * @param name - the attribute name
 	 * @param value - the attribute value or a list of values
 	 */
-	protected setAttr(name: string, value: CanUndef<CanArray<unknown>>): void {
+	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>): void {
 		const
 			{el} = this.params;
 
