@@ -352,4 +352,13 @@ export default abstract class iStaticPage extends iPage {
 		this.locale = locale;
 		this.forceUpdate().catch(stderr);
 	}
+
+	/**
+	 * Handler: the online status has been changed
+	 * @param status
+	 */
+	@watch({path: 'isOnline', immediate: true})
+	protected onOnlineChange(status: string): void {
+		this.setRootMod('online', status);
+	}
 }

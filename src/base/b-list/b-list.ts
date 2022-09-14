@@ -56,6 +56,10 @@ interface bList extends Trait<typeof iAccess> {}
 
 @derive(iAccess)
 class bList extends iData implements iVisible, iWidth, iItems, iAccess {
+	/** @see [[iVisible.prototype.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
+
 	/**
 	 * Type: component active item
 	 */

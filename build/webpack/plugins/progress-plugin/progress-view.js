@@ -65,12 +65,12 @@ module.exports = class ProgressView {
 	 * Prints a message with the execution time of a build process by the passed name
 	 *
 	 * @protected
-	 * @param {string} processName
+	 * @param {string} _processName
 	 */
-	_finishProgress(processName) {
+	_finishProgress(_processName) {
 		const
 			executionTime = Date.now() - this.startTime,
-			executionTimeInSeconds = Math.round(executionTime.seconds());
+			executionTimeInSeconds = Math.round(executionTime / 1000);
 
 		this.finishedProcess++;
 

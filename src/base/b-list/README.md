@@ -61,7 +61,7 @@ That is, links can be navigated using the Tab key, etc.
 ### List of tabs
 
 If the component is used as a list of tabs it will implement the ARIA [tablist](https://www.w3.org/TR/wai-aria/#tablist) role.
-All available features included in this [widget] (https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/) are supported.
+All available features included in this [widget](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/) are supported.
 
 Please note that the component does not support the ability to set the content of the tabs.
 You need to do it yourself using the ARIA [tabpanel](https://www.w3.org/TR/wai-aria/#tabpanel) role.
@@ -73,15 +73,15 @@ You need to do it yourself using the ARIA [tabpanel](https://www.w3.org/TR/wai-a
   {label: 'Third tab', id: 'tab-3', controls: 'panel-3'}
 ] .
 
-< div id = panel-1 | v-aria:tabpanel = {labelledby: 'tab-1'}
+< div id = 'panel-1' | v-aria:tabpanel = {labelledby: 'tab-1'}
   < p
     Content for the first panel
 
-< div id = panel-2 | v-aria:tabpanel = {labelledby: 'tab-2'}
+< div id = 'panel-2' | v-aria:tabpanel = {labelledby: 'tab-2'}
   < p
     Content for the second panel
 
-< div id = panel-3 | v-aria:tabpanel = {labelledby: 'tab-3'}
+< div id = 'panel-3' | v-aria:tabpanel = {labelledby: 'tab-3'}
   < p
     Content for the third panel
 ```

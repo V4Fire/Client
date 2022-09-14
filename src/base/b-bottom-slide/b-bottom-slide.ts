@@ -64,6 +64,10 @@ interface bBottomSlide extends
 @component()
 @derive(iLockPageScroll, iObserveDOM, iOpen)
 class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
+	/** @see [[iVisible.prototype.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
+
 	/**
 	 * Component height mode:
 	 *

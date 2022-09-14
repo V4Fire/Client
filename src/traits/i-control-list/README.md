@@ -108,7 +108,6 @@ The trait also defines a base template to render a list of controls.
 - include 'super/i-block'|b as placeholder
 - include 'traits/i-control-list'|b
 
-
 - template index() extends ['i-block'].index
   - block body
     += self.getTpl('i-control-list/')({ &

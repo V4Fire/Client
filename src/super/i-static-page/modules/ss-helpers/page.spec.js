@@ -19,6 +19,8 @@ const entryPoints = {
 	'p-v4-components-demo': ['p-v4-components-demo']
 };
 
+const removeHash = (content) => content.replace(/assets\/.*_favicons'/, 'assets/favicons');
+
 describe('super/i-static-page/modules/ss-helpers/page', () => {
 	const assets = ss.getAssets(entryPoints);
 
@@ -42,7 +44,7 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 				}
 			});
 
-			expect(fs.readFileSync(file).toString()).toBe(
+			expect(removeHash(fs.readFileSync(file).toString())).toBe(
 				`
 Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
@@ -75,6 +77,7 @@ try {
 \t});
 } catch (_) {}
 PATH['std'] = 'std.js';
+PATH['favicons'] = 'assets/favicons;
 PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
 PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
 PATH['vendor'] = 'vendor.js';

@@ -11,6 +11,55 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Removed `global/g-visible`
+* Renamed the global `hide-if-offline` attribute to `data-hide-if-offline` `iStaticPage`
+
+#### :bug: Bug Fix
+
+* The online watcher is now created with the `immediate` flag `iStaticPage`
+
+#### :memo: Documentation
+
+* Added missing documentation `data-hide-if-offline` `iStaticPage`
+
+## v3.28.0 (2022-09-12)
+
+#### :boom: Breaking Change
+
+* Removed `printLn-progress-view` `build/webpack/plugins/progress-plugin`
+
+### :bug: Bug Fix
+
+* Now `WebpackProgressPlugin` properly work with the Webpack watch mode `build/webpack/plugins/progress-plugin`
+
+### :rocket: New Feature
+
+* Now `WebpackProgressPlugin` work within the CI environment `build/webpack/plugins/progress-plugin`
+
+## v3.27.0 (2022-08-30)
+
+#### :boom: Breaking Change
+
+* Update `favicons` dependency on beta version `favicons@7.0.0`
+* Now `static:favicons:build` working with `favicons@7` `build/gulp`
+
+#### :rocket: New Feature
+
+* Added helpers for working with favicons assets `build/helpers`
+* Added favicons folder path in global `PATH` variable `build/webpack/plugins`
+* Added global styles to hide elements if there is no internet connection `src/global/g-visible`
+* Now the `iVisibile` trait can hide components if there is no internet connection `src/traits/i-visible`
+
+## v3.26.0 (2022-08-26)
+
+#### :boom: Breaking Change
+
+* `build.demoPage` is a function now `config/default`
+
 ## v3.25.0 (2022-08-19)
 
 #### :boom: Breaking Change

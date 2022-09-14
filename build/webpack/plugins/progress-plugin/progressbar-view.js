@@ -55,15 +55,30 @@ module.exports = class ProgressbarView extends ProgressView {
 		);
 	}
 
+	_createProgressBar(processName) {
+		this.handlers[processName] = this.multibar.create(100, 0, {processName});
+	}
+
+	_removeProgressBar(processName) {
+		this.multibar.remove(this.handlers[processName]);
+	}
+
 	/** @override */
 	getProgressHandler(processName) {
-		this.handlers[processName] = this.multibar.create(100, 0, {processName});
+		this._createProgressBar(processName);
+
 		return this._updateProgress.bind(this, processName);
 	}
 
 	/** @override */
 	_updateProgress(processName, newProgress) {
+		if (!this.handlers[processName].isActive) {
+			this._removeProgressBar(processName);
+			this._createProgressBar(processName);
+		}
+
 		this.handlers[processName].update(this._convertProgressToPercent(newProgress));
+
 		super._updateProgress(processName, newProgress);
 	}
 };

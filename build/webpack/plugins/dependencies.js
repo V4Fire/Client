@@ -16,8 +16,12 @@ const
 	path = require('upath');
 
 const
-	{webpack} = require('@config/config'),
+	{webpack, src} = require('@config/config'),
 	{assetsJSON, assetsJS} = include('build/helpers');
+
+const
+	genHash = include('build/hash'),
+	faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'});
 
 /**
  * Webpack plugin to generate `.dependencies.js` files and `assets.json` / `assets.js`
@@ -68,7 +72,24 @@ module.exports = class DependenciesPlugin {
 
 			} catch {}
 
-			Object.assign(assets, manifest);
+			const
+				assetsDest = path.dirname(webpack.assetsOutput()),
+				faviconsHash = genHash(path.join(faviconsFolder, '/**/*')),
+				faviconsKey = 'favicons';
+
+			const
+				faviconsPath = `${assetsDest}/${faviconsHash}_${faviconsKey}`,
+				faviconsDest = webpack.publicPath(faviconsPath);
+
+			const
+				staticAssetsPath = {
+					[faviconsKey]: {
+						path: faviconsPath,
+						publicPath: faviconsDest
+					}
+				};
+
+			Object.assign(assets, manifest, staticAssetsPath);
 
 			fd = fs.openSync(assetsJSON, 'w');
 			fs.writeFileSync(fd, JSON.stringify(assets));

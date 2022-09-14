@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.26.0 (2022-08-26)
+
+#### :boom: Breaking Change
+
+* `build.demoPage` is a function now
+
 ## v3.20.0 (2022-04-25)
 
 #### :boom: Breaking Change

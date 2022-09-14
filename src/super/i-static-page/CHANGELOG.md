@@ -9,6 +9,21 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Removed `global/g-visible`
+* Renamed the global `hide-if-offline` attribute to `data-hide-if-offline`
+
+#### :bug: Bug Fix
+
+* The online watcher is now created with the `immediate` flag
+
+#### :memo: Documentation
+
+* Added missing documentation `data-hide-if-offline`
+
 ## v3.9.1 (2021-11-09)
 
 #### :boom: Breaking Change
