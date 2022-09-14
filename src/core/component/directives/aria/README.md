@@ -57,7 +57,7 @@ Any ARIA attributes could be added in options through the short syntax.
 < div :aria-label = 'foo' | :aria-desribedby = 'id1' | :aria-details = 'id2'
 ```
 
-The most common are described below:
+The most common are described below.
 
 ### [label]
 
