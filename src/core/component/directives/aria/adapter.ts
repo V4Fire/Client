@@ -125,8 +125,11 @@ export default class ARIAAdapter {
 	 * For example, `@open` will be converted to the role `onOpen` handler.
 	 */
 	protected attachRoleHandlers(): void {
-		const
-			{role, params: {binding}} = this;
+		const {
+			role,
+			async: $a,
+			params: {binding}
+		} = this;
 
 		if (role == null || !Object.isDictionary(binding.value)) {
 			return;
@@ -148,13 +151,13 @@ export default class ARIAAdapter {
 				handler = role[handlerName].bind(this.role);
 
 			if (Object.isFunction(val)) {
-				val(handler);
+				val($a.proxy(handler));
 
 			} else if (Object.isPromiseLike(val)) {
-				val.then(handler, stderr);
+				$a.promise(val).then(handler, stderr);
 
 			} else if (Object.isString(val)) {
-				this.async.on(this.ctx, val, handler);
+				$a.on(this.ctx, val, handler);
 			}
 		});
 	}
