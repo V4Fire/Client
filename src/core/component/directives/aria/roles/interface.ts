@@ -7,43 +7,43 @@
  */
 
 import type Async from 'core/async';
-import type { ComponentInterface } from 'super/i-block/i-block';
+import type { ComponentInterface } from 'core/component';
 
 export abstract class ARIARole {
 	/**
-	 * Type: directive passed params
+	 * Type: parameters passed from the associated directive
 	 */
 	readonly Params!: AbstractParams;
 
 	/**
-	 * Type: component on which the directive is set
+	 * Type: a component context within which the associated directive is used
 	 */
 	readonly Ctx!: ComponentInterface;
 
 	/**
-	 * Element on which the directive is set
+	 * An element to which the associated directive is applied
 	 */
-	readonly el: HTMLElement;
+	readonly el: Element;
 
 	/**
-	 * Component on which the directive is set
+	 * A component context within which the associated directive is used
 	 */
 	readonly ctx?: this['Ctx'];
 
 	/**
-	 * Directive passed modifiers
-	 */
-	readonly modifiers?: Dictionary<boolean>;
-
-	/**
-	 * Directive passed params
+	 * Parameters passed from the associated directive
 	 */
 	readonly params: this['Params'];
 
-	/** @see [[Async]] */
-	async: Async;
+	/**
+	 * Modifiers passed from the associated directive
+	 */
+	readonly modifiers?: Dictionary<boolean>;
 
-	constructor({el, ctx, modifiers, params, async}: EngineOptions<ARIARole['Params']>) {
+	/** @see [[Async]] */
+	protected async: Async;
+
+	constructor({el, ctx, modifiers, params, async}: RoleOptions<ARIARole['Params']>) {
 		this.el = el;
 		this.ctx = ctx;
 		this.modifiers = modifiers;
@@ -52,26 +52,34 @@ export abstract class ARIARole {
 	}
 
 	/**
-	 * Sets base aria attributes for current role
+	 * Initializes the role
 	 */
 	abstract init(): void;
 
 	/**
-	 * Sets aria attributes and the `Async` destructor
+	 * Sets a new value of the specified attribute to the passed element
+	 *
+	 * @param name - the attribute name
+	 * @param value - the attribute value or a list of values
+	 * @param [el] - the element to set an attribute
 	 */
-	setAttribute(attr: string, value: string, el: Element = this.el): void {
-		el.setAttribute(attr, value);
-		this.async.worker(() => el.removeAttribute(attr));
+	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>, el: Element = this.el): void {
+		if (value == null) {
+			return;
+		}
+
+		el.setAttribute(name, Object.isArray(value) ? value.join(' ') : String(value));
+		this.async.worker(() => el.removeAttribute(name));
 	}
 }
 
 interface AbstractParams {}
 
-export interface EngineOptions<P extends AbstractParams, C extends ComponentInterface = ComponentInterface> {
-	el: HTMLElement;
+export interface RoleOptions<P extends AbstractParams, C extends ComponentInterface = ComponentInterface> {
+	el: Element;
 	ctx?: C;
-	modifiers?: Dictionary<boolean>;
 	params: P;
+	modifiers?: Dictionary<boolean>;
 	async: Async;
 }
 

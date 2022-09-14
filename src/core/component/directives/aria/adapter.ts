@@ -11,7 +11,7 @@ import type iBlock from 'super/i-block/i-block';
 
 import * as roles from 'core/component/directives/aria/roles';
 import type { DirectiveOptions } from 'core/component/directives/aria/interface';
-import type { ARIARole, EngineOptions } from 'core/component/directives/aria/roles';
+import type { ARIARole, RoleOptions } from 'core/component/directives/aria/roles';
 
 /**
  * An adapter to create an ARIA role instance based on the passed directive params and to add common attributes
@@ -76,7 +76,7 @@ export default class ARIAAdapter {
 			return null;
 		}
 
-		const params: EngineOptions<ARIARole['Params']> = {
+		const params: RoleOptions<ARIARole['Params']> = {
 			el,
 			modifiers,
 			params: value,
