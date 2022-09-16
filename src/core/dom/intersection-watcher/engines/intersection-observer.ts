@@ -90,7 +90,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	}
 
 	/**
-	 * Handler: IntersectionObserver instance event
+	 * Handler: the IntersectionObserver instance event
 	 *
 	 * @param threshold
 	 * @param entries
