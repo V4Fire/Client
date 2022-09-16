@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.26.0 (2022-08-26)
+
+#### :boom: Breaking Change
+
+* `build.demoPage` is a function now
+
+## v3.20.0 (2022-04-25)
+
+#### :boom: Breaking Change
+
+* Removed all options associated with `worker-loader`
+
 ## v3.16.2 (2022-02-22)
 
 #### :bug: Bug Fix

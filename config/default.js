@@ -25,8 +25,44 @@ const
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
+	/**
+	 * Name of the used MVVM library, like Vue or React
+	 *
+	 * @cli engine
+	 * @env ENGINE
+	 *
+	 * @param {string=} [def] - default value
+	 * @returns {string}
+	 */
+	engine(def = 'vue') {
+		return o('engine', {
+			env: true,
+			default: def,
+			validate(v) {
+				return Boolean({
+					vue: true,
+					vue3: true,
+					zero: true
+				}[v]);
+			}
+		});
+	},
+
 	/** @inheritDoc */
 	build: {
+		/**
+		 * True, if the build process is running within CI
+		 *
+		 * @cli build_ci
+		 * @env BUILD_CI
+		 *
+		 * @type {boolean}
+		 */
+		ci: o('build_ci', {
+			env: true,
+			default: Boolean(process.env.CI)
+		}),
+
 		/**
 		 * List of entries to build.
 		 * The entries are taken from the "core/entries" directory.
@@ -48,6 +84,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		entries: o('entries', {
 			env: true,
 			coerce: (v) => v ? v.split(',') : []
+		}),
+
+		/**
+		 * The number of available CPUs that can be used with application building
+		 *
+		 * @cli processes
+		 * @env PROCESSES
+		 *
+		 * @type {number}
+		 * @default `require('os').cpus().length - 1`
+		 */
+		processes: o('processes', {
+			env: true,
+			short: 'p',
+			type: 'number',
+			default: require('os').cpus().length - 1
 		}),
 
 		/**
@@ -85,22 +137,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		buildGraphFromCache: o('build-graph-from-cache', {
 			env: true,
 			type: 'boolean'
-		}),
-
-		/**
-		 * The number of available CPUs that can be used with application building
-		 *
-		 * @cli processes
-		 * @env PROCESSES
-		 *
-		 * @type {number}
-		 * @default `require('os').cpus().length - 1`
-		 */
-		processes: o('processes', {
-			env: true,
-			short: 'p',
-			type: 'number',
-			default: require('os').cpus().length - 1
 		}),
 
 		/**
@@ -204,11 +240,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * A name of the component to build demo examples or tests
+		 *
+		 * @cli demo-page
+		 * @env DEMO_PAGE
+		 *
+		 * @returns {string}
 		 */
-		demoPage: o('demo-page', {
-			env: true,
-			default: 'p-v4-components-demo'
-		}),
+		demoPage() {
+			return o('demo-page', {
+				env: true,
+				default: 'p-v4-components-demo'
+			});
+		},
 
 		/**
 		 * Port for a test server
@@ -220,7 +263,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Enables the special kind of a demo page to build with
+		 * Enables the special kind of demo page to build with
 		 * the feature of component inspection by using the "bV4ComponentDemo" component.
 		 *
 		 * The inspection mode allows us to see all component modifiers/props and dynamically change it.
@@ -273,34 +316,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Name of the used MVVM library, like Vue or React
-	 *
-	 * @cli engine
-	 * @env ENGINE
-	 *
-	 * @param {string=} [def] - default value
-	 * @returns {string}
-	 */
-	engine(def = 'vue3') {
-		return o('engine', {
-			env: true,
-			default: def,
-			validate(v) {
-				return Boolean({
-					vue: true,
-					vue3: true,
-					zero: true
-				}[v]);
-			}
-		});
-	},
-
-	/**
 	 * WebPack configuration
 	 */
 	webpack: {
 		/**
-		 * Value of `mode`
+		 * Returns a value of `mode`
 		 *
 		 * @cli mode
 		 * @env MODE
@@ -316,7 +336,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `cache.type`
+		 * Returns a value of `cache.type`
 		 *
 		 * @cli cache-type
 		 * @env CACHE_TYPE
@@ -332,7 +352,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `target`
+		 * Returns a value of `target`
 		 *
 		 * @cli target
 		 * @env TARGET
@@ -352,7 +372,37 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `devtool`
+		 * Returns parameters to show webpack build progress
+		 *
+		 * @cli progress
+		 * @env PROGRESS
+		 *
+		 * @see https://github.com/npkgz/cli-progress
+		 * @param [def] - default value
+		 * @returns {Object}
+		 */
+		progress(def = true) {
+			const enabled = o('progress', {
+				env: true,
+				default: def,
+				type: 'boolean'
+			});
+
+			if (enabled) {
+				return {
+					opts: {
+						clearOnComplete: true,
+						stopOnComplete: true,
+						forceRedraw: true,
+						noTTYOutput: this.config.build.ci,
+						hideCursor: null
+					}
+				};
+			}
+		},
+
+		/**
+		 * Returns a value of `devtool`
 		 *
 		 * @cli devtool
 		 * @env DEVTOOL
@@ -368,7 +418,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `stats`
+		 * Returns a value of `stats`
 		 *
 		 * @cli stats
 		 * @env STATS
@@ -431,7 +481,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Some webpack options to optimize build
+		 * Webpack options to optimize build
 		 */
 		optimize: {
 			/**
@@ -751,10 +801,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 *
 	 * 1. server - to compile node.js modules
 	 * 2. client - to compile client modules
-	 * 3. worker - to compile web-worker modules
 	 *
 	 * @override
-	 * @returns {{server: !Object, client: !Object, worker: !Object}}
+	 * @returns {{server: !Object, client: !Object}}
 	 */
 	typescript() {
 		const
@@ -773,8 +822,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			client,
-			server,
-			worker: client
+			server
 		};
 	},
 
@@ -784,24 +832,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	terser() {
 		return {};
-	},
-
-	/**
-	 * Returns parameters for `worker-loader`
-	 * @returns {{shared: !Object, service: !Object, worker: !Object}}
-	 */
-	worker() {
-		return {
-			worker: {},
-
-			serviceWorker: {
-				workerType: 'ServiceWorker'
-			},
-
-			sharedWorker: {
-				workerType: 'SharedWorker'
-			}
-		};
 	},
 
 	/**
@@ -843,87 +873,39 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for a stats report from Webpack
-	 * @see https://webpack.js.org/api/stats/
+	 * Returns parameters for statoscope
 	 *
-	 * @cli stats-path
-	 * @env STATS_PATH
-	 * @default `compilation-stats.json`
-	 *
-	 * @cli merged-stats-path
-	 * @env MERGED_STATS_PATH
-	 * @default `compilation-stats.json`
-	 *
-	 * @cli patchStatsPath
-	 * @env PATCH_STATS_PATH
-	 * @default `compilation-stats.json`
-	 *
-	 * @cli statoscope-report
-	 * @env STATOSCOPE_REPORT
-	 * @default `false`
-	 *
-	 * @cli entryDownloadSizeLimits
-	 * @default `1024``
-	 *
-	 * @cli entryDownloadTimeLimits
-	 * @default `250`
-	 *
-	 * @param {object} [def] - default value
+	 * @see https://github.com/statoscope/statoscope/tree/master/packages/webpack-plugin#usage
 	 * @returns {!Object}
 	 */
-	statoscope(def = {path: 'compilation-stats.json', mergedPath: 'compilation-stats.json'}) {
+	statoscope() {
 		return {
-			statsPath: o('stats-path', {
-				default: def.path,
-				env: true
-			}),
-
-			mergedStatsPath: o('merged-stats-path', {
-				default: def.mergedPath,
-				env: true
-			}),
-
-			patchStatsPath: o('patch-stats-path', {
-				default: def.path,
-				env: true
-			}),
-
-			openReport: o('statoscope-report', {
+			enabled: o('statoscope-webpack-plugin', {
 				default: false,
 				env: true
 			}),
 
-			entryDownloadSizeLimits: o('entry-download-size-limits', {
-				default: 1024,
-				env: true
-			}),
+			entryDownloadDiffSizeLimits: {
+				runtime: 50 * 1024,
+				standalone: 50 * 1024,
+				styles: 50 * 1024,
+				html: 10 * 1024
+			},
 
-			entryDownloadTimeLimits: o('entry-download-time-limits', {
-				default: 250,
-				env: true
-			})
-		};
-	},
+			entryDownloadDiffTimeLimits: {
+				runtime: 50,
+				standalone: 50,
+				styles: 50,
+				html: 10
+			},
 
-	/**
-	 * Returns parameters for `SimpleProgressWebpackPlugin`
-	 *
-	 * @cli progress
-	 * @env PROGRESS
-	 * @default `true`
-	 *
-	 * @param {boolean=} [def] - default value
-	 * @returns {!Object}
-	 */
-	simpleProgressWebpackPlugin(def = !IS_PROD) {
-		return {
-			enabled: o('progress', {
-				env: 'PROGRESS',
-				type: 'boolean',
-				default: def
-			}),
-
-			format: 'minimal'
+			webpackPluginConfig: {
+				saveStatsTo: 'statoscope-stats/stats-[name].json',
+				saveOnlyStats: true,
+				normalizeStats: false,
+				watchMode: false,
+				open: false
+			}
 		};
 	},
 
@@ -1071,7 +1053,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			display: 'standalone',
 			orientation: 'portrait',
 			version: 1.0,
-			logging: false
+			logging: false,
+			manifestName: 'manifest.json'
 		};
 	},
 

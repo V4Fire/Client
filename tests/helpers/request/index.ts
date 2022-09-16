@@ -13,7 +13,15 @@ export default class Request {
 	/**
 	 * Generates a random URL
 	 */
-	getRandomUrl(): string {
+	static getRandomUrl(): string {
 		return `https://v4fire-random-url.com/${String(Math.random()).substring(4)}`;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[Request.getRandomUrl]]
+	 */
+	getRandomUrl(): string {
+		return Request.getRandomUrl();
 	}
 }

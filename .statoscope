@@ -1,0 +1,31 @@
+{
+	"validate": {
+		"plugins": ["@statoscope/webpack"],
+		"reporters": [
+			"@statoscope/console",
+			["@statoscope/stats-report", {"open": false}]
+		],
+
+		"rules": {
+			"@statoscope/webpack/no-packages-dups": ["error"],
+
+			"@statoscope/webpack/diff-entry-download-size-limits": [
+				"error",
+				{
+					"global": {
+						"maxSizeDiff": $entryDownloadDiffSizeLimits
+					}
+				}
+			],
+
+			"@statoscope/webpack/diff-entry-download-time-limits": [
+				"error",
+				{
+					"global": {
+						"maxDownloadTimeDiff": $entryDownloadDiffTimeLimits
+					}
+				}
+			]
+		}
+	}
+}

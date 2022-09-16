@@ -9,7 +9,8 @@
 import delay from 'delay';
 import type { Page, ElementHandle } from 'playwright';
 
-import type Helpers from 'tests/helpers';
+import DOM from 'tests/helpers/dom';
+
 import type { ScrollToBottomWhileOptions } from 'tests/helpers/scroll/interface';
 
 export * from 'tests/helpers/scroll/interface';
@@ -28,14 +29,6 @@ export default class Scroll {
 		return page.evaluate((options) => globalThis.scrollBy(options), opts);
 	}
 
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
-
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Waits an element by the specified selector appear and scrolls a page to it if needed.
 	 * Throws an error when `elementHandle` does not refer to an element connected to a document or shadow root.
@@ -44,7 +37,7 @@ export default class Scroll {
 	 * @param selector
 	 * @param [scrollIntoViewOpts]
 	 */
-	async scrollIntoViewIfNeeded(
+	static async scrollIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
 		selector: string,
 		scrollIntoViewOpts: Dictionary
@@ -61,13 +54,21 @@ export default class Scroll {
 	 * @param refName
 	 * @param [scrollIntoViewOpts]
 	 */
-	async scrollRefIntoViewIfNeeded(
+	static async scrollRefIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
 		refName: string,
 		scrollIntoViewOpts: Dictionary
 	): Promise<void> {
-		const ref = await this.parent.dom.waitForRef(ctx, refName);
+		const ref = await DOM.waitRef(ctx, refName);
 		return ref.scrollIntoViewIfNeeded(scrollIntoViewOpts);
+	}
+
+	/**
+	 * @param page
+	 * @param [options]
+	 */
+	static scrollToBottom(page: Page, options?: ScrollOptions): Promise<void> {
+		return this.scrollBy(page, {top: 1e7, left: 0, ...options});
 	}
 
 	/**
@@ -77,7 +78,7 @@ export default class Scroll {
 	 * @param [checkFn]
 	 * @param [opts]
 	 */
-	async scrollToBottomWhile(
+	static async scrollToBottomWhile(
 		page: Page,
 		checkFn?: () => CanPromise<boolean>,
 		opts?: ScrollToBottomWhileOptions
@@ -115,23 +116,67 @@ export default class Scroll {
 	}
 
 	/**
-	 * Scrolls a page to the bottom
-	 *
-	 * @param page
-	 * @param [opts]
+	 * @param ctx
+	 * @param selector
+	 * @param [scrollIntoViewOpts]
+	 * @deprecated
+	 * @see [[Scroll.scrollIntoViewIfNeeded]]
 	 */
-	scrollToBottom(page: Page, opts?: ScrollOptions): Promise<void> {
-		return this.scrollBy(page, {top: 1e7, left: 0, ...opts});
+	async scrollIntoViewIfNeeded(
+		ctx: Page | ElementHandle,
+		selector: string,
+		scrollIntoViewOpts: Dictionary
+	): Promise<void> {
+		return Scroll.scrollRefIntoViewIfNeeded(ctx, selector, scrollIntoViewOpts);
 	}
 
 	/**
+	 * @param ctx
+	 * @param refName
+	 * @param [scrollIntoViewOpts]
+	 * @deprecated
+	 * @see [[Scroll.scrollRefIntoViewIfNeeded]]
+	 */
+	async scrollRefIntoViewIfNeeded(
+		ctx: Page | ElementHandle,
+		refName: string,
+		scrollIntoViewOpts: Dictionary
+	): Promise<void> {
+		return Scroll.scrollRefIntoViewIfNeeded(ctx, refName, scrollIntoViewOpts);
+	}
+
+	/**
+	 * @param page
+	 * @param opts
 	 * @deprecated
 	 * @see [[Scroll.scrollBy]]
-	 *
-	 * @param page
-	 * @param options
 	 */
-	scrollBy(page: Page, options: ScrollToOptions): Promise<void> {
-		return Scroll.scrollBy(page, options);
+	scrollBy(page: Page, opts: ScrollToOptions): Promise<void> {
+		return Scroll.scrollBy(page, opts);
+	}
+
+	/**
+	 * @param page
+	 * @param [opts]
+	 * @deprecated
+	 * @see [[Scroll.scrollToBottom]]
+	 */
+	scrollToBottom(page: Page, opts?: ScrollOptions): Promise<void> {
+		return Scroll.scrollToBottom(page, opts);
+	}
+
+	/**
+	 * @param page
+	 * @param [checkFn]
+	 * @param [opts]
+	 * @deprecated
+	 * @see [[Scroll.scrollToBottomWhile]]
+	 */
+	async scrollToBottomWhile(
+		page: Page,
+		checkFn?: () => CanPromise<boolean>,
+		opts?: ScrollToBottomWhileOptions
+	): Promise<void> {
+		return Scroll.scrollToBottomWhile(page, checkFn, opts);
 	}
 }

@@ -14,6 +14,7 @@
 
 declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
+declare let __webpack_require__: (moduleId: string) => any;
 
 declare const MODULE: string;
 declare const CSP_NONCE_STORE: string;
@@ -120,7 +121,7 @@ interface RenderParams {
 	/**
 	 * Component attrs
 	 */
-	attrs: Dictionary;
+	attrs?: Dictionary;
 
 	/** @see [[RenderContent]] */
 	content?: Dictionary<RenderContent | RenderContentFn | string>;
@@ -185,7 +186,12 @@ declare var
 	/**
 	 * Removes all components created via `globalThis.renderComponents`
 	 */
-	removeCreatedComponents: () => void;
+	removeCreatedComponents: () => void,
+
+	/**
+	 * Requires a module by the specified path
+	 */
+	importModule: (path: string) => any;
 
 interface TouchGesturesCreateOptions {
 	/**

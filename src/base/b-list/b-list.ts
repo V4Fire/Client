@@ -48,6 +48,10 @@ export const
 })
 
 export default class bList extends iData implements iVisible, iWidth, iItems {
+	/** @see [[iVisible.prototype.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
+
 	/**
 	 * Type: component active item
 	 */

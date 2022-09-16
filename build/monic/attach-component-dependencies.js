@@ -61,6 +61,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 	return imports + str;
 
 	async function forEach(dep) {
+		if (dep.startsWith('g-')) {
+			return;
+		}
+
 		const
 			declFromCache = decls[dep];
 

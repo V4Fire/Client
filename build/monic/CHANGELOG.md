@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.23.9 (2022-08-04)
+
+#### :bug: Bug Fix
+
+* Global component styles are no longer loaded using `import()`
+
 ## v3.15.0 (2021-12-16)
 
 #### :bug: Bug Fix

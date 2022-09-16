@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.24.2 (2022-08-19)
+
+#### :house: Internal
+
+* Provided unsafe access to the `engine` field
+
+## v3.23.8 (2022-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed opening a link in a new tab with the CMD meta key on macOS
+
 ## v3.5.2 (2021-10-06)
 
 #### :bug: Bug Fix

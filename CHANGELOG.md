@@ -11,7 +11,197 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2022-??-??)
+## v3.29.0 (2022-09-13)
+
+#### :boom: Breaking Change
+
+* Removed `global/g-visible`
+* Renamed the global `hide-if-offline` attribute to `data-hide-if-offline` `iStaticPage`
+
+#### :bug: Bug Fix
+
+* The online watcher is now created with the `immediate` flag `iStaticPage`
+
+#### :memo: Documentation
+
+* Added missing documentation `data-hide-if-offline` `iStaticPage`
+
+## v3.28.0 (2022-09-12)
+
+#### :boom: Breaking Change
+
+* Removed `printLn-progress-view` `build/webpack/plugins/progress-plugin`
+
+### :bug: Bug Fix
+
+* Now `WebpackProgressPlugin` properly work with the Webpack watch mode `build/webpack/plugins/progress-plugin`
+
+### :rocket: New Feature
+
+* Now `WebpackProgressPlugin` work within the CI environment `build/webpack/plugins/progress-plugin`
+
+## v3.27.0 (2022-08-30)
+
+#### :boom: Breaking Change
+
+* Update `favicons` dependency on beta version `favicons@7.0.0`
+* Now `static:favicons:build` working with `favicons@7` `build/gulp`
+
+#### :rocket: New Feature
+
+* Added helpers for working with favicons assets `build/helpers`
+* Added favicons folder path in the global `PATH` variable `build/webpack/plugins`
+* Added global styles to hide elements if there is no internet connection `src/global/g-visible`
+* Now the `iVisibile` trait can hide components if there is no internet connection `src/traits/i-visible`
+
+## v3.26.0 (2022-08-26)
+
+#### :boom: Breaking Change
+
+* `build.demoPage` is a function now `config/default`
+
+## v3.25.0 (2022-08-19)
+
+#### :boom: Breaking Change
+
+* Changed calculation of `textHintWithIndent` to concatenation `bInput.value` and `textHint` without space between it `form/b-input`
+
+## v3.24.2 (2022-08-19)
+
+#### :house: Internal
+
+* Provided unsafe access to the `engine` field `base/b-router`
+
+## v3.24.1 (2022-08-19)
+
+#### :house: Internal
+
+* Refactor of the statoscope config build script `build/build-statoscope`
+
+## v3.24.0 (2022-08-12)
+
+#### :boom: Breaking change
+
+* Removed outdated helpers for webpack stats files `build/gulp`
+
+#### :rocket: New Feature
+
+* Added a new plugin `statoscope-webpack-plugin` `build/webpack`
+* Added a new script to build the statoscope config file `build/build-statoscope`
+
+## v3.23.10 (2022-08-12)
+
+#### :bug: Bug Fix
+
+* Global component styles are no longer loaded using `import()` `build/monic`
+
+## v3.23.8 (2022-07-22)
+
+#### :bug: Bug Fix
+
+* Fixed opening a link in a new tab with the CMD meta key on macOS `base/b-router`
+
+## v3.23.7 (2022-07-22)
+
+#### :bug: Bug Fix
+
+* [Removed ES6 code from the prelude loader](build/webpack/loaders/prelude-loader.js)
+
+## v3.23.6 (2022-07-13)
+
+#### :bug: Bug Fix
+
+* [Added a new TypeScript transformer to transpile modern regexps for integrability with polyfills](build/ts-transformers)
+
+## v3.23.4 (2022-07-08)
+
+#### :house: Internal
+
+* [Removed setting of `optimization.moduleIds`](build/webpack/optimization.js)
+
+## v3.23.3 (2022-07-08)
+
+#### :rocket: New Feature
+
+* [Added a new method to import modules into the test environment `tests/helpers/utils#import`](tests/helpers/utils.ts)
+
+#### :house: Internal
+
+* [`optimization.moduleIds` is now set as `named`](build/webpack/optimization.js)
+* All test helpers now have static methods (similar to prototype methods)
+* Test migration from outdated API:
+  * `b-form`
+  * `b-button`
+  * `b-checkbox`
+
+## v3.23.2 (2022-07-04)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue with test server being spawned with incorrect `cwd`](tests/server/config.ts)
+
+## v3.23.1 (2022-06-14)
+
+#### :bug: Bug Fix
+
+* Fixed `textHint` position `form/b-input`
+
+## v3.23.0 (2022-05-27)
+
+#### :rocket: New Feature
+
+* Added a new checker `is.Safari` `core/browser`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the History API router engine when backing to the first history item doesn’t emit a popstate event in Safari if the script is running within an iframe `core/router/engines/browser-history`
+
+## v3.22.0 (2022-05-26)
+
+#### :boom: Breaking Change
+
+* Replaced `simpleProgressWebpackPlugin` to a custom plugin
+* Removed generation of redundant artifacts (`license.txt`, empty entry files) `build`
+* Now all comments are removed from compiled CSS files by default
+
+#### 🐛 Bug Fix
+
+* Removed deadlock during execution of Snakeskin templates `i-static-page/modules/ss-helpers`
+
+#### :house: Internal
+
+* Added human-readable names for all registered webpack process `build/webpack`
+
+## v3.21.1 (2022-05-25)
+
+#### 🐛 Bug Fix
+
+* Fixed `b-input` overflowing when `textHint` provided `form/b-input`
+
+## v3.21.0 (2022-05-24)
+
+#### :rocket: New Feature
+
+* Added a new prop `textHint` to show extra text after the component non-empty input `form/b-input`
+
+## v3.20.0 (2022-04-25)
+
+#### :boom: Breaking Change
+
+* Removed `worker-loader` `build`
+* Removed all options associated with `worker-loader` `config`
+
+## v3.19.2 (2022-04-19)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with `iHistory` repeatedly initializing when opening bottom-slide from a non-zero step `base/b-bottom-slide`
+
+#### :house: Internal
+
+* Downgraded TS to `4.6.2`
+
+## v3.19.1 (2022-04-12)
 
 #### :house: Internal
 

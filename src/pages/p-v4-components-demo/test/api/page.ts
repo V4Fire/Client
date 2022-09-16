@@ -46,7 +46,7 @@ export default class DemoPage {
 	 * Opens a demo page
 	 */
 	async goto(): Promise<DemoPage> {
-		await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage}.html`), {waitUntil: 'networkidle'});
+		await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage()}.html`), {waitUntil: 'networkidle'});
 		await this.page.waitForSelector('#root-component', {state: 'attached'});
 
 		return this;

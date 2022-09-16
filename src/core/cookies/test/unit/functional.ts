@@ -11,14 +11,15 @@ import type { JSHandle, Cookie } from 'playwright';
 import type * as Cookies from 'core/cookies';
 
 import test from 'tests/config/unit/test';
+import Utils from 'tests/helpers/utils';
 
 test.describe('core/cookies', () => {
 	let
 		cookie: JSHandle<typeof Cookies>;
 
-	test.beforeEach(async ({demoPage}) => {
+	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
-		cookie = await (await demoPage.createDummy()).evaluateHandle(({modules: {cookie}}) => cookie);
+		cookie = await Utils.import(page, 'core/cookies');
 	});
 
 	test.describe('`get`', () => {

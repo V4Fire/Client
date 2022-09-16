@@ -8,20 +8,15 @@
 
 import type { Page } from 'playwright';
 
-import type Helpers from 'tests/helpers';
+import Component from 'tests/helpers/component';
+import BOM from 'tests/helpers/bom';
+
+import type iStaticPage from 'super/i-static-page/i-static-page';
 
 /**
  * Class provides API to work with an application router
  */
 export default class Router {
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
-
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Calls the specified method on a router by providing the passed arguments
 	 *
@@ -29,14 +24,25 @@ export default class Router {
 	 * @param method
 	 * @param args
 	 */
-	async call(page: Page, method: string, ...args: unknown[]): Promise<void> {
+	static async call(page: Page, method: string, ...args: unknown[]): Promise<void> {
 		const
-			c = await this.parent.component.waitForComponent(page, '#root-component');
+			c = await Component.waitForRoot<iStaticPage>(page);
 
 		await c.evaluate((ctx, args) =>
 			ctx.router?.[<string>args[0]](...args.slice(1, args.length)), [method, ...args]);
 
 		await page.waitForLoadState('networkidle');
-		await this.parent.bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
+	}
+
+	/**
+	 * @param page
+	 * @param method
+	 * @param args
+	 * @deprecated
+	 * @see [[Router.call]]
+	 */
+	async call(page: Page, method: string, ...args: unknown[]): Promise<void> {
+		return Router.call(page, method, ...args);
 	}
 }

@@ -9,11 +9,8 @@
  */
 
 const
-	$C = require('collection.js');
-
-const
-	{webpack} = require('@config/config'),
-	{muteConsole, unmuteConsole} = include('build/helpers');
+	$C = require('collection.js'),
+	{webpack} = require('@config/config');
 
 /**
  * Returns WebPack configuration to the specified entry
@@ -25,8 +22,17 @@ const
 async function buildFactory(entry, buildId) {
 	await include('build/webpack/custom/preconfig');
 
+	const {
+		name,
+		entries,
+		dependencies
+	} = entry;
+
+	const webpackEntry = await $C(entries)
+		.parallel()
+		.map((src, name) => include('build/webpack/entry')(name, src));
+
 	const
-		name = Object.keys(entry)[0],
 		plugins = await include('build/webpack/plugins')({buildId, name}),
 		modules = await include('build/webpack/module')({buildId, plugins}),
 		target = await include('build/webpack/target');
@@ -34,7 +40,7 @@ async function buildFactory(entry, buildId) {
 	const config = {
 		name,
 
-		entry: await $C(entry).parallel().map((src, name) => include('build/webpack/entry')(name, src)),
+		entry: webpackEntry,
 		output: await include('build/webpack/output')({buildId}),
 
 		resolve: await include('build/webpack/resolve'),
@@ -60,6 +66,10 @@ async function buildFactory(entry, buildId) {
 		config.target = target;
 	}
 
+	if (dependencies) {
+		config.dependencies = dependencies;
+	}
+
 	return config;
 }
 
@@ -67,26 +77,13 @@ async function buildFactory(entry, buildId) {
  * Array of promises with WebPack configs.
  */
 const tasks = (async () => {
-	const
-		outputJSON = process.argv.some((arg) => /^--json(?:=|$)/.test(arg));
-
-	if (outputJSON) {
-		muteConsole();
-	}
-
 	await include('build/snakeskin');
 
 	const
-		{processes} = await include('build/graph');
-
-	const
+		{processes} = await include('build/graph'),
 		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
 
 	globalThis.WEBPACK_CONFIG = tasks;
-
-	if (outputJSON) {
-		unmuteConsole();
-	}
 
 	return tasks;
 })();

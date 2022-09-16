@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+
+## v3.27.0 (2022-08-30)
+
+#### :rocket: [New Feature]
+
+* Added helpers for working with favicons assets
+
 ## v3.15.5 (2021-02-03)
 
 #### :bug: Bug Fix

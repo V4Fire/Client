@@ -9,7 +9,9 @@
  */
 
 const
-	$C = require('collection.js'),
+	$C = require('collection.js');
+
+const
 	config = require('@config/config'),
 	webpack = require('webpack');
 
@@ -23,8 +25,9 @@ module.exports = async function plugins({name}) {
 
 	const
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
-		SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin'),
-		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings');
+		createProgressPlugin = include('build/webpack/plugins/progress-plugin'),
+		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
+		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
@@ -33,10 +36,17 @@ module.exports = async function plugins({name}) {
 	]);
 
 	const
-		progressWebpackConfig = config.simpleProgressWebpackPlugin();
+		statoscopeConfig = config.statoscope();
 
-	if (progressWebpackConfig.enabled) {
-		plugins.set('simpleProgressWebpackPlugin', new SimpleProgressWebpackPlugin({name, ...progressWebpackConfig}));
+	if (statoscopeConfig.enabled) {
+		plugins.set(
+			'statoscope-webpack-plugin',
+			new StatoscopeWebpackPlugin(statoscopeConfig.webpackPluginConfig)
+		);
+	}
+
+	if (config.webpack.progress()) {
+		plugins.set('progress-plugin', createProgressPlugin(name));
 	}
 
 	return plugins;

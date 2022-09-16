@@ -12,6 +12,8 @@ The layout contains including of base CSS/JS/... files and a bunch of meta tags,
 
 * The component is not used on its own. It is a superclass.
 
+* The component sets the root modifier `online` depending on the Internet status.
+
 * The component extends [[iPage]].
 
 * By default, the root tag of the component is `<div>`.
@@ -58,6 +60,22 @@ export default abstract class iStaticPage extends iPage {
 ```
 
 See [[bRouter]] and [[bDynamicPage]] for more information.
+
+## Hiding DOM elements when there is no Internet connection
+
+Depending on the Internet connection status, the component sets the `online` global modifier.
+In addition to this, any DOM element with the `data-hide-if-offline="true"` attribute will be hidden if there is no Internet.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < p data-hide-if-offline = true
+      Balance {{ balance }}
+```
 
 ## Providing dynamic `webpack.publicPath`
 

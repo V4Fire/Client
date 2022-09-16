@@ -10,7 +10,6 @@ import delay from 'delay';
 
 import type { Page } from 'playwright';
 
-import type Helpers from 'tests/helpers';
 import type { WaitForIdleOptions, WaitForRAFOptions } from 'tests/helpers/bom/interface';
 
 export * from 'tests/helpers/bom/interface';
@@ -57,21 +56,13 @@ export default class BOM {
 		await delay(normalizedIdleOptions.sleepAfterIdles);
 	}
 
-	/** @see [[Helpers]] */
-	protected parent: typeof Helpers;
-
-	/** @param parent */
-	constructor(parent: typeof Helpers) {
-		this.parent = parent;
-	}
-
 	/**
-	 * Returns a promise that will be resolved when the passed page fires a `requestAnimationFrame` event
+	 * Waits until `requestAnimationFrame` fires on the page
 	 *
 	 * @param page
 	 * @param [rafOpts]
 	 */
-	async waitForRAF(page: Page, rafOpts: WaitForRAFOptions = {}): Promise<void> {
+	static async waitForRAF(page: Page, rafOpts: WaitForRAFOptions = {}): Promise<void> {
 		const normalizedRafOptions = <Required<WaitForRAFOptions>>{
 			waitForRafTimes: 1,
 			sleepAfterRAF: 100,
@@ -104,5 +95,15 @@ export default class BOM {
 	 */
 	waitForIdleCallback(page: Page, idleOptions: WaitForIdleOptions = {}): Promise<void> {
 		return BOM.waitForIdleCallback(page, idleOptions);
+	}
+
+	/**
+	 * @param page
+	 * @param [rafOptions]
+	 * @deprecated
+	 * @see [[BOM.waitForRAF]]
+	 */
+	async waitForRAF(page: Page, rafOptions: WaitForRAFOptions = {}): Promise<void> {
+		return BOM.waitForRAF(page, rafOptions);
 	}
 }

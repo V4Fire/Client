@@ -29,7 +29,9 @@ module.exports = (page, {browser, contextOpts}) => {
 	const UaList = {
 		android10: 'Mozilla/5.0 (Linux; arm_64; Android 10; MI 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 YaBrowser/21.3.1.128.00 SA/3 Mobile Safari/537.36',
 		iphone14: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/71.0.3578.89 Mobile/15E148 Safari/605.1',
-		chrome: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.616 Yowser/2.5 Safari/537.36'
+		chrome: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 YaBrowser/21.6.0.616 Yowser/2.5 Safari/537.36',
+		chromeMac: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.141 YaBrowser/22.3.3.865 Yowser/2.5 Safari/537.36',
+		safariMac: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Safari/605.1.15'
 	};
 
 	describe('`core/browser`', () => {
@@ -66,6 +68,28 @@ module.exports = (page, {browser, contextOpts}) => {
 
 					const
 						testVal = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+
+					expect(testVal).toBeTrue();
+				});
+
+				it('`platform: ChromeMac`', async () => {
+					await createContextWithOpts({
+						userAgent: UaList.chromeMac
+					});
+
+					const
+						testVal = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+
+					expect(testVal).toBeTrue();
+				});
+
+				it('`platform: Safari`', async () => {
+					await createContextWithOpts({
+						userAgent: UaList.safariMac
+					});
+
+					const
+						testVal = await browserApi.evaluate((ctx) => ctx.test('Safari'));
 
 					expect(testVal).toBeTrue();
 				});
@@ -119,6 +143,28 @@ module.exports = (page, {browser, contextOpts}) => {
 				it('`platform: Chrome`', async () => {
 					await createContextWithOpts({
 						userAgent: UaList.iphone14
+					});
+
+					const
+						testVal = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+
+					expect(testVal).toBeFalse();
+				});
+
+				it('`platform: ChromeMac`', async () => {
+					await createContextWithOpts({
+						userAgent: UaList.chromeMac
+					});
+
+					const
+						testVal = await browserApi.evaluate((ctx) => ctx.test('Safari'));
+
+					expect(testVal).toBeFalse();
+				});
+
+				it('`platform: safariMac`', async () => {
+					await createContextWithOpts({
+						userAgent: UaList.safariMac
 					});
 
 					const

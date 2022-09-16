@@ -37,7 +37,13 @@ exports.RUNTIME = buildIterator++;
  * Index of a process that generates isolated files for workers
  * @type {number}
  */
-exports.STANDALONE = buildIterator;
+exports.STANDALONE = buildIterator++;
+
+/**
+ * Index of a process that generates styles
+ * @type {number}
+ */
+exports.STYLES = buildIterator;
 
 /**
  * Position of the last available process

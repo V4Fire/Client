@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.27.0 (2022-08-30)
+
+#### :rocket: New Feature
+
+* Added favicons folder path in globla `PATH` variable `build/webpack/plugins`
+
+## v3.24.0 (2022-08-12)
+
+#### :rocket: New Feature
+
+* Added `statoscope-webpack-plugin`
+
+## v3.20.0 (2022-04-25)
+
+#### :boom: Breaking Change
+
+* Removed `worker-loader`
+
 ## v3.15.0 (2021-12-16)
 
 #### :bug: Bug Fix

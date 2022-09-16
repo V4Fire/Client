@@ -11,10 +11,6 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/form';
-//#endif
-
 import symbolGenerator from 'core/symbol';
 
 import { Option } from 'core/prelude/structures';
@@ -67,6 +63,10 @@ export const
 export default class bForm extends iData implements iVisible {
 	override readonly dataProvider: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
+
+	/** @see [[iVisible.prototype.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
 
 	/**
 	 * A form identifier.
@@ -459,14 +459,14 @@ export default class bForm extends iData implements iVisible {
 	 * Returns values of the associated components grouped by names
 	 * @param [validate] - if true, the method returns values only when the data is valid
 	 */
-	async getValues(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>>;
+	async getValues(validate?: ValidateOptions | boolean): Promise<Dictionary<CanArray<FormValue>>>;
 
 	/**
 	 * Returns values of the specified iInput components grouped by names
 	 * @param elements
 	 */
 	async getValues(elements: iInput[]): Promise<Dictionary<CanArray<FormValue>>>;
-	async getValues(validateOrElements?: ValidateOptions | iInput[]): Promise<Dictionary<CanArray<FormValue>>> {
+	async getValues(validateOrElements?: ValidateOptions | iInput[] | boolean): Promise<Dictionary<CanArray<FormValue>>> {
 		let
 			els;
 
@@ -474,7 +474,9 @@ export default class bForm extends iData implements iVisible {
 			els = validateOrElements;
 
 		} else {
-			els = Object.isTruly(validateOrElements) ? await this.validate(validateOrElements) : await this.elements;
+			els = Object.isTruly(validateOrElements) ?
+				await this.validate(Object.isBoolean(validateOrElements) ? {} : validateOrElements) :
+				await this.elements;
 		}
 
 		if (Object.isArray(els)) {

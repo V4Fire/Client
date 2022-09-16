@@ -68,6 +68,10 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	override readonly dataProvider: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
+	/** @see [[iVisible.prototype.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
+
 	/**
 	 * A button' type to create. There can be values:
 	 *
