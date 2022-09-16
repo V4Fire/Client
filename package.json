@@ -147,7 +147,7 @@
     "@types/glob": "7.2.0",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
-    "@v4fire/core": "3.86.2",
+    "@v4fire/core": "github:V4Fire/Core#prelude-review",
     "@v4fire/linters": "1.9.0",
     "husky": "7.0.4",
     "nyc": "15.1.0",
