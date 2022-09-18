@@ -58,6 +58,13 @@ export class Tab extends ARIARole {
 	}
 
 	/**
+	 * The tab list element
+	 */
+	protected get tablist(): Element | null {
+		return this.el.closest('[role="tablist"]');
+	}
+
+	/**
 	 * Moves focus to the first tab in the tablist
 	 */
 	protected moveFocusToFirstTab(): void {
@@ -114,10 +121,6 @@ export class Tab extends ARIARole {
 		}
 
 		setAttributes(this.el === active);
-	}
-
-	protected get tablist(): Element | null {
-		return this.el.closest('[role="tablist"]');
 	}
 
 	/**

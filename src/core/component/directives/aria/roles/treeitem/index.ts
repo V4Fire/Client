@@ -50,6 +50,13 @@ export class Treeitem extends ARIARole {
 	}
 
 	/**
+	 * The root tree element
+	 */
+	protected get root(): Nullable<Element> {
+		return this.params.rootElement?.querySelector('[role="tree"]');
+	}
+
+	/**
 	 * Changes focus from the current focused element to the passed one
 	 * @param el
 	 */
@@ -150,10 +157,10 @@ export class Treeitem extends ARIARole {
 		}
 
 		const
-			{rootElement, expandable, expanded, toggleFold} = this.params;
+			{expandable, expanded, toggleFold} = this.params;
 
 		const
-			isHorizontal = rootElement?.getAttribute('aria-orientation') === 'horizontal';
+			isHorizontal = this.root?.getAttribute('aria-orientation') === 'horizontal';
 
 		const open = () => {
 			if (expandable) {
