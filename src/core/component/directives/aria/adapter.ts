@@ -52,7 +52,7 @@ export default class ARIAAdapter {
 	init(): void {
 		this.role?.init();
 		this.attachRoleHandlers();
-		this.setAttributes();
+		this.setRoleAttributes();
 	}
 
 	/**
@@ -90,7 +90,7 @@ export default class ARIAAdapter {
 	/**
 	 * Sets the ARIA attributes passed in the associated directive parameters
 	 */
-	protected setAttributes(): void {
+	protected setRoleAttributes(): void {
 		const
 			{binding} = this.params;
 
@@ -118,22 +118,6 @@ export default class ARIAAdapter {
 	}
 
 	/**
-	 * Sets a new value of the specified attribute to the node on which the ARIA directive is initialized
-	 *
-	 * @param name - the attribute name
-	 * @param value - the attribute value or a list of values
-	 * @param [el] - the element to set an attribute
-	 */
-	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>, el: Element = this.params.el): void {
-		if (value == null) {
-			return;
-		}
-
-		el.setAttribute(name, Object.isArray(value) ? value.join(' ') : String(value));
-		this.async.worker(() => el.removeAttribute(name));
-	}
-
-	/**
 	 * Attaches the handlers specified in the parameters of the associated directive to the created ARIA role.
 	 * Any handler can be specified as a function, a promise, or a string.
 	 *
@@ -141,8 +125,11 @@ export default class ARIAAdapter {
 	 * For example, `@open` will be converted to the role `onOpen` handler.
 	 */
 	protected attachRoleHandlers(): void {
-		const
-			{async, role, params: {binding}} = this;
+		const {
+			role,
+			async: $a,
+			params: {binding}
+		} = this;
 
 		if (role == null || !Object.isDictionary(binding.value)) {
 			return;
@@ -164,14 +151,30 @@ export default class ARIAAdapter {
 				handler = role[handlerName].bind(this.role);
 
 			if (Object.isFunction(val)) {
-				val(async.proxy(handler, {single: false}));
+				val($a.proxy(handler, {single: false}));
 
 			} else if (Object.isPromiseLike(val)) {
-				async.promise(val).then(handler, stderr);
+				$a.promise(val).then(handler, stderr);
 
 			} else if (Object.isString(val)) {
-				async.on(this.ctx, val, handler);
+				$a.on(this.ctx, val, handler);
 			}
 		});
+	}
+
+	/**
+	 * Sets a new value of the specified attribute to the node on which the ARIA directive is initialized
+	 *
+	 * @param name - the attribute name
+	 * @param value - the attribute value or a list of values
+	 * @param [el] - the element to set an attribute
+	 */
+	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>, el: Element = this.params.el): void {
+		if (value == null) {
+			return;
+		}
+
+		el.setAttribute(name, Object.isArray(value) ? value.join(' ') : String(value));
+		this.async.worker(() => el.removeAttribute(name));
 	}
 }
